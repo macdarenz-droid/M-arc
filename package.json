@@ -1,6 +1,6 @@
 {
   "name": "marc-daily-tracker",
-  "version": "36.7.0",
+  "version": "36.8.7",
   "private": true,
   "description": "M•ARC workout, recovery and health tracker Android/PWA source",
   "scripts": {
