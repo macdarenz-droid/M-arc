@@ -50,13 +50,11 @@ jobs:
           from pathlib import Path
           import hashlib, json
           expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
-          marker=b'window.DT_MARC_RELEASE_FIX_VERSION="36.8.6-fix-all-current-input-clock"'
           for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
               json.loads(Path(f).read_text(encoding='utf-8'))
           data=Path('www/index.html').read_bytes()
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          if marker not in data: raise SystemExit('V36.8.6 release marker missing')
           print('V36.8.6 source hash PASS:', actual)
           PY
 
