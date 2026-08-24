@@ -12,6 +12,7 @@ import android.health.connect.TimeInstantRangeFilter;
 import android.health.connect.datatypes.ActiveCaloriesBurnedRecord;
 import android.health.connect.datatypes.HeartRateRecord;
 import android.health.connect.datatypes.RestingHeartRateRecord;
+import android.health.connect.datatypes.Record;
 import android.health.connect.datatypes.SleepSessionRecord;
 import android.health.connect.datatypes.StepsRecord;
 import android.os.Build;
@@ -49,16 +50,16 @@ public class HealthConnectNativePlugin extends Plugin {
         return getContext().getSystemService(HealthConnectManager.class);
     }
 
-    private boolean hasPermission(String permission) {
+    private boolean hasHealthPermission(String permission) {
         return Build.VERSION.SDK_INT >= 34 &&
                 getContext().checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean hasReadPermissions() {
-        return hasPermission("android.permission.health.READ_STEPS") &&
-                hasPermission("android.permission.health.READ_SLEEP") &&
-                hasPermission("android.permission.health.READ_HEART_RATE") &&
-                hasPermission("android.permission.health.READ_ACTIVE_CALORIES_BURNED");
+        return hasHealthPermission("android.permission.health.READ_STEPS") &&
+                hasHealthPermission("android.permission.health.READ_SLEEP") &&
+                hasHealthPermission("android.permission.health.READ_HEART_RATE") &&
+                hasHealthPermission("android.permission.health.READ_ACTIVE_CALORIES_BURNED");
     }
 
     @PluginMethod
@@ -93,7 +94,7 @@ public class HealthConnectNativePlugin extends Plugin {
         Exception error;
     }
 
-    private <T> List<T> readRecords(Class<T> cls, Instant start, Instant end) throws Exception {
+    private <T extends Record> List<T> readRecords(Class<T> cls, Instant start, Instant end) throws Exception {
         HealthConnectManager hc = manager();
         if (hc == null) throw new IllegalStateException("Health Connect unavailable");
 
