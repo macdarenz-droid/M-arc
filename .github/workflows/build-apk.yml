@@ -1,0 +1,149 @@
+name: Build M-ARC Debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'www/**'
+      - 'native/**'
+      - 'package.json'
+      - 'capacitor.config.json'
+      - '.github/workflows/build-apk.yml'
+      - '.github/workflows/release-apk.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: marc-debug-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Verify locked V36.7 web source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          marker=b'window.DT_MARC_RELEASE_FIX_VERSION="36.7-phase7-haptic-reminder-health"'
+          for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
+              json.loads(Path(f).read_text(encoding='utf-8'))
+          data=Path('www/index.html').read_bytes()
+          actual=hashlib.sha256(data).hexdigest()
+          if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
+          if marker not in data: raise SystemExit('V36.7 release marker missing')
+          print('V36.7 source hash PASS:', actual)
+          PY
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Generate clean Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf android
+          npx cap add android
+
+      - name: Configure Android project
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('android/variables.gradle')
+          s=p.read_text(encoding='utf-8')
+          s,n=re.subn(r'(minSdkVersion\s*=\s*)\d+', r'\g<1>26', s)
+          if n == 0: raise SystemExit('minSdkVersion not found')
+          p.write_text(s,encoding='utf-8')
+          PY
+          npx cap sync android
+          PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
+          mkdir -p "$PKG"
+          cp native/HealthConnectNativePlugin.java "$PKG/HealthConnectNativePlugin.java"
+          cp native/MainActivity.java "$PKG/MainActivity.java"
+          cp native/PermissionsRationaleActivity.java "$PKG/PermissionsRationaleActivity.java"
+          python3 native/patch_manifest.py android/app/src/main/AndroidManifest.xml
+
+      - name: Verify bundled source and native plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          a=Path('www/index.html').read_bytes()
+          b=Path('android/app/src/main/assets/public/index.html').read_bytes()
+          if a != b: raise SystemExit('Capacitor bundled index differs from source')
+          if hashlib.sha256(b).hexdigest() != expected: raise SystemExit('Android bundled index hash mismatch')
+          print('Android bundled index exact-byte PASS')
+          PY
+          grep -n 'registerPlugin(HealthConnectNativePlugin.class)' android/app/src/main/java/com/mrcdrnzz/dailytracker/MainActivity.java
+          grep -n 'android.permission.health.READ_SLEEP' android/app/src/main/AndroidManifest.xml
+          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
+          for plugin in LocalNotifications Filesystem Share Haptics; do
+            grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; cat "$PLUGINS"; exit 1; }
+          done
+
+      - name: Build debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Verify APK contains exact V36.7 app
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, zipfile
+          apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          with zipfile.ZipFile(apk) as z:
+              data=z.read('assets/public/index.html')
+          actual=hashlib.sha256(data).hexdigest()
+          if actual != expected: raise SystemExit(f'APK index mismatch: {actual}')
+          print('Debug APK exact V36.7 embedded source PASS:', actual)
+          PY
+          mkdir -p release-output
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.7-debug.apk
+          sha256sum release-output/MARC-V36.7-debug.apk > release-output/MARC-V36.7-debug.apk.sha256
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-V36.7-DEBUG-APK
+          path: |
+            release-output/MARC-V36.7-debug.apk
+            release-output/MARC-V36.7-debug.apk.sha256
+          if-no-files-found: error
+          retention-days: 30

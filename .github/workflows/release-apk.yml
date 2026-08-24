@@ -1,0 +1,198 @@
+name: Build Signed M-ARC Release APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (blank = 36.7.<run>)'
+        required: false
+        type: string
+      version_code:
+        description: 'Android versionCode (blank = automatic)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v6
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        env:
+          INPUT_NAME: ${{ inputs.version_name }}
+          INPUT_CODE: ${{ inputs.version_code }}
+        run: |
+          set -euo pipefail
+          VERSION_NAME="${INPUT_NAME:-}"
+          VERSION_CODE="${INPUT_CODE:-}"
+          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.7.${GITHUB_RUN_NUMBER}"
+          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((3670000 + GITHUB_RUN_NUMBER))"
+          [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid versionCode'; exit 1; }
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Validate signing secrets
+        shell: bash
+        env:
+          KS: ${{ secrets.MARC_ANDROID_KEYSTORE_B64 }}
+          KSP: ${{ secrets.MARC_ANDROID_KEYSTORE_PASSWORD }}
+          KA: ${{ secrets.MARC_ANDROID_KEY_ALIAS }}
+          KP: ${{ secrets.MARC_ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for v in KS KSP KA KP; do
+            [ -n "${!v:-}" ] || { echo "::error::Missing signing secret for $v"; missing=1; }
+          done
+          [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
+
+      - name: Verify locked V36.7 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          data=Path('www/index.html').read_bytes()
+          actual=hashlib.sha256(data).hexdigest()
+          if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
+          print('V36.7 source hash PASS:', actual)
+          PY
+
+      - name: Install dependencies and generate Android
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install
+          rm -rf android
+          npx cap add android
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('android/variables.gradle')
+          s=p.read_text(encoding='utf-8')
+          s,n=re.subn(r'(minSdkVersion\s*=\s*)\d+', r'\g<1>26', s)
+          if n == 0: raise SystemExit('minSdkVersion not found')
+          p.write_text(s,encoding='utf-8')
+          PY
+          npx cap sync android
+          PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
+          mkdir -p "$PKG"
+          cp native/HealthConnectNativePlugin.java "$PKG/HealthConnectNativePlugin.java"
+          cp native/MainActivity.java "$PKG/MainActivity.java"
+          cp native/PermissionsRationaleActivity.java "$PKG/PermissionsRationaleActivity.java"
+          python3 native/patch_manifest.py android/app/src/main/AndroidManifest.xml
+
+      - name: Apply release version
+        shell: bash
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,re
+          p=Path('android/app/build.gradle')
+          s=p.read_text(encoding='utf-8')
+          s,n1=re.subn(r'(?m)^(\s*versionCode\s+)\d+\s*$', rf'\g<1>{os.environ["VERSION_CODE"]}', s, count=1)
+          s,n2=re.subn(r'(?m)^(\s*versionName\s+)["\'][^"\']+["\']\s*$', rf'\g<1>"{os.environ["VERSION_NAME"]}"', s, count=1)
+          if n1 != 1 or n2 != 1: raise SystemExit('Could not set Android version')
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Verify bundled bytes and plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          b=Path('android/app/src/main/assets/public/index.html').read_bytes()
+          if hashlib.sha256(b).hexdigest()!=expected: raise SystemExit('Android bundled index hash mismatch')
+          PY
+          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
+          for plugin in LocalNotifications Filesystem Share Haptics; do
+            grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; exit 1; }
+          done
+
+      - name: Build unsigned release APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+
+      - name: Decode signing keystore
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.MARC_ANDROID_KEYSTORE_B64 }}
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/marc-release.jks"
+          test -s "$RUNNER_TEMP/marc-release.jks"
+
+      - name: Sign and verify APK
+        id: sign
+        shell: bash
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.MARC_ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.MARC_ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.MARC_ANDROID_KEY_PASSWORD }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          BUILD_TOOLS="$(find "$SDK_ROOT/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          UNSIGNED='android/app/build/outputs/apk/release/app-release-unsigned.apk'
+          [ -f "$UNSIGNED" ] || UNSIGNED='android/app/build/outputs/apk/release/app-release.apk'
+          mkdir -p release-output
+          ALIGNED="release-output/MARC-v${VERSION_NAME}-aligned.apk"
+          SIGNED="release-output/MARC-v${VERSION_NAME}-signed.apk"
+          "$BUILD_TOOLS/zipalign" -p -f 4 "$UNSIGNED" "$ALIGNED"
+          "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-release.jks" --ks-key-alias "$KEY_ALIAS" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD --out "$SIGNED" "$ALIGNED"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED"
+          python3 - "$SIGNED" <<'PY'
+          import hashlib,sys,zipfile
+          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')
+          actual=hashlib.sha256(data).hexdigest()
+          if actual != expected: raise SystemExit(f'Signed APK source mismatch: {actual}')
+          print('Signed APK exact V36.7 embedded source PASS:',actual)
+          PY
+          sha256sum "$SIGNED" > "$SIGNED.sha256"
+          rm -f "$ALIGNED" "$RUNNER_TEMP/marc-release.jks"
+
+      - name: Upload signed release
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-v${{ steps.version.outputs.version_name }}-SIGNED-RELEASE
+          path: |
+            release-output/MARC-v${{ steps.version.outputs.version_name }}-signed.apk
+            release-output/MARC-v${{ steps.version.outputs.version_name }}-signed.apk.sha256
+          if-no-files-found: error
+          retention-days: 90
