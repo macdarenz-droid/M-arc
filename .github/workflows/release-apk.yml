@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version_name:
-        description: 'Version name (blank = 36.8.<run>)'
+        description: 'Version name (blank = 36.8.3.<run>)'
         required: false
         type: string
       version_code:
@@ -34,8 +34,8 @@ jobs:
           set -euo pipefail
           VERSION_NAME="${INPUT_NAME:-}"
           VERSION_CODE="${INPUT_CODE:-}"
-          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.8.${GITHUB_RUN_NUMBER}"
-          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((3680000 + GITHUB_RUN_NUMBER))"
+          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.8.3.${GITHUB_RUN_NUMBER}"
+          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((3683000 + GITHUB_RUN_NUMBER))"
           [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid versionCode'; exit 1; }
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
@@ -66,18 +66,18 @@ jobs:
           done
           [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
 
-      - name: Verify locked V36.8 source
+      - name: Verify locked V36.8.6 source
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
+          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
           data=Path('www/index.html').read_bytes()
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          print('V36.8 source hash PASS:', actual)
+          print('V36.8.6 source hash PASS:', actual)
           PY
 
       - name: Install dependencies and generate Android
@@ -99,10 +99,10 @@ jobs:
           npx cap sync android
           PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
           mkdir -p "$PKG"
-          cp native/HealthConnectNativePlugin.java "$PKG/HealthConnectNativePlugin.java"
-          cp native/MainActivity.java "$PKG/MainActivity.java"
-          cp native/PermissionsRationaleActivity.java "$PKG/PermissionsRationaleActivity.java"
-          python3 native/patch_manifest.py android/app/src/main/AndroidManifest.xml
+          # Replace Capacitor launcher assets with the M•ARC icon on every clean Android build.
+          cp -R branding/android/* android/app/src/main/res/
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
 
       - name: Apply release version
         shell: bash
@@ -129,10 +129,11 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
+          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
           b=Path('android/app/src/main/assets/public/index.html').read_bytes()
           if hashlib.sha256(b).hexdigest()!=expected: raise SystemExit('Android bundled index hash mismatch')
           PY
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || { echo '::error::MARC launcher icon missing'; exit 1; }
           PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
           for plugin in LocalNotifications Filesystem Share Haptics; do
             grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; exit 1; }
@@ -178,11 +179,11 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED"
           python3 - "$SIGNED" <<'PY'
           import hashlib,sys,zipfile
-          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
+          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
           with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'Signed APK source mismatch: {actual}')
-          print('Signed APK exact V36.8 embedded source PASS:',actual)
+          print('Signed APK exact V36.8.6 embedded source PASS:',actual)
           PY
           sha256sum "$SIGNED" > "$SIGNED.sha256"
           rm -f "$ALIGNED" "$RUNNER_TEMP/marc-release.jks"
