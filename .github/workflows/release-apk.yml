@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version_name:
-        description: 'Version name (blank = 36.8.6.<run>)'
+        description: 'Version name (blank = 36.8.7.<run>)'
         required: false
         type: string
       version_code:
@@ -34,8 +34,8 @@ jobs:
           set -euo pipefail
           VERSION_NAME="${INPUT_NAME:-}"
           VERSION_CODE="${INPUT_CODE:-}"
-          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.8.6.${GITHUB_RUN_NUMBER}"
-          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((3686000 + GITHUB_RUN_NUMBER))"
+          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.8.7.${GITHUB_RUN_NUMBER}"
+          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((3687000 + GITHUB_RUN_NUMBER))"
           [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid versionCode'; exit 1; }
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
@@ -66,18 +66,18 @@ jobs:
           done
           [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
 
-      - name: Verify locked V36.8.6 source
+      - name: Verify locked V36.8.7 source
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           data=Path('www/index.html').read_bytes()
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          print('V36.8.6 source hash PASS:', actual)
+          print('V36.8.7 source hash PASS:', actual)
           PY
 
       - name: Install dependencies and generate Android
@@ -141,7 +141,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           b=Path('android/app/src/main/assets/public/index.html').read_bytes()
           if hashlib.sha256(b).hexdigest()!=expected: raise SystemExit('Android bundled index hash mismatch')
           PY
@@ -191,11 +191,11 @@ jobs:
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED"
           python3 - "$SIGNED" <<'PY'
           import hashlib,sys,zipfile
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'Signed APK source mismatch: {actual}')
-          print('Signed APK exact V36.8.6 embedded source PASS:',actual)
+          print('Signed APK exact V36.8.7 embedded source PASS:',actual)
           PY
           sha256sum "$SIGNED" > "$SIGNED.sha256"
           rm -f "$ALIGNED" "$RUNNER_TEMP/marc-release.jks"

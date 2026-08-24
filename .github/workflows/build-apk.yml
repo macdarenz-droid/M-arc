@@ -42,20 +42,20 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Verify locked V36.8.6 web source
+      - name: Verify locked V36.8.7 web source
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import hashlib, json
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
               json.loads(Path(f).read_text(encoding='utf-8'))
           data=Path('www/index.html').read_bytes()
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          print('V36.8.6 source hash PASS:', actual)
+          print('V36.8.7 source hash PASS:', actual)
           PY
 
       - name: Install npm dependencies
@@ -108,7 +108,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           a=Path('www/index.html').read_bytes()
           b=Path('android/app/src/main/assets/public/index.html').read_bytes()
           if a != b: raise SystemExit('Capacitor bundled index differs from source')
@@ -139,7 +139,7 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
 
-      - name: Verify APK contains exact V36.8.6 app
+      - name: Verify APK contains exact V36.8.7 app
         shell: bash
         run: |
           set -euo pipefail
@@ -147,23 +147,23 @@ jobs:
           from pathlib import Path
           import hashlib, zipfile
           apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
-          expected='3a5410fc32808b3911a76dfe10f734241dae0463c23e7f2cf4354df5ceac194f'
+          expected='dcd14bb0bc829963d84acef4db3809533270fb08d3f841410c0e21a4b5186694'
           with zipfile.ZipFile(apk) as z:
               data=z.read('assets/public/index.html')
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'APK index mismatch: {actual}')
-          print('Debug APK exact V36.8.6 embedded source PASS:', actual)
+          print('Debug APK exact V36.8.7 embedded source PASS:', actual)
           PY
           mkdir -p release-output
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.8.6-debug.apk
-          sha256sum release-output/MARC-V36.8.6-debug.apk > release-output/MARC-V36.8.6-debug.apk.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.8.7-debug.apk
+          sha256sum release-output/MARC-V36.8.7-debug.apk > release-output/MARC-V36.8.7-debug.apk.sha256
 
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MARC-V36.8.6-DEBUG-APK
+          name: MARC-V36.8.7-DEBUG-APK
           path: |
-            release-output/MARC-V36.8.6-debug.apk
-            release-output/MARC-V36.8.6-debug.apk.sha256
+            release-output/MARC-V36.8.7-debug.apk
+            release-output/MARC-V36.8.7-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30
