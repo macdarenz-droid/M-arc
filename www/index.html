@@ -6390,33 +6390,10 @@ renderTrainingGoal();
   /* ---------- History indexed by exercise identity, not list position ---------- */
   function stableKey(e){return String(e?.[4]||exerciseKey(e)||'')}
   function historicalSets(e){
-    const out=[],key=stableKey(e),name=n(e?.[0]),type=n(e?.[1]);
-    const push=(sets,date,source)=>{(sets||[]).forEach((s,si)=>{const kg=parseFloat(s?.kg),reps=parseInt(s?.reps);if(!Number.isFinite(kg)||!Number.isFinite(reps)||reps<=0)return;out.push({kg,reps,effort:s?.effort||'',si,date:date||'',source})})};
-    const legacyMatch=r=>{
-      if(!r||String(r.exerciseKey||""))return false;
-      if(n(r.name)!==name)return false;
-      const rt=n(r.type);
-      return type?rt===type:!rt;
-    };
-
-    (state.workouts?.completedExercises||[]).forEach(r=>{
-      if(r.dayKey===today())return;
-      const recKey=String(r.exerciseKey||"");
-      const match=recKey?recKey===key:legacyMatch(r);
-      if(match)push(r.sets,r.finalizedAt||r.dayKey,'completed');
-    });
-    (state.workouts?.sessions||[]).forEach(sess=>{
-      const date=sess.date||'';if(String(date).slice(0,10)===today())return;
-      const snap=Array.isArray(sess.snapshot)?sess.snapshot:[];
-      if(!snap.length)return;
-      const keyed=snap.filter(x=>String(x?.exerciseKey||"")===key);
-      if(keyed.length){keyed.forEach(x=>push(x.sets,date,'session'));return}
-      const legacy=snap.filter(x=>legacyMatch(x));
-      if(legacy.length===1)push(legacy[0].sets,date,'session');
-    });
-    // newest first; de-duplicate exact repeats that may exist in both a session and finalized-exercise store
-    out.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-    const seen=new Set();return out.filter(x=>{const sig=`${String(x.date).slice(0,10)}|${x.si}|${x.kg}|${x.reps}`;if(seen.has(sig))return false;seen.add(sig);return true});
+    const rows=typeof window.dtCompletedExerciseSessions==="function"?window.dtCompletedExerciseSessions(e):[];
+    const out=[];
+    rows.forEach(session=>{(session.sets||[]).forEach((set,si)=>{const kg=parseFloat(set?.kg),reps=parseInt(set?.reps);if(!Number.isFinite(kg)||!Number.isFinite(reps)||reps<=0)return;out.push({kg,reps,effort:set?.effort||"",si:set?.si??si,date:session.date||session.ts||"",source:session.source||"session",sessionKey:session.sessionKey})})});
+    return out.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   }
 
   function parseRange(text){const nums=String(text||'').match(/\d+(?:\.\d+)?/g)?.map(Number)||[];return {lo:nums[0]??null,hi:nums[1]??nums[0]??null}}
@@ -6508,6 +6485,61 @@ renderTrainingGoal();
   window.DT_SMART_PROGRESSION_VERSION=DT_V4;
 })();
 </script>
+<script id="dt-v36-8-7-exercise-history-canonical-js">
+(()=>{
+  "use strict";
+  function norm(v){return String(v||"").toLowerCase().replace(/\bdb\b/g,"dumbbell").replace(/\bdumbbells\b/g,"dumbbell").replace(/\bbicep\b/g,"biceps").replace(/\btricep\b/g,"triceps").replace(/\bpull\s*down\b/g,"pulldown").replace(/\bpush\s*down\b/g,"pushdown").replace(/\bflye?s\b/g,"fly").replace(/[^a-z0-9]+/g," ").replace(/\s+/g," ").trim()}
+  function parts(input){
+    const name=Array.isArray(input)?input?.[0]:input?.name,type=Array.isArray(input)?input?.[1]:input?.type,key=Array.isArray(input)?input?.[4]:input?.exerciseKey;
+    const combined=norm(`${name||""} ${type||""}`);
+    let equipment="";
+    if(/\bdumbbell\b/.test(combined))equipment="dumbbell";else if(/\bbarbell\b/.test(combined))equipment="barbell";else if(/\bsmith\b/.test(combined))equipment="smith";else if(/\bcable\b/.test(combined))equipment="cable";else if(/\bmachine\b/.test(combined))equipment="machine";else if(/\bbody ?weight\b/.test(combined))equipment="bodyweight";
+    let movement=norm(name).replace(/\b(dumbbell|barbell|smith|cable|machine|plate loaded|bodyweight)\b/g," ").replace(/\s+/g," ").trim();
+    movement=movement.replace(/\brear delts\b/g,"rear delt").replace(/\bfront delts\b/g,"front delt").replace(/\bside delts\b/g,"side delt");
+    return {key:String(key||""),movement,equipment,id:`${movement}|${equipment}`};
+  }
+  function matches(a,b){
+    const A=parts(a),B=parts(b);
+    if(A.key&&B.key&&A.key===B.key)return true;
+    if(!A.movement||A.movement!==B.movement)return false;
+    return !A.equipment||!B.equipment||A.equipment===B.equipment;
+  }
+  function validSets(sets){return (sets||[]).map((s,si)=>({kg:+s?.kg||0,reps:+s?.reps||0,effort:String(s?.effort||""),si})).filter(s=>s.reps>0&&s.kg>=0)}
+  function sessionSemantic(s){
+    let snap="";try{snap=JSON.stringify(s?.snapshot||s?.exercises||[])}catch(_){}
+    return String(s?.id||s?.summaryId||`${s?.date||s?.completedAt||s?.dayKey||""}|${s?.day||""}|${snap}`);
+  }
+  function completedSessions(exercise){
+    const out=[],seen=new Set(),coveredDays=new Set();
+    (state.workouts?.sessions||[]).forEach((sess,idx)=>{
+      if(!sess||sess.demo)return;
+      const sk=sessionSemantic(sess);if(seen.has(sk))return;seen.add(sk);
+      const snapshot=Array.isArray(sess.snapshot)?sess.snapshot:(Array.isArray(sess.exercises)?sess.exercises:[]);
+      const hits=snapshot.filter(x=>matches(exercise,x));if(!hits.length)return;
+      const sets=hits.flatMap(x=>validSets(x.sets));if(!sets.length)return;
+      const ts=Date.parse(sess.date||sess.completedAt||sess.dayKey||0)||0,date=String(sess.date||sess.completedAt||sess.dayKey||"");
+      coveredDays.add(String(date).slice(0,10));out.push({sessionKey:sk,ts,date,sets,source:"session",day:sess.day||"",workoutName:sess.workoutName||sess.splitName||""});
+    });
+    // Legacy fallback only when no canonical session on that day contains the exercise.
+    (state.workouts?.completedExercises||[]).forEach((rec,idx)=>{
+      if(!matches(exercise,rec)||String(rec.id||"").startsWith("demo|"))return;
+      const date=String(rec.finalizedAt||rec.startedAt||rec.dayKey||""),dayKey=date.slice(0,10);if(coveredDays.has(dayKey))return;
+      const sets=validSets(rec.sets);if(!sets.length)return;
+      const sk=`legacy|${rec.id||idx}|${date}|${parts(rec).id}`;if(seen.has(sk))return;seen.add(sk);
+      out.push({sessionKey:sk,ts:Date.parse(date||0)||0,date,sets,source:"legacy",day:rec.day||"",workoutName:rec.workoutName||rec.splitName||""});
+    });
+    return out.sort((a,b)=>a.ts-b.ts||String(a.sessionKey).localeCompare(String(b.sessionKey)));
+  }
+  function annotateHistory(){
+    let changed=false;
+    const apply=x=>{if(!x||typeof x!=="object")return;const id=parts(x).id;if(id&&x.canonicalExerciseId!==id){x.canonicalExerciseId=id;changed=true}};
+    (state.workouts?.completedExercises||[]).forEach(apply);(state.workouts?.sessions||[]).forEach(s=>(s.snapshot||[]).forEach(apply));
+    if(changed)try{save()}catch(_){}
+  }
+  window.dtCanonicalExerciseIdentity=parts;window.dtExerciseHistoryMatches=matches;window.dtCompletedExerciseSessions=completedSessions;
+  document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>setTimeout(annotateHistory,250),{once:true}):setTimeout(annotateHistory,250);
+})();
+</script>
 <style id="dt-v5-progress-css">
 .dt-progress-open{border:0;background:transparent;color:#75baff;font:700 11px/1 system-ui;padding:8px 2px;letter-spacing:.02em;cursor:pointer;opacity:.82}
 .dt-progress-open:hover{opacity:1}
@@ -6558,12 +6590,8 @@ function e1rm(kg,reps){kg=+kg;reps=+reps;if(!(kg>0&&reps>0))return 0;return kg*(
 function vol(sets){return (sets||[]).reduce((n,s)=>n+(+s.kg||0)*(+s.reps||0),0)}
 function validSets(sets){return (sets||[]).map(s=>({kg:+s.kg||0,reps:+s.reps||0,effort:String(s.effort||"")})).filter(s=>s.reps>0&&s.kg>=0)}
 function historyFor(e){
- const key=stableKey(e), name=norm(e?.[0]), type=norm(e?.[1]), rows=[];
- const match=x=>{const exact=x?.exerciseKey&&key&&String(x.exerciseKey)===String(key);const named=norm(x?.name)===name&&(!type||!x?.type||norm(x.type)===type);return exact||named};
- (state.workouts?.completedExercises||[]).forEach(x=>{if(match(x))rows.push({...x,sets:validSets(x.sets),ts:Date.parse(x.finalizedAt||x.startedAt||x.dayKey||0)||0})});
- (state.workouts?.sessions||[]).forEach(sess=>{(Array.isArray(sess?.snapshot)?sess.snapshot:[]).forEach(x=>{if(match(x))rows.push({...x,sets:validSets(x.sets),ts:Date.parse(sess.date||sess.dayKey||0)||0})})});
- const seen=new Set();
- return rows.filter(x=>x.sets.length).sort((a,b)=>a.ts-b.ts).filter(x=>{const sig=`${String(x.ts).slice(0,10)}|${x.exerciseKey||norm(x.name)}|${x.sets.map(v=>`${v.kg}:${v.reps}`).join(',')}`;if(seen.has(sig))return false;seen.add(sig);return true});
+ const rows=typeof window.dtCompletedExerciseSessions==="function"?window.dtCompletedExerciseSessions(e):[];
+ return rows.map(x=>({...x,sets:(x.sets||[]).map(s=>({kg:+s.kg||0,reps:+s.reps||0,effort:String(s.effort||""),si:s.si??0})).filter(s=>s.reps>0&&s.kg>=0)})).filter(x=>x.sets.length);
 }
 function hasLoadedHistory(sessions){return sessions.some(x=>(x.sets||[]).some(s=>(+s.kg||0)>0))}
 function setScore(s,weighted){return weighted?e1rm(s.kg,s.reps):(+s.reps||0)}
@@ -7242,23 +7270,15 @@ function rirBand(effort){
   return {text:"RIR —",cls:"",rank:null};
 }
 function ltSessions(e){
-  const key=ltKey(e),name=ltNorm(e?.[0]),type=ltNorm(e?.[1]);
-  return (state.workouts?.completedExercises||[])
-    .filter(x=>{
-      const exact=x.exerciseKey&&key&&String(x.exerciseKey)===key;
-      const named=ltNorm(x.name)===name&&(!type||!x.type||ltNorm(x.type)===type);
-      return exact||named;
-    })
-    .map(x=>{
+  const rows=typeof window.dtCompletedExerciseSessions==="function"?window.dtCompletedExerciseSessions(e):[];
+  return rows.map(x=>{
       const sets=(x.sets||[]).map(s=>({kg:+s.kg||0,reps:+s.reps||0,effort:String(s.effort||"")})).filter(s=>s.kg>0&&s.reps>0);
       const best=sets.reduce((a,b)=>!a||ltE1rm(b)>ltE1rm(a)?b:a,null);
       const avgReps=sets.length?sets.reduce((n,s)=>n+s.reps,0)/sets.length:0;
       const ranks=sets.map(s=>rirBand(s.effort).rank).filter(v=>v!==null);
       const avgRir=ranks.length?ranks.reduce((a,b)=>a+b,0)/ranks.length:null;
-      return {date:x.finalizedAt||x.dayKey,sets,best,avgReps,avgRir};
-    })
-    .filter(x=>x.best)
-    .sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+      return {date:x.date||x.ts,ts:x.ts,sessionKey:x.sessionKey,sets,best,avgReps,avgRir};
+    }).filter(x=>x.best).sort((a,b)=>a.ts-b.ts);
 }
 function ltTrend(e){
   const s=ltSessions(e);
@@ -7892,7 +7912,7 @@ function ensureMore(){
     <button class="dt-more-item" data-more="goals"><b>Progress goals</b><small>Weekly consistency and optional lift target.</small></button>
     <button class="dt-more-item" data-more="stats"><b>Weekly performance</b><small>Sets, consistency, muscle emphasis and PRs.</small></button>
     <button class="dt-more-item money" data-more="money"><span><b>Money</b><small>Secondary feature · available balance</small></span><strong id="dtMoreMoneyValue">—</strong></button>
-    <button class="dt-more-item settings" data-more="settings"><b>Settings</b><small>Health Connect, workout setup and preferences.</small></button>
+    <button class="dt-more-item settings" data-more="settings"><b>Settings</b><small>Workout setup and preferences.</small></button>
   </div></section>`;
   m.onclick=e=>{if(e.target===m)m.classList.remove("show")};
   m.querySelector(".dt-more-close").onclick=()=>m.classList.remove("show");
@@ -8752,18 +8772,13 @@ demoObserver.observe(document.body,{childList:true,subtree:true});
 function p12Norm(v){return String(v||"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim()}
 function p12Key(e){try{return String(e?.[4]||exerciseKey(e)||"")}catch(_){return String(e?.[4]||"")}}
 function p12Sessions(e){
-  const key=p12Key(e),name=p12Norm(e?.[0]),type=p12Norm(e?.[1]),by=new Map();
-  const match=x=>{const exact=x?.exerciseKey&&key&&String(x.exerciseKey)===key;const named=p12Norm(x?.name)===name&&(!type||!x?.type||p12Norm(x.type)===type);return exact||named};
-  const add=(x,date)=>{
-    if(String(x?.id||"").startsWith("demo|"))return;if(!match(x))return;
-    const sets=(x.sets||[]).map(s=>({kg:+s.kg||0,reps:+s.reps||0})).filter(s=>s.reps>0&&s.kg>=0);if(!sets.length)return;
-    const dk=String(date||x.dayKey||x.finalizedAt||x.startedAt||"").slice(0,10);if(!dk)return;
-    const rec=by.get(dk)||{date:dk,sets:[],seen:new Set()};
-    sets.forEach(set=>{const sig=`${set.kg}|${set.reps}`;if(!rec.seen.has(sig)){rec.seen.add(sig);rec.sets.push(set)}});by.set(dk,rec);
-  };
-  (state.workouts?.completedExercises||[]).forEach(x=>add(x,x.finalizedAt||x.startedAt||x.dayKey));
-  (state.workouts?.sessions||[]).forEach(sess=>(Array.isArray(sess?.snapshot)?sess.snapshot:[]).forEach(x=>add(x,sess.date||sess.dayKey)));
-  return [...by.values()].sort((a,b)=>a.date.localeCompare(b.date)).map(x=>({date:x.date,volume:x.sets.reduce((n,s)=>n+s.kg*s.reps,0),reps:x.sets.reduce((n,s)=>n+s.reps,0),sets:x.sets.length}));
+  const rows=typeof window.dtCompletedExerciseSessions==="function"?window.dtCompletedExerciseSessions(e):[];
+  return rows.map(x=>({
+    date:String(x.date||"").slice(0,10),ts:x.ts,sessionKey:x.sessionKey,
+    volume:(x.sets||[]).reduce((n,s)=>n+(+s.kg||0)*(+s.reps||0),0),
+    reps:(x.sets||[]).reduce((n,s)=>n+(+s.reps||0),0),
+    sets:(x.sets||[]).filter(s=>(+s.reps||0)>0).length
+  })).filter(x=>x.date&&x.sets>0).sort((a,b)=>a.ts-b.ts);
 }
 function p12Date(s){try{return new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric"}).format(new Date(s+"T12:00:00"))}catch(_){return s}}
 function p12Sum(a,f){return a.reduce((n,x)=>n+(+x[f]||0),0)}
@@ -10181,7 +10196,7 @@ function releaseTextCleanup(){
   try{
     const more=document.getElementById("dtV10MoreModal");
     const settings=more?.querySelector('[data-more="settings"] small');
-    if(settings)settings.textContent="Health Connect, workout setup and preferences.";
+    if(settings)settings.textContent="Workout setup and preferences.";
 
     // The old wording sounded like a diagnostic/developer surface.
     document.querySelectorAll(".dt-wp-foot").forEach(x=>{
@@ -10344,6 +10359,11 @@ window.dtRemoveWorkoutSet=removeSet;
   backdrop-filter:blur(7px);display:none;align-items:flex-end;justify-content:center
 }
 #dtSplitModal.show{display:flex}
+body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
+#dtSplitModal{isolation:isolate!important;overscroll-behavior:contain!important}
+#dtSplitModal.show{pointer-events:auto!important}
+#dtSplitModal .dt-split-sheet{max-height:88dvh;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+
 .dt-split-sheet{
   width:min(560px,100%);background:#071a23;border:1px solid #284858;border-bottom:0;
   border-radius:24px 24px 0 0;padding:25px 24px calc(25px + env(safe-area-inset-bottom));
@@ -10375,6 +10395,7 @@ window.dtRemoveWorkoutSet=removeSet;
   const MAX_SPLITS=7;
   const BASE_KEYS=["push","pull","legs"];
   const COLORS=["#4d9dff","#7fc44b","#ffc845","#b071ff","#ff7a89","#4fd2c2","#ef9d55"];
+  let splitModalScrollY=0;
 
   function ensureState(){
     if(!state.workouts)state.workouts={sessions:[],drafts:{}};
@@ -10463,6 +10484,14 @@ window.dtRemoveWorkoutSet=removeSet;
     });
   }
 
+  function closeSplitModal({restoreScroll=true}={}){
+    const m=document.getElementById("dtSplitModal");if(!m)return;
+    m.classList.remove("show");m.setAttribute("aria-hidden","true");
+    document.body.classList.remove("dt-split-modal-open");
+    document.querySelectorAll(".view[inert]").forEach(v=>{v.inert=false;v.removeAttribute("inert")});
+    if(restoreScroll)requestAnimationFrame(()=>window.scrollTo({top:splitModalScrollY,behavior:"instant"}));
+  }
+
   function ensureModal(){
     let m=document.getElementById("dtSplitModal");
     if(m)return m;
@@ -10479,9 +10508,9 @@ window.dtRemoveWorkoutSet=removeSet;
       </div>
       <button id="dtDeleteCurrentSplit" type="button">Delete current custom split</button>
     </section>`;
-    document.body.appendChild(m);
-    m.onclick=e=>{if(e.target===m)m.classList.remove("show")};
-    m.querySelector("#dtCancelSplit").onclick=()=>m.classList.remove("show");
+    document.body.appendChild(m);m.setAttribute("aria-hidden","true");
+    m.onclick=e=>{if(e.target===m)closeSplitModal()};
+    m.querySelector("#dtCancelSplit").onclick=()=>closeSplitModal();
     m.querySelector("#dtCreateSplit").onclick=createSplit;
     m.querySelector("#dtSplitName").onkeydown=e=>{if(e.key==="Enter")createSplit()};
     m.querySelector("#dtDeleteCurrentSplit").onclick=deleteCurrent;
@@ -10509,8 +10538,11 @@ window.dtRemoveWorkoutSet=removeSet;
 
     const del=m.querySelector("#dtDeleteCurrentSplit");
     del.style.display=currentIsCustom?"block":"none";
-    m.classList.add("show");
-    if(!input.disabled)setTimeout(()=>input.focus(),100);
+    splitModalScrollY=window.scrollY||document.documentElement.scrollTop||0;
+    document.querySelectorAll(".view.active").forEach(v=>{v.inert=true;v.setAttribute("inert","")});
+    document.body.classList.add("dt-split-modal-open");
+    m.classList.add("show");m.setAttribute("aria-hidden","false");
+    if(!input.disabled)setTimeout(()=>input.focus({preventScroll:true}),100);
   }
 
   function createSplit(){
@@ -10528,11 +10560,10 @@ window.dtRemoveWorkoutSet=removeSet;
     plans[key]={title:name.toUpperCase(),sub:"",ex:[]};
     wday=key;
     try{save()}catch(e){console.warn("Split save failed",e)}
-    m.classList.remove("show");
-    renderTabs();
+    closeSplitModal({restoreScroll:false});
     renderWorkout();
-    /* New split starts empty: use the existing Add Exercise flow. */
-    setTimeout(()=>document.getElementById("addExerciseBtn")?.scrollIntoView({behavior:"smooth",block:"center"}),120);
+    /* New split starts empty: use the existing Add Exercise flow after the authoritative renderer settles. */
+    setTimeout(()=>document.getElementById("addExerciseBtn")?.scrollIntoView({behavior:"smooth",block:"center"}),160);
     try{window.dtRenderTodaySchedule?.()}catch(_){}
     return true;
   }
@@ -10558,8 +10589,8 @@ window.dtRemoveWorkoutSet=removeSet;
     }
     wday=baseKeys()[0]||"push";
     try{save()}catch(e){}
-    ensureModal().classList.remove("show");
-    renderTabs();renderWorkout();
+    closeSplitModal({restoreScroll:false});
+    renderWorkout();
     try{window.dtRenderTodaySchedule?.()}catch(_){}
     setTimeout(()=>{try{window.dtSyncTrainingReminders?.()}catch(_){}},120);
     return true;
@@ -10604,7 +10635,9 @@ window.dtRemoveWorkoutSet=removeSet;
   renderTabs();
   window.dtRenderWorkoutSplits=renderTabs;
   window.dtAddWorkoutSplit=openModal;
-  window.DT_CUSTOM_SPLITS_VERSION="20.0";
+  window.dtCloseWorkoutSplit=closeSplitModal;
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("dtSplitModal")?.classList.contains("show")){e.preventDefault();closeSplitModal()}});
+  window.DT_CUSTOM_SPLITS_VERSION="20.1-stable-modal";
 })();
 </script>
 <style id="dt-v21-history-units-css">
@@ -10909,10 +10942,49 @@ function daySessions(key){
   let dtTBWeekIdx=0;
   let dtTBPlayTimer=null;
 
-  function dtTBAllRecords(){
-    try{ return (state.workouts && state.workouts.completedExercises) || []; }
-    catch(e){ return []; }
+  function dtTBCanonicalSessions(){
+    try{
+      const raw=Array.isArray(state.workouts?.sessions)?state.workouts.sessions:[];
+      const seen=new Set(), out=[];
+      const stable=(v)=>{
+        try{return JSON.stringify(v??null)}catch(_){return String(v??"")}
+      };
+      raw.forEach((s,idx)=>{
+        if(!s||typeof s!=="object")return;
+        const ex=Array.isArray(s.snapshot)?s.snapshot:(Array.isArray(s.exercises)?s.exercises:[]);
+        const dateKey=(typeof window.dtLocalDateKey==="function")
+          ? window.dtLocalDateKey(new Date(s.date||s.completedAt||s.dayKey||Date.now()))
+          : String(s.dayKey||s.date||"").slice(0,10);
+        const semantic=[s.id||s.summaryId||"",s.date||s.completedAt||"",s.day||"",s.splitName||s.workoutName||"",stable(ex)].join("|");
+        if(seen.has(semantic))return;
+        seen.add(semantic);
+        out.push({...s,__dtSessionKey:semantic||`session-${idx}`,__dtDayKey:dateKey});
+      });
+      return out;
+    }catch(e){ return []; }
   }
+
+  function dtTBAllRecords(){
+    try{
+      const rows=[];
+      dtTBCanonicalSessions().forEach((session,si)=>{
+        const ex=Array.isArray(session.snapshot)?session.snapshot:(Array.isArray(session.exercises)?session.exercises:[]);
+        ex.forEach((item,ei)=>{
+          if(!item||typeof item!=="object")return;
+          rows.push({
+            ...item,
+            day:session.day||item.day||"",
+            dayKey:session.__dtDayKey||item.dayKey||"",
+            finalizedAt:session.date||session.completedAt||item.finalizedAt||"",
+            __dtSessionKey:session.__dtSessionKey||`session-${si}`,
+            __dtExerciseIndex:ei
+          });
+        });
+      });
+      return rows;
+    }catch(e){ return []; }
+  }
+  window.dtCanonicalWorkoutSessions=dtTBCanonicalSessions;
 
   function dtTBRecordsInRange(startKey,endKey){
     return dtTBAllRecords().filter(x=>{
@@ -10981,7 +11053,7 @@ function daySessions(key){
     };
 
     (records||[]).forEach(rec=>{
-      sessionSet.add(`${rec.dayKey}|${rec.day}`);
+      sessionSet.add(rec.__dtSessionKey||`${rec.dayKey}|${rec.day}`);
       const meta=(typeof window.dtInferMeta==="function")
         ? window.dtInferMeta(rec.name,rec.muscle)
         : {primaryMuscles:[],secondaryMuscles:[],stabilizerMuscles:[]};
@@ -11197,8 +11269,9 @@ function daySessions(key){
       const rows=dtTBBuildRows(agg,allTimeScores);
 
       const setText=(id,val)=>{ const el=document.getElementById(id); if(el)el.textContent=val; };
-      setText("dtTBStatWorkouts",allAgg.workouts);
-      const days=new Set(all.map(r=>String(r.dayKey||"").slice(0,10)).filter(Boolean)).size;
+      const canonicalSessions=dtTBCanonicalSessions();
+      setText("dtTBStatWorkouts",canonicalSessions.length);
+      const days=new Set(canonicalSessions.map(s=>String(s.__dtDayKey||s.dayKey||s.date||"").slice(0,10)).filter(Boolean)).size;
       setText("dtTBStatDays",days);
       setText("dtTBStatTop",allAgg.muscles[0]?allAgg.muscles[0].label:"—");
 
@@ -16669,6 +16742,8 @@ body{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 
 /* ---------------- Home ---------------- */
 #dtHomeV27{display:block;width:100%;max-width:720px;margin:0 auto;color:var(--v27-text)}
+#dtV27Viewport{touch-action:pan-y;overscroll-behavior-x:none}
+#dtV27Track{will-change:transform}
 .dt-v27-home-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:2px 0 13px}
 .dt-v27-brand small{display:block;color:var(--v27-green);font:850 8px/1 system-ui;letter-spacing:.18em;text-transform:uppercase}
 .dt-v27-brand h1{margin:7px 0 0;font:900 clamp(31px,8vw,42px)/1 system-ui;letter-spacing:-.045em;color:#f4f9fa}
@@ -16914,13 +16989,22 @@ body{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 body:has(#today.view.active) #dtRestGlobal{display:none!important}
 </style>
 
+<style id="dt-v36-8-7-settings-css">
+#settings .settings-card{padding:14px!important}
+.dt-settings-section{border-top:1px solid rgba(255,255,255,.065);padding-top:14px;margin-top:8px}
+.dt-settings-section:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.dt-settings-section-head{padding:0 8px 8px;display:flex;flex-direction:column;gap:3px}.dt-settings-section-head>b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8ca4b1}.dt-settings-section-head>small{font-size:10px;color:#5f7784}
+.dt-settings-section-body>.setting-row,.dt-settings-section-body>#dtBackupTools>*{border-radius:0!important}
+#dtSettingsDanger{margin-top:20px!important}.dt-settings-section#dtSettingsDanger .dt-settings-section-head>b{color:#ef8f9b}
+.dt-dev-modal{position:fixed;inset:0;background:rgba(2,8,12,.78);backdrop-filter:blur(8px);z-index:10050;display:none;align-items:flex-end;justify-content:center;padding:12px max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}.dt-dev-modal.show{display:flex}.dt-dev-sheet{width:min(100%,680px);max-height:calc(100dvh - 28px);overflow:auto;background:#091720;border:1px solid rgba(97,147,167,.34);border-radius:24px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.55)}.dt-dev-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:12px}.dt-dev-head small{font-size:9px;letter-spacing:.16em;color:#62dfa4;font-weight:900}.dt-dev-head h2{font-size:23px;margin:3px 0 3px}.dt-dev-head p{font-size:11px;color:var(--muted);margin:0}.dt-dev-close{width:46px;height:46px;border-radius:15px;border:1px solid var(--line);background:#0d202b;color:#e8f0f4;font-size:24px}.dt-dev-capacity{margin-bottom:6px}.dt-dev-capacity select{background:#0b1c26;border:1px solid #294553;color:#eaf2f5;border-radius:12px;padding:10px 12px;font-weight:800}.dt-dev-modal .dt-debug-actions,.dt-dev-modal .dt-debug-setting{display:flex!important}.dt-dev-modal .dt-debug-actions{flex-direction:column;align-items:stretch}.dt-dev-modal .dt-debug-action-grid{width:100%}
+</style>
 <script id="dt-v27-workout-home-js">
 
 (()=>{
   "use strict";
   const V="27.9-workout-only-home-html9-status-coach-validation";
   let pageIndex=1; // 0 Body & Recovery, 1 Today, 2 Performance
-  let touch=null,homeBuilt=false,refreshTimer=null,activityTouch=null;
+  let touch=null,homeBuilt=false,refreshTimer=null,activityTouch=null,pageTransitionToken=0;
   const quickPrefill=new Map();
 
   const svg={
@@ -17227,10 +17311,13 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
 
   function performanceRows(){
     const now=new Date(),start=new Date(now);start.setDate(now.getDate()-6);start.setHours(0,0,0,0);
-    const sessions=(state.workouts?.sessions||[]).filter(s=>new Date(s.date).getTime()>=start.getTime());
-    const daySet=new Set(sessions.map(s=>String(s.summaryId||s.date).slice(0,10)));
-    const records=(state.workouts?.completedExercises||[]).filter(x=>{const d=String(x.dayKey||x.finalizedAt||"").slice(0,10);return d&&new Date(d+"T12:00:00").getTime()>=start.getTime()});
-    const sets=records.reduce((n,r)=>n+(r.sets||[]).filter(s=>(+s.reps||0)>0).length,0);
+    const source=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);
+    const sessions=source.filter(s=>new Date(s.date||s.completedAt||s.__dtDayKey||0).getTime()>=start.getTime());
+    const daySet=new Set(sessions.map(s=>String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||"").slice(0,10)).filter(Boolean));
+    const sets=sessions.reduce((total,session)=>{
+      const ex=Array.isArray(session.snapshot)?session.snapshot:(Array.isArray(session.exercises)?session.exercises:[]);
+      return total+ex.reduce((n,r)=>n+(r.sets||[]).filter(set=>(+set.reps||0)>0).length,0);
+    },0);
     return {sessions:sessions.length,days:daySet.size,sets};
   }
   function coachInsights(){try{return typeof window.dtIntelTopInsights==="function"?window.dtIntelTopInsights(2):[]}catch(_){return []}}
@@ -17243,11 +17330,27 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
 
   function syncViewportHeight(){const vp=document.getElementById("dtV27Viewport"),pane=document.querySelector(`.dt-v27-pane[data-pane="${pageIndex}"]`);if(vp&&pane)vp.style.height=`${Math.max(1,pane.scrollHeight)}px`}
   function setPage(idx,animate=true){
-    idx=Math.max(0,Math.min(2,Number(idx)||0));pageIndex=idx;const track=document.getElementById("dtV27Track"),vp=document.getElementById("dtV27Viewport");if(!track||!vp)return;
-    if(!animate)track.style.transition="none";track.style.transform=`translateX(-${idx*33.333333}%)`;if(!animate)requestAnimationFrame(()=>track.style.transition="");
-    document.querySelectorAll(".dt-v27-pager button").forEach(b=>{const on=+b.dataset.page===idx;b.classList.toggle("active",on);b.setAttribute("aria-selected",on?"true":"false")});
+    idx=Math.max(0,Math.min(2,Number(idx)||0));
+    const track=document.getElementById("dtV27Track"),vp=document.getElementById("dtV27Viewport");
+    pageIndex=idx;
+    if(!track||!vp)return;
+    const token=++pageTransitionToken,target=`translate3d(-${idx*33.333333}%,0,0)`;
+    document.querySelectorAll(".dt-v27-pager button").forEach(b=>{const on=+b.dataset.page===idx;b.classList.toggle("active",on);b.setAttribute("aria-selected",on?"true":"false");b.tabIndex=on?0:-1});
     document.querySelectorAll(".dt-v27-pane").forEach(p=>p.setAttribute("aria-hidden",+p.dataset.pane===idx?"false":"true"));
     if(idx===0)renderRecovery();if(idx===2)renderPerformance();
+    const finish=()=>{
+      if(token!==pageTransitionToken)return;
+      track.style.transition="none";
+      track.style.transform=target;
+      requestAnimationFrame(()=>{if(token===pageTransitionToken){track.style.transition="";syncViewportHeight()}});
+    };
+    track.style.transition=animate?"transform 220ms cubic-bezier(.22,.8,.25,1)":"none";
+    track.style.transform=target;
+    if(animate){
+      const done=e=>{if(e&&e.target!==track)return;track.removeEventListener("transitionend",done);finish()};
+      track.addEventListener("transitionend",done);
+      setTimeout(()=>{track.removeEventListener("transitionend",done);finish()},280);
+    }else requestAnimationFrame(finish);
     requestAnimationFrame(syncViewportHeight);
   }
 
@@ -17310,6 +17413,7 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
   }
   function cleanSettings(){
     ensureWorkoutSettingsLinks();
+    setTimeout(organizeSettings,0);
     const cur=document.getElementById("currencySelect")?.closest(".setting-row");if(cur)cur.style.display="none";
     const h=document.querySelector("#settings>h1");if(h)h.textContent="Settings";
     document.querySelectorAll("#dtBackupTools small").forEach(x=>{if(/money/i.test(x.textContent||""))x.textContent=(x.textContent||"").replace(/Money,?\s*/ig,"")});
@@ -17323,15 +17427,60 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     ensureHomeBack(document.getElementById("workout"),"Workout");ensureHomeBack(document.getElementById("history"),"History");ensureHomeBack(document.getElementById("stats"),"Stats");ensureHomeBack(document.getElementById("coach"),"Coach");ensureHomeBack(document.getElementById("settings"),"Settings");
   }
 
+  function organizeSettings(){
+    const card=document.querySelector("#settings .settings-card");if(!card)return;
+    const ensureSection=(id,title,sub)=>{
+      let section=document.getElementById(id);if(section)return section;
+      section=document.createElement("section");section.id=id;section.className="dt-settings-section";
+      section.innerHTML=`<div class="dt-settings-section-head"><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:""}</div><div class="dt-settings-section-body"></div>`;
+      card.appendChild(section);return section;
+    };
+    const body=id=>ensureSection(id,"","").querySelector(".dt-settings-section-body");
+    const general=ensureSection("dtSettingsGeneral","General","Everyday app preferences").querySelector(".dt-settings-section-body");
+    const training=ensureSection("dtSettingsTraining","Training","Program, schedule and goals").querySelector(".dt-settings-section-body");
+    const data=ensureSection("dtSettingsData","Data & Backup","Keep your training history portable").querySelector(".dt-settings-section-body");
+    const developer=ensureSection("dtSettingsDeveloper","Developer","Diagnostics are kept out of normal use").querySelector(".dt-settings-section-body");
+    const danger=ensureSection("dtSettingsDanger","Danger Zone","Destructive actions").querySelector(".dt-settings-section-body");
+    const rows=[...card.children].filter(x=>x.classList?.contains("setting-row"));
+    rows.forEach(row=>{
+      const text=(row.textContent||"").trim();
+      if(row.classList.contains("dt-debug-setting")||row.classList.contains("dt-debug-actions"))return;
+      if(row.id==="resetBtn"){row.style.display="none";return}
+      if(row.classList.contains("dt-haptic-setting")||/^Theme\b/i.test(text)||/^Storage\b/i.test(text))general.appendChild(row);
+      else if(row.id==="dtScheduleSettingsBtn"||row.id==="dtReminderSettingsBtn"||row.id==="dtV27GoalsSettingsBtn"||/Workout setup|Training schedule|Training reminders|Progress goals/i.test(text))training.appendChild(row);
+    });
+    const backup=document.getElementById("dtBackupTools");if(backup&&backup.parentElement!==data)data.appendChild(backup);
+    const reset=document.getElementById("dtResetWorkoutDataBtn");if(reset&&reset.parentElement!==danger)danger.appendChild(reset);
+    let launch=document.getElementById("dtDeveloperSettingsBtn");
+    if(!launch){launch=document.createElement("button");launch.id="dtDeveloperSettingsBtn";launch.type="button";launch.className="setting-row dt-program-setting";launch.innerHTML='<span><b>Developer Mode</b><small>Recorder, exports, bug marks and diagnostics</small></span><span>›</span>';developer.appendChild(launch)}
+    let modal=document.getElementById("dtDeveloperModal");
+    if(!modal){
+      modal=document.createElement("div");modal.id="dtDeveloperModal";modal.className="dt-dev-modal";
+      modal.innerHTML=`<section class="dt-dev-sheet" role="dialog" aria-modal="true" aria-label="Developer Mode"><div class="dt-dev-head"><div><small>DEVELOPER</small><h2>Developer Mode</h2><p>Turn on only when diagnosing an app issue.</p></div><button type="button" class="dt-dev-close" aria-label="Close">×</button></div><div class="dt-dev-capacity setting-row"><span><b>Recording capacity</b><small>Choose how much diagnostic history to retain</small></span><select id="dtDebugCapacity"><option value="20000">20K events</option><option value="50000">50K events</option></select></div><div id="dtDevToolsMount"></div></section>`;
+      document.body.appendChild(modal);
+      modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show")});modal.querySelector(".dt-dev-close").onclick=()=>modal.classList.remove("show");
+      const select=modal.querySelector("#dtDebugCapacity");select.value=String(window.dtDebugRecorder?.capacity||20000);select.onchange=()=>{const cap=window.dtDebugRecorder?.setCapacity?.(+select.value)||+select.value;select.value=String(cap);try{window.dtHaptics?.light?.()}catch(_){}};
+    }
+    const mount=modal.querySelector("#dtDevToolsMount"),debugSetting=card.querySelector(":scope > .dt-debug-setting")||document.querySelector(".dt-debug-setting"),debugActions=card.querySelector(":scope > .dt-debug-actions")||document.querySelector(".dt-debug-actions");
+    if(debugSetting&&debugSetting.parentElement!==mount)mount.appendChild(debugSetting);if(debugActions&&debugActions.parentElement!==mount)mount.appendChild(debugActions);
+    launch.onclick=()=>{const select=modal.querySelector("#dtDebugCapacity");if(select)select.value=String(window.dtDebugRecorder?.capacity||20000);modal.classList.add("show")};
+    // Keep danger zone last even after later feature injectors append rows.
+    card.appendChild(document.getElementById("dtSettingsDanger"));
+  }
+
   function bindHome(){
     const root=document.getElementById("dtHomeV27");if(!root||root.dataset.bound==="1")return;root.dataset.bound="1";
     root.querySelector(".dt-v27-settings").onclick=openSettings;
     root.querySelectorAll(".dt-v27-pager button").forEach(b=>b.onclick=()=>setPage(+b.dataset.page));
     root.querySelectorAll(".dt-v27-launcher").forEach(b=>b.onclick=()=>({workout:()=>openWorkout(assignedDay()),history:openHistory,stats:openStats,coach:openCoach}[b.dataset.go]||(()=>{}))());
     const vp=document.getElementById("dtV27Viewport");
-    vp.addEventListener("touchstart",e=>{if(e.target.closest?.(".dt-v27-quicklog")){touch=null;return}const t=e.changedTouches?.[0];if(!t)return;touch={x:t.clientX,y:t.clientY,time:performance.now(),locked:null}},{passive:true});
+    vp.addEventListener("touchstart",e=>{
+      if(e.target.closest?.("button,input,select,textarea,a,.dt-v27-quicklog,.dt-tb-tabs,.dt-v27-session-orbit")){touch=null;return}
+      const t=e.changedTouches?.[0];if(!t)return;touch={x:t.clientX,y:t.clientY,time:performance.now(),locked:null,startPage:pageIndex}
+    },{passive:true});
     vp.addEventListener("touchmove",e=>{if(!touch)return;const t=e.changedTouches?.[0];if(!t)return;const dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(touch.locked==null&&Math.max(Math.abs(dx),Math.abs(dy))>12)touch.locked=Math.abs(dx)>Math.abs(dy)*1.35?"x":"y"},{passive:true});
-    vp.addEventListener("touchend",e=>{if(!touch)return;const t=e.changedTouches?.[0],start=touch;touch=null;if(!t||start.locked!=="x")return;const dx=t.clientX-start.x,dy=t.clientY-start.y,dt=Math.max(1,performance.now()-start.time);if(Math.abs(dx)<48||Math.abs(dx)<Math.abs(dy)*1.35)return;if(Math.abs(dx)/dt<.20&&Math.abs(dx)<72)return;setPage(pageIndex+(dx<0?1:-1))},{passive:true});
+    vp.addEventListener("touchcancel",()=>{touch=null},{passive:true});
+    vp.addEventListener("touchend",e=>{if(!touch)return;const t=e.changedTouches?.[0],start=touch;touch=null;if(!t||start.locked!=="x")return;const dx=t.clientX-start.x,dy=t.clientY-start.y,dt=Math.max(1,performance.now()-start.time);if(Math.abs(dx)<48||Math.abs(dx)<Math.abs(dy)*1.35)return;if(Math.abs(dx)/dt<.20&&Math.abs(dx)<72)return;setPage(start.startPage+(dx<0?1:-1))},{passive:true});
     window.addEventListener("resize",()=>setPage(pageIndex,false),{passive:true});
   }
   function renderHome(){
@@ -18060,7 +18209,7 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
   window.DT_MARC_MOTION_VERSION=V;
 })();
 </script>
-<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.6-timer-repaint-stability";</script>
+<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.7-patch-series";</script>
 <script id="dt-v36-p2-haptics">
 (()=>{
   "use strict";
@@ -18937,7 +19086,7 @@ html,body{overscroll-behavior-y:auto!important;touch-action:pan-y pinch-zoom!imp
   window.DT_MARC_RELEASE_FIX_VERSION=V;
 })();
 </script>
-<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.6-timer-repaint-stability";</script>
+<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.7-patch-series";</script>
 <style id="dt-v36-3-phase3-css">
 .exercise-chevron[aria-expanded="true"]{transform:rotate(180deg)!important}
 </style>
@@ -19025,7 +19174,7 @@ window.DT_MARC_PHASE3_FIX_VERSION="36.3-phase3-reliability";
 </script>
 <!-- M/ARC V36.6 Phase 6 — release/cache/APK parity checkpoint -->
 <script id="dt-v36-phase6-release-marker">
-window.DT_MARC_RELEASE_FIX_VERSION="36.8.6-timer-repaint-stability";
+window.DT_MARC_RELEASE_FIX_VERSION="36.8.7-patch-series";
 window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
 </script>
 <style id="dt-v36-phase6-mobile-edge-css">
@@ -19046,17 +19195,10 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
 <script id="dt-v36-8-release-cleanup">
 (()=>{
   "use strict";
-  // One-time release migration: remove retained developer-recorder storage only.
-  const debugKeys=[
-    "dt_debug_recorder_enabled_v1",
-    "dt_debug_recorder_log_v1",
-    "dt_debug_current_session_meta_v1",
-    "dt_debug_session_archive_v1"
-  ];
-  try{debugKeys.forEach(k=>localStorage.removeItem(k))}catch(_){}
-  try{delete window.dtDebugRecorder;delete window.dtDebuggerJ2}catch(_){}
+  // Developer recorder is a supported diagnostic subsystem again.
+  // Preserve its enable state, event history and retained sessions across launches.
   window.DT_V36_RELEASE_CLEANUP_VERSION="36.8.2-concern-fixes";
-  window.DT_MARC_RELEASE_FIX_VERSION="36.8.6-timer-repaint-stability";
+  window.DT_MARC_RELEASE_FIX_VERSION="36.8.7-patch-series";
 })();
 </script>
 <script>
@@ -19067,7 +19209,8 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
 
   const ENABLE_KEY="dt_debug_recorder_enabled_v1";
   const LOG_KEY="dt_debug_recorder_log_v1";
-  const MAX_EVENTS=20000;
+  const CAPACITY_KEY="dt_debug_recorder_capacity_v1";
+  let maxEvents=(()=>{try{return localStorage.getItem(CAPACITY_KEY)==="50000"?50000:20000}catch(_){return 20000}})();
   const MAX_TEXT=180;
   const PERSIST_DEBOUNCE_MS=1200;
   const PERSIST_EVENT_BATCH=18;
@@ -19158,7 +19301,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
     if(persistTimer)clearTimeout(persistTimer);
     persistTimer=setTimeout(()=>{persistTimer=null;persistLogNow()},PERSIST_DEBOUNCE_MS);
   }
-  function trim(){if(log.length>MAX_EVENTS)log=log.slice(log.length-MAX_EVENTS)}
+  function trim(){if(log.length>maxEvents)log=log.slice(log.length-maxEvents)}
 
   function safeText(value,name=""){
     if(REDACT_RE.test(String(name||"")))return "[REDACTED]";
@@ -19720,7 +19863,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
       box=document.createElement("small");box.id="dtDebugHealth";box.className="dt-setting-note";
       box.style.marginTop="5px";root.appendChild(box);
     }
-    box.textContent=`${log.length} events · ${counters.noVisibleChange} no-response candidates · ${counters.consoleError+counters.error+counters.unhandled} errors · ${counters.frameStall} frame stalls`;
+    box.textContent=`${log.length.toLocaleString()}/${maxEvents.toLocaleString()} events · ${counters.noVisibleChange} no-response candidates · ${counters.consoleError+counters.error+counters.unhandled} errors · ${counters.frameStall} frame stalls`;
     let status=document.getElementById("dtDebugExportStatus");
     if(!status){
       status=document.createElement("small");status.id="dtDebugExportStatus";status.className="dt-setting-note dt-debug-export-status";
@@ -19758,7 +19901,8 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
 
   window.dtDebugRecorder={
     get enabled(){return enabled},setEnabled,record,flush:persistLogNow,exportDebugLog,exportDebugBundle,exportAppBackup,
-    clear:clearDebug,getLog:()=>log.slice(),summary:diagnosticSummary,uiFingerprint,sessionId:debugSessionId,getSessionArchive:loadSessionArchive
+    clear:clearDebug,getLog:()=>log.slice(),summary:diagnosticSummary,uiFingerprint,sessionId:debugSessionId,getSessionArchive:loadSessionArchive,
+    get capacity(){return maxEvents},setCapacity(value){maxEvents=Number(value)===50000?50000:20000;try{localStorage.setItem(CAPACITY_KEY,String(maxEvents))}catch(_){}trim();dirty=true;eventsSincePersist++;persistLogNow();renderHealth();return maxEvents}
   };
 
   function boot(){
@@ -19983,7 +20127,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   }catch(_){}
 
   rec("debugger_j2_ready",{version:VERSION});
-  rec("debugger_j3_retention_ready",{maxEvents:20000,mutationAggregationMs:2000});
+  rec("debugger_j3_retention_ready",{maxEvents:(window.dtDebugRecorder?.capacity||20000),mutationAggregationMs:2000});
   window.dtDebuggerJ2={markBug,snapshot,version:VERSION};
 })();
 
