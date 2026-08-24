@@ -41,22 +41,22 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Verify locked V36.7 web source
+      - name: Verify locked V36.8 web source
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import hashlib, json
-          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
-          marker=b'window.DT_MARC_RELEASE_FIX_VERSION="36.7-phase7-haptic-reminder-health"'
+          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
+          marker=b'window.DT_MARC_RELEASE_FIX_VERSION="36.8-release-clean"'
           for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
               json.loads(Path(f).read_text(encoding='utf-8'))
           data=Path('www/index.html').read_bytes()
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          if marker not in data: raise SystemExit('V36.7 release marker missing')
-          print('V36.7 source hash PASS:', actual)
+          if marker not in data: raise SystemExit('V36.8 release marker missing')
+          print('V36.8 source hash PASS:', actual)
           PY
 
       - name: Install npm dependencies
@@ -97,7 +97,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import hashlib
-          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
           a=Path('www/index.html').read_bytes()
           b=Path('android/app/src/main/assets/public/index.html').read_bytes()
           if a != b: raise SystemExit('Capacitor bundled index differs from source')
@@ -111,6 +111,16 @@ jobs:
             grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; cat "$PLUGINS"; exit 1; }
           done
 
+      - name: Install stable M-ARC debug signing key
+        shell: bash
+        env:
+          MARC_DEBUG_KEYSTORE_B64: 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
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.android"
+          printf '%s' "$MARC_DEBUG_KEYSTORE_B64" | base64 --decode > "$HOME/.android/debug.keystore"
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
+
       - name: Build debug APK
         shell: bash
         run: |
@@ -119,7 +129,7 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
 
-      - name: Verify APK contains exact V36.7 app
+      - name: Verify APK contains exact V36.8 app
         shell: bash
         run: |
           set -euo pipefail
@@ -127,23 +137,23 @@ jobs:
           from pathlib import Path
           import hashlib, zipfile
           apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
-          expected='5563acffb233fdfc69fce97d3d6eb0972fbcdfeda92c3d833fc209f8b2e7fe66'
+          expected='679911dbea9a43b9c1a1244f7bc75eb8ac5ec1d1358f967ab91f9c4aec0f63ff'
           with zipfile.ZipFile(apk) as z:
               data=z.read('assets/public/index.html')
           actual=hashlib.sha256(data).hexdigest()
           if actual != expected: raise SystemExit(f'APK index mismatch: {actual}')
-          print('Debug APK exact V36.7 embedded source PASS:', actual)
+          print('Debug APK exact V36.8 embedded source PASS:', actual)
           PY
           mkdir -p release-output
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.7-debug.apk
-          sha256sum release-output/MARC-V36.7-debug.apk > release-output/MARC-V36.7-debug.apk.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.8-debug.apk
+          sha256sum release-output/MARC-V36.8-debug.apk > release-output/MARC-V36.8-debug.apk.sha256
 
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MARC-V36.7-DEBUG-APK
+          name: MARC-V36.8-DEBUG-APK
           path: |
-            release-output/MARC-V36.7-debug.apk
-            release-output/MARC-V36.7-debug.apk.sha256
+            release-output/MARC-V36.8-debug.apk
+            release-output/MARC-V36.8-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30
