@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = "marc-v36-7-phase7-haptic-reminder-health";
+const VERSION = "marc-v36-8-release-clean";
 const APP_CACHE = `${VERSION}-app`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest"];
