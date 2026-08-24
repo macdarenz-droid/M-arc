@@ -1,0 +1,11 @@
+node_modules/
+android/
+dist/
+*.jks
+*.keystore
+*.apk
+*.aab
+.env
+.DS_Store
+.idea/
+.vscode/
