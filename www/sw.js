@@ -1,6 +1,6 @@
 "use strict";
 
-const VERSION = "marc-v36-8-7-patch-series";
+const VERSION = "marc-v36-8-35";
 const APP_CACHE = `${VERSION}-app`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const APP_SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];

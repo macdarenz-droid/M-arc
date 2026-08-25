@@ -1532,6 +1532,20 @@ main,.app,.app-shell,#app{
   text-align:center!important;
 }
 </style>
+
+<style id="dt-v36-8-31-coach-haptic-minimal">
+/* V36.8.31 — truthful Coach affordance + compact Haptic Feedback switch. */
+#dtHapticToggle.dt-setting-toggle{
+  position:relative!important;
+  width:34px!important;min-width:34px!important;height:20px!important;min-height:20px!important;
+  padding:2px!important;background-clip:border-box!important;overflow:visible!important;
+}
+#dtHapticToggle.dt-setting-toggle::before{
+  content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);
+}
+#dtHapticToggle .dt-setting-toggle-dot{width:14px!important;height:14px!important;}
+#dtHapticToggle[aria-checked="true"] .dt-setting-toggle-dot{transform:translateX(14px)!important;}
+</style>
 </head>
 <body>
 <div aria-hidden="true" id="dtStartupGate"><div class="dt-startup-mark">M/ARC</div></div>
@@ -6827,7 +6841,23 @@ function dateKey(d){
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
 }
 function weekBounds(offset=0){const now=new Date();now.setHours(12,0,0,0);const day=(now.getDay()+6)%7;const start=new Date(now.getTime()-day*DAY+offset*7*DAY);const end=new Date(start.getTime()+6*DAY);return {start,end,keys:Array.from({length:7},(_,i)=>dateKey(new Date(start.getTime()+i*DAY)))}}
-function sessionsInWeek(w){const source=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);return source.filter(s=>{const k=String(s.__dtDayKey||s.date||s.dayKey||'').slice(0,10);return w.keys.includes(k)})}
+ function sessionLocalDayKey(s){
+   const canonical=String(s?.__dtDayKey||"").slice(0,10);
+   if(/^\d{4}-\d{2}-\d{2}$/.test(canonical))return canonical;
+   for(const raw of [s?.completedAt,s?.date,s?.startedAt]){
+     if(!raw)continue;
+     const d=new Date(raw);
+     if(Number.isFinite(d.getTime()))return dateKey(d);
+   }
+   const fallback=String(s?.dayKey||"").slice(0,10);
+   return /^\d{4}-\d{2}-\d{2}$/.test(fallback)?fallback:"";
+ }
+ function sessionsInWeek(w){
+   const source=typeof window.dtCanonicalWorkoutSessions==="function"
+     ? window.dtCanonicalWorkoutSessions()
+     : (state.workouts?.sessions||[]);
+   return source.filter(s=>w.keys.includes(sessionLocalDayKey(s)));
+ }
 function completedSessionsInWeek(w){
   return sessionsInWeek(w).filter(s=>{
     try{
@@ -6835,8 +6865,7 @@ function completedSessionsInWeek(w){
     }catch(_){return true}
   })
 }
-function sessionSnapshotRows(s){
-  const date=String(s?.date||s?.dayKey||"").slice(0,10);
+function sessionSnapshotRows(s){   const date=sessionLocalDayKey(s);
   const snap=Array.isArray(s?.snapshot)?s.snapshot:[];
   if(snap.length){
     return snap.map((x,i)=>({
@@ -6867,7 +6896,7 @@ function allCompletedSessionRows(){
   }).flatMap(sessionSnapshotRows);
 }
 function completedInWeek(w){return allCompletedSessionRows().filter(x=>w.keys.includes(workoutRecordDayKey(x)))}
-window.dtCompletedWorkoutSessionsInWeek=completedSessionsInWeek;
+window.dtWeeklySessionLocalDayKey=sessionLocalDayKey; window.dtCompletedWorkoutSessionsInWeek=completedSessionsInWeek;
 window.dtCompletedWorkoutExerciseRows=allCompletedSessionRows;
 function validSets(x){return (x.sets||[]).filter(s=>Number.isFinite(Number(s.kg))&&Number(s.reps)>0)}
 function e1rm(s){return (+s.kg||0)*(1+Math.min(+s.reps||0,30)/30)}
@@ -6881,7 +6910,7 @@ function workoutRecordDayKey(x){
   }
   return String(x?.dayKey||"").slice(0,10);
 }
-function allDayKeys(){const set=new Set();const source=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);source.forEach(sess=>{try{if(typeof workoutSessionSets==="function"&&workoutSessionSets(sess)<=0)return}catch(_){}const k=String(sess?.__dtDayKey||sess?.date||sess?.dayKey||"").slice(0,10);if(k)set.add(k)});return set}
+function allDayKeys(){const set=new Set();const source=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);source.forEach(sess=>{try{if(typeof workoutSessionSets==="function"&&workoutSessionSets(sess)<=0)return}catch(_){}const k=sessionLocalDayKey(sess);if(k)set.add(k)});return set}
 function currentStreak(){const days=allDayKeys();if(!days.size)return 0;const today=new Date();today.setHours(12,0,0,0);let cursor=new Date(today);if(!days.has(dateKey(cursor)))cursor=new Date(cursor.getTime()-DAY);let streak=0;while(days.has(dateKey(cursor))){streak++;cursor=new Date(cursor.getTime()-DAY)}return streak}
 window.dtCurrentWorkoutStreak=currentStreak;
 function muscleTotals(rows){const m={};rows.forEach(x=>{const sets=validSets(x).length;if(!sets)return;const parts=String(x.muscle||'Other').split(/[/,]/).map(s=>s.trim()).filter(Boolean);const share=sets/Math.max(parts.length,1);parts.forEach(p=>m[p]=(m[p]||0)+share)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
@@ -6911,7 +6940,7 @@ window.dtWeeklyPerformancePRList=prList;
 function ensure(){if(document.getElementById('dtWeeklyPerformanceModal'))return;const m=document.createElement('div');m.id='dtWeeklyPerformanceModal';m.innerHTML='<section class="dt-wp-sheet"><div id="dtWpContent"></div></section>';m.onclick=e=>{if(e.target===m)m.classList.remove('show')};document.body.appendChild(m)}
 function fmtRange(w){const f=d=>new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(d);return `${f(w.start)} – ${f(w.end)}`}
 function insight(rows,muscles,prs,sessions,streak){if(!rows.length)return ['•','Build the week','Complete your first workout this week and this dashboard will start comparing your streak, working sets and progression.'];if(prs.length)return ['↑',`${prs.length} new PR${prs.length===1?'':'s'}`,`Performance moved forward this week. Keep progression conservative and preserve good reps rather than forcing a load increase every session.`];if(sessions>=3)return ['🔥',`${streak}-day streak`,`You logged ${sessions} workout sessions. ${muscles[0]?`${muscles[0][0]} received the most logged set emphasis.`:''}`];return ['→','Keep building',`You have ${sessions} completed workout${sessions===1?'':'s'} this week. The dashboard will become more useful as completed sessions accumulate.`]}
-function openWeekly(){ensure();const w=weekBounds(),rows=completedInWeek(w),completedSessions=completedSessionsInWeek(w),sessions=completedSessions.length,sets=rows.reduce((n,x)=>n+validSets(x).length,0),volume=Math.round(rows.reduce((n,x)=>n+validSets(x).reduce((a,s)=>a+(+s.kg)*(+s.reps),0),0)),muscles=muscleTotals(rows),prs=currentWeekPRs(),totalM=muscles.reduce((a,x)=>a+x[1],0)||1,active=new Set(completedSessions.map(s=>String(s.date||s.dayKey||"").slice(0,10))),streak=currentStreak(),ins=insight(rows,muscles,prs,sessions,streak);
+function openWeekly(){ensure();const w=weekBounds(),rows=completedInWeek(w),completedSessions=completedSessionsInWeek(w),sessions=completedSessions.length,sets=rows.reduce((n,x)=>n+validSets(x).length,0),volume=Math.round(rows.reduce((n,x)=>n+validSets(x).reduce((a,s)=>a+(+s.kg)*(+s.reps),0),0)),muscles=muscleTotals(rows),prs=currentWeekPRs(),totalM=muscles.reduce((a,x)=>a+x[1],0)||1,active=new Set(completedSessions.map(sessionLocalDayKey).filter(Boolean)),streak=currentStreak(),ins=insight(rows,muscles,prs,sessions,streak);
  const muscleHtml=muscles.length?muscles.slice(0,6).map(([name,v])=>{const pct=Math.round(v/totalM*100),on=Math.max(1,Math.round(pct/10));return `<div class="dt-wp-muscle-line"><b>${name}</b><div class="dt-wp-track">${Array.from({length:10},(_,i)=>`<i class="${i<on?'on':''}"></i>`).join('')}</div><strong>${pct}%</strong></div>`}).join(''):'<div class="dt-wp-sub">Muscle emphasis appears after completed workout sets.</div>';
  const prHtml=prs.length?prs.slice(0,5).map(p=>`<div class="dt-wp-pr"><div><b>${p.name}</b><span>${p.date}</span></div><strong>🏆 ${p.kg} × ${p.reps}</strong></div>`).join(''):'<div class="dt-wp-sub">No new performance records detected this week.</div>';
  document.getElementById('dtWpContent').innerHTML=`<div class="dt-wp-head"><div><div class="dt-wp-kicker">Weekly Performance</div><div class="dt-wp-title">Your training week</div><div class="dt-wp-sub">${fmtRange(w)}</div></div><button class="dt-wp-close" onclick="document.getElementById('dtWeeklyPerformanceModal').classList.remove('show')">×</button></div><div class="dt-wp-grid"><div class="dt-wp-stat"><small>Workouts</small><strong>${sessions}</strong><em>completed</em></div><div class="dt-wp-stat"><small>Working sets</small><strong>${sets}</strong><em>completed sets</em></div><div class="dt-wp-stat"><small>Volume load</small><strong>${volume?volume.toLocaleString():'—'}</strong><em>${volume?'kg completed':'no data'}</em></div><div class="dt-wp-stat"><small>PRs</small><strong>${prs.length}</strong><em>this week</em></div></div><div class="dt-wp-card"><h4>🔥 Streak</h4><div class="dt-wp-streak-count">${streak} day${streak===1?'':'s'}</div><div class="dt-wp-days">${w.keys.map((k,i)=>`<div class="dt-wp-day ${active.has(k)?'on':''}"><i></i><span>${['M','T','W','T','F','S','S'][i]}</span></div>`).join('')}</div></div><div class="dt-wp-card"><h4>Completed set emphasis</h4><div class="dt-wp-muscles">${muscleHtml}</div><div class="dt-wp-foot">Relative share of working sets from completed workouts this week.</div></div><div class="dt-wp-card"><h4>Performance records</h4><div class="dt-wp-prs">${prHtml}</div></div><div class="dt-wp-card"><h4>Weekly insight</h4><div class="dt-wp-insight"><div class="dt-wp-insight-icon">${ins[0]}</div><div><b>${ins[1]}</b><span>${ins[2]}</span></div></div></div>`;document.getElementById('dtWeeklyPerformanceModal').classList.add('show')}
@@ -7745,11 +7774,25 @@ function renderModal(){
   document.querySelector("#dtSchedBody .dt-sched-save").onclick=()=>{
     document.querySelectorAll("#dtSchedBody .dt-sched-select").forEach(sel=>st.days[sel.dataset.day]=sel.value||null);
     st.updatedAt=new Date().toISOString();
+
+    /* Changing TODAY's schedule is an explicit workout choice.
+       If a live timer was restored from backup under another split, transfer
+       that same elapsed timer to today's newly chosen split. Do not restart it. */
+    const assignedToday=st.days[todaySchedKey()]||null;
+    const live=state.workouts?.sessionClock||null;
+    if(assignedToday&&live?.active&&String(live.day||"")!==String(assignedToday)){
+      try{window.dtRebindWorkoutSessionDay?.(assignedToday,{restartClock:false})}catch(e){
+        console.warn("Active workout rebind after schedule save failed",e);
+      }
+    }
+
     try{save()}catch(e){console.warn("Schedule save failed",e)}
     const btn=document.querySelector("#dtSchedBody .dt-sched-save");
     btn.textContent="Saved ✓";btn.disabled=true;
+    try{window.dtReconcileWorkoutSessionClock?.()}catch(_){}
     renderTodaySchedule();
     renderWorkoutScheduleBadge();
+    try{window.dtRefreshWorkoutHome?.()}catch(_){}
     setTimeout(()=>document.getElementById("dtTrainingScheduleModal")?.classList.remove("show"),420);
   };
 }
@@ -12985,6 +13028,78 @@ body.dt-session-focus-open{overflow:hidden!important}
     try{return window.dtWorkoutDisplayName?.(day)||window.dtWorkoutDayLabel?.(day)||plans?.[day]?.title||String(day||"Workout").toUpperCase()}
     catch(_){return String(day||"Workout").toUpperCase()}
   }
+  function dtTodayScheduledWorkout(){
+    try{
+      const key=["sun","mon","tue","wed","thu","fri","sat"][new Date().getDay()];
+      return String(state.trainingSchedule?.days?.[key]||"");
+    }catch(_){return ""}
+  }
+  function dtHasSessionDayEvidence(day,s){
+    if(!day||!s)return false;
+    const dayKey=localDayKey(now()),start=Number(s.startedAtMs)||0;
+    const atOrAfterStart=rec=>{
+      if(rec?.day!==day||String(rec?.dayKey||"")!==dayKey)return false;
+      const t=new Date(rec.finalizedAt||rec.startedAt||rec.updatedAt||0).getTime();
+      return !start||(Number.isFinite(t)&&t>=start);
+    };
+    if((state.workouts?.completedExercises||[]).some(atOrAfterStart))return true;
+    if(Object.values(state.workouts?.pendingExercises||{}).some(atOrAfterStart))return true;
+    const draft=state.workouts?.drafts?.[`${day}_${dayKey}`];
+    if(Array.isArray(draft)&&draft.some(entry=>(entry?.sets||[]).some(set=>
+      String(set?.kg??"").trim()!==""||String(set?.reps??"").trim()!==""||String(set?.effort??"").trim()!==""
+    )))return true;
+    return false;
+  }
+  function dtResetSessionPlanForDay(s,target){
+    if(!s)return;
+    try{s.plannedAtStart=typeof planDescriptor==="function"?planDescriptor(target):[]}catch(_){s.plannedAtStart=[]}
+    try{s.templateSnapshot=typeof templateSnapshot==="function"?templateSnapshot(target):null}catch(_){s.templateSnapshot=null}
+    s.skippedExerciseKeys=[];
+    s.events=[];
+  }
+  function dtApplySessionOwner(s,target,{reason="reconcile",clearRest=true}={}){
+    target=String(target||"");
+    if(!s?.active||!target||String(s.day||"")===target)return false;
+    try{cancelRestNotification?.()}catch(_){}
+    s.day=target;
+    s.dayKey=localDayKey(now());
+    s.ownerReconciledAt=new Date().toISOString();
+    s.ownerReconcileReason=reason;
+    dtResetSessionPlanForDay(s,target);
+
+    if(clearRest){
+      s.restTriggeredSets=[];
+      s.rest={
+        running:false,paused:false,remainingMs:0,endsAtMs:0,lastActiveAtMs:0,completeUntilMs:0,
+        exerciseKey:"",exerciseName:"",setIndex:null
+      };
+    }
+
+    const ui=state.workouts?.uiState;
+    if(ui?.currentActivity&&String(ui.currentActivity.day||"")!==target)ui.currentActivity=null;
+    return true;
+  }
+  function dtReconcileSessionOwner(s){
+    if(!s?.active)return false;
+    const today=localDayKey(now());
+    if(String(s.dayKey||"")!==today)return false;
+
+    const scheduled=dtTodayScheduledWorkout();
+    if(!scheduled||scheduled===String(s.day||""))return false;
+
+    const scheduleUpdatedAt=new Date(state.trainingSchedule?.updatedAt||0).getTime();
+    const start=Number(s.startedAtMs)||0;
+    const explicitScheduleChange=Number.isFinite(scheduleUpdatedAt)&&scheduleUpdatedAt>0&&(!start||scheduleUpdatedAt>=start);
+    const activityEvidence=dtHasSessionDayEvidence(scheduled,s);
+
+    if(!explicitScheduleChange&&!activityEvidence)return false;
+
+    return dtApplySessionOwner(s,scheduled,{
+      reason:explicitScheduleChange?"today_schedule_changed_after_session_start":"today_activity_evidence",
+      clearRest:true
+    });
+  }
+
   function ensure(){
     if(!state.workouts)state.workouts={sessions:[],drafts:{}};
     if(!state.workouts.sessionSettings)state.workouts.sessionSettings={restDefaultSec:90,autoRest:true};
@@ -12992,8 +13107,23 @@ body.dt-session-focus-open{overflow:hidden!important}
     set.restDefaultSec=clamp(Number(set.restDefaultSec)||90,REST_MIN,REST_MAX);
     if(typeof set.autoRest!=="boolean")set.autoRest=true;
     if(!Array.isArray(state.workouts.timedSessions))state.workouts.timedSessions=[];
-    const s=state.workouts.sessionClock;
+    let s=state.workouts.sessionClock;
     if(s?.active){
+      /* V36.8.26 — a live timer cannot survive into another calendar day.
+         Logged exercise/history data is separate and remains untouched. */
+      const today=localDayKey(now()),sessionDay=String(s.dayKey||"");
+      if(sessionDay&&sessionDay!==today){
+        state.workouts.sessionClock=null;
+        try{cancelRestNotification?.()}catch(_){}
+        try{save()}catch(_){}
+        s=null;
+      }
+    }
+    if(s?.active){
+      const ownerChanged=dtReconcileSessionOwner(s);
+      if(ownerChanged){
+        try{save()}catch(e){console.warn("Session owner reconciliation save failed",e)}
+      }
       if(!s.status)s.status="running";
       if(!Number.isFinite(s.pausedAccumMs))s.pausedAccumMs=0;
       if(!Array.isArray(s.restTriggeredSets))s.restTriggeredSets=[];
@@ -13087,6 +13217,30 @@ body.dt-session-focus-open{overflow:hidden!important}
     renderAll();
     openFocus();
   }
+  function rebindSessionDay(day,{restartClock=true}={}){
+    const target=String(day||"");
+    let s=session();
+    if(!s?.active||!target||s.day===target)return s||null;
+    const t=now();
+
+    const changed=dtApplySessionOwner(s,target,{reason:"explicit_rebind",clearRest:true});
+    if(!changed)return s;
+
+    if(restartClock){
+      s.startedAtMs=t;
+      s.startedAt=new Date(t).toISOString();
+      s.status="running";
+      s.pausedAccumMs=0;
+      s.pausedAtMs=0;
+      s.restSpentMs=0;
+    }
+
+    persist();
+    renderAll();
+    try{window.dtRefreshWorkoutHome?.()}catch(_){}
+    return s;
+  }
+
   function pauseSession(){
     const s=session();if(!s?.active||s.status!=="running")return;
     const t=now();s.status="paused";s.pausedAtMs=t;
@@ -13351,11 +13505,14 @@ body.dt-session-focus-open{overflow:hidden!important}
   document.addEventListener("click",e=>{
     const opt=e.target.closest?.("[data-eff]");if(!opt)return;
     setTimeout(()=>{
-      const s=session();if(!s?.active||s.status!=="running"||!state.workouts.sessionSettings.autoRest)return;
+      let s=session();if(!s?.active||s.status!=="running"||!state.workouts.sessionSettings.autoRest)return;
       try{
         if(typeof effTarget==="undefined"||!effTarget)return;
+        const currentDay=typeof wday!=="undefined"?String(wday||""):"";
+        if(currentDay&&s.day!==currentDay)s=rebindSessionDay(currentDay,{restartClock:false})||s;
         const k=`${s.day}|${effTarget.ei}|${effTarget.si}`;
         if(s.restTriggeredSets.includes(k))return;s.restTriggeredSets.push(k);persist();startRest();
+        try{window.dtRefreshWorkoutHome?.()}catch(_){}
       }catch(_){}
     },0);
   });
@@ -13415,6 +13572,21 @@ body.dt-session-focus-open{overflow:hidden!important}
   window.dtStopWorkoutTimer=stopSessionTimer;
   window.dtFinishWorkoutSession=finishSession;
   window.dtSessionElapsedMs=elapsed;
+  window.dtRebindWorkoutSessionDay=rebindSessionDay;
+  window.dtReconcileWorkoutSessionClock=()=>session();
+  window.dtReconcileWorkoutSessionOwner=()=>session();
+  window.dtWorkoutSessionOwnerSnapshot=()=>{
+    const s=state.workouts?.sessionClock||null;
+    return {
+      scheduledToday:dtTodayScheduledWorkout(),
+      scheduleUpdatedAt:state.trainingSchedule?.updatedAt||null,
+      sessionDay:s?.day||null,
+      sessionDayKey:s?.dayKey||null,
+      sessionStartedAtMs:s?.startedAtMs||null,
+      currentActivityDay:state.workouts?.uiState?.currentActivity?.day||null,
+      reason:s?.ownerReconcileReason||null
+    };
+  };
   window.DT_SESSION_FOCUS_VERSION=VERSION;
 })();
 </script>
@@ -16372,8 +16544,16 @@ body.dt-reorder-active{-webkit-user-select:none!important;user-select:none!impor
 <script id="dt-v26-production-cleanup-js">
 (()=>{
 "use strict";
-const VERSION="28.0-rest-alert-racefix-complete-training-backup-v1";
+const VERSION="36.8.34-version-safe-restore-bridge";
 const BACKUP_TYPE="marc-full-backup",BACKUP_VERSION=1;
+const DT_CURRENT_BUILD="V36.8.35";
+const DT_PORTABLE_DATA_SCHEMA=1;
+const DT_RUNTIME_STATE_SCHEMA=3;
+const DT_RUNTIME_PIN_KEY="marc_authoritative_runtime_pin_v1";
+function dtPinCurrentRuntime(){
+  try{localStorage.setItem(DT_RUNTIME_PIN_KEY,JSON.stringify({app:"M/ARC",build:DT_CURRENT_BUILD,runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,pinnedAt:new Date().toISOString()}))}catch(_){}
+}
+dtPinCurrentRuntime();
 const FORENSIC_TYPE="marc-recovery-forensic";
 const KEY_NAME="dailyTrackerPremium",DAMAGED_KEY=KEY_NAME+"_damaged_recovery_raw_v1",META_KEY=KEY_NAME+"_last_known_good_meta_v1";
 function clone(v){return JSON.parse(JSON.stringify(v))}
@@ -16449,11 +16629,16 @@ function backupContentsSummary(){
     appState:"complete"
   };
 }
-function backupStateSnapshot(){
-  const snapshot=clone(state);
+function dtStripNonPortableState(snapshot){
+  if(!snapshot||typeof snapshot!=="object")return snapshot;
+
+  /* Build/schema/migration metadata belongs to the installed runtime, never a backup. */
+  for(const key of ["appMeta","core","sessionClock","activeSession","currentSession","restClock","liveRest","sessionFocus","activeWorkout","activeWorkoutDay"]){
+    try{delete snapshot[key]}catch(_){}
+  }
+
+  /* Device/native integration state is recreated by the current build. */
   if(snapshot.notifications&&typeof snapshot.notifications==="object")snapshot.notifications.scheduledIds=[];
-  /* Health integration/snapshot settings were retired from M/ARC Settings.
-     Do not perpetuate obsolete integration state in new full backups. */
   for(const key of ["health","healthConnect","healthIntegration","healthSnapshots","healthSnapshot"]){
     try{delete snapshot[key]}catch(_){}
   }
@@ -16462,7 +16647,24 @@ function backupStateSnapshot(){
       try{delete snapshot.settings[key]}catch(_){}
     }
   }
+
+  /* Volatile workout/UI state must never be allowed to resurrect old behavior. */
+  const w=snapshot.workouts&&typeof snapshot.workouts==="object"?snapshot.workouts:null;
+  if(w){
+    for(const key of [
+      "sessionClock","activeSession","currentSession","restClock","liveRest","sessionFocus","activeWorkout","activeWorkoutDay",
+      "pendingExercises","drafts","uiState","collapsedByDay",
+      "demoDataLoaded","demoDataVersion","demoDataLoadedAt","demoDataDismissed",
+      "snapshotBackfillVersion","exportSampleVersion","exportSampleAddedAt","lastBackupRuntimeMigration"
+    ]){
+      try{delete w[key]}catch(_){}
+    }
+  }
   return snapshot;
+}
+function backupStateSnapshot(){
+  try{window.dtReconcileWorkoutSessionClock?.()}catch(_){}
+  return dtStripNonPortableState(clone(state));
 }
 function fullBackupObject(){
   let chatCollapsed=null,chatNonOverlap=null;
@@ -16473,11 +16675,19 @@ function fullBackupObject(){
     version:BACKUP_VERSION,
     exportedAt:new Date().toISOString(),
     app:"M/ARC",
-    backupScope:"complete-training-and-app-state",
+    backupScope:"portable-user-data",
+    compatibility:{
+      runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,
+      portableDataSchema:DT_PORTABLE_DATA_SCHEMA,
+      liveSessionContinuation:false,
+      authoritativeRuntimeRequired:true,
+      createdByBuild:DT_CURRENT_BUILD
+    },
     contents:backupContentsSummary(),
     deviceBoundExcluded:["notifications.scheduledIds","Android notification permission","Android exact-alarm access"],
+    runtimeExcluded:["appMeta","core","live session state","pending workout drafts","screen/UI state","demo/migration flags","retired health integration state"],
     state:backupStateSnapshot(),
-    auxLocalStorage:{dt_chat_collapsed:chatCollapsed,dt_chat_nonoverlap_v1:chatNonOverlap}
+    auxLocalStorage:{}
   };
 }
 function forensicObject(){
@@ -16491,8 +16701,46 @@ function validateBackupObject(obj){
   if(!validState(obj.state))throw new Error("Backup app-state structure is invalid.");
   return true;
 }
+function dtBackupRuntimeSchema(obj){
+  const n=Number(obj?.compatibility?.runtimeStateSchema||0);
+  return Number.isFinite(n)?n:0;
+}
+function dtMigrateLegacyRuntimeState(obj,candidate){
+  const schema=dtBackupRuntimeSchema(obj);
+  const beforeWorkouts=candidate?.workouts&&typeof candidate.workouts==="object"?new Set(Object.keys(candidate.workouts)):new Set();
+  const beforeRoot=new Set(Object.keys(candidate||{}));
+  dtStripNonPortableState(candidate);
+  const afterWorkouts=candidate?.workouts&&typeof candidate.workouts==="object"?new Set(Object.keys(candidate.workouts)):new Set();
+  const afterRoot=new Set(Object.keys(candidate||{}));
+  const removed=[];
+  for(const k of beforeRoot)if(!afterRoot.has(k))removed.push(k);
+  for(const k of beforeWorkouts)if(!afterWorkouts.has(k))removed.push(`workouts.${k}`);
+  return {legacy:schema<DT_RUNTIME_STATE_SCHEMA,fromSchema:schema,toSchema:DT_RUNTIME_STATE_SCHEMA,removed};
+}
+function dtRebuildCurrentRuntimeAfterImport(importInfo,previousAppMeta){
+  /* The imported object supplies durable user data only. The current build owns
+     runtime identity, schema metadata, migrations and all derived Core shadows. */
+  const keepMeta=previousAppMeta&&typeof previousAppMeta==="object"?clone(previousAppMeta):{};
+  state.appMeta=keepMeta;
+  state.appMeta.schemaVersion=typeof DT_SCHEMA_VERSION!=="undefined"?DT_SCHEMA_VERSION:state.appMeta.schemaVersion;
+  state.appMeta.updatedAt=new Date().toISOString();
+  state.appMeta.migrations=state.appMeta.migrations&&typeof state.appMeta.migrations==="object"?state.appMeta.migrations:{};
+  state.appMeta.migrations.versionSafeRestoreBridge={
+    completedAt:new Date().toISOString(),
+    currentBuild:DT_CURRENT_BUILD,
+    portableDataSchema:DT_PORTABLE_DATA_SCHEMA,
+    fromRuntimeSchema:Number(importInfo?.fromSchema||0),
+    toRuntimeSchema:DT_RUNTIME_STATE_SCHEMA,
+    removedRuntimeFields:Array.isArray(importInfo?.removed)?importInfo.removed.slice(0,80):[]
+  };
+  try{delete state.core}catch(_){}
+  dtEnsureFoundation?.();
+  dtPinCurrentRuntime();
+}
+
 function restoreObject(obj){
   validateBackupObject(obj);const candidate=clone(obj.state);
+  const runtimeMigration=dtMigrateLegacyRuntimeState(obj,candidate);
   if(candidate.notifications&&typeof candidate.notifications==="object")candidate.notifications.scheduledIds=[];
   /* Old backups may contain retired Health Connect / Health Snapshot preferences.
      Strip those compatibility fields before they can be persisted or rendered. */
@@ -16504,9 +16752,9 @@ function restoreObject(obj){
       try{delete candidate.settings[key]}catch(_){}
     }
   }
-  const old=state;state=candidate;
+  const old=state,previousAppMeta=clone(state?.appMeta||{});state=candidate;
   try{
-    dtEnsureFoundation?.();
+    dtRebuildCurrentRuntimeAfterImport(runtimeMigration,previousAppMeta);
     /* Rehydrate custom split containers before the restored state is persisted.
        The live split renderer will rebuild plans[] from these saved definitions on reload. */
     if(candidate.workouts&&typeof candidate.workouts==="object"){
@@ -16536,13 +16784,15 @@ function restoreObject(obj){
       candidate.notifications.trainingEnabled=!!candidate.notifications.trainingEnabled;
       candidate.notifications.scheduledIds=[];
     }
+    try{window.dtReconcileWorkoutSessionClock?.()}catch(_){}
     save({forceRecoveryScan:true,replaceRecoveryMeta:true});
-    if(obj.auxLocalStorage){
-      for(const key of ["dt_chat_collapsed","dt_chat_nonoverlap_v1"]){
-        if(!Object.prototype.hasOwnProperty.call(obj.auxLocalStorage,key))continue;
-        const v=obj.auxLocalStorage[key];if(v==null)localStorage.removeItem(key);else localStorage.setItem(key,String(v));
-      }
-    }
+    try{window.dtRenderTodaySchedule?.()}catch(_){}
+    try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}
+    try{window.dtRefreshWorkoutHome?.()}catch(_){}
+    try{window.dtForceCurrentHomeRendererAfterImport?.()}catch(_){}
+    /* UI-only auxiliary localStorage from backups is intentionally ignored.
+       Current-build screen state remains authoritative. */
+    dtPinCurrentRuntime();
   }
   catch(e){state=old;throw new Error("Restore could not be saved. Your previous saved copy is still preserved.")}
   return true;
@@ -16558,7 +16808,22 @@ function ensureUi(){
     try{await dtExportBackupObject(fullBackupObject(),fileName("MARC_Full_Backup"),"dtFullBackupAction","Full App Backup")}catch(_){}finally{btn.disabled=false}
   };
   const input=box.querySelector("#dtFullRestoreInput");box.querySelector("#dtFullRestoreBtn").onclick=()=>input.click();
-  input.onchange=async()=>{const f=input.files?.[0];input.value="";if(!f)return;dtSetBackupAction("dtFullRestoreAction","Checking…","busy");try{const obj=JSON.parse(await f.text());validateBackupObject(obj);dtSetBackupAction("dtFullRestoreAction","Ready","ok");if(!confirm("Restore this Full App Backup? Current on-device data will be replaced only after validation.")){dtSetBackupAction("dtFullRestoreAction","Import");return}restoreObject(obj);dtSetBackupAction("dtFullRestoreAction","Restored","ok");alert("Backup restored successfully. M/ARC will reload now.");location.reload()}catch(e){dtSetBackupAction("dtFullRestoreAction","Retry","error");alert(e?.message||String(e))}};
+  input.onchange=async()=>{const f=input.files?.[0];input.value="";if(!f)return;dtSetBackupAction("dtFullRestoreAction","Checking…","busy");try{const obj=JSON.parse(await f.text());validateBackupObject(obj);dtSetBackupAction("dtFullRestoreAction","Ready","ok");if(!confirm("Restore this Full App Backup? Current on-device data will be replaced only after validation.")){dtSetBackupAction("dtFullRestoreAction","Import");return}const restored=restoreObject(obj);dtSetBackupAction("dtFullRestoreAction","Restored","ok");
+        /* V36.8.33 — stay on the authoritative current runtime after import.
+           A hard location.reload() can re-enter an older service-worker cached
+           index.html and visually roll the app back even though the restored
+           data itself is valid. Rehydrate current renderers in-place instead. */
+        try{window.dtRefreshWorkoutHome?.()}catch(_){}
+        try{window.dtForceCurrentHomeRendererAfterImport?.()}catch(_){}
+        try{window.dtRenderTodaySchedule?.()}catch(_){}
+        try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}
+        try{window.dtRenderCoachDestination?.()}catch(_){}
+        try{renderWorkout?.()}catch(_){}
+        try{renderWorkoutHistory?.()}catch(_){}
+        try{renderHistory?.()}catch(_){}
+        try{renderToday?.()}catch(_){}
+        try{renderStats?.()}catch(_){}
+        alert(obj?.compatibility?.runtimeStateSchema>=2?"Backup restored through the version-safe bridge. Current M/ARC features and fixes preserved.":"Legacy backup migrated through the version-safe bridge. Your portable training data was preserved and current M/ARC features remain authoritative.")}catch(e){dtSetBackupAction("dtFullRestoreAction","Retry","error");alert(e?.message||String(e))}};
   let hasRaw=false;try{hasRaw=!!localStorage.getItem(DAMAGED_KEY)}catch(_){}const forensic=box.querySelector("#dtRecoveryExportBtn");
   if(hasRaw){forensic.style.display="";forensic.onclick=async()=>{const obj=forensicObject();if(!obj)return;const btn=forensic;if(btn.disabled)return;btn.disabled=true;try{await dtExportBackupObject(obj,fileName("MARC_Recovery_Data"),"dtRecoveryExportAction","Recovery Data")}catch(_){}finally{btn.disabled=false}}}
 }
@@ -16573,6 +16838,9 @@ window.dtValidateFullBackupObject=validateBackupObject;
 window.dtRestoreFullBackupObject=restoreObject;
 window.dtCreateRecoveryExportObject=forensicObject;
 window.DT_PRODUCTION_CLEANUP_VERSION=VERSION;
+window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.35";
+window.DT_VERSION_SAFE_RESTORE_BRIDGE={build:DT_CURRENT_BUILD,portableDataSchema:DT_PORTABLE_DATA_SCHEMA,runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,pinKey:DT_RUNTIME_PIN_KEY};
+window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.35";
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ensureUi):ensureUi();setTimeout(ensureUi,350);
 })();
 </script>
@@ -17142,6 +17410,38 @@ body{padding-bottom:max(20px,env(safe-area-inset-bottom))!important}
 .dt-v27-empty{padding:13px;border:1px dashed rgba(96,140,158,.22);border-radius:14px;color:#718995;font:600 9px/1.45 system-ui;text-align:center}
 .dt-v27-open-stats{width:100%;margin-top:11px;min-height:44px;border-radius:14px;border:1px solid rgba(85,170,255,.24);background:rgba(85,170,255,.07);color:#7abcf0;font:850 10px system-ui}
 
+
+/* V36.8.32 — Home Performance visual dashboard */
+.dt-v32-visual-stack{display:grid;gap:11px;margin-top:12px}
+.dt-v32-visual-card{border:1px solid rgba(92,142,163,.18);border-radius:18px;background:linear-gradient(155deg,rgba(7,25,34,.86),rgba(4,17,24,.80));padding:14px;overflow:hidden}
+.dt-v32-visual-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}
+.dt-v32-visual-head b{color:#cad9de;font:850 9px/1 system-ui;letter-spacing:.08em;text-transform:uppercase}
+.dt-v32-visual-head span{color:#607986;font:750 7px/1 system-ui;text-transform:uppercase;letter-spacing:.06em}
+.dt-v32-score-wrap{display:grid;grid-template-columns:136px minmax(0,1fr);gap:14px;align-items:center}
+.dt-v32-score-ring{--score:0;position:relative;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#58dfa3 calc(var(--score)*1%),rgba(85,170,255,.9) calc(var(--score)*1%),rgba(17,42,54,.75) 0);box-shadow:0 0 22px rgba(82,218,160,.08)}
+.dt-v32-score-ring:before{content:"";position:absolute;inset:8px;border-radius:50%;background:#071923;border:1px solid rgba(92,142,163,.20);box-shadow:inset 0 0 24px rgba(0,0,0,.28)}
+.dt-v32-score-core{position:relative;z-index:1;text-align:center}
+.dt-v32-score-core strong{display:block;color:#edf5f7;font:950 36px/.92 system-ui;letter-spacing:-.05em}
+.dt-v32-score-core small{display:block;margin-top:7px;color:#68dda7;font:850 7px/1 system-ui;letter-spacing:.12em;text-transform:uppercase}
+.dt-v32-score-bars{display:grid;gap:11px;min-width:0}
+.dt-v32-score-line{display:grid;grid-template-columns:70px 1fr 30px;gap:7px;align-items:center}
+.dt-v32-score-line span{color:#788f99;font:750 8px/1 system-ui;white-space:nowrap}
+.dt-v32-score-line i{height:5px;border-radius:99px;background:#10242e;overflow:hidden;display:block}
+.dt-v32-score-line i:after{content:"";display:block;height:100%;width:var(--pct);border-radius:inherit;background:linear-gradient(90deg,#57dda0,#58aaff)}
+.dt-v32-score-line b{color:#cad9df;font:850 8px/1 system-ui;text-align:right}
+.dt-v32-radar-wrap{display:grid;place-items:center;padding:2px 0 0}
+.dt-v32-radar{width:min(100%,300px);height:auto;overflow:visible}
+.dt-v32-radar .grid{fill:none;stroke:#173743;stroke-width:1}.dt-v32-radar .axis{stroke:#16313d;stroke-width:1}.dt-v32-radar .shape{fill:rgba(84,224,161,.20);stroke:#58dda3;stroke-width:2;filter:drop-shadow(0 0 5px rgba(84,224,161,.22))}.dt-v32-radar .dot{fill:#5be0a6}.dt-v32-radar text{fill:#8196a0;font:700 8px system-ui}.dt-v32-radar .pct{fill:#d5e1e5;font:850 8px system-ui}
+.dt-v32-timeline{position:relative;padding:5px 3px 3px}
+.dt-v32-timeline-bars{height:92px;display:grid;grid-template-columns:repeat(30,minmax(2px,1fr));gap:2px;align-items:end;border-bottom:1px solid rgba(91,139,158,.19)}
+.dt-v32-timeline-day{height:100%;display:flex;align-items:flex-end;justify-content:center;position:relative}
+.dt-v32-timeline-day i{display:block;width:70%;min-width:2px;max-width:7px;height:var(--h);border-radius:99px 99px 2px 2px;background:linear-gradient(180deg,#5adfa3,rgba(47,128,101,.32));box-shadow:0 0 8px rgba(84,224,161,.12)}
+.dt-v32-timeline-day.rest i{height:3px!important;background:#314650;box-shadow:none}
+.dt-v32-timeline-day.today:after{content:"";position:absolute;bottom:-5px;width:7px;height:7px;border:2px solid #58dda3;border-radius:50%;background:#071923;box-shadow:0 0 7px rgba(84,224,161,.35)}
+.dt-v32-timeline-labels{display:flex;justify-content:space-between;margin-top:10px;color:#657d88;font:750 7px/1 system-ui}
+.dt-v32-timeline-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;color:#728995;font:700 7px/1 system-ui}.dt-v32-timeline-legend span{display:flex;align-items:center;gap:5px}.dt-v32-timeline-legend i{width:6px;height:6px;border-radius:50%;background:#58dda3}.dt-v32-timeline-legend span:last-child i{background:#314650}
+@media(max-width:370px){.dt-v32-score-wrap{grid-template-columns:116px minmax(0,1fr);gap:10px}.dt-v32-score-ring{width:112px;height:112px}.dt-v32-score-core strong{font-size:31px}.dt-v32-score-line{grid-template-columns:60px 1fr 26px}}
+
 /* Secondary destinations: top Home control replaces bottom navigation. */
 .dt-v27-return-row{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -17447,7 +17747,16 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     try{
       const entry=quickDraftEntry(fresh);if(!entry)return {ok:false,msg:"Workout draft unavailable."};
       let target=(entry.sets||[]).find(x=>!quickValidSet(x));if(!target){target={kg:"",reps:"",effort:""};entry.sets.push(target)}
-      target.kg=kg;target.reps=String(repsInput);target.effort=effort;quickPrefill.delete(fresh.key);save();haptic();return {ok:true,msg:`Set ${quickLoggedSets(fresh).length} logged.`};
+      target.kg=kg;target.reps=String(repsInput);target.effort=effort;
+      /* A real set is authoritative evidence of the workout currently being performed.
+         Keep the restored/main elapsed timer; only transfer its split ownership. */
+      try{
+        const live=state.workouts?.sessionClock;
+        if(live?.active&&fresh.day&&String(live.day||"")!==String(fresh.day)){
+          window.dtRebindWorkoutSessionDay?.(fresh.day,{restartClock:false});
+        }
+      }catch(_){}
+      quickPrefill.delete(fresh.key);save();haptic();return {ok:true,msg:`Set ${quickLoggedSets(fresh).length} logged.`};
     }catch(_){return {ok:false,msg:"Could not save this set."}}
   }
   function quickComplete(info){
@@ -17570,11 +17879,56 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     },0);
     return {sessions:sessions.length,days:daySet.size,sets};
   }
+  function dtV32Sessions(days=30){
+    const now=new Date(),cut=new Date(now);cut.setDate(now.getDate()-(days-1));cut.setHours(0,0,0,0);
+    const src=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);
+    return src.filter(s=>{const d=new Date(s.date||s.completedAt||s.__dtDayKey||0);return Number.isFinite(d.getTime())&&d>=cut&&d<=new Date(now.getTime()+86400000)});
+  }
+  function dtV32ExerciseRows(session){return Array.isArray(session?.snapshot)?session.snapshot:(Array.isArray(session?.exercises)?session.exercises:[])}
+  function dtV32ValidSets(row){return (row?.sets||[]).filter(x=>(+x.reps||0)>0)}
+  function dtV32Volume(session){return dtV32ExerciseRows(session).reduce((a,r)=>a+dtV32ValidSets(r).reduce((n,x)=>n+Math.max(0,+x.kg||0)*Math.max(0,+x.reps||0),0),0)}
+  function dtV32WeekMetrics(offset=0){
+    const now=new Date(),end=new Date(now);end.setDate(now.getDate()-offset*7);end.setHours(23,59,59,999);const start=new Date(end);start.setDate(end.getDate()-6);start.setHours(0,0,0,0);
+    const rows=dtV32Sessions(42).filter(s=>{const d=new Date(s.date||s.completedAt||s.__dtDayKey||0);return d>=start&&d<=end});
+    const days=new Set(rows.map(s=>String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||'').slice(0,10)).filter(Boolean)).size;
+    const sets=rows.reduce((n,s)=>n+dtV32ExerciseRows(s).reduce((a,r)=>a+dtV32ValidSets(r).length,0),0);
+    const volume=rows.reduce((n,s)=>n+dtV32Volume(s),0);return {sessions:rows.length,days,sets,volume};
+  }
+  function dtV32Score(){
+    const cur=dtV32WeekMetrics(0),prev=[1,2,3].map(dtV32WeekMetrics),avg=k=>prev.reduce((a,x)=>a+(+x[k]||0),0)/Math.max(1,prev.length);
+    const consistency=Math.round(Math.min(100,(cur.days/Math.max(3,avg('days')||3))*100));
+    const workload=Math.round(Math.min(100,(cur.sets/Math.max(18,avg('sets')||18))*100));
+    const volumeBase=avg('volume'),progress=volumeBase>0?Math.max(0,Math.min(100,50+((cur.volume-volumeBase)/volumeBase)*100)):Math.min(100,cur.sessions*25);
+    const score=Math.round(consistency*.4+workload*.35+progress*.25);
+    return {score:Math.max(0,Math.min(100,score)),consistency,workload,progress:Math.round(progress)};
+  }
+  function dtV32Balance(){
+    const out={Pull:0,Push:0,Legs:0,Shoulders:0,Arms:0,Core:0};
+    const classify=k=>{const x=String(k||'').toLowerCase();if(/lat|back|trap|rhomboid/.test(x))return 'Pull';if(/quad|ham|glute|calf|hip/.test(x))return 'Legs';if(/delt|shoulder/.test(x))return 'Shoulders';if(/bicep|tricep|forearm/.test(x))return 'Arms';if(/ab|core|oblique/.test(x))return 'Core';if(/chest|pec/.test(x))return 'Push';return null};
+    dtV32Sessions(30).forEach(s=>dtV32ExerciseRows(s).forEach(r=>{const sets=dtV32ValidSets(r).length;if(!sets)return;let meta=null;try{meta=window.dtInferMeta?.(r.name,r.muscle)}catch(_){meta=null}const groups=[];if(meta){(meta.primaryMuscles||[]).forEach(k=>groups.push([k,1]));(meta.secondaryMuscles||[]).forEach(k=>groups.push([k,.55]));(meta.stabilizerMuscles||[]).forEach(k=>groups.push([k,.25]))}if(!groups.length)String(r.muscle||'').split(/[/,]/).filter(Boolean).forEach(k=>groups.push([k,1]));groups.forEach(([k,w])=>{const c=classify(k);if(c)out[c]+=sets*w})}));
+    const max=Math.max(1,...Object.values(out));Object.keys(out).forEach(k=>out[k]=Math.round(out[k]/max*100));return out;
+  }
+  function dtV32RadarSvg(balance){
+    const labels=['Pull','Push','Legs','Shoulders','Core','Arms'],cx=150,cy=123,R=78,angle=i=>(-90+i*60)*Math.PI/180,point=(r,i)=>[cx+Math.cos(angle(i))*r,cy+Math.sin(angle(i))*r],poly=r=>labels.map((_,i)=>point(r,i).join(',')).join(' '),shape=labels.map((k,i)=>point(R*(balance[k]||0)/100,i).join(',')).join(' ');
+    const grids=[.25,.5,.75,1].map(v=>`<polygon class="grid" points="${poly(R*v)}"/>`).join(''),axes=labels.map((_,i)=>{const p=point(R,i);return `<line class="axis" x1="${cx}" y1="${cy}" x2="${p[0]}" y2="${p[1]}"/>`}).join(''),dots=labels.map((k,i)=>{const p=point(R*(balance[k]||0)/100,i);return `<circle class="dot" cx="${p[0]}" cy="${p[1]}" r="3"/>`}).join('');
+    const pos=[[150,20],[251,69],[252,181],[150,224],[47,181],[47,69]];const anchors=['middle','start','start','middle','end','end'];const texts=labels.map((k,i)=>`<text x="${pos[i][0]}" y="${pos[i][1]}" text-anchor="${anchors[i]}">${k.toUpperCase()}</text><text class="pct" x="${pos[i][0]}" y="${pos[i][1]+11}" text-anchor="${anchors[i]}">${balance[k]||0}%</text>`).join('');
+    return `<svg class="dt-v32-radar" viewBox="0 0 300 240" role="img" aria-label="30 day training balance radar">${grids}${axes}<polygon class="shape" points="${shape}"/>${dots}${texts}</svg>`;
+  }
+  function dtV32Timeline(){
+    const now=new Date(),map=new Map();dtV32Sessions(30).forEach(s=>{const k=String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||'').slice(0,10);if(!k)return;const x=map.get(k)||{sets:0,volume:0};x.sets+=dtV32ExerciseRows(s).reduce((a,r)=>a+dtV32ValidSets(r).length,0);x.volume+=dtV32Volume(s);map.set(k,x)});
+    const days=[];for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');days.push({d,k,...(map.get(k)||{sets:0,volume:0})})}
+    const max=Math.max(1,...days.map(x=>x.sets));const bars=days.map((x,i)=>`<div class="dt-v32-timeline-day ${x.sets?'':'rest'} ${i===29?'today':''}" title="${x.k}: ${x.sets} sets"><i style="--h:${x.sets?Math.max(12,Math.round(x.sets/max*84)):3}px"></i></div>`).join('');const fmt=d=>d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+    return `<div class="dt-v32-timeline"><div class="dt-v32-timeline-bars">${bars}</div><div class="dt-v32-timeline-labels"><span>${fmt(days[0].d)}</span><span>${fmt(days[14].d)}</span><span>${fmt(days[29].d)}</span></div><div class="dt-v32-timeline-legend"><span><i></i>Workout load</span><span><i></i>Rest / no workout</span></div></div>`;
+  }
   function coachInsights(){try{return typeof window.dtIntelTopInsights==="function"?window.dtIntelTopInsights(2):[]}catch(_){return []}}
   function renderPerformance(){
-    const host=document.getElementById("dtV27Performance");if(!host)return;const m=performanceRows(),ins=coachInsights();
+    const host=document.getElementById("dtV27Performance");if(!host)return;const m=performanceRows(),sc=dtV32Score(),bal=dtV32Balance();
     host.innerHTML=`<div class="dt-v27-kicker">LAST 7 DAYS</div><div class="dt-v27-title">Training pulse</div><div class="dt-v27-perf-metrics"><div class="dt-v27-perf-metric"><small>Workouts</small><b>${m.sessions}</b></div><div class="dt-v27-perf-metric"><small>Days</small><b>${m.days}</b></div><div class="dt-v27-perf-metric"><small>Working sets</small><b>${m.sets}</b></div></div>
-      <div class="dt-v27-launch-head"><b>M/ARC Coach</b><span>${ins.length?"Current signals":"Building history"}</span></div><div class="dt-v27-coach-stack">${ins.length?ins.map(x=>`<article class="dt-v27-coach-card"><small>${esc(x.category||"insight")}</small><b>${esc(x.title)}</b><p>${esc(x.body)}</p></article>`).join(""):'<div class="dt-v27-empty">Keep logging workouts. Coach insights appear when M/ARC has enough reliable history.</div>'}</div><button class="dt-v27-open-stats" type="button">Open full Stats</button>`;
+      <div class="dt-v32-visual-stack">
+        <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>Performance</b><span>7 day momentum</span></div><div class="dt-v32-score-wrap"><div class="dt-v32-score-ring" style="--score:${sc.score}"><div class="dt-v32-score-core"><strong>${sc.score}</strong><small>Performance</small></div></div><div class="dt-v32-score-bars"><div class="dt-v32-score-line"><span>Consistency</span><i style="--pct:${sc.consistency}%"></i><b>${sc.consistency}</b></div><div class="dt-v32-score-line"><span>Workload</span><i style="--pct:${sc.workload}%"></i><b>${sc.workload}</b></div><div class="dt-v32-score-line"><span>Momentum</span><i style="--pct:${sc.progress}%"></i><b>${sc.progress}</b></div></div></div></section>
+        <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>Training Balance</b><span>Last 30 days</span></div><div class="dt-v32-radar-wrap">${dtV32RadarSvg(bal)}</div></section>
+        <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>30-Day Performance</b><span>Workout activity</span></div>${dtV32Timeline()}</section>
+      </div><button class="dt-v27-open-stats" type="button">Open full Stats</button>`;
     host.querySelector(".dt-v27-open-stats").onclick=openStats;
   }
 
@@ -17644,7 +17998,7 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const brief=model.brief?`<section class="dt-coach-v2-brief"><div class="dt-coach-v2-eyebrow">THIS WEEK</div><div class="dt-coach-v2-brief-head"><div><b>M/ARC Weekly Brief</b><span>${esc(model.brief.range||"")}</span></div><div class="dt-coach-v2-brief-metrics"><i><strong>${model.brief.workouts||0}</strong><small>workouts</small></i><i><strong>${model.brief.sets||0}</strong><small>sets</small></i><i><strong>${model.brief.prs||0}</strong><small>PRs</small></i></div></div><div class="dt-coach-v2-brief-grid"><div><small>GOING WELL</small><p>${esc(model.brief.good||"Keep building consistent sessions.")}</p></div><div><small>WATCH</small><p>${esc(model.brief.watch||"No strong warning signal this week.")}</p></div><div><small>NEXT FOCUS</small><p>${esc(model.brief.next||"Complete the next planned session and keep logging effort.")}</p></div></div></section>`:"";
     const cards=model.cards?.length?model.cards.map((c,i)=>`<article class="dt-v27-coach-card dt-coach-v2-card ${i===0?"open":""}" data-category="${esc(c.category||"insight")}"><button class="dt-coach-v2-card-top" type="button" aria-expanded="${i===0?"true":"false"}"><span><small>${esc(String(c.category||"insight").toUpperCase())}</small><b>${esc(c.title||"Training insight")}</b><em>${esc(c.summary||"")}</em></span><i>⌄</i></button><div class="dt-coach-v2-detail"><section><small>WHAT M/ARC NOTICED</small><p>${esc(c.noticed||c.summary||"")}</p></section>${c.evidence?.length?`<section><small>YOUR DATA</small><div class="dt-coach-v2-evidence">${c.evidence.map(x=>`<span>${esc(x)}</span>`).join("")}</div></section>`:""}<section><small>WHAT TO TRY</small><p>${esc(c.action||"")}</p></section><section><small>WHY IT MAY HELP</small><p>${esc(c.why||"")}</p></section><section class="dt-coach-v2-research"><small>TRAINING FACT</small><p>${esc(c.fact||"")}</p><div class="dt-coach-v2-source"><b>RESEARCH SOURCE</b><span>${esc(c.source||"")}</span></div></section>${c.trivia?`<section class="dt-coach-v2-trivia"><small>RELATED TRIVIA</small><p>${esc(c.trivia)}</p></section>`:""}<button class="dt-coach-v2-stats" type="button">See related stats ›</button></div></article>`).join(""):`<div class="dt-v27-coach-empty"><b>No coaching signal yet</b><span>Keep logging complete workouts. M/ARC Coach will surface recovery, progression, plateau and training-balance signals when there is enough history.</span></div>`;
     const learn=model.learn?`<section class="dt-coach-v2-learn"><div class="dt-coach-v2-eyebrow">LEARN</div><b>${esc(model.learn.title||"Training note")}</b><p>${esc(model.learn.fact||"")}</p><small>${esc(model.learn.source||"")}</small></section>`:"";
-    host.innerHTML=`${live}${brief}<div class="dt-v27-coach-section-title"><b>Coach signals</b><span>Tap a card for the reasoning</span></div><div class="dt-v27-coach-grid">${cards}</div>${learn}<div class="dt-v27-coach-note">Coach reads finalized workout history. Research notes are general training evidence, not a medical assessment or a guarantee of individual results.</div>`;
+    host.innerHTML=`${live}${brief}<div class="dt-v27-coach-section-title"><b>Coach signals</b>${model.cards?.length?`<span>Tap a card for the reasoning</span>`:""}</div><div class="dt-v27-coach-grid">${cards}</div>${learn}<div class="dt-v27-coach-note">Coach reads finalized workout history. Research notes are general training evidence, not a medical assessment or a guarantee of individual results.</div>`;
     host.querySelectorAll(".dt-coach-v2-card-top").forEach(btn=>btn.onclick=()=>{const card=btn.closest(".dt-coach-v2-card"),open=!card.classList.contains("open");card.classList.toggle("open",open);btn.setAttribute("aria-expanded",String(open))});
     host.querySelectorAll(".dt-coach-v2-stats").forEach(btn=>btn.onclick=()=>openStats());
     ensureDestinationHeaders();
@@ -17768,9 +18122,44 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
       const selected=selectedActivity(s.day,{preferUnfinished:false}),heading=document.querySelector("#dtV27SessionStage h3"),restTitle=String(r.exerciseName||"").trim(),nextHeading=(r.running||r.paused||complete)?(restTitle||selected?.e?.[0]||"Exercise"):(selected?.e?.[0]||"Exercise");if(heading&&heading.textContent!==nextHeading)heading.textContent=nextHeading;syncSessionFocusSelected();
     }
   }
+  function dtCurrentHomeContractOk(){
+    const home=document.getElementById("dtHomeV27");
+    if(!home)return false;
+    const perf=document.getElementById("dtV27Performance");
+    if(!perf)return false;
+    /* V36.8.35: visual Performance is part of the current-build contract.
+       Imported data may change values, never the renderer structure. */
+    if(pageCommittedIndex===2||pageIndex===2){
+      return !!perf.querySelector(".dt-v32-visual-stack")
+        && !!perf.querySelector(".dt-v32-score-ring")
+        && !!perf.querySelector(".dt-v32-radar")
+        && !!perf.querySelector(".dt-v32-timeline");
+    }
+    return true;
+  }
+  function dtForceCurrentHomeRendererAfterImport(){
+    const oldPage=Math.max(0,Math.min(2,Number(pageCommittedIndex)||0));
+    const mounted=document.getElementById("dtHomeV27");
+    if(mounted)mounted.remove();
+    homeBuilt=false;
+    pageIndex=oldPage;pageCommittedIndex=oldPage;
+    renderHome();
+    setPage(oldPage,false,"sync");
+    /* Re-render after layout settles so a stale compatibility callback cannot
+       leave the pre-visual Performance body mounted after restore. */
+    [40,180,600].forEach(ms=>setTimeout(()=>{
+      if(!document.getElementById("dtHomeV27"))renderHome();
+      if(oldPage===2)renderPerformance();
+      setPage(oldPage,false,"sync");
+    },ms));
+    return true;
+  }
   function refreshShell(){
     cleanLegacyNavigation();cleanSettings();ensureDestinationHeaders();
-    if(document.querySelector(".view.active")?.id==="today")renderHome();
+    if(document.querySelector(".view.active")?.id==="today"){
+      renderHome();
+      if((pageCommittedIndex===2||pageIndex===2)&&!dtCurrentHomeContractOk())renderPerformance();
+    }
   }
   function boot(){
     /* V32: build the authoritative Home immediately while the critical startup gate is still covering legacy markup. */
@@ -17791,6 +18180,9 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
   document.readyState==="loading"?document.addEventListener("DOMContentLoaded",boot):boot();
 
   window.dtOpenWorkoutHome=openHome;
+  window.dtRefreshWorkoutHome=refreshShell;
+  window.dtForceCurrentHomeRendererAfterImport=dtForceCurrentHomeRendererAfterImport;
+  window.dtCurrentHomeContractOk=dtCurrentHomeContractOk;
   window.dtRenderCoachDestination=renderCoachDestination;
   window.dtWorkoutHomeSetPage=setPage;
   window.dtV27OpenHome=openHome;
@@ -18477,7 +18869,7 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
   window.DT_MARC_MOTION_VERSION=V;
 })();
 </script>
-<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.7-patch-series";</script>
+<script>window.DT_MARC_RELEASE_FIX_VERSION="36.8.31-coach-haptic-minimal";</script>
 <script id="dt-v36-p2-haptics">
 (()=>{
   "use strict";
@@ -20800,6 +21192,83 @@ window.DT_V36_8_25_CUSTOM_SPLIT_COLORS={
   restoreNormalizesDuplicateOrMissingColors:true,
   addSplitOrderFixPreserved:true,
   emptySplitFixPreserved:true
+};
+</script>
+<script id="dt-v36-8-26-schedule-session-reconcile-contract">
+window.DT_V36_8_26_SCHEDULE_SESSION={
+  scheduleSaveRefreshesAuthoritativeHome:true,
+  staleCrossDaySessionExpires:true,
+  loggingDifferentSplitRebindsLiveSession:true,
+  rebindPreservesLoggedHistory:true,
+  restTimerUsesReboundSplit:true,
+  priorTimerVisibilityFixPreserved:true,
+  priorSplitScrollFixPreserved:true
+};
+</script>
+<script id="dt-v36-8-27-live-session-owner-contract">
+window.DT_V36_8_27_LIVE_SESSION_OWNER={
+  restoredElapsedTimerPreserved:true,
+  todayScheduleChangeRebindsActiveSession:true,
+  scheduleRebindDoesNotRestartElapsedTimer:true,
+  quickSetSaveRebindsActiveSession:true,
+  workoutEffortSaveRebindsWithoutRestart:true,
+  priorSplitRestStateClearedOnRebind:true,
+  backupTimerContinuationPreserved:true,
+  previousSplitAndSettingsFixesPreserved:true
+};
+</script>
+<script id="dt-v36-8-28-legacy-backup-runtime-migration-contract">
+window.DT_V36_8_28_BACKUP_RUNTIME={
+  currentRuntimeStateSchema:2,
+  newBackupsPreserveLiveSession:true,
+  legacyBackupsQuarantineLiveSession:true,
+  legacyBackupsPreserveHistory:true,
+  legacyBackupsPreserveCompletedExercises:true,
+  legacyBackupsPreserveCustomSplits:true,
+  legacyBackupsPreserveScheduleRemindersPreferences:true,
+  legacyPendingRuntimeCleared:true,
+  legacyTodayDraftsCleared:true,
+  currentBackupTimerContinuationPreserved:true
+};
+</script>
+<script id="dt-v36-8-29-session-owner-invariant">
+(()=>{
+  const reconcile=()=>{
+    try{
+      window.dtReconcileWorkoutSessionClock?.();
+      window.dtRefreshWorkoutHome?.();
+      window.dtRenderTodaySchedule?.();
+      window.dtRenderWorkoutScheduleBadge?.();
+    }catch(e){console.warn("M/ARC session owner lifecycle reconcile failed",e)}
+  };
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)reconcile()});
+  window.addEventListener("pageshow",reconcile);
+  setTimeout(reconcile,250);
+
+  window.DT_V36_8_29_SESSION_OWNER_INVARIANT={
+    authoritativeGate:"session.ensure",
+    scheduleChangeAfterStartRebinds:true,
+    targetDayActivityEvidenceRebinds:true,
+    elapsedWorkoutTimerPreserved:true,
+    mismatchedRestOwnershipCleared:true,
+    uiCurrentActivityInvalidatedOnDayChange:true,
+    plannedAtStartRebuiltOnDayChange:true,
+    templateSnapshotRebuiltOnDayChange:true,
+    backupReconcilesBeforeClone:true,
+    everyRestoreReconciles:true,
+    resumeReconciles:true
+  };
+})();
+</script>
+<script id="dt-v36-8-30-streak-day-consistency">
+window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
+  oneLocalSessionDayKey:true,
+  weeklyInclusionUsesLocalDay:true,
+  weeklyGreenIconsUseLocalDay:true,
+  streakUsesLocalDay:true,
+  snapshotRowsUseLocalDay:true,
+  canonicalDedupPreserved:true,
+  sessionOwnerInvariantPreserved:true
 };
 </script>
 </body>
