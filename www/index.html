@@ -11875,7 +11875,7 @@ function daySessions(key){
       <div class="dt-tb-stats"><div class="dt-tb-stat"><b id="dtTBStatWorkouts">0</b><span>Workouts</span></div><div class="dt-tb-stat"><b id="dtTBStatDays">0</b><span>Days Tracked</span></div><div class="dt-tb-stat"><b id="dtTBStatTop">—</b><span>Top Focus</span></div></div>
       <div class="dt-tb-tabs" id="dtTBTabs"><button class="dt-tb-tab active" type="button" data-mode="recent">Last 30 Days</button><button class="dt-tb-tab" type="button" data-mode="alltime">All-Time</button><button class="dt-tb-tab" type="button" data-mode="musclemap">Muscle Map</button></div>
       <div id="dtTBMain">
-        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed" id="dtMMRuntimeBadge" data-runtime-build="V36_8_58T" title="Runtime V36_8_58T">1x</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
+        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed" id="dtMMRuntimeBadge" data-runtime-build="V36_8_59T" title="Runtime V36_8_59T">1x</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
         <div class="dt-tb-bodies"><div class="dt-tb-body-col"><span>FRONT</span><div class="dt-tb-body" id="dtTBFront"></div></div><div class="dt-tb-body-col"><span>BACK</span><div class="dt-tb-body" id="dtTBBack"></div></div></div>
         <div class="dt-tb-legend"><span><i style="background:${primaryColor}"></i>Primary</span><span><i style="background:${secondaryColor}"></i>Secondary</span><span><i style="background:${stabilizerColor}"></i>Stabilizer</span></div><div class="dt-tb-note" id="dtTBNote"></div><div class="dt-tb-list" id="dtTBList"></div>
       </div>
@@ -11916,7 +11916,7 @@ function daySessions(key){
     if(!card)return false;
     const badge=card.querySelector("#dtMMRuntimeBadge");
     const panel=card.querySelector("#dtMMPanel");
-    if(!(badge&&panel&&badge.dataset.runtimeBuild==="V36_8_58T"))return false;
+    if(!(badge&&panel&&badge.dataset.runtimeBuild==="V36_8_59T"))return false;
     if(card.classList.contains("dt-mm-mode")){
       const map=card.querySelector("#dtMMMap");
       if(map&&map.children.length){
@@ -11987,7 +11987,7 @@ function daySessions(key){
       };
     }
     window.dtRenderBodyCard=dtTBRenderCard;
-    window.DT_TRAINING_BODY_VERSION="3.1-v58-completion-route-focus";window.DT_RUNTIME_BUILD_SIGNATURE="V36_8_58T";window.DT_SINGLE_SHELL_SHA="f8970728c00c8dca";
+    window.DT_TRAINING_BODY_VERSION="3.2-v59-completion-overlay-cleanup";window.DT_RUNTIME_BUILD_SIGNATURE="V36_8_59T";window.DT_SINGLE_SHELL_SHA="f8970728c00c8dca";
     setTimeout(dtTBInstallIntegrityObserver,0);
   }
 
@@ -14901,7 +14901,24 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
       p.style.setProperty("--c",colors[i%colors.length]);host.appendChild(p);
     }
   }
+  function dtClearCompletionBlockingOverlays(){
+    /* A Progress sheet can remain mounted behind the workout-complete overlay.
+       Clear it explicitly so View Training Body reveals Body & Recovery directly. */
+    try{window.dtCloseExerciseProgress?.()}catch(_){}
+    try{
+      const px=document.getElementById("dtExerciseProgressModal");
+      if(px){
+        px.classList.remove("show","dt-phase1-opening");
+        delete px.dataset.exerciseKey;
+        px.querySelector(".dt-px-sheet")?.scrollTo?.({top:0,behavior:"auto"});
+      }
+    }catch(_){}
+    try{window.__dtCurrentProgressExercise=null}catch(_){}
+    /* Defensive cleanup for the older workout-progress summary overlay as well. */
+    try{document.getElementById("workoutProgressSummaryModal")?.classList.remove("show")}catch(_){}
+  }
   function showComplete(summary,duration){
+    dtClearCompletionBlockingOverlays();
     ensureFinishUI();completeContext={summary,duration};
     document.getElementById("dtCompleteDay").textContent=summary.title;
     document.getElementById("dtCompleteDuration").textContent=fmtDuration(duration);
@@ -14937,9 +14954,11 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
     finishContext=null;restExpanded=false;renderRestUX();renderCenterRestRing();showComplete(summary,duration);
   }
   function closeComplete(toBody){
+    dtClearCompletionBlockingOverlays();
     document.getElementById("dtSessionComplete")?.classList.remove("show");
     if(toBody){
       const openBodyRecovery=()=>{
+        dtClearCompletionBlockingOverlays();
         try{window.dtRenderBodyCard?.()}catch(_){}
         try{
           if(typeof window.dtWorkoutHomeSetPage==="function"){
@@ -14964,6 +14983,7 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
         setTimeout(openBodyRecovery,60);
         setTimeout(openBodyRecovery,220);
         setTimeout(openBodyRecovery,520);
+        setTimeout(dtClearCompletionBlockingOverlays,760);
       }catch(_){
         setTimeout(openBodyRecovery,0);
       }
@@ -17301,7 +17321,7 @@ function restoreObject(obj){
     }catch(_){}
     try{
       window.DT_LAST_IMPORT_DIAGNOSTIC={
-        build:"V36_8_58T",
+        build:"V36_8_59T",
         importedSessions:Array.isArray(state.workouts?.sessions)?state.workouts.sessions.length:0,
         importedCompletedExercises:Array.isArray(state.workouts?.completedExercises)?state.workouts.completedExercises.length:0,
         importedDailySummaries:Object.keys(state.workouts?.dailySummaries||{}).length,
@@ -17378,9 +17398,9 @@ window.dtValidateFullBackupObject=validateBackupObject;
 window.dtRestoreFullBackupObject=restoreObject;
 window.dtCreateRecoveryExportObject=forensicObject;
 window.DT_PRODUCTION_CLEANUP_VERSION=VERSION;
-window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.58";
+window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.59";
 window.DT_VERSION_SAFE_RESTORE_BRIDGE={build:DT_CURRENT_BUILD,portableDataSchema:DT_PORTABLE_DATA_SCHEMA,runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,pinKey:DT_RUNTIME_PIN_KEY};
-window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.58";
+window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.59";
 
 window.dtGuardTrainingBodyAfterImport=function(durationMs=1800){
   const root=document.getElementById("today")||document.body;
@@ -17754,9 +17774,9 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
 <script id="dt-pwa-offline-registration">
 (()=>{
   "use strict";
-  const BUILD="V36_8_58T";
+  const BUILD="V36_8_59T";
   window.DT_RUNTIME_BUILD_SIGNATURE=BUILD;
-  window.DT_PWA_OFFLINE_VERSION="36.8.58-single-shell";
+  window.DT_PWA_OFFLINE_VERSION="36.8.59-single-shell";
   async function clearMarcCaches(){
     try{
       if(!("caches" in window))return;
@@ -17774,7 +17794,7 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
           if(reg.active?.scriptURL&&!/sw\.js(?:\?|$)/.test(reg.active.scriptURL))await reg.unregister();
         }catch(_){}
       }
-      const reg=await navigator.serviceWorker.register("./sw.js?v=36.8.58t",{scope:"./",updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("./sw.js?v=36.8.59t",{scope:"./",updateViaCache:"none"});
       try{await reg.update()}catch(_){}
       window.DT_PWA_SERVICE_WORKER_REGISTERED=true;
       return true;
