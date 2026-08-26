@@ -7901,19 +7901,41 @@ function decorateActivityTrends(){
     const h=miniHistory(e);
     let mini=box.querySelector(".dt-ex-trend-mini");
     if(h.length<2){if(mini)mini.remove();return}
+    const kind=miniTrendKind(e,h);
+    const arrow=kind==="up"?"↗":kind==="down"?"↘":"→";
+    const cls=`dt-ex-trend-mini ${kind==="hold"?"hold":kind==="down"?"down":""}`;
+    const html=`<span class="trend-label">Lift trend</span><span class="trend-values">${h.map(x=>`${x.kg}kg`).join(" · ")}</span><span class="trend-arrow">${arrow}</span>`;
+    const sig=`${cls}|${html}`;
     if(!mini){
       mini=document.createElement("div");
-      mini.className="dt-ex-trend-mini";
+      mini.className=cls;
+      mini.innerHTML=html;
+      mini.dataset.dtTrendSignature=sig;
       const name=box.querySelector(".exname")||box.querySelector(".exercise-head");
       if(name)name.appendChild(mini);else return;
+      return;
     }
-    const kind=miniTrendKind(e,h);
-    mini.className=`dt-ex-trend-mini ${kind==="hold"?"hold":kind==="down"?"down":""}`;
-    const arrow=kind==="up"?"↗":kind==="down"?"↘":"→";
-    mini.innerHTML=`<span class="trend-label">Lift trend</span><span class="trend-values">${h.map(x=>`${x.kg}kg`).join(" · ")}</span><span class="trend-arrow">${arrow}</span>`;
+    /* V61 freeze guard: this renderer is called by a MutationObserver that
+       watches #wlist. Replacing identical innerHTML creates another childList
+       mutation, which used to feed the observer indefinitely on exercises with
+       enough history to show Lift Trend. Keep the renderer idempotent. */
+    if(mini.dataset.dtTrendSignature===sig)return;
+    if(mini.className!==cls)mini.className=cls;
+    if(mini.innerHTML!==html)mini.innerHTML=html;
+    mini.dataset.dtTrendSignature=sig;
   });
 }
-const o=new MutationObserver(()=>{clearTimeout(o._t);o._t=setTimeout(decorateActivityTrends,70)});
+const o=new MutationObserver(records=>{
+  /* Ignore mutations produced only inside the trend widget itself. External
+     workout-list changes still schedule a refresh, including adding/removing
+     exercise cards and history-driven rerenders. */
+  const external=records.some(m=>{
+    const t=m.target?.nodeType===1?m.target:m.target?.parentElement;
+    return !t?.closest?.(".dt-ex-trend-mini");
+  });
+  if(!external)return;
+  clearTimeout(o._t);o._t=setTimeout(decorateActivityTrends,70);
+});
 const boot=()=>{
   const list=document.getElementById("wlist");
   if(list)o.observe(list,{childList:true,subtree:true});
