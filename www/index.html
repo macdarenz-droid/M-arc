@@ -1548,6 +1548,186 @@ main,.app,.app-shell,#app{
 #dtHapticToggle .dt-setting-toggle-dot{width:14px!important;height:14px!important;}
 #dtHapticToggle[aria-checked="true"] .dt-setting-toggle-dot{transform:translateX(14px)!important;}
 </style>
+<style id="dt-v36-8-45-anchor-tween">
+.dt-mm-anchor{
+  appearance:none;-webkit-appearance:none;
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
+  transform:none!important;z-index:3;overflow:visible!important;-webkit-tap-highlight-color:transparent;
+}
+.dt-mm-orb-visual{
+  --g:0;position:absolute;left:0;top:0;width:88px;height:88px;border-radius:50%;
+  transform:translate3d(-50%,-50%,0) scale(.34);transform-origin:50% 50%;
+  opacity:.1;will-change:transform,opacity;pointer-events:none;backface-visibility:hidden;
+}
+.dt-mm-anchor .dt-mm-orb-glass{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.19),transparent 27%),
+    radial-gradient(circle at 58% 62%,rgba(75,224,176,calc(.05 + var(--g)*.17)),transparent 58%),
+    rgba(10,27,37,.28);
+  border:1px solid rgba(188,225,236,.20);
+  -webkit-backdrop-filter:blur(10px) saturate(125%);backdrop-filter:blur(10px) saturate(125%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -12px 26px rgba(1,8,13,.22),0 8px 24px rgba(0,0,0,.18);
+  transition:border-color .9s ease,box-shadow .9s ease,background .9s ease;
+}
+.dt-mm-anchor .dt-mm-orb-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px;z-index:2;text-shadow:0 2px 7px rgba(0,0,0,.74)}
+.dt-mm-anchor .dt-mm-orb-copy .n{font-size:10px;font-weight:850;line-height:1.02;max-width:84%}
+.dt-mm-anchor .dt-mm-orb-copy .p{font-size:12px;font-weight:900;line-height:1;margin-top:4px}
+.dt-mm-anchor .dt-mm-orb-copy .e{font-size:7px;font-weight:700;margin-top:4px;opacity:.78}
+.dt-mm-anchor.tier-high .dt-mm-orb-glass{border-color:rgba(67,244,140,.68);background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.22),transparent 26%),radial-gradient(circle at 55% 58%,rgba(43,238,124,calc(.13 + var(--g)*.26)),transparent 61%),rgba(8,41,29,.29);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),inset 0 0 32px rgba(46,238,128,.12),0 0 calc(10px + var(--g)*22px) rgba(47,235,130,calc(.14 + var(--g)*.22))}
+.dt-mm-anchor.tier-mod .dt-mm-orb-glass{border-color:rgba(72,173,255,.62);background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.20),transparent 26%),radial-gradient(circle at 55% 58%,rgba(60,164,250,calc(.10 + var(--g)*.20)),transparent 61%),rgba(8,31,49,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.17),0 0 calc(8px + var(--g)*16px) rgba(57,161,247,.16)}
+.dt-mm-anchor.tier-low .dt-mm-orb-glass{border-color:rgba(177,101,225,.56);background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.17),transparent 26%),radial-gradient(circle at 55% 58%,rgba(162,85,216,calc(.09 + var(--g)*.15)),transparent 61%),rgba(33,18,45,.27);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 calc(7px + var(--g)*12px) rgba(161,83,213,.14)}
+.dt-mm-anchor.tier-vlow .dt-mm-orb-glass{border-color:rgba(143,160,169,.28);background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.12),transparent 26%),rgba(24,34,40,.22)}
+.dt-mm-anchor.selected .dt-mm-orb-glass{outline:1px solid rgba(111,255,184,.22);outline-offset:5px}
+.dt-mm-anchor.dormant .dt-mm-orb-copy{opacity:0}
+.dt-mm-anchor:active,.dt-mm-anchor:focus{transform:none!important}
+.dt-mm-anchor:focus-visible .dt-mm-orb-glass{outline:1px solid rgba(111,255,184,.36);outline-offset:5px}
+@media(max-width:420px){.dt-mm-orb-visual{width:82px;height:82px}}
+@media(max-width:360px){.dt-mm-orb-visual{width:76px;height:76px}}
+</style>
+
+
+<style id="dt-v36-8-46-target-glass-motion">
+/* Target screenshot implementation: fixed screenshot-traced anchors + continuously interpolated glass material. */
+.dt-mm-anchor{left:var(--unused);transform:none!important}
+.dt-mm-orb-visual{
+  --cr:132;--cg:146;--cb:154;--g:0;
+  position:absolute!important;left:-44px!important;top:-44px!important;width:88px!important;height:88px!important;
+  transform:scale(.34);transform-origin:44px 44px!important;
+  border-radius:50%;opacity:.1;will-change:transform,opacity;pointer-events:none;backface-visibility:hidden;
+}
+.dt-mm-anchor .dt-mm-orb-glass{
+  position:absolute;inset:0;border-radius:50%;
+  border:1px solid rgba(var(--cr),var(--cg),var(--cb),calc(.34 + var(--g)*.42))!important;
+  background:
+    radial-gradient(circle at 31% 21%,rgba(255,255,255,.20),transparent 24%),
+    radial-gradient(circle at 48% 46%,rgba(var(--cr),var(--cg),var(--cb),calc(.075 + var(--g)*.16)),transparent 49%),
+    radial-gradient(circle at 52% 70%,rgba(var(--cr),var(--cg),var(--cb),calc(.035 + var(--g)*.08)),transparent 64%),
+    rgba(6,20,29,.28)!important;
+  -webkit-backdrop-filter:blur(13px) saturate(132%)!important;backdrop-filter:blur(13px) saturate(132%)!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -12px 27px rgba(0,6,10,.27),
+    inset 0 0 28px rgba(var(--cr),var(--cg),var(--cb),calc(.025 + var(--g)*.09)),
+    0 0 calc(7px + var(--g)*20px) rgba(var(--cr),var(--cg),var(--cb),calc(.05 + var(--g)*.16)),
+    0 10px 26px rgba(0,0,0,.16)!important;
+  transition:none!important;
+}
+.dt-mm-anchor .dt-mm-orb-glass:before{content:"";position:absolute;inset:6%;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.10),transparent 38%);filter:blur(2px);opacity:.72}
+.dt-mm-anchor.selected .dt-mm-orb-glass{outline:1px solid rgba(var(--cr),var(--cg),var(--cb),.22)!important;outline-offset:5px}
+.dt-mm-anchor .dt-mm-orb-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px;z-index:2;text-shadow:0 2px 8px rgba(0,0,0,.78)}
+.dt-mm-anchor .dt-mm-orb-copy .n{font-size:10px!important;font-weight:850;line-height:1.03;color:#f2f7f9!important}
+.dt-mm-anchor .dt-mm-orb-copy .p{font-size:13px!important;font-weight:900;line-height:1;margin-top:4px;color:#fff!important}
+.dt-mm-anchor .dt-mm-orb-copy .e{font-size:7px!important;font-weight:700;margin-top:4px;color:rgba(var(--cr),var(--cg),var(--cb),.98)!important}
+.dt-mm-anchor.dormant .dt-mm-orb-copy{opacity:.28}
+/* Target composition: a taller field like the supplied design, without dynamic collision movement. */
+.dt-mm-map{height:475px!important;overflow:hidden!important}
+@media(max-width:420px){.dt-mm-orb-visual{left:-41px!important;top:-41px!important;width:82px!important;height:82px!important;transform-origin:41px 41px!important}.dt-mm-map{height:455px!important}}
+@media(max-width:360px){.dt-mm-orb-visual{left:-38px!important;top:-38px!important;width:76px!important;height:76px!important;transform-origin:38px 38px!important}.dt-mm-map{height:430px!important}}
+</style>
+
+<style id="dt-v36-8-47-motion-isolation">
+/* MOTION-ONLY TEST. Keep every orb visually identical so transition quality can be judged in isolation. */
+.dt-mm-anchor .dt-mm-orb-visual{
+  --cr:74;--cg:164;--cb:232;--g:0!important;
+  will-change:transform,opacity!important;
+  transform-origin:50% 50%!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  contain:layout paint style;
+}
+.dt-mm-anchor .dt-mm-orb-glass{
+  border:1px solid rgba(74,164,232,.68)!important;
+  background:
+    radial-gradient(circle at 30% 22%,rgba(255,255,255,.18),transparent 25%),
+    radial-gradient(circle at 52% 58%,rgba(74,164,232,.18),transparent 64%),
+    rgba(9,28,41,.86)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -10px 22px rgba(0,8,13,.23)!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+.dt-mm-anchor .dt-mm-orb-glass:before{filter:none!important;opacity:.62!important}
+.dt-mm-anchor.selected .dt-mm-orb-glass{outline:none!important}
+.dt-mm-anchor .dt-mm-orb-copy .e{display:none!important}
+.dt-mm-anchor .dt-mm-orb-copy .n,.dt-mm-anchor .dt-mm-orb-copy .p{color:#f4f8fa!important}
+</style>
+
+<style id="dt-v36-8-49-approved-muscle-map-v5">
+/* Approved standalone V5 visual language transplanted into Training Body. */
+.dt-tb-card.dt-mm-mode .dt-mm-shell{overflow:hidden;border:1px solid rgba(151,189,205,.15);background:radial-gradient(circle at 50% 35%,rgba(32,117,155,.07),transparent 40%),linear-gradient(180deg,#07141d,#06111a)}
+.dt-tb-card.dt-mm-mode .dt-mm-map{position:relative!important;height:505px!important;margin:0 5px!important;overflow:hidden!important;border-radius:20px;background:radial-gradient(circle at 50% 48%,rgba(35,116,149,.075),transparent 35%),radial-gradient(circle at 50% 50%,rgba(16,56,75,.11),transparent 68%)!important}
+.dt-tb-card.dt-mm-mode .dt-mm-map:before,.dt-tb-card.dt-mm-mode .dt-mm-map:after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px dashed rgba(92,176,205,.09);border-radius:50%;pointer-events:none}.dt-tb-card.dt-mm-mode .dt-mm-map:before{width:69%;height:68%}.dt-tb-card.dt-mm-mode .dt-mm-map:after{width:91%;height:86%}
+.dt-mm-v5-anchor{appearance:none;-webkit-appearance:none;position:absolute!important;left:var(--x)!important;top:var(--y)!important;width:1px!important;height:1px!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;overflow:visible!important;z-index:4;-webkit-tap-highlight-color:transparent}
+.dt-mm-v5-orb{position:absolute;left:-46px;top:-46px;width:92px;height:92px;border-radius:50%;transform:translateZ(0) scale(.24);transform-origin:50% 50%;opacity:.08;will-change:transform,opacity;pointer-events:auto;contain:paint}
+.dt-mm-v5-shell{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 33% 21%,rgba(255,255,255,.13),transparent 24%),radial-gradient(circle at 50% 68%,rgba(255,255,255,.025),transparent 58%),rgba(6,18,27,.34);border:1px solid rgba(214,235,245,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),inset 0 -14px 26px rgba(0,0,0,.18),inset 0 0 32px rgba(126,194,226,.05),0 14px 32px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(14px) saturate(132%);backdrop-filter:blur(14px) saturate(132%)}
+.dt-mm-v5-spec{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 31% 20%,rgba(255,255,255,.20),transparent 24%);pointer-events:none}
+.dt-mm-v5-tone{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;will-change:opacity}.dt-mm-v5-tone:before{content:"";position:absolute;inset:4%;border-radius:50%;filter:blur(8px);opacity:.72;pointer-events:none}.dt-mm-v5-tone:after{content:"";position:absolute;inset:-18%;border-radius:50%;background:transparent;filter:blur(12px);pointer-events:none}
+.dt-mm-v5-tone.high{background:radial-gradient(circle at 54% 58%,rgba(72,228,125,.48),rgba(16,75,46,.16) 42%,rgba(5,18,28,.02) 72%);box-shadow:inset 0 0 40px rgba(72,228,125,.26),inset 0 -10px 30px rgba(30,118,68,.12),0 0 20px rgba(72,228,125,.44),0 0 46px rgba(72,228,125,.30),0 0 82px rgba(72,228,125,.14)}
+.dt-mm-v5-tone.high:before{background:radial-gradient(circle,rgba(72,228,125,.22),transparent 68%)}.dt-mm-v5-tone.high:after{box-shadow:0 0 42px 16px rgba(72,228,125,.22),0 0 78px 18px rgba(72,228,125,.10)}
+.dt-mm-v5-tone.mod{background:radial-gradient(circle at 54% 58%,rgba(82,174,254,.40),rgba(32,94,150,.13) 44%,rgba(5,18,28,.02) 72%);box-shadow:inset 0 0 35px rgba(82,174,254,.21),0 0 17px rgba(82,174,254,.34),0 0 39px rgba(82,174,254,.22),0 0 68px rgba(82,174,254,.10)}
+.dt-mm-v5-tone.mod:before{background:radial-gradient(circle,rgba(82,174,254,.18),transparent 68%)}.dt-mm-v5-tone.mod:after{box-shadow:0 0 36px 14px rgba(82,174,254,.17),0 0 66px 16px rgba(82,174,254,.08)}
+.dt-mm-v5-tone.low{background:radial-gradient(circle at 54% 58%,rgba(173,105,222,.34),rgba(87,40,122,.11) 45%,rgba(5,18,28,.02) 72%);box-shadow:inset 0 0 30px rgba(173,105,222,.17),0 0 15px rgba(173,105,222,.27),0 0 34px rgba(173,105,222,.17),0 0 58px rgba(173,105,222,.075)}
+.dt-mm-v5-tone.low:before{background:radial-gradient(circle,rgba(173,105,222,.15),transparent 68%)}.dt-mm-v5-tone.low:after{box-shadow:0 0 30px 12px rgba(173,105,222,.13),0 0 54px 14px rgba(173,105,222,.055)}
+.dt-mm-v5-tone.vlow{background:radial-gradient(circle at 54% 58%,rgba(139,151,158,.20),rgba(55,65,72,.08) 45%,rgba(5,18,28,.02) 72%);box-shadow:inset 0 0 22px rgba(139,151,158,.09),0 0 9px rgba(139,151,158,.13),0 0 20px rgba(139,151,158,.07)}
+.dt-mm-v5-tone.vlow:before{background:radial-gradient(circle,rgba(139,151,158,.08),transparent 68%)}.dt-mm-v5-tone.vlow:after{box-shadow:0 0 20px 8px rgba(139,151,158,.06)}
+.dt-mm-v5-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:9px;text-shadow:0 2px 7px rgba(0,0,0,.72);z-index:5}.dt-mm-v5-copy .n{font-size:10px;font-weight:850;line-height:1.05}.dt-mm-v5-copy .p{font-size:13px;font-weight:950;line-height:1;margin-top:5px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.dt-mm-v5-copy .e{font-size:6px;margin-top:5px;color:#b8c9d1;font-weight:750;letter-spacing:.03em}.dt-mm-v5-anchor.selected .dt-mm-v5-shell{outline:1px solid rgba(220,241,250,.18);outline-offset:5px}
+@media(max-width:360px){.dt-tb-card.dt-mm-mode .dt-mm-map{height:475px!important}.dt-mm-v5-orb{left:-42px;top:-42px;width:84px;height:84px}.dt-mm-v5-copy .n{font-size:9px}.dt-mm-v5-copy .p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.dt-mm-v5-orb,.dt-mm-v5-tone{will-change:auto}}
+
+/* V36.8.49T — authoritative Muscle Map visual contract.
+   Real/imported/future data may change values only; renderer owns visuals. */
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-anchor{
+  position:absolute!important;
+  left:var(--x)!important;
+  top:var(--y)!important;
+  width:1px!important;
+  height:1px!important;
+  transform:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  overflow:visible!important;
+}
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-orb{
+  position:absolute!important;
+  left:-46px!important;
+  top:-46px!important;
+  width:92px!important;
+  height:92px!important;
+  border-radius:50%!important;
+  transform-origin:50% 50%!important;
+  background:transparent!important;
+  border:0!important;
+  contain:paint!important;
+  backface-visibility:hidden;
+}
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-shell,
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-tone,
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-spec{
+  border-radius:50%!important;
+}
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-bubble,
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-orb,
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-anchor,
+#dtTBCard.dt-mm-mode #dtMMMap .dt-mm-orb-visual{
+  /* Legacy nodes must never be visible if a stale lifecycle path leaves one behind. */
+  display:none!important;
+}
+@media(max-width:360px){
+  #dtTBCard.dt-mm-mode #dtMMMap .dt-mm-v5-orb{
+    left:-42px!important;top:-42px!important;width:84px!important;height:84px!important;
+  }
+}
+
+</style>\n<style id="dt-v36-8-50-runtime-badge">
+#dtTBCard.dt-mm-mode #dtMMRuntimeBadge{
+  min-width:72px;text-align:center;font-weight:900!important;letter-spacing:.02em;
+  color:#8fe8be!important;border-color:rgba(91,226,160,.28)!important;
+}
+</style>
 </head>
 <body>
 <div aria-hidden="true" id="dtStartupGate"><div class="dt-startup-mark">M/ARC</div></div>
@@ -11126,16 +11306,6 @@ function daySessions(key){
 .dt-mm-kicker{font-size:9px;letter-spacing:.15em;font-weight:900;color:#7f96a4}.dt-mm-week{font-size:15px;font-weight:900;color:#58e4a6;margin-top:2px}.dt-mm-date{font-size:10px;color:#a8bac3;margin-top:2px}
 .dt-mm-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 9px;font-size:8px;color:#879ca7;min-width:170px}.dt-mm-leg{display:flex;align-items:center;justify-content:space-between;gap:6px}.dt-mm-leg span{display:flex;align-items:center;gap:4px}.dt-mm-leg i{width:7px;height:7px;border-radius:50%;display:inline-block}.dt-mm-leg b{font-weight:800;color:#a8bac3}
 .dt-mm-map{height:405px;position:relative;margin:8px 0 4px;border-radius:14px;overflow:hidden;background:radial-gradient(circle at 50% 48%,rgba(68,130,154,.06),transparent 54%)}
-.dt-mm-bubble{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:50%;transform:translate(-50%,-50%);padding:3px;line-height:1.02;user-select:none;-webkit-tap-highlight-color:transparent;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease,transform .16s ease,opacity .25s ease;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 8px 18px rgba(0,0,0,.22)}
-.dt-mm-bubble:active{transform:translate(-50%,-50%) scale(.95)}.dt-mm-bubble.selected{box-shadow:inset 0 0 0 2px rgba(255,255,255,.48),0 0 0 3px rgba(87,226,163,.10),0 10px 22px rgba(0,0,0,.28)}
-.dt-mm-bubble.high{background:radial-gradient(circle at 35% 30%,#7beb95,#39bd64);color:#06150b}.dt-mm-bubble.mod{background:radial-gradient(circle at 35% 30%,#65b8ff,#2d7fd5);color:#06131f}.dt-mm-bubble.low{background:radial-gradient(circle at 35% 30%,#c58af5,#8851c0);color:#13091d}.dt-mm-bubble.vlow{background:radial-gradient(circle at 35% 30%,#b3bbc0,#737e85);color:#101518}
-.dt-mm-bubble .n{font-weight:900;max-width:88%;overflow:hidden;text-overflow:ellipsis}.dt-mm-bubble .p{font-weight:900;opacity:.82;margin-top:2px}.dt-mm-bubble.tiny .n{font-size:6px}.dt-mm-bubble.tiny .p{font-size:6px}.dt-mm-bubble.small .n{font-size:8px}.dt-mm-bubble.small .p{font-size:7px}.dt-mm-bubble.med .n{font-size:9px}.dt-mm-bubble.med .p{font-size:8px}.dt-mm-bubble.big .n{font-size:11px}.dt-mm-bubble.big .p{font-size:9px}
-.dt-mm-controls{margin-top:8px;border-top:1px solid rgba(255,255,255,.055);padding-top:10px}.dt-mm-playrow{display:flex;align-items:center;gap:10px}.dt-mm-play{width:46px;height:46px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(82,229,164,.68);background:rgba(19,75,57,.46);color:#58e4a6;font-size:17px;font-weight:900;display:grid;place-items:center}.dt-mm-range{flex:1;accent-color:#55e1a3;min-width:0}.dt-mm-speed{font-size:8px;color:#a9bbc3;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:6px 7px}
-.dt-mm-weeks{display:grid;gap:3px;margin-top:7px}.dt-mm-w{text-align:center;font-size:7px;color:#6f8793;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dt-mm-w.on{color:#58e4a6;font-weight:900}
-.dt-mm-detail{display:grid;grid-template-columns:1.35fr repeat(3,1fr);gap:0;margin-top:10px;border:1px solid rgba(255,255,255,.065);border-radius:13px;background:rgba(5,16,23,.50);overflow:hidden}.dt-mm-detail>div{padding:9px;border-right:1px solid rgba(255,255,255,.055);min-width:0}.dt-mm-detail>div:last-child{border-right:0}.dt-mm-dname{font-size:13px;font-weight:900;color:#eef6f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dt-mm-demph{font-size:8px;color:#58e4a6;margin-top:2px}.dt-mm-dval{font-size:13px;font-weight:900;color:#edf5f8}.dt-mm-dlbl{font-size:7px;color:#7e949f;margin-top:2px}.dt-mm-empty{text-align:center;color:#718995;font-size:10px;padding:55px 14px}
-@media(max-width:420px){.dt-mm-head{display:block}.dt-mm-legend{margin-top:7px;min-width:0}.dt-mm-map{height:390px}.dt-mm-detail{grid-template-columns:1.45fr 1fr 1fr}.dt-mm-detail>div:nth-child(4){display:none}}
-@media(max-width:360px){.dt-mm-shell{padding:10px}.dt-mm-map{height:380px}}
-@media(prefers-reduced-motion:reduce){.dt-mm-bubble{transition:none}}
 .dt-tb-bodies{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
 .dt-tb-body-col{text-align:center;min-width:0}
 .dt-tb-body-col>span{display:block;color:#8298a6;font-size:9px;letter-spacing:.12em;font-weight:900;margin-bottom:3px}
@@ -11407,56 +11577,168 @@ function daySessions(key){
     </div>`;
   }
 
-  function dtTBStopPlay(){
-    if(dtTBPlayTimer){ clearInterval(dtTBPlayTimer); dtTBPlayTimer=null; }
-    const btn=document.getElementById("dtMMPlay");
-    if(btn){btn.textContent="▶";btn.setAttribute("aria-label","Play weekly Muscle Map");}
-  }
-
+  /* ================================================================
+     V36.8.48T — Approved Muscle Map V5 runtime
+     Contract:
+     - workout history is the only durable source of map data
+     - fixed map-relative anchors are build-owned UI, never imported/exported
+     - one persistent DOM orb per muscle
+     - size + pre-rendered tone layer opacity only during morph
+     - no collision/layout recalculation during week changes
+     ================================================================ */
+  const DT_MM_MORPH_MS=3200;
+  const DT_MM_SETTLE_MS=800;
   const DT_MM_POS={
-    chest:[31,28],upper_chest:[47,18],front_delts:[69,24],triceps:[82,39],biceps:[18,39],forearms:[9,55],
-    lats:[68,48],mid_back:[49,45],upper_traps:[56,16],rear_delts:[78,27],abs:[43,67],core:[55,69],
-    quads:[29,82],hamstrings:[68,82],glutes:[52,83],calves:[14,88],hip_flexors:[83,69],brachialis:[18,52]
+    lats:[50,47],chest:[34,24],shoulders:[68,25],biceps:[20,40],triceps:[80,43],
+    upper_back:[27,56],quads:[73,65],hamstrings:[59,78],glutes:[35,78],forearms:[13,57],
+    calves:[17,86],abs:[47,89],mid_back:[87,64],hip_flexors:[78,86],
+    upper_chest:[43,12.5],front_delts:[61,18],rear_delts:[83,31],upper_traps:[56,11],
+    core:[49,84],brachialis:[12,42],side_delts:[73,17]
   };
+  const DT_MM_SPARES=[[28,45],[68,37],[37,62],[59,60],[22,68],[69,91],[38,92],[89,75]];
+  const DT_MM_TIERS=["vlow","low","mod","high"];
   let dtMMSelectedKey="";
-  function dtMMClass(v){return v>15?"high":v>=8?"mod":v>=3?"low":"vlow";}
-  function dtMMSize(v){v=+v||0;if(v<3)return 30;if(v<6)return 40+(v-3)*4;if(v<9)return 54+(v-6)*4;if(v<13)return 70+(v-9)*4;return Math.min(112,88+(v-13)*3.5);}
-  function dtMMSizeClass(s){return s>=100?"big":s>=72?"med":s>=48?"small":"tiny";}
-  function dtMMFallbackPos(key,index,total){let h=0;String(key||"").split("").forEach(c=>{h=((h<<5)-h)+c.charCodeAt(0);h|=0});const angle=((Math.abs(h)%360)+(index*(360/Math.max(1,total))))*Math.PI/180;const radius=27+(Math.abs(h>>4)%17);return [50+Math.cos(angle)*radius,51+Math.sin(angle)*radius*.82];}
-  function dtMMPos(row,index,total){return DT_MM_POS[row.key]||dtMMFallbackPos(row.key,index,total);}
-  function dtMMLayout(rows,map){
-    const W=Math.max(260,map?.clientWidth||500),H=Math.max(320,map?.clientHeight||405),scale=Math.max(.72,Math.min(1,W/390)),gap=6,pad=4;
-    const nodes=rows.map((row,i)=>{const pref=dtMMPos(row,i,rows.length),size=dtMMSize(row.pct)*scale;return{row,i,size,r:size/2+gap/2,px:pref[0]/100*W,py:pref[1]/100*H,x:pref[0]/100*W,y:pref[1]/100*H};});
-    for(let pass=0;pass<140;pass++){
-      let overlaps=0;
-      for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
-        const a=nodes[i],b=nodes[j],dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy)||.001,min=a.r+b.r;
-        if(dist<min){overlaps++;const push=(min-dist)/2+.35,ux=dx/dist,uy=dy/dist;a.x-=ux*push;a.y-=uy*push;b.x+=ux*push;b.y+=uy*push;}
-      }
-      for(const n of nodes){n.x+=(n.px-n.x)*.012;n.y+=(n.py-n.y)*.012;n.x=Math.max(n.r+pad,Math.min(W-n.r-pad,n.x));n.y=Math.max(n.r+pad,Math.min(H-n.r-pad,n.y));}
-      if(!overlaps)break;
-    }
-    return nodes.map(n=>({x:n.x/W*100,y:n.y/H*100,size:n.size}));
+  let dtMMTransitionToken=0;
+  let dtMMPlaying=false;
+  let dtMMPlaybackPromise=null;
+  const dtMMNodes=new Map();
+
+  function dtMMCanonicalKey(key,label){
+    key=String(key||"").toLowerCase().trim();label=String(label||"").toLowerCase().trim();
+    if(key==="quadriceps"||label==="quadriceps")return "quads";
+    if(key==="upper back"||key==="upper_back"||label==="upper back")return "upper_back";
+    if(key==="shoulder"||key==="shoulders"||label==="shoulders")return "shoulders";
+    return key.replace(/\s+/g,"_");
   }
+  function dtMMPos(item,index){
+    const key=dtMMCanonicalKey(item?.key,item?.label);
+    if(DT_MM_POS[key])return DT_MM_POS[key];
+    let h=0;String(key).split("").forEach(c=>{h=((h<<5)-h)+c.charCodeAt(0);h|=0});
+    return DT_MM_SPARES[Math.abs(h)%DT_MM_SPARES.length];
+  }
+  function dtMMTier(p){p=+p||0;return p>15?"high":p>=8?"mod":p>=3?"low":"vlow";}
+  function dtMMTierName(p){const t=dtMMTier(p);return t==="high"?"High":t==="mod"?"Moderate":t==="low"?"Low":"Very Low";}
+  function dtMMScaleFor(p){p=Math.max(0,Math.min(20,+p||0));const n=p/20;return .24+Math.pow(n,.82)*1.06;}
+  function dtMMOpacityFor(p){p=+p||0;return p<=0?.08:.50+Math.min(1,p/20)*.50;}
+  function dtMMWait(ms){return new Promise(r=>setTimeout(r,ms));}
+
   function dtMMWeekAgg(index){return index<0||index>=dtTBWeeks.length?dtTBAggregate([]):dtTBAggregate(dtTBWeekRecords(dtTBWeeks[index]));}
-  function dtMMRender(agg){
-    const map=document.getElementById("dtMMMap"),detail=document.getElementById("dtMMDetail");if(!map||!detail)return;
-    const week=dtTBWeeks[dtTBWeekIdx]||"",weekEl=document.getElementById("dtMMWeek"),dateEl=document.getElementById("dtMMDate");
-    if(weekEl)weekEl.textContent=dtTBWeeks.length?`Week ${dtTBWeekIdx+1} of ${dtTBWeeks.length}`:"No weekly history";
+  let dtMMUniverseCache={sig:"",items:[]};
+  function dtMMUniverse(){
+    const sig=dtTBWeeks.join("|");
+    if(dtMMUniverseCache.sig===sig&&dtMMUniverseCache.items.length)return dtMMUniverseCache.items;
+    const byKey=new Map();
+    dtTBWeeks.forEach((_,wi)=>{
+      (dtMMWeekAgg(wi).muscles||[]).forEach(m=>{
+        const key=dtMMCanonicalKey(m.key,m.label),prev=byKey.get(key);
+        if(!prev)byKey.set(key,{key,label:m.label||key,maxPct:+m.pct||0});
+        else prev.maxPct=Math.max(prev.maxPct,+m.pct||0);
+      });
+    });
+    const preferred=["lats","chest","shoulders","biceps","triceps","upper_back","quads","hamstrings","glutes","forearms","calves","abs","mid_back","hip_flexors","upper_chest","front_delts","rear_delts","upper_traps","core","brachialis","side_delts"];
+    const items=preferred.map(k=>byKey.get(k)).filter(Boolean);
+    [...byKey.values()].filter(x=>!preferred.includes(x.key)).sort((a,b)=>b.maxPct-a.maxPct).forEach(x=>{if(items.length<22)items.push(x)});
+    dtMMUniverseCache={sig,items};return items;
+  }
+  function dtMMResetDerived(){
+    dtMMTransitionToken++;
+    dtMMPlaying=false;
+    dtMMPlaybackPromise=null;
+    dtMMUniverseCache={sig:"",items:[]};
+    dtMMNodes.forEach(n=>{try{dtMMFreezeNode(n)}catch(_){}});
+    dtMMNodes.clear();
+    const map=document.getElementById("dtMMMap");if(map){map.innerHTML="";delete map.dataset.mmPrimed;}
+  }
+  window.dtMMResetDerived=dtMMResetDerived;
+
+  function dtMMEnsureNode(map,item,index){
+    const key=dtMMCanonicalKey(item.key,item.label);
+    let n=dtMMNodes.get(key);
+    if(n&&n.anchor?.isConnected)return n;
+    const pos=dtMMPos({key,label:item.label},index);
+    const anchor=document.createElement("button");
+    anchor.type="button";anchor.className="dt-mm-v5-anchor";anchor.dataset.mmKey=key;
+    anchor.style.setProperty("--x",pos[0]+"%");anchor.style.setProperty("--y",pos[1]+"%");
+    anchor.innerHTML=`<span class="dt-mm-v5-orb"><span class="dt-mm-v5-shell"></span><span class="dt-mm-v5-tone vlow"></span><span class="dt-mm-v5-tone low"></span><span class="dt-mm-v5-tone mod"></span><span class="dt-mm-v5-tone high"></span><span class="dt-mm-v5-spec"></span><span class="dt-mm-v5-copy"><b class="n"></b><strong class="p"></strong><small class="e"></small></span></span>`;
+    map.appendChild(anchor);
+    const orb=anchor.querySelector(".dt-mm-v5-orb");
+    n={key,anchor,orb,pct:anchor.querySelector(".p"),level:anchor.querySelector(".e"),name:anchor.querySelector(".n"),p:0,scale:.24,opacity:.08,tier:"vlow",anims:[],target:null};
+    dtMMNodes.set(key,n);return n;
+  }
+  function dtMMReadScale(el){
+    const t=getComputedStyle(el).transform;if(!t||t==="none")return 1;
+    const m=t.match(/matrix(?:3d)?\(([^)]+)\)/);if(!m)return 1;
+    const v=m[1].split(",").map(Number);return Math.hypot(v[0],v[1]||0)||1;
+  }
+  function dtMMCancelNode(n){n.anims.forEach(a=>{try{a.cancel()}catch(_){}});n.anims=[];}
+  function dtMMFreezeNode(n){
+    if(!n?.orb)return {scale:n?.scale||.24,opacity:n?.opacity||.08,layerOps:{vlow:1,low:0,mod:0,high:0}};
+    const scale=dtMMReadScale(n.orb),opacity=parseFloat(getComputedStyle(n.orb).opacity)||0;
+    n.orb.style.transform=`translateZ(0) scale(${scale})`;n.orb.style.opacity=String(opacity);
+    const layerOps={};DT_MM_TIERS.forEach(k=>{const el=n.anchor.querySelector(`.dt-mm-v5-tone.${k}`);layerOps[k]=parseFloat(getComputedStyle(el).opacity)||0;el.style.opacity=String(layerOps[k]);});
+    dtMMCancelNode(n);return {scale,opacity,layerOps};
+  }
+  function dtMMSetNodeInstant(n,p){
+    const scale=dtMMScaleFor(p),opacity=dtMMOpacityFor(p),tier=dtMMTier(p);
+    dtMMCancelNode(n);n.orb.style.transform=`translateZ(0) scale(${scale})`;n.orb.style.opacity=String(opacity);
+    DT_MM_TIERS.forEach(k=>n.anchor.querySelector(`.dt-mm-v5-tone.${k}`).style.opacity=k===tier?"1":"0");
+    n.p=p;n.scale=scale;n.opacity=opacity;n.tier=tier;n.pct.textContent=p>0?`${Math.round(p)}%`:"";n.level.textContent=p>0?dtMMTierName(p):"";
+  }
+  async function dtMMMorphNodes(targets,duration){
+    const token=++dtMMTransitionToken,promises=[];
+    targets.forEach(({n,p})=>{
+      const snap=dtMMFreezeNode(n),scale=dtMMScaleFor(p),opacity=dtMMOpacityFor(p),tier=dtMMTier(p);
+      const a=n.orb.animate([{transform:`translateZ(0) scale(${snap.scale})`,opacity:String(snap.opacity)},{transform:`translateZ(0) scale(${scale})`,opacity:String(opacity)}],{duration,easing:"cubic-bezier(.22,.61,.36,1)",fill:"forwards"});
+      n.anims.push(a);promises.push(a.finished.catch(()=>null));
+      DT_MM_TIERS.forEach(k=>{const layer=n.anchor.querySelector(`.dt-mm-v5-tone.${k}`),from=snap.layerOps[k]||0,to=k===tier?1:0,la=layer.animate([{opacity:String(from)},{opacity:String(to)}],{duration,easing:"cubic-bezier(.22,.61,.36,1)",fill:"forwards"});n.anims.push(la);promises.push(la.finished.catch(()=>null));});
+      n.target={p,scale,opacity,tier};
+    });
+    await Promise.all(promises);if(token!==dtMMTransitionToken)return false;
+    targets.forEach(({n})=>{const t=n.target;if(!t)return;n.orb.style.transform=`translateZ(0) scale(${t.scale})`;n.orb.style.opacity=String(t.opacity);DT_MM_TIERS.forEach(k=>n.anchor.querySelector(`.dt-mm-v5-tone.${k}`).style.opacity=k===t.tier?"1":"0");dtMMCancelNode(n);n.p=t.p;n.scale=t.scale;n.opacity=t.opacity;n.tier=t.tier;n.pct.textContent=t.p>0?`${Math.round(t.p)}%`:"";n.level.textContent=t.p>0?dtMMTierName(t.p):"";});
+    return true;
+  }
+  function dtMMRenderMeta(index,agg,current){
+    const week=dtTBWeeks[index]||"",weekEl=document.getElementById("dtMMWeek"),dateEl=document.getElementById("dtMMDate");
+    if(weekEl)weekEl.textContent=dtTBWeeks.length?`Week ${index+1} of ${dtTBWeeks.length}`:"No weekly history";
     if(dateEl)dateEl.textContent=week?dtTBWeekLabel(week):"Complete a workout to begin";
-    const rows=(agg.muscles||[]).filter(m=>m.pct>0).slice(0,18);
-    if(!rows.length){map.innerHTML='<div class="dt-mm-empty">No working sets logged for this week.</div>';detail.innerHTML='';return;}
-    if(!rows.some(r=>r.key===dtMMSelectedKey))dtMMSelectedKey=rows[0].key;
-    const layout=dtMMLayout(rows,map);
-    map.innerHTML=rows.map((row,i)=>{const p=layout[i],sel=row.key===dtMMSelectedKey?" selected":"";return `<button type="button" class="dt-mm-bubble ${dtMMClass(row.pct)} ${dtMMSizeClass(p.size)}${sel}" data-mm-key="${row.key}" style="left:${p.x.toFixed(2)}%;top:${p.y.toFixed(2)}%;width:${p.size.toFixed(1)}px;height:${p.size.toFixed(1)}px" aria-label="${row.label}, ${row.pct} percent"><span class="n">${row.label}</span><span class="p">${row.pct}%</span></button>`}).join("");
-    map.querySelectorAll("[data-mm-key]").forEach(btn=>btn.addEventListener("click",()=>{dtMMSelectedKey=btn.dataset.mmKey;dtMMRender(agg);}));
-    const selected=rows.find(r=>r.key===dtMMSelectedKey)||rows[0];
-    const prevIdx=Math.max(0,dtTBWeekIdx-1),prev=dtMMWeekAgg(prevIdx).muscles.find(m=>m.key===selected.key),change=dtTBWeekIdx>0?selected.pct-(prev?.pct||0):0;
-    detail.innerHTML=`<div><div class="dt-mm-dname">${selected.label}</div><div class="dt-mm-demph">${dtMMClass(selected.pct).replace("mod","Moderate").replace("vlow","Very Low").replace("high","High").replace("low","Low")} emphasis</div></div><div><div class="dt-mm-dval">${selected.pct}%</div><div class="dt-mm-dlbl">SHARE</div></div><div><div class="dt-mm-dval">${agg.workingSets}</div><div class="dt-mm-dlbl">WORKING SETS</div></div><div><div class="dt-mm-dval">${change>0?"+":""}${change}%</div><div class="dt-mm-dlbl">VS PRIOR</div></div>`;
-    const range=document.getElementById("dtMMRange");if(range){range.min="0";range.max=String(Math.max(0,dtTBWeeks.length-1));range.value=String(dtTBWeekIdx);range.disabled=dtTBWeeks.length<2;}
-    const weeks=document.getElementById("dtMMWeeks");if(weeks){weeks.style.gridTemplateColumns=`repeat(${Math.max(1,Math.min(dtTBWeeks.length,8))},1fr)`;const show=dtTBWeeks.slice(-8),base=dtTBWeeks.length-show.length;weeks.innerHTML=show.map((w,i)=>`<div class="dt-mm-w ${base+i===dtTBWeekIdx?"on":""}">W${base+i+1}</div>`).join("");}
+    const selected=current.get(dtMMSelectedKey)||(agg.muscles||[])[0]||null,detail=document.getElementById("dtMMDetail");
+    if(detail){
+      if(selected){const prev=index>0?dtMMWeekAgg(index-1).muscles.find(m=>dtMMCanonicalKey(m.key,m.label)===dtMMCanonicalKey(selected.key,selected.label)):null,delta=index>0?(+selected.pct||0)-(+prev?.pct||0):0;detail.innerHTML=`<div><div class="dt-mm-dname">${selected.label}</div><div class="dt-mm-demph">${dtMMTierName(selected.pct)} emphasis</div></div><div><div class="dt-mm-dval">${selected.pct}%</div><div class="dt-mm-dlbl">SHARE</div></div><div><div class="dt-mm-dval">${agg.workingSets}</div><div class="dt-mm-dlbl">WORKING SETS</div></div><div><div class="dt-mm-dval">${delta>0?"+":""}${delta}%</div><div class="dt-mm-dlbl">VS PRIOR</div></div>`;}else detail.innerHTML="";
+    }
+    const range=document.getElementById("dtMMRange");if(range){range.min="0";range.max=String(Math.max(0,dtTBWeeks.length-1));range.value=String(index);range.disabled=dtTBWeeks.length<2;}
+    const weeks=document.getElementById("dtMMWeeks");if(weeks){const show=dtTBWeeks.slice(-8),base=dtTBWeeks.length-show.length;weeks.style.gridTemplateColumns=`repeat(${Math.max(1,show.length)},1fr)`;if(weeks.querySelectorAll("[data-mm-week]").length!==show.length){weeks.innerHTML=show.map((w,i)=>`<button type="button" class="dt-mm-w" data-mm-week="${base+i}"><b>W${base+i+1}</b><span>${dtTBWeekLabel(w).replace(/ · Week.*$/," ")}</span></button>`).join("");weeks.querySelectorAll("[data-mm-week]").forEach(b=>b.onclick=()=>{dtTBStopPlay();dtMMUpdateWeek(+b.dataset.mmWeek||0);});}weeks.querySelectorAll("[data-mm-week]").forEach(b=>{const active=+b.dataset.mmWeek===index;b.classList.toggle("on",active);b.setAttribute("aria-current",active?"true":"false");});}
   }
 
+  async function dtMMUpdateWeek(index,{fromPlay=false,instant=false}={}){
+    if(!dtTBWeeks.length)return false;
+    index=Math.max(0,Math.min(dtTBWeeks.length-1,index|0));dtTBWeekIdx=index;
+    const agg=dtMMWeekAgg(index),map=document.getElementById("dtMMMap");if(!map)return false;
+    const current=new Map((agg.muscles||[]).map(m=>[dtMMCanonicalKey(m.key,m.label),{...m,key:dtMMCanonicalKey(m.key,m.label)}]));
+    const universe=dtMMUniverse();if(!current.has(dtMMSelectedKey)){const first=(agg.muscles||[]).find(m=>(+m.pct||0)>0);if(first)dtMMSelectedKey=dtMMCanonicalKey(first.key,first.label);}
+    const targets=[],seen=new Set();universe.forEach((item,i)=>{const key=dtMMCanonicalKey(item.key,item.label),row=current.get(key)||{key,label:item.label,pct:0},n=dtMMEnsureNode(map,{...item,key},i);seen.add(key);n.name.textContent=item.label;n.anchor.setAttribute("aria-label",`${item.label}, ${+row.pct||0}% ${dtMMTierName(row.pct)} emphasis`);n.anchor.classList.toggle("selected",key===dtMMSelectedKey);n.anchor.onclick=()=>{dtMMSelectedKey=key;dtMMRenderMeta(dtTBWeekIdx,dtMMWeekAgg(dtTBWeekIdx),new Map((dtMMWeekAgg(dtTBWeekIdx).muscles||[]).map(m=>[dtMMCanonicalKey(m.key,m.label),m])));dtMMNodes.forEach(x=>x.anchor.classList.toggle("selected",x.key===dtMMSelectedKey));};targets.push({n,p:+row.pct||0});});
+    [...dtMMNodes.entries()].forEach(([k,n])=>{if(!seen.has(k)){try{n.anchor.remove()}catch(_){}dtMMNodes.delete(k);}});
+    dtMMRenderMeta(index,agg,current);
+    if(instant||!map.dataset.mmPrimed){targets.forEach(t=>dtMMSetNodeInstant(t.n,t.p));map.dataset.mmPrimed="1";return true;}
+    const changed=targets.some(t=>Math.abs((t.n.p||0)-t.p)>.01);
+    if(!changed)return true;
+    const ok=await dtMMMorphNodes(targets,DT_MM_MORPH_MS);if(ok)dtMMRenderMeta(index,agg,current);return ok;
+  }
+  function dtMMRender(){return dtMMUpdateWeek(dtTBWeekIdx,{instant:!document.getElementById("dtMMMap")?.dataset.mmPrimed});}
+  window.dtMMUpdateWeek=dtMMUpdateWeek;
+
+  function dtTBStopPlay(){
+    dtMMPlaying=false;dtTBPlayTimer=null;dtMMTransitionToken++;
+    dtMMNodes.forEach(n=>{try{dtMMFreezeNode(n)}catch(_){}});
+    const btn=document.getElementById("dtMMPlay");if(btn){btn.textContent="▶";btn.setAttribute("aria-label","Play weekly Muscle Map");btn.setAttribute("aria-pressed","false");}
+  }
+  async function dtMMStartPlayback(){
+    if(dtMMPlaying){dtTBStopPlay();return}
+    if(dtTBWeeks.length<2)return;
+    dtMMPlaying=true;dtTBPlayTimer={kind:"muscle-map-v5"};
+    const btn=document.getElementById("dtMMPlay");if(btn){btn.textContent="⏸";btn.setAttribute("aria-label","Pause weekly Muscle Map");btn.setAttribute("aria-pressed","true");}
+    const run=async()=>{while(dtMMPlaying){const next=(dtTBWeekIdx+1)>=dtTBWeeks.length?0:dtTBWeekIdx+1;const ok=await dtMMUpdateWeek(next,{fromPlay:true});if(!dtMMPlaying||!ok)break;await dtMMWait(DT_MM_SETTLE_MS);}};
+    dtMMPlaybackPromise=run().finally(()=>{if(dtMMPlaying)dtTBStopPlay();});
+  }
   function dtTBEnsureCard(){
     let card=document.getElementById("dtTBCard");
     if(card)return card;
@@ -11467,15 +11749,15 @@ function daySessions(key){
       <div class="dt-tb-stats"><div class="dt-tb-stat"><b id="dtTBStatWorkouts">0</b><span>Workouts</span></div><div class="dt-tb-stat"><b id="dtTBStatDays">0</b><span>Days Tracked</span></div><div class="dt-tb-stat"><b id="dtTBStatTop">—</b><span>Top Focus</span></div></div>
       <div class="dt-tb-tabs" id="dtTBTabs"><button class="dt-tb-tab active" type="button" data-mode="recent">Last 30 Days</button><button class="dt-tb-tab" type="button" data-mode="alltime">All-Time</button><button class="dt-tb-tab" type="button" data-mode="musclemap">Muscle Map</button></div>
       <div id="dtTBMain">
-        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed">1.1s</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
+        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed" id="dtMMRuntimeBadge">V55 • 3.2s</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
         <div class="dt-tb-bodies"><div class="dt-tb-body-col"><span>FRONT</span><div class="dt-tb-body" id="dtTBFront"></div></div><div class="dt-tb-body-col"><span>BACK</span><div class="dt-tb-body" id="dtTBBack"></div></div></div>
         <div class="dt-tb-legend"><span><i style="background:${primaryColor}"></i>Primary</span><span><i style="background:${secondaryColor}"></i>Secondary</span><span><i style="background:${stabilizerColor}"></i>Stabilizer</span></div><div class="dt-tb-note" id="dtTBNote"></div><div class="dt-tb-list" id="dtTBList"></div>
       </div>
       <div class="dt-tb-empty" id="dtTBEmpty" style="display:none">Log your first workout and this body will start filling in — muscle by muscle, week by week.</div><div class="dt-tb-footnote">Levels are a relative training-emphasis estimate from your logged sets — not a biological or medical measurement.</div>`;
     const grid=document.querySelector("#today .today-clean-grid");if(grid&&grid.parentNode)grid.parentNode.insertBefore(card,grid);else{const today=document.getElementById("today");if(today)today.appendChild(card);}
     card.querySelectorAll(".dt-tb-tab").forEach(btn=>btn.addEventListener("click",()=>{const mode=btn.dataset.mode;if(mode===dtTBMode)return;dtTBStopPlay();dtTBMode=mode;card.querySelectorAll(".dt-tb-tab").forEach(b=>b.classList.toggle("active",b===btn));if(mode==="musclemap"&&dtTBWeeks.length)dtTBWeekIdx=dtTBWeeks.length-1;dtTBRenderCard();}));
-    const range=card.querySelector("#dtMMRange");if(range)range.addEventListener("input",()=>{dtTBStopPlay();dtTBWeekIdx=Math.max(0,Math.min(dtTBWeeks.length-1,parseInt(range.value,10)||0));dtTBRenderCard();});
-    const play=card.querySelector("#dtMMPlay");if(play)play.addEventListener("click",()=>{if(dtTBPlayTimer){dtTBStopPlay();return}if(!dtTBWeeks.length)return;play.textContent="⏸";play.setAttribute("aria-label","Pause weekly Muscle Map");dtTBPlayTimer=setInterval(()=>{dtTBWeekIdx=(dtTBWeekIdx+1)>=dtTBWeeks.length?0:dtTBWeekIdx+1;dtTBRenderCard();},1100);});
+    const range=card.querySelector("#dtMMRange");if(range)range.addEventListener("input",()=>{dtTBStopPlay();dtMMUpdateWeek(parseInt(range.value,10)||0);});
+    const play=card.querySelector("#dtMMPlay");if(play)play.addEventListener("click",()=>{dtMMStartPlayback();});
     return card;
   }
 
@@ -11498,6 +11780,69 @@ function daySessions(key){
     }catch(e){console.warn("Training Body render failed",e);}
   }
 
+
+  function dtTBCurrentRuntimeHealthy(){
+    const card=document.getElementById("dtTBCard");
+    if(!card)return false;
+    const badge=card.querySelector("#dtMMRuntimeBadge");
+    const panel=card.querySelector("#dtMMPanel");
+    if(!(badge&&panel&&badge.textContent==="V55 • 3.2s"))return false;
+    if(card.classList.contains("dt-mm-mode")){
+      const map=card.querySelector("#dtMMMap");
+      if(map&&map.children.length){
+        const hasV5=!!map.querySelector(".dt-mm-v5-anchor .dt-mm-v5-orb .dt-mm-v5-shell");
+        const hasLegacy=!!map.querySelector(".dt-mm-bubble,.dt-mm-orb-visual:not(.dt-mm-v5-orb)");
+        if(!hasV5||hasLegacy)return false;
+      }
+    }
+    return true;
+  }
+
+  function dtTBRebuildCurrentRuntime(){
+    try{
+      dtTBStopPlay();
+      dtMMResetDerived();
+      const old=document.getElementById("dtTBCard");
+      if(old)old.remove();
+      const card=dtTBEnsureCard();
+      if(!card)return false;
+      dtTBRenderCard();
+      return dtTBCurrentRuntimeHealthy();
+    }catch(e){
+      console.warn("Training Body authoritative rebuild failed",e);
+      return false;
+    }
+  }
+
+  function dtTBEnforceCurrentRuntime(){
+    if(dtTBCurrentRuntimeHealthy())return true;
+    return dtTBRebuildCurrentRuntime();
+  }
+
+  window.dtTBRebuildCurrentRuntime=dtTBRebuildCurrentRuntime;
+  window.dtTBEnforceCurrentRuntime=dtTBEnforceCurrentRuntime;
+
+  let dtTBIntegrityObserver=null,dtTBIntegrityTimer=0,dtTBIntegrityRepairing=false;
+  function dtTBInstallIntegrityObserver(){
+    try{dtTBIntegrityObserver?.disconnect()}catch(_){}
+    const root=document.getElementById("today")||document.body;
+    if(!root)return;
+    dtTBIntegrityObserver=new MutationObserver(()=>{
+      clearTimeout(dtTBIntegrityTimer);
+      dtTBIntegrityTimer=setTimeout(()=>{
+        if(dtTBIntegrityRepairing)return;
+        if(dtTBCurrentRuntimeHealthy())return;
+        dtTBIntegrityRepairing=true;
+        try{dtTBRebuildCurrentRuntime()}finally{
+          dtTBIntegrityRepairing=false;
+          setTimeout(dtTBInstallIntegrityObserver,0);
+        }
+      },32);
+    });
+    dtTBIntegrityObserver.observe(root,{childList:true,subtree:true,characterData:true});
+  }
+  window.dtTBInstallIntegrityObserver=dtTBInstallIntegrityObserver;
+
   function dtTBBoot(){
     try{ dtTBEnsureCard(); dtTBRenderCard(); }
     catch(e){ console.warn("Training Body init failed",e); }
@@ -11512,7 +11857,8 @@ function daySessions(key){
       };
     }
     window.dtRenderBodyCard=dtTBRenderCard;
-    window.DT_TRAINING_BODY_VERSION="2.0-muscle-map";
+    window.DT_TRAINING_BODY_VERSION="2.8-v55-single-shell";window.DT_RUNTIME_BUILD_SIGNATURE="V36_8_55T";window.DT_SINGLE_SHELL_SHA="f8970728c00c8dca";
+    setTimeout(dtTBInstallIntegrityObserver,0);
   }
 
   document.readyState==="loading"?document.addEventListener("DOMContentLoaded",dtTBBoot):dtTBBoot();
@@ -16688,6 +17034,62 @@ function dtRebuildCurrentRuntimeAfterImport(importInfo,previousAppMeta){
   dtPinCurrentRuntime();
 }
 
+
+function dtBuildStrictPortableImport(candidate){
+  const cur=clone(state||{});
+  const src=candidate&&typeof candidate==="object"?candidate:{};
+  const next=cur;
+
+  /* Root durable user data only. Runtime/build/derived/UI state never crosses. */
+  for(const key of ["days","user","preferences","trainingSchedule","money"]){
+    if(Object.prototype.hasOwnProperty.call(src,key))next[key]=clone(src[key]);
+  }
+
+  if(src.notifications&&typeof src.notifications==="object"){
+    next.notifications=clone(src.notifications);
+    next.notifications.scheduledIds=[];
+  }
+
+  const sw=src.workouts&&typeof src.workouts==="object"?src.workouts:{};
+  const cw=next.workouts&&typeof next.workouts==="object"?next.workouts:{};
+  const durableWorkoutKeys=[
+    "sessions","completedExercises","timedSessions",
+    "savedRoutines","routineOverrides","customSplits",
+    "dayNames","custom","edits","removed",
+    "trainingProgram","generatedProgram","sessionSettings",
+    "activityOrder","hidden"
+  ];
+  for(const key of durableWorkoutKeys){
+    if(Object.prototype.hasOwnProperty.call(sw,key))cw[key]=clone(sw[key]);
+  }
+
+  /* Explicitly current-build-owned / derived / volatile. */
+  cw.pendingExercises={};
+  cw.drafts={};
+  cw.dailySummaries={};
+  cw.sessionClock=null;
+  cw.uiState={};
+  cw.collapsedByDay={};
+  delete cw.snapshotBackfillVersion;
+  delete cw.demoDataLoaded;
+  delete cw.demoDataVersion;
+  delete cw.demoDataLoadedAt;
+  delete cw.demoDataDismissed;
+  delete cw.exportSampleVersion;
+  delete cw.exportSampleAddedAt;
+  delete cw.lastBackupRuntimeMigration;
+  next.workouts=cw;
+
+  /* Installed build owns these completely. */
+  delete next.core;
+  next.appMeta=clone(state?.appMeta||{});
+  for(const key of ["health","healthConnect","healthIntegration","healthSnapshots","healthSnapshot"]){
+    try{delete next[key]}catch(_){}
+  }
+  return next;
+}
+window.dtBuildStrictPortableImport=dtBuildStrictPortableImport;
+
 function restoreObject(obj){
   validateBackupObject(obj);const candidate=clone(obj.state);
   const runtimeMigration=dtMigrateLegacyRuntimeState(obj,candidate);
@@ -16702,13 +17104,15 @@ function restoreObject(obj){
       try{delete candidate.settings[key]}catch(_){}
     }
   }
-  const old=state,previousAppMeta=clone(state?.appMeta||{});state=candidate;
+  const old=state,previousAppMeta=clone(state?.appMeta||{});
+  const strictCandidate=dtBuildStrictPortableImport(candidate);
+  state=strictCandidate;
   try{
     dtRebuildCurrentRuntimeAfterImport(runtimeMigration,previousAppMeta);
     /* Rehydrate custom split containers before the restored state is persisted.
        The live split renderer will rebuild plans[] from these saved definitions on reload. */
-    if(candidate.workouts&&typeof candidate.workouts==="object"){
-      const w=candidate.workouts;
+    if(state.workouts&&typeof state.workouts==="object"){
+      const w=state.workouts;
       if(!Array.isArray(w.customSplits))w.customSplits=[];
       if(!w.custom||typeof w.custom!=="object")w.custom={push:[],pull:[],legs:[]};
       if(!w.edits||typeof w.edits!=="object")w.edits={push:{},pull:{},legs:{}};
@@ -16730,9 +17134,9 @@ function restoreObject(obj){
       });
     }
     /* Reminder preference is portable; scheduled Android notification IDs are not. */
-    if(candidate.notifications&&typeof candidate.notifications==="object"){
-      candidate.notifications.trainingEnabled=!!candidate.notifications.trainingEnabled;
-      candidate.notifications.scheduledIds=[];
+    if(state.notifications&&typeof state.notifications==="object"){
+      state.notifications.trainingEnabled=!!state.notifications.trainingEnabled;
+      state.notifications.scheduledIds=[];
     }
     try{window.dtReconcileWorkoutSessionClock?.()}catch(_){}
     save({forceRecoveryScan:true,replaceRecoveryMeta:true});
@@ -16740,7 +17144,20 @@ function restoreObject(obj){
     try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}
     try{window.dtRefreshWorkoutHome?.()}catch(_){}
     try{window.dtForceCurrentHomeRendererAfterImport?.()}catch(_){}
-    try{window.dtRenderBodyCard?.()}catch(_){}
+    try{
+      if(typeof window.dtTBRebuildCurrentRuntime==="function")window.dtTBRebuildCurrentRuntime();
+      else{window.dtMMResetDerived?.();window.dtRenderBodyCard?.();}
+    }catch(_){}
+    try{
+      window.DT_LAST_IMPORT_DIAGNOSTIC={
+        build:"V36_8_55T",
+        importedSessions:Array.isArray(state.workouts?.sessions)?state.workouts.sessions.length:0,
+        importedCompletedExercises:Array.isArray(state.workouts?.completedExercises)?state.workouts.completedExercises.length:0,
+        importedDailySummaries:Object.keys(state.workouts?.dailySummaries||{}).length,
+        runtimeBadge:document.getElementById("dtMMRuntimeBadge")?.textContent||null,
+        v5Nodes:document.querySelectorAll("#dtMMMap .dt-mm-v5-anchor").length
+      };
+    }catch(_){}
     /* UI-only auxiliary localStorage from backups is intentionally ignored.
        Current-build screen state remains authoritative. */
     dtPinCurrentRuntime();
@@ -16758,23 +17175,43 @@ function ensureUi(){
     const btn=box.querySelector("#dtFullBackupBtn");if(btn.disabled)return;btn.disabled=true;
     try{await dtExportBackupObject(fullBackupObject(),fileName("MARC_Full_Backup"),"dtFullBackupAction","Full App Backup")}catch(_){}finally{btn.disabled=false}
   };
-  const input=box.querySelector("#dtFullRestoreInput");box.querySelector("#dtFullRestoreBtn").onclick=()=>input.click();
+  const input=box.querySelector("#dtFullRestoreInput");box.querySelector("#dtFullRestoreBtn").onclick=async()=>{
+    const btn=box.querySelector("#dtFullRestoreBtn");
+    if(btn.disabled)return;
+    btn.disabled=true;
+    try{
+      dtSetBackupAction("dtFullRestoreAction","Preparing…","busy");
+      try{await window.dtPrepareCurrentRuntimeForImport?.()}catch(_){}
+      dtSetBackupAction("dtFullRestoreAction","Import");
+      input.click();
+    }finally{
+      setTimeout(()=>{btn.disabled=false},250);
+    }
+  };
   input.onchange=async()=>{const f=input.files?.[0];input.value="";if(!f)return;dtSetBackupAction("dtFullRestoreAction","Checking…","busy");try{const obj=JSON.parse(await f.text());validateBackupObject(obj);dtSetBackupAction("dtFullRestoreAction","Ready","ok");if(!confirm("Restore this Full App Backup? Current on-device data will be replaced only after validation.")){dtSetBackupAction("dtFullRestoreAction","Import");return}const restored=restoreObject(obj);dtSetBackupAction("dtFullRestoreAction","Restored","ok");
-        /* V36.8.33 — stay on the authoritative current runtime after import.
+        try{window.dtGuardTrainingBodyAfterImport?.(2200)}catch(_){}
+        try{await window.dtPrepareCurrentRuntimeForImport?.()}catch(_){}
+        /* V36.8.51 — stay on the authoritative current runtime after import.
            A hard location.reload() can re-enter an older service-worker cached
            index.html and visually roll the app back even though the restored
            data itself is valid. Rehydrate current renderers in-place instead. */
-        try{window.dtRefreshWorkoutHome?.()}catch(_){}
-        try{window.dtForceCurrentHomeRendererAfterImport?.()}catch(_){}
-        try{window.dtRenderTodaySchedule?.()}catch(_){}
-        try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}
-        try{window.dtRenderCoachDestination?.()}catch(_){}
-        try{renderWorkout?.()}catch(_){}
-        try{renderWorkoutHistory?.()}catch(_){}
-        try{renderHistory?.()}catch(_){}
-        try{renderToday?.()}catch(_){}
-        try{renderStats?.()}catch(_){}
-        try{window.dtRenderBodyCard?.()}catch(_){}
+        /* V53 import isolation: restore durable state first, then rebuild the
+           authoritative Training Body renderer BEFORE unrelated screen refreshes.
+           This prevents a broad legacy lifecycle cascade from owning Muscle Map. */
+        try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
+        try{window.dtTBInstallIntegrityObserver?.()}catch(_){}
+        /* Refresh unrelated destinations only after Training Body is pinned. */
+        queueMicrotask(()=>{try{window.dtRenderTodaySchedule?.()}catch(_){} try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}});
+        setTimeout(()=>{try{renderWorkout?.()}catch(_){} try{renderWorkoutHistory?.()}catch(_){} try{renderHistory?.()}catch(_){} try{renderStats?.()}catch(_){} try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},120);
+        /* Delayed lifecycle hooks may run after restore. Re-assert the current
+           Training Body template after the rest of the app has finished its
+           post-import renders. These checks are idempotent and rebuild only
+           when the current runtime signature is missing. */
+        try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}
+        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},80);
+        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},350);
+        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},900);
+        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},1600);
         alert(obj?.compatibility?.runtimeStateSchema>=2?"Backup restored through the version-safe bridge. Current M/ARC features and fixes preserved.":"Legacy backup migrated through the version-safe bridge. Your portable training data was preserved and current M/ARC features remain authoritative.")}catch(e){dtSetBackupAction("dtFullRestoreAction","Retry","error");alert(e?.message||String(e))}};
   let hasRaw=false;try{hasRaw=!!localStorage.getItem(DAMAGED_KEY)}catch(_){}const forensic=box.querySelector("#dtRecoveryExportBtn");
   if(hasRaw){forensic.style.display="";forensic.onclick=async()=>{const obj=forensicObject();if(!obj)return;const btn=forensic;if(btn.disabled)return;btn.disabled=true;try{await dtExportBackupObject(obj,fileName("MARC_Recovery_Data"),"dtRecoveryExportAction","Recovery Data")}catch(_){}finally{btn.disabled=false}}}
@@ -16790,9 +17227,27 @@ window.dtValidateFullBackupObject=validateBackupObject;
 window.dtRestoreFullBackupObject=restoreObject;
 window.dtCreateRecoveryExportObject=forensicObject;
 window.DT_PRODUCTION_CLEANUP_VERSION=VERSION;
-window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.35";
+window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.55";
 window.DT_VERSION_SAFE_RESTORE_BRIDGE={build:DT_CURRENT_BUILD,portableDataSchema:DT_PORTABLE_DATA_SCHEMA,runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,pinKey:DT_RUNTIME_PIN_KEY};
-window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.35";
+window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.55";
+
+window.dtGuardTrainingBodyAfterImport=function(durationMs=1800){
+  const root=document.getElementById("today")||document.body;
+  let active=true;
+  const repair=()=>{if(!active)return;try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}};
+  const obs=new MutationObserver(muts=>{
+    if(!active)return;
+    for(const m of muts){
+      if(m.type!=="childList")continue;
+      const card=document.getElementById("dtTBCard");
+      const touched=(card&&m.target&&(m.target===card||card.contains(m.target)))||[...m.addedNodes,...m.removedNodes].some(n=>n?.nodeType===1&&(n.id==="dtTBCard"||n.querySelector?.("#dtTBCard")));
+      if(touched){queueMicrotask(repair);break;}
+    }
+  });
+  try{obs.observe(root,{childList:true,subtree:true})}catch(_){}
+  setTimeout(()=>{active=false;try{obs.disconnect()}catch(_){}repair()},Math.max(500,Number(durationMs)||1800));
+};
+
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ensureUi):ensureUi();setTimeout(ensureUi,350);
 })();
 </script>
@@ -17144,22 +17599,56 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
   }catch(err){console.error("M/ARC real session import failed",err);window.DT_MARC_REAL_SESSION_IMPORT={id:IMPORT_ID,error:String(err?.message||err)}}
 })();
 </script>
+
 <script id="dt-pwa-offline-registration">
 (()=>{
   "use strict";
-  window.DT_PWA_OFFLINE_VERSION="28.0-pwa-rest-alert-racefix-backup-v1";
-  if(!("serviceWorker" in navigator))return;
+  const BUILD="V36_8_55T";
+  window.DT_RUNTIME_BUILD_SIGNATURE=BUILD;
+  window.DT_PWA_OFFLINE_VERSION="36.8.55-single-shell";
+  async function clearMarcCaches(){
+    try{
+      if(!("caches" in window))return;
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(k=>/^marc-/i.test(k)).map(k=>caches.delete(k)));
+    }catch(e){console.warn("M/ARC cache cleanup failed",e)}
+  }
+  async function installCleanWorker(){
+    await clearMarcCaches();
+    if(!("serviceWorker" in navigator))return false;
+    try{
+      const regs=await navigator.serviceWorker.getRegistrations();
+      for(const reg of regs){
+        try{
+          if(reg.active?.scriptURL&&!/sw\.js(?:\?|$)/.test(reg.active.scriptURL))await reg.unregister();
+        }catch(_){}
+      }
+      const reg=await navigator.serviceWorker.register("./sw.js?v=36.8.55t",{scope:"./",updateViaCache:"none"});
+      try{await reg.update()}catch(_){}
+      window.DT_PWA_SERVICE_WORKER_REGISTERED=true;
+      return true;
+    }catch(e){
+      console.warn("M/ARC clean service worker registration failed",e);
+      return false;
+    }
+  }
+  window.dtPrepareCurrentRuntimeForImport=async()=>{
+    await clearMarcCaches();
+    await installCleanWorker();
+    await clearMarcCaches();
+    return true;
+  };
   window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./sw.js",{scope:"./"})
-      .then(reg=>{
-        try{reg.update()}catch(_){}
-        window.DT_PWA_SERVICE_WORKER_REGISTERED=true;
-        const setReady=()=>{window.DT_PWA_OFFLINE_READY=!!navigator.serviceWorker.controller;};
-        navigator.serviceWorker.ready.then(setReady).catch(()=>{});
-        navigator.serviceWorker.addEventListener("controllerchange",setReady);
-        setReady();
-      })
-      .catch(err=>{console.warn("M/ARC offline service worker registration failed",err)});
+    installCleanWorker();
+    const stamp=()=>{
+      const b=document.getElementById("dtMMRuntimeBadge");
+      if(b){
+        b.textContent="V55 • 3.2s";
+        b.dataset.runtimeBuild=BUILD;
+        b.title="Runtime "+BUILD;
+      }
+    };
+    stamp();setTimeout(stamp,250);setTimeout(stamp,1000);
   });
 })();
 </script>
