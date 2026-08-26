@@ -1783,6 +1783,26 @@ main,.app,.app-shell,#app{
 }
 </style>
 
+
+<style id="dt-v36-8-58-muscle-map-play-focus">
+#dtTBCard.dt-mm-mode #dtMMPlay{
+  -webkit-tap-highlight-color:transparent!important;
+  outline:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+}
+#dtTBCard.dt-mm-mode #dtMMPlay:focus,
+#dtTBCard.dt-mm-mode #dtMMPlay:active{
+  outline:none!important;
+  border-radius:999px!important;
+}
+#dtTBCard.dt-mm-mode #dtMMPlay:focus-visible{
+  outline:2px solid rgba(97,226,165,.34)!important;
+  outline-offset:3px!important;
+  border-radius:999px!important;
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" id="dtStartupGate"><div class="dt-startup-mark">M/ARC</div></div>
@@ -11855,7 +11875,7 @@ function daySessions(key){
       <div class="dt-tb-stats"><div class="dt-tb-stat"><b id="dtTBStatWorkouts">0</b><span>Workouts</span></div><div class="dt-tb-stat"><b id="dtTBStatDays">0</b><span>Days Tracked</span></div><div class="dt-tb-stat"><b id="dtTBStatTop">—</b><span>Top Focus</span></div></div>
       <div class="dt-tb-tabs" id="dtTBTabs"><button class="dt-tb-tab active" type="button" data-mode="recent">Last 30 Days</button><button class="dt-tb-tab" type="button" data-mode="alltime">All-Time</button><button class="dt-tb-tab" type="button" data-mode="musclemap">Muscle Map</button></div>
       <div id="dtTBMain">
-        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed" id="dtMMRuntimeBadge" data-runtime-build="V36_8_57T" title="Runtime V36_8_57T">1x</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
+        <div class="dt-mm" id="dtMMPanel"><div class="dt-mm-shell"><div class="dt-mm-head"><div><div class="dt-mm-kicker">MUSCLE MAP</div><div class="dt-mm-week" id="dtMMWeek">—</div><div class="dt-mm-date" id="dtMMDate">—</div></div><div class="dt-mm-legend"><div class="dt-mm-leg"><span><i style="background:#63dc80"></i>High</span><b>&gt;15%</b></div><div class="dt-mm-leg"><span><i style="background:#459fff"></i>Moderate</span><b>8–15%</b></div><div class="dt-mm-leg"><span><i style="background:#aa68ec"></i>Low</span><b>3–7%</b></div><div class="dt-mm-leg"><span><i style="background:#9aa4ab"></i>Very Low</span><b>&lt;3%</b></div></div></div><div class="dt-mm-map" id="dtMMMap"></div><div class="dt-mm-controls"><div class="dt-mm-playrow"><button class="dt-mm-play" type="button" id="dtMMPlay" aria-label="Play weekly Muscle Map">▶</button><input class="dt-mm-range" type="range" id="dtMMRange" min="0" max="0" value="0" step="1"><span class="dt-mm-speed" id="dtMMRuntimeBadge" data-runtime-build="V36_8_58T" title="Runtime V36_8_58T">1x</span></div><div class="dt-mm-weeks" id="dtMMWeeks"></div></div><div class="dt-mm-detail" id="dtMMDetail"></div></div></div>
         <div class="dt-tb-bodies"><div class="dt-tb-body-col"><span>FRONT</span><div class="dt-tb-body" id="dtTBFront"></div></div><div class="dt-tb-body-col"><span>BACK</span><div class="dt-tb-body" id="dtTBBack"></div></div></div>
         <div class="dt-tb-legend"><span><i style="background:${primaryColor}"></i>Primary</span><span><i style="background:${secondaryColor}"></i>Secondary</span><span><i style="background:${stabilizerColor}"></i>Stabilizer</span></div><div class="dt-tb-note" id="dtTBNote"></div><div class="dt-tb-list" id="dtTBList"></div>
       </div>
@@ -11863,7 +11883,11 @@ function daySessions(key){
     const grid=document.querySelector("#today .today-clean-grid");if(grid&&grid.parentNode)grid.parentNode.insertBefore(card,grid);else{const today=document.getElementById("today");if(today)today.appendChild(card);}
     card.querySelectorAll(".dt-tb-tab").forEach(btn=>btn.addEventListener("click",()=>{const mode=btn.dataset.mode;if(mode===dtTBMode)return;dtTBStopPlay();dtTBMode=mode;card.querySelectorAll(".dt-tb-tab").forEach(b=>b.classList.toggle("active",b===btn));if(mode==="musclemap"&&dtTBWeeks.length)dtTBWeekIdx=dtTBWeeks.length-1;dtTBRenderCard();}));
     const range=card.querySelector("#dtMMRange");if(range)range.addEventListener("input",()=>{dtTBStopPlay();dtMMUpdateWeek(parseInt(range.value,10)||0);});
-    const play=card.querySelector("#dtMMPlay");if(play)play.addEventListener("click",()=>{dtMMStartPlayback();});
+    const play=card.querySelector("#dtMMPlay");if(play)play.addEventListener("click",()=>{
+      try{play.blur()}catch(_){}
+      dtMMStartPlayback();
+      requestAnimationFrame(()=>{try{play.blur()}catch(_){}});
+    });
     return card;
   }
 
@@ -11892,7 +11916,7 @@ function daySessions(key){
     if(!card)return false;
     const badge=card.querySelector("#dtMMRuntimeBadge");
     const panel=card.querySelector("#dtMMPanel");
-    if(!(badge&&panel&&badge.dataset.runtimeBuild==="V36_8_57T"))return false;
+    if(!(badge&&panel&&badge.dataset.runtimeBuild==="V36_8_58T"))return false;
     if(card.classList.contains("dt-mm-mode")){
       const map=card.querySelector("#dtMMMap");
       if(map&&map.children.length){
@@ -11963,7 +11987,7 @@ function daySessions(key){
       };
     }
     window.dtRenderBodyCard=dtTBRenderCard;
-    window.DT_TRAINING_BODY_VERSION="3.0-v57-synced-percent-motion";window.DT_RUNTIME_BUILD_SIGNATURE="V36_8_57T";window.DT_SINGLE_SHELL_SHA="f8970728c00c8dca";
+    window.DT_TRAINING_BODY_VERSION="3.1-v58-completion-route-focus";window.DT_RUNTIME_BUILD_SIGNATURE="V36_8_58T";window.DT_SINGLE_SHELL_SHA="f8970728c00c8dca";
     setTimeout(dtTBInstallIntegrityObserver,0);
   }
 
@@ -14915,13 +14939,34 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
   function closeComplete(toBody){
     document.getElementById("dtSessionComplete")?.classList.remove("show");
     if(toBody){
+      const openBodyRecovery=()=>{
+        try{window.dtRenderBodyCard?.()}catch(_){}
+        try{
+          if(typeof window.dtWorkoutHomeSetPage==="function"){
+            window.dtWorkoutHomeSetPage(0,false,"completion");
+          }else{
+            const bodyTab=document.querySelector('#dtHomeV27 .dt-v27-pager button[data-page="0"]');
+            bodyTab?.click();
+          }
+        }catch(_){}
+        /* Training Body is mounted inside Body & Recovery. Let the Home
+           renderer finish moving it, then keep the dashboard itself at the top. */
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          try{window.dtWorkoutHomeSetPage?.(0,false,"completion")}catch(_){}
+          try{window.dtRenderBodyCard?.()}catch(_){}
+          try{window.scrollTo({top:0,behavior:"smooth"})}catch(_){}
+        }));
+      };
       try{
         switchView("today");
-        setTimeout(()=>{
-          window.dtRenderBodyCard?.();
-          document.getElementById("dtTBCard")?.scrollIntoView({behavior:"smooth",block:"start"});
-        },130);
-      }catch(_){}
+        /* switchView/renderToday can rebuild Home and restore its prior page,
+           so assert Body & Recovery after both immediate and delayed lifecycle passes. */
+        setTimeout(openBodyRecovery,60);
+        setTimeout(openBodyRecovery,220);
+        setTimeout(openBodyRecovery,520);
+      }catch(_){
+        setTimeout(openBodyRecovery,0);
+      }
     }else{
       try{switchView("today");window.dtRenderBodyCard?.()}catch(_){}
     }
@@ -17256,7 +17301,7 @@ function restoreObject(obj){
     }catch(_){}
     try{
       window.DT_LAST_IMPORT_DIAGNOSTIC={
-        build:"V36_8_57T",
+        build:"V36_8_58T",
         importedSessions:Array.isArray(state.workouts?.sessions)?state.workouts.sessions.length:0,
         importedCompletedExercises:Array.isArray(state.workouts?.completedExercises)?state.workouts.completedExercises.length:0,
         importedDailySummaries:Object.keys(state.workouts?.dailySummaries||{}).length,
@@ -17333,9 +17378,9 @@ window.dtValidateFullBackupObject=validateBackupObject;
 window.dtRestoreFullBackupObject=restoreObject;
 window.dtCreateRecoveryExportObject=forensicObject;
 window.DT_PRODUCTION_CLEANUP_VERSION=VERSION;
-window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.57";
+window.DT_IMPORT_RUNTIME_PRESERVE_VERSION="36.8.58";
 window.DT_VERSION_SAFE_RESTORE_BRIDGE={build:DT_CURRENT_BUILD,portableDataSchema:DT_PORTABLE_DATA_SCHEMA,runtimeStateSchema:DT_RUNTIME_STATE_SCHEMA,pinKey:DT_RUNTIME_PIN_KEY};
-window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.57";
+window.DT_POST_IMPORT_RENDER_CONTRACT_VERSION="36.8.58";
 
 window.dtGuardTrainingBodyAfterImport=function(durationMs=1800){
   const root=document.getElementById("today")||document.body;
@@ -17709,9 +17754,9 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
 <script id="dt-pwa-offline-registration">
 (()=>{
   "use strict";
-  const BUILD="V36_8_57T";
+  const BUILD="V36_8_58T";
   window.DT_RUNTIME_BUILD_SIGNATURE=BUILD;
-  window.DT_PWA_OFFLINE_VERSION="36.8.57-single-shell";
+  window.DT_PWA_OFFLINE_VERSION="36.8.58-single-shell";
   async function clearMarcCaches(){
     try{
       if(!("caches" in window))return;
@@ -17729,7 +17774,7 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
           if(reg.active?.scriptURL&&!/sw\.js(?:\?|$)/.test(reg.active.scriptURL))await reg.unregister();
         }catch(_){}
       }
-      const reg=await navigator.serviceWorker.register("./sw.js?v=36.8.57t",{scope:"./",updateViaCache:"none"});
+      const reg=await navigator.serviceWorker.register("./sw.js?v=36.8.58t",{scope:"./",updateViaCache:"none"});
       try{await reg.update()}catch(_){}
       window.DT_PWA_SERVICE_WORKER_REGISTERED=true;
       return true;
