@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   repair:
@@ -177,13 +177,21 @@ jobs:
           grep -q 'Signed APK current embedded source PASS' .github/workflows/release-apk.yml
           echo 'Workflow repair checks PASS'
 
-      - name: Commit repaired workflows
+      - name: Package repaired workflows
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/build-apk.yml .github/workflows/release-apk.yml
-          if git diff --cached --quiet; then echo 'No workflow changes needed'; exit 0; fi
-          git commit -m 'Make M-ARC APK workflows version-safe'
-          git push
+          mkdir -p repaired-workflows
+          cp .github/workflows/build-apk.yml repaired-workflows/build-apk.yml
+          cp .github/workflows/release-apk.yml repaired-workflows/release-apk.yml
+          echo 'Prepared repaired workflow files'
+
+      - name: Upload repaired workflow files
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-WORKFLOW-REPAIRED-FILES
+          path: |
+            repaired-workflows/build-apk.yml
+            repaired-workflows/release-apk.yml
+          if-no-files-found: error
+          retention-days: 7
