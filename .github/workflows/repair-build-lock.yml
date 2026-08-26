@@ -35,116 +35,135 @@ jobs:
                   raise SystemExit(f'Could not patch step: {start}')
               return out
 
-          b = replace_step(b, 'Verify locked V36.8.25 web source', 'Install npm dependencies', """      - name: Validate current web source
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY2'
-          from pathlib import Path
-          import hashlib, json
-          for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
-              json.loads(Path(f).read_text(encoding='utf-8'))
-          data=Path('www/index.html').read_bytes()
-          if not data: raise SystemExit('www/index.html is empty')
-          print('Current source SHA256:', hashlib.sha256(data).hexdigest())
-          PY2
+          b = replace_step(
+              b,
+              'Verify locked V36.8.25 web source',
+              'Install npm dependencies',
+              "      - name: Validate current web source\n"
+              "        shell: bash\n"
+              "        run: |\n"
+              "          set -euo pipefail\n"
+              "          python3 - <<'PY2'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib, json\n"
+              "          for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):\n"
+              "              json.loads(Path(f).read_text(encoding='utf-8'))\n"
+              "          data=Path('www/index.html').read_bytes()\n"
+              "          if not data: raise SystemExit('www/index.html is empty')\n"
+              "          print('Current source SHA256:', hashlib.sha256(data).hexdigest())\n"
+              "          PY2\n\n"
+          )
 
-""")
+          b = replace_step(
+              b,
+              'Verify bundled source and native plugins',
+              'Install stable M-ARC debug signing key',
+              "      - name: Verify bundled source and native plugins\n"
+              "        shell: bash\n"
+              "        run: |\n"
+              "          set -euo pipefail\n"
+              "          python3 - <<'PY2'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib\n"
+              "          source=Path('www/index.html').read_bytes()\n"
+              "          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()\n"
+              "          if bundled != source: raise SystemExit('Capacitor bundled index differs from current www/index.html')\n"
+              "          print('Android bundled current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())\n"
+              "          PY2\n"
+              "          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1\n"
+              "          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'\n"
+              "          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi \"$plugin\" \"$PLUGINS\" || exit 1; done\n\n"
+          )
 
-          b = replace_step(b, 'Verify bundled source and native plugins', 'Install stable M-ARC debug signing key', """      - name: Verify bundled source and native plugins
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY2'
-          from pathlib import Path
-          import hashlib
-          source=Path('www/index.html').read_bytes()
-          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()
-          if bundled != source: raise SystemExit('Capacitor bundled index differs from current www/index.html')
-          print('Android bundled current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())
-          PY2
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1
-          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
-          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || exit 1; done
+          b = replace_step(
+              b,
+              'Verify APK contains exact V36.8.25 app',
+              'Upload debug APK artifact',
+              "      - name: Verify APK contains current app\n"
+              "        shell: bash\n"
+              "        run: |\n"
+              "          set -euo pipefail\n"
+              "          python3 - <<'PY2'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib, zipfile\n"
+              "          apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')\n"
+              "          source=Path('www/index.html').read_bytes()\n"
+              "          with zipfile.ZipFile(apk) as z: bundled=z.read('assets/public/index.html')\n"
+              "          if bundled != source: raise SystemExit('APK embedded index differs from current www/index.html')\n"
+              "          print('Debug APK current embedded source PASS:', hashlib.sha256(bundled).hexdigest())\n"
+              "          PY2\n"
+              "          mkdir -p release-output\n"
+              "          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-debug.apk\n"
+              "          sha256sum release-output/MARC-debug.apk > release-output/MARC-debug.apk.sha256\n\n"
+          )
+          b = b.replace('MARC-V36.8.25-DEBUG-APK', 'MARC-DEBUG-APK')
+          b = b.replace('MARC-V36.8.25-debug.apk', 'MARC-debug.apk')
 
-""")
+          r = replace_step(
+              r,
+              'Verify locked V36.8.25 source',
+              'Install dependencies and generate Android',
+              "      - name: Validate current source\n"
+              "        shell: bash\n"
+              "        run: |\n"
+              "          set -euo pipefail\n"
+              "          python3 - <<'PY2'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib\n"
+              "          data=Path('www/index.html').read_bytes()\n"
+              "          if not data: raise SystemExit('www/index.html is empty')\n"
+              "          print('Current source SHA256:', hashlib.sha256(data).hexdigest())\n"
+              "          PY2\n\n"
+          )
 
-          b = replace_step(b, 'Verify APK contains exact V36.8.25 app', 'Upload debug APK artifact', """      - name: Verify APK contains current app
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY2'
-          from pathlib import Path
-          import hashlib, zipfile
-          apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
-          source=Path('www/index.html').read_bytes()
-          with zipfile.ZipFile(apk) as z: bundled=z.read('assets/public/index.html')
-          if bundled != source: raise SystemExit('APK embedded index differs from current www/index.html')
-          print('Debug APK current embedded source PASS:', hashlib.sha256(bundled).hexdigest())
-          PY2
-          mkdir -p release-output
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-debug.apk
-          sha256sum release-output/MARC-debug.apk > release-output/MARC-debug.apk.sha256
+          r = replace_step(
+              r,
+              'Verify bundled bytes and plugins',
+              'Build unsigned release APK',
+              "      - name: Verify bundled bytes and plugins\n"
+              "        shell: bash\n"
+              "        run: |\n"
+              "          set -euo pipefail\n"
+              "          python3 - <<'PY2'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib\n"
+              "          source=Path('www/index.html').read_bytes()\n"
+              "          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()\n"
+              "          if bundled != source: raise SystemExit('Android bundled index differs from current www/index.html')\n"
+              "          print('Release bundle current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())\n"
+              "          PY2\n"
+              "          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1\n"
+              "          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'\n"
+              "          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi \"$plugin\" \"$PLUGINS\" || exit 1; done\n\n"
+          )
 
-""")
-          b=b.replace('MARC-V36.8.25-DEBUG-APK','MARC-DEBUG-APK').replace('MARC-V36.8.25-debug.apk','MARC-debug.apk')
-
-          r = replace_step(r, 'Verify locked V36.8.25 source', 'Install dependencies and generate Android', """      - name: Validate current source
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY2'
-          from pathlib import Path
-          import hashlib
-          data=Path('www/index.html').read_bytes()
-          if not data: raise SystemExit('www/index.html is empty')
-          print('Current source SHA256:', hashlib.sha256(data).hexdigest())
-          PY2
-
-""")
-
-          r = replace_step(r, 'Verify bundled bytes and plugins', 'Build unsigned release APK', """      - name: Verify bundled bytes and plugins
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY2'
-          from pathlib import Path
-          import hashlib
-          source=Path('www/index.html').read_bytes()
-          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()
-          if bundled != source: raise SystemExit('Android bundled index differs from current www/index.html')
-          print('Release bundle current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())
-          PY2
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1
-          PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
-          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || exit 1; done
-
-""")
-
-          # Flexible replacement: find the historical hash verifier regardless of exact quoting/spacing.
-          old_hash='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
-          pos=r.find(old_hash)
+          old_hash = '0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
+          pos = r.rfind(old_hash)
           if pos < 0:
-              raise SystemExit('Could not find release signed-APK fixed hash')
-          py_start=r.rfind('          python3 -', 0, pos)
-          py_end=r.find('          PY\n', pos)
+              raise SystemExit('Could not find signed APK fixed hash')
+          py_start = r.rfind('          python3 - "$SIGNED"', 0, pos)
+          py_end = r.find('          PY\n', pos)
           if py_start < 0 or py_end < 0:
               raise SystemExit('Could not locate signed APK Python verifier boundaries')
           py_end += len('          PY\n')
-          replacement="""          python3 - "$SIGNED" <<'PY'
-          from pathlib import Path
-          import hashlib,sys,zipfile
-          source=Path('www/index.html').read_bytes()
-          with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')
-          if data != source: raise SystemExit('Signed APK embedded source differs from current www/index.html')
-          print('Signed APK current embedded source PASS:',hashlib.sha256(data).hexdigest())
-          PY
-"""
-          r=r[:py_start]+replacement+r[py_end:]
-          r=r.replace("description: 'Version name (blank = 36.8.25.<run>)'", "description: 'Version name (blank = current app build + run)'")
+          replacement = (
+              "          python3 - \"$SIGNED\" <<'PY'\n"
+              "          from pathlib import Path\n"
+              "          import hashlib,sys,zipfile\n"
+              "          source=Path('www/index.html').read_bytes()\n"
+              "          with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')\n"
+              "          if data != source: raise SystemExit('Signed APK embedded source differs from current www/index.html')\n"
+              "          print('Signed APK current embedded source PASS:',hashlib.sha256(data).hexdigest())\n"
+              "          PY\n"
+          )
+          r = r[:py_start] + replacement + r[py_end:]
+          r = r.replace(
+              "description: 'Version name (blank = 36.8.25.<run>)'",
+              "description: 'Version name (blank = current app build + run)'"
+          )
 
-          build.write_text(b,encoding='utf-8')
-          release.write_text(r,encoding='utf-8')
+          build.write_text(b, encoding='utf-8')
+          release.write_text(r, encoding='utf-8')
           print('Repair prepared successfully')
           PY
 
