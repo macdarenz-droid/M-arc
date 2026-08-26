@@ -42,21 +42,19 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Verify locked V36.8.25 web source
+      - name: Validate current web source
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
+          python3 - <<'PY2'
           from pathlib import Path
           import hashlib, json
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
           for f in ('package.json','capacitor.config.json','www/manifest.webmanifest'):
               json.loads(Path(f).read_text(encoding='utf-8'))
           data=Path('www/index.html').read_bytes()
-          actual=hashlib.sha256(data).hexdigest()
-          if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          print('V36.8.25 source hash PASS:', actual)
-          PY
+          if not data: raise SystemExit('www/index.html is empty')
+          print('Current source SHA256:', hashlib.sha256(data).hexdigest())
+          PY2
 
       - name: Install npm dependencies
         run: npm install
@@ -105,21 +103,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
+          python3 - <<'PY2'
           from pathlib import Path
           import hashlib
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
-          a=Path('www/index.html').read_bytes()
-          b=Path('android/app/src/main/assets/public/index.html').read_bytes()
-          if a != b: raise SystemExit('Capacitor bundled index differs from source')
-          if hashlib.sha256(b).hexdigest() != expected: raise SystemExit('Android bundled index hash mismatch')
-          print('Android bundled index exact-byte PASS')
-          PY
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || { echo '::error::MARC launcher icon missing'; exit 1; }
+          source=Path('www/index.html').read_bytes()
+          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()
+          if bundled != source: raise SystemExit('Capacitor bundled index differs from current www/index.html')
+          print('Android bundled current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())
+          PY2
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1
           PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
-          for plugin in LocalNotifications Filesystem Share Haptics; do
-            grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; cat "$PLUGINS"; exit 1; }
-          done
+          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || exit 1; done
 
       - name: Install stable M-ARC debug signing key
         shell: bash
@@ -139,31 +133,29 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
 
-      - name: Verify APK contains exact V36.8.25 app
+      - name: Verify APK contains current app
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
+          python3 - <<'PY2'
           from pathlib import Path
           import hashlib, zipfile
           apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
-          with zipfile.ZipFile(apk) as z:
-              data=z.read('assets/public/index.html')
-          actual=hashlib.sha256(data).hexdigest()
-          if actual != expected: raise SystemExit(f'APK index mismatch: {actual}')
-          print('Debug APK exact V36.8.25 embedded source PASS:', actual)
-          PY
+          source=Path('www/index.html').read_bytes()
+          with zipfile.ZipFile(apk) as z: bundled=z.read('assets/public/index.html')
+          if bundled != source: raise SystemExit('APK embedded index differs from current www/index.html')
+          print('Debug APK current embedded source PASS:', hashlib.sha256(bundled).hexdigest())
+          PY2
           mkdir -p release-output
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-V36.8.25-debug.apk
-          sha256sum release-output/MARC-V36.8.25-debug.apk > release-output/MARC-V36.8.25-debug.apk.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-debug.apk
+          sha256sum release-output/MARC-debug.apk > release-output/MARC-debug.apk.sha256
 
       - name: Upload debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MARC-V36.8.25-DEBUG-APK
+          name: MARC-DEBUG-APK
           path: |
-            release-output/MARC-V36.8.25-debug.apk
-            release-output/MARC-V36.8.25-debug.apk.sha256
+            release-output/MARC-debug.apk
+            release-output/MARC-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30

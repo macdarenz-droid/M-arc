@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version_name:
-        description: 'Version name (blank = 36.8.25.<run>)'
+        description: 'Version name (blank = current app build + run)'
         required: false
         type: string
       version_code:
@@ -66,19 +66,17 @@ jobs:
           done
           [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
 
-      - name: Verify locked V36.8.25 source
+      - name: Validate current source
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
+          python3 - <<'PY2'
           from pathlib import Path
           import hashlib
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
           data=Path('www/index.html').read_bytes()
-          actual=hashlib.sha256(data).hexdigest()
-          if actual != expected: raise SystemExit(f'index hash mismatch: {actual}')
-          print('V36.8.25 source hash PASS:', actual)
-          PY
+          if not data: raise SystemExit('www/index.html is empty')
+          print('Current source SHA256:', hashlib.sha256(data).hexdigest())
+          PY2
 
       - name: Install dependencies and generate Android
         shell: bash
@@ -138,18 +136,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 - <<'PY'
+          python3 - <<'PY2'
           from pathlib import Path
           import hashlib
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
-          b=Path('android/app/src/main/assets/public/index.html').read_bytes()
-          if hashlib.sha256(b).hexdigest()!=expected: raise SystemExit('Android bundled index hash mismatch')
-          PY
-          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || { echo '::error::MARC launcher icon missing'; exit 1; }
+          source=Path('www/index.html').read_bytes()
+          bundled=Path('android/app/src/main/assets/public/index.html').read_bytes()
+          if bundled != source: raise SystemExit('Android bundled index differs from current www/index.html')
+          print('Release bundle current index exact-byte PASS:', hashlib.sha256(bundled).hexdigest())
+          PY2
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || exit 1
           PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
-          for plugin in LocalNotifications Filesystem Share Haptics; do
-            grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin missing from capacitor.plugins.json"; exit 1; }
-          done
+          for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || exit 1; done
 
       - name: Build unsigned release APK
         shell: bash
@@ -190,12 +187,12 @@ jobs:
           "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-release.jks" --ks-key-alias "$KEY_ALIAS" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD --out "$SIGNED" "$ALIGNED"
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED"
           python3 - "$SIGNED" <<'PY'
+          from pathlib import Path
           import hashlib,sys,zipfile
-          expected='0fecc0147fb18de89b2a649cdc2d9e9c8d81a94c9a1fa7f4385ef578da55e0f9'
+          source=Path('www/index.html').read_bytes()
           with zipfile.ZipFile(sys.argv[1]) as z: data=z.read('assets/public/index.html')
-          actual=hashlib.sha256(data).hexdigest()
-          if actual != expected: raise SystemExit(f'Signed APK source mismatch: {actual}')
-          print('Signed APK exact V36.8.25 embedded source PASS:',actual)
+          if data != source: raise SystemExit('Signed APK embedded source differs from current www/index.html')
+          print('Signed APK current embedded source PASS:',hashlib.sha256(data).hexdigest())
           PY
           sha256sum "$SIGNED" > "$SIGNED.sha256"
           rm -f "$ALIGNED" "$RUNNER_TEMP/marc-release.jks"
