@@ -1858,6 +1858,22 @@ nav.dt-v10-nav button.dt-log .dt-nav-label{font-size:8px!important;line-height:1
   nav.dt-v10-nav button.dt-log .dt-nav-label{font-size:7px!important}
 }
 </style>
+
+<style id="dtFix13SmartSetTargetsStyle">
+.smart-next.dt-smart-set-mode{display:block}
+.dt-smart-set-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dt-smart-set-grid{display:grid;gap:5px;margin-top:8px}
+.dt-smart-set-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:8px;
+ padding:6px 8px;border:1px solid rgba(83,130,148,.18);border-radius:9px;background:rgba(5,18,26,.28)}
+.dt-smart-set-row>small{font-size:8px;letter-spacing:.06em;color:#6e8da4}
+.dt-smart-set-row>b{font-size:12px;color:#85c1ff;white-space:nowrap}
+.dt-smart-set-row>span{font-size:8px;color:#7f96a1;text-align:right}
+@media(max-width:420px){
+ .dt-smart-set-row{grid-template-columns:38px minmax(0,1fr);gap:5px 7px}
+ .dt-smart-set-row>span{grid-column:2;text-align:left}
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" id="dtStartupGate"><div class="dt-startup-mark">M/ARC</div></div>
@@ -4159,16 +4175,40 @@ function draft(){
     return existing;
   }
 
-  const legacyByIndexSafe=existing.length===ex.length;
+  /* FIX12_DRAFT_IDENTITY_OWNERSHIP
+     Never migrate a populated draft by array index alone. Imported/legacy
+     programs can reorder or rename activities while leaving an old anonymous
+     draft/checkpoint with the same array length; index-copying then makes one
+     exercise inherit another exercise's kg/reps.
+     Exact stable keys remain authoritative. A legacy name|type key may bridge
+     only when the existing canonical movement+equipment matcher identifies
+     exactly one current exercise. Truly anonymous legacy entries are treated
+     as unowned and start empty rather than corrupting another activity. */
   const byKey=new Map();
   existing.forEach(entry=>{
     const stable=String(entry?.__exkey||entry?.exerciseKey||"");
     if(stable&&!byKey.has(stable))byKey.set(stable,entry);
   });
+  function legacyDraftIdentity(entry){
+    const raw=String(entry?.__exkey||entry?.exerciseKey||"");
+    const pipe=raw.indexOf("|");
+    if(pipe<0)return null;
+    return {name:raw.slice(0,pipe),type:raw.slice(pipe+1),exerciseKey:raw};
+  }
+  function canonicalLegacyDraftSource(target){
+    if(typeof window.dtExerciseHistoryMatches!=="function")return null;
+    const matches=[];
+    for(const entry of existing){
+      const legacy=legacyDraftIdentity(entry);
+      if(!legacy)continue;
+      try{if(window.dtExerciseHistoryMatches(target,legacy))matches.push(entry)}catch(_){}
+    }
+    return matches.length===1?matches[0]:null;
+  }
   state.workouts.drafts[key]=ex.map((e,i)=>{
     const stable=stableKeys[i];
     let src=byKey.get(stable)||null;
-    if(!src&&legacyByIndexSafe&&existing[i]&&!existing[i].__exkey&&!existing[i].exerciseKey)src=existing[i];
+    if(!src)src=canonicalLegacyDraftSource(e);
     const sourceSets=Array.isArray(src?.sets)?src.sets:[];
     const planned=Array.isArray(e?.[3])?e[3].length:0;
     const targetCount=Math.max(1,planned,sourceSets.length||0);
@@ -4187,7 +4227,56 @@ function draft(){
   });
   return state.workouts.drafts[key];
 }
-function prev(ei,si){return latest(wday)?.exercises?.[ei]?.sets?.[si]||null}
+window.DT_FIX12_DRAFT_IDENTITY_OWNERSHIP={
+  version:"FIX12_DRAFT_IDENTITY_OWNERSHIP",
+  exactStableKeyFirst:true,
+  canonicalLegacyNameTypeBridge:true,
+  anonymousIndexMigration:false
+};
+/* FIX16_CANONICAL_PREVIOUS_SET_OWNERSHIP
+   PREVIOUS must resolve the semantic exercise before resolving set position.
+   Never borrow a historical set merely because it occupies the same array index. */
+function prev(ei,si){
+  const session=latest(wday);
+  const target=effectiveExercises(wday)?.[ei];
+  if(!session||!target)return null;
+
+  const keyOf=x=>String(Array.isArray(x)?(x?.[4]||exerciseKey(x)||""):(x?.exerciseKey||x?.__exkey||""));
+  const targetKey=keyOf(target);
+  const snapshots=Array.isArray(session.snapshot)?session.snapshot:[];
+  const legacy=Array.isArray(session.exercises)?session.exercises:[];
+
+  // 1) Modern/portable snapshot: exact stable identity first.
+  if(targetKey&&snapshots.length){
+    const exact=snapshots.map((r,i)=>({r,i})).filter(x=>keyOf(x.r)===targetKey);
+    if(exact.length===1)return exact[0].r?.sets?.[si]??legacy[exact[0].i]?.sets?.[si]??null;
+  }
+
+  // 2) Imported/renamed built-ins: one unique canonical snapshot match only.
+  if(snapshots.length&&typeof window.dtExerciseHistoryMatches==="function"){
+    const canonical=snapshots.map((r,i)=>({r,i})).filter(x=>{
+      try{return !!window.dtExerciseHistoryMatches(target,x.r)}catch(_){return false}
+    });
+    if(canonical.length===1)return canonical[0].r?.sets?.[si]??legacy[canonical[0].i]?.sets?.[si]??null;
+  }
+
+  // 3) Modern saved draft/completion arrays can carry the stable key directly.
+  if(targetKey&&legacy.length){
+    const exact=legacy.filter(r=>keyOf(r)===targetKey);
+    if(exact.length===1)return exact[0]?.sets?.[si]??null;
+  }
+
+  // 4) Canonical committed-history fallback, preserving the old same-workout-day intent.
+  try{
+    const rows=typeof window.dtCompletedExerciseSessions==="function"?(window.dtCompletedExerciseSessions(target)||[]):[];
+    const sameDay=rows.filter(r=>!r?.day||String(r.day)===String(wday));
+    const row=(sameDay.length?sameDay:[]).slice().sort((a,b)=>(+a.ts||Date.parse(a.date||0)||0)-(+b.ts||Date.parse(b.date||0)||0)).at(-1);
+    if(row?.sets?.[si])return row.sets[si];
+  }catch(_){}
+
+  // Anonymous index-only history is intentionally not trusted.
+  return null;
+}
 function removeExercise(e,ei,skipConfirm){
   if(!skipConfirm && !confirm(`Remove "${e[0]}" from ${wday.toUpperCase()} Day?`))return;
   const baseExists=plans[wday].ex.some(x=>exerciseKey(x)===exerciseKey(e));
@@ -5503,11 +5592,12 @@ renderTrainingGoal();
           <button class="exercise-chevron" type="button" aria-label="Expand activity"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
         <div class="exbody">
-          <div class="smart-next">
-            <div class="smart-next-copy"><small>SMART NEXT SESSION</small><b>${smartRec.text}</b></div>
-            <div class="smart-next-reason">${smartRec.reason}</div>
+          <div class="smart-next${smartRec?.setTargets?.length?" dt-smart-set-mode":""}">
+            ${smartRec?.setTargets?.length
+              ? window.dtSmartSetTargetsMarkup?.(smartRec)
+              : `<div class="smart-next-copy"><small>SMART NEXT SESSION</small><b>${smartRec.text}</b></div><div class="smart-next-reason">${smartRec.reason}</div>`}
           </div>
-          ${smartRec.rationale?`<details class="smart-next-explain"><summary>Why this suggestion?</summary><p>${window.dtEscapeHtml?.(smartRec.rationale)??smartRec.rationale}</p>${smartRec.principle?`<div><b>TRAINING PRINCIPLE</b><span>${window.dtEscapeHtml?.(smartRec.principle)??smartRec.principle}</span></div>`:""}${smartRec.source?`<small>${window.dtEscapeHtml?.(smartRec.source)??smartRec.source}</small>`:""}</details>`:""}
+          ${smartRec.rationale?`<details class="smart-next-explain"><summary>Why this suggestion?</summary><p>${window.dtEscapeHtml?.(smartRec.rationale)??smartRec.rationale}</p>${smartRec.setWhy?.length?`<div class="dt-smart-set-why"><b>SET-BY-SET</b>${smartRec.setWhy.map(x=>`<span><strong>Set ${x.set}:</strong> ${window.dtEscapeHtml?.(x.text)??x.text}</span>`).join("")}</div>`:""}${smartRec.principle?`<div><b>TRAINING PRINCIPLE</b><span>${window.dtEscapeHtml?.(smartRec.principle)??smartRec.principle}</span></div>`:""}${smartRec.source?`<small>${window.dtEscapeHtml?.(smartRec.source)??smartRec.source}</small>`:""}</details>`:""}
           <div class="sethead${window.dtIsDurationBased?.(e)?" duration-mode":""}"><span>SET</span><span>PREVIOUS</span><span class="kg-label">${window.dtWeightUnitLabel?.()||"KG"}</span><span>${window.dtIsDurationBased?.(e)?"SEC":"REPS"}</span><span>EFFORT</span></div>
           <div class="rows"></div>
           <button class="addset" type="button">＋ Add Set</button>
@@ -7977,6 +8067,7 @@ function resetWorkoutData(){
   if(!state.workouts)state.workouts={};
   state.workouts.sessions=[];state.workouts.drafts={};state.workouts.pendingExercises={};state.workouts.completedExercises=[];state.workouts.dailySummaries={};
   state.workouts.savedRoutines=[];state.workouts.routineOverrides={};state.workouts.timedSessions=[];state.workouts.sessionClock=null;
+  try{window.dtClearActiveWorkoutCheckpoint?.()}catch(_){}
   state.workouts.collapsedByDay={push:true,pull:true,legs:true};
   delete state.workouts.demoDataLoaded;delete state.workouts.demoDataVersion;delete state.workouts.demoDataLoadedAt;delete state.workouts.demoDataDismissed;
   clearTodayWorkoutFlags();
@@ -13934,6 +14025,7 @@ body.dt-session-focus-open{overflow:hidden!important}
       const today=localDayKey(now()),sessionDay=String(s.dayKey||"");
       if(sessionDay&&sessionDay!==today){
         state.workouts.sessionClock=null;
+        try{window.dtClearActiveWorkoutCheckpoint?.()}catch(_){}
         try{cancelRestNotification?.()}catch(_){}
         try{save()}catch(_){}
         s=null;
@@ -14238,6 +14330,7 @@ body.dt-session-focus-open{overflow:hidden!important}
        do not finish the workout, and do not remove already logged sets. */
     accumulateRest(s);
     state.workouts.sessionClock=null;
+    try{window.dtClearActiveWorkoutCheckpoint?.()}catch(_){}
     persist();
     cancelRestNotification();
     document.getElementById("dtSessionFinishSheet")?.classList.remove("show");
@@ -14266,7 +14359,7 @@ body.dt-session-focus-open{overflow:hidden!important}
     if(!state.workouts.timedSessions.some(x=>x.id===rec.id))state.workouts.timedSessions.push(rec);
     state.workouts.timedSessions=state.workouts.timedSessions.slice(-300);
     if(state.workouts?.uiState)state.workouts.uiState.currentActivity=null;
-    state.workouts.sessionClock=null;persist();cancelRestNotification();document.getElementById("dtSessionFinishSheet")?.classList.remove("show");document.getElementById("dtSessionFocus")?.classList.remove("show");document.body.classList.remove("dt-session-focus-open");releaseWake();renderAll();
+    state.workouts.sessionClock=null;try{window.dtClearActiveWorkoutCheckpoint?.()}catch(_){}persist();cancelRestNotification();document.getElementById("dtSessionFinishSheet")?.classList.remove("show");document.getElementById("dtSessionFocus")?.classList.remove("show");document.body.classList.remove("dt-session-focus-open");releaseWake();renderAll();
     try{switchView("history");renderHistory?.()}catch(_){}
   }
 
@@ -15344,7 +15437,9 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
        active session still exists, then clear session state. */
     try{document.getElementById("dtSessionBack")?.click()}catch(_){}
     if(state.workouts?.uiState)state.workouts.uiState.currentActivity=null;
-    state.workouts.sessionClock=null;saveNow();
+    state.workouts.sessionClock=null;
+    try{window.dtClearActiveWorkoutCheckpoint?.()}catch(_){}
+    saveNow();
 
     document.getElementById("dtSessionRemaining")?.classList.remove("show");
     document.getElementById("dtSessionTemplateChoice")?.classList.remove("show");
@@ -15864,13 +15959,66 @@ window.DT_MARC_MERGED_VERSION="25.7-session-history-stats-stable";
     return `composite:${record.exerciseKey}|${dateStr}|${setsSignature}`;
   }
 
+  /* FIX11_IMPORTED_HISTORY_IDENTITY
+     Imported/legacy workout rows may carry an older exerciseKey even when the
+     movement is the same exercise. Resolve the CURRENT exercise identity once,
+     keep exact-key matches authoritative, then use the existing canonical
+     movement+equipment matcher as a compatibility bridge. This deliberately
+     does not use fuzzy substring matching, so Hammer Curl, Cable Curl,
+     Alternating Curl, etc. cannot be merged into Dumbbell Biceps Curl merely
+     because they train the same muscle. */
+  function dtIntelResolveExerciseTarget(exerciseKey){
+    const key=String(exerciseKey||"");
+    if(!key)return null;
+    try{
+      const days=Object.keys((typeof plans!=="undefined"&&plans)||{});
+      for(const day of days){
+        const list=typeof effectiveExercises==="function"?(effectiveExercises(day)||[]):[];
+        for(let i=0;i<list.length;i++){
+          const e=list[i];
+          const stable=typeof window.dtStableExerciseKey==="function"
+            ? window.dtStableExerciseKey(e,i)
+            : (e?.[4]||`${e?.[0]||""}|${e?.[1]||""}`);
+          if(String(stable)===key)return e;
+        }
+      }
+    }catch(_){}
+    try{
+      const lib=window.DT_EXERCISE_LIBRARY||(typeof DT_EXERCISE_LIBRARY!=="undefined"?DT_EXERCISE_LIBRARY:[]);
+      const entry=(lib||[]).find(x=>String(x?.id||"")===key);
+      if(entry)return [entry.name||"",entry.equipment||"",entry.primaryMuscle||"",[],key];
+    }catch(_){}
+    try{
+      const exact=(state?.workouts?.completedExercises||[]).find(x=>String(x?.exerciseKey||"")===key);
+      if(exact)return exact;
+    }catch(_){}
+    const pipe=key.indexOf("|");
+    if(pipe>=0)return {name:key.slice(0,pipe),type:key.slice(pipe+1),exerciseKey:key};
+    return null;
+  }
+
+  function dtIntelHistoryRecordMatches(exerciseKey,target,record){
+    if(!record)return false;
+    if(String(record.exerciseKey||"")===String(exerciseKey||""))return true;
+    if(!target)return false;
+    const a=String(target?.canonicalExerciseId||"");
+    const b=String(record?.canonicalExerciseId||"");
+    if(a&&b&&a===b)return true;
+    try{
+      if(typeof window.dtExerciseHistoryMatches==="function" &&
+         window.dtExerciseHistoryMatches(target,record))return true;
+    }catch(_){}
+    return false;
+  }
+
   function dtIntelExerciseHistory(exerciseKey, opts={}){
     const {sinceDays, limit} = opts;
     const source = (state?.workouts?.completedExercises) || [];
+    const target = dtIntelResolveExerciseTarget(exerciseKey);
     const seen = new Set();
     let all = source
       .filter(x => {
-        if(!x || x.exerciseKey !== exerciseKey) return false;
+        if(!dtIntelHistoryRecordMatches(exerciseKey,target,x)) return false;
         const key = dedupKeyFor(x);
         if(seen.has(key)) return false;
         seen.add(key);
@@ -16027,6 +16175,15 @@ window.DT_MARC_MERGED_VERSION="25.7-session-history-stats-stable";
   window.dtIntelEffortSeries=dtIntelEffortSeries;
   window.dtIntelRollingWindow=dtIntelRollingWindow;
   window.dtIntelMuscleWeeklyLoad=dtIntelMuscleWeeklyLoad;
+  window.dtIntelResolveExerciseTarget=dtIntelResolveExerciseTarget;
+  window.dtIntelHistoryRecordMatches=dtIntelHistoryRecordMatches;
+  window.DT_FIX11_IMPORTED_HISTORY_IDENTITY={
+    version:"FIX11_IMPORTED_HISTORY_IDENTITY",
+    exactKeyFirst:true,
+    canonicalMovementEquipmentFallback:true,
+    fuzzySubstringMatching:false,
+    importedHistoryFeedsSharedIntelCore:true
+  };
   window.DT_INTEL_CORE_VERSION=V;
 })();
 </script>
@@ -29028,6 +29185,178 @@ window.DT_FIX1_COMPLETED_TRAINING_EVIDENCE=Object.freeze({
 }
 </style>
 
+
+<script id="dt-fix13-per-set-smart-session">
+(()=>{
+  "use strict";
+  const VERSION="FIX13_PER_SET_SMART_SESSION";
+  const priorDecision=typeof window.dtProgressionDecision==="function"?window.dtProgressionDecision:null;
+  if(!priorDecision)return;
+  const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+  const safe=(fn,...args)=>{try{return typeof fn==="function"?fn(...args):null}catch(_){return null}};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const num=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
+  const keyFor=(e,ei)=>clean(safe(window.dtStableExerciseKey,e,ei)||e?.[4]||e?.[0]);
+  const rangeFor=e=>{
+    const r=safe(window.dtTrainingRange,e);
+    return Array.isArray(r)&&r.length===2?[Number(r[0])||6,Number(r[1])||12]:[6,12];
+  };
+  const historyFor=key=>key?(safe(window.dtIntelExerciseHistory,key)||[]):[];
+  const effortOf=s=>clean(s?.effort).toLowerCase();
+  const repsText=(a,b)=>a===b?`${a}`:`${a}–${b}`;
+
+  function nextLoad(e,kg){
+    const authored=num(safe(window.dtNextLoad,e,kg));
+    if(authored&&authored>kg)return authored;
+    const step=kg<10?.5:kg<30?1:kg<80?2:2.5;
+    return Math.round((kg+step)*2)/2;
+  }
+  function lowerLoad(e,kg){
+    const authored=(e?.[3]||[]).map(x=>num(x?.[0])).filter(x=>x&&x<kg).sort((a,b)=>b-a)[0];
+    if(authored)return authored;
+    const step=kg<=10?.5:kg<=30?1:kg<=80?2:2.5;
+    return Math.max(.5,Math.round((kg-step)*2)/2);
+  }
+  function repStep(current,low,high){
+    const r=num(current);
+    const next=clamp((r??low)+1,low,high);
+    return [next,Math.min(high,next+1)];
+  }
+  function holdRep(current,low,high){
+    const r=clamp(num(current)??low,low,high);
+    return [r,Math.min(high,r+1)];
+  }
+  function actionLabel(action){
+    return ({
+      add_reps:"Build reps",
+      increase_load:"Small load increase",
+      reduce_load:"Ease one step",
+      confirm:"Confirm",
+      reentry:"Re-entry",
+      start:"Start here",
+      bodyweight_reps:"Build reps",
+      maintain:"Maintain"
+    })[action]||"Target";
+  }
+
+  function targetFromHistoricalSet(e,set,index,d,low,high){
+    const kg=num(set?.kg), reps=num(set?.reps), effort=effortOf(set);
+    const weighted=kg!=null&&kg>0;
+    let targetKg=weighted?kg:null, repBand=repStep(reps,low,high), action="add_reps";
+
+    if(d.mode==="reentry"){
+      repBand=holdRep(reps,low,high);
+      action="reentry";
+    }else if(d.mode==="reduce"&&weighted&&effort==="max"&&(reps??0)<low){
+      targetKg=lowerLoad(e,kg);
+      repBand=[low,Math.min(high,low+2)];
+      action="reduce_load";
+    }else if(d.mode==="increase"&&weighted&&(reps??0)>=high&&effort!=="max"){
+      targetKg=nextLoad(e,kg);
+      repBand=[low,Math.min(high,low+2)];
+      action="increase_load";
+    }else if(d.mode==="confirm"&&weighted&&(reps??0)>=high){
+      repBand=[high,high];
+      action="confirm";
+    }else if(!weighted){
+      targetKg=null;
+      action="bodyweight_reps";
+    }
+
+    return {
+      set:index+1,
+      kg:targetKg,
+      repsMin:repBand[0],
+      repsMax:repBand[1],
+      action,
+      reason:actionLabel(action),
+      previous:{kg:kg,reps:reps,effort:effort||null}
+    };
+  }
+
+  function startingTargets(e,d){
+    if(d.mode==="duration")return [];
+    const [low,high]=rangeFor(e);
+    const authoredCount=Math.max(1,Math.min(6,Array.isArray(e?.[3])&&e[3].length?e[3].length:3));
+    const startKg=num(d?.signals?.startingWeightKg);
+    const weighted=startKg!=null&&startKg>0;
+    return Array.from({length:authoredCount},(_,i)=>({
+      set:i+1,kg:weighted?startKg:null,repsMin:low,repsMax:Math.min(high,low+2),
+      action:"start",reason:i===0?"Start here":"Repeat if form stays solid",previous:null
+    }));
+  }
+
+  function buildSetTargets(e,ei,d,opts={}){
+    if(!d||d.mode==="duration")return [];
+    const key=clean(opts.exerciseKey||d.exerciseKey||keyFor(e,ei));
+    const history=historyFor(key);
+    if(!history.length)return startingTargets(e,d);
+
+    const latest=history.at(-1);
+    const sets=(Array.isArray(latest?.sets)?latest.sets:[])
+      .filter(s=>s&&num(s.reps)!=null&&num(s.reps)>0);
+    if(!sets.length)return startingTargets(e,d);
+
+    const [low,high]=rangeFor(e);
+    return sets.slice(0,12).map((s,i)=>targetFromHistoricalSet(e,s,i,d,low,high));
+  }
+
+  function decision(e,ei,opts={}){
+    const d=priorDecision(e,ei,opts);
+    if(!d||typeof d!=="object")return d;
+    const setTargets=buildSetTargets(e,ei,d,opts);
+    if(!setTargets.length)return d;
+    return {
+      ...d,
+      setTargets,
+      perSet:true,
+      signals:{...(d.signals||{}),fix13SetTargets:setTargets.length},
+      fix13:{
+        version:VERSION,
+        setTargets:setTargets.length,
+        policy:"Preserve each recent working set as its own baseline; progress reps first unless the shared progression state and that set support a load change."
+      }
+    };
+  }
+
+  function esc(v){
+    try{return window.dtEscapeHtml?window.dtEscapeHtml(String(v??"")):String(v??"")}catch(_){return String(v??"")}
+  }
+  function unit(){try{return window.dtWeightUnitLabel?.()||"KG"}catch(_){return "KG"}}
+  function displayKg(kg){
+    if(kg==null)return "Bodyweight";
+    try{
+      const d=window.dtWeightDisplayValue?.(kg);
+      return `${d??kg} ${unit()}`;
+    }catch(_){return `${kg} ${unit()}`}
+  }
+  function targetsMarkup(d){
+    const t=Array.isArray(d?.setTargets)?d.setTargets:[];
+    if(!t.length)return "";
+    const rows=t.map(x=>`<div class="dt-smart-set-row"><small>SET ${x.set}</small><b>${esc(displayKg(x.kg))} · ${esc(repsText(x.repsMin,x.repsMax))} reps</b><span>${esc(x.reason)}</span></div>`).join("");
+    return `<div class="dt-smart-set-head"><div class="smart-next-copy"><small>SMART NEXT SESSION</small><b>Set-by-set targets</b></div><div class="smart-next-reason">${esc(d.reason||"Based on your recent sets")}</div></div><div class="dt-smart-set-grid">${rows}</div>`;
+  }
+
+  window.dtProgressionDecision=decision;
+  window.smartRecommendation=function(e,ei){
+    let day=null;try{day=wday}catch(_){}
+    return decision(e,ei,{day});
+  };
+  try{smartRecommendation=window.smartRecommendation}catch(_){}
+  window.dtSmartSetTargetsMarkup=targetsMarkup;
+  window.DT_FIX13_PER_SET_SMART_SESSION={
+    version:VERSION,
+    owner:"final dtProgressionDecision wrapper",
+    importedHistoryOwner:"Fix11 dtIntelExerciseHistory",
+    draftOwnershipOwner:"Fix12 draft identity",
+    preservesExerciseLevelDecision:true,
+    addsSetTargets:true,
+    inputsRemainUserEntered:true,
+    healthDataExcluded:true
+  };
+})();
+</script>
+
 </body>
 </html>
 <style id="dt-p47-smart-session-explanation-readability-css">
@@ -29435,4 +29764,201 @@ window.DT_FIX1_COMPLETED_TRAINING_EVIDENCE=Object.freeze({
   window.dtP50BackendIntegrity=integrity;
   window.DT_P50_HISTORY_MATURITY_CONFIDENCE={version:VERSION,sessionCaps:{"1":"low","2-3":"medium","4+":"existing evidence"},neverRaisesConfidence:true,doesNotChangeTargets:true,healthDataExcluded:true};
 })();
+</script>
+
+<style id="dt-fix14-explanation-alignment-style">
+.dt-smart-set-why{display:grid!important;gap:5px!important}
+.dt-smart-set-why>span{display:block!important}
+.dt-smart-set-why strong{color:#a8c9d8;font-weight:800}
+</style>
+<script id="dt-fix14-final-explanation-alignment">
+(()=>{
+  "use strict";
+  const VERSION="FIX14_FINAL_EXPLANATION_ALIGNMENT";
+  const priorDecision=typeof window.dtProgressionDecision==="function"?window.dtProgressionDecision:null;
+  const priorCoach=typeof window.dtCoachV2BuildModel==="function"?window.dtCoachV2BuildModel:null;
+  if(!priorDecision)return;
+
+  const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+  const esc=v=>{try{return window.dtEscapeHtml?window.dtEscapeHtml(String(v??"")):String(v??"")}catch(_){return String(v??"")}};
+  const displayKg=kg=>{
+    if(kg==null)return "bodyweight";
+    try{
+      const val=window.dtWeightDisplayValue?.(kg)??kg;
+      const unit=window.dtWeightUnitLabel?.()||"kg";
+      return `${val} ${unit}`;
+    }catch(_){return `${kg} kg`}
+  };
+  const repText=x=>x.repsMin===x.repsMax?`${x.repsMin}`:`${x.repsMin}–${x.repsMax}`;
+
+  function setWhyRow(x){
+    const p=x?.previous||null;
+    const prev=p&&Number(p.reps)>0
+      ? `${p.kg!=null&&Number(p.kg)>0?displayKg(Number(p.kg)):"bodyweight"} × ${Number(p.reps)}${p.effort?` (${clean(p.effort)})`:""}`
+      : "no comparable finalized set";
+    const target=`${displayKg(x.kg)} × ${repText(x)} reps`;
+
+    switch(clean(x.action)){
+      case "increase_load":
+        return `Previous ${prev}. Target ${target}. This set reached the top of its rep range and the shared progression gate supports a small load increase.`;
+      case "reduce_load":
+        return `Previous ${prev}. Target ${target}. This set was below the target range at Max effort while the shared backend is in reduction mode, so M•ARC eases one load step instead of forcing progression.`;
+      case "reentry":
+        return `Previous ${prev}. Target ${target}. After a re-entry gap, M•ARC keeps this set near its recent load rather than assuming readiness for an increase.`;
+      case "confirm":
+        return `Previous ${prev}. Target ${target}. M•ARC is asking for another comparable top-range set before treating the heavier progression as established.`;
+      case "bodyweight_reps":
+        return `Previous ${prev}. Target ${target}. This set progresses through repetitions; M•ARC does not invent an external load for bodyweight work.`;
+      case "start":
+        return `Target ${target}. There is not enough matched finalized history for this set, so this is a starting prescription rather than a personalized progression.`;
+      default:
+        return `Previous ${prev}. Target ${target}. The load stays with this set while repetitions progress inside the target range.`;
+    }
+  }
+
+  function scienceForSets(targets,d){
+    const actions=new Set((targets||[]).map(x=>clean(x?.action)));
+    if(actions.has("increase_load"))return {
+      principle:"Progressive overload can come from repetitions or load. M•ARC increases load only on the set(s) that have earned it, rather than flattening every set to one weight.",
+      source:"Research basis: ACSM Position Stand 2026 (PMID 41843416); ACSM progression model 2009 (PMID 19204579); overload progression trial (PMID 38286426). Exact M•ARC thresholds and equipment-step rules are app policy."
+    };
+    if(actions.has("reduce_load"))return {
+      principle:"Effort can inform load prescription. M•ARC uses the logged effort together with rep performance and the shared trend state; it does not treat one hard set as automatic failure.",
+      source:"Research basis: RIR load-prescription study (PMID 36135029); autoregulated resistance-training review/meta-analysis (2025, PMID 40791980). Exact M•ARC reduction gates are app policy."
+    };
+    if(actions.has("reentry"))return {
+      principle:"A previous performance is useful evidence, but readiness after a gap is uncertain. M•ARC therefore uses a conservative re-entry rule rather than automatically escalating load.",
+      source:"Research context: ACSM Position Stand 2026 (PMID 41843416). The specific re-entry hold rule is M•ARC policy, not a direct published prescription."
+    };
+    return {
+      principle:"Adding quality repetitions at the same load is a valid form of progressive overload; a load increase is not required every session.",
+      source:"Research basis: overload progression trials (PMID 38286426; PMID 36199287) and ACSM Position Stand 2026 (PMID 41843416). Exact M•ARC rep bands are app policy."
+    };
+  }
+
+  function explain(e,ei,d){
+    if(!d||typeof d!=="object")return d;
+    const targets=Array.isArray(d.setTargets)?d.setTargets:[];
+    if(!targets.length)return d;
+
+    const setWhy=targets.map(x=>({set:x.set,text:setWhyRow(x)}));
+    const actions=[...new Set(targets.map(x=>clean(x.action)).filter(Boolean))];
+    const sci=scienceForSets(targets,d);
+    const baseWhy=clean(d.rationale);
+    const rationale=[
+      baseWhy,
+      `M•ARC then applies that shared exercise decision to ${targets.length} recent working set${targets.length===1?"":"s"} separately, so each set keeps its own load/repetition history instead of inheriting one exercise-wide number.`
+    ].filter(Boolean).join(" ");
+
+    return {
+      ...d,
+      rationale,
+      principle:sci.principle,
+      source:sci.source,
+      setWhy,
+      explanationOwner:VERSION,
+      fix14:{
+        version:VERSION,
+        actions,
+        sharedDecisionPreserved:true,
+        exactThresholdsLabeledAppPolicy:true
+      }
+    };
+  }
+
+  function decision(e,ei,opts={}){
+    return explain(e,ei,priorDecision(e,ei,opts));
+  }
+
+  function findContext(key){
+    try{
+      for(const day of Object.keys((typeof plans!=="undefined"&&plans)||{})){
+        const list=typeof effectiveExercises==="function"?(effectiveExercises(day)||[]):[];
+        for(let i=0;i<list.length;i++){
+          const e=list[i];
+          const stable=window.dtStableExerciseKey?.(e,i)||e?.[4]||e?.[0]||"";
+          if(String(stable)===String(key))return {day,e,index:i};
+        }
+      }
+    }catch(_){}
+    return null;
+  }
+
+  function coachSetSummary(d){
+    const t=Array.isArray(d?.setTargets)?d.setTargets:[];
+    return t.map(x=>`Set ${x.set}: ${displayKg(x.kg)} × ${repText(x)} reps`).join("; ");
+  }
+
+  window.dtProgressionDecision=decision;
+  window.smartRecommendation=function(e,ei){
+    let day=null;try{day=wday}catch(_){}
+    return decision(e,ei,{day});
+  };
+  try{smartRecommendation=window.smartRecommendation}catch(_){}
+
+  if(priorCoach){
+    window.dtCoachV2BuildModel=function(rows){
+      const model=priorCoach(Array.isArray(rows)?rows:[])||{cards:[],brief:null,learn:null};
+      try{
+        for(const card of (model.cards||[])){
+          const id=clean(card?.id||"");
+          if(!id.startsWith("exercise:"))continue;
+          const key=id.slice("exercise:".length);
+          const ctx=findContext(key);
+          if(!ctx)continue;
+          const d=decision(ctx.e,ctx.index,{day:ctx.day,exerciseKey:key});
+          if(!d?.setTargets?.length)continue;
+          card.action=`Next session — ${coachSetSummary(d)}.`;
+          card.why=d.rationale||card.why;
+          card.fact=d.principle||card.fact;
+          card.source=d.source||card.source;
+          card.evidence=[
+            ...(d.setWhy||[]).map(x=>`Set ${x.set}: ${x.text}`),
+            ...(d.evidence||[]),
+            ...(card.evidence||[])
+          ].filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,8);
+          card.fix14={version:VERSION,setTargets:d.setTargets.length};
+        }
+      }catch(e){console.warn("M/ARC Fix14 Coach explanation alignment failed",e)}
+      return model;
+    };
+  }
+
+  window.DT_FIX14_FINAL_EXPLANATION_ALIGNMENT=Object.freeze({
+    version:VERSION,
+    finalProgressionOwner:true,
+    smartSessionUsesFinalDecision:true,
+    whyUsesFinalDecision:true,
+    coachUsesFinalDecision:true,
+    changesRecommendationMath:false,
+    changesSetTargets:false,
+    researchVsPolicySeparated:true,
+    healthDataExcluded:true
+  });
+})();
+</script>
+
+<script id="dt-fix15-checkpoint-lifecycle-ownership">
+window.DT_FIX15_CHECKPOINT_LIFECYCLE_OWNERSHIP=Object.freeze({
+ version:"FIX15_CHECKPOINT_LIFECYCLE_OWNERSHIP",
+ invariant:"No inactive/null live workout session may retain dtActiveWorkoutCheckpointV1",
+ coveredOwners:["workout_reset","midnight_expiry","stop_session","timed_finish_session","commit_finish","legacy_finish_workout"],
+ changesSmartSession:false,changesCoach:false,changesDraftIdentity:false,changesImportedHistory:false,healthDataExcluded:true
+});
+</script>
+
+<script id="dt-fix16-canonical-previous-set-ownership">
+window.DT_FIX16_CANONICAL_PREVIOUS_SET_OWNERSHIP=Object.freeze({
+  version:"FIX16_CANONICAL_PREVIOUS_SET_OWNERSHIP",
+  exactStableKeyFirst:true,
+  uniqueCanonicalSnapshotBridge:true,
+  sameWorkoutDayHistoryFallback:true,
+  anonymousIndexFallback:false,
+  setIndexPreservedAfterExerciseResolution:true,
+  changesProgression:false,
+  changesCoach:false,
+  changesDrafts:false,
+  changesPersistence:false,
+  healthDataExcluded:true
+});
 </script>
