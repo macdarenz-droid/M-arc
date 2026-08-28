@@ -3918,14 +3918,19 @@ function workoutSessionExercises(session){
   }));
 }
 function workoutSessionSets(session){
+  /* FIX-1 authority: weight/effort alone is not completed training evidence.
+     A durable working set requires completed reps. Bodyweight remains valid
+     because kg may legitimately be blank/zero. */
   return workoutSessionExercises(session).reduce((total,ex)=>{
-    return total+(ex.sets||[]).filter(s=>s.kg||s.reps||s.effort).length;
+    return total+(ex.sets||[]).filter(s=>Number(s?.reps)>0).length;
   },0);
 }
 function renderWorkoutHistory(){
   const list=document.getElementById("workoutHistoryList");
   if(!list) return;
-  const sessions=(state.workouts?.sessions||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const sessions=(state.workouts?.sessions||[]).filter(s=>{
+    try{return workoutSessionSets(s)>0}catch(_){return true}
+  }).slice().sort((a,b)=>b.date.localeCompare(a.date));
   list.innerHTML="";
   if(!sessions.length){
     list.innerHTML='<div class="workout-history-empty">No completed workout sessions yet.</div>';
@@ -5785,8 +5790,8 @@ renderTrainingGoal();
       try{return !!window.Capacitor?.isNativePlatform?.()}catch(_){return false}
     })();
 
-    const loadWeb=()=>dtLoadExternalScript("https://unpkg.com/body-muscles/dist/umd/body-muscles.umd.min.js")
-      .catch(()=>dtLoadExternalScript("https://cdn.jsdelivr.net/npm/body-muscles/dist/umd/body-muscles.umd.min.js"));
+    const loadWeb=()=>dtLoadExternalScript("https://unpkg.com/body-muscles@1.0.0/dist/umd/body-muscles.umd.min.js")
+      .catch(()=>dtLoadExternalScript("https://cdn.jsdelivr.net/npm/body-muscles@1.0.0/dist/umd/body-muscles.umd.min.js"));
 
     /* Android APK packages this file locally in the build workflow.
        The website keeps the existing CDN path. */
@@ -6118,16 +6123,23 @@ renderTrainingGoal();
     catch(e){return String(day||"Workout")}
   }
 
-  function dtInferMeta(name,muscleText){
-    /* P20: the authoritative exercise library owns exact built-in anatomy.
-       Older summary maps remain only as compatibility fallbacks for generic
-       labels/custom exercises that are not present in the library. */
+  function dtInferMeta(name,muscleText,exerciseKey){
+    /* P20 + FIX 4B: the authoritative exercise library owns exact built-in
+       anatomy. Historical/imported snapshots may preserve a stable exerciseKey
+       even when their display name is blank, abbreviated or legacy-formatted,
+       so resolve identity from BOTH fields before falling back to muscle text. */
     const q=dtSumNorm(name);
+    const keyRaw=String(exerciseKey||"");
+    const keyName=dtSumNorm(keyRaw.split("|")[0]);
+    const keyId=dtSumNorm(keyRaw.replace(/^custom:/i,""));
     try{
       const lib=Array.isArray(DT_EXERCISE_LIBRARY)?DT_EXERCISE_LIBRARY:[];
       const hit=lib.find(e=>{
         const names=[e?.name,...(e?.aliases||[])].map(dtSumNorm).filter(Boolean);
-        return names.includes(q);
+        const id=dtSumNorm(e?.id);
+        return (q&&names.includes(q)) ||
+               (keyName&&names.includes(keyName)) ||
+               (keyId&&id===keyId);
       });
       if(hit){
         return {
@@ -6158,7 +6170,11 @@ renderTrainingGoal();
 
   function dtLoggedSets(rec){
     return (rec?.sets||[]).filter(s=>{
-      const reps=Number(s?.reps),kgRaw=String(s?.kg??"").trim(),kg=kgRaw===""?null:Number(s.kg);
+      const reps=Number(s?.reps),kgRaw=String(s?.kg??"").trim(),kgToken=kgRaw.toLowerCase();
+      const bodyweight=kgToken==="bw"||kgToken==="bodyweight"||kgToken==="body weight";
+      const kg=kgRaw===""||bodyweight?null:Number(s.kg);
+      /* FIX 4C: reps are the completed-training authority. Bodyweight sets
+         often persist as "BW", so they must not be rejected as NaN weight. */
       return Number.isFinite(reps)&&reps>0&&(kg==null||(Number.isFinite(kg)&&kg>=0));
     });
   }
@@ -6201,7 +6217,7 @@ renderTrainingGoal();
     };
 
     records.forEach(rec=>{
-      const meta=dtInferMeta(rec.name,rec.muscle);
+      const meta=dtInferMeta(rec.name,rec.muscle,rec.exerciseKey);
       const sets=dtLoggedSets(rec);
       workingSets+=sets.length;
       sets.forEach(set=>{
@@ -6313,37 +6329,137 @@ renderTrainingGoal();
     if(window.BodyMuscles?.BodyChart)return Promise.resolve(window.BodyMuscles);
     return new Promise((resolve,reject)=>{
       const s=document.createElement("script");
-      s.src="https://unpkg.com/body-muscles/dist/umd/body-muscles.umd.min.js";
+      s.src="https://unpkg.com/body-muscles@1.0.0/dist/umd/body-muscles.umd.min.js";
       s.onload=()=>window.BodyMuscles?.BodyChart?resolve(window.BodyMuscles):reject(new Error("Body map unavailable"));
       s.onerror=reject;document.head.appendChild(s);
     }).catch(()=>new Promise((resolve,reject)=>{
       const s=document.createElement("script");
-      s.src="https://cdn.jsdelivr.net/npm/body-muscles/dist/umd/body-muscles.umd.min.js";
+      s.src="https://cdn.jsdelivr.net/npm/body-muscles@1.0.0/dist/umd/body-muscles.umd.min.js";
       s.onload=()=>window.BodyMuscles?.BodyChart?resolve(window.BodyMuscles):reject(new Error("Body map unavailable"));
       s.onerror=reject;document.head.appendChild(s);
     }));
   }
 
+  function dtSummaryNormalizePathData(v){return String(v||"").replace(/[\s,]+/g," ").trim()}
+  function dtSummaryRenderedDef(path,defs,index){
+    /* FIX 6 — BodyChart 1.0.0 does not expose muscle ids on its SVG paths.
+       It DOES put the authoritative MuscleDef.name in each path's <title>.
+       Resolve that stable semantic identity before geometry/index fallbacks so
+       Abs and every other region cannot depend on browser SVG path formatting. */
+    const explicit=String(
+      path?.dataset?.dtMuscleId||
+      path?.dataset?.muscleId||
+      path?.getAttribute?.("data-dt-muscle-id")||
+      path?.getAttribute?.("data-muscle-id")||
+      path?.getAttribute?.("data-id")||
+      path?.id||""
+    ).toLowerCase();
+    if(explicit){
+      const byId=(defs||[]).find(d=>String(d?.id||"").toLowerCase()===explicit);
+      if(byId)return byId;
+    }
+    const title=String(path?.querySelector?.("title")?.textContent||"").trim().toLowerCase();
+    if(title){
+      const byTitle=(defs||[]).find(d=>String(d?.name||"").trim().toLowerCase()===title);
+      if(byTitle){
+        try{path.setAttribute("data-dt-muscle-id",String(byTitle.id||""))}catch(_){}
+        return byTitle;
+      }
+    }
+    const renderedD=dtSummaryNormalizePathData(path?.getAttribute?.("d"));
+    if(renderedD){
+      const byPath=(defs||[]).find(d=>dtSummaryNormalizePathData(d?.path)===renderedD);
+      if(byPath){
+        try{path.setAttribute("data-dt-muscle-id",String(byPath.id||""))}catch(_){}
+        return byPath;
+      }
+    }
+    const fallback=(defs||[])[index]||null;
+    if(fallback){try{path.setAttribute("data-dt-muscle-id",String(fallback.id||""))}catch(_){}}
+    return fallback;
+  }
+  function dtBuildSummaryBodyState(defs,summary){
+    const maxPct=Math.max(1,...(summary?.muscles||[]).map(x=>Number(x.pct)||0));
+    const state={};
+    (defs||[]).forEach(def=>{
+      const matched=(summary?.muscles||[])
+        .filter(m=>dtSummaryMatch(m.key,def))
+        .sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0))[0];
+      if(!matched||!def?.id)return;
+      const intensity=Math.max(1,Math.min(10,Math.round((Number(matched.pct)||0)/maxPct*9)+1));
+      state[String(def.id)]={intensity,selected:true};
+    });
+    return state;
+  }
+  window.DT_ABS_FIX_RUNTIME="FIX10_STABLE_GLOW";
+  try{document.documentElement.dataset.dtAbsFix="10"}catch(_){}
+
+  /* ABS FIX 9 — BodyMuscles 1.0.0 visually splits the front abdominal
+     "six-pack" across canonical Abs plus neighbouring Serratus/Oblique
+     geometries. Android SVG evidence proved the canonical Abs state and
+     four official Abs paths are already correct. This presentation-only
+     bridge lets the front Training Body's otherwise-unclaimed six-pack
+     helper geometries borrow the canonical abs role. A real direct signal
+     (for example obliques/core) always wins and is never overwritten. */
+  const DT_TB_ABS_VISUAL_BRIDGE_IDS=new Set([
+    "serratus-anterior-left","serratus-anterior-right",
+    "obliques-left","obliques-right"
+  ]);
+  function dtTrainingBodyVisualMatch(host,def,summary,directMatch){
+    if(directMatch)return directMatch;
+    if(host?.id!=="dtTBFront")return null;
+    const id=String(def?.id||"").toLowerCase();
+    if(!DT_TB_ABS_VISUAL_BRIDGE_IDS.has(id))return null;
+    return (summary?.muscles||[]).find(m=>m.key==="abs"&&(Number(m.pct)||0)>0)||null;
+  }
+
   function dtStyleSummaryBody(host,defs,summary,mini){
     const maxPct=Math.max(1,...summary.muscles.map(x=>x.pct));
+    const isTrainingBody=host?.id==="dtTBFront"||host?.id==="dtTBBack";
     host.querySelectorAll(".body-chart-muscle").forEach((path,i)=>{
-      const def=defs[i];
-      const matched=summary.muscles
+      if(isTrainingBody){
+        path.classList.remove("dt-tb-role-animated");
+        path.classList.remove("dt-tb-glow-active");
+        path.style.removeProperty("animation");
+        path.style.removeProperty("--dt-base");
+        path.style.removeProperty("--dt-glow");
+        path.style.removeProperty("--dt-tb-glow");
+      }
+      const def=dtSummaryRenderedDef(path,defs,i);
+      const directMatched=summary.muscles
         .filter(m=>dtSummaryMatch(m.key,def))
-        .sort((a,b)=>b.pct-a.pct)[0];
+        .sort((a,b)=>b.pct-a.pct)[0]||null;
+      const matched=dtTrainingBodyVisualMatch(host,def,summary,directMatched);
       if(!matched){
-        path.setAttribute("fill","#3b4650");
-        path.style.fillOpacity=mini?".48":".58";
-        path.setAttribute("stroke","#222d35");
-        path.setAttribute("stroke-width",".07");
+        /* FIX 4C fallback: BodyChart has already received authoritative
+           bodyState by muscle id. If its own renderer marked this path active,
+           do not erase that valid highlight merely because our optional role-
+           color adapter could not recover the definition from DOM geometry. */
+        const currentFill=String(path.getAttribute("fill")||"").toLowerCase();
+        const nativeActive=currentFill && !["#3b4650","#3c4851","#334155","#475569"].includes(currentFill);
+        if(!nativeActive){
+          path.setAttribute("fill","#3b4650");
+          if(isTrainingBody)path.style.setProperty("fill","#3b4650","important");
+          path.style.fillOpacity=mini?".48":".58";
+          path.setAttribute("stroke","#222d35");
+          path.setAttribute("stroke-width",".07");
+          path.style.filter="none";
+        }
         return;
       }
       const strength=matched.pct/maxPct;
-      path.setAttribute("fill",dtBarColor(matched.role));
+      const roleFill=dtBarColor(matched.role);
+      path.setAttribute("fill",roleFill);
+      if(isTrainingBody)path.style.setProperty("fill",roleFill,"important");
       path.style.fillOpacity=String((mini?.62:.58)+(mini?.34:.40)*strength);
       path.setAttribute("stroke","rgba(255,255,255,.23)");
       path.setAttribute("stroke-width",".14");
-      path.style.filter=`drop-shadow(0 0 ${mini?2:4}px ${DT_ROLE_GLOWS[matched.role]||DT_ROLE_GLOWS.primary})`;
+      const roleGlow=DT_ROLE_GLOWS[matched.role]||DT_ROLE_GLOWS.primary;
+      path.style.filter=`drop-shadow(0 0 ${mini?2:4}px ${roleGlow})`;
+      if(isTrainingBody){
+        path.style.setProperty("--dt-tb-glow",roleGlow);
+        path.classList.add("dt-tb-glow-active");
+      }
     });
   }
 
@@ -6353,8 +6469,15 @@ renderTrainingGoal();
     dtEnsureBodyMusclesSummary().then(lib=>{
       const render=(host,view,defs)=>{
         host.innerHTML="";
-        new lib.BodyChart(host,{view,bodyState:{},enableTransitions:true,showViewLabel:false});
-        requestAnimationFrame(()=>requestAnimationFrame(()=>dtStyleSummaryBody(host,defs,summary,mini)));
+        const bodyState=dtBuildSummaryBodyState(defs,summary);
+        new lib.BodyChart(host,{view,bodyState,enableTransitions:true,showViewLabel:false});
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          dtStyleSummaryBody(host,defs,summary,mini);
+          /* ABS FIX 7 — Training Body keeps the authoritative styled fill
+             immediately. The former grey→target reveal could restart during
+             legitimate Training Body rerenders and visually pin low-share
+             muscles such as Abs at the grey base state. */
+        }));
       };
       render(f,lib.ViewSide.FRONT,lib.FRONT_MUSCLES||[]);
       render(b,lib.ViewSide.BACK,lib.BACK_MUSCLES||[]);
@@ -6570,6 +6693,8 @@ renderTrainingGoal();
   window.dtBarColor=dtBarColor;
   window.dtSummaryMatch=dtSummaryMatch;
   window.dtFindDefs=dtFindDefs;
+  window.dtSummaryRenderedDef=dtSummaryRenderedDef;
+  window.dtBuildSummaryBodyState=dtBuildSummaryBodyState;
   window.dtStyleSummaryBody=dtStyleSummaryBody;
   window.dtRenderSummaryBodies=dtRenderSummaryBodies;
   window.dtEnsureBodyMusclesSummary=dtEnsureBodyMusclesSummary;
@@ -11717,6 +11842,10 @@ function daySessions(key){
       raw.forEach((s,idx)=>{
         if(!s||typeof s!=="object")return;
         const ex=Array.isArray(s.snapshot)?s.snapshot:(Array.isArray(s.exercises)?s.exercises:[]);
+        /* FIX-1: legacy zero-input session shells remain in imported raw data
+           for compatibility, but are not canonical completed workouts. */
+        const completedSetCount=ex.reduce((n,row)=>n+(row?.sets||[]).filter(set=>Number(set?.reps)>0).length,0);
+        if(completedSetCount<=0)return;
         let stamp="";
         const rawStamp=s.date||s.completedAt||s.startedAt||"";
         if(rawStamp){const d=new Date(rawStamp);stamp=Number.isFinite(d.getTime())?d.toISOString():String(rawStamp)}
@@ -11826,11 +11955,9 @@ function daySessions(key){
     (records||[]).forEach(rec=>{
       sessionSet.add(rec.__dtSessionKey||`${rec.dayKey}|${rec.day}`);
       const meta=(typeof window.dtInferMeta==="function")
-        ? window.dtInferMeta(rec.name,rec.muscle)
+        ? window.dtInferMeta(rec.name,rec.muscle,rec.exerciseKey)
         : {primaryMuscles:[],secondaryMuscles:[],stabilizerMuscles:[]};
-      const sets=(rec.sets||[]).filter(s=>
-        String(s?.kg??"").trim()!==""||String(s?.reps??"").trim()!==""||String(s?.effort??"").trim()!==""
-      );
+      const sets=(rec.sets||[]).filter(s=>Number(s?.reps)>0);
       workingSets+=sets.length;
       sets.forEach(set=>{
         const factor=effortMult[set.effort]??1;
@@ -11908,7 +12035,10 @@ function daySessions(key){
       }
     });
     rows.sort((a,b)=>b.pct-a.pct||b.levelScore-a.levelScore);
-    return rows.slice(0,12);
+    /* FIX 4B: every muscle with real aggregate evidence remains visible.
+       The previous top-12 truncation could hide Abs/Core even while the body
+       aggregate contained them, making the list contradict the anatomy map. */
+    return rows;
   }
 
   function dtTBRowHTML(row){
@@ -15129,6 +15259,9 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
   function dayCompletedRows(s){
     return (state.workouts?.completedExercises||[]).filter(x=>x?.day===s.day&&x?.dayKey===s.dayKey);
   }
+  function sessionHasTrainingEvidence(s,end=Date.now()){
+    return sessionRecords(s,end).some(rec=>(rec?.sets||[]).some(set=>Number(set?.reps)>0));
+  }
   function saveSessionSummary(summary,s,end,duration,choice){
     if(!state.workouts.timedSessions)state.workouts.timedSessions=[];
     const stats=sessionStats(s,end),rec={
@@ -15201,7 +15334,11 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
     let summary=null;
     try{summary=typeof window.dtBuildWorkoutSummary==="function"?window.dtBuildWorkoutSummary(s.day):null}catch(_){summary=null}
     if(summary){summary={...summary,scope:"day-plan"}}else summary=buildMuscleSummary(s,end);
-    saveSessionSummary(summary,s,end,duration,choice);
+    const hasTrainingEvidence=sessionHasTrainingEvidence(s,end);
+    /* FIX-1 authority boundary: finishing/skipping a timer-only session is a
+       lifecycle action, not a completed workout. Do not create session,
+       timed-session, daily-summary, or workout-day truth without completed reps. */
+    if(hasTrainingEvidence)saveSessionSummary(summary,s,end,duration,choice);
 
     /* The V25.5 back handler owns wake-lock release. Invoke it while the
        active session still exists, then clear session state. */
@@ -17741,7 +17878,23 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
 .dt-export-preview-lightbox-body{overflow:auto;border:1px solid #1c3745;border-radius:18px;background:#041018;padding:10px;overscroll-behavior:contain;touch-action:pan-x pan-y pinch-zoom}
 .dt-export-preview-lightbox-body img{display:block;width:auto;max-width:none;height:auto;border-radius:12px}
 #dtTBFront .body-chart-muscle.dt-tb-role-animated,#dtTBBack .body-chart-muscle.dt-tb-role-animated{transform-box:fill-box;transform-origin:center}
-@media(prefers-reduced-motion:reduce){#dtTBFront .body-chart-muscle.dt-tb-role-animated,#dtTBBack .body-chart-muscle.dt-tb-role-animated{animation:none!important}}
+/* ABS FIX 10 — stable fill + glow-only Training Body animation.
+   The former reveal animation changed fill and caused the Abs regression.
+   This replacement animates FILTER ONLY; authoritative fill remains owned by
+   dtStyleSummaryBody and cannot be changed by the glow lifecycle. */
+@keyframes dtTrainingBodyGlow{
+  0%,100%{filter:drop-shadow(0 0 2px var(--dt-tb-glow))}
+  50%{filter:drop-shadow(0 0 7px var(--dt-tb-glow))}
+}
+#dtTBFront .body-chart-muscle.dt-tb-glow-active,
+#dtTBBack .body-chart-muscle.dt-tb-glow-active{
+  animation:dtTrainingBodyGlow 3.4s ease-in-out infinite!important;
+  transform-box:fill-box;transform-origin:center
+}
+@media(prefers-reduced-motion:reduce){
+  #dtTBFront .body-chart-muscle.dt-tb-glow-active,
+  #dtTBBack .body-chart-muscle.dt-tb-glow-active{animation:none!important}
+}
 
 .dt-today-recovery{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
 .dt-workout-complete-check{display:grid;place-items:center;width:88px;height:88px;margin:0 auto 6px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(84,224,151,.22),rgba(84,224,151,.12) 50%,rgba(84,224,151,.08) 72%,rgba(84,224,151,.04));color:#5be29f;font-size:44px;box-shadow:0 0 0 1px rgba(84,224,151,.14) inset,0 14px 34px rgba(21,91,58,.20)}
@@ -17940,63 +18093,9 @@ document.readyState==="loading"?document.addEventListener("DOMContentLoaded",ens
     }
   }catch(_){ }
 
-  /* Training Body uses the summary-body renderer, which correctly applies role
-     colours but did not emit the older muscle-map animation event. Animate this
-     card directly after its async SVG styling settles. */
-  function animateTrainingBody(){
-    const colors={
-      '#50dfa0':['#50dfa0','rgba(80,223,160,.70)',0],
-      '#43a7ff':['#43a7ff','rgba(67,167,255,.72)',.10],
-      '#a55cff':['#a55cff','rgba(165,92,255,.72)',.20]
-    };
-    document.querySelectorAll('#dtTBFront .body-chart-muscle,#dtTBBack .body-chart-muscle').forEach(path=>{
-      const fill=String(path.getAttribute('fill')||'').toLowerCase();
-      const cfg=colors[fill];
-      if(!cfg)return;
-      path.style.setProperty('--dt-target',cfg[0]);
-      path.style.setProperty('--dt-glow',cfg[1]);
-      path.style.setProperty('--dt-base','#3c4851');
-      path.style.transformBox='fill-box';
-      path.style.transformOrigin='center';
-      path.style.fill='#3c4851';
-      path.style.opacity='.48';
-      path.style.animation='none';
-      void path.getBoundingClientRect();
-      path.classList.add('dt-tb-role-animated');
-      path.style.animation=`dtMuscleReveal .82s cubic-bezier(.2,.75,.2,1) ${cfg[2]}s forwards, dtMusclePulse 3.4s ease-in-out ${cfg[2]+1.55}s infinite`;
-    });
-  }
-  let trainingBodyAnimTimer=0;
-  function scheduleTrainingBodyAnimation(delay=80){
-    clearTimeout(trainingBodyAnimTimer);
-    trainingBodyAnimTimer=setTimeout(animateTrainingBody,delay);
-  }
-  function observeTrainingBodyHosts(){
-    ['dtTBFront','dtTBBack'].forEach(id=>{
-      const host=document.getElementById(id);
-      if(!host||host.dataset.dtAnimObserved==='1')return;
-      host.dataset.dtAnimObserved='1';
-      new MutationObserver(()=>scheduleTrainingBodyAnimation(60)).observe(host,{childList:true,subtree:true});
-    });
-  }
-  function installTrainingBodyAnimation(){
-    observeTrainingBodyHosts();
-    const auditedBodyRender=window.dtRenderBodyCard;
-    if(typeof auditedBodyRender!=='function'||auditedBodyRender.__dtUiAuditWrapped){scheduleTrainingBodyAnimation(90);return;}
-    const wrapped=function(){
-      const r=auditedBodyRender.apply(this,arguments);
-      observeTrainingBodyHosts();
-      const card=document.getElementById('dtTBCard');
-      if(!card||!card.classList.contains('dt-mm-mode'))scheduleTrainingBodyAnimation(90);
-      return r;
-    };
-    wrapped.__dtUiAuditWrapped=true;
-    window.dtRenderBodyCard=wrapped;
-    scheduleTrainingBodyAnimation(90);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(installTrainingBodyAnimation,520));
-  setTimeout(installTrainingBodyAnimation,520);
-  setTimeout(installTrainingBodyAnimation,1250);
+  /* ABS FIX 7 — Training Body reveal animation removed.
+     dtStyleSummaryBody() is now the sole visible fill owner for Training Body.
+     The older non-Training-Body vector animation remains untouched. */
 
   // Restore and strengthen the summary card on load/navigation.
   setTimeout(()=>{
@@ -18741,13 +18840,22 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const rowHtml=x=>{const pct=Math.max(0,Math.min(100,Number(x.pct)||0)),color=pct<40?"#ef725c":pct<75?"#e7bd65":"#59dfa2";return `<div class="dt-v27-recovery-row ${x.recovering?"":"ready"}"><span class="dt-v27-recovery-name">${esc(labelMuscle(x.key))}</span><span class="dt-v27-recovery-track"><i class="dt-v27-recovery-fill" style="width:${pct}%;background:${color}"></i></span><span class="dt-v27-recovery-pct">${pct}%</span><span class="dt-v27-recovery-left">${x.recovering?fmtRecovery(x.hoursLeft):"Fully Recovered"}</span></div>`};
     const recoveringHtml=recovering.length?`<div class="dt-v27-recovery-section-label">Recovering</div><div class="dt-v27-recovery-list">${recovering.slice(0,8).map(rowHtml).join("")}</div>`:"";
     const readyHtml=readyRows.length?`<div class="dt-v27-recovery-section-label ready">Fully recovered</div><div class="dt-v27-recovery-list dt-v27-recovery-ready-list">${readyRows.slice(0,12).map(rowHtml).join("")}</div>`:"";
-    host.innerHTML=`<div class="dt-v27-kicker">RECOVERY ESTIMATE</div><div class="dt-v27-title">${recovering.length?`${recovering.length} muscle groups recovering`:"Ready to train"}</div><div class="dt-v27-sub">Estimated from your logged sets and effort. This is a training-readiness estimate, not a medical measurement.</div>
+    const markup=`<div class="dt-v27-kicker">RECOVERY ESTIMATE</div><div class="dt-v27-title">${recovering.length?`${recovering.length} muscle groups recovering`:"Ready to train"}</div><div class="dt-v27-sub">Estimated from your logged sets and effort. This is a training-readiness estimate, not a medical measurement.</div>
       <div class="dt-v27-recovery-meta"><div><small>Recovering</small><b>${recovering.length}</b></div><div><small>Ready</small><b>${ready}</b></div><div><small>Longest</small><b>${recovering.length?fmtRecovery(longest):"Ready"}</b></div></div>
       ${recoveringHtml}${readyHtml}${!rows.length?'<div class="dt-v27-empty">Complete a workout and recovery estimates will appear here.</div>':""}`;
-    try{window.dtRenderBodyCard?.()}catch(_){ }
-    setTimeout(moveTrainingBody,90);
+    /* FIX 3 — render only when recovery presentation actually changed.
+       Replacing identical innerHTML destroys/recreates every fill and restarts
+       width/SVG animation on resize, swipe-cancel and viewport sync. */
+    if(host.dataset.dtRecoveryMarkup!==markup){
+      host.dataset.dtRecoveryMarkup=markup;
+      host.innerHTML=markup;
+      try{window.dtRenderBodyCard?.()}catch(_){ }
+      moveTrainingBody();
+    }else{
+      syncViewportHeight();
+    }
   }
-  function moveTrainingBody(){const card=document.getElementById("dtTBCard"),mount=document.getElementById("dtHomeRecoveryMount");if(card&&mount&&card.parentElement!==mount){mount.appendChild(card);try{window.dtRenderBodyCard?.()}catch(_){}}requestAnimationFrame(syncViewportHeight)}
+  function moveTrainingBody(){const card=document.getElementById("dtTBCard"),mount=document.getElementById("dtHomeRecoveryMount");if(card&&mount&&card.parentElement!==mount){mount.appendChild(card);try{window.dtRenderBodyCard?.()}catch(_){}}syncViewportHeight()}
 
   function performanceRows(){
     const now=new Date(),start=new Date(now);start.setDate(now.getDate()-6);start.setHours(0,0,0,0);
@@ -18976,7 +19084,11 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     vp.addEventListener("touchmove",e=>{if(!touch)return;const t=e.changedTouches?.[0];if(!t)return;const dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(touch.locked==null&&Math.max(Math.abs(dx),Math.abs(dy))>12)touch.locked=Math.abs(dx)>Math.abs(dy)*1.35?"x":"y"},{passive:true});
     vp.addEventListener("touchcancel",()=>{touch=null;pageGestureActive=false;setPage(pageCommittedIndex,false,"sync")},{passive:true});
     vp.addEventListener("touchend",e=>{if(!touch){pageGestureActive=false;return}const t=e.changedTouches?.[0],start=touch;touch=null;pageGestureActive=false;if(!t||start.locked!=="x"){setPage(pageCommittedIndex,false,"sync");return}const dx=t.clientX-start.x,dy=t.clientY-start.y,dt=Math.max(1,performance.now()-start.time);if(Math.abs(dx)<48||Math.abs(dx)<Math.abs(dy)*1.35){setPage(pageCommittedIndex,false,"sync");return}if(Math.abs(dx)/dt<.20&&Math.abs(dx)<72){setPage(pageCommittedIndex,false,"sync");return}setPage(start.startPage+(dx<0?1:-1),true,"gesture")},{passive:true});
-    window.addEventListener("resize",()=>{clearTimeout(pageResizeTimer);pageResizeTimer=setTimeout(()=>setPage(pageCommittedIndex,false,"sync"),120)},{passive:true});
+    window.addEventListener("resize",()=>{clearTimeout(pageResizeTimer);pageResizeTimer=setTimeout(()=>{
+      /* FIX 3 — Android browser chrome/visualViewport changes are geometry
+         events. They must not re-run Recovery/Performance renderers. */
+      syncViewportHeight();
+    },120)},{passive:true});
   }
   function renderHome(){
     const host=document.getElementById("today");if(!host)return;
@@ -20673,6 +20785,21 @@ window.DT_MARC_PHASE3_FIX_VERSION="36.3-phase3-reliability";
     "#dtScheduledTodayBadge button"
   ].join(",");
   let active=null,lastNativeClickAt=0,lastNativeTarget=null;
+  /* FIX 2 — Phase 5 may recover taps only when the pointer interaction begins
+     on the unobstructed app surface. Several session overlays pre-date the
+     generic .modal convention, so they must be part of the same boundary.
+     Keep this inside the existing recovery owner: no new listener/observer. */
+  const BLOCKING_SURFACES=[
+    '.modal.show',
+    '[id$="Modal"].show',
+    '#dtSessionRemaining.show',
+    '#dtSessionTemplateChoice.show',
+    '#dtSessionComplete.show',
+    '#dtSessionFocus.show',
+    '#dtSessionFinishSheet.show'
+  ].join(',');
+  const pointerIsInsideBlockingSurface=node=>!!node?.closest?.(BLOCKING_SURFACES);
+  const blockingSurfaceVisible=()=>!!document.querySelector(BLOCKING_SURFACES);
   const pointCandidate=(x,y)=>{
     const direct=document.elementFromPoint(x,y)?.closest?.(SELECTORS);
     if(direct)return direct;
@@ -20694,12 +20821,12 @@ window.DT_MARC_PHASE3_FIX_VERSION="36.3-phase3-reliability";
   },true);
   document.addEventListener("pointerdown",e=>{
     if(e.pointerType!=="touch")return;
-    /* P51 — modal boundary guard.
-       Phase 5 touch recovery must never recover a tap through a visible modal.
-       A Cancel/Close tap can hide the Add Exercise sheet before the delayed
-       recovery runs; without this boundary, pointCandidate() may retain the
-       workout exercise geometrically underneath and call target.click(). */
-    if(e.target?.closest?.('.modal.show,[id$="Modal"].show')){active=null;return}
+    /* P51 + FIX 2 — overlay boundary guard.
+       The pointer-down boundary, not the delayed click moment, owns this
+       decision. A completion/control tap may hide its overlay before the
+       90 ms recovery callback runs; therefore never arm recovery when the
+       gesture began inside ANY blocking surface. */
+    if(pointerIsInsideBlockingSurface(e.target)||blockingSurfaceVisible()){active=null;return}
     const t=e.target?.closest?.(SELECTORS)||pointCandidate(e.clientX,e.clientY);
     if(!t)return;
     active={id:e.pointerId,target:t,x:e.clientX,y:e.clientY,t:performance.now()};
@@ -20712,9 +20839,10 @@ window.DT_MARC_PHASE3_FIX_VERSION="36.3-phase3-reliability";
     const target=a.target;
     setTimeout(()=>{
       const nativeRecent=lastNativeTarget===target && performance.now()-lastNativeClickAt<220;
-      if(nativeRecent||!target.isConnected||target.disabled)return;
+      if(nativeRecent||!target.isConnected||target.disabled||blockingSurfaceVisible())return;
       // Android WebView occasionally ends a small tap on the parent after a layout/scroll sample.
-      // Recover only the original known control, and only when no native click arrived.
+      // Recover only the original known control, only when no native click arrived,
+      // and never through a session/modal surface that appeared meanwhile.
       target.click();
     },90);
   },true);
@@ -23840,7 +23968,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
 })();
 </script>
 
-\n<style id="dt-p13-special-measurement-css">
+<style id="dt-p13-special-measurement-css">
 .dt-p13-measure-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 8px;padding:8px 10px;border:1px solid rgba(70,120,145,.25);border-radius:10px;background:rgba(6,24,33,.55)}
 .dt-p13-measure-row small{color:#8397a3;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.dt-p13-measure-select{min-width:118px;background:#07131b;color:#eaf6ff;border:1px solid #294354;border-radius:9px;padding:7px 9px;font-size:11px}
 </style>
@@ -23895,7 +24023,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   window.dtP13BackendIntegrity=integrity;for(const k of ["dtP12BackendIntegrity","dtP11BackendIntegrity","dtP10BackendIntegrity","dtP9BackendIntegrity"])window[k]=integrity;for(const k of ["dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P13_SPECIAL_MEASUREMENTS={version:VERSION,abWheelBodyweight:true,conditioningExercises:[...CONDITIONING],distanceAndTimeSeparate:true,noUniversalLoadDistanceScore:true,durableMeasurementMode:true,healthDataExcluded:true};window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specialMeasurements:"P13 load + distance/time",exerciseSemantics:"P13 Ab Wheel + conditioning measurement / P11 mixed / P10 base",healthDataExcludedFromCoach:true};
 })();
-</script>\n
+</script>
 
 <script id="dt-p14-detailed-muscle-specialization">
 (()=>{
@@ -28817,7 +28945,90 @@ window.DT_P68_2_STREAK_AUTHORITY=Object.freeze({
   noScheduleFallback:"legacy consecutive-calendar-day behavior"
 });
 })();
-</script></body>
+</script><script id="dt-fix1-completed-training-evidence-authority">
+window.DT_FIX1_COMPLETED_TRAINING_EVIDENCE=Object.freeze({
+  rule:"completed workout requires at least one set with reps > 0",
+  bodyweightKgMayBeBlank:true,
+  emptyFinishPersistsWorkout:false,
+  legacyEmptySessionsCanonical:false,
+  addsListeners:false,
+  addsObservers:false,
+  addsTimers:false
+});
+</script>
+<style id="dt-fix3-recovery-render-stability-css">
+/* FIX 3: recovery width changes still animate when values genuinely change,
+   but bars are not permanently promoted to compositor layers. */
+.dt-v27-recovery-fill{will-change:auto!important}
+</style>
+
+<style id="dt-fix5-why-mobile-readability-css">
+/* FIX 5 — Why This Suggestion phone readability.
+   Presentation-only. The Why model, rotation library, progression decision,
+   persistence and Coach/Smart Session data flow remain untouched.
+   On phone widths, the three-stage explanation becomes a vertical sequence
+   so explanatory text keeps a readable measure instead of being squeezed
+   into three ~1/3-width columns. */
+@media (max-width: 599px){
+  #dtWhyCoachModal .dt-why-chain{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:7px!important;
+    align-items:stretch!important;
+  }
+  #dtWhyCoachModal .dt-why-node{
+    min-width:0!important;
+    min-height:0!important;
+    padding:12px 13px!important;
+    border-radius:15px!important;
+    justify-content:flex-start!important;
+  }
+  #dtWhyCoachModal .dt-why-node small{
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+  #dtWhyCoachModal .dt-why-node b{
+    margin-top:5px!important;
+    font-size:14px!important;
+    line-height:1.3!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+    hyphens:auto;
+  }
+  #dtWhyCoachModal .dt-why-node span{
+    margin-top:5px!important;
+    font-size:10.5px!important;
+    line-height:1.45!important;
+    overflow-wrap:break-word!important;
+  }
+  #dtWhyCoachModal .dt-why-arrow{
+    min-height:14px!important;
+    font-size:15px!important;
+    line-height:14px!important;
+    transform:rotate(90deg);
+    animation:none!important;
+  }
+}
+@media (max-width: 359px){
+  #dtWhyCoachModal .dt-why-chain{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  #dtWhyCoachModal .dt-why-chain .dt-why-node:last-child,
+  #dtWhyCoachModal .dt-why-chain .dt-why-arrow:nth-of-type(2){
+    display:flex!important;
+  }
+  #dtWhyCoachModal .dt-why-node{
+    padding:11px 12px!important;
+  }
+  #dtWhyCoachModal .dt-why-node b{
+    font-size:13.5px!important;
+  }
+  #dtWhyCoachModal .dt-why-node span{
+    font-size:10px!important;
+  }
+}
+</style>
+
+</body>
 </html>
 <style id="dt-p47-smart-session-explanation-readability-css">
 /* P47 — Smart Session explanation readability only.
