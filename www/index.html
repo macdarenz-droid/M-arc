@@ -3992,6 +3992,46 @@ if(!state.workouts)state.workouts={sessions:[],drafts:{}};
 if(!state.workouts.custom)state.workouts.custom={push:[],pull:[],legs:[]};
 if(!state.workouts.edits)state.workouts.edits={push:{},pull:{},legs:{}};
 if(!state.workouts.removed)state.workouts.removed={push:[],pull:[],legs:[]};
+/* P64.2 — crash-safe unfinished-workout recovery.
+   Restore before P8 classifies this install/session. */
+const DT_ACTIVE_WORKOUT_CHECKPOINT_KEY="dtActiveWorkoutCheckpointV1";
+function dtClearActiveWorkoutCheckpoint(){
+  try{localStorage.removeItem(DT_ACTIVE_WORKOUT_CHECKPOINT_KEY)}catch(_){}
+}
+function dtRestoreActiveWorkoutCheckpoint(){
+  try{
+    const raw=localStorage.getItem(DT_ACTIVE_WORKOUT_CHECKPOINT_KEY);
+    if(!raw)return {restored:false,reason:"none"};
+    const cp=JSON.parse(raw);
+    if(!cp||cp.version!==1||!cp.sessionClock?.active||!cp.day||!cp.dayKey||!cp.draftKey||!Array.isArray(cp.draft)){
+      dtClearActiveWorkoutCheckpoint();return {restored:false,reason:"invalid"};
+    }
+    const savedAt=Date.parse(cp.savedAt||"");
+    const age=Date.now()-savedAt;
+    if(!Number.isFinite(savedAt)||!Number.isFinite(age)||age<0||age>36*60*60*1000){
+      dtClearActiveWorkoutCheckpoint();return {restored:false,reason:"stale"};
+    }
+    state.workouts=state.workouts||{};
+    state.workouts.drafts=state.workouts.drafts||{};
+    const current=state.workouts.sessionClock;
+    const currentStart=Date.parse(current?.startedAt||"")||Number(current?.startedAtMs)||0;
+    const cpStart=Date.parse(cp.sessionClock?.startedAt||"")||Number(cp.sessionClock?.startedAtMs)||0;
+    if(!current?.active||cpStart>=currentStart)state.workouts.sessionClock=cp.sessionClock;
+    const existing=state.workouts.drafts[cp.draftKey];
+    const existingHasData=Array.isArray(existing)&&existing.some(ex=>(ex?.sets||[]).some(s=>
+      String(s?.kg??"").trim()||Number(s?.reps)>0||String(s?.effort||"").trim()
+    ));
+    if(!existingHasData)state.workouts.drafts[cp.draftKey]=cp.draft;
+    return {restored:true,day:String(cp.day),dayKey:String(cp.dayKey),draftKey:String(cp.draftKey)};
+  }catch(e){
+    console.warn("Active workout checkpoint restore failed",e);
+    return {restored:false,reason:"parse"};
+  }
+}
+window.dtClearActiveWorkoutCheckpoint=dtClearActiveWorkoutCheckpoint;
+window.dtRestoreActiveWorkoutCheckpoint=dtRestoreActiveWorkoutCheckpoint;
+const DT_P64_BOOT_ACTIVE_WORKOUT_RECOVERY=dtRestoreActiveWorkoutCheckpoint();
+window.DT_P64_BOOT_ACTIVE_WORKOUT_RECOVERY=DT_P64_BOOT_ACTIVE_WORKOUT_RECOVERY;
 /* P8 — authoritative clean-start classifier. Runs before the stock plans are first rendered. */
 function dtP8HasDurableTrainingSetup(w=state.workouts){
   if(!w||typeof w!=="object")return false;
@@ -4027,8 +4067,48 @@ window.dtP8ResolveStartMode=dtP8ResolveStartMode;
 const DT_P8_BOOT_START_MODE=dtP8ResolveStartMode("boot");
 const plans={push:{title:'PUSH DAY',sub:'',ex:[['Chest Press','Machine','Chest',[[47,'6–8'],[54,'5–8'],[54,'5–8']]],['Incline Machine Press','','Upper Chest',[[25,'8–10'],[27.5,'8–10'],[30,'5–8']]],['Shoulder Press','Machine','Shoulders',[[33,'6–10'],[39,'5–8']]],['Pec Fly','Machine','Chest',[[40,'12–15'],[47,'10–12'],[54,'8–12']]],['Lateral Raise','Dumbbells','Side Delts',[[6,'12–20'],[7,'12–20'],[8,'12–20']]],['Triceps Pushdown','Cable','Triceps',[[12.5,'8–15'],[15,'8–15'],[17.5,'8–15']]],['Triceps Pushdown','Unilateral • Optional','Triceps',[[5,'10–15'],[5,'10–15']]]]},pull:{title:'PULL DAY',sub:'',ex:[['Lat Pulldown','Wide Grip','Lats',[[40,'8–10'],[47,'6–10'],[54,'3–8']]],['Chest Supported Row','Machine','Mid Back',[[33,'8–10'],[40,'6–10'],[47,'6–10']]],['Close Grip Pulldown','Neutral / Close','Lats',[[40,'8–10'],[47,'6–10'],[54,'3–8']]],['Rear Delt Fly','Machine','Rear Delts',[[12,'15–20'],[19,'12–15'],[25,'10–15']]],['DB Biceps Curl','','Biceps',[[8,'10–12'],[9,'8–12'],[9,'6–10']]],['Hammer Curl','Dumbbells','Biceps',[[8,'10–12'],[9,'8–12'],[9,'6–10']]],['Abs Work','Choose 2','Abs',[[null,'10–20'],[null,'10–20']]],['DB Shrugs','','Traps',[[null,'10–15'],[null,'10–15'],[null,'10–15']]]]},legs:{title:'LEG DAY',sub:'',ex:[['Leg Extension','Machine','Quadriceps',[[33,'10–15'],[40,'8–12'],[47,'8–12'],[54,'8–12']]],['Hamstring Curl','Machine','Hamstrings',[[25,'10–12'],[33,'8–10'],[40,'3–6']]],['Leg Press','Plate Loaded','Quads / Glutes',[[50,'10–15'],[80,'8–12'],[120,'6–10']]],['Seated Calf Raise','Machine','Calves',[[55,'10–15'],[75,'10–15'],[95,'10–15']]],['Abs Workout','Choose 2','Abs',[[null,'10–20'],[null,'10–20']]]]}};
 if(DT_P8_BOOT_START_MODE==="empty"){plans.push.ex=[];plans.pull.ex=[];plans.legs.ex=[];}
-let wday='push',effTarget=null;
-const wkey=()=>wday+'_'+todayKey();
+let wday=(state.workouts?.sessionClock?.active&&state.workouts.sessionClock.day)?String(state.workouts.sessionClock.day):'push',effTarget=null;
+function dtWorkoutDataDayKey(day=wday){
+  try{
+    const s=state.workouts?.sessionClock;
+    if(s?.active&&String(s.day||"")===String(day||"")&&s.dayKey)return String(s.dayKey);
+  }catch(_){}
+  return todayKey();
+}
+window.dtWorkoutDataDayKey=dtWorkoutDataDayKey;
+const wkey=()=>wday+'_'+dtWorkoutDataDayKey(wday);
+function dtCheckpointActiveWorkout(){
+  try{
+    const s=state.workouts?.sessionClock;
+    if(!s?.active)return false;
+    const key=wkey(),liveDraft=state.workouts?.drafts?.[key];
+    if(!Array.isArray(liveDraft))return false;
+    localStorage.setItem(DT_ACTIVE_WORKOUT_CHECKPOINT_KEY,JSON.stringify({
+      version:1,savedAt:new Date().toISOString(),
+      day:String(wday||s.day||""),dayKey:String(s.dayKey||dtWorkoutDataDayKey(wday)),
+      draftKey:key,sessionClock:JSON.parse(JSON.stringify(s)),draft:JSON.parse(JSON.stringify(liveDraft))
+    }));
+    return true;
+  }catch(e){console.warn("Active workout checkpoint failed",e);return false}
+}
+window.dtCheckpointActiveWorkout=dtCheckpointActiveWorkout;
+let DT_LIVE_WORKOUT_SAVE_TIMER=null;
+function dtSaveLiveWorkoutSoon(){
+  if(DT_LIVE_WORKOUT_SAVE_TIMER)clearTimeout(DT_LIVE_WORKOUT_SAVE_TIMER);
+  DT_LIVE_WORKOUT_SAVE_TIMER=setTimeout(()=>{
+    DT_LIVE_WORKOUT_SAVE_TIMER=null;
+    try{save()}catch(e){console.warn("Deferred live workout save failed",e)}
+  },650);
+}
+function dtFlushLiveWorkoutSave(){
+  if(DT_LIVE_WORKOUT_SAVE_TIMER){
+    clearTimeout(DT_LIVE_WORKOUT_SAVE_TIMER);
+    DT_LIVE_WORKOUT_SAVE_TIMER=null;
+  }
+  try{return save()}catch(e){console.warn("Live workout save flush failed",e);return false}
+}
+window.dtSaveLiveWorkoutSoon=dtSaveLiveWorkoutSoon;
+window.dtFlushLiveWorkoutSave=dtFlushLiveWorkoutSave;
 function exerciseKey(e){return (e[0]||"")+"|"+(e[1]||"")}
 function effectiveExercises(day){
   const removed=state.workouts.removed?.[day]||[];
@@ -4045,7 +4125,7 @@ function effectiveExercises(day){
   const custom=(state.workouts.custom?.[day]||[]).map(x=>[
     x.name,x.type||"",x.muscle||"Custom",
     Array.from({length:x.sets||3},()=>[null,""]),
-    "custom:"+x.id
+    (x.libraryId||("custom:"+x.id))
   ]);
   return [...base,...custom];
 }
@@ -4137,7 +4217,7 @@ function renderWorkout(){
         <b>${dtEscapeHtml(e[0])} ${e[1]?'<span style="color:var(--muted);font-weight:500">('+dtEscapeHtml(e[1])+')</span>':''}</b>
         <small>${dtEscapeHtml(e[2])}</small>
       </button>
-      <span class="exsum">${dtEscapeHtml(window.dtP13FormatSetSummary?.(e,pv,measurementMode)||(pv?(pv.kg||'–')+' × '+(pv.reps||'–'):(pl[0]??'–')+' × '+(pl[1]||'')))}</span>
+      <span class="exsum">${dtEscapeHtml(window.dtP13FormatSetSummary?.(e,pv,measurementMode)||(pv?(pv.kg||'–')+' × '+(pv.reps||'–'):'First log'))}</span>
       <button class="exercise-menu-btn" aria-label="Activity menu">⋯</button>
       <button class="exercise-chevron" aria-label="Expand activity"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
@@ -4181,17 +4261,17 @@ function renderWorkout(){
       const smartKg=!old?window.dtSuggestStartWeight?.(e[0])?.kg:null;
       const row=document.createElement('div');row.className='setrow'+(durationBased?' duration-mode':'');
       row.innerHTML=`<b style="text-align:center">${si+1}</b>
-        <div class="prevval">${dtEscapeHtml(window.dtP13FormatSetSummary?.(e,old,measurementMode)||(old?window.dtFormatLift?.(old.kg,old.reps)||((old.kg||'–')+' × '+(old.reps||'–')):window.dtFormatLift?.(pln[0],pln[1])||((pln[0]??'–')+' × '+(pln[1]||''))))}<br><span style="opacity:.5">${old?'previous':'plan'}</span></div>
+        <div class="prevval">${dtEscapeHtml(window.dtP13FormatSetSummary?.(e,old,measurementMode)||(old?window.dtFormatLift?.(old.kg,old.reps)||((old.kg||'–')+' × '+(old.reps||'–')):'First log'))}<br><span style="opacity:.5">${old?'previous':'first log'}</span></div>
         <input class="loginput kg" type="number" step="${window.dtWeightUnit?.()==='lb'?'1':'.5'}" value="${dtEscapeHtml(window.dtWeightDisplayValue?.(x.kg)??x.kg)}" placeholder="${window.dtWeightDisplayValue?.(old?.kg??smartKg)??old?.kg??smartKg??window.dtWeightUnitLabel?.()??'KG'}">
         <input class="loginput reps" type="number" value="${dtEscapeHtml(x.reps)}" placeholder="${old?.reps??(measurementMode==='distance_m'?'Metres':measurementMode==='duration_sec'?'Seconds':durationBased?'Sec':'Reps')}">
         <button class="effort ${["easy","ideal","max"].includes(x.effort)?x.effort:""}"></button>`;
-      row.querySelector('.kg').oninput=z=>{x.kg=window.dtWeightInputToKg?window.dtWeightInputToKg(z.target.value):z.target.value;save();updateFinishWorkoutButton()};
-      row.querySelector('.reps').oninput=z=>{x.reps=z.target.value;if(measurementMode==='distance_m'){x.metricType='distance_m';x.distanceM=z.target.value;x.durationSec=''}else if(measurementMode==='duration_sec'){x.metricType='duration_sec';x.durationSec=z.target.value;x.distanceM=''}save();updateFinishWorkoutButton()};
+      row.querySelector('.kg').oninput=z=>{x.kg=window.dtWeightInputToKg?window.dtWeightInputToKg(z.target.value):z.target.value;dtCheckpointActiveWorkout();dtSaveLiveWorkoutSoon();updateFinishWorkoutButton()};
+      row.querySelector('.reps').oninput=z=>{x.reps=z.target.value;if(measurementMode==='distance_m'){x.metricType='distance_m';x.distanceM=z.target.value;x.durationSec=''}else if(measurementMode==='duration_sec'){x.metricType='duration_sec';x.durationSec=z.target.value;x.distanceM=''}dtCheckpointActiveWorkout();dtSaveLiveWorkoutSoon();updateFinishWorkoutButton()};
       row.querySelector('.effort').onclick=()=>{
         // If this set already has an effort selected, tapping the circle again clears it.
         if(x.effort){
           x.effort="";
-          save();
+          dtCheckpointActiveWorkout();save();
           renderWorkout();
           return;
         }
@@ -4203,7 +4283,7 @@ function renderWorkout(){
 
     box.querySelector('.addset').onclick=()=>{
       d[ei].sets.push({kg:'',reps:'',effort:'',metricType:measurementMode,distanceM:'',durationSec:''});
-      save();renderWorkout();
+      dtCheckpointActiveWorkout();save();renderWorkout();
     };
     wlist.appendChild(box);
   });
@@ -4303,7 +4383,7 @@ document.querySelectorAll('[data-wday]').forEach(b=>b.onclick=()=>{
   renderWorkout();
 });
 document.querySelectorAll('[data-eff]').forEach(b=>b.onclick=()=>{
-  if(effTarget){draft()[effTarget.ei].sets[effTarget.si].effort=b.dataset.eff;save();effortModal.classList.remove('show');renderWorkout()}
+  if(effTarget){draft()[effTarget.ei].sets[effTarget.si].effort=b.dataset.eff;dtCheckpointActiveWorkout();save();effortModal.classList.remove('show');renderWorkout()}
 });
 closeEffort.onclick=()=>effortModal.classList.remove('show');
 saveWorkout.onclick=()=>{
@@ -4332,7 +4412,8 @@ saveWorkout.onclick=()=>{
   });
 
   delete state.workouts.drafts[wkey()];
-  save();
+  if(DT_LIVE_WORKOUT_SAVE_TIMER){clearTimeout(DT_LIVE_WORKOUT_SAVE_TIMER);DT_LIVE_WORKOUT_SAVE_TIMER=null;}
+  save(); dtClearActiveWorkoutCheckpoint();
   renderWorkout();
   renderWorkoutHistory();
   renderTodayDashboardExtras();
@@ -5073,7 +5154,7 @@ renderTrainingGoal();
   const tickers = new Map();
 
   function deepClone(v){ return JSON.parse(JSON.stringify(v)); }
-  function dayKey(){ return typeof todayKey === "function" ? todayKey() : (window.dtLocalDateKey?.(new Date())||new Date().toLocaleDateString("en-CA")); }
+  function dayKey(){ return typeof window.dtWorkoutDataDayKey==="function" ? window.dtWorkoutDataDayKey(typeof wday!=="undefined"?wday:null) : (typeof todayKey === "function" ? todayKey() : (window.dtLocalDateKey?.(new Date())||new Date().toLocaleDateString("en-CA"))); }
   function pendingId(day, key){ return `${day}|${dayKey()}|${key}`; }
 
   function ensureWorkoutPatchState(){
@@ -5412,7 +5493,7 @@ renderTrainingGoal();
             <b>${window.dtEscapeHtml?.(e[0])??e[0]} ${e[1]?'<span style="color:var(--muted);font-weight:500">('+(window.dtEscapeHtml?.(e[1])??e[1])+')</span>':''}</b>
             <small>${window.dtEscapeHtml?.(e[2])??e[2]}</small>
           </button>
-          <span class="exsum">${window.dtEscapeHtml?.(pv?(window.dtFormatLift?.(pv.kg,pv.reps)||((pv.kg||"–")+" × "+(pv.reps||"–"))):(window.dtFormatLift?.(pl[0],pl[1])||((pl[0]??"–")+" × "+(pl[1]||""))))??(pv?"previous":"plan")}</span>
+          <span class="exsum">${window.dtEscapeHtml?.(pv?(window.dtFormatLift?.(pv.kg,pv.reps)||((pv.kg||"–")+" × "+(pv.reps||"–"))):"First log")??(pv?"previous":"First log")}</span>
           <button class="exercise-menu-btn" type="button" aria-label="Activity menu">⋯</button>
           <button class="exercise-chevron" type="button" aria-label="Expand activity"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
@@ -5453,7 +5534,7 @@ renderTrainingGoal();
         row.className = "setrow" + (window.dtIsDurationBased?.(e) ? " duration-mode" : "");
         row.innerHTML = `
           <b style="text-align:center">${si+1}</b>
-          <div class="prevval">${window.dtEscapeHtml?.(old?(window.dtFormatLift?.(old.kg,old.reps)||((old.kg||"–")+" × "+(old.reps||"–"))):(window.dtFormatLift?.(pln[0],pln[1])||((pln[0]??"–")+" × "+(pln[1]||""))))??"—"}<br><span style="opacity:.5">${old?"previous":"plan"}</span></div>
+          <div class="prevval">${window.dtEscapeHtml?.(old?(window.dtFormatLift?.(old.kg,old.reps)||((old.kg||"–")+" × "+(old.reps||"–"))):"First log")??"First log"}<br><span style="opacity:.5">${old?"previous":"first log"}</span></div>
           <input class="loginput kg" inputmode="decimal" type="number" step="${window.dtWeightUnit?.()==='lb'?'1':'.5'}" value="${window.dtEscapeHtml?.(window.dtWeightDisplayValue?.(x.kg)??x.kg??"")??""}" placeholder="${window.dtEscapeHtml?.(window.dtWeightDisplayValue?.(old?.kg??smartKg)??old?.kg??smartKg??window.dtWeightUnitLabel?.()??"KG")??"KG"}">
           <input class="loginput reps" inputmode="numeric" type="number" value="${window.dtEscapeHtml?.(x.reps??"")??""}" placeholder="${window.dtEscapeHtml?.(old?.reps ?? (window.dtIsDurationBased?.(e)?"Sec":"Reps"))??"Reps"}">
           <button class="effort ${["easy","ideal","max"].includes(x.effort)?x.effort:""}" type="button"></button>`;
@@ -12528,7 +12609,7 @@ nav.dt-v10-nav{
 <script id="dt-v25-smart-coach-js">
 (()=>{
   "use strict";
-  const V="25.0-smart-coach";
+  const V="25.1-smart-coach-p65-safe-first-log";
 
   /* ---------------------------------------------------------
      Smart starting-weight suggestion.
@@ -12562,14 +12643,24 @@ nav.dt-v10-nav{
     return first||"default";
   }
 
+  /* P65 — first-log safety policy.
+     Never transfer another exercise's working weight into an unlogged lift.
+     Machine/cable resistance is not comparable across models, pulley ratios,
+     lever arms or exercise mechanics. For a first log we therefore provide
+     only a conservative familiarisation load where that is reasonably
+     portable; otherwise we leave kg blank and ask the user to start at the
+     machine's minimum/easiest setting. Exact-exercise history remains owned
+     by the established progression backend after the first completed log. */
   const DT_EQUIP_START_KG={
-    "Barbell":20,"Dumbbells":5,"Dumbbell":5,"EZ Bar":10,"Machine":15,"Cable":10,
-    "Smith Machine":20,"Plate-Loaded":20,"Bodyweight":0,"Kettlebell":8,
-    "Leg Press":40,"Landmine":10,"T-Bar":15,"Sled":10,"Trap Bar":20,"Ab Wheel":0,"Weight":5,"Dip Station":0
+    "Barbell":20,"Dumbbells":2.5,"Dumbbell":2.5,"EZ Bar":10,
+    "Kettlebell":4,"Landmine":10,"Trap Bar":20,"Weight":2.5,
+    "Bodyweight":0,"Ab Wheel":0,"Dip Station":0,
+    "Machine":null,"Cable":null,"Smith Machine":null,"Plate-Loaded":null,
+    "Leg Press":null,"T-Bar":null,"Sled":null
   };
   function dtDefaultStartKg(equipStr){
     const key=dtEquipKey(equipStr);
-    return DT_EQUIP_START_KG[key]!=null?DT_EQUIP_START_KG[key]:10;
+    return Object.prototype.hasOwnProperty.call(DT_EQUIP_START_KG,key)?DT_EQUIP_START_KG[key]:null;
   }
 
   function dtRecentWeightFor(exerciseName){
@@ -12590,37 +12681,17 @@ nav.dt-v10-nav{
   function dtSuggestStartWeight(exerciseName){
     try{
       const entry=dtFindLibraryEntry(exerciseName);
-      if(!entry)return {kg:null,confidence:"unknown",label:""};
+      if(!entry)return {kg:null,confidence:"unknown",label:"Start light and choose a comfortable first set"};
       const targetEquip=dtEquipKey(entry.equipment);
-      const targetMuscles=entry.primaryMuscles||[];
-      const trainedNames=new Set();
-      (state.workouts?.completedExercises||[]).forEach(x=>{if(x.name)trainedNames.add(x.name)});
-
-      let best=null,bestScore=-1,bestSameEquip=false;
-      trainedNames.forEach(tn=>{
-        if(dtNormEx(tn)===dtNormEx(exerciseName))return;
-        const libE=dtFindLibraryEntry(tn);
-        if(!libE)return;
-        let score=0;
-        const sameEquip=dtEquipKey(libE.equipment)===targetEquip;
-        if(libE.movementPattern&&libE.movementPattern===entry.movementPattern)score+=3;
-        const overlap=(libE.primaryMuscles||[]).filter(m=>targetMuscles.includes(m)).length;
-        score+=overlap*2;
-        if(sameEquip)score+=1;
-        if(score>bestScore&&score>0){
-          const recent=dtRecentWeightFor(tn);
-          if(recent){bestScore=score;best=recent;best.name=tn;bestSameEquip=sameEquip}
-        }
-      });
-
-      if(best&&bestScore>0){
-        const factor=bestSameEquip?1:0.7;
-        const kg=Math.round(best.kg*factor*2)/2;
-        return {kg,confidence:bestSameEquip?"similar-same-equip":"similar-diff-equip",label:`rough estimate based on your ${best.name}`};
-      }
       const def=dtDefaultStartKg(entry.equipment);
-      return {kg:def>0?def:null,confidence:"default",label:def>0?`general starting point for ${targetEquip}`:"bodyweight — no added load needed"};
-    }catch(e){console.warn("Smart weight suggestion failed",e);return {kg:null,confidence:"unknown",label:""}}
+      if(def>0){
+        return {kg:def,confidence:"first-log-conservative",label:`Light first-set starting point for ${targetEquip}`};
+      }
+      if(def===0){
+        return {kg:null,confidence:"bodyweight",label:"Start with bodyweight; add load only if comfortable"};
+      }
+      return {kg:null,confidence:"machine-minimum",label:`Start with the lightest comfortable ${targetEquip} setting`};
+    }catch(e){console.warn("Smart weight suggestion failed",e);return {kg:null,confidence:"unknown",label:"Start light and choose a comfortable first set"}}
   }
 
   window.dtSuggestStartWeight=dtSuggestStartWeight;
@@ -20691,8 +20762,12 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   const CAPACITY_KEY="dt_debug_recorder_capacity_v1";
   let maxEvents=(()=>{try{return localStorage.getItem(CAPACITY_KEY)==="50000"?50000:20000}catch(_){return 20000}})();
   const MAX_TEXT=180;
-  const PERSIST_DEBOUNCE_MS=1200;
-  const PERSIST_EVENT_BATCH=18;
+  /* P64 reliability: Developer diagnostics must never become a workout blocker.
+     Keep the large in-memory timeline for manual export, but serialize less often
+     and persist only a bounded crash-recovery tail. */
+  const PERSIST_DEBOUNCE_MS=8000;
+  const PERSIST_EVENT_BATCH=250;
+  const MAX_PERSISTED_EVENTS=5000;
   const REDACT_RE=/(password|passwd|token|secret|auth|key|credential|pin|ssn|card|cvv)/i;
   const STATE_BLOB_RE=/^dailyTrackerPremium(?:_|$)|backup|last_known_good|schema_snapshot|state_snapshot/i;
   const SAFE_CONTROL_LABEL_RE=/^(save|done|cancel|close|back|home|next|previous|add|edit|delete|remove|reset|export|import|start|stop|finish|confirm|settings?|today|history|workout|money|recovery|coach|on|off|progress)$/i;
@@ -20767,7 +20842,8 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
     if(!dirty&&eventsSincePersist===0)return true;
     if(persistTimer){clearTimeout(persistTimer);persistTimer=null}
     try{
-      localStorage.setItem(LOG_KEY,JSON.stringify(log));
+      const durableTail=log.length>MAX_PERSISTED_EVENTS?log.slice(-MAX_PERSISTED_EVENTS):log;
+      localStorage.setItem(LOG_KEY,JSON.stringify(durableTail));
       dirty=false;eventsSincePersist=0;return true;
     }catch(err){
       try{console.warn("Debug recorder persistence failed",err)}catch(_){}
@@ -21384,6 +21460,9 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
     get capacity(){return maxEvents},setCapacity(value){maxEvents=Number(value)===50000?50000:20000;try{localStorage.setItem(CAPACITY_KEY,String(maxEvents))}catch(_){}trim();dirty=true;eventsSincePersist++;persistLogNow();renderHealth();return maxEvents}
   };
 
+  addEventListener("pagehide",()=>{if(enabled)persistLogNow()},{capture:true});
+  document.addEventListener("visibilitychange",()=>{if(enabled&&document.visibilityState==="hidden")persistLogNow()});
+
   function boot(){
     watchViews();viewportEvent("boot");renderHealth();
     record("session_start",{sessionId:debugSessionId,previousSessionId:previousSessionMeta?.id||null,startedAt:debugSessionStartedAt,device:deviceMeta(),release:releaseMeta(),debugger:"J3"});
@@ -21588,6 +21667,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   }
   try{
     const mo=new MutationObserver(records=>{
+      if(!window.dtDebugRecorder?.enabled)return;
       records.forEach(r=>{
         mutationBurst.count++;
         mutationBurst.added+=r.addedNodes?.length||0;
@@ -27646,7 +27726,1098 @@ window.DT_P51_ADD_ACTIVITY_CANCEL={
   };
   window.dtWhyDashboardOpen=openFrom;
 })();</script>
-</body>
+<script id="dt-p62-goal-backend-alignment">
+(()=>{
+  "use strict";
+  const VERSION="P62-goal-backend-alignment-1";
+  const priorDecision=window.dtProgressionDecision;
+  const priorSmart=window.smartRecommendation;
+
+  const POLICIES=Object.freeze({
+    lean:Object.freeze({
+      id:"lean",name:"Lean Muscle",rir:Object.freeze([1,3]),
+      effortLabel:"1–3 RIR",
+      intent:"Build muscle with balanced progression and repeatable training."
+    }),
+    growth:Object.freeze({
+      id:"growth",name:"Muscle Growth",rir:Object.freeze([0,2]),
+      effortLabel:"0–2 RIR",
+      intent:"Prioritise muscle growth while managing fatigue across the session."
+    }),
+    strength_muscle:Object.freeze({
+      id:"strength_muscle",name:"Strength + Muscle",rir:Object.freeze([1,3]),
+      effortLabel:"1–3 RIR",
+      intent:"Use heavier compound work while keeping enough quality volume for muscle growth."
+    }),
+    strength:Object.freeze({
+      id:"strength",name:"Strength Focus",rir:Object.freeze([1,3]),
+      effortLabel:"1–3 RIR",
+      intent:"Prioritise heavier, lower-rep work without requiring failure on every set."
+    })
+  });
+
+  const currentProgram=()=>{
+    try{return String(state?.workouts?.trainingProgram||"lean")}catch(_){return "lean"}
+  };
+  const rangeFor=e=>{
+    try{
+      const r=window.dtTrainingRange?.(e);
+      if(Array.isArray(r)&&r.length===2)return [Number(r[0]),Number(r[1])];
+    }catch(_){}
+    return [6,12];
+  };
+  const effortBand=v=>{
+    const x=String(v||"").trim().toLowerCase();
+    if(x==="easy")return {label:"Easy",rir:[3,99],mid:4};
+    if(x==="ideal")return {label:"Ideal",rir:[1,3],mid:2};
+    if(x==="max")return {label:"Max",rir:[0,1],mid:.5};
+    return null;
+  };
+  const latestTopEffort=e=>{
+    try{
+      const key=window.dtStableExerciseKey?.(e,0)||window.exerciseKey?.(e)||String(e?.[4]||e?.[0]||"");
+      const hist=key?window.dtIntelExerciseHistory?.(key)||[]:[];
+      const latest=hist.at?.(-1);
+      const top=Number(latest?.topWeight);
+      if(!latest||!Number.isFinite(top)||top<=0)return {values:[],coverage:0};
+      const sets=(latest.sets||[]).filter(s=>Number(s?.kg)===top&&Number(s?.reps)>0);
+      const values=sets.map(s=>String(s?.effort||"").trim().toLowerCase()).filter(Boolean);
+      return {values,coverage:sets.length?Math.round(values.length/sets.length*100):0};
+    }catch(_){return {values:[],coverage:0}}
+  };
+  const assessEffort=(policy,values)=>{
+    if(!values?.length)return {state:"missing",message:"Log Effort on your top sets."};
+    const bands=values.map(effortBand).filter(Boolean);
+    if(!bands.length)return {state:"missing",message:"Log Effort on your top sets."};
+    const hasMax=values.includes("max");
+    const allEasy=values.every(v=>v==="easy");
+    if(hasMax){
+      return {
+        state:"hard",
+        message:policy.id==="growth"
+          ?"This is close to your muscle-growth effort range, but you do not need every set at your limit."
+          :"This is harder than the usual target for this goal. Repeat or adjust before forcing more load."
+      };
+    }
+    if(allEasy){
+      return {
+        state:"easy",
+        message:"You had plenty left. Build reps or progress only when the rep target also supports it."
+      };
+    }
+    return {state:"on_target",message:`Your logged Effort is close to the ${policy.effortLabel} working target.`};
+  };
+
+  function goalPolicy(e){
+    const id=currentProgram();
+    const base=POLICIES[id]||POLICIES.lean;
+    const repRange=rangeFor(e);
+    return Object.freeze({
+      id:base.id,name:base.name,repRange:Object.freeze(repRange),
+      rir:base.rir,effortLabel:base.effortLabel,intent:base.intent
+    });
+  }
+
+  function decorate(e,out){
+    if(!out||typeof out!=="object")return out;
+    const policy=goalPolicy(e);
+    const latest=latestTopEffort(e);
+    const effortAssessment=assessEffort(policy,latest.values);
+    return {
+      ...out,
+      goalPolicy:{
+        program:policy.id,
+        name:policy.name,
+        repRange:[...policy.repRange],
+        rirTarget:[...policy.rir],
+        effortTarget:policy.effortLabel,
+        effortAssessment:effortAssessment.state,
+        effortMessage:effortAssessment.message
+      },
+      signals:{
+        ...(out.signals||{}),
+        goalProgram:policy.id,
+        goalRepRange:[...policy.repRange],
+        goalRirTarget:[...policy.rir],
+        goalEffortCoverage:latest.coverage,
+        goalEffortAssessment:effortAssessment.state
+      }
+    };
+  }
+
+  if(typeof priorDecision==="function"){
+    window.dtProgressionDecision=function(e,ei,opts){
+      return decorate(e,priorDecision(e,ei,opts));
+    };
+  }
+  if(typeof priorSmart==="function"){
+    window.smartRecommendation=function(e,ei){
+      return decorate(e,priorSmart(e,ei));
+    };
+  }
+
+  window.dtGoalTrainingPolicy=goalPolicy;
+  window.dtGoalEffortAssessment=(e,values)=>assessEffort(goalPolicy(e),values);
+  window.DT_P62_GOAL_BACKEND_ALIGNMENT=Object.freeze({
+    version:VERSION,
+    policies:POLICIES,
+    decisionOwnerWrapped:typeof priorDecision==="function",
+    smartOwnerWrapped:typeof priorSmart==="function",
+    changesRecommendationMath:false
+  });
+})();
+</script><script id="dt-p63-goal-aware-rir-decision">
+(()=>{
+  "use strict";
+  const VERSION="P63-goal-aware-rir-decision-1";
+  const priorDecision=window.dtProgressionDecision;
+  const priorSmart=window.smartRecommendation;
+
+  const stableKey=(e,ei)=>{
+    try{return String(window.dtStableExerciseKey?.(e,ei)||window.exerciseKey?.(e)||e?.[4]||e?.[0]||"")}catch(_){return String(e?.[4]||e?.[0]||"")}
+  };
+  const semanticMode=e=>{
+    try{return String(window.dtExerciseSemanticMode?.(e)||"weighted")}catch(_){return "weighted"}
+  };
+  const historyFor=(e,ei)=>{
+    try{
+      const key=stableKey(e,ei);
+      const rows=key?window.dtIntelExerciseHistory?.(key)||[]:[];
+      return Array.isArray(rows)?rows:[];
+    }catch(_){return []}
+  };
+  const topSets=session=>{
+    const top=Number(session?.topWeight);
+    if(!Number.isFinite(top)||top<=0)return [];
+    return (session?.sets||[]).filter(s=>Number(s?.kg)===top&&Number(s?.reps)>0);
+  };
+  const completeEffort=sets=>sets.length>0&&sets.every(s=>String(s?.effort||"").trim());
+  const growthEffortOK=sets=>sets.length>0&&sets.every(s=>{
+    const v=String(s?.effort||"").trim().toLowerCase();
+    return v==="ideal"||v==="max";
+  });
+  const atTopRange=(sets,high)=>sets.length>0&&sets.every(s=>Number(s?.reps)>=Number(high));
+
+  function growthRepeatability(e,ei){
+    const range=window.dtTrainingRange?.(e)||[6,15];
+    const high=Number(range?.[1]||15);
+    const hist=historyFor(e,ei).slice().sort((a,b)=>{
+      const ta=Date.parse(a?.finalizedAt||a?.date||0)||0;
+      const tb=Date.parse(b?.finalizedAt||b?.date||0)||0;
+      return ta-tb;
+    });
+    const latest=hist.at(-1);
+    const latestTop=Number(latest?.topWeight);
+    if(!latest||!Number.isFinite(latestTop)||latestTop<=0){
+      return {sessions:0,latestQualifies:false,repeated:false,topWeight:null,high};
+    }
+    const comparable=hist.filter(s=>Number(s?.topWeight)===latestTop);
+    const qualified=comparable.filter(s=>{
+      const sets=topSets(s);
+      return completeEffort(sets)&&growthEffortOK(sets)&&atTopRange(sets,high);
+    });
+    return {
+      sessions:hist.length,
+      comparableSessions:comparable.length,
+      qualifiedSessions:qualified.length,
+      latestQualifies:qualified.includes(latest),
+      repeated:qualified.length>=2,
+      topWeight:latestTop,
+      high
+    };
+  }
+
+  function targetText(e,kg){
+    const range=window.dtTrainingRange?.(e)||[6,15];
+    const low=Number(range?.[0]||6),high=Number(range?.[1]||15);
+    return `${kg} kg • ${low}–${Math.min(high,low+2)} reps`;
+  }
+
+  function adjust(e,ei,out){
+    if(!out||typeof out!=="object")return out;
+
+    const policy=window.dtGoalTrainingPolicy?.(e);
+    if(policy?.id!=="growth")return out;
+
+    // Only normal weighted progressions are eligible for this narrow adjustment.
+    const sm=semanticMode(e);
+    if(sm!=="weighted")return out;
+
+    // Existing Increase/Reduce/Re-entry/Starting decisions stay untouched.
+    if(!["hold","confirm"].includes(String(out.mode||"")))return out;
+
+    // This patch exists only for the generic Max-at-limit hold behavior.
+    const reason=String(out.reason||"").toLowerCase();
+    const maxDriven=/max|limit|effort/.test(reason)
+      || String(out?.goalPolicy?.effortAssessment||"")==="hard";
+    if(!maxDriven)return out;
+
+    const rep=growthRepeatability(e,ei);
+    if(!rep.latestQualifies)return out;
+
+    // Preserve P2's stale-evidence/re-entry rule even when the older base
+    // decision is Hold because of Max effort rather than Increase.
+    const gapDays=Number(out?.signals?.p2GapDays);
+    if(Number.isFinite(gapDays)&&gapDays>28)return out;
+
+    // Preserve sparse-Effort/history safety gates from earlier patches.
+    const coverage=Number(out?.signals?.p25EffortCoverage ?? out?.signals?.goalEffortCoverage ?? 0);
+    if(Number.isFinite(coverage)&&coverage<100)return out;
+    if(String(out?.confidence||"").toLowerCase()==="insufficient")return out;
+
+    if(!rep.repeated){
+      return {
+        ...out,
+        mode:"confirm",
+        text:`${rep.topWeight} kg • ${rep.high} reps`,
+        reason:"Strong growth-range set — repeat it once more",
+        rationale:"You reached the top of the rep range close to your limit. Repeat that performance once more before adding weight.",
+        goalRirAdjustment:{
+          applied:true,
+          action:"confirm",
+          basis:"growth_0_2_rir_top_range_once",
+          priorMode:out.mode
+        },
+        signals:{
+          ...(out.signals||{}),
+          goalRirDecisionAdjusted:true,
+          goalRirDecisionAction:"confirm",
+          growthQualifiedSessions:rep.qualifiedSessions
+        }
+      };
+    }
+
+    let nextKg=null;
+    try{nextKg=Number(window.dtNextLoad?.(e,rep.topWeight))}catch(_){}
+    if(!Number.isFinite(nextKg)||nextKg<=rep.topWeight)return out;
+
+    return {
+      ...out,
+      mode:"increase",
+      text:targetText(e,nextKg),
+      reason:"Growth target repeated — add a small amount of weight",
+      rationale:"You reached the top of the rep range close to your limit in more than one comparable session. A small load increase is reasonable.",
+      goalRirAdjustment:{
+        applied:true,
+        action:"increase",
+        basis:"growth_0_2_rir_top_range_repeated",
+        priorMode:out.mode
+      },
+      signals:{
+        ...(out.signals||{}),
+        goalRirDecisionAdjusted:true,
+        goalRirDecisionAction:"increase",
+        growthQualifiedSessions:rep.qualifiedSessions
+      }
+    };
+  }
+
+  if(typeof priorDecision==="function"){
+    window.dtProgressionDecision=function(e,ei,opts){
+      return adjust(e,ei,priorDecision(e,ei,opts));
+    };
+  }
+  if(typeof priorSmart==="function"){
+    window.smartRecommendation=function(e,ei){
+      return adjust(e,ei,priorSmart(e,ei));
+    };
+  }
+
+  window.dtGoalAwareRirAdjustment=(e,ei,out)=>adjust(e,ei,out);
+  window.DT_P63_GOAL_AWARE_RIR_DECISION=Object.freeze({
+    version:VERSION,
+    scope:"growth-only 0–2 RIR alignment",
+    preservesPriorOwners:true,
+    requiresCompleteEffort:true,
+    requiresRepeatedTopRangeForIncrease:true
+  });
+})();
+</script><script id="dt-p64-active-workout-lifecycle">
+(()=>{
+  "use strict";
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="hidden"){
+      try{window.dtCheckpointActiveWorkout?.()}catch(_){}
+      try{window.dtFlushLiveWorkoutSave?.()}catch(_){}
+    }
+  });
+  addEventListener("pagehide",()=>{
+    try{window.dtCheckpointActiveWorkout?.()}catch(_){}
+    try{window.dtFlushLiveWorkoutSave?.()}catch(_){}
+  },{capture:true});
+})();
+</script>
+<script id="dt-p64-midnight-session-continuity">
+(()=>{"use strict";
+window.DT_P64_MIDNIGHT_SESSION_CONTINUITY={
+  version:"P64.3",
+  rule:"active_session_survives_calendar_rollover",
+  dataOwnership:"session_start_day_until_explicit_finish",
+  debugReliability:"bounded_persistence_and_disabled_observer_guard",
+  crashRecovery:"active_workout_checkpoint_before_full_save",
+  liveSavePerformance:"immediate_checkpoint_plus_650ms_full_save_debounce"
+};
+})();
+</script>
+<script id="dt-p66-safe-first-log-integration">
+(()=>{
+  "use strict";
+  const VERSION="P66-safe-first-log-integration-1";
+  const priorDecision=window.dtProgressionDecision;
+  const priorSmart=window.smartRecommendation;
+
+  const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+  const stableKey=(e,ei)=>{
+    try{return String(window.dtStableExerciseKey?.(e,ei)||window.exerciseKey?.(e)||e?.[4]||e?.[0]||"")}
+    catch(_){return String(e?.[4]||e?.[0]||"")}
+  };
+  const historyFor=(e,ei)=>{
+    try{
+      const key=stableKey(e,ei);
+      const rows=key?window.dtIntelExerciseHistory?.(key)||[]:[];
+      return Array.isArray(rows)?rows:[];
+    }catch(_){return []}
+  };
+  const repRangeFor=e=>{
+    try{
+      const r=window.dtTrainingRange?.(e);
+      if(Array.isArray(r)&&r.length===2&&Number.isFinite(Number(r[0]))&&Number.isFinite(Number(r[1]))){
+        return [Number(r[0]),Number(r[1])];
+      }
+    }catch(_){}
+    return [6,12];
+  };
+  const stripLeadingKg=text=>{
+    const s=clean(text);
+    return s.replace(/^\s*\d+(?:\.\d+)?\s*kg\s*[•·\-–—:]?\s*/i,"");
+  };
+
+  function integrate(e,ei,out){
+    if(!out||typeof out!=="object")return out;
+    if(String(out.mode||"").toLowerCase()!=="starting")return out;
+
+    // P66 is strictly zero-history only.
+    if(historyFor(e,ei).length)return out;
+
+    let suggestion=null;
+    try{suggestion=window.dtSuggestStartWeight?.(e?.[0])||null}catch(_){}
+    if(!suggestion)return out;
+
+    const kg=Number(suggestion.kg);
+    // Numeric safe starts are still owned by P48/P65. Do not alter them here.
+    if(Number.isFinite(kg)&&kg>0)return out;
+
+    const [low,high]=repRangeFor(e);
+    const label=clean(suggestion.label)||"Start light and choose a comfortable first set";
+    const body=stripLeadingKg(out.text);
+    const reps=/\d+\s*[–-]\s*\d+\s*reps/i.test(body)
+      ? body
+      : `${low}–${high} reps`;
+
+    return {
+      ...out,
+      text:`Start light • ${reps}`,
+      reason:"Choose a comfortable first set",
+      rationale:label,
+      confidence:"low",
+      signals:{
+        ...(out.signals||{}),
+        startingWeightSource:clean(suggestion.confidence)||"safe-first-log",
+        startingWeightKg:null,
+        startingWeightLabel:label,
+        startingWeightNumericSuppressed:true
+      },
+      p66:{
+        applied:true,
+        numericStartingWeightSuppressed:true,
+        safeLabel:label
+      }
+    };
+  }
+
+  if(typeof priorDecision==="function"){
+    window.dtProgressionDecision=function(e,ei,opts){
+      return integrate(e,ei,priorDecision(e,ei,opts));
+    };
+  }
+  if(typeof priorSmart==="function"){
+    window.smartRecommendation=function(e,ei){
+      return integrate(e,ei,priorSmart(e,ei));
+    };
+  }
+
+  window.DT_P66_SAFE_FIRST_LOG_INTEGRATION=Object.freeze({
+    version:VERSION,
+    zeroHistoryOnly:true,
+    suppressesUnsafeNumericPlaceholder:true,
+    preservesNumericSafeStarts:true
+  });
+})();
+</script><script id="dt-p67-first-log-display-authority">
+window.DT_P67_FIRST_LOG_DISPLAY_AUTHORITY=Object.freeze({
+ version:"P67-first-log-display-authority-1",
+ rule:"zero-history workout UI must not display legacy stock plan kg as user guidance",
+ zeroHistoryLabel:"First log",
+ preservesExactHistory:true,
+ preservesEditableInputAuthority:true,
+ preservesSmartSessionAuthority:true
+});
+</script>
+<style id="dt-p68-smart-split-css">
+.dt-p68-wrap{margin-top:12px;padding:12px;border:1px solid #203b48;border-radius:14px;background:#081821}
+.dt-p68-kicker{color:#8ca0ab;font:800 9px system-ui;letter-spacing:.08em;text-transform:uppercase}
+.dt-p68-levels{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+.dt-p68-level{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid #294653;background:#0a1a24;color:#8fa6b0;font:800 10px system-ui}
+.dt-p68-level.on{border-color:#55dda0;background:rgba(85,221,160,.10);color:#68e0a9}
+.dt-p68-generate,.dt-p68-create,.dt-p68-regenerate,.dt-p68-manual{width:100%;min-height:42px;border-radius:12px;font:850 10px system-ui;margin-top:9px}
+.dt-p68-generate,.dt-p68-create{border:1px solid rgba(85,221,160,.30);background:rgba(85,221,160,.10);color:#68e0a9}
+.dt-p68-regenerate,.dt-p68-manual{border:1px solid #294653;background:#0a1a24;color:#9fb3bd}
+.dt-p68-preview{display:none;margin-top:10px;border-top:1px solid #17313c;padding-top:10px}
+.dt-p68-preview.show{display:block}
+.dt-p68-status{display:grid;gap:6px;margin-bottom:9px}
+.dt-p68-status-row{padding:8px 9px;border-radius:10px;background:#0a1a24;border:1px solid #1d3945;color:#9eb1ba;font:650 9px/1.4 system-ui}
+.dt-p68-status-row.warn{border-color:#6b4d28;color:#e8bd79;background:#21180e}
+.dt-p68-list{display:grid;gap:7px}
+.dt-p68-ex{padding:9px;border-radius:11px;background:#0a1a24;border:1px solid #1d3945}
+.dt-p68-ex b{display:block;color:#e8f2f4;font:800 11px system-ui}
+.dt-p68-ex small{display:block;color:#78909a;font:650 9px/1.35 system-ui;margin-top:2px}
+.dt-p68-note{margin-top:8px;color:#708995;font:600 9px/1.45 system-ui}
+</style><script id="dt-p68-smart-split-generator">
+(()=>{
+"use strict";
+const VERSION="P68-smart-split-generator-1.0";
+const LEVELS=["beginner","intermediate","advanced"];
+const TARGETS=["chest","back","shoulders","biceps","triceps","forearms","quads","hamstrings","glutes","calves","abs","obliques"];
+const LABEL={chest:"Chest",back:"Back",shoulders:"Shoulders",biceps:"Biceps",triceps:"Triceps",forearms:"Forearms",quads:"Quads",hamstrings:"Hamstrings",glutes:"Glutes",calves:"Calves",abs:"Abs",obliques:"Obliques"};
+const TARGET_KEYS={
+ chest:new Set(["chest","upper_chest","lower_chest"]),
+ back:new Set(["back","lats","mid_back","upper_back","lower_back","traps","upper_traps","lower_traps","rhomboids"]),
+ shoulders:new Set(["shoulders","front_delts","side_delts","rear_delts","rotator_cuff"]),
+ biceps:new Set(["biceps","brachialis"]),
+ triceps:new Set(["triceps"]),
+ forearms:new Set(["forearms"]),
+ quads:new Set(["quads"]),
+ hamstrings:new Set(["hamstrings"]),
+ glutes:new Set(["glutes"]),
+ calves:new Set(["calves"]),
+ abs:new Set(["abs","core"]),
+ obliques:new Set(["obliques"])
+};
+const LEVEL_POLICY={
+ beginner:{singleCount:3,doubleCount:4,maxPerPattern:1,directBias:1.12,stableBias:1.18,variationBias:.82},
+ intermediate:{singleCount:4,doubleCount:5,maxPerPattern:2,directBias:1.08,stableBias:1.06,variationBias:1.00},
+ advanced:{singleCount:5,doubleCount:6,maxPerPattern:2,directBias:1.04,stableBias:.98,variationBias:1.10}
+};
+const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+const norm=v=>clean(v).toLowerCase().replace(/[\s-]+/g,"_").replace(/[^a-z0-9_]+/g,"").replace(/^_+|_+$/g,"");
+const uniq=a=>[...new Set((a||[]).filter(Boolean))];
+
+function canonicalTarget(raw){
+ const n=norm(raw);
+ if(TARGETS.includes(n))return n;
+ for(const [t,keys] of Object.entries(TARGET_KEYS))if(keys.has(n))return t;
+ try{
+   const b=window.dtClassifyMuscle?.(raw)?.bucket;
+   if(TARGETS.includes(b))return b;
+ }catch(_){}
+ return "";
+}
+function exerciseLibrary(){
+ try{
+   const rows=window.DTExerciseKnowledge?.all?.()||window.DT_EXERCISE_LIBRARY||[];
+   return Array.isArray(rows)?rows:[];
+ }catch(_){return []}
+}
+function roles(ex){
+ return {
+  primary:new Set((ex?.primaryMuscles||[]).map(canonicalTarget).filter(Boolean)),
+  secondary:new Set((ex?.secondaryMuscles||[]).map(canonicalTarget).filter(Boolean)),
+  stabilizer:new Set((ex?.stabilizerMuscles||[]).map(canonicalTarget).filter(Boolean))
+ };
+}
+function stableExercise(ex){
+ const eq=norm(ex?.equipment),mp=norm(ex?.movementPattern),name=norm(ex?.name);
+ let score=1;
+ if(/machine|cable|smith|bodyweight/.test(eq))score+=.45;
+ if(/dumbbell|barbell|free_weight/.test(eq))score-=.05;
+ if(/press|row|pulldown|curl|extension|raise|squat|leg_press|hinge|carry|plank/.test(mp+" "+name))score+=.10;
+ return score;
+}
+function experienceSuitability(ex,level){
+ const eq=norm(ex?.equipment),name=norm(ex?.name),mp=norm(ex?.movementPattern);
+ let s=1;
+ if(level==="beginner"){
+   if(/machine|cable|smith|bodyweight/.test(eq))s+=.25;
+   if(/snatch|clean|jerk|pistol|nordic|dragon_flag/.test(name+" "+mp))s-=.55;
+ }
+ if(level==="advanced"){
+   if(/single_arm|single_leg|incline|overhead|romanian|weighted|landmine/.test(name+" "+mp))s+=.08;
+ }
+ return Math.max(.2,s);
+}
+function recoverySnapshot(){
+ try{return window.dtMuscleRecoveryStatus?.()||{}}catch(_){return {}}
+}
+function recoveryFor(target){
+ const all=recoverySnapshot();let best=null;
+ for(const [k,v] of Object.entries(all||{})){
+   if(canonicalTarget(k)!==target||!v)continue;
+   if(!best||Number(v.pct||100)<Number(best.pct||100))best=v;
+ }
+ return best;
+}
+function weeklyModel(){
+ try{return window.dtP6WeeklyDoseModel?.()||null}catch(_){return null}
+}
+function weeklySetsFor(target){
+ const m=weeklyModel();if(!m||!Array.isArray(m.muscles))return 0;
+ let total=0;
+ for(const row of m.muscles){
+   if(canonicalTarget(row?.muscle)===target)total+=Number(row?.sets)||0;
+ }
+ return Math.round(total*10)/10;
+}
+function targetReadiness(target){
+ const recovery=recoveryFor(target),weeklySets=weeklySetsFor(target);
+ const recovering=!!recovery?.recovering;
+ const pct=Number.isFinite(Number(recovery?.pct))?Number(recovery.pct):100;
+ let dose="normal";
+ if(weeklySets>=12)dose="high";
+ else if(weeklySets>=8)dose="moderate";
+ return {target,label:LABEL[target]||target,recovery,recovering,recoveryPct:pct,weeklySets,dose};
+}
+function resolveIntent(targets,opts={}){
+ const chosen=uniq((targets||[]).map(canonicalTarget)).slice(0,2);
+ const override=new Set((opts.overrideRecovery||[]).map(canonicalTarget));
+ const status=chosen.map(targetReadiness);
+ const included=[],excluded=[];
+ for(const s of status){
+   if(s.recovering&&!override.has(s.target))excluded.push({...s,reason:"recovering"});
+   else included.push(s);
+ }
+ return {chosen,status,included,excluded,overrideRecovery:[...override]};
+}
+function directMatchScore(ex,target){
+ const r=roles(ex);
+ if(r.primary.has(target))return 100;
+ if(r.secondary.has(target))return 42;
+ if(r.stabilizer.has(target))return 10;
+ return 0;
+}
+function equipmentFamily(ex){
+ const e=norm(ex?.equipment);
+ if(/cable/.test(e))return "cable";
+ if(/machine|smith|plate_loaded|leg_press/.test(e))return "machine";
+ if(/dumbbell/.test(e))return "dumbbell";
+ if(/barbell|ez_bar/.test(e))return "barbell";
+ if(/bodyweight/.test(e))return "bodyweight";
+ return e||"other";
+}
+function patternKey(ex){
+ const m=norm(ex?.movementPattern);
+ if(m)return m;
+ return norm(ex?.name).split("_").slice(0,2).join("_");
+}
+function currentTrainingGoal(){
+ try{
+   const g=clean(state?.workouts?.trainingProgram||"lean");
+   return ["lean","growth","strength_muscle","strength"].includes(g)?g:"lean";
+ }catch(_){return "lean"}
+}
+function goalSuitability(ex,goal,directCount){
+ const n=norm(ex?.name),m=norm(ex?.movementPattern),eq=norm(ex?.equipment);
+ const compound=/(press|row|pulldown|pull_up|chin_up|dip|squat|deadlift|hinge|leg_press|lunge|step_up)/.test(`${n} ${m}`);
+ const isolation=/(curl|extension|pushdown|fly|raise|kickback|calf_raise|crunch)/.test(`${n} ${m}`);
+ if(goal==="strength"){
+   if(isolation)return .68;
+   if(compound&&/barbell|ez_bar|trap_bar/.test(eq))return 1.38;
+   if(compound&&/smith|machine|plate_loaded|leg_press/.test(eq))return 1.20;
+   if(compound&&/dumbbell/.test(eq))return 1.14;
+   if(compound&&/bodyweight/.test(eq))return 1.08;
+   if(compound&&/cable/.test(eq))return .94;
+   return .90;
+ }
+ if(goal==="growth"){
+   if(directCount>0&&isolation)return 1.20;
+   if(directCount>0&&/machine|cable/.test(eq))return 1.10;
+   return directCount>0?1.06:.92;
+ }
+ if(goal==="strength_muscle"){
+   if(compound)return 1.12;
+   return directCount>0?1.05:.96;
+ }
+ return 1;
+}
+function candidateScore(ex,targets,level,goal=currentTrainingGoal()){
+ const policy=LEVEL_POLICY[level]||LEVEL_POLICY.beginner;
+ let targetScore=0,direct=0,secondary=0;
+ for(const t of targets){
+   const d=directMatchScore(ex,t);
+   targetScore+=d;
+   if(d>=100)direct++;
+   else if(d>=42)secondary++;
+ }
+ if(!targetScore)return null;
+ let score=targetScore*policy.directBias;
+ score*=experienceSuitability(ex,level);
+ score*=goalSuitability(ex,goal,direct);
+ score*=Math.max(.7,stableExercise(ex)*policy.stableBias);
+ if(targets.length===2&&direct===2)score+=14;
+ if(targets.length===2&&direct===1&&secondary===1)score+=7;
+ return {ex,score,direct,secondary,pattern:patternKey(ex),equipmentFamily:equipmentFamily(ex)};
+}
+function conflictWithAvoidedTarget(ex,avoidTargets){
+ if(!avoidTargets?.length)return false;
+ const r=roles(ex);
+ return avoidTargets.some(t=>r.primary.has(t)||r.secondary.has(t));
+}
+function buildCandidates(targets,level,avoidTargets=[]){
+ return exerciseLibrary()
+   .filter(ex=>!conflictWithAvoidedTarget(ex,avoidTargets))
+   .map(ex=>candidateScore(ex,targets,level,currentTrainingGoal()))
+   .filter(Boolean)
+   .sort((a,b)=>b.score-a.score||clean(a.ex.name).localeCompare(clean(b.ex.name)));
+}
+function buildCombination(targets,level,opts={}){
+ const policy=LEVEL_POLICY[level]||LEVEL_POLICY.beginner;
+ const baseDesired=targets.length>1?policy.doubleCount:policy.singleCount;
+ const requestedCount=Math.max(2,baseDesired-(Number(opts.volumeReduction)||0));
+ const candidates=buildCandidates(targets,level,opts.avoidTargets||[]);
+ const desired=Math.min(requestedCount,candidates.length);
+ const picked=[],patternCount=new Map(),targetDirect=new Map(targets.map(t=>[t,0])),equipCount=new Map();
+ const canPick=c=>{
+   const pc=patternCount.get(c.pattern)||0;
+   if(pc>=policy.maxPerPattern)return false;
+   const ec=equipCount.get(c.equipmentFamily)||0;
+   if(level==="beginner"&&ec>=2&&picked.length<desired-1)return false;
+   return true;
+ };
+ // First guarantee one primary-direct exercise for each included target where possible.
+ for(const t of targets){
+   const c=candidates.find(x=>x.ex&&!picked.includes(x)&&roles(x.ex).primary.has(t)&&canPick(x));
+   if(c){
+     picked.push(c);patternCount.set(c.pattern,(patternCount.get(c.pattern)||0)+1);equipCount.set(c.equipmentFamily,(equipCount.get(c.equipmentFamily)||0)+1);
+     for(const tt of targets)if(roles(c.ex).primary.has(tt))targetDirect.set(tt,(targetDirect.get(tt)||0)+1);
+   }
+ }
+ for(const c of candidates){
+   if(picked.length>=desired)break;
+   if(picked.includes(c)||!canPick(c))continue;
+   picked.push(c);patternCount.set(c.pattern,(patternCount.get(c.pattern)||0)+1);equipCount.set(c.equipmentFamily,(equipCount.get(c.equipmentFamily)||0)+1);
+   for(const tt of targets)if(roles(c.ex).primary.has(tt))targetDirect.set(tt,(targetDirect.get(tt)||0)+1);
+ }
+ return {desired,requestedCount,candidates,picked,targetDirect:Object.fromEntries(targetDirect)};
+}
+function generate(targets,level="beginner",opts={}){
+ level=LEVELS.includes(level)?level:"beginner";
+ const intent=resolveIntent(targets,opts);
+ const trainingGoal=currentTrainingGoal();
+ const includedTargets=intent.included.map(x=>x.target);
+ if(!includedTargets.length){
+   return {version:VERSION,ok:false,level,intent,reason:"all_selected_targets_recovering",exercises:[]};
+ }
+ const doseStates=intent.included.map(x=>x.dose);
+ const volumeReduction=doseStates.includes("high")?2:doseStates.includes("moderate")?1:0;
+ const avoidTargets=intent.excluded.map(x=>x.target);
+ const combo=buildCombination(includedTargets,level,{volumeReduction,avoidTargets});
+ const exercises=combo.picked.map((c,i)=>({
+   id:c.ex.id,name:c.ex.name,equipment:c.ex.equipment||"",primaryMuscle:c.ex.primaryMuscle||c.ex.primaryMuscles?.[0]||"",
+   primaryMuscles:[...(c.ex.primaryMuscles||[])],secondaryMuscles:[...(c.ex.secondaryMuscles||[])],
+   stabilizerMuscles:[...(c.ex.stabilizerMuscles||[])],movementPattern:c.ex.movementPattern||null,
+   aliases:[...(c.ex.aliases||[])],defaultSets:Number(c.ex.defaultSets)||3,source:"library",rank:i+1,
+   matchedTargets:includedTargets.filter(t=>directMatchScore(c.ex,t)>0)
+ }));
+ return {
+   version:VERSION,ok:exercises.length>0,level,trainingGoal,intent,desired:combo.desired,requestedCount:combo.requestedCount,exercises,targetDirect:combo.targetDirect,
+   guardrails:{
+     recoveryExcludedTargets:avoidTargets,
+     weeklyDoseVolumeReduction:volumeReduction,
+     weeklyDoseState:volumeReduction===2?"high":volumeReduction===1?"moderate":"normal"
+   }
+ };
+}
+
+function commitGeneratedSplit(splitKey,generation,meta={}){
+ try{
+   splitKey=clean(splitKey);
+   if(!splitKey||!generation?.ok||!Array.isArray(generation.exercises)||!generation.exercises.length){
+     return {ok:false,reason:"invalid_generation"};
+   }
+   const split=(state?.workouts?.customSplits||[]).find(s=>String(s?.key)===splitKey);
+   if(!split)return {ok:false,reason:"split_not_found"};
+
+   state.workouts.custom=state.workouts.custom||{};
+   state.workouts.custom[splitKey]=state.workouts.custom[splitKey]||[];
+
+   // Generated creation is authoritative for an empty/new split only.
+   // Never overwrite exercises the user has already built manually.
+   if(state.workouts.custom[splitKey].length){
+     return {ok:false,reason:"split_not_empty"};
+   }
+
+   const now=new Date().toISOString();
+   const committed=generation.exercises.map((ex,i)=>({
+     id:`gen_${clean(ex.id)||"exercise"}_${Date.now().toString(36)}_${i}`,
+     name:clean(ex.name),
+     type:clean(ex.equipment),
+     muscle:clean(ex.primaryMuscle||ex.primaryMuscles?.[0]||""),
+     sets:Math.max(1,Math.min(8,Number(ex.defaultSets)||3)),
+     libraryId:clean(ex.id)||null,
+     primaryMuscles:[...(ex.primaryMuscles||[])],
+     secondaryMuscles:[...(ex.secondaryMuscles||[])],
+     stabilizerMuscles:[...(ex.stabilizerMuscles||[])],
+     movementPattern:ex.movementPattern||null,
+     aliases:[...(ex.aliases||[])],
+     source:"library",
+     generatedBy:"P68",
+     generatedAt:now
+   }));
+
+   state.workouts.custom[splitKey]=committed;
+   split.generationMeta={
+     version:VERSION,
+     generatedAt:now,
+     experience:generation.level,
+     trainingGoal:generation.trainingGoal||currentTrainingGoal(),
+     requestedMuscles:generation.intent?.chosen||[],
+     includedMuscles:generation.intent?.included?.map(x=>x.target)||[],
+     excludedMuscles:generation.intent?.excluded?.map(x=>x.target)||[],
+     recoveryOverride:generation.intent?.overrideRecovery||[],
+     weeklyDoseVolumeReduction:Number(generation.guardrails?.weeklyDoseVolumeReduction)||0,
+     deterministic:true
+   };
+   split.focusMuscles=[...(generation.intent?.chosen||[])].slice(0,2);
+   split.focusMode=split.focusMuscles.length?"specialization":undefined;
+   split.focusUpdatedAt=now;
+
+   // Mirror built-in identities into the normalized foundation exactly as the
+   // existing Add Exercise flow does. Do not create duplicate library entries.
+   if(state.core?.exercises?.items){
+     for(const ex of generation.exercises){
+       const id=clean(ex.id);if(!id)continue;
+       if(state.core.exercises.items.some(x=>String(x?.id)===id))continue;
+       state.core.exercises.items.push({
+         id,name:clean(ex.name),equipment:clean(ex.equipment),
+         primaryMuscle:clean(ex.primaryMuscle||ex.primaryMuscles?.[0]||""),
+         primaryMuscles:[...(ex.primaryMuscles||[])],
+         secondaryMuscles:[...(ex.secondaryMuscles||[])],
+         stabilizerMuscles:[...(ex.stabilizerMuscles||[])],
+         movementPattern:ex.movementPattern||null,aliases:[...(ex.aliases||[])],
+         source:"built-in",createdAt:now
+       });
+     }
+   }
+
+   // Invalidate only this split's current draft. History is never touched.
+   try{
+     const day=typeof window.dtWorkoutDataDayKey==="function"?window.dtWorkoutDataDayKey(splitKey):(typeof todayKey==="function"?todayKey():"");
+     if(day&&state.workouts?.drafts)delete state.workouts.drafts[`${splitKey}_${day}`];
+   }catch(_){}
+
+   try{save()}catch(e){console.warn("P68 generated split save failed",e)}
+   return {ok:true,splitKey,count:committed.length,exerciseIds:committed.map(x=>x.libraryId)};
+ }catch(e){
+   console.warn("P68 commit failed",e);
+   return {ok:false,reason:"commit_error"};
+ }
+}
+
+window.dtP68CanonicalTarget=canonicalTarget;
+window.dtP68ResolveSplitIntent=resolveIntent;
+window.dtP68GenerateSmartSplit=generate;
+window.dtP68CommitGeneratedSplit=commitGeneratedSplit;
+
+function selectedTargetsFromModal(modal){
+ return [...(modal?.querySelectorAll?.(".dt-p7-focus-chip.on")||[])].map(b=>canonicalTarget(b.dataset.muscle)).filter(Boolean).slice(0,2);
+}
+function escapeHtml(v){
+ try{return window.dtEscapeHtml?.(v)??clean(v)}catch(_){return clean(v)}
+}
+function ensureGeneratorUI(){
+ const modal=document.getElementById("dtSplitModal"),sheet=modal?.querySelector(".dt-split-sheet"),p7=sheet?.querySelector(".dt-p7-focus-wrap"),actions=sheet?.querySelector(".dt-split-actions");
+ if(!modal||!sheet||!p7||!actions)return null;
+ let wrap=sheet.querySelector(".dt-p68-wrap");
+ if(wrap)return wrap;
+ wrap=document.createElement("div");wrap.className="dt-p68-wrap";
+ wrap.innerHTML=`
+   <div class="dt-p68-kicker">Suggested workout</div>
+   <div class="dt-p68-levels">
+     ${LEVELS.map(x=>`<button type="button" class="dt-p68-level ${x==="beginner"?"on":""}" data-level="${x}">${x[0].toUpperCase()+x.slice(1)}</button>`).join("")}
+   </div>
+   <button type="button" class="dt-p68-generate">Generate workout</button>
+   <div class="dt-p68-preview" aria-live="polite">
+     <div class="dt-p68-status"></div>
+     <div class="dt-p68-list"></div>
+     <div class="dt-p68-note"></div>
+     <button type="button" class="dt-p68-create">Create suggested split</button>
+     <button type="button" class="dt-p68-regenerate">Regenerate</button>
+   </div>`;
+ sheet.insertBefore(wrap,actions);
+ const manual=actions.querySelector("#dtCreateSplit");
+ if(manual){
+   manual.textContent="Build manually";
+   manual.title="Create an empty split and choose exercises yourself";
+ }
+ wrap.dataset.level="beginner";wrap._p68Generation=null;wrap._p68Overrides=new Set();
+
+ const levelButtons=[...wrap.querySelectorAll(".dt-p68-level")];
+ levelButtons.forEach(b=>b.onclick=()=>{
+   wrap.dataset.level=b.dataset.level;
+   levelButtons.forEach(x=>x.classList.toggle("on",x===b));
+   wrap._p68Generation=null;
+   wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
+ });
+
+ function renderGeneration(g){
+   const preview=wrap.querySelector(".dt-p68-preview"),status=wrap.querySelector(".dt-p68-status"),list=wrap.querySelector(".dt-p68-list"),note=wrap.querySelector(".dt-p68-note");
+   status.innerHTML="";
+   for(const s of g.intent?.status||[]){
+     const excluded=(g.intent?.excluded||[]).some(x=>x.target===s.target);
+     const line=document.createElement("div");line.className="dt-p68-status-row"+(excluded?" warn":"");
+     if(excluded){
+       line.innerHTML=`<b>${escapeHtml(s.label)} is still recovering</b><br>${Math.max(0,Math.round(Number(s.recovery?.hoursLeft)||0))}h estimated remaining. M/ARC left direct and strong secondary ${escapeHtml(s.label.toLowerCase())} work out of this suggestion. <button type="button" data-p68-override="${escapeHtml(s.target)}">Include anyway</button>`;
+     }else{
+       const dose=s.dose==="high"?"High weekly exposure — volume reduced":s.dose==="moderate"?"Moderate weekly exposure — slightly reduced":"Available for today's suggestion";
+       line.innerHTML=`<b>${escapeHtml(s.label)}</b><br>${escapeHtml(dose)}${s.recovery?.recovering?" · recovery override active":""}`;
+     }
+     status.appendChild(line);
+   }
+   status.querySelectorAll("[data-p68-override]").forEach(btn=>btn.onclick=()=>{
+     wrap._p68Overrides.add(btn.dataset.p68Override);
+     generateNow();
+   });
+   if(!g.ok){
+     list.innerHTML="";
+     note.textContent=g.reason==="all_selected_targets_recovering"
+       ?"All selected muscles are still recovering. Use an Include anyway control only if you intentionally want to override M/ARC's recovery guidance."
+       :"M/ARC could not build a safe suggestion from the selected muscles.";
+     preview.classList.add("show");return;
+   }
+   list.innerHTML=g.exercises.map((ex,i)=>`
+     <div class="dt-p68-ex">
+       <b>${i+1}. ${escapeHtml(ex.name)}</b>
+       <small>${escapeHtml(ex.equipment||"Exercise")} · ${escapeHtml((ex.matchedTargets||[]).map(x=>LABEL[x]||x).join(" + "))}</small>
+     </div>`).join("");
+   const reduced=Number(g.guardrails?.weeklyDoseVolumeReduction)||0;
+   note.textContent=reduced
+     ?`M/ARC shortened this session because your current weekly muscle exposure is already elevated. Smart Session will determine the actual weight/reps when you train.`
+     :`Exercises are selected from your existing M/ARC library. Smart Session remains responsible for weight, reps and progression after creation.`;
+   preview.classList.add("show");
+ }
+ function generateNow(){
+   const targets=selectedTargetsFromModal(modal),level=wrap.dataset.level||"beginner";
+   try{modal.querySelector("#dtSplitName")?.blur()}catch(_){}
+   if(!targets.length){
+     wrap._p68Generation=null;
+     const preview=wrap.querySelector(".dt-p68-preview");
+     preview.classList.add("show");
+     wrap.querySelector(".dt-p68-status").innerHTML='<div class="dt-p68-status-row warn"><b>Select a muscle focus first</b><br>Choose one or two muscles, then generate.</div>';
+     wrap.querySelector(".dt-p68-list").innerHTML="";
+     wrap.querySelector(".dt-p68-note").textContent="";
+     return null;
+   }
+   const g=generate(targets,level,{overrideRecovery:[...wrap._p68Overrides]});
+   wrap._p68Generation=g;renderGeneration(g);return g;
+ }
+ wrap.querySelector(".dt-p68-generate").onclick=generateNow;
+ wrap.querySelector(".dt-p68-regenerate").onclick=generateNow;
+
+ wrap.querySelector(".dt-p68-create").onclick=()=>{
+   const g=wrap._p68Generation;
+   if(!g?.ok)return;
+   const nameInput=modal.querySelector("#dtSplitName");
+   if(!clean(nameInput?.value)){nameInput?.focus();return}
+   const before=new Set((state.workouts?.customSplits||[]).map(x=>String(x.key)));
+   const original=actions.querySelector("#dtCreateSplit");
+   if(!original)return;
+   original.click();
+   setTimeout(()=>{
+     const made=(state.workouts?.customSplits||[]).find(x=>!before.has(String(x.key)));
+     if(!made)return;
+     const result=commitGeneratedSplit(made.key,g);
+     if(!result.ok){
+       console.warn("P68 generated split commit did not complete",result);
+       return;
+     }
+     try{wday=made.key}catch(_){}
+     try{window.dtRenderWorkoutSplits?.()}catch(_){}
+     try{renderWorkout?.()}catch(_){}
+     try{window.dtRenderTodaySchedule?.()}catch(_){}
+   },30);
+ };
+
+ // After P7 toggles a chip, invalidate stale preview and keep keyboard closed.
+ p7.addEventListener("click",e=>{
+   if(!e.target.closest?.(".dt-p7-focus-chip"))return;
+   try{modal.querySelector("#dtSplitName")?.blur()}catch(_){}
+   setTimeout(()=>{
+     wrap._p68Generation=null;wrap._p68Overrides=new Set();
+     wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
+   },0);
+ });
+ return wrap;
+}
+function syncGeneratorUI(){
+ const wrap=ensureGeneratorUI();if(!wrap)return;
+ wrap._p68Generation=null;wrap._p68Overrides=new Set();
+ wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
+}
+document.addEventListener("click",e=>{
+ if(e.target.closest?.("#dtAddSplitBtn"))setTimeout(syncGeneratorUI,0);
+},true);
+document.readyState==="loading"
+ ?document.addEventListener("DOMContentLoaded",()=>setTimeout(syncGeneratorUI,0),{once:true})
+ :setTimeout(syncGeneratorUI,0);
+setTimeout(syncGeneratorUI,650);
+
+window.dtP68EnsureGeneratorUI=ensureGeneratorUI;
+window.dtP68SyncGeneratorUI=syncGeneratorUI;
+window.DT_P68_SMART_SPLIT_GENERATOR=Object.freeze({
+ version:VERSION,targets:TARGETS,levels:LEVELS,usesExistingExerciseLibrary:true,usesP4Recovery:true,usesP6WeeklyDose:true,
+ maxFocusMuscles:2,randomGeneration:false,commitOwner:"existing custom split model",
+ uiPreview:true,experienceSelector:true,recoveryWarning:true,recoveryOverride:true,manualBuildPreserved:true
+});
+})();
+</script><script id="dt-p68-1-mixed-equipment-first-log-safety">
+(()=>{
+"use strict";
+const VERSION="P68.1-mixed-equipment-first-log-safety-1";
+const prior=window.dtSuggestStartWeight;
+const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+const norm=v=>clean(v).toLowerCase();
+function libraryEntry(name){
+  const q=norm(name);
+  try{
+    const rows=window.DTExerciseKnowledge?.all?.()||window.DT_EXERCISE_LIBRARY||[];
+    return (rows||[]).find(ex=>{
+      const names=[ex?.name,...(ex?.aliases||[])].map(norm).filter(Boolean);
+      return names.includes(q);
+    })||null;
+  }catch(_){return null}
+}
+function ambiguousMachineEquipment(ex){
+  const equipment=norm(ex?.equipment);
+  if(!equipment.includes("/"))return false;
+  const parts=equipment.split("/").map(x=>x.trim()).filter(Boolean);
+  const hasMachineLike=parts.some(x=>/machine|cable|smith|plate[- ]?loaded|leg press|sled/.test(x));
+  const hasOther=parts.some(x=>!/machine|cable|smith|plate[- ]?loaded|leg press|sled/.test(x));
+  return hasMachineLike&&hasOther;
+}
+if(typeof prior==="function"){
+  window.dtSuggestStartWeight=function(name,...args){
+    const ex=libraryEntry(name);
+    if(ex&&ambiguousMachineEquipment(ex)){
+      return {
+        kg:null,
+        label:`Start with the lightest comfortable ${clean(ex.equipment)} setup`,
+        confidence:"safe-mixed-equipment",
+        source:"P68.1 mixed-equipment first-log safety"
+      };
+    }
+    return prior(name,...args);
+  };
+}
+window.DT_P68_1_MIXED_EQUIPMENT_FIRST_LOG_SAFETY=Object.freeze({
+  version:VERSION,
+  zeroHistoryPolicyOnly:true,
+  mixedMachineEquipmentNumericSuppressed:true,
+  preservesExactHistory:true,
+  preservesUnambiguousBarbellStarts:true
+});
+})();
+</script><script id="dt-p68-2-schedule-aware-streak-authority">
+(()=>{
+"use strict";
+const VERSION="P68.2-schedule-aware-streak-authority-1";
+const DAY=86400000;
+const SCHEDULE_KEYS=["sun","mon","tue","wed","thu","fri","sat"];
+const pad=n=>String(n).padStart(2,"0");
+const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+function localSessionDay(s){
+  const canonical=String(s?.__dtDayKey||"").slice(0,10);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(canonical))return canonical;
+  for(const raw of [s?.completedAt,s?.date,s?.startedAt]){
+    if(!raw)continue;
+    const d=new Date(raw);
+    if(Number.isFinite(d.getTime()))return dateKey(d);
+  }
+  const fallback=String(s?.dayKey||"").slice(0,10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(fallback)?fallback:"";
+}
+function completedSessions(){
+  const source=typeof window.dtCanonicalWorkoutSessions==="function"
+    ? (window.dtCanonicalWorkoutSessions()||[])
+    : (state.workouts?.sessions||[]);
+  return source.filter(s=>{
+    if(!s||s.demo)return false;
+    try{return typeof workoutSessionSets==="function"?workoutSessionSets(s)>0:true}catch(_){return true}
+  });
+}
+function completedDays(){
+  return new Set(completedSessions().map(localSessionDay).filter(Boolean));
+}
+function scheduleDays(){
+  const days=state.trainingSchedule?.days||null;
+  if(!days)return null;
+  const configured=SCHEDULE_KEYS.filter(k=>!!days[k]);
+  return configured.length?new Set(configured):null;
+}
+function scheduledOn(d,schedule){
+  return !!schedule?.has(SCHEDULE_KEYS[d.getDay()]);
+}
+function calendarFallback(days,now){
+  if(!days.size)return 0;
+  let cursor=new Date(now);cursor.setHours(12,0,0,0);
+  if(!days.has(dateKey(cursor)))cursor=new Date(cursor.getTime()-DAY);
+  let streak=0;
+  while(days.has(dateKey(cursor))){
+    streak++;
+    cursor=new Date(cursor.getTime()-DAY);
+  }
+  return streak;
+}
+function scheduleAwareStreak(nowInput){
+  const days=completedDays();
+  if(!days.size)return 0;
+  const schedule=scheduleDays();
+  const now=nowInput instanceof Date?new Date(nowInput):new Date();
+  now.setHours(12,0,0,0);
+  if(!schedule)return calendarFallback(days,now);
+
+  let cursor=new Date(now),streak=0,guard=0,started=false;
+  while(guard++<730){
+    const key=dateKey(cursor),completed=days.has(key),scheduled=scheduledOn(cursor,schedule);
+    if(completed){
+      streak++;
+      started=true;
+    }else if(scheduled){
+      /* Today is still an open training opportunity. It cannot break a streak before the day is over. */
+      if(key!==dateKey(now))break;
+    }
+    cursor=new Date(cursor.getTime()-DAY);
+    if(started){
+      /* Continue across intentional rest days; the next missed PAST scheduled day ends the streak. */
+      continue;
+    }
+    /* Before finding the latest completed workout, only today's open scheduled slot and rest days may be skipped.
+       A past scheduled miss means there is no currently alive streak. */
+    if(scheduled&&key!==dateKey(now))break;
+  }
+  return streak;
+}
+window.dtCurrentWorkoutStreak=()=>scheduleAwareStreak(new Date());
+window.dtP68_2ScheduleAwareStreakAt=iso=>scheduleAwareStreak(new Date(iso));
+window.DT_P68_2_STREAK_AUTHORITY=Object.freeze({
+  version:VERSION,
+  source:"canonical completed workout sessions",
+  scheduledRestDaysDoNotBreak:true,
+  missedPastScheduledDayBreaks:true,
+  todayOpenSlotDoesNotPrematurelyBreak:true,
+  duplicateSessionsCollapseToOneCompletedDay:true,
+  noScheduleFallback:"legacy consecutive-calendar-day behavior"
+});
+})();
+</script></body>
 </html>
 <style id="dt-p47-smart-session-explanation-readability-css">
 /* P47 — Smart Session explanation readability only.
