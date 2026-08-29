@@ -4291,7 +4291,7 @@ function removeExercise(e,ei,skipConfirm){
 }
 function renderWorkout(){
   const p=plans[wday],exercises=effectiveExercises(wday),d=draft();
-  wtitle.textContent=p.title;
+  wtitle.textContent=state.workouts?.dayNames?.[wday]||p.title;
   wsub.textContent="";
   wsub.style.display="none";
   wlist.innerHTML='';
@@ -4687,6 +4687,74 @@ createCustomExercise.onclick=()=>{
   });
 });
 
+
+function dtFix20ExerciseIdentityRecord(ex){
+  if(!ex)return null;
+  if(Array.isArray(ex)){
+    const stable=String(ex?.[4]||"");
+    return {
+      stableId:stable,
+      name:String(ex?.[0]||""),
+      type:String(ex?.[1]||""),
+      equipment:String(ex?.[1]||""),
+      source:"effective"
+    };
+  }
+  return {
+    stableId:String(ex?.libraryId||ex?.exerciseKey||""),
+    name:String(ex?.name||""),
+    type:String(ex?.type||ex?.equipment||""),
+    equipment:String(ex?.equipment||ex?.type||""),
+    source:String(ex?.source||"")
+  };
+}
+
+function dtFix20SameExerciseIdentity(candidate,existing){
+  const a=dtFix20ExerciseIdentityRecord(candidate),b=dtFix20ExerciseIdentityRecord(existing);
+  if(!a||!b)return false;
+
+  /* Stable identities fully own the decision when both are present.
+     Same = duplicate. Different = distinct. Never let display text override it. */
+  if(a.stableId&&b.stableId)return a.stableId===b.stableId;
+
+  /* Imported/legacy rows may lack one stable ID. Reuse the established canonical
+     movement/equipment matcher rather than inventing a new fuzzy identity. */
+  try{
+    if(typeof window.dtExerciseHistoryMatches==="function"){
+      if(window.dtExerciseHistoryMatches(a,b)||window.dtExerciseHistoryMatches(b,a))return true;
+    }
+  }catch(_){}
+
+  /* User-created/legacy fallback only: exact normalized name + equipment/type.
+     Similar exercise names remain distinct. */
+  const norm=v=>String(v||"").trim().toLowerCase().replace(/\s+/g," ");
+  const an=norm(a.name),bn=norm(b.name);
+  const at=norm(a.equipment||a.type),bt=norm(b.equipment||b.type);
+  return !!(an&&bn&&an===bn&&at===bt);
+}
+
+function dtFix20ExerciseAlreadyInSplit(targetDay,candidate){
+  const current=effectiveExercises(targetDay)||[];
+  return current.some(ex=>dtFix20SameExerciseIdentity(candidate,ex));
+}
+
+function dtFix20ShowDuplicateNotice(name){
+  let note=document.getElementById("dtExerciseDuplicateNotice");
+  if(!note){
+    note=document.createElement("div");
+    note.id="dtExerciseDuplicateNotice";
+    note.className="dt-exercise-duplicate-notice";
+    note.setAttribute("role","status");
+    note.setAttribute("aria-live","polite");
+    const host=document.querySelector("#exerciseModal .sheet")||exerciseModal;
+    host?.appendChild(note);
+  }
+  note.textContent=`${name} is already in this split.`;
+  note.classList.add("show");
+  clearTimeout(note._hideTimer);
+  note._hideTimer=setTimeout(()=>note.classList.remove("show"),2200);
+}
+
 document.getElementById("saveExercise").onclick=()=>{
   let name,type,muscle,sets=3,libraryId=null,secondaryMuscles=[],primaryMuscles=[],stabilizerMuscles=[],movementPattern=null,aliases=[];
   if(selectedLibraryExercise){
@@ -4726,6 +4794,15 @@ document.getElementById("saveExercise").onclick=()=>{
   if(!state.workouts.edits[targetDay]) state.workouts.edits[targetDay]={};
   if(!state.workouts.removed) state.workouts.removed={};
   if(!Array.isArray(state.workouts.removed[targetDay])) state.workouts.removed[targetDay]=[];
+  
+  /* FIX20_DUPLICATE_EXERCISE_GUARD
+     Reject only an already-present semantic exercise in this exact destination.
+     Existing entries/history are never deduplicated or rewritten. */
+  if(dtFix20ExerciseAlreadyInSplit(targetDay,newExercise)){
+    dtFix20ShowDuplicateNotice(name);
+    return;
+  }
+
   state.workouts.custom[targetDay].push(newExercise);
 
   // Register custom exercises in the normalized Phase 1.2 foundation so they can
@@ -5558,7 +5635,7 @@ renderTrainingGoal();
     // Persist draft creation immediately too.
     persistNow();
 
-    wtitle.textContent = p.title;
+    wtitle.textContent = state.workouts?.dayNames?.[wday] || p.title;
     wsub.textContent = "";
     wsub.style.display = "none";
     wlist.innerHTML = "";
@@ -11344,14 +11421,20 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
     return changed;
   }
 
-  function baseKeysRawCount(){
+  function baseKeysRaw(){
     const n=Number(state.workouts?.generatedProgram?.days||3);
-    return n===2?2:3;
+    return n===2?["push","pull"]:BASE_KEYS.slice();
+  }
+  function baseKeysRawCount(){
+    const hidden=new Set((state.workouts?.hiddenBaseSplits||[]).map(String));
+    return baseKeysRaw().filter(k=>!hidden.has(k)).length;
   }
 
   function ensureState(){
     if(!state.workouts)state.workouts={sessions:[],drafts:{}};
     if(!Array.isArray(state.workouts.customSplits))state.workouts.customSplits=[];
+    if(!Array.isArray(state.workouts.hiddenBaseSplits))state.workouts.hiddenBaseSplits=[];
+    state.workouts.hiddenBaseSplits=[...new Set(state.workouts.hiddenBaseSplits.map(String).filter(k=>BASE_KEYS.includes(k)))];
     if(!state.workouts.custom)state.workouts.custom={push:[],pull:[],legs:[]};
     if(!state.workouts.edits)state.workouts.edits={push:{},pull:{},legs:{}};
     if(!state.workouts.removed)state.workouts.removed={push:[],pull:[],legs:[]};
@@ -11376,8 +11459,8 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
   }
 
   function baseKeys(){
-    const n=Number(state.workouts?.generatedProgram?.days||3);
-    return n===2?["push","pull"]:BASE_KEYS.slice();
+    const hidden=new Set((state.workouts?.hiddenBaseSplits||[]).map(String));
+    return baseKeysRaw().filter(k=>!hidden.has(k));
   }
   function allKeys(){
     ensureState();
@@ -11402,10 +11485,25 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
   function selectSplit(key,btn){
     ensureState();
     if(!plans[key])return;
+
+    /* FIX22_SPLIT_RENDER_PRESSURE
+       Selecting the already-active split is idempotent. Do not rebuild the
+       entire workout merely because the active tab was tapped again. */
+    if(String(wday)===String(key)){
+      if(btn)btn.scrollIntoView({behavior:"auto",inline:"nearest",block:"nearest"});
+      return;
+    }
+
     wday=key;
     document.querySelectorAll("#workout .workout-tab[data-wday]").forEach(x=>x.classList.toggle("active",x.dataset.wday===key));
     if(btn)btn.scrollIntoView({behavior:"auto",inline:"nearest",block:"nearest"});
-    renderWorkout();
+
+    /* The active tab classes are already correct here. Tell the custom-split
+       render wrapper that this render does not require destroying/rebuilding
+       the entire tab strip. Structural callers still rebuild normally. */
+    window.__dtSplitSelectionRender=true;
+    try{renderWorkout()}
+    finally{window.__dtSplitSelectionRender=false}
   }
 
   function renderTabs(){
@@ -11424,6 +11522,48 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
       btn.title=splitName(key);
       btn.innerHTML=`<span class="dt-split-dot" style="background:${splitColor(key,i)};box-shadow:0 0 0 3px ${splitColor(key,i)}14"></span><span>${window.dtEscapeHtml?.(splitName(key))??splitName(key)}</span>`;
       btn.onclick=()=>selectSplit(key,btn);
+
+      /* FIX18_LONG_PRESS_DELETE_CUSTOM_SPLIT
+         Mobile-safe hold gesture for this exact custom split key.
+         Drag/swipe cancels. A recognized hold suppresses the following click. */
+      if(allKeys().includes(String(key))){
+        let holdTimer=0,holdStartX=0,holdStartY=0,holdTriggered=false,suppressClick=false;
+        const cancelHold=()=>{
+          if(holdTimer){clearTimeout(holdTimer);holdTimer=0}
+        };
+        btn.addEventListener("pointerdown",ev=>{
+          if(ev.button!=null&&ev.button!==0)return;
+          holdTriggered=false;
+          holdStartX=ev.clientX;holdStartY=ev.clientY;
+          cancelHold();
+          holdTimer=setTimeout(()=>{
+            holdTimer=0;
+            holdTriggered=true;
+            suppressClick=true;
+            try{window.dtHaptic?.("medium")}catch(_){}
+            deleteSplit(key);
+          },650);
+        },{passive:true});
+        btn.addEventListener("pointermove",ev=>{
+          if(!holdTimer)return;
+          if(Math.hypot(ev.clientX-holdStartX,ev.clientY-holdStartY)>12)cancelHold();
+        },{passive:true});
+        btn.addEventListener("pointerup",cancelHold,{passive:true});
+        btn.addEventListener("pointercancel",cancelHold,{passive:true});
+        btn.addEventListener("pointerleave",ev=>{
+          if(holdTimer&&Math.hypot(ev.clientX-holdStartX,ev.clientY-holdStartY)>12)cancelHold();
+        },{passive:true});
+        btn.addEventListener("click",ev=>{
+          if(!suppressClick)return;
+          suppressClick=false;
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+        },true);
+        btn.addEventListener("contextmenu",ev=>{
+          if(holdTriggered||holdTimer){ev.preventDefault()}
+        });
+      }
+
       wrap.appendChild(btn);
     });
 
@@ -11543,26 +11683,108 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
     return true;
   }
 
-  function deleteCurrent(){
+  function dtEnsureSplitDeletePrompt(){
+    let modal=document.getElementById("dtSplitDeletePrompt");
+    if(modal)return modal;
+    modal=document.createElement("div");
+    modal.id="dtSplitDeletePrompt";
+    modal.className="dt-split-delete-prompt";
+    modal.setAttribute("aria-hidden","true");
+    modal.innerHTML=`
+      <div class="dt-split-delete-backdrop" data-dt-delete-cancel></div>
+      <section class="dt-split-delete-card" role="dialog" aria-modal="true" aria-labelledby="dtSplitDeleteTitle">
+        <div class="dt-split-delete-kicker">REMOVE SPLIT</div>
+        <h3 id="dtSplitDeleteTitle">Remove this split?</h3>
+        <p id="dtSplitDeleteCopy"></p>
+        <div class="dt-split-delete-actions">
+          <button type="button" class="dt-split-delete-cancel" data-dt-delete-cancel>Keep split</button>
+          <button type="button" class="dt-split-delete-confirm">Remove split</button>
+        </div>
+      </section>`;
+    document.body.appendChild(modal);
+    return modal;
+  }
+
+  function dtAskDeleteSplit(item,{isBase=false,lastActive=false}={}){
+    const modal=dtEnsureSplitDeletePrompt();
+    const title=modal.querySelector("#dtSplitDeleteTitle");
+    const copy=modal.querySelector("#dtSplitDeleteCopy");
+    const confirmBtn=modal.querySelector(".dt-split-delete-confirm");
+    const cancelEls=modal.querySelectorAll("[data-dt-delete-cancel]");
+    title.textContent=lastActive?"Keep at least one split":`Remove ${item.name}?`;
+    copy.textContent=lastActive
+      ?"M•ARC needs one active split for workouts. Add another split first, then you can remove this one."
+      :isBase
+        ?"This removes the split from your active workout dashboard. Your logged workout history stays saved."
+        :"This removes the split and its current setup. Your logged workout history stays saved.";
+    confirmBtn.hidden=lastActive;
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+    return new Promise(resolve=>{
+      let done=false;
+      const finish=value=>{
+        if(done)return;done=true;
+        modal.classList.remove("show");modal.setAttribute("aria-hidden","true");
+        confirmBtn.removeEventListener("click",yes);
+        cancelEls.forEach(x=>x.removeEventListener("click",no));
+        resolve(value);
+      };
+      const yes=()=>finish(true),no=()=>finish(false);
+      confirmBtn.addEventListener("click",yes);
+      cancelEls.forEach(x=>x.addEventListener("click",no));
+      setTimeout(()=>{try{(lastActive?modal.querySelector(".dt-split-delete-cancel"):confirmBtn)?.focus()}catch(_){}},0);
+    });
+  }
+
+  async function deleteSplit(key){
     ensureState();
-    const idx=state.workouts.customSplits.findIndex(s=>s.key===wday);
-    if(idx<0)return false;
-    const item=state.workouts.customSplits[idx];
-    if(!confirm(`Delete "${item.name}"? Workout history already logged under this split will be kept.`))return "cancelled";
+    key=String(key||"");
+    const active=allKeys();
+    if(!active.includes(key))return false;
 
-    const key=item.key;
-    state.workouts.customSplits.splice(idx,1);
-    delete state.workouts.custom[key];
-    delete state.workouts.edits[key];
-    delete state.workouts.removed[key];
-    delete state.workouts.dayNames[key];
-    delete plans[key];
+    const customIdx=state.workouts.customSplits.findIndex(s=>String(s.key)===key);
+    const isCustom=customIdx>=0;
+    const isBase=baseKeysRaw().includes(key);
+    if(!isCustom&&!isBase)return false;
 
-    Object.keys(state.workouts.drafts||{}).filter(k=>k.startsWith(key+"_")).forEach(k=>delete state.workouts.drafts[k]);
+    const item=isCustom
+      ?state.workouts.customSplits[customIdx]
+      :{key,name:splitName(key)};
+
+    if(active.length<=1){
+      await dtAskDeleteSplit(item,{isBase,lastActive:true});
+      return "last_active";
+    }
+
+    const approved=await dtAskDeleteSplit(item,{isBase,lastActive:false});
+    if(!approved)return "cancelled";
+
+    const deletingCurrent=(String(wday)===key);
+
+    if(isCustom){
+      state.workouts.customSplits.splice(customIdx,1);
+      delete state.workouts.custom[key];
+      delete state.workouts.edits[key];
+      delete state.workouts.removed[key];
+      delete state.workouts.dayNames[key];
+      delete plans[key];
+      Object.keys(state.workouts.drafts||{}).filter(k=>k.startsWith(key+"_")).forEach(k=>delete state.workouts.drafts[k]);
+    }else{
+      if(!state.workouts.hiddenBaseSplits.includes(key))state.workouts.hiddenBaseSplits.push(key);
+      /* Keep built-in plan/exercise definitions and history intact.
+         Only active dashboard/program membership is removed. */
+      Object.keys(state.workouts.drafts||{}).filter(k=>k.startsWith(key+"_")).forEach(k=>delete state.workouts.drafts[k]);
+    }
+
     if(state.trainingSchedule?.days){
       Object.keys(state.trainingSchedule.days).forEach(d=>{if(state.trainingSchedule.days[d]===key)state.trainingSchedule.days[d]=null});
     }
-    wday=baseKeys()[0]||"push";
+
+    if(deletingCurrent){
+      const remaining=allKeys();
+      wday=remaining[0]||"push";
+    }
+
     try{save()}catch(e){}
     closeSplitModal({restoreScroll:false});
     renderWorkout();
@@ -11571,13 +11793,20 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
     return true;
   }
 
-  /* Keep custom tabs in sync after renders, onboarding, and renaming. */
+  function deleteCurrent(){
+    return deleteSplit(wday);
+  }
+
+/* Keep custom tabs in sync after renders, onboarding, and renaming. */
   const previousRender=window.renderWorkout;
   if(typeof previousRender==="function"){
     window.renderWorkout=function(...args){
       ensureState();
       const r=previousRender.apply(this,args);
-      setTimeout(renderTabs,0);
+      /* Ordinary split selection already updated the active tab in-place.
+         Preserve renderTabs() for create/delete/rename/import/onboarding and
+         all other structural renders. */
+      if(!window.__dtSplitSelectionRender)setTimeout(renderTabs,0);
       return r;
     };
   }
@@ -11611,6 +11840,7 @@ body.dt-split-modal-open{overflow:hidden!important;touch-action:none!important}
   window.dtRenderWorkoutSplits=renderTabs;
   window.dtAddWorkoutSplit=openModal;
   window.dtCloseWorkoutSplit=closeSplitModal;
+  window.dtDeleteWorkoutSplit=deleteSplit;
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("dtSplitModal")?.classList.contains("show")){e.preventDefault();closeSplitModal()}});
   window.DT_CUSTOM_SPLITS_VERSION="20.1-stable-modal";
 })();
@@ -28910,25 +29140,44 @@ function ensureGeneratorUI(){
  wrap.querySelector(".dt-p68-create").onclick=()=>{
    const g=wrap._p68Generation;
    if(!g?.ok)return;
+
    const nameInput=modal.querySelector("#dtSplitName");
-   if(!clean(nameInput?.value)){nameInput?.focus();return}
+
+   /* FIX17_GENERATED_SPLIT_CREATE
+      Preserve an explicit user-entered name. If the generated workout is valid
+      but the split name is blank, derive a deterministic name from the selected
+      focus so "Create suggested split" cannot silently stop before createSplit().
+      Manual split creation keeps its existing name-required behavior. */
+   if(nameInput&&!clean(nameInput.value)){
+     const chosen=(g.intent?.chosen||[]).map(x=>LABEL[x]||x).filter(Boolean);
+     const fallback=chosen.length
+       ?`${chosen.join(" + ")}${chosen.length===1?" Focus":""}`
+       :"Suggested Workout";
+     nameInput.value=clean(fallback).slice(0,28);
+   }
+
    const before=new Set((state.workouts?.customSplits||[]).map(x=>String(x.key)));
    const original=actions.querySelector("#dtCreateSplit");
    if(!original)return;
+
+   /* Keep the existing authoritative split-creation owner. */
    original.click();
-   setTimeout(()=>{
-     const made=(state.workouts?.customSplits||[]).find(x=>!before.has(String(x.key)));
-     if(!made)return;
-     const result=commitGeneratedSplit(made.key,g);
-     if(!result.ok){
-       console.warn("P68 generated split commit did not complete",result);
-       return;
-     }
-     try{wday=made.key}catch(_){}
-     try{window.dtRenderWorkoutSplits?.()}catch(_){}
-     try{renderWorkout?.()}catch(_){}
-     try{window.dtRenderTodaySchedule?.()}catch(_){}
-   },30);
+
+   /* createSplit() mutates/saves customSplits synchronously. Resolve the new
+      identity immediately instead of relying on an arbitrary 30 ms delay. */
+   const made=(state.workouts?.customSplits||[]).find(x=>!before.has(String(x.key)));
+   if(!made)return;
+
+   const result=commitGeneratedSplit(made.key,g);
+   if(!result.ok){
+     console.warn("P68 generated split commit did not complete",result);
+     return;
+   }
+
+   try{wday=made.key}catch(_){}
+   try{window.dtRenderWorkoutSplits?.()}catch(_){}
+   try{renderWorkout?.()}catch(_){}
+   try{window.dtRenderTodaySchedule?.()}catch(_){}
  };
 
  // After P7 toggles a chip, invalidate stale preview and keep keyboard closed.
@@ -29960,5 +30209,127 @@ window.DT_FIX16_CANONICAL_PREVIOUS_SET_OWNERSHIP=Object.freeze({
   changesDrafts:false,
   changesPersistence:false,
   healthDataExcluded:true
+});
+</script>
+
+<script id="dt-fix17-generated-split-create-marker">
+window.DT_FIX17_GENERATED_SPLIT_CREATE=Object.freeze({
+ version:"FIX17_GENERATED_SPLIT_CREATE",
+ base:"FIX16",
+ preservesTypedName:true,
+ fillsBlankGeneratedName:true,
+ manualCreateBehaviorChanged:false,
+ existingCreateOwner:true,
+ existingCommitOwner:true,
+ delayedLookupRemoved:true,
+ persistenceSchemaChanged:false,
+ freezePatchIncluded:false,
+ splitDeletePatchIncluded:false,
+ healthDataExcluded:true
+});
+</script>
+
+<script id="dt-fix18-long-press-delete-marker">
+window.DT_FIX18_LONG_PRESS_DELETE_CUSTOM_SPLIT=Object.freeze({
+ version:"FIX18_LONG_PRESS_DELETE_CUSTOM_SPLIT",
+ base:"FIX17",
+ keyedDeleteOwner:true,
+ customSplitsOnly:true,
+ holdMs:650,
+ moveCancelPx:12,
+ builtInDelete:false,
+ historyPreserved:true,
+ maxSplitIndependent:true,
+ freezePatchIncluded:false,
+ generatedSplitCreatePreserved:true
+});
+</script>
+
+<style id="dt-fix19-split-delete-prompt-css">
+.dt-split-delete-prompt{position:fixed;inset:0;z-index:15020;display:none;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+.dt-split-delete-prompt.show{display:flex}
+.dt-split-delete-backdrop{position:absolute;inset:0;background:rgba(0,8,13,.72);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.dt-split-delete-card{position:relative;width:min(100%,520px);border:1px solid rgba(82,164,210,.24);border-radius:24px;padding:22px 20px 18px;background:linear-gradient(180deg,#0b1d27,#08151d);box-shadow:0 24px 70px rgba(0,0,0,.45);color:#eef7fb}
+.dt-split-delete-kicker{font:800 10px/1.2 system-ui;letter-spacing:.13em;color:#63c6a3;margin-bottom:9px}
+.dt-split-delete-card h3{margin:0 0 9px;font:800 22px/1.2 system-ui;color:#f3f8fb}
+.dt-split-delete-card p{margin:0;color:#9fb1bc;font:500 14px/1.5 system-ui}
+.dt-split-delete-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.dt-split-delete-actions button{min-height:48px;border-radius:14px;font:800 14px system-ui}
+.dt-split-delete-cancel{border:1px solid rgba(126,158,176,.25);background:#10232e;color:#c8d6dd}
+.dt-split-delete-confirm{border:1px solid rgba(226,103,103,.35);background:#3a171b;color:#ffb7b7}
+.dt-split-delete-confirm[hidden]{display:none}
+@media(min-width:700px){.dt-split-delete-prompt{align-items:center}.dt-split-delete-card{padding:24px}}
+</style>
+
+<script id="dt-fix19-all-splits-delete-marker">
+window.DT_FIX19_ALL_SPLITS_DELETE=Object.freeze({
+ version:"FIX19_ALL_SPLITS_DELETE",
+ base:"FIX18",
+ inAppPrompt:true,
+ browserConfirm:false,
+ builtInSplitsRemovable:true,
+ builtInPlansPreserved:true,
+ builtInHistoryPreserved:true,
+ hiddenBaseSplitsPersisted:true,
+ customHistoryPreserved:true,
+ minimumActiveSplits:1,
+ holdTargetsExactKey:true,
+ maxSplitIndependent:true,
+ freezePatchIncluded:false
+});
+</script>
+
+<style id="dt-fix20-duplicate-exercise-css">
+.dt-exercise-duplicate-notice{display:none;margin:10px 0 0;padding:11px 12px;border-radius:12px;
+border:1px solid rgba(99,198,163,.22);background:rgba(15,43,48,.92);color:#bfe8d8;
+font:700 12px/1.4 system-ui;text-align:center}
+.dt-exercise-duplicate-notice.show{display:block}
+</style>
+<script id="dt-fix20-duplicate-exercise-marker">
+window.DT_FIX20_DUPLICATE_EXERCISE_GUARD=Object.freeze({
+ version:"FIX20_DUPLICATE_EXERCISE_GUARD",base:"FIX19",
+ stableIdentityPrecedence:true,canonicalMatcherReuse:true,
+ customFallbackExactNameEquipment:true,autoDedupExistingData:false,
+ historyMutation:false,persistenceSchemaChanged:false,
+ generatedSplitCreatePreserved:true,allSplitDeletePreserved:true,
+ freezePatchIncluded:false
+});
+</script>
+
+<script id="dt-fix21-workout-title-render-owner-marker">
+window.DT_FIX21_WORKOUT_TITLE_RENDER_OWNER=Object.freeze({
+ version:"FIX21_WORKOUT_TITLE_RENDER_OWNER",
+ base:"FIX20",
+ synchronousDisplayName:true,
+ persistedDayNamesFirst:true,
+ planTitleFallback:true,
+ delayedCorrectionStillIdempotent:true,
+ newRenderer:false,
+ newObserver:false,
+ newTimer:false,
+ stateSchemaChanged:false,
+ exerciseDataChanged:false,
+ historyChanged:false,
+ generatedSplitCreatePreserved:true,
+ splitDeletePreserved:true,
+ duplicateExerciseGuardPreserved:true,
+ freezePatchIncluded:false
+});
+</script>
+
+<script id="dt-fix22-split-render-pressure-marker">
+window.DT_FIX22_SPLIT_RENDER_PRESSURE=Object.freeze({
+ version:"FIX22_SPLIT_RENDER_PRESSURE",
+ base:"FIX21",
+ sameKeyIdempotent:true,
+ ordinarySelectionSkipsRedundantTabRebuild:true,
+ structuralRenderTabsPreserved:true,
+ persistenceChanged:false,
+ historyChanged:false,
+ exerciseIdentityChanged:false,
+ newObserver:false,
+ newTimer:false,
+ newRAF:false,
+ freezeScope:"split-switch amplification only"
 });
 </script>
