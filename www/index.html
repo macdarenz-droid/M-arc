@@ -6934,6 +6934,23 @@ renderTrainingGoal();
 .dt-summary-just-today{border:1px solid #35505f!important;background:#0d1b24!important;color:#dce8ee!important}
 .dt-save-confirm{margin-top:8px;padding:9px 10px;border-radius:12px;background:rgba(80,223,160,.08);border:1px solid rgba(80,223,160,.24);color:#66dfa7;font-size:9px;display:none}
 
+/* FIX29_TRAINING_TEMPLATE_COMMIT_OWNERSHIP
+   Confirmation is shown only after the generated program has been committed,
+   persisted and reconciled with the authoritative Workout split membership. */
+#dtProgramSuccessModal{z-index:2000}
+.dt-program-success-sheet{max-width:390px;padding:19px}
+.dt-program-success-mark{
+  width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+  margin-bottom:12px;border:1px solid rgba(86,226,164,.42);
+  background:rgba(86,226,164,.10);color:#68e4aa;font-size:21px;font-weight:950
+}
+.dt-program-success-sheet h3{margin:0 0 6px;font-size:20px;color:#f2f7f9}
+.dt-program-success-sheet p{margin:0;color:#8299a7;font-size:11px;line-height:1.55}
+.dt-program-success-sheet button{
+  width:100%;margin-top:15px;min-height:44px;border-radius:14px;
+  border:1px solid #2d8e68;background:#12392b;color:#68e4aa;font-weight:900
+}
+
 @media(max-width:430px){.dt-summary-actions.three{grid-template-columns:1fr}.dt-routine-card{min-width:190px}}
 </style>
 <script>
@@ -7041,13 +7058,103 @@ renderTrainingGoal();
     };
   }
 
+  function dtProgramOwnedKeys(program){
+    const sessionKeys=new Set((program?.sessions||[]).map(s=>String(s?.key||'')));
+    const desired=Number(program?.days||3)===2?['push','pull']:['push','pull','legs'];
+    return desired.filter(k=>sessionKeys.has(k));
+  }
+
   function dtApplyGeneratedProgram(program){
     if(!program?.sessions)return;
-    program.sessions.forEach(s=>{plans[s.key].title=s.title;plans[s.key].ex=JSON.parse(JSON.stringify(s.ex))});
-    const tabs=[...document.querySelectorAll('.workout-tab')];
-    const labels=['🔵 Full Body A','🟢 Full Body B','🟡 Full Body C'];
-    tabs.forEach((tab,i)=>{tab.textContent=labels[i];tab.style.display=(i<program.days?'':'none')});
-    if(program.days===2 && wday==='legs')wday='push';
+    program.sessions.forEach(s=>{
+      if(!s?.key||!plans[s.key])return;
+      plans[s.key].title=s.title;
+      plans[s.key].ex=JSON.parse(JSON.stringify(s.ex));
+    });
+
+    /* Legacy DOM compatibility only. The newer split renderer owns membership.
+       Never hide/rename custom tabs by positional index. */
+    const labels={push:'🔵 Full Body A',pull:'🟢 Full Body B',legs:'🟡 Full Body C'};
+    const owned=new Set(dtProgramOwnedKeys(program));
+    document.querySelectorAll('.workout-tab[data-wday]').forEach(tab=>{
+      const key=String(tab.dataset.wday||'');
+      if(!Object.prototype.hasOwnProperty.call(labels,key))return;
+      tab.textContent=labels[key];
+      tab.style.display=owned.has(key)?'':'none';
+    });
+    if(Number(program.days)===2 && wday==='legs')wday='push';
+  }
+
+  function dtShowProgramInstalled(program){
+    let modal=document.getElementById('dtProgramSuccessModal');
+    if(!modal){
+      modal=document.createElement('div');
+      modal.className='modal';
+      modal.id='dtProgramSuccessModal';
+      modal.innerHTML=`<div class="sheet dt-program-success-sheet"><div class="dt-program-success-mark">✓</div><h3>Program added</h3><p id="dtProgramSuccessCopy"></p><button type="button">Done</button></div>`;
+      document.body.appendChild(modal);
+      modal.querySelector('button').onclick=()=>modal.classList.remove('show');
+    }
+    const owned=dtProgramOwnedKeys(program);
+    const names=owned.map(k=>String(plans?.[k]?.title||k));
+    const copy=modal.querySelector('#dtProgramSuccessCopy');
+    if(copy)copy.textContent=`${names.join(', ')} ${names.length===1?'is':'are'} now available in Workouts.`;
+    modal.classList.add('show');
+  }
+
+  function dtCommitGeneratedProgram(program,st,onboardModal){
+    if(!program?.sessions?.length)return false;
+    if(!state.workouts)state.workouts={};
+
+    const owned=dtProgramOwnedKeys(program);
+    if(!owned.length)return false;
+
+    const demoWasActive=!!state.workouts.demoDataLoaded;
+    window.dtResetProgramCustomState?.(program);
+
+    /* A template install is an explicit user request to make these generated
+       built-in slots active again. Reconcile only the slots owned by this
+       template; unrelated hidden state remains untouched. */
+    if(!Array.isArray(state.workouts.hiddenBaseSplits))state.workouts.hiddenBaseSplits=[];
+    const ownedSet=new Set(owned);
+    state.workouts.hiddenBaseSplits=state.workouts.hiddenBaseSplits
+      .map(String)
+      .filter(k=>!ownedSet.has(k));
+
+    state.workouts.generatedProgram=program;
+    state.workouts.startMode='template';
+    state.workouts.startModeVersion=8;
+    st.completed=true;
+    st.completedAt=new Date().toISOString();
+
+    dtApplyGeneratedProgram(program);
+    state.workouts.drafts={};
+
+    /* Select a generated day before the authoritative Workout render. */
+    if(!ownedSet.has(String(wday)))wday=owned[0];
+
+    try{save()}catch(e){
+      console.warn('Training template save failed',e);
+      return false;
+    }
+
+    /* Fail closed: do not claim success if template-owned slots remain hidden
+       or their generated plan definitions were not applied. */
+    const committed=owned.every(k=>
+      !(state.workouts.hiddenBaseSplits||[]).includes(k) &&
+      !!plans?.[k] &&
+      (program.sessions||[]).some(s=>String(s?.key||'')===k)
+    );
+    if(!committed)return false;
+
+    onboardModal?.classList.remove('show');
+    try{switchView('workout')}catch(_){}
+    try{renderWorkout()}catch(_){}
+    try{dtRenderSavedRoutines()}catch(_){}
+    dtShowProgramInstalled(program);
+
+    if(demoWasActive)setTimeout(()=>window.dtLoadDemoWorkoutData?.(),80);
+    return true;
   }
 
   function dtOnboardModal(){
@@ -7082,7 +7189,7 @@ renderTrainingGoal();
       const answers=st.answers,program=dtBuildBeginnerProgram(answers);st.preview=program;
       body.innerHTML=`<div class="dt-program-preview"><h4>Your starting program</h4>${program.sessions.slice(0,Math.min(3,program.days)).map(s=>`<div class="dt-program-session"><b>${s.title}</b><span>${s.ex.map(e=>e[0]).join(' · ')}</span></div>`).join('')}${program.days>3?`<div class="dt-program-frequency-note">${program.days} training days selected. These starter sessions can repeat through the week, or you can add your own split from the Workout screen.</div>`:''}<div style="font-size:9px;color:#73909f;margin-top:7px;line-height:1.5">${program.note}</div></div>`;
       next.textContent='Use This Program';back.style.visibility='visible';
-      next.onclick=()=>{const demoWasActive=!!state.workouts?.demoDataLoaded;window.dtResetProgramCustomState?.(program);state.workouts.generatedProgram=program;state.workouts.startMode='template';state.workouts.startModeVersion=8;st.completed=true;st.completedAt=new Date().toISOString();dtApplyGeneratedProgram(program);delete state.workouts.drafts;state.workouts.drafts={};save();m.classList.remove('show');renderWorkout();dtRenderSavedRoutines();if(demoWasActive)setTimeout(()=>window.dtLoadDemoWorkoutData?.(),80);};
+      next.onclick=()=>{dtCommitGeneratedProgram(program,st,m)};
       back.onclick=()=>dtShowOnboard(DT_ONBOARD_STEPS.length-1);return;
     }
     const key=DT_ONBOARD_STEPS[st.step],q=QUESTIONS[key],chosen=st.answers[key];
@@ -7246,7 +7353,8 @@ renderTrainingGoal();
     const removed=JSON.parse(JSON.stringify(state.workouts.removed||{push:[],pull:[],legs:[]}));
     const hasOld=Object.values(custom).some(x=>x?.length)||Object.values(edits).some(x=>Object.keys(x||{}).length)||Object.values(removed).some(x=>x?.length);
     if(hasOld){state.workouts.archivedProgramExtras.push({archivedAt:new Date().toISOString(),custom,edits,removed,previousProgram:state.workouts.generatedProgram||null})}
-    const keptSplits=Array.isArray(state.workouts.customSplits)?state.workouts.customSplits.slice(0,4):[];
+    const generatedBaseCount=Number(program?.days||3)===2?2:3;
+    const keptSplits=Array.isArray(state.workouts.customSplits)?state.workouts.customSplits.slice(0,Math.max(0,7-generatedBaseCount)):[];
     const keptCustom={},keptEdits={},keptRemoved={};
     keptSplits.forEach(s=>{
       keptCustom[s.key]=JSON.parse(JSON.stringify(state.workouts.custom?.[s.key]||[]));
