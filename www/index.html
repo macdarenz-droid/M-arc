@@ -25893,8 +25893,11 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
         for(const x of (r?.sets||[])){if(Number(x?.reps)>0){sets++;reps+=Number(x.reps)||0;kg+=Number(x.kg)||0;if(clean(x.effort))effort++}}
       }
       const sessions=state?.workouts?.sessions||[];
-      const summaries=state?.workouts?.dailySummaries||{};
-      return [rows.length,sets,Math.round(kg*100)/100,reps,effort,sessions.length,Object.keys(summaries).length,last].join("|");
+      /* dailySummaries is derived/current-build UI state and can be rebuilt without
+         committed history changing. Keep the foreground fingerprint anchored only
+         to committed exercise/session authority so resume does not trigger a full
+         derived-state rebuild for summary churn alone. */
+      return [rows.length,sets,Math.round(kg*100)/100,reps,effort,sessions.length,last].join("|");
     }catch(_){return ""}
   }
   function renderAuthoritative(){
@@ -25989,7 +25992,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   window.dtP27BackendIntegrity=integrity;
   for(const k of ["dtP26BackendIntegrity","dtP25BackendIntegrity","dtP24BackendIntegrity","dtP23BackendIntegrity","dtP22BackendIntegrity","dtP21BackendIntegrity","dtP20BackendIntegrity","dtP19BackendIntegrity","dtP18BackendIntegrity","dtP17BackendIntegrity","dtP16BackendIntegrity","dtP15BackendIntegrity","dtP14BackendIntegrity","dtP13BackendIntegrity","dtP12BackendIntegrity","dtP11BackendIntegrity","dtP10BackendIntegrity","dtP9BackendIntegrity"])window[k]=integrity;
   for(const k of ["dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
-  window.DT_P27_DERIVED_STATE_INVALIDATION={version:VERSION,authority:"completedExercises + sessions + dailySummaries",resetTargets:["Muscle Map cache","Training Body","Weekly Performance","Recovery","Coach","Stats"],healthDataExcluded:true};
+  window.DT_P27_DERIVED_STATE_INVALIDATION={version:VERSION,authority:"completedExercises + sessions",resetTargets:["Muscle Map cache","Training Body","Weekly Performance","Recovery","Coach","Stats"],healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,derivedStateInvalidation:"P27",healthDataExcludedFromCoach:true};
   // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
