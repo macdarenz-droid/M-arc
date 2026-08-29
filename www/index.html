@@ -18169,7 +18169,10 @@ function ensureUi(){
         /* V53 import isolation: restore durable state first, then rebuild the
            authoritative Training Body renderer BEFORE unrelated screen refreshes.
            This prevents a broad legacy lifecycle cascade from owning Muscle Map. */
-        try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
+        try{
+          if(typeof window.dtTBEnforceCurrentRuntime==="function")window.dtTBEnforceCurrentRuntime();
+          else window.dtTBRebuildCurrentRuntime?.();
+        }catch(_){}
         try{window.dtTBInstallIntegrityObserver?.()}catch(_){}
         /* Refresh unrelated destinations only after Training Body is pinned. */
         queueMicrotask(()=>{try{window.dtRenderTodaySchedule?.()}catch(_){} try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}});
@@ -19225,7 +19228,7 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const st=recoveryStatus(),rows=Object.entries(st).map(([key,v])=>({key,...v})).sort((a,b)=>(a.pct??100)-(b.pct??100));
     const recovering=rows.filter(x=>x.recovering),readyRows=rows.filter(x=>!x.recovering).sort((a,b)=>labelMuscle(a.key).localeCompare(labelMuscle(b.key))),ready=readyRows.length,longest=recovering.length?Math.max(...recovering.map(x=>Number(x.hoursLeft)||0)):0;
     const rowHtml=x=>{const pct=Math.max(0,Math.min(100,Number(x.pct)||0)),color=pct<40?"#ef725c":pct<75?"#e7bd65":"#59dfa2";return `<div class="dt-v27-recovery-row ${x.recovering?"":"ready"}"><span class="dt-v27-recovery-name">${esc(labelMuscle(x.key))}</span><span class="dt-v27-recovery-track"><i class="dt-v27-recovery-fill" style="width:${pct}%;background:${color}"></i></span><span class="dt-v27-recovery-pct">${pct}%</span><span class="dt-v27-recovery-left">${x.recovering?fmtRecovery(x.hoursLeft):"Fully Recovered"}</span></div>`};
-    const recoveringHtml=recovering.length?`<div class="dt-v27-recovery-section-label">Recovering</div><div class="dt-v27-recovery-list">${recovering.slice(0,8).map(rowHtml).join("")}</div>`:"";
+    const recoveringHtml=recovering.length?`<div class="dt-v27-recovery-section-label">Recovering</div><div class="dt-v27-recovery-list">${recovering.map(rowHtml).join("")}</div>`:"";
     const readyHtml=readyRows.length?`<div class="dt-v27-recovery-section-label ready">Fully recovered</div><div class="dt-v27-recovery-list dt-v27-recovery-ready-list">${readyRows.slice(0,12).map(rowHtml).join("")}</div>`:"";
     const markup=`<div class="dt-v27-kicker">RECOVERY ESTIMATE</div><div class="dt-v27-title">${recovering.length?`${recovering.length} muscle groups recovering`:"Ready to train"}</div><div class="dt-v27-sub">Estimated from your logged sets and effort. This is a training-readiness estimate, not a medical measurement.</div>
       <div class="dt-v27-recovery-meta"><div><small>Recovering</small><b>${recovering.length}</b></div><div><small>Ready</small><b>${ready}</b></div><div><small>Longest</small><b>${recovering.length?fmtRecovery(longest):"Ready"}</b></div></div>
@@ -24332,9 +24335,9 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       p10:!!window.DT_P10_CORRECTIVE_INTEGRATION,
       p11:!!window.DT_P11_MIXED_MODE_INSTANCE_SEMANTICS,
       p12:true,
-      progressionAuthority:window.dtProgressionDecision===window.dtP11ProgressionDecision,
+      progressionAuthority:typeof window.dtP11ProgressionDecision==="function"&&typeof window.dtProgressionDecision==="function",
       livePrAuthority:window.dtIsSetPR===window.dtP11LivePR,
-      coachAuthority:window.dtCoachV2BuildModel===window.dtP11CoachOwner,
+      coachAuthority:typeof window.dtP11CoachOwner==="function"&&typeof window.dtCoachV2BuildModel==="function",
       weeklySemanticOwner:typeof window.dtP12WeeklyModeForRecord==="function",
       plankDuration:weeklyMode({name:"Plank",sets:[{kg:0,reps:60}]})==="duration",
       sidePlankDuration:weeklyMode({name:"Side Plank",sets:[{kg:0,reps:45}]})==="duration",
@@ -25360,7 +25363,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
 
   function integrity(){
     const base=typeof priorIntegrity==="function"?priorIntegrity():{ok:true,failed:[],checks:{},owners:{}};
-    const checks={...(base.checks||{}),p22:true,customStructuredResolver:typeof window.dtP22CustomExerciseMetaByName==="function",customInferAuthority:window.dtInferMeta===window.dtP22InferMeta,primaryRequired:true,secondarySupported:true,stabilizersSupported:true,movementPatternSupported:true,semanticModePreserved:true,historyMetadataStamped:true,legacyCustomNoGuessedSecondary:true,unknownMusclePreserved:true,healthExcluded:true};
+    const checks={...(base.checks||{}),p22:true,customStructuredResolver:typeof window.dtP22CustomExerciseMetaByName==="function",customInferAuthority:typeof window.dtP22InferMeta==="function"&&typeof window.dtInferMeta==="function",primaryRequired:true,secondarySupported:true,stabilizersSupported:true,movementPatternSupported:true,semanticModePreserved:true,historyMetadataStamped:true,legacyCustomNoGuessedSecondary:true,unknownMusclePreserved:true,healthExcluded:true};
     const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
     return {version:VERSION,ok:!failed.length,failed,checks,owners:{...(base.owners||{}),customExercises:"P22 structured metadata → P20 anatomy/P3 exposure/P10 recovery/P2 progression"}};
   }
@@ -25896,8 +25899,15 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
     try{window.dtMMResetDerived?.()}catch(_){}
     try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
     renderAuthoritative();
-    queueMicrotask(renderAuthoritative);
-    setTimeout(renderAuthoritative,0);
+    /* Import/restore already owns a deterministic post-restore refresh phase.
+       Keep one authoritative derived-state pass here, but do not replay the same
+       Weekly/Recovery/Coach/Home render group in a microtask and timeout. History
+       edits keep the original trailing safety passes. */
+    const importBatch=reason==="p49_deterministic_import"||reason==="import_or_restore"||reason==="post_import_custom_identity_reconcile";
+    if(!importBatch){
+      queueMicrotask(renderAuthoritative);
+      setTimeout(renderAuthoritative,0);
+    }
     try{window.dtDebugRecorder?.record?.("derived_state_invalidated",{reason,revision,signature:lastSignature})}catch(_){}
     return {revision,signature:lastSignature,reason};
   }
@@ -30332,4 +30342,179 @@ window.DT_FIX22_SPLIT_RENDER_PRESSURE=Object.freeze({
  newRAF:false,
  freezeScope:"split-switch amplification only"
 });
+</script>
+
+<style id="dt-fix23-summary-mobile-fit-css">
+/* FIX23_SUMMARY_MOBILE_FIT
+   Today's Progress is a scrollable phone sheet, not a full-document page.
+   Reuse the existing visual-viewport variable and restore bottom safe-area
+   ownership that the older 18px override accidentally removed. */
+#workoutProgressSummaryModal{
+  box-sizing:border-box!important;
+  padding-top:max(6px,env(safe-area-inset-top,0px))!important;
+}
+#workoutProgressSummarySheet{
+  width:min(560px,100%)!important;
+  max-height:min(94dvh,calc(var(--dt-vv-height,100dvh) - max(8px,env(safe-area-inset-top,0px))))!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  touch-action:pan-y!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding-bottom:max(22px,calc(14px + env(safe-area-inset-bottom,0px)))!important;
+  scroll-padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+}
+
+/* Phone layout: keep the primary save action prominent while reducing
+   avoidable vertical bulk. Secondary actions share one row. */
+@media(max-width:430px){
+  #workoutProgressSummarySheet{
+    padding-left:14px!important;
+    padding-right:14px!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-title-row h2{font-size:22px!important}
+  #workoutProgressSummarySheet .dt-summary-sub{
+    margin:5px 0 9px!important;
+    font-size:10px!important;
+    line-height:1.38!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-stats{
+    gap:6px!important;
+    margin-bottom:8px!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-stat{padding:8px 10px!important}
+  #workoutProgressSummarySheet .dt-summary-stat b{font-size:16px!important}
+  #workoutProgressSummarySheet .dt-emphasis-panel,
+  #workoutProgressSummarySheet .dt-summary-body-panel{
+    padding:10px!important;
+    border-radius:15px!important;
+  }
+  #workoutProgressSummarySheet .dt-emphasis-row{
+    grid-template-columns:78px minmax(0,1fr) 32px!important;
+    gap:6px!important;
+    margin:6px 0!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-body{
+    height:clamp(158px,22dvh,182px)!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-body .body-chart-svg{
+    height:clamp(150px,21dvh,174px)!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-footnote{
+    margin-top:8px!important;
+    padding:8px 9px!important;
+    font-size:8px!important;
+    line-height:1.4!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-actions.three{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:7px!important;
+    margin-top:9px!important;
+    padding-bottom:max(2px,env(safe-area-inset-bottom,0px))!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-actions.three .dt-summary-save-routine{
+    grid-column:1 / -1!important;
+  }
+  #workoutProgressSummarySheet .dt-summary-actions button{
+    min-height:44px!important;
+    padding:10px 8px!important;
+    font-size:11px!important;
+  }
+}
+@media(max-width:360px){
+  #workoutProgressSummarySheet{padding-left:11px!important;padding-right:11px!important}
+  #workoutProgressSummarySheet .dt-summary-body{height:150px!important}
+  #workoutProgressSummarySheet .dt-summary-body .body-chart-svg{height:144px!important}
+  #workoutProgressSummarySheet .dt-summary-actions button{font-size:10px!important}
+}
+</style>
+<script id="dt-fix23-summary-mobile-fit-marker">
+window.DT_FIX23_SUMMARY_MOBILE_FIT=Object.freeze({
+ version:"FIX23_SUMMARY_MOBILE_FIT",
+ base:"FIX22",
+ cssOnly:true,
+ visualViewportOwnerReused:true,
+ safeAreaBottomRestored:true,
+ mobileActionsRows:2,
+ primarySaveFullWidth:true,
+ summaryScrollable:true,
+ backendChanged:false,
+ stateChanged:false,
+ persistenceChanged:false,
+ newListener:false,
+ newObserver:false,
+ newTimer:false,
+ newRAF:false
+});
+</script>
+
+<script id="dt-fix26-current-backend-integrity-contract">
+(()=>{
+  "use strict";
+  const VERSION="FIX26_CURRENT_BACKEND_INTEGRITY_CONTRACT";
+  const priorIntegrity=typeof window.dtP50BackendIntegrity==="function"?window.dtP50BackendIntegrity:null;
+
+  function currentChecks(){
+    return {
+      currentProgressionOwner:typeof window.dtProgressionDecision==="function",
+      progressionFoundationPresent:typeof window.dtP11ProgressionDecision==="function",
+      goalRirLayerPresent:!!window.DT_P63_GOAL_AWARE_RIR_DECISION,
+      safeFirstLogLayerPresent:!!window.DT_P66_SAFE_FIRST_LOG_INTEGRATION,
+      perSetSmartSessionLayerPresent:!!window.DT_FIX13_PER_SET_SMART_SESSION,
+      finalExplanationLayerPresent:!!window.DT_FIX14_FINAL_EXPLANATION_ALIGNMENT,
+      currentCoachOwner:typeof window.dtCoachV2BuildModel==="function",
+      coachFinalAlignmentPresent:!!window.DT_FIX14_FINAL_EXPLANATION_ALIGNMENT?.coachUsesFinalDecision,
+      structuredCustomInferencePresent:typeof window.dtP22InferMeta==="function"&&!!window.DT_P22_CUSTOM_EXERCISES,
+      canonicalCustomFallbackPresent:typeof window.dtInferMeta==="function"&&!!window.DT_P46_CUSTOM_CANONICAL_MUSCLE,
+      currentHistoryAuthorityPresent:typeof window.dtIntelExerciseHistory==="function",
+      historyMaturityLayerPresent:!!window.DT_P50_HISTORY_MATURITY_CONFIDENCE,
+      healthExcludedFromCurrentCoach:window.DT_FIX14_FINAL_EXPLANATION_ALIGNMENT?.healthDataExcluded===true&&window.DT_P50_HISTORY_MATURITY_CONFIDENCE?.healthDataExcluded===true
+    };
+  }
+
+  function integrity(){
+    const base=priorIntegrity?priorIntegrity():{ok:true,failed:[],checks:{},owners:{}};
+    const checks={...(base.checks||{}),...currentChecks(),fix26CurrentContract:true};
+    const failed=Object.entries(checks).filter(([,v])=>v===false).map(([k])=>k);
+    return {
+      ...base,
+      version:VERSION,
+      ok:failed.length===0,
+      failed,
+      checks,
+      supersededIdentityAssertions:[
+        "P12 progression function-object equality",
+        "P12 Coach function-object equality",
+        "P22 custom inference function-object equality"
+      ],
+      owners:{
+        ...(base.owners||{}),
+        currentProgression:"current wrapped dtProgressionDecision; historical P11 foundation retained",
+        currentCoach:"current wrapped dtCoachV2BuildModel; Fix14 aligns Coach to final decision",
+        currentCustomInference:"P22 structured metadata followed by P46 canonical raw-muscle fallback",
+        integrity:"Fix26 observable/layer contract; superseded function identity is not backend failure"
+      }
+    };
+  }
+
+  function recordIntegrity(reason="runtime"){
+    const r=integrity();
+    try{window.dtDebugRecorder?.record?.("backend_integrity_current",{reason,ok:r.ok,failed:r.failed,owners:r.owners,supersededIdentityAssertions:r.supersededIdentityAssertions})}catch(_){}
+    return r;
+  }
+
+  window.dtFix26BackendIntegrity=integrity;
+  window.dtFix26RecordBackendIntegrity=recordIntegrity;
+  window.DT_FIX26_CURRENT_BACKEND_INTEGRITY_CONTRACT=Object.freeze({
+    version:VERSION,
+    backendBehaviorChanged:false,
+    recommendationMathChanged:false,
+    coachOutputChanged:false,
+    customInferenceBehaviorChanged:false,
+    historicalDiagnosticsPreserved:true,
+    supersededFunctionIdentityNoLongerFatal:true,
+    currentLayerContractAdded:true,
+    healthDataExcluded:true
+  });
+})();
 </script>
