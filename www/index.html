@@ -19262,7 +19262,10 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
       try{window.dtRenderBodyCard?.()}catch(_){ }
       moveTrainingBody();
     }else{
-      syncViewportHeight();
+      /* FIX28B.1.1 — mount ownership is independent of recovery value changes.
+         Training Body can be authoritatively rebuilt while Recovery markup stays
+         identical; always re-home the current dtTBCard into Body & Recovery. */
+      moveTrainingBody();
     }
   }
   function moveTrainingBody(){const card=document.getElementById("dtTBCard"),mount=document.getElementById("dtHomeRecoveryMount");if(card&&mount&&card.parentElement!==mount){mount.appendChild(card);try{window.dtRenderBodyCard?.()}catch(_){}}syncViewportHeight()}
