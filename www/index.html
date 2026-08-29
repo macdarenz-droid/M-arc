@@ -3761,6 +3761,12 @@ function switchView(viewName){
   const target=document.querySelector("section#"+CSS.escape(viewName)+".view");
   if(!target || target.classList.contains("active")) return;
 
+  /* FIX28B.1 — visual playback lifecycle ownership.
+     Muscle Map animation belongs to the visible Today surface only.
+     Leaving Today freezes the current map state instead of letting its
+     morph loop continue against hidden DOM. No training data is changed. */
+  if(viewName!=="today")try{window.dtTBStopPlay?.()}catch(_){}
+
   const token=++viewTransitionToken;
   const current=document.querySelector(".view.active");
 
@@ -12578,6 +12584,10 @@ function daySessions(key){
     dtMMNodes.forEach(n=>{try{dtMMFreezeNode(n)}catch(_){}});
     const btn=document.getElementById("dtMMPlay");if(btn){btn.textContent="▶";btn.setAttribute("aria-label","Play weekly Muscle Map");btn.setAttribute("aria-pressed","false");}
   }
+  /* FIX28B.1: expose the existing authoritative visual stop owner so
+     navigation/visibility lifecycle can stop playback without duplicating
+     animation state logic. */
+  window.dtTBStopPlay=dtTBStopPlay;
   async function dtMMStartPlayback(){
     if(dtMMPlaying){dtTBStopPlay();return}
     if(dtTBWeeks.length<2)return;
@@ -14550,8 +14560,12 @@ body.dt-session-focus-open{overflow:hidden!important}
     ensureUI();document.getElementById("dtSessionFocus").classList.add("show");document.body.classList.add("dt-session-focus-open");requestWake();renderAll();
   }
   function closeFocusToWorkout(){
+    /* FIX28A.2: leaving Session Focus returns to the Today dashboard.
+       Keep the legacy function/export name for compatibility, but do not
+       force the Workout destination as a side effect of simply closing
+       the timer interface. The active session continues unchanged. */
     document.getElementById("dtSessionFocus")?.classList.remove("show");document.body.classList.remove("dt-session-focus-open");releaseWake();
-    const s=session();try{switchView("workout");setTimeout(()=>selectSessionDay(s?.day),80)}catch(_){}
+    try{switchView("today");renderToday?.();window.dtRenderTodayWorkoutResult?.()}catch(_){}
   }
 
   function stopSessionTimer(){
@@ -14574,7 +14588,9 @@ body.dt-session-focus-open{overflow:hidden!important}
     releaseWake();
     renderAll();
     try{window.dtRenderSessionEnhancements?.();renderWorkout?.();renderToday?.();window.dtRenderTodayWorkoutResult?.()}catch(_){ }
-    try{switchView("workout");setTimeout(()=>selectSessionDay(s.day),60)}catch(_){ }
+    /* FIX28A.2: timer-only stop belongs to the Today clock lifecycle.
+       Do not redirect to Workout after cancelling only the timer. */
+    try{switchView("today");renderToday?.();window.dtRenderTodayWorkoutResult?.()}catch(_){ }
     return true;
   }
 
@@ -14682,6 +14698,9 @@ body.dt-session-focus-open{overflow:hidden!important}
   const nav=document.querySelector("nav.dt-v10-nav")||document.querySelector("body>nav");if(nav)navObserver.observe(nav,{childList:true,subtree:true});
 
   document.addEventListener("visibilitychange",()=>{
+    /* FIX28B.1: backgrounding ends visual Muscle Map playback. Reuse the
+       established stop owner; do not reset mode/week/history or auto-resume. */
+    if(document.visibilityState==="hidden")try{window.dtTBStopPlay?.()}catch(_){}
     renderAll();
     if(document.visibilityState==="visible"&&document.getElementById("dtSessionFocus")?.classList.contains("show"))requestWake();
   });
@@ -15760,8 +15779,9 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
     if(back){back.click();return}
     document.getElementById("dtSessionFocus")?.classList.remove("show");
     document.body.classList.remove("dt-session-focus-open");
-    const s=session();
-    try{switchView("workout");setTimeout(()=>{if(s?.day){const tab=document.querySelector(`.workout-tab[data-wday="${CSS.escape(s.day)}"]`);tab?.click()}},80)}catch(_){}
+    /* FIX28A.2 compatibility fallback: preserve the historical export name,
+       but align its destination with the authoritative Session Focus back owner. */
+    try{switchView("today");renderToday?.();window.dtRenderTodayWorkoutResult?.()}catch(_){}
   };
   window.dtRenderSessionEnhancements=renderV26;
   window.DT_SESSION_CONTROL_VERSION=VERSION;
@@ -30535,6 +30555,87 @@ window.DT_FIX23_SUMMARY_MOBILE_FIT=Object.freeze({
     stateChanged:false,
     persistenceChanged:false,
     rendererChanged:false,
+    healthDataExcluded:true
+  });
+})();
+</script>
+
+<script id="dt-fix28a1-coach-specialization-contract">
+(()=>{
+  "use strict";
+  const VERSION="FIX28A1_COACH_SPECIALIZATION_CONTRACT";
+  const priorCoach=typeof window.dtCoachV2BuildModel==="function"?window.dtCoachV2BuildModel:null;
+  if(!priorCoach)return;
+
+  const clean=v=>String(v??"").replace(/\s+/g," ").trim();
+  const specializationFact="Recent dose-response research supports weekly set volume as an important hypertrophy variable, but gains show diminishing returns and trained lifters do not reliably benefit from simply making large abrupt increases in volume. Training frequency is mainly useful for distributing weekly work when total volume is similar.";
+  const specializationSource="Pelland et al. · Sports Med · 2025 · PMID 41343037; Scarpelli et al. · Med Sci Sports Exerc · 2023 · PMID 37796222; Schoenfeld et al. · J Sports Sci · 2019 · PMID 30558493";
+  const specializationWhy="Specialization is treated as a controlled change from your own recent training dose, not a universal bodybuilding set target. M/ARC first uses your existing weekly exposure, then applies only a modest increase when history and mapping quality are sufficient.";
+
+  function models(){
+    try{return Array.isArray(window.dtP7AllSpecializationModels?.())?window.dtP7AllSpecializationModels():[]}catch(_){return []}
+  }
+  function matchingModel(row,all){
+    const id=clean(row?.id);
+    if(id.startsWith("specialization:")){
+      const key=id.slice("specialization:".length);
+      const exact=all.find(x=>clean(x?.muscle)===key);
+      if(exact)return exact;
+    }
+    return all[0]||null;
+  }
+  function restoreCard(card,row,model){
+    if(!card||card.category!=="specialization")return card;
+    const body=clean(card.summary||card.body||row?.body);
+    if(!clean(card.summary)&&body)card.summary=body;
+    if(!clean(card.noticed)&&body)card.noticed=body;
+
+    if((!Array.isArray(card.evidence)||!card.evidence.length)&&model){
+      card.evidence=[
+        `${Number(model.currentSets||0)} effective sets this week`,
+        `${Number(model.baselineSets||0)} effective sets/week recent median`,
+        `${Number(model.mappingCoverage||0)}% detailed muscle-mapping coverage`
+      ];
+    }
+    if(!clean(card.action)){
+      const label=clean(model?.label)||"selected muscle";
+      card.action=model?.historyReady
+        ?`Use your saved ${label} focus split to distribute the remaining work across manageable sessions. Do not add volume just to hit a number if performance or recovery is worsening.`
+        :`Keep your current ${label.toLowerCase()} work consistent until M/ARC has at least 3 reliable recent weeks to establish your personal baseline.`;
+    }
+    if(!clean(card.why))card.why=specializationWhy;
+    if(!clean(card.fact))card.fact=specializationFact;
+    if(!clean(card.source))card.source=specializationSource;
+    return card;
+  }
+
+  window.dtCoachV2BuildModel=function(rows){
+    const safeRows=Array.isArray(rows)?rows:[];
+    const out=priorCoach(safeRows)||{cards:[],brief:null,learn:null};
+    try{
+      const all=models();
+      const specRows=safeRows.filter(r=>r?.category==="specialization");
+      let specIndex=0;
+      for(const card of (out.cards||[])){
+        if(card?.category!=="specialization")continue;
+        const row=specRows[specIndex++]||specRows[0]||null;
+        restoreCard(card,row,matchingModel(row,all));
+      }
+      out.logicOwners={...(out.logicOwners||{}),coachSpecializationPresentationContract:VERSION};
+    }catch(e){console.warn("M/ARC Fix28A1 Coach specialization contract restore failed",e)}
+    return out;
+  };
+
+  window.DT_FIX28A1_COACH_SPECIALIZATION_CONTRACT=Object.freeze({
+    version:VERSION,
+    scope:"specialization Coach presentation contract only",
+    fillsMissingFieldsOnly:true,
+    specializationDecisionChanged:false,
+    progressionMathChanged:false,
+    recoveryChanged:false,
+    smartSessionChanged:false,
+    persistenceChanged:false,
+    importChanged:false,
     healthDataExcluded:true
   });
 })();
