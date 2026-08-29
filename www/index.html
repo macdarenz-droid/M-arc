@@ -4443,6 +4443,16 @@ document.getElementById("saveEditExercise").onclick=()=>{
   const sets=Math.max(1,Math.min(10,parseInt(document.getElementById("editExSets").value)||3));
 
   const baseKey=e[4] && String(e[4]).startsWith("custom:") ? null : (e[4]||exerciseKey(e));
+  window.dtEditCommitSucceeded=false;
+  /* FIX29R B2 — Edit Activity is one durable transaction. Capture the true
+     pre-mutation owners before changing edit/custom metadata or draft shape. */
+  const dtEditWasBase=!!baseKey;
+  const dtEditBefore=dtEditWasBase
+    ? JSON.parse(JSON.stringify(state.workouts.edits[wday]?.[baseKey]??null))
+    : JSON.parse(JSON.stringify(state.workouts.custom[wday]||[]));
+  const dd=draft();
+  const dtDraftBefore=JSON.parse(JSON.stringify(dd[ei]??null));
+
   if(baseKey){
     state.workouts.edits[wday][baseKey]={name,type,muscle,sets};
   }else{
@@ -4451,10 +4461,18 @@ document.getElementById("saveEditExercise").onclick=()=>{
     if(custom){custom.name=name;custom.type=type;custom.muscle=muscle;custom.sets=sets;}
   }
 
-  const dd=draft();
   const existing=dd[ei]?.sets||[];
   dd[ei].sets=Array.from({length:sets},(_,i)=>existing[i]||{kg:"",reps:"",effort:""});
-  save();
+  try{save()}catch(_){
+    if(dtEditWasBase){
+      if(dtEditBefore===null) delete state.workouts.edits[wday][baseKey];
+      else state.workouts.edits[wday][baseKey]=dtEditBefore;
+    }else state.workouts.custom[wday]=dtEditBefore;
+    if(dtDraftBefore===null) delete dd[ei]; else dd[ei]=dtDraftBefore;
+    try{renderWorkout()}catch(__){}
+    return false;
+  }
+  window.dtEditCommitSucceeded=true;
   modal.classList.remove("show");
   renderWorkout();
   return true;
@@ -4809,6 +4827,14 @@ document.getElementById("saveExercise").onclick=()=>{
     return;
   }
 
+  /* FIX29R B2 — Add Activity is a single persistence transaction. Keep exact
+     pre-mutation owners so a failed durable save cannot leave a ghost activity. */
+  const dtAddCustomBefore=JSON.parse(JSON.stringify(state.workouts.custom[targetDay]));
+  const dtAddCoreBefore=state.core?.exercises?.items ? JSON.parse(JSON.stringify(state.core.exercises.items)) : null;
+  const dtAddDraftKey=`${targetDay}_${todayKey()}`;
+  const dtAddDraftHad=Object.prototype.hasOwnProperty.call(state.workouts.drafts,dtAddDraftKey);
+  const dtAddDraftBefore=dtAddDraftHad ? JSON.parse(JSON.stringify(state.workouts.drafts[dtAddDraftKey])) : null;
+
   state.workouts.custom[targetDay].push(newExercise);
 
   // Register custom exercises in the normalized Phase 1.2 foundation so they can
@@ -4831,8 +4857,15 @@ document.getElementById("saveExercise").onclick=()=>{
   }
 
   /* Invalidate only the destination split's current-day draft. */
-  delete state.workouts.drafts[`${targetDay}_${todayKey()}`];
-  save();
+  delete state.workouts.drafts[dtAddDraftKey];
+  try{save()}catch(_){
+    state.workouts.custom[targetDay]=dtAddCustomBefore;
+    if(dtAddCoreBefore!==null) state.core.exercises.items=dtAddCoreBefore;
+    if(dtAddDraftHad) state.workouts.drafts[dtAddDraftKey]=dtAddDraftBefore;
+    else delete state.workouts.drafts[dtAddDraftKey];
+    try{renderWorkout?.()}catch(__){}
+    return;
+  }
   exerciseModal.classList.remove("show");
   dtResetExercisePicker();
   dtClearExerciseModalTarget();
@@ -5335,12 +5368,15 @@ renderTrainingGoal();
   function pendingId(day, key){ return `${day}|${dayKey()}|${key}`; }
 
   function ensureWorkoutPatchState(){
+    /* Structural normalization only. Read helpers such as completedToday() call
+       this frequently; persistence belongs to the mutation transaction owner,
+       not to an ensure/read path. */
     if(!state.workouts) state.workouts = {sessions:[], drafts:{}};
     if(!state.workouts.drafts) state.workouts.drafts = {};
     if(!state.workouts.pendingExercises) state.workouts.pendingExercises = {};
     if(!state.workouts.completedExercises) state.workouts.completedExercises = [];
     if(!state.workouts.collapsedByDay) state.workouts.collapsedByDay = {push:true,pull:true,legs:true};
-    save();
+    return true;
   }
 
   function exerciseStableKey(e, index){
@@ -5365,7 +5401,7 @@ renderTrainingGoal();
   function hasSetDataForExercise(entry,e){return validSetsForExercise(entry,e).length>0}
 
   function persistNow(){
-    try { save(); } catch(err){ console.warn("Workout autosave failed", err); }
+    try { save(); return true; } catch(err){ console.warn("Workout autosave failed", err); return false; }
   }
 
   function pendingFor(day, key){
@@ -5391,7 +5427,10 @@ renderTrainingGoal();
   function finalizePending(id){
     ensureWorkoutPatchState();
     const rec = state.workouts.pendingExercises[id];
-    if(!rec) return;
+    if(!rec) return false;
+    const completedSnapshot=deepClone(state.workouts.completedExercises||[]);
+    const pendingSnapshot=deepClone(state.workouts.pendingExercises||{});
+    const draftSnapshot=deepClone(state.workouts.drafts||{});
 
     const cleanSets=validSetsForExercise(rec,rec);
     const already = state.workouts.completedExercises.some(x => x.id === rec.id);
@@ -5415,7 +5454,12 @@ renderTrainingGoal();
       }
     }catch(e){ console.warn("Could not clear finalized draft", e); }
 
-    persistNow();
+    if(!persistNow()){
+      state.workouts.completedExercises=completedSnapshot;
+      state.workouts.pendingExercises=pendingSnapshot;
+      state.workouts.drafts=draftSnapshot;
+      return false;
+    }
     /* P34: finalization changes authoritative workout history. Reuse the common
        P27 invalidation/rebuild path before destination-specific rendering so
        Coach, Weekly, Recovery, Training Body and Stats cannot remain stale. */
@@ -5432,6 +5476,7 @@ renderTrainingGoal();
     if(active==="stats" && typeof window.dtOpenStatsDestination==="function")window.dtOpenStatsDestination();
     if(active==="coach" && typeof window.dtRenderCoachDestination==="function")window.dtRenderCoachDestination();
     if(typeof renderWorkout === "function") renderWorkout();
+    return true;
   }
 
   window.dtFinalizePending = finalizePending;
@@ -5451,9 +5496,16 @@ renderTrainingGoal();
       const el = document.querySelector(`[data-pending-id="${CSS.escape(id)}"] .pending-time`);
       if(el) el.textContent = formatLeft(left);
       if(left <= 0){
-        clearInterval(tickers.get(id));
-        tickers.delete(id);
-        finalizePending(id);
+        const now=Date.now();
+        if(loop._retryAfter&&now<loop._retryAfter)return;
+        const committed=finalizePending(id);
+        if(committed!==false){
+          clearInterval(tickers.get(id));
+          tickers.delete(id);
+        }else{
+          loop._retryAfter=now+15000;
+          if(el)el.textContent="Save pending";
+        }
       }
     };
     loop();
@@ -5531,17 +5583,22 @@ renderTrainingGoal();
 
   function startCompletion(e, ei){
     ensureWorkoutPatchState();
+    const draftSnapshot=deepClone(state.workouts.drafts||{});
     let entry = syncRenderedExerciseDraft(e,ei);
     entry = captureUnsavedCurrentSet(e,ei,entry);
-    persistNow();
+    if(!persistNow()){
+      state.workouts.drafts=draftSnapshot;
+      return false;
+    }
     if(!hasSetDataForExercise(entry,e)){
       const key=exerciseStableKey(e,ei);
       const box=[...document.querySelectorAll("#wlist .exercise")].find(x=>x.dataset.exerciseKey===key);
       refreshActivityDoneButton(e,ei,box);
-      return;
+      return false;
     }
     const key = exerciseStableKey(e,ei);
     const id = pendingId(wday,key);
+    const pendingSnapshot=deepClone(state.workouts.pendingExercises||{});
     state.workouts.pendingExercises[id] = {
       id,
       day: wday,
@@ -5555,15 +5612,21 @@ renderTrainingGoal();
       startedAt: new Date().toISOString(),
       expiresAt: Date.now() + FINALIZE_MS
     };
-    persistNow();
+    if(!persistNow()){
+      state.workouts.pendingExercises=pendingSnapshot;
+      return false;
+    }
     renderWorkout();
     schedulePending(id);
+    return true;
   }
 
   function undoCompletion(id){
     ensureWorkoutPatchState();
     const rec = state.workouts.pendingExercises[id];
-    if(!rec) return;
+    if(!rec) return false;
+    const pendingSnapshot=deepClone(state.workouts.pendingExercises||{});
+    const draftSnapshot=deepClone(state.workouts.drafts||{});
 
     try{
       const exs = effectiveExercises(rec.day);
@@ -5577,15 +5640,20 @@ renderTrainingGoal();
     }catch(e){ console.warn("Could not restore pending exercise", e); }
 
     delete state.workouts.pendingExercises[id];
+    if(!persistNow()){
+      state.workouts.pendingExercises=pendingSnapshot;
+      state.workouts.drafts=draftSnapshot;
+      return false;
+    }
     const timer = tickers.get(id);
     if(timer) clearInterval(timer);
     tickers.delete(id);
-    persistNow();
     renderWorkout();
+    return true;
   }
 
   function editPending(id){
-    undoCompletion(id);
+    if(!undoCompletion(id))return false;
     requestAnimationFrame(() => {
       const key = id.split("|").slice(2).join("|");
       document.querySelectorAll(".exercise").forEach(box => {
@@ -5595,6 +5663,7 @@ renderTrainingGoal();
         }
       });
     });
+    return true;
   }
 
   function renderPendingBubbles(container, day){
@@ -5789,8 +5858,16 @@ renderTrainingGoal();
       if(!effTarget) return;
       const current = effectiveExercises(wday)[effTarget.ei];
       const stableKey = current ? exerciseStableKey(current,effTarget.ei) : null;
-      draft()[effTarget.ei].sets[effTarget.si].effort = btn.dataset.eff;
-      persistNow();
+      const dtEffortSet=draft()[effTarget.ei].sets[effTarget.si];
+      const dtEffortBefore=dtEffortSet.effort;
+      dtEffortSet.effort = btn.dataset.eff;
+      if(!persistNow()){
+        /* FIX29R B2 — rollback in-memory Effort/RIR when durable autosave fails. */
+        dtEffortSet.effort=dtEffortBefore;
+        try{dtCheckpointActiveWorkout?.()}catch(_){}
+        renderWorkout();
+        return;
+      }
       effortModal.classList.remove("show");
       renderWorkout();
       if(stableKey){
@@ -5864,20 +5941,40 @@ renderTrainingGoal();
   const finishBtn = document.getElementById("saveWorkout");
   function saveRemainingActivities(){
     ensureWorkoutPatchState();
-    const entries=draft(),exs=effectiveExercises(wday),today=dayKey();let saved=0;
+    const entries=draft(),exs=effectiveExercises(wday),today=dayKey();let saved=0,hadValid=false;
+    /* Pending records own their own durable transaction. Finalize those first so
+       a later direct-save rollback cannot undo a completion that already saved. */
     exs.forEach((e,ei)=>{
       const key=exerciseStableKey(e,ei),sets=validSets(entries[ei]);
       if(!sets.length||completedToday(wday,key))return;
+      hadValid=true;
       const id=pendingId(wday,key);
-      if(state.workouts.pendingExercises?.[id]){finalizePending(id);saved++;return}
+      if(state.workouts.pendingExercises?.[id]&&finalizePending(id)!==false)saved++;
+    });
+    const completedSnapshot=deepClone(state.workouts.completedExercises||[]);
+    const draftSnapshot=deepClone(state.workouts.drafts||{});
+    let directSaved=0;
+    exs.forEach((e,ei)=>{
+      const key=exerciseStableKey(e,ei),sets=validSets(entries[ei]);
+      if(!sets.length||completedToday(wday,key)||state.workouts.pendingExercises?.[pendingId(wday,key)])return;
+      hadValid=true;
+      const id=pendingId(wday,key);
       state.workouts.completedExercises.push({
     splitName:snapshotWorkoutLabel(wday),
     workoutName:snapshotWorkoutLabel(wday),id,day:wday,dayKey:today,exerciseKey:key,name:e[0],type:e[1]||"",muscle:e[2]||"",measurementMode:entries[ei]?.measurementMode||window.dtP13DefaultMeasurementMode?.(e)||'',sets:deepClone(sets),startedAt:new Date().toISOString(),finalizedAt:new Date().toISOString()});
       if(entries[ei])entries[ei].sets=(entries[ei].sets||[]).map(()=>({kg:"",reps:"",effort:""}));
-      saved++;
+      directSaved++;
     });
-    if(!saved){alert("Enter at least one valid set first (reps must be above 0; weight cannot be negative).");return false}
-    persistNow();
+    if(directSaved&&!persistNow()){
+      state.workouts.completedExercises=completedSnapshot;
+      state.workouts.drafts=draftSnapshot;
+      return false;
+    }
+    saved+=directSaved;
+    if(!saved){
+      if(!hadValid)alert("Enter at least one valid set first (reps must be above 0; weight cannot be negative).");
+      return false;
+    }
     try{window.dtCheckWorkoutCompletion?.(wday,true)}catch(_){}
     try{renderWorkout();renderWorkoutHistory?.();renderHistory?.();renderToday?.();renderTodayDashboardExtras?.()}catch(_){}
     return true;
@@ -9502,11 +9599,15 @@ function ensureReminderModals(){
     m.onclick=e=>{if(e.target===m)m.classList.remove("show")};
     m.querySelector(".dt-rem-notnow").onclick=()=>{
       /* Dismissing onboarding is not the same thing as disabling reminders.
-         Preserve the user's saved ON/OFF preference. */
-      const n=reminderState();n.promptSeen=true;save();m.classList.remove("show");
+         Preserve the user's saved ON/OFF preference. Modal dismissal must not
+         be trapped behind a storage failure. */
+      const n=reminderState();n.promptSeen=true;
+      try{save()}catch(_){}
+      m.classList.remove("show");
     };
     m.querySelector(".dt-rem-enable").onclick=async()=>{
-      const n=reminderState();n.promptSeen=true;n.trainingEnabled=true;n.trainingTime=document.getElementById("dtPromptReminderTime").value||"17:30";save();
+      const n=reminderState();n.promptSeen=true;n.trainingEnabled=true;n.trainingTime=document.getElementById("dtPromptReminderTime").value||"17:30";
+      try{save()}catch(_){m.classList.remove("show");return}
       const btn=m.querySelector(".dt-rem-enable");btn.textContent="Enabling…";btn.disabled=true;
       const res=await syncTrainingReminders({requestPermission:true});
       btn.textContent=res.ok?"Enabled ✓":"Open settings later";btn.disabled=false;
@@ -9558,7 +9659,8 @@ function renderReminderSettings(){
     n.trainingEnabled=desiredEnabled;
     n.trainingTime=body.querySelector("#dtReminderTime").value||"17:30";
     n.trainingStyle=body.querySelector("[data-rem-style].active")?.dataset.remStyle||"silent";
-    n.promptSeen=true;save();
+    n.promptSeen=true;
+    try{save()}catch(_){document.getElementById("dtReminderModal")?.classList.remove("show");return}
     const btn=body.querySelector(".dt-rem-save");btn.textContent="Preparing…";btn.disabled=true;
     const res=await syncTrainingReminders({requestPermission:desiredEnabled});
     /* Android permission/queue health may fail, but that must not rewrite the
@@ -19997,7 +20099,7 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
       document.body.appendChild(m);
       const close=()=>{m.classList.remove("show");m._record=null};
       m.addEventListener("click",e=>{if(e.target===m)close()});m.querySelector("#dtV30DeleteClose").onclick=close;m.querySelector("#dtV30DeleteCancel").onclick=close;
-      m.querySelector("#dtV30DeleteConfirm").onclick=()=>{const rec=m._record;if(!rec)return;deleteRecord(rec);close()};
+      m.querySelector("#dtV30DeleteConfirm").onclick=()=>{const rec=m._record;if(!rec)return;if(deleteRecord(rec))close()};
     }
   }
   function activityMeta(rec){
@@ -20057,9 +20159,25 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
     const today=localKey(new Date());if(key===today&&typeof window.dtBuildWorkoutSummary==="function"){let fresh=null;try{fresh=window.dtBuildWorkoutSummary(rec.day)}catch(_){}matching.forEach(k=>delete sum[k]);if(fresh)sum[fresh.id]=fresh;return}
     matching.forEach(k=>{sum[k].exerciseCount=remaining.length;sum[k].workingSets=sets});
   }
+  function historyTxnSnapshot(){
+    return clone({
+      completedExercises:state.workouts?.completedExercises||[],
+      sessions:state.workouts?.sessions||[],
+      timedSessions:state.workouts?.timedSessions||[],
+      dailySummaries:state.workouts?.dailySummaries||{},
+      days:state.days||{}
+    });
+  }
+  function restoreHistoryTxn(snapshot){
+    state.workouts.completedExercises=clone(snapshot.completedExercises||[]);
+    state.workouts.sessions=clone(snapshot.sessions||[]);
+    state.workouts.timedSessions=clone(snapshot.timedSessions||[]);
+    state.workouts.dailySummaries=clone(snapshot.dailySummaries||{});
+    state.days=clone(snapshot.days||{});
+  }
   function persistAndRefresh(changedKey){
     if(changedKey)reconcileDayState(changedKey);
-    try{save()}catch(e){console.warn("History edit/delete save failed",e)}
+    try{save()}catch(e){console.warn("History edit/delete save failed",e);return false}
     try{renderWorkoutHistory?.()}catch(_){}
     try{window.dtRenderWorkoutHistoryV2?.()}catch(_){}
     try{renderHistory?.()}catch(_){}
@@ -20083,15 +20201,30 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
       try{if(document.querySelector(".view.active")?.id==="coach")window.dtRenderCoachDestination?.()}catch(_){}
       enhanceRows()
     },0);
+    return true;
   }
   function saveEdit(){
     if(!editRec)return false;const cards=[...document.querySelectorAll("#dtV30EditSets .dt-v30-edit-set")],clean=[];
     for(const card of cards){const kgRaw=card.querySelector(".dt-v30-edit-kg").value.trim(),repsRaw=card.querySelector(".dt-v30-edit-reps").value.trim(),i=Number(card.dataset.setIndex),effort=editSets[i]?.effort||"",hasAny=kgRaw!==""||repsRaw!==""||effort!=="";if(!hasAny)continue;const reps=Number(repsRaw),kgDisplay=kgRaw===""?null:Number(kgRaw);if(!Number.isFinite(reps)||reps<=0){showError(`Set ${i+1}: reps must be above 0.`);return false}if(kgRaw!==""&&(!Number.isFinite(kgDisplay)||kgDisplay<0)){showError(`Set ${i+1}: weight cannot be negative.`);return false}const storedKg=kgRaw===""?"":inputKg(kgRaw);clean.push({kg:storedKg===""?"":String(storedKg),reps:String(Math.round(reps)),effort})}
-    if(!clean.length){showError("Keep at least one valid set, or use Delete activity.");return false}editRec.sets=clean;syncSession(editRec,"edit");syncTimed(editRec);syncSummary(editRec,"edit");persistAndRefresh(recDayKey(editRec));try{window.dtInvalidateHistoryDerivedState?.("history_edit_committed")}catch(_){}document.getElementById("dtHistoryEditModal")?.classList.remove("show");editRec=null;editSets=[];return true;
+    if(!clean.length){showError("Keep at least one valid set, or use Delete activity.");return false}
+    const snapshot=historyTxnSnapshot(),targetId=editRec?.id||"",targetKey=editRec?.exerciseKey||"",targetTime=recordTime(editRec);
+    editRec.sets=clean;syncSession(editRec,"edit");syncTimed(editRec);syncSummary(editRec,"edit");
+    if(!persistAndRefresh(recDayKey(editRec))){
+      restoreHistoryTxn(snapshot);
+      editRec=(state.workouts.completedExercises||[]).find(x=>(targetId&&x?.id===targetId)||(!targetId&&String(x?.exerciseKey||"")===String(targetKey)&&recordTime(x)===targetTime))||null;
+      showError("Could not save changes. Your saved activity was not changed.");
+      return false;
+    }
+    try{window.dtInvalidateHistoryDerivedState?.("history_edit_committed")}catch(_){}
+    document.getElementById("dtHistoryEditModal")?.classList.remove("show");editRec=null;editSets=[];return true;
   }
   function openDelete(rec){ensureModals();const m=document.getElementById("dtHistoryDeleteModal");m._record=rec;document.getElementById("dtV30DeleteName").textContent=`${rec.name||"Saved activity"} · ${activityMeta(rec)}`;m.classList.add("show")}
   function deleteRecord(rec){
-    const list=state.workouts?.completedExercises||[],idx=list.findIndex(x=>x===rec||(rec.id&&x?.id===rec.id));if(idx<0)return false;const target=list[idx],key=recDayKey(target);syncSession(target,"delete");list.splice(idx,1);syncTimed(target);syncSummary(target,"delete");persistAndRefresh(key);try{window.dtInvalidateHistoryDerivedState?.("history_delete_committed")}catch(_){}return true;
+    const list=state.workouts?.completedExercises||[],idx=list.findIndex(x=>x===rec||(rec.id&&x?.id===rec.id));if(idx<0)return false;
+    const snapshot=historyTxnSnapshot(),target=list[idx],key=recDayKey(target);
+    syncSession(target,"delete");list.splice(idx,1);syncTimed(target);syncSummary(target,"delete");
+    if(!persistAndRefresh(key)){restoreHistoryTxn(snapshot);return false}
+    try{window.dtInvalidateHistoryDerivedState?.("history_delete_committed")}catch(_){}return true;
   }
   function enhanceRows(){
     ensureModals();const host=document.getElementById("workoutHistoryList");if(!host)return;const rows=[...host.querySelectorAll(".saved-activity-row")],data=records();
@@ -24247,7 +24380,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       const add=document.getElementById("saveExercise");if(add&&!add.dataset.p10Semantic){const old=add.onclick;add.onclick=function(...args){const target=typeof dtExerciseModalTarget==="function"?dtExerciseModalTarget():String(window.wday||"");const before=(state.workouts?.custom?.[target]||[]).length;let desired="weighted";let lib=null;try{lib=typeof selectedLibraryExercise!=="undefined"?selectedLibraryExercise:null}catch(_){};if(lib)desired=inferSemanticMode(lib).mode;else desired=document.getElementById("customExSemanticMode")?.value||"weighted";const r=old?.apply(this,args);const arr=state.workouts?.custom?.[target]||[];if(arr.length>before){const x=arr[arr.length-1];x.semanticMode=desired;setSemantic({exerciseKey:`custom:${x.id}`,name:x.name,type:x.type},desired,lib?"library":"user");try{const core=state.core?.exercises?.items?.find(y=>clean(y.id)===clean(x.libraryId||x.id));if(core)core.semanticMode=desired}catch(_){};try{save()}catch(_){}}return r};add.dataset.p10Semantic="1"}
     }catch(_){ }
     try{
-      const edit=document.getElementById("saveEditExercise");if(edit&&!edit.dataset.p10Semantic){const old=edit.onclick;edit.onclick=function(...args){const modal=document.getElementById("editExerciseModal"),ei=parseInt(modal?.dataset?.ei);let e=null;try{e=effectiveExercises(wday)?.[ei]}catch(_){};const desired=document.getElementById("editExSemanticMode")?.value||inferSemanticMode(e).mode;const stable=clean(e?.[4]||"");const r=old?.apply(this,args);if(e&&stable){setSemantic({exerciseKey:stable,name:e?.[0],type:e?.[1]},desired,"user_edit");if(stable.startsWith("custom:")){const id=stable.slice(7);for(const day of Object.keys(state.workouts?.custom||{})){const x=(state.workouts.custom[day]||[]).find(v=>clean(v.id)===id);if(x)x.semanticMode=desired}}try{save()}catch(_){}}return r};edit.dataset.p10Semantic="1"}
+      const edit=document.getElementById("saveEditExercise");if(edit&&!edit.dataset.p10Semantic){const old=edit.onclick;edit.onclick=function(...args){const modal=document.getElementById("editExerciseModal"),ei=parseInt(modal?.dataset?.ei);let e=null;try{e=effectiveExercises(wday)?.[ei]}catch(_){};const desired=document.getElementById("editExSemanticMode")?.value||inferSemanticMode(e).mode;const stable=clean(e?.[4]||"");const r=old?.apply(this,args);if(window.dtEditCommitSucceeded===true&&e&&stable){setSemantic({exerciseKey:stable,name:e?.[0],type:e?.[1]},desired,"user_edit");if(stable.startsWith("custom:")){const id=stable.slice(7);for(const day of Object.keys(state.workouts?.custom||{})){const x=(state.workouts.custom[day]||[]).find(v=>clean(v.id)===id);if(x)x.semanticMode=desired}}try{save()}catch(_){}}return r};edit.dataset.p10Semantic="1"}
     }catch(_){ }
   }
 
@@ -25459,6 +25592,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
     if(editSave&&!editSave.dataset.p22){const old=editSave.onclick;editSave.onclick=function(...args){
       let id="",meta=null;try{const modal=document.getElementById("editExerciseModal"),ei=parseInt(modal?.dataset?.ei),e=effectiveExercises(wday)?.[ei];id=clean(e?.[4]||"").replace(/^custom:/,"");meta={primaryMuscles:parseMuscles(document.getElementById("editExMuscle")?.value||""),secondaryMuscles:parseMuscles(document.getElementById("editExSecondary")?.value||""),stabilizerMuscles:parseMuscles(document.getElementById("editExStabilizers")?.value||""),movementPattern:clean(document.getElementById("editExMovementPattern")?.value)||"other"}}catch(_){}
       const r=old?.apply(this,args);
+      if(window.dtEditCommitSucceeded!==true)return r;
       try{const obj=allCustom().find(x=>clean(x.id)===id);if(obj&&meta){Object.assign(obj,meta);obj.customMetadataVersion=VERSION;stampCore(obj);stampHistory();save()}}catch(e){console.warn("M/ARC P22 custom metadata edit failed",e)}
       return r;
     };editSave.dataset.p22="1"}
@@ -26359,6 +26493,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
         oldName=clean(e?.[0]);
       }catch(_){}
       const r=old?.apply(this,args);
+      if(window.dtEditCommitSucceeded!==true)return r;
       try{
         const obj=customById(id);if(obj){
           obj.previousNames=Array.isArray(obj.previousNames)?obj.previousNames:[];
