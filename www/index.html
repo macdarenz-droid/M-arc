@@ -3606,7 +3606,7 @@ function renderRecent(){
   if(!items.length){box.innerHTML="<div class='subtitle' style='margin:14px 0 0;font-size:13px'>No history yet.</div>";return}
   items.forEach(([k,r])=>{
     const row=document.createElement("div");row.className="recent-row";
-    row.innerHTML=`<div><b>${new Date(k+"T12:00:00").toLocaleDateString("en-AU",{day:"numeric",month:"short"})}</b><div class="subtitle" style="margin:3px 0 0;font-size:12px">${r.restDay?"Rest day":"Tracked day"}</div></div><b style="color:var(--green)">${r.percent||0}%</b>`;
+    row.innerHTML=`<div><b>${new Date(k+"T12:00:00").toLocaleDateString("en-AU",{day:"numeric",month:"short"})}</b><div class="subtitle" style="margin:3px 0 0;font-size:12px">${r.restDay?"Rest day":"Tracked day"}</div></div>`;
     box.appendChild(row);
   })
 }
@@ -19211,10 +19211,10 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     };
     if(!host.querySelector("#dtV27SessionButton")){
       host.innerHTML=`<div class="dt-v27-kicker"></div><h3></h3><p></p><button class="dt-v27-session-orbit" type="button" id="dtV27SessionButton"><span class="dt-v27-session-inner"><span class="dt-v27-session-icon">${svg.play}</span><span class="dt-v27-session-time"></span><span class="dt-v27-session-state"></span></span></button><div class="dt-v27-session-bottom"></div>`;
-      const btn=host.querySelector("#dtV27SessionButton");btn.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();return false};let holdTimer=0,held=false,startX=0,startY=0;const cancelHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=0}};
-      btn.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();held=false;startX=e.clientX;startY=e.clientY;try{btn.setPointerCapture?.(e.pointerId)}catch(_){ }const m=model();if(m.active)holdTimer=setTimeout(()=>{held=true;btn.blur?.();syncSessionFocusSelected();window.dtOpenSessionFocus?.()},560)});
-      btn.addEventListener("pointermove",e=>{if(Math.hypot(e.clientX-startX,e.clientY-startY)>14)cancelHold()});btn.addEventListener("pointercancel",()=>{cancelHold();held=false});
-      btn.addEventListener("pointerup",e=>{e.preventDefault();e.stopPropagation();cancelHold();btn.blur?.();if(held){held=false;return}const m=model();if(!m.active){if(typeof window.dtStartWorkoutSession==="function")window.dtStartWorkoutSession();else openWorkout(m.assigned)}else if(m.sessionPaused){window.dtResumeWorkoutSession?.()}else if(m.restMode){window.dtContinueWorkoutFromRest?.()}else{window.dtStartRestTimer?.()}setTimeout(()=>{renderTodayHero();renderSessionStage();syncViewportHeight()},35)});
+      const btn=host.querySelector("#dtV27SessionButton");btn.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();return false};let holdTimer=0,held=false,gestureMoved=false,startX=0,startY=0,startScrollY=0;const TAP_MOVE_PX=12;const cancelHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=0}};
+      btn.addEventListener("pointerdown",e=>{e.stopPropagation();held=false;gestureMoved=false;startX=e.clientX;startY=e.clientY;startScrollY=window.scrollY;try{btn.setPointerCapture?.(e.pointerId)}catch(_){ }const m=model();if(m.active)holdTimer=setTimeout(()=>{if(gestureMoved)return;held=true;btn.blur?.();syncSessionFocusSelected();window.dtOpenSessionFocus?.()},560)});
+      btn.addEventListener("pointermove",e=>{if(Math.hypot(e.clientX-startX,e.clientY-startY)>TAP_MOVE_PX){gestureMoved=true;cancelHold()}});btn.addEventListener("pointercancel",()=>{cancelHold();held=false;gestureMoved=true});
+      btn.addEventListener("pointerup",e=>{e.stopPropagation();cancelHold();btn.blur?.();if(held){held=false;gestureMoved=false;return}const moved=gestureMoved||Math.hypot(e.clientX-startX,e.clientY-startY)>TAP_MOVE_PX||Math.abs(window.scrollY-startScrollY)>2;const endHit=document.elementFromPoint(e.clientX,e.clientY);gestureMoved=false;if(moved||!endHit||!btn.contains(endHit))return;const m=model();if(!m.active){if(typeof window.dtStartWorkoutSession==="function")window.dtStartWorkoutSession();else openWorkout(m.assigned)}else if(m.sessionPaused){window.dtResumeWorkoutSession?.()}else if(m.restMode){window.dtContinueWorkoutFromRest?.()}else{window.dtStartRestTimer?.()}setTimeout(()=>{renderTodayHero();renderSessionStage();syncViewportHeight()},35)});
     }
     const m=model(),btn=host.querySelector("#dtV27SessionButton"),k=host.querySelector(".dt-v27-kicker"),h=host.querySelector("h3"),sub=host.querySelector("p"),time=host.querySelector(".dt-v27-session-time"),st=host.querySelector(".dt-v27-session-state"),bottom=host.querySelector(".dt-v27-session-bottom");
     if(k&&k.textContent!==m.mode)k.textContent=m.mode;if(h&&h.textContent!==m.title)h.textContent=m.title;if(sub&&sub.textContent!==m.sub)sub.textContent=m.sub;if(time&&time.textContent!==m.display)time.textContent=m.display;if(st&&st.textContent!==m.stateLabel)st.textContent=m.stateLabel;if(bottom&&bottom.textContent!==m.bottom)bottom.textContent=m.bottom;
@@ -19613,7 +19613,7 @@ body:has(#today.view.active) #dtRestGlobal,body.dt-session-focus-open #dtRestGlo
 .dt-v27-coach-note{padding:3px 4px;color:#5e7681;font:560 8px/1.5 system-ui}
 .dt-v27-session-stage,.dt-v27-session-stage *,#dtSessionFocus .dt-session-main,#dtSessionFocus .dt-session-main *{-webkit-touch-callout:none}
 .dt-v27-session-orbit,.dt-v27-session-orbit *,#dtSessionOrbit,#dtSessionOrbit *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;-webkit-tap-highlight-color:transparent!important}
-#dtSessionOrbit,.dt-v27-session-orbit{touch-action:none!important}
+#dtSessionOrbit{touch-action:none!important}.dt-v27-session-orbit{touch-action:pan-y!important}
 @media(max-width:360px){.dt-v27-coach-context,.dt-v27-coach-card,.dt-v27-coach-empty{padding:13px}.dt-v27-coach-section-title{align-items:flex-start;flex-direction:column;gap:4px}}
 </style>
 <style id="dt-v27-5-history-coach-longterm-css">
@@ -24001,8 +24001,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   };
   window.DT_P9_CONSOLIDATION={version:VERSION,finalAuthorityRouting:true,coachDeduplication:true,canonicalWeeklyBrief:true,runtimeIntegrityChecks:true,debugIntegrityEvent:true,derivedDataNotPersisted:true,healthDataExcluded:true};
 
-  const boot=()=>recordIntegrity("boot");
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else queueMicrotask(boot);
+  // FIX28A: historical P9 integrity remains manually callable; automatic boot audit consolidated downstream.
 })();
 </script>
 <script id="dt-p10-exercise-semantics-corrective-integration">
@@ -24250,7 +24249,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
 
   window.DT_P10_CORRECTIVE_INTEGRATION={version:VERSION,structuredExerciseSemantics:true,customSemanticInput:true,assistedProgressionDirectionCorrected:true,assistedRecoverySameAssistanceComparison:true,highRepRecoverySameLoadComparison:true,estimatedStrengthRepGuard:10,performancePRsSeparateFromVolumeRecords:true,volumeRecordsPreserved:true,coachAuthorityIdentityChecked:true,healthDataExcluded:true,researchBasis:["PMID 35038063","PMID 38563729","PMID 37792272","Hevy assisted exercise semantics 2026"]};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,exerciseSemantics:"P10 stable-key semantic registry",progression:"P10 assisted semantics / P2 evidence-weighted normal progression",recovery:"P10 semantic-normalized recovery",pr:"P10 performance PR taxonomy",coachOutput:"P10 final correction wrapping P9",healthDataExcludedFromCoach:true};
-  const boot=()=>{installSemanticInputs();migrateSemantics();recordIntegrity("boot")};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else queueMicrotask(boot);
+  const boot=()=>{installSemanticInputs();migrateSemantics()};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else queueMicrotask(boot);
 })();
 </script>
 <script id="dt-p11-mixed-mode-instance-semantics">
@@ -24675,7 +24674,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P15_SPECIALIZATION_LIFECYCLE={version:VERSION,preservesDetailedKeysBeforeP14Loads:true,auditsImportRestartReconcile:true,neverGuessesLostIdentity:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specializationLifecycle:"P15 exact-key persistence",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p16-detailed-specialization-training-balance">
@@ -24801,7 +24800,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
     healthDataExcluded:true
   };
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,trainingBalanceIntent:"P16 detailed focus membership",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p17-multifocus-recovery-isolation">
@@ -24897,7 +24896,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P17_MULTIFOCUS_RECOVERY={version:VERSION,perMuscleIsolation:true,recoveryAuthority:"P4",doesNotRecommendRecoveryLimitedFocus:true,allowsRecoveredSiblingFocus:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specializationRecovery:"P17 per-muscle isolation",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p18-conditioning-recovery-semantics">
@@ -24995,7 +24994,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P18_CONDITIONING_RECOVERY={version:VERSION,activities:["Farmer's Carry","Sled Push","Sled Pull"],comparisonPolicy:["same load → compare distance/time","same work target → compare load","both changed → generic recovery fallback"],compositeScoreUsed:false,legacyUnknownFallsBack:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,conditioningRecovery:"P18",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p19-complete-muscle-coverage-weighted-bodyweight">
@@ -25069,7 +25068,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P19_COMPLETE_COVERAGE={version:VERSION,directMuscleKeys:24,addedExercises:["Resisted Hip Flexion","Cable External Rotation"],weightedBodyweightBodyMassAware:true,bodyMassRequiredForTotalResistanceEstimate:true,noDefaultBodyMass:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specialization:"P19 all 24 direct",weightedBodyweightRecovery:"P19",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p20-authoritative-exercise-muscle-mapping">
@@ -25137,7 +25136,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
 
   window.DT_P20_MAPPING_AUTHORITY={version:VERSION,builtinAuthority:"DT_EXERCISE_LIBRARY",legacySummaryFallback:true,rawCustomFallback:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,exerciseMuscleMapping:"P20 exercise library authority",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p21-balance-neutral-direct-muscles">
@@ -25180,7 +25179,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P21_BALANCE_NEUTRAL={version:VERSION,neutralDirectMuscles:["hip_flexors","rotator_cuff"],existingNeutralMuscles:["abs","core","obliques"],doesNotRewriteAnatomy:true,doesNotInventPushPullMembership:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,trainingBalanceNeutral:"P21",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p22-structured-custom-exercise-intelligence">
@@ -25373,7 +25372,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P22_CUSTOM_EXERCISES={version:VERSION,fields:["primary muscle","secondary muscles","stabilizers","movement pattern","resistance meaning","equipment"],unknownMusclePreserved:true,legacyMigration:"primary only; no guessed secondary/stabilizer",movementPatternFallback:"other",healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,customExercises:"P22 structured metadata",healthDataExcludedFromCoach:true};
-  const boot=()=>{wire();migrate();recordIntegrity("boot")};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else queueMicrotask(boot);setTimeout(wire,600);
+  const boot=()=>{wire();migrate()};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else queueMicrotask(boot);setTimeout(wire,600);
 })();
 </script>
 <script id="dt-p23-portable-exercise-preferences">
@@ -25451,7 +25450,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P23_PORTABLE_EXERCISE_PREFERENCES={version:VERSION,durableWorkoutKeys:["exerciseSemantics","exerciseMeasurementPreferences"],semanticModes:[...SEMANTIC_MODES],measurementModes:[...MEASURE_MODES],currentBuildOwnsRuntime:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,portableExercisePreferences:"P23 validated durable maps",healthDataExcludedFromCoach:true};
-  normalizeState();queueMicrotask(()=>recordIntegrity("boot"));
+  normalizeState();
 })();
 </script>
 <script id="dt-p24-unknown-custom-muscle-recovery">
@@ -25574,7 +25573,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
     healthDataExcluded:true
   };
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,unknownCustomMuscleRecovery:"P24",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p25-sparse-effort-coach-confidence">
@@ -25711,7 +25710,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P25_SPARSE_EFFORT_CONFIDENCE={version:VERSION,recentSessions:3,sparseBelow:.5,goodAtOrAbove:.8,confidenceCaps:{sparse:"low",partial:"medium",good:"unchanged"},blocksEffortDependentChangesWhenSparse:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,coachConfidence:"P25 effort coverage",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p26-specialization-effective-date">
@@ -25852,7 +25851,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P26_SPECIALIZATION_TIMING={version:VERSION,balanceWindowDays:BALANCE_WINDOW_DAYS,minPostFocusSessions:MIN_POST_FOCUS_SESSIONS,minPostFocusEffectiveSets:MIN_POST_FOCUS_EFFECTIVE_SETS,causalAttribution:true,noRetroactiveIntent:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specializationTiming:"P26",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p27-history-derived-state-invalidation">
@@ -25969,7 +25968,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P27_DERIVED_STATE_INVALIDATION={version:VERSION,authority:"completedExercises + sessions + dailySummaries",resetTargets:["Muscle Map cache","Training Body","Weekly Performance","Recovery","Coach","Stats"],healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,derivedStateInvalidation:"P27",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p28-strict-pr-volume-separation">
@@ -26112,7 +26111,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
     healthDataExcluded:true
   };
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,records:"P28 strict PR-volume separation",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p29-custom-exercise-stable-identity">
@@ -26265,7 +26264,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P29_CUSTOM_IDENTITY={version:VERSION,canonicalKey:"custom:<immutable id>",renameChangesIdentity:false,importPreservesId:true,nameFallback:"unique legacy migration only",healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,customExerciseIdentity:"P29 stable custom id",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p30-coach-card-identity-confidence-handoff">
@@ -26367,7 +26366,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP30RecordBackendIntegrity","dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P30_COACH_IDENTITY={version:VERSION,preservesRowId:true,effortConfidenceHandoff:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,coachCardIdentity:"P30",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p31-exact-muscle-specialization-attribution">
@@ -26517,7 +26516,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity","dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P31_SPECIALIZATION_ATTRIBUTION={version:VERSION,minPostFocusSessions:MIN_SESSIONS,minExactEffectiveSets:MIN_EFFECTIVE_SETS,exactMuscleRequired:true,broadGroupInsufficient:true,timeAloneInsufficient:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,specializationAttribution:"P31 exact muscle",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p32-committed-history-mutation-invalidation">
@@ -26560,7 +26559,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP32RecordBackendIntegrity","dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity","dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity","dtP24RecordBackendIntegrity","dtP23RecordBackendIntegrity","dtP22RecordBackendIntegrity","dtP21RecordBackendIntegrity","dtP20RecordBackendIntegrity","dtP19RecordBackendIntegrity","dtP18RecordBackendIntegrity","dtP17RecordBackendIntegrity","dtP16RecordBackendIntegrity","dtP15RecordBackendIntegrity","dtP14RecordBackendIntegrity","dtP13RecordBackendIntegrity","dtP12RecordBackendIntegrity","dtP11RecordBackendIntegrity","dtP10RecordBackendIntegrity","dtP9RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P32_HISTORY_MUTATION={version:VERSION,editHook:"after successful persistAndRefresh",deleteHook:"after successful persistAndRefresh",reusesP27:true,healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,historyMutationCommit:"P32",healthDataExcludedFromCoach:true};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p33-authoritative-haptics-setting">
@@ -26588,7 +26587,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity","dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity","dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P33_HAPTICS={version:VERSION,authority:"dtHaptics",settingKey:"dt_haptics_enabled_v1",allWorkoutPathsRespectToggle:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,haptics:"P33 authoritative toggle"};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p34-finalization-derived-state-sync">
@@ -26625,7 +26624,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity","dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity","dtP29RecordBackendIntegrity","dtP28RecordBackendIntegrity","dtP27RecordBackendIntegrity","dtP26RecordBackendIntegrity","dtP25RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P34_FINALIZATION_SYNC={version:VERSION,trigger:"pending exercise committed to completedExercises",pipeline:"P27 invalidation + immediate destination rerender",healthDataExcluded:true};
   window.DT_BACKEND_AUTHORITY={...(window.DT_BACKEND_AUTHORITY||{}),version:VERSION,finalizationSync:"P34"};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <style id="dt-p35-phone-touch-targets-css">
@@ -26714,7 +26713,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP34BackendIntegrity","dtP33BackendIntegrity","dtP32BackendIntegrity","dtP31BackendIntegrity","dtP30BackendIntegrity"])window[k]=integrity;
   for(const k of ["dtP35RecordBackendIntegrity","dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity","dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P35_PHONE_TOUCH_TARGETS={version:VERSION,minTargetPx:44,androidReferenceDp:48,wcagMinimumCssPx:24,backendLogicChanged:false};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <style id="dt-p36-phone-readable-information-css">
@@ -26801,7 +26800,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP35BackendIntegrity","dtP34BackendIntegrity","dtP33BackendIntegrity","dtP32BackendIntegrity","dtP31BackendIntegrity","dtP30BackendIntegrity"])window[k]=integrity;
   for(const k of ["dtP36RecordBackendIntegrity","dtP35RecordBackendIntegrity","dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity","dtP31RecordBackendIntegrity","dtP30RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P36_PHONE_READABILITY={version:VERSION,scope:"meaningful secondary/explanatory text only",backendLogicChanged:false};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <style id="dt-p37-history-edit-phone-ergonomics-css">
@@ -26905,7 +26904,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP36BackendIntegrity","dtP35BackendIntegrity","dtP34BackendIntegrity","dtP33BackendIntegrity","dtP32BackendIntegrity"])window[k]=integrity;
   for(const k of ["dtP37RecordBackendIntegrity","dtP36RecordBackendIntegrity","dtP35RecordBackendIntegrity","dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P37_HISTORY_PHONE_ERGONOMICS={version:VERSION,inputMinPx:46,smallPhoneInputMinPx:44,removeTargetMinPx:44,footerTargetMinPx:48,backendLogicChanged:false};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <style id="dt-p38-history-edit-effort-targets-css">
@@ -26962,7 +26961,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   for(const k of ["dtP37BackendIntegrity","dtP36BackendIntegrity","dtP35BackendIntegrity","dtP34BackendIntegrity","dtP33BackendIntegrity","dtP32BackendIntegrity"])window[k]=integrity;
   for(const k of ["dtP38RecordBackendIntegrity","dtP37RecordBackendIntegrity","dtP36RecordBackendIntegrity","dtP35RecordBackendIntegrity","dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P38_HISTORY_EDIT_EFFORT={version:VERSION,minTargetPx:44,backendLogicChanged:false};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <style id="dt-p39-coach-science-readability-css">
@@ -27024,7 +27023,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   window.dtP39BackendIntegrity=integrity;
   for(const k of ["dtP39RecordBackendIntegrity","dtP38RecordBackendIntegrity","dtP37RecordBackendIntegrity","dtP36RecordBackendIntegrity","dtP35RecordBackendIntegrity","dtP34RecordBackendIntegrity","dtP33RecordBackendIntegrity","dtP32RecordBackendIntegrity"])window[k]=recordIntegrity;
   window.DT_P39_COACH_SCIENCE_READABILITY={version:VERSION,scope:"Coach v2 detail/research/source typography only",backendLogicChanged:false};
-  queueMicrotask(()=>recordIntegrity("boot"));
+  // FIX28A: automatic historical boot integrity audit consolidated into the final current contract.
 })();
 </script>
 <script id="dt-p41-final-progression-presentation-authority">
@@ -30514,6 +30513,28 @@ window.DT_FIX23_SUMMARY_MOBILE_FIT=Object.freeze({
     historicalDiagnosticsPreserved:true,
     supersededFunctionIdentityNoLongerFatal:true,
     currentLayerContractAdded:true,
+    healthDataExcluded:true
+  });
+
+  // FIX28A: the sole automatic cold-boot integrity audit. It runs the current
+  // contract once after parsing, while every historical integrity function remains
+  // available for explicit Developer/debug invocation.
+  const bootCurrentIntegrity=()=>recordIntegrity("boot");
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bootCurrentIntegrity,{once:true});
+  else queueMicrotask(bootCurrentIntegrity);
+
+  window.DT_FIX28A_BOOT_INTEGRITY_CONSOLIDATION=Object.freeze({
+    version:"FIX28A_BOOT_INTEGRITY_CONSOLIDATION",
+    historicalAutomaticBootAuditsSuppressed:27,
+    currentAutomaticBootAudits:1,
+    historicalDiagnosticsPreserved:true,
+    requiredBootMigrationsPreserved:true,
+    backendBehaviorChanged:false,
+    recommendationMathChanged:false,
+    coachOutputChanged:false,
+    stateChanged:false,
+    persistenceChanged:false,
+    rendererChanged:false,
     healthDataExcluded:true
   });
 })();
