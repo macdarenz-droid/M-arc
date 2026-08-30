@@ -18389,7 +18389,10 @@ function restoreObject(obj){
     try{
       if(typeof window.dtTBRebuildCurrentRuntime==="function")window.dtTBRebuildCurrentRuntime();
       else{window.dtMMResetDerived?.();window.dtRenderBodyCard?.();}
-    }catch(_){}
+      /* CLI-5C handshake: P27's immediately-following import invalidation can
+         reuse this rebuild rather than rebuilding the same Training Body tree. */
+      window.__dtImportTrainingBodyRebuilt=true;
+    }catch(_){window.__dtImportTrainingBodyRebuilt=false}
     try{
       window.DT_LAST_IMPORT_DIAGNOSTIC={
         build:"V36_8_60T",
@@ -26185,16 +26188,33 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       return [rows.length,sets,Math.round(kg*100)/100,reps,effort,sessions.length,last].join("|");
     }catch(_){return ""}
   }
-  function renderAuthoritative(){
+  let importRecoveryGeneration=0;
+  function scheduleImportRecoveryRender(){
+    const generation=++importRecoveryGeneration;
+    const run=()=>{
+      if(generation!==importRecoveryGeneration)return;
+      try{window.dtRenderRecoveryStrip?.()}catch(_){}
+      try{window.dtDebugRecorder?.record?.("import_deferred_recovery_render",{generation})}catch(_){}
+    };
+    /* CLI-5C: Recovery is the dominant measured synchronous import renderer.
+       Yield one paint before running it so a valid Full Restore cannot monopolize
+       the same main-thread task as state replacement + P27 reconciliation. This
+       changes scheduling only; Recovery calculations and source data are untouched. */
+    if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>setTimeout(run,0));
+    else setTimeout(run,0);
+  }
+  function renderAuthoritative(opts={}){
+    const deferRecovery=!!opts.deferRecovery;
     const calls=[
       ()=>window.dtRenderWeeklyPerformance?.(),
-      ()=>window.dtRenderRecoveryStrip?.(),
+      ...(!deferRecovery?[()=>window.dtRenderRecoveryStrip?.()]:[]),
       ()=>window.dtRenderCoachInsights?.(),
       ()=>window.dtRenderHomePerformance?.(),
       ()=>window.dtRenderTodayWorkoutResult?.(),
       ()=>window.dtRenderSessionEnhancements?.()
     ];
     for(const fn of calls)try{fn()}catch(_){}
+    if(deferRecovery)scheduleImportRecoveryRender();
     try{
       const active=document.querySelector(".view.active")?.id;
       if(active==="stats")window.dtOpenStatsDestination?.();
@@ -26204,16 +26224,22 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
   function invalidate(reason="history_change",opts={}){
     revision++;
     lastSignature=signature();
-    /* Training Body / Muscle Map has an explicit derived cache and node universe.
-       Reset it before rebuilding so removed history cannot remain represented. */
-    try{window.dtMMResetDerived?.()}catch(_){}
-    try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
-    renderAuthoritative();
     /* Import/restore already owns a deterministic post-restore refresh phase.
        Keep one authoritative derived-state pass here, but do not replay the same
        Weekly/Recovery/Coach/Home render group in a microtask and timeout. History
        edits keep the original trailing safety passes. */
     const importBatch=reason==="p49_deterministic_import"||reason==="import_or_restore"||reason==="post_import_custom_identity_reconcile";
+    /* Training Body / Muscle Map has an explicit derived cache and node universe.
+       A Full Restore has already rebuilt the current runtime before P27 runs; do
+       not immediately rebuild the same tree twice. Other invalidations preserve
+       the original reset + rebuild behavior exactly. */
+    const importBodyAlreadyRebuilt=importBatch&&window.__dtImportTrainingBodyRebuilt===true;
+    if(importBodyAlreadyRebuilt)window.__dtImportTrainingBodyRebuilt=false;
+    else{
+      try{window.dtMMResetDerived?.()}catch(_){}
+      try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
+    }
+    renderAuthoritative({deferRecovery:importBatch});
     if(!importBatch){
       queueMicrotask(renderAuthoritative);
       setTimeout(renderAuthoritative,0);
@@ -26249,7 +26275,12 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       const r=await priorPrepare.apply(this,args);
       const sig=signature();
       if(lastSignature&&sig!==lastSignature)invalidate("import_or_restore");
-      else lastSignature=sig;
+      else{
+        lastSignature=sig;
+        /* No P27 invalidation consumed the import rebuild handshake. Do not let
+           it leak into a later unrelated import-class invalidation. */
+        window.__dtImportTrainingBodyRebuilt=false;
+      }
       return r;
     };
     wrapped.__p27=true;window.dtPrepareCurrentRuntimeForImport=wrapped;
