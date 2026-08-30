@@ -12366,11 +12366,27 @@ function daySessions(key){
 .dt-tb-row-track{height:7px;background:#0e1c27;border-radius:99px;overflow:hidden}
 .dt-tb-row-fill{height:100%;border-radius:99px;transition:width .3s ease}
 .dt-tb-row-pct{font-size:10px;color:var(--muted);font-weight:800;text-align:right}
-.dt-tb-lvl{font-size:9px;font-weight:900;text-align:center;padding:3px 0;border-radius:8px;color:#0a141c}
+.dt-tb-lvl{font-size:9px;font-weight:900;text-align:center;padding:3px 0;border-radius:8px;color:#0a141c;border:0;min-width:44px;cursor:pointer}
+.dt-tb-lvl:focus-visible{outline:2px solid #d7f7e8;outline-offset:2px}
 .dt-tb-lvl-low{background:#5b6b78;color:#dbe6ec}
 .dt-tb-lvl-mid{background:var(--blue)}
 .dt-tb-lvl-high{background:var(--green)}
 .dt-tb-lvl-max{background:var(--yellow)}
+.dt-tb-level-modal{position:fixed;inset:0;z-index:10040;display:none;align-items:flex-end;justify-content:center;background:rgba(2,8,12,.72);padding:14px;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.dt-tb-level-modal.show{display:flex}
+.dt-tb-level-sheet{width:min(620px,100%);max-height:min(84vh,780px);overflow:auto;background:linear-gradient(180deg,#0b1b25,#08151d);border:1px solid rgba(93,224,161,.28);border-radius:22px 22px 18px 18px;padding:18px;box-shadow:0 -20px 60px rgba(0,0,0,.46)}
+.dt-tb-level-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.dt-tb-level-kicker{font-size:9px;letter-spacing:.14em;font-weight:900;color:#6ee7ac;text-transform:uppercase}
+.dt-tb-level-title{font-size:20px;font-weight:900;color:var(--text);margin-top:4px}
+.dt-tb-level-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#0a1620;color:var(--text);font-size:20px;line-height:1}
+.dt-tb-level-lead{margin-top:10px;color:#b7c8d1;font-size:12px;line-height:1.55}
+.dt-tb-level-metric{margin-top:13px;padding:12px;border:1px solid rgba(125,164,184,.18);border-radius:14px;background:#091720}
+.dt-tb-level-metric b{display:block;font-size:13px;color:#e8f3f8}.dt-tb-level-metric span{display:block;margin-top:4px;color:#8ea4af;font-size:10px;line-height:1.45}
+.dt-tb-level-progress{height:7px;border-radius:99px;overflow:hidden;background:#10232e;margin-top:9px}.dt-tb-level-progress i{display:block;height:100%;border-radius:99px;background:var(--green)}
+.dt-tb-level-section{margin-top:16px}.dt-tb-level-section h4{margin:0 0 7px;font-size:10px;letter-spacing:.11em;color:#8299a6;text-transform:uppercase}.dt-tb-level-section p{margin:0;color:#b7c7d0;font-size:11px;line-height:1.55}
+.dt-tb-level-ladder{display:grid;gap:6px}.dt-tb-level-step{display:grid;grid-template-columns:46px 1fr;gap:9px;padding:9px 10px;border-radius:12px;border:1px solid rgba(125,164,184,.12);background:#091720}.dt-tb-level-step.on{border-color:rgba(93,224,161,.42);background:rgba(31,93,71,.18)}.dt-tb-level-step b{font-size:10px;color:#dce9ef}.dt-tb-level-step span{font-size:10px;color:#8ea4af;line-height:1.4}
+.dt-tb-level-source{margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:9px;color:#6f8793;line-height:1.55}
+@media(min-width:700px){.dt-tb-level-modal{align-items:center}.dt-tb-level-sheet{border-radius:22px}}
 .dt-tb-row-empty{text-align:center;color:var(--muted);font-size:11px;padding:8px 0}
 .dt-tb-empty{text-align:center;color:var(--muted);font-size:13px;padding:30px 10px;line-height:1.5}
 .dt-tb-footnote{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);color:#5c7381;font-size:9px;line-height:1.5;text-align:center}
@@ -12397,6 +12413,17 @@ function daySessions(key){
     {level:5,name:"Advanced",min:180},
     {level:6,name:"Elite",min:320},
     {level:7,name:"Master",min:520}
+  ];
+  /* Explanation-only names. These do not change level thresholds or score math.
+     They deliberately describe logged exposure rather than biological status. */
+  const DT_TB_LEVEL_INFO=[
+    {level:1,label:"Starting exposure",meaning:"M/ARC has begun recording qualifying training for this muscle."},
+    {level:2,label:"Building exposure",meaning:"Repeated logged work has moved this muscle beyond the starting range."},
+    {level:3,label:"Developing history",meaning:"A larger body of qualifying logged work is now available for this muscle."},
+    {level:4,label:"Established history",meaning:"This muscle has accumulated substantial training exposure in your M/ARC history."},
+    {level:5,label:"High exposure",meaning:"Your log contains a high amount of accumulated qualifying work for this muscle."},
+    {level:6,label:"Extensive exposure",meaning:"A very large training-history signal has accumulated for this muscle."},
+    {level:7,label:"Long-term exposure",meaning:"This is M/ARC's highest accumulated training-exposure tier."}
   ];
 
   let dtTBMode="recent"; // 'recent' | 'alltime' | 'musclemap'
@@ -12622,9 +12649,45 @@ function daySessions(key){
       <span class="dt-tb-row-name">${row.label}</span>
       <div class="dt-tb-row-track"><div class="dt-tb-row-fill" style="width:${row.pct}%;background:${color}"></div></div>
       <span class="dt-tb-row-pct">${row.pct}%</span>
-      <span class="dt-tb-lvl dt-tb-lvl-${tier}" title="${row.levelName} · ${Math.round(row.levelScore)} pts">Lv ${row.level}</span>
+      <button type="button" class="dt-tb-lvl dt-tb-lvl-${tier}" data-dt-tb-level-key="${row.key}" onclick="window.dtTBShowLevelInfo(this.dataset.dtTbLevelKey)" aria-label="Explain ${row.label} Level ${row.level}" title="Tap to understand Level ${row.level}">Lv ${row.level}</button>
     </div>`;
   }
+
+  function dtTBEscape(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  function dtTBLevelInfoFor(level){return DT_TB_LEVEL_INFO.find(x=>x.level===level)||DT_TB_LEVEL_INFO[0];}
+  function dtTBEnsureLevelModal(){
+    let modal=document.getElementById("dtTBLevelModal");if(modal)return modal;
+    modal=document.createElement("div");modal.className="dt-tb-level-modal";modal.id="dtTBLevelModal";modal.setAttribute("role","dialog");modal.setAttribute("aria-modal","true");modal.setAttribute("aria-labelledby","dtTBLevelTitle");
+    modal.innerHTML=`<div class="dt-tb-level-sheet"><div class="dt-tb-level-top"><div><div class="dt-tb-level-kicker">TRAINING LEVEL</div><div class="dt-tb-level-title" id="dtTBLevelTitle">Training level</div></div><button type="button" class="dt-tb-level-close" aria-label="Close">×</button></div><div id="dtTBLevelBody"></div></div>`;
+    document.body.appendChild(modal);
+    modal.querySelector(".dt-tb-level-close").onclick=()=>modal.classList.remove("show");
+    modal.onclick=e=>{if(e.target===modal)modal.classList.remove("show")};
+    return modal;
+  }
+  function dtTBShowLevelInfo(key){
+    try{
+      key=String(key||"");
+      const allAgg=dtTBAggregate(dtTBAllRecords());
+      const muscle=allAgg.muscles.find(m=>String(m.key)===key);if(!muscle)return;
+      const info=dtTBLevelFor(muscle.score),plain=dtTBLevelInfoFor(info.level),next=info.levelNext;
+      const label=muscle.label||((typeof window.dtSummaryLabel==="function")?window.dtSummaryLabel(key):key.replace(/_/g," "));
+      const remain=next?Math.max(0,next.min-muscle.score):0;
+      const ladder=DT_TB_LEVELS.map(l=>{const p=dtTBLevelInfoFor(l.level);return `<div class="dt-tb-level-step${l.level===info.level?" on":""}"><b>Lv ${l.level}</b><span><strong>${dtTBEscape(p.label)}</strong> — ${dtTBEscape(p.meaning)}${l.level>1?` Threshold: ${l.min} pts.`:""}</span></div>`}).join("");
+      const modal=dtTBEnsureLevelModal(),body=modal.querySelector("#dtTBLevelBody");
+      modal.querySelector("#dtTBLevelTitle").textContent=`${label} · Level ${info.level}`;
+      body.innerHTML=`
+        <div class="dt-tb-level-lead"><b>${dtTBEscape(plain.label)}</b><br>${dtTBEscape(plain.meaning)}</div>
+        <div class="dt-tb-level-metric"><b>${muscle.score.toFixed(1)} M/ARC training-emphasis points</b><span>${next?`${remain.toFixed(1)} points until Level ${next.level}.`:"Highest current level reached."} Points accumulate from finalized logged sets across your all-time history.</span><div class="dt-tb-level-progress"><i style="width:${Math.round(info.levelProgress*100)}%"></i></div></div>
+        <div class="dt-tb-level-section"><h4>What creates the score</h4><p>M/ARC weights a completed set by the exercise's existing muscle map: primary work = 1.00, secondary = 0.55 and stabilizer = 0.25, divided across muscles sharing that role. Logged effort then adjusts that contribution: Easy ×0.90, Ideal ×1.00, Max ×1.10. These are M/ARC scoring rules—not biological conversion factors.</p></div>
+        <div class="dt-tb-level-section"><h4>What this level means</h4><p>It summarizes accumulated logged training exposure for ${dtTBEscape(label)} inside M/ARC. It is useful for seeing which muscles have built a larger training history since you started logging.</p></div>
+        <div class="dt-tb-level-section"><h4>What it does not mean</h4><p>Level ${info.level} is not a measurement of muscle size, strength, recovery, fitness, anatomy or medical status. A higher level means more accumulated M/ARC training-emphasis points—not that the muscle is a specific percentage larger or stronger.</p></div>
+        <div class="dt-tb-level-section"><h4>Training science</h4><p>Resistance training produces strength and muscle adaptations, and higher training volume can support hypertrophy. But adaptation depends on more than set count alone, and training logs cannot directly measure muscle growth. Effort or proximity-to-failure can add useful context, but it is still an estimate. M/ARC therefore keeps this Level as a training-history/exposure signal rather than a biological claim.</p></div>
+        <div class="dt-tb-level-section"><h4>All M/ARC levels</h4><div class="dt-tb-level-ladder">${ladder}</div></div>
+        <div class="dt-tb-level-source"><b>Research basis</b><br>ACSM 2026 resistance-training position stand · PMID 41843416. Resistance-training dose-response meta-regression · PMID 41343037. Proximity-to-failure meta-regression · PMID 38970765.<br><br><b>M/ARC model boundary:</b> Level thresholds and role/effort weights are app-defined gamification/exposure rules. Research supports the training concepts; it does not validate these numeric thresholds as biological stages.</div>`;
+      modal.classList.add("show");
+    }catch(e){console.warn("Training Level info failed",e)}
+  }
+  window.dtTBShowLevelInfo=dtTBShowLevelInfo;
 
   /* ================================================================
      V36.8.48T — Approved Muscle Map V5 runtime
@@ -19762,7 +19825,7 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const visibleCards=(model.cards||[]).filter(c=>!c?.surface?.hidden);
     const live=`<section class="dt-v27-coach-context"><small>RIGHT NOW</small><b>${s?.active?esc(selected?.e?.[0]||dayTitle(s.day)):"No active workout"}</b><span>${s?.active?`Session active · ${esc(dayTitle(s.day))}`:"Coach recommendations update from finalized training data."}</span></section>`;
     const brief=model.brief?`<section class="dt-coach-v2-brief"><div class="dt-coach-v2-eyebrow">THIS WEEK</div><div class="dt-coach-v2-brief-head"><div><b>M/ARC Weekly Brief</b><span>${esc(model.brief.range||"")}</span></div><div class="dt-coach-v2-brief-metrics"><i><strong>${model.brief.workouts||0}</strong><small>workouts</small></i><i><strong>${model.brief.sets||0}</strong><small>sets</small></i><i><strong>${model.brief.prs||0}</strong><small>PRs</small></i></div></div><div class="dt-coach-v2-brief-grid"><div><small>GOING WELL</small><p>${esc(model.brief.good||"Keep building consistent sessions.")}</p></div><div><small>WATCH</small><p>${esc(model.brief.watch||"No strong warning signal this week.")}</p></div><div><small>NEXT FOCUS</small><p>${esc(model.brief.next||"Complete the next planned session and keep logging effort.")}</p></div></div></section>`:"";
-    const cards=visibleCards.length?visibleCards.map((c,i)=>`<article class="dt-v27-coach-card dt-coach-v2-card ${i===0?"open":""}" data-category="${esc(c.surface?.categoryLabel||c.category||"insight")}" data-signal-key="${esc(c.surface?.signalKey||"")}" data-advice-code="${esc(c.surface?.adviceCode||"")}" data-advice-recordable="${c.surface?.recordable===false?"false":"true"}"><button class="dt-coach-v2-card-top" type="button" aria-expanded="${i===0?"true":"false"}"><span><small>${esc(String(c.surface?.categoryLabel||c.category||"insight").toUpperCase())}</small><b>${esc(c.surface?.title||c.title||"Training insight")}</b><em>${esc(c.surface?.summary||c.summary||"")}</em></span><i>⌄</i></button><div class="dt-coach-v2-detail"><section><small>WHAT M/ARC NOTICED</small><p>${esc(c.surface?.noticed||c.noticed||c.summary||"")}</p></section>${(c.surface?.evidence||c.evidence)?.length?`<section><small>YOUR DATA</small><div class="dt-coach-v2-evidence">${(c.surface?.evidence||c.evidence).map(x=>`<span>${esc(x)}</span>`).join("")}</div></section>`:""}<section><small>WHAT TO TRY</small><p>${esc(c.surface?.action||c.action||"")}</p></section><section><small>WHY IT MAY HELP</small><p>${esc(c.surface?.why||c.why||"")}</p></section><section class="dt-coach-v2-research"><small>TRAINING FACT</small><p>${esc(c.surface?.fact||c.fact||"")}</p><div class="dt-coach-v2-source"><b>RESEARCH SOURCE</b><span>${esc(c.surface?.source||c.source||"")}</span></div></section>${c.trivia?`<section class="dt-coach-v2-trivia"><small>RELATED TRIVIA</small><p>${esc(c.trivia)}</p></section>`:""}<button class="dt-coach-v2-stats" type="button">See related stats ›</button></div></article>`).join(""):`<div class="dt-v27-coach-empty"><b>No coaching signal yet</b><span>Keep logging complete workouts. M/ARC Coach will surface recovery, progression, plateau and training-balance signals when there is enough history.</span></div>`;
+    const cards=visibleCards.length?visibleCards.map((c,i)=>`<article class="dt-v27-coach-card dt-coach-v2-card ${i===0?"open":""}" data-category="${esc(c.surface?.categoryLabel||c.category||"insight")}" data-signal-key="${esc(c.surface?.signalKey||"")}" data-advice-code="${esc(c.surface?.adviceCode||"")}" data-advice-recordable="${c.surface?.recordable===false?"false":"true"}"><button class="dt-coach-v2-card-top" type="button" aria-expanded="${i===0?"true":"false"}"><span><small>${esc(String(c.surface?.categoryLabel||c.category||"insight").toUpperCase())}</small>${c.exerciseName?`<span class="dt-coach-exercise-context">${esc(c.exerciseName)}</span>`:""}<b>${esc(c.surface?.title||c.title||"Training insight")}</b><em>${esc(c.surface?.summary||c.summary||"")}</em></span><i>⌄</i></button><div class="dt-coach-v2-detail"><section><small>WHAT M/ARC NOTICED</small><p>${esc(c.surface?.noticed||c.noticed||c.summary||"")}</p></section>${(c.surface?.evidence||c.evidence)?.length?`<section><small>YOUR DATA</small><div class="dt-coach-v2-evidence">${(c.surface?.evidence||c.evidence).map(x=>`<span>${esc(x)}</span>`).join("")}</div></section>`:""}<section><small>WHAT TO TRY</small><p>${esc(c.surface?.action||c.action||"")}</p></section><section><small>WHY IT MAY HELP</small><p>${esc(c.surface?.why||c.why||"")}</p></section><section class="dt-coach-v2-research"><small>TRAINING FACT</small><p>${esc(c.surface?.fact||c.fact||"")}</p><div class="dt-coach-v2-source"><b>RESEARCH SOURCE</b><span>${esc(c.surface?.source||c.source||"")}</span></div></section>${c.trivia?`<section class="dt-coach-v2-trivia"><small>RELATED TRIVIA</small><p>${esc(c.trivia)}</p></section>`:""}<button class="dt-coach-v2-stats" type="button">See related stats ›</button></div></article>`).join(""):`<div class="dt-v27-coach-empty"><b>No coaching signal yet</b><span>Keep logging complete workouts. M/ARC Coach will surface recovery, progression, plateau and training-balance signals when there is enough history.</span></div>`;
     const learn=model.learn?`<section class="dt-coach-v2-learn"><div class="dt-coach-v2-eyebrow">LEARN</div><b>${esc(model.learn.title||"Training note")}</b><p>${esc(model.learn.fact||"")}</p><small>${esc(model.learn.source||"")}</small></section>`:"";
     const renderSignature=JSON.stringify([
       !!s?.active,String(s?.day||""),String(selected?.key||selected?.e?.[0]||""),
@@ -35932,3 +35995,52 @@ window.DT_COACH_CLI5_CONTRACT=Object.freeze({
 })();
 </script>
 
+
+<style id="dt-readiness-exercise-context-p1-css">
+.dt-coach-exercise-context{display:block;margin:5px 0 2px;color:#6ee3ae;font:850 10px/1.25 system-ui;letter-spacing:.075em;text-transform:uppercase}
+</style>
+<script id="dt-readiness-exercise-context-p1-js">
+(()=>{
+  "use strict";
+  const prior=typeof window.dtCoachV2BuildModel==="function"?window.dtCoachV2BuildModel:null;
+  if(!prior)return;
+  function resolveExerciseName(row){
+    try{
+      if(!row||row.category!=="readiness")return "";
+      const id=String(row.id||"");
+      if(!id.startsWith("exercise:"))return "";
+      const key=id.slice(9);
+      if(!key)return "";
+      const done=Array.isArray(state?.workouts?.completedExercises)?state.workouts.completedExercises:[];
+      const rec=done.slice().reverse().find(x=>String(x?.exerciseKey||"")===key);
+      if(rec?.name)return String(rec.name);
+      try{
+        const days=Object.keys((typeof plans!=="undefined"&&plans)||{});
+        for(const day of days){
+          const list=typeof effectiveExercises==="function"?(effectiveExercises(day)||[]):[];
+          for(let i=0;i<list.length;i++){
+            const e=list[i];
+            const stable=typeof window.dtStableExerciseKey==="function"?window.dtStableExerciseKey(e,i):(e?.[4]||`${e?.[0]||""}|${e?.[1]||""}`);
+            if(String(stable)===key&&e?.[0])return String(e[0]);
+          }
+        }
+      }catch(_){}
+      const pipe=key.indexOf("|");
+      return pipe>0?key.slice(0,pipe):"";
+    }catch(_){return ""}
+  }
+  window.dtCoachV2BuildModel=function(rows){
+    const model=prior(rows)||{cards:[],brief:null,learn:null};
+    try{
+      (rows||[]).forEach((row,i)=>{
+        const card=model.cards?.[i];
+        if(!card)return;
+        const name=resolveExerciseName(row);
+        if(name)card.exerciseName=name;
+      });
+    }catch(e){console.warn("M/ARC readiness exercise context failed",e)}
+    return model;
+  };
+  window.DT_READINESS_EXERCISE_CONTEXT_VERSION="P1";
+})();
+</script>
