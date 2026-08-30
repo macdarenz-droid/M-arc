@@ -7412,17 +7412,16 @@ renderTrainingGoal();
 .dt-rename-workout:active{background:#102634;color:#55aaff}
 
 /* ---------- Previous record + smart cue ---------- */
-.prevval{line-height:1.23!important;color:#8295a1!important;position:relative;padding-right:18px}
+.prevval{line-height:1.23!important;color:#8295a1!important;position:relative;padding-right:0}
 .prevval .dt-last-main{display:block;color:#a6b7c1;font-size:9px;font-weight:800;white-space:nowrap}
 .prevval .dt-last-sub{display:block;color:#5f7482;font-size:7px;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.dt-train-cue{position:absolute;right:0;top:50%;transform:translateY(-50%);width:15px;height:20px;display:grid;place-items:center;font-size:13px;font-weight:950;border-radius:8px;cursor:default}
-.dt-train-cue.up{color:#55dfa0;animation:dtCueUp 1.7s ease-in-out infinite}
-.dt-train-cue.hold{color:#67a8d8;animation:dtCueHold 2.1s ease-in-out infinite}
-.dt-train-cue.ease{color:#e5a865;animation:dtCueDown 2.0s ease-in-out infinite}
-.dt-train-cue.start{color:#586d7a;opacity:.7}
-@keyframes dtCueUp{0%,100%{transform:translateY(-45%)}50%{transform:translateY(-70%)}}
-@keyframes dtCueHold{0%,100%{opacity:.55;transform:translateY(-50%) scale(.9)}50%{opacity:1;transform:translateY(-50%) scale(1.08)}}
-@keyframes dtCueDown{0%,100%{transform:translateY(-55%)}50%{transform:translateY(-32%)}}
+/* Smart Session compact cue is intentionally static and explicit. The exact target remains owned by Smart Next Session above. */
+.dt-train-cue{position:static;width:max-content;max-width:100%;height:auto;display:inline-flex;align-items:center;justify-content:center;margin-top:4px;padding:2px 5px;border-radius:999px;border:1px solid currentColor;font-size:7px;line-height:1;font-weight:900;letter-spacing:.035em;white-space:nowrap;cursor:default;opacity:.9}
+.dt-train-cue.up{color:#55dfa0;background:rgba(85,223,160,.05)}
+.dt-train-cue.hold{color:#67a8d8;background:rgba(103,168,216,.05)}
+.dt-train-cue.ease{color:#e5a865;background:rgba(229,168,101,.05)}
+.dt-train-cue.reps{color:#78b8ea;background:rgba(120,184,234,.05)}
+.dt-train-cue.start{color:#718793;background:rgba(113,135,147,.04)}
 
 /* ---------- Minimal PR badge ---------- */
 .dt-pr-badge{position:absolute;right:0;top:1px;display:none;align-items:center;gap:3px;padding:2px 5px;border-radius:999px;background:rgba(236,181,65,.10);border:1px solid rgba(236,181,65,.25);color:#e7bd5a;font-size:7px;letter-spacing:.04em;font-weight:950;pointer-events:none}
@@ -7519,29 +7518,38 @@ renderTrainingGoal();
   }
 
   function recommendation(e,si,ei){
-    /* P41 — the compact per-set cue must not run a second progression policy.
-       Read the current authoritative exercise-level decision used by Smart Session
-       and Coach, then reduce that decision to the small row cue. The legacy rule
-       remains only as a safe fallback if the authoritative owner is unavailable. */
+    /* Smart cue is presentation-only. It consumes the current authoritative
+       progression decision and, when Fix13 exposes per-set targets, reflects
+       THIS set's action instead of repeating the exercise-level mode on every row.
+       No progression calculation is performed here. */
     try{
       const key=window.dtStableExerciseKey?.(e,Number.isFinite(ei)?ei:0)||e?.[4]||null;
       const d=window.dtProgressionDecision?.(e,Number.isFinite(ei)?ei:0,{day:(typeof wday!=='undefined'?wday:null),exerciseKey:key});
       if(d?.text){
-        const mode=String(d.mode||d?.p2?.state||'').toLowerCase();
         const title=[d.reason,d.rationale].filter(Boolean).join(' — ');
-        if(['increase','increase_confirmed','increase_easy_fast_track'].includes(mode))return {kind:'up',icon:'↑',label:'Small increase',title:title||'Smart Session supports a small load increase.'};
-        if(mode==='reduce')return {kind:'ease',icon:'↓',label:'Ease slightly',title:title||'Smart Session supports a small load reduction.'};
-        if(mode==='starting')return {kind:'start',icon:'•',label:'Build baseline',title:title||'Build a finalized baseline first.'};
-        return {kind:'hold',icon:'↔',label:mode==='confirm'||mode==='confirm_effort'?'Confirm load':'Hold load',title:title||'Follow the Smart Next Session target before changing load.'};
+        const target=Array.isArray(d.setTargets)?d.setTargets[si]:null;
+        const action=String(target?.action||'').toLowerCase();
+        if(action==='increase_load')return {kind:'up',cueText:'ADD LOAD',label:'Add load',title:target?.reason||title||'Smart Session supports a small load increase for this set.'};
+        if(action==='reduce_load')return {kind:'ease',cueText:'EASE LOAD',label:'Ease load',title:target?.reason||title||'Smart Session supports a small load reduction for this set.'};
+        if(action==='add_reps'||action==='bodyweight_reps')return {kind:'reps',cueText:'ADD REPS',label:'Build reps',title:target?.reason||title||'Keep the load and build reps for this set.'};
+        if(action==='confirm'||action==='maintain')return {kind:'hold',cueText:'HOLD',label:'Hold load',title:target?.reason||title||'Confirm this set before increasing load.'};
+        if(action==='reentry')return {kind:'hold',cueText:'RE-ENTRY',label:'Re-entry',title:target?.reason||title||'Use the Smart Session re-entry target for this set.'};
+        if(action==='start')return {kind:'start',cueText:'START',label:'Build baseline',title:target?.reason||title||'Build a finalized baseline first.'};
+
+        const mode=String(d.mode||d?.p2?.state||'').toLowerCase();
+        if(['increase','increase_confirmed','increase_easy_fast_track'].includes(mode))return {kind:'up',cueText:'ADD LOAD',label:'Add load',title:title||'Smart Session supports a small load increase.'};
+        if(mode==='reduce')return {kind:'ease',cueText:'EASE LOAD',label:'Ease load',title:title||'Smart Session supports a small load reduction.'};
+        if(mode==='starting')return {kind:'start',cueText:'START',label:'Build baseline',title:title||'Build a finalized baseline first.'};
+        return {kind:'hold',cueText:'HOLD',label:mode==='confirm'||mode==='confirm_effort'?'Confirm load':'Hold load',title:title||'Follow the Smart Next Session target before changing load.'};
       }
     }catch(_){}
     const h=setHistory(e,si),range=parseRange(e?.[3]?.[si]?.[1]||e?.[3]?.[0]?.[1]||'');
-    if(!h.latest)return {kind:'start',icon:'•',label:'Build baseline',title:'No previous completed set yet.'};
+    if(!h.latest)return {kind:'start',cueText:'START',label:'Build baseline',title:'No previous completed set yet.'};
     const x=h.latest;
-    if(range.hi!=null&&x.reps>=range.hi&&x.effort!=='max')return {kind:'up',icon:'↑',label:'Small increase',title:'Previous set reached the top of the target range without Max effort. A small load increase is reasonable.'};
+    if(range.hi!=null&&x.reps>=range.hi&&x.effort!=='max')return {kind:'up',cueText:'ADD LOAD',label:'Add load',title:'Previous set reached the top of the target range without Max effort. A small load increase is reasonable.'};
     const recent=h.same.slice(0,2);
-    if(range.lo!=null&&recent.length>=2&&recent.every(r=>r.reps<range.lo&&r.effort==='max'))return {kind:'ease',icon:'↓',label:'Ease slightly',title:'Two recent sets were below target at Max effort. Keep technique clean and consider a small reduction.'};
-    return {kind:'hold',icon:'↔',label:'Hold load',title:'Stay at this load and try to improve reps or effort quality first.'};
+    if(range.lo!=null&&recent.length>=2&&recent.every(r=>r.reps<range.lo&&r.effort==='max'))return {kind:'ease',cueText:'EASE LOAD',label:'Ease load',title:'Two recent sets were below target at Max effort. Keep technique clean and consider a small reduction.'};
+    return {kind:'hold',cueText:'HOLD',label:'Hold load',title:'Stay at this load and try to improve reps or effort quality first.'};
   }
 
   function isPR(e,kg,reps){
@@ -7573,7 +7581,7 @@ renderTrainingGoal();
       rows.forEach((row,si)=>{
         const hist=setHistory(e,si),prev=row.querySelector('.prevval'),cue=recommendation(e,si,ei);
         if(prev){
-          prev.innerHTML=hist.latest?`<span class="dt-last-main">${hist.latest.kg} × ${hist.latest.reps}</span><span class="dt-last-sub">last time</span><i class="dt-train-cue ${cue.kind}" title="${cue.title}">${cue.icon}</i>`:`<span class="dt-last-main">—</span><span class="dt-last-sub">first log</span><i class="dt-train-cue start" title="${cue.title}">•</i>`;
+          prev.innerHTML=hist.latest?`<span class="dt-last-main">${hist.latest.kg} × ${hist.latest.reps}</span><span class="dt-last-sub">last time</span><i class="dt-train-cue ${cue.kind}" title="${cue.title}">${cue.cueText||cue.label}</i>`:`<span class="dt-last-main">—</span><span class="dt-last-sub">first log</span><i class="dt-train-cue start" title="${cue.title}">START</i>`;
         }
         let badge=row.querySelector('.dt-pr-badge');if(!badge){badge=document.createElement('span');badge.className='dt-pr-badge';badge.innerHTML='<span class="cup">🏆</span> PR';row.appendChild(badge)}
         let hint=row.querySelector('.dt-progress-hint');if(!hint){hint=document.createElement('div');hint.className='dt-progress-hint';row.appendChild(hint)}
@@ -14680,17 +14688,32 @@ body.dt-session-focus-open{overflow:hidden!important}
   }
   function togglePause(){running()?pauseSession():resumeSession()}
 
-  function startRest(seconds){
+  function startRest(seconds,contextOverride){
     const s=session();if(!s?.active||s.status!=="running")return false;
     const set=state.workouts.sessionSettings,sec=clamp(Number(seconds)||set.restDefaultSec,REST_MIN,REST_MAX),t=now();
-    let ctx={};
-    try{ctx=window.dtRestContextSnapshot?.()||{}}catch(_){ctx={}}
+    let ctx=contextOverride&&typeof contextOverride==="object"?contextOverride:{};
+    if(!Object.keys(ctx).length){try{ctx=window.dtRestContextSnapshot?.()||{}}catch(_){ctx={}}}
     const prior=s.rest||{};
     accumulateRest(s);
     s.rest={running:true,paused:false,remainingMs:sec*1000,endsAtMs:t+sec*1000,lastActiveAtMs:t,completeUntilMs:0,
       exerciseKey:String(ctx.exerciseKey||prior.exerciseKey||""),exerciseName:String(ctx.exerciseName||prior.exerciseName||""),
       setIndex:Number.isFinite(ctx.setIndex)?ctx.setIndex:(Number.isFinite(prior.setIndex)?prior.setIndex:null)};
     persist();renderAll();scheduleRestNotification(s.rest.endsAtMs);return true;
+  }
+  function autoRestAfterCommittedSet(ctx={}){
+    let s=session();
+    if(!s?.active||s.status!=="running"||!state.workouts?.sessionSettings?.autoRest)return false;
+    const day=String(ctx.day||s.day||"");
+    if(day&&String(s.day||"")!==day)s=rebindSessionDay(day,{restartClock:false})||s;
+    const r=s.rest||{},resting=!!(r.running||r.paused||(Number(r.completeUntilMs)||0)>now());
+    if(resting)return false;
+    const setIndex=Number(ctx.setIndex),exerciseKey=String(ctx.exerciseKey||""),exerciseIndex=Number(ctx.exerciseIndex);
+    const canonical=(day&&exerciseKey&&Number.isFinite(setIndex))?`${day}|${exerciseKey}|${setIndex}`:"";
+    const legacy=(day&&Number.isFinite(exerciseIndex)&&Number.isFinite(setIndex))?`${day}|${exerciseIndex}|${setIndex}`:"";
+    if((canonical&&s.restTriggeredSets.includes(canonical))||(legacy&&s.restTriggeredSets.includes(legacy)))return false;
+    if(canonical)s.restTriggeredSets.push(canonical);
+    if(legacy&&!s.restTriggeredSets.includes(legacy))s.restTriggeredSets.push(legacy);
+    return startRest(undefined,{exerciseKey,exerciseName:String(ctx.exerciseName||""),setIndex:Number.isFinite(setIndex)?setIndex:null});
   }
   function adjustRest(deltaSec){
     const s=session(),set=state.workouts.sessionSettings;if(!s?.active)return;
@@ -14993,6 +15016,7 @@ body.dt-session-focus-open{overflow:hidden!important}
   window.dtPauseWorkoutSession=pauseSession;
   window.dtResumeWorkoutSession=resumeSession;
   window.dtStartRestTimer=startRest;
+  window.dtAutoRestAfterCommittedSet=autoRestAfterCommittedSet;
   window.dtPauseRestTimer=pauseRest;
   window.dtResumeRestTimer=resumeRest;
   window.dtSkipRestTimer=skipRest;
@@ -19417,6 +19441,7 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     try{
       const entry=quickDraftEntry(fresh);if(!entry)return {ok:false,msg:"Workout draft unavailable."};
       let target=(entry.sets||[]).find(x=>!quickValidSet(x));if(!target){target={kg:"",reps:"",effort:""};entry.sets.push(target)}
+      const targetSetIndex=Math.max(0,(entry.sets||[]).indexOf(target));
       target.kg=kg;target.reps=String(repsInput);target.effort=effort;
       /* A real set is authoritative evidence of the workout currently being performed.
          Keep the restored/main elapsed timer; only transfer its split ownership. */
@@ -19426,7 +19451,9 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
           window.dtRebindWorkoutSessionDay?.(fresh.day,{restartClock:false});
         }
       }catch(_){}
-      quickPrefill.delete(fresh.key);save();haptic();return {ok:true,msg:`Set ${quickLoggedSets(fresh).length} logged.`};
+      quickPrefill.delete(fresh.key);save();
+      try{window.dtAutoRestAfterCommittedSet?.({day:fresh.day,exerciseKey:fresh.key,exerciseName:String(fresh.e?.[0]||""),exerciseIndex:fresh.index,setIndex:targetSetIndex,source:"today-quick-log"})}catch(_){}
+      haptic();return {ok:true,msg:`Set ${quickLoggedSets(fresh).length} logged.`};
     }catch(_){return {ok:false,msg:"Could not save this set."}}
   }
   function quickComplete(info){
@@ -19496,13 +19523,13 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const host=document.getElementById("dtV27SessionStage");if(!host)return;
     const model=()=>{
       const s=session(),active=!!s?.active,sessionPaused=active&&s.status==="paused",r=s?.rest||{},restRunning=active&&!!r.running,restPaused=active&&!!r.paused,restComplete=active&&(Number(r.completeUntilMs)||0)>Date.now(),restMode=restRunning||restPaused||restComplete,assigned=s?.day||assignedDay(),selected=active?selectedActivity(assigned,{preferUnfinished:false}):null,restLeft=active&&typeof window.dtRestRemainingMs==="function"?window.dtRestRemainingMs(s):0;
-      const restTitle=String(r.exerciseName||"").trim();
+      const restTitle=String(r.exerciseName||"").trim(),currentTitle=String(selected?.e?.[0]||dayTitle(assigned)||"").trim(),restFromOther=!!(restTitle&&currentTitle&&restTitle!==currentTitle);
       return {
         s,active,sessionPaused,r,restRunning,restPaused,restComplete,restMode,assigned,selected,
         display:!active?"START":restComplete?"0:00":restMode?fmtDuration(restLeft):fmtDuration(sessionElapsed()),
-        title:!active?"Start Workout Session":restMode?(restTitle||selected?.e?.[0]||dayTitle(assigned)):(selected?.e?.[0]||dayTitle(assigned)),
+        title:!active?"Start Workout Session":(currentTitle||restTitle||dayTitle(assigned)),
         mode:!active?"SESSION TIMER":restMode?"REST TIMER":"WORKOUT SESSION",
-        sub:!active?(assigned?`${dayTitle(assigned)} is scheduled today. Start the session clock when you are ready.`:"Start the session clock, then choose the workout you want to train."):sessionPaused?"Tap to resume the workout session.":restMode?(restComplete?"Rest is done · Tap to continue your workout":"Tap to continue session · Hold to open Session Focus"):"Tap to start Rest · Hold to open Session Focus",
+        sub:!active?(assigned?`${dayTitle(assigned)} is scheduled today. Start the session clock when you are ready.`:"Start the session clock, then choose the workout you want to train."):sessionPaused?"Tap to resume the workout session.":restMode?(restComplete?(restFromOther?`Rest after ${restTitle} is done · Tap to continue your workout`:"Rest is done · Tap to continue your workout"):(restFromOther?`Rest after ${restTitle} · Tap to continue session`:`Tap to continue session · Hold to open Session Focus`)):"Tap to start Rest · Hold to open Session Focus",
         stateClass:!active?"idle":sessionPaused?"paused":restMode?(restComplete?"rest-complete":"resting"):"running",
         stateLabel:!active?"READY":sessionPaused?"SESSION PAUSED":restMode?(restComplete?"REST DONE":"RESTING"):"LIVE",
         aria:!active?"Start workout session":restMode?"Continue workout session":"Start rest timer",
@@ -29186,9 +29213,13 @@ window.DT_P67_FIRST_LOG_DISPLAY_AUTHORITY=Object.freeze({
 .dt-p68-status-row{padding:8px 9px;border-radius:10px;background:#0a1a24;border:1px solid #1d3945;color:#9eb1ba;font:650 9px/1.4 system-ui}
 .dt-p68-status-row.warn{border-color:#6b4d28;color:#e8bd79;background:#21180e}
 .dt-p68-list{display:grid;gap:7px}
-.dt-p68-ex{padding:9px;border-radius:11px;background:#0a1a24;border:1px solid #1d3945}
+.dt-p68-ex{position:relative;width:100%;padding:9px 38px 9px 9px;border-radius:11px;background:#0a1a24;border:1px solid #1d3945;text-align:left;appearance:none;-webkit-appearance:none}
 .dt-p68-ex b{display:block;color:#e8f2f4;font:800 11px system-ui}
 .dt-p68-ex small{display:block;color:#78909a;font:650 9px/1.35 system-ui;margin-top:2px}
+.dt-p68-ex::after{content:"";position:absolute;right:12px;top:50%;width:17px;height:17px;border-radius:50%;border:1px solid #36515d;transform:translateY(-50%);box-sizing:border-box}
+.dt-p68-ex.on{border-color:#55dda0;background:rgba(85,221,160,.08)}
+.dt-p68-ex.on::after{content:"✓";display:grid;place-items:center;border-color:#55dda0;background:#55dda0;color:#06150f;font:900 11px/1 system-ui}
+.dt-p68-selection-note{margin:8px 0 0;color:#8ba0aa;font:650 9px/1.4 system-ui}
 .dt-p68-note{margin-top:8px;color:#708995;font:600 9px/1.45 system-ui}
 </style><script id="dt-p68-smart-split-generator">
 (()=>{
@@ -29556,6 +29587,7 @@ function ensureGeneratorUI(){
    <div class="dt-p68-preview" aria-live="polite">
      <div class="dt-p68-status"></div>
      <div class="dt-p68-list"></div>
+     <div class="dt-p68-selection-note"></div>
      <div class="dt-p68-note"></div>
      <button type="button" class="dt-p68-create">Create suggested split</button>
      <button type="button" class="dt-p68-regenerate">Regenerate</button>
@@ -29566,18 +29598,18 @@ function ensureGeneratorUI(){
    manual.textContent="Build manually";
    manual.title="Create an empty split and choose exercises yourself";
  }
- wrap.dataset.level="beginner";wrap._p68Generation=null;wrap._p68Overrides=new Set();
+ wrap.dataset.level="beginner";wrap._p68Generation=null;wrap._p68Overrides=new Set();wrap._p68SelectedExerciseIds=new Set();
 
  const levelButtons=[...wrap.querySelectorAll(".dt-p68-level")];
  levelButtons.forEach(b=>b.onclick=()=>{
    wrap.dataset.level=b.dataset.level;
    levelButtons.forEach(x=>x.classList.toggle("on",x===b));
-   wrap._p68Generation=null;
+   wrap._p68Generation=null;wrap._p68SelectedExerciseIds=new Set();
    wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
  });
 
  function renderGeneration(g){
-   const preview=wrap.querySelector(".dt-p68-preview"),status=wrap.querySelector(".dt-p68-status"),list=wrap.querySelector(".dt-p68-list"),note=wrap.querySelector(".dt-p68-note");
+   const preview=wrap.querySelector(".dt-p68-preview"),status=wrap.querySelector(".dt-p68-status"),list=wrap.querySelector(".dt-p68-list"),selectionNote=wrap.querySelector(".dt-p68-selection-note"),note=wrap.querySelector(".dt-p68-note");
    status.innerHTML="";
    for(const s of g.intent?.status||[]){
      const excluded=(g.intent?.excluded||[]).some(x=>x.target===s.target);
@@ -29596,16 +29628,18 @@ function ensureGeneratorUI(){
    });
    if(!g.ok){
      list.innerHTML="";
+     if(selectionNote)selectionNote.textContent="";
      note.textContent=g.reason==="all_selected_targets_recovering"
        ?"All selected muscles are still recovering. Use an Include anyway control only if you intentionally want to override M/ARC's recovery guidance."
        :"M/ARC could not build a safe suggestion from the selected muscles.";
      preview.classList.add("show");return;
    }
    list.innerHTML=g.exercises.map((ex,i)=>`
-     <div class="dt-p68-ex">
+     <button type="button" class="dt-p68-ex" data-p68-exercise-id="${escapeHtml(ex.id)}" aria-pressed="false">
        <b>${i+1}. ${escapeHtml(ex.name)}</b>
        <small>${escapeHtml(ex.equipment||"Exercise")} · ${escapeHtml((ex.matchedTargets||[]).map(x=>LABEL[x]||x).join(" + "))}</small>
-     </div>`).join("");
+     </button>`).join("");
+   if(selectionNote)selectionNote.textContent=`Tap exercises to choose only those. Leave all unselected to add all ${g.exercises.length}.`;
    const reduced=Number(g.guardrails?.weeklyDoseVolumeReduction)||0;
    note.textContent=reduced
      ?`M/ARC shortened this session because your current weekly muscle exposure is already elevated. Smart Session will determine the actual weight/reps when you train.`
@@ -29614,6 +29648,7 @@ function ensureGeneratorUI(){
  }
  function generateNow(){
    const targets=selectedTargetsFromModal(modal),level=wrap.dataset.level||"beginner";
+   wrap._p68SelectedExerciseIds=new Set();
    try{modal.querySelector("#dtSplitName")?.blur()}catch(_){}
    if(!targets.length){
      wrap._p68Generation=null;
@@ -29621,6 +29656,7 @@ function ensureGeneratorUI(){
      preview.classList.add("show");
      wrap.querySelector(".dt-p68-status").innerHTML='<div class="dt-p68-status-row warn"><b>Select a muscle focus first</b><br>Choose one or two muscles, then generate.</div>';
      wrap.querySelector(".dt-p68-list").innerHTML="";
+     wrap.querySelector(".dt-p68-selection-note").textContent="";
      wrap.querySelector(".dt-p68-note").textContent="";
      return null;
    }
@@ -29629,10 +29665,26 @@ function ensureGeneratorUI(){
  }
  wrap.querySelector(".dt-p68-generate").onclick=generateNow;
  wrap.querySelector(".dt-p68-regenerate").onclick=generateNow;
+ wrap.querySelector(".dt-p68-list").addEventListener("click",e=>{
+   const card=e.target.closest?.(".dt-p68-ex");if(!card)return;
+   const g=wrap._p68Generation,id=clean(card.dataset.p68ExerciseId);
+   if(!g?.ok||!id||!g.exercises.some(ex=>clean(ex.id)===id))return;
+   const selected=wrap._p68SelectedExerciseIds instanceof Set?wrap._p68SelectedExerciseIds:(wrap._p68SelectedExerciseIds=new Set());
+   if(selected.has(id))selected.delete(id);else selected.add(id);
+   const on=selected.has(id);card.classList.toggle("on",on);card.setAttribute("aria-pressed",on?"true":"false");
+   const n=selected.size,total=g.exercises.length,selectionNote=wrap.querySelector(".dt-p68-selection-note");
+   if(selectionNote)selectionNote.textContent=n?`${n} of ${total} selected. Only selected exercises will be added.`:`No exercises selected. All ${total} will be added.`;
+ });
 
  wrap.querySelector(".dt-p68-create").onclick=()=>{
    const g=wrap._p68Generation;
    if(!g?.ok)return;
+   const currentIds=new Set(g.exercises.map(ex=>clean(ex.id)).filter(Boolean));
+   const selected=wrap._p68SelectedExerciseIds instanceof Set?wrap._p68SelectedExerciseIds:new Set();
+   const safeSelected=[...selected].filter(id=>currentIds.has(id));
+   const committedExercises=safeSelected.length?g.exercises.filter(ex=>safeSelected.includes(clean(ex.id))):g.exercises;
+   if(!committedExercises.length)return;
+   const commitGeneration=safeSelected.length?{...g,exercises:committedExercises}:g;
 
    const nameInput=modal.querySelector("#dtSplitName");
 
@@ -29661,7 +29713,7 @@ function ensureGeneratorUI(){
    const made=(state.workouts?.customSplits||[]).find(x=>!before.has(String(x.key)));
    if(!made)return;
 
-   const result=commitGeneratedSplit(made.key,g);
+   const result=commitGeneratedSplit(made.key,commitGeneration);
    if(!result.ok){
      console.warn("P68 generated split commit did not complete",result);
      return;
@@ -29678,7 +29730,7 @@ function ensureGeneratorUI(){
    if(!e.target.closest?.(".dt-p7-focus-chip"))return;
    try{modal.querySelector("#dtSplitName")?.blur()}catch(_){}
    setTimeout(()=>{
-     wrap._p68Generation=null;wrap._p68Overrides=new Set();
+     wrap._p68Generation=null;wrap._p68Overrides=new Set();wrap._p68SelectedExerciseIds=new Set();
      wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
    },0);
  });
@@ -29686,7 +29738,7 @@ function ensureGeneratorUI(){
 }
 function syncGeneratorUI(){
  const wrap=ensureGeneratorUI();if(!wrap)return;
- wrap._p68Generation=null;wrap._p68Overrides=new Set();
+ wrap._p68Generation=null;wrap._p68Overrides=new Set();wrap._p68SelectedExerciseIds=new Set();
  wrap.querySelector(".dt-p68-preview")?.classList.remove("show");
 }
 document.addEventListener("click",e=>{
