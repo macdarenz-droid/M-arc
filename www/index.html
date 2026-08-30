@@ -12861,22 +12861,46 @@ function daySessions(key){
     return card;
   }
 
+  let dtTBLastRenderSignature="";
+  function dtTBRenderSignature(){
+    try{
+      const sessions=Array.isArray(state?.workouts?.sessions)?state.workouts.sessions:[];
+      let exercises=0,sets=0,reps=0,kg=0,effort=0,identity=2166136261;
+      const mix=v=>{const s=String(v??"");for(let i=0;i<s.length;i++){identity^=s.charCodeAt(i);identity=Math.imul(identity,16777619)}};
+      for(const session of sessions){
+        mix(session?.date||session?.completedAt||session?.startedAt||session?.dayKey||"");
+        mix(session?.day||"");mix(session?.splitName||session?.workoutName||"");
+        const rows=Array.isArray(session?.snapshot)?session.snapshot:(Array.isArray(session?.exercises)?session.exercises:[]);
+        for(const row of rows){
+          exercises++;mix(row?.exerciseKey||"");mix(row?.name||"");mix(row?.type||"");
+          for(const set of (row?.sets||[])){
+            const rr=Number(set?.reps)||0;if(rr<=0)continue;
+            sets++;reps+=rr;kg+=Number(set?.kg)||0;const e=String(set?.effort||"");if(e)effort++;mix(e);
+          }
+        }
+      }
+      return [dtTBMode,sessions.length,exercises,sets,Math.round(kg*100)/100,reps,effort,identity>>>0].join("|");
+    }catch(_){return `${dtTBMode}|unknown|${Date.now()}`}
+  }
   function dtTBRenderCard(){
     try{
       const card=dtTBEnsureCard();if(!card)return;
+      const renderSignature=dtTBRenderSignature();
+      if(renderSignature===dtTBLastRenderSignature&&dtTBCurrentRuntimeHealthy())return;
       const all=dtTBAllRecords();dtTBWeeks=dtTBWeekList();
       if(dtTBMode==="musclemap"){if(dtTBWeeks.length){if(dtTBWeekIdx>dtTBWeeks.length-1)dtTBWeekIdx=dtTBWeeks.length-1;if(dtTBWeekIdx<0)dtTBWeekIdx=0;}else dtTBWeekIdx=0;}
       card.classList.toggle("dt-mm-mode",dtTBMode==="musclemap");
       card.querySelectorAll(".dt-tb-tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===dtTBMode));
       const empty=all.length===0,emptyEl=document.getElementById("dtTBEmpty"),mainEl=document.getElementById("dtTBMain");if(emptyEl)emptyEl.style.display=empty?"":"none";if(mainEl)mainEl.style.display=empty?"none":"";
       const setText=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val};
-      if(empty){setText("dtTBStatWorkouts","0");setText("dtTBStatDays","0");setText("dtTBStatTop","—");["dtTBFront","dtTBBack","dtTBList","dtMMMap","dtMMDetail"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=""});const note=document.getElementById("dtTBNote");if(note)note.textContent="";const strip=document.getElementById("dtRecoveryStrip");if(strip){strip.innerHTML="";strip.style.display="none"}dtTBStopPlay();return;}
+      if(empty){setText("dtTBStatWorkouts","0");setText("dtTBStatDays","0");setText("dtTBStatTop","—");["dtTBFront","dtTBBack","dtTBList","dtMMMap","dtMMDetail"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=""});const note=document.getElementById("dtTBNote");if(note)note.textContent="";const strip=document.getElementById("dtRecoveryStrip");if(strip){strip.innerHTML="";strip.style.display="none"}dtTBStopPlay();dtTBLastRenderSignature=renderSignature;return;}
       const agg=dtTBCurrentAggregate(),allAgg=dtTBAggregate(all),allTimeScores={};allAgg.muscles.forEach(m=>{allTimeScores[m.key]=m.score});const rows=dtTBBuildRows(agg,allTimeScores);
       const canonicalSessions=dtTBCanonicalSessions();setText("dtTBStatWorkouts",canonicalSessions.length);const days=new Set(canonicalSessions.map(s=>String(s.__dtDayKey||s.dayKey||s.date||"").slice(0,10)).filter(Boolean)).size;setText("dtTBStatDays",days);setText("dtTBStatTop",allAgg.muscles[0]?allAgg.muscles[0].label:"—");
-      if(dtTBMode==="musclemap"){dtMMRender(agg);return;}
+      if(dtTBMode==="musclemap"){dtMMRender(agg);dtTBLastRenderSignature=renderSignature;return;}
       const listEl=document.getElementById("dtTBList");if(listEl)listEl.innerHTML=rows.length?rows.map(dtTBRowHTML).join(""):'<div class="dt-tb-row-empty">No emphasis recorded yet.</div>';
       const noteEl=document.getElementById("dtTBNote");if(noteEl){const topShare=agg.muscles[0]?agg.muscles[0].pct:0,balanced=topShare<30;noteEl.textContent=agg.muscles.length?(balanced?"Your training is well balanced across muscle groups.":`Training is concentrated on ${agg.muscles[0].label}. Consider adding volume elsewhere.`):"No sets logged in this window yet.";}
       if(typeof window.dtRenderSummaryBodies==="function")window.dtRenderSummaryBodies(agg,"dtTB",false);
+      dtTBLastRenderSignature=renderSignature;
     }catch(e){console.warn("Training Body render failed",e);}
   }
 
@@ -12900,6 +12924,7 @@ function daySessions(key){
 
   function dtTBRebuildCurrentRuntime(){
     try{
+      dtTBLastRenderSignature="";
       dtTBStopPlay();
       dtMMResetDerived();
       const old=document.getElementById("dtTBCard");
@@ -12921,6 +12946,7 @@ function daySessions(key){
 
   window.dtTBRebuildCurrentRuntime=dtTBRebuildCurrentRuntime;
   window.dtTBEnforceCurrentRuntime=dtTBEnforceCurrentRuntime;
+  window.dtTBInvalidateRenderSignature=()=>{dtTBLastRenderSignature=""};
 
   let dtTBIntegrityObserver=null,dtTBIntegrityTimer=0,dtTBIntegrityRepairing=false;
   function dtTBInstallIntegrityObserver(){
@@ -13159,6 +13185,10 @@ nav.dt-v10-nav{
       console.warn("Stats destination render failed",e);
       host.innerHTML='<div class="card"><div class="subtitle">No performance data yet.</div></div>';
     }
+    /* CLI-5K / P7: Stats owns this host rebuild. Refresh Coach presentation
+       explicitly here instead of making Coach watch every body child mutation. */
+    try{window.dtRenderCoachInsights?.()}catch(_){}
+    try{window.dtRenderImbalanceNudge?.()}catch(_){}
   }
 
   function openStatsDestination(){
@@ -16176,8 +16206,8 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
       if(card.parentElement!==host||card.nextElementSibling!==bf)host.insertBefore(card,bf);
     }else if(card.parentElement!==host)host.appendChild(card);
   }
-  let queued=false;
-  new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;render()})}).observe(document.body,{childList:true,subtree:true});
+  /* CLI-5K / P7: this legacy Stats presentation is now explicitly refreshed
+     by the Stats host owner. Do not observe unrelated body mutations. */
   setTimeout(render,600);setTimeout(render,1500);
   window.dtIntelImbalanceNudge=compute;
   window.dtRenderImbalanceNudge=render;
@@ -16407,8 +16437,9 @@ nav.dt-v10-nav button.dt-log[data-rest-active="1"]::after{
       if(wrap.parentElement!==host||wrap.nextElementSibling!==before)host.insertBefore(wrap,before);
     }else if(wrap.parentElement!==host)host.appendChild(wrap);
   }
-  let queued=false;
-  new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;render()})}).observe(document.body,{childList:true,subtree:true});
+  /* CLI-5K / P7: Coach presentation is state-derived and Stats-owned. Its
+     authoritative history mutation paths already call dtRenderCoachInsights;
+     Stats host rebuilds now call it explicitly as well. */
   setTimeout(render,700);setTimeout(render,1600);
   window.dtRenderCoachInsights=render;
   window.dtCoachInsightRows=insights;
@@ -18434,32 +18465,27 @@ function ensureUi(){
     }
   };
   input.onchange=async()=>{const f=input.files?.[0];input.value="";if(!f)return;dtSetBackupAction("dtFullRestoreAction","Checking…","busy");try{const obj=JSON.parse(await f.text());validateBackupObject(obj);dtSetBackupAction("dtFullRestoreAction","Ready","ok");if(!confirm("Restore this Full App Backup? Current on-device data will be replaced only after validation.")){dtSetBackupAction("dtFullRestoreAction","Import");return}const restored=restoreObject(obj);dtSetBackupAction("dtFullRestoreAction","Restored","ok");
-        try{window.dtGuardTrainingBodyAfterImport?.(2200)}catch(_){}
-        try{await window.dtPrepareCurrentRuntimeForImport?.()}catch(_){}
-        /* V36.8.51 — stay on the authoritative current runtime after import.
-           A hard location.reload() can re-enter an older service-worker cached
-           index.html and visually roll the app back even though the restored
-           data itself is valid. Rehydrate current renderers in-place instead. */
-        /* V53 import isolation: restore durable state first, then rebuild the
-           authoritative Training Body renderer BEFORE unrelated screen refreshes.
-           This prevents a broad legacy lifecycle cascade from owning Muscle Map. */
-        try{
-          if(typeof window.dtTBEnforceCurrentRuntime==="function")window.dtTBEnforceCurrentRuntime();
-          else window.dtTBRebuildCurrentRuntime?.();
-        }catch(_){}
-        try{window.dtTBInstallIntegrityObserver?.()}catch(_){}
-        /* Refresh unrelated destinations only after Training Body is pinned. */
-        queueMicrotask(()=>{try{window.dtRenderTodaySchedule?.()}catch(_){} try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}});
-        setTimeout(()=>{try{renderWorkout?.()}catch(_){} try{renderWorkoutHistory?.()}catch(_){} try{renderHistory?.()}catch(_){} try{renderStats?.()}catch(_){} try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},120);
-        /* Delayed lifecycle hooks may run after restore. Re-assert the current
-           Training Body template after the rest of the app has finished its
-           post-import renders. These checks are idempotent and rebuild only
-           when the current runtime signature is missing. */
-        try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}
-        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},80);
-        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},350);
-        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},900);
-        setTimeout(()=>{try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}},1600);
+        /* CLI-5J / P6 — restoreObject + the P49/P45/P27 wrappers already own
+           durable replacement, current-runtime rebuild, identity reconciliation
+           and one coalesced derived refresh. Do not start a second temporary
+           Training Body observer, rerun import preparation, or replay hidden
+           destinations on fixed-delay timers. Finalize only the currently visible
+           destination, then hand integrity back to Training Body's permanent owner. */
+        queueMicrotask(()=>{
+          try{window.dtRenderTodaySchedule?.()}catch(_){}
+          try{window.dtRenderWorkoutScheduleBadge?.()}catch(_){}
+          try{
+            const active=document.querySelector(".view.active")?.id;
+            if(active==="workout"){renderWorkout?.();renderWorkoutHistory?.()}
+            else if(active==="history")renderHistory?.();
+            else if(active==="stats")window.dtOpenStatsDestination?.();
+            else if(active==="coach")window.dtRenderCoachDestination?.();
+            else if(active==="today")window.dtRefreshWorkoutHome?.();
+          }catch(_){}
+          try{window.dtTBEnforceCurrentRuntime?.()}catch(_){}
+          try{window.dtTBInstallIntegrityObserver?.()}catch(_){}
+          try{window.dtDebugRecorder?.record?.("import_restore_lifecycle_finalized",{owner:"CLI-5J-P6",activeView:document.querySelector(".view.active")?.id||null})}catch(_){}
+        });
         alert(obj?.compatibility?.runtimeStateSchema>=2?"Backup restored through the version-safe bridge. Current M/ARC features and fixes preserved.":"Legacy backup migrated through the version-safe bridge. Your portable training data was preserved and current M/ARC features remain authoritative.")}catch(e){dtSetBackupAction("dtFullRestoreAction","Retry","error");alert(e?.message||String(e))}};
   let hasRaw=false;try{hasRaw=!!localStorage.getItem(DAMAGED_KEY)}catch(_){}const forensic=box.querySelector("#dtRecoveryExportBtn");
   if(hasRaw){forensic.style.display="";forensic.onclick=async()=>{const obj=forensicObject();if(!obj)return;const btn=forensic;if(btn.disabled)return;btn.disabled=true;try{await dtExportBackupObject(obj,fileName("MARC_Recovery_Data"),"dtRecoveryExportAction","Recovery Data")}catch(_){}finally{btn.disabled=false}}}
@@ -19522,46 +19548,59 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
       moveTrainingBody();
     }
   }
-  function moveTrainingBody(){const card=document.getElementById("dtTBCard"),mount=document.getElementById("dtHomeRecoveryMount");if(card&&mount&&card.parentElement!==mount){mount.appendChild(card);try{window.dtRenderBodyCard?.()}catch(_){}}syncViewportHeight()}
+  function moveTrainingBody(){let card=document.getElementById("dtTBCard");const mount=document.getElementById("dtHomeRecoveryMount");if(!card){try{window.dtRenderBodyCard?.()}catch(_){}card=document.getElementById("dtTBCard")}if(card&&mount&&card.parentElement!==mount)mount.appendChild(card);syncViewportHeight()}
 
-  function performanceRows(){
-    const now=new Date(),start=new Date(now);start.setDate(now.getDate()-6);start.setHours(0,0,0,0);
+  function dtV32BuildSnapshot(){
+    const now=new Date();
     const source=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);
-    const sessions=source.filter(s=>new Date(s.date||s.completedAt||s.__dtDayKey||0).getTime()>=start.getTime());
-    const daySet=new Set(sessions.map(s=>String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||"").slice(0,10)).filter(Boolean));
-    const sets=sessions.reduce((total,session)=>{
-      const ex=Array.isArray(session.snapshot)?session.snapshot:(Array.isArray(session.exercises)?session.exercises:[]);
-      return total+ex.reduce((n,r)=>n+(r.sets||[]).filter(set=>(+set.reps||0)>0).length,0);
-    },0);
+    const sessions=(Array.isArray(source)?source:[]).map(session=>{
+      const date=new Date(session?.date||session?.completedAt||session?.__dtDayKey||0);
+      const dayKey=String(session?.__dtDayKey||session?.dayKey||session?.date||session?.completedAt||"").slice(0,10);
+      const rows=dtV32ExerciseRows(session);
+      let sets=0,volume=0;
+      rows.forEach(row=>{
+        const valid=dtV32ValidSets(row);
+        sets+=valid.length;
+        valid.forEach(set=>{volume+=Math.max(0,+set.kg||0)*Math.max(0,+set.reps||0)});
+      });
+      return {session,date,dayKey,rows,sets,volume};
+    });
+    return {now,sessions};
+  }
+  function performanceRows(snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),now=snap.now,start=new Date(now);start.setDate(now.getDate()-6);start.setHours(0,0,0,0);
+    const sessions=snap.sessions.filter(x=>x.date.getTime()>=start.getTime());
+    const daySet=new Set(sessions.map(x=>x.dayKey).filter(Boolean));
+    const sets=sessions.reduce((total,x)=>total+x.sets,0);
     return {sessions:sessions.length,days:daySet.size,sets};
   }
-  function dtV32Sessions(days=30){
-    const now=new Date(),cut=new Date(now);cut.setDate(now.getDate()-(days-1));cut.setHours(0,0,0,0);
-    const src=typeof window.dtCanonicalWorkoutSessions==="function"?window.dtCanonicalWorkoutSessions():(state.workouts?.sessions||[]);
-    return src.filter(s=>{const d=new Date(s.date||s.completedAt||s.__dtDayKey||0);return Number.isFinite(d.getTime())&&d>=cut&&d<=new Date(now.getTime()+86400000)});
+  function dtV32Sessions(days=30,snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),now=snap.now,cut=new Date(now);cut.setDate(now.getDate()-(days-1));cut.setHours(0,0,0,0);
+    const max=new Date(now.getTime()+86400000);
+    return snap.sessions.filter(x=>Number.isFinite(x.date.getTime())&&x.date>=cut&&x.date<=max);
   }
   function dtV32ExerciseRows(session){return Array.isArray(session?.snapshot)?session.snapshot:(Array.isArray(session?.exercises)?session.exercises:[])}
   function dtV32ValidSets(row){return (row?.sets||[]).filter(x=>(+x.reps||0)>0)}
   function dtV32Volume(session){return dtV32ExerciseRows(session).reduce((a,r)=>a+dtV32ValidSets(r).reduce((n,x)=>n+Math.max(0,+x.kg||0)*Math.max(0,+x.reps||0),0),0)}
-  function dtV32WeekMetrics(offset=0){
-    const now=new Date(),end=new Date(now);end.setDate(now.getDate()-offset*7);end.setHours(23,59,59,999);const start=new Date(end);start.setDate(end.getDate()-6);start.setHours(0,0,0,0);
-    const rows=dtV32Sessions(42).filter(s=>{const d=new Date(s.date||s.completedAt||s.__dtDayKey||0);return d>=start&&d<=end});
-    const days=new Set(rows.map(s=>String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||'').slice(0,10)).filter(Boolean)).size;
-    const sets=rows.reduce((n,s)=>n+dtV32ExerciseRows(s).reduce((a,r)=>a+dtV32ValidSets(r).length,0),0);
-    const volume=rows.reduce((n,s)=>n+dtV32Volume(s),0);return {sessions:rows.length,days,sets,volume};
+  function dtV32WeekMetrics(offset=0,snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),now=snap.now,end=new Date(now);end.setDate(now.getDate()-offset*7);end.setHours(23,59,59,999);const start=new Date(end);start.setDate(end.getDate()-6);start.setHours(0,0,0,0);
+    const rows=dtV32Sessions(42,snap).filter(x=>x.date>=start&&x.date<=end);
+    const days=new Set(rows.map(x=>x.dayKey).filter(Boolean)).size;
+    const sets=rows.reduce((n,x)=>n+x.sets,0);
+    const volume=rows.reduce((n,x)=>n+x.volume,0);return {sessions:rows.length,days,sets,volume};
   }
-  function dtV32Score(){
-    const cur=dtV32WeekMetrics(0),prev=[1,2,3].map(dtV32WeekMetrics),avg=k=>prev.reduce((a,x)=>a+(+x[k]||0),0)/Math.max(1,prev.length);
+  function dtV32Score(snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),cur=dtV32WeekMetrics(0,snap),prev=[1,2,3].map(offset=>dtV32WeekMetrics(offset,snap)),avg=k=>prev.reduce((a,x)=>a+(+x[k]||0),0)/Math.max(1,prev.length);
     const consistency=Math.round(Math.min(100,(cur.days/Math.max(3,avg('days')||3))*100));
     const workload=Math.round(Math.min(100,(cur.sets/Math.max(18,avg('sets')||18))*100));
     const volumeBase=avg('volume'),progress=volumeBase>0?Math.max(0,Math.min(100,50+((cur.volume-volumeBase)/volumeBase)*100)):Math.min(100,cur.sessions*25);
     const score=Math.round(consistency*.4+workload*.35+progress*.25);
     return {score:Math.max(0,Math.min(100,score)),consistency,workload,progress:Math.round(progress)};
   }
-  function dtV32Balance(){
-    const out={Pull:0,Push:0,Legs:0,Shoulders:0,Arms:0,Core:0};
+  function dtV32Balance(snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),out={Pull:0,Push:0,Legs:0,Shoulders:0,Arms:0,Core:0};
     const classify=k=>{const x=String(k||'').toLowerCase();if(/lat|back|trap|rhomboid/.test(x))return 'Pull';if(/quad|ham|glute|calf|hip/.test(x))return 'Legs';if(/delt|shoulder/.test(x))return 'Shoulders';if(/bicep|tricep|forearm/.test(x))return 'Arms';if(/ab|core|oblique/.test(x))return 'Core';if(/chest|pec/.test(x))return 'Push';return null};
-    dtV32Sessions(30).forEach(s=>dtV32ExerciseRows(s).forEach(r=>{const sets=dtV32ValidSets(r).length;if(!sets)return;let meta=null;try{meta=window.dtInferMeta?.(r.name,r.muscle)}catch(_){meta=null}const groups=[];if(meta){(meta.primaryMuscles||[]).forEach(k=>groups.push([k,1]));(meta.secondaryMuscles||[]).forEach(k=>groups.push([k,.55]));(meta.stabilizerMuscles||[]).forEach(k=>groups.push([k,.25]))}if(!groups.length)String(r.muscle||'').split(/[/,]/).filter(Boolean).forEach(k=>groups.push([k,1]));groups.forEach(([k,w])=>{const c=classify(k);if(c)out[c]+=sets*w})}));
+    dtV32Sessions(30,snap).forEach(x=>x.rows.forEach(r=>{const sets=dtV32ValidSets(r).length;if(!sets)return;let meta=null;try{meta=window.dtInferMeta?.(r.name,r.muscle)}catch(_){meta=null}const groups=[];if(meta){(meta.primaryMuscles||[]).forEach(k=>groups.push([k,1]));(meta.secondaryMuscles||[]).forEach(k=>groups.push([k,.55]));(meta.stabilizerMuscles||[]).forEach(k=>groups.push([k,.25]))}if(!groups.length)String(r.muscle||'').split(/[/,]/).filter(Boolean).forEach(k=>groups.push([k,1]));groups.forEach(([k,w])=>{const c=classify(k);if(c)out[c]+=sets*w})}));
     const max=Math.max(1,...Object.values(out));Object.keys(out).forEach(k=>out[k]=Math.round(out[k]/max*100));return out;
   }
   function dtV32RadarSvg(balance){
@@ -19570,20 +19609,20 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     const pos=[[150,20],[251,69],[252,181],[150,224],[47,181],[47,69]];const anchors=['middle','start','start','middle','end','end'];const texts=labels.map((k,i)=>`<text x="${pos[i][0]}" y="${pos[i][1]}" text-anchor="${anchors[i]}">${k.toUpperCase()}</text><text class="pct" x="${pos[i][0]}" y="${pos[i][1]+11}" text-anchor="${anchors[i]}">${balance[k]||0}%</text>`).join('');
     return `<svg class="dt-v32-radar" viewBox="0 0 300 240" role="img" aria-label="30 day training balance radar">${grids}${axes}<polygon class="shape" points="${shape}"/>${dots}${texts}</svg>`;
   }
-  function dtV32Timeline(){
-    const now=new Date(),map=new Map();dtV32Sessions(30).forEach(s=>{const k=String(s.__dtDayKey||s.dayKey||s.date||s.completedAt||'').slice(0,10);if(!k)return;const x=map.get(k)||{sets:0,volume:0};x.sets+=dtV32ExerciseRows(s).reduce((a,r)=>a+dtV32ValidSets(r).length,0);x.volume+=dtV32Volume(s);map.set(k,x)});
+  function dtV32Timeline(snapshot){
+    const snap=snapshot||dtV32BuildSnapshot(),now=snap.now,map=new Map();dtV32Sessions(30,snap).forEach(x=>{const k=x.dayKey;if(!k)return;const row=map.get(k)||{sets:0,volume:0};row.sets+=x.sets;row.volume+=x.volume;map.set(k,row)});
     const days=[];for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');days.push({d,k,...(map.get(k)||{sets:0,volume:0})})}
     const max=Math.max(1,...days.map(x=>x.sets));const bars=days.map((x,i)=>`<div class="dt-v32-timeline-day ${x.sets?'':'rest'} ${i===29?'today':''}" title="${x.k}: ${x.sets} sets"><i style="--h:${x.sets?Math.max(12,Math.round(x.sets/max*84)):3}px"></i></div>`).join('');const fmt=d=>d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});
     return `<div class="dt-v32-timeline"><div class="dt-v32-timeline-bars">${bars}</div><div class="dt-v32-timeline-labels"><span>${fmt(days[0].d)}</span><span>${fmt(days[14].d)}</span><span>${fmt(days[29].d)}</span></div><div class="dt-v32-timeline-legend"><span><i></i>Workout load</span><span><i></i>Rest / no workout</span></div></div>`;
   }
   function coachInsights(){try{return typeof window.dtIntelTopInsights==="function"?window.dtIntelTopInsights(2):[]}catch(_){return []}}
   function renderPerformance(){
-    const host=document.getElementById("dtV27Performance");if(!host)return;const m=performanceRows(),sc=dtV32Score(),bal=dtV32Balance();
+    const host=document.getElementById("dtV27Performance");if(!host)return;const snapshot=dtV32BuildSnapshot(),m=performanceRows(snapshot),sc=dtV32Score(snapshot),bal=dtV32Balance(snapshot);
     host.innerHTML=`<div class="dt-v27-kicker">LAST 7 DAYS</div><div class="dt-v27-title">Training pulse</div><div class="dt-v27-perf-metrics"><div class="dt-v27-perf-metric"><small>Workouts</small><b>${m.sessions}</b></div><div class="dt-v27-perf-metric"><small>Days</small><b>${m.days}</b></div><div class="dt-v27-perf-metric"><small>Working sets</small><b>${m.sets}</b></div></div>
       <div class="dt-v32-visual-stack">
         <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>Performance</b><span>7 day momentum</span></div><div class="dt-v32-score-wrap"><div class="dt-v32-score-ring" style="--score:${sc.score}"><div class="dt-v32-score-core"><strong>${sc.score}</strong><small>Performance</small></div></div><div class="dt-v32-score-bars"><div class="dt-v32-score-line"><span>Consistency</span><i style="--pct:${sc.consistency}%"></i><b>${sc.consistency}</b></div><div class="dt-v32-score-line"><span>Workload</span><i style="--pct:${sc.workload}%"></i><b>${sc.workload}</b></div><div class="dt-v32-score-line"><span>Momentum</span><i style="--pct:${sc.progress}%"></i><b>${sc.progress}</b></div></div></div></section>
         <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>Training Balance</b><span>Last 30 days</span></div><div class="dt-v32-radar-wrap">${dtV32RadarSvg(bal)}</div></section>
-        <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>30-Day Performance</b><span>Workout activity</span></div>${dtV32Timeline()}</section>
+        <section class="dt-v32-visual-card"><div class="dt-v32-visual-head"><b>30-Day Performance</b><span>Workout activity</span></div>${dtV32Timeline(snapshot)}</section>
       </div><button class="dt-v27-open-stats" type="button">Open full Stats</button>`;
     host.querySelector(".dt-v27-open-stats").onclick=openStats;
   }
@@ -19645,23 +19684,75 @@ body:has(#today.view.active) #dtRestGlobal{display:none!important}
     if(settings?.parentNode)settings.parentNode.insertBefore(view,settings);else main.appendChild(view);
     return view;
   }
+  let coachDestinationCache={key:"",at:0,model:null,renderSignature:""};
+  function coachHistoryRevisionKey(){
+    try{
+      const rev=typeof window.dtP27HistoryRevision==="function"?Number(window.dtP27HistoryRevision())||0:0;
+      const w=state?.workouts||{},done=w.completedExercises||[],sessions=w.sessions||[];
+      const last=done.length?String(done[done.length-1]?.finalizedAt||done[done.length-1]?.startedAt||done[done.length-1]?.dayKey||""):"";
+      return `${rev}|${done.length}|${sessions.length}|${last}`;
+    }catch(_){return "0|0|0|"}
+  }
+  function coachRowsKey(rows){
+    try{return JSON.stringify((rows||[]).map(r=>[r?.id||"",r?.category||"",r?.title||"",r?.body||"",r?.exerciseKey||"",r?.muscleKey||""]))}catch(_){return String((rows||[]).length)}
+  }
+  function withCoachRenderMemo(work){
+    /* P2 shared-signal snapshot: several legacy Coach layers independently ask
+       for the same read-only recovery/balance signal in one synchronous model
+       build. Memoize only no-argument calls for this transaction, then restore
+       the exact global owners in finally. Nothing persists across actions. */
+    const names=["dtIntelImbalanceNudge","dtMuscleRecoveryStatus"],restore=[];
+    for(const name of names){
+      const original=window[name];if(typeof original!=="function")continue;
+      let has=false,value;
+      const memo=function(...args){if(args.length)return original.apply(this,args);if(has)return value;value=original.call(this);has=true;return value};
+      window[name]=memo;restore.push([name,original,memo]);
+    }
+    try{return work()}finally{for(const [name,original,memo] of restore)if(window[name]===memo)window[name]=original}
+  }
+  function coachPayloadForRender(){
+    const now=performance.now(),historyKey=coachHistoryRevisionKey();
+    /* P2: rows + final model share one one-second history snapshot. This collapses
+       repeated P27/observer/destination work while avoiding a durable Coach cache.
+       All global Coach decision functions remain the authoritative owners. */
+    const fastKey=historyKey;
+    if(coachDestinationCache.key===fastKey&&coachDestinationCache.model&&Array.isArray(coachDestinationCache.rows)&&(now-coachDestinationCache.at)<1100){
+      return {rows:coachDestinationCache.rows,model:coachDestinationCache.model};
+    }
+    const built=withCoachRenderMemo(()=>{
+      let rows=[];try{rows=typeof window.dtCoachInsightRows==="function"?window.dtCoachInsightRows():[]}catch(_){rows=[]}
+      const model=typeof window.dtCoachV2BuildModel==="function"?window.dtCoachV2BuildModel(rows):{cards:[],brief:null,learn:null};
+      return {rows,model};
+    });
+    const rows=built.rows,model=built.model,rowsKey=coachRowsKey(rows);
+    coachDestinationCache={...coachDestinationCache,key:fastKey,rows,rowsKey,at:now,model};
+    return {rows,model};
+  }
   function renderCoachDestination(){
     const view=ensureCoachView(),host=document.getElementById("dtV27CoachHost");if(!host)return;
-    let rows=[];try{rows=typeof window.dtCoachInsightRows==="function"?window.dtCoachInsightRows():[]}catch(_){rows=[]}
+    const payload=coachPayloadForRender(),rows=payload.rows,model=payload.model;
     const s=session(),selected=s?.active?selectedActivity(s.day,{preferUnfinished:false}):null;
-    const model=typeof window.dtCoachV2BuildModel==="function"?window.dtCoachV2BuildModel(rows):{cards:[],brief:null,learn:null};
     const visibleCards=(model.cards||[]).filter(c=>!c?.surface?.hidden);
     const live=`<section class="dt-v27-coach-context"><small>RIGHT NOW</small><b>${s?.active?esc(selected?.e?.[0]||dayTitle(s.day)):"No active workout"}</b><span>${s?.active?`Session active · ${esc(dayTitle(s.day))}`:"Coach recommendations update from finalized training data."}</span></section>`;
     const brief=model.brief?`<section class="dt-coach-v2-brief"><div class="dt-coach-v2-eyebrow">THIS WEEK</div><div class="dt-coach-v2-brief-head"><div><b>M/ARC Weekly Brief</b><span>${esc(model.brief.range||"")}</span></div><div class="dt-coach-v2-brief-metrics"><i><strong>${model.brief.workouts||0}</strong><small>workouts</small></i><i><strong>${model.brief.sets||0}</strong><small>sets</small></i><i><strong>${model.brief.prs||0}</strong><small>PRs</small></i></div></div><div class="dt-coach-v2-brief-grid"><div><small>GOING WELL</small><p>${esc(model.brief.good||"Keep building consistent sessions.")}</p></div><div><small>WATCH</small><p>${esc(model.brief.watch||"No strong warning signal this week.")}</p></div><div><small>NEXT FOCUS</small><p>${esc(model.brief.next||"Complete the next planned session and keep logging effort.")}</p></div></div></section>`:"";
     const cards=visibleCards.length?visibleCards.map((c,i)=>`<article class="dt-v27-coach-card dt-coach-v2-card ${i===0?"open":""}" data-category="${esc(c.surface?.categoryLabel||c.category||"insight")}" data-signal-key="${esc(c.surface?.signalKey||"")}" data-advice-code="${esc(c.surface?.adviceCode||"")}" data-advice-recordable="${c.surface?.recordable===false?"false":"true"}"><button class="dt-coach-v2-card-top" type="button" aria-expanded="${i===0?"true":"false"}"><span><small>${esc(String(c.surface?.categoryLabel||c.category||"insight").toUpperCase())}</small><b>${esc(c.surface?.title||c.title||"Training insight")}</b><em>${esc(c.surface?.summary||c.summary||"")}</em></span><i>⌄</i></button><div class="dt-coach-v2-detail"><section><small>WHAT M/ARC NOTICED</small><p>${esc(c.surface?.noticed||c.noticed||c.summary||"")}</p></section>${(c.surface?.evidence||c.evidence)?.length?`<section><small>YOUR DATA</small><div class="dt-coach-v2-evidence">${(c.surface?.evidence||c.evidence).map(x=>`<span>${esc(x)}</span>`).join("")}</div></section>`:""}<section><small>WHAT TO TRY</small><p>${esc(c.surface?.action||c.action||"")}</p></section><section><small>WHY IT MAY HELP</small><p>${esc(c.surface?.why||c.why||"")}</p></section><section class="dt-coach-v2-research"><small>TRAINING FACT</small><p>${esc(c.surface?.fact||c.fact||"")}</p><div class="dt-coach-v2-source"><b>RESEARCH SOURCE</b><span>${esc(c.surface?.source||c.source||"")}</span></div></section>${c.trivia?`<section class="dt-coach-v2-trivia"><small>RELATED TRIVIA</small><p>${esc(c.trivia)}</p></section>`:""}<button class="dt-coach-v2-stats" type="button">See related stats ›</button></div></article>`).join(""):`<div class="dt-v27-coach-empty"><b>No coaching signal yet</b><span>Keep logging complete workouts. M/ARC Coach will surface recovery, progression, plateau and training-balance signals when there is enough history.</span></div>`;
     const learn=model.learn?`<section class="dt-coach-v2-learn"><div class="dt-coach-v2-eyebrow">LEARN</div><b>${esc(model.learn.title||"Training note")}</b><p>${esc(model.learn.fact||"")}</p><small>${esc(model.learn.source||"")}</small></section>`:"";
-    host.innerHTML=`${live}${brief}<div class="dt-v27-coach-section-title"><b>Coach signals</b>${visibleCards.length?`<span>Tap a card for the reasoning</span>`:""}</div><div class="dt-v27-coach-grid">${cards}</div>${learn}<div class="dt-v27-coach-note">Coach reads finalized workout history. Research notes are general training evidence, not a medical assessment or a guarantee of individual results.</div>`;
-    host.querySelectorAll(".dt-coach-v2-card-top").forEach(btn=>btn.onclick=()=>{const card=btn.closest(".dt-coach-v2-card"),open=!card.classList.contains("open");card.classList.toggle("open",open);btn.setAttribute("aria-expanded",String(open));if(open)try{window.dtCoachCLI5RecordVisibleAdvice?.(card)}catch(_){}});
-    host.querySelectorAll(".dt-coach-v2-stats").forEach(btn=>btn.onclick=()=>openStats());
+    const renderSignature=JSON.stringify([
+      !!s?.active,String(s?.day||""),String(selected?.key||selected?.e?.[0]||""),
+      model?.brief||null,visibleCards.map(c=>[c?.surface||null,c?.trivia||""]),model?.learn||null
+    ]);
+    if(renderSignature!==coachDestinationCache.renderSignature){
+      const openKey=host.querySelector(".dt-coach-v2-card.open")?.dataset?.signalKey||"";
+      host.innerHTML=`${live}${brief}<div class="dt-v27-coach-section-title"><b>Coach signals</b>${visibleCards.length?`<span>Tap a card for the reasoning</span>`:""}</div><div class="dt-v27-coach-grid">${cards}</div>${learn}<div class="dt-v27-coach-note">Coach reads finalized workout history. Research notes are general training evidence, not a medical assessment or a guarantee of individual results.</div>`;
+      host.querySelectorAll(".dt-coach-v2-card-top").forEach(btn=>btn.onclick=()=>{const card=btn.closest(".dt-coach-v2-card"),open=!card.classList.contains("open");card.classList.toggle("open",open);btn.setAttribute("aria-expanded",String(open));if(open)try{window.dtCoachCLI5RecordVisibleAdvice?.(card)}catch(_){}});
+      host.querySelectorAll(".dt-coach-v2-stats").forEach(btn=>btn.onclick=()=>openStats());
+      if(openKey){const keep=[...host.querySelectorAll(".dt-coach-v2-card")].find(card=>card.dataset.signalKey===openKey);if(keep){host.querySelectorAll(".dt-coach-v2-card.open").forEach(card=>{if(card!==keep){card.classList.remove("open");card.querySelector(".dt-coach-v2-card-top")?.setAttribute("aria-expanded","false")}});keep.classList.add("open");keep.querySelector(".dt-coach-v2-card-top")?.setAttribute("aria-expanded","true")}}
+      coachDestinationCache.renderSignature=renderSignature;
+    }
     try{if(document.querySelector(".view.active")?.id==="coach")window.dtCoachCLI5RecordVisibleAdvice?.(host.querySelector(".dt-coach-v2-card.open"))}catch(_){}
     ensureDestinationHeaders();
   }
-  function openCoach(){ensureCoachView();try{switchView("coach")}catch(_){};setTimeout(()=>{renderCoachDestination();window.scrollTo({top:0,behavior:"instant"})},80)}
+  function openCoach(){ensureCoachView();try{switchView("coach")}catch(_){};requestAnimationFrame(()=>setTimeout(()=>{renderCoachDestination();window.scrollTo({top:0,behavior:"instant"})},0))}
   function openSettings(){try{switchView("settings")}catch(_){};setTimeout(()=>{cleanSettings();ensureDestinationHeaders();window.scrollTo({top:0,behavior:"instant"})},80)}
 
   function ensureHomeBack(view,label){
@@ -21593,6 +21684,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   /* P64 reliability: Developer diagnostics must never become a workout blocker.
      Keep the large in-memory timeline for manual export, but serialize less often
      and persist only a bounded crash-recovery tail. */
+  window.DT_CLI5E_P1_DIAGNOSTICS_VERSION="cli5e-p1-low-overhead-1.0.0";
   const PERSIST_DEBOUNCE_MS=8000;
   const PERSIST_EVENT_BATCH=250;
   const MAX_PERSISTED_EVENTS=5000;
@@ -21770,9 +21862,10 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
       rect:rectSnapshot(el)
     };
   }
-  function visibleOverlays(){
+  const OVERLAY_SELECTOR="[role='dialog'],.modal,.sheet,[class*='modal'],[class*='sheet'],#dtPxContent";
+  function scanVisibleOverlays(){
     const out=[];
-    document.querySelectorAll("[role='dialog'],.modal,.sheet,[class*='modal'],[class*='sheet'],#dtPxContent").forEach(el=>{
+    document.querySelectorAll(OVERLAY_SELECTOR).forEach(el=>{
       if(!(el instanceof HTMLElement))return;
       const r=el.getBoundingClientRect(),cs=getComputedStyle(el);
       if(r.width<2||r.height<2||cs.display==="none"||cs.visibility==="hidden"||Number(cs.opacity)===0)return;
@@ -21781,10 +21874,18 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
     });
     return out.slice(0,16);
   }
+  let overlayCache=scanVisibleOverlays();
+  function cachedOverlays(){return overlayCache.slice()}
+  function refreshOverlayCache(source="mutation"){
+    const previous=overlayCache,now=scanVisibleOverlays();
+    overlayCache=now;
+    const opened=now.filter(x=>!previous.includes(x)),closed=previous.filter(x=>!now.includes(x));
+    if(opened.length||closed.length)record("overlay_change",{opened,closed,current:now,source});
+  }
   function uiFingerprint(){
     const vv=window.visualViewport;
     return {
-      view:currentView(),overlays:visibleOverlays(),
+      view:currentView(),overlays:cachedOverlays(),
       active:cssPath(document.activeElement),
       scrollX:Math.round(window.scrollX||0),scrollY:Math.round(window.scrollY||document.documentElement.scrollTop||0),
       viewport:{w:Math.round(vv?.width||innerWidth),h:Math.round(vv?.height||innerHeight),top:Math.round(vv?.offsetTop||0)},
@@ -21831,6 +21932,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   function onPointerDown(e){
     if(!enabled)return;
     const target=interactiveTarget(e.target);
+    if(target?.closest?.(OVERLAY_SELECTOR))refreshOverlayCache("interaction_start");
     const id=`i_${Date.now().toString(36)}_${(++interactionSeq).toString(36)}`;
     activeInteractionId=id;
     const top=document.elementFromPoint(e.clientX,e.clientY);
@@ -21864,6 +21966,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   }
   function shouldFlagNoVisibleChange(target){
     if(!target)return false;
+    if(target.ariaSelected==="true")return false;
     const p=String(target.path||"");
     const tag=String(target.tag||"").toLowerCase();
     if(["input","textarea","select"].includes(tag))return false;
@@ -21889,22 +21992,25 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
 
     if(!cancelled&&g.target){
       const original=controlState(g.target),iid=g.id,before=g.before;
-      [80,220,700,1500].forEach((delay,index)=>setTimeout(()=>{
+      [120,700].forEach((delay,index)=>setTimeout(()=>{
+        refreshOverlayCache("interaction_outcome");
         const after=uiFingerprint(),now=controlState(g.target);
         const controlChanged=original?.ariaExpanded!==now?.ariaExpanded||
           original?.ariaSelected!==now?.ariaSelected||original?.ariaChecked!==now?.ariaChecked||
           original?.ariaPressed!==now?.ariaPressed||original?.disabled!==now?.disabled;
-        const changed=fingerprintChanged(before,after)||controlChanged;
+        const originalRect=original?.rect,nowRect=now?.rect;
+        const targetDisappeared=!!(originalRect&&originalRect.width>1&&originalRect.height>1&&nowRect&&(nowRect.width<2||nowRect.height<2));
+        const changed=fingerprintChanged(before,after)||controlChanged||targetDisappeared;
         record("interaction_outcome",{
-          delayMs:delay,target:original,changed,before,after,targetAfter:now,
+          delayMs:delay,target:original,changed,before,after,targetAfter:now,targetDisappeared,
           newOverlays:after.overlays.filter(x=>!before.overlays.includes(x)),
           closedOverlays:before.overlays.filter(x=>!after.overlays.includes(x))
         },{interactionId:iid});
-        if(index===2&&!changed&&!original?.disabled&&shouldFlagNoVisibleChange(original)){
+        if(index===1&&!changed&&!original?.disabled&&shouldFlagNoVisibleChange(original)){
           counters.noVisibleChange++;
           record("interaction_no_visible_change",{
             target:original,waitedMs:delay,
-            note:"Gesture reached the control but no navigation, overlay, selection, focus, scroll, or control-state change was detected."
+            note:"Gesture reached the control but no navigation, overlay, target disappearance, selection, focus, scroll, or control-state change was detected."
           },{interactionId:iid});
         }
       },delay));
@@ -21977,14 +22083,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   // Aggregated dom_mutation_summary telemetry is the single DOM churn signal.
 
 
-  let lastOverlays=visibleOverlays();
-  setInterval(()=>{
-    if(!enabled)return;
-    const now=visibleOverlays();
-    const opened=now.filter(x=>!lastOverlays.includes(x)),closed=lastOverlays.filter(x=>!now.includes(x));
-    if(opened.length||closed.length)record("overlay_change",{opened,closed,current:now});
-    lastOverlays=now;
-  },300);
+  // Overlay tracking is interaction/lifecycle driven. Avoid another body-wide observer or polling loop.
 
   // Progress panel-specific diagnostics: useful for flashes/render replacement.
   document.addEventListener("click",e=>{
@@ -22050,15 +22149,17 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   }catch(_){}
 
   // Frame/jank monitor. Field-friendly sampling; record only stalls.
-  let lastFrame=performance.now(),frameWindow=[];
+  let lastFrame=performance.now(),frameWindow=[],frameClockSuspended=document.visibilityState!=="visible";
+  function resetFrameClock(){lastFrame=performance.now();frameWindow.length=0}
   function frameTick(now){
+    if(frameClockSuspended||document.visibilityState!=="visible"){lastFrame=now;requestAnimationFrame(frameTick);return}
     const delta=now-lastFrame;lastFrame=now;
     frameWindow.push(delta);if(frameWindow.length>120)frameWindow.shift();
     if(enabled&&delta>=100){
       counters.frameStall++;if(delta>=700)counters.frozenFrame++;
       record(delta>=700?"frozen_frame":"frame_stall",{
         frameGapMs:Math.round(delta),threshold:delta>=700?"frozen_700ms":"stall_100ms",
-        view:currentView(),overlays:visibleOverlays(),scrollY:Math.round(scrollY||0),
+        view:currentView(),overlays:cachedOverlays(),scrollY:Math.round(scrollY||0),
         memory:performance.memory?{used:performance.memory.usedJSHeapSize,total:performance.memory.totalJSHeapSize}:null
       });
     }
@@ -22097,9 +22198,15 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   window.addEventListener("orientationchange",()=>record("orientation_change",{orientation:screen.orientation?.type||null,angle:screen.orientation?.angle||null}));
   window.addEventListener("online",()=>record("network_state",{online:true}));
   window.addEventListener("offline",()=>record("network_state",{online:false}));
-  document.addEventListener("visibilitychange",()=>{record("visibility_change",{state:document.visibilityState});if(document.visibilityState==="hidden")persistLogNow()},{passive:true});
-  window.addEventListener("pagehide",()=>{record("pagehide",{});persistLogNow()},{passive:true});
-  window.addEventListener("pageshow",e=>record("pageshow",{persisted:!!e.persisted}),{passive:true});
+  document.addEventListener("visibilitychange",()=>{
+    const visible=document.visibilityState==="visible";
+    frameClockSuspended=!visible;
+    if(visible){resetFrameClock();refreshOverlayCache("visibility_resume")}
+    record("visibility_change",{state:document.visibilityState});
+    if(!visible)persistLogNow();
+  },{passive:true});
+  window.addEventListener("pagehide",()=>{frameClockSuspended=true;record("pagehide",{});persistLogNow()},{passive:true});
+  window.addEventListener("pageshow",e=>{frameClockSuspended=false;resetFrameClock();refreshOverlayCache("pageshow");record("pageshow",{persisted:!!e.persisted})},{passive:true});
 
   // Scroll sessions: catches scroll lock / jumpback.
   let scrollSession=null,scrollEndTimer=null;
@@ -22485,7 +22592,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
   // J3: aggregate DOM churn so telemetry cannot evict real user interactions.
   function flushMutations(){
     if(!mutationBurst.count)return;
-    const targets=[...mutationBurst.targets];
+    const targets=[...mutationBurst.targets].slice(0,24).map(el=>path(el));
     const filtered=targets.filter(p=>!/small#dtDebugHealth/.test(p||"")&&!/^section#workout$/.test(p||""));
     const meaningful=mutationBurst.count>=20||mutationBurst.added>=8||mutationBurst.removed>=8||mutationBurst.attrs>=12||filtered.length>0;
     if(meaningful){
@@ -22501,7 +22608,7 @@ window.DT_V36_PHASE6_FIX_VERSION="36.6-phase6-release-integrity";
         mutationBurst.added+=r.addedNodes?.length||0;
         mutationBurst.removed+=r.removedNodes?.length||0;
         if(r.type==="attributes")mutationBurst.attrs++;
-        if(r.target instanceof Element)mutationBurst.targets.add(path(r.target));
+        if(r.target instanceof Element&&mutationBurst.targets.size<24)mutationBurst.targets.add(r.target);
       });
       clearTimeout(mutationBurst.timer);
       mutationBurst.timer=setTimeout(flushMutations,2000);
@@ -26168,7 +26275,7 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
 <script id="dt-p27-history-derived-state-invalidation">
 (()=>{
   "use strict";
-  const VERSION="P27-history-derived-state-invalidation-1.0";
+  const VERSION="P27-history-derived-state-invalidation-1.1-p5-coalesced";
   const priorIntegrity=window.dtP26BackendIntegrity;
   let revision=0,lastSignature="";
   const clean=v=>String(v??"");
@@ -26221,18 +26328,32 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       if(active==="coach")window.dtRenderCoachDestination?.();
     }catch(_){}
   }
+  function verifyRevision(rev,sig){
+    if(rev!==revision||sig!==lastSignature)return;
+    /* P5 replaces the old unconditional microtask + timeout render replays with
+       a verification-only pass. If authoritative history changed again without
+       its owning mutation path invalidating it, reconcile that new signature;
+       otherwise do no DOM/render work. */
+    const current=signature();
+    if(current!==sig)invalidate("p27_trailing_history_change");
+  }
   function invalidate(reason="history_change",opts={}){
-    revision++;
-    lastSignature=signature();
-    /* Import/restore already owns a deterministic post-restore refresh phase.
-       Keep one authoritative derived-state pass here, but do not replay the same
-       Weekly/Recovery/Coach/Home render group in a microtask and timeout. History
-       edits keep the original trailing safety passes. */
+    const nextSignature=signature();
     const importBatch=reason==="p49_deterministic_import"||reason==="import_or_restore"||reason==="post_import_custom_identity_reconcile";
-    /* Training Body / Muscle Map has an explicit derived cache and node universe.
-       A Full Restore has already rebuilt the current runtime before P27 runs; do
-       not immediately rebuild the same tree twice. Other invalidations preserve
-       the original reset + rebuild behavior exactly. */
+    /* Multiple stable owners can converge on P27 for the same committed mutation
+       (for example the legacy History wrapper plus the committed P32 hook). Once
+       this exact authoritative signature has been consumed, do not create a new
+       revision or replay derived renderers. Import-class handshakes are still
+       consumed below when they are the first invalidation for a changed state. */
+    if(nextSignature===lastSignature){
+      if(importBatch&&window.__dtImportTrainingBodyRebuilt===true)window.__dtImportTrainingBodyRebuilt=false;
+      return {revision,signature:lastSignature,reason:"unchanged",coalesced:true};
+    }
+    revision++;
+    lastSignature=nextSignature;
+    /* Import/restore already owns a deterministic post-restore refresh phase.
+       P27 keeps one authoritative pass and preserves CLI-5C deferred Recovery.
+       Ordinary history changes also get exactly one authoritative render wave. */
     const importBodyAlreadyRebuilt=importBatch&&window.__dtImportTrainingBodyRebuilt===true;
     if(importBodyAlreadyRebuilt)window.__dtImportTrainingBodyRebuilt=false;
     else{
@@ -26240,12 +26361,10 @@ window.DT_V36_8_30_STREAK_DAY_CONSISTENCY={
       try{window.dtTBRebuildCurrentRuntime?.()}catch(_){}
     }
     renderAuthoritative({deferRecovery:importBatch});
-    if(!importBatch){
-      queueMicrotask(renderAuthoritative);
-      setTimeout(renderAuthoritative,0);
-    }
-    try{window.dtDebugRecorder?.record?.("derived_state_invalidated",{reason,revision,signature:lastSignature})}catch(_){}
-    return {revision,signature:lastSignature,reason};
+    const rev=revision,sig=lastSignature;
+    queueMicrotask(()=>verifyRevision(rev,sig));
+    try{window.dtDebugRecorder?.record?.("derived_state_invalidated",{reason,revision,signature:lastSignature,coalesced:true})}catch(_){}
+    return {revision,signature:lastSignature,reason,coalesced:true};
   }
   window.dtInvalidateHistoryDerivedState=invalidate;
   window.dtP27HistoryRevision=()=>revision;
@@ -30054,6 +30173,221 @@ html[data-dt-theme="light"] .dt-rem-notnow{background:#eef3f5!important;color:#5
 html[data-dt-theme="light"] .dt-rem-enable{background:#dff5e9!important;color:#137747!important;border-color:#86c9a7!important}
 html[data-dt-theme="light"] meta[name="theme-color"]{color:#f3f6f8}
 </style>
+
+<style id="dt-cli5d-light-theme-ui-bridge">
+/* CLI-5D — light-theme presentation bridge only.
+   No feature, event, state, persistence, renderer, workout, Coach or backend ownership changes. */
+html[data-dt-theme="light"]{
+  --dt-lt-sheet:#ffffff;
+  --dt-lt-soft:#f6f9fa;
+  --dt-lt-soft-2:#eef3f5;
+  --dt-lt-line:#d3dee4;
+  --dt-lt-line-strong:#bdccd4;
+  --dt-lt-ink:#15242d;
+  --dt-lt-muted:#687b86;
+  --dt-lt-green:#168b55;
+  --dt-lt-green-soft:#e3f5eb;
+  --dt-lt-blue-soft:#e8f2fa;
+  --dt-lt-danger:#a64754;
+  --dt-lt-danger-soft:#fff0f2;
+}
+
+/* Temporary/configuration surfaces follow the selected light theme.
+   Dense performance/workout visualizations are deliberately excluded. */
+html[data-dt-theme="light"] :is(
+  #dtDeveloperModal,
+  #dtTrainingScheduleModal,
+  #dtGoalsModal,
+  #dtV10MoreModal,
+  #dtSplitModal,
+  #dtHistoryDayModal,
+  #dtWorkoutResetModal,
+  #dtDemoDataModal,
+  #dtV35RenameWorkoutModal
+){
+  background:rgba(43,58,68,.28)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(108%)!important;
+  backdrop-filter:blur(10px) saturate(108%)!important;
+}
+
+html[data-dt-theme="light"] :is(
+  #dtDeveloperModal .dt-dev-sheet,
+  #dtTrainingScheduleModal .dt-sched-sheet,
+  #dtGoalsModal .dt-g-sheet,
+  #dtV10MoreModal .dt-more-sheet,
+  #dtSplitModal .dt-split-sheet,
+  #dtHistoryDayModal .dt-history-day-sheet,
+  #dtWorkoutResetModal .dt-data-sheet,
+  #dtDemoDataModal .dt-data-sheet,
+  #dtV35RenameWorkoutModal .dt-v35-rename-sheet
+){
+  background:linear-gradient(180deg,#ffffff,#f7fafb)!important;
+  border-color:var(--dt-lt-line)!important;
+  color:var(--dt-lt-ink)!important;
+  box-shadow:0 -18px 48px rgba(26,48,61,.14),0 0 0 1px rgba(255,255,255,.70)!important;
+}
+
+/* Developer Options */
+html[data-dt-theme="light"] .dt-dev-head h2,
+html[data-dt-theme="light"] .dt-dev-tools-title>b,
+html[data-dt-theme="light"] .dt-debug-action-copy b,
+html[data-dt-theme="light"] .dt-debug-setting b,
+html[data-dt-theme="light"] .dt-dev-capacity b{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-dev-head p,
+html[data-dt-theme="light"] .dt-dev-tools-title>small,
+html[data-dt-theme="light"] .dt-debug-action-copy small,
+html[data-dt-theme="light"] .dt-debug-setting small,
+html[data-dt-theme="light"] .dt-dev-capacity small{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-dev-tools-title{border-top-color:#e0e7eb!important}
+html[data-dt-theme="light"] .dt-dev-close{
+  background:var(--dt-lt-soft-2)!important;color:#52656f!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] .dt-dev-capacity select{
+  background:#fff!important;color:var(--dt-lt-ink)!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] .dt-debug-action-btn{
+  background:#f8fafb!important;color:#435761!important;border-color:#cad7dd!important;
+  box-shadow:none!important
+}
+html[data-dt-theme="light"] .dt-debug-action-btn.danger{
+  background:var(--dt-lt-danger-soft)!important;color:var(--dt-lt-danger)!important;border-color:#efc6cc!important
+}
+
+/* Training Schedule */
+html[data-dt-theme="light"] .dt-sched-title{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-sched-sub,
+html[data-dt-theme="light"] .dt-sched-note{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-sched-close{
+  background:var(--dt-lt-soft-2)!important;color:#52656f!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] .dt-sched-day{
+  background:var(--dt-lt-soft)!important;border-color:#dce5e9!important
+}
+html[data-dt-theme="light"] .dt-sched-day.today{
+  border-color:#88c8a8!important;box-shadow:inset 0 0 0 1px rgba(45,163,100,.06)!important
+}
+html[data-dt-theme="light"] .dt-sched-day .dow{color:#33464f!important}
+html[data-dt-theme="light"] .dt-sched-select{
+  background:#fff!important;color:#1c2b33!important;border-color:#c9d6dc!important
+}
+html[data-dt-theme="light"] .dt-sched-chip{
+  background:#edf3f5!important;color:#667a85!important;border-color:#d0dde2!important
+}
+html[data-dt-theme="light"] .dt-sched-chip.train{
+  background:var(--dt-lt-green-soft)!important;color:#167c4d!important;border-color:#9ed4b7!important
+}
+html[data-dt-theme="light"] .dt-sched-auto{
+  background:var(--dt-lt-blue-soft)!important;color:#2d6e9b!important;border-color:#bad4e6!important
+}
+html[data-dt-theme="light"] .dt-sched-save{
+  background:var(--dt-lt-green-soft)!important;color:#147b4a!important;border-color:#91cfaf!important
+}
+
+/* Progress Goals */
+html[data-dt-theme="light"] .dt-g-title{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-g-sub,
+html[data-dt-theme="light"] .dt-g-note,
+html[data-dt-theme="light"] .dt-g-progress-top{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-g-close{
+  background:var(--dt-lt-soft-2)!important;color:#52656f!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] .dt-g-card{
+  background:var(--dt-lt-soft)!important;border-color:#dce5e9!important
+}
+html[data-dt-theme="light"] .dt-g-label{color:#6b7f89!important}
+html[data-dt-theme="light"] .dt-g-copy b{color:#263841!important}
+html[data-dt-theme="light"] .dt-g-copy small{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] :is(.dt-g-input,.dt-g-select){
+  background:#fff!important;color:#1c2b33!important;border-color:#c9d6dc!important
+}
+html[data-dt-theme="light"] .dt-g-track{background:#dfe8ec!important}
+html[data-dt-theme="light"] .dt-g-save{
+  background:var(--dt-lt-green-soft)!important;color:#147b4a!important;border-color:#91cfaf!important
+}
+
+/* More / secondary navigation sheet */
+html[data-dt-theme="light"] .dt-more-head b{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-more-close{
+  background:var(--dt-lt-soft-2)!important;color:#52656f!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] .dt-more-item{
+  background:var(--dt-lt-soft)!important;border-color:#d9e3e7!important
+}
+html[data-dt-theme="light"] .dt-more-item b{color:#2b3d46!important}
+html[data-dt-theme="light"] .dt-more-item small{color:var(--dt-lt-muted)!important}
+
+/* Add/Rename Split configuration */
+html[data-dt-theme="light"] .dt-split-title{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] :is(.dt-split-sub,.dt-split-field){color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] #dtSplitName{
+  background:#fff!important;color:var(--dt-lt-ink)!important;border-color:#c9d6dc!important
+}
+html[data-dt-theme="light"] .dt-split-actions button{
+  background:#f3f7f8!important;color:#465b65!important;border-color:#cbd8de!important
+}
+html[data-dt-theme="light"] #dtCreateSplit{
+  background:var(--dt-lt-green-soft)!important;color:#147b4a!important;border-color:#91cfaf!important
+}
+html[data-dt-theme="light"] .dt-program-frequency-note{
+  background:#f1f6f8!important;color:#607681!important;border-color:#d8e3e8!important
+}
+
+/* History day details */
+html[data-dt-theme="light"] .dt-hd-date{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-hd-close{
+  background:var(--dt-lt-soft-2)!important;color:#52656f!important;border-color:var(--dt-lt-line-strong)!important
+}
+html[data-dt-theme="light"] :is(.dt-hd-empty,.dt-hd-session){
+  background:var(--dt-lt-soft)!important;border-color:#d9e3e7!important
+}
+html[data-dt-theme="light"] :is(.dt-hd-empty b,.dt-hd-session-title b){color:#2a3c45!important}
+html[data-dt-theme="light"] :is(.dt-hd-empty span,.dt-hd-session-title small,.dt-hd-ex span){color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-hd-exercises{border-top-color:#dde6ea!important}
+html[data-dt-theme="light"] .dt-hd-ex b{color:#40545e!important}
+
+/* Reset/demo confirmation sheets */
+html[data-dt-theme="light"] .dt-data-title{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-data-copy{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-data-cancel{
+  background:#f2f6f8!important;color:#536873!important;border-color:#cbd8de!important
+}
+html[data-dt-theme="light"] .dt-data-demo{
+  background:var(--dt-lt-green-soft)!important;color:#147b4a!important;border-color:#91cfaf!important
+}
+html[data-dt-theme="light"] .dt-data-confirm{
+  background:var(--dt-lt-danger-soft)!important;color:var(--dt-lt-danger)!important;border-color:#efc6cc!important
+}
+
+/* Rename workout sheet */
+html[data-dt-theme="light"] .dt-v35-rename-title{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-v35-rename-copy,
+html[data-dt-theme="light"] .dt-v35-rename-count{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-v35-rename-input{
+  background:#fff!important;color:var(--dt-lt-ink)!important;border-color:#c9d6dc!important
+}
+html[data-dt-theme="light"] .dt-v35-rename-cancel{
+  background:#f2f6f8!important;color:#536873!important;border-color:#cbd8de!important
+}
+
+/* Split delete confirmation is a separate prompt, not an *Modal element. */
+html[data-dt-theme="light"] .dt-split-delete-backdrop{
+  background:rgba(43,58,68,.28)!important
+}
+html[data-dt-theme="light"] .dt-split-delete-card{
+  background:linear-gradient(180deg,#ffffff,#f7fafb)!important;
+  border-color:var(--dt-lt-line)!important;color:var(--dt-lt-ink)!important;
+  box-shadow:0 20px 58px rgba(26,48,61,.16)!important
+}
+html[data-dt-theme="light"] .dt-split-delete-card h3{color:var(--dt-lt-ink)!important}
+html[data-dt-theme="light"] .dt-split-delete-card p{color:var(--dt-lt-muted)!important}
+html[data-dt-theme="light"] .dt-split-delete-cancel{
+  background:#f2f6f8!important;color:#536873!important;border-color:#cbd8de!important
+}
+html[data-dt-theme="light"] .dt-split-delete-confirm{
+  background:var(--dt-lt-danger-soft)!important;color:var(--dt-lt-danger)!important;border-color:#efc6cc!important
+}
+</style>
+
 <script id="dt-cli5b-theme-preference-v1">
 (()=>{
   "use strict";
