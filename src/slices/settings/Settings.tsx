@@ -10,6 +10,7 @@ import { showToast } from '@/app/toast';
 import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable, readHealth } from '@/native/health';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
+import { Logo } from '@/ui/Logo';
 
 export const APP_VERSION = '37.0.0';
 
@@ -108,7 +109,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
           </Card>
         </Section>
-        <p class="hint" style={{ textAlign: 'center' }}>M/ARC {APP_VERSION}</p>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><span class="hint">Version {APP_VERSION}</span></div>
       </div>
     </Sheet>
   );

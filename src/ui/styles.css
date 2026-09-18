@@ -141,6 +141,10 @@ svg { display: block; }
 .rest .clock { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; min-width: 72px; }
 .rest.done { border-color: var(--positive); }
 
+/* Logo */
+.logo { display: inline-flex; line-height: 0; }
+.logo svg { display: block; height: 100%; width: auto; }
+
 /* Muscle map (body-muscles figure, viewBox units are tiny so strokes are fractional) */
 .map-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .map-wrap.compact { gap: 2px; }

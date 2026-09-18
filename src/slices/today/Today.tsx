@@ -12,6 +12,7 @@ import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { startSession } from '../workout/session';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
+import { LogoMark } from '@/ui/Logo';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -38,7 +39,7 @@ export function Today() {
     <div class="view">
       <div class="topbar">
         <div>
-          <div class="eyebrow">{formatDay(today.value, { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+          <div class="row" style={{ gap: 8, marginBottom: 6 }}><LogoMark size={22} /><span class="eyebrow">{formatDay(today.value, { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
           <h1>{greeting()}{s.profile.name ? `, ${s.profile.name}` : ''}</h1>
         </div>
         <div class="row">
