@@ -141,16 +141,17 @@ svg { display: block; }
 .rest .clock { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; min-width: 72px; }
 .rest.done { border-color: var(--positive); }
 
-/* Muscle map */
+/* Muscle map (body-muscles figure, viewBox units are tiny so strokes are fractional) */
 .map-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.map-wrap svg { width: 100%; height: auto; }
+.map-wrap.compact { gap: 2px; }
+.body-map { width: 100%; height: auto; max-height: 62vh; margin: 0 auto; }
 .map-label { text-align: center; font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
-.body-silhouette { fill: var(--map-body); stroke: var(--map-line); stroke-width: 1; }
-.body-head { fill: var(--map-body); stroke: var(--map-line); stroke-width: 1; }
-.muscle { fill: var(--muscle-fill, transparent); stroke: var(--map-line); stroke-width: .6; transition: fill 400ms ease; cursor: pointer; }
-.muscle.selected { stroke: var(--text); stroke-width: 1.4; }
+.body-part { fill: var(--map-body); stroke: var(--map-line); stroke-width: .12; stroke-linejoin: round; }
+.muscle { fill: var(--map-body); stroke: var(--map-line); stroke-width: .12; stroke-linejoin: round; transition: fill 400ms ease; cursor: pointer; }
+.muscle.lit { fill: var(--muscle-fill); stroke: color-mix(in srgb, var(--text) 35%, transparent); }
+.muscle.selected { stroke: var(--text); stroke-width: .3; }
 .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--text-2); }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--map-line); }
 
 /* Calendar */
 .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
