@@ -41,6 +41,7 @@ export function normalizeName(s: string): string {
   return s
     .toLowerCase()
     .replace(/dumbell/g, 'dumbbell')
+    .replace(/\bdbs?\b/g, 'dumbbell')
     .replace(/\btricep\b/g, 'triceps')
     .replace(/\bbicep\b/g, 'biceps')
     .replace(/pull ?down/g, 'pulldown')
@@ -56,7 +57,9 @@ export function findExercise(idOrName: string, custom: Exercise[] = []): Exercis
   const q = normalizeName(idOrName);
   if (!q) return undefined;
   const all = [...custom, ...LIBRARY];
-  return all.find(e => normalizeName(e.name) === q || e.aliases.some(a => normalizeName(a) === q))
+  const singular = q.replace(/s\b/g, '');
+  const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
+  return all.find(e => same(e.name) || e.aliases.some(same))
     ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
 }
 

@@ -9,6 +9,7 @@ import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable, readHealth } from '@/native/health';
+import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 
 export const APP_VERSION = '37.0.0';
 
@@ -28,6 +29,14 @@ export function Settings({ onClose }: { onClose: () => void }) {
     if (!text) return;
     try {
       const parsed = JSON.parse(text) as { state?: AppState } | AppState;
+      const legacy = asLegacyRoot(parsed);
+      if (legacy) {
+        // A backup from the previous version of the app: convert it on the way in.
+        const converted = convertLegacy(legacy);
+        replaceState(converted);
+        showToast(`Imported ${converted.sessions.length} sessions from the old backup`);
+        return;
+      }
       const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
       if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
       replaceState({ ...next, health: { connected: false } });

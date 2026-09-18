@@ -13,8 +13,8 @@ import { isMuscleId, type MuscleId } from '@/data/muscles';
 export const LEGACY_KEY = 'dailyTrackerPremium';
 
 interface LegacySet { kg?: unknown; reps?: unknown; effort?: unknown; durationSec?: unknown; distanceM?: unknown }
-interface LegacyCompleted { id?: string; day?: string; dayKey?: string; exerciseKey?: string; name?: string; type?: string; muscle?: string; sets?: LegacySet[]; finalizedAt?: string; splitName?: string }
-interface LegacySession { day?: string; date?: string; splitName?: string; workoutName?: string; snapshot?: Array<{ exerciseKey?: string; name?: string; type?: string; muscle?: string; sets?: LegacySet[] }> }
+interface LegacyCompleted { id?: string; day?: string; dayKey?: string; exerciseKey?: string; name?: string; type?: string; muscle?: string; sets?: LegacySet[]; finalizedAt?: string; splitName?: string; source?: string }
+interface LegacySession { day?: string; date?: string; summaryId?: string; splitName?: string; workoutName?: string; snapshot?: Array<{ exerciseKey?: string; name?: string; type?: string; muscle?: string; sets?: LegacySet[] }> }
 interface LegacyTimed { day?: string; dayKey?: string; startedAt?: string; endedAt?: string; durationMs?: number }
 interface LegacyCustomExercise { id?: string; name?: string; type?: string; muscle?: string; sets?: number; libraryId?: string; primaryMuscles?: string[]; secondaryMuscles?: string[]; source?: string }
 interface LegacySplit { key?: string; name?: string; color?: string; createdAt?: string; focusMuscles?: string[] }
@@ -28,9 +28,13 @@ interface LegacyRoot {
     custom?: Record<string, LegacyCustomExercise[]>;
     dayNames?: Record<string, string>;
     hiddenBaseSplits?: string[];
+    hidden?: Record<string, string[]>;
+    removed?: Record<string, string[]>;
+    activityOrder?: Record<string, string[]>;
     trainingProgram?: string;
     restDefaultSec?: number;
     autoRest?: boolean;
+    sessionSettings?: { restDefaultSec?: number; autoRest?: boolean };
   };
   trainingSchedule?: { days?: Record<string, string | null> };
   notifications?: { trainingEnabled?: boolean; trainingTime?: string; trainingStyle?: string };
@@ -63,12 +67,23 @@ function toSet(s: LegacySet): LoggedSet | null {
   return out.reps || out.durationSec || out.distanceM ? out : null;
 }
 
+/**
+ * Recognise the previous app's data in any of the shapes it was saved in:
+ * the raw storage root, or a "Full Backup" file that wraps it under `state`.
+ */
+export function asLegacyRoot(parsed: unknown): LegacyRoot | null {
+  if (!parsed || typeof parsed !== 'object') return null;
+  const o = parsed as { workouts?: unknown; state?: unknown };
+  if (o.workouts && typeof o.workouts === 'object') return o as LegacyRoot;
+  if (o.state && typeof o.state === 'object' && (o.state as { workouts?: unknown }).workouts) return o.state as LegacyRoot;
+  return null;
+}
+
 export function readLegacy(storage: Pick<Storage, 'getItem'> = localStorage): LegacyRoot | null {
   try {
     const raw = storage.getItem(LEGACY_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    return parsed && typeof parsed === 'object' ? (parsed as LegacyRoot) : null;
+    return asLegacyRoot(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -81,15 +96,21 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   const customExercises: Exercise[] = [];
   const customByName = new Map<string, Exercise>();
 
-  const resolveExercise = (name: string | undefined, type?: string, muscle?: string): { id: string; name: string } => {
+  // Old custom entries carry the library id they were created from.
+  const libraryIdByCustomKey = new Map<string, string>();
+  for (const list of Object.values(w.custom ?? {})) for (const c of list) {
+    if (c.id && c.libraryId && findExercise(c.libraryId)) libraryIdByCustomKey.set(`custom:${c.id}`, c.libraryId);
+  }
+  const resolveExercise = (name: string | undefined, type?: string, muscle?: string, key?: string): { id: string; name: string } => {
     const label = (name ?? '').trim() || 'Exercise';
-    const found = findExercise(label, customExercises);
+    const byKey = key ? findExercise(libraryIdByCustomKey.get(key) ?? key) : undefined;
+    const found = byKey ?? findExercise(label, customExercises);
     if (found) return { id: found.id, name: found.name };
-    const key = label.toLowerCase();
-    let custom = customByName.get(key);
+    const nameKey = label.toLowerCase();
+    let custom = customByName.get(nameKey);
     if (!custom) {
-      custom = makeCustomExercise({ id: `custom_${customExercises.length + 1}_${key.replace(/[^a-z0-9]+/g, '_').slice(0, 24)}`, name: label, equipment: type ?? 'Other', primary: muscle ? [muscle] : [] });
-      customByName.set(key, custom);
+      custom = makeCustomExercise({ id: `custom_${customExercises.length + 1}_${nameKey.replace(/[^a-z0-9]+/g, '_').slice(0, 24)}`, name: label, equipment: type ?? 'Other', primary: muscle ? [muscle] : [] });
+      customByName.set(nameKey, custom);
       customExercises.push(custom);
     }
     return { id: custom.id, name: custom.name };
@@ -123,25 +144,33 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
     if (!b) { b = { day, splitKey, exercises: [], times: [] }; buckets.set(k, b); }
     return b;
   };
+  // Backfilled copies of session snapshots duplicate real completions, often on the neighbouring UTC day.
+  const sig = (rec: LegacyCompleted) => `${(rec.name ?? '').toLowerCase()}|${JSON.stringify((rec.sets ?? []).map(x => [num(x.kg), num(x.reps)]))}`;
+  const realRows = (w.completedExercises ?? []).filter(r => r.source !== 'session-snapshot-backfill');
+  const isDuplicateBackfill = (rec: LegacyCompleted): boolean => {
+    if (rec.source !== 'session-snapshot-backfill') return false;
+    const t = new Date(rec.finalizedAt ?? `${rec.dayKey}T12:00:00`).getTime();
+    return realRows.some(r => sig(r) === sig(rec) && Math.abs(new Date(r.finalizedAt ?? `${r.dayKey}T12:00:00`).getTime() - t) < 36 * 3_600_000);
+  };
   for (const rec of w.completedExercises ?? []) {
-    if (!rec.dayKey || (rec.id ?? '').startsWith('demo|')) continue;
+    if (!rec.dayKey || (rec.id ?? '').startsWith('demo|') || isDuplicateBackfill(rec)) continue;
     const sets = (rec.sets ?? []).map(toSet).filter((s): s is LoggedSet => s != null);
     if (!sets.length) continue;
     const b = bucketFor(rec.dayKey, rec.day ?? 'push');
-    const ex = resolveExercise(rec.name, rec.type, rec.muscle);
+    const ex = resolveExercise(rec.name, rec.type, rec.muscle, rec.exerciseKey);
     b.exercises.push({ exerciseId: ex.id, name: ex.name, sets });
     if (rec.finalizedAt) b.times.push(new Date(rec.finalizedAt).getTime());
   }
   for (const s of w.sessions ?? []) {
     if (!s.date) continue;
-    const day = dayKey(s.date);
+    const day = s.summaryId?.split('|')[0] || dayKey(s.date);
     const splitKey = s.day ?? 'push';
     if (buckets.has(`${day}|${splitKey}`)) continue;
     const exercises: LoggedExercise[] = [];
     for (const snap of s.snapshot ?? []) {
       const sets = (snap.sets ?? []).map(toSet).filter((x): x is LoggedSet => x != null);
       if (!sets.length) continue;
-      const ex = resolveExercise(snap.name, snap.type, snap.muscle);
+      const ex = resolveExercise(snap.name, snap.type, snap.muscle, snap.exerciseKey);
       exercises.push({ exerciseId: ex.id, name: ex.name, sets });
     }
     if (!exercises.length) continue;
@@ -174,11 +203,18 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
     const key = [...splitIdByKey.entries()].find(([, id]) => id === split.id)?.[0] ?? '';
     const seen = new Set<string>();
     const push = (id: string, sets: number) => { if (!seen.has(id)) { seen.add(id); split.exercises.push({ exerciseId: id, sets: Math.max(1, Math.min(10, sets)) }); } };
-    const latest = [...sessions].reverse().find(s => s.splitId === split.id);
-    for (const ex of latest?.exercises ?? []) push(ex.exerciseId, ex.sets.length || 3);
+    const dropped = new Set([...(w.hidden?.[key] ?? []), ...(w.removed?.[key] ?? [])].map(k => k.toLowerCase()));
+    const isDropped = (id: string, name: string, type?: string) => dropped.has(id.toLowerCase()) || dropped.has(`${name}|${type ?? ''}`.toLowerCase());
     for (const c of w.custom?.[key] ?? []) {
-      const ex = resolveExercise(c.name, c.type, c.muscle);
-      push(ex.id, c.sets ?? 3);
+      const ex = resolveExercise(c.name, c.type, c.muscle, c.libraryId ?? (c.id ? `custom:${c.id}` : undefined));
+      if (!isDropped(ex.id, ex.name, c.type)) push(ex.id, c.sets ?? 3);
+    }
+    const latest = [...sessions].reverse().find(s => s.splitId === split.id);
+    for (const ex of latest?.exercises ?? []) if (!isDropped(ex.exerciseId, ex.name)) push(ex.exerciseId, ex.sets.length || 3);
+    const order = (w.activityOrder?.[key] ?? []).map(k => k.toLowerCase());
+    if (order.length) {
+      const rank = (id: string) => { const ex = findExercise(id, customExercises); const i = order.findIndex(k => k === id.toLowerCase() || (ex && k.startsWith(`${ex.name.toLowerCase()}|`))); return i < 0 ? 999 : i; };
+      split.exercises.sort((a, b) => rank(a.exerciseId) - rank(b.exerciseId));
     }
   }
 
@@ -189,8 +225,10 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   }
   if (isGoalId(w.trainingProgram)) state.goal = w.trainingProgram;
   if (legacy.preferences?.units?.weight === 'lb') state.preferences.weightUnit = 'lb';
-  if (typeof w.restDefaultSec === 'number' && w.restDefaultSec >= 15) state.preferences.restDefaultSec = w.restDefaultSec;
-  if (typeof w.autoRest === 'boolean') state.preferences.autoRest = w.autoRest;
+  const rest = w.sessionSettings?.restDefaultSec ?? w.restDefaultSec;
+  if (typeof rest === 'number' && rest >= 15 && rest <= 600) state.preferences.restDefaultSec = rest;
+  const autoRest = w.sessionSettings?.autoRest ?? w.autoRest;
+  if (typeof autoRest === 'boolean') state.preferences.autoRest = autoRest;
   const n = legacy.notifications;
   if (n) {
     state.preferences.reminders = {
