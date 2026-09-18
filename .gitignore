@@ -1,6 +1,7 @@
 node_modules/
 android/
 dist/
+www/
 *.jks
 *.keystore
 *.apk
@@ -9,3 +10,4 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+screenshots/

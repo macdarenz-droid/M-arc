@@ -1,12 +1,12 @@
 {
-  "name": "M/ARC Daily Tracker",
+  "name": "M/ARC",
   "short_name": "M/ARC",
   "description": "Local-first workout, progress and daily tracking.",
-  "start_url": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#071018",
-  "theme_color": "#071018",
+  "background_color": "#08090a",
+  "theme_color": "#08090a",
   "orientation": "portrait-primary",
   "icons": [
     {

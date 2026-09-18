@@ -34,8 +34,8 @@ jobs:
           set -euo pipefail
           VERSION_NAME="${INPUT_NAME:-}"
           VERSION_CODE="${INPUT_CODE:-}"
-          [ -n "$VERSION_NAME" ] || VERSION_NAME="36.8.25.${GITHUB_RUN_NUMBER}"
-          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((36825000 + GITHUB_RUN_NUMBER))"
+          [ -n "$VERSION_NAME" ] || VERSION_NAME="37.0.0.${GITHUB_RUN_NUMBER}"
+          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((37000000 + GITHUB_RUN_NUMBER))"
           [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid versionCode'; exit 1; }
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
@@ -66,7 +66,13 @@ jobs:
           done
           [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
 
-      - name: Validate current source
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Typecheck, test and build the web app
+        run: npm run check
+
+      - name: Validate built web source
         shell: bash
         run: |
           set -euo pipefail
@@ -75,14 +81,13 @@ jobs:
           import hashlib
           data=Path('www/index.html').read_bytes()
           if not data: raise SystemExit('www/index.html is empty')
-          print('Current source SHA256:', hashlib.sha256(data).hexdigest())
+          print('Built source SHA256:', hashlib.sha256(data).hexdigest())
           PY2
 
-      - name: Install dependencies and generate Android
+      - name: Generate Android project
         shell: bash
         run: |
           set -euo pipefail
-          npm install
           rm -rf android
           npx cap add android
           python3 - <<'PY'
