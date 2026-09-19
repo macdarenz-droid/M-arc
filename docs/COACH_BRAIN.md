@@ -219,7 +219,9 @@ the cases a single history cannot.
    in total per day. It calls Haiku 4.5 through the official SDK with a
    cached fixed system prompt and a JSON schema for the reply. Deploy
    steps are in `proxy/README.md`. A live test runs only when
-   `ANTHROPIC_API_KEY` is present in the environment.
+   `ANTHROPIC_API_KEY` or `MARC_ANTHROPIC_KEY` is present in the
+   environment; cloud sessions reserve the former name, so deploys from
+   them use the latter (see `proxy/README.md`).
 4. Backtest harness and calibration on the user's history.
 
 ## Decisions log

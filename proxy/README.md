@@ -24,6 +24,26 @@ first call.
 
 Check it is alive: open `<url>/health` in a browser.
 
+## Deploying from a Claude Code cloud session
+
+Cloud sessions can deploy this Worker when the environment allows
+`api.cloudflare.com` and defines `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID`. One catch: Claude Code reserves the variable name
+`ANTHROPIC_API_KEY` for its own login and never passes it into sessions, so
+store the key under another name, `MARC_ANTHROPIC_KEY`, and set the secret
+from it without ever printing the value:
+
+```sh
+cd proxy
+npx wrangler@4 deploy
+printenv MARC_ANTHROPIC_KEY | npx wrangler@4 secret put ANTHROPIC_API_KEY
+MARC_ANTHROPIC_KEY="$MARC_ANTHROPIC_KEY" npm test        # runs the live test
+curl -sS https://marc-coach.<subdomain>.workers.dev/health
+```
+
+Environment variables reach a session only when it starts, so edit the
+environment first, then start the session.
+
 ## Optional: daily quotas
 
 Per-device bursts are limited to six requests a minute out of the box.

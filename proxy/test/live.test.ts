@@ -7,7 +7,8 @@ import { describe, it, expect } from 'vitest';
 import { callAnthropic } from '../src/anthropic';
 import type { ExplainPayload } from '../src/types';
 
-const key = process.env.ANTHROPIC_API_KEY;
+// Claude Code cloud sessions reserve the name ANTHROPIC_API_KEY, so a differently named variable is accepted too.
+const key = process.env.ANTHROPIC_API_KEY || process.env.MARC_ANTHROPIC_KEY;
 const live = key ? describe : describe.skip;
 
 const payload: ExplainPayload = {
