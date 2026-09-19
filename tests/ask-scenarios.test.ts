@@ -1,7 +1,7 @@
 /**
- * 30 realistic questions across the categories a person actually asks a
+ * 34 realistic questions across the categories a person actually asks a
  * gym coach — general knowledge, injury/pain, split-building, personal
- * progress, out-of-scope, and mixed personal+general. This is honest
+ * progress, app navigation, out-of-scope, and mixed personal+general. This is honest
  * about what it can and cannot prove: there is no Anthropic API key in
  * this environment, so nothing here calls the real model or grades its
  * wording — that needs a live run of proxy/src/anthropic.ts's callAsk
@@ -170,6 +170,26 @@ describe('personal progress and comparison (6): needs real logged history', () =
     if (!withProposal) return; // nothing proposed this run — the assertion below still holds vacuously
     const payload = buildAskPayload(sink.report, [], 'Why did you suggest that?', { goal: 'strength', unit: 'kg' });
     expect(payload.proposals.some(p => p.id === withProposal.id)).toBe(true);
+  });
+});
+
+describe('app navigation and usage (4): "how do I..." questions about the app itself, not fitness', () => {
+  it('"how do I see my recovery per muscle" points at the real screen, not a guess', () => {
+    expect(PROMPT_SOURCE).toContain('or how to use this app itself');
+    expect(PROMPT_SOURCE).toContain('Body (bottom tab): "Recovery"');
+  });
+
+  it('"how do I see my workout history" points at the real screen', () => {
+    expect(PROMPT_SOURCE).toContain('History (bottom tab): a "Log"/"Stats" switch');
+  });
+
+  it('"can I add a split while I\'m in the middle of a workout": the app map says plainly no, rather than inventing a way', () => {
+    expect(PROMPT_SOURCE).toContain('You cannot create a new split from inside a live session');
+    expect(PROMPT_SOURCE).toContain("never guess a screen name or describe a button that isn't listed there");
+  });
+
+  it('"where do I see my PRs" — the app map names the one real place, not a screen that does not exist', () => {
+    expect(PROMPT_SOURCE).toContain("that's the one place personal records (PRs) are listed");
   });
 });
 

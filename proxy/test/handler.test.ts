@@ -385,6 +385,11 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Never endorse or recommend a specific commercial brand or product');
     expect(ASK_SYSTEM_PROMPT).toContain("you don't build plans in chat");
     expect(ASK_SYSTEM_PROMPT).toContain('give the general context in words rather than a precise outside figure');
+    expect(ASK_SYSTEM_PROMPT).toContain('or how to use this app itself');
+    expect(ASK_SYSTEM_PROMPT).toContain('never guess a screen name or describe a button that isn\'t listed there');
+    expect(ASK_SYSTEM_PROMPT).toContain('You cannot create a new split from inside a live session');
+    expect(ASK_SYSTEM_PROMPT).toContain('that\'s the one place personal records (PRs) are listed');
+    expect(ASK_SYSTEM_PROMPT).toContain('Settings has no tab of its own, only that gear');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
