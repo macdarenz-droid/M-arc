@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildPayload, allowedNumbers, validateText, extractNumbers, explanationKey, readCache, getCached, putCached, fetchExplanation, endpoint, newDeviceId, CACHE_SIZE, LIMITS, type ExplainPayload } from '@/brain/coach/explainer';
+import { buildPayload, allowedNumbers, validateText, extractNumbers, explanationKey, readCache, getCached, putCached, fetchExplanation, endpoint, newDeviceId, CACHE_SIZE, LIMITS, MAX_FINDINGS_PER_KIND, trimFindingsAndProposals, type ExplainPayload } from '@/brain/coach/explainer';
 import { PREFERENCE_FACTS_MAX } from '@/brain/coach/preferences';
 import { buildReport } from '@/brain/coach/report';
+import type { Finding, FindingsReport } from '@/brain/coach/contract';
 import { session } from './helpers';
 import { ctx, pplHistory, std, LAST_MONDAY, PUSH_EX, PUSH_ID } from './coach-helpers';
 
@@ -43,6 +44,28 @@ describe('payload', () => {
     const p = buildPayload(r, { goal: 'strength', unit: 'kg', preferenceFacts: many });
     expect(p.preferences).toHaveLength(PREFERENCE_FACTS_MAX);
     expect(p.preferences).toEqual(many.slice(0, PREFERENCE_FACTS_MAX));
+  });
+
+  it('a kind that fires once per muscle never crowds every other kind out of the payload (a heavy day flags most muscles under_recovered, but every record that day must still survive)', () => {
+    const bare = (over: Partial<Finding>): Finding => ({
+      id: 'x', kind: 'under_recovered', subject: {}, metrics: {}, window: { from: '2026-09-20', to: '2026-09-20' },
+      confidence: 'medium', severity: 2, evidence: { sessionIds: [], days: [] }, principles: ['recovery_time_course'], ...over,
+    });
+    const underRecovered = Array.from({ length: 20 }, (_, i) => bare({ id: `under_recovered:m${i}`, subject: { muscle: `m${i}` as never } }));
+    const records = ['lib_assisted_pull_up', 'lib_incline_machine_press', 'lib_overhead_cable_triceps_extension', 'lib_seated_cable_row'].map(exerciseId =>
+      bare({ id: `record:${exerciseId}:week`, kind: 'record', subject: { exerciseId }, severity: 0, confidence: 'high', principles: ['one_rm_estimation'] }));
+    const report: FindingsReport = {
+      version: 1, generatedAt: '2026-09-20T12:00:00.000Z', today: '2026-09-20',
+      dataQuality: { sessions: 12, weeksOfData: 5, effortCoverage: 0.9, insufficientData: false },
+      findings: [...underRecovered, ...records], // already sorted severity desc, as buildReport produces
+      proposals: [],
+    };
+    const { findings } = trimFindingsAndProposals(report);
+    const byKind = new Map<string, number>();
+    for (const f of findings) byKind.set(f.kind, (byKind.get(f.kind) ?? 0) + 1);
+    expect(byKind.get('under_recovered')).toBe(MAX_FINDINGS_PER_KIND);
+    expect(byKind.get('record')).toBe(records.length); // every record that day reaches the payload, not just one
+    expect(findings.length).toBeLessThanOrEqual(LIMITS.findings);
   });
 });
 

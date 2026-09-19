@@ -35,10 +35,20 @@ export interface ExplainPayload extends GroundingPayload {
 }
 
 export const LIMITS = { findings: 24, proposals: 16, cards: 18, explain: 12, preferences: 6 } as const;
+/** At most this many findings of any one kind count toward LIMITS.findings. A kind that fires once per muscle (under_recovered can fire for all 24) would otherwise fill the whole budget by itself on a heavy training day and crowd out everything else — including records, which are exactly what a person asking "why" wants explained. */
+export const MAX_FINDINGS_PER_KIND = 6;
 
 /** Findings and proposals trimmed to the limits every grounded route shares. No cards yet — those depend on which ids are actually in view. */
 export function trimFindingsAndProposals(report: FindingsReport): { findings: PayloadFinding[]; proposals: PayloadProposal[] } {
-  const findings = report.findings.slice(0, LIMITS.findings).map(f => ({ id: f.id, kind: f.kind, subject: f.subject, metrics: f.metrics, window: f.window, confidence: f.confidence, severity: f.severity }));
+  const perKind = new Map<string, number>();
+  const findings: PayloadFinding[] = [];
+  for (const f of report.findings) {
+    const n = perKind.get(f.kind) ?? 0;
+    if (n >= MAX_FINDINGS_PER_KIND) continue;
+    perKind.set(f.kind, n + 1);
+    findings.push({ id: f.id, kind: f.kind, subject: f.subject, metrics: f.metrics, window: f.window, confidence: f.confidence, severity: f.severity });
+    if (findings.length >= LIMITS.findings) break;
+  }
   const proposals = report.proposals.filter(p => p.kind !== 'load_next').slice(0, LIMITS.proposals).map(p => ({ id: p.id, kind: p.kind, subject: p.subject, apply: p.apply, basedOn: p.basedOn, confidence: p.confidence }));
   return { findings, proposals };
 }
