@@ -9,7 +9,7 @@ import { MUSCLE_BY_ID, type BalanceBucket, type MuscleId } from '@/data/muscles'
 import { findExercise } from '@/core/exercises';
 import type { Finding, Proposal } from '../contract';
 import type { BrainContext } from '../context';
-import { COMPOUND_PATTERN, MAX_SWAPS_PER_REPORT, RECOVERY_SWAP_PCT } from '../bands';
+import { COMPOUND_PATTERN, MAX_SWAPS_PER_REPORT } from '../bands';
 import { CONFIDENCE_RANK } from '../detectors/shared';
 import type { AdjustedRecovery } from '../detectors/recovery';
 import { allExercises, candidatesFor, pickExercise, proposal, usageProfile, type UsageProfile } from './shared';
@@ -18,8 +18,8 @@ function splitContaining(ctx: BrainContext, exerciseId: string): Split | undefin
   return ctx.splits.find(s => s.exercises.some(e => e.exerciseId === exerciseId));
 }
 
-export function planSwaps(ctx: BrainContext, findings: Finding[], recovery: AdjustedRecovery[], profile = usageProfile(ctx.sessions, ctx.custom, ctx.today)): Proposal[] {
-  const pct = new Map<MuscleId, number>(recovery.map(r => [r.muscle, r.adjustedPct]));
+/** A stall over weeks is not explained by yesterday's session, so recovery does not hide swaps; `recovery` is kept for callers. */
+export function planSwaps(ctx: BrainContext, findings: Finding[], _recovery: AdjustedRecovery[], profile = usageProfile(ctx.sessions, ctx.custom, ctx.today)): Proposal[] {
   const out: Proposal[] = [];
   // Compounds first, then confidence, then name: a stalled main lift matters more than a stalled curl.
   const plateaus = findings
@@ -30,7 +30,6 @@ export function planSwaps(ctx: BrainContext, findings: Finding[], recovery: Adju
   for (const { f, meta } of plateaus) {
     if (out.length >= MAX_SWAPS_PER_REPORT) break;
     if (!meta || meta.custom || meta.pattern === 'other' || !meta.primary[0]) continue;
-    if ((pct.get(meta.primary[0]) ?? 100) < RECOVERY_SWAP_PCT) continue;
     const split = splitContaining(ctx, meta.id);
     if (!split) continue; // no longer part of any split: nothing to swap
     const exclude = new Set([meta.id, ...split.exercises.map(e => e.exerciseId)]);

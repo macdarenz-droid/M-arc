@@ -55,9 +55,12 @@ export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[])
 export function exerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[] = []): ExerciseSessionSummary[] {
   const meta = findExercise(exerciseId, custom);
   const ids = new Set([exerciseId, meta?.id].filter(Boolean) as string[]);
+  // A history has a dozen distinct exercise names at most; resolve each name once, not once per session.
+  const byName = new Map<string, string | undefined>();
+  const nameId = (name: string) => { if (!byName.has(name)) byName.set(name, findExercise(name, custom)?.id); return byName.get(name); };
   const out: ExerciseSessionSummary[] = [];
   for (const s of sessions) {
-    const sets = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && findExercise(e.name, custom)?.id === meta.id)).flatMap(e => e.sets);
+    const sets = s.exercises.filter(e => ids.has(e.exerciseId) || (meta && nameId(e.name) === meta.id)).flatMap(e => e.sets);
     if (!sets.some(isWorkingSet)) continue;
     out.push(summarizeSets(s.id, s.day, sets));
   }

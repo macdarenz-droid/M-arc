@@ -51,16 +51,34 @@ export function normalizeName(s: string): string {
 }
 
 /** Resolve an exercise by id, then by exact name or alias, across library and custom list. */
+/** Normalised names computed once, so a lookup by name is a scan of plain string compares. */
+interface NameIndex { e: Exercise; name: string; names: string[]; singulars: string[] }
+const singularOf = (n: string) => n.replace(/s\b/g, '');
+function indexOf(e: Exercise): NameIndex {
+  const names = [e.name, ...e.aliases].map(normalizeName);
+  return { e, name: names[0]!, names, singulars: names.map(singularOf) };
+}
+const libraryIndex: NameIndex[] = LIBRARY.map(indexOf);
+/** Custom exercises are replaced as a whole array when edited, so indexing per array identity is safe. */
+const customIndexCache = new WeakMap<Exercise[], NameIndex[]>();
+function customIndex(custom: Exercise[]): NameIndex[] {
+  if (custom.length === 0) return [];
+  let idx = customIndexCache.get(custom);
+  if (!idx) { idx = custom.map(indexOf); customIndexCache.set(custom, idx); }
+  return idx;
+}
+
 export function findExercise(idOrName: string, custom: Exercise[] = []): Exercise | undefined {
   const direct = byId.get(idOrName) ?? custom.find(c => c.id === idOrName);
   if (direct) return direct;
   const q = normalizeName(idOrName);
   if (!q) return undefined;
-  const all = [...custom, ...LIBRARY];
-  const singular = q.replace(/s\b/g, '');
-  const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
-  return all.find(e => same(e.name) || e.aliases.some(same))
-    ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
+  const all = custom.length ? [...customIndex(custom), ...libraryIndex] : libraryIndex;
+  const singular = singularOf(q);
+  const exact = all.find(x => x.names.includes(q) || x.singulars.includes(singular));
+  if (exact) return exact.e;
+  if (q.length < 4) return undefined;
+  return all.find(x => x.name.includes(q) || q.includes(x.name))?.e;
 }
 
 export function searchExercises(query: string, custom: Exercise[] = [], limit = 12): Exercise[] {

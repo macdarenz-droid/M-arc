@@ -36,7 +36,9 @@ export function detectVolumeTrend(ctx: BrainContext): Finding[] {
   if (weeksOfData(ctx.sessions, ctx.today) < MIN_WEEKS_OF_DATA) return [];
   const rows = completeWeeks(ctx, VOLUME_RECENT_WEEKS + VOLUME_BASELINE_WEEKS);
   const recentRows = rows.slice(0, VOLUME_RECENT_WEEKS);
-  const baseRows = rows.slice(VOLUME_RECENT_WEEKS);
+  // Weeks before the first session are not quiet weeks, they are no data. Leave them out of the baseline.
+  const firstWeek = weekStart(ctx.sessions[0]!.day);
+  const baseRows = rows.slice(VOLUME_RECENT_WEEKS).filter(r => r.week >= firstWeek);
   if (recentRows.length < VOLUME_RECENT_WEEKS || baseRows.length < 3) return [];
   const recentGroups = recentRows.map(groupSets);
   const baseGroups = baseRows.map(groupSets);

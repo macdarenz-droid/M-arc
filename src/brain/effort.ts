@@ -1,4 +1,9 @@
-/** Is the user's logged effort on an exercise drifting harder or easier? */
+/**
+ * Is the user's logged effort on an exercise drifting harder or easier?
+ * The newer half of the last six sessions is compared with the older half.
+ * A drift needs at least two of three newer sessions to move a level, so one
+ * hard day is not a trend.
+ */
 import type { ExerciseSessionSummary } from './history';
 import { EFFORT_MULT } from './exposure';
 import type { Confidence } from './trend';
@@ -8,6 +13,9 @@ export interface EffortDrift {
   delta: number;
   confidence: Confidence;
 }
+
+/** Two of three sessions one level harder shifts the mean by about 0.067; one session by 0.033. */
+export const DRIFT_THRESHOLD = 0.05;
 
 export function effortDrift(history: ExerciseSessionSummary[]): EffortDrift {
   const recent = history.slice(-6);
@@ -20,6 +28,6 @@ export function effortDrift(history: ExerciseSessionSummary[]): EffortDrift {
   const mean = (xs: { v: number }[]) => xs.reduce((a, b) => a + b.v, 0) / xs.length;
   const delta = mean(newer) - mean(older);
   const confidence: Confidence = sessionsWithEffort >= 6 && obs.length >= 18 ? 'high' : sessionsWithEffort < 5 || obs.length < 10 ? 'low' : 'medium';
-  const status = Math.abs(delta) < 0.025 ? 'stable' : delta > 0 ? 'harder' : 'easier';
+  const status = Math.abs(delta) < DRIFT_THRESHOLD ? 'stable' : delta > 0 ? 'harder' : 'easier';
   return { status, delta, confidence };
 }

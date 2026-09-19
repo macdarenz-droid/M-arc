@@ -23,6 +23,7 @@ Node 22.
 npm ci
 npm run dev        # Vite dev server
 npm run check      # typecheck + tests + production build into www/
+npm run backtest   # replay the coach over a synthetic history; pass a backup file to use your own
 ```
 
 ## Android

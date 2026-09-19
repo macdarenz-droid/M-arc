@@ -71,12 +71,13 @@ export function learnHabits(sessions: Session[], splits: Split[], today: string)
       if (date >= today || date < first) continue;
       const wd = weekdayOf(date);
       den[wd] = (den[wd] ?? 0) + w;
-      if (k >= HABIT_COLD_WEEKS) oldDen[wd] = (oldDen[wd] ?? 0) + w;
+      // "Recent" is the current partial week plus the last HABIT_COLD_WEEKS complete weeks.
+      if (k > HABIT_COLD_WEEKS) oldDen[wd] = (oldDen[wd] ?? 0) + w;
       const list = byDay.get(date);
       if (!list?.length) continue;
       num[wd] = (num[wd] ?? 0) + w;
       all[wd].count++;
-      if (k < HABIT_COLD_WEEKS) all[wd].recentCount++;
+      if (k <= HABIT_COLD_WEEKS) all[wd].recentCount++;
       else oldNum[wd] = (oldNum[wd] ?? 0) + w;
       if (k >= 1 && k <= 8) trainedDaysLast8++;
       for (const s of list) {

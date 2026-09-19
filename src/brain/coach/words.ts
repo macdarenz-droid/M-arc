@@ -160,13 +160,14 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
     }
     case 'plateau': {
       const weighted = num(m.lastTopKg) > 0;
+      const flat = num(m.flatSessions, num(m.sessions));
       return pick<Words>([
         { title: `${ex}: stalled`,
-          noticed: weighted ? `${plural(num(m.sessions), 'session')} at about ${load(m.lastTopKg, ctx)} for ${num(m.lastTopReps)} reps.` : `${plural(num(m.sessions), 'session')} at about ${num(m.lastBestReps)} reps.`,
+          noticed: weighted ? `${plural(flat, 'session')} at about ${load(m.lastTopKg, ctx)} for ${num(m.lastTopReps)} reps.` : `${plural(flat, 'session')} at about ${num(m.lastBestReps)} reps.`,
           means: 'The stimulus stopped changing, so your body stopped adapting. This is common, and it is fixable.',
           action: weighted ? 'Reps first: aim for one more clean rep at this load. If that stalls too, try a different rep range for two weeks, or swap in a sibling exercise.' : 'Add one clean rep to your best set. If that stalls, try a harder variation.' },
         { title: `${ex} has not moved`,
-          noticed: weighted ? `Your last ${num(m.sessions)} sessions sit around ${load(m.lastTopKg, ctx)} × ${num(m.lastTopReps)}.` : `Your last ${num(m.sessions)} sessions sit around ${num(m.lastBestReps)} reps.`,
+          noticed: weighted ? `Your last ${flat} sessions sit around ${load(m.lastTopKg, ctx)} × ${num(m.lastTopReps)}.` : `Your last ${flat} sessions sit around ${num(m.lastBestReps)} reps.`,
           means: 'Progress needs the work to get a little harder over time. Same load, same reps for weeks is maintenance, which is fine on purpose and frustrating by accident.',
           action: 'Change one thing: a rep, a small step of load, or the exercise itself. Not all three.' },
       ], f.id, ctx.today);

@@ -69,13 +69,13 @@ enumerated in `src/brain/coach/contract.ts`.
 | `volume_drop`, `volume_spike` | Effective sets for a muscle group over the last 3 weeks against the trailing 8-week median | ≥ 6 weeks of data, ≥ 3 active weeks in baseline |
 | `weekly_sets_out_of_band` | Weekly effective sets far outside a wide band | ≥ 3 consecutive weeks |
 | `uncovered_muscle` | A major muscle under 2 effective sets a week for 4 complete weeks (secondary work counts half, so one compound's spill-over does not clear it) | ≥ 3 active weeks of 4 |
-| `plateau`, `decline`, `progressing` | Existing trend and plateau logic, exposed as facts | 7 of last 8 sessions |
+| `plateau`, `decline`, `progressing` | Existing trend and plateau logic, exposed as facts; a plateau also needs a flat tail of at least 1.5× this person's usual gap between improvements, never under 4 sessions | 7 of last 8 sessions |
 | `under_recovered` | Recovery window by effort, scaled by volume vs. baseline, widened by history | Any |
 | `effort_missing`, `effort_drift_*`, `effort_mismatch`, `rep_range_mismatch` | Effort coverage, drift, and fit to the goal's bands | Existing gates |
 | `redundant_exercises` | Same primary muscle and pattern twice in one split | Any |
 | `balance_imbalance` | Existing balance logic | Existing gates |
 | `long_gap` | Days since last session | ≥ 7 days |
-| `habit_pattern` | Per-weekday training probability and typical start time, recency-weighted over 10–12 weeks, with drift detection | ≥ 6 weeks, probability ≥ 0.6 |
+| `habit_pattern` | Per-weekday training probability and typical start time, recency-weighted over 10–12 weeks; a habitual day retires after three complete cold weeks | ≥ 6 weeks, probability ≥ 0.6 |
 | `low_sleep_readiness` | Health Connect sleep below the user's own norm | Sleep data present |
 | `record`, `first_sessions` | Records; baseline state with too little data | — |
 
@@ -222,7 +222,16 @@ the cases a single history cannot.
    `ANTHROPIC_API_KEY` or `MARC_ANTHROPIC_KEY` is present in the
    environment; cloud sessions reserve the former name, so deploys from
    them use the latter (see `proxy/README.md`).
-4. Backtest harness and calibration on the user's history.
+4. Backtest harness (`brain/coach/backtest.ts`, `npm run backtest`).
+   Replays the report day by day over a history and reports first fires,
+   noise, proposal churn, the recovery check and the habit check. On the
+   synthetic thirty-week history with ten planted events (two plateaus,
+   a chest volume drop, effort drift, two declines, the easier-week
+   proposal, and a habit learned, retired and relearned) every event fires
+   inside its window and nothing fires on the steady lifts; that run is a
+   unit test and its report is `docs/BACKTEST.md`. **Done for synthetic.**
+   The same command takes a real backup from Settings → Export backup,
+   which is where the recovery check becomes meaningful.
 
 ## Decisions log
 
@@ -242,6 +251,8 @@ the cases a single history cannot.
 | 2026-09-19 | Smart reminders turn on when a learned schedule is accepted and reminders are already enabled; never on their own. |
 | 2026-09-19 | The remote explainer fires only on a tap, one call per report content, cached in the browser. Any line whose numbers are not in the report is dropped, and the app says how many were dropped. |
 | 2026-09-19 | The proxy refuses payloads carrying sessions, profile fields or session ids, so a modified client cannot leak them through it. |
+| 2026-09-19 | Backtest findings: a plateau needs a flat tail of 1.5× the person's usual gap between improvements (min 4 sessions); the volume baseline excludes weeks before the first session; a habitual day retires after three complete cold weeks; effort drift needs two of three newer sessions to move a level; records collapse to one finding per exercise per week; recovery no longer hides swap proposals. |
+| 2026-09-19 | Exercise-name lookups are indexed once; a report on ninety sessions builds in about 50 ms instead of 5 s, and a test keeps it under 750 ms. |
 
 ## Non-goals
 
