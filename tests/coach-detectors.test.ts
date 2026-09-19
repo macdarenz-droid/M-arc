@@ -194,8 +194,21 @@ describe('note flags', () => {
 
   it('never fires on a session with no note flags, and caps at the newest few', () => {
     expect(detectNoteFlags(ctx([session('2026-09-17', std(PUSH_EX))]))).toEqual([]);
-    const kinds = ['pain_or_discomfort', 'equipment_issue', 'fatigue', 'schedule', 'form_check'] as const;
+    const kinds = ['equipment_issue', 'fatigue', 'schedule', 'form_check'] as const;
     const s = kinds.map((k, i) => ({ ...session(`2026-09-1${5 + i}`, std(PUSH_EX)), noteFlags: [{ kind: k, muscle: null }] }));
     expect(detectNoteFlags(ctx(s))).toHaveLength(MAX_NOTE_FLAGS);
+  });
+
+  it('a pain flag keeps its slot even when it is the oldest of more than MAX_NOTE_FLAGS distinct flags — it is never crowded out by unrelated, more recent notes', () => {
+    // Same shape as the cap test above, but with pain_or_discomfort as the oldest of 5 distinct kinds:
+    // a naive "keep the newest MAX_NOTE_FLAGS" would drop it, and recentPainMuscles() reads this same
+    // report — a dropped pain flag here would silently disable injury avoidance too.
+    const kinds = ['pain_or_discomfort', 'equipment_issue', 'fatigue', 'schedule', 'form_check'] as const;
+    const s = kinds.map((k, i) => ({ ...session(`2026-09-1${5 + i}`, std(PUSH_EX)), noteFlags: [{ kind: k, muscle: null }] }));
+    const out = detectNoteFlags(ctx(s));
+    expect(out).toHaveLength(MAX_NOTE_FLAGS);
+    expect(out.some(f => f.metrics.flagKind === 'pain_or_discomfort')).toBe(true);
+    // Still returned newest-first among the kept set, pain included.
+    expect(out.map(f => f.metrics.day)).toEqual([...out.map(f => f.metrics.day)].sort().reverse());
   });
 });

@@ -26,9 +26,16 @@ export function detectNoteFlags(ctx: BrainContext): Finding[] {
       if (!existing || existing.day < s.day) seen.set(key, { day: s.day, sessionId: s.id, kind: f.kind, muscle: f.muscle });
     }
   }
-  return [...seen.values()]
-    .sort((a, b) => b.day.localeCompare(a.day))
+  const all = [...seen.values()].sort((a, b) => b.day.localeCompare(a.day));
+  // A recent pain flag is a safety signal, not just another note — it always keeps a slot
+  // rather than being crowded out by unrelated flags (an equipment issue, a schedule note)
+  // that merely happened more recently. recentPainMuscles() in planners/shared.ts reads this
+  // same report, so a dropped pain flag here would also silently disable injury avoidance.
+  const pain = all.filter(f => f.kind === 'pain_or_discomfort');
+  const rest = all.filter(f => f.kind !== 'pain_or_discomfort');
+  return [...pain, ...rest]
     .slice(0, MAX_NOTE_FLAGS)
+    .sort((a, b) => b.day.localeCompare(a.day))
     .map(f => finding({
       kind: 'note_flag', target: `${f.kind}:${f.muscle ?? 'none'}`,
       subject: f.muscle ? { muscle: f.muscle as Finding['subject']['muscle'] } : {},
