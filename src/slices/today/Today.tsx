@@ -1,14 +1,16 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { insights, recovery, scheduledSplit, sessionsToday, streak, today, week } from '@/app/selectors';
+import { deload, insights, recovery, scheduledSplit, sessionsToday, streak, suggestions, today, todayChanges, todaySuggestion, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
 import { formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
-import { CATEGORY_LABEL } from '@/brain/coach/rules';
+import { CATEGORY_LABEL } from '@/brain/coach/words';
+import { acceptProposal } from '../coach/apply';
+import { showToast } from '@/app/toast';
 import { startSession } from '../workout/session';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
@@ -29,6 +31,9 @@ export function Today() {
   const ready = rec.filter(r => !r.recovering && r.lastTrainedAt).length;
   const w = week.value;
   const top = insights.value[0];
+  const plan = todaySuggestion.value;
+  const waiting = suggestions.value.filter(x => x.kind !== 'today_plan').length;
+  const accept = () => { if (plan) showToast(acceptProposal(plan.proposal, today.value)); };
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
   const spark = SPARKS[dayIndex]!;
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
@@ -69,19 +74,30 @@ export function Today() {
           <div class="stack-sm">
             <div class="eyebrow">Scheduled today</div>
             <h2>{split.name}</h2>
-            <p class="muted small">{split.exercises.length} exercises planned.</p>
-            <Button variant="primary" onClick={() => { startSession(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            <p class="muted small">{split.exercises.length} exercises planned{todayChanges.value.length ? `, ${todayChanges.value.length} swapped for today` : ''}.</p>
+            <Button variant="primary" onClick={() => { startSession(split, todayChanges.value); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            {plan && (
+              <div class="stack-sm" style={{ marginTop: 6 }}>
+                <p class="small">{plan.summary}</p>
+                <div class="row"><Button size="sm" onClick={accept}>{plan.acceptLabel}</Button><Button variant="quiet" size="sm" onClick={() => go('coach')}>Why</Button></div>
+              </div>
+            )}
           </div>
         )}
         {status === 'rest' && (
           <div class="stack-sm">
             <div class="eyebrow">Rest day</div>
             <h2>{s.splits.length ? 'Nothing scheduled' : 'Set up your first workout'}</h2>
-            <p class="muted small">{s.splits.length ? 'Train anyway, or let today be recovery.' : 'Add a split with a few exercises. The coach learns from what you log.'}</p>
-            <Button onClick={() => go('train')}>{s.splits.length ? 'Choose a workout' : 'Open Train'}</Button>
+            <p class="muted small">{plan ? plan.summary : s.splits.length ? 'Train anyway, or let today be recovery.' : 'Add a split with a few exercises. The coach learns from what you log.'}</p>
+            <div class="row">
+              {plan && <Button variant="primary" onClick={accept}>{plan.acceptLabel}</Button>}
+              <Button variant={plan ? 'quiet' : 'default'} onClick={() => go('train')}>{s.splits.length ? 'Choose a workout' : 'Open Train'}</Button>
+            </div>
           </div>
         )}
       </Card>
+
+      {deload.value && <div class="banner" role="status">Easier week until {formatDay(deload.value.to)}. Targets in Train are about {Math.round(deload.value.loadFactor * 100)}% of your usual.</div>}
 
       <Section title="This week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
@@ -112,13 +128,18 @@ export function Today() {
         </Card>
       </Section>
 
-      {top && (
+      {(top || waiting > 0) && (
         <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
-          <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
-            <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>
-            <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
-            <p class="small muted">{top.action}</p>
-          </Card>
+          <div class="stack-sm">
+            {top && (
+              <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
+                <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>
+                <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
+                <p class="small muted">{top.action}</p>
+              </Card>
+            )}
+            {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
+          </div>
         </Section>
       )}
 

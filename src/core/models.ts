@@ -125,6 +125,36 @@ export interface HealthSnapshot {
   activeCalories?: number;
 }
 
+/** One exercise swapped or dropped for a single session, from an accepted plan. */
+export interface CoachChange {
+  removeExerciseId: string;
+  replaceWithExerciseId?: string;
+}
+
+/** What the user has done with the coach's suggestions. Only the user writes here. */
+export interface CoachState {
+  /** dismissKey → how many times dismissed. Two suppresses the suggestion. */
+  dismissed: Record<string, number>;
+  /** dismissKey → last day it stays hidden after a single dismissal. */
+  snoozedUntil: Record<string, string>;
+  /** dismissKey → day the suggestion was accepted. */
+  accepted: Record<string, string>;
+  /** HH:MM local start times learned from history and accepted with a schedule suggestion. */
+  learnedStarts: Partial<Record<Weekday, string>>;
+  /** Time reminders from the learned start instead of a fixed clock time. Off until a schedule is accepted. */
+  smartReminders: boolean;
+  /** An accepted plan for one day: which split, and per-session exercise changes. */
+  todayPlan: { day: string; splitId: string; changes: CoachChange[] } | null;
+  /** An accepted easier week. */
+  deload: { from: string; to: string; loadFactor: number; effortCap: 'easy' | 'ideal' } | null;
+  /** Send findings to the remote explainer for richer wording. Off by default. */
+  remoteExplainer: boolean;
+}
+
+export function emptyCoach(): CoachState {
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false };
+}
+
 export interface AppState {
   version: 1;
   createdAt: string;
@@ -138,6 +168,7 @@ export interface AppState {
   preferences: Preferences;
   body: BodyMeasurement[];
   health: HealthSnapshot;
+  coach: CoachState;
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -167,6 +198,7 @@ export function freshState(now = new Date()): AppState {
     },
     body: [],
     health: { connected: false },
+    coach: emptyCoach(),
   };
 }
 

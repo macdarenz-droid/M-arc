@@ -24,6 +24,7 @@ function normalize(s: AppState): AppState {
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
     body: s.body ?? [],
     customExercises: s.customExercises ?? [],
+    coach: { ...fresh.coach, ...s.coach, dismissed: { ...s.coach?.dismissed }, snoozedUntil: { ...s.coach?.snoozedUntil }, accepted: { ...s.coach?.accepted }, learnedStarts: { ...s.coach?.learnedStarts } },
   };
 }
 

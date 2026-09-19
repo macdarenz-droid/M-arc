@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, setTicking, today, unit } from '@/app/selectors';
+import { deload, nowMs, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
-import { formatClock } from '@/core/dates';
+import { formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
+import { applyDeload } from '@/brain/coach/deload';
+import { endDeload } from '../coach/apply';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
@@ -53,6 +55,13 @@ function Splits() {
         <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
       </div>
 
+      {deload.value && (
+        <div class="banner row-between" role="status" style={{ marginBottom: 12 }}>
+          <span>Easier week until {formatDay(deload.value.to)}: targets are about {Math.round(deload.value.loadFactor * 100)}% of your usual, no max sets.</span>
+          <Button variant="quiet" size="sm" onClick={() => { endDeload(); showToast('Back to normal targets'); }}>End</Button>
+        </div>
+      )}
+
       {!s.splits.length && (
         <Card>
           <Empty icon={<IconDumbbell size={32} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>}>
@@ -80,7 +89,7 @@ function Splits() {
             <div class="list" style={{ marginTop: 6 }}>
               {split.exercises.map(se => {
                 const ex = findExercise(se.exerciseId, s.customExercises);
-                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises);
+                const next = applyDeload(suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises), deload.value, today.value);
                 return (
                   <Row key={se.exerciseId} trailing={<span class="hint num">{se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
@@ -90,7 +99,7 @@ function Splits() {
               })}
               {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split. Tap edit to add exercises.</p>}
             </div>
-            <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => startSession(split)}><IconPlay /> Start {split.name}</Button>
+            <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => startSession(split, todayPlan.value?.splitId === split.id ? todayChanges.value : [])}><IconPlay /> Start {split.name}</Button>
           </Card>
           <p class="hint" style={{ marginTop: 10 }}>Targets come from your last sessions and your goal ({GOALS.find(g => g.id === s.goal)?.name}). Change the goal in Coach.</p>
         </>
@@ -218,7 +227,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
-  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises);
+  const next = applyDeload(suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises), deload.value, today.value);
   const [menu, setMenu] = useState(false);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const isTimed = mode === 'duration';

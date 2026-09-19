@@ -175,6 +175,7 @@ svg { display: block; }
 
 /* Coach */
 .insight { border-left: 3px solid var(--insight, var(--accent)); }
+.suggestion { border-left: 3px solid var(--accent); }
 .insight-cat { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--insight, var(--accent)); }
 .chain { display: grid; gap: 10px; }
 .chain > div { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: 14px; }

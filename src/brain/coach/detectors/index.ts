@@ -7,3 +7,4 @@ export * from './structure';
 export * from './consistency';
 export * from './sleep';
 export * from './habit';
+export * from './focus';

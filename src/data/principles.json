@@ -27,7 +27,7 @@
       "statement": "More hard sets per muscle per week produce more growth, up to a point. Past that point each extra set adds less and costs more recovery. Roughly ten or more weekly sets per muscle is where research suggests most of the benefit sits, and the exact ceiling varies by person and muscle.",
       "disputed": "The exact shape at high volumes, whether there is a true plateau, and how much a set far from failure is worth. Individual response varies widely. Any specific set count is a band, not a law.",
       "appUse": "Weekly effective sets per muscle compared with the user's own trailing baseline and a deliberately wide band.",
-      "findingKinds": ["volume_drop", "volume_spike", "weekly_sets_out_of_band", "uncovered_muscle"],
+      "findingKinds": ["volume_drop", "volume_spike", "weekly_sets_out_of_band", "uncovered_muscle", "focus_behind"],
       "proposalKinds": ["add_exercise", "split_new", "split_modify"],
       "citations": [
         { "key": "schoenfeld2017volume", "authors": "Schoenfeld BJ, Ogborn D, Krieger JW", "year": 2017, "title": "Dose-response relationship between weekly resistance training volume and increases in muscle mass: A systematic review and meta-analysis", "journal": "J Sports Sci", "where": "35(11):1073-1082", "pmid": "27433992", "doi": "10.1080/02640414.2016.1210197", "verified": "search-index" },

@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, Exercise, LoggedSet, Session, Split } from '@/core/models';
+import type { ActiveSession, CoachChange, Exercise, LoggedSet, Session, Split } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -10,6 +10,7 @@ import { isWorkingSet } from '@/brain/exposure';
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
+import { resyncReminders } from '../settings/reminders';
 
 export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
 
@@ -19,13 +20,22 @@ function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
   update(s => (s.active ? { ...s, active: fn(s.active) } : s));
 }
 
-export function startSession(split: Split): void {
+/** Start a split. `changes` are one-day swaps or drops from an accepted coach plan; the split itself is untouched. */
+export function startSession(split: Split, changes: CoachChange[] = []): void {
   if (state.value.active) return;
   const custom = state.value.customExercises;
-  const entries: ActiveSession['entries'] = split.exercises.map(se => {
+  let entries: ActiveSession['entries'] = split.exercises.map(se => {
     const ex = findExercise(se.exerciseId, custom);
     return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({})), done: false, skipped: false };
   });
+  for (const c of changes) {
+    const i = entries.findIndex(e => e.exerciseId === c.removeExerciseId);
+    if (i < 0) continue;
+    const to = c.replaceWithExerciseId ? findExercise(c.replaceWithExerciseId, custom) : undefined;
+    entries = to
+      ? entries.map((e, j) => (j !== i ? e : { ...e, exerciseId: to.id, name: to.name }))
+      : entries.filter((_, j) => j !== i);
+  }
   update(s => ({ ...s, active: { splitId: split.id, startedAt: new Date().toISOString(), pausedMs: 0, entries } }));
   flushSave();
   void haptic.medium();
@@ -154,6 +164,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   }));
   flushSave();
   void cancelRestDone();
+  void resyncReminders();
   void haptic.success();
   return { session, changedTemplate };
 }

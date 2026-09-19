@@ -19,9 +19,11 @@ export interface BrainContext {
   now: number;
   /** dismissKey → how many times the user dismissed that suggestion. */
   dismissed: Record<string, number>;
+  /** dismissKey → day the user accepted that suggestion. */
+  accepted: Record<string, string>;
 }
 
-export function contextFromState(state: AppState, today: string, now: number, dismissed: Record<string, number> = {}): BrainContext {
+export function contextFromState(state: AppState, today: string, now: number): BrainContext {
   return {
     sessions: state.sessions,
     splits: state.splits,
@@ -32,6 +34,7 @@ export function contextFromState(state: AppState, today: string, now: number, di
     health: state.health,
     today,
     now,
-    dismissed,
+    dismissed: state.coach?.dismissed ?? {},
+    accepted: state.coach?.accepted ?? {},
   };
 }

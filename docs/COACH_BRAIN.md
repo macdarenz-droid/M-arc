@@ -202,8 +202,14 @@ the cases a single history cannot.
    on a phone; it is meant to run on app open and session finish, not on
    every render. The old `coach/rules.ts` is retired in Phase 2 when the
    screens read from the report.
-2. Template renderer; Coach and Today screens read from the report;
-   suggestions inbox; learned-schedule nudges.
+2. Template renderer (`words.ts`), Coach and Today screens reading from
+   the report, the suggestions inbox with accept and dismiss
+   (`slices/coach/apply.ts`), one-day plans that swap exercises for a
+   single session, an accepted easier week that scales Train targets,
+   learned-schedule nudges through the existing reminder scheduler, and
+   the old `coach/rules.ts` retired. **Done.** Every insight and
+   suggestion shows the research cards it rests on with their rating.
+   Verified with the five-theme visual gate.
 3. Cloudflare Worker proxy, remote explainer with validator and cache,
    settings toggle with a preview of what is sent.
 4. Backtest harness and calibration on the user's history.
@@ -221,6 +227,9 @@ the cases a single history cannot.
 | 2026-09-19 | Detectors never shrink a recovery window; volume can only widen it, up to 1.5×. |
 | 2026-09-19 | At most two exercise swaps per report; simultaneous plateaus are a programme signal. |
 | 2026-09-19 | Today is excluded from habit denominators, since the session may still happen. |
+| 2026-09-19 | One dismissal hides a suggestion for three days; a second suppresses it until the user resets coach memory in Settings. |
+| 2026-09-19 | Accepted suggestions have per-kind cooldowns (an easier week: six weeks) so they do not re-propose themselves. |
+| 2026-09-19 | Smart reminders turn on when a learned schedule is accepted and reminders are already enabled; never on their own. |
 
 ## Non-goals
 

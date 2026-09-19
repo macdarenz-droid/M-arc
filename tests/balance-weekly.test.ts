@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { trainingBalance } from '@/brain/balance';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
-import { coachInsights } from '@/brain/coach/rules';
+import { buildReport } from '@/brain/coach/report';
+import { insightsFrom, type RenderContext } from '@/brain/coach/words';
+import type { BrainContext } from '@/brain/coach/context';
 import { emptySchedule } from '@/core/models';
 import { session, sets } from './helpers';
 
@@ -42,17 +44,20 @@ describe('weekly', () => {
 });
 
 describe('coach', () => {
+  const ctx = (sessions: BrainContext['sessions']): BrainContext => ({ sessions, splits: [], schedule: emptySchedule(), custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), dismissed: {}, accepted: {} });
+  const render: RenderContext = { unit: 'kg', splits: [], custom: [], today: '2026-09-18', goal: 'lean' };
   it('asks for a first session on an empty app', () => {
-    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
-    expect(insights[0]?.id).toBe('first-session');
+    const insights = insightsFrom(buildReport(ctx([])), render);
+    expect(insights[0]?.id).toBe('first_sessions:baseline');
+    expect(insights[0]?.title).toBe('Start with a few sessions');
   });
   it('flags missing effort ratings and imbalance with plain words', () => {
     const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
     const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, null, 5) }, { id: 'lib_shoulder_press', sets: sets(30, 8, undefined, 4) }]));
-    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = insightsFrom(buildReport(ctx(s)), render);
     const ids = insights.map(i => i.id);
-    expect(ids).toContain('balance:push_pull');
-    expect(ids).toContain('effort-missing');
+    expect(ids).toContain('balance_imbalance:push_pull');
+    expect(ids).toContain('effort_missing:recent');
     for (const i of insights) expect(i.action.length).toBeGreaterThan(10);
   });
 });

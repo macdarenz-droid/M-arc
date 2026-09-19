@@ -1,33 +1,52 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, today, week } from '@/app/selectors';
+import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
-import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
+import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
+import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
 import { GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL } from '@/core/dates';
+import { WEEKDAY_LABEL, formatDay } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
+import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
+import { showToast } from '@/app/toast';
 import { resyncReminders } from '../settings/reminders';
+import { acceptProposal, dismissProposal, endDeload } from './apply';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
-  recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
+  recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
+  consistency: 'var(--warning)', data: 'var(--text-3)', volume: 'var(--info)',
 };
+
+const KIND_LABEL: Record<Suggestion['kind'], string> = {
+  schedule: 'Schedule', today_plan: 'Today', exercise_swap: 'Swap', add_exercise: 'Add', split_modify: 'Trim', split_new: 'New plan',
+  load_next: 'Next session', rest_default: 'Rest', deload_week: 'Easier week',
+};
+
+const CONFIDENCE_LABEL: Record<Insight['confidence'], string> = { low: 'Low confidence', medium: 'Fair confidence', high: 'High confidence' };
 
 export function Coach() {
   const s = state.value;
-  const list = insights.value;
+  const list = useMemo(() => shortlist(insights.value, 6, 2), [insights.value]);
+  const hidden = insights.value.length - list.length;
+  const open = suggestions.value;
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
+  const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
   const w = week.value;
   const goal = GOALS.find(g => g.id === s.goal)!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
   const cue: Cue | null = lastExercise ? pickCue(lastExercise, cueSeed % 2 ? 'learn' : 'coach', `${today.value}|${cueSeed}`) : null;
+  const dq = report.value.dataQuality;
+
+  const accept = (sg: Suggestion) => { showToast(acceptProposal(sg.proposal, today.value)); setOpenSuggestion(null); };
+  const dismiss = (sg: Suggestion) => { dismissProposal(sg.proposal, today.value); showToast('Not now. It can come back later.'); setOpenSuggestion(null); };
 
   return (
     <div class="view">
@@ -38,7 +57,31 @@ export function Coach() {
         <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
       </Card>
 
-      <Section title="Insights">
+      {deload.value && (
+        <div class="banner row-between" role="status">
+          <span>Easier week until {formatDay(deload.value.to)}. Targets in Train are about {Math.round(deload.value.loadFactor * 100)}% of your usual.</span>
+          <Button variant="quiet" size="sm" onClick={() => { endDeload(); showToast('Back to normal targets'); }}>End</Button>
+        </div>
+      )}
+
+      <Section title="Suggestions" aside={open.length ? <span class="small muted">{open.length}</span> : undefined}>
+        <div class="stack-sm">
+          {open.map(sg => (
+            <Card key={sg.id} class="suggestion card-press" onClick={() => setOpenSuggestion(sg)}>
+              <div class="row-between"><span class="insight-cat" style={{ '--insight': 'var(--accent)' }}>{KIND_LABEL[sg.kind]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+              <h3 style={{ margin: '4px 0 6px' }}>{sg.title}</h3>
+              <p class="small muted">{sg.summary}</p>
+              <div class="row" style={{ marginTop: 10 }}>
+                <Button size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(sg); }}>{sg.acceptLabel}</Button>
+                <Button size="sm" variant="quiet" onClick={e => { e.stopPropagation(); dismiss(sg); }}>Not now</Button>
+              </div>
+            </Card>
+          ))}
+          {!open.length && <Card class="card-quiet"><p class="small muted">{dq.insufficientData ? 'Log a few sessions and suggestions appear here. Nothing changes unless you accept it.' : 'Nothing to suggest right now. Your plan fits what your sessions show.'}</p></Card>}
+        </div>
+      </Section>
+
+      <Section title="Insights" aside={hidden > 0 ? <span class="small muted">+{hidden} more</span> : undefined}>
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
@@ -68,15 +111,16 @@ export function Coach() {
       <Section title="How the coach thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
-            <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
-            <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery windows are 24, 48 or 72 hours depending on effort, and they only ever widen when your own history shows you need it.</p>
-            <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
+            <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Everything here is worked out on your phone from what you log. Suggestions never apply themselves; you accept or dismiss each one. Dismiss one twice and it stays away.</p>
+            <p>Reps first, then load. Add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up. Two sessions under the range at max effort means one step down.</p>
+            <p>Recovery windows are 24, 48 or 72 hours by effort, wider after an unusually big session, and they only ever widen when your own history shows you need it.</p>
+            <p>Every insight names the research it rests on, with an honest rating. Where the evidence is thin or the advice is coaching convention, it says so.</p>
           </div>
         </Card>
       </Section>
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
+      {openSuggestion && <SuggestionSheet suggestion={openSuggestion} onAccept={() => accept(openSuggestion)} onDismiss={() => dismiss(openSuggestion)} onClose={() => setOpenSuggestion(null)} />}
       {goalOpen && (
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
           <div class="stack-sm">
@@ -89,15 +133,34 @@ export function Coach() {
   );
 }
 
+function Evidence({ cards }: { cards: PrincipleCard[] }) {
+  if (!cards.length) return null;
+  return (
+    <div>
+      <div class="eyebrow" style={{ marginBottom: 6 }}>Based on</div>
+      <div class="stack-sm">
+        {cards.map(c => (
+          <Card key={c.id} class="card-quiet">
+            <b class="small">{c.title}</b>
+            <div class="row" style={{ marginTop: 6 }}><Chip tone={c.rating === 'strong' ? 'positive' : c.rating === 'moderate' ? 'info' : 'warning'}>{RATING_LABEL[c.rating]}</Chip></div>
+            <p class="small muted" style={{ marginTop: 8 }}>{c.statement}</p>
+            {c.rating !== 'strong' && <p class="hint" style={{ marginTop: 4 }}>Disputed: {c.disputed}</p>}
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
-  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises) : null;
+  const next = ex ? applyDeload(suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises), deload.value, today.value) : null;
   const hist = ex ? exerciseHistory(s.sessions, ex.id, s.customExercises).slice(-5).reverse() : [];
   return (
     <Sheet title={insight.title} onClose={onClose}>
       <div class="stack">
-        <Chip tone="accent">{CATEGORY_LABEL[insight.category]}</Chip>
+        <div class="row"><Chip tone="accent">{CATEGORY_LABEL[insight.category]}</Chip><Chip>{CONFIDENCE_LABEL[insight.confidence]}</Chip></div>
         <div class="chain">
           <div><span>Noticed</span><span>{insight.noticed}</span></div>
           <div><span>Means</span><span>{insight.means}</span></div>
@@ -105,6 +168,22 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
         </div>
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
         {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
+        <Evidence cards={insight.evidence} />
+      </div>
+    </Sheet>
+  );
+}
+
+function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { suggestion: Suggestion; onAccept: () => void; onDismiss: () => void; onClose: () => void }) {
+  return (
+    <Sheet title={sg.title} onClose={onClose}>
+      <div class="stack">
+        <div class="row"><Chip tone="accent">{KIND_LABEL[sg.kind]}</Chip><Chip>{CONFIDENCE_LABEL[sg.confidence]}</Chip></div>
+        <p class="small">{sg.summary}</p>
+        {sg.why.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Why</div><div class="stack-sm">{sg.why.map((line, i) => <p key={i} class="small muted">{line}</p>)}</div></div>}
+        {sg.changes.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>What changes</div><div class="list">{sg.changes.map((line, i) => <Row key={i}><span class="small">{line}</span></Row>)}</div></div>}
+        <Evidence cards={sg.evidence} />
+        <div class="grid-2"><Button variant="quiet" onClick={onDismiss}>Not now</Button><Button variant="primary" onClick={onAccept}>{sg.acceptLabel}</Button></div>
       </div>
     </Sheet>
   );
@@ -128,7 +207,7 @@ function Schedule() {
         <div class="row" style={{ justifyContent: 'space-between' }}>
           {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
         </div>
-        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
+        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.${s.coach.smartReminders ? ' Reminders are timed from your usual start.' : ''}` : 'No schedule. The coach will suggest one from how you actually train, or set one here.'}</p>
       </Card>
       {open && (
         <Sheet title="Weekly schedule" onClose={() => setOpen(false)}>

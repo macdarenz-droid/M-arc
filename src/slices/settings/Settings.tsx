@@ -11,6 +11,8 @@ import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable, readHealth } from '@/native/health';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
+import { resetCoachMemory } from '../coach/apply';
+import { WEEKDAYS } from '@/core/models';
 
 export const APP_VERSION = '37.0.0';
 
@@ -73,6 +75,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <Row trailing={<Toggle checked={p.reminders.enabled} onChange={v => { setPref({ reminders: { ...p.reminders, enabled: v } }); void resyncReminders(); }} label="Training day reminders" />}><span class="small">Training day reminder</span><div class="hint">{reminderHealth.value.status}</div></Row>
             <Row trailing={<input type="time" style={{ width: 120 }} value={p.reminders.time} onChange={e => { setPref({ reminders: { ...p.reminders, time: (e.target as HTMLInputElement).value } }); void resyncReminders(); }} />}><span class="small">Time</span></Row>
             <Row trailing={<select style={{ width: 120 }} value={p.reminders.style} onChange={e => { setPref({ reminders: { ...p.reminders, style: (e.target as HTMLSelectElement).value as never } }); void resyncReminders(); }}><option value="silent">Silent</option><option value="vibrate">Vibrate</option><option value="alert">Alert</option></select>}><span class="small">Style</span></Row>
+            <Row trailing={<Toggle checked={s.coach.smartReminders} onChange={v => { update(x => ({ ...x, coach: { ...x.coach, smartReminders: v } })); void resyncReminders(); }} label="Time reminders from my usual start" />}><span class="small">From my usual start time</span><div class="hint">{WEEKDAYS.some(d => s.coach.learnedStarts[d]) ? `About an hour before the times the coach learned: ${WEEKDAYS.filter(d => s.coach.learnedStarts[d]).map(d => `${d[0]!.toUpperCase()}${d.slice(1)} ${s.coach.learnedStarts[d]}`).join(', ')}.` : 'Accept the coach\'s schedule suggestion first, so it knows your usual times.'}</div></Row>
             <p class="hint">Your choice stays on even if Android drops the queue. The app re-checks and repairs it when you come back.</p>
           </Card>
         </Section>
@@ -103,6 +106,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Your data">
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
+            <Row trailing={<Button size="sm" onClick={() => { resetCoachMemory(); showToast('Suggestions you dismissed can come back'); }}>Reset</Button>}><span class="small">Coach suggestions</span><div class="hint">Forget what you dismissed or accepted, so suppressed suggestions can return.</div></Row>
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
               <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>

@@ -8,15 +8,21 @@
 import { CONTRACT_VERSION, type Finding, type FindingKind, type FindingsReport, type Proposal, type ProposalKind } from './contract';
 import type { BrainContext } from './context';
 import { FIRST_SESSIONS_COUNT } from './bands';
+import { daysBetween } from '@/core/dates';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectHabit, detectProgress, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectSleep, detectUncovered,
+  detectFocus, detectHabit, detectProgress, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectSleep, detectUncovered,
   detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
 /** Kinds whose gate is the confidence, so a low value is still worth reporting. */
 const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern']);
+
+/** After accepting a suggestion, the same one stays away for this many days. */
+export const ACCEPT_COOLDOWN_DAYS: Record<ProposalKind, number> = {
+  today_plan: 1, schedule: 14, exercise_swap: 28, add_exercise: 28, split_modify: 28, split_new: 28, load_next: 0, rest_default: 60, deload_week: 42,
+};
 
 const PROPOSAL_ORDER: ProposalKind[] = ['today_plan', 'schedule', 'deload_week', 'exercise_swap', 'add_exercise', 'split_modify', 'split_new', 'rest_default', 'load_next'];
 
@@ -57,6 +63,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('first', () => detectFirstSessions(ctx)),
     ...safe('sleep', () => detectSleep(ctx)),
     ...safe('habit', () => detectHabit(ctx, habit)),
+    ...safe('focus', () => detectFocus(ctx)),
   ];
   const seen = new Set<string>();
   const findings = raw
@@ -80,6 +87,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
   const seenP = new Set<string>();
   const proposals = candidates
     .filter(p => (ctx.dismissed[p.dismissKey] ?? 0) < 2)
+    .filter(p => { const day = ctx.accepted[p.dismissKey]; return !day || daysBetween(day, ctx.today) >= ACCEPT_COOLDOWN_DAYS[p.kind]; })
     .filter(p => { if (seenP.has(p.id)) return false; seenP.add(p.id); return true; })
     .sort((a, b) => PROPOSAL_ORDER.indexOf(a.kind) - PROPOSAL_ORDER.indexOf(b.kind) || a.id.localeCompare(b.id));
 

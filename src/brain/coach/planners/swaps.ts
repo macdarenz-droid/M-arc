@@ -32,14 +32,14 @@ export function planSwaps(ctx: BrainContext, findings: Finding[], recovery: Adju
     if (!meta || meta.custom || meta.pattern === 'other' || !meta.primary[0]) continue;
     if ((pct.get(meta.primary[0]) ?? 100) < RECOVERY_SWAP_PCT) continue;
     const split = splitContaining(ctx, meta.id);
-    const exclude = new Set([meta.id, ...(split?.exercises.map(e => e.exerciseId) ?? [])]);
+    if (!split) continue; // no longer part of any split: nothing to swap
+    const exclude = new Set([meta.id, ...split.exercises.map(e => e.exerciseId)]);
     const candidates = allExercises(ctx.custom).filter(x => x.pattern === meta.pattern && x.primary[0] === meta.primary[0]);
     const pick = pickExercise({ candidates, profile, exclude, preferFresh: true });
     if (!pick) continue;
-    const apply: Proposal['apply'] = { kind: 'exercise_swap', fromExerciseId: meta.id, toExerciseId: pick.id };
-    if (split) apply.splitId = split.id;
+    const apply: Proposal['apply'] = { kind: 'exercise_swap', fromExerciseId: meta.id, toExerciseId: pick.id, splitId: split.id };
     out.push(proposal({
-      kind: 'exercise_swap', subject: { exerciseId: meta.id, exerciseName: meta.name, ...(split ? { splitId: split.id, splitName: split.name } : {}) },
+      kind: 'exercise_swap', subject: { exerciseId: meta.id, exerciseName: meta.name, splitId: split.id, splitName: split.name },
       apply, basedOn: [f.id], confidence: f.confidence,
     }));
   }
@@ -86,8 +86,9 @@ export function planAdditions(ctx: BrainContext, findings: Finding[], profile: U
   const out: Proposal[] = [];
   const all = allExercises(ctx.custom);
   const seen = new Set<MuscleId>();
+  const programmeHas = (muscle: MuscleId) => ctx.splits.some(s => s.exercises.some(e => findExercise(e.exerciseId, ctx.custom)?.primary.includes(muscle)));
   const add = (muscle: MuscleId, patterns: string[], basedOn: string[], confidence: Proposal['confidence']) => {
-    if (seen.has(muscle)) return;
+    if (seen.has(muscle) || programmeHas(muscle)) return; // it is in the programme already; the finding says they are not doing it
     const split = hostSplit(ctx, muscle);
     if (!split) return;
     const exclude = new Set(split.exercises.map(e => e.exerciseId));

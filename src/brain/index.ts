@@ -8,5 +8,4 @@ export * from './balance';
 export * from './effort';
 export * from './weekly';
 export * from './bodyfat';
-export * from './coach/rules';
 export * from './coach/cues';

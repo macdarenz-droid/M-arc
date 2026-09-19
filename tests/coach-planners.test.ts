@@ -90,16 +90,21 @@ describe('swaps, additions, redundancy', () => {
       { weekday: 'mon', splitId: PUSH_ID, exercises: () => std(PUSH_EX) },
       { weekday: 'thu', splitId: PULL_ID, exercises: () => std(['lib_lat_pulldown', 'lib_seated_cable_row', 'lib_face_pull', 'lib_dumbbell_biceps_curl']) },
     ]);
-    const c = ctx(s);
+    // With a legs split in the programme the coach says nothing: the split exists, the user is skipping it.
+    const withLegs = ctx(s);
+    expect(planAdditions(withLegs, detectBalance(withLegs))).toEqual([]);
+    // Without one, it adds a lower-body lift to the emptier split and never duplicates a muscle-and-pattern pair there.
+    const c = ctx(s, { splits: pplSplits().slice(0, 2) });
     const balance = detectBalance(c);
     expect(balance[0]!.metrics.weak).toBe('Lower body');
     const out = planAdditions(c, balance);
     expect(out).toHaveLength(1);
-    if (out[0]!.apply.kind !== 'add_exercise') return;
-    const legs = pplSplits()[2]!;
-    const keys = new Set(legs.exercises.map(e => { const m = findExercise(e.exerciseId)!; return `${m.primary[0]}|${m.pattern}`; }));
-    const added = findExercise(out[0]!.apply.exerciseId)!;
-    expect(out[0]!.apply.splitId).toBe(LEGS_ID);
+    const apply = out[0]!.apply;
+    if (apply.kind !== 'add_exercise') return;
+    const host = c.splits.find(sp => sp.id === apply.splitId)!;
+    expect(host.id).toBe(PULL_ID);
+    const keys = new Set(host.exercises.map(e => { const m = findExercise(e.exerciseId)!; return `${m.primary[0]}|${m.pattern}`; }));
+    const added = findExercise(apply.exerciseId)!;
     expect(keys.has(`${added.primary[0]}|${added.pattern}`)).toBe(false);
     expect(MUSCLE_BY_ID[added.primary[0]!].bucket).toBe('lower');
   });
