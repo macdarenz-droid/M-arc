@@ -4,7 +4,7 @@ import type { MuscleId } from '@/data/muscles';
 import { LIBRARY, findExercise } from '@/core/exercises';
 import { addDays } from '@/core/dates';
 import { equipmentGroup } from '../../coach/cues';
-import type { Confidence, Proposal, ProposalApply, ProposalKind, Subject } from '../contract';
+import type { Confidence, Finding, Proposal, ProposalApply, ProposalKind, Subject } from '../contract';
 import { PRINCIPLES_BY_PROPOSAL, dismissKey } from '../contract';
 
 interface Make {
@@ -104,4 +104,19 @@ export function allExercises(custom: Exercise[]): Exercise[] {
 /** Candidates for a muscle: primary includes it and the pattern is one of the given ones (any pattern when empty). */
 export function candidatesFor(all: Exercise[], muscle: MuscleId, patterns: readonly string[] = []): Exercise[] {
   return all.filter(ex => ex.primary.includes(muscle) && (!patterns.length || patterns.includes(ex.pattern)));
+}
+
+/**
+ * Muscles this person has flagged as painful or uncomfortable recently
+ * (note_flag, pain_or_discomfort) — `detectNoteFlags` already limits this
+ * to a short recall window (NOTE_FLAG_LOOKBACK_DAYS). A planner that adds
+ * *new* direct work skips these; it never touches a muscle already in a
+ * split, since whether to keep training around it is the person's call,
+ * not an automatic one. This is only ever a note the person wrote, never
+ * a diagnosis — see subjective_readiness_monitoring.
+ */
+export function recentPainMuscles(findings: Finding[]): Set<MuscleId> {
+  const out = new Set<MuscleId>();
+  for (const f of findings) if (f.kind === 'note_flag' && f.metrics.flagKind === 'pain_or_discomfort' && f.subject.muscle) out.add(f.subject.muscle);
+  return out;
 }

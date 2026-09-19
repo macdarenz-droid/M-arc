@@ -2,10 +2,12 @@
  * A deterministic split builder. Picks a structure by days per week, fills
  * each day by movement pattern so every major muscle is covered, keeps
  * weekly effective sets per muscle inside the band, gives focus muscles
- * extra sets spread over at least two days, and prefers the equipment and
- * exercises the user already uses. The language model never designs this;
- * it only explains it. Rests on volume_dose_response and
- * frequency_secondary_to_volume.
+ * extra sets spread over at least two days, prefers the equipment and
+ * exercises the user already uses, and skips direct work for any muscle
+ * the person has recently flagged as painful (see recentPainMuscles) so a
+ * fresh plan stays productive around it rather than ignoring it. The
+ * language model never designs this; it only explains it. Rests on
+ * volume_dose_response and frequency_secondary_to_volume.
  */
 import type { Exercise, Weekday } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
@@ -17,7 +19,7 @@ import type { Finding, Proposal, SplitDraft } from '../contract';
 import type { BrainContext } from '../context';
 import { WEEKLY_SETS_HIGH } from '../bands';
 import type { HabitModel } from '../detectors/habit';
-import { allExercises, candidatesFor, pickExercise, usageProfile, proposal, type UsageProfile } from './shared';
+import { allExercises, candidatesFor, pickExercise, usageProfile, proposal, recentPainMuscles, type UsageProfile } from './shared';
 
 interface Slot { muscle: MuscleId; patterns: string[]; sets: number }
 interface DayTemplate { key: string; name: string; slots: Slot[]; lower: boolean }
@@ -90,6 +92,14 @@ export interface SplitBuilderInput {
   profile: UsageProfile;
   /** Weekdays to place the splits on, in order. Defaults by day count. */
   days?: Weekday[];
+  /**
+   * Muscles to skip direct work for — typically a recent pain_or_discomfort
+   * flag. The day still trains everything else it normally would; only
+   * that muscle's own slots are dropped, so the week stays productive
+   * around it rather than being replaced or cancelled. Never overrides a
+   * muscle already in an existing split — see recentPainMuscles.
+   */
+  avoid?: MuscleId[];
 }
 
 export interface BuiltPlan {
@@ -115,7 +125,8 @@ export function buildSplits(input: SplitBuilderInput): BuiltPlan {
   const daysPerWeek = Math.max(1, Math.min(6, Math.round(input.daysPerWeek) || 3));
   const structure = structureFor(daysPerWeek);
   const all = allExercises(input.custom);
-  const focus = input.focus.slice(0, 2);
+  const avoid = new Set(input.avoid ?? []);
+  const focus = input.focus.filter(m => !avoid.has(m)).slice(0, 2);
   const placed = new Map<string, number>();
   const drafts: Array<{ name: string; template: DayTemplate; exercises: Array<{ exerciseId: string; sets: number; muscle: MuscleId }> }> = [];
 
@@ -123,6 +134,7 @@ export function buildSplits(input: SplitBuilderInput): BuiltPlan {
     const chosen = new Set<string>();
     const exercises: Array<{ exerciseId: string; sets: number; muscle: MuscleId }> = [];
     for (const s of day.template.slots) {
+      if (avoid.has(s.muscle)) continue; // skip direct work on a recently flagged muscle; the day still trains everything else
       const cands = candidatesFor(all, s.muscle, s.patterns);
       const pick = pickExercise({ candidates: cands.length ? cands : candidatesFor(all, s.muscle), profile: input.profile, exclude: chosen, penalize: placed })
         ?? pickExercise({ candidates: all.filter(x => s.patterns.includes(x.pattern)), profile: input.profile, exclude: chosen, penalize: placed });
@@ -195,7 +207,10 @@ export function planSplitNew(ctx: BrainContext, findings: Finding[], habit: Habi
   const uncovered = findings.filter(f => f.kind === 'uncovered_muscle');
   if (usable.length && uncovered.length < 3) return null;
   const { days, weekdays } = inferDaysPerWeek(ctx, habit);
-  const input: SplitBuilderInput = { goal: ctx.goal, daysPerWeek: days, focus: ctx.splits.flatMap(s => s.focus).slice(0, 2), custom: ctx.custom, profile: usageProfile(ctx.sessions, ctx.custom, ctx.today) };
+  const input: SplitBuilderInput = {
+    goal: ctx.goal, daysPerWeek: days, focus: ctx.splits.flatMap(s => s.focus).slice(0, 2), custom: ctx.custom,
+    profile: usageProfile(ctx.sessions, ctx.custom, ctx.today), avoid: [...recentPainMuscles(findings)],
+  };
   if (weekdays.length) input.days = weekdays;
   const plan = buildSplits(input);
   if (!plan.splits.length) return null;

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { Finding } from '@/brain/coach/contract';
 import { MUSCLE_BY_ID, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { adjustedRecovery, detectBalance, detectProgress, detectRedundant, detectUncovered, detectEffortDrift } from '@/brain/coach/detectors';
@@ -132,6 +133,24 @@ describe('swaps, additions, redundancy', () => {
     expect(out).toHaveLength(1);
     expect(out[0]!.apply).toMatchObject({ kind: 'split_modify', splitId: PUSH_ID, remove: ['lib_dumbbell_bench_press'] });
   });
+
+  it('never proposes adding direct work to a muscle recently flagged as painful', () => {
+    const noHams = pplHistory(LAST_MONDAY, 6, (_, split, ex) => (split === 'legs' ? ex.filter(e => e.id !== 'lib_romanian_deadlift' && e.id !== 'lib_seated_leg_curl') : ex));
+    const splits = pplSplits();
+    splits[2]!.exercises = splits[2]!.exercises.filter(e => e.exerciseId !== 'lib_romanian_deadlift' && e.exerciseId !== 'lib_seated_leg_curl');
+    const c = ctx(noHams, { splits });
+    const uncovered = detectUncovered(c);
+    expect(uncovered.some(f => f.subject.muscle === 'hamstrings')).toBe(true);
+    const painFlag: Finding = {
+      id: 'note_flag:pain_or_discomfort:hamstrings', kind: 'note_flag', subject: { muscle: 'hamstrings' },
+      metrics: { flagKind: 'pain_or_discomfort', daysAgo: 1, day: c.today },
+      window: { from: c.today, to: c.today }, confidence: 'high', severity: 1,
+      evidence: { sessionIds: [], days: [] }, principles: ['subjective_readiness_monitoring'],
+    };
+    // Without the flag, the coach would add a hamstring exercise (already covered by the earlier test); with it, it must not.
+    const out = planAdditions(c, [...uncovered, painFlag]);
+    expect(out.some(p => p.subject.muscle === 'hamstrings')).toBe(false);
+  });
 });
 
 describe('split builder', () => {
@@ -181,6 +200,21 @@ describe('split builder', () => {
       expect(plan.splits).toHaveLength(d);
       for (const [m, v] of Object.entries(plan.weeklySetsByMuscle)) expect(v, `${d} days ${m}`).toBeLessThanOrEqual(WEEKLY_SETS_HIGH);
     }
+  });
+
+  it('an avoided muscle gets no direct work, but its day still trains everything else', () => {
+    const plan = buildSplits({ goal: 'lean', daysPerWeek: 3, focus: [], custom: [], profile, avoid: ['chest'] });
+    // No exercise targets chest as its primary muscle; a little chest may still show up as a secondary role on another push exercise, which is fine — only direct slots are skipped.
+    for (const s of plan.splits) for (const e of s.exercises) expect(findExercise(e.exerciseId)!.primary).not.toContain('chest');
+    const push = plan.splits.find(s => s.name === 'Push')!;
+    expect(push.exercises.length).toBeGreaterThan(0); // still a real day, just without chest slots
+    expect(push.exercises.some(e => findExercise(e.exerciseId)!.primary.includes('front_delts'))).toBe(true);
+  });
+
+  it('a muscle that is both focus and avoided is treated as avoided: no extra sets, no forced second day', () => {
+    const plan = buildSplits({ goal: 'lean', daysPerWeek: 3, focus: ['chest'], custom: [], profile, avoid: ['chest'] });
+    expect(plan.splits.every(s => s.focus.length === 0)).toBe(true);
+    for (const s of plan.splits) for (const e of s.exercises) expect(findExercise(e.exerciseId)!.primary).not.toContain('chest');
   });
 });
 

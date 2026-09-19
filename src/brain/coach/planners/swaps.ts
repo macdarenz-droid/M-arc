@@ -12,7 +12,7 @@ import type { BrainContext } from '../context';
 import { COMPOUND_PATTERN, MAX_SWAPS_PER_REPORT } from '../bands';
 import { CONFIDENCE_RANK } from '../detectors/shared';
 import type { AdjustedRecovery } from '../detectors/recovery';
-import { allExercises, candidatesFor, pickExercise, proposal, usageProfile, type UsageProfile } from './shared';
+import { allExercises, candidatesFor, pickExercise, proposal, recentPainMuscles, usageProfile, type UsageProfile } from './shared';
 
 function splitContaining(ctx: BrainContext, exerciseId: string): Split | undefined {
   return ctx.splits.find(s => s.exercises.some(e => e.exerciseId === exerciseId));
@@ -85,9 +85,10 @@ export function planAdditions(ctx: BrainContext, findings: Finding[], profile: U
   const out: Proposal[] = [];
   const all = allExercises(ctx.custom);
   const seen = new Set<MuscleId>();
+  const avoid = recentPainMuscles(findings);
   const programmeHas = (muscle: MuscleId) => ctx.splits.some(s => s.exercises.some(e => findExercise(e.exerciseId, ctx.custom)?.primary.includes(muscle)));
   const add = (muscle: MuscleId, patterns: string[], basedOn: string[], confidence: Proposal['confidence']) => {
-    if (seen.has(muscle) || programmeHas(muscle)) return; // it is in the programme already; the finding says they are not doing it
+    if (seen.has(muscle) || programmeHas(muscle) || avoid.has(muscle)) return; // already programmed, or recently flagged painful — never pile more direct work on it automatically
     const split = hostSplit(ctx, muscle);
     if (!split) return;
     const exclude = new Set(split.exercises.map(e => e.exerciseId));
