@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
-import type { ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+import { ASK_SYSTEM_PROMPT, askMessages } from '../src/promptAsk';
+import type { AskPayload, ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
 
 const payload = (): ExplainPayload => ({
   version: 1, kind: 'explain', goal: 'lean', unit: 'kg', today: '2026-09-19',
@@ -16,6 +17,10 @@ const payload = (): ExplainPayload => ({
 
 const tagPayload = (): TagExercisePayload => ({ version: 1, kind: 'tag-exercise', name: 'Cable Face Pull', equipmentHint: 'Cable' });
 const notesPayload = (): NotesPayload => ({ version: 1, kind: 'notes', text: 'Felt a pinch in my left shoulder on the last set.' });
+const askPayload = (): AskPayload => {
+  const { version, goal, unit, today, dataQuality, findings, proposals, cards } = payload();
+  return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?' };
+};
 
 class FakeKV {
   store = new Map<string, string>();
@@ -52,6 +57,12 @@ const stubNotes = async () => ({ flags: [{ kind: 'pain_or_discomfort' as const, 
 const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   path: '/notes', maxBody: MAX_NOTES_BODY_BYTES, validate: validateNotesPayload,
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
+});
+
+const stubAsk = async () => ({ answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
+  path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
+  async call() { const out = await call(); return { answer: out.answer, model: out.model, usage: out.usage }; },
 });
 
 const post = (path: string, body: unknown, headers: Record<string, string> = {}, origin?: string) =>
@@ -92,6 +103,26 @@ describe('notes payload validation', () => {
     expect(validateNotesPayload({ version: 1, kind: 'notes', text: 'x'.repeat(281) })).toMatchObject({ ok: false });
     expect(validateNotesPayload({ version: 1, kind: 'notes', text: 'ok', exerciseId: 'lib_bench' })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
     expect(validateNotesPayload('nope')).toMatchObject({ ok: false });
+  });
+});
+
+describe('ask payload validation', () => {
+  it('accepts the same grounding as /explain, plus history and a question', () => {
+    expect(validateAskPayload(askPayload())).toMatchObject({ ok: true });
+    expect(validateAskPayload({ ...askPayload(), question: '' })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), question: 'x'.repeat(MAX_QUESTION_CHARS + 1) })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), profile: { name: 'x' } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), sessions: [] })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), findings: [{ ...askPayload().findings[0], evidence: { sessionIds: ['s1'] } }] })).toMatchObject({ ok: false });
+    // History: a real conversation, capped, well-shaped.
+    expect(validateAskPayload({ ...askPayload(), history: [{ role: 'user', text: 'hi' }, { role: 'assistant', text: 'hi' }] })).toMatchObject({ ok: true });
+    expect(validateAskPayload({ ...askPayload(), history: [{ role: 'coach', text: 'hi' }] })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), history: [{ role: 'user', text: '' }] })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), history: [{ role: 'user', text: 'x'.repeat(701) }] })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), history: Array.from({ length: MAX_HISTORY_TURNS + 1 }, () => ({ role: 'user', text: 'hi' })) })).toMatchObject({ ok: false });
+    // explain is /explain's own field: not accepted here, same "unexpected field" discipline as everywhere else.
+    expect(validateAskPayload({ ...askPayload(), explain: ['x'] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateAskPayload('nope')).toMatchObject({ ok: false });
   });
 });
 
@@ -180,7 +211,7 @@ describe('handler: /explain', () => {
 });
 
 describe('handler: multiple routes in one Worker', () => {
-  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes)]);
+  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk)]);
 
   it('answers /tag-exercise with a closed-vocabulary suggestion', async () => {
     const res = await handle(post('/tag-exercise', tagPayload()), env());
@@ -199,10 +230,20 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.flags).toEqual([{ kind: 'pain_or_discomfort', muscle: 'rear_delts' }]);
   });
 
-  it('keeps /explain, /tag-exercise and /notes independent: one 400 does not affect the others', async () => {
+  it('answers /ask grounded in the report, with a real question', async () => {
+    const res = await handle(post('/ask', askPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { answer: string; model: string };
+    expect(body.answer).toContain('14.5');
+    expect(body.model).toBe('claude-sonnet-5');
+  });
+
+  it('keeps /explain, /tag-exercise, /notes and /ask independent: one 400 does not affect the others', async () => {
     expect((await handle(post('/tag-exercise', { version: 1, kind: 'tag-exercise', name: '' }), env())).status).toBe(400);
+    expect((await handle(post('/ask', { ...askPayload(), question: '' }), env())).status).toBe(400);
     expect((await handle(post('/explain', payload()), env())).status).toBe(200);
     expect((await handle(post('/notes', notesPayload()), env())).status).toBe(200);
+    expect((await handle(post('/ask', askPayload()), env())).status).toBe(200);
   });
 
   it('a route neither route table entry matches is a 404, same as an unknown path', async () => {
@@ -231,5 +272,26 @@ describe('prompts', () => {
     expect(NOTES_SYSTEM_PROMPT).toContain('Never diagnose');
     expect(NOTES_SYSTEM_PROMPT).toContain('pain_or_discomfort');
     expect(NOTES_SYSTEM_PROMPT).toContain('not medical advice');
+  });
+
+  it('ask prompt is honest about the edges of the data and refuses diet and medical questions', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('Use only numbers that appear in the report');
+    expect(ASK_SYSTEM_PROMPT).toContain('say so plainly');
+    expect(ASK_SYSTEM_PROMPT).toContain('Never answer questions about diet, calories, supplements, medication or medical conditions');
+    expect(ASK_SYSTEM_PROMPT).toContain('Never predict or mention injury');
+    expect(ASK_SYSTEM_PROMPT).toContain('120 words');
+  });
+
+  it('ask replays the report once, then the real conversation, then the new question last', () => {
+    const withHistory: AskPayload = { ...askPayload(), history: [{ role: 'user', text: 'How was last week?' }, { role: 'assistant', text: 'Solid: chest volume held steady.' }] };
+    const msgs = askMessages(withHistory);
+    expect(msgs[0]).toMatchObject({ role: 'user' });
+    expect(msgs[0]!.content).toContain('"changePct":-18');
+    expect(msgs[1]).toMatchObject({ role: 'assistant' });
+    expect(msgs[2]).toEqual({ role: 'user', content: 'How was last week?' });
+    expect(msgs[3]).toEqual({ role: 'assistant', content: 'Solid: chest volume held steady.' });
+    expect(msgs.at(-1)).toEqual({ role: 'user', content: withHistory.question });
+    // Deterministic: same payload, same messages, so the same conversation always renders the same way.
+    expect(askMessages(withHistory)).toEqual(msgs);
   });
 });

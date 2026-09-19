@@ -1,6 +1,6 @@
-import { callAnthropic, callNotes, callTagExercise } from './anthropic';
-import { createHandler, MAX_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
-import type { ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
+import { callAnthropic, callAsk, callNotes, callTagExercise } from './anthropic';
+import { createHandler, MAX_ASK_BODY_BYTES, MAX_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateAskPayload, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
+import type { AskPayload, ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 const explainRoute: RouteConfig = {
   path: '/explain',
@@ -35,7 +35,17 @@ const notesRoute: RouteConfig = {
   },
 };
 
-const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute]);
+const askRoute: RouteConfig = {
+  path: '/ask',
+  maxBody: MAX_ASK_BODY_BYTES,
+  validate: validateAskPayload,
+  async call(payload, env: WorkerEnv) {
+    const out = await callAsk(payload as AskPayload, env);
+    return { answer: String(out.answer).trim(), model: out.model, usage: out.usage };
+  },
+};
+
+const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute, askRoute]);
 
 export default {
   fetch(request: Request, env: WorkerEnv): Promise<Response> {

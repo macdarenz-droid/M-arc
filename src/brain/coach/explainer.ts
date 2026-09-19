@@ -15,9 +15,8 @@ export interface PayloadFinding { id: string; kind: string; subject: Finding['su
 export interface PayloadProposal { id: string; kind: string; subject: Proposal['subject']; apply: Proposal['apply']; basedOn: string[]; confidence: Proposal['confidence'] }
 export interface PayloadCard { id: string; title: string; rating: string; statement: string; disputed: string }
 
-export interface ExplainPayload {
-  version: 1;
-  kind: 'explain';
+/** What every route that reasons about the coach's report sends: the report, nothing about the person. Shared with src/ai/ask.ts. */
+export interface GroundingPayload {
   goal: string;
   unit: 'kg' | 'lb';
   today: string;
@@ -25,15 +24,35 @@ export interface ExplainPayload {
   findings: PayloadFinding[];
   proposals: PayloadProposal[];
   cards: PayloadCard[];
+}
+
+export interface ExplainPayload extends GroundingPayload {
+  version: 1;
+  kind: 'explain';
   explain: string[];
 }
 
 export const LIMITS = { findings: 24, proposals: 16, cards: 18, explain: 12 } as const;
 
-/** Only what the words layer needs. Evidence (session ids) and profile never leave the device. */
-export function buildPayload(report: FindingsReport, opts: { goal: string; unit: 'kg' | 'lb'; explain?: string[] }): ExplainPayload {
+/** Findings and proposals trimmed to the limits every grounded route shares. No cards yet — those depend on which ids are actually in view. */
+export function trimFindingsAndProposals(report: FindingsReport): { findings: PayloadFinding[]; proposals: PayloadProposal[] } {
   const findings = report.findings.slice(0, LIMITS.findings).map(f => ({ id: f.id, kind: f.kind, subject: f.subject, metrics: f.metrics, window: f.window, confidence: f.confidence, severity: f.severity }));
   const proposals = report.proposals.filter(p => p.kind !== 'load_next').slice(0, LIMITS.proposals).map(p => ({ id: p.id, kind: p.kind, subject: p.subject, apply: p.apply, basedOn: p.basedOn, confidence: p.confidence }));
+  return { findings, proposals };
+}
+
+/** The research cards behind a set of finding/proposal ids, capped. */
+export function cardsFor(report: FindingsReport, ids: string[]): PayloadCard[] {
+  const chosen = new Set(ids);
+  const principleIds = new Set<string>();
+  for (const f of report.findings) if (chosen.has(f.id)) f.principles.forEach(p => principleIds.add(p));
+  for (const p of report.proposals) if (chosen.has(p.id)) p.principles.forEach(x => principleIds.add(x));
+  return principlesFor([...principleIds]).slice(0, LIMITS.cards).map(c => ({ id: c.id, title: c.title, rating: c.rating, statement: c.statement, disputed: c.disputed }));
+}
+
+/** Only what the words layer needs. Evidence (session ids) and profile never leave the device. */
+export function buildPayload(report: FindingsReport, opts: { goal: string; unit: 'kg' | 'lb'; explain?: string[] }): ExplainPayload {
+  const { findings, proposals } = trimFindingsAndProposals(report);
   const known = new Set([...findings.map(f => f.id), ...proposals.map(p => p.id)]);
   let explain = (opts.explain ?? []).filter(id => known.has(id));
   if (!explain.length) {
@@ -42,10 +61,7 @@ export function buildPayload(report: FindingsReport, opts: { goal: string; unit:
     explain = [...new Set([...topProposals, ...topFindings])];
   }
   explain = explain.slice(0, LIMITS.explain);
-  const ids = new Set<string>();
-  for (const f of report.findings) if (explain.includes(f.id)) f.principles.forEach(p => ids.add(p));
-  for (const p of report.proposals) if (explain.includes(p.id)) p.principles.forEach(x => ids.add(x));
-  const cards = principlesFor([...ids]).slice(0, LIMITS.cards).map(c => ({ id: c.id, title: c.title, rating: c.rating, statement: c.statement, disputed: c.disputed }));
+  const cards = cardsFor(report, explain);
   return { version: 1, kind: 'explain', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality, findings, proposals, cards, explain };
 }
 
@@ -56,7 +72,7 @@ export function extractNumbers(text: string): number[] {
 const dateParts = (day: string): number[] => (/^\d{4}-\d{2}-\d{2}$/.test(day) ? day.split('-').map(Number) : []);
 
 /** Every number the model is allowed to write: anything in the payload, plus dates it contains and the rounded forms of its decimals. */
-export function allowedNumbers(payload: ExplainPayload): Set<number> {
+export function allowedNumbers(payload: GroundingPayload): Set<number> {
   const out = new Set<number>();
   const add = (n: number) => { if (!Number.isFinite(n)) return; out.add(n); out.add(Math.abs(n)); out.add(Math.round(n)); out.add(Math.round(n * 10) / 10); };
   const visit = (v: unknown): void => {

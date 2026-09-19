@@ -5,12 +5,17 @@ import { z } from 'zod';
 import { SYSTEM_PROMPT, userMessage } from './prompt';
 import { TAG_SYSTEM_PROMPT, userMessage as tagUserMessage } from './promptTag';
 import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNotes';
+import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallModel, CallNotes, CallTagExercise } from './types';
+import type { CallAsk, CallModel, CallNotes, CallTagExercise } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
   items: z.array(z.object({ id: z.string(), text: z.string() })),
+});
+
+const AskSchema = z.object({
+  answer: z.string(),
 });
 
 const MuscleIdSchema = z.enum(MUSCLE_IDS);
@@ -104,4 +109,18 @@ export const callNotes: CallNotes = async (payload, env) => {
   });
   const parsed = requireParsed(response);
   return { flags: parsed.flags, model: response.model, usage: usageOf(response) };
+};
+
+export const callAsk: CallAsk = async (payload, env) => {
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
+  const model = env.MODEL || DEFAULT_MODEL;
+  const response = await client.messages.parse({
+    model,
+    max_tokens: 2500,
+    system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+    messages: askMessages(payload),
+    output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
+  });
+  const parsed = requireParsed(response);
+  return { answer: parsed.answer, model: response.model, usage: usageOf(response) };
 };

@@ -268,11 +268,28 @@ the cases a single history cannot.
    `/explain` summary already does that job — weaving the week's findings
    into one paragraph — so building a second endpoint for the same thing
    would only duplicate it; revisit only if the two need to diverge.
-   Queued next: ask-the-coach (needs multi-turn payload design), then
-   camera-based exercise identification and programme import from a photo
-   (the highest-design-effort phases, since vision
-   accuracy is genuinely limited — every result there must stay a
-   suggestion with alternates, never a silent write).
+   Queued next: camera-based exercise identification and programme import
+   from a photo (the highest-design-effort phases, since vision accuracy is
+   genuinely limited — every result there must stay a suggestion with
+   alternates, never a silent write).
+6. Ask-the-coach: a grounded multi-turn Q&A route, `/ask`, entered from a
+   "Ask a question" button beside "More from the coach" on the Coach
+   screen. **Done.** The Worker and app now share one `GroundingPayload`
+   shape (`proxy/src/types.ts`, `explainer.ts`'s exported interface) that
+   `/explain` and `/ask` both extend, so the report/cards validation and
+   trimming logic is written once. The Worker holds no session state:
+   `src/ai/ask.ts`'s `buildAskPayload` resends the whole exchange so far
+   (capped at 12 turns, each trimmed) on every call, and
+   `proxy/src/promptAsk.ts`'s `askMessages` reconstructs it as a real
+   Anthropic `messages` array — the report as a genuine first user turn, a
+   synthetic "Understood." assistant turn, then the real history and the
+   new question. The system prompt refuses diet, supplement and medical
+   questions, says plainly when the report does not cover something, and
+   is held to the same number-grounding check as `/explain`: any answer
+   using a number not in the payload is dropped rather than shown
+   half-trusted. `AskSheet` in `Coach.tsx` keeps the conversation as plain
+   component state — closing the sheet forgets it, nothing is persisted —
+   and shows `<Thinking />` while a reply is in flight.
 
 ## Decisions log
 
@@ -303,9 +320,14 @@ the cases a single history cannot.
 | 2026-09-19 | Found live: switching to Sonnet 5 without setting `output_config.effort` left it at its own default depth of thinking, unlike Haiku which never thinks at all — real requests exceeded the app's and the Worker's timeouts, burning real output tokens on calls that returned nothing. Every route now sets `effort: 'medium'` explicitly, with `max_tokens` and both the app-side and Worker-side timeouts raised to match. This is a reliability fix, not a cost cut: it also reduces spend, since a request that completes once costs less than one that thinks at length and still fails. |
 | 2026-09-19 | Any place waiting on the online coach shows a themed spinner (colour from the theme's own `--accent`, no per-theme code) with a rotating gym-flavoured phrase, in place of a bare "Asking…" — same restraint as the coach's own words, no exclamation marks. Respects prefers-reduced-motion. |
 | 2026-09-19 | The daily spark on Today is built locally from findings already rendered by `words.ts`, not a remote call: a screen element shown on every open cannot honestly follow the existing "never spend a call on screen refresh" rule any other way. The weekly-review idea from the Phase 5 plan was dropped as redundant, since the Coach screen's `/explain` summary already synthesizes the week — a lesson to re-check a queued idea against what has since shipped before building it. |
+| 2026-09-19 | `/ask`'s Worker is stateless: rather than store a conversation server-side, the app resends the whole exchange (capped at 12 turns) on every call and the Worker replays it as real alternating messages. Simpler than session storage, and it means the Worker never holds anything longer than one request. |
+| 2026-09-19 | Ask-the-coach's conversation lives only in the sheet's own component state, not in `AppState` or localStorage: closing the sheet is the same as ending the conversation. Nothing about the exchange needs to survive a screen change, and not persisting it keeps the payload the Worker sees exactly what the person can see on screen. |
+| 2026-09-19 | `/explain` and `/ask` were refactored onto one shared `GroundingPayload` (goal, unit, today, dataQuality, findings, proposals, cards) on both sides, so the "no sessions, no name, no body data" boundary and the findings/proposals/cards trimming are enforced in one place rather than copied per route. |
 
 ## Non-goals
 
-No injury prediction. No diet, calorie or supplement advice. No chat
-interface in v1. No on-device language model in v1; the explainer
-interface is pluggable if that changes.
+No injury prediction. No diet, calorie or supplement advice, in chat or
+anywhere else. No open-ended chat: ask-the-coach (Phase 6) answers only
+from the current report and research cards, refuses what that does not
+cover, and its conversation is never saved. No on-device language model in
+v1; the explainer interface is pluggable if that changes.

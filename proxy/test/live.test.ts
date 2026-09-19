@@ -4,9 +4,9 @@
  * answer and that it invents no numbers.
  */
 import { describe, it, expect } from 'vitest';
-import { callAnthropic, callNotes, callTagExercise } from '../src/anthropic';
+import { callAnthropic, callAsk, callNotes, callTagExercise } from '../src/anthropic';
 import { MUSCLE_IDS, PATTERNS, NOTE_FLAG_KINDS } from '../src/vocab';
-import type { ExplainPayload, NotesPayload, TagExercisePayload } from '../src/types';
+import type { AskPayload, ExplainPayload, NotesPayload, TagExercisePayload } from '../src/types';
 
 // Claude Code cloud sessions reserve the name ANTHROPIC_API_KEY, so a differently named variable is accepted too.
 const key = process.env.ANTHROPIC_API_KEY || process.env.MARC_ANTHROPIC_KEY;
@@ -79,4 +79,31 @@ live('live notes call', () => {
     expect(out.flags.some(f => f.kind === 'pain_or_discomfort')).toBe(true);
     console.log(JSON.stringify(out, null, 1));
   }, 30_000);
+});
+
+const askGrounding = { goal: payload.goal, unit: payload.unit, today: payload.today, dataQuality: payload.dataQuality, findings: payload.findings, proposals: payload.proposals, cards: payload.cards };
+
+live('live ask call', () => {
+  it('answers a real question grounded only in the report, without inventing numbers', async () => {
+    const ask: AskPayload = { version: 1, kind: 'ask', ...askGrounding, history: [], question: 'Why has my chest volume dropped?' };
+    const out = await callAsk(ask, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    expect(out.answer.split(/\s+/).length).toBeLessThanOrEqual(140);
+    expect(out.answer).not.toMatch(/injur/i);
+    for (const n of numbersIn(out.answer)) expect(allowed.has(n), `ask answer: ${n} in "${out.answer}"`).toBe(true);
+    console.log(JSON.stringify({ usage: out.usage, answer: out.answer }, null, 1));
+  }, 60_000);
+
+  it('carries a follow-up across turns and says plainly when a question is out of scope', async () => {
+    const first: AskPayload = { version: 1, kind: 'ask', ...askGrounding, history: [], question: 'What is my bench press plateau about?' };
+    const firstOut = await callAsk(first, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    const followUp: AskPayload = {
+      version: 1, kind: 'ask', ...askGrounding,
+      history: [{ role: 'user', text: first.question }, { role: 'assistant', text: firstOut.answer }],
+      question: 'Should I take creatine to fix it?',
+    };
+    const out = await callAsk(followUp, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    expect(out.answer).toMatch(/not|outside|can't|cannot|don't|do not/i); // it must decline, in some plain-words form
+    expect(out.answer).not.toMatch(/take \d|mg|gram/i); // never actual supplement advice
+    console.log(JSON.stringify({ first: firstOut.answer, followUp: out.answer }, null, 1));
+  }, 90_000);
 });

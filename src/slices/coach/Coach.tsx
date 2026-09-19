@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconChevron, IconInfo } from '@/ui/icons';
+import { IconChevron, IconInfo, IconSend } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -15,9 +15,10 @@ import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
+import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskTurn } from '@/ai/ask';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
-import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
+import { ensureDeviceId, explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -39,6 +40,7 @@ export function Coach() {
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
+  const [askOpen, setAskOpen] = useState(false);
   const w = week.value;
   const goal = GOALS.find(g => g.id === s.goal)!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
@@ -71,8 +73,11 @@ export function Coach() {
           {explanation.value?.summary
             ? <p class="small" style={{ marginTop: 6 }}>{explanation.value.summary}</p>
             : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
-          {!explanation.value && <Button size="sm" style={{ marginTop: 8 }} disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
           {explanation.value && explanation.value.rejected > 0 && <p class="hint" style={{ marginTop: 6 }}>{explanation.value.rejected} line{explanation.value.rejected === 1 ? '' : 's'} left out for using a number not in your data.</p>}
+          <div class="row" style={{ marginTop: 8 }}>
+            {!explanation.value && <Button size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
+            <Button size="sm" variant="quiet" onClick={() => setAskOpen(true)}>Ask a question</Button>
+          </div>
         </Card>
       )}
 
@@ -133,6 +138,7 @@ export function Coach() {
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
       {openSuggestion && <SuggestionSheet suggestion={openSuggestion} onAccept={() => accept(openSuggestion)} onDismiss={() => dismiss(openSuggestion)} onClose={() => setOpenSuggestion(null)} />}
+      {askOpen && <AskSheet onClose={() => setAskOpen(false)} />}
       {goalOpen && (
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
           <div class="stack-sm">
@@ -208,6 +214,55 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
         <Evidence cards={sg.evidence} />
         <div class="grid-2"><Button variant="quiet" onClick={onDismiss}>Not now</Button><Button variant="primary" onClick={onAccept}>{sg.acceptLabel}</Button></div>
       </div>
+    </Sheet>
+  );
+}
+
+/**
+ * A short, grounded conversation with the coach: the report and the
+ * research cards behind it, nothing about sessions, name or body. History
+ * lives only in this sheet's own state — closing it forgets the exchange.
+ */
+function AskSheet({ onClose }: { onClose: () => void }) {
+  const [history, setHistory] = useState<AskTurn[]>([]);
+  const [question, setQuestion] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight, behavior: 'smooth' }); }, [history, sending]);
+
+  const send = async () => {
+    const q = question.trim();
+    if (!q || sending) return;
+    const s = state.value;
+    const payload = buildAskPayload(report.value, history, q, { goal: s.goal, unit: s.preferences.weightUnit });
+    const withQuestion: AskTurn[] = [...history, { role: 'user', text: q }];
+    setHistory(withQuestion);
+    setQuestion('');
+    setError(null);
+    setSending(true);
+    try {
+      const r = await requestAskAnswer(payload, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
+      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer }]);
+      else setError(r.error);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <Sheet title="Ask the coach" onClose={onClose}>
+      <div class="ask-thread" ref={threadRef}>
+        {!history.length && <p class="small muted">Ask about anything in your report — a plateau, a drop in volume, why a suggestion showed up. It only sees the findings and research below, nothing about your sessions or body.</p>}
+        {history.map((turn, i) => <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>{turn.text}</div>)}
+        {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
+      </div>
+      {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
+      <form class="ask-input" onSubmit={e => { e.preventDefault(); void send(); }}>
+        <input value={question} maxLength={MAX_QUESTION_CHARS} placeholder="Ask a question…" disabled={sending} onInput={e => setQuestion((e.target as HTMLInputElement).value)} />
+        <Button variant="primary" size="sm" type="submit" class="btn-icon" disabled={sending || !question.trim()} aria-label="Send"><IconSend size={16} /></Button>
+      </form>
     </Sheet>
   );
 }

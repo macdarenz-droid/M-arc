@@ -28,3 +28,4 @@ export const IconCalendar = ({ size = 18, ...p }: P) => <svg {...base(size)} {..
 export const IconBack = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}><path d="M15 6l-6 6 6 6" /></svg>;
 export const IconInfo = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>;
 export const IconMore = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}><circle cx="5" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /><circle cx="19" cy="12" r="1.5" fill="currentColor" /></svg>;
+export const IconSend = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M21 3L3 10.5l7.5 3L14 21l7-18z" /><path d="M10.5 13.5L21 3" /></svg>;

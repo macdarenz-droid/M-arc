@@ -29,9 +29,8 @@ export interface PayloadCard {
   disputed: string;
 }
 
-export interface ExplainPayload {
-  version: 1;
-  kind: 'explain';
+/** What every route that reasons about the coach's report shares: the report itself, nothing about the person. */
+export interface GroundingPayload {
   goal: string;
   unit: 'kg' | 'lb';
   today: string;
@@ -39,6 +38,11 @@ export interface ExplainPayload {
   findings: PayloadFinding[];
   proposals: PayloadProposal[];
   cards: PayloadCard[];
+}
+
+export interface ExplainPayload extends GroundingPayload {
+  version: 1;
+  kind: 'explain';
   /** Ids (findings and proposals) the app wants an explanation for. */
   explain: string[];
 }
@@ -96,6 +100,28 @@ export interface NotesReply {
 }
 
 export type CallNotes = (payload: NotesPayload, env: WorkerEnv) => Promise<Omit<NotesReply, 'model' | 'usage'> & { model: string; usage: NotesReply['usage'] }>;
+
+/** One turn already exchanged in this conversation. */
+export interface AskTurn {
+  role: 'user' | 'assistant';
+  text: string;
+}
+
+/** The report, plus the conversation so far and the new question. The Worker holds no state between calls — the app resends the whole thing every time. */
+export interface AskPayload extends GroundingPayload {
+  version: 1;
+  kind: 'ask';
+  history: AskTurn[];
+  question: string;
+}
+
+export interface AskReply {
+  answer: string;
+  model: string;
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
+}
+
+export type CallAsk = (payload: AskPayload, env: WorkerEnv) => Promise<Omit<AskReply, 'model' | 'usage'> & { model: string; usage: AskReply['usage'] }>;
 
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;

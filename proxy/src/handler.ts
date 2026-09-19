@@ -6,11 +6,12 @@
  * call is injected so the handler is testable without the network.
  */
 import { DEFAULT_MODEL } from './anthropic';
-import type { NotesPayload, TagExercisePayload, WorkerEnv } from './types';
+import type { AskPayload, AskTurn, GroundingPayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
 export const MAX_TAG_BODY_BYTES = 1024;
 export const MAX_NOTES_BODY_BYTES = 2 * 1024;
+export const MAX_ASK_BODY_BYTES = 32 * 1024;
 export const MAX_FINDINGS = 24;
 export const MAX_PROPOSALS = 16;
 export const MAX_EXPLAIN = 12;
@@ -18,6 +19,9 @@ export const MAX_CARDS = 18;
 export const MAX_NAME_CHARS = 60;
 export const MAX_EQUIPMENT_HINT_CHARS = 40;
 export const MAX_NOTE_CHARS = 280;
+export const MAX_QUESTION_CHARS = 300;
+export const MAX_HISTORY_TURNS = 12;
+export const MAX_HISTORY_TURN_CHARS = 700;
 const DEVICE_ID = /^[a-zA-Z0-9_-]{8,64}$/;
 
 const ALWAYS_ALLOWED_ORIGINS = new Set(['capacitor://localhost', 'http://localhost', 'https://localhost', 'ionic://localhost']);
@@ -46,31 +50,45 @@ const onlyKeys = (raw: Record<string, unknown>, allowed: string[]): boolean => O
 
 export type Validated<P> = { ok: true; payload: P } | { ok: false; reason: string };
 
+/**
+ * The report shape every reasoning route shares (findings, proposals,
+ * cards, goal, unit, today, dataQuality) and nothing that looks like a
+ * person. Returns a plain-words reason it was refused, or null if it's
+ * fine — the caller still owns its own `version`/`kind` check and whatever
+ * fields are specific to that route.
+ */
+function validateGrounding(raw: Record<string, unknown>): string | null {
+  if (typeof raw.goal !== 'string' || (raw.unit !== 'kg' && raw.unit !== 'lb') || !isDay(raw.today)) return 'goal, unit and today are required.';
+  if (!isRecord(raw.dataQuality)) return 'dataQuality is required.';
+  const findings = raw.findings, proposals = raw.proposals, cards = raw.cards;
+  if (!Array.isArray(findings) || findings.length > MAX_FINDINGS) return `findings must be an array of at most ${MAX_FINDINGS}.`;
+  if (!Array.isArray(proposals) || proposals.length > MAX_PROPOSALS) return `proposals must be an array of at most ${MAX_PROPOSALS}.`;
+  if (!Array.isArray(cards) || cards.length > MAX_CARDS) return `cards must be an array of at most ${MAX_CARDS}.`;
+  for (const f of findings) {
+    if (!isRecord(f) || typeof f.id !== 'string' || typeof f.kind !== 'string' || !isRecord(f.metrics) || !isRecord(f.window) || !isRecord(f.subject)) return 'A finding is malformed.';
+    if ('evidence' in f || 'sessionIds' in f) return 'Findings must not carry session evidence.';
+  }
+  for (const p of proposals) {
+    if (!isRecord(p) || typeof p.id !== 'string' || typeof p.kind !== 'string' || !isRecord(p.subject)) return 'A proposal is malformed.';
+  }
+  for (const c of cards) {
+    if (!isRecord(c) || typeof c.id !== 'string' || typeof c.statement !== 'string' || typeof c.title !== 'string' || typeof c.rating !== 'string') return 'A card is malformed.';
+  }
+  // Anything that looks like a person: refuse. The app never sends these; a modified client might.
+  for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return `Field "${key}" is not accepted.`;
+  return null;
+}
+
 /** Returns the payload, or a plain-words reason it was refused. */
 export function validatePayload(raw: unknown): Validated<import('./types').ExplainPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'explain') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (typeof raw.goal !== 'string' || (raw.unit !== 'kg' && raw.unit !== 'lb') || !isDay(raw.today)) return { ok: false, reason: 'goal, unit and today are required.' };
-  if (!isRecord(raw.dataQuality)) return { ok: false, reason: 'dataQuality is required.' };
-  const findings = raw.findings, proposals = raw.proposals, cards = raw.cards, explain = raw.explain;
-  if (!Array.isArray(findings) || findings.length > MAX_FINDINGS) return { ok: false, reason: `findings must be an array of at most ${MAX_FINDINGS}.` };
-  if (!Array.isArray(proposals) || proposals.length > MAX_PROPOSALS) return { ok: false, reason: `proposals must be an array of at most ${MAX_PROPOSALS}.` };
-  if (!Array.isArray(cards) || cards.length > MAX_CARDS) return { ok: false, reason: `cards must be an array of at most ${MAX_CARDS}.` };
+  const groundingError = validateGrounding(raw);
+  if (groundingError) return { ok: false, reason: groundingError };
+  const findings = raw.findings as Array<{ id: string }>, proposals = raw.proposals as Array<{ id: string }>, explain = raw.explain;
   if (!Array.isArray(explain) || !explain.length || explain.length > MAX_EXPLAIN || !explain.every(x => typeof x === 'string')) return { ok: false, reason: `explain must list 1 to ${MAX_EXPLAIN} ids.` };
-  for (const f of findings) {
-    if (!isRecord(f) || typeof f.id !== 'string' || typeof f.kind !== 'string' || !isRecord(f.metrics) || !isRecord(f.window) || !isRecord(f.subject)) return { ok: false, reason: 'A finding is malformed.' };
-    if ('evidence' in f || 'sessionIds' in f) return { ok: false, reason: 'Findings must not carry session evidence.' };
-  }
-  for (const p of proposals) {
-    if (!isRecord(p) || typeof p.id !== 'string' || typeof p.kind !== 'string' || !isRecord(p.subject)) return { ok: false, reason: 'A proposal is malformed.' };
-  }
-  for (const c of cards) {
-    if (!isRecord(c) || typeof c.id !== 'string' || typeof c.statement !== 'string' || typeof c.title !== 'string' || typeof c.rating !== 'string') return { ok: false, reason: 'A card is malformed.' };
-  }
-  const known = new Set([...findings.map(f => (f as { id: string }).id), ...proposals.map(p => (p as { id: string }).id)]);
+  const known = new Set([...findings.map(f => f.id), ...proposals.map(p => p.id)]);
   if (!explain.every(id => known.has(id as string))) return { ok: false, reason: 'explain lists an id that is not in the report.' };
-  // Anything that looks like a person: refuse. The app never sends these; a modified client might.
-  for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return { ok: false, reason: `Field "${key}" is not accepted.` };
   return { ok: true, payload: raw as unknown as import('./types').ExplainPayload };
 }
 
@@ -91,6 +109,21 @@ export function validateNotesPayload(raw: unknown): Validated<NotesPayload> {
   if (!onlyKeys(raw, ['version', 'kind', 'text'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   if (typeof raw.text !== 'string' || !raw.text.trim() || raw.text.length > MAX_NOTE_CHARS) return { ok: false, reason: `text is required, at most ${MAX_NOTE_CHARS} characters.` };
   return { ok: true, payload: raw as unknown as NotesPayload };
+}
+
+const isTurn = (v: unknown): v is AskTurn => isRecord(v) && (v.role === 'user' || v.role === 'assistant') && typeof v.text === 'string' && v.text.length > 0 && v.text.length <= MAX_HISTORY_TURN_CHARS;
+
+/** The report, the conversation so far, and the new question. Same grounding rules as /explain. */
+export function validateAskPayload(raw: unknown): Validated<AskPayload> {
+  if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
+  if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'history', 'question'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  const groundingError = validateGrounding(raw);
+  if (groundingError) return { ok: false, reason: groundingError };
+  if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };
+  const history = raw.history;
+  if (!Array.isArray(history) || history.length > MAX_HISTORY_TURNS || !history.every(isTurn)) return { ok: false, reason: `history must be an array of at most ${MAX_HISTORY_TURNS} turns, each with a role and text.` };
+  return { ok: true, payload: raw as unknown as AskPayload };
 }
 
 export interface QuotaResult { ok: boolean; reason?: string; remaining?: number }
