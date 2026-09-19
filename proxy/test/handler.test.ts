@@ -378,6 +378,8 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
     expect(ASK_SYSTEM_PROMPT).toContain('preferences');
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" ("personal" or "general")');
+    expect(ASK_SYSTEM_PROMPT).toContain('web search tool');
+    expect(ASK_SYSTEM_PROMPT).toContain('Do not search for stable facts you already know confidently');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {

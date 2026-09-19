@@ -110,7 +110,12 @@ smaller requests and cost less each. `/identify-exercise` and
 image tokens dwarf a short text payload, and `/import-programme` also
 asks for a larger structured reply (up to 7 days of exercises) — but both
 are one-off, deliberate actions (saving one exercise, importing one
-plan), not something called on every screen. The Worker itself runs inside
+plan), not something called on every screen. `/ask` also has a web search
+tool (Claude Sonnet 5, `web_search_20260209`), capped at 3 searches per
+question and used only when the prompt judges the question needs a
+current or specific fact checked rather than recited from memory: $10 per
+1,000 searches (about a cent each), on top of the normal per-call cost,
+plus token cost for whatever it reads. The Worker itself runs inside
 Cloudflare's free plan.
 
 ## Develop

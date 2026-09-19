@@ -54,7 +54,7 @@ export type AskResult = { ok: true; answer: string; scope: 'personal' | 'general
 /** Ask. A "personal" answer is validated the way /explain's is: any number not already in the payload, and the whole answer is dropped rather than shown half-trusted. A "general" answer (ordinary exercise/nutrition knowledge, not a claim about this person) is not checked against the payload — there is nothing in it to check against. */
 export async function requestAskAnswer(payload: AskPayload, opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
   if (!payload.question) return { ok: false, error: 'Type a question first.' };
-  const result = await postJson<AskPayload, AskReply>(payload, { url: opts.url, path: '/ask', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 45_000 });
+  const result = await postJson<AskPayload, AskReply>(payload, { url: opts.url, path: '/ask', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 70_000 });
   if (!result.ok) return result;
   const answer = typeof result.body.answer === 'string' ? result.body.answer.trim() : '';
   if (!answer) return { ok: false, error: 'The coach sent back something we could not read.' };

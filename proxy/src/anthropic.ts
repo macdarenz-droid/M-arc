@@ -191,14 +191,24 @@ export const callImportProgramme: CallImportProgramme = async (payload, env) => 
   return { ...parsed, model: response.model, usage: usageOf(response) };
 };
 
+/**
+ * At most a couple of searches, and only when the prompt says it's worth
+ * one (current or specific factual claims) — most questions this route
+ * gets are stable knowledge a search would only slow down. Each search is
+ * $10/1,000 (about a cent), plus normal token cost for what it reads;
+ * capped here so one question can't run up an unbounded bill.
+ */
+const ASK_WEB_SEARCH_MAX_USES = 3;
+
 export const callAsk: CallAsk = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 70_000 });
   const model = modelFor(env, env.MODEL_ASK);
   const response = await client.messages.parse({
     model,
     max_tokens: 2500,
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
+    tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES }],
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);

@@ -406,6 +406,11 @@ the cases a single history cannot.
    existing routes were deliberately moved to Sonnet 5 with documented
    reasoning (see the decisions log), and reversing that without the
    means to verify quality live would be a guess, not research.
+   `/ask` also gained the Anthropic web search tool, scoped to that route
+   only and capped at 3 searches a question, for the minority of general
+   questions that actually need a current or specific fact checked rather
+   than recited from memory — see the decisions log for why it stays
+   off by default judgement rather than always-on.
 
 ## Decisions log
 
@@ -458,6 +463,7 @@ the cases a single history cannot.
 | 2026-09-20 | Considered and rejected: a hand-curated knowledge base of anatomy, exercise-science and nutrition facts to answer general questions from, mirroring `principles.json`. Rejected because Sonnet 5's own training already covers this material more completely and accurately than a file written in one sitting could, and because building one anyway would mean guessing at content rather than researching it — precisely backwards for an app whose whole design principle is grounding claims in real evidence. The right use of a curated database stays what it already was: grounding facts about *this person's own data*, which no model has any other way to know. |
 | 2026-09-20 | The safety line that does not move regardless of how broad `/ask` gets: no diagnosing a condition, no individualized medication or supplement dose tailored to a stated health condition, age or body weight. A general, non-personal version of the same topic (what a class of supplement generally does, typical ranges studied) stays fully answerable — the line is "tailored to this person's unstated medical specifics", not "the topic is off-limits". |
 | 2026-09-20 | Proxy gained a per-route model override (`MODEL_EXPLAIN`, `MODEL_TAG_EXERCISE`, `MODEL_NOTES`, `MODEL_ASK`, `MODEL_IDENTIFY_EXERCISE`, `MODEL_IMPORT_PROGRAMME`), each falling back to `MODEL` then `DEFAULT_MODEL`, and reported per-route at `/health`. No route was reassigned: the existing routes were moved to Sonnet 5 deliberately, with documented capability reasoning, and this sandbox has no live API key to verify a downgrade's quality — reversing that decision without evidence would be a guess, which is exactly what grounding this app's own decisions is supposed to avoid. The override exists so a future session with live-testing ability can tune a route without a code change. |
+| 2026-09-20 | `/ask` gained the Anthropic web search tool (`web_search_20260209`), scoped to that route only — `/explain` summarizes the person's own already-computed report and never needs an outside fact. Capped at 3 searches per question and left to the model's own judgement of when a search actually changes the answer (current guidelines, a specific claim worth checking) rather than always-on: most questions this route gets are stable knowledge (anatomy, established exercise science) that Sonnet 5 already answers reliably, and searching those would only add roughly a cent and real latency for no better an answer. Web search does not make "general" scope exempt from being wrong — a bad or misread source is still possible — so it changes what can go wrong, not whether anything can; the existing personal/general split and its number-grounding check are unaffected either way. |
 
 ## Non-goals
 
