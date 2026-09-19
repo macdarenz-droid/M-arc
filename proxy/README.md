@@ -1,7 +1,7 @@
 # M/ARC coach proxy
 
 A small Cloudflare Worker that holds the Anthropic API key and gives the app
-three narrow, single-purpose ways to use Claude Haiku 4.5. The app never
+three narrow, single-purpose ways to use Claude Sonnet 5. The app never
 holds the key. Every route only ever sees the small, specific slice of data
 that route needs — never raw sessions, names or body measurements.
 
@@ -71,14 +71,22 @@ Paste the printed id into `wrangler.toml` under the commented
 
 ## Change the model
 
-Edit `MODEL` in `wrangler.toml` and deploy. `claude-sonnet-5` is the
-documented step up if the wording ever falls short.
+Edit `MODEL` in `wrangler.toml` and deploy; every route reads the same
+variable. Sonnet 5 (`claude-sonnet-5`) is the default for every route here:
+each one is a real judgment call — which muscles are truly secondary, or
+whether a note describes real pain versus ordinary soreness — not pure
+pattern matching, and the closed-vocabulary schema only stops an invented
+answer, not a wrong one. `claude-opus-5` is the next step up if a route
+ever needs more. `claude-haiku-4-5` is faster and cheaper; nothing here
+currently calls for trading judgment for either.
 
 ## What it costs
 
-About $0.003 per explanation on Haiku 4.5 before prompt caching, at the
-usage the app is designed for (a handful of calls a week per user). The
-Worker itself runs inside Cloudflare's free plan.
+About $0.006 per explanation on Sonnet 5 before prompt caching (roughly
+double Haiku 4.5, still under a cent), at the usage the app is designed
+for (a handful of calls a week per user). `/tag-exercise` and `/notes` are
+smaller requests and cost less each. The Worker itself runs inside
+Cloudflare's free plan.
 
 ## Develop
 

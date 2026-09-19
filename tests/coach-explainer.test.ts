@@ -88,7 +88,7 @@ describe('fetchExplanation', () => {
   it('keeps validated lines, drops invented numbers, records the model', async () => {
     const first = p.explain[0]!;
     const numbers = [...allowedNumbers(p)].filter(n => n > 0 && Number.isInteger(n))[0] ?? 1;
-    const fetchImpl = reply(200, { summary: `A fair week with ${numbers} in it.`, items: [{ id: first, text: 'Nothing invented here.' }, { id: p.explain[1] ?? 'x', text: 'You should add 999 kg.' }, { id: 'not_requested', text: 'ignored' }], model: 'claude-haiku-4-5' });
+    const fetchImpl = reply(200, { summary: `A fair week with ${numbers} in it.`, items: [{ id: first, text: 'Nothing invented here.' }, { id: p.explain[1] ?? 'x', text: 'You should add 999 kg.' }, { id: 'not_requested', text: 'ignored' }], model: 'claude-sonnet-5' });
     const r = await fetchExplanation(p, { url: 'https://proxy.example/', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
@@ -96,7 +96,7 @@ describe('fetchExplanation', () => {
     expect(r.explanation.items[first]).toBe('Nothing invented here.');
     expect(Object.keys(r.explanation.items)).toHaveLength(1);
     expect(r.explanation.rejected).toBe(p.explain[1] ? 1 : 0);
-    expect(r.explanation.model).toBe('claude-haiku-4-5');
+    expect(r.explanation.model).toBe('claude-sonnet-5');
     expect(r.explanation.key).toBe(explanationKey(p));
   });
 

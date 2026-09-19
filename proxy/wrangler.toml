@@ -6,8 +6,10 @@ compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-# The model the explainer uses. Sonnet 5 is the documented upgrade: "claude-sonnet-5".
-MODEL = "claude-haiku-4-5"
+# The model every route uses: explaining a report, tagging a custom exercise, and tagging a note.
+# Sonnet 5 was chosen for the judgment each of these needs; Opus 5 ("claude-opus-5") is the next
+# step up if ever wanted. See proxy/README.md "Change the model".
+MODEL = "claude-sonnet-5"
 # Explanations per device per day and per day in total. Soft caps, best effort.
 MAX_DAILY_PER_DEVICE = "12"
 MAX_DAILY_TOTAL = "2000"

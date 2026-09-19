@@ -19,7 +19,7 @@ a card in `docs/RESEARCH.md`.
                                               ▼
  ┌──────────────────────── Layer 2: coach (words) ──────────────────────────────────────────────┐
  │  templates (always, offline, instant)   │   remote explainer (opt-in, event-driven, cached)  │
- │  notifications / nudges (templates only)│   Claude Haiku 4.5 behind a Cloudflare Worker       │
+ │  notifications / nudges (templates only)│   Claude Sonnet 5 behind a Cloudflare Worker        │
  └─────────────────────────────────────────┴────────────────────────────────────────────────────┘
                                               │
                                               ▼
@@ -132,8 +132,8 @@ network.
 
 ## Layer 2: remote explainer
 
-Opt-in. Model: Claude Haiku 4.5, configured as a string, with Sonnet 5 as
-the documented upgrade. It receives the report, the user's goal and unit,
+Opt-in. Model: Claude Sonnet 5, configured as a string, with Opus 5 as
+the documented upgrade if a route ever needs more. It receives the report, the user's goal and unit,
 and only the principle cards the report's kinds may cite. The system prompt
 forbids introducing any number not present in the report. A validator
 rejects any reply containing a number absent from the report or the cards
@@ -148,7 +148,7 @@ holds it.
 | Model | Per explanation | Per user per year at ~4 calls/week |
 |---|---|---|
 | Haiku 4.5 | ≈ $0.003 | ≈ $0.60 |
-| Sonnet 5 | ≈ $0.006 | ≈ $1.30 |
+| Sonnet 5 (in use) | ≈ $0.006 | ≈ $1.30 |
 | Opus 5 | ≈ $0.016 | ≈ $3.30 |
 
 Estimates for ~1,900 input and ~250 output tokens before prompt caching,
@@ -216,8 +216,9 @@ the cases a single history cannot.
    preview of exactly what is sent and a connection check. **Done.** The
    proxy validates shape and size, refuses anything personal, rate-limits
    per device (six a minute) and, with a KV namespace, caps per device and
-   in total per day. It calls Haiku 4.5 through the official SDK with a
-   cached fixed system prompt and a JSON schema for the reply. Deploy
+   in total per day. It calls the model (Sonnet 5, see the decisions log)
+   through the official SDK with a cached fixed system prompt and a JSON
+   schema for the reply. Deploy
    steps are in `proxy/README.md`. A live test runs only when
    `ANTHROPIC_API_KEY` or `MARC_ANTHROPIC_KEY` is present in the
    environment; cloud sessions reserve the former name, so deploys from
@@ -284,6 +285,7 @@ the cases a single history cannot.
 | 2026-09-19 | Session notes are tagged into a fixed set of flags (pain or discomfort, an equipment issue, fatigue, a schedule note, a form check, positive) and, for pain, at most one named muscle — never a diagnosis, a cause, or a severity. The `note_flag` finding only recalls what was tagged; the words layer states this limit in the copy itself. |
 | 2026-09-19 | One shared AI connection (`src/ai/`, the existing "Coach online" toggle and URL) serves every remote feature, not one per feature, so there is one place to turn it off and one Worker to trust. |
 | 2026-09-19 | New research claim added only with real citations found and checked the same way as the rest of `docs/RESEARCH.md` (P19, self-reported wellness monitoring): rated **moderate**, with the honest caveat that one reading alone is a weak signal. |
+| 2026-09-19 | Every route moved from Haiku 4.5 to Sonnet 5, per user direction, evaluated on capability rather than cost: each route is a real judgment call (weaving several findings into one coherent paragraph; which muscles are truly secondary; pain versus ordinary fatigue), not pure pattern matching, and a closed-vocabulary schema only stops an invented answer, never a wrong one. No route was found to have a genuine capability reason to prefer Haiku; `DEFAULT_MODEL` in `proxy/src/anthropic.ts` is the single source of truth the health check reads from too, so the two can no longer drift apart. |
 
 ## Non-goals
 

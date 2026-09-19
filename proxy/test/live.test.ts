@@ -36,8 +36,8 @@ const allowed = new Set<number>([-31, 31, 14.5, 10, 8, 7, 3, 60, 40, 29, 48, 1, 
 
 live('live model call', () => {
   it('answers in the schema, for every requested id, without inventing numbers', async () => {
-    const out = await callAnthropic(payload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-haiku-4-5' });
-    expect(out.model).toContain('haiku');
+    const out = await callAnthropic(payload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    expect(out.model).toContain('sonnet');
     expect(out.summary.split(/\s+/).length).toBeLessThanOrEqual(110);
     expect(out.items.map(i => i.id).sort()).toEqual([...payload.explain].sort());
     for (const item of out.items) {
@@ -53,7 +53,7 @@ live('live model call', () => {
 live('live tag-exercise call', () => {
   it('classifies a real exercise into the closed vocabularies only', async () => {
     const tagPayload: TagExercisePayload = { version: 1, kind: 'tag-exercise', name: 'Cable Face Pull', equipmentHint: 'Cable' };
-    const out = await callTagExercise(tagPayload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-haiku-4-5' });
+    const out = await callTagExercise(tagPayload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
     for (const m of out.primary) expect(MUSCLE_IDS as readonly string[], `primary "${m}"`).toContain(m);
     for (const m of out.secondary) expect(MUSCLE_IDS as readonly string[], `secondary "${m}"`).toContain(m);
     expect(PATTERNS as readonly string[]).toContain(out.pattern);
@@ -69,7 +69,7 @@ live('live tag-exercise call', () => {
 live('live notes call', () => {
   it('tags a note without diagnosing anything', async () => {
     const notes: NotesPayload = { version: 1, kind: 'notes', text: 'Sharp pinch in my left shoulder on the last set, had to stop early.' };
-    const out = await callNotes(notes, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-haiku-4-5' });
+    const out = await callNotes(notes, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
     expect(out.flags.length).toBeGreaterThan(0);
     expect(out.flags.length).toBeLessThanOrEqual(3);
     for (const f of out.flags) {

@@ -5,6 +5,7 @@
  * and quota logic is the same for all of them and lives once, here. Every
  * call is injected so the handler is testable without the network.
  */
+import { DEFAULT_MODEL } from './anthropic';
 import type { NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
@@ -130,7 +131,7 @@ export function createHandler(routes: RouteConfig[]) {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     if (!originAllowed(origin, env)) return json(403, { error: 'Origin not allowed.' }, cors);
     const url = new URL(request.url);
-    if (request.method === 'GET' && url.pathname === '/health') return json(200, { ok: true, model: env.MODEL ?? 'claude-haiku-4-5', quotas: !!env.QUOTA, rateLimit: !!env.RATE }, cors);
+    if (request.method === 'GET' && url.pathname === '/health') return json(200, { ok: true, model: env.MODEL ?? DEFAULT_MODEL, quotas: !!env.QUOTA, rateLimit: !!env.RATE }, cors);
     const route = routes.find(r => r.path === url.pathname);
     if (request.method !== 'POST' || !route) return json(404, { error: 'Not found.' }, cors);
     if (!env.ANTHROPIC_API_KEY) return json(503, { error: 'The proxy has no API key yet. Run: npx wrangler@4 secret put ANTHROPIC_API_KEY' }, cors);

@@ -27,7 +27,16 @@ const NotesSchema = z.object({
   flags: z.array(z.object({ kind: z.enum(NOTE_FLAG_KINDS), muscle: MuscleIdSchema.nullable() })).max(3),
 });
 
-export const DEFAULT_MODEL = 'claude-haiku-4-5';
+/**
+ * Sonnet 5 for every route. Considered per route: `/explain` weaves several
+ * findings into one coherent, well-hedged paragraph; `/tag-exercise` and
+ * `/notes` are closed-vocabulary classification, but the vocabulary being
+ * closed only stops an invented answer, not a wrong one, and the judgment
+ * call underneath (which muscles are truly secondary; pain versus ordinary
+ * fatigue) is exactly where a stronger model earns its keep. No route here
+ * found a genuine capability reason to prefer Haiku.
+ */
+export const DEFAULT_MODEL = 'claude-sonnet-5';
 
 /** A response the SDK refused to parse, or the model declined outright, is never silently swallowed. */
 function requireParsed<T>(response: { stop_reason: string | null; parsed_output: T | null | undefined }): T {

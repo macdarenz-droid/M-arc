@@ -23,12 +23,12 @@ class FakeKV {
   async put(k: string, v: string) { this.store.set(k, v); }
 }
 
-const env = (over: Partial<WorkerEnv> = {}): WorkerEnv => ({ ANTHROPIC_API_KEY: 'test-key', MODEL: 'claude-haiku-4-5', ...over });
+const env = (over: Partial<WorkerEnv> = {}): WorkerEnv => ({ ANTHROPIC_API_KEY: 'test-key', MODEL: 'claude-sonnet-5', ...over });
 
 const stubModel = async (p: ExplainPayload) => ({
   summary: 'A steady week with chest volume down 18%.',
   items: [...p.explain.map(id => ({ id, text: `About ${id}.` })), { id: 'not_requested', text: 'ignored' }],
-  model: 'claude-haiku-4-5', usage: { inputTokens: 900, outputTokens: 120, cacheReadTokens: 0 },
+  model: 'claude-sonnet-5', usage: { inputTokens: 900, outputTokens: 120, cacheReadTokens: 0 },
 });
 
 /** Wraps a stub model the same way index.ts wires the real one, for a route table under test. */
@@ -42,13 +42,13 @@ const explainRouteWith = (callModel: typeof stubModel): RouteConfig => ({
   },
 });
 
-const stubTag = async () => ({ equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-haiku-4-5', usage: { inputTokens: 200, outputTokens: 40, cacheReadTokens: 0 } });
+const stubTag = async () => ({ equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 200, outputTokens: 40, cacheReadTokens: 0 } });
 const tagRouteWith = (call: typeof stubTag): RouteConfig => ({
   path: '/tag-exercise', maxBody: MAX_TAG_BODY_BYTES, validate: validateTagPayload,
   async call() { const out = await call(); return { equipment: out.equipment, primary: out.primary, secondary: out.secondary, pattern: out.pattern, mode: out.mode, confidence: out.confidence, model: out.model, usage: out.usage }; },
 });
 
-const stubNotes = async () => ({ flags: [{ kind: 'pain_or_discomfort' as const, muscle: 'rear_delts' as const }], model: 'claude-haiku-4-5', usage: { inputTokens: 150, outputTokens: 20, cacheReadTokens: 0 } });
+const stubNotes = async () => ({ flags: [{ kind: 'pain_or_discomfort' as const, muscle: 'rear_delts' as const }], model: 'claude-sonnet-5', usage: { inputTokens: 150, outputTokens: 20, cacheReadTokens: 0 } });
 const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   path: '/notes', maxBody: MAX_NOTES_BODY_BYTES, validate: validateNotesPayload,
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
@@ -128,7 +128,7 @@ describe('handler: /explain', () => {
     const body = await res.json() as { summary: string; items: Array<{ id: string }>; model: string; usage: { inputTokens: number } };
     expect(body.summary).toContain('18%');
     expect(body.items.map(i => i.id)).toEqual(['volume_drop:chest', 'exercise_swap:lib_barbell_bench_press']);
-    expect(body.model).toBe('claude-haiku-4-5');
+    expect(body.model).toBe('claude-sonnet-5');
     expect(body.usage.inputTokens).toBe(900);
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
   });
@@ -136,7 +136,9 @@ describe('handler: /explain', () => {
   it('preflight, health, wrong path, wrong method', async () => {
     expect((await handle(new Request('https://x/explain', { method: 'OPTIONS', headers: { origin: 'capacitor://localhost' } }), env())).status).toBe(204);
     const health = await handle(new Request('https://x/health'), env({ RATE: { limit: async () => ({ success: true }) } }));
-    expect(await health.json()).toMatchObject({ ok: true, model: 'claude-haiku-4-5', rateLimit: true, quotas: false });
+    expect(await health.json()).toMatchObject({ ok: true, model: 'claude-sonnet-5', rateLimit: true, quotas: false });
+    const noModelSet = await handle(new Request('https://x/health'), env({ MODEL: undefined }));
+    expect(await noModelSet.json()).toMatchObject({ model: 'claude-sonnet-5' }); // falls back to DEFAULT_MODEL, not a stale hardcoded string
     expect((await handle(new Request('https://x/other', { method: 'POST' }), env())).status).toBe(404);
     expect((await handle(new Request('https://x/explain', { method: 'GET' }), env())).status).toBe(404);
   });

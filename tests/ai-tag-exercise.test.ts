@@ -20,7 +20,7 @@ describe('requestTagSuggestion', () => {
   });
 
   it('keeps only real muscle ids and passes the model\'s own confidence through', async () => {
-    const fetchImpl = reply(200, { equipment: 'Cable', primary: ['rear_delts', 'not_a_muscle'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted', confidence: 'high', model: 'claude-haiku-4-5' });
+    const fetchImpl = reply(200, { equipment: 'Cable', primary: ['rear_delts', 'not_a_muscle'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted', confidence: 'high', model: 'claude-sonnet-5' });
     const r = await requestTagSuggestion('Cable Face Pull', 'Cable', { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
@@ -32,7 +32,7 @@ describe('requestTagSuggestion', () => {
   });
 
   it('treats anything other than the literal "high" as low, never assumes confidence', async () => {
-    const fetchImpl = reply(200, { equipment: 'Machine', primary: [], secondary: [], pattern: 'other', mode: 'weighted', model: 'claude-haiku-4-5' });
+    const fetchImpl = reply(200, { equipment: 'Machine', primary: [], secondary: [], pattern: 'other', mode: 'weighted', model: 'claude-sonnet-5' });
     const r = await requestTagSuggestion('Some Machine', undefined, { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.suggestion.confidence).toBe('low');
