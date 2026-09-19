@@ -48,7 +48,7 @@ export type TagResult = { ok: true; suggestion: TagSuggestion } | { ok: false; e
 export async function requestTagSuggestion(name: string, equipmentHint: string | undefined, opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<TagResult> {
   const payload = buildTagPayload(name, equipmentHint);
   if (!payload.name) return { ok: false, error: 'Type a name first.' };
-  const result = await postJson<TagExercisePayload, TagReply>(payload, { url: opts.url, path: '/tag-exercise', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 15_000 });
+  const result = await postJson<TagExercisePayload, TagReply>(payload, { url: opts.url, path: '/tag-exercise', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 35_000 });
   if (!result.ok) return result;
   const body = result.body;
   if (typeof body.equipment !== 'string' || typeof body.pattern !== 'string' || !isMode(body.mode)) return { ok: false, error: 'The coach sent back something we could not read.' };

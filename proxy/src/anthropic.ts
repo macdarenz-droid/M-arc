@@ -52,43 +52,55 @@ const usageOf = (response: { usage: { input_tokens: number; output_tokens: numbe
   cacheReadTokens: response.usage.cache_read_input_tokens ?? 0,
 });
 
+/**
+ * Sonnet 5 turns on adaptive thinking whenever `thinking` is left unset —
+ * unlike Haiku, which never thought at all. Left at its own default effort,
+ * that thinking pushed real requests past our timeouts (seen live: "the
+ * proxy took too long to answer", then a plain failure on retry). "medium"
+ * keeps real reasoning depth for these bounded tasks while keeping answers
+ * fast enough to actually arrive. This is a reliability fix, not a cost cut:
+ * an answer that never completes is worse than one produced with less
+ * throat-clearing.
+ */
+const EFFORT = 'medium' as const;
+
 export const callAnthropic: CallModel = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
   const model = env.MODEL || DEFAULT_MODEL;
   const response = await client.messages.parse({
     model,
-    max_tokens: 1500,
+    max_tokens: 3000,
     system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: userMessage(payload) }],
-    output_config: { format: zodOutputFormat(ExplanationSchema) },
+    output_config: { format: zodOutputFormat(ExplanationSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
   return { summary: parsed.summary, items: parsed.items, model: response.model, usage: usageOf(response) };
 };
 
 export const callTagExercise: CallTagExercise = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 30_000 });
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 40_000 });
   const model = env.MODEL || DEFAULT_MODEL;
   const response = await client.messages.parse({
     model,
-    max_tokens: 400,
+    max_tokens: 1200,
     system: [{ type: 'text', text: TAG_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: tagUserMessage(payload) }],
-    output_config: { format: zodOutputFormat(TagSchema) },
+    output_config: { format: zodOutputFormat(TagSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
   return { ...parsed, model: response.model, usage: usageOf(response) };
 };
 
 export const callNotes: CallNotes = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 30_000 });
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 40_000 });
   const model = env.MODEL || DEFAULT_MODEL;
   const response = await client.messages.parse({
     model,
-    max_tokens: 300,
+    max_tokens: 1000,
     system: [{ type: 'text', text: NOTES_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: notesUserMessage(payload) }],
-    output_config: { format: zodOutputFormat(NotesSchema) },
+    output_config: { format: zodOutputFormat(NotesSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
   return { flags: parsed.flags, model: response.model, usage: usageOf(response) };

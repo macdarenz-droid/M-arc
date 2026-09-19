@@ -136,7 +136,8 @@ interface ProxyReply { summary?: unknown; items?: unknown; model?: unknown; erro
 
 /** POST the payload to the user's proxy and keep only the sentences that pass the number check. */
 export async function fetchExplanation(payload: ExplainPayload, opts: FetchOptions): Promise<FetchResult> {
-  const result = await postJson<ExplainPayload, ProxyReply>(payload, { url: opts.url, path: '/explain', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs });
+  // Sonnet 5 thinks before answering; this weaves several findings into one paragraph, the biggest of the three calls.
+  const result = await postJson<ExplainPayload, ProxyReply>(payload, { url: opts.url, path: '/explain', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 45_000 });
   if (!result.ok) return result;
   const body = result.body;
   const allowed = allowedNumbers(payload);

@@ -42,7 +42,7 @@ export async function requestNoteFlags(text: string, opts: { url: string; device
   const trimmed = text.trim().slice(0, MAX_NOTE_CHARS);
   if (!trimmed) return { ok: true, flags: [] };
   const payload: NotesPayload = { version: 1, kind: 'notes', text: trimmed };
-  const result = await postJson<NotesPayload, NotesReply>(payload, { url: opts.url, path: '/notes', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 15_000 });
+  const result = await postJson<NotesPayload, NotesReply>(payload, { url: opts.url, path: '/notes', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 35_000 });
   if (!result.ok) return result;
   const raw = Array.isArray(result.body.flags) ? result.body.flags : [];
   const flags: NoteFlag[] = raw
