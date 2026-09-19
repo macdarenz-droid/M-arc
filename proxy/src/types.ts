@@ -118,6 +118,8 @@ export interface AskPayload extends GroundingPayload {
 }
 
 export interface AskReply {
+  /** "personal" states something about this person's own logged data (grounded, number-checked by the app); "general" is ordinary exercise/nutrition knowledge that does not depend on their data and is not checked against the report. */
+  scope: 'personal' | 'general';
   answer: string;
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
@@ -188,7 +190,14 @@ export type CallImportProgramme = (payload: ImportProgrammePayload, env: WorkerE
 
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;
+  /** Default model for every route. A route's own MODEL_* below overrides this for just that route. */
   MODEL?: string;
+  MODEL_EXPLAIN?: string;
+  MODEL_TAG_EXERCISE?: string;
+  MODEL_NOTES?: string;
+  MODEL_ASK?: string;
+  MODEL_IDENTIFY_EXERCISE?: string;
+  MODEL_IMPORT_PROGRAMME?: string;
   MAX_DAILY_PER_DEVICE?: string;
   MAX_DAILY_TOTAL?: string;
   ALLOWED_ORIGINS?: string;

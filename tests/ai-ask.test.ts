@@ -64,19 +64,31 @@ describe('requestAskAnswer', () => {
     expect(r).toEqual({ ok: false, error: 'Type a question first.' });
   });
 
-  it('accepts a grounded answer', async () => {
+  it('accepts a grounded personal answer', async () => {
     const p = payload();
     const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
-    const fetchImpl = reply(200, { answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
+    const fetchImpl = reply(200, { scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(p, { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, answer: `Your data shows a factor around ${someNumber} worth watching.` });
+    expect(r).toEqual({ ok: true, scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.` });
   });
 
-  it('drops an answer that invents a number not in the report', async () => {
-    const fetchImpl = reply(200, { answer: 'Add exactly 999 kg to fix it.', model: 'claude-sonnet-5' });
+  it('drops a personal-scope answer that invents a number not in the report', async () => {
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'Add exactly 999 kg to fix it.', model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toContain('not in your data');
+  });
+
+  it('an unmarked answer defaults to the strict personal path, same as before scope existed', async () => {
+    const fetchImpl = reply(200, { answer: 'Add exactly 999 kg to fix it.', model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(false);
+  });
+
+  it('a general-knowledge answer is not checked against the report — it is not a claim about this person\'s data', async () => {
+    const fetchImpl = reply(200, { scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toEqual({ ok: true, scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.' });
   });
 
   it('rejects an unreadable reply rather than showing something empty', async () => {

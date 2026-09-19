@@ -66,10 +66,10 @@ const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
 });
 
-const stubAsk = async () => ({ answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const stubAsk = async () => ({ scope: 'personal' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
-  async call() { const out = await call(); return { answer: out.answer, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { scope: out.scope, answer: out.answer, model: out.model, usage: out.usage }; },
 });
 
 const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
@@ -299,8 +299,9 @@ describe('handler: multiple routes in one Worker', () => {
   it('answers /ask grounded in the report, with a real question', async () => {
     const res = await handle(post('/ask', askPayload()), env());
     expect(res.status).toBe(200);
-    const body = await res.json() as { answer: string; model: string };
+    const body = await res.json() as { scope: string; answer: string; model: string };
     expect(body.answer).toContain('14.5');
+    expect(body.scope).toBe('personal');
     expect(body.model).toBe('claude-sonnet-5');
   });
 
@@ -363,13 +364,20 @@ describe('prompts', () => {
     expect(NOTES_SYSTEM_PROMPT).toContain('not medical advice');
   });
 
-  it('ask prompt is honest about the edges of the data and refuses diet and medical questions', () => {
-    expect(ASK_SYSTEM_PROMPT).toContain('Use only numbers that appear in the report');
+  it('ask prompt splits personal (report-grounded, number-checked) from general knowledge (answered fully, not gated on data), and still refuses diagnosis and individualized dosing', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('General knowledge');
+    expect(ASK_SYSTEM_PROMPT).toContain('"scope" to "personal"');
+    expect(ASK_SYSTEM_PROMPT).toContain('never invent a load, a percentage, a set count, a day count or a date about them');
     expect(ASK_SYSTEM_PROMPT).toContain('say so plainly');
-    expect(ASK_SYSTEM_PROMPT).toContain('Never answer questions about diet, calories, supplements, medication or medical conditions');
-    expect(ASK_SYSTEM_PROMPT).toContain('Never predict or mention injury');
+    expect(ASK_SYSTEM_PROMPT).toContain('do not decline or hedge one for "not having the logs"');
+    expect(ASK_SYSTEM_PROMPT).toContain('Never diagnose a medical condition');
+    expect(ASK_SYSTEM_PROMPT).toContain('individualized medication or supplement dosage');
+    expect(ASK_SYSTEM_PROMPT).toContain('a doctor or pharmacist can tailor it to them');
+    expect(ASK_SYSTEM_PROMPT).toContain('gets a full, direct general answer, not a deflection');
+    expect(ASK_SYSTEM_PROMPT).toContain('never predict or comment on injury risk');
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
     expect(ASK_SYSTEM_PROMPT).toContain('preferences');
+    expect(ASK_SYSTEM_PROMPT).toContain('"scope" ("personal" or "general")');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {

@@ -9,7 +9,7 @@ import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from './promptImport';
 import { MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise } from './types';
+import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
@@ -17,6 +17,7 @@ const ExplanationSchema = z.object({
 });
 
 const AskSchema = z.object({
+  scope: z.enum(['personal', 'general']),
   answer: z.string(),
 });
 
@@ -71,6 +72,29 @@ const ImportProgrammeSchema = z.object({
  */
 export const DEFAULT_MODEL = 'claude-sonnet-5';
 
+/**
+ * Every route defaults to DEFAULT_MODEL via env.MODEL, same as always. A
+ * route's own env var (e.g. MODEL_TAG_EXERCISE) overrides just that route,
+ * so one route can be tuned — to a cheaper model, once a real live
+ * comparison justifies it — without touching the others or waiting on a
+ * code change. Nothing here changes behavior until an operator sets one.
+ */
+export function modelFor(env: WorkerEnv, routeOverride: string | undefined): string {
+  return routeOverride || env.MODEL || DEFAULT_MODEL;
+}
+
+/** What each route would actually call right now, for the health check. */
+export function modelsByRoute(env: WorkerEnv): Record<string, string> {
+  return {
+    explain: modelFor(env, env.MODEL_EXPLAIN),
+    tagExercise: modelFor(env, env.MODEL_TAG_EXERCISE),
+    notes: modelFor(env, env.MODEL_NOTES),
+    ask: modelFor(env, env.MODEL_ASK),
+    identifyExercise: modelFor(env, env.MODEL_IDENTIFY_EXERCISE),
+    importProgramme: modelFor(env, env.MODEL_IMPORT_PROGRAMME),
+  };
+}
+
 /** A response the SDK refused to parse, or the model declined outright, is never silently swallowed. */
 function requireParsed<T>(response: { stop_reason: string | null; parsed_output: T | null | undefined }): T {
   if (response.stop_reason === 'refusal') throw Object.assign(new Error('refused'), { status: 502 });
@@ -99,7 +123,7 @@ const EFFORT = 'medium' as const;
 
 export const callAnthropic: CallModel = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_EXPLAIN);
   const response = await client.messages.parse({
     model,
     max_tokens: 3000,
@@ -113,7 +137,7 @@ export const callAnthropic: CallModel = async (payload, env) => {
 
 export const callTagExercise: CallTagExercise = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 40_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_TAG_EXERCISE);
   const response = await client.messages.parse({
     model,
     max_tokens: 1200,
@@ -127,7 +151,7 @@ export const callTagExercise: CallTagExercise = async (payload, env) => {
 
 export const callNotes: CallNotes = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 40_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_NOTES);
   const response = await client.messages.parse({
     model,
     max_tokens: 1000,
@@ -141,7 +165,7 @@ export const callNotes: CallNotes = async (payload, env) => {
 
 export const callIdentifyExercise: CallIdentifyExercise = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_IDENTIFY_EXERCISE);
   const response = await client.messages.parse({
     model,
     max_tokens: 1200,
@@ -155,7 +179,7 @@ export const callIdentifyExercise: CallIdentifyExercise = async (payload, env) =
 
 export const callImportProgramme: CallImportProgramme = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_IMPORT_PROGRAMME);
   const response = await client.messages.parse({
     model,
     max_tokens: 4000,
@@ -169,7 +193,7 @@ export const callImportProgramme: CallImportProgramme = async (payload, env) => 
 
 export const callAsk: CallAsk = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(env, env.MODEL_ASK);
   const response = await client.messages.parse({
     model,
     max_tokens: 2500,
@@ -178,5 +202,5 @@ export const callAsk: CallAsk = async (payload, env) => {
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { answer: parsed.answer, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, answer: parsed.answer, model: response.model, usage: usageOf(response) };
 };

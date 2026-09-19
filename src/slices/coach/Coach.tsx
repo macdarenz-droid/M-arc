@@ -223,8 +223,11 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
  * research cards behind it, nothing about sessions, name or body. History
  * lives only in this sheet's own state — closing it forgets the exchange.
  */
+/** A turn as shown on screen. "scope" is local-only (never sent back to the Worker as part of history) — it just says whether an assistant reply was grounded in this person's report or is general exercise/nutrition knowledge, so it can carry a small honest label the same way the app labels evidence quality everywhere else. */
+type AskBubble = AskTurn & { scope?: 'personal' | 'general' };
+
 function AskSheet({ onClose }: { onClose: () => void }) {
-  const [history, setHistory] = useState<AskTurn[]>([]);
+  const [history, setHistory] = useState<AskBubble[]>([]);
   const [question, setQuestion] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -236,15 +239,16 @@ function AskSheet({ onClose }: { onClose: () => void }) {
     const q = question.trim();
     if (!q || sending) return;
     const s = state.value;
-    const payload = buildAskPayload(report.value, history, q, { goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts });
-    const withQuestion: AskTurn[] = [...history, { role: 'user', text: q }];
+    const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
+    const payload = buildAskPayload(report.value, plainHistory, q, { goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts });
+    const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
     setHistory(withQuestion);
     setQuestion('');
     setError(null);
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer }]);
+      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope }]);
       else setError(r.error);
     } finally {
       setSending(false);
@@ -254,8 +258,13 @@ function AskSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="Ask the coach" onClose={onClose}>
       <div class="ask-thread" ref={threadRef}>
-        {!history.length && <p class="small muted">Ask about anything in your report — a plateau, a drop in volume, why a suggestion showed up. It only sees the findings and research below, nothing about your sessions or body.</p>}
-        {history.map((turn, i) => <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>{turn.text}</div>)}
+        {!history.length && <p class="small muted">Ask anything — your own training, or general questions about exercise, muscles or nutrition. Personal answers only use the findings and research below, nothing about your sessions or body.</p>}
+        {history.map((turn, i) => (
+          <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
+            {turn.role === 'assistant' && turn.scope === 'general' && <div class="hint" style={{ marginBottom: 4 }}>General knowledge, not from your data</div>}
+            {turn.text}
+          </div>
+        ))}
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
       </div>
       {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}

@@ -366,6 +366,46 @@ the cases a single history cannot.
    `GroundingPayload`, capped at 6 entries) costs nothing extra and never
    itself triggers a call. Shown in Settings' existing "Preview what is
    sent".
+9. Ask-the-coach, opened up. **Done.** Phase 6 shipped `/ask` as
+   report-only Q&A that refused anything the report did not cover,
+   including ordinary exercise-science and nutrition questions with
+   nothing personal in them at all ("what is biceps", "how much creatine
+   do people usually take") — found live: a real person asking those got
+   "outside what the coach does" or a silently dropped answer, because
+   the number-grounding check (built for personal claims) was also
+   rejecting general facts that simply were not report numbers. The
+   report and cards are for one specific thing a model has no other way
+   to know — this person's own logged training — not a substitute for
+   the model's own, considerably broader, general knowledge of anatomy,
+   exercise science and nutrition. `/ask`'s schema now returns a
+   `scope`, `"personal"` or `"general"`, alongside the answer.
+   `"personal"` keeps every existing rule: grounded only in the report
+   and cards, every number checked, refuses what the data does not cover.
+   `"general"` is answered fully from the model's own knowledge and is
+   never checked against the report, since it is not a claim about this
+   person and there is nothing in the payload to check it against. The
+   one line that does not move for either scope: no diagnosing a
+   condition, no individualized medication or supplement dose tailored to
+   a stated health condition, age or body weight — those get the general,
+   non-personal picture plus one sentence pointing at a doctor or
+   pharmacist, not a refusal of the whole topic and not a personal
+   prescription either. `AskSheet` shows a small "General knowledge, not
+   from your data" label on a general-scope reply, the same
+   evidence-honesty instinct as everywhere else in the coach. A hand-built
+   "knowledge database" of anatomy and nutrition facts was considered and
+   rejected: Sonnet 5 already knows this material more completely and
+   accurately than a file written for one night could, and building one
+   anyway would have meant guessing at content instead of researching it
+   — the opposite of what grounding is for. The proxy also gained
+   per-route model overrides (`MODEL_EXPLAIN`, `MODEL_TAG_EXERCISE`,
+   `MODEL_NOTES`, `MODEL_ASK`, `MODEL_IDENTIFY_EXERCISE`,
+   `MODEL_IMPORT_PROGRAMME`, each falling back to `MODEL` then
+   `DEFAULT_MODEL`, reported per-route at `/health`), so a route can be
+   tuned to a different model later, once a real live comparison justifies
+   it, without a code change — no route was reassigned this round: the
+   existing routes were deliberately moved to Sonnet 5 with documented
+   reasoning (see the decisions log), and reversing that without the
+   means to verify quality live would be a guess, not research.
 
 ## Decisions log
 
@@ -413,11 +453,20 @@ the cases a single history cannot.
 | 2026-09-19 | Preference facts are recomputed at most once a week and cached, never derived inline while building a payload: the same "no remote call, and no meaningful extra work, on a screen refresh" rule that shaped the daily spark in Phase 5b applies here too, even though this computation is local and free — it still has no business running on every render. |
 | 2026-09-19 | `preferences` on `GroundingPayload` is optional rather than required: it lets an older or hand-built payload (existing tests, a script) stay valid without every caller having to thread through an empty array. The app itself always sends a real array, empty or not. |
 | 2026-09-20 | Found live: on a heavy training day `under_recovered` can fire once per muscle (up to 24), which alone filled the whole `LIMITS.findings` budget ahead of every lower-severity kind, including `record` — so a day with four separate PRs sent only one of them to `/explain` and `/ask`, and "why do you think I have more PRs today" could only ever be answered from that one survivor. `trimFindingsAndProposals` now caps any single kind at `MAX_FINDINGS_PER_KIND` (6) while filling the overall budget, the same diversity guarantee `words.ts`'s `shortlist()` already gave the local Coach screen. A kind that legitimately dominates a day (a full-body session) still gets a representative sample; it just can no longer crowd out every other kind entirely. |
+| 2026-09-20 | `/ask` splits "personal" from "general" instead of trusting a person to always ask one at a time: a single question can genuinely mix both ("why is my chest still recovering, and what does that muscle actually do"), and a model deciding per-answer is simpler and more accurate than the app trying to classify the question text itself beforehand. |
+| 2026-09-20 | The number-grounding check now runs only on a "personal"-scope answer. It was built to stop an invented claim about this person's own data, and it was already doing exactly that job correctly; the bug was applying it to general knowledge too, where there is no report number to check a real fact against in the first place. Scoping the check to where it means something fixed the false rejections without weakening it anywhere it was already working. |
+| 2026-09-20 | Considered and rejected: a hand-curated knowledge base of anatomy, exercise-science and nutrition facts to answer general questions from, mirroring `principles.json`. Rejected because Sonnet 5's own training already covers this material more completely and accurately than a file written in one sitting could, and because building one anyway would mean guessing at content rather than researching it — precisely backwards for an app whose whole design principle is grounding claims in real evidence. The right use of a curated database stays what it already was: grounding facts about *this person's own data*, which no model has any other way to know. |
+| 2026-09-20 | The safety line that does not move regardless of how broad `/ask` gets: no diagnosing a condition, no individualized medication or supplement dose tailored to a stated health condition, age or body weight. A general, non-personal version of the same topic (what a class of supplement generally does, typical ranges studied) stays fully answerable — the line is "tailored to this person's unstated medical specifics", not "the topic is off-limits". |
+| 2026-09-20 | Proxy gained a per-route model override (`MODEL_EXPLAIN`, `MODEL_TAG_EXERCISE`, `MODEL_NOTES`, `MODEL_ASK`, `MODEL_IDENTIFY_EXERCISE`, `MODEL_IMPORT_PROGRAMME`), each falling back to `MODEL` then `DEFAULT_MODEL`, and reported per-route at `/health`. No route was reassigned: the existing routes were moved to Sonnet 5 deliberately, with documented capability reasoning, and this sandbox has no live API key to verify a downgrade's quality — reversing that decision without evidence would be a guess, which is exactly what grounding this app's own decisions is supposed to avoid. The override exists so a future session with live-testing ability can tune a route without a code change. |
 
 ## Non-goals
 
-No injury prediction. No diet, calorie or supplement advice, in chat or
-anywhere else. No open-ended chat: ask-the-coach (Phase 6) answers only
-from the current report and research cards, refuses what that does not
-cover, and its conversation is never saved. No on-device language model in
-v1; the explainer interface is pluggable if that changes.
+No injury prediction or diagnosis, anywhere. No individualized medication
+or supplement dosage tailored to a health condition, medication, age or
+body weight — general, non-personal information on those topics is in
+scope (see Phase 9). No on-device language model in v1; the explainer
+interface is pluggable if that changes.
+
+General diet/calorie/supplement advice and open-ended chat were both
+non-goals through Phase 8; Phase 9 narrowed the first to only the
+individualized cases above and dropped the second entirely — see below.

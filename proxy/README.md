@@ -85,14 +85,20 @@ Paste the printed id into `wrangler.toml` under the commented
 
 ## Change the model
 
-Edit `MODEL` in `wrangler.toml` and deploy; every route reads the same
-variable. Sonnet 5 (`claude-sonnet-5`) is the default for every route here:
-each one is a real judgment call — which muscles are truly secondary, or
-whether a note describes real pain versus ordinary soreness — not pure
-pattern matching, and the closed-vocabulary schema only stops an invented
-answer, not a wrong one. `claude-opus-5` is the next step up if a route
-ever needs more. `claude-haiku-4-5` is faster and cheaper; nothing here
+Edit `MODEL` in `wrangler.toml` and deploy to change every route at once.
+Sonnet 5 (`claude-sonnet-5`) is the default for every route here: each one
+is a real judgment call — which muscles are truly secondary, or whether a
+note describes real pain versus ordinary soreness — not pure pattern
+matching, and the closed-vocabulary schema only stops an invented answer,
+not a wrong one. `claude-opus-5` is the next step up if a route ever needs
+more. `claude-haiku-4-5-20251001` is faster and cheaper; nothing here
 currently calls for trading judgment for either.
+
+To try a different model on just one route without touching the others,
+set that route's own `MODEL_*` variable in `wrangler.toml` (see the
+commented examples there) and deploy — it overrides `MODEL` for that route
+only. Useful for comparing a cheaper model against real traffic before
+deciding whether to move a route's default.
 
 ## What it costs
 
