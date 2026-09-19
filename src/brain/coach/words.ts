@@ -189,7 +189,7 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         means: 'Records mark real progress: heavier, stronger, or more reps at a load. Total volume never counts as one.',
         action: 'Nice. Rate the effort so the coach knows how close to your limit that was.' };
     case 'under_recovered': {
-      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', num(m.readinessFactor) > 1 ? 'Your check-in today read low, which widens it a little more.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
+      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', num(m.readinessFactor) > 1 ? 'Your check-in today read low, which widens it a little more.' : '', num(m.fatigueFactor) > 1 ? 'You noted that session felt unusually tiring, which widens it too.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
       return { title: `${muscle} still recovering`,
         noticed: `About ${num(m.pct)}% recovered with about ${formatHours(num(m.hoursLeft))} to go, after ${formatDay(str(m.lastDay) || ctx.today)}.${extra ? ` ${extra}` : ''}`,
         means: 'Training it again now mostly means a weaker session, not harm. Recovery windows are estimates, and they only widen when your own results say so.',

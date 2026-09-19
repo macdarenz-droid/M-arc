@@ -46,6 +46,14 @@ describe('words for findings', () => {
     expect(kg.priority).toBeGreaterThan(100);
   });
 
+  it('under_recovered names the fatigue note as a reason the window widened, alongside volume and readiness', () => {
+    const base: Omit<Finding, 'metrics'> = { id: 'under_recovered:chest', kind: 'under_recovered', subject: { muscle: 'chest', muscleGroup: 'chest' }, window: { from: '2026-09-18', to: '2026-09-19' }, confidence: 'medium', severity: 1, evidence: { sessionIds: [], days: [] }, principles: [] };
+    const quiet = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18' } }, render());
+    expect(quiet.noticed).not.toContain('unusually tiring');
+    const flagged = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18', fatigueFactor: 1.3 } }, render());
+    expect(flagged.noticed).toContain('unusually tiring');
+  });
+
   it('rotates variants weekly and deterministically', () => {
     const f: Finding = { id: 'volume_drop:chest', kind: 'volume_drop', subject: { muscleGroup: 'chest' }, metrics: { changePct: -30, baselineSets: 14, currentSets: 9.8 },
       window: { from: '2026-08-29', to: '2026-09-18', weeks: 3 }, confidence: 'high', severity: 1, evidence: { sessionIds: [], days: [] }, principles: ['volume_dose_response'] };

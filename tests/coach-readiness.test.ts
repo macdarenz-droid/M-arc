@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { adjustedRecovery, detectReadiness, readinessFactor } from '@/brain/coach/detectors';
-import { READINESS_LOW_AVG, READINESS_PATTERN_MIN_LOW, READINESS_RECOVERY_FACTOR_MAX } from '@/brain/coach/bands';
+import { FATIGUE_RECOVERY_FACTOR, READINESS_LOW_AVG, READINESS_PATTERN_MIN_LOW, READINESS_RECOVERY_FACTOR_MAX } from '@/brain/coach/bands';
 import type { ReadinessEntry } from '@/core/models';
 import { session, sets } from './helpers';
 import { addDays } from '@/core/dates';
@@ -45,6 +45,39 @@ describe('adjustedRecovery combines volume and readiness', () => {
     expect(r.volumeFactor).toBe(1.5);
     expect(r.readinessFactor).toBe(READINESS_RECOVERY_FACTOR_MAX);
     expect(r.adjustedWindowHours).toBe(72); // volume's wider factor wins, not the two multiplied together
+  });
+});
+
+describe('adjustedRecovery: a session note tagged "fatigue" widens that session\'s recovery window', () => {
+  const now = new Date('2026-09-19T18:00:00.000Z').getTime();
+  const usual = (noteFlags?: { kind: 'fatigue'; muscle: 'chest' | null }[]) => [
+    { ...session('2026-09-18', [{ id: 'lib_machine_chest_press', sets: sets(50, 8, 'ideal', 3) }]), ...(noteFlags ? { noteFlags } : {}) },
+  ];
+
+  it('a whole-session fatigue note (no muscle named) widens every muscle trained that day', () => {
+    const withoutFlag = adjustedRecovery(ctx(usual(), { now })).find(r => r.muscle === 'chest')!;
+    expect(withoutFlag.fatigueFactor).toBe(1);
+    const withFlag = adjustedRecovery(ctx(usual([{ kind: 'fatigue', muscle: null }]), { now })).find(r => r.muscle === 'chest')!;
+    expect(withFlag.fatigueFactor).toBe(FATIGUE_RECOVERY_FACTOR);
+    expect(withFlag.adjustedWindowHours).toBe(Math.round(48 * FATIGUE_RECOVERY_FACTOR));
+  });
+
+  it('a muscle-specific fatigue note only widens that muscle, not an unrelated one', () => {
+    const both = [
+      session('2026-09-18', [{ id: 'lib_machine_chest_press', sets: sets(50, 8, 'ideal', 3) }], 'split_push'),
+      { ...session('2026-09-18', [{ id: 'lib_barbell_back_squat', sets: sets(60, 8, 'ideal', 3) }], 'split_legs'), noteFlags: [{ kind: 'fatigue' as const, muscle: 'chest' as const }] },
+    ];
+    const out = adjustedRecovery(ctx(both, { now }));
+    expect(out.find(r => r.muscle === 'chest')!.fatigueFactor).toBe(FATIGUE_RECOVERY_FACTOR);
+    expect(out.find(r => r.muscle === 'quads')!.fatigueFactor).toBe(1);
+  });
+
+  it('never shrinks the window, and combines with the other factors by taking the largest rather than multiplying', () => {
+    const flagged = adjustedRecovery(ctx(usual([{ kind: 'fatigue', muscle: null }]), { now, readiness: [entry(TODAY, 1, 1, 1)] })).find(r => r.muscle === 'chest')!;
+    expect(flagged.fatigueFactor).toBe(FATIGUE_RECOVERY_FACTOR);
+    expect(flagged.readinessFactor).toBe(READINESS_RECOVERY_FACTOR_MAX);
+    // Both factors are the same size here, so the combined window matches either one alone, not their product.
+    expect(flagged.adjustedWindowHours).toBe(Math.round(48 * READINESS_RECOVERY_FACTOR_MAX));
   });
 });
 

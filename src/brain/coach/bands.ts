@@ -57,6 +57,17 @@ export const READINESS_RECOVERY_FACTOR_MAX = 1.3;
 export const READINESS_PATTERN_MIN_LOW = 2;
 export const READINESS_PATTERN_WINDOW_DAYS = 7;
 
+/**
+ * A session note tagged "fatigue" widens that session's own recovery
+ * window, the same way a low morning check-in does (subjective_readiness_monitoring
+ * applies just as well to a post-session reading as a pre-session one — one
+ * reading alone is still a weak signal, so this stays the same size as
+ * READINESS_RECOVERY_FACTOR_MAX rather than stacking on top of it). Combined
+ * with the volume and readiness factors by taking whichever is largest,
+ * never multiplied, and still capped by RECOVERY_VOLUME_FACTOR_MAX.
+ */
+export const FATIGUE_RECOVERY_FACTOR = READINESS_RECOVERY_FACTOR_MAX;
+
 export const LONG_GAP_DAYS = 7;
 export const REENTRY_GAP_DAYS = 28;
 export const FIRST_SESSIONS_COUNT = 4;
