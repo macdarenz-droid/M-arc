@@ -129,7 +129,8 @@ export interface SplitDraft {
 }
 
 export type ProposalApply =
-  | { kind: 'schedule'; days: Partial<Record<Weekday, LearnedDay>> }
+  /** A weekday mapped to null means: clear that day, the user never trains on it. */
+  | { kind: 'schedule'; days: Partial<Record<Weekday, LearnedDay | null>> }
   | { kind: 'today_plan'; recommendedSplitId: string | null; options: SplitOption[]; modifications: ExerciseChange[] }
   | { kind: 'exercise_swap'; splitId?: string; fromExerciseId: string; toExerciseId: string }
   | { kind: 'add_exercise'; splitId: string; exerciseId: string; sets: number; muscle: MuscleId }

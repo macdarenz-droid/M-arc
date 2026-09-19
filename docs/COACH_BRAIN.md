@@ -68,7 +68,7 @@ enumerated in `src/brain/coach/contract.ts`.
 |---|---|---|
 | `volume_drop`, `volume_spike` | Effective sets for a muscle group over the last 3 weeks against the trailing 8-week median | ≥ 6 weeks of data, ≥ 3 active weeks in baseline |
 | `weekly_sets_out_of_band` | Weekly effective sets far outside a wide band | ≥ 3 consecutive weeks |
-| `uncovered_muscle` | A muscle the goal implies with ~0 effective sets for ≥ 3 weeks | ≥ 3 active weeks |
+| `uncovered_muscle` | A major muscle under 2 effective sets a week for 4 complete weeks (secondary work counts half, so one compound's spill-over does not clear it) | ≥ 3 active weeks of 4 |
 | `plateau`, `decline`, `progressing` | Existing trend and plateau logic, exposed as facts | 7 of last 8 sessions |
 | `under_recovered` | Recovery window by effort, scaled by volume vs. baseline, widened by history | Any |
 | `effort_missing`, `effort_drift_*`, `effort_mismatch`, `rep_range_mismatch` | Effort coverage, drift, and fit to the goal's bands | Existing gates |
@@ -93,8 +93,12 @@ finding ids it rests on, `principles`, `confidence` and a `dismissKey`.
   the schedule, weekly sets vs. baseline and focus targets. Offers a swap
   or a modified version of the scheduled split, listing exercises to drop
   or replace and replacements from the same movement pattern.
-- **`exercise_swap`** for a plateaued lift, from the same pattern.
-- **`add_exercise`** for an uncovered muscle or a balance gap.
+- **`exercise_swap`** for a plateaued lift, from the same pattern, at most
+  two per report with compound lifts first. When most lifts stall at once
+  the problem is the programme, and swapping everything is bad coaching.
+- **`add_exercise`** for an uncovered muscle or a balance gap, placed in
+  the split with the most same-bucket work and never duplicating a
+  muscle-and-pattern pair already in that split.
 - **`split_modify`** for redundancy, balance or focus.
 - **`split_new`**: a deterministic constraint solver. Inputs: goal, days per
   week (learned or chosen), focus muscles, equipment actually logged,
@@ -191,8 +195,13 @@ the cases a single history cannot.
 ## Phases
 
 0. Research file, principle cards, this document, the contract. **Done.**
-1. Detectors and planners in `src/brain/coach/`, existing rules migrated to
-   emit findings, existing tests kept green, new tests per kind.
+1. Detectors and planners in `src/brain/coach/` (`detectors/`, `planners/`,
+   `report.ts`, `bands.ts`, `context.ts`), additive alongside the existing
+   rules, 43 new tests. **Done.** A full report over two years of history
+   (312 sessions) takes about 36 ms on a desktop CPU, so a few times that
+   on a phone; it is meant to run on app open and session finish, not on
+   every render. The old `coach/rules.ts` is retired in Phase 2 when the
+   screens read from the report.
 2. Template renderer; Coach and Today screens read from the report;
    suggestions inbox; learned-schedule nudges.
 3. Cloudflare Worker proxy, remote explainer with validator and cache,
@@ -209,6 +218,9 @@ the cases a single history cannot.
 | 2026-09-19 | Smart reminders default off until a learned schedule is accepted. |
 | 2026-09-19 | Deloads are signal-driven, never calendar-driven (see `deload_evidence`). |
 | 2026-09-19 | Citation verification via search-index records; re-verify against full text when the network allows. |
+| 2026-09-19 | Detectors never shrink a recovery window; volume can only widen it, up to 1.5×. |
+| 2026-09-19 | At most two exercise swaps per report; simultaneous plateaus are a programme signal. |
+| 2026-09-19 | Today is excluded from habit denominators, since the session may still happen. |
 
 ## Non-goals
 
