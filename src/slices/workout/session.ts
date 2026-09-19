@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, CoachChange, Exercise, LoggedSet, Session, Split } from '@/core/models';
+import type { ActiveSession, CoachChange, Exercise, LoggedSet, NoteFlag, Session, Split } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -173,4 +173,23 @@ export function discardSession(): void {
   update(s => ({ ...s, active: null }));
   flushSave();
   void cancelRestDone();
+}
+
+/** Sets a session's note text, by id. Clears its old flags: a changed note needs a fresh read, not the last one's tags. */
+export function setSessionNote(sessionId: string, note: string): void {
+  update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === sessionId ? { ...x, note: note || undefined, noteFlags: undefined } : x)) }));
+  flushSave();
+}
+
+/**
+ * The online coach's read of a session's note arrives after the request
+ * that started it, sometimes after the screen that asked has closed. This
+ * merges those flags into the session by id whenever it resolves, so
+ * Train's finish screen and History's session editor can both start the
+ * same request and let it land safely in the background.
+ */
+export function applySessionNoteFlags(sessionId: string, flags: NoteFlag[]): void {
+  if (!flags.length) return;
+  update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === sessionId ? { ...x, noteFlags: flags } : x)) }));
+  flushSave();
 }

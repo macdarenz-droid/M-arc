@@ -232,6 +232,32 @@ the cases a single history cannot.
    unit test and its report is `docs/BACKTEST.md`. **Done for synthetic.**
    The same command takes a real backup from Settings → Export backup,
    which is where the recovery check becomes meaningful.
+5. Expanding remote AI beyond the coach explainer, one narrow feature at a
+   time, each grounded the same way. Shared client machinery lives in
+   `src/ai/` (`client.ts`: device id, endpoint, a `postJson` that never
+   throws); each feature gets its own payload builder and reply validator
+   there. The proxy gained a generic multi-route `createHandler` in
+   `handler.ts` (CORS, rate limit and quota shared once, a route is a
+   path, a body cap, a validator and a call), so `/tag-exercise` and
+   `/notes` sit alongside `/explain` in one Worker, each with its own
+   fixed system prompt (`promptTag.ts`, `promptNotes.ts`) and its own
+   structured-output schema. **5a done:** custom-exercise auto-tag
+   (`ExercisePicker.tsx`'s "Suggest" button fills equipment, mode and
+   muscles from a name, honestly marked "low" confidence when the model
+   itself is not sure, always editable before saving) and session notes
+   (`Train.tsx`'s finish screen and `History.tsx`'s session editor; a note
+   is tagged into flags — pain or discomfort, an equipment issue, fatigue,
+   a schedule note, a form check, or good news — never a diagnosis, never
+   a cause, never a severity). A new deterministic finding, `note_flag`,
+   recalls a flag for up to a week so the coach can mention it without a
+   second remote call; `docs/RESEARCH.md` P19 grounds why self-report is
+   worth tracking and why one reading alone is not. Queued next: a
+   personal daily spark and a weekly review (reuse the `/explain`
+   pattern), then ask-the-coach (needs Sonnet 5 and multi-turn payload
+   design), then camera-based exercise identification and programme
+   import from a photo (the highest-design-effort phases, since vision
+   accuracy is genuinely limited — every result there must stay a
+   suggestion with alternates, never a silent write).
 
 ## Decisions log
 
@@ -253,6 +279,11 @@ the cases a single history cannot.
 | 2026-09-19 | The proxy refuses payloads carrying sessions, profile fields or session ids, so a modified client cannot leak them through it. |
 | 2026-09-19 | Backtest findings: a plateau needs a flat tail of 1.5× the person's usual gap between improvements (min 4 sessions); the volume baseline excludes weeks before the first session; a habitual day retires after three complete cold weeks; effort drift needs two of three newer sessions to move a level; records collapse to one finding per exercise per week; recovery no longer hides swap proposals. |
 | 2026-09-19 | Exercise-name lookups are indexed once; a report on ninety sessions builds in about 50 ms instead of 5 s, and a test keeps it under 750 ms. |
+| 2026-09-19 | Every remote-AI reply that classifies something (a muscle, a movement pattern, a note's kind) is checked against the app's own closed vocabulary on both sides: the proxy's structured-output schema rejects anything else, and the app re-validates independently rather than trusting the network. An unrecognised value is dropped, never shown as if it were real. |
+| 2026-09-19 | A classification carries its own honest confidence ("high"/"low") from the model, never inferred by the app; "low" is surfaced to the person as a reason to double-check, not hidden. |
+| 2026-09-19 | Session notes are tagged into a fixed set of flags (pain or discomfort, an equipment issue, fatigue, a schedule note, a form check, positive) and, for pain, at most one named muscle — never a diagnosis, a cause, or a severity. The `note_flag` finding only recalls what was tagged; the words layer states this limit in the copy itself. |
+| 2026-09-19 | One shared AI connection (`src/ai/`, the existing "Coach online" toggle and URL) serves every remote feature, not one per feature, so there is one place to turn it off and one Worker to trust. |
+| 2026-09-19 | New research claim added only with real citations found and checked the same way as the rest of `docs/RESEARCH.md` (P19, self-reported wellness monitoring): rated **moderate**, with the honest caveat that one reading alone is a weak signal. |
 
 ## Non-goals
 

@@ -41,6 +41,7 @@ export const FINDING_KINDS = [
   'low_sleep_readiness',
   'record',
   'first_sessions',
+  'note_flag',
 ] as const;
 export type FindingKind = (typeof FINDING_KINDS)[number];
 
@@ -199,6 +200,7 @@ export const PRINCIPLES_BY_FINDING: Record<FindingKind, string[]> = {
   low_sleep_readiness: ['sleep_and_performance'],
   record: ['one_rm_estimation'],
   first_sessions: ['beginner_progression'],
+  note_flag: ['subjective_readiness_monitoring'],
 };
 
 /** Which research cards each proposal kind may cite. */

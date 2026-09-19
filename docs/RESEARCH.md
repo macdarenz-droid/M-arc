@@ -474,6 +474,39 @@ with "about" and a plus-or-minus range and calls it an estimate.
 
 - Hodgdon JA, Beckett MB. Prediction of percent body fat for U.S. Navy men from body circumferences and height. Naval Health Research Center, San Diego. Report No. 84-11. 1984.
 
+## P19. Self-reported wellness is worth tracking over time; one reading, alone, is a weak signal — **moderate**
+
+**Statement.** Short, regular self-reports of soreness, fatigue, stress
+and sleep are a validated, low-cost way to monitor how someone is coping
+with training, when tracked over time. A single soreness rating on a
+single day, on its own, correlates weakly with actual muscle damage and
+should not be read as measuring anything by itself.
+
+**Evidence.** Hooper and Mackinnon (1995) validated a daily wellness
+questionnaire (fatigue, stress, muscle soreness, sleep quality) against
+physiological markers in swimmers, finding it predicted staleness better
+than several objective measures. The related session-RPE method (Foster
+et al., 2001), where an athlete's own rated exertion multiplied by session
+duration tracks training load, has been supported by 36 subsequent
+validity and reliability studies across ages, sports and expertise levels.
+Against that, Nosaka and colleagues (2002) found delayed-onset muscle
+soreness a poor reflector of the magnitude of actual exercise-induced
+muscle damage — soreness and damage do not move together reliably.
+
+**Disputed.** A soreness or fatigue rating from one day says little on its
+own; the signal is in the pattern over time and the honesty of the
+self-report, not any single value. This card supports noticing and
+recalling what someone told the app, never diagnosing, rating severity, or
+inferring a cause from it.
+
+**App use.** A note or check-in that mentions discomfort, fatigue or an
+equipment issue is tagged and can be recalled later — never diagnosed,
+never given a cause. Finding `note_flag`.
+
+- Hooper SL, Mackinnon LT. Monitoring overtraining in athletes: recommendations. *Sports Med.* 1995;20(5):321-327. PMID 8584849.
+- Foster C, Florhaug JA, Franklin J, et al. A new approach to monitoring exercise training. *J Strength Cond Res.* 2001;15(1):109-115. PMID 11708692.
+- Nosaka K, Newton M, Sacco P. Delayed-onset muscle soreness does not reflect the magnitude of eccentric exercise-induced muscle damage. *Scand J Med Sci Sports.* 2002;12(6):337-346. PMID 12453160.
+
 ---
 
 ## Maintenance

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   detectVolumeTrend, detectSetsOutOfBand, detectUncovered, detectProgress, detectRecords, detectUnderRecovered, adjustedRecovery,
   detectEffortMissing, detectEffortDrift, detectEffortMismatch, detectRepRangeMismatch, detectRedundant, detectBalance, detectGap, detectFirstSessions, detectSleep,
+  detectNoteFlags, NOTE_FLAG_LOOKBACK_DAYS, MAX_NOTE_FLAGS,
 } from '@/brain/coach/detectors';
 import { session, sets } from './helpers';
 import { ctx, pplHistory, pplSplits, std, LAST_MONDAY, TODAY, PUSH_EX, PUSH_ID, history } from './coach-helpers';
@@ -161,5 +162,40 @@ describe('structure and consistency detectors', () => {
     expect(detectSleep(sleepy)[0]!.metrics.sleepMinutes).toBe(300);
     expect(detectSleep(ctx(s, { health: { connected: true, lastSync: '2026-09-10T08:00:00.000Z', sleepMinutes: 300 } }))).toEqual([]);
     expect(detectSleep(ctx(s, { health: { connected: true, lastSync: `${TODAY}T08:00:00.000Z`, sleepMinutes: 420 } }))).toEqual([]);
+  });
+});
+
+describe('note flags', () => {
+  it('recalls the most recent flag per kind and muscle, newest first, with real evidence', () => {
+    const s = [
+      { ...session('2026-09-14', std(PUSH_EX)), noteFlags: [{ kind: 'pain_or_discomfort' as const, muscle: 'rear_delts' as const }] },
+      { ...session('2026-09-16', std(PUSH_EX)), noteFlags: [{ kind: 'pain_or_discomfort' as const, muscle: 'rear_delts' as const }, { kind: 'positive' as const, muscle: null }] },
+    ];
+    const out = detectNoteFlags(ctx(s));
+    expect(out).toHaveLength(2);
+    const pain = out.find(f => f.metrics.flagKind === 'pain_or_discomfort')!;
+    expect(pain.metrics.day).toBe('2026-09-16'); // the newer of the two mentions, not the older
+    expect(pain.metrics.daysAgo).toBe(3);
+    expect(pain.subject.muscle).toBe('rear_delts');
+    expect(pain.severity).toBe(1);
+    expect(pain.confidence).toBe('high');
+    expect(pain.evidence.sessionIds).toEqual([s[1]!.id]);
+    expect(pain.principles).toEqual(['subjective_readiness_monitoring']);
+    const positive = out.find(f => f.metrics.flagKind === 'positive')!;
+    expect(positive.subject.muscle).toBeUndefined();
+    expect(positive.severity).toBe(0);
+  });
+
+  it('drops a flag once it falls outside the lookback window', () => {
+    const old = [{ ...session('2026-09-09', std(PUSH_EX)), noteFlags: [{ kind: 'fatigue' as const, muscle: null }] }];
+    expect(NOTE_FLAG_LOOKBACK_DAYS).toBe(7); // 2026-09-19 minus 2026-09-09 is 10 days: outside the window
+    expect(detectNoteFlags(ctx(old))).toEqual([]);
+  });
+
+  it('never fires on a session with no note flags, and caps at the newest few', () => {
+    expect(detectNoteFlags(ctx([session('2026-09-17', std(PUSH_EX))]))).toEqual([]);
+    const kinds = ['pain_or_discomfort', 'equipment_issue', 'fatigue', 'schedule', 'form_check'] as const;
+    const s = kinds.map((k, i) => ({ ...session(`2026-09-1${5 + i}`, std(PUSH_EX)), noteFlags: [{ kind: k, muscle: null }] }));
+    expect(detectNoteFlags(ctx(s))).toHaveLength(MAX_NOTE_FLAGS);
   });
 });

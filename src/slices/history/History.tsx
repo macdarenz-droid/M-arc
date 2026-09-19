@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { today, unit } from '@/app/selectors';
-import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad } from '@/core/units';
@@ -13,6 +13,9 @@ import { weekSummary } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
+import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
+import { ensureDeviceId, remoteEnabled } from '@/slices/coach/remote';
+import { applySessionNoteFlags } from '@/slices/workout/session';
 
 export function History() {
   const [seg, setSeg] = useState<'log' | 'stats'>('log');
@@ -104,12 +107,18 @@ function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
 function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
   const u = unit.value;
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
+  const [note, setNote] = useState(session.note ?? '');
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
+    const trimmed = note.trim();
+    const noteChanged = trimmed !== (session.note ?? '').trim();
+    const cleaned = { ...draft, note: trimmed || undefined, noteFlags: noteChanged ? undefined : draft.noteFlags, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
     update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
     showToast('Session updated'); onClose();
+    if (trimmed && noteChanged && remoteEnabled.value) {
+      void requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() }).then(r => { if (r.ok) applySessionNoteFlags(session.id, r.flags); });
+    }
   };
   const remove = () => {
     const removed = session;
@@ -135,6 +144,12 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
             </div>
           </Card>
         ))}
+        <Field label="Note" hint="How it felt, soreness, an equipment issue — whatever's useful later.">
+          <input value={note} maxLength={280} placeholder="e.g. Left shoulder felt a bit off on presses" onInput={e => setNote((e.target as HTMLInputElement).value)} />
+        </Field>
+        {!!draft.noteFlags?.length && note.trim() === (session.note ?? '').trim() && (
+          <div class="wrap">{draft.noteFlags.map((f, i) => <Chip key={i}>{noteFlagLabel(f)}</Chip>)}</div>
+        )}
         <p class="hint">Sets with 0 reps are removed on save. Loads are in kg here.{u === 'lb' ? ' Your display unit is lb elsewhere.' : ''}</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}

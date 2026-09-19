@@ -52,6 +52,51 @@ export interface Explanation {
 
 export type CallModel = (payload: ExplainPayload, env: WorkerEnv) => Promise<Explanation>;
 
+/** A name typed for a custom exercise, plus whatever equipment word the user already typed, if any. */
+export interface TagExercisePayload {
+  version: 1;
+  kind: 'tag-exercise';
+  name: string;
+  equipmentHint?: string;
+}
+
+export interface TagExerciseReply {
+  equipment: string;
+  /** Every entry is one of the app's real muscle ids — the schema rejects anything else. */
+  primary: string[];
+  secondary: string[];
+  /** One of the app's real movement patterns. */
+  pattern: string;
+  mode: 'weighted' | 'bodyweight' | 'assisted' | 'duration' | 'conditioning';
+  /** The model's own honest read of how sure it is. "low" means the app must make the person double-check before saving. */
+  confidence: 'high' | 'low';
+  model: string;
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
+}
+
+export type CallTagExercise = (payload: TagExercisePayload, env: WorkerEnv) => Promise<Omit<TagExerciseReply, 'model' | 'usage'> & { model: string; usage: TagExerciseReply['usage'] }>;
+
+/** One session or exercise note, as typed. Nothing else about the session goes with it. */
+export interface NotesPayload {
+  version: 1;
+  kind: 'notes';
+  text: string;
+}
+
+export interface NoteFlag {
+  kind: 'pain_or_discomfort' | 'equipment_issue' | 'fatigue' | 'schedule' | 'form_check' | 'positive';
+  /** One of the app's real muscle ids, or null when no muscle was named. */
+  muscle: string | null;
+}
+
+export interface NotesReply {
+  flags: NoteFlag[];
+  model: string;
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
+}
+
+export type CallNotes = (payload: NotesPayload, env: WorkerEnv) => Promise<Omit<NotesReply, 'model' | 'usage'> & { model: string; usage: NotesReply['usage'] }>;
+
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;

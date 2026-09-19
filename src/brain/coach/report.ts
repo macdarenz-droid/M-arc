@@ -11,8 +11,8 @@ import { FIRST_SESSIONS_COUNT } from './bands';
 import { daysBetween } from '@/core/dates';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectFocus, detectHabit, detectProgress, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectSleep, detectUncovered,
-  detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
+  detectFocus, detectHabit, detectNoteFlags, detectProgress, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectSleep,
+  detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
@@ -64,6 +64,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('sleep', () => detectSleep(ctx)),
     ...safe('habit', () => detectHabit(ctx, habit)),
     ...safe('focus', () => detectFocus(ctx)),
+    ...safe('notes', () => detectNoteFlags(ctx)),
   ];
   const seen = new Set<string>();
   const findings = raw

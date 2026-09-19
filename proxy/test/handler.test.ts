@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, checkQuota, corsHeaders, MAX_BODY_BYTES } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
-import type { ExplainPayload, WorkerEnv } from '../src/types';
+import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
+import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
+import type { ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
 
 const payload = (): ExplainPayload => ({
   version: 1, kind: 'explain', goal: 'lean', unit: 'kg', today: '2026-09-19',
@@ -11,6 +13,9 @@ const payload = (): ExplainPayload => ({
   cards: [{ id: 'volume_dose_response', title: 'Weekly volume drives growth', rating: 'strong', statement: 'More hard sets per muscle per week produce more growth, up to a point.', disputed: 'The exact shape at high volumes.' }],
   explain: ['volume_drop:chest', 'exercise_swap:lib_barbell_bench_press'],
 });
+
+const tagPayload = (): TagExercisePayload => ({ version: 1, kind: 'tag-exercise', name: 'Cable Face Pull', equipmentHint: 'Cable' });
+const notesPayload = (): NotesPayload => ({ version: 1, kind: 'notes', text: 'Felt a pinch in my left shoulder on the last set.' });
 
 class FakeKV {
   store = new Map<string, string>();
@@ -26,8 +31,31 @@ const stubModel = async (p: ExplainPayload) => ({
   model: 'claude-haiku-4-5', usage: { inputTokens: 900, outputTokens: 120, cacheReadTokens: 0 },
 });
 
-const post = (body: unknown, headers: Record<string, string> = {}, origin?: string) =>
-  new Request('https://marc-coach.example.workers.dev/explain', { method: 'POST', body: typeof body === 'string' ? body : JSON.stringify(body), headers: { 'content-type': 'application/json', 'x-marc-device': 'device_abcdef12', ...(origin ? { origin } : {}), ...headers } });
+/** Wraps a stub model the same way index.ts wires the real one, for a route table under test. */
+const explainRouteWith = (callModel: typeof stubModel): RouteConfig => ({
+  path: '/explain', maxBody: MAX_BODY_BYTES, validate: validatePayload,
+  async call(p) {
+    const out = await callModel(p as ExplainPayload);
+    const wanted = new Set((p as ExplainPayload).explain);
+    const items = out.items.filter(i => wanted.has(i.id)).map(i => ({ id: i.id, text: String(i.text).trim() }));
+    return { summary: String(out.summary).trim(), items, model: out.model, usage: out.usage };
+  },
+});
+
+const stubTag = async () => ({ equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-haiku-4-5', usage: { inputTokens: 200, outputTokens: 40, cacheReadTokens: 0 } });
+const tagRouteWith = (call: typeof stubTag): RouteConfig => ({
+  path: '/tag-exercise', maxBody: MAX_TAG_BODY_BYTES, validate: validateTagPayload,
+  async call() { const out = await call(); return { equipment: out.equipment, primary: out.primary, secondary: out.secondary, pattern: out.pattern, mode: out.mode, confidence: out.confidence, model: out.model, usage: out.usage }; },
+});
+
+const stubNotes = async () => ({ flags: [{ kind: 'pain_or_discomfort' as const, muscle: 'rear_delts' as const }], model: 'claude-haiku-4-5', usage: { inputTokens: 150, outputTokens: 20, cacheReadTokens: 0 } });
+const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
+  path: '/notes', maxBody: MAX_NOTES_BODY_BYTES, validate: validateNotesPayload,
+  async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
+});
+
+const post = (path: string, body: unknown, headers: Record<string, string> = {}, origin?: string) =>
+  new Request(`https://marc-coach.example.workers.dev${path}`, { method: 'POST', body: typeof body === 'string' ? body : JSON.stringify(body), headers: { 'content-type': 'application/json', 'x-marc-device': 'device_abcdef12', ...(origin ? { origin } : {}), ...headers } });
 
 describe('payload validation', () => {
   it('accepts the app payload and refuses anything personal or oversized', () => {
@@ -40,6 +68,30 @@ describe('payload validation', () => {
     expect(validatePayload({ ...payload(), version: 2 })).toMatchObject({ ok: false });
     expect(validatePayload({ ...payload(), findings: Array.from({ length: 30 }, () => payload().findings[0]) })).toMatchObject({ ok: false });
     expect(validatePayload('nope')).toMatchObject({ ok: false });
+  });
+});
+
+describe('tag-exercise payload validation', () => {
+  it('accepts a name with an optional equipment hint and refuses anything else', () => {
+    expect(validateTagPayload(tagPayload())).toMatchObject({ ok: true });
+    expect(validateTagPayload({ version: 1, kind: 'tag-exercise', name: 'Face Pull' })).toMatchObject({ ok: true });
+    expect(validateTagPayload({ version: 1, kind: 'tag-exercise', name: '' })).toMatchObject({ ok: false });
+    expect(validateTagPayload({ version: 1, kind: 'tag-exercise', name: 'x'.repeat(61) })).toMatchObject({ ok: false });
+    expect(validateTagPayload({ version: 1, kind: 'tag-exercise', name: 'Face Pull', equipmentHint: 'x'.repeat(41) })).toMatchObject({ ok: false });
+    expect(validateTagPayload({ version: 2, kind: 'tag-exercise', name: 'Face Pull' })).toMatchObject({ ok: false });
+    // A modified client stuffing session data or anything unexpected in: refused, not silently dropped.
+    expect(validateTagPayload({ ...tagPayload(), sessions: [] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateTagPayload('nope')).toMatchObject({ ok: false });
+  });
+});
+
+describe('notes payload validation', () => {
+  it('accepts short text only', () => {
+    expect(validateNotesPayload(notesPayload())).toMatchObject({ ok: true });
+    expect(validateNotesPayload({ version: 1, kind: 'notes', text: '' })).toMatchObject({ ok: false });
+    expect(validateNotesPayload({ version: 1, kind: 'notes', text: 'x'.repeat(281) })).toMatchObject({ ok: false });
+    expect(validateNotesPayload({ version: 1, kind: 'notes', text: 'ok', exerciseId: 'lib_bench' })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateNotesPayload('nope')).toMatchObject({ ok: false });
   });
 });
 
@@ -67,11 +119,11 @@ describe('quota', () => {
   });
 });
 
-describe('handler', () => {
-  const handle = createHandler(stubModel);
+describe('handler: /explain', () => {
+  const handle = createHandler([explainRouteWith(stubModel)]);
 
   it('answers a valid request with only the requested items', async () => {
-    const res = await handle(post(payload()), env());
+    const res = await handle(post('/explain', payload()), env());
     expect(res.status).toBe(200);
     const body = await res.json() as { summary: string; items: Array<{ id: string }>; model: string; usage: { inputTokens: number } };
     expect(body.summary).toContain('18%');
@@ -90,42 +142,73 @@ describe('handler', () => {
   });
 
   it('refuses bad origins, missing device, missing key, bad JSON, oversized bodies', async () => {
-    expect((await handle(post(payload(), {}, 'https://evil.example'), env())).status).toBe(403);
-    expect((await handle(post(payload(), { 'x-marc-device': 'x' }), env())).status).toBe(400);
-    const noKey = await handle(post(payload()), env({ ANTHROPIC_API_KEY: undefined }));
+    expect((await handle(post('/explain', payload(), {}, 'https://evil.example'), env())).status).toBe(403);
+    expect((await handle(post('/explain', payload(), { 'x-marc-device': 'x' }), env())).status).toBe(400);
+    const noKey = await handle(post('/explain', payload()), env({ ANTHROPIC_API_KEY: undefined }));
     expect(noKey.status).toBe(503);
     expect((await noKey.json() as { error: string }).error).toContain('secret put');
-    expect((await handle(post('{not json'), env())).status).toBe(400);
-    expect((await handle(post('x'.repeat(MAX_BODY_BYTES + 1)), env())).status).toBe(413);
-    expect((await handle(post({ ...payload(), profile: {} }), env())).status).toBe(400);
+    expect((await handle(post('/explain', '{not json'), env())).status).toBe(400);
+    expect((await handle(post('/explain', 'x'.repeat(MAX_BODY_BYTES + 1)), env())).status).toBe(413);
+    expect((await handle(post('/explain', { ...payload(), profile: {} }), env())).status).toBe(400);
   });
 
   it('applies the rate limiter and daily quota', async () => {
     const limited = env({ RATE: { limit: async () => ({ success: false }) } });
-    const r = await handle(post(payload()), limited);
+    const r = await handle(post('/explain', payload()), limited);
     expect(r.status).toBe(429);
     expect(r.headers.get('retry-after')).toBe('60');
     const kv = new FakeKV();
     const quota = env({ QUOTA: kv as unknown as KVNamespace, MAX_DAILY_PER_DEVICE: '1' });
-    expect((await handle(post(payload()), quota)).status).toBe(200);
-    const second = await handle(post(payload()), quota);
+    expect((await handle(post('/explain', payload()), quota)).status).toBe(200);
+    const second = await handle(post('/explain', payload()), quota);
     expect(second.status).toBe(429);
     expect(second.headers.get('retry-after')).toBe('3600');
   });
 
   it('maps upstream failures to calm errors', async () => {
-    const failing = createHandler(async () => { throw Object.assign(new Error('rate'), { status: 429 }); });
-    expect((await failing(post(payload()), env())).status).toBe(429);
-    const unauthorized = createHandler(async () => { throw Object.assign(new Error('auth'), { status: 401 }); });
-    const u = await unauthorized(post(payload()), env());
+    const failing = createHandler([explainRouteWith(async () => { throw Object.assign(new Error('rate'), { status: 429 }); })]);
+    expect((await failing(post('/explain', payload()), env())).status).toBe(429);
+    const unauthorized = createHandler([explainRouteWith(async () => { throw Object.assign(new Error('auth'), { status: 401 }); })]);
+    const u = await unauthorized(post('/explain', payload()), env());
     expect(u.status).toBe(503);
     expect((await u.json() as { error: string }).error).toContain('ANTHROPIC_API_KEY');
-    const broken = createHandler(async () => { throw new Error('boom'); });
-    expect((await broken(post(payload()), env())).status).toBe(502);
+    const broken = createHandler([explainRouteWith(async () => { throw new Error('boom'); })]);
+    expect((await broken(post('/explain', payload()), env())).status).toBe(502);
   });
 });
 
-describe('prompt', () => {
+describe('handler: multiple routes in one Worker', () => {
+  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes)]);
+
+  it('answers /tag-exercise with a closed-vocabulary suggestion', async () => {
+    const res = await handle(post('/tag-exercise', tagPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { equipment: string; primary: string[]; pattern: string; confidence: string };
+    expect(body.equipment).toBe('Cable');
+    expect(body.primary).toEqual(['rear_delts']);
+    expect(body.pattern).toBe('horizontal_abduction');
+    expect(body.confidence).toBe('high');
+  });
+
+  it('answers /notes with flags only, never prose', async () => {
+    const res = await handle(post('/notes', notesPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { flags: Array<{ kind: string; muscle: string | null }> };
+    expect(body.flags).toEqual([{ kind: 'pain_or_discomfort', muscle: 'rear_delts' }]);
+  });
+
+  it('keeps /explain, /tag-exercise and /notes independent: one 400 does not affect the others', async () => {
+    expect((await handle(post('/tag-exercise', { version: 1, kind: 'tag-exercise', name: '' }), env())).status).toBe(400);
+    expect((await handle(post('/explain', payload()), env())).status).toBe(200);
+    expect((await handle(post('/notes', notesPayload()), env())).status).toBe(200);
+  });
+
+  it('a route neither route table entry matches is a 404, same as an unknown path', async () => {
+    expect((await handle(post('/import-programme', {}), env())).status).toBe(404);
+  });
+});
+
+describe('prompts', () => {
   it('states the contract and serialises the payload deterministically', () => {
     expect(SYSTEM_PROMPT).toContain('Use only numbers that appear in the report');
     expect(SYSTEM_PROMPT).toContain('Never predict or mention injury');
@@ -133,5 +216,18 @@ describe('prompt', () => {
     expect(SYSTEM_PROMPT).toContain('55 words');
     expect(userMessage(payload())).toBe(userMessage(payload()));
     expect(userMessage(payload())).toContain('"changePct":-18');
+  });
+
+  it('tag-exercise prompt names the closed vocabularies and asks for honest confidence', () => {
+    expect(TAG_SYSTEM_PROMPT).toContain('rear_delts');
+    expect(TAG_SYSTEM_PROMPT).toContain('horizontal_push');
+    expect(TAG_SYSTEM_PROMPT).toContain('Never invent a muscle, pattern or mode id');
+    expect(TAG_SYSTEM_PROMPT).toContain('Be honest here');
+  });
+
+  it('notes prompt forbids diagnosis and names the flag vocabulary', () => {
+    expect(NOTES_SYSTEM_PROMPT).toContain('Never diagnose');
+    expect(NOTES_SYSTEM_PROMPT).toContain('pain_or_discomfort');
+    expect(NOTES_SYSTEM_PROMPT).toContain('not medical advice');
   });
 });

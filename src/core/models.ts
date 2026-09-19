@@ -41,6 +41,18 @@ export interface LoggedExercise {
   sets: LoggedSet[];
 }
 
+/**
+ * What a session note was tagged as. Never a diagnosis, never a cause,
+ * never a severity — only that the note mentioned this kind of thing and,
+ * for pain or discomfort, which muscle it named, if any.
+ */
+export type NoteFlagKind = 'pain_or_discomfort' | 'equipment_issue' | 'fatigue' | 'schedule' | 'form_check' | 'positive';
+
+export interface NoteFlag {
+  kind: NoteFlagKind;
+  muscle: MuscleId | null;
+}
+
 export interface Session {
   id: string;
   splitId: string;
@@ -51,6 +63,10 @@ export interface Session {
   endedAt: string;
   durationSec: number;
   exercises: LoggedExercise[];
+  /** Free text the person wrote about this session. Optional; most sessions have none. */
+  note?: string;
+  /** What `note` was tagged as, from the online coach. Empty until the person has both a note and the coach on. */
+  noteFlags?: NoteFlag[];
 }
 
 export interface SplitExercise {

@@ -63,6 +63,21 @@ describe('words for findings', () => {
     const many = Array.from({ length: 6 }, (_, i) => ({ ...renderFinding({ id: `plateau:e${i}`, kind: 'plateau', subject: { exerciseName: `E${i}` }, metrics: { sessions: 8, lastTopKg: 50, lastTopReps: 8 }, window: { from: '', to: '' }, confidence: 'medium', severity: 1, evidence: { sessionIds: [], days: [] }, principles: [] }, render()) }));
     expect(shortlist(many, 6, 2)).toHaveLength(2);
   });
+
+  it('recalls a note flag honestly: what was said, never a diagnosis', () => {
+    const pain: Finding = { id: 'note_flag:pain_or_discomfort:rear_delts', kind: 'note_flag', subject: { muscle: 'rear_delts' },
+      metrics: { flagKind: 'pain_or_discomfort', daysAgo: 2, day: '2026-09-17' }, window: { from: '2026-09-17', to: '2026-09-17' },
+      confidence: 'high', severity: 1, evidence: { sessionIds: ['s1'], days: ['2026-09-17'] }, principles: ['subjective_readiness_monitoring'] };
+    const i = renderFinding(pain, render());
+    expect(i.title.toLowerCase()).toContain('rear should'); // muscleLabel('rear_delts') = 'Rear shoulders'
+    expect(i.noticed).toContain('2 days ago');
+    expect(i.means).not.toMatch(/diagnos|injur|torn|strain/i);
+    expect(i.category).toBe('readiness');
+    const positive: Finding = { ...pain, id: 'note_flag:positive:none', subject: {}, metrics: { flagKind: 'positive', daysAgo: 0, day: '2026-09-19' } };
+    const p = renderFinding(positive, render());
+    expect(p.noticed).toContain('today');
+    expect(p.title).not.toBe(i.title);
+  });
 });
 
 describe('words for proposals', () => {

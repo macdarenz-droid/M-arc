@@ -4,8 +4,9 @@
  * answer and that it invents no numbers.
  */
 import { describe, it, expect } from 'vitest';
-import { callAnthropic } from '../src/anthropic';
-import type { ExplainPayload } from '../src/types';
+import { callAnthropic, callNotes, callTagExercise } from '../src/anthropic';
+import { MUSCLE_IDS, PATTERNS, NOTE_FLAG_KINDS } from '../src/vocab';
+import type { ExplainPayload, NotesPayload, TagExercisePayload } from '../src/types';
 
 // Claude Code cloud sessions reserve the name ANTHROPIC_API_KEY, so a differently named variable is accepted too.
 const key = process.env.ANTHROPIC_API_KEY || process.env.MARC_ANTHROPIC_KEY;
@@ -47,4 +48,35 @@ live('live model call', () => {
     for (const n of numbersIn(out.summary)) expect(allowed.has(n), `summary: ${n}`).toBe(true);
     console.log(JSON.stringify({ usage: out.usage, summary: out.summary, items: out.items }, null, 1));
   }, 60_000);
+});
+
+live('live tag-exercise call', () => {
+  it('classifies a real exercise into the closed vocabularies only', async () => {
+    const tagPayload: TagExercisePayload = { version: 1, kind: 'tag-exercise', name: 'Cable Face Pull', equipmentHint: 'Cable' };
+    const out = await callTagExercise(tagPayload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-haiku-4-5' });
+    for (const m of out.primary) expect(MUSCLE_IDS as readonly string[], `primary "${m}"`).toContain(m);
+    for (const m of out.secondary) expect(MUSCLE_IDS as readonly string[], `secondary "${m}"`).toContain(m);
+    expect(PATTERNS as readonly string[]).toContain(out.pattern);
+    expect(['weighted', 'bodyweight', 'assisted', 'duration', 'conditioning']).toContain(out.mode);
+    expect(['high', 'low']).toContain(out.confidence);
+    // A face pull is unambiguous: a real system should be confident about it, not hedge everything.
+    expect(out.confidence).toBe('high');
+    expect(out.primary).toContain('rear_delts');
+    console.log(JSON.stringify(out, null, 1));
+  }, 30_000);
+});
+
+live('live notes call', () => {
+  it('tags a note without diagnosing anything', async () => {
+    const notes: NotesPayload = { version: 1, kind: 'notes', text: 'Sharp pinch in my left shoulder on the last set, had to stop early.' };
+    const out = await callNotes(notes, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-haiku-4-5' });
+    expect(out.flags.length).toBeGreaterThan(0);
+    expect(out.flags.length).toBeLessThanOrEqual(3);
+    for (const f of out.flags) {
+      expect(NOTE_FLAG_KINDS as readonly string[]).toContain(f.kind);
+      if (f.muscle !== null) expect(MUSCLE_IDS as readonly string[]).toContain(f.muscle);
+    }
+    expect(out.flags.some(f => f.kind === 'pain_or_discomfort')).toBe(true);
+    console.log(JSON.stringify(out, null, 1));
+  }, 30_000);
 });

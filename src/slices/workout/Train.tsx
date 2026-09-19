@@ -12,9 +12,11 @@ import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
 import { applyDeload } from '@/brain/coach/deload';
 import { endDeload } from '../coach/apply';
+import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
@@ -297,6 +299,18 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const emphasis = sessionEmphasis(session.exercises, state.value.customExercises).percents;
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
+  const [note, setNote] = useState('');
+  const saveNote = async () => {
+    const trimmed = note.trim();
+    if (!trimmed) return;
+    setSessionNote(session.id, trimmed);
+    if (!remoteEnabled.value) return;
+    const r = await requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() });
+    if (r.ok && r.flags.length) {
+      applySessionNoteFlags(session.id, r.flags);
+      showToast(`Noted: ${r.flags.map(noteFlagLabel).join(', ')}.`);
+    }
+  };
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div></div>
@@ -310,7 +324,14 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           {sets === 0 && <p class="small muted" style={{ marginTop: 10 }}>No sets were logged, so nothing was added to history.</p>}
         </Card>
       </Section>
-      <div class="stack-sm" style={{ marginTop: 16 }}><Button variant="primary" onClick={onClose}>Done</Button></div>
+      <Section title="Note">
+        <Card>
+          <Field label="Add a note (optional)" hint="How it felt, soreness, an equipment issue — whatever's useful later.">
+            <input value={note} maxLength={280} placeholder="e.g. Left shoulder felt a bit off on presses" onInput={e => setNote((e.target as HTMLInputElement).value)} onBlur={saveNote} />
+          </Field>
+        </Card>
+      </Section>
+      <div class="stack-sm" style={{ marginTop: 16 }}><Button variant="primary" onClick={() => { void saveNote(); onClose(); }}>Done</Button></div>
     </div>
   );
 }

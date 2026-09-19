@@ -33,6 +33,7 @@ const CATEGORY_OF: Record<FindingKind, Category> = {
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
   redundant_exercises: 'balance', balance_imbalance: 'balance',
   long_gap: 'consistency', habit_pattern: 'consistency', first_sessions: 'consistency',
+  note_flag: 'readiness',
 };
 
 export interface Insight {
@@ -274,10 +275,47 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: `${num(m.sessions)} of ${num(m.needed)} logged.`,
         means: 'The coach learns from what you log. The first sessions are your baseline, not a test.',
         action: 'Pick a split, log the sets you do, and rate the effort.' };
+    case 'note_flag': {
+      const daysAgo = num(m.daysAgo);
+      const when = daysAgo <= 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
+      const hasMuscle = !!f.subject.muscle;
+      switch (str(m.flagKind)) {
+        case 'pain_or_discomfort':
+          return { title: hasMuscle ? `You noted discomfort — ${lower(muscle)}` : 'You noted some discomfort',
+            noticed: hasMuscle ? `In a session note ${when}, you mentioned ${lower(muscle)}.` : `In a session note ${when}, you mentioned discomfort.`,
+            means: 'This is only what you wrote, recalled so it is not forgotten. The coach cannot tell you what it means or how serious it is, and does not try.',
+            action: 'If it is more than passing soreness, ease off that area, or have it looked at by someone who can.' };
+        case 'equipment_issue':
+          return { title: 'You flagged an equipment issue',
+            noticed: `In a session note ${when}, you mentioned a problem with equipment or the gym.`,
+            means: 'Worth remembering next time you plan that session.',
+            action: 'Swap the exercise or the slot if the issue is still there.' };
+        case 'fatigue':
+          return { title: 'You noted feeling unusually tired',
+            noticed: `In a session note ${when}, you mentioned feeling more fatigued than usual.`,
+            means: 'Fatigue that stands out from normal training soreness is worth watching, alongside sleep and stress outside the gym.',
+            action: 'An easier session or an extra rest day is a reasonable call here.' };
+        case 'schedule':
+          return { title: 'You left a scheduling note',
+            noticed: `In a session note ${when}, you mentioned timing or a missed session.`,
+            means: 'Worth knowing when the coach looks at your consistency.',
+            action: 'Nothing to do here unless you want to adjust your schedule.' };
+        case 'form_check':
+          return { title: 'You flagged a form check',
+            noticed: `In a session note ${when}, you wanted to check technique on something.`,
+            means: 'Good form matters more than the number on the bar.',
+            action: 'Film a set next time, or have someone watch you lift.' };
+        default:
+          return { title: 'Good note from a recent session',
+            noticed: `In a session note ${when}, you wrote something good.`,
+            means: 'Worth remembering what a good session felt like.',
+            action: 'Keep doing what you did that day.' };
+      }
+    }
   }
 }
 
-const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, record: 2, habit_pattern: 1 };
+const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, habit_pattern: 1 };
 
 export function renderFinding(f: Finding, ctx: RenderContext): Insight {
   const w = wordsFor(f, ctx);

@@ -1,15 +1,22 @@
 /**
  * Pure request handling: shape and size checks, CORS, per-device rate limit
- * and daily quotas, then the model call. The model call is injected so the
- * handler can be tested without the network.
+ * and daily quotas, then the route's own model call. Each route is a small
+ * config (path, body cap, validator, call); the dispatch, CORS, rate limit
+ * and quota logic is the same for all of them and lives once, here. Every
+ * call is injected so the handler is testable without the network.
  */
-import type { CallModel, ExplainPayload, WorkerEnv } from './types';
+import type { NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
+export const MAX_TAG_BODY_BYTES = 1024;
+export const MAX_NOTES_BODY_BYTES = 2 * 1024;
 export const MAX_FINDINGS = 24;
 export const MAX_PROPOSALS = 16;
 export const MAX_EXPLAIN = 12;
 export const MAX_CARDS = 18;
+export const MAX_NAME_CHARS = 60;
+export const MAX_EQUIPMENT_HINT_CHARS = 40;
+export const MAX_NOTE_CHARS = 280;
 const DEVICE_ID = /^[a-zA-Z0-9_-]{8,64}$/;
 
 const ALWAYS_ALLOWED_ORIGINS = new Set(['capacitor://localhost', 'http://localhost', 'https://localhost', 'ionic://localhost']);
@@ -34,9 +41,12 @@ export function originAllowed(origin: string | null, env: WorkerEnv): boolean {
 
 const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const isDay = (v: unknown): v is string => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+const onlyKeys = (raw: Record<string, unknown>, allowed: string[]): boolean => Object.keys(raw).every(k => allowed.includes(k));
+
+export type Validated<P> = { ok: true; payload: P } | { ok: false; reason: string };
 
 /** Returns the payload, or a plain-words reason it was refused. */
-export function validatePayload(raw: unknown): { ok: true; payload: ExplainPayload } | { ok: false; reason: string } {
+export function validatePayload(raw: unknown): Validated<import('./types').ExplainPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'explain') return { ok: false, reason: 'Unsupported payload version or kind.' };
   if (typeof raw.goal !== 'string' || (raw.unit !== 'kg' && raw.unit !== 'lb') || !isDay(raw.today)) return { ok: false, reason: 'goal, unit and today are required.' };
@@ -60,12 +70,31 @@ export function validatePayload(raw: unknown): { ok: true; payload: ExplainPaylo
   if (!explain.every(id => known.has(id as string))) return { ok: false, reason: 'explain lists an id that is not in the report.' };
   // Anything that looks like a person: refuse. The app never sends these; a modified client might.
   for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return { ok: false, reason: `Field "${key}" is not accepted.` };
-  return { ok: true, payload: raw as unknown as ExplainPayload };
+  return { ok: true, payload: raw as unknown as import('./types').ExplainPayload };
+}
+
+/** A custom exercise's name, and maybe an equipment word already typed. Nothing else. */
+export function validateTagPayload(raw: unknown): Validated<TagExercisePayload> {
+  if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
+  if (raw.version !== 1 || raw.kind !== 'tag-exercise') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'name', 'equipmentHint'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (typeof raw.name !== 'string' || !raw.name.trim() || raw.name.length > MAX_NAME_CHARS) return { ok: false, reason: `name is required, at most ${MAX_NAME_CHARS} characters.` };
+  if (raw.equipmentHint !== undefined && (typeof raw.equipmentHint !== 'string' || raw.equipmentHint.length > MAX_EQUIPMENT_HINT_CHARS)) return { ok: false, reason: `equipmentHint must be at most ${MAX_EQUIPMENT_HINT_CHARS} characters.` };
+  return { ok: true, payload: raw as unknown as TagExercisePayload };
+}
+
+/** A note's text, nothing else — no session, no exercise id, no other field about the person. */
+export function validateNotesPayload(raw: unknown): Validated<NotesPayload> {
+  if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
+  if (raw.version !== 1 || raw.kind !== 'notes') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'text'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (typeof raw.text !== 'string' || !raw.text.trim() || raw.text.length > MAX_NOTE_CHARS) return { ok: false, reason: `text is required, at most ${MAX_NOTE_CHARS} characters.` };
+  return { ok: true, payload: raw as unknown as NotesPayload };
 }
 
 export interface QuotaResult { ok: boolean; reason?: string; remaining?: number }
 
-/** Best-effort daily counters in KV. Without a QUOTA binding, everything is allowed. */
+/** Best-effort daily counters in KV, keyed by the server's own date so a client can never reset its own quota. Without a QUOTA binding, everything is allowed. */
 export async function checkQuota(env: WorkerEnv, device: string, today: string): Promise<QuotaResult> {
   const kv = env.QUOTA;
   if (!kv) return { ok: true };
@@ -85,7 +114,16 @@ function json(status: number, body: unknown, headers: Record<string, string> = {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
 }
 
-export function createHandler(callModel: CallModel) {
+/** One POST route: where it lives, how big a body it accepts, how to validate it, and how to answer it. */
+export interface RouteConfig {
+  path: string;
+  maxBody: number;
+  validate: (raw: unknown) => Validated<unknown>;
+  /** Returns the JSON body to send back (minus "remaining", which the handler adds). Throws with a `status` to map to a calm error. */
+  call: (payload: unknown, env: WorkerEnv) => Promise<Record<string, unknown>>;
+}
+
+export function createHandler(routes: RouteConfig[]) {
   return async (request: Request, env: WorkerEnv): Promise<Response> => {
     const origin = request.headers.get('origin');
     const cors = corsHeaders(origin, env);
@@ -93,37 +131,37 @@ export function createHandler(callModel: CallModel) {
     if (!originAllowed(origin, env)) return json(403, { error: 'Origin not allowed.' }, cors);
     const url = new URL(request.url);
     if (request.method === 'GET' && url.pathname === '/health') return json(200, { ok: true, model: env.MODEL ?? 'claude-haiku-4-5', quotas: !!env.QUOTA, rateLimit: !!env.RATE }, cors);
-    if (request.method !== 'POST' || url.pathname !== '/explain') return json(404, { error: 'Not found.' }, cors);
+    const route = routes.find(r => r.path === url.pathname);
+    if (request.method !== 'POST' || !route) return json(404, { error: 'Not found.' }, cors);
     if (!env.ANTHROPIC_API_KEY) return json(503, { error: 'The proxy has no API key yet. Run: npx wrangler@4 secret put ANTHROPIC_API_KEY' }, cors);
 
     const device = request.headers.get('x-marc-device') ?? '';
     if (!DEVICE_ID.test(device)) return json(400, { error: 'Missing or invalid x-marc-device header.' }, cors);
     const length = Number(request.headers.get('content-length') ?? '0');
-    if (length > MAX_BODY_BYTES) return json(413, { error: `Body too large (max ${MAX_BODY_BYTES} bytes).` }, cors);
+    if (length > route.maxBody) return json(413, { error: `Body too large (max ${route.maxBody} bytes).` }, cors);
     const text = await request.text();
-    if (text.length > MAX_BODY_BYTES) return json(413, { error: `Body too large (max ${MAX_BODY_BYTES} bytes).` }, cors);
+    if (text.length > route.maxBody) return json(413, { error: `Body too large (max ${route.maxBody} bytes).` }, cors);
     let raw: unknown;
     try { raw = JSON.parse(text); } catch { return json(400, { error: 'Body is not valid JSON.' }, cors); }
-    const v = validatePayload(raw);
+    const v = route.validate(raw);
     if (!v.ok) return json(400, { error: v.reason }, cors);
 
     if (env.RATE) {
       const r = await env.RATE.limit({ key: device });
       if (!r.success) return json(429, { error: 'Too many requests. Wait a minute.' }, { ...cors, 'retry-after': '60' });
     }
-    const quota = await checkQuota(env, device, v.payload.today);
+    const today = new Date().toISOString().slice(0, 10);
+    const quota = await checkQuota(env, device, today);
     if (!quota.ok) return json(429, { error: quota.reason }, { ...cors, 'retry-after': '3600' });
 
     try {
-      const out = await callModel(v.payload, env);
-      const wanted = new Set(v.payload.explain);
-      const items = out.items.filter(i => wanted.has(i.id)).map(i => ({ id: i.id, text: String(i.text).trim() }));
-      return json(200, { summary: String(out.summary).trim(), items, model: out.model, usage: out.usage, remaining: quota.remaining ?? null }, cors);
+      const body = await route.call(v.payload, env);
+      return json(200, { ...body, remaining: quota.remaining ?? null }, cors);
     } catch (err) {
       const status = (err as { status?: number }).status;
       if (status === 429) return json(429, { error: 'The model is busy. Try again in a minute.' }, { ...cors, 'retry-after': '60' });
       if (status === 401) return json(503, { error: 'The proxy key was rejected. Check the ANTHROPIC_API_KEY secret.' }, cors);
-      console.error('explain failed', err);
+      console.error(`${route.path} failed`, err);
       return json(502, { error: 'The coach could not answer right now.' }, cors);
     }
   };

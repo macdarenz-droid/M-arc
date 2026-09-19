@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "verifiedOn": "2026-09-19",
   "verificationMethod": "search-index",
   "verificationNote": "Each citation was confirmed on 2026-09-19 against web-search records of the publisher page and PubMed entry (title, authors, journal, year, PMID or DOI where shown). Direct journal fetches were unavailable in the build environment. See docs/RESEARCH.md.",
@@ -259,6 +259,21 @@
       "proposalKinds": [],
       "citations": [
         { "key": "hodgdon1984", "authors": "Hodgdon JA, Beckett MB", "year": 1984, "title": "Prediction of percent body fat for U.S. Navy men from body circumferences and height", "journal": "Naval Health Research Center, San Diego", "where": "Report No. 84-11", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "subjective_readiness_monitoring",
+      "title": "Self-reported wellness is worth tracking over time; one reading, alone, is a weak signal",
+      "rating": "moderate",
+      "statement": "Short, regular self-reports of soreness, fatigue, stress and sleep are a validated, low-cost way to monitor how someone is coping with training, when tracked over time. A single soreness rating on a single day, on its own, correlates weakly with actual muscle damage and should not be read as measuring anything by itself.",
+      "disputed": "A soreness or fatigue rating from one day says little on its own; the signal is in the pattern over time and the honesty of the self-report, not any single value. This card supports noticing and recalling what someone told the app, never diagnosing, rating severity, or inferring a cause from it.",
+      "appUse": "A note or check-in that mentions discomfort, fatigue or an equipment issue is tagged and can be recalled later — never diagnosed, never given a cause. Finding note_flag.",
+      "findingKinds": ["note_flag"],
+      "proposalKinds": [],
+      "citations": [
+        { "key": "hooper1995", "authors": "Hooper SL, Mackinnon LT", "year": 1995, "title": "Monitoring overtraining in athletes: recommendations", "journal": "Sports Med", "where": "20(5):321-327", "pmid": "8584849", "verified": "search-index" },
+        { "key": "foster2001", "authors": "Foster C, Florhaug JA, Franklin J, et al.", "year": 2001, "title": "A new approach to monitoring exercise training", "journal": "J Strength Cond Res", "where": "15(1):109-115", "pmid": "11708692", "verified": "search-index" },
+        { "key": "nosaka2002", "authors": "Nosaka K, Newton M, Sacco P", "year": 2002, "title": "Delayed-onset muscle soreness does not reflect the magnitude of eccentric exercise-induced muscle damage", "journal": "Scand J Med Sci Sports", "where": "12(6):337-346", "pmid": "12453160", "verified": "search-index" }
       ]
     }
   ]

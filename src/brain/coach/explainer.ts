@@ -7,6 +7,9 @@
  */
 import type { Finding, FindingsReport, Proposal } from './contract';
 import { PRINCIPLES_VERSION, principlesFor } from './principles';
+import { endpoint, newDeviceId, postJson } from '@/ai/client';
+
+export { endpoint, newDeviceId };
 
 export interface PayloadFinding { id: string; kind: string; subject: Finding['subject']; metrics: Finding['metrics']; window: Finding['window']; confidence: Finding['confidence']; severity: number }
 export interface PayloadProposal { id: string; kind: string; subject: Proposal['subject']; apply: Proposal['apply']; basedOn: string[]; confidence: Proposal['confidence'] }
@@ -126,53 +129,28 @@ export function putCached(explanation: Explanation, storage: Storagelike | null)
   } catch { /* storage full or unavailable: the answer is still returned, just not remembered */ }
 }
 
-export function newDeviceId(): string {
-  const c = (globalThis as { crypto?: Crypto }).crypto;
-  const uuid = c && 'randomUUID' in c ? c.randomUUID().replace(/-/g, '') : Math.random().toString(36).slice(2) + Date.now().toString(36);
-  return `dev_${uuid.slice(0, 24)}`;
-}
-
 export interface FetchOptions { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }
 export type FetchResult = { ok: true; explanation: Explanation } | { ok: false; error: string };
 
 interface ProxyReply { summary?: unknown; items?: unknown; model?: unknown; error?: unknown }
 
-export function endpoint(url: string, path: string): string {
-  return `${url.trim().replace(/\/+$/, '')}${path}`;
-}
-
 /** POST the payload to the user's proxy and keep only the sentences that pass the number check. */
 export async function fetchExplanation(payload: ExplainPayload, opts: FetchOptions): Promise<FetchResult> {
-  const f = opts.fetchImpl ?? globalThis.fetch;
-  if (!f) return { ok: false, error: 'No network available.' };
-  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  const timer = controller ? setTimeout(() => controller.abort(), opts.timeoutMs ?? 20_000) : null;
-  try {
-    const res = await f(endpoint(opts.url, '/explain'), {
-      method: 'POST', headers: { 'content-type': 'application/json', 'x-marc-device': opts.deviceId }, body: JSON.stringify(payload),
-      ...(controller ? { signal: controller.signal } : {}),
-    });
-    let body: ProxyReply = {};
-    try { body = (await res.json()) as ProxyReply; } catch { /* non-JSON error body */ }
-    if (!res.ok) return { ok: false, error: typeof body.error === 'string' ? body.error : `The proxy answered ${res.status}.` };
-    const allowed = allowedNumbers(payload);
-    const items: Record<string, string> = {};
-    let rejected = 0;
-    const wanted = new Set(payload.explain);
-    for (const item of Array.isArray(body.items) ? (body.items as Array<{ id?: unknown; text?: unknown }>) : []) {
-      if (typeof item.id !== 'string' || typeof item.text !== 'string' || !wanted.has(item.id)) continue;
-      if (validateText(item.text, allowed).ok) items[item.id] = item.text.trim();
-      else rejected++;
-    }
-    let summary: string | null = typeof body.summary === 'string' ? body.summary.trim() : null;
-    if (summary && !validateText(summary, allowed).ok) { summary = null; rejected++; }
-    return { ok: true, explanation: { key: explanationKey(payload), at: new Date().toISOString(), model: typeof body.model === 'string' ? body.model : 'unknown', summary, items, rejected } };
-  } catch (err) {
-    const aborted = (err as { name?: string }).name === 'AbortError';
-    return { ok: false, error: aborted ? 'The proxy took too long to answer.' : 'Could not reach the proxy. Check the address and your connection.' };
-  } finally {
-    if (timer) clearTimeout(timer);
+  const result = await postJson<ExplainPayload, ProxyReply>(payload, { url: opts.url, path: '/explain', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs });
+  if (!result.ok) return result;
+  const body = result.body;
+  const allowed = allowedNumbers(payload);
+  const items: Record<string, string> = {};
+  let rejected = 0;
+  const wanted = new Set(payload.explain);
+  for (const item of Array.isArray(body.items) ? (body.items as Array<{ id?: unknown; text?: unknown }>) : []) {
+    if (typeof item.id !== 'string' || typeof item.text !== 'string' || !wanted.has(item.id)) continue;
+    if (validateText(item.text, allowed).ok) items[item.id] = item.text.trim();
+    else rejected++;
   }
+  let summary: string | null = typeof body.summary === 'string' ? body.summary.trim() : null;
+  if (summary && !validateText(summary, allowed).ok) { summary = null; rejected++; }
+  return { ok: true, explanation: { key: explanationKey(payload), at: new Date().toISOString(), model: typeof body.model === 'string' ? body.model : 'unknown', summary, items, rejected } };
 }
 
 /** GET /health on the proxy, for the Settings check button. */
