@@ -14,7 +14,7 @@ import type { BrainContext } from '../context';
 import { RECOVERY_FLAG_PCT, RECOVERY_SWAP_PCT } from '../bands';
 import type { AdjustedRecovery } from '../detectors/recovery';
 import { median } from '../detectors/shared';
-import { allExercises, pickExercise, proposal, usageProfile } from './shared';
+import { allExercises, pickExercise, proposal, recentPainMuscles, usageProfile } from './shared';
 
 function primaries(split: Split, ctx: BrainContext): MuscleId[] {
   const out = new Set<MuscleId>();
@@ -32,6 +32,7 @@ export function planToday(ctx: BrainContext, recovery: AdjustedRecovery[], findi
   const current = weeks[0]?.sets ?? {};
   const prior = weeks.slice(1);
   const scheduledId = ctx.schedule[weekdayOf(ctx.today)];
+  const avoid = recentPainMuscles(findings);
 
   const options: SplitOption[] = splits.map(split => {
     const ms = primaries(split, ctx);
@@ -64,19 +65,24 @@ export function planToday(ctx: BrainContext, recovery: AdjustedRecovery[], findi
   for (const e of likely.exercises) {
     const meta = findExercise(e.exerciseId, ctx.custom);
     const main = meta?.primary[0];
-    if (!meta || !main || ready(main) >= RECOVERY_SWAP_PCT) continue;
+    if (!meta || !main) continue;
+    const painFlagged = avoid.has(main);
+    if (!painFlagged && ready(main) >= RECOVERY_SWAP_PCT) continue;
     const bucket = MUSCLE_BY_ID[main].bucket;
-    const candidates = allExercises(ctx.custom).filter(x => x.pattern !== 'other' && x.primary[0] && MUSCLE_BY_ID[x.primary[0]].bucket === bucket && x.id !== meta.id);
+    // A candidate must not still land on an avoided muscle — pain isn't part of the readiness
+    // model, so a muscle can read fully recovered by volume/time while still being the thing a
+    // recent note flagged as hurting, and pickExercise's own readiness gate would not catch that.
+    const candidates = allExercises(ctx.custom).filter(x => x.pattern !== 'other' && x.primary[0] && MUSCLE_BY_ID[x.primary[0]].bucket === bucket && x.id !== meta.id && !avoid.has(x.primary[0]));
     const pick = pickExercise({ candidates, profile, exclude: inSplit, readiness: ready, minReady: 90 });
-    const change: ExerciseChange = { removeExerciseId: meta.id, reason: 'under_recovered' };
+    const change: ExerciseChange = { removeExerciseId: meta.id, reason: painFlagged ? 'note_flag' : 'under_recovered' };
     if (pick) change.replaceWithExerciseId = pick.id;
     modifications.push(change);
   }
 
   const differs = scheduledId ? recommended.splitId !== scheduledId : true;
   if (!differs && !modifications.length) return null;
-  const involved = new Set<MuscleId>([...primaries(likely, ctx), ...recovery.filter(r => r.adjustedPct < RECOVERY_FLAG_PCT).map(r => r.muscle)]);
-  const basedOn = findings.filter(f => f.kind === 'under_recovered' && f.subject.muscle && involved.has(f.subject.muscle)).map(f => f.id);
+  const involved = new Set<MuscleId>([...primaries(likely, ctx), ...recovery.filter(r => r.adjustedPct < RECOVERY_FLAG_PCT).map(r => r.muscle), ...avoid]);
+  const basedOn = findings.filter(f => (f.kind === 'under_recovered' || f.kind === 'note_flag') && f.subject.muscle && involved.has(f.subject.muscle)).map(f => f.id);
   const personalized = recovery.some(r => involved.has(r.muscle) && r.personalized && r.adjustedPct < RECOVERY_FLAG_PCT);
   return proposal({
     kind: 'today_plan', subject: { splitId: likely.id, splitName: likely.name },

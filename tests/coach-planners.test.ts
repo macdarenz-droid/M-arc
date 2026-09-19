@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { Finding } from '@/brain/coach/contract';
 import { MUSCLE_BY_ID, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
-import { adjustedRecovery, detectBalance, detectProgress, detectRedundant, detectUncovered, detectEffortDrift } from '@/brain/coach/detectors';
+import { adjustedRecovery, detectBalance, detectNoteFlags, detectProgress, detectRedundant, detectUncovered, detectEffortDrift } from '@/brain/coach/detectors';
 import { buildSplits, planAdditions, planDeload, planLoad, planRedundancy, planRest, planSwaps, planToday, usageProfile } from '@/brain/coach/planners';
 import { session, sets } from './helpers';
 import { ctx, history, pplHistory, pplSplits, std, LAST_MONDAY, PUSH_ID, PULL_ID, LEGS_ID, PUSH_EX } from './coach-helpers';
@@ -45,6 +45,31 @@ describe('today plan', () => {
     expect(repl.primary).not.toContain('chest');
     expect(PUSH_EX).not.toContain(repl.id);
     expect(p.apply.modifications.some(m => m.removeExerciseId === 'lib_triceps_pushdown')).toBe(false);
+  });
+
+  it('a recent pain flag forces a swap even when the muscle reads fully recovered — pain isn\'t part of the readiness model', () => {
+    const now = new Date('2026-09-19T18:00:00.000Z').getTime();
+    const flaggedDay = '2026-09-14'; // 5 days before "today": long past any recovery window, still inside the 7-day note-flag lookback
+    const sessions = [...pplHistory(LAST_MONDAY, 8), { ...session(flaggedDay, std(PUSH_EX), PUSH_ID), noteFlags: [{ kind: 'pain_or_discomfort' as const, muscle: 'front_delts' as const }] }];
+    const c = ctx(sessions, { now, schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: PUSH_ID } });
+    const recovery = adjustedRecovery(c);
+    expect(recovery.find(r => r.muscle === 'front_delts')!.adjustedPct).toBe(100); // fully recovered by the numbers alone
+    const findings = detectNoteFlags(c);
+    expect(findings.some(f => f.kind === 'note_flag' && f.subject.muscle === 'front_delts')).toBe(true);
+    const p = planToday(c, recovery, findings)!;
+    expect(p).not.toBeNull();
+    expect(p.apply.kind).toBe('today_plan');
+    if (p.apply.kind !== 'today_plan') return;
+    const shoulderSwap = p.apply.modifications.find(m => m.removeExerciseId === 'lib_dumbbell_shoulder_press')!;
+    expect(shoulderSwap).toBeDefined();
+    expect(shoulderSwap.reason).toBe('note_flag');
+    // Chest and triceps are neither under-recovered nor pain-flagged — untouched.
+    expect(p.apply.modifications.some(m => m.removeExerciseId === 'lib_barbell_bench_press')).toBe(false);
+    expect(p.apply.modifications.some(m => m.removeExerciseId === 'lib_triceps_pushdown')).toBe(false);
+    if (shoulderSwap.replaceWithExerciseId) {
+      const repl = findExercise(shoulderSwap.replaceWithExerciseId)!;
+      expect(repl.primary).not.toContain('front_delts'); // the replacement must not also land on the flagged muscle
+    }
   });
 
   it('is quiet when the scheduled split is the best choice and nothing needs changing, and after training today', () => {

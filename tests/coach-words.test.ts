@@ -150,6 +150,31 @@ describe('words for proposals', () => {
     for (const k of PROPOSAL_KINDS) expect([...kinds, ...synth.map(p => p.kind)]).toContain(k);
   });
 
+  it('today_plan names a pain-flagged swap honestly — never "still recovering" for a muscle whose own numbers read fully recovered', () => {
+    const rc = render({ goal: 'strength' });
+    const painMod = { removeExerciseId: 'lib_dumbbell_shoulder_press', replaceWithExerciseId: 'lib_lateral_raise_machine', reason: 'note_flag' as const };
+    const fixture = buildReport(ctx([session('2026-09-19', std(PUSH_EX), PUSH_ID)]));
+    const painOnly: Proposal = {
+      id: 'today_plan:split_push', kind: 'today_plan', subject: { splitId: PUSH_ID, splitName: 'Push' },
+      apply: { kind: 'today_plan', recommendedSplitId: PUSH_ID, options: [{ splitId: PUSH_ID, score: 1, readyMuscles: ['chest', 'front_delts', 'triceps'], recoveringMuscles: [] }], modifications: [painMod] },
+      basedOn: [], principles: [], confidence: 'high', dismissKey: 'today_plan:split_push',
+    };
+    const sg = renderProposal(painOnly, fixture, rc);
+    expect(sg.summary).not.toContain('still recovering'); // nothing here is under-recovered — the fixture's own recoveringMuscles is empty
+    expect(sg.summary).not.toMatch(/^\s+is/); // the old bug: an empty muscle list left a dangling "  is still recovering"
+    expect(sg.summary).toContain('flagged it as sore');
+    expect(looksClean(sg.summary)).toBe(true);
+
+    const both: Proposal = {
+      id: 'today_plan:split_push', kind: 'today_plan', subject: { splitId: PUSH_ID, splitName: 'Push' },
+      apply: { kind: 'today_plan', recommendedSplitId: PUSH_ID, options: [{ splitId: PUSH_ID, score: 1, readyMuscles: ['chest', 'triceps'], recoveringMuscles: ['chest'] }], modifications: [painMod, { removeExerciseId: 'lib_barbell_bench_press', reason: 'under_recovered' as const }] },
+      basedOn: [], principles: [], confidence: 'high', dismissKey: 'today_plan:split_push',
+    };
+    const bothSg = renderProposal(both, fixture, rc);
+    expect(bothSg.summary).toContain('still recovering');
+    expect(bothSg.summary).toContain('flagged it as sore');
+  });
+
   it('nudges name the day and time when learned', () => {
     expect(nudgeBody('Push')).toBe('Push is ready when you are.');
     expect(nudgeBody('Push', 'wed', { hour: 18, minute: 0 })).toBe('Your usual Wed session is around 18:00. Push is ready when you are.');

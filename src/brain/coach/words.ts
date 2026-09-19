@@ -413,8 +413,15 @@ export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderC
           summary: recovering.length ? `${recovering.join(', ')} ${recovering.length > 1 ? 'are' : 'is'} still recovering from your last session. ${recName}'s muscles are ready.` : `${recName} scores higher today on recovery and this week's balance.`,
           changes: [`Today's session: ${recName}`, `${likelyName} stays scheduled for its usual day`], acceptLabel: `Switch to ${recName}` };
       }
+      // Two different reasons produce a swap, and only one of them means the muscle actually reads low —
+      // a muscle can be flagged sore in a note while its recovery numbers say 100%, so the copy must not
+      // call every swap "still recovering" (that would misstate what the person's own numbers show).
+      const painSwapCount = a.modifications.filter(c => c.reason === 'note_flag').length;
+      const recoverySummary = recovering.length ? `${recovering.join(', ')} ${recovering.length > 1 ? 'are' : 'is'} still recovering, so the lifts that hit it are swapped for fresh ones just for today.` : '';
+      const painSummary = painSwapCount ? `${painSwapCount > 1 ? 'A couple of lifts were' : 'One lift was'} swapped because you flagged it as sore recently — better to train around it for now.` : '';
+      const todaySummary = [recoverySummary, painSummary].filter(Boolean).join(' ') || `${recName} fits today: its muscles are ready.`;
       return { ...base, title: swaps.length ? `${likelyName} with ${plural(swaps.length, 'swap')}` : `Today: ${recName}`,
-        summary: swaps.length ? `${recovering.join(', ')} ${recovering.length > 1 ? 'are' : 'is'} still recovering, so the lifts that hit it are swapped for fresh ones just for today.` : `${recName} fits today: its muscles are ready.`,
+        summary: todaySummary,
         changes: swaps.length ? swaps.map(s => `Today only: ${s}`) : [`Today's session: ${recName}`], acceptLabel: swaps.length ? 'Use these swaps' : `Go with ${recName}` };
     }
     case 'exercise_swap': {
