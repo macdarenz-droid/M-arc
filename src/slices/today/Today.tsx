@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { deload, insights, recovery, scheduledSplit, sessionsToday, streak, suggestions, today, todayChanges, todaySuggestion, week } from '@/app/selectors';
+import { deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -35,7 +35,9 @@ export function Today() {
   const waiting = suggestions.value.filter(x => x.kind !== 'today_plan').length;
   const accept = () => { if (plan) showToast(acceptProposal(plan.proposal, today.value)); };
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
-  const spark = SPARKS[dayIndex]!;
+  // A true line from this person's own log, when there's one worth showing; the standing quote otherwise.
+  const ps = personalSpark.value;
+  const spark = ps ? { topic: ps.title, text: ps.text, by: ps.by } : SPARKS[dayIndex]!;
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
   const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';

@@ -252,11 +252,25 @@ the cases a single history cannot.
    a cause, never a severity). A new deterministic finding, `note_flag`,
    recalls a flag for up to a week so the coach can mention it without a
    second remote call; `docs/RESEARCH.md` P19 grounds why self-report is
-   worth tracking and why one reading alone is not. Queued next: a
-   personal daily spark and a weekly review (reuse the `/explain`
-   pattern), then ask-the-coach (needs Sonnet 5 and multi-turn payload
-   design), then camera-based exercise identification and programme
-   import from a photo (the highest-design-effort phases, since vision
+   worth tracking and why one reading alone is not. **5b done:** the
+   personal daily spark on Today (`brain/coach/words.ts`'s `dailySpark`,
+   the `spark` selector) — a true line about this person's own training,
+   picked from a `record` or `progressing` finding, rotating
+   deterministically by day among the real candidates. Built local and
+   free, not remote: the plan had said "reuse the `/explain` pattern" for
+   this, but it reuses `words.ts`'s already-rendered, already-grounded
+   text directly instead, since it needs to appear on every open of Today
+   — a remote call there would either break the existing "never spend a
+   call on screen refresh" rule or need caching stale enough to defeat the
+   word "daily". Falls back to the standing quote (`data/sparks.ts`) when
+   there is nothing genuinely worth celebrating yet. A separate weekly
+   review was also planned here, but the Coach screen's existing
+   `/explain` summary already does that job — weaving the week's findings
+   into one paragraph — so building a second endpoint for the same thing
+   would only duplicate it; revisit only if the two need to diverge.
+   Queued next: ask-the-coach (needs multi-turn payload design), then
+   camera-based exercise identification and programme import from a photo
+   (the highest-design-effort phases, since vision
    accuracy is genuinely limited — every result there must stay a
    suggestion with alternates, never a silent write).
 
@@ -287,6 +301,8 @@ the cases a single history cannot.
 | 2026-09-19 | New research claim added only with real citations found and checked the same way as the rest of `docs/RESEARCH.md` (P19, self-reported wellness monitoring): rated **moderate**, with the honest caveat that one reading alone is a weak signal. |
 | 2026-09-19 | Every route moved from Haiku 4.5 to Sonnet 5, per user direction, evaluated on capability rather than cost: each route is a real judgment call (weaving several findings into one coherent paragraph; which muscles are truly secondary; pain versus ordinary fatigue), not pure pattern matching, and a closed-vocabulary schema only stops an invented answer, never a wrong one. No route was found to have a genuine capability reason to prefer Haiku; `DEFAULT_MODEL` in `proxy/src/anthropic.ts` is the single source of truth the health check reads from too, so the two can no longer drift apart. |
 | 2026-09-19 | Found live: switching to Sonnet 5 without setting `output_config.effort` left it at its own default depth of thinking, unlike Haiku which never thinks at all — real requests exceeded the app's and the Worker's timeouts, burning real output tokens on calls that returned nothing. Every route now sets `effort: 'medium'` explicitly, with `max_tokens` and both the app-side and Worker-side timeouts raised to match. This is a reliability fix, not a cost cut: it also reduces spend, since a request that completes once costs less than one that thinks at length and still fails. |
+| 2026-09-19 | Any place waiting on the online coach shows a themed spinner (colour from the theme's own `--accent`, no per-theme code) with a rotating gym-flavoured phrase, in place of a bare "Asking…" — same restraint as the coach's own words, no exclamation marks. Respects prefers-reduced-motion. |
+| 2026-09-19 | The daily spark on Today is built locally from findings already rendered by `words.ts`, not a remote call: a screen element shown on every open cannot honestly follow the existing "never spend a call on screen refresh" rule any other way. The weekly-review idea from the Phase 5 plan was dropped as redundant, since the Coach screen's `/explain` summary already synthesizes the week — a lesson to re-check a queued idea against what has since shipped before building it. |
 
 ## Non-goals
 

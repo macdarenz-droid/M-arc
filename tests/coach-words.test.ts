@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildReport } from '@/brain/coach/report';
 import { FINDING_KINDS, PROPOSAL_KINDS, type Finding, type Proposal } from '@/brain/coach/contract';
-import { insightsFrom, renderFinding, renderProposal, shortlist, suggestionsFrom, nudgeBody, clock, type RenderContext, CATEGORY_LABEL } from '@/brain/coach/words';
+import { dailySpark, insightsFrom, renderFinding, renderProposal, shortlist, suggestionsFrom, nudgeBody, clock, type RenderContext, CATEGORY_LABEL } from '@/brain/coach/words';
 import { detectFocus, focusTarget } from '@/brain/coach/detectors';
 import { session, sets } from './helpers';
 import { ctx, pplHistory, pplSplits, std, LAST_MONDAY, PUSH_EX, PUSH_ID } from './coach-helpers';
@@ -77,6 +77,32 @@ describe('words for findings', () => {
     const p = renderFinding(positive, render());
     expect(p.noticed).toContain('today');
     expect(p.title).not.toBe(i.title);
+  });
+});
+
+describe('daily spark', () => {
+  const record = renderFinding({ id: 'record:lib_barbell_bench_press:week', kind: 'record', subject: { exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press' },
+    metrics: { detail: '65 kg × 8', previous: 60, recordKind: 'heaviest' }, window: { from: '2026-09-15', to: '2026-09-15' },
+    confidence: 'high', severity: 0, evidence: { sessionIds: [], days: [] }, principles: ['one_rm_estimation'] }, render());
+  const progressing = renderFinding({ id: 'progressing:lib_squat', kind: 'progressing', subject: { exerciseId: 'lib_squat', exerciseName: 'Squat' },
+    metrics: { sessions: 6, lastTopKg: 90, firstTopKg: 80 }, window: { from: '2026-08-01', to: '2026-09-15' },
+    confidence: 'medium', severity: 0, evidence: { sessionIds: [], days: [] }, principles: ['progressive_overload'] }, render());
+  const habit = renderFinding({ id: 'habit_pattern:*', kind: 'habit_pattern', subject: {}, metrics: { weeksObserved: 8, days: 'mon' }, window: { from: '2026-08-01', to: '2026-09-15' },
+    confidence: 'low', severity: 0, evidence: { sessionIds: [], days: [] }, principles: ['habit_formation_and_cues'] }, render());
+
+  it('picks only from real good news, never invents a line', () => {
+    expect(dailySpark([habit], '2026-09-19')).toBeNull(); // nothing spark-worthy here
+    expect(dailySpark([], '2026-09-19')).toBeNull();
+    const one = dailySpark([record], '2026-09-19');
+    expect(one).toEqual({ title: record.title, text: record.noticed, by: 'From your own log' });
+  });
+
+  it('rotates deterministically by day among real candidates, ignoring the rest', () => {
+    const choices = new Set(['2026-09-15', '2026-09-16', '2026-09-17', '2026-09-18', '2026-09-19', '2026-09-20'].map(d => dailySpark([habit, record, progressing], d)?.title));
+    expect([...choices].every(t => t === record.title || t === progressing.title)).toBe(true);
+    expect(choices.size).toBeGreaterThan(1); // more than one candidate actually gets shown across a week
+    // Same day, same pick: a repeat visit does not flip-flop.
+    expect(dailySpark([record, progressing], '2026-09-19')).toEqual(dailySpark([record, progressing], '2026-09-19'));
   });
 });
 

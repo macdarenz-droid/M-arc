@@ -8,7 +8,7 @@ import { trainingStreak, weekSummary } from '@/brain/weekly';
 import { buildReport } from '@/brain/coach/report';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery } from '@/brain/coach/detectors';
-import { insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
+import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
 import { deloadActive } from '@/brain/coach/deload';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
@@ -49,6 +49,8 @@ export const streak = computed(() => trainingStreak(state.value.sessions, state.
 export const report = computed(() => buildReport(brainContext.value));
 const renderContext = computed<RenderContext>(() => ({ unit: state.value.preferences.weightUnit, splits: state.value.splits, custom: state.value.customExercises, today: today.value, goal: state.value.goal }));
 export const insights = computed(() => insightsFrom(report.value, renderContext.value));
+/** One true line about this person's own training, free and instant. Null falls back to the standing quote. */
+export const spark = computed(() => dailySpark(insights.value, today.value));
 export const suggestions = computed(() => suggestionsFrom(report.value, state.value.coach, renderContext.value));
 export const todaySuggestion = computed(() => suggestions.value.find(s => s.kind === 'today_plan'));
 export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));

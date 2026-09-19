@@ -349,6 +349,28 @@ export function shortlist(insights: Insight[], limit = 6, perKind = 2): Insight[
   return out;
 }
 
+export interface Spark { title: string; text: string; by: string }
+
+/** Kinds worth celebrating on their own, with no other finding needed alongside them. */
+const SPARK_KINDS: ReadonlySet<FindingKind> = new Set<FindingKind>(['record', 'progressing']);
+
+/**
+ * One true, specific line about this person's own training, reusing the
+ * words already rendered for the findings screen — no separate template,
+ * no remote call, so it costs nothing and never invents a number. Picks
+ * deterministically by day among the real candidates, so a repeat visit
+ * the same day shows the same line, and a different day usually shows a
+ * different one. Null when there is nothing genuinely worth celebrating
+ * yet, so the screen can fall back to the standing quote instead.
+ */
+export function dailySpark(insights: Insight[], today: string): Spark | null {
+  const candidates = insights.filter(i => SPARK_KINDS.has(i.kind));
+  if (!candidates.length) return null;
+  const dayIndex = Math.floor(Date.parse(`${today}T00:00:00Z`) / 86_400_000);
+  const chosen = candidates[((dayIndex % candidates.length) + candidates.length) % candidates.length]!;
+  return { title: chosen.title, text: chosen.noticed, by: 'From your own log' };
+}
+
 function whyFor(p: Proposal, report: FindingsReport, ctx: RenderContext): string[] {
   const byId = new Map(report.findings.map(f => [f.id, f]));
   const out: string[] = [];
