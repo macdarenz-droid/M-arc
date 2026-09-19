@@ -1,10 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
 import { ASK_SYSTEM_PROMPT, askMessages } from '../src/promptAsk';
-import type { AskPayload, ExplainPayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from '../src/promptIdentify';
+import type { AskPayload, ExplainPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+
+/** The smallest valid PNG there is (1x1, transparent) — enough to exercise shape checks without a real photo. */
+const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 
 const payload = (): ExplainPayload => ({
   version: 1, kind: 'explain', goal: 'lean', unit: 'kg', today: '2026-09-19',
@@ -21,6 +25,7 @@ const askPayload = (): AskPayload => {
   const { version, goal, unit, today, dataQuality, findings, proposals, cards } = payload();
   return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?' };
 };
+const identifyPayload = (): IdentifyExercisePayload => ({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG }, equipmentHint: 'Cable' });
 
 class FakeKV {
   store = new Map<string, string>();
@@ -63,6 +68,12 @@ const stubAsk = async () => ({ answer: 'Chest sets dropped from 14.5 to 11.9 a w
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
   async call() { const out = await call(); return { answer: out.answer, model: out.model, usage: out.usage }; },
+});
+
+const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
+const identifyRouteWith = (call: typeof stubIdentify): RouteConfig => ({
+  path: '/identify-exercise', maxBody: MAX_IDENTIFY_BODY_BYTES, validate: validateIdentifyPayload,
+  async call() { const out = await call(); return { visible: out.visible, name: out.name, equipment: out.equipment, primary: out.primary, secondary: out.secondary, pattern: out.pattern, mode: out.mode, confidence: out.confidence, model: out.model, usage: out.usage }; },
 });
 
 const post = (path: string, body: unknown, headers: Record<string, string> = {}, origin?: string) =>
@@ -123,6 +134,23 @@ describe('ask payload validation', () => {
     // explain is /explain's own field: not accepted here, same "unexpected field" discipline as everywhere else.
     expect(validateAskPayload({ ...askPayload(), explain: ['x'] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
     expect(validateAskPayload('nope')).toMatchObject({ ok: false });
+  });
+});
+
+describe('identify-exercise payload validation', () => {
+  it('accepts a photo with an optional equipment hint and refuses anything else', () => {
+    expect(validateIdentifyPayload(identifyPayload())).toMatchObject({ ok: true });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/jpeg', data: TINY_PNG } })).toMatchObject({ ok: true });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/gif', data: TINY_PNG } })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: '' } })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: 'not base64!!' } })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: 'A'.repeat(MAX_IMAGE_DATA_CHARS + 1) } })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ version: 1, kind: 'identify-exercise', image: {} })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ ...identifyPayload(), equipmentHint: 'x'.repeat(41) })).toMatchObject({ ok: false });
+    expect(validateIdentifyPayload({ version: 2, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG } })).toMatchObject({ ok: false });
+    // A modified client stuffing session data or anything unexpected in: refused, not silently dropped.
+    expect(validateIdentifyPayload({ ...identifyPayload(), sessions: [] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateIdentifyPayload('nope')).toMatchObject({ ok: false });
   });
 });
 
@@ -211,7 +239,7 @@ describe('handler: /explain', () => {
 });
 
 describe('handler: multiple routes in one Worker', () => {
-  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk)]);
+  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk), identifyRouteWith(stubIdentify)]);
 
   it('answers /tag-exercise with a closed-vocabulary suggestion', async () => {
     const res = await handle(post('/tag-exercise', tagPayload()), env());
@@ -238,12 +266,24 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.model).toBe('claude-sonnet-5');
   });
 
-  it('keeps /explain, /tag-exercise, /notes and /ask independent: one 400 does not affect the others', async () => {
+  it('answers /identify-exercise with a closed-vocabulary suggestion and whether anything was recognizable', async () => {
+    const res = await handle(post('/identify-exercise', identifyPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { visible: boolean; name: string; equipment: string; primary: string[]; confidence: string };
+    expect(body.visible).toBe(true);
+    expect(body.name).toBe('Cable Face Pull');
+    expect(body.primary).toEqual(['rear_delts']);
+    expect(body.confidence).toBe('high');
+  });
+
+  it('keeps /explain, /tag-exercise, /notes, /ask and /identify-exercise independent: one 400 does not affect the others', async () => {
     expect((await handle(post('/tag-exercise', { version: 1, kind: 'tag-exercise', name: '' }), env())).status).toBe(400);
     expect((await handle(post('/ask', { ...askPayload(), question: '' }), env())).status).toBe(400);
+    expect((await handle(post('/identify-exercise', { version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: '' } }), env())).status).toBe(400);
     expect((await handle(post('/explain', payload()), env())).status).toBe(200);
     expect((await handle(post('/notes', notesPayload()), env())).status).toBe(200);
     expect((await handle(post('/ask', askPayload()), env())).status).toBe(200);
+    expect((await handle(post('/identify-exercise', identifyPayload()), env())).status).toBe(200);
   });
 
   it('a route neither route table entry matches is a 404, same as an unknown path', async () => {
@@ -280,6 +320,23 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Never answer questions about diet, calories, supplements, medication or medical conditions');
     expect(ASK_SYSTEM_PROMPT).toContain('Never predict or mention injury');
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
+  });
+
+  it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('rear_delts');
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('horizontal_push');
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('Never invent a muscle, pattern or mode id');
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('Be honest here');
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('Never describe or comment on their body, appearance, face');
+    expect(IDENTIFY_SYSTEM_PROMPT).toContain('"visible" is true only when');
+  });
+
+  it('identify-exercise message sends the photo as an image block and the hint as text, nothing else', () => {
+    const msg = identifyMessage(identifyPayload());
+    expect(msg[0]).toEqual({ type: 'image', source: { type: 'base64', media_type: 'image/png', data: TINY_PNG } });
+    expect(msg[1]).toEqual({ type: 'text', text: JSON.stringify({ equipmentHint: 'Cable' }) });
+    const noHint = identifyMessage({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/jpeg', data: TINY_PNG } });
+    expect(noHint[1]).toEqual({ type: 'text', text: JSON.stringify({ equipmentHint: null }) });
   });
 
   it('ask replays the report once, then the real conversation, then the new question last', () => {

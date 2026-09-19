@@ -29,3 +29,4 @@ export const IconBack = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}>
 export const IconInfo = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>;
 export const IconMore = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}><circle cx="5" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /><circle cx="19" cy="12" r="1.5" fill="currentColor" /></svg>;
 export const IconSend = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M21 3L3 10.5l7.5 3L14 21l7-18z" /><path d="M10.5 13.5L21 3" /></svg>;
+export const IconCamera = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13" r="3.5" /></svg>;

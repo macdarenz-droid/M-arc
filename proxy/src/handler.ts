@@ -6,12 +6,16 @@
  * call is injected so the handler is testable without the network.
  */
 import { DEFAULT_MODEL } from './anthropic';
-import type { AskPayload, AskTurn, GroundingPayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
+import type { AskPayload, AskTurn, GroundingPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
 export const MAX_TAG_BODY_BYTES = 1024;
 export const MAX_NOTES_BODY_BYTES = 2 * 1024;
 export const MAX_ASK_BODY_BYTES = 32 * 1024;
+/** A downscaled photo's base64 comfortably fits well under this; it exists to bound cost and abuse, not to be a target size. */
+export const MAX_IDENTIFY_BODY_BYTES = 1_500_000;
+export const MAX_IMAGE_DATA_CHARS = 2_000_000;
+export const IMAGE_MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 export const MAX_FINDINGS = 24;
 export const MAX_PROPOSALS = 16;
 export const MAX_EXPLAIN = 12;
@@ -23,6 +27,7 @@ export const MAX_QUESTION_CHARS = 300;
 export const MAX_HISTORY_TURNS = 12;
 export const MAX_HISTORY_TURN_CHARS = 700;
 const DEVICE_ID = /^[a-zA-Z0-9_-]{8,64}$/;
+const BASE64 = /^[A-Za-z0-9+/]+=*$/;
 
 const ALWAYS_ALLOWED_ORIGINS = new Set(['capacitor://localhost', 'http://localhost', 'https://localhost', 'ionic://localhost']);
 
@@ -109,6 +114,20 @@ export function validateNotesPayload(raw: unknown): Validated<NotesPayload> {
   if (!onlyKeys(raw, ['version', 'kind', 'text'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   if (typeof raw.text !== 'string' || !raw.text.trim() || raw.text.length > MAX_NOTE_CHARS) return { ok: false, reason: `text is required, at most ${MAX_NOTE_CHARS} characters.` };
   return { ok: true, payload: raw as unknown as NotesPayload };
+}
+
+/** One photo, already downscaled by the app, plus an optional equipment word. Nothing else. */
+export function validateIdentifyPayload(raw: unknown): Validated<IdentifyExercisePayload> {
+  if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
+  if (raw.version !== 1 || raw.kind !== 'identify-exercise') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'image', 'equipmentHint'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  const image = raw.image;
+  if (!isRecord(image)) return { ok: false, reason: 'A photo is required.' };
+  if (!onlyKeys(image, ['mediaType', 'data'])) return { ok: false, reason: 'Unexpected field in the photo.' };
+  if (typeof image.mediaType !== 'string' || !(IMAGE_MEDIA_TYPES as readonly string[]).includes(image.mediaType)) return { ok: false, reason: `Photo type must be one of: ${IMAGE_MEDIA_TYPES.join(', ')}.` };
+  if (typeof image.data !== 'string' || !image.data || image.data.length > MAX_IMAGE_DATA_CHARS || !BASE64.test(image.data)) return { ok: false, reason: 'Photo data must be non-empty base64.' };
+  if (raw.equipmentHint !== undefined && (typeof raw.equipmentHint !== 'string' || raw.equipmentHint.length > MAX_EQUIPMENT_HINT_CHARS)) return { ok: false, reason: `equipmentHint must be at most ${MAX_EQUIPMENT_HINT_CHARS} characters.` };
+  return { ok: true, payload: raw as unknown as IdentifyExercisePayload };
 }
 
 const isTurn = (v: unknown): v is AskTurn => isRecord(v) && (v.role === 'user' || v.role === 'assistant') && typeof v.text === 'string' && v.text.length > 0 && v.text.length <= MAX_HISTORY_TURN_CHARS;

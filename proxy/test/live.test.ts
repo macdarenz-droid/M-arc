@@ -4,9 +4,12 @@
  * answer and that it invents no numbers.
  */
 import { describe, it, expect } from 'vitest';
-import { callAnthropic, callAsk, callNotes, callTagExercise } from '../src/anthropic';
+import { callAnthropic, callAsk, callIdentifyExercise, callNotes, callTagExercise } from '../src/anthropic';
 import { MUSCLE_IDS, PATTERNS, NOTE_FLAG_KINDS } from '../src/vocab';
-import type { AskPayload, ExplainPayload, NotesPayload, TagExercisePayload } from '../src/types';
+import type { AskPayload, ExplainPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload } from '../src/types';
+
+/** The smallest valid PNG there is (1x1, transparent) — no real photo is checked into the repo, so the live check here proves the model stays honest ("visible": false) on an image with nothing to recognize, rather than asserting real vision accuracy. */
+const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 
 // Claude Code cloud sessions reserve the name ANTHROPIC_API_KEY, so a differently named variable is accepted too.
 const key = process.env.ANTHROPIC_API_KEY || process.env.MARC_ANTHROPIC_KEY;
@@ -106,4 +109,14 @@ live('live ask call', () => {
     expect(out.answer).not.toMatch(/take \d|mg|gram/i); // never actual supplement advice
     console.log(JSON.stringify({ first: firstOut.answer, followUp: out.answer }, null, 1));
   }, 90_000);
+});
+
+live('live identify-exercise call', () => {
+  it('stays honest about a photo with nothing recognizable in it, rather than inventing an exercise', async () => {
+    const identify: IdentifyExercisePayload = { version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG } };
+    const out = await callIdentifyExercise(identify, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    expect(out.visible).toBe(false);
+    for (const m of [...out.primary, ...out.secondary]) expect(MUSCLE_IDS as readonly string[], `muscle "${m}"`).toContain(m);
+    console.log(JSON.stringify({ usage: out.usage, visible: out.visible, name: out.name, confidence: out.confidence }, null, 1));
+  }, 30_000);
 });

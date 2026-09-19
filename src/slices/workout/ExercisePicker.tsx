@@ -1,11 +1,14 @@
 import { useState } from 'preact/hooks';
 import { Button, Chip, Field, Sheet, Thinking } from '@/ui/primitives';
+import { IconCamera } from '@/ui/icons';
 import { makeCustomExercise, searchExercises } from '@/core/exercises';
 import type { Exercise, ResistanceMode } from '@/core/models';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
 import { state } from '@/core/store';
 import { saveCustomExercise } from './splits';
 import { requestTagSuggestion } from '@/ai/tagExercise';
+import { requestExerciseFromPhoto } from '@/ai/identifyExercise';
+import { pickAndCompressPhoto } from '@/native/photo';
 import { ensureDeviceId, remoteEnabled } from '@/slices/coach/remote';
 import { showToast } from '@/app/toast';
 
@@ -18,8 +21,19 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
   const [secondary, setSecondary] = useState<string[]>([]);
   const [mode, setMode] = useState<ResistanceMode>('weighted');
   const [suggesting, setSuggesting] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [lowConfidence, setLowConfidence] = useState(false);
   const results = searchExercises(q, state.value.customExercises).filter(e => !exclude.includes(e.id));
+
+  const applySuggestion = (s: { name?: string; equipment: string; mode: ResistanceMode; primary: string[]; secondary: string[]; confidence: 'high' | 'low' }) => {
+    if (s.name) setName(s.name);
+    setEquipment(s.equipment);
+    setMode(s.mode);
+    setPrimary(s.primary);
+    setSecondary(s.secondary.filter(m => !s.primary.includes(m)));
+    setLowConfidence(s.confidence === 'low');
+    if (s.confidence === 'low') showToast('Not sure about this one — check the muscles below before saving.');
+  };
 
   const suggest = async () => {
     if (!name.trim() || suggesting) return;
@@ -28,12 +42,19 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
     const r = await requestTagSuggestion(name, equipment === 'Other' ? undefined : equipment, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() });
     setSuggesting(false);
     if (!r.ok) { showToast(r.error); return; }
-    setEquipment(r.suggestion.equipment);
-    setMode(r.suggestion.mode);
-    setPrimary(r.suggestion.primary);
-    setSecondary(r.suggestion.secondary.filter(m => !r.suggestion.primary.includes(m)));
-    setLowConfidence(r.suggestion.confidence === 'low');
-    if (r.suggestion.confidence === 'low') showToast('Not sure about this one — check the muscles below before saving.');
+    applySuggestion(r.suggestion);
+  };
+
+  const scan = async () => {
+    if (scanning) return;
+    const photo = await pickAndCompressPhoto().catch(() => null);
+    if (!photo) return;
+    setScanning(true);
+    setLowConfidence(false);
+    const r = await requestExerciseFromPhoto(photo, equipment === 'Other' ? undefined : equipment, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() });
+    setScanning(false);
+    if (!r.ok) { showToast(r.error); return; }
+    applySuggestion(r.suggestion);
   };
 
   const create = () => {
@@ -67,7 +88,11 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
           <Field label="Name"><input value={name} onInput={e => setName((e.target as HTMLInputElement).value)} placeholder="e.g. Cable Y-raise" /></Field>
           {remoteEnabled.value && (
             <div>
-              <Button variant="quiet" size="sm" disabled={!name.trim() || suggesting} onClick={suggest}>{suggesting ? <Thinking /> : 'Suggest equipment and muscles'}</Button>
+              <div class="wrap">
+                <Button variant="quiet" size="sm" disabled={!name.trim() || suggesting || scanning} onClick={suggest}>{suggesting ? <Thinking /> : 'Suggest equipment and muscles'}</Button>
+                <Button variant="quiet" size="sm" disabled={suggesting || scanning} onClick={scan}>{scanning ? <Thinking /> : <><IconCamera size={16} /> Scan a photo</>}</Button>
+              </div>
+              <div class="hint" style={{ marginTop: 4 }}>Photograph the equipment or the exercise, not yourself. The photo is sent once to your proxy for this and never saved.</div>
               {lowConfidence && <div class="hint" style={{ color: 'var(--warning)', marginTop: 4 }}>Not sure about this one. Check the muscles below before saving.</div>}
             </div>
           )}

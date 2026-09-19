@@ -123,6 +123,33 @@ export interface AskReply {
 
 export type CallAsk = (payload: AskPayload, env: WorkerEnv) => Promise<Omit<AskReply, 'model' | 'usage'> & { model: string; usage: AskReply['usage'] }>;
 
+/** One photo, already downscaled and compressed by the app, plus whatever equipment word the person already typed, if any. Nothing else about them. */
+export interface IdentifyExercisePayload {
+  version: 1;
+  kind: 'identify-exercise';
+  image: { mediaType: 'image/jpeg' | 'image/png' | 'image/webp'; data: string };
+  equipmentHint?: string;
+}
+
+export interface IdentifyExerciseReply {
+  /** False when the photo does not clearly show a strength-training exercise or piece of gym equipment. Every other field is still present but should be treated as a weak guess when this is false. */
+  visible: boolean;
+  name: string;
+  equipment: string;
+  /** Every entry is one of the app's real muscle ids — the schema rejects anything else. */
+  primary: string[];
+  secondary: string[];
+  /** One of the app's real movement patterns. */
+  pattern: string;
+  mode: 'weighted' | 'bodyweight' | 'assisted' | 'duration' | 'conditioning';
+  /** The model's own honest read of how sure it is. "low" means the app must make the person double-check before saving. */
+  confidence: 'high' | 'low';
+  model: string;
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
+}
+
+export type CallIdentifyExercise = (payload: IdentifyExercisePayload, env: WorkerEnv) => Promise<Omit<IdentifyExerciseReply, 'model' | 'usage'> & { model: string; usage: IdentifyExerciseReply['usage'] }>;
+
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;

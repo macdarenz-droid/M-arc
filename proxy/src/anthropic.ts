@@ -6,8 +6,9 @@ import { SYSTEM_PROMPT, userMessage } from './prompt';
 import { TAG_SYSTEM_PROMPT, userMessage as tagUserMessage } from './promptTag';
 import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNotes';
 import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
+import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
 import { MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallAsk, CallModel, CallNotes, CallTagExercise } from './types';
+import type { CallAsk, CallIdentifyExercise, CallModel, CallNotes, CallTagExercise } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
@@ -30,6 +31,17 @@ const TagSchema = z.object({
 
 const NotesSchema = z.object({
   flags: z.array(z.object({ kind: z.enum(NOTE_FLAG_KINDS), muscle: MuscleIdSchema.nullable() })).max(3),
+});
+
+const IdentifySchema = z.object({
+  visible: z.boolean(),
+  name: z.string(),
+  equipment: z.string(),
+  primary: z.array(MuscleIdSchema).max(3),
+  secondary: z.array(MuscleIdSchema).max(4),
+  pattern: z.enum(PATTERNS),
+  mode: z.enum(MODES),
+  confidence: z.enum(['high', 'low']),
 });
 
 /**
@@ -109,6 +121,20 @@ export const callNotes: CallNotes = async (payload, env) => {
   });
   const parsed = requireParsed(response);
   return { flags: parsed.flags, model: response.model, usage: usageOf(response) };
+};
+
+export const callIdentifyExercise: CallIdentifyExercise = async (payload, env) => {
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
+  const model = env.MODEL || DEFAULT_MODEL;
+  const response = await client.messages.parse({
+    model,
+    max_tokens: 1200,
+    system: [{ type: 'text', text: IDENTIFY_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: identifyMessage(payload) }],
+    output_config: { format: zodOutputFormat(IdentifySchema), effort: EFFORT },
+  });
+  const parsed = requireParsed(response);
+  return { ...parsed, model: response.model, usage: usageOf(response) };
 };
 
 export const callAsk: CallAsk = async (payload, env) => {

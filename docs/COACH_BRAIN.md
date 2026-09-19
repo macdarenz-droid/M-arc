@@ -268,10 +268,6 @@ the cases a single history cannot.
    `/explain` summary already does that job — weaving the week's findings
    into one paragraph — so building a second endpoint for the same thing
    would only duplicate it; revisit only if the two need to diverge.
-   Queued next: camera-based exercise identification and programme import
-   from a photo (the highest-design-effort phases, since vision accuracy is
-   genuinely limited — every result there must stay a suggestion with
-   alternates, never a silent write).
 6. Ask-the-coach: a grounded multi-turn Q&A route, `/ask`, entered from a
    "Ask a question" button beside "More from the coach" on the Coach
    screen. **Done.** The Worker and app now share one `GroundingPayload`
@@ -290,6 +286,31 @@ the cases a single history cannot.
    half-trusted. `AskSheet` in `Coach.tsx` keeps the conversation as plain
    component state — closing the sheet forgets it, nothing is persisted —
    and shows `<Thinking />` while a reply is in flight.
+7. Camera-based exercise identification, the first of the two
+   highest-design-effort phases (vision accuracy is genuinely limited, so
+   every result here must stay a suggestion with alternates, never a
+   silent write). **7a done:** "Scan a photo" beside "Suggest equipment and
+   muscles" on the custom-exercise form (`ExercisePicker.tsx`). Capture and
+   compression are plain web APIs (`src/native/photo.ts`: a hidden file
+   input with `capture="environment"`, downscaled to at most 900px on the
+   long side via canvas, re-encoded as JPEG, quality stepped down until it
+   is comfortably small) — no new Capacitor plugin or permission, since the
+   WebView already honours `capture` on Android. A new route,
+   `/identify-exercise` (`proxy/src/promptIdentify.ts`,
+   `IdentifySchema` in `anthropic.ts`), sends the photo as a real Anthropic
+   image content block, classified against the same closed muscle/pattern/
+   mode vocabularies as `/tag-exercise`, plus a `visible` boolean the
+   schema always returns: false means the photo did not clearly show a
+   real exercise or piece of gym equipment, and the app shows a plain
+   "could not tell" message rather than prefilling the form from a guess.
+   The prompt explicitly forbids describing a person's body, face or
+   appearance if one is in frame — only the equipment or movement itself.
+   `MAX_IDENTIFY_BODY_BYTES` (1.5 MB) is far above every other route's
+   cap, since a photo is inherently bigger than anything else this Worker
+   accepts; nothing about that photo is ever stored, on either side.
+   Queued next: programme import from a photo (7b) — reads a whole written
+   plan, not one exercise, so it needs its own review-before-commit UI
+   rather than reusing the custom-exercise form.
 
 ## Decisions log
 
@@ -323,6 +344,9 @@ the cases a single history cannot.
 | 2026-09-19 | `/ask`'s Worker is stateless: rather than store a conversation server-side, the app resends the whole exchange (capped at 12 turns) on every call and the Worker replays it as real alternating messages. Simpler than session storage, and it means the Worker never holds anything longer than one request. |
 | 2026-09-19 | Ask-the-coach's conversation lives only in the sheet's own component state, not in `AppState` or localStorage: closing the sheet is the same as ending the conversation. Nothing about the exchange needs to survive a screen change, and not persisting it keeps the payload the Worker sees exactly what the person can see on screen. |
 | 2026-09-19 | `/explain` and `/ask` were refactored onto one shared `GroundingPayload` (goal, unit, today, dataQuality, findings, proposals, cards) on both sides, so the "no sessions, no name, no body data" boundary and the findings/proposals/cards trimming are enforced in one place rather than copied per route. |
+| 2026-09-19 | Photo capture and compression (`src/native/photo.ts`) use plain web APIs (`<input type="file" capture>`, canvas, `toBlob`) rather than `@capacitor/camera`: the Capacitor WebView already honours `capture` on Android, one code path serves the APK and the PWA, and no new native permission has to be declared for one narrow feature. |
+| 2026-09-19 | `/identify-exercise`'s schema always returns a `visible` boolean rather than letting the model signal "nothing here" by leaving other fields blank or vague: an explicit false is impossible to misread as a real, if low-confidence, answer, and the app refuses to prefill the form at all when it is false. |
+| 2026-09-19 | The identify-exercise prompt explicitly forbids describing a person's body, face, clothing or anything identifying if one appears in the photo — only the exercise or equipment context. A photo carries more incidentally about a person than typed text ever could, so this route needed a rule none of the text-only routes did. |
 
 ## Non-goals
 
