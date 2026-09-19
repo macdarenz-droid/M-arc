@@ -7,8 +7,9 @@ import { TAG_SYSTEM_PROMPT, userMessage as tagUserMessage } from './promptTag';
 import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNotes';
 import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
+import { IMPORT_SYSTEM_PROMPT, importMessage } from './promptImport';
 import { MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallAsk, CallIdentifyExercise, CallModel, CallNotes, CallTagExercise } from './types';
+import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
@@ -42,6 +43,21 @@ const IdentifySchema = z.object({
   pattern: z.enum(PATTERNS),
   mode: z.enum(MODES),
   confidence: z.enum(['high', 'low']),
+});
+
+const ImportedExerciseSchema = z.object({
+  name: z.string(),
+  sets: z.number().int().min(1).max(10),
+  equipment: z.string(),
+  primary: z.array(MuscleIdSchema).max(3),
+  secondary: z.array(MuscleIdSchema).max(4),
+  pattern: z.enum(PATTERNS),
+  mode: z.enum(MODES),
+  confidence: z.enum(['high', 'low']),
+});
+const ImportProgrammeSchema = z.object({
+  readable: z.boolean(),
+  days: z.array(z.object({ name: z.string(), exercises: z.array(ImportedExerciseSchema).max(12) })).max(7),
 });
 
 /**
@@ -132,6 +148,20 @@ export const callIdentifyExercise: CallIdentifyExercise = async (payload, env) =
     system: [{ type: 'text', text: IDENTIFY_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: [{ role: 'user', content: identifyMessage(payload) }],
     output_config: { format: zodOutputFormat(IdentifySchema), effort: EFFORT },
+  });
+  const parsed = requireParsed(response);
+  return { ...parsed, model: response.model, usage: usageOf(response) };
+};
+
+export const callImportProgramme: CallImportProgramme = async (payload, env) => {
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
+  const model = env.MODEL || DEFAULT_MODEL;
+  const response = await client.messages.parse({
+    model,
+    max_tokens: 4000,
+    system: [{ type: 'text', text: IMPORT_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: importMessage(payload) }],
+    output_config: { format: zodOutputFormat(ImportProgrammeSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
   return { ...parsed, model: response.model, usage: usageOf(response) };

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { deload, nowMs, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
-import { Button, Card, Chip, Empty, Field, Row, Section, Sheet } from '@/ui/primitives';
-import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
+import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
+import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -19,6 +19,8 @@ import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
+import { ImportProgrammeSheet } from './ImportProgramme';
+import { pickAndCompressPhoto, type CapturedPhoto } from '@/native/photo';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { GOALS } from '@/data/goals';
@@ -46,15 +48,28 @@ function Splits() {
   const [selected, setSelected] = useState<string | null>(s.splits[0]?.id ?? null);
   const [editing, setEditing] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [pickingPhoto, setPickingPhoto] = useState(false);
+  const [importPhoto, setImportPhoto] = useState<CapturedPhoto | null>(null);
   const split = s.splits.find(x => x.id === selected) ?? s.splits[0];
   useEffect(() => { if (!split && s.splits[0]) setSelected(s.splits[0].id); }, [s.splits.length]);
   const u = unit.value;
+
+  const startImport = async () => {
+    if (pickingPhoto) return;
+    setPickingPhoto(true);
+    const photo = await pickAndCompressPhoto().catch(() => null);
+    setPickingPhoto(false);
+    if (photo) setImportPhoto(photo);
+  };
 
   return (
     <div class="view">
       <div class="topbar">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
-        <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
+        <div class="row">
+          {remoteEnabled.value && <Button variant="quiet" size="sm" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : <><IconCamera size={16} /> Import</>}</Button>}
+          <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
+        </div>
       </div>
 
       {deload.value && (
@@ -66,7 +81,7 @@ function Splits() {
 
       {!s.splits.length && (
         <Card>
-          <Empty icon={<IconDumbbell size={32} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>}>
+          <Empty icon={<IconDumbbell size={32} />} title="No workouts yet" action={<div class="wrap" style={{ justifyContent: 'center' }}><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button>{remoteEnabled.value && <Button variant="quiet" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : 'Import from a photo'}</Button>}</div>}>
             Start from a simple template or build your own split.
           </Empty>
         </Card>
@@ -109,6 +124,7 @@ function Splits() {
 
       {editing && split && <SplitEditor split={split} onClose={() => setEditing(false)} onDeleted={() => { setEditing(false); setSelected(null); }} />}
       {creating && <CreateSplit onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setSelected(id); setEditing(true); }} />}
+      {importPhoto && <ImportProgrammeSheet photo={importPhoto} onClose={() => setImportPhoto(null)} />}
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
 import { ASK_SYSTEM_PROMPT, askMessages } from '../src/promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from '../src/promptIdentify';
-import type { AskPayload, ExplainPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+import { IMPORT_SYSTEM_PROMPT, importMessage } from '../src/promptImport';
+import type { AskPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
 
 /** The smallest valid PNG there is (1x1, transparent) — enough to exercise shape checks without a real photo. */
 const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
@@ -26,6 +27,7 @@ const askPayload = (): AskPayload => {
   return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?' };
 };
 const identifyPayload = (): IdentifyExercisePayload => ({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG }, equipmentHint: 'Cable' });
+const importPayload = (): ImportProgrammePayload => ({ version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } });
 
 class FakeKV {
   store = new Map<string, string>();
@@ -74,6 +76,16 @@ const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equi
 const identifyRouteWith = (call: typeof stubIdentify): RouteConfig => ({
   path: '/identify-exercise', maxBody: MAX_IDENTIFY_BODY_BYTES, validate: validateIdentifyPayload,
   async call() { const out = await call(); return { visible: out.visible, name: out.name, equipment: out.equipment, primary: out.primary, secondary: out.secondary, pattern: out.pattern, mode: out.mode, confidence: out.confidence, model: out.model, usage: out.usage }; },
+});
+
+const stubImport = async () => ({
+  readable: true,
+  days: [{ name: 'Push', exercises: [{ name: 'Bench Press', sets: 3, equipment: 'Barbell', primary: ['chest'], secondary: ['triceps'], pattern: 'horizontal_push', mode: 'weighted' as const, confidence: 'high' as const }] }],
+  model: 'claude-sonnet-5', usage: { inputTokens: 2000, outputTokens: 120, cacheReadTokens: 0 },
+});
+const importRouteWith = (call: typeof stubImport): RouteConfig => ({
+  path: '/import-programme', maxBody: MAX_IMPORT_BODY_BYTES, validate: validateImportPayload,
+  async call() { const out = await call(); return { readable: out.readable, days: out.days, model: out.model, usage: out.usage }; },
 });
 
 const post = (path: string, body: unknown, headers: Record<string, string> = {}, origin?: string) =>
@@ -151,6 +163,20 @@ describe('identify-exercise payload validation', () => {
     // A modified client stuffing session data or anything unexpected in: refused, not silently dropped.
     expect(validateIdentifyPayload({ ...identifyPayload(), sessions: [] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
     expect(validateIdentifyPayload('nope')).toMatchObject({ ok: false });
+  });
+});
+
+describe('import-programme payload validation', () => {
+  it('accepts a photo and refuses anything else', () => {
+    expect(validateImportPayload(importPayload())).toMatchObject({ ok: true });
+    expect(validateImportPayload({ version: 1, kind: 'import-programme', image: { mediaType: 'image/gif', data: TINY_PNG } })).toMatchObject({ ok: false });
+    expect(validateImportPayload({ version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: '' } })).toMatchObject({ ok: false });
+    expect(validateImportPayload({ version: 1, kind: 'import-programme', image: {} })).toMatchObject({ ok: false });
+    expect(validateImportPayload({ version: 2, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } })).toMatchObject({ ok: false });
+    // No equipmentHint on this route — it is a whole page, not one exercise.
+    expect(validateImportPayload({ ...importPayload(), equipmentHint: 'Cable' })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateImportPayload({ ...importPayload(), sessions: [] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateImportPayload('nope')).toMatchObject({ ok: false });
   });
 });
 
@@ -239,7 +265,7 @@ describe('handler: /explain', () => {
 });
 
 describe('handler: multiple routes in one Worker', () => {
-  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk), identifyRouteWith(stubIdentify)]);
+  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk), identifyRouteWith(stubIdentify), importRouteWith(stubImport)]);
 
   it('answers /tag-exercise with a closed-vocabulary suggestion', async () => {
     const res = await handle(post('/tag-exercise', tagPayload()), env());
@@ -276,18 +302,28 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.confidence).toBe('high');
   });
 
-  it('keeps /explain, /tag-exercise, /notes, /ask and /identify-exercise independent: one 400 does not affect the others', async () => {
+  it('answers /import-programme with the extracted days, each exercise closed-vocabulary tagged', async () => {
+    const res = await handle(post('/import-programme', importPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { readable: boolean; days: Array<{ name: string; exercises: Array<{ name: string; sets: number; primary: string[] }> }> };
+    expect(body.readable).toBe(true);
+    expect(body.days).toEqual([{ name: 'Push', exercises: [{ name: 'Bench Press', sets: 3, equipment: 'Barbell', primary: ['chest'], secondary: ['triceps'], pattern: 'horizontal_push', mode: 'weighted', confidence: 'high' }] }]);
+  });
+
+  it('keeps /explain, /tag-exercise, /notes, /ask, /identify-exercise and /import-programme independent: one 400 does not affect the others', async () => {
     expect((await handle(post('/tag-exercise', { version: 1, kind: 'tag-exercise', name: '' }), env())).status).toBe(400);
     expect((await handle(post('/ask', { ...askPayload(), question: '' }), env())).status).toBe(400);
     expect((await handle(post('/identify-exercise', { version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: '' } }), env())).status).toBe(400);
+    expect((await handle(post('/import-programme', { version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: '' } }), env())).status).toBe(400);
     expect((await handle(post('/explain', payload()), env())).status).toBe(200);
     expect((await handle(post('/notes', notesPayload()), env())).status).toBe(200);
     expect((await handle(post('/ask', askPayload()), env())).status).toBe(200);
     expect((await handle(post('/identify-exercise', identifyPayload()), env())).status).toBe(200);
+    expect((await handle(post('/import-programme', importPayload()), env())).status).toBe(200);
   });
 
   it('a route neither route table entry matches is a 404, same as an unknown path', async () => {
-    expect((await handle(post('/import-programme', {}), env())).status).toBe(404);
+    expect((await handle(post('/not-a-real-route', {}), env())).status).toBe(404);
   });
 });
 
@@ -337,6 +373,19 @@ describe('prompts', () => {
     expect(msg[1]).toEqual({ type: 'text', text: JSON.stringify({ equipmentHint: 'Cable' }) });
     const noHint = identifyMessage({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/jpeg', data: TINY_PNG } });
     expect(noHint[1]).toEqual({ type: 'text', text: JSON.stringify({ equipmentHint: null }) });
+  });
+
+  it('import-programme prompt names the closed vocabularies, caps days and exercises, and forbids weight numbers', () => {
+    expect(IMPORT_SYSTEM_PROMPT).toContain('rear_delts');
+    expect(IMPORT_SYSTEM_PROMPT).toContain('horizontal_push');
+    expect(IMPORT_SYSTEM_PROMPT).toContain('at most 7 days');
+    expect(IMPORT_SYSTEM_PROMPT).toContain('Never report a weight, load or percentage');
+    expect(IMPORT_SYSTEM_PROMPT).toContain('Never describe or comment on their body, appearance, face');
+    expect(IMPORT_SYSTEM_PROMPT).toContain('"readable" is true only when');
+  });
+
+  it('import-programme message sends only the photo, no text block', () => {
+    expect(importMessage(importPayload())).toEqual([{ type: 'image', source: { type: 'base64', media_type: 'image/png', data: TINY_PNG } }]);
   });
 
   it('ask replays the report once, then the real conversation, then the new question last', () => {

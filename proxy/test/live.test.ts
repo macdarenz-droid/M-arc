@@ -4,9 +4,9 @@
  * answer and that it invents no numbers.
  */
 import { describe, it, expect } from 'vitest';
-import { callAnthropic, callAsk, callIdentifyExercise, callNotes, callTagExercise } from '../src/anthropic';
+import { callAnthropic, callAsk, callIdentifyExercise, callImportProgramme, callNotes, callTagExercise } from '../src/anthropic';
 import { MUSCLE_IDS, PATTERNS, NOTE_FLAG_KINDS } from '../src/vocab';
-import type { AskPayload, ExplainPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload } from '../src/types';
+import type { AskPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload } from '../src/types';
 
 /** The smallest valid PNG there is (1x1, transparent) — no real photo is checked into the repo, so the live check here proves the model stays honest ("visible": false) on an image with nothing to recognize, rather than asserting real vision accuracy. */
 const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
@@ -118,5 +118,15 @@ live('live identify-exercise call', () => {
     expect(out.visible).toBe(false);
     for (const m of [...out.primary, ...out.secondary]) expect(MUSCLE_IDS as readonly string[], `muscle "${m}"`).toContain(m);
     console.log(JSON.stringify({ usage: out.usage, visible: out.visible, name: out.name, confidence: out.confidence }, null, 1));
+  }, 30_000);
+});
+
+live('live import-programme call', () => {
+  it('stays honest about a photo with no written plan in it, rather than inventing days and exercises', async () => {
+    const importPayload: ImportProgrammePayload = { version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } };
+    const out = await callImportProgramme(importPayload, { ANTHROPIC_API_KEY: key, MODEL: process.env.MODEL || 'claude-sonnet-5' });
+    expect(out.readable).toBe(false);
+    expect(out.days).toEqual([]);
+    console.log(JSON.stringify({ usage: out.usage, readable: out.readable, days: out.days }, null, 1));
   }, 30_000);
 });

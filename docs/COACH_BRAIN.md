@@ -308,9 +308,25 @@ the cases a single history cannot.
    `MAX_IDENTIFY_BODY_BYTES` (1.5 MB) is far above every other route's
    cap, since a photo is inherently bigger than anything else this Worker
    accepts; nothing about that photo is ever stored, on either side.
-   Queued next: programme import from a photo (7b) — reads a whole written
-   plan, not one exercise, so it needs its own review-before-commit UI
-   rather than reusing the custom-exercise form.
+   **7b done:** programme import from a photo — "Import" beside "+ Split"
+   on Train (also offered from the empty-splits state), for a whole
+   written plan rather than one exercise: a gym handout, a whiteboard, a
+   printed program. A new route, `/import-programme`
+   (`proxy/src/promptImport.ts`), reads one photo and returns up to 7 days
+   of up to 12 exercises each, every exercise classified the same
+   closed-vocabulary way as `/identify-exercise` in the same call — no
+   second round trip per exercise. It never reports a weight or load, only
+   sets: this app tracks load from what a person actually lifts, not from
+   an old plan. A `readable` boolean carries the same honesty pattern as
+   `visible` in 7a. `ImportProgrammeSheet`
+   (`slices/workout/ImportProgramme.tsx`) is the review-before-commit UI
+   7a's plan called for: each day's name is editable, each exercise can be
+   tapped out before committing, low-confidence entries say so, and a
+   day becomes a real split only on an explicit "Add" tap — never
+   automatically. Each exercise is matched against the library and saved
+   custom exercises with the app's own existing `findExercise` lookup
+   before anything new is created, so a plan that names exercises already
+   in the library links to them instead of duplicating them.
 
 ## Decisions log
 
@@ -347,6 +363,10 @@ the cases a single history cannot.
 | 2026-09-19 | Photo capture and compression (`src/native/photo.ts`) use plain web APIs (`<input type="file" capture>`, canvas, `toBlob`) rather than `@capacitor/camera`: the Capacitor WebView already honours `capture` on Android, one code path serves the APK and the PWA, and no new native permission has to be declared for one narrow feature. |
 | 2026-09-19 | `/identify-exercise`'s schema always returns a `visible` boolean rather than letting the model signal "nothing here" by leaving other fields blank or vague: an explicit false is impossible to misread as a real, if low-confidence, answer, and the app refuses to prefill the form at all when it is false. |
 | 2026-09-19 | The identify-exercise prompt explicitly forbids describing a person's body, face, clothing or anything identifying if one appears in the photo — only the exercise or equipment context. A photo carries more incidentally about a person than typed text ever could, so this route needed a rule none of the text-only routes did. |
+| 2026-09-19 | `/import-programme` classifies every exercise in the same vision call that reads the page, instead of one `/tag-exercise`-style call per exercise afterward: a plan with a dozen exercises would otherwise cost a dozen extra round trips and likely trip the six-a-minute rate limit on its own. |
+| 2026-09-19 | `/import-programme` never reports a weight or load, only sets — a number copied from an old written plan would silently compete with the coach's own progression targets, which come from what the person has actually lifted, not from what a plan once said. |
+| 2026-09-19 | Import review runs every extracted exercise through the app's existing `findExercise` (exact/alias/singular/substring match) before creating anything: a plan naming an exercise already in the library or already saved as custom links to it instead of creating a near-duplicate. |
+| 2026-09-19 | A day is only ever turned into a real split on its own explicit "Add" tap, never for the whole imported plan at once: reviewing and committing one day at a time matches "never a silent write" more literally than a single "import everything" action would. |
 
 ## Non-goals
 

@@ -150,6 +150,40 @@ export interface IdentifyExerciseReply {
 
 export type CallIdentifyExercise = (payload: IdentifyExercisePayload, env: WorkerEnv) => Promise<Omit<IdentifyExerciseReply, 'model' | 'usage'> & { model: string; usage: IdentifyExerciseReply['usage'] }>;
 
+/** One photo of a whole written workout plan — a handout, a whiteboard, a printed program. Nothing else about the person. */
+export interface ImportProgrammePayload {
+  version: 1;
+  kind: 'import-programme';
+  image: { mediaType: 'image/jpeg' | 'image/png' | 'image/webp'; data: string };
+}
+
+export interface ImportedExercise {
+  name: string;
+  /** How many sets the page specifies, or a reasonable default when it only shows reps. Never a weight or load. */
+  sets: number;
+  equipment: string;
+  primary: string[];
+  secondary: string[];
+  pattern: string;
+  mode: 'weighted' | 'bodyweight' | 'assisted' | 'duration' | 'conditioning';
+  confidence: 'high' | 'low';
+}
+
+export interface ImportedDay {
+  name: string;
+  exercises: ImportedExercise[];
+}
+
+export interface ImportProgrammeReply {
+  /** False when the photo does not clearly show a written workout plan. "days" is empty when this is false. */
+  readable: boolean;
+  days: ImportedDay[];
+  model: string;
+  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
+}
+
+export type CallImportProgramme = (payload: ImportProgrammePayload, env: WorkerEnv) => Promise<Omit<ImportProgrammeReply, 'model' | 'usage'> & { model: string; usage: ImportProgrammeReply['usage'] }>;
+
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;

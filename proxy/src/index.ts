@@ -1,6 +1,6 @@
-import { callAnthropic, callAsk, callIdentifyExercise, callNotes, callTagExercise } from './anthropic';
-import { createHandler, MAX_ASK_BODY_BYTES, MAX_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateAskPayload, validateIdentifyPayload, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
-import type { AskPayload, ExplainPayload, IdentifyExercisePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
+import { callAnthropic, callAsk, callIdentifyExercise, callImportProgramme, callNotes, callTagExercise } from './anthropic';
+import { createHandler, MAX_ASK_BODY_BYTES, MAX_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateAskPayload, validateIdentifyPayload, validateImportPayload, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
+import type { AskPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 const explainRoute: RouteConfig = {
   path: '/explain',
@@ -55,7 +55,17 @@ const identifyExerciseRoute: RouteConfig = {
   },
 };
 
-const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute, askRoute, identifyExerciseRoute]);
+const importProgrammeRoute: RouteConfig = {
+  path: '/import-programme',
+  maxBody: MAX_IMPORT_BODY_BYTES,
+  validate: validateImportPayload,
+  async call(payload, env: WorkerEnv) {
+    const out = await callImportProgramme(payload as ImportProgrammePayload, env);
+    return { readable: out.readable, days: out.days, model: out.model, usage: out.usage };
+  },
+};
+
+const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute, askRoute, identifyExerciseRoute, importProgrammeRoute]);
 
 export default {
   fetch(request: Request, env: WorkerEnv): Promise<Response> {
