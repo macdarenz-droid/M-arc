@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildPayload, allowedNumbers, validateText, extractNumbers, explanationKey, readCache, getCached, putCached, fetchExplanation, endpoint, newDeviceId, CACHE_SIZE, LIMITS, type ExplainPayload } from '@/brain/coach/explainer';
+import { PREFERENCE_FACTS_MAX } from '@/brain/coach/preferences';
 import { buildReport } from '@/brain/coach/report';
 import { session } from './helpers';
 import { ctx, pplHistory, std, LAST_MONDAY, PUSH_EX, PUSH_ID } from './coach-helpers';
@@ -32,6 +33,16 @@ describe('payload', () => {
     const chosen = buildPayload(r, { goal: 'strength', unit: 'lb', explain: [r.findings[0]!.id, 'nope'] });
     expect(chosen.explain).toEqual([r.findings[0]!.id]);
     expect(chosen.unit).toBe('lb');
+    // No preferences given: an empty array, not a missing field.
+    expect(p.preferences).toEqual([]);
+  });
+
+  it('carries preference facts, capped the same way findings and cards are', () => {
+    const r = realReport();
+    const many = Array.from({ length: PREFERENCE_FACTS_MAX + 3 }, (_, i) => `Fact ${i}.`);
+    const p = buildPayload(r, { goal: 'strength', unit: 'kg', preferenceFacts: many });
+    expect(p.preferences).toHaveLength(PREFERENCE_FACTS_MAX);
+    expect(p.preferences).toEqual(many.slice(0, PREFERENCE_FACTS_MAX));
   });
 });
 

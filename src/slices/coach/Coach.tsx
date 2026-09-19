@@ -236,7 +236,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
     const q = question.trim();
     if (!q || sending) return;
     const s = state.value;
-    const payload = buildAskPayload(report.value, history, q, { goal: s.goal, unit: s.preferences.weightUnit });
+    const payload = buildAskPayload(report.value, history, q, { goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts });
     const withQuestion: AskTurn[] = [...history, { role: 'user', text: q }];
     setHistory(withQuestion);
     setQuestion('');

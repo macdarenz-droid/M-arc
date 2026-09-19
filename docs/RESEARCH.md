@@ -499,9 +499,14 @@ self-report, not any single value. This card supports noticing and
 recalling what someone told the app, never diagnosing, rating severity, or
 inferring a cause from it.
 
-**App use.** A note or check-in that mentions discomfort, fatigue or an
-equipment issue is tagged and can be recalled later — never diagnosed,
-never given a cause. Finding `note_flag`.
+**App use.** A note that mentions discomfort, fatigue or an equipment
+issue is tagged and can be recalled later — never diagnosed, never given
+a cause. Finding `note_flag`. A 10-second morning check-in (sleep,
+soreness, stress, each 1–5, a trimmed three-item version of the Hooper
+and Mackinnon questionnaire below) widens today's recovery windows from a
+single reading, and only becomes its own finding, `low_readiness`, once a
+pattern of low check-ins appears over the trailing week — a single
+reading is exactly the weak signal this card warns against over-reading.
 
 - Hooper SL, Mackinnon LT. Monitoring overtraining in athletes: recommendations. *Sports Med.* 1995;20(5):321-327. PMID 8584849.
 - Foster C, Florhaug JA, Franklin J, et al. A new approach to monitoring exercise training. *J Strength Cond Res.* 2001;15(1):109-115. PMID 11708692.

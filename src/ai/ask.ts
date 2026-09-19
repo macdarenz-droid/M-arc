@@ -8,7 +8,7 @@
  * answer is not shown.
  */
 import type { FindingsReport } from '@/brain/coach/contract';
-import { allowedNumbers, cardsFor, trimFindingsAndProposals, validateText, type GroundingPayload } from '@/brain/coach/explainer';
+import { allowedNumbers, cardsFor, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload } from '@/brain/coach/explainer';
 import { postJson } from './client';
 
 export interface AskTurn {
@@ -28,14 +28,15 @@ export const MAX_QUESTION_CHARS = 300;
 export const MAX_HISTORY_TURNS = 12;
 
 /** The report, the recent conversation, and a new question — trimmed and capped the same way /explain's payload is. */
-export function buildAskPayload(report: FindingsReport, history: AskTurn[], question: string, opts: { goal: string; unit: 'kg' | 'lb' }): AskPayload {
+export function buildAskPayload(report: FindingsReport, history: AskTurn[], question: string, opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[] }): AskPayload {
   const { findings, proposals } = trimFindingsAndProposals(report);
   const ids = [...findings.map(f => f.id), ...proposals.map(p => p.id)];
   const cards = cardsFor(report, ids);
   const trimmedHistory = history.slice(-MAX_HISTORY_TURNS).map(h => ({ role: h.role, text: h.text.trim().slice(0, 700) }));
+  const preferences = (opts.preferenceFacts ?? []).slice(0, LIMITS.preferences);
   return {
     version: 1, kind: 'ask', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality,
-    findings, proposals, cards, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
+    findings, proposals, cards, preferences, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
   };
 }
 

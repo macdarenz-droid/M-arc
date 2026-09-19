@@ -267,8 +267,8 @@
       "rating": "moderate",
       "statement": "Short, regular self-reports of soreness, fatigue, stress and sleep are a validated, low-cost way to monitor how someone is coping with training, when tracked over time. A single soreness rating on a single day, on its own, correlates weakly with actual muscle damage and should not be read as measuring anything by itself.",
       "disputed": "A soreness or fatigue rating from one day says little on its own; the signal is in the pattern over time and the honesty of the self-report, not any single value. This card supports noticing and recalling what someone told the app, never diagnosing, rating severity, or inferring a cause from it.",
-      "appUse": "A note or check-in that mentions discomfort, fatigue or an equipment issue is tagged and can be recalled later — never diagnosed, never given a cause. Finding note_flag.",
-      "findingKinds": ["note_flag"],
+      "appUse": "A note or check-in that mentions discomfort, fatigue or an equipment issue is tagged and can be recalled later — never diagnosed, never given a cause. Findings note_flag and low_readiness.",
+      "findingKinds": ["note_flag", "low_readiness"],
       "proposalKinds": [],
       "citations": [
         { "key": "hooper1995", "authors": "Hooper SL, Mackinnon LT", "year": 1995, "title": "Monitoring overtraining in athletes: recommendations", "journal": "Sports Med", "where": "20(5):321-327", "pmid": "8584849", "verified": "search-index" },

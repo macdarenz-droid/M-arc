@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, MAX_PREFERENCES, MAX_PREFERENCE_CHARS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
@@ -103,6 +103,13 @@ describe('payload validation', () => {
     expect(validatePayload({ ...payload(), findings: Array.from({ length: 30 }, () => payload().findings[0]) })).toMatchObject({ ok: false });
     expect(validatePayload('nope')).toMatchObject({ ok: false });
   });
+
+  it('preferences is optional, but validated when present', () => {
+    expect(validatePayload({ ...payload(), preferences: ['Usually accepts exercise swaps when the coach offers them.'] })).toMatchObject({ ok: true });
+    expect(validatePayload({ ...payload(), preferences: Array.from({ length: MAX_PREFERENCES + 1 }, () => 'x') })).toMatchObject({ ok: false });
+    expect(validatePayload({ ...payload(), preferences: ['x'.repeat(MAX_PREFERENCE_CHARS + 1)] })).toMatchObject({ ok: false });
+    expect(validatePayload({ ...payload(), preferences: [1] })).toMatchObject({ ok: false });
+  });
 });
 
 describe('tag-exercise payload validation', () => {
@@ -146,6 +153,11 @@ describe('ask payload validation', () => {
     // explain is /explain's own field: not accepted here, same "unexpected field" discipline as everywhere else.
     expect(validateAskPayload({ ...askPayload(), explain: ['x'] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
     expect(validateAskPayload('nope')).toMatchObject({ ok: false });
+  });
+
+  it('accepts an optional preferences list, capped and length-limited', () => {
+    expect(validateAskPayload({ ...askPayload(), preferences: ['Usually accepts schedule changes when the coach offers them.'] })).toMatchObject({ ok: true });
+    expect(validateAskPayload({ ...askPayload(), preferences: Array.from({ length: MAX_PREFERENCES + 1 }, () => 'x') })).toMatchObject({ ok: false });
   });
 });
 
@@ -335,6 +347,7 @@ describe('prompts', () => {
     expect(SYSTEM_PROMPT).toContain('55 words');
     expect(userMessage(payload())).toBe(userMessage(payload()));
     expect(userMessage(payload())).toContain('"changePct":-18');
+    expect(SYSTEM_PROMPT).toContain('preferences');
   });
 
   it('tag-exercise prompt names the closed vocabularies and asks for honest confidence', () => {
@@ -356,6 +369,7 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Never answer questions about diet, calories, supplements, medication or medical conditions');
     expect(ASK_SYSTEM_PROMPT).toContain('Never predict or mention injury');
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
+    expect(ASK_SYSTEM_PROMPT).toContain('preferences');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
@@ -389,10 +403,11 @@ describe('prompts', () => {
   });
 
   it('ask replays the report once, then the real conversation, then the new question last', () => {
-    const withHistory: AskPayload = { ...askPayload(), history: [{ role: 'user', text: 'How was last week?' }, { role: 'assistant', text: 'Solid: chest volume held steady.' }] };
+    const withHistory: AskPayload = { ...askPayload(), preferences: ['Usually accepts schedule changes when the coach offers them.'], history: [{ role: 'user', text: 'How was last week?' }, { role: 'assistant', text: 'Solid: chest volume held steady.' }] };
     const msgs = askMessages(withHistory);
     expect(msgs[0]).toMatchObject({ role: 'user' });
     expect(msgs[0]!.content).toContain('"changePct":-18');
+    expect(msgs[0]!.content).toContain('Usually accepts schedule changes');
     expect(msgs[1]).toMatchObject({ role: 'assistant' });
     expect(msgs[2]).toEqual({ role: 'user', content: 'How was last week?' });
     expect(msgs[3]).toEqual({ role: 'assistant', content: 'Solid: chest volume held steady.' });

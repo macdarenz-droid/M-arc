@@ -29,7 +29,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 const CATEGORY_OF: Record<FindingKind, Category> = {
   volume_drop: 'volume', volume_spike: 'volume', weekly_sets_out_of_band: 'volume', uncovered_muscle: 'balance', focus_behind: 'focus',
   plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress',
-  under_recovered: 'recovery', low_sleep_readiness: 'recovery',
+  under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
   redundant_exercises: 'balance', balance_imbalance: 'balance',
   long_gap: 'consistency', habit_pattern: 'consistency', first_sessions: 'consistency',
@@ -189,7 +189,7 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         means: 'Records mark real progress: heavier, stronger, or more reps at a load. Total volume never counts as one.',
         action: 'Nice. Rate the effort so the coach knows how close to your limit that was.' };
     case 'under_recovered': {
-      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
+      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', num(m.readinessFactor) > 1 ? 'Your check-in today read low, which widens it a little more.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
       return { title: `${muscle} still recovering`,
         noticed: `About ${num(m.pct)}% recovered with about ${formatHours(num(m.hoursLeft))} to go, after ${formatDay(str(m.lastDay) || ctx.today)}.${extra ? ` ${extra}` : ''}`,
         means: 'Training it again now mostly means a weaker session, not harm. Recovery windows are estimates, and they only widen when your own results say so.',
@@ -200,6 +200,11 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: `About ${num(m.sleepHours)} hours of sleep, under the ${num(m.thresholdMinutes) / 60}-hour mark most sleep studies use.`,
         means: 'Short sleep measurably lowers next-day strength, most on big compound lifts. It does not mean skip training.',
         action: 'Keep the loads you planned, do not chase records, and rate effort honestly so a tired session is not read as a decline.' };
+    case 'low_readiness':
+      return { title: 'Feeling worn down lately',
+        noticed: `Your morning check-ins have read low more than once this week: today, sleep ${num(m.sleep)}/5, soreness ${num(m.soreness)}/5, stress ${num(m.stress)}/5.`,
+        means: 'One rough morning says little by itself. A run of them tracked over time is the kind of pattern short daily wellness check-ins actually predict — this does not diagnose anything or say why.',
+        action: 'An easier session, a longer warm-up, or a rest day are all reasonable calls today. Keep checking in either way; the pattern is what matters.' };
     case 'effort_missing':
       return { title: 'Rate your sets',
         noticed: `Only ${num(m.ratedPct)}% of your last ${num(m.sets)} sets have an effort rating.`,
@@ -315,7 +320,7 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
   }
 }
 
-const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, habit_pattern: 1 };
+const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, low_readiness: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, habit_pattern: 1 };
 
 export function renderFinding(f: Finding, ctx: RenderContext): Insight {
   const w = wordsFor(f, ctx);

@@ -17,7 +17,10 @@ function pickFile(): Promise<File | null> {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.setAttribute('capture', 'environment');
+    // No "capture" attribute: that forces the camera open directly with no
+    // way back out to the gallery or Files. Leaving it off shows the normal
+    // Android/iOS chooser (camera, gallery, files), which is what a photo
+    // taken earlier or a screenshot of a programme needs.
     input.style.display = 'none';
     const done = (file: File | null) => { resolve(file); input.remove(); };
     input.addEventListener('change', () => done(input.files?.[0] ?? null), { once: true });

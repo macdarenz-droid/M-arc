@@ -24,6 +24,8 @@ export interface GroundingPayload {
   findings: PayloadFinding[];
   proposals: PayloadProposal[];
   cards: PayloadCard[];
+  /** Short, plain-word facts about how this person responds to the coach's own suggestions (see brain/coach/preferences.ts). Optional so an older or hand-built payload is still valid. */
+  preferences?: string[];
 }
 
 export interface ExplainPayload extends GroundingPayload {
@@ -32,7 +34,7 @@ export interface ExplainPayload extends GroundingPayload {
   explain: string[];
 }
 
-export const LIMITS = { findings: 24, proposals: 16, cards: 18, explain: 12 } as const;
+export const LIMITS = { findings: 24, proposals: 16, cards: 18, explain: 12, preferences: 6 } as const;
 
 /** Findings and proposals trimmed to the limits every grounded route shares. No cards yet — those depend on which ids are actually in view. */
 export function trimFindingsAndProposals(report: FindingsReport): { findings: PayloadFinding[]; proposals: PayloadProposal[] } {
@@ -51,7 +53,7 @@ export function cardsFor(report: FindingsReport, ids: string[]): PayloadCard[] {
 }
 
 /** Only what the words layer needs. Evidence (session ids) and profile never leave the device. */
-export function buildPayload(report: FindingsReport, opts: { goal: string; unit: 'kg' | 'lb'; explain?: string[] }): ExplainPayload {
+export function buildPayload(report: FindingsReport, opts: { goal: string; unit: 'kg' | 'lb'; explain?: string[]; preferenceFacts?: string[] }): ExplainPayload {
   const { findings, proposals } = trimFindingsAndProposals(report);
   const known = new Set([...findings.map(f => f.id), ...proposals.map(p => p.id)]);
   let explain = (opts.explain ?? []).filter(id => known.has(id));
@@ -62,7 +64,8 @@ export function buildPayload(report: FindingsReport, opts: { goal: string; unit:
   }
   explain = explain.slice(0, LIMITS.explain);
   const cards = cardsFor(report, explain);
-  return { version: 1, kind: 'explain', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality, findings, proposals, cards, explain };
+  const preferences = (opts.preferenceFacts ?? []).slice(0, LIMITS.preferences);
+  return { version: 1, kind: 'explain', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality, findings, proposals, cards, explain, preferences };
 }
 
 export function extractNumbers(text: string): number[] {
@@ -86,6 +89,7 @@ export function allowedNumbers(payload: GroundingPayload): Set<number> {
   visit(payload.dataQuality);
   dateParts(payload.today).forEach(add);
   for (const c of payload.cards) [...extractNumbers(c.statement), ...extractNumbers(c.disputed)].forEach(add);
+  for (const p of payload.preferences ?? []) extractNumbers(p).forEach(add);
   return out;
 }
 
@@ -108,6 +112,7 @@ export function explanationKey(payload: ExplainPayload): string {
   const body = JSON.stringify({
     v: PRINCIPLES_VERSION, goal: payload.goal, unit: payload.unit,
     f: payload.findings.map(f => [f.id, f.metrics]), p: payload.proposals.map(p => [p.id, p.apply]), c: payload.cards.map(c => c.id), e: payload.explain,
+    pf: payload.preferences ?? [],
   });
   return `${fnv(body)}${fnv(body.split('').reverse().join(''))}`;
 }

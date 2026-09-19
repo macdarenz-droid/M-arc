@@ -143,7 +143,7 @@ function PayloadPreview({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="What is sent" onClose={onClose}>
       <div class="stack">
-        <p class="small">This is the whole message, {kb} KB. It has your findings and suggestions with their numbers, exercise and muscle names, your goal and unit, and the research cards they rest on. It has no sessions, no name, no body weight or height, no device details beyond a random id for daily limits.</p>
+        <p class="small">This is the whole message, {kb} KB. It has your findings and suggestions with their numbers, exercise and muscle names, your goal and unit, the research cards they rest on, and a short list of preferences the coach has learned from what you have accepted or turned down. It has no sessions, no name, no body weight or height, no device details beyond a random id for daily limits.</p>
         <pre class="small" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 360, overflow: 'auto', background: 'var(--surface-2)', padding: 12, borderRadius: 'var(--radius-md)' }}>{text}</pre>
         <Button onClick={onClose}>Close</Button>
       </div>

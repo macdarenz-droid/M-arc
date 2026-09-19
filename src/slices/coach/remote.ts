@@ -18,7 +18,7 @@ export const remoteEnabled = computed(() => state.value.coach.remoteExplainer &&
 
 export function currentPayload(explain?: string[]): ExplainPayload {
   const s = state.value;
-  return buildPayload(report.value, { goal: s.goal, unit: s.preferences.weightUnit, ...(explain ? { explain } : {}) });
+  return buildPayload(report.value, { goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts, ...(explain ? { explain } : {}) });
 }
 
 export const explanation = computed<Explanation | null>(() => {

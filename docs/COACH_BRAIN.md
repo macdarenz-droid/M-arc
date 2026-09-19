@@ -77,6 +77,7 @@ enumerated in `src/brain/coach/contract.ts`.
 | `long_gap` | Days since last session | ≥ 7 days |
 | `habit_pattern` | Per-weekday training probability and typical start time, recency-weighted over 10–12 weeks; a habitual day retires after three complete cold weeks | ≥ 6 weeks, probability ≥ 0.6 |
 | `low_sleep_readiness` | Health Connect sleep below the user's own norm | Sleep data present |
+| `low_readiness` | A pattern of low morning check-ins (sleep, soreness, stress; trimmed Hooper-style, 1–5 each) | Today's check-in is low, and at least one more of the trailing week's was too |
 | `record`, `first_sessions` | Records; baseline state with too little data | — |
 
 ## Layer 1: planners
@@ -327,6 +328,44 @@ the cases a single history cannot.
    custom exercises with the app's own existing `findExercise` lookup
    before anything new is created, so a plan that names exercises already
    in the library links to them instead of duplicating them.
+8. Readiness check-in and preference memory, the two smallest-surface,
+   highest-leverage pieces left on the roadmap. **Done.**
+   **Readiness:** a 10-second morning check-in on Today (`slices/today/
+   ReadinessCheckIn.tsx`), three taps — sleep, soreness, stress, each 1
+   (worst) to 5 (best) — the trimmed, three-item version of Hooper and
+   Mackinnon's validated wellness questionnaire (P19,
+   `subjective_readiness_monitoring`; the original also asks fatigue
+   separately, folded here into the same three taps to keep it to ten
+   seconds). One entry a day (`AppState.readiness[]`), skippable, offered
+   again next app open if skipped. It feeds the brain two separate ways,
+   matching P19's own caveat that a single reading says little alone:
+   `detectors/recovery.ts`'s `readinessFactor` widens *today's* recovery
+   windows immediately from a single check-in, the same mechanism as the
+   existing volume factor (the wider of the two wins; they are never
+   multiplied, and the combined result still never exceeds
+   `RECOVERY_VOLUME_FACTOR_MAX`) — a low morning is real information about
+   right now, whether or not it turns out to be a pattern. A new finding,
+   `low_readiness`, only speaks up once at least two of the trailing
+   week's check-ins, today included, came back low, since one rough
+   morning is exactly the weak, on-its-own signal P19 warns against
+   over-reading.
+   **Preference memory:** short, plain-word facts the coach infers from
+   how this person has actually responded to its own suggestions —
+   `brain/coach/preferences.ts`'s `computePreferenceFacts`, reading
+   `CoachState.dismissed`/`accepted` (a kind dismissed twice for the same
+   subject, or accepted for two different subjects, is a real preference;
+   one dismissal is not) plus whether a learned schedule and smart
+   reminders are on. This is durable state a `FindingsReport` cannot hold:
+   a suggestion dismissed twice drops out of both findings and proposals,
+   so without a separate memory the remote coach would have no way to
+   know it ever happened, and would risk re-suggesting the same thing in
+   different words. Recomputed at most weekly (`shouldRefreshPreferences`,
+   checked on app open and session finish, never on a render) and cached
+   in `CoachState.preferenceFacts`, so including it in `/explain` and
+   `/ask`'s payload (a new, optional `preferences: string[]` field on
+   `GroundingPayload`, capped at 6 entries) costs nothing extra and never
+   itself triggers a call. Shown in Settings' existing "Preview what is
+   sent".
 
 ## Decisions log
 
@@ -367,6 +406,12 @@ the cases a single history cannot.
 | 2026-09-19 | `/import-programme` never reports a weight or load, only sets — a number copied from an old written plan would silently compete with the coach's own progression targets, which come from what the person has actually lifted, not from what a plan once said. |
 | 2026-09-19 | Import review runs every extracted exercise through the app's existing `findExercise` (exact/alias/singular/substring match) before creating anything: a plan naming an exercise already in the library or already saved as custom links to it instead of creating a near-duplicate. |
 | 2026-09-19 | A day is only ever turned into a real split on its own explicit "Add" tap, never for the whole imported plan at once: reviewing and committing one day at a time matches "never a silent write" more literally than a single "import everything" action would. |
+| 2026-09-19 | The morning check-in is trimmed to three items (sleep, soreness, stress) rather than Hooper's original four (which also asks fatigue separately): a fourth tap works against the ten-second target, and fatigue overlaps enough with the other three, day to day, that the loss is small. |
+| 2026-09-19 | A single low check-in widens today's recovery windows immediately (it is real information about right now), but only speaks up as a Finding once a pattern of at least two low check-ins in the trailing week appears — P19 is explicit that one reading alone correlates weakly with anything, so a finding built on one would be citing its own evidence card past what that card supports. |
+| 2026-09-19 | Readiness and volume widen a recovery window by taking whichever factor is larger, not by multiplying them: two moderate signals compounding into an extreme window would overstate what either one alone supports, and the combined result is still capped by the existing RECOVERY_VOLUME_FACTOR_MAX. |
+| 2026-09-19 | Preference memory reads only `CoachState.dismissed`/`accepted`, not the current report: a habit or a finding already reappears in every report on its own, so restating it as a "preference" would just duplicate what the payload already carries. What a report cannot carry is a suggestion the person has already declined, since a proposal dismissed twice is filtered out of the report entirely — that is the one thing worth a separate memory. |
+| 2026-09-19 | Preference facts are recomputed at most once a week and cached, never derived inline while building a payload: the same "no remote call, and no meaningful extra work, on a screen refresh" rule that shaped the daily spark in Phase 5b applies here too, even though this computation is local and free — it still has no business running on every render. |
+| 2026-09-19 | `preferences` on `GroundingPayload` is optional rather than required: it lets an older or hand-built payload (existing tests, a script) stay valid without every caller having to thread through an empty array. The app itself always sends a real array, empty or not. |
 
 ## Non-goals
 

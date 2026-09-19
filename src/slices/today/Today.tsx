@@ -15,6 +15,7 @@ import { startSession } from '../workout/session';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
+import { ReadinessCheckIn } from './ReadinessCheckIn';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -35,6 +36,8 @@ export function Today() {
   const waiting = suggestions.value.filter(x => x.kind !== 'today_plan').length;
   const accept = () => { if (plan) showToast(acceptProposal(plan.proposal, today.value)); };
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
+  const [checkInSkipped, setCheckInSkipped] = useState(false);
+  const checkedInToday = s.readiness.some(r => r.day === today.value);
   // A true line from this person's own log, when there's one worth showing; the standing quote otherwise.
   const ps = personalSpark.value;
   const spark = ps ? { topic: ps.title, text: ps.text, by: ps.by } : SPARKS[dayIndex]!;
@@ -54,6 +57,8 @@ export function Today() {
           <Button variant="quiet" class="btn-icon" aria-label="Settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
         </div>
       </div>
+
+      {!checkedInToday && !checkInSkipped && <ReadinessCheckIn day={today.value} onDone={() => setCheckInSkipped(true)} />}
 
       <Card class="card-accent">
         {status === 'live' && (

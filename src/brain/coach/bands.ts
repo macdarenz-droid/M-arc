@@ -46,6 +46,17 @@ export const HABIT_NUDGE_LEAD_MINUTES = 60;
 /** Short sleep, the cut most sleep-loss studies use (sleep_and_performance). */
 export const SLEEP_SHORT_MINUTES = 360;
 
+/**
+ * Morning check-in (sleep, soreness, stress; subjective_readiness_monitoring),
+ * each 1 (worst) to 5 (best). Average at or below this is a low-readiness day.
+ */
+export const READINESS_LOW_AVG = 2.5;
+/** A low-readiness day widens today's recovery windows like extra volume does, up to this factor. Combined with the volume factor by taking whichever is larger, never multiplied, and still capped by RECOVERY_VOLUME_FACTOR_MAX. */
+export const READINESS_RECOVERY_FACTOR_MAX = 1.3;
+/** One low morning says little on its own (subjective_readiness_monitoring); the coach only speaks up once at least this many of the trailing check-ins, today included, were low. */
+export const READINESS_PATTERN_MIN_LOW = 2;
+export const READINESS_PATTERN_WINDOW_DAYS = 7;
+
 export const LONG_GAP_DAYS = 7;
 export const REENTRY_GAP_DAYS = 28;
 export const FIRST_SESSIONS_COUNT = 4;

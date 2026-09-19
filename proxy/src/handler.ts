@@ -24,6 +24,8 @@ export const MAX_CARDS = 18;
 export const MAX_NAME_CHARS = 60;
 export const MAX_EQUIPMENT_HINT_CHARS = 40;
 export const MAX_NOTE_CHARS = 280;
+export const MAX_PREFERENCES = 6;
+export const MAX_PREFERENCE_CHARS = 160;
 export const MAX_QUESTION_CHARS = 300;
 export const MAX_HISTORY_TURNS = 12;
 export const MAX_HISTORY_TURN_CHARS = 700;
@@ -79,6 +81,12 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
   }
   for (const c of cards) {
     if (!isRecord(c) || typeof c.id !== 'string' || typeof c.statement !== 'string' || typeof c.title !== 'string' || typeof c.rating !== 'string') return 'A card is malformed.';
+  }
+  if (raw.preferences !== undefined) {
+    const preferences = raw.preferences;
+    if (!Array.isArray(preferences) || preferences.length > MAX_PREFERENCES || !preferences.every(p => typeof p === 'string' && p.length <= MAX_PREFERENCE_CHARS)) {
+      return `preferences must be an array of at most ${MAX_PREFERENCES} strings, each at most ${MAX_PREFERENCE_CHARS} characters.`;
+    }
   }
   // Anything that looks like a person: refuse. The app never sends these; a modified client might.
   for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return `Field "${key}" is not accepted.`;
@@ -154,7 +162,7 @@ const isTurn = (v: unknown): v is AskTurn => isRecord(v) && (v.role === 'user' |
 export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'history', 'question'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };

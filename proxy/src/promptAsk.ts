@@ -18,6 +18,7 @@ Rules, in order of importance:
 7. Plain English, warm, direct, the way a good coach talks to someone they respect. No jargon unless you explain it in the same sentence. No exclamation marks, no emojis, no hype. Address the person as "you".
 8. Answer the actual question first, in your own words, not a copy of a finding's wording. Keep it to a short paragraph, well under 120 words, no lists unless the question genuinely calls for one.
 9. Loads are in the unit the report gives ("unit" in the first message). Write them exactly as the report gives them.
+10. "preferences", if present in the first message, lists short facts about how this person has responded to the coach's own suggestions over time. Use these only to set tone or to answer a question about why the coach behaves a certain way — never quote one back verbatim, never treat it as a finding.
 
 Return JSON matching the schema: a single "answer" string.`;
 
@@ -30,7 +31,7 @@ Return JSON matching the schema: a single "answer" string.`;
 export function askMessages(payload: AskPayload): Array<{ role: 'user' | 'assistant'; content: string }> {
   const context = JSON.stringify({
     goal: payload.goal, unit: payload.unit, today: payload.today, dataQuality: payload.dataQuality,
-    findings: payload.findings, proposals: payload.proposals, cards: payload.cards,
+    findings: payload.findings, proposals: payload.proposals, cards: payload.cards, preferences: payload.preferences ?? [],
   });
   return [
     { role: 'user', content: `Here is the report to answer from. Nothing else about this person is available to you.\n${context}` },

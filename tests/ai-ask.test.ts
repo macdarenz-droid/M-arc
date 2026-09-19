@@ -22,6 +22,13 @@ describe('buildAskPayload', () => {
     expect(p.history).toEqual([]);
     expect(p.question).toBe('Why has my chest work dropped?');
     expect(JSON.stringify(p)).not.toMatch(/sessionIds|profile|bodyWeight|heightCm|"name":/);
+    expect(p.preferences).toEqual([]);
+  });
+
+  it('carries preference facts, capped', () => {
+    const report = realReport();
+    const p = buildAskPayload(report, [], 'ok', { goal: 'strength', unit: 'kg', preferenceFacts: ['Usually accepts schedule changes when the coach offers them.'] });
+    expect(p.preferences).toEqual(['Usually accepts schedule changes when the coach offers them.']);
   });
 
   it('caps the question length and the number of history turns kept', () => {

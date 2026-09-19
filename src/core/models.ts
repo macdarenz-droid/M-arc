@@ -53,6 +53,18 @@ export interface NoteFlag {
   muscle: MuscleId | null;
 }
 
+/**
+ * One 10-second morning check-in: a trimmed, 3-item Hooper-style wellness
+ * scale (sleep, soreness, stress — subjective_readiness_monitoring), each
+ * 1 (worst) to 5 (best). At most one entry per day.
+ */
+export interface ReadinessEntry {
+  day: string;
+  sleep: 1 | 2 | 3 | 4 | 5;
+  soreness: 1 | 2 | 3 | 4 | 5;
+  stress: 1 | 2 | 3 | 4 | 5;
+}
+
 export interface Session {
   id: string;
   splitId: string;
@@ -169,10 +181,22 @@ export interface CoachState {
   explainerUrl: string;
   /** Random id for per-device quotas at the proxy. Not tied to anything personal. */
   deviceId: string;
+  /**
+   * Short, plain-word facts the coach has learned about how this person
+   * responds to its own suggestions over time (which kinds they turn down
+   * or usually accept, whether they use a learned schedule) — never a
+   * diagnosis, never a body measurement, never invented. Recomputed at
+   * most weekly and sent as extra context to the remote coach, since a
+   * dismissed suggestion drops out of the report and would otherwise be
+   * forgotten. Empty until the first computation.
+   */
+  preferenceFacts: string[];
+  /** ISO timestamp preferenceFacts was last computed, or null before the first time. */
+  preferencesUpdatedAt: string | null;
 }
 
 export function emptyCoach(): CoachState {
-  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: '', deviceId: '' };
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: '', deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null };
 }
 
 export interface AppState {
@@ -189,6 +213,8 @@ export interface AppState {
   body: BodyMeasurement[];
   health: HealthSnapshot;
   coach: CoachState;
+  /** At most one per day. */
+  readiness: ReadinessEntry[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -219,6 +245,7 @@ export function freshState(now = new Date()): AppState {
     body: [],
     health: { connected: false },
     coach: emptyCoach(),
+    readiness: [],
   };
 }
 

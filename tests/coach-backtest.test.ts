@@ -48,7 +48,7 @@ describe('one report on ninety sessions stays cheap', () => {
   it('builds in well under a second', () => {
     const h = synthesizeHistory('2026-09-19', 30);
     const d = new Date(2026, 8, 19, 23, 30);
-    const ctx = { sessions: h.sessions, splits: h.splits, schedule: h.schedule, custom: [], goal: h.goal, restDefaultSec: 90, health: { connected: false }, today: h.today, now: d.getTime(), dismissed: {}, accepted: {} };
+    const ctx = { sessions: h.sessions, splits: h.splits, schedule: h.schedule, custom: [], goal: h.goal, restDefaultSec: 90, health: { connected: false }, readiness: [], today: h.today, now: d.getTime(), dismissed: {}, accepted: {} };
     buildReport(ctx); // warm the module-level indexes
     const start = performance.now();
     buildReport(ctx);

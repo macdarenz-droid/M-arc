@@ -11,6 +11,7 @@ import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
+import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 
 export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
 
@@ -165,6 +166,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   flushSave();
   void cancelRestDone();
   void resyncReminders();
+  refreshPreferenceFactsIfStale();
   void haptic.success();
   return { session, changedTemplate };
 }

@@ -35,7 +35,8 @@ One object, one key (`marc.state.v1`), saved 250 ms after a change and flushed w
 - `sessions[]`: finished workouts. Each exercise has an id (library `lib_*` or `custom_*`) and its sets `{kg, reps, effort, durationSec, distanceM}`.
 - `active`: the live session, so it survives an app restart.
 - `customExercises[]`, `preferences`, `profile`, `body[]` (body-fat readings), `health`.
-- `coach`: what the user did with suggestions (dismissed, snoozed, accepted), learned start times, smart reminders, an accepted plan for today, an accepted easier week.
+- `coach`: what the user did with suggestions (dismissed, snoozed, accepted), learned start times, smart reminders, an accepted plan for today, an accepted easier week, and `preferenceFacts[]` — short facts learned from that history, recomputed at most weekly.
+- `readiness[]`: at most one morning check-in per day (sleep, soreness, stress, each 1–5).
 
 `core/migrate.ts` converts the old `dailyTrackerPremium` root once, read-only. Per-exercise completed records are preferred, whole-session snapshots fill the gaps, timed sessions supply durations, and custom splits, day names, schedule, goal, units and reminder settings carry over.
 

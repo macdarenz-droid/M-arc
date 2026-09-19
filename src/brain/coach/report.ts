@@ -11,8 +11,8 @@ import { FIRST_SESSIONS_COUNT } from './bands';
 import { daysBetween } from '@/core/dates';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectFocus, detectHabit, detectNoteFlags, detectProgress, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectSleep,
-  detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
+  detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand,
+  detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
@@ -62,6 +62,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('gap', () => detectGap(ctx)),
     ...safe('first', () => detectFirstSessions(ctx)),
     ...safe('sleep', () => detectSleep(ctx)),
+    ...safe('readiness', () => detectReadiness(ctx)),
     ...safe('habit', () => detectHabit(ctx, habit)),
     ...safe('focus', () => detectFocus(ctx)),
     ...safe('notes', () => detectNoteFlags(ctx)),

@@ -38,6 +38,8 @@ export interface GroundingPayload {
   findings: PayloadFinding[];
   proposals: PayloadProposal[];
   cards: PayloadCard[];
+  /** Short, plain-word facts the app has learned about how this person responds to its suggestions. Optional so an older client is still accepted. */
+  preferences?: string[];
 }
 
 export interface ExplainPayload extends GroundingPayload {
