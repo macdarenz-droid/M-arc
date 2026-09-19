@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
-import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
+import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
@@ -71,7 +71,7 @@ export function Coach() {
           {explanation.value?.summary
             ? <p class="small" style={{ marginTop: 6 }}>{explanation.value.summary}</p>
             : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
-          {!explanation.value && <Button size="sm" style={{ marginTop: 8 }} disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? 'Asking…' : 'More from the coach'}</Button>}
+          {!explanation.value && <Button size="sm" style={{ marginTop: 8 }} disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
           {explanation.value && explanation.value.rejected > 0 && <p class="hint" style={{ marginTop: 6 }}>{explanation.value.rejected} line{explanation.value.rejected === 1 ? '' : 's'} left out for using a number not in your data.</p>}
         </Card>
       )}
@@ -151,7 +151,7 @@ function OnlineNote({ id }: { id: string }) {
   const text = explanation.value?.items[id];
   if (text) return <Card class="card-quiet"><div class="eyebrow">From the coach, online</div><p class="small" style={{ marginTop: 4 }}>{text}</p></Card>;
   if (explanation.value) return null;
-  return <Button size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? 'Asking…' : 'More from the coach'}</Button>;
+  return <Button size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>;
 }
 
 function Evidence({ cards }: { cards: PrincipleCard[] }) {

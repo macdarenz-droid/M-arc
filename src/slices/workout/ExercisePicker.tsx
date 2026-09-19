@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { Button, Chip, Field, Sheet } from '@/ui/primitives';
+import { Button, Chip, Field, Sheet, Thinking } from '@/ui/primitives';
 import { makeCustomExercise, searchExercises } from '@/core/exercises';
 import type { Exercise, ResistanceMode } from '@/core/models';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
@@ -67,7 +67,7 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
           <Field label="Name"><input value={name} onInput={e => setName((e.target as HTMLInputElement).value)} placeholder="e.g. Cable Y-raise" /></Field>
           {remoteEnabled.value && (
             <div>
-              <Button variant="quiet" size="sm" disabled={!name.trim() || suggesting} onClick={suggest}>{suggesting ? 'Asking…' : 'Suggest equipment and muscles'}</Button>
+              <Button variant="quiet" size="sm" disabled={!name.trim() || suggesting} onClick={suggest}>{suggesting ? <Thinking /> : 'Suggest equipment and muscles'}</Button>
               {lowConfidence && <div class="hint" style={{ color: 'var(--warning)', marginTop: 4 }}>Not sure about this one. Check the muscles below before saving.</div>}
             </div>
           )}

@@ -1,8 +1,35 @@
-import { useEffect, useId, useRef } from 'preact/hooks';
+import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
+
+/** Shown, in order, while the coach is thinking. Plain, no exclamation marks, same restraint as the coach's own words. */
+const THINKING_PHRASES = [
+  'Reading your log…',
+  'Chalking up…',
+  'Loading the bar…',
+  'Racking the plates…',
+  'Checking your numbers…',
+  'Spotting your sets…',
+  'Warming up…',
+  'One more rep of thinking…',
+];
+
+/**
+ * A small spinner plus a rotating gym-flavoured phrase, for anywhere the
+ * app is waiting on the online coach. Colour comes from the theme's own
+ * `--accent` and `--surface-3`, so it matches every theme without any
+ * per-theme code. Respects prefers-reduced-motion.
+ */
+export function Thinking() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setI(x => (x + 1) % THINKING_PHRASES.length), 1700);
+    return () => clearInterval(id);
+  }, []);
+  return <span class="thinking"><span class="thinking-spin" aria-hidden="true" />{THINKING_PHRASES[i]}</span>;
+}
 
 export function Card({ children, class: cls = '', className = '', ...rest }: { children?: ComponentChildren } & Div) {
   return <div class={`card ${cls} ${className}`} {...rest}>{children}</div>;
