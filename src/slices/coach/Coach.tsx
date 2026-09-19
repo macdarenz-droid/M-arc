@@ -17,6 +17,7 @@ import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
+import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -62,6 +63,17 @@ export function Coach() {
           <span>Easier week until {formatDay(deload.value.to)}. Targets in Train are about {Math.round(deload.value.loadFactor * 100)}% of your usual.</span>
           <Button variant="quiet" size="sm" onClick={() => { endDeload(); showToast('Back to normal targets'); }}>End</Button>
         </div>
+      )}
+
+      {remoteEnabled.value && (
+        <Card class="card-quiet">
+          <div class="row-between"><div class="eyebrow">From the coach, online</div>{explanation.value && <span class="hint">{explanation.value.model.replace('claude-', '')}</span>}</div>
+          {explanation.value?.summary
+            ? <p class="small" style={{ marginTop: 6 }}>{explanation.value.summary}</p>
+            : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
+          {!explanation.value && <Button size="sm" style={{ marginTop: 8 }} disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? 'Asking…' : 'More from the coach'}</Button>}
+          {explanation.value && explanation.value.rejected > 0 && <p class="hint" style={{ marginTop: 6 }}>{explanation.value.rejected} line{explanation.value.rejected === 1 ? '' : 's'} left out for using a number not in your data.</p>}
+        </Card>
       )}
 
       <Section title="Suggestions" aside={open.length ? <span class="small muted">{open.length}</span> : undefined}>
@@ -133,6 +145,15 @@ export function Coach() {
   );
 }
 
+/** The remote explainer's line for one insight or suggestion, when it exists. */
+function OnlineNote({ id }: { id: string }) {
+  if (!remoteEnabled.value) return null;
+  const text = explanation.value?.items[id];
+  if (text) return <Card class="card-quiet"><div class="eyebrow">From the coach, online</div><p class="small" style={{ marginTop: 4 }}>{text}</p></Card>;
+  if (explanation.value) return null;
+  return <Button size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? 'Asking…' : 'More from the coach'}</Button>;
+}
+
 function Evidence({ cards }: { cards: PrincipleCard[] }) {
   if (!cards.length) return null;
   return (
@@ -166,6 +187,7 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
           <div><span>Means</span><span>{insight.means}</span></div>
           <div><span>Do next</span><span>{insight.action}</span></div>
         </div>
+        <OnlineNote id={insight.id} />
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
         {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
         <Evidence cards={insight.evidence} />
@@ -180,6 +202,7 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
       <div class="stack">
         <div class="row"><Chip tone="accent">{KIND_LABEL[sg.kind]}</Chip><Chip>{CONFIDENCE_LABEL[sg.confidence]}</Chip></div>
         <p class="small">{sg.summary}</p>
+        <OnlineNote id={sg.id} />
         {sg.why.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Why</div><div class="stack-sm">{sg.why.map((line, i) => <p key={i} class="small muted">{line}</p>)}</div></div>}
         {sg.changes.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>What changes</div><div class="list">{sg.changes.map((line, i) => <Row key={i}><span class="small">{line}</span></Row>)}</div></div>}
         <Evidence cards={sg.evidence} />

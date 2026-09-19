@@ -17,6 +17,7 @@ src/
   app/       shell, bottom nav router, shared selectors, toast
   slices/    today, workout (splits, live session), history (+stats), body, coach, settings
 tests/       vitest, pure logic only
+proxy/       Cloudflare Worker holding the Anthropic key for the optional remote explainer (own tests)
 ```
 
 Rules of thumb:

@@ -9,7 +9,9 @@ Version 37 is a ground-up rebuild of the previous single-file app into slices. E
 - **Coach**: plain-words insights (recovery, progress, balance, focus, consistency, data), a training goal, a weekly schedule and coaching cues.
 - **History**: calendar, session log with edit and delete, weekly stats, exercise trends and records.
 - **Today**: what is scheduled, streak, recovery at a glance, the top insight and a daily quote.
-- **Settings**: five themes, units, rest, reminders, haptics, profile, Health Connect, backup and restore.
+- **Settings**: five themes, units, rest, reminders, haptics, profile, Health Connect, backup and restore, and the optional online coach.
+
+The coach works out everything on the phone from what you log and never applies a suggestion by itself. An optional online mode, off by default, sends only the coach's findings to your own small proxy (see `proxy/README.md`) for fuller wording. Design: `docs/COACH_BRAIN.md`. Evidence: `docs/RESEARCH.md`.
 
 Your history from the previous version (localStorage key `dailyTrackerPremium`) is imported automatically on first launch. The old key is never modified.
 

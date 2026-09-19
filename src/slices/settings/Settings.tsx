@@ -13,6 +13,8 @@ import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { resetCoachMemory } from '../coach/apply';
 import { WEEKDAYS } from '@/core/models';
+import { currentPayload } from '../coach/remote';
+import { checkProxy } from '@/brain/coach/explainer';
 
 export const APP_VERSION = '37.0.0';
 
@@ -20,6 +22,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const s = state.value;
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const setCoach = (patch: Partial<AppState['coach']>) => update(x => ({ ...x, coach: { ...x.coach, ...patch } }));
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
@@ -103,6 +107,17 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
 
+        <Section title="Coach online">
+          <Card class="stack-sm">
+            <Row trailing={<Toggle checked={s.coach.remoteExplainer} onChange={v => setCoach({ remoteExplainer: v })} label="Richer explanations" />}><span class="small">Richer explanations</span><div class="hint">Off by default. When on, tapping "More from the coach" sends the coach's findings to your own proxy and Claude for fuller wording. Never your sessions, name or measurements. About a third of a cent a time.</div></Row>
+            <Field label="Proxy address" hint="From proxy/README.md: your Cloudflare Worker URL"><input type="url" inputMode="url" placeholder="https://marc-coach.example.workers.dev" value={s.coach.explainerUrl} onInput={e => setCoach({ explainerUrl: (e.target as HTMLInputElement).value.trim() })} /></Field>
+            <div class="row">
+              <Button size="sm" onClick={() => setPreviewOpen(true)}>Preview what is sent</Button>
+              <Button size="sm" disabled={!s.coach.explainerUrl} onClick={async () => { const r = await checkProxy(s.coach.explainerUrl); showToast(r.message); }}>Check connection</Button>
+            </div>
+          </Card>
+        </Section>
+
         <Section title="Your data">
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
@@ -114,6 +129,23 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
         <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><span class="hint">Version {APP_VERSION}</span></div>
+      </div>
+      {previewOpen && <PayloadPreview onClose={() => setPreviewOpen(false)} />}
+    </Sheet>
+  );
+}
+
+/** Exactly what the remote explainer would send right now, so the choice is informed. */
+function PayloadPreview({ onClose }: { onClose: () => void }) {
+  const payload = currentPayload();
+  const text = JSON.stringify(payload, null, 1);
+  const kb = Math.round((new TextEncoder().encode(text).length / 1024) * 10) / 10;
+  return (
+    <Sheet title="What is sent" onClose={onClose}>
+      <div class="stack">
+        <p class="small">This is the whole message, {kb} KB. It has your findings and suggestions with their numbers, exercise and muscle names, your goal and unit, and the research cards they rest on. It has no sessions, no name, no body weight or height, no device details beyond a random id for daily limits.</p>
+        <pre class="small" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 360, overflow: 'auto', background: 'var(--surface-2)', padding: 12, borderRadius: 'var(--radius-md)' }}>{text}</pre>
+        <Button onClick={onClose}>Close</Button>
       </div>
     </Sheet>
   );

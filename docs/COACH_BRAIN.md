@@ -210,8 +210,16 @@ the cases a single history cannot.
    the old `coach/rules.ts` retired. **Done.** Every insight and
    suggestion shows the research cards it rests on with their rating.
    Verified with the five-theme visual gate.
-3. Cloudflare Worker proxy, remote explainer with validator and cache,
-   settings toggle with a preview of what is sent.
+3. Cloudflare Worker proxy (`proxy/`), the app-side explainer
+   (`brain/coach/explainer.ts`, `slices/coach/remote.ts`) with the number
+   validator and a content-keyed cache, and the opt-in in Settings with a
+   preview of exactly what is sent and a connection check. **Done.** The
+   proxy validates shape and size, refuses anything personal, rate-limits
+   per device (six a minute) and, with a KV namespace, caps per device and
+   in total per day. It calls Haiku 4.5 through the official SDK with a
+   cached fixed system prompt and a JSON schema for the reply. Deploy
+   steps are in `proxy/README.md`. A live test runs only when
+   `ANTHROPIC_API_KEY` is present in the environment.
 4. Backtest harness and calibration on the user's history.
 
 ## Decisions log
@@ -230,6 +238,8 @@ the cases a single history cannot.
 | 2026-09-19 | One dismissal hides a suggestion for three days; a second suppresses it until the user resets coach memory in Settings. |
 | 2026-09-19 | Accepted suggestions have per-kind cooldowns (an easier week: six weeks) so they do not re-propose themselves. |
 | 2026-09-19 | Smart reminders turn on when a learned schedule is accepted and reminders are already enabled; never on their own. |
+| 2026-09-19 | The remote explainer fires only on a tap, one call per report content, cached in the browser. Any line whose numbers are not in the report is dropped, and the app says how many were dropped. |
+| 2026-09-19 | The proxy refuses payloads carrying sessions, profile fields or session ids, so a modified client cannot leak them through it. |
 
 ## Non-goals
 

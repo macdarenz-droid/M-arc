@@ -149,10 +149,14 @@ export interface CoachState {
   deload: { from: string; to: string; loadFactor: number; effortCap: 'easy' | 'ideal' } | null;
   /** Send findings to the remote explainer for richer wording. Off by default. */
   remoteExplainer: boolean;
+  /** The user's own proxy, e.g. https://marc-coach.example.workers.dev. Empty until set. */
+  explainerUrl: string;
+  /** Random id for per-device quotas at the proxy. Not tied to anything personal. */
+  deviceId: string;
 }
 
 export function emptyCoach(): CoachState {
-  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false };
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: '', deviceId: '' };
 }
 
 export interface AppState {
