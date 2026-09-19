@@ -1,0 +1,217 @@
+# The coach brain
+
+M/ARC's coaching intelligence is two layers with one contract between
+them. Layer 1 runs on the phone, offline, and produces facts and suggested
+actions as structured data. Layer 2 turns that data into plain, warm
+English, offline from templates and, when the user opts in, through a
+small hosted language model. Every claim either layer makes traces back to
+a card in `docs/RESEARCH.md`.
+
+```
+ sessions[] (marc.state.v1)
+        │
+        ▼
+ ┌──────────────────────── Layer 1: brain (pure TypeScript, on device) ────────────────────────┐
+ │  detectors ──► findings      (facts: numbers, window, evidence, confidence, principle refs)  │
+ │  planners  ──► proposals     (actions: schedule, today's plan, swaps, splits, load, deload)  │
+ └────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                              │  FindingsReport (JSON, versioned)
+                                              ▼
+ ┌──────────────────────── Layer 2: coach (words) ──────────────────────────────────────────────┐
+ │  templates (always, offline, instant)   │   remote explainer (opt-in, event-driven, cached)  │
+ │  notifications / nudges (templates only)│   Claude Haiku 4.5 behind a Cloudflare Worker       │
+ └─────────────────────────────────────────┴────────────────────────────────────────────────────┘
+                                              │
+                                              ▼
+                       Coach screen · Today card · Suggestions inbox · local notifications
+```
+
+## Why this shape
+
+- **Layer 1 is statistics, not a trained model.** One user has a few
+  hundred sessions and no labels. Deterministic statistics with evidence
+  gates are more accurate here than anything learned, run in milliseconds,
+  are unit-testable, and explain themselves. Nothing to download.
+- **The language model only writes; it never decides.** Detection and
+  planning stay deterministic so plans can be tested for correctness
+  (every muscle covered, no muscle over the band, focus muscles hit twice)
+  and so the app works fully offline. A model that designed plans would
+  invent exercises and produce set counts that don't add up.
+- **Only the report leaves the device.** Never raw sets, never identity.
+  That keeps tokens tiny and privacy simple.
+- **Suggest, never control.** Every proposal goes through an inbox the
+  user accepts or dismisses. Accepting writes state through the normal
+  `update()` path. Nothing changes on its own.
+
+## What already existed
+
+v37 shipped most of Layer 1 in `src/brain/`: role-weighted muscle
+exposure, recovery windows by effort with personal widening,
+recency-weighted trend regression, plateau detection over eight sessions,
+double-progression load suggestions, push/pull and upper/lower balance,
+effort drift, weekly summaries and records, with 39 tests. The one
+structural problem was `coach/rules.ts`, which mixed fact detection and
+English prose in the same objects. This work cuts that seam: rules emit
+findings, and words are produced elsewhere.
+
+## Layer 1: detectors
+
+Each detector is a pure function over `Session[]` plus context, and emits
+zero or more `Finding` objects. A finding carries a `kind`, a `subject`
+(exercise, muscle, muscle group or split), `metrics` (numbers only),
+a `window`, `evidence` (session ids and days), a `confidence`, a
+`severity` and the `principles` it rests on. Detectors only speak when they
+clear a minimum-evidence gate. Kinds and the principles they may cite are
+enumerated in `src/brain/coach/contract.ts`.
+
+| Kind | What it measures | Gate |
+|---|---|---|
+| `volume_drop`, `volume_spike` | Effective sets for a muscle group over the last 3 weeks against the trailing 8-week median | ≥ 6 weeks of data, ≥ 3 active weeks in baseline |
+| `weekly_sets_out_of_band` | Weekly effective sets far outside a wide band | ≥ 3 consecutive weeks |
+| `uncovered_muscle` | A muscle the goal implies with ~0 effective sets for ≥ 3 weeks | ≥ 3 active weeks |
+| `plateau`, `decline`, `progressing` | Existing trend and plateau logic, exposed as facts | 7 of last 8 sessions |
+| `under_recovered` | Recovery window by effort, scaled by volume vs. baseline, widened by history | Any |
+| `effort_missing`, `effort_drift_*`, `effort_mismatch`, `rep_range_mismatch` | Effort coverage, drift, and fit to the goal's bands | Existing gates |
+| `redundant_exercises` | Same primary muscle and pattern twice in one split | Any |
+| `balance_imbalance` | Existing balance logic | Existing gates |
+| `long_gap` | Days since last session | ≥ 7 days |
+| `habit_pattern` | Per-weekday training probability and typical start time, recency-weighted over 10–12 weeks, with drift detection | ≥ 6 weeks, probability ≥ 0.6 |
+| `low_sleep_readiness` | Health Connect sleep below the user's own norm | Sleep data present |
+| `record`, `first_sessions` | Records; baseline state with too little data | — |
+
+## Layer 1: planners
+
+Planners take findings plus state and emit `Proposal` objects. A proposal
+carries a `kind`, an `apply` payload the app can write directly, the
+finding ids it rests on, `principles`, `confidence` and a `dismissKey`.
+
+- **`schedule`** from `habit_pattern`: "you usually train Wed and Thu
+  around 6 pm". Accepting fills the existing `schedule` map and drives the
+  existing reminder scheduler. An opt-in smart-reminders mode times the
+  nudge from the learned start time, about an hour before.
+- **`today_plan`**: scores every split for today from per-muscle recovery,
+  the schedule, weekly sets vs. baseline and focus targets. Offers a swap
+  or a modified version of the scheduled split, listing exercises to drop
+  or replace and replacements from the same movement pattern.
+- **`exercise_swap`** for a plateaued lift, from the same pattern.
+- **`add_exercise`** for an uncovered muscle or a balance gap.
+- **`split_modify`** for redundancy, balance or focus.
+- **`split_new`**: a deterministic constraint solver. Inputs: goal, days per
+  week (learned or chosen), focus muscles, equipment actually logged,
+  exercises actually used. Structure by day count, fill by movement pattern
+  so every major muscle is covered, weekly effective sets per muscle inside
+  the band, focus muscles get extra sets over ≥ 2 days, ≥ 2 days between
+  direct hits of the same muscle, prefer what the user already uses. The
+  payload reports per-muscle weekly totals as facts.
+- **`load_next`**: the existing progression suggestion, as a proposal.
+- **`rest_default`**: two to three minutes on compounds for a strength goal.
+- **`deload_week`**: only when several lifts decline together and effort at
+  the same load rises. Never by calendar.
+
+## The contract
+
+`src/brain/coach/contract.ts` defines `FindingsReport`, `Finding`,
+`Proposal` and the kind enumerations, plus `PRINCIPLES_BY_FINDING` and
+`PRINCIPLES_BY_PROPOSAL`, which say which cards each kind may cite. A test
+asserts every referenced principle exists and every kind has at least one.
+The report is versioned. `dataQuality` says how much history there is and
+whether the brain considers it insufficient.
+
+## Layer 2: templates
+
+`src/brain/coach/templates.ts` (Phase 2) maps each kind to a few sentence
+variants in the app's existing voice: what we noticed, what it means, what
+to do. Numbers are filled from `metrics`. Variants rotate deterministically
+so the same finding does not read identically twice. Every notification
+body comes from here, because nudges are scheduled ahead of time with no
+network.
+
+## Layer 2: remote explainer
+
+Opt-in. Model: Claude Haiku 4.5, configured as a string, with Sonnet 5 as
+the documented upgrade. It receives the report, the user's goal and unit,
+and only the principle cards the report's kinds may cite. The system prompt
+forbids introducing any number not present in the report. A validator
+rejects any reply containing a number absent from the report or the cards
+and falls back to the template text.
+
+Triggers: a session finishing with a changed findings set, the weekly
+review, or the user opening a proposal or tapping "explain more". Never on
+screen refresh. Replies are cached by a hash of the report content. The
+key lives in a Cloudflare Worker with a per-device daily cap; the app never
+holds it.
+
+| Model | Per explanation | Per user per year at ~4 calls/week |
+|---|---|---|
+| Haiku 4.5 | ≈ $0.003 | ≈ $0.60 |
+| Sonnet 5 | ≈ $0.006 | ≈ $1.30 |
+| Opus 5 | ≈ $0.016 | ≈ $3.30 |
+
+Estimates for ~1,900 input and ~250 output tokens before prompt caching,
+at September 2026 list prices. Caching lowers the system-prompt portion by
+about 90 percent once the prefix exceeds the model's minimum cacheable size.
+
+## Nudges and platform limits
+
+Android does not run the app's JavaScript in the background. The app
+already schedules local notifications eight weeks ahead on every open. The
+learned schedule plugs into that mechanism, rescheduled on each app open
+and session finish; today's nudge is cancelled when a session is logged.
+On the web PWA there is no background scheduling without a push server, so
+the browser shows the nudge in-app on open only.
+
+Rules, from `habit_formation_and_cues`: at most one nudge a day, none on a
+day already trained, a habit day that goes cold three weeks running is
+retired quietly, one tap turns nudges off, and copy never shames a broken
+streak. Smart reminders stay off until the user accepts a learned schedule.
+
+## Suggestions inbox
+
+A list of open proposals with accept and dismiss. Accept applies the
+payload through `update()`. Dismissing the same `dismissKey` twice
+suppresses that proposal kind for that subject until the underlying
+findings change materially. Dismissals are stored in state.
+
+## Privacy
+
+Layer 1 never leaves the device. The remote explainer receives the report
+and principle cards only: exercise names, muscle names, numbers, dates. No
+profile name, no body measurements, no raw sets. The user can read exactly
+what would be sent before turning the remote explainer on.
+
+## Backtesting
+
+`scripts/backtest.ts` (Phase 4) replays detectors day by day over a history
+and reports when each finding would have fired. On the user's own history
+it checks that plateau findings precede real stalls and that
+under-recovered findings precede weaker sessions. This is calibration on
+one person, not proof, and the report says so. Synthetic histories cover
+the cases a single history cannot.
+
+## Phases
+
+0. Research file, principle cards, this document, the contract. **Done.**
+1. Detectors and planners in `src/brain/coach/`, existing rules migrated to
+   emit findings, existing tests kept green, new tests per kind.
+2. Template renderer; Coach and Today screens read from the report;
+   suggestions inbox; learned-schedule nudges.
+3. Cloudflare Worker proxy, remote explainer with validator and cache,
+   settings toggle with a preview of what is sent.
+4. Backtest harness and calibration on the user's history.
+
+## Decisions log
+
+| Date | Decision |
+|---|---|
+| 2026-09-19 | Detection layer is deterministic statistics extending `src/brain/`, not a trained model. |
+| 2026-09-19 | Language model never designs plans; it explains deterministic output. |
+| 2026-09-19 | Remote model: Claude Haiku 4.5, Sonnet 5 as upgrade path. Key held only in a Cloudflare Worker. |
+| 2026-09-19 | Smart reminders default off until a learned schedule is accepted. |
+| 2026-09-19 | Deloads are signal-driven, never calendar-driven (see `deload_evidence`). |
+| 2026-09-19 | Citation verification via search-index records; re-verify against full text when the network allows. |
+
+## Non-goals
+
+No injury prediction. No diet, calorie or supplement advice. No chat
+interface in v1. No on-device language model in v1; the explainer
+interface is pluggable if that changes.

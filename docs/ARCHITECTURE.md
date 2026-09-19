@@ -82,3 +82,13 @@ The engine writes the tokens as CSS custom properties per `[data-theme]`, sets `
 - **Exercise**: append to `data/exercises.json` (id, name, equipment, primary/secondary/stabilizers muscle ids, aliases, pattern). Duration and conditioning exercises are listed in `core/exercises.ts`.
 - **Coach rule**: add an object to `RULES` in `brain/coach/rules.ts` and a test.
 - **Screen**: add a folder under `slices/`, a tab in `app/router.ts` and a case in `app/App.tsx`.
+
+## Coach brain
+
+The coaching intelligence is being rebuilt as two layers with one contract
+between them: the brain (`src/brain/`, deterministic, offline) emits a
+`FindingsReport` of findings and proposals; the coach turns it into words,
+offline from templates or through an opt-in remote explainer. Design:
+[docs/COACH_BRAIN.md](COACH_BRAIN.md). Evidence base:
+[docs/RESEARCH.md](RESEARCH.md), shipped as `src/data/principles.json`.
+Contract: `src/brain/coach/contract.ts`.
