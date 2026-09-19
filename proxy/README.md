@@ -115,8 +115,12 @@ tool (Claude Sonnet 5, `web_search_20260209`), capped at 3 searches per
 question and used only when the prompt judges the question needs a
 current or specific fact checked rather than recited from memory: $10 per
 1,000 searches (about a cent each), on top of the normal per-call cost,
-plus token cost for whatever it reads. The Worker itself runs inside
-Cloudflare's free plan.
+plus token cost for whatever it reads. Search results are restricted to a
+fixed list of research and public-health domains (`ASK_WEB_SEARCH_ALLOWED_DOMAINS`
+in `src/anthropic.ts` — nih.gov, cdc.gov, health.gov, who.int, mayoclinic.org,
+examine.com, acsm.org, nsca.com, and two sports-medicine journals), matching
+the evidence bar the rest of this app already holds itself to. The Worker
+itself runs inside Cloudflare's free plan.
 
 ## Develop
 

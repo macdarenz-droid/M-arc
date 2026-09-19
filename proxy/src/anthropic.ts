@@ -200,6 +200,20 @@ export const callImportProgramme: CallImportProgramme = async (payload, env) => 
  */
 const ASK_WEB_SEARCH_MAX_USES = 3;
 
+/**
+ * This app's whole design principle is grounding claims in real evidence
+ * (see docs/RESEARCH.md, principles.json) — an unrestricted web search
+ * would let one open question pull from whatever ranks highest that day,
+ * including a low-quality blog, for exactly the kind of nutrition or
+ * training claim the rest of the app is careful about. Scoped instead to
+ * research and public-health bodies plus one respected research-summary
+ * site (examine.com), the same evidence bar `/ask`'s own prompt already
+ * asks the model to hold itself to (rule 5: say when something is
+ * contested rather than reciting a single source as settled). Subdomains
+ * are covered automatically, so "nih.gov" also covers pubmed.ncbi.nlm.nih.gov.
+ */
+export const ASK_WEB_SEARCH_ALLOWED_DOMAINS = ['nih.gov', 'cdc.gov', 'health.gov', 'who.int', 'mayoclinic.org', 'examine.com', 'acsm.org', 'nsca.com', 'bjsm.bmj.com', 'jissn.biomedcentral.com'];
+
 export const callAsk: CallAsk = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 70_000 });
   const model = modelFor(env, env.MODEL_ASK);
@@ -208,7 +222,7 @@ export const callAsk: CallAsk = async (payload, env) => {
     max_tokens: 2500,
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
-    tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES }],
+    tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
