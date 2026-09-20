@@ -71,9 +71,10 @@ const SplitDraftSchema = z.object({
   focus: z.array(MuscleIdSchema).max(2),
   exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
 });
+const MAX_SPLIT_DRAFTS = 4;
 const BuildSplitSchema = z.object({
   answer: z.string(),
-  splitDraft: SplitDraftSchema.nullable(),
+  splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
 });
 
 /**
@@ -270,11 +271,11 @@ export const callBuildSplit: CallBuildSplit = async (payload, env) => {
   const model = modelFor(env, env.MODEL_BUILD_SPLIT);
   const response = await client.messages.parse({
     model,
-    max_tokens: 1500,
+    max_tokens: 2500,
     system: [{ type: 'text', text: SPLIT_BUILDER_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: buildSplitMessages(payload),
     output_config: { format: zodOutputFormat(BuildSplitSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { answer: stripFormattingLeak(parsed.answer), splitDraft: parsed.splitDraft, model: response.model, usage: usageOf(response) };
+  return { answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, model: response.model, usage: usageOf(response) };
 };

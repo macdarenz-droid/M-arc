@@ -28,7 +28,7 @@ const SPLIT_BUILDER_SUGGESTIONS = [
   'I want a 3-day split for muscle growth',
 ];
 
-type SplitBubble = SplitBuilderTurn & { draft?: SplitDraft | null; applied?: boolean };
+type SplitBubble = SplitBuilderTurn & { drafts?: SplitDraft[]; applied?: boolean[] };
 
 function SplitDraftAction({ draft, onApplied }: { draft: SplitDraft; onApplied: () => void }) {
   const label = draft.action === 'create' ? `Create split: ${draft.name}` : `Update ${draft.name} with these changes`;
@@ -70,7 +70,7 @@ export function SplitBuilderSheet({ onClose }: { onClose: () => void }) {
     setSending(true);
     try {
       const r = await requestSplitBuilderAnswer(payload, s.customExercises, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withMessage, { role: 'assistant', text: r.answer, draft: r.draft }]);
+      if (r.ok) setHistory([...withMessage, { role: 'assistant', text: r.answer, drafts: r.drafts, applied: r.drafts.map(() => false) }]);
       else setError(r.error);
     } finally {
       setSending(false);
@@ -80,14 +80,18 @@ export function SplitBuilderSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title={`Build a split with ${COACH_NAME}`} onClose={onClose}>
       <div class="ask-thread" ref={threadRef}>
-        {!history.length && <p class="small muted">Describe what you want — which muscles, or adding to or changing an existing split — and {COACH_NAME} will put one together from your real exercise list. Nothing changes until you tap the button on a proposal.</p>}
+        {!history.length && <p class="small muted">Describe what you want — which muscles, or adding to or changing an existing split — and {COACH_NAME} will put one together from your real exercise list. Describing several splits at once gets you a button for each. Nothing changes until you tap one.</p>}
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
             {turn.role === 'assistant' ? renderChatBody(turn.text, IconDumbbell) : turn.text}
-            {turn.role === 'assistant' && turn.draft && (turn.applied
-              ? <p class="hint" style={{ marginTop: 8 }}>Applied.</p>
-              : <SplitDraftAction draft={turn.draft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, applied: true } : t)))} />)}
+            {turn.role === 'assistant' && turn.drafts?.map((draft, di) => (
+              <div key={di}>
+                {turn.applied?.[di]
+                  ? <p class="hint" style={{ marginTop: 8 }}>Applied: {draft.name}.</p>
+                  : <SplitDraftAction draft={draft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, applied: (t.applied ?? []).map((a, ai) => (ai === di ? true : a)) } : t)))} />}
+              </div>
+            ))}
           </div>
         ))}
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}

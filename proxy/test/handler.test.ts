@@ -7,7 +7,7 @@ import { ASK_SYSTEM_PROMPT, askMessages } from '../src/promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from '../src/promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from '../src/promptImport';
 import { SPLIT_BUILDER_SYSTEM_PROMPT, buildSplitMessages } from '../src/promptSplitBuilder';
-import type { AskPayload, BuildSplitPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+import type { AskPayload, BuildSplitPayload, BuildSplitReply, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
 
 /** The smallest valid PNG there is (1x1, transparent) — enough to exercise shape checks without a real photo. */
 const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
@@ -80,12 +80,12 @@ const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
 
 const stubBuildSplit = async () => ({
   answer: 'Added Face Pull to Push for rear-delt balance.',
-  splitDraft: { action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] },
+  splitDrafts: [{ action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }],
   model: 'claude-sonnet-5', usage: { inputTokens: 2200, outputTokens: 90, cacheReadTokens: 1800 },
 });
-const buildSplitRouteWith = (call: typeof stubBuildSplit): RouteConfig => ({
+const buildSplitRouteWith = (call: () => Promise<BuildSplitReply>): RouteConfig => ({
   path: '/build-split', maxBody: MAX_BUILD_SPLIT_BODY_BYTES, validate: validateBuildSplitPayload,
-  async call() { const out = await call(); return { answer: out.answer, splitDraft: out.splitDraft, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { answer: out.answer, splitDrafts: out.splitDrafts, model: out.model, usage: out.usage }; },
 });
 
 const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
@@ -370,10 +370,26 @@ describe('handler: multiple routes in one Worker', () => {
   it('answers /build-split with a draft the app must still re-validate before applying it', async () => {
     const res = await handle(post('/build-split', buildSplitPayload()), env());
     expect(res.status).toBe(200);
-    const body = await res.json() as { answer: string; splitDraft: { action: string; splitId: string | null; exercises: Array<{ exerciseId: string; sets: number }> } | null };
+    const body = await res.json() as { answer: string; splitDrafts: Array<{ action: string; splitId: string | null; exercises: Array<{ exerciseId: string; sets: number }> }> };
     expect(body.answer).toContain('Face Pull');
-    expect(body.splitDraft).toMatchObject({ action: 'modify', splitId: 'split_push' });
-    expect(body.splitDraft!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_face_pull']);
+    expect(body.splitDrafts).toHaveLength(1);
+    expect(body.splitDrafts[0]).toMatchObject({ action: 'modify', splitId: 'split_push' });
+    expect(body.splitDrafts[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_face_pull']);
+  });
+
+  it('a single message describing several splits at once gets back one draft per split, not just the first', async () => {
+    const handleMulti = createHandler([buildSplitRouteWith(async () => ({
+      answer: 'Here are both — Push and Pull.',
+      splitDrafts: [
+        { action: 'create' as const, splitId: null, name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] },
+        { action: 'create' as const, splitId: null, name: 'Pull', focus: ['lats'], exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 3 }] },
+      ],
+      model: 'claude-sonnet-5', usage: { inputTokens: 2400, outputTokens: 140, cacheReadTokens: 1800 },
+    }))]);
+    const res = await handleMulti(post('/build-split', { ...buildSplitPayload(), message: 'Push day: bench press. Pull day: lat pulldown.' }), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { splitDrafts: Array<{ name: string }> };
+    expect(body.splitDrafts.map(d => d.name)).toEqual(['Push', 'Pull']);
   });
 
   it('keeps /explain, /tag-exercise, /notes, /ask, /identify-exercise, /import-programme and /build-split independent: one 400 does not affect the others', async () => {
@@ -509,6 +525,8 @@ describe('prompts', () => {
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('never invent one, never use an id not on it');
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('Lean muscle: 6-12 reps');
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('ask one or two short, specific questions first');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('"splitDrafts" is a list, not a single slot');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('put one entry per split in the same reply');
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('"action": "modify"');
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('the app replaces the list with exactly what you send');
     expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('at most 2 muscle ids');

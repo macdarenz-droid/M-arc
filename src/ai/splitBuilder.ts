@@ -61,9 +61,9 @@ export interface SplitDraft {
 }
 
 interface SplitDraftReply { action?: unknown; splitId?: unknown; name?: unknown; focus?: unknown; exercises?: unknown }
-interface BuildSplitReply { answer?: unknown; splitDraft?: unknown; error?: unknown }
+interface BuildSplitReply { answer?: unknown; splitDrafts?: unknown; error?: unknown }
 
-export type BuildSplitResult = { ok: true; answer: string; draft: SplitDraft | null } | { ok: false; error: string };
+export type BuildSplitResult = { ok: true; answer: string; drafts: SplitDraft[] } | { ok: false; error: string };
 
 /** Keeps only exercises the app actually recognizes, silently — never shown as real when the app can't find it. */
 function knownExercises(v: unknown, custom: Exercise[]): Array<{ exerciseId: string; sets: number }> {
@@ -95,7 +95,7 @@ function parseDraft(raw: unknown, knownSplitIds: Set<string>, custom: Exercise[]
   return { action, splitId: action === 'create' ? null : splitId, name, focus, exercises };
 }
 
-/** Ask. A splitDraft in the reply is re-validated against the app's own catalog and the splits this exact payload named — nothing from the network is trusted further than that. */
+/** Ask. Each splitDraft in the reply is re-validated against the app's own catalog and the splits this exact payload named — nothing from the network is trusted further than that. A single message can describe several splits at once, so this is a list: usually one entry, sometimes several, each independently actionable (and independently droppable if it doesn't hold up to validation). */
 export async function requestSplitBuilderAnswer(payload: BuildSplitPayload, custom: Exercise[], opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<BuildSplitResult> {
   if (!payload.message) return { ok: false, error: 'Type a message first.' };
   const result = await postJson<BuildSplitPayload, BuildSplitReply>(payload, { url: opts.url, path: '/build-split', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 45_000 });
@@ -103,6 +103,7 @@ export async function requestSplitBuilderAnswer(payload: BuildSplitPayload, cust
   const answer = typeof result.body.answer === 'string' ? result.body.answer.trim() : '';
   if (!answer) return { ok: false, error: 'The coach sent back something we could not read.' };
   const knownSplitIds = new Set(payload.splits.map(s => s.id));
-  const draft = parseDraft(result.body.splitDraft, knownSplitIds, custom);
-  return { ok: true, answer, draft };
+  const raw = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
+  const drafts = raw.map(d => parseDraft(d, knownSplitIds, custom)).filter((d): d is SplitDraft => d !== null);
+  return { ok: true, answer, drafts };
 }

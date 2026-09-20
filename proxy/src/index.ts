@@ -71,7 +71,7 @@ const buildSplitRoute: RouteConfig = {
   validate: validateBuildSplitPayload,
   async call(payload, env: WorkerEnv) {
     const out = await callBuildSplit(payload as BuildSplitPayload, env);
-    return { answer: String(out.answer).trim(), splitDraft: out.splitDraft, model: out.model, usage: out.usage };
+    return { answer: String(out.answer).trim(), splitDrafts: out.splitDrafts, model: out.model, usage: out.usage };
   },
 };
 

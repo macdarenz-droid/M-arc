@@ -212,7 +212,7 @@ export interface BuildSplitPayload {
   message: string;
 }
 
-/** Present only once the conversation has enough to propose something concrete; absent (null) while the model is still asking a clarifying question. Every exerciseId must be re-validated against the real catalog client-side before it can be applied — this reply is trusted no further than any other model output in this app. */
+/** One concrete split proposal. Every exerciseId must be re-validated against the real catalog client-side before it can be applied — this reply is trusted no further than any other model output in this app. */
 export interface SplitDraftReply {
   action: 'create' | 'modify';
   /** Must name an id from the payload's own `splits` when action is "modify"; null when action is "create". */
@@ -224,7 +224,8 @@ export interface SplitDraftReply {
 
 export interface BuildSplitReply {
   answer: string;
-  splitDraft: SplitDraftReply | null;
+  /** One entry per split the message actually proposes — several when the person described several splits in one message, empty while the model is still asking a clarifying question. */
+  splitDrafts: SplitDraftReply[];
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }

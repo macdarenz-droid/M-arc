@@ -45,58 +45,86 @@ describe('requestSplitBuilderAnswer', () => {
   it('accepts a real, catalog-only draft that modifies the named existing split', async () => {
     const fetchImpl = reply(200, {
       answer: 'Added Face Pull for rear-delt balance.',
-      splitDraft: { action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] },
+      splitDrafts: [{ action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }],
     });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.answer).toBe('Added Face Pull for rear-delt balance.');
-    expect(r.draft).toEqual({ action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] });
+    expect(r.drafts).toEqual([{ action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }]);
   });
 
-  it('a null splitDraft (still clarifying) is a normal, successful answer', async () => {
-    const fetchImpl = reply(200, { answer: 'Which muscles do you want this split to focus on?', splitDraft: null });
+  it('an empty splitDrafts list (still clarifying) is a normal, successful answer', async () => {
+    const fetchImpl = reply(200, { answer: 'Which muscles do you want this split to focus on?', splitDrafts: [] });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, answer: 'Which muscles do you want this split to focus on?', draft: null });
+    expect(r).toEqual({ ok: true, answer: 'Which muscles do you want this split to focus on?', drafts: [] });
+  });
+
+  it('one message describing two splits at once gets back a draft for each, independently applicable', async () => {
+    const fetchImpl = reply(200, {
+      answer: 'Here are both — Push and Pull.',
+      splitDrafts: [
+        { action: 'create', splitId: null, name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] },
+        { action: 'create', splitId: null, name: 'Pull', focus: ['lats'], exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 3 }] },
+      ],
+    });
+    const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.drafts.map(d => d.name)).toEqual(['Push', 'Pull']);
+  });
+
+  it('when one of several drafts fails validation, the rest still come through — not all-or-nothing', async () => {
+    const fetchImpl = reply(200, {
+      answer: 'ok',
+      splitDrafts: [
+        { action: 'create', splitId: null, name: 'Push', focus: [], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] },
+        { action: 'create', splitId: null, name: 'Empty', focus: [], exercises: [{ exerciseId: 'not_real', sets: 3 }] },
+      ],
+    });
+    const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.drafts.map(d => d.name)).toEqual(['Push']);
   });
 
   it('drops an exercise id the app does not recognize rather than showing it as real, and keeps the rest', async () => {
     const fetchImpl = reply(200, {
       answer: 'ok',
-      splitDraft: { action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_face_pull', sets: 3 }, { exerciseId: 'lib_totally_made_up_exercise', sets: 3 }] },
+      splitDrafts: [{ action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_face_pull', sets: 3 }, { exerciseId: 'lib_totally_made_up_exercise', sets: 3 }] }],
     });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
-    expect(r.draft!.exercises).toEqual([{ exerciseId: 'lib_face_pull', sets: 3 }]);
+    expect(r.drafts[0]!.exercises).toEqual([{ exerciseId: 'lib_face_pull', sets: 3 }]);
   });
 
   it('a draft left with no recognizable exercises at all is not shown as actionable', async () => {
-    const fetchImpl = reply(200, { answer: 'ok', splitDraft: { action: 'modify', splitId: 'split_push', name: 'Push', focus: [], exercises: [{ exerciseId: 'not_real', sets: 3 }] } });
+    const fetchImpl = reply(200, { answer: 'ok', splitDrafts: [{ action: 'modify', splitId: 'split_push', name: 'Push', focus: [], exercises: [{ exerciseId: 'not_real', sets: 3 }] }] });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toMatchObject({ ok: true, draft: null });
+    expect(r).toMatchObject({ ok: true, drafts: [] });
   });
 
   it('a "modify" naming a split id that is not one this payload actually sent is not applied', async () => {
-    const fetchImpl = reply(200, { answer: 'ok', splitDraft: { action: 'modify', splitId: 'split_legs_not_sent', name: 'Push', focus: [], exercises: [{ exerciseId: 'lib_face_pull', sets: 3 }] } });
+    const fetchImpl = reply(200, { answer: 'ok', splitDrafts: [{ action: 'modify', splitId: 'split_legs_not_sent', name: 'Push', focus: [], exercises: [{ exerciseId: 'lib_face_pull', sets: 3 }] }] });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toMatchObject({ ok: true, draft: null });
+    expect(r).toMatchObject({ ok: true, drafts: [] });
   });
 
   it('an invalid focus muscle id is dropped, real ones kept, capped at 2', async () => {
-    const fetchImpl = reply(200, { answer: 'ok', splitDraft: { action: 'create', splitId: null, name: 'Arms', focus: ['biceps', 'not_a_muscle', 'triceps', 'forearms'], exercises: [{ exerciseId: 'lib_hammer_curl', sets: 3 }] } });
+    const fetchImpl = reply(200, { answer: 'ok', splitDrafts: [{ action: 'create', splitId: null, name: 'Arms', focus: ['biceps', 'not_a_muscle', 'triceps', 'forearms'], exercises: [{ exerciseId: 'lib_hammer_curl', sets: 3 }] }] });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
-    expect(r.draft!.focus).toEqual(['biceps', 'triceps']);
+    expect(r.drafts[0]!.focus).toEqual(['biceps', 'triceps']);
   });
 
   it('sets outside 1-6 are clamped, not rejected outright', async () => {
-    const fetchImpl = reply(200, { answer: 'ok', splitDraft: { action: 'create', splitId: null, name: 'Legs', focus: [], exercises: [{ exerciseId: 'lib_leg_press', sets: 20 }, { exerciseId: 'lib_leg_extension', sets: 0 }] } });
+    const fetchImpl = reply(200, { answer: 'ok', splitDrafts: [{ action: 'create', splitId: null, name: 'Legs', focus: [], exercises: [{ exerciseId: 'lib_leg_press', sets: 20 }, { exerciseId: 'lib_leg_extension', sets: 0 }] }] });
     const r = await requestSplitBuilderAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
-    expect(r.draft!.exercises).toEqual([{ exerciseId: 'lib_leg_press', sets: 6 }, { exerciseId: 'lib_leg_extension', sets: 1 }]);
+    expect(r.drafts[0]!.exercises).toEqual([{ exerciseId: 'lib_leg_press', sets: 6 }, { exerciseId: 'lib_leg_extension', sets: 1 }]);
   });
 
   it('rejects an unreadable reply rather than showing something empty', async () => {
