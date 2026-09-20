@@ -116,6 +116,9 @@ export const WEEKDAY_KEYS: readonly WeekdayKey[] = ['sun', 'mon', 'tue', 'wed', 
 /** The person's real weekly schedule today — which split id trains on which day, or null for a rest day. Mirrors the app's own `AppState.schedule`. */
 export type WeekSchedule = Record<WeekdayKey, string | null>;
 
+/** Every day null — the fallback askMessages() (promptAsk.ts) sends the model when an older app build's payload has no `schedule` field at all, rather than treating the whole request as malformed. */
+export const EMPTY_WEEK_SCHEDULE: WeekSchedule = Object.fromEntries(WEEKDAY_KEYS.map(k => [k, null])) as WeekSchedule;
+
 /**
  * The report, plus the conversation so far and the new question. The
  * Worker holds no state between calls — the app resends the whole thing
@@ -132,7 +135,8 @@ export interface AskPayload extends GroundingPayload {
   history: AskTurn[];
   question: string;
   splits: KnownSplit[];
-  schedule: WeekSchedule;
+  /** Optional so an app build from before scheduleDraft shipped (which never sends this) still gets a valid, if schedule-unaware, answer — see EMPTY_WEEK_SCHEDULE and validateAskPayload. The current app always sends a real one. */
+  schedule?: WeekSchedule;
 }
 
 /** What an answer is mainly about, purely to pick a small decorative bullet icon client-side — never shown as text, never used for grounding or validation. */

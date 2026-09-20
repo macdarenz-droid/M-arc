@@ -187,7 +187,11 @@ export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!Array.isArray(history) || history.length > MAX_HISTORY_TURNS || !history.every(isTurn)) return { ok: false, reason: `history must be an array of at most ${MAX_HISTORY_TURNS} turns, each with a role and text.` };
   const splits = raw.splits;
   if (!Array.isArray(splits) || splits.length > MAX_KNOWN_SPLITS || !splits.every(isKnownSplit)) return { ok: false, reason: `splits must be an array of at most ${MAX_KNOWN_SPLITS} known splits.` };
-  if (!isSchedule(raw.schedule)) return { ok: false, reason: 'schedule must have all 7 weekday keys, each a split id or null.' };
+  // Optional, like `preferences`: an app build from before scheduleDraft shipped never sends this
+  // field at all, and a hard requirement here would 400 every single /ask call from that client —
+  // not just a schedule-related one — until it happens to be rebuilt. Missing is accepted and
+  // defaulted (askMessages() in promptAsk.ts); present-but-malformed is still refused outright.
+  if (raw.schedule !== undefined && !isSchedule(raw.schedule)) return { ok: false, reason: 'schedule must have all 7 weekday keys, each a split id or null.' };
   return { ok: true, payload: raw as unknown as AskPayload };
 }
 

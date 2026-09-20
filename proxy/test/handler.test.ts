@@ -200,6 +200,11 @@ describe('ask payload validation', () => {
     expect(validateAskPayload({ ...askPayload(), schedule: { ...emptySchedule, extraDay: null } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), schedule: { ...emptySchedule, mon: 5 } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), schedule: 'nope' })).toMatchObject({ ok: false });
+    // A present-but-malformed schedule is still refused (above); a schedule field missing
+    // entirely is a different case — an app build from before scheduleDraft shipped never sends
+    // this at all, and it must not 400 every /ask call from that client. See EMPTY_WEEK_SCHEDULE.
+    const { schedule: _schedule, ...withoutSchedule } = askPayload();
+    expect(validateAskPayload(withoutSchedule)).toMatchObject({ ok: true });
   });
 });
 
@@ -613,5 +618,11 @@ describe('prompts', () => {
     expect(msgs.at(-1)).toEqual({ role: 'user', content: withHistory.question });
     // Deterministic: same payload, same messages, so the same conversation always renders the same way.
     expect(askMessages(withHistory)).toEqual(msgs);
+  });
+
+  it('ask falls back to an all-rest schedule in the model context when an older client sent no schedule field at all', () => {
+    const { schedule: _schedule, ...withoutSchedule } = askPayload();
+    const msgs = askMessages(withoutSchedule as AskPayload);
+    expect(msgs[0]!.content).toContain('"schedule":{"sun":null,"mon":null,"tue":null,"wed":null,"thu":null,"fri":null,"sat":null}');
   });
 });

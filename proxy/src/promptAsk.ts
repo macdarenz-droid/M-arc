@@ -66,7 +66,7 @@
  * split this whole app already uses for findings and proposals, just
  * applied to a safety signal instead of a training one.
  */
-import type { AskPayload } from './types';
+import { EMPTY_WEEK_SCHEDULE, type AskPayload } from './types';
 import { EXERCISE_CATALOG } from './vocab';
 
 const CATALOG_BLOCK = EXERCISE_CATALOG.join('\n');
@@ -141,7 +141,7 @@ export function askMessages(payload: AskPayload): Array<{ role: 'user' | 'assist
   const context = JSON.stringify({
     goal: payload.goal, unit: payload.unit, today: payload.today, dataQuality: payload.dataQuality,
     findings: payload.findings, proposals: payload.proposals, cards: payload.cards, preferences: payload.preferences ?? [],
-    splits: payload.splits, schedule: payload.schedule,
+    splits: payload.splits, schedule: payload.schedule ?? EMPTY_WEEK_SCHEDULE,
   });
   return [
     { role: 'user', content: `Here is the report to answer from, and the real splits and weekly schedule I have today. Nothing else about this person is available to you.\n${context}` },
