@@ -8,7 +8,7 @@ import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNo
 import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from './promptImport';
-import { EXERCISE_IDS, MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
+import { EXERCISE_IDS, GOAL_IDS, MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
 import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
 
 const ExplanationSchema = z.object({
@@ -69,6 +69,26 @@ const ScheduleDraftSchema = z.object({
   thu: z.string().nullable(), fri: z.string().nullable(), sat: z.string().nullable(),
 });
 
+/**
+ * The general "actions" envelope the intelligence audit's Tier 3 called
+ * for, to replace the two hardcoded draft types (splitDrafts, scheduleDraft
+ * above) with one typed, extensible mechanism — "goal, sets, reminders,
+ * session control... same tap-to-apply, plus diff and undo". This pass
+ * scopes that down to exactly one new action kind, "goal_change": real,
+ * previously-impossible capability (the coach could never propose a goal
+ * change at all), small enough to fully test and verify, and — because
+ * it's a discriminated union on "kind" — a real future action (reminders,
+ * session control) is a new schema member here, not a rewrite of this one
+ * or of splitDrafts/scheduleDraft, which stay exactly as they are; a full
+ * migration of those two is a larger, separate piece of work than this
+ * pass's budget covers. The app renders its own diff ("Currently: X →
+ * Propose: Y") and a one-step undo — see AskSheet.tsx's GoalChangeAction.
+ */
+const GoalChangeActionSchema = z.object({ kind: z.literal('goal_change'), goal: z.enum(GOAL_IDS) });
+const AskActionSchema = z.discriminatedUnion('kind', [GoalChangeActionSchema]);
+/** At most this many actions per reply — a message rarely proposes more than one goal change at once; kept low since this is a big, deliberate personal choice, not routine programming (see promptAsk.ts rule 24). */
+const MAX_ACTIONS_PER_REPLY = 2;
+
 /** Mirrors MAX_STATED_CONSTRAINT_CHARS in src/core/models.ts (app) — a constraint is later sent back merged into "preferences", so it's bound by the same per-fact length the proxy already enforces there (MAX_PREFERENCE_CHARS in handler.ts). */
 const MAX_CONSTRAINT_CHARS = 160;
 /** At most this many stated constraints per reply — one message rarely states more than a couple at once ("no curls, elbow issue" plus "only have dumbbells" is already two); a much lower cap than a MAX_STATED_CONSTRAINTS-wide list (core/models.ts) since that one accumulates over many conversations, not one reply. */
@@ -88,6 +108,8 @@ export function askSchemaFor(splits: readonly { exercises: readonly { exerciseId
     concern: z.enum(['crisis', 'disordered_eating']).nullable(),
     /** Set by the model itself (promptAsk.ts rule 23) whenever the question states a durable fact about this person's own body, equipment or preferences worth remembering past this one reply — empty for most replies. The app persists these and sends them back merged into "preferences" on every future call, so a stated constraint doesn't need repeating in a new conversation. */
     constraints: z.array(z.string().max(MAX_CONSTRAINT_CHARS)).max(MAX_CONSTRAINTS_PER_REPLY),
+    /** The general typed-action envelope (promptAsk.ts rule 24) — present only when this reply actually proposes one; empty for nearly every reply. Re-validated app-side (a real goal id) before it can ever be shown as actionable, the same discipline every other proposal type here gets. */
+    actions: z.array(AskActionSchema).max(MAX_ACTIONS_PER_REPLY),
   });
 }
 
@@ -347,5 +369,5 @@ export const callAsk: CallAsk = async (payload, env) => {
   });
   const response = await stream.finalMessage();
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, constraints: parsed.constraints, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, constraints: parsed.constraints, actions: parsed.actions, model: response.model, usage: usageOf(response) };
 };

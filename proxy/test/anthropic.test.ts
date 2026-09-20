@@ -64,7 +64,7 @@ describe('exerciseIdSchemaFor — per-request splitDraft vocabulary', () => {
 });
 
 describe('askSchemaFor — constraints field', () => {
-  const base = { scope: 'personal' as const, category: 'training' as const, answer: 'ok', splitDrafts: [], scheduleDraft: null, concern: null };
+  const base = { scope: 'personal' as const, category: 'training' as const, answer: 'ok', splitDrafts: [], scheduleDraft: null, concern: null, actions: [] };
 
   it('accepts an empty constraints list — true for nearly every reply', () => {
     expect(askSchemaFor([]).safeParse({ ...base, constraints: [] }).success).toBe(true);
@@ -82,6 +82,31 @@ describe('askSchemaFor — constraints field', () => {
   it('rejects more constraints in one reply than a person plausibly states at once', () => {
     expect(askSchemaFor([]).safeParse({ ...base, constraints: ['a', 'b', 'c', 'd'] }).success).toBe(false);
     expect(askSchemaFor([]).safeParse({ ...base, constraints: ['a', 'b', 'c'] }).success).toBe(true);
+  });
+});
+
+describe('askSchemaFor — actions envelope (goal_change)', () => {
+  const base = { scope: 'personal' as const, category: 'training' as const, answer: 'ok', splitDrafts: [], scheduleDraft: null, concern: null, constraints: [] };
+
+  it('accepts an empty actions list — true for nearly every reply', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [] }).success).toBe(true);
+  });
+
+  it('accepts a real goal_change action naming a real goal id', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [{ kind: 'goal_change', goal: 'strength' }] }).success).toBe(true);
+  });
+
+  it('rejects an invented goal id — the vocabulary is closed, same discipline as every other id here', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [{ kind: 'goal_change', goal: 'not_a_real_goal' }] }).success).toBe(false);
+  });
+
+  it('rejects an unrecognized action kind, not just an unrecognized goal — the discriminated union only knows "goal_change" so far', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [{ kind: 'reminder_change', enabled: true }] }).success).toBe(false);
+  });
+
+  it('rejects more actions in one reply than a person plausibly asks for at once', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [{ kind: 'goal_change', goal: 'lean' }, { kind: 'goal_change', goal: 'growth' }, { kind: 'goal_change', goal: 'strength' }] }).success).toBe(false);
+    expect(askSchemaFor([]).safeParse({ ...base, actions: [{ kind: 'goal_change', goal: 'lean' }, { kind: 'goal_change', goal: 'growth' }] }).success).toBe(true);
   });
 });
 

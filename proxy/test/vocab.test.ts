@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { EXERCISE_CATALOG, MUSCLE_IDS, PATTERNS } from '../src/vocab';
+import { EXERCISE_CATALOG, GOAL_IDS, MUSCLE_IDS, PATTERNS } from '../src/vocab';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const appSrc = join(here, '..', '..', 'src');
@@ -28,6 +28,13 @@ describe('vocab stays in sync with the app', () => {
     const used = new Set(library.map(e => e.pattern));
     expect(used.size).toBeGreaterThan(0);
     for (const p of used) expect(PATTERNS as readonly string[], `pattern "${p}" used in exercises.json is missing from proxy/src/vocab.ts`).toContain(p);
+  });
+
+  it('every goal id in goals.ts is in the Worker vocab, and nothing extra', () => {
+    const text = readFileSync(join(appSrc, 'data', 'goals.ts'), 'utf8');
+    const ids = [...text.matchAll(/id:\s*'([a-z_]+)'/g)].map(m => m[1]);
+    expect(ids.length).toBeGreaterThan(0);
+    expect([...GOAL_IDS].sort()).toEqual([...new Set(ids)].sort());
   });
 
   it('EXERCISE_CATALOG has exactly the same ids, names and primary muscles as the app\'s real library', () => {

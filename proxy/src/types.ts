@@ -211,6 +211,18 @@ export interface AskPayload extends GroundingPayload {
 /** What an answer is mainly about, purely to pick a small decorative bullet icon client-side — never shown as text, never used for grounding or validation. */
 export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
 
+/** One of the app's real training goal ids — see src/data/goals.ts (app) and GOAL_IDS (vocab.ts). */
+export type GoalId = 'lean' | 'growth' | 'strength_muscle' | 'strength';
+
+/** A proposal to switch the person's training goal — the first (and so far only) member of the "actions" envelope; see the doc comment on AskActionSchema in anthropic.ts for why this is a discriminated union rather than its own top-level field. */
+export interface GoalChangeAction {
+  kind: 'goal_change';
+  goal: GoalId;
+}
+
+/** The general typed-action envelope — currently just GoalChangeAction, designed so a real future kind (reminders, session control) is a new union member here, not a schema rewrite. */
+export type AskAction = GoalChangeAction;
+
 export interface AskReply {
   /** "personal" states something about this person's own logged data (grounded, number-checked by the app); "general" is ordinary exercise/nutrition knowledge that does not depend on their data and is not checked against the report. */
   scope: 'personal' | 'general';
@@ -224,6 +236,8 @@ export interface AskReply {
   concern: 'crisis' | 'disordered_eating' | null;
   /** Durable facts the model itself flagged about this person's own body, equipment or preferences (promptAsk.ts rule 23) — empty for most replies. The app persists these and merges them back into "preferences" on every future call, mirroring how "concern" is a flag the model sets rather than something the app guesses from the raw chat text. */
   constraints: string[];
+  /** The general typed-action envelope (promptAsk.ts rule 24) — empty for nearly every reply. See AskAction below; splitDrafts/scheduleDraft stay their own fields rather than folding into this, at least for now (see the doc comment on AskActionSchema in anthropic.ts). */
+  actions: AskAction[];
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }

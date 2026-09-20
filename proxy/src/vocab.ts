@@ -28,6 +28,9 @@ export const MODES = ['weighted', 'bodyweight', 'assisted', 'duration', 'conditi
 /** What a session or exercise note may be tagged with. Never a diagnosis, never a severity, never a cause. */
 export const NOTE_FLAG_KINDS = ['pain_or_discomfort', 'equipment_issue', 'fatigue', 'schedule', 'form_check', 'positive'] as const;
 
+/** Mirrors GoalId in src/data/goals.ts (app) — checked by vocab.test.ts's drift check. */
+export const GOAL_IDS = ['lean', 'growth', 'strength_muscle', 'strength'] as const;
+
 /**
  * The real exercise library, `"id|Name|primary muscles"` per line, generated
  * from `src/data/exercises.json` (see the generating one-liner in the git

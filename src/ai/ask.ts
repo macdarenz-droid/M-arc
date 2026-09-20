@@ -31,6 +31,7 @@ import type { Exercise, Split, Weekday } from '@/core/models';
 import { MAX_STATED_CONSTRAINT_CHARS, WEEKDAYS } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
+import { isGoalId, type GoalId } from '@/data/goals';
 import type { FindingsReport } from '@/brain/coach/contract';
 import { allowedNumbers, cardsFor, extractNumbers, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload, type PayloadProposal } from '@/brain/coach/explainer';
 import type { AskStats } from '@/brain/stats';
@@ -110,7 +111,7 @@ export function buildAskPayload(
   };
 }
 
-interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; constraints?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; constraints?: unknown; actions?: unknown; error?: unknown }
 
 /** A crisis or disordered-eating signal the model flagged in the question itself (promptAsk.ts rule 17) — null for nearly every reply. Not a finding about the person; the UI shows a fixed, pre-written resource whenever this isn't null. */
 export type AskConcern = 'crisis' | 'disordered_eating' | null;
@@ -206,6 +207,33 @@ function parseScheduleDraft(raw: unknown, knownSplitIds: Set<string>): WeekSched
 }
 
 /**
+ * A proposal to switch the person's training goal — the first (and so far
+ * only) member of the general "actions" envelope the intelligence audit's
+ * Tier 3 asked for, to replace splitDrafts/scheduleDraft with one typed,
+ * extensible mechanism. Scoped to this one new capability for now; a real
+ * future kind (reminders, session control) is a new union member here, not
+ * a rewrite of this or of splitDrafts/scheduleDraft, which stay their own
+ * fields — see the doc comment on AskActionSchema in proxy/src/anthropic.ts
+ * for the full rationale.
+ */
+export interface GoalChangeAction {
+  kind: 'goal_change';
+  goal: GoalId;
+}
+
+/** The general typed-action envelope. Currently just GoalChangeAction. */
+export type AskAction = GoalChangeAction;
+
+/** An action that fails validation (an invented goal id, an unrecognized kind) becomes null — the same "half-drawn proposal isn't shown as one the person can accept" discipline every other draft type here uses. */
+function parseAction(raw: unknown): AskAction | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as { kind?: unknown; goal?: unknown };
+  if (r.kind !== 'goal_change') return null;
+  if (typeof r.goal !== 'string' || !isGoalId(r.goal)) return null;
+  return { kind: 'goal_change', goal: r.goal };
+}
+
+/**
  * allowedNumbers(payload) only knows about numbers the brain itself put in
  * the report — it has no idea the person just typed "I weigh 82kg" or "I
  * did 5 sets" in the question or an earlier turn of this same chat. Rule 18
@@ -262,7 +290,7 @@ function sanitizePersonalAnswer(answer: string, allowed: Set<number>): { text: s
 }
 
 export type AskResult =
-  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number; constraints: string[] }
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number; constraints: string[]; actions: AskAction[] }
   | { ok: false; error: string };
 
 /**
@@ -303,10 +331,12 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
   const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
   const constraints = parseConstraints(result.body.constraints);
+  const rawActions = Array.isArray(result.body.actions) ? result.body.actions : [];
+  const actions = rawActions.map(parseAction).filter((a): a is AskAction => a !== null);
   if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
     const sanitized = sanitizePersonalAnswer(answer, askAllowedNumbers(payload));
     if (!sanitized.text) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
-    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined, constraints };
+    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined, constraints, actions };
   }
-  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern, constraints };
+  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern, constraints, actions };
 }

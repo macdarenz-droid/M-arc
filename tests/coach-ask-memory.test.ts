@@ -38,6 +38,15 @@ describe('updateAskTurn', () => {
     expect(coach.askThread[1]!.applied).toEqual([true]);
     expect(coach.askThread[1]!.text).toBe('answer'); // rest of the patched turn preserved
   });
+
+  it('patches actionPrev for a goal_change action the same way — applying stashes the goal it replaced, undoing sets it back to null', () => {
+    let coach = emptyCoach();
+    coach = appendAskTurn(coach, { ...assistantTurn('answer'), actions: [{ kind: 'goal_change', goal: 'strength' }], actionPrev: [null] });
+    coach = updateAskTurn(coach, 0, { actionPrev: ['lean'] });
+    expect(coach.askThread[0]!.actionPrev).toEqual(['lean']);
+    coach = updateAskTurn(coach, 0, { actionPrev: [null] });
+    expect(coach.askThread[0]!.actionPrev).toEqual([null]);
+  });
 });
 
 describe('clearAskThread', () => {

@@ -169,6 +169,24 @@ export interface AskThreadDraft {
 }
 
 /**
+ * A proposal to switch the person's training goal, as persisted — mirrors
+ * GoalChangeAction in src/ai/ask.ts, the first (and so far only) member of
+ * the general "actions" envelope the intelligence audit's Tier 3 asked
+ * for. Kept a plain discriminated shape (a "kind" tag) so a real future
+ * action kind (reminders, session control) is a new union member later,
+ * not a rewrite of this or of AskThreadDraft/scheduleDraft above, which
+ * stay their own separate fields for now — see the doc comment on
+ * AskActionSchema in proxy/src/anthropic.ts for the full scoping rationale.
+ */
+export interface AskThreadGoalChangeAction {
+  kind: 'goal_change';
+  goal: GoalId;
+}
+
+/** The general typed-action envelope, as persisted. Currently just AskThreadGoalChangeAction. */
+export type AskThreadAction = AskThreadGoalChangeAction;
+
+/**
  * One turn of the "Ask Escobar" conversation, as persisted in CoachState —
  * mirrors AskSheet.tsx's local AskBubble shape. Closing the sheet (or the
  * app) used to lose the whole conversation, along with any stated
@@ -189,6 +207,9 @@ export interface AskThreadTurn {
   scheduleApplied?: boolean;
   concern?: 'crisis' | 'disordered_eating' | null;
   trimmed?: number;
+  actions?: AskThreadAction[];
+  /** Parallel to "actions": null before that action is applied; the goal it replaced once applied, so "Undo" can restore exactly that (and revert this back to null). */
+  actionPrev?: Array<GoalId | null>;
 }
 
 /** At most this many turns persist — oldest dropped first. Bounds how much the "Ask Escobar" thread adds to the saved state; a much higher ceiling than MAX_HISTORY_TURNS in src/ai/ask.ts, which caps what's actually resent to the model each call, not what's kept on screen. */
