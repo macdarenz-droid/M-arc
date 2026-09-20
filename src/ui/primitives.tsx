@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { IconX } from './icons';
+import { IconDumbbell, IconKettlebell, IconPlate, IconX } from './icons';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -16,19 +16,31 @@ const THINKING_PHRASES = [
   'One more rep of thinking…',
 ];
 
+/** Cycles through these while thinking — the same idea as a CLI spinner swapping glyph shapes, just gym-flavoured instead of generic. */
+const THINKING_ICONS = [IconDumbbell, IconKettlebell, IconPlate];
+
 /**
- * A small spinner plus a rotating gym-flavoured phrase, for anywhere the
- * app is waiting on the online coach. Colour comes from the theme's own
- * `--accent` and `--surface-3`, so it matches every theme without any
- * per-theme code. Respects prefers-reduced-motion.
+ * A small cycling gym-equipment icon plus a rotating gym-flavoured phrase,
+ * for anywhere the app is waiting on the online coach. Colour comes from
+ * the theme's own `--accent`, so it matches every theme without any
+ * per-theme code. Under prefers-reduced-motion the icon stays on the first
+ * shape rather than cycling — the phrase still rotates, same as the rest
+ * of the app treats text changes (not a CSS animation) versus motion.
  */
 export function Thinking() {
-  const [i, setI] = useState(0);
+  const [phrase, setPhrase] = useState(0);
+  const [icon, setIcon] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setI(x => (x + 1) % THINKING_PHRASES.length), 1700);
+    const id = setInterval(() => setPhrase(x => (x + 1) % THINKING_PHRASES.length), 1700);
     return () => clearInterval(id);
   }, []);
-  return <span class="thinking"><span class="thinking-spin" aria-hidden="true" />{THINKING_PHRASES[i]}</span>;
+  useEffect(() => {
+    if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => setIcon(x => (x + 1) % THINKING_ICONS.length), 500);
+    return () => clearInterval(id);
+  }, []);
+  const Icon = THINKING_ICONS[icon]!;
+  return <span class="thinking"><Icon size={15} class="thinking-icon" aria-hidden="true" />{THINKING_PHRASES[phrase]}</span>;
 }
 
 export function Card({ children, class: cls = '', className = '', ...rest }: { children?: ComponentChildren } & Div) {

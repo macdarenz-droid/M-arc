@@ -226,6 +226,64 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
 /** A turn as shown on screen. "scope" is local-only (never sent back to the Worker as part of history) — it just says whether an assistant reply was grounded in this person's report or is general exercise/nutrition knowledge, so it can carry a small honest label the same way the app labels evidence quality everywhere else. */
 type AskBubble = AskTurn & { scope?: 'personal' | 'general' };
 
+/**
+ * Someone who has been logging for months has no way to know the coach can
+ * compare their stats over time, or answer a plain anatomy/nutrition
+ * question — nothing on screen hints at it. These rotate through the empty
+ * input as a typed-out placeholder so the range of what's askable is
+ * discoverable without a tutorial. One from each real category: personal
+ * long-horizon comparison, app navigation, general knowledge, and injury.
+ */
+const ASK_SUGGESTIONS = [
+  'How have I improved over the last 3 months?',
+  'Why does my chest feel behind on volume?',
+  'How do I see my recovery per muscle?',
+  'What is progressive overload?',
+  'How much protein should I aim for?',
+  'What should I do if my shoulder feels sore?',
+];
+
+/** Types a suggestion out, holds it, erases it, moves to the next — only while `active` (the input is empty and nothing is sending). Falls back to a plain swap with no per-character animation under prefers-reduced-motion, the same treatment `Thinking`'s spinner gets in styles.css. */
+function useTypewriterPlaceholder(active: boolean): string {
+  const [text, setText] = useState('');
+  useEffect(() => {
+    if (!active) { setText(''); return; }
+    const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const TYPE_MS = 38, ERASE_MS = 22, HOLD_FULL_MS = 1600, HOLD_EMPTY_MS = 400;
+    let cancelled = false, phrase = 0;
+    const after = (fn: () => void, ms: number) => setTimeout(() => { if (!cancelled) fn(); }, ms);
+    const run = () => {
+      const full = ASK_SUGGESTIONS[phrase % ASK_SUGGESTIONS.length]!;
+      if (reduced) { setText(full); after(() => { phrase++; run(); }, HOLD_FULL_MS + TYPE_MS * full.length); return; }
+      const typeStep = (i: number) => {
+        setText(full.slice(0, i));
+        if (i >= full.length) { after(() => eraseStep(full.length), HOLD_FULL_MS); return; }
+        after(() => typeStep(i + 1), TYPE_MS);
+      };
+      const eraseStep = (j: number) => {
+        setText(full.slice(0, j));
+        if (j <= 0) { after(() => { phrase++; run(); }, HOLD_EMPTY_MS); return; }
+        after(() => eraseStep(j - 1), ERASE_MS);
+      };
+      typeStep(0);
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [active]);
+  return text;
+}
+
+/** Its own component so the typewriter's per-character re-renders touch only the input row, not the whole thread of past messages above it. */
+function AskInputRow({ question, setQuestion, sending, onSubmit }: { question: string; setQuestion: (v: string) => void; sending: boolean; onSubmit: (e: SubmitEvent) => void }) {
+  const placeholder = useTypewriterPlaceholder(question.length === 0 && !sending);
+  return (
+    <form class="ask-input" onSubmit={onSubmit}>
+      <input value={question} maxLength={MAX_QUESTION_CHARS} placeholder={placeholder} disabled={sending} onInput={e => setQuestion((e.target as HTMLInputElement).value)} />
+      <Button variant="primary" size="sm" type="submit" class="btn-icon" disabled={sending || !question.trim()} aria-label="Send"><IconSend size={16} /></Button>
+    </form>
+  );
+}
+
 function AskSheet({ onClose }: { onClose: () => void }) {
   const [history, setHistory] = useState<AskBubble[]>([]);
   const [question, setQuestion] = useState('');
@@ -268,10 +326,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
       </div>
       {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
-      <form class="ask-input" onSubmit={e => { e.preventDefault(); void send(); }}>
-        <input value={question} maxLength={MAX_QUESTION_CHARS} placeholder="Ask a question…" disabled={sending} onInput={e => setQuestion((e.target as HTMLInputElement).value)} />
-        <Button variant="primary" size="sm" type="submit" class="btn-icon" disabled={sending || !question.trim()} aria-label="Send"><IconSend size={16} /></Button>
-      </form>
+      <AskInputRow question={question} setQuestion={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} />
     </Sheet>
   );
 }

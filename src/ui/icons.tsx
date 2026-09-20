@@ -6,6 +6,8 @@ const base = (size: number) => ({ width: size, height: size, viewBox: '0 0 24 24
 
 export const IconSun = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>;
 export const IconDumbbell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12" /></svg>;
+export const IconKettlebell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M9 9a3 3 0 0 1 6 0v1" /><circle cx="12" cy="16" r="5.5" /></svg>;
+export const IconPlate = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /></svg>;
 export const IconBody = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="4.5" r="2.5" /><path d="M8 9h8l1 6h-2l-1 6h-4l-1-6H7z" /></svg>;
 export const IconSpark = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" /></svg>;
 export const IconClock = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;

@@ -103,6 +103,20 @@ function requireParsed<T>(response: { stop_reason: string | null; parsed_output:
   return parsed;
 }
 
+/**
+ * Seen live: a prose field inside a JSON-schema response can end with a
+ * stray quote-then-brace (`..."}`) — the model briefly "closing" the JSON
+ * object it's implicitly composing, leaking into the string's own content
+ * even under structured outputs. The prompt now says not to do this
+ * (prompt.ts, promptAsk.ts); this is the safety net for when it happens
+ * anyway. Deliberately narrow: real prose in this app's voice never ends
+ * in a bare quote, bracket or brace, so trimming a trailing run of them
+ * (and any whitespace after) cannot cut into a genuine sentence.
+ */
+export function stripFormattingLeak(text: string): string {
+  return text.replace(/[\s"'\]}]+$/, '');
+}
+
 const usageOf = (response: { usage: { input_tokens: number; output_tokens: number; cache_read_input_tokens?: number | null } }) => ({
   inputTokens: response.usage.input_tokens,
   outputTokens: response.usage.output_tokens,
@@ -132,7 +146,7 @@ export const callAnthropic: CallModel = async (payload, env) => {
     output_config: { format: zodOutputFormat(ExplanationSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { summary: parsed.summary, items: parsed.items, model: response.model, usage: usageOf(response) };
+  return { summary: stripFormattingLeak(parsed.summary), items: parsed.items.map(i => ({ ...i, text: stripFormattingLeak(i.text) })), model: response.model, usage: usageOf(response) };
 };
 
 export const callTagExercise: CallTagExercise = async (payload, env) => {
@@ -226,5 +240,5 @@ export const callAsk: CallAsk = async (payload, env) => {
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, answer: parsed.answer, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, answer: stripFormattingLeak(parsed.answer), model: response.model, usage: usageOf(response) };
 };

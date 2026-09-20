@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, modelFor, modelsByRoute } from '../src/anthropic';
+import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, modelFor, modelsByRoute, stripFormattingLeak } from '../src/anthropic';
 
 describe('ask web search domain allowlist', () => {
   it('is a non-empty, deduplicated list of plain hostnames — no scheme, no path, no wildcard', () => {
@@ -14,6 +14,24 @@ describe('ask web search domain allowlist', () => {
 
   it('sticks to research and public-health bodies, not general web content', () => {
     for (const trusted of ['nih.gov', 'cdc.gov', 'who.int']) expect(ASK_WEB_SEARCH_ALLOWED_DOMAINS).toContain(trusted);
+  });
+});
+
+describe('stripFormattingLeak', () => {
+  it('trims the exact live-observed leak: a trailing quote-then-brace copied from the response\'s own JSON shape', () => {
+    expect(stripFormattingLeak('treat it as a solid starting point rather than an exact number."}')).toBe('treat it as a solid starting point rather than an exact number.');
+  });
+
+  it('leaves ordinary prose, including normal closing punctuation, untouched', () => {
+    for (const normal of ['This is a full sentence.', 'Is this a question?', 'A parenthetical (like this one).', 'Ends in a normal word']) {
+      expect(stripFormattingLeak(normal)).toBe(normal);
+    }
+  });
+
+  it('also catches a bare trailing brace or bracket, or one preceded by trailing whitespace', () => {
+    expect(stripFormattingLeak('some text}')).toBe('some text');
+    expect(stripFormattingLeak('some text]')).toBe('some text');
+    expect(stripFormattingLeak('some text"} \n')).toBe('some text');
   });
 });
 

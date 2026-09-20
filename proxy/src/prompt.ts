@@ -17,6 +17,7 @@ Rules, in order of importance:
 6. Each item explanation is at most 55 words. The summary is at most 90 words and ties the findings together into one picture of the week.
 7. Loads are in the unit given by "unit". Write them exactly as the report gives them.
 8. "preferences", if present, lists short facts about how this person has responded to the coach's own suggestions over time (for example, that they usually decline easier weeks). Use these only to set tone — never quote one back verbatim, never treat it as a finding, never apologize for it. If it is empty, say nothing about it.
+9. Write "summary" and every item's "text" as plain prose only: no markdown code fences, no raw JSON, and never end one with a stray quotation mark or brace copied from how the response itself is structured — that is a formatting leak, not a real sentence, and it must not appear.
 
 You must return JSON matching the schema: a "summary" string and an "items" array with one object per id in "explain", each with "id" and "text". Do not include ids that are not in "explain".`;
 

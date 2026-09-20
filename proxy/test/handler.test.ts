@@ -349,6 +349,8 @@ describe('prompts', () => {
     expect(userMessage(payload())).toBe(userMessage(payload()));
     expect(userMessage(payload())).toContain('"changePct":-18');
     expect(SYSTEM_PROMPT).toContain('preferences');
+    expect(SYSTEM_PROMPT).toContain('no raw JSON');
+    expect(SYSTEM_PROMPT).toContain('stray quotation mark or brace');
   });
 
   it('tag-exercise prompt names the closed vocabularies and asks for honest confidence', () => {
@@ -385,6 +387,9 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Never endorse or recommend a specific commercial brand or product');
     expect(ASK_SYSTEM_PROMPT).toContain("you don't build plans in chat");
     expect(ASK_SYSTEM_PROMPT).toContain('give the general context in words rather than a precise outside figure');
+    expect(ASK_SYSTEM_PROMPT).toContain('no raw JSON');
+    expect(ASK_SYSTEM_PROMPT).toContain('stray quotation mark or brace');
+    expect(ASK_SYSTEM_PROMPT).toContain('starting with "- "');
     expect(ASK_SYSTEM_PROMPT).toContain('or how to use this app itself');
     expect(ASK_SYSTEM_PROMPT).toContain('never guess a screen name or describe a button that isn\'t listed there');
     expect(ASK_SYSTEM_PROMPT).toContain('You cannot create a new split from inside a live session');
