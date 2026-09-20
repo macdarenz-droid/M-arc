@@ -82,7 +82,7 @@ export function buildAskPayload(
   report: FindingsReport,
   history: AskTurn[],
   question: string,
-  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule },
+  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule; bmi?: number | null },
 ): AskPayload {
   const { findings, proposals: trimmed } = trimFindingsAndProposals(report);
   const loadNext: PayloadProposal[] = report.proposals
@@ -105,7 +105,7 @@ export function buildAskPayload(
   return {
     version: 1, kind: 'ask', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality,
     findings, proposals, cards, preferences, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
-    splits, schedule: opts.schedule,
+    splits, schedule: opts.schedule, bmi: opts.bmi ?? null,
   };
 }
 

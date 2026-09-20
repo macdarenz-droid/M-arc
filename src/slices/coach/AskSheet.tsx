@@ -24,6 +24,7 @@ import { Button, Sheet, Thinking } from '@/ui/primitives';
 import { IconApple, IconBody, IconCigarette, IconDumbbell, IconGear, IconInfo } from '@/ui/icons';
 import { ChatInputRow, COACH_NAME, renderChatBody } from '@/ui/chatRender';
 import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskConcern, type AskTurn, type SplitDraft, type WeekSchedule } from '@/ai/ask';
+import { computeBmi } from '@/brain/coach/explainer';
 import { WEEKDAYS } from '@/core/models';
 import { WEEKDAY_LABEL } from '@/core/dates';
 import { applyScheduleDraft, applySplitDraft } from '../workout/splits';
@@ -158,7 +159,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
     const payload = buildAskPayload(report.value, plainHistory, q, {
       goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts,
-      splits: s.splits, customExercises: s.customExercises, schedule: s.schedule,
+      splits: s.splits, customExercises: s.customExercises, schedule: s.schedule, bmi: computeBmi(s.profile),
     });
     const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
     setHistory(withQuestion);

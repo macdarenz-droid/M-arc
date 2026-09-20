@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildPayload, allowedNumbers, validateText, extractNumbers, explanationKey, readCache, getCached, putCached, fetchExplanation, endpoint, newDeviceId, CACHE_SIZE, LIMITS, MAX_FINDINGS_PER_KIND, trimFindingsAndProposals, type ExplainPayload } from '@/brain/coach/explainer';
+import { buildPayload, allowedNumbers, validateText, extractNumbers, explanationKey, readCache, getCached, putCached, fetchExplanation, endpoint, newDeviceId, computeBmi, CACHE_SIZE, LIMITS, MAX_FINDINGS_PER_KIND, trimFindingsAndProposals, type ExplainPayload } from '@/brain/coach/explainer';
 import { PREFERENCE_FACTS_MAX } from '@/brain/coach/preferences';
 import { buildReport } from '@/brain/coach/report';
 import type { Finding, FindingsReport } from '@/brain/coach/contract';
@@ -69,6 +69,21 @@ describe('payload', () => {
   });
 });
 
+describe('computeBmi', () => {
+  it('is weight in kg over height in metres squared, one decimal place', () => {
+    expect(computeBmi({ bodyWeightKg: 70, heightCm: 164 })).toBe(26);
+    expect(computeBmi({ bodyWeightKg: 68, heightCm: 175 })).toBe(22.2);
+  });
+
+  it('is null when either figure is missing or not a real positive number — never a guess', () => {
+    expect(computeBmi({})).toBeNull();
+    expect(computeBmi({ bodyWeightKg: 70 })).toBeNull();
+    expect(computeBmi({ heightCm: 164 })).toBeNull();
+    expect(computeBmi({ bodyWeightKg: 0, heightCm: 164 })).toBeNull();
+    expect(computeBmi({ bodyWeightKg: 70, heightCm: -164 })).toBeNull();
+  });
+});
+
 describe('number validation', () => {
   const p: ExplainPayload = {
     version: 1, kind: 'explain', goal: 'lean', unit: 'kg', today: '2026-09-19', dataQuality: { sessions: 40, weeksOfData: 12, effortCoverage: 0.85, insufficientData: false },
@@ -94,6 +109,14 @@ describe('number validation', () => {
     expect(bad.ok).toBe(false);
     expect(bad.offending).toEqual([5, 20]);
     expect(validateText('No numbers here at all.', allowed).ok).toBe(true);
+  });
+  it('allows "bmi" when present — a single derived number, the one deliberate exception to "no body measurements" — and doesn\'t invent one when absent', () => {
+    const withBmi = allowedNumbers({ ...p, bmi: 26 });
+    expect(withBmi.has(26)).toBe(true);
+    expect(validateText('Your BMI is 26, in the overweight band on paper.', withBmi).ok).toBe(true);
+    const withoutBmi = allowedNumbers({ ...p, bmi: null });
+    expect(withoutBmi.has(26)).toBe(false);
+    expect(validateText('Your BMI is 26.', withoutBmi).ok).toBe(false);
   });
   it('keys change with content and not with order of unrelated fields', () => {
     const k1 = explanationKey(p);

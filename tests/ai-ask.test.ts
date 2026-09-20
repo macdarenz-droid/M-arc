@@ -94,6 +94,15 @@ describe('buildAskPayload', () => {
     const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [PUSH], customExercises: [], schedule });
     expect(p.schedule).toEqual(schedule);
   });
+
+  it('carries a computed bmi when given one, null when not — never the raw weight or height it came from', () => {
+    const report = realReport();
+    const withBmi = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', ...noSplits, bmi: 26 });
+    expect(withBmi.bmi).toBe(26);
+    expect(JSON.stringify(withBmi)).not.toMatch(/bodyWeight|heightCm/);
+    const withoutBmi = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', ...noSplits });
+    expect(withoutBmi.bmi).toBeNull();
+  });
 });
 
 describe('requestAskAnswer', () => {

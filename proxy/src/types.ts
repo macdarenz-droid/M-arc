@@ -40,6 +40,16 @@ export interface GroundingPayload {
   cards: PayloadCard[];
   /** Short, plain-word facts the app has learned about how this person responds to its suggestions. Optional so an older client is still accepted. */
   preferences?: string[];
+  /**
+   * The person's current BMI, computed on-device from their weight/height in
+   * Settings — never the raw weight or height, which never leave the device.
+   * Null when either isn't set. Optional so an older client is still
+   * accepted. The one deliberate, narrow exception to "nothing about the
+   * person" this route's grounding otherwise holds to — requested directly
+   * after "what's my BMI" kept needing to ask for figures already sitting
+   * in Settings.
+   */
+  bmi?: number | null;
 }
 
 export interface ExplainPayload extends GroundingPayload {

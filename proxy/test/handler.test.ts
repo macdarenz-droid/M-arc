@@ -133,6 +133,12 @@ describe('payload validation', () => {
     expect(validatePayload({ ...payload(), preferences: ['x'.repeat(MAX_PREFERENCE_CHARS + 1)] })).toMatchObject({ ok: false });
     expect(validatePayload({ ...payload(), preferences: [1] })).toMatchObject({ ok: false });
   });
+
+  it('bmi is optional here too, same bounds as /ask', () => {
+    expect(validatePayload({ ...payload(), bmi: 26 })).toMatchObject({ ok: true });
+    expect(validatePayload({ ...payload(), bmi: null })).toMatchObject({ ok: true });
+    expect(validatePayload({ ...payload(), bmi: 500 })).toMatchObject({ ok: false });
+  });
 });
 
 describe('tag-exercise payload validation', () => {
@@ -181,6 +187,18 @@ describe('ask payload validation', () => {
   it('accepts an optional preferences list, capped and length-limited', () => {
     expect(validateAskPayload({ ...askPayload(), preferences: ['Usually accepts schedule changes when the coach offers them.'] })).toMatchObject({ ok: true });
     expect(validateAskPayload({ ...askPayload(), preferences: Array.from({ length: MAX_PREFERENCES + 1 }, () => 'x') })).toMatchObject({ ok: false });
+  });
+
+  it('accepts an optional bmi — a single derived number, never the raw weight or height it came from — bounded to a plausible range', () => {
+    expect(validateAskPayload({ ...askPayload(), bmi: 26 })).toMatchObject({ ok: true });
+    expect(validateAskPayload({ ...askPayload(), bmi: null })).toMatchObject({ ok: true });
+    expect(validateAskPayload(askPayload())).toMatchObject({ ok: true }); // omitted entirely: still fine, same as preferences
+    expect(validateAskPayload({ ...askPayload(), bmi: -5 })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), bmi: 500 })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), bmi: 'twenty-six' })).toMatchObject({ ok: false });
+    // The raw measurements themselves stay refused outright, bmi or no bmi.
+    expect(validateAskPayload({ ...askPayload(), bmi: 26, bodyWeightKg: 70 })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), bmi: 26, heightCm: 164 })).toMatchObject({ ok: false });
   });
 
   it('accepts the person\'s known splits, capped and shape-checked — this is the one route that may also design or adjust one', () => {
@@ -604,6 +622,15 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('rather than asking the person to hand you research you\'re equipped to do');
   });
 
+  it('ask prompt names "bmi" as the one exception to "never in the report" for personal body facts — a real number to state directly, not ask for', () => {
+    // Requested directly: weight/height are already in Settings, computed on-device into a
+    // single derived bmi number, so Escobar shouldn't keep asking for figures it already has.
+    expect(ASK_SYSTEM_PROMPT).toContain('"bmi" is the one exception to "their current weight is never in the report"');
+    expect(ASK_SYSTEM_PROMPT).toContain('state it directly and confidently, never ask for it');
+    expect(ASK_SYSTEM_PROMPT).toContain('Their actual weight and height still never reach you, though');
+    expect(ASK_SYSTEM_PROMPT).toContain('the one deliberate exception is "bmi" (rule 18), a single derived number, never their actual weight or height');
+  });
+
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('rear_delts');
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('horizontal_push');
@@ -655,5 +682,13 @@ describe('prompts', () => {
     const { schedule: _schedule, ...withoutSchedule } = askPayload();
     const msgs = askMessages(withoutSchedule as AskPayload);
     expect(msgs[0]!.content).toContain('"schedule":{"sun":null,"mon":null,"tue":null,"wed":null,"thu":null,"fri":null,"sat":null}');
+  });
+
+  it('ask passes bmi through to the model context when present, and null when the payload omits it', () => {
+    const withBmi = askMessages({ ...askPayload(), bmi: 26 });
+    expect(withBmi[0]!.content).toContain('"bmi":26');
+    const { bmi: _bmi, ...withoutBmi } = askPayload();
+    const msgsWithout = askMessages(withoutBmi as AskPayload);
+    expect(msgsWithout[0]!.content).toContain('"bmi":null');
   });
 });

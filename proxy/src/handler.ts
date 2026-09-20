@@ -92,6 +92,12 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
       return `preferences must be an array of at most ${MAX_PREFERENCES} strings, each at most ${MAX_PREFERENCE_CHARS} characters.`;
     }
   }
+  // A single derived ratio, not a raw body measurement — the one deliberate exception to the
+  // blocklist right below. Still bounded to a plausible human range, same "don't trust the
+  // network" discipline as every other numeric field here.
+  if (raw.bmi !== undefined && raw.bmi !== null) {
+    if (typeof raw.bmi !== 'number' || !Number.isFinite(raw.bmi) || raw.bmi <= 0 || raw.bmi > 200) return 'bmi must be a plausible positive number.';
+  }
   // Anything that looks like a person: refuse. The app never sends these; a modified client might.
   for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return `Field "${key}" is not accepted.`;
   return null;
@@ -101,7 +107,7 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
 export function validatePayload(raw: unknown): Validated<import('./types').ExplainPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'explain') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'explain'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'explain'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   const findings = raw.findings as Array<{ id: string }>, proposals = raw.proposals as Array<{ id: string }>, explain = raw.explain;
@@ -179,7 +185,7 @@ const isSchedule = (v: unknown): v is Record<string, string | null> =>
 export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question', 'splits', 'schedule'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'history', 'question', 'splits', 'schedule'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };

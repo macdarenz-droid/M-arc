@@ -1,9 +1,11 @@
 /**
  * The remote explainer, app side. Builds the payload the proxy accepts
- * (findings, proposals and research cards only: no sessions, no name, no
+ * (findings, proposals and research cards: no sessions, no name, no raw
  * body measurements), validates what comes back so no invented number ever
  * reaches the screen, and caches answers by report content so a screen
- * refresh never costs a call.
+ * refresh never costs a call. One narrow, deliberate exception to "no body
+ * measurements": `bmi` (see below) — a single derived ratio, never the raw
+ * weight or height it came from.
  */
 import type { Finding, FindingsReport, Proposal } from './contract';
 import { PRINCIPLES_VERSION, principlesFor } from './principles';
@@ -26,6 +28,22 @@ export interface GroundingPayload {
   cards: PayloadCard[];
   /** Short, plain-word facts about how this person responds to the coach's own suggestions (see brain/coach/preferences.ts). Optional so an older or hand-built payload is still valid. */
   preferences?: string[];
+  /**
+   * The person's current BMI, computed on-device from `profile.bodyWeightKg`/`heightCm`
+   * (see `computeBmi` below) — never the raw weight or height themselves, which still never
+   * leave the device. Null when either figure isn't set in Settings. Optional so an older
+   * or hand-built payload is still valid. Requested directly, after "what's my BMI, what
+   * weight should I get to" kept needing to ask for figures already sitting in Settings.
+   */
+  bmi?: number | null;
+}
+
+/** BMI = kg / (m^2), one decimal place, standard formula. Null when weight or height isn't set — never a guess. */
+export function computeBmi(profile: { bodyWeightKg?: number; heightCm?: number }): number | null {
+  const { bodyWeightKg: kg, heightCm: cm } = profile;
+  if (!kg || !cm || kg <= 0 || cm <= 0) return null;
+  const m = cm / 100;
+  return Math.round((kg / (m * m)) * 10) / 10;
 }
 
 export interface ExplainPayload extends GroundingPayload {
@@ -120,6 +138,7 @@ export function allowedNumbers(payload: GroundingPayload): Set<number> {
   visit(payload.dataQuality);
   for (const c of payload.cards) [...extractNumbers(c.statement), ...extractNumbers(c.disputed)].forEach(add);
   for (const p of payload.preferences ?? []) extractNumbers(p).forEach(add);
+  if (payload.bmi != null) add(payload.bmi);
   return out;
 }
 
