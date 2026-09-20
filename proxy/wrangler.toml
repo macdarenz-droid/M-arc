@@ -23,7 +23,7 @@ MAX_DAILY_PER_DEVICE = "12"
 MAX_DAILY_TOTAL = "2000"
 # Comma-separated web origins allowed to call this Worker, for the PWA. The Android app sends no Origin
 # (or capacitor://localhost / http(s)://localhost), which is always allowed.
-ALLOWED_ORIGINS = ""
+ALLOWED_ORIGINS = "https://mrcdrnzz.netlify.app"
 
 # Per-device burst limit: 6 requests a minute. Free on every plan.
 [[ratelimits]]
