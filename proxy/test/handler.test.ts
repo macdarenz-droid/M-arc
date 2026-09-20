@@ -469,6 +469,10 @@ describe('prompts', () => {
     // Findings-aware split-building: the standalone /build-split never had this context.
     expect(ASK_SYSTEM_PROMPT).toContain('since you flagged shoulder pain recently, I kept overhead work light here');
     expect(ASK_SYSTEM_PROMPT).toContain('Never invent a finding or number that isn\'t actually in the report');
+    // Seen live: "a 5-day full body split" was misread as 5 separate splitDrafts (one per day),
+    // ballooning the reply past max_tokens and 502ing. A day count is training frequency, not split count.
+    expect(ASK_SYSTEM_PROMPT).toContain('A day count in the request describes how often to train, not how many splits to create');
+    expect(ASK_SYSTEM_PROMPT).toContain('is exactly ONE splitDraft');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {

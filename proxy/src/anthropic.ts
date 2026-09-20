@@ -26,8 +26,15 @@ const SplitDraftSchema = z.object({
   focus: z.array(MuscleIdSchema).max(2),
   exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
 });
-/** At most this many splits proposed in one reply — a person describing several splits at once (a full weekly plan) still gets one entry per split, not just the first. */
-const MAX_SPLIT_DRAFTS = 4;
+/**
+ * At most this many splits proposed in one reply — a person describing
+ * several splits at once (a full weekly plan) still gets one entry per
+ * split, not just the first. 6 covers a genuine 5- or 6-day bro split (a
+ * different muscle focus named per day) without being so high that a
+ * misread "N-day" request (see promptAsk.ts's day-count-vs-split-count
+ * rule) could still balloon the reply past max_tokens.
+ */
+const MAX_SPLIT_DRAFTS = 6;
 
 const AskSchema = z.object({
   scope: z.enum(['personal', 'general']),
@@ -255,8 +262,11 @@ export const callAsk: CallAsk = async (payload, env) => {
   const response = await client.messages.parse({
     model,
     // Higher than a plain answer alone needs: a reply that also proposes several splitDrafts
-    // (each with its own exercise list) can run noticeably longer than prose-only ever did.
-    max_tokens: 3500,
+    // (each with its own exercise list, up to MAX_SPLIT_DRAFTS of them) can run noticeably
+    // longer than prose-only ever did. Seen live: a reply cut short by max_tokens mid-JSON
+    // comes back with no parsed_output at all (requireParsed throws, a 502 to the app), so
+    // this errs generous rather than tight.
+    max_tokens: 5000,
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
     tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
