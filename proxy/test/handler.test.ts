@@ -423,8 +423,8 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('a number you calculate is exactly as unverifiable to the check that reads this answer as one you invented outright');
     expect(ASK_SYSTEM_PROMPT).toContain('do not decline or hedge one for "not having the logs"');
     expect(ASK_SYSTEM_PROMPT).toContain('Never diagnose a medical condition');
-    expect(ASK_SYSTEM_PROMPT).toContain('individualized medication or supplement dosage');
-    expect(ASK_SYSTEM_PROMPT).toContain('a doctor or pharmacist can tailor it to them');
+    expect(ASK_SYSTEM_PROMPT).toContain('individualized medical guidance');
+    expect(ASK_SYSTEM_PROMPT).toContain('a doctor, pharmacist or other qualified professional can tailor it to them');
     expect(ASK_SYSTEM_PROMPT).toContain('gets a full, direct general answer, not a deflection');
     expect(ASK_SYSTEM_PROMPT).toContain('never predict or comment on injury risk');
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
@@ -432,7 +432,7 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" ("personal" or "general")');
     expect(ASK_SYSTEM_PROMPT).toContain('web search tool');
     expect(ASK_SYSTEM_PROMPT).toContain('Do not search for stable facts you already know confidently');
-    expect(ASK_SYSTEM_PROMPT).toContain('You are a gym coach, not a general assistant');
+    expect(ASK_SYSTEM_PROMPT).toContain('You are a gym and health coach, not a general-purpose assistant');
     expect(ASK_SYSTEM_PROMPT).toContain('this is outside what the coach here does');
     expect(ASK_SYSTEM_PROMPT).toContain('Never endorse or recommend a specific commercial brand or product');
     expect(ASK_SYSTEM_PROMPT).toContain('give the general context in words rather than a precise outside figure');
@@ -443,11 +443,28 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('not every noun');
     expect(ASK_SYSTEM_PROMPT).toContain('Set "category" to whichever the answer is mainly about');
     expect(ASK_SYSTEM_PROMPT).toContain('never shown as text and never affects grounding');
-    expect(ASK_SYSTEM_PROMPT).toContain('or how to use this app itself');
+    expect(ASK_SYSTEM_PROMPT).toContain('and how to use this app itself');
     expect(ASK_SYSTEM_PROMPT).toContain('never guess a screen name or describe a button that isn\'t listed there');
     expect(ASK_SYSTEM_PROMPT).toContain('You cannot create a new split from inside a live session');
     expect(ASK_SYSTEM_PROMPT).toContain('that\'s the one place personal records (PRs) are listed');
     expect(ASK_SYSTEM_PROMPT).toContain('Settings has no tab of its own, only that gear');
+  });
+
+  it('ask prompt scope is broadened to general health, not just training-adjacent topics, while the individualized-guidance safety rule stays exactly as strict', () => {
+    // Broadened on explicit request: "broaden our coach reasoning... answer almost all questions related to health, general, gym, muscles."
+    expect(ASK_SYSTEM_PROMPT).toContain('read "health" broadly');
+    expect(ASK_SYSTEM_PROMPT).toContain('any system, not only muscles');
+    expect(ASK_SYSTEM_PROMPT).toContain('the heart and circulation, lungs and breathing, digestion, hormones, the immune system, the nervous system');
+    expect(ASK_SYSTEM_PROMPT).toContain('nutrition and diet in general, not only what\'s obviously training-related');
+    expect(ASK_SYSTEM_PROMPT).toContain('sleep in general, not only as it affects training');
+    expect(ASK_SYSTEM_PROMPT).toContain('stress, mood, motivation, habit-building and mental wellbeing');
+    expect(ASK_SYSTEM_PROMPT).toContain('ordinary everyday health questions a person might ask any knowledgeable friend');
+    expect(ASK_SYSTEM_PROMPT).toContain('this is not a narrower assistant than you actually are on health topics');
+    // Still genuinely bounded: unrelated topics decline exactly as before.
+    expect(ASK_SYSTEM_PROMPT).toContain('Genuinely out of scope: weather, news, trivia, writing or coding something for them, finance or legal matters');
+    // The broadened surface explicitly does not loosen the individualized-guidance line.
+    expect(ASK_SYSTEM_PROMPT).toContain('broadening scope (rule 2) means more of these will sound medical-adjacent; the individualized/general line stays exactly the same');
+    expect(ASK_SYSTEM_PROMPT).toContain('what does high blood pressure mean');
   });
 
   it('ask prompt also carries the full exercise catalog and rep-range table, and states the splitDraft rules — this is the one route that may design or adjust a real split', () => {

@@ -253,8 +253,13 @@ const ASK_WEB_SEARCH_MAX_USES = 3;
  * asks the model to hold itself to (rule 5: say when something is
  * contested rather than reciting a single source as settled). Subdomains
  * are covered automatically, so "nih.gov" also covers pubmed.ncbi.nlm.nih.gov.
+ * Extended with medlineplus.gov (NIH's own consumer health encyclopedia —
+ * exactly the register a broadened, general-health "what does X mean"
+ * question needs), sleepfoundation.org (sleep-specific, well-regarded) and
+ * apa.org (American Psychological Association, for stress and mental
+ * wellbeing) when the scope broadened past training-only topics.
  */
-export const ASK_WEB_SEARCH_ALLOWED_DOMAINS = ['nih.gov', 'cdc.gov', 'health.gov', 'who.int', 'mayoclinic.org', 'examine.com', 'acsm.org', 'nsca.com', 'bjsm.bmj.com', 'jissn.biomedcentral.com'];
+export const ASK_WEB_SEARCH_ALLOWED_DOMAINS = ['nih.gov', 'cdc.gov', 'health.gov', 'who.int', 'mayoclinic.org', 'examine.com', 'acsm.org', 'nsca.com', 'bjsm.bmj.com', 'jissn.biomedcentral.com', 'medlineplus.gov', 'sleepfoundation.org', 'apa.org'];
 
 export const callAsk: CallAsk = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 70_000 });

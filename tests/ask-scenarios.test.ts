@@ -120,8 +120,8 @@ describe('injury and pain (6)', () => {
   });
 
   it('individualized dosage with a stated condition still gets a doctor referral, not a number', () => {
-    expect(PROMPT_SOURCE).toContain('individualized medication or supplement dosage');
-    expect(PROMPT_SOURCE).toContain('a doctor or pharmacist can tailor it to them');
+    expect(PROMPT_SOURCE).toContain('individualized medical guidance');
+    expect(PROMPT_SOURCE).toContain('a doctor, pharmacist or other qualified professional can tailor it to them');
   });
 
   it('general: is post-training soreness two days later normal', () =>
@@ -189,7 +189,7 @@ describe('personal progress and comparison (6): needs real logged history', () =
 
 describe('app navigation and usage (4): "how do I..." questions about the app itself, not fitness', () => {
   it('"how do I see my recovery per muscle" points at the real screen, not a guess', () => {
-    expect(PROMPT_SOURCE).toContain('or how to use this app itself');
+    expect(PROMPT_SOURCE).toContain('and how to use this app itself');
     expect(PROMPT_SOURCE).toContain('Body (bottom tab): "Recovery"');
   });
 
@@ -209,7 +209,7 @@ describe('app navigation and usage (4): "how do I..." questions about the app it
 
 describe('out of scope and edge cases (4)', () => {
   it('a genuinely unrelated question gets a short redirect, per the prompt\'s topic boundary — not silence, not a random answer', () => {
-    expect(PROMPT_SOURCE).toContain('You are a gym coach, not a general assistant');
+    expect(PROMPT_SOURCE).toContain('You are a gym and health coach, not a general-purpose assistant');
     expect(PROMPT_SOURCE).toContain('this is outside what the coach here does');
   });
 
@@ -224,6 +224,28 @@ describe('out of scope and edge cases (4)', () => {
   it('"recommend a protein powder brand": never a specific commercial endorsement', () => {
     expect(PROMPT_SOURCE).toContain('Never endorse or recommend a specific commercial brand or product');
   });
+});
+
+describe('broadened general-health scope (6): sleep, stress, common ailments, other body systems — not just training-adjacent topics', () => {
+  it('the prompt scopes in general health broadly, not a narrow list of training subtopics, while the individualized-guidance line stays exactly as strict', () => {
+    expect(PROMPT_SOURCE).toContain('read "health" broadly');
+    expect(PROMPT_SOURCE).toContain('any system, not only muscles');
+    expect(PROMPT_SOURCE).toContain('sleep in general, not only as it affects training');
+    expect(PROMPT_SOURCE).toContain('stress, mood, motivation, habit-building and mental wellbeing');
+    expect(PROMPT_SOURCE).toContain('ordinary everyday health questions a person might ask any knowledgeable friend');
+    expect(PROMPT_SOURCE).toContain('this is not a narrower assistant than you actually are on health topics');
+    expect(PROMPT_SOURCE).toContain('the individualized/general line stays exactly the same');
+  });
+
+  const questions: Array<[string, string]> = [
+    ['How can I get better sleep in general, not just for training?', 'A cool, dark room, a consistent wake time, and cutting caffeine after early afternoon all help most people fall and stay asleep.'],
+    ['What can I do to manage stress day to day?', 'Regular exercise, short breathing breaks, and keeping a consistent sleep schedule all measurably lower day-to-day stress for most people.'],
+    ['What generally causes a tension headache?', 'Tension headaches are usually linked to stress, dehydration, poor sleep, or tight neck and shoulder muscles from prolonged sitting.'],
+    ['How does the immune system generally respond to exercise?', 'Moderate regular exercise is linked to fewer illnesses overall, while a single very long, hard session can briefly dip immune function for a day or so.'],
+    ['What is blood pressure, in general terms?', 'Blood pressure is the force of blood against artery walls, written as two numbers — the pressure during a heartbeat over the pressure between beats.'],
+    ['Why do people get hungrier in cold weather?', 'The body burns more energy keeping warm in the cold, which commonly raises appetite as a result.'],
+  ];
+  it.each(questions)('%s', async (q, a) => acceptsGeneralAnswer(q, a));
 });
 
 describe('mixed personal + general (2): the subtlest category — one answer, one scope tag', () => {
