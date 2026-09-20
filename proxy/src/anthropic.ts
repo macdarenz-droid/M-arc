@@ -18,6 +18,7 @@ const ExplanationSchema = z.object({
 
 const AskSchema = z.object({
   scope: z.enum(['personal', 'general']),
+  category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
   answer: z.string(),
 });
 
@@ -240,5 +241,5 @@ export const callAsk: CallAsk = async (payload, env) => {
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, answer: stripFormattingLeak(parsed.answer), model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), model: response.model, usage: usageOf(response) };
 };

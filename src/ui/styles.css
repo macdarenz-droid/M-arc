@@ -186,9 +186,15 @@ svg { display: block; }
 
 /* Ask the coach */
 .ask-thread { display: grid; gap: 10px; max-height: 50vh; overflow-y: auto; padding: 2px 2px 4px; margin-bottom: 12px; }
-.ask-bubble { max-width: 86%; padding: 10px 14px; border-radius: var(--radius-lg); font-size: 15.5px; line-height: 1.5; white-space: pre-wrap; }
-.ask-user { justify-self: end; background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 4px; }
+.ask-bubble { max-width: 86%; padding: 10px 14px; border-radius: var(--radius-lg); font-size: 15.5px; line-height: 1.5; }
+.ask-bubble p { margin: 8px 0 0; }
+.ask-bubble p:first-child { margin-top: 0; }
+.ask-user { justify-self: end; background: var(--accent); color: var(--on-accent); border-bottom-right-radius: 4px; white-space: pre-wrap; }
 .ask-assistant { justify-self: start; background: var(--surface-2); border: 1px solid var(--border-subtle); border-bottom-left-radius: 4px; }
+.ask-list { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ask-list:first-child { margin-top: 0; }
+.ask-list li { display: flex; align-items: flex-start; gap: 8px; }
+.ask-list-icon { flex: none; margin-top: 2px; color: var(--accent); }
 .ask-input { display: flex; gap: 8px; align-items: center; }
 .ask-input input { flex: 1; }
 

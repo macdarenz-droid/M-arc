@@ -67,7 +67,7 @@ const fresh = freshStart();
 async function acceptsGeneralAnswer(question: string, answerWithOutsideNumbers: string) {
   const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg' });
   const r = await requestAskAnswer(payload, { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
-  expect(r, question).toEqual({ ok: true, scope: 'general', answer: answerWithOutsideNumbers });
+  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers });
 }
 
 describe('general knowledge (8): anatomy, machines, reps, nutrition — none of this needs the report', () => {

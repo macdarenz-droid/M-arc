@@ -69,7 +69,7 @@ describe('requestAskAnswer', () => {
     const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
     const fetchImpl = reply(200, { scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(p, { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.` });
+    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.` });
   });
 
   it('drops a personal-scope answer that invents a number not in the report', async () => {
@@ -88,7 +88,16 @@ describe('requestAskAnswer', () => {
   it('a general-knowledge answer is not checked against the report — it is not a claim about this person\'s data', async () => {
     const fetchImpl = reply(200, { scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.' });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.' });
+  });
+
+  it('a real category value passes through, and an invalid or missing one defaults to "general" rather than trusting the network', async () => {
+    const withReal = reply(200, { scope: 'general', category: 'nutrition', answer: 'Protein needs vary, but a common range is a gram or two per kilogram of body weight.' });
+    expect(await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withReal })).toMatchObject({ ok: true, category: 'nutrition' });
+    const withBogus = reply(200, { scope: 'general', category: 'not-a-real-category', answer: 'Protein needs vary, but a common range is a gram or two per kilogram of body weight.' });
+    expect(await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withBogus })).toMatchObject({ ok: true, category: 'general' });
+    const withMissing = reply(200, { scope: 'general', answer: 'Protein needs vary, but a common range is a gram or two per kilogram of body weight.' });
+    expect(await requestAskAnswer(payload(), { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withMissing })).toMatchObject({ ok: true, category: 'general' });
   });
 
   it('rejects an unreadable reply rather than showing something empty', async () => {

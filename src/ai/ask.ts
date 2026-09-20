@@ -47,9 +47,13 @@ export function buildAskPayload(report: FindingsReport, history: AskTurn[], ques
   };
 }
 
-interface AskReply { scope?: unknown; answer?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; error?: unknown }
 
-export type AskResult = { ok: true; answer: string; scope: 'personal' | 'general' } | { ok: false; error: string };
+/** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
+export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
+const ASK_CATEGORIES: readonly AskCategory[] = ['nutrition', 'body', 'training', 'app', 'general'];
+
+export type AskResult = { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory } | { ok: false; error: string };
 
 /** Ask. A "personal" answer is validated the way /explain's is: any number not already in the payload, and the whole answer is dropped rather than shown half-trusted. A "general" answer (ordinary exercise/nutrition knowledge, not a claim about this person) is not checked against the payload — there is nothing in it to check against. */
 export async function requestAskAnswer(payload: AskPayload, opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
@@ -59,9 +63,10 @@ export async function requestAskAnswer(payload: AskPayload, opts: { url: string;
   const answer = typeof result.body.answer === 'string' ? result.body.answer.trim() : '';
   if (!answer) return { ok: false, error: 'The coach sent back something we could not read.' };
   const scope: 'personal' | 'general' = result.body.scope === 'general' ? 'general' : 'personal';
+  const category: AskCategory = (ASK_CATEGORIES as string[]).includes(result.body.category as string) ? (result.body.category as AskCategory) : 'general';
   if (scope === 'personal') {
     const check = validateText(answer, allowedNumbers(payload));
     if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
   }
-  return { ok: true, answer, scope };
+  return { ok: true, answer, scope, category };
 }

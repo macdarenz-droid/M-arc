@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import type { ComponentChildren, JSX } from 'preact';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconChevron, IconInfo, IconSend } from '@/ui/icons';
+import { IconApple, IconBody, IconChevron, IconDumbbell, IconGear, IconInfo, IconSend } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -15,7 +16,7 @@ import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
-import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskTurn } from '@/ai/ask';
+import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskTurn } from '@/ai/ask';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { ensureDeviceId, explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
@@ -223,8 +224,35 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
  * research cards behind it, nothing about sessions, name or body. History
  * lives only in this sheet's own state — closing it forgets the exchange.
  */
-/** A turn as shown on screen. "scope" is local-only (never sent back to the Worker as part of history) — it just says whether an assistant reply was grounded in this person's report or is general exercise/nutrition knowledge, so it can carry a small honest label the same way the app labels evidence quality everywhere else. */
-type AskBubble = AskTurn & { scope?: 'personal' | 'general' };
+/** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. */
+type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory };
+
+const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string; 'aria-hidden'?: boolean }) => JSX.Element> = {
+  nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
+};
+
+/** `**term**` becomes emphasis; everything else passes through untouched. Never touches a raw string with HTML — this builds real child nodes, so there is nothing to escape or inject. */
+function renderAskInline(text: string): ComponentChildren {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(p => p.length > 0);
+  return parts.map((part, i) => (part.startsWith('**') && part.endsWith('**') && part.length > 4) ? <strong key={i}>{part.slice(2, -2)}</strong> : part);
+}
+
+/**
+ * The prompt (promptAsk.ts rule 13) allows a blank-line paragraph break and
+ * a "- "-prefixed line list for an answer that is genuinely a set of
+ * distinct items. This turns that plain-text convention into real <p>/<ul>
+ * structure with a small category icon per bullet, rather than relying on
+ * `white-space: pre-wrap` to fake it with raw dashes.
+ */
+function renderAskBody(text: string, category: AskCategory): ComponentChildren {
+  const Icon = ASK_CATEGORY_ICON[category] ?? IconInfo;
+  return text.split(/\n{2,}/).map((block, bi) => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    const isList = lines.length > 0 && lines.every(l => l.startsWith('- '));
+    if (isList) return <ul class="ask-list" key={bi}>{lines.map((l, li) => <li key={li}><Icon size={14} class="ask-list-icon" aria-hidden={true} />{renderAskInline(l.slice(2))}</li>)}</ul>;
+    return <p key={bi}>{renderAskInline(block.trim())}</p>;
+  });
+}
 
 /**
  * Someone who has been logging for months has no way to know the coach can
@@ -306,7 +334,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope }]);
+      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category }]);
       else setError(r.error);
     } finally {
       setSending(false);
@@ -320,7 +348,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && turn.scope === 'general' && <div class="hint" style={{ marginBottom: 4 }}>General knowledge, not from your data</div>}
-            {turn.text}
+            {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
           </div>
         ))}
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}

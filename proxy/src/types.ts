@@ -117,9 +117,13 @@ export interface AskPayload extends GroundingPayload {
   question: string;
 }
 
+/** What an answer is mainly about, purely to pick a small decorative bullet icon client-side — never shown as text, never used for grounding or validation. */
+export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
+
 export interface AskReply {
   /** "personal" states something about this person's own logged data (grounded, number-checked by the app); "general" is ordinary exercise/nutrition knowledge that does not depend on their data and is not checked against the report. */
   scope: 'personal' | 'general';
+  category: AskCategory;
   answer: string;
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };

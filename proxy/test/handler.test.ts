@@ -66,10 +66,10 @@ const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
 });
 
-const stubAsk = async () => ({ scope: 'personal' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
-  async call() { const out = await call(); return { scope: out.scope, answer: out.answer, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, model: out.model, usage: out.usage }; },
 });
 
 const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
@@ -299,9 +299,10 @@ describe('handler: multiple routes in one Worker', () => {
   it('answers /ask grounded in the report, with a real question', async () => {
     const res = await handle(post('/ask', askPayload()), env());
     expect(res.status).toBe(200);
-    const body = await res.json() as { scope: string; answer: string; model: string };
+    const body = await res.json() as { scope: string; category: string; answer: string; model: string };
     expect(body.answer).toContain('14.5');
     expect(body.scope).toBe('personal');
+    expect(body.category).toBe('training');
     expect(body.model).toBe('claude-sonnet-5');
   });
 
@@ -390,6 +391,10 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('no raw JSON');
     expect(ASK_SYSTEM_PROMPT).toContain('stray quotation mark or brace');
     expect(ASK_SYSTEM_PROMPT).toContain('starting with "- "');
+    expect(ASK_SYSTEM_PROMPT).toContain('**double asterisks**');
+    expect(ASK_SYSTEM_PROMPT).toContain('not every noun');
+    expect(ASK_SYSTEM_PROMPT).toContain('Set "category" to whichever the answer is mainly about');
+    expect(ASK_SYSTEM_PROMPT).toContain('never shown as text and never affects grounding');
     expect(ASK_SYSTEM_PROMPT).toContain('or how to use this app itself');
     expect(ASK_SYSTEM_PROMPT).toContain('never guess a screen name or describe a button that isn\'t listed there');
     expect(ASK_SYSTEM_PROMPT).toContain('You cannot create a new split from inside a live session');

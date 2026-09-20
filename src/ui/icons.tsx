@@ -8,6 +8,7 @@ export const IconSun = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><
 export const IconDumbbell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12" /></svg>;
 export const IconKettlebell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M9 9a3 3 0 0 1 6 0v1" /><circle cx="12" cy="16" r="5.5" /></svg>;
 export const IconPlate = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /></svg>;
+export const IconApple = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 8c-3.5 0-6 2.7-6 6.5C6 18.5 8.5 21 11 21c.7 0 1.3-.2 2-.2s1.3.2 2 .2c2.5 0 5-2.5 5-6.5 0-3.8-2.5-6.5-6-6.5-.6 0-1 .1-1.5.3.2-1 .9-2 2-2.5" /></svg>;
 export const IconBody = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="4.5" r="2.5" /><path d="M8 9h8l1 6h-2l-1 6h-4l-1-6H7z" /></svg>;
 export const IconSpark = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" /></svg>;
 export const IconClock = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;
