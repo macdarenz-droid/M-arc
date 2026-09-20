@@ -10,6 +10,7 @@ import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery } from '@/brain/coach/detectors';
 import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
 import { deloadActive } from '@/brain/coach/deload';
+import { buildAskStats } from '@/brain/stats';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -35,7 +36,10 @@ export const scheduledSplitId = computed(() => todayPlan.value?.splitId ?? state
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
 export const todayChanges = computed(() => todayPlan.value?.changes ?? []);
 
-const brainContext = computed(() => contextFromState(state.value, today.value, nowMinute.value));
+export const brainContext = computed(() => contextFromState(state.value, today.value, nowMinute.value));
+
+/** A precomputed "how things stand right now" snapshot for /ask — see src/brain/stats.ts. Recomputed alongside the report, whenever state or the minute changes. */
+export const askStats = computed(() => buildAskStats(brainContext.value));
 
 /** Recovery with the session's volume taken into account, the same numbers the coach uses. */
 export const recovery = computed<MuscleRecovery[]>(() => adjustedRecovery(brainContext.value).map(r => ({

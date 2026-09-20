@@ -18,14 +18,34 @@ const ExplanationSchema = z.object({
 
 const MuscleIdSchema = z.enum(MUSCLE_IDS);
 const ExerciseIdSchema = z.enum(EXERCISE_IDS as [string, ...string[]]);
+
+/**
+ * The shipped catalog, plus any custom exercise id this exact request's own
+ * `splits` already contain. Without this, ExerciseIdSchema is a closed enum
+ * built once from EXERCISE_IDS alone — a real id the person made themselves
+ * (never in the static catalog) can never be re-emitted by the model, so a
+ * "modify" splitDraft that keeps an existing custom exercise silently drops
+ * it, even though the person never asked to remove it. Built fresh per
+ * request rather than once at module load, since the set of custom ids in
+ * play is only known once a payload arrives. Doesn't touch prompt caching:
+ * output_config.format isn't part of the cached `system` prefix.
+ */
+export function exerciseIdSchemaFor(splits: readonly { exercises: readonly { exerciseId: string }[] }[]) {
+  const extra = new Set<string>();
+  for (const s of splits) for (const e of s.exercises) if (!EXERCISE_IDS.includes(e.exerciseId)) extra.add(e.exerciseId);
+  return extra.size === 0 ? ExerciseIdSchema : z.enum([...EXERCISE_IDS, ...extra] as [string, ...string[]]);
+}
+
 /** One concrete split proposal — see promptAsk.ts's split-building rules for when this is used. Every exerciseId is re-validated against the real catalog app-side too before it can ever be applied. */
-const SplitDraftSchema = z.object({
-  action: z.enum(['create', 'modify']),
-  splitId: z.string().nullable(),
-  name: z.string(),
-  focus: z.array(MuscleIdSchema).max(2),
-  exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
-});
+function splitDraftSchemaFor(exerciseId: typeof ExerciseIdSchema) {
+  return z.object({
+    action: z.enum(['create', 'modify']),
+    splitId: z.string().nullable(),
+    name: z.string(),
+    focus: z.array(MuscleIdSchema).max(2),
+    exercises: z.array(z.object({ exerciseId, sets: z.number().int().min(1).max(6) })).min(1).max(10),
+  });
+}
 /**
  * At most this many splits proposed in one reply — a person describing
  * several splits at once (a full weekly plan) still gets one entry per
@@ -49,17 +69,20 @@ const ScheduleDraftSchema = z.object({
   thu: z.string().nullable(), fri: z.string().nullable(), sat: z.string().nullable(),
 });
 
-const AskSchema = z.object({
-  scope: z.enum(['personal', 'general']),
-  category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
-  answer: z.string(),
-  /** Present only when this reply actually proposes designing or adjusting one or more splits — most replies leave this empty. */
-  splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
-  /** Present only when this reply actually proposes rearranging the weekly schedule — most replies leave this null. */
-  scheduleDraft: ScheduleDraftSchema.nullable(),
-  /** Set by the model itself (promptAsk.ts rule 17) when the question carries a crisis or disordered-eating signal — null for nearly every reply. The app renders a fixed resource card whenever this isn't null; it is a safety flag, not a finding about the person, so it is never checked against the report. */
-  concern: z.enum(['crisis', 'disordered_eating']).nullable(),
-});
+/** Built per request — see exerciseIdSchemaFor for why the exerciseId vocabulary can't be a fixed module-level enum. */
+function askSchemaFor(splits: readonly { exercises: readonly { exerciseId: string }[] }[]) {
+  return z.object({
+    scope: z.enum(['personal', 'general']),
+    category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
+    answer: z.string(),
+    /** Present only when this reply actually proposes designing or adjusting one or more splits — most replies leave this empty. */
+    splitDrafts: z.array(splitDraftSchemaFor(exerciseIdSchemaFor(splits))).max(MAX_SPLIT_DRAFTS),
+    /** Present only when this reply actually proposes rearranging the weekly schedule — most replies leave this null. */
+    scheduleDraft: ScheduleDraftSchema.nullable(),
+    /** Set by the model itself (promptAsk.ts rule 17) when the question carries a crisis or disordered-eating signal — null for nearly every reply. The app renders a fixed resource card whenever this isn't null; it is a safety flag, not a finding about the person, so it is never checked against the report. */
+    concern: z.enum(['crisis', 'disordered_eating']).nullable(),
+  });
+}
 
 const TagSchema = z.object({
   equipment: z.string(),
@@ -313,7 +336,7 @@ export const callAsk: CallAsk = async (payload, env) => {
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
     tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
-    output_config: { format: zodOutputFormat(AskSchema), effort: ASK_EFFORT },
+    output_config: { format: zodOutputFormat(askSchemaFor(payload.splits)), effort: ASK_EFFORT },
   });
   const response = await stream.finalMessage();
   const parsed = requireParsed(response);

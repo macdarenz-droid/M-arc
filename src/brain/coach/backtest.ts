@@ -185,7 +185,7 @@ function ctxFor(input: HistoryInput, day: string, now: number): BrainContext {
   return {
     sessions: input.sessions.filter(s => new Date(s.endedAt || s.startedAt).getTime() <= now),
     splits: input.splits, schedule: input.schedule, custom: input.custom ?? [], goal: input.goal, restDefaultSec: input.restDefaultSec ?? 90,
-    health: { connected: false }, readiness: [], today: day, now, dismissed: {}, accepted: {},
+    health: { connected: false }, readiness: [], deload: null, today: day, now, dismissed: {}, accepted: {},
   };
 }
 

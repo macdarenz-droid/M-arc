@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, MAX_PREFERENCES, MAX_PREFERENCE_CHARS, MAX_KNOWN_SPLITS, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, MAX_PREFERENCES, MAX_PREFERENCE_CHARS, MAX_KNOWN_SPLITS, MAX_STATS_PRS, MAX_STATS_WEEKS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
@@ -28,6 +28,13 @@ const scheduleWithPush = { ...emptySchedule, mon: 'split_push' };
 const askPayload = (): AskPayload => {
   const { version, goal, unit, today, dataQuality, findings, proposals, cards } = payload();
   return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?', splits: knownSplits, schedule: emptySchedule };
+};
+const validStats = {
+  version: 1 as const,
+  recovery: [{ muscle: 'chest', pct: 62, tier: 'mid' as const, hoursLeft: 18 }],
+  prs: [{ exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press', kind: 'heaviest' as const, detail: '80 kg × 5', day: '2026-09-12' }],
+  weeklyVolume: [{ start: '2026-09-14', end: '2026-09-20', sets: 24, volumeKg: 5200 }],
+  deload: null,
 };
 const identifyPayload = (): IdentifyExercisePayload => ({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG }, equipmentHint: 'Cable' });
 const importPayload = (): ImportProgrammePayload => ({ version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } });
@@ -199,6 +206,24 @@ describe('ask payload validation', () => {
     // The raw measurements themselves stay refused outright, bmi or no bmi.
     expect(validateAskPayload({ ...askPayload(), bmi: 26, bodyWeightKg: 70 })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), bmi: 26, heightCm: 164 })).toMatchObject({ ok: false });
+  });
+
+  it('accepts an optional stats snapshot — how things stand right now, shape-checked and capped the same way findings/proposals are', () => {
+    expect(validateAskPayload({ ...askPayload(), stats: validStats })).toMatchObject({ ok: true });
+    expect(validateAskPayload(askPayload())).toMatchObject({ ok: true }); // omitted entirely: still fine
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, version: 2 } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, extra: true } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, recovery: [{ muscle: 'not_a_muscle', pct: 50, tier: 'mid', hoursLeft: 10 }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, recovery: [{ muscle: 'chest', pct: 150, tier: 'mid', hoursLeft: 10 }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, recovery: Array.from({ length: 25 }, () => validStats.recovery[0]) } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: [{ ...validStats.prs[0], kind: 'not_a_real_kind' }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: Array.from({ length: MAX_STATS_PRS + 1 }, () => validStats.prs[0]) } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, weeklyVolume: [{ start: 'not-a-day', end: '2026-09-19', sets: 10, volumeKg: 500 }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, weeklyVolume: Array.from({ length: MAX_STATS_WEEKS + 1 }, () => validStats.weeklyVolume[0]) } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, deload: null } })).toMatchObject({ ok: true }); // no active deload is a real, valid state
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, deload: { from: '2026-09-15', to: '2026-09-21', loadFactor: 1.5, effortCap: 'easy' } } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, deload: { from: '2026-09-15', to: '2026-09-21', loadFactor: 0.7, effortCap: 'brutal' } } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: 'nope' })).toMatchObject({ ok: false });
   });
 
   it('accepts the person\'s known splits, capped and shape-checked — this is the one route that may also design or adjust one', () => {
@@ -498,6 +523,10 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('a shorter, direct answer beats a longer, more complete-sounding one whenever both would do');
     expect(ASK_SYSTEM_PROMPT).toContain('preferences');
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" ("personal" or "general")');
+    expect(ASK_SYSTEM_PROMPT).toContain('"findings" and "proposals" are exceptions only');
+    expect(ASK_SYSTEM_PROMPT).toContain('every muscle\'s current recovery percent and hours left');
+    expect(ASK_SYSTEM_PROMPT).toContain('this exercise\'s current best of each kind');
+    expect(ASK_SYSTEM_PROMPT).toContain('do not derive a percentage or an average across entries yourself');
     expect(ASK_SYSTEM_PROMPT).toContain('web search tool');
     expect(ASK_SYSTEM_PROMPT).toContain('Do not search for stable facts you already know confidently');
     expect(ASK_SYSTEM_PROMPT).toContain('You are a gym and health coach, not a general-purpose assistant');
@@ -702,5 +731,13 @@ describe('prompts', () => {
     const { bmi: _bmi, ...withoutBmi } = askPayload();
     const msgsWithout = askMessages(withoutBmi as AskPayload);
     expect(msgsWithout[0]!.content).toContain('"bmi":null');
+  });
+
+  it('ask passes stats through to the model context when present, and null when the payload omits it', () => {
+    const withStats = askMessages({ ...askPayload(), stats: validStats });
+    expect(withStats[0]!.content).toContain('"recovery":[{"muscle":"chest"');
+    expect(withStats[0]!.content).toContain('"prs":[{"exerciseId":"lib_barbell_bench_press"');
+    const msgsWithout = askMessages(askPayload());
+    expect(msgsWithout[0]!.content).toContain('"stats":null');
   });
 });

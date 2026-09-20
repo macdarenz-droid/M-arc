@@ -10,6 +10,7 @@
 import type { Finding, FindingsReport, Proposal } from './contract';
 import { PRINCIPLES_VERSION, principlesFor } from './principles';
 import { endpoint, newDeviceId, postJson } from '@/ai/client';
+import type { AskStats } from '../stats';
 
 export { endpoint, newDeviceId };
 
@@ -36,6 +37,8 @@ export interface GroundingPayload {
    * weight should I get to" kept needing to ask for figures already sitting in Settings.
    */
   bmi?: number | null;
+  /** A precomputed "how things stand right now" snapshot — see src/brain/stats.ts. Optional so an older or hand-built payload is still valid; only /ask sets it today. */
+  stats?: AskStats;
 }
 
 /** BMI = kg / (m^2), one decimal place, standard formula. Null when weight or height isn't set — never a guess. */
@@ -139,6 +142,11 @@ export function allowedNumbers(payload: GroundingPayload): Set<number> {
   for (const c of payload.cards) [...extractNumbers(c.statement), ...extractNumbers(c.disputed)].forEach(add);
   for (const p of payload.preferences ?? []) extractNumbers(p).forEach(add);
   if (payload.bmi != null) add(payload.bmi);
+  // Recovery %/hours, PR values, weekly volume and deload numbers — visit() already skips
+  // YYYY-MM-DD strings (a date never parses as a bare number), so stats' own `day`/`from`/`to`
+  // fields don't leak in as false positives the way an earlier version of this function let
+  // window dates do (see the comment on visit() above).
+  if (payload.stats) visit(payload.stats);
   return out;
 }
 

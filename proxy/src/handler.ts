@@ -6,13 +6,17 @@
  * call is injected so the handler is testable without the network.
  */
 import { DEFAULT_MODEL, modelsByRoute } from './anthropic';
+import { MUSCLE_IDS } from './vocab';
 import { WEEKDAY_KEYS } from './types';
 import type { AskPayload, AskTurn, GroundingPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
 export const MAX_TAG_BODY_BYTES = 1024;
 export const MAX_NOTES_BODY_BYTES = 2 * 1024;
-export const MAX_ASK_BODY_BYTES = 32 * 1024;
+// Raised from 32 KiB alongside `stats` (recovery for all 24 muscles, up to 20 PRs, a weekly
+// volume trend and deload state) — roughly 4-5 KiB more at the combined worst case of every
+// other field already at its own cap.
+export const MAX_ASK_BODY_BYTES = 40 * 1024;
 /** A downscaled photo's base64 comfortably fits well under this; it exists to bound cost and abuse, not to be a target size. */
 export const MAX_IDENTIFY_BODY_BYTES = 1_500_000;
 export const MAX_IMPORT_BODY_BYTES = 1_500_000;
@@ -33,6 +37,14 @@ export const MAX_HISTORY_TURN_CHARS = 700;
 export const MAX_KNOWN_SPLITS = 7;
 export const MAX_KNOWN_SPLIT_EXERCISES = 14;
 export const MAX_KNOWN_SPLIT_NAME_CHARS = 28;
+/** Mirrors MAX_STATS_PRS in src/brain/stats.ts (app). */
+export const MAX_STATS_PRS = 20;
+/** Mirrors STATS_WEEKS in src/brain/stats.ts (app). */
+export const MAX_STATS_WEEKS = 8;
+const RECOVERY_TIERS = ['low', 'mid', 'high', 'ready'] as const;
+/** Mirrors PrKind in src/brain/prs.ts (app). */
+const PR_KINDS = ['heaviest', 'strength', 'reps_at_load', 'best_reps', 'best_duration', 'best_distance'] as const;
+const EFFORT_CAPS = ['easy', 'ideal'] as const;
 const DEVICE_ID = /^[a-zA-Z0-9_-]{8,64}$/;
 const BASE64 = /^[A-Za-z0-9+/]+=*$/;
 
@@ -98,8 +110,45 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
   if (raw.bmi !== undefined && raw.bmi !== null) {
     if (typeof raw.bmi !== 'number' || !Number.isFinite(raw.bmi) || raw.bmi <= 0 || raw.bmi > 200) return 'bmi must be a plausible positive number.';
   }
+  if (raw.stats !== undefined) {
+    const statsError = validateStats(raw.stats);
+    if (statsError) return statsError;
+  }
   // Anything that looks like a person: refuse. The app never sends these; a modified client might.
   for (const key of ['profile', 'name', 'email', 'bodyWeightKg', 'heightCm', 'sessions']) if (key in raw) return `Field "${key}" is not accepted.`;
+  return null;
+}
+
+const isRecoveryEntry = (v: unknown): v is { muscle: string; pct: number; tier: string; hoursLeft: number } =>
+  isRecord(v) && typeof v.muscle === 'string' && (MUSCLE_IDS as readonly string[]).includes(v.muscle)
+  && typeof v.pct === 'number' && Number.isFinite(v.pct) && v.pct >= 0 && v.pct <= 100
+  && typeof v.tier === 'string' && (RECOVERY_TIERS as readonly string[]).includes(v.tier)
+  && typeof v.hoursLeft === 'number' && Number.isFinite(v.hoursLeft) && v.hoursLeft >= 0;
+
+const isStatsPr = (v: unknown): v is { exerciseId: string; exerciseName: string; kind: string; detail: string; day: string } =>
+  isRecord(v) && typeof v.exerciseId === 'string' && typeof v.exerciseName === 'string'
+  && typeof v.kind === 'string' && (PR_KINDS as readonly string[]).includes(v.kind)
+  && typeof v.detail === 'string' && isDay(v.day);
+
+const isStatsWeek = (v: unknown): v is { start: string; end: string; sets: number; volumeKg: number } =>
+  isRecord(v) && isDay(v.start) && isDay(v.end)
+  && typeof v.sets === 'number' && Number.isFinite(v.sets) && v.sets >= 0
+  && typeof v.volumeKg === 'number' && Number.isFinite(v.volumeKg) && v.volumeKg >= 0;
+
+const isStatsDeload = (v: unknown): v is { from: string; to: string; loadFactor: number; effortCap: string } =>
+  isRecord(v) && isDay(v.from) && isDay(v.to)
+  && typeof v.loadFactor === 'number' && Number.isFinite(v.loadFactor) && v.loadFactor > 0 && v.loadFactor <= 1
+  && typeof v.effortCap === 'string' && (EFFORT_CAPS as readonly string[]).includes(v.effortCap);
+
+/** A precomputed "how things stand right now" snapshot — see AskStats in types.ts. Returns a plain-words reason it was refused, or null if it's fine. */
+function validateStats(raw: unknown): string | null {
+  if (!isRecord(raw)) return 'stats must be an object.';
+  if (!onlyKeys(raw, ['version', 'recovery', 'prs', 'weeklyVolume', 'deload'])) return 'Unexpected field in stats.';
+  if (raw.version !== 1) return 'stats.version must be 1.';
+  if (!Array.isArray(raw.recovery) || raw.recovery.length > MUSCLE_IDS.length || !raw.recovery.every(isRecoveryEntry)) return `stats.recovery must be an array of at most ${MUSCLE_IDS.length} muscle entries.`;
+  if (!Array.isArray(raw.prs) || raw.prs.length > MAX_STATS_PRS || !raw.prs.every(isStatsPr)) return `stats.prs must be an array of at most ${MAX_STATS_PRS} records.`;
+  if (!Array.isArray(raw.weeklyVolume) || raw.weeklyVolume.length > MAX_STATS_WEEKS || !raw.weeklyVolume.every(isStatsWeek)) return `stats.weeklyVolume must be an array of at most ${MAX_STATS_WEEKS} weeks.`;
+  if (raw.deload !== null && !isStatsDeload(raw.deload)) return 'stats.deload must be a valid deload or null.';
   return null;
 }
 
@@ -107,7 +156,7 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
 export function validatePayload(raw: unknown): Validated<import('./types').ExplainPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'explain') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'explain'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'stats', 'explain'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   const findings = raw.findings as Array<{ id: string }>, proposals = raw.proposals as Array<{ id: string }>, explain = raw.explain;
@@ -185,7 +234,7 @@ const isSchedule = (v: unknown): v is Record<string, string | null> =>
 export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'history', 'question', 'splits', 'schedule'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'bmi', 'stats', 'history', 'question', 'splits', 'schedule'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };

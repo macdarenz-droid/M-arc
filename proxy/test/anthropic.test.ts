@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, modelFor, modelsByRoute, stripFormattingLeak } from '../src/anthropic';
+import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, exerciseIdSchemaFor, modelFor, modelsByRoute, stripFormattingLeak } from '../src/anthropic';
+import { EXERCISE_IDS } from '../src/vocab';
 
 describe('ask web search domain allowlist', () => {
   it('is a non-empty, deduplicated list of plain hostnames — no scheme, no path, no wildcard', () => {
@@ -37,6 +38,28 @@ describe('stripFormattingLeak', () => {
   it('does not touch a legitimate sentence that just happens to end in a quote or a unit mark — only an actual brace/bracket is a leak', () => {
     expect(stripFormattingLeak('this is sometimes called "muscle confusion"')).toBe('this is sometimes called "muscle confusion"');
     expect(stripFormattingLeak('bar height is about chest level, 45"')).toBe('bar height is about chest level, 45"');
+  });
+});
+
+describe('exerciseIdSchemaFor — per-request splitDraft vocabulary', () => {
+  it('accepts every shipped catalog id even with no custom exercises in play', () => {
+    const schema = exerciseIdSchemaFor([]);
+    expect(schema.safeParse(EXERCISE_IDS[0]).success).toBe(true);
+    expect(schema.safeParse('not_a_real_id').success).toBe(false);
+  });
+
+  it('also accepts a custom exercise id this exact payload\'s own splits already contain — a "modify" splitDraft can otherwise never re-propose it, silently dropping a real exercise the person never asked to remove', () => {
+    const schema = exerciseIdSchemaFor([{ exercises: [{ exerciseId: 'custom_1758312345_garage_press' }] }]);
+    expect(schema.safeParse('custom_1758312345_garage_press').success).toBe(true);
+    expect(schema.safeParse(EXERCISE_IDS[0]).success).toBe(true); // the shipped catalog is still allowed too
+    expect(schema.safeParse('not_a_real_id').success).toBe(false); // still closed — an invented id is still rejected
+  });
+
+  it('a custom id from one split does not leak into unrelated requests — a fresh schema is built per request, not cached module-wide', () => {
+    const withCustom = exerciseIdSchemaFor([{ exercises: [{ exerciseId: 'custom_only_in_this_request' }] }]);
+    const withoutCustom = exerciseIdSchemaFor([]);
+    expect(withCustom.safeParse('custom_only_in_this_request').success).toBe(true);
+    expect(withoutCustom.safeParse('custom_only_in_this_request').success).toBe(false);
   });
 });
 

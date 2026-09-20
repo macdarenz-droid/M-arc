@@ -256,6 +256,23 @@ describe('load, rest, deload', () => {
     expect(['confirm', 'increase', 'hold', 'reps', 'reentry', 'plateau']).toContain(bench.apply.mode);
   });
 
+  it('scales load_next by an active deload, the same way Train/Live already do — so /ask never states a heavier number than the person actually sees', () => {
+    const sessions = pplHistory('2026-08-31', 8);
+    const deload = { from: '2026-09-15', to: '2026-09-21', loadFactor: 0.7, effortCap: 'easy' as const };
+    const withDeload = ctx(sessions, { schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: PUSH_ID }, deload });
+    const out = planLoad(withDeload, [], null);
+    const bench = out.find(p => p.subject.exerciseId === 'lib_barbell_bench_press')!;
+    if (bench.apply.kind !== 'load_next') return;
+    expect(bench.apply.kg).toBe(28); // half(40 * 0.7), same rounding applyDeload already uses
+    expect(bench.apply.mode).toBe('hold');
+    // An expired deload (outside from/to) must not scale anything — the un-deloaded 40kg target holds.
+    const expired = ctx(sessions, { schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: PUSH_ID }, deload: { ...deload, from: '2026-01-01', to: '2026-01-07' } });
+    const outExpired = planLoad(expired, [], null);
+    const benchExpired = outExpired.find(p => p.subject.exerciseId === 'lib_barbell_bench_press')!;
+    if (benchExpired.apply.kind !== 'load_next') return;
+    expect(benchExpired.apply.kg).toBe(40);
+  });
+
   it('longer rests for strength goals with a short default', () => {
     expect(planRest(ctx([], { goal: 'strength', restDefaultSec: 90 }))!.apply).toEqual({ kind: 'rest_default', seconds: 150 });
     expect(planRest(ctx([], { goal: 'strength', restDefaultSec: 150 }))).toBeNull();

@@ -137,7 +137,7 @@ function buildPersonaContext(spec: PersonaSpec, seed: number, today: string): Br
   return {
     sessions, splits, schedule: schedule as BrainContext['schedule'], custom: [], goal: spec.goal, restDefaultSec: 90,
     health: { connected: rand() < 0.5, sleepMinutes: rand() < 0.7 ? Math.floor(rand() * 600) : undefined },
-    readiness, today, now: new Date(`${today}T12:00:00.000Z`).getTime(), dismissed, accepted,
+    readiness, deload: null, today, now: new Date(`${today}T12:00:00.000Z`).getTime(), dismissed, accepted,
   };
 }
 
@@ -238,7 +238,7 @@ describe('adversarial edge cases the persona generator above cannot reach on its
     ];
     const ctx: BrainContext = {
       sessions, splits, schedule: Object.fromEntries(WEEKDAYS.map(d => [d, splits[0]!.id])) as BrainContext['schedule'],
-      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], today, now: new Date(`${today}T12:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
+      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today, now: new Date(`${today}T12:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
     };
     let report;
     expect(() => { report = buildReport(ctx); }).not.toThrow();
@@ -251,7 +251,7 @@ describe('adversarial edge cases the persona generator above cannot reach on its
       ({ id: newId('s'), splitId: splits[0]!.id, splitName: splits[0]!.name, day: today, startedAt: `${today}T10:00:00.000Z`, endedAt: `${today}T11:00:00.000Z`, durationSec: 1800, exercises: [{ exerciseId: EXERCISE_IDS[0]!, name: 'x', sets: [{ kg: 40, reps: 10, effort: 'ideal' }] }] }));
     const ctx: BrainContext = {
       sessions, splits, schedule: Object.fromEntries(WEEKDAYS.map(d => [d, splits[0]!.id])) as BrainContext['schedule'],
-      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], today, now: new Date(`${today}T20:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
+      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today, now: new Date(`${today}T20:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
     };
     let report;
     expect(() => { report = buildReport(ctx); }).not.toThrow();
@@ -267,7 +267,7 @@ describe('adversarial edge cases the persona generator above cannot reach on its
     });
     const ctx: BrainContext = {
       sessions, splits, schedule: Object.fromEntries(WEEKDAYS.map(d => [d, splits[0]!.id])) as BrainContext['schedule'],
-      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], today, now: new Date(`${today}T20:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
+      custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today, now: new Date(`${today}T20:00:00.000Z`).getTime(), dismissed: {}, accepted: {},
     };
     let report;
     expect(() => { report = buildReport(ctx); }).not.toThrow();

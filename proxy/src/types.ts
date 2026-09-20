@@ -29,6 +29,59 @@ export interface PayloadCard {
   disputed: string;
 }
 
+/** One muscle's current recovery standing — see src/brain/recovery.ts in the app. */
+export interface StatsRecovery {
+  muscle: string;
+  /** 0–100, 100 = fully recovered. */
+  pct: number;
+  tier: 'low' | 'mid' | 'high' | 'ready';
+  hoursLeft: number;
+}
+
+/** The current standing (most recent) record of one kind for one exercise — see src/brain/prs.ts in the app. */
+export interface StatsPr {
+  exerciseId: string;
+  exerciseName: string;
+  kind: string;
+  /** Plain words, e.g. "60 kg × 8". */
+  detail: string;
+  day: string;
+}
+
+export interface StatsWeek {
+  start: string;
+  end: string;
+  sets: number;
+  volumeKg: number;
+}
+
+export interface StatsDeload {
+  from: string;
+  to: string;
+  loadFactor: number;
+  effortCap: 'easy' | 'ideal';
+}
+
+/**
+ * A compact, precomputed snapshot of "how things stand right now" —
+ * everything the exceptions-only findings/proposals above deliberately
+ * leave out: a muscle's current recovery even when it isn't flagged, an
+ * exercise's current PR even when it wasn't just broken, the recent weekly
+ * volume trend, and today's deload state. Mirrors src/brain/stats.ts
+ * (`buildAskStats`) in the app. Optional so an older client is still
+ * accepted.
+ */
+export interface AskStats {
+  version: 1;
+  /** All 24 muscles, not just the ones currently under-recovered. */
+  recovery: StatsRecovery[];
+  prs: StatsPr[];
+  /** Oldest first, including the current (still in progress) week. */
+  weeklyVolume: StatsWeek[];
+  /** Only when an accepted easier week is active today; null otherwise. */
+  deload: StatsDeload | null;
+}
+
 /** What every route that reasons about the coach's report shares: the report itself, nothing about the person. */
 export interface GroundingPayload {
   goal: string;
@@ -50,6 +103,8 @@ export interface GroundingPayload {
    * in Settings.
    */
   bmi?: number | null;
+  /** See AskStats above. Optional so an older client is still accepted. */
+  stats?: AskStats;
 }
 
 export interface ExplainPayload extends GroundingPayload {

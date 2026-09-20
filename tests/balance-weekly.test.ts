@@ -62,7 +62,7 @@ describe('weekly', () => {
 });
 
 describe('coach', () => {
-  const ctx = (sessions: BrainContext['sessions']): BrainContext => ({ sessions, splits: [], schedule: emptySchedule(), custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), dismissed: {}, accepted: {} });
+  const ctx = (sessions: BrainContext['sessions']): BrainContext => ({ sessions, splits: [], schedule: emptySchedule(), custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), dismissed: {}, accepted: {} });
   const render: RenderContext = { unit: 'kg', splits: [], custom: [], today: '2026-09-18', goal: 'lean' };
   it('asks for a first session on an empty app', () => {
     const insights = insightsFrom(buildReport(ctx([])), render);

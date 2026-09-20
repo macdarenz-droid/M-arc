@@ -32,7 +32,8 @@ import { WEEKDAYS } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 import type { FindingsReport } from '@/brain/coach/contract';
-import { allowedNumbers, cardsFor, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload, type PayloadProposal } from '@/brain/coach/explainer';
+import { allowedNumbers, cardsFor, extractNumbers, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload, type PayloadProposal } from '@/brain/coach/explainer';
+import type { AskStats } from '@/brain/stats';
 import { postJson } from './client';
 
 export interface AskTurn {
@@ -82,7 +83,7 @@ export function buildAskPayload(
   report: FindingsReport,
   history: AskTurn[],
   question: string,
-  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule; bmi?: number | null },
+  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule; bmi?: number | null; stats?: AskStats },
 ): AskPayload {
   const { findings, proposals: trimmed } = trimFindingsAndProposals(report);
   const loadNext: PayloadProposal[] = report.proposals
@@ -105,7 +106,7 @@ export function buildAskPayload(
   return {
     version: 1, kind: 'ask', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality,
     findings, proposals, cards, preferences, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
-    splits, schedule: opts.schedule, bmi: opts.bmi ?? null,
+    splits, schedule: opts.schedule, bmi: opts.bmi ?? null, stats: opts.stats,
   };
 }
 
@@ -192,6 +193,26 @@ function parseScheduleDraft(raw: unknown, knownSplitIds: Set<string>): WeekSched
   return schedule;
 }
 
+/**
+ * allowedNumbers(payload) only knows about numbers the brain itself put in
+ * the report — it has no idea the person just typed "I weigh 82kg" or "I
+ * did 5 sets" in the question or an earlier turn of this same chat. Rule 18
+ * (promptAsk.ts) tells the model to ask for exactly that kind of personal
+ * number instead of guessing it, but once the person answers, their own
+ * number is nowhere in the payload for the grounding check to recognize —
+ * so a reply that correctly repeats back what they just said ("at 82kg,
+ * ...") was being rejected as invented. /ask is the one route with a real
+ * back-and-forth (history), so it — and only it — also trusts numbers the
+ * person themselves already put on the record this conversation.
+ */
+function askAllowedNumbers(payload: AskPayload): Set<number> {
+  const out = allowedNumbers(payload);
+  const add = (n: number) => { out.add(n); out.add(Math.abs(n)); };
+  extractNumbers(payload.question).forEach(add);
+  for (const t of payload.history) if (t.role === 'user') extractNumbers(t.text).forEach(add);
+  return out;
+}
+
 export type AskResult =
   | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern }
   | { ok: false; error: string };
@@ -234,7 +255,7 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
   const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
   if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
-    const check = validateText(answer, allowedNumbers(payload));
+    const check = validateText(answer, askAllowedNumbers(payload));
     if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
   }
   return { ok: true, answer, scope, category, drafts, scheduleDraft, concern };

@@ -17,7 +17,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { state } from '@/core/store';
-import { report } from '@/app/selectors';
+import { askStats, report } from '@/app/selectors';
 import { go } from '@/app/router';
 import { showToast } from '@/app/toast';
 import { Button, Sheet, Thinking } from '@/ui/primitives';
@@ -160,6 +160,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     const payload = buildAskPayload(report.value, plainHistory, q, {
       goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts,
       splits: s.splits, customExercises: s.customExercises, schedule: s.schedule, bmi: computeBmi(s.profile),
+      stats: askStats.value,
     });
     const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
     setHistory(withQuestion);

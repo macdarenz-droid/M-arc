@@ -75,7 +75,7 @@ export function pplHistory(lastMonday: string, weeks: number, vary?: (w: number,
 export function ctx(sessions: Session[], over: Partial<BrainContext> = {}): BrainContext {
   return {
     sessions, splits: pplSplits(), schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null }, custom: [],
-    goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], today: TODAY, now: new Date('2026-09-19T12:00:00.000Z').getTime(), dismissed: {}, accepted: {},
+    goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today: TODAY, now: new Date('2026-09-19T12:00:00.000Z').getTime(), dismissed: {}, accepted: {},
     ...over,
   };
 }

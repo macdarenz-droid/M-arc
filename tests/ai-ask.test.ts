@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, type AskTurn } from '@/ai/ask';
 import { allowedNumbers, LIMITS } from '@/brain/coach/explainer';
+import { buildAskStats } from '@/brain/stats';
 import { buildReport } from '@/brain/coach/report';
 import type { Exercise, Split } from '@/core/models';
 import { emptySchedule } from '@/core/models';
@@ -95,6 +96,24 @@ describe('buildAskPayload', () => {
     expect(p.schedule).toEqual(schedule);
   });
 
+  it('carries a stats snapshot when given one, and its own numbers ground a personal answer just like a finding\'s would', () => {
+    const report = realReport();
+    const stats = buildAskStats(ctx(pplHistory(LAST_MONDAY, 8)));
+    const p = buildAskPayload(report, [], 'What\'s my bench PR?', { goal: 'strength', unit: 'kg', ...noSplits, stats });
+    expect(p.stats).toEqual(stats);
+    if (stats.prs.length) {
+      const pr = stats.prs[0]!;
+      const numberInDetail = [...allowedNumbers(p)].find(n => pr.detail.includes(String(n)));
+      expect(numberInDetail).toBeDefined();
+    }
+  });
+
+  it('omitting stats entirely is still a valid payload — an older call site with no stats to pass', () => {
+    const report = realReport();
+    const p = buildAskPayload(report, [], 'ok', { goal: 'strength', unit: 'kg', ...noSplits });
+    expect(p.stats).toBeUndefined();
+  });
+
   it('carries a computed bmi when given one, null when not — never the raw weight or height it came from', () => {
     const report = realReport();
     const withBmi = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', ...noSplits, bmi: 26 });
@@ -129,6 +148,39 @@ describe('requestAskAnswer', () => {
     const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toContain('not in your data');
+  });
+
+  it('a personal-scope answer may cite a number that only exists in the stats snapshot, not in findings/proposals/cards — recovery, PRs and weekly volume are real grounding, not just exceptions', async () => {
+    const stats = buildAskStats(ctx(pplHistory(LAST_MONDAY, 8)));
+    const p = buildAskPayload(report, [], 'How recovered is my chest?', { goal: 'strength', unit: 'kg', ...noSplits, stats });
+    const chest = stats.recovery.find(r => r.muscle === 'chest')!;
+    const fetchImpl = reply(200, { scope: 'personal', answer: `Your chest is at about ${chest.pct}% recovered.` });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+  });
+
+  it('a personal-scope answer may repeat back a number the person themselves just typed in the question — rule 18 asks for it, so rejecting the reply for citing it back was self-contradictory', async () => {
+    const p = buildAskPayload(report, [], 'I weigh 137kg today, what should my target calories be?', { goal: 'strength', unit: 'kg', ...noSplits });
+    expect([...allowedNumbers(p)]).not.toContain(137); // sanity: not already grounded by the report itself
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'At 137kg, a reasonable target is a modest deficit.' });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+  });
+
+  it('a personal-scope answer may repeat back a number the person gave in an earlier turn of this same chat, not just the current question', async () => {
+    const history: AskTurn[] = [{ role: 'assistant', text: 'How much do you weigh?' }, { role: 'user', text: 'I weigh 137kg.' }];
+    const p = buildAskPayload(report, history, 'What should my calorie target be?', { goal: 'strength', unit: 'kg', ...noSplits });
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'At 137kg, a reasonable target is a modest deficit.' });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+  });
+
+  it('a number the assistant itself said earlier is not thereby grounded — only what the person themselves typed counts', async () => {
+    const history: AskTurn[] = [{ role: 'assistant', text: 'A typical protocol is 999 grams a day.' }];
+    const p = buildAskPayload(report, history, 'ok', { goal: 'strength', unit: 'kg', ...noSplits });
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'Your own number is exactly 999.' });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(false);
   });
 
   it('an unmarked answer defaults to the strict personal path, same as before scope existed', async () => {
