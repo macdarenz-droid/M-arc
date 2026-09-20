@@ -573,6 +573,11 @@ describe('prompts', () => {
     // the same failure again; the safe move is to ask, per the vague-request bullet above it.
     expect(ASK_SYSTEM_PROMPT).toContain('A bare number with no clear referent');
     expect(ASK_SYSTEM_PROMPT).toContain('ask what they mean rather than guessing a count and building around it');
+    // Seen live: "changed to tue thurs sat" in "answer" when nothing had actually changed yet —
+    // applying a splitDraft/scheduleDraft always needs an explicit tap, so past-tense "done" is a
+    // false claim about their real data, not a style choice.
+    expect(ASK_SYSTEM_PROMPT).toContain('Write "answer" as a proposal still waiting on them, never as something already done');
+    expect(ASK_SYSTEM_PROMPT).toContain('describing it as already applied is a false claim about their real data');
   });
 
   it('ask prompt also states the scheduleDraft rules — this is the one route that may also rearrange the weekly schedule', () => {
@@ -584,6 +589,13 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('spacing so the same muscle group doesn\'t stack on back-to-back days without reason');
     expect(ASK_SYSTEM_PROMPT).toContain('If you don\'t have enough to make a real judgment');
     expect(ASK_SYSTEM_PROMPT).toContain('"scheduleDraft" (usually null), and "concern" (usually null)');
+    // Seen live twice in a row: (1) "changed to tue thurs sat" in "answer" while the real schedule
+    // stayed untouched — nothing applies until the button tap; (2) asked a clarifying question,
+    // got "yes" back, then failed with a number-check rejection instead of actually building the
+    // draft using that confirmation.
+    expect(ASK_SYSTEM_PROMPT).toContain('including when their very next message is just their answer to a clarifying question you asked ("yes", naming the order, confirming the days)');
+    expect(ASK_SYSTEM_PROMPT).toContain('do not ask again, or leave it for a later turn once they\'ve already told you what you needed');
+    expect(ASK_SYSTEM_PROMPT).toContain('The schedule only actually changes once they tap "Apply new schedule"');
   });
 
   it('ask prompt broadens the individualized-medical line to minors, pregnancy, PEDs and named-but-general conditions, and sets a concern flag for crisis or disordered-eating signals', () => {
