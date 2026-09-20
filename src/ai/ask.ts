@@ -131,15 +131,25 @@ export interface SplitDraft {
 
 interface SplitDraftReply { action?: unknown; splitId?: unknown; name?: unknown; focus?: unknown; exercises?: unknown }
 
-/** Keeps only exercises the app actually recognizes, silently — never shown as real when the app can't find it. */
+/**
+ * Keeps only exercises the app actually recognizes, silently — never shown
+ * as real when the app can't find it. Also drops a repeat of an exerciseId
+ * already kept, keeping the first occurrence's own sets: seen live, a
+ * reply listed "Push-Up" three times in one splitDraft's own exercises
+ * (three different set counts, so a genuine repeated entry, not a client
+ * bug) — the schema's array type never enforced uniqueness, so nothing
+ * upstream had caught this before it landed as a real split.
+ */
 function knownExercises(v: unknown, custom: Exercise[]): Array<{ exerciseId: string; sets: number }> {
   if (!Array.isArray(v)) return [];
   const out: Array<{ exerciseId: string; sets: number }> = [];
+  const seen = new Set<string>();
   for (const item of v) {
     if (!item || typeof item !== 'object') continue;
     const exerciseId = (item as { exerciseId?: unknown }).exerciseId;
     const sets = (item as { sets?: unknown }).sets;
-    if (typeof exerciseId !== 'string' || !findExercise(exerciseId, custom)) continue;
+    if (typeof exerciseId !== 'string' || !findExercise(exerciseId, custom) || seen.has(exerciseId)) continue;
+    seen.add(exerciseId);
     const n = typeof sets === 'number' && Number.isFinite(sets) ? Math.round(sets) : 3;
     out.push({ exerciseId, sets: Math.max(1, Math.min(6, n)) });
   }

@@ -231,6 +231,27 @@ describe('requestAskAnswer', () => {
     expect(r.drafts[0]!.exercises).toEqual([{ exerciseId: 'lib_face_pull', sets: 3 }]);
   });
 
+  it('drops a repeated exerciseId within one splitDraft, keeping only the first occurrence\'s sets — seen live, "Push-Up" listed three times built a split with three duplicate entries', async () => {
+    const fetchImpl = reply(200, {
+      scope: 'general', category: 'training', answer: 'ok',
+      splitDrafts: [{ action: 'create', splitId: null, name: 'Full Body (Home)', focus: ['chest'], exercises: [
+        { exerciseId: 'lib_push_up', sets: 3 },
+        { exerciseId: 'lib_glute_bridge', sets: 3 },
+        { exerciseId: 'lib_push_up', sets: 3 },
+        { exerciseId: 'lib_push_up', sets: 2 },
+        { exerciseId: 'lib_plank', sets: 3 },
+      ] }],
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.drafts[0]!.exercises).toEqual([
+      { exerciseId: 'lib_push_up', sets: 3 },
+      { exerciseId: 'lib_glute_bridge', sets: 3 },
+      { exerciseId: 'lib_plank', sets: 3 },
+    ]);
+  });
+
   it('a draft left with no recognizable exercises at all is not shown as actionable', async () => {
     const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'ok', splitDrafts: [{ action: 'modify', splitId: 'split_push', name: 'Push', focus: [], exercises: [{ exerciseId: 'not_real', sets: 3 }] }] });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
