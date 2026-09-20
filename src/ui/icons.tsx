@@ -9,7 +9,12 @@ export const IconDumbbell = ({ size = 22, ...p }: P) => <svg {...base(size)} {..
 export const IconKettlebell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M9 9a3 3 0 0 1 6 0v1" /><circle cx="12" cy="16" r="5.5" /></svg>;
 export const IconPlate = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /></svg>;
 export const IconApple = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 8c-3.5 0-6 2.7-6 6.5C6 18.5 8.5 21 11 21c.7 0 1.3-.2 2-.2s1.3.2 2 .2c2.5 0 5-2.5 5-6.5 0-3.8-2.5-6.5-6-6.5-.6 0-1 .1-1.5.3.2-1 .9-2 2-2.5" /></svg>;
-/** The coach's persona mark (see COACH_BRAIN.md — a private, personal touch, not a feature name). Three independently-timed smoke wisps and a softly pulsing ember; the animation lives in styles.css (`.persona-*` classes) so it follows the same prefers-reduced-motion handling as the rest of the app. */
+/** The coach's persistent persona mark on the Coach tab card (see COACH_BRAIN.md). A generic, faceless silhouette (wide-brim hat, no identifiable individual) — solid fill so it reads at small sizes and inherits the app's accent colour via currentColor. Static — this card sits on screen rather than being a chat you just opened, so it stays still; the animated persona mark used inside the Ask sheet's chat bubbles is `IconCigarette` below. */
+export const IconMafia = ({ size = 22, ...p }: P) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...p}>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C9.5 2 8 3.3 8 5.2v2.1C4.5 7.6 1.5 8.7 1.5 10.2c0 1.1 2.1 1.9 4.9 2.2-.4.9-.5 2-.1 3-2.3 1.4-3.8 3.6-3.8 6.6h19c0-3-1.5-5.2-3.8-6.6.4-1 .3-2.1-.1-3 2.8-.3 4.9-1.1 4.9-2.2 0-1.5-3-2.6-6.5-2.9V5.2C16 3.3 14.5 2 12 2zm-3 13.8h6L12 20l-3-4.2z" />
+  <path d="M11.4 16.3h1.2L12 19.2l-.6-2.9z" />
+</svg>;
+/** The coach's animated persona mark inside the Ask sheet's chat bubbles (see COACH_BRAIN.md). Three independently-timed smoke wisps and a softly pulsing ember; the animation lives in styles.css (`.persona-*` classes) so it follows the same prefers-reduced-motion handling as the rest of the app. */
 export const IconCigarette = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}>
   <path d="M2 15.5h13" stroke-width="3.2" />
   <path d="M12.5 13.6v3.8M14.2 13.6v3.8" stroke-width="1.1" />

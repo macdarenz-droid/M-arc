@@ -3,7 +3,7 @@ import type { ComponentChildren, JSX } from 'preact';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconSend } from '@/ui/icons';
+import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconMafia, IconSend } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -64,7 +64,7 @@ export function Coach() {
 
       {remoteEnabled.value && (
         <Card class="card-accent">
-          <div class="row-between"><div class="eyebrow row" style={{ gap: 6 }}><IconCigarette size={14} aria-hidden={true} />{COACH_NAME}, online</div>{explanation.value && <span class="hint">{explanation.value.model.replace('claude-', '')}</span>}</div>
+          <div class="row-between"><div class="eyebrow row" style={{ gap: 6 }}><IconMafia size={14} aria-hidden={true} />{COACH_NAME}, online</div>{explanation.value && <span class="hint">{explanation.value.model.replace('claude-', '')}</span>}</div>
           {explanation.value?.summary
             ? <p class="small" style={{ marginTop: 6 }}>{explanation.value.summary}</p>
             : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
