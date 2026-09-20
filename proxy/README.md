@@ -1,7 +1,7 @@
 # M/ARC coach proxy
 
 A small Cloudflare Worker that holds the Anthropic API key and gives the app
-six narrow, single-purpose ways to use Claude Sonnet 5. The app never
+seven narrow, single-purpose ways to use Claude Sonnet 5. The app never
 holds the key. Every route only ever sees the small, specific slice of data
 that route needs — never raw sessions, names or body measurements.
 
@@ -10,9 +10,10 @@ that route needs — never raw sessions, names or body measurements.
 | `POST /explain` | Turns the coach's findings and proposals into plain English. | Invent a number not in the report. |
 | `POST /tag-exercise` | Given a name (and maybe an equipment word), suggests equipment, muscles, movement pattern and mode for a new custom exercise. | Return a muscle, pattern or mode outside the app's own closed lists — the schema itself rejects anything else, and it says plainly when it isn't sure. |
 | `POST /notes` | Given a short training note, tags what kind of thing it is (pain mentioned, equipment issue, fatigue, and so on) so the app can act on it. | Diagnose, name a cause, judge severity, or give medical advice — it only tags that something was mentioned. |
-| `POST /ask` | Answers a question the person typed, grounded only in their report and the research cards; carries a short conversation across follow-up questions. | Invent a number not in the report; answer a diet, supplement or medical question (says plainly that's outside what it does); guess when the report genuinely doesn't cover the question. |
+| `POST /ask` | Answers a question the person typed, grounded only in their report and the research cards; carries a short conversation across follow-up questions. | Invent a number not in the report; answer a diet, supplement or medical question (says plainly that's outside what it does); guess when the report genuinely doesn't cover the question; build a plan in chat (see `/build-split`). |
 | `POST /identify-exercise` | Given one downscaled photo (and maybe an equipment word), identifies the exercise or equipment shown and suggests the same fields as `/tag-exercise`. | Guess when the photo doesn't clearly show a real exercise or equipment — it returns `visible: false` instead; describe a person's body, face or appearance if one is in frame. |
 | `POST /import-programme` | Given one photo of a written workout plan, extracts up to 7 days of up to 12 exercises each, every exercise classified the same way as `/identify-exercise`. | Guess when the photo doesn't show a legible plan — it returns `readable: false` instead; report a weight or load, only sets; invent a day or exercise the page doesn't show. |
+| `POST /build-split` | The one deliberate exception to `/ask`'s "no plans in chat" rule: designs or adjusts one split by conversation, from the person's goal and the splits they already have. | Use an exercise id outside the app's real catalog — the schema itself rejects anything else; propose a full split from a vague request instead of asking a clarifying question first; see or use the person's report, findings or logged history at all (it doesn't get sent any of that). |
 
 `/explain` and `/ask` share the same grounding shape (findings, proposals,
 cards, goal, unit, today) — `GroundingPayload` in `src/types.ts`,
@@ -26,11 +27,12 @@ messages, the report given once as a genuine first turn.
 
 Each route has its own fixed, cacheable system prompt (`src/prompt.ts`,
 `src/promptTag.ts`, `src/promptNotes.ts`, `src/promptAsk.ts`,
-`src/promptIdentify.ts`, `src/promptImport.ts`) and its own
-structured-output schema, so a malformed reply is rejected before the app
-ever sees it. `src/vocab.ts` holds the muscle and movement-pattern
-vocabularies the model must pick from; `test/vocab.test.ts` fails if that
-copy ever drifts from the app's real ones in `src/data/`.
+`src/promptIdentify.ts`, `src/promptImport.ts`, `src/promptSplitBuilder.ts`)
+and its own structured-output schema, so a malformed reply is rejected
+before the app ever sees it. `src/vocab.ts` holds the muscle, movement-
+pattern and (for `/build-split` only) full exercise-catalog vocabularies
+the model must pick from; `test/vocab.test.ts` fails if any of those copies
+ever drift from the app's real ones in `src/data/`.
 
 ## Deploy, about five minutes
 

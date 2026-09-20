@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, MAX_PREFERENCES, MAX_PREFERENCE_CHARS, type RouteConfig } from '../src/handler';
+import { createHandler, validatePayload, validateTagPayload, validateNotesPayload, validateAskPayload, validateIdentifyPayload, validateImportPayload, validateBuildSplitPayload, checkQuota, corsHeaders, MAX_BODY_BYTES, MAX_TAG_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_ASK_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_BUILD_SPLIT_BODY_BYTES, MAX_IMAGE_DATA_CHARS, MAX_QUESTION_CHARS, MAX_HISTORY_TURNS, MAX_PREFERENCES, MAX_PREFERENCE_CHARS, MAX_SPLIT_MESSAGE_CHARS, MAX_KNOWN_SPLITS, type RouteConfig } from '../src/handler';
 import { SYSTEM_PROMPT, userMessage } from '../src/prompt';
 import { TAG_SYSTEM_PROMPT } from '../src/promptTag';
 import { NOTES_SYSTEM_PROMPT } from '../src/promptNotes';
 import { ASK_SYSTEM_PROMPT, askMessages } from '../src/promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from '../src/promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from '../src/promptImport';
-import type { AskPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
+import { SPLIT_BUILDER_SYSTEM_PROMPT, buildSplitMessages } from '../src/promptSplitBuilder';
+import type { AskPayload, BuildSplitPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from '../src/types';
 
 /** The smallest valid PNG there is (1x1, transparent) — enough to exercise shape checks without a real photo. */
 const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
@@ -26,6 +27,11 @@ const askPayload = (): AskPayload => {
   const { version, goal, unit, today, dataQuality, findings, proposals, cards } = payload();
   return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?' };
 };
+const buildSplitPayload = (): BuildSplitPayload => ({
+  version: 1, kind: 'build-split', goal: 'lean', unit: 'kg',
+  splits: [{ id: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: 3 }] }],
+  history: [], message: 'Can you add a shoulder exercise to Push?',
+});
 const identifyPayload = (): IdentifyExercisePayload => ({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG }, equipmentHint: 'Cable' });
 const importPayload = (): ImportProgrammePayload => ({ version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } });
 
@@ -70,6 +76,16 @@ const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' 
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
   async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, model: out.model, usage: out.usage }; },
+});
+
+const stubBuildSplit = async () => ({
+  answer: 'Added Face Pull to Push for rear-delt balance.',
+  splitDraft: { action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] },
+  model: 'claude-sonnet-5', usage: { inputTokens: 2200, outputTokens: 90, cacheReadTokens: 1800 },
+});
+const buildSplitRouteWith = (call: typeof stubBuildSplit): RouteConfig => ({
+  path: '/build-split', maxBody: MAX_BUILD_SPLIT_BODY_BYTES, validate: validateBuildSplitPayload,
+  async call() { const out = await call(); return { answer: out.answer, splitDraft: out.splitDraft, model: out.model, usage: out.usage }; },
 });
 
 const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
@@ -160,6 +176,31 @@ describe('ask payload validation', () => {
   it('accepts an optional preferences list, capped and length-limited', () => {
     expect(validateAskPayload({ ...askPayload(), preferences: ['Usually accepts schedule changes when the coach offers them.'] })).toMatchObject({ ok: true });
     expect(validateAskPayload({ ...askPayload(), preferences: Array.from({ length: MAX_PREFERENCES + 1 }, () => 'x') })).toMatchObject({ ok: false });
+  });
+});
+
+describe('build-split payload validation', () => {
+  it('accepts a goal, the person\'s known splits, history and a message; refuses anything else', () => {
+    expect(validateBuildSplitPayload(buildSplitPayload())).toMatchObject({ ok: true });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), message: '' })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), message: 'x'.repeat(MAX_SPLIT_MESSAGE_CHARS + 1) })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), unit: 'stone' })).toMatchObject({ ok: false });
+    // Not a grounding-shaped route: /explain and /ask's own fields are unexpected here.
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), findings: [] })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), question: 'x' })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
+    // splits: capped, and each one shaped like a real split.
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), splits: Array.from({ length: MAX_KNOWN_SPLITS + 1 }, () => buildSplitPayload().splits[0]) })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), splits: [{ id: 'x', name: 'x', focus: ['chest', 'triceps', 'quads'], exercises: [] }] })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), splits: [{ id: 'x', name: 'x' }] })).toMatchObject({ ok: false });
+    // History: same shape and cap as /ask.
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), history: [{ role: 'user', text: 'hi' }, { role: 'assistant', text: 'hi' }] })).toMatchObject({ ok: true });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), history: [{ role: 'coach', text: 'hi' }] })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), history: Array.from({ length: MAX_HISTORY_TURNS + 1 }, () => ({ role: 'user', text: 'hi' })) })).toMatchObject({ ok: false });
+    expect(validateBuildSplitPayload('nope')).toMatchObject({ ok: false });
+  });
+
+  it('an empty splits array is fine — a brand-new user with no splits yet can still ask for one', () => {
+    expect(validateBuildSplitPayload({ ...buildSplitPayload(), splits: [] })).toMatchObject({ ok: true });
   });
 });
 
@@ -279,7 +320,7 @@ describe('handler: /explain', () => {
 });
 
 describe('handler: multiple routes in one Worker', () => {
-  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk), identifyRouteWith(stubIdentify), importRouteWith(stubImport)]);
+  const handle = createHandler([explainRouteWith(stubModel), tagRouteWith(stubTag), notesRouteWith(stubNotes), askRouteWith(stubAsk), identifyRouteWith(stubIdentify), importRouteWith(stubImport), buildSplitRouteWith(stubBuildSplit)]);
 
   it('answers /tag-exercise with a closed-vocabulary suggestion', async () => {
     const res = await handle(post('/tag-exercise', tagPayload()), env());
@@ -326,16 +367,27 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.days).toEqual([{ name: 'Push', exercises: [{ name: 'Bench Press', sets: 3, equipment: 'Barbell', primary: ['chest'], secondary: ['triceps'], pattern: 'horizontal_push', mode: 'weighted', confidence: 'high' }] }]);
   });
 
-  it('keeps /explain, /tag-exercise, /notes, /ask, /identify-exercise and /import-programme independent: one 400 does not affect the others', async () => {
+  it('answers /build-split with a draft the app must still re-validate before applying it', async () => {
+    const res = await handle(post('/build-split', buildSplitPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { answer: string; splitDraft: { action: string; splitId: string | null; exercises: Array<{ exerciseId: string; sets: number }> } | null };
+    expect(body.answer).toContain('Face Pull');
+    expect(body.splitDraft).toMatchObject({ action: 'modify', splitId: 'split_push' });
+    expect(body.splitDraft!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_face_pull']);
+  });
+
+  it('keeps /explain, /tag-exercise, /notes, /ask, /identify-exercise, /import-programme and /build-split independent: one 400 does not affect the others', async () => {
     expect((await handle(post('/tag-exercise', { version: 1, kind: 'tag-exercise', name: '' }), env())).status).toBe(400);
     expect((await handle(post('/ask', { ...askPayload(), question: '' }), env())).status).toBe(400);
     expect((await handle(post('/identify-exercise', { version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: '' } }), env())).status).toBe(400);
     expect((await handle(post('/import-programme', { version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: '' } }), env())).status).toBe(400);
+    expect((await handle(post('/build-split', { ...buildSplitPayload(), message: '' }), env())).status).toBe(400);
     expect((await handle(post('/explain', payload()), env())).status).toBe(200);
     expect((await handle(post('/notes', notesPayload()), env())).status).toBe(200);
     expect((await handle(post('/ask', askPayload()), env())).status).toBe(200);
     expect((await handle(post('/identify-exercise', identifyPayload()), env())).status).toBe(200);
     expect((await handle(post('/import-programme', importPayload()), env())).status).toBe(200);
+    expect((await handle(post('/build-split', buildSplitPayload()), env())).status).toBe(200);
   });
 
   it('a route neither route table entry matches is a 404, same as an unknown path', async () => {
@@ -447,5 +499,32 @@ describe('prompts', () => {
     expect(msgs.at(-1)).toEqual({ role: 'user', content: withHistory.question });
     // Deterministic: same payload, same messages, so the same conversation always renders the same way.
     expect(askMessages(withHistory)).toEqual(msgs);
+  });
+
+  it('split-builder prompt is a deliberate, separate exception to /ask\'s "no plans in chat" rule, carries the full exercise catalog, and states its own scope and safety rules', () => {
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('lib_barbell_bench_press|Barbell Bench Press|chest');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('lib_face_pull|Face Pull|rear_delts');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('never invent one, never use an id not on it');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('Lean muscle: 6-12 reps');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('ask one or two short, specific questions first');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('"action": "modify"');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('the app replaces the list with exactly what you send');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('at most 2 muscle ids');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('you have no access to their actual training history');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('Never diagnose a medical condition');
+    expect(SPLIT_BUILDER_SYSTEM_PROMPT).toContain('stray quotation mark or brace');
+  });
+
+  it('split-builder replays the goal and known splits once, then the real conversation, then the new message last', () => {
+    const withHistory: BuildSplitPayload = { ...buildSplitPayload(), history: [{ role: 'user', text: 'What do you think of Push?' }, { role: 'assistant', text: 'Solid coverage, a bit light on rear delts.' }] };
+    const msgs = buildSplitMessages(withHistory);
+    expect(msgs[0]).toMatchObject({ role: 'user' });
+    expect(msgs[0]!.content).toContain('lib_barbell_bench_press');
+    expect(msgs[0]!.content).toContain('"goal":"lean"');
+    expect(msgs[1]).toMatchObject({ role: 'assistant' });
+    expect(msgs[2]).toEqual({ role: 'user', content: 'What do you think of Push?' });
+    expect(msgs[3]).toEqual({ role: 'assistant', content: 'Solid coverage, a bit light on rear delts.' });
+    expect(msgs.at(-1)).toEqual({ role: 'user', content: withHistory.message });
+    expect(buildSplitMessages(withHistory)).toEqual(msgs);
   });
 });

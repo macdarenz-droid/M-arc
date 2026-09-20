@@ -3,7 +3,8 @@ import type { ComponentChildren, JSX } from 'preact';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconMafia, IconSend } from '@/ui/icons';
+import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconMafia } from '@/ui/icons';
+import { ChatInputRow, COACH_NAME, renderChatBody } from '@/ui/chatRender';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -225,33 +226,9 @@ const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string
   nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
 };
 
-/** A personal touch, not a feature: every assistant reply gets this name and mark instead of a bare bubble. Replaces the old per-answer "General knowledge, not from your data" disclaimer — the underlying scope check (validateText/allowedNumbers below) still runs exactly as before; only the visible label changed. */
-const COACH_NAME = 'Escobar';
-
-/** `**term**` becomes emphasis; everything else passes through untouched. Never touches a raw string with HTML — this builds real child nodes, so there is nothing to escape or inject. */
-function renderAskInline(text: string): ComponentChildren {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(p => p.length > 0);
-  return parts.map((part, i) => (part.startsWith('**') && part.endsWith('**') && part.length > 4) ? <strong key={i}>{part.slice(2, -2)}</strong> : part);
-}
-
-/**
- * The prompt (promptAsk.ts rule 13) allows a blank-line paragraph break and
- * a "- "-prefixed line list for an answer that is genuinely a set of
- * distinct items. This turns that plain-text convention into real <p>/<ul>
- * structure with a small category icon per bullet, rather than relying on
- * `white-space: pre-wrap` to fake it with raw dashes.
- */
+/** The prompt (promptAsk.ts rule 13) allows a blank-line paragraph break and a "- "-prefixed line list for an answer that is genuinely a set of distinct items; picks the bullet icon from the answer's category. See src/ui/chatRender.tsx for the shared rendering both this and the split-builder chat use. */
 function renderAskBody(text: string, category: AskCategory): ComponentChildren {
-  const Icon = ASK_CATEGORY_ICON[category] ?? IconInfo;
-  // A trailing (or doubled) blank line in the answer would otherwise survive
-  // as an empty block below, rendering a stray <p> whose CSS top-margin adds
-  // visible dead space at the bottom of the bubble.
-  return text.split(/\n{2,}/).map(b => b.trim()).filter(Boolean).map((block, bi) => {
-    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
-    const isList = lines.length > 0 && lines.every(l => l.startsWith('- '));
-    if (isList) return <ul class="ask-list" key={bi}>{lines.map((l, li) => <li key={li}><Icon size={14} class="ask-list-icon" aria-hidden={true} /><span>{renderAskInline(l.slice(2))}</span></li>)}</ul>;
-    return <p key={bi}>{renderAskInline(block.trim())}</p>;
-  });
+  return renderChatBody(text, ASK_CATEGORY_ICON[category] ?? IconInfo);
 }
 
 /**
@@ -270,47 +247,6 @@ const ASK_SUGGESTIONS = [
   'How much protein should I aim for?',
   'What should I do if my shoulder feels sore?',
 ];
-
-/** Types a suggestion out, holds it, erases it, moves to the next — only while `active` (the input is empty and nothing is sending). Falls back to a plain swap with no per-character animation under prefers-reduced-motion, the same treatment `Thinking`'s spinner gets in styles.css. */
-function useTypewriterPlaceholder(active: boolean): string {
-  const [text, setText] = useState('');
-  useEffect(() => {
-    if (!active) { setText(''); return; }
-    const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const TYPE_MS = 38, ERASE_MS = 22, HOLD_FULL_MS = 1600, HOLD_EMPTY_MS = 400;
-    let cancelled = false, phrase = 0;
-    const after = (fn: () => void, ms: number) => setTimeout(() => { if (!cancelled) fn(); }, ms);
-    const run = () => {
-      const full = ASK_SUGGESTIONS[phrase % ASK_SUGGESTIONS.length]!;
-      if (reduced) { setText(full); after(() => { phrase++; run(); }, HOLD_FULL_MS + TYPE_MS * full.length); return; }
-      const typeStep = (i: number) => {
-        setText(full.slice(0, i));
-        if (i >= full.length) { after(() => eraseStep(full.length), HOLD_FULL_MS); return; }
-        after(() => typeStep(i + 1), TYPE_MS);
-      };
-      const eraseStep = (j: number) => {
-        setText(full.slice(0, j));
-        if (j <= 0) { after(() => { phrase++; run(); }, HOLD_EMPTY_MS); return; }
-        after(() => eraseStep(j - 1), ERASE_MS);
-      };
-      typeStep(0);
-    };
-    run();
-    return () => { cancelled = true; };
-  }, [active]);
-  return text;
-}
-
-/** Its own component so the typewriter's per-character re-renders touch only the input row, not the whole thread of past messages above it. */
-function AskInputRow({ question, setQuestion, sending, onSubmit }: { question: string; setQuestion: (v: string) => void; sending: boolean; onSubmit: (e: SubmitEvent) => void }) {
-  const placeholder = useTypewriterPlaceholder(question.length === 0 && !sending);
-  return (
-    <form class="ask-input" onSubmit={onSubmit}>
-      <input value={question} maxLength={MAX_QUESTION_CHARS} placeholder={placeholder} disabled={sending} onInput={e => setQuestion((e.target as HTMLInputElement).value)} />
-      <Button variant="primary" size="sm" type="submit" class="btn-icon" disabled={sending || !question.trim()} aria-label="Send"><IconSend size={16} /></Button>
-    </form>
-  );
-}
 
 function AskSheet({ onClose }: { onClose: () => void }) {
   const [history, setHistory] = useState<AskBubble[]>([]);
@@ -354,7 +290,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
       </div>
       {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
-      <AskInputRow question={question} setQuestion={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} />
+      <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />
     </Sheet>
   );
 }

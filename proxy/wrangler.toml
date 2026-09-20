@@ -17,6 +17,7 @@ MODEL = "claude-sonnet-5"
 # MODEL_ASK = ""
 # MODEL_IDENTIFY_EXERCISE = ""
 # MODEL_IMPORT_PROGRAMME = ""
+# MODEL_BUILD_SPLIT = ""
 # Explanations per device per day and per day in total. Soft caps, best effort.
 MAX_DAILY_PER_DEVICE = "12"
 MAX_DAILY_TOTAL = "2000"

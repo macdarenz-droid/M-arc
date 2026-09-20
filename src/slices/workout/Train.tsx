@@ -3,7 +3,7 @@ import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { deload, nowMs, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMafia, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -20,9 +20,11 @@ import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessio
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
+import { SplitBuilderSheet } from './SplitBuilder';
 import { pickAndCompressPhoto, type CapturedPhoto } from '@/native/photo';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
+import { COACH_NAME } from '@/ui/chatRender';
 import { GOALS } from '@/data/goals';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
@@ -50,6 +52,7 @@ function Splits() {
   const [creating, setCreating] = useState(false);
   const [pickingPhoto, setPickingPhoto] = useState(false);
   const [importPhoto, setImportPhoto] = useState<CapturedPhoto | null>(null);
+  const [buildingSplit, setBuildingSplit] = useState(false);
   const split = s.splits.find(x => x.id === selected) ?? s.splits[0];
   useEffect(() => { if (!split && s.splits[0]) setSelected(s.splits[0].id); }, [s.splits.length]);
   const u = unit.value;
@@ -67,6 +70,7 @@ function Splits() {
       <div class="topbar">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
         <div class="row">
+          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={() => setBuildingSplit(true)} aria-label={`Build a split with ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
           {remoteEnabled.value && <Button variant="quiet" size="sm" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : <><IconCamera size={16} /> Import</>}</Button>}
           <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
         </div>
@@ -125,6 +129,7 @@ function Splits() {
       {editing && split && <SplitEditor split={split} onClose={() => setEditing(false)} onDeleted={() => { setEditing(false); setSelected(null); }} />}
       {creating && <CreateSplit onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setSelected(id); setEditing(true); }} />}
       {importPhoto && <ImportProgrammeSheet photo={importPhoto} onClose={() => setImportPhoto(null)} />}
+      {buildingSplit && <SplitBuilderSheet onClose={() => setBuildingSplit(false)} />}
     </div>
   );
 }

@@ -8,8 +8,9 @@ import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNo
 import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from './promptImport';
-import { MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
+import { SPLIT_BUILDER_SYSTEM_PROMPT, buildSplitMessages } from './promptSplitBuilder';
+import { EXERCISE_IDS, MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
+import type { CallAsk, CallBuildSplit, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
@@ -62,6 +63,19 @@ const ImportProgrammeSchema = z.object({
   days: z.array(z.object({ name: z.string(), exercises: z.array(ImportedExerciseSchema).max(12) })).max(7),
 });
 
+const ExerciseIdSchema = z.enum(EXERCISE_IDS as [string, ...string[]]);
+const SplitDraftSchema = z.object({
+  action: z.enum(['create', 'modify']),
+  splitId: z.string().nullable(),
+  name: z.string(),
+  focus: z.array(MuscleIdSchema).max(2),
+  exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
+});
+const BuildSplitSchema = z.object({
+  answer: z.string(),
+  splitDraft: SplitDraftSchema.nullable(),
+});
+
 /**
  * Sonnet 5 for every route. Considered per route: `/explain` weaves several
  * findings into one coherent, well-hedged paragraph; `/tag-exercise` and
@@ -93,6 +107,7 @@ export function modelsByRoute(env: WorkerEnv): Record<string, string> {
     ask: modelFor(env, env.MODEL_ASK),
     identifyExercise: modelFor(env, env.MODEL_IDENTIFY_EXERCISE),
     importProgramme: modelFor(env, env.MODEL_IMPORT_PROGRAMME),
+    buildSplit: modelFor(env, env.MODEL_BUILD_SPLIT),
   };
 }
 
@@ -248,4 +263,18 @@ export const callAsk: CallAsk = async (payload, env) => {
   });
   const parsed = requireParsed(response);
   return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), model: response.model, usage: usageOf(response) };
+};
+
+export const callBuildSplit: CallBuildSplit = async (payload, env) => {
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
+  const model = modelFor(env, env.MODEL_BUILD_SPLIT);
+  const response = await client.messages.parse({
+    model,
+    max_tokens: 1500,
+    system: [{ type: 'text', text: SPLIT_BUILDER_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+    messages: buildSplitMessages(payload),
+    output_config: { format: zodOutputFormat(BuildSplitSchema), effort: EFFORT },
+  });
+  const parsed = requireParsed(response);
+  return { answer: stripFormattingLeak(parsed.answer), splitDraft: parsed.splitDraft, model: response.model, usage: usageOf(response) };
 };

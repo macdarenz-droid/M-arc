@@ -1,6 +1,6 @@
-import { callAnthropic, callAsk, callIdentifyExercise, callImportProgramme, callNotes, callTagExercise } from './anthropic';
-import { createHandler, MAX_ASK_BODY_BYTES, MAX_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateAskPayload, validateIdentifyPayload, validateImportPayload, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
-import type { AskPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
+import { callAnthropic, callAsk, callBuildSplit, callIdentifyExercise, callImportProgramme, callNotes, callTagExercise } from './anthropic';
+import { createHandler, MAX_ASK_BODY_BYTES, MAX_BODY_BYTES, MAX_BUILD_SPLIT_BODY_BYTES, MAX_IDENTIFY_BODY_BYTES, MAX_IMPORT_BODY_BYTES, MAX_NOTES_BODY_BYTES, MAX_TAG_BODY_BYTES, validateAskPayload, validateBuildSplitPayload, validateIdentifyPayload, validateImportPayload, validateNotesPayload, validatePayload, validateTagPayload, type RouteConfig } from './handler';
+import type { AskPayload, BuildSplitPayload, ExplainPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 const explainRoute: RouteConfig = {
   path: '/explain',
@@ -65,7 +65,17 @@ const importProgrammeRoute: RouteConfig = {
   },
 };
 
-const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute, askRoute, identifyExerciseRoute, importProgrammeRoute]);
+const buildSplitRoute: RouteConfig = {
+  path: '/build-split',
+  maxBody: MAX_BUILD_SPLIT_BODY_BYTES,
+  validate: validateBuildSplitPayload,
+  async call(payload, env: WorkerEnv) {
+    const out = await callBuildSplit(payload as BuildSplitPayload, env);
+    return { answer: String(out.answer).trim(), splitDraft: out.splitDraft, model: out.model, usage: out.usage };
+  },
+};
+
+const handle = createHandler([explainRoute, tagExerciseRoute, notesRoute, askRoute, identifyExerciseRoute, importProgrammeRoute, buildSplitRoute]);
 
 export default {
   fetch(request: Request, env: WorkerEnv): Promise<Response> {

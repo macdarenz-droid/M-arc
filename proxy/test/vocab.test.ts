@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { MUSCLE_IDS, PATTERNS } from '../src/vocab';
+import { EXERCISE_CATALOG, MUSCLE_IDS, PATTERNS } from '../src/vocab';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const appSrc = join(here, '..', '..', 'src');
@@ -28,5 +28,15 @@ describe('vocab stays in sync with the app', () => {
     const used = new Set(library.map(e => e.pattern));
     expect(used.size).toBeGreaterThan(0);
     for (const p of used) expect(PATTERNS as readonly string[], `pattern "${p}" used in exercises.json is missing from proxy/src/vocab.ts`).toContain(p);
+  });
+
+  it('EXERCISE_CATALOG has exactly the same ids, names and primary muscles as the app\'s real library', () => {
+    const raw = readFileSync(join(appSrc, 'data', 'exercises.json'), 'utf8');
+    const library = JSON.parse(raw) as Array<{ id: string; name: string; primary?: string[] }>;
+    expect(library.length).toBeGreaterThan(0);
+    expect(EXERCISE_CATALOG.length).toBe(library.length);
+    const expected = new Set(library.map(e => `${e.id}|${e.name}|${(e.primary ?? []).join(',')}`));
+    const actual = new Set(EXERCISE_CATALOG);
+    expect(actual).toEqual(expected);
   });
 });

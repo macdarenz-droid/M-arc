@@ -70,3 +70,22 @@ export function moveExercise(id: string, from: number, to: number): void {
 export function saveCustomExercise(ex: Exercise): void {
   update(s => ({ ...s, customExercises: [...s.customExercises.filter(c => c.id !== ex.id), ex] }));
 }
+
+/**
+ * Apply a split draft from the AI split-builder (see src/ai/splitBuilder.ts):
+ * create a new split, or replace an existing one's name/focus/exercises
+ * wholesale. Every exerciseId in `draft.exercises` must already be a real,
+ * validated id — this trusts its caller exactly as much as accepting a
+ * coach proposal does, no more. Returns null if `splitId` no longer names a
+ * real split (e.g. deleted mid-conversation) or the split cap is reached.
+ */
+export function applySplitDraft(splitId: string | null, draft: { name: string; focus: MuscleId[]; exercises: Split['exercises'] }): Split | null {
+  if (!splitId) {
+    const created = createSplit(draft.name, draft.exercises);
+    if (created && draft.focus.length) setFocus(created.id, draft.focus);
+    return created ? { ...created, focus: draft.focus.slice(0, 2) } : null;
+  }
+  if (!state.value.splits.some(sp => sp.id === splitId)) return null;
+  update(s => ({ ...s, splits: s.splits.map(sp => (sp.id === splitId ? { ...sp, name: draft.name.trim().slice(0, 28) || sp.name, focus: draft.focus.slice(0, 2), exercises: draft.exercises } : sp)) }));
+  return state.value.splits.find(sp => sp.id === splitId) ?? null;
+}
