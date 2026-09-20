@@ -20,7 +20,7 @@ import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessio
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
-import { SplitBuilderSheet } from './SplitBuilder';
+import { AskSheet } from '../coach/AskSheet';
 import { pickAndCompressPhoto, type CapturedPhoto } from '@/native/photo';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
@@ -70,7 +70,7 @@ function Splits() {
       <div class="topbar">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
         <div class="row">
-          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={() => setBuildingSplit(true)} aria-label={`Build a split with ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
+          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={() => setBuildingSplit(true)} aria-label={`Ask ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
           {remoteEnabled.value && <Button variant="quiet" size="sm" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : <><IconCamera size={16} /> Import</>}</Button>}
           <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
         </div>
@@ -129,7 +129,7 @@ function Splits() {
       {editing && split && <SplitEditor split={split} onClose={() => setEditing(false)} onDeleted={() => { setEditing(false); setSelected(null); }} />}
       {creating && <CreateSplit onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setSelected(id); setEditing(true); }} />}
       {importPhoto && <ImportProgrammeSheet photo={importPhoto} onClose={() => setImportPhoto(null)} />}
-      {buildingSplit && <SplitBuilderSheet onClose={() => setBuildingSplit(false)} />}
+      {buildingSplit && <AskSheet onClose={() => setBuildingSplit(false)} />}
     </div>
   );
 }

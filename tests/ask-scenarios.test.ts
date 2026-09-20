@@ -63,11 +63,13 @@ const sink = kitchenSink();
 const flat = plateaued();
 const fresh = freshStart();
 
+const noSplits = { splits: [], customExercises: [] };
+
 /** A general-scope answer is never checked against the report — proves the bypass a naive validator would otherwise wrongly block (this is exactly what silently rejected "define biceps scientifically" before the scope split existed). */
 async function acceptsGeneralAnswer(question: string, answerWithOutsideNumbers: string) {
-  const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg' });
-  const r = await requestAskAnswer(payload, { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
-  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers });
+  const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg', ...noSplits });
+  const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
+  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [] });
 }
 
 describe('general knowledge (8): anatomy, machines, reps, nutrition — none of this needs the report', () => {
@@ -91,14 +93,26 @@ describe('injury and pain (6)', () => {
   it('general: what is still safe to train with a tweaked lower back', () =>
     acceptsGeneralAnswer('I tweaked my lower back, what can I still train safely?', 'Upper body work that does not load the spine — chest press, lat pulldown, seated rows — is usually fine.'));
 
-  it('"build me a split that avoids my hurt shoulder": the prompt forbids inventing one in chat, and still answers the general part', () => {
-    // Rule 6 (do not invent a programme in chat) and the earlier "New plan" mechanism are both real; the model must decline the invention, not the whole question.
-    expect(PROMPT_SOURCE).toContain("you don't build plans in chat");
-    expect(PROMPT_SOURCE).toContain('the app\'s own plan builder does that deterministically');
+  it('"build me a split that avoids my hurt shoulder": the prompt allows building it, using the real pain flag as context — this used to be refused entirely before the merge with /build-split', () => {
+    expect(PROMPT_SOURCE).toContain('You may design a new split or adjust an existing one when asked');
+    expect(PROMPT_SOURCE).toContain('a recent finding (a note-flagged pain, an under-recovered or uncovered muscle, a plateau)');
+    expect(PROMPT_SOURCE).toContain('respect a stated equipment or exercise-avoidance constraint exactly');
+  });
+
+  it('a real splitDraft round-trips through requestAskAnswer, re-validated against the app\'s own catalog — the same safety net the standalone /build-split had, now shared', async () => {
+    const payload = buildAskPayload(sink.report, [], 'Build me a push day that avoids overhead pressing for my shoulder', { goal: 'strength', unit: 'kg', ...noSplits });
+    const fetchImpl = reply(200, {
+      scope: 'personal', category: 'training', answer: 'Since you flagged shoulder pain recently, I kept overhead work out of this one.',
+      splitDrafts: [{ action: 'create', splitId: null, name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_cable_fly', sets: 3 }] }],
+    });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.drafts).toEqual([{ action: 'create', splitId: null, name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_cable_fly', sets: 3 }] }]);
   });
 
   it('personal: "why does the coach keep suggesting push exercises even though my shoulder hurts" — the report actually carries that flag', () => {
-    const payload = buildAskPayload(sink.report, [], 'Why does the coach keep suggesting push exercises even though my shoulder hurts?', { goal: 'strength', unit: 'kg' });
+    const payload = buildAskPayload(sink.report, [], 'Why does the coach keep suggesting push exercises even though my shoulder hurts?', { goal: 'strength', unit: 'kg', ...noSplits });
     const flagged = payload.findings.find(f => f.kind === 'note_flag' && f.subject.muscle === 'front_delts');
     expect(flagged).toBeDefined();
     expect(flagged!.metrics.flagKind).toBe('pain_or_discomfort');
@@ -115,7 +129,7 @@ describe('injury and pain (6)', () => {
 });
 
 describe('split and programme building (4)', () => {
-  it('"create a split for me focused on back": chat still refuses to invent one', () => {
+  it('"create a split for me focused on back": builds one for real now, but still never invents an action against an existing proposal it wasn\'t given', () => {
     expect(PROMPT_SOURCE).toContain('do not invent an exercise, programme or rep scheme');
   });
 
@@ -130,45 +144,45 @@ describe('split and programme building (4)', () => {
     expect(proposal).toBeDefined();
     if (proposal?.apply.kind !== 'split_new') return;
     expect(proposal.apply.splits.length).toBeGreaterThan(0);
-    const payload = buildAskPayload(fresh.report, [], 'Can you set me up with a plan?', { goal: 'lean', unit: 'kg' });
+    const payload = buildAskPayload(fresh.report, [], 'Can you set me up with a plan?', { goal: 'lean', unit: 'kg', ...noSplits });
     expect(payload.proposals.some(p => p.kind === 'split_new')).toBe(true);
   });
 });
 
 describe('personal progress and comparison (6): needs real logged history', () => {
   it('a genuine plateau is grounded with real, checkable numbers', () => {
-    const payload = buildAskPayload(flat.report, [], 'Why has my bench stopped moving?', { goal: 'lean', unit: 'kg' });
+    const payload = buildAskPayload(flat.report, [], 'Why has my bench stopped moving?', { goal: 'lean', unit: 'kg', ...noSplits });
     const plateau = payload.findings.find(f => f.kind === 'plateau' && f.subject.exerciseId === 'lib_barbell_bench_press');
     expect(plateau).toBeDefined();
     expect(allowedNumbers(payload).has(60)).toBe(true); // the actual stalled load
   });
 
   it('a personal answer using the report\'s own numbers is accepted', async () => {
-    const payload = buildAskPayload(flat.report, [], 'What\'s going on with my bench?', { goal: 'lean', unit: 'kg' });
-    const r = await requestAskAnswer(payload, { ...opts, fetchImpl: reply(200, { scope: 'personal', answer: 'You have been stuck at 60kg for a while now — the stimulus stopped changing.', model: 'claude-sonnet-5' }) });
+    const payload = buildAskPayload(flat.report, [], 'What\'s going on with my bench?', { goal: 'lean', unit: 'kg', ...noSplits });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'personal', answer: 'You have been stuck at 60kg for a while now — the stimulus stopped changing.', model: 'claude-sonnet-5' }) });
     expect(r.ok).toBe(true);
   });
 
   it('a personal answer inventing a number not in the report is rejected', async () => {
-    const payload = buildAskPayload(flat.report, [], 'How much should I add next session?', { goal: 'lean', unit: 'kg' });
-    const r = await requestAskAnswer(payload, { ...opts, fetchImpl: reply(200, { scope: 'personal', answer: 'Add exactly 7.5kg and you will break through.', model: 'claude-sonnet-5' }) });
+    const payload = buildAskPayload(flat.report, [], 'How much should I add next session?', { goal: 'lean', unit: 'kg', ...noSplits });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'personal', answer: 'Add exactly 7.5kg and you will break through.', model: 'claude-sonnet-5' }) });
     expect(r.ok).toBe(false);
   });
 
   it('"what is my main issue this week" is grounded in real findings from an actual training history', () => {
-    const payload = buildAskPayload(sink.report, [], 'What is my main issue this week?', { goal: 'strength', unit: 'kg' });
+    const payload = buildAskPayload(sink.report, [], 'What is my main issue this week?', { goal: 'strength', unit: 'kg', ...noSplits });
     expect(payload.findings.length).toBeGreaterThan(0);
   });
 
   it('"have I been getting stronger" has real progress/decline findings to draw from when they exist', () => {
-    const payload = buildAskPayload(sink.report, [], 'Have I been getting stronger lately?', { goal: 'strength', unit: 'kg' });
+    const payload = buildAskPayload(sink.report, [], 'Have I been getting stronger lately?', { goal: 'strength', unit: 'kg', ...noSplits });
     expect(payload.findings.some(f => ['progressing', 'decline', 'plateau', 'record'].includes(f.kind))).toBe(true);
   });
 
   it('a why-did-you-suggest-that question about an existing proposal has that proposal\'s real basedOn findings in view', () => {
     const withProposal = sink.report.proposals[0];
     if (!withProposal) return; // nothing proposed this run — the assertion below still holds vacuously
-    const payload = buildAskPayload(sink.report, [], 'Why did you suggest that?', { goal: 'strength', unit: 'kg' });
+    const payload = buildAskPayload(sink.report, [], 'Why did you suggest that?', { goal: 'strength', unit: 'kg', ...noSplits });
     expect(payload.proposals.some(p => p.id === withProposal.id)).toBe(true);
   });
 });
@@ -218,7 +232,7 @@ describe('mixed personal + general (2): the subtlest category — one answer, on
   });
 
   it('a mixed answer that follows that guidance (personal number exact, general part in words) is accepted', async () => {
-    const payload = buildAskPayload(flat.report, [], 'My bench is stuck — why does that happen physiologically?', { goal: 'lean', unit: 'kg' });
+    const payload = buildAskPayload(flat.report, [], 'My bench is stuck — why does that happen physiologically?', { goal: 'lean', unit: 'kg', ...noSplits });
     const mixed = 'You have been at 60kg for several sessions — the stimulus stopped changing, so your body has nothing new to adapt to. That is the mechanism behind a plateau in general, not something specific to you.';
     const check = validateText(mixed, allowedNumbers(payload));
     expect(check.ok).toBe(true);

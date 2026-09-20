@@ -8,22 +8,35 @@ import { NOTES_SYSTEM_PROMPT, userMessage as notesUserMessage } from './promptNo
 import { ASK_SYSTEM_PROMPT, askMessages } from './promptAsk';
 import { IDENTIFY_SYSTEM_PROMPT, identifyMessage } from './promptIdentify';
 import { IMPORT_SYSTEM_PROMPT, importMessage } from './promptImport';
-import { SPLIT_BUILDER_SYSTEM_PROMPT, buildSplitMessages } from './promptSplitBuilder';
 import { EXERCISE_IDS, MODES, MUSCLE_IDS, NOTE_FLAG_KINDS, PATTERNS } from './vocab';
-import type { CallAsk, CallBuildSplit, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
+import type { CallAsk, CallIdentifyExercise, CallImportProgramme, CallModel, CallNotes, CallTagExercise, WorkerEnv } from './types';
 
 const ExplanationSchema = z.object({
   summary: z.string(),
   items: z.array(z.object({ id: z.string(), text: z.string() })),
 });
 
+const MuscleIdSchema = z.enum(MUSCLE_IDS);
+const ExerciseIdSchema = z.enum(EXERCISE_IDS as [string, ...string[]]);
+/** One concrete split proposal — see promptAsk.ts's split-building rules for when this is used. Every exerciseId is re-validated against the real catalog app-side too before it can ever be applied. */
+const SplitDraftSchema = z.object({
+  action: z.enum(['create', 'modify']),
+  splitId: z.string().nullable(),
+  name: z.string(),
+  focus: z.array(MuscleIdSchema).max(2),
+  exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
+});
+/** At most this many splits proposed in one reply — a person describing several splits at once (a full weekly plan) still gets one entry per split, not just the first. */
+const MAX_SPLIT_DRAFTS = 4;
+
 const AskSchema = z.object({
   scope: z.enum(['personal', 'general']),
   category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
   answer: z.string(),
+  /** Present only when this reply actually proposes designing or adjusting one or more splits — most replies leave this empty. */
+  splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
 });
 
-const MuscleIdSchema = z.enum(MUSCLE_IDS);
 const TagSchema = z.object({
   equipment: z.string(),
   primary: z.array(MuscleIdSchema).max(3),
@@ -63,20 +76,6 @@ const ImportProgrammeSchema = z.object({
   days: z.array(z.object({ name: z.string(), exercises: z.array(ImportedExerciseSchema).max(12) })).max(7),
 });
 
-const ExerciseIdSchema = z.enum(EXERCISE_IDS as [string, ...string[]]);
-const SplitDraftSchema = z.object({
-  action: z.enum(['create', 'modify']),
-  splitId: z.string().nullable(),
-  name: z.string(),
-  focus: z.array(MuscleIdSchema).max(2),
-  exercises: z.array(z.object({ exerciseId: ExerciseIdSchema, sets: z.number().int().min(1).max(6) })).min(1).max(10),
-});
-const MAX_SPLIT_DRAFTS = 4;
-const BuildSplitSchema = z.object({
-  answer: z.string(),
-  splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
-});
-
 /**
  * Sonnet 5 for every route. Considered per route: `/explain` weaves several
  * findings into one coherent, well-hedged paragraph; `/tag-exercise` and
@@ -108,7 +107,6 @@ export function modelsByRoute(env: WorkerEnv): Record<string, string> {
     ask: modelFor(env, env.MODEL_ASK),
     identifyExercise: modelFor(env, env.MODEL_IDENTIFY_EXERCISE),
     importProgramme: modelFor(env, env.MODEL_IMPORT_PROGRAMME),
-    buildSplit: modelFor(env, env.MODEL_BUILD_SPLIT),
   };
 }
 
@@ -256,26 +254,14 @@ export const callAsk: CallAsk = async (payload, env) => {
   const model = modelFor(env, env.MODEL_ASK);
   const response = await client.messages.parse({
     model,
-    max_tokens: 2500,
+    // Higher than a plain answer alone needs: a reply that also proposes several splitDrafts
+    // (each with its own exercise list) can run noticeably longer than prose-only ever did.
+    max_tokens: 3500,
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
     tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), model: response.model, usage: usageOf(response) };
-};
-
-export const callBuildSplit: CallBuildSplit = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 45_000 });
-  const model = modelFor(env, env.MODEL_BUILD_SPLIT);
-  const response = await client.messages.parse({
-    model,
-    max_tokens: 2500,
-    system: [{ type: 'text', text: SPLIT_BUILDER_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
-    messages: buildSplitMessages(payload),
-    output_config: { format: zodOutputFormat(BuildSplitSchema), effort: EFFORT },
-  });
-  const parsed = requireParsed(response);
-  return { answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, model: response.model, usage: usageOf(response) };
 };

@@ -31,9 +31,9 @@ export const NOTE_FLAG_KINDS = ['pain_or_discomfort', 'equipment_issue', 'fatigu
 /**
  * The real exercise library, `"id|Name|primary muscles"` per line, generated
  * from `src/data/exercises.json` (see the generating one-liner in the git
- * history of this file if it needs regenerating). Used only by the
- * split-builder prompt (promptSplitBuilder.ts), so the model composes a
- * split entirely out of real, existing exercises instead of inventing an id
+ * history of this file if it needs regenerating). Used only by `/ask`'s
+ * split-building support (promptAsk.ts), so the model composes a split
+ * entirely out of real, existing exercises instead of inventing an id
  * that looks plausible but doesn't exist — the same closed-vocabulary idea
  * as MUSCLE_IDS/PATTERNS above, just for a much larger list.
  * `proxy/test/vocab.test.ts` checks this never drifts from the app's copy.

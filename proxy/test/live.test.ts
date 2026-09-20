@@ -84,7 +84,7 @@ live('live notes call', () => {
   }, 30_000);
 });
 
-const askGrounding = { goal: payload.goal, unit: payload.unit, today: payload.today, dataQuality: payload.dataQuality, findings: payload.findings, proposals: payload.proposals, cards: payload.cards };
+const askGrounding = { goal: payload.goal, unit: payload.unit, today: payload.today, dataQuality: payload.dataQuality, findings: payload.findings, proposals: payload.proposals, cards: payload.cards, splits: [] };
 
 live('live ask call', () => {
   it('answers a real question grounded only in the report, without inventing numbers', async () => {

@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import type { ComponentChildren, JSX } from 'preact';
+import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconMafia } from '@/ui/icons';
-import { ChatInputRow, COACH_NAME, renderChatBody } from '@/ui/chatRender';
+import { IconChevron, IconInfo, IconMafia } from '@/ui/icons';
+import { COACH_NAME } from '@/ui/chatRender';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -17,10 +16,10 @@ import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
-import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskTurn } from '@/ai/ask';
+import { AskSheet } from './AskSheet';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
-import { ensureDeviceId, explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
+import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -210,87 +209,6 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
         <Evidence cards={sg.evidence} />
         <div class="grid-2"><Button variant="quiet" onClick={onDismiss}>Not now</Button><Button variant="primary" onClick={onAccept}>{sg.acceptLabel}</Button></div>
       </div>
-    </Sheet>
-  );
-}
-
-/**
- * A short, grounded conversation with the coach: the report and the
- * research cards behind it, nothing about sessions, name or body. History
- * lives only in this sheet's own state — closing it forgets the exchange.
- */
-/** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. */
-type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory };
-
-const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string; 'aria-hidden'?: boolean }) => JSX.Element> = {
-  nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
-};
-
-/** The prompt (promptAsk.ts rule 13) allows a blank-line paragraph break and a "- "-prefixed line list for an answer that is genuinely a set of distinct items; picks the bullet icon from the answer's category. See src/ui/chatRender.tsx for the shared rendering both this and the split-builder chat use. */
-function renderAskBody(text: string, category: AskCategory): ComponentChildren {
-  return renderChatBody(text, ASK_CATEGORY_ICON[category] ?? IconInfo);
-}
-
-/**
- * Someone who has been logging for months has no way to know the coach can
- * compare their stats over time, or answer a plain anatomy/nutrition
- * question — nothing on screen hints at it. These rotate through the empty
- * input as a typed-out placeholder so the range of what's askable is
- * discoverable without a tutorial. One from each real category: personal
- * long-horizon comparison, app navigation, general knowledge, and injury.
- */
-const ASK_SUGGESTIONS = [
-  'How have I improved over the last 3 months?',
-  'Why does my chest feel behind on volume?',
-  'How do I see my recovery per muscle?',
-  'What is progressive overload?',
-  'How much protein should I aim for?',
-  'What should I do if my shoulder feels sore?',
-];
-
-function AskSheet({ onClose }: { onClose: () => void }) {
-  const [history, setHistory] = useState<AskBubble[]>([]);
-  const [question, setQuestion] = useState('');
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const threadRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => { threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight, behavior: 'smooth' }); }, [history, sending]);
-
-  const send = async () => {
-    const q = question.trim();
-    if (!q || sending) return;
-    const s = state.value;
-    const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
-    const payload = buildAskPayload(report.value, plainHistory, q, { goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts });
-    const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
-    setHistory(withQuestion);
-    setQuestion('');
-    setError(null);
-    setSending(true);
-    try {
-      const r = await requestAskAnswer(payload, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category }]);
-      else setError(r.error);
-    } finally {
-      setSending(false);
-    }
-  };
-
-  return (
-    <Sheet title="Ask the coach" onClose={onClose}>
-      <div class="ask-thread" ref={threadRef}>
-        {!history.length && <p class="small muted">Ask anything — your own training, or general questions about exercise, muscles or nutrition. Personal answers only use the findings and research below, nothing about your sessions or body.</p>}
-        {history.map((turn, i) => (
-          <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
-            {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
-            {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
-          </div>
-        ))}
-        {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
-      </div>
-      {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
-      <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />
     </Sheet>
   );
 }

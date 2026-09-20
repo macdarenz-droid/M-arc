@@ -1,11 +1,11 @@
 /**
- * The markdown-lite convention every AI chat surface in this app follows
- * (see promptAsk.ts rule 13, promptSplitBuilder.ts): a blank-line paragraph
- * break, a "- "-prefixed line list, and `**term**` for emphasis. Shared here
- * so Coach's "Ask the coach" sheet and Train's split-builder chat render it
- * identically rather than keeping two copies in sync by hand. Also holds
- * the two other pieces both chat surfaces share: the rotating typed-out
- * placeholder and the input row it drives.
+ * The markdown-lite convention the coach chat follows (see promptAsk.ts
+ * rule 13): a blank-line paragraph break, a "- "-prefixed line list, and
+ * `**term**` for emphasis. Shared here so the same sheet, opened from
+ * Coach's "Ask a question" and Train's "Escobar" entry points, renders
+ * identically wherever it's opened from. Also holds the two other pieces
+ * that chat needs: the rotating typed-out placeholder and the input row it
+ * drives.
  */
 import { useEffect, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';

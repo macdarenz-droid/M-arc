@@ -52,7 +52,7 @@ describe('per-route model override', () => {
 
   it('modelsByRoute reports one entry per real route, all defaulting to the same model until overridden', () => {
     const models = modelsByRoute({ ANTHROPIC_API_KEY: 'x' });
-    expect(Object.keys(models).sort()).toEqual(['ask', 'buildSplit', 'explain', 'identifyExercise', 'importProgramme', 'notes', 'tagExercise'].sort());
+    expect(Object.keys(models).sort()).toEqual(['ask', 'explain', 'identifyExercise', 'importProgramme', 'notes', 'tagExercise'].sort());
     expect(Object.values(models).every(m => m === DEFAULT_MODEL)).toBe(true);
   });
 });

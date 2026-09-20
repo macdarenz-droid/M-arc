@@ -12,7 +12,6 @@ export const MAX_BODY_BYTES = 24 * 1024;
 export const MAX_TAG_BODY_BYTES = 1024;
 export const MAX_NOTES_BODY_BYTES = 2 * 1024;
 export const MAX_ASK_BODY_BYTES = 32 * 1024;
-export const MAX_BUILD_SPLIT_BODY_BYTES = 16 * 1024;
 /** A downscaled photo's base64 comfortably fits well under this; it exists to bound cost and abuse, not to be a target size. */
 export const MAX_IDENTIFY_BODY_BYTES = 1_500_000;
 export const MAX_IMPORT_BODY_BYTES = 1_500_000;
@@ -30,7 +29,6 @@ export const MAX_PREFERENCE_CHARS = 160;
 export const MAX_QUESTION_CHARS = 300;
 export const MAX_HISTORY_TURNS = 12;
 export const MAX_HISTORY_TURN_CHARS = 700;
-export const MAX_SPLIT_MESSAGE_CHARS = 300;
 export const MAX_KNOWN_SPLITS = 7;
 export const MAX_KNOWN_SPLIT_EXERCISES = 14;
 export const MAX_KNOWN_SPLIT_NAME_CHARS = 28;
@@ -164,19 +162,6 @@ export function validateImportPayload(raw: unknown): Validated<ImportProgrammePa
 
 const isTurn = (v: unknown): v is AskTurn => isRecord(v) && (v.role === 'user' || v.role === 'assistant') && typeof v.text === 'string' && v.text.length > 0 && v.text.length <= MAX_HISTORY_TURN_CHARS;
 
-/** The report, the conversation so far, and the new question. Same grounding rules as /explain. */
-export function validateAskPayload(raw: unknown): Validated<AskPayload> {
-  if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
-  if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question'])) return { ok: false, reason: 'Unexpected field in the payload.' };
-  const groundingError = validateGrounding(raw);
-  if (groundingError) return { ok: false, reason: groundingError };
-  if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };
-  const history = raw.history;
-  if (!Array.isArray(history) || history.length > MAX_HISTORY_TURNS || !history.every(isTurn)) return { ok: false, reason: `history must be an array of at most ${MAX_HISTORY_TURNS} turns, each with a role and text.` };
-  return { ok: true, payload: raw as unknown as AskPayload };
-}
-
 const isKnownSplitExercise = (v: unknown): v is { exerciseId: string; name: string; sets: number } =>
   isRecord(v) && typeof v.exerciseId === 'string' && typeof v.name === 'string' && typeof v.sets === 'number' && Number.isFinite(v.sets);
 
@@ -185,18 +170,19 @@ const isKnownSplit = (v: unknown): v is { id: string; name: string; focus: strin
   && Array.isArray(v.focus) && v.focus.length <= 2 && v.focus.every(f => typeof f === 'string')
   && Array.isArray(v.exercises) && v.exercises.length <= MAX_KNOWN_SPLIT_EXERCISES && v.exercises.every(isKnownSplitExercise);
 
-/** The person's goal, the splits they already have (if any), and the conversation so far — no report, no findings; see promptSplitBuilder.ts for why this route doesn't need them. */
-export function validateBuildSplitPayload(raw: unknown): Validated<import('./types').BuildSplitPayload> {
+/** The report, the person's real splits today, the conversation so far, and the new question. Same grounding rules as /explain, plus `splits` — this is the one route that may also design or adjust a split when asked. */
+export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
-  if (raw.version !== 1 || raw.kind !== 'build-split') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'splits', 'history', 'message'])) return { ok: false, reason: 'Unexpected field in the payload.' };
-  if (typeof raw.goal !== 'string' || (raw.unit !== 'kg' && raw.unit !== 'lb')) return { ok: false, reason: 'goal and unit are required.' };
-  const splits = raw.splits;
-  if (!Array.isArray(splits) || splits.length > MAX_KNOWN_SPLITS || !splits.every(isKnownSplit)) return { ok: false, reason: `splits must be an array of at most ${MAX_KNOWN_SPLITS} known splits.` };
-  if (typeof raw.message !== 'string' || !raw.message.trim() || raw.message.length > MAX_SPLIT_MESSAGE_CHARS) return { ok: false, reason: `message is required, at most ${MAX_SPLIT_MESSAGE_CHARS} characters.` };
+  if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question', 'splits'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  const groundingError = validateGrounding(raw);
+  if (groundingError) return { ok: false, reason: groundingError };
+  if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };
   const history = raw.history;
   if (!Array.isArray(history) || history.length > MAX_HISTORY_TURNS || !history.every(isTurn)) return { ok: false, reason: `history must be an array of at most ${MAX_HISTORY_TURNS} turns, each with a role and text.` };
-  return { ok: true, payload: raw as unknown as import('./types').BuildSplitPayload };
+  const splits = raw.splits;
+  if (!Array.isArray(splits) || splits.length > MAX_KNOWN_SPLITS || !splits.every(isKnownSplit)) return { ok: false, reason: `splits must be an array of at most ${MAX_KNOWN_SPLITS} known splits.` };
+  return { ok: true, payload: raw as unknown as AskPayload };
 }
 
 export interface QuotaResult { ok: boolean; reason?: string; remaining?: number }

@@ -1,9 +1,18 @@
 /**
- * Ask the coach a real question — grounded in the current report and
- * research cards for anything about this person's own training, or
- * answered from the model's own general knowledge for everything else
- * (anatomy, exercise science, nutrition education). The Worker holds no
- * state, so every call resends the whole exchange so far, capped.
+ * Ask the coach — one chat, grounded in the current report and research
+ * cards for anything about this person's own training, answered from the
+ * model's own general knowledge for everything else (anatomy, exercise
+ * science, nutrition education), and the one place the coach may also
+ * design or adjust a real split by conversation (see promptAsk.ts). The
+ * Worker holds no state, so every call resends the whole exchange so far,
+ * capped.
+ *
+ * This used to be two separate routes/chats — this general one and a
+ * standalone /build-split with no report access — merged into one so a
+ * conversation can move between "why has my bench stalled" and "build me a
+ * split for that" without switching chats, and so split-building can use
+ * real findings the standalone version never had access to. See
+ * COACH_BRAIN.md's decision log.
  *
  * The reply is tagged "personal" or "general" (see promptAsk.ts). Only a
  * "personal" answer is checked the way /explain's is: every number in it
@@ -12,8 +21,15 @@
  * person's data, so there is nothing in the payload to check it against —
  * checking it anyway is exactly what silently rejected "define biceps
  * scientifically" (its numbers, real facts, just weren't in the report).
- * Anything other than exactly "general" defaults to the strict path.
+ * Anything other than exactly "general" defaults to the strict path. A
+ * splitDraft is a design choice, not a claim about this person's history,
+ * so it is never checked against the report the way "personal" prose is —
+ * it is instead re-validated against the app's real exercise catalog
+ * (below), the same idea as src/ai/tagExercise.ts's knownMuscles.
  */
+import type { Exercise, Split } from '@/core/models';
+import { findExercise } from '@/core/exercises';
+import { isMuscleId, type MuscleId } from '@/data/muscles';
 import type { FindingsReport } from '@/brain/coach/contract';
 import { allowedNumbers, cardsFor, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload, type PayloadProposal } from '@/brain/coach/explainer';
 import { postJson } from './client';
@@ -23,11 +39,20 @@ export interface AskTurn {
   text: string;
 }
 
+/** One split as the app actually has it today, so a splitDraft can propose a sensible change to it or avoid duplicating it. */
+export interface KnownSplit {
+  id: string;
+  name: string;
+  focus: string[];
+  exercises: Array<{ exerciseId: string; name: string; sets: number }>;
+}
+
 export interface AskPayload extends GroundingPayload {
   version: 1;
   kind: 'ask';
   history: AskTurn[];
   question: string;
+  splits: KnownSplit[];
 }
 
 export const MAX_QUESTION_CHARS = 300;
@@ -47,8 +72,13 @@ export const MAX_HISTORY_TURNS = 12;
  */
 const MAX_LOAD_NEXT = 8;
 
-/** The report, the recent conversation, and a new question — trimmed and capped the same way /explain's payload is. */
-export function buildAskPayload(report: FindingsReport, history: AskTurn[], question: string, opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[] }): AskPayload {
+/** The report, the recent conversation, the person's real splits today, and a new question — trimmed and capped the same way /explain's payload is. */
+export function buildAskPayload(
+  report: FindingsReport,
+  history: AskTurn[],
+  question: string,
+  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[] },
+): AskPayload {
   const { findings, proposals: trimmed } = trimFindingsAndProposals(report);
   const loadNext: PayloadProposal[] = report.proposals
     .filter(p => p.kind === 'load_next')
@@ -61,22 +91,84 @@ export function buildAskPayload(report: FindingsReport, history: AskTurn[], ques
   const cards = cardsFor(report, ids);
   const trimmedHistory = history.slice(-MAX_HISTORY_TURNS).map(h => ({ role: h.role, text: h.text.trim().slice(0, 700) }));
   const preferences = (opts.preferenceFacts ?? []).slice(0, LIMITS.preferences);
+  const splits: KnownSplit[] = opts.splits.map(sp => ({
+    id: sp.id,
+    name: sp.name,
+    focus: sp.focus,
+    exercises: sp.exercises.map(e => ({ exerciseId: e.exerciseId, name: findExercise(e.exerciseId, opts.customExercises)?.name ?? e.exerciseId, sets: e.sets })),
+  }));
   return {
     version: 1, kind: 'ask', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality,
     findings, proposals, cards, preferences, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
+    splits,
   };
 }
 
-interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; error?: unknown }
 
 /** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
 export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
 const ASK_CATEGORIES: readonly AskCategory[] = ['nutrition', 'body', 'training', 'app', 'general'];
 
-export type AskResult = { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory } | { ok: false; error: string };
+/** One concrete split proposal from a reply. Every exerciseId has already been re-validated against the app's real catalog by the time this is returned — nothing from the network is trusted further than that. */
+export interface SplitDraft {
+  action: 'create' | 'modify';
+  /** An id from the payload's own `splits`, only when action is "modify". */
+  splitId: string | null;
+  name: string;
+  focus: MuscleId[];
+  exercises: Array<{ exerciseId: string; sets: number }>;
+}
 
-/** Ask. A "personal" answer is validated the way /explain's is: any number not already in the payload, and the whole answer is dropped rather than shown half-trusted. A "general" answer (ordinary exercise/nutrition knowledge, not a claim about this person) is not checked against the payload — there is nothing in it to check against. */
-export async function requestAskAnswer(payload: AskPayload, opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
+interface SplitDraftReply { action?: unknown; splitId?: unknown; name?: unknown; focus?: unknown; exercises?: unknown }
+
+/** Keeps only exercises the app actually recognizes, silently — never shown as real when the app can't find it. */
+function knownExercises(v: unknown, custom: Exercise[]): Array<{ exerciseId: string; sets: number }> {
+  if (!Array.isArray(v)) return [];
+  const out: Array<{ exerciseId: string; sets: number }> = [];
+  for (const item of v) {
+    if (!item || typeof item !== 'object') continue;
+    const exerciseId = (item as { exerciseId?: unknown }).exerciseId;
+    const sets = (item as { sets?: unknown }).sets;
+    if (typeof exerciseId !== 'string' || !findExercise(exerciseId, custom)) continue;
+    const n = typeof sets === 'number' && Number.isFinite(sets) ? Math.round(sets) : 3;
+    out.push({ exerciseId, sets: Math.max(1, Math.min(6, n)) });
+  }
+  return out;
+}
+
+/** A draft that fails validation in a way that leaves nothing real to apply becomes null — a half-drawn action isn't shown as one the person can accept. */
+function parseDraft(raw: unknown, knownSplitIds: Set<string>, custom: Exercise[]): SplitDraft | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as SplitDraftReply;
+  const action = r.action === 'modify' ? 'modify' as const : r.action === 'create' ? 'create' as const : null;
+  if (!action) return null;
+  const splitId = typeof r.splitId === 'string' && knownSplitIds.has(r.splitId) ? r.splitId : null;
+  if (action === 'modify' && !splitId) return null;
+  const name = typeof r.name === 'string' && r.name.trim() ? r.name.trim().slice(0, 28) : 'New split';
+  const focus = Array.isArray(r.focus) ? r.focus.filter(isMuscleId).slice(0, 2) : [];
+  const exercises = knownExercises(r.exercises, custom);
+  if (!exercises.length) return null;
+  return { action, splitId: action === 'create' ? null : splitId, name, focus, exercises };
+}
+
+export type AskResult =
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[] }
+  | { ok: false; error: string };
+
+/**
+ * Ask. A "personal" answer is validated the way /explain's is: any number
+ * not already in the payload, and the whole answer is dropped rather than
+ * shown half-trusted. A "general" answer (ordinary exercise/nutrition
+ * knowledge, not a claim about this person) is not checked against the
+ * payload — there is nothing in it to check against. Each splitDraft in the
+ * reply is re-validated against the app's own catalog and the splits this
+ * exact payload named — a single message can describe several splits at
+ * once, so this is a list: usually empty, sometimes one, sometimes several,
+ * each independently actionable (and independently droppable if it doesn't
+ * hold up to validation).
+ */
+export async function requestAskAnswer(payload: AskPayload, customExercises: Exercise[], opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
   if (!payload.question) return { ok: false, error: 'Type a question first.' };
   const result = await postJson<AskPayload, AskReply>(payload, { url: opts.url, path: '/ask', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 70_000 });
   if (!result.ok) return result;
@@ -88,5 +180,8 @@ export async function requestAskAnswer(payload: AskPayload, opts: { url: string;
     const check = validateText(answer, allowedNumbers(payload));
     if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
   }
-  return { ok: true, answer, scope, category };
+  const knownSplitIds = new Set(payload.splits.map(s => s.id));
+  const rawDrafts = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
+  const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
+  return { ok: true, answer, scope, category, drafts };
 }

@@ -109,12 +109,20 @@ export interface AskTurn {
   text: string;
 }
 
-/** The report, plus the conversation so far and the new question. The Worker holds no state between calls — the app resends the whole thing every time. */
+/**
+ * The report, plus the conversation so far and the new question. The
+ * Worker holds no state between calls — the app resends the whole thing
+ * every time. `splits` is the person's real splits today (name, focus,
+ * exercises) — not part of GroundingPayload since /explain has no use for
+ * it, but /ask does: this is the one route that may also design or adjust
+ * a split when asked, using the real exercise catalog (see promptAsk.ts).
+ */
 export interface AskPayload extends GroundingPayload {
   version: 1;
   kind: 'ask';
   history: AskTurn[];
   question: string;
+  splits: KnownSplit[];
 }
 
 /** What an answer is mainly about, purely to pick a small decorative bullet icon client-side — never shown as text, never used for grounding or validation. */
@@ -125,6 +133,8 @@ export interface AskReply {
   scope: 'personal' | 'general';
   category: AskCategory;
   answer: string;
+  /** One entry per split this reply actually proposes designing or adjusting — empty for an ordinary answer, several when the person described several splits at once. */
+  splitDrafts: SplitDraftReply[];
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }
@@ -192,7 +202,7 @@ export interface ImportProgrammeReply {
 
 export type CallImportProgramme = (payload: ImportProgrammePayload, env: WorkerEnv) => Promise<Omit<ImportProgrammeReply, 'model' | 'usage'> & { model: string; usage: ImportProgrammeReply['usage'] }>;
 
-/** One split as the app actually has it today, so the model can propose a sensible change to it or avoid duplicating it — never sent for the general /ask route, only here. */
+/** One split as the app actually has it today, so /ask can propose a sensible change to it or avoid duplicating it when asked to design or adjust one. */
 export interface KnownSplit {
   id: string;
   name: string;
@@ -201,18 +211,7 @@ export interface KnownSplit {
   exercises: Array<{ exerciseId: string; name: string; sets: number }>;
 }
 
-/** Build or modify one split by conversation. No report, no findings — this is a design task (which real exercises, how many sets), not a claim about the person's history, so it does not go through the number-grounding used by /ask and /explain. */
-export interface BuildSplitPayload {
-  version: 1;
-  kind: 'build-split';
-  goal: string;
-  unit: 'kg' | 'lb';
-  splits: KnownSplit[];
-  history: AskTurn[];
-  message: string;
-}
-
-/** One concrete split proposal. Every exerciseId must be re-validated against the real catalog client-side before it can be applied — this reply is trusted no further than any other model output in this app. */
+/** One concrete split proposal — present in an AskReply only when the conversation actually calls for designing or adjusting a split. Every exerciseId must be re-validated against the real catalog client-side before it can be applied — this reply is trusted no further than any other model output in this app. */
 export interface SplitDraftReply {
   action: 'create' | 'modify';
   /** Must name an id from the payload's own `splits` when action is "modify"; null when action is "create". */
@@ -221,16 +220,6 @@ export interface SplitDraftReply {
   focus: string[];
   exercises: Array<{ exerciseId: string; sets: number }>;
 }
-
-export interface BuildSplitReply {
-  answer: string;
-  /** One entry per split the message actually proposes — several when the person described several splits in one message, empty while the model is still asking a clarifying question. */
-  splitDrafts: SplitDraftReply[];
-  model: string;
-  usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
-}
-
-export type CallBuildSplit = (payload: BuildSplitPayload, env: WorkerEnv) => Promise<Omit<BuildSplitReply, 'model' | 'usage'> & { model: string; usage: BuildSplitReply['usage'] }>;
 
 export interface WorkerEnv {
   ANTHROPIC_API_KEY?: string;
@@ -242,7 +231,6 @@ export interface WorkerEnv {
   MODEL_ASK?: string;
   MODEL_IDENTIFY_EXERCISE?: string;
   MODEL_IMPORT_PROGRAMME?: string;
-  MODEL_BUILD_SPLIT?: string;
   MAX_DAILY_PER_DEVICE?: string;
   MAX_DAILY_TOTAL?: string;
   ALLOWED_ORIGINS?: string;

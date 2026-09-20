@@ -72,7 +72,7 @@ export function saveCustomExercise(ex: Exercise): void {
 }
 
 /**
- * Apply a split draft from the AI split-builder (see src/ai/splitBuilder.ts):
+ * Apply a split draft from the coach chat (see src/ai/ask.ts's SplitDraft):
  * create a new split, or replace an existing one's name/focus/exercises
  * wholesale. Every exerciseId in `draft.exercises` must already be a real,
  * validated id — this trusts its caller exactly as much as accepting a
