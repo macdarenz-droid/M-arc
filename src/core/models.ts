@@ -177,7 +177,7 @@ export interface CoachState {
   deload: { from: string; to: string; loadFactor: number; effortCap: 'easy' | 'ideal' } | null;
   /** Send findings to the remote explainer for richer wording. Off by default. */
   remoteExplainer: boolean;
-  /** The user's own proxy, e.g. https://marc-coach.example.workers.dev. Empty until set. */
+  /** The Cloudflare Worker proxy URL. Defaults to DEFAULT_PROXY_URL (this is a personal, single-deployment app, not a generic template — there is only one real Worker to point at), so the "Online coach" toggle alone turns everything on. Still editable in Settings for a future redeploy under a different URL. */
   explainerUrl: string;
   /** Random id for per-device quotas at the proxy. Not tied to anything personal. */
   deviceId: string;
@@ -195,8 +195,18 @@ export interface CoachState {
   preferencesUpdatedAt: string | null;
 }
 
+/**
+ * The one real Worker this app talks to. Baked in rather than left for the
+ * person to paste in on every fresh install, data reset or new device: this
+ * is a personal app with a single Cloudflare deployment, not a template
+ * other people self-host under their own URL, so there is nothing to ask
+ * the person to fill in. Still a plain Settings field if that ever changes
+ * (a redeploy under a new name, for instance) — this is only the default.
+ */
+export const DEFAULT_PROXY_URL = 'https://marc-coach.mmarcdarenz.workers.dev';
+
 export function emptyCoach(): CoachState {
-  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: '', deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null };
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null };
 }
 
 export interface AppState {
