@@ -109,13 +109,22 @@ export interface AskTurn {
   text: string;
 }
 
+/** A day of the week, as the app's own `Weekday` type keys it. */
+export type WeekdayKey = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+export const WEEKDAY_KEYS: readonly WeekdayKey[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+/** The person's real weekly schedule today — which split id trains on which day, or null for a rest day. Mirrors the app's own `AppState.schedule`. */
+export type WeekSchedule = Record<WeekdayKey, string | null>;
+
 /**
  * The report, plus the conversation so far and the new question. The
  * Worker holds no state between calls — the app resends the whole thing
  * every time. `splits` is the person's real splits today (name, focus,
- * exercises) — not part of GroundingPayload since /explain has no use for
- * it, but /ask does: this is the one route that may also design or adjust
- * a split when asked, using the real exercise catalog (see promptAsk.ts).
+ * exercises) and `schedule` is which split trains on which day today —
+ * neither is part of GroundingPayload since /explain has no use for them,
+ * but /ask does: this is the one route that may also design or adjust a
+ * split (using the real exercise catalog) or rearrange the weekly
+ * schedule when asked (see promptAsk.ts).
  */
 export interface AskPayload extends GroundingPayload {
   version: 1;
@@ -123,6 +132,7 @@ export interface AskPayload extends GroundingPayload {
   history: AskTurn[];
   question: string;
   splits: KnownSplit[];
+  schedule: WeekSchedule;
 }
 
 /** What an answer is mainly about, purely to pick a small decorative bullet icon client-side — never shown as text, never used for grounding or validation. */
@@ -135,6 +145,8 @@ export interface AskReply {
   answer: string;
   /** One entry per split this reply actually proposes designing or adjusting — empty for an ordinary answer, several when the person described several splits at once. */
   splitDrafts: SplitDraftReply[];
+  /** Present only when this reply actually proposes rearranging the weekly schedule — the full week, every day, since the app replaces the whole thing with exactly what's here. Null for an ordinary answer. */
+  scheduleDraft: WeekSchedule | null;
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }

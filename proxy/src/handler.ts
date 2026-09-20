@@ -6,6 +6,7 @@
  * call is injected so the handler is testable without the network.
  */
 import { DEFAULT_MODEL, modelsByRoute } from './anthropic';
+import { WEEKDAY_KEYS } from './types';
 import type { AskPayload, AskTurn, GroundingPayload, IdentifyExercisePayload, ImportProgrammePayload, NotesPayload, TagExercisePayload, WorkerEnv } from './types';
 
 export const MAX_BODY_BYTES = 24 * 1024;
@@ -170,11 +171,15 @@ const isKnownSplit = (v: unknown): v is { id: string; name: string; focus: strin
   && Array.isArray(v.focus) && v.focus.length <= 2 && v.focus.every(f => typeof f === 'string')
   && Array.isArray(v.exercises) && v.exercises.length <= MAX_KNOWN_SPLIT_EXERCISES && v.exercises.every(isKnownSplitExercise);
 
-/** The report, the person's real splits today, the conversation so far, and the new question. Same grounding rules as /explain, plus `splits` — this is the one route that may also design or adjust a split when asked. */
+/** Every one of the 7 weekday keys present, no others, each a string id or null (rest) — the same "full week, not a diff" shape the app's own `schedule` state and a `scheduleDraft` reply both use. */
+const isSchedule = (v: unknown): v is Record<string, string | null> =>
+  isRecord(v) && onlyKeys(v, [...WEEKDAY_KEYS]) && WEEKDAY_KEYS.every(d => d in v && (v[d] === null || typeof v[d] === 'string'));
+
+/** The report, the person's real splits and schedule today, the conversation so far, and the new question. Same grounding rules as /explain, plus `splits`/`schedule` — this is the one route that may also design or adjust a split, or rearrange the weekly schedule, when asked. */
 export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'ask') return { ok: false, reason: 'Unsupported payload version or kind.' };
-  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question', 'splits'])) return { ok: false, reason: 'Unexpected field in the payload.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'history', 'question', 'splits', 'schedule'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   if (typeof raw.question !== 'string' || !raw.question.trim() || raw.question.length > MAX_QUESTION_CHARS) return { ok: false, reason: `question is required, at most ${MAX_QUESTION_CHARS} characters.` };
@@ -182,6 +187,7 @@ export function validateAskPayload(raw: unknown): Validated<AskPayload> {
   if (!Array.isArray(history) || history.length > MAX_HISTORY_TURNS || !history.every(isTurn)) return { ok: false, reason: `history must be an array of at most ${MAX_HISTORY_TURNS} turns, each with a role and text.` };
   const splits = raw.splits;
   if (!Array.isArray(splits) || splits.length > MAX_KNOWN_SPLITS || !splits.every(isKnownSplit)) return { ok: false, reason: `splits must be an array of at most ${MAX_KNOWN_SPLITS} known splits.` };
+  if (!isSchedule(raw.schedule)) return { ok: false, reason: 'schedule must have all 7 weekday keys, each a split id or null.' };
   return { ok: true, payload: raw as unknown as AskPayload };
 }
 

@@ -23,6 +23,7 @@ import { buildReport } from '@/brain/coach/report';
 import { session, sets } from './helpers';
 import { ctx, pplHistory, std, LAST_MONDAY, PUSH_ID, PUSH_EX } from './coach-helpers';
 import { addDays } from '@/core/dates';
+import { emptySchedule } from '@/core/models';
 
 /**
  * The Worker's system prompt lives in proxy/src/promptAsk.ts, a separate
@@ -63,13 +64,13 @@ const sink = kitchenSink();
 const flat = plateaued();
 const fresh = freshStart();
 
-const noSplits = { splits: [], customExercises: [] };
+const noSplits = { splits: [], customExercises: [], schedule: emptySchedule() };
 
 /** A general-scope answer is never checked against the report — proves the bypass a naive validator would otherwise wrongly block (this is exactly what silently rejected "define biceps scientifically" before the scope split existed). */
 async function acceptsGeneralAnswer(question: string, answerWithOutsideNumbers: string) {
   const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg', ...noSplits });
   const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
-  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [] });
+  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [], scheduleDraft: null });
 }
 
 describe('general knowledge (8): anatomy, machines, reps, nutrition — none of this needs the report', () => {

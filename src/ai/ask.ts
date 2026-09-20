@@ -27,7 +27,8 @@
  * it is instead re-validated against the app's real exercise catalog
  * (below), the same idea as src/ai/tagExercise.ts's knownMuscles.
  */
-import type { Exercise, Split } from '@/core/models';
+import type { Exercise, Split, Weekday } from '@/core/models';
+import { WEEKDAYS } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 import type { FindingsReport } from '@/brain/coach/contract';
@@ -47,12 +48,16 @@ export interface KnownSplit {
   exercises: Array<{ exerciseId: string; name: string; sets: number }>;
 }
 
+/** The person's real weekly schedule today — which split id, if any, trains on which day. Mirrors the app's own `AppState.schedule`. */
+export type WeekSchedule = Record<Weekday, string | null>;
+
 export interface AskPayload extends GroundingPayload {
   version: 1;
   kind: 'ask';
   history: AskTurn[];
   question: string;
   splits: KnownSplit[];
+  schedule: WeekSchedule;
 }
 
 export const MAX_QUESTION_CHARS = 300;
@@ -72,12 +77,12 @@ export const MAX_HISTORY_TURNS = 12;
  */
 const MAX_LOAD_NEXT = 8;
 
-/** The report, the recent conversation, the person's real splits today, and a new question — trimmed and capped the same way /explain's payload is. */
+/** The report, the recent conversation, the person's real splits and schedule today, and a new question — trimmed and capped the same way /explain's payload is. */
 export function buildAskPayload(
   report: FindingsReport,
   history: AskTurn[],
   question: string,
-  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[] },
+  opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[]; splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule },
 ): AskPayload {
   const { findings, proposals: trimmed } = trimFindingsAndProposals(report);
   const loadNext: PayloadProposal[] = report.proposals
@@ -100,11 +105,11 @@ export function buildAskPayload(
   return {
     version: 1, kind: 'ask', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality,
     findings, proposals, cards, preferences, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS),
-    splits,
+    splits, schedule: opts.schedule,
   };
 }
 
-interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; error?: unknown }
 
 /** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
 export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
@@ -152,8 +157,29 @@ function parseDraft(raw: unknown, knownSplitIds: Set<string>, custom: Exercise[]
   return { action, splitId: action === 'create' ? null : splitId, name, focus, exercises };
 }
 
+/**
+ * A proposed rearrangement of the whole week. Any day naming a split id
+ * the payload didn't actually list, or missing a day entirely, invalidates
+ * the whole draft rather than applying a partial week — unlike splitDrafts
+ * (an independent list where one bad entry is just dropped), a schedule is
+ * one object; a week with an unrecognized day silently reassigned isn't
+ * something the person can meaningfully review before accepting.
+ */
+function parseScheduleDraft(raw: unknown, knownSplitIds: Set<string>): WeekSchedule | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const schedule = {} as WeekSchedule;
+  for (const day of WEEKDAYS) {
+    const v = r[day];
+    if (v === null) { schedule[day] = null; continue; }
+    if (typeof v !== 'string' || !knownSplitIds.has(v)) return null;
+    schedule[day] = v;
+  }
+  return schedule;
+}
+
 export type AskResult =
-  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[] }
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null }
   | { ok: false; error: string };
 
 /**
@@ -166,16 +192,19 @@ export type AskResult =
  * exact payload named — a single message can describe several splits at
  * once, so this is a list: usually empty, sometimes one, sometimes several,
  * each independently actionable (and independently droppable if it doesn't
- * hold up to validation).
+ * hold up to validation). scheduleDraft is re-validated the same way, but
+ * as one object, not a list — any day naming an unrecognized split (or a
+ * missing day) invalidates the whole week rather than a partial reorder.
  *
- * Once a reply actually proposes a splitDraft, "answer" skips the personal
- * number check too — describing a fresh split necessarily cites its own
- * rep/set numbers (promptAsk.ts's rep-range table), which are a design
- * choice, not a claim about this person's history (see promptAsk.ts rule
- * 1), and were never going to be "in the report" to begin with. Rejecting
- * the whole reply over them would drop a real, valid splitDraft along with
- * it — seen live: "create a 5-day full body split" always cites its own
- * set/rep numbers in "answer" and was silently dropped every time.
+ * Once a reply actually proposes a splitDraft or a scheduleDraft, "answer"
+ * skips the personal number check too — describing a fresh split or a new
+ * arrangement necessarily cites its own numbers (a rep range, "twice a
+ * week"), which are a design choice, not a claim about this person's
+ * history (see promptAsk.ts rule 1), and were never going to be "in the
+ * report" to begin with. Rejecting the whole reply over them would drop a
+ * real, valid draft along with it — seen live: "create a 5-day full body
+ * split" always cites its own set/rep numbers in "answer" and was silently
+ * dropped every time.
  */
 export async function requestAskAnswer(payload: AskPayload, customExercises: Exercise[], opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
   if (!payload.question) return { ok: false, error: 'Type a question first.' };
@@ -188,9 +217,10 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const knownSplitIds = new Set(payload.splits.map(s => s.id));
   const rawDrafts = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
   const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
-  if (scope === 'personal' && drafts.length === 0) {
+  const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
+  if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
     const check = validateText(answer, allowedNumbers(payload));
     if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
   }
-  return { ok: true, answer, scope, category, drafts };
+  return { ok: true, answer, scope, category, drafts, scheduleDraft };
 }

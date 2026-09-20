@@ -3,6 +3,7 @@ import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, MAX_HISTORY_TURN
 import { allowedNumbers, LIMITS } from '@/brain/coach/explainer';
 import { buildReport } from '@/brain/coach/report';
 import type { Exercise, Split } from '@/core/models';
+import { emptySchedule } from '@/core/models';
 import { ctx, pplHistory, LAST_MONDAY, PUSH_ID } from './coach-helpers';
 
 function realReport() {
@@ -14,7 +15,7 @@ function realReport() {
 const reply = (status: number, body: unknown): typeof fetch => async () => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 
 const PUSH: Split = { id: 'split_push', name: 'Push', color: '#4d9dff', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }], createdAt: '2026-01-01T00:00:00.000Z' };
-const noSplits = { splits: [] as Split[], customExercises: [] as Exercise[] };
+const noSplits = { splits: [] as Split[], customExercises: [] as Exercise[], schedule: emptySchedule() };
 
 describe('buildAskPayload', () => {
   it('carries the report grounding plus a capped, trimmed conversation', () => {
@@ -70,7 +71,7 @@ describe('buildAskPayload', () => {
 
   it('carries the person\'s real splits today, with real exercise names resolved — this is the one route that may design or adjust one', () => {
     const report = realReport();
-    const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [PUSH], customExercises: [] });
+    const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [PUSH], customExercises: [], schedule: emptySchedule() });
     expect(p.splits).toEqual([{ id: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: 3 }] }]);
   });
 
@@ -78,7 +79,7 @@ describe('buildAskPayload', () => {
     const report = realReport();
     const custom: Exercise = { id: 'custom_1', name: 'Garage Landmine Press', equipment: 'Barbell', primary: ['front_delts'], secondary: [], stabilizers: [], aliases: [], pattern: 'shoulder_flexion', defaultSets: 3, mode: 'weighted', custom: true };
     const split: Split = { ...PUSH, exercises: [{ exerciseId: 'custom_1', sets: 3 }] };
-    const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [split], customExercises: [custom] });
+    const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [split], customExercises: [custom], schedule: emptySchedule() });
     expect(p.splits[0]!.exercises[0]).toEqual({ exerciseId: 'custom_1', name: 'Garage Landmine Press', sets: 3 });
   });
 
@@ -86,12 +87,19 @@ describe('buildAskPayload', () => {
     const report = realReport();
     expect(buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', ...noSplits }).splits).toEqual([]);
   });
+
+  it('carries the person\'s real weekly schedule today — this is the one route that may also rearrange it', () => {
+    const report = realReport();
+    const schedule = { ...emptySchedule(), mon: 'split_push', wed: 'split_pull' };
+    const p = buildAskPayload(report, [], 'ok', { goal: 'lean', unit: 'kg', splits: [PUSH], customExercises: [], schedule });
+    expect(p.schedule).toEqual(schedule);
+  });
 });
 
 describe('requestAskAnswer', () => {
   const report = realReport();
   const payload = () => buildAskPayload(report, [], 'What is my main issue this week?', { goal: 'strength', unit: 'kg', ...noSplits });
-  const withPush = () => buildAskPayload(report, [], 'Add a shoulder exercise to Push', { goal: 'strength', unit: 'kg', splits: [PUSH], customExercises: [] });
+  const withPush = () => buildAskPayload(report, [], 'Add a shoulder exercise to Push', { goal: 'strength', unit: 'kg', splits: [PUSH], customExercises: [], schedule: emptySchedule() });
 
   it('refuses locally on an empty question, never spending a call', async () => {
     const empty = buildAskPayload(report, [], '   ', { goal: 'strength', unit: 'kg', ...noSplits });
@@ -104,7 +112,7 @@ describe('requestAskAnswer', () => {
     const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
     const fetchImpl = reply(200, { scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [] });
+    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [], scheduleDraft: null });
   });
 
   it('drops a personal-scope answer that invents a number not in the report', async () => {
@@ -123,7 +131,7 @@ describe('requestAskAnswer', () => {
   it('a general-knowledge answer is not checked against the report — it is not a claim about this person\'s data', async () => {
     const fetchImpl = reply(200, { scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [] });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [], scheduleDraft: null });
   });
 
   it('a real category value passes through, and an invalid or missing one defaults to "general" rather than trusting the network', async () => {
@@ -181,7 +189,7 @@ describe('requestAskAnswer', () => {
   it('an empty splitDrafts list (still clarifying, or an ordinary answer) is a normal, successful answer', async () => {
     const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', splitDrafts: [] });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [] });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [], scheduleDraft: null });
   });
 
   it('one message describing two splits at once gets back a draft for each, independently applicable', async () => {
@@ -249,5 +257,58 @@ describe('requestAskAnswer', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.drafts[0]!.exercises).toEqual([{ exerciseId: 'lib_leg_press', sets: 6 }, { exerciseId: 'lib_leg_extension', sets: 1 }]);
+  });
+
+  it('accepts a full-week scheduleDraft naming real splits and rest days', async () => {
+    const fetchImpl = reply(200, {
+      scope: 'general', category: 'training', answer: 'Moved Push to Wednesday.',
+      scheduleDraft: { sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: null, sat: null },
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.scheduleDraft).toEqual({ sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: null, sat: null });
+  });
+
+  it('a missing day invalidates the whole scheduleDraft — a partial week is not shown as actionable', async () => {
+    const fetchImpl = reply(200, {
+      scope: 'general', category: 'training', answer: 'ok',
+      scheduleDraft: { sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: null }, // sat missing
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, scheduleDraft: null });
+  });
+
+  it('a day naming a split id this payload never sent invalidates the whole scheduleDraft', async () => {
+    const fetchImpl = reply(200, {
+      scope: 'general', category: 'training', answer: 'ok',
+      scheduleDraft: { sun: null, mon: 'split_never_sent', tue: null, wed: null, thu: null, fri: null, sat: null },
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, scheduleDraft: null });
+  });
+
+  it('an ordinary answer with no schedule change carries scheduleDraft: null', async () => {
+    const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'ok' });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, scheduleDraft: null });
+  });
+
+  it('a personal-scope answer describing a real scheduleDraft is not dropped for citing frequency numbers — a design choice, not a report claim', async () => {
+    const fetchImpl = reply(200, {
+      scope: 'personal', category: 'training',
+      answer: 'Since you train 5 days a week, I spaced Push and Pull with 2 rest days between them.',
+      scheduleDraft: { sun: null, mon: 'split_push', tue: null, wed: null, thu: null, fri: null, sat: null },
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.scheduleDraft).not.toBeNull();
+  });
+
+  it('still drops a personal-scope answer that invents a number when neither a splitDraft nor a scheduleDraft is present', async () => {
+    const fetchImpl = reply(200, { scope: 'personal', category: 'training', answer: 'You now train 999 days a week.' });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(false);
   });
 });

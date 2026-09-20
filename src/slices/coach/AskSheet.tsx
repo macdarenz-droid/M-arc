@@ -7,11 +7,12 @@
  * (see src/ai/ask.ts and COACH_BRAIN.md's decision log) so the conversation
  * itself never has to change depending on which button opened it.
  *
- * Nothing here writes to a real split until the person taps the action
- * button under a proposal — the conversation itself never changes
- * anything, the same "you accept or dismiss" posture as every other coach
- * suggestion in the app. Applying a split always sends you to Train (even
- * if you were already there) since that's where the result lives.
+ * Nothing here writes to a real split or the schedule until the person taps
+ * the action button under a proposal — the conversation itself never
+ * changes anything, the same "you accept or dismiss" posture as every
+ * other coach suggestion in the app. Applying a split or a new schedule
+ * always sends you to where the result lives (Train, or Coach's own
+ * Weekly schedule) even if you were already there.
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
@@ -22,12 +23,15 @@ import { showToast } from '@/app/toast';
 import { Button, Sheet, Thinking } from '@/ui/primitives';
 import { IconApple, IconBody, IconCigarette, IconDumbbell, IconGear, IconInfo } from '@/ui/icons';
 import { ChatInputRow, COACH_NAME, renderChatBody } from '@/ui/chatRender';
-import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskTurn, type SplitDraft } from '@/ai/ask';
-import { applySplitDraft } from '../workout/splits';
+import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskTurn, type SplitDraft, type WeekSchedule } from '@/ai/ask';
+import { WEEKDAYS } from '@/core/models';
+import { WEEKDAY_LABEL } from '@/core/dates';
+import { applyScheduleDraft, applySplitDraft } from '../workout/splits';
+import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId } from './remote';
 
-/** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. "drafts"/"applied" track any splits this reply proposed and whether each has been applied yet. */
-type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory; drafts?: SplitDraft[]; applied?: boolean[] };
+/** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. "drafts"/"applied" track any splits this reply proposed and whether each has been applied yet; "scheduleDraft"/"scheduleApplied" do the same for a proposed weekly-schedule rearrangement. */
+type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory; drafts?: SplitDraft[]; applied?: boolean[]; scheduleDraft?: WeekSchedule | null; scheduleApplied?: boolean };
 
 const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string; 'aria-hidden'?: boolean }) => JSX.Element> = {
   nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
@@ -41,11 +45,12 @@ function renderAskBody(text: string, category: AskCategory): ComponentChildren {
 /**
  * Someone who has been logging for months has no way to know the coach can
  * compare their stats over time, answer a plain anatomy/nutrition question,
- * or design a whole split from a description — nothing on screen hints at
- * it. These rotate through the empty input as a typed-out placeholder so
- * the range of what's askable is discoverable without a tutorial: personal
- * long-horizon comparison, app navigation, general knowledge, injury, and
- * several real split-building scenarios.
+ * design a whole split from a description, or rearrange the week — nothing
+ * on screen hints at it. These rotate through the empty input as a
+ * typed-out placeholder so the range of what's askable is discoverable
+ * without a tutorial: personal long-horizon comparison, app navigation,
+ * general knowledge, injury, several real split-building scenarios, and
+ * schedule rearrangement.
  */
 const ASK_SUGGESTIONS = [
   'How have I improved over the last 3 months?',
@@ -58,6 +63,8 @@ const ASK_SUGGESTIONS = [
   'Add a hamstring exercise to Legs',
   'Make Pull less arm-heavy, more back',
   'I want a 3-day split for muscle growth',
+  'Could you switch my Push split to Wednesday?',
+  'What do you think is best for my schedule this week?',
 ];
 
 function SplitDraftAction({ draft, onApplied }: { draft: SplitDraft; onApplied: () => void }) {
@@ -81,6 +88,42 @@ function SplitDraftAction({ draft, onApplied }: { draft: SplitDraft; onApplied: 
   );
 }
 
+/** Only the days this draft actually changes from the live schedule right now — shown so the person can see what they're accepting without having to compare all 7 days themselves. */
+function changedDays(draft: WeekSchedule): Array<{ day: string; label: string }> {
+  const current = state.value.schedule;
+  const splits = state.value.splits;
+  const nameOf = (id: string | null) => (id ? splits.find(sp => sp.id === id)?.name ?? id : 'Rest');
+  return WEEKDAYS.filter(d => draft[d] !== current[d]).map(d => ({ day: d, label: `${WEEKDAY_LABEL[d]}: ${nameOf(draft[d])}` }));
+}
+
+function ScheduleDraftAction({ draft, onApplied }: { draft: WeekSchedule; onApplied: () => void }) {
+  const changes = changedDays(draft);
+  // Nothing actually differs from the live schedule (e.g. it already agreed the current arrangement is fine) — nothing to accept.
+  if (!changes.length) return <p class="hint" style={{ marginTop: 8 }}>That matches your current schedule already.</p>;
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div class="stack-sm" style={{ marginBottom: 8 }}>
+        {changes.map(c => <p key={c.day} class="hint">{c.label}</p>)}
+      </div>
+      <Button
+        variant="primary"
+        size="sm"
+        onClick={() => {
+          const ok = applyScheduleDraft(draft);
+          if (ok) {
+            showToast('Schedule updated');
+            void resyncReminders();
+            go('coach');
+            onApplied();
+          } else showToast('Could not apply that — a split may have changed since. Ask again.');
+        }}
+      >
+        Apply new schedule
+      </Button>
+    </div>
+  );
+}
+
 export function AskSheet({ onClose }: { onClose: () => void }) {
   const [history, setHistory] = useState<AskBubble[]>([]);
   const [question, setQuestion] = useState('');
@@ -97,7 +140,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
     const payload = buildAskPayload(report.value, plainHistory, q, {
       goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts,
-      splits: s.splits, customExercises: s.customExercises,
+      splits: s.splits, customExercises: s.customExercises, schedule: s.schedule,
     });
     const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
     setHistory(withQuestion);
@@ -106,7 +149,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, s.customExercises, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false) }]);
+      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false }]);
       else setError(r.error);
     } finally {
       setSending(false);
@@ -116,7 +159,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title={`Ask ${COACH_NAME}`} onClose={onClose}>
       <div class="ask-thread" ref={threadRef}>
-        {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, or describe a split to build or change. Personal answers and splits only use the findings and real exercises below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
+        {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, describe a split to build or change, or ask about rearranging your weekly schedule. Personal answers, splits and schedule changes only use the findings, real exercises and real schedule below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
@@ -128,6 +171,11 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
                   : <SplitDraftAction draft={draft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, applied: (t.applied ?? []).map((a, ai) => (ai === di ? true : a)) } : t)))} />}
               </div>
             ))}
+            {turn.role === 'assistant' && turn.scheduleDraft && (
+              turn.scheduleApplied
+                ? <p class="hint" style={{ marginTop: 8 }}>Schedule updated.</p>
+                : <ScheduleDraftAction draft={turn.scheduleDraft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, scheduleApplied: true } : t)))} />
+            )}
           </div>
         ))}
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}

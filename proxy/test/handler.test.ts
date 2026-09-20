@@ -23,9 +23,11 @@ const payload = (): ExplainPayload => ({
 const tagPayload = (): TagExercisePayload => ({ version: 1, kind: 'tag-exercise', name: 'Cable Face Pull', equipmentHint: 'Cable' });
 const notesPayload = (): NotesPayload => ({ version: 1, kind: 'notes', text: 'Felt a pinch in my left shoulder on the last set.' });
 const knownSplits = [{ id: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: 3 }] }];
+const emptySchedule = { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null };
+const scheduleWithPush = { ...emptySchedule, mon: 'split_push' };
 const askPayload = (): AskPayload => {
   const { version, goal, unit, today, dataQuality, findings, proposals, cards } = payload();
-  return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?', splits: knownSplits };
+  return { version, kind: 'ask', goal, unit, today, dataQuality, findings, proposals, cards, history: [], question: 'Why has my chest work dropped?', splits: knownSplits, schedule: emptySchedule };
 };
 const identifyPayload = (): IdentifyExercisePayload => ({ version: 1, kind: 'identify-exercise', image: { mediaType: 'image/png', data: TINY_PNG }, equipmentHint: 'Cable' });
 const importPayload = (): ImportProgrammePayload => ({ version: 1, kind: 'import-programme', image: { mediaType: 'image/png', data: TINY_PNG } });
@@ -67,17 +69,26 @@ const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
 });
 
-const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], scheduleDraft: null as AskReply['scheduleDraft'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
-  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, model: out.model, usage: out.usage }; },
 });
 
 const stubAskWithSplit = async () => ({
   scope: 'personal' as const, category: 'training' as const,
   answer: 'Added Face Pull to Push for rear-delt balance.',
   splitDrafts: [{ action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }],
+  scheduleDraft: null as AskReply['scheduleDraft'],
   model: 'claude-sonnet-5', usage: { inputTokens: 2200, outputTokens: 90, cacheReadTokens: 1800 },
+});
+
+const stubAskWithSchedule = async () => ({
+  scope: 'personal' as const, category: 'training' as const,
+  answer: 'Moved Push to Wednesday and Pull to Friday, keeping two days of rest between them.',
+  splitDrafts: [] as AskReply['splitDrafts'],
+  scheduleDraft: { sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: 'split_pull', sat: null },
+  model: 'claude-sonnet-5', usage: { inputTokens: 2000, outputTokens: 70, cacheReadTokens: 1800 },
 });
 
 const stubIdentify = async () => ({ visible: true, name: 'Cable Face Pull', equipment: 'Cable', primary: ['rear_delts'], secondary: ['mid_back'], pattern: 'horizontal_abduction', mode: 'weighted' as const, confidence: 'high' as const, model: 'claude-sonnet-5', usage: { inputTokens: 1400, outputTokens: 40, cacheReadTokens: 0 } });
@@ -176,6 +187,17 @@ describe('ask payload validation', () => {
     expect(validateAskPayload({ ...askPayload(), splits: [{ id: 'x', name: 'x', focus: ['chest', 'triceps', 'quads'], exercises: [] }] })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), splits: [{ id: 'x', name: 'x' }] })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), splits: 'nope' })).toMatchObject({ ok: false });
+  });
+
+  it('accepts the person\'s real weekly schedule today, all 7 days required, each a split id or null — this is the one route that may also rearrange it', () => {
+    expect(validateAskPayload({ ...askPayload(), schedule: scheduleWithPush })).toMatchObject({ ok: true });
+    expect(validateAskPayload({ ...askPayload(), schedule: emptySchedule })).toMatchObject({ ok: true }); // an all-rest week is a real, valid schedule
+    // Missing a day, an extra key, or a non-string/non-null value are all refused — same "full week, exact shape" discipline as a scheduleDraft reply.
+    const { sun: _sun, ...missingSun } = emptySchedule;
+    expect(validateAskPayload({ ...askPayload(), schedule: missingSun })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), schedule: { ...emptySchedule, extraDay: null } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), schedule: { ...emptySchedule, mon: 5 } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), schedule: 'nope' })).toMatchObject({ ok: false });
   });
 });
 
@@ -336,6 +358,22 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.splitDrafts[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_face_pull']);
   });
 
+  it('answers /ask with a scheduleDraft — the full week, not just the days that changed — when the conversation calls for rearranging it', async () => {
+    const handleWithSchedule = createHandler([askRouteWith(stubAskWithSchedule)]);
+    const res = await handleWithSchedule(post('/ask', askPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { answer: string; scheduleDraft: Record<string, string | null> | null };
+    expect(body.answer).toContain('Wednesday');
+    expect(body.scheduleDraft).toEqual({ sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: 'split_pull', sat: null });
+  });
+
+  it('an ordinary answer with no schedule change carries scheduleDraft: null, not omitted', async () => {
+    const res = await handle(post('/ask', askPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { scheduleDraft: unknown };
+    expect(body.scheduleDraft).toBeNull();
+  });
+
   it('a single message describing several splits at once gets back one draft per split, not just the first', async () => {
     const handleMulti = createHandler([askRouteWith(async () => ({
       scope: 'personal' as const, category: 'training' as const,
@@ -344,6 +382,7 @@ describe('handler: multiple routes in one Worker', () => {
         { action: 'create' as const, splitId: null, name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] },
         { action: 'create' as const, splitId: null, name: 'Pull', focus: ['lats'], exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 3 }] },
       ],
+      scheduleDraft: null as AskReply['scheduleDraft'],
       model: 'claude-sonnet-5', usage: { inputTokens: 2400, outputTokens: 140, cacheReadTokens: 1800 },
     }))]);
     const res = await handleMulti(post('/ask', { ...askPayload(), question: 'Push day: bench press. Pull day: lat pulldown.' }), env());
@@ -501,6 +540,17 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('is exactly ONE splitDraft');
   });
 
+  it('ask prompt also states the scheduleDraft rules — this is the one route that may also rearrange the weekly schedule', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('"scheduleDraft"');
+    expect(ASK_SYSTEM_PROMPT).toContain('could u switch my Push to Wednesday');
+    expect(ASK_SYSTEM_PROMPT).toContain('is the FULL week, all seven days (sun through sat) every time, not just the days that change');
+    expect(ASK_SYSTEM_PROMPT).toContain('Never invent a split id, never assign a day to a split that isn\'t in "splits"');
+    expect(ASK_SYSTEM_PROMPT).toContain('a schedule tweak touches every day of their week, so it is a bigger, more disruptive action than adding an exercise to one split');
+    expect(ASK_SYSTEM_PROMPT).toContain('spacing so the same muscle group doesn\'t stack on back-to-back days without reason');
+    expect(ASK_SYSTEM_PROMPT).toContain('If you don\'t have enough to make a real judgment');
+    expect(ASK_SYSTEM_PROMPT).toContain('and "scheduleDraft" (usually null)');
+  });
+
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('rear_delts');
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('horizontal_push');
@@ -531,14 +581,15 @@ describe('prompts', () => {
     expect(importMessage(importPayload())).toEqual([{ type: 'image', source: { type: 'base64', media_type: 'image/png', data: TINY_PNG } }]);
   });
 
-  it('ask replays the report and real splits once, then the real conversation, then the new question last', () => {
-    const withHistory: AskPayload = { ...askPayload(), preferences: ['Usually accepts schedule changes when the coach offers them.'], history: [{ role: 'user', text: 'How was last week?' }, { role: 'assistant', text: 'Solid: chest volume held steady.' }] };
+  it('ask replays the report, real splits and real schedule once, then the real conversation, then the new question last', () => {
+    const withHistory: AskPayload = { ...askPayload(), schedule: scheduleWithPush, preferences: ['Usually accepts schedule changes when the coach offers them.'], history: [{ role: 'user', text: 'How was last week?' }, { role: 'assistant', text: 'Solid: chest volume held steady.' }] };
     const msgs = askMessages(withHistory);
     expect(msgs[0]).toMatchObject({ role: 'user' });
     expect(msgs[0]!.content).toContain('"changePct":-18');
     expect(msgs[0]!.content).toContain('Usually accepts schedule changes');
     expect(msgs[0]!.content).toContain('lib_barbell_bench_press');
     expect(msgs[0]!.content).toContain('split_push');
+    expect(msgs[0]!.content).toContain('"schedule":{"sun":null,"mon":"split_push"');
     expect(msgs[1]).toMatchObject({ role: 'assistant' });
     expect(msgs[2]).toEqual({ role: 'user', content: 'How was last week?' });
     expect(msgs[3]).toEqual({ role: 'assistant', content: 'Solid: chest volume held steady.' });

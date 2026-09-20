@@ -36,12 +36,27 @@ const SplitDraftSchema = z.object({
  */
 const MAX_SPLIT_DRAFTS = 6;
 
+/**
+ * A proposed rearrangement of the whole week — every day, not just the
+ * ones that change, since the app replaces the whole schedule with
+ * exactly what's here (the same "full replacement, not a diff" contract
+ * splitDraft's "modify" exercises list already uses). `null` on a day
+ * means rest; anything else must be a real split id from the payload's
+ * own `splits` — re-validated app-side, same as every other id here.
+ */
+const ScheduleDraftSchema = z.object({
+  sun: z.string().nullable(), mon: z.string().nullable(), tue: z.string().nullable(), wed: z.string().nullable(),
+  thu: z.string().nullable(), fri: z.string().nullable(), sat: z.string().nullable(),
+});
+
 const AskSchema = z.object({
   scope: z.enum(['personal', 'general']),
   category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
   answer: z.string(),
   /** Present only when this reply actually proposes designing or adjusting one or more splits — most replies leave this empty. */
   splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
+  /** Present only when this reply actually proposes rearranging the weekly schedule — most replies leave this null. */
+  scheduleDraft: ScheduleDraftSchema.nullable(),
 });
 
 const TagSchema = z.object({
@@ -278,5 +293,5 @@ export const callAsk: CallAsk = async (payload, env) => {
     output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
   });
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, model: response.model, usage: usageOf(response) };
 };

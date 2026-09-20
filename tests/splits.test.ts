@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { initStore, replaceState, state } from '@/core/store';
-import { freshState, type AppState } from '@/core/models';
-import { applySplitDraft, createSplit, MAX_SPLITS } from '@/slices/workout/splits';
+import { initStore, replaceState, state, update } from '@/core/store';
+import { emptySchedule, freshState, type AppState } from '@/core/models';
+import { applyScheduleDraft, applySplitDraft, createSplit, MAX_SPLITS } from '@/slices/workout/splits';
 
 const memory = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }; };
 
@@ -47,5 +47,39 @@ describe('applySplitDraft', () => {
     const result = applySplitDraft(null, { name: 'One too many', focus: [], exercises: [{ exerciseId: 'lib_leg_press', sets: 3 }] });
     expect(result).toBeNull();
     expect(state.value.splits).toHaveLength(MAX_SPLITS);
+  });
+});
+
+describe('applyScheduleDraft', () => {
+  beforeEach(() => { initStore(memory()); replaceState(seed()); });
+
+  it('replaces the whole week with exactly the draft, a real split id per day or null for rest', () => {
+    const push = createSplit('Push', [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }])!;
+    const pull = createSplit('Pull', [{ exerciseId: 'lib_lat_pulldown', sets: 3 }])!;
+    const draft = { ...emptySchedule(), mon: push.id, wed: pull.id, fri: push.id };
+    const ok = applyScheduleDraft(draft);
+    expect(ok).toBe(true);
+    expect(state.value.schedule).toEqual(draft);
+  });
+
+  it('overwrites a previously scheduled day entirely — the whole week is replaced, not merged', () => {
+    const push = createSplit('Push', [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }])!;
+    update(s => ({ ...s, schedule: { ...emptySchedule(), mon: push.id, tue: push.id } }));
+    const ok = applyScheduleDraft({ ...emptySchedule(), wed: push.id }); // Monday and Tuesday intentionally not carried over
+    expect(ok).toBe(true);
+    expect(state.value.schedule).toEqual({ ...emptySchedule(), wed: push.id });
+  });
+
+  it('an all-rest week (every day null) is a real, valid schedule', () => {
+    const ok = applyScheduleDraft(emptySchedule());
+    expect(ok).toBe(true);
+    expect(state.value.schedule).toEqual(emptySchedule());
+  });
+
+  it('refuses and changes nothing when any day names a split that is not real (deleted or never existed)', () => {
+    const before = state.value.schedule;
+    const ok = applyScheduleDraft({ ...emptySchedule(), mon: 'split_never_existed' });
+    expect(ok).toBe(false);
+    expect(state.value.schedule).toBe(before);
   });
 });

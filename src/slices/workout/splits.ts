@@ -1,6 +1,6 @@
 /** Split (workout template) management. */
-import type { Exercise, Split } from '@/core/models';
-import { newId } from '@/core/models';
+import type { Exercise, Split, Weekday } from '@/core/models';
+import { newId, WEEKDAYS } from '@/core/models';
 import { state, update } from '@/core/store';
 import { SPLIT_TEMPLATES } from '@/data/templates';
 import type { MuscleId } from '@/data/muscles';
@@ -88,4 +88,22 @@ export function applySplitDraft(splitId: string | null, draft: { name: string; f
   if (!state.value.splits.some(sp => sp.id === splitId)) return null;
   update(s => ({ ...s, splits: s.splits.map(sp => (sp.id === splitId ? { ...sp, name: draft.name.trim().slice(0, 28) || sp.name, focus: draft.focus.slice(0, 2), exercises: draft.exercises } : sp)) }));
   return state.value.splits.find(sp => sp.id === splitId) ?? null;
+}
+
+/**
+ * Apply a schedule draft from the coach chat (see src/ai/ask.ts's
+ * WeekSchedule): replace the whole weekly schedule with exactly what's
+ * given, one whole-record swap, never a per-day merge. `draft` was already
+ * validated against the splits the payload named at request time; this
+ * re-checks every non-rest day against the real, current splits before
+ * writing, the same "trust nothing further" posture `applySplitDraft`
+ * above uses — a split referenced in the draft may have been renamed or
+ * deleted since the reply arrived. Returns false, applying nothing at all,
+ * if any day now names a split that isn't real; true on success.
+ */
+export function applyScheduleDraft(draft: Record<Weekday, string | null>): boolean {
+  const realIds = new Set(state.value.splits.map(sp => sp.id));
+  if (WEEKDAYS.some(d => draft[d] !== null && !realIds.has(draft[d]!))) return false;
+  update(s => ({ ...s, schedule: { ...draft } }));
+  return true;
 }
