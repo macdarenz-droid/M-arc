@@ -546,6 +546,12 @@ describe('prompts', () => {
     // ballooning the reply past max_tokens and 502ing. A day count is training frequency, not split count.
     expect(ASK_SYSTEM_PROMPT).toContain('A day count in the request describes how often to train, not how many splits to create');
     expect(ASK_SYSTEM_PROMPT).toContain('is exactly ONE splitDraft');
+    // Seen live: "create functional workouts for me 3" — a bare trailing number with no clear
+    // referent — dropped the whole answer (personal-scope number check, no surviving splitDraft
+    // to exempt it). Ambiguous enough that guessing either way (a day count, a split count) risks
+    // the same failure again; the safe move is to ask, per the vague-request bullet above it.
+    expect(ASK_SYSTEM_PROMPT).toContain('A bare number with no clear referent');
+    expect(ASK_SYSTEM_PROMPT).toContain('ask what they mean rather than guessing a count and building around it');
   });
 
   it('ask prompt also states the scheduleDraft rules — this is the one route that may also rearrange the weekly schedule', () => {
