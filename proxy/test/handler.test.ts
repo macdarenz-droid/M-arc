@@ -32,7 +32,7 @@ const askPayload = (): AskPayload => {
 const validStats = {
   version: 1 as const,
   recovery: [{ muscle: 'chest', pct: 62, tier: 'mid' as const, hoursLeft: 18 }],
-  prs: [{ exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press', kind: 'heaviest' as const, detail: '80 kg × 5', day: '2026-09-12' }],
+  prs: [{ exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press', kind: 'heaviest' as const, detail: '80 kg × 5', value: 80, previous: 77.5, day: '2026-09-12' }],
   weeklyVolume: [{ start: '2026-09-14', end: '2026-09-20', sets: 24, volumeKg: 5200 }],
   deload: null,
 };
@@ -217,6 +217,8 @@ describe('ask payload validation', () => {
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, recovery: [{ muscle: 'chest', pct: 150, tier: 'mid', hoursLeft: 10 }] } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, recovery: Array.from({ length: 25 }, () => validStats.recovery[0]) } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: [{ ...validStats.prs[0], kind: 'not_a_real_kind' }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: [{ ...validStats.prs[0], value: 'eighty' }] } })).toMatchObject({ ok: false });
+    expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: [{ ...validStats.prs[0], previous: -5 }] } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, prs: Array.from({ length: MAX_STATS_PRS + 1 }, () => validStats.prs[0]) } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, weeklyVolume: [{ start: 'not-a-day', end: '2026-09-19', sets: 10, volumeKg: 500 }] } })).toMatchObject({ ok: false });
     expect(validateAskPayload({ ...askPayload(), stats: { ...validStats, weeklyVolume: Array.from({ length: MAX_STATS_WEEKS + 1 }, () => validStats.weeklyVolume[0]) } })).toMatchObject({ ok: false });
@@ -541,10 +543,24 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Set "category" to whichever the answer is mainly about');
     expect(ASK_SYSTEM_PROMPT).toContain('never shown as text and never affects grounding');
     expect(ASK_SYSTEM_PROMPT).toContain('and how to use this app itself');
-    expect(ASK_SYSTEM_PROMPT).toContain('never guess a screen name or describe a button that isn\'t listed there');
+    expect(ASK_SYSTEM_PROMPT).toContain('never invent a screen or button name that isn\'t listed there');
     expect(ASK_SYSTEM_PROMPT).toContain('You cannot create a new split from inside a live session');
     expect(ASK_SYSTEM_PROMPT).toContain('that\'s the one place personal records (PRs) are listed');
     expect(ASK_SYSTEM_PROMPT).toContain('Settings has no tab of its own, only that gear');
+  });
+
+  it('ask prompt treats the app map as accurate but non-exhaustive — an unlisted detail is "unconfirmed", never a confident "the app doesn\'t have that"', () => {
+    // Found live in the intelligence audit: the map used to assert "if it isn't listed here, the
+    // app doesn't have it yet" — every real but unenumerated feature (custom exercises, the E/I/M
+    // effort buttons, Discard session, Skip today) then got a confidently wrong denial.
+    expect(ASK_SYSTEM_PROMPT).toContain('not an exhaustive inventory of every control on every screen');
+    expect(ASK_SYSTEM_PROMPT).toContain('is unconfirmed, not absent');
+    expect(ASK_SYSTEM_PROMPT).not.toContain('if something isn\'t listed here, the app doesn\'t have it yet');
+    // The four features the audit found missing are now in the map.
+    expect(ASK_SYSTEM_PROMPT).toContain('Create a custom exercise');
+    expect(ASK_SYSTEM_PROMPT).toContain('E/I/M buttons');
+    expect(ASK_SYSTEM_PROMPT).toContain('Discard session');
+    expect(ASK_SYSTEM_PROMPT).toContain('Skip today');
   });
 
   it('ask prompt scope is broadened to general health, not just training-adjacent topics, while the individualized-guidance safety rule stays exactly as strict', () => {

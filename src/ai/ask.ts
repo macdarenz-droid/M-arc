@@ -213,8 +213,44 @@ function askAllowedNumbers(payload: AskPayload): Set<number> {
   return out;
 }
 
+/**
+ * A period/exclamation/question mark that's followed by real whitespace and
+ * then a capital letter or digit is a sentence boundary; a decimal point
+ * (e.g. "82.5") never has whitespace right after it, so a number is never
+ * mistaken for one.
+ */
+const SENTENCE_BOUNDARY = /(?<=[.!?])\s+(?=[A-Z0-9])/;
+
+/**
+ * Drops only the sentence(s) that cite an ungrounded number, not the whole
+ * answer — mirrors /explain's own per-item discard (`buildExplanation` in
+ * explainer.ts already keeps every item whose own numbers check out and
+ * drops just the ones that don't); `requestAskAnswer` used to run
+ * `validateText` over the whole "answer" at once, so one invented digit
+ * anywhere in an otherwise-true three-sentence paragraph deleted all three
+ * true sentences right along with it — exactly the "penalty is collective,
+ * not individual" gap the intelligence audit flagged. Splits on lines
+ * first (rule 13's own paragraph/bullet structure), then sentences within
+ * each line, so a genuinely separate idea surviving next to a dropped one
+ * still reads as a coherent line rather than a run-on fragment.
+ */
+function sanitizePersonalAnswer(answer: string, allowed: Set<number>): { text: string; trimmed: number } {
+  let trimmed = 0;
+  const keptLines: string[] = [];
+  for (const line of answer.split('\n')) {
+    if (!line.trim()) { keptLines.push(line); continue; }
+    const kept = line.split(SENTENCE_BOUNDARY).filter(sentence => {
+      if (validateText(sentence, allowed).ok) return true;
+      trimmed++;
+      return false;
+    });
+    if (kept.length) keptLines.push(kept.join(' ').trim());
+  }
+  return { text: keptLines.join('\n').trim(), trimmed };
+}
+
 export type AskResult =
-  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern }
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number }
   | { ok: false; error: string };
 
 /**
@@ -255,8 +291,9 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
   const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
   if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
-    const check = validateText(answer, askAllowedNumbers(payload));
-    if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
+    const sanitized = sanitizePersonalAnswer(answer, askAllowedNumbers(payload));
+    if (!sanitized.text) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
+    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined };
   }
   return { ok: true, answer, scope, category, drafts, scheduleDraft, concern };
 }

@@ -27,7 +27,15 @@ describe('buildAskStats', () => {
     expect(stats.prs.length).toBeLessThanOrEqual(MAX_STATS_PRS);
     const keys = stats.prs.map(p => `${p.exerciseId}:${p.kind}`);
     expect(new Set(keys).size).toBe(keys.length); // no duplicate exercise+kind pairs
-    for (const p of stats.prs) expect(p.detail.length).toBeGreaterThan(0);
+    for (const p of stats.prs) {
+      expect(p.detail.length).toBeGreaterThan(0);
+      // The record's own number as a real field, not just parsed out of `detail`'s free text —
+      // allowedNumbers() only recognizes a number that's its own field, never one embedded in a
+      // formatted sentence like "82.5 kg × 5".
+      expect(typeof p.value).toBe('number');
+      expect(Number.isFinite(p.value)).toBe(true);
+      expect(p.previous).toBeGreaterThanOrEqual(0);
+    }
   });
 
   it('no training history means no PRs, not an error', () => {

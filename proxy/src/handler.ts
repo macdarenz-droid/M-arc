@@ -125,10 +125,13 @@ const isRecoveryEntry = (v: unknown): v is { muscle: string; pct: number; tier: 
   && typeof v.tier === 'string' && (RECOVERY_TIERS as readonly string[]).includes(v.tier)
   && typeof v.hoursLeft === 'number' && Number.isFinite(v.hoursLeft) && v.hoursLeft >= 0;
 
-const isStatsPr = (v: unknown): v is { exerciseId: string; exerciseName: string; kind: string; detail: string; day: string } =>
+const isStatsPr = (v: unknown): v is { exerciseId: string; exerciseName: string; kind: string; detail: string; value: number; previous: number; day: string } =>
   isRecord(v) && typeof v.exerciseId === 'string' && typeof v.exerciseName === 'string'
   && typeof v.kind === 'string' && (PR_KINDS as readonly string[]).includes(v.kind)
-  && typeof v.detail === 'string' && isDay(v.day);
+  && typeof v.detail === 'string'
+  && typeof v.value === 'number' && Number.isFinite(v.value)
+  && typeof v.previous === 'number' && Number.isFinite(v.previous) && v.previous >= 0
+  && isDay(v.day);
 
 const isStatsWeek = (v: unknown): v is { start: string; end: string; sets: number; volumeKg: number } =>
   isRecord(v) && isDay(v.start) && isDay(v.end)

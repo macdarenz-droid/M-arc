@@ -31,6 +31,18 @@ export interface StatsPr {
   kind: PrKind;
   /** Plain words, e.g. "60 kg × 8" — same rendering prs.ts already uses. */
   detail: string;
+  /**
+   * The record's own number (a kg load, a rep count, a duration in
+   * seconds, a distance in metres, depending on `kind`) as a real field,
+   * not just embedded in `detail`'s free text — `allowedNumbers`
+   * (explainer.ts) only recognizes a number that's its own field or an
+   * entire string, never one parsed out of a formatted sentence like
+   * "82.5 kg × 5", so a `detail`-only PR silently couldn't ground its own
+   * number in a personal-scope answer.
+   */
+  value: number;
+  /** The record this one beat, when there was a prior one — 0 for a first-ever record on this exercise. */
+  previous: number;
   day: string;
 }
 
@@ -75,7 +87,7 @@ export function buildAskStats(ctx: BrainContext): AskStats {
     const key = `${r.exerciseId}:${r.kind}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    prs.push({ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: r.kind, detail: r.detail, day: r.day });
+    prs.push({ exerciseId: r.exerciseId, exerciseName: r.exerciseName, kind: r.kind, detail: r.detail, value: r.value, previous: r.previous, day: r.day });
     if (prs.length >= MAX_STATS_PRS) break;
   }
 

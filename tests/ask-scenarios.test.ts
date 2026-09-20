@@ -200,7 +200,7 @@ describe('app navigation and usage (4): "how do I..." questions about the app it
 
   it('"can I add a split while I\'m in the middle of a workout": the app map says plainly no, rather than inventing a way', () => {
     expect(PROMPT_SOURCE).toContain('You cannot create a new split from inside a live session');
-    expect(PROMPT_SOURCE).toContain("never guess a screen name or describe a button that isn't listed there");
+    expect(PROMPT_SOURCE).toContain("never invent a screen or button name that isn't listed there");
   });
 
   it('"where do I see my PRs" — the app map names the one real place, not a screen that does not exist', () => {

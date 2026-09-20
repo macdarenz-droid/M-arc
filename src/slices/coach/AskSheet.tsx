@@ -32,7 +32,7 @@ import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId } from './remote';
 
 /** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. "drafts"/"applied" track any splits this reply proposed and whether each has been applied yet; "scheduleDraft"/"scheduleApplied" do the same for a proposed weekly-schedule rearrangement. */
-type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory; drafts?: SplitDraft[]; applied?: boolean[]; scheduleDraft?: WeekSchedule | null; scheduleApplied?: boolean; concern?: AskConcern };
+type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory; drafts?: SplitDraft[]; applied?: boolean[]; scheduleDraft?: WeekSchedule | null; scheduleApplied?: boolean; concern?: AskConcern; trimmed?: number };
 
 const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string; 'aria-hidden'?: boolean }) => JSX.Element> = {
   nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
@@ -169,7 +169,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, s.customExercises, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false, concern: r.concern }]);
+      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false, concern: r.concern, trimmed: r.trimmed }]);
       else setError(r.error);
     } finally {
       setSending(false);
@@ -184,6 +184,7 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
             {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
+            {turn.role === 'assistant' && !!turn.trimmed && <p class="hint" style={{ marginTop: 6 }}>{turn.trimmed} sentence{turn.trimmed === 1 ? '' : 's'} left out for using a number not in your data.</p>}
             {turn.role === 'assistant' && turn.drafts?.map((draft, di) => (
               <div key={di}>
                 {turn.applied?.[di]

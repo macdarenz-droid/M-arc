@@ -150,6 +150,46 @@ describe('requestAskAnswer', () => {
     if (!r.ok) expect(r.error).toContain('not in your data');
   });
 
+  it('drops only the sentence with an invented number, keeping the true sentences around it — mirrors /explain\'s own per-item discard rather than nuking the whole reply over one bad digit', async () => {
+    const p = payload();
+    const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
+    const fetchImpl = reply(200, { scope: 'personal', answer: `Your true number is ${someNumber}. Add exactly 999 kg to fix it. That is the plan going forward.`, model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.answer).toBe(`Your true number is ${someNumber}. That is the plan going forward.`);
+    expect(r.trimmed).toBe(1);
+  });
+
+  it('a decimal number is never mistaken for a sentence boundary — "82.5" does not get sliced into two separate numbers', async () => {
+    const stats = { version: 1 as const, recovery: [], prs: [{ exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press', kind: 'heaviest' as const, detail: '82.5 kg × 5', value: 82.5, previous: 80, day: '2026-09-19' }], weeklyVolume: [], deload: null };
+    const grounded = buildAskPayload(realReport(), [], 'What is my bench at?', { goal: 'strength', unit: 'kg', ...noSplits, stats });
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'Your bench is at 82.5 kg today.', model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(grounded, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.answer).toBe('Your bench is at 82.5 kg today.');
+    expect(r.trimmed).toBeUndefined();
+  });
+
+  it('a bulleted, multi-line answer drops only the offending bullet line, not the whole answer', async () => {
+    const p = payload();
+    const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
+    const fetchImpl = reply(200, { scope: 'personal', answer: `Two things stand out:\n- The real figure is ${someNumber}.\n- Somehow it is also 999.`, model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.answer).toBe(`Two things stand out:\n- The real figure is ${someNumber}.`);
+    expect(r.trimmed).toBe(1);
+  });
+
+  it('when every sentence invents a number, the whole answer is still dropped — sanitizing to nothing is the same failure as before', async () => {
+    const fetchImpl = reply(200, { scope: 'personal', answer: 'The number is 999. It was always 999.', model: 'claude-sonnet-5' });
+    const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toContain('not in your data');
+  });
+
   it('a personal-scope answer may cite a number that only exists in the stats snapshot, not in findings/proposals/cards — recovery, PRs and weekly volume are real grounding, not just exceptions', async () => {
     const stats = buildAskStats(ctx(pplHistory(LAST_MONDAY, 8)));
     const p = buildAskPayload(report, [], 'How recovered is my chest?', { goal: 'strength', unit: 'kg', ...noSplits, stats });

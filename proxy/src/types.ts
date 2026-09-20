@@ -45,6 +45,10 @@ export interface StatsPr {
   kind: string;
   /** Plain words, e.g. "60 kg × 8". */
   detail: string;
+  /** The record's own number as a real field, not just embedded in `detail`'s free text — see src/brain/stats.ts in the app. */
+  value: number;
+  /** The record this one beat, when there was a prior one — 0 for a first-ever record. */
+  previous: number;
   day: string;
 }
 
