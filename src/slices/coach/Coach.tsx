@@ -347,7 +347,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
         {!history.length && <p class="small muted">Ask anything — your own training, or general questions about exercise, muscles or nutrition. Personal answers only use the findings and research below, nothing about your sessions or body.</p>}
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
-            {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={15} aria-hidden={true} />{COACH_NAME}</div>}
+            {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
             {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
           </div>
         ))}
