@@ -294,21 +294,28 @@ const ASK_WEB_SEARCH_MAX_USES = 3;
 export const ASK_WEB_SEARCH_ALLOWED_DOMAINS = ['nih.gov', 'cdc.gov', 'health.gov', 'who.int', 'mayoclinic.org', 'examine.com', 'acsm.org', 'nsca.com', 'bjsm.bmj.com', 'jissn.biomedcentral.com', 'medlineplus.gov', 'sleepfoundation.org', 'apa.org'];
 
 export const callAsk: CallAsk = async (payload, env) => {
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 70_000 });
+  // Streaming, not client.messages.parse()'s plain (buffered) request: a compound turn — a
+  // real answer, several splitDrafts, and a scheduleDraft, all at once, at ASK_EFFORT ("high")'s
+  // larger adaptive-thinking allotment — has real room to run long. Seen live: "check my current
+  // split and suggest another workout for next days and scheduling" 502'd outright (the same
+  // "cut short, parsed_output empty" failure the day-count fix addressed earlier, now reachable
+  // again by a different combination — a bigger max_tokens on a *non*-streaming call just risks
+  // trading a truncation failure for an HTTP-timeout one). Streaming removes that tradeoff:
+  // client.messages.stream(...).finalMessage() still yields the same parsed_output/stop_reason
+  // shape requireParsed() already expects, so nothing downstream changes.
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 120_000 });
   const model = modelFor(env, env.MODEL_ASK);
-  const response = await client.messages.parse({
+  const stream = client.messages.stream({
     model,
-    // Higher than a plain answer alone needs: a reply that also proposes several splitDrafts
-    // (each with its own exercise list, up to MAX_SPLIT_DRAFTS of them) can run noticeably
-    // longer than prose-only ever did. Seen live: a reply cut short by max_tokens mid-JSON
-    // comes back with no parsed_output at all (requireParsed throws, a 502 to the app), so
-    // this errs generous rather than tight.
-    max_tokens: 5000,
+    // Raised alongside the move to streaming, for the same compound-turn reason above — no
+    // longer constrained by keeping a single buffered response under the HTTP timeout.
+    max_tokens: 8000,
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
     tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
     output_config: { format: zodOutputFormat(AskSchema), effort: ASK_EFFORT },
   });
+  const response = await stream.finalMessage();
   const parsed = requireParsed(response);
   return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, model: response.model, usage: usageOf(response) };
 };
