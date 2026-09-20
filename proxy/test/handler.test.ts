@@ -475,6 +475,9 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('gets a full, direct general answer, not a deflection');
     expect(ASK_SYSTEM_PROMPT).toContain('never predict or comment on injury risk');
     expect(ASK_SYSTEM_PROMPT).toContain('120 words');
+    expect(ASK_SYSTEM_PROMPT).toContain('Lead with the direct answer, or with the one question you need');
+    expect(ASK_SYSTEM_PROMPT).toContain('never a preamble, a restated version of what they just asked, or a caveat stacked in front of the thing itself');
+    expect(ASK_SYSTEM_PROMPT).toContain('a shorter, direct answer beats a longer, more complete-sounding one whenever both would do');
     expect(ASK_SYSTEM_PROMPT).toContain('preferences');
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" ("personal" or "general")');
     expect(ASK_SYSTEM_PROMPT).toContain('web search tool');
