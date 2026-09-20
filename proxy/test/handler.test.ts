@@ -374,6 +374,7 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" to "personal"');
     expect(ASK_SYSTEM_PROMPT).toContain('never invent a load, a percentage, a set count, a day count or a date about them');
     expect(ASK_SYSTEM_PROMPT).toContain('say so plainly');
+    expect(ASK_SYSTEM_PROMPT).toContain('a number you calculate is exactly as unverifiable to the check that reads this answer as one you invented outright');
     expect(ASK_SYSTEM_PROMPT).toContain('do not decline or hedge one for "not having the logs"');
     expect(ASK_SYSTEM_PROMPT).toContain('Never diagnose a medical condition');
     expect(ASK_SYSTEM_PROMPT).toContain('individualized medication or supplement dosage');
