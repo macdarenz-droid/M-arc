@@ -579,13 +579,15 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('Never go quiet or refuse to engage when this comes up');
   });
 
-  it('ask prompt leads with a short direct question, not a long substitute answer, when a personalized number needs a figure never in the report (weight, most directly)', () => {
+  it('ask prompt leads with a short direct question, not a long explanation, whenever it genuinely cannot answer truthfully because something is missing', () => {
     // Seen live: "what's my BMI, what weight should I get to" got a full population-range
     // explanation with the actual question ("what's your current weight?") buried at the very
     // end — technically asked, but easy to miss under a paragraph of general BMI caveats.
-    expect(ASK_SYSTEM_PROMPT).toContain('their current weight, or anything else about their body beyond what they\'ve just typed in this message');
-    expect(ASK_SYSTEM_PROMPT).toContain('ask first, in one short, direct line ("What\'s your current weight?")');
-    expect(ASK_SYSTEM_PROMPT).toContain('not bury it under a paragraph they didn\'t actually get a personal number from');
+    // Generalized on direct request beyond just the weight case: a clean question first,
+    // whenever anything is missing, not a paragraph with the question buried or skipped.
+    expect(ASK_SYSTEM_PROMPT).toContain('One short, direct question ("What\'s your current weight?", "Which muscles do you want this to focus on?")');
+    expect(ASK_SYSTEM_PROMPT).toContain('not a paragraph of explanation with the question buried at the end or skipped for a hedge');
+    expect(ASK_SYSTEM_PROMPT).toContain('generalized to every other kind of answer too');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
