@@ -167,6 +167,15 @@ export type AskResult =
  * once, so this is a list: usually empty, sometimes one, sometimes several,
  * each independently actionable (and independently droppable if it doesn't
  * hold up to validation).
+ *
+ * Once a reply actually proposes a splitDraft, "answer" skips the personal
+ * number check too — describing a fresh split necessarily cites its own
+ * rep/set numbers (promptAsk.ts's rep-range table), which are a design
+ * choice, not a claim about this person's history (see promptAsk.ts rule
+ * 1), and were never going to be "in the report" to begin with. Rejecting
+ * the whole reply over them would drop a real, valid splitDraft along with
+ * it — seen live: "create a 5-day full body split" always cites its own
+ * set/rep numbers in "answer" and was silently dropped every time.
  */
 export async function requestAskAnswer(payload: AskPayload, customExercises: Exercise[], opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
   if (!payload.question) return { ok: false, error: 'Type a question first.' };
@@ -176,12 +185,12 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   if (!answer) return { ok: false, error: 'The coach sent back something we could not read.' };
   const scope: 'personal' | 'general' = result.body.scope === 'general' ? 'general' : 'personal';
   const category: AskCategory = (ASK_CATEGORIES as string[]).includes(result.body.category as string) ? (result.body.category as AskCategory) : 'general';
-  if (scope === 'personal') {
-    const check = validateText(answer, allowedNumbers(payload));
-    if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
-  }
   const knownSplitIds = new Set(payload.splits.map(s => s.id));
   const rawDrafts = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
   const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
+  if (scope === 'personal' && drafts.length === 0) {
+    const check = validateText(answer, allowedNumbers(payload));
+    if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
+  }
   return { ok: true, answer, scope, category, drafts };
 }

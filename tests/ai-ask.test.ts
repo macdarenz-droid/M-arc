@@ -158,6 +158,26 @@ describe('requestAskAnswer', () => {
     expect(r.drafts).toEqual([{ action: 'modify', splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }]);
   });
 
+  it('a personal-scope answer describing a real splitDraft is not dropped for citing the split\'s own rep/set numbers — those are a design choice, not a report claim', async () => {
+    // Seen live: "create a 5-day full body split" always cites its own numbers ("3 sets of 8-12 reps") in
+    // "answer", and every one of those got silently dropped before this exemption existed.
+    const fetchImpl = reply(200, {
+      scope: 'personal', category: 'training',
+      answer: 'Since your goal is strength, I built this around 5 sessions a week, 999 sets of 888-777 reps each.',
+      splitDrafts: [{ action: 'create', splitId: null, name: 'Full Body', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] }],
+    });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.drafts).toHaveLength(1);
+  });
+
+  it('still drops a personal-scope answer that invents a number, when the reply proposes no valid splitDraft at all', async () => {
+    const fetchImpl = reply(200, { scope: 'personal', category: 'training', answer: 'Add exactly 999 kg to fix it.', splitDrafts: [] });
+    const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r.ok).toBe(false);
+  });
+
   it('an empty splitDrafts list (still clarifying, or an ordinary answer) is a normal, successful answer', async () => {
     const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', splitDrafts: [] });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
