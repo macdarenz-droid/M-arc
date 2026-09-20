@@ -248,6 +248,31 @@ describe('broadened general-health scope (6): sleep, stress, common ailments, ot
   it.each(questions)('%s', async (q, a) => acceptsGeneralAnswer(q, a));
 });
 
+describe('food "what happens if I eat X" scenarios (6): broadened on explicit request, not treated as riskier for naming a food', () => {
+  it('the prompt names food-scenario questions explicitly, and the individualized line still holds when a real condition is named', () => {
+    expect(PROMPT_SOURCE).toContain('any "if I eat/drink X" scenario');
+    expect(PROMPT_SOURCE).toContain('not as a special or riskier category just because it names a food');
+    expect(PROMPT_SOURCE).toContain('what happens if I eat a lot of sugar every day');
+    expect(PROMPT_SOURCE).toContain('I have diabetes, exactly how much sugar can I personally have');
+  });
+
+  const questions: Array<[string, string]> = [
+    ['What happens if I eat a lot of sugar every day?', 'Regularly eating a lot of added sugar is linked to weight gain, energy crashes, and higher long-term risk of issues like type 2 diabetes.'],
+    ['Is it bad to eat right before bed?', 'A large, heavy meal close to bedtime can disrupt sleep for some people, though a small snack is usually fine.'],
+    ['What happens to my body if I eat only rice for a week?', 'A week of just rice would cover energy needs short-term but leaves out protein, fat, and several vitamins and minerals the body needs.'],
+    ['If I skip breakfast every day, what happens?', 'Skipping breakfast is not harmful by itself for most people, though some feel hungrier or less focused by mid-morning as a result.'],
+    ['What happens if I drink coffee on an empty stomach?', 'For some people it can cause mild stomach irritation or jitteriness; for most it causes no real problem at all.'],
+    ['Is eating fast food every day bad for me?', 'Eating fast food daily commonly means more calories, sodium, and saturated fat than most dietary guidelines recommend, raising long-term health risks.'],
+  ];
+  it.each(questions)('%s', async (q, a) => acceptsGeneralAnswer(q, a));
+
+  it('a food scenario wrapped around a real personal condition is still the individualized case, not a general one', () => {
+    // "what happens if I eat sugar" is general; adding a real, named condition makes it the specific case rule 4 still guards.
+    expect(PROMPT_SOURCE).toContain('individualized medical guidance');
+    expect(PROMPT_SOURCE).toContain('whether something is safe for a stated condition or medication');
+  });
+});
+
 describe('mixed personal + general (2): the subtlest category — one answer, one scope tag', () => {
   it('the prompt tells the model to keep the general half in words, not an outside number, so a real mixed answer can still pass as personal', () => {
     expect(PROMPT_SOURCE).toContain('give the general context in words rather than a precise outside figure');

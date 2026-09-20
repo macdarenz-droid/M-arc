@@ -467,6 +467,15 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('what does high blood pressure mean');
   });
 
+  it('a food "what happens if I eat X" scenario is squarely in scope and gets a full general answer, not treated as riskier just for naming a food', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('any "if I eat/drink X" scenario');
+    expect(ASK_SYSTEM_PROMPT).toContain('not as a special or riskier category just because it names a food');
+    expect(ASK_SYSTEM_PROMPT).toContain('what happens if I eat a lot of sugar every day');
+    expect(ASK_SYSTEM_PROMPT).toContain('is it bad to eat right before bed');
+    // The individualized line still holds for a real personal medical case wrapped in food language.
+    expect(ASK_SYSTEM_PROMPT).toContain('I have diabetes, exactly how much sugar can I personally have');
+  });
+
   it('ask prompt also carries the full exercise catalog and rep-range table, and states the splitDraft rules — this is the one route that may design or adjust a real split', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('lib_barbell_bench_press|Barbell Bench Press|chest');
     expect(ASK_SYSTEM_PROMPT).toContain('lib_face_pull|Face Pull|rear_delts');
