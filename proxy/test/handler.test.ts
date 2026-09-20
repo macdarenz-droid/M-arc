@@ -423,6 +423,8 @@ describe('prompts', () => {
 
   it('ask prompt splits personal (report-grounded, number-checked) from general knowledge (answered fully, not gated on data), and still refuses diagnosis and individualized dosing', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('General knowledge');
+    expect(ASK_SYSTEM_PROMPT).toContain('A "load_next" proposal, when present, is exactly this person\'s own recommended next weight and rep range');
+    expect(ASK_SYSTEM_PROMPT).toContain('use its numbers directly and confidently');
     expect(ASK_SYSTEM_PROMPT).toContain('"scope" to "personal"');
     expect(ASK_SYSTEM_PROMPT).toContain('never invent a load, a percentage, a set count, a day count or a date about them');
     expect(ASK_SYSTEM_PROMPT).toContain('say so plainly');

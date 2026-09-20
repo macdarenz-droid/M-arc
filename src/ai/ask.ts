@@ -15,7 +15,7 @@
  * Anything other than exactly "general" defaults to the strict path.
  */
 import type { FindingsReport } from '@/brain/coach/contract';
-import { allowedNumbers, cardsFor, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload } from '@/brain/coach/explainer';
+import { allowedNumbers, cardsFor, LIMITS, trimFindingsAndProposals, validateText, type GroundingPayload, type PayloadProposal } from '@/brain/coach/explainer';
 import { postJson } from './client';
 
 export interface AskTurn {
@@ -34,9 +34,29 @@ export const MAX_QUESTION_CHARS = 300;
 /** Kept turns, most recent first before reversing back to chronological order — an old exchange falls off rather than growing the payload without bound. */
 export const MAX_HISTORY_TURNS = 12;
 
+/**
+ * `load_next` (this exercise's recommended next weight and reps, from the
+ * person's own progression) is deliberately excluded from
+ * `trimFindingsAndProposals` — it never shows as a Suggestions card either
+ * (words.ts's `suggestionsFrom`), since Train already shows it live, per
+ * exercise, the moment you look at a split. But a real "what should I lift
+ * today for bench" question needs exactly this, and there was nothing in
+ * the payload to ground an answer in — so /ask (not /explain, which has no
+ * use for it) adds it back locally, capped the same way `planLoad` already
+ * bounds it (today's split, at most 8 exercises).
+ */
+const MAX_LOAD_NEXT = 8;
+
 /** The report, the recent conversation, and a new question — trimmed and capped the same way /explain's payload is. */
 export function buildAskPayload(report: FindingsReport, history: AskTurn[], question: string, opts: { goal: string; unit: 'kg' | 'lb'; preferenceFacts?: string[] }): AskPayload {
-  const { findings, proposals } = trimFindingsAndProposals(report);
+  const { findings, proposals: trimmed } = trimFindingsAndProposals(report);
+  const loadNext: PayloadProposal[] = report.proposals
+    .filter(p => p.kind === 'load_next')
+    .slice(0, MAX_LOAD_NEXT)
+    .map(p => ({ id: p.id, kind: p.kind, subject: p.subject, apply: p.apply, basedOn: p.basedOn, confidence: p.confidence }));
+  // The proxy refuses a payload with more than LIMITS.proposals proposals — this stays under that
+  // hard cap even in the rare case where trimmed proposals already used up most of the budget.
+  const proposals = [...trimmed, ...loadNext].slice(0, LIMITS.proposals);
   const ids = [...findings.map(f => f.id), ...proposals.map(p => p.id)];
   const cards = cardsFor(report, ids);
   const trimmedHistory = history.slice(-MAX_HISTORY_TURNS).map(h => ({ role: h.role, text: h.text.trim().slice(0, 700) }));

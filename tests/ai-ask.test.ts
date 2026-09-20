@@ -42,6 +42,17 @@ describe('buildAskPayload', () => {
     expect(p.history.at(-1)!.text).toBe(`turn ${history.length - 1}`);
   });
 
+  it('includes load_next proposals — excluded from Suggestions and /explain, but needed to ground "what should I lift today" — capped and never over the proxy\'s own proposal limit', () => {
+    const report = realReport();
+    expect(report.proposals.some(p => p.kind === 'load_next')).toBe(true); // sanity: this fixture actually has one to include
+    const p = buildAskPayload(report, [], 'What weight should I do for bench today?', { goal: 'strength', unit: 'kg' });
+    const loadNextIds = p.proposals.filter(x => x.kind === 'load_next').map(x => x.id);
+    expect(loadNextIds.length).toBeGreaterThan(0);
+    expect(p.proposals.length).toBeLessThanOrEqual(LIMITS.proposals);
+    const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0);
+    expect(someNumber).toBeDefined(); // a load_next's kg/reps are now grounded numbers an answer can cite
+  });
+
   it('cards cover everything in view, not just one finding, unlike /explain\'s narrower selection', () => {
     const report = realReport();
     const p = buildAskPayload(report, [], 'anything', { goal: 'strength', unit: 'kg' });
