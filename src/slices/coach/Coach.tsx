@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { state, update } from '@/core/store';
-import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
+import { deload, insights, report, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconSend } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
@@ -42,7 +42,6 @@ export function Coach() {
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
-  const w = week.value;
   const goal = GOALS.find(g => g.id === s.goal)!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -55,11 +54,6 @@ export function Coach() {
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
-
-      <Card class="card-accent">
-        <div class="eyebrow">This week in one line</div>
-        <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
-      </Card>
 
       {deload.value && (
         <div class="banner row-between" role="status">
