@@ -9,7 +9,7 @@ import type { LoggedSet, Session } from '@/core/models';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
-import { weekSummary } from '@/brain/weekly';
+import { weekSummary, weeklyVolumeHistory, type WeeklyVolume } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
@@ -160,10 +160,14 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
 
 /* ---------- Stats ---------- */
 
+/** ~3 months, matching what people mean by "my recent performance" — long enough to show a real trend, short enough that the chart stays readable at 12 columns. */
+const VOLUME_CHART_WEEKS = 12;
+
 function Stats() {
   const s = state.value;
   const u = unit.value;
   const w = weekSummary(s.sessions, today.value, s.customExercises);
+  const volumeWeeks = useMemo(() => weeklyVolumeHistory(s.sessions, today.value, VOLUME_CHART_WEEKS), [s.sessions, today.value]);
   const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const [exercise, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
@@ -186,6 +190,12 @@ function Stats() {
           </div>
         )}
       </Card>
+
+      <Section title="Volume trend">
+        {volumeWeeks.every(wk => wk.sets === 0) ? (
+          <Card class="card-quiet"><p class="small muted">Log a few weeks of sessions and your training volume over time shows up here.</p></Card>
+        ) : <Card><WeeklyVolumeChart weeks={volumeWeeks} unit={u} /></Card>}
+      </Section>
 
       <Section title="Exercise progress">
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
@@ -214,6 +224,37 @@ function Stats() {
           )}
         </Card>
       </Section>
+    </div>
+  );
+}
+
+/**
+ * Weekly training volume (working sets × weight × reps) over the last N
+ * weeks — the one real "how has my training gone" trend view, since
+ * "This week" above only ever shows the current week. Tapping a bar shows
+ * that week's own total; a single series needs no legend, just the title.
+ */
+function WeeklyVolumeChart({ weeks, unit: u }: { weeks: WeeklyVolume[]; unit: 'kg' | 'lb' }) {
+  const [selected, setSelected] = useState(weeks.length - 1);
+  const active = weeks[selected] ?? weeks[weeks.length - 1]!;
+  const max = Math.max(1, ...weeks.map(wk => wk.volumeKg));
+  return (
+    <div class="stack-sm">
+      <div class="row-between">
+        <div>
+          <div class="eyebrow">Weekly volume</div>
+          <b class="num" style={{ fontSize: 20 }}>{formatLoad(active.volumeKg, u)}</b>
+        </div>
+        <span class="small muted">{formatDay(active.start, { day: 'numeric', month: 'short' })} – {formatDay(active.end, { day: 'numeric', month: 'short' })} · {active.sets} sets</span>
+      </div>
+      <div class="volume-chart" role="group" aria-label={`Weekly training volume, last ${weeks.length} weeks`}>
+        {weeks.map((wk, i) => (
+          <button key={wk.start} type="button" class="volume-bar" aria-pressed={i === selected} aria-label={`Week of ${formatDay(wk.start, { day: 'numeric', month: 'short' })}: ${formatLoad(wk.volumeKg, u)}, ${wk.sets} sets`} onClick={() => setSelected(i)}>
+            <i style={{ height: `${Math.max(4, (wk.volumeKg / max) * 100)}%`, opacity: i === selected ? 1 : 0.4 }} />
+          </button>
+        ))}
+      </div>
+      <p class="hint">Tap a bar for that week's total. Volume is working sets × weight × reps.</p>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { trainingBalance } from '@/brain/balance';
-import { trainingStreak, weekSummary } from '@/brain/weekly';
+import { trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { buildReport } from '@/brain/coach/report';
 import { insightsFrom, type RenderContext } from '@/brain/coach/words';
 import type { BrainContext } from '@/brain/coach/context';
@@ -32,6 +32,24 @@ describe('weekly', () => {
     expect(w.records.length).toBeGreaterThan(0);
     expect(w.grade.title).toBe('Building momentum');
   });
+  it('reports one entry per week, oldest first, ending on the current week', () => {
+    const s = [session('2026-08-03', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]), session('2026-09-14', [{ id: 'lib_barbell_bench_press', sets: sets(62.5, 8) }])];
+    const weeks = weeklyVolumeHistory(s, '2026-09-18', 8);
+    expect(weeks).toHaveLength(8);
+    expect(weeks.every((w, i) => i === 0 || w.start > weeks[i - 1]!.start)).toBe(true); // oldest first
+    const last = weeks.at(-1)!;
+    expect(last.start).toBe(weekSummary(s, '2026-09-18').start); // last entry is the current week
+    const withBench = weeks.find(w => w.start <= '2026-09-14' && w.end >= '2026-09-14');
+    expect(withBench?.sets).toBe(3);
+    expect(withBench?.volumeKg).toBe(62.5 * 8 * 3);
+  });
+
+  it('a week with nothing logged is a real zero, not skipped', () => {
+    const weeks = weeklyVolumeHistory([], '2026-09-18', 4);
+    expect(weeks).toHaveLength(4);
+    for (const w of weeks) expect(w).toMatchObject({ sets: 0, volumeKg: 0 });
+  });
+
   it('schedule-aware streak ignores rest days and forgives today', () => {
     const schedule = { ...emptySchedule(), mon: 'split_push', wed: 'split_pull', fri: 'split_legs' };
     const s = [session('2026-09-14', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]), session('2026-09-16', [{ id: 'lib_lat_pulldown', sets: sets(60, 8) }])];
