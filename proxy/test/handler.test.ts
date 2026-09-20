@@ -593,6 +593,17 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('generalized to every other kind of answer too');
   });
 
+  it('ask prompt scopes the probing-question rule to what only the person can supply — a general, researchable fact gets answered, not asked about', () => {
+    // Direct request: probe for personal info (body weight, history, preference), but a
+    // generalized/researchable question should just be answered, reaching for web search
+    // (rule 11) if it genuinely needs it — never offloading that work back onto the person.
+    expect(ASK_SYSTEM_PROMPT).toContain('something only the person can tell you is missing');
+    expect(ASK_SYSTEM_PROMPT).toContain('a fact about their own body, history, preference or constraint');
+    expect(ASK_SYSTEM_PROMPT).toContain('This is never a substitute for using what you already know or reaching for the web search tool (rule 11)');
+    expect(ASK_SYSTEM_PROMPT).toContain('a general fact you could work out or look up yourself is not "missing" in this sense');
+    expect(ASK_SYSTEM_PROMPT).toContain('rather than asking the person to hand you research you\'re equipped to do');
+  });
+
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('rear_delts');
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('horizontal_push');
