@@ -249,7 +249,7 @@ function renderAskBody(text: string, category: AskCategory): ComponentChildren {
   return text.split(/\n{2,}/).map((block, bi) => {
     const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
     const isList = lines.length > 0 && lines.every(l => l.startsWith('- '));
-    if (isList) return <ul class="ask-list" key={bi}>{lines.map((l, li) => <li key={li}><Icon size={14} class="ask-list-icon" aria-hidden={true} />{renderAskInline(l.slice(2))}</li>)}</ul>;
+    if (isList) return <ul class="ask-list" key={bi}>{lines.map((l, li) => <li key={li}><Icon size={14} class="ask-list-icon" aria-hidden={true} /><span>{renderAskInline(l.slice(2))}</span></li>)}</ul>;
     return <p key={bi}>{renderAskInline(block.trim())}</p>;
   });
 }
