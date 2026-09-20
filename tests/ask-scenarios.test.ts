@@ -70,7 +70,7 @@ const noSplits = { splits: [], customExercises: [], schedule: emptySchedule() };
 async function acceptsGeneralAnswer(question: string, answerWithOutsideNumbers: string) {
   const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg', ...noSplits });
   const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
-  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [], scheduleDraft: null, concern: null });
+  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [], scheduleDraft: null, concern: null, constraints: [] });
 }
 
 describe('general knowledge (8): anatomy, machines, reps, nutrition — none of this needs the report', () => {

@@ -222,6 +222,8 @@ export interface AskReply {
   scheduleDraft: WeekSchedule | null;
   /** Set by the model when the question carries a crisis or disordered-eating signal (promptAsk.ts rule 17) — null for nearly every reply. A safety flag, not a finding about the person; the app shows a fixed resource card whenever this isn't null. */
   concern: 'crisis' | 'disordered_eating' | null;
+  /** Durable facts the model itself flagged about this person's own body, equipment or preferences (promptAsk.ts rule 23) — empty for most replies. The app persists these and merges them back into "preferences" on every future call, mirroring how "concern" is a flag the model sets rather than something the app guesses from the raw chat text. */
+  constraints: string[];
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }

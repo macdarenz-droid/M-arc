@@ -76,10 +76,10 @@ const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
 });
 
-const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], scheduleDraft: null as AskReply['scheduleDraft'], concern: null as AskReply['concern'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], scheduleDraft: null as AskReply['scheduleDraft'], concern: null as AskReply['concern'], constraints: [] as AskReply['constraints'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
-  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, concern: out.concern, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, concern: out.concern, constraints: out.constraints, model: out.model, usage: out.usage }; },
 });
 
 const stubAskWithSplit = async () => ({
@@ -88,7 +88,18 @@ const stubAskWithSplit = async () => ({
   splitDrafts: [{ action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }],
   scheduleDraft: null as AskReply['scheduleDraft'],
   concern: null as AskReply['concern'],
+  constraints: [] as AskReply['constraints'],
   model: 'claude-sonnet-5', usage: { inputTokens: 2200, outputTokens: 90, cacheReadTokens: 1800 },
+});
+
+const stubAskWithConstraint = async () => ({
+  scope: 'personal' as const, category: 'training' as const,
+  answer: 'Noted — I\'ll keep curls out of your splits going forward.',
+  splitDrafts: [] as AskReply['splitDrafts'],
+  scheduleDraft: null as AskReply['scheduleDraft'],
+  concern: null as AskReply['concern'],
+  constraints: ['Avoid curls — reported elbow pain.'] as AskReply['constraints'],
+  model: 'claude-sonnet-5', usage: { inputTokens: 2000, outputTokens: 70, cacheReadTokens: 1800 },
 });
 
 const stubAskWithSchedule = async () => ({
@@ -97,6 +108,7 @@ const stubAskWithSchedule = async () => ({
   splitDrafts: [] as AskReply['splitDrafts'],
   scheduleDraft: { sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: 'split_pull', sat: null },
   concern: null as AskReply['concern'],
+  constraints: [] as AskReply['constraints'],
   model: 'claude-sonnet-5', usage: { inputTokens: 2000, outputTokens: 70, cacheReadTokens: 1800 },
 });
 
@@ -410,6 +422,21 @@ describe('handler: multiple routes in one Worker', () => {
     expect(body.splitDrafts[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_face_pull']);
   });
 
+  it('answers /ask with any stated constraints the model flagged — the app persists these and merges them back into "preferences" on future calls', async () => {
+    const handleWithConstraint = createHandler([askRouteWith(stubAskWithConstraint)]);
+    const res = await handleWithConstraint(post('/ask', askPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { constraints: string[] };
+    expect(body.constraints).toEqual(['Avoid curls — reported elbow pain.']);
+  });
+
+  it('an ordinary answer with nothing worth remembering carries constraints: [], not omitted', async () => {
+    const res = await handle(post('/ask', askPayload()), env());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { constraints: unknown };
+    expect(body.constraints).toEqual([]);
+  });
+
   it('answers /ask with a scheduleDraft — the full week, not just the days that changed — when the conversation calls for rearranging it', async () => {
     const handleWithSchedule = createHandler([askRouteWith(stubAskWithSchedule)]);
     const res = await handleWithSchedule(post('/ask', askPayload()), env());
@@ -436,6 +463,7 @@ describe('handler: multiple routes in one Worker', () => {
       ],
       scheduleDraft: null as AskReply['scheduleDraft'],
       concern: null as AskReply['concern'],
+      constraints: [] as AskReply['constraints'],
       model: 'claude-sonnet-5', usage: { inputTokens: 2400, outputTokens: 140, cacheReadTokens: 1800 },
     }))]);
     const res = await handleMulti(post('/ask', { ...askPayload(), question: 'Push day: bench press. Pull day: lat pulldown.' }), env());
@@ -633,7 +661,7 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('a schedule tweak touches every day of their week, so it is a bigger, more disruptive action than adding an exercise to one split');
     expect(ASK_SYSTEM_PROMPT).toContain('spacing so the same muscle group doesn\'t stack on back-to-back days without reason');
     expect(ASK_SYSTEM_PROMPT).toContain('If you don\'t have enough to make a real judgment');
-    expect(ASK_SYSTEM_PROMPT).toContain('"scheduleDraft" (usually null), and "concern" (usually null)');
+    expect(ASK_SYSTEM_PROMPT).toContain('"scheduleDraft" (usually null), "concern" (usually null), and "constraints" (a list, usually empty)');
     // Seen live twice in a row: (1) "changed to tue thurs sat" in "answer" while the real schedule
     // stayed untouched — nothing applies until the button tap; (2) asked a clarifying question,
     // got "yes" back, then failed with a number-check rejection instead of actually building the
@@ -714,6 +742,14 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('is a bare date (YYYY-MM-DD), not a weekday name');
     expect(ASK_SYSTEM_PROMPT).toContain('this is ordinary calendar arithmetic, not an invented personal fact');
     expect(ASK_SYSTEM_PROMPT).toContain('never say you don\'t know what day it is or can\'t work out a relative date');
+  });
+
+  it('ask prompt flags a durable stated constraint (an injury to work around, real equipment on hand) as its own field, not something the app guesses from raw chat text', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('include it in "constraints" as a short, plain-word fact');
+    expect(ASK_SYSTEM_PROMPT).toContain('Describe it functionally, not as a diagnosis');
+    expect(ASK_SYSTEM_PROMPT).toContain('the person does not need to restate it');
+    expect(ASK_SYSTEM_PROMPT).toContain('Do not flag something true for only this one message');
+    expect(ASK_SYSTEM_PROMPT).toContain('"constraints" (a list, usually empty).');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {

@@ -140,7 +140,7 @@ describe('requestAskAnswer', () => {
     const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
     const fetchImpl = reply(200, { scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [], scheduleDraft: null, concern: null });
+    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [], scheduleDraft: null, concern: null, constraints: [] });
   });
 
   it('drops a personal-scope answer that invents a number not in the report', async () => {
@@ -232,7 +232,7 @@ describe('requestAskAnswer', () => {
   it('a general-knowledge answer is not checked against the report — it is not a claim about this person\'s data', async () => {
     const fetchImpl = reply(200, { scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [], scheduleDraft: null, concern: null });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [], scheduleDraft: null, concern: null, constraints: [] });
   });
 
   it('a real category value passes through, and an invalid or missing one defaults to "general" rather than trusting the network', async () => {
@@ -290,7 +290,7 @@ describe('requestAskAnswer', () => {
   it('an empty splitDrafts list (still clarifying, or an ordinary answer) is a normal, successful answer', async () => {
     const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', splitDrafts: [] });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [], scheduleDraft: null, concern: null });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [], scheduleDraft: null, concern: null, constraints: [] });
   });
 
   it('one message describing two splits at once gets back a draft for each, independently applicable', async () => {
@@ -445,5 +445,33 @@ describe('requestAskAnswer', () => {
     expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withBogus })).toMatchObject({ ok: true, concern: null });
     const withMissing = reply(200, { scope: 'general', category: 'general', answer: 'ok' });
     expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withMissing })).toMatchObject({ ok: true, concern: null });
+  });
+
+  it('a stated constraint passes through, trimmed', async () => {
+    const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'Noted, I\'ll avoid curls.', constraints: ['  Avoid curls — reported elbow pain.  '] });
+    const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, constraints: ['Avoid curls — reported elbow pain.'] });
+  });
+
+  it('missing constraints defaults to an empty list, not undefined — true for nearly every reply', async () => {
+    const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'ok' });
+    const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, constraints: [] });
+  });
+
+  it('a constraint that is not really a string, an empty one, or the whole field being malformed never reaches state — nothing is trusted from the network unchecked', async () => {
+    const notAnArray = reply(200, { scope: 'general', category: 'training', answer: 'ok', constraints: 'not an array' });
+    expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: notAnArray })).toMatchObject({ ok: true, constraints: [] });
+    const mixed = reply(200, { scope: 'general', category: 'training', answer: 'ok', constraints: ['Real one.', 42, '   ', null] });
+    expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: mixed })).toMatchObject({ ok: true, constraints: ['Real one.'] });
+  });
+
+  it('a constraint longer than the per-fact cap is trimmed, and no more than a few per reply survive, even if the network sent more', async () => {
+    const long = 'x'.repeat(200);
+    const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'ok', constraints: [long, 'a', 'b', 'c', 'd'] });
+    const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    if (!r.ok) throw new Error('expected ok');
+    expect(r.constraints[0]!.length).toBe(160);
+    expect(r.constraints).toHaveLength(3);
   });
 });

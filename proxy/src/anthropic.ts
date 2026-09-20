@@ -69,8 +69,13 @@ const ScheduleDraftSchema = z.object({
   thu: z.string().nullable(), fri: z.string().nullable(), sat: z.string().nullable(),
 });
 
-/** Built per request — see exerciseIdSchemaFor for why the exerciseId vocabulary can't be a fixed module-level enum. */
-function askSchemaFor(splits: readonly { exercises: readonly { exerciseId: string }[] }[]) {
+/** Mirrors MAX_STATED_CONSTRAINT_CHARS in src/core/models.ts (app) — a constraint is later sent back merged into "preferences", so it's bound by the same per-fact length the proxy already enforces there (MAX_PREFERENCE_CHARS in handler.ts). */
+const MAX_CONSTRAINT_CHARS = 160;
+/** At most this many stated constraints per reply — one message rarely states more than a couple at once ("no curls, elbow issue" plus "only have dumbbells" is already two); a much lower cap than a MAX_STATED_CONSTRAINTS-wide list (core/models.ts) since that one accumulates over many conversations, not one reply. */
+const MAX_CONSTRAINTS_PER_REPLY = 3;
+
+/** Built per request — see exerciseIdSchemaFor for why the exerciseId vocabulary can't be a fixed module-level enum. Exported for the same reason exerciseIdSchemaFor is: schema shape is otherwise untestable without a live model call. */
+export function askSchemaFor(splits: readonly { exercises: readonly { exerciseId: string }[] }[]) {
   return z.object({
     scope: z.enum(['personal', 'general']),
     category: z.enum(['nutrition', 'body', 'training', 'app', 'general']),
@@ -81,6 +86,8 @@ function askSchemaFor(splits: readonly { exercises: readonly { exerciseId: strin
     scheduleDraft: ScheduleDraftSchema.nullable(),
     /** Set by the model itself (promptAsk.ts rule 17) when the question carries a crisis or disordered-eating signal — null for nearly every reply. The app renders a fixed resource card whenever this isn't null; it is a safety flag, not a finding about the person, so it is never checked against the report. */
     concern: z.enum(['crisis', 'disordered_eating']).nullable(),
+    /** Set by the model itself (promptAsk.ts rule 23) whenever the question states a durable fact about this person's own body, equipment or preferences worth remembering past this one reply — empty for most replies. The app persists these and sends them back merged into "preferences" on every future call, so a stated constraint doesn't need repeating in a new conversation. */
+    constraints: z.array(z.string().max(MAX_CONSTRAINT_CHARS)).max(MAX_CONSTRAINTS_PER_REPLY),
   });
 }
 
@@ -340,5 +347,5 @@ export const callAsk: CallAsk = async (payload, env) => {
   });
   const response = await stream.finalMessage();
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, constraints: parsed.constraints, model: response.model, usage: usageOf(response) };
 };

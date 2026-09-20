@@ -16,7 +16,7 @@
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { state } from '@/core/store';
+import { state, update, flushSave } from '@/core/store';
 import { askStats, report } from '@/app/selectors';
 import { go } from '@/app/router';
 import { showToast } from '@/app/toast';
@@ -25,14 +25,26 @@ import { IconApple, IconBody, IconCigarette, IconDumbbell, IconGear, IconInfo } 
 import { ChatInputRow, COACH_NAME, renderChatBody } from '@/ui/chatRender';
 import { buildAskPayload, requestAskAnswer, MAX_QUESTION_CHARS, type AskCategory, type AskConcern, type AskTurn, type SplitDraft, type WeekSchedule } from '@/ai/ask';
 import { computeBmi } from '@/brain/coach/explainer';
-import { WEEKDAYS } from '@/core/models';
+import { WEEKDAYS, type AskThreadTurn } from '@/core/models';
 import { WEEKDAY_LABEL } from '@/core/dates';
 import { applyScheduleDraft, applySplitDraft } from '../workout/splits';
 import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId } from './remote';
+import { appendAskTurn, clearAskThread, mergeStatedConstraints, updateAskTurn } from './askMemory';
 
-/** A turn as shown on screen. "scope" and "category" are local-only (never sent back to the Worker as part of history) — "scope" says whether a reply was grounded in this person's report or is general knowledge, the same honest label the app uses for evidence quality everywhere else; "category" only picks which small icon marks its bullet points. "drafts"/"applied" track any splits this reply proposed and whether each has been applied yet; "scheduleDraft"/"scheduleApplied" do the same for a proposed weekly-schedule rearrangement. */
-type AskBubble = AskTurn & { scope?: 'personal' | 'general'; category?: AskCategory; drafts?: SplitDraft[]; applied?: boolean[]; scheduleDraft?: WeekSchedule | null; scheduleApplied?: boolean; concern?: AskConcern; trimmed?: number };
+/**
+ * A turn as shown on screen — the same AskThreadTurn persisted in
+ * CoachState.askThread, so the conversation survives closing the sheet or
+ * the app itself (see core/models.ts and COACH_BRAIN.md's decision log for
+ * the audit finding this closes). "scope" says whether a reply was
+ * grounded in this person's report or is general knowledge, the same
+ * honest label the app uses for evidence quality everywhere else;
+ * "category" only picks which small icon marks its bullet points.
+ * "drafts"/"applied" track any splits this reply proposed and whether each
+ * has been applied yet; "scheduleDraft"/"scheduleApplied" do the same for a
+ * proposed weekly-schedule rearrangement.
+ */
+type AskBubble = AskThreadTurn;
 
 const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string; 'aria-hidden'?: boolean }) => JSX.Element> = {
   nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
@@ -144,7 +156,7 @@ function ConcernResource({ concern }: { concern: Exclude<AskConcern, null> }) {
 }
 
 export function AskSheet({ onClose }: { onClose: () => void }) {
-  const [history, setHistory] = useState<AskBubble[]>([]);
+  const history = state.value.coach.askThread;
   const [question, setQuestion] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -157,20 +169,29 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     if (!q || sending) return;
     const s = state.value;
     const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
+    // Constraints first: they're rarer and more load-bearing (an injury to work around) than a
+    // behavioral preference fact, so if the shared cap (LIMITS.preferences, buildAskPayload)
+    // ever has to drop something, a stated constraint survives before a "usually accepts
+    // schedule changes"-style fact does.
     const payload = buildAskPayload(report.value, plainHistory, q, {
-      goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: s.coach.preferenceFacts,
+      goal: s.goal, unit: s.preferences.weightUnit, preferenceFacts: [...s.coach.statedConstraints, ...s.coach.preferenceFacts],
       splits: s.splits, customExercises: s.customExercises, schedule: s.schedule, bmi: computeBmi(s.profile),
       stats: askStats.value,
     });
-    const withQuestion: AskBubble[] = [...history, { role: 'user', text: q }];
-    setHistory(withQuestion);
+    update(st => ({ ...st, coach: appendAskTurn(st.coach, { role: 'user', text: q }) }));
+    flushSave();
     setQuestion('');
     setError(null);
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, s.customExercises, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
-      if (r.ok) setHistory([...withQuestion, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false, concern: r.concern, trimmed: r.trimmed }]);
-      else setError(r.error);
+      if (r.ok) {
+        update(st => {
+          const coach = appendAskTurn(st.coach, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false, concern: r.concern, trimmed: r.trimmed });
+          return { ...st, coach: r.constraints.length ? mergeStatedConstraints(coach, r.constraints) : coach };
+        });
+        flushSave();
+      } else setError(r.error);
     } finally {
       setSending(false);
     }
@@ -180,6 +201,11 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     <Sheet title={`Ask ${COACH_NAME}`} onClose={onClose}>
       <div class="ask-thread" ref={threadRef}>
         {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, describe a split to build or change, or ask about rearranging your weekly schedule. Personal answers, splits and schedule changes only use the findings, real exercises and real schedule below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
+        {history.length > 0 && (
+          <Button variant="quiet" size="sm" onClick={() => { update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
+            Clear conversation
+          </Button>
+        )}
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
@@ -189,13 +215,13 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
               <div key={di}>
                 {turn.applied?.[di]
                   ? <p class="hint" style={{ marginTop: 8 }}>Applied: {draft.name}.</p>
-                  : <SplitDraftAction draft={draft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, applied: (t.applied ?? []).map((a, ai) => (ai === di ? true : a)) } : t)))} />}
+                  : <SplitDraftAction draft={draft} onApplied={() => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { applied: (turn.applied ?? []).map((a, ai) => (ai === di ? true : a)) }) })); flushSave(); }} />}
               </div>
             ))}
             {turn.role === 'assistant' && turn.scheduleDraft && (
               turn.scheduleApplied
                 ? <p class="hint" style={{ marginTop: 8 }}>Schedule updated.</p>
-                : <ScheduleDraftAction draft={turn.scheduleDraft} onApplied={() => setHistory(h => h.map((t, ti) => (ti === i ? { ...t, scheduleApplied: true } : t)))} />
+                : <ScheduleDraftAction draft={turn.scheduleDraft} onApplied={() => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { scheduleApplied: true }) })); flushSave(); }} />
             )}
             {turn.role === 'assistant' && turn.concern && <ConcernResource concern={turn.concern} />}
           </div>

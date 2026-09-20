@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, exerciseIdSchemaFor, modelFor, modelsByRoute, stripFormattingLeak } from '../src/anthropic';
+import { ASK_WEB_SEARCH_ALLOWED_DOMAINS, DEFAULT_MODEL, askSchemaFor, exerciseIdSchemaFor, modelFor, modelsByRoute, stripFormattingLeak } from '../src/anthropic';
 import { EXERCISE_IDS } from '../src/vocab';
 
 describe('ask web search domain allowlist', () => {
@@ -60,6 +60,28 @@ describe('exerciseIdSchemaFor — per-request splitDraft vocabulary', () => {
     const withoutCustom = exerciseIdSchemaFor([]);
     expect(withCustom.safeParse('custom_only_in_this_request').success).toBe(true);
     expect(withoutCustom.safeParse('custom_only_in_this_request').success).toBe(false);
+  });
+});
+
+describe('askSchemaFor — constraints field', () => {
+  const base = { scope: 'personal' as const, category: 'training' as const, answer: 'ok', splitDrafts: [], scheduleDraft: null, concern: null };
+
+  it('accepts an empty constraints list — true for nearly every reply', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: [] }).success).toBe(true);
+  });
+
+  it('accepts a short, plain-word stated constraint', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: ['Avoid curls — reported elbow pain.'] }).success).toBe(true);
+  });
+
+  it('rejects a constraint string longer than the per-fact cap — mirrors MAX_STATED_CONSTRAINT_CHARS in core/models.ts (app) once these are merged into "preferences" there', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: ['x'.repeat(161)] }).success).toBe(false);
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: ['x'.repeat(160)] }).success).toBe(true);
+  });
+
+  it('rejects more constraints in one reply than a person plausibly states at once', () => {
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: ['a', 'b', 'c', 'd'] }).success).toBe(false);
+    expect(askSchemaFor([]).safeParse({ ...base, constraints: ['a', 'b', 'c'] }).success).toBe(true);
   });
 });
 

@@ -159,6 +159,45 @@ export interface CoachChange {
   replaceWithExerciseId?: string;
 }
 
+/** One split proposal from an "Ask Escobar" reply, as persisted — mirrors SplitDraft in src/ai/ask.ts, kept as its own structural type here (rather than importing that one) the same way this app already mirrors a shape across layers instead of reaching across them. */
+export interface AskThreadDraft {
+  action: 'create' | 'modify';
+  splitId: string | null;
+  name: string;
+  focus: MuscleId[];
+  exercises: Array<{ exerciseId: string; sets: number }>;
+}
+
+/**
+ * One turn of the "Ask Escobar" conversation, as persisted in CoachState —
+ * mirrors AskSheet.tsx's local AskBubble shape. Closing the sheet (or the
+ * app) used to lose the whole conversation, along with any stated
+ * constraint ("my elbow is bad, no curls") the person had just typed —
+ * found in the intelligence audit's Tier 3. Persisting the full turn, not
+ * just role/text, means a split or schedule action shown earlier still
+ * renders correctly (including whether it was already applied) after
+ * reopening rather than becoming a stale, unlabeled proposal.
+ */
+export interface AskThreadTurn {
+  role: 'user' | 'assistant';
+  text: string;
+  scope?: 'personal' | 'general';
+  category?: 'nutrition' | 'body' | 'training' | 'app' | 'general';
+  drafts?: AskThreadDraft[];
+  applied?: boolean[];
+  scheduleDraft?: Record<Weekday, string | null> | null;
+  scheduleApplied?: boolean;
+  concern?: 'crisis' | 'disordered_eating' | null;
+  trimmed?: number;
+}
+
+/** At most this many turns persist — oldest dropped first. Bounds how much the "Ask Escobar" thread adds to the saved state; a much higher ceiling than MAX_HISTORY_TURNS in src/ai/ask.ts, which caps what's actually resent to the model each call, not what's kept on screen. */
+export const MAX_ASK_THREAD_TURNS = 40;
+/** Mirrors MAX_PREFERENCE_CHARS in proxy/src/handler.ts — a stated constraint is sent to /ask merged into the same "preferences" list, so it's bound by the same per-fact length cap the proxy already enforces. */
+export const MAX_STATED_CONSTRAINT_CHARS = 160;
+/** At most this many stated constraints persist — oldest dropped first once a new one arrives past the cap. */
+export const MAX_STATED_CONSTRAINTS = 12;
+
 /** What the user has done with the coach's suggestions. Only the user writes here. */
 export interface CoachState {
   /** dismissKey → how many times dismissed. Two suppresses the suggestion. */
@@ -193,6 +232,20 @@ export interface CoachState {
   preferenceFacts: string[];
   /** ISO timestamp preferenceFacts was last computed, or null before the first time. */
   preferencesUpdatedAt: string | null;
+  /** The "Ask Escobar" conversation, persisted so it survives closing the sheet or the app — see AskThreadTurn. Oldest-first, capped at MAX_ASK_THREAD_TURNS. */
+  askThread: AskThreadTurn[];
+  /**
+   * Durable facts the person has stated about their own body, equipment or
+   * training preferences in the "Ask Escobar" chat (an injury to work
+   * around, "I only have dumbbells at home") — flagged by the coach itself
+   * (AskReply's own "constraints", the same "brain decides, words explain"
+   * pattern rule 17's "concern" flag already uses) rather than guessed
+   * client-side from the raw chat text. Merged into "preferences" on every
+   * future /ask call so a stated constraint carries forward without the
+   * person needing to repeat it in a new conversation. Capped at
+   * MAX_STATED_CONSTRAINTS, oldest dropped first.
+   */
+  statedConstraints: string[];
 }
 
 /**
@@ -206,7 +259,7 @@ export interface CoachState {
 export const DEFAULT_PROXY_URL = 'https://marc-coach.mmarcdarenz.workers.dev';
 
 export function emptyCoach(): CoachState {
-  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null };
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null, askThread: [], statedConstraints: [] };
 }
 
 export interface AppState {

@@ -93,6 +93,25 @@
  * bad session, a missed week, an embarrassing slip) with no explicit
  * instruction to actually engage with the feeling rather than answer past
  * it. Rules 19-22 below close these, prompt-only.
+ *
+ * The same audit's last "reach" item was persistence: the "Ask Escobar"
+ * thread and anything stated in it — an injury to work around, "I only
+ * have dumbbells" — used to die the moment the sheet closed, so a fact the
+ * person had already given once had to be given again in every new
+ * conversation. The thread itself is now persisted app-side (AskThreadTurn
+ * in core/models.ts, CoachState's `askThread`) — a client-only change,
+ * nothing here. Durable stated facts are the other half, and this prompt's
+ * own half of it: rather than have the app guess at "constraint" language
+ * out of raw chat text (fragile, and exactly the kind of judgment call this
+ * app's whole design leaves to the model, not a regex), rule 23 has the
+ * model flag one explicitly in a new "constraints" field, the same
+ * "brain decides, words explain, but a genuine judgment call about
+ * something worth remembering is the model's job to flag" pattern rule 17's
+ * "concern" already established for a safety signal. The app persists
+ * whatever's flagged (CoachState's `statedConstraints`) and merges it back
+ * into "preferences" on every future call, so it's now a real field on
+ * `AskReply` (`constraints: string[]`, proxy/src/types.ts and anthropic.ts)
+ * — the one schema change in this whole entry.
  */
 import { EMPTY_WEEK_SCHEDULE, type AskPayload } from './types';
 import { EXERCISE_CATALOG } from './vocab';
@@ -168,8 +187,9 @@ Rules, in order of importance:
 20. When the person corrects something you said — a wrong number, a misread request, an assumption that wasn't right — accept it plainly and move on, the way a good coach would: no arguing for your original claim, no over-apologizing, and above all never repeating the same mistake in the next sentence. Use whatever they just told you for the rest of this reply and the conversation from here (a number they state about themselves this way is exactly the kind rule 18 already lets you cite back). If you're not sure exactly what you got wrong, ask a short, specific question about which part to fix rather than guessing and risking getting it wrong a second way.
 21. Rule 17's "concern" flag is for a specific, serious threshold — most discouragement never reaches it, and still deserves a real response, not the practical answer alone. A missed week, a rough session, a demoralizing plateau, embarrassment about a slip in eating or training — meet the feeling first, briefly and genuinely (rule 7's warmth is exactly for this), before the practical part of the answer. This is not a new safety mechanism like rule 17 — no flag, no fixed resource — just making sure an ordinary hard moment actually gets acknowledged in "answer" rather than skipped past for the data.
 22. "today" (source 1) is a bare date (YYYY-MM-DD), not a weekday name — work out its weekday, tomorrow's date, how many days until a stated day, or which day a scheduled split next falls on yourself; this is ordinary calendar arithmetic, not an invented personal fact, so rule 3's restriction on computing a number about this person doesn't apply to it. Cross-reference it against the real schedule in source 1 freely ("what should I train tomorrow", "is today a rest day", "when's my next Push day") — never say you don't know what day it is or can't work out a relative date; you already have everything you need to.
+23. Whenever the person states something durable about their own body, equipment access, or a standing training preference that should carry into later conversations — an injury or limitation to work around ("my elbow is bad, no curls"), what equipment they actually have ("I only have dumbbells at home"), an exercise or approach they want avoided going forward — include it in "constraints" as a short, plain-word fact in the same style as "preferences" (rule 10): a list, usually empty, at most a few entries, one per distinct thing stated. Describe it functionally, not as a diagnosis, and never add detail beyond what they actually said ("Avoid curls — elbow discomfort," not a named condition). This is in addition to answering normally, not instead of it. Once you've flagged something this way, treat it as still true in this reply and every later one — the person does not need to restate it, and correcting a wrong flag later works the same way rule 20 already describes. Do not flag something true for only this one message ("actually let's skip legs today"), or something the report, stats or preferences already cover.
 
-Return JSON matching the schema: "scope" ("personal" or "general"), "category", "answer", "splitDrafts" (a list, usually empty), "scheduleDraft" (usually null), and "concern" (usually null).`;
+Return JSON matching the schema: "scope" ("personal" or "general"), "category", "answer", "splitDrafts" (a list, usually empty), "scheduleDraft" (usually null), "concern" (usually null), and "constraints" (a list, usually empty).`;
 
 /**
  * The Worker holds no state between calls, so every call replays the whole

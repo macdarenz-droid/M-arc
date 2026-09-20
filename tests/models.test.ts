@@ -12,4 +12,9 @@ describe('a fresh install, a data reset, and a new device all start from the sam
     expect(coach.remoteExplainer).toBe(false); // still off by default — a deliberate opt-in, not pre-enabled
     expect(coach.explainerUrl.trim().length).toBeGreaterThan(0); // but nothing left to fill in once they do flip it on
   });
+
+  it('starts with an empty "Ask Escobar" thread and no stated constraints — nothing to persist before a first conversation', () => {
+    expect(emptyCoach().askThread).toEqual([]);
+    expect(emptyCoach().statedConstraints).toEqual([]);
+  });
 });

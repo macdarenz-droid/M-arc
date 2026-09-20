@@ -28,7 +28,7 @@
  * (below), the same idea as src/ai/tagExercise.ts's knownMuscles.
  */
 import type { Exercise, Split, Weekday } from '@/core/models';
-import { WEEKDAYS } from '@/core/models';
+import { MAX_STATED_CONSTRAINT_CHARS, WEEKDAYS } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 import type { FindingsReport } from '@/brain/coach/contract';
@@ -110,11 +110,23 @@ export function buildAskPayload(
   };
 }
 
-interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; constraints?: unknown; error?: unknown }
 
 /** A crisis or disordered-eating signal the model flagged in the question itself (promptAsk.ts rule 17) — null for nearly every reply. Not a finding about the person; the UI shows a fixed, pre-written resource whenever this isn't null. */
 export type AskConcern = 'crisis' | 'disordered_eating' | null;
 const ASK_CONCERNS: readonly Exclude<AskConcern, null>[] = ['crisis', 'disordered_eating'];
+
+/** At most this many stated constraints trusted from one reply — mirrors MAX_CONSTRAINTS_PER_REPLY in proxy/src/anthropic.ts, checked again here rather than trusting the network to have enforced its own schema. */
+const MAX_CONSTRAINTS_PER_REPLY = 3;
+
+/** A durable fact the model flagged about this person's own body, equipment or preferences (promptAsk.ts rule 23) — free text, so only shape-checked (real non-empty strings, capped count and length), never checked against the report the way a personal-scope "answer" is; it's the model's own judgment call about what's worth remembering, not a claim this app can verify. */
+function parseConstraints(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((c): c is string => typeof c === 'string' && c.trim().length > 0)
+    .map(c => c.trim().slice(0, MAX_STATED_CONSTRAINT_CHARS))
+    .slice(0, MAX_CONSTRAINTS_PER_REPLY);
+}
 
 /** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
 export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
@@ -250,7 +262,7 @@ function sanitizePersonalAnswer(answer: string, allowed: Set<number>): { text: s
 }
 
 export type AskResult =
-  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number }
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number; constraints: string[] }
   | { ok: false; error: string };
 
 /**
@@ -290,10 +302,11 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
   const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
   const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
+  const constraints = parseConstraints(result.body.constraints);
   if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
     const sanitized = sanitizePersonalAnswer(answer, askAllowedNumbers(payload));
     if (!sanitized.text) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
-    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined };
+    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined, constraints };
   }
-  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern };
+  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern, constraints };
 }
