@@ -9,6 +9,15 @@ export const IconDumbbell = ({ size = 22, ...p }: P) => <svg {...base(size)} {..
 export const IconKettlebell = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M9 9a3 3 0 0 1 6 0v1" /><circle cx="12" cy="16" r="5.5" /></svg>;
 export const IconPlate = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /></svg>;
 export const IconApple = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 8c-3.5 0-6 2.7-6 6.5C6 18.5 8.5 21 11 21c.7 0 1.3-.2 2-.2s1.3.2 2 .2c2.5 0 5-2.5 5-6.5 0-3.8-2.5-6.5-6-6.5-.6 0-1 .1-1.5.3.2-1 .9-2 2-2.5" /></svg>;
+/** The coach's persona mark (see COACH_BRAIN.md — a private, personal touch, not a feature name). Three independently-timed smoke wisps and a softly pulsing ember; the animation lives in styles.css (`.persona-*` classes) so it follows the same prefers-reduced-motion handling as the rest of the app. */
+export const IconCigarette = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}>
+  <path d="M2 15.5h13" stroke-width="3.2" />
+  <path d="M12.5 13.6v3.8M14.2 13.6v3.8" stroke-width="1.1" />
+  <circle class="persona-ember" cx="16.5" cy="15.5" r="1.5" fill="currentColor" stroke="none" />
+  <path class="persona-wisp persona-wisp-a" d="M16.8 12.5c.5-.7-.1-1.4.4-2.1" stroke-width="1.1" />
+  <path class="persona-wisp persona-wisp-b" d="M16.5 12.7c-.6-.6.1-1.3-.5-1.9" stroke-width="1" />
+  <path class="persona-wisp persona-wisp-c" d="M17 12.6c.2-.8-.5-1.2-.2-2" stroke-width="0.9" />
+</svg>;
 export const IconBody = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="4.5" r="2.5" /><path d="M8 9h8l1 6h-2l-1 6h-4l-1-6H7z" /></svg>;
 export const IconSpark = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" /><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" /></svg>;
 export const IconClock = ({ size = 22, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;

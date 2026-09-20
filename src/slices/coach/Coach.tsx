@@ -3,7 +3,7 @@ import type { ComponentChildren, JSX } from 'preact';
 import { state, update } from '@/core/store';
 import { deload, insights, report, suggestions, today, week } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconApple, IconBody, IconChevron, IconDumbbell, IconGear, IconInfo, IconSend } from '@/ui/icons';
+import { IconApple, IconBody, IconChevron, IconCigarette, IconDumbbell, IconGear, IconInfo, IconSend } from '@/ui/icons';
 import { CATEGORY_LABEL, shortlist, type Category, type Insight, type Suggestion } from '@/brain/coach/words';
 import { RATING_LABEL, type PrincipleCard } from '@/brain/coach/principles';
 import { pickCue, type Cue } from '@/brain/coach/cues';
@@ -231,6 +231,9 @@ const ASK_CATEGORY_ICON: Record<AskCategory, (p: { size?: number; class?: string
   nutrition: IconApple, body: IconBody, training: IconDumbbell, app: IconGear, general: IconInfo,
 };
 
+/** A personal touch, not a feature: every assistant reply gets this name and mark instead of a bare bubble. Replaces the old per-answer "General knowledge, not from your data" disclaimer — the underlying scope check (validateText/allowedNumbers below) still runs exactly as before; only the visible label changed. */
+const COACH_NAME = 'Escobar';
+
 /** `**term**` becomes emphasis; everything else passes through untouched. Never touches a raw string with HTML — this builds real child nodes, so there is nothing to escape or inject. */
 function renderAskInline(text: string): ComponentChildren {
   const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(p => p.length > 0);
@@ -347,7 +350,7 @@ function AskSheet({ onClose }: { onClose: () => void }) {
         {!history.length && <p class="small muted">Ask anything — your own training, or general questions about exercise, muscles or nutrition. Personal answers only use the findings and research below, nothing about your sessions or body.</p>}
         {history.map((turn, i) => (
           <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
-            {turn.role === 'assistant' && turn.scope === 'general' && <div class="hint" style={{ marginBottom: 4 }}>General knowledge, not from your data</div>}
+            {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={15} aria-hidden={true} />{COACH_NAME}</div>}
             {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
           </div>
         ))}

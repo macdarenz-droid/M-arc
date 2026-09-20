@@ -19,7 +19,7 @@ svg { display: block; }
 .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + env(safe-area-inset-top)) 16px calc(92px + env(safe-area-inset-bottom)); }
 .view { animation: view-in 220ms cubic-bezier(.2,.8,.2,1); }
 @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .view, .sheet, .toast { animation: none !important; } * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .view, .sheet, .toast { animation: none !important; } * { transition: none !important; } .persona-ember, .persona-wisp { animation: none !important; opacity: .8 !important; transform: none !important; } }
 
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
@@ -197,6 +197,17 @@ svg { display: block; }
 .ask-list-icon { flex: none; margin-top: 2px; color: var(--accent); }
 .ask-input { display: flex; gap: 8px; align-items: center; }
 .ask-input input { flex: 1; }
+
+.ask-persona { display: flex; align-items: center; gap: 6px; color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.persona-ember { animation: persona-glow 1400ms ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes persona-glow { 0%, 100% { opacity: .65; } 50% { opacity: 1; } }
+.persona-wisp { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.persona-wisp-a { animation: persona-rise-a 2400ms ease-out infinite; }
+.persona-wisp-b { animation: persona-rise-b 2600ms ease-out infinite; animation-delay: 800ms; }
+.persona-wisp-c { animation: persona-rise-c 2200ms ease-out infinite; animation-delay: 1600ms; }
+@keyframes persona-rise-a { 0% { opacity: 0; transform: translate(0,3px) scale(.8) rotate(0deg); } 25% { opacity: .85; } 60% { opacity: .5; transform: translate(1.5px,-3px) scale(1.05) rotate(4deg); } 100% { opacity: 0; transform: translate(2.5px,-7px) scale(1.2) rotate(8deg); } }
+@keyframes persona-rise-b { 0% { opacity: 0; transform: translate(0,3px) scale(.75) rotate(0deg); } 30% { opacity: .8; } 65% { opacity: .45; transform: translate(-1.5px,-4px) scale(1.1) rotate(-6deg); } 100% { opacity: 0; transform: translate(-2.5px,-8px) scale(1.25) rotate(-10deg); } }
+@keyframes persona-rise-c { 0% { opacity: 0; transform: translate(0,3px) scale(.7) rotate(0deg); } 28% { opacity: .75; } 62% { opacity: .4; transform: translate(0.5px,-4px) scale(1.1) rotate(3deg); } 100% { opacity: 0; transform: translate(1px,-8px) scale(1.3) rotate(6deg); } }
 
 .sparkline { width: 100%; height: 56px; }
 .banner { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 13px; }
