@@ -13,7 +13,6 @@ import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { resetCoachMemory } from '../coach/apply';
 import { WEEKDAYS } from '@/core/models';
-import { currentPayload } from '../coach/remote';
 import { checkProxy } from '@/brain/coach/explainer';
 
 export const APP_VERSION = '37.0.0';
@@ -22,7 +21,6 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const s = state.value;
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
   const setCoach = (patch: Partial<AppState['coach']>) => update(x => ({ ...x, coach: { ...x.coach, ...patch } }));
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
@@ -108,13 +106,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </Section>
 
         <Section title="Coach online">
-          <Card class="stack-sm">
-            <Row trailing={<Toggle checked={s.coach.remoteExplainer} onChange={v => setCoach({ remoteExplainer: v })} label="Online coach" />}><span class="small">Online coach</span><div class="hint">Off by default. When on, your own proxy and Claude help with a few things: fuller wording when you tap "More from the coach", answers when you ask it a question — about your own training or general exercise and nutrition knowledge — suggested equipment and muscles when you tap "Suggest" or "Scan a photo" on a new exercise, a whole plan read from a photo when you tap "Import" on Train, and tags for a session note (never a diagnosis). Each request sends only what that one thing needs, never your sessions, name or measurements; a photo you scan or import is sent once for that suggestion and never saved. A fraction of a cent a time; a question that needs a quick web check (current guidelines, something time-sensitive) costs about a cent more, at most a couple of checks per question.</div></Row>
-            <Field label="Proxy address" hint="Pre-filled with the real Worker — only change this if you redeploy under a different URL"><input type="url" inputMode="url" placeholder="https://marc-coach.example.workers.dev" value={s.coach.explainerUrl} onInput={e => setCoach({ explainerUrl: (e.target as HTMLInputElement).value.trim() })} /></Field>
-            <div class="row">
-              <Button size="sm" onClick={() => setPreviewOpen(true)}>Preview what is sent</Button>
-              <Button size="sm" disabled={!s.coach.explainerUrl} onClick={async () => { const r = await checkProxy(s.coach.explainerUrl); showToast(r.message); }}>Check connection</Button>
-            </div>
+          <Card>
+            <Row trailing={<Toggle checked={s.coach.remoteExplainer} onChange={async v => { setCoach({ remoteExplainer: v }); if (v) { const r = await checkProxy(s.coach.explainerUrl); showToast(r.message); } }} label="Online coach" />}><span class="small">Online coach</span><div class="hint">Richer wording, answers to questions, exercise suggestions and photo imports, powered by your proxy and Claude.</div></Row>
           </Card>
         </Section>
 
@@ -129,23 +122,6 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
         <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><span class="hint">Version {APP_VERSION}</span></div>
-      </div>
-      {previewOpen && <PayloadPreview onClose={() => setPreviewOpen(false)} />}
-    </Sheet>
-  );
-}
-
-/** Exactly what the remote explainer would send right now, so the choice is informed. */
-function PayloadPreview({ onClose }: { onClose: () => void }) {
-  const payload = currentPayload();
-  const text = JSON.stringify(payload, null, 1);
-  const kb = Math.round((new TextEncoder().encode(text).length / 1024) * 10) / 10;
-  return (
-    <Sheet title="What is sent" onClose={onClose}>
-      <div class="stack">
-        <p class="small">This is the whole message, {kb} KB. It has your findings and suggestions with their numbers, exercise and muscle names, your goal and unit, the research cards they rest on, and a short list of preferences the coach has learned from what you have accepted or turned down. It has no sessions, no name, no body weight or height, no device details beyond a random id for daily limits.</p>
-        <pre class="small" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 360, overflow: 'auto', background: 'var(--surface-2)', padding: 12, borderRadius: 'var(--radius-md)' }}>{text}</pre>
-        <Button onClick={onClose}>Close</Button>
       </div>
     </Sheet>
   );
