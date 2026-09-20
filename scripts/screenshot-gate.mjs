@@ -60,8 +60,13 @@ for (const theme of themes) {
   await page.waitForSelector('.nav');
   await page.waitForTimeout(400);
   const shot = (name) => page.screenshot({ path: `${OUT}/${theme}-${name}.png` });
+  // Scoped to the bottom tab bar, not the whole page: a card's own aria-label (a suggestion,
+  // an insight, a session) can legitimately contain a tab's name as a substring — e.g. a
+  // "Today: Legs" plan suggestion — and Playwright's role/name matching is substring by
+  // default, so an unscoped lookup can match either one.
+  const nav = page.getByRole('navigation', { name: 'Main' });
   await shot('today');
-  await page.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
+  await nav.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
   if (theme === 'silent-black') {
     // Start a session and log a set for the live screenshot.
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -73,13 +78,13 @@ for (const theme of themes) {
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
     await page.getByRole('button', { name: 'Done' }).click();
   }
-  await page.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
+  await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
-  await page.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
+  await nav.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
-  await page.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');
+  await nav.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');
   if (theme === 'silent-black') { await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape'); }
-  await page.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
+  await nav.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
   if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);

@@ -110,12 +110,18 @@ function requireParsed<T>(response: { stop_reason: string | null; parsed_output:
  * object it's implicitly composing, leaking into the string's own content
  * even under structured outputs. The prompt now says not to do this
  * (prompt.ts, promptAsk.ts); this is the safety net for when it happens
- * anyway. Deliberately narrow: real prose in this app's voice never ends
- * in a bare quote, bracket or brace, so trimming a trailing run of them
- * (and any whitespace after) cannot cut into a genuine sentence.
+ * anyway.
+ *
+ * Requires an actual `}` or `]` in the trailing run before trimming
+ * anything — an earlier version matched a bare trailing quote or bracket on
+ * its own, which also silently ate a legitimate sentence ending in a quoted
+ * term (`...called "muscle confusion"`) or a unit mark (`...chest level,
+ * 45"`), neither of which is a formatting leak. A trailing `}`/`]` alone is
+ * never legitimate prose, so requiring one keeps this narrow to the actual
+ * bug.
  */
 export function stripFormattingLeak(text: string): string {
-  return text.replace(/[\s"'\]}]+$/, '');
+  return text.replace(/[\s"',]*[\]}][\s"',]*$/, '');
 }
 
 const usageOf = (response: { usage: { input_tokens: number; output_tokens: number; cache_read_input_tokens?: number | null } }) => ({

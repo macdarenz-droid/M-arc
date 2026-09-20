@@ -95,6 +95,8 @@ describe('payload validation', () => {
   it('accepts the app payload and refuses anything personal or oversized', () => {
     expect(validatePayload(payload()).ok).toBe(true);
     expect(validatePayload({ ...payload(), profile: { name: 'x' } })).toMatchObject({ ok: false });
+    // Any field outside the route's own key set is refused, the same as every sibling route — not just the PII-shaped keys validateGrounding blacklists by name.
+    expect(validatePayload({ ...payload(), extraField: 'x' })).toMatchObject({ ok: false, reason: expect.stringContaining('Unexpected field') });
     expect(validatePayload({ ...payload(), sessions: [] })).toMatchObject({ ok: false });
     expect(validatePayload({ ...payload(), findings: [{ ...payload().findings[0], evidence: { sessionIds: ['s1'] } }] })).toMatchObject({ ok: false });
     expect(validatePayload({ ...payload(), explain: ['nope'] })).toMatchObject({ ok: false, reason: expect.stringContaining('not in the report') });

@@ -145,7 +145,7 @@ export function Today() {
                 <p class="small muted">{top.action}</p>
               </Card>
             )}
-            {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
+            {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label={`${waiting} suggestion${waiting === 1 ? '' : 's'} waiting — open Coach`}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
           </div>
         </Section>
       )}

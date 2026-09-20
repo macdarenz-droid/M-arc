@@ -42,7 +42,7 @@ export function Coach() {
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
-  const goal = GOALS.find(g => g.id === s.goal)!;
+  const goal = GOALS.find(g => g.id === s.goal) ?? GOALS[0]!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
   const cue: Cue | null = lastExercise ? pickCue(lastExercise, cueSeed % 2 ? 'learn' : 'coach', `${today.value}|${cueSeed}`) : null;
@@ -79,7 +79,7 @@ export function Coach() {
       <Section title="Suggestions" aside={open.length ? <span class="small muted">{open.length}</span> : undefined}>
         <div class="stack-sm">
           {open.map(sg => (
-            <Card key={sg.id} class="suggestion card-press" onClick={() => setOpenSuggestion(sg)}>
+            <Card key={sg.id} class="suggestion card-press" onClick={() => setOpenSuggestion(sg)} aria-label={`Open suggestion: ${sg.title}`}>
               <div class="row-between"><span class="insight-cat" style={{ '--insight': 'var(--accent)' }}>{KIND_LABEL[sg.kind]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{sg.title}</h3>
               <p class="small muted">{sg.summary}</p>
@@ -96,7 +96,7 @@ export function Coach() {
       <Section title="Insights" aside={hidden > 0 ? <span class="small muted">+{hidden} more</span> : undefined}>
         <div class="stack-sm">
           {list.map(i => (
-            <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
+            <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)} aria-label={`Open insight: ${i.title}`}>
               <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
@@ -107,7 +107,7 @@ export function Coach() {
       </Section>
 
       <Section title="Training goal" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change</Button>}>
-        <Card class="card-press" onClick={() => setGoalOpen(true)}>
+        <Card class="card-press" onClick={() => setGoalOpen(true)} aria-label={`Change training goal, currently ${goal.name}`}>
           <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.reps[0]}–{goal.reps[1]} reps{goal.accessoryReps ? ` (accessories ${goal.accessoryReps[0]}–${goal.accessoryReps[1]})` : ''}</div>
         </Card>
       </Section>
@@ -138,7 +138,7 @@ export function Coach() {
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
           <div class="stack-sm">
             <p class="small muted">Your goal changes rep targets and the effort window. It does not change the exercises.</p>
-            {GOALS.map(g => <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { update(x => ({ ...x, goal: g.id as GoalId })); setGoalOpen(false); }}><b>{g.name}</b><div class="hint">{g.tagline} · {g.reps[0]}–{g.reps[1]} reps · {g.bestFor}</div></Card>)}
+            {GOALS.map(g => <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { update(x => ({ ...x, goal: g.id as GoalId })); setGoalOpen(false); }} aria-label={`Set training goal to ${g.name}`}><b>{g.name}</b><div class="hint">{g.tagline} · {g.reps[0]}–{g.reps[1]} reps · {g.bestFor}</div></Card>)}
           </div>
         </Sheet>
       )}
@@ -243,7 +243,10 @@ function renderAskInline(text: string): ComponentChildren {
  */
 function renderAskBody(text: string, category: AskCategory): ComponentChildren {
   const Icon = ASK_CATEGORY_ICON[category] ?? IconInfo;
-  return text.split(/\n{2,}/).map((block, bi) => {
+  // A trailing (or doubled) blank line in the answer would otherwise survive
+  // as an empty block below, rendering a stray <p> whose CSS top-margin adds
+  // visible dead space at the bottom of the bubble.
+  return text.split(/\n{2,}/).map(b => b.trim()).filter(Boolean).map((block, bi) => {
     const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
     const isList = lines.length > 0 && lines.every(l => l.startsWith('- '));
     if (isList) return <ul class="ask-list" key={bi}>{lines.map((l, li) => <li key={li}><Icon size={14} class="ask-list-icon" aria-hidden={true} /><span>{renderAskInline(l.slice(2))}</span></li>)}</ul>;
@@ -370,7 +373,7 @@ function Schedule() {
   };
   return (
     <Section title="Weekly schedule" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>Edit</Button>}>
-      <Card class="card-press" onClick={() => setOpen(true)}>
+      <Card class="card-press" onClick={() => setOpen(true)} aria-label="Edit weekly schedule">
         <div class="row" style={{ justifyContent: 'space-between' }}>
           {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
         </div>

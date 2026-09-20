@@ -1,6 +1,7 @@
 import { signal, computed, batch } from '@preact/signals';
 import { freshState, type AppState } from './models';
 import { convertLegacy, readLegacy } from './migrate';
+import { isGoalId } from '@/data/goals';
 
 export const STATE_KEY = 'marc.state.v1';
 const BACKUP_KEY = 'marc.state.v1.backup';
@@ -17,6 +18,7 @@ function normalize(s: AppState): AppState {
   return {
     ...fresh,
     ...s,
+    goal: isGoalId(s.goal) ? s.goal : fresh.goal,
     profile: { ...fresh.profile, ...s.profile },
     preferences: { ...fresh.preferences, ...s.preferences, reminders: { ...fresh.preferences.reminders, ...s.preferences?.reminders } },
     schedule: { ...fresh.schedule, ...s.schedule },

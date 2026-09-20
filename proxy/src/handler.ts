@@ -97,6 +97,7 @@ function validateGrounding(raw: Record<string, unknown>): string | null {
 export function validatePayload(raw: unknown): Validated<import('./types').ExplainPayload> {
   if (!isRecord(raw)) return { ok: false, reason: 'Body must be a JSON object.' };
   if (raw.version !== 1 || raw.kind !== 'explain') return { ok: false, reason: 'Unsupported payload version or kind.' };
+  if (!onlyKeys(raw, ['version', 'kind', 'goal', 'unit', 'today', 'dataQuality', 'findings', 'proposals', 'cards', 'preferences', 'explain'])) return { ok: false, reason: 'Unexpected field in the payload.' };
   const groundingError = validateGrounding(raw);
   if (groundingError) return { ok: false, reason: groundingError };
   const findings = raw.findings as Array<{ id: string }>, proposals = raw.proposals as Array<{ id: string }>, explain = raw.explain;

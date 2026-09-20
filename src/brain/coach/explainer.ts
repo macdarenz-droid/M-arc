@@ -78,26 +78,46 @@ export function buildPayload(report: FindingsReport, opts: { goal: string; unit:
   return { version: 1, kind: 'explain', goal: opts.goal, unit: opts.unit, today: report.today, dataQuality: report.dataQuality, findings, proposals, cards, explain, preferences };
 }
 
+/**
+ * A comma after digits is ambiguous: "11,9" (a European-style decimal) and
+ * "1,500" (an English thousands separator) both match the same shape. Digit
+ * count settles it — a thousands group is always exactly three digits, a
+ * decimal comma essentially never is (nobody writes "11,900" meaning 11.9).
+ * Getting this wrong silently mis-parses "1,500 kg" as 1.5, which then
+ * happens to pass the grounding check as a small, commonly-allowed number
+ * instead of being checked as the real value.
+ */
 export function extractNumbers(text: string): number[] {
-  return (text.match(/-?\d+(?:[.,]\d+)?/g) ?? []).map(n => parseFloat(n.replace(',', '.'))).filter(n => Number.isFinite(n));
+  return (text.match(/-?\d+(?:[.,]\d+)?/g) ?? []).map(raw => {
+    const grouped = /^(-?\d+),(\d{3})$/.exec(raw);
+    return parseFloat(grouped ? raw.replace(',', '') : raw.replace(',', '.'));
+  }).filter(n => Number.isFinite(n));
 }
 
-const dateParts = (day: string): number[] => (/^\d{4}-\d{2}-\d{2}$/.test(day) ? day.split('-').map(Number) : []);
-
-/** Every number the model is allowed to write: anything in the payload, plus dates it contains and the rounded forms of its decimals. */
+/**
+ * Every number the model is allowed to write: anything in the payload, plus
+ * the rounded forms of its decimals. Deliberately does NOT split a YYYY-MM-DD
+ * date string (a window's `from`/`to`, or `today`) into its year/month/day
+ * components as separately-allowed numbers — an earlier version did, and
+ * since a report can carry up to `LIMITS.findings` windows, that let a
+ * fabricated small number (a rep count, a set count, a week count — exactly
+ * the range coaching answers use most) slip through as "grounded" for no
+ * reason other than some finding's window happening to start or end on a
+ * matching day-of-month. The prompt already tells the model never to invent
+ * a date, so there is no legitimate case that needs this.
+ */
 export function allowedNumbers(payload: GroundingPayload): Set<number> {
   const out = new Set<number>();
   const add = (n: number) => { if (!Number.isFinite(n)) return; out.add(n); out.add(Math.abs(n)); out.add(Math.round(n)); out.add(Math.round(n * 10) / 10); };
   const visit = (v: unknown): void => {
     if (typeof v === 'number') add(v);
-    else if (typeof v === 'string') { dateParts(v).forEach(add); if (/^-?\d+(\.\d+)?$/.test(v)) add(parseFloat(v)); }
+    else if (typeof v === 'string') { if (/^-?\d+(\.\d+)?$/.test(v)) add(parseFloat(v)); }
     else if (Array.isArray(v)) v.forEach(visit);
     else if (v && typeof v === 'object') Object.values(v as Record<string, unknown>).forEach(visit);
   };
   for (const f of payload.findings) { visit(f.metrics); visit(f.window); }
   for (const p of payload.proposals) visit(p.apply);
   visit(payload.dataQuality);
-  dateParts(payload.today).forEach(add);
   for (const c of payload.cards) [...extractNumbers(c.statement), ...extractNumbers(c.disputed)].forEach(add);
   for (const p of payload.preferences ?? []) extractNumbers(p).forEach(add);
   return out;

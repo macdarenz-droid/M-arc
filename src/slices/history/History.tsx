@@ -78,7 +78,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const [open, setOpen] = useState(false);
   return (
-    <Card class="card-press" onClick={() => setOpen(o => !o)}>
+    <Card class="card-press" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label={`${open ? 'Collapse' : 'Expand'} ${session.splitName} session on ${formatDay(session.day)}`}>
       <div class="row-between">
         <div class="grow"><b>{session.splitName}</b><div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div></div>
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>

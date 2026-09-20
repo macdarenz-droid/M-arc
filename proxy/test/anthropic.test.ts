@@ -33,6 +33,11 @@ describe('stripFormattingLeak', () => {
     expect(stripFormattingLeak('some text]')).toBe('some text');
     expect(stripFormattingLeak('some text"} \n')).toBe('some text');
   });
+
+  it('does not touch a legitimate sentence that just happens to end in a quote or a unit mark — only an actual brace/bracket is a leak', () => {
+    expect(stripFormattingLeak('this is sometimes called "muscle confusion"')).toBe('this is sometimes called "muscle confusion"');
+    expect(stripFormattingLeak('bar height is about chest level, 45"')).toBe('bar height is about chest level, 45"');
+  });
 });
 
 describe('per-route model override', () => {

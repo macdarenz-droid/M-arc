@@ -77,12 +77,19 @@ describe('number validation', () => {
     cards: [{ id: 'load_and_rep_range', title: 't', rating: 'strong', statement: 'Around eighty percent of a one-rep max, or 80 percent.', disputed: 'Under roughly 30 percent.' }],
     explain: ['volume_drop:chest'],
   };
-  it('extracts numbers and allows exactly what the payload contains, dates and rounded forms included', () => {
+  it('extracts numbers and allows exactly what the payload contains and the rounded forms of its decimals — deliberately not a date\'s own year/month/day parts', () => {
     expect(extractNumbers('down 18% from 14.5 to 11,9 sets')).toEqual([18, 14.5, 11.9]);
+    expect(extractNumbers('total volume was 1,500 kg')).toEqual([1500]);
     const allowed = allowedNumbers(p);
-    for (const n of [18, -18, 14.5, 15, 11.9, 12, 3, 150, 80, 30, 2026, 9, 19, 8, 24, 13, 40, 0.85]) expect(allowed.has(n), String(n)).toBe(true);
+    for (const n of [18, -18, 14.5, 15, 11.9, 12, 3, 150, 80, 30, 40, 0.85]) expect(allowed.has(n), String(n)).toBe(true);
+    // A window's year/month/day-of-month must NOT be allowed just because a date string carries them —
+    // otherwise a fabricated small number (reps, sets, weeks) can slip through as "grounded" purely
+    // because some finding's window happens to start or end on a matching day-of-month.
+    for (const n of [2026, 9, 19, 8, 24, 13]) expect(allowed.has(n), `date part ${n} must not be allowed`).toBe(false);
     expect(validateText('Chest work is down 18%: about 12 sets a week against your usual 14.5.', allowed).ok).toBe(true);
-    expect(validateText('Since 24 August you did 3 weeks of lighter chest work.', allowed).ok).toBe(true);
+    const dated = validateText('Since 24 August you did 3 weeks of lighter chest work.', allowed);
+    expect(dated.ok).toBe(false); // "24" is a date's day-of-month, not a grounded quantity — correctly rejected now
+    expect(dated.offending).toEqual([24]);
     const bad = validateText('Add 5 kg to your bench and do 20 sets.', allowed);
     expect(bad.ok).toBe(false);
     expect(bad.offending).toEqual([5, 20]);
