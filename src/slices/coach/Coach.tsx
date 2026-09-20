@@ -69,15 +69,15 @@ export function Coach() {
       )}
 
       {remoteEnabled.value && (
-        <Card class="card-quiet">
-          <div class="row-between"><div class="eyebrow">From the coach, online</div>{explanation.value && <span class="hint">{explanation.value.model.replace('claude-', '')}</span>}</div>
+        <Card class="card-accent">
+          <div class="row-between"><div class="eyebrow row" style={{ gap: 6 }}><IconCigarette size={14} aria-hidden={true} />{COACH_NAME}, online</div>{explanation.value && <span class="hint">{explanation.value.model.replace('claude-', '')}</span>}</div>
           {explanation.value?.summary
             ? <p class="small" style={{ marginTop: 6 }}>{explanation.value.summary}</p>
             : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
           {explanation.value && explanation.value.rejected > 0 && <p class="hint" style={{ marginTop: 6 }}>{explanation.value.rejected} line{explanation.value.rejected === 1 ? '' : 's'} left out for using a number not in your data.</p>}
-          <div class="row" style={{ marginTop: 8 }}>
-            {!explanation.value && <Button size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
-            <Button size="sm" variant="quiet" onClick={() => setAskOpen(true)}>Ask a question</Button>
+          <div class="wrap" style={{ marginTop: 10 }}>
+            <Button variant="primary" onClick={() => setAskOpen(true)}>Ask {COACH_NAME} a question</Button>
+            {!explanation.value && <Button variant="quiet" size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
           </div>
         </Card>
       )}
