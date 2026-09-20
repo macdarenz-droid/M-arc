@@ -41,7 +41,7 @@ const askRoute: RouteConfig = {
   validate: validateAskPayload,
   async call(payload, env: WorkerEnv) {
     const out = await callAsk(payload as AskPayload, env);
-    return { scope: out.scope, category: out.category, answer: String(out.answer).trim(), splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, model: out.model, usage: out.usage };
+    return { scope: out.scope, category: out.category, answer: String(out.answer).trim(), splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, concern: out.concern, model: out.model, usage: out.usage };
   },
 };
 

@@ -109,7 +109,11 @@ export function buildAskPayload(
   };
 }
 
-interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; error?: unknown }
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; error?: unknown }
+
+/** A crisis or disordered-eating signal the model flagged in the question itself (promptAsk.ts rule 17) — null for nearly every reply. Not a finding about the person; the UI shows a fixed, pre-written resource whenever this isn't null. */
+export type AskConcern = 'crisis' | 'disordered_eating' | null;
+const ASK_CONCERNS: readonly Exclude<AskConcern, null>[] = ['crisis', 'disordered_eating'];
 
 /** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
 export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
@@ -179,7 +183,7 @@ function parseScheduleDraft(raw: unknown, knownSplitIds: Set<string>): WeekSched
 }
 
 export type AskResult =
-  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null }
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern }
   | { ok: false; error: string };
 
 /**
@@ -218,9 +222,10 @@ export async function requestAskAnswer(payload: AskPayload, customExercises: Exe
   const rawDrafts = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
   const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
   const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
+  const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
   if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
     const check = validateText(answer, allowedNumbers(payload));
     if (!check.ok) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
   }
-  return { ok: true, answer, scope, category, drafts, scheduleDraft };
+  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern };
 }

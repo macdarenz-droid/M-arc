@@ -112,7 +112,7 @@ describe('requestAskAnswer', () => {
     const someNumber = [...allowedNumbers(p)].find(n => Number.isInteger(n) && n > 0) ?? 1;
     const fetchImpl = reply(200, { scope: 'personal', answer: `Your data shows a factor around ${someNumber} worth watching.`, model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(p, [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [], scheduleDraft: null });
+    expect(r).toEqual({ ok: true, scope: 'personal', category: 'general', answer: `Your data shows a factor around ${someNumber} worth watching.`, drafts: [], scheduleDraft: null, concern: null });
   });
 
   it('drops a personal-scope answer that invents a number not in the report', async () => {
@@ -131,7 +131,7 @@ describe('requestAskAnswer', () => {
   it('a general-knowledge answer is not checked against the report — it is not a claim about this person\'s data', async () => {
     const fetchImpl = reply(200, { scope: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', model: 'claude-sonnet-5' });
     const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [], scheduleDraft: null });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'general', answer: 'Biceps brachii has two heads and flexes the elbow; typical creatine protocols study 3 to 5 grams a day.', drafts: [], scheduleDraft: null, concern: null });
   });
 
   it('a real category value passes through, and an invalid or missing one defaults to "general" rather than trusting the network', async () => {
@@ -189,7 +189,7 @@ describe('requestAskAnswer', () => {
   it('an empty splitDrafts list (still clarifying, or an ordinary answer) is a normal, successful answer', async () => {
     const fetchImpl = reply(200, { scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', splitDrafts: [] });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
-    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [], scheduleDraft: null });
+    expect(r).toEqual({ ok: true, scope: 'general', category: 'training', answer: 'Which muscles do you want this split to focus on?', drafts: [], scheduleDraft: null, concern: null });
   });
 
   it('one message describing two splits at once gets back a draft for each, independently applicable', async () => {
@@ -310,5 +310,18 @@ describe('requestAskAnswer', () => {
     const fetchImpl = reply(200, { scope: 'personal', category: 'training', answer: 'You now train 999 days a week.' });
     const r = await requestAskAnswer(withPush(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
     expect(r.ok).toBe(false);
+  });
+
+  it('a real concern value passes through', async () => {
+    const fetchImpl = reply(200, { scope: 'general', category: 'general', answer: 'That sounds really hard to carry.', concern: 'crisis' });
+    const r = await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl });
+    expect(r).toMatchObject({ ok: true, concern: 'crisis' });
+  });
+
+  it('an invalid or missing concern defaults to null rather than trusting the network', async () => {
+    const withBogus = reply(200, { scope: 'general', category: 'general', answer: 'ok', concern: 'not-a-real-concern' });
+    expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withBogus })).toMatchObject({ ok: true, concern: null });
+    const withMissing = reply(200, { scope: 'general', category: 'general', answer: 'ok' });
+    expect(await requestAskAnswer(payload(), [], { url: 'https://proxy.example', deviceId: 'dev_test', fetchImpl: withMissing })).toMatchObject({ ok: true, concern: null });
   });
 });

@@ -70,7 +70,7 @@ const noSplits = { splits: [], customExercises: [], schedule: emptySchedule() };
 async function acceptsGeneralAnswer(question: string, answerWithOutsideNumbers: string) {
   const payload = buildAskPayload(sink.report, [], question, { goal: 'lean', unit: 'kg', ...noSplits });
   const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'general', answer: answerWithOutsideNumbers, model: 'claude-sonnet-5' }) });
-  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [], scheduleDraft: null });
+  expect(r, question).toEqual({ ok: true, scope: 'general', category: 'general', answer: answerWithOutsideNumbers, drafts: [], scheduleDraft: null, concern: null });
 }
 
 describe('general knowledge (8): anatomy, machines, reps, nutrition — none of this needs the report', () => {
@@ -287,5 +287,74 @@ describe('mixed personal + general (2): the subtlest category — one answer, on
     // The failure mode this guidance avoids: the same idea with a precise outside number would wrongly fail personal-scope validation.
     const withOutsideNumber = 'You have been at 60kg for several sessions. In general, muscle protein synthesis stays elevated for about 24 to 48 hours after a session.';
     expect(validateText(withOutsideNumber, allowedNumbers(payload)).ok).toBe(false);
+  });
+});
+
+/**
+ * From a persona-based audit ("pretend you are 100 users... new/old-time/
+ * medium, kid, old age, teen, woman, men, etc.") against the prompt as it
+ * stood before this describe block: a stated-minor age, pregnancy and PEDs
+ * had no explicit handling, and a named-but-general chronic-condition
+ * question risked over-deflection. Closed as prompt-only extensions to
+ * rule 4/2 (the payload never carries age/sex/pregnancy — whatever
+ * context exists only ever arrives typed into the question itself), plus
+ * a new rule 17 "concern" flag for two gaps that were missing entirely:
+ * crisis/self-harm language and disordered-eating-adjacent requests. See
+ * COACH_BRAIN.md's decision log.
+ */
+describe('persona-audit gaps (6): minors, pregnancy, PEDs, a named-but-general condition, crisis and disordered-eating signals', () => {
+  it('a stated child/young-teen age is its own individualized case for training/supplement specifics, general education still answered', () => {
+    expect(PROMPT_SOURCE).toContain('When the person states they are a child or a young teen');
+    expect(PROMPT_SOURCE).toContain('a parent or guardian and, for anything supplement- or dosage-shaped, a doctor');
+    expect(PROMPT_SOURCE).toContain("don't refuse the general education itself");
+  });
+
+  it('pregnancy/postpartum is named as general scope, with the same general/individualized split as everything else in rule 4', () => {
+    expect(PROMPT_SOURCE).toContain('reproductive health, pregnancy and postpartum recovery in general');
+    expect(PROMPT_SOURCE).toContain('"what exercises are generally fine to keep doing during pregnancy" is general');
+    expect(PROMPT_SOURCE).toContain('is the individualized case, general picture plus a professional referral');
+  });
+
+  it('what pregnancy exercise is generally fine is answered fully, like any other general-knowledge question', () =>
+    acceptsGeneralAnswer('Is it generally fine to keep lifting weights during pregnancy?', 'Most people can safely continue moderate resistance training through pregnancy, adjusting as things get less comfortable — checking in with a doctor about anything specific to you is still worthwhile.'));
+
+  it('performance-enhancing drugs get an honest, harm-aware explanation, never help planning a cycle or dosage', () => {
+    expect(PROMPT_SOURCE).toContain('performance-enhancing drugs (steroids, SARMs, prohormones)');
+    expect(PROMPT_SOURCE).toContain('never help plan a cycle or a dosage or encourage taking them for faster results');
+  });
+
+  it('naming a condition does not by itself make a question individualized — a general question about it still gets a full answer', () => {
+    expect(PROMPT_SOURCE).toContain("Naming a condition doesn't by itself make a question individualized");
+    expect(PROMPT_SOURCE).toContain('is swimming generally fine for someone with asthma');
+  });
+
+  it('is cardio generally fine with asthma is answered fully, not deflected just for naming a condition', () =>
+    acceptsGeneralAnswer('Is cardio generally safe for someone with asthma?', 'Most people with well-managed asthma can do cardio safely, often starting with a longer warm-up and keeping a rescue inhaler nearby.'));
+
+  it('a crisis or disordered-eating signal sets "concern" as its own flag, distinct from a normal reply, and the prompt tells the model never to go quiet about it', () => {
+    expect(PROMPT_SOURCE).toContain('Set "concern" when the question itself carries a real signal of crisis');
+    expect(PROMPT_SOURCE).toContain('disordered-eating pattern (extreme restriction, compensatory behavior');
+    expect(PROMPT_SOURCE).toContain('"crisis" or "disordered_eating" respectively, null otherwise');
+    expect(PROMPT_SOURCE).toContain('Never go quiet or refuse to engage when this comes up');
+  });
+
+  it('a reply flagging "crisis" round-trips through requestAskAnswer as its own field, independent of scope/drafts', async () => {
+    const payload = buildAskPayload(sink.report, [], 'I feel like giving up on everything lately, training doesn\'t even help anymore', { goal: 'lean', unit: 'kg', ...noSplits });
+    const fetchImpl = reply(200, { scope: 'general', category: 'general', answer: 'That sounds like a lot to be carrying — you don\'t have to figure it out alone.', concern: 'crisis' });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl });
+    expect(r).toMatchObject({ ok: true, concern: 'crisis' });
+  });
+
+  it('a reply flagging "disordered_eating" round-trips the same way', async () => {
+    const payload = buildAskPayload(sink.report, [], 'Fastest way to lose 20 pounds in two weeks, I don\'t care if it\'s healthy', { goal: 'lean', unit: 'kg', ...noSplits });
+    const fetchImpl = reply(200, { scope: 'general', category: 'general', answer: 'That pace is worth slowing down on and talking through with someone.', concern: 'disordered_eating' });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl });
+    expect(r).toMatchObject({ ok: true, concern: 'disordered_eating' });
+  });
+
+  it('an ordinary reply carries concern: null, not omitted', async () => {
+    const payload = buildAskPayload(sink.report, [], 'What does creatine do?', { goal: 'lean', unit: 'kg', ...noSplits });
+    const r = await requestAskAnswer(payload, [], { ...opts, fetchImpl: reply(200, { scope: 'general', answer: 'It helps regenerate ATP for short bursts of effort.' }) });
+    expect(r).toMatchObject({ ok: true, concern: null });
   });
 });

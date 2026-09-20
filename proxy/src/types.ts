@@ -147,6 +147,8 @@ export interface AskReply {
   splitDrafts: SplitDraftReply[];
   /** Present only when this reply actually proposes rearranging the weekly schedule — the full week, every day, since the app replaces the whole thing with exactly what's here. Null for an ordinary answer. */
   scheduleDraft: WeekSchedule | null;
+  /** Set by the model when the question carries a crisis or disordered-eating signal (promptAsk.ts rule 17) — null for nearly every reply. A safety flag, not a finding about the person; the app shows a fixed resource card whenever this isn't null. */
+  concern: 'crisis' | 'disordered_eating' | null;
   model: string;
   usage: { inputTokens: number; outputTokens: number; cacheReadTokens: number };
 }

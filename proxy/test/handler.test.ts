@@ -69,10 +69,10 @@ const notesRouteWith = (call: typeof stubNotes): RouteConfig => ({
   async call() { const out = await call(); return { flags: out.flags, model: out.model, usage: out.usage }; },
 });
 
-const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], scheduleDraft: null as AskReply['scheduleDraft'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
+const stubAsk = async () => ({ scope: 'personal' as const, category: 'training' as const, answer: 'Chest sets dropped from 14.5 to 11.9 a week over the last three weeks.', splitDrafts: [] as AskReply['splitDrafts'], scheduleDraft: null as AskReply['scheduleDraft'], concern: null as AskReply['concern'], model: 'claude-sonnet-5', usage: { inputTokens: 1800, outputTokens: 60, cacheReadTokens: 0 } });
 const askRouteWith = (call: typeof stubAsk): RouteConfig => ({
   path: '/ask', maxBody: MAX_ASK_BODY_BYTES, validate: validateAskPayload,
-  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, model: out.model, usage: out.usage }; },
+  async call() { const out = await call(); return { scope: out.scope, category: out.category, answer: out.answer, splitDrafts: out.splitDrafts, scheduleDraft: out.scheduleDraft, concern: out.concern, model: out.model, usage: out.usage }; },
 });
 
 const stubAskWithSplit = async () => ({
@@ -80,6 +80,7 @@ const stubAskWithSplit = async () => ({
   answer: 'Added Face Pull to Push for rear-delt balance.',
   splitDrafts: [{ action: 'modify' as const, splitId: 'split_push', name: 'Push', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_face_pull', sets: 3 }] }],
   scheduleDraft: null as AskReply['scheduleDraft'],
+  concern: null as AskReply['concern'],
   model: 'claude-sonnet-5', usage: { inputTokens: 2200, outputTokens: 90, cacheReadTokens: 1800 },
 });
 
@@ -88,6 +89,7 @@ const stubAskWithSchedule = async () => ({
   answer: 'Moved Push to Wednesday and Pull to Friday, keeping two days of rest between them.',
   splitDrafts: [] as AskReply['splitDrafts'],
   scheduleDraft: { sun: null, mon: null, tue: null, wed: 'split_push', thu: null, fri: 'split_pull', sat: null },
+  concern: null as AskReply['concern'],
   model: 'claude-sonnet-5', usage: { inputTokens: 2000, outputTokens: 70, cacheReadTokens: 1800 },
 });
 
@@ -383,6 +385,7 @@ describe('handler: multiple routes in one Worker', () => {
         { action: 'create' as const, splitId: null, name: 'Pull', focus: ['lats'], exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 3 }] },
       ],
       scheduleDraft: null as AskReply['scheduleDraft'],
+      concern: null as AskReply['concern'],
       model: 'claude-sonnet-5', usage: { inputTokens: 2400, outputTokens: 140, cacheReadTokens: 1800 },
     }))]);
     const res = await handleMulti(post('/ask', { ...askPayload(), question: 'Push day: bench press. Pull day: lat pulldown.' }), env());
@@ -548,7 +551,21 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('a schedule tweak touches every day of their week, so it is a bigger, more disruptive action than adding an exercise to one split');
     expect(ASK_SYSTEM_PROMPT).toContain('spacing so the same muscle group doesn\'t stack on back-to-back days without reason');
     expect(ASK_SYSTEM_PROMPT).toContain('If you don\'t have enough to make a real judgment');
-    expect(ASK_SYSTEM_PROMPT).toContain('and "scheduleDraft" (usually null)');
+    expect(ASK_SYSTEM_PROMPT).toContain('"scheduleDraft" (usually null), and "concern" (usually null)');
+  });
+
+  it('ask prompt broadens the individualized-medical line to minors, pregnancy, PEDs and named-but-general conditions, and sets a concern flag for crisis or disordered-eating signals', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('reproductive health, pregnancy and postpartum recovery in general');
+    expect(ASK_SYSTEM_PROMPT).toContain('Naming a condition doesn\'t by itself make a question individualized');
+    expect(ASK_SYSTEM_PROMPT).toContain('"I\'m 32 weeks with [a stated complication], is this specific thing safe for me" is the individualized case');
+    expect(ASK_SYSTEM_PROMPT).toContain('performance-enhancing drugs (steroids, SARMs, prohormones)');
+    expect(ASK_SYSTEM_PROMPT).toContain('never help plan a cycle or a dosage or encourage taking them for faster results');
+    expect(ASK_SYSTEM_PROMPT).toContain('When the person states they are a child or a young teen');
+    expect(ASK_SYSTEM_PROMPT).toContain('a parent or guardian and, for anything supplement- or dosage-shaped, a doctor');
+    expect(ASK_SYSTEM_PROMPT).toContain('Set "concern" when the question itself carries a real signal of crisis');
+    expect(ASK_SYSTEM_PROMPT).toContain('"crisis" or "disordered_eating" respectively, null otherwise');
+    expect(ASK_SYSTEM_PROMPT).toContain('that resource must not depend on you remembering to mention it in "answer"');
+    expect(ASK_SYSTEM_PROMPT).toContain('Never go quiet or refuse to engage when this comes up');
   });
 
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {

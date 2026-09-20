@@ -57,6 +57,8 @@ const AskSchema = z.object({
   splitDrafts: z.array(SplitDraftSchema).max(MAX_SPLIT_DRAFTS),
   /** Present only when this reply actually proposes rearranging the weekly schedule — most replies leave this null. */
   scheduleDraft: ScheduleDraftSchema.nullable(),
+  /** Set by the model itself (promptAsk.ts rule 17) when the question carries a crisis or disordered-eating signal — null for nearly every reply. The app renders a fixed resource card whenever this isn't null; it is a safety flag, not a finding about the person, so it is never checked against the report. */
+  concern: z.enum(['crisis', 'disordered_eating']).nullable(),
 });
 
 const TagSchema = z.object({
@@ -178,6 +180,21 @@ const usageOf = (response: { usage: { input_tokens: number; output_tokens: numbe
  */
 const EFFORT = 'medium' as const;
 
+/**
+ * /ask alone gets a higher effort than every other route. Its prompt now
+ * carries real judgment calls with safety weight — a stated-minor age, a
+ * pregnancy question, a named chronic condition that may or may not be the
+ * individualized case, a crisis or disordered-eating signal to set neither
+ * too eagerly nor too rarely — and EFFORT (medium, tuned for the other
+ * routes' latency) trades away exactly the reasoning depth those calls
+ * need. "high" is the next step, not "xhigh"/"max": this is still a
+ * bounded chat reply against a fixed, short schema, not an open-ended
+ * agentic task, so the extra depth buys judgment quality, not more output
+ * length — and /ask already budgets the longest timeout of any route
+ * (70s) for exactly this kind of longer reasoning turn.
+ */
+const ASK_EFFORT = 'high' as const;
+
 export const callAnthropic: CallModel = async (payload, env) => {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, maxRetries: 1, timeout: 55_000 });
   const model = modelFor(env, env.MODEL_EXPLAIN);
@@ -290,8 +307,8 @@ export const callAsk: CallAsk = async (payload, env) => {
     system: [{ type: 'text', text: ASK_SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
     messages: askMessages(payload),
     tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: ASK_WEB_SEARCH_MAX_USES, allowed_domains: ASK_WEB_SEARCH_ALLOWED_DOMAINS }],
-    output_config: { format: zodOutputFormat(AskSchema), effort: EFFORT },
+    output_config: { format: zodOutputFormat(AskSchema), effort: ASK_EFFORT },
   });
   const parsed = requireParsed(response);
-  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, model: response.model, usage: usageOf(response) };
+  return { scope: parsed.scope, category: parsed.category, answer: stripFormattingLeak(parsed.answer), splitDrafts: parsed.splitDrafts, scheduleDraft: parsed.scheduleDraft, concern: parsed.concern, model: response.model, usage: usageOf(response) };
 };
