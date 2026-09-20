@@ -688,6 +688,34 @@ describe('prompts', () => {
     expect(ASK_SYSTEM_PROMPT).toContain('the one deliberate exception is "bmi" (rule 18), a single derived number, never their actual weight or height');
   });
 
+  it('ask prompt gives Escobar a self-model — its own name, honesty about being an AI, and its real capabilities and limits', () => {
+    // Found live in the intelligence audit: "Escobar" appeared exactly once in the whole prompt,
+    // describing a UI button, never as the model's own identity — asked its name, it had nothing
+    // grounded to answer from.
+    expect(ASK_SYSTEM_PROMPT).toContain('you go by "Escobar" in this app');
+    expect(ASK_SYSTEM_PROMPT).toContain('if asked directly whether you\'re a real person or an AI, say so honestly');
+    expect(ASK_SYSTEM_PROMPT).toContain('you don\'t act on your own between messages');
+    expect(ASK_SYSTEM_PROMPT).toContain('nothing you propose ever changes anything until they tap the action button under it');
+  });
+
+  it('ask prompt tells Escobar how to accept a correction rather than argue or repeat the same mistake', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('accept it plainly and move on');
+    expect(ASK_SYSTEM_PROMPT).toContain('never repeating the same mistake in the next sentence');
+    expect(ASK_SYSTEM_PROMPT).toContain('ask a short, specific question about which part to fix');
+  });
+
+  it('ask prompt extends real warmth to ordinary discouragement, not just rule 17\'s crisis threshold', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('most discouragement never reaches it, and still deserves a real response');
+    expect(ASK_SYSTEM_PROMPT).toContain('meet the feeling first, briefly and genuinely');
+    expect(ASK_SYSTEM_PROMPT).toContain('not a new safety mechanism like rule 17');
+  });
+
+  it('ask prompt licenses ordinary weekday/date reasoning from the bare "today" date, distinct from rule 3\'s ban on inventing a personal number', () => {
+    expect(ASK_SYSTEM_PROMPT).toContain('is a bare date (YYYY-MM-DD), not a weekday name');
+    expect(ASK_SYSTEM_PROMPT).toContain('this is ordinary calendar arithmetic, not an invented personal fact');
+    expect(ASK_SYSTEM_PROMPT).toContain('never say you don\'t know what day it is or can\'t work out a relative date');
+  });
+
   it('identify-exercise prompt names the closed vocabularies, asks for honest confidence and forbids describing a person', () => {
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('rear_delts');
     expect(IDENTIFY_SYSTEM_PROMPT).toContain('horizontal_push');
