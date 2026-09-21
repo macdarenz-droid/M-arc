@@ -13,3 +13,4 @@ www/
 .vscode/
 screenshots/
 test-results/
+.tmp/
