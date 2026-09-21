@@ -12,7 +12,7 @@
       "statement": "To keep adapting, training has to get a little harder over time. Adding repetitions at the same load is real progress, not a placeholder for adding weight. Both load progression and rep progression grow muscle about equally.",
       "disputed": "Nothing about the direction. How fast to progress, and by how much, varies by person.",
       "appUse": "Double progression: add a rep until the top of the range, hit it twice without max effort, then take one small load step.",
-      "findingKinds": ["progressing", "plateau", "decline", "session_execution"],
+      "findingKinds": ["progressing", "plateau", "decline", "session_execution", "near_miss"],
       "proposalKinds": ["load_next"],
       "citations": [
         { "key": "acsm2009", "authors": "American College of Sports Medicine", "year": 2009, "title": "Position stand. Progression models in resistance training for healthy adults", "journal": "Med Sci Sports Exerc", "where": "41(3):687-708", "pmid": "19204579", "verified": "search-index" },
@@ -228,7 +228,7 @@
       "statement": "Formulas that predict a one-rep max from a set of several reps correlate well with real maxes but carry bias, and they get worse as reps go up. Treat the number as about right, not exact, and never as a reason to test a true max.",
       "disputed": "Which equation is best; none is exact.",
       "appUse": "Epley estimate capped at ten reps, always worded as about X kg one-rep estimate.",
-      "findingKinds": ["record"],
+      "findingKinds": ["record", "near_miss"],
       "proposalKinds": [],
       "citations": [
         { "key": "lesuer1997", "authors": "LeSuer DA, McCormick JH, Mayhew JL, Wasserstein RL, Arnold MD", "year": 1997, "title": "The Accuracy of Prediction Equations for Estimating 1-RM Performance in the Bench Press, Squat, and Deadlift", "journal": "J Strength Cond Res", "where": "11(4):211-213", "verified": "search-index" }

@@ -29,7 +29,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 
 const CATEGORY_OF: Record<FindingKind, Category> = {
   volume_drop: 'volume', volume_spike: 'volume', weekly_sets_out_of_band: 'volume', week_review: 'volume', uncovered_muscle: 'balance', focus_behind: 'focus',
-  plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress', session_execution: 'progress',
+  plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress', near_miss: 'progress', session_execution: 'progress',
   under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
   redundant_exercises: 'balance', balance_imbalance: 'balance', chronic_skip: 'consistency',
@@ -196,6 +196,18 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: `${str(m.detail)}, up from ${num(m.previous)}.`,
         means: 'Records mark real progress: heavier, stronger, or more reps at a load. Total volume never counts as one.',
         action: 'Nice. Rate the effort so the coach knows how close to your limit that was.' };
+    case 'near_miss': {
+      const kind = str(m.recordKind);
+      let noticed: string;
+      if (kind === 'reps_at_load' && num(m.current) === num(m.standing)) noticed = `Matched your ${num(m.standing)}-rep best at ${load(m.loadKg, ctx)}. ${plural(num(m.gap), 'more rep')} would be a new rep record.`;
+      else if (kind === 'reps_at_load') noticed = `${num(m.current)} reps at ${load(m.loadKg, ctx)}; previous best ${num(m.standing)}. ${num(m.required)} would beat it.`;
+      else if (kind === 'best_reps') noticed = `${num(m.current)} reps; previous best ${num(m.standing)}. ${num(m.required)} would beat it.`;
+      else if (kind === 'heaviest') noticed = `Logged ${load(m.current, ctx)}; heaviest previously ${load(m.standing, ctx)}. A load above ${load(m.standing, ctx)} would beat it; the next normal step is ${load(m.required, ctx)}.`;
+      else noticed = `Strength estimate ${load(m.current, ctx)}; the next record threshold is ${load(m.required, ctx)}.`;
+      return { title: `Close to a record: ${ex}`, noticed,
+        means: 'This recognizes work you already logged. It does not change the next target.',
+        action: 'A useful marker for another day; no extra set needed now.' };
+    }
     case 'session_execution':
       return {
         title: `${f.subject.splitName ?? 'Session'}: plan and actual`,

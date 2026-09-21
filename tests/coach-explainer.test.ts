@@ -130,6 +130,15 @@ describe('number validation', () => {
     for (const n of [2047, 11, 23, 2048, 2, 27]) expect(allowed.has(n), `date part ${n} must not be allowed`).toBe(false);
     expect(validateText('The next step projects around 23 November 2047.', allowed)).toMatchObject({ ok: false, offending: [23, 2047] });
   });
+  it('grounds every near-miss quantity as an explicit scalar without admitting its session date', () => {
+    const nearMiss = { ...p, findings: [{ ...p.findings[0]!, id: 'near_miss:bench', kind: 'near_miss', metrics: {
+      recordKind: 'reps_at_load', current: 7, standing: 8, required: 9, gap: 2, loadKg: 60, sessionDay: '2047-11-23',
+    } }] };
+    const allowed = allowedNumbers(nearMiss);
+    for (const n of [7, 8, 9, 2, 60]) expect(allowed.has(n), `near-miss scalar ${n}`).toBe(true);
+    for (const n of [2047, 11, 23]) expect(allowed.has(n), `date part ${n} must not be allowed`).toBe(false);
+    expect(validateText('7 reps at 60 kg; previous best 8. 9 would beat it by 2 reps.', allowed).ok).toBe(true);
+  });
   it('allows "bmi" when present — a single derived number, the one deliberate exception to "no body measurements" — and doesn\'t invent one when absent', () => {
     const withBmi = allowedNumbers({ ...p, bmi: 26 });
     expect(withBmi.has(26)).toBe(true);

@@ -12,7 +12,7 @@ import { daysBetween } from '@/core/dates';
 import { reopenReason } from './reopen';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectChronicSkip, detectConsistencyDrift, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
+  detectChronicSkip, detectConsistencyDrift, detectFocus, detectHabit, detectNearMiss, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
   detectSessionExecution, detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planConsistencyShift, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
@@ -53,6 +53,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('uncovered', () => detectUncovered(ctx)),
     ...safe('progress', () => detectProgress(ctx)),
     ...safe('records', () => detectRecords(ctx)),
+    ...safe('near-miss', () => detectNearMiss(ctx)),
     ...safe('recovery', () => detectUnderRecovered(ctx, recovery)),
     ...safe('effort-missing', () => detectEffortMissing(ctx)),
     ...safe('effort-drift', () => detectEffortDrift(ctx)),

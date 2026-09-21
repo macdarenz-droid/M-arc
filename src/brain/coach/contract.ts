@@ -45,6 +45,7 @@ export const FINDING_KINDS = [
   'low_sleep_readiness',
   'low_readiness',
   'record',
+  'near_miss',
   'first_sessions',
   'note_flag',
 ] as const;
@@ -211,6 +212,7 @@ export const PRINCIPLES_BY_FINDING: Record<FindingKind, string[]> = {
   low_sleep_readiness: ['sleep_and_performance'],
   low_readiness: ['subjective_readiness_monitoring'],
   record: ['one_rm_estimation'],
+  near_miss: ['progressive_overload', 'one_rm_estimation'],
   first_sessions: ['beginner_progression'],
   note_flag: ['subjective_readiness_monitoring'],
 };
