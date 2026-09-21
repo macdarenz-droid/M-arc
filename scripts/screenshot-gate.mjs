@@ -61,8 +61,8 @@ for (const theme of themes) {
   await page.waitForTimeout(400);
   const shot = (name) => page.screenshot({ path: `${OUT}/${theme}-${name}.png` });
   // Scoped to the bottom tab bar, not the whole page: a card's own aria-label (a suggestion,
-  // an insight, a session) can legitimately contain a tab's name as a substring — e.g. a
-  // "Today: Legs" plan suggestion — and Playwright's role/name matching is substring by
+  // an insight, a session) can legitimately contain a tab's name as a substring - e.g. a
+  // "Today: Legs" plan suggestion - and Playwright's role/name matching is substring by
   // default, so an unscoped lookup can match either one.
   const nav = page.getByRole('navigation', { name: 'Main' });
   await shot('today');
@@ -267,11 +267,11 @@ for (const theme of themes) {
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
     await debriefPage.getByRole('heading', { name: 'Plan and actual' }).waitFor();
-    await debriefPage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefPage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
     await debriefPage.getByText('Starting suggestion, not a target learned from your history.', { exact: true }).waitFor();
-    await debriefPage.getByText(/Additional set; logged 62\.5 kg × 5/).waitFor();
+    await debriefPage.getByText(/Additional set; logged 62\.5 kg x 5/).waitFor();
     await debriefPage.getByRole('button', { name: 'Show comparison' }).focus(); await debriefPage.keyboard.press('Enter');
-    await debriefPage.getByText(/Previous: 60 kg × 10, 1800 kg total/).waitFor();
+    await debriefPage.getByText(/Previous: 60 kg x 10, 1800 kg total/).waitFor();
     await debriefPage.screenshot({ path: `${OUT}/silent-black-session-debrief-history.png` });
     await debriefPage.setViewportSize({ width: 360, height: 800 });
     if (await debriefPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: history debrief overflows at 360px');
@@ -282,7 +282,7 @@ for (const theme of themes) {
     await debriefPage.reload(); await debriefPage.waitForSelector('.nav');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefPage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefPage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
     await debriefPage.keyboard.press('Escape');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
     await debriefPage.getByRole('button', { name: 'Settings' }).click();
@@ -305,7 +305,7 @@ for (const theme of themes) {
     await debriefRestorePage.keyboard.press('Escape');
     await debriefRestorePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefRestorePage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefRestorePage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefRestorePage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
     await debriefRestoreCtx.close();
 
     const debriefLbState = structuredClone(debriefState); debriefLbState.preferences.weightUnit = 'lb';
@@ -316,7 +316,7 @@ for (const theme of themes) {
     await debriefLbPage.goto(`http://localhost:${PORT}/`); await debriefLbPage.waitForSelector('.nav');
     await debriefLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefLbPage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefLbPage.getByText('Accepted target 138 lb × 6', { exact: true }).waitFor();
+    await debriefLbPage.getByText('Accepted target 138 lb x 6', { exact: true }).waitFor();
     await debriefLbCtx.close();
     if (debriefRequests.length) errors.push(`silent-black: session debrief made external requests (${debriefRequests.join(', ')})`);
 
@@ -392,7 +392,7 @@ for (const theme of themes) {
     await repairLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
     await repairLbPage.getByRole('button', { name: 'Finish' }).click();
     await repairLbPage.getByRole('button', { name: /Finish and save|Just today/ }).click();
-    await repairLbPage.getByText(/Barbell Bench Press · Set 1 · 132\.5 lb × 8/).waitFor();
+    await repairLbPage.getByText(/Barbell Bench Press � Set 1 � 132\.5 lb x 8/).waitFor();
     await repairLbCtx.close();
     if (repairRequests.length) errors.push(`silent-black: effort repair made external requests (${repairRequests.join(', ')})`);
 
@@ -627,6 +627,25 @@ for (const theme of themes) {
     await nearPage.setViewportSize({ width: 360, height: 800 });
     if (await nearPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: near-miss finish note overflows at 360px');
     await nearPage.setViewportSize({ width: 390, height: 844 });
+    // The migrated fixture deliberately produces many unrelated Coach findings.
+    // Keep this presentation check focused on the three near-miss sessions so
+    // the six-card Coach shortlist cannot vary with timezone-sensitive legacy
+    // readiness, schedule or body data on CI runners.
+    await nearPage.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('marc.state.v1'));
+      saved.body = [];
+      saved.readiness = [];
+      saved.health = { connected: false };
+      saved.schedule = { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null };
+      saved.splits = [];
+      saved.coach = {
+        ...saved.coach,
+        dismissed: {}, snoozedUntil: {}, accepted: {}, dismissalEvidence: {}, learnedStarts: {},
+        todayPlan: null, deload: null, preferenceFacts: [], askThread: [], statedConstraints: [],
+      };
+      localStorage.setItem('marc.state.v1', JSON.stringify(saved));
+    });
+    await nearPage.reload(); await nearPage.waitForSelector('.nav');
     await openNearCoach(nearPage);
     const nearInsight = nearPage.getByLabel('Open insight: Close to a record: Barbell Bench Press');
     await nearInsight.focus(); await nearPage.keyboard.press('Enter');
@@ -943,3 +962,4 @@ stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
 console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified.');
+
