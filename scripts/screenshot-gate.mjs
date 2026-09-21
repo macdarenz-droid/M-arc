@@ -25,9 +25,14 @@ for (let i = 0; ; i++) {
 }
 console.log('preview ready on', PORT);
 
+// Share one clock and timezone across fixtures and every browser context.
+// Timers still run normally; only Date is fixed. A morning run must not turn
+// a saved near miss into a future workout that the Coach correctly excludes.
+const fixtureNow = new Date(process.env.MARC_GATE_NOW || '2026-09-21T18:30:00.000Z');
+if (!Number.isFinite(fixtureNow.getTime())) throw new Error('Invalid MARC_GATE_NOW');
 // Realistic legacy data so the migration path is exercised end to end.
-const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
-const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
+const day = (offset) => { const d = new Date(fixtureNow); d.setUTCDate(d.getUTCDate() - offset); return d.toISOString().slice(0, 10); };
+const iso = (offset, h = 17) => { const d = new Date(fixtureNow); d.setUTCDate(d.getUTCDate() - offset); d.setUTCHours(h, 30, 0, 0); return d.toISOString(); };
 const rec = (i, offset, dayKey, name, type, muscle, sets, kg0) => ({ id: `r${i}`, day: dayKey, dayKey: day(offset), name, type, muscle, finalizedAt: iso(offset), sets: Array.from({ length: sets }, (_, k) => ({ kg: kg0, reps: 8 + (k % 2), effort: k === sets - 1 ? 'max' : 'ideal' })) });
 const completed = [];
 let i = 0;
@@ -47,10 +52,15 @@ const legacy = {
 };
 
 const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox'] });
+async function gateContext(options) {
+  const context = await browser.newContext({ ...options, timezoneId: 'UTC' });
+  await context.clock.setFixedTime(fixtureNow);
+  return context;
+}
 const themes = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'];
 const errors = [];
 for (const theme of themes) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await gateContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${theme}: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`${theme} console: ${m.text()}`); });
@@ -61,8 +71,8 @@ for (const theme of themes) {
   await page.waitForTimeout(400);
   const shot = (name) => page.screenshot({ path: `${OUT}/${theme}-${name}.png` });
   // Scoped to the bottom tab bar, not the whole page: a card's own aria-label (a suggestion,
-  // an insight, a session) can legitimately contain a tab's name as a substring - e.g. a
-  // "Today: Legs" plan suggestion - and Playwright's role/name matching is substring by
+  // an insight, a session) can legitimately contain a tab's name as a substring — e.g. a
+  // "Today: Legs" plan suggestion — and Playwright's role/name matching is substring by
   // default, so an unscoped lookup can match either one.
   const nav = page.getByRole('navigation', { name: 'Main' });
   await shot('today');
@@ -80,7 +90,7 @@ for (const theme of themes) {
     if (await restoredReview.getByRole('button', { name: 'Details' }).getAttribute('aria-expanded') !== 'false') errors.push('silent-black: review Details state persisted across reload');
     const reviewState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     reviewState.preferences.weightUnit = 'lb';
-    const reviewLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reviewLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const reviewLbPage = await reviewLbCtx.newPage();
     await reviewLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(reviewState));
     await reviewLbPage.goto(`http://localhost:${PORT}/`); await reviewLbPage.waitForSelector('.nav');
@@ -110,7 +120,7 @@ for (const theme of themes) {
     await page.setViewportSize({ width: 390, height: 844 });
     const liveState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     liveState.preferences.weightUnit = 'lb';
-    const lbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const lbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const lbPage = await lbCtx.newPage();
     lbPage.on('pageerror', e => errors.push(`silent-black lb: ${e.message}`));
     await lbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(liveState));
@@ -194,7 +204,7 @@ for (const theme of themes) {
       skipState.sessions.push({ id: `gate-skip-${index}`, splitId: push.id, splitName: push.name, day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: loggedIds.map(id => ({ exerciseId: id, name: id, sets: [{ kg: 30 + index * 2.5, reps: 8, effort: 'ideal' }] })), plan: { version: 1, capturedAt: `${day}T10:00:00.000Z`, goal: skipState.goal, deload: null, entries: planned } });
     }
     skipState.active = null;
-    const skipCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const skipCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const skipPage = await skipCtx.newPage();
     skipPage.on('pageerror', e => errors.push(`silent-black chronic skip: ${e.message}`));
     await skipPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(skipState));
@@ -223,7 +233,7 @@ for (const theme of themes) {
     legacySkip.splits = legacySkip.splits.filter(split => split.id === 'split_push');
     legacySkip.sessions = legacySkip.sessions.filter(session => session.splitId === 'split_push').map(session => ({ ...session, plan: undefined }));
     await skipCtx.close();
-    const legacyCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const legacyCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const legacyPage = await legacyCtx.newPage();
     legacyPage.on('pageerror', e => errors.push(`silent-black legacy skip: ${e.message}`));
     await legacyPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(legacySkip));
@@ -259,7 +269,7 @@ for (const theme of themes) {
       ], plan: { version: 1, capturedAt: `${currentDay}T09:59:00.000Z`, goal: debriefState.goal, deload: null, entries: planEntries } };
     debriefState.sessions = [priorSession, currentSession];
     const debriefRequests = [];
-    const debriefCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const debriefCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const debriefPage = await debriefCtx.newPage();
     debriefPage.on('pageerror', error => errors.push(`silent-black debrief: ${error.message}`));
     debriefPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
@@ -268,11 +278,11 @@ for (const theme of themes) {
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
     await debriefPage.getByRole('heading', { name: 'Plan and actual' }).waitFor();
-    await debriefPage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
+    await debriefPage.getByText('Accepted target 62.5 kg \u00d7 6', { exact: true }).waitFor();
     await debriefPage.getByText('Starting suggestion, not a target learned from your history.', { exact: true }).waitFor();
-    await debriefPage.getByText(/Additional set; logged 62\.5 kg x 5/).waitFor();
+    await debriefPage.getByText(/Additional set; logged 62\.5 kg \u00d7 5/).waitFor();
     await debriefPage.getByRole('button', { name: 'Show comparison' }).focus(); await debriefPage.keyboard.press('Enter');
-    await debriefPage.getByText(/Previous: 60 kg x 10, 1800 kg total/).waitFor();
+    await debriefPage.getByText(/Previous: 60 kg \u00d7 10, 1800 kg total/).waitFor();
     await debriefPage.screenshot({ path: `${OUT}/silent-black-session-debrief-history.png` });
     await debriefPage.setViewportSize({ width: 360, height: 800 });
     if (await debriefPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: history debrief overflows at 360px');
@@ -283,7 +293,7 @@ for (const theme of themes) {
     await debriefPage.reload(); await debriefPage.waitForSelector('.nav');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefPage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
+    await debriefPage.getByText('Accepted target 62.5 kg \u00d7 6', { exact: true }).waitFor();
     await debriefPage.keyboard.press('Escape');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
     await debriefPage.getByRole('button', { name: 'Settings' }).click();
@@ -294,7 +304,7 @@ for (const theme of themes) {
     await debriefDownload.saveAs(debriefBackupPath);
     await debriefCtx.close();
 
-    const debriefRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const debriefRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const debriefRestorePage = await debriefRestoreCtx.newPage();
     debriefRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
     await debriefRestorePage.goto(`http://localhost:${PORT}/`); await debriefRestorePage.waitForSelector('.nav');
@@ -306,18 +316,18 @@ for (const theme of themes) {
     await debriefRestorePage.keyboard.press('Escape');
     await debriefRestorePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefRestorePage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefRestorePage.getByText('Accepted target 62.5 kg x 6', { exact: true }).waitFor();
+    await debriefRestorePage.getByText('Accepted target 62.5 kg \u00d7 6', { exact: true }).waitFor();
     await debriefRestoreCtx.close();
 
     const debriefLbState = structuredClone(debriefState); debriefLbState.preferences.weightUnit = 'lb';
-    const debriefLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const debriefLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const debriefLbPage = await debriefLbCtx.newPage();
     debriefLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
     await debriefLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(debriefLbState));
     await debriefLbPage.goto(`http://localhost:${PORT}/`); await debriefLbPage.waitForSelector('.nav');
     await debriefLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefLbPage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefLbPage.getByText('Accepted target 138 lb x 6', { exact: true }).waitFor();
+    await debriefLbPage.getByText('Accepted target 138 lb \u00d7 6', { exact: true }).waitFor();
     await debriefLbCtx.close();
     if (debriefRequests.length) errors.push(`silent-black: session debrief made external requests (${debriefRequests.join(', ')})`);
 
@@ -331,7 +341,7 @@ for (const theme of themes) {
       plan: { version: 1, capturedAt: repairStartedAt, goal: repairState.goal, deload: null, entries: [{ id: 'gate-repair-entry', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 3, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null })) }] },
     };
     const repairRequests = [];
-    const repairCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const repairCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const repairPage = await repairCtx.newPage();
     repairPage.on('pageerror', error => errors.push(`silent-black effort repair: ${error.message}`));
     repairPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
@@ -371,7 +381,7 @@ for (const theme of themes) {
     await repairDownload.saveAs(repairBackupPath);
     await repairCtx.close();
 
-    const repairRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const repairRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const repairRestorePage = await repairRestoreCtx.newPage();
     repairRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
     await repairRestorePage.goto(`http://localhost:${PORT}/`); await repairRestorePage.waitForSelector('.nav');
@@ -385,7 +395,7 @@ for (const theme of themes) {
     await repairRestoreCtx.close();
 
     const repairLbState = structuredClone(repairState); repairLbState.preferences.weightUnit = 'lb';
-    const repairLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const repairLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const repairLbPage = await repairLbCtx.newPage();
     repairLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
     await repairLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(repairLbState));
@@ -393,7 +403,7 @@ for (const theme of themes) {
     await repairLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
     await repairLbPage.getByRole('button', { name: 'Finish' }).click();
     await repairLbPage.getByRole('button', { name: /Finish and save|Just today/ }).click();
-    await repairLbPage.getByText(/Barbell Bench Press � Set 1 � 132\.5 lb x 8/).waitFor();
+    await repairLbPage.getByText(/Barbell Bench Press \u00b7 Set 1 \u00b7 132\.5 lb \u00d7 8/).waitFor();
     await repairLbCtx.close();
     if (repairRequests.length) errors.push(`silent-black: effort repair made external requests (${repairRequests.join(', ')})`);
 
@@ -414,7 +424,7 @@ for (const theme of themes) {
     };
     const reachRequests = [];
     const reachCopy = '9 reps at 60 kg would beat your previous 8. Only if it feels right today.';
-    const reachCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const reachCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const reachPage = await reachCtx.newPage();
     reachPage.on('pageerror', error => errors.push(`silent-black PR reach: ${error.message}`));
     reachPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
@@ -451,7 +461,7 @@ for (const theme of themes) {
     if (await reachPage.getByText(/^\d+ reps at .*would beat your previous/).count()) errors.push('silent-black: possible record remained after the actual record was logged');
     await reachCtx.close();
 
-    const reachRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reachRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const reachRestorePage = await reachRestoreCtx.newPage();
     reachRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
     await reachRestorePage.goto(`http://localhost:${PORT}/`); await reachRestorePage.waitForSelector('.nav');
@@ -466,7 +476,7 @@ for (const theme of themes) {
     await reachRestoreCtx.close();
 
     const reachLbState = structuredClone(reachState); reachLbState.preferences.weightUnit = 'lb';
-    const reachLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reachLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const reachLbPage = await reachLbCtx.newPage();
     reachLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
     await reachLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(reachLbState));
@@ -477,10 +487,10 @@ for (const theme of themes) {
     if (reachRequests.length) errors.push(`silent-black: PR reach made external requests (${reachRequests.join(', ')})`);
 
     const driftState = structuredClone(source);
-    const addDay = (key, amount) => { const value = new Date(`${key}T12:00:00`); value.setDate(value.getDate() + amount); return value.toISOString().slice(0, 10); };
+    const addDay = (key, amount) => { const value = new Date(`${key}T12:00:00Z`); value.setUTCDate(value.getUTCDate() + amount); return value.toISOString().slice(0, 10); };
     const localToday = day(0);
-    const localDate = new Date(`${localToday}T12:00:00`);
-    const currentMonday = addDay(localToday, -((localDate.getDay() + 6) % 7));
+    const localDate = new Date(`${localToday}T12:00:00Z`);
+    const currentMonday = addDay(localToday, -((localDate.getUTCDay() + 6) % 7));
     const oldestMonday = addDay(currentMonday, -16 * 7);
     const driftSessions = [];
     const driftSession = (week, weekday, splitId, splitName, exerciseId, name) => {
@@ -502,7 +512,7 @@ for (const theme of themes) {
     const driftRequests = [];
     const driftTitle = 'Fri is less common in your logs';
     const driftSuggestionTitle = 'Move Push from Fri to Sat?';
-    const driftCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const driftCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const driftPage = await driftCtx.newPage();
     driftPage.on('pageerror', error => errors.push(`silent-black consistency drift: ${error.message}`));
     driftPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
@@ -542,7 +552,7 @@ for (const theme of themes) {
     await driftDownload.saveAs(driftBackupPath);
     await driftCtx.close();
 
-    const driftRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const driftRestorePage = await driftRestoreCtx.newPage();
     driftRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
     await driftRestorePage.goto(`http://localhost:${PORT}/`); await driftRestorePage.waitForSelector('.nav');
@@ -554,7 +564,7 @@ for (const theme of themes) {
     await driftRestorePage.keyboard.press('Escape'); await openDriftCoach(driftRestorePage);
     await driftRestoreCtx.close();
 
-    const driftDismissCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftDismissCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const driftDismissPage = await driftDismissCtx.newPage();
     driftDismissPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
     await driftDismissPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftState));
@@ -567,7 +577,7 @@ for (const theme of themes) {
     if (afterDriftDismiss.coach.dismissed['schedule:*'] !== 1) errors.push('silent-black: consistency drift dismissal was not remembered');
     await driftDismissCtx.close();
 
-    const driftAcceptCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftAcceptCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const driftAcceptPage = await driftAcceptCtx.newPage();
     driftAcceptPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
     await driftAcceptPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftState));
@@ -580,7 +590,7 @@ for (const theme of themes) {
     await driftAcceptCtx.close();
 
     const driftLbState = structuredClone(driftState); driftLbState.preferences.weightUnit = 'lb';
-    const driftLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const driftLbPage = await driftLbCtx.newPage();
     driftLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
     await driftLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftLbState));
@@ -597,7 +607,7 @@ for (const theme of themes) {
         startedAt: `${sessionDay}T17:00:00`, endedAt: `${sessionDay}T18:00:00`, durationSec: 3600,
         exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 60, reps: 8, effort: 'ideal' }] }] };
     });
-    const nearStartedAt = `${currentDay}T12:00:00`;
+    const nearStartedAt = new Date(fixtureNow.getTime() - 3_600_000).toISOString();
     const nearActive = reps => ({
       splitId: 'split_push', startedAt: nearStartedAt, pausedMs: 0,
       entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false, planEntryId: 'gate-near-entry', sets: [{ kg: 60, reps, effort: 'ideal' }] }],
@@ -615,7 +625,7 @@ for (const theme of themes) {
       await target.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
       await target.getByLabel('Open insight: Close to a record: Barbell Bench Press').waitFor();
     };
-    const nearCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const nearCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const nearPage = await nearCtx.newPage();
     nearPage.on('pageerror', error => errors.push(`silent-black near miss: ${error.message}`));
     nearPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
@@ -628,25 +638,6 @@ for (const theme of themes) {
     await nearPage.setViewportSize({ width: 360, height: 800 });
     if (await nearPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: near-miss finish note overflows at 360px');
     await nearPage.setViewportSize({ width: 390, height: 844 });
-    // The migrated fixture deliberately produces many unrelated Coach findings.
-    // Keep this presentation check focused on the three near-miss sessions so
-    // the six-card Coach shortlist cannot vary with timezone-sensitive legacy
-    // readiness, schedule or body data on CI runners.
-    await nearPage.evaluate(() => {
-      const saved = JSON.parse(localStorage.getItem('marc.state.v1'));
-      saved.body = [];
-      saved.readiness = [];
-      saved.health = { connected: false };
-      saved.schedule = { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null };
-      saved.splits = [];
-      saved.coach = {
-        ...saved.coach,
-        dismissed: {}, snoozedUntil: {}, accepted: {}, dismissalEvidence: {}, learnedStarts: {},
-        todayPlan: null, deload: null, preferenceFacts: [], askThread: [], statedConstraints: [],
-      };
-      localStorage.setItem('marc.state.v1', JSON.stringify(saved));
-    });
-    await nearPage.reload(); await nearPage.waitForSelector('.nav');
     await openNearCoach(nearPage);
     const nearInsight = nearPage.getByLabel('Open insight: Close to a record: Barbell Bench Press');
     await nearInsight.focus(); await nearPage.keyboard.press('Enter');
@@ -664,7 +655,7 @@ for (const theme of themes) {
     await nearDownload.saveAs(nearBackupPath);
     await nearCtx.close();
 
-    const nearRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nearRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const nearRestorePage = await nearRestoreCtx.newPage();
     nearRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
     await nearRestorePage.goto(`http://localhost:${PORT}/`); await nearRestorePage.waitForSelector('.nav');
@@ -677,7 +668,7 @@ for (const theme of themes) {
     await nearRestoreCtx.close();
 
     const nearLbState = structuredClone(nearState); nearLbState.preferences.weightUnit = 'lb';
-    const nearLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nearLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const nearLbPage = await nearLbCtx.newPage();
     nearLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
     await nearLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(nearLbState));
@@ -686,7 +677,7 @@ for (const theme of themes) {
     await nearLbCtx.close();
 
     const recordState = structuredClone(nearState); recordState.active = nearActive(9);
-    const recordCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const recordCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const recordPage = await recordCtx.newPage();
     recordPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
     await recordPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(recordState));
@@ -718,7 +709,7 @@ for (const theme of themes) {
       await stats.focus(); await target.keyboard.press('Enter');
       await target.getByText(/^Logged top load is rising about/).waitFor();
     };
-    const trajectoryCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const trajectoryCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const trajectoryPage = await trajectoryCtx.newPage();
     trajectoryPage.on('pageerror', e => errors.push(`silent-black trajectory: ${e.message}`));
     trajectoryPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) externalRequests.push(request.url()); });
@@ -748,7 +739,7 @@ for (const theme of themes) {
     const backupPath = join(ROOT, '.tmp', 'trajectory-backup.json');
     await download.saveAs(backupPath);
 
-    const restoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const restoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const restorePage = await restoreCtx.newPage();
     restorePage.on('pageerror', e => errors.push(`silent-black trajectory restore: ${e.message}`));
     await restorePage.goto(`http://localhost:${PORT}/`); await restorePage.waitForSelector('.nav');
@@ -761,7 +752,7 @@ for (const theme of themes) {
     await restoreCtx.close();
 
     const lbState = structuredClone(trajectoryState); lbState.preferences.weightUnit = 'lb';
-    const lbTrajectoryCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const lbTrajectoryCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const lbTrajectoryPage = await lbTrajectoryCtx.newPage();
     await lbTrajectoryPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(lbState));
     await lbTrajectoryPage.goto(`http://localhost:${PORT}/`); await lbTrajectoryPage.waitForSelector('.nav'); await openStats(lbTrajectoryPage);
@@ -770,7 +761,7 @@ for (const theme of themes) {
 
     const expiredState = structuredClone(trajectoryState);
     expiredState.sessions = expiredState.sessions.map((session, index) => { const offset = (7 - index) * 7 + 40; const sessionDay = day(offset); return { ...session, day: sessionDay, startedAt: iso(offset, 10), endedAt: iso(offset, 11) }; });
-    const expiredCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const expiredCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const expiredPage = await expiredCtx.newPage();
     await expiredPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(expiredState));
     await expiredPage.goto(`http://localhost:${PORT}/`); await expiredPage.waitForSelector('.nav');
@@ -780,7 +771,7 @@ for (const theme of themes) {
 
     const deloadState = structuredClone(trajectoryState);
     deloadState.coach.deload = { from: day(0), to: day(-6), loadFactor: 0.85, effortCap: 'ideal' };
-    const deloadCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const deloadCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const deloadPage = await deloadCtx.newPage();
     await deloadPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(deloadState));
     await deloadPage.goto(`http://localhost:${PORT}/`); await deloadPage.waitForSelector('.nav');
@@ -810,7 +801,7 @@ for (const theme of themes) {
       actions: [{ kind: 'goal_change', goal: 'strength' }], actionPrev: [null],
     }];
     const unfinishedRequests = [];
-    const unfinishedCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const unfinishedCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const unfinishedPage = await unfinishedCtx.newPage();
     unfinishedPage.on('pageerror', e => errors.push(`silent-black unfinished: ${e.message}`));
     unfinishedPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) unfinishedRequests.push(request.url()); });
@@ -849,7 +840,7 @@ for (const theme of themes) {
     const afterGoal = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     if (afterGoal.goal !== 'strength' || afterGoal.coach.askThread[0]?.actionPrev?.[0] !== unfinishedState.goal) errors.push('silent-black: saved goal did not record the exact previous goal');
 
-    const backupCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const backupCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const backupPage = await backupCtx.newPage();
     await backupPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(afterGoal));
     await backupPage.goto(`http://localhost:${PORT}/`); await backupPage.waitForSelector('.nav');
@@ -861,7 +852,7 @@ for (const theme of themes) {
     await unfinishedDownload.saveAs(unfinishedBackupPath);
     await backupCtx.close();
 
-    const unfinishedRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const unfinishedRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const unfinishedRestorePage = await unfinishedRestoreCtx.newPage();
     await unfinishedRestorePage.goto(`http://localhost:${PORT}/`); await unfinishedRestorePage.waitForSelector('.nav');
     await unfinishedRestorePage.getByRole('button', { name: 'Settings' }).click();
@@ -880,7 +871,7 @@ for (const theme of themes) {
     await unfinishedPage.waitForTimeout(350);
     const laterGoalState = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     laterGoalState.coach.remoteExplainer = true;
-    const undoCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const undoCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const undoPage = await undoCtx.newPage();
     undoPage.on('pageerror', e => errors.push(`silent-black stale undo: ${e.message}`));
     undoPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) unfinishedRequests.push(request.url()); });
@@ -902,7 +893,7 @@ for (const theme of themes) {
     reopenState.coach.snoozedUntil = {};
     reopenState.coach.accepted = {};
     reopenState.coach.dismissalEvidence = {};
-    const captureCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const captureCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const capturePage = await captureCtx.newPage();
     await capturePage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(reopenState));
     await capturePage.goto(`http://localhost:${PORT}/`); await capturePage.waitForSelector('.nav');
@@ -928,7 +919,7 @@ for (const theme of themes) {
     await captureCtx.close();
 
     const reopenedCopy = /^New evidence since you dismissed this \d+ days ago: \d+ more sessions support it\.$/;
-    const reopenedDismissCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reopenedDismissCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const reopenedDismissPage = await reopenedDismissCtx.newPage();
     await reopenedDismissPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(capturedDismissal));
     await reopenedDismissPage.goto(`http://localhost:${PORT}/`); await reopenedDismissPage.waitForSelector('.nav');
@@ -941,7 +932,7 @@ for (const theme of themes) {
     if (afterReopenedDismiss.coach.dismissalEvidence?.['schedule:*']?.reopenedOnce !== true) errors.push('silent-black: dismissing a reappearance did not consume its lifetime offer');
     await reopenedDismissCtx.close();
 
-    const reopenedAcceptCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reopenedAcceptCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const reopenedAcceptPage = await reopenedAcceptCtx.newPage();
     await reopenedAcceptPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(capturedDismissal));
     await reopenedAcceptPage.goto(`http://localhost:${PORT}/`); await reopenedAcceptPage.waitForSelector('.nav');
@@ -963,4 +954,3 @@ stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
 console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified.');
-

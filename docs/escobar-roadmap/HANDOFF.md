@@ -1,6 +1,6 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** The complete routed roadmap is implemented and committed unit by unit on the working branch: F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss records (14A-14T). The final gate is green.
+**Status, 2026-09-21:** The complete routed roadmap is implemented and committed unit by unit on the working branch: F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss records (14A-14T). The earlier claim that the final gate was green referred only to local checks; GitHub's source gate was red. See the workflow repair below.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
@@ -58,7 +58,7 @@ Brain decisions are pure `src/brain/**` functions; the model only phrases. Every
 
 Before each implementation commit: app + proxy typecheck → both full suites → build → five-theme visual gate → live Playwright checks of that feature → dated decision log → commit → push → exact-commit CI green. Integrity, grounding or payload work is minimum T2 with T3 review. No Worker deployment is requested here.
 
-The latest 10A/10AT gate passed app/proxy typechecks, 457 app tests across 35 files, 87 proxy tests with eight existing skips, production build, and the five-theme visual/migration gate. The live gate also restores an active snapshot after reload, renders it in lb, and checks 360 px overflow. Branch CI still requires an authenticated push of the exact commit.
+Workflow repair, 2026-09-21: GitHub run 35597168717 failed on a corrupted multiplication character in the debrief assertion. The earlier near-miss failure came from a noon fixture being in the future on a morning UTC runner. The gate now shares a fixed UTC clock across fixtures and browser contexts, uses escaped Unicode assertions, and starts the near-miss session one hour before that clock. The unrelated-data clearing workaround was removed. Android again depends on a successful source gate. Both typechecks, 606 app tests, 87 proxy tests (eight existing skips), production build and five-theme gates at 18:30 UTC and 03:30 UTC passed locally. Exact-commit GitHub CI must still be checked after pushing this repair.
 
 ## Existing work outside this implementation assignment
 

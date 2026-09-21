@@ -62,6 +62,7 @@ jobs:
           retention-days: 7
 
   android-gate:
+    needs: source-gate
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -185,4 +186,3 @@ jobs:
             release-output/MARC-debug.apk.sha256
           if-no-files-found: error
           retention-days: 30
-
