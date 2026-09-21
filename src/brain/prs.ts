@@ -3,10 +3,11 @@
  * record. Records are about performance (heavier, stronger, more reps at a
  * load, longer hold, more distance), never about total volume.
  */
-import type { Exercise, ResistanceMode, Session } from '@/core/models';
+import type { Exercise, LoggedSet, PlanSetTarget, ResistanceMode, Session } from '@/core/models';
 import { exerciseHistory, modeOf, summarizeSets, type ExerciseSessionSummary } from './history';
 import { weekStart, addDays } from '@/core/dates';
 import { isWorkingSet } from './exposure';
+import { PR_REACH_EXTRA_REPS, PR_REACH_MIN_HISTORY } from './coach/bands';
 
 export type PrKind = 'heaviest' | 'strength' | 'reps_at_load' | 'best_reps' | 'best_duration' | 'best_distance';
 
@@ -30,12 +31,79 @@ export const PR_LABEL: Record<PrKind, string> = {
   best_distance: 'Furthest carry',
 };
 
-function repsAtLoadMap(rows: ExerciseSessionSummary[]): Map<number, number> {
+export function repsAtLoadMap(rows: ExerciseSessionSummary[]): Map<number, number> {
   const m = new Map<number, number>();
   for (const r of rows) for (const s of r.sets) {
     if ((s.kg ?? 0) > 0 && (s.reps ?? 0) > 0) m.set(s.kg!, Math.max(m.get(s.kg!) ?? 0, s.reps!));
   }
   return m;
+}
+
+export interface PrReach {
+  kind: 'reps_at_load' | 'best_reps';
+  kg: number | null;
+  standingReps: number;
+  requiredReps: number;
+}
+
+/** The record core used by live logging once exercise history has been resolved. */
+export function liveRecordFrom(prior: ExerciseSessionSummary[], mode: ResistanceMode, set: LoggedSet): boolean {
+  if (!isWorkingSet(set) || !prior.length) return false;
+  const current = summarizeSets('live', '9999-12-31', [set]);
+  return recordsFor(current, prior, mode, '', '').length > 0;
+}
+
+/** A reachable rep record for the next untouched row. This never changes the target. */
+export function prReach(args: {
+  prior: ExerciseSessionSummary[];
+  mode: ResistanceMode;
+  target: PlanSetTarget | null;
+  repCeiling: number;
+  earlierSets: LoggedSet[];
+  deloadActive: boolean;
+  reducedTarget: boolean;
+}): PrReach | null {
+  const { prior, mode, target, repCeiling, earlierSets, deloadActive, reducedTarget } = args;
+  if (
+    prior.length < PR_REACH_MIN_HISTORY ||
+    (mode !== 'weighted' && mode !== 'bodyweight') ||
+    !target || target.reps == null || !Number.isFinite(target.reps) || target.reps <= 0 ||
+    !Number.isFinite(repCeiling) || repCeiling <= 0 || deloadActive || reducedTarget
+  ) return null;
+
+  let standingReps: number;
+  let kg: number | null;
+  let kind: PrReach['kind'];
+  let earlierReps: number[];
+
+  if (mode === 'weighted') {
+    if (target.kg == null || !Number.isFinite(target.kg) || target.kg <= 0) return null;
+    const priorReps = repsAtLoadMap(prior).get(target.kg);
+    if (priorReps == null || !Number.isFinite(priorReps) || priorReps <= 0) return null;
+    standingReps = priorReps;
+    kg = target.kg;
+    kind = 'reps_at_load';
+    earlierReps = earlierSets
+      .filter(isWorkingSet)
+      .filter(set => set.kg === target.kg && Number.isFinite(set.reps) && (set.reps ?? 0) > 0)
+      .map(set => set.reps!);
+  } else {
+    standingReps = Math.max(0, ...prior.map(row => row.bestReps));
+    if (!Number.isFinite(standingReps) || standingReps <= 0) return null;
+    kg = null;
+    kind = 'best_reps';
+    earlierReps = earlierSets
+      .filter(isWorkingSet)
+      .filter(set => Number.isFinite(set.reps) && (set.reps ?? 0) > 0)
+      .map(set => set.reps!);
+  }
+
+  const todayBest = Math.max(0, ...earlierReps);
+  if (todayBest > standingReps) return null;
+  standingReps = Math.max(standingReps, todayBest);
+  const requiredReps = standingReps + 1;
+  if (requiredReps > target.reps + PR_REACH_EXTRA_REPS || requiredReps > repCeiling) return null;
+  return { kind, kg, standingReps, requiredReps };
 }
 
 /** Records set in `current`, given all `prior` sessions of the same exercise. */
@@ -92,10 +160,7 @@ export function recordsInWeek(sessions: Session[], today: string, custom: Exerci
 
 /** Live check while logging: would this set be a record right now? */
 export function isLiveRecord(sessions: Session[], exerciseId: string, set: { kg?: number; reps?: number }, custom: Exercise[] = []): boolean {
-  if (!isWorkingSet(set)) return false;
   const hist = exerciseHistory(sessions, exerciseId, custom);
-  if (!hist.length) return false;
   const mode = modeOf(exerciseId, custom);
-  const current = summarizeSets('live', '9999-12-31', [set]);
-  return recordsFor(current, hist, mode, exerciseId, '').length > 0;
+  return liveRecordFrom(hist, mode, set);
 }

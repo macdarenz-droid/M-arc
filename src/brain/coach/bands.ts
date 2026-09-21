@@ -159,6 +159,11 @@ export const TRAJECTORY_MAX_LAST_GAP_DAYS = 28;
 export const DEBRIEF_FINDING_DAYS = 2;
 export const DEBRIEF_MIN_COMPARABLE_SETS = 3;
 
+/** A reachable rep record may sit at most one rep above the current target. */
+export const PR_REACH_EXTRA_REPS = 1;
+/** At least one prior exposure is required before a rep record can be in reach. */
+export const PR_REACH_MIN_HISTORY = 1;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',

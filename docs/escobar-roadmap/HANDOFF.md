@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and effort repair (11A-11T) are implemented and committed unit by unit on the working branch. Feature 12 record reach is next.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), and PR-in-reach pure logic (12A) are implemented and committed unit by unit on the working branch. Feature 12 UI integration is next.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 12A only
+## Start here: 12B only
 
-Extract the existing PR helpers without changing record semantics and implement the pure `prReach` calculation and differential tests defined by spec 12. Keep the live hint UI out of this unit; it belongs to 12B. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Memoize exercise history once per EntryCard, reuse it for actual live-record checks, and mount the quiet `PrReachHint` only on the earliest eligible untouched row as defined by spec 12. Use effective targets, reduced-target and deload guards; keep this unit read-only. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 
