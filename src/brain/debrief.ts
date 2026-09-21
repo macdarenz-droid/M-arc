@@ -1,7 +1,7 @@
 /** Immutable workout-target capture and saved plan-versus-actual comparison. */
 import { PLAN_MAX_METADATA_SETS, type Effort, type Exercise, type LoggedSet, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { exerciseHistory, summarizeSets } from './history';
+import { exerciseHistory, summarizeSets, type ExerciseSessionSummary } from './history';
 import { isWorkingSet } from './exposure';
 import { suggestNext } from './progression';
 import { applyDeload, deloadActive } from './coach/deload';
@@ -125,12 +125,26 @@ function compareTarget(mode: ResistanceMode | null, target: PlanSetTarget | null
   return 'uncomparable';
 }
 
+export const compareSessionStarts = (a: Session, b: Session): number => Date.parse(a.startedAt) - Date.parse(b.startedAt) || a.id.localeCompare(b.id);
+
 function beforeSession(candidate: Session, session: Session): boolean {
-  return candidate.startedAt < session.startedAt || (candidate.startedAt === session.startedAt && candidate.id < session.id);
+  return Number.isFinite(Date.parse(candidate.startedAt)) && Number.isFinite(Date.parse(session.startedAt))
+    && compareSessionStarts(candidate, session) < 0;
+}
+
+/** The preceding exposure by actual instant, even when imported local days disagree. */
+export function previousExerciseWork(session: Session, exerciseId: string, prior: Session[], custom: Exercise[] = []): { session: Session; summary: ExerciseSessionSummary } | null {
+  const ordered = prior.filter(candidate => candidate.id !== session.id && beforeSession(candidate, session)).sort(compareSessionStarts);
+  for (let index = ordered.length - 1; index >= 0; index--) {
+    const candidate = ordered[index]!;
+    const summary = exerciseHistory([candidate], exerciseId, custom)[0];
+    if (summary) return { session: candidate, summary };
+  }
+  return null;
 }
 
 function weightedTradeoff(session: Session, exerciseId: string, sets: LoggedSet[], prior: Session[], custom: Exercise[]): DebriefExercise['tradeoff'] {
-  const previous = exerciseHistory(prior.filter(candidate => candidate.id !== session.id && beforeSession(candidate, session)), exerciseId, custom).at(-1);
+  const previous = previousExerciseWork(session, exerciseId, prior, custom)?.summary;
   if (!previous) return null;
   const actual = summarizeSets(session.id, session.day, sets);
   if (!(previous.topKg > 0 && previous.topReps > 0 && previous.volume > 0

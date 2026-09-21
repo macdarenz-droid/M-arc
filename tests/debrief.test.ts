@@ -74,4 +74,42 @@ describe('sessionDebrief', () => {
     const current = saved({ exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', planEntryId: 'pe_bench', actualSetIndices: [0, 1, 2], sets: Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 6 })) }] });
     expect(sessionDebrief(current, [previous]).exercises[0]!.tradeoff).toEqual({ previousKg: 60, actualKg: 62.5, previousReps: 10, actualReps: 6, previousVolumeKg: 1800, actualVolumeKg: 1125 });
   });
+
+  it('uses the latest same-day prior workout regardless of imported array order', () => {
+    const earlier = saved({ id: 'earlier', day: '2026-09-18', startedAt: '2026-09-18T10:00:00.000Z',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 60, reps: 10 }] }] });
+    const later = saved({ id: 'later', day: '2026-09-18', startedAt: '2026-09-18T16:00:00.000Z',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 62.5, reps: 8 }] }] });
+    const current = saved({ exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', planEntryId: 'pe_bench', actualSetIndices: [0], sets: [{ kg: 62.5, reps: 6 }] }] });
+    for (const history of [[earlier, later], [later, earlier]]) {
+      expect(sessionDebrief(current, history).exercises[0]!.tradeoff).toBeNull();
+    }
+  });
+
+  it('breaks equal-instant ties by session ID and excludes the current or later sessions', () => {
+    const earlier = saved({ id: 'a', startedAt: '2026-09-19T10:00:00.000Z',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 60, reps: 10 }] }] });
+    const latest = saved({ id: 'b', startedAt: '2026-09-19T18:00:00.000+08:00',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 62.5, reps: 8 }] }] });
+    const current = saved({ id: 'c', exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', planEntryId: 'pe_bench', actualSetIndices: [0], sets: [{ kg: 65, reps: 6 }] }] });
+    const later = { ...current, id: 'd' };
+    const tomorrow = { ...current, id: 'tomorrow', day: '2026-09-20', startedAt: '2026-09-20T10:00:00.000Z' };
+    const invalid = { ...current, id: 'invalid', startedAt: 'invalid' };
+    const result = sessionDebrief(current, [latest, tomorrow, earlier, later, current, invalid]).exercises[0]!.tradeoff;
+    expect(result).toEqual({ previousKg: 62.5, actualKg: 65, previousReps: 8, actualReps: 6, previousVolumeKg: 500, actualVolumeKg: 390 });
+  });
+
+  it('keeps actual time order when travel makes the imported local days run backwards', () => {
+    const earlier = saved({ id: 'earlier', day: '2026-09-19', startedAt: '2026-09-19T00:30:00+14:00',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 60, reps: 10 }] }] });
+    const latest = saved({ id: 'latest', day: '2026-09-18', startedAt: '2026-09-18T23:30:00-10:00',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 62.5, reps: 8 }] }] });
+    const current = saved({ startedAt: '2026-09-19T12:00:00Z',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', planEntryId: 'pe_bench', actualSetIndices: [0], sets: [{ kg: 62.5, reps: 6 }] }] });
+    for (const history of [[earlier, latest], [latest, earlier]]) {
+      expect(sessionDebrief(current, history).exercises[0]!.tradeoff).toBeNull();
+    }
+    current.exercises[0]!.sets[0]!.kg = 65;
+    expect(sessionDebrief(current, [latest, earlier]).exercises[0]!.tradeoff).toMatchObject({ previousKg: 62.5, previousReps: 8, previousVolumeKg: 500 });
+  });
 });

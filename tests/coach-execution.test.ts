@@ -47,4 +47,56 @@ describe('session execution finding', () => {
     expect(validateText('2 of 3 targets were met; 1 was below.', allowed).ok).toBe(true);
     expect(validateText('137 targets were met.', allowed).ok).toBe(false);
   });
+
+  it('uses the same chronological tradeoff evidence after reversed same-day imports', () => {
+    const earlier = { ...plannedSession('2026-09-18'), id: 'earlier' };
+    earlier.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 57.5, reps: 12 }));
+    const latest = { ...plannedSession('2026-09-18'), id: 'latest', startedAt: '2026-09-18T16:00:00.000Z' };
+    latest.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 10 }));
+    const current = plannedSession();
+    current.plan!.entries[0]!.targets = Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 6, durationSec: null }));
+    current.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 6 }));
+    const future = { ...plannedSession('2026-09-20'), id: 'future' };
+    const finding = detectSessionExecution(ctx([latest, future, current, earlier], { today: '2026-09-19' }))[0]!;
+    expect(finding.evidence.sessionIds).toEqual(['latest', 'done']);
+    expect(finding.metrics.metSets).toBe(3);
+  });
+
+  it('selects the latest actual instant and resolves same-instant evidence by ID', () => {
+    const earlier = { ...plannedSession(), id: 'a', startedAt: '2026-09-19T09:00:00.000Z' };
+    earlier.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 57.5, reps: 12 }));
+    const latest = { ...plannedSession(), id: 'b', startedAt: '2026-09-19T17:00:00.000+08:00' };
+    latest.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 10 }));
+    const current = plannedSession();
+    current.plan!.entries[0]!.targets = Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 6, durationSec: null }));
+    current.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 6 }));
+    const finding = detectSessionExecution(ctx([latest, current, earlier], { today: '2026-09-19' }))[0]!;
+    expect(finding.id).toBe('session_execution:done');
+    expect(finding.evidence.sessionIds).toEqual(['b', 'done']);
+  });
+
+  it.each([true, false])('ignores a later-today session without suppressing current metrics (future planned: %s)', planned => {
+    const current = plannedSession();
+    const future = { ...plannedSession(), id: 'future', startedAt: '2026-09-19T20:00:00Z', plan: planned ? plannedSession().plan : undefined };
+    const finding = detectSessionExecution(ctx([current, future]))[0]!;
+    expect(finding.id).toBe('session_execution:done');
+    expect(finding.metrics).toMatchObject({ comparableSets: 3, metSets: 2, belowSets: 1 });
+    expect(finding.evidence.sessionIds).toEqual(['done']);
+  });
+
+  it.each([62.5, 65])('grounds current %s kg work against timestamp order when local days run backwards', kg => {
+    const earlier = { ...plannedSession(), id: 'earlier', startedAt: '2026-09-19T00:30:00+14:00' };
+    earlier.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 10 }));
+    const latest = { ...plannedSession('2026-09-18'), id: 'latest', startedAt: '2026-09-18T23:30:00-10:00' };
+    latest.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg: 62.5, reps: 8 }));
+    const current = { ...plannedSession(), startedAt: '2026-09-19T12:00:00Z' };
+    current.plan!.entries[0]!.targets = Array.from({ length: 3 }, () => ({ kg, reps: 6, durationSec: null }));
+    current.exercises[0]!.sets = Array.from({ length: 3 }, () => ({ kg, reps: 6 }));
+    for (const sessions of [[earlier, latest, current], [latest, current, earlier]]) {
+      const finding = detectSessionExecution(ctx(sessions))[0]!;
+      expect(finding.id).toBe('session_execution:done');
+      expect(finding.metrics).toMatchObject({ comparableSets: 3, metSets: 3, belowSets: 0 });
+      expect(finding.evidence.sessionIds).toEqual(kg === 62.5 ? ['done'] : ['latest', 'done']);
+    }
+  });
 });
