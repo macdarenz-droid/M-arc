@@ -935,6 +935,37 @@ for (const theme of themes) {
     if (unfinishedRequests.length) errors.push(`silent-black: saved-only review made external requests (${unfinishedRequests.join(', ')})`);
     await unfinishedCtx.close();
 
+    // P03 (docs/escobar-presence 01-ARCHITECTURE.md §4, regression B03) forbids a nested
+    // modal. AskSheet is now mounted once at App level and survives navigation (P03.3) — the
+    // one new collision that introduced was Settings opening on top of an already-open Ask,
+    // which App.tsx defers against explicitly. Every OTHER control that could open a second
+    // modal (Today's Settings gear, History/Body's own sheets, Train's confirmations) lives
+    // on a screen that isn't even rendered while Ask is open from Coach or Train (App.tsx only
+    // mounts the active tab), and AskSheet's own internal navigation (go('train')/go('coach'))
+    // never targets 'today' — so reaching them at all first requires leaving the currently
+    // open native <dialog>. That's only possible if the browser's own modal-dialog inertness,
+    // which showModal() is specified to apply to every other on-page control, actually holds
+    // here — verified directly below rather than assumed: a real tap at the bottom nav while
+    // Ask is open must do nothing.
+    const nestedModalState = { ...unfinishedState, coach: { ...unfinishedState.coach, remoteExplainer: true } };
+    const nestedModalCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nestedModalPage = await nestedModalCtx.newPage();
+    nestedModalPage.on('pageerror', e => errors.push(`silent-black nested-modal: ${e.message}`));
+    await nestedModalPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(nestedModalState));
+    await nestedModalPage.goto(`http://localhost:${PORT}/`); await nestedModalPage.waitForSelector('.nav');
+    await nestedModalPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await nestedModalPage.getByRole('button', { name: /Ask Escobar a question/ }).click();
+    await nestedModalPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor();
+    let navClickBlocked = false;
+    try {
+      await nestedModalPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click({ timeout: 2000 });
+    } catch { navClickBlocked = true; }
+    if (!navClickBlocked) errors.push('silent-black: nav click was not blocked while Ask was open — nested-modal risk is real, needs an explicit defer guard (see docs/escobar-presence/PROGRESS.md)');
+    if (!(await nestedModalPage.getByRole('heading', { name: 'Ask Escobar' }).isVisible())) errors.push('silent-black: Ask sheet closed or the tab changed from a background nav click while modal-open');
+    await nestedModalPage.keyboard.press('Escape');
+    await nestedModalPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor({ state: 'hidden' });
+    await nestedModalCtx.close();
+
     const reopenState = structuredClone(unfinishedState);
     reopenState.coach.askThread = [];
     reopenState.coach.dismissed = {};
