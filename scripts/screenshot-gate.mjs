@@ -474,6 +474,118 @@ for (const theme of themes) {
     await reachLbPage.getByText('9 reps at 132.5 lb would beat your previous 8. Only if it feels right today.', { exact: true }).waitFor();
     await reachLbCtx.close();
     if (reachRequests.length) errors.push(`silent-black: PR reach made external requests (${reachRequests.join(', ')})`);
+
+    const driftState = structuredClone(source);
+    const addDay = (key, amount) => { const value = new Date(`${key}T12:00:00`); value.setDate(value.getDate() + amount); return value.toISOString().slice(0, 10); };
+    const localToday = day(0);
+    const localDate = new Date(`${localToday}T12:00:00`);
+    const currentMonday = addDay(localToday, -((localDate.getDay() + 6) % 7));
+    const oldestMonday = addDay(currentMonday, -16 * 7);
+    const driftSessions = [];
+    const driftSession = (week, weekday, splitId, splitName, exerciseId, name) => {
+      const sessionDay = addDay(oldestMonday, week * 7 + weekday);
+      driftSessions.push({ id: `gate-drift-${week}-${weekday}-${splitId}`, splitId, splitName, day: sessionDay,
+        startedAt: `${sessionDay}T18:00:00`, endedAt: `${sessionDay}T19:00:00`, durationSec: 3600,
+        exercises: [{ exerciseId, name, sets: [{ kg: 60, reps: 8, effort: 'ideal' }] }] });
+    };
+    driftSession(-1, 0, 'split_pull', 'Pull', 'lib_lat_pulldown', 'Lat Pulldown');
+    for (let week = 0; week < 16; week++) {
+      if (week < 7 || week === 8 || week === 9) driftSession(week, 4, 'split_push', 'Push', 'lib_barbell_bench_press', 'Barbell Bench Press');
+      if (week >= 10 && week <= 13) driftSession(week, 5, 'split_push', 'Push', 'lib_barbell_bench_press', 'Barbell Bench Press');
+      if (week >= 14) driftSession(week, 5, 'split_pull', 'Pull', 'lib_lat_pulldown', 'Lat Pulldown');
+    }
+    driftState.active = null;
+    driftState.sessions = driftSessions.sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+    driftState.schedule = { sun: null, mon: null, tue: null, wed: null, thu: null, fri: 'split_push', sat: null };
+    driftState.coach = { ...driftState.coach, deload: null, remoteExplainer: false, learnedStarts: { fri: '18:00', sat: '18:00', tue: '07:15' }, dismissed: {}, snoozedUntil: {}, accepted: {}, dismissalEvidence: {} };
+    const driftRequests = [];
+    const driftTitle = 'Fri is less common in your logs';
+    const driftSuggestionTitle = 'Move Push from Fri to Sat?';
+    const driftCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const driftPage = await driftCtx.newPage();
+    driftPage.on('pageerror', error => errors.push(`silent-black consistency drift: ${error.message}`));
+    driftPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
+    await driftPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(driftState));
+    await driftPage.goto(`http://localhost:${PORT}/`); await driftPage.waitForSelector('.nav');
+    const openDriftCoach = async target => {
+      await target.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+      await target.getByLabel(`Open insight: ${driftTitle}`).waitFor();
+      await target.getByLabel(`Open suggestion: ${driftSuggestionTitle}`).waitFor();
+    };
+    await openDriftCoach(driftPage);
+    const driftInsight = driftPage.getByLabel(`Open insight: ${driftTitle}`);
+    await driftInsight.focus(); await driftPage.keyboard.press('Enter');
+    await driftPage.getByText('Fri appeared in 7 of the older 8 complete weeks and 2 of the recent 8.', { exact: true }).waitFor();
+    await driftPage.getByText(/This describes logged sessions; your past schedule was not saved\./).waitFor();
+    await driftPage.screenshot({ path: `${OUT}/silent-black-consistency-drift.png` });
+    await driftPage.setViewportSize({ width: 360, height: 800 });
+    if (await driftPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: consistency drift overflows at 360px');
+    await driftPage.setViewportSize({ width: 390, height: 844 });
+    await driftPage.keyboard.press('Escape');
+    await driftPage.getByLabel(`Open suggestion: ${driftSuggestionTitle}`).click();
+    const driftDialog = driftPage.getByRole('dialog');
+    await driftDialog.getByText('Sat appeared in 6 recent weeks, including 4 with Push.', { exact: true }).waitFor();
+    await driftDialog.getByText('Fri: cleared', { exact: true }).waitFor();
+    await driftDialog.getByText('Sat: Push at the learned start time', { exact: true }).waitFor();
+    await driftPage.keyboard.press('Escape');
+    await driftPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await openDriftCoach(driftPage);
+    await driftPage.reload(); await driftPage.waitForSelector('.nav'); await openDriftCoach(driftPage);
+
+    await driftPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await driftPage.getByRole('button', { name: 'Settings' }).click();
+    const driftDownloadPromise = driftPage.waitForEvent('download');
+    await driftPage.getByRole('button', { name: 'Export backup' }).click();
+    const driftDownload = await driftDownloadPromise;
+    const driftBackupPath = join(ROOT, '.tmp', 'consistency-drift-backup.json');
+    await driftDownload.saveAs(driftBackupPath);
+    await driftCtx.close();
+
+    const driftRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftRestorePage = await driftRestoreCtx.newPage();
+    driftRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
+    await driftRestorePage.goto(`http://localhost:${PORT}/`); await driftRestorePage.waitForSelector('.nav');
+    await driftRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const driftChooserPromise = driftRestorePage.waitForEvent('filechooser');
+    await driftRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const driftChooser = await driftChooserPromise; await driftChooser.setFiles(driftBackupPath);
+    await driftRestorePage.getByText(`Restored ${driftSessions.length} sessions`, { exact: true }).waitFor();
+    await driftRestorePage.keyboard.press('Escape'); await openDriftCoach(driftRestorePage);
+    await driftRestoreCtx.close();
+
+    const driftDismissCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftDismissPage = await driftDismissCtx.newPage();
+    driftDismissPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
+    await driftDismissPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftState));
+    await driftDismissPage.goto(`http://localhost:${PORT}/`); await driftDismissPage.waitForSelector('.nav'); await openDriftCoach(driftDismissPage);
+    const beforeDriftDismiss = await driftDismissPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    await driftDismissPage.getByLabel(`Open suggestion: ${driftSuggestionTitle}`).getByRole('button', { name: 'Not now' }).click();
+    await driftDismissPage.waitForTimeout(350);
+    const afterDriftDismiss = await driftDismissPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (JSON.stringify(afterDriftDismiss.schedule) !== JSON.stringify(beforeDriftDismiss.schedule) || JSON.stringify(afterDriftDismiss.coach.learnedStarts) !== JSON.stringify(beforeDriftDismiss.coach.learnedStarts)) errors.push('silent-black: consistency drift dismissal changed schedule or learned starts');
+    if (afterDriftDismiss.coach.dismissed['schedule:*'] !== 1) errors.push('silent-black: consistency drift dismissal was not remembered');
+    await driftDismissCtx.close();
+
+    const driftAcceptCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftAcceptPage = await driftAcceptCtx.newPage();
+    driftAcceptPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
+    await driftAcceptPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftState));
+    await driftAcceptPage.goto(`http://localhost:${PORT}/`); await driftAcceptPage.waitForSelector('.nav'); await openDriftCoach(driftAcceptPage);
+    await driftAcceptPage.getByLabel(`Open suggestion: ${driftSuggestionTitle}`).getByRole('button', { name: 'Move the scheduled day' }).click();
+    await driftAcceptPage.waitForTimeout(350);
+    const afterDriftAccept = await driftAcceptPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterDriftAccept.schedule.fri !== null || afterDriftAccept.schedule.sat !== 'split_push' || afterDriftAccept.coach.learnedStarts.fri !== undefined || afterDriftAccept.coach.learnedStarts.sat !== '18:00') errors.push('silent-black: consistency drift acceptance did not move the exact scheduled day');
+    if (afterDriftAccept.schedule.tue !== driftState.schedule.tue || afterDriftAccept.coach.learnedStarts.tue !== '07:15' || afterDriftAccept.coach.accepted['schedule:*'] !== localToday) errors.push('silent-black: consistency drift acceptance changed unrelated schedule data or was not remembered');
+    await driftAcceptCtx.close();
+
+    const driftLbState = structuredClone(driftState); driftLbState.preferences.weightUnit = 'lb';
+    const driftLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const driftLbPage = await driftLbCtx.newPage();
+    driftLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) driftRequests.push(request.url()); });
+    await driftLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(driftLbState));
+    await driftLbPage.goto(`http://localhost:${PORT}/`); await driftLbPage.waitForSelector('.nav'); await openDriftCoach(driftLbPage);
+    await driftLbCtx.close();
+    if (driftRequests.length) errors.push(`silent-black: consistency drift made external requests (${driftRequests.join(', ')})`);
   }
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
   if (theme === 'silent-black') {
