@@ -304,7 +304,7 @@ export function autoregulate(input: {
     reason = 'max_below_target';
     next = { kg, reps: Math.max(range[0], Math.min(range[1], targetReps)), durationSec: null };
   } else {
-    if (source.effort !== 'easy' || input.deloadActive || !input.allowIncrease) return null;
+    if (source.effort !== 'easy' || source.reps! < targetReps + LIVE_SURPLUS_REPS || input.deloadActive || !input.allowIncrease) return null;
     if (sets.some(set => isWorkingSet(set) && set.effort === 'max')) return null;
     let qualifying = 0;
     for (let index = 0; index <= sourceSet; index++) {

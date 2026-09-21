@@ -85,6 +85,16 @@ describe('autoregulate', () => {
     expect(autoregulate(input(twoEasy, { sourceSet: 1, targets: twoEasy.map(() => target(60, 12)) }))).toBeNull();
   });
 
+  it.each([6, 8, 9])('does not increase after a current easy set of %i reps despite two earlier surplus sets', reps => {
+    const sets: LoggedSet[] = [
+      { kg: 60, reps: 10, effort: 'easy' },
+      { kg: 60, reps: 10, effort: 'easy' },
+      { kg: 60, reps, effort: 'easy' },
+      {},
+    ];
+    expect(autoregulate(input(sets, { sourceSet: 2 }))).toBeNull();
+  });
+
   it('blocks an upward offer during a deload but still permits a conservative downward offer', () => {
     const easy: LoggedSet[] = [{ kg: 51, reps: 10, effort: 'easy' }, { kg: 51, reps: 10, effort: 'easy' }, {}];
     expect(autoregulate(input(easy, { sourceSet: 1, targets: easy.map(() => target(51, 8)), deloadActive: true }))).toBeNull();
