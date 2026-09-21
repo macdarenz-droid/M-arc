@@ -99,6 +99,26 @@ export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void 
   patchActive(a => (a.entries.some(e => e.exerciseId === ex.id) ? a : { ...a, entries: [...a.entries, { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: sets }, () => ({})), done: false, skipped: false }] }));
 }
 
+/**
+ * Swap one live entry for a different exercise, in place. The card keeps its
+ * position and its planned set count, so a mid-session swap does not send the
+ * exercise to the bottom of the list. Sets already logged in the slot are
+ * cleared — they belong to the exercise that was there — so the caller confirms
+ * with the person first when the slot is not empty. Returns false and changes
+ * nothing when there is no active session, the index is out of range, or that
+ * exercise is already somewhere in this session.
+ */
+export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt: string; exerciseId: string }): boolean {
+  const a = active();
+  if (!a || !a.entries[entry]) return false;
+  if (expected && (a.startedAt !== expected.startedAt || a.entries[entry]!.exerciseId !== expected.exerciseId)) return false;
+  if (a.entries[entry]!.exerciseId === ex.id) return false;
+  if (a.entries.some((e, i) => i !== entry && e.exerciseId === ex.id)) return false;
+  patchActive(x => ({ ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: Math.max(1, e.sets.length) }, () => ({})), done: false, skipped: false })) }));
+  void haptic.medium();
+  return true;
+}
+
 export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }

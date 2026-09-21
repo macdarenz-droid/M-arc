@@ -1,14 +1,20 @@
 import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { addDays } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
+import { freshState } from '@/core/models';
+import { initStore, replaceState, state } from '@/core/store';
 import type { MuscleId } from '@/data/muscles';
 import { applyDeload } from '@/brain/coach/deload';
 import { DELOAD_LOAD_FACTOR, MAX_SUBSTITUTES } from '@/brain/coach/bands';
 import { substitutes } from '@/brain/live';
 import { suggestNext } from '@/brain/progression';
+import { finishSession, markDone, replaceEntry, setSet, skipEntry, startSession } from '@/slices/workout/session';
+import { createSplit } from '@/slices/workout/splits';
 import { ctx, LAST_MONDAY, LEGS_EX, pplHistory, PUSH_EX } from './coach-helpers';
 import { session, sets } from './helpers';
+
+const memory = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }; };
 
 const withMachine = () => pplHistory(LAST_MONDAY, 8, (_week, split, exercises) =>
   split === 'push'
@@ -171,5 +177,104 @@ describe('substitutes', () => {
     const source = readFileSync(new URL('../src/brain/live.ts', import.meta.url), 'utf8');
     expect(source).not.toMatch(/from '@\/(app|slices|ui|native)\//);
     expect(source).not.toMatch(/from '@\/core\/store'/);
+  });
+});
+
+describe('replaceEntry', () => {
+  beforeEach(() => {
+    initStore(memory());
+    replaceState(freshState(new Date('2026-06-01T00:00:00Z')));
+  });
+
+  function startPush() {
+    const split = createSplit('Push', [
+      { exerciseId: 'lib_barbell_bench_press', sets: 4 },
+      { exerciseId: 'lib_dumbbell_lateral_raise', sets: 3 },
+      { exerciseId: 'lib_triceps_pushdown', sets: 3 },
+    ])!;
+    startSession(split);
+    return split;
+  }
+
+  it('replaces a card in place while preserving its planned set count', () => {
+    startPush();
+    const replacement = findExercise('lib_machine_chest_press')!;
+
+    expect(replaceEntry(0, replacement)).toBe(true);
+    expect(state.value.active?.entries).toHaveLength(3);
+    expect(state.value.active?.entries[0]).toEqual({
+      exerciseId: replacement.id,
+      name: replacement.name,
+      sets: [{}, {}, {}, {}],
+      done: false,
+      skipped: false,
+    });
+    expect(state.value.active?.entries.slice(1).map(entry => entry.exerciseId)).toEqual([
+      'lib_dumbbell_lateral_raise',
+      'lib_triceps_pushdown',
+    ]);
+  });
+
+  it('clears logged sets and the done flag from the replaced exercise', () => {
+    startPush();
+    setSet(0, 0, { kg: 60, reps: 8, effort: 'ideal' });
+    markDone(0);
+
+    expect(replaceEntry(0, findExercise('lib_machine_chest_press')!)).toBe(true);
+    expect(state.value.active?.entries[0]).toMatchObject({
+      sets: [{}, {}, {}, {}],
+      done: false,
+      skipped: false,
+    });
+  });
+
+  it('clears the skipped flag from the replaced exercise', () => {
+    startPush();
+    skipEntry(0);
+
+    expect(replaceEntry(0, findExercise('lib_machine_chest_press')!)).toBe(true);
+    expect(state.value.active?.entries[0]).toMatchObject({ done: false, skipped: false });
+  });
+
+  it('refuses a duplicate exercise without changing the session', () => {
+    startPush();
+    const before = state.value.active;
+
+    expect(replaceEntry(0, findExercise('lib_dumbbell_lateral_raise')!)).toBe(false);
+    expect(state.value.active).toBe(before);
+  });
+
+  it('refuses missing sessions and out-of-range entries', () => {
+    const replacement = findExercise('lib_machine_chest_press')!;
+    expect(replaceEntry(0, replacement)).toBe(false);
+
+    startPush();
+    const before = state.value.active;
+    expect(replaceEntry(99, replacement)).toBe(false);
+    expect(state.value.active).toBe(before);
+  });
+
+  it('guards against stale session and exercise identities', () => {
+    startPush();
+    const replacement = findExercise('lib_machine_chest_press')!;
+    const current = state.value.active!;
+
+    expect(replaceEntry(0, replacement, { startedAt: '2025-01-01T00:00:00.000Z', exerciseId: current.entries[0]!.exerciseId })).toBe(false);
+    expect(state.value.active).toBe(current);
+    expect(replaceEntry(0, replacement, { startedAt: current.startedAt, exerciseId: 'lib_incline_bench_press' })).toBe(false);
+    expect(state.value.active).toBe(current);
+    expect(replaceEntry(0, replacement, { startedAt: current.startedAt, exerciseId: current.entries[0]!.exerciseId })).toBe(true);
+  });
+
+  it('finishes with the replacement while leaving the split template unchanged', () => {
+    const split = startPush();
+    const replacement = findExercise('lib_machine_chest_press')!;
+    replaceEntry(0, replacement);
+    setSet(0, 0, { kg: 50, reps: 10, effort: 'ideal' });
+
+    const result = finishSession(false)!;
+    expect(result.changedTemplate).toBe(true);
+    expect(result.session.exercises[0]?.exerciseId).toBe(replacement.id);
+    expect(state.value.splits.find(item => item.id === split.id)?.exercises[0]?.exerciseId).toBe('lib_barbell_bench_press');
   });
 });
