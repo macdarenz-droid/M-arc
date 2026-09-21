@@ -966,6 +966,37 @@ for (const theme of themes) {
     await nestedModalPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor({ state: 'hidden' });
     await nestedModalCtx.close();
 
+    // P03 contextual prefill (§4 "context by IDs, visible editable prefill"; A06): an
+    // insight/suggestion's own detail sheet offers "Ask about this", seeding Ask's composer
+    // with a visible, editable question about that exact finding rather than opening blank.
+    // Proves the prefill actually lands in the real input (not just "no page errors") and that
+    // it stays editable and unsent until the person acts.
+    const prefillCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const prefillPage = await prefillCtx.newPage();
+    prefillPage.on('pageerror', e => errors.push(`silent-black prefill: ${e.message}`));
+    await prefillPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(nestedModalState));
+    await prefillPage.goto(`http://localhost:${PORT}/`); await prefillPage.waitForSelector('.nav');
+    await prefillPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const firstInsight = prefillPage.getByRole('button', { name: /^Open insight: / }).first();
+    if (await firstInsight.count()) {
+      const insightTitle = (await firstInsight.getAttribute('aria-label'))?.replace(/^Open insight: /, '') ?? '';
+      const threadLenBefore = nestedModalState.coach.askThread.length;
+      await firstInsight.click();
+      await prefillPage.getByRole('button', { name: /^Ask Escobar about this$/ }).click();
+      await prefillPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor();
+      const composer = prefillPage.locator('.ask-input input');
+      const seeded = await composer.inputValue();
+      if (seeded !== `About "${insightTitle}": `) errors.push(`silent-black: Ask's composer did not seed the expected contextual prefill (got "${seeded}")`);
+      const stateAfterOpen = await prefillPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+      if (stateAfterOpen.coach.askThread.length !== threadLenBefore) errors.push('silent-black: opening Ask with a prefill sent a turn automatically instead of just seeding the composer');
+      await composer.click();
+      await composer.press('End');
+      await composer.type('does this affect my next session?');
+      if (!(await composer.inputValue()).endsWith('does this affect my next session?')) errors.push('silent-black: Ask\'s prefilled composer was not actually editable');
+      await prefillPage.getByRole('button', { name: 'Close' }).click();
+    } else errors.push('silent-black: no insight available to open — prefill scenario needs at least one Insights card in this fixture');
+    await prefillCtx.close();
+
     const reopenState = structuredClone(unfinishedState);
     reopenState.coach.askThread = [];
     reopenState.coach.dismissed = {};

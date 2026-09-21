@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { askOpenState, closeAsk, openAsk, openAskSavedReview } from '@/slices/coach/askController';
+import { askOpenState, closeAsk, openAsk, openAskSavedReview, openAskWithQuestion } from '@/slices/coach/askController';
 
 describe('askController: the single open/closed source of truth for the shared Ask sheet', () => {
   it('starts closed', () => {
@@ -28,6 +28,12 @@ describe('askController: the single open/closed source of truth for the shared A
     closeAsk();
     expect(askOpenState.value).toEqual({ open: false, savedOnly: false });
   });
+
+  it('openAskWithQuestion opens a plain, non-savedOnly conversation with the given prefill', () => {
+    closeAsk();
+    openAskWithQuestion('About "Volume is trending up": ');
+    expect(askOpenState.value).toEqual({ open: true, savedOnly: false, initialQuestion: 'About "Volume is trending up": ' });
+  });
 });
 
 /**
@@ -51,9 +57,15 @@ describe('Coach.tsx and Train.tsx: no competing local AskSheet mounts', () => {
   });
 
   it('Coach.tsx calls openAsk for the plain question button and openAskSavedReview for saved-item review', () => {
-    expect(coach).toContain("import { openAsk, openAskSavedReview } from './askController';");
+    expect(coach).toContain("import { openAsk, openAskSavedReview, openAskWithQuestion } from './askController';");
     expect(coach).toContain('onClick={openAsk}');
     expect(coach).toContain('onReview={item => openAskSavedReview(item?.key)}');
+  });
+
+  it('InsightSheet and SuggestionSheet each offer a contextual "Ask about this" that closes the detail sheet first', () => {
+    expect(coach.match(/openAskWithQuestion\(/g)).toHaveLength(2);
+    expect(coach).toContain('onClick={() => { onClose(); openAskWithQuestion(`About "${insight.title}": `); }}');
+    expect(coach).toContain('onClick={() => { onClose(); openAskWithQuestion(`About "${sg.title}": `); }}');
   });
 
   it('Train.tsx calls openAsk for its Escobar button', () => {
@@ -70,9 +82,10 @@ describe('App.tsx: the single shared AskSheet mount, deferred (not stacked) whil
     expect(source).toContain('{askOpenState.value.open && !settingsOpen.value && (');
   });
 
-  it('passes onClose={closeAsk} and forwards initialTurnKey/savedOnly from the controller state', () => {
+  it('passes onClose={closeAsk} and forwards initialTurnKey/savedOnly/initialQuestion from the controller state', () => {
     expect(source).toContain('onClose={closeAsk}');
     expect(source).toContain('initialTurnKey={askOpenState.value.initialTurnKey}');
     expect(source).toContain('savedOnly={askOpenState.value.savedOnly}');
+    expect(source).toContain('initialQuestion={askOpenState.value.initialQuestion}');
   });
 });

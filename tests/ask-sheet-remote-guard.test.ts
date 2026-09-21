@@ -77,6 +77,41 @@ describe('AskSheet.send(): captures the request generation and drops a stale rep
   });
 });
 
+/**
+ * P03.5 (docs/escobar-presence §4's "context by IDs, visible editable
+ * prefill", regression A06): InsightSheet/SuggestionSheet's "Ask about this"
+ * seeds AskSheet's composer with a starting question, fully visible and
+ * editable, never sent automatically. Read once at mount only (see
+ * askController.ts's own doc comment on openAskWithQuestion for why that's
+ * safe), and clamped to MAX_QUESTION_CHARS so a future long prefill can't
+ * silently exceed the same limit the composer itself enforces on typing.
+ */
+describe('AskSheet: seeds (not auto-sends) an initialQuestion prefill', () => {
+  const source = readFileSync(new URL('../src/slices/coach/AskSheet.tsx', import.meta.url), 'utf8');
+
+  it('accepts initialQuestion and seeds useState with it once, clamped to MAX_QUESTION_CHARS', () => {
+    expect(source).toContain('initialQuestion?: string');
+    expect(source).toContain("useState(() => (initialQuestion ?? '').slice(0, MAX_QUESTION_CHARS));");
+  });
+
+  it('never calls send() or any submit path as part of accepting a prefill — the composer is seeded, not triggered', () => {
+    const propsToSeed = source.slice(source.indexOf('export function AskSheet'), source.indexOf('const send = async'));
+    expect(propsToSeed).not.toContain('send(');
+    expect(propsToSeed).not.toContain('void send');
+  });
+});
+
+describe('Coach.tsx: InsightSheet/SuggestionSheet "Ask about this" closes the detail sheet before opening Ask', () => {
+  const source = readFileSync(new URL('../src/slices/coach/Coach.tsx', import.meta.url), 'utf8');
+
+  it('both call onClose() before openAskWithQuestion(...), not after', () => {
+    for (const call of [
+      'onClick={() => { onClose(); openAskWithQuestion(`About "${insight.title}": `); }}',
+      'onClick={() => { onClose(); openAskWithQuestion(`About "${sg.title}": `); }}',
+    ]) expect(source).toContain(call);
+  });
+});
+
 describe('Settings: every reset/restore that changes what a stale Ask reply could land on bumps the generation first', () => {
   const source = readFileSync(new URL('../src/slices/settings/Settings.tsx', import.meta.url), 'utf8');
 

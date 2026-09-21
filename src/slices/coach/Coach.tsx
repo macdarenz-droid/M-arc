@@ -16,7 +16,7 @@ import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
-import { openAsk, openAskSavedReview } from './askController';
+import { openAsk, openAskSavedReview, openAskWithQuestion } from './askController';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
@@ -229,6 +229,7 @@ export function InsightSheet({ insight, onClose }: { insight: Insight; onClose: 
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
         {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
         {insight.reviewInTrain && <Button variant="primary" onClick={() => { onClose(); go('train'); }}>Review in Train</Button>}
+        <Button variant="quiet" onClick={() => { onClose(); openAskWithQuestion(`About "${insight.title}": `); }}>Ask {COACH_NAME} about this</Button>
         <Evidence cards={insight.evidence} />
       </div>
     </Sheet>
@@ -276,6 +277,7 @@ export function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }
         {sg.why.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Why</div><div class="stack-sm">{sg.why.map((line, i) => <p key={i} class="small muted">{line}</p>)}</div></div>}
         {sg.changes.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>What changes</div><div class="list">{sg.changes.map((line, i) => <Row key={i}><span class="small">{line}</span></Row>)}</div></div>}
         <Evidence cards={sg.evidence} />
+        <Button variant="quiet" onClick={() => { onClose(); openAskWithQuestion(`About "${sg.title}": `); }}>Ask {COACH_NAME} about this</Button>
         <div class="grid-2"><Button variant="quiet" onClick={onDismiss}>Not now</Button><Button variant="primary" onClick={onAccept}>{sg.acceptLabel}</Button></div>
       </div>
     </Sheet>

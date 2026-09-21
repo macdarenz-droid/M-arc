@@ -220,12 +220,16 @@ function ConcernResource({ concern }: { concern: Exclude<AskConcern, null> }) {
   return <p class="hint" style={{ marginTop: 8 }}>{ASK_CONCERN_RESOURCE[concern]}</p>;
 }
 
-export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClose: () => void; initialTurnKey?: string; savedOnly?: boolean }) {
+export function AskSheet({ onClose, initialTurnKey, savedOnly = false, initialQuestion }: { onClose: () => void; initialTurnKey?: string; savedOnly?: boolean; initialQuestion?: string }) {
   const history = state.value.coach.askThread;
   const pending = pendingCoachItems(state.value.coach, state.value.splits, state.value.schedule, state.value.goal, MAX_SPLITS);
   const pendingAt = (turnIndex: number, kind: PendingCoachItem['kind'], itemIndex: number) => pending.find(item => item.turnIndex === turnIndex && item.kind === kind && item.itemIndex === itemIndex) ?? null;
   const reviewItem = (initialTurnKey ? pending.find(item => item.key === initialTurnKey) : undefined) ?? (savedOnly ? pending[0] : undefined);
-  const [question, setQuestion] = useState('');
+  // Read once, at mount, same as reviewItem's own initialTurnKey lookup above — AskSheet is a
+  // native modal dialog, so a second "Ask about this" tap can't reach it while it's already
+  // open (see docs/escobar-presence/PROGRESS.md's P03.4), meaning this never needs to react to
+  // a later prop change on an already-mounted instance.
+  const [question, setQuestion] = useState(() => (initialQuestion ?? '').slice(0, MAX_QUESTION_CHARS));
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);

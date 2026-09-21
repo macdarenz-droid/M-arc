@@ -22,6 +22,7 @@ export interface AskOpenState {
   open: boolean;
   savedOnly: boolean;
   initialTurnKey?: string;
+  initialQuestion?: string;
 }
 
 const CLOSED: AskOpenState = { open: false, savedOnly: false };
@@ -31,6 +32,23 @@ export const askOpenState = signal<AskOpenState>(CLOSED);
 /** The ordinary "Ask a question" entry point — Coach's button, Train's Escobar button, a presence launcher's "Ask about this". */
 export function openAsk(): void {
   askOpenState.value = { open: true, savedOnly: false };
+}
+
+/**
+ * Contextual entry point (docs/escobar-presence §4's "context by IDs, visible
+ * editable prefill", regression A06): InsightSheet/SuggestionSheet's "Ask
+ * about this" seeds the composer with a starting question about the exact
+ * finding the sheet was opened for, fully visible and editable — never sent
+ * automatically. AskSheet only reads `initialQuestion` once, at mount
+ * (matching `initialTurnKey`'s existing pattern above): reachable safely
+ * because AskSheet is a native modal dialog, so a second sheet's own "Ask
+ * about this" can't be tapped again while Ask is already open (see P03.4's
+ * verified nested-modal reasoning in docs/escobar-presence/PROGRESS.md) —
+ * there is no live scenario where this needs to update an already-open
+ * instance.
+ */
+export function openAskWithQuestion(question: string): void {
+  askOpenState.value = { open: true, savedOnly: false, initialQuestion: question };
 }
 
 /** Coach's saved-draft review entry point: opens straight to one saved item, composer replaced by the offline-safe review view (AskSheet's own `savedOnly`). */

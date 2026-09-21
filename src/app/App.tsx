@@ -48,7 +48,7 @@ export function App() {
         or resets it.
       */}
       {askOpenState.value.open && !settingsOpen.value && (
-        <AskSheet onClose={closeAsk} initialTurnKey={askOpenState.value.initialTurnKey} savedOnly={askOpenState.value.savedOnly} />
+        <AskSheet onClose={closeAsk} initialTurnKey={askOpenState.value.initialTurnKey} savedOnly={askOpenState.value.savedOnly} initialQuestion={askOpenState.value.initialQuestion} />
       )}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
