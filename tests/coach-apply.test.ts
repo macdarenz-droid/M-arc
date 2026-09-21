@@ -64,6 +64,55 @@ describe('accepting and dismissing', () => {
     expect(push.exercises[0]!.sets).toBe(3);
   });
 
+  it('guards chronic-skip cut and swap against stale splits without touching active work or history', () => {
+    const split = state.value.splits.find(candidate => candidate.id === PUSH_ID)!;
+    startSession(split);
+    const beforeActive = structuredClone(state.value.active);
+    const beforeHistory = structuredClone(state.value.sessions);
+    const cut: Proposal = {
+      id: 'split_modify:split_push:skip-cut-lib_barbell_bench_press', kind: 'split_modify',
+      subject: { splitId: PUSH_ID, splitName: 'Push' },
+      apply: { kind: 'split_modify', splitId: PUSH_ID, add: [], remove: ['lib_barbell_bench_press'], setChanges: [] },
+      basedOn: ['chronic_skip:split_push:lib_barbell_bench_press'], principles: ['exercise_variation'], confidence: 'medium', dismissKey: 'split_modify:split_push',
+    };
+    expect(acceptProposal(cut, TODAY)).toContain('Removed Barbell Bench Press');
+    expect(state.value.active).toEqual(beforeActive);
+    expect(state.value.sessions).toEqual(beforeHistory);
+    expect(state.value.splits.find(candidate => candidate.id === PUSH_ID)!.exercises.some(entry => entry.exerciseId === 'lib_barbell_bench_press')).toBe(false);
+    expect(state.value.coach.accepted[cut.dismissKey]).toBe(TODAY);
+
+    expect(acceptProposal(cut, TODAY)).toContain('changed');
+    const staleSwap: Proposal = {
+      id: 'exercise_swap:split_push:skip-swap-lib_barbell_bench_press', kind: 'exercise_swap',
+      subject: { splitId: PUSH_ID, splitName: 'Push', exerciseName: 'Barbell Bench Press' },
+      apply: { kind: 'exercise_swap', splitId: PUSH_ID, fromExerciseId: 'lib_barbell_bench_press', toExerciseId: 'lib_dumbbell_bench_press' },
+      basedOn: ['chronic_skip:split_push:lib_barbell_bench_press'], principles: ['exercise_variation'], confidence: 'medium', dismissKey: 'exercise_swap:split_push',
+    };
+    expect(acceptProposal(staleSwap, TODAY)).toContain('changed');
+    expect(state.value.coach.accepted[staleSwap.dismissKey]).toBeUndefined();
+    expect(state.value.active).toEqual(beforeActive);
+    expect(state.value.sessions).toEqual(beforeHistory);
+  });
+
+  it('rejects a chronic-skip replacement already in the split and never removes a sole exercise', () => {
+    const swap: Proposal = {
+      id: 'exercise_swap:split_push:skip-swap-lib_barbell_bench_press', kind: 'exercise_swap', subject: { splitId: PUSH_ID },
+      apply: { kind: 'exercise_swap', splitId: PUSH_ID, fromExerciseId: 'lib_barbell_bench_press', toExerciseId: 'lib_incline_dumbbell_press' },
+      basedOn: ['chronic_skip:split_push:lib_barbell_bench_press'], principles: ['exercise_variation'], confidence: 'medium', dismissKey: 'exercise_swap:split_push',
+    };
+    expect(acceptProposal(swap, TODAY)).toContain('already');
+    expect(state.value.coach.accepted[swap.dismissKey]).toBeUndefined();
+    replaceState({ ...state.value, splits: [{ ...state.value.splits[0]!, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] }] });
+    const cut: Proposal = {
+      id: 'split_modify:split_push:skip-cut-lib_barbell_bench_press', kind: 'split_modify', subject: { splitId: PUSH_ID },
+      apply: { kind: 'split_modify', splitId: PUSH_ID, add: [], remove: ['lib_barbell_bench_press'], setChanges: [] },
+      basedOn: ['chronic_skip:split_push:lib_barbell_bench_press'], principles: ['exercise_variation'], confidence: 'medium', dismissKey: 'split_modify:split_push',
+    };
+    expect(acceptProposal(cut, TODAY)).toContain('changed');
+    expect(state.value.splits[0]!.exercises).toHaveLength(1);
+    expect(state.value.coach.accepted[cut.dismissKey]).toBeUndefined();
+  });
+
   it('a today plan applies one-day swaps to the session, not the split', () => {
     const p: Proposal = { id: 'today_plan:split_push', kind: 'today_plan', subject: { splitId: PUSH_ID },
       apply: { kind: 'today_plan', recommendedSplitId: PUSH_ID, options: [], modifications: [{ removeExerciseId: 'lib_barbell_bench_press', replaceWithExerciseId: 'lib_triceps_pushdown', reason: 'under_recovered' }, { removeExerciseId: 'lib_incline_dumbbell_press', reason: 'under_recovered' }] },

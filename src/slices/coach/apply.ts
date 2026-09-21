@@ -15,6 +15,7 @@ import { resyncReminders } from '../settings/reminders';
 
 /** Hide a suggestion for this many days after one dismissal. A second dismissal suppresses it. */
 export const SNOOZE_DAYS = 3;
+const fromChronicSkip = (proposal: Proposal): boolean => proposal.basedOn.some(id => id.startsWith('chronic_skip:'));
 
 function remember(key: string, today: string): void {
   update(s => ({ ...s, coach: { ...s.coach, accepted: { ...s.coach.accepted, [key]: today } } }));
@@ -53,6 +54,11 @@ export function acceptProposal(p: Proposal, today: string): string {
     case 'exercise_swap': {
       const to = findExercise(a.toExerciseId, state.value.customExercises);
       if (!to) return 'That exercise is not in the library any more';
+      if (a.splitId) {
+        const split = state.value.splits.find(candidate => candidate.id === a.splitId);
+        if (!split || !split.exercises.some(entry => entry.exerciseId === a.fromExerciseId)) return 'That split has changed; review the suggestion again';
+        if (split.exercises.some(entry => entry.exerciseId === to.id)) return `${to.name} is already in that split`;
+      } else if (fromChronicSkip(p)) return 'That split has changed; review the suggestion again';
       update(s => ({ ...s, splits: s.splits.map(sp => (a.splitId && sp.id !== a.splitId ? sp : { ...sp, exercises: sp.exercises.map(e => (e.exerciseId === a.fromExerciseId ? { ...e, exerciseId: to.id } : e)) })) }));
       message = `Swapped in ${to.name}`;
       break;
@@ -65,6 +71,14 @@ export function acceptProposal(p: Proposal, today: string): string {
       break;
     }
     case 'split_modify': {
+      if (fromChronicSkip(p)) {
+        const split = state.value.splits.find(candidate => candidate.id === a.splitId);
+        const remove = a.remove[0];
+        if (!split || a.remove.length !== 1 || a.add.length || a.setChanges.length || !remove || !split.exercises.some(entry => entry.exerciseId === remove) || split.exercises.length <= 1) return 'That split has changed; review the suggestion again';
+        update(s => ({ ...s, splits: s.splits.map(candidate => candidate.id !== split.id ? candidate : { ...candidate, exercises: candidate.exercises.filter(entry => entry.exerciseId !== remove) }) }));
+        message = `Removed ${findExercise(remove, state.value.customExercises)?.name ?? 'exercise'} from ${split.name}`;
+        break;
+      }
       for (const id of a.remove) removeExerciseFromSplit(a.splitId, id);
       for (const e of a.add) { const ex = findExercise(e.exerciseId, state.value.customExercises); if (ex) addExerciseToSplit(a.splitId, ex, e.sets); }
       for (const c of a.setChanges) setSplitSets(a.splitId, c.exerciseId, c.sets);

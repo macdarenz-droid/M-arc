@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip evidence/planning (6A) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip work items 6A–6B are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 6B only
+## Start here: 6C only
 
-Implement spec 6's guarded cut/swap acceptance in `slices/coach/apply.ts`, then continue with grouped alternatives in 6C and the full 6T review. Recheck the current split and replacement at acceptance; changing a future template must not touch an active workout or history. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement spec 6's grouped mutually exclusive Coach alternatives and the legacy insight's read-only `Review in Train` navigation, then continue with the full 6T review. One `Not now` must dismiss the displayed pair together; accepting either current-template change naturally invalidates the other. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 
