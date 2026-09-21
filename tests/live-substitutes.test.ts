@@ -9,7 +9,7 @@ import { applyDeload } from '@/brain/coach/deload';
 import { DELOAD_LOAD_FACTOR, MAX_SUBSTITUTES } from '@/brain/coach/bands';
 import { substitutes } from '@/brain/live';
 import { suggestNext } from '@/brain/progression';
-import { finishSession, markDone, replaceEntry, setSet, skipEntry, startSession } from '@/slices/workout/session';
+import { finishSession, markDone, removeEntry, replaceEntry, restoreEmptyEntry, setSet, skipEntry, startSession } from '@/slices/workout/session';
 import { createSplit } from '@/slices/workout/splits';
 import { ctx, LAST_MONDAY, LEGS_EX, pplHistory, PUSH_EX } from './coach-helpers';
 import { session, sets } from './helpers';
@@ -264,6 +264,50 @@ describe('replaceEntry', () => {
     expect(replaceEntry(0, replacement, { startedAt: current.startedAt, exerciseId: 'lib_incline_bench_press' })).toBe(false);
     expect(state.value.active).toBe(current);
     expect(replaceEntry(0, replacement, { startedAt: current.startedAt, exerciseId: current.entries[0]!.exerciseId })).toBe(true);
+  });
+
+  it('stale swap cannot replace a shifted entry', () => {
+    startPush();
+    const current = state.value.active!;
+    const expected = { startedAt: current.startedAt, exerciseId: current.entries[1]!.exerciseId };
+    removeEntry(0);
+    const shifted = state.value.active;
+
+    expect(replaceEntry(1, findExercise('lib_machine_chest_press')!, expected)).toBe(false);
+    expect(state.value.active).toBe(shifted);
+    expect(state.value.active?.entries.map(entry => entry.exerciseId)).toEqual([
+      'lib_dumbbell_lateral_raise',
+      'lib_triceps_pushdown',
+    ]);
+  });
+
+  it('undo never clears newly logged sets', () => {
+    startPush();
+    const original = findExercise('lib_barbell_bench_press')!;
+    const replacement = findExercise('lib_machine_chest_press')!;
+    const startedAt = state.value.active!.startedAt;
+    expect(replaceEntry(0, replacement, { startedAt, exerciseId: original.id })).toBe(true);
+    setSet(0, 0, { kg: 50, reps: 10, effort: 'ideal' });
+    const withNewWork = state.value.active;
+
+    expect(restoreEmptyEntry(0, original, { startedAt, exerciseId: replacement.id })).toBe(false);
+    expect(state.value.active).toBe(withNewWork);
+    expect(state.value.active?.entries[0]).toMatchObject({
+      exerciseId: replacement.id,
+      sets: [{ kg: 50, reps: 10, effort: 'ideal' }, {}, {}, {}],
+    });
+  });
+
+  it('leaves coach state byte-identical across a swap and empty-slot undo', () => {
+    startPush();
+    const original = findExercise('lib_barbell_bench_press')!;
+    const replacement = findExercise('lib_machine_chest_press')!;
+    const startedAt = state.value.active!.startedAt;
+    const coachBefore = JSON.stringify(state.value.coach);
+
+    expect(replaceEntry(0, replacement, { startedAt, exerciseId: original.id })).toBe(true);
+    expect(restoreEmptyEntry(0, original, { startedAt, exerciseId: replacement.id })).toBe(true);
+    expect(JSON.stringify(state.value.coach)).toBe(coachBefore);
   });
 
   it('finishes with the replacement while leaving the split template unchanged', () => {

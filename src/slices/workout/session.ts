@@ -119,6 +119,15 @@ export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt
   return true;
 }
 
+/** Restore a swapped slot only while it is still the expected empty replacement. */
+export function restoreEmptyEntry(entry: number, ex: Exercise, expected: { startedAt: string; exerciseId: string }): boolean {
+  const a = active();
+  const slot = a?.entries[entry];
+  if (!a || !slot || a.startedAt !== expected.startedAt || slot.exerciseId !== expected.exerciseId) return false;
+  if (slot.sets.some(set => Object.values(set).some(value => value !== undefined))) return false;
+  return replaceEntry(entry, ex, expected);
+}
+
 export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }

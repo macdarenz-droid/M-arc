@@ -21,7 +21,7 @@ import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, replaceEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -335,7 +335,7 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
     showToast(`Swapped in ${pick.name}`, undoable ? 'Undo' : undefined, undoable ? () => {
       const latest = active();
       const slot = latest?.entries[index];
-      if (!latest || latest.startedAt !== swappedSession || !slot || slot.exerciseId !== pick.id || slot.sets.some(set => Object.values(set).some(value => value !== undefined)) || !replaceEntry(index, original!, { startedAt: swappedSession, exerciseId: pick.id })) {
+      if (!latest || latest.startedAt !== swappedSession || !slot || slot.exerciseId !== pick.id || !restoreEmptyEntry(index, original!, { startedAt: swappedSession, exerciseId: pick.id })) {
         showToast('This exercise has changed; Undo is no longer available');
       }
     } : undefined);
