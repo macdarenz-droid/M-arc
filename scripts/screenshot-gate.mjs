@@ -231,6 +231,96 @@ for (const theme of themes) {
   }
   await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
+  if (theme === 'silent-black') {
+    const base = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    const trajectoryState = structuredClone(base);
+    trajectoryState.active = null;
+    trajectoryState.coach.deload = null;
+    trajectoryState.sessions = Array.from({ length: 8 }, (_, index) => {
+      const offset = (7 - index) * 7;
+      const sessionDay = day(offset);
+      return { id: `gate-trajectory-${index}`, splitId: 'split_push', splitName: 'Push', day: sessionDay, startedAt: iso(offset, 10), endedAt: iso(offset, 11), durationSec: 3600,
+        exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 43 + index, reps: 8, effort: 'ideal' }] }] };
+    });
+    const externalRequests = [];
+    const openStats = async target => {
+      await target.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+      const stats = target.getByRole('tab', { name: 'Stats' });
+      await stats.focus(); await target.keyboard.press('Enter');
+      await target.getByText(/^Logged top load is rising about/).waitFor();
+    };
+    const trajectoryCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const trajectoryPage = await trajectoryCtx.newPage();
+    trajectoryPage.on('pageerror', e => errors.push(`silent-black trajectory: ${e.message}`));
+    trajectoryPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) externalRequests.push(request.url()); });
+    await trajectoryPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(trajectoryState));
+    await trajectoryPage.goto(`http://localhost:${PORT}/`); await trajectoryPage.waitForSelector('.nav');
+    const beforeTrajectory = await trajectoryPage.evaluate(() => localStorage.getItem('marc.state.v1'));
+    await openStats(trajectoryPage);
+    const trajectoryBlock = trajectoryPage.getByText(/^Logged top load is rising about/).locator('..');
+    if (!(await trajectoryBlock.innerText()).includes('1 kg per week across 8 logged days')) errors.push('silent-black: projected trajectory rate or evidence count was wrong');
+    if (!(await trajectoryBlock.innerText()).includes('52.5 kg')) errors.push('silent-black: projected next load was wrong');
+    await trajectoryBlock.scrollIntoViewIfNeeded();
+    await trajectoryPage.screenshot({ path: `${OUT}/silent-black-lift-trajectory.png` });
+    await trajectoryPage.setViewportSize({ width: 360, height: 800 });
+    if (await trajectoryPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: lift trajectory overflows at 360px');
+    await trajectoryPage.setViewportSize({ width: 390, height: 844 });
+    await trajectoryPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await openStats(trajectoryPage);
+    await trajectoryPage.reload(); await trajectoryPage.waitForSelector('.nav'); await openStats(trajectoryPage);
+    const afterTrajectory = await trajectoryPage.evaluate(() => localStorage.getItem('marc.state.v1'));
+    if (afterTrajectory !== beforeTrajectory) errors.push('silent-black: viewing or reloading lift trajectory wrote app state');
+
+    await trajectoryPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await trajectoryPage.getByRole('button', { name: 'Settings' }).click();
+    const downloadPromise = trajectoryPage.waitForEvent('download');
+    await trajectoryPage.getByRole('button', { name: 'Export backup' }).click();
+    const download = await downloadPromise;
+    const backupPath = join(ROOT, '.tmp', 'trajectory-backup.json');
+    await download.saveAs(backupPath);
+
+    const restoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const restorePage = await restoreCtx.newPage();
+    restorePage.on('pageerror', e => errors.push(`silent-black trajectory restore: ${e.message}`));
+    await restorePage.goto(`http://localhost:${PORT}/`); await restorePage.waitForSelector('.nav');
+    await restorePage.getByRole('button', { name: 'Settings' }).click();
+    const chooserPromise = restorePage.waitForEvent('filechooser');
+    await restorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const chooser = await chooserPromise; await chooser.setFiles(backupPath);
+    await restorePage.getByText('Restored 8 sessions', { exact: true }).waitFor();
+    await restorePage.keyboard.press('Escape'); await openStats(restorePage);
+    await restoreCtx.close();
+
+    const lbState = structuredClone(trajectoryState); lbState.preferences.weightUnit = 'lb';
+    const lbTrajectoryCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const lbTrajectoryPage = await lbTrajectoryCtx.newPage();
+    await lbTrajectoryPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(lbState));
+    await lbTrajectoryPage.goto(`http://localhost:${PORT}/`); await lbTrajectoryPage.waitForSelector('.nav'); await openStats(lbTrajectoryPage);
+    if (!(await lbTrajectoryPage.getByText(/^Logged top load is rising about/).locator('..').innerText()).includes('2 lb per week')) errors.push('silent-black: lift trajectory did not render in lb');
+    await lbTrajectoryCtx.close();
+
+    const expiredState = structuredClone(trajectoryState);
+    expiredState.sessions = expiredState.sessions.map((session, index) => { const offset = (7 - index) * 7 + 40; const sessionDay = day(offset); return { ...session, day: sessionDay, startedAt: iso(offset, 10), endedAt: iso(offset, 11) }; });
+    const expiredCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const expiredPage = await expiredCtx.newPage();
+    await expiredPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(expiredState));
+    await expiredPage.goto(`http://localhost:${PORT}/`); await expiredPage.waitForSelector('.nav');
+    await expiredPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click(); await expiredPage.getByRole('tab', { name: 'Stats' }).click();
+    await expiredPage.getByText('This projection has expired; another logged session is needed to reassess it.', { exact: true }).waitFor();
+    await expiredCtx.close();
+
+    const deloadState = structuredClone(trajectoryState);
+    deloadState.coach.deload = { from: day(0), to: day(-6), loadFactor: 0.85, effortCap: 'ideal' };
+    const deloadCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const deloadPage = await deloadCtx.newPage();
+    await deloadPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(deloadState));
+    await deloadPage.goto(`http://localhost:${PORT}/`); await deloadPage.waitForSelector('.nav');
+    await deloadPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click(); await deloadPage.getByRole('tab', { name: 'Stats' }).click();
+    if (await deloadPage.getByText(/^Logged top load is rising about/).count() || await deloadPage.getByText(/^This projection has expired/).count()) errors.push('silent-black: easier week did not suppress lift trajectory');
+    await deloadCtx.close();
+    if (externalRequests.length) errors.push(`silent-black: lift trajectory made external requests (${externalRequests.join(', ')})`);
+    await trajectoryCtx.close();
+  }
   await nav.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
   await nav.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');

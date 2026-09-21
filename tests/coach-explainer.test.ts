@@ -110,6 +110,16 @@ describe('number validation', () => {
     expect(bad.offending).toEqual([5, 20]);
     expect(validateText('No numbers here at all.', allowed).ok).toBe(true);
   });
+  it('grounds trajectory scalars without admitting forecast date components', () => {
+    const trajectory = { ...p, findings: [{ ...p.findings[0]!, metrics: {
+      trajectoryKgPerWeek: 1.25, trajectoryCurrentKg: 50, trajectoryStepKg: 2.5, trajectoryNextKg: 52.5, trajectoryPoints: 8,
+      trajectoryProjectedOn: '2047-11-23', trajectoryExpiresOn: '2048-02-27',
+    } }] };
+    const allowed = allowedNumbers(trajectory);
+    for (const n of [1.25, 50, 2.5, 52.5, 8]) expect(allowed.has(n), `trajectory scalar ${n}`).toBe(true);
+    for (const n of [2047, 11, 23, 2048, 2, 27]) expect(allowed.has(n), `date part ${n} must not be allowed`).toBe(false);
+    expect(validateText('The next step projects around 23 November 2047.', allowed)).toMatchObject({ ok: false, offending: [23, 2047] });
+  });
   it('allows "bmi" when present — a single derived number, the one deliberate exception to "no body measurements" — and doesn\'t invent one when absent', () => {
     const withBmi = allowedNumbers({ ...p, bmi: 26 });
     expect(withBmi.has(26)).toBe(true);
