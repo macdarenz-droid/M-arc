@@ -4,6 +4,7 @@ import { trainingDaysPerWeek } from '@/brain/weekly';
 import { consistencyDestination, detectConsistencyDrift, learnHabits } from '@/brain/coach/detectors';
 import { planConsistencyShift } from '@/brain/coach/planners';
 import { buildReport } from '@/brain/coach/report';
+import { renderFinding, renderProposal, type RenderContext } from '@/brain/coach/words';
 import { ctx, history, pplSplits, PUSH_EX, PUSH_ID, PULL_EX, PULL_ID, std, timedSession } from './coach-helpers';
 
 const LAST_COMPLETE_MONDAY = '2026-09-07';
@@ -87,5 +88,23 @@ describe('consistency drift', () => {
     for (const key of ['olderCount', 'recentCount', 'olderWeeks', 'recentWeeks', 'dropCount', 'destinationCount', 'destinationSplitCount']) {
       expect(typeof finding.metrics[key], key).toBe('number');
     }
+  });
+
+  it('renders the logged-session limitation and supported move in the existing Coach copy', () => {
+    const c = ctx(driftHistory(), { schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: PUSH_ID, sat: null } });
+    const report = buildReport(c);
+    const finding = report.findings.find(row => row.kind === 'consistency_drift')!;
+    const proposal = report.proposals.find(row => row.id.includes(':drift-'))!;
+    const render: RenderContext = { unit: 'kg', splits: c.splits, custom: [], today: c.today, goal: c.goal };
+    const insight = renderFinding(finding, render);
+    expect(insight.title).toBe('Fri is less common in your logs');
+    expect(insight.noticed).toBe('Fri appeared in 7 of the older 8 complete weeks and 2 of the recent 8.');
+    expect(insight.means).toContain('This describes logged sessions; your past schedule was not saved.');
+    expect(insight.action).toBe('Sat has enough recent logs to review as a schedule move.');
+    const suggestion = renderProposal(proposal, report, render);
+    expect(suggestion.title).toBe('Move Push from Fri to Sat?');
+    expect(suggestion.summary).toBe('Sat appeared in 6 recent weeks, including 4 with Push.');
+    expect(suggestion.acceptLabel).toBe('Move the scheduled day');
+    expect(suggestion.changes).toEqual(['Fri: cleared', 'Sat: Push at the learned start time']);
   });
 });
