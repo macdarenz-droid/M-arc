@@ -4,14 +4,14 @@ import { state } from '@/core/store';
 import { deload, nowMs, restNext, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMafia, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
-import { formatClock, formatDay } from '@/core/dates';
+import { dayKey, formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
 import type { Exercise, PlanSetTarget, Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
-import { applyDeload } from '@/brain/coach/deload';
-import { substitutes, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
+import { applyDeload, deloadActive as isDeloadActive } from '@/brain/coach/deload';
+import { autoregulate, effectiveSetTarget, substitutes, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
 import { recentPainMuscles } from '@/brain/coach/planners/shared';
@@ -21,7 +21,7 @@ import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
+import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -304,13 +304,43 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
   const mode = ex?.mode ?? 'weighted';
   const next = applyDeload(suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises), deload.value, today.value);
   const captured = entry.planComparisonValid === false ? undefined : s.active?.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
-  const headline = captured ? fmtCapturedTarget(captured.targets[0], u) : fmtTarget(next, u);
+  const headlineTarget = captured ? effectiveSetTarget(captured.targets, entry.targetOverrides, 0) : null;
+  const headline = captured ? fmtCapturedTarget(headlineTarget ?? undefined, u) : fmtTarget(next, u);
+  const [offer, setOffer] = useState<LiveAdjustment | null>(null);
   const [menu, setMenu] = useState<{ startedAt: string; exerciseId: string } | null>(null);
   const [swap, setSwap] = useState<{ mode: 'any' | 'different_equipment'; rows: Substitute[] } | null>(null);
   const [confirmSwap, setConfirmSwap] = useState<{ sub: Substitute; count: number } | null>(null);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const loggedHere = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
+
+  const evaluateOffer = (sourceSet: number) => {
+    const latest = active();
+    const slot = latest?.entries[index];
+    const planEntry = latest?.plan?.entries.find(candidate => candidate.id === slot?.planEntryId);
+    if (!latest || latest.pausedAt || !slot || !planEntry || slot.planComparisonValid === false || planEntry.excluded) { setOffer(null); return; }
+    const exercise = findExercise(slot.exerciseId, state.value.customExercises);
+    setOffer(autoregulate({
+      exercise,
+      goal: latest.plan!.goal,
+      sets: slot.sets,
+      targets: planEntry.targets,
+      sourceSet,
+      deloadActive: isDeloadActive(latest.plan!.deload, dayKey(new Date(latest.startedAt))) || isDeloadActive(state.value.coach.deload, today.value),
+      decisionTaken: !!slot.coachDecision,
+      historyBacked: planEntry.targetSource === 'history',
+      allowIncrease: planEntry.allowIncrease,
+    }));
+  };
+
+  const decideOffer = (action: 'accept' | 'dismiss') => {
+    if (!offer || !entry.planEntryId || !s.active) return;
+    const ok = action === 'accept'
+      ? acceptLiveAdjustment(entry.planEntryId, s.active.startedAt, offer)
+      : dismissLiveAdjustment(entry.planEntryId, s.active.startedAt, offer);
+    setOffer(null);
+    if (!ok) showToast('The set changed; review the new target.');
+  };
 
   const closeChanged = () => {
     setConfirmSwap(null);
@@ -384,32 +414,41 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
       {open && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
+          {entry.coachDecision?.action === 'accepted' && <p class="hint positive-text">Target updated for the remaining empty sets.</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{u}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);
-            const capturedTarget = j < (captured?.plannedSets ?? 0) ? captured?.targets[j] : undefined;
             const fallbackTarget = next.sets[Math.min(j, next.sets.length - 1)];
-            const target = capturedTarget ?? fallbackTarget;
-            const targetNote = capturedTarget ? (captured?.targetSource === 'starter' ? 'Starting suggestion' : 'Original target') : fallbackTarget?.note;
+            const target = captured ? effectiveSetTarget(captured.targets, entry.targetOverrides, j) : fallbackTarget;
+            const overridden = !!entry.targetOverrides?.[j];
+            const targetNote = captured ? (overridden ? 'Updated target' : captured.targetSource === 'starter' ? 'Starting suggestion' : 'Original target') : fallbackTarget?.note;
             const pr = !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises);
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
                   <span class="set-index">{j + 1}</span>
                   {isTimed ? (
-                    <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => { setOffer(null); setSet(index, j, { durationSec: parseInt((e.target as HTMLInputElement).value) || undefined }); }} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <input type="number" inputMode="decimal" step="0.5" placeholder={target?.kg != null ? String(kgToDisplay(target.kg, u)) : prev?.kg != null ? String(kgToDisplay(prev.kg, u)) : mode === 'bodyweight' ? 'bw' : ''} value={set.kg != null ? kgToDisplay(set.kg, u) : ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); setSet(index, j, { kg: Number.isFinite(v) ? displayToKg(v, u) : undefined }); }} />
-                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
+                      <input type="number" inputMode="decimal" step="0.5" placeholder={target?.kg != null ? String(kgToDisplay(target.kg, u)) : prev?.kg != null ? String(kgToDisplay(prev.kg, u)) : mode === 'bodyweight' ? 'bw' : ''} value={set.kg != null ? kgToDisplay(set.kg, u) : ''} onInput={e => { setOffer(null); const v = parseFloat((e.target as HTMLInputElement).value); setSet(index, j, { kg: Number.isFinite(v) ? displayToKg(v, u) : undefined }); }} />
+                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => { setOffer(null); setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined }); }} onBlur={() => { if (commitSet(index, j)) evaluateOffer(j); }} />
                     </>
                   )}
-                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); regradeRest(index, j); }}>{ef.l}</button>)}</div>
+                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setOffer(null); setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); regradeRest(index, j); evaluateOffer(j); }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
                   <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : targetNote ?? ''}</span>
                   {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
                 </div>
+                {!s.active?.pausedAt && offer?.sourceSet === j && (
+                  <div class="stack-sm" style={{ marginTop: 8 }}>
+                    <p class="hint">{offer.reason === 'max_below_target'
+                      ? `That set was ${formatLoad(offer.actualKg, u)} × ${offer.actualReps} at max effort.`
+                      : 'Those easy sets cleared their targets.'} Use {formatLoad(offer.next.kg!, u)} × {offer.next.reps} for the remaining {offer.remainingSets} empty set{offer.remainingSets === 1 ? '' : 's'}?</p>
+                    <div class="wrap"><Button size="sm" variant="solid" onClick={() => decideOffer('accept')}>Use this target</Button><Button size="sm" onClick={() => decideOffer('dismiss')}>Keep my targets</Button></div>
+                  </div>
+                )}
               </div>
             );
           })}

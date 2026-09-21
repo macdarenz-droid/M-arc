@@ -2,7 +2,7 @@
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { todayKey, weekdayOf } from '@/core/dates';
-import { WEEKDAYS } from '@/core/models';
+import { WEEKDAYS, type PlanSetTarget } from '@/core/models';
 import type { MuscleRecovery } from '@/brain/recovery';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
 import { buildReport } from '@/brain/coach/report';
@@ -12,7 +12,7 @@ import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@
 import { applyDeload, deloadActive } from '@/brain/coach/deload';
 import { buildAskStats } from '@/brain/stats';
 import { suggestNext } from '@/brain/progression';
-import { nextAfterRest, type RestNext } from '@/brain/live';
+import { effectiveSetTarget, nextAfterRest, type RestNext } from '@/brain/live';
 import { readinessToday } from '@/brain/readiness';
 import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain/coach/verdict';
 
@@ -96,5 +96,8 @@ export const restNext = computed<RestNext | null>(() => {
     deload.value,
     today.value,
   );
-  return nextAfterRest(active.entries, from, suggestion);
+  const captured = entry.planComparisonValid === false ? undefined : active.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
+  const base: PlanSetTarget[] = captured?.targets ?? suggestion.sets.map(target => ({ kg: target.kg, reps: target.reps, durationSec: target.durationSec }));
+  const effective = entry.sets.map((_, index) => effectiveSetTarget(base, captured ? entry.targetOverrides : undefined, index));
+  return nextAfterRest(active.entries, from, suggestion, effective);
 });
