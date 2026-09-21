@@ -353,7 +353,7 @@ export function warmupRamp(input: {
   targets: ReadonlyMap<string, PlanSetTarget | null>;
 }): WarmupRamp | null {
   const { active } = input;
-  if (active.pausedAt || ('warmupDismissed' in active && active.warmupDismissed === true)) return null;
+  if (active.pausedAt || active.warmupDismissed) return null;
   if (active.entries.some(entry => entry.sets.some(isWorkingSet))) return null;
 
   for (const entry of active.entries) {

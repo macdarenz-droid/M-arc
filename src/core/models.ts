@@ -170,6 +170,8 @@ export interface ActiveSession {
   entries: ActiveSessionEntry[];
   /** Immutable targets captured on the explicit start/add/replace action. */
   plan?: WorkoutPlanSnapshot;
+  /** The person hid the read-only preparation ramp for this session. */
+  warmupDismissed?: boolean;
   rest?: RestState;
 }
 

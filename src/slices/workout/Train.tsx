@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { deload, nowMs, restNext, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
@@ -11,7 +11,7 @@ import { MUSCLES, muscleLabel } from '@/data/muscles';
 import { PLAN_MAX_METADATA_SETS, type Exercise, type PlanSetTarget, type Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload, deloadActive as isDeloadActive } from '@/brain/coach/deload';
-import { autoregulate, effectiveSetTarget, substitutes, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
+import { autoregulate, effectiveSetTarget, substitutes, warmupRamp, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute, type WarmupRamp } from '@/brain/live';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
 import { recentPainMuscles } from '@/brain/coach/planners/shared';
@@ -21,7 +21,7 @@ import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
+import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, dismissWarmup, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -237,6 +237,19 @@ function LiveSession() {
   const elapsed = elapsedSec(a, nowMs.value);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
+  const ramp = useMemo(() => {
+    const targets = new Map<string, PlanSetTarget | null>();
+    for (const entry of a.entries) {
+      if (!entry.planEntryId || entry.planComparisonValid === false) continue;
+      const captured = a.plan?.entries.find(candidate => candidate.id === entry.planEntryId);
+      if (captured?.exerciseId === entry.exerciseId) targets.set(captured.id, effectiveSetTarget(captured.targets, entry.targetOverrides, 0));
+    }
+    return warmupRamp({
+      ctx: contextFromState(s, dayKey(new Date(a.startedAt)), Date.now()),
+      active: a,
+      targets,
+    });
+  }, [a.entries, a.plan, a.pausedAt, a.warmupDismissed, s.customExercises]);
 
   return (
     <div class="view">
@@ -249,7 +262,7 @@ function LiveSession() {
       </div>
 
       <div class="stack">
-        {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} onBrowse={expected => setPicking({ mode: 'replace', index: i, expected })} />)}
+        {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} ramp={entry.planEntryId === ramp?.entryId ? ramp : null} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} onBrowse={expected => setPicking({ mode: 'replace', index: i, expected })} />)}
         <Button onClick={() => setPicking({ mode: 'add' })}><IconPlus size={16} /> Add exercise to this session</Button>
       </div>
 
@@ -297,7 +310,7 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
   );
 }
 
-function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void; onRemove: () => void; onBrowse: (expected: { startedAt: string; exerciseId: string }) => void }) {
+function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBrowse }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; ramp: WarmupRamp | null; open: boolean; onToggle: () => void; onDone: () => void; onRemove: () => void; onBrowse: (expected: { startedAt: string; exerciseId: string }) => void }) {
   const s = state.value;
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
@@ -340,6 +353,11 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
       : dismissLiveAdjustment(entry.planEntryId, s.active.startedAt, offer);
     setOffer(null);
     if (!ok) showToast('The set changed; review the new target.');
+  };
+
+  const hideWarmup = () => {
+    if (!s.active || dismissWarmup(s.active.startedAt)) return;
+    showToast('This workout changed; review the warm-up again.');
   };
 
   const closeChanged = () => {
@@ -414,6 +432,13 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
       {open && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
+          {ramp && (
+            <div class="stack-sm">
+              <p class="hint">Suggested ramp: {ramp.sets.map(step => `${formatLoad(step.kg, u)} × ${step.reps}`).join(' → ')}. Working target {formatLoad(ramp.workingKg, u)}.</p>
+              <p class="hint">Use the nearest lighter load your equipment allows. These suggestions are not logged sets.</p>
+              <Button size="sm" variant="quiet" onClick={hideWarmup}>Hide warm-up</Button>
+            </div>
+          )}
           {entry.coachDecision?.action === 'accepted' && <p class="hint positive-text">Target updated for the remaining empty sets.</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{u}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {

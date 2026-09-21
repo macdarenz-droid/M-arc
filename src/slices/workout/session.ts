@@ -253,6 +253,15 @@ export function dismissLiveAdjustment(entryId: string, expectedStartedAt: string
   return true;
 }
 
+/** Hide the read-only preparation ramp for this active session only. */
+export function dismissWarmup(expectedStartedAt: string): boolean {
+  const a = active();
+  if (!a || a.startedAt !== expectedStartedAt) return false;
+  patchActive(latest => latest !== a ? latest : { ...latest, warmupDismissed: true });
+  flushSave();
+  return true;
+}
+
 function clearRestOwner(rest: RestState | undefined): RestState | undefined {
   return rest ? { ...rest, from: undefined, reasonKind: undefined, gradedSec: undefined, deltaSec: undefined } : undefined;
 }

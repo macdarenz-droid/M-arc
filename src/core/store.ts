@@ -104,7 +104,12 @@ function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | 
       coachDecision: linked ? decision : undefined,
     };
   });
-  return { ...active, plan, entries };
+  return {
+    ...active,
+    plan,
+    entries,
+    warmupDismissed: typeof active.warmupDismissed === 'boolean' ? active.warmupDismissed : undefined,
+  };
 }
 
 /** Fill in fields added after a state was first saved. */

@@ -4,9 +4,9 @@ Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A–1T), effort-graded rest (2A–2T), morning verdict (3A–3T), the session-plan capture prerequisite (10A/10AT), live autoregulation (4A–4T), and the pure warm-up ramp (5A) are complete in this checkout. The ramp is derived only from the first eligible history-backed effective target and never creates logged work. Claude Opus 5's ranking and architecture remain the contract.
+Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A–1T), effort-graded rest (2A–2T), morning verdict (3A–3T), the session-plan capture prerequisite (10A/10AT), live autoregulation (4A–4T), and warm-up ramp work items 5A–5B are complete in this checkout. The ramp is derived only from the first eligible history-backed effective target, never creates logged work, renders from the shared effective target, and can be hidden for the active session. Claude Opus 5's ranking and architecture remain the contract.
 
-Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **5B**, the session-wide Hide flag, effective-target map and inline ramp presentation, then 5T. Preserve the ordinary working-set inputs and all live-autoregulation metadata. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
+Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **5T**, the warm-up feature review, full gate and decision record, then 6A. Preserve the ordinary working-set inputs and all live-autoregulation metadata. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
 
 ## Fixed decisions
 
@@ -19,4 +19,4 @@ Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-road
 
 ## Validation and next handoff
 
-Warm-up-ramp work item 5A verification on 2026-09-21: app typecheck passed; 490 app tests passed across 38 files, including the unchanged 50-persona finite-number fuzz sweep; proxy typecheck passed; 87 proxy tests passed with eight existing skips; and the production build passed. Named pure tests cover the exact 60 kg ramp, first-compound selection, session-wide logged-work suppression, starter/legacy/light/unknown absence, every unsupported resistance mode, single deload application, downward rounding, pause and hidden state. Work item 5B is next.
+Warm-up-ramp work item 5B verification on 2026-09-21: app typecheck passed and all 14 focused warm-up tests passed. The session-wide dismissal has a stale-start guard, survives store restart, resets on a new session, drops malformed imported metadata, and leaves actual rows, sessions and splits untouched. The inline ramp renders only on its selected expanded card from a once-per-change effective-target map. Work item 5T is next.
