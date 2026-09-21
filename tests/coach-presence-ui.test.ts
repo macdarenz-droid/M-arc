@@ -154,6 +154,24 @@ describe('Coach: deliberately exempt from the presence launcher', () => {
   });
 });
 
+describe('Settings: deliberately exempt from the presence launcher (a different reason than Coach)', () => {
+  it('never imports PresenceLauncher — it has no report-derived content for a moment to be about', () => {
+    const source = readFileSync(new URL('../src/slices/settings/Settings.tsx', import.meta.url), 'utf8');
+    expect(source).not.toContain("from '@/slices/coach/Presence'");
+    expect(source).not.toMatch(/<PresenceLauncher\b/);
+    // Load-bearing: the reasoning depends on Settings never importing the
+    // same report-derived selectors selectMoment ranks over. If a future
+    // edit adds them, this fails and forces a re-read of the comment above
+    // Settings(), not a silent stale claim. Checked against the import
+    // statement, not the whole file, so this comment's own prose mentioning
+    // those words by name doesn't trip the assertion.
+    const importLine = source.split('\n').find(line => line.includes("from '@/app/selectors'")) ?? '';
+    expect(importLine).not.toContain('insights');
+    expect(importLine).not.toContain('suggestions');
+    expect(importLine).not.toContain('presenceMoment');
+  });
+});
+
 describe('dismissPresenceMoment / setPresenceTone: the only writers of coach.presence', () => {
   it('dismissing a moment appends one entry and defaults tone to steady the first time', () => {
     initStore(memStorage());

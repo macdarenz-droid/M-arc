@@ -18,6 +18,19 @@ import { checkProxy } from '@/brain/coach/explainer';
 
 export const APP_VERSION = '37.0.0';
 
+/**
+ * No shared PresenceLauncher here either (docs/escobar-presence P02) —
+ * verified, not assumed, the same way Coach.tsx's exemption was. The
+ * presence selector's moments are built from `insights.value`/
+ * `suggestions.value` — report-derived facts about training (a plateau, a
+ * readiness reading, a suggested target). This screen reads none of that;
+ * every row here is a static preference (theme, units, reminders, haptics,
+ * data export). There is no report-derived content for a presence cue to
+ * be *about*, so there is nothing for the launcher to show — not a layout
+ * problem to solve, a genuine category mismatch. If a future patch adds
+ * settings-specific coaching (e.g. "you turned off the online coach 3
+ * weeks ago"), that's a new kind of moment, not this one reused here.
+ */
 export function Settings({ onClose }: { onClose: () => void }) {
   const s = state.value;
   const p = s.preferences;
