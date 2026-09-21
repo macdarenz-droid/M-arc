@@ -30,6 +30,11 @@ import {
   REST_ROUND_SEC,
   REST_STRENGTH_SEC,
   SUBSTITUTE_MIN_READY,
+  WARMUP_FRACTIONS,
+  WARMUP_MIN_STEPS,
+  WARMUP_MIN_WORKING_KG,
+  WARMUP_REPS,
+  WARMUP_ROUND_KG,
 } from './coach/bands';
 
 /**
@@ -332,4 +337,44 @@ export function autoregulate(input: {
     remainingIndices,
     remainingSets: remainingIndices.length,
   };
+}
+
+export interface WarmupRamp {
+  entryId: string;
+  exerciseId: string;
+  name: string;
+  workingKg: number;
+  sets: Array<{ kg: number; reps: number }>;
+}
+
+export function warmupRamp(input: {
+  ctx: BrainContext;
+  active: ActiveSession;
+  targets: ReadonlyMap<string, PlanSetTarget | null>;
+}): WarmupRamp | null {
+  const { active } = input;
+  if (active.pausedAt || ('warmupDismissed' in active && active.warmupDismissed === true)) return null;
+  if (active.entries.some(entry => entry.sets.some(isWorkingSet))) return null;
+
+  for (const entry of active.entries) {
+    if (entry.skipped || entry.done || !entry.planEntryId || entry.planComparisonValid === false) continue;
+    const captured = active.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
+    if (!captured || captured.exerciseId !== entry.exerciseId || captured.targetSource !== 'history' || captured.excluded) continue;
+    const exercise = findExercise(entry.exerciseId, input.ctx.custom);
+    if (!exercise || exercise.mode !== 'weighted' || !COMPOUND_PATTERN.test(exercise.pattern)) continue;
+    const effective = input.targets.get(entry.planEntryId);
+    const workingKg = effective?.kg;
+    if (typeof workingKg !== 'number' || !Number.isFinite(workingKg) || workingKg < WARMUP_MIN_WORKING_KG) continue;
+
+    const seen = new Set<number>();
+    const sets: WarmupRamp['sets'] = [];
+    for (let index = 0; index < WARMUP_FRACTIONS.length; index++) {
+      const kg = Math.floor((workingKg * WARMUP_FRACTIONS[index]!) / WARMUP_ROUND_KG) * WARMUP_ROUND_KG;
+      if (!Number.isFinite(kg) || kg <= 0 || kg >= workingKg || seen.has(kg)) continue;
+      seen.add(kg);
+      sets.push({ kg, reps: WARMUP_REPS[index]! });
+    }
+    return sets.length >= WARMUP_MIN_STEPS ? { entryId: entry.planEntryId, exerciseId: exercise.id, name: entry.name, workingKg, sets } : null;
+  }
+  return null;
 }

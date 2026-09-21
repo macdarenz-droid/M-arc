@@ -129,6 +129,15 @@ export const LIVE_SURPLUS_REPS = 2;
 /** Two easy surplus sets are required before adding one rep to remaining rows. */
 export const LIVE_UP_MIN_SETS = 2;
 
+/** Warm-up ramps stay hidden for lighter working targets where the three-step card adds little value. */
+export const WARMUP_MIN_WORKING_KG = 20;
+/** Fractions and reps for the read-only three-step preparation ramp. */
+export const WARMUP_FRACTIONS = [0.4, 0.6, 0.8] as const;
+export const WARMUP_REPS = [8, 5, 3] as const;
+/** Always round down to this load increment; equipment availability is unknown. */
+export const WARMUP_ROUND_KG = 0.5;
+export const WARMUP_MIN_STEPS = 2;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',
