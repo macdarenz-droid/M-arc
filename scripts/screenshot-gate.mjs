@@ -330,6 +330,7 @@ for (const theme of themes) {
     const unfinishedState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     unfinishedState.active = null;
     unfinishedState.coach.remoteExplainer = false;
+    unfinishedState.coach.dismissalEvidence = { 'gate:*': { day: day(30), proposalFingerprint: '[]', reopenedOnce: false, findings: [] } };
     unfinishedState.coach.askThread = [{
       role: 'assistant', text: 'I saved four typed options for you.', scope: 'personal', category: 'training', concern: null,
       drafts: [
@@ -340,11 +341,11 @@ for (const theme of themes) {
       actions: [{ kind: 'goal_change', goal: 'strength' }], actionPrev: [null],
     }];
     const unfinishedRequests = [];
-    const unfinishedCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const unfinishedCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const unfinishedPage = await unfinishedCtx.newPage();
     unfinishedPage.on('pageerror', e => errors.push(`silent-black unfinished: ${e.message}`));
     unfinishedPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) unfinishedRequests.push(request.url()); });
-    await unfinishedPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(unfinishedState));
+    await unfinishedPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(unfinishedState));
     await unfinishedPage.goto(`http://localhost:${PORT}/`); await unfinishedPage.waitForSelector('.nav');
     await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
     const unfinished = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Unfinished' }) });
@@ -378,6 +379,31 @@ for (const theme of themes) {
     await unfinishedPage.getByRole('button', { name: 'Change goal to Strength' }).click();
     const afterGoal = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     if (afterGoal.goal !== 'strength' || afterGoal.coach.askThread[0]?.actionPrev?.[0] !== unfinishedState.goal) errors.push('silent-black: saved goal did not record the exact previous goal');
+
+    const backupCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const backupPage = await backupCtx.newPage();
+    await backupPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(afterGoal));
+    await backupPage.goto(`http://localhost:${PORT}/`); await backupPage.waitForSelector('.nav');
+    await backupPage.getByRole('button', { name: 'Settings' }).click();
+    const unfinishedDownloadPromise = backupPage.waitForEvent('download');
+    await backupPage.getByRole('button', { name: 'Export backup' }).click();
+    const unfinishedDownload = await unfinishedDownloadPromise;
+    const unfinishedBackupPath = join(ROOT, '.tmp', 'unfinished-backup.json');
+    await unfinishedDownload.saveAs(unfinishedBackupPath);
+    await backupCtx.close();
+
+    const unfinishedRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const unfinishedRestorePage = await unfinishedRestoreCtx.newPage();
+    await unfinishedRestorePage.goto(`http://localhost:${PORT}/`); await unfinishedRestorePage.waitForSelector('.nav');
+    await unfinishedRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const unfinishedChooserPromise = unfinishedRestorePage.waitForEvent('filechooser');
+    await unfinishedRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const unfinishedChooser = await unfinishedChooserPromise; await unfinishedChooser.setFiles(unfinishedBackupPath);
+    await unfinishedRestorePage.getByText(/Restored \d+ sessions/).waitFor();
+    const restoredUnfinishedState = await unfinishedRestorePage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (!restoredUnfinishedState.coach.dismissalEvidence?.['gate:*'] || restoredUnfinishedState.coach.askThread[0]?.draftDismissed?.[1] !== true || !restoredUnfinishedState.splits.some(split => split.name === 'Saved full body')) errors.push('silent-black: unfinished-item ledger or flags did not survive export and restore');
+    await unfinishedRestoreCtx.close();
+
     await unfinishedPage.keyboard.press('Escape');
     const goalSection = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Training goal' }) });
     await goalSection.getByRole('button', { name: 'Change', exact: true }).click();
@@ -400,6 +426,62 @@ for (const theme of themes) {
     await undoCtx.close();
     if (unfinishedRequests.length) errors.push(`silent-black: saved-only review made external requests (${unfinishedRequests.join(', ')})`);
     await unfinishedCtx.close();
+
+    const reopenState = structuredClone(unfinishedState);
+    reopenState.coach.askThread = [];
+    reopenState.coach.dismissed = {};
+    reopenState.coach.snoozedUntil = {};
+    reopenState.coach.accepted = {};
+    reopenState.coach.dismissalEvidence = {};
+    const captureCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const capturePage = await captureCtx.newPage();
+    await capturePage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(reopenState));
+    await capturePage.goto(`http://localhost:${PORT}/`); await capturePage.waitForSelector('.nav');
+    await capturePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const scheduleCard = capturePage.locator('.suggestion').filter({ hasText: 'Schedule' }).first();
+    await scheduleCard.getByRole('button', { name: 'Not now' }).click();
+    const capturedDismissal = await capturePage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    const scheduleEvidence = capturedDismissal.coach.dismissalEvidence?.['schedule:*'];
+    if (!scheduleEvidence?.findings?.length) errors.push('silent-black: explicit proposal dismissal did not capture supporting evidence');
+    else {
+      scheduleEvidence.day = day(30);
+      for (const finding of scheduleEvidence.findings) {
+        const kept = finding.sessionIds.map((id, index) => ({ id, fingerprint: finding.sessionFingerprints[index] }))
+          .filter(item => capturedDismissal.sessions.find(session => session.id === item.id)?.day <= scheduleEvidence.day);
+        finding.sessionIds = kept.map(item => item.id);
+        finding.sessionFingerprints = kept.map(item => item.fingerprint);
+        if (finding.severity > 0) finding.severity -= 1;
+        else finding.confidence = finding.confidence === 'high' ? 'medium' : 'low';
+      }
+      capturedDismissal.coach.dismissed['schedule:*'] = 2;
+      capturedDismissal.coach.snoozedUntil['schedule:*'] = day(1);
+    }
+    await captureCtx.close();
+
+    const reopenedCopy = /^New evidence since you dismissed this \d+ days ago: \d+ more sessions support it\.$/;
+    const reopenedDismissCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reopenedDismissPage = await reopenedDismissCtx.newPage();
+    await reopenedDismissPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(capturedDismissal));
+    await reopenedDismissPage.goto(`http://localhost:${PORT}/`); await reopenedDismissPage.waitForSelector('.nav');
+    await reopenedDismissPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const reopenedCard = reopenedDismissPage.locator('.suggestion').filter({ has: reopenedDismissPage.getByText(reopenedCopy) });
+    await reopenedCard.waitFor();
+    await reopenedDismissPage.screenshot({ path: `${OUT}/silent-black-reopened-suggestion.png` });
+    await reopenedCard.getByRole('button', { name: 'Not now' }).click();
+    const afterReopenedDismiss = await reopenedDismissPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterReopenedDismiss.coach.dismissalEvidence?.['schedule:*']?.reopenedOnce !== true) errors.push('silent-black: dismissing a reappearance did not consume its lifetime offer');
+    await reopenedDismissCtx.close();
+
+    const reopenedAcceptCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reopenedAcceptPage = await reopenedAcceptCtx.newPage();
+    await reopenedAcceptPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(capturedDismissal));
+    await reopenedAcceptPage.goto(`http://localhost:${PORT}/`); await reopenedAcceptPage.waitForSelector('.nav');
+    await reopenedAcceptPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const reopenedAcceptCard = reopenedAcceptPage.locator('.suggestion').filter({ has: reopenedAcceptPage.getByText(reopenedCopy) });
+    await reopenedAcceptCard.getByRole('button', { name: 'Use this schedule' }).click();
+    const afterReopenedAccept = await reopenedAcceptPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterReopenedAccept.coach.dismissalEvidence?.['schedule:*']?.reopenedOnce !== true || afterReopenedAccept.coach.accepted?.['schedule:*'] !== day(0)) errors.push('silent-black: accepting a reappearance did not consume and remember it');
+    await reopenedAcceptCtx.close();
   }
   await nav.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));

@@ -37,13 +37,13 @@ export function dismissAskItem(item: PendingCoachItem): boolean {
     if (!current || askTurnFingerprint(current) !== item.turnFingerprint) return s;
     let next: AskThreadTurn;
     if (item.kind === 'split') {
-      const flags = [...(current.draftDismissed ?? [])];
+      const flags = Array.from({ length: current.drafts?.length ?? item.itemIndex + 1 }, (_, index) => current.draftDismissed?.[index] ?? false);
       flags[item.itemIndex] = true;
       next = { ...current, draftDismissed: flags };
     } else if (item.kind === 'schedule') {
       next = { ...current, scheduleDismissed: true };
     } else {
-      const flags = [...(current.actionDismissed ?? [])];
+      const flags = Array.from({ length: current.actions?.length ?? item.itemIndex + 1 }, (_, index) => current.actionDismissed?.[index] ?? false);
       flags[item.itemIndex] = true;
       next = { ...current, actionDismissed: flags };
     }

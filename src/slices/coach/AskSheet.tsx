@@ -302,7 +302,7 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
                     : (() => {
                       const item = pendingAt(i, 'split', di);
                       return item ? <SplitDraftAction draft={draft} item={item} onApplied={() => {
-                        if (!patchExactTurn(item, current => { const flags = [...(current.applied ?? [])]; flags[di] = true; return { applied: flags }; })) staleItem();
+                        if (!patchExactTurn(item, current => { const flags = Array.from({ length: current.drafts?.length ?? di + 1 }, (_, index) => current.applied?.[index] ?? false); flags[di] = true; return { applied: flags }; })) staleItem();
                       }} /> : <p class="hint" style={{ marginTop: 8 }}>This item changed. Review the current version.</p>;
                     })()}
               </div>

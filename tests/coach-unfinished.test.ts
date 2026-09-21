@@ -4,8 +4,10 @@ import { emptyCoach, emptySchedule } from '@/core/models';
 import type { Finding, FindingsReport, Proposal } from '@/brain/coach/contract';
 import { askTurnFingerprint, dismissalEvidence, pendingCoachItems, reopenReason } from '@/brain/coach/reopen';
 import { addDays } from '@/core/dates';
-import { pplSplits, PUSH_ID } from './coach-helpers';
+import { ctx, LAST_MONDAY, pplHistory, pplSplits, PUSH_ID } from './coach-helpers';
 import { session, sets } from './helpers';
+import { buildReport } from '@/brain/coach/report';
+import { suggestionsFrom } from '@/brain/coach/words';
 
 const DAY = '2026-08-01';
 const proposal = (over: Partial<Proposal> = {}): Proposal => ({ id: 'split_modify:push', kind: 'split_modify', subject: { splitId: PUSH_ID },
@@ -87,6 +89,29 @@ describe('dismissal evidence and reopening', () => {
   it('uses a conservative empty snapshot when supporting evidence exceeds its cap', () => {
     const sessions = Array.from({ length: 65 }, (_, i) => workout(addDays('2026-05-01', i), `s${i}`));
     expect(dismissalEvidence(proposal(), report(finding(sessions.map(s => s.id))), sessions, DAY).findings).toEqual([]);
+  });
+
+  it('integrates one stronger same-action reappearance while accepted cooldown and snooze still win', () => {
+    const sessions = pplHistory(LAST_MONDAY, 12);
+    const first = buildReport(ctx(sessions));
+    const p = first.proposals.find(item => item.kind === 'add_exercise' && item.basedOn.includes('uncovered_muscle:abs'))!;
+    expect(p).toBeDefined();
+    const dismissedOn = '2026-08-20';
+    const snapshot = dismissalEvidence(p, first, sessions, dismissedOn);
+    snapshot.findings = snapshot.findings.map(prior => {
+      const keep = prior.sessionIds.map((id, index) => ({ id, fingerprint: prior.sessionFingerprints[index]! }))
+        .filter(item => sessions.find(current => current.id === item.id)!.day <= dismissedOn);
+      return { ...prior, severity: 0, sessionIds: keep.map(item => item.id), sessionFingerprints: keep.map(item => item.fingerprint) };
+    });
+    const memory = { dismissed: { [p.dismissKey]: 2 }, dismissalEvidence: { [p.dismissKey]: snapshot } };
+    const reopened = buildReport(ctx(sessions, memory)).proposals.find(item => item.dismissKey === p.dismissKey);
+    expect(reopened?.reopened).toMatchObject({ dismissedOn, newSessions: 10, previousSeverity: 0, currentSeverity: 1 });
+
+    const accepted = buildReport(ctx(sessions, { ...memory, accepted: { [p.dismissKey]: '2026-09-10' } }));
+    expect(accepted.proposals.some(item => item.dismissKey === p.dismissKey)).toBe(false);
+    const coach = { ...emptyCoach(), ...memory, snoozedUntil: { [p.dismissKey]: '2026-09-22' } };
+    expect(suggestionsFrom(buildReport(ctx(sessions, memory)), coach, { unit: 'kg', splits: pplSplits(), custom: [], today: '2026-09-19', goal: 'lean' })
+      .some(item => item.proposal.dismissKey === p.dismissKey)).toBe(false);
   });
 });
 
