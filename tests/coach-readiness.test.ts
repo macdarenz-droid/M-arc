@@ -144,6 +144,11 @@ describe('detectReadiness', () => {
     expect(detectReadiness(ctx([], { readiness }))).toEqual([]);
   });
 
+  it('future readiness cannot create a low pattern', () => {
+    const readiness = [entry(TODAY, 1, 1, 1), entry(addDays(TODAY, 1), 1, 1, 1)];
+    expect(detectReadiness(ctx([], { readiness }))).toEqual([]);
+  });
+
   it('speaks for a repeated relative crash above the absolute line', () => {
     const baseline = Array.from({ length: 12 }, (_, i) => i % 2
       ? entry(addDays(TODAY, -(i + 2)), 4, 5, 5)

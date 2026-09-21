@@ -121,7 +121,7 @@ export function readinessCard(input: { readiness: ReadinessToday; consequence: R
     detail = `Sleep ${sleep}/5, soreness ${soreness}/5, stress ${stress}/5 — your usual ${r.baseline!.avg.median}.`;
   } else {
     headline = 'Logged';
-    detail = `Sleep ${sleep}/5, soreness ${soreness}/5, stress ${stress}/5. ${r.entriesInWindow} check-ins in the last ${READINESS_BASELINE_WINDOW_DAYS} days; ${r.baselineEntriesNeeded} more and the coach can read these against your own normal instead of a textbook.`;
+    detail = `Sleep ${sleep}/5, soreness ${soreness}/5, stress ${stress}/5. ${r.entriesInWindow} check-ins in the last ${READINESS_BASELINE_WINDOW_DAYS} days; ${r.baselineEntriesNeeded} more prior check-ins are needed before the coach can read these against your own normal instead of a textbook.`;
   }
   const actionable = r.verdict === 'amber' || r.verdict === 'red';
   return {

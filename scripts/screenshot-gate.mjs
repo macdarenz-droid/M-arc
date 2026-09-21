@@ -66,6 +66,13 @@ for (const theme of themes) {
   // default, so an unscoped lookup can match either one.
   const nav = page.getByRole('navigation', { name: 'Main' });
   await shot('today');
+  if (theme === 'silent-black') {
+    const ones = page.getByRole('tab', { name: '1', exact: true });
+    await ones.nth(0).click(); await ones.nth(1).click(); await ones.nth(2).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByText('A low morning', { exact: true }).waitFor();
+    await shot('readiness');
+  }
   await nav.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
   if (theme === 'silent-black') {
     // Start a session and log a set for the live screenshot.

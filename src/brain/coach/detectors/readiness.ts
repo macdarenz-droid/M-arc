@@ -13,7 +13,10 @@ import { finding, round1 } from './shared';
 export function detectReadiness(ctx: BrainContext): Finding[] {
   const r = readinessToday(ctx.readiness, ctx.today);
   if (!r || (r.verdict !== 'red' && r.verdict !== 'amber')) return [];
-  const trailing = ctx.readiness.filter(x => x.day < ctx.today && daysBetween(x.day, ctx.today) <= READINESS_PATTERN_WINDOW_DAYS);
+  const trailingByDay = new Map(ctx.readiness
+    .filter(x => readinessToday([x], x.day) && x.day < ctx.today && daysBetween(x.day, ctx.today) <= READINESS_PATTERN_WINDOW_DAYS)
+    .map(x => [x.day, x]));
+  const trailing = [...trailingByDay.values()];
   const lowCount = 1 + trailing.filter(x => round1(readinessAvg(x)) <= r.lowLine).length;
   if (lowCount < READINESS_PATTERN_MIN_LOW) return [];
   return [finding({

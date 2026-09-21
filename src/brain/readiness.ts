@@ -50,8 +50,24 @@ export interface ReadinessToday {
 
 const round1 = (v: number): number => Math.round(v * 10) / 10;
 const round2 = (v: number): number => Math.round(v * 100) / 100;
+const validDay = (day: string): boolean => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
+  if (!match) return false;
+  const year = Number(match[1]), month = Number(match[2]), date = Number(match[3]);
+  const value = new Date(Date.UTC(year, month - 1, date));
+  return value.getUTCFullYear() === year && value.getUTCMonth() === month - 1 && value.getUTCDate() === date;
+};
+const validScore = (value: number): boolean => Number.isInteger(value) && value >= 1 && value <= 5;
+/** Valid rows only, one per day (last occurrence wins), sorted without mutating state. */
+const canonicalReadiness = (entries: ReadinessEntry[]): ReadinessEntry[] => {
+  const byDay = new Map<string, ReadinessEntry>();
+  for (const entry of entries) {
+    if (validDay(entry.day) && validScore(entry.sleep) && validScore(entry.soreness) && validScore(entry.stress)) byDay.set(entry.day, entry);
+  }
+  return [...byDay.values()].sort((a, b) => a.day.localeCompare(b.day));
+};
 const priorInWindow = (entries: ReadinessEntry[], today: string): ReadinessEntry[] =>
-  entries.filter(r => r.day < today && daysBetween(r.day, today) <= READINESS_BASELINE_WINDOW_DAYS);
+  canonicalReadiness(entries).filter(r => r.day < today && daysBetween(r.day, today) <= READINESS_BASELINE_WINDOW_DAYS);
 
 export function readinessAvg(e: { sleep: number; soreness: number; stress: number }): number {
   return (e.sleep + e.soreness + e.stress) / 3;
@@ -69,6 +85,7 @@ export function readinessMad(xs: number[], median: number): number {
 }
 
 export function readinessBaseline(entries: ReadinessEntry[], today: string): ReadinessBaseline | null {
+  if (!validDay(today)) return null;
   const prior = priorInWindow(entries, today);
   if (prior.length < READINESS_BASELINE_MIN_ENTRIES) return null;
   const centre = (dimension: ReadinessDimension): ReadinessCentre => {
@@ -93,8 +110,8 @@ export function readinessLowLine(baseline: ReadinessBaseline | null): number {
 }
 
 export function readinessDrift(entries: ReadinessEntry[], today: string, baseline: ReadinessBaseline | null): ReadinessDrift | null {
-  if (!baseline) return null;
-  const series = entries
+  if (!baseline || !validDay(today)) return null;
+  const series = canonicalReadiness(entries)
     .filter(r => r.day <= today && daysBetween(r.day, today) <= READINESS_BASELINE_WINDOW_DAYS)
     .sort((a, b) => b.day.localeCompare(a.day));
   if (!series.length || series[0]!.day !== today) return null;
@@ -130,10 +147,12 @@ export function readinessVerdict(r: Pick<ReadinessToday, 'avg' | 'z' | 'personal
 }
 
 export function readinessToday(entries: ReadinessEntry[], today: string): ReadinessToday | null {
-  const entry = entries.find(r => r.day === today);
+  if (!validDay(today)) return null;
+  const canonical = canonicalReadiness(entries);
+  const entry = canonical.find(r => r.day === today);
   if (!entry) return null;
   const avg = round1(readinessAvg(entry));
-  const baseline = readinessBaseline(entries, today);
+  const baseline = readinessBaseline(canonical, today);
   const personalized = baseline !== null;
   const delta = baseline ? round2(avg - baseline.avg.median) : null;
   const madDenom = baseline ? Math.max(READINESS_MAD_FLOOR, baseline.avg.mad) : null;
@@ -143,9 +162,9 @@ export function readinessToday(entries: ReadinessEntry[], today: string): Readin
     .filter(x => x.delta < 0)
     .sort((a, b) => a.delta - b.delta || a.order - b.order)
     .map(({ order: _order, ...value }) => value)[0] ?? null : null;
-  const priorCount = priorInWindow(entries, today).length;
+  const priorCount = priorInWindow(canonical, today).length;
   const input = { entry, avg, baseline, personalized, delta, madDenom, z, lowLine: readinessLowLine(baseline), worst,
-    drift: readinessDrift(entries, today, baseline), entriesInWindow: priorCount + 1,
+    drift: readinessDrift(canonical, today, baseline), entriesInWindow: priorCount + 1,
     baselineEntriesNeeded: Math.max(0, READINESS_BASELINE_MIN_ENTRIES - priorCount) };
   return { ...input, verdict: readinessVerdict(input) };
 }

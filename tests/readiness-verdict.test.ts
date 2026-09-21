@@ -37,7 +37,7 @@ describe('readiness consequence attribution', () => {
     expect(readinessConsequence({ recovery: [recovery({ adjustedPct: 55, pctWithoutReadiness: 55 })], plan: null, custom: [], hasScheduledSplit: true })).toMatchObject({ kind: 'none' });
   });
 
-  it('attributes an actual same-split under-recovery modification, never a note flag', () => {
+  it('switching splits does not claim an ignored swap, and a note flag is never attributed', () => {
     const crossed = recovery({ adjustedPct: 55, pctWithoutReadiness: 65 });
     expect(readinessConsequence({ recovery: [crossed], plan: plan(), custom: [], hasScheduledSplit: true })).toMatchObject({
       kind: 'plan_swap', exerciseIds: ['lib_machine_chest_press'], exerciseNames: ['Machine Chest Press'], muscle: 'chest', pct: 55, pctWithout: 65,
@@ -45,6 +45,15 @@ describe('readiness consequence attribution', () => {
     expect(readinessConsequence({ recovery: [crossed], plan: plan('note_flag'), custom: [], hasScheduledSplit: true }).kind).toBe('recovery_swap');
     const switchPlan = { ...plan(), apply: { ...plan().apply, recommendedSplitId: 'split_pull' } } as Proposal;
     expect(readinessConsequence({ recovery: [crossed], plan: switchPlan, custom: [], hasScheduledSplit: true }).kind).toBe('recovery_swap');
+  });
+
+  it('attribution names only the muscle whose numbers are shown', () => {
+    const chest = recovery({ muscle: 'chest', adjustedPct: 52, pctWithoutReadiness: 65 });
+    const triceps = recovery({ muscle: 'triceps', adjustedPct: 57, pctWithoutReadiness: 68 });
+    const tricepsPlan = { ...plan(), apply: { kind: 'today_plan' as const, recommendedSplitId: PUSH_ID, options: [], modifications: [{ removeExerciseId: 'lib_triceps_pushdown', reason: 'under_recovered' as const }] } };
+    expect(readinessConsequence({ recovery: [chest, triceps], plan: tricepsPlan, custom: [], hasScheduledSplit: true })).toMatchObject({
+      kind: 'plan_swap', muscle: 'triceps', pct: 57, pctWithout: 68,
+    });
   });
 
   it('states honestly when no recovery threshold moved', () => {
@@ -100,5 +109,14 @@ describe('readiness card copy', () => {
     expect(card.detail).toContain('sleep is holding');
     expect(card.detail).not.toContain('%');
     expect(card.detail).not.toContain('days');
+  });
+
+  it('absolute green does not claim above-baseline improvement', () => {
+    const readiness = readinessToday([check(TODAY, 5, 5, 5)], TODAY)!;
+    const card = readinessCard({ readiness, consequence: { kind: 'none', thresholdPct: 75 }, canOfferPlan: false });
+    expect(card.verdict).toBe('green');
+    expect(card.personalized).toBe(false);
+    expect(card.detail).not.toMatch(/above|better|improv/i);
+    expect(card.detail).toContain('Not enough check-ins');
   });
 });

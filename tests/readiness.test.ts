@@ -46,6 +46,22 @@ describe('readiness baseline', () => {
     expect(baseline?.to).toBe(addDays(TODAY, -1));
   });
 
+  it('duplicate days do not create a baseline', () => {
+    const duplicates = Array.from({ length: READINESS_BASELINE_MIN_ENTRIES }, () => entry(addDays(TODAY, -1), 4, 4, 4));
+    expect(readinessBaseline(duplicates, TODAY)).toBeNull();
+  });
+
+  it('uses the last valid row for a duplicate day and ignores malformed backup rows', () => {
+    const malformed = [
+      { day: '2026-02-30', sleep: 4, soreness: 4, stress: 4 },
+      { day: addDays(TODAY, -2), sleep: 0, soreness: 4, stress: 4 },
+      { day: 'not-a-day', sleep: 4, soreness: 4, stress: 4 },
+    ] as ReadinessEntry[];
+    const r = readinessToday([...malformed, entry(TODAY, 5, 5, 5), entry(TODAY, 1, 1, 1)], TODAY)!;
+    expect(r.entry).toEqual(entry(TODAY, 1, 1, 1));
+    expect(r.entriesInWindow).toBe(1);
+  });
+
   it('computes medians and raw median absolute deviation without mutating input', () => {
     const xs = [4, 1, 3, 2];
     expect(readinessMedian(xs)).toBe(2.5);
