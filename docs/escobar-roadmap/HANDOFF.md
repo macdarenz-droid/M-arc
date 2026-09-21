@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), chronic skip (6A–6T), and the closed-week review brain (7A) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), chronic skip (6A–6T), and closed-week review work items 7A–7B are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 7B only
+## Start here: 7T only
 
-Implement spec 7's selected computed signal and Today card, then continue through 7T. Keep current-week counters, replace their grade with literal in-progress copy, and render the closed review from deterministic local words with an in-memory Details toggle. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Review the closed-week feature, run its full gate and record the dated decision, then continue with 8A. Verify Monday/Sunday boundaries, partial and zero weeks, kg/lb details, 360 px wrapping, reload/import recomputation and absence of any automatic remote request. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

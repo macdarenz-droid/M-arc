@@ -15,6 +15,8 @@ import { suggestNext } from '@/brain/progression';
 import { effectiveSetTarget, nextAfterRest, type RestNext } from '@/brain/live';
 import { readinessToday } from '@/brain/readiness';
 import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain/coach/verdict';
+import { weekReview } from '@/brain/coach/review';
+import type { BrainContext } from '@/brain/coach/context';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -53,6 +55,18 @@ export const recovery = computed<MuscleRecovery[]>(() => adjusted.value.map(r =>
   lastTrainedAt: r.lastTrainedAt, lastDay: r.lastDay, personalized: r.personalized, recovering: r.adjustedPct < 100,
 })));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value || 3));
+const reviewSessions = computed(() => state.value.sessions);
+const reviewCustom = computed(() => state.value.customExercises);
+const reviewSchedule = computed(() => state.value.schedule);
+const reviewSplits = computed(() => state.value.splits);
+/** Closed-week projection reads selected references, so typing or clock ticks do not recompute it. */
+export const closedWeekReview = computed(() => weekReview({
+  sessions: reviewSessions.value,
+  custom: reviewCustom.value,
+  schedule: reviewSchedule.value,
+  splits: reviewSplits.value,
+  today: today.value,
+} as BrainContext));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
 
 /** The brain's report: facts and suggestions, recomputed when state or the minute changes. */

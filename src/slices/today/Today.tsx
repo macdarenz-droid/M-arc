@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, verdictCard, week } from '@/app/selectors';
+import { closedWeekReview, deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -17,6 +17,7 @@ import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';
 import { ReadinessVerdict } from './ReadinessVerdict';
+import { WeekReview } from './WeekReview';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -108,16 +109,18 @@ export function Today() {
 
       {deload.value && <div class="banner" role="status">Easier week until {formatDay(deload.value.to)}. Targets in Train are about {Math.round(deload.value.loadFactor * 100)}% of your usual.</div>}
 
-      <Section title="This week" aside={<span class="small muted">{w.grade.title}</span>}>
+      <Section title="This week" aside={<span class="small muted">Week in progress</span>}>
         <Card>
           <div class="grid-3">
             <Stat value={w.workouts} label="workouts" />
             <Stat value={w.sets} label="sets" />
             <Stat value={w.records.length} label="records" tone={w.records.length ? 'positive' : undefined} />
           </div>
-          <p class="small muted" style={{ marginTop: 10 }}>{w.grade.note}</p>
+          <p class="small muted" style={{ marginTop: 10 }}>Your logged work so far.</p>
         </Card>
       </Section>
+
+      {closedWeekReview.value && <Section title="Week in review"><WeekReview review={closedWeekReview.value} unit={unit.value} /></Section>}
 
       <Section title="Recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
         <Card>
