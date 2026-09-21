@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { today, unit } from '@/app/selectors';
+import { deload, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
@@ -9,6 +9,7 @@ import type { LoggedSet, Session } from '@/core/models';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
+import { liftTrajectory } from '@/brain/trajectory';
 import { weekSummary, weeklyVolumeHistory, type WeeklyVolume } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
@@ -184,6 +185,9 @@ function Stats() {
   const [exercise, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
+  const activeDeload = deload.value;
+  const trajectory = useMemo(() => exercise && !activeDeload ? liftTrajectory(s.sessions, exercise, today.value, s.customExercises) : null,
+    [s.sessions, exercise, s.customExercises, today.value, activeDeload]);
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
 
@@ -221,6 +225,13 @@ function Stats() {
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map(st => setLabel(st, u)).join(' · ')}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                {trajectory && <div class="hint stack-sm">
+                  {trajectory.status === 'projected' ? <>
+                    <p>Logged top load is rising about {formatLoad(trajectory.kgPerWeek, u)} per week across {trajectory.points} logged days.</p>
+                    <p>If that rate holds, {formatLoad(trajectory.nextKg, u)} projects around {formatDay(trajectory.projectedOn)}. Reassess after {formatDay(trajectory.expiresOn)}.</p>
+                  </> : <p>This projection has expired; another logged session is needed to reassess it.</p>}
+                  <p>A past-load trend, not a scheduled target. Rep counts and equipment setup can affect it.</p>
+                </div>}
                 <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
