@@ -36,6 +36,8 @@ import { effortRepair, sessionDebrief } from '@/brain/debrief';
 import { SessionDebrief } from './SessionDebrief';
 import { EffortRepair } from './EffortRepair';
 import { PrReachHint } from './PrReachHint';
+import { sessionNearMisses } from '@/brain/coach/detectors/nearmiss';
+import { NearMissNote } from './NearMissNote';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -585,6 +587,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const fresh = sessions.find(candidate => candidate.id === summary.session.id);
   const session = fresh ?? summary.session;
   const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
+  const nearMiss = useMemo(() => fresh ? sessionNearMisses(fresh, sessions, custom)[0] ?? null : null, [fresh, sessions, custom]);
   const [repairSessionId, setRepairSessionId] = useState<string | null>(() => fresh && effortRepair(fresh).offer ? fresh.id : null);
   const emphasis = sessionEmphasis(session.exercises, custom).percents;
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -609,6 +612,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
       </Card>
       {fresh && repairSessionId === fresh.id && <EffortRepair session={fresh} onDone={() => setRepairSessionId(null)} />}
       {debrief && <SessionDebrief debrief={debrief} unit={unit.value} />}
+      {nearMiss && <NearMissNote miss={nearMiss} unit={unit.value} />}
       <Section title="Muscles worked today">
         <Card>
           <MuscleMap values={emphasis as never} mode="emphasis" />
