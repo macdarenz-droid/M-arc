@@ -997,6 +997,33 @@ for (const theme of themes) {
     } else errors.push('silent-black: no insight available to open — prefill scenario needs at least one Insights card in this fixture');
     await prefillCtx.close();
 
+    // A01/A03's most direct claim: a typed-but-unsent question must not vanish just from
+    // navigating away and back. The one path a real user can trigger navigation from *inside*
+    // an already-open Ask sheet is an action button within it (e.g. applying a saved split
+    // draft, which calls go('train') internally) — the bottom nav itself is inert while Ask is
+    // open (verified above), so a plain nav-bar tab switch can't happen mid-conversation in the
+    // first place. This is the scenario the P03.3 "unfinished coach items" fix made safe to
+    // exercise; this one specifically checks the typed draft's own text, which that fix's own
+    // scenario never asserted on.
+    const draftCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const draftPage = await draftCtx.newPage();
+    draftPage.on('pageerror', e => errors.push(`silent-black draft-survives-nav: ${e.message}`));
+    await draftPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(nestedModalState));
+    await draftPage.goto(`http://localhost:${PORT}/`); await draftPage.waitForSelector('.nav');
+    await draftPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await draftPage.getByRole('button', { name: /Ask Escobar a question/ }).click();
+    await draftPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor();
+    const draftComposer = draftPage.locator('.ask-input input');
+    await draftComposer.fill('Should I do this today or wait until tomorrow?');
+    await draftPage.getByRole('button', { name: 'Create split: Saved full body' }).click();
+    // The click above calls go('train') internally — tab content behind the still-open dialog
+    // changes, but the dialog itself never unmounts, so its own `question` state must survive.
+    if (await draftComposer.inputValue() !== 'Should I do this today or wait until tomorrow?') errors.push('silent-black: a typed-but-unsent Ask draft was lost after an in-sheet action navigated internally');
+    if (!(await draftPage.getByRole('heading', { name: 'Ask Escobar' }).isVisible())) errors.push('silent-black: Ask sheet closed unexpectedly from an in-sheet action\'s internal navigation');
+    await draftPage.keyboard.press('Escape');
+    await draftPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor({ state: 'hidden' });
+    await draftCtx.close();
+
     const reopenState = structuredClone(unfinishedState);
     reopenState.coach.askThread = [];
     reopenState.coach.dismissed = {};
