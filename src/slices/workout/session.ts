@@ -2,18 +2,23 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, CoachChange, Exercise, LoggedSet, NoteFlag, Session, Split } from '@/core/models';
+import type { ActiveSession, CoachChange, Exercise, LoggedSet, NoteFlag, RestState, Session, Split } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '@/brain/exposure';
+import { REST_CEIL_SEC, REST_FLOOR_SEC, REST_MIN_REMAINING_SEC } from '@/brain/coach/bands';
+import { restFor, type RestGrade } from '@/brain/live';
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 
-export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
+/** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
+export const REST_STEP = 15;
+/** Never let a running clock drop below this many seconds on a re-time. */
+const MIN_REMAINING_SEC = REST_MIN_REMAINING_SEC;
 
 export function active(): ActiveSession | null { return state.value.active; }
 
@@ -55,7 +60,9 @@ export function pauseSession(): void {
 export function resumeSession(): void {
   patchActive(a => {
     if (!a.pausedAt) return a;
-    const rest = a.rest?.pausedRemainingSec != null ? { endsAt: Date.now() + a.rest.pausedRemainingSec * 1000, totalSec: a.rest.totalSec } : a.rest;
+    const rest = a.rest?.pausedRemainingSec != null
+      ? { ...a.rest, endsAt: Date.now() + a.rest.pausedRemainingSec * 1000, pausedRemainingSec: undefined }
+      : a.rest;
     if (rest) void scheduleRestDone(rest.endsAt);
     return { ...a, pausedMs: a.pausedMs + (Date.now() - a.pausedAt), pausedAt: undefined, rest };
   });
@@ -73,7 +80,10 @@ export function commitSet(entry: number, index: number): boolean {
   const a = active();
   const set = a?.entries[entry]?.sets[index];
   if (!a || !set || !isWorkingSet(set)) return false;
-  if (state.value.preferences.autoRest) startRest(state.value.preferences.restDefaultSec);
+  if (state.value.preferences.autoRest) {
+    const grade = gradeFor(a, entry, index);
+    startRest(grade.seconds, { entry, set: index, startedAt: a.startedAt, exerciseId: a.entries[entry]!.exerciseId }, grade);
+  }
   void haptic.light();
   return true;
 }
@@ -83,7 +93,11 @@ export function addSet(entry: number): void {
 }
 
 export function removeSet(entry: number, index: number): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry || e.sets.length <= 1 ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })) }));
+  patchActive(a => {
+    const target = a.entries[entry];
+    if (!target?.sets[index] || target.sets.length <= 1) return a;
+    return { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })), rest: clearRestOwner(a.rest) };
+  });
 }
 
 export function markDone(entry: number, done = true): void {
@@ -92,7 +106,9 @@ export function markDone(entry: number, done = true): void {
 }
 
 export function skipEntry(entry: number, skipped = true): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })) }));
+  patchActive(a => a.entries[entry]
+    ? { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })), rest: skipped ? clearRestOwner(a.rest) : a.rest }
+    : a);
 }
 
 export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void {
@@ -114,7 +130,7 @@ export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt
   if (expected && (a.startedAt !== expected.startedAt || a.entries[entry]!.exerciseId !== expected.exerciseId)) return false;
   if (a.entries[entry]!.exerciseId === ex.id) return false;
   if (a.entries.some((e, i) => i !== entry && e.exerciseId === ex.id)) return false;
-  patchActive(x => ({ ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: Math.max(1, e.sets.length) }, () => ({})), done: false, skipped: false })) }));
+  patchActive(x => ({ ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: Math.max(1, e.sets.length) }, () => ({})), done: false, skipped: false })), rest: clearRestOwner(x.rest) }));
   void haptic.medium();
   return true;
 }
@@ -129,23 +145,76 @@ export function restoreEmptyEntry(entry: number, ex: Exercise, expected: { start
 }
 
 export function removeEntry(entry: number): void {
-  patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
+  patchActive(a => a.entries[entry]
+    ? { ...a, entries: a.entries.filter((_, i) => i !== entry), rest: clearRestOwner(a.rest) }
+    : a);
 }
 
-export function startRest(sec: number): void {
-  const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
+function clearRestOwner(rest: RestState | undefined): RestState | undefined {
+  return rest ? { ...rest, from: undefined, reasonKind: undefined, gradedSec: undefined, deltaSec: undefined } : undefined;
+}
+
+/** Grade the rest for one logged set, starting from the person's own default. */
+function gradeFor(a: ActiveSession, entry: number, index: number): RestGrade {
+  const sessionEntry = a.entries[entry];
+  const exercise = sessionEntry ? findExercise(sessionEntry.exerciseId, state.value.customExercises) : undefined;
+  return restFor({
+    base: state.value.preferences.restDefaultSec,
+    effort: sessionEntry?.sets[index]?.effort,
+    pattern: exercise?.pattern ?? '',
+    mode: exercise?.mode ?? 'weighted',
+    goal: state.value.goal,
+  });
+}
+
+export function startRest(sec: number, from?: RestState['from'], grade?: RestGrade): void {
+  const total = Math.max(REST_FLOOR_SEC, Math.min(REST_CEIL_SEC, Math.round(sec)));
   const endsAt = Date.now() + total * 1000;
-  patchActive(a => ({ ...a, rest: { endsAt, totalSec: total } }));
+  patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, from, reasonKind: grade?.reasonKind, gradedSec: grade?.seconds, deltaSec: grade?.deltaSec } }));
   void scheduleRestDone(endsAt);
+}
+
+/** Re-time a running rest without restarting it: elapsed time is preserved. */
+function retimeRest(totalTargetSec: number, grade?: RestGrade): void {
+  const a = active();
+  if (!a?.rest) return;
+  const paused = a.pausedAt != null && a.rest.pausedRemainingSec != null;
+  const previousRemaining = restRemainingSec(a) ?? 0;
+  const elapsed = Math.max(0, a.rest.totalSec - previousRemaining);
+  if (previousRemaining <= 0) return;
+  const floorRemaining = Math.min(MIN_REMAINING_SEC, REST_CEIL_SEC - elapsed);
+  const total = Math.max(elapsed + floorRemaining, Math.min(REST_CEIL_SEC, Math.round(totalTargetSec)));
+  const remaining = total - elapsed;
+  const endsAt = Date.now() + remaining * 1000;
+  patchActive(current => {
+    if (!current.rest) return current;
+    const rest: RestState = { ...current.rest, endsAt, totalSec: total };
+    if (paused) rest.pausedRemainingSec = remaining;
+    if (grade) {
+      rest.reasonKind = grade.reasonKind;
+      rest.gradedSec = grade.seconds;
+      rest.deltaSec = grade.deltaSec;
+    }
+    return { ...current, rest };
+  });
+  if (paused) void cancelRestDone(); else void scheduleRestDone(endsAt);
 }
 
 export function adjustRest(deltaSec: number): void {
   const a = active();
   if (!a?.rest) return;
-  const remaining = Math.max(0, (a.rest.endsAt - Date.now()) / 1000) + deltaSec;
-  const endsAt = Date.now() + Math.max(5, Math.min(REST_MAX, remaining)) * 1000;
-  patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, endsAt, totalSec: Math.max(x.rest.totalSec, Math.round(remaining)) } : x.rest }));
-  void scheduleRestDone(endsAt);
+  retimeRest(a.rest.totalSec + deltaSec);
+}
+
+/** Re-grade only the running timer owned by this exact set. */
+export function regradeRest(entry: number, index: number): void {
+  const a = active();
+  if (!a?.rest?.from) return;
+  if (a.rest.from.startedAt !== a.startedAt || a.rest.from.exerciseId !== a.entries[entry]?.exerciseId) return;
+  if (a.rest.from.entry !== entry || a.rest.from.set !== index) return;
+  if (!state.value.preferences.autoRest || (restRemainingSec(a) ?? 0) <= 0) return;
+  const grade = gradeFor(a, entry, index);
+  retimeRest(grade.seconds, grade);
 }
 
 export function stopRest(): void {

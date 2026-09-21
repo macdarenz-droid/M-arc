@@ -1,5 +1,6 @@
 import type { MuscleId } from '@/data/muscles';
 import type { GoalId } from '@/data/goals';
+import type { RestReasonKind } from '@/brain/live';
 
 export type Effort = 'easy' | 'ideal' | 'max';
 export type Weekday = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
@@ -100,6 +101,14 @@ export interface RestState {
   endsAt: number;
   totalSec: number;
   pausedRemainingSec?: number;
+  /** The logged set that owns this timer. Transient with the active session. */
+  from?: { entry: number; set: number; startedAt: string; exerciseId: string };
+  /** Why the brain graded this rest away from the person's default. */
+  reasonKind?: RestReasonKind;
+  /** The requested graded total; manual adjustments make this differ from totalSec. */
+  gradedSec?: number;
+  /** Brain-produced difference from the person's clamped default. */
+  deltaSec?: number;
 }
 
 export interface ActiveSession {
