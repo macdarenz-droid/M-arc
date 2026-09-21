@@ -16,7 +16,7 @@ import { applyDeload } from '@/brain/coach/deload';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { showToast } from '@/app/toast';
-import { AskSheet } from './AskSheet';
+import { openAsk, openAskSavedReview } from './askController';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
@@ -59,8 +59,6 @@ export function Coach() {
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [openSkipGroup, setOpenSkipGroup] = useState<Suggestion[] | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
-  const [askOpen, setAskOpen] = useState(false);
-  const [savedReview, setSavedReview] = useState<{ key?: string } | null>(null);
   const goal = GOALS.find(g => g.id === s.goal) ?? GOALS[0]!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -103,13 +101,13 @@ export function Coach() {
             : <p class="small muted" style={{ marginTop: 6 }}>{explanation.value ? 'The coach answered, but its summary used a number that is not in your data, so it was left out.' : 'A fuller read of this week, written from the findings below. One call, cached until your data changes.'}</p>}
           {explanation.value && explanation.value.rejected > 0 && <p class="hint" style={{ marginTop: 6 }}>{explanation.value.rejected} line{explanation.value.rejected === 1 ? '' : 's'} left out for using a number not in your data.</p>}
           <div class="wrap" style={{ marginTop: 10 }}>
-            <Button variant="primary" onClick={() => setAskOpen(true)}>Ask {COACH_NAME} a question</Button>
+            <Button variant="primary" onClick={openAsk}>Ask {COACH_NAME} a question</Button>
             {!explanation.value && <Button variant="quiet" size="sm" disabled={explaining.value} onClick={async () => { const r = await requestExplanation(); if (!r && explainError.value) showToast(explainError.value); }}>{explaining.value ? <Thinking /> : 'More from the coach'}</Button>}
           </div>
         </Card>
       )}
 
-      <UnfinishedItems onReview={item => setSavedReview({ key: item?.key })} />
+      <UnfinishedItems onReview={item => openAskSavedReview(item?.key)} />
 
       <Section title="Suggestions" aside={visibleSuggestions.length ? <span class="small muted">{visibleSuggestions.length}</span> : undefined}>
         <div class="stack-sm">
@@ -173,8 +171,6 @@ export function Coach() {
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
       {openSuggestion && <SuggestionSheet suggestion={openSuggestion} onAccept={() => accept(openSuggestion)} onDismiss={() => dismiss(openSuggestion)} onClose={() => setOpenSuggestion(null)} />}
       {openSkipGroup && <ChronicSkipSheet suggestions={openSkipGroup} onAccept={sg => { accept(sg); setOpenSkipGroup(null); }} onDismiss={() => dismissSkipGroup(openSkipGroup)} onClose={() => setOpenSkipGroup(null)} />}
-      {askOpen && <AskSheet onClose={() => setAskOpen(false)} />}
-      {savedReview && <AskSheet initialTurnKey={savedReview.key} savedOnly onClose={() => setSavedReview(null)} />}
       {goalOpen && (
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
           <div class="stack-sm">

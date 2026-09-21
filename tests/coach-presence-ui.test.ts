@@ -77,7 +77,7 @@ describe('Train (Splits/pre-workout header): the presence launcher sits in its o
 
   it('is gated on the online coach being off, the Ask button on it being on — mutually exclusive', () => {
     expect(source).toContain('{!remoteEnabled.value && moment && (');
-    expect(source).toContain("{remoteEnabled.value && <Button variant=\"quiet\" size=\"sm\" onClick={() => setBuildingSplit(true)} aria-label={`Ask ${COACH_NAME}`}>");
+    expect(source).toContain("{remoteEnabled.value && <Button variant=\"quiet\" size=\"sm\" onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}>");
   });
 
   it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {

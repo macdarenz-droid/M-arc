@@ -862,6 +862,13 @@ for (const theme of themes) {
     await unfinishedPage.getByRole('button', { name: 'Create split: Saved full body' }).click();
     const afterCreate = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     if (!afterCreate.splits.some(split => split.name === 'Saved full body') || afterCreate.coach.askThread[0]?.applied?.[0] !== true) errors.push('silent-black: eligible saved split did not apply and mark its exact item');
+    // P03: the shared Ask sheet is now mounted once at App level (docs/escobar-presence)
+    // specifically so it survives a tab switch instead of being silently discarded — applying
+    // the draft above navigated to Train under the hood, and the still-open saved-review
+    // dialog correctly stays open across that navigation rather than vanishing as a side
+    // effect of the old per-tab mount unmounting it. Close it explicitly, the way a real
+    // person now has to, before driving the nav bar again.
+    await unfinishedPage.getByRole('button', { name: 'Close' }).click();
     await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
     await unfinishedPage.reload(); await unfinishedPage.waitForSelector('.nav');
     await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();

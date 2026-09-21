@@ -29,7 +29,7 @@ import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest,
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
-import { AskSheet } from '../coach/AskSheet';
+import { openAsk } from '../coach/askController';
 import { pickAndCompressPhoto, type CapturedPhoto } from '@/native/photo';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
@@ -100,7 +100,6 @@ function Splits() {
   const [creating, setCreating] = useState(false);
   const [pickingPhoto, setPickingPhoto] = useState(false);
   const [importPhoto, setImportPhoto] = useState<CapturedPhoto | null>(null);
-  const [buildingSplit, setBuildingSplit] = useState(false);
   const [momentOpen, setMomentOpen] = useState(false);
   const moment = presenceMoment.value;
   const momentInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
@@ -122,7 +121,7 @@ function Splits() {
       <div class="topbar">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
         <div class="row">
-          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={() => setBuildingSplit(true)} aria-label={`Ask ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
+          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
           {remoteEnabled.value && <Button variant="quiet" size="sm" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : <><IconCamera size={16} /> Import</>}</Button>}
           <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
         </div>
@@ -199,7 +198,6 @@ function Splits() {
       {editing && split && <SplitEditor split={split} onClose={() => setEditing(false)} onDeleted={() => { setEditing(false); setSelected(null); }} />}
       {creating && <CreateSplit onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setSelected(id); setEditing(true); }} />}
       {importPhoto && <ImportProgrammeSheet photo={importPhoto} onClose={() => setImportPhoto(null)} />}
-      {buildingSplit && <AskSheet onClose={() => setBuildingSplit(false)} />}
       {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}
       {momentOpen && momentSuggestion && (
         <SuggestionSheet
