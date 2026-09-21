@@ -12,7 +12,7 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, 'screenshots');
 mkdirSync(OUT, { recursive: true });
 const PORT = process.env.MARC_GATE_PORT || '4173';
-const server = spawn(process.execPath, [join(ROOT, 'node_modules/vite/bin/vite.js'), 'preview', '--port', PORT, '--strictPort'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+const server = spawn(process.execPath, [join(ROOT, 'node_modules/vite/bin/vite.js'), 'preview', '--configLoader', 'runner', '--port', PORT, '--strictPort'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
 process.on('exit', () => { try { server.kill('SIGKILL'); } catch { /* already gone */ } });
 server.stdout.on('data', d => process.stdout.write(`[preview] ${d}`));
 server.stderr.on('data', d => process.stderr.write(`[preview] ${d}`));
@@ -73,6 +73,7 @@ for (const theme of themes) {
     const inputs = page.locator('input[type="number"]');
     await inputs.nth(0).fill('72.5'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
     await page.locator('.effort button.ideal').first().click();
+    await page.waitForSelector('.rest');
     await page.waitForTimeout(300); await shot('live');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
