@@ -1,5 +1,5 @@
 /** Immutable workout-target capture and saved plan-versus-actual comparison. */
-import { PLAN_MAX_METADATA_SETS, type Effort, type Exercise, type LoggedSet, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
+import { MAX_ASSESSMENT_CHANGES, PLAN_MAX_METADATA_SETS, type Effort, type Exercise, type LoggedSet, type PlanAgreementChange, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { exerciseHistory, summarizeSets, type ExerciseSessionSummary } from './history';
 import { isWorkingSet } from './exposure';
@@ -74,6 +74,21 @@ export function capturePlan(ctx: BrainContext, entries: PlanEntryInput[], captur
       seenWorkingRows: [],
     },
   };
+}
+
+/**
+ * P05's own append point: every accepted target/add/replace/remove mutation
+ * calls this instead of touching `plan.assessment.changes` directly, so the
+ * cap (D06: "explicit unavailable, not a truncated effective plan") is
+ * enforced in exactly one place. A plan with no assessment (pre-P04, or
+ * already dropped by normalization) is returned unchanged — never backfilled
+ * mid-session, matching D07.
+ */
+export function appendAgreementChange(plan: WorkoutPlanSnapshot | undefined, change: PlanAgreementChange): WorkoutPlanSnapshot | undefined {
+  if (!plan?.assessment) return plan;
+  const changes = [...plan.assessment.changes, change];
+  if (changes.length > MAX_ASSESSMENT_CHANGES) return { ...plan, assessment: undefined };
+  return { ...plan, assessment: { ...plan.assessment, changes } };
 }
 
 export const DEBRIEF_LOAD_EPS_KG = 0.01;

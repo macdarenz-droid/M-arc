@@ -15,7 +15,7 @@ import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 import { contextFromState } from '@/brain/coach/context';
-import { capturePlan, capturePlanEntry, effortSetFingerprint } from '@/brain/debrief';
+import { appendAgreementChange, capturePlan, capturePlanEntry, effortSetFingerprint } from '@/brain/debrief';
 import { deloadActive } from '@/brain/coach/deload';
 
 /** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
@@ -130,7 +130,9 @@ export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void 
     const entry = { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: sets }, () => ({})), done: false, skipped: false, planEntryId: id };
     const ctx = contextFromState(state.value, dayKey(new Date(a.startedAt)), Date.now());
     const captured = capturePlanEntry(ctx, { id, exerciseId: ex.id, name: ex.name, plannedSets: sets, origin: 'added' });
-    return { ...a, entries: [...a.entries, entry], plan: a.plan ? { ...a.plan, entries: [...a.plan.entries, captured] } : undefined };
+    const withEntry = a.plan ? { ...a.plan, entries: [...a.plan.entries, captured] } : undefined;
+    const plan = appendAgreementChange(withEntry, { id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'add', entryId: id });
+    return { ...a, entries: [...a.entries, entry], plan };
   });
 }
 
@@ -163,10 +165,13 @@ export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt
     const count = Math.max(1, previous.sets.length);
     const ctx = contextFromState(state.value, dayKey(new Date(x.startedAt)), Date.now());
     const captured = capturePlanEntry(ctx, { id, exerciseId: ex.id, name: ex.name, plannedSets: count, origin: 'replacement', replaces: previous.planEntryId });
-    const plan = x.plan ? {
+    const withEntries = x.plan ? {
       ...x.plan,
       entries: [...x.plan.entries.map(p => p.id === previous.planEntryId ? { ...p, excluded: 'replaced' as const } : p), captured],
     } : undefined;
+    const plan = previous.planEntryId
+      ? appendAgreementChange(withEntries, { id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'replace', fromEntryId: previous.planEntryId, toEntryId: id })
+      : withEntries;
     return { ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: count }, () => ({})), done: false, skipped: false, planEntryId: id })), plan, rest: clearRestOwner(x.rest) };
   });
   void haptic.medium();
@@ -183,14 +188,15 @@ export function restoreEmptyEntry(entry: number, ex: Exercise, expected: { start
 }
 
 export function removeEntry(entry: number): void {
-  patchActive(a => a.entries[entry]
-    ? {
-      ...a,
-      entries: a.entries.filter((_, i) => i !== entry),
-      plan: a.plan ? { ...a.plan, entries: a.plan.entries.map(p => p.id === a.entries[entry]!.planEntryId ? { ...p, excluded: 'removed' } : p) } : undefined,
-      rest: clearRestOwner(a.rest),
-    }
-    : a);
+  patchActive(a => {
+    if (!a.entries[entry]) return a;
+    const removedId = a.entries[entry]!.planEntryId;
+    const withEntries = a.plan ? { ...a.plan, entries: a.plan.entries.map(p => p.id === removedId ? { ...p, excluded: 'removed' as const } : p) } : undefined;
+    const plan = removedId
+      ? appendAgreementChange(withEntries, { id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'remove', entryId: removedId })
+      : withEntries;
+    return { ...a, entries: a.entries.filter((_, i) => i !== entry), plan, rest: clearRestOwner(a.rest) };
+  });
 }
 
 function currentLiveAdjustment(a: ActiveSession, entryId: string, sourceSet: number): { entryIndex: number; offer: LiveAdjustment } | null {
@@ -230,7 +236,7 @@ export function acceptLiveAdjustment(entryId: string, expectedStartedAt: string,
       targetOverrides: overrides,
       coachDecision: { key: current.offer.key, action: 'accepted' as const },
     });
-    const plan = latest.plan ? {
+    const withTargets = latest.plan ? {
       ...latest.plan,
       entries: latest.plan.entries.map(candidate => {
         if (candidate.id !== entryId) return candidate;
@@ -239,6 +245,10 @@ export function acceptLiveAdjustment(entryId: string, expectedStartedAt: string,
         return { ...candidate, acceptedTargets };
       }),
     } : undefined;
+    const plan = appendAgreementChange(withTargets, {
+      id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'targets', entryId, reason: current.offer.reason,
+      targets: current.offer.remainingIndices.map(index => ({ setIndex: index, target: { ...current.offer.next } })),
+    });
     return { ...latest, entries, plan };
   });
   flushSave();
