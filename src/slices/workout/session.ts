@@ -134,6 +134,13 @@ export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void 
   });
 }
 
+/** Canonical identity and set values reviewed before a destructive swap. */
+export function swapEntryFingerprint(entry: ActiveSession['entries'][number]): string {
+  return JSON.stringify([entry.planEntryId ?? null, entry.exerciseId, entry.sets.map(set => [
+    set.kg ?? null, set.reps ?? null, set.effort ?? null, set.durationSec ?? null, set.distanceM ?? null,
+  ])]);
+}
+
 /**
  * Swap one live entry for a different exercise, in place. The card keeps its
  * position and its planned set count, so a mid-session swap does not send the
@@ -143,10 +150,11 @@ export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void 
  * nothing when there is no active session, the index is out of range, or that
  * exercise is already somewhere in this session.
  */
-export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt: string; exerciseId: string }): boolean {
+export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt: string; exerciseId: string; setsFingerprint?: string }): boolean {
   const a = active();
   if (!a || !a.entries[entry]) return false;
   if (expected && (a.startedAt !== expected.startedAt || a.entries[entry]!.exerciseId !== expected.exerciseId)) return false;
+  if (expected?.setsFingerprint !== undefined && swapEntryFingerprint(a.entries[entry]!) !== expected.setsFingerprint) return false;
   if (a.entries[entry]!.exerciseId === ex.id) return false;
   if (a.entries.some((e, i) => i !== entry && e.exerciseId === ex.id)) return false;
   patchActive(x => {

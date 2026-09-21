@@ -9,7 +9,7 @@ import { applyDeload } from '@/brain/coach/deload';
 import { DELOAD_LOAD_FACTOR, MAX_SUBSTITUTES } from '@/brain/coach/bands';
 import { substitutes } from '@/brain/live';
 import { suggestNext } from '@/brain/progression';
-import { finishSession, markDone, removeEntry, replaceEntry, restoreEmptyEntry, setSet, skipEntry, startSession } from '@/slices/workout/session';
+import { finishSession, markDone, removeEntry, replaceEntry, restoreEmptyEntry, setSet, skipEntry, startSession, swapEntryFingerprint } from '@/slices/workout/session';
 import { createSplit } from '@/slices/workout/splits';
 import { ctx, LAST_MONDAY, LEGS_EX, pplHistory, PUSH_EX } from './coach-helpers';
 import { session, sets } from './helpers';
@@ -280,6 +280,39 @@ describe('replaceEntry', () => {
       'lib_dumbbell_lateral_raise',
       'lib_triceps_pushdown',
     ]);
+  });
+
+  it.each([
+    { kg: 62.5 }, { reps: 9 }, { effort: 'max' as const }, { durationSec: 30 }, { distanceM: 20 },
+  ])('requires a fresh swap confirmation after a same-count set edit: %o', patch => {
+    startPush();
+    setSet(0, 0, { kg: 60, reps: 8, effort: 'ideal' });
+    const displayed = state.value.active!;
+    const expected = { startedAt: displayed.startedAt, exerciseId: displayed.entries[0]!.exerciseId, setsFingerprint: swapEntryFingerprint(displayed.entries[0]!) };
+    const replacement = findExercise('lib_machine_chest_press')!;
+    setSet(0, 0, patch);
+    const changed = state.value.active!;
+
+    expect(replaceEntry(0, replacement, expected)).toBe(false);
+    expect(state.value.active).toBe(changed);
+    expect(state.value.active!.entries[0]!.sets[0]).toEqual({ kg: 60, reps: 8, effort: 'ideal', ...patch });
+
+    const refreshed = { ...expected, setsFingerprint: swapEntryFingerprint(changed.entries[0]!) };
+    expect(replaceEntry(0, replacement, refreshed)).toBe(true);
+    expect(state.value.active!.entries[0]!).toMatchObject({ exerciseId: replacement.id, sets: [{}, {}, {}, {}] });
+  });
+
+  it('fingerprints all set rows canonically, including partially entered values', () => {
+    startPush();
+    setSet(0, 0, { kg: 60, reps: 8, effort: 'ideal' });
+    const displayed = state.value.active!;
+    const slot = displayed.entries[0]!;
+    const expected = { startedAt: displayed.startedAt, exerciseId: slot.exerciseId, setsFingerprint: swapEntryFingerprint(slot) };
+    expect(swapEntryFingerprint({ ...slot, sets: [{ effort: 'ideal', reps: 8, kg: 60 }, {}, {}, {}] })).toBe(expected.setsFingerprint);
+    setSet(0, 1, { kg: 62.5 });
+    const changed = state.value.active;
+    expect(replaceEntry(0, findExercise('lib_machine_chest_press')!, expected)).toBe(false);
+    expect(state.value.active).toBe(changed);
   });
 
   it('undo never clears newly logged sets', () => {

@@ -22,7 +22,7 @@ import { liveRecordFrom, prReach } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, dismissWarmup, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
+import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, dismissWarmup, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, swapEntryFingerprint, REST_STEP, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -283,8 +283,9 @@ function LiveSession() {
             return;
           }
           const n = slot.sets.filter(isWorkingSet).length;
+          const setsFingerprint = swapEntryFingerprint(slot);
           if (n > 0 && !confirm(`Replace ${slot.name}? The ${n} set${n === 1 ? '' : 's'} you logged on it are cleared from this session.`)) { setPicking(null); return; }
-          if (!replaceEntry(picking.index, ex, picking.expected)) showToast('This exercise has changed or is already in this session');
+          if (!replaceEntry(picking.index, ex, { ...picking.expected, setsFingerprint })) showToast('This exercise has changed or is already in this session');
         } else addExerciseToSession(ex);
         setPicking(null);
       }} />}
@@ -333,9 +334,8 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
   const [offer, setOffer] = useState<LiveAdjustment | null>(null);
   const [menu, setMenu] = useState<{ startedAt: string; exerciseId: string } | null>(null);
   const [swap, setSwap] = useState<{ mode: 'any' | 'different_equipment'; rows: Substitute[] } | null>(null);
-  const [confirmSwap, setConfirmSwap] = useState<{ sub: Substitute; count: number } | null>(null);
+  const [confirmSwap, setConfirmSwap] = useState<{ sub: Substitute; count: number; fingerprint: string } | null>(null);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
-  const loggedHere = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
   const firstUncompleted = entry.sets.findIndex(set => !isWorkingSet(set));
   const activeDeload = !!s.active && (
@@ -402,22 +402,23 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
     });
     setSwap({ mode: m, rows });
   };
-  const doSwap = (sub: Substitute, confirmedCount?: number) => {
+  const doSwap = (sub: Substitute, confirmedFingerprint?: string) => {
     const current = currentSlot();
     if (!current) { closeChanged(); return; }
     const currentCount = current.slot.sets.filter(isWorkingSet).length;
-    if (currentCount > 0 && confirmedCount === undefined) {
-      setConfirmSwap({ sub, count: currentCount });
+    const fingerprint = swapEntryFingerprint(current.slot);
+    if (currentCount > 0 && confirmedFingerprint === undefined) {
+      setConfirmSwap({ sub, count: currentCount, fingerprint });
       return;
     }
-    if (confirmedCount !== undefined && currentCount !== confirmedCount) {
-      setConfirmSwap({ sub, count: currentCount });
-      showToast('Your logged sets changed; check the updated count before swapping.');
+    if (confirmedFingerprint !== undefined && fingerprint !== confirmedFingerprint) {
+      setConfirmSwap({ sub, count: currentCount, fingerprint });
+      showToast('Your logged sets changed; review them before swapping.');
       return;
     }
     const pick = findExercise(sub.exerciseId, state.value.customExercises);
     const original = findExercise(menu!.exerciseId, state.value.customExercises);
-    if (!pick || !replaceEntry(index, pick, menu!)) {
+    if (!pick || !replaceEntry(index, pick, { ...menu!, setsFingerprint: confirmedFingerprint ?? fingerprint })) {
       showToast('This exercise has changed or is already in this session');
       return;
     }
@@ -560,7 +561,7 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
       {menu && confirmSwap && (
         <Sheet title={`Swap ${entry.name}?`} onClose={() => setConfirmSwap(null)}>
           <div class="stack-sm">
-            <p class="small">You have {loggedHere} set{loggedHere === 1 ? '' : 's'} logged on {entry.name}. Swapping replaces the card and clears them from this session.</p>
+            <p class="small">You have {confirmSwap.count} set{confirmSwap.count === 1 ? '' : 's'} logged on {entry.name}. Swapping replaces the card and clears them from this session.</p>
             <div class="grid-2">
               <Button onClick={() => {
                 const current = currentSlot();
@@ -571,7 +572,7 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
                 setConfirmSwap(null); setSwap(null); setMenu(null);
                 showToast(`${pick.name} added below`);
               }}>Keep my sets, add below</Button>
-              <Button variant="primary" onClick={() => doSwap(confirmSwap.sub, confirmSwap.count)}>Swap and clear</Button>
+              <Button variant="primary" onClick={() => doSwap(confirmSwap.sub, confirmSwap.fingerprint)}>Swap and clear</Button>
             </div>
             <Button variant="quiet" onClick={() => setConfirmSwap(null)}>Cancel</Button>
           </div>
