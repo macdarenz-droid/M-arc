@@ -80,6 +80,10 @@ for (const theme of themes) {
     const capturedTarget = await page.locator('.exercise .hint.ellipsis').first().innerText();
     await page.reload(); await page.waitForSelector('.exercise');
     if (await page.locator('.exercise .hint.ellipsis').first().innerText() !== capturedTarget) errors.push('silent-black: captured live target changed after reload');
+    const rampText = page.getByText(/^Suggested ramp:/).first();
+    if (!await rampText.count()) errors.push('silent-black: history-backed warm-up ramp was not shown');
+    const beforeHide = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    await shot('warmup-ramp');
     await page.setViewportSize({ width: 360, height: 800 });
     if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: live session overflows at 360px');
     await page.setViewportSize({ width: 390, height: 844 });
@@ -96,7 +100,18 @@ for (const theme of themes) {
     await lbPage.waitForSelector('.exercise');
     const lbTarget = await lbPage.locator('.exercise .hint.ellipsis').first().innerText();
     if (!lbTarget.includes('lb')) errors.push(`silent-black: captured target did not render in lb (${lbTarget})`);
+    const lbRamp = await lbPage.getByText(/^Suggested ramp:/).first().innerText().catch(() => '');
+    if (!lbRamp.includes('lb')) errors.push(`silent-black: warm-up ramp did not render in lb (${lbRamp})`);
     await lbCtx.close();
+    const hideWarmup = page.getByRole('button', { name: 'Hide warm-up' });
+    await hideWarmup.focus(); await page.keyboard.press('Enter');
+    if (await page.getByRole('button', { name: 'Hide warm-up' }).count()) errors.push('silent-black: warm-up remained after keyboard dismissal');
+    const afterHide = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterHide.active?.warmupDismissed !== true) errors.push('silent-black: warm-up dismissal was not persisted');
+    if (JSON.stringify(afterHide.active?.entries.map(entry => entry.sets.length)) !== JSON.stringify(beforeHide.active?.entries.map(entry => entry.sets.length))) errors.push('silent-black: warm-up dismissal changed live set counts');
+    if (afterHide.sessions.length !== beforeHide.sessions.length) errors.push('silent-black: warm-up dismissal wrote workout history');
+    await page.reload(); await page.waitForSelector('.exercise');
+    if (await page.getByRole('button', { name: 'Hide warm-up' }).count()) errors.push('silent-black: hidden warm-up returned after reload');
     const inputs = page.locator('input[type="number"]');
     const targetKg = Number(await inputs.nth(0).getAttribute('placeholder'));
     const targetReps = Number(await inputs.nth(1).getAttribute('placeholder'));
@@ -131,6 +146,10 @@ for (const theme of themes) {
     if (await page.getByRole('button', { name: 'Use this target' }).count()) errors.push('silent-black: dismissed live offer returned after reload');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
+    const finishedState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    const finished = finishedState.sessions[finishedState.sessions.length - 1];
+    const finishedSets = finished?.exercises.reduce((total, exercise) => total + exercise.sets.length, 0) ?? 0;
+    if (finishedSets !== 2) errors.push(`silent-black: warm-up suggestions changed saved set count (${finishedSets}, expected 2 actual sets)`);
     await page.getByRole('button', { name: 'Done' }).click();
   }
   await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');

@@ -17,11 +17,18 @@ const active = (entries = [entry('pe_bench', 'lib_barbell_bench_press')], plans 
   plan: { version: 1, capturedAt: STARTED, goal: 'lean', deload: null, entries: plans },
 });
 const target = (kg: number): PlanSetTarget => ({ kg, reps: 8, durationSec: null });
+const deepFreeze = <T>(value: T): T => {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const child of Object.values(value)) deepFreeze(child);
+  }
+  return value;
+};
 
 describe('warmupRamp', () => {
   it('turns a 60 kg captured working target into 24x8, 36x5 and 48x3 without mutation', () => {
-    const session = active();
-    const targets = new Map([['pe_bench', target(60)]]);
+    const session = deepFreeze(active());
+    const targets = deepFreeze(new Map([['pe_bench', deepFreeze(target(60))]]));
     const before = structuredClone(session);
     expect(warmupRamp({ ctx: ctx([]), active: session, targets })).toEqual({
       entryId: 'pe_bench', exerciseId: 'lib_barbell_bench_press', name: 'lib_barbell_bench_press', workingKg: 60,
@@ -51,6 +58,22 @@ describe('warmupRamp', () => {
     expect(warmupRamp({ ctx: ctx([]), active: active(), targets: new Map([['pe_bench', target(19.5)]]) })).toBeNull();
     const unknown = active([entry('pe_unknown', 'custom_missing')], [planEntry('pe_unknown', 'custom_missing')]);
     expect(warmupRamp({ ctx: ctx([]), active: unknown, targets: new Map([['pe_unknown', target(60)]]) })).toBeNull();
+  });
+
+  it('keeps empty, legacy, edited and deleted plan state silent', () => {
+    expect(warmupRamp({ ctx: ctx([]), active: active([], []), targets: new Map() })).toBeNull();
+    const legacy = active();
+    legacy.plan = undefined;
+    legacy.entries[0]!.planEntryId = undefined;
+    expect(warmupRamp({ ctx: ctx([]), active: legacy, targets: new Map([['pe_bench', target(60)]]) })).toBeNull();
+    const edited = active();
+    edited.entries[0]!.planComparisonValid = false;
+    expect(warmupRamp({ ctx: ctx([]), active: edited, targets: new Map([['pe_bench', target(60)]]) })).toBeNull();
+    for (const excluded of ['removed', 'replaced', 'skipped'] as const) {
+      const deleted = active();
+      deleted.plan!.entries[0]!.excluded = excluded;
+      expect(warmupRamp({ ctx: ctx([]), active: deleted, targets: new Map([['pe_bench', target(60)]]) })).toBeNull();
+    }
   });
 
   it.each([
