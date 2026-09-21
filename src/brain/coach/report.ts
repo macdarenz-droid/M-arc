@@ -13,7 +13,7 @@ import { reopenReason } from './reopen';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
   detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
-  detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
+  detectSessionExecution, detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
@@ -69,6 +69,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('notes', () => detectNoteFlags(ctx)),
     ...safe('chronic-skip', () => detectChronicSkip(ctx)),
     ...safe('week-review', () => detectWeekClose(ctx)),
+    ...safe('session-execution', () => detectSessionExecution(ctx)),
   ];
   const seen = new Set<string>();
   const findings = raw

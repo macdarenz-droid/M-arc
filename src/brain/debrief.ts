@@ -1,7 +1,8 @@
-/** Immutable workout-target capture. Historical comparison is added later. */
-import type { PlanSetTarget, WorkoutPlanEntry, WorkoutPlanSnapshot } from '@/core/models';
+/** Immutable workout-target capture and saved plan-versus-actual comparison. */
+import type { Exercise, LoggedSet, PlanSetTarget, ResistanceMode, Session, WorkoutPlanEntry, WorkoutPlanSnapshot } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { exerciseHistory } from './history';
+import { exerciseHistory, summarizeSets } from './history';
+import { isWorkingSet } from './exposure';
 import { suggestNext } from './progression';
 import { applyDeload, deloadActive } from './coach/deload';
 import type { BrainContext } from './coach/context';
@@ -57,5 +58,151 @@ export function capturePlan(ctx: BrainContext, entries: PlanEntryInput[], captur
       const captured = capturePlanEntry(ctx, { ...entry });
       return { ...captured, targets: captured.targets.map(target => ({ ...target })) };
     }),
+  };
+}
+
+export const DEBRIEF_LOAD_EPS_KG = 0.01;
+
+export interface DebriefSet {
+  setNumber: number;
+  planned: PlanSetTarget | null;
+  accepted: PlanSetTarget | null;
+  actual: PlanSetTarget;
+  result: 'met' | 'below' | 'different_load' | 'uncomparable';
+}
+
+export interface DebriefExercise {
+  planEntryId: string | null;
+  exerciseId: string;
+  name: string;
+  plannedSets: number | null;
+  loggedSets: number;
+  targetSource: WorkoutPlanEntry['targetSource'] | 'missing';
+  excluded: WorkoutPlanEntry['excluded'] | null;
+  rows: DebriefSet[];
+  tradeoff: {
+    previousKg: number;
+    actualKg: number;
+    previousReps: number;
+    actualReps: number;
+    previousVolumeKg: number;
+    actualVolumeKg: number;
+  } | null;
+}
+
+export interface SessionDebrief {
+  sessionId: string;
+  hasPlan: boolean;
+  plannedSets: number | null;
+  loggedSets: number;
+  comparableSets: number;
+  metSets: number;
+  exercises: DebriefExercise[];
+}
+
+const actualTarget = (set: LoggedSet): PlanSetTarget => ({
+  kg: finiteNonnegative(set.kg ?? null),
+  reps: positiveInteger(set.reps ?? null),
+  durationSec: finiteNonnegative(set.durationSec ?? null),
+});
+
+function compareTarget(mode: ResistanceMode | null, target: PlanSetTarget | null, actual: PlanSetTarget): DebriefSet['result'] {
+  if (!target) return 'uncomparable';
+  if (mode === 'weighted') {
+    if (target.kg === null || target.reps === null || actual.kg === null || actual.reps === null) return 'uncomparable';
+    if (Math.abs(target.kg - actual.kg) > DEBRIEF_LOAD_EPS_KG) return 'different_load';
+    return actual.reps >= target.reps ? 'met' : 'below';
+  }
+  if (mode === 'bodyweight') {
+    if (target.reps === null || actual.reps === null) return 'uncomparable';
+    return actual.reps >= target.reps ? 'met' : 'below';
+  }
+  if (mode === 'duration') {
+    if (target.durationSec === null || actual.durationSec === null) return 'uncomparable';
+    return actual.durationSec >= target.durationSec ? 'met' : 'below';
+  }
+  return 'uncomparable';
+}
+
+function beforeSession(candidate: Session, session: Session): boolean {
+  return candidate.startedAt < session.startedAt || (candidate.startedAt === session.startedAt && candidate.id < session.id);
+}
+
+function weightedTradeoff(session: Session, exerciseId: string, sets: LoggedSet[], prior: Session[], custom: Exercise[]): DebriefExercise['tradeoff'] {
+  const previous = exerciseHistory(prior.filter(candidate => candidate.id !== session.id && beforeSession(candidate, session)), exerciseId, custom).at(-1);
+  if (!previous) return null;
+  const actual = summarizeSets(session.id, session.day, sets);
+  if (!(previous.topKg > 0 && previous.topReps > 0 && previous.volume > 0
+    && actual.topKg > previous.topKg && actual.topReps > 0 && actual.topReps < previous.topReps
+    && actual.volume > 0 && actual.volume < previous.volume)) return null;
+  return {
+    previousKg: previous.topKg,
+    actualKg: actual.topKg,
+    previousReps: previous.topReps,
+    actualReps: actual.topReps,
+    previousVolumeKg: previous.volume,
+    actualVolumeKg: actual.volume,
+  };
+}
+
+export function sessionDebrief(session: Session, prior: Session[], custom: Exercise[] = []): SessionDebrief {
+  const plan = session.plan;
+  const actualByPlanId = new Map(session.exercises.filter(entry => entry.planEntryId).map(entry => [entry.planEntryId!, entry]));
+  const used = new Set<typeof session.exercises[number]>();
+  const exercises: DebriefExercise[] = [];
+
+  for (const entry of plan?.entries ?? []) {
+    const logged = actualByPlanId.get(entry.id);
+    if (logged) used.add(logged);
+    const working = logged?.sets.filter(isWorkingSet) ?? [];
+    const indices = logged?.actualSetIndices;
+    const validIndices = !!logged && Array.isArray(indices) && indices.length === working.length
+      && indices.every(index => Number.isInteger(index) && index >= 0);
+    const rows = working.map((set, index): DebriefSet => {
+      const targetIndex = validIndices ? indices![index]! : -1;
+      const planned = targetIndex >= 0 && entry.targets[targetIndex] ? { ...entry.targets[targetIndex]! } : null;
+      const accepted = targetIndex >= 0 && entry.acceptedTargets?.[targetIndex] ? { ...entry.acceptedTargets[targetIndex]! } : null;
+      const actual = actualTarget(set);
+      return { setNumber: targetIndex >= 0 ? targetIndex + 1 : index + 1, planned, accepted, actual, result: compareTarget(entry.mode, accepted ?? planned, actual) };
+    });
+    exercises.push({
+      planEntryId: entry.id,
+      exerciseId: entry.exerciseId,
+      name: entry.name,
+      plannedSets: entry.plannedSets,
+      loggedSets: working.length,
+      targetSource: entry.targetSource,
+      excluded: entry.excluded ?? null,
+      rows,
+      tradeoff: entry.mode === 'weighted' && logged ? weightedTradeoff(session, entry.exerciseId, working, prior, custom) : null,
+    });
+  }
+
+  for (const logged of session.exercises) {
+    if (used.has(logged)) continue;
+    const working = logged.sets.filter(isWorkingSet);
+    const mode = findExercise(logged.exerciseId, custom)?.mode ?? null;
+    exercises.push({
+      planEntryId: null,
+      exerciseId: logged.exerciseId,
+      name: logged.name,
+      plannedSets: null,
+      loggedSets: working.length,
+      targetSource: 'missing',
+      excluded: null,
+      rows: working.map((set, index) => ({ setNumber: index + 1, planned: null, accepted: null, actual: actualTarget(set), result: 'uncomparable' })),
+      tradeoff: mode === 'weighted' ? weightedTradeoff(session, logged.exerciseId, working, prior, custom) : null,
+    });
+  }
+
+  const rows = exercises.flatMap(entry => entry.rows);
+  return {
+    sessionId: session.id,
+    hasPlan: !!plan,
+    plannedSets: plan ? plan.entries.reduce((sum, entry) => sum + entry.plannedSets, 0) : null,
+    loggedSets: rows.length,
+    comparableSets: rows.filter(row => row.result === 'met' || row.result === 'below').length,
+    metSets: rows.filter(row => row.result === 'met').length,
+    exercises,
   };
 }

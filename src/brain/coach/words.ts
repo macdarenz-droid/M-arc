@@ -29,7 +29,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 
 const CATEGORY_OF: Record<FindingKind, Category> = {
   volume_drop: 'volume', volume_spike: 'volume', weekly_sets_out_of_band: 'volume', week_review: 'volume', uncovered_muscle: 'balance', focus_behind: 'focus',
-  plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress',
+  plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress', session_execution: 'progress',
   under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
   redundant_exercises: 'balance', balance_imbalance: 'balance', chronic_skip: 'consistency',
@@ -196,6 +196,13 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: `${str(m.detail)}, up from ${num(m.previous)}.`,
         means: 'Records mark real progress: heavier, stronger, or more reps at a load. Total volume never counts as one.',
         action: 'Nice. Rate the effort so the coach knows how close to your limit that was.' };
+    case 'session_execution':
+      return {
+        title: `${f.subject.splitName ?? 'Session'}: plan and actual`,
+        noticed: `${num(m.metSets)} of ${num(m.comparableSets)} history-backed set targets were met; ${num(m.belowSets)} were below at the captured load. ${num(m.loggedSets)} working sets were logged from ${num(m.plannedSets)} originally planned.`,
+        means: 'This compares the saved plan with the work you logged. Starter suggestions, edited rows and different loads are left out of the comparison.',
+        action: 'Use it as a record of the session, not a grade or an automatic change to your next target.',
+      };
     case 'under_recovered': {
       const readiness = num(m.readinessFactor) > 1
         ? (m.readinessPersonalized === true ? 'Your check-in today read below your own normal, which widens it a little more.' : 'Your check-in today read low, which widens it a little more.') : '';
@@ -360,7 +367,7 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
   }
 }
 
-const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, low_readiness: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, habit_pattern: 1 };
+const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, low_readiness: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, session_execution: 1, habit_pattern: 1 };
 
 export function renderFinding(f: Finding, ctx: RenderContext): Insight {
   const w = wordsFor(f, ctx);

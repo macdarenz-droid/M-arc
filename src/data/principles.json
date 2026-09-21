@@ -12,7 +12,7 @@
       "statement": "To keep adapting, training has to get a little harder over time. Adding repetitions at the same load is real progress, not a placeholder for adding weight. Both load progression and rep progression grow muscle about equally.",
       "disputed": "Nothing about the direction. How fast to progress, and by how much, varies by person.",
       "appUse": "Double progression: add a rep until the top of the range, hit it twice without max effort, then take one small load step.",
-      "findingKinds": ["progressing", "plateau", "decline"],
+      "findingKinds": ["progressing", "plateau", "decline", "session_execution"],
       "proposalKinds": ["load_next"],
       "citations": [
         { "key": "acsm2009", "authors": "American College of Sports Medicine", "year": 2009, "title": "Position stand. Progression models in resistance training for healthy adults", "journal": "Med Sci Sports Exerc", "where": "41(3):687-708", "pmid": "19204579", "verified": "search-index" },

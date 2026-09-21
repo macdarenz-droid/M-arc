@@ -156,6 +156,9 @@ export const TRAJECTORY_MAX_HORIZON_DAYS = 84;
 export const TRAJECTORY_EXPIRY_DAYS = 21;
 export const TRAJECTORY_MAX_LAST_GAP_DAYS = 28;
 
+export const DEBRIEF_FINDING_DAYS = 2;
+export const DEBRIEF_MIN_COMPARABLE_SETS = 3;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',

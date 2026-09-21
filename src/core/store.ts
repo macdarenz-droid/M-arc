@@ -32,7 +32,7 @@ const oneOf = <T extends string>(value: unknown, choices: readonly T[]): value i
 const validDay = (value: unknown): value is string => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
   && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
 const CONFIDENCES = ['low', 'medium', 'high'] as const;
-const FINDING_KINDS = ['volume_drop', 'volume_spike', 'weekly_sets_out_of_band', 'uncovered_muscle', 'plateau', 'decline', 'progressing', 'under_recovered', 'effort_missing', 'effort_drift_harder', 'effort_drift_easier', 'effort_mismatch', 'rep_range_mismatch', 'redundant_exercises', 'chronic_skip', 'week_review', 'balance_imbalance', 'long_gap', 'habit_pattern', 'focus_behind', 'low_sleep_readiness', 'low_readiness', 'record', 'first_sessions', 'note_flag'] as const;
+const FINDING_KINDS = ['volume_drop', 'volume_spike', 'weekly_sets_out_of_band', 'uncovered_muscle', 'plateau', 'decline', 'progressing', 'under_recovered', 'effort_missing', 'effort_drift_harder', 'effort_drift_easier', 'effort_mismatch', 'rep_range_mismatch', 'redundant_exercises', 'chronic_skip', 'week_review', 'session_execution', 'balance_imbalance', 'long_gap', 'habit_pattern', 'focus_behind', 'low_sleep_readiness', 'low_readiness', 'record', 'first_sessions', 'note_flag'] as const;
 
 function validDismissalEvidence(value: unknown): value is DismissalEvidence {
   if (!object(value) || !validDay(value.day) || typeof value.proposalFingerprint !== 'string' || typeof value.reopenedOnce !== 'boolean' || !Array.isArray(value.findings)) return false;
