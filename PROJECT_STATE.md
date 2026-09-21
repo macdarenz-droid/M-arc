@@ -4,9 +4,9 @@ Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and effort-repair work items 11A-11B are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
+Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and effort-repair work items 11A-11C are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
 
-Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **11C**, the Finish effort-repair strip and explicit per-row controls. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
+Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **11T**, single-field persistence, concurrency, side-effect and full feature-gate verification. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
 
 ## Fixed decisions
 
@@ -60,3 +60,5 @@ Session-debrief feature gate on 2026-09-21: both typechecks passed; 559 app test
 Effort-repair work item 11A verification on 2026-09-21: app typecheck and nine focused debrief/repair tests passed. Only working sets count; valid Easy/Ideal/Max ratings determine coverage, invalid imported labels remain unknown, and repair is offered only below half coverage. Missing rows retain saved indices and exact canonical fingerprints, while calibration copies the existing RIR bands without inventing a scale. Work item 11B is next.
 
 Effort-repair work item 11B verification on 2026-09-21: app typecheck and 21 focused repair/session-integrity tests passed. An explicit valid tap may clone and update only one current saved working set after its full fingerprint matches; deleted, edited, moved, placeholder, already-rated and invalid-choice cases return false without persistence. Imported invalid labels remain visible as unknown and can be replaced only by an explicit valid choice; History's object-identity guard prevents a stale editor from erasing the repair. Work item 11C is next.
+
+Effort-repair work item 11C verification on 2026-09-21: app typecheck and production build passed. Finish mounts a session-keyed repair strip only when initial coverage is below half, keeps it open across explicit ratings until Done or Skip, and reflects every successful tap from the fresh saved session. Each row formats its real resistance mode, exposes three fully labelled existing RIR choices, leaves no default selection, and reports a stale fingerprint without blocking the main Finish action. Work item 11T is next.

@@ -31,8 +31,9 @@ import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { COACH_NAME } from '@/ui/chatRender';
 import { GOALS } from '@/data/goals';
-import { sessionDebrief } from '@/brain/debrief';
+import { effortRepair, sessionDebrief } from '@/brain/debrief';
 import { SessionDebrief } from './SessionDebrief';
+import { EffortRepair } from './EffortRepair';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -559,6 +560,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const fresh = sessions.find(candidate => candidate.id === summary.session.id);
   const session = fresh ?? summary.session;
   const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
+  const [repairSessionId, setRepairSessionId] = useState<string | null>(() => fresh && effortRepair(fresh).offer ? fresh.id : null);
   const emphasis = sessionEmphasis(session.exercises, custom).percents;
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
@@ -580,6 +582,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
       <Card class="card-accent">
         <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
       </Card>
+      {fresh && repairSessionId === fresh.id && <EffortRepair session={fresh} onDone={() => setRepairSessionId(null)} />}
       {debrief && <SessionDebrief debrief={debrief} unit={unit.value} />}
       <Section title="Muscles worked today">
         <Card>
