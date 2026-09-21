@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import type { ComponentChildren, VNode } from 'preact';
 import { PresenceLauncher } from '@/slices/coach/Presence';
 import { dismissPresenceMoment, setPresenceTone } from '@/slices/coach/presence';
@@ -42,6 +43,54 @@ describe('PresenceLauncher: the shared launcher, no duplicate copy', () => {
     const withoutDismiss = JSON.stringify(PresenceLauncher({ moment, label: 'Escobar', onOpen: () => {} }));
     expect(withDismiss).toContain('Dismiss');
     expect(withoutDismiss).not.toContain('Dismiss');
+  });
+});
+
+describe('PresenceLauncher: never single-line-truncates the cue (regression, see PROGRESS.md)', () => {
+  it('does not use white-space: nowrap or text-overflow: ellipsis anywhere in its output', () => {
+    const rendered = JSON.stringify(PresenceLauncher({ moment, label: 'Escobar', onOpen: () => {}, onDismiss: () => {} }));
+    // Forcing this long, dynamic cue text onto one unbroken line — the classic
+    // overflow:hidden + text-overflow:ellipsis + white-space:nowrap combo — lets
+    // its intrinsic (pre-clip) width exceed the viewport in a cramped flex row.
+    // Reproduced concretely: with this combo present, headless Chromium's
+    // mobile+touch emulation decouples the layout viewport from the visual one,
+    // and the bottom tab bar becomes unclickable elsewhere on the page (see
+    // docs/escobar-presence/PROGRESS.md, the P02 Train entries). Multi-line
+    // wrapping, contained by overflow:hidden + min-width:0 on every ancestor,
+    // does not have that failure mode. Do not reintroduce nowrap/ellipsis here.
+    expect(rendered).not.toContain('nowrap');
+    expect(rendered).not.toContain('ellipsis');
+  });
+});
+
+describe('Train (Splits/pre-workout header): the presence launcher sits in its own row, never cramped into the icon-button row', () => {
+  const source = readFileSync(new URL('../src/slices/workout/Train.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+
+  it('is rendered outside .topbar, not squeezed alongside the Ask/Import/Split buttons', () => {
+    const topbarStart = source.indexOf('<div class="topbar">');
+    const topbarEnd = source.indexOf('</div>\n      </div>', topbarStart) + '</div>\n      </div>'.length;
+    const topbarBlock = source.slice(topbarStart, topbarEnd);
+    expect(topbarBlock).not.toContain('PresenceLauncher');
+    const afterTopbar = source.slice(topbarEnd, topbarEnd + 1200);
+    expect(afterTopbar).toContain('PresenceLauncher');
+  });
+
+  it('is gated on the online coach being off, the Ask button on it being on — mutually exclusive', () => {
+    expect(source).toContain('{!remoteEnabled.value && moment && (');
+    expect(source).toContain("{remoteEnabled.value && <Button variant=\"quiet\" size=\"sm\" onClick={() => setBuildingSplit(true)} aria-label={`Ask ${COACH_NAME}`}>");
+  });
+
+  it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {
+    expect(source).toContain("import { InsightSheet, SuggestionSheet } from '../coach/Coach';");
+    expect(source.match(/<InsightSheet\b/g)).toHaveLength(1);
+    expect(source.match(/<SuggestionSheet\b/g)).toHaveLength(1);
+  });
+
+  it('the live in-workout view (LiveSession) is untouched — no presence launcher inside it', () => {
+    const liveSessionStart = source.indexOf('function LiveSession(');
+    const liveSessionEnd = source.indexOf('\nfunction ', liveSessionStart + 1);
+    const liveSessionBody = source.slice(liveSessionStart, liveSessionEnd === -1 ? undefined : liveSessionEnd);
+    expect(liveSessionBody).not.toContain('PresenceLauncher');
   });
 });
 

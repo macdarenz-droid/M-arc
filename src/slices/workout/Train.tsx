@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { deload, nowMs, restNext, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
+import { deload, insights, nowMs, presenceMoment, report, restNext, setTicking, suggestions, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMafia, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { dayKey, formatClock, formatDay } from '@/core/dates';
@@ -16,8 +16,11 @@ import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
 import { recentPainMuscles } from '@/brain/coach/planners/shared';
 import { equipmentGroup } from '@/brain/coach/cues';
-import { endDeload } from '../coach/apply';
+import { acceptProposal, dismissProposal, endDeload } from '../coach/apply';
 import { ensureDeviceId, remoteEnabled } from '../coach/remote';
+import { InsightSheet, SuggestionSheet } from '../coach/Coach';
+import { PresenceLauncher } from '../coach/Presence';
+import { dismissPresenceMoment } from '../coach/presence';
 import { liveRecordFrom, prReach } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
@@ -98,6 +101,10 @@ function Splits() {
   const [pickingPhoto, setPickingPhoto] = useState(false);
   const [importPhoto, setImportPhoto] = useState<CapturedPhoto | null>(null);
   const [buildingSplit, setBuildingSplit] = useState(false);
+  const [momentOpen, setMomentOpen] = useState(false);
+  const moment = presenceMoment.value;
+  const momentInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
+  const momentSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   const split = s.splits.find(x => x.id === selected) ?? s.splits[0];
   useEffect(() => { if (!split && s.splits[0]) setSelected(s.splits[0].id); }, [s.splits.length]);
   const u = unit.value;
@@ -120,6 +127,24 @@ function Splits() {
           <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
         </div>
       </div>
+
+      {/*
+        Its own full-width row below the topbar, not squeezed into the
+        compact button row above (matching the "easier week" banner's own
+        placement right below): cramming this text-bearing card into a
+        narrow flex row alongside icon buttons was the real design flaw
+        behind a real, reproduced visual-gate bug — a long cue's nested
+        dismiss control in that cramped row made the bottom nav
+        unclickable under headless Chromium's mobile+touch emulation. See
+        docs/escobar-presence/PROGRESS.md's P02 Train entry for the full
+        diagnosis trail. This placement was verified against that exact
+        failure with the full five-theme visual gate before shipping.
+      */}
+      {!remoteEnabled.value && moment && (
+        <div style={{ marginBottom: 12 }}>
+          <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => setMomentOpen(true)} onDismiss={m => dismissPresenceMoment(m)} />
+        </div>
+      )}
 
       {deload.value && (
         <div class="banner row-between" role="status" style={{ marginBottom: 12 }}>
@@ -175,6 +200,15 @@ function Splits() {
       {creating && <CreateSplit onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setSelected(id); setEditing(true); }} />}
       {importPhoto && <ImportProgrammeSheet photo={importPhoto} onClose={() => setImportPhoto(null)} />}
       {buildingSplit && <AskSheet onClose={() => setBuildingSplit(false)} />}
+      {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}
+      {momentOpen && momentSuggestion && (
+        <SuggestionSheet
+          suggestion={momentSuggestion}
+          onAccept={() => { showToast(acceptProposal(momentSuggestion.proposal, today.value)); setMomentOpen(false); }}
+          onDismiss={() => { dismissProposal(momentSuggestion.proposal, today.value, report.value); setMomentOpen(false); }}
+          onClose={() => setMomentOpen(false)}
+        />
+      )}
     </div>
   );
 }
