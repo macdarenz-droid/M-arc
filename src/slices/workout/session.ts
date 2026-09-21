@@ -424,12 +424,13 @@ export function setSessionEffort(sessionId: string, exerciseIndex: number, setIn
 /**
  * The online coach's read of a session's note arrives after the request
  * that started it, sometimes after the screen that asked has closed. This
- * merges those flags into the session by id whenever it resolves, so
- * Train's finish screen and History's session editor can both start the
- * same request and let it land safely in the background.
+ * merges those flags only while the submitted note is still current, so
+ * a late response cannot tag a newer note. Unrelated set edits are preserved.
  */
-export function applySessionNoteFlags(sessionId: string, flags: NoteFlag[]): void {
-  if (!flags.length) return;
-  update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === sessionId ? { ...x, noteFlags: flags } : x)) }));
+export function applySessionNoteFlags(sessionId: string, expectedNote: string, flags: NoteFlag[]): boolean {
+  const session = state.value.sessions.find(candidate => candidate.id === sessionId);
+  if (!flags.length || !session || session.note !== expectedNote) return false;
+  update(s => ({ ...s, sessions: s.sessions.map(candidate => candidate === session ? { ...candidate, noteFlags: flags } : candidate) }));
   flushSave();
+  return true;
 }

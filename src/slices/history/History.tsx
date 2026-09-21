@@ -130,7 +130,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
     }
     showToast('Session updated'); onClose();
     if (trimmed && noteChanged && remoteEnabled.value) {
-      void requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() }).then(r => { if (r.ok) applySessionNoteFlags(session.id, r.flags); });
+      void requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() }).then(r => { if (r.ok) applySessionNoteFlags(session.id, trimmed, r.flags); });
     }
   };
   const remove = () => {

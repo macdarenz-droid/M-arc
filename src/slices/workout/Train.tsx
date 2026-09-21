@@ -599,8 +599,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
     setSessionNote(session.id, trimmed);
     if (!remoteEnabled.value) return;
     const r = await requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() });
-    if (r.ok && r.flags.length) {
-      applySessionNoteFlags(session.id, r.flags);
+    if (r.ok && applySessionNoteFlags(session.id, trimmed, r.flags)) {
       showToast(`Noted: ${r.flags.map(noteFlagLabel).join(', ')}.`);
     }
   };
