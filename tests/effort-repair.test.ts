@@ -5,6 +5,7 @@ import type { LoggedSet, Session } from '@/core/models';
 import { freshState } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { setSessionEffort } from '@/slices/workout/session';
+import { replaceSessionIfCurrent } from '@/slices/history/sessionEdit';
 
 const saved = (sets: LoggedSet[]): Session => ({
   id: 'saved', splitId: 'push', splitName: 'Push', day: '2026-09-21', startedAt: '2026-09-21T10:00:00.000Z', endedAt: '2026-09-21T11:00:00.000Z', durationSec: 3600,
@@ -65,6 +66,8 @@ describe('saved effort mutation', () => {
 
   it('changes exactly one effort field and flushes once', () => {
     const session = saved([{ kg: 60, reps: 8 }, { kg: 60, reps: 7 }]);
+    session.note = 'Keep this note';
+    session.noteFlags = [{ kind: 'positive', muscle: null }];
     const storage = setup(session);
     const beforeWrites = storage.writes();
     const fingerprint = effortSetFingerprint(state.value.sessions[0]!, 0, 1)!;
@@ -73,7 +76,8 @@ describe('saved effort mutation', () => {
     expect(state.value.sessions[0]!.exercises[0]!.sets).toEqual([{ kg: 60, reps: 8 }, { kg: 60, reps: 7, effort: 'max' }]);
     expect(state.value.active).toBeNull();
     expect(state.value.sessions).toHaveLength(1);
-    expect(state.value.sessions[0]!.noteFlags).toBeUndefined();
+    expect(state.value.sessions[0]!.note).toBe('Keep this note');
+    expect(state.value.sessions[0]!.noteFlags).toEqual([{ kind: 'positive', muscle: null }]);
   });
 
   it('rejects deleted, edited, moved, nonworking, already-rated and invalid choices without a write', () => {
@@ -104,5 +108,15 @@ describe('saved effort mutation', () => {
     const current = state.value.sessions[0]!;
     expect(setSessionEffort(session.id, 0, 0, effortSetFingerprint(current, 0, 0)!, 'ideal')).toBe(true);
     expect(state.value.sessions[0]!.exercises[0]!.sets[0]!.effort).toBe('ideal');
+  });
+
+  it('makes a History draft opened before repair stale instead of letting it erase the rating', () => {
+    const session = saved([{ kg: 60, reps: 8 }]);
+    setup(session);
+    const opened = state.value.sessions[0]!;
+    expect(setSessionEffort(session.id, 0, 0, effortSetFingerprint(opened, 0, 0)!, 'easy')).toBe(true);
+    expect(replaceSessionIfCurrent(opened, { ...opened, note: 'stale draft' })).toBe('changed');
+    expect(state.value.sessions[0]!.exercises[0]!.sets[0]!.effort).toBe('easy');
+    expect(state.value.sessions[0]!.note).toBeUndefined();
   });
 });

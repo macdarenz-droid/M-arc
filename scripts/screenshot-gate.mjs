@@ -262,7 +262,7 @@ for (const theme of themes) {
     const debriefPage = await debriefCtx.newPage();
     debriefPage.on('pageerror', error => errors.push(`silent-black debrief: ${error.message}`));
     debriefPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
-    await debriefPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(debriefState));
+    await debriefPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(debriefState));
     await debriefPage.goto(`http://localhost:${PORT}/`); await debriefPage.waitForSelector('.nav');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
@@ -319,6 +319,82 @@ for (const theme of themes) {
     await debriefLbPage.getByText('Accepted target 138 lb × 6', { exact: true }).waitFor();
     await debriefLbCtx.close();
     if (debriefRequests.length) errors.push(`silent-black: session debrief made external requests (${debriefRequests.join(', ')})`);
+
+    const repairState = structuredClone(source);
+    repairState.sessions = [];
+    repairState.coach.remoteExplainer = false;
+    const repairStartedAt = `${currentDay}T12:00:00.000Z`;
+    repairState.active = {
+      splitId: 'split_push', startedAt: repairStartedAt, pausedMs: 0,
+      entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: true, skipped: false, planEntryId: 'gate-repair-entry', sets: [{ kg: 60, reps: 8 }, { kg: 60, reps: 7 }, { kg: 60, reps: 6 }] }],
+      plan: { version: 1, capturedAt: repairStartedAt, goal: repairState.goal, deload: null, entries: [{ id: 'gate-repair-entry', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 3, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null })) }] },
+    };
+    const repairRequests = [];
+    const repairCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const repairPage = await repairCtx.newPage();
+    repairPage.on('pageerror', error => errors.push(`silent-black effort repair: ${error.message}`));
+    repairPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
+    await repairPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(repairState));
+    await repairPage.goto(`http://localhost:${PORT}/`); await repairPage.waitForSelector('.nav');
+    await repairPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await repairPage.getByRole('button', { name: 'Finish' }).click();
+    await repairPage.getByRole('button', { name: /Finish and save|Just today/ }).click();
+    const repairHeading = repairPage.getByRole('heading', { name: 'Rate the sets you remember' });
+    await repairHeading.waitFor();
+    await repairPage.getByText('3 of 3 working sets have no effort rating.', { exact: true }).waitFor();
+    await repairPage.screenshot({ path: `${OUT}/silent-black-effort-repair.png` });
+    await repairPage.setViewportSize({ width: 360, height: 800 });
+    if (await repairPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: effort repair overflows at 360px');
+    await repairPage.setViewportSize({ width: 390, height: 844 });
+    const easyFirst = repairPage.getByRole('button', { name: 'Rate Barbell Bench Press set 1 Easy' });
+    await easyFirst.focus(); await repairPage.keyboard.press('Enter');
+    await repairPage.getByText('2 of 3 working sets have no effort rating.', { exact: true }).waitFor();
+    await repairPage.getByRole('button', { name: 'Rate Barbell Bench Press set 2 Ideal' }).click();
+    await repairPage.getByText('1 of 3 working sets have no effort rating.', { exact: true }).waitFor();
+    if (!await repairHeading.count()) errors.push('silent-black: repair closed when coverage crossed one half');
+    await repairPage.getByRole('button', { name: 'Skip for now' }).click();
+    if (await repairHeading.count()) errors.push('silent-black: Skip for now did not close the repair strip');
+    const repairedState = await repairPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    const repairedSets = repairedState.sessions.at(-1)?.exercises[0]?.sets;
+    if (JSON.stringify(repairedSets?.map(set => set.effort ?? null)) !== JSON.stringify(['easy', 'ideal', null])) errors.push('silent-black: rating or Skip changed the wrong saved efforts');
+    if (repairedState.active !== null || repairedState.sessions.length !== 1) errors.push('silent-black: effort repair changed active state or session count');
+    await repairPage.reload(); await repairPage.waitForSelector('.nav');
+    const afterRepairReload = await repairPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (JSON.stringify(afterRepairReload.sessions[0]?.exercises[0]?.sets.map(set => set.effort ?? null)) !== JSON.stringify(['easy', 'ideal', null])) errors.push('silent-black: effort repair did not persist across reload');
+    await repairPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await repairPage.getByRole('button', { name: 'Settings' }).click();
+    const repairDownloadPromise = repairPage.waitForEvent('download');
+    await repairPage.getByRole('button', { name: 'Export backup' }).click();
+    const repairDownload = await repairDownloadPromise;
+    const repairBackupPath = join(ROOT, '.tmp', 'effort-repair-backup.json');
+    await repairDownload.saveAs(repairBackupPath);
+    await repairCtx.close();
+
+    const repairRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const repairRestorePage = await repairRestoreCtx.newPage();
+    repairRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
+    await repairRestorePage.goto(`http://localhost:${PORT}/`); await repairRestorePage.waitForSelector('.nav');
+    await repairRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const repairChooserPromise = repairRestorePage.waitForEvent('filechooser');
+    await repairRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const repairChooser = await repairChooserPromise; await repairChooser.setFiles(repairBackupPath);
+    await repairRestorePage.getByText('Restored 1 sessions', { exact: true }).waitFor();
+    const restoredRepair = await repairRestorePage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (JSON.stringify(restoredRepair.sessions[0]?.exercises[0]?.sets.map(set => set.effort ?? null)) !== JSON.stringify(['easy', 'ideal', null])) errors.push('silent-black: repaired efforts did not survive export and restore');
+    await repairRestoreCtx.close();
+
+    const repairLbState = structuredClone(repairState); repairLbState.preferences.weightUnit = 'lb';
+    const repairLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const repairLbPage = await repairLbCtx.newPage();
+    repairLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) repairRequests.push(request.url()); });
+    await repairLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(repairLbState));
+    await repairLbPage.goto(`http://localhost:${PORT}/`); await repairLbPage.waitForSelector('.nav');
+    await repairLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await repairLbPage.getByRole('button', { name: 'Finish' }).click();
+    await repairLbPage.getByRole('button', { name: /Finish and save|Just today/ }).click();
+    await repairLbPage.getByText(/Barbell Bench Press · Set 1 · 132\.5 lb × 8/).waitFor();
+    await repairLbCtx.close();
+    if (repairRequests.length) errors.push(`silent-black: effort repair made external requests (${repairRequests.join(', ')})`);
   }
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
   if (theme === 'silent-black') {

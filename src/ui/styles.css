@@ -56,6 +56,8 @@ svg { display: block; }
 .btn-sm { min-height: 34px; padding: 0 12px; font-size: 13px; }
 .btn-block { width: 100%; }
 .btn-icon { width: 40px; min-height: 40px; padding: 0; border-radius: 50%; }
+.effort-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.effort-choices .btn { white-space: normal; line-height: 1.25; padding: 8px 10px; }
 
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: var(--text-2); background: var(--surface-2); white-space: nowrap; min-height: 28px; }
 .chip-accent { background: var(--accent-soft); border-color: transparent; color: var(--accent); }

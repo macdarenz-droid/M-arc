@@ -33,7 +33,7 @@ export function EffortRepair({ session, onDone }: { session: Session; onDone: ()
           {repair.missing.map(row => (
             <Card key={row.fingerprint} class="card-quiet">
               <b class="small">{row.exerciseName} · Set {row.setNumber} · {actualText(row)}</b>
-              <div class="wrap" style={{ marginTop: 10 }}>
+              <div class="effort-choices" style={{ marginTop: 10 }}>
                 {calibration.map(choice => (
                   <Button key={choice.effort} size="sm" class="grow" aria-label={`Rate ${row.exerciseName} set ${row.setNumber} ${choice.label}`} onClick={() => {
                     if (!setSessionEffort(session.id, row.exerciseIndex, row.setIndex, row.fingerprint, choice.effort)) showToast('That set changed. Check it in History.');
