@@ -171,7 +171,7 @@
       "rating": "moderate",
       "statement": "Two to three minutes between sets beats one minute for strength and, in trained lifters, for growth. Shorter rests are fine for lighter isolation work and for beginners.",
       "disputed": "The optimum for growth on isolation exercises.",
-      "appUse": "Suggest two to three minutes on compound lifts for a strength goal when the rest default is short. The app does not log per-set rest, so this is advice about the default.",
+      "appUse": "Suggest two to three minutes on compound lifts for a strength goal when the rest default is short. The live rest timer also grades the person's own default up for a max-effort or compound set and down for an easy one; it still does not log the rest actually taken.",
       "findingKinds": [],
       "proposalKinds": ["rest_default"],
       "citations": [

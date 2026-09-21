@@ -8,6 +8,7 @@
  */
 import type { ActiveSession, Effort, Exercise, ResistanceMode } from '@/core/models';
 import { findExercise } from '@/core/exercises';
+import { isWorkingSet } from './exposure';
 import type { GoalId } from '@/data/goals';
 import type { MuscleId } from '@/data/muscles';
 import { suggestNext, type Suggestion } from './progression';
@@ -189,10 +190,12 @@ export function nextAfterRest(
   from: { entry: number; set: number },
   suggestion: Suggestion | null,
 ): RestNext | null {
+  if (!Number.isInteger(from.entry) || !Number.isInteger(from.set) || from.entry < 0 || from.set < 0) return null;
   const entry = entries[from.entry];
-  if (!entry) return null;
+  if (!entry || entry.done || entry.skipped || from.set >= entry.sets.length) return null;
   const nextIndex = from.set + 1;
   if (nextIndex < entry.sets.length) {
+    if (isWorkingSet(entry.sets[nextIndex]!)) return null;
     const target = suggestion?.sets[Math.min(nextIndex, suggestion.sets.length - 1)] ?? null;
     return {
       kind: 'set',

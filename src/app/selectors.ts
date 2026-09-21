@@ -9,8 +9,10 @@ import { buildReport } from '@/brain/coach/report';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery } from '@/brain/coach/detectors';
 import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
-import { deloadActive } from '@/brain/coach/deload';
+import { applyDeload, deloadActive } from '@/brain/coach/deload';
 import { buildAskStats } from '@/brain/stats';
+import { suggestNext } from '@/brain/progression';
+import { nextAfterRest, type RestNext } from '@/brain/live';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -60,3 +62,22 @@ export const todaySuggestion = computed(() => suggestions.value.find(s => s.kind
 export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));
 
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+
+/**
+ * What the running rest is counting towards. This deliberately does not read
+ * nowMs, so the one-second clock tick never recomputes progression targets.
+ */
+export const restNext = computed<RestNext | null>(() => {
+  const s = state.value;
+  const active = s.active;
+  const from = active?.rest?.from;
+  if (!active || !from) return null;
+  const entry = active.entries[from.entry];
+  if (!entry || from.startedAt !== active.startedAt || from.exerciseId !== entry.exerciseId) return null;
+  const suggestion = applyDeload(
+    suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises),
+    deload.value,
+    today.value,
+  );
+  return nextAfterRest(active.entries, from, suggestion);
+});

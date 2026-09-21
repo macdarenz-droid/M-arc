@@ -7,7 +7,8 @@ src/
   data/      static facts: exercises.json, muscles, goals, templates, coachCues.json, sparks
   core/      models, dates, units, exercise lookup, store (persistence), legacy migration
   brain/     pure functions: exposure, recovery, history, prs, trend, progression, balance,
-             effort, weekly, bodyfat, coach/cues, and the coach brain: coach/detectors (findings),
+             effort, weekly, bodyfat, live (rest grading + next-set for the live session), coach/cues,
+             and the coach brain: coach/detectors (findings),
              coach/planners (proposals), coach/report, coach/words (plain-English templates),
              coach/{contract,principles,context,bands,deload} — see docs/COACH_BRAIN.md
   theme/     five themes as one token contract + the engine that applies them

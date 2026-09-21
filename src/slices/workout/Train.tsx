@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { deload, nowMs, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
+import { deload, nowMs, restNext, setTicking, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMafia, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock, formatDay } from '@/core/dates';
@@ -11,7 +11,7 @@ import { MUSCLES, muscleLabel } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload } from '@/brain/coach/deload';
-import { substitutes, type Substitute } from '@/brain/live';
+import { substitutes, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
 import { recentPainMuscles } from '@/brain/coach/planners/shared';
@@ -21,7 +21,7 @@ import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -37,6 +37,25 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
   { v: 'ideal', l: 'I', title: 'Ideal: 1 to 3 reps left' },
   { v: 'max', l: 'M', title: 'Max: nothing left' },
 ];
+
+const REST_REASON: Record<RestReasonKind, string> = {
+  ungraded: '', base: '',
+  easy: 'easy set', max: 'max effort',
+  compound: 'a compound lift',
+  easy_compound: 'easy set on a compound',
+  max_compound: 'max effort on a compound',
+  strength_floor: 'strength goal, compound lift',
+};
+
+function restNextLine(next: RestNext | null, displayUnit: 'kg' | 'lb'): string {
+  if (!next) return '';
+  if (next.kind === 'next_exercise') return `Last set · next up: ${next.name}`;
+  if (next.kind === 'session_end') return 'Last set · last exercise of the session';
+  if (next.durationSec != null) return `Set ${next.setNumber} · ${next.durationSec}s`;
+  if (next.kg != null) return next.reps != null ? `Set ${next.setNumber} · ${formatLoad(next.kg, displayUnit)} × ${next.reps}` : `Set ${next.setNumber} · ${formatLoad(next.kg, displayUnit)}`;
+  if (next.reps != null) return `Set ${next.setNumber} · ${next.reps} reps`;
+  return `Set ${next.setNumber}`;
+}
 
 /** A Suggestion's headline target, with kg rendered in the user's unit. */
 function fmtTarget(sg: Suggestion, u: 'kg' | 'lb'): string {
@@ -371,7 +390,7 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
                       <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
-                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); }}>{ef.l}</button>)}</div>
+                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); regradeRest(index, j); }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
                   <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
@@ -503,16 +522,25 @@ export function RestBanner() {
   const now = nowMs.value;
   const remaining = a.pausedAt && a.rest.pausedRemainingSec != null ? a.rest.pausedRemainingSec : Math.max(0, Math.round((a.rest.endsAt - now) / 1000));
   const done = remaining <= 0;
-  const pct = a.rest.totalSec ? Math.min(100, 100 - (remaining / a.rest.totalSec) * 100) : 100;
+  const pct = a.rest.totalSec ? Math.max(0, Math.min(100, 100 - (remaining / a.rest.totalSec) * 100)) : 100;
+  const primary = restNextLine(restNext.value, unit.value);
+  const base = state.value.preferences.restDefaultSec;
+  const honouring = a.rest.gradedSec != null && a.rest.gradedSec === a.rest.totalSec && a.rest.totalSec !== base;
+  const reason = honouring && a.rest.reasonKind ? REST_REASON[a.rest.reasonKind] : '';
+  const delta = a.rest.deltaSec ?? 0;
+  const detail = done
+    ? (primary ? 'Rest done.' : 'Rest done. Next set.')
+    : `Rest · ${formatClock(a.rest.totalSec)}${reason ? ` · ${delta > 0 ? '+' : '−'}${Math.abs(delta)}s, ${reason}` : ''}`;
   return (
     <div class={`rest ${done ? 'done' : ''}`} role="status">
-      <div>
-        <div class="clock">{done ? 'Go' : formatClock(remaining)}</div>
-        <div class="hint">{done ? 'Rest done. Next set.' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
+      <div class="clock">{done ? 'Go' : formatClock(remaining)}</div>
+      <div class="grow">
+        {primary && <div class="rest-next ellipsis">{primary}</div>}
+        <div class="hint ellipsis">{detail}</div>
+        <div class="bar" style={{ marginTop: 6 }}><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div>
       </div>
-      <div class="grow"><div class="bar"><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div></div>
-      {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
-      {!done && <Button variant="quiet" size="sm" aria-label="More rest" onClick={() => adjustRest(15)}>+15</Button>}
+      {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-REST_STEP)}>{`−${REST_STEP}`}</Button>}
+      {!done && <Button variant="quiet" size="sm" aria-label="More rest" onClick={() => adjustRest(REST_STEP)}>{`+${REST_STEP}`}</Button>}
       <Button size="sm" onClick={() => stopRest()}>{done ? 'OK' : 'Skip'}</Button>
     </div>
   );
