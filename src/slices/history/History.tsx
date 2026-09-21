@@ -18,6 +18,8 @@ import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
 import { ensureDeviceId, remoteEnabled } from '@/slices/coach/remote';
 import { applySessionNoteFlags } from '@/slices/workout/session';
 import { cleanSessionEdit, removeSessionIfCurrent, replaceSessionIfCurrent } from './sessionEdit';
+import { sessionDebrief } from '@/brain/debrief';
+import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDebrief';
 
 export function History() {
   const [seg, setSeg] = useState<'log' | 'stats'>('log');
@@ -108,6 +110,10 @@ function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
 
 function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
   const u = unit.value;
+  const sessions = state.value.sessions;
+  const custom = state.value.customExercises;
+  const fresh = sessions.find(candidate => candidate.id === session.id);
+  const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [note, setNote] = useState(session.note ?? '');
   const [confirm, setConfirm] = useState(false);
@@ -141,6 +147,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
       <div class="stack">
+        {debrief && <SessionDebriefView debrief={debrief} unit={u} />}
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
             <b class="small">{e.name}</b>
