@@ -13,6 +13,8 @@ import { applyDeload, deloadActive } from '@/brain/coach/deload';
 import { buildAskStats } from '@/brain/stats';
 import { suggestNext } from '@/brain/progression';
 import { nextAfterRest, type RestNext } from '@/brain/live';
+import { readinessToday } from '@/brain/readiness';
+import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain/coach/verdict';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -43,8 +45,10 @@ export const brainContext = computed(() => contextFromState(state.value, today.v
 /** A precomputed "how things stand right now" snapshot for /ask — see src/brain/stats.ts. Recomputed alongside the report, whenever state or the minute changes. */
 export const askStats = computed(() => buildAskStats(brainContext.value));
 
-/** Recovery with the session's volume taken into account, the same numbers the coach uses. */
-export const recovery = computed<MuscleRecovery[]>(() => adjustedRecovery(brainContext.value).map(r => ({
+/** Recovery with every local adjustment and counterfactual, computed once per state change. */
+export const adjusted = computed(() => adjustedRecovery(brainContext.value));
+/** The public muscle-recovery shape shared by the existing screens. */
+export const recovery = computed<MuscleRecovery[]>(() => adjusted.value.map(r => ({
   muscle: r.muscle, pct: r.adjustedPct, hoursLeft: r.adjustedHoursLeft, windowHours: r.adjustedWindowHours,
   lastTrainedAt: r.lastTrainedAt, lastDay: r.lastDay, personalized: r.personalized, recovering: r.adjustedPct < 100,
 })));
@@ -62,6 +66,19 @@ export const todaySuggestion = computed(() => suggestions.value.find(s => s.kind
 export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));
 
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+export const readingToday = computed(() => readinessToday(state.value.readiness, today.value));
+export const canOfferTodayPlan = computed(() => !!todaySuggestion.value && !!scheduledSplit.value && sessionsToday.value.length === 0 && !state.value.active);
+export const verdictCard = computed<ReadinessCard | null>(() => {
+  const readiness = readingToday.value;
+  if (!readiness) return null;
+  const consequence = readinessConsequence({
+    recovery: adjusted.value,
+    plan: todaySuggestion.value?.proposal ?? null,
+    custom: state.value.customExercises,
+    hasScheduledSplit: !!scheduledSplit.value,
+  });
+  return readinessCard({ readiness, consequence, canOfferPlan: canOfferTodayPlan.value });
+});
 
 /**
  * What the running rest is counting towards. This deliberately does not read

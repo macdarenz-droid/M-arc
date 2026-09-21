@@ -17,7 +17,7 @@ describe('words for findings', () => {
       subject: { exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press', muscle: 'chest', muscleGroup: 'chest', splitId: PUSH_ID, splitName: 'Push' },
       metrics: {
         changePct: -18, baselineSets: 14.5, currentSets: 11.9, weeklySets: 27, bandHigh: 25, threshold: 2, sessions: 8, lastTopKg: 60, firstTopKg: 55, lastTopReps: 8, firstTopReps: 8, lastBestReps: 10, firstBestReps: 8,
-        pct: 45, hoursLeft: 26, volumeFactor: 1.5, personalized: true, lastDay: '2026-09-18', ratedPct: 20, maxSharePct: 70, easySharePct: 10, idealSharePct: 20, goalRirLow: 1, goalRirHigh: 3,
+        pct: 45, hoursLeft: 26, volumeFactor: 1.5, readinessPersonalized: true, personalized: true, baselineAvg: 4.7, deltaFromBaseline: -1.4, z: -2.33, worstDimension: 'stress', worstValue: 2, worstMedian: 4, lastDay: '2026-09-18', ratedPct: 20, maxSharePct: 70, easySharePct: 10, idealSharePct: 20, goalRirLow: 1, goalRirHigh: 3,
         direction: 'harder_than_goal', typicalReps: 12, rangeLow: 6, rangeHigh: 12, exerciseIds: 'lib_barbell_bench_press,lib_dumbbell_bench_press', pattern: 'horizontal_push',
         strong: 'Push', weak: 'Pull', ratioLabel: '2.4×', days: 12, reentry: false, weeksObserved: 12, sessionsPerWeek: 2, wed_start: '18:00', thu_start: '18:30', retired: 'sat',
         currentSets_: 0, targetSets: 12, baselineSets_: 0, daysLeft: 3, sleepHours: 5.5, thresholdMinutes: 360, needed: 4, detail: '65 kg × 8', previous: 60, recordKind: 'heaviest', delta: 0.08,
@@ -52,6 +52,23 @@ describe('words for findings', () => {
     expect(quiet.noticed).not.toContain('unusually tiring');
     const flagged = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18', fatigueFactor: 1.3 } }, render());
     expect(flagged.noticed).toContain('unusually tiring');
+    const personal = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18', readinessFactor: 1.3, readinessPersonalized: true } }, render());
+    expect(personal.noticed).toContain('below your own normal');
+    expect(personal.noticed).not.toContain('read low');
+    const absolute = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18', readinessFactor: 1.3, readinessPersonalized: false } }, render());
+    expect(absolute.noticed).toContain('read low');
+    expect(absolute.noticed).not.toContain('your own normal');
+  });
+
+  it('describes personalized and absolute low-readiness patterns differently', () => {
+    const base: Omit<Finding, 'metrics'> = { id: 'low_readiness:x', kind: 'low_readiness', subject: {}, window: { from: '2026-09-18', to: '2026-09-19' }, confidence: 'medium', severity: 1, evidence: { sessionIds: [], days: [] }, principles: [] };
+    const personal = renderFinding({ ...base, metrics: { personalized: true, baselineAvg: 4.7, avg: 3, sleep: 3, soreness: 3, stress: 3 } }, render());
+    expect(personal.title).toContain('your own normal');
+    expect(personal.noticed).toContain('your usual');
+    expect(personal.noticed).toContain('4.7');
+    const absolute = renderFinding({ ...base, metrics: { personalized: false, avg: 2, sleep: 2, soreness: 2, stress: 2 } }, render());
+    expect(absolute.title).toBe('Feeling worn down lately');
+    expect(absolute.noticed).not.toContain('normal');
   });
 
   it('rotates variants weekly and deterministically', () => {

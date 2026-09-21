@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, week } from '@/app/selectors';
+import { deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, verdictCard, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -16,6 +16,7 @@ import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';
+import { ReadinessVerdict } from './ReadinessVerdict';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -59,6 +60,7 @@ export function Today() {
       </div>
 
       {!checkedInToday && !checkInSkipped && <ReadinessCheckIn day={today.value} onDone={() => setCheckInSkipped(true)} />}
+      {checkedInToday && verdictCard.value && <ReadinessVerdict card={verdictCard.value} acceptLabel={plan?.acceptLabel ?? null} onAccept={accept} onWhy={() => go('coach')} />}
 
       <Card class="card-accent">
         {status === 'live' && (

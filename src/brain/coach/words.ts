@@ -189,7 +189,9 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         means: 'Records mark real progress: heavier, stronger, or more reps at a load. Total volume never counts as one.',
         action: 'Nice. Rate the effort so the coach knows how close to your limit that was.' };
     case 'under_recovered': {
-      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', num(m.readinessFactor) > 1 ? 'Your check-in today read low, which widens it a little more.' : '', num(m.fatigueFactor) > 1 ? 'You noted that session felt unusually tiring, which widens it too.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
+      const readiness = num(m.readinessFactor) > 1
+        ? (m.readinessPersonalized === true ? 'Your check-in today read below your own normal, which widens it a little more.' : 'Your check-in today read low, which widens it a little more.') : '';
+      const extra = [num(m.volumeFactor) > 1 ? 'That session was bigger than your usual, so the window is wider.' : '', readiness, num(m.fatigueFactor) > 1 ? 'You noted that session felt unusually tiring, which widens it too.' : '', m.personalized ? 'Your own history shows you perform worse when you go back too soon.' : ''].filter(Boolean).join(' ');
       return { title: `${muscle} still recovering`,
         noticed: `About ${num(m.pct)}% recovered with about ${formatHours(num(m.hoursLeft))} to go, after ${formatDay(str(m.lastDay) || ctx.today)}.${extra ? ` ${extra}` : ''}`,
         means: 'Training it again now mostly means a weaker session, not harm. Recovery windows are estimates, and they only widen when your own results say so.',
@@ -200,11 +202,15 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: `About ${num(m.sleepHours)} hours of sleep, under the ${num(m.thresholdMinutes) / 60}-hour mark most sleep studies use.`,
         means: 'Short sleep measurably lowers next-day strength, most on big compound lifts. It does not mean skip training.',
         action: 'Keep the loads you planned, do not chase records, and rate effort honestly so a tired session is not read as a decline.' };
-    case 'low_readiness':
-      return { title: 'Feeling worn down lately',
-        noticed: `Your morning check-ins have read low more than once this week: today, sleep ${num(m.sleep)}/5, soreness ${num(m.soreness)}/5, stress ${num(m.stress)}/5.`,
+    case 'low_readiness': {
+      const personalized = m.personalized === true && typeof m.baselineAvg === 'number';
+      return { title: personalized ? 'Below your own normal, more than once' : 'Feeling worn down lately',
+        noticed: personalized
+          ? `Your morning check-ins have read below your own normal more than once this week: today, sleep ${num(m.sleep)}/5, soreness ${num(m.soreness)}/5, stress ${num(m.stress)}/5 — an average of ${num(m.avg)} against your usual ${num(m.baselineAvg)}.`
+          : `Your morning check-ins have read low more than once this week: today, sleep ${num(m.sleep)}/5, soreness ${num(m.soreness)}/5, stress ${num(m.stress)}/5.`,
         means: 'One rough morning says little by itself. A run of them tracked over time is the kind of pattern short daily wellness check-ins actually predict — this does not diagnose anything or say why.',
         action: 'An easier session, a longer warm-up, or a rest day are all reasonable calls today. Keep checking in either way; the pattern is what matters.' };
+    }
     case 'effort_missing':
       return { title: 'Rate your sets',
         noticed: `Only ${num(m.ratedPct)}% of your last ${num(m.sets)} sets have an effort rating.`,
