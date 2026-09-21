@@ -5,6 +5,8 @@ import {
   PLAN_MAX_METADATA_SETS,
   type ActiveSession,
   type AppState,
+  type AskThreadTurn,
+  type DismissalEvidence,
   type LoggedExercise,
   type PlanSetTarget,
   type Session,
@@ -27,6 +29,39 @@ const object = (value: unknown): value is Record<string, unknown> => !!value && 
 const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 const shortString = (value: unknown): value is string => typeof value === 'string' && value.length > 0 && value.length <= 500;
 const oneOf = <T extends string>(value: unknown, choices: readonly T[]): value is T => typeof value === 'string' && choices.includes(value as T);
+const validDay = (value: unknown): value is string => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+  && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
+const CONFIDENCES = ['low', 'medium', 'high'] as const;
+const FINDING_KINDS = ['volume_drop', 'volume_spike', 'weekly_sets_out_of_band', 'uncovered_muscle', 'plateau', 'decline', 'progressing', 'under_recovered', 'effort_missing', 'effort_drift_harder', 'effort_drift_easier', 'effort_mismatch', 'rep_range_mismatch', 'redundant_exercises', 'chronic_skip', 'week_review', 'balance_imbalance', 'long_gap', 'habit_pattern', 'focus_behind', 'low_sleep_readiness', 'low_readiness', 'record', 'first_sessions', 'note_flag'] as const;
+
+function validDismissalEvidence(value: unknown): value is DismissalEvidence {
+  if (!object(value) || !validDay(value.day) || typeof value.proposalFingerprint !== 'string' || typeof value.reopenedOnce !== 'boolean' || !Array.isArray(value.findings)) return false;
+  return value.findings.every(finding => object(finding)
+    && shortString(finding.id) && oneOf(finding.kind, FINDING_KINDS)
+    && finite(finding.severity) && Number.isInteger(finding.severity) && finding.severity >= 0 && finding.severity <= 3
+    && oneOf(finding.confidence, CONFIDENCES)
+    && Array.isArray(finding.sessionIds) && finding.sessionIds.length <= 64 && finding.sessionIds.every(shortString)
+    && Array.isArray(finding.sessionFingerprints) && finding.sessionFingerprints.length === finding.sessionIds.length
+    && finding.sessionFingerprints.every(item => typeof item === 'string'));
+}
+
+function normalizeDismissalEvidence(value: unknown): Record<string, DismissalEvidence> {
+  if (!object(value)) return {};
+  const valid: Array<[string, DismissalEvidence]> = [];
+  for (const [key, entry] of Object.entries(value)) if (shortString(key) && validDismissalEvidence(entry)) valid.push([key, entry]);
+  return Object.fromEntries(valid
+    .sort(([keyA, a], [keyB, b]) => a.day.localeCompare(b.day) || keyA.localeCompare(keyB))
+    .slice(-100));
+}
+
+const validFlags = (value: unknown, max: number): value is boolean[] => Array.isArray(value) && value.length <= max && value.every(flag => typeof flag === 'boolean');
+
+function normalizeAskTurn(turn: AskThreadTurn): AskThreadTurn {
+  const draftDismissed = validFlags(turn.draftDismissed, turn.drafts?.length ?? 0) ? turn.draftDismissed : undefined;
+  const actionDismissed = validFlags(turn.actionDismissed, turn.actions?.length ?? 0) ? turn.actionDismissed : undefined;
+  const scheduleDismissed = typeof turn.scheduleDismissed === 'boolean' && !!turn.scheduleDraft ? turn.scheduleDismissed : undefined;
+  return { ...turn, draftDismissed, actionDismissed, scheduleDismissed };
+}
 
 function validTarget(value: unknown): value is PlanSetTarget {
   if (!object(value)) return false;
@@ -129,7 +164,16 @@ function normalize(s: AppState): AppState {
     body: s.body ?? [],
     customExercises: s.customExercises ?? [],
     readiness: s.readiness ?? [],
-    coach: { ...fresh.coach, ...s.coach, dismissed: { ...s.coach?.dismissed }, snoozedUntil: { ...s.coach?.snoozedUntil }, accepted: { ...s.coach?.accepted }, learnedStarts: { ...s.coach?.learnedStarts } },
+    coach: {
+      ...fresh.coach,
+      ...s.coach,
+      dismissed: { ...s.coach?.dismissed },
+      snoozedUntil: { ...s.coach?.snoozedUntil },
+      accepted: { ...s.coach?.accepted },
+      dismissalEvidence: normalizeDismissalEvidence(s.coach?.dismissalEvidence),
+      learnedStarts: { ...s.coach?.learnedStarts },
+      askThread: Array.isArray(s.coach?.askThread) ? s.coach.askThread.map(normalizeAskTurn) : [],
+    },
   };
 }
 

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { appendAskTurn, clearAskThread, clearStatedConstraints, mergeStatedConstraints, updateAskTurn } from '@/slices/coach/askMemory';
+import { appendAskTurn, clearAskThread, clearStatedConstraints, dismissAskItem, mergeStatedConstraints, updateAskTurn } from '@/slices/coach/askMemory';
 import { emptyCoach, MAX_ASK_THREAD_TURNS, MAX_STATED_CONSTRAINT_CHARS, MAX_STATED_CONSTRAINTS, type AskThreadTurn } from '@/core/models';
+import { initStore, replaceState, state } from '@/core/store';
+import { freshState } from '@/core/models';
+import { askTurnFingerprint } from '@/brain/coach/reopen';
 
 const userTurn = (text: string): AskThreadTurn => ({ role: 'user', text });
 const assistantTurn = (text: string): AskThreadTurn => ({ role: 'assistant', text, scope: 'general', category: 'general', concern: null });
@@ -96,5 +99,21 @@ describe('clearStatedConstraints', () => {
     let coach = mergeStatedConstraints(emptyCoach(), ['Avoid curls.']);
     coach = clearStatedConstraints(coach);
     expect(coach.statedConstraints).toEqual([]);
+  });
+});
+
+describe('dismissAskItem', () => {
+  it('marks only the exact saved payload and refuses a stale index after eviction', () => {
+    const storage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+    initStore(storage);
+    const turn = { ...assistantTurn('draft'), drafts: [{ action: 'create' as const, splitId: null, name: 'Push', focus: [], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] }] };
+    replaceState({ ...freshState(), coach: { ...emptyCoach(), askThread: [turn] } });
+    const item = { key: 'k', turnIndex: 0, turnFingerprint: askTurnFingerprint(turn), kind: 'split' as const, itemIndex: 0, title: 'Split draft: Push', actionable: true };
+    expect(dismissAskItem(item)).toBe(true);
+    expect(state.value.coach.askThread[0]!.draftDismissed).toEqual([true]);
+
+    replaceState({ ...state.value, coach: { ...state.value.coach, askThread: [assistantTurn('replacement')] } });
+    expect(dismissAskItem(item)).toBe(false);
+    expect(state.value.coach.askThread[0]!.draftDismissed).toBeUndefined();
   });
 });

@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), chronic skip (6A–6T), closed-week review (7A–7T), lift trajectory (8A–8T), and unfinished-item work item 9A are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), and unfinished-item work items 9A-9B are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 9B only
+## Start here: 9C only
 
-Add bounded ledger and draft-flag normalization, integrate reopening before two-dismissal suppression, and guard every explicit dismissal/acceptance against fresh state. Keep old dismissal counts without snapshots suppressed and make stale pending keys fail without mutation. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Mount the bounded Unfinished list before suggestions, open saved turns in AskSheet without network access, and revalidate each pending key before apply/dismiss. Show deterministic local reappearance copy and pass the freshly computed report into explicit proposal dismissals. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

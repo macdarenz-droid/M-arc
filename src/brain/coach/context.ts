@@ -24,6 +24,8 @@ export interface BrainContext {
   dismissed: Record<string, number>;
   /** dismissKey → day the user accepted that suggestion. */
   accepted: Record<string, string>;
+  /** Evidence captured when a proposal was explicitly dismissed. */
+  dismissalEvidence?: CoachState['dismissalEvidence'];
 }
 
 export function contextFromState(state: AppState, today: string, now: number): BrainContext {
@@ -41,5 +43,6 @@ export function contextFromState(state: AppState, today: string, now: number): B
     now,
     dismissed: state.coach?.dismissed ?? {},
     accepted: state.coach?.accepted ?? {},
+    dismissalEvidence: state.coach?.dismissalEvidence ?? {},
   };
 }

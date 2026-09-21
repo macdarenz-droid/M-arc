@@ -110,6 +110,16 @@ describe('number validation', () => {
     expect(bad.offending).toEqual([5, 20]);
     expect(validateText('No numbers here at all.', allowed).ok).toBe(true);
   });
+
+  it('never sends local reopening metadata', () => {
+    const r = realReport();
+    const proposal = r.proposals.find(item => item.kind !== 'load_next')!;
+    expect(proposal).toBeDefined();
+    const reopened = { ...proposal, reopened: { dismissedOn: '2026-08-20', elapsedDays: 30, newSessions: 2, findingId: 'x', previousSeverity: 1 as const, currentSeverity: 2 as const, previousConfidence: 'medium' as const, currentConfidence: 'high' as const } };
+    const payload = buildPayload({ ...r, proposals: [reopened] }, { goal: 'strength', unit: 'kg' });
+    expect(JSON.stringify(payload)).not.toContain('reopened');
+    expect(payload.proposals[0]).toEqual(expect.objectContaining({ id: reopened.id, apply: reopened.apply }));
+  });
   it('grounds trajectory scalars without admitting forecast date components', () => {
     const trajectory = { ...p, findings: [{ ...p.findings[0]!, metrics: {
       trajectoryKgPerWeek: 1.25, trajectoryCurrentKg: 50, trajectoryStepKg: 2.5, trajectoryNextKg: 52.5, trajectoryPoints: 8,

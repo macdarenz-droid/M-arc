@@ -10,7 +10,7 @@
  * Every kind names the research cards it may cite (see docs/RESEARCH.md
  * and src/data/principles.json). A test keeps those references honest.
  */
-import type { Weekday } from '@/core/models';
+import type { ReopenReason, Weekday } from '@/core/models';
 import type { MuscleGroup, MuscleId } from '@/data/muscles';
 
 export const CONTRACT_VERSION = 1 as const;
@@ -158,6 +158,8 @@ export interface Proposal {
   dismissKey: string;
   /** Day key after which the proposal is stale. */
   expiresOn?: string;
+  /** Local presentation metadata; deliberately omitted from remote payloads. */
+  reopened?: ReopenReason;
 }
 
 export interface DataQuality {

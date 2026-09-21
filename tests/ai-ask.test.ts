@@ -48,6 +48,14 @@ describe('buildAskPayload', () => {
     expect(p.history.at(-1)!.text).toBe(`turn ${history.length - 1}`);
   });
 
+  it('serializes only role and text from saved turns', () => {
+    const report = realReport();
+    const saved = { role: 'assistant' as const, text: 'saved answer', draftDismissed: [true], scheduleDismissed: true, actionDismissed: [true] };
+    const p = buildAskPayload(report, [saved], 'ok', { goal: 'lean', unit: 'kg', ...noSplits });
+    expect(p.history).toEqual([{ role: 'assistant', text: 'saved answer' }]);
+    expect(JSON.stringify(p)).not.toMatch(/draftDismissed|scheduleDismissed|actionDismissed/);
+  });
+
   it('includes load_next proposals — excluded from Suggestions and /explain, but needed to ground "what should I lift today" — capped and never over the proxy\'s own proposal limit', () => {
     const report = realReport();
     expect(report.proposals.some(p => p.kind === 'load_next')).toBe(true); // sanity: this fixture actually has one to include

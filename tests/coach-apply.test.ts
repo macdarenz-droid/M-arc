@@ -6,6 +6,7 @@ import { buildReport } from '@/brain/coach/report';
 import { contextFromState } from '@/brain/coach/context';
 import { startSession, discardSession } from '@/slices/workout/session';
 import type { Proposal } from '@/brain/coach/contract';
+import { emptyReport } from '@/brain/coach/contract';
 import { pplHistory, pplSplits, LAST_MONDAY, PUSH_ID } from './coach-helpers';
 import { smartReminderOptions, nudgeTime } from '@/slices/settings/reminders';
 
@@ -28,6 +29,20 @@ describe('coach state', () => {
     const loaded = loadState(store);
     expect(loaded.source).toBe('saved');
     expect(loaded.state.coach).toEqual(emptyCoach());
+  });
+
+  it('drops malformed unfinished metadata without dropping valid turns or history', () => {
+    const store = memory();
+    const saved = seed();
+    saved.coach.askThread = [{ role: 'assistant', text: 'saved answer', drafts: [], draftDismissed: [true], scheduleDismissed: true }];
+    saved.coach.dismissalEvidence = { broken: { day: 'not-a-day', proposalFingerprint: 'x', reopenedOnce: false, findings: [] } };
+    store.setItem('marc.state.v1', JSON.stringify(saved));
+    const loaded = loadState(store).state;
+    expect(loaded.sessions).toHaveLength(saved.sessions.length);
+    expect(loaded.coach.askThread[0]).toMatchObject({ text: 'saved answer' });
+    expect(loaded.coach.askThread[0]!.draftDismissed).toBeUndefined();
+    expect(loaded.coach.askThread[0]!.scheduleDismissed).toBeUndefined();
+    expect(loaded.coach.dismissalEvidence).toEqual({});
   });
 });
 
@@ -162,5 +177,34 @@ describe('accepting and dismissing', () => {
     resetCoachMemory();
     expect(state.value.coach.dismissed).toEqual({});
     expect(buildReport(contextFromState(state.value, TODAY, Date.now())).proposals.some(x => x.kind === 'schedule')).toBe(true);
+  });
+
+  it('captures dismissal evidence and consumes a reopened proposal only on an explicit decision', () => {
+    const p: Proposal = { id: 'rest_default:*', kind: 'rest_default', subject: {}, apply: { kind: 'rest_default', seconds: 150 }, basedOn: [], principles: ['rest_intervals'], confidence: 'medium', dismissKey: 'rest_default:*' };
+    const report = emptyReport(TODAY, new Date(`${TODAY}T12:00:00Z`));
+    dismissProposal(p, TODAY, report);
+    expect(state.value.coach.dismissalEvidence?.[p.dismissKey]).toMatchObject({ day: TODAY, reopenedOnce: false });
+
+    const reopened = { ...p, reopened: { dismissedOn: '2026-08-20', elapsedDays: 30, newSessions: 2, findingId: 'x', previousSeverity: 1 as const, currentSeverity: 2 as const, previousConfidence: 'medium' as const, currentConfidence: 'high' as const } };
+    dismissProposal(reopened, TODAY, report);
+    expect(state.value.coach.dismissalEvidence?.[p.dismissKey]?.reopenedOnce).toBe(true);
+    resetCoachMemory();
+    expect(state.value.coach.dismissalEvidence).toEqual({});
+
+    replaceState(seed());
+    dismissProposal(p, TODAY, report);
+    expect(acceptProposal(reopened, TODAY)).toContain('150');
+    expect(state.value.coach.dismissalEvidence?.[p.dismissKey]?.reopenedOnce).toBe(true);
+  });
+
+  it('rejects expired and no-op actions without recording acceptance', () => {
+    const expired: Proposal = { id: 'rest_default:*', kind: 'rest_default', subject: {}, apply: { kind: 'rest_default', seconds: 150 }, basedOn: [], principles: ['rest_intervals'], confidence: 'medium', dismissKey: 'rest_default:*', expiresOn: '2026-09-18' };
+    expect(acceptProposal(expired, TODAY)).toContain('expired');
+    expect(state.value.preferences.restDefaultSec).toBe(90);
+    expect(state.value.coach.accepted[expired.dismissKey]).toBeUndefined();
+
+    const duplicate: Proposal = { id: 'add_exercise:chest', kind: 'add_exercise', subject: { muscle: 'chest' }, apply: { kind: 'add_exercise', splitId: PUSH_ID, exerciseId: 'lib_barbell_bench_press', sets: 3, muscle: 'chest' }, basedOn: [], principles: ['volume_dose_response'], confidence: 'medium', dismissKey: 'add_exercise:chest' };
+    expect(acceptProposal(duplicate, TODAY)).toContain('already');
+    expect(state.value.coach.accepted[duplicate.dismissKey]).toBeUndefined();
   });
 });

@@ -319,6 +319,8 @@ export interface CoachState {
   snoozedUntil: Record<string, string>;
   /** dismissKey → day the suggestion was accepted. */
   accepted: Record<string, string>;
+  /** Local evidence captured at dismissal, used only to decide whether one stronger reappearance is warranted. */
+  dismissalEvidence?: Record<string, DismissalEvidence>;
   /** HH:MM local start times learned from history and accepted with a schedule suggestion. */
   learnedStarts: Partial<Record<Weekday, string>>;
   /** Time reminders from the learned start instead of a fixed clock time. Off until a schedule is accepted. */
@@ -372,7 +374,7 @@ export interface CoachState {
 export const DEFAULT_PROXY_URL = 'https://marc-coach.mmarcdarenz.workers.dev';
 
 export function emptyCoach(): CoachState {
-  return { dismissed: {}, snoozedUntil: {}, accepted: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null, askThread: [], statedConstraints: [] };
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, dismissalEvidence: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null, askThread: [], statedConstraints: [] };
 }
 
 export interface AppState {

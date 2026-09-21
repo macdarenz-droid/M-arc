@@ -9,6 +9,7 @@ import { CONTRACT_VERSION, type Finding, type FindingKind, type FindingsReport, 
 import type { BrainContext } from './context';
 import { FIRST_SESSIONS_COUNT, MAX_SWAPS_PER_REPORT } from './bands';
 import { daysBetween } from '@/core/dates';
+import { reopenReason } from './reopen';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
   detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
@@ -98,7 +99,15 @@ export function buildReport(ctx: BrainContext): FindingsReport {
   ];
   const seenP = new Set<string>();
   const proposals = candidates
-    .filter(p => (ctx.dismissed[p.dismissKey] ?? 0) < 2)
+    .map(p => {
+      if ((ctx.dismissed[p.dismissKey] ?? 0) < 2) return p;
+      const reopened = safe('reopen', () => {
+        const reason = reopenReason(p, { findings }, ctx.dismissalEvidence?.[p.dismissKey], ctx.sessions, ctx.today);
+        return reason ? [{ ...p, reopened: reason }] : [];
+      })[0];
+      return reopened ?? null;
+    })
+    .filter((p): p is Proposal => p !== null)
     .filter(p => { const day = ctx.accepted[p.dismissKey]; return !day || daysBetween(day, ctx.today) >= ACCEPT_COOLDOWN_DAYS[p.kind]; })
     .filter(p => { if (seenP.has(p.id)) return false; seenP.add(p.id); return true; })
     .sort((a, b) => PROPOSAL_ORDER.indexOf(a.kind) - PROPOSAL_ORDER.indexOf(b.kind) || a.id.localeCompare(b.id));

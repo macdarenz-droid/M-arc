@@ -11,6 +11,8 @@
  */
 import type { AskThreadTurn, CoachState } from '@/core/models';
 import { MAX_ASK_THREAD_TURNS, MAX_STATED_CONSTRAINTS, MAX_STATED_CONSTRAINT_CHARS } from '@/core/models';
+import { flushSave, state, update } from '@/core/store';
+import { askTurnFingerprint, type PendingCoachItem } from '@/brain/coach/reopen';
 
 /** Appends one turn, dropping the oldest once past MAX_ASK_THREAD_TURNS. */
 export function appendAskTurn(coach: CoachState, turn: AskThreadTurn): CoachState {
@@ -20,6 +22,35 @@ export function appendAskTurn(coach: CoachState, turn: AskThreadTurn): CoachStat
 /** Patches the turn at `index` in place — used to mark a shown draft/schedule action as applied without touching the rest of the thread. */
 export function updateAskTurn(coach: CoachState, index: number, patch: Partial<AskThreadTurn>): CoachState {
   return { ...coach, askThread: coach.askThread.map((t, i) => (i === index ? { ...t, ...patch } : t)) };
+}
+
+/** Dismiss one saved typed item only if the bounded thread still contains the exact turn and payload. */
+export function dismissAskItem(item: PendingCoachItem): boolean {
+  const turn = state.value.coach.askThread[item.turnIndex];
+  if (!turn || turn.role !== 'assistant' || askTurnFingerprint(turn) !== item.turnFingerprint) return false;
+  if (item.kind === 'split' && (!turn.drafts?.[item.itemIndex] || turn.applied?.[item.itemIndex] || turn.draftDismissed?.[item.itemIndex])) return false;
+  if (item.kind === 'schedule' && (item.itemIndex !== 0 || !turn.scheduleDraft || turn.scheduleApplied || turn.scheduleDismissed)) return false;
+  if (item.kind === 'goal' && (!turn.actions?.[item.itemIndex] || turn.actionPrev?.[item.itemIndex] != null || turn.actionDismissed?.[item.itemIndex])) return false;
+
+  update(s => {
+    const current = s.coach.askThread[item.turnIndex];
+    if (!current || askTurnFingerprint(current) !== item.turnFingerprint) return s;
+    let next: AskThreadTurn;
+    if (item.kind === 'split') {
+      const flags = [...(current.draftDismissed ?? [])];
+      flags[item.itemIndex] = true;
+      next = { ...current, draftDismissed: flags };
+    } else if (item.kind === 'schedule') {
+      next = { ...current, scheduleDismissed: true };
+    } else {
+      const flags = [...(current.actionDismissed ?? [])];
+      flags[item.itemIndex] = true;
+      next = { ...current, actionDismissed: flags };
+    }
+    return { ...s, coach: { ...s.coach, askThread: s.coach.askThread.map((candidate, index) => index === item.turnIndex ? next : candidate) } };
+  });
+  flushSave();
+  return true;
 }
 
 /** The person's own "start over" action — never automatic. */
