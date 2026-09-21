@@ -6,7 +6,10 @@ import {
   type ActiveSession,
   type AppState,
   type AskThreadTurn,
+  type CoachPresence,
+  type CoachPresenceDismissal,
   type DismissalEvidence,
+  MAX_PRESENCE_DISMISSALS,
   type LoggedExercise,
   type PlanSetTarget,
   type Session,
@@ -55,6 +58,26 @@ function normalizeDismissalEvidence(value: unknown): Record<string, DismissalEvi
 }
 
 const validFlags = (value: unknown, max: number): value is boolean[] => Array.isArray(value) && value.length <= max && value.every(flag => typeof flag === 'boolean');
+
+const validIsoTimestamp = (value: unknown): value is string => typeof value === 'string' && value.length <= 40 && !Number.isNaN(Date.parse(value));
+
+function validPresenceDismissal(value: unknown): value is CoachPresenceDismissal {
+  return object(value) && shortString(value.id) && shortString(value.evidenceKey) && validIsoTimestamp(value.dismissedAt);
+}
+
+/** Malformed or oversized presence metadata drops only itself, never history. */
+function normalizePresence(value: unknown): CoachPresence | undefined {
+  if (!object(value)) return undefined;
+  if (value.version !== 1) return undefined;
+  const tone = value.tone === 'direct' ? 'direct' : value.tone === 'steady' ? 'steady' : undefined;
+  if (!tone) return undefined;
+  if (!Array.isArray(value.dismissed)) return undefined;
+  const valid = value.dismissed.filter(validPresenceDismissal);
+  const dismissed = valid
+    .sort((a, b) => a.dismissedAt.localeCompare(b.dismissedAt))
+    .slice(-MAX_PRESENCE_DISMISSALS);
+  return { version: 1, tone, dismissed };
+}
 
 function normalizeAskTurn(turn: AskThreadTurn): AskThreadTurn {
   const draftDismissed = validFlags(turn.draftDismissed, turn.drafts?.length ?? 0) ? turn.draftDismissed : undefined;
@@ -173,6 +196,7 @@ function normalize(s: AppState): AppState {
       dismissalEvidence: normalizeDismissalEvidence(s.coach?.dismissalEvidence),
       learnedStarts: { ...s.coach?.learnedStarts },
       askThread: Array.isArray(s.coach?.askThread) ? s.coach.askThread.map(normalizeAskTurn) : [],
+      presence: normalizePresence(s.coach?.presence),
     },
   };
 }

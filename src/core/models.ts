@@ -311,6 +311,35 @@ export const MAX_STATED_CONSTRAINT_CHARS = 160;
 /** At most this many stated constraints persist — oldest dropped first once a new one arrives past the cap. */
 export const MAX_STATED_CONSTRAINTS = 12;
 
+/** Voice only — never changes which moment wins, its target, or its confidence. */
+export type CoachTone = 'steady' | 'direct';
+
+/**
+ * One durable "don't show me that again" — keyed by a moment's stable id
+ * AND its evidence hash, so a materially changed situation can requalify
+ * while cosmetic re-renders (tab, tone, a rest-timer tick) cannot.
+ */
+export interface CoachPresenceDismissal {
+  id: string;
+  evidenceKey: string;
+  dismissedAt: string;
+}
+
+/** At most this many presence dismissals persist — oldest dropped first. */
+export const MAX_PRESENCE_DISMISSALS = 128;
+
+/**
+ * Optional, local-only presence preferences for the shared Escobar cue
+ * (see docs/escobar-presence). Absent entirely on any save before this
+ * field existed — every reader treats a missing `presence` the same as
+ * `{ version: 1, tone: 'steady', dismissed: [] }`.
+ */
+export interface CoachPresence {
+  version: 1;
+  tone: CoachTone;
+  dismissed: CoachPresenceDismissal[];
+}
+
 /** What the user has done with the coach's suggestions. Only the user writes here. */
 export interface CoachState {
   /** dismissKey → how many times dismissed. Two suppresses the suggestion. */
@@ -361,6 +390,8 @@ export interface CoachState {
    * MAX_STATED_CONSTRAINTS, oldest dropped first.
    */
   statedConstraints: string[];
+  /** Absent until the person changes tone or dismisses a presence cue. */
+  presence?: CoachPresence;
 }
 
 /**
