@@ -3,7 +3,8 @@ import { autoregulate, type LiveAdjustment } from '@/brain/live';
 import { findExercise } from '@/core/exercises';
 import { freshState, type ActiveSession, type AppState, type WorkoutPlanEntry } from '@/core/models';
 import { initStore, replaceState, state, update } from '@/core/store';
-import { acceptLiveAdjustment, dismissLiveAdjustment, setSet } from '@/slices/workout/session';
+import { restNext } from '@/app/selectors';
+import { acceptLiveAdjustment, addSet, dismissLiveAdjustment, replaceEntry, setSet } from '@/slices/workout/session';
 
 const STARTED = '2026-09-21T05:00:00.000Z';
 const bench = findExercise('lib_barbell_bench_press')!;
@@ -103,5 +104,54 @@ describe('live adjustment persistence guards', () => {
     const proposed = offer();
     update(current => ({ ...current, active: current.active ? { ...current.active, pausedAt: Date.now() } : null }));
     expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
+  });
+
+  it('rejects a stale offer after the exercise is done or metadata exceeds its bound', () => {
+    const proposed = offer();
+    update(current => ({ ...current, active: current.active ? { ...current.active, entries: current.active.entries.map((entry, index) => index ? entry : { ...entry, done: true }) } : null }));
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
+    const oversized = live();
+    oversized.entries[0]!.sets = [oversized.entries[0]!.sets[0]!, ...Array.from({ length: 100 }, () => ({}))];
+    replaceState(seed(oversized));
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
+  });
+
+  it('keeps the accepted row target and rest banner in agreement', () => {
+    const proposed = offer();
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(true);
+    update(current => ({ ...current, active: current.active ? { ...current.active, rest: { endsAt: Date.now() + 60_000, totalSec: 60, from: { entry: 0, set: 0, startedAt: STARTED, exerciseId: bench.id } } } : null }));
+    expect(state.value.active!.entries[0]!.targetOverrides?.[1]).toEqual(proposed.next);
+    expect(restNext.value).toEqual({ kind: 'set', setNumber: 2, kg: proposed.next.kg, reps: proposed.next.reps, durationSec: null });
+  });
+
+  it('clears effective overrides after a structural add while retaining the one decision and accepted record', () => {
+    const proposed = offer();
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(true);
+    addSet(0);
+    expect(state.value.active!.entries[0]!.targetOverrides).toBeUndefined();
+    expect(state.value.active!.entries[0]!.coachDecision?.action).toBe('accepted');
+    expect(state.value.active!.plan!.entries[0]!.acceptedTargets?.[1]).toEqual(proposed.next);
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
+  });
+
+  it('a replacement receives a fresh identity and no inherited decision', () => {
+    const proposed = offer();
+    expect(dismissLiveAdjustment('pe_bench', STARTED, proposed)).toBe(true);
+    const machine = findExercise('lib_machine_chest_press')!;
+    expect(replaceEntry(0, machine, { startedAt: STARTED, exerciseId: bench.id })).toBe(true);
+    const replacement = state.value.active!.entries[0]!;
+    expect(replacement.planEntryId).not.toBe('pe_bench');
+    expect(replacement.coachDecision).toBeUndefined();
+    expect(replacement.targetOverrides).toBeUndefined();
+  });
+
+  it('a legacy active session cannot acquire invented target metadata', () => {
+    const legacy = live();
+    legacy.plan = undefined;
+    legacy.entries[0]!.planEntryId = undefined;
+    replaceState(seed(legacy));
+    const staleOffer = autoregulate({ exercise: bench, goal: 'lean', sets: legacy.entries[0]!.sets, targets: [target, target, target], sourceSet: 0, deloadActive: false, decisionTaken: false, historyBacked: true, allowIncrease: true })!;
+    expect(acceptLiveAdjustment('pe_bench', STARTED, staleOffer)).toBe(false);
+    expect(state.value.active!.entries[0]!.targetOverrides).toBeUndefined();
   });
 });

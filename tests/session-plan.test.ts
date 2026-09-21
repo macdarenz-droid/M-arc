@@ -164,6 +164,20 @@ describe('plan metadata persistence boundaries', () => {
     expect(loaded.exercises[0]!.actualSetIndices).toBeUndefined();
     expect(loaded.exercises[0]!.sets).toHaveLength(2);
   });
+
+  it('does not let a valid plan ID redirect comparison metadata to a different exercise', () => {
+    const saved = seed();
+    const logged = session('2026-09-20', [{ id: 'lib_machine_chest_press', sets: [{ kg: 50, reps: 8 }] }]);
+    logged.plan = validPlan();
+    logged.exercises[0]!.planEntryId = 'pe_1';
+    logged.exercises[0]!.actualSetIndices = [0];
+    saved.sessions = [logged];
+    const loaded = loadState(savedStorage(saved)).state.sessions[0]!;
+    expect(loaded.plan).toEqual(logged.plan);
+    expect(loaded.exercises[0]!.sets).toEqual([{ kg: 50, reps: 8 }]);
+    expect(loaded.exercises[0]!.planEntryId).toBeUndefined();
+    expect(loaded.exercises[0]!.actualSetIndices).toBeUndefined();
+  });
 });
 
 describe('history editor comparison safety', () => {

@@ -64,8 +64,9 @@ function validPlan(value: unknown): value is WorkoutPlanSnapshot {
   return new Set(ids).size === ids.length;
 }
 
-function normalizeLoggedExercise(exercise: LoggedExercise, planIds: Set<string> | null): LoggedExercise {
-  const linked = planIds !== null && shortString(exercise.planEntryId) && planIds.has(exercise.planEntryId);
+function normalizeLoggedExercise(exercise: LoggedExercise, planEntries: Map<string, WorkoutPlanEntry> | null): LoggedExercise {
+  const linkedEntry = planEntries !== null && shortString(exercise.planEntryId) ? planEntries.get(exercise.planEntryId) : undefined;
+  const linked = !!linkedEntry && linkedEntry.exerciseId === exercise.exerciseId;
   if (!linked) {
     const { planEntryId: _planEntryId, actualSetIndices: _actualSetIndices, ...actual } = exercise;
     return actual;
@@ -80,16 +81,17 @@ function normalizeLoggedExercise(exercise: LoggedExercise, planIds: Set<string> 
 
 function normalizeSessionMetadata(session: Session): Session {
   const plan = validPlan(session.plan) ? session.plan : undefined;
-  const planIds = plan ? new Set(plan.entries.map(entry => entry.id)) : null;
-  return { ...session, plan, exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planIds)) };
+  const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
+  return { ...session, plan, exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planEntries)) };
 }
 
 function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | null {
   if (!active) return null;
   const plan = validPlan(active.plan) ? active.plan : undefined;
-  const planIds = plan ? new Set(plan.entries.map(entry => entry.id)) : null;
+  const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
   const entries = (active.entries ?? []).map(entry => {
-    const linked = planIds !== null && shortString(entry.planEntryId) && planIds.has(entry.planEntryId);
+    const linkedEntry = planEntries !== null && shortString(entry.planEntryId) ? planEntries.get(entry.planEntryId) : undefined;
+    const linked = !!linkedEntry && linkedEntry.exerciseId === entry.exerciseId;
     const overrides = Array.isArray(entry.targetOverrides) && entry.targetOverrides.length <= PLAN_MAX_METADATA_SETS
       && entry.targetOverrides.every(target => target === null || validTarget(target)) ? entry.targetOverrides : undefined;
     const decision = object(entry.coachDecision) && shortString(entry.coachDecision.key)

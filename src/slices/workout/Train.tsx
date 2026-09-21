@@ -8,7 +8,7 @@ import { dayKey, formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
-import type { Exercise, PlanSetTarget, Split } from '@/core/models';
+import { PLAN_MAX_METADATA_SETS, type Exercise, type PlanSetTarget, type Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload, deloadActive as isDeloadActive } from '@/brain/coach/deload';
 import { autoregulate, effectiveSetTarget, substitutes, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
@@ -318,7 +318,7 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
     const latest = active();
     const slot = latest?.entries[index];
     const planEntry = latest?.plan?.entries.find(candidate => candidate.id === slot?.planEntryId);
-    if (!latest || latest.pausedAt || !slot || !planEntry || slot.planComparisonValid === false || planEntry.excluded) { setOffer(null); return; }
+    if (!latest || latest.pausedAt || !slot || !planEntry || slot.exerciseId !== planEntry.exerciseId || slot.done || slot.skipped || slot.sets.length > PLAN_MAX_METADATA_SETS || slot.planComparisonValid === false || planEntry.excluded) { setOffer(null); return; }
     const exercise = findExercise(slot.exerciseId, state.value.customExercises);
     setOffer(autoregulate({
       exercise,

@@ -3,7 +3,7 @@
  * survives app restarts. All mutations go through `update` so they persist.
  */
 import type { ActiveSession, CoachChange, Exercise, LoggedSet, NoteFlag, RestState, Session, Split } from '@/core/models';
-import { newId } from '@/core/models';
+import { newId, PLAN_MAX_METADATA_SETS } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '@/brain/exposure';
@@ -190,7 +190,7 @@ function currentLiveAdjustment(a: ActiveSession, entryId: string, sourceSet: num
   const entryIndex = a.entries.findIndex(entry => entry.planEntryId === entryId);
   const entry = a.entries[entryIndex];
   const planEntry = a.plan?.entries.find(candidate => candidate.id === entryId);
-  if (!entry || !planEntry || entry.planComparisonValid === false || planEntry.excluded) return null;
+  if (!entry || !planEntry || entry.exerciseId !== planEntry.exerciseId || entry.done || entry.skipped || entry.sets.length > PLAN_MAX_METADATA_SETS || entry.planComparisonValid === false || planEntry.excluded) return null;
   const exercise = findExercise(entry.exerciseId, state.value.customExercises);
   const startDay = dayKey(new Date(a.startedAt));
   const offer = autoregulate({
