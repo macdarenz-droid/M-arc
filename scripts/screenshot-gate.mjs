@@ -151,6 +151,62 @@ for (const theme of themes) {
     const finishedSets = finished?.exercises.reduce((total, exercise) => total + exercise.sets.length, 0) ?? 0;
     if (finishedSets !== 2) errors.push(`silent-black: warm-up suggestions changed saved set count (${finishedSets}, expected 2 actual sets)`);
     await page.getByRole('button', { name: 'Done' }).click();
+
+    // Confirmed chronic-skip choices: one card, two explicit alternatives, one group dismissal.
+    const skipState = structuredClone(finishedState);
+    const push = skipState.splits.find(split => split.id === 'split_push');
+    const omittedId = 'lib_triceps_pushdown';
+    if (!push?.exercises.some(entry => entry.exerciseId === omittedId)) errors.push('silent-black: chronic-skip fixture target missing from Push');
+    skipState.splits = [push];
+    skipState.sessions = [];
+    const skipDays = ['2026-08-24', '2026-08-30', '2026-09-05', '2026-09-11', '2026-09-15'];
+    for (const [index, day] of skipDays.entries()) {
+      const planned = push.exercises.map((entry, planIndex) => ({ id: `gate-pe-${index}-${planIndex}`, exerciseId: entry.exerciseId, name: entry.exerciseId, mode: 'weighted', origin: 'start', plannedSets: entry.sets, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: entry.sets }, () => ({ kg: 30 + index * 2.5, reps: 8, durationSec: null })) }));
+      const loggedIds = push.exercises.map(entry => entry.exerciseId).filter(id => id !== omittedId || index === 0);
+      skipState.sessions.push({ id: `gate-skip-${index}`, splitId: push.id, splitName: push.name, day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: loggedIds.map(id => ({ exerciseId: id, name: id, sets: [{ kg: 30 + index * 2.5, reps: 8, effort: 'ideal' }] })), plan: { version: 1, capturedAt: `${day}T10:00:00.000Z`, goal: skipState.goal, deload: null, entries: planned } });
+    }
+    skipState.active = null;
+    const skipCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const skipPage = await skipCtx.newPage();
+    skipPage.on('pageerror', e => errors.push(`silent-black chronic skip: ${e.message}`));
+    await skipPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(skipState));
+    await skipPage.goto(`http://localhost:${PORT}/`); await skipPage.waitForSelector('.nav');
+    await skipPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const removeChoice = skipPage.getByRole('button', { name: 'Remove from Push' });
+    await removeChoice.waitFor();
+    const skipCard = skipPage.locator('.suggestion').filter({ has: removeChoice });
+    if (await skipCard.getByRole('button', { name: /^Use / }).count() !== 1) errors.push('silent-black: chronic-skip alternatives were not grouped on one card');
+    await skipCard.locator('h3').click(); await skipPage.getByRole('heading', { name: 'Choose a split change' }).waitFor();
+    await skipPage.screenshot({ path: `${OUT}/silent-black-chronic-skip.png` });
+    await skipPage.keyboard.press('Escape');
+    await skipCard.getByRole('button', { name: 'Not now' }).click();
+    const dismissedSkip = await skipPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if ((dismissedSkip.coach.dismissed['split_modify:split_push'] ?? 0) < 1 || (dismissedSkip.coach.dismissed['exercise_swap:split_push'] ?? 0) < 1) errors.push('silent-black: one Not now did not dismiss both chronic-skip alternatives');
+
+    await skipPage.evaluate(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(skipState));
+    await skipPage.reload(); await skipPage.waitForSelector('.nav');
+    await skipPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await skipPage.getByRole('button', { name: 'Remove from Push' }).click();
+    const acceptedSkip = await skipPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (acceptedSkip.splits.find(split => split.id === 'split_push')?.exercises.some(entry => entry.exerciseId === omittedId)) errors.push('silent-black: accepted chronic-skip cut did not update the split');
+    if (JSON.stringify(acceptedSkip.sessions) !== JSON.stringify(skipState.sessions) || acceptedSkip.active !== null) errors.push('silent-black: chronic-skip template change touched history or active work');
+
+    const legacySkip = structuredClone(skipState);
+    legacySkip.splits = legacySkip.splits.filter(split => split.id === 'split_push');
+    legacySkip.sessions = legacySkip.sessions.filter(session => session.splitId === 'split_push').map(session => ({ ...session, plan: undefined }));
+    await skipCtx.close();
+    const legacyCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const legacyPage = await legacyCtx.newPage();
+    legacyPage.on('pageerror', e => errors.push(`silent-black legacy skip: ${e.message}`));
+    await legacyPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(legacySkip));
+    await legacyPage.goto(`http://localhost:${PORT}/`); await legacyPage.waitForSelector('.nav');
+    await legacyPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const legacyInsight = legacyPage.locator('.insight').filter({ hasText: 'Triceps Pushdown: often absent from Push' });
+    await legacyInsight.click();
+    const review = legacyPage.getByRole('button', { name: 'Review in Train' });
+    await review.waitFor(); await review.click();
+    if (!await legacyPage.getByRole('heading', { name: 'Workouts' }).count()) errors.push('silent-black: legacy chronic-skip review did not navigate to Train');
+    await legacyCtx.close();
   }
   await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');

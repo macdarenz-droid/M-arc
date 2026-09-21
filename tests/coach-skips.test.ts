@@ -88,6 +88,15 @@ describe('chronic skip evidence', () => {
     expect(detectChronicSkip(unknown)).toEqual([]);
   });
 
+  it('keeps explicit skipped entries expected but excludes a planned drop that never entered the effective plan', () => {
+    const skipped = Array.from({ length: 5 }, (_, i) => session(i));
+    for (const item of skipped) item.plan!.entries.find(entry => entry.exerciseId === calf)!.excluded = 'skipped';
+    expect(detectChronicSkip(skipCtx(skipped)).some(f => f.subject.exerciseId === calf)).toBe(true);
+    const dropped = Array.from({ length: 5 }, (_, i) => session(i));
+    dropped[0]!.plan!.entries = dropped[0]!.plan!.entries.filter(entry => entry.exerciseId !== calf);
+    expect(detectChronicSkip(skipCtx(dropped)).some(f => f.subject.exerciseId === calf)).toBe(false);
+  });
+
   it('recomputes immediately after a history edit or delete', () => {
     const sessions = Array.from({ length: 5 }, (_, i) => session(i, i === 0 ? { kg: 40, reps: 8 } : null));
     expect(detectChronicSkip(skipCtx(sessions)).some(f => f.subject.exerciseId === calf)).toBe(true);

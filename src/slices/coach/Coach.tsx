@@ -36,7 +36,14 @@ const CONFIDENCE_LABEL: Record<Insight['confidence'], string> = { low: 'Low conf
 
 export function Coach() {
   const s = state.value;
-  const list = useMemo(() => shortlist(insights.value, 6, 2), [insights.value]);
+  const list = useMemo(() => {
+    const ranked = shortlist(insights.value, 6, 2);
+    const reviews = insights.value.filter(item => item.reviewInTrain).slice(0, 2);
+    if (!reviews.some(item => !ranked.some(candidate => candidate.id === item.id))) return ranked;
+    const reviewIds = new Set(reviews.map(item => item.id));
+    return [...ranked.filter(item => !reviewIds.has(item.id)).slice(0, 6 - reviews.length), ...reviews]
+      .sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id));
+  }, [insights.value]);
   const hidden = insights.value.length - list.length;
   const open = suggestions.value;
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
@@ -96,15 +103,15 @@ export function Coach() {
         <div class="stack-sm">
           {visibleSuggestions.map(sg => {
             const alternatives = alternativesFor(sg);
-            const grouped = alternatives.length > 1;
-            return <Card key={sg.id} class="suggestion card-press" onClick={() => grouped ? setOpenSkipGroup(alternatives) : setOpenSuggestion(sg)} aria-label={`Open suggestion: ${sg.title}`}>
+            const skipChoice = !!skipSource(sg);
+            return <Card key={sg.id} class="suggestion card-press" onClick={() => skipChoice ? setOpenSkipGroup(alternatives) : setOpenSuggestion(sg)} aria-label={`Open suggestion: ${sg.title}`}>
               <div class="row-between"><span class="insight-cat" style={{ '--insight': 'var(--accent)' }}>{KIND_LABEL[sg.kind]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{sg.title}</h3>
               <p class="small muted">{sg.summary}</p>
               <div class="wrap" style={{ marginTop: 10 }}>
-                {grouped ? alternatives.map(option => <Button key={option.id} size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(option); }}>{skipAcceptLabel(option)}</Button>)
+                {skipChoice ? alternatives.map(option => <Button key={option.id} size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(option); }}>{skipAcceptLabel(option)}</Button>)
                   : <Button size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(sg); }}>{sg.acceptLabel}</Button>}
-                <Button size="sm" variant="quiet" onClick={e => { e.stopPropagation(); grouped ? dismissSkipGroup(alternatives) : dismiss(sg); }}>Not now</Button>
+                <Button size="sm" variant="quiet" onClick={e => { e.stopPropagation(); skipChoice ? dismissSkipGroup(alternatives) : dismiss(sg); }}>Not now</Button>
               </div>
             </Card>;
           })}
