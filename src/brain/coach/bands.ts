@@ -79,6 +79,28 @@ export const RIR_BAND: Record<Effort, [number, number]> = { easy: [4, 6], ideal:
 export const REST_STRENGTH_SEC = 150;
 export const REST_SHORT_SEC = 120;
 
+/**
+ * Live rest grading (rest_intervals). The person's own restDefaultSec is the
+ * base and is never overridden — these only bend it, and only once they have
+ * actually rated the set. Harder sets and compound lifts get longer rests;
+ * an easy set gets a shorter one.
+ */
+export const REST_EFFORT_MULT: Record<Effort, number> = { easy: 0.8, ideal: 1, max: 1.25 };
+/** A compound earns a longer rest than an isolation at the same effort. */
+export const REST_COMPOUND_MULT = 1.2;
+/** Graded rests round to this, keeping the multiplier more accurate than the 15-second UI step. */
+export const REST_ROUND_SEC = 5;
+/** Hard bounds on any rest timer, in seconds. */
+export const REST_FLOOR_SEC = 15;
+export const REST_CEIL_SEC = 600;
+/** Remaining-time floor used by the later timer integration. */
+export const REST_MIN_REMAINING_SEC = 5;
+
+/** Maximum number of mid-session substitutes offered at once. */
+export const MAX_SUBSTITUTES = 3;
+/** Minimum adjusted muscle recovery required for a substitute. */
+export const SUBSTITUTE_MIN_READY = 75;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',
