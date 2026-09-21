@@ -142,6 +142,18 @@ describe('Body: the presence launcher sits in its own row too', () => {
   });
 });
 
+describe('Coach: deliberately exempt from the presence launcher', () => {
+  it('never imports PresenceLauncher — its own list already contains the top moment by construction', () => {
+    const source = readFileSync(new URL('../src/slices/coach/Coach.tsx', import.meta.url), 'utf8');
+    expect(source).not.toContain("from '@/slices/coach/Presence'");
+    expect(source).not.toMatch(/<PresenceLauncher\b/);
+    // The reasoning is load-bearing, not just a comment: Coach must still read the
+    // same suggestions/insights arrays the selector ranks over, or the "structurally
+    // guaranteed" claim in that comment would stop being true.
+    expect(source).toContain("import { deload, insights, report, suggestions, today } from '@/app/selectors';");
+  });
+});
+
 describe('dismissPresenceMoment / setPresenceTone: the only writers of coach.presence', () => {
   it('dismissing a moment appends one entry and defaults tone to steady the first time', () => {
     initStore(memStorage());

@@ -35,6 +35,14 @@ const KIND_LABEL: Record<Suggestion['kind'], string> = {
 
 const CONFIDENCE_LABEL: Record<Insight['confidence'], string> = { low: 'Low confidence', medium: 'Fair confidence', high: 'High confidence' };
 
+/**
+ * No shared PresenceLauncher here (docs/escobar-presence P02) — deliberately,
+ * not an oversight. Its selector ranks the exact same `suggestions.value` /
+ * `insights.value` arrays this screen already renders in full below, so its
+ * top pick is structurally guaranteed to already be the first "Suggestions"
+ * or "Insights" card here. A launcher would duplicate that card, not surface
+ * a new one — the one thing every other presence surface is built to avoid.
+ */
 export function Coach() {
   const s = state.value;
   const list = useMemo(() => {

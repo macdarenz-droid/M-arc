@@ -587,6 +587,8 @@ the cases a single history cannot.
 
 | 2026-09-21 | Escobar-presence P02 added Body as a fourth presence surface, same verified-safe shape as History (own full-width row, no truncation, no existing button row to share). Verification: both typechecks passed; 670 app tests passed across 58 files (668 + 2 new); 87 proxy tests passed with eight existing skips; production build passed; five-theme gate passed ×4. App-only; no Worker redeploy and no state-version change. |
 
+| 2026-09-21 | Escobar-presence P02: verified Coach is correctly exempt from the shared presence launcher, rather than assuming it. Coach.tsx's own "Suggestions"/"Insights" sections already read the identical `suggestions.value`/`insights.value` arrays the presence selector ranks over, so its top pick is structurally guaranteed to already be the first card shown there — a launcher would duplicate it. Documented with a code comment and a regression test tying the claim to the actual selector imports, so a future refactor that changes what Coach reads fails the test rather than silently invalidating the reasoning. Verification: typecheck passed; 671 app tests passed (670 + 1 new, comment-only app change); production build passed; five-theme gate passed. |
+
 ## Non-goals
 
 No injury prediction or diagnosis, anywhere. No individualized medical
