@@ -2,7 +2,11 @@
 
 **Status:** design complete, 3 of 14 specs written, 11 specs outstanding.
 **Written by:** Claude Opus 5 (design/architecture pass), 2026-09-21.
-**For:** the next model to continue — design work at T3, implementation at T1/T2.
+**Handing to:** GPT-6 Astra — **this is a direct continuation of Opus 5's work**,
+not a fresh start. The brief, scoreboard and three specs in this folder are
+Opus 5's output; build on them rather than re-deriving them.
+**Then:** implementation goes to lower-tier agents (Sonnet / Sol tier), so
+everything you write must be executable by one with no other context.
 
 ---
 
@@ -143,8 +147,39 @@ Sonnet-executable.
 and state field against the real repo. A spec naming a function that does not
 exist is worse than no spec.
 
-**Step 3 — implement (T1/T2: Sonnet).** Build `src/brain/live.ts` first, then
-features in scoreboard order. One feature per commit, full quality bar each time.
+**Step 3 — produce the implementation routing plan (you, Astra).** The owner
+will hand the finished specs to lower-tier agents and needs to know *which
+agent at what effort* for each piece of work. Write this as
+`02-ROUTING-PLAN.md` in this folder. For every feature 1–14, give:
+
+| Column | What it means |
+|---|---|
+| Work item | The feature, split into separable units if it genuinely has them (brain module / UI / tests are often separable) |
+| Tier | T0–T4 per the owner's MODEL_ROUTER (score it: ambiguity, breadth, novelty, blast radius, verification difficulty) |
+| Claude agent | Haiku 4.5 · Sonnet 5 low/med/high · Opus 5 |
+| GPT agent | GPT-5.6 Luna · Sol Instant/Medium/High · Sol Extra High |
+| Effort | The reasoning-effort dial for that model |
+| Why | One line — what makes it that tier |
+| Escalate if | The specific failure signal that means bump a tier |
+
+Rules the owner works by, which your plan must respect:
+- Recommend the **cheapest model that gets it right first try** — a failed
+  cheap attempt plus a retry costs more than one correct mid-tier attempt.
+- Effort tracks **ambiguity and reasoning depth**, not importance. A fully
+  specced but important feature is still medium effort.
+- If a smaller model would need its *top* effort setting, move up one model at
+  medium instead.
+- Anything touching data integrity, the grounding validator, or the proxy
+  payload contract is **minimum T2, reviewed at T3**.
+- Long-but-repetitive work stays low tier — length is not difficulty.
+
+Also state the **build order** explicitly (what blocks what), and flag which
+items are safe to run **in parallel** by separate agents versus which must be
+sequential because they touch the same file.
+
+**Step 4 — implement (lower-tier agents).** Build `src/brain/live.ts` first,
+then features in the order your routing plan sets. One feature per commit, full
+quality bar each time.
 
 ---
 
