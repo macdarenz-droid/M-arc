@@ -59,6 +59,14 @@ describe('coach state', () => {
     expect(loaded.coach.askThread[0]!.scheduleDismissed).toBeUndefined();
     expect(loaded.coach.dismissalEvidence).toEqual({});
   });
+
+  it('retains consistency-drift evidence used to judge a later reappearance', () => {
+    const store = memory();
+    const saved = seed();
+    saved.coach.dismissalEvidence = { 'schedule:*': { day: TODAY, proposalFingerprint: 'schedule drift', reopenedOnce: false, findings: [{ id: 'consistency_drift:fri', kind: 'consistency_drift', severity: 1, confidence: 'high', sessionIds: ['evidence'], sessionFingerprints: ['fingerprint'] }] } };
+    store.setItem('marc.state.v1', JSON.stringify(saved));
+    expect(loadState(store).state.coach.dismissalEvidence).toEqual(saved.coach.dismissalEvidence);
+  });
 });
 
 describe('accepting and dismissing', () => {
