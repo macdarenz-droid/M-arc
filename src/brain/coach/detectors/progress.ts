@@ -5,8 +5,10 @@
 import { exerciseHistory } from '../../history';
 import { plateauStatus, trend } from '../../trend';
 import { recordsInWeek } from '../../prs';
+import { liftTrajectory } from '../../trajectory';
 import type { Finding } from '../contract';
 import type { BrainContext } from '../context';
+import { deloadActive } from '../deload';
 import { finding, loggedExercises, median, round2 } from './shared';
 import type { ExerciseSessionSummary } from '../../history';
 
@@ -40,6 +42,7 @@ export function detectProgress(ctx: BrainContext): Finding[] {
     if (kind === 'plateau' && tail < minTail) continue;
     const loadTrend = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
     const volumeTrend = trend(recent.map(r => ({ day: r.day, value: r.volume })));
+    const trajectory = kind === 'progressing' && !deloadActive(ctx.deload, ctx.today) ? liftTrajectory(ctx.sessions, id, ctx.today, ctx.custom) : null;
     const ids = new Set(recent.map(r => r.sessionId));
     out.push(finding({
       kind, target: id, subject: { exerciseId: id, exerciseName: name },
@@ -51,6 +54,15 @@ export function detectProgress(ctx: BrainContext): Finding[] {
         firstVolume: Math.round(first.volume), lastVolume: Math.round(last.volume),
         loadSlopePerWeek: round2(loadTrend.slopePerWeek), volumeSlopePerWeek: round2(volumeTrend.slopePerWeek),
         flatSessions: tail, usualStepEvery: usualStep,
+        ...(trajectory?.status === 'projected' ? {
+          trajectoryKgPerWeek: trajectory.kgPerWeek,
+          trajectoryCurrentKg: trajectory.currentKg,
+          trajectoryStepKg: trajectory.stepKg,
+          trajectoryNextKg: trajectory.nextKg,
+          trajectoryPoints: trajectory.points,
+          trajectoryProjectedOn: trajectory.projectedOn,
+          trajectoryExpiresOn: trajectory.expiresOn,
+        } : {}),
       },
       from: first.day, to: last.day, sessions: recent.length,
       confidence: p.confidence,

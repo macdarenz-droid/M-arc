@@ -71,6 +71,23 @@ describe('progress detectors', () => {
     expect(detectProgress(ctx(bench([60, 60, 60, 60, 60, 60])))).toEqual([]);
   });
 
+  it('adds a finite anchored trajectory only to projected progress outside an easier week', () => {
+    const rising = Array.from({ length: 8 }, (_, i) => session(addDays(TODAY, (i - 7) * 7), [{ id: 'lib_barbell_bench_press', sets: sets(43 + i, 8) }]));
+    const projected = detectProgress(ctx(rising))[0]!;
+    expect(projected).toMatchObject({ kind: 'progressing', metrics: {
+      sessions: 8, firstTopKg: 43, lastTopKg: 50,
+      trajectoryKgPerWeek: 1, trajectoryCurrentKg: 50, trajectoryStepKg: 2.5, trajectoryNextKg: 52.5,
+      trajectoryPoints: 8, trajectoryProjectedOn: '2026-10-07', trajectoryExpiresOn: '2026-10-28',
+    } });
+    for (const [key, value] of Object.entries(projected.metrics)) if (key.startsWith('trajectory') && typeof value === 'number') expect(Number.isFinite(value)).toBe(true);
+
+    const deload = { from: TODAY, to: addDays(TODAY, 6), loadFactor: 0.85, effortCap: 'ideal' as const };
+    const duringDeload = detectProgress(ctx(rising, { deload }))[0]!;
+    expect(Object.keys(duringDeload.metrics).some(key => key.startsWith('trajectory'))).toBe(false);
+    const expired = detectProgress(ctx(rising, { today: addDays(TODAY, 40) }))[0]!;
+    expect(Object.keys(expired.metrics).some(key => key.startsWith('trajectory'))).toBe(false);
+  });
+
   it('reports records set this week', () => {
     const s = [...bench([60, 60, 60]), session('2026-09-17', [{ id: 'lib_barbell_bench_press', sets: sets(65, 8) }])];
     const out = detectRecords(ctx(s));

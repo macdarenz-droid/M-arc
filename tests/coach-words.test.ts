@@ -46,6 +46,20 @@ describe('words for findings', () => {
     expect(kg.priority).toBeGreaterThan(100);
   });
 
+  it('renders a projected top-load trajectory from grounded fields in either unit', () => {
+    const finding: Finding = { id: 'progressing:lib_barbell_bench_press', kind: 'progressing', subject: { exerciseId: 'lib_barbell_bench_press', exerciseName: 'Barbell Bench Press' },
+      metrics: { sessions: 8, firstTopKg: 43, lastTopKg: 50, trajectoryKgPerWeek: 1, trajectoryCurrentKg: 50, trajectoryStepKg: 2.5, trajectoryNextKg: 52.5, trajectoryPoints: 8, trajectoryProjectedOn: '2026-10-07', trajectoryExpiresOn: '2026-10-28' },
+      window: { from: '2026-08-01', to: '2026-09-19', sessions: 8 }, confidence: 'medium', severity: 0, evidence: { sessionIds: [], days: [] }, principles: ['progressive_overload'] };
+    const kg = renderFinding(finding, render());
+    expect(kg.action).toContain('1 kg per week across 8 logged days');
+    expect(kg.action).toContain('52.5 kg');
+    expect(kg.action).toContain('Oct');
+    expect(kg.action).toContain('not a scheduled target');
+    const lb = renderFinding(finding, render({ unit: 'lb' }));
+    expect(lb.action).toContain('2 lb per week');
+    expect(lb.action).toContain('115.5 lb');
+  });
+
   it('under_recovered names the fatigue note as a reason the window widened, alongside volume and readiness', () => {
     const base: Omit<Finding, 'metrics'> = { id: 'under_recovered:chest', kind: 'under_recovered', subject: { muscle: 'chest', muscleGroup: 'chest' }, window: { from: '2026-09-18', to: '2026-09-19' }, confidence: 'medium', severity: 1, evidence: { sessionIds: [], days: [] }, principles: [] };
     const quiet = renderFinding({ ...base, metrics: { pct: 45, hoursLeft: 26, lastDay: '2026-09-18' } }, render());

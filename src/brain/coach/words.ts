@@ -181,11 +181,16 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         noticed: num(m.lastTopKg) > 0 ? `From ${load(m.firstTopKg, ctx)} to ${load(m.lastTopKg, ctx)} over ${plural(num(m.sessions), 'session')}.` : `Your best sets have drifted down over ${plural(num(m.sessions), 'session')}.`,
         means: 'A downward trend across sessions usually means fatigue is running ahead of recovery, or something outside the gym changed. Pushing through rarely fixes it.',
         action: 'Keep the load, stop short of max effort for a week, then build back up.' };
-    case 'progressing':
+    case 'progressing': {
+      const projection = typeof m.trajectoryKgPerWeek === 'number' && typeof m.trajectoryNextKg === 'number'
+        && typeof m.trajectoryPoints === 'number' && typeof m.trajectoryProjectedOn === 'string' && typeof m.trajectoryExpiresOn === 'string'
+        ? `Logged top load is rising about ${load(m.trajectoryKgPerWeek, ctx)} per week across ${plural(num(m.trajectoryPoints), 'logged day')}. If that rate holds, ${load(m.trajectoryNextKg, ctx)} projects around ${formatDay(m.trajectoryProjectedOn)}. Reassess after ${formatDay(m.trajectoryExpiresOn)}. A past-load trend, not a scheduled target.`
+        : 'Keep the same pattern. Small steps, most weeks.';
       return { title: `${ex}: moving up`,
         noticed: num(m.lastTopKg) > 0 ? `${load(m.firstTopKg, ctx)} to ${load(m.lastTopKg, ctx)} across ${plural(num(m.sessions), 'session')}.` : `${num(m.firstBestReps)} to ${num(m.lastBestReps)} reps across ${plural(num(m.sessions), 'session')}.`,
         means: 'That is progressive overload doing its job. Nothing to fix.',
-        action: 'Keep the same pattern. Small steps, most weeks.' };
+        action: projection };
+    }
     case 'record':
       return { title: `New record: ${ex}`,
         noticed: `${str(m.detail)}, up from ${num(m.previous)}.`,
