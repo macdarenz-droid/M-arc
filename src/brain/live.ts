@@ -6,12 +6,12 @@
  * the recent-pain muscle set are computed in the app layer and passed in
  * as `readiness` and `avoid`, not fetched from a selector.
  */
-import type { ActiveSession, Effort, Exercise, ResistanceMode } from '@/core/models';
+import type { ActiveSession, Effort, Exercise, LoggedSet, PlanSetTarget, ResistanceMode } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from './exposure';
 import type { GoalId } from '@/data/goals';
 import type { MuscleId } from '@/data/muscles';
-import { suggestNext, type Suggestion } from './progression';
+import { loadStep, repRange, suggestNext, type Suggestion } from './progression';
 import { applyDeload } from './coach/deload';
 import { equipmentGroup } from './coach/cues';
 import type { BrainContext } from './coach/context';
@@ -19,6 +19,10 @@ import { allExercises, scoreExercise, usageProfile, type UsageProfile } from './
 import {
   COMPOUND_PATTERN,
   MAX_SUBSTITUTES,
+  LIVE_MISS_REPS,
+  LIVE_SURPLUS_REPS,
+  LIVE_TARGET_LOAD_EPS_KG,
+  LIVE_UP_MIN_SETS,
   REST_CEIL_SEC,
   REST_COMPOUND_MULT,
   REST_EFFORT_MULT,
@@ -189,6 +193,7 @@ export function nextAfterRest(
   entries: ActiveSession['entries'],
   from: { entry: number; set: number },
   suggestion: Suggestion | null,
+  effectiveTargets?: ReadonlyArray<PlanSetTarget | null>,
 ): RestNext | null {
   if (!Number.isInteger(from.entry) || !Number.isInteger(from.set) || from.entry < 0 || from.set < 0) return null;
   const entry = entries[from.entry];
@@ -196,7 +201,9 @@ export function nextAfterRest(
   const nextIndex = from.set + 1;
   if (nextIndex < entry.sets.length) {
     if (isWorkingSet(entry.sets[nextIndex]!)) return null;
-    const target = suggestion?.sets[Math.min(nextIndex, suggestion.sets.length - 1)] ?? null;
+    const target = effectiveTargets
+      ? effectiveTargets[nextIndex] ?? null
+      : suggestion?.sets[Math.min(nextIndex, suggestion.sets.length - 1)] ?? null;
     return {
       kind: 'set',
       setNumber: nextIndex + 1,
@@ -207,4 +214,122 @@ export function nextAfterRest(
   }
   const upcoming = entries.slice(from.entry + 1).find(candidate => !candidate.done && !candidate.skipped);
   return upcoming ? { kind: 'next_exercise', name: upcoming.name } : { kind: 'session_end' };
+}
+
+export interface LiveAdjustment {
+  key: string;
+  sourceSet: number;
+  direction: 'down' | 'up';
+  reason: 'max_below_target' | 'easy_above_target';
+  actualKg: number;
+  actualReps: number;
+  targetReps: number;
+  next: PlanSetTarget;
+  remainingIndices: number[];
+  remainingSets: number;
+}
+
+const validTarget = (target: PlanSetTarget | null | undefined): target is PlanSetTarget => !!target
+  && (target.kg === null || (Number.isFinite(target.kg) && target.kg >= 0))
+  && (target.reps === null || (Number.isInteger(target.reps) && target.reps > 0))
+  && (target.durationSec === null || (Number.isFinite(target.durationSec) && target.durationSec >= 0));
+
+const copyTarget = (target: PlanSetTarget): PlanSetTarget => ({
+  kg: target.kg,
+  reps: target.reps,
+  durationSec: target.durationSec,
+});
+
+export function effectiveSetTarget(
+  base: readonly PlanSetTarget[],
+  overrides: Array<PlanSetTarget | null> | undefined,
+  setIndex: number,
+): PlanSetTarget | null {
+  if (!Number.isInteger(setIndex) || setIndex < 0) return null;
+  const override = overrides?.[setIndex];
+  if (validTarget(override)) return copyTarget(override);
+  if (!base.length) return null;
+  const target = base[Math.min(setIndex, base.length - 1)];
+  return validTarget(target) ? copyTarget(target) : null;
+}
+
+export function isReducedTarget(original: PlanSetTarget | null, effective: PlanSetTarget | null): boolean {
+  if (!validTarget(original) || !validTarget(effective)) return false;
+  return (original.kg !== null && effective.kg !== null && effective.kg < original.kg)
+    || (original.reps !== null && effective.reps !== null && effective.reps < original.reps);
+}
+
+const untouched = (set: LoggedSet): boolean => Object.values(set).every(value => value === undefined);
+const atTargetLoad = (set: LoggedSet, target: PlanSetTarget): boolean =>
+  typeof set.kg === 'number' && Number.isFinite(set.kg) && set.kg > 0
+  && typeof target.kg === 'number' && Number.isFinite(target.kg) && target.kg > 0
+  && Math.abs(set.kg - target.kg) <= LIVE_TARGET_LOAD_EPS_KG;
+const half = (value: number): number => Math.round(value * 2) / 2;
+
+export function autoregulate(input: {
+  exercise: Exercise | undefined;
+  goal: GoalId;
+  sets: LoggedSet[];
+  targets: PlanSetTarget[];
+  sourceSet: number;
+  deloadActive: boolean;
+  decisionTaken: boolean;
+  historyBacked: boolean;
+  allowIncrease: boolean;
+}): LiveAdjustment | null {
+  const { exercise, sets, targets, sourceSet } = input;
+  if (input.decisionTaken || !exercise || exercise.mode !== 'weighted' || !input.historyBacked) return null;
+  if (!Number.isInteger(sourceSet) || sourceSet < 0 || sourceSet >= sets.length) return null;
+  const source = sets[sourceSet]!;
+  const original = effectiveSetTarget(targets, undefined, sourceSet);
+  if (!original || !atTargetLoad(source, original)) return null;
+  if (!Number.isInteger(source.reps) || source.reps! <= 0 || !source.effort || !Number.isInteger(original.reps) || original.reps! <= 0) return null;
+  const remainingIndices = sets.map((set, index) => index > sourceSet && untouched(set) ? index : -1).filter(index => index >= 0);
+  if (!remainingIndices.length) return null;
+  const range = repRange(exercise, input.goal);
+  const targetReps = original.reps!;
+  let direction: LiveAdjustment['direction'];
+  let reason: LiveAdjustment['reason'];
+  let next: PlanSetTarget;
+
+  if (source.effort === 'max' && source.reps! <= targetReps - LIVE_MISS_REPS) {
+    const kg = half(source.kg! - loadStep(source.kg!));
+    if (kg <= 0 || kg >= source.kg!) return null;
+    direction = 'down';
+    reason = 'max_below_target';
+    next = { kg, reps: Math.max(range[0], Math.min(range[1], targetReps)), durationSec: null };
+  } else {
+    if (source.effort !== 'easy' || input.deloadActive || !input.allowIncrease) return null;
+    if (sets.some(set => isWorkingSet(set) && set.effort === 'max')) return null;
+    let qualifying = 0;
+    for (let index = 0; index <= sourceSet; index++) {
+      const set = sets[index]!;
+      const target = effectiveSetTarget(targets, undefined, index);
+      if (set.effort === 'easy' && target && atTargetLoad(set, target) && Number.isInteger(set.reps) && Number.isInteger(target.reps) && set.reps! >= target.reps! + LIVE_SURPLUS_REPS) qualifying++;
+    }
+    if (qualifying < LIVE_UP_MIN_SETS || targetReps >= range[1]) return null;
+    direction = 'up';
+    reason = 'easy_above_target';
+    next = { kg: original.kg, reps: Math.min(range[1], targetReps + 1), durationSec: null };
+  }
+
+  const key = JSON.stringify([
+    exercise.id,
+    sourceSet,
+    [source.kg ?? null, source.reps ?? null, source.durationSec ?? null, source.distanceM ?? null, source.effort ?? null],
+    original,
+    remainingIndices,
+  ]);
+  return {
+    key,
+    sourceSet,
+    direction,
+    reason,
+    actualKg: source.kg!,
+    actualReps: source.reps!,
+    targetReps,
+    next,
+    remainingIndices,
+    remainingSets: remainingIndices.length,
+  };
 }

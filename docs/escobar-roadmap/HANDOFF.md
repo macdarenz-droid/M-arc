@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), and session-plan capture (10A/10AT) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), and the pure live-autoregulation rules (4A) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 4A only
+## Start here: 4B only
 
-Implement spec 4's pure live-autoregulation decision in `src/brain/live.ts` and its bands first, then continue through 4B–4T. Reuse 10A's captured plan entry, original targets, reserved overrides and decision fields; never write actual sets while offering or accepting a target. Exact scope, T2 mutation boundaries, T3 review and shared-file locks are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement spec 4's guarded accept/dismiss mutations in `src/slices/workout/session.ts`, then continue through 4C/4T. Re-read the active session by stable plan-entry ID, rerun 4A's decision, compare its evidence key, and write only overrides, accepted targets and the slot decision. Exact scope, T2 mutation boundaries, T3 review and shared-file locks are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

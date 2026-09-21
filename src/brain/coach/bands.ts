@@ -120,6 +120,15 @@ export const MAX_SUBSTITUTES = 3;
 /** Minimum adjusted muscle recovery required for a substitute. */
 export const SUBSTITUTE_MIN_READY = 75;
 
+/** Live autoregulation only treats loads within this tolerance as the captured target. */
+export const LIVE_TARGET_LOAD_EPS_KG = 0.01;
+/** A max-effort set must miss by at least this many reps before offering one load step down. */
+export const LIVE_MISS_REPS = 2;
+/** An easy set must clear its target by this many reps to count toward an upward offer. */
+export const LIVE_SURPLUS_REPS = 2;
+/** Two easy surplus sets are required before adding one rep to remaining rows. */
+export const LIVE_UP_MIN_SETS = 2;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',
