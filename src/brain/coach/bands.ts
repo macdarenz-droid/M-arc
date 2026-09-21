@@ -164,6 +164,14 @@ export const PR_REACH_EXTRA_REPS = 1;
 /** At least one prior exposure is required before a rep record can be in reach. */
 export const PR_REACH_MIN_HISTORY = 1;
 
+export const DRIFT_WINDOW_WEEKS = 16;
+export const DRIFT_HALF_WEEKS = 8;
+export const DRIFT_MIN_OLDER = 6;
+export const DRIFT_MAX_RECENT = 3;
+export const DRIFT_MIN_DROP = 3;
+export const DRIFT_DEST_MIN_WEEKS = 6;
+export const DRIFT_DEST_SPLIT_WEEKS = 4;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',

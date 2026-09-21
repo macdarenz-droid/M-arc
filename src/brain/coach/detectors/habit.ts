@@ -15,6 +15,8 @@ export interface HabitDay extends LearnedDay {
   count: number;
   /** Weight-normalised probability over the older part of the window only. */
   olderProbability: number;
+  /** Weight-normalised probability inside the existing cold/recent window. */
+  recentProbability: number;
   recentCount: number;
 }
 
@@ -46,7 +48,7 @@ function weightedMedian(values: Array<{ v: number; w: number }>): number {
 }
 
 export function learnHabits(sessions: Session[], splits: Split[], today: string): HabitModel {
-  const empty = (): HabitDay => ({ splitId: null, probability: 0, startHour: 0, startMinute: 0, spreadMinutes: 0, count: 0, olderProbability: 0, recentCount: 0 });
+  const empty = (): HabitDay => ({ splitId: null, probability: 0, startHour: 0, startMinute: 0, spreadMinutes: 0, count: 0, olderProbability: 0, recentProbability: 0, recentCount: 0 });
   const all = Object.fromEntries(WEEKDAYS.map(d => [d, empty()])) as Record<Weekday, HabitDay>;
   const model: HabitModel = { weeksObserved: 0, days: {}, retired: [], sessionsPerWeek: 0, all };
   const first = sessions[0]?.day;
@@ -57,7 +59,7 @@ export function learnHabits(sessions: Session[], splits: Split[], today: string)
   model.weeksObserved = weeks;
   const start = weekStart(today);
   const splitIds = new Set(splits.map(s => s.id));
-  const num: Record<string, number> = {}, den: Record<string, number> = {}, oldNum: Record<string, number> = {}, oldDen: Record<string, number> = {};
+  const num: Record<string, number> = {}, den: Record<string, number> = {}, oldNum: Record<string, number> = {}, oldDen: Record<string, number> = {}, recentNum: Record<string, number> = {}, recentDen: Record<string, number> = {};
   const starts: Record<string, Array<{ v: number; w: number }>> = {};
   const splitVotes: Record<string, Map<string, number>> = {};
   let trainedDaysLast8 = 0, weeksLast8 = 0;
@@ -71,13 +73,14 @@ export function learnHabits(sessions: Session[], splits: Split[], today: string)
       if (date >= today || date < first) continue;
       const wd = weekdayOf(date);
       den[wd] = (den[wd] ?? 0) + w;
+      if (k <= HABIT_COLD_WEEKS) recentDen[wd] = (recentDen[wd] ?? 0) + w;
       // "Recent" is the current partial week plus the last HABIT_COLD_WEEKS complete weeks.
       if (k > HABIT_COLD_WEEKS) oldDen[wd] = (oldDen[wd] ?? 0) + w;
       const list = byDay.get(date);
       if (!list?.length) continue;
       num[wd] = (num[wd] ?? 0) + w;
       all[wd].count++;
-      if (k <= HABIT_COLD_WEEKS) all[wd].recentCount++;
+      if (k <= HABIT_COLD_WEEKS) { all[wd].recentCount++; recentNum[wd] = (recentNum[wd] ?? 0) + w; }
       else oldNum[wd] = (oldNum[wd] ?? 0) + w;
       if (k >= 1 && k <= 8) trainedDaysLast8++;
       for (const s of list) {
@@ -93,6 +96,7 @@ export function learnHabits(sessions: Session[], splits: Split[], today: string)
     const d = all[wd];
     d.probability = den[wd] ? round2((num[wd] ?? 0) / den[wd]!) : 0;
     d.olderProbability = oldDen[wd] ? round2((oldNum[wd] ?? 0) / oldDen[wd]!) : 0;
+    d.recentProbability = recentDen[wd] ? round2((recentNum[wd] ?? 0) / recentDen[wd]!) : 0;
     const st = starts[wd] ?? [];
     const med = weightedMedian(st);
     d.startHour = Math.floor(med / 60);

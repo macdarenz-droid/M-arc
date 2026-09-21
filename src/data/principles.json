@@ -213,7 +213,7 @@
       "statement": "Training at a consistent time and context builds automaticity over weeks to months, about two months on average with a very wide range. Deciding in advance when and where you will train roughly doubles the odds of doing it. Missing one day does not undo the habit.",
       "disputed": "Whether phone reminders help long term or just create fatigue. Evidence for reminders is modest, so they are capped hard.",
       "appUse": "Learned schedule proposals and cue-timed nudges: at most one a day, none on days already trained, retired when a habit day goes cold, one tap to turn off, no streak shaming.",
-      "findingKinds": ["habit_pattern", "chronic_skip"],
+      "findingKinds": ["habit_pattern", "chronic_skip", "consistency_drift"],
       "proposalKinds": ["schedule"],
       "citations": [
         { "key": "lally2010", "authors": "Lally P, van Jaarsveld CHM, Potts HWW, Wardle J", "year": 2010, "title": "How are habits formed: Modelling habit formation in the real world", "journal": "Eur J Soc Psychol", "where": "40(6):998-1009", "doi": "10.1002/ejsp.674", "verified": "search-index" },

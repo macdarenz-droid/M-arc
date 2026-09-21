@@ -17,6 +17,7 @@ describe('habit learning', () => {
     const m = learnHabits(sessions, pplSplits(), '2026-09-19');
     expect(Object.keys(m.days).sort()).toEqual(['thu', 'wed']);
     expect(m.days.wed!.probability).toBeGreaterThanOrEqual(0.95);
+    expect(m.days.wed!.recentProbability).toBe(1);
     expect(m.days.wed!.startHour).toBe(18);
     expect(m.days.wed!.startMinute).toBe(0);
     expect(m.days.thu!.startMinute).toBe(30);
@@ -31,6 +32,7 @@ describe('habit learning', () => {
     const sessions = wedThu(12, w => w < 8); // Saturdays only in the older weeks
     const m = learnHabits(sessions, pplSplits(), '2026-09-19');
     expect(m.retired).toEqual(['sat']);
+    expect(m.all.sat.recentProbability).toBe(0);
     expect(m.days.sat).toBeUndefined();
     const f = detectHabit(ctx(sessions))[0]!;
     expect(f.kind).toBe('habit_pattern');

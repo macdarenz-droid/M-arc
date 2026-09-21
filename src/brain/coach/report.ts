@@ -12,10 +12,10 @@ import { daysBetween } from '@/core/dates';
 import { reopenReason } from './reopen';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
+  detectChronicSkip, detectConsistencyDrift, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
   detectSessionExecution, detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
-import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
+import { planAdditions, planConsistencyShift, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
 /** Kinds whose gate is the confidence, so a low value is still worth reporting. */
 const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern', 'chronic_skip', 'week_review']);
@@ -65,6 +65,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('sleep', () => detectSleep(ctx)),
     ...safe('readiness', () => detectReadiness(ctx)),
     ...safe('habit', () => detectHabit(ctx, habit)),
+    ...safe('consistency-drift', () => detectConsistencyDrift(ctx, habit)),
     ...safe('focus', () => detectFocus(ctx)),
     ...safe('notes', () => detectNoteFlags(ctx)),
     ...safe('chronic-skip', () => detectChronicSkip(ctx)),
@@ -78,6 +79,8 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     .sort((a, b) => b.severity - a.severity || CONFIDENCE_RANK[b.confidence] - CONFIDENCE_RANK[a.confidence] || a.id.localeCompare(b.id));
 
   const habitFinding = findings.find(f => f.kind === 'habit_pattern');
+  const driftFinding = findings.find(f => f.kind === 'consistency_drift');
+  const driftSchedule = safe('consistency-shift', () => { const p = planConsistencyShift(ctx, habit, driftFinding); return p ? [p] : []; })[0] ?? null;
   const today = safe('today', () => { const p = planToday(ctx, recovery, findings); return p ? [p] : []; })[0] ?? null;
   const swaps = safe('swaps', () => planSwaps(ctx, findings, recovery, profile));
   const redundancy = safe('redundancy', () => planRedundancy(ctx, findings, profile));
@@ -88,7 +91,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
       : item.apply.kind !== 'split_modify' || !item.apply.remove.some(id => alreadyRemoved.has(id)));
   const candidates: Proposal[] = [
     ...(today ? [today] : []),
-    ...safe('schedule', () => { const p = planSchedule(ctx, habit, habitFinding); return p ? [p] : []; }),
+    ...(driftSchedule ? [driftSchedule] : safe('schedule', () => { const p = planSchedule(ctx, habit, habitFinding); return p ? [p] : []; })),
     ...safe('deload', () => { const p = planDeload(ctx, findings); return p ? [p] : []; }),
     ...swaps,
     ...skips,

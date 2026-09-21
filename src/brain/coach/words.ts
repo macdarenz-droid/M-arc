@@ -33,7 +33,7 @@ const CATEGORY_OF: Record<FindingKind, Category> = {
   under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
   redundant_exercises: 'balance', balance_imbalance: 'balance', chronic_skip: 'consistency',
-  long_gap: 'consistency', habit_pattern: 'consistency', first_sessions: 'consistency',
+  long_gap: 'consistency', habit_pattern: 'consistency', consistency_drift: 'consistency', first_sessions: 'consistency',
   note_flag: 'readiness',
 };
 
@@ -322,6 +322,16 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         means: 'A routine you already keep is the strongest habit cue there is. Deciding in advance when you will train roughly doubles the odds of showing up.',
         action: days.length ? 'Let the coach set your schedule and reminders around those times, or keep it as you have.' : 'Pick the days you can most often make, and let the coach remind you around then.' };
     }
+    case 'consistency_drift': {
+      const day = str(m.weekday) as Weekday;
+      const label = WEEKDAYS.includes(day) ? WEEKDAY_LABEL[day] : 'A training day';
+      const destination = str(m.destinationWeekday) as Weekday;
+      const dated = /^\d{4}-\d{2}-\d{2}$/.test(str(m.olderFrom)) && /^\d{4}-\d{2}-\d{2}$/.test(str(m.recentFrom));
+      return { title: `${label} is less common in your logs`,
+        noticed: `${label} appeared in ${num(m.olderCount)} of the older ${num(m.olderWeeks)} complete weeks and ${num(m.recentCount)} of the recent ${num(m.recentWeeks)}.`,
+        means: `This describes logged sessions; your past schedule was not saved.${dated ? ` Older window: ${formatDay(str(m.olderFrom))} to ${formatDay(str(m.olderTo))}. Recent window: ${formatDay(str(m.recentFrom))} to ${formatDay(str(m.recentTo))}.` : ''}`,
+        action: WEEKDAYS.includes(destination) ? `${WEEKDAY_LABEL[destination]} has enough recent logs to review as a schedule move.` : 'No schedule change suggested.' };
+    }
     case 'first_sessions':
       return { title: 'Start with a few sessions',
         noticed: `${num(m.sessions)} of ${num(m.needed)} logged.`,
@@ -439,9 +449,18 @@ function whyFor(p: Proposal, report: FindingsReport, ctx: RenderContext): string
 export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderContext): Suggestion {
   const a = p.apply;
   const chronicSkip = p.basedOn.some(id => report.findings.some(f => f.id === id && f.kind === 'chronic_skip'));
+  const consistencyDrift = p.basedOn.map(id => report.findings.find(f => f.id === id)).find(f => f?.kind === 'consistency_drift');
   const base = { id: p.id, kind: p.kind, why: whyFor(p, report, ctx), evidence: principlesFor(p.principles), confidence: p.confidence, dismissKey: p.dismissKey, proposal: p };
   switch (a.kind) {
     case 'schedule': {
+      if (consistencyDrift) {
+        const source = WEEKDAYS.find(day => a.days[day] === null)!;
+        const destination = WEEKDAYS.find(day => !!a.days[day])!;
+        const split = splitName(a.days[destination]?.splitId ?? undefined, ctx);
+        return { ...base, title: `Move ${split} from ${WEEKDAY_LABEL[source]} to ${WEEKDAY_LABEL[destination]}?`,
+          summary: `${WEEKDAY_LABEL[destination]} appeared in ${num(consistencyDrift.metrics.destinationCount)} recent weeks, including ${num(consistencyDrift.metrics.destinationSplitCount)} with ${split}.`,
+          changes: [`${WEEKDAY_LABEL[source]}: cleared`, `${WEEKDAY_LABEL[destination]}: ${split} at the learned start time`], acceptLabel: 'Move the scheduled day' };
+      }
       const set = WEEKDAYS.filter(d => a.days[d]).map(d => { const day = a.days[d]!; return `${WEEKDAY_LABEL[d]} around ${clock(day.startHour, day.startMinute)}${day.splitId ? ` (${splitName(day.splitId, ctx)})` : ''}`; });
       const cleared = WEEKDAYS.filter(d => a.days[d] === null).map(d => WEEKDAY_LABEL[d]);
       const changes = [...WEEKDAYS.filter(d => a.days[d]).map(d => `${WEEKDAY_LABEL[d]}: ${a.days[d]!.splitId ? splitName(a.days[d]!.splitId ?? undefined, ctx) : 'training day'}, reminder about an hour before ${clock(a.days[d]!.startHour, a.days[d]!.startMinute)}`), ...cleared.map(d => `${d}: cleared, you have not trained on ${d}s`)];

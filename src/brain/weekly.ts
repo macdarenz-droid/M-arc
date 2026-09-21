@@ -59,6 +59,31 @@ export interface WeeklyVolume {
   volumeKg: number;
 }
 
+export interface TrainingWeek {
+  from: string;
+  to: string;
+  days: Weekday[];
+  activeDayCount: number;
+}
+
+/** Completed Monday-Sunday training windows, oldest first. */
+export function trainingDaysPerWeek(sessions: Session[], today: string, weeks = 16): TrainingWeek[] {
+  const count = Math.max(1, Math.min(52, Math.trunc(Number.isFinite(weeks) ? weeks : 16)));
+  const current = weekStart(today);
+  const out: TrainingWeek[] = [];
+  for (let i = count; i >= 1; i--) {
+    const from = addDays(current, -7 * i);
+    const to = addDays(from, 6);
+    const dates = new Set(sessions
+      .filter(session => session.day >= from && session.day <= to && session.day < current)
+      .filter(session => session.exercises.some(exercise => exercise.sets.some(isWorkingSet)))
+      .map(session => session.day));
+    const present = new Set([...dates].map(weekdayOf));
+    out.push({ from, to, days: WEEKDAYS.filter(day => present.has(day)), activeDayCount: dates.size });
+  }
+  return out;
+}
+
 /**
  * One entry per week, oldest first, for a real "over time" view (History's
  * volume trend chart) — `weekSummary` above only ever looks at the current
