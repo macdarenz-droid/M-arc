@@ -4,9 +4,9 @@ Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss detection and presentation (14A-14B) are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
+The routed Escobar proactive-coach roadmap is complete from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss records (14A-14T) are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
 
-Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **14T**, the full near-miss boundary, grounding and live visual gate. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
+Read `docs/escobar-roadmap/HANDOFF.md` for the completed spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for the implemented dependency order. No routed work item remains. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol, for any later scope.
 
 ## Fixed decisions
 
@@ -17,7 +17,7 @@ Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-road
 - Raw body measurements stay on device; no medical diagnosis or injury prediction.
 - Earlier intelligence-audit tiers 0–3 are shipped and outside scope.
 
-## Validation and next handoff
+## Validation and completion record
 
 Warm-up-ramp feature gate on 2026-09-21: both typechecks passed; 495 app tests passed across 39 files, including 15 focused ramp/dismissal tests and the unchanged 50-persona finite-number fuzz sweep; 87 proxy tests passed with eight existing skips; production build passed; and the five-theme visual/migration gate passed without page errors. The live flow verifies kg/lb rendering, 360 px wrapping, keyboard Hide, navigation/reload persistence, unchanged live/history counts and exactly two saved actual sets rather than five rows containing the three suggestions. Work item 6A is next.
 
@@ -82,3 +82,5 @@ Consistency-drift feature gate on 2026-09-21: both typechecks passed; 590 app te
 Near-miss work item 14A verification on 2026-09-21: app typecheck, 32 focused detector, ordering, wording, principle and grounding checks, and the full 603-test app suite across 52 files passed. Weighted and bodyweight ties remain short of a record, one-below cases preserve the two-rep gap, and any actual record wins. Two prior working exposures are required; new loads and unsupported modes do not invent rep comparisons. Heaviest and strict one-percent strength boundaries reuse the existing load step, estimate and record rules. Canonical alias resolution, imported timestamp/id ordering, edits/deletes, future sessions, two-day expiry, scalar-only remote facts and one strongest Coach finding are covered. Work item 14B is next.
 
 Near-miss work item 14B verification on 2026-09-21: app typecheck, 14 focused detector and UI checks, and production build passed. Finish resolves the fresh saved session and derives at most the first ranked near miss after the existing plan-versus-actual debrief. The quiet note formats weighted, bodyweight, heaviest and estimated-strength variants in kg/lb and explicitly says no extra set is needed. It writes no celebration state, history or target; an actual record continues to suppress the note through the shared record engine. The registered Coach insight uses the same scalar-backed deterministic finding. Work item 14T is next.
+
+Near-miss feature gate and roadmap completion on 2026-09-21: both typechecks passed; 606 app tests passed across 53 files; 87 proxy tests passed with eight existing skips; production build passed; and the five-theme visual/migration gate passed without page errors. The live flow covers the saved Finish note and Coach insight, actual-record priority, kg/lb, 360/390 px layouts, keyboard access, navigation/reload, backup export/restore and zero external requests. The inspected silent-black mobile screenshot is clean. All routed F0 and 1A-14T work items are complete; no Worker deployment or state-version change is required.

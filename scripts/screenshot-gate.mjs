@@ -586,6 +586,98 @@ for (const theme of themes) {
     await driftLbPage.goto(`http://localhost:${PORT}/`); await driftLbPage.waitForSelector('.nav'); await openDriftCoach(driftLbPage);
     await driftLbCtx.close();
     if (driftRequests.length) errors.push(`silent-black: consistency drift made external requests (${driftRequests.join(', ')})`);
+
+    const nearState = structuredClone(source);
+    nearState.coach.deload = null;
+    nearState.coach.remoteExplainer = false;
+    nearState.sessions = [14, 7].map((offset, index) => {
+      const sessionDay = day(offset);
+      return { id: `gate-near-prior-${index}`, splitId: 'split_push', splitName: 'Push', day: sessionDay,
+        startedAt: `${sessionDay}T17:00:00`, endedAt: `${sessionDay}T18:00:00`, durationSec: 3600,
+        exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 60, reps: 8, effort: 'ideal' }] }] };
+    });
+    const nearStartedAt = `${currentDay}T12:00:00`;
+    const nearActive = reps => ({
+      splitId: 'split_push', startedAt: nearStartedAt, pausedMs: 0,
+      entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false, planEntryId: 'gate-near-entry', sets: [{ kg: 60, reps, effort: 'ideal' }] }],
+      plan: { version: 1, capturedAt: nearStartedAt, goal: nearState.goal, deload: null, entries: [{ id: 'gate-near-entry', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 1, targetSource: 'history', allowIncrease: true, targets: [{ kg: 60, reps: 8, durationSec: null }] }] },
+    });
+    nearState.active = nearActive(8);
+    const nearRequests = [];
+    const finishNearMiss = async target => {
+      await target.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+      await target.getByRole('button', { name: 'Finish' }).click();
+      await target.getByRole('button', { name: /Finish and save|Just today/ }).click();
+      await target.getByLabel('Close to a record: Barbell Bench Press').waitFor();
+    };
+    const openNearCoach = async target => {
+      await target.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+      await target.getByLabel('Open insight: Close to a record: Barbell Bench Press').waitFor();
+    };
+    const nearCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const nearPage = await nearCtx.newPage();
+    nearPage.on('pageerror', error => errors.push(`silent-black near miss: ${error.message}`));
+    nearPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
+    await nearPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(nearState));
+    await nearPage.goto(`http://localhost:${PORT}/`); await nearPage.waitForSelector('.nav');
+    await finishNearMiss(nearPage);
+    await nearPage.getByText('Matched your 8-rep best at 60 kg. 1 more rep would be a new rep record.', { exact: true }).waitFor();
+    await nearPage.getByText('A useful marker for another day; no extra set needed now.', { exact: true }).waitFor();
+    await nearPage.screenshot({ path: `${OUT}/silent-black-near-miss.png` });
+    await nearPage.setViewportSize({ width: 360, height: 800 });
+    if (await nearPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: near-miss finish note overflows at 360px');
+    await nearPage.setViewportSize({ width: 390, height: 844 });
+    await openNearCoach(nearPage);
+    const nearInsight = nearPage.getByLabel('Open insight: Close to a record: Barbell Bench Press');
+    await nearInsight.focus(); await nearPage.keyboard.press('Enter');
+    await nearPage.getByText('Matched your 8-rep best at 60 kg. 1 more rep would be a new rep record.', { exact: true }).waitFor();
+    await nearPage.keyboard.press('Escape');
+    await nearPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await openNearCoach(nearPage);
+    await nearPage.reload(); await nearPage.waitForSelector('.nav'); await openNearCoach(nearPage);
+    await nearPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await nearPage.getByRole('button', { name: 'Settings' }).click();
+    const nearDownloadPromise = nearPage.waitForEvent('download');
+    await nearPage.getByRole('button', { name: 'Export backup' }).click();
+    const nearDownload = await nearDownloadPromise;
+    const nearBackupPath = join(ROOT, '.tmp', 'near-miss-backup.json');
+    await nearDownload.saveAs(nearBackupPath);
+    await nearCtx.close();
+
+    const nearRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nearRestorePage = await nearRestoreCtx.newPage();
+    nearRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
+    await nearRestorePage.goto(`http://localhost:${PORT}/`); await nearRestorePage.waitForSelector('.nav');
+    await nearRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const nearChooserPromise = nearRestorePage.waitForEvent('filechooser');
+    await nearRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const nearChooser = await nearChooserPromise; await nearChooser.setFiles(nearBackupPath);
+    await nearRestorePage.getByText('Restored 3 sessions', { exact: true }).waitFor();
+    await nearRestorePage.keyboard.press('Escape'); await openNearCoach(nearRestorePage);
+    await nearRestoreCtx.close();
+
+    const nearLbState = structuredClone(nearState); nearLbState.preferences.weightUnit = 'lb';
+    const nearLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const nearLbPage = await nearLbCtx.newPage();
+    nearLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
+    await nearLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(nearLbState));
+    await nearLbPage.goto(`http://localhost:${PORT}/`); await nearLbPage.waitForSelector('.nav'); await finishNearMiss(nearLbPage);
+    await nearLbPage.getByText('Matched your 8-rep best at 132.5 lb. 1 more rep would be a new rep record.', { exact: true }).waitFor();
+    await nearLbCtx.close();
+
+    const recordState = structuredClone(nearState); recordState.active = nearActive(9);
+    const recordCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const recordPage = await recordCtx.newPage();
+    recordPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) nearRequests.push(request.url()); });
+    await recordPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(recordState));
+    await recordPage.goto(`http://localhost:${PORT}/`); await recordPage.waitForSelector('.nav');
+    await recordPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await recordPage.getByText('Record', { exact: true }).waitFor();
+    await recordPage.getByRole('button', { name: 'Finish' }).click();
+    await recordPage.getByRole('button', { name: /Finish and save|Just today/ }).click();
+    if (await recordPage.getByLabel('Close to a record: Barbell Bench Press').count()) errors.push('silent-black: actual record also rendered a near-miss finish note');
+    await recordCtx.close();
+    if (nearRequests.length) errors.push(`silent-black: near miss made external requests (${nearRequests.join(', ')})`);
   }
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
   if (theme === 'silent-black') {

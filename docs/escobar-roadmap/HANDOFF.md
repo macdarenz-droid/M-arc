@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss detection and presentation (14A-14B) are implemented and committed unit by unit on the working branch. The final near-miss gate is next.
+**Status, 2026-09-21:** The complete routed roadmap is implemented and committed unit by unit on the working branch: F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss records (14A-14T). The final gate is green.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 14T only
+## Roadmap complete
 
-Run the complete near-miss gate from [spec-14-near-miss-records.md](spec-14-near-miss-records.md): full app/proxy checks, boundary and grounding coverage, five themes, and a live Finish/Coach flow with kg/lb, narrow layouts, keyboard access, navigation/reload, backup restore, explicit live accept/dismiss inputs and zero network use. Append the dated decision entry and complete the roadmap audit. Exact scope and routing are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+No routed implementation item remains. The final gate passed both typechecks, 606 app tests across 53 files, 87 proxy tests with eight existing skips, production build and the five-theme live visual/migration run. Preserve the completed behavior and use [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md) plus the numbered specs as the audit trail for later scope.
 
 Read:
 
