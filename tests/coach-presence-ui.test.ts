@@ -94,6 +94,35 @@ describe('Train (Splits/pre-workout header): the presence launcher sits in its o
   });
 });
 
+describe('History: the presence launcher sits in its own row too, and reuses the same detail sheets', () => {
+  const source = readFileSync(new URL('../src/slices/history/History.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+
+  it('is rendered outside .topbar', () => {
+    const topbarStart = source.indexOf('<div class="topbar">');
+    const topbarEnd = source.indexOf('</div>', topbarStart) + '</div>'.length;
+    const topbarBlock = source.slice(topbarStart, topbarEnd);
+    expect(topbarBlock).not.toContain('PresenceLauncher');
+    const afterTopbar = source.slice(topbarEnd, topbarEnd + 1200);
+    expect(afterTopbar).toContain('PresenceLauncher');
+  });
+
+  it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {
+    expect(source).toContain("import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';");
+    expect(source.match(/<InsightSheet\b/g)).toHaveLength(1);
+    expect(source.match(/<SuggestionSheet\b/g)).toHaveLength(1);
+  });
+
+  it('is present for both the Log and Stats segments, not re-mounted per segment', () => {
+    // The launcher sits in History()'s own return, above the seg==='log'/'stats' branch —
+    // one mount point covers both, so switching segments can't duplicate or drop it.
+    const historyFnStart = source.indexOf('export function History(');
+    const logFnStart = source.indexOf('function Log(');
+    const historyBody = source.slice(historyFnStart, logFnStart);
+    expect(historyBody).toContain('PresenceLauncher');
+    expect(historyBody).toContain("seg === 'log' ? <Log /> : <Stats />");
+  });
+});
+
 describe('dismissPresenceMoment / setPresenceTone: the only writers of coach.presence', () => {
   it('dismissing a moment appends one entry and defaults tone to steady the first time', () => {
     initStore(memStorage());

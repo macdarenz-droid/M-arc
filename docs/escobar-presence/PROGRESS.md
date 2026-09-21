@@ -18,7 +18,7 @@ Planning review corrections incorporated: normal intent has no inferred effort c
 |---|---|---|---|
 | P00 | Verify current baseline | VERIFIED | 7d15d4c9dabda5f4add72ad37bf52d3582e19f6a; [run 35617178195](https://github.com/macdarenz-droid/M-arc/actions/runs/35617178195), source-gate + android-gate both success |
 | P01 | Moment selector, tone, shared dismissals | VERIFIED | 62d097c1a3ecb0b02036df74e854299670b9b34b; [run 35619601814](https://github.com/macdarenz-droid/M-arc/actions/runs/35619601814), source-gate + android-gate both success |
-| P02 | Presence and local explanation surfaces | IN PROGRESS — Today and Train VERIFIED (see below); History/Body/Coach/Settings not started | see ledger entries below |
+| P02 | Presence and local explanation surfaces | IN PROGRESS — Today, Train and History VERIFIED (see below); Body/Coach/Settings not started | see ledger entries below |
 | P03 | Shared guarded contextual Ask | NOT STARTED | — |
 | P04 | Optional intent and normalization | NOT STARTED | — |
 | P05 | Prospective agreements and evidence integrity | NOT STARTED | — |
@@ -158,4 +158,21 @@ Known limits / remaining proof: this fixes Train specifically. History, Body, Co
 Next concrete action: push this commit, verify exact-head CI (both jobs) on the pushed SHA, record that result at the start of the next entry, then continue P02 on History next, applying both lessons from this entry (own row if History's existing layout is tight anywhere near a fixed/sticky element; no nowrap/ellipsis truncation of dynamic cue text) from the start rather than rediscovering them.
 ```
 
-NEXT: P02 is IN PROGRESS (Today AND Train both VERIFIED — Train's real, reproducible visual-gate bug was fully root-caused across two independent causes and fixed, not worked around; History/Body/Coach/Settings remain). Apply both lessons above (own row; no cue-text truncation) proactively on History next.
+```text
+Patch / date / executor: P02 History / 2026-09-21 / Claude Sonnet 5
+Starting local and remote SHA: e94663f (Train root-cause fix, VERIFIED above), both local and origin.
+User-visible change: History (both the Log and Stats segments — one mount point above the segment switch, so it can't duplicate or drop when switching) shows the shared presence cue in its own full-width row below the topbar. History had no existing "Ask"/coaching entry point at all, so this is a genuinely new slot, not a reused one — nothing to duplicate.
+Owned files and any reconciled baseline drift: src/slices/history/History.tsx only; tests/coach-presence-ui.test.ts (+3 tests). No drift.
+Architecture decisions: applied both lessons from the Train investigation from the start rather than rediscovering them: (1) own full-width row, never a shared button row (History's topbar happens to have no button row at all, but the same placement was kept anyway for consistency with Train/Today and because it's the verified-safe shape); (2) PresenceLauncher's cue already wraps instead of truncating (fixed upstream in the same component Train uses, nothing extra needed here). Mounted at the top-level History() component, not inside Log()/Stats(), so the same instance persists across the segment toggle.
+Regression IDs → concrete test/scenario names: same coverage class as Train (M03 own-slot judgment, B01-B05 general presence). New source-check tests confirm: launcher outside `.topbar`; InsightSheet/SuggestionSheet reused (exactly one of each in the file); mounted once above the Log/Stats branch, not per-segment.
+Focused failure reproduction and result: n/a — no failure this time. Applying the Train lessons proactively meant the full gate passed on the first attempt, run 4 times in a row for confidence given the precision bar this session is holding to, rather than assuming one green run is enough.
+Full commands → exit/result/test counts/skips: `npx tsc --noEmit` (app) exit 0; `npm run typecheck` exit 0; `npx tsc --noEmit -p proxy/tsconfig.json` exit 0; `npm test` — 57 files, 668 passed (665 + 3 new); `npm --prefix proxy test` — 87 passed, 8 skipped (unchanged); `npm run build` succeeded; `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate` — PASS ×4 consecutive runs, 5 themes each, no page errors.
+Browser evidence paths, themes/widths and console/network result: the 4 gate runs above are the full existing scenario suite; History's Log/Stats screens are visited directly in the standard per-theme walk (`history`/`stats` screenshots), now with this new surface present.
+Reviewer identity, findings, fixes and re-review: self-review; this patch is low-risk relative to Train's (new empty slot, no competing layout, both hard lessons already known and applied), so the multiple gate runs were about honoring the precision bar generally, not chasing a specific suspicion.
+Commit and verified remote SHA: pending — recorded in the next patch's entry once pushed and CI is confirmed.
+Exact-head workflow URL + source/Android conclusions: pending, same reason.
+Known limits / remaining proof: Body, Coach and contextual Settings integration remain P02's open scope. Coach already has its own full insight/suggestion list UI (the "destination" screen the other surfaces' sheets and "All"/"Review all" links point to) — worth deciding explicitly whether Coach needs its own presence launcher at all, or whether it's correctly exempt as the one screen where the full list already *is* the presence surface, before wiring it reflexively.
+Next concrete action: push this commit, verify exact-head CI (both jobs) on the pushed SHA, record that result at the start of the next entry, then decide Coach's status explicon (likely: exempt, with a one-line note why) before moving to Body and then contextual Settings.
+```
+
+NEXT: P02 is IN PROGRESS (Today, Train and History VERIFIED — Train's bug fully root-caused and fixed, not worked around, both lessons carried forward cleanly into History; Body/Coach/Settings remain). Decide Coach's status explicitly (likely exempt — it's already the full list) before continuing to Body.

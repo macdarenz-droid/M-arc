@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { deload, today, unit } from '@/app/selectors';
+import { deload, insights, presenceMoment, report, suggestions, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
@@ -20,14 +20,46 @@ import { applySessionNoteFlags } from '@/slices/workout/session';
 import { cleanSessionEdit, removeSessionIfCurrent, replaceSessionIfCurrent } from './sessionEdit';
 import { sessionDebrief } from '@/brain/debrief';
 import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDebrief';
+import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
+import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
+import { PresenceLauncher } from '@/slices/coach/Presence';
+import { dismissPresenceMoment } from '@/slices/coach/presence';
+import { COACH_NAME } from '@/ui/chatRender';
 
 export function History() {
   const [seg, setSeg] = useState<'log' | 'stats'>('log');
+  const [momentOpen, setMomentOpen] = useState(false);
+  const moment = presenceMoment.value;
+  const momentInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
+  const momentSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div></div>
+      {/*
+        Own full-width row, never squeezed into a shared button row — see
+        docs/escobar-presence/PROGRESS.md's P02 Train entry for why that
+        specific combination (a cramped flex row + this launcher's nested
+        dismiss control) broke the bottom nav's clickability under headless
+        Chromium's mobile+touch emulation. History's topbar has no button
+        row to share, but the same "own row" placement is kept here for
+        consistency and because it's the verified-safe shape.
+      */}
+      {!remoteEnabled.value && moment && (
+        <div style={{ marginBottom: 12 }}>
+          <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => setMomentOpen(true)} onDismiss={m => dismissPresenceMoment(m)} />
+        </div>
+      )}
       <Segmented value={seg} onChange={setSeg} options={[{ value: 'log', label: 'Log' }, { value: 'stats', label: 'Stats' }]} />
       {seg === 'log' ? <Log /> : <Stats />}
+      {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}
+      {momentOpen && momentSuggestion && (
+        <SuggestionSheet
+          suggestion={momentSuggestion}
+          onAccept={() => { showToast(acceptProposal(momentSuggestion.proposal, today.value)); setMomentOpen(false); }}
+          onDismiss={() => { dismissProposal(momentSuggestion.proposal, today.value, report.value); setMomentOpen(false); }}
+          onClose={() => setMomentOpen(false)}
+        />
+      )}
     </div>
   );
 }
