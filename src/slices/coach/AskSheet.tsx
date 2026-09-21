@@ -28,10 +28,11 @@ import { computeBmi } from '@/brain/coach/explainer';
 import { WEEKDAYS, type AskThreadTurn } from '@/core/models';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { WEEKDAY_LABEL } from '@/core/dates';
-import { applyScheduleDraft, applySplitDraft } from '../workout/splits';
+import { MAX_SPLITS, applyScheduleDraft, applySplitDraft } from '../workout/splits';
 import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId } from './remote';
 import { appendAskTurn, clearAskThread, mergeStatedConstraints, updateAskTurn } from './askMemory';
+import { askTurnFingerprint, pendingCoachItems, type PendingCoachItem } from '@/brain/coach/reopen';
 
 /**
  * A turn as shown on screen — the same AskThreadTurn persisted in
@@ -81,14 +82,24 @@ const ASK_SUGGESTIONS = [
   'What do you think is best for my schedule this week?',
 ];
 
-function SplitDraftAction({ draft, onApplied }: { draft: SplitDraft; onApplied: () => void }) {
+function pendingNow(item: PendingCoachItem): PendingCoachItem | null {
+  const s = state.value;
+  return pendingCoachItems(s.coach, s.splits, s.schedule, s.goal, MAX_SPLITS).find(candidate => candidate.key === item.key) ?? null;
+}
+
+const staleItem = () => showToast('This item changed. Review the current version.');
+
+function SplitDraftAction({ draft, item, onApplied }: { draft: SplitDraft; item: PendingCoachItem; onApplied: () => void }) {
   const label = draft.action === 'create' ? `Create split: ${draft.name}` : `Update ${draft.name} with these changes`;
+  if (!item.actionable) return <p class="hint" style={{ marginTop: 8 }}>This draft refers to something that has changed.</p>;
   return (
     <Button
       variant="primary"
       size="sm"
       style={{ marginTop: 8 }}
       onClick={() => {
+        const current = pendingNow(item);
+        if (!current?.actionable) { staleItem(); return; }
         const result = applySplitDraft(draft.splitId, { name: draft.name, focus: draft.focus, exercises: draft.exercises });
         if (result) {
           showToast(draft.action === 'create' ? `Created ${result.name}` : `Updated ${result.name}`);
@@ -110,10 +121,11 @@ function changedDays(draft: WeekSchedule): Array<{ day: string; label: string }>
   return WEEKDAYS.filter(d => draft[d] !== current[d]).map(d => ({ day: d, label: `${WEEKDAY_LABEL[d]}: ${nameOf(draft[d])}` }));
 }
 
-function ScheduleDraftAction({ draft, onApplied }: { draft: WeekSchedule; onApplied: () => void }) {
+function ScheduleDraftAction({ draft, item, onApplied }: { draft: WeekSchedule; item: PendingCoachItem; onApplied: () => void }) {
   const changes = changedDays(draft);
   // Nothing actually differs from the live schedule (e.g. it already agreed the current arrangement is fine) — nothing to accept.
   if (!changes.length) return <p class="hint" style={{ marginTop: 8 }}>That matches your current schedule already.</p>;
+  if (!item.actionable) return <p class="hint" style={{ marginTop: 8 }}>This draft refers to something that has changed.</p>;
   return (
     <div style={{ marginTop: 8 }}>
       <div class="stack-sm" style={{ marginBottom: 8 }}>
@@ -123,6 +135,8 @@ function ScheduleDraftAction({ draft, onApplied }: { draft: WeekSchedule; onAppl
         variant="primary"
         size="sm"
         onClick={() => {
+          const current = pendingNow(item);
+          if (!current?.actionable) { staleItem(); return; }
           const ok = applyScheduleDraft(draft);
           if (ok) {
             showToast('Schedule updated');
@@ -149,19 +163,24 @@ function ScheduleDraftAction({ draft, onApplied }: { draft: WeekSchedule; onAppl
  * history for — a one-step "Undo" restoring exactly the goal it replaced,
  * the same "prev" this component itself captured at the moment of applying.
  */
-function GoalChangeAction({ action, prev, onApplied, onUndone }: { action: AskAction; prev: GoalId | null; onApplied: (previous: GoalId) => void; onUndone: () => void }) {
+function GoalChangeAction({ action, item, turnIndex, turnFingerprint, prev, onApplied, onUndone }: { action: AskAction; item: PendingCoachItem | null; turnIndex: number; turnFingerprint: string; prev: GoalId | null; onApplied: (previous: GoalId) => void; onUndone: () => void }) {
   const target = GOAL_BY_ID[action.goal];
   if (prev != null) {
     const previous = GOAL_BY_ID[prev];
     return (
       <p class="hint" style={{ marginTop: 8 }}>
         Applied: goal set to {target.name}.{' '}
-        <Button variant="quiet" size="sm" onClick={() => { update(st => ({ ...st, goal: prev })); onUndone(); showToast(`Reverted to ${previous.name}`); }}>Undo</Button>
+        <Button variant="quiet" size="sm" onClick={() => {
+          const turn = state.value.coach.askThread[turnIndex];
+          if (!turn || askTurnFingerprint(turn) !== turnFingerprint || state.value.goal !== action.goal) { staleItem(); return; }
+          update(st => ({ ...st, goal: prev })); onUndone(); showToast(`Reverted to ${previous.name}`);
+        }}>Undo</Button>
       </p>
     );
   }
   const current = GOAL_BY_ID[state.value.goal];
   if (current.id === action.goal) return <p class="hint" style={{ marginTop: 8 }}>That's already your training goal.</p>;
+  if (!item?.actionable) return <p class="hint" style={{ marginTop: 8 }}>This draft refers to something that has changed.</p>;
   return (
     <div style={{ marginTop: 8 }}>
       <p class="hint">Currently: {current.name} → Propose: {target.name}</p>
@@ -169,6 +188,8 @@ function GoalChangeAction({ action, prev, onApplied, onUndone }: { action: AskAc
         variant="primary"
         size="sm"
         onClick={() => {
+          const fresh = pendingNow(item);
+          if (!fresh?.actionable) { staleItem(); return; }
           const previous = state.value.goal;
           update(st => ({ ...st, goal: action.goal }));
           onApplied(previous);
@@ -199,18 +220,35 @@ function ConcernResource({ concern }: { concern: Exclude<AskConcern, null> }) {
   return <p class="hint" style={{ marginTop: 8 }}>{ASK_CONCERN_RESOURCE[concern]}</p>;
 }
 
-export function AskSheet({ onClose }: { onClose: () => void }) {
+export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClose: () => void; initialTurnKey?: string; savedOnly?: boolean }) {
   const history = state.value.coach.askThread;
+  const pending = pendingCoachItems(state.value.coach, state.value.splits, state.value.schedule, state.value.goal, MAX_SPLITS);
+  const pendingAt = (turnIndex: number, kind: PendingCoachItem['kind'], itemIndex: number) => pending.find(item => item.turnIndex === turnIndex && item.kind === kind && item.itemIndex === itemIndex) ?? null;
+  const reviewItem = (initialTurnKey ? pending.find(item => item.key === initialTurnKey) : undefined) ?? (savedOnly ? pending[0] : undefined);
   const [question, setQuestion] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
+  const reviewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight, behavior: 'smooth' }); }, [history, sending]);
+  useEffect(() => { if (savedOnly) reviewRef.current?.scrollIntoView({ block: 'center' }); }, [savedOnly, reviewItem?.key]);
+
+  const patchExactTurn = (item: PendingCoachItem, patch: (turn: AskThreadTurn) => Partial<AskThreadTurn>): boolean => {
+    let applied = false;
+    update(st => {
+      const turn = st.coach.askThread[item.turnIndex];
+      if (!turn || askTurnFingerprint(turn) !== item.turnFingerprint) return st;
+      applied = true;
+      return { ...st, coach: updateAskTurn(st.coach, item.turnIndex, patch(turn)) };
+    });
+    if (applied) flushSave();
+    return applied;
+  };
 
   const send = async () => {
     const q = question.trim();
-    if (!q || sending) return;
+    if (savedOnly || !q || sending) return;
     const s = state.value;
     const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
     // Constraints first: they're rarer and more load-bearing (an injury to work around) than a
@@ -245,13 +283,13 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
     <Sheet title={`Ask ${COACH_NAME}`} onClose={onClose}>
       <div class="ask-thread" ref={threadRef}>
         {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, describe a split to build or change, or ask about rearranging your weekly schedule. Personal answers, splits and schedule changes only use the findings, real exercises and real schedule below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
-        {history.length > 0 && (
+        {history.length > 0 && !savedOnly && (
           <Button variant="quiet" size="sm" onClick={() => { update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
             Clear conversation
           </Button>
         )}
         {history.map((turn, i) => (
-          <div key={i} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
+          <div key={i} ref={i === reviewItem?.turnIndex ? reviewRef : undefined} class={`ask-bubble ${turn.role === 'user' ? 'ask-user' : 'ask-assistant'}`}>
             {turn.role === 'assistant' && <div class="ask-persona"><IconCigarette size={24} aria-hidden={true} />{COACH_NAME}</div>}
             {turn.role === 'assistant' ? renderAskBody(turn.text, turn.category ?? 'general') : turn.text}
             {turn.role === 'assistant' && !!turn.trimmed && <p class="hint" style={{ marginTop: 6 }}>{turn.trimmed} sentence{turn.trimmed === 1 ? '' : 's'} left out for using a number not in your data.</p>}
@@ -259,21 +297,47 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
               <div key={di}>
                 {turn.applied?.[di]
                   ? <p class="hint" style={{ marginTop: 8 }}>Applied: {draft.name}.</p>
-                  : <SplitDraftAction draft={draft} onApplied={() => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { applied: (turn.applied ?? []).map((a, ai) => (ai === di ? true : a)) }) })); flushSave(); }} />}
+                  : turn.draftDismissed?.[di]
+                    ? <p class="hint" style={{ marginTop: 8 }}>Dismissed: {draft.name}.</p>
+                    : (() => {
+                      const item = pendingAt(i, 'split', di);
+                      return item ? <SplitDraftAction draft={draft} item={item} onApplied={() => {
+                        if (!patchExactTurn(item, current => { const flags = [...(current.applied ?? [])]; flags[di] = true; return { applied: flags }; })) staleItem();
+                      }} /> : <p class="hint" style={{ marginTop: 8 }}>This item changed. Review the current version.</p>;
+                    })()}
               </div>
             ))}
             {turn.role === 'assistant' && turn.scheduleDraft && (
               turn.scheduleApplied
                 ? <p class="hint" style={{ marginTop: 8 }}>Schedule updated.</p>
-                : <ScheduleDraftAction draft={turn.scheduleDraft} onApplied={() => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { scheduleApplied: true }) })); flushSave(); }} />
+                : turn.scheduleDismissed
+                  ? <p class="hint" style={{ marginTop: 8 }}>Schedule draft dismissed.</p>
+                  : (() => {
+                    const item = pendingAt(i, 'schedule', 0);
+                    return item ? <ScheduleDraftAction draft={turn.scheduleDraft!} item={item} onApplied={() => {
+                      if (!patchExactTurn(item, () => ({ scheduleApplied: true }))) staleItem();
+                    }} /> : <p class="hint" style={{ marginTop: 8 }}>That matches your current schedule already.</p>;
+                  })()
             )}
             {turn.role === 'assistant' && turn.actions?.map((action, ai) => (
-              <GoalChangeAction
+              turn.actionDismissed?.[ai] ? <p key={ai} class="hint" style={{ marginTop: 8 }}>Goal change dismissed.</p> : <GoalChangeAction
                 key={ai}
                 action={action}
+                item={pendingAt(i, 'goal', ai)}
+                turnIndex={i}
+                turnFingerprint={askTurnFingerprint(turn)}
                 prev={turn.actionPrev?.[ai] ?? null}
-                onApplied={previous => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { actionPrev: (turn.actionPrev ?? turn.actions!.map(() => null)).map((p, pi) => (pi === ai ? previous : p)) }) })); flushSave(); }}
-                onUndone={() => { update(st => ({ ...st, coach: updateAskTurn(st.coach, i, { actionPrev: (turn.actionPrev ?? []).map((p, pi) => (pi === ai ? null : p)) }) })); flushSave(); }}
+                onApplied={previous => {
+                  const item = pendingAt(i, 'goal', ai);
+                  if (!item || !patchExactTurn(item, current => { const prev = [...(current.actionPrev ?? current.actions?.map(() => null) ?? [])]; prev[ai] = previous; return { actionPrev: prev }; })) staleItem();
+                }}
+                onUndone={() => {
+                  const identity = { turnIndex: i, turnFingerprint: askTurnFingerprint(turn) };
+                  const current = state.value.coach.askThread[identity.turnIndex];
+                  if (!current || askTurnFingerprint(current) !== identity.turnFingerprint) { staleItem(); return; }
+                  const prev = [...(current.actionPrev ?? [])]; prev[ai] = null;
+                  update(st => ({ ...st, coach: updateAskTurn(st.coach, identity.turnIndex, { actionPrev: prev }) })); flushSave();
+                }}
               />
             ))}
             {turn.role === 'assistant' && turn.concern && <ConcernResource concern={turn.concern} />}
@@ -282,7 +346,9 @@ export function AskSheet({ onClose }: { onClose: () => void }) {
         {sending && <div class="ask-bubble ask-assistant"><Thinking /></div>}
       </div>
       {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
-      <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />
+      {savedOnly
+        ? <p class="small muted">Review saved drafts. Online questions are off.</p>
+        : <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />}
     </Sheet>
   );
 }

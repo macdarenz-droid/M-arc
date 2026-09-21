@@ -324,7 +324,83 @@ for (const theme of themes) {
   await nav.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
   await nav.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');
-  if (theme === 'silent-black') { await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape'); }
+  if (theme === 'silent-black') {
+    await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape');
+
+    const unfinishedState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    unfinishedState.active = null;
+    unfinishedState.coach.remoteExplainer = false;
+    unfinishedState.coach.askThread = [{
+      role: 'assistant', text: 'I saved four typed options for you.', scope: 'personal', category: 'training', concern: null,
+      drafts: [
+        { action: 'create', splitId: null, name: 'Saved full body', focus: ['quads'], exercises: [{ exerciseId: 'lib_leg_press', sets: 3 }] },
+        { action: 'modify', splitId: 'split_push', name: 'Push revised', focus: ['chest'], exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] },
+      ], applied: [false, false],
+      scheduleDraft: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null }, scheduleApplied: false,
+      actions: [{ kind: 'goal_change', goal: 'strength' }], actionPrev: [null],
+    }];
+    const unfinishedRequests = [];
+    const unfinishedCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const unfinishedPage = await unfinishedCtx.newPage();
+    unfinishedPage.on('pageerror', e => errors.push(`silent-black unfinished: ${e.message}`));
+    unfinishedPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) unfinishedRequests.push(request.url()); });
+    await unfinishedPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(unfinishedState));
+    await unfinishedPage.goto(`http://localhost:${PORT}/`); await unfinishedPage.waitForSelector('.nav');
+    await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const unfinished = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Unfinished' }) });
+    await unfinished.getByRole('button', { name: 'Review all' }).waitFor();
+    if (await unfinished.getByRole('button', { name: 'Review', exact: true }).count() !== 3) errors.push('silent-black: unfinished list did not cap visible rows at three');
+    await unfinishedPage.screenshot({ path: `${OUT}/silent-black-unfinished.png` });
+    await unfinishedPage.setViewportSize({ width: 360, height: 800 });
+    if (await unfinishedPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: unfinished list overflows at 360px');
+    const firstReview = unfinished.getByRole('button', { name: 'Review', exact: true }).first();
+    await firstReview.focus(); await unfinishedPage.keyboard.press('Enter');
+    await unfinishedPage.getByText('Review saved drafts. Online questions are off.', { exact: true }).waitFor();
+    if (await unfinishedPage.getByRole('textbox').count()) errors.push('silent-black: saved-only review rendered an online composer');
+    await unfinishedPage.getByRole('button', { name: 'Create split: Saved full body' }).click();
+    const afterCreate = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (!afterCreate.splits.some(split => split.name === 'Saved full body') || afterCreate.coach.askThread[0]?.applied?.[0] !== true) errors.push('silent-black: eligible saved split did not apply and mark its exact item');
+    await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await unfinishedPage.reload(); await unfinishedPage.waitForSelector('.nav');
+    await unfinishedPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    const restoredUnfinished = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Unfinished' }) });
+    if (await restoredUnfinished.getByRole('button', { name: 'Review', exact: true }).count() !== 3) errors.push('silent-black: finished saved split returned or pending items were lost after reload');
+    await restoredUnfinished.getByRole('button', { name: 'Dismiss' }).first().click();
+    const afterDismiss = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (!afterDismiss.coach.askThread[0]?.draftDismissed?.some(Boolean)) errors.push('silent-black: explicit saved-item dismissal was not persisted');
+    await restoredUnfinished.getByRole('button', { name: 'Review', exact: true }).first().click();
+    await unfinishedPage.getByRole('button', { name: 'Apply new schedule' }).click();
+    await unfinishedPage.keyboard.press('Escape');
+    const afterSchedule = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterSchedule.coach.askThread[0]?.scheduleApplied !== true || Object.values(afterSchedule.schedule).some(Boolean)) errors.push('silent-black: saved schedule did not apply atomically');
+    const remaining = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Unfinished' }) });
+    await remaining.locator('.card').filter({ hasText: 'Goal: Strength' }).getByRole('button', { name: 'Review' }).click();
+    await unfinishedPage.getByRole('button', { name: 'Change goal to Strength' }).click();
+    const afterGoal = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterGoal.goal !== 'strength' || afterGoal.coach.askThread[0]?.actionPrev?.[0] !== unfinishedState.goal) errors.push('silent-black: saved goal did not record the exact previous goal');
+    await unfinishedPage.keyboard.press('Escape');
+    const goalSection = unfinishedPage.locator('section').filter({ has: unfinishedPage.getByRole('heading', { name: 'Training goal' }) });
+    await goalSection.getByRole('button', { name: 'Change', exact: true }).click();
+    await unfinishedPage.getByRole('button', { name: /Set training goal to Muscle growth/ }).click();
+    await unfinishedPage.waitForTimeout(350);
+    const laterGoalState = await unfinishedPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    laterGoalState.coach.remoteExplainer = true;
+    const undoCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const undoPage = await undoCtx.newPage();
+    undoPage.on('pageerror', e => errors.push(`silent-black stale undo: ${e.message}`));
+    undoPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) unfinishedRequests.push(request.url()); });
+    await undoPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(laterGoalState));
+    await undoPage.goto(`http://localhost:${PORT}/`); await undoPage.waitForSelector('.nav');
+    await undoPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await undoPage.getByRole('button', { name: /Ask Escobar a question/ }).click();
+    await undoPage.getByRole('button', { name: 'Undo' }).click();
+    await undoPage.getByText('This item changed. Review the current version.', { exact: true }).waitFor();
+    const afterStaleUndo = await undoPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (afterStaleUndo.goal !== 'growth') errors.push('silent-black: stale goal Undo overwrote a later goal choice');
+    await undoCtx.close();
+    if (unfinishedRequests.length) errors.push(`silent-black: saved-only review made external requests (${unfinishedRequests.join(', ')})`);
+    await unfinishedCtx.close();
+  }
   await nav.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);

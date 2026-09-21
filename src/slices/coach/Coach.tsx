@@ -21,6 +21,7 @@ import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 import { go } from '@/app/router';
+import { UnfinishedItems } from './UnfinishedItems';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -51,6 +52,7 @@ export function Coach() {
   const [openSkipGroup, setOpenSkipGroup] = useState<Suggestion[] | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
+  const [savedReview, setSavedReview] = useState<{ key?: string } | null>(null);
   const goal = GOALS.find(g => g.id === s.goal) ?? GOALS[0]!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -58,7 +60,7 @@ export function Coach() {
   const dq = report.value.dataQuality;
 
   const accept = (sg: Suggestion) => { showToast(acceptProposal(sg.proposal, today.value)); setOpenSuggestion(null); };
-  const dismiss = (sg: Suggestion) => { dismissProposal(sg.proposal, today.value); showToast('Not now. It can come back later.'); setOpenSuggestion(null); };
+  const dismiss = (sg: Suggestion) => { dismissProposal(sg.proposal, today.value, report.value); showToast('Not now. It can come back later.'); setOpenSuggestion(null); };
   const skipSource = (sg: Suggestion) => sg.proposal.basedOn.find(id => id.startsWith('chronic_skip:'));
   const visibleSuggestions = open.filter((sg, index) => {
     const source = skipSource(sg);
@@ -69,7 +71,7 @@ export function Coach() {
     return source ? open.filter(candidate => skipSource(candidate) === source) : [sg];
   };
   const dismissSkipGroup = (group: Suggestion[]) => {
-    for (const sg of group) dismissProposal(sg.proposal, today.value);
+    for (const sg of group) dismissProposal(sg.proposal, today.value, report.value);
     showToast('Not now. It can come back later.');
     setOpenSkipGroup(null);
   };
@@ -99,6 +101,8 @@ export function Coach() {
         </Card>
       )}
 
+      <UnfinishedItems onReview={item => setSavedReview({ key: item?.key })} />
+
       <Section title="Suggestions" aside={visibleSuggestions.length ? <span class="small muted">{visibleSuggestions.length}</span> : undefined}>
         <div class="stack-sm">
           {visibleSuggestions.map(sg => {
@@ -108,6 +112,7 @@ export function Coach() {
               <div class="row-between"><span class="insight-cat" style={{ '--insight': 'var(--accent)' }}>{KIND_LABEL[sg.kind]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{sg.title}</h3>
               <p class="small muted">{sg.summary}</p>
+              <ReopenedNote suggestion={sg} />
               <div class="wrap" style={{ marginTop: 10 }}>
                 {skipChoice ? alternatives.map(option => <Button key={option.id} size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(option); }}>{skipAcceptLabel(option)}</Button>)
                   : <Button size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(sg); }}>{sg.acceptLabel}</Button>}
@@ -149,7 +154,7 @@ export function Coach() {
       <Section title="How the coach thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
-            <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Everything here is worked out on your phone from what you log. Suggestions never apply themselves; you accept or dismiss each one. Dismiss one twice and it stays away.</p>
+            <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Everything here is worked out on your phone from what you log. Suggestions never apply themselves; you accept or dismiss each one. Dismissed suggestions may return once if later logs provide stronger evidence.</p>
             <p>Reps first, then load. Add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up. Two sessions under the range at max effort means one step down.</p>
             <p>Recovery windows are 24, 48 or 72 hours by effort, wider after an unusually big session, and they only ever widen when your own history shows you need it.</p>
             <p>Every insight names the research it rests on, with an honest rating. Where the evidence is thin or the advice is coaching convention, it says so.</p>
@@ -161,6 +166,7 @@ export function Coach() {
       {openSuggestion && <SuggestionSheet suggestion={openSuggestion} onAccept={() => accept(openSuggestion)} onDismiss={() => dismiss(openSuggestion)} onClose={() => setOpenSuggestion(null)} />}
       {openSkipGroup && <ChronicSkipSheet suggestions={openSkipGroup} onAccept={sg => { accept(sg); setOpenSkipGroup(null); }} onDismiss={() => dismissSkipGroup(openSkipGroup)} onClose={() => setOpenSkipGroup(null)} />}
       {askOpen && <AskSheet onClose={() => setAskOpen(false)} />}
+      {savedReview && <AskSheet initialTurnKey={savedReview.key} savedOnly onClose={() => setSavedReview(null)} />}
       {goalOpen && (
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
           <div class="stack-sm">
@@ -232,6 +238,12 @@ function skipAcceptLabel(sg: Suggestion): string {
   return sg.acceptLabel;
 }
 
+function ReopenedNote({ suggestion }: { suggestion: Suggestion }) {
+  const reopened = suggestion.proposal.reopened;
+  if (!reopened) return null;
+  return <p class="hint" style={{ marginTop: 6 }}>New evidence since you dismissed this {reopened.elapsedDays} days ago: {reopened.newSessions} more sessions support it.</p>;
+}
+
 function ChronicSkipSheet({ suggestions: group, onAccept, onDismiss, onClose }: { suggestions: Suggestion[]; onAccept: (sg: Suggestion) => void; onDismiss: () => void; onClose: () => void }) {
   const first = group[0]!;
   return (
@@ -255,6 +267,7 @@ function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { sug
       <div class="stack">
         <div class="row"><Chip tone="accent">{KIND_LABEL[sg.kind]}</Chip><Chip>{CONFIDENCE_LABEL[sg.confidence]}</Chip></div>
         <p class="small">{sg.summary}</p>
+        <ReopenedNote suggestion={sg} />
         <OnlineNote id={sg.id} />
         {sg.why.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Why</div><div class="stack-sm">{sg.why.map((line, i) => <p key={i} class="small muted">{line}</p>)}</div></div>}
         {sg.changes.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>What changes</div><div class="list">{sg.changes.map((line, i) => <Row key={i}><span class="small">{line}</span></Row>)}</div></div>}
