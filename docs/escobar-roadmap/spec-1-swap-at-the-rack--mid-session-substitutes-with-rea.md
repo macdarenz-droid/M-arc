@@ -4,7 +4,7 @@
 
 **Tier:** core · **Effort:** Medium — roughly 4 to 6 focused hours. About 70 lines of new brain code in `src/brain/live.ts` (a composition over five already-exported helpers, prototyped and verified working against the real library), 14 lines in `session.ts`, 2 constants in `bands.ts`, roughly 90 lines of changed/added JSX and handlers in `Train.tsx` (the sheet's three states plus lifting `picking` to a tagged union and threading `onBrowse`), around 200 lines of tests, and two doc edits. The ranking itself is the cheap part. The real cost sits in three places: keeping `substitutes()` pure by injecting readiness and the pain set rather than reaching for selectors; the `picking` lift plus `onBrowse` threading, which is the only genuinely new state plumbing; and cost discipline in `EntryCard`, where the surrounding code models exactly the habit that must not be copied.
 **Judged:** value 7/10 · effort 4/10 · fit 8/10 · fires monthly · composite 24.8
-**Adversarially verified:** yes, clean
+**Source verification:** corrected against `c3f467571f958c54e6447c7182ebf15c007d5947` on 2026-09-21. See `03-SOURCE-VERIFICATION.md` for the reference inventory and corrections. Proposed code is not implemented or runtime-verified.
 
 ## User story
 
@@ -12,7 +12,7 @@ You are three exercises into Push. The bench is occupied and you are not waiting
 
 ## Brain work
 
-NEW FILE `/home/user/M-arc/src/brain/live.ts`. This file does not exist today (verified: `ls src/brain/live.ts` → not found). If another feature in this roadmap has already created it, APPEND to it rather than overwriting.
+NEW FILE `src/brain/live.ts`. This file does not exist today (verified: `ls src/brain/live.ts` → not found). If another feature in this roadmap has already created it, APPEND to it rather than overwriting.
 
 It is pure, synchronous, dependency-free Layer-1 code like the rest of `src/brain/`. It takes a `BrainContext` plus plain injected inputs and returns plain data. Adjusted recovery and the pain-flag muscle set live in the app layer (`src/app/selectors.ts`); they are INJECTED AS PARAMETERS, never imported.
 
@@ -28,7 +28,7 @@ File header comment (write it, it is load-bearing for the next reader):
  */
 ```
 
-Imports (all verified to exist with these exact names):
+Imports (existing exports verified with these exact names; MAX_SUBSTITUTES and SUBSTITUTE_MIN_READY are NEW bands defined below):
 ```ts
 import type { Exercise, ResistanceMode } from '@/core/models';
 import type { MuscleId } from '@/data/muscles';
@@ -168,7 +168,7 @@ The only shared-constants change is two new bands in `src/brain/coach/bands.ts` 
 
 ## Files to create
 
-### `/home/user/M-arc/src/brain/live.ts`
+### `src/brain/live.ts`
 Pure Layer-1 brain work for the live session: ranked substitute exercises for one entry, each carrying its own deload-adjusted next-session target. Composes existing helpers only; imports nothing from @/app, @/slices, @/ui, @/native or @/core/store.
 
 ```ts
@@ -181,7 +181,7 @@ export function substitutes(ctx: BrainContext, exerciseId: string, plannedSets: 
 (module-private, not exported: const REP_PROGRESS_MODES: ReadonlySet<ResistanceMode>; const sameModeFamily: (a: Exercise, b: Exercise) => boolean)
 ```
 
-### `/home/user/M-arc/tests/live-substitutes.test.ts`
+### `tests/live-substitutes.test.ts`
 Vitest node-environment tests for substitutes() and replaceEntry(). Two describes in one file: the brain function against real library data and tests/coach-helpers fixtures, and replaceEntry against a real store seeded the way tests/splits.test.ts does it.
 
 ```ts
@@ -193,7 +193,7 @@ const withMachine = () => pplHistory(LAST_MONDAY, 8, (_w, split, ex) => split ==
 
 ## Files to modify
 
-- **`/home/user/M-arc/src/brain/coach/bands.ts`** — Append two constants at the end of the file (after DELOAD_LOAD_FACTOR, line 96), each with a doc comment. The brief's rule is that thresholds live here and are never inlined.
+- **`src/brain/coach/bands.ts`** — Append two constants at the end of the file (after DELOAD_LOAD_FACTOR, line 96), each with a doc comment. The brief's rule is that thresholds live here and are never inlined.
 
 /** At most this many substitutes in the live swap sheet. Three rows is a decision, six is a menu. */
 export const MAX_SUBSTITUTES = 3;
@@ -208,7 +208,7 @@ export const MAX_SUBSTITUTES = 3;
 export const SUBSTITUTE_MIN_READY = 75;
 
 Do not change any existing constant in this file.
-- **`/home/user/M-arc/src/slices/workout/session.ts`** — Add `replaceEntry` immediately after `addExerciseToSession` (line 98-100) and before `removeEntry`. This is the bug fix: `addExerciseToSession` appends to the end of `entries`, and EntryCards are keyed `${entry.exerciseId}-${i}`, so using it for a swap would jump the exercise to the bottom of the list and reset every card below it.
+- **`src/slices/workout/session.ts`** — Add `replaceEntry` immediately after `addExerciseToSession` (line 98-100) and before `removeEntry`. This is the bug fix: `addExerciseToSession` appends to the end of `entries`, and EntryCards are keyed `${entry.exerciseId}-${i}`, so using it for a swap would jump the exercise to the bottom of the list and reset every card below it.
 
 /**
  * Swap one live entry for a different exercise, in place. The card keeps its
@@ -219,17 +219,19 @@ Do not change any existing constant in this file.
  * nothing when there is no active session, the index is out of range, or that
  * exercise is already somewhere in this session.
  */
-export function replaceEntry(entry: number, ex: Exercise): boolean {
+export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt: string; exerciseId: string }): boolean {
   const a = active();
   if (!a || !a.entries[entry]) return false;
+  if (expected && (a.startedAt !== expected.startedAt || a.entries[entry]!.exerciseId !== expected.exerciseId)) return false;
+  if (a.entries[entry]!.exerciseId === ex.id) return false;
   if (a.entries.some((e, i) => i !== entry && e.exerciseId === ex.id)) return false;
   patchActive(x => ({ ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: Math.max(1, e.sets.length) }, () => ({})), done: false, skipped: false })) }));
   void haptic.medium();
   return true;
 }
 
-No new imports are needed: `Exercise`, `active`, `patchActive` and `haptic` are all already in this file. Do NOT call `flushSave()` — match `addExerciseToSession` and `removeEntry`, which do not; `update()` already schedules the save.
-- **`/home/user/M-arc/src/slices/workout/Train.tsx`** — Six edits.
+Before spec 10, no new imports are needed: `Exercise`, `active`, `patchActive` and `haptic` are all already in this file. Do NOT call `flushSave()` — match `addExerciseToSession` and `removeEntry`, which do not; `update()` already schedules the save.
+- **`src/slices/workout/Train.tsx`** — Six edits.
 
 (1) IMPORTS. Add to the existing import from './session' (line 19): `replaceEntry`. Add to the existing import from '@/brain/exposure' (line 17): `isWorkingSet`. Add to the existing import from '@/brain/progression' (line 12): `type Suggestion`. Add to the existing import from 'preact/hooks' (line 1): nothing (useMemo is NOT used — see doNots). New import lines:
 import { substitutes, type Substitute } from '@/brain/live';
@@ -284,17 +286,24 @@ const openSwaps = (m: 'any' | 'different_equipment') => {
   });
   setSwap({ mode: m, rows });
 };
+// Also apply the fresh-state/Undo guards in the verification addendum below.
 const doSwap = (sub: Substitute) => {
   const pick = findExercise(sub.exerciseId, s.customExercises);
   if (!pick) return;
   if (!replaceEntry(index, pick)) { showToast('Already in this session'); return; }
   const undoable = loggedHere === 0 && !!ex;
   setConfirmSwap(null); setSwap(null); setMenu(false);
-  showToast(`Swapped in ${pick.name}`, undoable ? 'Undo' : undefined, undoable ? () => { replaceEntry(index, ex!); } : undefined);
+  const swappedSession = active()?.startedAt;
+  showToast(`Swapped in ${pick.name}`, undoable ? 'Undo' : undefined, undoable ? () => {
+    const latest = active();
+    const slot = latest?.entries[index];
+    if (!latest || latest.startedAt !== swappedSession || !slot || slot.exerciseId !== pick.id || slot.sets.some(set => Object.values(set).some(value => value !== undefined))) { showToast('This exercise has changed; Undo is no longer available'); return; }
+    replaceEntry(index, ex!, { startedAt: latest.startedAt, exerciseId: pick.id });
+  } : undefined);
 };
 
 (6) EntryCard sheet (lines 305-313) — replace the single sheet with three mutually exclusive sheets. Exact markup in uiSpec. Only one <Sheet> is ever mounted at a time; never nest two.
-- **`/home/user/M-arc/docs/COACH_BRAIN.md`** — Two additions.
+- **`docs/COACH_BRAIN.md`** — Two additions.
 
 (a) A new short subsection immediately after the '## Layer 1: planners' block (which ends just before '## The contract', around line 128), titled '## Layer 1: live helpers':
 
@@ -319,7 +328,7 @@ lives for one tap, and leaves no `dismissKey` behind.
 
 ## UI spec
 
-All UI lives in `/home/user/M-arc/src/slices/workout/Train.tsx`. No new component, no new file, no new CSS class. Reuses `Sheet`, `Row`, `Button`, `Chip` from `src/ui/primitives.tsx` and the existing `.stack-sm`, `.list`, `.hint`, `.ellipsis`, `.small`, `.muted`, `.grid-2` classes (all verified present in `src/ui/styles.css`).
+All UI lives in `src/slices/workout/Train.tsx`. No new component, no new file, no new CSS class. Reuses `Sheet`, `Row`, `Button`, `Chip` from `src/ui/primitives.tsx` and the existing `.stack-sm`, `.list`, `.hint`, `.ellipsis`, `.small`, `.muted`, `.grid-2` classes (all verified present in `src/ui/styles.css`).
 
 MOUNT POINT: the per-entry options `Sheet` inside `EntryCard`, Train.tsx lines 305-313. Today it contains exactly "Skip today / Put back in today", "Remove from this session", and a metadata `.hint` line. It becomes three mutually exclusive sheets driven by `menu`, `swap` and `confirmSwap`.
 
@@ -350,7 +359,7 @@ Copy is fixed, kit-neutral and honest. It is deliberately NOT "Rack's taken" —
 {menu && swap && !confirmSwap && (
   <Sheet title={`Swap ${entry.name}`} onClose={() => { setSwap(null); setMenu(false); }}>
     <div class="stack-sm">
-      <p class="hint">{swap.mode === 'different_equipment' && ex ? `Same muscles, off the ${equipmentGroup(ex.equipment).toLowerCase()}.` : 'Same muscles, ranked by what you already train.'} Every target below comes from your own sessions with that exercise. Nothing changes until you pick one.</p>
+      <p class="hint">{swap.mode === 'different_equipment' && ex ? `Same muscles, off the ${equipmentGroup(ex.equipment).toLowerCase()}.` : 'Same muscles, ranked by what you already train.'} Targets use your own sessions where available; new exercises show a starting suggestion. Nothing changes until you pick one.</p>
       <div class="list">
         {swap.rows.map(sub => (
           <Row
@@ -370,7 +379,7 @@ Copy is fixed, kit-neutral and honest. It is deliberately NOT "Rack's taken" —
       </div>
       <Row onClick={() => { setSwap(null); setMenu(false); onBrowse(); }}>
         <div>Browse all exercises</div>
-        <div class="hint">Search the library. No target until you have logged it.</div>
+        <div class="hint">Search the full library, including your saved exercises.</div>
       </Row>
       <Button variant="quiet" onClick={() => setSwap(null)}>Back</Button>
     </div>
@@ -506,7 +515,7 @@ If a future version ever adds phrasing ("this one keeps the same chest emphasis 
 - [ ] `Undo` appears on the toast only when the slot was empty, and restores the original exercise at the same index with the same planned set count.
 - [ ] No `Proposal`, `Finding`, `dismissKey`, `accepted[...]` entry or cooldown is created by a swap; `state.value.coach` is byte-identical before and after.
 - [ ] Every number on a substitute row traces to logged data: the load and rep range to that candidate's own `exerciseHistory` via `suggestNext` (or, for a never-logged candidate, to `startingLoadKg(equipment)` from the library), the session count to `usageProfile.useCount`, the confidence word to `Suggestion.confidence`. No arithmetic is performed on any of them.
-- [ ] With `remoteExplainer === false` (the default), every part of the feature works: the list appears, the targets are real, and the pain gate is simply an empty set.
+- [ ] With `remoteExplainer === false` (the default), every part of the feature works: the list appears, the targets are real, and the pain gate uses any already-saved note flags; when none exist it is an empty set.
 - [ ] The substitute list spans at least two distinct equipment groups whenever the eligible pool contains at least two, and in `different_equipment` mode contains no candidate on the original's own equipment group.
 - [ ] A row's `samePattern` order is non-increasing top to bottom: no same-muscle-only candidate is ever listed above a same-movement one, regardless of how familiar it is.
 - [ ] Only one `<Sheet>` is mounted at a time inside `EntryCard`; there is no nested `<dialog>` and no second `<ExercisePicker>` rendered inside a card.
@@ -515,7 +524,7 @@ If a future version ever adds phrasing ("this one keeps the same chest emphasis 
 ## Do NOT
 
 - Do NOT import `recovery`, `report`, `brainContext`, `insights` or anything else from `@/app/selectors` inside `src/brain/live.ts`. Nothing lints this — the layering rule is convention only — so an agent that does it gets a green `npm run check` and a silently broken architecture. Readiness and the pain-muscle set are PARAMETERS (`readiness`, `avoid`), resolved at the Train.tsx call site. The layering test in tests/live-substitutes.test.ts exists precisely to catch this.
-- Do NOT call `substitutes()`, `usageProfile()`, `adjustedRecovery()` or `detectNoteFlags()` in `EntryCard`'s render body. The surrounding code actively teaches the wrong habit: `EntryCard` already calls `suggestNext` unmemoized at Train.tsx:253, and that is cheap (0.3-0.4 ms). This one is not — `usageProfile` is a full O(all logged sets) scan (7,468 sets at the brief's 400-session fixture), `adjustedRecovery` is ~21 ms, and three more `suggestNext` calls ride along. Compute it in the tap handler and store the result in `useState`. Do NOT 'fix' this with `useMemo` either: a `useMemo` whose deps include `s.sessions` or `state.value` re-runs on every keystroke, which is the bug.
+- Do NOT call `substitutes()`, `usageProfile()`, `adjustedRecovery()` or `detectNoteFlags()` in `EntryCard`'s render body. The surrounding code actively teaches the wrong habit: `EntryCard` already calls `suggestNext` unmemoized at Train.tsx:253, and that is cheap (0.3-0.4 ms). This one is not — `usageProfile` is a full O(all logged sets) scan (7,468 sets at the brief's 400-session fixture), `adjustedRecovery` is ~21 ms, and three more `suggestNext` calls ride along. Compute it in the tap handler and store the result in `useState`. Do NOT move this tap-triggered calculation into a render-time memo. A dependency on the entire state invalidates on every keystroke; a narrow sessions-array dependency does not, but opening the sheet is the intended trigger here.
 - Do NOT read `report.value` (or call `buildReport`) anywhere in Train.tsx to get the pain-flag set. `buildReport` runs 19 detectors and is 50-116 ms; it is exactly the wrong thing to run when a sheet opens mid-workout. Call `detectNoteFlags(ctx)` and pass its findings to `recentPainMuscles` — that is an O(sessions) scan over `Session.noteFlags`.
 - Do NOT build a row from raw `suggestNext`. It MUST go through `applyDeload(suggestion, ctx.deload, ctx.today)`, because `EntryCard` at line 253 does, and during an accepted easier week the sheet would show 60 kg and the card would show 51 kg one tap later — the same target with two values seconds apart.
 - Do NOT use `target.mode === 'start'` to decide whether a target is trustworthy. `applyDeload` rewrites `mode` to `'hold'` for every deloaded suggestion, including a start-mode one. Honesty on the row comes from `useCount === 0` ("New to you") and `target.confidence === 'low'` ("Rough target"), which `applyDeload` preserves.
@@ -531,7 +540,7 @@ If a future version ever adds phrasing ("this one keeps the same chest emphasis 
 - Do NOT do arithmetic on a `Suggestion`'s numbers for display — no 'that's 15% lighter', no percentage of the old load, no estimated one-rep max on the row. Each figure must be its own field. Show `target.target`, `target.kg`, `useCount` and `confidence` as they come out of the brain.
 - Do NOT convert kg inside `src/brain/live.ts`. All loads stay in kg through the brain; conversion happens only at the render edge, via the `fmtTarget` helper in Train.tsx using `formatLoad`/`kgToDisplay` from `core/units.ts`.
 - Do NOT silently clear logged sets. When `entry.sets.filter(isWorkingSet).length > 0`, the confirm step is mandatory on BOTH paths — the substitute row (confirm sheet with 'Keep my sets, add below' / 'Swap and clear') and the Browse-all picker (`confirm()`, the same pattern already used at Train.tsx:230). And do NOT offer `Undo` after clearing sets — it cannot restore them and the toast would be lying.
-- Do NOT describe the feature as pain-aware in user-facing copy. `recentPainMuscles` reads `note_flag` findings, which exist only when `/notes` has run, which requires `remoteExplainer === true`. For the default offline user that set is permanently empty and the gate is a no-op. It degrades safely, but do not claim it.
+- Do NOT describe the feature as pain-aware in user-facing copy. `recentPainMuscles` reads `note_flag` findings, which exist only when `/notes` has run, which requires `remoteExplainer === true`. For an offline user with no saved note flags that set is empty and the gate is a no-op; switching online off does not erase previously saved flags. It degrades safely, but do not claim it.
 - Do NOT make any network call, add any payload field, or touch `src/ai/**`, `proxy/src/**`, `onlyKeys` or `validateGrounding`. At 6 requests / 60 s across all routes, a per-swap model call mid-workout is not buildable.
 - Do NOT add `export * from './live'` to `src/brain/index.ts`. Import from `@/brain/live` directly, the same way `stats.ts` is imported from `@/brain/stats`. The barrel would drag `coach/planners/shared` → `contract` → `principles.json` into every brain import for no benefit.
 - Do NOT add `flushSave()` to `replaceEntry`. `addExerciseToSession` and `removeEntry` do not; `update()` already schedules the save. Match the neighbours.
@@ -539,7 +548,16 @@ If a future version ever adds phrasing ("this one keeps the same chest emphasis 
 - Do NOT offer a candidate whose progress means something different: a timed hold (`mode: 'duration'`) or a conditioning drill (`mode: 'conditioning'`) is not a substitute for a weighted press, even when it passes the same-pattern + same-lead-muscle test. `lib_wall_sit`, `lib_box_jump` and `lib_jump_squat` all pass that test for a leg press and all must be filtered out by `sameModeFamily`.
 - Do NOT skip appending the dated row to the COACH_BRAIN.md decisions log. Every substantive change appends one, and it must end in the deploy consequence.
 
-## Open questions for the owner
+## Verification addendum — binding implementation details
+
+- Re-read `active()` at every row, confirmation and picker tap. Match the session `startedAt` and original exercise id captured when opening. Pass that pair to `replaceEntry`. A changed/missing slot closes the sheet with “This exercise has changed; open its options again.” The snippets above describe the layout, not permission to trust a render-time index.
+- The confirmation counts **current** working sets. If their values change while confirmation is open, refresh the confirmation before clearing; do not reuse an old `loggedHere`. Undo must refuse after any work has been logged on the replacement. Add named tests `stale swap cannot replace a shifted entry` and `undo never clears newly logged sets`.
+- Once spec 2 lands, replacing an entry invalidates rest ownership (`from`, `reasonKind`, `gradedSec`, `deltaSec`) without restarting its clock. Once spec 10 lands, create the replacement plan entry and its fresh targets through `capturePlanEntry`; retire the previous plan identity as replaced and clear its live target overrides. These later integrations are owned by those specs.
+- Scoreboard language about introducing `rankExercises` was an earlier sketch. `scoreExercise` is already exported, and this spec composes it; no new `rankExercises` function or planner refactor is required.
+- The listed prototype outputs are inherited examples, not a claim this verification executed a prototype. Fixture assertions must establish them when implementation lands.
+- Implementation defaults below are decided for this workstream: keep the two entry rows, 75% floor, and explicit logged-set confirmation. Follow-on preference learning remains out of scope.
+
+## Deferred tuning notes (not implementation blockers)
 
 - When the slot already has logged sets, the shipped default is a confirm sheet offering BOTH 'Keep my sets, add below' (existing `addExerciseToSession`, appends) and 'Swap and clear' (`replaceEntry`). The owner may prefer that a slot with logged work ALWAYS inserts below and never offers to clear — one fewer destructive path, at the cost of the card losing its position. Decide before shipping; the two-button confirm is the reversible choice.
 - `SUBSTITUTE_MIN_READY = 75` is a judgement call. `pickExercise`'s own default is 90 and the merged feature note suggested 75; `RECOVERY_SWAP_PCT` (what today_plan uses to force a swap) is 60 and `RECOVERY_FLAG_PCT` (worth mentioning) is 75. 75 is defensible as 'do not offer something visibly still cooked' without being so strict it empties the list mid-session, but it is not derived from anything. Owner call.

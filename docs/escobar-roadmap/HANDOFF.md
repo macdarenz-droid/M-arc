@@ -1,202 +1,69 @@
-# HANDOFF → Escobar proactive-coach build
+# HANDOFF → Escobar proactive-coach implementation
 
-**Status:** design complete, 3 of 14 specs written, 11 specs outstanding.
-**Written by:** Claude Opus 5 (design/architecture pass), 2026-09-21.
-**Handing to:** GPT-6 Astra — **this is a direct continuation of Opus 5's work**,
-not a fresh start. The brief, scoreboard and three specs in this folder are
-Opus 5's output; build on them rather than re-deriving them.
-**Then:** implementation goes to lower-tier agents (Sonnet / Sol tier), so
-everything you write must be executable by one with no other context.
+**Status, 2026-09-21:** documentation continuation complete. Specs 4–14 written; specs 1–3 source-checked and corrected; implementation routing and source inventory complete. **No feature implementation has started in this pass.**
 
----
+Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Project
+## Start here: F0 only
 
-**M/ARC** — a Preact + TypeScript fitness tracker. Cloudflare Worker proxy
-(`proxy/`) fronts Claude Sonnet 5, the in-app coach persona is **Escobar**.
-Repo root `/home/user/M-arc`, working branch
-`claude/phase-9-readiness-preference-ckw91g`.
+Use **Sonnet 5 Medium or GPT-5.6 Sol Medium, T1 (4/10)**. Create `src/brain/live.ts` once with spec 1's substitutes and spec 2's restFor/nextAfterRest, their named bands and pure tests. Do not wire UI or mutate sessions in F0. Exact scope, subsequent T2 mutations/T3 reviews and shared-file locks are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md). Its final section is a compact ready-to-paste implementation handoff.
 
-**Goal of this workstream:** Escobar today is a chat assistant behind an
-"Ask a question" button. Turn it into a proactive coach woven through the app —
-intervening at the right moments, learning from real logged data, surfacing
-advice where the person already is.
+Read:
 
----
+1. Root `PROJECT_STATE.md` and `MODEL_ROUTER.md`.
+2. [00-CODEBASE-BRIEF.md](00-CODEBASE-BRIEF.md), the inherited source map; verify each owner before editing.
+3. [01-SCOREBOARD.md](01-SCOREBOARD.md), the unchanged candidate ranking.
+4. [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md), [03-SOURCE-VERIFICATION.md](03-SOURCE-VERIFICATION.md), then the assigned feature's spec.
+5. `docs/COACH_BRAIN.md`, including shipped intelligence-audit decisions and the documentation-continuation entry.
 
-## Read these first, in this order
+## Project and goal
 
-1. **`00-CODEBASE-BRIEF.md`** (this folder) — 16k-word ground-truth map of the
-   codebase, produced by 8 agents that read the real source: every
-   deterministic signal already computable, the Finding/Proposal contract and
-   its seams, the full AppState shape, the live-logging flow, every screen, the
-   proxy/quota/caching plumbing with real numbers, everything already
-   proactive, and the hard constraints. **Trust this over memory.** It is the
-   reason the specs name real functions instead of invented ones.
-2. **`01-SCOREBOARD.md`** — 30 canonical features, each scored by three
-   independent judges on value / effort / architectural fit, ranked by a
-   composite. Also lists what was dropped at merge and why.
-3. **`spec-1..3-*.md`** — three complete, implementation-ready specs.
-4. **`docs/COACH_BRAIN.md`** — the project's own decision log. Every entry
-   explains why something is shaped the way it is. Append to it when you ship.
+M/ARC is a Preact + TypeScript fitness tracker in `macdarenz-droid/M-arc`, branch `claude/phase-9-readiness-preference-ckw91g`. `proxy/` is the Cloudflare Worker fronting Claude Sonnet 5; the persona is Escobar. Turn the existing Ask-centered assistant into a proactive coach that uses real logged workout data at the moments people already visit.
 
----
+The design's key finding remains: almost all shortlisted behavior requires no network; the deterministic brain already computes the needed evidence. Each spec defines full local behavior with the online coach off. Existing explicit optional explanations are not a prerequisite and receive no raw body data or historical plan arrays.
 
-## What was done
+## Completed specification index
 
-A 130-agent workflow: 8 parallel codebase readers → shared brief → 8
-independent design lenses (pre-set moments, post-session, daily/ambient,
-long-horizon, *new brain signals nobody computes yet*, zero-network,
-conversational hooks, recovery/body) → semantic merge to 30 canonical features
-→ 90 scoring agents (3 complementary judges each) → spec writing.
+| Rank | Original composite | Specification | Documentation status |
+|---|---|---|---|
+| 1 | 24.8 | [Swap at the rack](spec-1-swap-at-the-rack--mid-session-substitutes-with-rea.md) | Source-checked and corrected |
+| 2 | 24.1 | [Effort-graded rest](spec-2-effort-graded-rest-timer.md) | Source-checked and corrected |
+| 3 | 24.0 | [Morning verdict](spec-3-morning-verdict--the-check-in-answered-against-you.md) | Source-checked and corrected |
+| 4 | 23.5 | [Live autoregulation](spec-4-live-autoregulation.md) | Written |
+| 5 | 22.9 | [Warm-up ramp](spec-5-warm-up-ramp.md) | Written |
+| 6 | 22.8 | [Chronic skip](spec-6-chronic-skip.md) | Written |
+| 7 | 22.5 | [Week in review](spec-7-week-in-review.md) | Written |
+| 8 | 21.8 | [Lift trajectory](spec-8-lift-trajectory.md) | Written |
+| 9 | 21.5 | [Unfinished coach items](spec-9-unfinished-coach-items.md) | Written |
+| 10 | 21.2 | [Session debrief](spec-10-session-debrief.md) | Written |
+| 11 | 21.1 | [Effort repair](spec-11-effort-rating-repair.md) | Written |
+| 12 | 20.6 | [PR in reach](spec-12-pr-in-reach.md) | Written |
+| 13 | 20.5 | [Consistency drift](spec-13-consistency-drift.md) | Written |
+| 14 | 20.3 | [Near-miss records](spec-14-near-miss-records.md) | Written |
 
-**111 of 130 agents completed.** The run died on a session limit during the
-spec round. Everything upstream of that survived and is captured in this folder.
+“Written” and “source-checked” do not mean implemented or feature-tested. New modules/functions are marked NEW in every spec. The verification inventory identifies current exports, private helpers, proposed declarations and corrections rather than claiming nonexistent functions already exist.
 
-### Complete and usable
-- The codebase brief (`00-CODEBASE-BRIEF.md`)
-- All 30 candidates scored and ranked (`01-SCOREBOARD.md`)
-- 3 full specs, 60–70k chars each (`spec-1`, `spec-2`, `spec-3`)
+## Build dependencies that must survive the handoff
 
-### Lost to the session limit — must be redone
-- **Specs 4–14** (11 features, all ranked, none specced — see table below)
-- **Adversarial verification of specs 1–3.** This matters: the verify pass
-  greps the real repo to confirm every file path, function and type a spec
-  names actually exists. It did not run. **Treat specs 1–3 as unverified** and
-  fact-check each referenced symbol before implementing.
-- **Roadmap synthesis** (phase sequencing) and the **completeness critic**
-  (what moments nothing covers). Both worth redoing.
+- `live.ts` is created in F0, then appended to. It serves features 1, 2, 4 and 5 here; the inherited fifth consumer, candidate 15, remains outside scope. Do not export the module through the brain barrel.
+- Feature 10 has a separately committed **capture prerequisite** before 4/5/6: immutable original targets, stable entry identity and guarded history edits. Its finish UI comes later. Never reconstruct a past plan from a current split or the just-saved workout.
+- Feature 4's shared effective target must agree across row placeholders, rest banner, warm-up and PR hint. Explicit acceptance alters suggestion metadata only, never actual logged sets.
+- Feature 12 exports the existing PR helper once; feature 14 reuses it. Recorded PR semantics remain unchanged.
+- Shared models/session/Train, report/contract/words/research, Coach/apply and existing test files have sequential owners in the routing plan. Only independent new modules/components/tests are safe for parallel drafts.
+- New scalar Finding.metrics use the existing envelope. No proxy route, top-level payload field or validator relaxation is part of these specs.
 
----
+## Constraints and gate
 
-## The ranked shortlist
+Brain decisions are pure `src/brain/**` functions; the model only phrases. Every displayed number has a source field. Proposals mutate only after a tap; facts and projections do not persist on appearance. Offline behavior is complete. Raw body measurements stay on device. No injury prediction, diagnosis or individualized medical guidance.
 
-Composite = `value*2 + differentiation + fit − noiseRisk*0.5 − effort*0.8`.
-Effort is 1–10 for a mid-tier agent working from a good spec.
+Before each implementation commit: app + proxy typecheck → both full suites → build → five-theme visual gate → live Playwright checks of that feature → dated decision log → commit → push → exact-commit CI green. Integrity, grounding or payload work is minimum T2 with T3 review. No Worker deployment is requested here.
 
-| # | Score | Feature | Effort | Network | Spec |
-|---|---|---|---|---|---|
-| 1 | 24.8 | Swap at the rack: mid-session substitutes with real targets | 4 | optional | ✅ |
-| 2 | 24.1 | Effort-graded rest timer | 3 | never | ✅ |
-| 3 | 24.0 | Morning verdict: check-in answered against your own normal | 5 | never | ✅ |
-| 4 | 23.5 | Live autoregulation: in-session target answering the sets you just did | 5 | never | ❌ |
-| 5 | 22.9 | Warm-up ramp for the first heavy compound | 2 | never | ❌ |
-| 6 | 22.8 | The exercise you always drop (chronic skip) | 4 | never | ❌ |
-| 7 | 22.5 | Week in review | 5 | never | ❌ |
-| 8 | 21.8 | Lift trajectory: velocity, projection date, falsifiable expiry | 4 | never | ❌ |
-| 9 | 21.5 | Unfinished coach items: re-raised dismissals and stranded drafts | 5 | never | ❌ |
-| 10 | 21.2 | Session debrief: plan vs actual on the finish screen | 6 | never | ❌ |
-| 11 | 21.1 | Effort-rating repair and calibration | 3 | never | ❌ |
-| 12 | 20.6 | PR in reach (pre-set record badge) | 3 | never | ❌ |
-| 13 | 20.5 | The day that died (consistency drift) | 5 | never | ❌ |
-| 14 | 20.3 | One rep short: near-miss records | 4 | never | ❌ |
+For this docs-only continuation the unchanged baseline passed app/proxy typechecks, 374 app tests, 87 proxy tests (eight existing skips), and build. Local browser checks were blocked by unavailable Chromium and a denied download; do not call those locally passed. The source-verification document records the limitation. Branch CI runs the existing visual/migration and Android gates on push.
 
-Candidates 15–30 are in the scoreboard with full scoring detail — several are
-strong (pre-set soreness brief, recovery debt) and were cut only by the top-14
-cap, not by merit.
+## Existing work outside this implementation assignment
 
-**The headline finding: 12 of the top 14 need zero network calls.** The
-deterministic brain already computes almost everything required. This is a
-brain-and-UI workstream, not a prompting workstream — which also means it
-works offline and costs nothing against the per-device daily quota.
+The intelligence-audit tiers 0–3 are already shipped; do not re-propose deload-aware targets, provenance/per-sentence grounding, stats snapshot, app map, self-model/correction/warmth/date rules, chat memory/stated constraints or typed actions. Earlier audit deployment was noted as requiring an authenticated machine; this pass did not deploy it or change its status.
 
-**Shared foundation:** `src/brain/live.ts` is a new file that features 1, 2, 4,
-5 and 15 all build on. **Build it once, first.** Specs 1–3 each describe it;
-they agree on the module's shape and say to append rather than overwrite.
+Candidates 15–30 remain scored in the scoreboard but are not implementation assignments. No need to recover the old session-scoped raw agent output: the durable design artifacts are in this folder.
 
----
-
-## Constraints any implementation must respect
-
-Non-negotiable, enforced throughout the existing codebase:
-
-1. **The deterministic brain decides; the LLM only phrases.** New logic goes in
-   `src/brain/**` as pure functions. Never compute a displayed number in a prompt.
-2. **Every number traces to real logged data.** `allowedNumbers`/`validateText`
-   in `src/brain/coach/explainer.ts` drop any answer citing an ungrounded figure.
-3. **Nothing changes user data until an explicit tap.** Every proposal is
-   accept/dismiss. Never write state from a suggestion appearing.
-4. **Raw body measurements never leave the device.** `validateGrounding` in
-   `proxy/src/handler.ts` refuses payloads carrying them. Derived BMI is the one
-   audited exception.
-5. **Offline-first.** The online coach is opt-in and quota-limited. Every feature
-   needs a defined degraded state with it switched off.
-6. **Named non-goals:** no injury prediction, no diagnosis, no individualized
-   medical guidance.
-
-**Quality bar before any commit** (this repo holds to it strictly):
-`npx tsc --noEmit` (app + `proxy/`) → `npx vitest run` (both) → `npm run build`
-→ `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate` (5-theme visual gate)
-→ live Playwright verification of the actual feature → a `docs/COACH_BRAIN.md`
-decision-log entry → commit → push → confirm CI green.
-
----
-
-## Recommended next steps
-
-**Step 1 — finish the design (T3: Astra / Opus).** Write specs 4–14 using
-specs 1–3 as the template, and run the verification pass on 1–3. The spec
-format that worked: user story, brain work with exact file paths and exported
-signatures, contract changes, files to create/modify, UI spec with real copy
-templates and placeholder sources, data flow, network/offline, named test
-cases, acceptance criteria, and an explicit **do-NOT** list aimed at traps a
-cheaper model would fall into. The do-NOT list is what makes these
-Sonnet-executable.
-
-**Step 2 — verify.** For each spec, grep every referenced path, function, type
-and state field against the real repo. A spec naming a function that does not
-exist is worse than no spec.
-
-**Step 3 — produce the implementation routing plan (you, Astra).** The owner
-will hand the finished specs to lower-tier agents and needs to know *which
-agent at what effort* for each piece of work. Write this as
-`02-ROUTING-PLAN.md` in this folder. For every feature 1–14, give:
-
-| Column | What it means |
-|---|---|
-| Work item | The feature, split into separable units if it genuinely has them (brain module / UI / tests are often separable) |
-| Tier | T0–T4 per the owner's MODEL_ROUTER (score it: ambiguity, breadth, novelty, blast radius, verification difficulty) |
-| Claude agent | Haiku 4.5 · Sonnet 5 low/med/high · Opus 5 |
-| GPT agent | GPT-5.6 Luna · Sol Instant/Medium/High · Sol Extra High |
-| Effort | The reasoning-effort dial for that model |
-| Why | One line — what makes it that tier |
-| Escalate if | The specific failure signal that means bump a tier |
-
-Rules the owner works by, which your plan must respect:
-- Recommend the **cheapest model that gets it right first try** — a failed
-  cheap attempt plus a retry costs more than one correct mid-tier attempt.
-- Effort tracks **ambiguity and reasoning depth**, not importance. A fully
-  specced but important feature is still medium effort.
-- If a smaller model would need its *top* effort setting, move up one model at
-  medium instead.
-- Anything touching data integrity, the grounding validator, or the proxy
-  payload contract is **minimum T2, reviewed at T3**.
-- Long-but-repetitive work stays low tier — length is not difficulty.
-
-Also state the **build order** explicitly (what blocks what), and flag which
-items are safe to run **in parallel** by separate agents versus which must be
-sequential because they touch the same file.
-
-**Step 4 — implement (lower-tier agents).** Build `src/brain/live.ts` first,
-then features in the order your routing plan sets. One feature per commit, full
-quality bar each time.
-
----
-
-## Prior context
-
-Tiers 0–3 of an earlier "Escobar intelligence audit" are **complete, shipped
-and CI-green** — deload-aware targets, provenance-aware grounding, a stats
-snapshot, per-sentence grounding, an honest app map, self-model/correction/
-warmth/date-reasoning rules, persisted chat memory and stated constraints, and
-a typed `actions[]` envelope. See `docs/COACH_BRAIN.md`. Do not re-propose them.
-
-**Outstanding deploy:** proxy changes from that work need `cd proxy && npm run
-deploy` from an authenticated machine; the app needs its usual Netlify deploy.
-
-## Raw artifacts
-
-Full workflow output (all agent returns, including the 3 specs verbatim):
-`/tmp/claude-0/-home-user-M-arc/357e94e5-a98c-5e96-b108-df6a3a9bb9ab/tasks/w1n3pvw0z.output`
-— session-scoped, will not survive container recycling. This folder is the
-durable copy.
+Router: follow root MODEL_ROUTER.md and end with NEXT.

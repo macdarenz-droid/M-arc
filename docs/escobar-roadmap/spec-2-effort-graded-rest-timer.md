@@ -1,36 +1,36 @@
 # Effort-graded rest timer
 
-> The rest timer is graded by the effort you tapped and whether the lift was a compound, the countdown never jumps backwards, and the banner's headline is what your next set actually is.
+> The rest timer is graded by the effort you tapped and whether the lift was a compound, elapsed rest is preserved when the duration changes, and the banner's headline is what your next set actually is.
 
 **Tier:** quick-win · **Effort:** Small-to-medium: roughly 45 lines of new production code in brain/live.ts, ~35 changed lines in session.ts, ~25 in Train.tsx, ~12 in selectors.ts, 5 in models.ts, 6 in bands.ts, 2 CSS lines, plus a ~170-line test file and two doc edits. About half a day for a careful implementer, most of it in the store-backed fake-timer tests and in re-reading adjustRest/resumeSession/retimeRest against each other. Budget an extra hour for `npm run check` plus `npm run gate` (which boots a real browser in five themes and will exercise this exact code path).
 **Judged:** value 7/10 · effort 3/10 · fit 8/10 · fires every-set · composite 24.1
-**Adversarially verified:** yes, clean
+**Source verification:** corrected against `c3f467571f958c54e6447c7182ebf15c007d5947` on 2026-09-21. See `03-SOURCE-VERIFICATION.md` for the reference inventory and corrections. Proposed code is not implemented or runtime-verified.
 
 ## User story
 
-You finish a heavy set of Leg Press, tab out of the reps box, and the rest timer starts on your own 90 seconds. A second later you tap "M". The clock does not reset — it keeps counting from where it is, but the total it is counting towards quietly becomes 2:15, and the line under it reads "Rest · 2:15 · +45s, max effort on a compound". Above that, in the banner's largest non-clock text, is the thing you actually want during a rest window: "Set 3 · 62.5 kg × 8" — the same target already sitting in that set row's placeholder on the card behind the banner. When the set you just logged was the last planned set of that exercise, the line reads "Last set · next up: Romanian Deadlift" instead. If you tap "M" again to clear the rating, the timer grades itself back down to your 90 seconds, still without resetting and still without the progress bar moving backwards. If you never tap effort at all, the timer behaves exactly as it does today, to the second.
+You finish a heavy set of Leg Press, tab out of the reps box, and the rest timer starts on your own 90 seconds. A second later you tap "M". The clock does not reset — it keeps counting from where it is, but the total it is counting towards quietly becomes 2:15, and the line under it reads "Rest · 2:15 · +45s, max effort on a compound". Above that, in the banner's largest non-clock text, is the thing you actually want during a rest window: "Set 3 · 62.5 kg × 8" — the same target already sitting in that set row's placeholder on the card behind the banner. When the set you just logged was the last planned set of that exercise, the line reads "Last set · next up: Romanian Deadlift" instead. If you tap "M" again to clear the rating, the timer grades itself back down to your 90 seconds, still without resetting and without resetting elapsed rest (the percentage can change when the total changes). If you never tap effort at all, the timer behaves exactly as it does today, to the second.
 
 ## Brain work
 
-NEW FILE /home/user/M-arc/src/brain/live.ts — pure, synchronous, no store, no signals, no prose, no Date.now(). It is the first file in brain/ about the live session rather than history. It imports ONLY: type { ActiveSession, Effort, ResistanceMode } from '@/core/models', type { GoalId } from '@/data/goals', type { Suggestion } from './progression', and the constants from './coach/bands'.
+NEW FILE src/brain/live.ts — pure, synchronous, no store, no signals, no prose, no Date.now(). It is the first file in brain/ about the live session rather than history. The rest helpers require the following imports; merge with the substitute imports from spec 1, never replace that module: type { ActiveSession, Effort, ResistanceMode } from '@/core/models', type { GoalId } from '@/data/goals', type { Suggestion } from './progression', and the constants from './coach/bands'.
 
 === A. restFor(input: RestInput): RestGrade ===
 
 Types:
   export interface RestInput { base: number; effort?: Effort; pattern: string; mode: ResistanceMode; goal: GoalId }
-  export interface RestGrade { seconds: number; reasonKind: RestReasonKind }
+  export interface RestGrade { seconds: number; deltaSec: number; reasonKind: RestReasonKind }
   export type RestReasonKind = 'ungraded' | 'base' | 'easy' | 'max' | 'compound' | 'easy_compound' | 'max_compound' | 'strength_floor'
 
 Algorithm, in exactly this order:
 
-1. const base = clamp(input.base), where clamp(sec) = Math.max(REST_FLOOR_SEC, Math.min(REST_CEIL_SEC, Math.round(sec))). This is byte-identical to what startRest already does to preferences.restDefaultSec today.
-2. if (!input.effort) return { seconds: base, reasonKind: 'ungraded' }. THIS IS THE WHOLE BACKWARD-COMPATIBILITY STORY: at reps-blur time the effort has not been tapped yet, so the grade is exactly the person's own default and the timer is identical to today's. No compound multiplier, no floor, no rounding of their own number. Do not "improve" this by applying the compound multiplier without an effort rating.
+1. const base = clamp(input.base), where clamp(sec) = Math.max(REST_FLOOR_SEC, Math.min(REST_CEIL_SEC, Math.round(sec))). The bounds match existing startRest. Integer rounding is new: existing startRest clamps without Math.round. Normal Settings values are integral; explicitly test fractional legacy preferences.
+2. if (!input.effort) return { seconds: base, deltaSec: 0, reasonKind: 'ungraded' }. THIS IS THE WHOLE BACKWARD-COMPATIBILITY STORY: at reps-blur time the effort has not been tapped yet, so the grade is exactly the person's own default and the timer is identical to today's. No compound multiplier or strength floor; only the documented bounds/integer normalization. Do not "improve" this by applying the compound multiplier without an effort rating.
 3. const compound = !!input.pattern && COMPOUND_PATTERN.test(input.pattern)  (COMPOUND_PATTERN is already exported from bands.ts:88).
 4. const graded = base * REST_EFFORT_MULT[input.effort] * (compound ? REST_COMPOUND_MULT : 1)
 5. const strengthGoal = input.goal === 'strength' || input.goal === 'strength_muscle'   (same predicate planners/rest.ts:8 already uses to decide who wants REST_STRENGTH_SEC as their default; keeping them in step is the point).
 6. const floored = (strengthGoal && compound && input.mode === 'weighted') ? Math.max(graded, REST_STRENGTH_SEC) : graded
 7. const seconds = clamp(Math.round(floored / REST_ROUND_SEC) * REST_ROUND_SEC)
-8. reasonKind, first match wins:
+8. Return `deltaSec = seconds - base` alongside seconds and reasonKind. This delta is computed in the brain, not a display template. reasonKind, first match wins:
    - seconds === base                  -> 'base'          (checked FIRST: never claim a reason when the number did not move — covers ideal/isolation, and covers a clamp that swallowed the multiplier at base 15 or base 600)
    - floored > graded                  -> 'strength_floor' (the floor was the binding constraint)
    - compound && effort === 'ideal'    -> 'compound'
@@ -92,7 +92,7 @@ The one principles.json edit is prose only: the `appUse` string on the existing 
 
 ## Files to create
 
-### `/home/user/M-arc/src/brain/live.ts`
+### `src/brain/live.ts`
 The live session's deterministic helpers: how long to rest after a set, and what the running timer is counting towards. Pure functions over plain data, like the rest of brain/ — numbers and tags out, never prose. First file in brain/ about the live session rather than history.
 
 ```ts
@@ -101,6 +101,8 @@ export type RestReasonKind = 'ungraded' | 'base' | 'easy' | 'max' | 'compound' |
 export interface RestGrade {
   /** Seconds the timer should run end to end. Always an integer in [REST_FLOOR_SEC, REST_CEIL_SEC]. */
   seconds: number;
+  /** Difference from the clamped default at grading time. */
+  deltaSec: number;
   /** Why it differs from the person's own default, or 'base'/'ungraded' when it does not. */
   reasonKind: RestReasonKind;
 }
@@ -137,7 +139,7 @@ export function nextAfterRest(
 //   import { COMPOUND_PATTERN, REST_CEIL_SEC, REST_COMPOUND_MULT, REST_EFFORT_MULT, REST_FLOOR_SEC, REST_ROUND_SEC, REST_STRENGTH_SEC } from './coach/bands';
 ```
 
-### `/home/user/M-arc/tests/live-rest.test.ts`
+### `tests/live-rest.test.ts`
 Vitest (node environment) covering restFor and nextAfterRest as pure functions, and commitSet / regradeRest / adjustRest / pause-resume against the real signals store with fake timers, following the in-memory-storage pattern of tests/coach-apply.test.ts.
 
 ```ts
@@ -147,7 +149,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { initStore, replaceState, state } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
 import { restFor, nextAfterRest, type RestNext } from '@/brain/live';
-import { REST_CEIL_SEC, REST_FLOOR_SEC } from '@/brain/coach/bands';
+import { REST_CEIL_SEC, REST_FLOOR_SEC, REST_MIN_REMAINING_SEC } from '@/brain/coach/bands';
 import { startSession, commitSet, regradeRest, adjustRest, setSet, startRest, stopRest, restRemainingSec, pauseSession, resumeSession, finishSession, discardSession, active, addSet } from '@/slices/workout/session';
 import { pplSplits, PUSH_ID, LEGS_ID } from './coach-helpers';
 
@@ -165,7 +167,7 @@ afterEach(() => { discardSession(); vi.useRealTimers(); });
 
 ## Files to modify
 
-- **`/home/user/M-arc/src/brain/coach/bands.ts`** — Directly under the existing `export const REST_STRENGTH_SEC = 150; export const REST_SHORT_SEC = 120;` (lines 78-80), add the grading bands. `Effort` is already imported at line 6 for RIR_BAND, so no new import:
+- **`src/brain/coach/bands.ts`** — Directly under the existing `export const REST_STRENGTH_SEC = 150; export const REST_SHORT_SEC = 120;` (lines 78-80), add the grading bands. `Effort` is already imported at line 6 for RIR_BAND, so no new import:
 
 /**
  * Live rest grading (rest_intervals). The person's own restDefaultSec is the
@@ -181,25 +183,29 @@ export const REST_ROUND_SEC = 5;
 /** Hard bounds on any rest timer, in seconds. Moved here from src/slices/workout/session.ts (was REST_MIN / REST_MAX) because brain/ may never import from slices/ and restFor() has to clamp with the same numbers session.ts does. */
 export const REST_FLOOR_SEC = 15;
 export const REST_CEIL_SEC = 600;
+/** Remaining-time floor on retime, reduced only to respect the total ceiling. */
+export const REST_MIN_REMAINING_SEC = 5;
 
 Do not change REST_STRENGTH_SEC, REST_SHORT_SEC or COMPOUND_PATTERN.
-- **`/home/user/M-arc/src/brain/index.ts`** — Add `export * from './live';` after `export * from './progression';` (line 6). No name collides with anything already barrelled. `stats.ts` stays out of the barrel, as today.
-- **`/home/user/M-arc/src/core/models.ts`** — Extend `RestState` (lines 99-103) with three optional, transient fields. No `version` bump, no entry in core/migrate.ts, no change to store.ts's normalize() — `normalize` spreads `active` through untouched and every new field is optional, so an in-flight rest saved by an older build simply has them undefined and the banner falls back to today's copy.
+- **`src/brain/index.ts`** — No edit. Import live helpers directly from `@/brain/live`, agreeing with spec 1. The shared module also imports planner helpers; do not pull that graph into the existing barrel.
+- **`src/core/models.ts`** — Extend `RestState` (lines 99-103) with optional, transient metadata. No `version` bump, no entry in core/migrate.ts, no change to store.ts's normalize() — `normalize` spreads `active` through untouched and every new field is optional, so an in-flight rest saved by an older build simply has them undefined and the banner falls back to today's copy.
 
 export interface RestState {
   endsAt: number;
   totalSec: number;
   pausedRemainingSec?: number;
   /** Which logged set started this timer, so a later effort tap can re-grade the timer that set owns and no other. Transient: it dies with the active session. */
-  from?: { entry: number; set: number };
+  from?: { entry: number; set: number; startedAt: string; exerciseId: string };
   /** Why restFor() graded it away from the person's own default. Undefined on a rest from an older build. */
   reasonKind?: RestReasonKind;
   /** The total restFor() asked for. Equal to totalSec exactly while the clock is still honouring the grade; a manual +/-15 or a late clamp makes them differ, which is what hides the reason line. */
   gradedSec?: number;
+  /** Brain-produced delta against the default when graded. */
+  deltaSec?: number;
 }
 
 Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a TYPE-ONLY import, so it creates no runtime edge from core/ to brain/ (core/ has no runtime brain imports today and must keep none). If that import is judged unacceptable, inline the union instead of importing it — but do not remove the field.
-- **`/home/user/M-arc/src/slices/workout/session.ts`** — Five edits. (1) Line 16: delete `export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;` and replace with `/** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */\nexport const REST_STEP = 15;\n/** Never let a running clock drop below this many seconds on a re-time; matches what adjustRest has always floored remaining at. */\nconst MIN_REMAINING_SEC = 5;`. Add imports: `import { REST_CEIL_SEC, REST_FLOOR_SEC } from '@/brain/coach/bands';` and `import { restFor, type RestGrade } from '@/brain/live';` (slices -> brain is the legal direction; findExercise is already imported at line 8, state at line 7).
+- **`src/slices/workout/session.ts`** — The edits below, including topology cleanup in the verification notes. (1) Line 16: delete `export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;` and replace with `/** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */\nexport const REST_STEP = 15;\n/** Never let a running clock drop below this many seconds on a re-time; matches what adjustRest has always floored remaining at. */\nconst MIN_REMAINING_SEC = REST_MIN_REMAINING_SEC;`. Add imports: `import { REST_CEIL_SEC, REST_FLOOR_SEC, REST_MIN_REMAINING_SEC } from '@/brain/coach/bands';` and `import { restFor, type RestGrade } from '@/brain/live';` (slices -> brain is the legal direction; findExercise is already imported at line 8, state at line 7).
 
 (2) resumeSession (lines 55-62) — THE PAUSE BUG. It currently rebuilds rest as a fresh object literal `{ endsAt, totalSec }`, which silently drops `from`, `reasonKind` and `gradedSec` on every pause/resume, so the regrade stops working after a pause and only after a pause. Change the one line to spread:
     const rest = a.rest?.pausedRemainingSec != null
@@ -207,10 +213,10 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
       : a.rest;
 
 (3) startRest (lines 106-111) gains two optional params, so its existing single call site and any test calling startRest(90) keep compiling:
-    export function startRest(sec: number, from?: { entry: number; set: number }, grade?: RestGrade): void {
+    export function startRest(sec: number, from?: { entry: number; set: number; startedAt: string; exerciseId: string }, grade?: RestGrade): void {
       const total = Math.max(REST_FLOOR_SEC, Math.min(REST_CEIL_SEC, Math.round(sec)));
       const endsAt = Date.now() + total * 1000;
-      patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, from, reasonKind: grade?.reasonKind, gradedSec: grade?.seconds } }));
+      patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, from, reasonKind: grade?.reasonKind, gradedSec: grade?.seconds, deltaSec: grade?.deltaSec } }));
       void scheduleRestDone(endsAt);
     }
 
@@ -230,8 +236,7 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
 
     /**
      * Re-time the running rest WITHOUT restarting it: keep what has already
-     * elapsed, replace only what is left. This is what keeps the countdown and
-     * the progress bar monotonic, and it is the single path — there is no
+     * elapsed, replace only what is left. This preserves elapsed rest, and it is the single path — there is no
      * "restart if it only just started" branch.
      */
     function retimeRest(totalTargetSec: number, grade?: RestGrade): void {
@@ -240,14 +245,16 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
       const paused = a.pausedAt != null && a.rest.pausedRemainingSec != null;
       const rem0 = restRemainingSec(a) ?? 0;
       const elapsed = Math.max(0, a.rest.totalSec - rem0);
-      const rem1 = Math.max(MIN_REMAINING_SEC, Math.min(REST_CEIL_SEC, Math.round(totalTargetSec) - elapsed));
-      const total = Math.min(REST_CEIL_SEC, Math.round(elapsed + rem1));
+      if (rem0 <= 0) return; // never revive a completed timer
+      const floorRemaining = Math.min(MIN_REMAINING_SEC, REST_CEIL_SEC - elapsed);
+      const total = Math.max(elapsed + floorRemaining, Math.min(REST_CEIL_SEC, Math.round(totalTargetSec)));
+      const rem1 = total - elapsed;
       const endsAt = Date.now() + rem1 * 1000;
       patchActive(x => {
         if (!x.rest) return x;
         const rest: RestState = { ...x.rest, endsAt, totalSec: total };
         if (paused) rest.pausedRemainingSec = rem1;
-        if (grade) { rest.reasonKind = grade.reasonKind; rest.gradedSec = grade.seconds; }
+        if (grade) { rest.reasonKind = grade.reasonKind; rest.gradedSec = grade.seconds; rest.deltaSec = grade.deltaSec; }
         return { ...x, rest };
       });
       if (paused) void cancelRestDone(); else void scheduleRestDone(endsAt);
@@ -264,7 +271,7 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
 (6) commitSet (lines 71-79) — the only behavioural change is the seconds it passes:
       if (state.value.preferences.autoRest) {
         const g = gradeFor(a, entry, index);
-        startRest(g.seconds, { entry, set: index }, g);
+        startRest(g.seconds, { entry, set: index, startedAt: a.startedAt, exerciseId: a.entries[entry]!.exerciseId }, g);
       }
   Everything else (the isWorkingSet gate, the boolean return, haptic.light()) is untouched. At reps-blur time `effort` is undefined, restFor returns the clamped base, and the timer is identical to today's.
 
@@ -278,6 +285,7 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
     export function regradeRest(entry: number, index: number): void {
       const a = active();
       if (!a?.rest?.from) return;
+      if (a.rest.from.startedAt !== a.startedAt || a.rest.from.exerciseId !== a.entries[entry]?.exerciseId) return;
       if (a.rest.from.entry !== entry || a.rest.from.set !== index) return;
       if (!state.value.preferences.autoRest) return;
       if ((restRemainingSec(a) ?? 0) <= 0) return; // already rung: leave it alone
@@ -286,7 +294,7 @@ Add `import type { RestReasonKind } from '@/brain/live';` at the top. This is a 
   (compute gradeFor once into a local `g` and pass `g.seconds, g` — do not call it twice; the two-call form above is written out only to show both arguments.)
 
 finishSession needs no edit: it sets `active: null`, so `rest` and its `from` go with it.
-- **`/home/user/M-arc/src/app/selectors.ts`** — Add ONE computed at the very end of the file, after `sessionsToday` (line 62), so it is declared after `deload` and `today` which it reads. Add to the existing imports: `applyDeload` alongside `deloadActive` from '@/brain/coach/deload'; `import { suggestNext } from '@/brain/progression';`; `import { nextAfterRest, type RestNext } from '@/brain/live';`.
+- **`src/app/selectors.ts`** — Add ONE computed at the very end of the file, after `sessionsToday` (line 62), so it is declared after `deload` and `today` which it reads. Add to the existing imports: `applyDeload` alongside `deloadActive` from '@/brain/coach/deload'; `import { suggestNext } from '@/brain/progression';`; `import { nextAfterRest, type RestNext } from '@/brain/live';`.
 
 /**
  * What the running rest timer is counting towards: the next set of the same
@@ -302,7 +310,7 @@ export const restNext = computed<RestNext | null>(() => {
   const from = a?.rest?.from;
   if (!a || !from) return null;
   const entry = a.entries[from.entry];
-  if (!entry) return null;
+  if (!entry || from.startedAt !== a.startedAt || from.exerciseId !== entry.exerciseId) return null;
   const suggestion = applyDeload(
     suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises),
     deload.value, today.value,
@@ -311,7 +319,7 @@ export const restNext = computed<RestNext | null>(() => {
 });
 
 That suggestNext + applyDeload pair is character-for-character the call EntryCard already makes at Train.tsx:253, which is precisely why the banner can only ever show a number the user is already looking at.
-- **`/home/user/M-arc/src/slices/workout/Train.tsx`** — Four edits, no other component touched.
+- **`src/slices/workout/Train.tsx`** — Four edits, no other component touched.
 
 (1) Imports: add `restNext` to the selectors import on line 4; add `regradeRest` and `REST_STEP` to the './session' import on line 19; add `import type { RestNext, RestReasonKind } from '@/brain/live';`. formatClock (line 7), formatLoad (line 8) and unit (line 4) are already imported.
 
@@ -353,7 +361,7 @@ That suggestNext + applyDeload pair is character-for-character the call EntryCar
       const base = state.value.preferences.restDefaultSec;
       const honouring = a.rest.gradedSec != null && a.rest.gradedSec === a.rest.totalSec && a.rest.totalSec !== base;
       const reason = honouring && a.rest.reasonKind ? REST_REASON[a.rest.reasonKind] : '';
-      const delta = a.rest.totalSec - base;
+      const delta = a.rest.deltaSec ?? 0;
       const detail = done
         ? (primary ? 'Rest done.' : 'Rest done. Next set.')
         : `Rest · ${formatClock(a.rest.totalSec)}${reason ? ` · ${delta > 0 ? '+' : '−'}${Math.abs(delta)}s, ${reason}` : ''}`;
@@ -372,19 +380,19 @@ That suggestNext + applyDeload pair is character-for-character the call EntryCar
       );
     }
   Note the added Math.max(0, ...) on pct: with the old adjustRest, remaining could exceed totalSec and produce a negative CSS width, which browsers discard. The aria-labels 'Less rest'/'More rest' are unchanged, so nothing that queries by accessible name breaks.
-- **`/home/user/M-arc/src/ui/styles.css`** — Two edits inside the existing `/* Rest banner */` block (lines 143-145), nothing else in the file. Add `flex: none;` to the `.rest .clock` rule so the clock keeps its 72px now that it is a direct flex child, and add one new rule scoped under `.rest` so it can affect no other screen and no other theme token:
+- **`src/ui/styles.css`** — Two edits inside the existing `/* Rest banner */` block (lines 143-145), nothing else in the file. Add `flex: none;` to the `.rest .clock` rule so the clock keeps its 72px now that it is a direct flex child, and add one new rule scoped under `.rest` so it can affect no other screen and no other theme token:
     .rest .rest-next { font-size: 14px; font-weight: 600; line-height: 1.3; }
 Colours come only from the inherited text token — do not introduce a colour here. The growing column already gets `min-width: 0` from `.grow`, which is what makes `.ellipsis` work on a 360px-wide phone.
-- **`/home/user/M-arc/src/data/principles.json`** — On the `rest_intervals` card (line ~169), replace the `appUse` sentence "The app does not log per-set rest, so this is advice about the default." with "The live rest timer also grades the person's own default up for a max-effort or compound set and down for an easy one; it still does not log the rest actually taken." Touch nothing else on the card — its findingKinds stays [] and its proposalKinds stays ["rest_default"].
-- **`/home/user/M-arc/docs/COACH_BRAIN.md`** — Append one dated row to the Decisions log table (starts line 430, `| Date | Decision |`), ending in the deploy consequence, matching the voice of the surrounding rows. Suggested text:
+- **`src/data/principles.json`** — On the `rest_intervals` card (line ~169), replace the `appUse` sentence "The app does not log per-set rest, so this is advice about the default." with "The live rest timer also grades the person's own default up for a max-effort or compound set and down for an easy one; it still does not log the rest actually taken." Touch nothing else on the card — its findingKinds stays [] and its proposalKinds stays ["rest_default"].
+- **`docs/COACH_BRAIN.md`** — Append one dated row to the Decisions log table (starts line 430, `| Date | Decision |`), ending in the deploy consequence, matching the voice of the surrounding rows. Suggested text:
 | 2026-09-20 | Live rest timer is graded, not fixed. `restFor()` (`src/brain/live.ts`) bends the person's own `restDefaultSec` by effort (0.8 / 1 / 1.25) and by 1.2x on a compound, with a 150s floor for compound loaded work on a strength goal; it returns the base untouched until the set is actually rated, so anyone who never taps E/I/M sees the identical timer. Repaired the plumbing defect this exposed: the effort buttons never committed anything, so the coach could not see the rating at the moment it acted — the buttons now call `regradeRest()`. Re-timing is one path only (keep what has elapsed, replace what is left), which forced a fix to `adjustRest`, whose `totalSec` was set to the new REMAINING rather than the new TOTAL and so printed a length the clock was not honouring and snapped the progress bar backwards; and to `resumeSession`, which rebuilt the rest object as a fresh literal and dropped the new fields on every pause. No model call, no payload field, nothing leaves the device. Deploy consequence: after this ships the +/-15 buttons report a longer total than before (correctly), and an in-flight rest saved by the previous build has no `from`, so its banner falls back to the old copy until the next set is logged. |
 
 No new row in the detector table — there is no new detector.
-- **`/home/user/M-arc/docs/ARCHITECTURE.md`** — In the `src/` tree at line 9-12, add `live` to the brain/ line so the file is discoverable: `brain/     pure functions: exposure, recovery, history, prs, trend, progression, balance, effort, weekly, bodyfat, live (rest grading + next-set for the live session), coach/cues, ...`. No other edit.
+- **`docs/ARCHITECTURE.md`** — In the `src/` tree at line 9-12, add `live` to the brain/ line so the file is discoverable: `brain/     pure functions: exposure, recovery, history, prs, trend, progression, balance, effort, weekly, bodyfat, live (rest grading + next-set for the live session), coach/cues, ...`. No other edit.
 
 ## UI spec
 
-SURFACE: exactly one component, `RestBanner` in /home/user/M-arc/src/slices/workout/Train.tsx (currently lines 360-380), rendered globally by App.tsx:27 whenever `state.active.rest` exists. No new screen, no new sheet, no new route, no Settings change.
+SURFACE: exactly one component, `RestBanner` in src/slices/workout/Train.tsx (currently lines 360-380), rendered globally by App.tsx:27 whenever `state.active.rest` exists. No new screen, no new sheet, no new route, no Settings change.
 
 LAYOUT (existing primitives and classes only, plus one scoped CSS rule):
   [ .clock 26px ] [ .grow column: .rest-next / .hint / .bar ] [ −15 ] [ +15 ] [ Skip|OK ]
@@ -410,7 +418,7 @@ DETAIL LINE (`.hint`), while counting:
   no reason:   "Rest · {formatClock(rest.totalSec)}"                       (identical to today's copy)
   with reason: "Rest · {formatClock(rest.totalSec)} · +{n}s, {clause}"     e.g.  Rest · 2:15 · +45s, max effort on a compound
                "Rest · {formatClock(rest.totalSec)} · −{n}s, {clause}"     e.g.  Rest · 1:10 · −20s, easy set
-  n      = Math.abs(rest.totalSec − preferences.restDefaultSec) — the delta against the number the person themselves set with the ±15 rows in Settings.tsx:71. Rendering the delta rather than only the absolute is the whole point: it reads as their 90 seconds being adjusted, not replaced.
+  n      = Math.abs(rest.deltaSec ?? 0), copied from RestGrade.deltaSec — the delta against the number the person themselves set with the ±15 rows in Settings.tsx:71. Rendering the delta rather than only the absolute is the whole point: it reads as their 90 seconds being adjusted, not replaced.
   sign   = '+' (U+002B) / '−' (U+2212, the same glyph Settings already uses)
   clause = REST_REASON[rest.reasonKind] — one of: 'easy set', 'max effort', 'a compound lift', 'easy set on a compound', 'max effort on a compound', 'strength goal, compound lift'
   THE GATE: the reason clause renders only when `rest.gradedSec != null && rest.gradedSec === rest.totalSec && rest.totalSec !== preferences.restDefaultSec`. That means it is silent on every set where the grading did not move the number (ideal effort on an isolation, a clamp at 15s or 600s, and every set where no effort was tapped), and it disappears the moment the person overrides with ±15 or a late clamp bends the target — so the app can never print a duration the clock is not actually honouring.
@@ -433,7 +441,7 @@ INTERACTION AND CONSENT — nothing here changes the person's logged data:
   - There is no accept/dismiss/snooze surface because this emits no Proposal. Do not add one, do not route it through src/slices/coach/apply.ts, do not write a dismissKey.
   - Nothing writes to preferences.restDefaultSec. The person's own number is the base and stays the base.
 
-VISIBLE CHANGE IN THE EXISTING VISUAL GATE: scripts/screenshot-gate.mjs (silent-black only) fills 72.5 / 8, blurs the reps input, then clicks `.effort button.ideal` on the first Push exercise, which migrates to Machine Chest Press (pattern horizontal_push = compound, mode weighted, goal lean, default 90s). Expect screenshots/silent-black-live.png to show "Rest · 1:50 · +20s, a compound lift" with "Set 2 · 72.5 kg × 8" above it. That is correct output, not a regression — do not "fix" it.
+VISIBLE CHANGE IN THE EXISTING VISUAL GATE: scripts/screenshot-gate.mjs (silent-black only) fills 72.5 / 8, blurs the reps input, then clicks `.effort button.ideal` on the first Push exercise, which migrates to Machine Chest Press (pattern horizontal_push = compound, mode weighted, goal lean, default 90s). Expect screenshots/silent-black-live.png to show "Rest · 1:50 · +20s, a compound lift" with Set 2’s actual computed placeholder above it; 72.5 is the typed current load, not an asserted next target. That is correct output, not a regression — do not "fix" it.
 
 ## Data flow
 
@@ -450,7 +458,7 @@ RE-GRADING
 6. The person taps E / I / M at Train.tsx:288. onClick calls setSet(index, j, { effort }) FIRST — that is the existing, explicit, user-initiated write to LoggedSet.effort — then regradeRest(index, j). update() is synchronous, so step 7 already sees the new effort.
 7. regradeRest (session.ts) reads active(); bails unless `rest.from` exists AND matches (entry, index) AND autoRest is on AND restRemainingSec(a) > 0. Calls gradeFor again — now with the tapped effort — and hands the result to retimeRest.
 8. retimeRest reads rest.totalSec and restRemainingSec(a) (which itself honours pausedAt/pausedRemainingSec), derives elapsed = totalSec − remaining, sets rem1 = clamp(target − elapsed, 5, 600) and total = elapsed + rem1, then patchActive spreads `...x.rest` and writes endsAt, totalSec, reasonKind, gradedSec (and pausedRemainingSec when paused). scheduleRestDone(endsAt) reschedules the Android notification for free; cancelRestDone() when paused.
-   Because elapsed is preserved by construction, `remaining <= totalSec` always holds and the progress bar only ever moves forward.
+   Elapsed is preserved and `remaining <= totalSec` holds. The displayed percentage is the truthful fraction of the NEW total and may decrease on an extension: 20/90 becomes 20/135. Do not claim monotonic percentage or clamp the bar to a stale high-water mark.
 
 RENDERING
 9. app/selectors.ts `restNext` (a computed) re-evaluates whenever state.value or today changes — and NOT on the nowMs tick, because it never reads nowMs. It reads state.active.rest.from and the entry, calls suggestNext(sessions, exerciseId, goal, today, entry.sets.length, customExercises) (brain/progression.ts:59) and applyDeload(..., deload.value, today.value) (brain/coach/deload.ts:13), then nextAfterRest(entries, from, suggestion) (brain/live.ts) -> a plain RestNext.
@@ -461,7 +469,7 @@ NETWORK: none. No hop above touches src/ai/**, proxy/**, GroundingPayload, expla
 
 ## Network / offline
 
-none - fully on-device. No route is added or called; no payload field is added, so there is no edit to `onlyKeys` in proxy/src/handler.ts, none to proxy/src/types.ts, and none to validateGrounding()'s blocklist. Nothing in this feature produces text that is ever sent to a model, so allowedNumbers()/validateText() in src/brain/coach/explainer.ts and askAllowedNumbers()/sanitizePersonalAnswer() are not in this path at all. `emptyCoach().remoteExplainer === false` changes nothing about the behaviour — the feature is identical with the online coach on or off, and identical in aeroplane mode. Do not run `npm --prefix proxy run check` expecting changes; there are none. The feature also degrades along its own axis without a network: with no effort tapped, restFor returns the person's own default and the timer is byte-identical to the current build.
+none - fully on-device. No route is added or called; no payload field is added, so there is no edit to `onlyKeys` in proxy/src/handler.ts, none to proxy/src/types.ts, and none to validateGrounding()'s blocklist. Nothing in this feature produces text that is ever sent to a model, so allowedNumbers()/validateText() in src/brain/coach/explainer.ts and askAllowedNumbers()/sanitizePersonalAnswer() are not in this path at all. `emptyCoach().remoteExplainer === false` changes nothing about the behaviour — the feature is identical with the online coach on or off, and identical in aeroplane mode. Run the proxy check as part of the mandatory gate even though there are no proxy changes. The feature also degrades along its own axis without a network: with no effort tapped, restFor returns the person's own default and the timer is byte-identical to the current build.
 
 ## Tests to write
 
@@ -471,22 +479,22 @@ none - fully on-device. No route is added or called; no payload field is added, 
 - tests/live-rest.test.ts :: 'the strength floor applies to loaded compounds only' — goal 'strength', pattern 'squat', mode 'weighted', effort 'easy' -> { seconds: 150, reasonKind: 'strength_floor' }; the same input with mode 'bodyweight' (a Pull-Up, pattern 'vertical_pull') -> 85/'easy_compound'; the same input with pattern 'elbow_flexion' -> 70/'easy'; goal 'lean' with pattern 'squat' -> 85/'easy_compound'. Also assert goal 'strength_muscle' floors identically to 'strength', matching planners/rest.ts's predicate.
 - tests/live-rest.test.ts :: 'a graded rest is never outside the clamps and never lies about landing on the base' — loop every Effort x ['squat','elbow_extension',''] x every GoalId x base in [15, 90, 150, 600, 5, 900] and assert Number.isInteger(seconds), seconds >= REST_FLOOR_SEC, seconds <= REST_CEIL_SEC, and (reasonKind === 'base' || reasonKind === 'ungraded') === (seconds === clamp(base)). Explicitly assert restFor({ base: 600, effort: 'max', pattern: 'squat', mode: 'weighted', goal: 'lean' }) is { seconds: 600, reasonKind: 'base' } — clamped, and therefore silent.
 - tests/live-rest.test.ts :: 'nextAfterRest names the next set, then the next exercise, then the end' — build a plain entries array [{ exerciseId: 'a', name: 'Leg Press', sets: [{},{},{}], done: false, skipped: false }, { exerciseId: 'b', name: 'Romanian Deadlift', sets: [{}], done: false, skipped: false }] and a stub Suggestion whose sets are [{kg:60,reps:8,durationSec:null,note:''}, {kg:62.5,reps:8,...}, {kg:62.5,reps:6,...}]. from {entry:0,set:0} -> { kind:'set', setNumber:2, kg:62.5, reps:8 }; from {entry:0,set:2} -> { kind:'next_exercise', name:'Romanian Deadlift' }; with entry 1 marked skipped -> { kind:'session_end' }; from {entry:9,set:0} -> null; suggestion null -> { kind:'set', setNumber:2, kg:null, reps:null, durationSec:null }; an entry extended to 5 sets against a 3-set suggestion -> from {entry:0,set:3} reuses the LAST target (kg 62.5, reps 6), mirroring Train.tsx:274.
-- tests/live-rest.test.ts :: 'committing a set starts the person's own rest and records which set owns it' — startSession(pplSplits()[0]) (Push, first exercise lib_barbell_bench_press), setSet(0,0,{kg:60,reps:8}), commitSet(0,0) returns true; expect(active()!.rest).toMatchObject({ totalSec: 90, gradedSec: 90, reasonKind: 'ungraded' }); expect(active()!.rest!.from).toEqual({ entry: 0, set: 0 }). Then a second case with preferences.autoRest false: commitSet still returns true and active()!.rest is undefined. Then a third: commitSet(0,1) on an empty set returns false and leaves the rest object untouched.
-- tests/live-rest.test.ts :: 'tapping an effort re-grades the running timer without restarting it' — startSession(legs split), setSet(0,0,{kg:100,reps:8}) (lib_leg_press, pattern 'squat', mode weighted, goal 'lean'), commitSet(0,0); vi.advanceTimersByTime(20_000); setSet(0,0,{effort:'max'}); regradeRest(0,0); expect(active()!.rest!.totalSec).toBe(135); expect(restRemainingSec(active()!)).toBe(115); expect(active()!.rest!.totalSec - restRemainingSec(active()!)!).toBe(20) — elapsed is preserved, which is the monotonic-bar guarantee; expect(active()!.rest!.gradedSec).toBe(135); expect(active()!.rest!.reasonKind).toBe('max_compound').
+- tests/live-rest.test.ts :: 'committing a set starts the person's own rest and records which set owns it' — startSession(pplSplits()[0]) (Push, first exercise lib_barbell_bench_press), setSet(0,0,{kg:60,reps:8}), commitSet(0,0) returns true; expect(active()!.rest).toMatchObject({ totalSec: 90, gradedSec: 90, reasonKind: 'ungraded' }); expect(active()!.rest!.from).toMatchObject({ entry: 0, set: 0, startedAt: active()!.startedAt, exerciseId: active()!.entries[0]!.exerciseId }). Then a second case with preferences.autoRest false: commitSet still returns true and active()!.rest is undefined. Then a third: commitSet(0,1) on an empty set returns false and leaves the rest object untouched.
+- tests/live-rest.test.ts :: 'tapping an effort re-grades the running timer without restarting it' — startSession(legs split), setSet(0,0,{kg:100,reps:8}) (lib_leg_press, pattern 'squat', mode weighted, goal 'lean'), commitSet(0,0); vi.advanceTimersByTime(20_000); setSet(0,0,{effort:'max'}); regradeRest(0,0); expect(active()!.rest!.totalSec).toBe(135); expect(restRemainingSec(active()!)).toBe(115); expect(active()!.rest!.totalSec - restRemainingSec(active()!)!).toBe(20) — elapsed is preserved, which proves elapsed time is preserved; expect(active()!.rest!.gradedSec).toBe(135); expect(active()!.rest!.reasonKind).toBe('max_compound').
 - tests/live-rest.test.ts :: 'clearing the effort grades back down to the person's default, symmetrically' — continuing from the previous state, setSet(0,0,{effort:undefined}); regradeRest(0,0); expect totalSec 90, remaining 70, elapsed still 20, reasonKind 'ungraded', gradedSec 90. Then tap 'easy' -> totalSec 85 (90*0.8*1.2 = 86.4 -> 85), remaining 65.
 - tests/live-rest.test.ts :: 'a late downgrade never drags the progress bar backwards' — commitSet with base 90 on lib_triceps_pushdown, advance 80_000, setSet effort 'easy', regradeRest: the raw target (70) is already behind, so expect totalSec 85, restRemainingSec 5, and totalSec - remaining === 80. Assert 100 - (remaining/totalSec)*100 is strictly greater than the pct measured just before the tap.
 - tests/live-rest.test.ts :: 'a regrade only ever touches the timer its own set started' — commitSet(0,0) starts the timer; setSet(0,1,{effort:'max'}); regradeRest(0,1) leaves rest.totalSec, rest.endsAt and rest.reasonKind byte-identical. Also: regradeRest(1,0) after a timer started by entry 0 is a no-op; regradeRest(0,0) after stopRest() is a no-op and does NOT create a rest object; regradeRest(0,0) with autoRest false is a no-op.
-- tests/live-rest.test.ts :: 'a paused and resumed rest still knows which set owns it' — the pause trap. commitSet(0,0); advance 10_000; pauseSession(); advance 5_000; resumeSession(); expect(active()!.rest!.from).toEqual({ entry: 0, set: 0 }) — this fails against the current resumeSession, which rebuilds the rest object as a fresh literal. Then setSet(0,0,{effort:'max'}); regradeRest(0,0); expect totalSec to be the graded target and elapsed to still be 10.
+- tests/live-rest.test.ts :: 'a paused and resumed rest still knows which set owns it' — the pause trap. commitSet(0,0); advance 10_000; pauseSession(); advance 5_000; resumeSession(); expect(active()!.rest!.from).toMatchObject({ entry: 0, set: 0, startedAt: active()!.startedAt, exerciseId: active()!.entries[0]!.exerciseId }) — this fails against the current resumeSession, which rebuilds the rest object as a fresh literal. Then setSet(0,0,{effort:'max'}); regradeRest(0,0); expect totalSec to be the graded target and elapsed to still be 10.
 - tests/live-rest.test.ts :: 'the +/-15 buttons report the length the clock is actually honouring' — pins the adjustRest fix. commitSet(0,0) with base 90; advance 20_000; adjustRest(15); expect(active()!.rest!.totalSec).toBe(105) and restRemainingSec === 85 (the old code wrote 90 while running 85 more seconds). Then adjustRest(-15) -> totalSec 90, remaining 70. Then with 3 seconds left, adjustRest(-15) floors remaining at 5 rather than ringing instantly. Also assert an adjust does NOT clear gradedSec/reasonKind but DOES make gradedSec !== totalSec, which is the flag the banner uses to stop printing the reason.
 - tests/live-rest.test.ts :: 'the clamps come from bands.ts and hold on every path' — startRest(5) -> totalSec REST_FLOOR_SEC (15); startRest(9_999) -> totalSec REST_CEIL_SEC (600); retime via adjustRest(10_000) never exceeds REST_CEIL_SEC. Import REST_FLOOR_SEC/REST_CEIL_SEC from '@/brain/coach/bands' in the test so a future edit to the bands moves the test with it.
 - tests/live-rest.test.ts :: 'finishing the session takes the timer with it' — commitSet(0,0); finishSession(false); expect(state.value.active).toBeNull(). No assertion on notifications (they no-op under node).
 
 ## Acceptance criteria
 
-- [ ] With no effort rating ever tapped, the rest timer's length, start time and banner copy are byte-identical to the current build: commitSet passes exactly clamp(preferences.restDefaultSec) and the detail line reads 'Rest · 1:30' for a 90s default.
-- [ ] Tapping E, I or M on the set that started the running timer re-times it in place: the countdown never resets to a full new total, the elapsed portion is preserved exactly (totalSec − remaining is unchanged by the tap), and the progress bar's pct never decreases across a regrade.
+- [ ] With no effort rating ever tapped, the rest timer's length and start time match the current build for integral defaults; the new next-set headline is intentionally added: commitSet passes exactly clamp(preferences.restDefaultSec) and the detail line reads 'Rest · 1:30' for a 90s default.
+- [ ] Tapping E, I or M on the set that started the running timer re-times it in place: the countdown never resets to a full new total, the elapsed portion is preserved exactly (totalSec − remaining is unchanged by the tap), and the percentage reflects the new total, even when an extension reduces that percentage.
 - [ ] Tapping the same effort button again clears the rating and grades the timer back down to the person's own restDefaultSec, by the same single path — the timer can go down as well as up.
-- [ ] The number printed on the detail line is always the number the clock is honouring: rest.totalSec is rendered directly, and the '+30s, max effort on a compound' clause appears only when gradedSec === totalSec && totalSec !== restDefaultSec.
+- [ ] The number printed on the detail line is always the number the clock is honouring: rest.totalSec is rendered directly, and the '+45s, max effort on a compound' clause appears only when gradedSec === totalSec && totalSec !== restDefaultSec.
 - [ ] The reason clause is silent on every set where the grading did not move the number — ideal effort on an isolation, any set with no rating, a base clamped at 15s or 600s, and any rest the person has overridden with ±15.
 - [ ] The banner's largest non-clock text is what comes next: 'Set 3 · 62.5 kg × 8' mid-exercise, 'Last set · next up: {name}' after the last planned set, 'Last set · last exercise of the session' when nothing is left. It renders in both the counting and the done state.
 - [ ] Every kg shown in the banner is the same number the corresponding set row already shows as its placeholder — same suggestNext call, same applyDeload, same set index (Math.min(j, sets.length − 1)) — and follows the lb setting through formatLoad.
@@ -495,7 +503,7 @@ none - fully on-device. No route is added or called; no payload field is added, 
 - [ ] Nothing the feature does writes to state.sessions, state.preferences or state.coach. The only writes are state.active.rest (a timer) and the pre-existing, explicitly tapped LoggedSet.effort.
 - [ ] adjustRest(±15) now reports the true total: base 90 with 20s elapsed and +15 gives totalSec 105 with 85 remaining, and pct reads ~19%, not ~6%.
 - [ ] `npm run check` passes (tsc --noEmit with strict + noUncheckedIndexedAccess, all vitest files, build).
-- [ ] `npm run gate` passes with no console errors in all five themes, and screenshots/silent-black-live.png shows the graded banner ('Rest · 1:50 · +20s, a compound lift' over 'Set 2 · 72.5 kg × 8') with no horizontal overflow at 390px.
+- [ ] `npm run gate` passes with no console errors in all five themes, and screenshots/silent-black-live.png shows the graded banner ('Rest · 1:50 · +20s, a compound lift' over the computed Set 2 placeholder) with no horizontal overflow at 390px.
 - [ ] `npm --prefix proxy run check` is unchanged and unaffected — no proxy file is touched.
 - [ ] grep confirms REST_MIN and REST_MAX no longer exist anywhere in src/, and no file under src/brain/ imports from src/slices/.
 
@@ -532,7 +540,19 @@ none - fully on-device. No route is added or called; no payload field is added, 
 - Do NOT let either new text line wrap or push the buttons off screen. Both carry .ellipsis inside the .grow column (which supplies min-width: 0); the only new CSS is one rule scoped under .rest plus flex: none on .rest .clock.
 - Do NOT 'fix' the changed gate screenshot. scripts/screenshot-gate.mjs clicks an effort button on a compound lift, so a graded banner in screenshots/silent-black-live.png is the expected new output.
 
-## Open questions for the owner
+## Verification addendum — binding implementation details
+
+- Build `live.ts` once, direct imports only. Spec 1 owns substitutes; this spec appends rest exports. New signatures/types are proposed, not existing exports.
+- `rest.from` must additionally carry `startedAt: string` and `exerciseId: string`, captured by `commitSet`; regrade and the `restNext` selector compare both against current active state. `nextAfterRest` itself also rejects invalid negative/non-integer/out-of-range set indices, skipped/done owning entries, and an already-filled immediate next row (return null for that row rather than claiming it is next).
+- In `removeEntry`, `removeSet`, `skipEntry` when skipping, and spec 1's `replaceEntry`, clear rest ownership/grade metadata when topology changes; keep the existing countdown. Never let an index shift transfer the rest to another exercise. Add these functions to this spec's session.ts edit list.
+- All complete RestGrade equality assertions include `deltaSec`; shorthand seconds/reason examples above omit it only for readability. Add `retime near the 600-second ceiling preserves elapsed and total` with elapsed 598, target 600, remainder 2. The 5-second floor cannot override the 600-second total cap.
+- Add `longer rest preserves elapsed but truthfully lowers completion fraction`: elapsed 20, total 90→135, remaining 70→115, pct 22.22→14.81. This corrects the impossible monotonic-percent promise; it is not a production timer regression.
+- The visual fixture's 72.5 kg is a typed actual load. It is NOT necessarily the next target. Assert the banner equals the fixture's `applyDeload(suggestNext(...)).sets[1]` (or spec 4 effective override after it ships), not a hardcoded 72.5. With no effort, only duration behavior is unchanged; the new headline still appears.
+- Once spec 4 lands, the selector and set row both call `effectiveSetTarget`; never overwrite an accepted live override by recomputing history alone.
+- New fields on a resumed/imported rest are optional, but guard their runtime shape before use because normalize() does not validate nested active state. Reject malformed ownership/grade metadata locally; do not rewrite logged data.
+- Defaults below are settled for implementation: the multiplier applies to every rated compound, both strength goals use the floor, no final-set cap, and manual adjustment hides the reason while its total differs from the grade. Tuning is deferred.
+
+## Deferred tuning notes (not implementation blockers)
 
 - Should REST_COMPOUND_MULT (1.2) apply at 'ideal' effort, or only at 'max'? As specified it applies at every rated effort, which means most compound sets get +20% and therefore show a reason line — the grading is not 'silent on about half of sets' as the value judge hoped, it is silent mainly on isolation work. Defensible (the rest_intervals card recommends 2-3 minutes on compounds generally), but it makes the feature louder than the note assumed. Owner call: keep as specified, or gate the compound multiplier behind effort !== 'easy', or behind effort === 'max' only.
 - The final-set cap from the merge note is deliberately NOT implemented. Capping the rest after an exercise's last planned set at the base is arguable (the next set is a different movement, so the extension earned by the muscle you just worked does not transfer) but it is also often wrong (bench -> incline press is the same muscle), it is hard to state in one line of copy, and it makes restFor depend on set position. Owner call: leave it out, or add `lastSet: boolean` to RestInput with `if (lastSet) seconds = Math.min(seconds, base)` and a 'changing exercise' reason clause.
