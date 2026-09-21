@@ -1,18 +1,20 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { closedWeekReview, deload, insights, recovery, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
+import { closedWeekReview, deload, insights, presenceMoment, recovery, report, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
 import { formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
-import { CATEGORY_LABEL } from '@/brain/coach/words';
-import { acceptProposal } from '../coach/apply';
+import { COACH_NAME } from '@/ui/chatRender';
+import { acceptProposal, dismissProposal } from '../coach/apply';
 import { showToast } from '@/app/toast';
 import { startSession } from '../workout/session';
-import { INSIGHT_COLOR } from '../coach/Coach';
+import { InsightSheet, SuggestionSheet } from '../coach/Coach';
+import { PresenceLauncher } from '../coach/Presence';
+import { dismissPresenceMoment } from '../coach/presence';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';
@@ -33,7 +35,10 @@ export function Today() {
   const recovering = rec.filter(r => r.recovering).sort((a, b) => a.pct - b.pct);
   const ready = rec.filter(r => !r.recovering && r.lastTrainedAt).length;
   const w = week.value;
-  const top = insights.value[0];
+  const moment = presenceMoment.value;
+  const [momentOpen, setMomentOpen] = useState(false);
+  const openInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
+  const openSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   const plan = todaySuggestion.value;
   const waiting = suggestions.value.filter(x => x.kind !== 'today_plan').length;
   const accept = () => { if (plan) showToast(acceptProposal(plan.proposal, today.value)); };
@@ -140,19 +145,29 @@ export function Today() {
         </Card>
       </Section>
 
-      {(top || waiting > 0) && (
+      {(moment || waiting > 0) && (
         <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
           <div class="stack-sm">
-            {top && (
-              <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
-                <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>
-                <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
-                <p class="small muted">{top.action}</p>
-              </Card>
+            {moment && (
+              <PresenceLauncher
+                moment={moment}
+                label={COACH_NAME}
+                onOpen={() => setMomentOpen(true)}
+                onDismiss={m => dismissPresenceMoment(m)}
+              />
             )}
             {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label={`${waiting} suggestion${waiting === 1 ? '' : 's'} waiting — open Coach`}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
           </div>
         </Section>
+      )}
+      {momentOpen && openInsight && <InsightSheet insight={openInsight} onClose={() => setMomentOpen(false)} />}
+      {momentOpen && openSuggestion && (
+        <SuggestionSheet
+          suggestion={openSuggestion}
+          onAccept={() => { showToast(acceptProposal(openSuggestion.proposal, today.value)); setMomentOpen(false); }}
+          onDismiss={() => { dismissProposal(openSuggestion.proposal, today.value, report.value); setMomentOpen(false); }}
+          onClose={() => setMomentOpen(false)}
+        />
       )}
 
       {s.preferences.showSpark && (

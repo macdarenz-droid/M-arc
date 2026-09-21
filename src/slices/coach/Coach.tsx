@@ -207,7 +207,7 @@ function Evidence({ cards }: { cards: PrincipleCard[] }) {
   );
 }
 
-function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
+export function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
   const next = ex ? applyDeload(suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises), deload.value, today.value) : null;
@@ -261,7 +261,7 @@ function ChronicSkipSheet({ suggestions: group, onAccept, onDismiss, onClose }: 
   );
 }
 
-function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { suggestion: Suggestion; onAccept: () => void; onDismiss: () => void; onClose: () => void }) {
+export function SuggestionSheet({ suggestion: sg, onAccept, onDismiss, onClose }: { suggestion: Suggestion; onAccept: () => void; onDismiss: () => void; onClose: () => void }) {
   return (
     <Sheet title={sg.title} onClose={onClose}>
       <div class="stack">

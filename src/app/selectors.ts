@@ -17,6 +17,7 @@ import { readinessToday } from '@/brain/readiness';
 import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain/coach/verdict';
 import { weekReview } from '@/brain/coach/review';
 import type { BrainContext } from '@/brain/coach/context';
+import { selectMoment, type CoachingMoment } from '@/brain/coach/moments';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -77,6 +78,14 @@ export const insights = computed(() => insightsFrom(report.value, renderContext.
 export const spark = computed(() => dailySpark(insights.value, today.value));
 export const suggestions = computed(() => suggestionsFrom(report.value, state.value.coach, renderContext.value));
 export const todaySuggestion = computed(() => suggestions.value.find(s => s.kind === 'today_plan'));
+
+/** The one shared presence cue (docs/escobar-presence), or null. Pure derivation — no I/O. */
+export const presenceMoment = computed<CoachingMoment | null>(() => selectMoment({
+  suggestions: suggestions.value.filter(s => s.kind !== 'today_plan'),
+  insights: insights.value,
+  tone: state.value.coach.presence?.tone ?? 'steady',
+  dismissed: state.value.coach.presence?.dismissed ?? [],
+}));
 export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));
 
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
