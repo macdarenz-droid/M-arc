@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { appendAskTurn, clearAskThread, clearStatedConstraints, dismissAskItem, mergeStatedConstraints, updateAskTurn } from '@/slices/coach/askMemory';
+import { appendAskTurn, askRequestGeneration, clearAskThread, clearStatedConstraints, dismissAskItem, invalidateAskRequests, mergeStatedConstraints, updateAskTurn } from '@/slices/coach/askMemory';
 import { emptyCoach, MAX_ASK_THREAD_TURNS, MAX_STATED_CONSTRAINT_CHARS, MAX_STATED_CONSTRAINTS, type AskThreadTurn } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { freshState } from '@/core/models';
@@ -115,5 +115,23 @@ describe('dismissAskItem', () => {
     replaceState({ ...state.value, coach: { ...state.value.coach, askThread: [assistantTurn('replacement')] } });
     expect(dismissAskItem(item)).toBe(false);
     expect(state.value.coach.askThread[0]!.draftDismissed).toBeUndefined();
+  });
+});
+
+describe('invalidateAskRequests', () => {
+  it('bumps askRequestGeneration by exactly one per call, monotonically', () => {
+    const before = askRequestGeneration.value;
+    invalidateAskRequests();
+    expect(askRequestGeneration.value).toBe(before + 1);
+    invalidateAskRequests();
+    invalidateAskRequests();
+    expect(askRequestGeneration.value).toBe(before + 3);
+  });
+
+  it('a generation captured before invalidation no longer matches the current value — the shape AskSheet.send() checks', () => {
+    const captured = askRequestGeneration.value;
+    expect(askRequestGeneration.value).toBe(captured); // unchanged until something calls invalidate
+    invalidateAskRequests();
+    expect(askRequestGeneration.value).not.toBe(captured);
   });
 });

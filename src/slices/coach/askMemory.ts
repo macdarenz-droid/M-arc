@@ -9,10 +9,29 @@
  * only place touching `update`/`flushSave` — everything here is testable
  * without a store or a component.
  */
+import { signal } from '@preact/signals';
 import type { AskThreadTurn, CoachState } from '@/core/models';
 import { MAX_ASK_THREAD_TURNS, MAX_STATED_CONSTRAINTS, MAX_STATED_CONSTRAINT_CHARS } from '@/core/models';
 import { flushSave, state, update } from '@/core/store';
 import { askTurnFingerprint, type PendingCoachItem } from '@/brain/coach/reopen';
+
+/**
+ * Bumped by every call site that wipes or replaces the conversation this
+ * sheet is talking about: AskSheet's own "Clear conversation", Settings'
+ * "Ask Escobar" reset, "Reset everything", and "Restore backup" (see their
+ * call sites for `invalidateAskRequests`). AskSheet.send() captures the
+ * value before its network call and checks it again after — a reply that
+ * arrives after the conversation it was answering no longer exists is
+ * dropped instead of appended to whatever now-different (or empty) thread
+ * is showing (01-ARCHITECTURE.md §4: "stale success/error/finally cannot
+ * alter newer state"). A plain signal, not part of CoachState, because it
+ * describes in-memory request identity, not anything worth persisting.
+ */
+export const askRequestGeneration = signal(0);
+
+export function invalidateAskRequests(): void {
+  askRequestGeneration.value++;
+}
 
 /** Appends one turn, dropping the oldest once past MAX_ASK_THREAD_TURNS. */
 export function appendAskTurn(coach: CoachState, turn: AskThreadTurn): CoachState {

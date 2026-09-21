@@ -31,7 +31,7 @@ import { WEEKDAY_LABEL } from '@/core/dates';
 import { MAX_SPLITS, applyScheduleDraft, applySplitDraft } from '../workout/splits';
 import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId, remoteEnabled } from './remote';
-import { appendAskTurn, clearAskThread, mergeStatedConstraints, updateAskTurn } from './askMemory';
+import { appendAskTurn, askRequestGeneration, clearAskThread, invalidateAskRequests, mergeStatedConstraints, updateAskTurn } from './askMemory';
 import { askTurnFingerprint, pendingCoachItems, type PendingCoachItem } from '@/brain/coach/reopen';
 
 /**
@@ -267,6 +267,11 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
       splits: s.splits, customExercises: s.customExercises, schedule: s.schedule, bmi: computeBmi(s.profile),
       stats: askStats.value,
     });
+    // Captured before the network call: if a "Clear conversation", Settings' "Ask Escobar"
+    // reset, "Reset everything" or "Restore backup" bumps this while the request is in
+    // flight, the reply below is answering a conversation that no longer exists and must be
+    // dropped, not appended to whatever now-different thread is showing.
+    const myGeneration = askRequestGeneration.value;
     update(st => ({ ...st, coach: appendAskTurn(st.coach, { role: 'user', text: q }) }));
     flushSave();
     setQuestion('');
@@ -274,6 +279,7 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
     setSending(true);
     try {
       const r = await requestAskAnswer(payload, s.customExercises, { url: s.coach.explainerUrl, deviceId: ensureDeviceId() });
+      if (askRequestGeneration.value !== myGeneration) return;
       if (r.ok) {
         update(st => {
           const coach = appendAskTurn(st.coach, { role: 'assistant', text: r.answer, scope: r.scope, category: r.category, drafts: r.drafts, applied: r.drafts.map(() => false), scheduleDraft: r.scheduleDraft, scheduleApplied: false, concern: r.concern, trimmed: r.trimmed, actions: r.actions, actionPrev: r.actions.map(() => null) });
@@ -291,7 +297,7 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
       <div class="ask-thread" ref={threadRef}>
         {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, describe a split to build or change, or ask about rearranging your weekly schedule. Personal answers, splits and schedule changes only use the findings, real exercises and real schedule below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
         {history.length > 0 && !savedOnly && (
-          <Button variant="quiet" size="sm" onClick={() => { update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
+          <Button variant="quiet" size="sm" onClick={() => { invalidateAskRequests(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
             Clear conversation
           </Button>
         )}

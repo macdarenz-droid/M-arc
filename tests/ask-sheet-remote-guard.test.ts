@@ -46,3 +46,53 @@ describe('AskSheet: remote-enabled guard lives inside send(), not just the calle
     expect(actionsSection).not.toContain('remoteEnabled');
   });
 });
+
+/**
+ * P03: a reply that arrives after its conversation was cleared/reset/restored
+ * must be dropped, not appended to a now-different thread (01-ARCHITECTURE.md
+ * §4: "stale success/error/finally cannot alter newer state"). askMemory.ts's
+ * `askRequestGeneration`/`invalidateAskRequests` are tested behaviorally in
+ * tests/coach-ask-memory.test.ts; these source checks confirm every call site
+ * that should bump the generation actually does, and that send() captures and
+ * re-checks it around (not just before) the network call.
+ */
+describe('AskSheet.send(): captures the request generation and drops a stale reply', () => {
+  const source = readFileSync(new URL('../src/slices/coach/AskSheet.tsx', import.meta.url), 'utf8');
+
+  it('captures askRequestGeneration before the network call and checks it again after, before touching state', () => {
+    expect(source).toContain("import { appendAskTurn, askRequestGeneration, clearAskThread, invalidateAskRequests, mergeStatedConstraints, updateAskTurn } from './askMemory';");
+    const sendStart = source.indexOf('const send = async () => {');
+    const captureIdx = source.indexOf('const myGeneration = askRequestGeneration.value;', sendStart);
+    const awaitIdx = source.indexOf('await requestAskAnswer(', sendStart);
+    const checkIdx = source.indexOf('if (askRequestGeneration.value !== myGeneration) return;', sendStart);
+    const appendIdx = source.indexOf('appendAskTurn(st.coach, { role: \'assistant\'', sendStart);
+    expect(captureIdx).toBeGreaterThan(sendStart);
+    expect(awaitIdx).toBeGreaterThan(captureIdx);
+    expect(checkIdx).toBeGreaterThan(awaitIdx);
+    expect(appendIdx).toBeGreaterThan(checkIdx);
+  });
+
+  it('"Clear conversation" bumps the generation before clearing the thread', () => {
+    expect(source).toContain("onClick={() => { invalidateAskRequests(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}");
+  });
+});
+
+describe('Settings: every reset/restore that changes what a stale Ask reply could land on bumps the generation first', () => {
+  const source = readFileSync(new URL('../src/slices/settings/Settings.tsx', import.meta.url), 'utf8');
+
+  it('imports invalidateAskRequests', () => {
+    expect(source).toContain("import { clearAskMemory, invalidateAskRequests } from '../coach/askMemory';");
+  });
+
+  it('"Ask Escobar" reset, legacy restore, normal restore and "Reset everything" all call it immediately before their replaceState/clearAskMemory call', () => {
+    const callSites = [
+      'invalidateAskRequests(); update(x => ({ ...x, coach: clearAskMemory(x.coach) }));',
+      'invalidateAskRequests();\n        replaceState(converted);',
+      'invalidateAskRequests();\n      replaceState({ ...next, health: { connected: false } });',
+      'invalidateAskRequests(); replaceState(freshState());',
+    ];
+    for (const site of callSites) expect(source).toContain(site);
+    // Exactly four invalidation calls — one per state-replacing/clearing site, no more, no fewer.
+    expect(source.match(/invalidateAskRequests\(\)/g)).toHaveLength(4);
+  });
+});
