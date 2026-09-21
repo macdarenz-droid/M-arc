@@ -30,7 +30,7 @@ import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { WEEKDAY_LABEL } from '@/core/dates';
 import { MAX_SPLITS, applyScheduleDraft, applySplitDraft } from '../workout/splits';
 import { resyncReminders } from '../settings/reminders';
-import { ensureDeviceId } from './remote';
+import { ensureDeviceId, remoteEnabled } from './remote';
 import { appendAskTurn, clearAskThread, mergeStatedConstraints, updateAskTurn } from './askMemory';
 import { askTurnFingerprint, pendingCoachItems, type PendingCoachItem } from '@/brain/coach/reopen';
 
@@ -249,6 +249,13 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
   const send = async () => {
     const q = question.trim();
     if (savedOnly || !q || sending) return;
+    // The composer is disabled whenever remoteEnabled is off (see render below), but that's a
+    // UI-level guard the parent used to be the only enforcement for (docs/escobar-presence
+    // §4: "the current AskSheet.send relies on Coach's remote-enabled mounting"). If the
+    // person flips the setting off in Settings while this sheet is already open elsewhere, or
+    // a stale click slips past a disabled-but-not-yet-re-rendered button, the handler itself
+    // must still refuse — checked fresh here, not captured at mount.
+    if (!remoteEnabled.value) { setError('Online coach is off. Turn it on in Settings to ask a question.'); return; }
     const s = state.value;
     const plainHistory: AskTurn[] = history.map(h => ({ role: h.role, text: h.text }));
     // Constraints first: they're rarer and more load-bearing (an injury to work around) than a
@@ -348,7 +355,9 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClo
       {error && <p class="hint" style={{ color: 'var(--negative)', marginBottom: 8 }}>{error}</p>}
       {savedOnly
         ? <p class="small muted">Review saved drafts. Online questions are off.</p>
-        : <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />}
+        : !remoteEnabled.value
+          ? <p class="small muted">Online coach is off. Turn it on in Settings to ask a question — saved drafts above still work.</p>
+          : <ChatInputRow value={question} setValue={setQuestion} sending={sending} onSubmit={e => { e.preventDefault(); void send(); }} placeholders={ASK_SUGGESTIONS} maxLength={MAX_QUESTION_CHARS} />}
     </Sheet>
   );
 }
