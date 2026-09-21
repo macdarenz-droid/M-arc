@@ -9,14 +9,19 @@ import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
-import { suggestNext, previousSet } from '@/brain/progression';
+import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload } from '@/brain/coach/deload';
+import { substitutes, type Substitute } from '@/brain/live';
+import { contextFromState } from '@/brain/coach/context';
+import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
+import { recentPainMuscles } from '@/brain/coach/planners/shared';
+import { equipmentGroup } from '@/brain/coach/cues';
 import { endDeload } from '../coach/apply';
 import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { isLiveRecord } from '@/brain/prs';
-import { sessionEmphasis } from '@/brain/exposure';
+import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, replaceEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { ImportProgrammeSheet } from './ImportProgramme';
@@ -32,6 +37,11 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
   { v: 'ideal', l: 'I', title: 'Ideal: 1 to 3 reps left' },
   { v: 'max', l: 'M', title: 'Max: nothing left' },
 ];
+
+/** A Suggestion's headline target, with kg rendered in the user's unit. */
+function fmtTarget(sg: Suggestion, u: 'kg' | 'lb'): string {
+  return sg.kg != null && u === 'lb' ? sg.target.replace(`${sg.kg} kg`, formatLoad(sg.kg, u)) : sg.target;
+}
 
 /** Shown once after a session is saved, then dismissed. */
 const lastFinish = signal<FinishSummary | null>(null);
@@ -114,7 +124,7 @@ function Splits() {
                 return (
                   <Row key={se.exerciseId} trailing={<span class="hint num">{se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
-                    <div class="hint ellipsis">{next.kg != null && u === 'lb' ? next.target.replace(`${next.kg} kg`, formatLoad(next.kg, u)) : next.target} · {next.reason}</div>
+                    <div class="hint ellipsis">{fmtTarget(next, u)} · {next.reason}</div>
                   </Row>
                 );
               })}
@@ -193,7 +203,7 @@ function LiveSession() {
   const a = active()!;
   const split = s.splits.find(x => x.id === a.splitId);
   const [open, setOpen] = useState<number>(a.entries.findIndex(e => !e.done && !e.skipped));
-  const [picking, setPicking] = useState(false);
+  const [picking, setPicking] = useState<{ mode: 'add' } | { mode: 'replace'; index: number; expected: { startedAt: string; exerciseId: string } } | null>(null);
   const [finishing, setFinishing] = useState(false);
   useEffect(() => { setTicking(true); return () => setTicking(false); }, []);
   const elapsed = elapsedSec(a, nowMs.value);
@@ -211,11 +221,25 @@ function LiveSession() {
       </div>
 
       <div class="stack">
-        {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} />)}
-        <Button onClick={() => setPicking(true)}><IconPlus size={16} /> Add exercise to this session</Button>
+        {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} onBrowse={expected => setPicking({ mode: 'replace', index: i, expected })} />)}
+        <Button onClick={() => setPicking({ mode: 'add' })}><IconPlus size={16} /> Add exercise to this session</Button>
       </div>
 
-      {picking && <ExercisePicker exclude={a.entries.map(e => e.exerciseId)} onClose={() => setPicking(false)} onPick={ex => { addExerciseToSession(ex); setPicking(false); }} />}
+      {picking && <ExercisePicker exclude={a.entries.map(e => e.exerciseId)} onClose={() => setPicking(null)} onPick={ex => {
+        if (picking.mode === 'replace') {
+          const latest = active();
+          const slot = latest?.entries[picking.index];
+          if (!latest || latest.startedAt !== picking.expected.startedAt || !slot || slot.exerciseId !== picking.expected.exerciseId) {
+            showToast('This exercise has changed; open its options again.');
+            setPicking(null);
+            return;
+          }
+          const n = slot.sets.filter(isWorkingSet).length;
+          if (n > 0 && !confirm(`Replace ${slot.name}? The ${n} set${n === 1 ? '' : 's'} you logged on it are cleared from this session.`)) { setPicking(null); return; }
+          if (!replaceEntry(picking.index, ex, picking.expected)) showToast('This exercise has changed or is already in this session');
+        } else addExerciseToSession(ex);
+        setPicking(null);
+      }} />}
       {finishing && (
         <Sheet title={remaining.length ? 'Exercises remaining' : 'Finish session?'} onClose={() => setFinishing(false)}>
           <div class="stack">
@@ -245,24 +269,86 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
   );
 }
 
-function EntryCard({ index, entry, open, onToggle, onDone, onRemove }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void; onRemove: () => void }) {
+function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void; onRemove: () => void; onBrowse: (expected: { startedAt: string; exerciseId: string }) => void }) {
   const s = state.value;
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
   const next = applyDeload(suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises), deload.value, today.value);
-  const [menu, setMenu] = useState(false);
+  const [menu, setMenu] = useState<{ startedAt: string; exerciseId: string } | null>(null);
+  const [swap, setSwap] = useState<{ mode: 'any' | 'different_equipment'; rows: Substitute[] } | null>(null);
+  const [confirmSwap, setConfirmSwap] = useState<{ sub: Substitute; count: number } | null>(null);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
+  const loggedHere = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
+
+  const closeChanged = () => {
+    setConfirmSwap(null);
+    setSwap(null);
+    setMenu(null);
+    showToast('This exercise has changed; open its options again.');
+  };
+  const currentSlot = () => {
+    const latest = active();
+    const slot = latest?.entries[index];
+    return menu && latest?.startedAt === menu.startedAt && slot?.exerciseId === menu.exerciseId ? { latest, slot } : null;
+  };
+  // Computed on tap, never in the render body: usageProfile is an O(all logged sets)
+  // scan and adjustedRecovery is ~20 ms — both would otherwise run on every keystroke.
+  const openSwaps = (m: 'any' | 'different_equipment') => {
+    const current = currentSlot();
+    if (!current) { closeChanged(); return; }
+    const c = contextFromState(state.value, today.value, Date.now());
+    const ready = new Map(adjustedRecovery(c).map(r => [r.muscle, r.adjustedPct]));
+    const rows = substitutes(c, current.slot.exerciseId, current.slot.sets.length, {
+      mode: m,
+      exclude: new Set(current.latest.entries.map(e => e.exerciseId)),
+      readiness: muscle => ready.get(muscle) ?? 100,
+      avoid: recentPainMuscles(detectNoteFlags(c)),
+    });
+    setSwap({ mode: m, rows });
+  };
+  const doSwap = (sub: Substitute, confirmedCount?: number) => {
+    const current = currentSlot();
+    if (!current) { closeChanged(); return; }
+    const currentCount = current.slot.sets.filter(isWorkingSet).length;
+    if (currentCount > 0 && confirmedCount === undefined) {
+      setConfirmSwap({ sub, count: currentCount });
+      return;
+    }
+    if (confirmedCount !== undefined && currentCount !== confirmedCount) {
+      setConfirmSwap({ sub, count: currentCount });
+      showToast('Your logged sets changed; check the updated count before swapping.');
+      return;
+    }
+    const pick = findExercise(sub.exerciseId, state.value.customExercises);
+    const original = findExercise(menu!.exerciseId, state.value.customExercises);
+    if (!pick || !replaceEntry(index, pick, menu!)) {
+      showToast('This exercise has changed or is already in this session');
+      return;
+    }
+    const undoable = currentCount === 0 && !!original;
+    const swappedSession = current.latest.startedAt;
+    setConfirmSwap(null);
+    setSwap(null);
+    setMenu(null);
+    showToast(`Swapped in ${pick.name}`, undoable ? 'Undo' : undefined, undoable ? () => {
+      const latest = active();
+      const slot = latest?.entries[index];
+      if (!latest || latest.startedAt !== swappedSession || !slot || slot.exerciseId !== pick.id || slot.sets.some(set => Object.values(set).some(value => value !== undefined)) || !replaceEntry(index, original!, { startedAt: swappedSession, exerciseId: pick.id })) {
+        showToast('This exercise has changed; Undo is no longer available');
+      }
+    } : undefined);
+  };
 
   return (
     <Card class={`exercise ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
         <div class="grow">
           <div class="row"><b class="ellipsis">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
-          <div class="hint ellipsis">{next.kg != null && u === 'lb' ? next.target.replace(`${next.kg} kg`, formatLoad(next.kg, u)) : next.target} · {logged}/{entry.sets.length} sets</div>
+          <div class="hint ellipsis">{fmtTarget(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
-        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setMenu(true); }}><IconMore /></Button>
+        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); const latest = active(); const slot = latest?.entries[index]; if (latest && slot) setMenu({ startedAt: latest.startedAt, exerciseId: slot.exerciseId }); }}><IconMore /></Button>
         <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
       </div>
       {open && (
@@ -302,12 +388,65 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove }: { index: 
           </div>
         </div>
       )}
-      {menu && (
-        <Sheet title={entry.name} onClose={() => setMenu(false)}>
+      {menu && !swap && !confirmSwap && (
+        <Sheet title={entry.name} onClose={() => setMenu(null)}>
           <div class="stack-sm">
-            <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
-            <Button variant="danger" onClick={() => { onRemove(); setMenu(false); }}>Remove from this session</Button>
+            <Row onClick={() => openSwaps('different_equipment')}>
+              <div>Equipment is taken</div>
+              <div class="hint">Same muscles, different kit</div>
+            </Row>
+            <Row onClick={() => openSwaps('any')}>
+              <div>Not doing this one today</div>
+              <div class="hint">Same muscles, best match from your history</div>
+            </Row>
+            <Button onClick={() => { if (!currentSlot()) { closeChanged(); return; } skipEntry(index, !entry.skipped); setMenu(null); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            <Button variant="danger" onClick={() => { if (!currentSlot()) { closeChanged(); return; } onRemove(); setMenu(null); }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
+          </div>
+        </Sheet>
+      )}
+      {menu && swap && !confirmSwap && (
+        <Sheet title={`Swap ${entry.name}`} onClose={() => { setSwap(null); setMenu(null); }}>
+          <div class="stack-sm">
+            <p class="hint">{swap.mode === 'different_equipment' && ex ? `Same muscles, off the ${equipmentGroup(ex.equipment).toLowerCase()}.` : 'Same muscles, ranked by what you already train.'} Targets use your own sessions where available; new exercises show a starting suggestion. Nothing changes until you pick one.</p>
+            <div class="list">
+              {swap.rows.map(sub => (
+                <Row
+                  key={sub.exerciseId}
+                  onClick={() => doSwap(sub)}
+                  trailing={sub.useCount === 0 ? <Chip>New to you</Chip> : sub.target.confidence === 'low' ? <Chip tone="warning">Rough target</Chip> : <Chip>{sub.useCount} session{sub.useCount === 1 ? '' : 's'}</Chip>}
+                >
+                  <div class="ellipsis">{sub.name}</div>
+                  <div class="hint ellipsis">{fmtTarget(sub.target, u)} · {sub.samePattern ? `Same movement, ${sub.sharedPrimary.map(muscleLabel).join(' and ')}` : `Also hits ${sub.sharedPrimary.map(muscleLabel).join(' and ')}`} · {sub.equipment}</div>
+                </Row>
+              ))}
+              {!swap.rows.length && <p class="muted small" style={{ padding: '12px 0' }}>{swap.mode === 'different_equipment' ? 'Nothing on other kit trains the same muscles and is ready today.' : 'No close match right now — everything similar is already in this session or still recovering.'}</p>}
+            </div>
+            <Row onClick={() => { const expected = menu; setSwap(null); setMenu(null); onBrowse(expected); }}>
+              <div>Browse all exercises</div>
+              <div class="hint">Search the full library, including your saved exercises.</div>
+            </Row>
+            <Button variant="quiet" onClick={() => setSwap(null)}>Back</Button>
+          </div>
+        </Sheet>
+      )}
+      {menu && confirmSwap && (
+        <Sheet title={`Swap ${entry.name}?`} onClose={() => setConfirmSwap(null)}>
+          <div class="stack-sm">
+            <p class="small">You have {loggedHere} set{loggedHere === 1 ? '' : 's'} logged on {entry.name}. Swapping replaces the card and clears them from this session.</p>
+            <div class="grid-2">
+              <Button onClick={() => {
+                const current = currentSlot();
+                if (!current) { closeChanged(); return; }
+                const pick = findExercise(confirmSwap.sub.exerciseId, state.value.customExercises);
+                if (!pick || current.latest.entries.some(item => item.exerciseId === pick.id)) { showToast('Already in this session'); return; }
+                addExerciseToSession(pick);
+                setConfirmSwap(null); setSwap(null); setMenu(null);
+                showToast(`${pick.name} added below`);
+              }}>Keep my sets, add below</Button>
+              <Button variant="primary" onClick={() => doSwap(confirmSwap.sub, confirmSwap.count)}>Swap and clear</Button>
+            </div>
+            <Button variant="quiet" onClick={() => setConfirmSwap(null)}>Cancel</Button>
           </div>
         </Sheet>
       )}
