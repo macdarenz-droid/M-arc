@@ -24,16 +24,26 @@ export function PresenceLauncher({ moment, label, onOpen, onDismiss }: {
     );
   }
   return (
-    <Card class="card-press presence-cue" onClick={onOpen} aria-label={`${label}: ${moment.cue}`}>
-      <div class="row-between">
-        <span class="wrap small" style={{ alignItems: 'center', gap: 6 }}>
-          <IconMafia size={14} aria-hidden={true} /> {moment.cue}
+    <Card
+      class="card-press presence-cue"
+      onClick={onOpen}
+      aria-label={`${label}: ${moment.cue}`}
+      style={{ minWidth: 0, flex: '1 1 auto', overflow: 'hidden' }}
+    >
+      <div class="row-between" style={{ minWidth: 0 }}>
+        <span
+          class="small"
+          style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, overflow: 'hidden' }}
+        >
+          <IconMafia size={14} aria-hidden={true} style={{ flexShrink: 0 }} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{moment.cue}</span>
         </span>
         {onDismiss && (
           <button
             type="button"
             class="btn btn-quiet btn-sm"
             aria-label="Dismiss"
+            style={{ flexShrink: 0 }}
             onClick={e => { e.stopPropagation(); onDismiss(moment); }}
           >
             <IconX size={14} />
