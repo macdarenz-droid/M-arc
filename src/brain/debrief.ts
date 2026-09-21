@@ -1,5 +1,5 @@
 /** Immutable workout-target capture and saved plan-versus-actual comparison. */
-import type { Exercise, LoggedSet, PlanSetTarget, ResistanceMode, Session, WorkoutPlanEntry, WorkoutPlanSnapshot } from '@/core/models';
+import { PLAN_MAX_METADATA_SETS, type Exercise, type LoggedSet, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { exerciseHistory, summarizeSets } from './history';
 import { isWorkingSet } from './exposure';
@@ -152,12 +152,14 @@ export function sessionDebrief(session: Session, prior: Session[], custom: Exerc
   const exercises: DebriefExercise[] = [];
 
   for (const entry of plan?.entries ?? []) {
-    const logged = actualByPlanId.get(entry.id);
+    const candidate = actualByPlanId.get(entry.id);
+    const logged = candidate?.exerciseId === entry.exerciseId ? candidate : undefined;
     if (logged) used.add(logged);
     const working = logged?.sets.filter(isWorkingSet) ?? [];
     const indices = logged?.actualSetIndices;
     const validIndices = !!logged && Array.isArray(indices) && indices.length === working.length
-      && indices.every(index => Number.isInteger(index) && index >= 0);
+      && indices.every((value, index) => Number.isInteger(value) && value >= 0 && value < PLAN_MAX_METADATA_SETS
+        && (index === 0 || value > indices[index - 1]!));
     const rows = working.map((set, index): DebriefSet => {
       const targetIndex = validIndices ? indices![index]! : -1;
       const planned = targetIndex >= 0 && entry.targets[targetIndex] ? { ...entry.targets[targetIndex]! } : null;

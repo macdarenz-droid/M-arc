@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and session-debrief work items 10B-10C are implemented and committed unit by unit on the working branch. Feature 10's full test and browser gate is next.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), and unfinished coach items (9A-9T) are implemented and committed unit by unit on the working branch. Feature 11 effort repair is next.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 10T only
+## Start here: 11A only
 
-Run the debrief arithmetic, tradeoff and execution-grounding regressions and the full app/proxy/build/five-theme gate defined by spec 10. Cover Finish and History, kg/lb, narrow widths, reload and backup export/restore without any debrief network call. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement the pure unrated-set detector, effort-repair choices and calibration helpers defined by spec 11. Keep saved-session mutation and Finish UI out of this unit; they belong to 11B and 11C. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

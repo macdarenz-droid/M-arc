@@ -37,6 +37,13 @@ describe('sessionDebrief', () => {
     expect(result.exercises[0]!.rows.every(row => row.planned === null && row.result === 'uncomparable')).toBe(true);
     expect(result.exercises[1]).toMatchObject({ planEntryId: null, plannedSets: null, targetSource: 'missing' });
     expect(sessionDebrief({ ...edited, plan: undefined }, []).hasPlan).toBe(false);
+
+    const corrupted = saved();
+    corrupted.exercises[0]!.exerciseId = 'lib_leg_press';
+    expect(sessionDebrief(corrupted, []).exercises[0]).toMatchObject({ loggedSets: 0, rows: [] });
+    const duplicateIndices = saved();
+    duplicateIndices.exercises[0]!.actualSetIndices = [0, 0];
+    expect(sessionDebrief(duplicateIndices, []).exercises[0]!.rows.every(row => row.planned === null)).toBe(true);
   });
 
   it('keeps different loads and unsupported modes out, while comparing reps and seconds in their own modes', () => {

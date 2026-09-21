@@ -167,6 +167,13 @@ for (const theme of themes) {
     if (await page.getByRole('button', { name: 'Use this target' }).count()) errors.push('silent-black: dismissed live offer returned after reload');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
+    await page.getByRole('heading', { name: 'Plan and actual' }).waitFor();
+    const finishDebrief = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Plan and actual' }) });
+    if (!(await finishDebrief.innerText()).includes('working sets logged')) errors.push('silent-black: finish debrief lacked saved plan totals');
+    await page.screenshot({ path: `${OUT}/silent-black-session-debrief-finish.png` });
+    await page.setViewportSize({ width: 360, height: 800 });
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: finish debrief overflows at 360px');
+    await page.setViewportSize({ width: 390, height: 844 });
     const finishedState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     const finished = finishedState.sessions[finishedState.sessions.length - 1];
     const finishedSets = finished?.exercises.reduce((total, exercise) => total + exercise.sets.length, 0) ?? 0;
@@ -230,6 +237,89 @@ for (const theme of themes) {
     await legacyCtx.close();
   }
   await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
+  if (theme === 'silent-black') {
+    const source = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    const debriefState = structuredClone(source);
+    debriefState.active = null;
+    debriefState.coach.remoteExplainer = false;
+    const previousDay = day(7), currentDay = day(0);
+    const originalTargets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null }));
+    const priorSession = { id: 'gate-debrief-prior', splitId: 'split_push', splitName: 'Push', day: previousDay, startedAt: `${previousDay}T10:00:00.000Z`, endedAt: `${previousDay}T11:00:00.000Z`, durationSec: 3600,
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 10, effort: 'ideal' })) }] };
+    const planEntries = [
+      { id: 'gate-pe-bench', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 3, targetSource: 'history', allowIncrease: true, targets: originalTargets, acceptedTargets: [null, null, { kg: 62.5, reps: 6, durationSec: null }] },
+      { id: 'gate-pe-lateral', exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', mode: 'weighted', origin: 'start', plannedSets: 1, targetSource: 'starter', allowIncrease: false, targets: [{ kg: 5, reps: 12, durationSec: null }] },
+      { id: 'gate-pe-triceps', exerciseId: 'lib_triceps_pushdown', name: 'Triceps Pushdown', mode: 'weighted', origin: 'start', plannedSets: 2, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: 2 }, () => ({ kg: 30, reps: 10, durationSec: null })), excluded: 'skipped' },
+    ];
+    const currentSession = { id: 'gate-debrief-current', splitId: 'split_push', splitName: 'Push', day: currentDay, startedAt: `${currentDay}T10:00:00.000Z`, endedAt: `${currentDay}T11:00:00.000Z`, durationSec: 3600,
+      exercises: [
+        { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', planEntryId: 'gate-pe-bench', actualSetIndices: [0, 1, 2, 3], sets: [{ kg: 60, reps: 8 }, { kg: 60, reps: 7 }, { kg: 62.5, reps: 6 }, { kg: 62.5, reps: 5 }] },
+        { exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', planEntryId: 'gate-pe-lateral', actualSetIndices: [0], sets: [{ kg: 5, reps: 12 }] },
+      ], plan: { version: 1, capturedAt: `${currentDay}T09:59:00.000Z`, goal: debriefState.goal, deload: null, entries: planEntries } };
+    debriefState.sessions = [priorSession, currentSession];
+    const debriefRequests = [];
+    const debriefCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const debriefPage = await debriefCtx.newPage();
+    debriefPage.on('pageerror', error => errors.push(`silent-black debrief: ${error.message}`));
+    debriefPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
+    await debriefPage.addInitScript(saved => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(debriefState));
+    await debriefPage.goto(`http://localhost:${PORT}/`); await debriefPage.waitForSelector('.nav');
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+    await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
+    await debriefPage.getByRole('heading', { name: 'Plan and actual' }).waitFor();
+    await debriefPage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefPage.getByText('Starting suggestion, not a target learned from your history.', { exact: true }).waitFor();
+    await debriefPage.getByText(/Additional set; logged 62\.5 kg × 5/).waitFor();
+    await debriefPage.getByRole('button', { name: 'Show comparison' }).focus(); await debriefPage.keyboard.press('Enter');
+    await debriefPage.getByText(/Previous: 60 kg × 10, 1800 kg total/).waitFor();
+    await debriefPage.screenshot({ path: `${OUT}/silent-black-session-debrief-history.png` });
+    await debriefPage.setViewportSize({ width: 360, height: 800 });
+    if (await debriefPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: history debrief overflows at 360px');
+    await debriefPage.setViewportSize({ width: 390, height: 844 });
+    await debriefPage.keyboard.press('Escape');
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+    await debriefPage.reload(); await debriefPage.waitForSelector('.nav');
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+    await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
+    await debriefPage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefPage.keyboard.press('Escape');
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await debriefPage.getByRole('button', { name: 'Settings' }).click();
+    const debriefDownloadPromise = debriefPage.waitForEvent('download');
+    await debriefPage.getByRole('button', { name: 'Export backup' }).click();
+    const debriefDownload = await debriefDownloadPromise;
+    const debriefBackupPath = join(ROOT, '.tmp', 'debrief-backup.json');
+    await debriefDownload.saveAs(debriefBackupPath);
+    await debriefCtx.close();
+
+    const debriefRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const debriefRestorePage = await debriefRestoreCtx.newPage();
+    debriefRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
+    await debriefRestorePage.goto(`http://localhost:${PORT}/`); await debriefRestorePage.waitForSelector('.nav');
+    await debriefRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const debriefChooserPromise = debriefRestorePage.waitForEvent('filechooser');
+    await debriefRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const debriefChooser = await debriefChooserPromise; await debriefChooser.setFiles(debriefBackupPath);
+    await debriefRestorePage.getByText('Restored 2 sessions', { exact: true }).waitFor();
+    await debriefRestorePage.keyboard.press('Escape');
+    await debriefRestorePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+    await debriefRestorePage.getByRole('button', { name: 'Edit' }).first().click();
+    await debriefRestorePage.getByText('Accepted target 62.5 kg × 6', { exact: true }).waitFor();
+    await debriefRestoreCtx.close();
+
+    const debriefLbState = structuredClone(debriefState); debriefLbState.preferences.weightUnit = 'lb';
+    const debriefLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const debriefLbPage = await debriefLbCtx.newPage();
+    debriefLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
+    await debriefLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(debriefLbState));
+    await debriefLbPage.goto(`http://localhost:${PORT}/`); await debriefLbPage.waitForSelector('.nav');
+    await debriefLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
+    await debriefLbPage.getByRole('button', { name: 'Edit' }).first().click();
+    await debriefLbPage.getByText('Accepted target 138 lb × 6', { exact: true }).waitFor();
+    await debriefLbCtx.close();
+    if (debriefRequests.length) errors.push(`silent-black: session debrief made external requests (${debriefRequests.join(', ')})`);
+  }
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
   if (theme === 'silent-black') {
     const base = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
