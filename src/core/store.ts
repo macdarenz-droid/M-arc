@@ -1,5 +1,16 @@
 import { signal, computed, batch } from '@preact/signals';
-import { freshState, type AppState } from './models';
+import {
+  freshState,
+  PLAN_MAX_METADATA_ENTRIES,
+  PLAN_MAX_METADATA_SETS,
+  type ActiveSession,
+  type AppState,
+  type LoggedExercise,
+  type PlanSetTarget,
+  type Session,
+  type WorkoutPlanEntry,
+  type WorkoutPlanSnapshot,
+} from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { isGoalId } from '@/data/goals';
 
@@ -10,6 +21,88 @@ type Storagelike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
 function isState(v: unknown): v is AppState {
   return !!v && typeof v === 'object' && (v as AppState).version === 1 && Array.isArray((v as AppState).sessions) && Array.isArray((v as AppState).splits);
+}
+
+const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const shortString = (value: unknown): value is string => typeof value === 'string' && value.length > 0 && value.length <= 500;
+const oneOf = <T extends string>(value: unknown, choices: readonly T[]): value is T => typeof value === 'string' && choices.includes(value as T);
+
+function validTarget(value: unknown): value is PlanSetTarget {
+  if (!object(value)) return false;
+  return (value.kg === null || (finite(value.kg) && value.kg >= 0))
+    && (value.reps === null || (finite(value.reps) && Number.isInteger(value.reps) && value.reps > 0))
+    && (value.durationSec === null || (finite(value.durationSec) && value.durationSec >= 0));
+}
+
+function validDeload(value: unknown): value is WorkoutPlanSnapshot['deload'] {
+  if (value === null) return true;
+  return object(value) && shortString(value.from) && shortString(value.to)
+    && finite(value.loadFactor) && value.loadFactor > 0 && value.loadFactor <= 1
+    && oneOf(value.effortCap, ['easy', 'ideal'] as const);
+}
+
+function validPlanEntry(value: unknown): value is WorkoutPlanEntry {
+  if (!object(value) || !shortString(value.id) || !shortString(value.exerciseId) || !shortString(value.name)) return false;
+  if (!(value.mode === null || oneOf(value.mode, ['weighted', 'bodyweight', 'assisted', 'duration', 'conditioning'] as const))) return false;
+  if (!oneOf(value.origin, ['start', 'added', 'replacement'] as const)) return false;
+  if (value.replaces !== undefined && !shortString(value.replaces)) return false;
+  if (!finite(value.plannedSets) || !Number.isInteger(value.plannedSets) || value.plannedSets < 1 || value.plannedSets > PLAN_MAX_METADATA_SETS) return false;
+  if (!oneOf(value.targetSource, ['history', 'starter', 'unavailable'] as const) || typeof value.allowIncrease !== 'boolean') return false;
+  if (!Array.isArray(value.targets) || value.targets.length > PLAN_MAX_METADATA_SETS || !value.targets.every(validTarget)) return false;
+  if (value.targetSource === 'unavailable' ? value.targets.length !== 0 : value.targets.length !== value.plannedSets) return false;
+  if (value.excluded !== undefined && !oneOf(value.excluded, ['skipped', 'removed', 'replaced'] as const)) return false;
+  if (value.acceptedTargets !== undefined && (!Array.isArray(value.acceptedTargets) || value.acceptedTargets.length > PLAN_MAX_METADATA_SETS || !value.acceptedTargets.every(target => target === null || validTarget(target)))) return false;
+  return true;
+}
+
+function validPlan(value: unknown): value is WorkoutPlanSnapshot {
+  if (!object(value) || value.version !== 1 || !shortString(value.capturedAt) || !Number.isFinite(Date.parse(value.capturedAt))) return false;
+  if (!isGoalId(value.goal) || !validDeload(value.deload)) return false;
+  if (!Array.isArray(value.entries) || value.entries.length > PLAN_MAX_METADATA_ENTRIES || !value.entries.every(validPlanEntry)) return false;
+  const ids = value.entries.map(entry => entry.id);
+  return new Set(ids).size === ids.length;
+}
+
+function normalizeLoggedExercise(exercise: LoggedExercise, planIds: Set<string> | null): LoggedExercise {
+  const linked = planIds !== null && shortString(exercise.planEntryId) && planIds.has(exercise.planEntryId);
+  if (!linked) {
+    const { planEntryId: _planEntryId, actualSetIndices: _actualSetIndices, ...actual } = exercise;
+    return actual;
+  }
+  const indices = exercise.actualSetIndices;
+  const validIndices = Array.isArray(indices)
+    && indices.length === exercise.sets.length
+    && indices.length <= PLAN_MAX_METADATA_SETS
+    && indices.every((index, position) => Number.isInteger(index) && index >= 0 && index < PLAN_MAX_METADATA_SETS && (position === 0 || index > indices[position - 1]!));
+  return validIndices ? exercise : { ...exercise, actualSetIndices: undefined };
+}
+
+function normalizeSessionMetadata(session: Session): Session {
+  const plan = validPlan(session.plan) ? session.plan : undefined;
+  const planIds = plan ? new Set(plan.entries.map(entry => entry.id)) : null;
+  return { ...session, plan, exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planIds)) };
+}
+
+function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | null {
+  if (!active) return null;
+  const plan = validPlan(active.plan) ? active.plan : undefined;
+  const planIds = plan ? new Set(plan.entries.map(entry => entry.id)) : null;
+  const entries = (active.entries ?? []).map(entry => {
+    const linked = planIds !== null && shortString(entry.planEntryId) && planIds.has(entry.planEntryId);
+    const overrides = Array.isArray(entry.targetOverrides) && entry.targetOverrides.length <= PLAN_MAX_METADATA_SETS
+      && entry.targetOverrides.every(target => target === null || validTarget(target)) ? entry.targetOverrides : undefined;
+    const decision = object(entry.coachDecision) && shortString(entry.coachDecision.key)
+      && oneOf(entry.coachDecision.action, ['accepted', 'dismissed'] as const) ? entry.coachDecision : undefined;
+    return {
+      ...entry,
+      planEntryId: linked ? entry.planEntryId : undefined,
+      planComparisonValid: linked && typeof entry.planComparisonValid === 'boolean' ? entry.planComparisonValid : undefined,
+      targetOverrides: linked ? overrides : undefined,
+      coachDecision: linked ? decision : undefined,
+    };
+  });
+  return { ...active, plan, entries };
 }
 
 /** Fill in fields added after a state was first saved. */
@@ -23,6 +116,8 @@ function normalize(s: AppState): AppState {
     preferences: { ...fresh.preferences, ...s.preferences, reminders: { ...fresh.preferences.reminders, ...s.preferences?.reminders } },
     schedule: { ...fresh.schedule, ...s.schedule },
     health: { ...fresh.health, ...s.health },
+    sessions: (s.sessions ?? []).map(normalizeSessionMetadata),
+    active: normalizeActiveMetadata(s.active ?? null),
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
     body: s.body ?? [],
     customExercises: s.customExercises ?? [],

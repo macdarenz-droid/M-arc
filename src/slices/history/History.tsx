@@ -16,6 +16,7 @@ import { showToast } from '@/app/toast';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
 import { ensureDeviceId, remoteEnabled } from '@/slices/coach/remote';
 import { applySessionNoteFlags } from '@/slices/workout/session';
+import { cleanSessionEdit, removeSessionIfCurrent, replaceSessionIfCurrent } from './sessionEdit';
 
 export function History() {
   const [seg, setSeg] = useState<'log' | 'stats'>('log');
@@ -113,8 +114,13 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
   const save = () => {
     const trimmed = note.trim();
     const noteChanged = trimmed !== (session.note ?? '').trim();
-    const cleaned = { ...draft, note: trimmed || undefined, noteFlags: noteChanged ? undefined : draft.noteFlags, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
-    update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
+    const cleaned = cleanSessionEdit(draft, trimmed, noteChanged);
+    const result = replaceSessionIfCurrent(session, cleaned);
+    if (result !== 'saved') {
+      showToast(result === 'deleted' ? 'This session was deleted. Reopen History.' : 'This session changed. Reopen it before editing.');
+      onClose();
+      return;
+    }
     showToast('Session updated'); onClose();
     if (trimmed && noteChanged && remoteEnabled.value) {
       void requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() }).then(r => { if (r.ok) applySessionNoteFlags(session.id, r.flags); });
@@ -122,7 +128,12 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
   };
   const remove = () => {
     const removed = session;
-    update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
+    const result = removeSessionIfCurrent(session);
+    if (result !== 'saved') {
+      showToast(result === 'deleted' ? 'This session was already deleted.' : 'This session changed. Reopen it before deleting.');
+      onClose();
+      return;
+    }
     showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
     onClose();
   };

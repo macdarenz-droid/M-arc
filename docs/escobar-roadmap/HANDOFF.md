@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** documentation continuation complete. Specs 4–14 written; specs 1–3 source-checked and corrected; implementation routing and source inventory complete. **No feature implementation has started in this pass.**
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), and session-plan capture (10A/10AT) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: F0 only
+## Start here: 4A only
 
-Use **Sonnet 5 Medium or GPT-5.6 Sol Medium, T1 (4/10)**. Create `src/brain/live.ts` once with spec 1's substitutes and spec 2's restFor/nextAfterRest, their named bands and pure tests. Do not wire UI or mutate sessions in F0. Exact scope, subsequent T2 mutations/T3 reviews and shared-file locks are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md). Its final section is a compact ready-to-paste implementation handoff.
+Implement spec 4's pure live-autoregulation decision in `src/brain/live.ts` and its bands first, then continue through 4B–4T. Reuse 10A's captured plan entry, original targets, reserved overrides and decision fields; never write actual sets while offering or accepting a target. Exact scope, T2 mutation boundaries, T3 review and shared-file locks are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 
@@ -58,7 +58,7 @@ Brain decisions are pure `src/brain/**` functions; the model only phrases. Every
 
 Before each implementation commit: app + proxy typecheck → both full suites → build → five-theme visual gate → live Playwright checks of that feature → dated decision log → commit → push → exact-commit CI green. Integrity, grounding or payload work is minimum T2 with T3 review. No Worker deployment is requested here.
 
-For this docs-only continuation the unchanged baseline passed app/proxy typechecks, 374 app tests, 87 proxy tests (eight existing skips), and build. Local browser checks were blocked by unavailable Chromium and a denied download; do not call those locally passed. The source-verification document records the limitation. Branch CI runs the existing visual/migration and Android gates on push.
+The latest 10A/10AT gate passed app/proxy typechecks, 457 app tests across 35 files, 87 proxy tests with eight existing skips, production build, and the five-theme visual/migration gate. The live gate also restores an active snapshot after reload, renders it in lb, and checks 360 px overflow. Branch CI still requires an authenticated push of the exact commit.
 
 ## Existing work outside this implementation assignment
 

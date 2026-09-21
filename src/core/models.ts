@@ -40,6 +40,42 @@ export interface LoggedExercise {
   exerciseId: string;
   name: string;
   sets: LoggedSet[];
+  /** Stable link to the entry captured when this workout started. */
+  planEntryId?: string;
+  /** Original live-row indices for the working sets retained at finish. */
+  actualSetIndices?: number[];
+}
+
+export const PLAN_MAX_METADATA_SETS = 100;
+export const PLAN_MAX_METADATA_ENTRIES = 100;
+
+export interface PlanSetTarget {
+  kg: number | null;
+  reps: number | null;
+  durationSec: number | null;
+}
+
+export interface WorkoutPlanEntry {
+  id: string;
+  exerciseId: string;
+  name: string;
+  mode: ResistanceMode | null;
+  origin: 'start' | 'added' | 'replacement';
+  replaces?: string;
+  plannedSets: number;
+  targetSource: 'history' | 'starter' | 'unavailable';
+  allowIncrease: boolean;
+  targets: PlanSetTarget[];
+  excluded?: 'skipped' | 'removed' | 'replaced';
+  acceptedTargets?: Array<PlanSetTarget | null>;
+}
+
+export interface WorkoutPlanSnapshot {
+  version: 1;
+  capturedAt: string;
+  goal: GoalId;
+  deload: CoachState['deload'];
+  entries: WorkoutPlanEntry[];
 }
 
 /**
@@ -76,6 +112,8 @@ export interface Session {
   endedAt: string;
   durationSec: number;
   exercises: LoggedExercise[];
+  /** Immutable targets captured before this session's work was logged. */
+  plan?: WorkoutPlanSnapshot;
   /** Free text the person wrote about this session. Optional; most sessions have none. */
   note?: string;
   /** What `note` was tagged as, from the online coach. Empty until the person has both a note and the coach on. */
@@ -111,13 +149,27 @@ export interface RestState {
   deltaSec?: number;
 }
 
+export interface ActiveSessionEntry {
+  exerciseId: string;
+  name: string;
+  sets: LoggedSet[];
+  done: boolean;
+  skipped: boolean;
+  planEntryId?: string;
+  planComparisonValid?: boolean;
+  targetOverrides?: Array<PlanSetTarget | null>;
+  coachDecision?: { key: string; action: 'accepted' | 'dismissed' };
+}
+
 export interface ActiveSession {
   splitId: string;
   startedAt: string;
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
+  entries: ActiveSessionEntry[];
+  /** Immutable targets captured on the explicit start/add/replace action. */
+  plan?: WorkoutPlanSnapshot;
   rest?: RestState;
 }
 

@@ -205,6 +205,7 @@ describe('replaceEntry', () => {
     expect(state.value.active?.entries[0]).toEqual({
       exerciseId: replacement.id,
       name: replacement.name,
+      planEntryId: expect.any(String),
       sets: [{}, {}, {}, {}],
       done: false,
       skipped: false,

@@ -14,6 +14,8 @@ import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
+import { contextFromState } from '@/brain/coach/context';
+import { capturePlan, capturePlanEntry } from '@/brain/debrief';
 
 /** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
 export const REST_STEP = 15;
@@ -29,10 +31,12 @@ function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
 /** Start a split. `changes` are one-day swaps or drops from an accepted coach plan; the split itself is untouched. */
 export function startSession(split: Split, changes: CoachChange[] = []): void {
   if (state.value.active) return;
+  const started = new Date();
+  const startedAt = started.toISOString();
   const custom = state.value.customExercises;
   let entries: ActiveSession['entries'] = split.exercises.map(se => {
     const ex = findExercise(se.exerciseId, custom);
-    return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({})), done: false, skipped: false };
+    return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({})), done: false, skipped: false, planEntryId: newId('pe') };
   });
   for (const c of changes) {
     const i = entries.findIndex(e => e.exerciseId === c.removeExerciseId);
@@ -42,7 +46,9 @@ export function startSession(split: Split, changes: CoachChange[] = []): void {
       ? entries.map((e, j) => (j !== i ? e : { ...e, exerciseId: to.id, name: to.name }))
       : entries.filter((_, j) => j !== i);
   }
-  update(s => ({ ...s, active: { splitId: split.id, startedAt: new Date().toISOString(), pausedMs: 0, entries } }));
+  const ctx = contextFromState(state.value, dayKey(started), started.getTime());
+  const plan = capturePlan(ctx, entries.map(entry => ({ id: entry.planEntryId!, exerciseId: entry.exerciseId, name: entry.name, plannedSets: entry.sets.length, origin: 'start' })), startedAt);
+  update(s => ({ ...s, active: { splitId: split.id, startedAt, pausedMs: 0, entries, plan } }));
   flushSave();
   void haptic.medium();
 }
@@ -89,14 +95,14 @@ export function commitSet(entry: number, index: number): boolean {
 }
 
 export function addSet(entry: number): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: [...e.sets, { ...(e.sets[e.sets.length - 1] ?? {}), effort: undefined }] })) }));
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: [...e.sets, { ...(e.sets[e.sets.length - 1] ?? {}), effort: undefined }], targetOverrides: undefined })) }));
 }
 
 export function removeSet(entry: number, index: number): void {
   patchActive(a => {
     const target = a.entries[entry];
     if (!target?.sets[index] || target.sets.length <= 1) return a;
-    return { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })), rest: clearRestOwner(a.rest) };
+    return { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: e.sets.filter((_, j) => j !== index), targetOverrides: undefined, planComparisonValid: false })), rest: clearRestOwner(a.rest) };
   });
 }
 
@@ -107,12 +113,24 @@ export function markDone(entry: number, done = true): void {
 
 export function skipEntry(entry: number, skipped = true): void {
   patchActive(a => a.entries[entry]
-    ? { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })), rest: skipped ? clearRestOwner(a.rest) : a.rest }
+    ? {
+      ...a,
+      entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })),
+      plan: a.plan ? { ...a.plan, entries: a.plan.entries.map(p => p.id === a.entries[entry]!.planEntryId ? { ...p, excluded: skipped ? 'skipped' : undefined } : p) } : undefined,
+      rest: skipped ? clearRestOwner(a.rest) : a.rest,
+    }
     : a);
 }
 
 export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void {
-  patchActive(a => (a.entries.some(e => e.exerciseId === ex.id) ? a : { ...a, entries: [...a.entries, { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: sets }, () => ({})), done: false, skipped: false }] }));
+  patchActive(a => {
+    if (a.entries.some(e => e.exerciseId === ex.id)) return a;
+    const id = newId('pe');
+    const entry = { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: sets }, () => ({})), done: false, skipped: false, planEntryId: id };
+    const ctx = contextFromState(state.value, dayKey(new Date(a.startedAt)), Date.now());
+    const captured = capturePlanEntry(ctx, { id, exerciseId: ex.id, name: ex.name, plannedSets: sets, origin: 'added' });
+    return { ...a, entries: [...a.entries, entry], plan: a.plan ? { ...a.plan, entries: [...a.plan.entries, captured] } : undefined };
+  });
 }
 
 /**
@@ -130,7 +148,18 @@ export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt
   if (expected && (a.startedAt !== expected.startedAt || a.entries[entry]!.exerciseId !== expected.exerciseId)) return false;
   if (a.entries[entry]!.exerciseId === ex.id) return false;
   if (a.entries.some((e, i) => i !== entry && e.exerciseId === ex.id)) return false;
-  patchActive(x => ({ ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: Math.max(1, e.sets.length) }, () => ({})), done: false, skipped: false })), rest: clearRestOwner(x.rest) }));
+  patchActive(x => {
+    const previous = x.entries[entry]!;
+    const id = newId('pe');
+    const count = Math.max(1, previous.sets.length);
+    const ctx = contextFromState(state.value, dayKey(new Date(x.startedAt)), Date.now());
+    const captured = capturePlanEntry(ctx, { id, exerciseId: ex.id, name: ex.name, plannedSets: count, origin: 'replacement', replaces: previous.planEntryId });
+    const plan = x.plan ? {
+      ...x.plan,
+      entries: [...x.plan.entries.map(p => p.id === previous.planEntryId ? { ...p, excluded: 'replaced' as const } : p), captured],
+    } : undefined;
+    return { ...x, entries: x.entries.map((e, i) => (i !== entry ? e : { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: count }, () => ({})), done: false, skipped: false, planEntryId: id })), plan, rest: clearRestOwner(x.rest) };
+  });
   void haptic.medium();
   return true;
 }
@@ -146,7 +175,12 @@ export function restoreEmptyEntry(entry: number, ex: Exercise, expected: { start
 
 export function removeEntry(entry: number): void {
   patchActive(a => a.entries[entry]
-    ? { ...a, entries: a.entries.filter((_, i) => i !== entry), rest: clearRestOwner(a.rest) }
+    ? {
+      ...a,
+      entries: a.entries.filter((_, i) => i !== entry),
+      plan: a.plan ? { ...a.plan, entries: a.plan.entries.map(p => p.id === a.entries[entry]!.planEntryId ? { ...p, excluded: 'removed' } : p) } : undefined,
+      rest: clearRestOwner(a.rest),
+    }
     : a);
 }
 
@@ -238,7 +272,13 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   const now = new Date();
   const exercises = a.entries
     .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet) }))
+    .map(e => {
+      const hasCapturedEntry = !!a.plan?.entries.some(planEntry => planEntry.id === e.planEntryId);
+      const actualSetIndices = hasCapturedEntry && e.planComparisonValid !== false
+        ? e.sets.map((set, index) => isWorkingSet(set) ? index : -1).filter(index => index >= 0)
+        : undefined;
+      return { exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet), planEntryId: hasCapturedEntry ? e.planEntryId : undefined, actualSetIndices };
+    })
     .filter(e => e.sets.length);
   const session: Session = {
     id: newId('s'),
@@ -249,6 +289,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     endedAt: now.toISOString(),
     durationSec: elapsedSec(a, now.getTime()),
     exercises,
+    plan: a.plan,
   };
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');

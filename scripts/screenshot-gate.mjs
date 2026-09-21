@@ -77,6 +77,26 @@ for (const theme of themes) {
   if (theme === 'silent-black') {
     // Start a session and log a set for the live screenshot.
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    const capturedTarget = await page.locator('.exercise .hint.ellipsis').first().innerText();
+    await page.reload(); await page.waitForSelector('.exercise');
+    if (await page.locator('.exercise .hint.ellipsis').first().innerText() !== capturedTarget) errors.push('silent-black: captured live target changed after reload');
+    await page.setViewportSize({ width: 360, height: 800 });
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: live session overflows at 360px');
+    await page.setViewportSize({ width: 390, height: 844 });
+    const liveState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    liveState.preferences.weightUnit = 'lb';
+    const lbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const lbPage = await lbCtx.newPage();
+    lbPage.on('pageerror', e => errors.push(`silent-black lb: ${e.message}`));
+    await lbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(liveState));
+    await lbPage.goto(`http://localhost:${PORT}/`); await lbPage.waitForSelector('.nav');
+    const restored = await lbPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    if (!restored.active) errors.push('silent-black: active session missing from restored lb context');
+    await lbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await lbPage.waitForSelector('.exercise');
+    const lbTarget = await lbPage.locator('.exercise .hint.ellipsis').first().innerText();
+    if (!lbTarget.includes('lb')) errors.push(`silent-black: captured target did not render in lb (${lbTarget})`);
+    await lbCtx.close();
     const inputs = page.locator('input[type="number"]');
     await inputs.nth(0).fill('72.5'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
     await page.locator('.effort button.ideal').first().click();

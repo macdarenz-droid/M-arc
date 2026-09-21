@@ -8,7 +8,7 @@ import { formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
-import type { Exercise, Split } from '@/core/models';
+import type { Exercise, PlanSetTarget, Split } from '@/core/models';
 import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload } from '@/brain/coach/deload';
 import { substitutes, type RestNext, type RestReasonKind, type Substitute } from '@/brain/live';
@@ -60,6 +60,15 @@ function restNextLine(next: RestNext | null, displayUnit: 'kg' | 'lb'): string {
 /** A Suggestion's headline target, with kg rendered in the user's unit. */
 function fmtTarget(sg: Suggestion, u: 'kg' | 'lb'): string {
   return sg.kg != null && u === 'lb' ? sg.target.replace(`${sg.kg} kg`, formatLoad(sg.kg, u)) : sg.target;
+}
+
+function fmtCapturedTarget(target: PlanSetTarget | undefined, u: 'kg' | 'lb'): string {
+  if (!target) return 'Target unavailable';
+  if (target.durationSec != null) return `Hold ${target.durationSec}s`;
+  if (target.kg != null && target.reps != null) return `${formatLoad(target.kg, u)} × ${target.reps} reps`;
+  if (target.kg != null) return formatLoad(target.kg, u);
+  if (target.reps != null) return `${target.reps} reps`;
+  return 'Target unavailable';
 }
 
 /** Shown once after a session is saved, then dismissed. */
@@ -294,6 +303,8 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
   const next = applyDeload(suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises), deload.value, today.value);
+  const captured = entry.planComparisonValid === false ? undefined : s.active?.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
+  const headline = captured ? fmtCapturedTarget(captured.targets[0], u) : fmtTarget(next, u);
   const [menu, setMenu] = useState<{ startedAt: string; exerciseId: string } | null>(null);
   const [swap, setSwap] = useState<{ mode: 'any' | 'different_equipment'; rows: Substitute[] } | null>(null);
   const [confirmSwap, setConfirmSwap] = useState<{ sub: Substitute; count: number } | null>(null);
@@ -365,7 +376,7 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
         <div class="grow">
           <div class="row"><b class="ellipsis">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
-          <div class="hint ellipsis">{fmtTarget(next, u)} · {logged}/{entry.sets.length} sets</div>
+          <div class="hint ellipsis">{headline} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); const latest = active(); const slot = latest?.entries[index]; if (latest && slot) setMenu({ startedAt: latest.startedAt, exerciseId: slot.exerciseId }); }}><IconMore /></Button>
         <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
@@ -376,7 +387,10 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{u}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);
-            const target = next.sets[Math.min(j, next.sets.length - 1)];
+            const capturedTarget = j < (captured?.plannedSets ?? 0) ? captured?.targets[j] : undefined;
+            const fallbackTarget = next.sets[Math.min(j, next.sets.length - 1)];
+            const target = capturedTarget ?? fallbackTarget;
+            const targetNote = capturedTarget ? (captured?.targetSource === 'starter' ? 'Starting suggestion' : 'Original target') : fallbackTarget?.note;
             const pr = !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises);
             return (
               <div key={j}>
@@ -393,7 +407,7 @@ function EntryCard({ index, entry, open, onToggle, onDone, onRemove, onBrowse }:
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); regradeRest(index, j); }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
-                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
+                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : targetNote ?? ''}</span>
                   {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
                 </div>
               </div>
