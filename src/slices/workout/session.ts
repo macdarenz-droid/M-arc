@@ -8,7 +8,7 @@ import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '@/brain/exposure';
 import { REST_CEIL_SEC, REST_FLOOR_SEC, REST_MIN_REMAINING_SEC } from '@/brain/coach/bands';
-import { restFor, type RestGrade } from '@/brain/live';
+import { autoregulate, restFor, type LiveAdjustment, type RestGrade } from '@/brain/live';
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
@@ -16,6 +16,7 @@ import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 import { contextFromState } from '@/brain/coach/context';
 import { capturePlan, capturePlanEntry } from '@/brain/debrief';
+import { deloadActive } from '@/brain/coach/deload';
 
 /** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
 export const REST_STEP = 15;
@@ -182,6 +183,74 @@ export function removeEntry(entry: number): void {
       rest: clearRestOwner(a.rest),
     }
     : a);
+}
+
+function currentLiveAdjustment(a: ActiveSession, entryId: string, sourceSet: number): { entryIndex: number; offer: LiveAdjustment } | null {
+  if (a.pausedAt) return null;
+  const entryIndex = a.entries.findIndex(entry => entry.planEntryId === entryId);
+  const entry = a.entries[entryIndex];
+  const planEntry = a.plan?.entries.find(candidate => candidate.id === entryId);
+  if (!entry || !planEntry || entry.planComparisonValid === false || planEntry.excluded) return null;
+  const exercise = findExercise(entry.exerciseId, state.value.customExercises);
+  const startDay = dayKey(new Date(a.startedAt));
+  const offer = autoregulate({
+    exercise,
+    goal: a.plan!.goal,
+    sets: entry.sets,
+    targets: planEntry.targets,
+    sourceSet,
+    deloadActive: deloadActive(a.plan!.deload, startDay) || deloadActive(state.value.coach.deload, dayKey(new Date())),
+    decisionTaken: !!entry.coachDecision,
+    historyBacked: planEntry.targetSource === 'history',
+    allowIncrease: planEntry.allowIncrease,
+  });
+  return offer ? { entryIndex, offer } : null;
+}
+
+export function acceptLiveAdjustment(entryId: string, expectedStartedAt: string, expected: LiveAdjustment): boolean {
+  const a = active();
+  if (!a || a.startedAt !== expectedStartedAt) return false;
+  const current = currentLiveAdjustment(a, entryId, expected.sourceSet);
+  if (!current || current.offer.key !== expected.key) return false;
+  patchActive(latest => {
+    if (latest !== a) return latest;
+    const entry = latest.entries[current.entryIndex]!;
+    const overrides = Array.from({ length: entry.sets.length }, (_, index) => entry.targetOverrides?.[index] ?? null);
+    for (const index of current.offer.remainingIndices) overrides[index] = { ...current.offer.next };
+    const entries = latest.entries.map((candidate, index) => index !== current.entryIndex ? candidate : {
+      ...candidate,
+      targetOverrides: overrides,
+      coachDecision: { key: current.offer.key, action: 'accepted' as const },
+    });
+    const plan = latest.plan ? {
+      ...latest.plan,
+      entries: latest.plan.entries.map(candidate => {
+        if (candidate.id !== entryId) return candidate;
+        const acceptedTargets = Array.from({ length: entry.sets.length }, (_, index) => candidate.acceptedTargets?.[index] ?? null);
+        for (const index of current.offer.remainingIndices) acceptedTargets[index] = { ...current.offer.next };
+        return { ...candidate, acceptedTargets };
+      }),
+    } : undefined;
+    return { ...latest, entries, plan };
+  });
+  flushSave();
+  return true;
+}
+
+export function dismissLiveAdjustment(entryId: string, expectedStartedAt: string, expected: LiveAdjustment): boolean {
+  const a = active();
+  if (!a || a.startedAt !== expectedStartedAt) return false;
+  const current = currentLiveAdjustment(a, entryId, expected.sourceSet);
+  if (!current || current.offer.key !== expected.key) return false;
+  patchActive(latest => latest !== a ? latest : {
+    ...latest,
+    entries: latest.entries.map((candidate, index) => index !== current.entryIndex ? candidate : {
+      ...candidate,
+      coachDecision: { key: current.offer.key, action: 'dismissed' as const },
+    }),
+  });
+  flushSave();
+  return true;
 }
 
 function clearRestOwner(rest: RestState | undefined): RestState | undefined {
