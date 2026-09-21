@@ -123,6 +123,25 @@ describe('History: the presence launcher sits in its own row too, and reuses the
   });
 });
 
+describe('Body: the presence launcher sits in its own row too', () => {
+  const source = readFileSync(new URL('../src/slices/body/Body.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+
+  it('is rendered outside .topbar', () => {
+    const topbarStart = source.indexOf('<div class="topbar">');
+    const topbarEnd = source.indexOf('</div>', topbarStart) + '</div>'.length;
+    const topbarBlock = source.slice(topbarStart, topbarEnd);
+    expect(topbarBlock).not.toContain('PresenceLauncher');
+    const afterTopbar = source.slice(topbarEnd, topbarEnd + 500);
+    expect(afterTopbar).toContain('PresenceLauncher');
+  });
+
+  it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {
+    expect(source).toContain("import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';");
+    expect(source.match(/<InsightSheet\b/g)).toHaveLength(1);
+    expect(source.match(/<SuggestionSheet\b/g)).toHaveLength(1);
+  });
+});
+
 describe('dismissPresenceMoment / setPresenceTone: the only writers of coach.presence', () => {
   it('dismissing a moment appends one entry and defaults tone to steady the first time', () => {
     initStore(memStorage());

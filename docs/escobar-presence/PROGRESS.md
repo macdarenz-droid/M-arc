@@ -18,7 +18,7 @@ Planning review corrections incorporated: normal intent has no inferred effort c
 |---|---|---|---|
 | P00 | Verify current baseline | VERIFIED | 7d15d4c9dabda5f4add72ad37bf52d3582e19f6a; [run 35617178195](https://github.com/macdarenz-droid/M-arc/actions/runs/35617178195), source-gate + android-gate both success |
 | P01 | Moment selector, tone, shared dismissals | VERIFIED | 62d097c1a3ecb0b02036df74e854299670b9b34b; [run 35619601814](https://github.com/macdarenz-droid/M-arc/actions/runs/35619601814), source-gate + android-gate both success |
-| P02 | Presence and local explanation surfaces | IN PROGRESS — Today, Train and History VERIFIED (see below); Body/Coach/Settings not started | see ledger entries below |
+| P02 | Presence and local explanation surfaces | IN PROGRESS — Today, Train, History and Body VERIFIED (see below); Coach/Settings not started | see ledger entries below |
 | P03 | Shared guarded contextual Ask | NOT STARTED | — |
 | P04 | Optional intent and normalization | NOT STARTED | — |
 | P05 | Prospective agreements and evidence integrity | NOT STARTED | — |
@@ -175,4 +175,21 @@ Known limits / remaining proof: Body, Coach and contextual Settings integration 
 Next concrete action: push this commit, verify exact-head CI (both jobs) on the pushed SHA, record that result at the start of the next entry, then decide Coach's status explicon (likely: exempt, with a one-line note why) before moving to Body and then contextual Settings.
 ```
 
-NEXT: P02 is IN PROGRESS (Today, Train and History VERIFIED — Train's bug fully root-caused and fixed, not worked around, both lessons carried forward cleanly into History; Body/Coach/Settings remain). Decide Coach's status explicitly (likely exempt — it's already the full list) before continuing to Body.
+```text
+Patch / date / executor: P02 Body / 2026-09-21 / Claude Sonnet 5
+Starting local and remote SHA: 591a90b (History, VERIFIED above), both local and origin.
+User-visible change: Body shows the shared presence cue in its own full-width row below the topbar, same verified-safe shape as History (Body's topbar also has no button row to share). Present across all three Body view segments (Recovery/This week/Levels) from one mount point.
+Owned files and any reconciled baseline drift: src/slices/body/Body.tsx only; tests/coach-presence-ui.test.ts (+2 tests). No drift.
+Architecture decisions: identical shape to History — own row, wrapped (not truncated) cue, `!remoteEnabled.value` gate for consistency even though Body has no existing Ask entry to actually collide with (kept for uniformity across screens, so a future global online-Ask entry point doesn't have to retrofit this gate everywhere).
+Regression IDs → concrete test/scenario names: same class as Today/Train/History. Source-check tests: launcher outside `.topbar`; InsightSheet/SuggestionSheet reused (exactly one of each).
+Focused failure reproduction and result: n/a — third consecutive screen where applying the two Train lessons from the start meant the gate passed clean on the first attempt.
+Full commands → exit/result/test counts/skips: `npx tsc --noEmit` exit 0; `npm run typecheck` exit 0; `npx tsc --noEmit -p proxy/tsconfig.json` exit 0; `npm test` — 57 files, 670 passed (668 + 2 new); `npm --prefix proxy test` — 87 passed, 8 skipped (unchanged); `npm run build` succeeded; `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate` — PASS ×4 consecutive runs.
+Browser evidence paths, themes/widths and console/network result: existing per-theme `body` screenshot scenario now includes this surface; all 4 runs clean, no page errors.
+Reviewer identity, findings, fixes and re-review: self-review; low-risk, same verified shape as the prior two screens.
+Commit and verified remote SHA: pending — recorded in the next patch's entry once pushed and CI is confirmed.
+Exact-head workflow URL + source/Android conclusions: pending, same reason.
+Known limits / remaining proof: Coach and contextual Settings remain P02's open scope. Coach's status still needs an explicit decision (see below) before treating it as done or skipped.
+Next concrete action: push this commit, verify exact-head CI, then decide Coach explicitly: Coach.tsx already renders the full ranked insights/suggestions list (the same "All"/"Review all" destination Today and other screens link to) — the presence selector's single top-ranked moment is very likely already visible at or near the top of that existing list, making a second, separate launcher on Coach redundant by construction, not merely stylistically similar. Recommend documenting Coach as **intentionally exempt** with that one-line reasoning, rather than adding a launcher there, then move to contextual Settings (P02's last named surface) to close out the patch.
+```
+
+NEXT: P02 is IN PROGRESS (Today, Train, History and Body VERIFIED; Coach needs an explicit exempt-or-not decision — leaning exempt, see reasoning above — before contextual Settings closes out P02's named surfaces).

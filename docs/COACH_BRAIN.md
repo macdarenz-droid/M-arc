@@ -585,6 +585,8 @@ the cases a single history cannot.
 
 | 2026-09-21 | Escobar-presence P02 added History as a third presence surface (Log and Stats segments share one mount point above the toggle, so switching segments can't duplicate or drop the cue). History had no existing coaching entry point, so this is a genuinely new slot. Applied both lessons from the Train investigation proactively — own full-width row, never a shared button row; no single-line cue truncation — so the full gate passed clean on the first attempt, re-run four times for confidence. Verification: both typechecks passed; 668 app tests passed across 58 files (665 + 3 new); 87 proxy tests passed with eight existing skips; production build passed; five-theme gate passed ×4. App-only; no Worker redeploy and no state-version change. |
 
+| 2026-09-21 | Escobar-presence P02 added Body as a fourth presence surface, same verified-safe shape as History (own full-width row, no truncation, no existing button row to share). Verification: both typechecks passed; 670 app tests passed across 58 files (668 + 2 new); 87 proxy tests passed with eight existing skips; production build passed; five-theme gate passed ×4. App-only; no Worker redeploy and no state-version change. |
+
 ## Non-goals
 
 No injury prediction or diagnosis, anywhere. No individualized medical
