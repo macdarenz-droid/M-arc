@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), and warm-up ramp (5A–5T) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip evidence/planning (6A) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 6A only
+## Start here: 6B only
 
-Implement spec 6's chronic-skip evidence and planner, then register its report kind, deterministic wording and research support. Confirmed comparisons must come from captured plans; older sessions use the explicitly labelled legacy comparison and never receive invented snapshots. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement spec 6's guarded cut/swap acceptance in `slices/coach/apply.ts`, then continue with grouped alternatives in 6C and the full 6T review. Recheck the current split and replacement at acceptance; changing a future template must not touch an active workout or history. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

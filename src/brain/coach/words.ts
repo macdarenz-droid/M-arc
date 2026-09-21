@@ -31,7 +31,7 @@ const CATEGORY_OF: Record<FindingKind, Category> = {
   plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress',
   under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
-  redundant_exercises: 'balance', balance_imbalance: 'balance',
+  redundant_exercises: 'balance', balance_imbalance: 'balance', chronic_skip: 'consistency',
   long_gap: 'consistency', habit_pattern: 'consistency', first_sessions: 'consistency',
   note_flag: 'readiness',
 };
@@ -255,6 +255,21 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
         means: 'Two near-identical lifts split your effort without adding a new stimulus. Not wrong, just not efficient.',
         action: 'Keep the one you progress on, and use the slot for something the split lacks.' };
     }
+    case 'chronic_skip': {
+      const sessions = num(m.sessions), missing = num(m.missingSessions);
+      const split = f.subject.splitName ?? splitName(f.subject.splitId, ctx);
+      const confirmed = str(m.basis) === 'saved_plan';
+      return {
+        title: `${ex}: often absent from ${split}`,
+        noticed: confirmed
+          ? `${ex} was in the saved plan but had no work logged in ${missing} of ${sessions} ${split} sessions.`
+          : `${ex} is in your current ${split} split, but is absent from ${missing} of its last ${sessions} logs. Older plans were not saved.`,
+        means: confirmed
+          ? 'The saved plans show the exercise was expected; the log only shows that no working set was saved. It does not show why.'
+          : 'This compares today’s split with older logs. It cannot prove the exercise was planned in those sessions.',
+        action: confirmed ? 'Keep the work realistic for your current routine: replace the exercise, remove it, or leave the split as it is.' : 'Review the split and decide whether this exercise still belongs there.',
+      };
+    }
     case 'balance_imbalance':
       return { title: `${str(m.weak)} work is trailing`,
         noticed: `${str(m.strong)} work has been ${str(m.ratioLabel)} your ${lower(str(m.weak))} work over the last three weeks.`,
@@ -396,6 +411,7 @@ function whyFor(p: Proposal, report: FindingsReport, ctx: RenderContext): string
 
 export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderContext): Suggestion {
   const a = p.apply;
+  const chronicSkip = p.basedOn.some(id => report.findings.some(f => f.id === id && f.kind === 'chronic_skip'));
   const base = { id: p.id, kind: p.kind, why: whyFor(p, report, ctx), evidence: principlesFor(p.principles), confidence: p.confidence, dismissKey: p.dismissKey, proposal: p };
   switch (a.kind) {
     case 'schedule': {
@@ -433,7 +449,7 @@ export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderC
     case 'exercise_swap': {
       const from = exName(a.fromExerciseId, ctx), to = exName(a.toExerciseId, ctx);
       return { ...base, title: `Swap ${from} for ${to}`,
-        summary: `${from} has stalled. ${to} works the same muscles through the same movement with a different feel: a fresh stimulus and a reset, not a magic fix.`,
+        summary: chronicSkip ? `Keep the work realistic for your current routine. ${to} trains the same area; choose the change or leave the split as it is.` : `${from} has stalled. ${to} works the same muscles through the same movement with a different feel: a fresh stimulus and a reset, not a magic fix.`,
         changes: [`${splitName(a.splitId, ctx)}: ${from} → ${to}, same sets`], acceptLabel: 'Swap it' };
     }
     case 'add_exercise': {
@@ -446,7 +462,7 @@ export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderC
       const removed = a.remove.map(id => exName(id, ctx));
       const added = a.add.map(e => `${exName(e.exerciseId, ctx)} (${plural(e.sets, 'set')})`);
       return { ...base, title: `Trim ${splitName(a.splitId, ctx)}`,
-        summary: removed.length ? `Remove ${removed.join(' and ')}: it duplicates another lift in this split.` : `Adjust ${splitName(a.splitId, ctx)}.`,
+        summary: removed.length ? (chronicSkip ? `Keep the work realistic for your current routine. Remove ${removed.join(' and ')}, or leave the split as it is.` : `Remove ${removed.join(' and ')}: it duplicates another lift in this split.`) : `Adjust ${splitName(a.splitId, ctx)}.`,
         changes: [...removed.map(n => `Remove ${n}`), ...added.map(n => `Add ${n}`), ...a.setChanges.map(c => `${exName(c.exerciseId, ctx)}: ${plural(c.sets, 'set')}`)], acceptLabel: 'Trim it' };
     }
     case 'split_new': {

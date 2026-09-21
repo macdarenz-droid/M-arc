@@ -158,7 +158,7 @@
       "statement": "Swapping a stalled exercise for a similar one can spread growth across a muscle and refresh motivation. It has not been shown to grow more muscle overall, and too much variation makes progress hard to track.",
       "disputed": "Whether the observed regional growth is real or measurement. The best-supported benefit is motivation and adherence.",
       "appUse": "A swap from the same movement pattern for a plateaued lift, worded as a fresh stimulus and a reset, not a fix.",
-      "findingKinds": ["plateau", "redundant_exercises"],
+      "findingKinds": ["plateau", "redundant_exercises", "chronic_skip"],
       "proposalKinds": ["exercise_swap", "split_modify"],
       "citations": [
         { "key": "fonseca2014", "authors": "Fonseca RM, Roschel H, Tricoli V, et al.", "year": 2014, "title": "Changes in exercises are more effective than in loading schemes to improve muscle strength", "journal": "J Strength Cond Res", "where": "28(11):3085-3092", "doi": "10.1519/JSC.0000000000000539", "verified": "search-index" },
@@ -213,7 +213,7 @@
       "statement": "Training at a consistent time and context builds automaticity over weeks to months, about two months on average with a very wide range. Deciding in advance when and where you will train roughly doubles the odds of doing it. Missing one day does not undo the habit.",
       "disputed": "Whether phone reminders help long term or just create fatigue. Evidence for reminders is modest, so they are capped hard.",
       "appUse": "Learned schedule proposals and cue-timed nudges: at most one a day, none on days already trained, retired when a habit day goes cold, one tap to turn off, no streak shaming.",
-      "findingKinds": ["habit_pattern"],
+      "findingKinds": ["habit_pattern", "chronic_skip"],
       "proposalKinds": ["schedule"],
       "citations": [
         { "key": "lally2010", "authors": "Lally P, van Jaarsveld CHM, Potts HWW, Wardle J", "year": 2010, "title": "How are habits formed: Modelling habit formation in the real world", "journal": "Eur J Soc Psychol", "where": "40(6):998-1009", "doi": "10.1002/ejsp.674", "verified": "search-index" },

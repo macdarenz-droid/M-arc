@@ -138,6 +138,12 @@ export const WARMUP_REPS = [8, 5, 3] as const;
 export const WARMUP_ROUND_KG = 0.5;
 export const WARMUP_MIN_STEPS = 2;
 
+/** Chronic-skip comparisons require five comparable split sessions inside eight weeks. */
+export const SKIP_LOOKBACK_DAYS = 56;
+export const SKIP_WINDOW_SESSIONS = 5;
+export const SKIP_MIN_MISSING = 4;
+export const SKIP_MAX_FINDINGS = 2;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',

@@ -4,9 +4,9 @@ Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A–1T), effort-graded rest (2A–2T), morning verdict (3A–3T), the session-plan capture prerequisite (10A/10AT), live autoregulation (4A–4T), and the warm-up ramp (5A–5T) are complete in this checkout. The ramp is derived only from the first eligible history-backed effective target, never creates logged work, renders from the shared effective target, and can be hidden for the active session. Claude Opus 5's ranking and architecture remain the contract.
+Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A–1T), effort-graded rest (2A–2T), morning verdict (3A–3T), the session-plan capture prerequisite (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip evidence/planning (6A) are complete in this checkout. Confirmed omissions use five comparable saved plans; older logs remain an explicitly labelled current-template comparison with no mutation proposal. Claude Opus 5's ranking and architecture remain the contract.
 
-Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **6A**, chronic-skip evidence, planning, report registration, wording and research registration. Preserve captured-plan provenance and label legacy comparisons explicitly. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
+Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **6B**, guarded cut/swap acceptance in coach apply, then 6C and 6T. Preserve captured-plan provenance, the two-swap report ceiling and the informational-only legacy comparison. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
 
 ## Fixed decisions
 
@@ -20,3 +20,5 @@ Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-road
 ## Validation and next handoff
 
 Warm-up-ramp feature gate on 2026-09-21: both typechecks passed; 495 app tests passed across 39 files, including 15 focused ramp/dismissal tests and the unchanged 50-persona finite-number fuzz sweep; 87 proxy tests passed with eight existing skips; production build passed; and the five-theme visual/migration gate passed without page errors. The live flow verifies kg/lb rendering, 360 px wrapping, keyboard Hide, navigation/reload persistence, unchanged live/history counts and exactly two saved actual sets rather than five rows containing the three suggestions. Work item 6A is next.
+
+Chronic-skip work item 6A verification on 2026-09-21: app typecheck passed and 89 focused detector, planner, report, wording, principle and fuzz tests passed. Five recent comparable split sessions are required; confirmed saved-plan and explicitly limited legacy paths never mix. Only confirmed evidence produces a split-scoped cut or same-area swap, both bounded by the existing report swap budget. Work item 6B is next.

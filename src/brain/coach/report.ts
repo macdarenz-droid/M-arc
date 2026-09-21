@@ -7,17 +7,17 @@
  */
 import { CONTRACT_VERSION, type Finding, type FindingKind, type FindingsReport, type Proposal, type ProposalKind } from './contract';
 import type { BrainContext } from './context';
-import { FIRST_SESSIONS_COUNT } from './bands';
+import { FIRST_SESSIONS_COUNT, MAX_SWAPS_PER_REPORT } from './bands';
 import { daysBetween } from '@/core/dates';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand,
+  detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand,
   detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
-import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
+import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
 /** Kinds whose gate is the confidence, so a low value is still worth reporting. */
-const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern']);
+const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern', 'chronic_skip']);
 
 /** After accepting a suggestion, the same one stays away for this many days. */
 export const ACCEPT_COOLDOWN_DAYS: Record<ProposalKind, number> = {
@@ -66,6 +66,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('habit', () => detectHabit(ctx, habit)),
     ...safe('focus', () => detectFocus(ctx)),
     ...safe('notes', () => detectNoteFlags(ctx)),
+    ...safe('chronic-skip', () => detectChronicSkip(ctx)),
   ];
   const seen = new Set<string>();
   const findings = raw
@@ -75,13 +76,21 @@ export function buildReport(ctx: BrainContext): FindingsReport {
 
   const habitFinding = findings.find(f => f.kind === 'habit_pattern');
   const today = safe('today', () => { const p = planToday(ctx, recovery, findings); return p ? [p] : []; })[0] ?? null;
+  const swaps = safe('swaps', () => planSwaps(ctx, findings, recovery, profile));
+  const redundancy = safe('redundancy', () => planRedundancy(ctx, findings, profile));
+  const alreadyRemoved = new Set(redundancy.flatMap(item => item.apply.kind === 'split_modify' ? item.apply.remove : []));
+  const swapped = new Set(swaps.flatMap(item => item.apply.kind === 'exercise_swap' ? [item.apply.fromExerciseId] : []));
+  const skips = safe('skip-plans', () => planSkips(ctx, findings, profile, Math.max(0, MAX_SWAPS_PER_REPORT - swaps.length)))
+    .filter(item => item.apply.kind === 'exercise_swap' ? !swapped.has(item.apply.fromExerciseId)
+      : item.apply.kind !== 'split_modify' || !item.apply.remove.some(id => alreadyRemoved.has(id)));
   const candidates: Proposal[] = [
     ...(today ? [today] : []),
     ...safe('schedule', () => { const p = planSchedule(ctx, habit, habitFinding); return p ? [p] : []; }),
     ...safe('deload', () => { const p = planDeload(ctx, findings); return p ? [p] : []; }),
-    ...safe('swaps', () => planSwaps(ctx, findings, recovery, profile)),
+    ...swaps,
+    ...skips,
     ...safe('additions', () => planAdditions(ctx, findings, profile)),
-    ...safe('redundancy', () => planRedundancy(ctx, findings, profile)),
+    ...redundancy,
     ...safe('split-new', () => { const p = planSplitNew(ctx, findings, habit); return p ? [p] : []; }),
     ...safe('rest', () => { const p = planRest(ctx); return p ? [p] : []; }),
     ...safe('load', () => planLoad(ctx, findings, today)),
