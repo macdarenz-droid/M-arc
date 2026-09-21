@@ -47,8 +47,12 @@ describe('chronic skip planner', () => {
   it('labels confirmed and legacy copy without claiming plateau, duplication or cause', () => {
     const c = ctx([]);
     const render = { unit: 'kg' as const, splits: c.splits, custom: c.custom, today: c.today, goal: c.goal };
-    expect(renderFinding(finding(), render).noticed).toBe('Standing Calf Raise was in the saved plan but had no work logged in 4 of 5 Legs sessions.');
-    expect(renderFinding(finding('current_template'), render).noticed).toContain('Older plans were not saved.');
+    const confirmed = renderFinding(finding(), render);
+    const legacy = renderFinding(finding('current_template'), render);
+    expect(confirmed.noticed).toBe('Standing Calf Raise was in the saved plan but had no work logged in 4 of 5 Legs sessions.');
+    expect(confirmed.reviewInTrain).toBeUndefined();
+    expect(legacy.noticed).toContain('Older plans were not saved.');
+    expect(legacy.reviewInTrain).toBe(true);
     const proposals = planSkips(c, [finding()], usageProfile([], [], c.today), 1);
     const report: FindingsReport = { version: 1, generatedAt: new Date(c.now).toISOString(), today: c.today, dataQuality: { sessions: 5, weeksOfData: 5, effortCoverage: 1, insufficientData: false }, findings: [finding()], proposals };
     for (const item of proposals) {

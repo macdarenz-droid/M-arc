@@ -50,6 +50,8 @@ export interface Insight {
   confidence: Confidence;
   severity: Severity;
   evidence: PrincipleCard[];
+  /** Legacy chronic-skip comparisons can only navigate to the current split for review. */
+  reviewInTrain?: boolean;
 }
 
 export interface Suggestion {
@@ -353,6 +355,7 @@ export function renderFinding(f: Finding, ctx: RenderContext): Insight {
   };
   if (f.subject.exerciseId) insight.exerciseId = f.subject.exerciseId;
   if (f.subject.muscle) insight.muscle = f.subject.muscle;
+  if (f.kind === 'chronic_skip' && f.metrics.basis === 'current_template') insight.reviewInTrain = true;
   return insight;
 }
 

@@ -20,6 +20,7 @@ import { AskSheet } from './AskSheet';
 import { resyncReminders } from '../settings/reminders';
 import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
+import { go } from '@/app/router';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -40,6 +41,7 @@ export function Coach() {
   const open = suggestions.value;
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
+  const [openSkipGroup, setOpenSkipGroup] = useState<Suggestion[] | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
   const goal = GOALS.find(g => g.id === s.goal) ?? GOALS[0]!;
@@ -50,6 +52,20 @@ export function Coach() {
 
   const accept = (sg: Suggestion) => { showToast(acceptProposal(sg.proposal, today.value)); setOpenSuggestion(null); };
   const dismiss = (sg: Suggestion) => { dismissProposal(sg.proposal, today.value); showToast('Not now. It can come back later.'); setOpenSuggestion(null); };
+  const skipSource = (sg: Suggestion) => sg.proposal.basedOn.find(id => id.startsWith('chronic_skip:'));
+  const visibleSuggestions = open.filter((sg, index) => {
+    const source = skipSource(sg);
+    return !source || open.findIndex(candidate => skipSource(candidate) === source) === index;
+  });
+  const alternativesFor = (sg: Suggestion) => {
+    const source = skipSource(sg);
+    return source ? open.filter(candidate => skipSource(candidate) === source) : [sg];
+  };
+  const dismissSkipGroup = (group: Suggestion[]) => {
+    for (const sg of group) dismissProposal(sg.proposal, today.value);
+    showToast('Not now. It can come back later.');
+    setOpenSkipGroup(null);
+  };
 
   return (
     <div class="view">
@@ -76,19 +92,22 @@ export function Coach() {
         </Card>
       )}
 
-      <Section title="Suggestions" aside={open.length ? <span class="small muted">{open.length}</span> : undefined}>
+      <Section title="Suggestions" aside={visibleSuggestions.length ? <span class="small muted">{visibleSuggestions.length}</span> : undefined}>
         <div class="stack-sm">
-          {open.map(sg => (
-            <Card key={sg.id} class="suggestion card-press" onClick={() => setOpenSuggestion(sg)} aria-label={`Open suggestion: ${sg.title}`}>
+          {visibleSuggestions.map(sg => {
+            const alternatives = alternativesFor(sg);
+            const grouped = alternatives.length > 1;
+            return <Card key={sg.id} class="suggestion card-press" onClick={() => grouped ? setOpenSkipGroup(alternatives) : setOpenSuggestion(sg)} aria-label={`Open suggestion: ${sg.title}`}>
               <div class="row-between"><span class="insight-cat" style={{ '--insight': 'var(--accent)' }}>{KIND_LABEL[sg.kind]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{sg.title}</h3>
               <p class="small muted">{sg.summary}</p>
-              <div class="row" style={{ marginTop: 10 }}>
-                <Button size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(sg); }}>{sg.acceptLabel}</Button>
-                <Button size="sm" variant="quiet" onClick={e => { e.stopPropagation(); dismiss(sg); }}>Not now</Button>
+              <div class="wrap" style={{ marginTop: 10 }}>
+                {grouped ? alternatives.map(option => <Button key={option.id} size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(option); }}>{skipAcceptLabel(option)}</Button>)
+                  : <Button size="sm" variant="primary" onClick={e => { e.stopPropagation(); accept(sg); }}>{sg.acceptLabel}</Button>}
+                <Button size="sm" variant="quiet" onClick={e => { e.stopPropagation(); grouped ? dismissSkipGroup(alternatives) : dismiss(sg); }}>Not now</Button>
               </div>
-            </Card>
-          ))}
+            </Card>;
+          })}
           {!open.length && <Card class="card-quiet"><p class="small muted">{dq.insufficientData ? 'Log a few sessions and suggestions appear here. Nothing changes unless you accept it.' : 'Nothing to suggest right now. Your plan fits what your sessions show.'}</p></Card>}
         </div>
       </Section>
@@ -133,6 +152,7 @@ export function Coach() {
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
       {openSuggestion && <SuggestionSheet suggestion={openSuggestion} onAccept={() => accept(openSuggestion)} onDismiss={() => dismiss(openSuggestion)} onClose={() => setOpenSuggestion(null)} />}
+      {openSkipGroup && <ChronicSkipSheet suggestions={openSkipGroup} onAccept={sg => { accept(sg); setOpenSkipGroup(null); }} onDismiss={() => dismissSkipGroup(openSkipGroup)} onClose={() => setOpenSkipGroup(null)} />}
       {askOpen && <AskSheet onClose={() => setAskOpen(false)} />}
       {goalOpen && (
         <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
@@ -191,7 +211,32 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
         <OnlineNote id={insight.id} />
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
         {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
+        {insight.reviewInTrain && <Button variant="primary" onClick={() => { onClose(); go('train'); }}>Review in Train</Button>}
         <Evidence cards={insight.evidence} />
+      </div>
+    </Sheet>
+  );
+}
+
+function skipAcceptLabel(sg: Suggestion): string {
+  const apply = sg.proposal.apply;
+  if (apply.kind === 'split_modify') return `Remove from ${state.value.splits.find(split => split.id === apply.splitId)?.name ?? 'split'}`;
+  if (apply.kind === 'exercise_swap') return `Use ${findExercise(apply.toExerciseId, state.value.customExercises)?.name ?? 'replacement'}`;
+  return sg.acceptLabel;
+}
+
+function ChronicSkipSheet({ suggestions: group, onAccept, onDismiss, onClose }: { suggestions: Suggestion[]; onAccept: (sg: Suggestion) => void; onDismiss: () => void; onClose: () => void }) {
+  const first = group[0]!;
+  return (
+    <Sheet title="Choose a split change" onClose={onClose}>
+      <div class="stack">
+        <p class="small">Keep the work realistic for your current routine. Choose a change, or leave the split as it is.</p>
+        {first.why.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Why</div><p class="small muted">{first.why[0]}</p></div>}
+        <div class="stack-sm">
+          {group.map(sg => <Card key={sg.id} class="card-quiet"><div class="stack-sm"><b class="small">{sg.changes[0] ?? sg.title}</b><Button variant="primary" onClick={() => onAccept(sg)}>{skipAcceptLabel(sg)}</Button></div></Card>)}
+        </div>
+        <Evidence cards={first.evidence} />
+        <Button variant="quiet" onClick={onDismiss}>Not now</Button>
       </div>
     </Sheet>
   );

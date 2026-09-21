@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip work items 6A–6B are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), and chronic-skip work items 6A–6C are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 6C only
+## Start here: 6T only
 
-Implement spec 6's grouped mutually exclusive Coach alternatives and the legacy insight's read-only `Review in Train` navigation, then continue with the full 6T review. One `Not now` must dismiss the displayed pair together; accepting either current-template change naturally invalidates the other. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Review chronic skip as one integrity-sensitive feature, run its full gate and record the dated decision, then continue with 7A. Confirm the shared swap ceiling, grouped dismissal, stale acceptance, exact split diff, read-only legacy navigation and unchanged active/history data. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 
