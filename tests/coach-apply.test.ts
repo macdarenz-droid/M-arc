@@ -7,7 +7,7 @@ import { contextFromState } from '@/brain/coach/context';
 import { startSession, discardSession } from '@/slices/workout/session';
 import type { Proposal } from '@/brain/coach/contract';
 import { emptyReport } from '@/brain/coach/contract';
-import { pplHistory, pplSplits, LAST_MONDAY, PUSH_ID } from './coach-helpers';
+import { history, pplHistory, pplSplits, LAST_MONDAY, PUSH_EX, PUSH_ID, PULL_EX, PULL_ID, std, timedSession } from './coach-helpers';
 import { smartReminderOptions, nudgeTime } from '@/slices/settings/reminders';
 
 const memory = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k) }; };
@@ -17,6 +17,21 @@ function seed(): AppState {
   const s = freshState(new Date('2026-06-01T00:00:00Z'));
   s.splits = pplSplits();
   s.sessions = pplHistory(LAST_MONDAY, 12);
+  return s;
+}
+
+function driftSeed(): AppState {
+  const s = freshState(new Date('2026-05-01T00:00:00Z'));
+  s.splits = pplSplits();
+  s.sessions = history('2026-09-07', 16, [
+    { weekday: 'fri', splitId: PUSH_ID, exercises: w => (w < 7 || w === 8 || w === 9 ? std(PUSH_EX) : []) },
+    { weekday: 'sat', splitId: PUSH_ID, exercises: w => (w >= 10 && w <= 13 ? std(PUSH_EX) : []) },
+    { weekday: 'sat', splitId: PULL_ID, exercises: w => (w >= 14 ? std(PULL_EX) : []) },
+  ]);
+  s.sessions.push(timedSession('2026-05-18', 18, 0, std(PULL_EX), PULL_ID));
+  s.sessions.sort((a, b) => a.day.localeCompare(b.day));
+  s.schedule.fri = PUSH_ID;
+  s.coach.learnedStarts = { fri: '18:00', tue: '07:15' };
   return s;
 }
 
@@ -77,6 +92,40 @@ describe('accepting and dismissing', () => {
     expect(push.exercises.map(e => e.exerciseId)).toContain('lib_dumbbell_bench_press');
     expect(push.exercises.map(e => e.exerciseId)).not.toContain('lib_barbell_bench_press');
     expect(push.exercises[0]!.sets).toBe(3);
+  });
+
+  it('revalidates a consistency move and changes only its exact two schedule days', () => {
+    replaceState(driftSeed());
+    const proposal = buildReport(contextFromState(state.value, TODAY, Date.now())).proposals.find(row => row.id.includes(':drift-'))!;
+    expect(acceptProposal(proposal, TODAY)).toContain('Schedule');
+    expect(state.value.schedule.fri).toBeNull();
+    expect(state.value.schedule.sat).toBe(PUSH_ID);
+    expect(state.value.coach.learnedStarts.fri).toBeUndefined();
+    expect(state.value.coach.learnedStarts.sat).toBe('18:00');
+    expect(state.value.coach.learnedStarts.tue).toBe('07:15');
+    expect(state.value.coach.accepted['schedule:*']).toBe(TODAY);
+  });
+
+  it('blocks stale consistency moves without schedule or acceptance writes', () => {
+    const cases = [
+      (s: AppState) => ({ ...s, schedule: { ...s.schedule, sat: PULL_ID } }),
+      (s: AppState) => ({ ...s, schedule: { ...s.schedule, fri: PULL_ID } }),
+      (s: AppState) => ({ ...s, splits: s.splits.filter(split => split.id !== PUSH_ID) }),
+    ];
+    for (const mutate of cases) {
+      replaceState(driftSeed());
+      const proposal = buildReport(contextFromState(state.value, TODAY, Date.now())).proposals.find(row => row.id.includes(':drift-'))!;
+      replaceState(mutate(state.value));
+      const before = structuredClone(state.value);
+      expect(acceptProposal(proposal, TODAY)).toBe('Your schedule changed. Review a fresh suggestion.');
+      expect(state.value).toEqual(before);
+      expect(state.value.coach.accepted['schedule:*']).toBeUndefined();
+    }
+    replaceState(driftSeed());
+    const expired = buildReport(contextFromState(state.value, TODAY, Date.now())).proposals.find(row => row.id.includes(':drift-'))!;
+    const before = structuredClone(state.value);
+    expect(acceptProposal(expired, '2026-09-27')).toBe('Your schedule changed. Review a fresh suggestion.');
+    expect(state.value).toEqual(before);
   });
 
   it('guards chronic-skip cut and swap against stale splits without touching active work or history', () => {

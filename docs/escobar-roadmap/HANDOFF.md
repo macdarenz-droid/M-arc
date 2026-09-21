@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), and consistency-drift detection/planning (13A) are implemented and committed unit by unit on the working branch. Feature 13 acceptance is next.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), and consistency-drift detection and guarded acceptance (13A-13B) are implemented and committed unit by unit on the working branch. Feature 13 presentation is next.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 13B only
+## Start here: 13C only
 
-Add fresh guarded acceptance for the consistency-drift schedule patch. Recompute the current drift proposal and require exact two-day equality; changed source split, occupied destination, deleted split and expiry must fail without touching schedule, learned starts, reminders or acceptance memory. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Verify the consistency-drift wording and existing Coach Insight/Suggestion sheets show the exact two eight-week windows, logged-session limitation, supported destination evidence and explicit move/dismiss controls. No new screen or notification path is needed. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

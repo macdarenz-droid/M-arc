@@ -10,6 +10,9 @@ import { addDays } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import type { FindingsReport, Proposal } from '@/brain/coach/contract';
 import { dismissalEvidence as captureDismissalEvidence } from '@/brain/coach/reopen';
+import { contextFromState } from '@/brain/coach/context';
+import { detectConsistencyDrift, learnHabits } from '@/brain/coach/detectors';
+import { planConsistencyShift } from '@/brain/coach/planners';
 import { clock } from '@/brain/coach/words';
 import { MAX_SPLITS, addExerciseToSplit, createSplit, removeExerciseFromSplit, setFocus, setSplitSets } from '../workout/splits';
 import { resyncReminders } from '../settings/reminders';
@@ -17,6 +20,7 @@ import { resyncReminders } from '../settings/reminders';
 /** Hide a suggestion for this many days after one dismissal. A second dismissal suppresses it. */
 export const SNOOZE_DAYS = 3;
 const fromChronicSkip = (proposal: Proposal): boolean => proposal.basedOn.some(id => id.startsWith('chronic_skip:'));
+const fromConsistencyDrift = (proposal: Proposal): boolean => proposal.basedOn.some(id => id.startsWith('consistency_drift:'));
 
 function remember(proposal: Proposal, today: string): void {
   update(s => {
@@ -27,6 +31,18 @@ function remember(proposal: Proposal, today: string): void {
 }
 
 const changedMessage = 'That suggestion has changed; review the latest coach update';
+const scheduleChangedMessage = 'Your schedule changed. Review a fresh suggestion.';
+
+function currentConsistencyShift(p: Proposal, s: AppState, today: string): boolean {
+  if (p.apply.kind !== 'schedule' || !fromConsistencyDrift(p)) return false;
+  const ctx = contextFromState(s, today, new Date(`${today}T12:00:00`).getTime());
+  const model = learnHabits(ctx.sessions, ctx.splits, ctx.today);
+  const drift = detectConsistencyDrift(ctx, model)[0];
+  const fresh = planConsistencyShift(ctx, model, drift);
+  if (!fresh || fresh.apply.kind !== 'schedule') return false;
+  const freshDays = fresh.apply.days, proposedDays = p.apply.days;
+  return WEEKDAYS.every(day => JSON.stringify(freshDays[day]) === JSON.stringify(proposedDays[day]));
+}
 
 function actionIsCurrent(p: Proposal, s: AppState, today: string): boolean {
   const a = p.apply;
@@ -93,7 +109,8 @@ function actionIsCurrent(p: Proposal, s: AppState, today: string): boolean {
 /** Apply a proposal. Returns a plain-words confirmation, or a reason nothing changed. */
 export function acceptProposal(p: Proposal, today: string): string {
   const a = p.apply;
-  if (p.expiresOn && today > p.expiresOn) return 'That suggestion has expired; review the latest coach update';
+  if (p.expiresOn && today > p.expiresOn) return fromConsistencyDrift(p) ? scheduleChangedMessage : 'That suggestion has expired; review the latest coach update';
+  if (fromConsistencyDrift(p) && !currentConsistencyShift(p, state.value, today)) return scheduleChangedMessage;
   if (a.kind === 'split_new' && state.value.splits.length + a.splits.length > MAX_SPLITS) return `The app holds up to ${MAX_SPLITS} splits. Delete one first.`;
   if (a.kind === 'add_exercise') {
     const target = state.value.splits.find(split => split.id === a.splitId);
@@ -109,6 +126,7 @@ export function acceptProposal(p: Proposal, today: string): string {
   let message = 'Done';
   switch (a.kind) {
     case 'schedule': {
+      const exactDrift = fromConsistencyDrift(p);
       update(s => {
         const schedule = { ...s.schedule };
         const learnedStarts = { ...s.coach.learnedStarts };
@@ -116,7 +134,7 @@ export function acceptProposal(p: Proposal, today: string): string {
           const day = a.days[d];
           if (day === undefined) continue;
           if (day === null) { schedule[d] = null; delete learnedStarts[d]; continue; }
-          schedule[d] = day.splitId && s.splits.some(sp => sp.id === day.splitId) ? day.splitId : (schedule[d] ?? s.splits[0]?.id ?? null);
+          schedule[d] = exactDrift ? day.splitId : day.splitId && s.splits.some(sp => sp.id === day.splitId) ? day.splitId : (schedule[d] ?? s.splits[0]?.id ?? null);
           learnedStarts[d] = clock(day.startHour, day.startMinute);
         }
         return { ...s, schedule, coach: { ...s.coach, learnedStarts, smartReminders: s.preferences.reminders.enabled ? true : s.coach.smartReminders } };
