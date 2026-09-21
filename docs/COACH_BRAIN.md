@@ -90,7 +90,7 @@ enumerated in `src/brain/coach/contract.ts`.
 | `long_gap` | Days since last session | ≥ 7 days |
 | `habit_pattern` | Per-weekday training probability and typical start time, recency-weighted over 10–12 weeks; a habitual day retires after three complete cold weeks | ≥ 6 weeks, probability ≥ 0.6 |
 | `low_sleep_readiness` | Health Connect sleep below the user's own norm | Sleep data present |
-| `low_readiness` | A pattern of low morning check-ins (sleep, soreness, stress; trimmed Hooper-style, 1–5 each) | Today's check-in is low, and at least one more of the trailing week's was too |
+| `low_readiness` | A pattern of low morning check-ins, read against this person's own 28-day baseline when one exists (≥10 check-ins in 28 days) | Today's verdict is amber or red, and at least one more of the trailing week's check-ins was at or under this person's own low line |
 | `record`, `first_sessions` | Records; baseline state with too little data | — |
 
 ## Layer 1: planners
@@ -369,15 +369,17 @@ the cases a single history cannot.
    again next app open if skipped. It feeds the brain two separate ways,
    matching P19's own caveat that a single reading says little alone:
    `detectors/recovery.ts`'s `readinessFactor` widens *today's* recovery
-   windows immediately from a single check-in, the same mechanism as the
-   existing volume factor (the wider of the two wins; they are never
-   multiplied, and the combined result still never exceeds
-   `RECOVERY_VOLUME_FACTOR_MAX`) — a low morning is real information about
-   right now, whether or not it turns out to be a pattern. A new finding,
-   `low_readiness`, only speaks up once at least two of the trailing
-   week's check-ins, today included, came back low, since one rough
-   morning is exactly the weak, on-its-own signal P19 warns against
-   over-reading.
+   windows in three steps from the deterministic verdict: steady/green
+   leaves them alone, amber widens halfway to the cap, and red uses the
+   existing cap. Volume, fatigue and readiness still combine by taking
+   the widest factor, never multiplying, and never exceed
+   `RECOVERY_VOLUME_FACTOR_MAX`. Once ten prior check-ins exist inside 28
+   days, the verdict reads today against that person's median and median
+   absolute deviation. `READINESS_LOW_AVG` remains the no-baseline band;
+   a separate hard floor still catches a terrible morning for everyone.
+   The `low_readiness` finding only speaks once at least two recent
+   check-ins cross that person's low line, since one rough morning is the
+   weak, on-its-own signal P19 warns against over-reading.
    **Preference memory:** short, plain-word facts the coach infers from
    how this person has actually responded to its own suggestions —
    `brain/coach/preferences.ts`'s `computePreferenceFacts`, reading

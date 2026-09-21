@@ -53,6 +53,25 @@ export const SLEEP_SHORT_MINUTES = 360;
 export const READINESS_LOW_AVG = 2.5;
 /** A low-readiness day widens today's recovery windows like extra volume does, up to this factor. Combined with the volume factor by taking whichever is larger, never multiplied, and still capped by RECOVERY_VOLUME_FACTOR_MAX. */
 export const READINESS_RECOVERY_FACTOR_MAX = 1.3;
+/** Ten check-ins in four weeks before the coach claims to know this person's normal. */
+export const READINESS_BASELINE_WINDOW_DAYS = 28;
+export const READINESS_BASELINE_MIN_ENTRIES = 10;
+/** A 1–5 scale often has zero spread; this stops a small dip looking like a crisis. */
+export const READINESS_MAD_FLOOR = 0.6;
+/** Baseline-relative verdict bands, measured in median absolute deviations. */
+export const READINESS_Z_RED = -1.5;
+export const READINESS_Z_AMBER = -0.75;
+export const READINESS_Z_GREEN = 1;
+/** One dimension two points below its own median is worth naming even when the average holds. */
+export const READINESS_DIM_DROP = 2;
+/** A strong absolute morning when no low dimension contradicts it. */
+export const READINESS_GOOD_AVG = 4.5;
+/** The absolute floor that still applies when someone's own normal is already low. */
+export const READINESS_FLOOR_HARD_AVG = 1.5;
+/** Consecutive equal check-ins needed before a below-normal dimension counts as drift. */
+export const READINESS_DRIFT_MIN_RUN = 3;
+/** Halfway to the cap: an amber morning is a real signal, but not the worst one. */
+export const READINESS_RECOVERY_FACTOR_AMBER = Math.round((1 + (READINESS_RECOVERY_FACTOR_MAX - 1) / 2) * 100) / 100;
 /** One low morning says little on its own (subjective_readiness_monitoring); the coach only speaks up once at least this many of the trailing check-ins, today included, were low. */
 export const READINESS_PATTERN_MIN_LOW = 2;
 export const READINESS_PATTERN_WINDOW_DAYS = 7;

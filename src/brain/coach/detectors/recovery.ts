@@ -1,16 +1,15 @@
 /**
- * Muscle recovery with the session's volume taken into account. The base
- * window comes from effort (24/48/72 h) and the user's own short-rest
- * history; a session much bigger than the muscle's usual widens it, up to
- * 1.5×. Nothing ever shrinks it. Rests on recovery_time_course.
+ * Muscle recovery with volume, readiness and fatigue widening the base
+ * window. Factors combine by maximum and never shrink recovery time.
  */
 import type { Session } from '@/core/models';
 import type { MuscleId } from '@/data/muscles';
 import { MUSCLE_BY_ID } from '@/data/muscles';
 import { muscleTouches, recoveryStatus, type MuscleRecovery } from '../../recovery';
+import { readinessToday, type ReadinessVerdict } from '../../readiness';
 import type { Finding } from '../contract';
 import type { BrainContext } from '../context';
-import { FATIGUE_RECOVERY_FACTOR, READINESS_LOW_AVG, READINESS_RECOVERY_FACTOR_MAX, RECOVERY_FLAG_PCT, RECOVERY_VOLUME_FACTOR_MAX } from '../bands';
+import { FATIGUE_RECOVERY_FACTOR, READINESS_RECOVERY_FACTOR_AMBER, READINESS_RECOVERY_FACTOR_MAX, RECOVERY_FLAG_PCT, RECOVERY_VOLUME_FACTOR_MAX } from '../bands';
 import { finding, median, round2 } from './shared';
 
 export interface AdjustedRecovery extends MuscleRecovery {
@@ -20,33 +19,25 @@ export interface AdjustedRecovery extends MuscleRecovery {
   adjustedWindowHours: number;
   adjustedPct: number;
   adjustedHoursLeft: number;
+  pctWithoutReadiness: number;
+  windowHoursWithoutReadiness: number;
+  readinessPersonalized: boolean;
 }
 
-function readinessAvg(e: { sleep: number; soreness: number; stress: number }): number {
-  return (e.sleep + e.soreness + e.stress) / 3;
+export interface ReadinessAdjustment { factor: number; verdict: ReadinessVerdict | null; personalized: boolean }
+
+/** Today's check-in as a recovery-window multiplier, in three widen-only steps. */
+export function readinessAdjustment(ctx: BrainContext): ReadinessAdjustment {
+  const readiness = readinessToday(ctx.readiness, ctx.today);
+  if (!readiness) return { factor: 1, verdict: null, personalized: false };
+  const factor = readiness.verdict === 'red' ? READINESS_RECOVERY_FACTOR_MAX
+    : readiness.verdict === 'amber' ? READINESS_RECOVERY_FACTOR_AMBER : 1;
+  return { factor, verdict: readiness.verdict, personalized: readiness.personalized };
 }
 
-/**
- * How much today's own check-in, if any, widens every muscle's recovery
- * window — the same idea as the volume factor: only ever widens, never
- * shrinks. Linear between a full check-in (factor 1) and the worst
- * possible one (READINESS_RECOVERY_FACTOR_MAX).
- */
-export function readinessFactor(ctx: BrainContext): number {
-  const entry = ctx.readiness.find(r => r.day === ctx.today);
-  if (!entry) return 1;
-  const avg = readinessAvg(entry);
-  if (avg >= READINESS_LOW_AVG) return 1;
-  const t = (READINESS_LOW_AVG - avg) / (READINESS_LOW_AVG - 1);
-  return round2(1 + t * (READINESS_RECOVERY_FACTOR_MAX - 1));
-}
+/** Kept as the narrow public entry point existing callers use. */
+export function readinessFactor(ctx: BrainContext): number { return readinessAdjustment(ctx).factor; }
 
-/**
- * True when a session logged that day was tagged "fatigue" in a way that
- * touches this muscle — either the flag named no muscle (a whole-session
- * note like "felt gassed today" widens recovery for everything trained
- * that day) or named this muscle specifically.
- */
 function fatigueFlaggedOn(sessions: Session[], day: string, muscle: MuscleId): boolean {
   return sessions.some(s => s.day === day && s.noteFlags?.some(f => f.kind === 'fatigue' && (f.muscle === null || f.muscle === muscle)));
 }
@@ -54,9 +45,15 @@ function fatigueFlaggedOn(sessions: Session[], day: string, muscle: MuscleId): b
 export function adjustedRecovery(ctx: BrainContext): AdjustedRecovery[] {
   const base = recoveryStatus(ctx.sessions, ctx.custom, ctx.now);
   const touches = muscleTouches(ctx.sessions, ctx.custom);
-  const rFactor = readinessFactor(ctx);
+  const ra = readinessAdjustment(ctx);
+  const rFactor = ra.factor;
   return base.map(r => {
-    if (!r.lastDay || !r.lastTrainedAt) return { ...r, volumeFactor: 1, readinessFactor: rFactor, fatigueFactor: 1, adjustedWindowHours: r.windowHours, adjustedPct: r.pct, adjustedHoursLeft: r.hoursLeft };
+    if (!r.lastDay || !r.lastTrainedAt) return {
+      ...r, volumeFactor: 1, readinessFactor: rFactor, fatigueFactor: 1,
+      adjustedWindowHours: r.windowHours, adjustedPct: r.pct, adjustedHoursLeft: r.hoursLeft,
+      pctWithoutReadiness: r.pct, windowHoursWithoutReadiness: r.windowHours,
+      readinessPersonalized: ra.personalized,
+    };
     const list = touches[r.muscle];
     const lastSets = list.filter(t => t.day === r.lastDay).reduce((a, t) => a + t.sets, 0);
     const priorByDay = new Map<string, number>();
@@ -69,10 +66,18 @@ export function adjustedRecovery(ctx: BrainContext): AdjustedRecovery[] {
     }
     const fFactor = fatigueFlaggedOn(ctx.sessions, r.lastDay, r.muscle) ? FATIGUE_RECOVERY_FACTOR : 1;
     const factor = Math.min(RECOVERY_VOLUME_FACTOR_MAX, Math.max(volumeFactor, rFactor, fFactor));
-    const window = r.windowHours * factor;
     const elapsed = (ctx.now - new Date(r.lastTrainedAt).getTime()) / 3_600_000;
+    const factorWithout = Math.min(RECOVERY_VOLUME_FACTOR_MAX, Math.max(volumeFactor, fFactor));
+    const windowWithout = r.windowHours * factorWithout;
+    const pctWithout = Math.max(0, Math.min(100, Math.round((elapsed / windowWithout) * 100)));
+    const window = r.windowHours * factor;
     const pct = Math.max(0, Math.min(100, Math.round((elapsed / window) * 100)));
-    return { ...r, volumeFactor: round2(volumeFactor), readinessFactor: round2(rFactor), fatigueFactor: round2(fFactor), adjustedWindowHours: Math.round(window), adjustedPct: pct, adjustedHoursLeft: Math.max(0, window - elapsed) };
+    return {
+      ...r, volumeFactor: round2(volumeFactor), readinessFactor: round2(rFactor), fatigueFactor: round2(fFactor),
+      adjustedWindowHours: Math.round(window), adjustedPct: pct, adjustedHoursLeft: Math.max(0, window - elapsed),
+      pctWithoutReadiness: pctWithout, windowHoursWithoutReadiness: Math.round(windowWithout),
+      readinessPersonalized: ra.personalized,
+    };
   });
 }
 
@@ -86,7 +91,9 @@ export function detectUnderRecovered(ctx: BrainContext, recovery = adjustedRecov
       subject: { muscle: r.muscle as MuscleId, muscleGroup: MUSCLE_BY_ID[r.muscle].group },
       metrics: {
         pct: r.adjustedPct, hoursLeft: Math.round(r.adjustedHoursLeft), windowHours: r.adjustedWindowHours,
-        baseWindowHours: r.windowHours, volumeFactor: r.volumeFactor, readinessFactor: r.readinessFactor, fatigueFactor: r.fatigueFactor, personalized: r.personalized, lastDay: r.lastDay,
+        baseWindowHours: r.windowHours, volumeFactor: r.volumeFactor, readinessFactor: r.readinessFactor,
+        fatigueFactor: r.fatigueFactor, readinessPersonalized: r.readinessPersonalized,
+        personalized: r.personalized, lastDay: r.lastDay,
       },
       from: r.lastDay, to: ctx.today,
       confidence: r.personalized ? 'high' : 'medium',

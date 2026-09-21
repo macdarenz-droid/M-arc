@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { adjustedRecovery, detectReadiness, readinessFactor } from '@/brain/coach/detectors';
-import { FATIGUE_RECOVERY_FACTOR, READINESS_LOW_AVG, READINESS_PATTERN_MIN_LOW, READINESS_RECOVERY_FACTOR_MAX } from '@/brain/coach/bands';
+import { adjustedRecovery, detectReadiness, detectUnderRecovered, readinessFactor } from '@/brain/coach/detectors';
+import { FATIGUE_RECOVERY_FACTOR, READINESS_LOW_AVG, READINESS_PATTERN_MIN_LOW, READINESS_RECOVERY_FACTOR_AMBER, READINESS_RECOVERY_FACTOR_MAX } from '@/brain/coach/bands';
 import type { ReadinessEntry } from '@/core/models';
 import { session, sets } from './helpers';
 import { addDays } from '@/core/dates';
@@ -15,11 +15,28 @@ describe('readinessFactor', () => {
     expect(readinessFactor(ctx([], { readiness: [entry('2026-09-18', 1, 1, 1)] }))).toBe(1); // yesterday, not today
   });
 
-  it('widens toward the cap as today\'s check-in gets worse, capping at the worst possible reading', () => {
-    const mild = readinessFactor(ctx([], { readiness: [entry(TODAY, 2, 2, 2)] })); // avg 2, just under the 2.5 threshold
-    expect(mild).toBeGreaterThan(1);
-    expect(mild).toBeLessThan(READINESS_RECOVERY_FACTOR_MAX);
+  it('steps by verdict rather than ramping, and a habitual low reading no longer widens anything', () => {
+    expect(readinessFactor(ctx([], { readiness: [entry(TODAY, 2, 2, 2)] }))).toBe(READINESS_RECOVERY_FACTOR_MAX);
     expect(readinessFactor(ctx([], { readiness: [entry(TODAY, 1, 1, 1)] }))).toBe(READINESS_RECOVERY_FACTOR_MAX);
+    const high = Array.from({ length: 10 }, (_, i) => entry(addDays(TODAY, -(i + 1)), 4, 4, 4));
+    const amber = readinessFactor(ctx([], { readiness: [...high, entry(TODAY, 4, 4, 2)] }));
+    expect(amber).toBe(READINESS_RECOVERY_FACTOR_AMBER);
+    expect(amber).toBeGreaterThan(1);
+    expect(amber).toBeLessThan(READINESS_RECOVERY_FACTOR_MAX);
+    const habitual = Array.from({ length: 10 }, (_, i) => entry(addDays(TODAY, -(i + 1)), 2, 2, 2));
+    expect(readinessFactor(ctx([], { readiness: [...habitual, entry(TODAY, 2, 2, 2)] }))).toBe(1);
+  });
+
+  it('never shrinks or exceeds the recovery cap for any score combination', () => {
+    const baseline = Array.from({ length: 10 }, (_, i) => entry(addDays(TODAY, -(i + 1)), 3, 3, 3));
+    for (let sleep = 1; sleep <= 5; sleep++) for (let soreness = 1; soreness <= 5; soreness++) for (let stress = 1; stress <= 5; stress++) {
+      const current = entry(TODAY, sleep as 1 | 2 | 3 | 4 | 5, soreness as 1 | 2 | 3 | 4 | 5, stress as 1 | 2 | 3 | 4 | 5);
+      for (const readiness of [[current], [...baseline, current]]) {
+        const factor = readinessFactor(ctx([], { readiness }));
+        expect(factor).toBeGreaterThanOrEqual(1);
+        expect(factor).toBeLessThanOrEqual(READINESS_RECOVERY_FACTOR_MAX);
+      }
+    }
   });
 });
 
@@ -36,6 +53,16 @@ describe('adjustedRecovery combines volume and readiness', () => {
     expect(withCheckIn.readinessFactor).toBe(READINESS_RECOVERY_FACTOR_MAX);
     expect(withCheckIn.adjustedWindowHours).toBeGreaterThan(withoutCheckIn.adjustedWindowHours);
     expect(withCheckIn.adjustedWindowHours).toBe(Math.round(48 * READINESS_RECOVERY_FACTOR_MAX));
+    expect(withoutCheckIn.pctWithoutReadiness).toBe(withoutCheckIn.adjustedPct);
+    expect(withoutCheckIn.windowHoursWithoutReadiness).toBe(withoutCheckIn.adjustedWindowHours);
+    expect(withCheckIn.pctWithoutReadiness).toBe(withoutCheckIn.adjustedPct);
+    expect(withCheckIn.adjustedPct).toBeLessThan(withCheckIn.pctWithoutReadiness);
+    expect(withCheckIn.readinessPersonalized).toBe(false);
+    const baseline = Array.from({ length: 10 }, (_, i) => entry(addDays(TODAY, -(i + 1)), 4, 4, 4));
+    const personalized = adjustedRecovery(ctx(usual, { now, readiness: [...baseline, entry(TODAY, 4, 2, 2)] })).find(r => r.muscle === 'chest')!;
+    expect(personalized.readinessPersonalized).toBe(true);
+    const finding = detectUnderRecovered(ctx(usual, { now, readiness: [...baseline, entry(TODAY, 4, 2, 2)] })).find(f => f.subject.muscle === 'chest')!;
+    expect(finding.metrics.readinessPersonalized).toBe(true);
   });
 
   it('never shrinks the window, and the larger of the two factors wins rather than multiplying', () => {
@@ -45,6 +72,8 @@ describe('adjustedRecovery combines volume and readiness', () => {
     expect(r.volumeFactor).toBe(1.5);
     expect(r.readinessFactor).toBe(READINESS_RECOVERY_FACTOR_MAX);
     expect(r.adjustedWindowHours).toBe(72); // volume's wider factor wins, not the two multiplied together
+    expect(r.windowHoursWithoutReadiness).toBe(r.adjustedWindowHours);
+    expect(r.pctWithoutReadiness).toBe(r.adjustedPct);
   });
 });
 
@@ -78,6 +107,8 @@ describe('adjustedRecovery: a session note tagged "fatigue" widens that session\
     expect(flagged.readinessFactor).toBe(READINESS_RECOVERY_FACTOR_MAX);
     // Both factors are the same size here, so the combined window matches either one alone, not their product.
     expect(flagged.adjustedWindowHours).toBe(Math.round(48 * READINESS_RECOVERY_FACTOR_MAX));
+    expect(flagged.windowHoursWithoutReadiness).toBe(flagged.adjustedWindowHours);
+    expect(flagged.pctWithoutReadiness).toBe(flagged.adjustedPct);
   });
 });
 
@@ -110,6 +141,23 @@ describe('detectReadiness', () => {
 
   it('ignores a low check-in more than a week old', () => {
     const readiness = [entry('2026-09-05', 1, 1, 1), entry(TODAY, 1, 1, 1)];
+    expect(detectReadiness(ctx([], { readiness }))).toEqual([]);
+  });
+
+  it('speaks for a repeated relative crash above the absolute line', () => {
+    const baseline = Array.from({ length: 12 }, (_, i) => i % 2
+      ? entry(addDays(TODAY, -(i + 2)), 4, 5, 5)
+      : entry(addDays(TODAY, -(i + 2)), 5, 4, 5));
+    const readiness = [...baseline, entry(addDays(TODAY, -1), 3, 3, 3), entry(TODAY, 3, 3, 3)];
+    const out = detectReadiness(ctx([], { readiness }));
+    expect(out).toHaveLength(1);
+    expect(out[0]!.metrics).toMatchObject({ avg: 3, personalized: true, baselineAvg: 4.7, lowCheckIns: 2, verdict: 'red' });
+    expect(Number(out[0]!.metrics.avg)).toBeGreaterThan(READINESS_LOW_AVG);
+    expect(out[0]!.principles).toEqual(['subjective_readiness_monitoring']);
+  });
+
+  it('stays silent when a habitual 2 remains at the person\'s normal', () => {
+    const readiness = [...Array.from({ length: 10 }, (_, i) => entry(addDays(TODAY, -(i + 2)), 2, 2, 2)), entry(addDays(TODAY, -1), 2, 2, 2), entry(TODAY, 2, 2, 2)];
     expect(detectReadiness(ctx([], { readiness }))).toEqual([]);
   });
 });
