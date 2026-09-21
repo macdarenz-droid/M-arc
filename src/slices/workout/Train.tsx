@@ -9,16 +9,17 @@ import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
 import { PLAN_MAX_METADATA_SETS, type Exercise, type PlanSetTarget, type Split } from '@/core/models';
-import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
+import { repRange, suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { applyDeload, deloadActive as isDeloadActive } from '@/brain/coach/deload';
-import { autoregulate, effectiveSetTarget, substitutes, warmupRamp, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute, type WarmupRamp } from '@/brain/live';
+import { autoregulate, effectiveSetTarget, isReducedTarget, substitutes, warmupRamp, type LiveAdjustment, type RestNext, type RestReasonKind, type Substitute, type WarmupRamp } from '@/brain/live';
 import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery, detectNoteFlags } from '@/brain/coach/detectors';
 import { recentPainMuscles } from '@/brain/coach/planners/shared';
 import { equipmentGroup } from '@/brain/coach/cues';
 import { endDeload } from '../coach/apply';
 import { ensureDeviceId, remoteEnabled } from '../coach/remote';
-import { isLiveRecord } from '@/brain/prs';
+import { liveRecordFrom, prReach } from '@/brain/prs';
+import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
 import { acceptLiveAdjustment, addExerciseToSession, addSet, active, adjustRest, dismissLiveAdjustment, dismissWarmup, stopRest, applySessionNoteFlags, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, regradeRest, removeEntry, removeSet, replaceEntry, restoreEmptyEntry, resumeSession, setSessionNote, setSet, skipEntry, startSession, REST_STEP, type FinishSummary } from './session';
@@ -34,6 +35,7 @@ import { GOALS } from '@/data/goals';
 import { effortRepair, sessionDebrief } from '@/brain/debrief';
 import { SessionDebrief } from './SessionDebrief';
 import { EffortRepair } from './EffortRepair';
+import { PrReachHint } from './PrReachHint';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -318,6 +320,10 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
+  const prior = useMemo(
+    () => exerciseHistory(s.sessions, entry.exerciseId, s.customExercises),
+    [s.sessions, s.customExercises, entry.exerciseId],
+  );
   const next = applyDeload(suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises), deload.value, today.value);
   const captured = entry.planComparisonValid === false ? undefined : s.active?.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
   const headlineTarget = captured ? effectiveSetTarget(captured.targets, entry.targetOverrides, 0) : null;
@@ -329,6 +335,11 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const loggedHere = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
+  const firstUncompleted = entry.sets.findIndex(set => !isWorkingSet(set));
+  const activeDeload = !!s.active && (
+    isDeloadActive(s.active.plan?.deload, dayKey(new Date(s.active.startedAt)))
+    || isDeloadActive(s.coach.deload, today.value)
+  );
 
   const evaluateOffer = (sourceSet: number) => {
     const latest = active();
@@ -447,10 +458,23 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
           {entry.sets.map((set, j) => {
             const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);
             const fallbackTarget = next.sets[Math.min(j, next.sets.length - 1)];
-            const target = captured ? effectiveSetTarget(captured.targets, entry.targetOverrides, j) : fallbackTarget;
+            const target = (captured ? effectiveSetTarget(captured.targets, entry.targetOverrides, j) : fallbackTarget) ?? null;
             const overridden = !!entry.targetOverrides?.[j];
             const targetNote = captured ? (overridden ? 'Updated target' : captured.targetSource === 'starter' ? 'Starting suggestion' : 'Original target') : fallbackTarget?.note;
-            const pr = !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises);
+            const pr = !isTimed && liveRecordFrom(prior, mode, set);
+            const originalTarget = captured ? effectiveSetTarget(captured.targets, undefined, j) : null;
+            const rowHasInput = set.kg != null || set.reps != null || set.durationSec != null || set.distanceM != null || set.effort != null;
+            const reach = captured && j === firstUncompleted && !rowHasInput && !entry.done && !entry.skipped && !offer
+              ? prReach({
+                prior,
+                mode,
+                target,
+                repCeiling: repRange(ex, s.goal)[1],
+                earlierSets: entry.sets.slice(0, j),
+                deloadActive: activeDeload,
+                reducedTarget: isReducedTarget(originalTarget, target),
+              })
+              : null;
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
@@ -469,6 +493,7 @@ function EntryCard({ index, entry, ramp, open, onToggle, onDone, onRemove, onBro
                   <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : targetNote ?? ''}</span>
                   {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
                 </div>
+                {reach && <PrReachHint reach={reach} unit={u} />}
                 {!s.active?.pausedAt && offer?.sourceSet === j && (
                   <div class="stack-sm" style={{ marginTop: 8 }}>
                     <p class="hint">{offer.reason === 'max_below_target'
