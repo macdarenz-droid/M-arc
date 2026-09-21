@@ -242,6 +242,7 @@ for (const theme of themes) {
     const debriefState = structuredClone(source);
     debriefState.active = null;
     debriefState.coach.remoteExplainer = false;
+    debriefState.preferences.weightUnit = 'kg';
     const previousDay = day(7), currentDay = day(0);
     const originalTargets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null }));
     const priorSession = { id: 'gate-debrief-prior', splitId: 'split_push', splitName: 'Push', day: previousDay, startedAt: `${previousDay}T10:00:00.000Z`, endedAt: `${previousDay}T11:00:00.000Z`, durationSec: 3600,
