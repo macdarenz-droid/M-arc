@@ -395,6 +395,85 @@ for (const theme of themes) {
     await repairLbPage.getByText(/Barbell Bench Press · Set 1 · 132\.5 lb × 8/).waitFor();
     await repairLbCtx.close();
     if (repairRequests.length) errors.push(`silent-black: effort repair made external requests (${repairRequests.join(', ')})`);
+
+    const reachState = structuredClone(source);
+    reachState.goal = 'lean';
+    reachState.coach.deload = null;
+    reachState.coach.remoteExplainer = false;
+    reachState.sessions = [{
+      id: 'gate-reach-prior', splitId: 'split_push', splitName: 'Push', day: previousDay,
+      startedAt: `${previousDay}T10:00:00.000Z`, endedAt: `${previousDay}T11:00:00.000Z`, durationSec: 3600,
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 60, reps: 8, effort: 'ideal' }] }],
+    }];
+    const reachStartedAt = `${currentDay}T13:00:00.000Z`;
+    reachState.active = {
+      splitId: 'split_push', startedAt: reachStartedAt, pausedMs: 0,
+      entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false, planEntryId: 'gate-reach-entry', sets: [{}, {}, {}] }],
+      plan: { version: 1, capturedAt: reachStartedAt, goal: 'lean', deload: null, entries: [{ id: 'gate-reach-entry', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 3, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null })) }] },
+    };
+    const reachRequests = [];
+    const reachCopy = '9 reps at 60 kg would beat your previous 8. Only if it feels right today.';
+    const reachCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
+    const reachPage = await reachCtx.newPage();
+    reachPage.on('pageerror', error => errors.push(`silent-black PR reach: ${error.message}`));
+    reachPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
+    await reachPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(reachState));
+    await reachPage.goto(`http://localhost:${PORT}/`); await reachPage.waitForSelector('.nav');
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await reachPage.getByText(reachCopy, { exact: true }).waitFor();
+    await reachPage.screenshot({ path: `${OUT}/silent-black-pr-reach.png` });
+    await reachPage.setViewportSize({ width: 360, height: 800 });
+    if (await reachPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: PR reach overflows at 360px');
+    await reachPage.setViewportSize({ width: 390, height: 844 });
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await reachPage.getByText(reachCopy, { exact: true }).waitFor();
+    await reachPage.reload(); await reachPage.waitForSelector('.nav');
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await reachPage.getByText(reachCopy, { exact: true }).waitFor();
+
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await reachPage.getByRole('button', { name: 'Settings' }).click();
+    const reachDownloadPromise = reachPage.waitForEvent('download');
+    await reachPage.getByRole('button', { name: 'Export backup' }).click();
+    const reachDownload = await reachDownloadPromise;
+    const reachBackupPath = join(ROOT, '.tmp', 'pr-reach-backup.json');
+    await reachDownload.saveAs(reachBackupPath);
+    await reachPage.keyboard.press('Escape');
+    await reachPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    const reachCard = reachPage.locator('.exercise').filter({ hasText: 'Barbell Bench Press' });
+    const reachInputs = reachCard.locator('input[type="number"]');
+    await reachInputs.nth(0).focus(); await reachPage.keyboard.type('60');
+    await reachPage.getByText(reachCopy, { exact: true }).waitFor({ state: 'hidden' });
+    await reachInputs.nth(1).fill('9'); await reachInputs.nth(1).press('Tab');
+    await reachCard.getByText('Record', { exact: true }).waitFor();
+    if (await reachPage.getByText(/^\d+ reps at .*would beat your previous/).count()) errors.push('silent-black: possible record remained after the actual record was logged');
+    await reachCtx.close();
+
+    const reachRestoreCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reachRestorePage = await reachRestoreCtx.newPage();
+    reachRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
+    await reachRestorePage.goto(`http://localhost:${PORT}/`); await reachRestorePage.waitForSelector('.nav');
+    await reachRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const reachChooserPromise = reachRestorePage.waitForEvent('filechooser');
+    await reachRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const reachChooser = await reachChooserPromise; await reachChooser.setFiles(reachBackupPath);
+    await reachRestorePage.getByText('Restored 1 sessions', { exact: true }).waitFor();
+    await reachRestorePage.keyboard.press('Escape');
+    await reachRestorePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await reachRestorePage.getByText(reachCopy, { exact: true }).waitFor();
+    await reachRestoreCtx.close();
+
+    const reachLbState = structuredClone(reachState); reachLbState.preferences.weightUnit = 'lb';
+    const reachLbCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const reachLbPage = await reachLbCtx.newPage();
+    reachLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) reachRequests.push(request.url()); });
+    await reachLbPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(reachLbState));
+    await reachLbPage.goto(`http://localhost:${PORT}/`); await reachLbPage.waitForSelector('.nav');
+    await reachLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await reachLbPage.getByText('9 reps at 132.5 lb would beat your previous 8. Only if it feels right today.', { exact: true }).waitFor();
+    await reachLbCtx.close();
+    if (reachRequests.length) errors.push(`silent-black: PR reach made external requests (${reachRequests.join(', ')})`);
   }
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
   if (theme === 'silent-black') {

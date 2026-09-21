@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), and PR-in-reach logic and UI (12A-12B) are implemented and committed unit by unit on the working branch. Feature 12 verification is next.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), and PR in reach (12A-12T) are implemented and committed unit by unit on the working branch. Feature 13 consistency drift is next.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 12T only
+## Start here: 13A only
 
-Run the full record-reach gate and add the spec's live checks: hint visibility, typing dismissal, performed-record precedence, kg/lb, narrow layouts, keyboard access, navigation/reload, backup export/import and zero network use. Inspect all five theme screenshots, append the dated decision entry, then hand off to 13A. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement closed training weeks, `recentProbability`, the consistency-drift detector/planner and its scalar contract/wording/principle registration defined by spec 13. Keep schedule mutation and presentation out of this unit; they belong to 13B and 13C. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 
