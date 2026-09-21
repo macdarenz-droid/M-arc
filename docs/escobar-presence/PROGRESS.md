@@ -18,7 +18,7 @@ Planning review corrections incorporated: normal intent has no inferred effort c
 |---|---|---|---|
 | P00 | Verify current baseline | VERIFIED | 7d15d4c9dabda5f4add72ad37bf52d3582e19f6a; [run 35617178195](https://github.com/macdarenz-droid/M-arc/actions/runs/35617178195), source-gate + android-gate both success |
 | P01 | Moment selector, tone, shared dismissals | VERIFIED | 62d097c1a3ecb0b02036df74e854299670b9b34b; [run 35619601814](https://github.com/macdarenz-droid/M-arc/actions/runs/35619601814), source-gate + android-gate both success |
-| P02 | Presence and local explanation surfaces | LOCAL VERIFIED / CI PENDING — all six named surfaces addressed: Today/Train/History/Body integrated, Coach and Settings verified exempt (see below) | see ledger entries below |
+| P02 | Presence and local explanation surfaces | VERIFIED — all six named surfaces addressed: Today/Train/History/Body integrated, Coach and Settings verified exempt (see below) | ab9f89d9a03d58c2705053e9ca9cddc1366825c0; [run 35630547553](https://github.com/macdarenz-droid/M-arc/actions/runs/35630547553), source-gate + android-gate both success |
 | P03 | Shared guarded contextual Ask | NOT STARTED | — |
 | P04 | Optional intent and normalization | NOT STARTED | — |
 | P05 | Prospective agreements and evidence integrity | NOT STARTED | — |
@@ -226,4 +226,4 @@ Known limits / remaining proof: **P02's six named surfaces (Today, Train, Histor
 Next concrete action: push this commit, verify exact-head CI, then mark P02 VERIFIED in the status table (not just this entry) and move to P03 (shared guarded contextual Ask) — read 02-IMPLEMENTATION-WORKFLOW.md's P03 section and 01-ARCHITECTURE.md §4 fresh before starting, since P03 is a materially different kind of work (unifying an existing multi-mount Ask host, request-generation invalidation, remote-enabled guards) than P02's read-only local cue surfacing.
 ```
 
-NEXT: P02's six named surfaces are all addressed (Today/Train/History/Body integrated; Coach/Settings verified exempt with code-checked, test-locked reasoning). Once this commit's CI confirms, mark P02 VERIFIED in the status table and move to P03 — a materially different kind of work, read its own docs fresh rather than assuming P02's patterns carry over.
+NEXT: P02 is VERIFIED, exact-head CI confirmed both jobs (source-gate + android-gate) on ab9f89d. Start P03 (shared guarded contextual Ask) next — read 02-IMPLEMENTATION-WORKFLOW.md's P03 section and 01-ARCHITECTURE.md §4 fresh rather than assuming P02's patterns carry over; P03 is materially different work (unifying an existing multi-mount Ask host across Coach.tsx/Train.tsx, request-generation invalidation on clear/reset/restore, an in-handler remote-enabled guard, not just placing a read-only local cue).
