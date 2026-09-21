@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), chronic skip (6A–6T), and closed-week review (7A–7T) are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session-plan capture (10A/10AT), live autoregulation (4A–4T), warm-up ramp (5A–5T), chronic skip (6A–6T), closed-week review (7A–7T), and lift-trajectory work item 8A are implemented and committed unit by unit on the working branch. Feature 10's debrief calculation/UI remains later in the routed order.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 8A only
+## Start here: 8B only
 
-Implement the pure lift-trajectory module and arithmetic tests, then continue with 8B. Verify the existing trend's relative slope is converted with its identical weighted mean, dates remain anchored to the last observation, and missing, stale, unsupported or over-horizon evidence stays absent. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Add trajectory fields only to projected `progressing` findings outside an active easier week, then render their deterministic offline sentence without weakening numeric/date grounding. Expired and absent trajectories must leave existing metrics and words unchanged. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

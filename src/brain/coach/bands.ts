@@ -149,6 +149,13 @@ export const REVIEW_MIN_BASELINE_WEEKS = 4;
 export const REVIEW_SIMILAR_RATIO = 0.1;
 export const REVIEW_MIN_MUSCLE_DELTA = 1;
 
+export const TRAJECTORY_POINTS = 12;
+export const TRAJECTORY_MIN_POINTS = 7;
+export const TRAJECTORY_MIN_SPAN_DAYS = 28;
+export const TRAJECTORY_MAX_HORIZON_DAYS = 84;
+export const TRAJECTORY_EXPIRY_DAYS = 21;
+export const TRAJECTORY_MAX_LAST_GAP_DAYS = 28;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',
