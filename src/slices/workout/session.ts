@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, CoachChange, Exercise, LoggedSet, NoteFlag, RestState, Session, Split } from '@/core/models';
+import type { ActiveSession, CoachChange, Effort, Exercise, LoggedSet, NoteFlag, RestState, Session, Split } from '@/core/models';
 import { newId, PLAN_MAX_METADATA_SETS } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -15,7 +15,7 @@ import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 import { contextFromState } from '@/brain/coach/context';
-import { capturePlan, capturePlanEntry } from '@/brain/debrief';
+import { capturePlan, capturePlanEntry, effortSetFingerprint } from '@/brain/debrief';
 import { deloadActive } from '@/brain/coach/deload';
 
 /** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
@@ -398,6 +398,27 @@ export function discardSession(): void {
 export function setSessionNote(sessionId: string, note: string): void {
   update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === sessionId ? { ...x, note: note || undefined, noteFlags: undefined } : x)) }));
   flushSave();
+}
+
+/** Rate exactly one saved working set while its canonical fingerprint is still current. */
+export function setSessionEffort(sessionId: string, exerciseIndex: number, setIndex: number, expectedFingerprint: string, effort: Effort): boolean {
+  if (effort !== 'easy' && effort !== 'ideal' && effort !== 'max') return false;
+  const session = state.value.sessions.find(candidate => candidate.id === sessionId);
+  const set = session?.exercises[exerciseIndex]?.sets[setIndex];
+  if (!session || !set || !isWorkingSet(set) || set.effort === 'easy' || set.effort === 'ideal' || set.effort === 'max'
+    || effortSetFingerprint(session, exerciseIndex, setIndex) !== expectedFingerprint) return false;
+  update(current => ({
+    ...current,
+    sessions: current.sessions.map(candidate => candidate !== session ? candidate : {
+      ...candidate,
+      exercises: candidate.exercises.map((exercise, candidateExerciseIndex) => candidateExerciseIndex !== exerciseIndex ? exercise : {
+        ...exercise,
+        sets: exercise.sets.map((candidateSet, candidateSetIndex) => candidateSetIndex !== setIndex ? candidateSet : { ...candidateSet, effort }),
+      }),
+    }),
+  }));
+  flushSave();
+  return true;
 }
 
 /**
