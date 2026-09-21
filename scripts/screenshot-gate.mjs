@@ -249,6 +249,47 @@ for (const theme of themes) {
   await nav.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
   if (theme === 'silent-black') {
     const source = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+    // A delayed input event must invalidate a destructive swap confirmation,
+    // even when the number of logged sets stays the same.
+    const swapState = structuredClone(source);
+    swapState.sessions = [];
+    swapState.readiness = [];
+    swapState.health = { connected: false };
+    swapState.preferences.weightUnit = 'kg';
+    swapState.coach.deload = null;
+    swapState.coach.remoteExplainer = false;
+    swapState.active = {
+      splitId: 'split_push', startedAt: new Date(fixtureNow.getTime() - 600_000).toISOString(), pausedMs: 0,
+      entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false,
+        sets: [{ kg: 60, reps: 8, effort: 'ideal' }, {}, {}] }],
+    };
+    const swapCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const swapPage = await swapCtx.newPage();
+    swapPage.on('pageerror', error => errors.push(`silent-black stale swap: ${error.message}`));
+    await swapPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(swapState));
+    await swapPage.goto(`http://localhost:${PORT}/`); await swapPage.waitForSelector('.nav');
+    await swapPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await swapPage.getByRole('button', { name: 'Options', exact: true }).first().click();
+    await swapPage.getByRole('button', { name: /Equipment is taken/ }).click();
+    await swapPage.locator('dialog[open] .list .pressable').first().click();
+    const clearSwap = swapPage.getByRole('button', { name: 'Swap and clear', exact: true });
+    await clearSwap.waitFor();
+    await swapPage.locator('.exercise input[type="number"]').first().evaluate(input => {
+      input.value = '62.5'; input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await swapPage.waitForFunction(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0].sets[0]?.kg === 62.5);
+    await clearSwap.click();
+    await swapPage.getByText('Your logged sets changed; review them before swapping.', { exact: true }).waitFor();
+    const preservedSwap = await swapPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0]);
+    if (preservedSwap.exerciseId !== 'lib_barbell_bench_press' || preservedSwap.sets[0]?.kg !== 62.5) errors.push('silent-black: stale swap cleared a newer logged set');
+    await swapPage.screenshot({ path: `${OUT}/silent-black-swap-refreshed.png` });
+    await clearSwap.click();
+    await clearSwap.waitFor({ state: 'hidden' });
+    await swapPage.waitForFunction(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0].exerciseId !== 'lib_barbell_bench_press');
+    const replacedSwap = await swapPage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0]);
+    if (replacedSwap.exerciseId === 'lib_barbell_bench_press' || JSON.stringify(replacedSwap.sets) !== '[{},{},{}]') errors.push('silent-black: refreshed swap did not replace the reviewed sets');
+    await swapCtx.close();
+
     const debriefState = structuredClone(source);
     debriefState.active = null;
     debriefState.coach.remoteExplainer = false;

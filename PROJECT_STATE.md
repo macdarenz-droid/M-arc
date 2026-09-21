@@ -8,6 +8,8 @@ The routed Escobar proactive-coach roadmap is complete from documentation commit
 
 Read `docs/escobar-roadmap/HANDOFF.md` for the completed spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for the implemented dependency order. No routed work item remains. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol, for any later scope.
 
+Post-roadmap review, 2026-09-21: repaired the red visual workflow and verified both source/Android jobs green on `c3ea43c` ([run 35601329698](https://github.com/macdarenz-droid/M-arc/actions/runs/35601329698)). Four reviewed corrections now require a current-set surplus for upward advice, reject stale note-analysis replies, refresh swaps after same-count set edits, and order debrief comparisons/evidence by actual time while excluding future Coach sessions. The handoff records regression coverage and separates local validation from exact-revision GitHub status. No new roadmap phase or Worker deployment was added.
+
 ## Fixed decisions
 
 - Pure deterministic brain; LLM phrases only. Offline-first; no automatic new model calls.

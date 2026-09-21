@@ -23,7 +23,7 @@ describe('reachable record hint', () => {
   });
 
   it('resolves history once per entry memo and reuses it for row checks', () => {
-    const source = readFileSync(new URL('../src/slices/workout/Train.tsx', import.meta.url), 'utf8');
+    const source = readFileSync(new URL('../src/slices/workout/Train.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
     expect(source.match(/exerciseHistory\(/g)).toHaveLength(1);
     expect(source).toContain('() => exerciseHistory(s.sessions, entry.exerciseId, s.customExercises)');
     expect(source).toContain('[s.sessions, s.customExercises, entry.exerciseId]');
