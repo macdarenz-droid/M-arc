@@ -108,7 +108,7 @@ describe('J06: adding, replacing and removing an entry each append their own mat
   });
 });
 
-describe('a full mixed session (add, replace, targets, remove) round-trips through save/reload intact', () => {
+describe('a full mixed session (add, targets, replace) round-trips through save/reload intact', () => {
   beforeEach(() => { initStore(memory()); replaceState(seed()); });
 
   it('the whole journal survives loadState unchanged, and normalizePlan accepts real production output — not just hand-crafted fixtures', () => {
@@ -129,13 +129,20 @@ describe('a full mixed session (add, replace, targets, remove) round-trips throu
 
 describe('D06: appendAgreementChange enforces the cap explicitly, never a silent truncation', () => {
   it('the 257th change drops the whole assessment, not a 256-length array', () => {
+    // Alternating add/remove across distinct entryIds — unlike a real replay-validator-accepted
+    // sequence would ever look with 256 'targets' events on one entry (at most one is ever
+    // allowed per entry), this at least stays a plausible shape: each entryId is introduced by
+    // its own 'add' before being retired by its own 'remove', matching how a real churn of
+    // add/remove actions across a long session would actually be structured.
     const base = live().plan!;
     let plan: typeof base | undefined = base;
     for (let i = 0; i < MAX_ASSESSMENT_CHANGES; i++) {
-      plan = appendAgreementChange(plan, { id: `c${i}`, acceptedAt: STARTED, kind: 'targets', entryId: 'pe_bench', reason: 'max_below_target', targets: [{ setIndex: 0, target: { ...target } }] });
+      const entryId = `pe_extra_${Math.floor(i / 2)}`;
+      const kind = i % 2 === 0 ? 'add' : 'remove';
+      plan = appendAgreementChange(plan, { id: `c${i}`, acceptedAt: STARTED, kind, entryId });
     }
     expect(plan!.assessment!.changes).toHaveLength(MAX_ASSESSMENT_CHANGES);
-    plan = appendAgreementChange(plan, { id: 'overflow', acceptedAt: STARTED, kind: 'targets', entryId: 'pe_bench', reason: 'max_below_target', targets: [{ setIndex: 0, target: { ...target } }] });
+    plan = appendAgreementChange(plan, { id: 'overflow', acceptedAt: STARTED, kind: 'add', entryId: 'pe_overflow' });
     expect(plan!.assessment).toBeUndefined();
   });
 
