@@ -1,6 +1,7 @@
 import type { MuscleId } from '@/data/muscles';
 import type { GoalId } from '@/data/goals';
 import type { RestReasonKind } from '@/brain/live';
+import type { Confidence, FindingKind, Severity } from '@/brain/coach/contract';
 
 export type Effort = 'easy' | 'ideal' | 'max';
 export type Weekday = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
@@ -266,13 +267,41 @@ export interface AskThreadTurn {
   category?: 'nutrition' | 'body' | 'training' | 'app' | 'general';
   drafts?: AskThreadDraft[];
   applied?: boolean[];
+  draftDismissed?: boolean[];
   scheduleDraft?: Record<Weekday, string | null> | null;
   scheduleApplied?: boolean;
+  scheduleDismissed?: boolean;
   concern?: 'crisis' | 'disordered_eating' | null;
   trimmed?: number;
   actions?: AskThreadAction[];
   /** Parallel to "actions": null before that action is applied; the goal it replaced once applied, so "Undo" can restore exactly that (and revert this back to null). */
   actionPrev?: Array<GoalId | null>;
+  actionDismissed?: boolean[];
+}
+
+export interface DismissalEvidence {
+  day: string;
+  proposalFingerprint: string;
+  reopenedOnce: boolean;
+  findings: Array<{
+    id: string;
+    kind: FindingKind;
+    severity: Severity;
+    confidence: Confidence;
+    sessionIds: string[];
+    sessionFingerprints: string[];
+  }>;
+}
+
+export interface ReopenReason {
+  dismissedOn: string;
+  elapsedDays: number;
+  newSessions: number;
+  findingId: string;
+  previousSeverity: Severity;
+  currentSeverity: Severity;
+  previousConfidence: Confidence;
+  currentConfidence: Confidence;
 }
 
 /** At most this many turns persist — oldest dropped first. Bounds how much the "Ask Escobar" thread adds to the saved state; a much higher ceiling than MAX_HISTORY_TURNS in src/ai/ask.ts, which caps what's actually resent to the model each call, not what's kept on screen. */
