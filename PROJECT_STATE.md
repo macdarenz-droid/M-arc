@@ -4,9 +4,9 @@ Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), and unfinished coach items (9A-9T) are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
+Escobar proactive-coach implementation has started from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and effort-repair work item 11A are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
 
-Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **11A**, unrated-set detection, effort-repair choices and calibration. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
+Read `docs/escobar-roadmap/HANDOFF.md` for the spec index and `docs/escobar-roadmap/02-ROUTING-PLAN.md` for dependencies/model routing. Continue with **11B**, fingerprint-guarded saved-set effort mutation. Follow `MODEL_ROUTER.md`, copied unchanged from the owner's supplied protocol.
 
 ## Fixed decisions
 
@@ -56,3 +56,5 @@ Session-debrief work item 10B verification on 2026-09-21: app typecheck and 559 
 Session-debrief work item 10C verification on 2026-09-21: app typecheck and production build passed. Finish resolves the fresh saved session before deriving the receipt and debrief; History derives the same read-only component from the current saved object inside its existing sheet. The component shows original and accepted targets separately, labels starter, legacy, edited, unavailable and additional rows honestly, and keeps weighted tradeoffs descriptive with optional numeric detail. Work item 10T is next.
 
 Session-debrief feature gate on 2026-09-21: both typechecks passed; 559 app tests passed across 47 files; 87 proxy tests passed with eight existing skips; production build passed; and the five-theme visual/migration gate passed without page errors. The live flow covers a fresh Finish receipt plus History comparison, stable original-row gaps, accepted and starter targets, additional and skipped rows, keyboard-expanded tradeoff detail, kg/lb, 360/390 px layouts, navigation/reload, backup export/restore, explicit live accept/dismiss inputs and zero debrief network calls. Work item 11A is next.
+
+Effort-repair work item 11A verification on 2026-09-21: app typecheck and nine focused debrief/repair tests passed. Only working sets count; valid Easy/Ideal/Max ratings determine coverage, invalid imported labels remain unknown, and repair is offered only below half coverage. Missing rows retain saved indices and exact canonical fingerprints, while calibration copies the existing RIR bands without inventing a scale. Work item 11B is next.

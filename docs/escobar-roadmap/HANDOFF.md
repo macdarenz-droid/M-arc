@@ -1,12 +1,12 @@
 # HANDOFF → Escobar proactive-coach implementation
 
-**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), and unfinished coach items (9A-9T) are implemented and committed unit by unit on the working branch. Feature 11 effort repair is next.
+**Status, 2026-09-21:** F0, rack swap (1), effort-graded rest (2), morning verdict (3), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), and effort-repair work item 11A are implemented and committed unit by unit on the working branch. Saved-set mutation is next.
 
 Claude Opus 5's committed architecture, ranking and shipped audit decisions remain the starting point. The earlier handoff recorded a session limit after three specs; this continuation closes those missing documentation deliverables. Original source baseline: `c3f467571f958c54e6447c7182ebf15c007d5947`.
 
-## Start here: 11A only
+## Start here: 11B only
 
-Implement the pure unrated-set detector, effort-repair choices and calibration helpers defined by spec 11. Keep saved-session mutation and Finish UI out of this unit; they belong to 11B and 11C. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
+Implement the fingerprint-guarded `setSessionEffort` mutation defined by spec 11. It may change exactly one saved `LoggedSet.effort`; stale, deleted, moved, nonworking or already-rated rows must cause no write. Keep Finish UI out of this unit; it belongs to 11C. Exact scope and next feature order are in [02-ROUTING-PLAN.md](02-ROUTING-PLAN.md).
 
 Read:
 

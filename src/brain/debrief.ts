@@ -1,11 +1,12 @@
 /** Immutable workout-target capture and saved plan-versus-actual comparison. */
-import { PLAN_MAX_METADATA_SETS, type Exercise, type LoggedSet, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
+import { PLAN_MAX_METADATA_SETS, type Effort, type Exercise, type LoggedSet, type PlanSetTarget, type ResistanceMode, type Session, type WorkoutPlanEntry, type WorkoutPlanSnapshot } from '@/core/models';
 import { findExercise } from '@/core/exercises';
 import { exerciseHistory, summarizeSets } from './history';
 import { isWorkingSet } from './exposure';
 import { suggestNext } from './progression';
 import { applyDeload, deloadActive } from './coach/deload';
 import type { BrainContext } from './coach/context';
+import { RIR_BAND } from './coach/bands';
 
 export interface PlanEntryInput {
   id: string;
@@ -207,4 +208,75 @@ export function sessionDebrief(session: Session, prior: Session[], custom: Exerc
     metSets: rows.filter(row => row.result === 'met').length,
     exercises,
   };
+}
+
+export interface UnratedSet {
+  exerciseIndex: number;
+  setIndex: number;
+  exerciseId: string;
+  exerciseName: string;
+  setNumber: number;
+  fingerprint: string;
+  actual: LoggedSet;
+}
+
+export interface EffortRepair {
+  workingSets: number;
+  ratedSets: number;
+  missingSets: number;
+  coverage: number;
+  offer: boolean;
+  missing: UnratedSet[];
+}
+
+const EFFORTS: readonly Effort[] = ['easy', 'ideal', 'max'];
+const validEffort = (value: unknown): value is Effort => EFFORTS.includes(value as Effort);
+
+export function effortSetFingerprint(session: Session, exerciseIndex: number, setIndex: number): string | null {
+  const exercise = session.exercises[exerciseIndex];
+  const set = exercise?.sets[setIndex];
+  if (!exercise || !set || !Number.isInteger(exerciseIndex) || !Number.isInteger(setIndex) || exerciseIndex < 0 || setIndex < 0) return null;
+  return JSON.stringify([
+    session.id,
+    session.startedAt,
+    exerciseIndex,
+    exercise.exerciseId,
+    exercise.planEntryId ?? null,
+    setIndex,
+    set.kg ?? null,
+    set.reps ?? null,
+    set.durationSec ?? null,
+    set.distanceM ?? null,
+    set.effort ?? null,
+  ]);
+}
+
+export function unratedSets(session: Session): UnratedSet[] {
+  const missing: UnratedSet[] = [];
+  session.exercises.forEach((exercise, exerciseIndex) => exercise.sets.forEach((set, setIndex) => {
+    if (!isWorkingSet(set) || validEffort(set.effort)) return;
+    const fingerprint = effortSetFingerprint(session, exerciseIndex, setIndex);
+    if (!fingerprint) return;
+    missing.push({ exerciseIndex, setIndex, exerciseId: exercise.exerciseId, exerciseName: exercise.name, setNumber: setIndex + 1, fingerprint, actual: { ...set } });
+  }));
+  return missing;
+}
+
+export function effortRepair(session: Session): EffortRepair {
+  const working = session.exercises.flatMap(exercise => exercise.sets).filter(isWorkingSet);
+  const ratedSets = working.filter(set => validEffort(set.effort)).length;
+  const missing = unratedSets(session);
+  const coverage = working.length ? ratedSets / working.length : 0;
+  return {
+    workingSets: working.length,
+    ratedSets,
+    missingSets: missing.length,
+    coverage,
+    offer: working.length > 0 && coverage < 0.5,
+    missing,
+  };
+}
+
+export function effortCalibration(): Array<{ effort: Effort; label: string; rir: readonly [number, number] }> {
+  return EFFORTS.map(effort => ({ effort, label: `${effort[0]!.toUpperCase()}${effort.slice(1)}`, rir: [...RIR_BAND[effort]] as [number, number] }));
 }
