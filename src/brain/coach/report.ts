@@ -11,13 +11,13 @@ import { FIRST_SESSIONS_COUNT, MAX_SWAPS_PER_REPORT } from './bands';
 import { daysBetween } from '@/core/dates';
 import {
   CONFIDENCE_RANK, adjustedRecovery, detectBalance, detectEffortDrift, detectEffortMismatch, detectEffortMissing, detectFirstSessions, detectGap,
-  detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand,
+  detectChronicSkip, detectFocus, detectHabit, detectNoteFlags, detectProgress, detectReadiness, detectRecords, detectRedundant, detectRepRangeMismatch, detectSetsOutOfBand, detectWeekClose,
   detectSleep, detectUncovered, detectUnderRecovered, detectVolumeTrend, effortCoverage, learnHabits, weeksOfData,
 } from './detectors';
 import { planAdditions, planDeload, planLoad, planRedundancy, planRest, planSchedule, planSkips, planSplitNew, planSwaps, planToday, usageProfile } from './planners';
 
 /** Kinds whose gate is the confidence, so a low value is still worth reporting. */
-const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern', 'chronic_skip']);
+const LOW_OK: ReadonlySet<FindingKind> = new Set<FindingKind>(['first_sessions', 'long_gap', 'record', 'effort_missing', 'habit_pattern', 'chronic_skip', 'week_review']);
 
 /** After accepting a suggestion, the same one stays away for this many days. */
 export const ACCEPT_COOLDOWN_DAYS: Record<ProposalKind, number> = {
@@ -67,6 +67,7 @@ export function buildReport(ctx: BrainContext): FindingsReport {
     ...safe('focus', () => detectFocus(ctx)),
     ...safe('notes', () => detectNoteFlags(ctx)),
     ...safe('chronic-skip', () => detectChronicSkip(ctx)),
+    ...safe('week-review', () => detectWeekClose(ctx)),
   ];
   const seen = new Set<string>();
   const findings = raw

@@ -18,6 +18,7 @@ import { findExercise } from '@/core/exercises';
 import type { Confidence, Finding, FindingKind, FindingsReport, Proposal, ProposalKind, Severity } from './contract';
 import { principlesFor, type PrincipleCard } from './principles';
 import { CONFIDENCE_RANK } from './detectors/shared';
+import { weekReviewCopy, type WeekReview } from './review';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data' | 'volume';
 
@@ -27,7 +28,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 };
 
 const CATEGORY_OF: Record<FindingKind, Category> = {
-  volume_drop: 'volume', volume_spike: 'volume', weekly_sets_out_of_band: 'volume', uncovered_muscle: 'balance', focus_behind: 'focus',
+  volume_drop: 'volume', volume_spike: 'volume', weekly_sets_out_of_band: 'volume', week_review: 'volume', uncovered_muscle: 'balance', focus_behind: 'focus',
   plateau: 'progress', decline: 'progress', progressing: 'progress', record: 'progress',
   under_recovered: 'recovery', low_sleep_readiness: 'recovery', low_readiness: 'readiness',
   effort_missing: 'data', effort_drift_harder: 'readiness', effort_drift_easier: 'readiness', effort_mismatch: 'readiness', rep_range_mismatch: 'readiness',
@@ -212,6 +213,17 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
           : `Your morning check-ins have read low more than once this week: today, sleep ${num(m.sleep)}/5, soreness ${num(m.soreness)}/5, stress ${num(m.stress)}/5.`,
         means: 'One rough morning says little by itself. A run of them tracked over time is the kind of pattern short daily wellness check-ins actually predict — this does not diagnose anything or say why.',
         action: 'An easier session, a longer warm-up, or a rest day are all reasonable calls today. Keep checking in either way; the pattern is what matters.' };
+    }
+    case 'week_review': {
+      const review: WeekReview = {
+        start: str(m.start), end: str(m.end), workouts: num(m.workouts), activeDays: [], activeDayCount: num(m.activeDayCount), sets: num(m.sets), volumeKg: num(m.volumeKg),
+        baselineWeeks: num(m.baselineWeeks), baselineSets: m.hasBaseline ? num(m.baselineSets) : null, baselineVolumeKg: m.hasBaseline ? num(m.baselineVolumeKg) : null,
+        setsDelta: m.hasBaseline ? num(m.setsDelta) : null, volumeDeltaKg: m.hasBaseline ? num(m.volumeDeltaKg) : null,
+        direction: str(m.direction) as WeekReview['direction'], scheduledDays: num(m.scheduledDays), alignedDays: num(m.alignedDays), scheduleBasis: str(m.scheduleBasis) as WeekReview['scheduleBasis'],
+        muscle: m.muscleId ? { id: str(m.muscleId) as MuscleId, sets: num(m.muscleSets), baselineSets: num(m.muscleBaselineSets), deltaSets: num(m.muscleDeltaSets) } : null,
+      };
+      const copy = weekReviewCopy(review, ctx.unit);
+      return { title: copy.title, noticed: copy.summary, means: copy.detail, action: copy.schedule || 'This is a description of logged work, not a grade.' };
     }
     case 'effort_missing':
       return { title: 'Rate your sets',

@@ -144,6 +144,11 @@ export const SKIP_WINDOW_SESSIONS = 5;
 export const SKIP_MIN_MISSING = 4;
 export const SKIP_MAX_FINDINGS = 2;
 
+export const REVIEW_BASELINE_WEEKS = 8;
+export const REVIEW_MIN_BASELINE_WEEKS = 4;
+export const REVIEW_SIMILAR_RATIO = 0.1;
+export const REVIEW_MIN_MUSCLE_DELTA = 1;
+
 /** Muscles a general programme is expected to cover. Used by uncovered_muscle. */
 export const MAJOR_MUSCLES: MuscleId[] = [
   'chest', 'lats', 'mid_back', 'rear_delts', 'side_delts', 'biceps', 'triceps',
