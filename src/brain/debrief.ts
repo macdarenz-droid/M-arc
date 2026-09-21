@@ -4,7 +4,7 @@ import { findExercise } from '@/core/exercises';
 import { exerciseHistory, summarizeSets, type ExerciseSessionSummary } from './history';
 import { isWorkingSet } from './exposure';
 import { suggestNext } from './progression';
-import { applyDeload, deloadActive } from './coach/deload';
+import { applyDeload, captureSessionIntent, deloadActive } from './coach/deload';
 import type { BrainContext } from './coach/context';
 import { RIR_BAND } from './coach/bands';
 
@@ -49,6 +49,13 @@ export function capturePlanEntry(ctx: BrainContext, entry: PlanEntryInput): Work
   };
 }
 
+/**
+ * The only call site is `startSession` (docs/escobar-presence P04) — this
+ * is what makes it safe to always attach a fresh `assessment` here rather
+ * than threading an explicit "is this a new session" flag through: capturing
+ * a plan snapshot IS starting a new session, today. `changes` starts empty;
+ * P05 owns appending to it.
+ */
 export function capturePlan(ctx: BrainContext, entries: PlanEntryInput[], capturedAt: string): WorkoutPlanSnapshot {
   return {
     version: 1,
@@ -59,6 +66,13 @@ export function capturePlan(ctx: BrainContext, entries: PlanEntryInput[], captur
       const captured = capturePlanEntry(ctx, { ...entry });
       return { ...captured, targets: captured.targets.map(target => ({ ...target })) };
     }),
+    assessment: {
+      version: 1,
+      intent: captureSessionIntent(ctx.deload, ctx.today, capturedAt),
+      changes: [],
+      invalidatedEntryIds: [],
+      seenWorkingRows: [],
+    },
   };
 }
 

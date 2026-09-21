@@ -821,6 +821,30 @@ for (const theme of themes) {
     await deloadCtx.close();
     if (externalRequests.length) errors.push(`silent-black: lift trajectory made external requests (${externalRequests.join(', ')})`);
     await trajectoryCtx.close();
+
+    // P04 (docs/escobar-presence §5): a session captured while an accepted deload is active
+    // shows its own frozen intent while training, not the live deload state — the pre-start
+    // Splits banner already covers "live state"; this is "what THIS session was captured as".
+    const intentState = structuredClone(deloadState);
+    intentState.sessions = [];
+    const intentStartedAt = `${day(0)}T12:00:00.000Z`;
+    intentState.active = {
+      splitId: 'split_push', startedAt: intentStartedAt, pausedMs: 0,
+      entries: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', done: false, skipped: false, planEntryId: 'gate-intent-entry', sets: [{}, {}, {}] }],
+      plan: {
+        version: 1, capturedAt: intentStartedAt, goal: intentState.goal, deload: intentState.coach.deload,
+        entries: [{ id: 'gate-intent-entry', exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', mode: 'weighted', origin: 'start', plannedSets: 3, targetSource: 'history', allowIncrease: true, targets: Array.from({ length: 3 }, () => ({ kg: 51, reps: 8, durationSec: null })) }],
+        assessment: { version: 1, intent: { kind: 'easier', capturedAt: intentStartedAt, source: 'accepted_deload', effortCap: 'ideal' }, changes: [], invalidatedEntryIds: [], seenWorkingRows: [] },
+      },
+    };
+    const intentCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const intentPage = await intentCtx.newPage();
+    intentPage.on('pageerror', error => errors.push(`silent-black session-intent: ${error.message}`));
+    await intentPage.addInitScript(saved => localStorage.setItem('marc.state.v1', saved), JSON.stringify(intentState));
+    await intentPage.goto(`http://localhost:${PORT}/`); await intentPage.waitForSelector('.nav');
+    await intentPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await intentPage.getByText('Captured as an easier session: stop at ideal effort, no max sets.', { exact: true }).waitFor();
+    await intentCtx.close();
   }
   await nav.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }

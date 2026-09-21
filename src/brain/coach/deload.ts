@@ -1,11 +1,24 @@
 /** Apply an accepted easier week to a next-session suggestion. */
-import type { CoachState } from '@/core/models';
+import type { CoachState, SessionIntent } from '@/core/models';
 import type { Suggestion } from '../progression';
 
 export type Deload = NonNullable<CoachState['deload']>;
 
 export function deloadActive(deload: Deload | null | undefined, today: string): deload is Deload {
   return !!deload && deload.from <= today && today <= deload.to;
+}
+
+/**
+ * What a NEW session's intent is, captured once at start (docs/escobar-presence
+ * P04, 01-ARCHITECTURE.md §5). Easier only exists through an already-accepted
+ * active deload at this exact moment — never invented, never a separate
+ * easier-day planner. A later deload ending, or a new one starting, cannot
+ * retroactively change what was captured here.
+ */
+export function captureSessionIntent(deload: Deload | null | undefined, today: string, capturedAt: string): SessionIntent {
+  return deloadActive(deload, today)
+    ? { kind: 'easier', capturedAt, source: 'accepted_deload', effortCap: deload.effortCap }
+    : { kind: 'normal', capturedAt, source: 'session_start', effortCap: null };
 }
 
 const half = (v: number) => Math.round(v * 2) / 2;

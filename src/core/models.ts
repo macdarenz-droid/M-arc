@@ -71,12 +71,59 @@ export interface WorkoutPlanEntry {
   acceptedTargets?: Array<PlanSetTarget | null>;
 }
 
+/**
+ * What kind of session this was, captured once at start and never rewritten
+ * by a later goal/deload change (docs/escobar-presence P04, 01-ARCHITECTURE.md
+ * §5). `normal` has no cap — never invented from overlapping RIR bands.
+ * `easier` only exists through an already-accepted active deload at capture
+ * time, using its own saved cap; there is no separate easier-day planner.
+ */
+export interface SessionIntent {
+  kind: 'normal' | 'easier';
+  capturedAt: string;
+  source: 'session_start' | 'accepted_deload';
+  effortCap: Effort | null;
+}
+
+export const MAX_ASSESSMENT_CHANGES = 256;
+
+/**
+ * One accepted, in-session adjustment to the captured plan. A discriminated
+ * union so each kind only carries the fields it needs; `id`/`acceptedAt`
+ * are common to all four. The mutation logic that appends these (accepting
+ * a live-adjustment offer, add/replace/remove) is P05's scope — P04 only
+ * defines the shape and validates it, always shipping an empty `changes[]`
+ * today.
+ */
+export type PlanAgreementChange =
+  | { id: string; acceptedAt: string; kind: 'targets'; entryId: string; targets: Array<{ setIndex: number; target: PlanSetTarget }>; reason: 'max_below_target' | 'easy_above_target' }
+  | { id: string; acceptedAt: string; kind: 'add'; entryId: string }
+  | { id: string; acceptedAt: string; kind: 'replace'; fromEntryId: string; toEntryId: string }
+  | { id: string; acceptedAt: string; kind: 'remove'; entryId: string };
+
+/**
+ * Optional, independently versioned wrapper on `WorkoutPlanSnapshot`
+ * (01-ARCHITECTURE.md §5). Absent on every session captured before P04 and
+ * on any session this app can't confidently assess (corrupt/overflowing
+ * metadata) — its absence never invalidates the plan or logged work it sits
+ * on top of.
+ */
+export interface SessionAssessment {
+  version: 1;
+  intent: SessionIntent;
+  changes: PlanAgreementChange[];
+  invalidatedEntryIds: string[];
+  seenWorkingRows: Array<{ entryId: string; setIndices: number[] }>;
+}
+
 export interface WorkoutPlanSnapshot {
   version: 1;
   capturedAt: string;
   goal: GoalId;
   deload: CoachState['deload'];
   entries: WorkoutPlanEntry[];
+  /** Absent for plans captured before P04, or dropped on normalization if malformed — see SessionAssessment. */
+  assessment?: SessionAssessment;
 }
 
 /**

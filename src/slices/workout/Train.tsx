@@ -299,6 +299,19 @@ function LiveSession() {
           <Button variant="solid" size="sm" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
       </div>
+      {/*
+        docs/escobar-presence P04: what THIS session was captured as at start, not the live
+        deload state (which the pre-start Splits screen's own banner already shows and which
+        could since change — a later deload ending mid-session must not retroactively alter
+        what shows here, or what this session is actually assessed against). Only the "easier"
+        case gets a line, matching the app's existing restraint elsewhere (no banner exists for
+        "not in a deload" either) — a normal session needs no purpose called out.
+      */}
+      {a.plan?.assessment?.intent.kind === 'easier' && (
+        <div class="banner" role="status">
+          <span>Captured as an easier session: stop at {a.plan.assessment.intent.effortCap} effort, no max sets.</span>
+        </div>
+      )}
 
       <div class="stack">
         {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} ramp={entry.planEntryId === ramp?.entryId ? ramp : null} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} onBrowse={expected => setPicking({ mode: 'replace', index: i, expected })} />)}

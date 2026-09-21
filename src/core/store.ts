@@ -1,6 +1,7 @@
 import { signal, computed, batch } from '@preact/signals';
 import {
   freshState,
+  MAX_ASSESSMENT_CHANGES,
   PLAN_MAX_METADATA_ENTRIES,
   PLAN_MAX_METADATA_SETS,
   type ActiveSession,
@@ -11,8 +12,10 @@ import {
   type DismissalEvidence,
   MAX_PRESENCE_DISMISSALS,
   type LoggedExercise,
+  type PlanAgreementChange,
   type PlanSetTarget,
   type Session,
+  type SessionAssessment,
   type WorkoutPlanEntry,
   type WorkoutPlanSnapshot,
 } from './models';
@@ -122,6 +125,137 @@ function validPlan(value: unknown): value is WorkoutPlanSnapshot {
   return new Set(ids).size === ids.length;
 }
 
+function validChangeTargets(value: unknown, ids: Set<string>): boolean {
+  if (!Array.isArray(value) || value.length === 0 || value.length > PLAN_MAX_METADATA_SETS) return false;
+  const seen = new Set<number>();
+  for (const item of value) {
+    if (!object(item) || !finite(item.setIndex) || !Number.isInteger(item.setIndex) || item.setIndex < 0 || item.setIndex >= PLAN_MAX_METADATA_SETS) return false;
+    if (seen.has(item.setIndex)) return false;
+    seen.add(item.setIndex);
+    if (!validTarget(item.target)) return false;
+  }
+  return true;
+}
+
+/** Structural shape only — `id` uniqueness and the entryId-exists check happen in validAssessment, once, over the whole array. */
+function validAssessmentChange(value: unknown, ids: Set<string>): value is PlanAgreementChange {
+  if (!object(value) || !shortString(value.id) || !shortString(value.acceptedAt) || !Number.isFinite(Date.parse(value.acceptedAt))) return false;
+  switch (value.kind) {
+    case 'targets':
+      return shortString(value.entryId) && ids.has(value.entryId)
+        && oneOf(value.reason, ['max_below_target', 'easy_above_target'] as const)
+        && validChangeTargets(value.targets, ids);
+    case 'add':
+      return shortString(value.entryId) && ids.has(value.entryId);
+    case 'replace':
+      return shortString(value.fromEntryId) && ids.has(value.fromEntryId)
+        && shortString(value.toEntryId) && ids.has(value.toEntryId) && value.fromEntryId !== value.toEntryId;
+    case 'remove':
+      return shortString(value.entryId) && ids.has(value.entryId);
+    default:
+      return false;
+  }
+}
+
+/** No cycle through `replace` edges (fromEntryId → toEntryId): follow each chain and fail on revisiting a node. */
+function acyclicReplacements(changes: PlanAgreementChange[]): boolean {
+  const next = new Map<string, string>();
+  for (const change of changes) if (change.kind === 'replace') next.set(change.fromEntryId, change.toEntryId);
+  for (const start of next.keys()) {
+    const seen = new Set<string>();
+    let cur: string | undefined = start;
+    while (cur !== undefined && next.has(cur)) {
+      if (seen.has(cur)) return false;
+      seen.add(cur);
+      cur = next.get(cur);
+    }
+  }
+  return true;
+}
+
+/**
+ * Replays `changes` in stored order against which entries are "active"
+ * (01-ARCHITECTURE.md §5, ¶102): only `origin: 'start'` entries begin
+ * active; `add`/`replace` introduce a previously unseen destination;
+ * `remove`/`replace` require a currently active source; `targets` requires
+ * a currently active entry and allows at most one per entry (the existing
+ * one-live-adjustment-per-entry rule). Any violation — double introduction,
+ * acting on a retired or never-active entry, a second target event on the
+ * same entry — makes the whole assessment unavailable, not partially
+ * salvaged.
+ */
+function replayValid(changes: PlanAgreementChange[], startEntryIds: Set<string>): boolean {
+  const active = new Set(startEntryIds);
+  const retired = new Set<string>();
+  const targeted = new Set<string>();
+  for (const change of changes) {
+    if (change.kind === 'add') {
+      if (active.has(change.entryId) || retired.has(change.entryId)) return false;
+      active.add(change.entryId);
+    } else if (change.kind === 'replace') {
+      if (!active.has(change.fromEntryId)) return false;
+      if (active.has(change.toEntryId) || retired.has(change.toEntryId)) return false;
+      active.delete(change.fromEntryId);
+      retired.add(change.fromEntryId);
+      active.add(change.toEntryId);
+    } else if (change.kind === 'remove') {
+      if (!active.has(change.entryId)) return false;
+      active.delete(change.entryId);
+      retired.add(change.entryId);
+    } else if (change.kind === 'targets') {
+      if (!active.has(change.entryId) || targeted.has(change.entryId)) return false;
+      targeted.add(change.entryId);
+    }
+  }
+  return true;
+}
+
+function validSeenWorkingRow(value: unknown, ids: Set<string>): boolean {
+  if (!object(value) || !shortString(value.entryId) || !ids.has(value.entryId)) return false;
+  if (!Array.isArray(value.setIndices) || value.setIndices.length > PLAN_MAX_METADATA_SETS) return false;
+  const seen = new Set<number>();
+  for (const index of value.setIndices) {
+    if (!finite(index) || !Number.isInteger(index) || index < 0 || index >= PLAN_MAX_METADATA_SETS || seen.has(index)) return false;
+    seen.add(index);
+  }
+  return true;
+}
+
+/**
+ * The whole wrapper is dropped on any structural or replay failure — never
+ * partially salvaged (D06: "explicit unavailable, not a truncated effective
+ * plan"). `entryIds` is every id in the owning plan's `entries[]`, since a
+ * change/invalidation/seen-row referencing an id that doesn't exist there is
+ * a dangling link regardless of replay order.
+ */
+function validAssessment(value: unknown, entryIds: Set<string>, startEntryIds: Set<string>): value is SessionAssessment {
+  if (!object(value) || value.version !== 1) return false;
+  const intent = value.intent;
+  if (!object(intent) || !oneOf(intent.kind, ['normal', 'easier'] as const)) return false;
+  if (!shortString(intent.capturedAt) || !Number.isFinite(Date.parse(intent.capturedAt))) return false;
+  if (!oneOf(intent.source, ['session_start', 'accepted_deload'] as const)) return false;
+  if (!(intent.effortCap === null || oneOf(intent.effortCap, ['easy', 'ideal', 'max'] as const))) return false;
+  if (!Array.isArray(value.changes) || value.changes.length > MAX_ASSESSMENT_CHANGES) return false;
+  if (!value.changes.every(change => validAssessmentChange(change, entryIds))) return false;
+  const changeIds = value.changes.map(change => change.id);
+  if (new Set(changeIds).size !== changeIds.length) return false;
+  if (!acyclicReplacements(value.changes) || !replayValid(value.changes, startEntryIds)) return false;
+  if (!Array.isArray(value.invalidatedEntryIds) || value.invalidatedEntryIds.length > PLAN_MAX_METADATA_ENTRIES) return false;
+  if (!value.invalidatedEntryIds.every(id => shortString(id) && entryIds.has(id))) return false;
+  if (new Set(value.invalidatedEntryIds).size !== value.invalidatedEntryIds.length) return false;
+  if (!Array.isArray(value.seenWorkingRows) || value.seenWorkingRows.length > PLAN_MAX_METADATA_ENTRIES) return false;
+  return value.seenWorkingRows.every(row => validSeenWorkingRow(row, entryIds));
+}
+
+/** Drops just `assessment` on failure — malformed metadata never invalidates the plan or logged work it sits on top of (D03). */
+function normalizePlan(value: unknown): WorkoutPlanSnapshot | undefined {
+  if (!validPlan(value)) return undefined;
+  const entryIds = new Set(value.entries.map(entry => entry.id));
+  const startEntryIds = new Set(value.entries.filter(entry => entry.origin === 'start').map(entry => entry.id));
+  const assessment = value.assessment !== undefined && validAssessment(value.assessment, entryIds, startEntryIds) ? value.assessment : undefined;
+  return { ...value, assessment };
+}
+
 function normalizeLoggedExercise(exercise: LoggedExercise, planEntries: Map<string, WorkoutPlanEntry> | null): LoggedExercise {
   const linkedEntry = planEntries !== null && shortString(exercise.planEntryId) ? planEntries.get(exercise.planEntryId) : undefined;
   const linked = !!linkedEntry && linkedEntry.exerciseId === exercise.exerciseId;
@@ -138,14 +272,14 @@ function normalizeLoggedExercise(exercise: LoggedExercise, planEntries: Map<stri
 }
 
 function normalizeSessionMetadata(session: Session): Session {
-  const plan = validPlan(session.plan) ? session.plan : undefined;
+  const plan = normalizePlan(session.plan);
   const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
   return { ...session, plan, exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planEntries)) };
 }
 
 function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | null {
   if (!active) return null;
-  const plan = validPlan(active.plan) ? active.plan : undefined;
+  const plan = normalizePlan(active.plan);
   const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
   const entries = (active.entries ?? []).map(entry => {
     const linkedEntry = planEntries !== null && shortString(entry.planEntryId) ? planEntries.get(entry.planEntryId) : undefined;
