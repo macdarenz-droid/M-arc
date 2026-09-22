@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { closedWeekReview, deload, insights, presenceMoment, recovery, report, scheduledSplit, sessionFeedback, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
+import { closedWeekReview, deload, insights, objectiveReview, presenceMoment, recovery, report, scheduledSplit, sessionFeedback, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -42,6 +42,7 @@ export function Today() {
   const openSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   const plan = todaySuggestion.value;
   const waiting = suggestions.value.filter(x => x.kind !== 'today_plan').length;
+  const dueReview = !moment && waiting === 0 && objectiveReview.value?.due ? objectiveReview.value : null;
   const accept = () => { if (plan) showToast(acceptProposal(plan.proposal, today.value)); };
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
   const [checkInSkipped, setCheckInSkipped] = useState(false);
@@ -147,7 +148,7 @@ export function Today() {
         </Card>
       </Section>
 
-      {(moment || waiting > 0) && (
+      {(moment || waiting > 0 || dueReview) && (
         <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
           <div class="stack-sm">
             {moment && (
@@ -159,6 +160,7 @@ export function Today() {
               />
             )}
             {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label={`${waiting} suggestion${waiting === 1 ? '' : 's'} waiting — open Coach`}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
+            {dueReview && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label="Direction review due — open Coach"><div class="row-between"><div><b class="small">Your direction is ready to review</b><p class="hint" style={{ marginTop: 4 }}>{dueReview.measures.length} selected evidence measure{dueReview.measures.length === 1 ? '' : 's'}, using the records available now.</p></div><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
           </div>
         </Section>
       )}

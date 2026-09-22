@@ -410,6 +410,7 @@ for (const theme of themes) {
     await objectivePage.getByRole('button', { name: 'Chest', exact: true }).click();
     await objectivePage.getByRole('button', { name: 'Mon', exact: true }).click();
     await objectivePage.getByRole('button', { name: 'Lift trend', exact: true }).click();
+    await objectivePage.getByRole('button', { name: 'Recorded body trend', exact: true }).click();
     await objectivePage.getByLabel('Lift to follow').selectOption('lib_barbell_bench_press');
     await objectivePage.getByLabel('Review day (optional)').fill(day(-14));
     await objectivePage.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -420,6 +421,7 @@ for (const theme of themes) {
     await objectivePage.getByRole('button', { name: 'Chest', exact: true }).click();
     await objectivePage.getByRole('button', { name: 'Mon', exact: true }).click();
     await objectivePage.getByRole('button', { name: 'Lift trend', exact: true }).click();
+    await objectivePage.getByRole('button', { name: 'Recorded body trend', exact: true }).click();
     await objectivePage.getByLabel('Lift to follow').selectOption('lib_barbell_bench_press');
     await objectivePage.getByLabel('Review day (optional)').fill(day(-14));
     await objectivePage.getByRole('button', { name: 'Save direction', exact: true }).click();
@@ -427,7 +429,7 @@ for (const theme of themes) {
     await objectivePage.waitForFunction(() => JSON.parse(localStorage.getItem('marc.state.v1')).coach.objective?.revision === 1);
     const savedObjectiveState = await objectivePage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
     if (JSON.stringify(savedObjectiveState.schedule) !== objectiveSchedule || JSON.stringify(savedObjectiveState.splits) !== objectiveSplits) errors.push('silent-black: saving objective mutated schedule or splits');
-    if (savedObjectiveState.coach.objective?.revision !== 1 || savedObjectiveState.coach.objective?.measures?.length !== 2) errors.push('silent-black: objective did not save bounded evidence and revision');
+    if (savedObjectiveState.coach.objective?.revision !== 1 || savedObjectiveState.coach.objective?.measures?.length !== 3) errors.push('silent-black: objective did not save bounded evidence and revision');
     await objectivePage.screenshot({ path: `${OUT}/silent-black-objective-summary.png` });
     for (const width of [320, 900]) {
       await objectivePage.setViewportSize({ width, height: width === 900 ? 900 : 800 });
@@ -439,6 +441,24 @@ for (const theme of themes) {
     const reloadedObjective = await objectivePage.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).coach.objective);
     if (reloadedObjective?.statement !== 'Build a steady three-day routine and improve my bench press') errors.push(`silent-black: objective did not survive reload (${JSON.stringify(reloadedObjective)} from ${JSON.stringify(savedObjectiveState.coach.objective)})`);
     else await objectivePage.getByText('Build a steady three-day routine and improve my bench press', { exact: true }).waitFor();
+    await objectivePage.getByRole('button', { name: 'View evidence', exact: true }).click();
+    await objectivePage.getByRole('heading', { name: 'Direction review' }).waitFor();
+    await objectivePage.getByText('Training consistency', { exact: true }).waitFor();
+    await objectivePage.getByText('Recorded body trend', { exact: true }).waitFor();
+    if (!(await objectivePage.locator('dialog[open]').innerText()).includes('US Navy tape-method estimates are not direct body-fat measurements')) errors.push('silent-black: objective review omitted the body-estimate limitation');
+    await objectivePage.screenshot({ path: `${OUT}/silent-black-objective-review.png` });
+    for (const width of [320, 900]) {
+      await objectivePage.setViewportSize({ width, height: width === 900 ? 900 : 800 });
+      if (await objectivePage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push(`silent-black: objective review overflows at ${width}px`);
+    }
+    await objectivePage.setViewportSize({ width: 390, height: 844 });
+    await objectivePage.locator('dialog[open]').getByText('Close', { exact: true }).click();
+    await objectivePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
+    await objectivePage.getByRole('heading', { name: 'Selected objective evidence' }).waitFor();
+    const bodyObjectiveEvidence = objectivePage.locator('section').filter({ has: objectivePage.getByRole('heading', { name: 'Selected objective evidence' }) });
+    if (!(await bodyObjectiveEvidence.innerText()).includes('not measured muscle growth')) errors.push('silent-black: Body objective evidence inferred muscle growth');
+    await objectivePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
+    await objectivePage.getByText(/^Direction: Build a steady three-day routine/).waitFor();
     await objectiveCtx.close();
     if (objectiveRequests.length) errors.push(`silent-black: objective flow made external requests (${objectiveRequests.join(', ')})`);
 

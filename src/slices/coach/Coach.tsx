@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { deload, insights, report, sessionFeedback, suggestions, today } from '@/app/selectors';
+import { deload, insights, objectiveReview, report, sessionFeedback, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconChevron, IconInfo, IconMafia } from '@/ui/icons';
 import { COACH_NAME } from '@/ui/chatRender';
@@ -114,7 +114,7 @@ export function Coach() {
 
       <UnfinishedItems onReview={item => openAskSavedReview(item?.key)} />
 
-      <ObjectiveSummary objective={s.coach.objective} onEdit={() => setObjectiveOpen(true)} />
+      <ObjectiveSummary objective={s.coach.objective} review={objectiveReview.value} onEdit={() => setObjectiveOpen(true)} />
 
       {feedback && (
         <Section title="Latest workout">

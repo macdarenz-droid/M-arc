@@ -7,6 +7,7 @@ import { formatDay, WEEKDAY_LABEL } from '@/core/dates';
 import { Button, Card, Chip, Field, Section, Sheet } from '@/ui/primitives';
 import { showToast } from '@/app/toast';
 import { draftFromObjective, removeObjective, restoreObjective, saveObjectiveDraft, type ObjectiveDraft } from './objective';
+import type { ObjectiveReview, ObjectiveMeasureReview } from '@/brain/coach/objectiveReview';
 
 const measureKey = (measure: ObjectiveEvidenceMeasure): string => measure.kind === 'lift_trend' ? `${measure.kind}:${measure.exerciseId}` : measure.kind;
 
@@ -16,7 +17,11 @@ function measureLabel(measure: ObjectiveEvidenceMeasure, custom = state.value.cu
   return findExercise(measure.exerciseId, custom)?.name ?? `Unavailable lift (${measure.exerciseId})`;
 }
 
-export function ObjectiveSummary({ objective, onEdit }: { objective: PersonalObjective | undefined; onEdit: () => void }) {
+const reviewStatus = (measure: ObjectiveMeasureReview): string => measure.status === 'up' ? 'Rising' : measure.status === 'down' ? 'Falling' : measure.status === 'flat' ? 'Steady' : 'Not enough data';
+
+export function ObjectiveSummary({ objective, review, onEdit }: { objective: PersonalObjective | undefined; review: ObjectiveReview | null; onEdit: () => void }) {
+  const [openReview, setOpenReview] = useState<{ objectiveId: string; revision: number; evidenceKey: string } | null>(null);
+  const stale = !!openReview && (!review || review.objectiveId !== openReview.objectiveId || review.objectiveRevision !== openReview.revision || review.evidenceKey !== openReview.evidenceKey);
   return (
     <Section title="Your direction" aside={<Button variant="quiet" size="sm" onClick={onEdit}>{objective ? 'Edit' : 'Set'}</Button>}>
       <Card>
@@ -29,9 +34,36 @@ export function ObjectiveSummary({ objective, onEdit }: { objective: PersonalObj
             {objective.equipmentNote && <p class="hint">Equipment note: {objective.equipmentNote}</p>}
             {objective.reviewDay && <p class="hint">Review chosen for {formatDay(objective.reviewDay)}.</p>}
             <p class="hint">Availability and equipment are notes only. They do not change your schedule, splits or targets.</p>
+            {review && <Button variant={review.due ? 'primary' : 'quiet'} size="sm" onClick={() => setOpenReview({ objectiveId: review.objectiveId, revision: review.objectiveRevision, evidenceKey: review.evidenceKey })}>{review.due ? 'Review now' : 'View evidence'}</Button>}
           </div>
         )}
       </Card>
+      {openReview && (
+        <Sheet title="Direction review" onClose={() => setOpenReview(null)}>
+          {stale || !review ? (
+            <div class="stack"><Card class="card-quiet"><b>Evidence changed</b><p class="small muted" style={{ marginTop: 6 }}>The direction or one of its source records changed while this review was open. Close and reopen it to review the current facts.</p></Card><Button onClick={() => setOpenReview(null)}>Close review</Button></div>
+          ) : (
+            <div class="stack">
+              <div><div class="eyebrow">Current agreement · revision {review.objectiveRevision}</div><h2 style={{ marginTop: 6 }}>{objective?.statement}</h2></div>
+              {review.measures.map(measure => (
+                <Card key={measure.key} class="card-quiet">
+                  <div class="row-between"><b>{measure.label}</b><Chip>{reviewStatus(measure)}</Chip></div>
+                  <p class="small" style={{ marginTop: 8 }}>{measure.summary}</p>
+                  <div class="stack-sm" style={{ marginTop: 10 }}>
+                    <p class="hint"><b>Window:</b> {measure.window}</p>
+                    <p class="hint"><b>Source:</b> {measure.source}</p>
+                    <p class="hint"><b>Limit:</b> {measure.limitation}</p>
+                    <p class="hint"><b>Confidence:</b> {measure.status === 'unknown' ? 'Unknown' : measure.confidence}</p>
+                  </div>
+                </Card>
+              ))}
+              <p class="hint">This review has no overall score and does not change your programme. Changes to your direction remain explicit.</p>
+              <Button variant="primary" onClick={() => { setOpenReview(null); onEdit(); }}>Edit direction</Button>
+              <Button variant="quiet" onClick={() => setOpenReview(null)}>Close</Button>
+            </div>
+          )}
+        </Sheet>
+      )}
     </Section>
   );
 }

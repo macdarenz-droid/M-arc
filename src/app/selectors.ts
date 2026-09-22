@@ -19,6 +19,7 @@ import { weekReview } from '@/brain/coach/review';
 import type { BrainContext } from '@/brain/coach/context';
 import { selectMoment, type CoachingMoment } from '@/brain/coach/moments';
 import { selectSessionFeedback } from '@/brain/coach/sessionFeedback';
+import { projectObjectiveReview } from '@/brain/coach/objectiveReview';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -69,6 +70,18 @@ export const closedWeekReview = computed(() => weekReview({
   splits: reviewSplits.value,
   today: today.value,
 } as BrainContext));
+const objectiveState = computed(() => state.value.coach.objective);
+const objectiveSessions = computed(() => state.value.sessions);
+const objectiveBody = computed(() => state.value.body);
+const objectiveCustom = computed(() => state.value.customExercises);
+/** Long-term agreement evidence, isolated from tone, tab, Ask draft and second-clock changes. */
+export const objectiveReview = computed(() => projectObjectiveReview({
+  objective: objectiveState.value,
+  sessions: objectiveSessions.value,
+  body: objectiveBody.value,
+  custom: objectiveCustom.value,
+  today: today.value,
+}));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
 
 /** The brain's report: facts and suggestions, recomputed when state or the minute changes. */

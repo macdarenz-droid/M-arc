@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, presenceMoment, recovery, report, suggestions, today, unit } from '@/app/selectors';
+import { insights, objectiveReview, presenceMoment, recovery, report, suggestions, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -17,6 +17,7 @@ import { PresenceLauncher } from '@/slices/coach/Presence';
 import { dismissPresenceMoment } from '@/slices/coach/presenceState';
 import { COACH_NAME } from '@/ui/chatRender';
 import { remoteEnabled } from '@/slices/coach/remote';
+import { go } from '@/app/router';
 
 type View = 'recovery' | 'levels' | 'week';
 
@@ -81,6 +82,15 @@ export function Body() {
       {view === 'week' && (
         <Section title="Effective sets this week">
           <Card><div class="list">{(Object.entries(weekSets) as Array<[MuscleId, number]>).sort((a, b) => b[1] - a[1]).map(([m, v]) => <Row key={m} onClick={() => setSelected(m)} trailing={<span class="num small">{v}</span>}><span class="small">{muscleLabel(m)}</span></Row>)}{!Object.keys(weekSets).length && <p class="small muted">No sets logged this week yet.</p>}</div></Card>
+        </Section>
+      )}
+
+      {(objectiveReview.value?.measures.some(measure => measure.kind === 'body_trend') || s.coach.objective?.priorityMuscles.length) && (
+        <Section title="Selected objective evidence" aside={<Button variant="quiet" size="sm" onClick={() => go('coach')}>Coach</Button>}>
+          <Card class="card-quiet">
+            {objectiveReview.value?.measures.filter(measure => measure.kind === 'body_trend').map(measure => <div key={measure.key} class="stack-sm"><div class="row-between"><b>{measure.label}</b><Chip>{measure.status === 'unknown' ? 'Not enough data' : measure.status}</Chip></div><p class="small">{measure.summary}</p><p class="hint">{measure.source}. {measure.limitation}</p></div>)}
+            {!!s.coach.objective?.priorityMuscles.length && <p class="hint" style={{ marginTop: 10 }}>Priority muscles: {s.coach.objective.priorityMuscles.map(muscleLabel).join(', ')}. The map shows recorded training exposure and recovery, not measured muscle growth.</p>}
+          </Card>
         </Section>
       )}
 

@@ -153,6 +153,12 @@ function Splits() {
         </div>
       )}
 
+      {s.coach.objective && (
+        <div class="banner" role="note" style={{ marginBottom: 12 }}>
+          <span><b>Direction:</b> {s.coach.objective.statement}</span>
+        </div>
+      )}
+
       {!s.splits.length && (
         <Card>
           <Empty icon={<IconDumbbell size={32} />} title="No workouts yet" action={<div class="wrap" style={{ justifyContent: 'center' }}><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button>{remoteEnabled.value && <Button variant="quiet" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : 'Import from a photo'}</Button>}</div>}>
@@ -311,6 +317,11 @@ function LiveSession() {
       {a.plan?.assessment?.intent.kind === 'easier' && (
         <div class="banner" role="status">
           <span>Captured as an easier session: stop at {a.plan.assessment.intent.effortCap} effort, no max sets.</span>
+        </div>
+      )}
+      {s.coach.objective && (
+        <div class="banner" role="note">
+          <span><b>Direction:</b> {s.coach.objective.statement}</span>
         </div>
       )}
 
