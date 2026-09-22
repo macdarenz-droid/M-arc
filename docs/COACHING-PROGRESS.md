@@ -160,8 +160,42 @@ Sections read: 6.4 (`restTarget`, `heart.effort-mismatch`/`heart.drift`), F1.2-F
 - **Needs device check**: the actual HR-guided rest experience on a real broadcasting watch (does 0.6 of reserve / +12bpm feel right in practice) — everything else (the decision logic, the UI fallback, the gate) was verified by other means.
 - **Depends on this for later phases**: P3's readiness work will add `heart.overreaching` once its baselines exist; P4's deload state is independent.
 
-## Next: Phase P3 (Readiness) — NOT STARTED
-Sections to read next: 6.4's `brain/readiness.ts` bullet (readinessBaselines/readiness/overreachingFlag), the readiness card/insight and check-in flow, `suggestNext`'s readiness hook, Appendix E (HRV dormant on the GT6 — no RR intervals).
+## Phase P3 (Readiness) — DONE
+
+Sections read: 6.4's `brain/readiness.ts` bullet, F2.1-F2.5, section 7 (P3 row).
+
+### Layer: data model — folded into the brain commit (no separate commit)
+- `core/models.ts`: `DailyHealth.rmssd?/lnRmssd?/rmssdAt?` (F2.3, unpopulated — dormant on the GT6).
+
+### Layer: brain — done, commit 77ceea3
+- `brain/readiness.ts` (new): `readinessBaselines` (7d/28d resting HR, 14d sleep median, 7d lnRMSSD mean/SD/CV), `readiness()` — weighted, renormalising, self-report-led score across check-in (0.35)/sleep (0.25)/target-muscle recovery (0.15)/resting-HR (0.10)/HRV (0.10)/acute load (0.05); bands green>=67/amber 34-66/red<=33; `loadAdvice`; never scores from zero inputs (null); "calibrating" until 14 days of check-ins or sleep. Several sub-formulas the plan names but doesn't fully specify (bedtime regularity, the check-in 3-way combination, hysteresis) are approximated or deferred — see decisions.
+- `progression.ts`: `suggestNext()` gains an optional `ProgressionContext` (readiness, recoveryPct); 'reduce' holds and drops a set, 'no_increase'/recoveryPct<60 skips the increase branch.
+- `recovery.ts`: exported `avg`/`stddev`/`clamp`/`sessionRpeLoad` (were private) for reuse.
+- Tests: `tests/readiness.test.ts` (10), 4 new cases in `tests/progression.test.ts`, 2 new cases in `tests/coach.test.ts` (`readiness.today` rule).
+
+### Layer: native — N/A (HRV native read deferred, see decisions)
+
+### Layer: UI — done, commit 7d7dacd
+- `Train.tsx`: a "Quick check-in" sheet (F2.2) — sleep quality, mood, and soreness per muscle in today's scheduled split — shows once per day before the pre-session brief, skippable; `suggestNext()` call sites now pass `{ readiness, recoveryPct }`.
+- `Today.tsx`: a "Readiness" card above "This week" (band, score, drivers, load advice) or a quiet connect/check-in prompt. `coach/rules.ts`: `readiness.today` (450 red / 380 amber / 120 green on Mondays).
+- `app/selectors.ts`: `todayCheckIn`/`todayReadiness` computed once, shared by Train, Today and the coach rules.
+- **Found and fixed a real bug via manual testing**: `readiness()`'s target-muscle fallback (every muscle when nothing scheduled) combined with `recoveryStatus()`'s 100%-for-untrained-muscles default was silently padding the recovery sub-score toward green regardless of how bad other inputs were — caught by a failing unit test, fixed by leaving target muscles (and the sub-score) empty when nothing is scheduled. Also added a raw-rating fallback so a first-ever check-in with no history to z-score against still contributes to a (calibrating) score instead of nothing.
+
+### Layer: gate — done, commit 06ad508
+- New fixture: 28 days of health data (resting HR elevated the last 7), plus a "two-for-two clean top" exercise history that would otherwise suggest an increase. Asserts a real "Red · calibrating" tier renders on Today, and Train holds the load ("Add one step" does not appear) once readiness is red.
+- Fixed the check-in sheet's new interruption of the existing "Start" flow in three places (the silent-black theme pass, the watch-stub fixture, and the new readiness fixture) — all previously assumed the pre-session sheet appears immediately after "Start", which the check-in sheet now sits in front of on any day without one.
+- `npm run check`: **PASS** (typecheck, 254/254 tests across 23 files, build). `npm run gate`: **PASS** — 5/5 themes plus all supplementary fixtures.
+
+### P3 report
+- **Built**: readiness score and baselines, the progression readiness/recovery hook, the check-in sheet, the Today readiness card, the `readiness.today` insight.
+- **Tested**: `npx vitest run` → 254/254 across 23 files. `npm run check` → clean. `npm run gate` → 5/5 themes + all fixtures, PASS, including a real red-readiness-holds-the-load screenshot.
+- **Decided by research**: none requiring new external sources (the readiness formula's precisely-specified parts came straight from the plan; underspecified parts were extended from the plan's own analogous formulas or existing primitives, recorded in COACHING-DECISIONS.md).
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: F2.3 (HRV reading flow) and F2.5 (resting-HR/HRR trend sparklines, `overreachingFlag`) deferred — not in this phase's Done-when, and F2.3 is verifiably dead code on the only hardware this build targets; band hysteresis deferred (needs new persisted state, untested by Done-when).
+- **Needs device check**: none new — HRV is the one input that would need real hardware, and it's already correctly inert (never populated) on the verified watch.
+- **Depends on this for later phases**: P4's deload state can read `readiness()`'s band/loadAdvice the same way `suggestNext()` now does; a future phase adding a real HRV-capable device would only need to populate `DailyHealth.lnRmssd`, since `readiness()` already knows what to do with it.
+
+## Next: Phase P4 (Programming) — NOT STARTED
+Sections to read next: F3.1-F3.8, W1/W7/W8/W9/W10 (scheduled-split conflict — F3.1 partly done in P1-R already —, volume landmark bands, deload state, warm-up sets — pre.ts's warmupRamp partly covers this from P2-C —, cues in session, insight feedback and snooze deferred here from P2-C, exercise substitution, optional morning notification).
 
 ## Not started
-P3, P4.
+P4.
