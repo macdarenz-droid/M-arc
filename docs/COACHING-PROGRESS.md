@@ -51,8 +51,46 @@ Sections read: 6.11 (recovery model), F3.1, 6.12.1 (data gaps), 6.17 (logging fi
 - **Needs device check**: none new (pure web/TS/UI).
 - **Depends on this for later phases**: P2-C's `metrics.ts` and post-session debrief will read `Session.logging` and the fidelity gating; P3's readiness card extends the same `healthDays`-based systemic-factor pattern; P4's deload state reads `recoveryModel`/calibration observations.
 
-## Next: Phase P2-C (Coach v2) — NOT STARTED
-Sections to read next: 6.12 (CoachContext v2, metrics.ts), 6.13 (insight catalogue).
+## Phase P2-C (Coach v2) — DONE
+
+Sections read: 6.12 (CoachContext v2, insight shape, cadences), 6.13 (insight catalogue), section 7 (P2-C row).
+
+### Layer: data model — folded into the brain commits (no separate commit)
+- `core/models.ts`: `AppState.weeklyReviewDismissedWeek?: string` (Monday key of the week already reviewed).
+- `brain/recovery.ts`: `trainingAgeMonths`/`ageOf` changed from module-private to exported, for `weeklyReviewInsights`'s `trainingAgeMonths` input and `Coach.tsx`'s `WhatCoachCanSee`.
+
+### Layer: brain — done, commits d142028, 6a91163, 9839a5b
+- `brain/e1rm.ts` (new): `effectiveOneRm` (effort-aware e1RM: RIR by label, easy +3/ideal +2/max +0, plus an optional personal bias), `e1rmWeight`, `roundToStep`, `isRealChange` (two-typical-error threshold), `loadForReps` (Epley inverted). `history.ts`'s `bestE1rm` and `prs.ts`'s strength-record threshold (1% → the plan's 2.5%) now use it.
+- `brain/effortBias.ts` (new): `rirObservations`/`effortBiasByLabel` — pairs a max-effort set with a non-max set at the same load within 14 days to learn a personal RIR bias per effort label, gated on 3+ pairs.
+- `brain/coach/weeklyReview.ts` (new): sets-vs-band (fractional hard sets), frequency per muscle, e1RM trend, progress vs. training age, rep-range mix, failure share, staleness, adherence, weight trend vs. the goal's band; `weekHasEnoughData()` (≥5 logged days this week) gates the whole set; `weeklyReviewInsights(input, limit=6)`.
+- `brain/coach/pre.ts` (new): `workingLoadTarget`, `warmupRamp`, `mastersDefaults`, `preSessionInsights(input, limit=3)`.
+- `brain/coach/post.ts` (new): `recordsInsight`, `effortMixInsight`, `restAndDensityInsight` and `durationDriftInsight` (the last two gated on `session.logging.timingTrusted`), `postSessionInsights(input, limit=4)`.
+- `brain/coach/live.ts` (new): `autoregulationSuggestion` — after a main lift's first live-committed set, easy at/above target reps suggests more load (2.5% step after 3+ sessions of history, else flat 2.5 kg); missing target by 2+ reps at max effort suggests less, advising ideal effort for the rest.
+- `brain/coach/rules.ts`: `Insight` gained the v2 fields (`kind`, `cadence` — now includes `'live'` — `evidence`, `numbers`, `drivers`, `unlocks`, `validUntil`) as optional additions; two new now-cadence rules, `progress.plateau-lever` and `readiness.effort-calibration`.
+- Tests: `tests/e1rm.test.ts` (10), `tests/effortBias.test.ts` (6), `tests/weeklyReview.test.ts` (13), `tests/pre.test.ts` (6), `tests/post.test.ts` (10), `tests/live.test.ts` (8), `tests/coach.test.ts` (+4 for the two new rules).
+
+### Layer: native — N/A (no native code needed)
+
+### Layer: UI — done, commits 3ce4016, a72e4c6
+- `Train.tsx`: starting a split shows a `PreSessionSheet` (load target, warm-up ramp, masters note) before the timer starts; `EntryCard` shows the autoregulation line under a main lift's open exercise, in the accent colour, once its first set is committed live; the finish screen appends a `Debrief` section built from `postSessionInsights()`.
+- `Coach.tsx`: `WeeklyReviewCard` (top item as a teaser, opens a sheet with the rest, "Dismiss until next week" keyed to the Monday date so it reappears next week) and `WhatCoachCanSee` (sets logged, effort-rated share, live-logged share, Health Connect, today's check-in, profile completeness, weigh-in count — each with what it unlocks).
+- Manually verified via Playwright (not just unit tests, since these are UI-driven, evidence-gated features): the pre-session sheet with no history ("Nothing to flag"); the post-session debrief with 4 rated sets (effort-mix row); the weekly review card and its sheet after 5 sessions logged across the current week (also confirmed `WhatCoachCanSee` renders further down the same page); the autoregulation line in both directions (easy → "Try 52.5 kg for the next set", max miss → "Drop to 50 kg and keep the rest at ideal effort") against a fixture with 5 prior sessions of real history.
+
+### Layer: gate — done, commits 900af9a, a72e4c6
+- Extended the silent-black walkthrough: screenshots the pre-session sheet; logs 4 rated sets (first one easy at the placeholder target, to exercise autoregulation; the mix still lands in the "healthy spread" branch so the existing debrief assertion holds); screenshots the live session (now asserted to contain an autoregulation "for the next set" line) and the finish screen (now asserted to contain a `Debrief` section).
+- New fixture pass: a fresh profile logs 5 past sessions across the current calendar week via the existing "Log a past session" flow, then screenshots the Coach page (asserted to show "Weekly review") and the opened weekly-review sheet.
+- `npm run check`: **PASS** (typecheck, 171/171 tests across 19 files, build). `npm run gate`: **PASS** — 5/5 themes, all new assertions hold, no page errors.
+
+### P2-C report
+- **Built**: see layer sections above — effort-aware e1RM, effort-calibration foundation, weekly review, pre-session brief, post-session debrief, in-session autoregulation, "What the coach can see".
+- **Tested**: `npx vitest run` → 171/171 passed across 19 files (added `e1rm`, `effortBias`, `weeklyReview`, `pre`, `post`, `live`, plus 4 new `coach.test.ts` cases). `npm run check` → clean typecheck, 171/171, clean build. `npm run gate` → 5/5 themes PASS; screenshots visually confirmed for the pre-session sheet, the post-session debrief, the weekly-review card + sheet, and the autoregulation line (both the "add load" and "ease off" branches, the latter landing on a real plateau-detected 40 kg target from the legacy fixture's history).
+- **Decided by research**: none requiring external sources this phase (e1RM RIR-by-effort mapping, record threshold, and autoregulation's formula all came straight from the plan's own tables).
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: insight feedback/snooze (F3.6) deferred to P4 — the plan assigns it to both phases in scope prose, but only P4's Done-when has a concrete test for it; the "watch" row in "What the coach can see" omitted until P1 builds WatchBridge; the post-session debrief is recomputed live rather than persisted to a new `Session.debrief` field (no second reader yet).
+- **Needs device check**: none new (pure web/TS/UI; autoregulation and the debrief were both verified against realistic history via Playwright, not a real watch or phone).
+- **Depends on this for later phases**: P1's live-HR work will add a `watch` row to "What the coach can see" and HR-aware rows to the post-session debrief; P2's HR-guided rest and effort-mismatch rules extend `coach/live.ts`'s cadence; P4's deload state will suppress `autoregulationSuggestion` on a back-off day (no-op today since `deload` doesn't exist yet) and builds the F3.6 feedback/snooze mechanism this phase deliberately deferred.
+
+## Next: Phase P1 (Live HR / WatchBridge) — NOT STARTED
+Sections to read next: 6.2, 6.3 (WatchBridge/native BLE), F0.4, F1.1, F1.6 (catalogue rows needing heart data), 6.10 (profile sheet on first watch connect). Port Watch-test's Java BLE adapter into M/ARC as a Capacitor plugin; do not touch the Watch-test repository itself.
 
 ## Not started
-P2-C, P1, P2, P3, P4.
+P1, P2, P3, P4.
