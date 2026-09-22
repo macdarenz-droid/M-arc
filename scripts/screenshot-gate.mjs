@@ -76,11 +76,21 @@ for (const theme of themes) {
     await page.locator('.effort button.easy').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Done' }).click(); await page.waitForTimeout(250);
-    // Start a session and log a set for the live screenshot.
+    // Starting a session first shows the pre-session sheet (6.13, cadence 'pre').
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); await shot('pre-session');
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    // Four rated sets so the post-session debrief has enough evidence to show an effort-mix row.
     const inputs = page.locator('input[type="number"]');
     await inputs.nth(0).fill('72.5'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
-    await page.locator('.effort button.ideal').first().click();
+    await page.locator('.effort button.ideal').nth(0).click();
+    await inputs.nth(2).fill('72.5'); await inputs.nth(3).fill('8'); await inputs.nth(3).blur();
+    await page.locator('.effort button.ideal').nth(1).click();
+    await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
+    await page.locator('.effort button.max').nth(2).click();
+    await page.getByRole('button', { name: 'Set', exact: true }).first().click(); await page.waitForTimeout(150);
+    const inputs2 = page.locator('input[type="number"]');
+    await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
+    await page.locator('.effort button.ideal').nth(3).click();
     await page.waitForTimeout(300); await shot('live');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
@@ -91,6 +101,7 @@ for (const theme of themes) {
       await page.waitForTimeout(400);
     }
     await shot('summary');
+    if (!(await page.getByText('Debrief', { exact: true }).isVisible().catch(() => false))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
     await page.getByRole('button', { name: 'Done' }).click();
   }
   await page.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
@@ -133,6 +144,52 @@ for (const theme of themes) {
   const insightTitles = await page.locator('.insight h3').allTextContents();
   if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
   await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
+  await ctx.close();
+}
+
+// A fresh profile with >=5 sessions logged this calendar week, so the weekly review
+// card (6.13, cadence 'weekly') appears on Coach without waiting a real week.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`weekly-review: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`weekly-review console: ${m.text()}`); });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click();
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
+  await page.waitForTimeout(200);
+
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const dayStr = (offset) => { const d = new Date(monday); d.setDate(monday.getDate() + offset); return d.toISOString().slice(0, 10); };
+  const todayOffset = (now.getDay() + 6) % 7;
+  const days = [];
+  for (let n = 0; n < 5; n++) days.push(dayStr(Math.min(n, todayOffset)));
+
+  for (const dayKey of days) {
+    await page.getByRole('button', { name: 'Log a past session' }).click();
+    await page.waitForTimeout(200);
+    await page.locator('input[type="date"]').fill(dayKey);
+    const pastInputs = page.locator('input[type="number"]');
+    await pastInputs.nth(1).fill('50');
+    await pastInputs.nth(2).fill('10');
+    await page.locator('.effort button.ideal').first().click();
+    await page.getByRole('button', { name: 'Save past session' }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Done' }).click();
+    await page.waitForTimeout(200);
+  }
+  await page.getByRole('button', { name: 'Coach' }).click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
+  if (!(await page.getByText('Weekly review').isVisible().catch(() => false))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
+  await page.getByText('Weekly review').click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/silent-black-weekly-review-sheet.png` });
   await ctx.close();
 }
 
