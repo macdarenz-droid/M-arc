@@ -35,7 +35,7 @@ export interface Insight {
   muscle?: MuscleId;
   /** 6.12.4: drives colour and where an insight may appear. Rules built before this stayed 'tip'/'now' implicitly; only new rules populate it. */
   kind?: 'alert' | 'progress' | 'plan' | 'praise' | 'tip' | 'data';
-  cadence?: 'now' | 'pre' | 'post' | 'weekly';
+  cadence?: 'now' | 'pre' | 'live' | 'post' | 'weekly';
   evidence?: { n: number; window: string; confidence: 'low' | 'medium' | 'high' };
   numbers?: Array<{ label: string; value: string }>;
   drivers?: string[];
