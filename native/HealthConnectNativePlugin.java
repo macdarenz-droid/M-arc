@@ -26,6 +26,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,7 +38,17 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@CapacitorPlugin(name = "HealthConnectNative")
+@CapacitorPlugin(
+        name = "HealthConnectNative",
+        permissions = {
+                @Permission(alias = "health", strings = {
+                        "android.permission.health.READ_STEPS",
+                        "android.permission.health.READ_SLEEP",
+                        "android.permission.health.READ_HEART_RATE",
+                        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+                })
+        }
+)
 public class HealthConnectNativePlugin extends Plugin {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
@@ -87,6 +99,28 @@ public class HealthConnectNativePlugin extends Plugin {
         } catch (Exception e) {
             call.reject("Unable to open Health Connect permissions", e);
         }
+    }
+
+    @PluginMethod
+    public void requestPermissions(PluginCall call) {
+        if (!platformAvailable()) {
+            call.reject("Health Connect requires Android 14 or newer on this build.");
+            return;
+        }
+        if (hasReadPermissions()) {
+            JSObject out = new JSObject();
+            out.put("granted", true);
+            call.resolve(out);
+            return;
+        }
+        requestPermissionForAlias("health", call, "healthPermissionsCallback");
+    }
+
+    @PermissionCallback
+    private void healthPermissionsCallback(PluginCall call) {
+        JSObject out = new JSObject();
+        out.put("granted", hasReadPermissions());
+        call.resolve(out);
     }
 
     private static class Holder<T> {
