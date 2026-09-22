@@ -86,8 +86,10 @@ svg { display: block; }
 .toggle[aria-checked="true"] { background: var(--accent); border-color: transparent; }
 .toggle[aria-checked="true"]::after { transform: translateX(18px); background: var(--on-accent); }
 
-.bar { height: 6px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
-.bar > i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.bar { height: 6px; border-radius: 999px; background: var(--surface-3); overflow: hidden; position: relative; }
+.bar > i { display: block; height: 100%; border-radius: inherit; background: var(--accent); position: relative; z-index: 1; }
+/* F3.2: the volume-landmark band, a faint range sitting under the actual bar. */
+.bar > .range { position: absolute; top: 0; bottom: 0; background: var(--text); opacity: 0.18; }
 
 .ring { --p: 0; width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-3) 0); display: grid; place-items: center; position: relative; }
 .ring::after { content: ""; position: absolute; inset: 9px; border-radius: 50%; background: var(--surface-1); }

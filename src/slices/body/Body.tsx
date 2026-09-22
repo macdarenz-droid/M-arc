@@ -6,6 +6,7 @@ import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
 import { formatDay, formatHours } from '@/core/dates';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
+import { muscleVolumeStatus } from '@/brain/volume';
 import { navyBodyFat } from '@/brain/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
@@ -22,6 +23,8 @@ export function Body() {
   const levels = useMemo(() => trainingLevels(s.sessions, s.customExercises), [s.sessions]);
   const weekSets = useMemo(() => weeklyMuscleSets(s.sessions, today.value, 1, s.customExercises)[0]?.sets ?? {}, [s.sessions, today.value]);
   const maxWeek = Math.max(1, ...Object.values(weekSets).map(v => v ?? 0));
+  /** F3.2: this week's effective sets vs. the level-based band, faint-range on each bar. */
+  const volumeStatus = useMemo(() => muscleVolumeStatus(s.sessions, today.value, s.customExercises).filter(r => r.status !== 'unknown').sort((a, b) => b.thisWeekSets - a.thisWeekSets), [s.sessions, today.value, s.customExercises]);
 
   const values: Partial<Record<MuscleId, number>> = view === 'recovery'
     ? Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]))
@@ -75,7 +78,21 @@ export function Body() {
 
       {view === 'week' && (
         <Section title="Effective sets this week">
-          <Card><div class="list">{(Object.entries(weekSets) as Array<[MuscleId, number]>).sort((a, b) => b[1] - a[1]).map(([m, v]) => <Row key={m} onClick={() => setSelected(m)} trailing={<span class="num small">{v}</span>}><span class="small">{muscleLabel(m)}</span></Row>)}{!Object.keys(weekSets).length && <p class="small muted">No sets logged this week yet.</p>}</div></Card>
+          <Card><div class="list">
+            {volumeStatus.map(r => {
+              const scaleMax = Math.max(r.thisWeekSets, r.band[1]) * 1.15 || 1;
+              return (
+                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="num small">{r.thisWeekSets}</span>}>
+                  <span class="small">{muscleLabel(r.muscle)}</span>
+                  <div class="bar" style={{ marginTop: 4 }}>
+                    <span class="range" style={{ left: `${(r.band[0] / scaleMax) * 100}%`, width: `${((r.band[1] - r.band[0]) / scaleMax) * 100}%` }} />
+                    <i style={{ width: `${(r.thisWeekSets / scaleMax) * 100}%`, background: r.status === 'over' ? 'var(--warning)' : r.status === 'under' ? 'var(--text-3)' : 'var(--positive)' }} />
+                  </div>
+                </Row>
+              );
+            })}
+            {!volumeStatus.length && <p class="small muted">No sets logged this week yet.</p>}
+          </div></Card>
         </Section>
       )}
 
