@@ -172,6 +172,31 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
 
+      - name: Verify the release APK carries the native bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY2'
+          from pathlib import Path
+          import zipfile
+          # Checking the sources and the manifest proves what went into the
+          # build; only the compiled dex proves what came out. A release APK
+          # that builds cleanly with the whole native layer missing is exactly
+          # the failure this repo already shipped once.
+          apk=Path('android/app/build/outputs/apk/release/app-release-unsigned.apk')
+          if not apk.exists(): apk=Path('android/app/build/outputs/apk/release/app-release.apk')
+          with zipfile.ZipFile(apk) as z:
+              dex=b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
+          CLASSES=('HeartRateNativePlugin','HeartRateService','HeartRateDatabase','HeartRateMetrics','HeartRateDeviceScanner','HealthConnectNativePlugin')
+          missing=[c for c in CLASSES if f'Lcom/mrcdrnzz/dailytracker/{c};'.encode() not in dex]
+          if missing:
+              named=[c for c in missing if c.encode() in dex]
+              raise SystemExit('Release APK is missing compiled native classes: %s%s' % (
+                  ', '.join(missing),
+                  '' if not named else ' (but these names DO appear in the dex, so the descriptor form above is wrong, not the build: %s)' % ', '.join(named)))
+          print('Release APK native bridge PASS: all 6 classes present in dex')
+          PY2
+
       - name: Decode signing keystore
         shell: bash
         env:

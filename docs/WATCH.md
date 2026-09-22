@@ -131,6 +131,23 @@ duration checks to catch unlike work. That changes the claim from "identical
 work" to "similar work", so it is a deliberate product decision, not a tuning
 knob.
 
+## Verified in CI
+
+Exact-head evidence for `fa25a41`:
+[run 35714797341](https://github.com/macdarenz-droid/M-arc/actions/runs/35714797341) —
+source-gate and android-gate both green, including the Java/TypeScript metrics
+parity scenarios, the five-theme visual and migration gate, and a debug APK
+(artifact `MARC-DEBUG-APK`).
+
+That run is also the first time this repository has ever compiled the native
+layer: before `scripts/prepare-android.mjs` existed, nothing copied `native/`
+into the generated project, so the Java was never part of a Gradle build.
+
+The APK is now checked for the compiled classes themselves, not just for the
+sources and manifest that went into it. The original failure was an APK that
+built cleanly with the whole native layer missing and every check passing, so a
+gate that only inspects the inputs would not have caught it.
+
 ## What is not proven
 
 **The hardware.** CI compiles the Java, builds the APK and checks that the native

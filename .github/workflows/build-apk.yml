@@ -191,9 +191,27 @@ jobs:
           import hashlib, zipfile
           apk=Path('android/app/build/outputs/apk/debug/app-debug.apk')
           source=Path('www/index.html').read_bytes()
-          with zipfile.ZipFile(apk) as z: bundled=z.read('assets/public/index.html')
+          with zipfile.ZipFile(apk) as z:
+              bundled=z.read('assets/public/index.html')
+              # The hand-written bridge has to be IN the APK, not merely on disk
+              # beside it. Checking the sources and the manifest proves what went
+              # into the build; only the compiled dex proves what came out — and
+              # an APK that builds cleanly with the whole native layer missing is
+              # exactly the failure this repo already shipped once.
+              dex=b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
           if bundled != source: raise SystemExit('APK embedded index differs from built www/index.html')
+          CLASSES=('HeartRateNativePlugin','HeartRateService','HeartRateDatabase','HeartRateMetrics','HeartRateDeviceScanner','HealthConnectNativePlugin')
+          missing=[c for c in CLASSES if f'Lcom/mrcdrnzz/dailytracker/{c};'.encode() not in dex]
+          if missing:
+              # Say which failure this is: a class that is genuinely absent has
+              # no trace in the dex at all, while one whose bare name is present
+              # means only that the descriptor form assumed here is wrong.
+              named=[c for c in missing if c.encode() in dex]
+              raise SystemExit('APK is missing compiled native classes: %s%s' % (
+                  ', '.join(missing),
+                  '' if not named else ' (but these names DO appear in the dex, so the descriptor form above is wrong, not the build: %s)' % ', '.join(named)))
           print('Debug APK embedded source PASS:', hashlib.sha256(bundled).hexdigest())
+          print('Debug APK native bridge PASS: all 6 classes present in dex')
           PY
           mkdir -p release-output
           cp android/app/build/outputs/apk/debug/app-debug.apk release-output/MARC-debug.apk
