@@ -21,7 +21,7 @@ Planning review corrections incorporated: normal intent has no inferred effort c
 | P02 | Presence and local explanation surfaces | VERIFIED — all six named surfaces addressed: Today/Train/History/Body integrated, Coach and Settings verified exempt (see below) | ab9f89d9a03d58c2705053e9ca9cddc1366825c0; [run 35630547553](https://github.com/macdarenz-droid/M-arc/actions/runs/35630547553), source-gate + android-gate both success |
 | P03 | Shared guarded contextual Ask | VERIFIED — every "Do" item shipped: remote-enabled guard, request-generation invalidation, shared host mount, verified no-nested-modal, contextual prefill, and a dedicated typed-draft-survives-navigation scenario (see below) | 6bf05ee2c1e0c74feb596894c60b5fe48f9dc9f7 (P03.6, final); [run 35644471679](https://github.com/macdarenz-droid/M-arc/actions/runs/35644471679), source-gate + android-gate both success |
 | P04 | Optional intent and normalization | VERIFIED — data model, capture, validation/normalization (incl. lifecycle replay), active-session UI and NEW tests/session-intent.test.ts (28 tests) all shipped | 6c066edcd07bf056351c987952e215aa207040b1; [run 35646654197](https://github.com/macdarenz-droid/M-arc/actions/runs/35646654197), source-gate + android-gate both success |
-| P05 | Prospective agreements and evidence integrity | NOT STARTED | — |
+| P05 | Prospective agreements and evidence integrity | IN PROGRESS — P05.1 journal append wiring independently reviewed and exact-head verified; seen-row/invalidation, finish/history identity and remaining regressions still open | 5cea4e238f1e46530a378bec7649ec84fd775041 (P05.1); [run 35648617281](https://github.com/macdarenz-droid/M-arc/actions/runs/35648617281), source-gate + android-gate both success |
 | P06 | Fair plan-fit projection | NOT STARTED | — |
 | P07 | Purpose-aware debrief and copy | NOT STARTED | — |
 | P08 | Optional personal objective | NOT STARTED | — |
@@ -364,4 +364,21 @@ Commit and verified remote SHA: f82e19a (original wiring), plus a follow-up comm
 Exact-head workflow URL + source/Android conclusions: not yet checked — this is the very next action for whoever resumes, before any further code changes.
 Known limits / remaining proof: (a) P05's remaining scope beyond this journal-append wiring is untouched: rule 4's seenWorkingRows/invalidatedEntryIds tracking (the "don't punish typing, do punish losing real work" distinction), rule 7's finish-time actualSetIndices interaction, and D05's "unexplained mismatch makes the entry unassessable" fallback are all still to be built — this patch (P05.1) is a deliberately narrow first slice of P05, not the whole of it; (b) no NEW browser scenario was added specifically asserting on `plan.assessment.changes` contents (the existing five-theme gate passed clean, proving no regression, but the journal itself is unit-tested, not browser-tested, matching the established pattern from P04).
 Next concrete action, IN ORDER: (1) verify exact-head CI (both source-gate and android-gate) for the follow-up commit's exact SHA — do not proceed while it's red or unchecked; this is the only remaining step before P05.1 can be marked VERIFIED in the status table. (2) Once CI is confirmed, write the confirming PROGRESS.md/COACH_BRAIN.md update (mirroring the pattern used for every prior patch's own CI-confirmation entry in this file), then continue P05's remaining scope (rules 4 and 7, D05) per §5 ¶108-119 and the J01/J02/J04/J05/J07-J12/O01-O10 regression IDs not yet covered — read those sections fresh rather than assuming this entry's summary is complete.
+```
+
+```text
+Patch / date / executor: P05.1 exact-head verification / 2026-09-22 / Codex
+Starting local and remote SHA: 5cea4e238f1e46530a378bec7649ec84fd775041, both local and origin after a safe fast-forward; unrelated untracked `.tmp/` content preserved.
+User-visible change: none; verification and ledger reconciliation only.
+Owned files and any reconciled baseline drift: docs/escobar-presence/PROGRESS.md and docs/COACH_BRAIN.md only. The archive copy of this ledger was stale; the remote branch contained the authoritative P00-P05.1 sequence.
+Architecture decisions (or none): none.
+Regression IDs → concrete test/scenario names: inherited P05.1 evidence for J03/J06/D06 from the preceding record; no new behavior claimed.
+Focused failure reproduction and result: not applicable; exact-head CI was the missing proof.
+Full commands → exit/result/test counts/skips: GitHub Actions run 35648617281 completed successfully for exact head 5cea4e238f1e46530a378bec7649ec84fd775041. `source-gate` job 106495654295 succeeded; `android-gate` job 106496603257 succeeded.
+Browser evidence paths, themes/widths and console/network result: inherited from P05.1's locally passing full gate; exact-head source-gate confirmed it remotely.
+Reviewer identity, findings, fixes and re-review: inherited independent mutation-path review from the preceding P05.1 record; its two description/fixture nits are included in the verified SHA.
+Commit and verified remote SHA: 5cea4e238f1e46530a378bec7649ec84fd775041.
+Exact-head workflow URL + source/Android conclusions: https://github.com/macdarenz-droid/M-arc/actions/runs/35648617281 — source-gate success and android-gate success for the exact SHA.
+Known limits / remaining proof: P05 remains IN PROGRESS. J01/J02/J04/J05/J07-J12, D05 and the named O regressions still require reconciliation or new proof; seenWorkingRows, invalidatedEntryIds, finish-time actualSetIndices and History structural invalidation are not implemented by P05.1.
+Next concrete action: implement P05's remaining evidence-identity and invalidation rules, beginning with an ownership/writer audit and focused failing tests before production edits.
 ```
