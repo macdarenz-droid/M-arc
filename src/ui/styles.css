@@ -215,3 +215,20 @@ svg { display: block; }
 .positive-text { color: var(--positive); }
 .warning-text { color: var(--warning); }
 @media (max-width: 380px) { h1 { font-size: 24px; } .grid-3 { grid-template-columns: 1fr 1fr; } }
+
+/* Plate Sense (§25.5): the entry-unit pill inside a weight input, and the other-unit reading under it. */
+.weight-input { position: relative; display: grid; min-width: 0; }
+.weight-input input { width: 100%; padding-right: 30px; }
+.unit-pill { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); min-width: 26px; height: 22px; padding: 0 5px; border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border: 0; line-height: 22px; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+.unit-pill::before { content: ''; position: absolute; inset: -11px -6px; }
+.set-grid .weight-input input { padding-right: 30px; }
+.weight-approx { font-size: 11px; color: var(--text-3); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.unit-tag { display: inline-block; margin-left: 4px; padding: 0 4px; border-radius: 4px; font-size: 10px; font-weight: 700; color: var(--text-3); border: 1px solid var(--border-subtle); vertical-align: 1px; }
+.suspect-chip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 6px; padding: 8px 10px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--warning) 12%, transparent); color: var(--text); font-size: 13px; }
+.suspect-chip .grow { flex: 1 1 160px; }
+.target-link { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+.plate-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.plate { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+.gym-chip { display: inline-flex; align-items: center; gap: 4px; }
+.weight-input input::-webkit-outer-spin-button, .weight-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.weight-input input { -moz-appearance: textfield; appearance: textfield; }

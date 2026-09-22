@@ -13,6 +13,7 @@ import { healthAvailable } from '@/native/health';
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
+import { GymsSheet } from './Gyms';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
@@ -24,6 +25,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
   const [watchOpen, setWatchOpen] = useState(false);
+  const [gymsOpen, setGymsOpen] = useState(false);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
@@ -68,7 +70,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Training">
           <Card>
-            <Row trailing={<div class="seg" style={{ width: 120 }}><button type="button" aria-pressed={p.weightUnit === 'kg'} onClick={() => setPref({ weightUnit: 'kg' })}>kg</button><button type="button" aria-pressed={p.weightUnit === 'lb'} onClick={() => setPref({ weightUnit: 'lb' })}>lb</button></div>}><span class="small">Weight unit</span></Row>
+            <Row trailing={<div class="seg" style={{ width: 120 }}><button type="button" aria-pressed={p.weightUnit === 'kg'} onClick={() => setPref({ weightUnit: 'kg' })}>kg</button><button type="button" aria-pressed={p.weightUnit === 'lb'} onClick={() => setPref({ weightUnit: 'lb' })}>lb</button></div>}><span class="small">Show weights in</span><div class="hint">History, charts and records. Each machine keeps its own entry unit.</div></Row>
+            <Row trailing={<Button size="sm" onClick={() => setGymsOpen(true)}>Manage</Button>}><span class="small" data-palace="settings.gyms">Gyms and equipment</span><div class="hint">{s.units.gyms.length === 1 ? s.units.gyms[0]!.name : `${s.units.gyms.length} gyms`}</div></Row>
             <Row trailing={<Toggle checked={p.autoRest} onChange={v => setPref({ autoRest: v })} label="Automatic rest timer" />}><span class="small">Start rest after each set</span></Row>
             <Row trailing={<div class="row"><Button variant="quiet" size="sm" onClick={() => setPref({ restDefaultSec: Math.max(15, p.restDefaultSec - 15) })}>−15</Button><b class="num small">{p.restDefaultSec}s</b><Button variant="quiet" size="sm" onClick={() => setPref({ restDefaultSec: Math.min(600, p.restDefaultSec + 15) })}>+15</Button></div>}><span class="small">Rest length</span></Row>
             <Row trailing={<Toggle checked={p.showSpark} onChange={v => setPref({ showSpark: v })} label="Daily quote" />}><span class="small">Daily quote on Today</span></Row>
@@ -112,6 +115,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
+        {gymsOpen && <GymsSheet onClose={() => setGymsOpen(false)} />}
 
         <Section title="Your data">
           <Card class="stack-sm">

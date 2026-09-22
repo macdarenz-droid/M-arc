@@ -198,6 +198,8 @@ export interface ActiveSession {
   /** Working copy of the exercises for this session. */
   entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
   rest?: RestState;
+  /** The gym this session is at (§25), stamped at start. */
+  gymId?: string;
 }
 
 export interface Reminders {

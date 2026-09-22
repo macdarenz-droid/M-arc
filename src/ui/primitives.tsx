@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
-import { kgToDisplay, displayToKg } from '@/core/units';
+import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
+import type { LoadUnit } from '@/core/models';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -90,22 +91,56 @@ export function Field({ label, children, hint }: { label: string; children?: Com
  * reformats on every keystroke, so "23." collapses back to "23" before a "5" can follow it — the
  * displayed text only re-syncs from the committed kg while the field is not focused.
  */
-export function WeightInput({ kg, unit, placeholder, onChange }: { kg: number | undefined; unit: 'kg' | 'lb'; placeholder?: string; onChange: (kg: number | undefined) => void }) {
-  const display = kg != null ? String(kgToDisplay(kg, unit)) : '';
+export interface WeightChange { kg: number; entered: { value: number; unit: LoadUnit } }
+
+/**
+ * Plate Sense (§25.5): the entry unit is per exercise and gym, flipped with the pill at the
+ * input's right edge (long-press for the whole equipment group). What was typed is kept
+ * verbatim in `entered`, so 35 lb stays 35 lb. When the entry unit differs from the display
+ * unit, a second reading sits under the input.
+ */
+export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, onChange, onUnitFlip, onUnitLongPress }: {
+  kg: number | undefined;
+  entered?: { value: number; unit: LoadUnit };
+  entryUnit: LoadUnit;
+  displayUnit?: LoadUnit;
+  placeholder?: string;
+  onChange: (v: WeightChange | undefined) => void;
+  onUnitFlip?: () => void;
+  onUnitLongPress?: () => void;
+}) {
+  const shown = kg != null ? setLoadIn({ kg, entered }, entryUnit) : undefined;
+  const display = shown != null ? String(shown) : '';
   const [text, setText] = useState(display);
   const focused = useRef(false);
+  const press = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const long = useRef(false);
   if (!focused.current && text !== display) setText(display);
+  const other = displayUnit && displayUnit !== entryUnit && kg != null && kg > 0 ? approxIn(kg, displayUnit) : null;
+  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; onUnitLongPress(); }, 550); };
+  const endPress = () => { if (press.current) { clearTimeout(press.current); press.current = null; } };
   return (
-    <input
-      type="number" inputMode="decimal" step="0.5" placeholder={placeholder} value={text}
-      onFocus={() => { focused.current = true; }}
-      onBlur={() => { focused.current = false; setText(kg != null ? String(kgToDisplay(kg, unit)) : ''); }}
-      onInput={e => {
-        const raw = (e.target as HTMLInputElement).value;
-        setText(raw);
-        const v = parseFloat(raw);
-        onChange(Number.isFinite(v) ? displayToKg(v, unit) : undefined);
-      }}
-    />
+    <span class="weight-input">
+      <input
+        type="number" inputMode="decimal" step="any" placeholder={placeholder} value={text} aria-label={`Load in ${entryUnit}`}
+        onFocus={() => { focused.current = true; }}
+        onBlur={() => { focused.current = false; setText(display); }}
+        onInput={e => {
+          const raw = (e.target as HTMLInputElement).value;
+          setText(raw);
+          const v = parseFloat(raw);
+          onChange(Number.isFinite(v) ? enteredLoad(v, entryUnit) : undefined);
+        }}
+      />
+      {onUnitFlip ? (
+        <button
+          type="button" class="unit-pill" aria-label={`Entry unit ${entryUnit}. Tap to switch to ${entryUnit === 'kg' ? 'lb' : 'kg'}`}
+          onPointerDown={startPress} onPointerUp={endPress} onPointerLeave={endPress} onPointerCancel={endPress}
+          onContextMenu={e => e.preventDefault()}
+          onClick={() => { if (long.current) { long.current = false; return; } onUnitFlip(); }}
+        >{entryUnit}</button>
+      ) : null}
+      {other && <span class="weight-approx">{other}</span>}
+    </span>
   );
 }

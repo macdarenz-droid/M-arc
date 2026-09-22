@@ -4,7 +4,7 @@ import { today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
-import { formatLoad } from '@/core/units';
+import { formatLoad, kgToDisplay } from '@/core/units';
 import type { LoggedSet, Session } from '@/core/models';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
@@ -89,7 +89,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
           {session.exercises.map((e, i) => (
             <Row key={i}>
               <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map(st => setLabel(st, u)).join(' · ')}</div>
+              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
             </Row>
           ))}
         </div>
@@ -103,6 +103,11 @@ function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
   if (st.distanceM) return `${st.distanceM} m${st.kg ? ` @ ${formatLoad(st.kg, u)}` : ''}`;
   const load = st.kg ? formatLoad(st.kg, u) : 'bw';
   return `${load} × ${st.reps ?? 0}${st.effort ? ` ${st.effort[0]!.toUpperCase()}` : ''}`;
+}
+
+/** A tiny tag on sets typed in the other unit (§25.2 point 2). */
+export function UnitTag({ st, u }: { st: LoggedSet; u: 'kg' | 'lb' }) {
+  return st.entered && st.entered.unit !== u ? <span class="unit-tag" title={`Logged as ${st.entered.value} ${st.entered.unit}`}>{st.entered.unit}</span> : null;
 }
 
 function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
@@ -131,7 +136,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
               {e.sets.map((st, si) => (
                 <div key={si} class="set-grid">
                   <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <WeightInput kg={st.kg} unit="kg" placeholder="kg" onChange={kg => setField(ei, si, { kg })} />}
+                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={st.entered?.unit ?? u} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
                   {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseInt((ev.target as HTMLInputElement).value) || 0 })} />}
                   <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
                 </div>
@@ -188,7 +193,7 @@ function Stats() {
                   <Stat value={`${hist[hist.length - 1]!.topReps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
-                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map(st => setLabel(st, u)).join(' · ')}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}

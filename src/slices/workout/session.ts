@@ -32,7 +32,7 @@ export function startSession(split: Split): void {
     return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({})), done: false, skipped: false };
   });
   const startedAt = new Date().toISOString();
-  update(s => ({ ...s, active: { splitId: split.id, startedAt, pausedMs: 0, entries } }));
+  update(s => ({ ...s, active: { splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
   flushSave();
   resetHeartCapture(startedAt);
   void haptic.medium();
@@ -178,6 +178,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     durationSec: Math.max(0, Math.round((new Date(logging.trainedEndAt).getTime() - new Date(logging.trainedAt).getTime()) / 1000)),
     exercises,
     logging,
+    gymId: a.gymId ?? state.value.units.activeGymId,
   });
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
@@ -237,6 +238,7 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
     durationSec: input.durationMin * 60,
     exercises,
     logging,
+    gymId: state.value.units.activeGymId,
   };
   update(s => ({ ...s, sessions: [...s.sessions, session].sort((x, y) => x.startedAt.localeCompare(y.startedAt)) }));
   flushSave();
