@@ -355,3 +355,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Mode addenda live app-side** (`escobar/context/modes.ts`) because the app builds the brief's `mode:` line; `scripts/escobar-tools.mjs` copies them into the Worker's generated file (EV3) so there is one source.
 - **Knowledge cards cite sources by title and year only** (no URLs) to avoid linking to wrong pages; every number in a card also appears in its statement (tested), and debated topics are rated `debated`.
 - **Brief lines are diffed without fact ids**; ids are assigned only to lines actually sent, then renumbered so the ledger stays sequential.
+
+### EV3 (Worker)
+- **`fallbacks: "default"` with `server-side-fallback-2026-07-01`** (SDK 0.128 types it; no `@ts-expect-error` needed). Compatibility check (§12.3): the default route sends cyber refusals to `claude-opus-4-8`, which accepts mid-conversation system messages (per the Claude API skill's model table), so the array form was not needed.
+- **Strict-tool limits:** the live structured-outputs docs (checked 2026-09-22) list unsupported keywords but publish no numeric caps on strict tools or optional parameters. The Worker test keeps a self-imposed budget (≤ 20 strict tools, ≤ 24 optional strict parameters); today it is 20 and 21.
+- **Mid-conversation system messages** are sent as-is for models on the known list (Opus 5 / 5.5 / 4.8, Fable 5 / 5.1, Mythos); others (e.g. Sonnet 5) get `<situation>` blocks. A 400 whose error body says `role 'system' is not supported` triggers one folded retry (only when nothing was streamed yet) and is remembered per model for the instance. The SDK puts the API's error body (not the message argument) into `err.message`, so the check reads `err.error` too.
+- **Preserved-thinking models** (`claude-opus-5-5`, `claude-fable-5-1`, `claude-mythos-5-1`) get `thinking.block_binding.prefix_mismatch_behavior: "drop_block"` with `thinking-binding-controls-2026-08-01` (field name verified in the skill's migration guide and SDK types).
+- **Effort-change system messages** (`content: []` + `output_config`) are accepted and add `mid-conversation-output-config-2026-07-01` automatically.
+- **Quota tokens:** the Worker is stateless, so a turn's output tokens are counted from its final step only; steps are exact (assistant messages since the last user message + 1). Counters are written once per finished turn.
+- **Tool inputs** are accumulated from `input_json_delta` in the relay itself (no dependence on SDK snapshot internals), parsed at `content_block_stop`, and sent as `tool_input`; the authoritative input is still `final.content`.
+- **Heartbeat/idle:** `: ping` every 10 s; the Worker aborts the upstream after 60 s without an event and emits `error timeout`.

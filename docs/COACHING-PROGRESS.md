@@ -262,3 +262,7 @@ Spec: `docs/ESCOBAR-ARCHITECTURE.md`. Branch: `claude/escobar-v2-implementation-
 - brain: `weeklyVolumeHistory` (`brain/weekly.ts`), `brain/plan.ts` `evaluatePlan`/`hasBlockingIssues`, exported `readinessSeries` (`brain/coach/rules.ts`), `recoveryPctFor` moved to `brain/recovery.ts`; `ProgressionContext.loadFactor` (landed in EVU). Tests: `tests/plan.test.ts`, fixtures `tests/fixtures/plans.ts`.
 - brain (perf): memoised `normalizeName`, name → exercise per custom list, day-key parsing; exported method constants (readiness, heart, fidelity, e1rm, warm-up, progression, plateau, balance, weekly review, `data/deload.ts`).
 - ai: `escobar/tools/{context,schema,read,calc,plan,actions,show,executor}.ts`, `escobar/{ledger,hash}.ts`, `escobar/knowledge/{cards,methods}.ts` + `src/data/knowledge.json` (47 cards), `escobar/context/{brief,manifest,modes}.ts`. Tests: `tests/escobar/{read,calc,ledger,schema,actions,executor,knowledge,brief,show}.test.ts` (167 new; fixtures in `tests/escobar/fixtures.ts`).
+
+## EV3: Worker v2
+- worker: `escobar-worker/` (`src/{index,handler,anthropic,validate,quota}.ts`, `src/prompt/{policy,modes,manifest}.ts`, `src/tools.generated.json`, `wrangler.toml` name `marc-coach`, README), `scripts/escobar-tools.mjs` (`npm run escobar:tools`), app test `tests/escobar/tools-sync.test.ts`, CI step in `build-apk.yml`. Worker tests: `test/{validate,anthropic,handler,schema}.test.ts` (48).
+- Not deployed (owner action): `cd escobar-worker && npm ci && npx wrangler@4 deploy`.
