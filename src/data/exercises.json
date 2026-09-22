@@ -2261,5 +2261,550 @@
   ],
   "pattern": "carry",
   "defaultSets": 3
+ },
+ {
+  "id": "lib_burpee",
+  "name": "Burpee",
+  "equipment": "Bodyweight",
+  "primary": [
+   "chest"
+  ],
+  "secondary": [
+   "quads",
+   "core"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "burpees",
+   "squat thrust"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_mountain_climbers",
+  "name": "Mountain Climbers",
+  "equipment": "Bodyweight",
+  "primary": [
+   "core"
+  ],
+  "secondary": [
+   "hip_flexors",
+   "abs"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "mountain climber",
+   "running plank"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_jumping_jacks",
+  "name": "Jumping Jacks",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "side_delts"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "star jumps"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_high_knees",
+  "name": "High Knees",
+  "equipment": "Bodyweight",
+  "primary": [
+   "hip_flexors"
+  ],
+  "secondary": [
+   "quads"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "high knee sprints",
+   "knee ups"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_jump_rope",
+  "name": "Jump Rope",
+  "equipment": "Jump Rope",
+  "primary": [
+   "calves"
+  ],
+  "secondary": [
+   "quads"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "skipping",
+   "skipping rope"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_kettlebell_swing",
+  "name": "Kettlebell Swing",
+  "equipment": "Kettlebell",
+  "primary": [
+   "glutes"
+  ],
+  "secondary": [
+   "hamstrings",
+   "lower_back"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "kb swing",
+   "russian swing"
+  ],
+  "pattern": "hip_hinge",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_box_jump",
+  "name": "Box Jump",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes",
+   "calves"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "box jumps",
+   "plyo box jump"
+  ],
+  "pattern": "squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_battle_ropes",
+  "name": "Battle Ropes",
+  "equipment": "Battle Ropes",
+  "primary": [
+   "side_delts"
+  ],
+  "secondary": [
+   "core",
+   "forearms"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "battle rope waves",
+   "rope slams"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_medicine_ball_slam",
+  "name": "Medicine Ball Slam",
+  "equipment": "Medicine Ball",
+  "primary": [
+   "core"
+  ],
+  "secondary": [
+   "side_delts",
+   "lats"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "slam ball",
+   "med ball slam"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_wall_ball",
+  "name": "Wall Ball",
+  "equipment": "Medicine Ball",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "side_delts",
+   "core"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "wall balls",
+   "med ball squat throw"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bear_crawl",
+  "name": "Bear Crawl",
+  "equipment": "Bodyweight",
+  "primary": [
+   "core"
+  ],
+  "secondary": [
+   "front_delts",
+   "quads"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "bear crawls"
+  ],
+  "pattern": "conditioning",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_renegade_row",
+  "name": "Renegade Row",
+  "equipment": "Dumbbells",
+  "primary": [
+   "lats"
+  ],
+  "secondary": [
+   "core",
+   "mid_back"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "plank row",
+   "renegade rows"
+  ],
+  "pattern": "horizontal_pull",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bodyweight_squat",
+  "name": "Bodyweight Squat",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "air squat",
+   "no-weight squat"
+  ],
+  "pattern": "squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_jump_squat",
+  "name": "Jump Squat",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes",
+   "calves"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "squat jump",
+   "jumping squat"
+  ],
+  "pattern": "squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bodyweight_lunge",
+  "name": "Bodyweight Lunge",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "no-weight lunge",
+   "air lunge"
+  ],
+  "pattern": "lunge",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bodyweight_split_squat",
+  "name": "Bodyweight Split Squat",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "no-weight split squat"
+  ],
+  "pattern": "single_leg_squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_pistol_squat",
+  "name": "Pistol Squat",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [
+   "glutes",
+   "abductors"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "single-leg squat",
+   "one-leg squat"
+  ],
+  "pattern": "single_leg_squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_wall_sit",
+  "name": "Wall Sit",
+  "equipment": "Bodyweight",
+  "primary": [
+   "quads"
+  ],
+  "secondary": [],
+  "stabilizers": [],
+  "aliases": [
+   "wall squat hold"
+  ],
+  "pattern": "squat",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bodyweight_calf_raise",
+  "name": "Bodyweight Calf Raise",
+  "equipment": "Bodyweight",
+  "primary": [
+   "calves"
+  ],
+  "secondary": [],
+  "stabilizers": [],
+  "aliases": [
+   "standing calf raise (bodyweight)",
+   "no-weight calf raise"
+  ],
+  "pattern": "plantar_flexion",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_inverted_row",
+  "name": "Inverted Row",
+  "equipment": "Bodyweight",
+  "primary": [
+   "mid_back"
+  ],
+  "secondary": [
+   "lats",
+   "biceps"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "bodyweight row",
+   "aussie pull-up",
+   "australian pull-up"
+  ],
+  "pattern": "horizontal_pull",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_pike_push_up",
+  "name": "Pike Push-Up",
+  "equipment": "Bodyweight",
+  "primary": [
+   "front_delts"
+  ],
+  "secondary": [
+   "triceps"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "pike press",
+   "pike push ups"
+  ],
+  "pattern": "vertical_push",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_diamond_push_up",
+  "name": "Diamond Push-Up",
+  "equipment": "Bodyweight",
+  "primary": [
+   "triceps"
+  ],
+  "secondary": [
+   "chest"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "close-grip push-up",
+   "triangle push-up"
+  ],
+  "pattern": "horizontal_push",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_v_up",
+  "name": "V-Up",
+  "equipment": "Bodyweight",
+  "primary": [
+   "abs"
+  ],
+  "secondary": [],
+  "stabilizers": [],
+  "aliases": [
+   "v ups",
+   "jackknife sit-up"
+  ],
+  "pattern": "spinal_flexion",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bicycle_crunch",
+  "name": "Bicycle Crunch",
+  "equipment": "Bodyweight",
+  "primary": [
+   "obliques"
+  ],
+  "secondary": [
+   "abs"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "bicycle crunches",
+   "cross-body crunch"
+  ],
+  "pattern": "rotation",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_flutter_kicks",
+  "name": "Flutter Kicks",
+  "equipment": "Bodyweight",
+  "primary": [
+   "hip_flexors"
+  ],
+  "secondary": [
+   "abs"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "flutter kick",
+   "leg flutters"
+  ],
+  "pattern": "hip_flexion",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_hollow_body_hold",
+  "name": "Hollow Body Hold",
+  "equipment": "Bodyweight",
+  "primary": [
+   "abs"
+  ],
+  "secondary": [
+   "core"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "hollow hold",
+   "hollow body"
+  ],
+  "pattern": "anti_extension",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_bird_dog",
+  "name": "Bird Dog",
+  "equipment": "Bodyweight",
+  "primary": [
+   "core"
+  ],
+  "secondary": [
+   "lower_back",
+   "glutes"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "bird-dog",
+   "opposite arm leg raise"
+  ],
+  "pattern": "anti_rotation",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_superman",
+  "name": "Superman",
+  "equipment": "Bodyweight",
+  "primary": [
+   "lower_back"
+  ],
+  "secondary": [
+   "glutes"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "supermans",
+   "back extension hold"
+  ],
+  "pattern": "hip_extension",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_resistance_band_row",
+  "name": "Resistance Band Row",
+  "equipment": "Resistance Band",
+  "primary": [
+   "mid_back"
+  ],
+  "secondary": [
+   "lats",
+   "rear_delts"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "band row",
+   "seated band row"
+  ],
+  "pattern": "horizontal_pull",
+  "defaultSets": 3
+ },
+ {
+  "id": "lib_resistance_band_pull_apart",
+  "name": "Resistance Band Pull-Apart",
+  "equipment": "Resistance Band",
+  "primary": [
+   "rear_delts"
+  ],
+  "secondary": [
+   "upper_traps"
+  ],
+  "stabilizers": [],
+  "aliases": [
+   "band pull-apart",
+   "band pull aparts"
+  ],
+  "pattern": "horizontal_abduction",
+  "defaultSets": 3
  }
 ]
