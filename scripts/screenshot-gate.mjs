@@ -61,6 +61,12 @@ for (const theme of themes) {
   await page.waitForTimeout(400);
   const shot = (name) => page.screenshot({ path: `${OUT}/${theme}-${name}.png` });
   await shot('today');
+  // A profile with no birth year/height/sex and no completed onboarding shows the "help the
+  // coach know you" sheet on top of Today (even on the legacy-import fixture) — screenshot it,
+  // then dismiss ("Later") so the rest of the walk is unblocked, same as a real user's first look.
+  await shot('onboarding');
+  await page.getByRole('button', { name: 'Later' }).click();
+  await page.waitForTimeout(250);
   await page.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
   if (theme === 'silent-black') {
     // Start a session and log a set for the live screenshot.
@@ -80,11 +86,42 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');
   if (theme === 'silent-black') { await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape'); }
   await page.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
+  if (theme === 'silent-black') {
+    await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
   if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
   await ctx.close();
 }
+
+// A fresh (non-legacy) profile so the onboarding form and a goal-change insight are visible
+// without the legacy fixture's own progress insights outranking them in the top 3.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`fresh-profile: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`fresh-profile console: ${m.text()}`); });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Add my details' }).click();
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
+  await page.locator('input[type="number"]').first().fill('80');
+  await page.getByText('Strength focus').click();
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Coach' }).click();
+  await page.waitForTimeout(250);
+  const insightTitles = await page.locator('.insight h3').allTextContents();
+  if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
+  await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
