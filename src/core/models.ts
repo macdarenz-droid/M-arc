@@ -106,6 +106,7 @@ export interface Profile {
   bodyWeightKg?: number;
   heightCm?: number;
   sex?: 'male' | 'female';
+  birthYear?: number;
 }
 
 export interface BodyMeasurement {
@@ -125,6 +126,21 @@ export interface HealthSnapshot {
   activeCalories?: number;
 }
 
+/** One day's Health Connect readings. `restingHr`/`latestHr` are point samples, not averages. */
+export interface DailyHealth {
+  day: string;
+  restingHr?: number;
+  restingHrAt?: string;
+  latestHr?: number;
+  latestHrAt?: string;
+  sleepMinutes?: number;
+  sleepEndAt?: string;
+  steps?: number;
+  activeCalories?: number;
+  source: 'health_connect' | 'watch' | 'manual';
+  syncedAt: string;
+}
+
 export interface AppState {
   version: 1;
   createdAt: string;
@@ -138,6 +154,8 @@ export interface AppState {
   preferences: Preferences;
   body: BodyMeasurement[];
   health: HealthSnapshot;
+  /** Daily Health Connect history, newest last, capped at 180 days. */
+  healthDays: DailyHealth[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -167,6 +185,7 @@ export function freshState(now = new Date()): AppState {
     },
     body: [],
     health: { connected: false },
+    healthDays: [],
   };
 }
 

@@ -24,6 +24,7 @@ function normalize(s: AppState): AppState {
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
     body: s.body ?? [],
     customExercises: s.customExercises ?? [],
+    healthDays: s.healthDays ?? [],
   };
 }
 
