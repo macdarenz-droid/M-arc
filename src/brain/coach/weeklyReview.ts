@@ -161,7 +161,7 @@ export function weekHasEnoughData(sessions: Session[], today: string): boolean {
   return days.size >= 5 || sessions.filter(s => s.day >= start && s.day < end).length >= 5;
 }
 
-export function weeklyReviewInsights(input: WeeklyReviewInput): Insight[] {
+export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insight[] {
   const { sessions, today, custom, schedule, goal, weightLog, trainingAgeMonths, exerciseIds } = input;
   const out: Insight[] = [];
   const start = weekStart(today);
@@ -331,5 +331,5 @@ export function weeklyReviewInsights(input: WeeklyReviewInput): Insight[] {
     });
   }
 
-  return out;
+  return out.sort((a, b) => b.priority - a.priority).slice(0, limit);
 }

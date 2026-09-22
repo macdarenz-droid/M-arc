@@ -13,6 +13,9 @@ import { suggestNext, previousSet } from '@/brain/progression';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { preSessionInsights } from '@/brain/coach/pre';
+import { postSessionInsights } from '@/brain/coach/post';
+import { INSIGHT_COLOR } from '@/slices/coach/Coach';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
@@ -31,6 +34,8 @@ const lastFinish = signal<FinishSummary | null>(null);
 const pendingTimeQuestion = signal<FinishSummary | null>(null);
 /** Set when the user taps "Log a past session" from the split list. */
 const loggingPast = signal<Split | null>(null);
+/** Set when the user taps "Start" — shows the pre-session brief before the timer begins. */
+const startingSplit = signal<Split | null>(null);
 
 export function Train() {
   const s = state.value;
@@ -38,6 +43,7 @@ export function Train() {
   if (pendingTimeQuestion.value) return <TimeQuestionSheet summary={pendingTimeQuestion.value} onResolved={r => { pendingTimeQuestion.value = null; lastFinish.value = r; }} />;
   if (lastFinish.value) return <FinishScreen summary={lastFinish.value} onClose={() => { lastFinish.value = null; }} />;
   if (loggingPast.value) return <PastSessionEntry split={loggingPast.value} onClose={() => { loggingPast.value = null; }} onSaved={r => { loggingPast.value = null; lastFinish.value = r; }} />;
+  if (startingSplit.value) return <PreSessionSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
   return live ? <LiveSession /> : <Splits />;
 }
 
@@ -96,7 +102,7 @@ function Splits() {
               })}
               {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split. Tap edit to add exercises.</p>}
             </div>
-            <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => startSession(split)}><IconPlay /> Start {split.name}</Button>
+            <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => { startingSplit.value = split; }}><IconPlay /> Start {split.name}</Button>
             <Button variant="quiet" block disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
           </Card>
           <p class="hint" style={{ marginTop: 10 }}>Targets come from your last sessions and your goal ({GOALS.find(g => g.id === s.goal)?.name}). Change the goal in Coach.</p>
@@ -291,6 +297,28 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
 }
 
 /** "Looks like you logged this after training." Never blocks: Skip files it on the schedule slot or 17:00. */
+/** Shown when "Start" is tapped, before the timer begins (6.13 cadence 'pre'). */
+function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: () => void; onStart: () => void }) {
+  const s = state.value;
+  const age = s.profile.birthYear ? new Date().getFullYear() - s.profile.birthYear : null;
+  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age });
+  return (
+    <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
+      <div class="stack">
+        {items.map(i => (
+          <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
+            <b class="small">{i.title}</b>
+            <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+            <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
+          </Card>
+        ))}
+        {!items.length && <p class="small muted">Nothing to flag. Have a good session.</p>}
+        <Button variant="primary" block onClick={onStart}><IconPlay /> Start {split.name}</Button>
+      </div>
+    </Sheet>
+  );
+}
+
 function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; onResolved: (r: FinishSummary) => void }) {
   const s = state.value;
   const medianLiveMinutes = () => {
@@ -389,15 +417,31 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
 
 function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: () => void }) {
   const { session } = summary;
-  const emphasis = sessionEmphasis(session.exercises, state.value.customExercises).percents;
+  const s = state.value;
+  const emphasis = sessionEmphasis(session.exercises, s.customExercises).percents;
   const top = (Object.entries(emphasis) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
+  const priorSessions = s.sessions.filter(x => x.id !== session.id);
+  const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, isStrengthGoal: s.goal === 'strength' }) : [];
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div></div>
       <Card class="card-accent">
         <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
       </Card>
+      {debrief.length > 0 && (
+        <Section title="Debrief">
+          <div class="stack-sm">
+            {debrief.map(i => (
+              <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
+                <b class="small">{i.title}</b>
+                <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+                <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
+              </Card>
+            ))}
+          </div>
+        </Section>
+      )}
       <Section title="Muscles worked today">
         <Card>
           <MuscleMap values={emphasis as never} mode="emphasis" />

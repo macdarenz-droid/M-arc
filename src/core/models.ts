@@ -240,6 +240,8 @@ export interface AppState {
   recoveryModel: RecoveryModel;
   /** "Mark as fresh" overrides, newest last, capped at 100. Cleared once older than the muscle's fullInHours. */
   freshMarks: FreshMark[];
+  /** The Monday key of the week whose review the user has already seen, so it stops reappearing. */
+  weeklyReviewDismissedWeek?: string;
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }

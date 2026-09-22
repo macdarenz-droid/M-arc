@@ -5,9 +5,12 @@ import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
+import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
+import { trainingAgeMonths } from '@/brain/recovery';
+import { profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { exerciseHistory } from '@/brain/history';
@@ -33,6 +36,8 @@ export function Coach() {
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
+
+      <WeeklyReviewCard />
 
       <Card class="card-accent">
         <div class="eyebrow">This week in one line</div>
@@ -66,12 +71,14 @@ export function Coach() {
         </Section>
       )}
 
+      <WhatCoachCanSee />
+
       <Section title="How the coach thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery windows are 24, 48 or 72 hours depending on effort, and they only ever widen when your own history shows you need it.</p>
+            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and only ever widens when your own history shows you need it.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
           </div>
         </Card>
@@ -169,6 +176,82 @@ function Schedule() {
           </div>
         </Sheet>
       )}
+    </Section>
+  );
+}
+
+/** Pinned at the top of Coach on the first open of a new week with >=5 logged days, until dismissed. */
+function WeeklyReviewCard() {
+  const s = state.value;
+  const [open, setOpen] = useState(false);
+  const thisWeek = weekStart(today.value);
+  const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
+  const enough = weekHasEnoughData(s.sessions, today.value);
+  if (dismissed || !enough) return null;
+  const exerciseIds = useMemo(() => {
+    const names = new Map<string, string>();
+    for (const sess of [...s.sessions].reverse()) for (const e of sess.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
+    return [...names].map(([id, name]) => ({ id, name }));
+  }, [s.sessions]);
+  const items = weeklyReviewInsights({
+    sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds,
+  }, 6);
+  const dismiss = () => { update(x => ({ ...x, weeklyReviewDismissedWeek: thisWeek })); };
+  return (
+    <>
+      <Card class="card-accent card-press" onClick={() => setOpen(true)}>
+        <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+        <p style={{ marginTop: 6 }}>{items.length ? `${items.length} thing${items.length > 1 ? 's' : ''} worth knowing about this week.` : 'Steady week — nothing stands out either way.'}</p>
+      </Card>
+      {open && (
+        <Sheet title="Weekly review" onClose={() => setOpen(false)}>
+          <div class="stack">
+            {items.map(i => (
+              <Card key={i.id} class="card-quiet">
+                <b class="small">{i.title}</b>
+                <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+                <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
+              </Card>
+            ))}
+            {!items.length && <p class="small muted">Nothing stood out this week, good or bad.</p>}
+            <Button variant="quiet" onClick={() => { dismiss(); setOpen(false); }}>Dismiss until next week</Button>
+          </div>
+        </Sheet>
+      )}
+    </>
+  );
+}
+
+/** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
+function WhatCoachCanSee() {
+  const s = state.value;
+  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0);
+  const ratedShare = recentSets.length ? recentSets.filter(x => x.effort).length / recentSets.length : null;
+  const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
+  const completeness = profileCompleteness(s.profile);
+  const todayCheckIn = s.checkIns.find(c => c.day === today.value);
+  const rows: Array<{ label: string; value: string; unlocks?: string }> = [
+    { label: 'Sets logged', value: `${s.sessions.reduce((a, x) => a + x.exercises.reduce((b, e) => b + e.sets.length, 0), 0)} total` },
+    { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet', unlocks: ratedShare == null || ratedShare < 0.5 ? 'Rate sets so the coach can judge hard vs easy.' : undefined },
+    { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
+    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync?.slice(0, 10) ?? ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
+    { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
+    { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
+    { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
+  ];
+  return (
+    <Section title="What the coach can see">
+      <Card class="card-quiet">
+        <div class="list">
+          {rows.map(r => (
+            <Row key={r.label} trailing={<span class="hint num">{r.value}</span>}>
+              <span class="small">{r.label}</span>
+              {r.unlocks && <div class="hint">{r.unlocks}</div>}
+            </Row>
+          ))}
+        </div>
+      </Card>
     </Section>
   );
 }

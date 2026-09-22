@@ -63,7 +63,7 @@ function monthsBetween(fromDay: string, toMs: number): number {
   return Math.max(0, daysBetween(fromDay, dayKey(new Date(toMs))) / 30.44);
 }
 
-function trainingAgeMonths(profile: Profile, sessions: Session[], atMs: number): number | null {
+export function trainingAgeMonths(profile: Profile, sessions: Session[], atMs: number): number | null {
   const since = profile.trainingSince ? `${profile.trainingSince}-01` : sessions[0]?.day;
   return since ? monthsBetween(since, atMs) : null;
 }
@@ -74,7 +74,7 @@ function trainingAgePrior(months: number | null): number {
   return TRAINING_AGE_PRIOR.established;
 }
 
-function ageOf(profile: Profile, atMs: number): number | null {
+export function ageOf(profile: Profile, atMs: number): number | null {
   return profile.birthYear ? new Date(atMs).getFullYear() - profile.birthYear : null;
 }
 
