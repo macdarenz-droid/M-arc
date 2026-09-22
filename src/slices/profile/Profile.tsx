@@ -1,3 +1,4 @@
+import { usePalaceFocus } from '@/escobar/palace/focus';
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { Button, Card, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
@@ -16,6 +17,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
   const c = profileCompleteness(s.profile);
   const [goalOpen, setGoalOpen] = useState(false);
   const goal = GOAL_BY_ID[s.goal];
+  usePalaceFocus('profile.about');
 
   return (
     <Sheet title="Your profile" onClose={onClose}>
@@ -25,7 +27,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
           <p class="small muted" style={{ marginTop: 4 }}>Calories, heart-rate zones, recovery time and strength trends all depend on these once they're connected. Everything stays on this phone.</p>
         </Card>
 
-        <Section title="About you">
+        <Section title="About you" palace="profile.about">
           <Card class="stack-sm">
             <Field label="Birth year" hint="Unlocks: heart-rate zones, age-adjusted recovery. ">
               <input type="number" value={s.profile.birthYear ?? ''} onInput={e => { const v = parseInt((e.target as HTMLInputElement).value, 10); setBirthYear(Number.isFinite(v) ? v : undefined); }} />
@@ -42,14 +44,14 @@ export function Profile({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
 
-        <Section title="Body">
+        <Section title="Body" palace="profile.weigh-in">
           <Card class="stack-sm">
             <WeighIn />
             <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'bodyWeightKg'))} · {s.weightLog.length} weigh-in{s.weightLog.length === 1 ? '' : 's'} logged</span>
           </Card>
         </Section>
 
-        <Section title="Training" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change goal</Button>}>
+        <Section title="Training" palace="profile.training" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change goal</Button>}>
           <Card class="stack-sm">
             <Row trailing={<span class="hint">{goal.name}</span>}><span class="small">Goal</span></Row>
             <Field label="Training since" hint="Unlocks: progress-rate expectations.">

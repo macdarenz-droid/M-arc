@@ -325,3 +325,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **The slip chip is computed in Train, not from stored `flags`**: `flagsForSet` is not called by any slice today, so the chip checks `unitSuspect(set.kg, best of the last 3 sessions' top loads)` on committed sets. "No, kg" is remembered for the rest of the app session (in memory); "Yes, lb" converts the set (`entered` = the typed number in lb) and saves the exercise's unit with source `suspect_fix`.
 - **Gym pre-selection runs once per app session** on Train idle (only with 2+ gyms), so a manual switch is never overridden while the app stays open.
 - **The Settings row button reads "Manage"** (not "Open") so the existing gate's `Open` lookup for Profile stays unique.
+
+### EV1 (Palace)
+- **`settingsOpen`/`profileOpen` are getter/setter objects, not `computed`**: existing callers write `.value = true`, which a read-only computed cannot take. Reads go through `openPanel.value`, so components still subscribe.
+- **All sheet panels render from `App.tsx` (`Panels`)**, so a palace target opens them from any tab; `go(tab)` clears the panel only when the tab actually changes. `exercise-stats` is a History view (seg forced to Stats, exercise preselected), not a sheet.
+- **Body's map view and History's segment moved into router signals** (`bodyView`, `historySeg`) so targets can say `{view: 'week'}` or `{seg: 'stats'}`.
+- **Panel params left out are filled from the data** (`resolvePanelParams`): the last session for `session`, the last session's first exercise for `exercise-stats`, chest for `muscle`.
+- **Live-session features anchor on the way in**: warm-up, swap, rest, plate math, unit pill, effort and finish only exist during a session, so their entries spotlight `train.start` (the Start button when idle, the live header when a session runs) and carry `how` steps. Every anchor is then verifiable by the gate.
+- **Today's Coach section always renders** (with a quiet empty state), so `today.coach` has a stable anchor.
+- **The weekly review sheet opens as a panel even when the card is hidden** (fewer than 5 days logged): it then says nothing stood out.
+- **Closing open Sheets generically** dispatches `cancel` on every open `dialog.sheet`, which runs each Sheet's own `onClose`, so local sheet state stays consistent.
+- **`openSheets` counter lives in `ui/primitives.tsx`** next to `Sheet` (the dock in EV5 reads it).
+- **69 registry entries** cover every tab section, panel, Settings row group, and the §7.1 key actions.

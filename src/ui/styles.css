@@ -232,3 +232,11 @@ svg { display: block; }
 .gym-chip { display: inline-flex; align-items: center; gap: 4px; }
 .weight-input input::-webkit-outer-spin-button, .weight-input input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .weight-input input { -moz-appearance: textfield; appearance: textfield; }
+
+/* Palace spotlight (§7.2): a ring on the element Escobar is pointing at. */
+.palace-spotlight { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius-md); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .palace-spotlight { animation: palace-glow 1.6s ease-out; }
+  @keyframes palace-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 40% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); } 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

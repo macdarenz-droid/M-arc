@@ -35,7 +35,7 @@ export function WatchSheet({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Sheet title="Watch" onClose={onClose}>
+    <Sheet title="Watch" onClose={onClose} palace="panel.watch">
       <div class="stack">
         <p class="small muted">{status.message}</p>
         {status.state === 'connected' ? (

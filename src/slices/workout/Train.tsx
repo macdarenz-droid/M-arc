@@ -29,6 +29,7 @@ import { GOALS } from '@/data/goals';
 import { watchSupported, watchStatus, latestMeasurement } from '@/native/watch';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { recentLiveBpms } from './heart';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 import { activeGymId, addGym, profileFor, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
 import { formatLoadable, formatPerSide, inferGym, loadableNear, plateBreakdown } from '@/brain/units';
 import { suspectAlternative, unitSuspect } from '@/brain/fidelity';
@@ -172,11 +173,13 @@ function Splits() {
     if (guess && guess !== s.units.activeGymId) setActiveGym(guess);
   }, []);
 
+  usePalaceFocus('train.workouts', split ? { splitId: split.id } : undefined);
+
   return (
     <div class="view">
-      <div class="topbar">
+      <div class="topbar" data-palace="train.workouts">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
-        <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
+        <Button variant="quiet" size="sm" data-palace="train.new-split" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
       </div>
       <div class="row" style={{ marginBottom: 10 }}>
         <button type="button" class="chip chip-btn gym-chip" data-palace="train.gym-chip" aria-label={`Gym: ${gym?.name ?? ''}. Change gym`} onClick={() => setGymOpen(true)}>At: {gym?.name} <IconChevronDown size={14} /></button>
@@ -199,13 +202,13 @@ function Splits() {
 
       {split && (
         <>
-          <Card>
+          <Card data-palace="train.split">
             <div class="row-between">
               <div>
                 <h2>{split.name}</h2>
                 <span class="hint">{split.exercises.length} exercises · {split.exercises.reduce((a, e) => a + e.sets, 0)} sets{split.focus.length ? ` · focus: ${split.focus.map(muscleLabel).join(', ')}` : ''}</span>
               </div>
-              <Button variant="quiet" class="btn-icon" aria-label="Edit split" onClick={() => setEditing(true)}><IconEdit /></Button>
+              <Button variant="quiet" class="btn-icon" aria-label="Edit split" data-palace="train.edit-split" onClick={() => setEditing(true)}><IconEdit /></Button>
             </div>
             <div class="list" style={{ marginTop: 6 }}>
               {split.exercises.map(se => {
@@ -220,8 +223,8 @@ function Splits() {
               })}
               {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split. Tap edit to add exercises.</p>}
             </div>
-            <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => { startingSplit.value = split; }}><IconPlay /> Start {split.name}</Button>
-            <Button variant="quiet" block disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
+            <Button variant="primary" block style={{ marginTop: 12 }} data-palace="train.start" disabled={!split.exercises.length} onClick={() => { startingSplit.value = split; }}><IconPlay /> Start {split.name}</Button>
+            <Button variant="quiet" block data-palace="train.log-past" disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
           </Card>
           <p class="hint" style={{ marginTop: 10 }}>Targets come from your last sessions and your goal ({GOALS.find(g => g.id === s.goal)?.name}). Change the goal in Coach.</p>
         </>
@@ -290,6 +293,7 @@ function SplitEditor({ split, onClose, onDeleted }: { split: Split; onClose: () 
 function LiveSession() {
   const s = state.value;
   const a = active()!;
+  usePalaceFocus('train.start', { live: 1, splitId: a.splitId });
   const split = s.splits.find(x => x.id === a.splitId);
   const [open, setOpen] = useState<number>(a.entries.findIndex(e => !e.done && !e.skipped));
   const [picking, setPicking] = useState(false);
@@ -301,7 +305,7 @@ function LiveSession() {
 
   return (
     <div class="view">
-      <div class="topbar">
+      <div class="topbar" data-palace="train.start">
         <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><h1 class="num">{formatClock(elapsed)}</h1><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
         <div class="row">
           <WatchPill />
@@ -530,15 +534,19 @@ function RatingRow({ value, onChange }: { value: 1 | 2 | 3 | 4 | 5 | undefined; 
 }
 
 /** F2.2: optional, a few taps — sleep quality, mood, and soreness for today's target muscles. Shown once per day, before the pre-session brief. */
-function CheckInSheet({ split, onClose, onDone }: { split: Split; onClose: () => void; onDone: () => void }) {
+/** The daily check-in. With a split, soreness asks about its muscles; without one (the `checkin` panel), about the least-recovered ones. */
+export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClose: () => void; onDone: () => void }) {
   const s = state.value;
-  const muscles = [...new Set(split.exercises.flatMap(se => findExercise(se.exerciseId, s.customExercises)?.primary ?? []))].slice(0, 4);
+  usePalaceFocus('panel.checkin');
+  const muscles = split
+    ? [...new Set(split.exercises.flatMap(se => findExercise(se.exerciseId, s.customExercises)?.primary ?? []))].slice(0, 4)
+    : recoverySelector.value.filter(r => r.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, 4).map(r => r.muscle);
   const [sleepQuality, setSleepQuality] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
   const [soreness, setSoreness] = useState<Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>>({});
   const save = () => { saveCheckIn(today.value, { sleepQuality, mood, soreness }); onDone(); };
   return (
-    <Sheet title="Quick check-in" onClose={onClose}>
+    <Sheet title="Quick check-in" onClose={onClose} palace="panel.checkin">
       <div class="stack">
         <p class="hint">Feeds today's readiness. Takes a few seconds, skip any time.</p>
         <Field label="Sleep quality"><RatingRow value={sleepQuality} onChange={setSleepQuality} /></Field>

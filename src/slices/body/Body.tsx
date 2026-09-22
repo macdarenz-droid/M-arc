@@ -12,13 +12,18 @@ import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
+import { bodyView, openPanel, showPanel } from '@/app/router';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 
 type View = 'recovery' | 'levels' | 'week';
 
 export function Body() {
   const s = state.value;
-  const [view, setView] = useState<View>('recovery');
-  const [selected, setSelected] = useState<MuscleId | null>(null);
+  const view = bodyView.value;
+  const setView = (v: View) => { bodyView.value = v; };
+  const setSelected = (m: MuscleId) => showPanel('muscle', { muscle: m });
+  const selected = openPanel.value?.id === 'muscle' ? (openPanel.value.params?.muscle as MuscleId | undefined) ?? null : null;
+  usePalaceFocus('body.map', { view });
   const rec = recovery.value;
   const levels = useMemo(() => trainingLevels(s.sessions, s.customExercises), [s.sessions]);
   const weekSets = useMemo(() => weeklyMuscleSets(s.sessions, today.value, 1, s.customExercises)[0]?.sets ?? {}, [s.sessions, today.value]);
@@ -41,7 +46,7 @@ export function Body() {
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Body</div><h1>Muscle map</h1></div></div>
       <Segmented value={view} onChange={setView} options={[{ value: 'recovery', label: 'Recovery' }, { value: 'week', label: 'This week' }, { value: 'levels', label: 'Levels' }]} />
-      <Card style={{ marginTop: 14 }}>
+      <Card style={{ marginTop: 14 }} data-palace="body.map">
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
         <div style={{ marginTop: 10 }}><MapLegend mode={mode} /></div>
         <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and only ever widens from your own history.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
@@ -50,7 +55,7 @@ export function Body() {
 
       {view === 'recovery' && (
         <>
-          <Section title="Recovering" aside={<span class="small muted">{recovering.length}</span>}>
+          <Section title="Recovering" palace="body.recovering" aside={<span class="small muted">{recovering.length}</span>}>
             <Card>
               {!recovering.length && <p class="small muted">{readyOnly.length || fullyRecovered.length ? 'Everything you have trained is ready for hard work.' : 'Nothing logged yet.'}</p>}
               <div class="list">{recovering.map(r => (
@@ -61,23 +66,23 @@ export function Body() {
               ))}</div>
             </Card>
           </Section>
-          <Section title="Ready for hard work" aside={<span class="small muted">{readyOnly.length}</span>}>
+          <Section title="Ready for hard work" palace="body.ready" aside={<span class="small muted">{readyOnly.length}</span>}>
             <Card><div class="wrap">{readyOnly.map(r => <Chip key={r.muscle} onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)} · {r.pct}%</Chip>)}{!readyOnly.length && <span class="small muted">Muscles between ready and fully recovered show here.</span>}</div></Card>
           </Section>
-          <Section title="Fully recovered" aside={<span class="small muted">{fullyRecovered.length}</span>}>
+          <Section title="Fully recovered" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
             <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">Trained muscles show here once fully recovered.</span>}</div></Card>
           </Section>
         </>
       )}
 
       {view === 'levels' && (
-        <Section title="Training levels">
+        <Section title="Training levels" palace="body.levels">
           <Card><div class="list">{MUSCLES.map(m => levels[m.id]).map((l, i) => ({ l, m: MUSCLES[i]! })).sort((a, b) => b.l.score - a.l.score).map(({ l, m }) => <Row key={m.id} onClick={() => setSelected(m.id)} trailing={<Chip tone={l.levelIndex >= 4 ? 'accent' : undefined}>{l.level}</Chip>}><span class="small">{m.label}</span></Row>)}</div></Card>
         </Section>
       )}
 
       {view === 'week' && (
-        <Section title="Effective sets this week">
+        <Section title="Effective sets this week" palace="body.week-volume">
           <Card><div class="list">
             {volumeStatus.map(r => {
               const scaleMax = Math.max(r.thisWeekSets, r.band[1]) * 1.15 || 1;
@@ -97,13 +102,14 @@ export function Body() {
       )}
 
       <BodyFat />
-      {selected && <MuscleDetail muscle={selected} onClose={() => setSelected(null)} />}
     </div>
   );
 }
 
-function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => void }) {
+/** One muscle, opened as the `muscle` panel (from the map, a list row, or Escobar). */
+export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => void }) {
   const s = state.value;
+  usePalaceFocus('body.muscle', { muscle });
   const u = unit.value;
   const r = recovery.value.find(x => x.muscle === muscle)!;
   const info = MUSCLE_BY_ID[muscle];
@@ -112,7 +118,7 @@ function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => vo
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));
   const markFresh = () => { update(x => ({ ...x, freshMarks: [...x.freshMarks, { muscle, at: new Date().toISOString() }].slice(-100) })); onClose(); };
   return (
-    <Sheet title={info.label} onClose={onClose}>
+    <Sheet title={info.label} onClose={onClose} palace="body.muscle">
       <div class="stack">
         <div class="grid-3">
           <Stat value={r.lastTrainedAt ? `${r.pct}%` : '—'} label="recovered" tone={r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive'} />
@@ -157,7 +163,7 @@ function BodyFat() {
     setOpen(false);
   };
   return (
-    <Section title="Body fat estimate" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>{last ? 'New reading' : 'Measure'}</Button>}>
+    <Section title="Body fat estimate" palace="body.bodyfat" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>{last ? 'New reading' : 'Measure'}</Button>}>
       <Card>
         {last ? <div class="row-between"><Stat value={`${last.bodyFatPct}%`} label={`on ${formatDay(last.day)}`} />{s.body.length > 1 && <span class="small muted">{s.body.length} readings · first {s.body[0]!.bodyFatPct}%</span>}</div> : <p class="small muted">Tape-measure estimate using the US Navy method. Track the trend, not one reading.</p>}
       </Card>

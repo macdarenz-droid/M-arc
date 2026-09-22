@@ -5,6 +5,7 @@ import { insights, recovery, scheduledSplit, sessionsToday, streak, today, today
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 import { formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
@@ -34,21 +35,22 @@ export function Today() {
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
   const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';
+  usePalaceFocus('today.header', { status });
 
   return (
     <div class="view">
-      <div class="topbar">
+      <div class="topbar" data-palace="today.header">
         <div>
           <div class="row" style={{ gap: 8, marginBottom: 6 }}><LogoMark size={22} /><span class="eyebrow">{formatDay(today.value, { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
           <h1>{greeting()}{s.profile.name ? `, ${s.profile.name}` : ''}</h1>
         </div>
         <div class="row">
           {streak.value > 0 && <Chip tone="warning"><IconFlame size={14} /> {streak.value}</Chip>}
-          <Button variant="quiet" class="btn-icon" aria-label="Settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
+          <Button variant="quiet" class="btn-icon" aria-label="Settings" data-palace="today.settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
         </div>
       </div>
 
-      <Card class="card-accent">
+      <Card class="card-accent" data-palace="today.session-card">
         {status === 'live' && (
           <div class="stack-sm">
             <div class="eyebrow">Session in progress</div>
@@ -85,7 +87,7 @@ export function Today() {
 
       <ReadinessCard />
 
-      <Section title="This week" aside={<span class="small muted">{w.grade.title}</span>}>
+      <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
             <Stat value={w.workouts} label="workouts" />
@@ -96,7 +98,7 @@ export function Today() {
         </Card>
       </Section>
 
-      <Section title="Recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
+      <Section title="Recovery" palace="today.recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
         <Card>
           <div class="row" style={{ alignItems: 'flex-start' }}>
             <div style={{ width: 120, flex: 'none' }}><MuscleMap values={values} mode="recovery" compact /></div>
@@ -114,18 +116,18 @@ export function Today() {
         </Card>
       </Section>
 
-      {top && (
-        <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+      <Section title="Coach" palace="today.coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+        {top ? (
           <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
             <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>
             <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
             <p class="small muted">{top.action}</p>
           </Card>
-        </Section>
-      )}
+        ) : <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
+      </Section>
 
       {s.preferences.showSpark && (
-        <Section title="Daily spark">
+        <Section title="Daily spark" palace="today.spark">
           <Card class="card-quiet">
             <div class="eyebrow">{spark.topic}</div>
             <p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p>
@@ -145,14 +147,14 @@ function ReadinessCard() {
   const r = todayReadiness.value;
   if (!r) {
     return (
-      <Section title="Readiness">
+      <Section title="Readiness" palace="today.readiness">
         <Card class="card-quiet"><p class="small muted">Connect a watch or add a check-in to see your readiness.</p></Card>
       </Section>
     );
   }
   const advice = ADVICE_COPY[r.loadAdvice];
   return (
-    <Section title="Readiness">
+    <Section title="Readiness" palace="today.readiness">
       <Card class={r.band === 'red' ? 'card-accent' : ''}>
         <div class="row-between">
           <h2 style={{ margin: 0 }}>{BAND_LABEL[r.band]}{r.calibrating ? ' · calibrating' : ''}</h2>

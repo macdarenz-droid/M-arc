@@ -13,9 +13,13 @@ import { weekSummary } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
+import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 
 export function History() {
-  const [seg, setSeg] = useState<'log' | 'stats'>('log');
+  const panel = openPanel.value;
+  const seg = panel?.id === 'exercise-stats' ? 'stats' : historySeg.value;
+  const setSeg = (v: 'log' | 'stats') => { historySeg.value = v; if (panel?.id === 'exercise-stats') closePanel('exercise-stats'); };
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div></div>
@@ -29,7 +33,8 @@ function Log() {
   const s = state.value;
   const [month, setMonth] = useState(() => today.value.slice(0, 7));
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [editing, setEditing] = useState<Session | null>(null);
+  const setEditing = (x: Session) => showPanel('session', { sessionId: x.id });
+  usePalaceFocus('history.calendar', selectedDay ? { day: selectedDay } : undefined);
   const trained = useMemo(() => new Set(s.sessions.map(x => x.day)), [s.sessions]);
   const first = parseDay(`${month}-01`);
   const startOffset = (first.getDay() + 6) % 7;
@@ -43,7 +48,7 @@ function Log() {
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
-      <Card>
+      <Card data-palace="history.calendar">
         <div class="row-between" style={{ marginBottom: 8 }}>
           <Button variant="quiet" class="btn-icon" aria-label="Previous month" onClick={() => shift(-1)}><IconBack /></Button>
           <b>{first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</b>
@@ -61,11 +66,10 @@ function Log() {
         </Section>
       )}
 
-      <Section title="Recent">
+      <Section title="Recent" palace="history.recent">
         {!recent.length && <Card><Empty icon={<IconCalendar size={30} />} title="No sessions yet">Finished workouts show up here.</Empty></Card>}
         <div class="stack-sm">{recent.map(x => <SessionCard key={x.id} session={x} onEdit={() => setEditing(x)} />)}</div>
       </Section>
-      {editing && <SessionEditor session={editing} onClose={() => setEditing(null)} />}
     </div>
   );
 }
@@ -110,8 +114,10 @@ export function UnitTag({ st, u }: { st: LoggedSet; u: 'kg' | 'lb' }) {
   return st.entered && st.entered.unit !== u ? <span class="unit-tag" title={`Logged as ${st.entered.value} ${st.entered.unit}`}>{st.entered.unit}</span> : null;
 }
 
-function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
+/** One session, editable; opened as the `session` panel. */
+export function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
   const u = unit.value;
+  usePalaceFocus('history.session', { sessionId: session.id });
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
@@ -127,7 +133,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
     onClose();
   };
   return (
-    <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
+    <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose} palace="history.session">
       <div class="stack">
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
@@ -160,7 +166,11 @@ function Stats() {
   const w = weekSummary(s.sessions, today.value, s.customExercises);
   const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
-  const [exercise, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
+  const panel = openPanel.value;
+  const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;
+  const [picked, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
+  const exercise = fromPanel && exerciseIds.some(([id]) => id === fromPanel) ? fromPanel : picked;
+  usePalaceFocus(exercise ? 'history.exercise-stats' : 'history.week', exercise ? { exerciseId: exercise } : undefined);
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
@@ -168,7 +178,7 @@ function Stats() {
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
-      <Card>
+      <Card data-palace="history.week">
         <div class="eyebrow">This week</div>
         <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={`${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
         {muscleRows.length > 0 && (
@@ -181,10 +191,10 @@ function Stats() {
         )}
       </Card>
 
-      <Section title="Exercise progress">
+      <Section title="Exercise progress" palace="history.exercise-stats">
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
           <Card>
-            <select value={exercise} onChange={e => setExercise((e.target as HTMLSelectElement).value)}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
+            <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
                 <Sparkline points={hist.slice(-12).map(h => h.bestE1rm || h.topKg || h.bestReps)} />
@@ -201,7 +211,7 @@ function Stats() {
         )}
       </Section>
 
-      <Section title="Records" aside={<Chip tone="warning"><IconTrophy size={12} /> {records.length}</Chip>}>
+      <Section title="Records" palace="history.records" aside={<Chip tone="warning"><IconTrophy size={12} /> {records.length}</Chip>}>
         <Card>
           {!records.length ? <p class="small muted">Records appear from your second session of an exercise onward.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>

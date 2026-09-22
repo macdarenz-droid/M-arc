@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
+import { signal } from '@preact/signals';
 import { IconX } from './icons';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import type { LoadUnit } from '@/core/models';
@@ -35,8 +36,8 @@ export function Stat({ value, label, tone }: { value: ComponentChildren; label: 
   return <div class="stat"><b class={`num ${tone ? `${tone}-text` : ''}`}>{value}</b><span>{label}</span></div>;
 }
 
-export function Row({ children, trailing, onClick, class: cls = '' }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string }) {
-  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
+export function Row({ children, trailing, onClick, class: cls = '', palace }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string; palace?: string }) {
+  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} data-palace={palace} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
 }
 
 export function Bar({ pct, color }: { pct: number; color?: string }) {
@@ -47,7 +48,10 @@ export function Ring({ pct, size = 120, children }: { pct: number; size?: number
   return <div class="ring" style={{ '--p': Math.max(0, Math.min(100, pct)), width: size, height: size }}><div>{children}</div></div>;
 }
 
-export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children?: ComponentChildren }) {
+/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. */
+export const openSheets = signal(0);
+
+export function Sheet({ title, onClose, children, palace }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   useEffect(() => {
@@ -56,11 +60,12 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; if (d.open) d.close(); };
+    openSheets.value++;
+    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div class="sheet-panel">
+      <div class="sheet-panel" data-palace={palace}>
         <div class="sheet-grab" />
         <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
         {children}
@@ -78,8 +83,8 @@ export function Empty({ icon, title, children, action }: { icon?: ComponentChild
   return <div class="empty">{icon}<h3>{title}</h3>{children && <p class="small">{children}</p>}{action}</div>;
 }
 
-export function Section({ title, aside, children }: { title: string; aside?: ComponentChildren; children?: ComponentChildren }) {
-  return <section class="section"><div class="section-title"><h2>{title}</h2>{aside}</div>{children}</section>;
+export function Section({ title, aside, children, palace }: { title: string; aside?: ComponentChildren; children?: ComponentChildren; palace?: string }) {
+  return <section class="section" data-palace={palace}><div class="section-title"><h2>{title}</h2>{aside}</div>{children}</section>;
 }
 
 export function Field({ label, children, hint }: { label: string; children?: ComponentChildren; hint?: string }) {

@@ -6,7 +6,16 @@ import { Coach } from '@/slices/coach/Coach';
 import { Settings } from '@/slices/settings/Settings';
 import { Profile } from '@/slices/profile/Profile';
 import { OnboardingSheet } from '@/slices/profile/Onboarding';
-import { go, profileOpen, settingsOpen, tab, TABS, type Tab } from './router';
+import { closePanel, go, openPanel, tab, TABS, type Tab } from './router';
+import { WatchSheet } from '@/slices/settings/Watch';
+import { GoalSheet, ScheduleSheet, WeeklyReviewSheet } from '@/slices/coach/Coach';
+import { CheckInSheet } from '@/slices/workout/Train';
+import { MuscleDetail } from '@/slices/body/Body';
+import { SessionEditor } from '@/slices/history/History';
+import { MemoryPlaceholder } from '@/escobar/ui/MemoryPlaceholder';
+import { palaceAnnouncement } from '@/escobar/palace/navigate';
+import { installPalaceDevHooks } from '@/escobar/palace/dev';
+import type { MuscleId } from '@/data/muscles';
 import { toast } from './toast';
 import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
@@ -16,9 +25,35 @@ import { haptic } from '@/native/haptics';
 
 const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconSpark };
 
+installPalaceDevHooks();
+
+/** Every sheet a palace target can open by id (§7.2), rendered here so it works from any tab. */
+function Panels() {
+  const p = openPanel.value;
+  if (!p) return null;
+  const close = () => closePanel(p.id);
+  switch (p.id) {
+    case 'settings': return <Settings onClose={close} />;
+    case 'profile': return <Profile onClose={close} />;
+    case 'watch': return <WatchSheet onClose={close} />;
+    case 'goal': return <GoalSheet onClose={close} />;
+    case 'schedule': return <ScheduleSheet onClose={close} />;
+    case 'weekly-review': return <WeeklyReviewSheet onClose={close} />;
+    case 'checkin': return <CheckInSheet onClose={close} onDone={close} />;
+    case 'memory': return <MemoryPlaceholder onClose={close} />;
+    case 'muscle': return p.params?.muscle ? <MuscleDetail key={p.params.muscle} muscle={p.params.muscle as MuscleId} onClose={close} /> : null;
+    case 'session': {
+      const sess = state.value.sessions.find(x => x.id === p.params?.sessionId);
+      return sess ? <SessionEditor key={sess.id} session={sess} onClose={close} /> : null;
+    }
+    default: return null; // exercise-stats is a History view, not a sheet
+  }
+}
+
 export function App() {
   const t = tab.value;
   const live = !!state.value.active;
+  const panel = openPanel.value?.id;
   return (
     <div class="app">
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
@@ -37,9 +72,9 @@ export function App() {
           ); })}
         </div>
       </nav>
-      {settingsOpen.value && <Settings onClose={() => { settingsOpen.value = false; }} />}
-      {profileOpen.value && <Profile onClose={() => { profileOpen.value = false; }} />}
-      {!settingsOpen.value && !profileOpen.value && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
+      <Panels />
+      <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
+      {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );

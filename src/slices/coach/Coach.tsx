@@ -19,6 +19,8 @@ import { formatLoad } from '@/core/units';
 import { resyncReminders } from '../settings/reminders';
 import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
 import { acceptDeload, saveInsightFeedback } from './coach';
+import { closePanel, showPanel } from '@/app/router';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -28,8 +30,8 @@ export function Coach() {
   const s = state.value;
   const list = insights.value;
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
-  const [goalOpen, setGoalOpen] = useState(false);
   const w = week.value;
+  usePalaceFocus('coach.header');
   const goal = GOALS.find(g => g.id === s.goal)!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -37,17 +39,17 @@ export function Coach() {
 
   return (
     <div class="view">
-      <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
+      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
 
       <WeeklyReviewCard />
       <DeloadCard />
 
-      <Card class="card-accent">
+      <Card class="card-accent" data-palace="coach.week-line">
         <div class="eyebrow">This week in one line</div>
         <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
       </Card>
 
-      <Section title="Insights">
+      <Section title="Insights" palace="coach.insights">
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
@@ -65,8 +67,8 @@ export function Coach() {
       </Section>
       <InsightFeedbackLog />
 
-      <Section title="Training goal" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change</Button>}>
-        <Card class="card-press" onClick={() => setGoalOpen(true)}>
+      <Section title="Training goal" palace="coach.goal" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('goal')}>Change</Button>}>
+        <Card class="card-press" onClick={() => showPanel('goal')}>
           <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.mainReps[0]}–{goal.mainReps[1]} reps (accessories {goal.accessoryReps[0]}–{goal.accessoryReps[1]})</div>
         </Card>
       </Section>
@@ -74,14 +76,14 @@ export function Coach() {
       <Schedule />
 
       {cue && (
-        <Section title={cue.kind === 'learn' ? 'Worth knowing' : 'Coach tip'} aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
+        <Section title={cue.kind === 'learn' ? 'Worth knowing' : 'Coach tip'} palace="coach.tip" aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
           <Card class="card-quiet"><b class="small">{cue.title}</b><p class="small muted" style={{ marginTop: 4 }}>{cue.text}</p>{lastExercise && <span class="hint">About {lastExercise.name}</span>}</Card>
         </Section>
       )}
 
       <WhatCoachCanSee />
 
-      <Section title="How the coach thinks">
+      <Section title="How the coach thinks" palace="coach.thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
@@ -93,7 +95,6 @@ export function Coach() {
       </Section>
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
-      {goalOpen && <GoalSheet onClose={() => setGoalOpen(false)} />}
     </div>
   );
 }
@@ -105,7 +106,7 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
   const picked = changedTo ? GOAL_BY_ID[changedTo] : null;
 
   return (
-    <Sheet title="Training goal" onClose={onClose}>
+    <Sheet title="Training goal" onClose={onClose} palace="panel.goal">
       {!picked ? (
         <div class="stack-sm">
           <p class="small muted">Your goal sets rep targets, effort target, rest suggestion, weekly heavy-set and volume guidance and the weight trend the coach watches. It does not change your exercises.</p>
@@ -153,8 +154,23 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
 
 function Schedule() {
   const s = state.value;
-  const [open, setOpen] = useState(false);
   const active = WEEKDAYS.filter(d => s.schedule[d]);
+  return (
+    <Section title="Weekly schedule" palace="coach.schedule" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('schedule')}>Edit</Button>}>
+      <Card class="card-press" onClick={() => showPanel('schedule')}>
+        <div class="row" style={{ justifyContent: 'space-between' }}>
+          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
+        </div>
+        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
+      </Card>
+    </Section>
+  );
+}
+
+/** Weekly schedule editor, opened as the `schedule` panel. */
+export function ScheduleSheet({ onClose }: { onClose: () => void }) {
+  const s = state.value;
+  usePalaceFocus('panel.schedule');
   const set = (d: Weekday, id: string | null) => { update(x => ({ ...x, schedule: { ...x.schedule, [d]: id } })); void resyncReminders(); };
   const autoArrange = (n: number) => {
     const slots: Record<number, Weekday[]> = { 1: ['mon'], 2: ['mon', 'thu'], 3: ['mon', 'wed', 'fri'], 4: ['mon', 'tue', 'thu', 'sat'], 5: ['mon', 'tue', 'wed', 'fri', 'sat'], 6: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'], 7: [...WEEKDAYS] };
@@ -164,38 +180,38 @@ function Schedule() {
     update(x => ({ ...x, schedule: sched })); void resyncReminders();
   };
   return (
-    <Section title="Weekly schedule" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>Edit</Button>}>
-      <Card class="card-press" onClick={() => setOpen(true)}>
-        <div class="row" style={{ justifyContent: 'space-between' }}>
-          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
-        </div>
-        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
-      </Card>
-      {open && (
-        <Sheet title="Weekly schedule" onClose={() => setOpen(false)}>
-          <div class="stack">
-            {!s.splits.length && <p class="small muted">Create a split first, then assign it to days.</p>}
-            {WEEKDAYS.map(d => (
-              <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
-                <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
-              </div>
-            ))}
-            {s.splits.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 6 }}>Quick arrange</div><div class="wrap">{[2, 3, 4, 5, 6].map(n => <Chip key={n} onClick={() => autoArrange(n)}>{n} days</Chip>)}</div></div>}
+    <Sheet title="Weekly schedule" onClose={onClose} palace="panel.schedule">
+      <div class="stack">
+        {!s.splits.length && <p class="small muted">Create a split first, then assign it to days.</p>}
+        {WEEKDAYS.map(d => (
+          <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
+            <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
           </div>
-        </Sheet>
-      )}
-    </Section>
+        ))}
+        {s.splits.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 6 }}>Quick arrange</div><div class="wrap">{[2, 3, 4, 5, 6].map(n => <Chip key={n} onClick={() => autoArrange(n)}>{n} days</Chip>)}</div></div>}
+      </div>
+    </Sheet>
   );
 }
 
 /** Pinned at the top of Coach on the first open of a new week with >=5 logged days, until dismissed. */
 function WeeklyReviewCard() {
   const s = state.value;
-  const [open, setOpen] = useState(false);
   const thisWeek = weekStart(today.value);
   const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
   const enough = weekHasEnoughData(s.sessions, today.value);
   if (dismissed || !enough) return null;
+  const items = useWeeklyReviewItems();
+  return (
+    <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
+      <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+      <p style={{ marginTop: 6 }}>{items.length ? `${items.length} thing${items.length > 1 ? 's' : ''} worth knowing about this week.` : 'Steady week — nothing stands out either way.'}</p>
+    </Card>
+  );
+}
+
+function useWeeklyReviewItems() {
+  const s = state.value;
   const exerciseIds = useMemo(() => {
     const names = new Map<string, string>();
     for (const sess of [...s.sessions].reverse()) for (const e of sess.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
@@ -205,15 +221,17 @@ function WeeklyReviewCard() {
     sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
     profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds,
   }, 6);
-  const dismiss = () => { update(x => ({ ...x, weeklyReviewDismissedWeek: thisWeek })); };
+  return items;
+}
+
+/** The weekly review, opened as the `weekly-review` panel (from its card or by Escobar). */
+export function WeeklyReviewSheet({ onClose }: { onClose: () => void }) {
+  const items = useWeeklyReviewItems();
+  usePalaceFocus('panel.weekly-review');
+  const dismiss = () => { const wk = weekStart(today.value); update(x => ({ ...x, weeklyReviewDismissedWeek: wk })); };
+  const setOpen = (_: boolean) => { closePanel('weekly-review'); onClose(); };
   return (
-    <>
-      <Card class="card-accent card-press" onClick={() => setOpen(true)}>
-        <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
-        <p style={{ marginTop: 6 }}>{items.length ? `${items.length} thing${items.length > 1 ? 's' : ''} worth knowing about this week.` : 'Steady week — nothing stands out either way.'}</p>
-      </Card>
-      {open && (
-        <Sheet title="Weekly review" onClose={() => setOpen(false)}>
+        <Sheet title="Weekly review" onClose={onClose} palace="panel.weekly-review">
           <div class="stack">
             {items.map(i => (
               <Card key={i.id} class="card-quiet">
@@ -226,8 +244,6 @@ function WeeklyReviewCard() {
             <Button variant="quiet" onClick={() => { dismiss(); setOpen(false); }}>Dismiss until next week</Button>
           </div>
         </Sheet>
-      )}
-    </>
   );
 }
 
@@ -301,7 +317,7 @@ function WhatCoachCanSee() {
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
   ];
   return (
-    <Section title="What the coach can see">
+    <Section title="What the coach can see" palace="coach.sees">
       <Card class="card-quiet">
         <div class="list">
           {rows.map(r => (
