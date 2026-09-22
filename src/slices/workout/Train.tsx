@@ -16,7 +16,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
-import { preSessionInsights } from '@/brain/coach/pre';
+import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
@@ -279,6 +279,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const autoreg = ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
     ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length })
     : null;
+  const priorE1rm = ex?.role === 'main' && mode === 'weighted' ? exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).at(-1)?.bestE1rm ?? 0 : 0;
+  const warmup = priorE1rm > 0 ? warmupSets(priorE1rm) : null;
+  const [warmupOpen, setWarmupOpen] = useState(false);
 
   return (
     <Card class={`exercise ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
@@ -294,6 +297,16 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
+          {warmup && (
+            <div class="warmup">
+              <button type="button" class="btn btn-quiet btn-sm" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
+              {warmupOpen && (
+                <div class="list" style={{ marginTop: 4 }}>
+                  {warmup.map((st, i) => <Row key={i} trailing={<span class="hint num">{formatLoad(st.kg, u)} × {st.reps}</span>}><span class="small muted">Warm-up {i + 1}</span></Row>)}
+                </div>
+              )}
+            </div>
+          )}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{u}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);

@@ -38,18 +38,24 @@ export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exer
   };
 }
 
-/** 50% x 8, 70% x 5, 85% x 2 of the trend e1RM, rounded to a load step. */
+const WARMUP_PCTS = [0.5, 0.7, 0.85];
+const WARMUP_REPS = [8, 5, 2];
+
+/** F3.4: 50% x 8, 70% x 5, 85% x 2 of the trend e1RM, rounded to a load step. Shared by the pre-session brief's text and Train's collapsed warm-up rows. */
+export function warmupSets(e1rm: number): Array<{ kg: number; reps: number }> {
+  return WARMUP_PCTS.map((p, i) => ({ kg: roundToStep(e1rm * p), reps: WARMUP_REPS[i]! }));
+}
+
 export function warmupRamp(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string): Insight | null {
   const last = hist[hist.length - 1];
   if (!last || last.bestE1rm <= 0) return null;
-  const e1rm = last.bestE1rm;
-  const steps = [0.5, 0.7, 0.85].map(p => roundToStep(e1rm * p));
+  const steps = warmupSets(last.bestE1rm);
   return {
     id: `pre:warmup:${exerciseId}`, category: 'progress', priority: 120, cadence: 'pre', kind: 'tip', exerciseId,
     title: `${exerciseName}: warm-up ramp`,
     noticed: 'A short ramp before your working sets.',
     means: 'A gradual ramp readies the lift without adding real fatigue.',
-    action: `${steps[0]} x 8, ${steps[1]} x 5, ${steps[2]} x 2, then your working sets.`,
+    action: `${steps[0]!.kg} x ${steps[0]!.reps}, ${steps[1]!.kg} x ${steps[1]!.reps}, ${steps[2]!.kg} x ${steps[2]!.reps}, then your working sets.`,
     evidence: { n: 1, window: 'today', confidence: 'high' },
   };
 }

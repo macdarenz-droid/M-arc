@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mastersDefaults, preSessionInsights, warmupRamp, workingLoadTarget } from '@/brain/coach/pre';
+import { mastersDefaults, preSessionInsights, warmupRamp, warmupSets, workingLoadTarget } from '@/brain/coach/pre';
 import { exerciseHistory } from '@/brain/history';
 import { session, sets } from './helpers';
 import type { Split } from '@/core/models';
@@ -28,6 +28,12 @@ describe('warmupRamp', () => {
   });
   it('null with no history', () => {
     expect(warmupRamp([], bench, 'Bench')).toBeNull();
+  });
+});
+
+describe('warmupSets (F3.4)', () => {
+  it('rounds 50/70/85% of e1RM to the load step, at 8/5/2 reps', () => {
+    expect(warmupSets(100)).toEqual([{ kg: 50, reps: 8 }, { kg: 70, reps: 5 }, { kg: 85, reps: 2 }]);
   });
 });
 
