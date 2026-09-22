@@ -281,4 +281,4 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 ## Escobar v2: reset and architecture (2026-09-22)
 - Phase E (the port of the old Escobar onto this brain) was reverted at the owner's request (`4d8ff4e`, a revert commit, so the history stays intact). The boot-crash fix `decec92` stays.
 - Escobar is to be rebuilt fresh on this brain from `docs/ESCOBAR-ARCHITECTURE.md` (phases EV0–EV9). That document's §24 lists the decisions already taken. An adversarial review against the code and the Claude API docs was folded into it before commit.
-- Model default `claude-opus-5`, with refusal fallbacks on by default (`fallbacks: 'default'`). Both are env-configurable in the new Worker (`marc-escobar`). The old Worker `marc-coach` stays untouched.
+- Model default `claude-opus-5`, with refusal fallbacks on by default (`fallbacks: 'default'`). Both are env-configurable in the Worker. v2 is deployed into the existing Worker `marc-coach` (the owner's call), which keeps its API-key secret. The owner runs the deploy; agents never wait for it.
