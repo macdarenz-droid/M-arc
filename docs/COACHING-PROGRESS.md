@@ -89,8 +89,47 @@ Sections read: 6.12 (CoachContext v2, insight shape, cadences), 6.13 (insight ca
 - **Needs device check**: none new (pure web/TS/UI; autoregulation and the debrief were both verified against realistic history via Playwright, not a real watch or phone).
 - **Depends on this for later phases**: P1's live-HR work will add a `watch` row to "What the coach can see" and HR-aware rows to the post-session debrief; P2's HR-guided rest and effort-mismatch rules extend `coach/live.ts`'s cadence; P4's deload state will suppress `autoregulationSuggestion` on a back-off day (no-op today since `deload` doesn't exist yet) and builds the F3.6 feedback/snooze mechanism this phase deliberately deferred.
 
-## Next: Phase P1 (Live HR / WatchBridge) — NOT STARTED
-Sections to read next: 6.2, 6.3 (WatchBridge/native BLE), F0.4, F1.1, F1.6 (catalogue rows needing heart data), 6.10 (profile sheet on first watch connect). Port Watch-test's Java BLE adapter into M/ARC as a Capacitor plugin; do not touch the Watch-test repository itself.
+## Phase P1 (Live HR / WatchBridge) — DONE
+
+Sections read: 6.2, 6.3 (WatchBridge/native BLE), F0.4, F1.1, F1.6, 6.10 (energy + profile sheet on first connect), section 7 (P1 row). Ported from `macdarenz-droid/Watch-test`'s Java (read-only; that repo was never modified).
+
+### Layer: data model — done, commit 88e7a49
+- `core/models.ts`: `SetHeart` (peak/end/restStart/hrr60), `SessionHeart` (source/deviceName/samples/avg/max/min/hrr60Median/zoneSec/energy/coverage), `SessionEnergy` (gross/active/low/high/minutes/source/profileSnapshot — frozen at finish, never recomputed from a later profile edit), `Profile.hrMaxOverride`/`restingHrOverride`, `Preferences.watch` (autoConnectOnSession/deviceAddress/deviceName). `LoggedSet.heart?`/`Session.heart?`.
+
+### Layer: brain — done, commits beb5b05, 916b9e5
+- `brain/heart.ts` (new): `hrMax` (override → validated observed max, decaying toward Tanaka past 12 months → Tanaka → 190), `observedHrMaxFromSeries` (5+ point plateau within 3bpm, reached by a ramp, <=220bpm), `downsampleToBuckets` (raw samples → 5s-bucket medians, contact=true only), `bestObservedHrMax` (aggregates across stored session series), `restingHr` (override → 7-day Health Connect median → null, no session inference), `zones` (Karvonen boundaries at 50/60/70/80/90% HRR), `signalQuality` (coverage), `setHeartFromWindow` (per-set peak/end/HRR60), `sessionHeartSummary` (the finish-card aggregate; `restingHrBpm` nullable — see decisions).
+- `brain/energy.ts` (new): Mifflin-St Jeor BMR, Keytel gross kcal/min, `sessionEnergy` (heart-rate integration), `energyFromWatch`/`energyFromHealthConnect` (pure, the latter has no native caller yet — see decisions), `pickEnergy` (Health Connect > watch > heart rate), `dailyActiveKcal`, `weeklyEnergy`.
+- Tests: `tests/heart.test.ts` (25), `tests/energy.test.ts` (18), `tests/heartStore.test.ts` (5).
+
+### Layer: native — done, commit 72f27db; real compile verified by CI
+- `native/watch/core/{HeartRateMeasurement,LiveSession}.java`: ported verbatim from Watch-test's Android-free `sensor-core`; compiles standalone with `javac` (checked directly in this environment, no Android SDK needed since they have zero Android dependency).
+- `native/watch/{WatchService,DeviceScanner}.java`: ported from Watch-test, repackaged, notification points at M/ARC's `MainActivity`.
+- `native/watch/WatchBridgePlugin.java` (new): the `@CapacitorPlugin(name="WatchBridge")` adapter matching the plan's exact TS contract (isSupported/permissionState/requestPermissions/startScan/stopScan/connect/disconnect/status, watchStatus/watchMeasurement/watchDevice events).
+- `native/MainActivity.java`, `native/patch_manifest.py`, both CI workflows updated and verified against a synthetic manifest (idempotent, correct attributes) since this environment has no Android SDK to run a real `cap sync`.
+- **This branch's own push triggered the real GitHub Actions Gradle build** (`android-gate` job, run 35739430443): "Build debug APK" succeeded — the actual, non-simulated compile check for every Android-dependent file in this layer passed.
+- **Needs device check**: real BLE connection to a broadcasting watch, permission prompts on real API levels (31+/<=30/33+) — nothing further to verify without hardware; the code path has no substitute for an actual watch broadcast.
+
+### Layer: UI — done, commits 036c489, 7f3aa85
+- `native/watch.ts`, `core/heartStore.ts`, `slices/workout/heart.ts`: plugin wrapper + signals, the separate `marc.heart.v1` store (LRU 60), live-only in-memory capture wired into `session.ts` (`startSession`/`commitSet`/`finishSession`/`discardSession`), `main.tsx` boots both.
+- `Train.tsx`: live pill (bpm + freshness dot, hidden on web) opening the new `slices/settings/Watch.tsx` `WatchSheet` (scan/connect/disconnect/auto-connect, shared with Settings); per-set "peak N" badge; finish screen "Heart" card.
+- `History.tsx`: session card heart/kcal line. `Settings.tsx`: "Health" section renamed "Watch and health", gains a Watch row. `Onboarding.tsx`/`brain/onboarding.ts`/`profile.ts`/`selectors.ts`: the watch-connects-for-the-first-time trigger.
+- **Manually verified end to end via Playwright** with a stubbed WatchBridge plugin (see decisions for the `CapacitorCustomPlatform` technique that made this possible against the real bundled `@capacitor/core`): pill appears and reaches LIVE with a real bpm reading, scan finds a device, connecting works, the onboarding-on-first-connect sheet fires correctly, the per-set peak badge renders, the finish screen's Heart card renders with real numbers. Zero console/page errors. Also reconfirmed (as in every prior phase) that the plain web-fallback path — no watch plugin at all — still produces zero errors through a full log-session-finish-history-settings walkthrough.
+- **Found and fixed one real bug this way**: `sessionHeartSummary` was gated entirely on having a resting HR, so the whole Heart card silently disappeared whenever Health Connect had no history yet, even though avg/max/HRR60 don't need one — fixed to make `restingHrBpm` nullable and only skip the zone bar (see decisions).
+
+### Layer: gate — done, commit 27eea4d
+- Extends the walkthrough with a watch-stub fixture (plain, non-touch context — see decisions): stubs `WatchBridge` and reports the platform native via `CapacitorCustomPlatform`, then scans, connects, screenshots the watch sheet and the LIVE pill, logs a live set (asserts a peak badge), finishes (asserts a Heart card on the finish screen).
+- `npm run check`: **PASS** (typecheck, 223/223 tests across 22 files, build). `npm run gate`: **PASS** — 5/5 themes plus the watch-stub fixture, all assertions hold, no page errors.
+
+### P1 report
+- **Built**: see layer sections above — WatchBridge Capacitor plugin (ported from Watch-test), heart-rate and energy brain modules, live capture wiring, live pill, per-set peaks, finish/History heart cards, Watch settings sheet, onboarding-on-first-connect.
+- **Tested**: `npx vitest run` → 223/223 across 22 files. `npm run check` → clean. `npm run gate` → 5/5 themes + watch stub, PASS. The real GitHub Actions Gradle build (triggered by pushing the native commit) compiled every native file successfully — not a local simulation, the actual CI check section 7 names.
+- **Decided by research**: none requiring new external sources (the heart/energy formulas came from the plan's own tables; the `CapacitorCustomPlatform` mechanism was found by reading `@capacitor/core`'s own bundled source directly, cited in the decisions log).
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: native `SharedPreferences` device-remembering skipped (AppState already the single source of truth); Health Connect's `readRange`/`energyFromHealthConnect` native call site skipped (the plan's own hardware note says this source is unreachable on the verified watch/Huawei-Health pairing today); `restTarget`/`rmssd`/`hrrTrend` deferred to P2/P3 per section 7's own phase assignment.
+- **Needs device check**: real BLE connection to a broadcasting watch and the runtime permission prompts on real Android API levels — the one thing no environment available here can substitute for. Everything else (native compile, plugin contract, UI wiring, degraded-without-a-watch behaviour) was verified by other means as described above.
+- **Depends on this for later phases**: P2's HR-guided rest and effort-mismatch/drift rules read `latestMeasurement`/`SetHeart`/`SessionHeart` this phase built; P3's readiness baselines read `healthDays` the same way P0 already established; P4's deload state is independent of this phase.
+
+## Next: Phase P2 (HR coaching) — NOT STARTED
+Sections to read next: 6.4 (HR-guided rest via `restTarget`, the `heart.overreaching`/`heart.effort-mismatch`/`heart.drift`/`heart.hrr-trend` coach rules), F1.2-F1.5 (conditioning zones, two new record kinds). Needs device check for the actual HR-guided rest behaviour on real hardware; build and test the pure logic regardless.
 
 ## Not started
-P1, P2, P3, P4.
+P2, P3, P4.
