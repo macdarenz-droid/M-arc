@@ -20,6 +20,7 @@ import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
+import { readiness, type ReadinessResult } from '../readiness';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -62,14 +63,21 @@ export interface CoachContext {
 interface Derived {
   recovery: MuscleRecovery[];
   exerciseIds: Array<{ id: string; name: string }>;
+  readiness: ReadinessResult | null;
 }
 
 function derive(ctx: CoachContext): Derived {
   const names = new Map<string, string>();
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
+  const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
+  const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
   return {
-    recovery: recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel }),
+    recovery,
     exerciseIds: [...names].map(([id, name]) => ({ id, name })),
+    readiness: readiness({
+      today: ctx.today, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+    }),
   };
 }
 
@@ -336,6 +344,39 @@ export const RULES: Rule[] = [
           evidence: { n: b.n, window: `${b.n} matched pairs`, confidence: b.n >= 5 ? 'medium' : 'low' },
         }];
       }),
+  },
+  {
+    id: 'readiness.today',
+    run: (ctx, d) => {
+      const r = d.readiness;
+      if (!r) return [];
+      if (r.band === 'red') {
+        return [{
+          id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
+          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.',
+          means: 'Training hard today would work against you more than for you.',
+          action: 'Keep loads where they are, or drop a set on the hardest lifts.',
+          evidence: { n: 1, window: 'today', confidence: r.confidence },
+        }];
+      }
+      if (r.band === 'amber') {
+        return [{
+          id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
+          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.',
+          means: 'Not a reason to skip, just not a day to chase a new best.',
+          action: 'Keep today’s loads where they are.',
+          evidence: { n: 1, window: 'today', confidence: r.confidence },
+        }];
+      }
+      if (weekdayOf(ctx.today) !== 'mon') return [];
+      return [{
+        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise',
+        title: 'Readiness: green', noticed: 'Sleep, resting heart rate and recovery are all lining up this week.',
+        means: 'A good week to push the lifts that have room to grow.',
+        action: 'No change needed.',
+        evidence: { n: 1, window: 'today', confidence: r.confidence },
+      }];
+    },
   },
   {
     id: 'heart.effort-mismatch',

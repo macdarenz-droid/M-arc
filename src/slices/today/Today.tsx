@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { insights, recovery, scheduledSplit, sessionsToday, streak, today, week } from '@/app/selectors';
+import { insights, recovery, scheduledSplit, sessionsToday, streak, today, todayReadiness, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -83,6 +83,8 @@ export function Today() {
         )}
       </Card>
 
+      <ReadinessCard />
+
       <Section title="This week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
@@ -132,5 +134,33 @@ export function Today() {
         </Section>
       )}
     </div>
+  );
+}
+
+const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
+const ADVICE_COPY = { normal: null, no_increase: 'Keep loads steady today — skip any increases.', reduce: 'Keep the load, but consider one fewer set.' } as const;
+
+/** F2.1: a tier with reasons above "This week", or a quiet connect/check-in prompt when there is nothing to show yet. */
+function ReadinessCard() {
+  const r = todayReadiness.value;
+  if (!r) {
+    return (
+      <Section title="Readiness">
+        <Card class="card-quiet"><p class="small muted">Connect a watch or add a check-in to see your readiness.</p></Card>
+      </Section>
+    );
+  }
+  const advice = ADVICE_COPY[r.loadAdvice];
+  return (
+    <Section title="Readiness">
+      <Card class={r.band === 'red' ? 'card-accent' : ''}>
+        <div class="row-between">
+          <h2 style={{ margin: 0 }}>{BAND_LABEL[r.band]}{r.calibrating ? ' · calibrating' : ''}</h2>
+          <span class="num small muted">{r.score}</span>
+        </div>
+        {r.drivers.length > 0 && <p class="small muted" style={{ marginTop: 6 }}>{r.drivers.join('. ')}.</p>}
+        {advice && <p class="small" style={{ marginTop: 6 }}>{advice}</p>}
+      </Card>
+    </Section>
   );
 }

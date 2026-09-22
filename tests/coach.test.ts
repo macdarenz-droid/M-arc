@@ -108,3 +108,16 @@ describe('heart.drift', () => {
     expect(out.some(i => i.id.startsWith('heart-drift'))).toBe(false);
   });
 });
+
+describe('readiness.today', () => {
+  const day = (offset: number) => { const d = new Date('2026-09-18T00:00:00Z'); d.setUTCDate(d.getUTCDate() - offset); return d.toISOString().slice(0, 10); };
+  it('fires red when resting heart rate is sharply elevated', () => {
+    const healthDays = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 75 : 55, source: 'health_connect' as const, syncedAt: '2026-09-18T00:00:00Z' }));
+    const out = coachInsights({ ...baseCtx, healthDays }, 20);
+    expect(out.some(i => i.id === 'readiness-today' && i.title === 'Readiness: red')).toBe(true);
+  });
+  it('is quiet with no health or check-in data at all', () => {
+    const out = coachInsights({ ...baseCtx }, 20);
+    expect(out.some(i => i.id === 'readiness-today')).toBe(false);
+  });
+});

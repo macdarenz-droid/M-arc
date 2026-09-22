@@ -85,12 +85,12 @@ export interface ReadinessInput {
   sessions: Session[];
 }
 
-/** Target muscles: the scheduled split's primary muscles, or every muscle recovery() has an opinion on if nothing is scheduled. */
-function targetMuscles(split: Split | undefined, custom: Exercise[], recovery: MuscleRecovery[]): MuscleId[] {
-  if (!split) return recovery.map(r => r.muscle);
+/** The scheduled split's primary muscles. Empty when nothing is scheduled — there is no "today's target muscle" to speak of, and falling back to every muscle would pad the recovery/soreness subscores with untrained muscles sitting at 100%. */
+function targetMuscles(split: Split | undefined, custom: Exercise[]): MuscleId[] {
+  if (!split) return [];
   const set = new Set<MuscleId>();
   for (const se of split.exercises) findExercise(se.exerciseId, custom)?.primary.forEach(m => set.add(m));
-  return set.size ? [...set] : recovery.map(r => r.muscle);
+  return [...set];
 }
 
 interface Weighted { key: string; weight: number; score: number | null; }
@@ -98,7 +98,7 @@ interface Weighted { key: string; weight: number; score: number | null; }
 export function readiness(input: ReadinessInput): ReadinessResult | null {
   const { today, healthDays, checkIn, checkInHistory, recovery, scheduledSplit, custom, sessions } = input;
   const baselines = readinessBaselines(healthDays, today);
-  const muscles = targetMuscles(scheduledSplit, custom, recovery);
+  const muscles = targetMuscles(scheduledSplit, custom);
   const drivers: string[] = [];
 
   // Check-in (0.35): soreness of today's target muscles, sleep quality, mood — each a z-score
@@ -118,8 +118,16 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
     const sorenessZ = todaySoreness != null ? zScore(todaySoreness, priorSoreness) : null;
     const sleepQZ = checkIn.sleepQuality != null ? zScore(checkIn.sleepQuality, checkInHistory.map(c => c.sleepQuality).filter(v => v != null) as number[]) : null;
     const moodZ = checkIn.mood != null ? zScore(checkIn.mood, checkInHistory.map(c => c.mood).filter(v => v != null) as number[]) : null;
+    // Before there's enough history for a z-score (n<3), fall back to the raw 1-5 rating against
+    // its own midpoint (3) — still "calibrating", per 6.4, but a first-ever check-in should count
+    // for something rather than vanishing entirely for lack of a personal baseline.
+    const rawFallback = (raw: number | undefined, invert: boolean) => raw == null ? null : clamp(invert ? 0.5 - (raw - 3) / 4 : 0.5 + (raw - 3) / 4, 0, 1);
     // Soreness is inverted (higher = worse); sleep quality and mood are not.
-    const parts = [sorenessZ != null ? clamp(0.5 - sorenessZ / 3, 0, 1) : null, sleepQZ != null ? clamp(0.5 + sleepQZ / 3, 0, 1) : null, moodZ != null ? clamp(0.5 + moodZ / 3, 0, 1) : null].filter((v): v is number => v != null);
+    const parts = [
+      sorenessZ != null ? clamp(0.5 - sorenessZ / 3, 0, 1) : rawFallback(todaySoreness ?? undefined, true),
+      sleepQZ != null ? clamp(0.5 + sleepQZ / 3, 0, 1) : rawFallback(checkIn.sleepQuality, false),
+      moodZ != null ? clamp(0.5 + moodZ / 3, 0, 1) : rawFallback(checkIn.mood, false),
+    ].filter((v): v is number => v != null);
     if (parts.length) {
       checkInScore = avg(parts);
       if (checkInScore < 0.4) drivers.push('how you feel today (soreness, sleep quality or mood)');

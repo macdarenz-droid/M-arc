@@ -46,6 +46,11 @@ describe('readiness', () => {
     expect(r).not.toBeNull();
     expect(r!.confidence).toBe('low');
   });
+  it('still scores a first-ever check-in with zero prior history, via the raw-rating fallback', () => {
+    const r = readiness({ ...baseInput, checkIn: { day: today, sleepQuality: 2, mood: 2 }, checkInHistory: [] });
+    expect(r).not.toBeNull();
+    expect(r!.score).toBeLessThan(50);
+  });
   it('is red with reduce advice when recovery and resting HR are both poor', () => {
     const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 70 : 55, source: 'health_connect' as const, syncedAt: today }));
     const r = readiness({ ...baseInput, healthDays, recovery: [mr('chest', 20), mr('triceps', 25)] });

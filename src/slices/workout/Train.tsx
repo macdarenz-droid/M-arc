@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, setTicking, today, unit } from '@/app/selectors';
+import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector } from '@/app/selectors';
+import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
-import { MUSCLES, muscleLabel } from '@/data/muscles';
+import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
 import { isLiveRecord } from '@/brain/prs';
@@ -34,14 +35,24 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
   { v: 'max', l: 'M', title: 'Max: nothing left' },
 ];
 
+/** The lowest recovery % among an exercise's primary muscles (F2.1's progression hook). */
+function recoveryPctFor(exerciseId: string, custom: Exercise[], recoveryList: ReturnType<typeof recoverySelector.peek>): number | undefined {
+  const meta = findExercise(exerciseId, custom);
+  if (!meta) return undefined;
+  const pcts = meta.primary.map(m => recoveryList.find(r => r.muscle === m)?.pct).filter((v): v is number => v != null);
+  return pcts.length ? Math.min(...pcts) : undefined;
+}
+
 /** Shown once after a session is saved, then dismissed. */
 const lastFinish = signal<FinishSummary | null>(null);
 /** Set instead of lastFinish when the just-saved session looks logged after training. */
 const pendingTimeQuestion = signal<FinishSummary | null>(null);
 /** Set when the user taps "Log a past session" from the split list. */
 const loggingPast = signal<Split | null>(null);
-/** Set when the user taps "Start" — shows the pre-session brief before the timer begins. */
+/** Set when the user taps "Start" — shows the check-in (if not done today) then the pre-session brief before the timer begins. */
 const startingSplit = signal<Split | null>(null);
+/** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
+const checkInDismissed = signal(false);
 
 export function Train() {
   const s = state.value;
@@ -49,7 +60,10 @@ export function Train() {
   if (pendingTimeQuestion.value) return <TimeQuestionSheet summary={pendingTimeQuestion.value} onResolved={r => { pendingTimeQuestion.value = null; lastFinish.value = r; }} />;
   if (lastFinish.value) return <FinishScreen summary={lastFinish.value} onClose={() => { lastFinish.value = null; }} />;
   if (loggingPast.value) return <PastSessionEntry split={loggingPast.value} onClose={() => { loggingPast.value = null; }} onSaved={r => { loggingPast.value = null; lastFinish.value = r; }} />;
-  if (startingSplit.value) return <PreSessionSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
+  if (startingSplit.value) {
+    if (!todayCheckIn.value && !checkInDismissed.value) return <CheckInSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onDone={() => { checkInDismissed.value = true; }} />;
+    return <PreSessionSheet split={startingSplit.value} onClose={() => { startingSplit.value = null; }} onStart={() => { startSession(startingSplit.value!); startingSplit.value = null; }} />;
+  }
   return live ? <LiveSession /> : <Splits />;
 }
 
@@ -98,7 +112,7 @@ function Splits() {
             <div class="list" style={{ marginTop: 6 }}>
               {split.exercises.map(se => {
                 const ex = findExercise(se.exerciseId, s.customExercises);
-                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises);
+                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value) });
                 return (
                   <Row key={se.exerciseId} trailing={<span class="hint num">{se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
@@ -256,7 +270,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
-  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises);
+  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value) });
   const [menu, setMenu] = useState(false);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const isTimed = mode === 'duration';
@@ -332,6 +346,42 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
 
 /** "Looks like you logged this after training." Never blocks: Skip files it on the schedule slot or 17:00. */
 /** Shown when "Start" is tapped, before the timer begins (6.13 cadence 'pre'). */
+const RATING_LABELS = ['1', '2', '3', '4', '5'] as const;
+
+function RatingRow({ value, onChange }: { value: 1 | 2 | 3 | 4 | 5 | undefined; onChange: (v: 1 | 2 | 3 | 4 | 5) => void }) {
+  return (
+    <div class="row" style={{ gap: 6 }}>
+      {RATING_LABELS.map((l, i) => {
+        const n = (i + 1) as 1 | 2 | 3 | 4 | 5;
+        return <Button key={l} size="sm" variant={value === n ? 'solid' : 'quiet'} onClick={() => onChange(n)}>{l}</Button>;
+      })}
+    </div>
+  );
+}
+
+/** F2.2: optional, a few taps — sleep quality, mood, and soreness for today's target muscles. Shown once per day, before the pre-session brief. */
+function CheckInSheet({ split, onClose, onDone }: { split: Split; onClose: () => void; onDone: () => void }) {
+  const s = state.value;
+  const muscles = [...new Set(split.exercises.flatMap(se => findExercise(se.exerciseId, s.customExercises)?.primary ?? []))].slice(0, 4);
+  const [sleepQuality, setSleepQuality] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
+  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
+  const [soreness, setSoreness] = useState<Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>>({});
+  const save = () => { saveCheckIn(today.value, { sleepQuality, mood, soreness }); onDone(); };
+  return (
+    <Sheet title="Quick check-in" onClose={onClose}>
+      <div class="stack">
+        <p class="hint">Feeds today's readiness. Takes a few seconds, skip any time.</p>
+        <Field label="Sleep quality"><RatingRow value={sleepQuality} onChange={setSleepQuality} /></Field>
+        <Field label="Mood"><RatingRow value={mood} onChange={setMood} /></Field>
+        {muscles.map(m => (
+          <Field key={m} label={`${muscleLabel(m)} soreness`}><RatingRow value={soreness[m]} onChange={v => setSoreness(cur => ({ ...cur, [m]: v }))} /></Field>
+        ))}
+        <div class="row"><Button variant="quiet" onClick={onDone}>Skip</Button><Button variant="primary" class="grow" onClick={save}>Save</Button></div>
+      </div>
+    </Sheet>
+  );
+}
+
 function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: () => void; onStart: () => void }) {
   const s = state.value;
   const age = s.profile.birthYear ? new Date().getFullYear() - s.profile.birthYear : null;
