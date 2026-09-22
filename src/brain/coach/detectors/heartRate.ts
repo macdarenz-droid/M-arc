@@ -20,9 +20,12 @@ export function detectHeartRate(ctx: BrainContext): Finding[] {
   // No recording has ever happened: a person without a watch sees nothing.
   if (hr.recordedCount === 0 || !hr.latest) return [];
   const latest = hr.latest;
+  // An imported workout can carry a day key that disagrees with its own
+  // timestamps, so clamp rather than emit a window that ends before it starts.
+  const from = latest.day <= ctx.today ? latest.day : ctx.today;
   const shared = {
     subject: { splitId: latest.splitId, splitName: latest.splitName },
-    from: latest.day, to: ctx.today,
+    from, to: ctx.today,
     evidence: { sessionIds: [...hr.baselineSessionIds, latest.id], days: [latest.day] },
   };
 

@@ -148,3 +148,38 @@ describe('wording', () => {
     for (const n of written) expect(allowed, `${n} is not in the finding's metrics`).toContain(Number(n));
   });
 });
+
+describe('window integrity', () => {
+  it('never emits a window that ends before it starts, even for a mislabelled import', () => {
+    const future = workout(1, 150);
+    future.day = '2099-01-01'; // an import whose day key disagrees with its timestamps
+    const [f] = detectHeartRate(context([...baseline(130), future]));
+    expect(f!.window.from <= f!.window.to).toBe(true);
+  });
+});
+
+describe('why no comparison is available', () => {
+  const insightFor = (sessions: Session[]) => {
+    const report = buildReport(context(sessions));
+    return insightsFrom(report, render).find(i => i.kind === 'heart_rate_evidence')!;
+  };
+
+  it('says the baseline is still building when little has been recorded', () => {
+    const insight = insightFor([workout(5, 130), workout(1, 150)]);
+    expect(insight.title).toMatch(/still building/i);
+    expect(insight.noticed).toContain('1 of 3');
+  });
+
+  /**
+   * A lifter adding weight every session produces plenty of good recordings
+   * that never match each other. Left alone, the app would show "0 of 3"
+   * forever without ever saying why, and the advice for the two cases differs.
+   */
+  it('says the work keeps changing when recordings are plentiful but unmatched', () => {
+    const climbing = Array.from({ length: 6 }, (_, i) => workout(18 - i * 3, 130, { kg: 60 + i * 2.5 }));
+    const insight = insightFor(climbing);
+    expect(insight.title).toMatch(/work keeps changing/i);
+    expect(insight.noticed).toMatch(/recorded well enough to compare/i);
+    expect(insight.action).toMatch(/no reason to stop progressing/i);
+  });
+});

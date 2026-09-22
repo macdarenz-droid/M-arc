@@ -101,6 +101,36 @@ Also absent, and not by oversight: HRV, calorie or training-zone inference, any
 "recovered" indicator, any wait-until-X-BPM rule, automatic load or rest changes,
 and any use of workout heart rate as a resting baseline.
 
+## The practical limit of strict matching
+
+Requiring the same loads and set counts is what makes the comparison honest,
+and it is also what will most often stop it firing. Simulated over twelve push
+sessions in six weeks:
+
+| Progression | Baseline found | Comparison |
+| --- | --- | --- |
+| None — loads repeat | 11 | fires |
+| +2.5 kg every 4th session | 3 | fires, just |
+| +2.5 kg every 2nd session | 1 | never fires |
+| +2.5 kg every session | 0 | never fires |
+
+So a lifter in steady linear progression may never see a comparison, while
+someone in a maintenance or repeated block sees one readily. That is the
+intended trade — pulse against genuinely different work is not evidence — but
+it means the feature is quiet exactly when training is going well.
+
+Because the two silences need different advice, `heart_rate_evidence`
+distinguishes them: too little recorded so far, versus plenty recorded and
+nothing matching because the work keeps changing. The second says so plainly
+and does not suggest repeating work to satisfy it.
+
+If real use shows this is too quiet, the lever is `workload()`'s exact-load
+signature in `src/brain/heart-rate.ts` — relaxing it to same exercises and set
+counts with loads inside a band, leaving the existing 20% volume and 25%
+duration checks to catch unlike work. That changes the claim from "identical
+work" to "similar work", so it is a deliberate product decision, not a tuning
+knob.
+
 ## What is not proven
 
 **The hardware.** CI compiles the Java, builds the APK and checks that the native

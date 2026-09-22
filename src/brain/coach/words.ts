@@ -411,11 +411,21 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
     }
     case 'heart_rate_evidence': {
       switch (str(m.code)) {
-        case 'baseline_too_small':
-          return { title: 'Your pulse baseline is still building',
-            noticed: `${num(m.baselineSessions)} of ${num(m.baselineNeeded)} comparable recorded workouts so far.`,
-            means: 'A comparison needs several recordings of closely matching work — same split, same exercises, same loads and set counts, similar duration.',
-            action: 'Keep recording your usual workouts. There is no need to repeat work just to fill this out.' };
+        case 'baseline_too_small': {
+          // Plenty of good recordings but nothing to compare them with means the
+          // work keeps changing, which is a different situation from not having
+          // recorded enough yet — and the advice is not the same either.
+          const unmatched = num(m.eligibleSessions) - num(m.baselineSessions) > 1;
+          return unmatched
+            ? { title: 'Recordings are good, but the work keeps changing',
+                noticed: `${plural(num(m.eligibleSessions), 'workout')} recorded well enough to compare, but only ${num(m.baselineSessions)} of ${num(m.baselineNeeded)} match the last one closely enough.`,
+                means: 'Pulse is only meaningful against near-identical work — same split, same exercises, the same loads and set counts. While you are adding weight, each session is its own thing and there is nothing fair to compare it with.',
+                action: 'Nothing to fix, and no reason to stop progressing. Comparisons appear on their own during a stretch where the loads repeat.' }
+            : { title: 'Your pulse baseline is still building',
+                noticed: `${num(m.baselineSessions)} of ${num(m.baselineNeeded)} comparable recorded workouts so far.`,
+                means: 'A comparison needs several recordings of closely matching work — same split, same exercises, same loads and set counts, similar duration.',
+                action: 'Keep recording your usual workouts. There is no need to repeat work just to fill this out.' };
+        }
         case 'latest_not_eligible':
           return { title: 'That recording is too patchy to compare',
             noticed: num(m.coveragePct) > 0
