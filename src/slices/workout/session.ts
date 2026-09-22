@@ -10,6 +10,7 @@ import { isWorkingSet } from '@/brain/exposure';
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
+import { syncAndStoreHealth } from '@/slices/settings/health';
 
 export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
 
@@ -29,6 +30,7 @@ export function startSession(split: Split): void {
   update(s => ({ ...s, active: { splitId: split.id, startedAt: new Date().toISOString(), pausedMs: 0, entries } }));
   flushSave();
   void haptic.medium();
+  void syncAndStoreHealth();
 }
 
 export function elapsedSec(a: ActiveSession, now = Date.now()): number {

@@ -5,6 +5,7 @@ import { bootSource, flushSave, initStore, state } from './core/store';
 import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
+import { syncAndStoreHealth } from './slices/settings/health';
 import { onNotificationTap } from './native/notifications';
 import { go } from './app/router';
 import './ui/styles.css';
@@ -23,8 +24,9 @@ if (bootSource.value === 'legacy') {
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
 window.addEventListener('pagehide', flushSave);
 // Android may drop scheduled reminders; check and repair when we come back.
-window.addEventListener('pageshow', () => { void resyncReminders(); });
+window.addEventListener('pageshow', () => { void resyncReminders(); void syncAndStoreHealth(); });
 void resyncReminders();
+void syncAndStoreHealth();
 
 // Notification taps: rest done → Train, training day → Train.
 onNotificationTap(() => go('train'));

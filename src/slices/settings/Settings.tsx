@@ -8,7 +8,8 @@ import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
 import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { reminderHealth, resyncReminders } from './reminders';
-import { healthAvailable, readHealth } from '@/native/health';
+import { healthAvailable } from '@/native/health';
+import { syncAndStoreHealth } from './health';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 
@@ -91,12 +92,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
               <Field label="Body weight (kg)"><input type="number" value={s.profile.bodyWeightKg ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, bodyWeightKg: parseFloat((e.target as HTMLInputElement).value) || undefined } }))} /></Field>
               <Field label="Height (cm)"><input type="number" value={s.profile.heightCm ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, heightCm: parseFloat((e.target as HTMLInputElement).value) || undefined } }))} /></Field>
             </div>
+            <Field label="Birth year"><input type="number" value={s.profile.birthYear ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, birthYear: parseInt((e.target as HTMLInputElement).value, 10) || undefined } }))} /></Field>
           </Card>
         </Section>
 
         <Section title="Health">
           <Card>
-            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const h = await readHealth(); update(x => ({ ...x, health: h })); showToast(h.connected ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
           </Card>
         </Section>
 
