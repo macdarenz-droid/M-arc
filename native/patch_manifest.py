@@ -20,6 +20,13 @@ tree = ET.parse(path)
 root = tree.getroot()
 
 permissions = [
+    "android.permission.BLUETOOTH",
+    "android.permission.BLUETOOTH_ADMIN",
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.BLUETOOTH_SCAN",
+    "android.permission.BLUETOOTH_CONNECT",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
     "android.permission.POST_NOTIFICATIONS",
     "android.permission.SCHEDULE_EXACT_ALARM",
     "android.permission.health.READ_STEPS",
@@ -34,9 +41,33 @@ for name in permissions:
         node.set(a("name"), name)
         root.insert(0, node)
 
+for node in root.findall("uses-permission"):
+    name = node.get(a("name"))
+    if name in {"android.permission.BLUETOOTH", "android.permission.BLUETOOTH_ADMIN", "android.permission.ACCESS_FINE_LOCATION"}:
+        node.set(a("maxSdkVersion"), "30")
+    if name == "android.permission.BLUETOOTH_SCAN":
+        node.set(a("usesPermissionFlags"), "neverForLocation")
+
+if not any(x.get(a("name")) == "android.hardware.bluetooth_le" for x in root.findall("uses-feature")):
+    feature = ET.Element("uses-feature")
+    feature.set(a("name"), "android.hardware.bluetooth_le")
+    feature.set(a("required"), "false")
+    root.insert(0, feature)
+
 app = root.find("application")
 if app is None:
     raise SystemExit("<application> not found")
+
+service = None
+for x in app.findall("service"):
+    if x.get(a("name")) == ".HeartRateService":
+        service = x
+        break
+if service is None:
+    service = ET.SubElement(app, "service")
+    service.set(a("name"), ".HeartRateService")
+    service.set(a("exported"), "false")
+    service.set(a("foregroundServiceType"), "connectedDevice")
 
 # Health Connect privacy/rationale activity.
 activity = None
@@ -66,6 +97,11 @@ if alias is None:
     action.set(a("name"), "android.intent.action.VIEW_PERMISSION_USAGE")
     cat = ET.SubElement(filt, "category")
     cat.set(a("name"), "android.intent.category.HEALTH_PERMISSIONS")
+
+# Recorded heart rate is health data and lives in an app-private database.
+# Android's cloud backup would copy it off the device without the person ever
+# choosing to share it, so it is switched off for the whole app.
+app.set(a("allowBackup"), "false")
 
 ET.indent(tree, space="    ")
 tree.write(path, encoding="utf-8", xml_declaration=True)

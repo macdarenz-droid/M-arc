@@ -27,6 +27,16 @@ jobs:
         run: npm run check
       - name: Coach proxy typecheck and tests
         run: npm --prefix proxy ci && npm --prefix proxy run check
+      - name: Native heart-rate metrics parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The Java recorder and the TypeScript summariser must produce the
+          # same numbers, or the finish screen and History disagree about the
+          # same workout.
+          mkdir -p native-test-build
+          javac -d native-test-build native/HeartRateMetrics.java native-tests/HeartRateMetricsTest.java
+          java -cp native-test-build com.mrcdrnzz.dailytracker.HeartRateMetricsTest
       - name: Validate built web source
         shell: bash
         run: |
@@ -100,8 +110,10 @@ jobs:
           p.write_text(s,encoding='utf-8')
           PY
           npx cap sync android
-          PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
-          mkdir -p "$PKG"
+          # cap sync only wires npm plugins. Without this the hand-written
+          # native layer never reaches the project and every native call
+          # silently resolves to nothing in a perfectly valid APK.
+          npm run cap:prepare
           # Replace Capacitor launcher assets with the M/ARC icon copied into www/ by the build.
           ICON='www/icon-512.png'
           test -f "$ICON" || { echo '::error::www/icon-512.png missing'; exit 1; }
@@ -133,6 +145,16 @@ jobs:
           PY
           PLUGINS='android/app/src/main/assets/capacitor.plugins.json'
           for plugin in LocalNotifications Filesystem Share Haptics; do grep -qi "$plugin" "$PLUGINS" || { echo "::error::$plugin plugin missing from the APK"; exit 1; }; done
+          # The hand-written bridge is not listed in capacitor.plugins.json, so
+          # check the sources and the manifest entries it needs directly.
+          PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
+          for src in MainActivity HealthConnectNativePlugin HeartRateNativePlugin HeartRateService HeartRateDatabase HeartRateMetrics HeartRateDeviceScanner HeartRateMeasurement PermissionsRationaleActivity; do
+            test -f "$PKG/$src.java" || { echo "::error::$src.java missing from the Android project"; exit 1; }
+          done
+          MANIFEST='android/app/src/main/AndroidManifest.xml'
+          for entry in 'android.permission.BLUETOOTH_CONNECT' 'android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE' '.HeartRateService' 'android:allowBackup="false"'; do
+            grep -q "$entry" "$MANIFEST" || { echo "::error::$entry missing from AndroidManifest.xml"; exit 1; }
+          done
 
       - name: Preserve development signing identity
         uses: actions/cache@v4
