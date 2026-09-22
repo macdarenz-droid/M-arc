@@ -8,52 +8,51 @@ Resume from this file, `docs/COACHING-DECISIONS.md` and `docs/COACHING-PLAN.md`.
 PR: https://github.com/macdarenz-droid/M-arc/pull/2 (kept open across all phases; checklist updated after each phase).
 
 ## Phase P0 (Close the loops) — DONE
-See prior revision of this file (git history) or the PR description for the P0 report. Summary: native health plugin now compiles into the APK (CI copy + manifest patch), `health.ts` bridge fixed to match the real plugin, `DailyHealth`/`healthDays` added, auto-sync on boot/pageshow/session-start, insights use the minute-quantised clock, profile gained `birthYear`.
+Native health plugin compiles into the APK (CI copy + manifest patch), `health.ts` bridge fixed, `DailyHealth`/`healthDays` added, auto-sync on boot/pageshow/session-start, insights use the minute-quantised clock, profile gained `birthYear`.
 
 ## Phase P0-P (Profile and goal) — DONE
+Onboarding sheet + profile dashboard, `profileHistory`, weight log, `profile.changed` insight, goal rewritten as a full policy object (role-based main/accessory ranges, low-range e1RM step-down, rest suggestion, starter templates per goal).
 
-Sections read: 6.14 (onboarding + profile dashboard), 6.15 (profile history/propagation), 6.16 (goal audit and fix).
+## Phase P1-R (Recovery v2) — DONE
 
-### Layer: data model — done, commit 0d3feb6
-- `core/models.ts`: `Exercise.role`; `Profile.trainingSince`/`plannedDays`; `WeightEntry`, `ProfileField`, `ProfileChange`, `Onboarding`; `AppState.weightLog`/`profileHistory`/`onboarding`.
-- `core/store.ts`: defaults for all of the above.
-- `core/exercises.ts`: `roleOf()` derives main/accessory from the plan's pattern list (+ the hip-thrust exception); `makeCustomExercise()` takes an explicit role.
-- `data/goals.ts`: `Goal` rewritten as the full 6.16 policy object; every goal now has `accessoryReps`.
-- `data/templates.ts`: added `full_a`/`full_b`/`upper`/`lower`; exported `SplitTemplateKey`.
+Sections read: 6.11 (recovery model), F3.1, 6.12.1 (data gaps), 6.17 (logging fidelity).
 
-### Layer: brain — done, commit bebcefa
-- `progression.ts`: `repRange()` reads `exercise.role` (fixes G3/G4); low-range step-down (G5) uses two-consecutive-sessions e1RM decline at max effort when the goal's main range starts at 1-2 reps.
-- `onboarding.ts` (new): `profileCompleteness()`, `shouldShowOnboarding()` (first/partial/review triggers, 14-day suppression, 3-dismissal cutoff, 90-day review), `isWeightTypo()`.
-- `coach/rules.ts`: `CoachContext.profileHistory`; new `profile.changed` rule (weight + goal only — see decisions).
-- Tests: `tests/goal.test.ts` (20 tests, all 4 goals), `tests/onboarding.test.ts` (9), `tests/coach.test.ts` (5), updated `tests/balance-weekly.test.ts` call sites.
+### Layer: data model — done, commit 7638f50
+- `core/models.ts`: `LoggedSet.at/restSec/fidelity/flags`; `Session.logging: SessionLogging`, `day` now derives from `trainedAt`; `CheckIn` (soreness-only for now, other fields optional), `RecoveryModel`, `FreshMark`.
+- `core/store.ts`: backfills `logging` via `legacySessionLogging()` for any session saved before the field existed.
+- `data/muscles.ts`: `recoveryFactor` per muscle (τ_base prior).
+- `brain/fidelity.ts` (new): `classifySetFidelity`, `isCompressed`, `liveSessionLogging`/`retroSessionLogging`/`legacySessionLogging`, plausibility checks (`implausibleLoad`/`implausibleReps`/`unitSuspect`/`futureTime`/`isDuplicateSession`).
 
-### Layer: native — N/A for this phase (no native code needed)
+### Layer: brain — done, commits 43c0fa3, 766b189
+- `data/recovery.ts` (new): the model's full parameter table.
+- `core/exercises.ts`: `exerciseDamage()`/`setDamage()` (damage factor, same code-derived pattern as `roleOf()`).
+- `brain/recovery.ts` rewritten: impulse-response model (per-set impulse → per-session-per-muscle dose+τ → fast+slow decay stacked over 7 days → pct vs personal reference dose), ready@90%/full@97% both solved numerically with a ±15% display band, systemic (whole-body) factor from sleep/resting-HR/session-RPE load ratio (capped 1.25x, gated on real history — see decisions), soreness cap, "Mark as fresh" override, `calibrateTauScale`/`calibrateAfterSession`.
+- `coach/rules.ts`: new `recovery.scheduled-conflict` rule (F3.1), doesn't require `personalized`.
+- Verified against the plan's own worked example (ready ~24/34/47h, full ~55/77h, 8 max sets ~75h) — matches almost exactly once each scenario's own history defines its reference dose.
+- Tests: `tests/fidelity.test.ts` (21), `tests/recovery.test.ts` rewritten (20, including the 36h-apart stacking test, 120h cap, 7-day floor, soreness cap, fresh-mark override, calibration bounds/direction).
 
-### Layer: UI — done, commits 8f1bc4f
-- `slices/profile/profile.ts`: field setters recording `profileHistory`, `logWeight`, `changeGoal`/`applyGoalRest`/`addGoalTemplates`, onboarding dismiss/complete/review.
-- `slices/profile/Onboarding.tsx`: the sheet (first/partial/review copy) and the details form.
-- `slices/profile/Profile.tsx`: the dashboard (About you / Body / Training — see decisions for why Watch-and-health/Check-ins are omitted); typo guard on a >10% weight jump.
-- `coach/Coach.tsx`: extracted `GoalSheet` (exported, shared with the dashboard); one-tap "Apply rest"/"Add templates" buttons after a goal change.
-- `settings/Settings.tsx`: Profile section is now a link to the dashboard.
-- `workout/ExercisePicker.tsx`: main-lift-or-accessory picker for custom exercises.
-- `router.ts`/`App.tsx`/`selectors.ts`: `profileOpen` sheet state; `onboardingTrigger` signal (purely state-derived, so every exit path stops it reappearing without a separate "closed" flag).
-- Verified manually with a scripted Playwright walkthrough (fresh state → onboarding → dismiss → Settings → profile dashboard → weigh in → change goal → apply rest → add templates → Coach shows the `profile.changed` insight): zero console/page errors, screenshots inspected visually.
+### Layer: native — N/A (no native code needed)
 
-### Layer: gate — done, commit a4af474
-- `scripts/screenshot-gate.mjs`: every theme now dismisses the onboarding sheet (shown on the legacy fixture's incomplete profile) and screenshots it; profile dashboard screenshotted from Settings (silent-black); a separate fresh-state pass screenshots the onboarding form and a real goal-change insight (the legacy fixture's own priority-320 progress insights would otherwise outrank the priority-260 `profile.changed` insight out of the top 3 — correct behaviour, not a bug to route around).
-- `npm run check`: **PASS** (typecheck, 76/76 tests across 12 files, production build).
-- `npm run gate`: **PASS** — 5/5 themes, no page errors, legacy import verified, new screenshots confirmed visually (onboarding sheet/form, profile dashboard, goal-changed insight all render correctly).
+### Layer: UI — done, commit 47b8ccb
+- `session.ts`: `commitSet` records `at`/`restSec`/`fidelity`; auto-rest restarts only on a live commit; `finishSession` builds `logging` and derives day/timing from `trainedAt`; `resolveSessionTiming()` (patches a compressed session after the time question); `logPastSession()` (timer-free entry); `calibrateAfterSession` wired in.
+- `Train.tsx`: "When did you train?" sheet on a compressed finish; "Log a past session" button + entry grid (no timer, no rest banner).
+- `Body.tsx`: three-state recovery map (Recovering / Ready for hard work / Fully recovered), ready-in-hours range + confidence per muscle, drivers + "Mark as fresh" in the muscle sheet, whole-body systemic line.
+- **Found and fixed two real bugs via manual Playwright verification** (not just unit tests): (1) the systemic training-load ratio spiked to >1.25x for any brand-new account's very first session (fixed by requiring real history — see decisions); (2) the time-question sheet's default start time could land in the future when the reminder-time guess hadn't happened yet today, which the model correctly zeroed out to "100% recovered" (fixed the default, not the model).
 
-### P0-P report
-- **Built**: see the four layer sections above for exact files/functions.
-- **Tested**: `npx vitest run tests/goal.test.ts tests/onboarding.test.ts tests/coach.test.ts` → 34 passed. `npm run check` → clean typecheck, 76/76 tests, build OK. `npm run gate` → 5/5 themes PASS. Manual Playwright walkthrough → 0 console/page errors, screenshots visually confirmed.
-- **Decided by research**: full_a/full_b → strength, upper/lower → strength_muscle (standard programming heuristic, no primary source needed — see COACHING-DECISIONS.md).
-- **Scoped down (recorded in COACHING-DECISIONS.md)**: `profile.changed` limited to weight/goal; `profileAt`/`ageAt`/`weightAt`/`profileDiff` deferred to their first real consumer; `goal` stays non-nullable; dashboard omits Watch-and-health/Check-ins; one-tap actions are sheet buttons, not toasts (toasts are hidden behind an open `<dialog>`'s top layer).
-- **Needs device check**: none new in this phase (pure web/TS/UI, no native code touched).
-- **Depends on this for later phases**: P1-R's fidelity classifier and set timestamps build on `models.ts`/`store.ts` in the same pattern; P2-C's `metrics.ts` (relative strength, weight trend) will consume `weightLog`/`profileHistory` and is the natural home for `profileAt`/`weightAt`; P1's watch profile sheet reuses the "profile completeness" pattern from `onboarding.ts`.
+### Layer: gate — done, commit bc28b8c
+- `npm run check`: **PASS** (typecheck, 114/114 tests across 13 files, build).
+- `npm run gate`: **PASS** — 5/5 themes. The scripted finish is fast enough to be "compressed" every run, so the time-question sheet is exercised and screenshotted for real on every gate run (not a synthetic fixture); "Log a past session" is exercised and screenshotted; Body's existing screenshot slot now shows the three-state map.
 
-## Next: Phase P1-R (Recovery v2) — NOT STARTED
-Sections to read next: 6.11 (recovery model), F3.1, 6.12.1 (data gaps — set timestamps, `trainedAt`/`loggedAt`, `weightLog` already added, `trainingSince` already added), 6.17 (logging fidelity).
+### P1-R report
+- **Built**: see layer sections above.
+- **Tested**: `npx vitest run tests/fidelity.test.ts tests/recovery.test.ts` → 41 passed. `npm run check` → 114/114, clean build. `npm run gate` → 5/5 themes PASS, screenshots visually confirmed (time-question sheet, past-session grid, three-state Body map with a legitimate "whole body" line on the legacy fixture's ~29 days of history).
+- **Decided by research**: none requiring external sources this phase (the recovery model's constants come straight from the plan's own formulas, verified by reproducing its worked examples numerically).
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: `exerciseDamageScale` calibration axis omitted (no distinct trigger/test named); full 6.17.4 gating matrix / `tests/gating.test.ts` deferred to the phases that build the gated features; History tags and the post-session debrief deferred to P2-C (explicitly assigned there by section 7); foreground/background gap distinction collapsed into one rule.
+- **Needs device check**: none new (pure web/TS/UI).
+- **Depends on this for later phases**: P2-C's `metrics.ts` and post-session debrief will read `Session.logging` and the fidelity gating; P3's readiness card extends the same `healthDays`-based systemic-factor pattern; P4's deload state reads `recoveryModel`/calibration observations.
+
+## Next: Phase P2-C (Coach v2) — NOT STARTED
+Sections to read next: 6.12 (CoachContext v2, metrics.ts), 6.13 (insight catalogue).
 
 ## Not started
-P1-R, P2-C, P1, P2, P3, P4.
+P2-C, P1, P2, P3, P4.

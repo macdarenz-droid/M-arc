@@ -49,3 +49,33 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: the goal-change "Apply rest" / "Add templates" one-tap actions (6.16, decision 14) are buttons inside the `GoalSheet`, not a `showToast(...)` action.
   **Why**: `Sheet` renders a native `<dialog>` via `showModal()`, which promotes it to the browser's top layer; the app's `Toast` is an ordinary fixed-position `<div>` rendered outside the dialog, so it would be visually hidden behind the modal's backdrop while the sheet is open. Buttons inside the sheet are guaranteed visible and are arguably a clearer one-tap surface than a toast that has to be dismissed first anyway.
   **Source**: verified by reading `ui/primitives.tsx`'s `Sheet` (`showModal()`) and `Toast` (plain `div`, rendered in `App.tsx` as a sibling, not inside any open dialog).
+
+## P1-R
+
+- **Decided**: `RecoveryModel` ships as `{ tauScale, observations }` only; the plan's `exerciseDamageScale` axis is not implemented.
+  **Why**: 6.11 point 8 describes two calibration axes (per-muscle `tauScale` and a separate per-exercise `exerciseDamageScale`), but only names one required test ("calibration bounds and direction") and gives no distinct trigger condition for the exercise-level axis. Shipping a second, unused calibration dimension with no consumer or test would be a speculative abstraction. Per-muscle `tauScale` alone already satisfies the two-sided, bounded calibration loop and its test.
+  **Source**: plan 6.11 point 8; "no speculative abstractions" rule.
+
+- **Decided**: exercise damage (`x` in the impulse formula) is derived in code from a name/id list (`core/exercises.ts` `exerciseDamage()`/`setDamage()`), the same pattern as `roleOf()` from P0-P, instead of adding a `damage` field to `exercises.json`.
+  **Why**: keeps a large, hand-maintained data file untouched; the plan's own damage list ("Romanian and stiff-leg deadlift, Nordic and glute-ham curl, good morning, deficit deadlift, ...") is exactly the kind of static classification `roleOf()` already established the convention for. Checked the actual library: several named exercises (Nordic curl, good morning, deficit/stiff-leg deadlift, sissy squat) don't exist in this library at all, so the derived list only includes what's actually present.
+  **Source**: `node -e` inspection of `src/data/exercises.json`; plan 6.11 point 1.
+
+- **Decided**: the per-set fidelity classifier does not distinguish "gap while the app was backgrounded" from "gap while foregrounded" (6.17.2's `delayed` condition for a >12-minute gap explicitly says "while the app was in the background the whole time"). Any gap outside the 20s-12min live window is `delayed`, regardless of foreground/background.
+  **Why**: tracking real foreground/background time would need new `visibilitychange` wiring threaded through the active-session state — real complexity for a distinction that doesn't change the outcome (a long foreground gap between sets is equally not "logged as it happened" for timing-trust purposes as a long backgrounded one).
+  **Source**: plan 6.17.2; "no scope beyond the phase" rule.
+
+- **Decided**: the full 6.17.4 gating matrix and `tests/gating.test.ts` are not implemented this phase, beyond what the recovery model, records, and adherence/streak already do correctly by construction (they already key off `trainedAt`/`day`, never `loggedAt`).
+  **Why**: most of the matrix's rows gate features that don't exist yet — per-set heart data, HR-guided rest, session density/idle-time medians, fixed-load HR comparison — all P1/P2 work. A table-driven test asserting "produces X" for a metric that isn't built would be testing nothing. `CheckIn.sleepQuality`/`mood` were left optional (not required, unlike the plan's literal `CheckIn` shape) so P1-R can write a soreness-only check-in row today without inventing sleep/mood values, and P2 can fill them on the same day's row later without a shape change.
+  **Source**: plan 6.17.4; section 7 P1-R's actual Done-when list, which names none of these; "no speculative abstractions".
+
+- **Decided**: History "logged later" tags, edited-set pencil marks, and the post-session debrief's "here's what I could/couldn't judge" copy (6.17.3, 6.17.6) are not built this phase.
+  **Why**: section 7 assigns the post-session debrief explicitly to **P2-C** ("the pre-session sheet and post-session debrief render in the gate"). Building debrief copy now would either duplicate work when P2-C's `Insight` v2 shape lands, or fork the copy into two places. `Session.logging` already carries everything a future debrief needs (`mode`, `flags`, `timingTrusted`); nothing is lost by deferring the surface.
+  **Source**: plan section 7 (P2-C row).
+
+- **Decided**: the systemic training-load ratio (7-day vs 28-day session-RPE load) only applies once training has spanned at least 14 of the last 28 days with 3 or more sessions in that window.
+  **Why**: found by manually exercising the feature — a brand-new account's very first session always produced a ratio over the 1.3 threshold, because dividing the same one-session total by 7 versus 28 mechanically gives 4.0 regardless of actual training pattern. The plan's ATL/CTL framing assumes an established training history; nothing in 6.11 says what to do before one exists, so this guard is a reasonable, tested reading rather than a literal instruction.
+  **Source**: manual Playwright verification (see COACHING-PROGRESS.md); plan 6.11 point 2 (systemic factor).
+
+- **Decided**: the "when did you train?" sheet's default start time never lands in the future. If the scheduled/reminder-time guess would put the session's end after "now", the default falls back to "ended just now" (`now − duration` as the start).
+  **Why**: found the same way — defaulting blindly to a fixed guess (the reminder time, or 17:00) produces a future timestamp whenever the sheet is answered before that time of day, which the recovery model correctly (if surprisingly) treats as "hasn't happened yet" (zero residual, 100% recovered) since `residualOf` guards against negative elapsed time. The guard is on the timestamp, not the model; the model's negative-elapsed guard is correct and stays as is.
+  **Source**: manual Playwright verification; `resolveSessionTiming`/`TimeQuestionSheet` in `slices/workout/Train.tsx` and `session.ts`.
