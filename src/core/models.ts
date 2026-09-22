@@ -23,6 +23,8 @@ export interface Exercise {
   pattern: string;
   defaultSets: number;
   mode: ResistanceMode;
+  /** Main lifts get the goal's main rep range; everything else gets the accessory range. */
+  role: 'main' | 'accessory';
   /** True for exercises the user created. */
   custom?: boolean;
 }
@@ -107,6 +109,31 @@ export interface Profile {
   heightCm?: number;
   sex?: 'male' | 'female';
   birthYear?: number;
+  /** Month the user started training, YYYY-MM. Defaults to the first session's month. */
+  trainingSince?: string;
+  /** Preferred training days per week, independent of which days are actually scheduled. */
+  plannedDays?: number;
+}
+
+export interface WeightEntry {
+  day: string;
+  kg: number;
+}
+
+export type ProfileField = 'bodyWeightKg' | 'heightCm' | 'birthYear' | 'sex' | 'goal' | 'trainingSince' | 'plannedDays';
+export interface ProfileChange {
+  at: string;
+  field: ProfileField;
+  from: unknown;
+  to: unknown;
+  source: 'user' | 'onboarding' | 'health_connect' | 'migration';
+}
+
+export interface Onboarding {
+  completedAt?: string;
+  /** ISO timestamps of "Later" taps, newest last, so the sheet can back off after a few. */
+  dismissedAt: string[];
+  lastReviewAt?: string;
 }
 
 export interface BodyMeasurement {
@@ -156,6 +183,11 @@ export interface AppState {
   health: HealthSnapshot;
   /** Daily Health Connect history, newest last, capped at 180 days. */
   healthDays: DailyHealth[];
+  /** Weigh-ins, newest last, capped at 400. */
+  weightLog: WeightEntry[];
+  /** Changes to profile facts, newest last, capped at 500. */
+  profileHistory: ProfileChange[];
+  onboarding: Onboarding;
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -186,6 +218,9 @@ export function freshState(now = new Date()): AppState {
     body: [],
     health: { connected: false },
     healthDays: [],
+    weightLog: [],
+    profileHistory: [],
+    onboarding: { dismissedAt: [] },
   };
 }
 

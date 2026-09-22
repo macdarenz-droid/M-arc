@@ -21,6 +21,15 @@ interface RawExercise {
 
 const onlyMuscles = (list: string[]): MuscleId[] => list.filter(isMuscleId);
 
+/** Patterns whose exercises get the goal's main rep range. Everything else is an accessory. */
+const MAIN_PATTERNS = new Set(['squat', 'single_leg_squat', 'lunge', 'hip_hinge', 'horizontal_push', 'incline_push', 'vertical_push', 'vertical_pull', 'horizontal_pull']);
+/** hip_extension is a main pattern only for the barbell/machine hip thrust; glute bridges and kickbacks stay accessories. */
+const MAIN_IDS = new Set(['lib_hip_thrust']);
+
+export function roleOf(pattern: string, id: string): 'main' | 'accessory' {
+  return MAIN_PATTERNS.has(pattern) || MAIN_IDS.has(id) ? 'main' : 'accessory';
+}
+
 /** The built-in library, typed and with a resistance mode attached. */
 export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
   id: e.id,
@@ -33,6 +42,7 @@ export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
   pattern: e.pattern,
   defaultSets: e.defaultSets,
   mode: inferMode(e.id, e.equipment, e.name),
+  role: roleOf(e.pattern, e.id),
 }));
 
 const byId = new Map(LIBRARY.map(e => [e.id, e]));
@@ -89,7 +99,7 @@ export function searchExercises(query: string, custom: Exercise[] = [], limit = 
 
 /** Build a custom exercise from plain form fields. Unknown muscle text is classified, never dropped silently. */
 export function makeCustomExercise(input: {
-  id?: string; name: string; equipment: string; primary: string[]; secondary?: string[]; mode?: ResistanceMode;
+  id?: string; name: string; equipment: string; primary: string[]; secondary?: string[]; mode?: ResistanceMode; role?: 'main' | 'accessory';
 }): Exercise {
   const toIds = (list: string[] | undefined) =>
     (list ?? []).map(v => (isMuscleId(v) ? v : classifyMuscleText(v))).filter((v): v is MuscleId => v != null);
@@ -104,6 +114,7 @@ export function makeCustomExercise(input: {
     pattern: 'other',
     defaultSets: 3,
     mode: input.mode ?? inferMode('', input.equipment, input.name),
+    role: input.role ?? 'accessory',
     custom: true,
   };
 }

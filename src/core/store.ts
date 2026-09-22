@@ -25,6 +25,9 @@ function normalize(s: AppState): AppState {
     body: s.body ?? [],
     customExercises: s.customExercises ?? [],
     healthDays: s.healthDays ?? [],
+    weightLog: s.weightLog ?? [],
+    profileHistory: s.profileHistory ?? [],
+    onboarding: { ...fresh.onboarding, ...s.onboarding, dismissedAt: s.onboarding?.dismissedAt ?? [] },
   };
 }
 
