@@ -80,7 +80,8 @@ describe('Train (Splits/pre-workout header): the presence launcher sits in its o
   it('is local regardless of online-coach state and its null state opens the shared Ask destination', () => {
     expect(source).not.toContain('{!remoteEnabled.value && moment && (');
     expect(source).toContain('moment ? setMomentOpen(true) : openAsk()');
-    expect(source).not.toContain('aria-label={`Ask ${COACH_NAME}`}');
+    expect(source).toContain('{remoteEnabled.value && moment && <Button');
+    expect(source).not.toContain('{remoteEnabled.value && <Button variant="quiet" size="sm" onClick={openAsk}');
   });
 
   it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {

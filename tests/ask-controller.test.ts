@@ -78,10 +78,11 @@ describe('Coach.tsx and Train.tsx: no competing local AskSheet mounts', () => {
     expect(coach).toContain('onClick={() => { onClose(); openAskWithQuestion(`About "${sg.title}": `); }}');
   });
 
-  it('Train.tsx routes the single presence launcher null state to openAsk', () => {
+  it('Train.tsx routes the null launcher and the moment-present online shortcut to openAsk', () => {
     expect(train).toContain("import { openAsk } from '../coach/askController';");
     expect(train).toContain('moment ? setMomentOpen(true) : openAsk()');
-    expect(train).not.toContain('aria-label={`Ask ${COACH_NAME}`}');
+    expect(train).toContain('remoteEnabled.value && moment && <Button');
+    expect(train).toContain('onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}');
   });
 });
 
