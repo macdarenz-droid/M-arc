@@ -281,6 +281,10 @@ export interface DailyHealth {
   sleepEndAt?: string;
   steps?: number;
   activeCalories?: number;
+  /** HRV (F2.3): only ever populated on a device that sends RR intervals — dormant on the GT6 (Appendix E). */
+  rmssd?: number;
+  lnRmssd?: number;
+  rmssdAt?: string;
   source: 'health_connect' | 'watch' | 'manual';
   syncedAt: string;
 }

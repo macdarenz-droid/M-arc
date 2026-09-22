@@ -60,7 +60,14 @@ function setPlan(count: number, kg: number | null, reps: number | null, duration
   return Array.from({ length: Math.max(1, Math.min(6, count)) }, () => ({ kg, reps, durationSec, note }));
 }
 
-export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = []): Suggestion {
+export interface ProgressionContext {
+  /** From brain/readiness.ts's readiness(). Red skips increases and drops a set; amber only blocks the increase. */
+  readiness?: { loadAdvice: 'normal' | 'no_increase' | 'reduce'; reason?: string } | null;
+  /** From brain/recovery.ts's recoveryStatus() for the exercise's primary muscle, 0-100. */
+  recoveryPct?: number;
+}
+
+export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   const meta = findExercise(exerciseId, custom);
   const mode: ResistanceMode = modeOf(exerciseId, custom);
   const range = repRange(meta, goal);
@@ -101,6 +108,11 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   const holdSets = (note: string, reps = Math.min(range[1], Math.max(range[0], last.topReps + 1))) => setPlan(setCount, topKg, reps, null, note);
   const holdTarget = `${topKg} kg · ${fmtRange(range)}`;
 
+  if (ctx?.readiness?.loadAdvice === 'reduce') {
+    const fewer = Math.max(1, setCount - 1);
+    return { mode: 'hold', target: holdTarget, kg: topKg, reps: range, reason: ctx.readiness.reason ?? 'Readiness is low today. Keep the load and drop a set.', confidence: conf, sets: setPlan(fewer, topKg, range[0], null, 'Readiness: one fewer set') };
+  }
+
   if (coverage < 0.5 && hist.length >= 2) {
     return { mode: 'confirm_effort', target: holdTarget, kg: topKg, reps: range, reason: 'Most recent sets have no effort rating. Keep the load and rate each set so the coach can judge the next step.', confidence: 'low', sets: holdSets('Log effort') };
   }
@@ -129,11 +141,15 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   if (cleanTop(last)) {
     const twoForTwo = !!prev && cleanTop(prev) && prev.topKg === topKg;
     const fastTrack = last.allEasy && hist.length >= 4;
-    if ((twoForTwo || fastTrack) && plateau.status !== 'declining') {
+    const readinessBlocksIncrease = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < 60);
+    if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && !readinessBlocksIncrease) {
       const step = loadStep(topKg);
       const capped = topKg >= 10 ? Math.min(step, topKg * 0.1) : step;
       const up = half(topKg + Math.max(0.5, capped));
       return { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
+    }
+    if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && readinessBlocksIncrease) {
+      return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: ctx?.readiness?.reason ?? 'Recovery is under 60% for this muscle, so the load holds for now.', confidence: conf, sets: holdSets('Hold for now', range[1]) };
     }
     return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: 'You reached the top of the range once. Do it again at this load and the next step unlocks.', confidence: conf, sets: holdSets('Confirm', range[1]) };
   }

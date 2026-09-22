@@ -63,4 +63,27 @@ describe('progression', () => {
     expect(s.mode).toBe('duration');
     expect(s.sets[0]!.durationSec).toBe(45);
   });
+
+  describe('readiness context (F2.1)', () => {
+    const a = session('2026-09-12', [{ id: ex, sets: sets(60, 12) }]);
+    const b = session('2026-09-15', [{ id: ex, sets: sets(60, 12) }]);
+    it('red readiness holds the load and drops a set instead of increasing', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'reduce', reason: 'Readiness is red today.' } });
+      expect(s.mode).toBe('hold');
+      expect(s.sets.length).toBe(2);
+      expect(s.reason).toBe('Readiness is red today.');
+    });
+    it('amber (no_increase) holds at confirm instead of increasing', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'no_increase' } });
+      expect(s.mode).toBe('confirm');
+    });
+    it('low muscle recovery also blocks the increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { recoveryPct: 40 });
+      expect(s.mode).toBe('confirm');
+    });
+    it('normal readiness does not interfere with a genuine increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'normal' }, recoveryPct: 90 });
+      expect(s.mode).toBe('increase');
+    });
+  });
 });

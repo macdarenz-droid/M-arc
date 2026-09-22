@@ -50,10 +50,10 @@ export interface MuscleRecovery {
   systemicFactor: number;
 }
 
-const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 
-function avg(xs: number[]): number { return xs.reduce((a, b) => a + b, 0) / xs.length; }
-function stddev(xs: number[]): number {
+export function avg(xs: number[]): number { return xs.reduce((a, b) => a + b, 0) / xs.length; }
+export function stddev(xs: number[]): number {
   if (xs.length < 2) return 0;
   const m = avg(xs);
   return Math.sqrt(xs.reduce((a, x) => a + (x - m) ** 2, 0) / xs.length);
@@ -85,7 +85,7 @@ function agePrior(age: number | null): number {
 }
 
 /** Session-RPE proxy load (no heart rate needed): effort-weighted minutes. */
-function sessionRpeLoad(session: Session): number {
+export function sessionRpeLoad(session: Session): number {
   const sets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet);
   if (!sets.length) return 0;
   const weight = { easy: 4, ideal: 7, max: 10 } as const;
