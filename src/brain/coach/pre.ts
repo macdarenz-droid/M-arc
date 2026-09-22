@@ -8,6 +8,8 @@ import { findExercise } from '@/core/exercises';
 import { exerciseHistory } from '../history';
 import { e1rmTrend } from './weeklyReview';
 import { loadForReps, roundToStep } from '../e1rm';
+import { loadableNear } from '../units';
+import type { EquipmentProfile } from '@/core/models';
 import type { Insight } from './rules';
 
 export interface PreSessionInput {
@@ -42,8 +44,8 @@ const WARMUP_PCTS = [0.5, 0.7, 0.85];
 const WARMUP_REPS = [8, 5, 2];
 
 /** F3.4: 50% x 8, 70% x 5, 85% x 2 of the trend e1RM, rounded to a load step. Shared by the pre-session brief's text and Train's collapsed warm-up rows. */
-export function warmupSets(e1rm: number): Array<{ kg: number; reps: number }> {
-  return WARMUP_PCTS.map((p, i) => ({ kg: roundToStep(e1rm * p), reps: WARMUP_REPS[i]! }));
+export function warmupSets(e1rm: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {
+  return WARMUP_PCTS.map((p, i) => ({ kg: equipment ? loadableNear(e1rm * p, equipment, 'nearest').kg : roundToStep(e1rm * p), reps: WARMUP_REPS[i]! }));
 }
 
 export function warmupRamp(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string): Insight | null {

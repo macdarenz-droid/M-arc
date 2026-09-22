@@ -249,3 +249,4 @@ Spec: `docs/ESCOBAR-ARCHITECTURE.md`. Branch: `claude/escobar-v2-implementation-
 
 ## EVU: Plate Sense
 - data: `LoadUnit`, `EquipmentProfile`, `Gym`, `UnitsState` (`AppState.units`, `freshUnits`), `LoggedSet.entered`, `Session.gymId`; `normalizeUnits`; `core/units.ts` round-trip fix (`displayToKg` 3 decimals, `setLoadIn`, `formatSetLoad`, `enteredLoad`, `approxIn`). Tests: `tests/plate-sense.test.ts` (round trip 2.5–500 lb and 0.5–300 kg).
+- brain: `brain/units.ts` (`defaultProfile`, `resolveProfile`, `loadableValues`, `loadableNear`, `plateBreakdown`, `formatPerSide`, `inferGym`); `suggestNext` snaps with `ctx.equipment` and scales with `ctx.loadFactor` (`Suggestion.unit/value`); `warmupSets(e1rm, equipment?)`; `autoregulationSuggestion` `equipment`; `fidelity.suspectAlternative`. Tests in `tests/plate-sense.test.ts`.

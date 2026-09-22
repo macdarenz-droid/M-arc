@@ -10,7 +10,8 @@
  *  7. Trend clearly down             → keep the load, easier week, then rebuild.
  *  8. Otherwise                      → add a rep.
  */
-import type { Deload, Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import { loadableNear } from './units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
@@ -29,6 +30,9 @@ export interface Suggestion {
   confidence: 'low' | 'medium' | 'high';
   /** Set-by-set targets for the next session. */
   sets: Array<{ kg: number | null; reps: number | null; durationSec: number | null; note: string }>;
+  /** With an equipment profile (§25.4): the target in the equipment's own unit, e.g. 55 lb. */
+  unit?: LoadUnit;
+  value?: number;
 }
 
 export function loadStep(kg: number): number {
@@ -68,9 +72,46 @@ export interface ProgressionContext {
   recoveryPct?: number;
   /** Active lighter week (F3.3). Takes priority over readiness and recovery: it's a whole-week call, not a single day's. */
   deload?: Deload | null;
+  /** What the equipment really loads (§25.4). Targets snap to it: up for increases, down for reductions and deloads. */
+  equipment?: EquipmentProfile;
+  /** Today's load change from an applied Escobar adjustment (§10.4), applied like a deload's loadFactor. */
+  loadFactor?: number;
+}
+
+const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
+
+/** Restates a suggestion's loads as loads the equipment can make, in its own unit. */
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile): Suggestion {
+  if (s.kg == null) return s;
+  const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
+  const snap = loadableNear(s.kg, profile, dir);
+  const oldLabel = `${s.kg} kg`;
+  return {
+    ...s,
+    kg: snap.kg,
+    unit: snap.unit,
+    value: snap.value,
+    target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${snap.value} ${snap.unit}`) : s.target,
+    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: loadableNear(x.kg, profile, dir).kg })),
+  };
+}
+
+/** Scales a suggestion's loads by today's adjustment factor (§10.4), rounding down like a deload. */
+function applyLoadFactor(s: Suggestion, f: number): Suggestion {
+  if (s.kg == null || !(f > 0) || f === 1) return s;
+  const down = half(s.kg * f);
+  const oldLabel = `${s.kg} kg`;
+  return { ...s, kg: down, target: s.target.replace(oldLabel, `${down} kg`), reason: `${s.reason} Adjusted for today.`, sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: half(x.kg * f) })) };
 }
 
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
+  let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
+  if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
+  if (ctx?.equipment && modeOf(exerciseId, custom) === 'weighted') s = snapToEquipment(s, ctx.equipment);
+  return s;
+}
+
+function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   const meta = findExercise(exerciseId, custom);
   const mode: ResistanceMode = modeOf(exerciseId, custom);
   const range = repRange(meta, goal);

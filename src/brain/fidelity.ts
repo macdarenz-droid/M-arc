@@ -4,7 +4,8 @@
  * every fidelity; timing is trusted only for a live commit in a live
  * session. Pure: no store, no clock reads other than what is passed in.
  */
-import type { LoggedSet, Session, SessionLogging, SetFidelity, SetFlag } from '@/core/models';
+import type { LoadUnit, LoggedSet, Session, SessionLogging, SetFidelity, SetFlag } from '@/core/models';
+import { KG_PER_LB } from '@/core/units';
 
 /** A commit is "delayed" (timing not trusted) when it is part of a burst or outside a plausible rest/set gap. */
 export function classifySetFidelity(gapSec: number | null, burstCount: number): SetFidelity {
@@ -110,6 +111,19 @@ export function unitSuspect(kg: number, recentBestKg: number | null): boolean {
   if (!recentBestKg || recentBestKg <= 0 || kg <= 0) return false;
   const ratio = kg / recentBestKg;
   return Math.abs(ratio - 2.2) / 2.2 <= 0.05 || Math.abs(ratio - 0.45) / 0.45 <= 0.05;
+}
+
+/**
+ * The reading `unitSuspect` implies (§25.4): a load about 2.2× the usual was probably
+ * the right number typed as kg when the plate said lb; about 0.45× was probably kg
+ * typed into an lb field. Null when the load is not suspect.
+ */
+export function suspectAlternative(kg: number, recentBestKg: number | null): { unit: LoadUnit; value: number; kg: number } | null {
+  if (!unitSuspect(kg, recentBestKg)) return null;
+  const ratio = kg / recentBestKg!;
+  if (ratio > 1) return { unit: 'lb', value: Math.round(kg * 100) / 100, kg: Math.round(kg * KG_PER_LB * 1000) / 1000 };
+  const value = Math.round((kg / KG_PER_LB) * 10) / 10;
+  return { unit: 'kg', value, kg: value };
 }
 
 /** Same day, same exercises in the same order, same load and reps on every set: an accidental double-save. */
