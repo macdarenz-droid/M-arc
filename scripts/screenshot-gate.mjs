@@ -198,8 +198,94 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// A stubbed WatchBridge plugin (F0.4/F1.1/F1.6, 6.2/6.3), so the live pill, per-set peak and
+// finish-screen Heart card are exercised without real Bluetooth hardware. Capacitor's real web
+// core (bundled in the app) overwrites a plain `window.Capacitor` override, but respects the
+// official CapacitorCustomPlatform escape hatch for reporting a non-web platform.
+// Plain viewport, no touch/mobile emulation: the touch-event path made clicks on the effort
+// buttons flaky here, unlike the theme passes above which never type into a live set mid-flow.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`watch-stub: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`watch-stub console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    window.CapacitorCustomPlatform = { name: 'android' };
+    const listeners = {};
+    let status = { state: 'idle', freshness: 'DISCONNECTED', message: 'Ready to connect' };
+    let bpm = 118;
+    const emitBpm = () => { bpm += 1; for (const cb of listeners.watchMeasurement || []) cb({ bpm, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: Date.now(), receivedAtElapsedMs: performance.now() }); };
+    const setStatus = s => { status = { ...status, ...s }; for (const cb of listeners.watchStatus || []) cb(status); };
+    window.Capacitor = {
+      isNativePlatform: () => true,
+      Plugins: {
+        WatchBridge: {
+          isSupported: async () => ({ supported: true }),
+          permissionState: async () => ({ granted: true, needsLocation: false }),
+          requestPermissions: async () => ({ granted: true }),
+          startScan: async () => { setTimeout(() => { for (const cb of listeners.watchDevice || []) cb({ address: 'AA:BB', name: 'Test Watch', advertisesHeartRate: true, paired: false, rssi: -50 }); }, 50); },
+          stopScan: async () => {},
+          connect: async () => { setStatus({ state: 'connected', freshness: 'LIVE', deviceName: 'Test Watch', message: 'Connected' }); emitBpm(); },
+          disconnect: async () => { setStatus({ state: 'idle', freshness: 'DISCONNECTED', deviceName: undefined, message: 'Disconnected' }); },
+          status: async () => status,
+          addListener: async (event, cb) => { (listeners[event] ||= []).push(cb); return { remove: () => {} }; },
+        },
+      },
+    };
+    // A complete profile so the profile-onboarding sheet doesn't compete for the dialog top layer here.
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForTimeout(300);
+  await page.locator('.watch-pill').click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Scan for a watch' }).click();
+  await page.waitForTimeout(300);
+  await page.getByText('Test Watch').click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/watch-sheet.png` });
+  await page.getByRole('button', { name: 'Close' }).click();
+  await page.waitForTimeout(200);
+  if (!(await page.locator('.watch-pill .dot.live').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
+  await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
+
+  const inputs = page.locator('input[type="number"]');
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
+  await page.locator('.effort button.ideal').first().click();
+  await page.waitForTimeout(200);
+  if (!(await page.getByText(/^peak /).isVisible().catch(() => false))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
+
+  await page.getByRole('button', { name: 'Finish' }).click();
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
+  await page.waitForTimeout(400);
+  if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.waitForTimeout(400);
+  }
+  await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
+  if (!(await page.getByRole('heading', { name: 'Heart' }).isVisible().catch(() => false))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified.');
