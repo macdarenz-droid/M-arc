@@ -20,7 +20,7 @@ import { acceptProposal, dismissProposal, endDeload } from '../coach/apply';
 import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { InsightSheet, SuggestionSheet } from '../coach/Coach';
 import { PresenceLauncher } from '../coach/Presence';
-import { dismissPresenceMoment } from '../coach/presence';
+import { dismissPresenceMoment } from '../coach/presenceState';
 import { liveRecordFrom, prReach } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';

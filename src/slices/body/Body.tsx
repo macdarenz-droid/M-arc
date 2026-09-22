@@ -14,7 +14,7 @@ import { showToast } from '@/app/toast';
 import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
 import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment } from '@/slices/coach/presence';
+import { dismissPresenceMoment } from '@/slices/coach/presenceState';
 import { COACH_NAME } from '@/ui/chatRender';
 import { remoteEnabled } from '@/slices/coach/remote';
 

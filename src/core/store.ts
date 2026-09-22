@@ -244,7 +244,48 @@ function validAssessment(value: unknown, entryIds: Set<string>, startEntryIds: S
   if (!value.invalidatedEntryIds.every(id => shortString(id) && entryIds.has(id))) return false;
   if (new Set(value.invalidatedEntryIds).size !== value.invalidatedEntryIds.length) return false;
   if (!Array.isArray(value.seenWorkingRows) || value.seenWorkingRows.length > PLAN_MAX_METADATA_ENTRIES) return false;
-  return value.seenWorkingRows.every(row => validSeenWorkingRow(row, entryIds));
+  if (!value.seenWorkingRows.every(row => validSeenWorkingRow(row, entryIds))) return false;
+  return new Set(value.seenWorkingRows.map(row => row.entryId)).size === value.seenWorkingRows.length;
+}
+
+const sameTarget = (left: PlanSetTarget | null | undefined, right: PlanSetTarget | null | undefined): boolean =>
+  left == null && right == null
+    ? true
+    : !!left && !!right && left.kg === right.kg && left.reps === right.reps && left.durationSec === right.durationSec;
+
+function sameTargetProjection(left: Array<PlanSetTarget | null> | undefined, right: Array<PlanSetTarget | null> | undefined): boolean {
+  const length = Math.max(left?.length ?? 0, right?.length ?? 0);
+  for (let index = 0; index < length; index++) if (!sameTarget(left?.[index], right?.[index])) return false;
+  return true;
+}
+
+function activeAssessmentEntryIds(plan: WorkoutPlanSnapshot): Set<string> {
+  const active = new Set(plan.entries.filter(entry => entry.origin === 'start').map(entry => entry.id));
+  for (const change of plan.assessment?.changes ?? []) {
+    if (change.kind === 'add') active.add(change.entryId);
+    else if (change.kind === 'replace') { active.delete(change.fromEntryId); active.add(change.toEntryId); }
+    else if (change.kind === 'remove') active.delete(change.entryId);
+  }
+  return active;
+}
+
+/** D05: a surviving entry whose journal and compatibility projection disagree is retained but explicitly unassessable. */
+function invalidateProjectionMismatches(plan: WorkoutPlanSnapshot): WorkoutPlanSnapshot {
+  if (!plan.assessment) return plan;
+  const active = activeAssessmentEntryIds(plan);
+  const expected = new Map<string, Array<PlanSetTarget | null>>();
+  for (const change of plan.assessment.changes) if (change.kind === 'targets') {
+    const projection: Array<PlanSetTarget | null> = [];
+    for (const item of change.targets) projection[item.setIndex] = { ...item.target };
+    expected.set(change.entryId, projection);
+  }
+  const invalidated = new Set(plan.assessment.invalidatedEntryIds);
+  for (const entry of plan.entries) {
+    if (!active.has(entry.id)) continue;
+    if (!sameTargetProjection(entry.acceptedTargets, expected.get(entry.id))) invalidated.add(entry.id);
+  }
+  if (invalidated.size === plan.assessment.invalidatedEntryIds.length) return plan;
+  return { ...plan, assessment: { ...plan.assessment, invalidatedEntryIds: [...invalidated] } };
 }
 
 /** Drops just `assessment` on failure — malformed metadata never invalidates the plan or logged work it sits on top of (D03). */
@@ -253,7 +294,7 @@ function normalizePlan(value: unknown): WorkoutPlanSnapshot | undefined {
   const entryIds = new Set(value.entries.map(entry => entry.id));
   const startEntryIds = new Set(value.entries.filter(entry => entry.origin === 'start').map(entry => entry.id));
   const assessment = value.assessment !== undefined && validAssessment(value.assessment, entryIds, startEntryIds) ? value.assessment : undefined;
-  return { ...value, assessment };
+  return invalidateProjectionMismatches({ ...value, assessment });
 }
 
 function normalizeLoggedExercise(exercise: LoggedExercise, planEntries: Map<string, WorkoutPlanEntry> | null): LoggedExercise {
@@ -279,8 +320,9 @@ function normalizeSessionMetadata(session: Session): Session {
 
 function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | null {
   if (!active) return null;
-  const plan = normalizePlan(active.plan);
+  let plan = normalizePlan(active.plan);
   const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
+  const projectionMismatchIds = new Set<string>();
   const entries = (active.entries ?? []).map(entry => {
     const linkedEntry = planEntries !== null && shortString(entry.planEntryId) ? planEntries.get(entry.planEntryId) : undefined;
     const linked = !!linkedEntry && linkedEntry.exerciseId === entry.exerciseId;
@@ -288,6 +330,8 @@ function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | 
       && entry.targetOverrides.every(target => target === null || validTarget(target)) ? entry.targetOverrides : undefined;
     const decision = object(entry.coachDecision) && shortString(entry.coachDecision.key)
       && oneOf(entry.coachDecision.action, ['accepted', 'dismissed'] as const) ? entry.coachDecision : undefined;
+    if (linked && plan?.assessment && activeAssessmentEntryIds(plan).has(linkedEntry.id)
+      && !sameTargetProjection(overrides, linkedEntry.acceptedTargets)) projectionMismatchIds.add(linkedEntry.id);
     return {
       ...entry,
       planEntryId: linked ? entry.planEntryId : undefined,
@@ -296,6 +340,10 @@ function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | 
       coachDecision: linked ? decision : undefined,
     };
   });
+  if (plan?.assessment && projectionMismatchIds.size) {
+    const invalidated = new Set([...plan.assessment.invalidatedEntryIds, ...projectionMismatchIds]);
+    plan = { ...plan, assessment: { ...plan.assessment, invalidatedEntryIds: [...invalidated] } };
+  }
   return {
     ...active,
     plan,

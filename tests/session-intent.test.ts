@@ -282,7 +282,9 @@ describe('D01/D03/D06: assessment normalization — malformed metadata drops onl
       changes: [{ id: 'c1', acceptedAt: '2026-09-19T10:00:00.000Z', kind: 'targets' as const, entryId: 'pe1', reason: 'max_below_target' as const, targets: [{ setIndex: 0, target: { kg: 60, reps: 8, durationSec: null } }] }],
       invalidatedEntryIds: [], seenWorkingRows: [{ entryId: 'pe1', setIndices: [0, 1] }],
     };
-    const { state: loaded } = loadState(savedStorage(withAssessment(valid)));
+    const saved = withAssessment(valid);
+    saved.sessions[0]!.plan!.entries[0]!.acceptedTargets = [{ kg: 60, reps: 8, durationSec: null }];
+    const { state: loaded } = loadState(savedStorage(saved));
     expect(loaded.sessions[0]!.plan?.assessment).toEqual(valid);
   });
 

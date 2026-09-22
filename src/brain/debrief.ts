@@ -91,6 +91,39 @@ export function appendAgreementChange(plan: WorkoutPlanSnapshot | undefined, cha
   return { ...plan, assessment: { ...plan.assessment, changes } };
 }
 
+/**
+ * Remember that a live row has contained real work at least once. This is
+ * identity provenance, not a snapshot of the values: ordinary corrections
+ * may blank and refill the same row without losing assessability. Metadata
+ * outside its declared bounds makes only the optional assessment unavailable.
+ */
+export function recordSeenWorkingRow(plan: WorkoutPlanSnapshot | undefined, entryId: string | undefined, setIndex: number): WorkoutPlanSnapshot | undefined {
+  if (!plan?.assessment || !entryId) return plan;
+  if (!Number.isInteger(setIndex) || setIndex < 0 || setIndex >= PLAN_MAX_METADATA_SETS) return { ...plan, assessment: undefined };
+  if (!plan.entries.some(entry => entry.id === entryId)) return { ...plan, assessment: undefined };
+  const existing = plan.assessment.seenWorkingRows.find(row => row.entryId === entryId);
+  if (existing?.setIndices.includes(setIndex)) return plan;
+  const seenWorkingRows = existing
+    ? plan.assessment.seenWorkingRows.map(row => row !== existing ? row : { ...row, setIndices: [...row.setIndices, setIndex].sort((a, b) => a - b) })
+    : [...plan.assessment.seenWorkingRows, { entryId, setIndices: [setIndex] }];
+  return { ...plan, assessment: { ...plan.assessment, seenWorkingRows } };
+}
+
+/** Mark an entry's row identity/evidence as structurally uncertain, once. */
+export function invalidateAssessmentEntry(plan: WorkoutPlanSnapshot | undefined, entryId: string | undefined): WorkoutPlanSnapshot | undefined {
+  if (!plan?.assessment || !entryId || plan.assessment.invalidatedEntryIds.includes(entryId)) return plan;
+  if (!plan.entries.some(entry => entry.id === entryId)) return { ...plan, assessment: undefined };
+  return {
+    ...plan,
+    assessment: { ...plan.assessment, invalidatedEntryIds: [...plan.assessment.invalidatedEntryIds, entryId] },
+  };
+}
+
+export function seenWorkingSetIndices(plan: WorkoutPlanSnapshot | undefined, entryId: string | undefined): readonly number[] {
+  if (!plan?.assessment || !entryId) return [];
+  return plan.assessment.seenWorkingRows.find(row => row.entryId === entryId)?.setIndices ?? [];
+}
+
 export const DEBRIEF_LOAD_EPS_KG = 0.01;
 
 export interface DebriefSet {

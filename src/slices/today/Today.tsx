@@ -14,7 +14,7 @@ import { showToast } from '@/app/toast';
 import { startSession } from '../workout/session';
 import { InsightSheet, SuggestionSheet } from '../coach/Coach';
 import { PresenceLauncher } from '../coach/Presence';
-import { dismissPresenceMoment } from '../coach/presence';
+import { dismissPresenceMoment } from '../coach/presenceState';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';

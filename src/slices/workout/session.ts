@@ -15,7 +15,7 @@ import { haptic } from '@/native/haptics';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 import { contextFromState } from '@/brain/coach/context';
-import { appendAgreementChange, capturePlan, capturePlanEntry, effortSetFingerprint } from '@/brain/debrief';
+import { appendAgreementChange, capturePlan, capturePlanEntry, effortSetFingerprint, invalidateAssessmentEntry, recordSeenWorkingRow, seenWorkingSetIndices } from '@/brain/debrief';
 import { deloadActive } from '@/brain/coach/deload';
 
 /** The step the rest banner's +/- buttons move by. A UI step, not a coaching band. */
@@ -77,8 +77,13 @@ export function resumeSession(): void {
 
 export function setSet(entry: number, index: number, patch: Partial<LoggedSet>): void {
   patchActive(a => {
-    const entries = a.entries.map((e, i) => i !== entry ? e : { ...e, sets: e.sets.map((s, j) => (j !== index ? s : { ...s, ...patch })) });
-    return { ...a, entries };
+    const target = a.entries[entry];
+    const current = target?.sets[index];
+    if (!target || !current) return a;
+    const nextSet = { ...current, ...patch };
+    const entries = a.entries.map((e, i) => i !== entry ? e : { ...e, sets: e.sets.map((s, j) => (j !== index ? s : nextSet)) });
+    const plan = isWorkingSet(nextSet) ? recordSeenWorkingRow(a.plan, target.planEntryId, index) : a.plan;
+    return { ...a, entries, plan };
   });
 }
 
@@ -96,14 +101,26 @@ export function commitSet(entry: number, index: number): boolean {
 }
 
 export function addSet(entry: number): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: [...e.sets, { ...(e.sets[e.sets.length - 1] ?? {}), effort: undefined }], targetOverrides: undefined })) }));
+  patchActive(a => {
+    const target = a.entries[entry];
+    if (!target) return a;
+    const appended = { ...(target.sets[target.sets.length - 1] ?? {}), effort: undefined };
+    const nextIndex = target.sets.length;
+    const targetOverrides = target.targetOverrides
+      ? Array.from({ length: nextIndex + 1 }, (_, index) => target.targetOverrides?.[index] ?? null)
+      : undefined;
+    const entries = a.entries.map((e, i) => i !== entry ? e : { ...e, sets: [...e.sets, appended], targetOverrides });
+    const plan = isWorkingSet(appended) ? recordSeenWorkingRow(a.plan, target.planEntryId, nextIndex) : a.plan;
+    return { ...a, entries, plan };
+  });
 }
 
 export function removeSet(entry: number, index: number): void {
   patchActive(a => {
     const target = a.entries[entry];
     if (!target?.sets[index] || target.sets.length <= 1) return a;
-    return { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: e.sets.filter((_, j) => j !== index), targetOverrides: undefined, planComparisonValid: false })), rest: clearRestOwner(a.rest) };
+    const plan = invalidateAssessmentEntry(a.plan, target.planEntryId);
+    return { ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: e.sets.filter((_, j) => j !== index), targetOverrides: undefined, planComparisonValid: false })), plan, rest: clearRestOwner(a.rest) };
   });
 }
 
@@ -165,9 +182,15 @@ export function replaceEntry(entry: number, ex: Exercise, expected?: { startedAt
     const count = Math.max(1, previous.sets.length);
     const ctx = contextFromState(state.value, dayKey(new Date(x.startedAt)), Date.now());
     const captured = capturePlanEntry(ctx, { id, exerciseId: ex.id, name: ex.name, plannedSets: count, origin: 'replacement', replaces: previous.planEntryId });
-    const withEntries = x.plan ? {
-      ...x.plan,
-      entries: [...x.plan.entries.map(p => p.id === previous.planEntryId ? { ...p, excluded: 'replaced' as const } : p), captured],
+    const linkedPlan = previous.planEntryId
+      ? x.plan
+      : x.plan ? { ...x.plan, assessment: undefined } : undefined;
+    const invalidated = previous.sets.some(isWorkingSet) || seenWorkingSetIndices(linkedPlan, previous.planEntryId).length
+      ? invalidateAssessmentEntry(linkedPlan, previous.planEntryId)
+      : linkedPlan;
+    const withEntries = invalidated ? {
+      ...invalidated,
+      entries: [...invalidated.entries.map(p => p.id === previous.planEntryId ? { ...p, excluded: 'replaced' as const } : p), captured],
     } : undefined;
     const plan = previous.planEntryId
       ? appendAgreementChange(withEntries, { id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'replace', fromEntryId: previous.planEntryId, toEntryId: id })
@@ -190,8 +213,12 @@ export function restoreEmptyEntry(entry: number, ex: Exercise, expected: { start
 export function removeEntry(entry: number): void {
   patchActive(a => {
     if (!a.entries[entry]) return a;
-    const removedId = a.entries[entry]!.planEntryId;
-    const withEntries = a.plan ? { ...a.plan, entries: a.plan.entries.map(p => p.id === removedId ? { ...p, excluded: 'removed' as const } : p) } : undefined;
+    const removed = a.entries[entry]!;
+    const removedId = removed.planEntryId;
+    const invalidated = removed.sets.some(isWorkingSet) || seenWorkingSetIndices(a.plan, removedId).length
+      ? invalidateAssessmentEntry(a.plan, removedId)
+      : a.plan;
+    const withEntries = invalidated ? { ...invalidated, entries: invalidated.entries.map(p => p.id === removedId ? { ...p, excluded: 'removed' as const } : p) } : undefined;
     const plan = removedId
       ? appendAgreementChange(withEntries, { id: newId('pac'), acceptedAt: new Date().toISOString(), kind: 'remove', entryId: removedId })
       : withEntries;
@@ -366,10 +393,16 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   if (!a) return null;
   const split = state.value.splits.find(s => s.id === a.splitId);
   const now = new Date();
+  let plan = a.plan;
+  for (const entry of a.entries) {
+    if (seenWorkingSetIndices(plan, entry.planEntryId).some(index => !entry.sets[index] || !isWorkingSet(entry.sets[index]!))) {
+      plan = invalidateAssessmentEntry(plan, entry.planEntryId);
+    }
+  }
   const exercises = a.entries
     .filter(e => !e.skipped)
     .map(e => {
-      const hasCapturedEntry = !!a.plan?.entries.some(planEntry => planEntry.id === e.planEntryId);
+      const hasCapturedEntry = !!plan?.entries.some(planEntry => planEntry.id === e.planEntryId);
       const actualSetIndices = hasCapturedEntry && e.planComparisonValid !== false
         ? e.sets.map((set, index) => isWorkingSet(set) ? index : -1).filter(index => index >= 0)
         : undefined;
@@ -385,7 +418,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     endedAt: now.toISOString(),
     durationSec: elapsedSec(a, now.getTime()),
     exercises,
-    plan: a.plan,
+    plan,
   };
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');

@@ -86,7 +86,9 @@ describe('session plan lifecycle', () => {
     setSet(0, 0, { kg: 50, reps: 8 });
     setSet(0, 2, { kg: 50, reps: 6 });
     const result = finishSession(false)!;
-    expect(result.session.plan).toBe(plan);
+    expect(result.session.plan).not.toBe(plan);
+    expect(result.session.plan?.entries).toEqual(plan?.entries);
+    expect(result.session.plan?.assessment?.seenWorkingRows).toContainEqual({ entryId: id, setIndices: [0, 2] });
     expect(result.session.exercises[0]).toMatchObject({ planEntryId: id, actualSetIndices: [0, 2] });
   });
 

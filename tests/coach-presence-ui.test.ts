@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { ComponentChildren, VNode } from 'preact';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment, setPresenceTone } from '@/slices/coach/presence';
+import { dismissPresenceMoment, setPresenceTone } from '@/slices/coach/presenceState';
 import { freshState } from '@/core/models';
 import { initStore, state } from '@/core/store';
 import type { CoachingMoment } from '@/brain/coach/moments';

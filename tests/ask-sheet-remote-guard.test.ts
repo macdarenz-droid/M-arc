@@ -113,7 +113,9 @@ describe('Coach.tsx: InsightSheet/SuggestionSheet "Ask about this" closes the de
 });
 
 describe('Settings: every reset/restore that changes what a stale Ask reply could land on bumps the generation first', () => {
-  const source = readFileSync(new URL('../src/slices/settings/Settings.tsx', import.meta.url), 'utf8');
+  // Git may materialize CRLF on Windows; source-structure assertions should
+  // care about statement order, not the checkout's newline convention.
+  const source = readFileSync(new URL('../src/slices/settings/Settings.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 
   it('imports invalidateAskRequests', () => {
     expect(source).toContain("import { clearAskMemory, invalidateAskRequests } from '../coach/askMemory';");

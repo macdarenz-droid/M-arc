@@ -78,6 +78,19 @@ describe('live adjustment persistence guards', () => {
     expect(state.value.active!.entries[0]!.coachDecision).toBeUndefined();
   });
 
+  it.each([
+    { kg: 20 }, { effort: 'easy' as const }, { durationSec: 30 }, { distanceM: 100 },
+  ])('rejects an old offer when a remaining row becomes even partially drafted: %o', patch => {
+    const proposed = offer();
+    setSet(0, 1, patch);
+    const afterDraft = state.value.active;
+    expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
+    expect(state.value.active).toBe(afterDraft);
+    expect(state.value.active!.entries[0]!.sets[1]).toEqual(patch);
+    expect(state.value.active!.entries[0]!.targetOverrides).toBeUndefined();
+    expect(state.value.active!.plan!.entries[0]!.acceptedTargets).toBeUndefined();
+  });
+
   it('uses stable identity after an array shift and never redirects to the shifted row', () => {
     const proposed = offer();
     const otherPlan = { ...planEntry('pe_other'), exerciseId: 'lib_machine_chest_press', name: 'Machine Chest Press' };
@@ -124,13 +137,14 @@ describe('live adjustment persistence guards', () => {
     expect(restNext.value).toEqual({ kind: 'set', setNumber: 2, kg: proposed.next.kg, reps: proposed.next.reps, durationSec: null });
   });
 
-  it('clears effective overrides after a structural add while retaining the one decision and accepted record', () => {
+  it('preserves accepted overrides after appending a row; the copied extra row has no accepted target', () => {
     const proposed = offer();
     expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(true);
     addSet(0);
-    expect(state.value.active!.entries[0]!.targetOverrides).toBeUndefined();
+    expect(state.value.active!.entries[0]!.targetOverrides).toEqual([null, proposed.next, proposed.next, null]);
     expect(state.value.active!.entries[0]!.coachDecision?.action).toBe('accepted');
     expect(state.value.active!.plan!.entries[0]!.acceptedTargets?.[1]).toEqual(proposed.next);
+    expect(state.value.active!.plan!.entries[0]!.acceptedTargets?.[3]).toBeUndefined();
     expect(acceptLiveAdjustment('pe_bench', STARTED, proposed)).toBe(false);
   });
 

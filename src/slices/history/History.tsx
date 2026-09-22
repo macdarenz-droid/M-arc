@@ -23,7 +23,7 @@ import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDe
 import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
 import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment } from '@/slices/coach/presence';
+import { dismissPresenceMoment } from '@/slices/coach/presenceState';
 import { COACH_NAME } from '@/ui/chatRender';
 
 export function History() {
