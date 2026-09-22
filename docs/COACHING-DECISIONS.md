@@ -277,3 +277,8 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 ## Boot crash: `addListener(...).catch is not a function` (2026-09-22)
 - On device, `Capacitor.Plugins.WatchBridge.addListener` returned a bare handle, not a Promise, so the chained `.catch` threw during boot.
 - Decision: never chain `.catch` onto a plugin call directly. `listen()` in `src/native/watch.ts` wraps it in `Promise.resolve(...)` inside a try; `isSupported`/`status` get the same treatment, and so does the LocalNotifications tap listener. A missing or odd plugin now turns live HR off and never blocks boot.
+
+## Escobar v2: reset and architecture (2026-09-22)
+- Phase E (the port of the old Escobar onto this brain) was reverted at the owner's request (`4d8ff4e`, a revert commit, so the history stays intact). The boot-crash fix `decec92` stays.
+- Escobar is to be rebuilt fresh on this brain from `docs/ESCOBAR-ARCHITECTURE.md` (phases EV0–EV9). That document's §24 lists the decisions already taken. An adversarial review against the code and the Claude API docs was folded into it before commit.
+- Model default `claude-opus-5`, with refusal fallbacks on by default (`fallbacks: 'default'`). Both are env-configurable in the new Worker (`marc-escobar`). The old Worker `marc-coach` stays untouched.
