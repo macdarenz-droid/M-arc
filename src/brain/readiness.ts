@@ -211,3 +211,9 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
 
   return { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating };
 }
+
+/** F3.8: a one-line summary for the optional morning notification. */
+export function readinessSummaryText(r: ReadinessResult): string {
+  const advice = r.loadAdvice === 'reduce' ? ' Ease off today.' : r.loadAdvice === 'no_increase' ? ' Keep loads steady today.' : '';
+  return `Readiness: ${r.band} (${r.score}).${advice}`;
+}

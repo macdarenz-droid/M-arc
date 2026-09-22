@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readinessBaselines, readiness, type ReadinessInput } from '@/brain/readiness';
+import { readinessBaselines, readiness, readinessSummaryText, type ReadinessInput } from '@/brain/readiness';
 import type { CheckIn, DailyHealth } from '@/core/models';
 import type { MuscleRecovery } from '@/brain/recovery';
 import { session, sets } from './helpers';
@@ -81,5 +81,12 @@ describe('readiness', () => {
     const sessions = [session(day(1), [{ id: 'bench', sets: sets(60, 8, 'ideal', 3) }])];
     const r = readiness({ ...baseInput, healthDays, checkIn: { day: today, sleepQuality: 4, mood: 4 }, checkInHistory, recovery: [mr('chest', 90)], sessions });
     expect(r!.confidence).not.toBe('low');
+  });
+});
+
+describe('readinessSummaryText (F3.8)', () => {
+  it('names the band and score, with advice only when it is not normal', () => {
+    expect(readinessSummaryText({ score: 80, band: 'green', confidence: 'high', loadAdvice: 'normal', drivers: [], calibrating: false })).toBe('Readiness: green (80).');
+    expect(readinessSummaryText({ score: 20, band: 'red', confidence: 'high', loadAdvice: 'reduce', drivers: [], calibrating: false })).toBe('Readiness: red (20). Ease off today.');
   });
 });

@@ -164,6 +164,8 @@ export interface Reminders {
   /** HH:MM local time. */
   time: string;
   style: 'silent' | 'vibrate' | 'alert';
+  /** F3.8: swap today's body for a readiness one-liner when today is a scheduled day. Off by default; only ever affects the notification already scheduled for today, since a future day's readiness cannot be known ahead of time. */
+  readinessSummary?: boolean;
 }
 
 /** Remembers the last watch so a session can reconnect without scanning again. */
