@@ -128,8 +128,40 @@ Sections read: 6.2, 6.3 (WatchBridge/native BLE), F0.4, F1.1, F1.6, 6.10 (energy
 - **Needs device check**: real BLE connection to a broadcasting watch and the runtime permission prompts on real Android API levels — the one thing no environment available here can substitute for. Everything else (native compile, plugin contract, UI wiring, degraded-without-a-watch behaviour) was verified by other means as described above.
 - **Depends on this for later phases**: P2's HR-guided rest and effort-mismatch/drift rules read `latestMeasurement`/`SetHeart`/`SessionHeart` this phase built; P3's readiness baselines read `healthDays` the same way P0 already established; P4's deload state is independent of this phase.
 
-## Next: Phase P2 (HR coaching) — NOT STARTED
-Sections to read next: 6.4 (HR-guided rest via `restTarget`, the `heart.overreaching`/`heart.effort-mismatch`/`heart.drift`/`heart.hrr-trend` coach rules), F1.2-F1.5 (conditioning zones, two new record kinds). Needs device check for the actual HR-guided rest behaviour on real hardware; build and test the pure logic regardless.
+## Phase P2 (HR coaching) — DONE
+
+Sections read: 6.4 (`restTarget`, `heart.effort-mismatch`/`heart.drift`), F1.2-F1.5, section 7 (P2 row).
+
+### Layer: data model — done, commit 2afc601
+- `core/models.ts`: `Preferences.rest: { mode: 'time'|'heart'; heartTargetPct; minSec }` (default `mode: 'time'`), `RestState.preSetBpm?`/`effort?`.
+
+### Layer: brain — done, commit 15b12af
+- `brain/heart.ts`: `minRestSec` (60/90/120 easy/ideal/max, applied uniformly — see decisions), `restReadyBpm`/`restTarget` (3 consecutive settled samples + the effort's minimum time, 300s hard cap), `effortMismatch` (session-relative, only the "easy but near-max" direction the plan's template actually describes), `intraSessionDrift` (3+ same-load sets, rising peak HR + shrinking HRR60).
+- `coach/rules.ts`: `heart.effort-mismatch` (110) and `heart.drift` (130, alert) added to the always-on `RULES`, reading the most recent session.
+- Tests: 13 new cases in `tests/heart.test.ts` (38 total in that file), 4 new cases in `tests/coach.test.ts`.
+
+### Layer: native — N/A (no new native surface; reuses P1's WatchBridge stream)
+
+### Layer: UI — done, commit 10b2c3e
+- `session.ts`: `startRest` captures `preSetBpm`/`effort` at the moment auto-rest starts (from `slices/workout/heart.ts`'s new `latestLiveBpm()`).
+- `Train.tsx`'s `RestBanner`: in heart mode with a LIVE stream and a resting-HR source, shows "150 → 103" and ends via `restTarget()`; falls back to the ordinary timer display/behaviour the instant the stream isn't LIVE or heart mode isn't selected — the original timer duration stays the ceiling either way.
+- `Settings.tsx`: a "Rest ends by heart rate" toggle appears once a watch is actually connected.
+- Manually verified via Playwright with the stubbed-watch technique from P1: heart mode shows the bpm-target banner correctly; forcing the stub's freshness to STALE correctly falls back to the plain timer. Zero errors either way.
+
+### Layer: gate — done, commit d2b5f3a
+- Watch-stub fixture now seeds a week of `restingHr` history and `rest.mode: 'heart'`, screenshots the rest banner after a live commit, and asserts the "N → N" heart-guided text appears.
+- `npm run check`: **PASS** (typecheck, 239/239 tests across 22 files, build). `npm run gate`: **PASS** — 5/5 themes plus the watch-stub fixture, all assertions hold.
+
+### P2 report
+- **Built**: HR-guided rest (target bpm, 3-sample settling, effort-based minimum, 300s cap, timer-ceiling and STALE fallback), `heart.effort-mismatch` and `heart.drift` coach rules, Settings toggle.
+- **Tested**: `npx vitest run` → 239/239 across 22 files. `npm run check` → clean. `npm run gate` → 5/5 themes + watch stub, PASS, including a real heart-mode rest screenshot.
+- **Decided by research**: none (thresholds either came from the plan's own numbers/examples or are recorded as implementation-detail choices with no plan text to contradict).
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: F1.5 (conditioning zone targets, two new record kinds) deferred — not in this phase's literal Done-when, and would need new raw-series plumbing into `prs.ts`/`progression.ts` that doesn't exist; `heart.overreaching`/`heart.hrr-trend`/`data.watch`/`data.health` deferred (unclaimed by any phase's Done-when, and `heart.overreaching` needs P3's not-yet-built readiness module).
+- **Needs device check**: the actual HR-guided rest experience on a real broadcasting watch (does 0.6 of reserve / +12bpm feel right in practice) — everything else (the decision logic, the UI fallback, the gate) was verified by other means.
+- **Depends on this for later phases**: P3's readiness work will add `heart.overreaching` once its baselines exist; P4's deload state is independent.
+
+## Next: Phase P3 (Readiness) — NOT STARTED
+Sections to read next: 6.4's `brain/readiness.ts` bullet (readinessBaselines/readiness/overreachingFlag), the readiness card/insight and check-in flow, `suggestNext`'s readiness hook, Appendix E (HRV dormant on the GT6 — no RR intervals).
 
 ## Not started
-P2, P3, P4.
+P3, P4.
