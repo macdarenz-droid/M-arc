@@ -43,7 +43,7 @@ export const todayReadiness = computed(() => readiness({
 }));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value || 3));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
-export const insights = computed(() => coachInsights({ sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises, today: today.value, now: quantizedNow(), profileHistory: state.value.profileHistory, profile: state.value.profile, healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks, recoveryModel: state.value.recoveryModel }, 3));
+export const insights = computed(() => coachInsights({ sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises, today: today.value, now: quantizedNow(), profileHistory: state.value.profileHistory, profile: state.value.profile, healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks, recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback }, 3));
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;

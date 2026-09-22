@@ -5,10 +5,10 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
-import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
+import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf } from '@/core/dates';
+import { formatHours, weekdayOf, daysBetween } from '@/core/dates';
 import { recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory } from '../history';
 import { plateauStatus } from '../trend';
@@ -58,6 +58,8 @@ export interface CoachContext {
   checkIns: CheckIn[];
   freshMarks: FreshMark[];
   recoveryModel: RecoveryModel;
+  deload: Deload | null;
+  feedback: InsightFeedback[];
 }
 
 interface Derived {
@@ -434,7 +436,9 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
   });
   // A recovery insight about a muscle explains plateau/readiness on lifts that target it.
   const recovering = new Set(all.filter(i => i.category === 'recovery').map(i => i.muscle));
+  const snoozedIds = new Set(ctx.feedback.filter(f => f.verdict === 'snoozed' && daysBetween(f.day, ctx.today) < 7).map(f => f.id));
   const filtered = all.filter(i => {
+    if (snoozedIds.has(i.id)) return false;
     if (!i.exerciseId || recovering.size === 0) return true;
     const meta = findExercise(i.exerciseId, ctx.custom);
     return !meta?.primary.some(m => recovering.has(m));

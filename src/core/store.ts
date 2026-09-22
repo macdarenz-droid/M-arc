@@ -37,6 +37,8 @@ function normalize(s: AppState): AppState {
     checkIns: s.checkIns ?? [],
     recoveryModel: { tauScale: s.recoveryModel?.tauScale ?? {}, observations: s.recoveryModel?.observations ?? {} },
     freshMarks: s.freshMarks ?? [],
+    deload: s.deload ?? null,
+    insightFeedback: s.insightFeedback ?? [],
     sessions: (s.sessions ?? []).map(withLogging),
   };
 }

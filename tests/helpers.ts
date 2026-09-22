@@ -1,4 +1,4 @@
-import type { CheckIn, FreshMark, LoggedSet, Profile, RecoveryModel, Session, SessionLogging } from '@/core/models';
+import type { CheckIn, FreshMark, InsightFeedback, LoggedSet, Profile, RecoveryModel, Session, SessionLogging } from '@/core/models';
 import { newId } from '@/core/models';
 
 export function liveLogging(trainedAt: string, trainedEndAt: string): SessionLogging {
@@ -33,6 +33,7 @@ export const establishedProfile: Profile = { name: 'Test', trainingSince: '2015-
 export const noCheckIns: CheckIn[] = [];
 export const noFreshMarks: FreshMark[] = [];
 export const freshRecoveryModel: RecoveryModel = { tauScale: {}, observations: {} };
+export const noFeedback: InsightFeedback[] = [];
 
 /** Every field CoachContext needs beyond sessions/splits/schedule/custom/today/now, defaulted for tests that don't care. */
 export const baseCoachExtras = {
@@ -42,4 +43,6 @@ export const baseCoachExtras = {
   checkIns: noCheckIns,
   freshMarks: noFreshMarks,
   recoveryModel: freshRecoveryModel,
+  deload: null,
+  feedback: noFeedback,
 };

@@ -247,6 +247,22 @@ export interface RecoveryModel {
   observations: Partial<Record<MuscleId, number>>;
 }
 
+/** F3.3: a lighter week, offered by the coach and accepted by the user. Closes itself after endDay. */
+export interface Deload {
+  startDay: string;
+  endDay: string;
+  reason: string;
+  setFactor: number;
+  loadFactor: number;
+}
+
+/** F3.6: "Helpful" or a 7-day snooze on one insight id. Newest last. */
+export interface InsightFeedback {
+  id: string;
+  day: string;
+  verdict: 'helpful' | 'snoozed';
+}
+
 /** A muscle the user marked recovered from the muscle sheet, overriding the model for today. */
 export interface FreshMark {
   muscle: MuscleId;
@@ -316,6 +332,10 @@ export interface AppState {
   freshMarks: FreshMark[];
   /** The Monday key of the week whose review the user has already seen, so it stops reappearing. */
   weeklyReviewDismissedWeek?: string;
+  /** Active lighter week, if any (F3.3). */
+  deload: Deload | null;
+  /** "Helpful"/snooze feedback per insight id, newest last, capped at 200 (F3.6). */
+  insightFeedback: InsightFeedback[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -354,6 +374,8 @@ export function freshState(now = new Date()): AppState {
     checkIns: [],
     recoveryModel: { tauScale: {}, observations: {} },
     freshMarks: [],
+    deload: null,
+    insightFeedback: [],
   };
 }
 
