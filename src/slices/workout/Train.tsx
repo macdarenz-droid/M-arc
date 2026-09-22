@@ -290,10 +290,10 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
 
   return (
-    <Card class={`exercise ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
+    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
         <div class="grow">
-          <div class="row"><b class="ellipsis">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
+          <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
           <div class="hint ellipsis">{next.kg != null && u === 'lb' ? next.target.replace(`${next.kg} kg`, formatLoad(next.kg, u)) : next.target} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setMenu(true); }}><IconMore /></Button>
