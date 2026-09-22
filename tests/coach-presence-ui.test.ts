@@ -68,7 +68,7 @@ describe('PresenceLauncher: never single-line-truncates the cue (regression, see
 describe('Train (Splits/pre-workout header): the presence launcher sits in its own row, never cramped into the icon-button row', () => {
   const source = readFileSync(new URL('../src/slices/workout/Train.tsx', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 
-  it('is rendered outside .topbar, not squeezed alongside the Ask/Import/Split buttons', () => {
+  it('is rendered outside .topbar, not squeezed alongside the Import/Split buttons', () => {
     const topbarStart = source.indexOf('<div class="topbar">');
     const topbarEnd = source.indexOf('</div>\n      </div>', topbarStart) + '</div>\n      </div>'.length;
     const topbarBlock = source.slice(topbarStart, topbarEnd);
@@ -80,7 +80,7 @@ describe('Train (Splits/pre-workout header): the presence launcher sits in its o
   it('is local regardless of online-coach state and its null state opens the shared Ask destination', () => {
     expect(source).not.toContain('{!remoteEnabled.value && moment && (');
     expect(source).toContain('moment ? setMomentOpen(true) : openAsk()');
-    expect(source).toContain("{remoteEnabled.value && <Button variant=\"quiet\" size=\"sm\" onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}>");
+    expect(source).not.toContain('aria-label={`Ask ${COACH_NAME}`}');
   });
 
   it('reuses the existing InsightSheet/SuggestionSheet rather than a new detail view', () => {

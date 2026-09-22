@@ -3,7 +3,7 @@ import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { deload, insights, nowMs, presenceMoment, report, restNext, setTicking, suggestions, today, todayChanges, todayPlan, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, Thinking } from '@/ui/primitives';
-import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMafia, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconCamera, IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { dayKey, formatClock, formatDay } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -122,7 +122,6 @@ function Splits() {
       <div class="topbar">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
         <div class="row">
-          {remoteEnabled.value && <Button variant="quiet" size="sm" onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}><IconMafia size={16} aria-hidden={true} /> {COACH_NAME}</Button>}
           {remoteEnabled.value && <Button variant="quiet" size="sm" disabled={pickingPhoto} onClick={startImport}>{pickingPhoto ? <Thinking /> : <><IconCamera size={16} /> Import</>}</Button>}
           <Button variant="quiet" size="sm" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
         </div>
