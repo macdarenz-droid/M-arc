@@ -32,6 +32,17 @@ export interface Exercise {
 export type SetFidelity = 'live' | 'delayed' | 'retro' | 'edited';
 export type SetFlag = 'implausible_load' | 'implausible_reps' | 'unit_suspect' | 'duplicate' | 'future_time';
 
+/** Heart rate around one set. Series live in heartStore (6.3); only aggregates live here. */
+export interface SetHeart {
+  /** Highest bpm from set start to the commit. */
+  peakBpm: number;
+  /** bpm at commit. */
+  endBpm: number;
+  restStartBpm?: number;
+  /** endBpm minus bpm 60s after commit, only when a live sample existed there. */
+  hrr60?: number;
+}
+
 export interface LoggedSet {
   kg?: number;
   reps?: number;
@@ -44,6 +55,7 @@ export interface LoggedSet {
   restSec?: number;
   fidelity?: SetFidelity;
   flags?: SetFlag[];
+  heart?: SetHeart;
 }
 
 export interface LoggedExercise {
@@ -68,6 +80,37 @@ export interface SessionLogging {
   flags: string[];
 }
 
+/** Energy for one session, frozen at finish time (6.10). Recomputing history when the
+ * user's weight changes later would silently rewrite the past, so this is stored, not derived. */
+export interface SessionEnergy {
+  /** Total burn including resting metabolism. */
+  grossKcal: number;
+  /** Gross minus resting metabolism for the same minutes; comparable to a watch or Health Connect. */
+  activeKcal: number;
+  low: number;
+  high: number;
+  minutes: number;
+  source: 'heart_rate' | 'watch_energy' | 'health_connect';
+  /** The profile values used to compute this, so History can say "estimated with 75 kg at the time". */
+  profileSnapshot: { kg: number; age: number | null; sex: 'male' | 'female' | null };
+}
+
+export interface SessionHeart {
+  source: 'ble';
+  deviceName?: string;
+  /** Valid samples: contact true and bpm > 0. */
+  samples: number;
+  avgBpm: number;
+  maxBpm: number;
+  minBpm: number;
+  hrr60Median?: number;
+  /** Seconds in each of zones 1-5. */
+  zoneSec: [number, number, number, number, number];
+  energy?: SessionEnergy;
+  /** 0-1 share of session time with a live (not delayed/stale) sample. */
+  coverage: number;
+}
+
 export interface Session {
   id: string;
   splitId: string;
@@ -79,6 +122,7 @@ export interface Session {
   durationSec: number;
   exercises: LoggedExercise[];
   logging: SessionLogging;
+  heart?: SessionHeart;
 }
 
 export interface SplitExercise {
@@ -119,6 +163,13 @@ export interface Reminders {
   style: 'silent' | 'vibrate' | 'alert';
 }
 
+/** Remembers the last watch so a session can reconnect without scanning again. */
+export interface WatchPreference {
+  autoConnectOnSession: boolean;
+  deviceAddress?: string;
+  deviceName?: string;
+}
+
 export interface Preferences {
   weightUnit: 'kg' | 'lb';
   restDefaultSec: number;
@@ -127,6 +178,7 @@ export interface Preferences {
   reminders: Reminders;
   /** Show the daily quote card. */
   showSpark: boolean;
+  watch: WatchPreference;
 }
 
 export interface Profile {
@@ -139,6 +191,10 @@ export interface Profile {
   trainingSince?: string;
   /** Preferred training days per week, independent of which days are actually scheduled. */
   plannedDays?: number;
+  /** Manual override for hrMax(); otherwise derived from observed max or the Tanaka formula. */
+  hrMaxOverride?: number;
+  /** Manual override for restingHr(); otherwise the 7-day median of healthDays. */
+  restingHrOverride?: number;
 }
 
 export interface WeightEntry {
@@ -268,6 +324,7 @@ export function freshState(now = new Date()): AppState {
       haptics: true,
       reminders: { enabled: false, time: '17:30', style: 'silent' },
       showSpark: true,
+      watch: { autoConnectOnSession: true },
     },
     body: [],
     health: { connected: false },
