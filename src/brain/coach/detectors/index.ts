@@ -14,3 +14,4 @@ export * from './skips';
 export * from './review';
 export * from './execution';
 export * from './nearmiss';
+export * from './heartRate';

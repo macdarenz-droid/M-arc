@@ -48,8 +48,26 @@ export const FINDING_KINDS = [
   'near_miss',
   'first_sessions',
   'note_flag',
+  'heart_rate_response',
+  'heart_rate_evidence',
 ] as const;
 export type FindingKind = (typeof FINDING_KINDS)[number];
+
+/**
+ * Findings that may never leave the device, whatever the person has turned on.
+ *
+ * A recorded pulse is health data. The remote explainer copies every finding's
+ * metrics verbatim, so registering a heart-rate detector without this set would
+ * put BPM on the wire automatically, through routes that already exist and were
+ * never reviewed for it. Sharing derived heart-rate observations is a separate,
+ * explicitly consented contract — not something a new detector may switch on by
+ * being added. Enforced in `explainer.ts` (`trimFindingsAndProposals`,
+ * `buildPayload`, `cardsFor`), covered by tests/heart-rate-privacy.test.ts.
+ */
+export const LOCAL_ONLY_FINDING_KINDS: ReadonlySet<FindingKind> = new Set<FindingKind>([
+  'heart_rate_response',
+  'heart_rate_evidence',
+]);
 
 export const PROPOSAL_KINDS = [
   'schedule',
@@ -215,6 +233,8 @@ export const PRINCIPLES_BY_FINDING: Record<FindingKind, string[]> = {
   near_miss: ['progressive_overload', 'one_rm_estimation'],
   first_sessions: ['beginner_progression'],
   note_flag: ['subjective_readiness_monitoring'],
+  heart_rate_response: ['wearable_heart_rate_validity'],
+  heart_rate_evidence: ['wearable_heart_rate_validity'],
 };
 
 /** Which research cards each proposal kind may cite. */

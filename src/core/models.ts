@@ -30,6 +30,10 @@ export interface Exercise {
 }
 
 export interface LoggedSet {
+  /** Stable identity for sensor/event attribution. Optional: rows saved before the watch integration have none. */
+  id?: string;
+  /** First time this row was explicitly committed. A logging marker, never a physical set boundary. */
+  loggedAt?: string;
   kg?: number;
   reps?: number;
   effort?: Effort;
@@ -150,6 +154,34 @@ export interface ReadinessEntry {
   stress: 1 | 2 | 3 | 4 | 5;
 }
 
+/**
+ * A compact, versioned summary of one workout's heart-rate recording.
+ *
+ * `metricsVersion: 2` is the only shape any comparison will accept: it counts
+ * each reading for at most five seconds, drops duplicate timestamps, invalid
+ * and poor-contact readings and anything outside the workout window, and
+ * weights the average by those bounded intervals. Anything without it is a
+ * recorded fact that cannot carry time coverage.
+ *
+ * `recordedPeakBpm` is the highest reading actually captured. It is not an
+ * estimate of maximum heart rate and must never be presented as one.
+ */
+export interface HeartRateSummary {
+  metricsVersion?: 2;
+  /** Elapsed workout time represented by accepted readings. */
+  capturedMs?: number;
+  /** Full elapsed workout window, pauses included. */
+  durationMs?: number;
+  sampleCount: number;
+  averageBpm?: number;
+  recordedPeakBpm?: number;
+  coveragePct?: number;
+  firstSampleAt?: string;
+  lastSampleAt?: string;
+  /** Intervals longer than 15 seconds with no accepted reading. */
+  gapCount: number;
+}
+
 export interface Session {
   id: string;
   splitId: string;
@@ -160,6 +192,8 @@ export interface Session {
   endedAt: string;
   durationSec: number;
   exercises: LoggedExercise[];
+  /** Compact recording summary. Raw samples stay in the native store. */
+  heartRate?: HeartRateSummary;
   /** Immutable targets captured before this session's work was logged. */
   plan?: WorkoutPlanSnapshot;
   /** Free text the person wrote about this session. Optional; most sessions have none. */
@@ -198,6 +232,8 @@ export interface RestState {
 }
 
 export interface ActiveSessionEntry {
+  /** Stable across edits, so a recording can be attributed to a row the person moved or renamed. */
+  id?: string;
   exerciseId: string;
   name: string;
   sets: LoggedSet[];
@@ -210,6 +246,12 @@ export interface ActiveSessionEntry {
 }
 
 export interface ActiveSession {
+  /**
+   * Allocated when the person presses Start and reused verbatim as the saved
+   * `Session.id`. The recorder needs an identity before any sample arrives, so
+   * this may not be minted at finish.
+   */
+  id?: string;
   splitId: string;
   startedAt: string;
   pausedMs: number;

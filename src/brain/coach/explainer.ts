@@ -7,7 +7,7 @@
  * measurements": `bmi` (see below) — a single derived ratio, never the raw
  * weight or height it came from.
  */
-import type { Finding, FindingsReport, Proposal } from './contract';
+import { LOCAL_ONLY_FINDING_KINDS, type Finding, type FindingsReport, type Proposal } from './contract';
 import { PRINCIPLES_VERSION, principlesFor } from './principles';
 import { endpoint, newDeviceId, postJson } from '@/ai/client';
 import type { AskStats } from '../stats';
@@ -59,11 +59,21 @@ export const LIMITS = { findings: 24, proposals: 16, cards: 18, explain: 12, pre
 /** At most this many findings of any one kind count toward LIMITS.findings. A kind that fires once per muscle (under_recovered can fire for all 24) would otherwise fill the whole budget by itself on a heavy training day and crowd out everything else — including records, which are exactly what a person asking "why" wants explained. */
 export const MAX_FINDINGS_PER_KIND = 6;
 
+/**
+ * The single gate every outbound route passes through: a local-only kind is
+ * dropped here, before its metrics can be copied into a payload. This runs
+ * ahead of the per-kind budget deliberately, so a local-only finding cannot
+ * even consume a slot.
+ */
+export function outboundFindings(report: FindingsReport): Finding[] {
+  return report.findings.filter(f => !LOCAL_ONLY_FINDING_KINDS.has(f.kind));
+}
+
 /** Findings and proposals trimmed to the limits every grounded route shares. No cards yet — those depend on which ids are actually in view. */
 export function trimFindingsAndProposals(report: FindingsReport): { findings: PayloadFinding[]; proposals: PayloadProposal[] } {
   const perKind = new Map<string, number>();
   const findings: PayloadFinding[] = [];
-  for (const f of report.findings) {
+  for (const f of outboundFindings(report)) {
     const n = perKind.get(f.kind) ?? 0;
     if (n >= MAX_FINDINGS_PER_KIND) continue;
     perKind.set(f.kind, n + 1);
@@ -78,7 +88,9 @@ export function trimFindingsAndProposals(report: FindingsReport): { findings: Pa
 export function cardsFor(report: FindingsReport, ids: string[]): PayloadCard[] {
   const chosen = new Set(ids);
   const principleIds = new Set<string>();
-  for (const f of report.findings) if (chosen.has(f.id)) f.principles.forEach(p => principleIds.add(p));
+  // Defensive: a local-only finding's id must never pull its research card
+  // outbound either — the card alone would disclose the feature is in play.
+  for (const f of outboundFindings(report)) if (chosen.has(f.id)) f.principles.forEach(p => principleIds.add(p));
   for (const p of report.proposals) if (chosen.has(p.id)) p.principles.forEach(x => principleIds.add(x));
   return principlesFor([...principleIds]).slice(0, LIMITS.cards).map(c => ({ id: c.id, title: c.title, rating: c.rating, statement: c.statement, disputed: c.disputed }));
 }
@@ -90,7 +102,9 @@ export function buildPayload(report: FindingsReport, opts: { goal: string; unit:
   let explain = (opts.explain ?? []).filter(id => known.has(id));
   if (!explain.length) {
     const topProposals = proposals.slice(0, 6).map(p => p.id);
-    const topFindings = report.findings.filter(f => f.severity > 0 || f.kind === 'habit_pattern').slice(0, 6).map(f => f.id);
+    // outboundFindings, not report.findings: this fallback bypassed the trim
+    // above, so a local-only finding's id (and its card) could still ship.
+    const topFindings = outboundFindings(report).filter(f => f.severity > 0 || f.kind === 'habit_pattern').slice(0, 6).map(f => f.id);
     explain = [...new Set([...topProposals, ...topFindings])];
   }
   explain = explain.slice(0, LIMITS.explain);

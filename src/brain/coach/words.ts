@@ -21,11 +21,11 @@ import { CONFIDENCE_RANK } from './detectors/shared';
 import { weekReviewCopy, type WeekReview } from './review';
 import { canonicalEvidenceKey } from './moments';
 
-export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data' | 'volume';
+export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data' | 'volume' | 'heart_rate';
 
 export const CATEGORY_LABEL: Record<Category, string> = {
   recovery: 'Recovery', progress: 'Progress', readiness: 'Readiness', balance: 'Training balance', focus: 'Focus muscle',
-  consistency: 'Consistency', data: 'Training data', volume: 'Weekly volume',
+  consistency: 'Consistency', data: 'Training data', volume: 'Weekly volume', heart_rate: 'Watch insights',
 };
 
 const CATEGORY_OF: Record<FindingKind, Category> = {
@@ -36,6 +36,7 @@ const CATEGORY_OF: Record<FindingKind, Category> = {
   redundant_exercises: 'balance', balance_imbalance: 'balance', chronic_skip: 'consistency',
   long_gap: 'consistency', habit_pattern: 'consistency', consistency_drift: 'consistency', first_sessions: 'consistency',
   note_flag: 'readiness',
+  heart_rate_response: 'heart_rate', heart_rate_evidence: 'heart_rate',
 };
 
 export interface Insight {
@@ -389,10 +390,55 @@ function wordsFor(f: Finding, ctx: RenderContext): Words {
             action: 'Keep doing what you did that day.' };
       }
     }
+    case 'heart_rate_response': {
+      const direction = str(m.direction);
+      const matches = plural(num(m.baselineSessions), 'comparable workout');
+      const effort = str(m.effortDirection) === 'harder' ? ' You rated the work harder than usual.'
+        : str(m.effortDirection) === 'easier' ? ' You rated the work easier than usual.'
+        : str(m.effortDirection) === 'similar' ? ' You rated the work about as hard as usual.'
+        : ' Too few sets were rated to compare effort.';
+      const easier = str(m.intent) === 'easier' ? ' These are all easier-week sessions, compared only with each other.' : '';
+      if (direction === 'usual') {
+        return { title: 'Pulse close to your usual range',
+          noticed: `Your recorded average was ${num(m.averageBpm)} bpm, against a median of ${num(m.baselineMedianBpm)} bpm across ${matches}.${effort}${easier}`,
+          means: 'Nothing here stands out. A recording that matches your own history is the ordinary case, not a result.',
+          action: 'Nothing to change. Keep rating your sets so the next comparison has something to work with.' };
+      }
+      return { title: `Pulse ${direction} at similar recorded work`,
+        noticed: `Your recorded average was ${num(m.absDeltaBpm)} bpm ${direction} than your ${num(m.baselineMedianBpm)} bpm median across ${matches}.${effort}${easier}`,
+        means: 'This compares recordings of closely matching work. It does not establish a change in fitness, recovery or readiness, and a wrist sensor is least accurate during lifting.',
+        action: 'Worth a look at your rest lengths, effort ratings and conditions that day, then see whether it repeats. Your loads and rest times are unchanged.' };
+    }
+    case 'heart_rate_evidence': {
+      switch (str(m.code)) {
+        case 'baseline_too_small':
+          return { title: 'Your pulse baseline is still building',
+            noticed: `${num(m.baselineSessions)} of ${num(m.baselineNeeded)} comparable recorded workouts so far.`,
+            means: 'A comparison needs several recordings of closely matching work — same split, same exercises, same loads and set counts, similar duration.',
+            action: 'Keep recording your usual workouts. There is no need to repeat work just to fill this out.' };
+        case 'latest_not_eligible':
+          return { title: 'That recording is too patchy to compare',
+            noticed: num(m.coveragePct) > 0
+              ? `Heart rate covered ${num(m.coveragePct)}% of your last workout; a comparison needs at least ${num(m.minimumCoveragePct)}%.`
+              : 'Your last workout has a recording, but not enough of it to compare.',
+            means: 'Coverage is how much of the elapsed workout has usable readings. A thin recording can look calm simply because most of it is missing.',
+            action: 'Check the watch fit and that broadcasting stays on, then record a workout from start to finish.' };
+        case 'latest_unmatchable':
+          return { title: 'This workout cannot be matched yet',
+            noticed: 'Your last workout was recorded, but its logged work cannot be matched reliably.',
+            means: 'Comparisons currently need known weighted exercises with complete loads and reps. Bodyweight and custom resistance work has no historical record to match against.',
+            action: 'The recording is still saved and visible. Nothing to fix.' };
+        default:
+          return { title: 'Recording saved, no comparison yet',
+            noticed: `${plural(num(m.recordedSessions), 'recorded workout')} so far, ${num(m.eligibleSessions)} with enough coverage to compare.`,
+            means: 'Pulse becomes useful only once there is enough of your own matching history to compare against.',
+            action: 'Keep recording and rating your sets.' };
+      }
+    }
   }
 }
 
-const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, low_readiness: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, session_execution: 1, habit_pattern: 1 };
+const KIND_WEIGHT: Partial<Record<FindingKind, number>> = { heart_rate_response: 1, under_recovered: 9, decline: 8, long_gap: 7, plateau: 6, balance_imbalance: 5, focus_behind: 4, volume_drop: 4, low_readiness: 4, effort_drift_harder: 3, effort_mismatch: 3, low_sleep_readiness: 3, note_flag: 3, record: 2, session_execution: 1, habit_pattern: 1 };
 
 export function renderFinding(f: Finding, ctx: RenderContext): Insight {
   const w = wordsFor(f, ctx);

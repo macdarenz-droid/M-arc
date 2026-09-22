@@ -26,7 +26,7 @@ import { ObjectiveEditor, ObjectiveSummary } from './ObjectiveAgreement';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
-  consistency: 'var(--warning)', data: 'var(--text-3)', volume: 'var(--info)',
+  consistency: 'var(--warning)', data: 'var(--text-3)', volume: 'var(--info)', heart_rate: 'var(--info)',
 };
 
 const KIND_LABEL: Record<Suggestion['kind'], string> = {
