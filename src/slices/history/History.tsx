@@ -6,7 +6,8 @@ import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad } from '@/core/units';
 import type { LoggedSet, Session } from '@/core/models';
-import { allRecords, PR_LABEL } from '@/brain/prs';
+import { allRecords, PR_LABEL, recordsForSession } from '@/brain/prs';
+import { assessPlanFit } from '@/brain/planFit';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
 import { liftTrajectory } from '@/brain/trajectory';
@@ -146,6 +147,9 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
   const custom = state.value.customExercises;
   const fresh = sessions.find(candidate => candidate.id === session.id);
   const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
+  const fit = useMemo(() => fresh ? assessPlanFit(fresh) : null, [fresh]);
+  const achievements = useMemo(() => fresh ? recordsForSession(fresh, sessions, custom) : [], [fresh, sessions, custom]);
+  const tone = state.value.coach.presence?.tone ?? 'steady';
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [note, setNote] = useState(session.note ?? '');
   const [confirm, setConfirm] = useState(false);
@@ -179,7 +183,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
       <div class="stack">
-        {debrief && <SessionDebriefView debrief={debrief} unit={u} />}
+        {debrief && fit && <SessionDebriefView debrief={debrief} fit={fit} achievements={achievements} tone={tone} unit={u} />}
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
             <b class="small">{e.name}</b>

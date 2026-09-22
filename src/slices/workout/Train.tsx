@@ -21,7 +21,8 @@ import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { InsightSheet, SuggestionSheet } from '../coach/Coach';
 import { PresenceLauncher } from '../coach/Presence';
 import { dismissPresenceMoment } from '../coach/presenceState';
-import { liveRecordFrom, prReach } from '@/brain/prs';
+import { liveRecordFrom, prReach, recordsForSession } from '@/brain/prs';
+import { assessPlanFit } from '@/brain/planFit';
 import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet, sessionEmphasis } from '@/brain/exposure';
 import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
@@ -632,7 +633,10 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const custom = state.value.customExercises;
   const fresh = sessions.find(candidate => candidate.id === summary.session.id);
   const session = fresh ?? summary.session;
-  const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
+  const debrief = useMemo(() => sessionDebrief(session, sessions, custom), [session, sessions, custom]);
+  const fit = useMemo(() => assessPlanFit(session), [session]);
+  const achievements = useMemo(() => recordsForSession(session, sessions, custom), [session, sessions, custom]);
+  const tone = state.value.coach.presence?.tone ?? 'steady';
   const nearMiss = useMemo(() => fresh ? sessionNearMisses(fresh, sessions, custom)[0] ?? null : null, [fresh, sessions, custom]);
   const [repairSessionId, setRepairSessionId] = useState<string | null>(() => fresh && effortRepair(fresh).offer ? fresh.id : null);
   const emphasis = sessionEmphasis(session.exercises, custom).percents;
@@ -656,7 +660,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
         <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
       </Card>
       {fresh && repairSessionId === fresh.id && <EffortRepair session={fresh} onDone={() => setRepairSessionId(null)} />}
-      {debrief && <SessionDebrief debrief={debrief} unit={unit.value} />}
+      <SessionDebrief debrief={debrief} fit={fit} achievements={achievements} tone={tone} unit={unit.value} />
       {nearMiss && <NearMissNote miss={nearMiss} unit={unit.value} />}
       <Section title="Muscles worked today">
         <Card>

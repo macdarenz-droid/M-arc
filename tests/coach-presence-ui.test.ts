@@ -150,7 +150,10 @@ describe('Coach: deliberately exempt from the presence launcher', () => {
     // The reasoning is load-bearing, not just a comment: Coach must still read the
     // same suggestions/insights arrays the selector ranks over, or the "structurally
     // guaranteed" claim in that comment would stop being true.
-    expect(source).toContain("import { deload, insights, report, suggestions, today } from '@/app/selectors';");
+    const selectorImport = source.split('\n').find(line => line.includes("from '@/app/selectors'")) ?? '';
+    expect(selectorImport).toContain('insights');
+    expect(selectorImport).toContain('suggestions');
+    expect(selectorImport).toContain('sessionFeedback');
   });
 });
 

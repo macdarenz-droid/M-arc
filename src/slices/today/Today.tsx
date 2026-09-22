@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { closedWeekReview, deload, insights, presenceMoment, recovery, report, scheduledSplit, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
+import { closedWeekReview, deload, insights, presenceMoment, recovery, report, scheduledSplit, sessionFeedback, sessionsToday, spark as personalSpark, streak, suggestions, today, todayChanges, todaySuggestion, unit, verdictCard, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -36,6 +36,7 @@ export function Today() {
   const ready = rec.filter(r => !r.recovering && r.lastTrainedAt).length;
   const w = week.value;
   const moment = presenceMoment.value;
+  const feedback = sessionFeedback.value;
   const [momentOpen, setMomentOpen] = useState(false);
   const openInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
   const openSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
@@ -82,6 +83,7 @@ export function Today() {
             <div class="eyebrow">Today</div>
             <h2>{done.map(d => d.splitName).join(' + ')} done</h2>
             <p class="muted small">{done.reduce((a, d) => a + d.exercises.reduce((x, e) => x + e.sets.length, 0), 0)} sets logged. Recovery has started.</p>
+            {feedback && <p class="small"><b>{feedback.copy.headline}.</b> {feedback.copy.summary}{feedback.achievements.length ? ` ${feedback.achievements.length} new ${feedback.achievements.length === 1 ? 'best' : 'bests'} recorded.` : ''}</p>}
             <div class="row"><Button onClick={() => go('body')}>View recovery</Button><Button variant="quiet" onClick={() => go('history')}>History</Button></div>
           </div>
         )}

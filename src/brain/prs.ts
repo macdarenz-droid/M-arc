@@ -164,3 +164,19 @@ export function isLiveRecord(sessions: Session[], exerciseId: string, set: { kg?
   const mode = modeOf(exerciseId, custom);
   return liveRecordFrom(hist, mode, set);
 }
+
+/** Records earned by one exact session, using only chronologically earlier evidence. */
+export function recordsForSession(session: Session, sessions: Session[], custom: Exercise[] = []): PersonalRecord[] {
+  const sessionTime = Date.parse(session.startedAt);
+  if (!Number.isFinite(sessionTime)) return [];
+  const prior = sessions.filter(candidate => candidate.id !== session.id && Number.isFinite(Date.parse(candidate.startedAt))
+    && (Date.parse(candidate.startedAt) < sessionTime || (Date.parse(candidate.startedAt) === sessionTime && candidate.id.localeCompare(session.id) < 0)));
+  const names = new Map(session.exercises.map(exercise => [exercise.exerciseId, exercise.name]));
+  const out: PersonalRecord[] = [];
+  for (const [exerciseId, name] of names) {
+    const current = exerciseHistory([session], exerciseId, custom)[0];
+    if (!current) continue;
+    out.push(...recordsFor(current, exerciseHistory(prior, exerciseId, custom), modeOf(exerciseId, custom), exerciseId, name));
+  }
+  return out;
+}

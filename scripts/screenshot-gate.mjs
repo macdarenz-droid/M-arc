@@ -177,8 +177,8 @@ for (const theme of themes) {
     if (await page.getByRole('button', { name: 'Use this target' }).count()) errors.push('silent-black: dismissed live offer returned after reload');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
-    await page.getByRole('heading', { name: 'Plan and actual' }).waitFor();
-    const finishDebrief = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Plan and actual' }) });
+    await page.getByRole('heading', { name: 'Evidence' }).waitFor();
+    const finishDebrief = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Evidence' }) });
     if (!(await finishDebrief.innerText()).includes('working sets logged')) errors.push('silent-black: finish debrief lacked saved plan totals');
     await page.screenshot({ path: `${OUT}/silent-black-session-debrief-finish.png` });
     await page.setViewportSize({ width: 360, height: 800 });
@@ -293,6 +293,7 @@ for (const theme of themes) {
     const debriefState = structuredClone(source);
     debriefState.active = null;
     debriefState.coach.remoteExplainer = false;
+    debriefState.coach.presence = { version: 1, tone: 'steady', dismissed: [] };
     debriefState.preferences.weightUnit = 'kg';
     const previousDay = day(7), currentDay = day(0);
     const originalTargets = Array.from({ length: 3 }, () => ({ kg: 60, reps: 8, durationSec: null }));
@@ -305,9 +306,12 @@ for (const theme of themes) {
     ];
     const currentSession = { id: 'gate-debrief-current', splitId: 'split_push', splitName: 'Push', day: currentDay, startedAt: `${currentDay}T10:00:00.000Z`, endedAt: `${currentDay}T11:00:00.000Z`, durationSec: 3600,
       exercises: [
-        { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', planEntryId: 'gate-pe-bench', actualSetIndices: [0, 1, 2, 3], sets: [{ kg: 60, reps: 8 }, { kg: 60, reps: 7 }, { kg: 62.5, reps: 6 }, { kg: 62.5, reps: 5 }] },
-        { exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', planEntryId: 'gate-pe-lateral', actualSetIndices: [0], sets: [{ kg: 5, reps: 12 }] },
-      ], plan: { version: 1, capturedAt: `${currentDay}T09:59:00.000Z`, goal: debriefState.goal, deload: null, entries: planEntries } };
+        { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', planEntryId: 'gate-pe-bench', actualSetIndices: [0, 1, 2, 3], sets: [{ kg: 60, reps: 8, effort: 'ideal' }, { kg: 60, reps: 7, effort: 'ideal' }, { kg: 62.5, reps: 6, effort: 'max' }, { kg: 62.5, reps: 5, effort: 'ideal' }] },
+        { exerciseId: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', planEntryId: 'gate-pe-lateral', actualSetIndices: [0], sets: [{ kg: 5, reps: 12, effort: 'ideal' }] },
+      ], plan: { version: 1, capturedAt: `${currentDay}T09:59:00.000Z`, goal: debriefState.goal, deload: null, entries: planEntries,
+        assessment: { version: 1, intent: { kind: 'easier', capturedAt: `${currentDay}T09:59:00.000Z`, source: 'accepted_deload', effortCap: 'ideal' },
+          changes: [{ id: 'gate-pac-targets', acceptedAt: `${currentDay}T10:20:00.000Z`, kind: 'targets', entryId: 'gate-pe-bench', reason: 'max_below_target', targets: [{ setIndex: 2, target: { kg: 62.5, reps: 6, durationSec: null } }] }],
+          invalidatedEntryIds: [], seenWorkingRows: [{ entryId: 'gate-pe-bench', setIndices: [0, 1, 2, 3] }, { entryId: 'gate-pe-lateral', setIndices: [0] }] } } };
     debriefState.sessions = [priorSession, currentSession];
     const debriefRequests = [];
     const debriefCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
@@ -316,17 +320,28 @@ for (const theme of themes) {
     debriefPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
     await debriefPage.addInitScript(saved => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', 'silent-black'); }, JSON.stringify(debriefState));
     await debriefPage.goto(`http://localhost:${PORT}/`); await debriefPage.waitForSelector('.nav');
+    await debriefPage.getByText('Harder than planned.', { exact: true }).waitFor();
+    await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await debriefPage.getByRole('heading', { name: 'Latest workout' }).waitFor();
+    await debriefPage.getByRole('button', { name: 'View plan evidence' }).waitFor();
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefPage.getByRole('button', { name: 'Edit' }).first().click();
-    await debriefPage.getByRole('heading', { name: 'Plan and actual' }).waitFor();
+    await debriefPage.getByRole('heading', { name: 'Achievement' }).waitFor();
+    await debriefPage.getByRole('heading', { name: 'Plan fit' }).waitFor();
+    await debriefPage.getByRole('heading', { name: 'Evidence' }).waitFor();
+    await debriefPage.getByText('Harder than planned', { exact: true }).waitFor();
+    await debriefPage.getByText('New best', { exact: true }).first().waitFor();
+    await debriefPage.getByText('1 recorded effort rating was above the saved cap.', { exact: true }).waitFor();
     await debriefPage.getByText('Accepted target 62.5 kg \u00d7 6', { exact: true }).waitFor();
     await debriefPage.getByText('Starting suggestion, not a target learned from your history.', { exact: true }).waitFor();
-    await debriefPage.getByText(/Additional set; logged 62\.5 kg \u00d7 5/).waitFor();
+    await debriefPage.getByText(/No original target \(additional set\); actual 62\.5 kg \u00d7 5/).waitFor();
     await debriefPage.getByRole('button', { name: 'Show comparison' }).focus(); await debriefPage.keyboard.press('Enter');
     await debriefPage.getByText(/Previous: 60 kg \u00d7 10, 1800 kg total/).waitFor();
     await debriefPage.screenshot({ path: `${OUT}/silent-black-session-debrief-history.png` });
-    await debriefPage.setViewportSize({ width: 360, height: 800 });
-    if (await debriefPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push('silent-black: history debrief overflows at 360px');
+    for (const width of [320, 360, 900]) {
+      await debriefPage.setViewportSize({ width, height: width === 900 ? 900 : 800 });
+      if (await debriefPage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push(`silent-black: history debrief overflows at ${width}px`);
+    }
     await debriefPage.setViewportSize({ width: 390, height: 844 });
     await debriefPage.keyboard.press('Escape');
     await debriefPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Body' }).click();
@@ -360,7 +375,7 @@ for (const theme of themes) {
     await debriefRestorePage.getByText('Accepted target 62.5 kg \u00d7 6', { exact: true }).waitFor();
     await debriefRestoreCtx.close();
 
-    const debriefLbState = structuredClone(debriefState); debriefLbState.preferences.weightUnit = 'lb';
+    const debriefLbState = structuredClone(debriefState); debriefLbState.preferences.weightUnit = 'lb'; debriefLbState.coach.presence.tone = 'direct';
     const debriefLbCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const debriefLbPage = await debriefLbCtx.newPage();
     debriefLbPage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) debriefRequests.push(request.url()); });
@@ -368,6 +383,8 @@ for (const theme of themes) {
     await debriefLbPage.goto(`http://localhost:${PORT}/`); await debriefLbPage.waitForSelector('.nav');
     await debriefLbPage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'History' }).click();
     await debriefLbPage.getByRole('button', { name: 'Edit' }).first().click();
+    await debriefLbPage.getByText('Harder than planned', { exact: true }).waitFor();
+    await debriefLbPage.getByText('1 recorded effort rating was above the saved cap.', { exact: true }).waitFor();
     await debriefLbPage.getByText('Accepted target 138 lb \u00d7 6', { exact: true }).waitFor();
     await debriefLbCtx.close();
     if (debriefRequests.length) errors.push(`silent-black: session debrief made external requests (${debriefRequests.join(', ')})`);

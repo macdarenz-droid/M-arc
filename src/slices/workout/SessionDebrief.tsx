@@ -1,8 +1,12 @@
 import { useState } from 'preact/hooks';
-import type { PlanSetTarget } from '@/core/models';
+import type { CoachTone, PlanSetTarget } from '@/core/models';
 import type { SessionDebrief as SessionDebriefResult } from '@/brain/debrief';
+import type { PlanFitResult } from '@/brain/planFit';
+import type { PersonalRecord } from '@/brain/prs';
+import { PR_LABEL } from '@/brain/prs';
+import { planFitCopy } from '@/brain/coach/planFitWords';
 import { formatLoad } from '@/core/units';
-import { Button, Card, Section } from '@/ui/primitives';
+import { Button, Card, Chip, Section } from '@/ui/primitives';
 
 function targetText(target: PlanSetTarget, unit: 'kg' | 'lb'): string {
   if (target.durationSec !== null) return `${target.durationSec}s`;
@@ -14,10 +18,11 @@ function targetText(target: PlanSetTarget, unit: 'kg' | 'lb'): string {
 
 const setsLabel = (count: number): string => `${count} ${count === 1 ? 'set' : 'sets'}`;
 
-export function SessionDebrief({ debrief, unit }: { debrief: SessionDebriefResult; unit: 'kg' | 'lb' }) {
+export function SessionDebrief({ debrief, fit, achievements, tone, unit }: { debrief: SessionDebriefResult; fit: PlanFitResult; achievements: PersonalRecord[]; tone: CoachTone; unit: 'kg' | 'lb' }) {
   const [showAll, setShowAll] = useState(false);
   const [tradeoffs, setTradeoffs] = useState<Set<string>>(() => new Set());
   const shown = showAll ? debrief.exercises : debrief.exercises.slice(0, 3);
+  const copy = planFitCopy(fit, tone);
   const toggleTradeoff = (key: string) => setTradeoffs(current => {
     const next = new Set(current);
     if (next.has(key)) next.delete(key); else next.add(key);
@@ -25,7 +30,30 @@ export function SessionDebrief({ debrief, unit }: { debrief: SessionDebriefResul
   });
 
   return (
-    <Section title="Plan and actual">
+    <>
+    <Section title="Achievement">
+      <Card>
+        {achievements.length ? (
+          <div class="list">{achievements.map((record, index) => (
+            <div class="list-row" key={`${record.exerciseId}:${record.kind}:${index}`}>
+              <div class="grow"><b class="small">{record.exerciseName}</b><div class="hint">{PR_LABEL[record.kind]} · {record.detail}</div></div>
+              <Chip tone="positive">New best</Chip>
+            </div>
+          ))}</div>
+        ) : <p class="small">No new personal record identified from the saved history. This is separate from how the workout fit the plan.</p>}
+      </Card>
+    </Section>
+    <Section title="Plan fit">
+      <Card>
+        <b>{copy.headline}</b>
+        <p class="small" style={{ marginTop: 6 }}>{copy.summary}</p>
+        <p class="hint" style={{ marginTop: 6 }}>{fit.expectedRows
+          ? `${fit.metRows} of ${fit.expectedRows} expected rows met with comparable evidence.`
+          : 'No assessable expected rows were saved.'}</p>
+        {!!copy.details.length && <div class="stack-sm" style={{ marginTop: 10 }}>{copy.details.map(detail => <p class="hint" key={detail}>{detail}</p>)}</div>}
+      </Card>
+    </Section>
+    <Section title="Evidence">
       <Card>
         <p class="small">
           {debrief.loggedSets} working {debrief.loggedSets === 1 ? 'set' : 'sets'} logged{debrief.plannedSets !== null ? `; ${setsLabel(debrief.plannedSets)} originally planned.` : '.'}
@@ -55,12 +83,12 @@ export function SessionDebrief({ debrief, unit }: { debrief: SessionDebriefResul
                     return <div class="small" key={row.setNumber}>
                       <span class="muted">Set {row.setNumber} · </span>
                       {row.planned
-                        ? <>Target {targetText(row.planned, unit)}; logged {targetText(row.actual, unit)}</>
+                        ? <>Original target {targetText(row.planned, unit)}; actual {targetText(row.actual, unit)}</>
                         : additional
-                          ? <>Additional set; logged {targetText(row.actual, unit)}</>
+                          ? <>No original target (additional set); actual {targetText(row.actual, unit)}</>
                           : unavailable
-                            ? <>Target unavailable; logged {targetText(row.actual, unit)}</>
-                            : <>Logged {targetText(row.actual, unit)}</>}
+                            ? <>Original target unavailable; actual {targetText(row.actual, unit)}</>
+                            : <>Actual {targetText(row.actual, unit)}</>}
                       {row.accepted && <div class="hint">Accepted target {targetText(row.accepted, unit)}</div>}
                     </div>;
                   })}
@@ -81,5 +109,6 @@ export function SessionDebrief({ debrief, unit }: { debrief: SessionDebriefResul
         {debrief.exercises.length > 3 && <Button variant="quiet" size="sm" style={{ marginTop: 10 }} onClick={() => setShowAll(value => !value)}>{showAll ? 'Show fewer exercises' : 'Show all exercises'}</Button>}
       </Card>
     </Section>
+    </>
   );
 }

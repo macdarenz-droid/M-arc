@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { deload, insights, report, suggestions, today } from '@/app/selectors';
+import { deload, insights, report, sessionFeedback, suggestions, today } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet, Thinking } from '@/ui/primitives';
 import { IconChevron, IconInfo, IconMafia } from '@/ui/icons';
 import { COACH_NAME } from '@/ui/chatRender';
@@ -42,6 +42,8 @@ const CONFIDENCE_LABEL: Record<Insight['confidence'], string> = { low: 'Low conf
  * top pick is structurally guaranteed to already be the first "Suggestions"
  * or "Insights" card here. A launcher would duplicate that card, not surface
  * a new one — the one thing every other presence surface is built to avoid.
+ * Completed-session feedback is different evidence and gets its own occupied
+ * slot below, sourced from the same local selector used by Today.
  */
 export function Coach() {
   const s = state.value;
@@ -64,6 +66,7 @@ export function Coach() {
   const [cueSeed, setCueSeed] = useState(0);
   const cue: Cue | null = lastExercise ? pickCue(lastExercise, cueSeed % 2 ? 'learn' : 'coach', `${today.value}|${cueSeed}`) : null;
   const dq = report.value.dataQuality;
+  const feedback = sessionFeedback.value;
 
   const accept = (sg: Suggestion) => { showToast(acceptProposal(sg.proposal, today.value)); setOpenSuggestion(null); };
   const dismiss = (sg: Suggestion) => { dismissProposal(sg.proposal, today.value, report.value); showToast('Not now. It can come back later.'); setOpenSuggestion(null); };
@@ -108,6 +111,18 @@ export function Coach() {
       )}
 
       <UnfinishedItems onReview={item => openAskSavedReview(item?.key)} />
+
+      {feedback && (
+        <Section title="Latest workout">
+          <Card>
+            <div class="row-between"><b>{feedback.splitName}</b>{feedback.achievements.length > 0 && <Chip tone="positive">{feedback.achievements.length} new {feedback.achievements.length === 1 ? 'best' : 'bests'}</Chip>}</div>
+            <h3 style={{ margin: '8px 0 4px' }}>{feedback.copy.headline}</h3>
+            <p class="small muted">{feedback.copy.summary}</p>
+            {!!feedback.copy.details.length && <div class="stack-sm" style={{ marginTop: 8 }}>{feedback.copy.details.map(detail => <p class="hint" key={detail}>{detail}</p>)}</div>}
+            <Button variant="quiet" size="sm" style={{ marginTop: 10 }} onClick={() => go('history')}>View plan evidence</Button>
+          </Card>
+        </Section>
+      )}
 
       <Section title="Suggestions" aside={visibleSuggestions.length ? <span class="small muted">{visibleSuggestions.length}</span> : undefined}>
         <div class="stack-sm">

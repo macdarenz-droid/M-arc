@@ -18,6 +18,7 @@ import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain
 import { weekReview } from '@/brain/coach/review';
 import type { BrainContext } from '@/brain/coach/context';
 import { selectMoment, type CoachingMoment } from '@/brain/coach/moments';
+import { selectSessionFeedback } from '@/brain/coach/sessionFeedback';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -86,6 +87,13 @@ export const presenceMoment = computed<CoachingMoment | null>(() => selectMoment
   tone: state.value.coach.presence?.tone ?? 'steady',
   dismissed: state.value.coach.presence?.dismissed ?? [],
 }));
+/** Today's completed-session feedback, separate from report-derived proposals. */
+export const sessionFeedback = computed(() => selectSessionFeedback(
+  state.value.sessions,
+  today.value,
+  state.value.customExercises,
+  state.value.coach.presence?.tone ?? 'steady',
+));
 export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));
 
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));

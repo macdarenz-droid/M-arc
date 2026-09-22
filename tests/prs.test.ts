@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allRecords, isLiveRecord, liveRecordFrom, recordsInWeek } from '@/brain/prs';
+import { allRecords, isLiveRecord, liveRecordFrom, recordsForSession, recordsInWeek } from '@/brain/prs';
 import { exerciseHistory, modeOf } from '@/brain/history';
 import { session, sets } from './helpers';
 
@@ -40,5 +40,12 @@ describe('personal records', () => {
     for (const candidate of candidates) {
       expect(isLiveRecord([prior], ex, candidate)).toBe(liveRecordFrom(exerciseHistory([prior], ex), modeOf(ex), candidate));
     }
+  });
+  it('finds records for one exact session without crediting later history', () => {
+    const prior = session('2026-09-01', [{ id: ex, name: 'Bench Press', sets: sets(60, 8) }]);
+    const current = session('2026-09-04', [{ id: ex, name: 'Bench Press', sets: sets(62.5, 8) }]);
+    const later = session('2026-09-07', [{ id: ex, name: 'Bench Press', sets: sets(70, 8) }]);
+    expect(recordsForSession(current, [later, current, prior]).map(record => record.kind)).toEqual(expect.arrayContaining(['heaviest', 'strength']));
+    expect(recordsForSession(prior, [later, current, prior])).toHaveLength(0);
   });
 });
