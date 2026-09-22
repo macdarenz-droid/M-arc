@@ -87,7 +87,7 @@ The owner rated the old Escobar 4/10. The target is 9/10 or better, judged on th
 Why this shape:
 - **Tools run on the phone.** The Worker is a stateless single-step relay: every model call is one POST. When the model returns `tool_use`, the app runs the tools locally and posts again with the results. Data never leaves the device except what the model asked for. It also means a new read tool only needs a Worker redeploy because the tool schema is shared (§12.4), not because the Worker holds data.
 - **The Worker owns policy.** It holds the persona, safety and tool policy prompt, the tool definitions, model and effort, quotas and the API key. The app owns data and the palace manifest, which it sends as a data block.
-- **The old Worker `marc-coach` is left untouched**, so older builds keep working and rollback is trivial. v2 deploys as a new Worker, `marc-escobar`.
+- **Owner's decision: v2 reuses the existing Cloudflare Worker `marc-coach`** (same account, same URL `https://marc-coach.mmarcdarenz.workers.dev`). Deploying under the same name keeps its stored `ANTHROPIC_API_KEY` secret and its bindings, so a deploy needs no key handling. The old routes are replaced; older app builds are retired. v2 code lives in `escobar-worker/`, but `wrangler.toml` keeps `name = "marc-coach"`.
 
 ---
 
@@ -475,7 +475,7 @@ The request includes the whole current conversation until its estimated size pas
 
 ### 12.1 Stack
 
-Cloudflare Worker, TypeScript, `@anthropic-ai/sdk` (TypeScript SDK; follow the skill's `typescript/claude-api/README.md` and `streaming.md`), `wrangler@4`. Name `marc-escobar`. No state beyond optional KV for quotas and the rate-limit binding.
+Cloudflare Worker, TypeScript, `@anthropic-ai/sdk` (TypeScript SDK; follow the skill's `typescript/claude-api/README.md` and `streaming.md`), `wrangler@4`. Worker name `marc-coach` (reused, see §3). No state beyond optional KV for quotas and the rate-limit binding.
 
 ### 12.2 Routes
 
@@ -562,11 +562,11 @@ Keep the old line's allowlist logic (`capacitor://localhost`, `http(s)://localho
 
 ### 12.8 Tests (vitest, no network)
 
-Validation (every rule in §12.2), SSE framing (mock the SDK stream), the step limit, quota behaviour, the error mapping table, manifest rendering stability (same input → byte-identical output), a **cache-prefix stability test** (two requests with different messages share a byte-identical `tools + system` prefix), and a strict-schema lint (no forbidden keywords, §8; count of strict tools). The tools sync test lives **app-side** in `tests/escobar/tools-sync.test.ts` (it bundles `schema.ts` and compares it with `escobar-worker/src/tools.generated.json`). `scripts/escobar-tools.mjs` bundles `src/escobar/tools/schema.ts` with esbuild the way the `logo` npm script does, then writes the JSON. Commit `escobar-worker/package-lock.json` (CI uses `npm ci`). `wrangler.toml`: `name = "marc-escobar"`, `main = "src/index.ts"`, `compatibility_flags = ["nodejs_compat"]`, with the date and ratelimit shape copied from the old `wrangler.toml`.
+Validation (every rule in §12.2), SSE framing (mock the SDK stream), the step limit, quota behaviour, the error mapping table, manifest rendering stability (same input → byte-identical output), a **cache-prefix stability test** (two requests with different messages share a byte-identical `tools + system` prefix), and a strict-schema lint (no forbidden keywords, §8; count of strict tools). The tools sync test lives **app-side** in `tests/escobar/tools-sync.test.ts` (it bundles `schema.ts` and compares it with `escobar-worker/src/tools.generated.json`). `scripts/escobar-tools.mjs` bundles `src/escobar/tools/schema.ts` with esbuild the way the `logo` npm script does, then writes the JSON. Commit `escobar-worker/package-lock.json` (CI uses `npm ci`). `wrangler.toml`: `name = "marc-coach"`, `main = "src/index.ts"`, `compatibility_flags = ["nodejs_compat"]`, with the date and ratelimit shape copied from the old `wrangler.toml`.
 
 ### 12.9 Deploy (owner action if credentials are missing)
 
-Deploying needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` in the environment and the Anthropic key available as `MARC_ANTHROPIC_KEY`. Commands: `npx wrangler@4 deploy`, then `printenv MARC_ANTHROPIC_KEY | npx wrangler@4 secret put ANTHROPIC_API_KEY`. If these are absent, put the exact command list under "Needs owner action" in the EV3 report so the owner can run it locally, and continue. `ESCOBAR_PROXY_URL` in `src/escobar/state.ts` is `'https://marc-escobar.mmarcdarenz.workers.dev'` from the start (the owner's account subdomain, taken from the old line's `DEFAULT_PROXY_URL`); confirm it against wrangler's output after deploy. The app treats the proxy as online only if `GET /health` answers `protocol: 2`; before deploy, Escobar simply shows offline. Missing credentials follow §0.2: not turn-ending.
+The owner deploys it with the existing Cloudflare Worker. The agent never deploys and never waits for a deploy. Deploying needs only `cd escobar-worker && npx wrangler@4 deploy` (the `ANTHROPIC_API_KEY` secret already exists on `marc-coach`). Put that command under "Needs owner action" in the EV3 report, and continue. Copy the KV/ratelimit binding ids from the old `proxy/wrangler.toml` (`git show origin/claude/smartwatch-connector-integration-j42yb5:proxy/wrangler.toml`). `ESCOBAR_PROXY_URL` in `src/escobar/state.ts` is `'https://marc-coach.mmarcdarenz.workers.dev'`. The app treats the proxy as online only if `GET /health` answers `protocol: 2`; before deploy, Escobar simply shows offline. Missing credentials follow §0.2: not turn-ending.
 
 ---
 
@@ -857,7 +857,7 @@ Nothing else is a reason to stop or to ask.
 
 ## 24. Decisions already made (log these in COACHING-DECISIONS.md at EV0)
 
-1. **Revert and rebuild** rather than port: the owner's call (2026-09-22). The old Escobar's Worker (`marc-coach`) stays deployed and untouched.
+1. **Revert and rebuild** rather than port: the owner's call (2026-09-22). v2 is deployed **into the existing Worker `marc-coach`** (owner's call), which keeps its secret; the owner runs the deploy, and agents never block on it.
 2. **Model:** `claude-opus-5` for every mode, with adaptive thinking and effort per mode (chat medium, plan high, live/brief/moment/summarize low). This follows the Claude API guidance to default to the current Opus and tune cost with effort before switching models. The model id is env-configurable.
 3. **Refusal fallbacks on by default** (`fallbacks: 'default'`, beta `server-side-fallback-2026-07-01`), with the compatibility check in §12.3.
 4. **Client-side tool execution through a stateless single-step Worker.** Data stays local; the Worker owns policy.
