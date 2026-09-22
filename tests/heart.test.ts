@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary } from '@/brain/heart';
+import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary, downsampleToBuckets, bestObservedHrMax } from '@/brain/heart';
 import type { Profile } from '@/core/models';
 
 const profile = (p: Partial<Profile> = {}): Profile => ({ name: '', ...p });
@@ -93,6 +93,30 @@ describe('setHeartFromWindow', () => {
   });
   it('is null with nothing in the window', () => {
     expect(setHeartFromWindow(series, 200, 210)).toBeNull();
+  });
+});
+
+describe('downsampleToBuckets', () => {
+  it('takes the median bpm per 5-second bucket', () => {
+    const samples = [{ tSec: 0, bpm: 100 }, { tSec: 1, bpm: 110 }, { tSec: 4, bpm: 120 }, { tSec: 5, bpm: 130 }];
+    const r = downsampleToBuckets(samples);
+    expect(r).toEqual([[0, 110], [5, 130]]);
+  });
+  it('drops contact=false and non-positive bpm samples', () => {
+    const samples = [{ tSec: 0, bpm: 100, contact: false }, { tSec: 1, bpm: 0 }, { tSec: 2, bpm: 110, contact: true }];
+    expect(downsampleToBuckets(samples)).toEqual([[0, 110]]);
+  });
+});
+
+describe('bestObservedHrMax', () => {
+  it('takes the highest validated plateau across sessions', () => {
+    const flat = (bpm: number): Array<[number, number]> => [[0, bpm], [5, bpm], [10, bpm], [15, bpm], [20, bpm]];
+    const seriesById = { a: flat(170), b: flat(185) };
+    const r = bestObservedHrMax([{ id: 'a', endedAt: '2026-01-01T00:00:00Z' }, { id: 'b', endedAt: '2026-01-02T00:00:00Z' }], seriesById);
+    expect(r?.bpm).toBe(185);
+  });
+  it('is null with no stored series', () => {
+    expect(bestObservedHrMax([{ id: 'a', endedAt: '2026-01-01T00:00:00Z' }], {})).toBeNull();
   });
 });
 

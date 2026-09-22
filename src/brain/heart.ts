@@ -31,6 +31,21 @@ export function hrMax(profile: Profile, observedMax?: { bpm: number; atMs: numbe
   return { bpm: 190, source: 'default' };
 }
 
+/** Downsamples raw per-sample readings into 5-second buckets: the median bpm of each bucket, contact=true only. */
+export function downsampleToBuckets(samples: Array<{ tSec: number; bpm: number; contact?: boolean | null }>, bucketSec = 5): Array<[number, number]> {
+  const buckets = new Map<number, number[]>();
+  for (const s of samples) {
+    if (s.contact === false || !(s.bpm > 0)) continue;
+    const b = Math.floor(s.tSec / bucketSec) * bucketSec;
+    const list = buckets.get(b);
+    if (list) list.push(s.bpm); else buckets.set(b, [s.bpm]);
+  }
+  return [...buckets.entries()].sort((a, b) => a[0] - b[0]).map(([t, bpms]) => {
+    const sorted = [...bpms].sort((a, b) => a - b);
+    return [t, sorted[Math.floor(sorted.length / 2)]!] as [number, number];
+  });
+}
+
 /**
  * A validated max within one session's series: 5+ consecutive 5-second points within 3 bpm
  * of each other (a plateau), reached by an ascending run into it (a ramp), value <= 220.
@@ -127,4 +142,16 @@ export function sessionHeartSummary(input: SessionHeartInput): Omit<SessionHeart
     energy,
     coverage: signalQuality(series, sessionSec),
   };
+}
+
+/** The best validated observed max across stored session series, with when it was recorded, for hrMax(). */
+export function bestObservedHrMax(sessions: Array<{ id: string; endedAt: string }>, seriesById: Record<string, Array<[number, number]>>): { bpm: number; atMs: number } | null {
+  let best: { bpm: number; atMs: number } | null = null;
+  for (const s of sessions) {
+    const series = seriesById[s.id];
+    if (!series?.length) continue;
+    const observed = observedHrMaxFromSeries(series);
+    if (observed != null && (!best || observed > best.bpm)) best = { bpm: observed, atMs: new Date(s.endedAt).getTime() };
+  }
+  return best;
 }
