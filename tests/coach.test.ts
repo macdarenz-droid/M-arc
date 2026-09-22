@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { coachInsights } from '@/brain/coach/rules';
+import { coachInsights, deloadOffer } from '@/brain/coach/rules';
 import { emptySchedule } from '@/core/models';
 import { baseCoachExtras, session, sets } from './helpers';
 
@@ -119,5 +119,54 @@ describe('readiness.today', () => {
   it('is quiet with no health or check-in data at all', () => {
     const out = coachInsights({ ...baseCtx }, 20);
     expect(out.some(i => i.id === 'readiness-today')).toBe(false);
+  });
+});
+
+describe('insight feedback (F3.6)', () => {
+  it('hides an insight snoozed within the last 7 days', () => {
+    const profileHistory = [{ at: '2026-09-17T08:00:00Z', field: 'bodyWeightKg' as const, from: 80, to: 78, source: 'user' as const }];
+    const insight = coachInsights({ ...baseCtx, profileHistory })[0]!;
+    const snoozed = coachInsights({ ...baseCtx, profileHistory, feedback: [{ id: insight.id, day: '2026-09-16', verdict: 'snoozed' }] });
+    expect(snoozed.some(i => i.id === insight.id)).toBe(false);
+  });
+  it('stops hiding an insight once the 7-day snooze has passed', () => {
+    const profileHistory = [{ at: '2026-09-17T08:00:00Z', field: 'bodyWeightKg' as const, from: 80, to: 78, source: 'user' as const }];
+    const insight = coachInsights({ ...baseCtx, profileHistory })[0]!;
+    const stillSnoozed = coachInsights({ ...baseCtx, profileHistory, feedback: [{ id: insight.id, day: '2026-09-11', verdict: 'snoozed' as const }] });
+    expect(stillSnoozed.some(i => i.id === insight.id)).toBe(true);
+  });
+});
+
+describe('programming.volume (F3.2)', () => {
+  const push = { id: 'split_push', name: 'Push', color: '#fff', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: '2026-01-01' };
+  it('flags a trained muscle that has run well over its band', () => {
+    const s = [session('2026-09-18', [{ id: bench, sets: sets(60, 8, 'ideal', 12) }])];
+    const out = coachInsights({ ...baseCtx, sessions: s, splits: [push] }, 20);
+    expect(out.some(i => i.id === 'volume:chest')).toBe(true);
+  });
+  it('stays quiet for a muscle outside any split', () => {
+    const s = [session('2026-09-18', [{ id: 'lib_lat_pulldown', sets: sets(60, 8, 'ideal', 12) }])];
+    const out = coachInsights({ ...baseCtx, sessions: s, splits: [push] }, 20);
+    expect(out.some(i => i.id?.startsWith('volume:'))).toBe(false);
+  });
+});
+
+describe('deloadOffer (F3.3)', () => {
+  it('offers nothing with no signal', () => {
+    expect(deloadOffer(baseCtx).suggest).toBe(false);
+  });
+  it('offers nothing while a deload is already active', () => {
+    const out = deloadOffer({ ...baseCtx, deload: { startDay: '2026-09-16', endDay: '2026-09-22', reason: 'x', setFactor: 0.6, loadFactor: 0.9 } });
+    expect(out.suggest).toBe(false);
+  });
+  it('offers a lighter week once its endDay has passed', () => {
+    const past = { startDay: '2026-08-01', endDay: '2026-08-07', reason: 'x', setFactor: 0.6, loadFactor: 0.9 };
+    const days = ['2026-08-20', '2026-08-24', '2026-08-27', '2026-08-31', '2026-09-03', '2026-09-07', '2026-09-10', '2026-09-14', '2026-09-17'];
+    const sessions = days.flatMap((d, i) => [
+      session(d, [{ id: bench, sets: sets(70 - i * 2.5, 9, 'ideal') }]),
+      session(d, [{ id: 'lib_barbell_back_squat', sets: sets(100 - i * 2.5, 9, 'ideal') }], 'split_legs'),
+    ]);
+    const out = deloadOffer({ ...baseCtx, sessions, deload: past });
+    expect(out.suggest).toBe(true);
   });
 });

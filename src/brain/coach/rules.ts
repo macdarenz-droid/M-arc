@@ -8,7 +8,7 @@
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf, daysBetween } from '@/core/dates';
+import { formatHours, weekdayOf, daysBetween, addDays } from '@/core/dates';
 import { recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory } from '../history';
 import { plateauStatus } from '../trend';
@@ -16,11 +16,13 @@ import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
 import { weeklyMuscleSets } from '../exposure';
+import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
-import { readiness, type ReadinessResult } from '../readiness';
+import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
+import { deloadTrigger, type DeloadSuggestion } from '../deload';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -215,6 +217,27 @@ export const RULES: Rule[] = [
           means: 'A small bump over your own baseline is enough. Big jumps do not help.',
           action: `Aim for about ${target} effective sets this week.`,
           muscle: m,
+        });
+      }
+      return out;
+    },
+  },
+  {
+    id: 'programming.volume',
+    run: ctx => {
+      const trainedMuscles = new Set(ctx.splits.flatMap(s => s.exercises.flatMap(se => findExercise(se.exerciseId, ctx.custom)?.primary ?? [])));
+      const out: Insight[] = [];
+      for (const row of muscleVolumeStatus(ctx.sessions, ctx.today, ctx.custom)) {
+        if ((row.status !== 'under' && row.status !== 'over') || !trainedMuscles.has(row.muscle)) continue;
+        const label = muscleLabel(row.muscle);
+        const under = row.status === 'under';
+        out.push({
+          id: `volume:${row.muscle}`, category: 'focus', priority: 140,
+          title: `${label}: ${under ? 'under' : 'over'} your usual range`,
+          noticed: `${label} got ${row.thisWeekSets} effective sets this week; your range is ${row.band[0]}–${row.band[1]}.`,
+          means: under ? 'Too little direct work for a while can slow progress on this muscle.' : 'Volume held well above your range adds fatigue without much extra growth.',
+          action: under ? `Add one or two direct sets for ${label.toLowerCase()} this week.` : `Trim a set or two for ${label.toLowerCase()} next week.`,
+          muscle: row.muscle,
         });
       }
       return out;
@@ -448,4 +471,26 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
     .sort((a, b) => b.priority - a.priority)
     .filter(i => { if (seen.has(i.id)) return false; seen.add(i.id); return true; })
     .slice(0, limit);
+}
+
+/** The readiness band for each of the last `days` days (index 0 = today), for deloadTrigger's readiness-red condition. Recomputes recovery/readiness as of each day rather than storing history, since nothing else needs it kept. */
+function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | null> {
+  const out: Array<ReadinessBand | null> = [];
+  for (let i = 0; i < days; i++) {
+    const day = addDays(ctx.today, -i);
+    const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: new Date(`${day}T23:59:59`).getTime(), profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
+    const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
+    const r = readiness({
+      today: day, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+    });
+    out.push(r?.band ?? null);
+  }
+  return out;
+}
+
+/** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
+export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
+  if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx));
 }
