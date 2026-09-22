@@ -2,6 +2,7 @@ import { signal, computed, batch } from '@preact/signals';
 import { freshState, type AppState, type Session } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { legacySessionLogging } from '@/brain/fidelity';
+import { normalizeEscobar } from './escobarState';
 
 /** A session saved before `logging` existed gets a legacy backfill so every reader can rely on it being present. */
 function withLogging(s: Session): Session {
@@ -40,6 +41,7 @@ function normalize(s: AppState): AppState {
     deload: s.deload ?? null,
     insightFeedback: s.insightFeedback ?? [],
     sessions: (s.sessions ?? []).map(withLogging),
+    escobar: normalizeEscobar(s.escobar),
   };
 }
 

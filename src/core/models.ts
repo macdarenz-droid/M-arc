@@ -307,6 +307,110 @@ export interface DailyHealth {
   syncedAt: string;
 }
 
+/** The closed set of inline components Escobar can draw (§4.4). */
+export type ShowComponentId =
+  | 'lift_trend' | 'recovery_map' | 'volume_bars' | 'readiness_gauge' | 'readiness_history' | 'week_summary'
+  | 'session_summary' | 'records_list' | 'plan_week' | 'plan_evaluation' | 'exercise_card' | 'heart_session'
+  | 'compare_periods' | 'body_trend';
+export const SHOW_COMPONENT_IDS: ShowComponentId[] = [
+  'lift_trend', 'recovery_map', 'volume_bars', 'readiness_gauge', 'readiness_history', 'week_summary',
+  'session_summary', 'records_list', 'plan_week', 'plan_evaluation', 'exercise_card', 'heart_session',
+  'compare_periods', 'body_trend',
+];
+
+export type MemoryKind = 'fact' | 'injury' | 'equipment' | 'preference' | 'goal' | 'agreement' | 'episode';
+export const MEMORY_KINDS: MemoryKind[] = ['fact', 'injury', 'equipment', 'preference', 'goal', 'agreement', 'episode'];
+
+/** Something Escobar remembers about the person (§17). Plain words, at most 200 characters. */
+export interface MemoryItem {
+  id: string;
+  kind: MemoryKind;
+  text: string;
+  source: 'user_said' | 'inferred' | 'user_edit' | 'summary';
+  createdAt: string;
+  updatedAt: string;
+  /** Injuries default to 42 days out, then ask "Still true?". */
+  expiresOn?: string;
+  conversationId?: string;
+}
+
+/** A component the person pinned to Today with consent (`pin_card`). */
+export interface PinnedCard {
+  id: string;
+  component: ShowComponentId;
+  params: Record<string, unknown>;
+  title: string;
+  pinnedAt: string;
+  until?: string;
+}
+
+export type TodayChange =
+  | { kind: 'swap'; from: string; to: string }
+  | { kind: 'remove'; exerciseId: string }
+  | { kind: 'add'; exerciseId: string; sets: number }
+  | { kind: 'sets'; exerciseId: string; sets: number }
+  | { kind: 'load'; exerciseId: string; factor: number };
+
+/** Today's session, adjusted by Escobar and applied by the person (§10.4). Only valid while `day` is today. */
+export interface TodayOverride {
+  day: string;
+  splitId: string;
+  reason: string;
+  changes: TodayChange[];
+}
+
+export interface DailyBrief {
+  day: string;
+  headline: string;
+  priorities: Array<{ insightId: string; line: string }>;
+  generatedAt: string;
+  source: 'escobar' | 'brain';
+}
+
+/** The online coach (§6.1). Conversations live under their own key (`marc.escobar.v1`), not here. */
+export interface EscobarState {
+  /** "Online coach" toggle. Nothing leaves the phone while off. */
+  enabled: boolean;
+  /** null = the built-in proxy URL; only a Settings edit stores a string. */
+  proxyUrl: string | null;
+  /** 'dev_' + 24 hex chars, created lazily. Empty until first needed. */
+  deviceId: string;
+  sharing: { health: boolean; body: boolean };
+  tone: 'warm' | 'direct';
+  /** Off → the `remember` tool is refused. */
+  memoryEnabled: boolean;
+  memory: MemoryItem[];
+  pins: PinnedCard[];
+  todayOverride: TodayOverride | null;
+  proactive: { enabled: boolean; shown: Record<string, string>; day: string; count: number };
+  brief: DailyBrief | null;
+  usage: { day: string; turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number };
+  /** The old single-thread chat (`coach.askThread`) has been imported once (§6.3). */
+  legacyImported: boolean;
+}
+
+export const MAX_MEMORY_ITEMS = 60;
+export const MAX_MEMORY_TEXT = 200;
+export const MAX_PINS = 4;
+
+export function freshEscobar(): EscobarState {
+  return {
+    enabled: false,
+    proxyUrl: null,
+    deviceId: '',
+    sharing: { health: false, body: false },
+    tone: 'warm',
+    memoryEnabled: true,
+    memory: [],
+    pins: [],
+    todayOverride: null,
+    proactive: { enabled: true, shown: {}, day: '', count: 0 },
+    brief: null,
+    usage: { day: '', turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 },
+    legacyImported: false,
+  };
+}
+
 export interface AppState {
   version: 1;
   createdAt: string;
@@ -340,6 +444,8 @@ export interface AppState {
   insightFeedback: InsightFeedback[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
+  /** The online coach's settings, memory, pins and today's plan changes (§6.1). */
+  escobar: EscobarState;
 }
 
 export function emptySchedule(): Record<Weekday, string | null> {
@@ -378,6 +484,7 @@ export function freshState(now = new Date()): AppState {
     freshMarks: [],
     deload: null,
     insightFeedback: [],
+    escobar: freshEscobar(),
   };
 }
 

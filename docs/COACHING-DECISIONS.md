@@ -282,3 +282,31 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - Phase E (the port of the old Escobar onto this brain) was reverted at the owner's request (`4d8ff4e`, a revert commit, so the history stays intact). The boot-crash fix `decec92` stays.
 - Escobar is to be rebuilt fresh on this brain from `docs/ESCOBAR-ARCHITECTURE.md` (phases EV0–EV9). That document's §24 lists the decisions already taken. An adversarial review against the code and the Claude API docs was folded into it before commit.
 - Model default `claude-opus-5`, with refusal fallbacks on by default (`fallbacks: 'default'`). Both are env-configurable in the Worker. v2 is deployed into the existing Worker `marc-coach` (the owner's call), which keeps its API-key secret. The owner runs the deploy; agents never wait for it.
+
+## Escobar v2
+
+### Decisions already made (ESCOBAR-ARCHITECTURE.md §24, logged at EV0)
+1. Revert and rebuild rather than port (owner, 2026-09-22). v2 deploys into the existing Worker `marc-coach`, which keeps its secret; the owner deploys, agents never wait.
+2. Model `claude-opus-5` for every mode, adaptive thinking, effort per mode (chat medium, plan high, live/brief/moment/summarize low); env-configurable.
+3. Refusal fallbacks on by default (`fallbacks: 'default'`, beta `server-side-fallback-2026-07-01`), with the §12.3 compatibility check.
+4. Client-side tool execution through a stateless single-step Worker. Data stays local; the Worker owns policy.
+5. `show` is a tool, not markup; chips and citations are markup.
+6. Numbers: fact ledger + citations + one repair round, never silent deletion.
+7. `strict: true` on action/memory tools and `evaluate_plan`; read/show tools non-strict with app-side validation; no numeric/length keywords in schemas; `eager_input_streaming` off.
+8. Brief as a mid-conversation system message, persisted once per user turn, diffed between full briefs, carrying the mode addendum and decisions; `<situation>` fallback for models without support.
+9. Manifest sent by the app, cached 1 h; tool schema changes need a Worker redeploy (shared schema + sync test).
+10. Tab id stays `coach`; label and icon become Escobar.
+11. Proactivity: ≤ 2 moments shown/day, ≤ 3 wording calls/day, quiet hours 22:00–07:00, no new push notifications.
+12. Old thread imported once as "Earlier conversation".
+13. Photos never touch localStorage; sent once, then a permanent stub.
+14. Staged user turns and orphan closing keep API history valid on every exit path.
+15. Sharing toggles default off until the user taps Enable.
+16. Mixed-unit gyms (§25): per-exercise/per-gym entry unit, display unit global, `LoggedSet.entered` stores exactly what was typed, loadable targets, slip detection, Escobar sets equipment profiles.
+
+### EV0
+- **`escobar.memoryEnabled` added to `EscobarState`** (not in §6.1's field list). §17.2 needs a persisted "Escobar may remember things I tell him" toggle that makes `remember` return denied; it belongs with the rest of the coach's settings. Default `true` (memory writes are already visible with Undo, §2.3).
+- **Normalisation lives in `src/core/escobarState.ts`** (`normalizeEscobar`), called from `store.ts`'s private `normalize()`. Keeps `normalize()` private while making the per-field repair unit-testable directly.
+- **Conversation store extras:** `Conversation.pendingDecisions` (the §10.3 decision queue, read by the next brief) and `rollingSummary` (§11.4 request-side compaction) are stored on the conversation, not in messages, so history stays append-only. `setEscobarStorage()` lets the gate's mock use an in-memory store (§23 EV5).
+- **Size accounting uses UTF-16 length × 2** as the byte estimate: WebView localStorage quotas are counted in UTF-16 code units, so this is the conservative measure.
+- **Cap victim order:** summarised conversations first (oldest first), then the oldest; the active conversation is never dropped by the count cap and goes last under the size guard.
+- **Backup:** Settings export adds `escobar: exportAllEscobar()` next to `state`; restore calls `restoreEscobar()` only when the file has an `escobar` key (older backups leave the store alone); Reset everything clears the store.

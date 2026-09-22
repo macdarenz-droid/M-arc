@@ -239,3 +239,10 @@ Sections read: F3.1-F3.8, section 7 (P4 row: "Each rule tested; deload changes T
 
 ## Every phase complete
 P0, P0-P, P1-R, P2-C, P1, P2, P3, P4 are all DONE. The standing autonomous-loop instruction's stop condition (every phase complete) is met.
+
+# Escobar v2
+
+Spec: `docs/ESCOBAR-ARCHITECTURE.md`. Branch: `claude/escobar-v2-implementation-eidx64` (from `claude/marc-coaching-implementation-0lk6ax`). Decisions: `docs/COACHING-DECISIONS.md` → "## Escobar v2".
+
+## EV0: Foundations
+- data: `EscobarState` in `core/models.ts` (+ `freshEscobar()`), `core/escobarState.ts` `normalizeEscobar`, `escobar/types.ts`, `escobar/store.ts` (conversation store, caps, size guard, image pruning, backup/restore/reset wiring in Settings). Tests: `tests/escobar/state.test.ts`, `tests/escobar/store.test.ts`.

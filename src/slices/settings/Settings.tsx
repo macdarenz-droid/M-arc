@@ -15,6 +15,7 @@ import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
+import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 
 export const APP_VERSION = '37.0.0';
 
@@ -28,13 +29,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const backup = async () => {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    try { showToast(await exportText(name, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s }, null, 1))); } catch { showToast('Export failed'); }
+    try { showToast(await exportText(name, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s, escobar: exportAllEscobar() }, null, 1))); } catch { showToast('Export failed'); }
   };
   const restore = async () => {
     const text = await pickFile();
     if (!text) return;
     try {
-      const parsed = JSON.parse(text) as { state?: AppState } | AppState;
+      const parsed = JSON.parse(text) as { state?: AppState; escobar?: unknown } | AppState;
       const legacy = asLegacyRoot(parsed);
       if (legacy) {
         // A backup from the previous version of the app: convert it on the way in.
@@ -46,6 +47,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
       const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
       if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
       replaceState({ ...next, health: { connected: false } });
+      if ('escobar' in parsed) restoreEscobar(parsed.escobar);
       showToast(`Restored ${next.sessions.length} sessions`);
     } catch { showToast('That file is not an M/ARC backup'); }
   };
@@ -116,7 +118,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); clearEscobarStore(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>
