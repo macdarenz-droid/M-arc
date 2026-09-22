@@ -191,20 +191,30 @@ function acyclicReplacements(changes: PlanAgreementChange[]): boolean {
  * same entry — makes the whole assessment unavailable, not partially
  * salvaged.
  */
-function replayValid(changes: PlanAgreementChange[], startEntryIds: Set<string>): boolean {
+function replayValid(changes: PlanAgreementChange[], entries: WorkoutPlanEntry[]): boolean {
+  const byId = new Map(entries.map(entry => [entry.id, entry]));
+  const startEntryIds = new Set(entries.filter(entry => entry.origin === 'start').map(entry => entry.id));
+  if (entries.some(entry => (entry.origin === 'start' || entry.origin === 'added') && entry.replaces !== undefined)) return false;
   const active = new Set(startEntryIds);
+  const introduced = new Set(startEntryIds);
   const retired = new Set<string>();
   const targeted = new Set<string>();
   for (const change of changes) {
     if (change.kind === 'add') {
+      const destination = byId.get(change.entryId);
+      if (destination?.origin !== 'added' || destination.replaces !== undefined) return false;
       if (active.has(change.entryId) || retired.has(change.entryId)) return false;
       active.add(change.entryId);
+      introduced.add(change.entryId);
     } else if (change.kind === 'replace') {
+      const destination = byId.get(change.toEntryId);
+      if (destination?.origin !== 'replacement' || destination.replaces !== change.fromEntryId) return false;
       if (!active.has(change.fromEntryId)) return false;
       if (active.has(change.toEntryId) || retired.has(change.toEntryId)) return false;
       active.delete(change.fromEntryId);
       retired.add(change.fromEntryId);
       active.add(change.toEntryId);
+      introduced.add(change.toEntryId);
     } else if (change.kind === 'remove') {
       if (!active.has(change.entryId)) return false;
       active.delete(change.entryId);
@@ -214,7 +224,7 @@ function replayValid(changes: PlanAgreementChange[], startEntryIds: Set<string>)
       targeted.add(change.entryId);
     }
   }
-  return true;
+  return introduced.size === entries.length;
 }
 
 function validSeenWorkingRow(value: unknown, ids: Set<string>): boolean {
@@ -235,8 +245,9 @@ function validSeenWorkingRow(value: unknown, ids: Set<string>): boolean {
  * change/invalidation/seen-row referencing an id that doesn't exist there is
  * a dangling link regardless of replay order.
  */
-function validAssessment(value: unknown, entryIds: Set<string>, startEntryIds: Set<string>): value is SessionAssessment {
+function validAssessment(value: unknown, entries: WorkoutPlanEntry[]): value is SessionAssessment {
   if (!object(value) || value.version !== 1) return false;
+  const entryIds = new Set(entries.map(entry => entry.id));
   const intent = value.intent;
   if (!object(intent) || !oneOf(intent.kind, ['normal', 'easier'] as const)) return false;
   if (!shortString(intent.capturedAt) || !Number.isFinite(Date.parse(intent.capturedAt))) return false;
@@ -246,7 +257,7 @@ function validAssessment(value: unknown, entryIds: Set<string>, startEntryIds: S
   if (!value.changes.every(change => validAssessmentChange(change, entryIds))) return false;
   const changeIds = value.changes.map(change => change.id);
   if (new Set(changeIds).size !== changeIds.length) return false;
-  if (!acyclicReplacements(value.changes) || !replayValid(value.changes, startEntryIds)) return false;
+  if (!acyclicReplacements(value.changes) || !replayValid(value.changes, entries)) return false;
   if (!Array.isArray(value.invalidatedEntryIds) || value.invalidatedEntryIds.length > PLAN_MAX_METADATA_ENTRIES) return false;
   if (!value.invalidatedEntryIds.every(id => shortString(id) && entryIds.has(id))) return false;
   if (new Set(value.invalidatedEntryIds).size !== value.invalidatedEntryIds.length) return false;
@@ -345,9 +356,7 @@ function invalidateProjectionMismatches(plan: WorkoutPlanSnapshot): WorkoutPlanS
 /** Drops just `assessment` on failure — malformed metadata never invalidates the plan or logged work it sits on top of (D03). */
 function normalizePlan(value: unknown): WorkoutPlanSnapshot | undefined {
   if (!validPlan(value)) return undefined;
-  const entryIds = new Set(value.entries.map(entry => entry.id));
-  const startEntryIds = new Set(value.entries.filter(entry => entry.origin === 'start').map(entry => entry.id));
-  const assessment = value.assessment !== undefined && validAssessment(value.assessment, entryIds, startEntryIds) ? value.assessment : undefined;
+  const assessment = value.assessment !== undefined && validAssessment(value.assessment, value.entries) ? value.assessment : undefined;
   return invalidateProjectionMismatches({ ...value, assessment });
 }
 

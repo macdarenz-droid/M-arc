@@ -134,6 +134,36 @@ describe('P05 saved-session normalization and History edits', () => {
     expect(loadState(savedStorage(saved)).state.sessions[0]!.plan!.assessment).toBeUndefined();
   });
 
+  it('D04 rejects orphaned entries and journal events that disagree with captured origin/replacement links', () => {
+    const cases: Array<(session: Session) => void> = [
+      session => {
+        session.plan!.entries.push({ ...session.plan!.entries[0]!, id: 'pe2', origin: 'added' });
+      },
+      session => {
+        session.plan!.entries.push({ ...session.plan!.entries[0]!, id: 'pe2', origin: 'replacement', replaces: 'pe' });
+        session.plan!.assessment!.changes.push({ id: 'c', acceptedAt: '2026-09-21T10:15:00.000Z', kind: 'add', entryId: 'pe2' });
+      },
+      session => {
+        session.plan!.entries.push({ ...session.plan!.entries[0]!, id: 'pe2', origin: 'replacement', replaces: 'wrong-predecessor' });
+        session.plan!.assessment!.changes.push({ id: 'c', acceptedAt: '2026-09-21T10:15:00.000Z', kind: 'replace', fromEntryId: 'pe', toEntryId: 'pe2' });
+      },
+      session => {
+        session.plan!.entries[0] = { ...session.plan!.entries[0]!, replaces: 'ghost' };
+      },
+    ];
+
+    for (const corrupt of cases) {
+      const saved = seed();
+      const session = savedSession();
+      corrupt(session);
+      saved.sessions = [session];
+      const loaded = loadState(savedStorage(saved)).state.sessions[0]!;
+      expect(loaded.exercises[0]!.sets).toEqual(session.exercises[0]!.sets);
+      expect(loaded.plan).toBeDefined();
+      expect(loaded.plan!.assessment).toBeUndefined();
+    }
+  });
+
   it('D05 keeps logs but marks a surviving journal/projection mismatch unassessable', () => {
     const saved = seed();
     const session = savedSession();
