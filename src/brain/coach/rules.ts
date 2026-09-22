@@ -19,6 +19,7 @@ import { weeklyMuscleSets } from '../exposure';
 import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
+import { effortMismatch, intraSessionDrift } from '../heart';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -335,6 +336,52 @@ export const RULES: Rule[] = [
           evidence: { n: b.n, window: `${b.n} matched pairs`, confidence: b.n >= 5 ? 'medium' : 'low' },
         }];
       }),
+  },
+  {
+    id: 'heart.effort-mismatch',
+    run: ctx => {
+      const last = ctx.sessions[ctx.sessions.length - 1];
+      if (!last) return [];
+      const sets = last.exercises.flatMap(e => e.sets);
+      const m = effortMismatch(sets);
+      if (!m) return [];
+      return [{
+        id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data',
+        title: 'Effort rating: worth a second look',
+        noticed: `You rated a set Easy that hit ${m.examplePct}% of your session's hardest peak heart rate.`,
+        means: 'Easy sets are not usually that close to your hardest effort of the day.',
+        action: 'No change needed — just something to notice next time you rate that set.',
+        evidence: { n: m.rated, window: 'this session', confidence: 'medium' },
+      }];
+    },
+  },
+  {
+    id: 'heart.drift',
+    run: ctx => {
+      const last = ctx.sessions[ctx.sessions.length - 1];
+      if (!last) return [];
+      for (const ex of last.exercises) {
+        const byLoad = new Map<number, typeof ex.sets>();
+        for (const s of ex.sets) {
+          if (s.kg == null) continue;
+          byLoad.set(s.kg, [...(byLoad.get(s.kg) ?? []), s]);
+        }
+        for (const group of byLoad.values()) {
+          const d = intraSessionDrift(group);
+          if (d?.drifting) {
+            return [{
+              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId,
+              title: `${ex.name}: fatigue building within the session`,
+              noticed: `Peak heart rate rose about ${d.bpmRisePerSet} bpm per set at the same load, while your recovery between sets got worse.`,
+              means: 'This usually means the working muscles are fatiguing faster than the rest periods are covering.',
+              action: 'Finish this lift, then trim an accessory or two rather than pushing through.',
+              evidence: { n: group.length, window: 'this session', confidence: 'medium' },
+            }];
+          }
+        }
+      }
+      return [];
+    },
   },
 ];
 

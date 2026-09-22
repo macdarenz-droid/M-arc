@@ -80,3 +80,31 @@ describe('progress.plateau-lever', () => {
     expect(out.some(i => i.id.startsWith('plateau-lever'))).toBe(false);
   });
 });
+
+describe('heart.effort-mismatch', () => {
+  const withHeart = (effort: 'easy' | 'ideal' | 'max', peakBpm: number) => ({ kg: 60, reps: 8, effort, heart: { peakBpm, endBpm: peakBpm } });
+  it('fires when the last session has an easy set near its own hardest peak', () => {
+    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHeart('ideal', 160), withHeart('ideal', 170), withHeart('ideal', 180), withHeart('max', 190), withHeart('easy', 180)] }])];
+    const out = coachInsights({ ...baseCtx, sessions }, 20);
+    expect(out.some(i => i.id.startsWith('heart-mismatch'))).toBe(true);
+  });
+  it('stays quiet below 5 rated-and-heart sets', () => {
+    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHeart('ideal', 160), withHeart('easy', 180)] }])];
+    const out = coachInsights({ ...baseCtx, sessions }, 20);
+    expect(out.some(i => i.id.startsWith('heart-mismatch'))).toBe(false);
+  });
+});
+
+describe('heart.drift', () => {
+  const withHrr = (peakBpm: number, hrr60: number) => ({ kg: 60, reps: 8, effort: 'ideal' as const, heart: { peakBpm, endBpm: peakBpm, hrr60 } });
+  it('fires when peak HR rises and HRR60 shrinks across same-load sets', () => {
+    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHrr(150, 20), withHrr(160, 15), withHrr(172, 8)] }])];
+    const out = coachInsights({ ...baseCtx, sessions }, 20);
+    expect(out.some(i => i.id.startsWith('heart-drift'))).toBe(true);
+  });
+  it('stays quiet without shrinking recovery', () => {
+    const sessions = [session('2026-09-18', [{ id: bench, sets: [withHrr(150, 20), withHrr(160, 22), withHrr(172, 21)] }])];
+    const out = coachInsights({ ...baseCtx, sessions }, 20);
+    expect(out.some(i => i.id.startsWith('heart-drift'))).toBe(false);
+  });
+});

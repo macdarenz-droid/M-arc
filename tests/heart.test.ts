@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary, downsampleToBuckets, bestObservedHrMax } from '@/brain/heart';
-import type { Profile } from '@/core/models';
+import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary, downsampleToBuckets, bestObservedHrMax, minRestSec, restReadyBpm, restTarget, effortMismatch, intraSessionDrift } from '@/brain/heart';
+import type { Profile, SetHeart } from '@/core/models';
 
 const profile = (p: Partial<Profile> = {}): Profile => ({ name: '', ...p });
 
@@ -142,5 +142,75 @@ describe('sessionHeartSummary', () => {
     const r = sessionHeartSummary({ series, sessionSec: 15, hrMaxBpm: 190, restingHrBpm: null, sets: [] });
     expect(r?.avgBpm).toBe(140);
     expect(r?.zoneSec).toEqual([0, 0, 0, 0, 0]);
+  });
+});
+
+describe('minRestSec', () => {
+  it('is 60/90/120 for easy/ideal/max, ideal for unrated', () => {
+    expect(minRestSec('easy')).toBe(60);
+    expect(minRestSec('ideal')).toBe(90);
+    expect(minRestSec('max')).toBe(120);
+    expect(minRestSec(undefined)).toBe(90);
+  });
+});
+
+describe('restReadyBpm', () => {
+  it('takes the lower of the two candidate targets', () => {
+    expect(restReadyBpm(150, 60, 190)).toBe(106); // 60 + 0.35*130 = 105.5 -> 106, vs 162
+    expect(restReadyBpm(80, 60, 190)).toBe(92); // preSetBpm+12 = 92, vs 105.5
+  });
+});
+
+describe('restTarget', () => {
+  const base = { preSetBpm: 150, restingHrBpm: 60, hrMaxBpm: 190, effort: 'ideal' as const };
+  it('is not ready before 3 consecutive samples settle, even past the minimum time', () => {
+    const r = restTarget({ ...base, recentBpms: [140, 130, 120], elapsedSec: 100 });
+    expect(r.ready).toBe(false); // 120 > readyBpm 106
+  });
+  it('is ready once 3 consecutive samples are at or below target and the minimum time passed', () => {
+    const r = restTarget({ ...base, recentBpms: [106, 105, 100], elapsedSec: 100 });
+    expect(r.ready).toBe(true);
+  });
+  it('is not ready before the effort minimum even if bpm settled', () => {
+    const r = restTarget({ ...base, recentBpms: [106, 105, 100], elapsedSec: 50 });
+    expect(r.ready).toBe(false);
+  });
+  it('is always ready past the 300s hard cap', () => {
+    const r = restTarget({ ...base, recentBpms: [180, 180, 180], elapsedSec: 300 });
+    expect(r.ready).toBe(true);
+  });
+});
+
+describe('effortMismatch', () => {
+  const set = (effort: 'easy' | 'ideal' | 'max', peakBpm: number): { effort: 'easy' | 'ideal' | 'max'; heart: SetHeart } => ({ effort, heart: { peakBpm, endBpm: peakBpm } });
+  it('flags an easy set that hit near the session max, needs 5+ rated sets', () => {
+    const sets = [set('ideal', 160), set('ideal', 170), set('ideal', 180), set('max', 190), set('easy', 180)];
+    const r = effortMismatch(sets);
+    expect(r?.mismatched).toBe(1);
+    expect(r?.examplePct).toBe(Math.round(180 / 190 * 100));
+  });
+  it('is null below 5 rated sets', () => {
+    const sets = [set('ideal', 160), set('easy', 180)];
+    expect(effortMismatch(sets)).toBeNull();
+  });
+  it('is null when no easy set is anywhere near the session max', () => {
+    const sets = [set('ideal', 160), set('ideal', 170), set('ideal', 180), set('max', 190), set('easy', 100)];
+    expect(effortMismatch(sets)).toBeNull();
+  });
+});
+
+describe('intraSessionDrift', () => {
+  const set = (peakBpm: number, hrr60: number): { heart: SetHeart } => ({ heart: { peakBpm, endBpm: peakBpm, hrr60 } });
+  it('flags rising peak HR with shrinking HRR60 across 3+ sets', () => {
+    const r = intraSessionDrift([set(150, 20), set(160, 15), set(172, 8)]);
+    expect(r?.drifting).toBe(true);
+    expect(r?.bpmRisePerSet).toBe(11);
+  });
+  it('does not flag a rise without shrinking recovery', () => {
+    const r = intraSessionDrift([set(150, 20), set(160, 22), set(172, 21)]);
+    expect(r?.drifting).toBe(false);
+  });
+  it('is null below 3 sets with heart data', () => {
+    expect(intraSessionDrift([set(150, 20)])).toBeNull();
   });
 });

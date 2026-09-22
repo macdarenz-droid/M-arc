@@ -4,7 +4,7 @@
  * numbers. The live in-memory ring, freshness state machine and storage
  * live in slices/workout/heart.ts and core/heartStore.ts, not here.
  */
-import type { Profile, SessionHeart, SetHeart, SessionEnergy } from '@/core/models';
+import type { Effort, Profile, SessionHeart, SetHeart, SessionEnergy } from '@/core/models';
 
 export type HrMaxSource = 'override' | 'observed' | 'tanaka' | 'default';
 export interface HrMaxResult { bpm: number; source: HrMaxSource }
@@ -157,4 +157,84 @@ export function bestObservedHrMax(sessions: Array<{ id: string; endedAt: string 
     if (observed != null && (!best || observed > best.bpm)) best = { bpm: observed, atMs: new Date(s.endedAt).getTime() };
   }
   return best;
+}
+
+/** 60s easy, 90s ideal, 120s max (6.4). Unrated counts as ideal, same as the recovery model. */
+export function minRestSec(effort: Effort | undefined): number {
+  return effort === 'easy' ? 60 : effort === 'max' ? 120 : 90;
+}
+
+/** `min(preSetBpm + 12, restingHr + 0.35 * reserve)` (6.4) — the bpm rest is "done enough" at. */
+export function restReadyBpm(preSetBpm: number, restingHrBpm: number, hrMaxBpm: number): number {
+  return Math.round(Math.min(preSetBpm + 12, restingHrBpm + 0.35 * (hrMaxBpm - restingHrBpm)));
+}
+
+export interface RestTargetInput {
+  /** Chronological, contact=true LIVE samples only; the caller drops anything else before calling. */
+  recentBpms: number[];
+  preSetBpm: number;
+  restingHrBpm: number;
+  hrMaxBpm: number;
+  effort: Effort | undefined;
+  elapsedSec: number;
+}
+
+export interface RestTargetResult {
+  readyBpm: number;
+  /** True once 3 consecutive valid samples are at or below readyBpm and elapsedSec >= the effort's minimum, or the 300s hard cap is reached. */
+  ready: boolean;
+}
+
+/** HR-guided rest (F1.2). The timer stays the ceiling: callers still cap at their own totalSec. */
+export function restTarget(input: RestTargetInput): RestTargetResult {
+  const { recentBpms, preSetBpm, restingHrBpm, hrMaxBpm, effort, elapsedSec } = input;
+  const target = restReadyBpm(preSetBpm, restingHrBpm, hrMaxBpm);
+  if (elapsedSec >= 300) return { readyBpm: target, ready: true };
+  const lastThree = recentBpms.slice(-3);
+  const settled = lastThree.length === 3 && lastThree.every(b => b <= target);
+  return { readyBpm: target, ready: settled && elapsedSec >= minRestSec(effort) };
+}
+
+export interface EffortMismatchResult {
+  /** Sets rated easy whose peak was within 10% of the session's hardest rated set. */
+  mismatched: number;
+  rated: number;
+  examplePct: number;
+}
+
+/**
+ * F1.3: after 5+ rated sets with heart data, an "easy" set that hit near the session's hardest
+ * peak is probably under-rated. Session-relative (never an absolute population number) — the
+ * plan's own worked example ("hit 92% of your session max") anchors the 90% cutoff here.
+ */
+export function effortMismatch(sets: Array<{ effort?: Effort; heart?: SetHeart }>): EffortMismatchResult | null {
+  const rated = sets.filter(s => s.effort && s.heart?.peakBpm != null);
+  if (rated.length < 5) return null;
+  const sessionMax = Math.max(...rated.map(s => s.heart!.peakBpm));
+  if (sessionMax <= 0) return null;
+  const flagged = rated.filter(s => s.effort === 'easy' && s.heart!.peakBpm >= sessionMax * 0.9);
+  if (!flagged.length) return null;
+  const examplePct = Math.round(Math.max(...flagged.map(s => s.heart!.peakBpm)) / sessionMax * 100);
+  return { mismatched: flagged.length, rated: rated.length, examplePct };
+}
+
+export interface DriftResult {
+  drifting: boolean;
+  bpmRisePerSet: number;
+}
+
+/**
+ * F1.4: 3+ sets of the same exercise at the same load (the caller filters to that), peak HR
+ * rising 8+ bpm per set on average while HRR60 shrinks, means fatigue is building within the
+ * session — not a single set's reading, a trend across several.
+ */
+export function intraSessionDrift(sets: Array<{ heart?: SetHeart }>): DriftResult | null {
+  const withHeart = sets.filter(s => s.heart?.peakBpm != null);
+  if (withHeart.length < 3) return null;
+  const peaks = withHeart.map(s => s.heart!.peakBpm);
+  const rises = peaks.slice(1).map((p, i) => p - peaks[i]!);
+  const avgRise = rises.reduce((a, b) => a + b, 0) / rises.length;
+  const hrr60s = withHeart.map(s => s.heart!.hrr60).filter((x): x is number => x != null);
+  const hrrShrinking = hrr60s.length >= 2 && hrr60s[hrr60s.length - 1]! < hrr60s[0]!;
+  return { drifting: avgRise >= 8 && hrrShrinking, bpmRisePerSet: Math.round(avgRise) };
 }
