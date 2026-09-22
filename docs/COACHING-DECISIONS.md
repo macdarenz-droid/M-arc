@@ -365,3 +365,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Quota tokens:** the Worker is stateless, so a turn's output tokens are counted from its final step only; steps are exact (assistant messages since the last user message + 1). Counters are written once per finished turn.
 - **Tool inputs** are accumulated from `input_json_delta` in the relay itself (no dependence on SDK snapshot internals), parsed at `content_block_stop`, and sent as `tool_input`; the authoritative input is still `final.content`.
 - **Heartbeat/idle:** `: ping` every 10 s; the Worker aborts the upstream after 60 s without an event and emits `error timeout`.
+
+### EV4 (loop, transport, verification)
+- **The loop is a class over injected deps** (`transport`, `getState`, `now`, `persist`, `applyEffect`, …) so it runs in Node tests with a scripted transport; the UI binds it to signals in EV5.
+- **Staging covers the repair round too:** the `[app] verification check` user message and its system instruction are staged and only committed with the next final, so a failed repair never leaves a dangling system message.
+- **Answer = text blocks of the final `end_turn` message**; text before a tool call is kept as a muted preamble on that step's `rendered`. The first answer is marked `revised` when a repair replaces it.
+- **History window without a summary yet:** the request drops the oldest half at a clean user turn and starts with `[earlier conversation trimmed]`; EV7 adds the rolling summary. Stored history is never edited.
+- **Retry once** for `upstream_busy`/`timeout` only when no text or tool event reached the screen, after 2 s; `invalid`, `quota`, `refusal` never retry.
+- **Grounding details:** integers 0–10, `NxM` set notation, ISO dates, "17 Sep"-style dates, `HH:MM` times and quoted text are removed before checking; range endpoints are checked separately; lb values within 1 lb of a kg fact count; numbers from the person's own messages count; a `⟦k:id⟧` citation grounds that card's numbers in the same sentence.
+- **Safety pre-screen** is a keyword/regex classifier; crisis and medical fire the card immediately (also offline) and every signal goes into the brief's `signals:` line.
+- **Photos:** `image_ref` blocks are inflated from `imageData(id)` until the turn that carried them finishes; `sent: true` then turns them into `[photo shared earlier: …]` stubs for good.

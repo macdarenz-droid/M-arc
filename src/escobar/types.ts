@@ -89,8 +89,28 @@ export interface Conversation {
   rollingSummary?: { text: string; upTo: number };
   /** Proposal decisions not yet reported to the model in a brief (§10.3). */
   pendingDecisions?: Array<DecisionEvent & { title: string }>;
+  /** Every proposal made in this conversation and where it stands. */
+  proposals?: ProposalRecord[];
+  /** The last brief's lines (without fact ids), to send only what changed next turn (§11.2). */
+  briefLines?: Record<string, string>;
+  /** User turns so far (the brief is sent in full on the first and every 5th). */
+  userTurns?: number;
   appVersion: string;
   protocol: 2;
 }
 
 export interface ConversationStore { version: 1; activeId: string | null; conversations: Conversation[] }
+
+export interface ProposalRecord {
+  id: string;
+  kind: string;
+  input: Record<string, unknown>;
+  title: string;
+  preview: Array<{ label: string; before?: string; after: string }>;
+  fingerprint: string;
+  createdAt: string;
+  expiresOn: string;
+  status: 'awaiting' | 'applied' | 'dismissed' | 'stale' | 'undone' | 'failed';
+  /** The assistant message index that proposed it, so the card renders in its turn. */
+  messageIndex?: number;
+}
