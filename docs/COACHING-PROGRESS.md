@@ -239,3 +239,43 @@ Sections read: F3.1-F3.8, section 7 (P4 row: "Each rule tested; deload changes T
 
 ## Every phase complete
 P0, P0-P, P1-R, P2-C, P1, P2, P3, P4 are all DONE. The standing autonomous-loop instruction's stop condition (every phase complete) is met.
+
+## Phase E: Escobar on this brain (2026-09-22)
+The owner found the Ask chat, photo import and split features missing from this build. They were on a separate branch line (`smartwatch-connector-integration-j42yb5`). The owner chose to keep this build and bring Escobar in on top of it, reading this brain. See COACHING-DECISIONS.md, Phase E.
+
+### Layer: data — done, commit 5fdf0b2
+- `AppState.coach` (`remoteExplainer`, `explainerUrl`, `deviceId`, `askThread`, `statedConstraints`). Field names match the Escobar line, so a phone that ran it keeps its saved thread. `normalize()` validates and caps the saved thread and constraints.
+- Tests: `tests/escobar-state.test.ts` (2).
+
+### Layer: brain — done, commits d1f596e, 7964210
+- `brain/coach/grounding.ts`: the proxy's payload types, its caps, and the number-grounding check (ported).
+- `brain/coach/escobar.ts`: `buildGrounding()` sends up to 14 insights from every rule (prose plus the numbers inside it), readiness, an active or offered deload, today's split, the muscles furthest outside their volume band, the load for the next session on each lift in today's split, recovery for every muscle, current PRs, 8 weeks of volume, BMI and stated constraints.
+- `brain/weekly.ts`: `weeklyVolumeHistory()`. `brain/recovery.ts`: `recoveryPctFor()`, moved out of Train.
+- `brain/coach/askDrafts.ts`: which chat drafts can still be applied (ported from `reopen.ts`).
+- 30 bodyweight/conditioning exercises added to `exercises.json`, matching the proxy's catalog.
+- Tests: `tests/escobar.test.ts` (6, including two that run the payload through the deployed proxy's own `validateAskPayload` and 40 KiB cap), `tests/askDrafts.test.ts` (4).
+
+### Layer: ai — done, commits 006ab32, 74e85b3
+- `ai/client.ts`, `ai/ask.ts` (`buildAskPayload` now takes the grounding), `ai/importProgramme.ts`, `ai/identifyExercise.ts`, `ai/tagExercise.ts`, `native/photo.ts`. `proxy/` source (unchanged from the deployed Worker).
+- CI: the proxy's typecheck and tests run before the app's check.
+- Tests: `tests/ai-ask.test.ts` (46, reply parsing, sentence-level grounding, drafts, schedule, goal action, constraints), `tests/ai-import-programme.test.ts`, `tests/ai-identify-exercise.test.ts`, `tests/ai-tag-exercise.test.ts` (21 together). Proxy: 87 passed, 8 skipped (live tests).
+
+### Layer: native — N/A (the photo picker is a plain file input; the Capacitor WebView already handles it)
+
+### Layer: UI — done, commit 4739594
+- `AskSheet` (one mount, in App), `askController`, `askMemory`, `remote`, `escobarContext`, `ui/chatRender`, `Thinking`, the persona icons.
+- Coach: an Escobar card (online: ask or continue; offline: open Settings), plus "Ask Escobar about this" on every insight.
+- Train: Import (photo of a programme → up to 7 splits), and "Ask Escobar to build or change a split". Empty state: "Import from a photo".
+- Exercise picker: "Suggest equipment and muscles" and "Scan a photo" for custom exercises, plus an "Also involves" muscle list.
+- Settings: an "Online coach" section with the toggle (it checks the proxy's `/health` when switched on), the proxy address and a memory reset. Restore and Reset everything drop replies still in flight.
+- Walked in Playwright with a mocked proxy. A thread saved by the Escobar build shows up. A question sends a valid payload (readiness, BMI 24.7, stats, history). A split draft applies and lands in Train. No page errors.
+
+### Layer: gate — done
+- `npm run gate`: PASS, 5 themes, no page errors. The gate runs with the online coach off, so Coach shows the offline card.
+
+### Phase E report
+- **Built**: Ask Escobar chat grounded in this brain, split/schedule/goal drafts, programme import from a photo, exercise scan/auto-tag, Settings online coach.
+- **Tested**: 358 app tests, 87 proxy tests, build, gate 5/5.
+- **Decided**: keep the deployed proxy's contract, so no redeploy and no credential. Heart-rate insights now go to Escobar, at the owner's "oversee the whole logic" request. Not ported: presence cues, objectives, the unfinished-items queue, note tagging and `/explain`.
+- **Needs device check**: a real `/ask` round trip from the phone (the proxy's CORS allows `https://localhost`); the photo picker opening the Android chooser; importing a real programme photo.
+- **Next dependency**: none.
