@@ -23,3 +23,29 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: `native/watch/*` and the `WatchBridge` plugin (F0.4, section 6.2) are **not** touched in P0.
   **Why**: section 7 assigns F0.4 to phase **P1**, not P0; `native/watch/` does not exist yet in the repo.
   **Source**: plan section 7 (P1 row lists F0.4).
+
+## P0-P
+
+- **Decided**: the `profile.changed` insight (6.15) only fires for `bodyWeightKg` and `goal`, not `heightCm`/`birthYear`/`sex`/`trainingSince`/`plannedDays`.
+  **Why**: the plan's own templates for those other fields ("Now using age 34: estimated max heart rate 184, zones updated") describe consumers (HRmax, zones, calories) that don't exist until P1/P1-R/P2-C. Emitting an insight that names a feature the app doesn't have yet would be a lie the coach tells the user. Section 7's P0-P Done-when only requires "changing weight or goal produces one feedback insight" — it doesn't ask for the other fields.
+  **Source**: plan 6.15 templates, section 7 P0-P row, "never write 'should work'" truthfulness rule.
+
+- **Decided**: `src/brain/profile.ts`'s `profileAt()`/`ageAt()`/`weightAt()`/`profileDiff()` (6.15) are **not** implemented in P0-P.
+  **Why**: nothing consumes them yet — frozen per-session energy snapshots need `SessionEnergy` (P1), relative-strength-at-the-time needs P2-C's metrics, and historical-band lookups need P1-R/P4. Building them now would be a speculative abstraction with no caller and no test beyond "it replays correctly in the abstract." `profileHistory` itself is recorded now (so no data is lost); the replay functions land with their first real consumer.
+  **Source**: "no speculative abstractions" rule; plan 6.12.3/6.16 list these consumers in later phases.
+
+- **Decided**: `AppState.goal` stays a non-nullable `GoalId` (defaulting to `'lean'` as today); no "goal: not set" state was introduced.
+  **Why**: G9's fix ("the Today card for a fresh state says 'Goal: not set' instead of implying lean") would require `goal: GoalId | null` and touch every reader of `s.goal` across the app (progression, Coach, Train, coach rules) — a large, risky ripple for a copy nuance. Instead, the onboarding form actively asks the user to pick a goal (a real, informed choice is recorded in `profileHistory` with `source: 'onboarding'`), which addresses G9's substance (users choosing a goal, not drifting on a silent default) without the type change. Kept the existing, working default.
+  **Source**: "if the plan contradicts... choose the reading that keeps existing behaviour" rule; G9 in plan 6.16.
+
+- **Decided**: the profile dashboard (6.14) ships with only "About you", "Body" and "Training" sections. "Watch and health" and "Check-ins" are omitted.
+  **Why**: Settings already has a working Health Connect card (P0); duplicating it in the dashboard before the watch (P1) or check-ins (P1-R/P2) exist would show controls for features that don't work. The dashboard will grow these sections when those phases land.
+  **Source**: "no scope beyond the phase" rule.
+
+- **Decided**: `strength_muscle`'s starter templates are `['upper', 'lower']`; `strength`'s are `['full_a', 'full_b']`.
+  **Why**: 6.16 specifies the four template keys to add but not which of the two new goals gets which pair. Full-body A/B (higher per-lift frequency) is the more common recommendation for pure strength; upper/lower suits combined strength-and-muscle work with more accessory volume. Both are standard, defensible splits.
+  **Source**: research (common strength-programming heuristics: full-body for frequency-driven strength work, upper/lower for combined hypertrophy+strength); no primary source needed since this is a template-offering choice, not a coaching claim.
+
+- **Decided**: the goal-change "Apply rest" / "Add templates" one-tap actions (6.16, decision 14) are buttons inside the `GoalSheet`, not a `showToast(...)` action.
+  **Why**: `Sheet` renders a native `<dialog>` via `showModal()`, which promotes it to the browser's top layer; the app's `Toast` is an ordinary fixed-position `<div>` rendered outside the dialog, so it would be visually hidden behind the modal's backdrop while the sheet is open. Buttons inside the sheet are guaranteed visible and are arguably a clearer one-tap surface than a toast that has to be dismissed first anyway.
+  **Source**: verified by reading `ui/primitives.tsx`'s `Sheet` (`showModal()`) and `Toast` (plain `div`, rendered in `App.tsx` as a sibling, not inside any open dialog).
