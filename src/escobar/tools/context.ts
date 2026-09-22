@@ -1,0 +1,75 @@
+/**
+ * What every tool reads from: the app state and "now", plus a few derived views
+ * computed the same way the screens compute them (app/selectors.ts), but without
+ * signals, so tools stay pure and testable.
+ */
+import type { AppState, Exercise, LoadUnit } from '@/core/models';
+import { WEEKDAYS } from '@/core/models';
+import { daysBetween, dayKey, weekdayOf } from '@/core/dates';
+import { findExercise } from '@/core/exercises';
+import { recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
+import { readiness, type ReadinessResult } from '@/brain/readiness';
+import type { CoachContext } from '@/brain/coach/rules';
+
+export interface ToolCtx {
+  state: AppState;
+  /** ms since epoch. */
+  now: number;
+  /** Local day key for `now`. */
+  today: string;
+  /** Heart-rate series by session id (heartStore); absent in tests and when not needed. */
+  heartSeries?: (sessionId: string) => Array<[number, number]>;
+  /** Live watch freshness, when a watch is connected. */
+  watch?: { state: string; freshness: string; bpm?: number };
+  /** Current screen, for the brief. */
+  focus?: { id: string; details?: Record<string, string | number> } | null;
+}
+
+export function makeCtx(state: AppState, now = Date.now(), extra: Partial<ToolCtx> = {}): ToolCtx {
+  return { state, now, today: dayKey(new Date(now)), ...extra };
+}
+
+const cache = new WeakMap<ToolCtx, { recovery?: MuscleRecovery[]; readiness?: ReadinessResult | null; coach?: CoachContext }>();
+const memo = (ctx: ToolCtx) => { let m = cache.get(ctx); if (!m) { m = {}; cache.set(ctx, m); } return m; };
+
+export function recoveryAt(ctx: ToolCtx, atMs = ctx.now): MuscleRecovery[] {
+  const s = ctx.state;
+  const run = () => recoveryStatus({ sessions: s.sessions, custom: s.customExercises, now: atMs, profile: s.profile, healthDays: s.healthDays, checkIns: s.checkIns, freshMarks: s.freshMarks, recoveryModel: s.recoveryModel });
+  if (atMs !== ctx.now) return run();
+  const m = memo(ctx);
+  return (m.recovery ??= run());
+}
+
+export function scheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
+  const id = ctx.state.schedule[weekdayOf(day)];
+  return id ? ctx.state.splits.find(sp => sp.id === id) : undefined;
+}
+
+export function readinessToday(ctx: ToolCtx): ReadinessResult | null {
+  const m = memo(ctx);
+  if (m.readiness !== undefined) return m.readiness;
+  const s = ctx.state;
+  m.readiness = readiness({
+    today: ctx.today, healthDays: s.healthDays, checkIn: s.checkIns.find(c => c.day === ctx.today),
+    checkInHistory: s.checkIns.filter(c => c.day !== ctx.today && daysBetween(c.day, ctx.today) <= 30),
+    recovery: recoveryAt(ctx), scheduledSplit: scheduledSplitFor(ctx), custom: s.customExercises, sessions: s.sessions,
+  });
+  return m.readiness;
+}
+
+export function coachCtx(ctx: ToolCtx): CoachContext {
+  const m = memo(ctx);
+  const s = ctx.state;
+  return (m.coach ??= {
+    sessions: s.sessions, splits: s.splits, schedule: s.schedule, custom: s.customExercises, today: ctx.today, now: ctx.now - (ctx.now % 60_000),
+    profileHistory: s.profileHistory, profile: s.profile, healthDays: s.healthDays, checkIns: s.checkIns, freshMarks: s.freshMarks,
+    recoveryModel: s.recoveryModel, deload: s.deload, feedback: s.insightFeedback,
+  });
+}
+
+export const activeDeloadOf = (ctx: ToolCtx) => { const d = ctx.state.deload; return d && d.endDay >= ctx.today ? d : null; };
+export const todayOverrideOf = (ctx: ToolCtx) => { const o = ctx.state.escobar.todayOverride; return o && o.day === ctx.today ? o : null; };
+export const plannedPerWeek = (ctx: ToolCtx) => WEEKDAYS.filter(d => ctx.state.schedule[d]).length;
+export const exerciseOf = (ctx: ToolCtx, id: string): Exercise | undefined => findExercise(id, ctx.state.customExercises);
+export const exerciseName = (ctx: ToolCtx, id: string): string => exerciseOf(ctx, id)?.name ?? id;
+export const displayUnit = (ctx: ToolCtx): LoadUnit => ctx.state.preferences.weightUnit;

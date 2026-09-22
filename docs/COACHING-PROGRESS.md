@@ -260,3 +260,5 @@ Spec: `docs/ESCOBAR-ARCHITECTURE.md`. Branch: `claude/escobar-v2-implementation-
 
 ## EV2: Tools and brain additions
 - brain: `weeklyVolumeHistory` (`brain/weekly.ts`), `brain/plan.ts` `evaluatePlan`/`hasBlockingIssues`, exported `readinessSeries` (`brain/coach/rules.ts`), `recoveryPctFor` moved to `brain/recovery.ts`; `ProgressionContext.loadFactor` (landed in EVU). Tests: `tests/plan.test.ts`, fixtures `tests/fixtures/plans.ts`.
+- brain (perf): memoised `normalizeName`, name → exercise per custom list, day-key parsing; exported method constants (readiness, heart, fidelity, e1rm, warm-up, progression, plateau, balance, weekly review, `data/deload.ts`).
+- ai: `escobar/tools/{context,schema,read,calc,plan,actions,show,executor}.ts`, `escobar/{ledger,hash}.ts`, `escobar/knowledge/{cards,methods}.ts` + `src/data/knowledge.json` (47 cards), `escobar/context/{brief,manifest,modes}.ts`. Tests: `tests/escobar/{read,calc,ledger,schema,actions,executor,knowledge,brief,show}.test.ts` (167 new; fixtures in `tests/escobar/fixtures.ts`).
