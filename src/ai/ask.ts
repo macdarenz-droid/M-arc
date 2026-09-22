@@ -1,0 +1,316 @@
+/**
+ * Ask the coach — one chat, grounded in this app's brain (brain/coach/escobar.ts)
+ * for anything about this person's own training, answered from the
+ * model's own general knowledge for everything else (anatomy, exercise
+ * science, nutrition education), and the one place the coach may also
+ * design or adjust a real split by conversation (see promptAsk.ts). The
+ * Worker holds no state, so every call resends the whole exchange so far,
+ * capped.
+ *
+ * This used to be two separate routes/chats — this general one and a
+ * standalone /build-split with no report access — merged into one so a
+ * conversation can move between "why has my bench stalled" and "build me a
+ * split for that" without switching chats, and so split-building can use
+ * real findings the standalone version never had access to. See
+ * COACH_BRAIN.md's decision log.
+ *
+ * The reply is tagged "personal" or "general" (see promptAsk.ts). Only a
+ * "personal" answer is checked the way /explain's is: every number in it
+ * must already be in the payload, or the whole answer is dropped rather
+ * than shown half-trusted. A "general" answer is not a claim about this
+ * person's data, so there is nothing in the payload to check it against —
+ * checking it anyway is exactly what silently rejected "define biceps
+ * scientifically" (its numbers, real facts, just weren't in the report).
+ * Anything other than exactly "general" defaults to the strict path. A
+ * splitDraft is a design choice, not a claim about this person's history,
+ * so it is never checked against the report the way "personal" prose is —
+ * it is instead re-validated against the app's real exercise catalog
+ * (below), the same idea as src/ai/tagExercise.ts's knownMuscles.
+ */
+import type { Exercise, Split, Weekday } from '@/core/models';
+import { MAX_STATED_CONSTRAINT_CHARS, WEEKDAYS } from '@/core/models';
+import { findExercise } from '@/core/exercises';
+import { isMuscleId, type MuscleId } from '@/data/muscles';
+import { isGoalId, type GoalId } from '@/data/goals';
+import { allowedNumbers, extractNumbers, validateText, type GroundingPayload } from '@/brain/coach/grounding';
+import { postJson } from './client';
+
+export interface AskTurn {
+  role: 'user' | 'assistant';
+  text: string;
+}
+
+/** One split as the app actually has it today, so a splitDraft can propose a sensible change to it or avoid duplicating it. */
+export interface KnownSplit {
+  id: string;
+  name: string;
+  focus: string[];
+  exercises: Array<{ exerciseId: string; name: string; sets: number }>;
+}
+
+/** The person's real weekly schedule today — which split id, if any, trains on which day. Mirrors the app's own `AppState.schedule`. */
+export type WeekSchedule = Record<Weekday, string | null>;
+
+export interface AskPayload extends GroundingPayload {
+  version: 1;
+  kind: 'ask';
+  history: AskTurn[];
+  question: string;
+  splits: KnownSplit[];
+  schedule: WeekSchedule;
+}
+
+export const MAX_QUESTION_CHARS = 300;
+/** Kept turns, most recent first before reversing back to chronological order — an old exchange falls off rather than growing the payload without bound. */
+export const MAX_HISTORY_TURNS = 12;
+
+/** The proxy's own caps on the splits it is told about (proxy/src/handler.ts). */
+const MAX_KNOWN_SPLITS = 7;
+const MAX_KNOWN_SPLIT_EXERCISES = 14;
+
+/** The grounding (brain/coach/escobar.ts), the recent conversation, the person's real splits and schedule, and a new question. */
+export function buildAskPayload(
+  grounding: GroundingPayload,
+  history: AskTurn[],
+  question: string,
+  opts: { splits: Split[]; customExercises: Exercise[]; schedule: WeekSchedule },
+): AskPayload {
+  const trimmedHistory = history.map(h => ({ role: h.role, text: h.text.trim().slice(0, 700) })).filter(h => h.text).slice(-MAX_HISTORY_TURNS);
+  const splits: KnownSplit[] = opts.splits.slice(0, MAX_KNOWN_SPLITS).map(sp => ({
+    id: sp.id,
+    name: sp.name.slice(0, 28),
+    focus: sp.focus.slice(0, 2),
+    exercises: sp.exercises.slice(0, MAX_KNOWN_SPLIT_EXERCISES).map(e => ({ exerciseId: e.exerciseId, name: findExercise(e.exerciseId, opts.customExercises)?.name ?? e.exerciseId, sets: e.sets })),
+  }));
+  return { version: 1, kind: 'ask', ...grounding, history: trimmedHistory, question: question.trim().slice(0, MAX_QUESTION_CHARS), splits, schedule: opts.schedule };
+}
+
+interface AskReply { scope?: unknown; category?: unknown; answer?: unknown; splitDrafts?: unknown; scheduleDraft?: unknown; concern?: unknown; constraints?: unknown; actions?: unknown; error?: unknown }
+
+/** A crisis or disordered-eating signal the model flagged in the question itself (promptAsk.ts rule 17) — null for nearly every reply. Not a finding about the person; the UI shows a fixed, pre-written resource whenever this isn't null. */
+export type AskConcern = 'crisis' | 'disordered_eating' | null;
+const ASK_CONCERNS: readonly Exclude<AskConcern, null>[] = ['crisis', 'disordered_eating'];
+
+/** At most this many stated constraints trusted from one reply — mirrors MAX_CONSTRAINTS_PER_REPLY in proxy/src/anthropic.ts, checked again here rather than trusting the network to have enforced its own schema. */
+const MAX_CONSTRAINTS_PER_REPLY = 3;
+
+/** A durable fact the model flagged about this person's own body, equipment or preferences (promptAsk.ts rule 23) — free text, so only shape-checked (real non-empty strings, capped count and length), never checked against the report the way a personal-scope "answer" is; it's the model's own judgment call about what's worth remembering, not a claim this app can verify. */
+function parseConstraints(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((c): c is string => typeof c === 'string' && c.trim().length > 0)
+    .map(c => c.trim().slice(0, MAX_STATED_CONSTRAINT_CHARS))
+    .slice(0, MAX_CONSTRAINTS_PER_REPLY);
+}
+
+/** What an answer is mainly about — purely to pick a small decorative bullet icon; never shown as text. */
+export type AskCategory = 'nutrition' | 'body' | 'training' | 'app' | 'general';
+const ASK_CATEGORIES: readonly AskCategory[] = ['nutrition', 'body', 'training', 'app', 'general'];
+
+/** One concrete split proposal from a reply. Every exerciseId has already been re-validated against the app's real catalog by the time this is returned — nothing from the network is trusted further than that. */
+export interface SplitDraft {
+  action: 'create' | 'modify';
+  /** An id from the payload's own `splits`, only when action is "modify". */
+  splitId: string | null;
+  name: string;
+  focus: MuscleId[];
+  exercises: Array<{ exerciseId: string; sets: number }>;
+}
+
+interface SplitDraftReply { action?: unknown; splitId?: unknown; name?: unknown; focus?: unknown; exercises?: unknown }
+
+/**
+ * Keeps only exercises the app actually recognizes, silently — never shown
+ * as real when the app can't find it. Also drops a repeat of an exerciseId
+ * already kept, keeping the first occurrence's own sets: seen live, a
+ * reply listed "Push-Up" three times in one splitDraft's own exercises
+ * (three different set counts, so a genuine repeated entry, not a client
+ * bug) — the schema's array type never enforced uniqueness, so nothing
+ * upstream had caught this before it landed as a real split.
+ */
+function knownExercises(v: unknown, custom: Exercise[]): Array<{ exerciseId: string; sets: number }> {
+  if (!Array.isArray(v)) return [];
+  const out: Array<{ exerciseId: string; sets: number }> = [];
+  const seen = new Set<string>();
+  for (const item of v) {
+    if (!item || typeof item !== 'object') continue;
+    const exerciseId = (item as { exerciseId?: unknown }).exerciseId;
+    const sets = (item as { sets?: unknown }).sets;
+    if (typeof exerciseId !== 'string' || !findExercise(exerciseId, custom) || seen.has(exerciseId)) continue;
+    seen.add(exerciseId);
+    const n = typeof sets === 'number' && Number.isFinite(sets) ? Math.round(sets) : 3;
+    out.push({ exerciseId, sets: Math.max(1, Math.min(6, n)) });
+  }
+  return out;
+}
+
+/** A draft that fails validation in a way that leaves nothing real to apply becomes null — a half-drawn action isn't shown as one the person can accept. */
+function parseDraft(raw: unknown, knownSplitIds: Set<string>, custom: Exercise[]): SplitDraft | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as SplitDraftReply;
+  const action = r.action === 'modify' ? 'modify' as const : r.action === 'create' ? 'create' as const : null;
+  if (!action) return null;
+  const splitId = typeof r.splitId === 'string' && knownSplitIds.has(r.splitId) ? r.splitId : null;
+  if (action === 'modify' && !splitId) return null;
+  const name = typeof r.name === 'string' && r.name.trim() ? r.name.trim().slice(0, 28) : 'New split';
+  const focus = Array.isArray(r.focus) ? r.focus.filter(isMuscleId).slice(0, 2) : [];
+  const exercises = knownExercises(r.exercises, custom);
+  if (!exercises.length) return null;
+  return { action, splitId: action === 'create' ? null : splitId, name, focus, exercises };
+}
+
+/**
+ * A proposed rearrangement of the whole week. Any day naming a split id
+ * the payload didn't actually list, or missing a day entirely, invalidates
+ * the whole draft rather than applying a partial week — unlike splitDrafts
+ * (an independent list where one bad entry is just dropped), a schedule is
+ * one object; a week with an unrecognized day silently reassigned isn't
+ * something the person can meaningfully review before accepting.
+ */
+function parseScheduleDraft(raw: unknown, knownSplitIds: Set<string>): WeekSchedule | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const schedule = {} as WeekSchedule;
+  for (const day of WEEKDAYS) {
+    const v = r[day];
+    if (v === null) { schedule[day] = null; continue; }
+    if (typeof v !== 'string' || !knownSplitIds.has(v)) return null;
+    schedule[day] = v;
+  }
+  return schedule;
+}
+
+/**
+ * A proposal to switch the person's training goal — the first (and so far
+ * only) member of the general "actions" envelope the intelligence audit's
+ * Tier 3 asked for, to replace splitDrafts/scheduleDraft with one typed,
+ * extensible mechanism. Scoped to this one new capability for now; a real
+ * future kind (reminders, session control) is a new union member here, not
+ * a rewrite of this or of splitDrafts/scheduleDraft, which stay their own
+ * fields — see the doc comment on AskActionSchema in proxy/src/anthropic.ts
+ * for the full rationale.
+ */
+export interface GoalChangeAction {
+  kind: 'goal_change';
+  goal: GoalId;
+}
+
+/** The general typed-action envelope. Currently just GoalChangeAction. */
+export type AskAction = GoalChangeAction;
+
+/** An action that fails validation (an invented goal id, an unrecognized kind) becomes null — the same "half-drawn proposal isn't shown as one the person can accept" discipline every other draft type here uses. */
+function parseAction(raw: unknown): AskAction | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as { kind?: unknown; goal?: unknown };
+  if (r.kind !== 'goal_change') return null;
+  if (typeof r.goal !== 'string' || !isGoalId(r.goal)) return null;
+  return { kind: 'goal_change', goal: r.goal };
+}
+
+/**
+ * allowedNumbers(payload) only knows about numbers the brain itself put in
+ * the report — it has no idea the person just typed "I weigh 82kg" or "I
+ * did 5 sets" in the question or an earlier turn of this same chat. Rule 18
+ * (promptAsk.ts) tells the model to ask for exactly that kind of personal
+ * number instead of guessing it, but once the person answers, their own
+ * number is nowhere in the payload for the grounding check to recognize —
+ * so a reply that correctly repeats back what they just said ("at 82kg,
+ * ...") was being rejected as invented. /ask is the one route with a real
+ * back-and-forth (history), so it — and only it — also trusts numbers the
+ * person themselves already put on the record this conversation.
+ */
+function askAllowedNumbers(payload: AskPayload): Set<number> {
+  const out = allowedNumbers(payload);
+  const add = (n: number) => { out.add(n); out.add(Math.abs(n)); };
+  extractNumbers(payload.question).forEach(add);
+  for (const t of payload.history) if (t.role === 'user') extractNumbers(t.text).forEach(add);
+  return out;
+}
+
+/**
+ * A period/exclamation/question mark that's followed by real whitespace and
+ * then a capital letter or digit is a sentence boundary; a decimal point
+ * (e.g. "82.5") never has whitespace right after it, so a number is never
+ * mistaken for one.
+ */
+const SENTENCE_BOUNDARY = /(?<=[.!?])\s+(?=[A-Z0-9])/;
+
+/**
+ * Drops only the sentence(s) that cite an ungrounded number, not the whole
+ * answer — mirrors /explain's own per-item discard (`buildExplanation` in
+ * explainer.ts already keeps every item whose own numbers check out and
+ * drops just the ones that don't); `requestAskAnswer` used to run
+ * `validateText` over the whole "answer" at once, so one invented digit
+ * anywhere in an otherwise-true three-sentence paragraph deleted all three
+ * true sentences right along with it — exactly the "penalty is collective,
+ * not individual" gap the intelligence audit flagged. Splits on lines
+ * first (rule 13's own paragraph/bullet structure), then sentences within
+ * each line, so a genuinely separate idea surviving next to a dropped one
+ * still reads as a coherent line rather than a run-on fragment.
+ */
+function sanitizePersonalAnswer(answer: string, allowed: Set<number>): { text: string; trimmed: number } {
+  let trimmed = 0;
+  const keptLines: string[] = [];
+  for (const line of answer.split('\n')) {
+    if (!line.trim()) { keptLines.push(line); continue; }
+    const kept = line.split(SENTENCE_BOUNDARY).filter(sentence => {
+      if (validateText(sentence, allowed).ok) return true;
+      trimmed++;
+      return false;
+    });
+    if (kept.length) keptLines.push(kept.join(' ').trim());
+  }
+  return { text: keptLines.join('\n').trim(), trimmed };
+}
+
+export type AskResult =
+  | { ok: true; answer: string; scope: 'personal' | 'general'; category: AskCategory; drafts: SplitDraft[]; scheduleDraft: WeekSchedule | null; concern: AskConcern; trimmed?: number; constraints: string[]; actions: AskAction[] }
+  | { ok: false; error: string };
+
+/**
+ * Ask. A "personal" answer is validated the way /explain's is: any number
+ * not already in the payload, and the whole answer is dropped rather than
+ * shown half-trusted. A "general" answer (ordinary exercise/nutrition
+ * knowledge, not a claim about this person) is not checked against the
+ * payload — there is nothing in it to check against. Each splitDraft in the
+ * reply is re-validated against the app's own catalog and the splits this
+ * exact payload named — a single message can describe several splits at
+ * once, so this is a list: usually empty, sometimes one, sometimes several,
+ * each independently actionable (and independently droppable if it doesn't
+ * hold up to validation). scheduleDraft is re-validated the same way, but
+ * as one object, not a list — any day naming an unrecognized split (or a
+ * missing day) invalidates the whole week rather than a partial reorder.
+ *
+ * Once a reply actually proposes a splitDraft or a scheduleDraft, "answer"
+ * skips the personal number check too — describing a fresh split or a new
+ * arrangement necessarily cites its own numbers (a rep range, "twice a
+ * week"), which are a design choice, not a claim about this person's
+ * history (see promptAsk.ts rule 1), and were never going to be "in the
+ * report" to begin with. Rejecting the whole reply over them would drop a
+ * real, valid draft along with it — seen live: "create a 5-day full body
+ * split" always cites its own set/rep numbers in "answer" and was silently
+ * dropped every time.
+ */
+export async function requestAskAnswer(payload: AskPayload, customExercises: Exercise[], opts: { url: string; deviceId: string; fetchImpl?: typeof fetch; timeoutMs?: number }): Promise<AskResult> {
+  if (!payload.question) return { ok: false, error: 'Type a question first.' };
+  const result = await postJson<AskPayload, AskReply>(payload, { url: opts.url, path: '/ask', deviceId: opts.deviceId, fetchImpl: opts.fetchImpl, timeoutMs: opts.timeoutMs ?? 70_000 });
+  if (!result.ok) return result;
+  const answer = typeof result.body.answer === 'string' ? result.body.answer.trim() : '';
+  if (!answer) return { ok: false, error: 'The coach sent back something we could not read.' };
+  const scope: 'personal' | 'general' = result.body.scope === 'general' ? 'general' : 'personal';
+  const category: AskCategory = (ASK_CATEGORIES as string[]).includes(result.body.category as string) ? (result.body.category as AskCategory) : 'general';
+  const knownSplitIds = new Set(payload.splits.map(s => s.id));
+  const rawDrafts = Array.isArray(result.body.splitDrafts) ? result.body.splitDrafts : [];
+  const drafts = rawDrafts.map(d => parseDraft(d, knownSplitIds, customExercises)).filter((d): d is SplitDraft => d !== null);
+  const scheduleDraft = result.body.scheduleDraft != null ? parseScheduleDraft(result.body.scheduleDraft, knownSplitIds) : null;
+  const concern: AskConcern = (ASK_CONCERNS as string[]).includes(result.body.concern as string) ? (result.body.concern as Exclude<AskConcern, null>) : null;
+  const constraints = parseConstraints(result.body.constraints);
+  const rawActions = Array.isArray(result.body.actions) ? result.body.actions : [];
+  const actions = rawActions.map(parseAction).filter((a): a is AskAction => a !== null);
+  if (scope === 'personal' && drafts.length === 0 && !scheduleDraft) {
+    const sanitized = sanitizePersonalAnswer(answer, askAllowedNumbers(payload));
+    if (!sanitized.text) return { ok: false, error: 'The coach\'s answer used a number that is not in your data, so it was not shown. Try asking again.' };
+    return { ok: true, answer: sanitized.text, scope, category, drafts, scheduleDraft, concern, trimmed: sanitized.trimmed || undefined, constraints, actions };
+  }
+  return { ok: true, answer, scope, category, drafts, scheduleDraft, concern, constraints, actions };
+}
