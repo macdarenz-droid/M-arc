@@ -48,7 +48,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   if (origin && !('Access-Control-Allow-Origin' in cors)) return new Response('forbidden origin', { status: 403 });
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (url.pathname === '/health' && req.method === 'GET') {
-    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, modes: MODES, quotas: !!env.QUOTA }, cors);
+    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, modes: MODES, quotas: !!env.QUOTA, key: !!env.ANTHROPIC_API_KEY }, cors);
   }
   if (url.pathname !== '/v2/turn') return json(404, { t: 'error', code: 'invalid', message: 'not found' }, cors);
   if (req.method !== 'POST') return fail(405, 'invalid', 'use POST', cors);

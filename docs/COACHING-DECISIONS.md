@@ -387,3 +387,6 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Layout:** the dock sits 12 px above the nav, so `.app` bottom padding grew to 140 px and toasts moved above the dock.
 - **Palace:** added `settings.escobar` and `coach.hall` (71 entries); Coach-tab entries now say "Escobar tab"; the Insights section is "Escobar's notes".
 - **"Ask about this" on the pre-session brief** uses `{kind:'session', id:'plan:<splitId>'}` (there is no session yet).
+
+### Deploy
+- **The Worker deploys from GitHub Actions** (`.github/workflows/deploy-worker.yml`) at the owner's request (phone only): a push to the branch touching `escobar-worker/` runs the Worker check, `wrangler@4 deploy` with the `CLOUDFLARE_API_TOKEN` secret, then asserts `/health` shows `protocol: 2`. `/health` now also reports `key: true|false` (whether the `ANTHROPIC_API_KEY` secret is present, never its value).
