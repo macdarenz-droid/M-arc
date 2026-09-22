@@ -17,6 +17,8 @@ import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
 import { weeklyMuscleSets } from '../exposure';
 import { findExercise } from '@/core/exercises';
+import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
+import { effortBiasByLabel, rirObservations } from '../effortBias';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -31,6 +33,14 @@ export interface Insight {
   /** Optional link to an exercise or muscle for the UI. */
   exerciseId?: string;
   muscle?: MuscleId;
+  /** 6.12.4: drives colour and where an insight may appear. Rules built before this stayed 'tip'/'now' implicitly; only new rules populate it. */
+  kind?: 'alert' | 'progress' | 'plan' | 'praise' | 'tip' | 'data';
+  cadence?: 'now' | 'pre' | 'post' | 'weekly';
+  evidence?: { n: number; window: string; confidence: 'low' | 'medium' | 'high' };
+  numbers?: Array<{ label: string; value: string }>;
+  drivers?: string[];
+  unlocks?: string;
+  validUntil?: string;
 }
 
 export interface CoachContext {
@@ -270,6 +280,61 @@ export const RULES: Rule[] = [
       }
       return [];
     },
+  },
+  {
+    id: 'progress.plateau-lever',
+    run: (ctx, d) =>
+      d.exerciseIds.flatMap(({ id, name }) => {
+        const meta = findExercise(id, ctx.custom);
+        if (meta?.role !== 'main') return [];
+        const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
+        if (hist.length < 6) return [];
+        const t = e1rmTrend(hist.slice(-12));
+        if (t.direction === 'unknown' || t.confidence === 'low' || Math.abs(t.slopePerWeek) >= 0.015) return [];
+        const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).slice(-6);
+        if (recentSessions.length < 6) return [];
+
+        const primaryMuscle = meta.primary[0];
+        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, ctx.today, ctx.custom)[primaryMuscle] ?? 0) : 0;
+        const fShare = failureShare(recentSessions);
+        const stale = isStale(hist);
+
+        let lever: { means: string; action: string } | null = null;
+        if (weekSets < 10) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
+        else if (fShare > 0.5 && recentSessions.length >= 6) lever = { means: 'Effort has been mostly max for a while, which adds fatigue without much extra progress.', action: 'Pull most sets back to ideal effort and save max for the last set.' };
+        else if (stale) lever = { means: 'The load and rep range have not changed in a while, so the stimulus has nowhere to come from.', action: 'Change the rep range for two weeks, or swap in a similar exercise for a block.' };
+        if (!lever) return [];
+
+        return [{
+          id: `plateau-lever:${id}`, category: 'progress', priority: 230, cadence: 'now', kind: 'plan', exerciseId: id,
+          title: `${name}: flat for a while, most likely lever`,
+          noticed: `${name} has not moved over recent sessions.`,
+          means: lever.means,
+          action: lever.action,
+          evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: t.confidence },
+        }];
+      }),
+  },
+  {
+    id: 'readiness.effort-calibration',
+    run: (ctx, d) =>
+      d.exerciseIds.flatMap(({ id, name }) => {
+        const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
+        if (hist.length < 2) return [];
+        const obs = rirObservations(hist);
+        const biases = effortBiasByLabel(obs).filter(b => b.bias >= 2);
+        if (!biases.length) return [];
+        const b = biases[0]!;
+        const sample = obs.find(o => o.otherEffort === b.effort);
+        return [{
+          id: `effort-calibration:${id}`, category: 'readiness', priority: 95, cadence: 'now', kind: 'data', exerciseId: id,
+          title: `${name}: you had more in reserve than rated`,
+          noticed: sample ? `You rated ${b.effort} at ${sample.kg} kg, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
+          means: 'That is normal, especially early on. Lifters usually underestimate how many reps they have left.',
+          action: `The coach will treat your ${b.effort} sets on ${name} as a little easier when estimating your max.`,
+          evidence: { n: b.n, window: `${b.n} matched pairs`, confidence: b.n >= 5 ? 'medium' : 'low' },
+        }];
+      }),
   },
 ];
 
