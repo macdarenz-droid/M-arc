@@ -18,6 +18,7 @@ import { dismissPresenceLauncher } from '../coach/presenceState';
 import { openAsk } from '../coach/askController';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { HeartRateCard } from '@/heart-rate/HeartRateCard';
+import { heartRateSurfacesVisible } from '@/heart-rate/store';
 import { WatchInsights } from '@/heart-rate/WatchInsights';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';
@@ -120,7 +121,7 @@ export function Today() {
 
       {deload.value && <div class="banner" role="status">Easier week until {formatDay(deload.value.to)}. Targets in Train are about {Math.round(deload.value.loadFactor * 100)}% of your usual.</div>}
 
-      <HeartRateCard compact />
+      {heartRateSurfacesVisible.value && <HeartRateCard compact />}
       <WatchInsights compact />
 
       <Section title="This week" aside={<span class="small muted">Week in progress</span>}>

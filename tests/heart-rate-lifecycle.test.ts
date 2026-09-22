@@ -116,3 +116,27 @@ describe('normalization on load', () => {
     expect(loadState(store({ ...freshState(), active })).state.active!.id).toBe('s_keepme');
   });
 });
+
+describe('a person with no watch gains no new screens', () => {
+  it('the surfaces stay hidden with no sensor and no recording', async () => {
+    const { heartRateSurfacesVisible } = await import('@/heart-rate/store');
+    const { state } = await import('@/core/store');
+    state.value = { ...freshState(), sessions: [session('s_a')] };
+    expect(heartRateSurfacesVisible.value).toBe(false);
+  });
+
+  it('they appear once any workout carries a recording', async () => {
+    const { heartRateSurfacesVisible } = await import('@/heart-rate/store');
+    const { state } = await import('@/core/store');
+    const recorded: Session = { ...session('s_a'), heartRate: { metricsVersion: 2, sampleCount: 600, capturedMs: 3_200_000, durationMs: HOUR, coveragePct: 89, averageBpm: 130, recordedPeakBpm: 168, gapCount: 0 } };
+    state.value = { ...freshState(), sessions: [recorded] };
+    expect(heartRateSurfacesVisible.value).toBe(true);
+  });
+
+  it('an empty recording does not count as one', async () => {
+    const { heartRateSurfacesVisible } = await import('@/heart-rate/store');
+    const { state } = await import('@/core/store');
+    state.value = { ...freshState(), sessions: [{ ...session('s_a'), heartRate: { sampleCount: 0, gapCount: 0 } }] };
+    expect(heartRateSurfacesVisible.value).toBe(false);
+  });
+});

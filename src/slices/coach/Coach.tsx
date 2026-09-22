@@ -23,6 +23,7 @@ import { explainError, explaining, explanation, remoteEnabled, requestExplanatio
 import { go } from '@/app/router';
 import { UnfinishedItems } from './UnfinishedItems';
 import { WatchInsights } from '@/heart-rate/WatchInsights';
+import { heartRateSurfacesVisible } from '@/heart-rate/store';
 import { ObjectiveEditor, ObjectiveSummary } from './ObjectiveAgreement';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
@@ -117,7 +118,7 @@ export function Coach() {
 
       <ObjectiveSummary objective={s.coach.objective} review={objectiveReview.value} onEdit={() => setObjectiveOpen(true)} />
 
-      <WatchInsights />
+      {heartRateSurfacesVisible.value && <WatchInsights />}
 
       {feedback && (
         <Section title="Latest workout">

@@ -172,4 +172,17 @@ export async function refreshHeartRateSummaries(): Promise<void> {
   } finally { refreshing = false; }
 }
 
+/**
+ * Whether the heart-rate surfaces belong on screen at all.
+ *
+ * Someone who has never used a watch must not gain three new empty panels.
+ * They appear where the sensor could actually be used — the Android app, or a
+ * bridge that reports itself available — or where a recording already exists to
+ * look at, which also covers reading old workouts in the browser.
+ */
+export const heartRateSurfacesVisible = computed(() =>
+  heartRateNativeAvailable() ||
+  heartRateStatus.value.available ||
+  state.value.sessions.some(session => (session.heartRate?.sampleCount ?? 0) > 0));
+
 export { heartRateNativeAvailable };
