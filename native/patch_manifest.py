@@ -34,9 +34,47 @@ for name in permissions:
         node.set(a("name"), name)
         root.insert(0, node)
 
+# Watch BLE (6.2): BLUETOOTH_SCAN never resolves location from the scan; BLUETOOTH_CONNECT is
+# plain; the legacy trio covers Android 8-11, capped so a modern OS never grants them at runtime.
+attributed_permissions = [
+    ("android.permission.BLUETOOTH_SCAN", {"usesPermissionFlags": "neverForLocation"}),
+    ("android.permission.BLUETOOTH_CONNECT", {}),
+    ("android.permission.BLUETOOTH", {"maxSdkVersion": "30"}),
+    ("android.permission.BLUETOOTH_ADMIN", {"maxSdkVersion": "30"}),
+    ("android.permission.ACCESS_FINE_LOCATION", {"maxSdkVersion": "30"}),
+    ("android.permission.FOREGROUND_SERVICE", {}),
+    ("android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE", {}),
+]
+for name, attrs in attributed_permissions:
+    if name in existing:
+        continue
+    node = ET.Element("uses-permission")
+    node.set(a("name"), name)
+    for k, v in attrs.items():
+        node.set(a(k), v)
+    root.insert(0, node)
+    existing.add(name)
+
+if not any(f.get(a("name")) == "android.hardware.bluetooth_le" for f in root.findall("uses-feature")):
+    feature = ET.SubElement(root, "uses-feature")
+    feature.set(a("name"), "android.hardware.bluetooth_le")
+    feature.set(a("required"), "false")
+
 app = root.find("application")
 if app is None:
     raise SystemExit("<application> not found")
+
+# WatchService (6.2): a foreground connected-device service, ported from Watch-test.
+watch_service = None
+for x in app.findall("service"):
+    if x.get(a("name")) == ".watch.WatchService":
+        watch_service = x
+        break
+if watch_service is None:
+    watch_service = ET.SubElement(app, "service")
+    watch_service.set(a("name"), ".watch.WatchService")
+    watch_service.set(a("foregroundServiceType"), "connectedDevice")
+    watch_service.set(a("exported"), "false")
 
 # Health Connect privacy/rationale activity.
 activity = None
