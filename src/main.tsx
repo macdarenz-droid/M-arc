@@ -7,12 +7,16 @@ import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
 import { syncAndStoreHealth } from './slices/settings/health';
 import { onNotificationTap } from './native/notifications';
+import { startWatchListeners } from './native/watch';
+import { startHeartCapture } from './slices/workout/heart';
 import { go } from './app/router';
 import './ui/styles.css';
 
 installThemeEngine();
 initStore();
 setHapticsEnabled(state.value.preferences.haptics);
+startWatchListeners();
+startHeartCapture();
 
 render(<App />, document.getElementById('app')!);
 

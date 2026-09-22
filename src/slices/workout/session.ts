@@ -13,6 +13,8 @@ import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { syncAndStoreHealth } from '@/slices/settings/health';
+import { connectWatch } from '@/native/watch';
+import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
 
@@ -29,10 +31,14 @@ export function startSession(split: Split): void {
     const ex = findExercise(se.exerciseId, custom);
     return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({})), done: false, skipped: false };
   });
-  update(s => ({ ...s, active: { splitId: split.id, startedAt: new Date().toISOString(), pausedMs: 0, entries } }));
+  const startedAt = new Date().toISOString();
+  update(s => ({ ...s, active: { splitId: split.id, startedAt, pausedMs: 0, entries } }));
   flushSave();
+  resetHeartCapture(startedAt);
   void haptic.medium();
   void syncAndStoreHealth();
+  const w = state.value.preferences.watch;
+  if (w.autoConnectOnSession && w.deviceAddress) void connectWatch(w.deviceAddress);
 }
 
 export function elapsedSec(a: ActiveSession, now = Date.now()): number {
@@ -77,7 +83,9 @@ export function commitSet(entry: number, index: number): boolean {
   const gapSec = last != null ? Math.round((now - last) / 1000) : null;
   const burstCount = prior.filter(t => now - t <= 15_000).length + 1;
   const fidelity = classifySetFidelity(gapSec, burstCount);
-  setSet(entry, index, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity });
+  const startedAtMs = new Date(a.startedAt).getTime();
+  const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
+  setSet(entry, index, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart });
   if (state.value.preferences.autoRest && fidelity === 'live') startRest(state.value.preferences.restDefaultSec);
   void haptic.light();
   return true;
@@ -155,7 +163,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     loggedDurationSec: elapsedSec(a, now.getTime()),
     workingSetCount: workingSets.length,
   });
-  const session: Session = {
+  const session: Session = finishHeartCapture({
     id: newId('s'),
     splitId: a.splitId,
     splitName: split?.name ?? 'Workout',
@@ -165,7 +173,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     durationSec: Math.max(0, Math.round((new Date(logging.trainedEndAt).getTime() - new Date(logging.trainedAt).getTime()) / 1000)),
     exercises,
     logging,
-  };
+  });
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
   const changedTemplate = !!split && templateIds !== sessionIds;
@@ -235,4 +243,5 @@ export function discardSession(): void {
   update(s => ({ ...s, active: null }));
   flushSave();
   void cancelRestDone();
+  discardHeartCapture();
 }
