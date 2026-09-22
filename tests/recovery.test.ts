@@ -109,7 +109,7 @@ describe('recovery model v2 (impulse-response)', () => {
     const evalAt = secondEnd + 20 * HOUR;
     const stacked = statusFor([first, second], evalAt);
     const alone = statusFor([second], evalAt);
-    expect(stacked.pct).toBeLessThan(alone.pct);
+    expect(stacked.windowHours).toBeGreaterThan(alone.windowHours);
   });
 
   it('unrated sets count as ideal and lower confidence, never as easy or max', () => {

@@ -12,6 +12,7 @@ import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, RecoveryModel,
 import { MUSCLE_BY_ID, MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise, setDamage } from '@/core/exercises';
 import { ROLE_WEIGHT, isWorkingSet, rolesFor } from './exposure';
+import { exerciseHistory } from './history';
 import { daysBetween, dayKey } from '@/core/dates';
 import {
   EFFORT_IMPULSE, EFFORT_STRETCH, repFactor, HARD_SET_DIMINISH_AFTER, HARD_SET_DIMINISH_FACTOR,
@@ -114,11 +115,18 @@ export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], a
     if (sd > 0 && Math.abs(avg(rhr7) - avg(rhr28)) / sd > SYSTEMIC_RHR_SD) factor *= SYSTEMIC_RHR_FACTOR;
   }
 
-  const atl = sessions.filter(s => withinDaysOfSession(s, atMs, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
-  const ctl = sessions.filter(s => withinDaysOfSession(s, atMs, 28)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
-  if (ctl > 0 && atl / ctl > SYSTEMIC_LOAD_RATIO) {
-    const extra = clamp(1 + (atl / ctl - SYSTEMIC_LOAD_RATIO) * 0.5, 1.0, SYSTEMIC_LOAD_FACTOR_MAX);
-    factor *= extra;
+  // A fixed 28-day divisor understates chronic load for a new account with little history, which
+  // would spike the ratio for reasons that have nothing to do with overreaching. Only trust it once
+  // training has actually spanned most of that window.
+  const ctlSessions = sessions.filter(s => withinDaysOfSession(s, atMs, 28));
+  const oldestCtlDaysAgo = ctlSessions.length ? Math.max(...ctlSessions.map(s => daysBetween(s.day, dayKey(new Date(atMs))))) : 0;
+  if (ctlSessions.length >= 3 && oldestCtlDaysAgo >= 14) {
+    const atl = sessions.filter(s => withinDaysOfSession(s, atMs, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
+    const ctl = ctlSessions.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
+    if (ctl > 0 && atl / ctl > SYSTEMIC_LOAD_RATIO) {
+      const extra = clamp(1 + (atl / ctl - SYSTEMIC_LOAD_RATIO) * 0.5, 1.0, SYSTEMIC_LOAD_FACTOR_MAX);
+      factor *= extra;
+    }
   }
   return Math.min(SYSTEMIC_CAP, factor);
 }
@@ -320,4 +328,42 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
   if (performanceDeltaPct <= -CALIBRATION_PERFORMANCE_DROP * 100 && predictedPct >= CALIBRATION_PREDICTED_HIGH) next = currentScale * TAU_SCALE_UP;
   else if (performanceDeltaPct >= 0 && predictedPct <= CALIBRATION_PREDICTED_LOW) next = currentScale * TAU_SCALE_DOWN;
   return clamp(next, TAU_SCALE_MIN, TAU_SCALE_MAX);
+}
+
+/**
+ * Runs once, right after a session finishes: for each primary muscle of an exercise rated max
+ * effort with a matched-effort prior session, compares the predicted recovery at session start
+ * against the e1RM change and nudges that muscle's tauScale. Pure: `priorSessions` must not yet
+ * include `newSession`.
+ */
+export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel): RecoveryModel {
+  const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
+  const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel });
+  const tauScale = { ...recoveryModel.tauScale };
+  const observations = { ...recoveryModel.observations };
+  const touched = new Set<MuscleId>();
+
+  for (const ex of newSession.exercises) {
+    const meta = findExercise(ex.exerciseId, custom);
+    if (!meta) continue;
+    const curHist = exerciseHistory([newSession], ex.exerciseId, custom);
+    const cur = curHist[curHist.length - 1];
+    if (!cur?.hasMax || cur.bestE1rm <= 0) continue;
+    const priorHist = exerciseHistory(priorSessions, ex.exerciseId, custom);
+    const prev = priorHist[priorHist.length - 1];
+    if (!prev?.hasMax || prev.bestE1rm <= 0) continue;
+    const deltaPct = ((cur.bestE1rm - prev.bestE1rm) / prev.bestE1rm) * 100;
+    for (const muscle of meta.primary) {
+      if (touched.has(muscle)) continue;
+      touched.add(muscle);
+      const predictedPct = predicted.find(r => r.muscle === muscle)?.pct ?? 50;
+      const before = tauScale[muscle] ?? 1.0;
+      const after = calibrateTauScale(before, predictedPct, deltaPct);
+      if (after !== before) {
+        tauScale[muscle] = after;
+        observations[muscle] = (observations[muscle] ?? 0) + 1;
+      }
+    }
+  }
+  return { tauScale, observations };
 }
