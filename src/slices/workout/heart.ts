@@ -40,6 +40,20 @@ export function startHeartCapture(): void {
   });
 }
 
+/** The most recent contact=true bpm reading, for F1.2's rest target ("preSetBpm"). */
+export function latestLiveBpm(): number | undefined {
+  for (let i = rawSamples.length - 1; i >= 0; i--) {
+    const s = rawSamples[i]!;
+    if (s.contact !== false) return s.bpm;
+  }
+  return undefined;
+}
+
+/** The last n contact=true bpm readings, oldest first, for restTarget()'s "3 consecutive settled samples". */
+export function recentLiveBpms(n = 3): number[] {
+  return rawSamples.filter(s => s.contact !== false).slice(-n).map(s => s.bpm);
+}
+
 /** setStartSec/setEndSec: seconds since the session started (see resetHeartCapture). */
 export function heartForSet(setStartSec: number, setEndSec: number): SetHeart | undefined {
   if (!rawSamples.length) return undefined;

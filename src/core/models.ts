@@ -144,6 +144,9 @@ export interface RestState {
   endsAt: number;
   totalSec: number;
   pausedRemainingSec?: number;
+  /** F1.2: bpm when rest started and the effort just committed, so heart-guided rest has a target. Absent when the stream wasn't LIVE at that moment. */
+  preSetBpm?: number;
+  effort?: Effort;
 }
 
 export interface ActiveSession {

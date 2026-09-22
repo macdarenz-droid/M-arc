@@ -14,7 +14,7 @@ import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { syncAndStoreHealth } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
-import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture } from './heart';
+import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
 
@@ -86,7 +86,7 @@ export function commitSet(entry: number, index: number): boolean {
   const startedAtMs = new Date(a.startedAt).getTime();
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   setSet(entry, index, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart });
-  if (state.value.preferences.autoRest && fidelity === 'live') startRest(state.value.preferences.restDefaultSec);
+  if (state.value.preferences.autoRest && fidelity === 'live') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm());
   void haptic.light();
   return true;
 }
@@ -116,10 +116,10 @@ export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }
 
-export function startRest(sec: number): void {
+export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number): void {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
   const endsAt = Date.now() + total * 1000;
-  patchActive(a => ({ ...a, rest: { endsAt, totalSec: total } }));
+  patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm } }));
   void scheduleRestDone(endsAt);
 }
 

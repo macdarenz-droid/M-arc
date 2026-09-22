@@ -100,6 +100,12 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <Card class="stack-sm">
             <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
+            {watchStatus.value.state === 'connected' && (
+              <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>
+                <span class="small">Rest ends by heart rate</span>
+                <div class="hint">Falls back to the timer if the signal drops.</div>
+              </Row>
+            )}
           </Card>
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}

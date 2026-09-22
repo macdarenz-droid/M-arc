@@ -25,6 +25,8 @@ import { MuscleMap } from '@/ui/MuscleMap';
 import { GOALS } from '@/data/goals';
 import { watchSupported, watchStatus, latestMeasurement } from '@/native/watch';
 import { WatchSheet } from '@/slices/settings/Watch';
+import { recentLiveBpms } from './heart';
+import { restTarget, hrMax, restingHr } from '@/brain/heart';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -505,18 +507,37 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
 }
 
 export function RestBanner() {
-  const a = state.value.active;
+  const s = state.value;
+  const a = s.active;
   useEffect(() => { if (a?.rest) setTicking(true); }, [a?.rest?.endsAt]);
   if (!a?.rest) return null;
   const now = nowMs.value;
   const remaining = a.pausedAt && a.rest.pausedRemainingSec != null ? a.rest.pausedRemainingSec : Math.max(0, Math.round((a.rest.endsAt - now) / 1000));
-  const done = remaining <= 0;
+  const timeDone = remaining <= 0;
+
+  // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
+  const heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && a.rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
+  let heartReady = false;
+  let currentBpm: number | undefined;
+  let targetBpm: number | undefined;
+  if (heartMode) {
+    const restingBpm = restingHr(s.healthDays, s.profile, today.value);
+    if (restingBpm != null) {
+      const elapsedSec = Math.max(0, a.rest.totalSec - remaining);
+      const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: a.rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: a.rest.effort, elapsedSec });
+      heartReady = r.ready;
+      targetBpm = r.readyBpm;
+      currentBpm = latestMeasurement.value?.bpm;
+    }
+  }
+  const done = timeDone || heartReady;
   const pct = a.rest.totalSec ? Math.min(100, 100 - (remaining / a.rest.totalSec) * 100) : 100;
+  const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
   return (
     <div class={`rest ${done ? 'done' : ''}`} role="status">
       <div>
-        <div class="clock">{done ? 'Go' : formatClock(remaining)}</div>
-        <div class="hint">{done ? 'Rest done. Next set.' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
+        <div class="clock">{done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining)}</div>
+        <div class="hint">{done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
       </div>
       <div class="grow"><div class="bar"><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div></div>
       {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
