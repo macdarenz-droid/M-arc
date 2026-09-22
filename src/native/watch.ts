@@ -29,7 +29,8 @@ interface WatchPlugin {
   connect(opts: { address: string }): Promise<void>;
   disconnect(): Promise<void>;
   status(): Promise<WatchStatus>;
-  addListener(eventName: string, cb: (data: unknown) => void): Promise<ListenerHandle>;
+  // The legacy Capacitor.Plugins proxy returns a bare handle on some builds, a Promise on others.
+  addListener(eventName: string, cb: (data: unknown) => void): Promise<ListenerHandle> | ListenerHandle;
 }
 
 function plugin(): WatchPlugin | null {
@@ -39,23 +40,30 @@ function plugin(): WatchPlugin | null {
 
 let started = false;
 
+/** Attach a listener without assuming addListener returns a Promise; never throws. */
+function listen(p: WatchPlugin, eventName: string, cb: (data: unknown) => void): void {
+  try {
+    Promise.resolve(p.addListener(eventName, cb)).catch(() => undefined);
+  } catch { /* plugin missing the method: live HR stays off, the app still boots */ }
+}
+
 /** Call once, from main.tsx. No-ops on the web or when the plugin isn't in this build. */
 export function startWatchListeners(): void {
   if (started) return;
   started = true;
   const p = plugin();
   if (!isNative() || !p) return;
-  p.isSupported().then(r => {
+  Promise.resolve().then(() => p.isSupported()).then(r => {
     watchSupported.value = r.supported;
     if (!r.supported) { watchStatus.value = UNSUPPORTED; return; }
-    p.status().then(s => { watchStatus.value = s; }).catch(() => undefined);
+    return Promise.resolve(p.status()).then(s => { watchStatus.value = s; });
   }).catch(() => undefined);
-  p.addListener('watchStatus', data => { watchStatus.value = data as WatchStatus; }).catch(() => undefined);
-  p.addListener('watchMeasurement', data => { latestMeasurement.value = data as WatchMeasurement; }).catch(() => undefined);
-  p.addListener('watchDevice', data => {
+  listen(p, 'watchStatus', data => { watchStatus.value = data as WatchStatus; });
+  listen(p, 'watchMeasurement', data => { latestMeasurement.value = data as WatchMeasurement; });
+  listen(p, 'watchDevice', data => {
     const d = data as WatchDevice;
     scannedDevices.value = [...scannedDevices.value.filter(x => x.address !== d.address), d];
-  }).catch(() => undefined);
+  });
 }
 
 export async function watchPermissionState(): Promise<{ granted: boolean; needsLocation: boolean } | null> {

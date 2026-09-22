@@ -100,5 +100,7 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
 
 export function onNotificationTap(handler: () => void): void {
   if (!isNative()) return;
-  LocalNotifications.addListener('localNotificationActionPerformed', handler).catch(() => undefined);
+  try {
+    Promise.resolve(LocalNotifications.addListener('localNotificationActionPerformed', handler)).catch(() => undefined);
+  } catch { /* tapping a reminder just opens the app */ }
 }
