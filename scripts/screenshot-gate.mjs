@@ -233,13 +233,15 @@ for (const theme of themes) {
       },
     };
     // A complete profile so the profile-onboarding sheet doesn't compete for the dialog top layer here.
+    // A week of restingHr history so restTarget() has what it needs for a heart-mode rest screenshot (F1.2).
     const now = new Date().toISOString();
+    const healthDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return { day: d.toISOString().slice(0, 10), restingHr: 60, source: 'health_connect', syncedAt: now }; });
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
       goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [], active: null, customExercises: [],
-      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false } },
-      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'heart', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays, weightLog: [], profileHistory: [],
       onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
     }));
   });
@@ -270,6 +272,8 @@ for (const theme of themes) {
   await page.locator('.effort button.ideal').first().click();
   await page.waitForTimeout(200);
   if (!(await page.getByText(/^peak /).isVisible().catch(() => false))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
+  await page.screenshot({ path: `${OUT}/watch-rest-heart-mode.png` });
+  if (!(await page.getByText('Resting until heart rate settles').isVisible().catch(() => false))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
 
   await page.getByRole('button', { name: 'Finish' }).click();
   await page.waitForTimeout(200);
