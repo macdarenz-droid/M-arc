@@ -8,6 +8,7 @@ import { WEEKDAYS } from './models';
 import { findExercise, makeCustomExercise } from './exercises';
 import { dayKey } from './dates';
 import { isGoalId } from '@/data/goals';
+import { legacySessionLogging } from '@/brain/fidelity';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 
 export const LEGACY_KEY = 'dailyTrackerPremium';
@@ -185,15 +186,18 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
     const end = b.times.length ? Math.max(...b.times) : new Date(`${b.day}T12:00:00`).getTime();
     const durationSec = t?.durationMs ? Math.round(t.durationMs / 1000) : 0;
     const start = t?.startedAt ? new Date(t.startedAt).getTime() : end - durationSec * 1000;
+    const startedAt = new Date(start).toISOString();
+    const endedAt = new Date(end).toISOString();
     sessions.push({
       id: newId('s'),
       splitId: splitIdByKey.get(b.splitKey) ?? `split_${b.splitKey}`,
       splitName: splitNameFor(b.splitKey),
       day: b.day,
-      startedAt: new Date(start).toISOString(),
-      endedAt: new Date(end).toISOString(),
+      startedAt,
+      endedAt,
       durationSec,
       exercises: b.exercises,
+      logging: legacySessionLogging(startedAt, endedAt),
     });
   }
   sessions.sort((a, b) => a.startedAt.localeCompare(b.startedAt));

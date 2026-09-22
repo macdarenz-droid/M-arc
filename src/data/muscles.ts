@@ -22,33 +22,35 @@ export interface Muscle {
   bucket: BalanceBucket;
   /** Which side of the body map draws it. */
   view: 'front' | 'back';
+  /** Recovery-model prior: relative time-to-recover vs quads (1.0). Small; calibration does the rest. */
+  recoveryFactor: number;
 }
 
 export const MUSCLES: Muscle[] = [
-  { id: 'chest', label: 'Chest', group: 'chest', bucket: 'push', view: 'front' },
-  { id: 'upper_chest', label: 'Upper chest', group: 'chest', bucket: 'push', view: 'front' },
-  { id: 'front_delts', label: 'Front shoulders', group: 'shoulders', bucket: 'push', view: 'front' },
-  { id: 'side_delts', label: 'Side shoulders', group: 'shoulders', bucket: 'push', view: 'front' },
-  { id: 'rear_delts', label: 'Rear shoulders', group: 'shoulders', bucket: 'pull', view: 'back' },
-  { id: 'rotator_cuff', label: 'Rotator cuff', group: 'shoulders', bucket: 'neutral', view: 'back' },
-  { id: 'biceps', label: 'Biceps', group: 'arms', bucket: 'pull', view: 'front' },
-  { id: 'triceps', label: 'Triceps', group: 'arms', bucket: 'push', view: 'back' },
-  { id: 'brachialis', label: 'Brachialis', group: 'arms', bucket: 'pull', view: 'front' },
-  { id: 'forearms', label: 'Forearms', group: 'arms', bucket: 'pull', view: 'front' },
-  { id: 'lats', label: 'Lats', group: 'back', bucket: 'pull', view: 'back' },
-  { id: 'mid_back', label: 'Mid back', group: 'back', bucket: 'pull', view: 'back' },
-  { id: 'upper_traps', label: 'Upper traps', group: 'back', bucket: 'pull', view: 'back' },
-  { id: 'lower_back', label: 'Lower back', group: 'back', bucket: 'neutral', view: 'back' },
-  { id: 'abs', label: 'Abs', group: 'core', bucket: 'neutral', view: 'front' },
-  { id: 'obliques', label: 'Obliques', group: 'core', bucket: 'neutral', view: 'front' },
-  { id: 'core', label: 'Deep core', group: 'core', bucket: 'neutral', view: 'front' },
-  { id: 'hip_flexors', label: 'Hip flexors', group: 'core', bucket: 'neutral', view: 'front' },
-  { id: 'quads', label: 'Quads', group: 'legs', bucket: 'lower', view: 'front' },
-  { id: 'hamstrings', label: 'Hamstrings', group: 'legs', bucket: 'lower', view: 'back' },
-  { id: 'glutes', label: 'Glutes', group: 'legs', bucket: 'lower', view: 'back' },
-  { id: 'adductors', label: 'Inner thighs', group: 'legs', bucket: 'lower', view: 'front' },
-  { id: 'abductors', label: 'Outer hips', group: 'legs', bucket: 'lower', view: 'front' },
-  { id: 'calves', label: 'Calves', group: 'legs', bucket: 'lower', view: 'back' },
+  { id: 'chest', label: 'Chest', group: 'chest', bucket: 'push', view: 'front', recoveryFactor: 1.1 },
+  { id: 'upper_chest', label: 'Upper chest', group: 'chest', bucket: 'push', view: 'front', recoveryFactor: 1.1 },
+  { id: 'front_delts', label: 'Front shoulders', group: 'shoulders', bucket: 'push', view: 'front', recoveryFactor: 1.0 },
+  { id: 'side_delts', label: 'Side shoulders', group: 'shoulders', bucket: 'push', view: 'front', recoveryFactor: 1.0 },
+  { id: 'rear_delts', label: 'Rear shoulders', group: 'shoulders', bucket: 'pull', view: 'back', recoveryFactor: 1.0 },
+  { id: 'rotator_cuff', label: 'Rotator cuff', group: 'shoulders', bucket: 'neutral', view: 'back', recoveryFactor: 1.0 },
+  { id: 'biceps', label: 'Biceps', group: 'arms', bucket: 'pull', view: 'front', recoveryFactor: 1.1 },
+  { id: 'triceps', label: 'Triceps', group: 'arms', bucket: 'push', view: 'back', recoveryFactor: 1.1 },
+  { id: 'brachialis', label: 'Brachialis', group: 'arms', bucket: 'pull', view: 'front', recoveryFactor: 1.1 },
+  { id: 'forearms', label: 'Forearms', group: 'arms', bucket: 'pull', view: 'front', recoveryFactor: 0.8 },
+  { id: 'lats', label: 'Lats', group: 'back', bucket: 'pull', view: 'back', recoveryFactor: 1.1 },
+  { id: 'mid_back', label: 'Mid back', group: 'back', bucket: 'pull', view: 'back', recoveryFactor: 1.0 },
+  { id: 'upper_traps', label: 'Upper traps', group: 'back', bucket: 'pull', view: 'back', recoveryFactor: 1.0 },
+  { id: 'lower_back', label: 'Lower back', group: 'back', bucket: 'neutral', view: 'back', recoveryFactor: 1.1 },
+  { id: 'abs', label: 'Abs', group: 'core', bucket: 'neutral', view: 'front', recoveryFactor: 0.8 },
+  { id: 'obliques', label: 'Obliques', group: 'core', bucket: 'neutral', view: 'front', recoveryFactor: 0.8 },
+  { id: 'core', label: 'Deep core', group: 'core', bucket: 'neutral', view: 'front', recoveryFactor: 0.8 },
+  { id: 'hip_flexors', label: 'Hip flexors', group: 'core', bucket: 'neutral', view: 'front', recoveryFactor: 0.8 },
+  { id: 'quads', label: 'Quads', group: 'legs', bucket: 'lower', view: 'front', recoveryFactor: 1.0 },
+  { id: 'hamstrings', label: 'Hamstrings', group: 'legs', bucket: 'lower', view: 'back', recoveryFactor: 1.2 },
+  { id: 'glutes', label: 'Glutes', group: 'legs', bucket: 'lower', view: 'back', recoveryFactor: 1.0 },
+  { id: 'adductors', label: 'Inner thighs', group: 'legs', bucket: 'lower', view: 'front', recoveryFactor: 1.2 },
+  { id: 'abductors', label: 'Outer hips', group: 'legs', bucket: 'lower', view: 'front', recoveryFactor: 1.0 },
+  { id: 'calves', label: 'Calves', group: 'legs', bucket: 'lower', view: 'back', recoveryFactor: 0.8 },
 ];
 
 export const MUSCLE_BY_ID: Record<MuscleId, Muscle> = Object.fromEntries(

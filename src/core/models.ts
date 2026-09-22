@@ -29,12 +29,21 @@ export interface Exercise {
   custom?: boolean;
 }
 
+export type SetFidelity = 'live' | 'delayed' | 'retro' | 'edited';
+export type SetFlag = 'implausible_load' | 'implausible_reps' | 'unit_suspect' | 'duplicate' | 'future_time';
+
 export interface LoggedSet {
   kg?: number;
   reps?: number;
   effort?: Effort;
   durationSec?: number;
   distanceM?: number;
+  /** Commit time. Absent for sets from before this field existed, or the past-session flow. */
+  at?: string;
+  /** Seconds since the previous commit in this session, capped at 600. */
+  restSec?: number;
+  fidelity?: SetFidelity;
+  flags?: SetFlag[];
 }
 
 export interface LoggedExercise {
@@ -43,16 +52,33 @@ export interface LoggedExercise {
   sets: LoggedSet[];
 }
 
+/** How a session was logged, and how much its timing can be trusted. See brain/fidelity.ts. */
+export interface SessionLogging {
+  mode: 'live' | 'mixed' | 'retro' | 'legacy';
+  /** When training actually started: the timer, the user's own answer, the schedule slot, or a 17:00 default. */
+  trainedAt: string;
+  trainedEndAt: string;
+  /** When Finish (or Save) was tapped. */
+  loggedAt: string;
+  timeSource: 'timer' | 'user' | 'schedule' | 'default';
+  /** 0-1 share of sets with fidelity 'live'. */
+  liveShare: number;
+  timingTrusted: boolean;
+  contentConfidence: 'high' | 'medium' | 'low';
+  flags: string[];
+}
+
 export interface Session {
   id: string;
   splitId: string;
   splitName: string;
-  /** Local calendar day, YYYY-MM-DD. */
+  /** Local calendar day, YYYY-MM-DD. Derived from logging.trainedAt, never from when it was logged. */
   day: string;
   startedAt: string;
   endedAt: string;
   durationSec: number;
   exercises: LoggedExercise[];
+  logging: SessionLogging;
 }
 
 export interface SplitExercise {
@@ -136,6 +162,27 @@ export interface Onboarding {
   lastReviewAt?: string;
 }
 
+/** A day's soreness-only check-in (recovery v2). Sleep quality and mood join this later without a migration. */
+export interface CheckIn {
+  day: string;
+  soreness?: Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>;
+  sleepQuality?: 1 | 2 | 3 | 4 | 5;
+  mood?: 1 | 2 | 3 | 4 | 5;
+  note?: string;
+}
+
+/** Recovery-model self-calibration (6.11 point 8). Bounded, slow, two-sided. */
+export interface RecoveryModel {
+  tauScale: Partial<Record<MuscleId, number>>;
+  observations: Partial<Record<MuscleId, number>>;
+}
+
+/** A muscle the user marked recovered from the muscle sheet, overriding the model for today. */
+export interface FreshMark {
+  muscle: MuscleId;
+  at: string;
+}
+
 export interface BodyMeasurement {
   day: string;
   neckCm: number;
@@ -188,6 +235,11 @@ export interface AppState {
   /** Changes to profile facts, newest last, capped at 500. */
   profileHistory: ProfileChange[];
   onboarding: Onboarding;
+  /** Per-muscle soreness check-ins, newest last, capped at 180. */
+  checkIns: CheckIn[];
+  recoveryModel: RecoveryModel;
+  /** "Mark as fresh" overrides, newest last, capped at 100. Cleared once older than the muscle's fullInHours. */
+  freshMarks: FreshMark[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -221,6 +273,9 @@ export function freshState(now = new Date()): AppState {
     weightLog: [],
     profileHistory: [],
     onboarding: { dismissedAt: [] },
+    checkIns: [],
+    recoveryModel: { tauScale: {}, observations: {} },
+    freshMarks: [],
   };
 }
 

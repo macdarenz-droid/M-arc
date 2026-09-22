@@ -1,6 +1,12 @@
 import { signal, computed, batch } from '@preact/signals';
-import { freshState, type AppState } from './models';
+import { freshState, type AppState, type Session } from './models';
 import { convertLegacy, readLegacy } from './migrate';
+import { legacySessionLogging } from '@/brain/fidelity';
+
+/** A session saved before `logging` existed gets a legacy backfill so every reader can rely on it being present. */
+function withLogging(s: Session): Session {
+  return s.logging ? s : { ...s, logging: legacySessionLogging(s.startedAt, s.endedAt) };
+}
 
 export const STATE_KEY = 'marc.state.v1';
 const BACKUP_KEY = 'marc.state.v1.backup';
@@ -28,6 +34,10 @@ function normalize(s: AppState): AppState {
     weightLog: s.weightLog ?? [],
     profileHistory: s.profileHistory ?? [],
     onboarding: { ...fresh.onboarding, ...s.onboarding, dismissedAt: s.onboarding?.dismissedAt ?? [] },
+    checkIns: s.checkIns ?? [],
+    recoveryModel: { tauScale: s.recoveryModel?.tauScale ?? {}, observations: s.recoveryModel?.observations ?? {} },
+    freshMarks: s.freshMarks ?? [],
+    sessions: (s.sessions ?? []).map(withLogging),
   };
 }
 
