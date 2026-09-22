@@ -6,7 +6,6 @@ import { WEEKDAYS, type PlanSetTarget } from '@/core/models';
 import type { MuscleRecovery } from '@/brain/recovery';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
 import { buildReport } from '@/brain/coach/report';
-import { contextFromState } from '@/brain/coach/context';
 import { adjustedRecovery } from '@/brain/coach/detectors';
 import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
 import { applyDeload, deloadActive } from '@/brain/coach/deload';
@@ -45,7 +44,36 @@ export const scheduledSplitId = computed(() => todayPlan.value?.splitId ?? state
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
 export const todayChanges = computed(() => todayPlan.value?.changes ?? []);
 
-export const brainContext = computed(() => contextFromState(state.value, today.value, nowMinute.value));
+const reportSessions = computed(() => state.value.sessions);
+const reportSplits = computed(() => state.value.splits);
+const reportSchedule = computed(() => state.value.schedule);
+const reportCustom = computed(() => state.value.customExercises);
+const reportGoal = computed(() => state.value.goal);
+const reportRestDefault = computed(() => state.value.preferences.restDefaultSec);
+const reportHealth = computed(() => state.value.health);
+const reportReadiness = computed(() => state.value.readiness);
+const reportDeload = computed(() => state.value.coach.deload);
+const reportDismissed = computed(() => state.value.coach.dismissed);
+const reportAccepted = computed(() => state.value.coach.accepted);
+const reportDismissalEvidence = computed(() => state.value.coach.dismissalEvidence);
+
+/** Expensive report inputs are reference-selected so tone, Ask-thread and other UI writes do not rebuild the detector pipeline. */
+export const brainContext = computed<BrainContext>(() => ({
+  sessions: reportSessions.value,
+  splits: reportSplits.value,
+  schedule: reportSchedule.value,
+  custom: reportCustom.value,
+  goal: reportGoal.value,
+  restDefaultSec: reportRestDefault.value,
+  health: reportHealth.value,
+  readiness: reportReadiness.value,
+  deload: reportDeload.value,
+  today: today.value,
+  now: nowMinute.value,
+  dismissed: reportDismissed.value,
+  accepted: reportAccepted.value,
+  dismissalEvidence: reportDismissalEvidence.value,
+}));
 
 /** A precomputed "how things stand right now" snapshot for /ask — see src/brain/stats.ts. Recomputed alongside the report, whenever state or the minute changes. */
 export const askStats = computed(() => buildAskStats(brainContext.value));

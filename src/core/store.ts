@@ -251,8 +251,9 @@ function validAssessment(value: unknown, entries: WorkoutPlanEntry[]): value is 
   const intent = value.intent;
   if (!object(intent) || !oneOf(intent.kind, ['normal', 'easier'] as const)) return false;
   if (!shortString(intent.capturedAt) || !Number.isFinite(Date.parse(intent.capturedAt))) return false;
-  if (!oneOf(intent.source, ['session_start', 'accepted_deload'] as const)) return false;
-  if (!(intent.effortCap === null || oneOf(intent.effortCap, ['easy', 'ideal', 'max'] as const))) return false;
+  if (intent.kind === 'normal') {
+    if (intent.source !== 'session_start' || intent.effortCap !== null) return false;
+  } else if (intent.source !== 'accepted_deload' || !oneOf(intent.effortCap, ['easy', 'ideal'] as const)) return false;
   if (!Array.isArray(value.changes) || value.changes.length > MAX_ASSESSMENT_CHANGES) return false;
   if (!value.changes.every(change => validAssessmentChange(change, entryIds))) return false;
   const changeIds = value.changes.map(change => change.id);

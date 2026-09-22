@@ -19,6 +19,7 @@ import type { Confidence, Finding, FindingKind, FindingsReport, Proposal, Propos
 import { principlesFor, type PrincipleCard } from './principles';
 import { CONFIDENCE_RANK } from './detectors/shared';
 import { weekReviewCopy, type WeekReview } from './review';
+import { canonicalEvidenceKey } from './moments';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data' | 'volume';
 
@@ -51,6 +52,7 @@ export interface Insight {
   confidence: Confidence;
   severity: Severity;
   evidence: PrincipleCard[];
+  evidenceKey: string;
   /** Legacy chronic-skip comparisons can only navigate to the current split for review. */
   reviewInTrain?: boolean;
 }
@@ -69,6 +71,7 @@ export interface Suggestion {
   confidence: Confidence;
   dismissKey: string;
   proposal: Proposal;
+  evidenceKey: string;
 }
 
 export interface RenderContext {
@@ -398,6 +401,10 @@ export function renderFinding(f: Finding, ctx: RenderContext): Insight {
     priority: f.severity * 100 + CONFIDENCE_RANK[f.confidence] * 10 + (KIND_WEIGHT[f.kind] ?? 0),
     ...w,
     confidence: f.confidence, severity: f.severity, evidence: principlesFor(f.principles),
+    evidenceKey: canonicalEvidenceKey('insight', {
+      id: f.id, kind: f.kind, subject: f.subject, metrics: f.metrics, window: f.window,
+      confidence: f.confidence, severity: f.severity, evidence: f.evidence,
+    }),
   };
   if (f.subject.exerciseId) insight.exerciseId = f.subject.exerciseId;
   if (f.subject.muscle) insight.muscle = f.subject.muscle;
@@ -462,7 +469,12 @@ export function renderProposal(p: Proposal, report: FindingsReport, ctx: RenderC
   const a = p.apply;
   const chronicSkip = p.basedOn.some(id => report.findings.some(f => f.id === id && f.kind === 'chronic_skip'));
   const consistencyDrift = p.basedOn.map(id => report.findings.find(f => f.id === id)).find(f => f?.kind === 'consistency_drift');
-  const base = { id: p.id, kind: p.kind, why: whyFor(p, report, ctx), evidence: principlesFor(p.principles), confidence: p.confidence, dismissKey: p.dismissKey, proposal: p };
+  const basis = p.basedOn.map(id => report.findings.find(finding => finding.id === id)).filter((finding): finding is Finding => !!finding)
+    .map(finding => ({ id: finding.id, kind: finding.kind, subject: finding.subject, metrics: finding.metrics, window: finding.window, confidence: finding.confidence, severity: finding.severity, evidence: finding.evidence }));
+  const base = {
+    id: p.id, kind: p.kind, why: whyFor(p, report, ctx), evidence: principlesFor(p.principles), confidence: p.confidence, dismissKey: p.dismissKey, proposal: p,
+    evidenceKey: canonicalEvidenceKey('suggestion', { kind: p.kind, dismissKey: p.dismissKey, subject: p.subject, apply: p.apply, basedOn: p.basedOn, confidence: p.confidence, basis }),
+  };
   switch (a.kind) {
     case 'schedule': {
       if (consistencyDrift) {

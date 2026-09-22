@@ -145,6 +145,20 @@ describe('D01/D03/D06: assessment normalization — malformed metadata drops onl
     expect(loaded.sessions[0]!.plan?.assessment).toBeUndefined();
   });
 
+  it.each([
+    ['normal intent with a cap', { kind: 'normal', source: 'session_start', effortCap: 'ideal' }],
+    ['normal intent from an accepted deload', { kind: 'normal', source: 'accepted_deload', effortCap: null }],
+    ['easier intent without a cap', { kind: 'easier', source: 'accepted_deload', effortCap: null }],
+    ['easier intent with max cap', { kind: 'easier', source: 'accepted_deload', effortCap: 'max' }],
+    ['easier intent from ordinary session start', { kind: 'easier', source: 'session_start', effortCap: 'ideal' }],
+  ])('D03: rejects the semantically impossible tuple %s', (_label, tuple) => {
+    const assessment = { version: 1, intent: { ...tuple, capturedAt: '2026-09-19T10:00:00.000Z' }, changes: [], invalidatedEntryIds: [], seenWorkingRows: [] };
+    const loaded = loadState(savedStorage(withAssessment(assessment))).state.sessions[0]!;
+    expect(loaded.exercises[0]!.sets).toHaveLength(1);
+    expect(loaded.plan).toBeDefined();
+    expect(loaded.plan!.assessment).toBeUndefined();
+  });
+
   it('D03: a non-ISO capturedAt drops only the assessment', () => {
     const { state: loaded } = loadState(savedStorage(withAssessment({ version: 1, intent: { kind: 'normal', capturedAt: 'not-a-date', source: 'session_start', effortCap: null }, changes: [], invalidatedEntryIds: [], seenWorkingRows: [] })));
     expect(loaded.sessions[0]!.plan?.assessment).toBeUndefined();

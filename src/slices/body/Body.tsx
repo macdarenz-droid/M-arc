@@ -14,9 +14,9 @@ import { showToast } from '@/app/toast';
 import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
 import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment } from '@/slices/coach/presenceState';
+import { dismissPresenceLauncher } from '@/slices/coach/presenceState';
+import { openAsk } from '@/slices/coach/askController';
 import { COACH_NAME } from '@/ui/chatRender';
-import { remoteEnabled } from '@/slices/coach/remote';
 import { go } from '@/app/router';
 
 type View = 'recovery' | 'levels' | 'week';
@@ -47,11 +47,9 @@ export function Body() {
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Body</div><h1>Muscle map</h1></div></div>
       {/* Own full-width row, never a shared button row — see docs/escobar-presence/PROGRESS.md's P02 Train entry. */}
-      {!remoteEnabled.value && moment && (
-        <div style={{ marginBottom: 12 }}>
-          <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => setMomentOpen(true)} onDismiss={m => dismissPresenceMoment(m)} />
-        </div>
-      )}
+      <div style={{ marginBottom: 12 }}>
+        <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => moment ? setMomentOpen(true) : openAsk()} onDismiss={m => { dismissPresenceLauncher(m); }} />
+      </div>
       <Segmented value={view} onChange={setView} options={[{ value: 'recovery', label: 'Recovery' }, { value: 'week', label: 'This week' }, { value: 'levels', label: 'Levels' }]} />
       <Card style={{ marginTop: 14 }}>
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />

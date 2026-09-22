@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { askOpenState, closeAsk, openAsk, openAskSavedReview, openAskWithQuestion } from '@/slices/coach/askController';
+import { askDraft, askError, askOpenState, askSending, closeAsk, openAsk, openAskSavedReview, openAskWithQuestion, resetAskTransient } from '@/slices/coach/askController';
 
 describe('askController: the single open/closed source of truth for the shared Ask sheet', () => {
   it('starts closed', () => {
@@ -30,9 +30,19 @@ describe('askController: the single open/closed source of truth for the shared A
   });
 
   it('openAskWithQuestion opens a plain, non-savedOnly conversation with the given prefill', () => {
-    closeAsk();
+    closeAsk(); resetAskTransient();
     openAskWithQuestion('About "Volume is trending up": ');
-    expect(askOpenState.value).toEqual({ open: true, savedOnly: false, initialQuestion: 'About "Volume is trending up": ' });
+    expect(askOpenState.value).toEqual({ open: true, savedOnly: false });
+    expect(askDraft.value).toBe('About "Volume is trending up": ');
+  });
+
+  it('owns draft, request and error state across close/reopen until an explicit reset', () => {
+    resetAskTransient(); openAsk();
+    askDraft.value = 'unsent question'; askSending.value = true; askError.value = 'offline';
+    closeAsk(); openAsk();
+    expect({ draft: askDraft.value, sending: askSending.value, error: askError.value }).toEqual({ draft: 'unsent question', sending: true, error: 'offline' });
+    resetAskTransient();
+    expect({ draft: askDraft.value, sending: askSending.value, error: askError.value }).toEqual({ draft: '', sending: false, error: null });
   });
 });
 
@@ -82,10 +92,10 @@ describe('App.tsx: the single shared AskSheet mount, deferred (not stacked) whil
     expect(source).toContain('{askOpenState.value.open && !settingsOpen.value && (');
   });
 
-  it('passes onClose={closeAsk} and forwards initialTurnKey/savedOnly/initialQuestion from the controller state', () => {
+  it('passes onClose={closeAsk} and forwards initialTurnKey/savedOnly while composer state stays in the controller', () => {
     expect(source).toContain('onClose={closeAsk}');
     expect(source).toContain('initialTurnKey={askOpenState.value.initialTurnKey}');
     expect(source).toContain('savedOnly={askOpenState.value.savedOnly}');
-    expect(source).toContain('initialQuestion={askOpenState.value.initialQuestion}');
+    expect(source).not.toContain('initialQuestion=');
   });
 });

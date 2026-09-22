@@ -5,29 +5,35 @@
  * Train.tsx each mounted their own separate <AskSheet> behind their own
  * local boolean — closing the sheet on one screen and reopening it on the
  * other, or just switching tabs while it was open, unmounted the old
- * instance and lost AskSheet's own local `question`/`sending`/`error`
- * state, since each mount was a fresh component instance.
+ * instance and lost its transient `question`/`sending`/`error` state.
  *
  * A signal here instead of per-screen state means whichever single place
- * mounts <AskSheet> (App.tsx, alongside the tab content rather than inside
- * it) keeps the same component instance alive across tab switches — the
- * typed-but-unsent question, an in-flight send, and any error survive
- * navigating away and back, satisfying A03 ("Navigation/close/reopen cannot
- * double-send or silently discard draft") by construction rather than by
- * separately re-implementing draft preservation.
+ * mounts <AskSheet>, while the signals below own transient state across any
+ * unmount/remount (ordinary close/reopen and Settings deferral included).
  */
 import { signal } from '@preact/signals';
+import { MAX_QUESTION_CHARS } from '@/ai/ask';
 
 export interface AskOpenState {
   open: boolean;
   savedOnly: boolean;
   initialTurnKey?: string;
-  initialQuestion?: string;
 }
 
 const CLOSED: AskOpenState = { open: false, savedOnly: false };
 
 export const askOpenState = signal<AskOpenState>(CLOSED);
+/** Transient composer/request UI belongs to the application controller so a close, tab change, or Settings deferral cannot discard it. */
+export const askDraft = signal('');
+export const askSending = signal(false);
+export const askError = signal<string | null>(null);
+
+/** Deliberate reset boundary used alongside request-generation invalidation. */
+export function resetAskTransient(): void {
+  askDraft.value = '';
+  askSending.value = false;
+  askError.value = null;
+}
 
 /** The ordinary "Ask a question" entry point — Coach's button, Train's Escobar button, a presence launcher's "Ask about this". */
 export function openAsk(): void {
@@ -36,19 +42,13 @@ export function openAsk(): void {
 
 /**
  * Contextual entry point (docs/escobar-presence §4's "context by IDs, visible
- * editable prefill", regression A06): InsightSheet/SuggestionSheet's "Ask
- * about this" seeds the composer with a starting question about the exact
- * finding the sheet was opened for, fully visible and editable — never sent
- * automatically. AskSheet only reads `initialQuestion` once, at mount
- * (matching `initialTurnKey`'s existing pattern above): reachable safely
- * because AskSheet is a native modal dialog, so a second sheet's own "Ask
- * about this" can't be tapped again while Ask is already open (see P03.4's
- * verified nested-modal reasoning in docs/escobar-presence/PROGRESS.md) —
- * there is no live scenario where this needs to update an already-open
- * instance.
+ * editable prefill", regression A06): seed the controller-owned composer
+ * with a visible, editable question and never submit it automatically.
  */
 export function openAskWithQuestion(question: string): void {
-  askOpenState.value = { open: true, savedOnly: false, initialQuestion: question };
+  askDraft.value = question.slice(0, MAX_QUESTION_CHARS);
+  askError.value = null;
+  askOpenState.value = { open: true, savedOnly: false };
 }
 
 /** Coach's saved-draft review entry point: opens straight to one saved item, composer replaced by the offline-safe review view (AskSheet's own `savedOnly`). */

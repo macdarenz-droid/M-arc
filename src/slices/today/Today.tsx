@@ -14,7 +14,8 @@ import { showToast } from '@/app/toast';
 import { startSession } from '../workout/session';
 import { InsightSheet, SuggestionSheet } from '../coach/Coach';
 import { PresenceLauncher } from '../coach/Presence';
-import { dismissPresenceMoment } from '../coach/presenceState';
+import { dismissPresenceLauncher } from '../coach/presenceState';
+import { openAsk } from '../coach/askController';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
 import { ReadinessCheckIn } from './ReadinessCheckIn';
@@ -148,22 +149,18 @@ export function Today() {
         </Card>
       </Section>
 
-      {(moment || waiting > 0 || dueReview) && (
-        <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+      <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
           <div class="stack-sm">
-            {moment && (
-              <PresenceLauncher
-                moment={moment}
-                label={COACH_NAME}
-                onOpen={() => setMomentOpen(true)}
-                onDismiss={m => dismissPresenceMoment(m)}
-              />
-            )}
+            <PresenceLauncher
+              moment={moment}
+              label={COACH_NAME}
+              onOpen={() => moment ? setMomentOpen(true) : openAsk()}
+              onDismiss={m => { dismissPresenceLauncher(m); }}
+            />
             {waiting > 0 && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label={`${waiting} suggestion${waiting === 1 ? '' : 's'} waiting — open Coach`}><div class="row-between"><span class="small">{waiting} suggestion{waiting === 1 ? '' : 's'} waiting for you</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
             {dueReview && <Card class="card-quiet card-press" onClick={() => go('coach')} aria-label="Direction review due — open Coach"><div class="row-between"><div><b class="small">Your direction is ready to review</b><p class="hint" style={{ marginTop: 4 }}>{dueReview.measures.length} selected evidence measure{dueReview.measures.length === 1 ? '' : 's'}, using the records available now.</p></div><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div></Card>}
           </div>
-        </Section>
-      )}
+      </Section>
       {momentOpen && openInsight && <InsightSheet insight={openInsight} onClose={() => setMomentOpen(false)} />}
       {momentOpen && openSuggestion && (
         <SuggestionSheet

@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { evidenceKeyFor, selectMoment, type CoachTone, type PresenceDismissal } from '@/brain/coach/moments';
 import type { Insight, Suggestion } from '@/brain/coach/words';
-import type { Proposal } from '@/brain/coach/contract';
+import { renderFinding, renderProposal } from '@/brain/coach/words';
+import type { Finding, FindingsReport, Proposal } from '@/brain/coach/contract';
 
 function insight(overrides: Partial<Insight> = {}): Insight {
   return {
     id: 'plateau:lib_barbell_bench_press', kind: 'plateau', category: 'progress', priority: 210,
     title: 'Bench press has plateaued', noticed: 'Your top set hasn’t moved in 4 weeks.',
     means: 'The load isn’t progressing.', action: 'Try a small jump next session.',
-    confidence: 'high', severity: 2, evidence: [],
+    confidence: 'high', severity: 2, evidence: [], evidenceKey: 'insight-facts-v1',
     ...overrides,
   };
 }
@@ -27,7 +28,7 @@ function suggestion(overrides: Partial<Suggestion> = {}): Suggestion {
     id: 'p1', kind: 'load_next', title: 'Push the top set', summary: 'Time for a small jump.',
     why: ['Bench has been flat for 4 weeks.'], changes: ['Next target: 62.5kg x 6-8'],
     acceptLabel: 'Use 62.5kg', evidence: [], confidence: 'medium', dismissKey: 'load_next:lib_barbell_bench_press',
-    proposal: proposal(),
+    proposal: proposal(), evidenceKey: 'suggestion-facts-v1',
     ...overrides,
   };
 }
@@ -103,14 +104,14 @@ describe('M04: Steady/Direct change wording only', () => {
 
 describe('M05: dismissal is exact-match on (id, evidenceKey), and bounded retention is the caller’s job', () => {
   it('dismissing the exact id+evidenceKey removes it from candidates, revealing the next one', () => {
-    const dismissed: PresenceDismissal[] = [{ id: 'suggestion:load_next:lib_barbell_bench_press', evidenceKey: evidenceKeyFor(['suggestion', 'load_next', 'load_next:lib_barbell_bench_press', 'medium', 'Next target: 62.5kg x 6-8']) }];
+    const dismissed: PresenceDismissal[] = [{ id: 'suggestion:load_next:lib_barbell_bench_press', evidenceKey: 'suggestion-facts-v1' }];
     const m = selectMoment({ suggestions: [suggestion()], insights: [insight()], tone: 'steady', dismissed });
     expect(m?.kind).toBe('insight');
   });
 
   it('dismissing by id alone, with a stale evidenceKey, does not suppress a materially changed situation', () => {
     const dismissed: PresenceDismissal[] = [{ id: 'insight:plateau:lib_barbell_bench_press', evidenceKey: 'stale-hash-from-before' }];
-    const m = selectMoment({ suggestions: [], insights: [insight({ severity: 3 })], tone: 'steady', dismissed });
+    const m = selectMoment({ suggestions: [], insights: [insight({ severity: 3, evidenceKey: 'changed-facts' })], tone: 'steady', dismissed });
     expect(m).not.toBeNull(); // severity changed -> evidenceKey changed -> requalifies
   });
 
@@ -118,6 +119,31 @@ describe('M05: dismissal is exact-match on (id, evidenceKey), and bounded retent
     const steadyId = selectMoment({ suggestions: [], insights: [insight()], tone: 'steady', dismissed: [] })!;
     const directId = selectMoment({ suggestions: [], insights: [insight()], tone: 'direct', dismissed: [] })!;
     expect(steadyId.evidenceKey).toBe(directId.evidenceKey);
+  });
+
+  it('derives insight identity from typed facts, so changed metrics requalify unchanged severity bands', () => {
+    const base: Finding = {
+      id: 'plateau:bench', kind: 'plateau', subject: { exerciseId: 'lib_barbell_bench_press' },
+      metrics: { sessions: 4, weeks: 3 }, window: { from: '2026-09-01', to: '2026-09-21' }, confidence: 'medium', severity: 2,
+      evidence: { sessionIds: ['s1'], days: ['2026-09-20'] }, principles: [],
+    };
+    const ctx = { unit: 'kg' as const, splits: [], custom: [], today: '2026-09-21', goal: 'growth' as const };
+    const before = renderFinding(base, ctx);
+    const after = renderFinding({ ...base, metrics: { ...base.metrics, sessions: 5 } }, ctx);
+    expect(before.priority).toBe(after.priority);
+    expect(before.evidenceKey).not.toBe(after.evidenceKey);
+  });
+
+  it('keeps proposal identity stable across kg/lb copy while changing it for a typed action change', () => {
+    const p = proposal();
+    const report: FindingsReport = { version: 1, generatedAt: '2026-09-21T00:00:00.000Z', today: '2026-09-21', dataQuality: { sessions: 0, weeksOfData: 0, effortCoverage: 0, insufficientData: true }, findings: [], proposals: [p] };
+    const baseCtx = { splits: [], custom: [], today: '2026-09-21', goal: 'growth' as const };
+    const kg = renderProposal(p, report, { ...baseCtx, unit: 'kg' });
+    const lb = renderProposal(p, report, { ...baseCtx, unit: 'lb' });
+    expect(kg.title).not.toBe(lb.title);
+    expect(kg.evidenceKey).toBe(lb.evidenceKey);
+    const changed = { ...p, apply: { ...p.apply, kg: 65 } } as Proposal;
+    expect(renderProposal(changed, { ...report, proposals: [changed] }, { ...baseCtx, unit: 'kg' }).evidenceKey).not.toBe(kg.evidenceKey);
   });
 
   it('dismissing everything present leaves null, never a fallback filler', () => {

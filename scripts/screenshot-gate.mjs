@@ -1206,6 +1206,13 @@ for (const theme of themes) {
     if (!(await draftPage.getByRole('heading', { name: 'Ask Escobar' }).isVisible())) errors.push('silent-black: Ask sheet closed unexpectedly from an in-sheet action\'s internal navigation');
     await draftPage.keyboard.press('Escape');
     await draftPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor({ state: 'hidden' });
+    // Closing deliberately unmounts the modal. Reopening from the destination tab must still
+    // restore the controller-owned transient draft; component-local state cannot satisfy this.
+    await draftPage.getByRole('button', { name: /Ask Escobar/ }).first().click();
+    await draftPage.getByRole('heading', { name: 'Ask Escobar' }).waitFor();
+    const reopenedComposer = draftPage.locator('.ask-input input');
+    if (await reopenedComposer.inputValue() !== 'Should I do this today or wait until tomorrow?') errors.push('silent-black: closing and reopening Ask discarded the controller-owned draft');
+    await draftPage.keyboard.press('Escape');
     await draftCtx.close();
 
     const reopenState = structuredClone(unfinishedState);

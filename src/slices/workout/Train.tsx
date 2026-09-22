@@ -20,7 +20,7 @@ import { acceptProposal, dismissProposal, endDeload } from '../coach/apply';
 import { ensureDeviceId, remoteEnabled } from '../coach/remote';
 import { InsightSheet, SuggestionSheet } from '../coach/Coach';
 import { PresenceLauncher } from '../coach/Presence';
-import { dismissPresenceMoment } from '../coach/presenceState';
+import { dismissPresenceLauncher } from '../coach/presenceState';
 import { liveRecordFrom, prReach, recordsForSession } from '@/brain/prs';
 import { assessPlanFit } from '@/brain/planFit';
 import { exerciseHistory } from '@/brain/history';
@@ -140,11 +140,9 @@ function Splits() {
         diagnosis trail. This placement was verified against that exact
         failure with the full five-theme visual gate before shipping.
       */}
-      {!remoteEnabled.value && moment && (
-        <div style={{ marginBottom: 12 }}>
-          <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => setMomentOpen(true)} onDismiss={m => dismissPresenceMoment(m)} />
-        </div>
-      )}
+      <div style={{ marginBottom: 12 }}>
+        <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => moment ? setMomentOpen(true) : openAsk()} onDismiss={m => { dismissPresenceLauncher(m); }} />
+      </div>
 
       {deload.value && (
         <div class="banner row-between" role="status" style={{ marginBottom: 12 }}>

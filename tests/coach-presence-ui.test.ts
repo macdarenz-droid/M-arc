@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { ComponentChildren, VNode } from 'preact';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment, setPresenceTone } from '@/slices/coach/presenceState';
+import { dismissPresenceMoment, presenceDismissalTarget, setPresenceTone } from '@/slices/coach/presenceState';
 import { freshState } from '@/core/models';
 import { initStore, state } from '@/core/store';
 import type { CoachingMoment } from '@/brain/coach/moments';
+import type { Suggestion } from '@/brain/coach/words';
+import type { Proposal } from '@/brain/coach/contract';
 
 function text(node: ComponentChildren): string {
   if (node == null || typeof node === 'boolean') return '';
@@ -75,8 +77,9 @@ describe('Train (Splits/pre-workout header): the presence launcher sits in its o
     expect(afterTopbar).toContain('PresenceLauncher');
   });
 
-  it('is gated on the online coach being off, the Ask button on it being on — mutually exclusive', () => {
-    expect(source).toContain('{!remoteEnabled.value && moment && (');
+  it('is local regardless of online-coach state and its null state opens the shared Ask destination', () => {
+    expect(source).not.toContain('{!remoteEnabled.value && moment && (');
+    expect(source).toContain('moment ? setMomentOpen(true) : openAsk()');
     expect(source).toContain("{remoteEnabled.value && <Button variant=\"quiet\" size=\"sm\" onClick={openAsk} aria-label={`Ask ${COACH_NAME}`}>");
   });
 
@@ -121,6 +124,11 @@ describe('History: the presence launcher sits in its own row too, and reuses the
     expect(historyBody).toContain('PresenceLauncher');
     expect(historyBody).toContain("seg === 'log' ? <Log /> : <Stats />");
   });
+
+  it('is local regardless of online-coach state and its null state opens the shared Ask destination', () => {
+    expect(source).not.toContain('!remoteEnabled.value && moment');
+    expect(source).toContain('moment ? setMomentOpen(true) : openAsk()');
+  });
 });
 
 describe('Body: the presence launcher sits in its own row too', () => {
@@ -139,6 +147,11 @@ describe('Body: the presence launcher sits in its own row too', () => {
     expect(source).toContain("import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';");
     expect(source.match(/<InsightSheet\b/g)).toHaveLength(1);
     expect(source.match(/<SuggestionSheet\b/g)).toHaveLength(1);
+  });
+
+  it('is local regardless of online-coach state and its null state opens the shared Ask destination', () => {
+    expect(source).not.toContain('!remoteEnabled.value && moment');
+    expect(source).toContain('moment ? setMomentOpen(true) : openAsk()');
   });
 });
 
@@ -176,6 +189,15 @@ describe('Settings: deliberately exempt from the presence launcher (a different 
 });
 
 describe('dismissPresenceMoment / setPresenceTone: the only writers of coach.presence', () => {
+  it('routes suggestion cues to the canonical proposal owner and refuses stale launcher evidence', () => {
+    const proposal: Proposal = { id: 'p', kind: 'rest_default', subject: {}, apply: { kind: 'rest_default', seconds: 120 }, basedOn: [], principles: [], confidence: 'medium', dismissKey: 'rest' };
+    const suggestion: Suggestion = { id: 'p', kind: 'rest_default', title: 'Rest longer', summary: 'Two minutes.', why: [], changes: ['120s'], acceptLabel: 'Use 120s', evidence: [], confidence: 'medium', dismissKey: 'rest', proposal, evidenceKey: 'facts' };
+    const suggestionMoment: CoachingMoment = { ...moment, id: 'suggestion:rest', kind: 'suggestion', sourceIds: ['p'], evidenceKey: 'facts' };
+    expect(presenceDismissalTarget(suggestionMoment, suggestionMoment, [suggestion])).toEqual({ kind: 'suggestion', suggestion });
+    expect(presenceDismissalTarget(suggestionMoment, { ...suggestionMoment, evidenceKey: 'new-facts' }, [suggestion])).toBeNull();
+    expect(presenceDismissalTarget(moment, moment, [])).toEqual({ kind: 'insight', moment });
+  });
+
   it('dismissing a moment appends one entry and defaults tone to steady the first time', () => {
     initStore(memStorage());
     state.value = freshState();

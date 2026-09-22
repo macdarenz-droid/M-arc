@@ -63,15 +63,28 @@ export function evidenceKeyFor(parts: ReadonlyArray<string | number>): string {
   return fnv(parts.join('|')).toString(36);
 }
 
+function canonical(value: unknown): string {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value) ?? 'undefined';
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  return `{${Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => item !== undefined)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, item]) => `${JSON.stringify(key)}:${canonical(item)}`).join(',')}}`;
+}
+
+/** Canonical identity for typed evidence/action facts; rendered copy, tone and display units never enter it. */
+export function canonicalEvidenceKey(namespace: string, value: unknown): string {
+  return evidenceKeyFor([namespace, canonical(value)]);
+}
+
 /** Suggestions (an actionable next step) always outrank plain insights (an observation), matching the architecture's "relevant existing proposal" tier sitting above general finding evidence. */
 const SUGGESTION_PRIORITY_FLOOR = 1_000;
 const CONFIDENCE_WEIGHT: Record<Confidence, number> = { low: 0, medium: 10, high: 20 };
 
 function suggestionMoment(s: Suggestion, tone: CoachTone): CoachingMoment {
-  const evidenceKey = evidenceKeyFor(['suggestion', s.kind, s.dismissKey, s.confidence, s.changes.join(',')]);
   return {
     id: `suggestion:${s.dismissKey}`,
-    evidenceKey,
+    evidenceKey: s.evidenceKey,
     kind: 'suggestion',
     sourceIds: [s.id],
     priority: SUGGESTION_PRIORITY_FLOOR + CONFIDENCE_WEIGHT[s.confidence],
@@ -84,10 +97,9 @@ function suggestionMoment(s: Suggestion, tone: CoachTone): CoachingMoment {
 }
 
 function insightMoment(i: Insight, tone: CoachTone): CoachingMoment {
-  const evidenceKey = evidenceKeyFor(['insight', i.kind, i.id, i.severity, i.confidence]);
   return {
     id: `insight:${i.id}`,
-    evidenceKey,
+    evidenceKey: i.evidenceKey,
     kind: 'insight',
     sourceIds: [i.id],
     priority: i.priority,

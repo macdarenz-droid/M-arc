@@ -73,7 +73,7 @@ describe('AskSheet.send(): captures the request generation and drops a stale rep
   });
 
   it('"Clear conversation" bumps the generation before clearing the thread', () => {
-    expect(source).toContain("onClick={() => { invalidateAskRequests(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}");
+    expect(source).toContain("onClick={() => { invalidateAskRequests(); resetAskTransient(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}");
   });
 });
 
@@ -81,17 +81,18 @@ describe('AskSheet.send(): captures the request generation and drops a stale rep
  * P03.5 (docs/escobar-presence §4's "context by IDs, visible editable
  * prefill", regression A06): InsightSheet/SuggestionSheet's "Ask about this"
  * seeds AskSheet's composer with a starting question, fully visible and
- * editable, never sent automatically. Read once at mount only (see
- * askController.ts's own doc comment on openAskWithQuestion for why that's
- * safe), and clamped to MAX_QUESTION_CHARS so a future long prefill can't
+ * editable, never sent automatically. Owned by askController so closing or
+ * deferring the modal cannot lose it, and clamped to MAX_QUESTION_CHARS so a future long prefill can't
  * silently exceed the same limit the composer itself enforces on typing.
  */
-describe('AskSheet: seeds (not auto-sends) an initialQuestion prefill', () => {
+describe('AskSheet: uses the controller-owned draft without auto-sending it', () => {
   const source = readFileSync(new URL('../src/slices/coach/AskSheet.tsx', import.meta.url), 'utf8');
 
-  it('accepts initialQuestion and seeds useState with it once, clamped to MAX_QUESTION_CHARS', () => {
-    expect(source).toContain('initialQuestion?: string');
-    expect(source).toContain("useState(() => (initialQuestion ?? '').slice(0, MAX_QUESTION_CHARS));");
+  it('reads and writes the shared bounded draft instead of component-local state', () => {
+    expect(source).toContain("import { askDraft, askError, askSending, resetAskTransient } from './askController';");
+    expect(source).toContain('const question = askDraft.value;');
+    expect(source).toContain('askDraft.value = value.slice(0, MAX_QUESTION_CHARS);');
+    expect(source).not.toContain('initialQuestion?: string');
   });
 
   it('never calls send() or any submit path as part of accepting a prefill — the composer is seeded, not triggered', () => {
@@ -123,10 +124,10 @@ describe('Settings: every reset/restore that changes what a stale Ask reply coul
 
   it('"Ask Escobar" reset, legacy restore, normal restore and "Reset everything" all call it immediately before their replaceState/clearAskMemory call', () => {
     const callSites = [
-      'invalidateAskRequests(); update(x => ({ ...x, coach: clearAskMemory(x.coach) }));',
-      'invalidateAskRequests();\n        replaceState(converted);',
-      'invalidateAskRequests();\n      replaceState({ ...next, health: { connected: false } });',
-      'invalidateAskRequests(); replaceState(freshState());',
+      'invalidateAskRequests(); resetAskTransient(); update(x => ({ ...x, coach: clearAskMemory(x.coach) }));',
+      'invalidateAskRequests(); resetAskTransient();\n        replaceState(converted);',
+      'invalidateAskRequests(); resetAskTransient();\n      replaceState({ ...next, health: { connected: false } });',
+      'invalidateAskRequests(); resetAskTransient(); replaceState(freshState());',
     ];
     for (const site of callSites) expect(source).toContain(site);
     // Exactly four invalidation calls — one per state-replacing/clearing site, no more, no fewer.

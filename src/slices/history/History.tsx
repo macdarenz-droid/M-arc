@@ -24,7 +24,8 @@ import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDe
 import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
 import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
 import { PresenceLauncher } from '@/slices/coach/Presence';
-import { dismissPresenceMoment } from '@/slices/coach/presenceState';
+import { dismissPresenceLauncher } from '@/slices/coach/presenceState';
+import { openAsk } from '@/slices/coach/askController';
 import { COACH_NAME } from '@/ui/chatRender';
 
 export function History() {
@@ -45,11 +46,9 @@ export function History() {
         row to share, but the same "own row" placement is kept here for
         consistency and because it's the verified-safe shape.
       */}
-      {!remoteEnabled.value && moment && (
-        <div style={{ marginBottom: 12 }}>
-          <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => setMomentOpen(true)} onDismiss={m => dismissPresenceMoment(m)} />
-        </div>
-      )}
+      <div style={{ marginBottom: 12 }}>
+        <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => moment ? setMomentOpen(true) : openAsk()} onDismiss={m => { dismissPresenceLauncher(m); }} />
+      </div>
       <Segmented value={seg} onChange={setSeg} options={[{ value: 'log', label: 'Log' }, { value: 'stats', label: 'Stats' }]} />
       {seg === 'log' ? <Log /> : <Stats />}
       {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}

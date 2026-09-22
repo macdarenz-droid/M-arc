@@ -13,6 +13,7 @@ import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { resetCoachMemory } from '../coach/apply';
 import { clearAskMemory, invalidateAskRequests } from '../coach/askMemory';
+import { resetAskTransient } from '../coach/askController';
 import { WEEKDAYS } from '@/core/models';
 import { checkProxy } from '@/brain/coach/explainer';
 
@@ -52,14 +53,14 @@ export function Settings({ onClose }: { onClose: () => void }) {
       if (legacy) {
         // A backup from the previous version of the app: convert it on the way in.
         const converted = convertLegacy(legacy);
-        invalidateAskRequests();
+        invalidateAskRequests(); resetAskTransient();
         replaceState(converted);
         showToast(`Imported ${converted.sessions.length} sessions from the old backup`);
         return;
       }
       const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
       if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
-      invalidateAskRequests();
+      invalidateAskRequests(); resetAskTransient();
       replaceState({ ...next, health: { connected: false } });
       showToast(`Restored ${next.sessions.length} sessions`);
     } catch { showToast('That file is not an M/ARC backup'); }
@@ -131,10 +132,10 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
             <Row trailing={<Button size="sm" onClick={() => { resetCoachMemory(); showToast('Suggestions you dismissed can come back'); }}>Reset</Button>}><span class="small">Coach suggestions</span><div class="hint">Forget what you dismissed or accepted, so suppressed suggestions can return.</div></Row>
-            <Row trailing={<Button size="sm" onClick={() => { invalidateAskRequests(); update(x => ({ ...x, coach: clearAskMemory(x.coach) })); flushSave(); showToast('Ask Escobar conversation and remembered facts cleared'); }}>Reset</Button>}><span class="small">Ask Escobar</span><div class="hint">Clear the conversation and anything stated in it (an injury to work around, your equipment), so it starts fresh.</div></Row>
+            <Row trailing={<Button size="sm" onClick={() => { invalidateAskRequests(); resetAskTransient(); update(x => ({ ...x, coach: clearAskMemory(x.coach) })); flushSave(); showToast('Ask Escobar conversation and remembered facts cleared'); }}>Reset</Button>}><span class="small">Ask Escobar</span><div class="hint">Clear the conversation and anything stated in it (an injury to work around, your equipment), so it starts fresh.</div></Row>
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { invalidateAskRequests(); replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { invalidateAskRequests(); resetAskTransient(); replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>

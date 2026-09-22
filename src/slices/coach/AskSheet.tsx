@@ -33,6 +33,7 @@ import { resyncReminders } from '../settings/reminders';
 import { ensureDeviceId, remoteEnabled } from './remote';
 import { appendAskTurn, askRequestGeneration, clearAskThread, invalidateAskRequests, mergeStatedConstraints, updateAskTurn } from './askMemory';
 import { askTurnFingerprint, pendingCoachItems, type PendingCoachItem } from '@/brain/coach/reopen';
+import { askDraft, askError, askSending, resetAskTransient } from './askController';
 
 /**
  * A turn as shown on screen — the same AskThreadTurn persisted in
@@ -220,18 +221,17 @@ function ConcernResource({ concern }: { concern: Exclude<AskConcern, null> }) {
   return <p class="hint" style={{ marginTop: 8 }}>{ASK_CONCERN_RESOURCE[concern]}</p>;
 }
 
-export function AskSheet({ onClose, initialTurnKey, savedOnly = false, initialQuestion }: { onClose: () => void; initialTurnKey?: string; savedOnly?: boolean; initialQuestion?: string }) {
+export function AskSheet({ onClose, initialTurnKey, savedOnly = false }: { onClose: () => void; initialTurnKey?: string; savedOnly?: boolean }) {
   const history = state.value.coach.askThread;
   const pending = pendingCoachItems(state.value.coach, state.value.splits, state.value.schedule, state.value.goal, MAX_SPLITS);
   const pendingAt = (turnIndex: number, kind: PendingCoachItem['kind'], itemIndex: number) => pending.find(item => item.turnIndex === turnIndex && item.kind === kind && item.itemIndex === itemIndex) ?? null;
   const reviewItem = (initialTurnKey ? pending.find(item => item.key === initialTurnKey) : undefined) ?? (savedOnly ? pending[0] : undefined);
-  // Read once, at mount, same as reviewItem's own initialTurnKey lookup above — AskSheet is a
-  // native modal dialog, so a second "Ask about this" tap can't reach it while it's already
-  // open (see docs/escobar-presence/PROGRESS.md's P03.4), meaning this never needs to react to
-  // a later prop change on an already-mounted instance.
-  const [question, setQuestion] = useState(() => (initialQuestion ?? '').slice(0, MAX_QUESTION_CHARS));
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const question = askDraft.value;
+  const sending = askSending.value;
+  const error = askError.value;
+  const setQuestion = (value: string) => { askDraft.value = value.slice(0, MAX_QUESTION_CHARS); };
+  const setSending = (value: boolean) => { askSending.value = value; };
+  const setError = (value: string | null) => { askError.value = value; };
   const threadRef = useRef<HTMLDivElement>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
 
@@ -292,7 +292,7 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false, initialQu
         flushSave();
       } else setError(r.error);
     } finally {
-      setSending(false);
+      if (askRequestGeneration.value === myGeneration) setSending(false);
     }
   };
 
@@ -301,7 +301,7 @@ export function AskSheet({ onClose, initialTurnKey, savedOnly = false, initialQu
       <div class="ask-thread" ref={threadRef}>
         {!history.length && <p class="small muted">Ask anything — your own training, general questions about exercise, muscles or nutrition, describe a split to build or change, or ask about rearranging your weekly schedule. Personal answers, splits and schedule changes only use the findings, real exercises and real schedule below, nothing about your sessions or body; nothing changes until you tap an action.</p>}
         {history.length > 0 && !savedOnly && (
-          <Button variant="quiet" size="sm" onClick={() => { invalidateAskRequests(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
+          <Button variant="quiet" size="sm" onClick={() => { invalidateAskRequests(); resetAskTransient(); update(st => ({ ...st, coach: clearAskThread(st.coach) })); flushSave(); }}>
             Clear conversation
           </Button>
         )}
