@@ -2,7 +2,7 @@
 import type { Exercise, Split } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update } from '@/core/store';
-import { SPLIT_TEMPLATES } from '@/data/templates';
+import { SPLIT_TEMPLATES, type SplitTemplateKey } from '@/data/templates';
 import type { MuscleId } from '@/data/muscles';
 
 export const SPLIT_COLORS = ['#4d9dff', '#7fc44b', '#ffc845', '#a061ff', '#ff7a59', '#2fd4c0', '#f25fa0'];
@@ -17,8 +17,9 @@ export function createSplit(name: string, exercises: Split['exercises'] = []): S
   return split;
 }
 
-export function addTemplates(): void {
+export function addTemplates(keys: SplitTemplateKey[] = ['push', 'pull', 'legs']): void {
   for (const t of SPLIT_TEMPLATES) {
+    if (!keys.includes(t.key)) continue;
     if (state.value.splits.some(s => s.name.toLowerCase() === t.name.toLowerCase())) continue;
     createSplit(t.name, t.exercises.map(e => ({ ...e })));
   }

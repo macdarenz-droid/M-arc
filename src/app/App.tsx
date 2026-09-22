@@ -4,8 +4,11 @@ import { History } from '@/slices/history/History';
 import { Body } from '@/slices/body/Body';
 import { Coach } from '@/slices/coach/Coach';
 import { Settings } from '@/slices/settings/Settings';
-import { go, settingsOpen, tab, TABS, type Tab } from './router';
+import { Profile } from '@/slices/profile/Profile';
+import { OnboardingSheet } from '@/slices/profile/Onboarding';
+import { go, profileOpen, settingsOpen, tab, TABS, type Tab } from './router';
 import { toast } from './toast';
+import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconSpark, IconSun } from '@/ui/icons';
 import { saveError, state } from '@/core/store';
@@ -35,6 +38,8 @@ export function App() {
         </div>
       </nav>
       {settingsOpen.value && <Settings onClose={() => { settingsOpen.value = false; }} />}
+      {profileOpen.value && <Profile onClose={() => { profileOpen.value = false; }} />}
+      {!settingsOpen.value && !profileOpen.value && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );

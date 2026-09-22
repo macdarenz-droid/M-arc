@@ -16,6 +16,7 @@ function initial(): Tab {
 
 export const tab = signal<Tab>(initial());
 export const settingsOpen = signal(false);
+export const profileOpen = signal(false);
 
 export function go(t: Tab): void {
   tab.value = t;

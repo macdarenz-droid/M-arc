@@ -5,7 +5,7 @@ import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
-import { GOALS, type GoalId } from '@/data/goals';
+import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
 import { WEEKDAY_LABEL } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
@@ -13,6 +13,7 @@ import { suggestNext } from '@/brain/progression';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { resyncReminders } from '../settings/reminders';
+import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -53,7 +54,7 @@ export function Coach() {
 
       <Section title="Training goal" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change</Button>}>
         <Card class="card-press" onClick={() => setGoalOpen(true)}>
-          <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.reps[0]}–{goal.reps[1]} reps{goal.accessoryReps ? ` (accessories ${goal.accessoryReps[0]}–${goal.accessoryReps[1]})` : ''}</div>
+          <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.mainReps[0]}–{goal.mainReps[1]} reps (accessories {goal.accessoryReps[0]}–{goal.accessoryReps[1]})</div>
         </Card>
       </Section>
 
@@ -77,15 +78,40 @@ export function Coach() {
       </Section>
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
-      {goalOpen && (
-        <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
-          <div class="stack-sm">
-            <p class="small muted">Your goal changes rep targets and the effort window. It does not change the exercises.</p>
-            {GOALS.map(g => <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { update(x => ({ ...x, goal: g.id as GoalId })); setGoalOpen(false); }}><b>{g.name}</b><div class="hint">{g.tagline} · {g.reps[0]}–{g.reps[1]} reps · {g.bestFor}</div></Card>)}
-          </div>
-        </Sheet>
-      )}
+      {goalOpen && <GoalSheet onClose={() => setGoalOpen(false)} />}
     </div>
+  );
+}
+
+/** Shared by the Coach tab and the profile dashboard: pick a goal, then offer its rest suggestion and templates. */
+export function GoalSheet({ onClose }: { onClose: () => void }) {
+  const s = state.value;
+  const [changedTo, setChangedTo] = useState<GoalId | null>(null);
+  const picked = changedTo ? GOAL_BY_ID[changedTo] : null;
+
+  return (
+    <Sheet title="Training goal" onClose={onClose}>
+      {!picked ? (
+        <div class="stack-sm">
+          <p class="small muted">Your goal sets rep targets, effort target, rest suggestion, weekly heavy-set and volume guidance and the weight trend the coach watches. It does not change your exercises.</p>
+          {GOALS.map(g => (
+            <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { changeGoal(g.id); setChangedTo(g.id); }}>
+              <b>{g.name}</b><div class="hint">{g.tagline} · {g.mainReps[0]}–{g.mainReps[1]} reps · {g.bestFor}</div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div class="stack-sm">
+          <Card class="card-accent">
+            <b>{picked.name}</b>
+            <div class="hint">Main lifts {picked.mainReps[0]}–{picked.mainReps[1]} reps, accessories {picked.accessoryReps[0]}–{picked.accessoryReps[1]}. Your splits keep their exercises.</div>
+          </Card>
+          <Button onClick={() => applyGoalRest(picked.id)}>Apply {picked.restDefaultSec}s rest</Button>
+          <Button variant="quiet" onClick={() => addGoalTemplates(picked.id)}>Add starter templates for this goal</Button>
+          <Button variant="primary" onClick={onClose}>Done</Button>
+        </div>
+      )}
+    </Sheet>
   );
 }
 

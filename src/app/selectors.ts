@@ -5,6 +5,7 @@ import { todayKey, weekdayOf } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
+import { shouldShowOnboarding } from '@/brain/onboarding';
 import { WEEKDAYS } from '@/core/models';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
@@ -28,5 +29,6 @@ export const plannedPerWeek = computed(() => WEEKDAYS.filter(d => state.value.sc
 export const recovery = computed(() => recoveryStatus(state.value.sessions, state.value.customExercises, nowMs.value - (nowMs.value % 60_000)));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value || 3));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
-export const insights = computed(() => coachInsights({ sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises, today: today.value, now: nowMs.value - (nowMs.value % 60_000) }, 3));
+export const insights = computed(() => coachInsights({ sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises, today: today.value, now: nowMs.value - (nowMs.value % 60_000), profileHistory: state.value.profileHistory }, 3));
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+export const onboardingTrigger = computed(() => shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value));

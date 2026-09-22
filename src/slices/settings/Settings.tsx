@@ -7,6 +7,7 @@ import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
 import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
+import { profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable } from '@/native/health';
 import { syncAndStoreHealth } from './health';
@@ -88,11 +89,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Profile">
           <Card class="stack-sm">
             <Field label="Name"><input value={s.profile.name} maxLength={30} onInput={e => update(x => ({ ...x, profile: { ...x.profile, name: (e.target as HTMLInputElement).value } }))} /></Field>
-            <div class="grid-2">
-              <Field label="Body weight (kg)"><input type="number" value={s.profile.bodyWeightKg ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, bodyWeightKg: parseFloat((e.target as HTMLInputElement).value) || undefined } }))} /></Field>
-              <Field label="Height (cm)"><input type="number" value={s.profile.heightCm ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, heightCm: parseFloat((e.target as HTMLInputElement).value) || undefined } }))} /></Field>
-            </div>
-            <Field label="Birth year"><input type="number" value={s.profile.birthYear ?? ''} onInput={e => update(x => ({ ...x, profile: { ...x.profile, birthYear: parseInt((e.target as HTMLInputElement).value, 10) || undefined } }))} /></Field>
+            <Row trailing={<Button size="sm" onClick={() => { onClose(); profileOpen.value = true; }}>Open</Button>}><span class="small">Weight, height, birth year, goal and more</span></Row>
           </Card>
         </Section>
 
