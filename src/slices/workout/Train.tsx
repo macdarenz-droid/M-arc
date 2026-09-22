@@ -15,6 +15,7 @@ import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
+import { pickCue } from '@/brain/coach/cues';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -282,6 +283,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const priorE1rm = ex?.role === 'main' && mode === 'weighted' ? exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).at(-1)?.bestE1rm ?? 0 : 0;
   const warmup = priorE1rm > 0 ? warmupSets(priorE1rm) : null;
   const [warmupOpen, setWarmupOpen] = useState(false);
+  /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
+  const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
 
   return (
     <Card class={`exercise ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
@@ -297,6 +300,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
+          {cue && <p class="hint muted">{cue.text}</p>}
           {warmup && (
             <div class="warmup">
               <button type="button" class="btn btn-quiet btn-sm" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
@@ -520,6 +524,9 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const priorSessions = s.sessions.filter(x => x.id !== session.id);
   const debrief = sets > 0 ? postSessionInsights({ session, priorSessions, custom: s.customExercises, isStrengthGoal: s.goal === 'strength' }) : [];
+  /** F3.5: a "did you know" cue on the finish screen, for whichever main lift the session actually trained. */
+  const learnExercise = findExercise((session.exercises.find(e => findExercise(e.exerciseId, s.customExercises)?.role === 'main') ?? session.exercises[0])?.exerciseId ?? '', s.customExercises);
+  const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div></div>
@@ -555,6 +562,11 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
               </Card>
             ))}
           </div>
+        </Section>
+      )}
+      {learnCue && (
+        <Section title="Worth knowing">
+          <Card class="card-quiet"><b class="small">{learnCue.title}</b><p class="small muted" style={{ marginTop: 4 }}>{learnCue.text}</p></Card>
         </Section>
       )}
       <Section title="Muscles worked today">
