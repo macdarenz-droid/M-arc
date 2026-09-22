@@ -17,7 +17,8 @@
     "cap:copy": "cap copy android",
     "gate": "node scripts/screenshot-gate.mjs",
     "convert-backup": "esbuild scripts/convert-legacy-backup.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/convert-backup.mjs && node node_modules/.cache/convert-backup.mjs",
-    "logo": "esbuild src/theme/themes.ts --bundle --format=esm --outfile=node_modules/.cache/logo-themes.mjs --log-level=warning && esbuild src/svg/logo.ts --bundle --format=esm --outfile=node_modules/.cache/logo-svg.mjs --log-level=warning && node scripts/render-logo.mjs"
+    "logo": "esbuild src/theme/themes.ts --bundle --format=esm --outfile=node_modules/.cache/logo-themes.mjs --log-level=warning && esbuild src/svg/logo.ts --bundle --format=esm --outfile=node_modules/.cache/logo-svg.mjs --log-level=warning && node scripts/render-logo.mjs",
+    "escobar:tools": "node scripts/escobar-tools.mjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",

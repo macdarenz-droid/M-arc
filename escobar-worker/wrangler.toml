@@ -1,0 +1,35 @@
+# M/ARC coach Worker, Escobar v2. Deploys under the existing name so the stored
+# ANTHROPIC_API_KEY secret and bindings carry over. Deploy: npx wrangler@4 deploy
+name = "marc-coach"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Default model and per-mode effort; change here without touching code.
+MODEL = "claude-opus-5"
+# EFFORT_CHAT = "medium"
+# EFFORT_PLAN = "high"
+# EFFORT_LIVE = "low"
+# EFFORT_BRIEF = "low"
+# EFFORT_MOMENT = "low"
+# EFFORT_SUMMARIZE = "low"
+# Daily caps (per device; global steps). Soft: KV is eventually consistent.
+MAX_TURNS_PER_DEVICE = "80"
+MAX_STEPS_PER_DEVICE = "400"
+MAX_OUTPUT_PER_DEVICE = "400000"
+MAX_STEPS_TOTAL = "20000"
+# Web origins allowed to call this Worker (the PWA). The Android app sends capacitor://localhost or no Origin.
+ALLOWED_ORIGINS = "https://mrcdrnzz.netlify.app"
+
+# Per-device burst limit: 30 model steps a minute.
+[[ratelimits]]
+name = "RATE"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }
+
+# Optional daily quotas. Create the namespace once and paste its id here:
+#   npx wrangler@4 kv namespace create QUOTA
+# [[kv_namespaces]]
+# binding = "QUOTA"
+# id = "paste-the-id-here"

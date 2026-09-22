@@ -1,0 +1,126 @@
+import { describe, it, expect } from 'vitest';
+import Anthropic from '@anthropic-ai/sdk';
+import { handle, corsHeaders } from '../src/handler';
+import { noSystemRole } from '../src/anthropic';
+import { baseEnv, deps, eventsFor, finalMessage, memoryKv, mockClient, post, sse, turn, DEVICE } from './helpers';
+
+const TEXT = [{ type: 'thinking', thinking: '', signature: 'sig' }, { type: 'text', text: 'Short sleep pulled you to amber ⟦f3⟧.' }];
+
+describe('routes, CORS and device', () => {
+  it('health answers protocol 2', async () => {
+    const r = await handle(new Request('https://x/health'), baseEnv(), deps(mockClient([])));
+    expect(await r.json()).toEqual({ ok: true, protocol: 2, model: 'claude-opus-5', modes: ['chat', 'plan', 'live', 'brief', 'moment', 'summarize'], quotas: false });
+  });
+  it('allows the app origins and configured web origins, refuses others', async () => {
+    expect(corsHeaders('capacitor://localhost', baseEnv())['Access-Control-Allow-Origin']).toBe('capacitor://localhost');
+    expect(corsHeaders('http://localhost:5173', baseEnv())['Access-Control-Allow-Origin']).toBe('http://localhost:5173');
+    expect(corsHeaders('https://pwa.example', baseEnv({ ALLOWED_ORIGINS: 'https://pwa.example' }))['Access-Control-Allow-Origin']).toBe('https://pwa.example');
+    const r = await handle(post(turn(), { origin: 'https://evil.example' }), baseEnv(), deps(mockClient([])));
+    expect(r.status).toBe(403);
+    const pre = await handle(new Request('https://x/v2/turn', { method: 'OPTIONS', headers: { origin: 'capacitor://localhost' } }), baseEnv(), deps(mockClient([])));
+    expect(pre.status).toBe(204);
+    expect(pre.headers.get('access-control-allow-headers')).toContain('x-escobar-device');
+  });
+  it('requires a well-formed device id', async () => {
+    const r = await handle(post(turn(), { 'x-escobar-device': 'dev_short' }), baseEnv(), deps(mockClient([])));
+    expect(r.status).toBe(400);
+    expect(await r.json()).toMatchObject({ t: 'error', code: 'invalid' });
+  });
+  it('invalid bodies and too many steps are plain 400s before the stream', async () => {
+    const r = await handle(post({ ...turn(), profile: {} }), baseEnv(), deps(mockClient([])));
+    expect(r.status).toBe(400);
+    const chain: unknown[] = [{ role: 'user', content: 'go' }];
+    for (let i = 0; i < 15; i++) { chain.push({ role: 'assistant', content: [{ type: 'tool_use', id: `t${i}`, name: 'get_overview', input: {} }] }); chain.push({ role: 'user', content: [{ type: 'tool_result', tool_use_id: `t${i}`, content: '{}' }] }); }
+    const s = await handle(post(turn({ messages: chain })), baseEnv(), deps(mockClient([])));
+    expect(s.status).toBe(400);
+    expect(((await s.json()) as { code: string }).code).toBe('too_many_steps');
+  });
+  it('a missing key is upstream_auth 503', async () => {
+    const r = await handle(post(turn()), baseEnv({ ANTHROPIC_API_KEY: undefined }), deps(mockClient([])));
+    expect(r.status).toBe(503);
+  });
+});
+
+describe('SSE relay (§12.4)', () => {
+  it('streams start, thinking, text deltas and final with verbatim content', async () => {
+    const client = mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    const r = await handle(post(turn()), baseEnv(), deps(client));
+    expect(r.headers.get('content-type')).toBe('text/event-stream');
+    const ev = await sse(r);
+    expect(ev[0]).toEqual({ t: 'start', requestId: 'req_1' });
+    expect(ev[1]).toEqual({ t: 'thinking' });
+    expect(ev.filter(e => e.t === 'text').map(e => e.d).join('')).toBe('Short sleep pulled you to amber ⟦f3⟧.');
+    const final = ev.at(-1)!;
+    expect(final).toMatchObject({ t: 'final', stop_reason: 'end_turn', model: 'claude-opus-5' });
+    expect((final.content as Array<{ signature?: string }>)[0]!.signature).toBe('sig');
+  });
+  it('announces tool calls early and their inputs at block stop', async () => {
+    const content = [{ type: 'tool_use', id: 'tu_1', name: 'get_exercise_history', input: { exerciseId: 'lib_barbell_bench_press', weeks: 12 } }, { type: 'tool_use', id: 'tu_2', name: 'get_recovery', input: {} }];
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor(content), final: finalMessage(content, 'tool_use') }])));
+    const ev = await sse(r);
+    expect(ev.filter(e => e.t === 'tool')).toEqual([{ t: 'tool', id: 'tu_1', name: 'get_exercise_history' }, { t: 'tool', id: 'tu_2', name: 'get_recovery' }]);
+    expect(ev.find(e => e.t === 'tool_input' && e.id === 'tu_1')).toEqual({ t: 'tool_input', id: 'tu_1', input: { exerciseId: 'lib_barbell_bench_press', weeks: 12 } });
+    expect(ev.at(-1)!.stop_reason).toBe('tool_use');
+  });
+  it('relays a refusal instead of a final', async () => {
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor([]), final: finalMessage([], 'refusal', { stop_details: { type: 'refusal', category: 'cyber' } }) }])));
+    const ev = await sse(r);
+    expect(ev.at(-1)).toEqual({ t: 'refusal', category: 'cyber' });
+    expect(ev.some(e => e.t === 'final')).toBe(false);
+  });
+  it('prunes pre-fallback blocks in final', async () => {
+    const content = [{ type: 'tool_use', id: 'x', name: 'get_overview', input: {} }, { type: 'fallback', from: { model: 'claude-opus-5' }, to: { model: 'claude-opus-4-8' } }, { type: 'text', text: 'ok' }];
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor(content.slice(2)), final: finalMessage(content) }])));
+    expect(((await sse(r)).at(-1)!.content as Array<{ type: string }>).map(b => b.type)).toEqual(['fallback', 'text']);
+  });
+  it('maps upstream errors to typed error events', async () => {
+    const err = new Anthropic.RateLimitError(429, {}, 'rate', new Headers({ 'retry-after': '3' }));
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor(TEXT), throwAt: 0, error: err }])));
+    expect((await sse(r)).at(-1)).toEqual({ t: 'error', code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.', retryAfter: 3 });
+    const auth = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: [], throwAt: 0, error: new Anthropic.AuthenticationError(401, {}, 'no', new Headers()) }])));
+    expect((await sse(auth)).at(-1)!.code).toBe('upstream_auth');
+  });
+  it('retries once with <situation> blocks when the model rejects system messages, and remembers', async () => {
+    const reject = new Anthropic.BadRequestError(400, { type: 'error', error: { type: 'invalid_request_error', message: "messages.1: role 'system' is not supported on this model" } }, undefined, new Headers());
+    const client = mockClient([{ events: [], throwAt: 0, error: reject }, { events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    const r = await handle(post(turn()), baseEnv({ MODEL: 'claude-opus-5-5' }), deps(client));
+    const ev = await sse(r);
+    expect(ev.at(-1)!.t).toBe('final');
+    expect(client.calls).toHaveLength(2);
+    const second = client.calls[1] as { messages: Array<{ role: string }> };
+    expect(second.messages.every(m => m.role !== 'system')).toBe(true);
+    expect(noSystemRole.has('claude-opus-5-5')).toBe(true);
+    noSystemRole.clear();
+  });
+  it('enforces the idle timeout itself (the heartbeat defeats client timers)', async () => {
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor([{ type: 'text', text: 'hi' }]), hang: true }]), { idleMs: 30 }));
+    expect((await sse(r)).at(-1)).toEqual({ t: 'error', code: 'timeout', message: 'The coach took too long to answer.' });
+  });
+  it('sends heartbeat comments while waiting', async () => {
+    const r = await handle(post(turn()), baseEnv(), deps(mockClient([{ events: eventsFor([{ type: 'text', text: 'hi' }]), hang: true }]), { idleMs: 60, heartbeatMs: 10 }));
+    expect(await r.text()).toContain(': ping\n\n');
+  });
+});
+
+describe('quotas and rate (§12.5)', () => {
+  it('rate limit binding refusal is a 429 rate error', async () => {
+    const r = await handle(post(turn()), baseEnv({ RATE: { limit: async () => ({ success: false }) } }), deps(mockClient([])));
+    expect(r.status).toBe(429);
+    expect(((await r.json()) as { code: string }).code).toBe('rate');
+  });
+  it('writes counters once per finished turn and refuses over the cap with the reset time', async () => {
+    const kv = memoryKv();
+    const env = baseEnv({ QUOTA: kv, MAX_TURNS_PER_DEVICE: '2' });
+    const ok = () => mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]);
+    await sse(await handle(post(turn()), env, deps(ok())));
+    const toolStep = [{ type: 'tool_use', id: 't', name: 'get_overview', input: {} }];
+    await sse(await handle(post(turn()), env, deps(mockClient([{ events: eventsFor(toolStep), final: finalMessage(toolStep, 'tool_use') }]))));
+    expect(JSON.parse(kv.data.get(`d:2026-09-22:${DEVICE}`)!)).toEqual({ turns: 1, steps: 1, out: 40 });
+    await sse(await handle(post(turn()), env, deps(ok())));
+    const r = await handle(post(turn()), env, deps(ok()));
+    expect(r.status).toBe(429);
+    const j = (await r.json()) as { code: string; retryAfter: number };
+    expect(j.code).toBe('quota');
+    expect(j.retryAfter).toBe(12 * 3600);
+  });
+});
