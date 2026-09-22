@@ -2,11 +2,13 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, Exercise, LoggedSet, Session, Split } from '@/core/models';
+import type { ActiveSession, Exercise, LoggedSet, Session, SessionLogging, Split } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '@/brain/exposure';
+import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
+import { calibrateAfterSession } from '@/brain/recovery';
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
@@ -59,12 +61,24 @@ export function setSet(entry: number, index: number, patch: Partial<LoggedSet>):
   });
 }
 
-/** Commit a set. Starts the rest timer when auto-rest is on. Returns true if the set counts. */
+/** Every already-committed set's timestamp, oldest first, used to judge the next commit's timing. */
+function committedTimestamps(a: ActiveSession): number[] {
+  return a.entries.flatMap(e => e.sets.map(s => s.at)).filter((x): x is string => !!x).map(t => new Date(t).getTime()).sort((x, y) => x - y);
+}
+
+/** Commit a set. Starts the rest timer only on a live commit (a delayed catch-up should not restart it). Returns true if the set counts. */
 export function commitSet(entry: number, index: number): boolean {
   const a = active();
   const set = a?.entries[entry]?.sets[index];
   if (!a || !set || !isWorkingSet(set)) return false;
-  if (state.value.preferences.autoRest) startRest(state.value.preferences.restDefaultSec);
+  const now = Date.now();
+  const prior = committedTimestamps(a);
+  const last = prior[prior.length - 1];
+  const gapSec = last != null ? Math.round((now - last) / 1000) : null;
+  const burstCount = prior.filter(t => now - t <= 15_000).length + 1;
+  const fidelity = classifySetFidelity(gapSec, burstCount);
+  setSet(entry, index, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity });
+  if (state.value.preferences.autoRest && fidelity === 'live') startRest(state.value.preferences.restDefaultSec);
   void haptic.light();
   return true;
 }
@@ -133,15 +147,24 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     .filter(e => !e.skipped)
     .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet) }))
     .filter(e => e.sets.length);
+  const workingSets = exercises.flatMap(e => e.sets);
+  const logging = liveSessionLogging({
+    setFidelities: workingSets.map(s => s.fidelity ?? 'live'),
+    startedAt: a.startedAt,
+    endedAt: now.toISOString(),
+    loggedDurationSec: elapsedSec(a, now.getTime()),
+    workingSetCount: workingSets.length,
+  });
   const session: Session = {
     id: newId('s'),
     splitId: a.splitId,
     splitName: split?.name ?? 'Workout',
-    day: dayKey(now),
-    startedAt: a.startedAt,
-    endedAt: now.toISOString(),
-    durationSec: elapsedSec(a, now.getTime()),
+    day: dayKey(logging.trainedAt),
+    startedAt: logging.trainedAt,
+    endedAt: logging.trainedEndAt,
+    durationSec: Math.max(0, Math.round((new Date(logging.trainedEndAt).getTime() - new Date(logging.trainedAt).getTime()) / 1000)),
     exercises,
+    logging,
   };
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
@@ -153,11 +176,59 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     splits: saveTemplate && split
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.length) })) }))
       : s.splits,
+    recoveryModel: exercises.length ? calibrateAfterSession(s.sessions, session, s.customExercises, s.profile, s.healthDays, s.recoveryModel) : s.recoveryModel,
   }));
   flushSave();
   void cancelRestDone();
   void haptic.success();
   return { session, changedTemplate };
+}
+
+/** The finish sheet calls this after "when did you train?" resolves a compressed session's real timing. */
+export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, durationMin: number, timeSource: SessionLogging['timeSource']): void {
+  const trainedAt = new Date(trainedAtLocal).toISOString();
+  const trainedEndAt = new Date(new Date(trainedAtLocal).getTime() + durationMin * 60_000).toISOString();
+  update(s => ({
+    ...s,
+    sessions: s.sessions.map(sess => {
+      if (sess.id !== sessionId) return sess;
+      const flags = trainedAt.slice(0, 10) !== sess.logging.loggedAt.slice(0, 10) ? [...new Set([...sess.logging.flags, 'midnight_crossing'])] : sess.logging.flags;
+      return {
+        ...sess,
+        day: dayKey(trainedAt),
+        startedAt: trainedAt,
+        endedAt: trainedEndAt,
+        durationSec: durationMin * 60,
+        logging: { ...sess.logging, trainedAt, trainedEndAt, timeSource, flags },
+      };
+    }),
+  }));
+  flushSave();
+}
+
+/** "Log a past session": no timer, no rest banner. Every set is retro. */
+export function logPastSession(input: { splitId: string; trainedAtLocal: string; durationMin: number; entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[] }> }): FinishSummary | null {
+  const split = state.value.splits.find(s => s.id === input.splitId);
+  const exercises = input.entries.map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet) })).filter(e => e.sets.length);
+  if (!exercises.length) return null;
+  const trainedAt = new Date(input.trainedAtLocal).toISOString();
+  const trainedEndAt = new Date(new Date(input.trainedAtLocal).getTime() + input.durationMin * 60_000).toISOString();
+  const logging = retroSessionLogging(trainedAt, trainedEndAt, 'user');
+  const session: Session = {
+    id: newId('s'),
+    splitId: input.splitId,
+    splitName: split?.name ?? 'Workout',
+    day: dayKey(trainedAt),
+    startedAt: trainedAt,
+    endedAt: trainedEndAt,
+    durationSec: input.durationMin * 60,
+    exercises,
+    logging,
+  };
+  update(s => ({ ...s, sessions: [...s.sessions, session].sort((x, y) => x.startedAt.localeCompare(y.startedAt)) }));
+  flushSave();
+  void haptic.success();
+  return { session, changedTemplate: false };
 }
 
 export function discardSession(): void {

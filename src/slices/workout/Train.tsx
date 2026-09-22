@@ -12,7 +12,7 @@ import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, markDone, pauseSession, removeEntry, removeSet, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
@@ -27,11 +27,17 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
 
 /** Shown once after a session is saved, then dismissed. */
 const lastFinish = signal<FinishSummary | null>(null);
+/** Set instead of lastFinish when the just-saved session looks logged after training. */
+const pendingTimeQuestion = signal<FinishSummary | null>(null);
+/** Set when the user taps "Log a past session" from the split list. */
+const loggingPast = signal<Split | null>(null);
 
 export function Train() {
   const s = state.value;
   const live = s.active;
+  if (pendingTimeQuestion.value) return <TimeQuestionSheet summary={pendingTimeQuestion.value} onResolved={r => { pendingTimeQuestion.value = null; lastFinish.value = r; }} />;
   if (lastFinish.value) return <FinishScreen summary={lastFinish.value} onClose={() => { lastFinish.value = null; }} />;
+  if (loggingPast.value) return <PastSessionEntry split={loggingPast.value} onClose={() => { loggingPast.value = null; }} onSaved={r => { loggingPast.value = null; lastFinish.value = r; }} />;
   return live ? <LiveSession /> : <Splits />;
 }
 
@@ -91,6 +97,7 @@ function Splits() {
               {!split.exercises.length && <p class="muted small" style={{ padding: '10px 0' }}>Empty split. Tap edit to add exercises.</p>}
             </div>
             <Button variant="primary" block style={{ marginTop: 12 }} disabled={!split.exercises.length} onClick={() => startSession(split)}><IconPlay /> Start {split.name}</Button>
+            <Button variant="quiet" block disabled={!split.exercises.length} onClick={() => { loggingPast.value = split; }}>Log a past session</Button>
           </Card>
           <p class="hint" style={{ marginTop: 10 }}>Targets come from your last sessions and your goal ({GOALS.find(g => g.id === s.goal)?.name}). Change the goal in Coach.</p>
         </>
@@ -193,7 +200,7 @@ function LiveSession() {
               <div class="stat"><b>{a.entries.filter(e => e.sets.some(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0)).length}</b><span>exercises</span></div>
               <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length, 0)}</b><span>sets</span></div>
             </div>
-            <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate); setFinishing(false); if (r) lastFinish.value = r; }} changed={!!split && split.exercises.map(e => e.exerciseId).join('|') !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|')} />
+            <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={!!split && split.exercises.map(e => e.exerciseId).join('|') !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|')} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
             <Button variant="danger" size="sm" onClick={() => { if (confirm('Discard this session? Nothing will be saved.')) { discardSession(); setFinishing(false); } }}>Discard session</Button>
           </div>
@@ -280,6 +287,103 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </Sheet>
       )}
     </Card>
+  );
+}
+
+/** "Looks like you logged this after training." Never blocks: Skip files it on the schedule slot or 17:00. */
+function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; onResolved: (r: FinishSummary) => void }) {
+  const s = state.value;
+  const medianLiveMinutes = () => {
+    const durations = s.sessions.filter(x => x.logging.mode === 'live').map(x => x.durationSec / 60);
+    if (!durations.length) return 60;
+    const sorted = [...durations].sort((a, b) => a - b);
+    return Math.round(sorted[Math.floor(sorted.length / 2)]!);
+  };
+  const [duration, setDuration] = useState(medianLiveMinutes());
+  const guessedTime = s.preferences.reminders.enabled ? s.preferences.reminders.time : '17:00';
+  const now = Date.now();
+  // Never default to a session that would end in the future: fall back to "ended just now" instead.
+  const guessedEndsInFuture = new Date(`${summary.session.day}T${guessedTime}`).getTime() + duration * 60_000 > now;
+  const fallbackStart = new Date(now - duration * 60_000);
+  const [day, setDay] = useState(guessedEndsInFuture ? fallbackStart.toISOString().slice(0, 10) : summary.session.day);
+  const [time, setTime] = useState(guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
+
+  const resolve = (timeSource: 'user' | 'schedule' | 'default', overrideDay?: string, overrideTime?: string) => {
+    resolveSessionTiming(summary.session.id, `${overrideDay ?? day}T${overrideTime ?? time}`, duration, timeSource);
+    const updated = state.value.sessions.find(x => x.id === summary.session.id)!;
+    onResolved({ session: updated, changedTemplate: summary.changedTemplate });
+  };
+
+  return (
+    <Sheet title="When did you train?" onClose={() => resolve('schedule')}>
+      <div class="stack">
+        <p class="small muted">Looks like you logged this after training. Timing-based advice (rest, density, live heart data) needs to know when it actually happened.</p>
+        <div class="grid-2">
+          <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
+          <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
+        </div>
+        <Field label="Duration (minutes)"><input type="number" value={duration} onInput={e => setDuration(parseInt((e.target as HTMLInputElement).value, 10) || duration)} /></Field>
+        <div class="row"><Button variant="quiet" onClick={() => resolve('schedule')}>Skip</Button><Button variant="primary" class="grow" onClick={() => resolve('user')}>Save</Button></div>
+        <Button variant="quiet" size="sm" onClick={() => {
+          // The session ends now; start is `duration` minutes before that (never a future timestamp).
+          const start = new Date(Date.now() - duration * 60_000);
+          resolveSessionTiming(summary.session.id, start.toISOString(), duration, 'default');
+          onResolved({ session: state.value.sessions.find(x => x.id === summary.session.id)!, changedTemplate: summary.changedTemplate });
+        }}>I trained just now</Button>
+      </div>
+    </Sheet>
+  );
+}
+
+/** "Log a past session": the split's usual sets, entered without a timer or rest banner. */
+function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: () => void; onSaved: (r: FinishSummary) => void }) {
+  const s = state.value;
+  const u = unit.value;
+  const [day, setDay] = useState(today.value);
+  const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5)); // never defaults into the future
+  const [duration, setDuration] = useState(60);
+  const [entries, setEntries] = useState(() => split.exercises.map(se => {
+    const ex = findExercise(se.exerciseId, s.customExercises);
+    return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({}) as import('@/core/models').LoggedSet) };
+  }));
+
+  const patchSet = (ei: number, si: number, patch: Partial<import('@/core/models').LoggedSet>) =>
+    setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((st, j) => (j !== si ? st : { ...st, ...patch })) })));
+
+  const save = () => {
+    const r = logPastSession({ splitId: split.id, trainedAtLocal: `${day}T${time}`, durationMin: duration, entries });
+    if (r) onSaved(r);
+  };
+
+  return (
+    <Sheet title={`Log ${split.name}`} onClose={onClose}>
+      <div class="stack">
+        <div class="grid-2">
+          <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
+          <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
+        </div>
+        <Field label="Duration (minutes)"><input type="number" value={duration} onInput={e => setDuration(parseInt((e.target as HTMLInputElement).value, 10) || duration)} /></Field>
+        {entries.map((entry, ei) => (
+          <Card key={entry.exerciseId}>
+            <b class="small">{entry.name}</b>
+            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{u}</span><span class="hint">reps</span><span class="hint">effort</span></div>
+            {entry.sets.map((set, si) => (
+              <div key={si} class="set-grid">
+                <span class="set-index">{si + 1}</span>
+                <input type="number" inputMode="decimal" step="0.5" value={set.kg != null ? kgToDisplay(set.kg, u) : ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); patchSet(ei, si, { kg: Number.isFinite(v) ? displayToKg(v, u) : undefined }); }} />
+                <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseInt((e.target as HTMLInputElement).value, 10) || undefined })} />
+                <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
+              </div>
+            ))}
+            <div class="row">
+              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: [...e.sets, {}] })))}><IconPlus size={14} /> Set</Button>
+              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.slice(0, -1) })))} disabled={entry.sets.length <= 1}><IconMinus size={14} /> Set</Button>
+            </div>
+          </Card>
+        ))}
+        <Button variant="primary" block onClick={save}>Save past session</Button>
+      </div>
+    </Sheet>
   );
 }
 

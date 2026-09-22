@@ -10,6 +10,7 @@ import { navyBodyFat } from '@/brain/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
+import { FULL_PCT, READY_PCT } from '@/data/recovery';
 
 type View = 'recovery' | 'levels' | 'week';
 
@@ -29,7 +30,9 @@ export function Body() {
       : Object.fromEntries((Object.entries(weekSets) as Array<[MuscleId, number]>).map(([m, v]) => [m, (v / maxWeek) * 100]));
   const mode: MapMode = view === 'recovery' ? 'recovery' : 'emphasis';
   const recovering = rec.filter(r => r.recovering).sort((a, b) => a.pct - b.pct);
-  const readyList = rec.filter(r => !r.recovering && r.lastTrainedAt);
+  const readyOnly = rec.filter(r => r.ready && r.pct < FULL_PCT && r.lastTrainedAt);
+  const fullyRecovered = rec.filter(r => r.pct >= FULL_PCT && r.lastTrainedAt);
+  const wholeBody = rec.find(r => r.systemicFactor > 1);
 
   return (
     <div class="view">
@@ -38,19 +41,28 @@ export function Body() {
       <Card style={{ marginTop: 14 }}>
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
         <div style={{ marginTop: 10 }}><MapLegend mode={mode} /></div>
-        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? 'Recovery time depends on how hard you trained it: about a day after easy work, up to three days after max effort.' : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
+        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and only ever widens from your own history.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
+        {view === 'recovery' && wholeBody && <p class="hint" style={{ marginTop: 4 }}>Whole body: recovering about {Math.round((wholeBody.systemicFactor - 1) * 100)}% slower than usual this week.</p>}
       </Card>
 
       {view === 'recovery' && (
         <>
           <Section title="Recovering" aside={<span class="small muted">{recovering.length}</span>}>
             <Card>
-              {!recovering.length && <p class="small muted">{readyList.length ? 'Everything you have trained is ready to go.' : 'Nothing logged yet.'}</p>}
-              <div class="list">{recovering.map(r => <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{formatHours(r.hoursLeft)} left</span>}><div class="row-between small"><span>{muscleLabel(r.muscle)}</span><span class="muted">{r.pct}%</span></div><div class="bar" style={{ marginTop: 4 }}><i style={{ width: `${r.pct}%`, background: r.pct >= 75 ? 'var(--positive)' : r.pct >= 40 ? 'var(--warning)' : 'var(--negative)' }} /></div></Row>)}</div>
+              {!recovering.length && <p class="small muted">{readyOnly.length || fullyRecovered.length ? 'Everything you have trained is ready for hard work.' : 'Nothing logged yet.'}</p>}
+              <div class="list">{recovering.map(r => (
+                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : `${formatHours(r.hoursLeft)} left`}</span>}>
+                  <div class="row-between small"><span>{muscleLabel(r.muscle)}</span><span class="muted">{r.pct}% · {r.confidence}</span></div>
+                  <div class="bar" style={{ marginTop: 4 }}><i style={{ width: `${r.pct}%`, background: r.pct >= 75 ? 'var(--positive)' : r.pct >= 40 ? 'var(--warning)' : 'var(--negative)' }} /></div>
+                </Row>
+              ))}</div>
             </Card>
           </Section>
-          <Section title="Fully recovered" aside={<span class="small muted">{readyList.length}</span>}>
-            <Card><div class="wrap">{readyList.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!readyList.length && <span class="small muted">Trained muscles show here once their recovery window has passed.</span>}</div></Card>
+          <Section title="Ready for hard work" aside={<span class="small muted">{readyOnly.length}</span>}>
+            <Card><div class="wrap">{readyOnly.map(r => <Chip key={r.muscle} onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)} · {r.pct}%</Chip>)}{!readyOnly.length && <span class="small muted">Muscles between ready and fully recovered show here.</span>}</div></Card>
+          </Section>
+          <Section title="Fully recovered" aside={<span class="small muted">{fullyRecovered.length}</span>}>
+            <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">Trained muscles show here once fully recovered.</span>}</div></Card>
           </Section>
         </>
       )}
@@ -81,6 +93,7 @@ function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => vo
   const levels = trainingLevels(s.sessions, s.customExercises)[muscle];
   const direct = [...s.customExercises, ...LIBRARY].filter(e => e.primary.includes(muscle));
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));
+  const markFresh = () => { update(x => ({ ...x, freshMarks: [...x.freshMarks, { muscle, at: new Date().toISOString() }].slice(-100) })); onClose(); };
   return (
     <Sheet title={info.label} onClose={onClose}>
       <div class="stack">
@@ -89,7 +102,14 @@ function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => vo
           <Stat value={r.lastDay ? formatDay(r.lastDay) : 'never'} label="last trained" />
           <Stat value={levels.level} label="level" />
         </div>
-        {r.recovering && <p class="small muted">About {formatHours(r.hoursLeft)} until fully recovered{r.personalized ? '. This window is widened from your own history.' : '.'}</p>}
+        {r.recovering && (
+          <p class="small muted">
+            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
+            {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · widened from your own history' : ''}.
+          </p>
+        )}
+        {r.drivers.length > 0 && <p class="hint">{r.drivers.map(d => d.text).join(' · ')}</p>}
+        {r.recovering && <Button variant="quiet" size="sm" onClick={markFresh}>Mark as fresh</Button>}
         <div>
           <div class="eyebrow" style={{ marginBottom: 6 }}>Your exercises for this muscle</div>
           {!logged.length && <p class="small muted">Nothing logged for this muscle yet.</p>}
