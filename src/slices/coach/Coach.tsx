@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, today, week } from '@/app/selectors';
+import { insights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
@@ -10,13 +10,14 @@ import { trainingAgeMonths } from '@/brain/recovery';
 import { profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL, weekStart } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart, daysBetween, addDays } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { resyncReminders } from '../settings/reminders';
 import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
+import { acceptDeload, saveInsightFeedback } from './coach';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -38,6 +39,7 @@ export function Coach() {
       <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
 
       <WeeklyReviewCard />
+      <DeloadCard />
 
       <Card class="card-accent">
         <div class="eyebrow">This week in one line</div>
@@ -51,11 +53,16 @@ export function Coach() {
               <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
+              <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>
+                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'helpful')}>Helpful</Button>
+                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'snoozed')}>Not now</Button>
+              </div>
             </Card>
           ))}
           {!list.length && <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
         </div>
       </Section>
+      <InsightFeedbackLog />
 
       <Section title="Training goal" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change</Button>}>
         <Card class="card-press" onClick={() => setGoalOpen(true)}>
@@ -125,7 +132,7 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
-  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises) : null;
+  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises, { deload: activeDeload.value }) : null;
   const hist = ex ? exerciseHistory(s.sessions, ex.id, s.customExercises).slice(-5).reverse() : [];
   return (
     <Sheet title={insight.title} onClose={onClose}>
@@ -220,6 +227,58 @@ function WeeklyReviewCard() {
         </Sheet>
       )}
     </>
+  );
+}
+
+/** F3.3: the active lighter week, or the coach's offer of one. Never shows both at once. */
+function DeloadCard() {
+  const active = activeDeload.value;
+  const suggestion = deloadSuggestion.value;
+  if (!active && !suggestion.suggest) return null;
+  return (
+    <Card class="card-accent">
+      {active ? (
+        <>
+          <div class="eyebrow">Lighter week</div>
+          <p style={{ marginTop: 6 }}>Day {Math.min(7, Math.max(1, daysBetween(active.startDay, today.value) + 1))} of 7. {active.reason}</p>
+          <p class="hint" style={{ marginTop: 4 }}>Sets and load are reduced across your plan through {active.endDay}.</p>
+        </>
+      ) : (
+        <>
+          <div class="eyebrow">Coach suggestion</div>
+          <p style={{ marginTop: 6 }}>{suggestion.reason}</p>
+          <Button style={{ marginTop: 8 }} onClick={() => acceptDeload(suggestion.reason)}>Take a lighter week</Button>
+        </>
+      )}
+    </Card>
+  );
+}
+
+/** F3.6: a friendly label from an insight id's stable prefix, e.g. "volume:chest" -> "Volume". Feedback only keeps id/day/verdict, not the insight's own words, since those can change after the fact. */
+function labelForInsight(id: string): string {
+  const key = (id.split(':')[0] ?? id).replace(/[-_]/g, ' ');
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+/** F3.6: a short log of recent "Helpful"/"Not now" taps, so feedback does not just vanish. */
+function InsightFeedbackLog() {
+  const s = state.value;
+  const cutoff = addDays(today.value, -30);
+  const items = s.insightFeedback.filter(f => f.day >= cutoff).slice().reverse().slice(0, 10);
+  if (!items.length) return null;
+  return (
+    <Section title="Earlier this month">
+      <Card class="card-quiet">
+        <div class="list">
+          {items.map((f, i) => (
+            <Row key={`${f.id}:${f.day}:${i}`} trailing={<span class="hint">{f.verdict === 'helpful' ? 'Helpful' : 'Not now'}</span>}>
+              <span class="small">{labelForInsight(f.id)}</span>
+              <div class="hint">{f.day}</div>
+            </Row>
+          ))}
+        </div>
+      </Card>
+    </Section>
   );
 }
 

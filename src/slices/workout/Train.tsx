@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector } from '@/app/selectors';
+import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
@@ -112,7 +112,7 @@ function Splits() {
             <div class="list" style={{ marginTop: 6 }}>
               {split.exercises.map(se => {
                 const ex = findExercise(se.exerciseId, s.customExercises);
-                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value) });
+                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value });
                 return (
                   <Row key={se.exerciseId} trailing={<span class="hint num">{se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
@@ -270,7 +270,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
-  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value) });
+  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value });
   const [menu, setMenu] = useState(false);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const isTimed = mode === 'duration';
