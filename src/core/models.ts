@@ -170,6 +170,14 @@ export interface WatchPreference {
   deviceName?: string;
 }
 
+/** How rest between sets decides it's done (F1.2). `heart` needs a connected, LIVE watch; a stale stream falls back to the timer. */
+export interface RestPreference {
+  mode: 'time' | 'heart';
+  /** Share of heart-rate reserve that counts as "recovered enough", 0-1. */
+  heartTargetPct: number;
+  minSec: number;
+}
+
 export interface Preferences {
   weightUnit: 'kg' | 'lb';
   restDefaultSec: number;
@@ -179,6 +187,7 @@ export interface Preferences {
   /** Show the daily quote card. */
   showSpark: boolean;
   watch: WatchPreference;
+  rest: RestPreference;
 }
 
 export interface Profile {
@@ -327,6 +336,7 @@ export function freshState(now = new Date()): AppState {
       reminders: { enabled: false, time: '17:30', style: 'silent' },
       showSpark: true,
       watch: { autoConnectOnSession: true },
+      rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 },
     },
     body: [],
     health: { connected: false },

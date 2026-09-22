@@ -24,7 +24,7 @@ function normalize(s: AppState): AppState {
     ...fresh,
     ...s,
     profile: { ...fresh.profile, ...s.profile },
-    preferences: { ...fresh.preferences, ...s.preferences, reminders: { ...fresh.preferences.reminders, ...s.preferences?.reminders }, watch: { ...fresh.preferences.watch, ...s.preferences?.watch } },
+    preferences: { ...fresh.preferences, ...s.preferences, reminders: { ...fresh.preferences.reminders, ...s.preferences?.reminders }, watch: { ...fresh.preferences.watch, ...s.preferences?.watch }, rest: { ...fresh.preferences.rest, ...s.preferences?.rest } },
     schedule: { ...fresh.schedule, ...s.schedule },
     health: { ...fresh.health, ...s.health },
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
