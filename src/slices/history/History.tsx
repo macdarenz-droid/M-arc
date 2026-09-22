@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { today, unit } from '@/app/selectors';
-import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad } from '@/core/units';
@@ -131,7 +131,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
               {e.sets.map((st, si) => (
                 <div key={si} class="set-grid">
                   <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <input type="number" step="0.5" value={st.kg ?? ''} placeholder="kg" onInput={ev => setField(ei, si, { kg: parseFloat((ev.target as HTMLInputElement).value) || undefined })} />}
+                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <WeightInput kg={st.kg} unit="kg" placeholder="kg" onChange={kg => setField(ei, si, { kg })} />}
                   {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseInt((ev.target as HTMLInputElement).value) || 0 })} />}
                   <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
                 </div>

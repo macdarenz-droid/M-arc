@@ -3,7 +3,7 @@ import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
-import { Button, Card, Chip, Empty, Field, Row, Section, Sheet } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock } from '@/core/dates';
 import { formatLoad, kgToDisplay, displayToKg } from '@/core/units';
@@ -330,7 +330,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <input type="number" inputMode="decimal" step="0.5" placeholder={target?.kg != null ? String(kgToDisplay(target.kg, u)) : prev?.kg != null ? String(kgToDisplay(prev.kg, u)) : mode === 'bodyweight' ? 'bw' : ''} value={set.kg != null ? kgToDisplay(set.kg, u) : ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); setSet(index, j, { kg: Number.isFinite(v) ? displayToKg(v, u) : undefined }); }} />
+                      <WeightInput kg={set.kg} unit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, u)) : prev?.kg != null ? String(kgToDisplay(prev.kg, u)) : mode === 'bodyweight' ? 'bw' : ''} onChange={kg => setSet(index, j, { kg })} />
                       <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
@@ -528,7 +528,7 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
             {entry.sets.map((set, si) => (
               <div key={si} class="set-grid">
                 <span class="set-index">{si + 1}</span>
-                <input type="number" inputMode="decimal" step="0.5" value={set.kg != null ? kgToDisplay(set.kg, u) : ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); patchSet(ei, si, { kg: Number.isFinite(v) ? displayToKg(v, u) : undefined }); }} />
+                <WeightInput kg={set.kg} unit={u} onChange={kg => patchSet(ei, si, { kg })} />
                 <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseInt((e.target as HTMLInputElement).value, 10) || undefined })} />
                 <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
               </div>

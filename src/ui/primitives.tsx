@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef } from 'preact/hooks';
+import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
+import { kgToDisplay, displayToKg } from '@/core/units';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -82,4 +83,29 @@ export function Section({ title, aside, children }: { title: string; aside?: Com
 
 export function Field({ label, children, hint }: { label: string; children?: ComponentChildren; hint?: string }) {
   return <label class="stack-sm"><span class="small muted">{label}</span>{children}{hint && <span class="hint">{hint}</span>}</label>;
+}
+
+/**
+ * A weight input that keeps decimals while typing. A plain controlled `<input value={kgToDisplay(kg)}>`
+ * reformats on every keystroke, so "23." collapses back to "23" before a "5" can follow it — the
+ * displayed text only re-syncs from the committed kg while the field is not focused.
+ */
+export function WeightInput({ kg, unit, placeholder, onChange }: { kg: number | undefined; unit: 'kg' | 'lb'; placeholder?: string; onChange: (kg: number | undefined) => void }) {
+  const display = kg != null ? String(kgToDisplay(kg, unit)) : '';
+  const [text, setText] = useState(display);
+  const focused = useRef(false);
+  if (!focused.current && text !== display) setText(display);
+  return (
+    <input
+      type="number" inputMode="decimal" step="0.5" placeholder={placeholder} value={text}
+      onFocus={() => { focused.current = true; }}
+      onBlur={() => { focused.current = false; setText(kg != null ? String(kgToDisplay(kg, unit)) : ''); }}
+      onInput={e => {
+        const raw = (e.target as HTMLInputElement).value;
+        setText(raw);
+        const v = parseFloat(raw);
+        onChange(Number.isFinite(v) ? displayToKg(v, unit) : undefined);
+      }}
+    />
+  );
 }
