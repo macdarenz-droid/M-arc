@@ -16,7 +16,8 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue } from '@/brain/coach/cues';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
@@ -271,8 +272,10 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
-  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value });
+  const recoveryPct = recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value);
+  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value });
   const [menu, setMenu] = useState(false);
+  const [subOpen, setSubOpen] = useState(false);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const isTimed = mode === 'duration';
   const firstSet = entry.sets[0];
@@ -300,6 +303,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
+          {ex && recoveryPct != null && recoveryPct < 60 && (
+            <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <a onClick={() => setSubOpen(true)}>See substitutes</a> or ease off today.</p>
+          )}
           {cue && <p class="hint muted">{cue.text}</p>}
           {warmup && (
             <div class="warmup">
@@ -352,12 +358,35 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <Sheet title={entry.name} onClose={() => setMenu(false)}>
           <div class="stack-sm">
             <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            {ex && <Button variant="quiet" onClick={() => { setMenu(false); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => { removeEntry(index); setMenu(false); }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
         </Sheet>
       )}
+      {subOpen && ex && <SubstituteSheet exercise={ex} custom={s.customExercises} onPick={sub => { substituteEntry(index, sub); setSubOpen(false); }} onClose={() => setSubOpen(false)} />}
     </Card>
+  );
+}
+
+/** F3.7: substitutes sharing the primary muscle, when it is recovering or an insight suggests balance work. */
+function SubstituteSheet({ exercise, custom, onPick, onClose }: { exercise: Exercise; custom: Exercise[]; onPick: (ex: Exercise) => void; onClose: () => void }) {
+  const subs = substitutesFor(exercise, custom);
+  return (
+    <Sheet title={`Substitute ${exercise.name}`} onClose={onClose}>
+      <div class="list">
+        {subs.map(e => (
+          <div key={e.id} class="list-row pressable" onClick={() => onPick(e)}>
+            <div class="grow">
+              <div>{e.name}</div>
+              <div class="hint">{e.equipment} · {e.primary.map(muscleLabel).join(', ')}</div>
+            </div>
+            <span class="chip">Swap</span>
+          </div>
+        ))}
+        {!subs.length && <p class="small muted" style={{ padding: '12px 0' }}>No substitutes with the same primary muscle in the library yet.</p>}
+      </div>
+    </Sheet>
   );
 }
 

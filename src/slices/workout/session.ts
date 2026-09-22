@@ -116,6 +116,11 @@ export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }
 
+/** F3.7: swap this entry for a substitute, e.g. a recovering muscle or a balance nudge. Blank sets: a different exercise's numbers would not mean the same thing. */
+export function substituteEntry(entry: number, ex: Exercise): void {
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, exerciseId: ex.id, name: ex.name, sets: e.sets.map(() => ({})) })) }));
+}
+
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number): void {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
   const endsAt = Date.now() + total * 1000;
