@@ -69,6 +69,13 @@ for (const theme of themes) {
   await page.waitForTimeout(250);
   await page.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
   if (theme === 'silent-black') {
+    // Log a past session: no timer, no rest banner.
+    await page.getByRole('button', { name: 'Log a past session' }).click(); await page.waitForTimeout(250); await shot('past-session');
+    const pastInputs = page.locator('input[type="number"]');
+    await pastInputs.nth(1).fill('40'); await pastInputs.nth(2).fill('10');
+    await page.locator('.effort button.easy').first().click();
+    await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
+    await page.getByRole('button', { name: 'Done' }).click(); await page.waitForTimeout(250);
     // Start a session and log a set for the live screenshot.
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
     const inputs = page.locator('input[type="number"]');
@@ -76,7 +83,14 @@ for (const theme of themes) {
     await page.locator('.effort button.ideal').first().click();
     await page.waitForTimeout(300); await shot('live');
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
-    await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400); await shot('summary');
+    await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
+    // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
+    if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
+      await shot('time-question');
+      await page.getByRole('button', { name: 'Save' }).click();
+      await page.waitForTimeout(400);
+    }
+    await shot('summary');
     await page.getByRole('button', { name: 'Done' }).click();
   }
   await page.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
