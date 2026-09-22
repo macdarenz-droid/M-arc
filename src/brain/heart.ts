@@ -117,7 +117,8 @@ export interface SessionHeartInput {
   series: Array<[number, number]>;
   sessionSec: number;
   hrMaxBpm: number;
-  restingHrBpm: number;
+  /** Null when no source exists yet (no override, no 7-day Health Connect history). Zones are skipped, not guessed. */
+  restingHrBpm: number | null;
   sets: Array<{ heart?: SetHeart }>;
   energy?: SessionEnergy;
 }
@@ -128,8 +129,10 @@ export function sessionHeartSummary(input: SessionHeartInput): Omit<SessionHeart
   if (!series.length) return null;
   const bpms = series.map(([, bpm]) => bpm);
   const zoneSec: [number, number, number, number, number] = [0, 0, 0, 0, 0];
-  const boundaries = zones(hrMaxBpm, restingHrBpm);
-  for (const bpm of bpms) { const z = zoneIndex(bpm, boundaries); if (z >= 0) zoneSec[z] = (zoneSec[z] ?? 0) + 5; }
+  if (restingHrBpm != null) {
+    const boundaries = zones(hrMaxBpm, restingHrBpm);
+    for (const bpm of bpms) { const z = zoneIndex(bpm, boundaries); if (z >= 0) zoneSec[z] = (zoneSec[z] ?? 0) + 5; }
+  }
   const hrr60s = sets.map(s => s.heart?.hrr60).filter((x): x is number => x != null).sort((a, b) => a - b);
   const hrr60Median = hrr60s.length ? hrr60s[Math.floor(hrr60s.length / 2)] : undefined;
   return {

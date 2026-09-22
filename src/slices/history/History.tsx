@@ -77,7 +77,11 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   return (
     <Card class="card-press" onClick={() => setOpen(o => !o)}>
       <div class="row-between">
-        <div class="grow"><b>{session.splitName}</b><div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div></div>
+        <div class="grow">
+          <b>{session.splitName}</b>
+          <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
+          {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
+        </div>
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
       </div>
       {open && (

@@ -52,9 +52,9 @@ export function finishHeartCapture(session: Session): Session {
   if (!rawSamples.length) return session;
   const series = downsampleToBuckets(rawSamples);
   storeSeries(session.id, series);
+  if (!series.length) return session;
   const s = state.value;
   const restBpm = restingHr(s.healthDays, s.profile, today.value);
-  if (restBpm == null || !series.length) return session;
   const priorAndThis = s.sessions.some(x => x.id === session.id) ? s.sessions : [...s.sessions, session];
   const observed = bestObservedHrMax(priorAndThis.map(x => ({ id: x.id, endedAt: x.endedAt })), { ...exportHeart(), [session.id]: series });
   const maxBpm = hrMax(s.profile, observed).bpm;

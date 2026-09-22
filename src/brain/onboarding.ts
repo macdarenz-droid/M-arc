@@ -25,16 +25,21 @@ export function profileCompleteness(profile: Profile): ProfileCompleteness {
   return { weight, height, age, sex, done, of: 4, complete: done === 4 };
 }
 
-export type OnboardingTrigger = 'first' | 'partial' | 'review';
+export type OnboardingTrigger = 'first' | 'partial' | 'review' | 'watch';
 
 const DISMISS_SUPPRESS_DAYS = 14;
 const MAX_DISMISSALS = 3;
 const REVIEW_DAYS = 90;
 
-/** Which sheet, if any, should show right now. `todayIso` may be a full timestamp or a day key. */
-export function shouldShowOnboarding(profile: Profile, onboarding: Onboarding, todayIso: string): OnboardingTrigger | null {
+/**
+ * Which sheet, if any, should show right now. `todayIso` may be a full timestamp or a day key.
+ * `justConnectedWatch`: a watch is connected and this profile has never been prompted for it
+ * before (6.10) — overrides the normal dismissal cooldown, once, the first time it happens.
+ */
+export function shouldShowOnboarding(profile: Profile, onboarding: Onboarding, todayIso: string, justConnectedWatch = false): OnboardingTrigger | null {
   const today = todayIso.slice(0, 10);
   const c = profileCompleteness(profile);
+  if (justConnectedWatch && !onboarding.watchPromptedAt && !c.complete) return 'watch';
   if (c.complete) {
     if (!onboarding.lastReviewAt) return null;
     return daysBetween(onboarding.lastReviewAt.slice(0, 10), today) >= REVIEW_DAYS ? 'review' : null;

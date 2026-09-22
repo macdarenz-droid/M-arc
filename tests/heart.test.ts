@@ -137,4 +137,10 @@ describe('sessionHeartSummary', () => {
   it('is null with an empty series', () => {
     expect(sessionHeartSummary({ series: [], sessionSec: 60, hrMaxBpm: 190, restingHrBpm: 60, sets: [] })).toBeNull();
   });
+  it('still gives avg/max/coverage without a resting HR, but skips zones rather than guessing one', () => {
+    const series: Array<[number, number]> = [[0, 100], [5, 150], [10, 170]];
+    const r = sessionHeartSummary({ series, sessionSec: 15, hrMaxBpm: 190, restingHrBpm: null, sets: [] });
+    expect(r?.avgBpm).toBe(140);
+    expect(r?.zoneSec).toEqual([0, 0, 0, 0, 0]);
+  });
 });

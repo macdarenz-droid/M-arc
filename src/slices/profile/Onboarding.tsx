@@ -3,17 +3,23 @@ import { state } from '@/core/store';
 import { Button, Card, Field, Segmented, Sheet } from '@/ui/primitives';
 import { profileCompleteness, type OnboardingTrigger } from '@/brain/onboarding';
 import { GOALS, type GoalId } from '@/data/goals';
-import { changeGoal, completeOnboarding, dismissOnboarding, logWeight, reviewOnboarding, setBirthYear, setHeight, setSex, setTrainingSince } from './profile';
+import { changeGoal, completeOnboarding, dismissOnboarding, logWeight, markWatchPrompted, reviewOnboarding, setBirthYear, setHeight, setSex, setTrainingSince } from './profile';
 
-/** The "help the coach know you" sheet: shown for a fresh/partial profile, or a 90-day review. */
+/** The "help the coach know you" sheet: shown for a fresh/partial profile, a 90-day review, or a first watch connection. */
 export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigger; onClose: () => void }) {
   const [step, setStep] = useState<'intro' | 'form'>('intro');
   const s = state.value;
   const c = profileCompleteness(s.profile);
 
   // Closing the sheet always records something, so it never reopens on the very next render:
-  // a review postpones the next check 90 days, anything else counts as a "Later" dismissal.
-  const exit = () => { if (trigger === 'review') reviewOnboarding(); else dismissOnboarding(); onClose(); };
+  // a review postpones the next check 90 days, a watch prompt only ever fires once, anything
+  // else counts as a "Later" dismissal.
+  const exit = () => {
+    if (trigger === 'review') reviewOnboarding();
+    else { if (trigger === 'watch') markWatchPrompted(); dismissOnboarding(); }
+    onClose();
+  };
+  const finishForm = () => { if (trigger === 'watch') markWatchPrompted(); completeOnboarding(); onClose(); };
 
   if (trigger === 'review' && step === 'intro') {
     return (
@@ -33,7 +39,9 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
       <Sheet title="Help the coach know you" onClose={exit}>
         <div class="stack">
           <p class="small muted">
-            {trigger === 'first'
+            {trigger === 'watch'
+              ? 'Your watch is connected. A few details about you turn its heart-rate stream into calories, heart-rate zones and recovery time.'
+              : trigger === 'first'
               ? 'The coach already learns from every set you log. A few details about you make its advice fit you: calories, heart-rate zones, recovery time and strength trends all depend on them.'
               : `${missing.length === 1 ? 'One detail is' : `${missing.length} details are`} missing: ${missing.join(', ')}. Without them the coach cannot show calories or heart-rate zones.`}
           </p>
@@ -44,7 +52,7 @@ export function OnboardingSheet({ trigger, onClose }: { trigger: OnboardingTrigg
     );
   }
 
-  return <OnboardingForm onDone={() => { completeOnboarding(); onClose(); }} />;
+  return <OnboardingForm onDone={finishForm} />;
 }
 
 function OnboardingForm({ onDone }: { onDone: () => void }) {

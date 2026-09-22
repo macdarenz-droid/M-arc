@@ -23,6 +23,8 @@ import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { GOALS } from '@/data/goals';
+import { watchSupported, watchStatus, latestMeasurement } from '@/native/watch';
+import { WatchSheet } from '@/slices/settings/Watch';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -188,6 +190,7 @@ function LiveSession() {
       <div class="topbar">
         <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><h1 class="num">{formatClock(elapsed)}</h1><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
         <div class="row">
+          <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
           <Button variant="solid" size="sm" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
@@ -215,6 +218,24 @@ function LiveSession() {
         </Sheet>
       )}
     </div>
+  );
+}
+
+/** bpm + freshness dot, tap to open the watch sheet (6.5). Hidden entirely on the web, same as haptics. */
+function WatchPill() {
+  const [open, setOpen] = useState(false);
+  if (!watchSupported.value) return null;
+  const status = watchStatus.value;
+  const bpm = latestMeasurement.value?.bpm;
+  const live = status.freshness === 'LIVE';
+  return (
+    <>
+      <button type="button" class="watch-pill" aria-label="Watch" onClick={() => setOpen(true)}>
+        <span class={`dot ${live ? 'live' : ''}`} />
+        {bpm != null ? `${bpm} bpm` : 'Watch'}
+      </button>
+      {open && <WatchSheet onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
@@ -278,7 +299,10 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
                   <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatLoad(prev.kg, u)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
-                  {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
+                  <span class="row" style={{ gap: 6 }}>
+                    {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
+                    {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
+                  </span>
                 </div>
               </div>
             );
@@ -437,6 +461,24 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
       <Card class="card-accent">
         <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
       </Card>
+      {session.heart && (
+        <Section title="Heart">
+          <Card>
+            <div class="grid-3">
+              <div class="stat"><b class="num">{session.heart.avgBpm}</b><span>avg bpm</span></div>
+              <div class="stat"><b class="num">{session.heart.maxBpm}</b><span>max bpm</span></div>
+              <div class="stat"><b class="num">{session.heart.hrr60Median ?? '—'}</b><span>HRR60</span></div>
+            </div>
+            <div class="row" style={{ marginTop: 12, gap: 2 }}>
+              {session.heart.zoneSec.map((sec, i) => <div key={i} class="grow" style={{ height: 8, borderRadius: 4, background: sec > 0 ? 'var(--accent)' : 'var(--border)', opacity: sec > 0 ? 0.4 + i * 0.15 : 1 }} />)}
+            </div>
+            {session.heart.energy && (
+              <p class="small" style={{ marginTop: 10 }}>About {session.heart.energy.low} to {session.heart.energy.high} kcal active. {session.heart.energy.source === 'heart_rate' ? 'Estimated from heart rate.' : session.heart.energy.source === 'watch_energy' ? 'From your watch.' : 'From Health Connect.'}</p>
+            )}
+            <p class="hint" style={{ marginTop: 6 }}>Watch was live for {Math.round(session.heart.coverage * 100)}% of the session.</p>
+          </Card>
+        </Section>
+      )}
       {debrief.length > 0 && (
         <Section title="Debrief">
           <div class="stack-sm">

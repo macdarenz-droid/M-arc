@@ -97,3 +97,8 @@ export function completeOnboarding(): void {
 export function reviewOnboarding(): void {
   update(s => ({ ...s, onboarding: { ...s.onboarding, lastReviewAt: new Date().toISOString() } }));
 }
+
+/** The watch-connect onboarding prompt (6.10) only ever shows once per profile. */
+export function markWatchPrompted(): void {
+  update(s => ({ ...s, onboarding: { ...s.onboarding, watchPromptedAt: new Date().toISOString() } }));
+}

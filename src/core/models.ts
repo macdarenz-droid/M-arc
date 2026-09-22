@@ -216,6 +216,8 @@ export interface Onboarding {
   /** ISO timestamps of "Later" taps, newest last, so the sheet can back off after a few. */
   dismissedAt: string[];
   lastReviewAt?: string;
+  /** Set the first time a watch connects and the profile sheet was shown for it, so it only asks once (6.10). */
+  watchPromptedAt?: string;
 }
 
 /** A day's soreness-only check-in (recovery v2). Sleep quality and mood join this later without a migration. */

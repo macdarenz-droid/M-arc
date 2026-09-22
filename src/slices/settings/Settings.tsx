@@ -11,6 +11,8 @@ import { profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable } from '@/native/health';
 import { syncAndStoreHealth } from './health';
+import { watchSupported, watchStatus } from '@/native/watch';
+import { WatchSheet } from './Watch';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 
@@ -20,6 +22,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const s = state.value;
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
+  const [watchOpen, setWatchOpen] = useState(false);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
@@ -93,11 +96,13 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
 
-        <Section title="Health">
-          <Card>
+        <Section title="Watch and health">
+          <Card class="stack-sm">
             <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
           </Card>
         </Section>
+        {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
 
         <Section title="Your data">
           <Card class="stack-sm">

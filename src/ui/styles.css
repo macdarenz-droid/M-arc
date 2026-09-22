@@ -135,6 +135,9 @@ svg { display: block; }
 .effort button[aria-pressed="true"].max { background: var(--negative); color: #fff; border-color: transparent; }
 .hint { font-size: 12px; color: var(--text-3); }
 .pr-badge { color: var(--warning); font-weight: 700; font-size: 12px; }
+.watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-1); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
+.watch-pill .dot.live { background: var(--positive); }
 
 /* Rest banner */
 .rest { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 25; max-width: 560px; width: calc(100% - 32px); background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }

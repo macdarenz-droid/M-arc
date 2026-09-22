@@ -35,6 +35,18 @@ describe('shouldShowOnboarding', () => {
   it('a complete profile with no review date set is quiet, not stuck reviewing', () => {
     expect(shouldShowOnboarding(complete, fresh, '2026-09-22')).toBeNull();
   });
+  it('a watch connecting shows the sheet once, even inside the normal dismiss cooldown', () => {
+    const justDismissed = { dismissedAt: ['2026-09-21T00:00:00.000Z'] };
+    expect(shouldShowOnboarding(partial, justDismissed, '2026-09-22')).toBeNull();
+    expect(shouldShowOnboarding(partial, justDismissed, '2026-09-22', true)).toBe('watch');
+  });
+  it('does not re-trigger once this profile has already been prompted for a watch', () => {
+    // Falls through to the normal logic instead of forcing 'watch' again.
+    expect(shouldShowOnboarding(partial, { dismissedAt: ['2026-09-21T00:00:00.000Z'], watchPromptedAt: '2026-09-01T00:00:00.000Z' }, '2026-09-22', true)).toBeNull();
+  });
+  it('a watch connecting never interrupts an already-complete profile', () => {
+    expect(shouldShowOnboarding(complete, fresh, '2026-09-22', true)).toBeNull();
+  });
 });
 
 describe('isWeightTypo', () => {
