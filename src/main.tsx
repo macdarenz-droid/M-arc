@@ -12,29 +12,35 @@ import { startHeartCapture } from './slices/workout/heart';
 import { go } from './app/router';
 import './ui/styles.css';
 
-installThemeEngine();
-initStore();
-setHapticsEnabled(state.value.preferences.haptics);
-startWatchListeners();
-startHeartCapture();
+/** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
+try {
+  installThemeEngine();
+  initStore();
+  setHapticsEnabled(state.value.preferences.haptics);
+  startWatchListeners();
+  startHeartCapture();
 
-render(<App />, document.getElementById('app')!);
+  render(<App />, document.getElementById('app')!);
 
-if (bootSource.value === 'legacy') {
-  showToast(`Imported ${state.value.sessions.length} sessions from the previous version`);
-}
+  if (bootSource.value === 'legacy') {
+    showToast(`Imported ${state.value.sessions.length} sessions from the previous version`);
+  }
 
-// Keep unsaved work safe when the app goes to the background.
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
-window.addEventListener('pagehide', flushSave);
-// Android may drop scheduled reminders; check and repair when we come back.
-window.addEventListener('pageshow', () => { void resyncReminders(); void syncAndStoreHealth(); });
-void resyncReminders();
-void syncAndStoreHealth();
+  // Keep unsaved work safe when the app goes to the background.
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+  window.addEventListener('pagehide', flushSave);
+  // Android may drop scheduled reminders; check and repair when we come back.
+  window.addEventListener('pageshow', () => { void resyncReminders(); void syncAndStoreHealth(); });
+  void resyncReminders();
+  void syncAndStoreHealth();
 
-// Notification taps: rest done → Train, training day → Train.
-onNotificationTap(() => go('train'));
+  // Notification taps: rest done → Train, training day → Train.
+  onNotificationTap(() => go('train'));
 
-if ('serviceWorker' in navigator && !(globalThis as { Capacitor?: unknown }).Capacitor) {
-  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => undefined); });
+  if ('serviceWorker' in navigator && !(globalThis as { Capacitor?: unknown }).Capacitor) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => undefined); });
+  }
+} catch (err) {
+  (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);
+  throw err;
 }
