@@ -17,7 +17,7 @@ Audience: the implementing agent. Every claim about existing code names a file; 
    - A STOP condition (§23.4). The only turn-ending STOP is "all phases complete". A missing credential is **not** turn-ending: list the exact commands under "Needs owner action" in that phase's report and keep going.
 3. When this plan is silent on something, decide it yourself by the plan's principles (§2), the existing code or research. Do not ask the owner. Append the decision to `docs/COACHING-DECISIONS.md` under a `## Escobar v2` heading and continue.
 4. Be precise and frugal. Read only the files a step needs. Code from the old Escobar line is reachable without checking it out: `git show 4d8ff4e^:<path>` (the reverted port) and `git show origin/claude/smartwatch-connector-integration-j42yb5:<path>`. Useful ones: CORS allowlist and body blocklist `4d8ff4e^:proxy/src/handler.ts`; `extractNumbers` `4d8ff4e^:src/brain/coach/grounding.ts`; crisis copy `4d8ff4e^:proxy/src/promptAsk.ts`; photo picker `4d8ff4e^:src/native/photo.ts`; old thread shape `4d8ff4e^:src/core/models.ts` (`AskThreadTurn {role, text, …}`); `IconSend`/`IconCamera` `4d8ff4e^:src/ui/icons.tsx`. Prefer `grep`/`sed -n` over whole-file reads. Do not spawn subagents unless a step says so. Never run a live model call except where §22 or §23 explicitly allows it.
-5. Order is §23's phase list. Inside a phase, layers go in the order data → brain → ai → native → worker → UI → gate. Commit after every layer with message `EV<phase> <layer>: <what>`. Push after every phase.
+5. Order is §23's phase list (EV0, EVU, EV1 … EV9). Inside a phase, layers go in the order data → brain → ai → native → worker → UI → gate. Commit after every layer with message `EV<phase> <layer>: <what>`. Push after every phase.
 6. Keep green on every commit: `npm run check` (typecheck, vitest, build). On every UI commit also run `npm run gate` with `MARC_CHROMIUM=/opt/pw-browsers/chromium`. Once the Worker exists, also run `npm --prefix escobar-worker run check`.
 7. Ground rules from the repo still hold. `src/brain/**` stays pure: no imports from `ui/`, `slices/`, `native/`, `escobar/` or the network. State changes only go through `update()` / `replaceState()`. State stays `version: 1`, with new fields defaulted in `normalize()` (a private function in `src/core/store.ts`; `freshState()` is in `src/core/models.ts`). Coach copy is plain words: no "algorithm", "model", "AI-powered", "score" (except the readiness score already shipped) or version numbers.
 8. Design contract: every colour comes from a theme token (`var(--accent)` and the rest; see `src/theme/themes.ts` `ThemeTokens`). Every animation has a `prefers-reduced-motion` fallback. Every new screen passes the 5-theme gate.
@@ -26,7 +26,7 @@ Audience: the implementing agent. Every claim about existing code names a file; 
 
 ## 1. North star and scorecard
 
-The owner rated the old Escobar 4/10. The target is 9/10 or better, judged on the ten capabilities below. Each one has a concrete acceptance test in §22 or §23.
+The owner rated the old Escobar 4/10. The target is 9/10 or better, judged on the eleven capabilities below. Each one has a concrete acceptance test in §22 or §23.
 
 | # | Capability | Old Escobar (4/10) | Escobar v2 target |
 |---|---|---|---|
@@ -40,6 +40,7 @@ The owner rated the old Escobar 4/10. The target is 9/10 or better, judged on th
 | 8 | Is present | Two buttons. | The Hall (the Coach tab, relabelled Escobar), a dock pill on every screen, "Ask about this" on every insight and chart, a daily brief on Today, a live-workout mode, and bounded proactive moments. |
 | 9 | Feels fast | Blocking reply after 10–70 s with a spinner. | Streamed tokens, tool-activity narration ("Reading your bench history…"), first visible feedback in under 1 s and first token typically under 4 s. |
 | 10 | Is safe and honest | A concern flag plus a fixed resource. | App-owned escalation cards (pain/injury, crisis, disordered eating, medical), MI-style coaching, a scope contract, a transparency drawer ("What Escobar looked at"), and a graded scenario suite as a regression gate. |
+| 11 | Speaks the gym's units | One global kg/lb switch; typed lb values drift (35 → 35.5) | Per-exercise and per-gym units, a pill on every input, loadable targets, plate math, slip detection, and Escobar reading a rack photo (§25) |
 
 ---
 
@@ -326,6 +327,7 @@ Set `strict: true` on `kind: 'act' | 'memory'` tools and on `evaluate_plan`; rea
 | `get_live_session` | `{}` | Active session: split, elapsed, current entry, sets done/target, rest timer, autoregulation suggestion, live HR freshness (health gate) | `state.active`, `autoregulationSuggestion`, `watchStatus` |
 | `search_exercises` | `{query?, muscle?, equipment?, pattern?, limit ≤ 12}` | `[{exerciseId, name, primary, equipment, pattern, mode}]` | `searchExercises(query, custom, limit)` in `core/exercises.ts` has no muscle/equipment/pattern filters: filter the catalog in `read.ts` |
 | `get_exercise` | `{exerciseId}` | Full meta plus substitutes (≤ 6) plus a cue | `findExercise`, `substitutesFor`, `pickCue` |
+| `get_equipment` | `{exerciseId?, gymId?}` | Resolved equipment profile (unit, step, ladder, bar, plates), active gym, loadable neighbours of the current target (§25.6) | `brain/units.ts` `resolveProfile`, `loadableNear` |
 | `find_in_app` | `{query}` | Top 5 palace entries (id, title, where, how) | registry keyword scoring (also works offline) |
 | `explain_method` | `{topic: MethodId}` | How the app computes it, with the user's personal calibration values (§16.2) | `knowledge/methods.ts` |
 | `lookup_knowledge` | `{query?, ids?}` | ≤ 4 cards: statement, key numbers, evidence rating, sources | `knowledge/cards.ts` |
@@ -378,6 +380,8 @@ Each returns immediately with `{proposalId, status: 'awaiting_user', preview}` a
 | `propose_reminder` | `{enabled, time?: 'HH:MM', style?, readinessSummary?}` | preferences update plus `resyncReminders()` |
 | `propose_setting` | `anyOf` per key: `rest.mode` (`'time'\|'heart'`, the real field is `preferences.rest.mode`), `autoRest`, `restDefaultSec`, `weightUnit`, `showSpark`, `haptics` | `update()` on preferences (`setHapticsEnabled` too for haptics) |
 | `snooze_insight` | `{insightId, verdict: 'snoozed'\|'helpful'}` | `saveInsightFeedback` (applied immediately; low risk; Undo shown) |
+| `propose_equipment_profile` | `{scope: 'exercise'\|'equipment', exerciseId?, equipmentGroup?, gymId, profile}` | `units.byExercise` / `units.byEquipment` (validated per §25.6), Undo |
+| `propose_gym` | `{name, defaultUnit}` | Adds the gym to `units.gyms` and sets it active |
 | `escalate` | `{kind: 'pain'\|'medical'\|'crisis'\|'disordered_eating', note?}` | Renders the fixed card (§19); no state write |
 
 ### 8.5 Memory tools (`kind: 'memory'`)
@@ -783,6 +787,9 @@ Phase ids are EV0–EV9. Each phase lists its layers and its acceptance. "Tests"
 - data: `EscobarState` + `normalize` + `freshState` (`tests/escobar/state.test.ts`: defaults, caps, malformed items dropped, old `coach.askThread` preserved for import). Conversation store module plus backup/restore wiring (`tests/escobar/store.test.ts`: round trip, size guard, image pruning).
 - Accept: `npm run check` green; nothing visible yet.
 
+**EVU: Plate Sense** (data → brain → UI → gate; no network). Full spec in §25. Runs after EV0 and before EV1.
+- Accept: the round-trip test passes (it fails on today's `units.ts`); targets are always loadable when a profile exists; the suspect chip converts and remembers; the gate PASSes with the new screenshots.
+
 **EV1: Palace** (brain-adjacent pure + UI)
 - data: `palace/registry.ts` with about 70 entries; `openPanel` signal migration (`settingsOpen`/`profileOpen` kept as aliases).
 - UI: `data-palace` anchors on every entry's element; `goTo` + spotlight CSS; `usePalaceFocus` in every tab and panel; panels lifted to `openPanel` (muscle, exercise-stats, session, goal, schedule, checkin, weekly-review, memory placeholder).
@@ -865,5 +872,86 @@ Nothing else is a reason to stop or to ask.
 13. **Photos never touch localStorage**; each is sent once, then replaced by a stub permanently.
 14. **Staged user turns and orphan closing** (§13) keep API history valid on every exit path.
 15. **Sharing toggles default off** until the user taps Enable on the explainer.
+16. **Mixed-unit gyms (§25):** the entry unit is resolved per exercise and gym and flipped with an inline pill; the global setting becomes the display unit; `LoggedSet.entered` stores exactly what was typed (fixing the lb round-trip drift); targets snap to loadable equipment; unit slips are caught with the existing `unitSuspect`; Escobar can set equipment profiles from a photo or from chat.
 
 Open questions: none. Where the plan leaves a gap, decide by §2 and log it.
+
+---
+
+## 25. Plate Sense: mixed-unit gyms (kg and lb on the same gym floor)
+
+### 25.1 Problem
+Real gyms mix units: lb dumbbells next to kg plates, a cable stack in kg, a leg press in lb. Today the only control is the global Settings toggle (`preferences.weightUnit`), which applies to every input. There is also a **bug**: `displayToKg` rounds to 0.25 kg and `kgToDisplay` rounds to 0.5 in the display unit (`src/core/units.ts`), so a typed lb value doesn't always survive its own round trip. Of the 2.5 lb steps from 2.5 to 400 lb, 15 change after blur: 35 → 35.5, 67.5 → 67, 72.5 → 73, 105 → 105.5, 175 → 175.5, 310 → 309.5, and more. Checked with the same formulas in Node.
+
+### 25.2 What the user sees
+1. **A unit pill on every weight input.** A tiny `kg | lb` segmented pill sits inside the right edge of the weight input on each set row (Train entry card, past-session flow, History edit). 44 px tap area via padding, `var(--text-3)` idle and `var(--accent)` for the active unit. Tap it to flip the unit **for this exercise at this gym**; the app remembers the choice. Long-press offers "Use lb for all Dumbbells here".
+2. **Always a second reading.** When the entry unit differs from the display unit, a one-line hint under the input: `≈ 20.4 kg`. History, charts, records and Escobar keep using the display unit, so progress is comparable. Rows logged in the other unit carry a tiny `lb` tag.
+3. **The app catches unit slips.** When a committed load trips the existing `unitSuspect` check (`src/brain/fidelity.ts`: the load is about 2.2× or 0.45× the recent best), the set shows an inline chip: "That's 2.2× your usual. Was it 175 lb?" with the buttons `Yes, lb` and `No, kg`. Yes converts the set and remembers lb for that exercise at that gym. The user never opens Settings.
+4. **Targets you can actually load.** Progression targets snap to what the equipment really has, in its own unit: "Next: 55 lb dumbbells", never "24.9 kg". The same goes for warm-up ramps and autoregulation suggestions.
+5. **Plate math.** Tap a barbell target → a small sheet: "Per side: 45 + 10 + 2.5 lb (bar 45 lb)". It also handles mixed setups, such as a 20 kg bar with lb plates, which gives the exact total in both units.
+6. **The Gym passport.** Gyms are named profiles (Home, Work gym, Travel), each with its own unit map and equipment ladders. A chip on Train idle reads "At: Home ▾". The app pre-selects the gym you usually train at on this weekday and hour (a pure pattern match over past sessions), and switching is one tap. A new gym starts from a single question: "Mostly kg or lb here?"
+7. **Escobar reads the rack.** In chat, photograph a dumbbell rack, a weight-stack pin plate or a bumper plate. Escobar reads the label (unit, increments, stack range, add-on weights) and proposes an equipment profile card ("Cable stack at Work gym: kg, 5 kg steps, plus a 2.5 kg add-on. Apply?"). Saying it works too: "the dumbbells here are in pounds" → the same card.
+
+### 25.3 Data (`src/core/models.ts`, defaults in `freshState()`, merged in `normalize()`)
+```ts
+export type LoadUnit = 'kg' | 'lb';
+export interface EquipmentProfile {
+  unit: LoadUnit;
+  step?: number;              // smallest jump in `unit` (stack pin step, dumbbell step)
+  ladder?: number[];          // explicit available loads in `unit` (e.g. dumbbells 5..120 by 5), max 80 values
+  addOns?: number[];          // stack add-on weights in `unit`
+  barKg?: number;             // barbell/EZ/trap bar weight, canonical kg
+  plates?: number[];          // plate denominations in `unit`, per side
+  source: 'user' | 'suspect_fix' | 'escobar_scan' | 'escobar_chat' | 'default';
+  updatedAt: string;
+}
+export interface Gym { id: string; name: string; defaultUnit: LoadUnit; createdAt: string }
+export interface UnitsState {
+  gyms: Gym[];                                                     // at least one; cap 8
+  activeGymId: string;
+  byExercise: Record<string /*gymId*/, Record<string /*exerciseId*/, EquipmentProfile>>;
+  byEquipment: Record<string /*gymId*/, Partial<Record<string /*equipmentGroup()*/, EquipmentProfile>>>;
+}
+// AppState.units: UnitsState  — default: one gym "My gym", defaultUnit = preferences.weightUnit
+// LoggedSet gains:
+entered?: { value: number; unit: LoadUnit };   // exactly what was typed; `kg` stays the canonical number
+// Session gains:
+gymId?: string;
+```
+- The canonical `kg` for a set entered in lb is stored **unrounded to 3 decimals** (`round(value × 0.45359237, 3)`). Displaying a set in its entered unit uses `entered.value` verbatim, which fixes the drift. Other units convert from `kg`.
+- `preferences.weightUnit` keeps its field name but is relabelled "Show weights in" in Settings; it is now the display unit, not the entry unit.
+- Backfill: old sets have no `entered`, and their display is unchanged.
+
+### 25.4 Brain (pure; new `src/brain/units.ts`, plus small changes)
+- `resolveProfile(exerciseId, gymId, units, exercise): EquipmentProfile`, resolved in this order: exercise at this gym → exercise at any gym (most recent) → equipment group at this gym (`equipmentGroup()` from `brain/coach/cues.ts`) → gym default unit with the built-in ladders below.
+- Built-in defaults: lb plates `[45, 35, 25, 10, 5, 2.5]`, kg plates `[25, 20, 15, 10, 5, 2.5, 1.25]`, bar 20 kg (kg gym) or 45 lb = 20.41 kg (lb gym). Dumbbells: lb from 5 upwards in 5 lb steps (2.5 lb steps below 25 lb), kg 2 kg steps to 10 then 2.5 kg. Machines and cables: step 5 lb or 5 kg, no ladder.
+- `loadableNear(kg, profile, direction: 'nearest'|'up'|'down'): { kg: number; value: number; unit: LoadUnit }` snaps to the ladder, or to `bar + 2 × Σplates` combinations (greedy per side, both units allowed in a mixed setup), or to the step.
+- `plateBreakdown(totalKg, profile): { perSide: Array<{ value; unit; count }>; barKg; exactTotalKg; remainderKg }`.
+- `progression.ts`: `ProgressionContext.equipment?: EquipmentProfile`. When present, `suggestNext` snaps every target load with `loadableNear` (up for increases, down for reductions and deloads) and states the target in the profile's unit (`Suggestion` gains `unit` and `value`). `loadStep` stays as the fallback when there is no profile. `pre.ts` `warmupSets` and `live.ts` autoregulation snap the same way.
+- `fidelity.ts`: add `suspectAlternative(kg, recentBestKg): { unit: LoadUnit; value: number; kg: number } | null`, returning the reading that `unitSuspect` implies.
+- `inferGym(sessions, gyms, now): string | null`: the gym used most often on this weekday within ±2 h over the last 8 weeks, or null.
+- Records, e1RM, recovery and volume keep using canonical `kg`; nothing else changes. `isRealChange`'s 4% noise band already absorbs the 20.41 vs 20 kg rounding difference.
+
+### 25.5 UI
+- `WeightInput` (`src/ui/primitives.tsx`) gains `entryUnit`, `displayUnit`, `onUnitFlip?` and the pill. `onChange` receives `{kg, entered}`. It keeps the existing typing behaviour (decimals mid-typing, the fix in `013fbda`).
+- The Train entry card resolves the profile per entry and passes `equipment` to `suggestNext` at both call sites. The target line and plate sheet use `value unit`. The suspect chip renders under the committed set.
+- The Gym chip and gym sheet sit on Train idle (switch, add or rename a gym, set the default unit). `startSession` stamps `gymId`.
+- Settings → "Gyms and equipment": a list of gyms, and per gym the equipment groups and exercises with their saved profiles (edit or reset). Palace entries `settings.gyms` and `train.gym-chip` are added (§7).
+- Backup and restore carry `units` with the main state.
+
+### 25.6 Escobar integration
+- Read tool `get_equipment` `{exerciseId?, gymId?}` returns the resolved profile, the active gym and loadable neighbours of the current target. Every read tool that returns loads also returns `unit` and `value` in the entry unit next to canonical `kg`, so Escobar talks in the unit the plate says.
+- `calculate` ops `convert_load` and `plate_breakdown` use `units.ts`, with the gym's plates.
+- Action `propose_equipment_profile` `{scope: 'exercise'|'equipment', exerciseId?, equipmentGroup?, gymId, profile}` is validated (unit enum, ladder ascending and ≤ 80 values, step > 0, barKg 5–30), then applied into `units.byExercise` or `units.byEquipment` with Undo.
+- Action `propose_gym` `{name, defaultUnit}` creates a gym and makes it active.
+- Vision: the chat composer's photo attach (§4.2) is enough. The policy (§15 item 6) adds: "When a photo shows gym equipment labels, read the unit and increments and call `propose_equipment_profile`; if unsure of the unit, ask one question."
+- The brief (§11.2) adds `gym: <name>, default <unit>; this session's entry units: bench lb, cable row kg`.
+- Knowledge card `units_and_plates` (standard plate sets, bar weights, why ladders matter).
+
+### 25.7 Tests
+- Round trip: every 2.5 lb value from 2.5 to 500 lb, and every 0.5 kg value from 0.5 to 300 kg, survives entry → store → display in its entered unit **exactly**. This test fails on today's `units.ts`, so write it first.
+- `resolveProfile` precedence (all 4 levels); `loadableNear` on the lb dumbbell ladder, the kg plate set, a mixed kg-bar + lb-plates barbell, and a stack with add-ons; `plateBreakdown` known cases (100 kg, 225 lb, 60 kg on a 45 lb bar); `suggestNext` never returns a load that isn't on the ladder when a profile is present; `suspectAlternative` on a 2.2× and a 0.45× typo; `inferGym` on a 3-gym fixture.
+- The gate adds a screenshot of an entry card with the pill in lb and the `≈ kg` hint, and the plate sheet, in 5 themes.
+
+### 25.8 Phase placement
+A new phase **EVU**, run **right after EV0 and before EV1**, so that every Escobar tool built in EV2 already speaks the entry units. Layers: data (§25.3) → brain (§25.4) → UI (§25.5) → gate. The Escobar parts (§25.6) land inside EV2 (read tools and calculate), EV6 (the two actions) and EV5 (photo attach). EVU needs no network and delivers value on its own before Escobar exists.
