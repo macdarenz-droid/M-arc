@@ -307,70 +307,6 @@ export interface DailyHealth {
   syncedAt: string;
 }
 
-/** One split proposal from an "Ask Escobar" reply, as persisted. Mirrors SplitDraft in src/ai/ask.ts. */
-export interface AskThreadDraft {
-  action: 'create' | 'modify';
-  splitId: string | null;
-  name: string;
-  focus: MuscleId[];
-  exercises: Array<{ exerciseId: string; sets: number }>;
-}
-
-/** A proposal to switch the training goal, as persisted. Mirrors GoalChangeAction in src/ai/ask.ts. */
-export interface AskThreadGoalChangeAction {
-  kind: 'goal_change';
-  goal: GoalId;
-}
-export type AskThreadAction = AskThreadGoalChangeAction;
-
-/** One turn of the "Ask Escobar" conversation, persisted so a shown draft still renders (and knows if it was applied) after reopening. */
-export interface AskThreadTurn {
-  role: 'user' | 'assistant';
-  text: string;
-  scope?: 'personal' | 'general';
-  category?: 'nutrition' | 'body' | 'training' | 'app' | 'general';
-  drafts?: AskThreadDraft[];
-  applied?: boolean[];
-  draftDismissed?: boolean[];
-  scheduleDraft?: Record<Weekday, string | null> | null;
-  scheduleApplied?: boolean;
-  scheduleDismissed?: boolean;
-  concern?: 'crisis' | 'disordered_eating' | null;
-  trimmed?: number;
-  actions?: AskThreadAction[];
-  /** Parallel to `actions`: the goal each one replaced once applied, so Undo can restore it. */
-  actionPrev?: Array<GoalId | null>;
-  actionDismissed?: boolean[];
-}
-
-export const MAX_ASK_THREAD_TURNS = 40;
-export const MAX_STATED_CONSTRAINTS = 8;
-export const MAX_STATED_CONSTRAINT_CHARS = 160;
-
-/**
- * The online coach (Escobar). Field names match the Escobar line's CoachState so a
- * phone that last ran that build keeps its thread, device id and toggle.
- */
-export interface CoachState {
-  /** "Online coach" in Settings. Off by default; nothing leaves the phone while off. */
-  remoteExplainer: boolean;
-  /** The Cloudflare Worker proxy URL. */
-  explainerUrl: string;
-  /** Random id for per-device quotas at the proxy. Not tied to anything personal. */
-  deviceId: string;
-  /** Oldest first, capped at MAX_ASK_THREAD_TURNS. */
-  askThread: AskThreadTurn[];
-  /** Durable facts the person told Escobar (an injury, home equipment), resent as context on every question. */
-  statedConstraints: string[];
-}
-
-/** The one deployed Worker this app talks to. Still editable in Settings. */
-export const DEFAULT_PROXY_URL = 'https://marc-coach.mmarcdarenz.workers.dev';
-
-export function emptyCoach(): CoachState {
-  return { remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', askThread: [], statedConstraints: [] };
-}
-
 export interface AppState {
   version: 1;
   createdAt: string;
@@ -402,7 +338,6 @@ export interface AppState {
   deload: Deload | null;
   /** "Helpful"/snooze feedback per insight id, newest last, capped at 200 (F3.6). */
   insightFeedback: InsightFeedback[];
-  coach: CoachState;
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -443,7 +378,6 @@ export function freshState(now = new Date()): AppState {
     freshMarks: [],
     deload: null,
     insightFeedback: [],
-    coach: emptyCoach(),
   };
 }
 

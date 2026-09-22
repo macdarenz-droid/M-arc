@@ -2,11 +2,7 @@ import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { insights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
-import { IconChevron, IconInfo, IconMafia } from '@/ui/icons';
-import { COACH_NAME } from '@/ui/chatRender';
-import { settingsOpen } from '@/app/router';
-import { remoteEnabled } from './remote';
-import { openAsk, openAskWithQuestion } from './askController';
+import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
 import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
@@ -42,7 +38,6 @@ export function Coach() {
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
 
-      <EscobarCard />
       <WeeklyReviewCard />
       <DeloadCard />
 
@@ -134,27 +129,6 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** Escobar, the online coach: one chat that reads everything this coach knows, answers anything, and can draft splits, a new week or a goal change for you to accept. */
-function EscobarCard() {
-  const online = remoteEnabled.value;
-  const saved = state.value.coach.askThread.length;
-  return (
-    <Card class="card-accent escobar-card" style={{ marginBottom: 12 }}>
-      <div class="eyebrow escobar-head"><IconMafia size={14} aria-hidden={true} />{COACH_NAME}, {online ? 'online' : 'offline'}</div>
-      <p class="small muted" style={{ marginTop: 6 }}>
-        {online
-          ? 'Ask anything: why a lift stalled, what to eat, how recovered you are. He reads your readiness, recovery, volume, records and today\'s targets, and can build or change a split for you to accept.'
-          : 'Turn on the online coach in Settings to ask questions, build splits by chat and import a programme from a photo.'}
-      </p>
-      <div class="wrap" style={{ marginTop: 10 }}>
-        {online
-          ? <Button variant="primary" onClick={openAsk}>{saved ? `Continue with ${COACH_NAME}` : `Ask ${COACH_NAME} a question`}</Button>
-          : <Button onClick={() => { settingsOpen.value = true; }}>Open Settings</Button>}
-      </div>
-    </Card>
-  );
-}
-
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
@@ -171,7 +145,6 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
         </div>
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
         {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
-        {remoteEnabled.value && <Button variant="quiet" onClick={() => { onClose(); openAskWithQuestion(`About "${insight.title}": `); }}>Ask {COACH_NAME} about this</Button>}
       </div>
     </Sheet>
   );

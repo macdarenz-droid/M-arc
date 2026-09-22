@@ -19,40 +19,17 @@ export interface WeekSummary {
   grade: { title: string; note: string };
 }
 
-/** Working sets and total kg×reps volume for sessions falling within [start, end] inclusive. */
-function volumeInRange(sessions: Session[], start: string, end: string): { sets: number; volumeKg: number } {
-  let sets = 0, volumeKg = 0;
-  for (const s of sessions) {
-    if (s.day < start || s.day > end) continue;
-    for (const e of s.exercises) for (const x of e.sets) {
-      if (!isWorkingSet(x)) continue;
-      sets++;
-      if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
-    }
-  }
-  return { sets, volumeKg: Math.round(volumeKg) };
-}
-
-export interface WeeklyVolume { start: string; end: string; sets: number; volumeKg: number }
-
-/** One entry per week, oldest first, the current (in-progress) week last. */
-export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 12): WeeklyVolume[] {
-  const thisWeekStart = weekStart(today);
-  const out: WeeklyVolume[] = [];
-  for (let i = weeks - 1; i >= 0; i--) {
-    const start = addDays(thisWeekStart, -7 * i);
-    const end = addDays(start, 6);
-    out.push({ start, end, ...volumeInRange(sessions, start, end) });
-  }
-  return out;
-}
-
 export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek = 3): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
   const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
-  const { sets, volumeKg } = volumeInRange(sessions, start, end);
+  let sets = 0, volumeKg = 0;
+  for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
+    if (!isWorkingSet(x)) continue;
+    sets++;
+    if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+  }
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
   const grade = workouts >= Math.max(3, plannedPerWeek) ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
@@ -60,7 +37,7 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
     : workouts === 1 ? { title: 'Started', note: 'One session down. The next one is the one that counts.' }
     : { title: 'Start the week', note: 'Nothing logged yet. A short session still counts.' };
   return {
-    start, end, workouts, activeDays, sets, volumeKg,
+    start, end, workouts, activeDays, sets, volumeKg: Math.round(volumeKg),
     records: recordsInWeek(sessions, today, custom),
     muscleSets: weeks[0]?.sets ?? {},
     previousMuscleSets: weeks[1]?.sets ?? {},

@@ -15,10 +15,6 @@ import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
-import { checkProxy } from '@/slices/coach/remote';
-import { clearAskMemory, invalidateAskRequests } from '@/slices/coach/askMemory';
-import { resetAskTransient } from '@/slices/coach/askController';
-import { COACH_NAME } from '@/ui/chatRender';
 
 export const APP_VERSION = '37.0.0';
 
@@ -43,14 +39,12 @@ export function Settings({ onClose }: { onClose: () => void }) {
       if (legacy) {
         // A backup from the previous version of the app: convert it on the way in.
         const converted = convertLegacy(legacy);
-        invalidateAskRequests(); resetAskTransient();
         replaceState(converted);
         showToast(`Imported ${converted.sessions.length} sessions from the old backup`);
         return;
       }
       const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
       if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
-      invalidateAskRequests(); resetAskTransient();
       replaceState({ ...next, health: { connected: false } });
       showToast(`Restored ${next.sessions.length} sessions`);
     } catch { showToast('That file is not an M/ARC backup'); }
@@ -117,30 +111,12 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
 
-        <Section title="Online coach">
-          <Card>
-            <Row trailing={<Toggle checked={s.coach.remoteExplainer} onChange={async v => { update(x => ({ ...x, coach: { ...x.coach, remoteExplainer: v } })); flushSave(); if (v) { const r = await checkProxy(s.coach.explainerUrl); showToast(r.message); } }} label="Online coach" />}>
-              <span class="small">{COACH_NAME}, the online coach</span>
-              <div class="hint">Chat about anything, build splits by conversation and import a programme from a photo. Sends the coach's findings (not your sessions, name or body measurements) to your proxy and Claude.</div>
-            </Row>
-            {s.coach.remoteExplainer && (
-              <Field label="Proxy address">
-                <input value={s.coach.explainerUrl} inputMode="url" autoCapitalize="off" spellcheck={false} onChange={e => { const url = (e.target as HTMLInputElement).value.trim(); if (url) update(x => ({ ...x, coach: { ...x.coach, explainerUrl: url } })); }} />
-              </Field>
-            )}
-            <Row trailing={<Button size="sm" onClick={() => { invalidateAskRequests(); resetAskTransient(); update(x => ({ ...x, coach: clearAskMemory(x.coach) })); flushSave(); showToast(`${COACH_NAME} conversation and remembered facts cleared`); }}>Reset</Button>}>
-              <span class="small">{COACH_NAME}'s memory</span>
-              <div class="hint">{s.coach.statedConstraints.length ? `Remembers: ${s.coach.statedConstraints.join('; ')}` : 'Clears the conversation and anything you told him (an injury, your equipment).'}</div>
-            </Row>
-          </Card>
-        </Section>
-
         <Section title="Your data">
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { invalidateAskRequests(); resetAskTransient(); replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>

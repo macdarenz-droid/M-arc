@@ -1,5 +1,5 @@
 import { signal, computed, batch } from '@preact/signals';
-import { freshState, MAX_ASK_THREAD_TURNS, MAX_STATED_CONSTRAINTS, type AppState, type Session } from './models';
+import { freshState, type AppState, type Session } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { legacySessionLogging } from '@/brain/fidelity';
 
@@ -39,15 +39,6 @@ function normalize(s: AppState): AppState {
     freshMarks: s.freshMarks ?? [],
     deload: s.deload ?? null,
     insightFeedback: s.insightFeedback ?? [],
-    coach: {
-      ...s.coach,
-      ...fresh.coach,
-      remoteExplainer: s.coach?.remoteExplainer === true,
-      explainerUrl: typeof s.coach?.explainerUrl === 'string' && s.coach.explainerUrl.trim() ? s.coach.explainerUrl : fresh.coach.explainerUrl,
-      deviceId: typeof s.coach?.deviceId === 'string' ? s.coach.deviceId : '',
-      askThread: Array.isArray(s.coach?.askThread) ? s.coach.askThread.filter(t => t && (t.role === 'user' || t.role === 'assistant') && typeof t.text === 'string').slice(-MAX_ASK_THREAD_TURNS) : [],
-      statedConstraints: Array.isArray(s.coach?.statedConstraints) ? s.coach.statedConstraints.filter((c): c is string => typeof c === 'string').slice(-MAX_STATED_CONSTRAINTS) : [],
-    },
     sessions: (s.sessions ?? []).map(withLogging),
   };
 }
