@@ -22,6 +22,7 @@ import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 import { go } from '@/app/router';
 import { UnfinishedItems } from './UnfinishedItems';
+import { ObjectiveEditor, ObjectiveSummary } from './ObjectiveAgreement';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)',
@@ -61,6 +62,7 @@ export function Coach() {
   const [openSuggestion, setOpenSuggestion] = useState<Suggestion | null>(null);
   const [openSkipGroup, setOpenSkipGroup] = useState<Suggestion[] | null>(null);
   const [goalOpen, setGoalOpen] = useState(false);
+  const [objectiveOpen, setObjectiveOpen] = useState(false);
   const goal = GOALS.find(g => g.id === s.goal) ?? GOALS[0]!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -111,6 +113,8 @@ export function Coach() {
       )}
 
       <UnfinishedItems onReview={item => openAskSavedReview(item?.key)} />
+
+      <ObjectiveSummary objective={s.coach.objective} onEdit={() => setObjectiveOpen(true)} />
 
       {feedback && (
         <Section title="Latest workout">
@@ -194,6 +198,7 @@ export function Coach() {
           </div>
         </Sheet>
       )}
+      {objectiveOpen && <ObjectiveEditor objective={s.coach.objective} today={today.value} onClose={() => setObjectiveOpen(false)} />}
     </div>
   );
 }

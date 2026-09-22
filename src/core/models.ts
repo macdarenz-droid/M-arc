@@ -387,6 +387,31 @@ export interface CoachPresence {
   dismissed: CoachPresenceDismissal[];
 }
 
+export const MAX_OBJECTIVE_STATEMENT_CHARS = 280;
+export const MAX_OBJECTIVE_EQUIPMENT_CHARS = 120;
+export const MAX_OBJECTIVE_MUSCLES = 3;
+export const MAX_OBJECTIVE_MEASURES = 3;
+
+export type ObjectiveEvidenceMeasure =
+  | { kind: 'consistency' }
+  | { kind: 'lift_trend'; exerciseId: string }
+  | { kind: 'body_trend' };
+
+/** One explicit, local agreement about the user's direction. Never inferred from chat. */
+export interface PersonalObjective {
+  version: 1;
+  id: string;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  statement: string;
+  priorityMuscles: MuscleId[];
+  availableWeekdays: Weekday[];
+  equipmentNote?: string;
+  measures: ObjectiveEvidenceMeasure[];
+  reviewDay?: string;
+}
+
 /** What the user has done with the coach's suggestions. Only the user writes here. */
 export interface CoachState {
   /** dismissKey → how many times dismissed. Two suppresses the suggestion. */
@@ -439,6 +464,8 @@ export interface CoachState {
   statedConstraints: string[];
   /** Absent until the person changes tone or dismisses a presence cue. */
   presence?: CoachPresence;
+  /** Optional local agreement; saving it never mutates the training preset, schedule or programme. */
+  objective?: PersonalObjective;
 }
 
 /**

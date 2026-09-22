@@ -2,6 +2,10 @@ import { signal, computed, batch } from '@preact/signals';
 import {
   freshState,
   MAX_ASSESSMENT_CHANGES,
+  MAX_OBJECTIVE_EQUIPMENT_CHARS,
+  MAX_OBJECTIVE_MEASURES,
+  MAX_OBJECTIVE_MUSCLES,
+  MAX_OBJECTIVE_STATEMENT_CHARS,
   PLAN_MAX_METADATA_ENTRIES,
   PLAN_MAX_METADATA_SETS,
   type ActiveSession,
@@ -14,13 +18,16 @@ import {
   type LoggedExercise,
   type PlanAgreementChange,
   type PlanSetTarget,
+  type PersonalObjective,
   type Session,
   type SessionAssessment,
   type WorkoutPlanEntry,
   type WorkoutPlanSnapshot,
+  WEEKDAYS,
 } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { isGoalId } from '@/data/goals';
+import { isMuscleId } from '@/data/muscles';
 
 export const STATE_KEY = 'marc.state.v1';
 const BACKUP_KEY = 'marc.state.v1.backup';
@@ -248,6 +255,53 @@ function validAssessment(value: unknown, entryIds: Set<string>, startEntryIds: S
   return new Set(value.seenWorkingRows.map(row => row.entryId)).size === value.seenWorkingRows.length;
 }
 
+/** Malformed objective metadata drops only itself. Unknown exercise IDs remain inspectable/editable. */
+function normalizeObjective(value: unknown): PersonalObjective | undefined {
+  if (!object(value) || value.version !== 1 || !shortString(value.id)
+    || !Number.isInteger(value.revision) || (value.revision as number) < 1
+    || !validIsoTimestamp(value.createdAt) || !validIsoTimestamp(value.updatedAt)
+    || Date.parse(value.updatedAt as string) < Date.parse(value.createdAt as string)
+    || typeof value.statement !== 'string') return undefined;
+  const statement = value.statement.trim();
+  if (!statement || statement.length > MAX_OBJECTIVE_STATEMENT_CHARS) return undefined;
+  if (!Array.isArray(value.priorityMuscles) || !value.priorityMuscles.every(isMuscleId)) return undefined;
+  const priorityMuscles = [...new Set(value.priorityMuscles)];
+  if (priorityMuscles.length > MAX_OBJECTIVE_MUSCLES) return undefined;
+  if (!Array.isArray(value.availableWeekdays) || !value.availableWeekdays.every(day => oneOf(day, WEEKDAYS))) return undefined;
+  const available = new Set(value.availableWeekdays);
+  const availableWeekdays = WEEKDAYS.filter(day => available.has(day));
+  const equipmentNote = value.equipmentNote === undefined ? undefined : typeof value.equipmentNote === 'string' ? value.equipmentNote.trim() : null;
+  if (equipmentNote === null || (equipmentNote !== undefined && equipmentNote.length > MAX_OBJECTIVE_EQUIPMENT_CHARS)) return undefined;
+  if (!Array.isArray(value.measures)) return undefined;
+  const measures: PersonalObjective['measures'] = [];
+  const keys = new Set<string>();
+  for (const measure of value.measures) {
+    if (!object(measure)) return undefined;
+    let normalized: PersonalObjective['measures'][number];
+    if (measure.kind === 'consistency') normalized = { kind: 'consistency' };
+    else if (measure.kind === 'body_trend') normalized = { kind: 'body_trend' };
+    else if (measure.kind === 'lift_trend' && shortString(measure.exerciseId)) normalized = { kind: 'lift_trend', exerciseId: measure.exerciseId };
+    else return undefined;
+    const key = normalized.kind === 'lift_trend' ? `${normalized.kind}:${normalized.exerciseId}` : normalized.kind;
+    if (!keys.has(key)) { keys.add(key); measures.push(normalized); }
+  }
+  if (measures.length < 1 || measures.length > MAX_OBJECTIVE_MEASURES) return undefined;
+  if (value.reviewDay !== undefined && !validDay(value.reviewDay)) return undefined;
+  return {
+    version: 1,
+    id: value.id,
+    revision: value.revision as number,
+    createdAt: value.createdAt as string,
+    updatedAt: value.updatedAt as string,
+    statement,
+    priorityMuscles,
+    availableWeekdays,
+    equipmentNote: equipmentNote || undefined,
+    measures,
+    reviewDay: value.reviewDay as string | undefined,
+  };
+}
+
 const sameTarget = (left: PlanSetTarget | null | undefined, right: PlanSetTarget | null | undefined): boolean =>
   left == null && right == null
     ? true
@@ -379,6 +433,7 @@ function normalize(s: AppState): AppState {
       learnedStarts: { ...s.coach?.learnedStarts },
       askThread: Array.isArray(s.coach?.askThread) ? s.coach.askThread.map(normalizeAskTurn) : [],
       presence: normalizePresence(s.coach?.presence),
+      objective: normalizeObjective(s.coach?.objective),
     },
   };
 }
