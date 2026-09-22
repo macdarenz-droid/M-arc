@@ -140,3 +140,4 @@ describe('a person with no watch gains no new screens', () => {
     expect(heartRateSurfacesVisible.value).toBe(false);
   });
 });
+

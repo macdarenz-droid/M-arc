@@ -145,30 +145,35 @@ export async function refreshHeartRateSummaries(): Promise<void> {
   try {
     const recent = state.value.sessions.filter(s => Date.parse(s.endedAt) >= Date.now() - 42 * 86_400_000);
     // Keyed by id, not by object: sessions may be edited, replaced or deleted
-    // while the native calls below are still in flight.
-    const replacements = new Map<string, HeartRateSummary>();
+    // while the native calls below are still in flight. Each summary carries
+    // the window it was computed for, because an edit can move that window
+    // while we wait and a summary for the old one is simply wrong.
+    const replacements = new Map<string, { summary: HeartRateSummary; startedAt: string; endedAt: string }>();
     for (const session of recent) {
       const startedAtEpochMs = Date.parse(session.startedAt), endedAtEpochMs = Date.parse(session.endedAt);
       if (!Number.isFinite(startedAtEpochMs) || !Number.isFinite(endedAtEpochMs) || endedAtEpochMs <= startedAtEpochMs) continue;
       try {
         const { summary } = await native.getSessionSummary({ sessionId: session.id, startedAtEpochMs, endedAtEpochMs });
-        if (summary && summary.sampleCount > 0) replacements.set(session.id, summary);
+        if (summary && summary.sampleCount > 0) replacements.set(session.id, { summary, startedAt: session.startedAt, endedAt: session.endedAt });
       } catch { /* The saved summary remains available if the service has not bound yet. */ }
     }
     if (!replacements.size) return;
+    let changedAny = false;
     update(s => {
       let changed = false;
       const sessions = s.sessions.map((session: Session) => {
-        const summary = replacements.get(session.id);
-        // Re-read the session's own times: an edit during the awaits above may
-        // have moved the window this summary was computed for.
-        if (!summary || sameSummary(summary, session.heartRate)) return session;
-        changed = true;
-        return { ...session, heartRate: summary };
+        const pending = replacements.get(session.id);
+        if (!pending) return session;
+        // The workout was edited while this was in flight; its summary describes
+        // a window that no longer exists. Drop it — the next refresh recomputes.
+        if (pending.startedAt !== session.startedAt || pending.endedAt !== session.endedAt) return session;
+        if (sameSummary(pending.summary, session.heartRate)) return session;
+        changed = true; changedAny = true;
+        return { ...session, heartRate: pending.summary };
       });
       return changed ? { ...s, sessions } : s;
     });
-    flushSave();
+    if (changedAny) flushSave();
   } finally { refreshing = false; }
 }
 
@@ -180,9 +185,13 @@ export async function refreshHeartRateSummaries(): Promise<void> {
  * bridge that reports itself available — or where a recording already exists to
  * look at, which also covers reading old workouts in the browser.
  */
+const recordedSessions = computed(() => state.value.sessions);
 export const heartRateSurfacesVisible = computed(() =>
   heartRateNativeAvailable() ||
   heartRateStatus.value.available ||
-  state.value.sessions.some(session => (session.heartRate?.sampleCount ?? 0) > 0));
+  // Through a stable slice, not state.value directly: reading the whole signal
+  // would re-scan every workout on every unrelated write — a tone change, an
+  // Ask keystroke — which is exactly what P05's review took out of the report.
+  recordedSessions.value.some(session => (session.heartRate?.sampleCount ?? 0) > 0));
 
 export { heartRateNativeAvailable };
