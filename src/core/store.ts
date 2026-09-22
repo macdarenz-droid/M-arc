@@ -14,6 +14,7 @@ import {
   type CoachPresence,
   type CoachPresenceDismissal,
   type DismissalEvidence,
+  type HeartRateSummary,
   MAX_PRESENCE_DISMISSALS,
   type LoggedExercise,
   type PlanAgreementChange,
@@ -23,6 +24,7 @@ import {
   type SessionAssessment,
   type WorkoutPlanEntry,
   type WorkoutPlanSnapshot,
+  newId,
   WEEKDAYS,
 } from './models';
 import { convertLegacy, readLegacy } from './migrate';
@@ -376,10 +378,38 @@ function normalizeLoggedExercise(exercise: LoggedExercise, planEntries: Map<stri
   return validIndices ? exercise : { ...exercise, actualSetIndices: undefined };
 }
 
+/**
+ * A recording summary is dropped whole when its shape is wrong, and never
+ * repaired: a half-trusted summary is worse than none, because the evidence
+ * layer would treat the surviving fields as measured. Losing it costs only a
+ * display — the raw samples stay in the native store and can be recomputed.
+ */
+function normalizeHeartRate(value: unknown): HeartRateSummary | undefined {
+  if (!object(value)) return undefined;
+  const count = value.sampleCount, gaps = value.gapCount;
+  if (!Number.isSafeInteger(count) || (count as number) < 0) return undefined;
+  if (!Number.isSafeInteger(gaps) || (gaps as number) < 0) return undefined;
+  if (value.metricsVersion !== undefined && value.metricsVersion !== 2) return undefined;
+  const optionalNumber = (n: unknown, min: number, max: number) => n === undefined || (finite(n) && n >= min && n <= max);
+  if (!optionalNumber(value.capturedMs, 0, Number.MAX_SAFE_INTEGER) ||
+      !optionalNumber(value.durationMs, 0, Number.MAX_SAFE_INTEGER) ||
+      !optionalNumber(value.coveragePct, 0, 100) ||
+      !optionalNumber(value.averageBpm, 20, 260) ||
+      !optionalNumber(value.recordedPeakBpm, 20, 260)) return undefined;
+  if (value.firstSampleAt !== undefined && !validIsoTimestamp(value.firstSampleAt)) return undefined;
+  if (value.lastSampleAt !== undefined && !validIsoTimestamp(value.lastSampleAt)) return undefined;
+  return value as unknown as HeartRateSummary;
+}
+
 function normalizeSessionMetadata(session: Session): Session {
   const plan = normalizePlan(session.plan);
   const planEntries = plan ? new Map(plan.entries.map(entry => [entry.id, entry])) : null;
-  return { ...session, plan, exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planEntries)) };
+  return {
+    ...session,
+    plan,
+    heartRate: normalizeHeartRate(session.heartRate),
+    exercises: (session.exercises ?? []).map(exercise => normalizeLoggedExercise(exercise, planEntries)),
+  };
 }
 
 function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | null {
@@ -410,6 +440,10 @@ function normalizeActiveMetadata(active: ActiveSession | null): ActiveSession | 
   }
   return {
     ...active,
+    // A workout started before this feature has no id. Mint one now so the
+    // recorder and the saved session agree from here on; no earlier samples
+    // are invented for it.
+    id: shortString(active.id) ? active.id : newId('s'),
     plan,
     entries,
     warmupDismissed: typeof active.warmupDismissed === 'boolean' ? active.warmupDismissed : undefined,

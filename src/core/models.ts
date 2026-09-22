@@ -30,9 +30,11 @@ export interface Exercise {
 }
 
 export interface LoggedSet {
-  /** Stable identity for sensor/event attribution. Optional: rows saved before the watch integration have none. */
-  id?: string;
-  /** First time this row was explicitly committed. A logging marker, never a physical set boundary. */
+  /**
+   * When this row was first committed. A logging marker only: it says when the
+   * person tapped, not when physical work started or stopped. The trace labels
+   * it as such, and no rest interval may ever be derived from it.
+   */
   loggedAt?: string;
   kg?: number;
   reps?: number;
@@ -232,8 +234,6 @@ export interface RestState {
 }
 
 export interface ActiveSessionEntry {
-  /** Stable across edits, so a recording can be attributed to a row the person moved or renamed. */
-  id?: string;
   exerciseId: string;
   name: string;
   sets: LoggedSet[];

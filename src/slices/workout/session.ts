@@ -12,6 +12,7 @@ import { autoregulate, restFor, type LiveAdjustment, type RestGrade } from '@/br
 import { dayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
+import { beginHeartRateSession, discardHeartRateSession, finishHeartRateSession } from '@/heart-rate/store';
 import { resyncReminders } from '../settings/reminders';
 import { refreshPreferenceFactsIfStale } from '../coach/preferences';
 import { contextFromState } from '@/brain/coach/context';
@@ -49,8 +50,12 @@ export function startSession(split: Split, changes: CoachChange[] = []): void {
   }
   const ctx = contextFromState(state.value, dayKey(started), started.getTime());
   const plan = capturePlan(ctx, entries.map(entry => ({ id: entry.planEntryId!, exerciseId: entry.exerciseId, name: entry.name, plannedSets: entry.sets.length, origin: 'start' })), startedAt);
-  update(s => ({ ...s, active: { splitId: split.id, startedAt, pausedMs: 0, entries, plan } }));
+  // The recorder needs an identity before the first sample arrives, so the
+  // session id is minted here and reused verbatim at finish.
+  const id = newId('s');
+  update(s => ({ ...s, active: { id, splitId: split.id, startedAt, pausedMs: 0, entries, plan } }));
   flushSave();
+  void beginHeartRateSession(id, startedAt);
   void haptic.medium();
 }
 
@@ -92,6 +97,18 @@ export function commitSet(entry: number, index: number): boolean {
   const a = active();
   const set = a?.entries[entry]?.sets[index];
   if (!a || !set || !isWorkingSet(set)) return false;
+  // Stamped once, on the first commit, and never revised by a later edit. It
+  // marks the tap, not the work; the trace labels it that way.
+  if (!set.loggedAt) {
+    const loggedAt = new Date().toISOString();
+    patchActive(current => ({
+      ...current,
+      entries: current.entries.map((item, i) => i !== entry ? item : {
+        ...item,
+        sets: item.sets.map((value, j) => j !== index ? value : { ...value, loggedAt }),
+      }),
+    }));
+  }
   if (state.value.preferences.autoRest) {
     const grade = gradeFor(a, entry, index);
     startRest(grade.seconds, { entry, set: index, startedAt: a.startedAt, exerciseId: a.entries[entry]!.exerciseId }, grade);
@@ -410,7 +427,9 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     })
     .filter(e => e.sets.length);
   const session: Session = {
-    id: newId('s'),
+    // Reused from the active session so the recording already points at it. A
+    // session resumed from before this feature has none, so one is minted.
+    id: a.id ?? newId('s'),
     splitId: a.splitId,
     splitName: split?.name ?? 'Workout',
     day: dayKey(now),
@@ -432,6 +451,18 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
       : s.splits,
   }));
   flushSave();
+  if (exercises.length) {
+    // Closing the recording window is native work and may fail or be absent;
+    // it must never prevent the workout itself from saving.
+    void finishHeartRateSession(session.id, session.endedAt).then(summary => {
+      if (!summary || !summary.sampleCount) return;
+      update(current => ({ ...current, sessions: current.sessions.map(value => value.id === session.id ? { ...value, heartRate: summary } : value) }));
+      flushSave();
+    }).catch(() => undefined);
+  } else {
+    // Nothing was logged, so nothing is saved to attach a recording to.
+    void discardHeartRateSession(session.id);
+  }
   void cancelRestDone();
   void resyncReminders();
   refreshPreferenceFactsIfStale();
@@ -440,8 +471,10 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
 }
 
 export function discardSession(): void {
+  const sessionId = state.value.active?.id;
   update(s => ({ ...s, active: null }));
   flushSave();
+  if (sessionId) void discardHeartRateSession(sessionId);
   void cancelRestDone();
 }
 

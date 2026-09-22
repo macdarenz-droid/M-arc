@@ -5,6 +5,7 @@ import { todayKey, weekdayOf } from '@/core/dates';
 import { WEEKDAYS, type PlanSetTarget } from '@/core/models';
 import type { MuscleRecovery } from '@/brain/recovery';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
+import { heartRateContext } from '@/brain/heart-rate';
 import { buildReport } from '@/brain/coach/report';
 import { adjustedRecovery } from '@/brain/coach/detectors';
 import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
@@ -111,6 +112,17 @@ export const objectiveReview = computed(() => projectObjectiveReview({
   today: today.value,
 }));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
+
+const watchSessions = computed(() => state.value.sessions);
+/**
+ * Recorded-pulse context for Today, Coach and History.
+ *
+ * Deliberately observes only the saved sessions and the local day key, never
+ * the minute clock and never the live sample signals: receiving a BPM reading
+ * must not rerun historical matching over every workout. `Date.now()` is read
+ * untracked for the same reason.
+ */
+export const watchContext = computed(() => { today.value; return heartRateContext(watchSessions.value, Date.now()); });
 
 /** The brain's report: facts and suggestions, recomputed when state or the minute changes. */
 export const report = computed(() => buildReport(brainContext.value));

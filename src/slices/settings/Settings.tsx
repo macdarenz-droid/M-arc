@@ -16,6 +16,8 @@ import { clearAskMemory, invalidateAskRequests } from '../coach/askMemory';
 import { resetAskTransient } from '../coach/askController';
 import { WEEKDAYS } from '@/core/models';
 import { checkProxy } from '@/brain/coach/explainer';
+import { exportAllHeartRate, importAllHeartRate, refreshHeartRateSummaries, resetAllHeartRate } from '@/heart-rate/store';
+import { prepareHeartRateRestore } from '@/heart-rate/backup';
 
 export const APP_VERSION = '37.0.0';
 
@@ -42,7 +44,28 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const backup = async () => {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    try { showToast(await exportText(name, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s }, null, 1))); } catch { showToast('Export failed'); }
+    try {
+      // Traces belonging to workouts this backup does not contain are left out.
+      const heartRate = await exportAllHeartRate().catch(() => null);
+      const body = { app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s, ...(heartRate ? { heartRate } : {}) };
+      showToast(await exportText(name, JSON.stringify(body, null, 1)));
+    } catch { showToast('Export failed'); }
+  };
+
+  /**
+   * Validate every trace against the workouts being restored, then replace the
+   * native store, then publish the app state. A file that fails validation
+   * leaves both stores exactly as they were rather than half-applied.
+   *
+   * An older backup carries no traces at all: the workouts restore normally and
+   * `refreshHeartRateSummaries` recovers anything still held natively.
+   */
+  const restoreHeartRate = async (next: AppState, heartRate: unknown): Promise<AppState> => {
+    const payload = heartRate && typeof heartRate === 'object' ? heartRate as { version: 1; traces: [] } : undefined;
+    if (!payload) return next;
+    const prepared = prepareHeartRateRestore(next.sessions, payload, next.active);
+    await importAllHeartRate(prepared.payload);
+    return { ...next, sessions: prepared.sessions };
   };
   const restore = async () => {
     const text = await pickFile();
@@ -60,9 +83,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
       }
       const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
       if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
+      const withHeartRate = await restoreHeartRate(next, (parsed as { heartRate?: unknown }).heartRate);
       invalidateAskRequests(); resetAskTransient();
-      replaceState({ ...next, health: { connected: false } });
+      replaceState({ ...withHeartRate, health: { connected: false } });
       showToast(`Restored ${next.sessions.length} sessions`);
+      void refreshHeartRateSummaries();
     } catch { showToast('That file is not an M/ARC backup'); }
   };
 
@@ -135,7 +160,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <Row trailing={<Button size="sm" onClick={() => { invalidateAskRequests(); resetAskTransient(); update(x => ({ ...x, coach: clearAskMemory(x.coach) })); flushSave(); showToast('Ask Escobar conversation and remembered facts cleared'); }}>Reset</Button>}><span class="small">Ask Escobar</span><div class="hint">Clear the conversation and anything stated in it (an injury to work around, your equipment), so it starts fresh.</div></Row>
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { invalidateAskRequests(); resetAskTransient(); replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { void resetAllHeartRate(); invalidateAskRequests(); resetAskTransient(); replaceState(freshState()); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>

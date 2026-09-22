@@ -123,10 +123,15 @@ describe('Settings: every reset/restore that changes what a stale Ask reply coul
   });
 
   it('"Ask Escobar" reset, legacy restore, normal restore and "Reset everything" all call it immediately before their replaceState/clearAskMemory call', () => {
+    // The normal-restore site replaces `...withHeartRate` rather than `...next`:
+    // a restore may carry heart-rate traces, which are validated and written to
+    // the native store before the app state is published. The invariant under
+    // test is unchanged — nothing at all sits between the generation bump and
+    // the replaceState it guards.
     const callSites = [
       'invalidateAskRequests(); resetAskTransient(); update(x => ({ ...x, coach: clearAskMemory(x.coach) }));',
       'invalidateAskRequests(); resetAskTransient();\n        replaceState(converted);',
-      'invalidateAskRequests(); resetAskTransient();\n      replaceState({ ...next, health: { connected: false } });',
+      'invalidateAskRequests(); resetAskTransient();\n      replaceState({ ...withHeartRate, health: { connected: false } });',
       'invalidateAskRequests(); resetAskTransient(); replaceState(freshState());',
     ];
     for (const site of callSites) expect(source).toContain(site);

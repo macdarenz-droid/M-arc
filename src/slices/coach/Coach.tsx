@@ -22,6 +22,7 @@ import { acceptProposal, dismissProposal, endDeload } from './apply';
 import { explainError, explaining, explanation, remoteEnabled, requestExplanation } from './remote';
 import { go } from '@/app/router';
 import { UnfinishedItems } from './UnfinishedItems';
+import { WatchInsights } from '@/heart-rate/WatchInsights';
 import { ObjectiveEditor, ObjectiveSummary } from './ObjectiveAgreement';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
@@ -115,6 +116,8 @@ export function Coach() {
       <UnfinishedItems onReview={item => openAskSavedReview(item?.key)} />
 
       <ObjectiveSummary objective={s.coach.objective} review={objectiveReview.value} onEdit={() => setObjectiveOpen(true)} />
+
+      <WatchInsights />
 
       {feedback && (
         <Section title="Latest workout">

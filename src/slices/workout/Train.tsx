@@ -34,6 +34,8 @@ import { openAsk } from '../coach/askController';
 import { pickAndCompressPhoto, type CapturedPhoto } from '@/native/photo';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
+import { HeartRateCard } from '@/heart-rate/HeartRateCard';
+import { SessionHeartRate } from '@/heart-rate/SessionHeartRate';
 import { COACH_NAME } from '@/ui/chatRender';
 import { GOALS } from '@/data/goals';
 import { effortRepair, sessionDebrief } from '@/brain/debrief';
@@ -322,6 +324,8 @@ function LiveSession() {
           <span><b>Direction:</b> {s.coach.objective.statement}</span>
         </div>
       )}
+
+      <HeartRateCard />
 
       <div class="stack">
         {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} ramp={entry.planEntryId === ramp?.entryId ? ramp : null} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} onRemove={() => { removeEntry(i); setOpen(o => (o === i ? -1 : o > i ? o - 1 : o)); }} onBrowse={expected => setPicking({ mode: 'replace', index: i, expected })} />)}
@@ -670,6 +674,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
       </Card>
       {fresh && repairSessionId === fresh.id && <EffortRepair session={fresh} onDone={() => setRepairSessionId(null)} />}
       <SessionDebrief debrief={debrief} fit={fit} achievements={achievements} tone={tone} unit={unit.value} />
+      <SessionHeartRate session={session} />
       {nearMiss && <NearMissNote miss={nearMiss} unit={unit.value} />}
       <Section title="Muscles worked today">
         <Card>

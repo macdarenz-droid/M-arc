@@ -21,6 +21,8 @@ import { applySessionNoteFlags } from '@/slices/workout/session';
 import { cleanSessionEdit, removeSessionIfCurrent, replaceSessionIfCurrent } from './sessionEdit';
 import { sessionDebrief } from '@/brain/debrief';
 import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDebrief';
+import { SessionHeartRate } from '@/heart-rate/SessionHeartRate';
+import { deleteHeartRateSession } from '@/heart-rate/store';
 import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
 import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
 import { PresenceLauncher } from '@/slices/coach/Presence';
@@ -176,6 +178,10 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
       onClose();
       return;
     }
+    // Recorded health data goes with the workout immediately rather than
+    // lingering for an undo window. Undo restores the log and its saved
+    // summary; the raw trace behind the chart does not come back.
+    void deleteHeartRateSession(removed.id);
     showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
     onClose();
   };
@@ -183,6 +189,7 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
       <div class="stack">
         {debrief && fit && <SessionDebriefView debrief={debrief} fit={fit} achievements={achievements} tone={tone} unit={u} />}
+        <SessionHeartRate session={session} showAdvice={false} />
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
             <b class="small">{e.name}</b>
