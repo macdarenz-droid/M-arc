@@ -21,6 +21,8 @@ import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile'
 import { acceptDeload, saveInsightFeedback } from './coach';
 import { closePanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
+import { Hall } from '@/escobar/ui/Hall';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -39,7 +41,9 @@ export function Coach() {
 
   return (
     <div class="view">
-      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
+      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Escobar</div><h1>What to do next</h1></div></div>
+
+      <Hall />
 
       <WeeklyReviewCard />
       <DeloadCard />
@@ -49,11 +53,11 @@ export function Coach() {
         <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
       </Card>
 
-      <Section title="Insights" palace="coach.insights">
+      <Section title="Escobar’s notes" palace="coach.insights">
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
-              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></span></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
               <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>

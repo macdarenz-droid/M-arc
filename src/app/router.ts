@@ -6,7 +6,7 @@ export const TABS: Array<{ id: Tab; label: string }> = [
   { id: 'train', label: 'Train' },
   { id: 'history', label: 'History' },
   { id: 'body', label: 'Body' },
-  { id: 'coach', label: 'Coach' },
+  { id: 'coach', label: 'Escobar' },
 ];
 
 function initial(): Tab {

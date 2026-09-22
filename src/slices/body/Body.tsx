@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { recovery, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
@@ -120,6 +121,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   return (
     <Sheet title={info.label} onClose={onClose} palace="body.muscle">
       <div class="stack">
+        <div class="row-between"><span class="hint">{info.label} at a glance</span><AskAbout refTo={{ kind: 'muscle', id: muscle, label: info.label }} /></div>
         <div class="grid-3">
           <Stat value={r.lastTrainedAt ? `${r.pct}%` : '—'} label="recovered" tone={r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive'} />
           <Stat value={r.lastDay ? formatDay(r.lastDay) : 'never'} label="last trained" />

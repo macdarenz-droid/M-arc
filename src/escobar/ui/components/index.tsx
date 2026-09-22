@@ -1,0 +1,48 @@
+/**
+ * The closed `show` vocabulary (§4.4). Each component resolves its data locally through
+ * `summarize` (the same object the model got back), so it never draws a model's number.
+ * EV5 draws lift_trend; the rest render their summary as a compact card until EV6.
+ */
+import { state } from '@/core/store';
+import { Card, Chip } from '@/ui/primitives';
+import { Sparkline } from '@/ui/Sparkline';
+import { makeCtx } from '../../tools/context';
+import { summarize } from '../../tools/show';
+
+type S = Record<string, unknown>;
+const num = (v: unknown): string => (typeof v === 'number' ? String(Math.round(v * 10) / 10) : '—');
+
+function LiftTrend({ s }: { s: S }) {
+  const pts = (s.points as Array<{ day: string; value: number }>) ?? [];
+  const unit = s.metric === 'volume' ? 'kg volume' : 'kg';
+  const chip = s.plateau === 'plateaued' ? <Chip tone="warning">Stalled</Chip> : s.trend === 'up' ? <Chip tone="positive">Rising</Chip> : s.trend === 'down' ? <Chip tone="negative">Dipping</Chip> : <Chip>Steady</Chip>;
+  return (
+    <>
+      <div class="row-between"><b class="small">{String(s.exercise)}</b>{pts.length > 1 && chip}</div>
+      {pts.length > 1 ? <Sparkline points={pts.map(p => p.value)} /> : <div class="esc-comp-empty small muted">{String(s.empty ?? 'Not enough sessions to draw a line yet.')}</div>}
+      <div class="esc-comp-stats small">
+        <span><span class="muted">First</span> {num(s.first)}</span>
+        <span><span class="muted">Last</span> {num(s.last)}</span>
+        <span><span class="muted">Best</span> {num(s.best)} {unit}</span>
+      </div>
+    </>
+  );
+}
+
+function Generic({ s }: { s: S }) {
+  const rows = Object.entries(s).filter(([, v]) => typeof v === 'number' || typeof v === 'string').slice(0, 6);
+  if (typeof s.empty === 'string') return <div class="esc-comp-empty small muted">{s.empty}</div>;
+  return <div class="esc-comp-generic small">{rows.map(([k, v]) => <div key={k} class="row-between"><span class="muted">{k.replace(/([A-Z])/g, ' $1').toLowerCase()}</span><span>{typeof v === 'number' ? num(v) : String(v).slice(0, 40)}</span></div>)}</div>;
+}
+
+export function ShowComponent({ component, params, caption }: { component: string; params: S; caption?: string }) {
+  let s: S | null = null;
+  try { s = summarize(component, params, makeCtx(state.value)); } catch { s = null; }
+  return (
+    <Card class="esc-comp" data-component={component}>
+      {caption && <div class="eyebrow">{caption}</div>}
+      {!s ? <div class="esc-comp-empty small muted">Couldn’t draw that with the data on this phone.</div>
+        : component === 'lift_trend' ? <LiftTrend s={s} /> : <Generic s={s} />}
+    </Card>
+  );
+}

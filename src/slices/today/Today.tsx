@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
 import { insights, recovery, scheduledSplit, sessionsToday, streak, today, todayReadiness, week } from '@/app/selectors';
@@ -158,7 +159,7 @@ function ReadinessCard() {
       <Card class={r.band === 'red' ? 'card-accent' : ''}>
         <div class="row-between">
           <h2 style={{ margin: 0 }}>{BAND_LABEL[r.band]}{r.calibrating ? ' · calibrating' : ''}</h2>
-          <span class="num small muted">{r.score}</span>
+          <span class="row" style={{ gap: 6 }}><span class="num small muted">{r.score}</span><AskAbout refTo={{ kind: 'readiness', id: 'today', label: 'Today’s readiness' }} /></span>
         </div>
         {r.drivers.length > 0 && <p class="small muted" style={{ marginTop: 6 }}>{r.drivers.join('. ')}.</p>}
         {advice && <p class="small" style={{ marginTop: 6 }}>{advice}</p>}

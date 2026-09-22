@@ -15,17 +15,31 @@ import { SessionEditor } from '@/slices/history/History';
 import { MemoryPlaceholder } from '@/escobar/ui/MemoryPlaceholder';
 import { palaceAnnouncement } from '@/escobar/palace/navigate';
 import { installPalaceDevHooks } from '@/escobar/palace/dev';
+import { Dock } from '@/escobar/ui/Dock';
+import { escobarUi } from '@/escobar/state';
+import { useEffect, useState } from 'preact/hooks';
+import type { FunctionComponent } from 'preact';
 import type { MuscleId } from '@/data/muscles';
 import { toast } from './toast';
 import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
-import { IconBody, IconDumbbell, IconCalendar, IconSpark, IconSun } from '@/ui/icons';
+import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
 
-const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconSpark };
+const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconEscobar };
 
 installPalaceDevHooks();
+
+/** The chat sheet is its own chunk, fetched the first time Escobar opens (§4.2, §21). */
+function EscobarMount() {
+  const open = escobarUi.value.open;
+  const [Comp, setComp] = useState<FunctionComponent | null>(null);
+  useEffect(() => {
+    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet));
+  }, [open, Comp]);
+  return open && Comp ? <Comp /> : null;
+}
 
 /** Every sheet a palace target can open by id (§7.2), rendered here so it works from any tab. */
 function Panels() {
@@ -73,6 +87,8 @@ export function App() {
         </div>
       </nav>
       <Panels />
+      <Dock />
+      <EscobarMount />
       <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
       {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}

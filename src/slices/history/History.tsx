@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
@@ -13,6 +14,7 @@ import { weekSummary } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
+import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 
@@ -191,7 +193,7 @@ function Stats() {
         )}
       </Card>
 
-      <Section title="Exercise progress" palace="history.exercise-stats">
+      <Section title="Exercise progress" palace="history.exercise-stats" aside={exercise ? <AskAbout refTo={{ kind: 'exercise', id: exercise, label: `${exerciseIds.find(([id]) => id === exercise)?.[1] ?? 'Exercise'} trend` }} /> : undefined}>
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
           <Card>
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
@@ -220,14 +222,4 @@ function Stats() {
       </Section>
     </div>
   );
-}
-
-export function Sparkline({ points }: { points: number[] }) {
-  if (points.length < 2) return null;
-  const min = Math.min(...points), max = Math.max(...points);
-  const w = 300, h = 56, pad = 4;
-  const x = (i: number) => pad + (i / (points.length - 1)) * (w - pad * 2);
-  const y = (v: number) => h - pad - ((v - min) / Math.max(1e-6, max - min)) * (h - pad * 2);
-  const d = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p).toFixed(1)}`).join(' ');
-  return <svg class="sparkline" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true"><path d={d} fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" /><circle cx={x(points.length - 1)} cy={y(points[points.length - 1]!)} r="3" fill="var(--accent)" /></svg>;
 }

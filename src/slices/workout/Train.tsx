@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
+import { openEscobar } from '@/escobar/ui/open';
 import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
-import { IconCheck, IconChevronDown, IconDumbbell, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { formatClock } from '@/core/dates';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -301,6 +303,7 @@ function LiveSession() {
       <div class="topbar" data-palace="train.start">
         <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><h1 class="num">{formatClock(elapsed)}</h1><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
         <div class="row">
+          {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
           <Button variant="solid" size="sm" onClick={() => setFinishing(true)}>Finish</Button>
@@ -560,6 +563,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
   return (
     <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
       <div class="stack">
+        <div class="row-between"><span class="hint">Today’s checks</span><AskAbout refTo={{ kind: 'session', id: `plan:${split.id}`, label: `Before ${split.name}` }} /></div>
         {items.map(i => (
           <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
             <b class="small">{i.title}</b>
@@ -683,7 +687,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
   return (
     <div class="view">
-      <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div></div>
+      <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div><AskAbout refTo={{ kind: 'session', id: session.id, label: `${session.splitName} session` }} /></div>
       <Card class="card-accent">
         <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
       </Card>

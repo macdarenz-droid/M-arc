@@ -17,6 +17,7 @@ import { GymsSheet } from './Gyms';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
+import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 
 export const APP_VERSION = '37.0.0';
@@ -118,6 +119,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
         {gymsOpen && <GymsSheet onClose={() => setGymsOpen(false)} />}
+
+        <EscobarSettings onClose={onClose} />
 
         <Section title="Your data" palace="settings.data">
           <Card class="stack-sm">
