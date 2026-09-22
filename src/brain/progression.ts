@@ -10,13 +10,14 @@
  *  7. Trend clearly down             → keep the load, easier week, then rebuild.
  *  8. Otherwise                      → add a rep.
  */
-import type { Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import type { Deload, Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
+import { daysBetween } from '@/core/dates';
 
-export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau';
+export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau' | 'deload';
 
 export interface Suggestion {
   mode: Mode;
@@ -65,6 +66,8 @@ export interface ProgressionContext {
   readiness?: { loadAdvice: 'normal' | 'no_increase' | 'reduce'; reason?: string } | null;
   /** From brain/recovery.ts's recoveryStatus() for the exercise's primary muscle, 0-100. */
   recoveryPct?: number;
+  /** Active lighter week (F3.3). Takes priority over readiness and recovery: it's a whole-week call, not a single day's. */
+  deload?: Deload | null;
 }
 
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
@@ -93,6 +96,19 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
 
   if (gap > 28) {
     return { mode: 'reentry', target: mode === 'weighted' ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
+  }
+
+  if (ctx?.deload) {
+    const d = ctx.deload;
+    const dayN = Math.min(7, Math.max(1, daysBetween(d.startDay, today) + 1));
+    const reason = `Lighter week, day ${dayN} of 7.`;
+    const deloadSets = Math.max(1, Math.round(setCount * d.setFactor));
+    if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
+      const reps = last.bestReps;
+      return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload') };
+    }
+    const down = half(last.topKg * d.loadFactor);
+    return { mode: 'deload', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(deloadSets, down, range[0], null, 'Deload') };
   }
 
   const recent = hist.slice(-3);

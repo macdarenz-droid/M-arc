@@ -86,4 +86,21 @@ describe('progression', () => {
       expect(s.mode).toBe('increase');
     });
   });
+
+  describe('deload context (F3.3)', () => {
+    const a = session('2026-09-12', [{ id: ex, sets: sets(60, 12, 'ideal', 3) }]);
+    const b = session('2026-09-15', [{ id: ex, sets: sets(60, 12, 'ideal', 3) }]);
+    const deload = { startDay: '2026-09-16', endDay: '2026-09-22', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+    it('cuts sets and load and names the day of the week', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { deload });
+      expect(s.mode).toBe('deload');
+      expect(s.kg).toBe(54);
+      expect(s.sets.length).toBe(2);
+      expect(s.reason).toBe('Lighter week, day 3 of 7.');
+    });
+    it('takes priority over a genuine increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { deload, readiness: { loadAdvice: 'normal' }, recoveryPct: 90 });
+      expect(s.mode).toBe('deload');
+    });
+  });
 });
