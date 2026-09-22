@@ -1,10 +1,10 @@
 # M/ARC project state
 
-Updated 2026-09-21. Branch: `claude/phase-9-readiness-preference-ckw91g`.
+Updated 2026-09-22. Branch: `claude/phase-9-readiness-preference-ckw91g`.
 
 ## Current phase
 
-New follow-on specification, 2026-09-21: [Escobar throughout the app](docs/escobar-presence/README.md) is prepared for Claude Sonnet at Medium effort. It covers shared presence, contextual conversation, fair plan-fit feedback and optional personal objectives. Its [handoff](docs/escobar-presence/HANDOFF.md), ordered patches and mandatory regression/CI/APK gates are ready; **the new implementation has not started**. The completed roadmap below remains the application baseline.
+The [Escobar throughout the app](docs/escobar-presence/README.md) follow-on is implemented through P09: shared presence, one guarded contextual conversation, captured session purpose and agreements, fair plan-fit feedback, and optional local personal objectives with evidence reviews. P00–P09 have exact-head source/Android gates. P10's combined local audit passes, but its required independent mutation/persistence/final review is still outstanding and must not be represented as complete. See the [execution ledger](docs/escobar-presence/PROGRESS.md) for exact commits, runs and the remaining delivery proof.
 
 The routed Escobar proactive-coach roadmap is complete from documentation commit `e694f004aeb9eb38e6ba30bcaf080b942d75cce3`. F0, rack swap (1A-1T), effort-graded rest (2A-2T), morning verdict (3A-3T), session plan capture and debrief (10A/10AT/10B-10T), live autoregulation (4A-4T), warm-up ramp (5A-5T), chronic skip (6A-6T), closed-week review (7A-7T), lift trajectory (8A-8T), unfinished coach items (9A-9T), effort repair (11A-11T), PR in reach (12A-12T), consistency drift (13A-13T), and near-miss records (14A-14T) are complete in this checkout. Claude Opus 5's ranking and architecture remain the contract.
 

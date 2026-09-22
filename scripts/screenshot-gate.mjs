@@ -396,7 +396,7 @@ for (const theme of themes) {
     const objectiveSchedule = JSON.stringify(objectiveState.schedule);
     const objectiveSplits = JSON.stringify(objectiveState.splits);
     const objectiveRequests = [];
-    const objectiveCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const objectiveCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, acceptDownloads: true });
     const objectivePage = await objectiveCtx.newPage();
     objectivePage.on('pageerror', error => errors.push(`silent-black objective: ${error.message}`));
     objectivePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) objectiveRequests.push(request.url()); });
@@ -459,7 +459,31 @@ for (const theme of themes) {
     if (!(await bodyObjectiveEvidence.innerText()).includes('not measured muscle growth')) errors.push('silent-black: Body objective evidence inferred muscle growth');
     await objectivePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: /^Train|^Live/ }).click();
     await objectivePage.getByText(/^Direction: Build a steady three-day routine/).waitFor();
+    await objectivePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Today' }).click();
+    await objectivePage.getByRole('button', { name: 'Settings' }).click();
+    const objectiveDownloadPromise = objectivePage.waitForEvent('download');
+    await objectivePage.getByRole('button', { name: 'Export backup' }).click();
+    const objectiveDownload = await objectiveDownloadPromise;
+    const objectiveBackupPath = join(ROOT, '.tmp', 'objective-backup.json');
+    await objectiveDownload.saveAs(objectiveBackupPath);
     await objectiveCtx.close();
+
+    const objectiveRestoreCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const objectiveRestorePage = await objectiveRestoreCtx.newPage();
+    objectiveRestorePage.on('pageerror', error => errors.push(`silent-black objective restore: ${error.message}`));
+    objectiveRestorePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) objectiveRequests.push(request.url()); });
+    await objectiveRestorePage.goto(`http://localhost:${PORT}/`); await objectiveRestorePage.waitForSelector('.nav');
+    await objectiveRestorePage.getByRole('button', { name: 'Settings' }).click();
+    const objectiveChooserPromise = objectiveRestorePage.waitForEvent('filechooser');
+    await objectiveRestorePage.getByRole('button', { name: 'Restore backup' }).click();
+    const objectiveChooser = await objectiveChooserPromise; await objectiveChooser.setFiles(objectiveBackupPath);
+    await objectiveRestorePage.getByText(/Restored \d+ sessions/).waitFor();
+    await objectiveRestorePage.keyboard.press('Escape');
+    await objectiveRestorePage.getByRole('navigation', { name: 'Main' }).getByRole('button', { name: 'Coach' }).click();
+    await objectiveRestorePage.getByText('Build a steady three-day routine and improve my bench press', { exact: true }).waitFor();
+    await objectiveRestorePage.getByRole('button', { name: 'View evidence', exact: true }).click();
+    await objectiveRestorePage.getByRole('heading', { name: 'Direction review' }).waitFor();
+    await objectiveRestoreCtx.close();
     if (objectiveRequests.length) errors.push(`silent-black: objective flow made external requests (${objectiveRequests.join(', ')})`);
 
     const repairState = structuredClone(source);
@@ -936,6 +960,52 @@ for (const theme of themes) {
     await intentPage.getByText('Captured as an easier session: stop at ideal effort, no max sets.', { exact: true }).waitFor();
     await intentCtx.close();
   }
+  // P10 integrated visual state: every theme renders the same populated current objective
+  // on Body, Coach review and Train. The focused silent-black flow above owns save/cancel;
+  // this pass owns cross-theme/phone-width inspection without repeating editor mutations.
+  const objectiveVisualState = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')));
+  objectiveVisualState.active = null;
+  objectiveVisualState.coach.remoteExplainer = false;
+  const objectiveLiftId = objectiveVisualState.sessions.flatMap(session => session.exercises).find(exercise => exercise.sets.some(set => (set.kg ?? 0) > 0))?.exerciseId ?? 'lib_machine_chest_press';
+  objectiveVisualState.coach.objective = {
+    version: 1, id: `gate-objective-${theme}`, revision: 1, createdAt: iso(56), updatedAt: iso(56),
+    statement: 'Build a steady three-day routine and improve my main press without guessing from body changes.',
+    priorityMuscles: ['chest'], availableWeekdays: ['mon', 'wed', 'fri'], equipmentNote: 'Use the equipment already in my saved workouts.',
+    measures: [{ kind: 'consistency' }, { kind: 'lift_trend', exerciseId: objectiveLiftId }, { kind: 'body_trend' }], reviewDay: day(0),
+  };
+  objectiveVisualState.body = [
+    { day: day(42), neckCm: 39, waistCm: 86, bodyFatPct: 22 },
+    { day: day(28), neckCm: 39, waistCm: 85, bodyFatPct: 21.5 },
+    { day: day(14), neckCm: 39, waistCm: 84, bodyFatPct: 21 },
+    { day: day(0), neckCm: 39, waistCm: 83, bodyFatPct: 20.5 },
+  ];
+  const objectiveThemeRequests = [];
+  const objectiveThemeCtx = await gateContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const objectiveThemePage = await objectiveThemeCtx.newPage();
+  objectiveThemePage.on('pageerror', error => errors.push(`${theme} objective review: ${error.message}`));
+  objectiveThemePage.on('request', request => { if (!request.url().startsWith(`http://localhost:${PORT}/`)) objectiveThemeRequests.push(request.url()); });
+  await objectiveThemePage.addInitScript(([saved, selectedTheme]) => { localStorage.setItem('marc.state.v1', saved); localStorage.setItem('marc.theme', selectedTheme); }, [JSON.stringify(objectiveVisualState), theme]);
+  await objectiveThemePage.goto(`http://localhost:${PORT}/`); await objectiveThemePage.waitForSelector('.nav');
+  const objectiveThemeNav = objectiveThemePage.getByRole('navigation', { name: 'Main' });
+  await objectiveThemeNav.getByRole('button', { name: 'Body' }).click();
+  const selectedObjectiveHeading = objectiveThemePage.getByRole('heading', { name: 'Selected objective evidence' });
+  await selectedObjectiveHeading.waitFor(); await selectedObjectiveHeading.scrollIntoViewIfNeeded();
+  await objectiveThemePage.screenshot({ path: `${OUT}/${theme}-objective-body.png` });
+  await objectiveThemeNav.getByRole('button', { name: 'Coach' }).click();
+  await objectiveThemePage.getByRole('button', { name: 'Review now', exact: true }).click();
+  await objectiveThemePage.getByRole('heading', { name: 'Direction review' }).waitFor();
+  await objectiveThemePage.setViewportSize({ width: 360, height: 800 });
+  if (await objectiveThemePage.evaluate(() => document.documentElement.scrollWidth > innerWidth)) errors.push(`${theme}: objective review overflows at 360px`);
+  await objectiveThemePage.screenshot({ path: `${OUT}/${theme}-objective-review-360.png` });
+  await objectiveThemePage.setViewportSize({ width: 390, height: 844 });
+  await objectiveThemePage.screenshot({ path: `${OUT}/${theme}-objective-review.png` });
+  await objectiveThemePage.locator('dialog[open]').getByText('Close', { exact: true }).click();
+  await objectiveThemeNav.getByRole('button', { name: /^Train|^Live/ }).click();
+  await objectiveThemePage.getByText(/^Direction: Build a steady three-day routine/).waitFor();
+  await objectiveThemePage.screenshot({ path: `${OUT}/${theme}-objective-train.png` });
+  if (objectiveThemeRequests.length) errors.push(`${theme}: populated objective surfaces made external requests (${objectiveThemeRequests.join(', ')})`);
+  await objectiveThemeCtx.close();
+
   await nav.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
   await nav.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');

@@ -88,7 +88,7 @@ export function Body() {
       {(objectiveReview.value?.measures.some(measure => measure.kind === 'body_trend') || s.coach.objective?.priorityMuscles.length) && (
         <Section title="Selected objective evidence" aside={<Button variant="quiet" size="sm" onClick={() => go('coach')}>Coach</Button>}>
           <Card class="card-quiet">
-            {objectiveReview.value?.measures.filter(measure => measure.kind === 'body_trend').map(measure => <div key={measure.key} class="stack-sm"><div class="row-between"><b>{measure.label}</b><Chip>{measure.status === 'unknown' ? 'Not enough data' : measure.status}</Chip></div><p class="small">{measure.summary}</p><p class="hint">{measure.source}. {measure.limitation}</p></div>)}
+            {objectiveReview.value?.measures.filter(measure => measure.kind === 'body_trend').map(measure => <div key={measure.key} class="stack-sm"><div class="row-between"><b>{measure.label}</b><Chip>{measure.status === 'unknown' ? 'Not enough data' : measure.status === 'up' ? 'Rising' : measure.status === 'down' ? 'Falling' : 'Steady'}</Chip></div><p class="small">{measure.summary}</p><p class="hint">{measure.source}. {measure.limitation}</p></div>)}
             {!!s.coach.objective?.priorityMuscles.length && <p class="hint" style={{ marginTop: 10 }}>Priority muscles: {s.coach.objective.priorityMuscles.map(muscleLabel).join(', ')}. The map shows recorded training exposure and recovery, not measured muscle growth.</p>}
           </Card>
         </Section>
