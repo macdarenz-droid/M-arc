@@ -375,3 +375,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Grounding details:** integers 0–10, `NxM` set notation, ISO dates, "17 Sep"-style dates, `HH:MM` times and quoted text are removed before checking; range endpoints are checked separately; lb values within 1 lb of a kg fact count; numbers from the person's own messages count; a `⟦k:id⟧` citation grounds that card's numbers in the same sentence.
 - **Safety pre-screen** is a keyword/regex classifier; crisis and medical fire the card immediately (also offline) and every signal goes into the brief's `signals:` line.
 - **Photos:** `image_ref` blocks are inflated from `imageData(id)` until the turn that carried them finishes; `sent: true` then turns them into `[photo shared earlier: …]` stubs for good.
+
+### EV5 (chat UI and presence)
+- **Turning Escobar on is explicit everywhere, the mock included.** The gate goes through the explainer ("Turn on Escobar") like a person would; the Settings switch opens the explainer instead of enabling silently (§20).
+- **Light entry points.** Dock, Hall, "Ask about this" and the live button import only `escobar/ui/open.ts` and signals; the sheet, loop, tools and knowledge load as a separate chunk on first open (`EscobarSheet` ≈ 25 kB, session ≈ 148 kB before gzip).
+- **First feedback before any await:** `session.send` shows the pending message and "Thinking…" synchronously, then loads the loop; the gate measures it (well under 150 ms on the mock).
+- **Components in EV5:** `lift_trend` is drawn (Sparkline with first/last/best and a trend chip); the other 13 render their `summarize()` numbers in a compact card until EV6 draws them. Components re-resolve from local data when a stored conversation redraws.
+- **Apply in EV5 covers `propose_goal`;** other kinds show the card with Apply disabled until EV6. Every decision (applied, dismissed, undone, stale, failed) is queued in `pendingDecisions` for the next brief.
+- **Detents:** half by default, full when the composer is focused, drag up/down on the handle (down from half closes). Double-tap the handle toggles.
+- **Photos:** up to 3 per message, 900 px JPEG, kept in IndexedDB/memory, never in localStorage.
+- **Layout:** the dock sits 12 px above the nav, so `.app` bottom padding grew to 140 px and toasts moved above the dock.
+- **Palace:** added `settings.escobar` and `coach.hall` (71 entries); Coach-tab entries now say "Escobar tab"; the Insights section is "Escobar's notes".
+- **"Ask about this" on the pre-session brief** uses `{kind:'session', id:'plan:<splitId>'}` (there is no session yet).

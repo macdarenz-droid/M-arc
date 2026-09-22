@@ -67,7 +67,7 @@ for (const theme of themes) {
   await shot('onboarding');
   await page.getByRole('button', { name: 'Later' }).click();
   await page.waitForTimeout(250);
-  await page.getByRole('button', { name: /^Train|^Live/ }).click(); await page.waitForTimeout(250); await shot('train');
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250); await shot('train');
   if (theme === 'silent-black') {
     // Log a past session: no timer, no rest banner.
     await page.getByRole('button', { name: 'Log a past session' }).click(); await page.waitForTimeout(250); await shot('past-session');
@@ -75,7 +75,7 @@ for (const theme of themes) {
     await pastInputs.nth(1).fill('40'); await pastInputs.nth(2).fill('10');
     await page.locator('.effort button.easy').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
-    await page.getByRole('button', { name: 'Done' }).click(); await page.waitForTimeout(250);
+    await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250);
     // Starting a session first shows the check-in sheet (F2.2, once per day), then the pre-session sheet (6.13, cadence 'pre').
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); await shot('check-in');
     await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); await shot('pre-session');
@@ -103,20 +103,20 @@ for (const theme of themes) {
     // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
     if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
       await shot('time-question');
-      await page.getByRole('button', { name: 'Save' }).click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
       await page.waitForTimeout(400);
     }
     await shot('summary');
     if (!(await page.getByText('Debrief', { exact: true }).isVisible().catch(() => false))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
-    await page.getByRole('button', { name: 'Done' }).click();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
   }
-  await page.getByRole('button', { name: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
-  await page.getByRole('button', { name: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
-  await page.getByRole('button', { name: 'Coach' }).click(); await page.waitForTimeout(250); await shot('coach');
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250); await shot('coach');
   if (theme === 'silent-black') { await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape'); }
-  await page.getByRole('button', { name: 'Today' }).click(); await page.getByRole('button', { name: 'Settings' }).click(); await page.waitForTimeout(300); await shot('settings');
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300); await shot('settings');
   if (theme === 'silent-black') {
     await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
@@ -143,9 +143,9 @@ for (const theme of themes) {
   await page.locator('input[type="number"]').first().fill('80');
   await page.getByText('Strength focus').click();
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await page.waitForTimeout(300);
-  await page.getByRole('button', { name: 'Coach' }).click();
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click();
   await page.waitForTimeout(250);
   const insightTitles = await page.locator('.insight h3').allTextContents();
   if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
@@ -164,7 +164,7 @@ for (const theme of themes) {
   await page.waitForSelector('.nav');
   await page.getByRole('button', { name: 'Later' }).click();
   await page.waitForTimeout(200);
-  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
   await page.waitForTimeout(200);
 
@@ -186,10 +186,10 @@ for (const theme of themes) {
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
-    await page.getByRole('button', { name: 'Done' }).click();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
     await page.waitForTimeout(200);
   }
-  await page.getByRole('button', { name: 'Coach' }).click();
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
   if (!(await page.getByText('Weekly review').isVisible().catch(() => false))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
@@ -227,7 +227,7 @@ for (const theme of themes) {
   if (!(await page.getByRole('heading', { name: /^Readiness:/ }).isVisible().catch(() => false))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
 
   // A "two-for-two clean top" history that would otherwise suggest an increase.
-  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
   await page.waitForTimeout(200);
   for (const offset of [8, 4]) {
@@ -240,7 +240,7 @@ for (const theme of themes) {
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
-    await page.getByRole('button', { name: 'Done' }).click();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
     await page.waitForTimeout(200);
   }
   await page.getByRole('button', { name: /^Start / }).first().click();
@@ -304,7 +304,7 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
   await page.waitForTimeout(300);
-  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: /^Start / }).first().click();
@@ -338,7 +338,7 @@ for (const theme of themes) {
   await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click();
   await page.waitForTimeout(400);
   if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) {
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.waitForTimeout(400);
   }
   await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
@@ -378,7 +378,7 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
   await page.waitForTimeout(300);
-  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.waitForTimeout(200);
   if (!(await page.locator('[data-palace="train.gym-chip"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -451,8 +451,81 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
+// conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
+// five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = `escobar ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.evaluate(() => document.querySelector('.toast button')?.click());
+  await page.waitForTimeout(100);
+  if (!(await page.locator('.esc-dock').isVisible().catch(() => false))) errors.push(`${tag}: expected the dock on Today`);
+  await page.screenshot({ path: `${OUT}/${theme}-escobar-dock-today.png` });
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.screenshot({ path: `${OUT}/${theme}-escobar-hall.png` });
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(250);
+  if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  if (!(await page.getByText('Ask me anything.').isVisible().catch(() => false))) errors.push(`${tag}: expected the empty state`);
+  if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-empty.png` });
+  await page.locator('.esc-textarea').fill('How is my chest press going?');
+  const firstFeedbackMs = await page.evaluate(() => new Promise(res => {
+    const t0 = performance.now();
+    document.querySelector('.esc-send').click();
+    const tick = () => { if (document.querySelector('.esc-live')?.textContent?.includes('Thinking…')) res(performance.now() - t0); else if (performance.now() - t0 > 2000) res(9999); else requestAnimationFrame(tick); };
+    tick();
+  }));
+  if (firstFeedbackMs > 150) errors.push(`${tag}: "Thinking…" took ${Math.round(firstFeedbackMs)} ms (budget 150)`);
+  await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-proposal'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock conversation did not finish`));
+  await page.waitForTimeout(200);
+  if (!(await page.locator('.esc-comp[data-component="lift_trend"] .sparkline').isVisible().catch(() => false))) errors.push(`${tag}: expected the lift_trend chart`);
+  if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
+  if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
+  await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
+  await page.setViewportSize({ width: 360, height: 780 }); await page.waitForTimeout(200);
+  const overflow = await page.evaluate(() => { const t = document.querySelector('.esc-thread'); return t ? t.scrollWidth - t.clientWidth : 0; });
+  if (overflow > 1) errors.push(`${tag}: the thread scrolls sideways at 360 px`);
+  await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-360.png` });
+  if (theme === 'silent-black') {
+    await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
+    if (!(await page.locator('.esc-pop').isVisible().catch(() => false))) errors.push(`${tag}: expected the citation popover`);
+    await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
+    await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
+    if (!(await page.locator('.esc-proposal').getByText('Applied').isVisible().catch(() => false))) errors.push(`${tag}: expected "Applied" on the proposal`);
+    await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
+    await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
+    // Stop mid-turn, then the offline fallback (find_in_app answered locally).
+    await page.locator('.esc-textarea').fill('And my legs?'); await page.locator('.esc-send').click(); await page.waitForTimeout(60);
+    await page.getByRole('button', { name: 'Stop', exact: true }).click(); await page.waitForTimeout(300);
+    if (!(await page.getByText('Stopped.').isVisible().catch(() => false))) errors.push(`${tag}: expected "Stopped." after Stop`);
+    await ctx.setOffline(true);
+    await page.locator('.esc-textarea').fill('where are my records'); await page.locator('.esc-send').click(); await page.waitForTimeout(400);
+    if (!(await page.locator('.esc-local').isVisible().catch(() => false))) errors.push(`${tag}: expected the offline palace answer`);
+    await page.screenshot({ path: `${OUT}/${theme}-escobar-offline.png` });
+    await ctx.setOffline(false);
+  }
+  const touched = await page.evaluate(() => localStorage.getItem('marc.escobar.v1'));
+  if (touched) errors.push(`${tag}: the mock wrote to marc.escobar.v1`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified.');
