@@ -40,8 +40,12 @@ const half = (v: number) => Math.round(v * 2) / 2;
 
 export function repRange(exercise: Exercise | undefined, goal: GoalId): [number, number] {
   const g = GOAL_BY_ID[goal];
-  const isMain = !!exercise && /squat|hinge|horizontal_push|vertical_push|vertical_pull|horizontal_pull/.test(exercise.pattern);
-  return !isMain && g.accessoryReps ? g.accessoryReps : g.reps;
+  return exercise?.role === 'main' ? g.mainReps : g.accessoryReps;
+}
+
+/** True when the max-effort e1RM dropped 5% or more from the prior session at max effort too. */
+function e1rmDownAtMax(cur: ExerciseSessionSummary, prior: ExerciseSessionSummary): boolean {
+  return cur.hasMax && prior.hasMax && prior.bestE1rm > 0 && cur.bestE1rm > 0 && cur.bestE1rm <= prior.bestE1rm * 0.95;
 }
 
 function fmtRange(r: [number, number]): string {
@@ -102,10 +106,19 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   }
 
   const prev = hist[hist.length - 2];
+  const prev2 = hist[hist.length - 3];
+  // A range starting at 1-2 reps can never see "reps under the range" at max effort, so a
+  // falling e1RM over two consecutive max-effort sessions is the step-down signal instead.
   const belowAtMax = (r: ExerciseSessionSummary) => r.hasMax && r.topReps < range[0];
-  if (prev && belowAtMax(last) && belowAtMax(prev)) {
+  const stepDown = range[0] <= 2
+    ? !!prev && !!prev2 && e1rmDownAtMax(last, prev) && e1rmDownAtMax(prev, prev2)
+    : !!prev && belowAtMax(last) && belowAtMax(prev);
+  if (stepDown) {
     const down = Math.max(0, half(topKg - loadStep(topKg)));
-    return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason: 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.', confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
+    const reason = range[0] <= 2
+      ? 'Your estimated one-rep max has dropped at max effort for two sessions running. Take one step down and rebuild.'
+      : 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.';
+    return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
   }
 
   const plateau = plateauStatus(hist);

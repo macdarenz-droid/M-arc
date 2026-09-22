@@ -43,13 +43,13 @@ describe('weekly', () => {
 
 describe('coach', () => {
   it('asks for a first session on an empty app', () => {
-    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now(), profileHistory: [] });
     expect(insights[0]?.id).toBe('first-session');
   });
   it('flags missing effort ratings and imbalance with plain words', () => {
     const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
     const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, null, 5) }, { id: 'lib_shoulder_press', sets: sets(30, 8, undefined, 4) }]));
-    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now(), profileHistory: [] });
     const ids = insights.map(i => i.id);
     expect(ids).toContain('balance:push_pull');
     expect(ids).toContain('effort-missing');

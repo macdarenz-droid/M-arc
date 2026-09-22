@@ -5,8 +5,9 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
-import type { Exercise, Session, Split, Weekday } from '@/core/models';
+import type { Exercise, ProfileChange, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
+import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours } from '@/core/dates';
 import { recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory } from '../history';
@@ -39,6 +40,7 @@ export interface CoachContext {
   custom: Exercise[];
   today: string;
   now: number;
+  profileHistory: ProfileChange[];
 }
 
 interface Derived {
@@ -200,6 +202,37 @@ export const RULES: Rule[] = [
         means: 'Without effort the coach cannot tell a hard set from an easy one, so it stays cautious.',
         action: 'Tap Easy, Ideal or Max after each set. One tap is enough.',
       }];
+    },
+  },
+  {
+    id: 'profile.changed',
+    run: ctx => {
+      const cutoff = ctx.now - 7 * 86_400_000;
+      const recent = ctx.profileHistory.filter(c => (c.field === 'bodyWeightKg' || c.field === 'goal') && new Date(c.at).getTime() >= cutoff);
+      const latest = new Map<ProfileChange['field'], ProfileChange>();
+      for (const c of recent) latest.set(c.field, c); // profileHistory is chronological; later entries win
+      return [...latest.values()].map((c): Insight => {
+        if (c.field === 'goal') {
+          const g = GOAL_BY_ID[c.to as GoalId];
+          return {
+            id: `profile-changed:goal:${c.at}`, category: 'data', priority: 260,
+            title: `Goal changed to ${g.name}`,
+            noticed: `You changed your training goal to ${g.name}.`,
+            means: `Main lifts now target ${g.mainReps[0]}–${g.mainReps[1]} reps, accessories ${g.accessoryReps[0]}–${g.accessoryReps[1]}. Your splits keep their exercises.`,
+            action: `Suggested rest for this goal is ${g.restDefaultSec}s. Apply it from the goal sheet if you'd like.`,
+          };
+        }
+        const to = c.to as number;
+        const from = typeof c.from === 'number' ? c.from : null;
+        const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
+        return {
+          id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
+          title: `Weight updated to ${to} kg`,
+          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} kg, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} kg since your last entry.` : `You updated your weight to ${to} kg.`,
+          means: 'Saved to your weight log.',
+          action: 'Nothing to do here. Keep weighing in for a trend, not just a jump.',
+        };
+      });
     },
   },
   {
