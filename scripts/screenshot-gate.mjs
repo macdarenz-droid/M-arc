@@ -346,8 +346,74 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Plate Sense (§25): an lb dumbbell at a kg gym shows the entry pill in lb with the "≈ kg" reading
+// under it; a barbell target opens the plate sheet; a 2.2× slip shows the suspect chip. 5 themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`plate-sense ${theme}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`plate-sense ${theme} console: ${m.text()}`); });
+  await page.addInitScript(([t]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const sess = (offset) => ({ id: `s${offset}`, splitId: 'sp1', splitName: 'Upper', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: [
+        { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [0, 1, 2].map(() => ({ kg: 80, reps: 8, effort: 'ideal' })) },
+        { exerciseId: 'lib_dumbbell_bench_press', name: 'Dumbbell Bench Press', sets: [0, 1, 2].map(() => ({ kg: 22.68, reps: 10, effort: 'ideal', entered: { value: 50, unit: 'lb' } })) },
+      ],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T18:00:00.000Z`, loggedAt: `${day(offset)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_dumbbell_bench_press', sets: 3 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess(6), sess(3)], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [{ day: day(0), sleepQuality: 4 }], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: { gym_default: { lib_dumbbell_bench_press: { unit: 'lb', ladder: [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80], source: 'user', updatedAt: now } } }, byEquipment: {} },
+    }));
+  }, [theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.waitForTimeout(200);
+  if (!(await page.locator('[data-palace="train.gym-chip"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  // The barbell entry opens first. A 2.2× slip on its first set shows the suspect chip.
+  const inputs = page.locator('input[type="number"]');
+  await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.waitForTimeout(200);
+  if (!(await page.locator('.suspect-chip').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
+  await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
+  await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
+  await page.waitForTimeout(200);
+  if (!(await page.locator('.weight-approx').first().isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
+  // Plate sheet from the barbell target.
+  await page.locator('.target-link').first().click();
+  await page.waitForTimeout(300);
+  if (!(await page.locator('[data-palace="train.plate-sheet"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
+  await page.screenshot({ path: `${OUT}/${theme}-plate-sheet.png` });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  // The dumbbell entry, typed in lb.
+  await page.getByText('Dumbbell Bench Press').first().click();
+  await page.waitForTimeout(200);
+  const dbInput = page.locator('.exercise.active input[aria-label="Load in lb"]').first();
+  await dbInput.fill('55');
+  await page.waitForTimeout(150);
+  const pill = page.locator('.exercise.active .unit-pill').first();
+  if ((await pill.textContent())?.trim() !== 'lb') errors.push(`plate-sense ${theme}: expected the dumbbell pill in lb`);
+  if (!(await page.locator('.exercise.active .weight-approx').first().textContent().catch(() => ''))?.includes('≈ 24.9 kg')) errors.push(`plate-sense ${theme}: expected "≈ 24.9 kg" under 55 lb`);
+  await page.locator('.exercise.active').first().screenshot({ path: `${OUT}/${theme}-plate-pill.png` });
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified.');
