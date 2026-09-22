@@ -194,8 +194,48 @@ Sections read: 6.4's `brain/readiness.ts` bullet, F2.1-F2.5, section 7 (P3 row).
 - **Needs device check**: none new — HRV is the one input that would need real hardware, and it's already correctly inert (never populated) on the verified watch.
 - **Depends on this for later phases**: P4's deload state can read `readiness()`'s band/loadAdvice the same way `suggestNext()` now does; a future phase adding a real HRV-capable device would only need to populate `DailyHealth.lnRmssd`, since `readiness()` already knows what to do with it.
 
-## Next: Phase P4 (Programming) — NOT STARTED
-Sections to read next: F3.1-F3.8, W1/W7/W8/W9/W10 (scheduled-split conflict — F3.1 partly done in P1-R already —, volume landmark bands, deload state, warm-up sets — pre.ts's warmupRamp partly covers this from P2-C —, cues in session, insight feedback and snooze deferred here from P2-C, exercise substitution, optional morning notification).
+## Phase P4 (Programming) — DONE
 
-## Not started
-P4.
+Sections read: F3.1-F3.8, section 7 (P4 row: "Each rule tested; deload changes Train targets for 7 days and closes itself; snoozed insights hide for 7 days"). F3.1 (scheduled-split conflict) was already done in P1-R (`recovery.scheduled-conflict`); this phase covers F3.2 through F3.8.
+
+### Layer: data model — done, commit 1b0577a
+- `core/models.ts`: `Deload{startDay,endDay,reason,setFactor,loadFactor}`, `InsightFeedback{id,day,verdict}`; `AppState.deload: Deload | null`, `AppState.insightFeedback: InsightFeedback[]`, both defaulted in `freshState()`.
+- `core/store.ts`: `normalize()` defaults both fields for states saved before this phase.
+- `brain/coach/rules.ts`: `CoachContext` gains `deload`/`feedback`; `coachInsights()` filters out any insight whose id was snoozed within the last 7 days (F3.6). Fixed the resulting ~17 missing-property errors at every `CoachContext` call site (`tests/helpers.ts`'s shared `baseCoachExtras`, `app/selectors.ts`'s one production call site).
+
+### Layer: brain — done, commits 83b8037, 674f0b1
+- `data/volume.ts` (new): the 5-level set-count bands (F3.2), with per-muscle offsets for lower back (lower) and side delts/calves (higher).
+- `brain/volume.ts` (new): `volumeBands(levelIndex, muscle)` (reuses `trainingLevels()`'s 7-level scale, clamped to Advanced past index 4 — plan gives no bands past it); `muscleVolumeStatus()` — this week's effective sets vs. the 4-week median and the band, `'under'|'in'|'over'|'unknown'`.
+- `brain/deload.ts` (new): `deloadTrigger()` — reuses `plateauStatus()`/`effortDrift()`/`weeklyMuscleSets()` rather than a fresh e1RM-window comparator (see decisions); fires on 2+ main lifts plateaued/declining, OR effort drifting harder on 2+ lifts with 3-weeks-rising volume, OR a muscle over its band for 2 weeks running, OR readiness red on 3+ of the last 5 days.
+- `brain/progression.ts`: `suggestNext()`'s `ProgressionContext` gains `deload?: Deload | null`; a new branch right after the `gap > 28` reentry check returns `mode: 'deload'` with sets ×`setFactor` and load ×`loadFactor` (fixed at 0.6/0.9 — see decisions), reasoned as "Lighter week, day N of 7." Never reaches `duration` mode (that mode returns earlier in the function, predating this phase).
+- `brain/coach/rules.ts`: `readinessHistory()` (private) recomputes readiness for each of the last 5 days for the readiness-red trigger; `deloadOffer()` (exported) — gates on an already-active, unexpired deload, else delegates to `deloadTrigger()`. New `programming.volume` rule surfaces `muscleVolumeStatus()` for muscles the user actually trains in some split.
+- `brain/coach/pre.ts`: `warmupSets(e1rm)` extracted from the existing `warmupRamp()` (P2-C) so both the pre-session text and Train's new rows (F3.4) compute the same 50/70/85% ramp.
+- `brain/substitute.ts` (new): `substitutesFor(exercise, custom)` (F3.7) — LIBRARY/custom exercises sharing a primary muscle, ranked by matching pattern then equipment group.
+- `brain/readiness.ts`: `readinessSummaryText(r)` (F3.8) — a one-line band/score/advice summary for the optional morning notification.
+- `app/selectors.ts`: `coachContext` computed shared by `insights`/`deloadSuggestion`; `activeDeload` (read-time-gated on `endDay`, "closes itself" with no mutation needed).
+- Tests: `tests/volume.test.ts` (7), `tests/deload.test.ts` (4), `tests/substitute.test.ts` (2), plus new cases in `tests/progression.test.ts` (deload context, 2), `tests/coach.test.ts` (insight feedback/snooze, `deloadOffer`, `programming.volume` — 7), `tests/pre.test.ts` (`warmupSets`, 1), `tests/readiness.test.ts` (`readinessSummaryText`, 1).
+
+### Layer: native — N/A (no native surface in this phase)
+
+### Layer: UI — done, commits 005c95f, 45cd9ae, 383445e, e1a30b5, 2c4507f, c01b875
+- `Coach.tsx`: `DeloadCard` (F3.3) — the coach's offer ("Take a lighter week") or the active week's status ("Day N of 7"), wired to `acceptDeload()`; Helpful/Not now buttons on every insight card wired to `saveInsightFeedback()` (F3.6); a short "Earlier this month" feedback log.
+- `slices/coach/coach.ts` (new): `acceptDeload(reason)`, `saveInsightFeedback(id, verdict)` mutations.
+- `Body.tsx`/`ui/styles.css`: the "This week" view's bars gain a faint `.range` overlay for each muscle's volume-landmark band (F3.2), colored by `muscleVolumeStatus()`.
+- `Train.tsx`: `EntryCard` gets a collapsed "Show warm-up" disclosure above the working sets (F3.4, `warmupSets()`); a one-line `pickCue(...,'coach')` cue under the target, seeded by day+exercise (F3.5); a "Still recovering (N%)" line with a "See substitutes" link when the exercise's primary muscle is below 60% (F3.7); a "Substitute exercise" action in the exercise menu opening `SubstituteSheet` (`substitutesFor()`), wired to the new `substituteEntry()` mutation in `session.ts` (blanks the entry's sets — a different exercise's numbers aren't comparable). `FinishScreen` gets a "Worth knowing" card with a `pickCue(...,'learn')` cue for the session's main lift (F3.5). All `suggestNext()` call sites (Train x2, Coach's `InsightSheet`) now pass `activeDeload.value` through.
+- `core/models.ts`/`Settings.tsx`/`native/notifications.ts`/`slices/settings/reminders.ts`: `Reminders.readinessSummary?: boolean` (F3.8, off by default); `syncTrainingReminders()` swaps *today's* notification body for `readinessSummaryText()` when the toggle is on (every day beyond today keeps the plain body — see decisions); `resyncReminders()` (already called on app boot/`pageshow` since P0) now passes today's readiness through.
+- Manually verified every UI piece end to end in Playwright (deload offer → accept → Train target discount; insight snooze → log; volume band overlay's DOM percentages; warm-up rows expand/collapse with correct kg; both coach cues render through a full log-set-and-finish flow; recovering hint → substitute sheet → live swap; the F3.8 Settings toggle, off by default, flips on tap — actual on-device notification delivery needs a real Android build to observe, noted below).
+
+### Layer: gate — done (folded into each UI commit; no new fixture needed)
+- No new 5-theme fixture was added: every P4 screen (Coach, Body, Train) was already covered by the existing gate fixtures, and none of this phase's changes altered the gate's assumed flow (unlike P1's watch stub or P3's check-in sheet, which each blocked an existing fixture and needed a fix). `npm run gate` re-run and confirmed passing (5/5 themes) after every UI commit in this phase.
+- `npm run check`: **PASS** (typecheck, 279/279 tests across 26 files, build) as of the final P4 commit.
+
+### P4 report
+- **Built**: F3.2 (volume bands, `muscleVolumeStatus`, Body overlay, coach insight), F3.3 (deload trigger/state, progression hook, Coach card), F3.4 (warm-up rows), F3.5 (in-session + finish-screen cues), F3.6 (insight feedback/snooze, log), F3.7 (exercise substitution), F3.8 (optional morning readiness notification). F3.1 was already done in P1-R.
+- **Tested**: `npx vitest run` → 279/279 across 26 files. `npm run check` → clean. `npm run gate` → 5/5 themes, PASS. Every new UI surface additionally walked through in Playwright (see Layer: UI above for specifics).
+- **Decided by research**: none requiring new external sources this phase — every resolution extended an already-built primitive (`plateauStatus`, `effortDrift`, `trainingLevels`, the existing cue-rotation seed convention, the existing 60%-recovery threshold) or picked the overlap between two conflicting plan passages (deload's set/load factors). All recorded in COACHING-DECISIONS.md.
+- **Scoped down (recorded in COACHING-DECISIONS.md)**: `deloadTrigger()`'s HRV coefficient-of-variation condition (dead code on the GT6, same reasoning as P3's HRV deferrals); F3.7's "an insight suggests balance work" trigger path (the concrete recovering-muscle path is built; wiring the balance insight to a specific substitute needs a real design decision about which exercise it means, not a mechanical gap).
+- **Needs device check**: F3.8's actual on-device notification — the web preview always reports "Reminders need the Android app," so the readiness-summary body swap is verified by a pure-function unit test (`readinessSummaryText`) and by the Settings toggle's UI behavior, not by seeing a real delivered notification.
+- **Depends on this for later phases**: none pending — this was the last phase in the plan's P0→P4 sequence.
+
+## Every phase complete
+P0, P0-P, P1-R, P2-C, P1, P2, P3, P4 are all DONE. The standing autonomous-loop instruction's stop condition (every phase complete) is met.
