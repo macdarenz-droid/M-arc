@@ -76,8 +76,9 @@ for (const theme of themes) {
     await page.locator('.effort button.easy').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Done' }).click(); await page.waitForTimeout(250);
-    // Starting a session first shows the pre-session sheet (6.13, cadence 'pre').
-    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); await shot('pre-session');
+    // Starting a session first shows the check-in sheet (F2.2, once per day), then the pre-session sheet (6.13, cadence 'pre').
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); await shot('check-in');
+    await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); await shot('pre-session');
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
     // Four rated sets so the post-session debrief has enough evidence to show an effort-mix row.
     // Set 1 is easy at/above the placeholder target, so in-session autoregulation (6.13, cadence
@@ -198,6 +199,61 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// A profile with 7+ days of elevated resting HR (F2.1), so the Today readiness card shows a real
+// tier with reasons instead of the empty "connect a watch" prompt, and a lift that would otherwise
+// suggest an increase holds instead once readiness is red (the progression hook, 6.4).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`readiness: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`readiness console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const healthDays = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 75 : 55, source: 'health_connect', syncedAt: now }));
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays, weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
+  if (!(await page.getByRole('heading', { name: /^Readiness:/ }).isVisible().catch(() => false))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
+
+  // A "two-for-two clean top" history that would otherwise suggest an increase.
+  await page.getByRole('button', { name: 'Train', exact: true }).click();
+  await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
+  await page.waitForTimeout(200);
+  for (const offset of [8, 4]) {
+    await page.getByRole('button', { name: 'Log a past session' }).click();
+    await page.waitForTimeout(200);
+    const d = new Date(); d.setDate(d.getDate() - offset);
+    await page.locator('input[type="date"]').fill(d.toISOString().slice(0, 10));
+    const pastInputs = page.locator('input[type="number"]');
+    await pastInputs.nth(1).fill('50'); await pastInputs.nth(2).fill('12');
+    await page.locator('.effort button.ideal').first().click();
+    await page.getByRole('button', { name: 'Save past session' }).click();
+    await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Done' }).click();
+    await page.waitForTimeout(200);
+  }
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Skip' }).click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${OUT}/silent-black-readiness-holds-train.png` });
+  if (await page.getByText('Add one step').isVisible().catch(() => false)) errors.push('readiness: expected red readiness to remove the load increase in Train');
+  await ctx.close();
+}
+
 // A stubbed WatchBridge plugin (F0.4/F1.1/F1.6, 6.2/6.3), so the live pill, per-set peak and
 // finish-screen Heart card are exercised without real Bluetooth hardware. Capacitor's real web
 // core (bundled in the app) overwrites a plain `window.Capacitor` override, but respects the
@@ -252,6 +308,8 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Skip' }).click();
   await page.waitForTimeout(300);
   await page.getByRole('button', { name: /^Start / }).first().click();
   await page.waitForTimeout(300);
