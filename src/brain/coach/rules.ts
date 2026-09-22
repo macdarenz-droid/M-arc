@@ -5,10 +5,10 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
-import type { Exercise, ProfileChange, Session, Split, Weekday } from '@/core/models';
+import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours } from '@/core/dates';
+import { formatHours, weekdayOf } from '@/core/dates';
 import { recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory } from '../history';
 import { plateauStatus } from '../trend';
@@ -41,6 +41,11 @@ export interface CoachContext {
   today: string;
   now: number;
   profileHistory: ProfileChange[];
+  profile: Profile;
+  healthDays: DailyHealth[];
+  checkIns: CheckIn[];
+  freshMarks: FreshMark[];
+  recoveryModel: RecoveryModel;
 }
 
 interface Derived {
@@ -52,7 +57,7 @@ function derive(ctx: CoachContext): Derived {
   const names = new Map<string, string>();
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
   return {
-    recovery: recoveryStatus(ctx.sessions, ctx.custom, ctx.now),
+    recovery: recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel }),
     exerciseIds: [...names].map(([id, name]) => ({ id, name })),
   };
 }
@@ -86,6 +91,27 @@ export const RULES: Rule[] = [
           action: 'Give it more time, or train something that is fully recovered today.',
           muscle: r.muscle,
         }));
+    },
+  },
+  {
+    id: 'recovery.scheduled-conflict',
+    run: (ctx, d) => {
+      const split = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
+      if (!split) return [];
+      const primaryMuscles = new Set<MuscleId>();
+      for (const se of split.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => primaryMuscles.add(m));
+      const worst = d.recovery.filter(r => primaryMuscles.has(r.muscle) && !r.ready).sort((a, b) => a.pct - b.pct)[0];
+      if (!worst) return [];
+      const firm = worst.pct < 60;
+      return [{
+        id: `scheduled-conflict:${split.id}:${worst.muscle}`,
+        category: 'recovery', priority: firm ? 380 : 340,
+        title: `${split.name} today, but ${muscleLabel(worst.muscle).toLowerCase()} is only ${worst.pct}% recovered`,
+        noticed: `${split.name} is scheduled today and works ${muscleLabel(worst.muscle).toLowerCase()} directly. It is about ${worst.pct}% recovered.`,
+        means: firm ? 'Training this hard right now works against the muscle you are trying to build.' : 'You can still train productively at this level; the hardest sets just will not be at their best.',
+        action: firm ? `Swap to another split today, or keep ${split.name} light and put the hard sets elsewhere.` : `Reorder ${split.name} so this muscle comes later, or go a little lighter on it today.`,
+        muscle: worst.muscle,
+      }];
     },
   },
   {

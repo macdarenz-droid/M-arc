@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { coachInsights } from '@/brain/coach/rules';
 import { emptySchedule } from '@/core/models';
+import { baseCoachExtras } from './helpers';
 
-const baseCtx = { sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime() };
+const baseCtx = { sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), ...baseCoachExtras };
 
 describe('profile.changed', () => {
   it('reports a recent weight change with the delta from the prior entry', () => {

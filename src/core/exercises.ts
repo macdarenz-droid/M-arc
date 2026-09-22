@@ -30,6 +30,35 @@ export function roleOf(pattern: string, id: string): 'main' | 'accessory' {
   return MAIN_PATTERNS.has(pattern) || MAIN_IDS.has(id) ? 'main' : 'accessory';
 }
 
+/** Eccentric-emphasis or lengthened-position movements (recovery.ts 6.11's damage factor 1.3). */
+const HIGH_DAMAGE_IDS = new Set([
+  'lib_romanian_deadlift', 'lib_dumbbell_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_bulgarian_split_squat', 'lib_walking_lunge', 'lib_reverse_lunge', 'lib_forward_lunge',
+  'lib_incline_dumbbell_curl', 'lib_preacher_curl',
+  'lib_pec_fly', 'lib_cable_fly', 'lib_low_to_high_cable_fly', 'lib_high_to_low_cable_fly', 'lib_dumbbell_fly',
+  'lib_rear_delt_fly', 'lib_cable_rear_delt_fly', 'lib_bent_over_dumbbell_rear_delt_fly',
+  'lib_machine_pullover', 'lib_dumbbell_pullover',
+]);
+/** Short-range machine or concentric-dominant work (damage factor 0.8). */
+const LOW_DAMAGE_IDS = new Set([
+  'lib_leg_extension', 'lib_sled_push', 'lib_sled_pull',
+  'lib_seated_calf_raise', 'lib_standing_calf_raise', 'lib_leg_press_calf_raise',
+]);
+const TEMPO_OR_PAUSE = /\b(tempo|pause)\b/i;
+
+/** Static per-exercise damage factor, before the dynamic "heavy main lift" bump below. */
+export function exerciseDamage(exercise: { id: string; name: string }): number {
+  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return 1.3;
+  if (LOW_DAMAGE_IDS.has(exercise.id)) return 0.8;
+  return 1.0;
+}
+
+/** The set's actual damage factor: the static value, bumped to at least 1.15 for a heavy main lift. */
+export function setDamage(exercise: { id: string; name: string; role: 'main' | 'accessory' }, reps: number): number {
+  const base = exerciseDamage(exercise);
+  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, 1.15) : base;
+}
+
 /** The built-in library, typed and with a resistance mode attached. */
 export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
   id: e.id,

@@ -1,4 +1,4 @@
-import type { LoggedSet, Session, SessionLogging } from '@/core/models';
+import type { CheckIn, FreshMark, LoggedSet, Profile, RecoveryModel, Session, SessionLogging } from '@/core/models';
 import { newId } from '@/core/models';
 
 export function liveLogging(trainedAt: string, trainedEndAt: string): SessionLogging {
@@ -6,16 +6,19 @@ export function liveLogging(trainedAt: string, trainedEndAt: string): SessionLog
 }
 
 export function session(day: string, exercises: Array<{ id: string; name?: string; sets: LoggedSet[] }>, splitId = 'split_push'): Session {
-  const startedAt = `${day}T17:00:00.000Z`;
-  const endedAt = `${day}T18:00:00.000Z`;
+  return sessionAt(`${day}T17:00:00.000Z`, `${day}T18:00:00.000Z`, exercises, splitId);
+}
+
+/** Like `session()`, but with exact start/end instants, for recovery-model tests that need precise gaps. */
+export function sessionAt(startedAt: string, endedAt: string, exercises: Array<{ id: string; name?: string; sets: LoggedSet[] }>, splitId = 'split_push'): Session {
   return {
     id: newId('s'),
     splitId,
     splitName: 'Push',
-    day,
+    day: startedAt.slice(0, 10),
     startedAt,
     endedAt,
-    durationSec: 3600,
+    durationSec: Math.max(0, Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000)),
     exercises: exercises.map(e => ({ exerciseId: e.id, name: e.name ?? e.id, sets: e.sets })),
     logging: liveLogging(startedAt, endedAt),
   };
@@ -24,3 +27,19 @@ export function session(day: string, exercises: Array<{ id: string; name?: strin
 /** Pass `null` for effort to leave it unrated. */
 export const sets = (kg: number, reps: number, effort: LoggedSet['effort'] | null = 'ideal', n = 3): LoggedSet[] =>
   Array.from({ length: n }, () => (effort ? { kg, reps, effort } : { kg, reps }));
+
+/** An established lifter with no profile facts set: keeps recovery priors neutral (1.0) in tests. */
+export const establishedProfile: Profile = { name: 'Test', trainingSince: '2015-01' };
+export const noCheckIns: CheckIn[] = [];
+export const noFreshMarks: FreshMark[] = [];
+export const freshRecoveryModel: RecoveryModel = { tauScale: {}, observations: {} };
+
+/** Every field CoachContext needs beyond sessions/splits/schedule/custom/today/now, defaulted for tests that don't care. */
+export const baseCoachExtras = {
+  profileHistory: [],
+  profile: establishedProfile,
+  healthDays: [],
+  checkIns: noCheckIns,
+  freshMarks: noFreshMarks,
+  recoveryModel: freshRecoveryModel,
+};
