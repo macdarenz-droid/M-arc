@@ -29,6 +29,43 @@ export interface Exercise {
   custom?: boolean;
 }
 
+export type LoadUnit = 'kg' | 'lb';
+
+/** What a piece of equipment really loads, in its own unit (§25.3). */
+export interface EquipmentProfile {
+  unit: LoadUnit;
+  /** Smallest jump in `unit` (stack pin step, dumbbell step). */
+  step?: number;
+  /** Explicit available loads in `unit`, ascending, at most 80. */
+  ladder?: number[];
+  /** Stack add-on weights in `unit`. */
+  addOns?: number[];
+  /** Barbell/EZ/trap bar weight, canonical kg. */
+  barKg?: number;
+  /** Plate denominations in `unit`, per side. */
+  plates?: number[];
+  source: 'user' | 'suspect_fix' | 'escobar_scan' | 'escobar_chat' | 'default';
+  updatedAt: string;
+}
+
+export interface Gym { id: string; name: string; defaultUnit: LoadUnit; createdAt: string }
+
+/** Gyms and their equipment (§25). Loads keep their canonical kg; this only decides entry units and loadable targets. */
+export interface UnitsState {
+  /** At least one; cap 8. */
+  gyms: Gym[];
+  activeGymId: string;
+  byExercise: Record<string, Record<string, EquipmentProfile>>;
+  byEquipment: Record<string, Partial<Record<string, EquipmentProfile>>>;
+}
+
+export const MAX_GYMS = 8;
+export const DEFAULT_GYM_ID = 'gym_default';
+
+export function freshUnits(defaultUnit: LoadUnit = 'kg', now = new Date()): UnitsState {
+  return { gyms: [{ id: DEFAULT_GYM_ID, name: 'My gym', defaultUnit, createdAt: now.toISOString() }], activeGymId: DEFAULT_GYM_ID, byExercise: {}, byEquipment: {} };
+}
+
 export type SetFidelity = 'live' | 'delayed' | 'retro' | 'edited';
 export type SetFlag = 'implausible_load' | 'implausible_reps' | 'unit_suspect' | 'duplicate' | 'future_time';
 
@@ -56,6 +93,8 @@ export interface LoggedSet {
   fidelity?: SetFidelity;
   flags?: SetFlag[];
   heart?: SetHeart;
+  /** Exactly what was typed and in which unit (§25). `kg` stays the canonical number; display in the entered unit uses this verbatim. */
+  entered?: { value: number; unit: LoadUnit };
 }
 
 export interface LoggedExercise {
@@ -123,6 +162,8 @@ export interface Session {
   exercises: LoggedExercise[];
   logging: SessionLogging;
   heart?: SessionHeart;
+  /** The gym this session was trained at (§25). */
+  gymId?: string;
 }
 
 export interface SplitExercise {
@@ -184,7 +225,8 @@ export interface RestPreference {
 }
 
 export interface Preferences {
-  weightUnit: 'kg' | 'lb';
+  /** The display unit ("Show weights in"). The entry unit is per exercise and gym (§25). */
+  weightUnit: LoadUnit;
   restDefaultSec: number;
   autoRest: boolean;
   haptics: boolean;
@@ -446,6 +488,8 @@ export interface AppState {
   legacyImportedAt?: string;
   /** The online coach's settings, memory, pins and today's plan changes (§6.1). */
   escobar: EscobarState;
+  /** Gyms and equipment units (§25). */
+  units: UnitsState;
 }
 
 export function emptySchedule(): Record<Weekday, string | null> {
@@ -485,6 +529,7 @@ export function freshState(now = new Date()): AppState {
     deload: null,
     insightFeedback: [],
     escobar: freshEscobar(),
+    units: freshUnits('kg', now),
   };
 }
 

@@ -310,3 +310,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Size accounting uses UTF-16 length × 2** as the byte estimate: WebView localStorage quotas are counted in UTF-16 code units, so this is the conservative measure.
 - **Cap victim order:** summarised conversations first (oldest first), then the oldest; the active conversation is never dropped by the count cap and goes last under the size guard.
 - **Backup:** Settings export adds `escobar: exportAllEscobar()` next to `state`; restore calls `restoreEscobar()` only when the file has an `escobar` key (older backups leave the store alone); Reset everything clears the store.
+
+### EVU (Plate Sense)
+- **Display rounding changed with the storage fix.** `displayToKg` now keeps 3 decimals for both units (§25.3). `kgToDisplay` rounds kg to 0.01 (so 1.25 kg steps and 23.75 kg survive) and lb to 0.1 (a 3-decimal kg converts back to the typed lb exactly). The old 0.5 rounding would have re-created drift for 1.25 kg plates. Logged sets additionally carry `entered`, and `setLoadIn`/`formatSetLoad` show it verbatim in its own unit.
+- **`units` normalisation sits next to `normalizeEscobar`** in `core/escobarState.ts` (`normalizeUnits`, `normalizeProfile`): same per-field repair style; pre-Plate-Sense states get one gym "My gym" with the old global unit as its default (§25.3). Profiles for unknown gym ids are dropped; ladders sort ascending (≤ 80), plates descending (≤ 12), add-ons ≤ 6, `barKg` kept only in 5–30.

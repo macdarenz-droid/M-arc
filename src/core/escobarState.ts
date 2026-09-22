@@ -1,5 +1,5 @@
 import {
-  freshEscobar, MAX_MEMORY_ITEMS, MAX_MEMORY_TEXT, MAX_PINS, MEMORY_KINDS, SHOW_COMPONENT_IDS,
+  freshEscobar, freshUnits, MAX_GYMS, type EquipmentProfile, type Gym, type LoadUnit, type UnitsState, MAX_MEMORY_ITEMS, MAX_MEMORY_TEXT, MAX_PINS, MEMORY_KINDS, SHOW_COMPONENT_IDS,
   type DailyBrief, type EscobarState, type MemoryItem, type PinnedCard, type TodayChange, type TodayOverride,
 } from './models';
 
@@ -99,5 +99,63 @@ export function normalizeEscobar(raw: unknown): EscobarState {
       cacheReadTokens: num(usage.cacheReadTokens) ? usage.cacheReadTokens : 0,
     },
     legacyImported: raw.legacyImported === true || fresh.legacyImported,
+  };
+}
+
+const UNITS = ['kg', 'lb'] as const;
+const PROFILE_SOURCES = ['user', 'suspect_fix', 'escobar_scan', 'escobar_chat', 'default'] as const;
+const numList = (v: unknown, max: number): number[] | undefined => {
+  if (!Array.isArray(v)) return undefined;
+  const list = v.filter((x): x is number => num(x) && x > 0).slice(0, max);
+  return list.length ? list : undefined;
+};
+
+export function normalizeProfile(v: unknown): EquipmentProfile | null {
+  if (!isObj(v) || !UNITS.includes(v.unit as LoadUnit)) return null;
+  const p: EquipmentProfile = {
+    unit: v.unit as LoadUnit,
+    source: PROFILE_SOURCES.includes(v.source as EquipmentProfile['source']) ? (v.source as EquipmentProfile['source']) : 'user',
+    updatedAt: str(v.updatedAt) ? v.updatedAt : '',
+  };
+  if (num(v.step) && v.step > 0) p.step = v.step;
+  const ladder = numList(v.ladder, 80);
+  if (ladder) p.ladder = [...ladder].sort((a, b) => a - b);
+  const addOns = numList(v.addOns, 6);
+  if (addOns) p.addOns = addOns;
+  if (num(v.barKg) && v.barKg >= 5 && v.barKg <= 30) p.barKg = v.barKg;
+  const plates = numList(v.plates, 12);
+  if (plates) p.plates = [...plates].sort((a, b) => b - a);
+  return p;
+}
+
+function profileMap(v: unknown, gymIds: Set<string>): Record<string, Record<string, EquipmentProfile>> {
+  const out: Record<string, Record<string, EquipmentProfile>> = {};
+  if (!isObj(v)) return out;
+  for (const [gymId, inner] of Object.entries(v)) {
+    if (!gymIds.has(gymId) || !isObj(inner)) continue;
+    const m: Record<string, EquipmentProfile> = {};
+    for (const [key, p] of Object.entries(inner)) { const n = normalizeProfile(p); if (n) m[key] = n; }
+    out[gymId] = m;
+  }
+  return out;
+}
+
+/** Repairs `units` (§25.3). A state from before Plate Sense gets one gym whose default unit is the old global setting. */
+export function normalizeUnits(raw: unknown, weightUnit: LoadUnit): UnitsState {
+  const fresh = freshUnits(weightUnit);
+  if (!isObj(raw)) return fresh;
+  const seen = new Set<string>();
+  const gyms: Gym[] = (Array.isArray(raw.gyms) ? raw.gyms : [])
+    .filter((g): g is Record<string, unknown> => isObj(g) && str(g.id) && str(g.name))
+    .filter(g => (seen.has(g.id as string) ? false : (seen.add(g.id as string), true)))
+    .slice(0, MAX_GYMS)
+    .map(g => ({ id: g.id as string, name: (g.name as string).slice(0, 28) || 'Gym', defaultUnit: g.defaultUnit === 'lb' ? 'lb' : 'kg', createdAt: str(g.createdAt) ? g.createdAt : fresh.gyms[0]!.createdAt }));
+  if (!gyms.length) return fresh;
+  const ids = new Set(gyms.map(g => g.id));
+  return {
+    gyms,
+    activeGymId: str(raw.activeGymId) && ids.has(raw.activeGymId) ? raw.activeGymId : gyms[0]!.id,
+    byExercise: profileMap(raw.byExercise, ids),
+    byEquipment: profileMap(raw.byEquipment, ids),
   };
 }
