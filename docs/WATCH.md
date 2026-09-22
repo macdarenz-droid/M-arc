@@ -133,20 +133,28 @@ knob.
 
 ## Verified in CI
 
-Exact-head evidence for `fa25a41`:
-[run 35714797341](https://github.com/macdarenz-droid/M-arc/actions/runs/35714797341) —
+Exact-head evidence for `d69b22e`:
+[run 35715588832](https://github.com/macdarenz-droid/M-arc/actions/runs/35715588832) —
 source-gate and android-gate both green, including the Java/TypeScript metrics
 parity scenarios, the five-theme visual and migration gate, and a debug APK
-(artifact `MARC-DEBUG-APK`).
+(artifact `MARC-DEBUG-APK`). The preceding head `fa25a41` is
+[run 35714797341](https://github.com/macdarenz-droid/M-arc/actions/runs/35714797341),
+also green on both jobs.
 
-That run is also the first time this repository has ever compiled the native
-layer: before `scripts/prepare-android.mjs` existed, nothing copied `native/`
-into the generated project, so the Java was never part of a Gradle build.
+Those runs are the first time this repository has compiled the native layer at
+all: before `scripts/prepare-android.mjs` existed, nothing copied `native/` into
+the generated project, so the Java was never part of a Gradle build.
 
-The APK is now checked for the compiled classes themselves, not just for the
-sources and manifest that went into it. The original failure was an APK that
-built cleanly with the whole native layer missing and every check passing, so a
-gate that only inspects the inputs would not have caught it.
+The APK is checked for the compiled classes themselves, not just for the sources
+and manifest that went into it. The original failure was an APK that built
+cleanly with the whole native layer missing and every check passing, so a gate
+that only inspects the inputs would not have caught it. The android-gate log for
+`d69b22e` reads:
+
+```
+Prepared Android project: 9 native sources, drawable and manifest.
+Debug APK native bridge PASS: all 6 classes present in dex
+```
 
 ## What is not proven
 
