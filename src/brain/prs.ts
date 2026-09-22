@@ -47,7 +47,7 @@ export function recordsFor(current: ExerciseSessionSummary, prior: ExerciseSessi
     const prevTop = Math.max(0, ...prior.map(p => p.topKg));
     if (current.topKg > prevTop && prevTop > 0) out.push({ ...base, kind: 'heaviest', detail: `${current.topKg} kg × ${current.topReps}`, value: current.topKg, previous: prevTop });
     const prevE = Math.max(0, ...prior.map(p => p.bestE1rm));
-    if (prevE > 0 && current.bestE1rm > prevE * 1.01) out.push({ ...base, kind: 'strength', detail: `about ${Math.round(current.bestE1rm)} kg one-rep estimate`, value: current.bestE1rm, previous: prevE });
+    if (prevE > 0 && current.bestE1rm > prevE * 1.025) out.push({ ...base, kind: 'strength', detail: `about ${Math.round(current.bestE1rm)} kg one-rep estimate`, value: current.bestE1rm, previous: prevE });
     const atLoad = repsAtLoadMap(prior);
     for (const s of current.sets) {
       const prevReps = atLoad.get(s.kg ?? -1);

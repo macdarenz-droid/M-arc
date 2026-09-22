@@ -1,7 +1,7 @@
 /** Per-exercise history, derived once from sessions and reused by every engine. */
 import type { Effort, Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { estimatedOneRm } from '@/core/units';
+import { effectiveOneRm } from './e1rm';
 import { daysBetween } from '@/core/dates';
 import { isWorkingSet, EFFORT_MULT } from './exposure';
 
@@ -43,7 +43,7 @@ export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[])
     bestDurationSec: Math.max(0, ...working.map(s => s.durationSec ?? 0)),
     bestDistanceM: Math.max(0, ...working.map(s => s.distanceM ?? 0)),
     volume: working.reduce((a, s) => a + ((s.kg ?? 0) > 0 ? (s.kg ?? 0) * (s.reps ?? 0) : (s.reps ?? 0)), 0),
-    bestE1rm: Math.max(0, ...working.filter(s => (s.kg ?? 0) > 0 && (s.reps ?? 0) > 0 && (s.reps ?? 0) <= 10).map(s => estimatedOneRm(s.kg!, s.reps!))),
+    bestE1rm: Math.max(0, ...working.map(s => effectiveOneRm(s.kg ?? 0, s.reps ?? 0, s.effort) ?? 0)),
     effortCoverage: working.length ? withEffort.length / working.length : 0,
     avgEffort: efforts.length ? efforts.reduce((a, b) => a + b, 0) / efforts.length : 1,
     hasMax: withEffort.some(s => s.effort === 'max'),

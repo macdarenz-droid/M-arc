@@ -14,8 +14,3 @@ export function formatLoad(kg: number | undefined, unit: 'kg' | 'lb'): string {
   if (kg == null || !Number.isFinite(kg)) return '—';
   return `${kgToDisplay(kg, unit)} ${unit}`;
 }
-
-/** Epley estimate, capped at 10 reps so high-rep sets do not inflate it. */
-export function estimatedOneRm(kg: number, reps: number): number {
-  return kg * (1 + Math.min(reps, 10) / 30);
-}
