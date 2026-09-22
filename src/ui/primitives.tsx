@@ -1,9 +1,39 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { IconX } from './icons';
+import { IconDumbbell, IconKettlebell, IconPlate, IconX } from './icons';
 import { kgToDisplay, displayToKg } from '@/core/units';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
+
+/** Shown, in order, while the online coach is thinking. */
+const THINKING_PHRASES = [
+  'Reading your log…',
+  'Chalking up…',
+  'Loading the bar…',
+  'Racking the plates…',
+  'Checking your numbers…',
+  'Spotting your sets…',
+  'Warming up…',
+  'One more rep of thinking…',
+];
+const THINKING_ICONS = [IconDumbbell, IconKettlebell, IconPlate];
+
+/** A cycling gym icon and a rotating phrase, for anywhere the app waits on the online coach. The icon holds still under reduced motion. */
+export function Thinking() {
+  const [phrase, setPhrase] = useState(0);
+  const [icon, setIcon] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setPhrase(x => (x + 1) % THINKING_PHRASES.length), 1700);
+    return () => clearInterval(id);
+  }, []);
+  useEffect(() => {
+    if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => setIcon(x => (x + 1) % THINKING_ICONS.length), 500);
+    return () => clearInterval(id);
+  }, []);
+  const Icon = THINKING_ICONS[icon]!;
+  return <span class="thinking"><Icon size={15} class="thinking-icon" aria-hidden="true" />{THINKING_PHRASES[phrase]}</span>;
+}
 
 export function Card({ children, class: cls = '', className = '', ...rest }: { children?: ComponentChildren } & Div) {
   return <div class={`card ${cls} ${className}`} {...rest}>{children}</div>;

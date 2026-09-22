@@ -13,6 +13,8 @@ import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconSpark, IconSun } from '@/ui/icons';
 import { saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
+import { AskSheet } from '@/slices/coach/AskSheet';
+import { askOpenState, closeAsk } from '@/slices/coach/askController';
 
 const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconSpark };
 
@@ -38,6 +40,8 @@ export function App() {
         </div>
       </nav>
       {settingsOpen.value && <Settings onClose={() => { settingsOpen.value = false; }} />}
+      {/* One shared chat, mounted here so a tab switch never loses a typed question or an in-flight reply. Deferred, not stacked, while Settings is open. */}
+      {askOpenState.value.open && !settingsOpen.value && <AskSheet onClose={closeAsk} initialTurnKey={askOpenState.value.initialTurnKey} savedOnly={askOpenState.value.savedOnly} />}
       {profileOpen.value && <Profile onClose={() => { profileOpen.value = false; }} />}
       {!settingsOpen.value && !profileOpen.value && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}

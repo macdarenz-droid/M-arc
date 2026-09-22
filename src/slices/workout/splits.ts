@@ -1,6 +1,6 @@
 /** Split (workout template) management. */
-import type { Exercise, Split } from '@/core/models';
-import { newId } from '@/core/models';
+import type { Exercise, Split, Weekday } from '@/core/models';
+import { newId, WEEKDAYS } from '@/core/models';
 import { state, update } from '@/core/store';
 import { SPLIT_TEMPLATES, type SplitTemplateKey } from '@/data/templates';
 import type { MuscleId } from '@/data/muscles';
@@ -70,4 +70,28 @@ export function moveExercise(id: string, from: number, to: number): void {
 
 export function saveCustomExercise(ex: Exercise): void {
   update(s => ({ ...s, customExercises: [...s.customExercises.filter(c => c.id !== ex.id), ex] }));
+}
+
+/**
+ * Apply a split draft from the Escobar chat: create a new split, or replace an
+ * existing one's name/focus/exercises. Every exerciseId was already validated
+ * against the catalog. Null when `splitId` no longer names a split or the cap is reached.
+ */
+export function applySplitDraft(splitId: string | null, draft: { name: string; focus: MuscleId[]; exercises: Split['exercises'] }): Split | null {
+  if (!splitId) {
+    const created = createSplit(draft.name, draft.exercises);
+    if (created && draft.focus.length) setFocus(created.id, draft.focus);
+    return created ? { ...created, focus: draft.focus.slice(0, 2) } : null;
+  }
+  if (!state.value.splits.some(sp => sp.id === splitId)) return null;
+  update(s => ({ ...s, splits: s.splits.map(sp => (sp.id === splitId ? { ...sp, name: draft.name.trim().slice(0, 28) || sp.name, focus: draft.focus.slice(0, 2), exercises: draft.exercises } : sp)) }));
+  return state.value.splits.find(sp => sp.id === splitId) ?? null;
+}
+
+/** Replace the whole weekly schedule with a draft from the Escobar chat. False, writing nothing, if any day now names a split that isn't real. */
+export function applyScheduleDraft(draft: Record<Weekday, string | null>): boolean {
+  const realIds = new Set(state.value.splits.map(sp => sp.id));
+  if (WEEKDAYS.some(d => draft[d] !== null && !realIds.has(draft[d]!))) return false;
+  update(s => ({ ...s, schedule: { ...draft } }));
+  return true;
 }
