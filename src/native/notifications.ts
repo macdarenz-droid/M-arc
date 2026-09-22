@@ -59,7 +59,14 @@ export interface ReminderHealth { status: string; queued: number; ok: boolean }
  * Re-sync training reminders for the next 8 weeks from the schedule.
  * Returns a plain-words status; never changes the user's preference.
  */
-export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>): Promise<ReminderHealth> {
+export interface ReminderOptions {
+  /** Per-weekday HH:MM overriding the fixed reminder time, e.g. an hour before a learned start. */
+  timeByDay?: Partial<Record<Weekday, string>>;
+  /** Notification body for a day; defaults to a plain "ready when you are". */
+  body?: (splitName: string, day: Weekday) => string;
+}
+
+export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, opts: ReminderOptions = {}): Promise<ReminderHealth> {
   if (!isNative()) return { status: 'Reminders need the Android app.', queued: 0, ok: false };
   await ensureChannels();
   let pending: Array<{ id: number }> = [];
@@ -68,20 +75,21 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
   if (!reminders.enabled) return { status: 'Off', queued: 0, ok: true };
   const granted = await ensurePermission();
   if (!granted) return { status: 'On, but Android has not allowed notifications yet.', queued: 0, ok: false };
-  const [hh, mm] = reminders.time.split(':').map(Number);
   const list: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = [];
   const today = todayKey();
   for (let i = 0; i < 56; i++) {
     const day = addDays(today, i);
-    const splitId = schedule[weekdayOf(day)];
+    const wd = weekdayOf(day);
+    const splitId = schedule[wd];
     if (!splitId || completedDays.has(day)) continue;
+    const [hh, mm] = (opts.timeByDay?.[wd] ?? reminders.time).split(':').map(Number);
     const at = parseDay(day);
     at.setHours(hh ?? 17, mm ?? 30, 0, 0);
     if (at.getTime() <= Date.now()) continue;
     const [y, m, d] = day.split('-').map(Number);
     list.push({
       id: 730000 + (((y ?? 0) * 372 + (m ?? 0) * 31 + (d ?? 0)) % 90000),
-      title: 'Training day', body: `${splitName(splitId)} is ready when you are.`,
+      title: 'Training day', body: opts.body ? opts.body(splitName(splitId), wd) : `${splitName(splitId)} is ready when you are.`,
       schedule: { at, allowWhileIdle: true }, channelId: CHANNELS[reminders.style].id, extra: { type: 'training', day, splitId },
     });
   }

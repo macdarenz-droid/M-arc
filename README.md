@@ -4,12 +4,14 @@ Local-first workout, recovery and coaching tracker. Ships as an Android APK (Cap
 
 Version 37 is a ground-up rebuild of the previous single-file app into slices. Everything the old app did is here, organised so each part can be read and changed on its own:
 
-- **Train**: splits, a live session with rest timer, effort rating, set-by-set targets and live record badges.
+- **Train**: splits, a live session with rest timer, effort rating, set-by-set targets, live record badges, and importing a whole plan from a photo.
 - **Body**: a themed vector muscle map with recovery, this-week and level views, a fully-recovered list, and a body-fat estimate.
 - **Coach**: plain-words insights (recovery, progress, balance, focus, consistency, data), a training goal, a weekly schedule and coaching cues.
 - **History**: calendar, session log with edit and delete, weekly stats, exercise trends and records.
 - **Today**: what is scheduled, streak, recovery at a glance, the top insight and a daily quote.
-- **Settings**: five themes, units, rest, reminders, haptics, profile, Health Connect, backup and restore.
+- **Settings**: five themes, units, rest, reminders, haptics, profile, Health Connect, backup and restore, and the optional online coach.
+
+The coach works out everything on the phone from what you log and never applies a suggestion by itself. An optional online mode, off by default, sends narrow, single-purpose requests to your own small proxy (see `proxy/README.md`): fuller wording for a finding, an answer to a question you type in ("Ask a question" on the Coach screen), suggested equipment and muscles for a custom exercise you name or photograph ("Scan a photo"), a whole plan read from a photo of a written program ("Import" on Train, reviewed before anything is saved), or tags for a session note (never a diagnosis). Design: `docs/COACH_BRAIN.md`. Evidence: `docs/RESEARCH.md`.
 
 Your history from the previous version (localStorage key `dailyTrackerPremium`) is imported automatically on first launch. The old key is never modified.
 
@@ -21,6 +23,7 @@ Node 22.
 npm ci
 npm run dev        # Vite dev server
 npm run check      # typecheck + tests + production build into www/
+npm run backtest   # replay the coach over a synthetic history; pass a backup file to use your own
 ```
 
 ## Android

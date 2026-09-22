@@ -2,8 +2,12 @@ import rawLibrary from '@/data/exercises.json';
 import type { Exercise, ResistanceMode } from './models';
 import { classifyMuscleText, isMuscleId, type MuscleId } from '@/data/muscles';
 
-const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank']);
-const CONDITIONING_NAMES = new Set(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry']);
+const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank', 'lib_wall_sit', 'lib_hollow_body_hold']);
+const CONDITIONING_NAMES = new Set([
+  'lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry',
+  'lib_burpee', 'lib_mountain_climbers', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope',
+  'lib_box_jump', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_jump_squat',
+]);
 const ASSISTED_HINT = /assisted/i;
 
 function inferMode(id: string, equipment: string, name: string): ResistanceMode {
@@ -51,16 +55,34 @@ export function normalizeName(s: string): string {
 }
 
 /** Resolve an exercise by id, then by exact name or alias, across library and custom list. */
+/** Normalised names computed once, so a lookup by name is a scan of plain string compares. */
+interface NameIndex { e: Exercise; name: string; names: string[]; singulars: string[] }
+const singularOf = (n: string) => n.replace(/s\b/g, '');
+function indexOf(e: Exercise): NameIndex {
+  const names = [e.name, ...e.aliases].map(normalizeName);
+  return { e, name: names[0]!, names, singulars: names.map(singularOf) };
+}
+const libraryIndex: NameIndex[] = LIBRARY.map(indexOf);
+/** Custom exercises are replaced as a whole array when edited, so indexing per array identity is safe. */
+const customIndexCache = new WeakMap<Exercise[], NameIndex[]>();
+function customIndex(custom: Exercise[]): NameIndex[] {
+  if (custom.length === 0) return [];
+  let idx = customIndexCache.get(custom);
+  if (!idx) { idx = custom.map(indexOf); customIndexCache.set(custom, idx); }
+  return idx;
+}
+
 export function findExercise(idOrName: string, custom: Exercise[] = []): Exercise | undefined {
   const direct = byId.get(idOrName) ?? custom.find(c => c.id === idOrName);
   if (direct) return direct;
   const q = normalizeName(idOrName);
   if (!q) return undefined;
-  const all = [...custom, ...LIBRARY];
-  const singular = q.replace(/s\b/g, '');
-  const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
-  return all.find(e => same(e.name) || e.aliases.some(same))
-    ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
+  const all = custom.length ? [...customIndex(custom), ...libraryIndex] : libraryIndex;
+  const singular = singularOf(q);
+  const exact = all.find(x => x.names.includes(q) || x.singulars.includes(singular));
+  if (exact) return exact.e;
+  if (q.length < 4) return undefined;
+  return all.find(x => x.name.includes(q) || q.includes(x.name))?.e;
 }
 
 export function searchExercises(query: string, custom: Exercise[] = [], limit = 12): Exercise[] {

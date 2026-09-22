@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { recovery, today, unit } from '@/app/selectors';
+import { insights, objectiveReview, presenceMoment, recovery, report, suggestions, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -10,6 +10,14 @@ import { navyBodyFat } from '@/brain/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
+import { showToast } from '@/app/toast';
+import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
+import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
+import { PresenceLauncher } from '@/slices/coach/Presence';
+import { dismissPresenceLauncher } from '@/slices/coach/presenceState';
+import { openAsk } from '@/slices/coach/askController';
+import { COACH_NAME } from '@/ui/chatRender';
+import { go } from '@/app/router';
 
 type View = 'recovery' | 'levels' | 'week';
 
@@ -17,6 +25,10 @@ export function Body() {
   const s = state.value;
   const [view, setView] = useState<View>('recovery');
   const [selected, setSelected] = useState<MuscleId | null>(null);
+  const [momentOpen, setMomentOpen] = useState(false);
+  const moment = presenceMoment.value;
+  const momentInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
+  const momentSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   const rec = recovery.value;
   const levels = useMemo(() => trainingLevels(s.sessions, s.customExercises), [s.sessions]);
   const weekSets = useMemo(() => weeklyMuscleSets(s.sessions, today.value, 1, s.customExercises)[0]?.sets ?? {}, [s.sessions, today.value]);
@@ -34,6 +46,10 @@ export function Body() {
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Body</div><h1>Muscle map</h1></div></div>
+      {/* Own full-width row, never a shared button row — see docs/escobar-presence/PROGRESS.md's P02 Train entry. */}
+      <div style={{ marginBottom: 12 }}>
+        <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => moment ? setMomentOpen(true) : openAsk()} onDismiss={m => { dismissPresenceLauncher(m); }} />
+      </div>
       <Segmented value={view} onChange={setView} options={[{ value: 'recovery', label: 'Recovery' }, { value: 'week', label: 'This week' }, { value: 'levels', label: 'Levels' }]} />
       <Card style={{ marginTop: 14 }}>
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
@@ -67,8 +83,26 @@ export function Body() {
         </Section>
       )}
 
+      {(objectiveReview.value?.measures.some(measure => measure.kind === 'body_trend') || s.coach.objective?.priorityMuscles.length) && (
+        <Section title="Selected objective evidence" aside={<Button variant="quiet" size="sm" onClick={() => go('coach')}>Coach</Button>}>
+          <Card class="card-quiet">
+            {objectiveReview.value?.measures.filter(measure => measure.kind === 'body_trend').map(measure => <div key={measure.key} class="stack-sm"><div class="row-between"><b>{measure.label}</b><Chip>{measure.status === 'unknown' ? 'Not enough data' : measure.status === 'up' ? 'Rising' : measure.status === 'down' ? 'Falling' : 'Steady'}</Chip></div><p class="small">{measure.summary}</p><p class="hint">{measure.source}. {measure.limitation}</p></div>)}
+            {!!s.coach.objective?.priorityMuscles.length && <p class="hint" style={{ marginTop: 10 }}>Priority muscles: {s.coach.objective.priorityMuscles.map(muscleLabel).join(', ')}. The map shows recorded training exposure and recovery, not measured muscle growth.</p>}
+          </Card>
+        </Section>
+      )}
+
       <BodyFat />
       {selected && <MuscleDetail muscle={selected} onClose={() => setSelected(null)} />}
+      {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}
+      {momentOpen && momentSuggestion && (
+        <SuggestionSheet
+          suggestion={momentSuggestion}
+          onAccept={() => { showToast(acceptProposal(momentSuggestion.proposal, today.value)); setMomentOpen(false); }}
+          onDismiss={() => { dismissProposal(momentSuggestion.proposal, today.value, report.value); setMomentOpen(false); }}
+          onClose={() => setMomentOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import type { MuscleId } from '@/data/muscles';
 import type { GoalId } from '@/data/goals';
+import type { RestReasonKind } from '@/brain/live';
+import type { Confidence, FindingKind, Severity } from '@/brain/coach/contract';
 
 export type Effort = 'easy' | 'ideal' | 'max';
 export type Weekday = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
@@ -39,6 +41,113 @@ export interface LoggedExercise {
   exerciseId: string;
   name: string;
   sets: LoggedSet[];
+  /** Stable link to the entry captured when this workout started. */
+  planEntryId?: string;
+  /** Original live-row indices for the working sets retained at finish. */
+  actualSetIndices?: number[];
+}
+
+export const PLAN_MAX_METADATA_SETS = 100;
+export const PLAN_MAX_METADATA_ENTRIES = 100;
+
+export interface PlanSetTarget {
+  kg: number | null;
+  reps: number | null;
+  durationSec: number | null;
+}
+
+export interface WorkoutPlanEntry {
+  id: string;
+  exerciseId: string;
+  name: string;
+  mode: ResistanceMode | null;
+  origin: 'start' | 'added' | 'replacement';
+  replaces?: string;
+  plannedSets: number;
+  targetSource: 'history' | 'starter' | 'unavailable';
+  allowIncrease: boolean;
+  targets: PlanSetTarget[];
+  excluded?: 'skipped' | 'removed' | 'replaced';
+  acceptedTargets?: Array<PlanSetTarget | null>;
+}
+
+/**
+ * What kind of session this was, captured once at start and never rewritten
+ * by a later goal/deload change (docs/escobar-presence P04, 01-ARCHITECTURE.md
+ * §5). `normal` has no cap — never invented from overlapping RIR bands.
+ * `easier` only exists through an already-accepted active deload at capture
+ * time, using its own saved cap; there is no separate easier-day planner.
+ */
+export interface SessionIntent {
+  kind: 'normal' | 'easier';
+  capturedAt: string;
+  source: 'session_start' | 'accepted_deload';
+  effortCap: Effort | null;
+}
+
+export const MAX_ASSESSMENT_CHANGES = 256;
+
+/**
+ * One accepted, in-session adjustment to the captured plan. A discriminated
+ * union so each kind only carries the fields it needs; `id`/`acceptedAt`
+ * are common to all four. The mutation logic that appends these (accepting
+ * a live-adjustment offer, add/replace/remove) is P05's scope — P04 only
+ * defines the shape and validates it, always shipping an empty `changes[]`
+ * today.
+ */
+export type PlanAgreementChange =
+  | { id: string; acceptedAt: string; kind: 'targets'; entryId: string; targets: Array<{ setIndex: number; target: PlanSetTarget }>; reason: 'max_below_target' | 'easy_above_target' }
+  | { id: string; acceptedAt: string; kind: 'add'; entryId: string }
+  | { id: string; acceptedAt: string; kind: 'replace'; fromEntryId: string; toEntryId: string }
+  | { id: string; acceptedAt: string; kind: 'remove'; entryId: string };
+
+/**
+ * Optional, independently versioned wrapper on `WorkoutPlanSnapshot`
+ * (01-ARCHITECTURE.md §5). Absent on every session captured before P04 and
+ * on any session this app can't confidently assess (corrupt/overflowing
+ * metadata) — its absence never invalidates the plan or logged work it sits
+ * on top of.
+ */
+export interface SessionAssessment {
+  version: 1;
+  intent: SessionIntent;
+  changes: PlanAgreementChange[];
+  invalidatedEntryIds: string[];
+  seenWorkingRows: Array<{ entryId: string; setIndices: number[] }>;
+}
+
+export interface WorkoutPlanSnapshot {
+  version: 1;
+  capturedAt: string;
+  goal: GoalId;
+  deload: CoachState['deload'];
+  entries: WorkoutPlanEntry[];
+  /** Absent for plans captured before P04, or dropped on normalization if malformed — see SessionAssessment. */
+  assessment?: SessionAssessment;
+}
+
+/**
+ * What a session note was tagged as. Never a diagnosis, never a cause,
+ * never a severity — only that the note mentioned this kind of thing and,
+ * for pain or discomfort, which muscle it named, if any.
+ */
+export type NoteFlagKind = 'pain_or_discomfort' | 'equipment_issue' | 'fatigue' | 'schedule' | 'form_check' | 'positive';
+
+export interface NoteFlag {
+  kind: NoteFlagKind;
+  muscle: MuscleId | null;
+}
+
+/**
+ * One 10-second morning check-in: a trimmed, 3-item Hooper-style wellness
+ * scale (sleep, soreness, stress — subjective_readiness_monitoring), each
+ * 1 (worst) to 5 (best). At most one entry per day.
+ */
+export interface ReadinessEntry {
+  day: string;
+  sleep: 1 | 2 | 3 | 4 | 5;
+  soreness: 1 | 2 | 3 | 4 | 5;
+  stress: 1 | 2 | 3 | 4 | 5;
 }
 
 export interface Session {
@@ -51,6 +160,12 @@ export interface Session {
   endedAt: string;
   durationSec: number;
   exercises: LoggedExercise[];
+  /** Immutable targets captured before this session's work was logged. */
+  plan?: WorkoutPlanSnapshot;
+  /** Free text the person wrote about this session. Optional; most sessions have none. */
+  note?: string;
+  /** What `note` was tagged as, from the online coach. Empty until the person has both a note and the coach on. */
+  noteFlags?: NoteFlag[];
 }
 
 export interface SplitExercise {
@@ -72,6 +187,26 @@ export interface RestState {
   endsAt: number;
   totalSec: number;
   pausedRemainingSec?: number;
+  /** The logged set that owns this timer. Transient with the active session. */
+  from?: { entry: number; set: number; startedAt: string; exerciseId: string };
+  /** Why the brain graded this rest away from the person's default. */
+  reasonKind?: RestReasonKind;
+  /** The requested graded total; manual adjustments make this differ from totalSec. */
+  gradedSec?: number;
+  /** Brain-produced difference from the person's clamped default. */
+  deltaSec?: number;
+}
+
+export interface ActiveSessionEntry {
+  exerciseId: string;
+  name: string;
+  sets: LoggedSet[];
+  done: boolean;
+  skipped: boolean;
+  planEntryId?: string;
+  planComparisonValid?: boolean;
+  targetOverrides?: Array<PlanSetTarget | null>;
+  coachDecision?: { key: string; action: 'accepted' | 'dismissed' };
 }
 
 export interface ActiveSession {
@@ -80,7 +215,11 @@ export interface ActiveSession {
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
+  entries: ActiveSessionEntry[];
+  /** Immutable targets captured on the explicit start/add/replace action. */
+  plan?: WorkoutPlanSnapshot;
+  /** The person hid the read-only preparation ramp for this session. */
+  warmupDismissed?: boolean;
   rest?: RestState;
 }
 
@@ -125,6 +264,224 @@ export interface HealthSnapshot {
   activeCalories?: number;
 }
 
+/** One exercise swapped or dropped for a single session, from an accepted plan. */
+export interface CoachChange {
+  removeExerciseId: string;
+  replaceWithExerciseId?: string;
+}
+
+/** One split proposal from an "Ask Escobar" reply, as persisted — mirrors SplitDraft in src/ai/ask.ts, kept as its own structural type here (rather than importing that one) the same way this app already mirrors a shape across layers instead of reaching across them. */
+export interface AskThreadDraft {
+  action: 'create' | 'modify';
+  splitId: string | null;
+  name: string;
+  focus: MuscleId[];
+  exercises: Array<{ exerciseId: string; sets: number }>;
+}
+
+/**
+ * A proposal to switch the person's training goal, as persisted — mirrors
+ * GoalChangeAction in src/ai/ask.ts, the first (and so far only) member of
+ * the general "actions" envelope the intelligence audit's Tier 3 asked
+ * for. Kept a plain discriminated shape (a "kind" tag) so a real future
+ * action kind (reminders, session control) is a new union member later,
+ * not a rewrite of this or of AskThreadDraft/scheduleDraft above, which
+ * stay their own separate fields for now — see the doc comment on
+ * AskActionSchema in proxy/src/anthropic.ts for the full scoping rationale.
+ */
+export interface AskThreadGoalChangeAction {
+  kind: 'goal_change';
+  goal: GoalId;
+}
+
+/** The general typed-action envelope, as persisted. Currently just AskThreadGoalChangeAction. */
+export type AskThreadAction = AskThreadGoalChangeAction;
+
+/**
+ * One turn of the "Ask Escobar" conversation, as persisted in CoachState —
+ * mirrors AskSheet.tsx's local AskBubble shape. Closing the sheet (or the
+ * app) used to lose the whole conversation, along with any stated
+ * constraint ("my elbow is bad, no curls") the person had just typed —
+ * found in the intelligence audit's Tier 3. Persisting the full turn, not
+ * just role/text, means a split or schedule action shown earlier still
+ * renders correctly (including whether it was already applied) after
+ * reopening rather than becoming a stale, unlabeled proposal.
+ */
+export interface AskThreadTurn {
+  role: 'user' | 'assistant';
+  text: string;
+  scope?: 'personal' | 'general';
+  category?: 'nutrition' | 'body' | 'training' | 'app' | 'general';
+  drafts?: AskThreadDraft[];
+  applied?: boolean[];
+  draftDismissed?: boolean[];
+  scheduleDraft?: Record<Weekday, string | null> | null;
+  scheduleApplied?: boolean;
+  scheduleDismissed?: boolean;
+  concern?: 'crisis' | 'disordered_eating' | null;
+  trimmed?: number;
+  actions?: AskThreadAction[];
+  /** Parallel to "actions": null before that action is applied; the goal it replaced once applied, so "Undo" can restore exactly that (and revert this back to null). */
+  actionPrev?: Array<GoalId | null>;
+  actionDismissed?: boolean[];
+}
+
+export interface DismissalEvidence {
+  day: string;
+  proposalFingerprint: string;
+  reopenedOnce: boolean;
+  findings: Array<{
+    id: string;
+    kind: FindingKind;
+    severity: Severity;
+    confidence: Confidence;
+    sessionIds: string[];
+    sessionFingerprints: string[];
+  }>;
+}
+
+export interface ReopenReason {
+  dismissedOn: string;
+  elapsedDays: number;
+  newSessions: number;
+  findingId: string;
+  previousSeverity: Severity;
+  currentSeverity: Severity;
+  previousConfidence: Confidence;
+  currentConfidence: Confidence;
+}
+
+/** At most this many turns persist — oldest dropped first. Bounds how much the "Ask Escobar" thread adds to the saved state; a much higher ceiling than MAX_HISTORY_TURNS in src/ai/ask.ts, which caps what's actually resent to the model each call, not what's kept on screen. */
+export const MAX_ASK_THREAD_TURNS = 40;
+/** Mirrors MAX_PREFERENCE_CHARS in proxy/src/handler.ts — a stated constraint is sent to /ask merged into the same "preferences" list, so it's bound by the same per-fact length cap the proxy already enforces. */
+export const MAX_STATED_CONSTRAINT_CHARS = 160;
+/** At most this many stated constraints persist — oldest dropped first once a new one arrives past the cap. */
+export const MAX_STATED_CONSTRAINTS = 12;
+
+/** Voice only — never changes which moment wins, its target, or its confidence. */
+export type CoachTone = 'steady' | 'direct';
+
+/**
+ * One durable "don't show me that again" — keyed by a moment's stable id
+ * AND its evidence hash, so a materially changed situation can requalify
+ * while cosmetic re-renders (tab, tone, a rest-timer tick) cannot.
+ */
+export interface CoachPresenceDismissal {
+  id: string;
+  evidenceKey: string;
+  dismissedAt: string;
+}
+
+/** At most this many presence dismissals persist — oldest dropped first. */
+export const MAX_PRESENCE_DISMISSALS = 128;
+
+/**
+ * Optional, local-only presence preferences for the shared Escobar cue
+ * (see docs/escobar-presence). Absent entirely on any save before this
+ * field existed — every reader treats a missing `presence` the same as
+ * `{ version: 1, tone: 'steady', dismissed: [] }`.
+ */
+export interface CoachPresence {
+  version: 1;
+  tone: CoachTone;
+  dismissed: CoachPresenceDismissal[];
+}
+
+export const MAX_OBJECTIVE_STATEMENT_CHARS = 280;
+export const MAX_OBJECTIVE_EQUIPMENT_CHARS = 120;
+export const MAX_OBJECTIVE_MUSCLES = 3;
+export const MAX_OBJECTIVE_MEASURES = 3;
+
+export type ObjectiveEvidenceMeasure =
+  | { kind: 'consistency' }
+  | { kind: 'lift_trend'; exerciseId: string }
+  | { kind: 'body_trend' };
+
+/** One explicit, local agreement about the user's direction. Never inferred from chat. */
+export interface PersonalObjective {
+  version: 1;
+  id: string;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  statement: string;
+  priorityMuscles: MuscleId[];
+  availableWeekdays: Weekday[];
+  equipmentNote?: string;
+  measures: ObjectiveEvidenceMeasure[];
+  reviewDay?: string;
+}
+
+/** What the user has done with the coach's suggestions. Only the user writes here. */
+export interface CoachState {
+  /** dismissKey → how many times dismissed. Two suppresses the suggestion. */
+  dismissed: Record<string, number>;
+  /** dismissKey → last day it stays hidden after a single dismissal. */
+  snoozedUntil: Record<string, string>;
+  /** dismissKey → day the suggestion was accepted. */
+  accepted: Record<string, string>;
+  /** Local evidence captured at dismissal, used only to decide whether one stronger reappearance is warranted. */
+  dismissalEvidence?: Record<string, DismissalEvidence>;
+  /** HH:MM local start times learned from history and accepted with a schedule suggestion. */
+  learnedStarts: Partial<Record<Weekday, string>>;
+  /** Time reminders from the learned start instead of a fixed clock time. Off until a schedule is accepted. */
+  smartReminders: boolean;
+  /** An accepted plan for one day: which split, and per-session exercise changes. */
+  todayPlan: { day: string; splitId: string; changes: CoachChange[] } | null;
+  /** An accepted easier week. */
+  deload: { from: string; to: string; loadFactor: number; effortCap: 'easy' | 'ideal' } | null;
+  /** Send findings to the remote explainer for richer wording. Off by default. */
+  remoteExplainer: boolean;
+  /** The Cloudflare Worker proxy URL. Defaults to DEFAULT_PROXY_URL (this is a personal, single-deployment app, not a generic template — there is only one real Worker to point at), so the "Online coach" toggle alone turns everything on. Still editable in Settings for a future redeploy under a different URL. */
+  explainerUrl: string;
+  /** Random id for per-device quotas at the proxy. Not tied to anything personal. */
+  deviceId: string;
+  /**
+   * Short, plain-word facts the coach has learned about how this person
+   * responds to its own suggestions over time (which kinds they turn down
+   * or usually accept, whether they use a learned schedule) — never a
+   * diagnosis, never a body measurement, never invented. Recomputed at
+   * most weekly and sent as extra context to the remote coach, since a
+   * dismissed suggestion drops out of the report and would otherwise be
+   * forgotten. Empty until the first computation.
+   */
+  preferenceFacts: string[];
+  /** ISO timestamp preferenceFacts was last computed, or null before the first time. */
+  preferencesUpdatedAt: string | null;
+  /** The "Ask Escobar" conversation, persisted so it survives closing the sheet or the app — see AskThreadTurn. Oldest-first, capped at MAX_ASK_THREAD_TURNS. */
+  askThread: AskThreadTurn[];
+  /**
+   * Durable facts the person has stated about their own body, equipment or
+   * training preferences in the "Ask Escobar" chat (an injury to work
+   * around, "I only have dumbbells at home") — flagged by the coach itself
+   * (AskReply's own "constraints", the same "brain decides, words explain"
+   * pattern rule 17's "concern" flag already uses) rather than guessed
+   * client-side from the raw chat text. Merged into "preferences" on every
+   * future /ask call so a stated constraint carries forward without the
+   * person needing to repeat it in a new conversation. Capped at
+   * MAX_STATED_CONSTRAINTS, oldest dropped first.
+   */
+  statedConstraints: string[];
+  /** Absent until the person changes tone or dismisses a presence cue. */
+  presence?: CoachPresence;
+  /** Optional local agreement; saving it never mutates the training preset, schedule or programme. */
+  objective?: PersonalObjective;
+}
+
+/**
+ * The one real Worker this app talks to. Baked in rather than left for the
+ * person to paste in on every fresh install, data reset or new device: this
+ * is a personal app with a single Cloudflare deployment, not a template
+ * other people self-host under their own URL, so there is nothing to ask
+ * the person to fill in. Still a plain Settings field if that ever changes
+ * (a redeploy under a new name, for instance) — this is only the default.
+ */
+export const DEFAULT_PROXY_URL = 'https://marc-coach.mmarcdarenz.workers.dev';
+
+export function emptyCoach(): CoachState {
+  return { dismissed: {}, snoozedUntil: {}, accepted: {}, dismissalEvidence: {}, learnedStarts: {}, smartReminders: false, todayPlan: null, deload: null, remoteExplainer: false, explainerUrl: DEFAULT_PROXY_URL, deviceId: '', preferenceFacts: [], preferencesUpdatedAt: null, askThread: [], statedConstraints: [] };
+}
+
 export interface AppState {
   version: 1;
   createdAt: string;
@@ -138,6 +495,9 @@ export interface AppState {
   preferences: Preferences;
   body: BodyMeasurement[];
   health: HealthSnapshot;
+  coach: CoachState;
+  /** At most one per day. */
+  readiness: ReadinessEntry[];
   /** Set once the old single-file app's data has been imported. */
   legacyImportedAt?: string;
 }
@@ -167,6 +527,8 @@ export function freshState(now = new Date()): AppState {
     },
     body: [],
     health: { connected: false },
+    coach: emptyCoach(),
+    readiness: [],
   };
 }
 

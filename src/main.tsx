@@ -5,6 +5,7 @@ import { bootSource, flushSave, initStore, state } from './core/store';
 import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
+import { refreshPreferenceFactsIfStale } from './slices/coach/preferences';
 import { onNotificationTap } from './native/notifications';
 import { go } from './app/router';
 import './ui/styles.css';
@@ -25,6 +26,7 @@ window.addEventListener('pagehide', flushSave);
 // Android may drop scheduled reminders; check and repair when we come back.
 window.addEventListener('pageshow', () => { void resyncReminders(); });
 void resyncReminders();
+refreshPreferenceFactsIfStale();
 
 // Notification taps: rest done → Train, training day → Train.
 onNotificationTap(() => go('train'));

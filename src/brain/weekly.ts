@@ -19,17 +19,24 @@ export interface WeekSummary {
   grade: { title: string; note: string };
 }
 
+/** Working sets and total kg×reps volume for sessions falling within [start, end] inclusive. */
+function volumeInRange(sessions: Session[], start: string, end: string): { sets: number; volumeKg: number } {
+  const inRange = sessions.filter(s => s.day >= start && s.day <= end);
+  let sets = 0, volumeKg = 0;
+  for (const s of inRange) for (const e of s.exercises) for (const x of e.sets) {
+    if (!isWorkingSet(x)) continue;
+    sets++;
+    if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+  }
+  return { sets, volumeKg: Math.round(volumeKg) };
+}
+
 export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek = 3): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
   const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
-  let sets = 0, volumeKg = 0;
-  for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
-    if (!isWorkingSet(x)) continue;
-    sets++;
-    if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
-  }
+  const { sets, volumeKg } = volumeInRange(sessions, start, end);
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
   const grade = workouts >= Math.max(3, plannedPerWeek) ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
@@ -37,12 +44,61 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
     : workouts === 1 ? { title: 'Started', note: 'One session down. The next one is the one that counts.' }
     : { title: 'Start the week', note: 'Nothing logged yet. A short session still counts.' };
   return {
-    start, end, workouts, activeDays, sets, volumeKg: Math.round(volumeKg),
+    start, end, workouts, activeDays, sets, volumeKg,
     records: recordsInWeek(sessions, today, custom),
     muscleSets: weeks[0]?.sets ?? {},
     previousMuscleSets: weeks[1]?.sets ?? {},
     grade,
   };
+}
+
+export interface WeeklyVolume {
+  start: string;
+  end: string;
+  sets: number;
+  volumeKg: number;
+}
+
+export interface TrainingWeek {
+  from: string;
+  to: string;
+  days: Weekday[];
+  activeDayCount: number;
+}
+
+/** Completed Monday-Sunday training windows, oldest first. */
+export function trainingDaysPerWeek(sessions: Session[], today: string, weeks = 16): TrainingWeek[] {
+  const count = Math.max(1, Math.min(52, Math.trunc(Number.isFinite(weeks) ? weeks : 16)));
+  const current = weekStart(today);
+  const out: TrainingWeek[] = [];
+  for (let i = count; i >= 1; i--) {
+    const from = addDays(current, -7 * i);
+    const to = addDays(from, 6);
+    const dates = new Set(sessions
+      .filter(session => session.day >= from && session.day <= to && session.day < current)
+      .filter(session => session.exercises.some(exercise => exercise.sets.some(isWorkingSet)))
+      .map(session => session.day));
+    const present = new Set([...dates].map(weekdayOf));
+    out.push({ from, to, days: WEEKDAYS.filter(day => present.has(day)), activeDayCount: dates.size });
+  }
+  return out;
+}
+
+/**
+ * One entry per week, oldest first, for a real "over time" view (History's
+ * volume trend chart) — `weekSummary` above only ever looks at the current
+ * week. The current week is included even though it's still in progress,
+ * the same way every other "this week" figure in the app treats it.
+ */
+export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 12): WeeklyVolume[] {
+  const thisWeekStart = weekStart(today);
+  const out: WeeklyVolume[] = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    const start = addDays(thisWeekStart, -7 * i);
+    const end = addDays(start, 6);
+    out.push({ start, end, ...volumeInRange(sessions, start, end) });
+  }
+  return out;
 }
 
 /**

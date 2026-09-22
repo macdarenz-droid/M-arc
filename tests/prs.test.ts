@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { allRecords, isLiveRecord, recordsInWeek } from '@/brain/prs';
+import { allRecords, isLiveRecord, liveRecordFrom, recordsForSession, recordsInWeek } from '@/brain/prs';
+import { exerciseHistory, modeOf } from '@/brain/history';
 import { session, sets } from './helpers';
 
 const ex = 'lib_barbell_bench_press';
@@ -32,5 +33,19 @@ describe('personal records', () => {
     const a = session('2026-09-01', [{ id: 'lib_pull_up', sets: sets(0, 6) }]);
     const b = session('2026-09-04', [{ id: 'lib_pull_up', sets: sets(0, 8) }]);
     expect(allRecords([a, b]).map(r => r.kind)).toEqual(['best_reps']);
+  });
+  it('delegated live checks match resolved-history checks', () => {
+    const prior = session('2026-09-01', [{ id: ex, sets: sets(60, 8) }]);
+    const candidates = [{ kg: 65, reps: 5 }, { kg: 55, reps: 5 }, {}];
+    for (const candidate of candidates) {
+      expect(isLiveRecord([prior], ex, candidate)).toBe(liveRecordFrom(exerciseHistory([prior], ex), modeOf(ex), candidate));
+    }
+  });
+  it('finds records for one exact session without crediting later history', () => {
+    const prior = session('2026-09-01', [{ id: ex, name: 'Bench Press', sets: sets(60, 8) }]);
+    const current = session('2026-09-04', [{ id: ex, name: 'Bench Press', sets: sets(62.5, 8) }]);
+    const later = session('2026-09-07', [{ id: ex, name: 'Bench Press', sets: sets(70, 8) }]);
+    expect(recordsForSession(current, [later, current, prior]).map(record => record.kind)).toEqual(expect.arrayContaining(['heaviest', 'strength']));
+    expect(recordsForSession(prior, [later, current, prior])).toHaveLength(0);
   });
 });

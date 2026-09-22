@@ -2,10 +2,23 @@
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { todayKey, weekdayOf } from '@/core/dates';
-import { recoveryStatus } from '@/brain/recovery';
-import { coachInsights } from '@/brain/coach/rules';
+import { WEEKDAYS, type PlanSetTarget } from '@/core/models';
+import type { MuscleRecovery } from '@/brain/recovery';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
-import { WEEKDAYS } from '@/core/models';
+import { buildReport } from '@/brain/coach/report';
+import { adjustedRecovery } from '@/brain/coach/detectors';
+import { dailySpark, insightsFrom, suggestionsFrom, type RenderContext } from '@/brain/coach/words';
+import { applyDeload, deloadActive } from '@/brain/coach/deload';
+import { buildAskStats } from '@/brain/stats';
+import { suggestNext } from '@/brain/progression';
+import { effectiveSetTarget, nextAfterRest, type RestNext } from '@/brain/live';
+import { readinessToday } from '@/brain/readiness';
+import { readinessCard, readinessConsequence, type ReadinessCard } from '@/brain/coach/verdict';
+import { weekReview } from '@/brain/coach/review';
+import type { BrainContext } from '@/brain/coach/context';
+import { selectMoment, type CoachingMoment } from '@/brain/coach/moments';
+import { selectSessionFeedback } from '@/brain/coach/sessionFeedback';
+import { projectObjectiveReview } from '@/brain/coach/objectiveReview';
 
 /** The current day key. Re-evaluated every minute so midnight rolls over. */
 export const today = signal(todayKey());
@@ -18,15 +31,145 @@ export function setTicking(on: boolean): void {
   if (on && !ticker) ticker = setInterval(() => { nowMs.value = Date.now(); }, 1000);
   if (!on && ticker) { clearInterval(ticker); ticker = null; }
 }
+/** The clock rounded to the minute, so the brain re-runs at most once a minute. */
+export const nowMinute = computed(() => nowMs.value - (nowMs.value % 60_000));
 
 export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
-export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
-export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
 export const plannedPerWeek = computed(() => WEEKDAYS.filter(d => state.value.schedule[d]).length);
 
-export const recovery = computed(() => recoveryStatus(state.value.sessions, state.value.customExercises, nowMs.value - (nowMs.value % 60_000)));
+/** An accepted plan for today, if any. It overrides the schedule for today only. */
+export const todayPlan = computed(() => { const p = state.value.coach.todayPlan; return p && p.day === today.value ? p : null; });
+export const scheduledSplitId = computed(() => todayPlan.value?.splitId ?? state.value.schedule[weekdayOf(today.value)]);
+export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
+export const todayChanges = computed(() => todayPlan.value?.changes ?? []);
+
+const reportSessions = computed(() => state.value.sessions);
+const reportSplits = computed(() => state.value.splits);
+const reportSchedule = computed(() => state.value.schedule);
+const reportCustom = computed(() => state.value.customExercises);
+const reportGoal = computed(() => state.value.goal);
+const reportRestDefault = computed(() => state.value.preferences.restDefaultSec);
+const reportHealth = computed(() => state.value.health);
+const reportReadiness = computed(() => state.value.readiness);
+const reportDeload = computed(() => state.value.coach.deload);
+const reportDismissed = computed(() => state.value.coach.dismissed);
+const reportAccepted = computed(() => state.value.coach.accepted);
+const reportDismissalEvidence = computed(() => state.value.coach.dismissalEvidence);
+
+/** Expensive report inputs are reference-selected so tone, Ask-thread and other UI writes do not rebuild the detector pipeline. */
+export const brainContext = computed<BrainContext>(() => ({
+  sessions: reportSessions.value,
+  splits: reportSplits.value,
+  schedule: reportSchedule.value,
+  custom: reportCustom.value,
+  goal: reportGoal.value,
+  restDefaultSec: reportRestDefault.value,
+  health: reportHealth.value,
+  readiness: reportReadiness.value,
+  deload: reportDeload.value,
+  today: today.value,
+  now: nowMinute.value,
+  dismissed: reportDismissed.value,
+  accepted: reportAccepted.value,
+  dismissalEvidence: reportDismissalEvidence.value,
+}));
+
+/** A precomputed "how things stand right now" snapshot for /ask — see src/brain/stats.ts. Recomputed alongside the report, whenever state or the minute changes. */
+export const askStats = computed(() => buildAskStats(brainContext.value));
+
+/** Recovery with every local adjustment and counterfactual, computed once per state change. */
+export const adjusted = computed(() => adjustedRecovery(brainContext.value));
+/** The public muscle-recovery shape shared by the existing screens. */
+export const recovery = computed<MuscleRecovery[]>(() => adjusted.value.map(r => ({
+  muscle: r.muscle, pct: r.adjustedPct, hoursLeft: r.adjustedHoursLeft, windowHours: r.adjustedWindowHours,
+  lastTrainedAt: r.lastTrainedAt, lastDay: r.lastDay, personalized: r.personalized, recovering: r.adjustedPct < 100,
+})));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value || 3));
+const reviewSessions = computed(() => state.value.sessions);
+const reviewCustom = computed(() => state.value.customExercises);
+const reviewSchedule = computed(() => state.value.schedule);
+const reviewSplits = computed(() => state.value.splits);
+/** Closed-week projection reads selected references, so typing or clock ticks do not recompute it. */
+export const closedWeekReview = computed(() => weekReview({
+  sessions: reviewSessions.value,
+  custom: reviewCustom.value,
+  schedule: reviewSchedule.value,
+  splits: reviewSplits.value,
+  today: today.value,
+} as BrainContext));
+const objectiveState = computed(() => state.value.coach.objective);
+const objectiveSessions = computed(() => state.value.sessions);
+const objectiveBody = computed(() => state.value.body);
+const objectiveCustom = computed(() => state.value.customExercises);
+/** Long-term agreement evidence, isolated from tone, tab, Ask draft and second-clock changes. */
+export const objectiveReview = computed(() => projectObjectiveReview({
+  objective: objectiveState.value,
+  sessions: objectiveSessions.value,
+  body: objectiveBody.value,
+  custom: objectiveCustom.value,
+  today: today.value,
+}));
 export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
-export const insights = computed(() => coachInsights({ sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises, today: today.value, now: Date.now() }, 3));
+
+/** The brain's report: facts and suggestions, recomputed when state or the minute changes. */
+export const report = computed(() => buildReport(brainContext.value));
+const renderContext = computed<RenderContext>(() => ({ unit: state.value.preferences.weightUnit, splits: state.value.splits, custom: state.value.customExercises, today: today.value, goal: state.value.goal }));
+export const insights = computed(() => insightsFrom(report.value, renderContext.value));
+/** One true line about this person's own training, free and instant. Null falls back to the standing quote. */
+export const spark = computed(() => dailySpark(insights.value, today.value));
+export const suggestions = computed(() => suggestionsFrom(report.value, state.value.coach, renderContext.value));
+export const todaySuggestion = computed(() => suggestions.value.find(s => s.kind === 'today_plan'));
+
+/** The one shared presence cue (docs/escobar-presence), or null. Pure derivation — no I/O. */
+export const presenceMoment = computed<CoachingMoment | null>(() => selectMoment({
+  suggestions: suggestions.value.filter(s => s.kind !== 'today_plan'),
+  insights: insights.value,
+  tone: state.value.coach.presence?.tone ?? 'steady',
+  dismissed: state.value.coach.presence?.dismissed ?? [],
+}));
+/** Today's completed-session feedback, separate from report-derived proposals. */
+export const sessionFeedback = computed(() => selectSessionFeedback(
+  state.value.sessions,
+  today.value,
+  state.value.customExercises,
+  state.value.coach.presence?.tone ?? 'steady',
+));
+export const deload = computed(() => (deloadActive(state.value.coach.deload, today.value) ? state.value.coach.deload : null));
+
 export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+export const readingToday = computed(() => readinessToday(state.value.readiness, today.value));
+export const canOfferTodayPlan = computed(() => !!todaySuggestion.value && !!scheduledSplit.value && sessionsToday.value.length === 0 && !state.value.active);
+export const verdictCard = computed<ReadinessCard | null>(() => {
+  const readiness = readingToday.value;
+  if (!readiness) return null;
+  const consequence = readinessConsequence({
+    recovery: adjusted.value,
+    plan: todaySuggestion.value?.proposal ?? null,
+    custom: state.value.customExercises,
+    hasScheduledSplit: !!scheduledSplit.value,
+  });
+  return readinessCard({ readiness, consequence, canOfferPlan: canOfferTodayPlan.value });
+});
+
+/**
+ * What the running rest is counting towards. This deliberately does not read
+ * nowMs, so the one-second clock tick never recomputes progression targets.
+ */
+export const restNext = computed<RestNext | null>(() => {
+  const s = state.value;
+  const active = s.active;
+  const from = active?.rest?.from;
+  if (!active || !from) return null;
+  const entry = active.entries[from.entry];
+  if (!entry || from.startedAt !== active.startedAt || from.exerciseId !== entry.exerciseId) return null;
+  const suggestion = applyDeload(
+    suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises),
+    deload.value,
+    today.value,
+  );
+  const captured = entry.planComparisonValid === false ? undefined : active.plan?.entries.find(planEntry => planEntry.id === entry.planEntryId);
+  const base: PlanSetTarget[] = captured?.targets ?? suggestion.sets.map(target => ({ kg: target.kg, reps: target.reps, durationSec: target.durationSec }));
+  const effective = entry.sets.map((_, index) => effectiveSetTarget(base, captured ? entry.targetOverrides : undefined, index));
+  return nextAfterRest(active.entries, from, suggestion, effective);
+});

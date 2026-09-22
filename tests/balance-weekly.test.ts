@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { trainingBalance } from '@/brain/balance';
-import { trainingStreak, weekSummary } from '@/brain/weekly';
-import { coachInsights } from '@/brain/coach/rules';
+import { trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { buildReport } from '@/brain/coach/report';
+import { insightsFrom, type RenderContext } from '@/brain/coach/words';
+import type { BrainContext } from '@/brain/coach/context';
 import { emptySchedule } from '@/core/models';
 import { session, sets } from './helpers';
 
@@ -30,6 +32,24 @@ describe('weekly', () => {
     expect(w.records.length).toBeGreaterThan(0);
     expect(w.grade.title).toBe('Building momentum');
   });
+  it('reports one entry per week, oldest first, ending on the current week', () => {
+    const s = [session('2026-08-03', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]), session('2026-09-14', [{ id: 'lib_barbell_bench_press', sets: sets(62.5, 8) }])];
+    const weeks = weeklyVolumeHistory(s, '2026-09-18', 8);
+    expect(weeks).toHaveLength(8);
+    expect(weeks.every((w, i) => i === 0 || w.start > weeks[i - 1]!.start)).toBe(true); // oldest first
+    const last = weeks.at(-1)!;
+    expect(last.start).toBe(weekSummary(s, '2026-09-18').start); // last entry is the current week
+    const withBench = weeks.find(w => w.start <= '2026-09-14' && w.end >= '2026-09-14');
+    expect(withBench?.sets).toBe(3);
+    expect(withBench?.volumeKg).toBe(62.5 * 8 * 3);
+  });
+
+  it('a week with nothing logged is a real zero, not skipped', () => {
+    const weeks = weeklyVolumeHistory([], '2026-09-18', 4);
+    expect(weeks).toHaveLength(4);
+    for (const w of weeks) expect(w).toMatchObject({ sets: 0, volumeKg: 0 });
+  });
+
   it('schedule-aware streak ignores rest days and forgives today', () => {
     const schedule = { ...emptySchedule(), mon: 'split_push', wed: 'split_pull', fri: 'split_legs' };
     const s = [session('2026-09-14', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]), session('2026-09-16', [{ id: 'lib_lat_pulldown', sets: sets(60, 8) }])];
@@ -42,17 +62,20 @@ describe('weekly', () => {
 });
 
 describe('coach', () => {
+  const ctx = (sessions: BrainContext['sessions']): BrainContext => ({ sessions, splits: [], schedule: emptySchedule(), custom: [], goal: 'lean', restDefaultSec: 90, health: { connected: false }, readiness: [], deload: null, today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), dismissed: {}, accepted: {} });
+  const render: RenderContext = { unit: 'kg', splits: [], custom: [], today: '2026-09-18', goal: 'lean' };
   it('asks for a first session on an empty app', () => {
-    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
-    expect(insights[0]?.id).toBe('first-session');
+    const insights = insightsFrom(buildReport(ctx([])), render);
+    expect(insights[0]?.id).toBe('first_sessions:baseline');
+    expect(insights[0]?.title).toBe('Start with a few sessions');
   });
   it('flags missing effort ratings and imbalance with plain words', () => {
     const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
     const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, null, 5) }, { id: 'lib_shoulder_press', sets: sets(30, 8, undefined, 4) }]));
-    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = insightsFrom(buildReport(ctx(s)), render);
     const ids = insights.map(i => i.id);
-    expect(ids).toContain('balance:push_pull');
-    expect(ids).toContain('effort-missing');
+    expect(ids).toContain('balance_imbalance:push_pull');
+    expect(ids).toContain('effort_missing:recent');
     for (const i of insights) expect(i.action.length).toBeGreaterThan(10);
   });
 });

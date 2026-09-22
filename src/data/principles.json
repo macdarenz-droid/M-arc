@@ -1,0 +1,280 @@
+{
+  "version": 2,
+  "verifiedOn": "2026-09-19",
+  "verificationMethod": "search-index",
+  "verificationNote": "Each citation was confirmed on 2026-09-19 against web-search records of the publisher page and PubMed entry (title, authors, journal, year, PMID or DOI where shown). Direct journal fetches were unavailable in the build environment. See docs/RESEARCH.md.",
+  "ratings": ["strong", "moderate", "contested", "coaching_consensus"],
+  "cards": [
+    {
+      "id": "progressive_overload",
+      "title": "Progressive overload, and reps count as progress",
+      "rating": "strong",
+      "statement": "To keep adapting, training has to get a little harder over time. Adding repetitions at the same load is real progress, not a placeholder for adding weight. Both load progression and rep progression grow muscle about equally.",
+      "disputed": "Nothing about the direction. How fast to progress, and by how much, varies by person.",
+      "appUse": "Double progression: add a rep until the top of the range, hit it twice without max effort, then take one small load step.",
+      "findingKinds": ["progressing", "plateau", "decline", "session_execution", "near_miss"],
+      "proposalKinds": ["load_next"],
+      "citations": [
+        { "key": "acsm2009", "authors": "American College of Sports Medicine", "year": 2009, "title": "Position stand. Progression models in resistance training for healthy adults", "journal": "Med Sci Sports Exerc", "where": "41(3):687-708", "pmid": "19204579", "verified": "search-index" },
+        { "key": "acsm2026", "authors": "American College of Sports Medicine", "year": 2026, "title": "Position Stand. Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults: An Overview of Reviews", "journal": "Med Sci Sports Exerc", "where": "58(4):851-872", "pmid": "41843416", "verified": "search-index" },
+        { "key": "plotkin2022", "authors": "Plotkin D, Coleman M, Van Every D, et al.", "year": 2022, "title": "Progressive overload without progressing load? The effects of load or repetition progression on muscular adaptations", "journal": "PeerJ", "where": "10:e14142", "pmid": "36199287", "doi": "10.7717/peerj.14142", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "volume_dose_response",
+      "title": "Weekly volume drives growth, with diminishing returns",
+      "rating": "strong",
+      "statement": "More hard sets per muscle per week produce more growth, up to a point. Past that point each extra set adds less and costs more recovery. Roughly ten or more weekly sets per muscle is where research suggests most of the benefit sits, and the exact ceiling varies by person and muscle.",
+      "disputed": "The exact shape at high volumes, whether there is a true plateau, and how much a set far from failure is worth. Individual response varies widely. Any specific set count is a band, not a law.",
+      "appUse": "Weekly effective sets per muscle compared with the user's own trailing baseline and a deliberately wide band.",
+      "findingKinds": ["volume_drop", "volume_spike", "weekly_sets_out_of_band", "uncovered_muscle", "focus_behind", "week_review"],
+      "proposalKinds": ["add_exercise", "split_new", "split_modify"],
+      "citations": [
+        { "key": "schoenfeld2017volume", "authors": "Schoenfeld BJ, Ogborn D, Krieger JW", "year": 2017, "title": "Dose-response relationship between weekly resistance training volume and increases in muscle mass: A systematic review and meta-analysis", "journal": "J Sports Sci", "where": "35(11):1073-1082", "pmid": "27433992", "doi": "10.1080/02640414.2016.1210197", "verified": "search-index" },
+        { "key": "pelland2026", "authors": "Pelland JC, Remmert JF, Robinson ZP, Hinson SR, Zourdos MC", "year": 2026, "title": "The Resistance Training Dose Response: Meta-Regressions Exploring the Effects of Weekly Volume and Frequency on Muscle Hypertrophy and Strength Gains", "journal": "Sports Med", "where": "56(2):481-505", "pmid": "41343037", "verified": "search-index" },
+        { "key": "acsm2026", "authors": "American College of Sports Medicine", "year": 2026, "title": "Position Stand. Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults: An Overview of Reviews", "journal": "Med Sci Sports Exerc", "where": "58(4):851-872", "pmid": "41843416", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "frequency_secondary_to_volume",
+      "title": "Frequency matters mostly through volume",
+      "rating": "moderate",
+      "statement": "How many days a week a muscle is trained matters less than how much good work it gets across the week. Splitting the same volume over more days can make each session better, but it is not required. Training a muscle a day later than ideal mainly costs session quality, not progress.",
+      "disputed": "Whether very high per-session volumes become low-value, which would make frequency matter more at the top end.",
+      "appUse": "Today's plan can swap a split without guilt. Split proposals spread focus-muscle volume over at least two days to fit more quality work, not as a rule.",
+      "findingKinds": [],
+      "proposalKinds": ["today_plan", "split_new"],
+      "citations": [
+        { "key": "schoenfeld2019frequency", "authors": "Schoenfeld BJ, Grgic J, Krieger J", "year": 2019, "title": "How many times per week should a muscle be trained to maximize muscle hypertrophy? A systematic review and meta-analysis of studies examining the effects of resistance training frequency", "journal": "J Sports Sci", "where": "37(11):1286-1295", "pmid": "30558493", "doi": "10.1080/02640414.2018.1555906", "verified": "search-index" },
+        { "key": "grgic2018frequency", "authors": "Grgic J, Schoenfeld BJ, Davies TB, Lazinica B, Krieger JW, Pedisic Z", "year": 2018, "title": "Effect of Resistance Training Frequency on Gains in Muscular Strength: A Systematic Review and Meta-Analysis", "journal": "Sports Med", "where": "48(5):1207-1220", "pmid": "29470825", "verified": "search-index" },
+        { "key": "pelland2026", "authors": "Pelland JC, Remmert JF, Robinson ZP, Hinson SR, Zourdos MC", "year": 2026, "title": "The Resistance Training Dose Response: Meta-Regressions Exploring the Effects of Weekly Volume and Frequency on Muscle Hypertrophy and Strength Gains", "journal": "Sports Med", "where": "56(2):481-505", "pmid": "41343037", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "effort_rir_scale",
+      "title": "Effort can be rated by reps in reserve",
+      "rating": "moderate",
+      "statement": "Asking how many more reps you could have done is a valid, practical way to measure how hard a set was. In this app, easy means about four or more reps left, ideal about one to three, max about zero to one. A missing rating never counts as easy or max; it just lowers confidence.",
+      "disputed": "Accuracy is lower far from failure and in beginners, and people tend to underestimate how many reps they had left.",
+      "appUse": "The three-level effort maps to reps-in-reserve bands used by goals and by the recovery model.",
+      "findingKinds": ["effort_missing", "effort_drift_harder", "effort_drift_easier", "effort_mismatch"],
+      "proposalKinds": [],
+      "citations": [
+        { "key": "zourdos2016", "authors": "Zourdos MC, Klemp A, Dolan C, et al.", "year": 2016, "title": "Novel Resistance Training-Specific Rating of Perceived Exertion Scale Measuring Repetitions in Reserve", "journal": "J Strength Cond Res", "where": "30(1):267-275", "pmid": "26049792", "verified": "search-index" },
+        { "key": "helms2016", "authors": "Helms ER, Cronin J, Storey A, Zourdos MC", "year": 2016, "title": "Application of the Repetitions in Reserve-Based Rating of Perceived Exertion Scale for Resistance Training", "journal": "Strength Cond J", "where": "38(4):42-49", "pmid": "27531969", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "proximity_to_failure",
+      "title": "Close to failure helps growth a little; failure every set is not required",
+      "rating": "moderate",
+      "statement": "Sets need to be hard to be useful. Stopping a rep or two short of failure gives most of the benefit for growth and all of it for strength, at lower fatigue cost. Training to absolute failure on every set is not superior and costs more recovery.",
+      "disputed": "How close is close enough for growth, and whether the extra growth from the last rep is worth the extra fatigue. Researchers still disagree.",
+      "appUse": "Goal reps-in-reserve bands. A strength goal with max effort on every set is flagged; a growth goal is not, but recovery accounts for it.",
+      "findingKinds": ["effort_mismatch"],
+      "proposalKinds": ["deload_week"],
+      "citations": [
+        { "key": "grgic2022failure", "authors": "Grgic J, Schoenfeld BJ, Orazem J, Sabol F", "year": 2022, "title": "Effects of resistance training performed to repetition failure or non-failure on muscular strength and hypertrophy: A systematic review and meta-analysis", "journal": "J Sport Health Sci", "where": "11(2):202-211", "pmid": "33497853", "doi": "10.1016/j.jshs.2021.01.007", "verified": "search-index" },
+        { "key": "refalo2023", "authors": "Refalo MC, Helms ER, Trexler ET, Hamilton DL, Fyfe JJ", "year": 2023, "title": "Influence of Resistance Training Proximity-to-Failure on Skeletal Muscle Hypertrophy: A Systematic Review with Meta-analysis", "journal": "Sports Med", "where": "53(3):649-665", "pmid": "36334240", "doi": "10.1007/s40279-022-01784-y", "verified": "search-index" },
+        { "key": "robinson2024", "authors": "Robinson ZP, Pelland JC, Remmert JF, Refalo MC, Jukic I, Steele J, Zourdos MC", "year": 2024, "title": "Exploring the Dose-Response Relationship Between Estimated Resistance Training Proximity to Failure, Strength Gain, and Muscle Hypertrophy: A Series of Meta-Regressions", "journal": "Sports Med", "where": "54(9):2209-2231", "pmid": "38970765", "doi": "10.1007/s40279-024-02069-2", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "load_and_rep_range",
+      "title": "Heavy loads for strength; a wide rep range works for size",
+      "rating": "strong",
+      "statement": "If the goal is maximal strength, lift heavy, around eighty percent of a one-rep max or more. If the goal is muscle size, loads from light to heavy work about equally as long as sets are taken close to failure.",
+      "disputed": "Very light loads, under roughly thirty percent, are less efficient and far more fatiguing per unit of growth.",
+      "appUse": "Goal rep ranges. Rep-range mismatch is a nudge for strength goals and information for growth goals.",
+      "findingKinds": ["rep_range_mismatch"],
+      "proposalKinds": ["load_next"],
+      "citations": [
+        { "key": "schoenfeld2017load", "authors": "Schoenfeld BJ, Grgic J, Ogborn D, Krieger JW", "year": 2017, "title": "Strength and Hypertrophy Adaptations Between Low- vs. High-Load Resistance Training: A Systematic Review and Meta-analysis", "journal": "J Strength Cond Res", "where": "31(12):3508-3523", "pmid": "28834797", "verified": "search-index" },
+        { "key": "acsm2026", "authors": "American College of Sports Medicine", "year": 2026, "title": "Position Stand. Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults: An Overview of Reviews", "journal": "Med Sci Sports Exerc", "where": "58(4):851-872", "pmid": "41843416", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "recovery_time_course",
+      "title": "Recovery takes one to three days and depends on how hard and how much",
+      "rating": "moderate",
+      "statement": "After a hard session a muscle's ability to perform is reduced for roughly one to three days. Bigger, harder and less familiar sessions take longer; familiar sessions take less. Trained people recover faster because muscle damage shrinks with practice. Training a muscle before it has recovered mostly means a worse session, not harm.",
+      "disputed": "Exact hours per muscle and the size of individual variation. No table of recovery times by muscle is supported by evidence; the app's windows are priors that only widen with the user's own evidence.",
+      "appUse": "24, 48 or 72 hours by effort as a prior, scaled by session volume against the muscle's own baseline, widened by the user's short-rest history, never shrunk below the effort floor.",
+      "findingKinds": ["under_recovered"],
+      "proposalKinds": ["today_plan"],
+      "citations": [
+        { "key": "paulsen2012", "authors": "Paulsen G, Mikkelsen UR, Raastad T, Peake JM", "year": 2012, "title": "Leucocytes, cytokines and satellite cells: what role do they play in muscle damage and regeneration following eccentric exercise?", "journal": "Exerc Immunol Rev", "where": "18:42-97", "pmid": "22876722", "verified": "search-index" },
+        { "key": "damas2016", "authors": "Damas F, Phillips SM, Libardi CA, et al.", "year": 2016, "title": "Resistance training-induced changes in integrated myofibrillar protein synthesis are related to hypertrophy only after attenuation of muscle damage", "journal": "J Physiol", "where": "594(18):5209-5222", "doi": "10.1113/JP272472", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "deload_evidence",
+      "title": "Planned deloads have weak evidence; easing off when signals say so is reasonable",
+      "rating": "contested",
+      "statement": "Taking an easier week on a fixed schedule has not been shown to improve muscle growth, and one trial found it slightly hurt strength. What is well supported is that reduced training keeps most gains, so an easier week costs little when you actually need one.",
+      "disputed": "Whether deloads help people who are genuinely over-reached, which trials of healthy volunteers do not test.",
+      "appUse": "Never by calendar. An easier week is proposed only when several lifts decline together and effort at the same load is rising.",
+      "findingKinds": ["decline", "effort_drift_harder"],
+      "proposalKinds": ["deload_week"],
+      "citations": [
+        { "key": "coleman2024", "authors": "Coleman M, Burke R, Augustin F, et al.", "year": 2024, "title": "Gaining more from doing less? The effects of a one-week deload period during supervised resistance training on muscular adaptations", "journal": "PeerJ", "where": "12:e16777", "doi": "10.7717/peerj.16777", "verified": "search-index" },
+        { "key": "ogasawara2013", "authors": "Ogasawara R, Yasuda T, Ishii N, Abe T", "year": 2013, "title": "Comparison of muscle hypertrophy following 6-month of continuous and periodic strength training", "journal": "Eur J Appl Physiol", "where": "113(4):975-985", "doi": "10.1007/s00421-012-2511-9", "verified": "search-index" },
+        { "key": "bosquet2013", "authors": "Bosquet L, Berryman N, Dupuy O, et al.", "year": 2013, "title": "Effect of training cessation on muscular performance: A meta-analysis", "journal": "Scand J Med Sci Sports", "where": "23(3):e140-e149", "pmid": "23347054", "doi": "10.1111/sms.12047", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "detraining_retraining",
+      "title": "Time off costs less than people fear, and regain is fast",
+      "rating": "moderate",
+      "statement": "A few weeks away reduces strength modestly. Muscle and strength come back faster than they were first built, because muscle keeps a memory of earlier growth.",
+      "disputed": "How long the memory lasts and how much of the quick regain is muscle versus skill.",
+      "appUse": "More than 28 days away means repeat the last load once with no increase. Copy: strength comes back fast; make the first session easy.",
+      "findingKinds": ["long_gap"],
+      "proposalKinds": ["load_next"],
+      "citations": [
+        { "key": "seaborne2018", "authors": "Seaborne RA, Strauss J, Cocks M, et al.", "year": 2018, "title": "Human Skeletal Muscle Possesses an Epigenetic Memory of Hypertrophy", "journal": "Sci Rep", "where": "8:1898", "pmid": "29382913", "doi": "10.1038/s41598-018-20287-3", "verified": "search-index" },
+        { "key": "bosquet2013", "authors": "Bosquet L, Berryman N, Dupuy O, et al.", "year": 2013, "title": "Effect of training cessation on muscular performance: A meta-analysis", "journal": "Scand J Med Sci Sports", "where": "23(3):e140-e149", "pmid": "23347054", "doi": "10.1111/sms.12047", "verified": "search-index" },
+        { "key": "ogasawara2013", "authors": "Ogasawara R, Yasuda T, Ishii N, Abe T", "year": 2013, "title": "Comparison of muscle hypertrophy following 6-month of continuous and periodic strength training", "journal": "Eur J Appl Physiol", "where": "113(4):975-985", "doi": "10.1007/s00421-012-2511-9", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "beginner_progression",
+      "title": "Beginners: start light, add small steps often",
+      "rating": "moderate",
+      "statement": "New lifters respond to modest doses and progress quickly. Starting conservatively, an empty bar or the lightest dumbbell, and adding small amounts each session is safer and loses nothing. Increasing load by a few percent once you can do a rep or two beyond target is the standard guidance.",
+      "disputed": "There is no research table of starting weights. The specific two-clean-sessions-then-step rule is a widely taught coaching heuristic, not a trial result.",
+      "appUse": "Starting loads by equipment, load steps of 1, 2 or 2.5 kg capped at ten percent, and the confirm-then-step rule.",
+      "findingKinds": ["first_sessions"],
+      "proposalKinds": ["load_next"],
+      "citations": [
+        { "key": "acsm2009", "authors": "American College of Sports Medicine", "year": 2009, "title": "Position stand. Progression models in resistance training for healthy adults", "journal": "Med Sci Sports Exerc", "where": "41(3):687-708", "pmid": "19204579", "verified": "search-index" },
+        { "key": "peterson2005", "authors": "Peterson MD, Rhea MR, Alvar BA", "year": 2005, "title": "Applications of the dose-response for muscular strength development: a review of meta-analytic efficacy and reliability for designing training prescription", "journal": "J Strength Cond Res", "where": "19(4):950-958", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "exercise_variation",
+      "title": "Changing exercises: a useful reset, not a growth hack",
+      "rating": "contested",
+      "statement": "Swapping a stalled exercise for a similar one can spread growth across a muscle and refresh motivation. It has not been shown to grow more muscle overall, and too much variation makes progress hard to track.",
+      "disputed": "Whether the observed regional growth is real or measurement. The best-supported benefit is motivation and adherence.",
+      "appUse": "A swap from the same movement pattern for a plateaued lift, worded as a fresh stimulus and a reset, not a fix.",
+      "findingKinds": ["plateau", "redundant_exercises", "chronic_skip"],
+      "proposalKinds": ["exercise_swap", "split_modify"],
+      "citations": [
+        { "key": "fonseca2014", "authors": "Fonseca RM, Roschel H, Tricoli V, et al.", "year": 2014, "title": "Changes in exercises are more effective than in loading schemes to improve muscle strength", "journal": "J Strength Cond Res", "where": "28(11):3085-3092", "doi": "10.1519/JSC.0000000000000539", "verified": "search-index" },
+        { "key": "kassiano2022", "authors": "Kassiano W, Nunes JP, Costa B, Ribeiro AS, Schoenfeld BJ, Cyrino ES", "year": 2022, "title": "Does Varying Resistance Exercises Promote Superior Muscle Hypertrophy and Strength Gains? A Systematic Review", "journal": "J Strength Cond Res", "where": "36(6):1753-1762", "pmid": "35438660", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "rest_intervals",
+      "title": "Rest longer between heavy sets",
+      "rating": "moderate",
+      "statement": "Two to three minutes between sets beats one minute for strength and, in trained lifters, for growth. Shorter rests are fine for lighter isolation work and for beginners.",
+      "disputed": "The optimum for growth on isolation exercises.",
+      "appUse": "Suggest two to three minutes on compound lifts for a strength goal when the rest default is short. The live rest timer also grades the person's own default up for a max-effort or compound set and down for an easy one; it still does not log the rest actually taken.",
+      "findingKinds": [],
+      "proposalKinds": ["rest_default"],
+      "citations": [
+        { "key": "schoenfeld2016rest", "authors": "Schoenfeld BJ, Pope ZK, Benik FM, et al.", "year": 2016, "title": "Longer Interset Rest Periods Enhance Muscle Strength and Hypertrophy in Resistance-Trained Men", "journal": "J Strength Cond Res", "where": "30(7):1805-1812", "pmid": "26605807", "verified": "search-index" },
+        { "key": "grgic2018rest", "authors": "Grgic J, Schoenfeld BJ, Skrepnik M, Davies TB, Mikulic P", "year": 2018, "title": "Effects of Rest Interval Duration in Resistance Training on Measures of Muscular Strength: A Systematic Review", "journal": "Sports Med", "where": "48(1):137-151", "pmid": "28933024", "doi": "10.1007/s40279-017-0788-x", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "push_pull_balance",
+      "title": "Push and pull balance",
+      "rating": "coaching_consensus",
+      "statement": "Training the back and rear shoulders roughly as much as the chest and front shoulders is standard coaching advice for shoulder health and even development. It is reasonable, and the shoulder is where many training injuries happen, but no trial has shown that a particular ratio prevents injury.",
+      "disputed": "Almost everything specific. The rule is kept because lopsided programmes are common and the cost of fixing them is low.",
+      "appUse": "Push versus pull and upper versus lower over three weeks, with softened copy labelled as coaching consensus.",
+      "findingKinds": ["balance_imbalance"],
+      "proposalKinds": ["add_exercise", "split_modify"],
+      "citations": [
+        { "key": "kolber2010", "authors": "Kolber MJ, Beekhuizen KS, Cheng MS, Hellman MA", "year": 2010, "title": "Shoulder injuries attributed to resistance training: a brief review", "journal": "J Strength Cond Res", "where": "24(6):1696-1704", "pmid": "20508476", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "sleep_and_performance",
+      "title": "Short sleep lowers strength performance",
+      "rating": "moderate",
+      "statement": "A short night measurably reduces next-day strength, especially on big compound lifts, by several percent on average. Rating effort honestly on those days keeps the coach from misreading a tired session as a real decline.",
+      "disputed": "Thresholds, and how much habitual short sleep matters versus one bad night.",
+      "appUse": "Only when Health Connect provides sleep. Suggest keeping the load and not chasing records that day. Never fires without sleep data.",
+      "findingKinds": ["low_sleep_readiness"],
+      "proposalKinds": ["today_plan"],
+      "citations": [
+        { "key": "knowles2018", "authors": "Knowles OE, Drinkwater EJ, Urwin CS, Lamon S, Aisbett B", "year": 2018, "title": "Inadequate sleep and muscle strength: Implications for resistance training", "journal": "J Sci Med Sport", "where": "21(9):959-968", "pmid": "29422383", "doi": "10.1016/j.jsams.2018.01.012", "verified": "search-index" },
+        { "key": "craven2022", "authors": "Craven J, McCartney D, Desbrow B, et al.", "year": 2022, "title": "Effects of Acute Sleep Loss on Physical Performance: A Systematic and Meta-Analytical Review", "journal": "Sports Med", "where": "52(11):2669-2690", "pmid": "35708888", "doi": "10.1007/s40279-022-01706-y", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "habit_formation_and_cues",
+      "title": "Habits form through repeated cues, slowly, and survive missed days",
+      "rating": "moderate",
+      "statement": "Training at a consistent time and context builds automaticity over weeks to months, about two months on average with a very wide range. Deciding in advance when and where you will train roughly doubles the odds of doing it. Missing one day does not undo the habit.",
+      "disputed": "Whether phone reminders help long term or just create fatigue. Evidence for reminders is modest, so they are capped hard.",
+      "appUse": "Learned schedule proposals and cue-timed nudges: at most one a day, none on days already trained, retired when a habit day goes cold, one tap to turn off, no streak shaming.",
+      "findingKinds": ["habit_pattern", "chronic_skip", "consistency_drift"],
+      "proposalKinds": ["schedule"],
+      "citations": [
+        { "key": "lally2010", "authors": "Lally P, van Jaarsveld CHM, Potts HWW, Wardle J", "year": 2010, "title": "How are habits formed: Modelling habit formation in the real world", "journal": "Eur J Soc Psychol", "where": "40(6):998-1009", "doi": "10.1002/ejsp.674", "verified": "search-index" },
+        { "key": "gollwitzer2006", "authors": "Gollwitzer PM, Sheeran P", "year": 2006, "title": "Implementation intentions and goal achievement: A meta-analysis of effects and processes", "journal": "Adv Exp Soc Psychol", "where": "38:69-119", "doi": "10.1016/S0065-2601(06)38002-1", "verified": "search-index" },
+        { "key": "kaushal2015", "authors": "Kaushal N, Rhodes RE", "year": 2015, "title": "Exercise habit formation in new gym members: a longitudinal study", "journal": "J Behav Med", "where": "38(4):652-663", "pmid": "25851609", "doi": "10.1007/s10865-015-9640-7", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "one_rm_estimation",
+      "title": "One-rep-max estimates are estimates",
+      "rating": "moderate",
+      "statement": "Formulas that predict a one-rep max from a set of several reps correlate well with real maxes but carry bias, and they get worse as reps go up. Treat the number as about right, not exact, and never as a reason to test a true max.",
+      "disputed": "Which equation is best; none is exact.",
+      "appUse": "Epley estimate capped at ten reps, always worded as about X kg one-rep estimate.",
+      "findingKinds": ["record", "near_miss"],
+      "proposalKinds": [],
+      "citations": [
+        { "key": "lesuer1997", "authors": "LeSuer DA, McCormick JH, Mayhew JL, Wasserstein RL, Arnold MD", "year": 1997, "title": "The Accuracy of Prediction Equations for Estimating 1-RM Performance in the Bench Press, Squat, and Deadlift", "journal": "J Strength Cond Res", "where": "11(4):211-213", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "load_monitoring_acwr",
+      "title": "Acute-versus-chronic load ratios are not injury predictors",
+      "rating": "contested",
+      "statement": "Comparing this week's training load with the recent average is a reasonable way to notice a sudden jump. It is not a validated predictor of injury, and the coach never presents it as one.",
+      "disputed": "Most of it. The ratio has known statistical pitfalls and no causal evidence.",
+      "appUse": "A per-muscle acute-to-chronic volume ratio is one soft input to volume-spike and deload signals. Copy never mentions injury risk.",
+      "findingKinds": ["volume_spike"],
+      "proposalKinds": ["deload_week"],
+      "citations": [
+        { "key": "gabbett2016", "authors": "Gabbett TJ", "year": 2016, "title": "The training-injury prevention paradox: should athletes be training smarter and harder?", "journal": "Br J Sports Med", "where": "50(5):273-280", "pmid": "26758673", "doi": "10.1136/bjsports-2015-095788", "verified": "search-index" },
+        { "key": "impellizzeri2020", "authors": "Impellizzeri FM, Tenan MS, Kempton T, Novak A, Coutts AJ", "year": 2020, "title": "Acute:Chronic Workload Ratio: Conceptual Issues and Fundamental Pitfalls", "journal": "Int J Sports Physiol Perform", "where": "15(6):907-913", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "body_fat_estimate",
+      "title": "Tape-measure body fat is an estimate",
+      "rating": "moderate",
+      "statement": "The circumference method estimates body fat within a few percentage points for most people. It is useful for tracking direction over time, not for a precise number.",
+      "disputed": "Accuracy at the extremes of body composition and in populations unlike the original sample.",
+      "appUse": "Shown with about and a plus-or-minus range, and called an estimate.",
+      "findingKinds": [],
+      "proposalKinds": [],
+      "citations": [
+        { "key": "hodgdon1984", "authors": "Hodgdon JA, Beckett MB", "year": 1984, "title": "Prediction of percent body fat for U.S. Navy men from body circumferences and height", "journal": "Naval Health Research Center, San Diego", "where": "Report No. 84-11", "verified": "search-index" }
+      ]
+    },
+    {
+      "id": "subjective_readiness_monitoring",
+      "title": "Self-reported wellness is worth tracking over time; one reading, alone, is a weak signal",
+      "rating": "moderate",
+      "statement": "Short, regular self-reports of soreness, fatigue, stress and sleep are a validated, low-cost way to monitor how someone is coping with training, when tracked over time. A single soreness rating on a single day, on its own, correlates weakly with actual muscle damage and should not be read as measuring anything by itself.",
+      "disputed": "A soreness or fatigue rating from one day says little on its own; the signal is in the pattern over time and the honesty of the self-report, not any single value. This card supports noticing and recalling what someone told the app, never diagnosing, rating severity, or inferring a cause from it.",
+      "appUse": "A note or check-in that mentions discomfort, fatigue or an equipment issue is tagged and can be recalled later — never diagnosed, never given a cause. Findings note_flag and low_readiness.",
+      "findingKinds": ["note_flag", "low_readiness"],
+      "proposalKinds": [],
+      "citations": [
+        { "key": "hooper1995", "authors": "Hooper SL, Mackinnon LT", "year": 1995, "title": "Monitoring overtraining in athletes: recommendations", "journal": "Sports Med", "where": "20(5):321-327", "pmid": "8584849", "verified": "search-index" },
+        { "key": "foster2001", "authors": "Foster C, Florhaug JA, Franklin J, et al.", "year": 2001, "title": "A new approach to monitoring exercise training", "journal": "J Strength Cond Res", "where": "15(1):109-115", "pmid": "11708692", "verified": "search-index" },
+        { "key": "nosaka2002", "authors": "Nosaka K, Newton M, Sacco P", "year": 2002, "title": "Delayed-onset muscle soreness does not reflect the magnitude of eccentric exercise-induced muscle damage", "journal": "Scand J Med Sci Sports", "where": "12(6):337-346", "pmid": "12453160", "verified": "search-index" }
+      ]
+    }
+  ]
+}

@@ -1,26 +1,65 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { today, unit } from '@/app/selectors';
-import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
+import { deload, insights, presenceMoment, report, suggestions, today, unit } from '@/app/selectors';
+import { Button, Card, Chip, Empty, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad } from '@/core/units';
 import type { LoggedSet, Session } from '@/core/models';
-import { allRecords, PR_LABEL } from '@/brain/prs';
+import { allRecords, PR_LABEL, recordsForSession } from '@/brain/prs';
+import { assessPlanFit } from '@/brain/planFit';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
-import { weekSummary } from '@/brain/weekly';
+import { liftTrajectory } from '@/brain/trajectory';
+import { weekSummary, weeklyVolumeHistory, type WeeklyVolume } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
+import { requestNoteFlags, noteFlagLabel } from '@/ai/notes';
+import { ensureDeviceId, remoteEnabled } from '@/slices/coach/remote';
+import { applySessionNoteFlags } from '@/slices/workout/session';
+import { cleanSessionEdit, removeSessionIfCurrent, replaceSessionIfCurrent } from './sessionEdit';
+import { sessionDebrief } from '@/brain/debrief';
+import { SessionDebrief as SessionDebriefView } from '@/slices/workout/SessionDebrief';
+import { acceptProposal, dismissProposal } from '@/slices/coach/apply';
+import { InsightSheet, SuggestionSheet } from '@/slices/coach/Coach';
+import { PresenceLauncher } from '@/slices/coach/Presence';
+import { dismissPresenceLauncher } from '@/slices/coach/presenceState';
+import { openAsk } from '@/slices/coach/askController';
+import { COACH_NAME } from '@/ui/chatRender';
 
 export function History() {
   const [seg, setSeg] = useState<'log' | 'stats'>('log');
+  const [momentOpen, setMomentOpen] = useState(false);
+  const moment = presenceMoment.value;
+  const momentInsight = moment?.kind === 'insight' ? insights.value.find(i => `insight:${i.id}` === moment.id) : undefined;
+  const momentSuggestion = moment?.kind === 'suggestion' ? suggestions.value.find(sg => `suggestion:${sg.dismissKey}` === moment.id) : undefined;
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div></div>
+      {/*
+        Own full-width row, never squeezed into a shared button row — see
+        docs/escobar-presence/PROGRESS.md's P02 Train entry for why that
+        specific combination (a cramped flex row + this launcher's nested
+        dismiss control) broke the bottom nav's clickability under headless
+        Chromium's mobile+touch emulation. History's topbar has no button
+        row to share, but the same "own row" placement is kept here for
+        consistency and because it's the verified-safe shape.
+      */}
+      <div style={{ marginBottom: 12 }}>
+        <PresenceLauncher moment={moment} label={COACH_NAME} onOpen={() => moment ? setMomentOpen(true) : openAsk()} onDismiss={m => { dismissPresenceLauncher(m); }} />
+      </div>
       <Segmented value={seg} onChange={setSeg} options={[{ value: 'log', label: 'Log' }, { value: 'stats', label: 'Stats' }]} />
       {seg === 'log' ? <Log /> : <Stats />}
+      {momentOpen && momentInsight && <InsightSheet insight={momentInsight} onClose={() => setMomentOpen(false)} />}
+      {momentOpen && momentSuggestion && (
+        <SuggestionSheet
+          suggestion={momentSuggestion}
+          onAccept={() => { showToast(acceptProposal(momentSuggestion.proposal, today.value)); setMomentOpen(false); }}
+          onDismiss={() => { dismissProposal(momentSuggestion.proposal, today.value, report.value); setMomentOpen(false); }}
+          onClose={() => setMomentOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -75,7 +114,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const [open, setOpen] = useState(false);
   return (
-    <Card class="card-press" onClick={() => setOpen(o => !o)}>
+    <Card class="card-press" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label={`${open ? 'Collapse' : 'Expand'} ${session.splitName} session on ${formatDay(session.day)}`}>
       <div class="row-between">
         <div class="grow"><b>{session.splitName}</b><div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div></div>
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
@@ -103,23 +142,47 @@ function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
 
 function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
   const u = unit.value;
+  const sessions = state.value.sessions;
+  const custom = state.value.customExercises;
+  const fresh = sessions.find(candidate => candidate.id === session.id);
+  const debrief = useMemo(() => fresh ? sessionDebrief(fresh, sessions, custom) : null, [fresh, sessions, custom]);
+  const fit = useMemo(() => fresh ? assessPlanFit(fresh) : null, [fresh]);
+  const achievements = useMemo(() => fresh ? recordsForSession(fresh, sessions, custom) : [], [fresh, sessions, custom]);
+  const tone = state.value.coach.presence?.tone ?? 'steady';
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
+  const [note, setNote] = useState(session.note ?? '');
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
-    update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
+    const trimmed = note.trim();
+    const noteChanged = trimmed !== (session.note ?? '').trim();
+    const cleaned = cleanSessionEdit(draft, trimmed, noteChanged);
+    const result = replaceSessionIfCurrent(session, cleaned);
+    if (result !== 'saved') {
+      showToast(result === 'deleted' ? 'This session was deleted. Reopen History.' : 'This session changed. Reopen it before editing.');
+      onClose();
+      return;
+    }
     showToast('Session updated'); onClose();
+    if (trimmed && noteChanged && remoteEnabled.value) {
+      void requestNoteFlags(trimmed, { url: state.value.coach.explainerUrl, deviceId: ensureDeviceId() }).then(r => { if (r.ok) applySessionNoteFlags(session.id, trimmed, r.flags); });
+    }
   };
   const remove = () => {
     const removed = session;
-    update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
+    const result = removeSessionIfCurrent(session);
+    if (result !== 'saved') {
+      showToast(result === 'deleted' ? 'This session was already deleted.' : 'This session changed. Reopen it before deleting.');
+      onClose();
+      return;
+    }
     showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
     onClose();
   };
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
       <div class="stack">
+        {debrief && fit && <SessionDebriefView debrief={debrief} fit={fit} achievements={achievements} tone={tone} unit={u} />}
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
             <b class="small">{e.name}</b>
@@ -135,6 +198,12 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
             </div>
           </Card>
         ))}
+        <Field label="Note" hint="How it felt, soreness, an equipment issue — whatever's useful later.">
+          <input value={note} maxLength={280} placeholder="e.g. Left shoulder felt a bit off on presses" onInput={e => setNote((e.target as HTMLInputElement).value)} />
+        </Field>
+        {!!draft.noteFlags?.length && note.trim() === (session.note ?? '').trim() && (
+          <div class="wrap">{draft.noteFlags.map((f, i) => <Chip key={i}>{noteFlagLabel(f)}</Chip>)}</div>
+        )}
         <p class="hint">Sets with 0 reps are removed on save. Loads are in kg here.{u === 'lb' ? ' Your display unit is lb elsewhere.' : ''}</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}
@@ -145,15 +214,22 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
 
 /* ---------- Stats ---------- */
 
+/** ~3 months, matching what people mean by "my recent performance" — long enough to show a real trend, short enough that the chart stays readable at 12 columns. */
+const VOLUME_CHART_WEEKS = 12;
+
 function Stats() {
   const s = state.value;
   const u = unit.value;
   const w = weekSummary(s.sessions, today.value, s.customExercises);
+  const volumeWeeks = useMemo(() => weeklyVolumeHistory(s.sessions, today.value, VOLUME_CHART_WEEKS), [s.sessions, today.value]);
   const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const [exercise, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
+  const activeDeload = deload.value;
+  const trajectory = useMemo(() => exercise && !activeDeload ? liftTrajectory(s.sessions, exercise, today.value, s.customExercises) : null,
+    [s.sessions, exercise, s.customExercises, today.value, activeDeload]);
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
 
@@ -172,6 +248,12 @@ function Stats() {
         )}
       </Card>
 
+      <Section title="Volume trend">
+        {volumeWeeks.every(wk => wk.sets === 0) ? (
+          <Card class="card-quiet"><p class="small muted">Log a few weeks of sessions and your training volume over time shows up here.</p></Card>
+        ) : <Card><WeeklyVolumeChart weeks={volumeWeeks} unit={u} /></Card>}
+      </Section>
+
       <Section title="Exercise progress">
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
           <Card>
@@ -185,6 +267,13 @@ function Stats() {
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map(st => setLabel(st, u)).join(' · ')}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                {trajectory && <div class="hint stack-sm">
+                  {trajectory.status === 'projected' ? <>
+                    <p>Logged top load is rising about {formatLoad(trajectory.kgPerWeek, u)} per week across {trajectory.points} logged days.</p>
+                    <p>If that rate holds, {formatLoad(trajectory.nextKg, u)} projects around {formatDay(trajectory.projectedOn)}. Reassess after {formatDay(trajectory.expiresOn)}.</p>
+                  </> : <p>This projection has expired; another logged session is needed to reassess it.</p>}
+                  <p>A past-load trend, not a scheduled target. Rep counts and equipment setup can affect it.</p>
+                </div>}
                 <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
@@ -199,6 +288,37 @@ function Stats() {
           )}
         </Card>
       </Section>
+    </div>
+  );
+}
+
+/**
+ * Weekly training volume (working sets × weight × reps) over the last N
+ * weeks — the one real "how has my training gone" trend view, since
+ * "This week" above only ever shows the current week. Tapping a bar shows
+ * that week's own total; a single series needs no legend, just the title.
+ */
+function WeeklyVolumeChart({ weeks, unit: u }: { weeks: WeeklyVolume[]; unit: 'kg' | 'lb' }) {
+  const [selected, setSelected] = useState(weeks.length - 1);
+  const active = weeks[selected] ?? weeks[weeks.length - 1]!;
+  const max = Math.max(1, ...weeks.map(wk => wk.volumeKg));
+  return (
+    <div class="stack-sm">
+      <div class="row-between">
+        <div>
+          <div class="eyebrow">Weekly volume</div>
+          <b class="num" style={{ fontSize: 20 }}>{formatLoad(active.volumeKg, u)}</b>
+        </div>
+        <span class="small muted">{formatDay(active.start, { day: 'numeric', month: 'short' })} – {formatDay(active.end, { day: 'numeric', month: 'short' })} · {active.sets} sets</span>
+      </div>
+      <div class="volume-chart" role="group" aria-label={`Weekly training volume, last ${weeks.length} weeks`}>
+        {weeks.map((wk, i) => (
+          <button key={wk.start} type="button" class="volume-bar" aria-pressed={i === selected} aria-label={`Week of ${formatDay(wk.start, { day: 'numeric', month: 'short' })}: ${formatLoad(wk.volumeKg, u)}, ${wk.sets} sets`} onClick={() => setSelected(i)}>
+            <i style={{ height: `${Math.max(4, (wk.volumeKg / max) * 100)}%`, opacity: i === selected ? 1 : 0.4 }} />
+          </button>
+        ))}
+      </div>
+      <p class="hint">Tap a bar for that week's total. Volume is working sets × weight × reps.</p>
     </div>
   );
 }

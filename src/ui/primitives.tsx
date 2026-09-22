@@ -1,11 +1,64 @@
-import { useEffect, useId, useRef } from 'preact/hooks';
+import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { IconX } from './icons';
+import { IconDumbbell, IconKettlebell, IconPlate, IconX } from './icons';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
+/** Shown, in order, while the coach is thinking. Plain, no exclamation marks, same restraint as the coach's own words. */
+const THINKING_PHRASES = [
+  'Reading your log…',
+  'Chalking up…',
+  'Loading the bar…',
+  'Racking the plates…',
+  'Checking your numbers…',
+  'Spotting your sets…',
+  'Warming up…',
+  'One more rep of thinking…',
+];
+
+/** Cycles through these while thinking — the same idea as a CLI spinner swapping glyph shapes, just gym-flavoured instead of generic. */
+const THINKING_ICONS = [IconDumbbell, IconKettlebell, IconPlate];
+
+/**
+ * A small cycling gym-equipment icon plus a rotating gym-flavoured phrase,
+ * for anywhere the app is waiting on the online coach. Colour comes from
+ * the theme's own `--accent`, so it matches every theme without any
+ * per-theme code. Under prefers-reduced-motion the icon stays on the first
+ * shape rather than cycling — the phrase still rotates, same as the rest
+ * of the app treats text changes (not a CSS animation) versus motion.
+ */
+export function Thinking() {
+  const [phrase, setPhrase] = useState(0);
+  const [icon, setIcon] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setPhrase(x => (x + 1) % THINKING_PHRASES.length), 1700);
+    return () => clearInterval(id);
+  }, []);
+  useEffect(() => {
+    if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => setIcon(x => (x + 1) % THINKING_ICONS.length), 500);
+    return () => clearInterval(id);
+  }, []);
+  const Icon = THINKING_ICONS[icon]!;
+  return <span class="thinking"><Icon size={15} class="thinking-icon" aria-hidden="true" />{THINKING_PHRASES[phrase]}</span>;
+}
+
+/** Enter/Space activates a div given a role="button", the same as a real <button> would — needed anywhere a click handler sits on a <div> rather than a button, or a keyboard/switch-access user can see it but never activate it. */
+function activateOnKey(onClick: (e: JSX.TargetedEvent<HTMLDivElement>) => void) {
+  return (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClick(e as unknown as JSX.TargetedEvent<HTMLDivElement>);
+  };
+}
+
 export function Card({ children, class: cls = '', className = '', ...rest }: { children?: ComponentChildren } & Div) {
-  return <div class={`card ${cls} ${className}`} {...rest}>{children}</div>;
+  const onClick = rest.onClick as ((e: JSX.TargetedEvent<HTMLDivElement>) => void) | undefined;
+  return (
+    <div class={`card ${cls} ${className}`} {...rest} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined} onKeyDown={onClick ? activateOnKey(onClick) : undefined}>
+      {children}
+    </div>
+  );
 }
 
 export function Button({ children, variant = 'default', size, block, class: cls = '', ...rest }: {
@@ -34,7 +87,7 @@ export function Stat({ value, label, tone }: { value: ComponentChildren; label: 
 }
 
 export function Row({ children, trailing, onClick, class: cls = '' }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string }) {
-  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
+  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined} onKeyDown={onClick ? activateOnKey(onClick) : undefined}><div class="grow">{children}</div>{trailing}</div>;
 }
 
 export function Bar({ pct, color }: { pct: number; color?: string }) {

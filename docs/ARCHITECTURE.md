@@ -7,7 +7,10 @@ src/
   data/      static facts: exercises.json, muscles, goals, templates, coachCues.json, sparks
   core/      models, dates, units, exercise lookup, store (persistence), legacy migration
   brain/     pure functions: exposure, recovery, history, prs, trend, progression, balance,
-             effort, weekly, bodyfat, coach/rules (rules as data), coach/cues
+             effort, weekly, bodyfat, live (rest grading + next-set for the live session), coach/cues,
+             and the coach brain: coach/detectors (findings),
+             coach/planners (proposals), coach/report, coach/words (plain-English templates),
+             coach/{contract,principles,context,bands,deload} — see docs/COACH_BRAIN.md
   theme/     five themes as one token contract + the engine that applies them
   ui/        stylesheet, primitives (Card, Button, Sheet, Toggle ...), icons, MuscleMap
   svg/       generated body parts for the muscle map (from body-muscles)
@@ -15,6 +18,7 @@ src/
   app/       shell, bottom nav router, shared selectors, toast
   slices/    today, workout (splits, live session), history (+stats), body, coach, settings
 tests/       vitest, pure logic only
+proxy/       Cloudflare Worker holding the Anthropic key for the optional remote explainer (own tests)
 ```
 
 Rules of thumb:
@@ -32,6 +36,8 @@ One object, one key (`marc.state.v1`), saved 250 ms after a change and flushed w
 - `sessions[]`: finished workouts. Each exercise has an id (library `lib_*` or `custom_*`) and its sets `{kg, reps, effort, durationSec, distanceM}`.
 - `active`: the live session, so it survives an app restart.
 - `customExercises[]`, `preferences`, `profile`, `body[]` (body-fat readings), `health`.
+- `coach`: what the user did with suggestions (dismissed, snoozed, accepted), learned start times, smart reminders, an accepted plan for today, an accepted easier week, and `preferenceFacts[]` — short facts learned from that history, recomputed at most weekly.
+- `readiness[]`: at most one morning check-in per day (sleep, soreness, stress, each 1–5).
 
 `core/migrate.ts` converts the old `dailyTrackerPremium` root once, read-only. Per-exercise completed records are preferred, whole-session snapshots fill the gaps, timed sessions supply durations, and custom splits, day names, schedule, goal, units and reminder settings carry over.
 
@@ -51,7 +57,7 @@ Everything below is in `src/brain/`, each file a few screens long.
 
 **Balance** (`balance.ts`): push vs pull and upper vs lower over three weeks, with gates (12 sets total, two active weeks, ratio ≥ 2 persisting two weeks). A chosen focus muscle softens the warning.
 
-**Coach rules** (`coach/rules.ts`) are a list of objects. Each looks at the same context and returns insights with `title`, `noticed`, `means`, `action` and a priority. Recovery outranks a plateau on a lift that targets the recovering muscle. To add a rule, append one object. To change the words, edit strings.
+**Coach brain** (`coach/`). Detectors turn history into findings (facts with numbers, a window, evidence, confidence and the research cards they rest on); planners turn findings into proposals (actions the app can apply once the user accepts). `report.ts` assembles both into a `FindingsReport`; `words.ts` renders it into insights and suggestions in plain words, with weekly-rotating variants. Nothing changes state until the user accepts a suggestion (`slices/coach/apply.ts`). Full design in `docs/COACH_BRAIN.md`, evidence in `docs/RESEARCH.md`.
 
 **Cues** (`coach/cues.ts`): 422 short tips matched by exercise, movement, muscle or equipment, rotated deterministically.
 
@@ -80,5 +86,15 @@ The engine writes the tokens as CSS custom properties per `[data-theme]`, sets `
 ## Adding things
 
 - **Exercise**: append to `data/exercises.json` (id, name, equipment, primary/secondary/stabilizers muscle ids, aliases, pattern). Duration and conditioning exercises are listed in `core/exercises.ts`.
-- **Coach rule**: add an object to `RULES` in `brain/coach/rules.ts` and a test.
+- **Coach finding**: add a kind to `brain/coach/contract.ts` with the cards it may cite, a detector under `brain/coach/detectors/`, words in `brain/coach/words.ts`, and a test. The principles test checks the card lists the kind back.
 - **Screen**: add a folder under `slices/`, a tab in `app/router.ts` and a case in `app/App.tsx`.
+
+## Coach brain
+
+The coaching intelligence is being rebuilt as two layers with one contract
+between them: the brain (`src/brain/`, deterministic, offline) emits a
+`FindingsReport` of findings and proposals; the coach turns it into words,
+offline from templates or through an opt-in remote explainer. Design:
+[docs/COACH_BRAIN.md](COACH_BRAIN.md). Evidence base:
+[docs/RESEARCH.md](RESEARCH.md), shipped as `src/data/principles.json`.
+Contract: `src/brain/coach/contract.ts`.

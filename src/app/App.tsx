@@ -4,6 +4,8 @@ import { History } from '@/slices/history/History';
 import { Body } from '@/slices/body/Body';
 import { Coach } from '@/slices/coach/Coach';
 import { Settings } from '@/slices/settings/Settings';
+import { AskSheet } from '@/slices/coach/AskSheet';
+import { askOpenState, closeAsk } from '@/slices/coach/askController';
 import { go, settingsOpen, tab, TABS, type Tab } from './router';
 import { toast } from './toast';
 import { Toast } from '@/ui/primitives';
@@ -35,6 +37,19 @@ export function App() {
         </div>
       </nav>
       {settingsOpen.value && <Settings onClose={() => { settingsOpen.value = false; }} />}
+      {/*
+        Mounted once here rather than inside each tab (docs/escobar-presence P03):
+        the same AskSheet instance now survives a tab switch, so a typed-but-unsent
+        question, an in-flight send or an error banner is never silently lost just
+        by navigating away and back (A03). Deferred, not stacked, while Settings is
+        open (§4: "show inline local help or defer the global modal... retain the
+        draft") — askOpenState itself is untouched while suppressed, so the sheet
+        reappears exactly as it was the moment Settings closes; nothing here closes
+        or resets it.
+      */}
+      {askOpenState.value.open && !settingsOpen.value && (
+        <AskSheet onClose={closeAsk} initialTurnKey={askOpenState.value.initialTurnKey} savedOnly={askOpenState.value.savedOnly} />
+      )}
       {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );
