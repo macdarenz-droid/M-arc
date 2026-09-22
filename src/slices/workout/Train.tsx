@@ -36,20 +36,13 @@ import { suspectAlternative, unitSuspect } from '@/brain/fidelity';
 import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
+import { recoveryPctFor } from '@/brain/recovery';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
   { v: 'ideal', l: 'I', title: 'Ideal: 1 to 3 reps left' },
   { v: 'max', l: 'M', title: 'Max: nothing left' },
 ];
-
-/** The lowest recovery % among an exercise's primary muscles (F2.1's progression hook). */
-function recoveryPctFor(exerciseId: string, custom: Exercise[], recoveryList: ReturnType<typeof recoverySelector.peek>): number | undefined {
-  const meta = findExercise(exerciseId, custom);
-  if (!meta) return undefined;
-  const pcts = meta.primary.map(m => recoveryList.find(r => r.muscle === m)?.pct).filter((v): v is number => v != null);
-  return pcts.length ? Math.min(...pcts) : undefined;
-}
 
 /** Shown once after a session is saved, then dismissed. */
 const lastFinish = signal<FinishSummary | null>(null);

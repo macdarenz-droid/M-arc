@@ -70,3 +70,30 @@ export function daysSinceLastSession(sessions: Session[], today: string): number
   const last = sessions[sessions.length - 1];
   return last ? daysBetween(last.day, today) : null;
 }
+
+export interface WeekVolume {
+  /** Monday of the week. */
+  week: string;
+  sessions: number;
+  sets: number;
+  volumeKg: number;
+  muscleSets: Partial<Record<MuscleId, number>>;
+}
+
+/** Per-week totals for the last `weeks` weeks, index 0 = this week (EV2, for compare_periods and get_volume). */
+export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 8, custom: Exercise[] = []): WeekVolume[] {
+  const muscle = weeklyMuscleSets(sessions, today, weeks, custom);
+  return muscle.map(m => {
+    const end = addDays(m.week, 6);
+    const inWeek = sessions.filter(s => s.day >= m.week && s.day <= end);
+    let sets = 0, volumeKg = 0;
+    for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
+      if (!isWorkingSet(x)) continue;
+      sets++;
+      if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+    }
+    const muscleSets: Partial<Record<MuscleId, number>> = {};
+    for (const [k, v] of Object.entries(m.sets) as Array<[MuscleId, number]>) muscleSets[k] = Math.round(v * 10) / 10;
+    return { week: m.week, sessions: inWeek.length, sets, volumeKg: Math.round(volumeKg), muscleSets };
+  });
+}

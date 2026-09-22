@@ -337,3 +337,10 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Closing open Sheets generically** dispatches `cancel` on every open `dialog.sheet`, which runs each Sheet's own `onClose`, so local sheet state stays consistent.
 - **`openSheets` counter lives in `ui/primitives.tsx`** next to `Sheet` (the dock in EV5 reads it).
 - **69 registry entries** cover every tab section, panel, Settings row group, and the §7.1 key actions.
+
+### EV2 (tools and brain additions)
+- **`evaluatePlan` counts secondary muscles at `ROLE_WEIGHT.secondary` (0.55)** as §8.3 says, while the Body tab's effective sets use `SET_WEIGHT.secondary` (0.5). The 10% difference only matters at band edges; the spec's number is kept and the constant is imported, not copied.
+- **"Over 7 days" is read as "more than 7 splits"** (`too_many_splits`, the app's `MAX_SPLITS`); a 7-key schedule cannot hold more than 7 days. Unknown schedule refs and a plan with no training day also block.
+- **Under-band warnings only for muscles the plan trains as a primary target, or the six big ones** (chest, lats, quads, hamstrings, glutes, side delts). Secondary-only muscles (forearms, traps, rotator cuff) would otherwise flood every plan with warnings.
+- **A "hard day" for a muscle = 3+ direct sets**; two such days in a row (Saturday → Sunday wraps) is a 24 h recovery conflict (a warning, not a block: §8.3 lists blocks explicitly).
+- **Score** = 100 − 30 per block − 8 per warn − 2 per info, clamped 0–100; used only to compare drafts.

@@ -367,3 +367,11 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
   }
   return { tauScale, observations };
 }
+
+/** The lowest recovery % among an exercise's primary muscles (F2.1's progression hook). Moved from Train.tsx so Escobar's tools share it. */
+export function recoveryPctFor(exerciseId: string, custom: Exercise[], recovery: Array<Pick<MuscleRecovery, 'muscle' | 'pct'>>): number | undefined {
+  const meta = findExercise(exerciseId, custom);
+  if (!meta) return undefined;
+  const pcts = meta.primary.map(m => recovery.find(r => r.muscle === m)?.pct).filter((v): v is number => v != null);
+  return pcts.length ? Math.min(...pcts) : undefined;
+}

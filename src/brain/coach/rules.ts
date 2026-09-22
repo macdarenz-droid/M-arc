@@ -473,20 +473,27 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
     .slice(0, limit);
 }
 
-/** The readiness band for each of the last `days` days (index 0 = today), for deloadTrigger's readiness-red condition. Recomputes recovery/readiness as of each day rather than storing history, since nothing else needs it kept. */
-function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | null> {
-  const out: Array<ReadinessBand | null> = [];
+/**
+ * Readiness for each of the last `days` days (index 0 = today), null where there was nothing
+ * to score. Recomputes recovery/readiness as of each day rather than storing history. Used by
+ * deloadTrigger's readiness-red condition and Escobar's readiness history.
+ */
+export function readinessSeries(ctx: CoachContext, days = 5): Array<ReadinessResult | null> {
+  const out: Array<ReadinessResult | null> = [];
   for (let i = 0; i < days; i++) {
     const day = addDays(ctx.today, -i);
     const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: new Date(`${day}T23:59:59`).getTime(), profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
     const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
-    const r = readiness({
+    out.push(readiness({
       today: day, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
       checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
-    });
-    out.push(r?.band ?? null);
+    }));
   }
   return out;
+}
+
+function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | null> {
+  return readinessSeries(ctx, days).map(r => r?.band ?? null);
 }
 
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
