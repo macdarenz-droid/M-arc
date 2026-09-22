@@ -13,9 +13,20 @@ export function todayKey(): string {
   return dayKey(new Date());
 }
 
-export function parseDay(key: string): Date {
+/** Local midnight (ms) per day key. Brain loops compare the same few hundred days many times. */
+const dayMsCache = new Map<string, number>();
+function dayMs(key: string): number {
+  const hit = dayMsCache.get(key);
+  if (hit !== undefined) return hit;
   const [y, m, d] = key.split('-').map(Number);
-  return new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1);
+  const ms = new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1).getTime();
+  if (dayMsCache.size > 5000) dayMsCache.clear();
+  dayMsCache.set(key, ms);
+  return ms;
+}
+
+export function parseDay(key: string): Date {
+  return new Date(dayMs(key));
 }
 
 export function addDays(key: string, n: number): string {
@@ -37,7 +48,7 @@ export function weekStart(key: string): string {
 }
 
 export function daysBetween(a: string, b: string): number {
-  return Math.round((parseDay(b).getTime() - parseDay(a).getTime()) / 86_400_000);
+  return Math.round((dayMs(b) - dayMs(a)) / 86_400_000);
 }
 
 export function hoursSince(iso: string, now = Date.now()): number {

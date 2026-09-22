@@ -20,7 +20,7 @@ const OBSERVED_MAX_STALE_MONTHS = 12;
 export function hrMax(profile: Profile, observedMax?: { bpm: number; atMs: number } | null, nowMs = Date.now()): HrMaxResult {
   if (profile.hrMaxOverride) return { bpm: Math.round(profile.hrMaxOverride), source: 'override' };
   const age = profile.birthYear ? new Date(nowMs).getFullYear() - profile.birthYear : null;
-  const tanaka = age != null ? 208 - 0.7 * age : null;
+  const tanaka = age != null ? TANAKA.intercept - TANAKA.perYear * age : null;
   if (observedMax && observedMax.bpm >= 150) {
     const monthsOld = (nowMs - observedMax.atMs) / (30.44 * 86_400_000);
     if (monthsOld <= OBSERVED_MAX_STALE_MONTHS) return { bpm: Math.round(observedMax.bpm), source: 'observed' };
@@ -76,10 +76,16 @@ export function restingHr(healthDays: Array<{ day: string; restingHr?: number }>
 }
 
 /** Karvonen heart-rate-reserve boundaries at 50/60/70/80/90%, the lower edge of zones 1-5. Below b[0] is outside any zone. */
+/** Zone floors as shares of heart-rate reserve (Karvonen). */
+export const ZONE_RESERVE_PCTS = [0.5, 0.6, 0.7, 0.8, 0.9] as const;
+/** Tanaka: 208 − 0.7 × age. */
+export const TANAKA = { intercept: 208, perYear: 0.7 } as const;
+
 export function zones(hrMaxBpm: number, restingHrBpm: number): [number, number, number, number, number] {
   const reserve = Math.max(1, hrMaxBpm - restingHrBpm);
   const at = (pct: number) => Math.round(restingHrBpm + pct * reserve);
-  return [at(0.5), at(0.6), at(0.7), at(0.8), at(0.9)];
+  const [z1, z2, z3, z4, z5] = ZONE_RESERVE_PCTS;
+  return [at(z1), at(z2), at(z3), at(z4), at(z5)];
 }
 
 /** -1 when below zone 1 (not counted in any zone), else 0-4 for zones 1-5. */
@@ -160,13 +166,17 @@ export function bestObservedHrMax(sessions: Array<{ id: string; endedAt: string 
 }
 
 /** 60s easy, 90s ideal, 120s max (6.4). Unrated counts as ideal, same as the recovery model. */
+export const MIN_REST_SEC = { easy: 60, ideal: 90, max: 120 } as const;
 export function minRestSec(effort: Effort | undefined): number {
-  return effort === 'easy' ? 60 : effort === 'max' ? 120 : 90;
+  return MIN_REST_SEC[effort ?? 'ideal'];
 }
+/** Rest is done enough at the lower of pre-set bpm + REST_RISE_BPM and resting + REST_RESERVE_PCT of reserve. */
+export const REST_RISE_BPM = 12;
+export const REST_RESERVE_PCT = 0.35;
 
 /** `min(preSetBpm + 12, restingHr + 0.35 * reserve)` (6.4) — the bpm rest is "done enough" at. */
 export function restReadyBpm(preSetBpm: number, restingHrBpm: number, hrMaxBpm: number): number {
-  return Math.round(Math.min(preSetBpm + 12, restingHrBpm + 0.35 * (hrMaxBpm - restingHrBpm)));
+  return Math.round(Math.min(preSetBpm + REST_RISE_BPM, restingHrBpm + REST_RESERVE_PCT * (hrMaxBpm - restingHrBpm)));
 }
 
 export interface RestTargetInput {

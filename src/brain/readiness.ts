@@ -58,6 +58,11 @@ function zScore(value: number, series: number[]): number | null {
   return (value - avg(series)) / sd;
 }
 
+/** How much each input counts toward the score; missing inputs are left out and the rest renormalised. */
+export const READINESS_WEIGHTS = { checkIn: 0.35, sleep: 0.25, recovery: 0.15, rhr: 0.10, hrv: 0.10, load: 0.05 } as const;
+export const READINESS_GREEN_AT = 67;
+export const READINESS_RED_AT = 33;
+
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';
 export type ReadinessBand = 'green' | 'amber' | 'red';
 
@@ -189,20 +194,21 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
     if (ctl > 0) loadScore = clamp(1 - Math.max(0, atl / ctl - 1) / 0.5, 0, 1);
   }
 
+  const W = READINESS_WEIGHTS;
   const weighted: Weighted[] = [
-    { key: 'checkIn', weight: 0.35, score: checkInScore },
-    { key: 'sleep', weight: 0.25, score: sleepScore },
-    { key: 'recovery', weight: 0.15, score: recoveryScore },
-    { key: 'rhr', weight: 0.10, score: rhrScore },
-    { key: 'hrv', weight: 0.10, score: hrvScore },
-    { key: 'load', weight: 0.05, score: loadScore },
+    { key: 'checkIn', weight: W.checkIn, score: checkInScore },
+    { key: 'sleep', weight: W.sleep, score: sleepScore },
+    { key: 'recovery', weight: W.recovery, score: recoveryScore },
+    { key: 'rhr', weight: W.rhr, score: rhrScore },
+    { key: 'hrv', weight: W.hrv, score: hrvScore },
+    { key: 'load', weight: W.load, score: loadScore },
   ];
   const present = weighted.filter(w => w.score != null);
   if (!present.length) return null;
 
   const totalWeight = present.reduce((a, w) => a + w.weight, 0);
   const score = Math.round(100 * present.reduce((a, w) => a + w.weight * w.score!, 0) / totalWeight);
-  const band: ReadinessBand = score >= 67 ? 'green' : score <= 33 ? 'red' : 'amber';
+  const band: ReadinessBand = score >= READINESS_GREEN_AT ? 'green' : score <= READINESS_RED_AT ? 'red' : 'amber';
   const loadAdvice: LoadAdvice = band === 'red' ? 'reduce' : band === 'amber' ? 'no_increase' : 'normal';
   const confidence = present.length >= 4 ? 'high' : present.length >= 2 ? 'medium' : 'low';
   const distinctCheckInDays = new Set(checkInHistory.map(c => c.day)).size;

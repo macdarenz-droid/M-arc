@@ -35,9 +35,13 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';
 
 /** Looks at the last 8 sessions. Needs at least 7 to say anything. */
+/** Plateau status looks at this many recent sessions and needs at least PLATEAU_MIN_SESSIONS. */
+export const PLATEAU_WINDOW = 8;
+export const PLATEAU_MIN_SESSIONS = 7;
+
 export function plateauStatus(history: ExerciseSessionSummary[]): { status: PlateauStatus; confidence: Confidence } {
-  const recent = history.slice(-8);
-  if (recent.length < 7) return { status: 'unknown', confidence: 'low' };
+  const recent = history.slice(-PLATEAU_WINDOW);
+  if (recent.length < PLATEAU_MIN_SESSIONS) return { status: 'unknown', confidence: 'low' };
   const weight = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
   const volume = trend(recent.map(r => ({ day: r.day, value: r.volume })));
   const conf = weight.confidence === 'low' ? volume.confidence : weight.confidence;

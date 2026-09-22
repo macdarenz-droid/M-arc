@@ -76,7 +76,19 @@ export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
 
 const byId = new Map(LIBRARY.map(e => [e.id, e]));
 
+/** Name lookups run inside tight brain loops; the same few hundred strings recur, so remember them. */
+const normalized = new Map<string, string>();
+
 export function normalizeName(s: string): string {
+  const hit = normalized.get(s);
+  if (hit !== undefined) return hit;
+  const out = normalizeUncached(s);
+  if (normalized.size > 4000) normalized.clear();
+  normalized.set(s, out);
+  return out;
+}
+
+function normalizeUncached(s: string): string {
   return s
     .toLowerCase()
     .replace(/dumbell/g, 'dumbbell')
@@ -89,10 +101,23 @@ export function normalizeName(s: string): string {
     .trim();
 }
 
+/** Name → exercise answers per custom list (by identity), so repeated name lookups are O(1). */
+const byName = new WeakMap<Exercise[], Map<string, Exercise | undefined>>();
+const NO_CUSTOM: Exercise[] = [];
+
 /** Resolve an exercise by id, then by exact name or alias, across library and custom list. */
-export function findExercise(idOrName: string, custom: Exercise[] = []): Exercise | undefined {
+export function findExercise(idOrName: string, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
   const direct = byId.get(idOrName) ?? custom.find(c => c.id === idOrName);
   if (direct) return direct;
+  let memo = byName.get(custom);
+  if (!memo) { memo = new Map(); byName.set(custom, memo); }
+  if (memo.has(idOrName)) return memo.get(idOrName);
+  const found = findByName(idOrName, custom);
+  memo.set(idOrName, found);
+  return found;
+}
+
+function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
   const q = normalizeName(idOrName);
   if (!q) return undefined;
   const all = [...custom, ...LIBRARY];

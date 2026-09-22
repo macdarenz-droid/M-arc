@@ -153,12 +153,15 @@ export interface WeeklyReviewInput {
   exerciseIds: Array<{ id: string; name: string }>;
 }
 
+/** Days logged in a calendar week before the weekly review appears. */
+export const WEEKLY_REVIEW_DAYS = 5;
+
 /** True once >=5 distinct days were logged within the calendar week containing `today`. */
 export function weekHasEnoughData(sessions: Session[], today: string): boolean {
   const start = weekStart(today);
   const end = addDays(start, 7);
   const days = new Set(sessions.filter(s => s.day >= start && s.day < end).map(s => s.day));
-  return days.size >= 5 || sessions.filter(s => s.day >= start && s.day < end).length >= 5;
+  return days.size >= WEEKLY_REVIEW_DAYS || sessions.filter(s => s.day >= start && s.day < end).length >= WEEKLY_REVIEW_DAYS;
 }
 
 export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insight[] {

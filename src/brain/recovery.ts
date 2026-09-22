@@ -105,11 +105,14 @@ function withinDaysOfSession(session: Session, atMs: number, days: number): bool
 /** Whole-body slowdown from multi-day sleep debt, resting-HR deviation and acute training load. Never from one bad night. Capped. */
 export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], atMs: number): number {
   let factor = 1.0;
-  const sleep7 = healthDays.filter(d => withinDays(d.day, atMs, 7) && d.sleepMinutes != null).map(d => d.sleepMinutes! / 60);
+  // One day key for the reference time; per-item dayKey() calls made this O(n) in Date work per session.
+  const ref = dayKey(new Date(atMs));
+  const within = (day: string, days: number): boolean => { const d = daysBetween(day, ref); return d >= 0 && d < days; };
+  const sleep7 = healthDays.filter(d => within(d.day, 7) && d.sleepMinutes != null).map(d => d.sleepMinutes! / 60);
   if (sleep7.length && avg(sleep7) < SYSTEMIC_SLEEP_HOURS) factor *= SYSTEMIC_SLEEP_FACTOR;
 
-  const rhr7 = healthDays.filter(d => withinDays(d.day, atMs, 7) && d.restingHr != null).map(d => d.restingHr!);
-  const rhr28 = healthDays.filter(d => withinDays(d.day, atMs, 28) && d.restingHr != null).map(d => d.restingHr!);
+  const rhr7 = healthDays.filter(d => within(d.day, 7) && d.restingHr != null).map(d => d.restingHr!);
+  const rhr28 = healthDays.filter(d => within(d.day, 28) && d.restingHr != null).map(d => d.restingHr!);
   if (rhr7.length && rhr28.length >= 2) {
     const sd = stddev(rhr28);
     if (sd > 0 && Math.abs(avg(rhr7) - avg(rhr28)) / sd > SYSTEMIC_RHR_SD) factor *= SYSTEMIC_RHR_FACTOR;
@@ -118,10 +121,10 @@ export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], a
   // A fixed 28-day divisor understates chronic load for a new account with little history, which
   // would spike the ratio for reasons that have nothing to do with overreaching. Only trust it once
   // training has actually spanned most of that window.
-  const ctlSessions = sessions.filter(s => withinDaysOfSession(s, atMs, 28));
-  const oldestCtlDaysAgo = ctlSessions.length ? Math.max(...ctlSessions.map(s => daysBetween(s.day, dayKey(new Date(atMs))))) : 0;
+  const ctlSessions = sessions.filter(s => within(s.day, 28));
+  const oldestCtlDaysAgo = ctlSessions.length ? Math.max(...ctlSessions.map(s => daysBetween(s.day, ref))) : 0;
   if (ctlSessions.length >= 3 && oldestCtlDaysAgo >= 14) {
-    const atl = sessions.filter(s => withinDaysOfSession(s, atMs, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
+    const atl = sessions.filter(s => within(s.day, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
     const ctl = ctlSessions.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
     if (ctl > 0 && atl / ctl > SYSTEMIC_LOAD_RATIO) {
       const extra = clamp(1 + (atl / ctl - SYSTEMIC_LOAD_RATIO) * 0.5, 1.0, SYSTEMIC_LOAD_FACTOR_MAX);
@@ -266,6 +269,7 @@ export function recoveryStatus(input: RecoveryInputs): MuscleRecovery[] {
   const { sessions, custom = [], now = Date.now(), profile = { name: '' }, healthDays = [], checkIns = [], freshMarks = [], recoveryModel = { tauScale: {}, observations: {} } } = input;
   const doses = sessionMuscleDoses(sessions, custom, profile, healthDays, recoveryModel);
   const today = dayKey(new Date(now));
+  const systemicNow = Math.round(systemicFactor(healthDays, sessions, now) * 100) / 100;
 
   return MUSCLE_IDS.map(muscle => {
     const list = doses[muscle];
@@ -309,7 +313,7 @@ export function recoveryStatus(input: RecoveryInputs): MuscleRecovery[] {
       fullInHours: tFull == null ? null : Math.round(tFull * 10) / 10,
       confidence: confidenceFor(observations),
       drivers: last.drivers,
-      systemicFactor: Math.round(systemicFactor(healthDays, sessions, now) * 100) / 100,
+      systemicFactor: systemicNow,
     };
   });
 }

@@ -18,8 +18,11 @@ export interface Imbalance {
 
 const LABEL = { push: 'Push', pull: 'Pull', upper: 'Upper body', lower: 'Lower body' } as const;
 
+/** Imbalance rule thresholds. */
+export const BALANCE = { weeks: 3, minTotalSets: 12, ratio: 2, persistWeeks: 2 } as const;
+
 export function trainingBalance(sessions: Session[], today: string, custom: Exercise[] = [], intentionalFocus: MuscleId[] = []): Imbalance | null {
-  const weeks = weeklyMuscleSets(sessions, today, 3, custom);
+  const weeks = weeklyMuscleSets(sessions, today, BALANCE.weeks, custom);
   const bucketWeeks = weeks.map(w => {
     const b = { push: 0, pull: 0, upper: 0, lower: 0 };
     for (const [m, v] of Object.entries(w.sets) as Array<[MuscleId, number]>) {
@@ -35,15 +38,15 @@ export function trainingBalance(sessions: Session[], today: string, custom: Exer
     const totalB = bucketWeeks.reduce((s, w) => s + w[b], 0);
     const total = totalA + totalB;
     const active = bucketWeeks.filter(w => w[a] + w[b] >= 4).length;
-    if (total < 12 || active < 2) return null;
+    if (total < BALANCE.minTotalSets || active < 2) return null;
     const [strongKey, weakKey, strong, weak] = totalA >= totalB ? [a, b, totalA, totalB] : [b, a, totalB, totalA];
     const ratio = weak === 0 ? (strong >= 8 ? 99 : 0) : strong / weak;
-    if (ratio < 2) return null;
+    if (ratio < BALANCE.ratio) return null;
     const persist = bucketWeeks.filter(w => {
       const s = w[strongKey], k = w[weakKey];
       return k === 0 ? s >= 4 : s / k >= 1.5;
     }).length;
-    if (persist < 2) return null;
+    if (persist < BALANCE.persistWeeks) return null;
     let severity = Math.min(6, ratio) * Math.min(1.5, total / 24) * (persist / 3);
     const focusBuckets = new Set(intentionalFocus.map(m => MUSCLE_BY_ID[m].bucket));
     if (focusBuckets.has(strongKey === 'upper' ? 'push' : strongKey) || (strongKey === 'upper' && (focusBuckets.has('push') || focusBuckets.has('pull')))) severity *= 0.6;

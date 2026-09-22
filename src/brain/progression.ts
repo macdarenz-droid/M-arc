@@ -35,6 +35,13 @@ export interface Suggestion {
   value?: number;
 }
 
+/** More than this many days away: repeat the last load once. */
+export const REENTRY_DAYS = 28;
+/** Primary-muscle recovery under this % holds the load. */
+export const RECOVERY_HOLD_PCT = 60;
+/** A load step never adds more than this share of the current load (from 10 kg up). */
+export const MAX_INCREASE_SHARE = 0.1;
+
 export function loadStep(kg: number): number {
   if (kg <= 10) return 1;
   if (kg <= 30) return 2;
@@ -135,7 +142,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'duration', target: `Hold ${next}s`, kg: null, reps: null, reason: last.hasMax ? 'Last hold was max effort. Repeat it before adding time.' : 'Add five seconds to your best hold.', confidence: conf, sets: setPlan(setCount, null, null, next, last.hasMax ? 'Repeat' : 'Add 5s') };
   }
 
-  if (gap > 28) {
+  if (gap > REENTRY_DAYS) {
     return { mode: 'reentry', target: mode === 'weighted' ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
   }
 
@@ -198,10 +205,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (cleanTop(last)) {
     const twoForTwo = !!prev && cleanTop(prev) && prev.topKg === topKg;
     const fastTrack = last.allEasy && hist.length >= 4;
-    const readinessBlocksIncrease = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < 60);
+    const readinessBlocksIncrease = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
     if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && !readinessBlocksIncrease) {
       const step = loadStep(topKg);
-      const capped = topKg >= 10 ? Math.min(step, topKg * 0.1) : step;
+      const capped = topKg >= 10 ? Math.min(step, topKg * MAX_INCREASE_SHARE) : step;
       const up = half(topKg + Math.max(0.5, capped));
       return { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
     }

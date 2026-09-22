@@ -40,8 +40,8 @@ export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exer
   };
 }
 
-const WARMUP_PCTS = [0.5, 0.7, 0.85];
-const WARMUP_REPS = [8, 5, 2];
+export const WARMUP_PCTS = [0.5, 0.7, 0.85];
+export const WARMUP_REPS = [8, 5, 2];
 
 /** F3.4: 50% x 8, 70% x 5, 85% x 2 of the trend e1RM, rounded to a load step. Shared by the pre-session brief's text and Train's collapsed warm-up rows. */
 export function warmupSets(e1rm: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {

@@ -8,16 +8,21 @@ import type { LoadUnit, LoggedSet, Session, SessionLogging, SetFidelity, SetFlag
 import { KG_PER_LB } from '@/core/units';
 
 /** A commit is "delayed" (timing not trusted) when it is part of a burst or outside a plausible rest/set gap. */
+/** A commit gap in this range (seconds) reads as logged live; 3+ commits within 15 s is a burst. */
+export const LIVE_GAP_SEC = [20, 720] as const;
+export const BURST_COUNT = 3;
+export const COMPRESSED_SEC_PER_SET = 40;
+
 export function classifySetFidelity(gapSec: number | null, burstCount: number): SetFidelity {
-  if (burstCount >= 3) return 'delayed';
+  if (burstCount >= BURST_COUNT) return 'delayed';
   if (gapSec == null) return 'live'; // first set of the session
-  if (gapSec >= 20 && gapSec <= 720) return 'live';
+  if (gapSec >= LIVE_GAP_SEC[0] && gapSec <= LIVE_GAP_SEC[1]) return 'live';
   return 'delayed';
 }
 
 /** A session logged in far less time than its working-set count could plausibly take. */
 export function isCompressed(workingSetCount: number, loggedDurationSec: number, burstShare: number): boolean {
-  return loggedDurationSec < workingSetCount * 40 || burstShare >= 0.6;
+  return loggedDurationSec < workingSetCount * COMPRESSED_SEC_PER_SET || burstShare >= 0.6;
 }
 
 export type SessionOrigin = 'live' | 'retro' | 'legacy';
