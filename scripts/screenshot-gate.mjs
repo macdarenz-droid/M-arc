@@ -412,8 +412,47 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Palace (§7, EV1): every registry entry resolves. goTo each id through the dev hooks and assert its
+// anchor is visible (silent-black), then screenshot three spotlights in all five themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`palace ${theme}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`palace ${theme} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const ids = await page.evaluate(() => window.__palace.ids);
+  const anchors = await page.evaluate(() => window.__palace.anchors);
+  if (theme === 'silent-black') {
+    if (ids.length < 65) errors.push(`palace: expected about 70 entries, got ${ids.length}`);
+    const unresolved = [];
+    for (const id of ids) {
+      const ok = await page.evaluate(id => window.__palace.goTo(id), id);
+      await page.waitForTimeout(60);
+      const visible = await page.locator(`[data-palace="${anchors[id]}"]`).last().isVisible().catch(() => false);
+      if (!ok || !visible) unresolved.push(id);
+    }
+    if (unresolved.length) errors.push(`palace: anchors not visible after goTo: ${unresolved.join(', ')}`);
+    console.log('palace', ids.length - unresolved.length, '/', ids.length, 'entries resolved');
+  }
+  for (const id of ['body.recovering', 'settings.gyms', 'history.records']) {
+    await page.evaluate(id => window.__palace.goTo(id), id);
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: `${OUT}/${theme}-spotlight-${id.replace('.', '-')}.png` });
+  }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified.');
