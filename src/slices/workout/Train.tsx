@@ -12,6 +12,8 @@ import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
+import { exerciseHistory } from '@/brain/history';
+import { autoregulationSuggestion } from '@/brain/coach/live';
 import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, type FinishSummary } from './session';
 import { preSessionInsights } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -235,6 +237,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [menu, setMenu] = useState(false);
   const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
   const isTimed = mode === 'duration';
+  const firstSet = entry.sets[0];
+  const firstTarget = next.sets[0];
+  const autoreg = ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
+    ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length })
+    : null;
 
   return (
     <Card class={`exercise ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
@@ -249,6 +256,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
       {open && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
+          {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{u}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);

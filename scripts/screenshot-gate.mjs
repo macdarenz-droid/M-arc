@@ -80,9 +80,13 @@ for (const theme of themes) {
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); await shot('pre-session');
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
     // Four rated sets so the post-session debrief has enough evidence to show an effort-mix row.
+    // Set 1 is easy at/above the placeholder target, so in-session autoregulation (6.13, cadence
+    // 'live') suggests more load right under the exercise.
     const inputs = page.locator('input[type="number"]');
-    await inputs.nth(0).fill('72.5'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
-    await page.locator('.effort button.ideal').nth(0).click();
+    const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
+    const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
+    await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
+    await page.locator('.effort button.easy').nth(0).click();
     await inputs.nth(2).fill('72.5'); await inputs.nth(3).fill('8'); await inputs.nth(3).blur();
     await page.locator('.effort button.ideal').nth(1).click();
     await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
@@ -92,6 +96,7 @@ for (const theme of themes) {
     await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
     await page.locator('.effort button.ideal').nth(3).click();
     await page.waitForTimeout(300); await shot('live');
+    if (!(await page.getByText('for the next set').isVisible().catch(() => false))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
     // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
