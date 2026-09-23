@@ -390,3 +390,9 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R4b-2 (low)
 - When a sharing switch is off, replayed tool results that were not already denied are scrubbed of health keys (heart numbers, resting-HR baselines, sleep, watch, HR drivers) or body keys (body weight, body fat), in both `data` and the `facts` map. This covers get_readiness, get_session, the live session, readiness_gauge, session_summary and explain_method. Replayed briefs lose their readiness drivers or `weight N kg`. Training data stays.
 - Also fixed test typing from the QA-R4b-3 and QA-R4b-9 commits: assistant fixtures are cast to `StoredMessage`.
+
+### QA-R4b-6 (low)
+- Test coverage only; the guards were already correct.
+  - The old coach chat import runs once on enable, sets `legacyImported`, and a second enable adds nothing.
+  - Undo after a workout started on a split Escobar created, or on a programme he applied, is refused and the split stays (apply.ts guards at the create and programme undos).
+- These tests pass before and after.

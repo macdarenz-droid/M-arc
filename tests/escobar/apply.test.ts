@@ -8,7 +8,7 @@ import { activeConversation } from '@/escobar/session';
 import { commitSet, setSet } from '@/slices/workout/session';
 import { logWeight } from '@/slices/profile/profile';
 import { GOALS } from '@/data/goals';
-import { PPL6 } from '../fixtures/plans';
+import { FULL2, PPL6 } from '../fixtures/plans';
 import type { Conversation } from '@/escobar/types';
 import { NOW, TODAY, ctxOf, twoWeeksState } from './fixtures';
 
@@ -126,5 +126,29 @@ describe('split delete undo mid-workout (QA-R2b-2, QA-R2b-4)', () => {
     expect(state.value.splits.some(s => s.id === other!.id)).toBe(true);
     expect(JSON.stringify(state.value.active)).toBe(before);
     expect(() => buildAction('propose_split', { action: 'delete', splitId: trained!.id, name: trained!.name, exercises: [] }, ctxOf(state.value))).toThrow(/trained right now/);
+  });
+});
+
+describe('undo after a workout started on what was applied (QA-R4b-6)', () => {
+  it('a created split being trained stays', () => {
+    const ex = state.value.splits[0]!.exercises.slice(0, 2);
+    const a = decide(proposal('propose_split', { action: 'create', name: 'Arms day', exercises: ex, focus: [] }), 'p1', 'apply');
+    expect(a.result.status).toBe('applied');
+    const sp = state.value.splits.find(x => x.name === 'Arms day')!;
+    const s2 = decide({ ...a.conversation, proposals: [...(a.conversation.proposals ?? []), { ...buildProposal('propose_start_session', { splitId: sp.id }, ctxOf(state.value), 'p2'), status: 'awaiting', messageIndex: 1 }] }, 'p2', 'apply');
+    expect(s2.result.status).toBe('applied');
+    const u = decide(s2.conversation, 'p1', 'undo', a.result.undo);
+    expect(u.result).toMatchObject({ ok: false, message: 'Undo is no longer available.' });
+    expect(state.value.splits.some(x => x.id === sp.id)).toBe(true);
+  });
+  it('a programme whose split is being trained stays', () => {
+    const a = decide(proposal('propose_program', { draft: FULL2, replaceExisting: true }), 'p1', 'apply');
+    expect(a.result.status).toBe('applied');
+    const sp = state.value.splits.find(x => x.name === 'Full body')!;
+    const s2 = decide({ ...a.conversation, proposals: [...(a.conversation.proposals ?? []), { ...buildProposal('propose_start_session', { splitId: sp.id }, ctxOf(state.value), 'p2'), status: 'awaiting', messageIndex: 1 }] }, 'p2', 'apply');
+    expect(s2.result.status).toBe('applied');
+    const u = decide(s2.conversation, 'p1', 'undo', a.result.undo);
+    expect(u.result).toMatchObject({ ok: false, message: 'Undo is no longer available.' });
+    expect(state.value.splits.some(x => x.id === sp.id)).toBe(true);
   });
 });

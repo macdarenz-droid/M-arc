@@ -168,3 +168,21 @@ describe('old coach chat carry-over (QA-R4b-1)', () => {
     expect(earlier()).toHaveLength(0);
   });
 });
+
+describe('the old coach chat import (QA-R4b-6, RG-03)', () => {
+  it('runs once on enable, marks it done, and a second enable adds nothing', async () => {
+    const { replaceState, state } = await import('@/core/store');
+    const { freshState } = await import('@/core/models');
+    const { setEscobarEnabled } = await import('@/escobar/session');
+    setEscobarStorage(memoryStorage());
+    const base = freshState();
+    replaceState({ ...base, escobar: { ...base.escobar, enabled: false, legacyImported: false }, coach: { askThread: [{ role: 'user', text: 'old question' }, { role: 'assistant', text: 'old answer' }] } } as never);
+    setEscobarEnabled(true);
+    expect(state.value.escobar.legacyImported).toBe(true);
+    const earlier = () => loadStore().conversations.filter(c => c.title === 'Earlier conversation');
+    expect(earlier()).toHaveLength(1);
+    setEscobarEnabled(false);
+    setEscobarEnabled(true);
+    expect(earlier()).toHaveLength(1);
+  });
+});
