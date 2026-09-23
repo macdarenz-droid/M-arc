@@ -269,3 +269,20 @@ describe('reset everything (QA-R1-7)', () => {
     expect(st.map.get('marc.state.v1') ?? '').not.toContain('old1');
   });
 });
+
+describe('a live set copied by the old + Set (QA-R2d-4)', () => {
+  it('keeps the typed values and drops the copied commit time, rest and heart', async () => {
+    const st = memoryStorage();
+    const set1 = { id: 'set_a', status: 'committed', kg: 60, reps: 8, at: '2026-09-22T10:05:00.000Z', restSec: 90, heart: { peak: 150 } };
+    const active = { id: 's_live', splitId: null, startedAt: '2026-09-22T09:50:00.000Z', entries: [{ id: 'e1', exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [set1, { ...set1, effort: undefined }] }] };
+    st.map.set('marc.state.v1', JSON.stringify({ ...freshState(), active }));
+    const S = await fresh();
+    S.initStore(st);
+    const sets = S.state.value.active!.entries[0]!.sets;
+    expect(sets[0]!.at).toBe(set1.at);
+    expect(sets[1]!.kg).toBe(60);
+    expect(sets[1]!.at).toBeUndefined();
+    expect(sets[1]!.heart).toBeUndefined();
+    expect(sets[1]!.id).not.toBe('set_a');
+  });
+});

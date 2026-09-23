@@ -1,5 +1,5 @@
 import { signal, batch } from '@preact/signals';
-import { freshState, newId, type AppState, type Session, type Split, type Weekday } from './models';
+import { freshState, newId, type AppState, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { legacySessionLogging } from './sessionLogging';
 import { normalizeEscobar, normalizeUnits } from './escobarState';
@@ -99,12 +99,28 @@ function normalize(s: AppState): AppState {
 }
 
 /** R2.8: a loaded live session gets ids where it has none. Times are never invented. */
+/**
+ * QA-R2d-4: the previous version's '+ Set' copied the whole last set, commit time, rest, heart
+ * and id included. A live set with the same commit time (or id) as the set before it is such a
+ * copy: it keeps the typed values and loses what only its commit can set.
+ */
+function uncopiedSets(sets: LoggedSet[]): LoggedSet[] {
+  return sets.map((set, i) => {
+    const prev = sets[i - 1];
+    if (!prev || !isObj(set) || !isObj(prev)) return set;
+    const copied = (set.at != null && set.at === prev.at) || (set.id != null && set.id === prev.id);
+    if (!copied) return set;
+    const { at: _at, restSec: _r, fidelity: _f, heart: _h, status: _s, id: _id, ...kept } = set;
+    return kept;
+  });
+}
+
 function withActiveIds(a: AppState['active']): AppState['active'] {
   if (!a || !Array.isArray(a.entries)) return a ?? null;
   return {
     ...a,
     id: a.id ?? newId('s'),
-    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: (Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
+    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: uncopiedSets(Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
   };
 }
 

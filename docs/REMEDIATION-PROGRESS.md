@@ -311,3 +311,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R2c-2, QA-R2d-2 (low, same root cause)
 - `resolveSessionTiming` ignores an unparseable time (the session stays as saved at finish) and returns false. "When did you train?" Skip and close with a cleared day or time use the guess the sheet opened with.
+
+### QA-R2d-4 (low)
+- On load, a live set with the same commit time (or id) as the set before it is treated as a copy made by the previous version's "+ Set". It keeps its typed values and loses the copied commit time, rest, heart data, status and id, so committing it works normally.
