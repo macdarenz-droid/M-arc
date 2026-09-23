@@ -423,3 +423,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R5b-4 (low)
 - On `controllerchange`, `pageIsCurrent()` checks whether the page's own entry script is one of the new build's files, rather than a carried one. "App updated · Reload" shows only when it is not. The first launch after a deploy (network-first, already current) no longer shows it.
+
+### QA-R6-5 (low)
+- A conditioning lift logged by distance or time progresses by distance (+5 m, or +10 m from 100 m) or time (+5 s) at the same load. It repeats after a max effort or a long gap, and in a lighter week it keeps the distance at a lighter load. New mode `distance`. It never shows "1 reps".
+- Train: a loaded carry uses the gym's equipment unit and the unit flip, and "Last:" shows load · distance (or time).

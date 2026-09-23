@@ -426,7 +426,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const mode = ex?.mode ?? 'weighted';
   const recoveryPct = recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value);
   const profile = profileFor(entry.exerciseId, s.active?.gymId ?? activeGymId());
-  const eu = mode === 'weighted' ? profile.unit : u;
+  // QA-R6-5: a loaded carry uses the gym's equipment unit too.
+  const loaded = mode === 'weighted' || mode === 'conditioning';
+  const eu = loaded ? profile.unit : u;
   const gymId = s.active?.gymId;
   const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, recoveryPct];
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
@@ -503,7 +505,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={mode === 'weighted' ? flip : undefined} onUnitLongPress={mode === 'weighted' ? flipGroup : undefined} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
                       <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
@@ -516,7 +518,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                   }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
-                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
+                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
                   <span class="row" style={{ gap: 6 }}>
                     {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
                     {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}

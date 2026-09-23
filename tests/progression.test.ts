@@ -104,3 +104,20 @@ describe('progression', () => {
     });
   });
 });
+
+describe('carries progress by distance or time (QA-R6-5)', () => {
+  const id = 'lib_farmer_s_carry';
+  it('a carry logged as 32 kg × 40 m aims 5 m further at the same load, never "1 reps"', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }, { kg: 32, distanceM: 35, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toBe('32 kg · 45 m');
+    expect(n.target).not.toMatch(/reps/);
+    expect(n.mode).toBe('distance');
+  });
+  it('a max-effort carry repeats its distance; a timed one adds five seconds', () => {
+    const max = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'max' }] }])];
+    expect(suggestNext(max, id, 'lean', '2026-09-14').target).toBe('32 kg · 40 m');
+    const timed = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, effort: 'ideal' }] }])];
+    expect(suggestNext(timed, id, 'lean', '2026-09-14').target).toBe('24 kg · 65s');
+  });
+});
