@@ -169,8 +169,24 @@ export function onStoreReplaced(fn: () => void): () => void {
 }
 function notifyReplaced(): void { for (const fn of replacedListeners) { try { fn(); } catch (e) { console.error(e); } } }
 
+/**
+ * QA-R1-9: a reset or restore in another tab. Its tab bumps this key; this tab drops what it
+ * holds, so its next save cannot write the old conversations back. A cleared localStorage
+ * (the crash screen's reset) or a removed store count too.
+ */
+export const REPLACED_KEY = 'marc.escobar.v1.replaced';
+function markReplaced(): void {
+  try { storage()?.setItem(REPLACED_KEY, `${Date.now()}.${Math.random().toString(36).slice(2, 8)}`); } catch { /* best-effort */ }
+}
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('storage', (e: StorageEvent) => {
+    if (e.key === null || e.key === REPLACED_KEY || (e.key === ESCOBAR_KEY && e.newValue === null)) notifyReplaced();
+  });
+}
+
 export function clearStore(): void {
   try { storage()?.removeItem(ESCOBAR_KEY); } catch { /* best-effort */ }
+  markReplaced();
   notifyReplaced();
 }
 
@@ -245,5 +261,6 @@ export function exportAllEscobar(): ConversationStore { return loadStore(); }
 export function restoreEscobar(data: unknown): void {
   if (data === undefined || data === null) return;
   saveStore(sanitizeStore(data));
+  markReplaced();
   notifyReplaced();
 }

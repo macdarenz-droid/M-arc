@@ -302,3 +302,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R1-8 (low)
 - The error card adds "Reset app data" (behind a confirm, with a note to save a copy first). It uses the same wipe as the start-up crash screen, so a state that crashes on every render no longer traps the person.
+
+### QA-R1-9 (low)
+- A reset or restore of Escobar's store bumps `marc.escobar.v1.replaced`. Other tabs listen for it (and for a removed store or a cleared storage) and drop what they hold, so their next save cannot write the old conversations back.
