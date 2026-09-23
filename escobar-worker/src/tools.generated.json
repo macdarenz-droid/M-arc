@@ -2047,8 +2047,7 @@
      "exercises"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_program",
@@ -2431,8 +2430,7 @@
      "reason"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_deload",
@@ -2550,8 +2548,7 @@
     },
     "required": [],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_profile",
@@ -2582,8 +2579,7 @@
      "value"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_custom_exercise",
@@ -2690,8 +2686,7 @@
      "role"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_reminder",
@@ -2722,8 +2717,7 @@
      "enabled"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_setting",
@@ -2863,8 +2857,7 @@
      "setting"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "snooze_insight",
@@ -2977,8 +2970,7 @@
      "profile"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_gym",
@@ -3108,8 +3100,7 @@
     },
     "required": [],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   }
  ],
  "modes": {

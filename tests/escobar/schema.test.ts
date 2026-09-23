@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TOOLS, TOOL_BY_NAME, apiTools, COMPONENT_PARAMS, READ_TOOL_NAMES } from '@/escobar/tools/schema';
+import { TOOLS, TOOL_BY_NAME, apiTools, COMPONENT_PARAMS, READ_TOOL_NAMES, STRICT_TOOLS } from '@/escobar/tools/schema';
 import { SHOW_COMPONENT_IDS } from '@/core/models';
 
 const FORBIDDEN = ['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf', 'minLength', 'maxLength', 'pattern', 'format'];
@@ -43,12 +43,9 @@ describe('tool schema', () => {
       for (const r of (node.required as string[]) ?? []) expect(Object.keys(node.properties as object), `${t.name}${path} requires ${r}`).toContain(r);
     });
   });
-  it('strict on action and memory tools, except the plan-draft ones (their 7 nullable weekdays each exceed the API union budget; the app validates them)', () => {
-    const PLAN_DRAFT_TOOLS = ['propose_program', 'propose_schedule'];
-    for (const t of TOOLS) {
-      const shouldBeStrict = (t.kind === 'act' || t.kind === 'memory') && !PLAN_DRAFT_TOOLS.includes(t.name);
-      expect(!!t.strict, t.name).toBe(shouldBeStrict);
-    }
+  it('strict only on the small flat tools (grammar size limit); every strict tool is an action or memory tool', () => {
+    for (const t of TOOLS) expect(!!t.strict, t.name).toBe(STRICT_TOOLS.has(t.name));
+    for (const name of STRICT_TOOLS) expect(['act', 'memory']).toContain(TOOLS.find(t => t.name === name)?.kind);
   });
   it('gated tools are the health and body ones', () => {
     expect(TOOLS.filter(t => t.gate).map(t => `${t.name}:${t.gate}`).sort()).toEqual(['get_body:body', 'get_health:health', 'get_heart_session:health']);
