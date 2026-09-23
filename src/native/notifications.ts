@@ -46,11 +46,16 @@ async function ensureChannels(): Promise<void> {
   channelsReady = true;
 }
 
-export async function ensurePermission(): Promise<boolean> {
+/**
+ * Whether notifications may be shown. Only a person's own tap (a Settings toggle) passes
+ * `prompt: true`; launch and resume only check, so a refusal is never asked again on its own
+ * (QA-R2a-2, QA-R6-13).
+ */
+export async function ensurePermission({ prompt = false }: { prompt?: boolean } = {}): Promise<boolean> {
   if (!isNative()) return false;
   try {
     let p = await LocalNotifications.checkPermissions();
-    if (p.display !== 'granted') p = await LocalNotifications.requestPermissions();
+    if (p.display !== 'granted' && prompt) p = await LocalNotifications.requestPermissions();
     return p.display === 'granted';
   } catch { return false; }
 }
@@ -83,14 +88,14 @@ export interface ReminderHealth { status: string; queued: number; ok: boolean }
  * `todayReadinessSummary` (F3.8) replaces today's body only: a day further out cannot know its
  * own readiness yet, since that depends on health data that has not happened.
  */
-export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null): Promise<ReminderHealth> {
+export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null, { prompt = false }: { prompt?: boolean } = {}): Promise<ReminderHealth> {
   if (!isNative()) return { status: 'Reminders need the Android app.', queued: 0, ok: false };
   await ensureChannels();
   let pending: Array<{ id: number }> = [];
   try { pending = (await LocalNotifications.getPending()).notifications.filter(n => n.id >= 730000 && n.id < 820000); } catch { /* ignore */ }
   if (pending.length) { try { await LocalNotifications.cancel({ notifications: pending.map(p => ({ id: p.id })) }); } catch { /* ignore */ } }
   if (!reminders.enabled) return { status: 'Off', queued: 0, ok: true };
-  const granted = await ensurePermission();
+  const granted = await ensurePermission({ prompt });
   if (!granted) return { status: 'On, but Android has not allowed notifications yet.', queued: 0, ok: false };
   const [hh, mm] = reminders.time.split(':').map(Number);
   const list: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = [];
@@ -134,10 +139,10 @@ export function onNotificationTap(handler: (type: string | undefined) => void): 
 export const BACKUP_REMINDER_ID = 880101;
 
 /** F5: a weekly, inexact "save a backup" note on Sundays at 19:00; cancelled when off. */
-export async function syncBackupReminder(on: boolean): Promise<void> {
+export async function syncBackupReminder(on: boolean, { prompt = false }: { prompt?: boolean } = {}): Promise<void> {
   if (!isNative()) return;
   try { await LocalNotifications.cancel({ notifications: [{ id: BACKUP_REMINDER_ID }] }); } catch { /* none pending */ }
-  if (!on || !(await ensurePermission())) return;
+  if (!on || !(await ensurePermission({ prompt }))) return;
   await ensureChannels();
   try {
     await LocalNotifications.schedule({ notifications: [{

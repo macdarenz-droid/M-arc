@@ -250,3 +250,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R1-1, QA-R1-2, QA-R1-3 (medium)
 - Quarantine with storage full moves the unreadable raw (removes the source key first, then writes the `.corrupt` copy), so boot is flagged and the data survives.
 - `repairState` needs a session start time: a missing or malformed day is derived from it, and a session with neither is dropped (counted in `dropped`). Covers boot, restore and other-tab loads.
+### QA-R2a-1, QA-R2a-2 (medium), QA-R6-13 (low)
+- Health Connect part: already fixed by R5 (`backgroundHealthSync`: connected only, `prompt: false`, 10-min throttle). Notifications: `ensurePermission({ prompt })` only requests on a Settings tap (reminder controls, backup-reminder toggle); launch, resume, day-off and schedule edits only check. No more prompt on first launch either.
