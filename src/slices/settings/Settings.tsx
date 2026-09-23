@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { bootSource, deleteRescueCopy, flushSave, replaceState, rescueRaw, state, update } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
 import { Button, Card, Field, Row, Section, Sheet, Toggle } from '@/ui/primitives';
@@ -19,7 +19,8 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
-import { cancelRestDone } from '@/native/notifications';
+import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, scheduleRestDone } from '@/native/notifications';
+import { isNative } from '@/native/capacitor';
 import { APP_VERSION } from '@/core/version';
 import { formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { buildBackup, parseBackup } from './backup';
@@ -62,6 +63,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [gymsOpen, setGymsOpen] = useState(false);
   const [pending, setPending] = useState<PendingRestore | null>(null);
   const [rescue, setRescue] = useState(() => rescueRaw() != null);
+  const [exact, setExact] = useState(exactAlarmsAllowed());
+  useEffect(() => { void refreshExactAlarm().then(setExact); }, []);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
@@ -124,6 +127,10 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <Row trailing={<input type="time" style={{ width: 120 }} value={p.reminders.time} onChange={e => { setPref({ reminders: { ...p.reminders, time: (e.target as HTMLInputElement).value } }); void resyncReminders(); }} />}><span class="small">Time</span></Row>
             <Row trailing={<select style={{ width: 120 }} value={p.reminders.style} onChange={e => { setPref({ reminders: { ...p.reminders, style: (e.target as HTMLSelectElement).value as never } }); void resyncReminders(); }}><option value="silent">Silent</option><option value="vibrate">Vibrate</option><option value="alert">Alert</option></select>}><span class="small">Style</span></Row>
             <Row trailing={<Toggle checked={!!p.reminders.readinessSummary} onChange={v => { setPref({ reminders: { ...p.reminders, readinessSummary: v } }); void resyncReminders(); }} label="Readiness in the reminder" />}><span class="small" data-palace="settings.readiness-reminder">Morning readiness summary</span><div class="hint">Swaps today's reminder for your readiness, when there is one to show.</div></Row>
+            {isNative() && !exact && (
+              <Row trailing={<Button size="sm" onClick={() => { void requestExactAlarm().then(setExact); }}>Allow</Button>}><span class="small" data-palace="settings.precise-rest">Precise rest alerts</span><div class="hint">Without this, Android may deliver the rest alert a little late.</div></Row>
+            )}
+            {isNative() && <Button size="sm" onClick={() => { void scheduleRestDone(Date.now() + 5000); showToast('Lock the phone; an alert should arrive in 5 s'); }}>Test rest alert (5 s)</Button>}
             <p class="hint">Your choice stays on even if Android drops the queue. The app re-checks and repairs it when you come back.</p>
           </Card>
         </Section>

@@ -78,7 +78,10 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - deleteSplit keeps active; History editor: empty save → remove with Undo; rebuildRecoveryModel (linear: recent window + carried last summary; calibrateAfterSession got an optional prevSummary) on save/remove/undo.
 - Paused rest: adjustRest changes pausedRemainingSec; startRest while paused stores it; resume keeps effort/preSetBpm.
 - tests/reorder.test.ts updated for R2.8 (sets now carry ids) and now also asserts ids survive reorder.
-### Layer: UI — done — IDs: UI-13, UI-22, UI-27, UI-28, UI-17, UI-23
+### Layer: UI — done, commit b466dc0 — IDs: UI-13, UI-22, UI-27, UI-28, UI-17, UI-23
 - src/core/parse.ts (parseLoad/Reps/DurationSec/Minutes; comma decimal; ranges). WeightInput type=text inputMode=decimal via parseLoad. Train reps/duration, History editor, TimeQuestion/PastSession durations use the parsers; Save disabled on missing day/time, bad duration, future past-session start; logPastSession null → toast.
 - New CommitNumber primitive (local text, commit on blur/Enter, range-checked): Profile + Onboarding birth year (1900..now−10) and height (100..250).
 - Split rename and gym rename commit on sheet close and Enter. Toast keeps onDismiss in a ref, deps [message, action]. Today Start → requestStart + go('train') (check-in/pre-session sheets). ≤380 px set-grid CSS.
+### Layer: notifications — done — IDs: UI-02, PL-09, RG-18 (test alert part)
+- notifications.ts: cached exactOk from checkExactNotificationSetting (boot + resume); rest alert isExactNotification: exactOk; training reminders isExactNotification: false; requestExactAlarm only from a Settings tap. No USE_EXACT_ALARM.
+- Settings → Reminders (native only): "Precise rest alerts" row when not granted; "Test rest alert (5 s)".

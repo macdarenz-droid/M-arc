@@ -6,7 +6,7 @@ import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
 import { syncAndStoreHealth } from './slices/settings/health';
-import { onNotificationTap } from './native/notifications';
+import { onNotificationTap, refreshExactAlarm } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
 import { go } from './app/router';
@@ -47,10 +47,12 @@ try {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') { flushSave(); return; }
     refreshClock();
+    void refreshExactAlarm();
     void resyncReminders();
     void syncAndStoreHealth();
   });
   window.addEventListener('pagehide', flushSave);
+  void refreshExactAlarm();
   void resyncReminders();
   void syncAndStoreHealth();
 
