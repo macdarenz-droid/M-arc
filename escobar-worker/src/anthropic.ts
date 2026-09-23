@@ -130,19 +130,27 @@ export type SseEvent =
   | { t: 'tool_input'; id: string; input: unknown }
   | { t: 'final'; content: unknown[]; stop_reason: string | null; usage: unknown; model: string }
   | { t: 'refusal'; category: string | null }
-  | { t: 'error'; code: ErrorCode; message: string; retryAfter?: number };
+  | { t: 'error'; code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 
 export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout';
 
 /** Maps SDK errors by type, never by message text (the one exception is the system-role probe below). */
-export function mapError(err: unknown): { code: ErrorCode; message: string; retryAfter?: number } {
+/** The API's own error text for a rejected request (no secrets in it), so a 400 can be diagnosed from the app or `wrangler tail`. */
+export function errorDetail(err: unknown): string | undefined {
+  if (!(err instanceof Anthropic.APIError)) return undefined;
+  const e = err.error as { error?: { message?: unknown } } | undefined;
+  const m = typeof e?.error?.message === 'string' ? e.error.message : err.message;
+  return m ? String(m).slice(0, 300) : undefined;
+}
+
+export function mapError(err: unknown): { code: ErrorCode; message: string; retryAfter?: number; detail?: string } {
   if (err instanceof Anthropic.APIConnectionTimeoutError) return { code: 'timeout', message: 'The coach took too long to answer.' };
   if (err instanceof Anthropic.RateLimitError) {
     const ra = Number(err.headers?.get?.('retry-after'));
     return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.', ...(Number.isFinite(ra) && ra > 0 ? { retryAfter: ra } : {}) };
   }
   if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError) return { code: 'upstream_auth', message: 'The coach is not set up correctly.' };
-  if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.UnprocessableEntityError || err instanceof Anthropic.NotFoundError) return { code: 'invalid', message: 'The request was not accepted.' };
+  if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.UnprocessableEntityError || err instanceof Anthropic.NotFoundError) { const detail = errorDetail(err); return { code: 'invalid', message: 'The request was not accepted.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.APIError && err.status === 529) return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.' };
   if (err instanceof Anthropic.InternalServerError || err instanceof Anthropic.APIConnectionError || err instanceof Anthropic.APIError) return { code: 'upstream', message: 'The coach is unavailable right now.' };
   return { code: 'upstream', message: 'The coach is unavailable right now.' };

@@ -89,7 +89,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
       params = buildParams(body, env, { foldSystem: true });
       res = await runStep(client, params, emit, { idleMs: deps.idleMs, signal: req.signal });
     }
-    if (res.error && !res.timedOut && !(res.error instanceof Anthropic.APIUserAbortError)) emit({ t: 'error', ...mapError(res.error) });
+    if (res.error && !res.timedOut && !(res.error instanceof Anthropic.APIUserAbortError)) { const m = mapError(res.error); if (m.detail) console.error('upstream rejected:', m.detail); emit({ t: 'error', ...m }); }
     if (res.final && res.final.stop_reason !== 'tool_use') {
       const steps = stepsSinceUser(body.messages) + 1;
       const p = recordTurn(env, device, now, steps, res.final.usage?.output_tokens ?? 0);

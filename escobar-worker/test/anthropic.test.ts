@@ -106,6 +106,10 @@ describe('error mapping by SDK type', () => {
     [new Anthropic.APIConnectionError({ message: 'c' }), 'upstream'],
     [new Error('x'), 'upstream'],
   ])('%s → %s', (err, code) => expect(mapError(err).code).toBe(code));
+  it('carries the API error text for a rejected request', () => {
+    const e = new Anthropic.BadRequestError(400, { type: 'error', error: { type: 'invalid_request_error', message: 'fallbacks: bad value' } }, 'x', h);
+    expect(mapError(e)).toMatchObject({ code: 'invalid', detail: 'fallbacks: bad value' });
+  });
   it('carries retry-after for rate limits', () => expect(mapError(new Anthropic.RateLimitError(429, {}, 'rate', h)).retryAfter).toBe(7));
 });
 
