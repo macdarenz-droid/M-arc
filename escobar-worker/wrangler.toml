@@ -1,5 +1,5 @@
 # M/ARC coach Worker, Escobar v2. Deploys under the existing name so the stored
-# ANTHROPIC_API_KEY secret and bindings carry over. Deploy: npx wrangler@4 deploy
+# ANTHROPIC_API_KEY secret and bindings carry over. Deploy: npx wrangler deploy (pinned in package.json)
 name = "marc-coach"
 main = "src/index.ts"
 compatibility_date = "2026-09-01"
@@ -48,7 +48,7 @@ new_sqlite_classes = ["QuotaCounter"]
 
 # Fallback only if Durable Objects are unavailable on the account: soft KV quotas.
 # Create the namespace once and paste its id here:
-#   npx wrangler@4 kv namespace create QUOTA
+#   npx wrangler kv namespace create QUOTA
 # [[kv_namespaces]]
 # binding = "QUOTA"
 # id = "paste-the-id-here"
