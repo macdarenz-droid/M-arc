@@ -308,3 +308,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R2c-1, QA-R2c-4 (low)
 - "Test rest alert" calls `testRestAlert()`. It uses its own notification id (880002), so it no longer cancels a live rest's alert. It asks for permission (it is a tap), and when notifications are refused the toast says so instead of promising an alert. The Health Connect diagnostic part of R2c-1 was done in R5 (`lastHealthError`).
+
+### QA-R2c-2, QA-R2d-2 (low, same root cause)
+- `resolveSessionTiming` ignores an unparseable time (the session stays as saved at finish) and returns false. "When did you train?" Skip and close with a cleared day or time use the guess the sheet opened with.

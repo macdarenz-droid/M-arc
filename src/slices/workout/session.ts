@@ -377,7 +377,9 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
 }
 
 /** The finish sheet calls this after "when did you train?" resolves a compressed session's real timing. */
-export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, durationMin: number, timeSource: SessionLogging['timeSource']): void {
+export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, durationMin: number, timeSource: SessionLogging['timeSource']): boolean {
+  // QA-R2c-2: a cleared day or time leaves the session as it was saved at finish.
+  if (!Number.isFinite(new Date(trainedAtLocal).getTime()) || !Number.isFinite(durationMin) || durationMin <= 0) return false;
   const trainedAt = new Date(trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(trainedAtLocal).getTime() + durationMin * 60_000).toISOString();
   update(s => ({
@@ -396,6 +398,7 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
     })),
   }));
   flushSave();
+  return true;
 }
 
 /** "Log a past session": no timer, no rest banner. Every set is retro. */

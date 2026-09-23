@@ -689,12 +689,16 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
   // Never default to a session that would end in the future: fall back to "ended just now" instead.
   const guessedEndsInFuture = new Date(`${summary.session.day}T${guessedTime}`).getTime() + medianLiveMinutes() * 60_000 > now;
   const fallbackStart = new Date(now - medianLiveMinutes() * 60_000);
-  const [day, setDay] = useState(guessedEndsInFuture ? dayKey(fallbackStart) : summary.session.day);
-  const [time, setTime] = useState(guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
+  const [guessDay] = useState(() => guessedEndsInFuture ? dayKey(fallbackStart) : summary.session.day);
+  const [guessTime] = useState(() => guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
+  const [day, setDay] = useState(guessDay);
+  const [time, setTime] = useState(guessTime);
   const valid = !!day && !!time && parseMinutes(durText) != null;
 
-  const resolve = (timeSource: 'user' | 'schedule' | 'default', overrideDay?: string, overrideTime?: string) => {
-    resolveSessionTiming(summary.session.id, `${overrideDay ?? day}T${overrideTime ?? time}`, duration, timeSource);
+  const resolve = (timeSource: 'user' | 'schedule' | 'default') => {
+    // QA-R2c-2: Skip and close with a cleared field fall back to the guess the sheet opened with.
+    const at = day && time ? `${day}T${time}` : `${guessDay}T${guessTime}`;
+    resolveSessionTiming(summary.session.id, at, duration, timeSource);
     const updated = state.value.sessions.find(x => x.id === summary.session.id)!;
     onResolved({ session: updated, changedTemplate: summary.changedTemplate });
   };

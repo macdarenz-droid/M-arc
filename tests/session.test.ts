@@ -136,6 +136,14 @@ describe('history order and edits (RG-05, UI-11, UI-12)', () => {
     resolveSessionTiming(s3.id, '2026-09-11T09:00', 60, 'user');
     expect(state.value.sessions.map(s => s.id)).toEqual([s1.id, s3.id, s2.id]);
   });
+  it('a cleared day or time leaves the session as saved (QA-R2c-2, QA-R2d-2)', () => {
+    const s1 = past('2026-09-10');
+    replaceState({ ...freshState(), sessions: [s1] });
+    for (const at of ['T17:00', '2026-09-10T']) {
+      expect(() => resolveSessionTiming(s1.id, at, 60, 'schedule')).not.toThrow();
+      expect(state.value.sessions[0]!.startedAt).toBe(s1.startedAt);
+    }
+  });
   it('logPastSession inserts in sorted order', () => {
     const [s1, s2] = [past('2026-09-10'), past('2026-09-14')];
     replaceState({ ...freshState(), splits: [split], sessions: [s1, s2] });
