@@ -1,8 +1,10 @@
 # Watch progress
 
-RUN LOCK: 2026-09-23T19:53:35Z
+RUN LOCK: 2026-09-23T20:07:24Z
 
 ## Done this run
+
+- Android JVM test harness for the native command store is green: M/ARC gate [35912688857](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688857), Agent guard [35912688849](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688849). The first version exercised the Java method in Robolectric before the owner QA corrections below.
 
 - Replaced the caller supplied native snapshot/receipt API with `completeSet(raw)`, which checks the bound installation, R2.8 session/entry/set IDs, per-set revision, draft values and action time before mutating the selected set and writing its receipt in one SQLite transaction. Session revision and set revision change in the same transaction. Old command IDs replay the recorded result; changed fingerprints conflict. Commit `a6330273805ce9f1a44031d0b170771eb668d671`.
 - Added a version 1 to 2 migration for set revisions, a crash-before-commit rollback test, a receipt-after-reopen test and a session test that verifies stable ID targeting after reorder. Green M/ARC gate [35910010862](https://github.com/macdarenz-droid/M-arc/actions/runs/35910010862) (source and Android jobs); Agent guard [35910010885](https://github.com/macdarenz-droid/M-arc/actions/runs/35910010885). CI source log: 684 regular tests per run, 2 performance tests, 10 probe tests, 7 command tests, 4 SQLite schema tests and watch lab browser gate passed.
