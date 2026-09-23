@@ -366,3 +366,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R4a-11 (low)
 - Undo on "adjust today" says "Undo is no longer available" once a session of that split has started since the change was applied (live or finished). It no longer reports "Undone" while the running session keeps the change.
+
+### QA-R4b-8 (low)
+- "What Escobar knows" shows the saved date as the phone's day (`dayKey(createdAt)`), not the UTC date in the timestamp.
