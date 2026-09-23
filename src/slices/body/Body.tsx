@@ -60,7 +60,7 @@ export function Body() {
             <Card>
               {!recovering.length && <p class="small muted">{readyOnly.length || fullyRecovered.length ? 'Everything you have trained is ready for hard work.' : 'Nothing logged yet.'}</p>}
               <div class="list">{recovering.map(r => (
-                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : `${formatHours(r.hoursLeft)} left`}</span>}>
+                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'sore today' : `${formatHours(r.hoursLeft)} left`}</span>}>
                   <div class="row-between small"><span>{muscleLabel(r.muscle)}</span><span class="muted">{r.pct}% · {r.confidence}</span></div>
                   <div class="bar" style={{ marginTop: 4 }}><i style={{ width: `${r.pct}%`, background: r.pct >= 75 ? 'var(--positive)' : r.pct >= 40 ? 'var(--warning)' : 'var(--negative)' }} /></div>
                 </Row>
@@ -130,7 +130,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
         </div>
         {r.recovering && (
           <p class="small muted">
-            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
+            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'Held back by today\'s soreness rating. Ready for hard work once it eases.' : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
             {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · adjusted to your own history' : ''}.
           </p>
         )}

@@ -314,3 +314,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R2d-4 (low)
 - On load, a live set with the same commit time (or id) as the set before it is treated as a copy made by the previous version's "+ Set". It keeps its typed values and loses the copied commit time, rest, heart data, status and id, so committing it works normally.
+
+### QA-R3a-9 (low)
+- When today's soreness rating holds a muscle below ready after the model's own ready time has passed, the status has `soreToday` and no ready time. Body says "sore today" or "Held back by today's soreness rating", not "ready in under 1h".

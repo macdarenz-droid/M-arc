@@ -48,6 +48,8 @@ export interface MuscleRecovery {
   confidence: 'low' | 'medium' | 'high';
   drivers: Array<{ text: string; hours: number }>;
   systemicFactor: number;
+  /** QA-R3a-9: today's soreness rating holds this muscle below ready; no clock time can say when that eases. */
+  soreToday?: boolean;
 }
 
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
@@ -315,14 +317,18 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
 
     // Soreness caps today's pct; it never raises it, and no soreness never implies ready either.
     const todaySoreness = checkIns.find(c => c.day === today)?.soreness?.[muscle];
+    const modelPct = pct;
     if (todaySoreness != null && todaySoreness >= SORENESS_CAP_MIN_RATING) pct = Math.min(pct, SORENESS_CAP_PCT);
+    const soreToday = pct < modelPct && pct < READY_PCT;
 
     const tReady = input.pctOnly ? null : solveHours(list, fRef, last.at, now, READY_PCT);
     const tFull = input.pctOnly ? null : solveHours(list, fRef, last.at, now, FULL_PCT);
     // solveHours counts from the last session; ready/full times are shown from now (BR-02).
     const r1 = (x: number) => Math.round(x * 10) / 10;
     const elapsedH = Math.max(0, (now - last.at) / 3_600_000);
-    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
+    // Sore but past the model's own ready time: the soreness decides, not the clock.
+    const soreOnly = soreToday && tReady != null && tReady <= elapsedH;
+    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
 
@@ -341,6 +347,7 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
       confidence: confidenceFor(observations),
       drivers: last.drivers,
       systemicFactor: systemicNow,
+      ...(soreToday ? { soreToday } : {}),
     };
   });
 }
