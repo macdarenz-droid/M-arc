@@ -260,3 +260,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - finishSession predicts from the whole history again (one call, ~40 ms at 600 sessions), so it judges against the number the app showed.
 - The rebuild's window covers the 28-day load ratio and layoff novelty (29 days, and at least F_ref sessions), anchors training age to the first session when none is set, and calibrates the sessions finishSession calibrates (everything but a session typed in afterwards: retro without `compressed`), including pre-logging `legacy` saves.
 - `calibrateAfterSession` only runs the recovery prediction when some exercise has a max-effort comparison. Perf fixture rebuild: 34 ms (budget 500 ms, unchanged). Worst case measured: 600 sessions with every exercise at max effort, 0.7 s, only on a History save.
+### QA-R2d-1 (medium)
+- Recovery and readiness selectors read one computed per state field (`sessions`, `profile`, `healthDays`, …), so edits to the live session (a new `active`) leave them untouched and EntryCard's memos survive typing.

@@ -254,3 +254,17 @@ describe('recovery calibration sees what the app showed (QA-R2b-3, QA-R2b-5, QA-
     expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, typedLater] }).tauScale.chest).toBeUndefined();
   });
 });
+
+import { recovery, todayReadiness } from '@/app/selectors';
+describe('typing into a live set does not recompute recovery (QA-R2d-1)', () => {
+  it('recovery and readiness keep their identity across set edits', () => {
+    start();
+    const r0 = recovery.value, t0 = todayReadiness.value;
+    setSet(0, 0, { kg: 60 });
+    setSet(0, 0, { reps: 8 });
+    expect(recovery.value).toBe(r0);
+    expect(todayReadiness.value).toBe(t0);
+    commitSet(0, 0);
+    expect(recovery.value).toBe(r0);
+  });
+});
