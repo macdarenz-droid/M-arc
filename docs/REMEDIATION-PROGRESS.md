@@ -102,3 +102,20 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - Needs device check: exact-alarm flow on Android 14+ (Allow row, test alert while locked); comma-decimal entry on the Android keyboard; 360 px phones.
 - Next dependency: R3 (coach numbers) reads the new clock/selectors.
 (skipped / not reproduced: none)
+
+## Phase R3 — done
+### Layer: brain — done, commits efd7e36, 7cfbd73, b94c159, d30da88 — IDs: BR-01, BR-02, BR-03, BR-19, BR-05, BR-06, BR-04, BR-27, BR-07, BR-16, BR-17, D9, BR-08, BR-09, BR-10, BR-11, BR-12, BR-13, BR-14, BR-22, BR-18, BR-20, BR-21, BR-26, BR-31, BR-24, BR-28
+### Layer: UI and Escobar wiring — done — IDs: ST-12, ST-13, ST-17, UI-18, RG-09 (+ Train/Escobar call sites for BR-08/BR-09, History for BR-22/BR-28)
+### Layer: tests + gate — done — app 641 → 681
+- One test per row in the existing files, plus new tests/bodyfat, trend, muscles, exercises, cues (every cue reachable).
+- Tests updated because they asserted a fixed bug: weeklyReview hardSetsThisWeek (easy counted half, BR-16); isStale gained a `today` argument (BR-04).
+- Perf budgets moved to tests/perf and run alone (`MARC_PERF=1`, part of `npm test`): in the full parallel run recoveryStatus measured 53–58 ms against 60, i.e. contention, not the code (alone: 42 ms).
+- Gate: onboarding weight selector (the field is text now). PASS.
+
+### R3 report
+- Built: the 21 rows of plan §R3 (see COACHING-DECISIONS.md "Remediation R3").
+- Tested: `npm run check` 681 + 2 perf; `npm run test:tz` 681 × 2; worker 66; gate PASS.
+- Decided by research/judgement: balance upper = mean of push and pull (the finding's own balanced fixture); plateau-lever's 6-session bar replaces the trend-confidence check; legacy import keeps name mapping via an equipment-agreeing partial match (all gate fixtures unchanged); reason-cue mapping from suggestion mode (reasonKeyFor).
+- Needs device check: Body fat inches entry; lb body weight entry; mindset note on Today on an odd day.
+- Next dependency: R4 (Escobar integrity) reads these brain outputs.
+(skipped / not reproduced: none)
