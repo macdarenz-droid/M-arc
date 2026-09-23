@@ -104,7 +104,7 @@ export function App() {
       <EscobarMount />
       <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
       {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
-      {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
+      {toast.value && <Toast key={toast.value.id} message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );
 }

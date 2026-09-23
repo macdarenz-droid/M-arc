@@ -138,6 +138,13 @@ for (const theme of themes) {
     for (let k = errors.length - 1; k >= 0; k--) if (errors[k].includes('gate-injected')) errors.splice(k, 1);
     if (await page.getByText('could not start').isVisible().catch(() => false)) errors.push(`${theme}: a post-boot error showed the crash screen`);
     if (!(await page.locator('.nav').isVisible())) errors.push(`${theme}: the app disappeared after a post-boot error`);
+    // QA-R2c-3: the same toast twice restarts its timer (the second one lasts its full 3 s).
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+    const buzz = page.getByRole('button', { name: 'Test haptic' });
+    await buzz.click(); await page.waitForTimeout(2000); await buzz.click(); await page.waitForTimeout(2200);
+    if (!(await page.locator('.toast', { hasText: 'Sent a test buzz' }).isVisible().catch(() => false))) errors.push(`${theme}: a repeated toast closed on the first toast's timer`);
+    await page.waitForTimeout(1200);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
     // R1.3: export a backup, reset everything, restore it: the session count must match.
     const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
     await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
@@ -245,6 +252,11 @@ for (const theme of themes) {
     });
     if (misses.length) errors.push(`${tag}: taps below a 'Max' land on the next set: ${misses.join(', ')}`);
   } else errors.push(`${tag}: expected the effort repair list on the finish sheet`);
+  // QA-R2d-3: the finish sheet's duration keeps ticking while the sheet is open.
+  const dur = page2.locator('[data-finish-duration]');
+  const d0 = await dur.textContent().catch(() => null); await page2.waitForTimeout(2100);
+  const d1 = await dur.textContent().catch(() => null);
+  if (!d0 || d0 === d1) errors.push(`${tag}: the finish sheet's duration froze at ${d0}`);
   await page2.keyboard.press('Escape'); await page2.waitForTimeout(150);
   const width = await page2.evaluate(() => document.documentElement.scrollWidth);
   if (width > 390) errors.push(`${tag}: the live screen is ${width} px wide`);

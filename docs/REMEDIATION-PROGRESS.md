@@ -323,3 +323,9 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-1 (low)
 - Without an equipment profile, live autoregulation rounds on the 2.5 kg grid strictly past the target in the direction it advises: a drop from 44.9 or 45.359 kg is 42.5 kg, never 45. Escobar's live-session tool already passes the gym's equipment (R4.7).
+
+### QA-R2c-3 (low)
+- Every toast has its own id and `<Toast>` is keyed by it, so the same message shown twice restarts its timer. Gate: "Test haptic" tapped twice 2 s apart; the second toast must still be showing 2.2 s later.
+
+### QA-R2d-3 (low)
+- The Finish sheet's duration is its own small component that reads the ticking clock, so it keeps counting while the sheet is open. Gate: the value changes over 2 s.
