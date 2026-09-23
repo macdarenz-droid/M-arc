@@ -16,6 +16,8 @@ The implementation plan built from this audit is [`REMEDIATION-PLAN.md`](REMEDIA
 | Repro | 60 findings were **executed** (numeric scripts, TZ switches, Java executor simulation, Worker handler harness), not only read. |
 | Verification | 3 adversarial verifiers re-checked every medium+ finding and tried to refute it. Result: 104 confirmed, 2 uncertain, 0 refuted. They lowered 14 severities, corrected 45 fixes, and found 2 new issues (VX-01, VX-02). Low findings (53) were not verified. |
 | Spot check | I independently re-read 6 of the highest-impact claims (Health Connect executor deadlock, Navy formula, `commitSet` re-commit, commented-out `QUOTA` binding, frozen `nowMs`, `isExactNotification` default in plugin 8.3.1). All six hold. |
+| Plan review | An independent reviewer checked every file, symbol and line reference in `REMEDIATION-PLAN.md` against `e34076f`, plus the Cloudflare, Capacitor and Health Connect API usage. Its 40 corrections are merged into the plan. |
+| Follow-up | APK signing certificates extracted from two CI artifacts revealed PL-19 (signing identity lives only in a per-branch cache). |
 | Research | Competitor feature matrix (Hevy, Strong, Fitbod, Alpha Progression, JEFIT, RP, Boostcamp, Liftosaur, Gravl), Android 15/16/17 and Play changes, training science behind the coach models. |
 
 ## 2. Baseline (all green, which is why these bugs went unnoticed)
