@@ -13,3 +13,12 @@ describe('watchDevices batch (PL-13)', () => {
     expect(devicesFrom({ devices: [null, { name: 'no address' }] })).toEqual([]);
   });
 });
+
+describe('the watch permission hint (QA-R5a-2, QA-R5b-1, QA-R5b-6)', () => {
+  it('names Location on Android 11 and older, Nearby devices on 12+', async () => {
+    const { watchPermissionHint } = await import('@/native/watch');
+    expect(watchPermissionHint(true)).toContain('Location');
+    expect(watchPermissionHint(true)).not.toContain('Nearby devices');
+    expect(watchPermissionHint(false)).toContain('Nearby devices');
+  });
+});

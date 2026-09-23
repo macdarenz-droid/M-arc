@@ -83,6 +83,16 @@ export async function watchDiagnostics(): Promise<string | null> {
   try { return (await p.diagnostics()).text; } catch { return null; }
 }
 
+/**
+ * QA-R5a-2, QA-R5b-1, QA-R5b-6: Android 11 and older find Bluetooth devices through the Location
+ * permission; only Android 12+ has "Nearby devices".
+ */
+export function watchPermissionHint(needsLocation: boolean): string {
+  return needsLocation
+    ? 'M/ARC needs the Location permission to find your watch (this Android version uses it for Bluetooth scans). Allow it in Android settings, then scan again.'
+    : 'M/ARC needs the Nearby devices permission to find your watch. Allow it in Android settings, then scan again.';
+}
+
 export async function watchPermissionState(): Promise<{ granted: boolean; needsLocation: boolean } | null> {
   const p = plugin();
   if (!p) return null;

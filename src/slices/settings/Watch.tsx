@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
 import { Button, Card, Row, Sheet, Toggle } from '@/ui/primitives';
-import { watchStatus, scannedDevices, scanForWatch, stopWatchScan, connectWatch, disconnectWatch, watchPermissionState, requestWatchPermissions, watchDiagnostics } from '@/native/watch';
+import { watchStatus, scannedDevices, scanForWatch, stopWatchScan, connectWatch, disconnectWatch, watchPermissionHint, watchPermissionState, requestWatchPermissions, watchDiagnostics } from '@/native/watch';
 import { showToast } from '@/app/toast';
 
 /** Connect, forget, and auto-connect (6.5): reused from Train's live pill and Settings. */
@@ -13,14 +13,17 @@ export function WatchSheet({ onClose }: { onClose: () => void }) {
   const [localScanning, setLocalScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [denied, setDenied] = useState(false);
+  const [needsLocation, setNeedsLocation] = useState(false);
   const scanning = status.state === 'scanning' || localScanning;
   const devices = scannedDevices.value;
 
   useEffect(() => () => { if (watchStatus.peek().state === 'scanning') void stopWatchScan(); }, []);
+  useEffect(() => { void watchPermissionState().then(p => { if (p) setNeedsLocation(p.needsLocation); }); }, []);
 
   const startScan = async () => {
     setDenied(false);
     const perm = await watchPermissionState();
+    if (perm) setNeedsLocation(perm.needsLocation);
     if (perm && !perm.granted) {
       const granted = await requestWatchPermissions();
       if (!granted) { setDenied(true); return; }
@@ -56,7 +59,7 @@ export function WatchSheet({ onClose }: { onClose: () => void }) {
         ) : (
           <Button variant="primary" block onClick={startScan} disabled={scanning}>{scanning ? 'Scanning…' : 'Scan for a watch'}</Button>
         )}
-        {(denied || status.state === 'permission') && <p class="hint">M/ARC needs the Nearby devices permission to find your watch. Allow it in Android settings, then scan again.</p>}
+        {(denied || status.state === 'permission') && <p class="hint">{watchPermissionHint(needsLocation)}</p>}
         {(scanning || devices.length > 0) && (
           <div class="stack-sm">
             {scanning && devices.length === 0 && <p class="small muted">Looking for broadcasting watches…</p>}

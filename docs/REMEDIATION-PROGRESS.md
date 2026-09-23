@@ -396,3 +396,8 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - The old coach chat import runs once on enable, sets `legacyImported`, and a second enable adds nothing.
   - Undo after a workout started on a split Escobar created, or on a programme he applied, is refused and the split stays (apply.ts guards at the create and programme undos).
 - These tests pass before and after.
+
+### QA-R5a-2, QA-R5b-1, QA-R5b-6 (low, same root cause)
+- The watch sheet reads `needsLocation` from `watchPermissionState()`, on open and on each scan, and shows `watchPermissionHint()`. It names Location on Android 8–11 and Nearby devices on 12+.
+- Not done here: forwarding the scanner's "Bluetooth is off" message from `native/watch/WatchBridgePlugin.java`. That is native Java outside this finding's scope, and it needs a device check.
+- **Needs device check:** Android 11 phone → deny Location → the hint names Location.
