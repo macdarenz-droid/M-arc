@@ -136,6 +136,8 @@ export class EscobarLoop {
   conversation: Conversation;
   private deps: LoopDeps;
   private generation = 0;
+  /** The generation of the most recent send: only it may set the view idle (ES-09). */
+  private latestSend = 0;
   private controller: AbortController | null = null;
   private abortReason: TurnOutcome | null = null;
   view: LiveView = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
@@ -272,8 +274,11 @@ export class EscobarLoop {
     for (const s of signals) if (s === 'crisis' || s === 'medical') this.deps.onSafety?.(s);
     const outcomes: ToolOutcome[] = [];
     if (this.deps.online && !this.deps.online()) return { outcome: 'offline', local: offlineReply(input.text), outcomes, signals, notSent: true };
+    // ES-09: a new send supersedes one still running.
+    if (this.busy) this.abort('stale');
 
     const gen = this.generation = ++genCounter;
+    this.latestSend = gen;
     this.abortReason = null;
     const controller = this.controller = new AbortController();
     const timer = setTimeout(() => this.abort('timeout'), this.deps.wallClockMs ?? WALL_CLOCK_MS);
@@ -281,7 +286,12 @@ export class EscobarLoop {
 
     const brief = this.briefMessage(mode, signals);
     let staged: StoredMessage[] | null = [this.userMessage(input), brief.msg];
-    let stagedExtra: Partial<Conversation> = { ledger: [...this.conversation.ledger, ...brief.facts], briefLines: brief.lines, userTurns: (this.conversation.userTurns ?? 0) + 1, pendingDecisions: [] };
+    // ES-20: the brief reported these decisions; any recorded while this turn runs stay queued.
+    const decisionKey = (d: { proposalId: string; decision: string; at: string }) => `${d.proposalId}|${d.decision}|${d.at}`;
+    const reported = new Set((this.conversation.pendingDecisions ?? []).map(decisionKey));
+    let stagedExtra: Partial<Conversation> = { ledger: [...this.conversation.ledger, ...brief.facts], briefLines: brief.lines, userTurns: (this.conversation.userTurns ?? 0) + 1 };
+    let userCommitted = false;
+    let firstAnswer: { parsed: ReturnType<typeof parseDirectives>; unverified: string[] } | null = null;
     const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
     let steps = 0;
     let budget = STEP_BUDGET[mode];
@@ -292,14 +302,16 @@ export class EscobarLoop {
     const finish = (r: TurnResult): TurnResult => {
       clearTimeout(timer);
       if (usage.outputTokens || usage.inputTokens) this.deps.recordUsage?.({ turns: 1, ...usage });
-      this.update({ status: 'idle' });
-      if (!staged) this.markImagesSent(); else this.save();
+      // ES-11: a repair that did not finish still shows the first answer, with its unchecked numbers marked.
+      if (r.outcome !== 'done' && firstAnswer && firstAnswerIndex >= 0) this.setRendered(firstAnswerIndex, { answer: firstAnswer.parsed.text, chips: firstAnswer.parsed.chips, unverified: firstAnswer.unverified });
+      if (this.latestSend === gen) this.update({ status: 'idle' });
+      if (userCommitted) this.markImagesSent(); else this.save();
       return r;
     };
     const exitAborted = (): TurnResult => {
       const reason = this.abortReason ?? 'stale';
       this.closeOrphans(reason === 'aborted' ? 'aborted' : reason === 'backgrounded' ? 'backgrounded' : reason === 'timeout' ? 'timeout' : 'stale');
-      return finish({ outcome: reason, outcomes, signals, notSent: !!staged });
+      return finish({ outcome: reason, outcomes, signals, notSent: !userCommitted });
     };
 
     try {
@@ -313,13 +325,17 @@ export class EscobarLoop {
         const pending = staged ? [...this.conversation.messages, ...staged] : this.conversation.messages;
         const r = await this.step(pending, mode, controller.signal, gen);
         if (r.stale || gen !== this.generation) { result = exitAborted(); break; }
-        if (r.error) { result = finish({ outcome: 'error', error: r.error, outcomes, signals, notSent: !!staged }); break; }
-        if (r.refusal) { this.update({ text: '' }); result = finish({ outcome: 'refusal', refusal: r.refusal, outcomes, signals, notSent: !!staged }); break; }
+        if (r.error) { result = finish({ outcome: 'error', error: r.error, outcomes, signals, notSent: !userCommitted }); break; }
+        if (r.refusal) { this.update({ text: '' }); result = finish({ outcome: 'refusal', refusal: r.refusal, outcomes, signals, notSent: !userCommitted }); break; }
         const final = r.final!;
         const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage>> } | undefined;
         const its = u?.iterations?.length ? u.iterations : u ? [u] : [];
         for (const it of its) { usage.inputTokens += it.input_tokens ?? 0; usage.outputTokens += it.output_tokens ?? 0; usage.cacheReadTokens += it.cache_read_input_tokens ?? 0; }
-        if (staged) { this.commit(staged, stagedExtra); staged = null; stagedExtra = {}; }
+        if (staged) {
+          const extra = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
+          this.commit(staged, extra);
+          staged = null; stagedExtra = {}; userCommitted = true;
+        }
         const content = final.content;
         const uses = toolUses(content);
         const preamble = uses.length ? textOf(content).trim() : '';
@@ -338,7 +354,7 @@ export class EscobarLoop {
           const parsed = parseDirectives(raw);
           const grounding = checkGrounding({ answer: raw, ledger: this.conversation.ledger, userTexts: this.userTexts() });
           const idx = this.conversation.messages.length - 1;
-          if (firstAnswerIndex < 0) firstAnswerIndex = idx;
+          if (firstAnswerIndex < 0) { firstAnswerIndex = idx; firstAnswer = { parsed, unverified: grounding.ok ? [] : grounding.sentences }; }
           if (!grounding.ok && !repaired) {
             repaired = true;
             budget = steps + REPAIR_BUDGET;
@@ -346,6 +362,7 @@ export class EscobarLoop {
             staged = [{ role: 'user', content: [{ type: 'text', text: REPAIR_TEXT }], meta: { repair: true } }, { role: 'system', content: repairInstruction(grounding.ungrounded) }];
             continue;
           }
+          firstAnswer = null;
           const revised = firstAnswerIndex !== idx;
           this.setRendered(idx, { answer: parsed.text, chips: parsed.chips, ...(grounding.ok ? {} : { unverified: grounding.sentences }) });
           if (revised) this.setRendered(firstAnswerIndex, { revised: true });
@@ -378,9 +395,9 @@ export class EscobarLoop {
       }
     } catch {
       if (gen !== this.generation) result = exitAborted();
-      else { this.closeOrphans('error'); result = finish({ outcome: 'error', error: { code: 'network', message: 'Something went wrong.' }, outcomes, signals, notSent: !!staged }); }
+      else { this.closeOrphans('error'); result = finish({ outcome: 'error', error: { code: 'network', message: 'Something went wrong.' }, outcomes, signals, notSent: !userCommitted }); }
     }
-    this.controller = null;
+    if (this.controller === controller) this.controller = null;
     return result!;
   }
 

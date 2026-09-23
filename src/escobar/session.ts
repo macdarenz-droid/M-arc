@@ -17,6 +17,8 @@ import { currentFocus } from './palace/focus';
 import { emptyStore, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { imageData } from './images';
 import { escobarUi, loopView, online, proxyUrlOf, quotaResetAt } from './state';
+import { PROTECTED_MEMORY } from './tools/executor';
+import { isPlanRequest } from './ui/prompts';
 import type { MemoryEffect } from './tools/executor';
 import type { Conversation, ConversationStore, ContextRef } from './types';
 import type { EscobarMode } from './context/modes';
@@ -99,23 +101,51 @@ function loadConversations(): void {
 
 function persist(c: Conversation): void {
   const next = upsertConversation(storeSig.value, c, true);
-  storeSig.value = saveStore(next) ?? next;
+  const saved = saveStore(next);
+  storeSig.value = saved ?? next;
+  // ES-30: the store keeps the active conversation; if it still could not fit, say so once.
+  if (saved && !saved.conversations.some(x => x.id === c.id) && !warnedMissing) { warnedMissing = true; showToast('This conversation is too long to save. Start a new one.'); }
   activeConversation.value = c;
 }
+let warnedMissing = false;
 
+/** A loop that is no longer the active one (a new conversation or a reset started mid-turn) only saves quietly. */
+function persistQuietly(c: Conversation): void {
+  const next = upsertConversation(storeSig.value, c, false);
+  storeSig.value = saveStore(next) ?? next;
+}
+
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
 export function checkOnline(): void {
   if (devMode()) { online.value = true; return; }
   if (typeof navigator !== 'undefined' && navigator.onLine === false) { online.value = false; return; }
-  if (Date.now() < offlineUntil) return;
+  // ES-08: inside the back-off, check again when it ends rather than never.
+  if (Date.now() < offlineUntil) {
+    if (!retryTimer) retryTimer = setTimeout(() => { retryTimer = null; checkOnline(); }, offlineUntil - Date.now() + 50);
+    return;
+  }
   void checkHealth(proxyUrlOf(state.value.escobar.proxyUrl)).then(r => {
     online.value = r.ok;
     if (!r.ok) offlineUntil = Date.now() + 60_000;
   });
 }
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('online', () => { offlineUntil = 0; checkOnline(); });
+}
 
 function applyEffect(e: MemoryEffect): void {
   if (e.type === 'remember') {
-    update(s => ({ ...s, escobar: { ...s.escobar, memory: [...s.escobar.memory, e.item].slice(-MAX_MEMORY_ITEMS) } }));
+    update(s => {
+      let memory = [...s.escobar.memory];
+      // ES-31: make room by dropping the oldest item that is not an injury, equipment or an agreement.
+      while (memory.length >= MAX_MEMORY_ITEMS) {
+        const i = memory.findIndex(m => !PROTECTED_MEMORY.has(m.kind));
+        if (i < 0) return s;
+        memory.splice(i, 1);
+      }
+      memory = [...memory, e.item];
+      return { ...s, escobar: { ...s.escobar, memory } };
+    });
     showToast(`Escobar will remember: ${e.item.text}`, 'Undo', () => update(s => ({ ...s, escobar: { ...s.escobar, memory: s.escobar.memory.filter(m => m.id !== e.item.id) } })));
   } else if (e.type === 'forget') {
     const gone: MemoryItem | undefined = state.value.escobar.memory.find(m => m.id === e.id);
@@ -143,26 +173,34 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
   if (!conv) { conv = newConversation(APP_VERSION, mode === 'plan' ? 'plan' : mode === 'live' ? 'live' : 'chat'); persist(conv); }
   if (loop && loop.conversation.id === conv.id) return loop;
   const born = epoch;
-  loop = new EscobarLoop(conv, {
+  // ES-06: each loop's callbacks touch the shared signals only while it is the active loop.
+  const mine = (): boolean => loop === created;
+  const created: EscobarLoop = new EscobarLoop(conv, {
     transport: t,
     getState: (): AppState => state.value,
     now: () => Date.now(),
     appVersion: APP_VERSION,
     manifest: () => MANIFEST,
     focus: () => currentFocus.value,
-    online: () => online.value !== false && (typeof navigator === 'undefined' || navigator.onLine !== false),
+    online: () => (typeof navigator === 'undefined' || navigator.onLine !== false) && !(online.value === false && Date.now() < offlineUntil),
     imageData,
     applyEffect,
     recordUsage,
-    persist: c => { if (born === epoch) persist(c); },
-    onUpdate: v => { loopView.value = v; },
-    onSafety: s => { if (!safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
+    persist: c => { if (born !== epoch) return; if (mine()) persist(c); else persistQuietly(c); },
+    onUpdate: v => { if (mine()) loopView.value = v; },
+    onSafety: s => { if (mine() && !safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
   });
-  return loop;
+  loop = created;
+  return created;
 }
 
 export async function send(input: SendInput): Promise<TurnResult> {
-  const mode = escobarUi.value.mode;
+  // ES-10: one turn at a time; the text waits in the composer.
+  if (loop?.busy) {
+    escobarUi.value = { ...escobarUi.value, draft: input.text };
+    return { outcome: 'error', error: { code: 'invalid', message: 'Escobar is still answering.' }, outcomes: [], signals: [] };
+  }
+  const mode = modeFor(input.text);
   // First feedback within 150 ms (§21): show the message and "Thinking…" before any await.
   lastTurn.value = null;
   pendingUser.value = { input, at: activeConversation.value?.messages.length ?? 0 };
@@ -171,7 +209,8 @@ export async function send(input: SendInput): Promise<TurnResult> {
   const sentIn = epoch;
   if (!activeConversation.value?.messages.length) pendingUser.value = { input, at: 0 };
   const r = await l.send(input, mode);
-  if (sentIn !== epoch) return r;
+  if (sentIn !== epoch || loop !== l) return r;
+  if (r.outcome === 'done' || r.outcome === 'refusal' || r.outcome === 'step_limit' || r.outcome === 'cut_off') online.value = true;
   pendingUser.value = null;
   if (loopView.value.status !== 'idle') loopView.value = { ...loopView.value, status: 'idle' };
   lastTurn.value = { ...r, input };
@@ -232,10 +271,27 @@ export function selectConversation(id: string): void {
   safetyCards.value = [];
 }
 
+/**
+ * ES-17: plan mode sticks once a conversation is about a programme; a chat turns into one when
+ * the person asks for a programme; live wins while a session runs.
+ */
+function modeFor(text: string): EscobarMode {
+  const ui = escobarUi.value.mode;
+  if (state.value.active && ui === 'live') return 'live';
+  if (activeConversation.value?.mode === 'plan') return 'plan';
+  if (ui === 'chat' && isPlanRequest(text)) {
+    const c = activeConversation.value;
+    if (c) persist({ ...c, mode: 'plan' });
+    return 'plan';
+  }
+  return ui;
+}
+
 /** Settings → Reset conversations. */
 export function resetConversations(): void {
   loop?.stop();
   loop = null;
+  epoch++;
   storeSig.value = saveStore(emptyStore()) ?? emptyStore();
   activeConversation.value = null;
   lastTurn.value = null;

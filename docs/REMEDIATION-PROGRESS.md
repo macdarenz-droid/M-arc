@@ -143,3 +143,10 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Live-session guards: programme replace and deleting the trained split are ToolErrors; fingerprints include the active split; the programme applier refuses while a session runs (no more `active: null`).
 - Today override: `plannedExercises(split, override)` applies swap/remove/add/sets/load at startSession and in the Train preview; entries carry `loadFactor` into suggestNext; finishSession clears it. Step 1 (disable, then re-enable) was folded into this single push since nothing ships between the two.
 - ProfileChange.source gains 'escobar' (used by the appliers).
+### Layer: session and loop ownership — done — IDs: ES-06, ES-09, ES-10, ES-20, ES-11, ES-08, ES-17, ES-30 (toast), ES-31
+- session: loop callbacks touch signals only while their loop is active (others save quietly, same epoch only); resetConversations bumps epoch; busy guard returns 'Escobar is still answering.' and keeps the text as the draft; after send, signals only if the loop is still current.
+- loop: a new send aborts a running one; only the latest send sets idle; controller cleared only if still ours; notSent = !userCommitted; an unfinished repair renders the first answer with its unverified marks; decisions recorded during a turn stay queued.
+- online: back-off only (60 s), done/refusal/step_limit/cut_off set online; checkOnline reschedules after the back-off; window 'online' clears it; health needs key:true ("Escobar isn't set up yet.").
+- plan mode: isPlanRequest (word-bounded regex) in ui/prompts.ts; plan sticks per conversation; live wins in a session.
+- memory: eviction skips injury/equipment/agreement; executor throws 'memory is full' when nothing can go; ids are time + random.
+- tests/escobar/transport health fixture gains key:true (ES-08 changed the contract).

@@ -9,6 +9,13 @@ import type { ReadinessResult } from '@/brain/readiness';
 import type { Focus } from '../palace/focus';
 import type { ContextRef } from '../types';
 
+/**
+ * ES-17: a request for a new or changed programme. Word-bounded so "Bulgarian split squat" and
+ * "morning routine" do not switch the conversation into plan mode for good.
+ */
+export const PLAN_REQUEST = /\b(new|make|build|write|create|design|plan|change|redo)\b[^.?!]{0,40}\b(programme|program|routine|split)\b(?!\s*squat)|\b\d[- ]day (split|program|programme|routine)\b|\b\d (days?|times) a week\b/i;
+export const isPlanRequest = (text: string): boolean => PLAN_REQUEST.test(text);
+
 function lastLift(s: AppState): { id: string; name: string } | null {
   for (const sess of [...s.sessions].reverse()) for (const e of sess.exercises) {
     const ex = findExercise(e.exerciseId, s.customExercises);
