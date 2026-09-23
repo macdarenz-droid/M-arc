@@ -223,9 +223,12 @@ public class WorkoutCommandStoreTest {
                     raw = raw.replace(from, mutation.getString("to"));
                 }
                 if (fixture.optBoolean("repaired")) {
-                    assertEquals("applied", store.completeSet(raw).status);
+                    String oldRaw = command("c-fixture", "watch-1", "e-1", "set-1", 0, "2026-09-23T19:00:00.000Z");
+                    assertEquals("applied", store.completeSet(oldRaw).status);
                     store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
                     store.seed("s-2", "watch-2", initial.put("id", "s-2").toString());
+                    if ("new_replay".equals(fixture.optString("repairedMode")))
+                        assertEquals("applied", store.completeSet(raw).status);
                 }
                 String status = store.completeSet(raw).status;
                 assertEquals(fixture.getString("name"), fixture.getString("expected"), "applied".equals(status) ? "accepted" : status);
@@ -233,10 +236,12 @@ public class WorkoutCommandStoreTest {
                     try (Cursor current = store.getReadableDatabase().rawQuery(
                             "SELECT snapshot,revision FROM sessions WHERE session_id='s-2'", null)) {
                         assertTrue(current.moveToFirst());
-                        assertFalse(set(new JSONObject(current.getString(0)), "e-1", "set-1").has("at"));
-                        assertEquals(0, current.getInt(1));
+                        boolean newApplied = "new_replay".equals(fixture.optString("repairedMode"));
+                        assertEquals(newApplied, set(new JSONObject(current.getString(0)), "e-1", "set-1").has("at"));
+                        assertEquals(newApplied ? 1 : 0, current.getInt(1));
                     }
-                    assertEquals(3, pendingCount("c-fixture"));
+                    assertEquals("new_replay".equals(fixture.optString("repairedMode")) ? 6 : 3,
+                            pendingCount("c-fixture"));
                 }
             }
         }

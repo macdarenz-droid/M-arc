@@ -9,10 +9,14 @@ checks the selected installation, session, entry, set and set revision. A retry
 with a recorded command ID returns its original receipt; reuse of that ID with
 different content is rejected. Stored rejections return `replay_rejected` with
 their original rejection receipt; only a stored application returns `replay`.
-Receipt lookup uses the command's original session and installation before
-consulting the currently paired watch. Re-pairing cannot turn an old applied
-receipt into a new-session mutation; a command with no matching receipt must
-still pass the current binding check.
+Receipt lookup uses the pair (session ID, command ID), matching the SQLite
+primary key. The old session's persisted installation and terminal status
+must be supplied to the JS planner as `binding.sessionBindings` when another
+watch owns the active session. Re-pairing cannot turn an old applied receipt
+into a new-session mutation; the new session may reuse the same command ID.
+Unknown commands for a finished old session return conflict when sent by its
+own watch, and wrong_installation from another watch. The current binding
+still guards commands without an archived session.
 Reordering a set preserves its ID, while
 substitution/removal or a changed revision prevents silent retargeting.
 

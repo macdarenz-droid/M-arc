@@ -162,5 +162,43 @@
     "name": "repaired_old_receipt_replays",
     "repaired": true,
     "expected": "replay"
+  },
+  {
+    "name": "repaired_old_new_command",
+    "repaired": true,
+    "repairedMode": "old_new",
+    "patch": {
+      "commandId": "c-new"
+    },
+    "expected": "conflict"
+  },
+  {
+    "name": "repaired_new_watch_known_old_command",
+    "repaired": true,
+    "repairedMode": "other_known",
+    "patch": {
+      "installationId": "watch-2"
+    },
+    "expected": "wrong_installation"
+  },
+  {
+    "name": "repaired_new_watch_unknown_old_command",
+    "repaired": true,
+    "repairedMode": "other_unknown",
+    "patch": {
+      "commandId": "c-new",
+      "installationId": "watch-2"
+    },
+    "expected": "wrong_installation"
+  },
+  {
+    "name": "repaired_same_command_id_new_session_replays",
+    "repaired": true,
+    "repairedMode": "new_replay",
+    "patch": {
+      "sessionId": "s-2",
+      "installationId": "watch-2"
+    },
+    "expected": "replay"
   }
 ]
