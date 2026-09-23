@@ -31,4 +31,6 @@ The GitHub Actions workflows build the web app, generate the Android project wit
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised, how the coach thinks, and how to add a theme, a rule or an exercise.
 
+`relay/` is Relay, a separate shared workspace where you and your agents (Claude, GPT, Codex…) work on projects through one link. See [relay/README.md](relay/README.md).
+
 The previous single-file app is kept under `legacy/v36/` for reference only. It is not built or shipped.
