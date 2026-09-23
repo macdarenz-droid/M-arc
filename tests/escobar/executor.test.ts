@@ -48,6 +48,12 @@ describe('executor', () => {
     const o = run('navigate', { target: 'body.recovering', auto: true });
     expect(o.navigate).toMatchObject({ target: 'body.recovering', auto: true, title: 'Recovering muscles' });
     expect(run('navigate', { target: 'nowhere' }).isError).toBe(true);
+    // R1.2: only known keys pass, and a made-up muscle is an error that lists the real ones.
+    const kept = run('navigate', { target: 'body.recovering', params: [{ key: 'muscle', value: 'quads' }, { key: 'evil', value: 'x' }] });
+    expect(kept.navigate!.params).toEqual({ muscle: 'quads' });
+    const bad = run('navigate', { target: 'body.recovering', params: [{ key: 'muscle', value: 'wings' }] });
+    expect(bad.isError).toBe(true);
+    expect(parse(bad.content).error).toMatch(/muscle must be one of .*chest/);
   });
   it('actions return awaiting_user with a proposal and deterministic ids', () => {
     const e = { ...env(twoWeeksState()), proposalCount: 4 };

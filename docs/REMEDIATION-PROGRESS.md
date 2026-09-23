@@ -33,7 +33,7 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - Next dependency: R1 (store hardening) is independent of R0 and can start now. Two consecutive APKs signed 05:66… are produced by CI on this branch's push (build-apk.yml unchanged).
 (skipped / not reproduced: none)
 
-## Phase R1 — in progress
+## Phase R1 — done
 ### Layer: core/store — done, commit 4f4cc86 — IDs: ST-01, ST-10, ST-11, ST-19, RG-02, ST-09
 - Quarantine to `marc.state.v1.corrupt` (main) and `marc.state.v1.backup.corrupt` (backup, when source is fresh/legacy); `bootRecovered` signal; `rescueRaw()` / `deleteRescueCopy()`.
 - persistNow: main write first, quota → drop backup + retry once; backup = previous good raw on the first save of each local day (`marc.state.v1.backupDay`), best-effort.
@@ -45,9 +45,22 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - main.tsx: ErrorBoundary around App, booted flag, late error/rejection toast throttled to 10 s. New src/app/ErrorBoundary.tsx, src/core/rescue.ts.
 - Lazy import catches: App EscobarMount, ui/open.ts, SettingsSection reset, Composer attach.
 - router.validatePanelParams + showPanel refuses a panel without its required param; goTo validates view/seg; executor navigate keeps only view/seg/muscle/exerciseId/sessionId and rejects a bad muscle; MuscleDetail guards itself.
-### Layer: settings + Escobar store listener — done — IDs: UI-06, UI-15, ST-21, RG-08, UI-14, ES-07, RG-15 (tests in the next layer)
+### Layer: settings + Escobar store listener — done, commit bcf1c04 — IDs: UI-06, UI-15, ST-21, RG-08, UI-14, ES-07, RG-15 (tests in the next layer)
 - src/core/version.ts is the one APP_VERSION (Settings and escobar/session import it).
 - src/slices/settings/backup.ts: buildBackup (schema 2, escobar, heart), parseBackup (v37 wrapper / bare state / legacy / error; repairState + dropped count; active kept only if under 12 h).
 - Settings: confirm card before restore ("Replace N sessions … with M sessions from <date>?"), health reset, escobar + heart restore, Undo restores all three; cancelRestDone, haptics, resyncReminders after. Reset everything clears heart, images, marc.health.asked too. Rescue row: save rescue file / delete rescue copy.
 - heartStore: read() plain-object check, restoreHeart sanitizes [number, number] pairs, clearHeart(); History delete removes the series and Undo restores it.
 - escobar/store onStoreReplaced (clearStore, restoreEscobar); escobar/session subscribes: stops the loop, bumps `epoch`, reloads; a turn from an older epoch persists nothing.
+### Layer: tests + gate — done — app 589 → 615
+- New: tests/store.test.ts (quarantine survives 2 edits, backup throw → saveError null, quota retry, daily restore point, deep repair + dropped count, storage event without writing, other-tab toast, lb backfill 225 lb, kg/units unchanged), tests/backup.test.ts, tests/router.test.ts, tests/escobar/session-reset.test.ts (fails on the pre-fix session.ts).
+- Extended: migrate (lb gym), escobar/executor (navigate keys, bad muscle hint).
+- persistNow: after a quota retry the same save skips the restore-point write (found by the quota test).
+- Gate (silent-black): post-boot rejection + throw → no crash screen; export → reset → restore round trip 27 → 0 → 27.
+
+### R1 report
+- Built: store quarantine + rescue file, daily restore point, deep repair, multi-tab sync, lb backfill, lb legacy gym; crash overlay rescue + boot gate, ErrorBoundary, late-error toast, lazy-import catches, panel param validation; version.ts, backup.ts (schema 2 with heart), confirmed restore with Undo, full reset, heart delete/undo, Escobar store-replaced listener with epoch.
+- Tested: app `npm run check` 615 passed; worker 66 passed; gate PASS incl. round trip.
+- Decided by research/judgement: two quarantine keys (main `.corrupt`, backup `.backup.corrupt`), rescue row downloads main first; legacy lb import also gets the lb backfill; restore confirm is an inline card like the existing reset confirm.
+- Needs device check: rescue file download inside the Android WebView (ErrorBoundary uses the share sheet first; the pre-bundle overlay falls back to clipboard); restore file picker on Android.
+- Next dependency: R2 (clock module) builds on R1's store test harness.
+(skipped / not reproduced: none)

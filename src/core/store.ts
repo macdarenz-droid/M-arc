@@ -217,20 +217,21 @@ export function persistNow(): boolean {
   let raw: string;
   try { raw = JSON.stringify(state.value); } catch (err) { saveError.value = 'Could not save. Free some storage space and try again.'; console.warn('save failed', err); return false; }
   const before = lastGoodRaw;
+  let freedSpace = false;
   try {
     storage.setItem(STATE_KEY, raw);
   } catch (err) {
-    let saved = false;
     if (isQuotaError(err)) {
-      try { storage.removeItem(BACKUP_KEY); storage.removeItem(BACKUP_DAY_KEY); storage.setItem(STATE_KEY, raw); saved = true; } catch (retryErr) { console.warn('save failed', retryErr); }
+      try { storage.removeItem(BACKUP_KEY); storage.removeItem(BACKUP_DAY_KEY); storage.setItem(STATE_KEY, raw); freedSpace = true; } catch (retryErr) { console.warn('save failed', retryErr); }
     } else console.warn('save failed', err);
-    if (!saved) { saveError.value = 'Could not save. Free some storage space and try again.'; return false; }
+    if (!freedSpace) { saveError.value = 'Could not save. Free some storage space and try again.'; return false; }
   }
   lastGoodRaw = raw;
   saveError.value = null;
   try {
     const today = dayKey();
-    if (before && before !== raw && storage.getItem(BACKUP_DAY_KEY) !== today) {
+    // Right after the backup was dropped for space, don't fill that space again on this save.
+    if (!freedSpace && before && before !== raw && storage.getItem(BACKUP_DAY_KEY) !== today) {
       storage.setItem(BACKUP_KEY, before);
       storage.setItem(BACKUP_DAY_KEY, today);
     }

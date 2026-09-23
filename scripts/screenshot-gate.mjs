@@ -121,6 +121,31 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
+  if (theme === 'silent-black') {
+    // R1.2: after boot, a stray rejection or throw must not replace the app with the crash screen.
+    await page.evaluate(() => { void Promise.reject(new Error('gate-injected-x')); setTimeout(() => { throw new Error('gate-injected-y'); }); });
+    await page.waitForTimeout(400);
+    for (let k = errors.length - 1; k >= 0; k--) if (errors[k].includes('gate-injected')) errors.splice(k, 1);
+    if (await page.getByText('could not start').isVisible().catch(() => false)) errors.push(`${theme}: a post-boot error showed the crash screen`);
+    if (!(await page.locator('.nav').isVisible())) errors.push(`${theme}: the app disappeared after a post-boot error`);
+    // R1.3: export a backup, reset everything, restore it: the session count must match.
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
+    const { readFile } = await import('node:fs/promises');
+    const backupText = await readFile(await download.path(), 'utf8');
+    await page.getByRole('button', { name: 'Reset workout data' }).click();
+    await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
+    await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
+    await page.getByRole('button', { name: 'Replace', exact: true }).click(); await page.waitForTimeout(400);
+    await shot('restored');
+    const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    console.log(theme, 'backup round trip:', before, '→ reset', afterReset, '→ restored', after);
+    if (afterReset !== 0 || after !== before) errors.push(`${theme}: backup round trip lost sessions (${before} → ${afterReset} → ${after})`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
   if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
@@ -570,4 +595,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');

@@ -51,6 +51,13 @@ describe('legacy migration', () => {
     expect(state.profile.bodyWeightKg).toBe(80);
     expect(state.legacyImportedAt).toBeTruthy();
   });
+  it('an lb user gets an lb gym and their loads as typed (ST-09, RG-02)', () => {
+    expect(state.preferences.weightUnit).toBe('lb');
+    expect(state.units.gyms[0]!.defaultUnit).toBe('lb');
+    const kgUser = convertLegacy({ ...legacy, preferences: undefined } as never, new Date('2026-09-18T00:00:00.000Z'));
+    expect(kgUser.units.gyms[0]!.defaultUnit).toBe('kg');
+    expect(kgUser.sessions.flatMap(x => x.exercises).flatMap(e => e.sets).every(set => !set.entered)).toBe(true);
+  });
   it('loadState prefers saved state, then legacy, without touching the old key', () => {
     const store = new Map<string, string>();
     const storage = { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v), removeItem: (k: string) => void store.delete(k) };
