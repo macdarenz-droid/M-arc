@@ -74,6 +74,24 @@ for (const theme of themes) {
   if (theme === 'silent-black') {
     // Log a past session: no timer, no rest banner.
     await page.getByRole('button', { name: 'Log a past session' }).click(); await page.waitForTimeout(250); await shot('past-session');
+    // QA-R7-1: in the past-session rows too, a tap 1-8 px below any effort button hits its own row or no effort row.
+    const pastMisses = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('dialog[open] .effort')];
+      const bad = [];
+      rows.forEach((row, i) => {
+        for (const b of row.querySelectorAll('button')) {
+          const r = b.getBoundingClientRect();
+          for (let dy = 1; dy <= 8; dy++) {
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom + dy);
+            const other = hit?.closest('.effort');
+            if (other && other !== row) bad.push(`row ${i} ${b.className} +${dy}px`);
+          }
+        }
+      });
+      return { rows: rows.length, bad };
+    });
+    if (pastMisses.rows < 2) errors.push(`${theme}: expected several effort rows in the past-session sheet, found ${pastMisses.rows}`);
+    if (pastMisses.bad.length) errors.push(`${theme}: past-session taps below an effort button land on another set: ${pastMisses.bad.slice(0, 4).join(', ')}`);
     const pastInputs = page.locator('.set-grid input');
     await pastInputs.nth(0).fill('40'); await pastInputs.nth(1).fill('10');
     await page.locator('.effort button.easy').first().click();
