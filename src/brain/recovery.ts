@@ -145,6 +145,7 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
   const sorted = [...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   // systemicFactor depends on the time only through its day (BR-23): one evaluation per day.
   const systemicByDay = new Map<string, number>();
+  let lo = 0, hi = 0;
 
   for (const session of sorted) {
     const at = new Date(session.logging?.trainedEndAt || session.endedAt || session.startedAt).getTime();
@@ -196,7 +197,14 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
 
     const atDay = dayKey(new Date(at));
     let systemic = systemicByDay.get(atDay);
-    if (systemic === undefined) { systemic = systemicFactor(healthDays, sorted, at); systemicByDay.set(atDay, systemic); }
+    if (systemic === undefined) {
+      // systemicFactor only reads sessions from the 28 days up to this day: pass that window
+      // (with a 2-day margin either side for day/start ordering) instead of the whole history.
+      while (lo < sorted.length && daysBetween(sorted[lo]!.day, atDay) > 30) lo++;
+      while (hi < sorted.length && daysBetween(atDay, sorted[hi]!.day) <= 2) hi++;
+      systemic = systemicFactor(healthDays, sorted.slice(lo, hi), at);
+      systemicByDay.set(atDay, systemic);
+    }
     const trainingAge = trainingAgePrior(trainingAgeMonths(profile, sorted, at));
     const age = agePrior(ageOf(profile, at));
 
@@ -267,6 +275,8 @@ export interface RecoveryInputs {
   checkIns?: CheckIn[];
   freshMarks?: FreshMark[];
   recoveryModel?: RecoveryModel;
+  /** Only `pct` is needed (calibration): skip solving the ready/full times. */
+  pctOnly?: boolean;
 }
 
 export type MuscleDoses = Record<MuscleId, Dose[]>;
@@ -309,8 +319,8 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     const todaySoreness = checkIns.find(c => c.day === today)?.soreness?.[muscle];
     if (todaySoreness != null && todaySoreness >= SORENESS_CAP_MIN_RATING) pct = Math.min(pct, SORENESS_CAP_PCT);
 
-    const tReady = solveHours(list, fRef, last.at, now, READY_PCT);
-    const tFull = solveHours(list, fRef, last.at, now, FULL_PCT);
+    const tReady = input.pctOnly ? null : solveHours(list, fRef, last.at, now, READY_PCT);
+    const tFull = input.pctOnly ? null : solveHours(list, fRef, last.at, now, FULL_PCT);
     const readyInHours: [number, number] | null = tReady == null ? null : [Math.round(tReady * 0.85 * 10) / 10, Math.min(READY_TO_HOURS_CAP, Math.round(tReady * 1.15 * 10) / 10)];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
@@ -362,7 +372,7 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  */
 export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
-  const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel });
+  const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true });
   const tauScale = { ...recoveryModel.tauScale };
   const observations = { ...recoveryModel.observations };
   const touched = new Set<MuscleId>();

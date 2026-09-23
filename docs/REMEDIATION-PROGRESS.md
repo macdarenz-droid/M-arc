@@ -65,7 +65,7 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - Next dependency: R2 (clock module) builds on R1's store test harness.
 (skipped / not reproduced: none)
 
-## Phase R2 — in progress
+## Phase R2 — done
 ### Layer: clock and dates — done, commit d217c48 — IDs: ST-05, ST-06, ST-07, UI-03, UI-09, RG-06, RG-07, VX-02, ST-08, ST-16, ST-18, BR-15, BR-25, ES-25, UI-04
 - New src/app/clock.ts: today, nowMs, minuteNow, refreshClock (tz signature → resetDayCache), always-on 60 s interval, ref-counted acquireTicker. setTicking deleted; selectors re-export; recovery/coachContext read minuteNow.
 - main.tsx: visible → refreshClock + resyncReminders + syncAndStoreHealth; pageshow removed.
@@ -85,8 +85,20 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 ### Layer: notifications — done, commit f022161 — IDs: UI-02, PL-09, RG-18 (test alert part)
 - notifications.ts: cached exactOk from checkExactNotificationSetting (boot + resume); rest alert isExactNotification: exactOk; training reminders isExactNotification: false; requestExactAlarm only from a Settings tap. No USE_EXACT_ALARM.
 - Settings → Reminders (native only): "Precise rest alerts" row when not granted; "Test rest alert (5 s)".
-### Layer: performance — done — IDs: BR-23, UI-10, BR-32
+### Layer: performance — done, commit 0ccadfa — IDs: BR-23, UI-10, BR-32
 - recovery: systemicFactor memoised per day inside sessionMuscleDoses; muscleDoses() + recoveryAt() exported, recoveryStatus = recoveryAt(muscleDoses()); readinessSeries builds doses once.
 - history: exerciseHistory cached per (sessions array, custom array, id) in WeakMaps; returns a copy.
 - Train: LiveClock is the only nowMs reader on the live screen; EntryCard memoises suggestNext, best, autoreg, priorE1rm and per-set prev/PR (deps: sessions, custom, units, goal, gym, entry, today, readiness, deload, recoveryPct; never profile).
 - rules week-grade: sessions.length === 0 check without weekSummary.
+### Layer: tests + gate — done — app 615 → 641 (also under TZ=America/New_York and Asia/Manila)
+- New: tests/clock.test.ts (refcount, 30 ticks → recovery once, minute interval without ticker, TZ change + refresh; the TZ test fails with a no-op resetDayCache), tests/session.test.ts (commit-once, draft on empty, addSet carry, R2.8 ids/substitution/commitSetById/actionAt/backfill, sorted resolve/logPast, deleteSplit keeps active, order-independent rebuild, paused rest, perf), tests/parse.test.ts, tests/notifications.test.ts (mocked plugin).
+- Perf (this container, median of 5 after warm-up, 600 sessions): recoveryStatus 42 ms (budget 60), coachInsights 51 ms (budget 150), rebuildRecoveryModel 249 ms (budget 500). Needed: systemicFactor gets a 28-day session window (+2-day margins); calibration asks recovery for pct only (`pctOnly`).
+- Gate: `.set-grid input` selectors (load input is text now); rest clock still ticks on Today after a commit; 360 px live screen with 102.5 typed: input not clipped and page not wider than 360. Found and fixed: at ≤380 px the exercise card's button row forced the page to 387 px (row wraps now; grid columns minmax(0, …)).
+
+### R2 report
+- Built: clock module + resume refresh; time-zone-safe day keys and local time hints; TZ matrix in CI; commit-once sets and stable live ids with id-based mutators; sorted history everywhere; recovery rebuild on history edits; paused-rest fixes; input parsers and text load entry; commit-on-blur profile fields; rename commits; toast timer; Today start via check-in; exact-alarm handling with Settings row and test alert; perf (dose reuse, per-day systemic factor, history cache, isolated live clock, memoised entry cards); narrow-phone layout.
+- Tested: `npm run check` 641; `npm run test:tz` 641 × 2; worker 66; gate PASS.
+- Decided by research/judgement: rebuild uses a recent window plus carried last summaries (linear) and finish uses the same window, so live and rebuilt models agree on the recovery prediction; `pctOnly` for calibration; history cache returns copies.
+- Needs device check: exact-alarm flow on Android 14+ (Allow row, test alert while locked); comma-decimal entry on the Android keyboard; 360 px phones.
+- Next dependency: R3 (coach numbers) reads the new clock/selectors.
+(skipped / not reproduced: none)
