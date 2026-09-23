@@ -32,7 +32,7 @@ Watch companion (GT6, Huawei Wear Engine): [`WATCH-ARCHITECTURE.md`](WATCH-ARCHI
 |---|---|
 | Android package | `com.mrcdrnzz.dailytracker` |
 | Huawei App ID | `119100049` (Wear Engine application submitted, pending) |
-| App signing certificate SHA-256 | The permanent key created in R0.0, recorded in repo variable `MARC_SIGNING_SHA256` and added to the Huawei product. (`05:A0…A6:E8`, registered earlier, was a one-run random key and is permanently lost; see PL-19.) |
+| App signing certificate SHA-256 | `05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5`: the permanent key, created 2026-09-23 (run 35865126922), stored in secrets `MARC_SIGNING_KEYSTORE_B64` / `MARC_SIGNING_STORE_PASSWORD`, and pinned in `build-apk.yml`. Add it to the Huawei product. (`05:A0…A6:E8`, registered earlier, was a one-run random key and is permanently lost; see PL-19.) |
 
 Once R0.0 has created it, never rotate or replace the permanent key. Every CI-built APK, debug and release, must be signed with it; CI fails otherwise. Never commit the Huawei app secret or `agconnect-services.json` (the repo is public).
 
@@ -96,7 +96,12 @@ Dependencies: R1 before R2 (shared store and test harness). R2's clock module be
 **Why first**: the Worker is live and anyone can spend the Anthropic key (PL-01, critical). Every build has a random signing key, so no update installs over the last without wiping data (PL-19).
 **Layers**: signing key → worker → CI → gate.
 
-### R0.0 Permanent signing key (PL-19, PL-02) 🔑: do this first
+### R0.0 Permanent signing key (PL-19, PL-02) 🔑: **done on this branch 2026-09-23**
+Status:
+- Steps 1–2: done. The key is created and stored as secrets.
+- Step 4: done on `claude/marc-regression-architecture-gegkbq`. Run 35866203809's APK was verified as signed `05:66:9A:…:F1:F5`, v2 and v3.
+- Left: the same `build-apk.yml` change on the branch the owner installs from, and owner steps 3 and 5.
+
 Facts, from certificates extracted out of CI artifacts:
 - Five debug APKs have five different signing fingerprints. The Capacitor template has no `signingConfig`, and on the runner AGP does not read `~/.android/debug.keystore`, so it generates a fresh key on every build.
 - The cache `marc-debug-signing-v1` holds the committed `1E:13…` keystore, which Gradle never uses (export run 35863961872).

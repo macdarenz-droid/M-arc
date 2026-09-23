@@ -13,6 +13,7 @@ Consequences:
 - No new APK installs as an update over the installed one. The next install needs an uninstall, which wipes local workouts unless a backup is exported first.
 
 Rules:
+- **Permanent key (created 2026-09-23):** SHA-256 `05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5`. Only APKs from branches whose `build-apk.yml` carries the R0.0 signing step have it.
 - **Before Gate A:** remediation R0.0 creates one permanent key (secrets `MARC_SIGNING_KEYSTORE_B64` / `MARC_SIGNING_STORE_PASSWORD`, repo variable `MARC_SIGNING_SHA256`, plus an encrypted offline backup). CI then signs every APK explicitly with `apksigner` and fails on a fingerprint mismatch. The owner adds the new fingerprint to the Huawei product (slot #2, or replacing the dead #1).
 - **Never rotate the permanent key** once created. Never rely on Gradle's default debug keystore.
 - Debug APKs have `versionCode 1` (the Capacitor template default). Release APKs have `37000000 + run`. A phone running a release build refuses debug builds because of the downgrade.
