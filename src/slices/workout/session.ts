@@ -315,6 +315,17 @@ export function restRemainingSec(a: ActiveSession, now = Date.now()): number | n
 
 export interface FinishSummary { session: Session; changedTemplate: boolean }
 
+/**
+ * QA-R4a-4: the person changed the exercises themselves, compared with what was planned for
+ * today (the split as today's Escobar adjustment shaped it). A one-day swap or skip from Escobar
+ * is not a change worth saving to the split.
+ */
+export function changedFromPlan(a: ActiveSession, split: Split | undefined, override = state.value.escobar.todayOverride): boolean {
+  if (!split) return false;
+  const planned = plannedExercises(split, override, dayKey(new Date(a.startedAt))).map(e => e.exerciseId).join('|');
+  return planned !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
+}
+
 /** Turn the active session into history. Sets that were never filled are dropped. */
 export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
   const a = active();
@@ -346,9 +357,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     gymId: a.gymId ?? state.value.units.activeGymId,
     ...(opts.note?.trim() ? { note: opts.note.trim().slice(0, 1000) } : {}),
   });
-  const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
-  const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
-  const changedTemplate = !!split && templateIds !== sessionIds;
+  const changedTemplate = changedFromPlan(a, split);
   update(s => ({
     ...s,
     active: null,

@@ -268,3 +268,19 @@ describe('typing into a live set does not recompute recovery (QA-R2d-1)', () => 
     expect(recovery.value).toBe(r0);
   });
 });
+
+import { addExerciseToSession, changedFromPlan } from '@/slices/workout/session';
+describe('a one-day Escobar change is not a template change (QA-R4a-4)', () => {
+  it('skipping an exercise for today does not ask to save the split; adding one yourself does', () => {
+    replaceState({ ...state.value, escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove', exerciseId: 'lib_cable_fly' }] } } });
+    start();
+    expect(a().entries.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press']);
+    expect(changedFromPlan(a(), split)).toBe(false);
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    expect(finishSession(false)!.changedTemplate).toBe(false);
+    replaceState({ ...state.value, splits: [split] });
+    start();
+    addExerciseToSession(findExercise('lib_dumbbell_lateral_raise')!);
+    expect(changedFromPlan(a(), split)).toBe(true);
+  });
+});

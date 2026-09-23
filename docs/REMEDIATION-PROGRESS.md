@@ -275,3 +275,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R4a-1, QA-R4a-2, QA-R4a-3 (medium), QA-R4a-8 (low)
 - `dropLoop()` (new/select/reset conversation and store replaced) stops the turn and sets loopView idle, pendingUser null, lastTurn null and the safety cards empty: the stopped loop is no longer allowed to touch the UI, so the switch does it.
 - Plan mode is persisted through `updateConversation`, so the running loop's copy is plan too and a follow-up stays in plan mode.
+### QA-R4a-4 (medium)
+- `changedFromPlan(active, split)` compares the session with what was planned for today (the split shaped by today's Escobar adjustment), for both the finish prompt and `changedTemplate`. A one-day swap or skip from Escobar no longer offers "Keep the change for future sessions?".
