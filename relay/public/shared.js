@@ -34,9 +34,11 @@ export const extOf = name => {
 /** @param {string} name */
 export const mimeFor = name => /** @type {Record<string,string>} */ (MIME)[extOf(name)] || (TEXT_EXT.has(extOf(name)) ? 'text/plain' : 'application/octet-stream')
 
-/** @param {string} name @param {string} [mime] */
+/** Text we can show and edit. Never images (SVG included), audio, video or office documents. @param {string} name @param {string} [mime] */
 export const isText = (name, mime = '') =>
-  TEXT_EXT.has(extOf(name)) || /^text\//.test(mime) || /(json|xml|yaml|javascript|typescript|x-sh|sql)/.test(mime)
+  !/^(image|audio|video)\/|officedocument|opendocument|msword|ms-excel|ms-powerpoint/.test(mime) &&
+  (TEXT_EXT.has(extOf(name)) || /^text\//.test(mime) ||
+    /^application\/([\w.-]+\+)?(json|xml|javascript|typescript|x-sh|sql|yaml|x-yaml|toml|x-ndjson)$/.test(mime))
 
 /** @param {string} name */
 export const isMarkdown = name => /^(md|markdown)$/.test(extOf(name))
@@ -64,14 +66,14 @@ function inline(s) {
   s = s
     .replace(/\u0000/g, '')
     .replace(/`([^`\n]+)`/g, (_, c) => put(`<code>${esc(c)}</code>`))
-    .replace(/!?\[([^\]\n]+)\]\(<?([^)\s>]+)>?(?:\s+"[^"]*")?\)/g, (_, t, u) => put(link(u, t)))
+    .replace(/!?\[([^[\]\n]{1,500})\]\(<?([^()\s<>]{1,2000})>?(?:\s+"[^"\n]{0,200}")?\)/g, (_, t, u) => put(link(u, t)))
     .replace(/\bhttps?:\/\/[^\s<>()]+[^\s<>().,:;"'!?\]]/g, u => put(link(u, u)))
   s = esc(s)
-    .replace(/\*\*(?=\S)(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/(^|[^\w])__(?=\S)(.+?)__(?!\w)/g, '$1<strong>$2</strong>')
-    .replace(/(^|[^*\w])\*(?=[^\s*])(.+?)\*(?![*\w])/g, '$1<em>$2</em>')
-    .replace(/(^|[^\w])_(?=[^\s_])(.+?)_(?!\w)/g, '$1<em>$2</em>')
-    .replace(/~~(?=\S)(.+?)~~/g, '<del>$1</del>')
+    .replace(/\*\*(?=\S)((?:[^*\n]|\*(?!\*))+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^\w])__(?=\S)((?:[^_\n]|_(?!_))+?)__(?!\w)/g, '$1<strong>$2</strong>')
+    .replace(/(^|[^*\w])\*(?=[^\s*])([^*\n]+)\*(?![*\w])/g, '$1<em>$2</em>')
+    .replace(/(^|[^\w])_(?=[^\s_])([^_\n]+)_(?!\w)/g, '$1<em>$2</em>')
+    .replace(/~~(?=\S)((?:[^~\n]|~(?!~))+?)~~/g, '<del>$1</del>')
   return s.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[+i] ?? '')
 }
 
@@ -85,8 +87,8 @@ const TABLE_SEP = /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/
 /** @param {string} line @param {string | undefined} next */
 const isTable = (line, next) => line.includes('|') && next !== undefined && next.includes('-') && TABLE_SEP.test(next)
 /** @param {string} line @param {string | undefined} next */
-const startsBlock = (line, next) =>
-  FENCE.test(line) || HEADING.test(line) || HR.test(line) || QUOTE.test(line) || ITEM.test(line) || isTable(line, next)
+const startsBlock = (line, next, depth = 0) =>
+  FENCE.test(line) || HEADING.test(line) || HR.test(line) || (QUOTE.test(line) && depth < 8) || ITEM.test(line) || isTable(line, next)
 
 /** @param {string} line */
 const cells = line =>
@@ -122,8 +124,9 @@ function list(lines) {
   return out
 }
 
-/** Markdown to safe HTML: every character of input is escaped unless it forms one of the supported constructs. @param {unknown} src @returns {string} */
-export function renderMarkdown(src) {
+/** Markdown to safe HTML: every character of input is escaped unless it forms one of the supported constructs.
+ * Quotes nest at most 8 deep; deeper `>` is plain text. @param {unknown} src @param {number} [depth] @returns {string} */
+export function renderMarkdown(src, depth = 0) {
   const lines = String(src ?? '').replace(/\r\n?/g, '\n').split('\n')
   let out = ''
   let i = 0
@@ -145,10 +148,10 @@ export function renderMarkdown(src) {
     } else if (HR.test(line)) {
       out += '<hr>'
       i++
-    } else if (QUOTE.test(line)) {
+    } else if (QUOTE.test(line) && depth < 8) {
       const buf = []
       while (i < lines.length && QUOTE.test(lines[i] ?? '')) buf.push((lines[i++] ?? '').replace(/^\s{0,3}> ?/, ''))
-      out += `<blockquote>${renderMarkdown(buf.join('\n'))}</blockquote>`
+      out += `<blockquote>${renderMarkdown(buf.join('\n'), depth + 1)}</blockquote>`
     } else if (isTable(line, lines[i + 1])) {
       const head = cells(line)
       const align = cells(lines[i + 1] ?? '').map(c => (/^:.*:$/.test(c) ? ' class="al-c"' : /:$/.test(c) ? ' class="al-r"' : ''))
@@ -165,7 +168,7 @@ export function renderMarkdown(src) {
     } else {
       const buf = [line]
       i++
-      while (i < lines.length && (lines[i] ?? '').trim() && !startsBlock(lines[i] ?? '', lines[i + 1])) buf.push(lines[i++] ?? '')
+      while (i < lines.length && (lines[i] ?? '').trim() && !startsBlock(lines[i] ?? '', lines[i + 1], depth)) buf.push(lines[i++] ?? '')
       out += `<p>${buf.map(inline).join('<br>')}</p>`
     }
   }

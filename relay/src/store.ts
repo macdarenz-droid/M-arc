@@ -31,6 +31,20 @@ export class HttpError extends Error {
 
 const CHUNK = 1 << 20
 const SCHEMA = 1
+// Durable Object SQLite allows 100 bound parameters per statement and 50-byte LIKE patterns.
+const BATCH = 90
+export const MAX_DEPTH = 24
+export const MAX_FOLDERS = 2000
+const SUBTREE = `WITH RECURSIVE t(id) AS (SELECT ? UNION ALL SELECT f.id FROM folders f JOIN t ON f.parent_id = t.id)`
+
+function batched<T>(ids: string[], fn: (part: string[], marks: string) => T[]): T[] {
+  const out: T[] = []
+  for (let i = 0; i < ids.length; i += BATCH) {
+    const part = ids.slice(i, i + BATCH)
+    out.push(...fn(part, part.map(() => '?').join(',')))
+  }
+  return out
+}
 export const TEMPLATES: Record<string, string[]> = {
   software: ['agents', 'agents/claude', 'agents/gpt', 'agents/handoffs', 'docs', 'docs/architecture', 'docs/decisions', 'design', 'tasks', 'releases'],
   empty: [],
@@ -66,8 +80,11 @@ export const slugify = (s: string) =>
   s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'project'
 
 /** Split a user path like "agents/claude/" into clean segments. */
-export const segments = (path: unknown) =>
-  String(path ?? '').split('/').map(s => s.trim()).filter(Boolean).map(s => cleanName(s, 'Folder name'))
+export function segments(path: unknown): string[] {
+  const parts = String(path ?? '').split('/').map(s => s.trim()).filter(Boolean)
+  if (parts.length > 16) throw new HttpError(400, 'Paths are limited to 16 folders deep')
+  return parts.map(s => cleanName(s, 'Folder name'))
+}
 
 export class Store {
   sql: Sql
@@ -209,12 +226,20 @@ export class Store {
 
   /** The folder and every folder below it. */
   subtree(rootId: string): string[] {
-    return this.sql
-      .all<{ id: string }>(
-        `WITH RECURSIVE t(id) AS (SELECT ? UNION ALL SELECT f.id FROM folders f JOIN t ON f.parent_id = t.id) SELECT id FROM t`,
-        rootId,
-      )
-      .map(r => r.id)
+    return this.sql.all<{ id: string }>(`${SUBTREE} SELECT id FROM t`, rootId).map(r => r.id)
+  }
+
+  /** Levels above a folder (the project root is 0). */
+  depth(id: string): number {
+    let n = 0
+    for (let f = this.folder(id); f.parent_id; f = this.folder(f.parent_id)) n++
+    return n
+  }
+
+  /** Levels below a folder (a leaf is 0). */
+  height(id: string): number {
+    return Number(this.sql.get<{ h: number }>(
+      `WITH RECURSIVE t(id, d) AS (SELECT ?, 0 UNION ALL SELECT f.id, t.d + 1 FROM folders f JOIN t ON f.parent_id = t.id) SELECT MAX(d) AS h FROM t`, id)?.h ?? 0)
   }
 
   /** "a/b" below rootId → path segments relative to rootId; '' for the root itself. */
@@ -239,17 +264,23 @@ export class Store {
   }
 
   ensurePath(rootId: string, path: unknown): Folder {
-    let f = this.folder(rootId)
-    for (const seg of segments(path)) {
-      const next = this.sql.get<Folder>(`SELECT * FROM folders WHERE parent_id = ? AND name = ? COLLATE NOCASE`, f.id, seg)
-      f = next ?? this.createFolder(f.id, seg)
-    }
-    return f
+    const segs = segments(path)
+    return this.sql.tx(() => {
+      let f = this.folder(rootId)
+      for (const seg of segs) {
+        const next = this.sql.get<Folder>(`SELECT * FROM folders WHERE parent_id = ? AND name = ? COLLATE NOCASE`, f.id, seg)
+        f = next ?? this.createFolder(f.id, seg)
+      }
+      return f
+    })
   }
 
   createFolder(parentId: string, rawName: unknown): Folder {
     const parent = this.folder(parentId)
     const name = cleanName(rawName, 'Folder name', 80)
+    if (this.depth(parent.id) + 1 > MAX_DEPTH) throw new HttpError(400, `Folders nest at most ${MAX_DEPTH} levels`)
+    const count = Number(this.sql.get<{ n: number }>(`SELECT COUNT(*) AS n FROM folders WHERE project_id = ?`, parent.project_id)?.n ?? 0)
+    if (count >= MAX_FOLDERS) throw new HttpError(400, `A project holds at most ${MAX_FOLDERS} folders`)
     return this.sql.tx(() => {
       if (this.sql.get(`SELECT 1 FROM folders WHERE parent_id = ? AND name = ? COLLATE NOCASE`, parent.id, name))
         throw new HttpError(409, `“${name}” already exists here`)
@@ -268,6 +299,7 @@ export class Store {
     const parent = this.folder(parentId)
     if (parent.project_id !== f.project_id) throw new HttpError(400, 'Folders cannot move between projects')
     if (this.subtree(f.id).includes(parent.id)) throw new HttpError(400, 'A folder cannot move inside itself')
+    if (this.depth(parent.id) + 1 + this.height(f.id) > MAX_DEPTH) throw new HttpError(400, `Folders nest at most ${MAX_DEPTH} levels`)
     return this.sql.tx(() => {
       if (this.sql.get(`SELECT 1 FROM folders WHERE parent_id = ? AND name = ? COLLATE NOCASE AND id != ?`, parent.id, name, f.id))
         throw new HttpError(409, `“${name}” already exists there`)
@@ -281,13 +313,12 @@ export class Store {
     const f = this.folder(id)
     if (!f.parent_id) throw new HttpError(400, 'Delete the project to delete its root folder')
     const ids = this.subtree(f.id)
-    const marks = ids.map(() => '?').join(',')
     this.sql.tx(() => {
-      this.sql.run(`DELETE FROM chunks WHERE file_id IN (SELECT id FROM files WHERE folder_id IN (${marks}))`, ...ids)
-      this.sql.run(`DELETE FROM files WHERE folder_id IN (${marks})`, ...ids)
-      this.sql.run(`DELETE FROM messages WHERE folder_id IN (${marks})`, ...ids)
-      this.sql.run(`DELETE FROM links WHERE folder_id IN (${marks})`, ...ids)
-      this.sql.run(`DELETE FROM folders WHERE id IN (${marks})`, ...ids)
+      for (const id of ids) {
+        this.sql.run(`DELETE FROM chunks WHERE file_id IN (SELECT id FROM files WHERE folder_id = ?)`, id)
+        for (const t of ['files', 'messages', 'links']) this.sql.run(`DELETE FROM ${t} WHERE folder_id = ?`, id)
+        this.sql.run(`DELETE FROM folders WHERE id = ?`, id)
+      }
       this.bump()
     })
   }
@@ -295,9 +326,8 @@ export class Store {
   // ── messages ────────────────────────────────────────────────
   private withFiles(rows: Omit<Message, 'files'>[]): Message[] {
     if (!rows.length) return []
-    const ids = rows.map(r => r.id)
-    const files = this.sql.all<FileMeta>(
-      `SELECT * FROM files WHERE message_id IN (${ids.map(() => '?').join(',')}) ORDER BY created_at`, ...ids)
+    const files = batched(rows.map(r => r.id), (part, marks) =>
+      this.sql.all<FileMeta>(`SELECT * FROM files WHERE message_id IN (${marks}) ORDER BY created_at`, ...part))
     return rows.map(r => ({ ...r, files: files.filter(f => f.message_id === r.id) }))
   }
 
@@ -312,12 +342,12 @@ export class Store {
     return { messages: this.withFiles(rows.slice(0, limit).reverse()), more }
   }
 
-  /** Latest messages across a set of folders, oldest first. */
-  recent(folderIds: string[], limit = 30): Message[] {
-    if (!folderIds.length) return []
+  /** Latest messages in a folder and everything below it (optionally leaving one folder out), oldest first. */
+  recent(rootId: string, limit = 30, except = ''): Message[] {
     const rows = this.sql.all<Omit<Message, 'files'>>(
-      `SELECT * FROM messages WHERE folder_id IN (${folderIds.map(() => '?').join(',')}) ORDER BY created_at DESC, id DESC LIMIT ?`,
-      ...folderIds, limit,
+      `${SUBTREE} SELECT m.* FROM messages m WHERE m.folder_id IN (SELECT id FROM t) AND m.folder_id != ?
+       ORDER BY m.created_at DESC, m.id DESC LIMIT ?`,
+      rootId, except, limit,
     )
     return this.withFiles(rows.reverse())
   }
@@ -370,11 +400,13 @@ export class Store {
   }
 
   // ── files ───────────────────────────────────────────────────
-  files(folderIds: string | string[]): FileMeta[] {
-    const ids = Array.isArray(folderIds) ? folderIds : [folderIds]
-    if (!ids.length) return []
-    return this.sql.all<FileMeta>(
-      `SELECT * FROM files WHERE folder_id IN (${ids.map(() => '?').join(',')}) ORDER BY name COLLATE NOCASE`, ...ids)
+  files(folderId: string): FileMeta[] {
+    return this.sql.all<FileMeta>(`SELECT * FROM files WHERE folder_id = ? ORDER BY name COLLATE NOCASE`, folderId)
+  }
+
+  /** Files in a folder and everything below it. */
+  filesUnder(rootId: string): FileMeta[] {
+    return this.sql.all<FileMeta>(`${SUBTREE} SELECT x.* FROM files x WHERE x.folder_id IN (SELECT id FROM t) ORDER BY x.name COLLATE NOCASE`, rootId)
   }
 
   file(id: string): FileMeta {
@@ -521,7 +553,12 @@ export class Store {
 
   // ── search ──────────────────────────────────────────────────
   search(q: string) {
-    const like = `%${q.replace(/[\\%_]/g, c => '\\' + c)}%`
+    // Durable Object SQLite refuses LIKE patterns over 50 bytes.
+    let like = ''
+    for (let n = q.length; n > 0; n--) {
+      like = `%${q.slice(0, n).replace(/[\\%_]/g, c => '\\' + c)}%`
+      if (new TextEncoder().encode(like).byteLength <= 50) break
+    }
     const messages = this.sql.all<Omit<Message, 'files'> & { slug: string }>(
       `SELECT m.*, p.slug FROM messages m JOIN projects p ON p.id = m.project_id
        WHERE m.body LIKE ? ESCAPE '\\' ORDER BY m.created_at DESC LIMIT 20`, like)

@@ -37,9 +37,42 @@ export function secure(res: Response, https: boolean): Response {
 export const json = (data: unknown, status = 200, headers: HeadersInit = {}) =>
   new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers } })
 
-export async function readJson(req: Request): Promise<Record<string, unknown>> {
-  if (Number(req.headers.get('content-length') ?? 0) > 1_048_576) throw new HttpError(413, 'Request body is too large')
-  const text = await req.text()
+const mb = (n: number) => `${Math.round(n / 1048576) || 1} MB`
+
+/** Reads at most `max` bytes, whatever Content-Length says (or does not say, when chunked). */
+export async function readBody(req: Request, max: number, what = 'Request body'): Promise<Uint8Array> {
+  const tooBig = () => new HttpError(413, `${what} is larger than ${mb(max)}`)
+  if (Number(req.headers.get('content-length') ?? 0) > max) throw tooBig()
+  if (!req.body) return new Uint8Array(0)
+  const reader = req.body.getReader()
+  const parts: Uint8Array[] = []
+  let n = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    n += value.byteLength
+    if (n > max) {
+      await reader.cancel().catch(() => {})
+      throw tooBig()
+    }
+    parts.push(value)
+  }
+  const out = new Uint8Array(n)
+  let o = 0
+  for (const p of parts) {
+    out.set(p, o)
+    o += p.byteLength
+  }
+  return out
+}
+
+export async function readForm(req: Request, max: number): Promise<FormData> {
+  const bytes = await readBody(req, max, 'Upload')
+  return new Response(bytes, { headers: { 'Content-Type': req.headers.get('content-type') ?? '' } }).formData()
+}
+
+export async function readJson(req: Request, max = 1_048_576): Promise<Record<string, unknown>> {
+  const text = new TextDecoder().decode(await readBody(req, max))
   if (!text) return {}
   try {
     const v = JSON.parse(text)
@@ -49,12 +82,7 @@ export async function readJson(req: Request): Promise<Record<string, unknown>> {
   }
 }
 
-export async function readBytes(req: Request, max: number): Promise<Uint8Array> {
-  if (Number(req.headers.get('content-length') ?? 0) > max) throw new HttpError(413, `File is larger than ${Math.round(max / 1048576)} MB`)
-  const data = new Uint8Array(await req.arrayBuffer())
-  if (data.byteLength > max) throw new HttpError(413, `File is larger than ${Math.round(max / 1048576)} MB`)
-  return data
-}
+export const readBytes = (req: Request, max: number) => readBody(req, max, 'File')
 
 // ── rate limits (per process / Durable Object instance) ─────────
 const hits = new Map<string, { n: number; reset: number }>()
@@ -97,7 +125,13 @@ async function ownerVia(c: Ctx): Promise<'cookie' | 'bearer' | null> {
   const key = c.ownerKey
   if (!key) return null
   const auth = c.req.headers.get('authorization') ?? ''
-  if (auth.startsWith('Bearer ') && (await keyMatches(auth.slice(7).trim(), key))) return 'bearer'
+  if (auth.startsWith('Bearer ')) {
+    // Bearer guesses share the login limit, so the key cannot be brute-forced through any endpoint.
+    if (limited(`login:${c.ip}`, 10, 600_000, false)) throw new HttpError(429, 'Too many attempts. Try again in a few minutes.')
+    if (await keyMatches(auth.slice(7).trim(), key)) return 'bearer'
+    limited(`login:${c.ip}`, 10, 600_000)
+    return null
+  }
   const m = (c.req.headers.get('cookie') ?? '').match(new RegExp(`(?:^|;\\s*)${COOKIE}=(\\d+)\\.([\\w-]+)`))
   if (m && Number(m[1]) > Date.now() && same(m[2] ?? '', await hmac(key, `relay-session.${m[1]}`))) return 'cookie'
   return null
@@ -193,7 +227,7 @@ async function api(c: Ctx): Promise<Response> {
   if (path === '/api/login' && method === 'POST') {
     if (!c.ownerKey) throw new HttpError(503, 'OWNER_KEY is not set on the server')
     if (limited(`login:${c.ip}`, 10, 600_000, false)) throw new HttpError(429, 'Too many attempts. Try again in a few minutes.')
-    const { key } = await readJson(c.req)
+    const { key } = await readJson(c.req, 4096)
     if (typeof key !== 'string' || !(await keyMatches(key, c.ownerKey))) {
       limited(`login:${c.ip}`, 10, 600_000)
       throw new HttpError(401, 'That key is not right')

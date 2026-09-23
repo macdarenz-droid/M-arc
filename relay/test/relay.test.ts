@@ -2,9 +2,23 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { DatabaseSync } from 'node:sqlite'
 import { handle } from '../src/app.ts'
-import { nodeSql } from '../src/sql.ts'
+import { nodeSql, type Sql, type Val } from '../src/sql.ts'
 import { Store } from '../src/store.ts'
-import { renderMarkdown } from '../public/shared.js'
+import { isText, renderMarkdown } from '../public/shared.js'
+
+/** node:sqlite with the Durable Object's limits: 100 bound parameters, LIKE patterns of 50 bytes. */
+function durableLimits(sql: Sql): Sql {
+  const check = (q: string, a: Val[]) => {
+    if (a.length > 100) throw new Error(`too many SQL variables (${a.length})`)
+    if (/\bLIKE\b/i.test(q)) for (const v of a) if (typeof v === 'string' && new TextEncoder().encode(v).byteLength > 50) throw new Error('LIKE pattern too complex')
+  }
+  return {
+    ...sql,
+    all: (q, ...a) => (check(q, a), sql.all(q, ...a)),
+    get: (q, ...a) => (check(q, a), sql.get(q, ...a)),
+    run: (q, ...a) => (check(q, a), sql.run(q, ...a)),
+  }
+}
 
 const KEY = 'test-owner-key-0123456789'
 let ipN = 0
@@ -12,7 +26,7 @@ let ipN = 0
 interface Call { body?: unknown; raw?: BodyInit; type?: string; headers?: Record<string, string>; auth?: boolean }
 
 function setup() {
-  const store = new Store(nodeSql(new DatabaseSync(':memory:')))
+  const store = new Store(durableLimits(nodeSql(new DatabaseSync(':memory:'))))
   const ip = `10.0.0.${++ipN}`
   const call = (method: string, path: string, o: Call = {}) => {
     const headers: Record<string, string> = { ...(o.auth === false ? {} : { authorization: `Bearer ${KEY}` }), ...o.headers }
@@ -167,11 +181,67 @@ test('write agent link: post JSON and form, put files by path, mkdir, context.md
 test('markdown is escaped except for the supported constructs', () => {
   const html = renderMarkdown('<script>alert(1)</script>\n\n[x](javascript:alert(1)) <img src=x onerror=alert(1)>\n\n**b** _i_ `c<d>` https://example.com/a?b=1.')
   assert.ok(!html.includes('<script') && !html.includes('<img'))
-  assert.ok(html.includes('href="#"'))
+  assert.ok(!/href="\s*javascript/i.test(html))
+  assert.ok(renderMarkdown('[x](javascript:alert)').includes('href="#"'))
   assert.ok(html.includes('<strong>b</strong>') && html.includes('<em>i</em>') && html.includes('<code>c&lt;d&gt;</code>'))
   assert.ok(html.includes('href="https://example.com/a?b=1"'))
   const t = renderMarkdown('| a | b |\n|---|--:|\n| 1 | 2 |\n\n- [x] done\n  - nested\n1. one\n\n```js\nconst a = "<b>"\n```')
   assert.ok(t.includes('<table>') && t.includes('class="al-r"'))
   assert.ok(t.includes('checked') && t.includes('<ul><li>nested</li></ul>'))
   assert.ok(t.includes('data-lang="js"') && t.includes('&lt;b&gt;'))
+})
+
+test('Durable Object limits: hundreds of folders and messages, long searches', async () => {
+  const { j, call, store } = setup()
+  const d = (await j('GET', '/api/projects/m-arc')).data
+  const big = store.createFolder(d.project.root_id, 'big')
+  for (let i = 0; i < 130; i++) {
+    const f = store.createFolder(big.id, `f${i}`)
+    store.createMessage(f.id, { author: 'a', kind: 'agent', via: 'owner' }, { body: `m${i}` })
+  }
+  const link = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'Codex', can_write: true } })).data.link
+  const s = `/s/${link.token}`
+  assert.equal((await call('GET', s, { auth: false })).status, 200)
+  assert.equal((await call('GET', `${s}/tree.json`, { auth: false })).status, 200)
+  const ctx = await call('GET', `${s}/context.md?messages=200`, { auth: false })
+  assert.equal(ctx.status, 200)
+  assert.ok((await ctx.text()).includes('m129'))
+  assert.equal((await j('GET', `/api/folders/${big.id}/messages?limit=500`)).status, 200)
+  assert.equal((await j('GET', `/api/search?q=${'x'.repeat(100)}`)).status, 200)
+  assert.equal((await j('GET', `/api/search?q=${encodeURIComponent('é'.repeat(100))}`)).status, 200)
+  assert.equal((await j('DELETE', `/api/folders/${big.id}`)).status, 200)
+})
+
+test('folder depth and path length are capped, and failed paths leave nothing behind', async () => {
+  const { j, call, store } = setup()
+  const d = (await j('GET', '/api/projects/m-arc')).data
+  const link = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'Codex', can_write: true } })).data.link
+  const s = `/s/${link.token}`
+  const before = store.folders(d.project.id).length
+  assert.equal((await call('POST', `${s}/folders`, { auth: false, body: { path: Array(17).fill('a').join('/') } })).status, 400)
+  assert.equal((await call('POST', `${s}/folders`, { auth: false, body: { path: Array(16).fill('a').join('/') } })).status, 201)
+  assert.equal((await call('POST', `${s}/folders`, { auth: false, body: { path: Array(16).fill('a').join('/') + '/b/c/d/e/f/g/h/i/j' } })).status, 400)
+  assert.equal(store.folders(d.project.id).length, before + 16)
+})
+
+test('bearer guesses are rate limited like logins; chunked bodies respect limits', async () => {
+  const { call } = setup()
+  for (let i = 0; i < 11; i++) assert.equal((await call('GET', '/api/projects', { auth: false, headers: { authorization: `Bearer guess${i}` } })).status, 401)
+  assert.equal((await call('GET', '/api/projects')).status, 429)
+  const { store } = setup()
+  const chunked = new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode('x'.repeat(8192))); c.close() } })
+  const res = await handle(new Request('https://relay.test/api/login', { method: 'POST', body: chunked, duplex: 'half' } as RequestInit),
+    { store, ownerKey: KEY, maxFileBytes: 1 << 20, ip: 'chunked' })
+  assert.equal(res.status, 413)
+})
+
+test('markdown stays fast and bounded on hostile input; file kinds', () => {
+  for (const src of ['>'.repeat(20000) + 'x', ' *a'.repeat(33000), ' _a'.repeat(33000), '['.repeat(99000), '[a]('.repeat(24000), '**a *'.repeat(20000)]) {
+    const t = performance.now()
+    renderMarkdown(src)
+    assert.ok(performance.now() - t < 500, src.slice(0, 12))
+  }
+  assert.equal(isText('a.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), false)
+  assert.equal(isText('a.svg', 'image/svg+xml'), false)
+  assert.equal(isText('a.ts', 'application/octet-stream'), true)
 })

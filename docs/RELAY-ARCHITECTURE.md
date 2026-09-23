@@ -55,6 +55,7 @@ A single Durable Object gives one consistent writer and SQLite with no extra ser
 - Every write bumps `meta.seq`. The UI polls `GET /api/pulse` and refetches only when it moves.
 - No foreign keys; deletes cascade in code inside one transaction.
 - Paths (`agents/claude`) are resolved by name from a root; `.`, `..`, `/` and control characters are refused in names.
+- Limits that keep one link from hurting everyone: 24 folder levels, 16 segments per path, 2,000 folders per project, 100,000-character messages, bodies read through a byte-counting stream (chunked uploads included). Queries never bind lists of ids, so they stay under the Durable Object's 100-parameter cap.
 
 New projects can start from the **Software** template (the M/ARC sample is seeded on first run):
 
@@ -77,7 +78,7 @@ releases/
 - A link is scoped to one folder (the project root for the whole project). Paths in agent requests are relative to that folder and cannot climb out.
 - Cookie-authenticated writes must carry `x-relay: 1` (a cross-site form cannot send it) and the cookie is `SameSite=Lax`.
 - Tokens are stored as issued so the owner can copy a link again later; revoking deletes the row. (Hashing them would protect nothing the same database does not already hold.)
-- Login failures are limited to 10 per 10 minutes per IP.
+- Wrong owner keys, at `/api/login` or as a Bearer header, are limited to 10 per 10 minutes per IP.
 - Every response: `X-Robots-Tag: noindex`, `Referrer-Policy: no-referrer` (links never leak through Referer), `X-Content-Type-Options: nosniff`, frame denial, and a strict same-origin CSP on HTML.
 - Uploaded files are served with a sandboxing CSP; text is always `text/plain`, and anything that is not an image, audio, video, PDF or text is forced to download. An uploaded HTML or SVG file can never run script on the Relay origin.
 

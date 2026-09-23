@@ -1,6 +1,6 @@
 // Node entry for local development and self-hosting: node:sqlite + node:http, same app as the Worker.
 //   PORT=8787  DATA_DIR=./.data  OWNER_KEY=…  MAX_FILE_MB=25
-import { createServer } from 'node:http'
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { DatabaseSync } from 'node:sqlite'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
@@ -34,7 +34,13 @@ const TYPES: Record<string, string> = {
 }
 
 async function serveStatic(url: URL): Promise<Response> {
-  let file = normalize(join(pub, decodeURIComponent(url.pathname)))
+  let path: string
+  try {
+    path = decodeURIComponent(url.pathname)
+  } catch {
+    return new Response('Bad request', { status: 400 })
+  }
+  let file = normalize(join(pub, path))
   if (!file.startsWith(pub)) return new Response('Not found', { status: 404 })
   if (url.pathname.endsWith('/') || !extname(file)) file = join(pub, 'index.html')
   try {
@@ -45,8 +51,14 @@ async function serveStatic(url: URL): Promise<Response> {
 }
 
 const port = Number(process.env.PORT ?? 8787)
-createServer(async (req, res) => {
-  const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
+async function serve(req: IncomingMessage, res: ServerResponse) {
+  let url: URL
+  try {
+    url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
+  } catch {
+    res.writeHead(400).end('Bad request')
+    return
+  }
   const headers = new Headers()
   for (const [k, v] of Object.entries(req.headers)) if (v !== undefined) headers.set(k, Array.isArray(v) ? v.join(', ') : v)
   const hasBody = req.method !== 'GET' && req.method !== 'HEAD'
@@ -63,6 +75,15 @@ createServer(async (req, res) => {
   res.writeHead(out.status, Object.fromEntries(out.headers))
   if (out.body && req.method !== 'HEAD') res.end(Buffer.from(await out.arrayBuffer()))
   else res.end()
+}
+
+// Nothing a request does may take the process down.
+createServer((req, res) => {
+  serve(req, res).catch(err => {
+    console.error(err)
+    if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'text/plain' })
+    res.end('Server error')
+  })
 }).listen(port, () => {
   console.log(`Relay on http://localhost:${port}`)
   if (!process.env.OWNER_KEY) console.log(`Owner key (from ${keyFile}): ${ownerKey}`)

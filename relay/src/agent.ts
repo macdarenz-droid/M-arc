@@ -1,7 +1,7 @@
 // Agent links: /s/<token>. Server-rendered HTML with no script (readable by any fetch tool, postable by browser agents),
 // the same content as markdown for agents, JSON for tools, and path-based writes for agents that can send HTTP.
 import { HttpError, cleanName, segments, type Author, type FileMeta, type Folder, type FolderStat, type Link, type Message, type Project, type Store } from './store.ts'
-import { json, limited, rawResponse, readBytes, readJson, type Ctx } from './app.ts'
+import { json, limited, rawResponse, readBytes, readForm, readJson, type Ctx } from './app.ts'
 import { KINDS, esc, fmtBytes, isText, renderMarkdown } from '../public/shared.js'
 
 interface View {
@@ -18,6 +18,13 @@ const folderUrl = (v: View, path: string) => (path ? `${v.base}/f/${enc(path)}` 
 const rawUrl = (v: View, f: FileMeta) => `${v.base}/raw/${f.id}/${encodeURIComponent(f.name)}`
 const when = (t: number) => new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
 const label = (path: string) => '/' + path
+const decode = (s: string) => {
+  try {
+    return decodeURIComponent(s)
+  } catch {
+    throw new HttpError(400, 'Bad URL encoding')
+  }
+}
 
 function view(c: Ctx, token: string): View {
   const link = c.store.linkByToken(token)
@@ -104,9 +111,8 @@ function folderMd(v: View, at: View['tree'][number]): string {
 }
 
 function contextMd(v: View, at: View['tree'][number], limit: number): string {
-  const ids = v.tree.filter(t => t.path === at.path || !at.path || t.path.startsWith(at.path + '/')).map(t => t.f.id)
-  const messages = v.store.recent(ids, limit)
-  const files = v.store.files(ids)
+  const messages = v.store.recent(at.f.id, limit)
+  const files = v.store.filesUnder(at.f.id)
   let budget = 256 * 1024
   const texts: string[] = []
   for (const f of [...files].sort((a, b) => b.updated_at - a.updated_at)) {
@@ -167,7 +173,7 @@ function folderHtml(v: View, at: View['tree'][number]): Response {
     .join('')}</nav>`
   const recent =
     at.f.id === v.scope.id
-      ? v.store.recent(v.tree.filter(t => t.f.id !== at.f.id).map(t => t.f.id), 12)
+      ? v.store.recent(v.scope.id, 12, at.f.id)
       : []
   const fileRows = files
     .map(f => `<tr><td><a href="${esc(rawUrl(v, f))}">${esc(f.name)}</a></td><td>${fmtBytes(f.size)}</td><td>${esc(f.author)}</td><td>${when(f.updated_at)}</td></tr>`)
@@ -199,7 +205,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
 
   if (method === 'GET' || method === 'HEAD') {
     if (rest === '' || rest.startsWith('/f/') || rest === '/f') {
-      const path = rest.startsWith('/f/') ? rest.slice(3).split('/').map(decodeURIComponent).join('/') : ''
+      const path = rest.startsWith('/f/') ? rest.slice(3).split('/').map(decode).join('/') : ''
       const at = folderAt(v, path)
       return wantsMd ? markdown(folderMd(v, at)) : folderHtml(v, at)
     }
@@ -208,12 +214,11 @@ export async function agentRoute(c: Ctx): Promise<Response> {
       return markdown(contextMd(v, folderAt(v, c.url.searchParams.get('folder') ?? ''), limit))
     }
     if (rest === '/tree.json') {
-      const ids = v.tree.map(t => t.f.id)
       return json({
         project: { name: v.project.name, slug: v.project.slug, description: v.project.description },
         link: { name: v.link.name, kind: v.link.kind, can_write: !!v.link.can_write },
         folders: v.tree.map(t => ({ path: t.path, messages: t.f.messages, files: t.f.files, last_at: t.f.last_at, url: folderUrl(v, t.path) })),
-        files: v.store.files(ids).map(f => ({ path: pathOf(v, f.folder_id), name: f.name, size: f.size, mime: f.mime, author: f.author, updated_at: f.updated_at, url: rawUrl(v, f) })),
+        files: v.store.filesUnder(v.scope.id).map(f => ({ path: pathOf(v, f.folder_id), name: f.name, size: f.size, mime: f.mime, author: f.author, updated_at: f.updated_at, url: rawUrl(v, f) })),
       })
     }
     const raw = rest.match(/^\/raw\/(\w+)(?:\/.*)?$/)
@@ -235,8 +240,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     let fields: Record<string, unknown>
     let uploads: { name: string; mime: string; data: Uint8Array }[] = []
     if (isForm) {
-      if (Number(c.req.headers.get('content-length') ?? 0) > c.maxFileBytes * 4) throw new HttpError(413, 'Upload is too large')
-      const form = await c.req.formData()
+      const form = await readForm(c.req, c.maxFileBytes + 1048576)
       fields = { folder: form.get('folder'), body: form.get('body'), author: form.get('author') }
       for (const f of form.getAll('file')) {
         if (typeof f === 'string' || !f.size) continue
@@ -256,7 +260,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
   }
 
   if (method === 'PUT' && rest.startsWith('/files/')) {
-    const parts = rest.slice(7).split('/').map(decodeURIComponent)
+    const parts = rest.slice(7).split('/').map(decode)
     const name = cleanName(parts.pop(), 'File name', 200)
     const data = await readBytes(c.req, c.maxFileBytes)
     const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
@@ -267,8 +271,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
 
   if (method === 'POST' && rest === '/files') {
     if (!isForm) throw new HttpError(415, 'Send multipart/form-data with a "folder" field and "file" fields, or PUT /files/<path>/<name>')
-    if (Number(c.req.headers.get('content-length') ?? 0) > c.maxFileBytes * 4) throw new HttpError(413, 'Upload is too large')
-    const form = await c.req.formData()
+    const form = await readForm(c.req, c.maxFileBytes + 1048576)
     const at = folderAt(v, form.get('folder'))
     const w = who(form.get('author'))
     const out: FileMeta[] = []
@@ -282,7 +285,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
   }
 
   if (method === 'POST' && rest === '/folders') {
-    const b = isForm ? Object.fromEntries((await c.req.formData()).entries()) : await readJson(c.req)
+    const b = isForm ? Object.fromEntries((await readForm(c.req, 65536)).entries()) : await readJson(c.req, 65536)
     const f = v.store.ensurePath(v.scope.id, b.path)
     const fresh = view(c, v.link.token)
     return json({ folder: { path: pathOf(fresh, f.id), url: folderUrl(fresh, pathOf(fresh, f.id)) } }, 201)

@@ -191,12 +191,15 @@ async function onRoute() {
   if (target) { target.scrollIntoView({ block: 'center' }); target.classList.add('flash') }
 }
 
+/** Latest page of messages plus files. Older pages the user already loaded stay in place. */
 async function loadFolder() {
   const id = S.folderId
   try {
     const [m, f] = await Promise.all([api('GET', `/api/folders/${id}/messages`), api('GET', `/api/folders/${id}/files`)])
     if (id !== S.folderId) return
-    Object.assign(S, { msgs: m.messages, more: m.more, files: f.files })
+    const first = m.messages[0]?.created_at ?? Infinity
+    const older = m.more ? S.msgs.filter(x => x.created_at < first) : []
+    Object.assign(S, { msgs: [...older, ...m.messages], more: older.length ? S.more : m.more, files: f.files })
   } catch (e) { toast(e.message) }
 }
 
@@ -898,7 +901,12 @@ function renderDrawer(force = false) {
   else if (text) {
     const out = h('div.textprev', {}, h('p.muted', {}, 'Loading…'))
     body.append(out)
-    loadText(f).then(t => out.replaceChildren(md && !drawer.source ? h('div.md', { html: renderMarkdown(t) }) : h('pre.code', {}, h('code', {}, t))))
+    loadText(f).then(t => {
+      const cut = t.length > 400_000
+      const shown = cut ? t.slice(0, 400_000) : t
+      out.replaceChildren(md && !drawer.source && !cut ? h('div.md', { html: renderMarkdown(shown) }) : h('pre.code', {}, h('code', {}, shown)),
+        cut ? h('p.muted', {}, 'Preview shows the first 400 KB. Download for the rest.') : null)
+    })
   } else body.append(h('div.empty.small', {}, fileIcon(f), h('p', {}, 'No preview for this type.'), h('a.btn.sm', { href: raw + '?download=1' }, icon('download'), 'Download')))
   const next = h('aside.drawer', { 'aria-label': f.name },
     h('div.dhead', {}, fileIcon(f), h('div.dtitle', {}, h('strong', {}, f.name), h('span.muted', {}, `${fmtBytes(f.size)} · ${f.author} · ${rel(f.updated_at)}`)),
