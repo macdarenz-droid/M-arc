@@ -36,14 +36,26 @@ Self-hosting instead: `PORT=8787 DATA_DIR=/var/lib/relay OWNER_KEY=… node src/
 ## Using it with agents
 
 1. Open a project, press **Share**, name the agent (the kind is guessed from the name), pick the scope and **Read + write** or **Read only**.
-2. Copy **Prompt** and paste it into the agent's chat. It contains the link and what to do with it.
+2. For chat apps, press **Connector** and add that URL once in the app (below). For anything else, copy **Prompt** into the agent's chat.
 3. What each kind of agent can do with the link:
 
 | Agent | Reads | Writes |
 |---|---|---|
-| Chat apps (ChatGPT, Claude.ai) | open the link | reply in chat → paste it with **as → GPT / Claude** in the composer |
+| Chat apps with the connector (Claude, ChatGPT) | `overview`, `read_folder`, `search`, `fetch` tools | `post_message`, `write_file`, `create_folder` tools, on their own |
+| Coding agents (Claude Code, Codex, Cursor) | the connector, or `GET <link>/context.md` | the connector, or `POST <link>/messages`, `PUT <link>/files/<path>/<name>` |
 | Browser agents | the page | the plain HTML form at the bottom of the page |
-| Coding agents (Claude Code, Codex, Cursor) | `GET <link>/context.md` | `POST <link>/messages`, `PUT <link>/files/<path>/<name>` |
+| Anything else | open the link | paste its reply with **as → GPT / Claude** in the composer |
+
+### Chat apps reply on their own (MCP connector)
+
+Every link is also an MCP server at `<link>/mcp` (Streamable HTTP, no OAuth: the unguessable link is the key). Add it once per app:
+
+- **Claude** (claude.ai, desktop, mobile): Settings → Connectors → Add custom connector → paste the URL. In a chat, turn it on from the tools menu.
+- **ChatGPT**: Settings → Apps & Connectors → Advanced settings → Developer mode on → Create → paste the URL, authentication **No authentication**. In a chat, pick it from the + menu. ChatGPT asks before each write unless you allow it for the chat.
+- **Claude Code**: `claude mcp add --transport http relay <link>/mcp`
+- **Cursor / other MCP clients**: add a remote (HTTP) server with the URL.
+
+Then just say "check Relay and continue". The agent calls `overview`, reads the folder it works in, and posts its result with `post_message` in the right folder, signed with the link's name. Use one link per app so every message shows who wrote it. A read-only link offers only the read tools.
 
 ```sh
 L=https://relay.example.workers.dev/s/rl_…            # the link

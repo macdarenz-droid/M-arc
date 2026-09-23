@@ -46,6 +46,7 @@ const ICONS = {
   external: '<path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>',
   eye: '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="2.5"/>',
   code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
+  plug: '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
 }
 const icon = (n, cls = '') => h('span.i' + cls, { html: `<svg viewBox="0 0 24 24" ${P} aria-hidden="true">${ICONS[n] ?? ''}</svg>` })
 const stop = e => { e.preventDefault(); e.stopPropagation() }
@@ -491,9 +492,10 @@ function agentPrompt(l, url) {
     `I'm working on "${p}" in Relay, a shared workspace for me and my AI agents.`,
     `Open this link first and read it: ${url}`,
     `It has the folders, recent messages and files${l.can_write ? ', and explains how to post back' : ''}.`,
+    `If the Relay connector (MCP) is available to you, use its tools instead: call overview first${l.can_write ? ', then post your results with post_message and keep shared docs current with write_file' : ''}.`,
     l.can_write
-      ? 'When you finish a step, post your result there as the page explains. If you cannot send HTTP requests, give me the text and I will paste it.'
-      : 'You have read-only access: answer here and I will post your reply.',
+      ? 'When you finish a step, post your result there yourself. Only if you have no way to send it, give me the text.'
+      : 'You have read-only access: answer here.',
   ].join('\n')
 }
 
@@ -514,6 +516,7 @@ function shareDialog(folderId = S.folderId) {
       h('div.linfo', {}, h('strong', {}, l.name), h('span', {}, `${scopeName(l.folder_id)} · ${l.can_write ? 'read + write' : 'read only'} · ${l.last_used_at ? 'opened ' + rel(l.last_used_at) : 'not opened yet'}`)),
       h('button.btn.sm', { title: 'Copy link', onclick: () => copy(url, 'Link copied') }, icon('link'), h('span.lbl', {}, 'Link')),
       h('button.btn.sm', { title: 'Copy a ready-made prompt for the agent', onclick: () => copy(agentPrompt(l, url), 'Prompt copied') }, icon('copy'), h('span.lbl', {}, 'Prompt')),
+      h('button.btn.sm', { title: 'Copy the MCP connector URL (Claude, ChatGPT, Cursor, Claude Code)', onclick: () => copy(`${url}/mcp`, 'Connector URL copied') }, icon('plug'), h('span.lbl', {}, 'Connector')),
       h('a.icon-btn.sm', { href: url, target: '_blank', rel: 'noopener', title: 'Open as the agent sees it' }, icon('external')),
       h('button.icon-btn.sm.danger', {
         title: 'Revoke',
@@ -530,8 +533,14 @@ function shareDialog(folderId = S.folderId) {
   }, h('div.grid2', {}, field('Agent name', name), field('Kind', kind), field('Scope', scope), field('Access', access)),
   actions(h('button.btn.primary', { type: 'submit' }, icon('link'), 'Create link')))
   modal(`Share ${d.project.name}`, h('div', {},
-    h('p.hint', {}, 'A link opens the project (or one folder) for whoever has it: a readable page, a markdown version and a JSON index. Read + write links can also post and upload. Chat apps that cannot post: paste their reply with “as GPT / Claude” in the composer.'),
-    form, h('div.section-label', {}, 'Links'), list), { cls: 'wide' })
+    h('p.hint', {}, 'A link opens the project (or one folder) for whoever has it. Read + write links can also post and upload. Revoke any time.'),
+    form, h('div.section-label', {}, 'Links'), list,
+    h('div.section-label', {}, 'Let chat apps reply on their own'),
+    h('ol.steps', {},
+      h('li', {}, 'Create a read + write link for the app, then press ', h('strong', {}, 'Connector'), ' to copy its MCP URL.'),
+      h('li', {}, h('strong', {}, 'Claude'), ': Settings → Connectors → Add custom connector → paste the URL. Turn it on in a chat from the tools menu.'),
+      h('li', {}, h('strong', {}, 'ChatGPT'), ': Settings → Apps & Connectors → Advanced → Developer mode on → Create → paste the URL, authentication: none. Pick it in a chat from the + menu.'),
+      h('li', {}, 'Ask: “Check Relay and continue.” The agent reads with overview and posts with post_message.'))), { cls: 'wide' })
   draw()
   setTimeout(() => name.focus())
 }

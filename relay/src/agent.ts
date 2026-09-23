@@ -4,7 +4,7 @@ import { HttpError, cleanName, segments, type Author, type FileMeta, type Folder
 import { json, limited, rawResponse, readBytes, readForm, readJson, type Ctx } from './app.ts'
 import { KINDS, esc, fmtBytes, isText, renderMarkdown } from '../public/shared.js'
 
-interface View {
+export interface View {
   store: Store
   link: Link
   project: Project
@@ -14,9 +14,9 @@ interface View {
 }
 
 const enc = (path: string) => path.split('/').map(encodeURIComponent).join('/')
-const folderUrl = (v: View, path: string) => (path ? `${v.base}/f/${enc(path)}` : v.base)
-const rawUrl = (v: View, f: FileMeta) => `${v.base}/raw/${f.id}/${encodeURIComponent(f.name)}`
-const when = (t: number) => new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
+export const folderUrl = (v: View, path: string) => (path ? `${v.base}/f/${enc(path)}` : v.base)
+export const rawUrl = (v: View, f: FileMeta) => `${v.base}/raw/${f.id}/${encodeURIComponent(f.name)}`
+export const when = (t: number) => new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
 const label = (path: string) => '/' + path
 const decode = (s: string) => {
   try {
@@ -26,7 +26,7 @@ const decode = (s: string) => {
   }
 }
 
-function view(c: Ctx, token: string): View {
+export function view(c: Ctx, token: string): View {
   const link = c.store.linkByToken(token)
   if (!link) throw new HttpError(404, 'This link is not valid, or it was revoked')
   const project = c.store.project(link.project_id)
@@ -45,9 +45,9 @@ function view(c: Ctx, token: string): View {
 }
 
 const node = (v: View, folderId: string) => v.tree.find(t => t.f.id === folderId)
-const pathOf = (v: View, folderId: string) => node(v, folderId)?.path ?? ''
+export const pathOf = (v: View, folderId: string) => node(v, folderId)?.path ?? ''
 
-function folderAt(v: View, path: unknown): View['tree'][number] {
+export function folderAt(v: View, path: unknown): View['tree'][number] {
   const want = segments(path).join('/').toLowerCase()
   const hit = v.tree.find(t => t.path.toLowerCase() === want)
   if (!hit) throw new HttpError(404, `No folder “${want || '/'}” in this link`)
@@ -58,7 +58,7 @@ function folderAt(v: View, path: unknown): View['tree'][number] {
 function howTo(v: View): string {
   const l = v.link
   if (!l.can_write)
-    return `## How to use this link\nThis link is **read-only**. Read what you need, then answer in your chat; the person who shared it will post your reply here.\n\n- A folder as markdown: \`GET ${v.base}/f/<path>?format=md\`\n- Everything at once: \`GET ${v.base}/context.md\`\n- Raw files: the links in the file lists.\n`
+    return `## How to use this link\nThis link is **read-only**. Read what you need, then answer in your chat; the person who shared it will post your reply here.\n\n- As an MCP server (read tools only): \`${v.base}/mcp\`\n- A folder as markdown: \`GET ${v.base}/f/<path>?format=md\`\n- Everything at once: \`GET ${v.base}/context.md\`\n- Raw files: the links in the file lists.\n`
   return `## How to use this link
 You are posting as **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}). Paths are relative to this link's folder; \`""\` is its root.
 
@@ -67,6 +67,7 @@ You are posting as **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}). Paths are
 - Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body (missing folders are created)
 - Upload files: \`POST ${v.base}/files\` as multipart form data: field \`folder\`, one or more \`file\`
 - Create a folder: \`POST ${v.base}/folders\` with JSON \`{"path": "<path>"}\`
+- Tool-using apps (Claude, ChatGPT, Cursor, Claude Code): connect \`${v.base}/mcp\` as an MCP server and use its tools instead.
 - No HTTP tool? Use the form on ${v.base} in a browser, or answer in chat and the person will paste it.
 
 \`\`\`sh
@@ -76,33 +77,33 @@ curl -X POST ${v.base}/messages -H 'content-type: application/json' \\
 `
 }
 
-function msgMd(v: View, m: Message, withFolder: boolean): string {
+export function msgMd(v: View, m: Message, withFolder: boolean): string {
   const where = withFolder ? ` · in ${label(pathOf(v, m.folder_id))}` : ''
   const files = m.files.length ? '\n\nAttachments: ' + m.files.map(f => `[${f.name}](${rawUrl(v, f)}) (${fmtBytes(f.size)})`).join(', ') : ''
   return `### ${m.author} (${KINDS[m.kind]?.label ?? m.kind}) · ${when(m.created_at)}${where}\n\n${m.body}${files}\n`
 }
 
-const fileLine = (v: View, f: FileMeta, path = pathOf(v, f.folder_id)) =>
+export const fileLine = (v: View, f: FileMeta, path = pathOf(v, f.folder_id)) =>
   `- [${path ? path + '/' : ''}${f.name}](${rawUrl(v, f)}) · ${fmtBytes(f.size)} · ${f.author} · ${when(f.updated_at)}`
 
-function treeMd(v: View): string {
+export function treeMd(v: View): string {
   return v.tree
     .map(t => `${'  '.repeat(t.depth)}- ${t.depth ? t.f.name + '/' : '/'} — ${t.f.messages} messages, ${t.f.files} files`)
     .join('\n')
 }
 
-function header(v: View, title: string): string {
+export function header(v: View, title: string): string {
   const scope = v.scope.parent_id ? ` · scope: ${v.scope.name}/` : ''
   return `# ${title}\n\nRelay · ${v.project.name} · link “${v.link.name}” · ${v.link.can_write ? 'read + write' : 'read only'}${scope} · ${when(Date.now())}\n${v.project.description ? `\n> ${v.project.description}\n` : ''}`
 }
 
-function folderMd(v: View, at: View['tree'][number]): string {
+export function folderMd(v: View, at: View['tree'][number], how = true): string {
   const { messages, more } = v.store.messages(at.f.id, { limit: 100 })
   const files = v.store.files(at.f.id)
   const subs = v.tree.filter(t => t.f.parent_id === at.f.id)
   return [
     header(v, `${v.project.name} ${label(at.path)}`),
-    howTo(v),
+    how ? howTo(v) : '',
     `## Folders\n${treeMd(v)}`,
     subs.length ? `## Subfolders\n${subs.map(s => `- [${s.f.name}/](${folderUrl(v, s.path)}?format=md)`).join('\n')}` : '',
     `## Thread ${label(at.path)}${more ? ' (latest 100)' : ''}\n\n${messages.map(m => msgMd(v, m, false)).join('\n') || '_No messages yet._'}`,
@@ -163,7 +164,7 @@ function folderHtml(v: View, at: View['tree'][number]): Response {
   }
   const mdUrl = `${folderUrl(v, at.path)}?format=md`
   const w = !!v.link.can_write
-  const note = `<section class="s-note"><strong>For AI agents</strong><p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>.</p>${
+  const note = `<section class="s-note"><strong>For AI agents</strong><p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>. MCP server for Claude, ChatGPT and other tool-using apps: <code>${esc(v.base)}/mcp</code>.</p>${
     w
       ? `<p>Post with HTTP: <code>POST ${esc(v.base)}/messages</code> and JSON <code>{"folder": "${esc(at.path)}", "body": "…"}</code>; replace a file with <code>PUT ${esc(v.base)}/files/&lt;path&gt;/&lt;name&gt;</code>. Or use the form at the bottom.</p>`
       : `<p>This link is read-only: answer in your chat and the person who shared it will post it here.</p>`

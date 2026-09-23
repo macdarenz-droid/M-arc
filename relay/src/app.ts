@@ -1,6 +1,7 @@
 // Platform-agnostic HTTP layer: owner API (/api), agent links (/s/<token>), health. Adapters: worker.ts, node.ts.
 import { HttpError, Store, asKind, cleanName, type Author, type FileMeta } from './store.ts'
 import { agentRoute } from './agent.ts'
+import { mcpRoute } from './mcp.ts'
 import { isImage, isText } from '../public/shared.js'
 
 export interface Options {
@@ -21,7 +22,7 @@ const CSP_APP =
   "frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
 
 /** Paths the app answers; everything else is a static file from public/. */
-export const isDynamic = (path: string) => /^\/(api|s)(\/|$)/.test(path) || path === '/health' || path === '/robots.txt'
+export const isDynamic = (path: string) => /^\/(api|s|\.well-known)(\/|$)/.test(path) || path === '/health' || path === '/robots.txt'
 
 export function secure(res: Response, https: boolean): Response {
   const h = new Headers(res.headers)
@@ -261,6 +262,9 @@ export async function handle(req: Request, o: Options): Promise<Response> {
     if (url.pathname === '/health') res = json({ ok: true, app: 'relay', owner: !!o.ownerKey })
     else if (url.pathname === '/robots.txt') res = new Response('User-agent: *\nDisallow: /\n', { headers: { 'Content-Type': 'text/plain' } })
     else if (url.pathname.startsWith('/api')) res = await api(c)
+    // No OAuth: MCP clients probe these and must get a 404, never the app shell.
+    else if (url.pathname.startsWith('/.well-known/')) throw new HttpError(404, 'Not found')
+    else if (/^\/s\/[^/]+\/mcp\/?$/.test(url.pathname)) res = await mcpRoute(c)
     else res = await agentRoute(c)
     return secure(res, c.https)
   } catch (e) {

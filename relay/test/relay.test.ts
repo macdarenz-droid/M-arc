@@ -245,3 +245,57 @@ test('markdown stays fast and bounded on hostile input; file kinds', () => {
   assert.equal(isText('a.svg', 'image/svg+xml'), false)
   assert.equal(isText('a.ts', 'application/octet-stream'), true)
 })
+
+test('MCP: handshake, tools by permission, post / write / fetch / search inside the link scope', async () => {
+  const { j, call } = setup()
+  const d = (await j('GET', '/api/projects/m-arc')).data
+  const agents = d.folders.find((f: any) => f.name === 'agents')
+  const docs = d.folders.find((f: any) => f.name === 'docs')
+  await j('POST', `/api/folders/${docs.id}/messages`, { body: { body: 'secret-in-docs' } })
+  const outside = (await j('POST', `/api/folders/${docs.id}/files?name=d.txt`, { raw: 'd', type: 'text/plain' })).data.file
+  const w = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'ChatGPT', kind: 'gpt', folder_id: agents.id, can_write: true } })).data.link
+  const r = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'Claude.ai', kind: 'claude' } })).data.link
+  let id = 0
+  const rpc = async (t: string, method: string, params: unknown = {}) => {
+    const res = await call('POST', `/s/${t}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: ++id, method, params }, headers: { accept: 'application/json, text/event-stream' } })
+    return (await res.json()) as any
+  }
+  const tool = async (t: string, name: string, args: unknown) => (await rpc(t, 'tools/call', { name, arguments: args })).result
+
+  const init = await rpc(w.token, 'initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } })
+  assert.equal(init.result.protocolVersion, '2025-06-18')
+  assert.ok(init.result.capabilities.tools && init.result.instructions.includes('ChatGPT'))
+  const note = await call('POST', `/s/${w.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', method: 'notifications/initialized' } })
+  assert.equal(note.status, 202)
+  assert.equal(note.headers.get('access-control-allow-origin'), '*')
+
+  const names = async (t: string) => (await rpc(t, 'tools/list')).result.tools.map((x: any) => x.name)
+  assert.deepEqual(await names(r.token), ['overview', 'read_folder', 'search', 'fetch'])
+  assert.ok((await names(w.token)).includes('post_message'))
+
+  const posted = await tool(w.token, 'post_message', { folder: 'gpt', body: 'Reviewed. **Ship it.**' })
+  assert.match(posted.content[0].text, /Posted to \/gpt as ChatGPT/)
+  const gpt = d.folders.find((f: any) => f.name === 'gpt')
+  const msg = (await j('GET', `/api/folders/${gpt.id}/messages`)).data.messages.at(-1)
+  assert.equal(msg.via, w.id)
+  assert.equal(msg.kind, 'gpt')
+
+  assert.match((await tool(w.token, 'write_file', { path: 'notes/STATE.md', content: 'v1' })).content[0].text, /^Created/)
+  assert.match((await tool(w.token, 'write_file', { path: 'notes/STATE.md', content: 'v2' })).content[0].text, /^Replaced/)
+  assert.equal(JSON.parse((await tool(w.token, 'fetch', { id: 'notes/STATE.md' })).content[0].text).text, 'v2')
+  assert.match((await tool(w.token, 'overview', {})).content[0].text, /Reviewed\. \*\*Ship it/)
+  assert.match((await tool(w.token, 'read_folder', { folder: 'gpt' })).content[0].text, /Ship it/)
+
+  const found = async (t: string, q: string) => JSON.parse((await tool(t, 'search', { query: q })).content[0].text).results.length
+  assert.equal(await found(w.token, 'secret-in-docs'), 0)
+  assert.equal(await found(r.token, 'secret-in-docs'), 1)
+  assert.equal((await tool(w.token, 'fetch', { id: `file:${outside.id}` })).isError, true)
+  assert.equal((await tool(w.token, 'read_folder', { folder: '../docs' })).isError, true)
+
+  assert.equal((await tool(r.token, 'post_message', { folder: '', body: 'x' })).isError, true)
+  assert.equal((await rpc(w.token, 'tools/call', { name: 'nope', arguments: {} })).error.code, -32602)
+  assert.equal((await rpc(w.token, 'resources/list')).error.code, -32601)
+  assert.equal((await call('GET', `/s/${w.token}/mcp`, { auth: false })).status, 405)
+  assert.equal((await call('POST', `/s/rl_${'x'.repeat(32)}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 1, method: 'ping' } })).status, 404)
+  assert.equal((await call('GET', '/.well-known/oauth-protected-resource', { auth: false })).status, 404)
+})

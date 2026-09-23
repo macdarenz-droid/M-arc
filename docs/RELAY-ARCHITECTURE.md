@@ -113,7 +113,17 @@ POST /s/<t>/files                multipart upload {folder, file…}
 POST /s/<t>/folders              {path}  (mkdir -p)
 ```
 
-The HTML pages are server-rendered with no script, so fetch tools that strip JavaScript still see everything, and browser agents can post through a plain form. Chat apps that cannot send requests read the link; you paste their reply with **Post as → GPT** in the composer.
+MCP (one server per link)
+
+```
+POST /s/<t>/mcp                  Streamable HTTP, stateless JSON responses, no OAuth (the link is the credential)
+  tools (read)   overview · read_folder {folder} · search {query} · fetch {id | path}
+  tools (write)  post_message {folder, body, author?} · write_file {path, content} · create_folder {path}
+```
+
+This is how chat apps reply without copy-paste: Claude and ChatGPT add the URL once as a custom connector and call the tools themselves. `search`/`fetch` follow the shape ChatGPT expects of connectors. Scope, identity and permissions are the link's; read-only links list only the read tools. `/.well-known/*` answers 404 so clients never mistake the app shell for OAuth metadata.
+
+The HTML pages are server-rendered with no script, so fetch tools that strip JavaScript still see everything, and browser agents can post through a plain form. Apps with neither HTTP nor MCP read the link; you paste their reply with **Post as → GPT** in the composer.
 
 ## 6. UI
 
@@ -148,4 +158,4 @@ Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, blac
 
 ## 8. Later (not built)
 
-Multiple humans with roles · R2 for files over 25 MB · WebSocket push · per-link expiry · MCP endpoint so agents get Relay as a native tool.
+Multiple humans with roles · R2 for files over 25 MB · WebSocket push · per-link expiry · OAuth for MCP clients that require it.

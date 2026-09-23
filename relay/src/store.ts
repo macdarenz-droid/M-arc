@@ -552,19 +552,22 @@ export class Store {
   }
 
   // ── search ──────────────────────────────────────────────────
-  search(q: string) {
+  /** Message text and file names matching q, everywhere or below one folder. */
+  search(q: string, rootId?: string) {
     // Durable Object SQLite refuses LIKE patterns over 50 bytes.
     let like = ''
     for (let n = q.length; n > 0; n--) {
       like = `%${q.slice(0, n).replace(/[\\%_]/g, c => '\\' + c)}%`
       if (new TextEncoder().encode(like).byteLength <= 50) break
     }
+    const cte = rootId ? `${SUBTREE} ` : ''
+    const args = rootId ? [rootId, like] : [like]
     const messages = this.sql.all<Omit<Message, 'files'> & { slug: string }>(
-      `SELECT m.*, p.slug FROM messages m JOIN projects p ON p.id = m.project_id
-       WHERE m.body LIKE ? ESCAPE '\\' ORDER BY m.created_at DESC LIMIT 20`, like)
+      `${cte}SELECT m.*, p.slug FROM messages m JOIN projects p ON p.id = m.project_id
+       WHERE m.body LIKE ? ESCAPE '\\'${rootId ? ' AND m.folder_id IN (SELECT id FROM t)' : ''} ORDER BY m.created_at DESC LIMIT 20`, ...args)
     const files = this.sql.all<FileMeta & { slug: string }>(
-      `SELECT f.*, p.slug FROM files f JOIN projects p ON p.id = f.project_id
-       WHERE f.name LIKE ? ESCAPE '\\' ORDER BY f.updated_at DESC LIMIT 20`, like)
+      `${cte}SELECT f.*, p.slug FROM files f JOIN projects p ON p.id = f.project_id
+       WHERE f.name LIKE ? ESCAPE '\\'${rootId ? ' AND f.folder_id IN (SELECT id FROM t)' : ''} ORDER BY f.updated_at DESC LIMIT 20`, ...args)
     return { messages, files }
   }
 }
