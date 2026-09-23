@@ -157,5 +157,10 @@
       "installationId": "other"
     },
     "expected": "wrong_session"
+  },
+  {
+    "name": "repaired_old_receipt_replays",
+    "repaired": true,
+    "expected": "replay"
   }
 ]

@@ -25,16 +25,20 @@ export function parseWatchCommand(raw, maxBytes = 1024) {
 /** Return a plan only. The caller must atomically persist the workout and receipt before replying Saved. */
 export function planSetCommand(session, binding, revisions, receipts, command, now = Date.now()) {
   if (!command) return { status: 'invalid' };
-  // A command ID cannot be reused for a different payload, even after the original is applied.
+  // Old session receipts keep their original installation even after a new watch is paired.
+  // IDs cannot contain '|', so the stored fingerprint preserves the bound installation/session.
   const recorded = Object.hasOwn(receipts, command.commandId) ? receipts[command.commandId] : undefined;
-  if (!session && !recorded) return { status: 'wrong_session' };
-  if (session && (session.status === 'finished' || session.status === 'discarded')
-      && session.id !== command.sessionId && !recorded) return { status: 'wrong_session' };
-  if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
-  if (recorded) return recorded.fingerprint === fingerprint(command)
-    ? { status: recorded.result.status === 'applied' ? 'replay' : 'replay_rejected', receipt: recorded.result }
-    : { status: 'command_id_conflict' };
+  const receiptParts = typeof recorded?.fingerprint === 'string' ? recorded.fingerprint.split('|') : [];
+  if (recorded?.result?.sessionId === command.sessionId && receiptParts[3] === command.sessionId) {
+    if (receiptParts[2] !== command.installationId) return { status: 'wrong_installation' };
+    return recorded.fingerprint === fingerprint(command)
+      ? { status: recorded.result.status === 'applied' ? 'replay' : 'replay_rejected', receipt: recorded.result }
+      : { status: 'command_id_conflict' };
+  }
   if (!session) return { status: 'wrong_session' };
+  if ((session.status === 'finished' || session.status === 'discarded')
+      && session.id !== command.sessionId) return { status: 'wrong_session' };
+  if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
   if (session.id !== command.sessionId) return { status: 'wrong_session' };
   if (session.status === 'finished' || session.status === 'discarded') return { status: 'conflict' };
   if (session.pausedAt || session.status === 'paused') return { status: 'paused' };

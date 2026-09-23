@@ -222,8 +222,22 @@ public class WorkoutCommandStoreTest {
                     assertTrue(fixture.getString("name"), raw.contains(from));
                     raw = raw.replace(from, mutation.getString("to"));
                 }
+                if (fixture.optBoolean("repaired")) {
+                    assertEquals("applied", store.completeSet(raw).status);
+                    store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
+                    store.seed("s-2", "watch-2", initial.put("id", "s-2").toString());
+                }
                 String status = store.completeSet(raw).status;
                 assertEquals(fixture.getString("name"), fixture.getString("expected"), "applied".equals(status) ? "accepted" : status);
+                if (fixture.optBoolean("repaired")) {
+                    try (Cursor current = store.getReadableDatabase().rawQuery(
+                            "SELECT snapshot,revision FROM sessions WHERE session_id='s-2'", null)) {
+                        assertTrue(current.moveToFirst());
+                        assertFalse(set(new JSONObject(current.getString(0)), "e-1", "set-1").has("at"));
+                        assertEquals(0, current.getInt(1));
+                    }
+                    assertEquals(3, pendingCount("c-fixture"));
+                }
             }
         }
     }
