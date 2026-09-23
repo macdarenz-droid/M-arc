@@ -23,8 +23,8 @@ import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
 import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, scheduleRestDone, syncBackupReminder } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { APP_VERSION } from '@/core/version';
-import { addDays, daysBetween, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
-import { buildBackup, parseBackup } from './backup';
+import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
+import { backupAgeDays, buildBackup, parseBackup } from './backup';
 import { sessionsToCsv } from './exportCsv';
 import { today } from '@/app/selectors';
 
@@ -88,7 +88,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     try { showToast(await exportText(`marc-sessions-${days ? `${days}d` : 'all'}-${to}.csv`, csv)); } catch { showToast('Export failed'); }
   };
   const backupOn = p.backupReminder ?? isNative();
-  const backupAge = s.lastBackupAt ? daysBetween(s.lastBackupAt.slice(0, 10), today.value) : null;
+  const backupAge = backupAgeDays(s.lastBackupAt, today.value);
   // A tap on the backup reminder opens Settings at "Your data".
   useEffect(() => {
     if (openPanel.peek()?.params?.section !== 'data') return;

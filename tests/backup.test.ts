@@ -94,3 +94,13 @@ describe('sessions without a date (QA-R1-2, QA-R1-3)', () => {
     expect(out.state.sessions[0]!.day).toBe('2026-09-21');
   });
 });
+
+import { backupAgeDays } from '@/slices/settings/backup';
+describe('last backup age in local days (QA-R6-1, QA-R6-7)', () => {
+  it('a backup made late tonight or early this morning is from today, in every time zone', () => {
+    expect(backupAgeDays(new Date(2026, 8, 22, 23, 30).toISOString(), '2026-09-22')).toBe(0);
+    expect(backupAgeDays(new Date(2026, 8, 22, 0, 30).toISOString(), '2026-09-22')).toBe(0);
+    expect(backupAgeDays(new Date(2026, 8, 20, 12, 0).toISOString(), '2026-09-22')).toBe(2);
+    expect(backupAgeDays(undefined, '2026-09-22')).toBeNull();
+  });
+});

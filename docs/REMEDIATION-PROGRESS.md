@@ -281,3 +281,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - `prepare()` runs the one-time carry-over when Escobar is already on, so users who enabled it in an earlier build get "Earlier conversation" once; `legacyImported` stops a second import.
 ### QA-R5a-1 (medium)
 - A sync merges into the day already stored: a field a later sync could not read (or read as empty) keeps the earlier value. A partial failure sets `lastHealthError` (Settings shows its message and the Details row); the sync reports success only when nothing failed.
+### QA-R6-1 (medium), QA-R6-7 (low)
+- `backupAgeDays` compares the local day the backup was made with today (the stamp is UTC): no more -1 in the evening west of UTC or +1 in the morning east of it (tested under the 3-zone run). Tests added for the reminder (id, Sunday 19:00, inexact, cancel when off) and tap routing by `extra.type`.

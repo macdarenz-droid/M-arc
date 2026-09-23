@@ -63,3 +63,26 @@ describe('permission is only asked from a tap (QA-R2a-2, QA-R6-13)', () => {
     plugin.requestPermissions.mockResolvedValue({ display: 'granted' });
   });
 });
+
+describe('weekly backup reminder (QA-R6-1)', () => {
+  it('is one inexact Sunday 19:00 note outside the training-reminder ids, and taps report its type', async () => {
+    const N = await import('@/native/notifications');
+    await N.syncBackupReminder(true);
+    const n = lastSchedule().notifications[0] as unknown as { id: number; schedule: { on: { weekday: number; hour: number; minute: number } }; isExactNotification: boolean; extra: { type: string } };
+    expect(n.id).toBe(N.BACKUP_REMINDER_ID);
+    expect(n.id < 730000 || n.id >= 820000).toBe(true);
+    expect(n.schedule.on).toEqual({ weekday: 1, hour: 19, minute: 0 });
+    expect(n.isExactNotification).toBe(false);
+    expect(n.extra.type).toBe('backup');
+    plugin.schedule.mockClear();
+    await N.syncBackupReminder(false);
+    expect(plugin.cancel).toHaveBeenCalledWith({ notifications: [{ id: N.BACKUP_REMINDER_ID }] });
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    const seen: Array<string | undefined> = [];
+    N.onNotificationTap(t => seen.push(t));
+    const cb = (plugin.addListener.mock.calls.at(-1) as unknown as [string, (a: unknown) => void])[1];
+    cb({ notification: { extra: { type: 'backup' } } });
+    cb({ notification: { extra: { type: 'training' } } });
+    expect(seen).toEqual(['backup', 'training']);
+  });
+});
