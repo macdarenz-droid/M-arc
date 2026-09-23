@@ -67,6 +67,10 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
   });
 }
 
+/** Readiness drivers that come from health data (ES-12); check-in drivers stay. */
+const HEALTH_DRIVER = /resting heart rate|HRV|sleep has been short/i;
+export const redactDrivers = (drivers: string[], health: boolean): string[] => (health ? drivers : drivers.filter(d => !HEALTH_DRIVER.test(d)));
+
 export const activeDeloadOf = (ctx: ToolCtx) => { const d = ctx.state.deload; return d && d.endDay >= ctx.today ? d : null; };
 export const todayOverrideOf = (ctx: ToolCtx) => { const o = ctx.state.escobar.todayOverride; return o && o.day === ctx.today ? o : null; };
 export const plannedPerWeek = (ctx: ToolCtx) => WEEKDAYS.filter(d => ctx.state.schedule[d]).length;

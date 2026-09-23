@@ -213,7 +213,8 @@ describe('agent loop (§13)', () => {
 describe('history window (§11.4)', () => {
   it('replaces the oldest half with the rolling summary in the request only', () => {
     const conv = newConversation('37.0.0');
-    const big = 'x'.repeat(6000);
+    // ES-16: the window now checks the size again after the cut, so the data leaves the kept half under the limit.
+    const big = 'x'.repeat(4500);
     const msgs: StoredMessage[] = [];
     for (let i = 0; i < 60; i++) { msgs.push({ role: 'user', content: [{ type: 'text', text: `${i} ${big}` }] }); msgs.push({ role: 'assistant', content: [{ type: 'text', text: 'ok' }], meta: { rendered: {} } }); }
     const trimmed = windowMessages(conv, msgs);
@@ -223,5 +224,15 @@ describe('history window (§11.4)', () => {
     expect(JSON.stringify(withSummary[0])).toContain('[summary of earlier conversation] We planned a PPL.');
     expect(withSummary.length).toBe(msgs.length - 40 + 1);
     expect(toRequestMessages(withSummary).length).toBe(withSummary.length);
+  });
+  it('keeps trimming at clean user turns until the request fits (ES-16)', () => {
+    const conv = newConversation('37.0.0');
+    const big = 'x'.repeat(9000);
+    const msgs: StoredMessage[] = [];
+    for (let i = 0; i < 60; i++) { msgs.push({ role: 'user', content: [{ type: 'text', text: `${i} ${big}` }] }); msgs.push({ role: 'assistant', content: [{ type: 'text', text: 'ok' }], meta: { rendered: {} } }); }
+    const w = windowMessages({ ...conv, rollingSummary: { text: 'Earlier.', upTo: 40 } }, msgs);
+    expect(Math.ceil(JSON.stringify(toRequestMessages(w)).length / 4)).toBeLessThanOrEqual(60_000);
+    expect(JSON.stringify(w[0])).toContain('[later messages trimmed]');
+    expect((w[1] as { role: string }).role).toBe('user');
   });
 });

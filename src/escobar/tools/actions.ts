@@ -197,7 +197,7 @@ function validateToday(i: Record<string, unknown>, ctx: ToolCtx): Built {
       default: throw new ToolError(`changes[${n}].kind must be swap, remove, add, sets or load`);
     }
   });
-  const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.trim().slice(0, 140) : 'Adjusted for today';
+  const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.replace(/[\r\n]+/g, ' ').trim().slice(0, 140) : 'Adjusted for today';
   const preview = changes.map((c): DiffRow => {
     switch (c.kind) {
       case 'swap': return { label: exerciseName(ctx, c.from), before: 'planned', after: `swap for ${exerciseName(ctx, c.to)}` };
@@ -299,7 +299,7 @@ export function buildAction(name: string, raw: unknown, ctx: ToolCtx): Built {
     case 'propose_today': return validateToday(i, ctx);
     case 'propose_deload': {
       if (s.deload && s.deload.endDay >= ctx.today) throw new ToolError('a lighter week is already running');
-      const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.trim().slice(0, 140) : 'A lighter week to recover.';
+      const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.replace(/[\r\n]+/g, ' ').trim().slice(0, 140) : 'A lighter week to recover.';
       return { title: 'Take a lighter week', input: { reason }, preview: [{ label: 'Next 7 days', before: 'normal', after: 'fewer sets, lighter loads' }, { label: 'Ends', after: addDays(ctx.today, 6) }] };
     }
     case 'propose_start_session': {

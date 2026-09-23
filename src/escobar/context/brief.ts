@@ -58,6 +58,12 @@ export function memoryForBrief(memory: MemoryItem[], today: string): MemoryItem[
   return [...first.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)), ...rest].slice(0, MEMORY_IN_BRIEF);
 }
 
+/**
+ * ES-23: anything the person named (splits, gyms, reasons, memories) goes into the brief on one
+ * line, without directive brackets and at most 140 characters, so it cannot pose as a brief line.
+ */
+export const one = (v: string | undefined | null): string => String(v ?? '').replace(/[\r\n]+/g, ' ').replace(/[⟦⟧]/g, '').replace(/\s+/g, ' ').trim().slice(0, 140);
+
 function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const { ctx } = inp;
   const s = ctx.state;
@@ -72,15 +78,15 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const split = scheduledSplitFor(ctx);
   const r = readinessToday(ctx);
   const parts: string[] = [];
-  parts.push(split ? `scheduled ${split.name} (splitId ${split.id})` : 'rest day');
+  parts.push(split ? `scheduled ${one(split.name)} (splitId ${split.id})` : 'rest day');
   if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
   else parts.push('readiness none (no check-in or health data)');
   const deload = activeDeloadOf(ctx);
   if (deload) parts.push(`lighter week day ${num(Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), 'lighter week day')} of 7`);
   const o = todayOverrideOf(ctx);
-  if (o) parts.push(`today adjusted: ${o.reason}`);
-  if (s.active) parts.push(`live session: ${s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'workout'}`);
-  if (s.sessions.some(x => x.day === ctx.today)) parts.push(`done today: ${s.sessions.filter(x => x.day === ctx.today).map(x => x.splitName).join(', ')}`);
+  if (o) parts.push(`today adjusted: ${one(o.reason)}`);
+  if (s.active) parts.push(`live session: ${one(s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'workout')}`);
+  if (s.sessions.some(x => x.day === ctx.today)) parts.push(`done today: ${s.sessions.filter(x => x.day === ctx.today).map(x => one(x.splitName)).join(', ')}`);
   L.today = parts.join('; ');
 
   const least = recoveryAt(ctx).filter(x => x.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, 3);
@@ -91,13 +97,13 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   L.week = `${num(w.workouts, 'sessions this week')} of ${num(planned, 'planned sessions per week')} planned sessions, ${num(w.sets, 'sets this week')} sets, ${num(w.records.length, 'records this week')} records`;
 
   const top = coachInsights(coachCtx(ctx), 5);
-  L.top_insights = top.length ? top.map(i => `${i.id} "${i.title}"`).join('; ') : 'none';
+  L.top_insights = top.length ? top.map(i => `${i.id} "${one(i.title)}"`).join('; ') : 'none';
 
   const g = GOAL_BY_ID[s.goal];
   const months = trainingAgeMonths(s.profile, s.sessions, ctx.now);
   const age = ageOf(s.profile, ctx.now);
   const prof = [`goal ${g.name} (main ${g.mainReps[0]}–${g.mainReps[1]} reps)`];
-  if (months != null) prof.push(`training ${num(months, 'training age', 'months')} months`);
+  if (months != null) prof.push(`training ${num(Math.round(months), 'training age', 'months')} months`);
   if (s.profile.plannedDays) prof.push(`plans ${num(s.profile.plannedDays, 'planned days per week')} days/week`);
   if (s.profile.sex) prof.push(s.profile.sex);
   if (age != null) prof.push(`age ${num(age, 'age', 'years')}`);
@@ -108,21 +114,21 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const entryUnits = (split?.exercises ?? []).map(x => {
     const ex = exerciseOf(ctx, x.exerciseId);
     const p = resolveProfile(x.exerciseId, s.units.activeGymId, s.units, ex);
-    return p.unit !== gym?.defaultUnit ? `${exerciseName(ctx, x.exerciseId)} ${p.unit}` : null;
+    return p.unit !== gym?.defaultUnit ? `${one(exerciseName(ctx, x.exerciseId))} ${p.unit}` : null;
   }).filter(Boolean);
   const groups = Object.entries(s.units.byEquipment[s.units.activeGymId] ?? {}).map(([k, p]) => `${k} ${p?.unit}`);
-  L.gym = `${gym?.name ?? 'My gym'}, default ${gym?.defaultUnit ?? 'kg'}; display ${s.preferences.weightUnit}${entryUnits.length || groups.length ? `; entry units: ${[...groups, ...entryUnits].join(', ')}` : ''}`;
+  L.gym = `${one(gym?.name ?? 'My gym')}, default ${gym?.defaultUnit ?? 'kg'}; display ${s.preferences.weightUnit}${entryUnits.length || groups.length ? `; entry units: ${[...groups, ...entryUnits].join(', ')}` : ''}`;
 
   const mem = memoryForBrief(e.memory, ctx.today);
-  L.memory = mem.length ? mem.map(m => `[${m.id}] ${m.kind}: ${m.text}${m.expiresOn && m.expiresOn < ctx.today ? ' (review: past its date)' : ''}`).join(' | ') : e.memoryEnabled ? 'none' : 'off (the person turned memory off)';
+  L.memory = mem.length ? mem.map(m => `[${m.id}] ${m.kind}: ${one(m.text)}${m.expiresOn && m.expiresOn < ctx.today ? ' (review: past its date)' : ''}`).join(' | ') : e.memoryEnabled ? 'none' : 'off (the person turned memory off)';
   const off = [!e.sharing.health && 'health', !e.sharing.body && 'body'].filter(Boolean);
   L.sharing = off.length ? `${off.join(' and ')} sharing off` : 'health and body shared';
   L.tone = e.tone;
   if (age != null && age < 18) L.minor = 'true';
   if (inp.signals?.length) L.signals = inp.signals.join(', ');
   L.mode = `${inp.mode}: ${MODE_ADDENDUM[inp.mode]}`;
-  L.pending = inp.pending?.length ? inp.pending.map(p => `${p.id} "${p.title}"`).join('; ') : 'none';
-  L.decisions = inp.decisions?.length ? inp.decisions.map(x => `proposal ${x.proposalId} "${x.title}" → ${x.decision}`).join('; ') : 'none';
+  L.pending = inp.pending?.length ? inp.pending.map(p => `${p.id} "${one(p.title)}"`).join('; ') : 'none';
+  L.decisions = inp.decisions?.length ? inp.decisions.map(x => `proposal ${x.proposalId} "${one(x.title)}" → ${x.decision}`).join('; ') : 'none';
   return L;
 }
 

@@ -84,15 +84,43 @@ const blocksOf = (m: StoredMessage): unknown[] => (Array.isArray(m.content) ? m.
 const toolUses = (content: unknown[]) => content.filter((b): b is { type: 'tool_use'; id: string; name: string; input: unknown } => isObj(b) && b.type === 'tool_use');
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
 
+/** At most this many photos travel inline in one request (D3, ES-13); older ones go as stubs. */
+export const MAX_INLINE_IMAGES = 2;
+
+/**
+ * ES-12: results of health or body tools recorded while sharing was on are replayed as denied
+ * once that sharing is off, so switching it off also covers what was said before.
+ */
+function deniedFor(use: { name: string; input: unknown } | undefined, sharing: { health: boolean; body: boolean }): string | null {
+  if (!use) return null;
+  const component = isObj(use.input) ? use.input.component : undefined;
+  if (!sharing.health && (use.name === 'get_health' || use.name === 'get_heart_session' || (use.name === 'show' && component === 'heart_session'))) return 'health_sharing_off';
+  if (!sharing.body && (use.name === 'get_body' || (use.name === 'show' && component === 'body_trend'))) return 'body_sharing_off';
+  return null;
+}
+
 /** The app-only parts (meta, image refs, sent flags) never reach the Worker (§12.2). */
-export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDeps['imageData']): unknown[] {
+export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDeps['imageData'], sharing?: { health: boolean; body: boolean }): unknown[] {
+  const uses = new Map<string, { name: string; input: unknown }>();
+  if (sharing && !(sharing.health && sharing.body)) for (const m of messages) if (m.role === 'assistant') for (const u of toolUses(m.content)) uses.set(u.id, { name: u.name, input: u.input });
+  // The newest unsent photos are inlined, up to the cap.
+  const inline = new Set<string>();
+  if (imageData) for (let i = messages.length - 1; i >= 0 && inline.size < MAX_INLINE_IMAGES; i--) {
+    const m = messages[i]!;
+    if (m.role !== 'user') continue;
+    for (let j = m.content.length - 1; j >= 0 && inline.size < MAX_INLINE_IMAGES; j--) { const b = m.content[j]!; if (b.type === 'image_ref' && !b.sent) inline.add(b.id); }
+  }
   return messages.map(m => {
     if (m.role === 'system') return { role: 'system', content: m.content };
     if (m.role === 'assistant') return { role: 'assistant', content: m.content };
     const content = m.content.map((b: UserBlock) => {
       if (b.type === 'text') return { type: 'text', text: b.text };
-      if (b.type === 'tool_result') return { type: 'tool_result', tool_use_id: b.tool_use_id, content: b.content, ...(b.is_error ? { is_error: true } : {}) };
-      const img = !b.sent && imageData ? imageData(b.id) : null;
+      if (b.type === 'tool_result') {
+        const denied = sharing ? deniedFor(uses.get(b.tool_use_id), sharing) : null;
+        if (denied) return { type: 'tool_result', tool_use_id: b.tool_use_id, content: JSON.stringify({ data: { denied }, facts: {} }) };
+        return { type: 'tool_result', tool_use_id: b.tool_use_id, content: b.content, ...(b.is_error ? { is_error: true } : {}) };
+      }
+      const img = !b.sent && imageData && inline.has(b.id) ? imageData(b.id) : null;
       if (img) return { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.data } };
       return { type: 'text', text: `[photo shared earlier${b.description ? `: ${b.description}` : ''}]` };
     });
@@ -107,8 +135,10 @@ const isPlainUser = (m: StoredMessage | undefined): boolean => !!m && m.role ===
  * in the request (never in the store) by the rolling summary, or trimmed at a clean user turn.
  */
 export function windowMessages(conv: Conversation, messages: StoredMessage[]): StoredMessage[] {
-  const tokens = (ms: StoredMessage[]) => Math.ceil(JSON.stringify(ms).length / 4);
-  if (tokens(messages) <= HISTORY_TOKEN_LIMIT && messages.length <= HISTORY_ENTRY_LIMIT) return messages;
+  // ES-16: estimate on what is actually sent (no meta, photos as stubs, not inline base64).
+  const tokens = (ms: StoredMessage[]) => Math.ceil(JSON.stringify(toRequestMessages(ms)).length / 4);
+  const fits = (ms: StoredMessage[]) => tokens(ms) <= HISTORY_TOKEN_LIMIT && ms.length <= Math.min(HISTORY_ENTRY_LIMIT, 600);
+  if (fits(messages)) return messages;
   const summary = conv.rollingSummary;
   let cut = summary && summary.upTo < messages.length && isPlainUser(messages[summary.upTo]) ? summary.upTo : -1;
   if (cut < 0) {
@@ -116,7 +146,14 @@ export function windowMessages(conv: Conversation, messages: StoredMessage[]): S
     while (cut < messages.length && !isPlainUser(messages[cut])) cut++;
     if (cut >= messages.length) return messages;
   }
-  const head: StoredMessage = { role: 'user', content: [{ type: 'text', text: summary && cut === summary.upTo ? `[summary of earlier conversation] ${summary.text}` : '[earlier conversation trimmed]' }] };
+  // Still too big after the first cut: move on to later clean user turns until it fits.
+  while (!fits(messages.slice(cut))) {
+    let next = cut + 1;
+    while (next < messages.length && !isPlainUser(messages[next])) next++;
+    if (next >= messages.length) break;
+    cut = next;
+  }
+  const head: StoredMessage = { role: 'user', content: [{ type: 'text', text: summary && cut === summary.upTo ? `[summary of earlier conversation] ${summary.text}` : summary && cut > summary.upTo ? `[summary of earlier conversation] ${summary.text} [later messages trimmed]` : '[earlier conversation trimmed]' }] };
   const rest = messages.slice(cut);
   // Two user messages in a row are merged by the API; keep the shape simple.
   return [head, ...rest];
@@ -205,7 +242,8 @@ export class EscobarLoop {
     const c = this.conversation;
     const b = buildBrief({
       ctx: this.ctx(), mode, turnIndex: c.userTurns ?? 0, previous: c.briefLines ?? null, ledger: c.ledger,
-      pending: (c.proposals ?? []).filter(p => p.status === 'awaiting').map(p => ({ id: p.id, title: p.title })),
+      // ES-32: an expired suggestion is no longer pending.
+      pending: (c.proposals ?? []).filter(p => p.status === 'awaiting' && p.expiresOn >= this.ctx().today).map(p => ({ id: p.id, title: p.title })),
       decisions: (c.pendingDecisions ?? []).map(d => ({ proposalId: d.proposalId, title: d.title, decision: d.decision })),
       signals,
     });
@@ -215,9 +253,12 @@ export class EscobarLoop {
   /** Streams one step. Retries once for busy/timeout when nothing reached the screen yet. */
   private async step(messages: StoredMessage[], mode: EscobarMode, signal: AbortSignal, gen: number): Promise<{ final?: Extract<StreamEvent, { t: 'final' }>; error?: TurnResult['error']; refusal?: { category: string | null }; stale?: boolean }> {
     const s = this.deps.getState();
+    const windowed = windowMessages(this.conversation, messages);
+    // After a trim the next brief is sent in full: the diff it would build on may be cut off.
+    if (windowed !== messages && this.conversation.briefLines) this.conversation = { ...this.conversation, briefLines: undefined };
     const body = {
       protocol: 2, mode, appVersion: this.deps.appVersion, manifest: this.deps.manifest(),
-      messages: toRequestMessages(windowMessages(this.conversation, messages), this.deps.imageData),
+      messages: toRequestMessages(windowed, this.deps.imageData, s.escobar.sharing),
       unit: s.preferences.weightUnit, tone: s.escobar.tone,
     };
     for (let attempt = 0; ; attempt++) {

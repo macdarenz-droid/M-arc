@@ -186,9 +186,21 @@ const METHODS: Record<MethodId, Builder> = {
   }),
 };
 
+/** ES-12: personal numbers that come from health or body data leave the answer when that sharing is off. */
+const HEALTH_KEYS = new Set(['restingHrBaseline', 'healthDaysLogged', 'restingHr']);
+const BODY_KEYS = new Set(['restingKcalPerDay']);
+
 export function explainMethod(topic: MethodId, ctx: ToolCtx): MethodExplanation {
-  const b = METHODS[topic];
-  return { topic, ...b(ctx) };
+  const b = METHODS[topic](ctx);
+  const { health, body } = ctx.state.escobar.sharing;
+  if (health && body) return { topic, ...b };
+  const personal = Object.fromEntries(Object.entries(b.personal ?? {}).filter(([k]) => {
+    if (!health && (HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k))) return false;
+    if (!health && k === 'hrMax' && b.personal?.hrMaxSource !== 'tanaka') return false;
+    if (!body && BODY_KEYS.has(k)) return false;
+    return true;
+  }));
+  return { topic, ...b, personal };
 }
 
 /** The method index sent in the manifest (§7.3): topic → one line. */

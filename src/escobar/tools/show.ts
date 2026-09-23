@@ -22,7 +22,7 @@ import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { resolveProfile } from '@/brain/units';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
-import { coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, type ToolCtx } from './context';
+import { coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
 
 type P = Record<string, unknown>;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
@@ -94,7 +94,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     }
     case 'readiness_gauge': {
       const r = readinessToday(ctx);
-      return r ? { score: r.score, band: r.band, confidence: r.confidence, calibrating: r.calibrating, drivers: r.drivers, loadAdvice: r.loadAdvice } : { score: null, empty: 'No readiness yet: add a check-in or connect health data.' };
+      return r ? { score: r.score, band: r.band, confidence: r.confidence, calibrating: r.calibrating, drivers: redactDrivers(r.drivers, s.escobar.sharing.health), loadAdvice: r.loadAdvice } : { score: null, empty: 'No readiness yet: add a check-in or connect health data.' };
     }
     case 'readiness_history': {
       const days = intIn(params.days, 7, 30, 14, 'days');

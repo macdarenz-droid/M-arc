@@ -383,7 +383,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Components in EV5:** `lift_trend` is drawn (Sparkline with first/last/best and a trend chip); the other 13 render their `summarize()` numbers in a compact card until EV6 draws them. Components re-resolve from local data when a stored conversation redraws.
 - **Apply in EV5 covers `propose_goal`;** other kinds show the card with Apply disabled until EV6. Every decision (applied, dismissed, undone, stale, failed) is queued in `pendingDecisions` for the next brief.
 - **Detents:** half by default, full when the composer is focused, drag up/down on the handle (down from half closes). Double-tap the handle toggles.
-- **Photos:** up to 3 per message, 900 px JPEG, kept in IndexedDB/memory, never in localStorage.
+- **Photos:** up to 2 per message (D3, R4.8: three at 1.2 MB each could exceed the Worker's 3 MB body limit), 900 px JPEG, kept in IndexedDB/memory, never in localStorage.
 - **Layout:** the dock sits 12 px above the nav, so `.app` bottom padding grew to 140 px and toasts moved above the dock.
 - **Palace:** added `settings.escobar` and `coach.hall` (71 entries); Coach-tab entries now say "Escobar tab"; the Insights section is "Escobar's notes".
 - **"Ask about this" on the pre-session brief** uses `{kind:'session', id:'plan:<splitId>'}` (there is no session yet).

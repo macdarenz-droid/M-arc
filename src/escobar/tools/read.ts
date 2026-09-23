@@ -32,7 +32,7 @@ import { autoregulationSuggestion } from '@/brain/coach/live';
 import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
 import {
-  activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -243,7 +243,7 @@ export function getReadiness(input: { day?: string; historyDays?: number }, ctx:
   const health = s.escobar.sharing.health;
   return capJson({
     day: day ?? ctx.today,
-    readiness: r ? { score: r.score, band: r.band, loadAdvice: r.loadAdvice, confidence: r.confidence, calibrating: r.calibrating, ...(health ? { drivers: r.drivers } : { drivers: r.drivers.filter(d => !/heart|sleep|hrv/i.test(d)) }) } : null,
+    readiness: r ? { score: r.score, band: r.band, loadAdvice: r.loadAdvice, confidence: r.confidence, calibrating: r.calibrating, drivers: redactDrivers(r.drivers, health) } : null,
     ...(health ? { baselines: { restingHr7d: b.restingHr7d != null ? r1(b.restingHr7d) : null, restingHr28d: b.restingHr28d != null ? r1(b.restingHr28d) : null, sleep14dMedianMin: b.sleep14dMedian } } : {}),
     checkInToday: !!s.checkIns.find(c => c.day === ctx.today),
     ...(historyDays ? { history: series.slice(0, historyDays).map((x, i) => ({ day: addDays(ctx.today, -i), band: x?.band ?? null, score: x?.score ?? null })) } : {}),

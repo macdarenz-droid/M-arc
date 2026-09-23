@@ -84,7 +84,7 @@ export function AnswerText({ text, ledger, unverified, streaming }: { text: stri
     });
     const facts = ids.map(id => ledger.find(f => f.id === id)).filter((f): f is Fact => !!f);
     if (facts.length) body.push(<Citation key="cite" n={++cites} facts={facts} />);
-    const plain = parseDirectives(raw).plain.trim();
+    const plain = parseDirectives(raw).plain.trim().replace(/^[-•]\s+/, '');
     return bad.has(plain) ? <span key={key} class="esc-unverified" title="Unverified number">{body}<span class="esc-unverified-hint"> Unverified number</span> </span> : <span key={key}>{body} </span>;
   };
   return (

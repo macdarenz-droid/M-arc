@@ -150,3 +150,9 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - plan mode: isPlanRequest (word-bounded regex) in ui/prompts.ts; plan sticks per conversation; live wins in a session.
 - memory: eviction skips injury/equipment/agreement; executor throws 'memory is full' when nothing can go; ids are time + random.
 - tests/escobar/transport health fixture gains key:true (ES-08 changed the contract).
+### Layer: privacy and limits — done — IDs: ES-12, ES-23, ES-13, ES-14, ES-16, ES-11 (render), ES-32 (pending expiry, months)
+- context.redactDrivers (resting HR / HRV / sleep drivers) in get_readiness and show readiness_gauge; explainMethod drops health keys (restingHr*, healthDaysLogged, zone*FromBpm, non-Tanaka hrMax) and body keys (restingKcalPerDay) when sharing is off; toRequestMessages replays get_health / get_heart_session / show heart_session (health off) and get_body / show body_trend (body off) as denied.
+- brief `one()` (single line, no ⟦⟧, ≤140) on every name, reason, title and memory; actions strip newlines from reasons; months rounded; expired proposals are not pending.
+- Photos: Composer 2 per message; at most the 2 newest unsent photos inline per request; decisions log line fixed (D3).
+- History window: estimated on the request form, keeps cutting at clean user turns until it fits (≤ 60k est. tokens, ≤ 400 entries); a trim forces a full brief. The existing window test's data was resized (ES-16 re-checks after the cut) and a new test covers repeated trimming.
+- Verification: sentences drop leading list markers (both sides); the chips directive is removed before grounding; new CRISIS pattern (plan §R4.8).
