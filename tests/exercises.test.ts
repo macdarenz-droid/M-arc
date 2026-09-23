@@ -24,3 +24,15 @@ describe('a longer name is not filed under the library name it contains (QA-R3b-
     expect(findExercise('Hack Squat heavy')?.id).toBe(findExercise('Hack Squat')?.id);
   });
 });
+
+describe('the heavy main-lift damage floor (QA-R7-2, QA-R7-3)', () => {
+  it('comes from DAMAGE_HEAVY_MAIN, so changing it changes the model', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    vi.doMock('@/data/recovery', async orig => ({ ...(await orig<typeof import('@/data/recovery')>()), DAMAGE_HEAVY_MAIN: 1.5 }));
+    const { setDamage } = await import('@/core/exercises');
+    expect(setDamage({ id: 'x', name: 'Bench', role: 'main' }, 5)).toBe(1.5);
+    vi.doUnmock('@/data/recovery');
+    vi.resetModules();
+  });
+});

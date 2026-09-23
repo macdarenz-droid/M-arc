@@ -165,7 +165,7 @@ svg { display: block; }
 .effort button[aria-pressed="true"].max { background: var(--negative); color: #fff; border-color: transparent; }
 .hint { font-size: 12px; color: var(--text-3); }
 .pr-badge { color: var(--warning); font-weight: 700; font-size: 12px; }
-.watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-1); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
 
 /* Rest banner */

@@ -435,3 +435,12 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - The other two are R6-8 and R6-9 below.
 - R6-8: the "Last:" hints use each row's place among the working sets (`workingIndex`). Warm-up rows get none, so the first working set shows last time's first set.
 - R6-9: the kg/lb slip chip uses `setUnitSuspect`, which never flags a warm-up or a drop set.
+
+### QA-R7-2, QA-R7-3 (low, same gap)
+- `setDamage` reads `DAMAGE_HEAVY_MAIN` instead of the literal 1.15, so changing the constant changes the model. Test: the constant mocked to 1.5 gives 1.5.
+
+### QA-R7-4 (low)
+- `.watch-pill` uses `var(--text)`; `--text-1` was never defined. New test: every `var()` in the stylesheet is a theme token, is defined in the sheet, or is one of the named inline properties.
+
+### QA-R7-5 (low)
+- Plan R7.4 kept lb display at 0.1. That stays for everything off the quarter-pound grid. A value that lands on .25 or .75 lb (1.25 lb add-ons) keeps its two decimals, so 26.25 lb no longer shows as 26.3 and warm-up ramps don't round one step up and the next down. Typed values still convert back exactly.

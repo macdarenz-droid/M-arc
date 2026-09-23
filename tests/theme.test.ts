@@ -34,3 +34,15 @@ describe('first paint (ST-25)', () => {
     for (const id of THEME_IDS.filter(t => t !== 'paper')) expect(isDarkBg(THEMES[id].tokens.bg), id).toBe(true);
   });
 });
+
+describe('stylesheet custom properties (QA-R7-4)', () => {
+  it('every var() the stylesheet reads is a theme token, defined in the sheet, or set inline by a component', async () => {
+    const { readFileSync } = await import('node:fs');
+    const css = readFileSync('src/ui/styles.css', 'utf8');
+    const used = new Set([...css.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]!));
+    const defined = new Set([...css.matchAll(/(--[\w-]+)\s*:/g), ...themeToCss(THEMES.paper).matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]!));
+    // Set from a style attribute or by the platform.
+    const inline = new Set(['--dot', '--insight', '--muscle-fill', '--pulse-beat', '--safe-area-inset-bottom', '--safe-area-inset-top']);
+    expect([...used].filter(v => !defined.has(v) && !inline.has(v))).toEqual([]);
+  });
+});

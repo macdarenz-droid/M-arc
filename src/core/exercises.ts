@@ -1,7 +1,7 @@
 import rawLibrary from '@/data/exercises.json';
 import type { Exercise, ResistanceMode } from './models';
 import { classifyMuscleText, isMuscleId, type MuscleId } from '@/data/muscles';
-import { DAMAGE_DEFAULT, DAMAGE_HIGH, DAMAGE_LOW } from '@/data/recovery';
+import { DAMAGE_DEFAULT, DAMAGE_HEAVY_MAIN, DAMAGE_HIGH, DAMAGE_LOW } from '@/data/recovery';
 
 const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank', 'lib_wall_sit', 'lib_hollow_body_hold']);
 const CONDITIONING_NAMES = new Set([
@@ -58,10 +58,10 @@ export function exerciseDamage(exercise: { id: string; name: string }): number {
   return DAMAGE_DEFAULT;
 }
 
-/** The set's actual damage factor: the static value, bumped to at least 1.15 for a heavy main lift. */
+/** The set's actual damage factor: the static value, bumped to at least DAMAGE_HEAVY_MAIN for a heavy main lift (QA-R7-2, QA-R7-3). */
 export function setDamage(exercise: { id: string; name: string; role: 'main' | 'accessory' }, reps: number): number {
   const base = exerciseDamage(exercise);
-  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, 1.15) : base;
+  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, DAMAGE_HEAVY_MAIN) : base;
 }
 
 /** The built-in library, typed and with a resistance mode attached. */

@@ -250,3 +250,14 @@ describe('plateBreakdown finds the best combination (BR-24)', () => {
     expect(b.perSide.map(p => [p.value, p.count])).toEqual([[25, 2], [10, 1]]);
   });
 });
+
+describe('quarter-pound loads (QA-R7-5)', () => {
+  it('26.25 lb reads as 26.25, other lb values still at 0.1', async () => {
+    const { kgToDisplay, displayToKg } = await import('@/core/units');
+    expect(kgToDisplay(displayToKg(26.25, 'lb'), 'lb')).toBe(26.25);
+    expect(kgToDisplay(displayToKg(2.25, 'lb'), 'lb')).toBe(2.25);
+    expect(kgToDisplay(displayToKg(26.3, 'lb'), 'lb')).toBe(26.3);
+    expect(kgToDisplay(displayToKg(102.5, 'lb'), 'lb')).toBe(102.5);
+    expect(kgToDisplay(46.4, 'lb')).toBe(102.3);
+  });
+});
