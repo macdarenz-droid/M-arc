@@ -14,7 +14,7 @@ import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
-import { imageData } from '../images';
+import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
 import { statusLabel } from '../tools/executor';
@@ -62,7 +62,7 @@ export function UserBubble({ msg }: { msg: UserTurn['msg'] }) {
   return (
     <div class="esc-user">
       {refs.map(r => <span key={r.id} class="chip chip-accent esc-ref">About: {r.label}</span>)}
-      {imgs.length > 0 && <div class="esc-thumbs">{imgs.map(i => { const d = imageData(i.id); return d ? <img key={i.id} src={`data:${d.mediaType};base64,${d.data}`} alt={i.description ?? 'Attached photo'} /> : <span key={i.id} class="esc-thumb-missing small muted">Photo</span>; })}</div>}
+      {imgs.length > 0 && <div class="esc-thumbs">{imgs.map(i => <Thumb key={i.id} id={i.id} alt={i.description ?? 'Attached photo'} />)}</div>}
       {text && <div class="esc-bubble">{text}</div>}
     </div>
   );
@@ -229,4 +229,16 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       {!live && last && !!r?.chips?.length && <div class="esc-chips">{r.chips.map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => onChip?.(c)}>{c}</button>)}</div>}
     </div>
   );
+}
+
+/** A sent photo's thumbnail: memory while it is fresh, then IndexedDB (ES-28 evicts sent photos from memory). */
+function Thumb({ id, alt }: { id: string; alt: string }) {
+  const [img, setImg] = useState(() => imageData(id));
+  useEffect(() => {
+    if (img) return;
+    let live = true;
+    void loadImage(id).then(v => { if (live && v) setImg(v); });
+    return () => { live = false; };
+  }, [id]);
+  return img ? <img src={`data:${img.mediaType};base64,${img.data}`} alt={alt} /> : <span class="esc-thumb-missing small muted">Photo</span>;
 }

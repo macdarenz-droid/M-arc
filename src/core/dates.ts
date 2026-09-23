@@ -57,10 +57,6 @@ export function daysBetween(a: string, b: string): number {
   return Math.round((dayMs(b) - dayMs(a)) / 86_400_000);
 }
 
-export function hoursSince(iso: string, now = Date.now()): number {
-  return (now - new Date(iso).getTime()) / 3_600_000;
-}
-
 export const WEEKDAY_LABEL: Record<Weekday, string> = {
   sun: 'Sun', mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat',
 };

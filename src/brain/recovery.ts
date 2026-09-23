@@ -93,15 +93,6 @@ export function sessionRpeLoad(session: Session): number {
   return avgWeight * (session.durationSec / 60);
 }
 
-function withinDays(day: string, atMs: number, days: number): boolean {
-  const d = daysBetween(day, dayKey(new Date(atMs)));
-  return d >= 0 && d < days;
-}
-
-function withinDaysOfSession(session: Session, atMs: number, days: number): boolean {
-  return withinDays(session.day, atMs, days);
-}
-
 /**
  * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
  * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at

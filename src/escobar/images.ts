@@ -39,7 +39,7 @@ export function imageData(id: string): { mediaType: string; data: string } | nul
   return memory.get(id) ?? null;
 }
 
-/** Loads a stored photo into memory (for thumbnails after a restart). */
+/** A stored photo for a thumbnail: memory first, else IndexedDB (not put back into memory, so sent photos stay evicted). */
 export async function loadImage(id: string): Promise<{ mediaType: string; data: string } | null> {
   const hit = memory.get(id);
   if (hit) return hit;
@@ -48,7 +48,7 @@ export async function loadImage(id: string): Promise<{ mediaType: string; data: 
   return new Promise(resolve => {
     try {
       const req = db.transaction(STORE, 'readonly').objectStore(STORE).get(id);
-      req.onsuccess = () => { const v = req.result as { mediaType: string; data: string } | undefined; if (v) memory.set(id, v); resolve(v ?? null); };
+      req.onsuccess = () => { const v = req.result as { mediaType: string; data: string } | undefined; resolve(v ?? null); };
       req.onerror = () => resolve(null);
     } catch { resolve(null); }
   });

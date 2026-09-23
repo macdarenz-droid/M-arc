@@ -10,7 +10,6 @@ import { LIBRARY, searchExercises } from '@/core/exercises';
 import { MUSCLE_BY_ID, MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
 import { exerciseHistory } from '@/brain/history';
-import { effectiveOneRm } from '@/brain/e1rm';
 import { plateauStatus, trend } from '@/brain/trend';
 import { effortDrift } from '@/brain/effort';
 import { allRecords, PR_LABEL } from '@/brain/prs';
@@ -22,7 +21,6 @@ import { coachInsights, deloadOffer, readinessSeries, CATEGORY_LABEL, type Insig
 import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
-import { weeklyMuscleSets } from '@/brain/exposure';
 import { daysSinceLastSession, plannedThisWeek, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { restingHr, hrMax, zones, effortMismatch, intraSessionDrift } from '@/brain/heart';
 import { substitutesFor } from '@/brain/substitute';
@@ -445,11 +443,3 @@ export function findInAppTool(input: { query?: string }) {
   return { results: findInApp(input.query, 5).map(p => ({ id: p.id, title: p.title, where: p.where, what: p.what, ...(p.how ? { how: p.how } : {}) })) };
 }
 
-/** Everything in weekly sets for one muscle over N weeks, for compare and show. */
-export function weeklySetsFor(ctx: ToolCtx, weeks: number, muscles?: MuscleId[]) {
-  return weeklyMuscleSets(ctx.state.sessions, ctx.today, weeks, ctx.state.customExercises).map(w => ({
-    week: w.week, sets: Object.fromEntries((Object.entries(w.sets) as Array<[MuscleId, number]>).filter(([m]) => !muscles || muscles.includes(m)).map(([m, v]) => [m, r1(v)])),
-  }));
-}
-
-export const e1rmOf = (kg: number, reps: number, effort?: 'easy' | 'ideal' | 'max') => effectiveOneRm(kg, reps, effort);

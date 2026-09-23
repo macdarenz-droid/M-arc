@@ -9,7 +9,7 @@ import { VOLUME_BANDS, VOLUME_OFFSET } from '@/data/volume';
 import { GOAL_BY_ID } from '@/data/goals';
 import { DELOAD_DAYS, DELOAD_LOAD_FACTOR, DELOAD_SET_FACTOR } from '@/data/deload';
 import { READINESS_CALIBRATING_DAYS, READINESS_GREEN_AT, READINESS_RED_AT, READINESS_WEIGHTS } from '@/brain/readiness';
-import { E1RM_FULL_WEIGHT_REPS, E1RM_MAX_REPS, EPLEY_DIVISOR, RIR_BY_EFFORT } from '@/brain/e1rm';
+import { E1RM_MAX_REPS, EPLEY_DIVISOR, RIR_BY_EFFORT } from '@/brain/e1rm';
 import { DELOAD_TRIGGER } from '@/brain/deload';
 import { ROLE_WEIGHT, SET_WEIGHT, LEVELS, trainingLevels } from '@/brain/exposure';
 import { MIN_REST_SEC, REST_RESERVE_PCT, REST_RISE_BPM, TANAKA, ZONE_RESERVE_PCTS, hrMax, restingHr, zones } from '@/brain/heart';
@@ -101,9 +101,9 @@ const METHODS: Record<MethodId, Builder> = {
     personal: {},
   }),
   e1rm: () => ({
-    summary: `The strength estimate uses Epley with the effort label as reps in reserve: load × (1 + (reps + reps left) / ${EPLEY_DIVISOR}), where easy counts ${RIR_BY_EFFORT.easy} reps left, ideal ${RIR_BY_EFFORT.ideal} and max ${RIR_BY_EFFORT.max}. Only sets of ${E1RM_MAX_REPS} reps or fewer count, and sets of ${E1RM_FULL_WEIGHT_REPS + 1}–${E1RM_MAX_REPS} weigh half in trends. It's a guide, not a test.`,
+    summary: `The strength estimate uses Epley with the effort label as reps in reserve: load × (1 + (reps + reps left) / ${EPLEY_DIVISOR}), where easy counts ${RIR_BY_EFFORT.easy} reps left, ideal ${RIR_BY_EFFORT.ideal} and max ${RIR_BY_EFFORT.max}. Only sets of ${E1RM_MAX_REPS} reps or fewer count; the session's best set is its estimate. It's a guide, not a test.`,
     inputs: ['load', 'reps', 'effort'],
-    constants: { epleyDivisor: EPLEY_DIVISOR, rirEasy: RIR_BY_EFFORT.easy, rirIdeal: RIR_BY_EFFORT.ideal, rirMax: RIR_BY_EFFORT.max, maxReps: E1RM_MAX_REPS, halfWeightAboveReps: E1RM_FULL_WEIGHT_REPS },
+    constants: { epleyDivisor: EPLEY_DIVISOR, rirEasy: RIR_BY_EFFORT.easy, rirIdeal: RIR_BY_EFFORT.ideal, rirMax: RIR_BY_EFFORT.max, maxReps: E1RM_MAX_REPS },
     personal: {},
   }),
   plateau: () => ({

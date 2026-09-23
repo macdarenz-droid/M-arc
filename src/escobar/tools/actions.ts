@@ -10,7 +10,6 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, isGoalId } from '@/data/goals';
 import { WEEKDAY_LABEL, addDays } from '@/core/dates';
 import { isWeightTypo } from '@/brain/onboarding';
-import { equipmentGroup } from '@/brain/coach/cues';
 import { evaluatePlan, hasBlockingIssues, type PlanDraft } from '@/brain/plan';
 import { ToolError } from './read';
 import { exerciseName, scheduledSplitFor, type ToolCtx } from './context';
@@ -393,4 +392,4 @@ export function buildProposal(name: string, raw: unknown, ctx: ToolCtx, idHint?:
   };
 }
 
-export const equipmentGroupOf = (ctx: ToolCtx, exerciseId: string): string => equipmentGroup(findExercise(exerciseId, ctx.state.customExercises)?.equipment ?? '');
+

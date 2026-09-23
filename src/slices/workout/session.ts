@@ -18,7 +18,7 @@ import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
 import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
 
-export const REST_MIN = 15, REST_MAX = 600, REST_STEP = 15;
+export const REST_MIN = 15, REST_MAX = 600;
 
 /** Sessions oldest first by start (RG-05). Sort is stable, so equal starts keep their order. */
 export const sortByStart = (sessions: Session[]): Session[] => [...sessions].sort((x, y) => x.startedAt.localeCompare(y.startedAt));

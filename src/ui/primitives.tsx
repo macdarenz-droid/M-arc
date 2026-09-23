@@ -41,14 +41,6 @@ export function Row({ children, trailing, onClick, class: cls = '', palace }: { 
   return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} data-palace={palace} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
 }
 
-export function Bar({ pct, color }: { pct: number; color?: string }) {
-  return <div class="bar"><i style={{ width: `${Math.max(0, Math.min(100, pct))}%`, background: color }} /></div>;
-}
-
-export function Ring({ pct, size = 120, children }: { pct: number; size?: number; children?: ComponentChildren }) {
-  return <div class="ring" style={{ '--p': Math.max(0, Math.min(100, pct)), width: size, height: size }}><div>{children}</div></div>;
-}
-
 /** How many Sheets are open, so floating things (the Escobar dock) can hide under them. Derived from the sheet stack. */
 export const openSheets = openSheetCount;
 

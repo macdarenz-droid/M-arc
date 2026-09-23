@@ -1,4 +1,4 @@
-import { signal, computed, batch } from '@preact/signals';
+import { signal, batch } from '@preact/signals';
 import { freshState, newId, type AppState, type Session, type Split, type Weekday } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { legacySessionLogging } from '@/brain/fidelity';
@@ -293,8 +293,3 @@ export function flushSave(): void {
   persistNow();
 }
 
-export const sessions = computed(() => state.value.sessions);
-export const splits = computed(() => state.value.splits);
-export const preferences = computed(() => state.value.preferences);
-export const customExercises = computed(() => state.value.customExercises);
-export const allExercisesLookup = computed(() => state.value.customExercises);

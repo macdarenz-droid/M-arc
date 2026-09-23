@@ -15,7 +15,6 @@ import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
 import { plannedThisWeek, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
-import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';

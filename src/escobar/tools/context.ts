@@ -3,8 +3,7 @@
  * computed the same way the screens compute them (app/selectors.ts), but without
  * signals, so tools stay pure and testable.
  */
-import type { AppState, Exercise, LoadUnit } from '@/core/models';
-import { WEEKDAYS } from '@/core/models';
+import type { AppState, Exercise } from '@/core/models';
 import { daysBetween, dayKey, weekdayOf } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { recoveryPctFor, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
@@ -91,7 +90,5 @@ export function progressionCtxFor(ctx: ToolCtx, exerciseId: string, gymId?: stri
 
 export const activeDeloadOf = (ctx: ToolCtx) => { const d = ctx.state.deload; return d && d.endDay >= ctx.today ? d : null; };
 export const todayOverrideOf = (ctx: ToolCtx) => { const o = ctx.state.escobar.todayOverride; return o && o.day === ctx.today ? o : null; };
-export const plannedPerWeek = (ctx: ToolCtx) => WEEKDAYS.filter(d => ctx.state.schedule[d]).length;
 export const exerciseOf = (ctx: ToolCtx, id: string): Exercise | undefined => findExercise(id, ctx.state.customExercises);
 export const exerciseName = (ctx: ToolCtx, id: string): string => exerciseOf(ctx, id)?.name ?? id;
-export const displayUnit = (ctx: ToolCtx): LoadUnit => ctx.state.preferences.weightUnit;

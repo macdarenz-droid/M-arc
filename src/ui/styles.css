@@ -91,9 +91,6 @@ svg { display: block; }
 /* F3.2: the volume-landmark band, a faint range sitting under the actual bar. */
 .bar > .range { position: absolute; top: 0; bottom: 0; background: var(--text); opacity: 0.18; }
 
-.ring { --p: 0; width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-3) 0); display: grid; place-items: center; position: relative; }
-.ring::after { content: ""; position: absolute; inset: 9px; border-radius: 50%; background: var(--surface-1); }
-.ring > div { position: relative; z-index: 1; text-align: center; }
 
 /* Bottom navigation */
 .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--border-subtle); padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)); }
@@ -167,7 +164,6 @@ svg { display: block; }
 .pr-badge { color: var(--warning); font-weight: 700; font-size: 12px; }
 .watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text-1); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
-.watch-pill .dot.live { background: var(--positive); }
 
 /* Rest banner */
 .rest { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(70px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); z-index: 25; max-width: 560px; width: calc(100% - 32px); background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }

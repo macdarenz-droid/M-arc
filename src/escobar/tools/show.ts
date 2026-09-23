@@ -11,7 +11,7 @@ import { exerciseHistory } from '@/brain/history';
 import { plateauStatus, trend } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
-import { plannedThisWeek, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -188,5 +188,3 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
   }
 }
 
-/** Weekly totals used by compare-style views. */
-export const weeklyTotals = (ctx: ToolCtx, weeks: number) => weeklyVolumeHistory(ctx.state.sessions, ctx.today, weeks, ctx.state.customExercises);

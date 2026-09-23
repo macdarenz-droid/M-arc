@@ -26,7 +26,6 @@ public final class WatchService extends Service {
     public String deviceName = "No watch connected";
     public boolean subscribed, running;
     public Integer battery;
-    public long batteryReceivedAt;
     public final List<String> services = new ArrayList<>();
     private final ArrayDeque<String> logs = new ArrayDeque<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -70,7 +69,7 @@ public final class WatchService extends Service {
     public void connect(BluetoothDevice selected) {
         disconnect();
         if (!permitted()) { setStatus("Permission needed", "Allow Nearby devices to connect."); return; }
-        session = new LiveSession(); battery = null; batteryReceivedAt = 0; services.clear();
+        session = new LiveSession(); battery = null; services.clear();
         device = selected; retries = 0;
         String name = selected.getName(); deviceName = name == null || name.trim().isEmpty() ? "Bluetooth sensor" : name;
         pausedReason = null;
@@ -230,7 +229,7 @@ public final class WatchService extends Service {
                 changed();
             } catch (IllegalArgumentException e) { log("Ignored malformed HR packet: " + e.getMessage()); }
         } else if (BATTERY.equals(characteristic) && value.length == 1 && (value[0] & 255) <= 100) {
-            battery = value[0] & 255; batteryReceivedAt = System.currentTimeMillis(); changed();
+            battery = value[0] & 255; changed();
         }
     }
     private void setStatus(String title, String text) { status = title; detail = text; log(title); changed(); }
