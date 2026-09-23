@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateTurn, stepsSinceUser, REPAIR_MARKER } from '../src/validate';
+import { validateTurn, stepsSinceUser, REPAIR_MARKER, MAX_SYSTEM_BYTES } from '../src/validate';
 import { turn } from './helpers';
 
 const v = (b: unknown) => validateTurn(b, JSON.stringify(b).length);
@@ -10,6 +10,18 @@ const toolResult = (id: string) => ({ role: 'user', content: [{ type: 'tool_resu
 
 describe('POST /v2/turn validation (§12.2)', () => {
   it('accepts a normal turn', () => expect(v(turn()).ok).toBe(true));
+  it('refuses effort-only system messages (PL-06)', () => {
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: [], output_config: { effort: 'max' } }] }))).toBe('effort-only system messages are not accepted');
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'now: tue', output_config: { effort: 'max' } }] }))).toBe('effort-only system messages are not accepted');
+  });
+  it('caps system text at 48 KB, measured in bytes (PL-06)', () => {
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'x'.repeat(MAX_SYSTEM_BYTES) }] }))).toBe('ok');
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'x'.repeat(MAX_SYSTEM_BYTES + 1) }] }))).toMatch(/system text over 48 KB/);
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'é'.repeat(MAX_SYSTEM_BYTES / 2 + 1) }] }))).toMatch(/system text over 48 KB/);
+  });
+  it('user text blocks accept no cache_control (PL-12)', () => {
+    expect(reason(turn({ messages: [{ role: 'user', content: [{ type: 'text', text: 'hi', cache_control: { type: 'ephemeral' } }] }] }))).toMatch(/unknown key cache_control/);
+  });
   it('rejects unknown and blocked top-level keys', () => {
     expect(reason(turn({ extra: 1 }))).toMatch(/unknown key extra/);
     for (const k of ['profile', 'name', 'email', 'sessions']) expect(reason(turn({ [k]: 'x' }))).toMatch(/not accepted/);

@@ -1,8 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Anthropic from '@anthropic-ai/sdk';
 import { handle, corsHeaders } from '../src/handler';
 import { noSystemRole } from '../src/anthropic';
+import type { ClientLike, StreamLike } from '../src/anthropic';
 import { baseEnv, deps, eventsFor, finalMessage, memoryKv, mockClient, post, sse, turn, DEVICE } from './helpers';
+
+beforeEach(() => { vi.spyOn(console, 'log').mockImplementation(() => {}); });
 
 const TEXT = [{ type: 'thinking', thinking: '', signature: 'sig' }, { type: 'text', text: 'Short sleep pulled you to amber ⟦f3⟧.' }];
 
@@ -122,5 +125,56 @@ describe('quotas and rate (§12.5)', () => {
     const j = (await r.json()) as { code: string; retryAfter: number };
     expect(j.code).toBe('quota');
     expect(j.retryAfter).toBe(12 * 3600);
+  });
+});
+
+describe('input hardening and disconnects (PL-14, PL-05)', () => {
+  it('a declared content-length over 3 MB is 413 before the body is read or the client is made', async () => {
+    const makeClient = vi.fn();
+    const req = new Request('https://x/v2/turn', { method: 'POST', body: 'x', headers: { 'x-escobar-device': DEVICE, 'content-length': '3000001' } });
+    const text = vi.spyOn(req, 'text');
+    const r = await handle(req, baseEnv(), { ...deps(mockClient([])), makeClient });
+    expect(r.status).toBe(413);
+    expect(((await r.json()) as { code: string }).code).toBe('invalid');
+    expect(text).not.toHaveBeenCalled();
+    expect(makeClient).not.toHaveBeenCalled();
+  });
+  it('measures the body in UTF-8 bytes, not UTF-16 units', async () => {
+    const body = JSON.stringify(turn({ messages: [{ role: 'user', content: 'é'.repeat(1_500_001) }] }));
+    expect(body.length).toBeLessThan(3_000_000);
+    const makeClient = vi.fn();
+    const r = await handle(new Request('https://x/v2/turn', { method: 'POST', body, headers: { 'x-escobar-device': DEVICE } }), baseEnv(), { ...deps(mockClient([])), makeClient });
+    expect(r.status).toBe(413);
+    expect(makeClient).not.toHaveBeenCalled();
+  });
+  it('a cancelled response body aborts the model stream within 50 ms', async () => {
+    let signal: AbortSignal | undefined;
+    let abortedAt = 0;
+    const client: ClientLike = {
+      beta: {
+        messages: {
+          stream(_params, opts) {
+            signal = opts?.signal;
+            signal?.addEventListener('abort', () => { abortedAt = Date.now(); });
+            const it: StreamLike = {
+              async *[Symbol.asyncIterator]() {
+                yield eventsFor([])[0] as never;
+                await new Promise((_, rej) => signal?.addEventListener('abort', () => rej(new Anthropic.APIUserAbortError())));
+              },
+              finalMessage: () => new Promise(() => {}),
+              abort() {},
+            };
+            return it;
+          },
+        },
+      },
+    };
+    const r = await handle(post(turn()), baseEnv(), deps(client));
+    const reader = r.body!.getReader();
+    await reader.read();
+    const cancelledAt = Date.now();
+    await reader.cancel();
+    await vi.waitFor(() => { expect(signal?.aborted).toBe(true); }, { timeout: 50, interval: 2 });
+    expect(abortedAt - cancelledAt).toBeLessThan(50);
   });
 });
