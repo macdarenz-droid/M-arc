@@ -145,23 +145,17 @@ jobs:
           grep -q 'android.permission.BLUETOOTH_CONNECT' android/app/src/main/AndroidManifest.xml || { echo '::error::watch Bluetooth permissions not patched into the manifest'; exit 1; }
           grep -q 'foregroundServiceType="connectedDevice"' android/app/src/main/AndroidManifest.xml || { echo '::error::WatchService foreground service type not patched into the manifest'; exit 1; }
 
-      - name: Preserve development signing identity
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: marc-debug-signing-v1
-
-      - name: Install stable M/ARC debug signing key
+      - name: Decode the permanent signing key
         shell: bash
         env:
-          MARC_DEBUG_KEYSTORE_B64: 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
+          KS_B64: ${{ secrets.MARC_SIGNING_KEYSTORE_B64 }}
         run: |
           set -euo pipefail
-          mkdir -p "$HOME/.android"
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            printf '%s' "$MARC_DEBUG_KEYSTORE_B64" | base64 --decode > "$HOME/.android/debug.keystore"
-          fi
-          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
+          # One permanent key for every build (plan R0.0, finding PL-19). Never rely on
+          # Gradle's default debug keystore: on the runner it made a new random key per build.
+          [ -n "$KS_B64" ] || { echo '::error::Secret MARC_SIGNING_KEYSTORE_B64 is missing.'; exit 1; }
+          umask 077
+          printf '%s' "$KS_B64" | base64 --decode > "$RUNNER_TEMP/marc-signing.p12"
 
       - name: Build debug APK
         shell: bash
@@ -170,6 +164,31 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
+
+      - name: Sign with the permanent key and verify the fingerprint
+        shell: bash
+        env:
+          PW: ${{ secrets.MARC_SIGNING_STORE_PASSWORD }}
+          # Public certificate fingerprint of the permanent key. Registered with Huawei (App ID 119100049).
+          EXPECTED_SHA256: '05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5'
+        run: |
+          set -euo pipefail
+          [ -n "$PW" ] || { echo '::error::Secret MARC_SIGNING_STORE_PASSWORD is missing.'; exit 1; }
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          BUILD_TOOLS="$(find "$SDK_ROOT/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          APK='android/app/build/outputs/apk/debug/app-debug.apk'
+          "$BUILD_TOOLS/zipalign" -p -f 4 "$APK" "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-signing.p12" --ks-key-alias marc --ks-pass env:PW --key-pass env:PW --out "$APK" "$RUNNER_TEMP/aligned.apk"
+          FP=$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK" | awk -F': ' '/Signer #1 certificate SHA-256 digest/{print toupper($2); exit}' | sed 's/../&:/g; s/:$//')
+          rm -f "$RUNNER_TEMP/marc-signing.p12" "$RUNNER_TEMP/aligned.apk"
+          if [ "$FP" != "$EXPECTED_SHA256" ]; then echo "::error::APK is signed with $FP, expected $EXPECTED_SHA256"; exit 1; fi
+          echo "APK signer SHA-256: $FP"
+
+      - name: No keystore may be committed in workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -rEl 'MII[A-Za-z0-9+/]{100,}' .github/workflows; then echo '::error::A base64 keystore is committed in a workflow.'; exit 1; fi
 
       - name: Verify APK contains the built app
         shell: bash
