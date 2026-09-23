@@ -176,6 +176,13 @@ Log one structured line per step: `{ requestId, mode, model, stop_reason, in, ou
 ### R0.8 Release signing (companion to R0.0)
 `release-apk.yml` has never run, and its `MARC_ANDROID_*` secrets are unverified. Switch it to the same `MARC_SIGNING_*` secrets and the same fingerprint assertion as R0.0, so debug and release share one identity. Release keeps its higher `versionCode`; a phone on a release build cannot take debug builds.
 
+### R0.9 Upstream location and honest auth errors (PL-20, found 2026-09-23)
+A Philippine user's chat fails on home Wi-Fi ("The coach is not set up correctly.") but works on mobile data, on the same phone. The Worker runs wherever Cloudflare routes each network and calls Anthropic from there; some locations are refused.
+- Add a Durable Object `UpstreamRelay`, obtained with `env.UPSTREAM.get(env.UPSTREAM.idFromName('us'), { locationHint: 'enam' })`. It runs the existing `runStep` stream and returns the SSE `Response`, so every Anthropic call leaves from the US. The handler keeps validation, quotas and abort. Add the wrangler binding plus a `new_sqlite_classes` migration entry, and extend the node stub.
+- `mapError`: 403 becomes code `upstream_region`, with the message "Escobar isn't available on this network right now. Try mobile data." 401 stays `upstream_auth`. Both pass `errorDetail` through and log `code`, `detail` and `request.cf.colo`. Add `upstream_region` to `src/escobar/transport.ts` `ErrorCode` and to the client message map.
+- Tests: the upstream call goes through the relay stub; a 403 maps to `upstream_region` with detail.
+- Owner check after deploy: the affected user on the failing Wi-Fi gets an answer.
+
 ### R0 tests
 `escobar-worker/test/`:
 - rotating device ids from one IP hit 429 (mock `RATE_IP`);

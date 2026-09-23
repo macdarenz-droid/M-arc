@@ -38,6 +38,25 @@
   "verifier_reason": "Found after the audit by extracting v2 signing certificates from five CI APK artifacts and by the export workflow run 35863961872."
  },
  {
+  "id": "PL-20",
+  "phase": "R0",
+  "final_severity": "high",
+  "severity": "high",
+  "verdict": "confirmed",
+  "category": "bug",
+  "area": "follow-up",
+  "file": "escobar-worker/src/anthropic.ts",
+  "line": 152,
+  "title": "Escobar fails for users whose network routes to a Cloudflare location Anthropic refuses (\"The coach is not set up correctly.\")",
+  "evidence": "A user in the Philippines on iOS: chat fails on home Wi-Fi with 'The coach is not set up correctly.', and the same phone works on 5G mobile data (screenshots 2026-09-23). /health reports key:true, and a test turn from a US location (colo EWR) answered normally. The Worker runs in the Cloudflare location nearest each network path and calls Anthropic from there; mapError turns Anthropic's 401/403 into upstream_auth with a generic message and no detail.",
+  "failure_scenario": "Any user whose ISP routes Cloudflare traffic to a location Anthropic does not serve (commonly Hong Kong for Philippine ISPs) gets a permanent 'not set up correctly' error. Nothing in the app or the logs says why.",
+  "fix": "(1) Add an UpstreamRelay Durable Object obtained with env.UPSTREAM.get(env.UPSTREAM.idFromName('us'), { locationHint: 'enam' }). It performs the Anthropic stream call and returns the SSE Response, so every upstream request leaves from the US. Quotas, validation and abort stay in the handler. (2) In mapError, split 403 into code 'upstream_region' with 'Escobar isn't available on this network right now. Try mobile data.', pass errorDetail through for 401/403, and log code, detail and request.cf.colo. Add the code to the client ErrorCode and message map. (3) Wrangler: durable_objects binding plus a migration new_sqlite_classes for UpstreamRelay.",
+  "fix_correction": "",
+  "test": "handler test with the node stub: the upstream call goes through the relay stub; a 403 maps to upstream_region with detail. Manual: a PH user on the failing Wi-Fi gets an answer after deploy.",
+  "reproduced": true,
+  "verifier_reason": "Reproduced by the owner with the affected user: Wi-Fi fails, mobile data works, same phone and app."
+ },
+ {
   "id": "PL-05",
   "phase": "R0",
   "final_severity": "medium",
