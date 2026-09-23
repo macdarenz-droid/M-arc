@@ -17,7 +17,7 @@ The implementation plan built from this audit is [`REMEDIATION-PLAN.md`](REMEDIA
 | Verification | 3 adversarial verifiers re-checked every medium+ finding and tried to refute it. Result: 104 confirmed, 2 uncertain, 0 refuted. They lowered 14 severities, corrected 45 fixes, and found 2 new issues (VX-01, VX-02). Low findings (53) were not verified. |
 | Spot check | I independently re-read 6 of the highest-impact claims (Health Connect executor deadlock, Navy formula, `commitSet` re-commit, commented-out `QUOTA` binding, frozen `nowMs`, `isExactNotification` default in plugin 8.3.1). All six hold. |
 | Plan review | An independent reviewer checked every file, symbol and line reference in `REMEDIATION-PLAN.md` against `e34076f`, plus the Cloudflare, Capacitor and Health Connect API usage. Its 40 corrections are merged into the plan. |
-| Follow-up | APK signing certificates extracted from two CI artifacts revealed PL-19 (signing identity lives only in a per-branch cache). |
+| Follow-up | Signing certificates extracted from five CI APKs, plus a one-off cache export run, revealed PL-19: every build is signed with a new random key. |
 | Research | Competitor feature matrix (Hevy, Strong, Fitbod, Alpha Progression, JEFIT, RP, Boostcamp, Liftosaur, Gravl), Android 15/16/17 and Play changes, training science behind the coach models. |
 
 ## 2. Baseline (all green, which is why these bugs went unnoticed)
@@ -44,7 +44,7 @@ Green CI does not mean correct here. The unit tests cover pure brain functions, 
 7. **The coach states wrong numbers users act on.** Body fat uses metric constants on inch values (BR-01). "Ready in" is measured from training instead of from now (BR-02). Readiness gives opposite bands in Train and in Coach (BR-03). The plateau threshold is 1.5 %/week instead of 1.5 % over 8 weeks (BR-04). Abandoned lifts trigger decline and deload offers forever (BR-05). Volume is "under" for every muscle each Monday (BR-07). The pre-session load ignores goal, deload and gym units (BR-08).
 8. **Escobar's Undo corrupts state (ES-03/04/05).** Undo restores whole state slices, including the live session, at any later time. After a reload it does nothing but is still reported as "undone". Applying a programme discards a running workout.
 9. **The clock is frozen when no timer runs (ST-05 / VX-02).** Recovery, readiness and insights are computed at boot time or at the last tick. While a timer runs they are recomputed every second (ST-07 / BR-23 / UI-10), about 30–120 ms of work per tick.
-10. **The app's signing identity lives only in a per-branch CI cache (PL-19, found in follow-up).** The key registered with Huawei for Wear Engine (`05:A0…A6:E8`) signs only builds from the escobar branch. Other branches sign with `7E:BC…`, and GitHub deletes the cache after 7 days unused. The committed debug keystore (PL-02, `1E:13…`) is only the cache-miss fallback, so it is low severity.
+10. **Every CI build is signed with a new random key (PL-19, found in follow-up).** Five debug APKs, five different signing fingerprints. Gradle never uses the cached or committed keystore (`1E:13…`, PL-02). The key registered with Huawei (`05:A0…A6:E8`) existed only inside one CI run and is gone, and no new build can install as an update without an uninstall, which wipes local data.
 
 ## 4. Totals
 
@@ -75,7 +75,7 @@ Severities are the final, verifier-adjusted values.
 | Escobar | SSE transport, ledger/citations, palace navigation, brief, mock transport | loop (ES-09/10/20), read tools (ES-01/21), show (ES-15), photos (ES-13), privacy gates (ES-12), memory (ES-30) | undo (ES-03/04), today override (ES-02), plan mode (ES-17), offline latch (ES-08), store vs reset (ES-07), pins/proactive/brief (stubs, ES-26) |
 | Native | haptics, photo pick, watch FGS type | watch plugin threading (PL-08), notifications (UI-02) | Health Connect sync (PL-03/04), HC diagnose (dead) |
 | Worker | `/health`, SSE relay, validation, error mapping | CORS (not access control), per-device rate limit | quotas (PL-01), disconnect abort (PL-05) |
-| CI | gate, debug APK, signed release, tools-sync | deploy-worker (PL-11), release versioning (PL-17) | signing identity only in a per-branch cache (PL-19); committed fallback keystore (PL-02) |
+| CI | gate, debug APK, signed release, tools-sync | deploy-worker (PL-11), release versioning (PL-17) | a new random signing key on every build (PL-19); committed keystore unused (PL-02) |
 
 ## 6. Regression analysis
 
@@ -169,7 +169,7 @@ Sorted by phase, then severity. "unverified-low" means low severity and not put 
 | ID | Sev | Verdict | Cat | Location | Finding | Phase |
 |---|---|---|---|---|---|---|
 | PL-01 | critical | confirmed | security | `escobar-worker/wrangler.toml:33` | Escobar Worker is an unauthenticated open relay to the Anthropic key; quotas disabled in production | R0 |
-| PL-19 | high | confirmed | build-ci | `.github/workflows/build-apk.yml:148` | Debug signing identity lives only in per-branch Actions cache: differs by branch and is lost after 7 days unused | R0 |
+| PL-19 | high | confirmed | build-ci | `.github/workflows/build-apk.yml:148` | Debug APKs are signed with a new random key on every CI run; the cached/committed keystore is never used | R0 |
 | PL-05 | medium | confirmed | perf | `escobar-worker/src/handler.ts:77` | Client disconnect never aborts the upstream model stream | R0 |
 | PL-06 | medium | confirmed | spec-drift | `escobar-worker/src/validate.ts:136` | decision-review: client-authored system messages and effort escalation accepted verbatim | R0 |
 | PL-07 | medium | confirmed | spec-drift | `escobar-worker/src/handler.ts:93` | decision-review: quota accounting undercounts — tool_use-terminated turns and intermediate steps are free; concurrent turns lose updates | R0 |

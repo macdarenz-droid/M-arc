@@ -6,27 +6,18 @@ The architecture itself is sound. I checked its code claims against `e34076f`, a
 
 ## 1. Signing identity: blocking for Gate A (finding PL-19)
 
-Huawei's app registration (App ID `119100049`, package `com.mrcdrnzz.dailytracker`) has fingerprint #1 = `05:A0:B1:32:DB:B1:E1:7D:ED:E7:51:78:92:0D:32:B2:7A:EE:54:DC:70:CB:FD:D1:78:3A:FE:38:F8:F1:A6:E8`.
-
-That key is **not** in the repo and **not** in a secret. It exists only in the GitHub Actions cache `marc-debug-signing-v1` of the branch `claude/escobar-v2-implementation-eidx64`. The signing certificates inside the CI-built APKs show this:
-
-| Build | Signing SHA-256 |
-|---|---|
-| escobar branch, run 35853038794 | `05:A0:…:A6:E8` (registered with Huawei) |
-| any branch without its own cache (e.g. run 35861335573, same code) | `7E:BC:16:BB:…:29:04:3D:9D` (restored from `main`'s cache) |
-| the keystore embedded in `build-apk.yml` (cache-miss fallback) | `1E:13:E7:B6:…:B5:11:5E:0E` (public) |
+Huawei's app registration (App ID `119100049`, package `com.mrcdrnzz.dailytracker`) has fingerprint #1 = `05:A0:…:A6:E8`. **That key no longer exists.** Every CI debug build is signed with a new random key: five APKs gave five different fingerprints. Gradle ignores the cached and committed keystores, and `05:A0` lived only inside CI run 35853038794.
 
 Consequences:
-- A Gate A phone build from any other branch fails Wear Engine's identity check and cannot update the installed app.
-- GitHub deletes caches that go unused for 7 days. If the escobar branch does not build again, the `05:A0` key is gone around **2026-09-30**.
+- No build can pass Wear Engine's identity check until a permanent key exists and its fingerprint is registered.
+- No new APK installs as an update over the installed one. The next install needs an uninstall, which wipes local workouts unless a backup is exported first.
 
 Rules:
-- **Before Gate A:** the owner rescues the key into secret `MARC_DEBUG_KEYSTORE_B64` (remediation plan R0.0). Until then, build every APK you install from the escobar branch.
-- **Never rotate `05:A0`.** Never register `1E:13` or `7E:BC`. A release key, if ever used, goes into Huawei fingerprint slot 2 and never replaces #1.
-- CI must fail any APK whose signing SHA-256 is not the expected one (R0.0 adds this check).
-- Debug APKs have `versionCode 1` (the Capacitor template default). Release APKs have `37000000 + run`. A phone running a release build refuses debug builds, both because of the downgrade and because the signature differs.
-- **Do not build Gate A's phone side as a separate APK with package `com.mrcdrnzz.dailytracker`.** It would install over M/ARC. Put the phone half of Gate A inside M/ARC as a hidden "Watch lab" screen behind a developer flag (e.g. `localStorage['marc.dev.watchlab']`). The Wear Engine identity is then M/ARC's own, and the gym data stays safe.
-- Before any uninstall or reinstall, export a backup: Settings → Export backup. Uninstalling wipes all local workouts.
+- **Before Gate A:** remediation R0.0 creates one permanent key (secrets `MARC_SIGNING_KEYSTORE_B64` / `MARC_SIGNING_STORE_PASSWORD`, repo variable `MARC_SIGNING_SHA256`, plus an encrypted offline backup). CI then signs every APK explicitly with `apksigner` and fails on a fingerprint mismatch. The owner adds the new fingerprint to the Huawei product (slot #2, or replacing the dead #1).
+- **Never rotate the permanent key** once created. Never rely on Gradle's default debug keystore.
+- Debug APKs have `versionCode 1` (the Capacitor template default). Release APKs have `37000000 + run`. A phone running a release build refuses debug builds because of the downgrade.
+- **Do not build Gate A's phone side as a separate APK with package `com.mrcdrnzz.dailytracker`.** It would install over M/ARC. Put the phone half of Gate A inside M/ARC as a hidden "Watch lab" screen behind a developer flag (e.g. `localStorage['marc.dev.watchlab']`).
+- Before any uninstall or reinstall, export a backup: Settings → Export backup.
 
 ## 2. The Android project is generated in CI; nothing under `android/` is committed
 
@@ -45,7 +36,7 @@ The remediation plan (R0–R8) and the watch gates edit the same files. Order:
 
 | Watch gate | Can start | Touches in M/ARC | Must wait for |
 |---|---|---|---|
-| **A** Feasibility | now | Only additive files: `src/native/wearEngine.ts`, `native/wear/**`, a hidden Watch-lab screen, CI patch lines | the R0.0 key rescue (or build from the escobar branch) |
+| **A** Feasibility | after R0.0 | Only additive files: `src/native/wearEngine.ts`, `native/wear/**`, a hidden Watch-lab screen, CI patch lines | R0.0 (permanent key registered with Huawei) |
 | **B** Command foundation | after **R2** is merged | `session.ts`, `models.ts`, `store.ts` | R1 (store gives a real save acknowledgement) and R2 (clock module, commit-once, `addSet` copying drafts only, stable ids R2.8, parsers) |
 | **C** Vertical slice | after B | + the Wear Engine transport | R5.2 (WatchBridge threading fix, FGS start guard) |
 | **D** Native ownership, 4 screens | after C | + a new native service and a SQLite store | R4 (Escobar undo no longer restores `active`; apply guards) |

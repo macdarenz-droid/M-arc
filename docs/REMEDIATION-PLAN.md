@@ -32,9 +32,9 @@ Watch companion (GT6, Huawei Wear Engine): [`WATCH-ARCHITECTURE.md`](WATCH-ARCHI
 |---|---|
 | Android package | `com.mrcdrnzz.dailytracker` |
 | Huawei App ID | `119100049` (Wear Engine application submitted, pending) |
-| App signing certificate SHA-256 (Huawei fingerprint #1) | `05:A0:B1:32:DB:B1:E1:7D:ED:E7:51:78:92:0D:32:B2:7A:EE:54:DC:70:CB:FD:D1:78:3A:FE:38:F8:F1:A6:E8` |
+| App signing certificate SHA-256 | The permanent key created in R0.0, recorded in repo variable `MARC_SIGNING_SHA256` and added to the Huawei product. (`05:A0…A6:E8`, registered earlier, was a one-run random key and is permanently lost; see PL-19.) |
 
-Never rotate or replace this signing key. Never register another key in slot #1. Every CI-built APK must be signed with it once R0.0 is done. Never commit the Huawei app secret or `agconnect-services.json` (the repo is public).
+Once R0.0 has created it, never rotate or replace the permanent key. Every CI-built APK, debug and release, must be signed with it; CI fails otherwise. Never commit the Huawei app secret or `agconnect-services.json` (the repo is public).
 
 ### 1.2 Commands
 | What | Command |
@@ -57,7 +57,7 @@ Never rotate or replace this signing key. Never register another key in slot #1.
 
 | # | Decision | Default | Why |
 |---|---|---|---|
-| D1 🔑 | Signing identity (PL-19, PL-02) | **Rescue `05:A0…A6:E8` from the escobar-branch cache into secret `MARC_DEBUG_KEYSTORE_B64` (R0.0). Never rotate it.** Remove the cache step and the embedded `1E:13` keystore; CI pins the fingerprint. | It is the key Huawei Wear Engine is registered to and the key of the installed app. Rotating it breaks Wear Engine and forces an uninstall, which wipes local workouts. |
+| D1 🔑 | Signing identity (PL-19, PL-02) | **Create one permanent key in CI (R0.0), stored as secrets plus an encrypted offline backup. Sign debug and release with it explicitly.** Remove the cache step and the unused `1E:13` keystore; CI pins the fingerprint. Register the new fingerprint with Huawei. | Today every build gets a random key, so no build can update the last one, and the Huawei-registered `05:A0` key is gone. After one last uninstall/reinstall, updates keep data. |
 | D2 | Android auto-backup (`allowBackup`) | **Keep enabled.** Update the privacy text to say Android device backup may include app data. | It is the only automatic safety net for a local-first app (the smartwatch branch disabled it). |
 | D3 | Photos per Escobar message (ES-13) | **2** (client cap). Fix the decision line. | 3 × 1.2 MB exceeds the Worker's 3 MB body limit. |
 | D4 | "Day off" semantics (RG-19) | A marked day off on a scheduled day counts as unscheduled for streak, adherence and week grade. | v36 parity. |
@@ -77,7 +77,7 @@ Never rotate or replace this signing key. Never register another key in slot #1.
 
 | Phase | Goal | Findings | Size | Suggested executor |
 |---|---|---|---|---|
-| **R0** | Rescue the signing key; stop Worker money exposure | 9 | M | Opus 5.5 · medium (high for the Durable Object) |
+| **R0** | One permanent signing key; stop Worker money exposure | 9 | M | Opus 5.5 · medium (high for the Durable Object) |
 | **R1** | No silent data loss: store, crash box, restore/reset, heart backup | 19 | L | Opus 5.5 · medium |
 | **R2** | Live session and clock correctness, time zones, performance, notifications, stable ids for the watch | 33 + R2.8 | L | Opus 5.5 · medium |
 | **R3** | Coach numbers users act on | 31 | L | Opus 5.5 · medium |
@@ -93,35 +93,39 @@ Dependencies: R1 before R2 (shared store and test harness). R2's clock module be
 
 ## R0. Worker spend and CI secrets
 
-**Why first**: the Worker is live and anyone can spend the Anthropic key (PL-01, critical). The app's signing key can be lost within a week (PL-19).
-**Layers**: signing rescue → worker → CI → gate.
+**Why first**: the Worker is live and anyone can spend the Anthropic key (PL-01, critical). Every build has a random signing key, so no update installs over the last without wiping data (PL-19).
+**Layers**: signing key → worker → CI → gate.
 
-### R0.0 Signing identity rescue (PL-19, PL-02) 🔑: do this first; deadline ≈ 2026-09-30
-Facts:
-- Debug APKs are signed by whatever `~/.android/debug.keystore` the Actions cache `marc-debug-signing-v1` restores. That cache is per branch, and a branch without its own entry falls back to `main`'s.
-- The escobar branch cache holds `05:A0…A6:E8`, the key registered with Huawei. `main`'s cache holds `7E:BC…`. The embedded literal is `1E:13…` and is used only on a cache miss.
-- GitHub deletes caches that go unused for 7 days. Until this step is done, the owner installs only escobar-branch builds, and that branch must build at least every 6 days.
+### R0.0 Permanent signing key (PL-19, PL-02) 🔑: do this first
+Facts, from certificates extracted out of CI artifacts:
+- Five debug APKs have five different signing fingerprints. The Capacitor template has no `signingConfig`, and on the runner AGP does not read `~/.android/debug.keystore`, so it generates a fresh key on every build.
+- The cache `marc-debug-signing-v1` holds the committed `1E:13…` keystore, which Gradle never uses (export run 35863961872).
+- The Huawei-registered `05:A0…A6:E8` existed only inside run 35853038794 and cannot be recovered.
 
 Steps:
-1. Owner: add repo secret `KEY_EXPORT_PASSPHRASE` (≥ 32 random characters).
-2. Agent (with the owner's explicit OK to push to `claude/escobar-v2-implementation-eidx64`): add `.github/workflows/export-debug-key.yml`.
-   - Trigger: `push` on that branch, `paths` = the file itself.
-   - Steps:
-     - `actions/cache/restore@v4` with `path: ~/.android/debug.keystore`, `key: marc-debug-signing-v1`, `fail-on-cache-miss: true`;
-     - `keytool -list -v … -storepass android`: fail unless the SHA256 line equals the pinned value;
-     - `openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:KEY_EXPORT_PASSPHRASE -in … -out debug.keystore.enc`;
-     - `actions/upload-artifact@v4` with `retention-days: 1`.
-   - Never print the key.
-3. Owner: download the artifact and run `openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in debug.keystore.enc -out debug.keystore`. Check that `keytool -list -v -keystore debug.keystore -storepass android` shows `05:A0…A6:E8`. Keep an offline copy (password manager). Then `base64 -w0 debug.keystore` → secret `MARC_DEBUG_KEYSTORE_B64`.
-4. Agent, once the owner confirms, in `build-apk.yml`:
-   - delete the `Preserve development signing identity` cache step and the embedded literal;
-   - decode `${{ secrets.MARC_DEBUG_KEYSTORE_B64 }}`, and fail with `::error::` if it is empty;
-   - after `assembleDebug`, parse the APK v2 signing block (a small Python step like `docs/qa` used, or `apksigner verify --print-certs`) and fail unless the SHA-256 equals repo variable `MARC_DEBUG_SHA256` (default the pinned value);
+1. Owner: secrets `KEY_EXPORT_PASSPHRASE` (done) and `SECRETS_WRITE_TOKEN`, a fine-grained PAT restricted to this repo with Secrets: read and write, 7-day expiry.
+2. Agent: add a one-off `.github/workflows/create-signing-key.yml` on the working branch, triggered on push of that file and `workflow_dispatch`:
+   - fail if `secrets.MARC_SIGNING_KEYSTORE_B64` is non-empty (never overwrite a key);
+   - generate a 32-character random store password;
+   - run `keytool -genkeypair -storetype PKCS12 -keystore marc-signing.p12 -alias marc -keyalg RSA -keysize 4096 -validity 36500 -dname "CN=M/ARC, O=MARC, C=AU" -storepass "$PW" -keypass "$PW"`;
+   - print the certificate SHA-256 to the log and the job summary (it is public);
+   - `tar` the keystore with a `password.txt`, encrypt with `openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:KEY_EXPORT_PASSPHRASE`, and upload with `retention-days: 30`;
+   - set `MARC_SIGNING_KEYSTORE_B64` and `MARC_SIGNING_STORE_PASSWORD` with `gh secret set` (`GH_TOKEN = SECRETS_WRITE_TOKEN`), and set repo variable `MARC_SIGNING_SHA256` with `gh variable set`;
+   - never print the key or the password.
+3. Owner: download the encrypted artifact and keep it plus the passphrase in a password manager as the offline backup; delete `SECRETS_WRITE_TOKEN`.
+4. Agent, in `build-apk.yml` and `release-apk.yml`:
+   - remove the `Preserve development signing identity` cache step, the embedded literal and the old export workflow;
+   - after `assembleDebug` (and the release build), `zipalign` if needed and sign with `apksigner sign --ks marc-signing.p12 --ks-key-alias marc --ks-pass env:PW --key-pass env:PW`;
+   - verify with `apksigner verify --print-certs` and fail unless the SHA-256 equals `vars.MARC_SIGNING_SHA256`;
+   - fail with `::error::` if the secrets are missing;
    - add `! grep -rE 'MII[A-Za-z0-9+/]{100,}' .github/workflows`.
-   Remove the export workflow in the same change.
-5. Owner: delete the Actions caches named `marc-debug-signing-v1` (Actions → Caches) and the `KEY_EXPORT_PASSPHRASE` secret.
+   The branch the owner installs from must carry this change. That is the escobar branch today, and editing it needs the owner's OK.
+5. Owner:
+   - in AppGallery Connect (App ID `119100049`), add the new SHA-256 as fingerprint #2 (or replace #1, which is dead);
+   - export a backup in the app, uninstall, install the new build and restore the backup (the last forced reinstall);
+   - delete the Actions caches named `marc-debug-signing-v1`.
 
-Test: the next CI run on any branch produces an APK signed `05:A0…A6:E8`. Check it with the same certificate extraction.
+Test: two consecutive CI runs produce APKs whose signer SHA-256 equals `MARC_SIGNING_SHA256`, and the second installs over the first as an update.
 
 ### R0.1 Atomic quota store (PL-01 part 1, PL-07)
 - New `escobar-worker/src/quotaDO.ts`: `export class QuotaCounter extends DurableObject` (from `cloudflare:workers`), SQLite-backed, one instance per UTC day (`env.QUOTA_DO.idFromName(dayKey(now))`). A Durable Object is single-threaded, so read-modify-write through `this.ctx.storage.get/put` is atomic. RPC methods:
@@ -163,8 +167,8 @@ Log one structured line per step: `{ requestId, mode, model, stop_reason, in, ou
 - Pin wrangler: `cd escobar-worker && npm i -D -E wrangler@4` (commit the lockfile) and use `npx wrangler deploy`. Keep the existing `paths:` filter.
 - The `/health` check step must also fail when `quotas !== true`.
 
-### R0.8 Release signing fingerprint (companion to R0.0)
-In `release-apk.yml`, after signing, print the APK signer SHA-256. If repo variable `MARC_RELEASE_SHA256` is set, fail on mismatch. The release key must never replace Huawei fingerprint #1; if release builds are ever used with Wear Engine, the owner adds the release fingerprint to slot #2.
+### R0.8 Release signing (companion to R0.0)
+`release-apk.yml` has never run, and its `MARC_ANDROID_*` secrets are unverified. Switch it to the same `MARC_SIGNING_*` secrets and the same fingerprint assertion as R0.0, so debug and release share one identity. Release keeps its higher `versionCode`; a phone on a release build cannot take debug builds.
 
 ### R0 tests
 `escobar-worker/test/`:
@@ -177,7 +181,7 @@ In `release-apk.yml`, after signing, print the APK signer SHA-256. If repo varia
 - a user block with `cache_control` is rejected;
 - a cancelled response body aborts the mock stream within 50 ms.
 
-**Done when**: Worker `npm run check` and app `npm run check` are green, and the gate passes. An APK from this phase's branch is signed `05:A0…A6:E8`. Owner actions logged: dispatch "Deploy Escobar Worker", then confirm `/health` shows `quotas: true`; R0.0 steps 1, 3 and 5.
+**Done when**: Worker `npm run check` and app `npm run check` are green, and the gate passes. Two consecutive APKs from this phase's branch are signed with `MARC_SIGNING_SHA256`. Owner actions logged: dispatch "Deploy Escobar Worker", then confirm `/health` shows `quotas: true`; R0.0 steps 1, 3 and 5.
 
 ---
 
@@ -670,8 +674,8 @@ Rewrite `README.md` and `docs/ARCHITECTURE.md` to match the code (RG-11): layers
 - Do not import `escobar/session` from the main bundle (keeps the 148 KB chunk lazy).
 - Do not remove `legacy/v36`, delete branches or rotate the signing key without the owner's answer.
 - Do not deploy the Worker or trigger workflows yourself. List them as owner actions.
-- Do not rotate, regenerate or replace the app signing key, and do not register other fingerprints in Huawei slot #1 (§1.1a).
-- Do not push to `claude/escobar-v2-implementation-eidx64` except for the R0.0 export workflow, and only with the owner's explicit OK.
+- Once R0.0 has created the permanent key, do not rotate, regenerate or replace it (§1.1a). The create workflow refuses to overwrite it.
+- Do not push to `claude/escobar-v2-implementation-eidx64` without the owner's explicit OK.
 
 ## 12. Test additions summary
 New files:
@@ -696,7 +700,7 @@ D1: pending · D2: default · … (record any non-default answer here)
 
 ## Owner actions (collected; STOP once at the end)
 - [ ] R0: dispatch "Deploy Escobar Worker", confirm /health quotas:true
-- [ ] R0.0: add KEY_EXPORT_PASSPHRASE → decrypt artifact → set MARC_DEBUG_KEYSTORE_B64 → delete caches
+- [ ] R0.0: SECRETS_WRITE_TOKEN → keep the encrypted key backup → add the new fingerprint in AppGallery Connect → backup, uninstall, reinstall, restore → delete the token and caches
 
 ## Phase R0 — <status>
 ### Layer: worker — done, commit <sha> — IDs: …
