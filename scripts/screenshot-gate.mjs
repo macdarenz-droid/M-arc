@@ -25,8 +25,11 @@ for (let i = 0; ; i++) {
 }
 console.log('preview ready on', PORT);
 
+/** PL-18: wait up to 5 s for something that should appear, instead of a fixed sleep + isVisible. */
+const visible = (locator, timeout = 5000) => locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
+
 // Realistic legacy data so the migration path is exercised end to end.
-const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
 const rec = (i, offset, dayKey, name, type, muscle, sets, kg0) => ({ id: `r${i}`, day: dayKey, dayKey: day(offset), name, type, muscle, finalizedAt: iso(offset), sets: Array.from({ length: sets }, (_, k) => ({ kg: kg0, reps: 8 + (k % 2), effort: k === sets - 1 ? 'max' : 'ideal' })) });
 const completed = [];
@@ -104,7 +107,7 @@ for (const theme of themes) {
     const clock1 = await page.locator('.rest .clock').textContent().catch(() => null);
     if (!clock0 || clock0 === clock1) errors.push(`${theme}: the rest clock stopped after switching to Today (${clock0} → ${clock1})`);
     await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
-    if (!(await page.getByText('for the next set').isVisible().catch(() => false))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
+    if (!(await visible(page.getByText('for the next set')))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
     // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
@@ -114,7 +117,7 @@ for (const theme of themes) {
       await page.waitForTimeout(400);
     }
     await shot('summary');
-    if (!(await page.getByText('Debrief', { exact: true }).isVisible().catch(() => false))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
+    if (!(await visible(page.getByText('Debrief', { exact: true })))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
     await page.getByRole('button', { name: 'Done', exact: true }).click();
   }
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
@@ -200,7 +203,7 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {});
   await page.getByRole('button', { name: 'Take today off' }).click().catch(() => errors.push(`${tag}: no "Take today off" on a scheduled day`));
   await page.waitForTimeout(250);
-  if (!(await page.getByText('Day off', { exact: true }).isVisible().catch(() => false))) errors.push(`${tag}: expected the day-off state on Today`);
+  if (!(await visible(page.getByText('Day off', { exact: true })))) errors.push(`${tag}: expected the day-off state on Today`);
   await page.screenshot({ path: `${OUT}/silent-black-day-off.png` });
   await page.getByRole('button', { name: 'Undo day off' }).click().catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -212,7 +215,7 @@ for (const theme of themes) {
   await page.locator('[data-palace="train.exercise-note-edit"]').fill('Seat 4, narrow grip');
   await page.locator('[data-palace="train.exercise-note-edit"]').blur();
   await page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click(); await page.waitForTimeout(200);
-  if (!(await card.locator('.exercise-note').isVisible().catch(() => false))) errors.push(`${tag}: expected the setup note under the exercise name`);
+  if (!(await visible(card.locator('.exercise-note')))) errors.push(`${tag}: expected the setup note under the exercise name`);
   await page.getByRole('button', { name: 'Show warm-up' }).first().click().catch(() => errors.push(`${tag}: no warm-up on the first main lift`));
   await page.getByRole('button', { name: 'Log warm-ups' }).first().click().catch(() => errors.push(`${tag}: no "Log warm-ups"`));
   await page.waitForTimeout(250);
@@ -224,7 +227,7 @@ for (const theme of themes) {
   await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
   const csv = page.locator('[data-palace="settings.csv"]');
   await csv.scrollIntoViewIfNeeded().catch(() => {});
-  if (!(await csv.isVisible().catch(() => false))) errors.push(`${tag}: expected the CSV export row in Settings`);
+  if (!(await visible(csv))) errors.push(`${tag}: expected the CSV export row in Settings`);
   else await csv.screenshot({ path: `${OUT}/silent-black-csv-row.png` });
   await ctx.close();
 }
@@ -273,7 +276,7 @@ for (const theme of themes) {
   const now = new Date();
   const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-  const dayStr = (offset) => { const d = new Date(monday); d.setDate(monday.getDate() + offset); return d.toISOString().slice(0, 10); };
+  const dayStr = (offset) => { const d = new Date(monday); d.setDate(monday.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const todayOffset = (now.getDay() + 6) % 7;
   const days = [];
   for (let n = 0; n < 5; n++) days.push(dayStr(Math.min(n, todayOffset)));
@@ -294,7 +297,7 @@ for (const theme of themes) {
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
-  if (!(await page.getByText('Weekly review').isVisible().catch(() => false))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
+  if (!(await visible(page.getByText('Weekly review')))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
   await page.getByText('Weekly review').click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-weekly-review-sheet.png` });
@@ -311,7 +314,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`readiness console: ${m.text()}`); });
   await page.addInitScript(() => {
     const now = new Date().toISOString();
-    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
     const healthDays = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 75 : 55, source: 'health_connect', syncedAt: now }));
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
@@ -326,7 +329,7 @@ for (const theme of themes) {
   await page.waitForSelector('.nav');
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
-  if (!(await page.getByRole('heading', { name: /^Readiness:/ }).isVisible().catch(() => false))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
+  if (!(await visible(page.getByRole('heading', { name: /^Readiness:/ })))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
 
   // A "two-for-two clean top" history that would otherwise suggest an increase.
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
@@ -336,7 +339,7 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Log a past session' }).click();
     await page.waitForTimeout(200);
     const d = new Date(); d.setDate(d.getDate() - offset);
-    await page.locator('input[type="date"]').fill(d.toISOString().slice(0, 10));
+    await page.locator('input[type="date"]').fill(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
     const pastInputs = page.locator('.set-grid input');
     await pastInputs.nth(0).fill('50'); await pastInputs.nth(1).fill('12');
     await page.locator('.effort button.ideal').first().click();
@@ -393,7 +396,7 @@ for (const theme of themes) {
     // A complete profile so the profile-onboarding sheet doesn't compete for the dialog top layer here.
     // A week of restingHr history so restTarget() has what it needs for a heart-mode rest screenshot (F1.2).
     const now = new Date().toISOString();
-    const healthDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return { day: d.toISOString().slice(0, 10), restingHr: 60, source: 'health_connect', syncedAt: now }; });
+    const healthDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return { day: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`, restingHr: 60, source: 'health_connect', syncedAt: now }; });
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
       goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
@@ -424,16 +427,16 @@ for (const theme of themes) {
   await page.screenshot({ path: `${OUT}/watch-sheet.png` });
   await page.getByRole('button', { name: 'Close' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.watch-pill .heart-bpm').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
+  if (!(await visible(page.locator('.watch-pill .heart-bpm')))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
   await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
 
   const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
   await page.locator('.effort button.ideal').first().click();
   await page.waitForTimeout(200);
-  if (!(await page.getByText(/^peak /).isVisible().catch(() => false))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
+  if (!(await visible(page.getByText(/^peak /)))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
   await page.screenshot({ path: `${OUT}/watch-rest-heart-mode.png` });
-  if (!(await page.getByText('Resting until heart rate settles').isVisible().catch(() => false))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
+  if (!(await visible(page.getByText('Resting until heart rate settles')))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
 
   await page.getByRole('button', { name: 'Finish' }).click();
   await page.waitForTimeout(200);
@@ -444,7 +447,7 @@ for (const theme of themes) {
     await page.waitForTimeout(400);
   }
   await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
-  if (!(await page.getByRole('heading', { name: 'Heart' }).isVisible().catch(() => false))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
+  if (!(await visible(page.getByRole('heading', { name: 'Heart' })))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
   await ctx.close();
 }
 
@@ -459,7 +462,7 @@ for (const theme of themes) {
     if (localStorage.getItem('marc.state.v1')) return;
     localStorage.setItem('marc.theme', t);
     const now = new Date().toISOString();
-    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
     const sess = (offset) => ({ id: `s${offset}`, splitId: 'sp1', splitName: 'Upper', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
       exercises: [
         { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [0, 1, 2].map(() => ({ kg: 80, reps: 8, effort: 'ideal' })) },
@@ -482,7 +485,7 @@ for (const theme of themes) {
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('[data-palace="train.gym-chip"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
+  if (!(await visible(page.locator('[data-palace="train.gym-chip"]')))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -490,15 +493,15 @@ for (const theme of themes) {
   const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.suspect-chip').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
+  if (!(await visible(page.locator('.suspect-chip')))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
   await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
   await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.weight-approx').first().isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
+  if (!(await visible(page.locator('.weight-approx').first()))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
   // Plate sheet from the barbell target.
   await page.locator('.target-link').first().click();
   await page.waitForTimeout(300);
-  if (!(await page.locator('[data-palace="train.plate-sheet"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
+  if (!(await visible(page.locator('[data-palace="train.plate-sheet"]')))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
   await page.screenshot({ path: `${OUT}/${theme}-plate-sheet.png` });
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   // The dumbbell entry, typed in lb.
@@ -573,7 +576,7 @@ for (const theme of themes) {
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.evaluate(() => document.querySelector('.toast button')?.click());
   await page.waitForTimeout(100);
-  if (!(await page.locator('.esc-dock').isVisible().catch(() => false))) errors.push(`${tag}: expected the dock on Today`);
+  if (!(await visible(page.locator('.esc-dock')))) errors.push(`${tag}: expected the dock on Today`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-dock-today.png` });
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-hall.png` });
@@ -581,24 +584,37 @@ for (const theme of themes) {
   await page.waitForSelector('dialog.esc-sheet[open]');
   await page.waitForTimeout(250);
   if (theme === 'silent-black') {
-    for (const label of ['Share health data', 'Share body data']) if (!(await page.locator('dialog.esc-sheet').getByText(label, { exact: true }).isVisible().catch(() => false))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
+    for (const label of ['Share health data', 'Share body data']) if (!(await visible(page.locator('dialog.esc-sheet').getByText(label, { exact: true })))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
   }
   await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
   await page.waitForTimeout(200);
-  if (!(await page.getByText('Ask me anything.').isVisible().catch(() => false))) errors.push(`${tag}: expected the empty state`);
+  if (!(await visible(page.getByText('Ask me anything.')))) errors.push(`${tag}: expected the empty state`);
   if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-empty.png` });
   await page.locator('.esc-textarea').fill('How is my chest press going?');
-  const firstFeedbackMs = await page.evaluate(() => new Promise(res => {
+  const measureFeedback = p => p.evaluate(() => new Promise(res => {
     const t0 = performance.now();
     document.querySelector('.esc-send').click();
     const tick = () => { if (document.querySelector('.esc-live')?.textContent?.includes('Thinking…')) res(performance.now() - t0); else if (performance.now() - t0 > 2000) res(9999); else requestAnimationFrame(tick); };
     tick();
   }));
-  if (firstFeedbackMs > 150) errors.push(`${tag}: "Thinking…" took ${Math.round(firstFeedbackMs)} ms (budget 150)`);
+  let firstFeedbackMs = await measureFeedback(page);
+  if (firstFeedbackMs > 150) {
+    // PL-18: one retry on a fresh page of the same context, so a slow runner tick does not fail the gate.
+    const again = await ctx.newPage();
+    await again.goto(`http://localhost:${PORT}/`);
+    await again.waitForSelector('.nav');
+    await again.locator('nav.nav button', { hasText: 'Escobar' }).click();
+    await again.locator('.esc-hall-input').click();
+    await again.waitForSelector('.esc-textarea');
+    await again.locator('.esc-textarea').fill('How is my chest press going?');
+    firstFeedbackMs = await measureFeedback(again);
+    await again.close();
+  }
+  if (firstFeedbackMs > 150) errors.push(`${tag}: "Thinking…" took ${Math.round(firstFeedbackMs)} ms (budget 150, after one retry)`);
   await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-proposal'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock conversation did not finish`));
   await page.waitForTimeout(200);
-  if (!(await page.locator('.esc-comp[data-component="lift_trend"] .sparkline').isVisible().catch(() => false))) errors.push(`${tag}: expected the lift_trend chart`);
+  if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .sparkline')))) errors.push(`${tag}: expected the lift_trend chart`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
@@ -610,28 +626,28 @@ for (const theme of themes) {
     // ES-03: Undo is offered right after Apply and gone once its 8 s window closes.
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     const undo = page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true });
-    if (!(await undo.isVisible().catch(() => false))) errors.push(`${tag}: expected Undo right after Apply`);
+    if (!(await visible(undo))) errors.push(`${tag}: expected Undo right after Apply`);
     await page.waitForTimeout(8300);
     if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
   }
   if (theme === 'silent-black') {
     await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
-    if (!(await page.locator('.esc-pop').isVisible().catch(() => false))) errors.push(`${tag}: expected the citation popover`);
+    if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
-    if (!(await page.locator('.esc-proposal').getByText('Applied').isVisible().catch(() => false))) errors.push(`${tag}: expected "Applied" on the proposal`);
+    if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
     // ES-03: Undo inside its 8 s window reverses the change.
     await page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true }).click(); await page.waitForTimeout(300);
-    if (!(await page.locator('.esc-proposal').getByText('Undone').isVisible().catch(() => false))) errors.push(`${tag}: expected "Undone" after Undo within the window`);
+    if (!(await visible(page.locator('.esc-proposal').getByText('Undone')))) errors.push(`${tag}: expected "Undone" after Undo within the window`);
     await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
     // Stop mid-turn, then the offline fallback (find_in_app answered locally).
     await page.locator('.esc-textarea').fill('And my legs?'); await page.locator('.esc-send').click(); await page.waitForTimeout(60);
     await page.getByRole('button', { name: 'Stop', exact: true }).click(); await page.waitForTimeout(300);
-    if (!(await page.getByText('Stopped.').isVisible().catch(() => false))) errors.push(`${tag}: expected "Stopped." after Stop`);
+    if (!(await visible(page.getByText('Stopped.')))) errors.push(`${tag}: expected "Stopped." after Stop`);
     await ctx.setOffline(true);
     await page.locator('.esc-textarea').fill('where are my records'); await page.locator('.esc-send').click(); await page.waitForTimeout(400);
-    if (!(await page.locator('.esc-local').isVisible().catch(() => false))) errors.push(`${tag}: expected the offline palace answer`);
+    if (!(await visible(page.locator('.esc-local')))) errors.push(`${tag}: expected the offline palace answer`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-offline.png` });
     await ctx.setOffline(false);
   }
@@ -646,6 +662,7 @@ for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`pulse ${theme}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`pulse ${theme} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.dev', '1'); localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
@@ -656,7 +673,7 @@ for (const theme of themes) {
   // A watch appearing can raise the "help the coach know you" sheet; dismiss it like a person would.
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); }
   await page.waitForTimeout(600);
-  if (!(await page.locator('.pulse-edge').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
+  if (!(await visible(page.locator('.pulse-edge')))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
   await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {

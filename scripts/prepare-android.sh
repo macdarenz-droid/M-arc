@@ -29,8 +29,9 @@ for d in mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi; do
   mkdir -p "android/app/src/main/res/$d"
   cp "$ICON" "android/app/src/main/res/$d/ic_launcher.png"
   cp "$ICON" "android/app/src/main/res/$d/ic_launcher_round.png"
-  cp "$ICON" "android/app/src/main/res/$d/ic_launcher_foreground.png"
 done
+# R7.3: the adaptive icon's padded foreground and monochrome layers (scripts/render-logo.mjs --android).
+cp -R native/res/. android/app/src/main/res/
 mkdir -p android/app/src/main/res/values
 cat > android/app/src/main/res/values/ic_launcher_background.xml <<'XML'
 <?xml version="1.0" encoding="utf-8"?>
@@ -38,3 +39,5 @@ cat > android/app/src/main/res/values/ic_launcher_background.xml <<'XML'
 XML
 test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+grep -q monochrome android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png

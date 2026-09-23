@@ -57,6 +57,11 @@ jobs:
           path: screenshots/
           if-no-files-found: error
           retention-days: 30
+      - name: Visual gate once more in Pacific/Auckland (RG-14)
+        env:
+          TZ: Pacific/Auckland
+          MARC_GATE_PORT: '4174'
+        run: npm run gate
       - name: Upload built web app
         uses: actions/upload-artifact@v4
         with:

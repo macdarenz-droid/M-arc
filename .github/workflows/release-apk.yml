@@ -14,6 +14,8 @@ on:
 
 permissions:
   contents: read
+  # PL-17: read the "M/ARC gate" runs for this commit.
+  actions: read
 
 jobs:
   release:
@@ -22,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout project
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Resolve version
         id: version
@@ -34,19 +36,22 @@ jobs:
           set -euo pipefail
           VERSION_NAME="${INPUT_NAME:-}"
           VERSION_CODE="${INPUT_CODE:-}"
-          [ -n "$VERSION_NAME" ] || VERSION_NAME="37.0.0.${GITHUB_RUN_NUMBER}"
-          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((37000000 + GITHUB_RUN_NUMBER))"
+          # PL-17: package.json is the version source; the run number makes each build unique.
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          MAJOR="${PKG_VERSION%%.*}"
+          [ -n "$VERSION_NAME" ] || VERSION_NAME="${PKG_VERSION}.${GITHUB_RUN_NUMBER}"
+          [ -n "$VERSION_CODE" ] || VERSION_CODE="$((MAJOR * 1000000 + GITHUB_RUN_NUMBER))"
           [[ "$VERSION_CODE" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid versionCode'; exit 1; }
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
 
       - name: Set up Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
@@ -84,6 +89,24 @@ jobs:
           if '/*__ASSETS__*/' in sw or '__BUILD__' in sw: raise SystemExit('service worker was not stamped')
           print('Built source SHA256:', hashlib.sha256(data).hexdigest())
           PY2
+
+      - name: Find a green "M/ARC gate" run on this commit
+        id: gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          N="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow build-apk.yml --commit "$GITHUB_SHA" --status success --json databaseId --jq 'length' 2>/dev/null || echo 0)"
+          if [ "${N:-0}" -gt 0 ]; then echo "green=true" >> "$GITHUB_OUTPUT"; echo "M/ARC gate is green on $GITHUB_SHA"; else echo "green=false" >> "$GITHUB_OUTPUT"; echo "No green M/ARC gate on $GITHUB_SHA: running it here"; fi
+
+      - name: Run the gate here (no green gate run on this commit)
+        if: steps.gate.outputs.green != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright install --with-deps chromium
+          npm run gate
 
       - name: Generate Android project
         shell: bash
