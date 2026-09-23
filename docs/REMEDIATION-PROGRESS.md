@@ -199,3 +199,21 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Back gesture on 3-button and gesture navigation; edge-to-edge bars on Android 15/16 per theme.
 ### Layer: gate — done
 - `npm run check`: 755 passed · worker 71 passed · `npm run build && npm run gate`: PASS (incl. service worker offline reload and build-B carry-over).
+
+## Phase R6 — done (agent side)
+### Layer: data model — IDs: RG-04 (D5), RG-19 (D4), F1, F2, F5
+- `LoggedSet.kind` ('warmup' | 'drop' | 'failure'); `LoggedExercise.note`, `Session.note`, active entry `note`; `AppState.exerciseNotes` (≤ 200 chars, normalize `{}`), `daysOff` (valid, unique, sorted, ≤ 400, normalize `[]`), `lastBackupAt`; `Preferences.backupReminder`.
+- 30 phase-9 exercises appended to exercises.json (153 total); DURATION_NAMES / CONDITIONING_NAMES ported verbatim.
+### Layer: brain — IDs: F2, RG-19, RG-17
+- `hasEntry` (filled in) decides what is kept and committed: `finishSession`, `commitSet` (a warm-up commits but never starts auto-rest), the un-commit check, `logPastSession`, the History editor, CSV. `isWorkingSet = hasEntry && kind !== 'warmup'` stays for counting (exposure, volume, recovery, e1RM, records, progression, weekly review, coach rules, Train/Coach counters, Escobar tools). `effortLabel`: failure = max (exposure, recovery, summaries). Records drop `drop` sets (both sides). Template save counts non-warm-up sets; suggestNext plans non-warm-up sets.
+- Days off: `trainingStreak(…, daysOff)`, `adherenceRate(…, daysOff)`, `plannedThisWeek(schedule, daysOff, today)` as weekSummary's target (selectors, History, Escobar read/show/brief); training reminders skip days off.
+- `sessionsToCsv(sessions, unit, from, to)` (RFC 4180, `setLoadIn`, exercise note on its first set, session note as its own row). Escobar get_exercise_history carries `setupNote`.
+### Layer: UI — IDs: RG-17, RG-19, UI-20, F1, F2, F5, F8, F9
+- Settings → Your data: Export CSV (90 days / all), "Last backup: N days ago" (stamped on export), Weekly backup reminder (native; Sunday 19:00, inexact, id 880101, tap opens Settings at Your data; taps route by `extra.type`).
+- Today: "Take today off" (toast Undo) and a Day off state with Train anyway / Undo.
+- Live card: setup note under the name (edit in Options, plus today's note), set-number button opens Normal / warm-up / drop / to failure, Log warm-ups in the warm-up disclosure, conditioning distance (1–1000 m) and seconds inputs. Finish: effort repair (≤ 12 unrated working sets, Skip) and a session note.
+- History: session and exercise notes, setup note, W/D/F tags; Stats: 12-week volume bars in the display unit.
+### Layer: tests — app 755 → 769
+- exposure (kinds, warm-ups add no weekly sets), prs (warm-up/drop never a record), e1rm (warm-up ignored, failure = max), session (2 warm-ups + 3 working = 5 stored / 3 counted, no rest on warm-up, notes, farmer's carry distance), r6-features (CSV rows/quoting/filter, days off in streak/adherence/target, normalize, library modes, notes).
+### Layer: gate — done
+- Screenshot gate: day-off state on Today, setup note under the exercise name, logged warm-ups (W) in the live card, CSV row in Settings; page width checked. `npm run check`: 769 passed · worker 71 · `npm run build && npm run gate`: PASS.

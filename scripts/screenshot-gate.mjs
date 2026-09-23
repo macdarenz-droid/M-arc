@@ -184,6 +184,51 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'r6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  // Every weekday scheduled, so today is a training day whatever the date.
+  await page.evaluate(() => { const st = JSON.parse(localStorage.getItem('marc.state.v1')); const id = st.splits[0].id; for (const d of ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']) st.schedule[d] = id; localStorage.setItem('marc.state.v1', JSON.stringify(st)); });
+  await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {});
+  await page.getByRole('button', { name: 'Take today off' }).click().catch(() => errors.push(`${tag}: no "Take today off" on a scheduled day`));
+  await page.waitForTimeout(250);
+  if (!(await page.getByText('Day off', { exact: true }).isVisible().catch(() => false))) errors.push(`${tag}: expected the day-off state on Today`);
+  await page.screenshot({ path: `${OUT}/silent-black-day-off.png` });
+  await page.getByRole('button', { name: 'Undo day off' }).click().catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const card = page.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  await page.locator('[data-palace="train.exercise-note-edit"]').fill('Seat 4, narrow grip');
+  await page.locator('[data-palace="train.exercise-note-edit"]').blur();
+  await page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click(); await page.waitForTimeout(200);
+  if (!(await card.locator('.exercise-note').isVisible().catch(() => false))) errors.push(`${tag}: expected the setup note under the exercise name`);
+  await page.getByRole('button', { name: 'Show warm-up' }).first().click().catch(() => errors.push(`${tag}: no warm-up on the first main lift`));
+  await page.getByRole('button', { name: 'Log warm-ups' }).first().click().catch(() => errors.push(`${tag}: no "Log warm-ups"`));
+  await page.waitForTimeout(250);
+  if ((await card.locator('.set-kind.warmup').count()) < 1) errors.push(`${tag}: expected warm-up sets in the live card`);
+  await card.screenshot({ path: `${OUT}/silent-black-warmups-note.png` });
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (width > 390) errors.push(`${tag}: the live screen is ${width} px wide`);
+  await page.locator('nav.nav button', { hasText: /^(Today)$/ }).click(); await page.waitForTimeout(200);
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  const csv = page.locator('[data-palace="settings.csv"]');
+  await csv.scrollIntoViewIfNeeded().catch(() => {});
+  if (!(await csv.isVisible().catch(() => false))) errors.push(`${tag}: expected the CSV export row in Settings`);
+  else await csv.screenshot({ path: `${OUT}/silent-black-csv-row.png` });
+  await ctx.close();
+}
+
 // A fresh (non-legacy) profile so the onboarding form and a goal-change insight are visible
 // without the legacy fixture's own progress insights outranking them in the top 3.
 {
@@ -679,4 +724,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified.');
