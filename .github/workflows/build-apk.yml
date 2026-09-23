@@ -51,6 +51,7 @@ jobs:
       - name: Watch lab isolation and protocol gate
         run: |
           node --test native/wear/probe.test.mjs
+          node --test native/wear/commandProtocol.test.mjs
           node native/wear/watch-lab-gate.mjs
       - name: Upload gate evidence
         if: always()

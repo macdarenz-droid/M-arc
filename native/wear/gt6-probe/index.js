@@ -39,7 +39,14 @@ export default {
       });
       client = new P2pClient();
       client.setPeerPkgName(PHONE_PACKAGE);
-      client.setPeerFingerPrint(PHONE_CERTIFICATE);
+      // Some Lite Wearable SDKs omit this method and take peer identity from
+      // the template's config.json instead. Record the limitation; the real
+      // messaging gate still has to prove that the signed peer is accepted.
+      if (typeof client.setPeerFingerPrint === 'function') {
+        client.setPeerFingerPrint(PHONE_CERTIFICATE);
+      } else {
+        page.state = 'Peer fingerprint API unavailable';
+      }
       return client.registerReceiver({
         onSuccess: function () { page.state = 'Ready for phone tests'; },
         onFailure: function () { page.state = 'Receiver failed'; },
