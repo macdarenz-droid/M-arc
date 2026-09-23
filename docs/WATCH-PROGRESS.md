@@ -1,18 +1,16 @@
 # Watch progress
 
-RUN LOCK: 2026-09-23T20:07:24Z
+RUN LOCK: none
 
 ## Done this run
 
-- Android JVM test harness for the native command store is green: M/ARC gate [35912688857](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688857), Agent guard [35912688849](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688849). The first version exercised the Java method in Robolectric before the owner QA corrections below.
-
-- Replaced the caller supplied native snapshot/receipt API with `completeSet(raw)`, which checks the bound installation, R2.8 session/entry/set IDs, per-set revision, draft values and action time before mutating the selected set and writing its receipt in one SQLite transaction. Session revision and set revision change in the same transaction. Old command IDs replay the recorded result; changed fingerprints conflict. Commit `a6330273805ce9f1a44031d0b170771eb668d671`.
-- Added a version 1 to 2 migration for set revisions, a crash-before-commit rollback test, a receipt-after-reopen test and a session test that verifies stable ID targeting after reorder. Green M/ARC gate [35910010862](https://github.com/macdarenz-droid/M-arc/actions/runs/35910010862) (source and Android jobs); Agent guard [35910010885](https://github.com/macdarenz-droid/M-arc/actions/runs/35910010885). CI source log: 684 regular tests per run, 2 performance tests, 10 probe tests, 7 command tests, 4 SQLite schema tests and watch lab browser gate passed.
-- Local `npm run check`, probe/command/SQLite tests and agent guard passed. Local browser gate cannot start without Playwright Chromium; CI installed Chromium and passed it. Java mutation behavior itself has only compiled, not run under an Android test harness: UNVERIFIED.
+- Added an Android JVM test harness for the actual `WorkoutCommandStore.completeSet` Java method. Initial harness commit `bd43bf218a9af5d0ab7529608b62395663eb71d4`: M/ARC gate [35912688857](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688857) and Agent guard [35912688849](https://github.com/macdarenz-droid/M-arc/actions/runs/35912688849) green.
+- Fixed owner QA in commit `fd06c505933de57e6764319bf61e53831d04d308`: missing revision returns `invalid`; applied and identified rejected receipts preserve separate `actionAt` / `receivedAt` with `clockConfidence: unverified`; the set snapshot records unverified action clock confidence; identified authorized rejections are durable and replay rather than later apply; JS and Java share 10 wire/conflict fixtures for installation/session ordering, paused state, revision limit and trailing JSON; an applied internal receipt explicitly marks `sideEffectsStatus: not_implemented`. Invalid or unbound packets cannot claim/occupy a session receipt.
+- Green M/ARC gate [35914017824](https://github.com/macdarenz-droid/M-arc/actions/runs/35914017824) (source and Android jobs) and Agent guard [35914017418](https://github.com/macdarenz-droid/M-arc/actions/runs/35914017418). CI source log: 684 regular tests per run, 2 performance tests, 10 probe tests, 9 command tests, 4 SQLite schema tests, watch lab browser gate. Android gate ran the 7 Java test methods and built/signed the debug APK. Local `npm run check`, node/SQLite tests and agent guard pass; local browser gate still lacks Chromium, and CI passed it.
 
 ## Next task
 
-- Add an Android runtime test for `WorkoutCommandStore.completeSet`: valid targeted set, duplicate replay after DB reopen, changed fingerprint, wrong installation, reordered and substituted entries, stale set revision, invalid time and failed transaction. Then design the single-writer handover from `state.active`, including rest/fidelity/heart side effects, before connecting the watch or sending `Saved`.
+- Gate B/C boundary: design and test the explicit single-writer handover from `state.active` to native ownership and include fidelity, rest and heart pending effects in the same native transaction before any transport connects. The current class is unconnected and its internal `applied` receipt must not be shown as watch `Saved`. Clock synchronization and confidence beyond `unverified` are still UNVERIFIED.
 
 ## WAITING ON OWNER
 
