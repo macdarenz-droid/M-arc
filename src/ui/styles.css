@@ -155,10 +155,11 @@ svg { display: block; }
 .set-kind.drop, .set-kind.failure { color: var(--accent); }
 .exercise-note { display: flex; align-items: center; gap: 4px; }
 .conditioning-extra input { width: 0; flex: 1 1 0; min-width: 0; }
-.effort { display: flex; gap: 4px; align-items: center; min-height: 44px; }
+.effort { display: flex; gap: 4px; align-items: center; min-height: 48px; }
 .effort button { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text-3); }
-/* UI-30: a 44 px tall hit area. QA-R7-1: the row itself is 44 px tall (.effort min-height), so the
-   area never reaches into the row above or below; sideways it stops at the gap to the next button. */
+/* UI-30: a 44 px tall hit area. QA-R7-1: the row is 48 px tall, so the area stays inside it with
+   2 px to spare and a tap up to 8 px below a button still lands in its own row, even where rows
+   touch (the past-session list); sideways it stops at the gap to the next button. */
 .effort button::before { content: ""; position: absolute; inset: -7px -2px; }
 .effort button[aria-pressed="true"].easy { background: var(--positive); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].ideal { background: var(--info); color: #fff; border-color: transparent; }

@@ -495,3 +495,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - Escobar's split tools do not read or write groups, so an Escobar split update drops them.
   - CSV export has no group column.
   - Both are noted for later.
+
+### QA-R7-1 follow-up (supervisor re-check)
+- The first R7-1 fix (44 px rows, which landed in the QA-R1-4 commit 14f0046) was only checked on the Finish sheet. The supervisor was right about the "Log a past session" rows: they touch, so a tap 7–8 px below set 1 still reached set 2. The new gate check reproduced this: `row 0 easy +7px, +8px`.
+- Fix: `.effort` rows are 48 px tall, so the 44 px hit area stays inside its row with 2 px to spare. The gate now runs the elementFromPoint check (1–8 px below every effort button must hit its own row or no effort row) on the past-session sheet as well as the Finish sheet.
