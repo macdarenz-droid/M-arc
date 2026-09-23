@@ -1,5 +1,5 @@
 import { state, update } from '@/core/store';
-import { healthAvailable, syncHealth } from '@/native/health';
+import { healthAvailable, lastHealthError, syncHealth } from '@/native/health';
 
 /** Reads today's Health Connect summary and folds it into healthDays. `prompt` only from the Settings buttons. */
 let lastBackground = 0;
@@ -15,12 +15,17 @@ export async function syncAndStoreHealth({ prompt = false }: { prompt?: boolean 
   const day = await syncHealth({ prompt });
   if (!day) return false;
   update(s => {
-    const healthDays = [...s.healthDays.filter(d => d.day !== day.day), day].sort((a, b) => a.day.localeCompare(b.day)).slice(-180);
+    // QA-R5a-1: a later sync where a read failed (or came back empty) keeps what an earlier sync
+    // that day already had, instead of replacing the whole day.
+    const before = s.healthDays.find(d => d.day === day.day);
+    const merged = before ? { ...before, ...Object.fromEntries(Object.entries(day).filter(([, v]) => v !== undefined)) } as typeof day : day;
+    const healthDays = [...s.healthDays.filter(d => d.day !== day.day), merged].sort((a, b) => a.day.localeCompare(b.day)).slice(-180);
     return {
       ...s,
       healthDays,
-      health: { connected: true, lastSync: day.syncedAt, sleepMinutes: day.sleepMinutes, restingHr: day.restingHr, steps: day.steps, activeCalories: day.activeCalories },
+      health: { connected: true, lastSync: merged.syncedAt, sleepMinutes: merged.sleepMinutes, restingHr: merged.restingHr, steps: merged.steps, activeCalories: merged.activeCalories },
     };
   });
-  return true;
+  // Something was saved; a partial failure still shows its Details row.
+  return !lastHealthError;
 }

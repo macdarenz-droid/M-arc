@@ -100,7 +100,10 @@ export async function syncHealth({ prompt = false }: { prompt?: boolean } = {}):
       r = await p.readSummary();
     }
     const day = mapHealthSummary(r, dayKey(new Date()), new Date().toISOString());
-    lastHealthError = day ? null : { needsPermission: false, missing: r.missing ?? [], failed: r.failed ?? [], message: 'Health Connect answered, but every read failed.', raw: r };
+    // QA-R5a-1: a partial failure is reported too (Settings shows Details), not only a total one.
+    lastHealthError = !day ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed ?? [], message: 'Health Connect answered, but every read failed.', raw: r }
+      : r.failed?.length ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed, message: 'Some health data could not be read. What was read is saved.', raw: r }
+      : null;
     return day;
   } catch (e) {
     lastHealthError = { needsPermission: false, missing: [], failed: [], message: e instanceof Error ? e.message : 'Health Connect did not answer.' };

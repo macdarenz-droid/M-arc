@@ -83,3 +83,21 @@ it('a saved state with small-calorie days loads healed', () => {
   expect(out.healthDays.map(d => d.activeCalories)).toEqual([512, 480]);
   expect(out.health.activeCalories).toBe(512);
 });
+
+import { replaceState, state as appState } from '@/core/store';
+describe('a later partial sync keeps what the morning sync had (QA-R5a-1)', () => {
+  afterEach(() => { delete (globalThis as { Capacitor?: unknown }).Capacitor; });
+  it('sleep and resting HR survive a sync where those reads failed, and the failure is reported', async () => {
+    const { syncAndStoreHealth } = await import('@/slices/settings/health');
+    replaceState({ ...freshState(), health: { connected: true } });
+    let r: HealthSummaryRawLike = { needsPermission: false, sleepMinutes: 420, restingHR: 55, steps: 1200, activeCalories: 40 };
+    (globalThis as { Capacitor?: unknown }).Capacitor = { isNativePlatform: () => true, Plugins: { HealthConnectNative: { readSummary: async () => r } } };
+    expect(await syncAndStoreHealth()).toBe(true);
+    r = { needsPermission: false, workoutHR: 72, steps: 3500, activeCalories: 130, failed: ['SleepSessionRecord: Timeout', 'RestingHeartRateRecord: Timeout'] };
+    expect(await syncAndStoreHealth()).toBe(false);
+    const d = appState.value.healthDays.at(-1)!;
+    expect(d).toMatchObject({ sleepMinutes: 420, restingHr: 55, steps: 3500, latestHr: 72, activeCalories: 130 });
+    expect(health.lastHealthError?.failed).toHaveLength(2);
+  });
+});
+type HealthSummaryRawLike = import('@/native/health').HealthSummaryRaw;

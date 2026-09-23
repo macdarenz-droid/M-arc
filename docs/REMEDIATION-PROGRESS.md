@@ -277,3 +277,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - Plan mode is persisted through `updateConversation`, so the running loop's copy is plan too and a follow-up stays in plan mode.
 ### QA-R4a-4 (medium)
 - `changedFromPlan(active, split)` compares the session with what was planned for today (the split shaped by today's Escobar adjustment), for both the finish prompt and `changedTemplate`. A one-day swap or skip from Escobar no longer offers "Keep the change for future sessions?".
+### QA-R4b-1 (medium)
+- `prepare()` runs the one-time carry-over when Escobar is already on, so users who enabled it in an earlier build get "Earlier conversation" once; `legacyImported` stops a second import.
+### QA-R5a-1 (medium)
+- A sync merges into the day already stored: a field a later sync could not read (or read as empty) keeps the earlier value. A partial failure sets `lastHealthError` (Settings shows its message and the Details row); the sync reports success only when nothing failed.

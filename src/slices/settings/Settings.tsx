@@ -9,7 +9,7 @@ import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { openPanel, profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
-import { healthAvailable } from '@/native/health';
+import { healthAvailable, lastHealthError } from '@/native/health';
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
@@ -173,7 +173,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
-            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : lastHealthError?.message ?? 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
             {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">Last Health Connect sync failed</span><div class="hint">See what was allowed and what was read</div></Row>}
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
