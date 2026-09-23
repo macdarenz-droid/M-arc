@@ -543,7 +543,7 @@ for (const theme of themes) {
   // A watch appearing can raise the "help the coach know you" sheet; dismiss it like a person would.
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); }
   await page.waitForTimeout(600);
-  if (!(await page.locator('.pulse-line canvas').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the heart line on Train`);
+  if (!(await page.locator('.pulse-edge').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
   await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   await ctx.close();
