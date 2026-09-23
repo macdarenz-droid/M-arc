@@ -6,6 +6,7 @@
  */
 import type { LoadUnit, LoggedSet, Session, SessionLogging, SetFidelity, SetFlag } from '@/core/models';
 import { KG_PER_LB } from '@/core/units';
+import { dayKey } from '@/core/dates';
 
 /** A commit is "delayed" (timing not trusted) when it is part of a burst or outside a plausible rest/set gap. */
 /** A commit gap in this range (seconds) reads as logged live; 3+ commits within 15 s is a burst. */
@@ -52,8 +53,8 @@ export function liveSessionLogging(input: {
   const flags: string[] = [];
   if (compressed) flags.push('compressed');
   if (burstShare >= 0.3 && !compressed) flags.push('burst');
-  const trainedDay = startedAt.slice(0, 10);
-  const loggedDay = endedAt.slice(0, 10);
+  const trainedDay = dayKey(startedAt);
+  const loggedDay = dayKey(endedAt);
   if (trainedDay !== loggedDay) flags.push('midnight_crossing');
   return {
     mode,
@@ -70,8 +71,8 @@ export function liveSessionLogging(input: {
 
 /** Built by the "when did you train?" sheet, or the "Log a past session" flow. */
 export function retroSessionLogging(trainedAt: string, trainedEndAt: string, timeSource: SessionLogging['timeSource'], loggedAt = new Date().toISOString()): SessionLogging {
-  const trainedDay = trainedAt.slice(0, 10);
-  const loggedDay = loggedAt.slice(0, 10);
+  const trainedDay = dayKey(trainedAt);
+  const loggedDay = dayKey(loggedAt);
   return {
     mode: 'retro',
     trainedAt,

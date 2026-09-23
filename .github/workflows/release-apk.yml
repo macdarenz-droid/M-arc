@@ -68,6 +68,9 @@ jobs:
       - name: Typecheck, test and build the web app
         run: npm run check
 
+      - name: Unit tests in two more time zones
+        run: npm run test:tz
+
       - name: Validate built web source
         shell: bash
         run: |

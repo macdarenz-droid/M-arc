@@ -12,7 +12,7 @@ import { findExercise } from '@/core/exercises';
 import { isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, type ExerciseSessionSummary } from '../history';
 import { trend } from '../trend';
-import { weekStart, addDays, daysBetween } from '@/core/dates';
+import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import type { Insight } from './rules';
 
 const EFFORT_FRACTION = { easy: 0.5, ideal: 1, max: 1 } as const;
@@ -99,9 +99,10 @@ export function isStale(hist: ExerciseSessionSummary[], weeks = 6): boolean {
 export function adherenceRate(sessions: Session[], schedule: Record<string, string | null>, today: string, days = 28): number | null {
   const doneDays = new Set(sessions.map(s => s.day));
   let planned = 0, done = 0;
-  for (let i = 0; i < days; i++) {
+  // Today only counts once it has a session: an unfinished planned day is not a miss yet (BR-15).
+  for (let i = doneDays.has(today) ? 0 : 1; i < days; i++) {
     const day = addDays(today, -i);
-    const weekday = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][new Date(day).getDay()]!;
+    const weekday = weekdayOf(day);
     if (!schedule[weekday]) continue;
     planned++;
     if (doneDays.has(day)) done++;

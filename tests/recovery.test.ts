@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { dayKey } from '@/core/dates';
 import { calibrateTauScale, recoveryStatus, recoveryTier, systemicFactor } from '@/brain/recovery';
 import { sessionAt, sets, establishedProfile, noCheckIns, noFreshMarks, freshRecoveryModel } from './helpers';
 import type { CheckIn, DailyHealth, FreshMark, Session } from '@/core/models';
@@ -128,7 +129,7 @@ describe('recovery model v2 (impulse-response)', () => {
   it('soreness of 4 or 5 caps the percentage at 60%, never raises it', () => {
     const s = sessionAt('2026-09-01T17:00:00.000Z', '2026-09-01T18:00:00.000Z', [{ id: QUADS_EX, sets: sets(100, 8, 'easy', 1) }]);
     const now = Date.parse('2026-09-01T18:00:00.000Z') + 6 * DAY; // would otherwise be near 100%
-    const today = new Date(now).toISOString().slice(0, 10);
+    const today = dayKey(now);
     const capped = statusFor([s], now, { checkIns: [{ day: today, soreness: { quads: 5 } }] });
     expect(capped.pct).toBeLessThanOrEqual(60);
   });

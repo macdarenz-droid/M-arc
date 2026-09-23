@@ -4,10 +4,11 @@
  * returns null everywhere, never a number the coach can't stand behind.
  */
 import type { Profile, Session, SessionEnergy } from '@/core/models';
+import { parseDay } from '@/core/dates';
 
 export function age(profile: Profile, today: string): number | null {
   if (!profile.birthYear) return null;
-  return new Date(today).getFullYear() - profile.birthYear;
+  return parseDay(today).getFullYear() - profile.birthYear;
 }
 
 interface EnergyProfile { bodyWeightKg: number; heightCm: number; sex: 'male' | 'female'; ageYears: number }

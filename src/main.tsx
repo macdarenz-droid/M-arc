@@ -10,6 +10,7 @@ import { onNotificationTap } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
 import { go } from './app/router';
+import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import './ui/styles.css';
 
@@ -41,10 +42,15 @@ try {
   }
 
   // Keep unsaved work safe when the app goes to the background.
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
+  // Coming back: re-read the clock (a night in the background, a new time zone), and repair
+  // reminders Android may have dropped (ST-16).
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') { flushSave(); return; }
+    refreshClock();
+    void resyncReminders();
+    void syncAndStoreHealth();
+  });
   window.addEventListener('pagehide', flushSave);
-  // Android may drop scheduled reminders; check and repair when we come back.
-  window.addEventListener('pageshow', () => { void resyncReminders(); void syncAndStoreHealth(); });
   void resyncReminders();
   void syncAndStoreHealth();
 

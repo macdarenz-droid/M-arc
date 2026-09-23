@@ -37,7 +37,8 @@ describe('liveSessionLogging', () => {
     expect(l.flags).toContain('compressed');
   });
   it('flags a session that crosses midnight', () => {
-    const l = liveSessionLogging({ setFidelities: ['live'], startedAt: '2026-09-18T23:50:00.000Z', endedAt: '2026-09-19T00:10:00.000Z', loggedDurationSec: 1200, workingSetCount: 1 });
+    // Local midnight: the crossing is judged on the person's calendar, not UTC's (ST-18).
+    const l = liveSessionLogging({ setFidelities: ['live'], startedAt: new Date(2026, 8, 18, 23, 50).toISOString(), endedAt: new Date(2026, 8, 19, 0, 10).toISOString(), loggedDurationSec: 1200, workingSetCount: 1 });
     expect(l.flags).toContain('midnight_crossing');
   });
 });

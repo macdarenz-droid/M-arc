@@ -21,7 +21,7 @@ import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } fro
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
 import { cancelRestDone } from '@/native/notifications';
 import { APP_VERSION } from '@/core/version';
-import { formatDay, dayKey } from '@/core/dates';
+import { formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { buildBackup, parseBackup } from './backup';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
@@ -144,7 +144,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
-            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
               <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>

@@ -3,13 +3,14 @@ import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { Button, Card, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
 import { showToast } from '@/app/toast';
+import { formatLocalStamp } from '@/core/dates';
 import { profileCompleteness, isWeightTypo } from '@/brain/onboarding';
 import { GOAL_BY_ID } from '@/data/goals';
 import { GoalSheet } from '@/slices/coach/Coach';
 import { lastChangeAt, logWeight, setBirthYear, setHeight, setPlannedDays, setSex, setTrainingSince } from './profile';
 
 function updatedHint(at: string | undefined): string {
-  return at ? `Updated ${at.slice(0, 10)}` : 'Not set';
+  return at ? `Updated ${formatLocalStamp(at)}` : 'Not set';
 }
 
 export function Profile({ onClose }: { onClose: () => void }) {

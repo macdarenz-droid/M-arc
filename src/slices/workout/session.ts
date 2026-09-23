@@ -217,7 +217,7 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
     ...s,
     sessions: s.sessions.map(sess => {
       if (sess.id !== sessionId) return sess;
-      const flags = trainedAt.slice(0, 10) !== sess.logging.loggedAt.slice(0, 10) ? [...new Set([...sess.logging.flags, 'midnight_crossing'])] : sess.logging.flags;
+      const flags = dayKey(trainedAt) !== dayKey(sess.logging.loggedAt) ? [...new Set([...sess.logging.flags, 'midnight_crossing'])] : sess.logging.flags;
       return {
         ...sess,
         day: dayKey(trainedAt),

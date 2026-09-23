@@ -27,6 +27,8 @@ jobs:
         run: npm --prefix escobar-worker ci && npm --prefix escobar-worker run check
       - name: Typecheck, unit tests and production build
         run: npm run check
+      - name: Unit tests in two more time zones
+        run: npm run test:tz
       - name: Validate built web source
         shell: bash
         run: |

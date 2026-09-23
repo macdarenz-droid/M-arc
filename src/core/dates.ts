@@ -3,8 +3,11 @@ import { WEEKDAYS } from './models';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Local calendar day as YYYY-MM-DD. */
+const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Local calendar day as YYYY-MM-DD. A day key passes through unchanged (new Date('2026-09-22') is UTC midnight). */
 export function dayKey(value: Date | string | number = new Date()): string {
+  if (typeof value === 'string' && DAY_KEY.test(value)) return value;
   const d = value instanceof Date ? value : new Date(value);
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
@@ -24,6 +27,9 @@ function dayMs(key: string): number {
   dayMsCache.set(key, ms);
   return ms;
 }
+
+/** Forget cached local midnights: call after the time zone changes. */
+export function resetDayCache(): void { dayMsCache.clear(); }
 
 export function parseDay(key: string): Date {
   return new Date(dayMs(key));
@@ -61,6 +67,16 @@ export const WEEKDAY_LABEL: Record<Weekday, string> = {
 
 export function formatDay(key: string, opts: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' }): string {
   return parseDay(key).toLocaleDateString(undefined, opts);
+}
+
+/** A time of day in the person's locale, e.g. 17:30. (formatClock is a duration.) */
+export function formatTimeOfDay(iso: string): string {
+  return new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}
+
+/** A stored ISO time as the person's local day and time, e.g. "Tue, 22 Sep 17:30". */
+export function formatLocalStamp(iso: string): string {
+  return `${formatDay(dayKey(iso))} ${formatTimeOfDay(iso)}`;
 }
 
 export function formatClock(sec: number): string {

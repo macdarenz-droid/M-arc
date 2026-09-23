@@ -5,11 +5,11 @@ import { useReorder } from './reorder';
 import { openEscobar } from '@/escobar/ui/open';
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
+import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
-import { formatClock } from '@/core/dates';
+import { dayKey, formatClock } from '@/core/dates';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -305,7 +305,7 @@ function LiveSession() {
     moveEntry(from, to);
     if (openId) setOpen(state.value.active?.entries.findIndex(e => e.exerciseId === openId) ?? -1);
   });
-  useEffect(() => { setTicking(true); return () => setTicking(false); }, []);
+  useEffect(() => acquireTicker(), []);
   const elapsed = elapsedSec(a, nowMs.value);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
@@ -613,7 +613,7 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
   // Never default to a session that would end in the future: fall back to "ended just now" instead.
   const guessedEndsInFuture = new Date(`${summary.session.day}T${guessedTime}`).getTime() + duration * 60_000 > now;
   const fallbackStart = new Date(now - duration * 60_000);
-  const [day, setDay] = useState(guessedEndsInFuture ? fallbackStart.toISOString().slice(0, 10) : summary.session.day);
+  const [day, setDay] = useState(guessedEndsInFuture ? dayKey(fallbackStart) : summary.session.day);
   const [time, setTime] = useState(guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
 
   const resolve = (timeSource: 'user' | 'schedule' | 'default', overrideDay?: string, overrideTime?: string) => {
@@ -763,7 +763,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
 export function RestBanner() {
   const s = state.value;
   const a = s.active;
-  useEffect(() => { if (a?.rest) setTicking(true); }, [a?.rest?.endsAt]);
+  useEffect(() => (a?.rest ? acquireTicker() : undefined), [!!a?.rest]);
   if (!a?.rest) return null;
   const now = nowMs.value;
   const remaining = a.pausedAt && a.rest.pausedRemainingSec != null ? a.rest.pausedRemainingSec : Math.max(0, Math.round((a.rest.endsAt - now) / 1000));

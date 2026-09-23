@@ -5,6 +5,7 @@
  * live in slices/workout/heart.ts and core/heartStore.ts, not here.
  */
 import type { Effort, Profile, SessionHeart, SetHeart, SessionEnergy } from '@/core/models';
+import { addDays } from '@/core/dates';
 
 export type HrMaxSource = 'override' | 'observed' | 'tanaka' | 'default';
 export interface HrMaxResult { bpm: number; source: HrMaxSource }
@@ -68,8 +69,7 @@ export function observedHrMaxFromSeries(series: Array<[number, number]>): number
 /** 7-day median of healthDays' restingHr, or the manual override. Never inferred from a session. */
 export function restingHr(healthDays: Array<{ day: string; restingHr?: number }>, profile: Profile, today: string): number | null {
   if (profile.restingHrOverride) return Math.round(profile.restingHrOverride);
-  const since = new Date(today); since.setDate(since.getDate() - 6);
-  const sinceKey = since.toISOString().slice(0, 10);
+  const sinceKey = addDays(today, -6);
   const values = healthDays.filter(d => d.day >= sinceKey && d.day <= today && d.restingHr != null).map(d => d.restingHr!).sort((a, b) => a - b);
   if (!values.length) return null;
   return Math.round(values[Math.floor(values.length / 2)]!);

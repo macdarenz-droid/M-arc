@@ -18,7 +18,8 @@ describe('hrMax', () => {
     expect(r.source).toBe('tanaka');
   });
   it('falls back to Tanaka from birth year', () => {
-    const r = hrMax(profile({ birthYear: 1990 }), null, new Date('2026-01-01').getTime());
+    // Local mid-year, so the year is 2026 in every time zone (the UTC midnight of 1 Jan is 2025 in New York).
+    const r = hrMax(profile({ birthYear: 1990 }), null, new Date(2026, 5, 1).getTime());
     expect(r).toEqual({ bpm: Math.round(208 - 0.7 * 36), source: 'tanaka' });
   });
   it('decays a stale observed max toward Tanaka past 12 months', () => {
