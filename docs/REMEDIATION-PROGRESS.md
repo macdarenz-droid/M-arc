@@ -265,3 +265,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R3a-1, QA-R3a-5 (medium), QA-R3a-8 (low)
 - 'under' needs the last two completed weeks to be full training weeks (3+ sessions, `FULL_WEEK_SESSIONS`) and both below the band. A first week, a first week back, or part weeks read 'in'. Two R3 volume tests that encoded the first-week 'under' were updated (named in the test) and a full-week case added.
 - get_volume and volume_bars send `lastWeekSets` (and get_volume says what status is judged on). Body's this-week bar colours by this week's own count against the band.
+### QA-R3a-2 (medium)
+- `liftTrend(history, mode)` in brain/trend.ts: weighted uses the strength estimate, bodyweight best reps, duration longest hold, assisted the assistance load inverted. get_exercise_history and lift_trend pass the lift's mode to plateauStatus and use liftTrend.

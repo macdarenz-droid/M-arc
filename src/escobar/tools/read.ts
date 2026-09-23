@@ -9,8 +9,8 @@ import { addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { LIBRARY, searchExercises } from '@/core/exercises';
 import { MUSCLE_BY_ID, MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
-import { exerciseHistory } from '@/brain/history';
-import { plateauStatus, trend } from '@/brain/trend';
+import { modeOf, exerciseHistory } from '@/brain/history';
+import { liftTrend, plateauStatus } from '@/brain/trend';
 import { effortDrift } from '@/brain/effort';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { suggestNext } from '@/brain/progression';
@@ -181,8 +181,10 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const all = exerciseHistory(s.sessions, id, s.customExercises);
   const since = addDays(ctx.today, -weeks * 7);
   const hist = all.filter(h => h.day >= since);
-  const p = plateauStatus(all);
-  const t = trend(all.slice(-12).map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+  // QA-R3a-2: judged by the lift's mode (less assistance is progress).
+  const liftMode = modeOf(id, s.customExercises);
+  const p = plateauStatus(all, liftMode);
+  const t = liftTrend(all, liftMode);
   const records = allRecords(s.sessions, s.customExercises).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({

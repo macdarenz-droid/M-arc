@@ -7,8 +7,8 @@ import type { ShowComponentId } from '@/core/models';
 import { SHOW_COMPONENT_IDS, WEEKDAYS } from '@/core/models';
 import { addDays, weekStart } from '@/core/dates';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
-import { exerciseHistory } from '@/brain/history';
-import { plateauStatus, trend } from '@/brain/trend';
+import { modeOf, exerciseHistory } from '@/brain/history';
+import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
@@ -65,8 +65,10 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const hist = sampleEvenly(inWindow, 12);
       const points = hist.map(h => ({ day: h.day, value: val(h) }));
       const values = inWindow.map(val).filter(v => v > 0);
-      const p = plateauStatus(all);
-      const t = trend(all.slice(-12).map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+      // QA-R3a-2: judged by the lift's mode (less assistance is progress).
+      const liftMode = modeOf(id, s.customExercises);
+      const p = plateauStatus(all, liftMode);
+      const t = liftTrend(all, liftMode);
       return {
         exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: metric === 'volume' ? 'kg' : 'kg', weeks, points,
         first: values[0] ?? null, last: values.at(-1) ?? null, best: values.length ? Math.max(...values) : null,

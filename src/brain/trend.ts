@@ -33,6 +33,21 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
   return { direction, slopePerWeek: rel, confidence, points: n };
 }
 
+/**
+ * QA-R3a-2: the trend of what counts as progress for the lift's mode. Weighted: the strength
+ * estimate (or top load). Bodyweight: best reps. Duration: longest hold. Assisted: the assistance
+ * load, with the direction inverted (less help is up).
+ */
+export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): Trend {
+  const recent = history.slice(-12);
+  if (mode === 'bodyweight') return trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
+  if (mode === 'duration') return trend(recent.map(h => ({ day: h.day, value: h.bestDurationSec })));
+  const t = trend(recent.map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+  if (mode !== 'assisted') return t;
+  const flipped: Direction = t.direction === 'up' ? 'down' : t.direction === 'down' ? 'up' : t.direction;
+  return { ...t, direction: flipped, slopePerWeek: -t.slopePerWeek };
+}
+
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';
 
 /** Looks at the last 8 sessions. Needs at least 7 to say anything. */
