@@ -136,3 +136,10 @@ deploy-worker.yml runs on a push to `main` touching `escobar-worker/**`, or from
 1. Open a pull request from `claude/marc-r0-remediation-ast5xs` into `main` and merge it. The merge is a push to main that touches `escobar-worker/`, so "Deploy Escobar Worker" runs by itself (it needs the existing `CLOUDFLARE_API_TOKEN` secret, and `CLOUDFLARE_ACCOUNT_ID` if the token sees several accounts). It fails unless /health shows protocol 2, key, quotas and relay.
 2. Without merging: on a computer, `cd escobar-worker && npm ci && CLOUDFLARE_API_TOKEN=… npx wrangler deploy` from this branch.
 Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that branch's older Worker (its own workflow), without the relay: don't use it for this.
+
+## Phase R4 — in progress
+### Layer: apply/undo — done — IDs: ES-03, ES-04, ES-05, ES-02
+- Undo is a targeted inverse per kind (table in plan §R4.1); `active` is never restored; an inverse that can no longer apply throws UndoUnavailable → "Undo is no longer available." and nothing is recorded. Undo map keyed `${conversationId}:${proposalId}`; `appliedAt` stored; `undoOpen()` = applied < 8 s ago and an inverse exists; ProposalCard hides Undo after the window (timer re-render).
+- Live-session guards: programme replace and deleting the trained split are ToolErrors; fingerprints include the active split; the programme applier refuses while a session runs (no more `active: null`).
+- Today override: `plannedExercises(split, override)` applies swap/remove/add/sets/load at startSession and in the Train preview; entries carry `loadFactor` into suggestNext; finishSession clears it. Step 1 (disable, then re-enable) was folded into this single push since nothing ships between the two.
+- ProfileChange.source gains 'escobar' (used by the appliers).

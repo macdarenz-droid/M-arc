@@ -111,6 +111,8 @@ export interface ProposalRecord {
   createdAt: string;
   expiresOn: string;
   status: 'awaiting' | 'applied' | 'dismissed' | 'stale' | 'undone' | 'failed';
+  /** When it was applied: Undo is offered for UNDO_WINDOW_MS after this (ES-03). */
+  appliedAt?: string;
   /** The assistant message index that proposed it, so the card renders in its turn. */
   messageIndex?: number;
 }

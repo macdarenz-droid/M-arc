@@ -3,14 +3,14 @@
  * components, proposal / navigate / escalation cards, the verified answer with citations,
  * and the "What Escobar looked at" drawer. Everything redraws from the stored messages.
  */
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { Button, Card } from '@/ui/primitives';
 import { IconChevronDown } from '@/ui/icons';
 import { goTo } from '../palace/navigate';
 import { PALACE_BY_ID } from '../palace/registry';
 import { CARD_BY_ID } from '../knowledge/cards';
 import { parseDirectives } from '../verify';
-import { onProposal, canApply } from '../apply';
+import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
@@ -98,8 +98,16 @@ export function AnswerText({ text, ledger, unverified, streaming }: { text: stri
   );
 }
 
-export function ProposalCard({ p }: { p: ProposalRecord }) {
+export function ProposalCard({ p, conversationId }: { p: ProposalRecord; conversationId: string }) {
   const [busy, setBusy] = useState(false);
+  // ES-03: Undo shows only inside its window, and the card re-renders when the window closes.
+  const [, tick] = useState(0);
+  const open = p.status === 'applied' && undoOpen(conversationId, p);
+  useEffect(() => {
+    if (!open || !p.appliedAt) return;
+    const t = setTimeout(() => tick(n => n + 1), Math.max(0, Date.parse(p.appliedAt) + UNDO_WINDOW_MS - Date.now()) + 50);
+    return () => clearTimeout(t);
+  }, [open, p.appliedAt]);
   const act = async (choice: 'apply' | 'dismiss' | 'undo') => { setBusy(true); try { await onProposal(p.id, choice); } finally { setBusy(false); } };
   return (
     <Card class="esc-proposal" data-proposal={p.status}>
@@ -111,7 +119,7 @@ export function ProposalCard({ p }: { p: ProposalRecord }) {
           <Button variant="quiet" size="sm" disabled={busy} onClick={() => act('dismiss')}>Not now</Button>
         </div>
       )}
-      {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span><button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button></div>}
+      {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span>{open && <button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button>}</div>}
       {p.status === 'dismissed' && <div class="small muted">Dismissed</div>}
       {p.status === 'undone' && <div class="small muted">Undone</div>}
       {p.status === 'stale' && <div class="small muted">Out of date. Ask again for a fresh one.</div>}
@@ -212,7 +220,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
           </div>
         );
       })}
-      {proposals.map(p => <ProposalCard key={p.id} p={p} />)}
+      {proposals.map(p => <ProposalCard key={p.id} p={p} conversationId={conv.id} />)}
       {earlier.filter(a => a.m.meta.rendered.revised).map(a => (
         <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{parseDirectives(textOf(a.m.content)).plain}</p></details>
       ))}

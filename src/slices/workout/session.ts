@@ -2,7 +2,7 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split } from '@/core/models';
+import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
@@ -11,7 +11,7 @@ import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/
 import { calibrateAfterSession } from '@/brain/recovery';
 import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
 import { IMPULSE_LOOKBACK_DAYS, F_REF_SESSION_LOOKBACK } from '@/data/recovery';
-import { dayKey } from '@/core/dates';
+import { dayKey, todayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { syncAndStoreHealth } from '@/slices/settings/health';
@@ -64,12 +64,29 @@ const draftSet = (from: Partial<LoggedSet> = {}): LoggedSet => ({ ...from, id: n
 const blankSets = (n: number): LoggedSet[] => Array.from({ length: n }, () => draftSet());
 const isCommitted = (set: LoggedSet): boolean => set.status === 'committed' || !!set.at;
 
+/**
+ * ES-02: the split as today's applied Escobar adjustment reshapes it (swap, remove, add, sets,
+ * load). Only for today's override of this split; otherwise the split as saved.
+ */
+export function plannedExercises(split: Split, override: TodayOverride | null, today = todayKey()): Array<{ exerciseId: string; sets: number; loadFactor?: number }> {
+  let list: Array<{ exerciseId: string; sets: number; loadFactor?: number }> = split.exercises.map(e => ({ ...e }));
+  if (!override || override.day !== today || override.splitId !== split.id) return list;
+  for (const c of override.changes) {
+    if (c.kind === 'swap') list = list.map(e => (e.exerciseId === c.from ? { ...e, exerciseId: c.to } : e));
+    else if (c.kind === 'remove') list = list.filter(e => e.exerciseId !== c.exerciseId);
+    else if (c.kind === 'add') { if (!list.some(e => e.exerciseId === c.exerciseId)) list.push({ exerciseId: c.exerciseId, sets: c.sets }); }
+    else if (c.kind === 'sets') list = list.map(e => (e.exerciseId === c.exerciseId ? { ...e, sets: c.sets } : e));
+    else if (c.kind === 'load') list = list.map(e => (e.exerciseId === c.exerciseId ? { ...e, loadFactor: c.factor } : e));
+  }
+  return list;
+}
+
 export function startSession(split: Split): void {
   if (state.value.active) return;
   const custom = state.value.customExercises;
-  const entries: ActiveSession['entries'] = split.exercises.map(se => {
+  const entries: ActiveSession['entries'] = plannedExercises(split, state.value.escobar.todayOverride).map(se => {
     const ex = findExercise(se.exerciseId, custom);
-    return { id: newId('e'), exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: blankSets(se.sets), done: false, skipped: false };
+    return { id: newId('e'), exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: blankSets(se.sets), done: false, skipped: false, ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) };
   });
   const startedAt = new Date().toISOString();
   update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
@@ -298,6 +315,8 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   update(s => ({
     ...s,
     active: null,
+    // ES-02: today's adjustment is used up by finishing this split (a discarded session keeps it).
+    escobar: s.escobar.todayOverride?.splitId === a.splitId ? { ...s.escobar, todayOverride: null } : s.escobar,
     sessions: exercises.length ? sortByStart([...s.sessions, session]) : s.sessions,
     splits: saveTemplate && split
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.length) })) }))

@@ -202,7 +202,7 @@ export interface ActiveSession {
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;
@@ -272,7 +272,7 @@ export interface ProfileChange {
   field: ProfileField;
   from: unknown;
   to: unknown;
-  source: 'user' | 'onboarding' | 'health_connect' | 'migration';
+  source: 'user' | 'onboarding' | 'health_connect' | 'migration' | 'escobar';
 }
 
 export interface Onboarding {

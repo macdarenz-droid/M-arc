@@ -88,8 +88,8 @@ export function planDraftArg(v: unknown, ctx: ToolCtx): PlanDraft {
 
 export function touchedState(kind: string, input: Record<string, unknown>, s: AppState): unknown {
   switch (kind) {
-    case 'propose_split': return input.action === 'create' ? s.splits.length : s.splits.find(x => x.id === input.splitId) ?? null;
-    case 'propose_program': return [s.splits, s.schedule];
+    case 'propose_split': return input.action === 'create' ? s.splits.length : [s.splits.find(x => x.id === input.splitId) ?? null, s.active?.splitId ?? null];
+    case 'propose_program': return [s.splits, s.schedule, !!s.active];
     case 'propose_schedule': return [s.schedule, s.splits.map(x => x.id)];
     case 'propose_goal': return s.goal;
     case 'propose_today': return [s.escobar.todayOverride, s.splits.find(x => x.id === input.splitId)?.exercises ?? null, !!s.active];
@@ -129,6 +129,8 @@ function validateSplit(i: Record<string, unknown>, ctx: ToolCtx): Built {
   }
   const split = s.splits.find(x => x.id === i.splitId);
   if (!split) throw new ToolError(`unknown splitId; current splits: ${s.splits.map(x => `${x.id} (${x.name})`).join(', ') || 'none'}`);
+  // ES-05: never delete the split someone is training right now.
+  if (action === 'delete' && s.active?.splitId === split.id) throw new ToolError('that split is being trained right now');
   if (action === 'delete') return { title: `Delete split: ${split.name}`, input: { action, splitId: split.id, name: split.name, exercises: [] }, preview: [{ label: split.name, before: `${split.exercises.length} exercises`, after: 'deleted' }] };
   const exercises = exerciseList(ctx, i.exercises);
   if (!exercises.length) throw new ToolError('a split needs at least one exercise');
@@ -147,6 +149,7 @@ function validateProgram(i: Record<string, unknown>, ctx: ToolCtx): Built {
   const draft = planDraftArg(i.draft, ctx);
   const replace = i.replaceExisting === true;
   const s = ctx.state;
+  if (replace && s.active) throw new ToolError('a session is running; finish it before replacing the programme');
   if ((replace ? 0 : s.splits.length) + draft.splits.length > MAX_SPLITS) throw new ToolError(`that makes more than ${MAX_SPLITS} splits; set replaceExisting or use fewer`);
   const ev = evaluatePlan(draft, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
   if (hasBlockingIssues(ev)) throw new ToolError(`evaluate_plan finds blocking issues; revise and try again: ${ev.issues.filter(x => x.severity === 'block').map(x => x.text).join(' ')}`);
