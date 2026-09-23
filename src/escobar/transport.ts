@@ -3,7 +3,7 @@
  * CapacitorHttp out of the path (it buffers responses and would kill streaming).
  */
 
-export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout' | 'network' | 'offline';
+export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout' | 'network' | 'offline';
 
 export type StreamEvent =
   | { t: 'start'; requestId: string }

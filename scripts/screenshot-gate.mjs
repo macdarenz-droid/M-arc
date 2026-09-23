@@ -71,8 +71,8 @@ for (const theme of themes) {
   if (theme === 'silent-black') {
     // Log a past session: no timer, no rest banner.
     await page.getByRole('button', { name: 'Log a past session' }).click(); await page.waitForTimeout(250); await shot('past-session');
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('40'); await pastInputs.nth(2).fill('10');
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('40'); await pastInputs.nth(1).fill('10');
     await page.locator('.effort button.easy').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250);
@@ -83,7 +83,7 @@ for (const theme of themes) {
     // Four rated sets so the post-session debrief has enough evidence to show an effort-mix row.
     // Set 1 is easy at/above the placeholder target, so in-session autoregulation (6.13, cadence
     // 'live') suggests more load right under the exercise.
-    const inputs = page.locator('input[type="number"]');
+    const inputs = page.locator('.set-grid input');
     const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
     const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
     await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
@@ -93,10 +93,17 @@ for (const theme of themes) {
     await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
     await page.locator('.effort button.max').nth(2).click();
     await page.getByRole('button', { name: 'Set', exact: true }).first().click(); await page.waitForTimeout(150);
-    const inputs2 = page.locator('input[type="number"]');
+    const inputs2 = page.locator('.set-grid input');
     await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
     await page.locator('.effort button.ideal').nth(3).click();
     await page.waitForTimeout(300); await shot('live');
+    // R2.1: the rest clock keeps ticking after leaving the live screen.
+    const clock0 = await page.locator('.rest .clock').textContent().catch(() => null);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click();
+    await page.waitForTimeout(2100);
+    const clock1 = await page.locator('.rest .clock').textContent().catch(() => null);
+    if (!clock0 || clock0 === clock1) errors.push(`${theme}: the rest clock stopped after switching to Today (${clock0} → ${clock1})`);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
     if (!(await page.getByText('for the next set').isVisible().catch(() => false))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
@@ -121,9 +128,59 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
+  if (theme === 'silent-black') {
+    // R1.2: after boot, a stray rejection or throw must not replace the app with the crash screen.
+    await page.evaluate(() => { void Promise.reject(new Error('gate-injected-x')); setTimeout(() => { throw new Error('gate-injected-y'); }); });
+    await page.waitForTimeout(400);
+    for (let k = errors.length - 1; k >= 0; k--) if (errors[k].includes('gate-injected')) errors.splice(k, 1);
+    if (await page.getByText('could not start').isVisible().catch(() => false)) errors.push(`${theme}: a post-boot error showed the crash screen`);
+    if (!(await page.locator('.nav').isVisible())) errors.push(`${theme}: the app disappeared after a post-boot error`);
+    // R1.3: export a backup, reset everything, restore it: the session count must match.
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
+    const { readFile } = await import('node:fs/promises');
+    const backupText = await readFile(await download.path(), 'utf8');
+    await page.getByRole('button', { name: 'Reset workout data' }).click();
+    await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
+    await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
+    await page.getByRole('button', { name: 'Replace', exact: true }).click(); await page.waitForTimeout(400);
+    await shot('restored');
+    const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    console.log(theme, 'backup round trip:', before, '→ reset', afterReset, '→ restored', after);
+    if (afterReset !== 0 || after !== before) errors.push(`${theme}: backup round trip lost sessions (${before} → ${afterReset} → ${after})`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
   if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  await ctx.close();
+}
+
+// R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
+{
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`narrow: ${e.message}`));
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const load = page.locator('.set-grid .weight-input input').first();
+  await load.fill('102.5');
+  await page.waitForTimeout(150);
+  const fit = await load.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }));
+  await page.screenshot({ path: `${OUT}/silent-black-set-grid-360.png` });
+  console.log('narrow set grid:', fit);
+  if (fit.scroll > fit.client) errors.push(`narrow: the load input clips 102.5 at 360 px (${fit.scroll} > ${fit.client})`);
+  const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (pageWidth > 360) errors.push(`narrow: the live screen is ${pageWidth} px wide on a 360 px phone`);
   await ctx.close();
 }
 
@@ -140,7 +197,7 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Add my details' }).click();
   await page.waitForTimeout(250);
   await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
-  await page.locator('input[type="number"]').first().fill('80');
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
   await page.getByText('Strength focus').click();
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -180,9 +237,9 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Log a past session' }).click();
     await page.waitForTimeout(200);
     await page.locator('input[type="date"]').fill(dayKey);
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('50');
-    await pastInputs.nth(2).fill('10');
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('50');
+    await pastInputs.nth(1).fill('10');
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
@@ -235,8 +292,8 @@ for (const theme of themes) {
     await page.waitForTimeout(200);
     const d = new Date(); d.setDate(d.getDate() - offset);
     await page.locator('input[type="date"]').fill(d.toISOString().slice(0, 10));
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('50'); await pastInputs.nth(2).fill('12');
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('50'); await pastInputs.nth(1).fill('12');
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
@@ -325,7 +382,7 @@ for (const theme of themes) {
   if (!(await page.locator('.watch-pill .heart-bpm').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
   await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
 
-  const inputs = page.locator('input[type="number"]');
+  const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
   await page.locator('.effort button.ideal').first().click();
   await page.waitForTimeout(200);
@@ -385,7 +442,7 @@ for (const theme of themes) {
   if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   // The barbell entry opens first. A 2.2× slip on its first set shows the suspect chip.
-  const inputs = page.locator('input[type="number"]');
+  const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
   if (!(await page.locator('.suspect-chip').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
@@ -570,4 +627,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');

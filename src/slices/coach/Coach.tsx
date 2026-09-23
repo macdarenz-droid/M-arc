@@ -10,7 +10,7 @@ import { trainingAgeMonths } from '@/brain/recovery';
 import { profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL, weekStart, daysBetween, addDays } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart, daysBetween, addDays, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { profileFor } from '@/slices/workout/units';
@@ -92,7 +92,7 @@ export function Coach() {
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and only ever widens when your own history shows you need it.</p>
+            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
           </div>
         </Card>
@@ -315,7 +315,7 @@ function WhatCoachCanSee() {
     { label: 'Sets logged', value: `${s.sessions.reduce((a, x) => a + x.exercises.reduce((b, e) => b + e.sets.length, 0), 0)} total` },
     { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet', unlocks: ratedShare == null || ratedShare < 0.5 ? 'Rate sets so the coach can judge hard vs easy.' : undefined },
     { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
-    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync?.slice(0, 10) ?? ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
+    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
     { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
     { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },

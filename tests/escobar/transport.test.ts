@@ -61,3 +61,10 @@ describe('http transport', () => {
     expect((await checkHealth('https://w', (async () => { throw new Error('x'); }) as never)).ok).toBe(false);
   });
 });
+
+describe('region refusal (PL-20)', () => {
+  it('passes upstream_region through with its message', async () => {
+    const msg = "Escobar isn't available on this network right now. Try mobile data.";
+    expect(await collect([frame({ t: 'error', code: 'upstream_region', message: msg, detail: 'region' })])).toEqual([{ t: 'error', code: 'upstream_region', message: msg, detail: 'region' }]);
+  });
+});

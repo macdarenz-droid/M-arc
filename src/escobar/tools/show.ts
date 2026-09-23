@@ -147,12 +147,11 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const e = exerciseOf(ctx, id)!;
       const profile = resolveProfile(id, s.units.activeGymId, s.units, e);
       const next = suggestNext(s.sessions, id, s.goal, ctx.today, e.defaultSets, s.customExercises, { equipment: profile });
-      const e1 = exerciseHistory(s.sessions, id, s.customExercises).at(-1)?.bestE1rm ?? 0;
       const cue = pickCue(e, 'coach', `${ctx.today}|${id}`);
       return {
         exercise: e.name, exerciseId: id, equipment: e.equipment, primary: e.primary, secondary: e.secondary,
         next: { target: next.target, reason: next.reason },
-        warmup: e.role === 'main' && e1 > 0 ? warmupSets(e1, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
+        warmup: e.role === 'main' && (next.sets[0]?.kg ?? 0) > 0 ? warmupSets(next.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
         cue: cue?.text ?? null, substitutes: substitutesFor(e, s.customExercises).slice(0, 3).map(x => x.name),
       };
     }

@@ -54,23 +54,22 @@ jobs:
       - name: Validate signing secrets
         shell: bash
         env:
-          KS: ${{ secrets.MARC_ANDROID_KEYSTORE_B64 }}
-          KSP: ${{ secrets.MARC_ANDROID_KEYSTORE_PASSWORD }}
-          KA: ${{ secrets.MARC_ANDROID_KEY_ALIAS }}
-          KP: ${{ secrets.MARC_ANDROID_KEY_PASSWORD }}
+          KS: ${{ secrets.MARC_SIGNING_KEYSTORE_B64 }}
+          PW: ${{ secrets.MARC_SIGNING_STORE_PASSWORD }}
         run: |
           set -euo pipefail
-          missing=0
-          for v in KS KSP KA KP; do
-            [ -n "${!v:-}" ] || { echo "::error::Missing signing secret for $v"; missing=1; }
-          done
-          [ "$missing" -eq 0 ] || { echo 'Add the four MARC_ANDROID_* secrets described in FRESH_GITHUB_UPLOAD_INSTRUCTIONS.txt'; exit 1; }
+          # Release uses the same permanent key as every debug build (plan R0.0/R0.8, PL-19, PL-02).
+          [ -n "$KS" ] || { echo '::error::Secret MARC_SIGNING_KEYSTORE_B64 is missing.'; exit 1; }
+          [ -n "$PW" ] || { echo '::error::Secret MARC_SIGNING_STORE_PASSWORD is missing.'; exit 1; }
 
       - name: Install npm dependencies
         run: npm ci
 
       - name: Typecheck, test and build the web app
         run: npm run check
+
+      - name: Unit tests in two more time zones
+        run: npm run test:tz
 
       - name: Validate built web source
         shell: bash
@@ -180,24 +179,24 @@ jobs:
           [ -f "$APK" ] || APK='android/app/build/outputs/apk/release/app-release.apk'
           python3 native/wear/check_apk.py "$APK"
 
-      - name: Decode signing keystore
+      - name: Decode the permanent signing key
         shell: bash
         env:
-          KEYSTORE_B64: ${{ secrets.MARC_ANDROID_KEYSTORE_B64 }}
+          KS_B64: ${{ secrets.MARC_SIGNING_KEYSTORE_B64 }}
         run: |
           set -euo pipefail
           umask 077
-          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/marc-release.jks"
-          test -s "$RUNNER_TEMP/marc-release.jks"
+          printf '%s' "$KS_B64" | base64 --decode > "$RUNNER_TEMP/marc-signing.p12"
+          test -s "$RUNNER_TEMP/marc-signing.p12"
 
-      - name: Sign and verify APK
+      - name: Sign with the permanent key and verify the fingerprint
         id: sign
         shell: bash
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.MARC_ANDROID_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.MARC_ANDROID_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.MARC_ANDROID_KEY_PASSWORD }}
+          PW: ${{ secrets.MARC_SIGNING_STORE_PASSWORD }}
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          # Public certificate fingerprint of the permanent key (same as build-apk.yml). Registered with Huawei (App ID 119100049).
+          EXPECTED_SHA256: '05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5'
         run: |
           set -euo pipefail
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
@@ -208,8 +207,17 @@ jobs:
           ALIGNED="release-output/MARC-v${VERSION_NAME}-aligned.apk"
           SIGNED="release-output/MARC-v${VERSION_NAME}-signed.apk"
           "$BUILD_TOOLS/zipalign" -p -f 4 "$UNSIGNED" "$ALIGNED"
-          "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-release.jks" --ks-key-alias "$KEY_ALIAS" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD --out "$SIGNED" "$ALIGNED"
-          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED"
+          "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-signing.p12" --ks-key-alias marc --ks-pass env:PW --key-pass env:PW --out "$SIGNED" "$ALIGNED"
+          rm -f "$RUNNER_TEMP/marc-signing.p12"
+          CERTS="$("$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$SIGNED")"
+          printf '%s\n' "$CERTS"
+          # Every signer line must carry the expected digest (format differs between build-tools versions).
+          DIGESTS="$(printf '%s\n' "$CERTS" | grep -i 'certificate SHA-256 digest' | sed 's/.*: *//' | tr 'a-f' 'A-F' | sed 's/../&:/g; s/:$//' | sort -u)"
+          if [ "$DIGESTS" != "$EXPECTED_SHA256" ]; then
+            echo "::error::APK signer SHA-256 is '$DIGESTS', expected $EXPECTED_SHA256"
+            exit 1
+          fi
+          echo "APK signer SHA-256: $DIGESTS"
           python3 - "$SIGNED" <<'PY'
           from pathlib import Path
           import hashlib,sys,zipfile
@@ -219,7 +227,13 @@ jobs:
           print('Signed APK current embedded source PASS:',hashlib.sha256(data).hexdigest())
           PY
           sha256sum "$SIGNED" > "$SIGNED.sha256"
-          rm -f "$ALIGNED" "$RUNNER_TEMP/marc-release.jks"
+          rm -f "$ALIGNED"
+
+      - name: No keystore may be committed in workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -rEl 'MII[A-Za-z0-9+/]{100,}' .github/workflows; then echo '::error::A base64 keystore is committed in a workflow.'; exit 1; fi
 
       - name: Upload signed release
         uses: actions/upload-artifact@v4

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { dayKey } from '@/core/dates';
 import { calibrateTauScale, recoveryStatus, recoveryTier, systemicFactor } from '@/brain/recovery';
 import { sessionAt, sets, establishedProfile, noCheckIns, noFreshMarks, freshRecoveryModel } from './helpers';
 import type { CheckIn, DailyHealth, FreshMark, Session } from '@/core/models';
@@ -48,6 +49,17 @@ describe('recovery model v2 (impulse-response)', () => {
     expect(ideal.fullInHours).not.toBeNull();
     expect(ideal.fullInHours!).toBeGreaterThan(ideal.windowHours);
     expect(max.fullInHours!).toBeGreaterThan(max.windowHours);
+  });
+
+  it('ready and full times count down from now, not from the session (BR-02)', () => {
+    const end = Date.parse('2026-09-10T18:00:00.000Z');
+    const sessions = steadyStateSessions(100, 8, 'max', 9, end);
+    const atEnd = statusFor(sessions, end);
+    const later = statusFor(sessions, end + 24 * HOUR);
+    expect(later.fullInHours!).toBeCloseTo(atEnd.fullInHours! - 24, 0);
+    expect(later.readyInHours![1]).toBeLessThan(atEnd.readyInHours![1]);
+    const ready = statusFor(sessions, end + 6 * DAY);
+    expect(ready.readyInHours).toBeNull();
   });
 
   it('eight max-effort sets take noticeably longer to be ready than three (plan: ~75h for eight)', () => {
@@ -128,7 +140,7 @@ describe('recovery model v2 (impulse-response)', () => {
   it('soreness of 4 or 5 caps the percentage at 60%, never raises it', () => {
     const s = sessionAt('2026-09-01T17:00:00.000Z', '2026-09-01T18:00:00.000Z', [{ id: QUADS_EX, sets: sets(100, 8, 'easy', 1) }]);
     const now = Date.parse('2026-09-01T18:00:00.000Z') + 6 * DAY; // would otherwise be near 100%
-    const today = new Date(now).toISOString().slice(0, 10);
+    const today = dayKey(now);
     const capped = statusFor([s], now, { checkIns: [{ day: today, soreness: { quads: 5 } }] });
     expect(capped.pct).toBeLessThanOrEqual(60);
   });
@@ -183,5 +195,19 @@ describe('calibrateTauScale', () => {
   it('is bounded to 0.7-1.6', () => {
     expect(calibrateTauScale(1.59, 90, -20)).toBeLessThanOrEqual(1.6);
     expect(calibrateTauScale(0.71, 60, 5)).toBeGreaterThanOrEqual(0.7);
+  });
+});
+
+describe('recovery top driver (BR-31)', () => {
+  it('names the heaviest-dose exercise with its own set count', () => {
+    const end = Date.parse('2026-09-10T18:00:00.000Z');
+    // Earlier sessions so neither exercise is new or back from a layoff.
+    const prior = steadyStateSessions(140, 5, 'ideal', 3, end - 4 * DAY).map(x => ({ ...x, exercises: [...x.exercises, { exerciseId: 'lib_leg_extension', name: 'Leg extension', sets: sets(30, 15, 'easy', 2) }] }));
+    const s = sessionAt(new Date(end - HOUR).toISOString(), new Date(end).toISOString(), [
+      { id: QUADS_EX, sets: sets(140, 5, 'ideal', 4) },
+      { id: 'lib_leg_extension', sets: sets(30, 15, 'easy', 2) },
+    ]);
+    const q = statusFor([...prior, s], end);
+    expect(q.drivers[0]!.text).toMatch(/: 4 sets$/);
   });
 });

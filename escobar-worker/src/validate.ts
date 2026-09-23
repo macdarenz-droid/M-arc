@@ -12,13 +12,14 @@ export const MAX_MANIFEST_BYTES = 40_000;
 export const MAX_MESSAGES = 600;
 export const MAX_IMAGES = 2;
 export const MAX_IMAGE_BYTES = 1_200_000;
+/** Twice the app's largest brief would still fit many times over: BRIEF_CAP is 3000 characters (PL-06). */
+export const MAX_SYSTEM_BYTES = 48_000;
 export const MAX_STEPS = 15;
 export const REPAIR_MARKER = '[app] verification check';
 const TOP_KEYS = ['protocol', 'mode', 'appVersion', 'manifest', 'messages', 'unit', 'tone'];
 const BLOCKED_KEYS = ['profile', 'name', 'email', 'sessions'];
 const ASSISTANT_TYPES = new Set(['text', 'tool_use', 'thinking', 'redacted_thinking', 'fallback']);
 const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const EFFORTS = new Set(['low', 'medium', 'high', 'xhigh', 'max']);
 export const TOOL_NAMES = new Set((generated.tools as Array<{ name: string }>).map(t => t.name));
 
 export interface TurnBody {
@@ -26,7 +27,7 @@ export interface TurnBody {
   mode: Mode;
   appVersion: string;
   manifest: { hash: string; body: Record<string, unknown> };
-  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: unknown; output_config?: { effort: string } }>;
+  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: unknown }>;
   unit: 'kg' | 'lb';
   tone: 'warm' | 'direct';
 }
@@ -41,7 +42,7 @@ function userBlock(b: unknown, where: string, seenToolUses: Set<string>, counter
   if (!isObj(b)) return `${where} must be an object`;
   switch (b.type) {
     case 'text': {
-      const extra = only(b, ['type', 'text', 'cache_control']);
+      const extra = only(b, ['type', 'text']);
       if (extra) return `${where}: unknown key ${extra}`;
       return typeof b.text === 'string' ? null : `${where}.text must be a string`;
     }
@@ -131,15 +132,11 @@ export function validateTurn(raw: unknown, rawBytes: number): Validation {
         }
       }
     } else if (msg.role === 'system') {
-      if (only(msg, ['role', 'content', 'output_config'])) return bad(`${where}: unknown key`);
+      if ('output_config' in msg) return bad('effort-only system messages are not accepted');
+      if (only(msg, ['role', 'content'])) return bad(`${where}: unknown key`);
       if (i === 0) return bad('a system message cannot come first');
-      const effortOnly = Array.isArray(msg.content) && msg.content.length === 0 && isObj(msg.output_config);
-      if (effortOnly) {
-        const oc = msg.output_config as Record<string, unknown>;
-        if (only(oc, ['effort']) || !EFFORTS.has(String(oc.effort))) return bad(`${where}.output_config must be {effort}`);
-        continue;
-      }
-      if (typeof msg.content !== 'string' || msg.output_config !== undefined) return bad(`${where}: system content must be text`);
+      if (typeof msg.content !== 'string') return bad(`${where}: system content must be text`);
+      if (new TextEncoder().encode(msg.content).byteLength > MAX_SYSTEM_BYTES) return bad(`${where}: system text over 48 KB`);
       const prev = messages[i - 1];
       if (!isObj(prev) || prev.role !== 'user') return bad(`${where}: a system message must follow a user message`);
       const next = messages[i + 1];

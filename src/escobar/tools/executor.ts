@@ -8,6 +8,7 @@ import type { MemoryItem, MemoryKind } from '@/core/models';
 import { MAX_MEMORY_TEXT, MEMORY_KINDS } from '@/core/models';
 import { addDays } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
+import { isMuscleId, MUSCLE_IDS } from '@/data/muscles';
 import { captureFacts } from '../ledger';
 import type { Fact } from '../types';
 import { PALACE_BY_ID } from '../palace/registry';
@@ -21,6 +22,9 @@ import { buildProposal, type Proposal } from './actions';
 import { evaluatePlanTool } from './plan';
 import { summarize, COMPONENT_GATE } from './show';
 import { exerciseName, type ToolCtx } from './context';
+
+/** The only params a navigate call may carry (R1.2). */
+const NAV_KEYS = new Set(['view', 'seg', 'muscle', 'exerciseId', 'sessionId']);
 
 export interface ToolUse { id: string; name: string; input: unknown }
 
@@ -165,7 +169,8 @@ export function executeTool(use: ToolUse, env: ExecEnv): ToolOutcome {
           const entry = PALACE_BY_ID[String(input.target ?? '')];
           if (!entry) throw new R.ToolError('unknown target; use a palace id from the manifest or find_in_app');
           const params: Record<string, string> = {};
-          if (Array.isArray(input.params)) for (const p of input.params) if (isObj(p) && typeof p.key === 'string' && typeof p.value === 'string') params[p.key] = p.value;
+          if (Array.isArray(input.params)) for (const p of input.params) if (isObj(p) && typeof p.key === 'string' && typeof p.value === 'string' && NAV_KEYS.has(p.key)) params[p.key] = p.value;
+          if (params.muscle !== undefined && !isMuscleId(params.muscle)) throw new R.ToolError(`muscle must be one of ${MUSCLE_IDS.join(', ')}`);
           const nav = { target: entry.id, ...(Object.keys(params).length ? { params } : {}), auto: input.auto === true, title: entry.title, where: entry.where };
           return { ...base, navigate: nav, content: JSON.stringify({ data: { shown: true, title: entry.title, where: entry.where }, facts: {} }) };
         }

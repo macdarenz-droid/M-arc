@@ -21,20 +21,31 @@ export type VolumeStatus = 'under' | 'in' | 'over' | 'unknown';
 export interface MuscleVolumeStatus {
   muscle: MuscleId;
   status: VolumeStatus;
+  /** This week so far: for display only. */
   thisWeekSets: number;
+  /** The last completed week: what the status is judged on (BR-07). */
+  lastWeekSets: number;
   medianSets: number;
   band: [number, number];
 }
 
-/** This week's effective sets per muscle vs. the 4-week median and the level's band. 'unknown' when there's no work at all to judge. */
+/**
+ * Volume per muscle vs. the level's band, judged on completed weeks (BR-07): 'under' only after
+ * two completed weeks below the band, 'over' when this or last week is above it, 'unknown' with
+ * no work in four weeks. A Monday no longer reads every muscle as under.
+ */
 export function muscleVolumeStatus(sessions: Session[], today: string, custom: Exercise[] = []): MuscleVolumeStatus[] {
   const weekly = weeklyMuscleSets(sessions, today, 4, custom);
   const levels = trainingLevels(sessions, custom);
   return MUSCLE_IDS.map(muscle => {
-    const thisWeekSets = weekly[0]?.sets[muscle] ?? 0;
-    const medianSets = median(weekly.map(w => w.sets[muscle] ?? 0));
+    const w = [0, 1, 2, 3].map(i => weekly[i]?.sets[muscle] ?? 0);
+    const [thisWeekSets, lastWeekSets, twoWeeksAgo] = [w[0]!, w[1]!, w[2]!];
+    const medianSets = median(w);
     const band = volumeBands(levels[muscle].levelIndex, muscle);
-    const status: VolumeStatus = !thisWeekSets && !medianSets ? 'unknown' : thisWeekSets < band[0] ? 'under' : thisWeekSets > band[1] ? 'over' : 'in';
-    return { muscle, status, thisWeekSets: Math.round(thisWeekSets * 10) / 10, medianSets: Math.round(medianSets * 10) / 10, band };
+    const status: VolumeStatus = w.every(v => v === 0) ? 'unknown'
+      : Math.max(thisWeekSets, lastWeekSets) > band[1] ? 'over'
+      : lastWeekSets < band[0] && twoWeeksAgo < band[0] ? 'under' : 'in';
+    const r1 = (x: number) => Math.round(x * 10) / 10;
+    return { muscle, status, thisWeekSets: r1(thisWeekSets), lastWeekSets: r1(lastWeekSets), medianSets: r1(medianSets), band };
   });
 }

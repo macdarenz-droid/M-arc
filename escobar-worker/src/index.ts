@@ -13,3 +13,6 @@ export default {
     });
   },
 };
+
+export { QuotaCounter } from './quotaDO';
+export { UpstreamRelay } from './upstreamRelay';

@@ -31,11 +31,15 @@ function statusText(): string {
   return 'online';
 }
 
+export const REGION_LINE = "Escobar isn't available on this network right now. Try mobile data.";
+
 function resultLine(r: TurnResult): string | null {
   switch (r.outcome) {
     case 'error':
       if (r.error?.code === 'quota') return 'Escobar is resting until tomorrow (daily limit reached).';
       if (r.error?.code === 'rate') return 'Too many messages at once. Try again in a minute.';
+      // PL-20: the coach's provider refuses some network locations; this is not a setup problem.
+      if (r.error?.code === 'upstream_region') return REGION_LINE;
       return r.error?.message || 'Escobar couldn’t answer. Try again.';
     case 'refusal': return 'Escobar can’t help with that one.';
     case 'step_limit': return 'That took too many steps. Try a narrower question.';

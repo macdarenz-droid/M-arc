@@ -18,14 +18,18 @@ import { installPalaceDevHooks } from '@/escobar/palace/dev';
 import { Dock } from '@/escobar/ui/Dock';
 import { escobarUi } from '@/escobar/state';
 import { useEffect, useState } from 'preact/hooks';
+import { signal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
 import type { MuscleId } from '@/data/muscles';
-import { toast } from './toast';
+import { showToast, toast } from './toast';
 import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
-import { saveError, state } from '@/core/store';
+import { bootRecovered, saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
+
+/** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
+const recoveredSeen = signal(false);
 
 const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconEscobar };
 
@@ -36,7 +40,10 @@ function EscobarMount() {
   const open = escobarUi.value.open;
   const [Comp, setComp] = useState<FunctionComponent | null>(null);
   useEffect(() => {
-    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet));
+    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet)).catch(() => {
+      escobarUi.value = { ...escobarUi.value, open: false, contextRef: null };
+      showToast('Could not load Escobar. Check your connection.');
+    });
   }, [open, Comp]);
   return open && Comp ? <Comp /> : null;
 }
@@ -71,6 +78,12 @@ export function App() {
   return (
     <div class="app">
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
+      {bootRecovered.value && !recoveredSeen.value && (
+        <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>
+          We couldn't read your latest saved data. A copy was kept. Settings → Your data → Save rescue file.
+          <button type="button" class="btn btn-quiet btn-sm" style={{ marginLeft: 8 }} onClick={() => { recoveredSeen.value = true; }}>OK</button>
+        </div>
+      )}
       {t === 'today' && <Today />}
       {t === 'train' && <Train />}
       {t === 'history' && <History />}

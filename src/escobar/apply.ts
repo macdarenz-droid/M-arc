@@ -180,7 +180,7 @@ export function decide(c: Conversation, proposalId: string, choice: 'apply' | 'd
   if (!p) return { conversation: c, result: { ok: false, status: 'failed', message: 'That suggestion is gone.' } };
   if (choice === 'dismiss') return { conversation: withDecision(c, p, 'dismissed'), result: { ok: true, status: 'dismissed', message: 'Dismissed' } };
   if (choice === 'undo') { undoFn?.(); return { conversation: withDecision(c, p, 'undone'), result: { ok: true, status: 'undone', message: 'Undone' } }; }
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayKey();
   if (p.expiresOn < today || fingerprint(p.kind, p.input, state.value) !== p.fingerprint) {
     return { conversation: withDecision(c, p, 'stale'), result: { ok: false, status: 'stale', message: 'Things changed since this was suggested. Ask again for a fresh one.' } };
   }

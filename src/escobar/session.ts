@@ -14,7 +14,7 @@ import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
-import { emptyStore, loadStore, memoryStorage, newConversation, saveStore, setEscobarStorage, upsertConversation } from './store';
+import { emptyStore, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { imageData } from './images';
 import { escobarUi, loopView, online, proxyUrlOf, quotaResetAt } from './state';
 import type { MemoryEffect } from './tools/executor';
@@ -22,7 +22,7 @@ import type { Conversation, ConversationStore, ContextRef } from './types';
 import type { EscobarMode } from './context/modes';
 import type { SafetySignal } from './verify';
 
-export const APP_VERSION = '37.0.0';
+import { APP_VERSION } from '@/core/version';
 const MANIFEST = buildManifest(APP_VERSION);
 
 export const devMode = (): boolean => { try { return typeof localStorage !== 'undefined' && localStorage.getItem('marc.dev') === '1'; } catch { return false; } };
@@ -41,6 +41,22 @@ let transport: Transport | null = null;
 let loop: EscobarLoop | null = null;
 let offlineUntil = 0;
 let loaded = false;
+/** Bumped whenever the conversation store is replaced; a turn from an older epoch writes nothing (ES-07, R4.4). */
+let epoch = 0;
+
+// Reset or restore replaced the store underneath us: drop the loop and everything cached.
+onStoreReplaced(() => {
+  loop?.stop();
+  loop = null;
+  epoch++;
+  loaded = false;
+  lastTurn.value = null;
+  safetyCards.value = [];
+  pendingUser.value = null;
+  activeConversation.value = null;
+  storeSig.value = emptyStore();
+  loadConversations();
+});
 
 export function ensureDeviceId(): string {
   const cur = state.value.escobar.deviceId;
@@ -126,6 +142,7 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
   let conv = activeConversation.value;
   if (!conv) { conv = newConversation(APP_VERSION, mode === 'plan' ? 'plan' : mode === 'live' ? 'live' : 'chat'); persist(conv); }
   if (loop && loop.conversation.id === conv.id) return loop;
+  const born = epoch;
   loop = new EscobarLoop(conv, {
     transport: t,
     getState: (): AppState => state.value,
@@ -137,7 +154,7 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
     imageData,
     applyEffect,
     recordUsage,
-    persist,
+    persist: c => { if (born === epoch) persist(c); },
     onUpdate: v => { loopView.value = v; },
     onSafety: s => { if (!safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
   });
@@ -151,8 +168,10 @@ export async function send(input: SendInput): Promise<TurnResult> {
   pendingUser.value = { input, at: activeConversation.value?.messages.length ?? 0 };
   loopView.value = { status: 'thinking', text: '', preamble: [], activity: [], outcomes: [] };
   const l = await getLoop(mode);
+  const sentIn = epoch;
   if (!activeConversation.value?.messages.length) pendingUser.value = { input, at: 0 };
   const r = await l.send(input, mode);
+  if (sentIn !== epoch) return r;
   pendingUser.value = null;
   if (loopView.value.status !== 'idle') loopView.value = { ...loopView.value, status: 'idle' };
   lastTurn.value = { ...r, input };

@@ -50,7 +50,7 @@ export function Body() {
       <Card style={{ marginTop: 14 }} data-palace="body.map">
         <MuscleMap values={values} mode={mode} selected={selected} onSelect={m => setSelected(m)} />
         <div style={{ marginTop: 10 }}><MapLegend mode={mode} /></div>
-        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and only ever widens from your own history.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
+        <p class="hint" style={{ marginTop: 8 }}>Tap a muscle for details. {view === 'recovery' ? `Ready for hard work at ${READY_PCT}%, fully recovered at ${FULL_PCT}%. Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.` : view === 'week' ? 'Shading follows effective sets this week.' : 'Levels are a relative measure of how much you have trained each muscle. Not a medical measurement.'}</p>
         {view === 'recovery' && wholeBody && <p class="hint" style={{ marginTop: 4 }}>Whole body: recovering about {Math.round((wholeBody.systemicFactor - 1) * 100)}% slower than usual this week.</p>}
       </Card>
 
@@ -112,8 +112,9 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const s = state.value;
   usePalaceFocus('body.muscle', { muscle });
   const u = unit.value;
-  const r = recovery.value.find(x => x.muscle === muscle)!;
+  const r = recovery.value.find(x => x.muscle === muscle);
   const info = MUSCLE_BY_ID[muscle];
+  if (!info || !r) { queueMicrotask(onClose); return null; }
   const levels = trainingLevels(s.sessions, s.customExercises)[muscle];
   const direct = [...s.customExercises, ...LIBRARY].filter(e => e.primary.includes(muscle));
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));
@@ -130,7 +131,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
         {r.recovering && (
           <p class="small muted">
             {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
-            {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · widened from your own history' : ''}.
+            {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · adjusted to your own history' : ''}.
           </p>
         )}
         {r.drivers.length > 0 && <p class="hint">{r.drivers.map(d => d.text).join(' · ')}</p>}
@@ -153,15 +154,25 @@ function BodyFat() {
   const s = state.value;
   const [open, setOpen] = useState(false);
   const [sex, setSex] = useState<'male' | 'female'>(s.profile.sex ?? 'male');
-  const [height, setHeight] = useState(String(s.profile.heightCm ?? ''));
+  // RG-09: tape measurements in cm or inches (inches by default for lb users); stored in cm.
+  const [len, setLen] = useState<'cm' | 'in'>(s.preferences.weightUnit === 'lb' ? 'in' : 'cm');
+  const toShown = (cm: number | undefined) => (cm == null ? '' : String(len === 'in' ? Math.round((cm / 2.54) * 10) / 10 : cm));
+  const [height, setHeight] = useState(toShown(s.profile.heightCm));
   const [neck, setNeck] = useState('');
   const [waist, setWaist] = useState('');
   const [hip, setHip] = useState('');
+  const cm = (v: string) => { const n = parseFloat(v.replace(',', '.')); return Number.isFinite(n) ? (len === 'in' ? n * 2.54 : n) : NaN; };
+  const switchLen = (next: 'cm' | 'in') => {
+    if (next === len) return;
+    const conv = (v: string) => { const n = parseFloat(v.replace(',', '.')); return Number.isFinite(n) ? String(Math.round((next === 'in' ? n / 2.54 : n * 2.54) * 10) / 10) : v; };
+    setHeight(conv(height)); setNeck(conv(neck)); setWaist(conv(waist)); setHip(conv(hip)); setLen(next);
+  };
   const last = s.body[s.body.length - 1];
-  const result = navyBodyFat({ sex, heightCm: parseFloat(height), neckCm: parseFloat(neck), waistCm: parseFloat(waist), hipCm: parseFloat(hip) || undefined });
+  const result = navyBodyFat({ sex, heightCm: cm(height), neckCm: cm(neck), waistCm: cm(waist), hipCm: cm(hip) || undefined });
   const save = () => {
     if (result == null) return;
-    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: parseFloat(height) || x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: parseFloat(neck), waistCm: parseFloat(waist), hipCm: parseFloat(hip) || undefined, bodyFatPct: result }] }));
+    const r1 = (v: number) => Math.round(v * 10) / 10;
+    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: Number.isFinite(cm(height)) ? r1(cm(height)) : x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: r1(cm(neck)), waistCm: r1(cm(waist)), hipCm: Number.isFinite(cm(hip)) ? r1(cm(hip)) : undefined, bodyFatPct: result }] }));
     setOpen(false);
   };
   return (
@@ -173,11 +184,12 @@ function BodyFat() {
         <Sheet title="Body fat estimate" onClose={() => setOpen(false)}>
           <div class="stack">
             <Segmented value={sex} onChange={setSex} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} />
+            <Segmented value={len} onChange={switchLen} options={[{ value: 'cm', label: 'cm' }, { value: 'in', label: 'in' }]} />
             <div class="grid-2">
-              <Field label="Height (cm)"><input type="number" value={height} onInput={e => setHeight((e.target as HTMLInputElement).value)} /></Field>
-              <Field label="Neck (cm)"><input type="number" value={neck} onInput={e => setNeck((e.target as HTMLInputElement).value)} /></Field>
-              <Field label="Waist (cm)"><input type="number" value={waist} onInput={e => setWaist((e.target as HTMLInputElement).value)} /></Field>
-              {sex === 'female' && <Field label="Hip (cm)"><input type="number" value={hip} onInput={e => setHip((e.target as HTMLInputElement).value)} /></Field>}
+              <Field label={`Height (${len})`}><input type="text" inputMode="decimal" value={height} onInput={e => setHeight((e.target as HTMLInputElement).value)} /></Field>
+              <Field label={`Neck (${len})`}><input type="text" inputMode="decimal" value={neck} onInput={e => setNeck((e.target as HTMLInputElement).value)} /></Field>
+              <Field label={`Waist (${len})`}><input type="text" inputMode="decimal" value={waist} onInput={e => setWaist((e.target as HTMLInputElement).value)} /></Field>
+              {sex === 'female' && <Field label={`Hip (${len})`}><input type="text" inputMode="decimal" value={hip} onInput={e => setHip((e.target as HTMLInputElement).value)} /></Field>}
             </div>
             <Card class="card-quiet"><Stat value={result != null ? `${result}%` : '—'} label="estimated body fat" /></Card>
             <p class="hint">Typically within 3 to 4 points of lab methods. Not a medical measurement.</p>

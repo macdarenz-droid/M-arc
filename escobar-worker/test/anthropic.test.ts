@@ -59,16 +59,15 @@ describe('request assembly (§12.3)', () => {
     expect(p.thinking.block_binding).toEqual({ prefix_mismatch_behavior: 'drop_block' });
     expect(p.betas).toContain('thinking-binding-controls-2026-08-01');
   });
-  it('effort-change system messages add the mid-conversation output config beta', () => {
-    const b = body({ messages: [{ role: 'user', content: 'a' }, { role: 'system', content: [], output_config: { effort: 'high' } }] });
-    expect(P(b).betas).toContain('mid-conversation-output-config-2026-07-01');
+  it('never sends the mid-conversation output config beta (PL-06: effort-only system messages are refused)', () => {
+    expect(P(body()).betas).not.toContain('mid-conversation-output-config-2026-07-01');
   });
   it('models without system messages get <situation> blocks', () => {
     const p = P(body(), baseEnv({ MODEL: 'claude-sonnet-5' }));
     expect(p.messages).toHaveLength(1);
     expect(p.messages[0].content.at(-1).text).toBe('<situation>\nnow: tue 2026-09-22\n</situation>');
-    const folded = foldSystemMessages([{ role: 'user', content: 'a' }, { role: 'system', content: [] as never, output_config: { effort: 'low' } }]);
-    expect(folded).toEqual([{ role: 'user', content: 'a' }]);
+    const folded = foldSystemMessages([{ role: 'user', content: 'a' }, { role: 'system', content: 'b' }]);
+    expect(folded).toEqual([{ role: 'user', content: [{ type: 'text', text: 'a' }, { type: 'text', text: '<situation>\nb\n</situation>' }] }]);
   });
   it('mode budgets match §12.3', () => {
     expect(Object.fromEntries(Object.entries(MODE_CONFIG).map(([k, v]) => [k, v.maxTokens]))).toEqual({ chat: 16000, plan: 32000, live: 4000, brief: 3000, moment: 3000, summarize: 4000 });

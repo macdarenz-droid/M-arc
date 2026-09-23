@@ -122,8 +122,8 @@ const METHODS: Record<MethodId, Builder> = {
     };
   },
   warmup: () => ({
-    summary: `Before a main lift: ${WARMUP_PCTS.map((p, i) => `${Math.round(p * 100)}% × ${WARMUP_REPS[i]}`).join(', ')} of your trend strength estimate, snapped to loads the equipment has.`,
-    inputs: ['latest strength estimate for the lift', 'equipment profile'],
+    summary: `Before a main lift: ${WARMUP_PCTS.map((p, i) => `${Math.round(p * 100)}% × ${WARMUP_REPS[i]}`).join(', ')} of your first working set, snapped to loads the equipment has; a step at or above the working load is left out.`,
+    inputs: ['your first working set for the lift', 'equipment profile'],
     constants: Object.fromEntries(WARMUP_PCTS.flatMap((p, i) => [[`set${i + 1}Pct`, p], [`set${i + 1}Reps`, WARMUP_REPS[i]!]])),
     personal: {},
   }),

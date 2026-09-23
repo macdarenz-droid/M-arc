@@ -35,3 +35,35 @@ describe('muscleVolumeStatus (F3.2)', () => {
     expect(row.status).toBe('over');
   });
 });
+
+describe('muscleVolumeStatus judges completed weeks (BR-07)', () => {
+  const bench = 'lib_barbell_bench_press';
+  it('a Monday with nothing logged yet is not "under"', () => {
+    const last = ['2026-09-08', '2026-09-10', '2026-09-01', '2026-09-03'].map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 3) }]));
+    const chest = muscleVolumeStatus(last, '2026-09-14').find(r => r.muscle === 'chest')!;
+    expect(chest.thisWeekSets).toBe(0);
+    expect(chest.lastWeekSets).toBe(6);
+    expect(chest.status).toBe('in');
+  });
+  it('"under" needs two completed weeks below the band', () => {
+    const one = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 6) }])];
+    expect(muscleVolumeStatus(one, '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('in');
+    const two = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }])];
+    expect(muscleVolumeStatus(two, '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('under');
+  });
+  it('nothing in four weeks is unknown', () => {
+    expect(muscleVolumeStatus([], '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('unknown');
+  });
+});
+
+describe('effectiveSetsByMuscle (BR-16)', () => {
+  it('direct 1, secondary 0.5, stabiliser 0; easy optional', async () => {
+    const { effectiveSetsByMuscle } = await import('@/brain/exposure');
+    const s = [session('2026-09-15', [{ id: 'lib_barbell_bench_press', sets: [...sets(60, 8, 'easy', 2), ...sets(60, 8, 'ideal', 2)] }])];
+    const all = effectiveSetsByMuscle(s, '2026-09-14', '2026-09-21');
+    const hard = effectiveSetsByMuscle(s, '2026-09-14', '2026-09-21', [], { countEasy: false });
+    expect(all.chest).toBe(4);
+    expect(hard.chest).toBe(2);
+    expect(all.triceps).toBe(2);
+  });
+});

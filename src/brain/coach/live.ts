@@ -29,7 +29,11 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
   const step = historyCount >= 3 ? targetKg * 0.025 : 2.5;
   const equipment = input.equipment;
   const snap = (kg: number, dir: 'up' | 'down'): string => {
-    if (!equipment) return `${roundToStep(kg)} kg`;
+    if (!equipment) {
+      // BR-18: rounding can land back on the target (a 1.6 kg step on 64 kg); nudge a full 2.5.
+      const v = roundToStep(kg);
+      return `${Math.abs(v - targetKg) < 0.01 ? Math.max(0, targetKg + (dir === 'up' ? 2.5 : -2.5)) : v} kg`;
+    }
     const l = loadableNear(kg, equipment, dir);
     // Never "add load" to the same load: step to the next rung.
     const same = Math.abs(l.kg - targetKg) < 0.01;

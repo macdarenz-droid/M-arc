@@ -10,6 +10,10 @@ import { WORKER_POLICY } from './prompt/policy';
 import { renderManifest } from './prompt/manifest';
 import type { Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
+import type { QuotaCounter } from './quotaDO';
+import type { UpstreamRelay } from './upstreamRelay';
+
+export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: boolean }> }
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -17,8 +21,13 @@ export interface Env {
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
+  MAX_TURNS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
+  QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
+  /** Makes every Anthropic call from a US location (PL-20). Without it the call leaves from the edge. */
+  UPSTREAM?: DurableObjectNamespace<UpstreamRelay>;
   QUOTA?: KVNamespace;
-  RATE?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+  RATE?: RateLimiter;
+  RATE_IP?: RateLimiter;
 }
 
 export const DEFAULT_MODEL = 'claude-opus-5';
@@ -63,17 +72,16 @@ const PRESERVED_THINKING = new Set(['claude-opus-5-5', 'claude-fable-5-1', 'clau
 
 /**
  * For models without mid-conversation system messages: fold each system message into a
- * <situation> text block on the preceding user message. Effort-only system messages are dropped.
+ * <situation> text block on the preceding user message.
  */
 export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['messages'] {
   const out: TurnBody['messages'] = [];
   for (const m of messages) {
     if (m.role !== 'system') { out.push(m); continue; }
-    if (typeof m.content !== 'string') continue;
     const prev = out[out.length - 1];
     if (!prev || prev.role !== 'user') continue;
     const blocks = typeof prev.content === 'string' ? [{ type: 'text', text: prev.content }] : [...(prev.content as unknown[])];
-    blocks.push({ type: 'text', text: `<situation>\n${m.content}\n</situation>` });
+    blocks.push({ type: 'text', text: `<situation>\n${m.content as string}\n</situation>` });
     out[out.length - 1] = { ...prev, content: blocks };
   }
   return out;
@@ -87,7 +95,6 @@ export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boole
   const tools = body.mode === 'brief' ? READ_TOOLS : cfg.conversational ? TOOLS : null;
   const format = FORMATS[body.mode];
   const betas = ['server-side-fallback-2026-07-01'];
-  if (body.messages.some(m => m.role === 'system' && Array.isArray(m.content))) betas.push('mid-conversation-output-config-2026-07-01');
   const preserved = PRESERVED_THINKING.has(model);
   if (preserved) betas.push('thinking-binding-controls-2026-08-01');
   const params = {
@@ -132,7 +139,9 @@ export type SseEvent =
   | { t: 'refusal'; category: string | null }
   | { t: 'error'; code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 
-export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout';
+export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout';
+
+export const REGION_MESSAGE = "Escobar isn't available on this network right now. Try mobile data.";
 
 /** Maps SDK errors by type, never by message text (the one exception is the system-role probe below). */
 /** The API's own error text for a rejected request (no secrets in it), so a 400 can be diagnosed from the app or `wrangler tail`. */
@@ -149,7 +158,9 @@ export function mapError(err: unknown): { code: ErrorCode; message: string; retr
     const ra = Number(err.headers?.get?.('retry-after'));
     return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.', ...(Number.isFinite(ra) && ra > 0 ? { retryAfter: ra } : {}) };
   }
-  if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError) return { code: 'upstream_auth', message: 'The coach is not set up correctly.' };
+  // PL-20: Anthropic answers 403 by the caller's location; 401 is a bad key. Both keep the API's text.
+  if (err instanceof Anthropic.PermissionDeniedError) { const detail = errorDetail(err); return { code: 'upstream_region', message: REGION_MESSAGE, ...(detail ? { detail } : {}) }; }
+  if (err instanceof Anthropic.AuthenticationError) { const detail = errorDetail(err); return { code: 'upstream_auth', message: 'The coach is not set up correctly.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.UnprocessableEntityError || err instanceof Anthropic.NotFoundError) { const detail = errorDetail(err); return { code: 'invalid', message: 'The request was not accepted.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.APIError && err.status === 529) return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.' };
   if (err instanceof Anthropic.InternalServerError || err instanceof Anthropic.APIConnectionError || err instanceof Anthropic.APIError) return { code: 'upstream', message: 'The coach is unavailable right now.' };

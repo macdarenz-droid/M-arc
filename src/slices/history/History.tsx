@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { today, unit } from '@/app/selectors';
+import { plannedPerWeek, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
-import type { LoggedSet, Session } from '@/core/models';
+import type { AppState, LoggedSet, Session } from '@/core/models';
+import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
+import { parseDurationSec, parseReps } from '@/core/parse';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
@@ -16,6 +18,7 @@ import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
+import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 
 export function History() {
@@ -123,17 +126,27 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
+  // Every history edit relearns the recovery model from what is left (UI-12).
+  const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
     const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
-    update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
+    // An edit that leaves no sets is a delete, with its Undo (UI-24).
+    if (!cleaned.exercises.length) { remove(); return; }
+    update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();
   };
-  const remove = () => {
+  function remove() {
     const removed = session;
-    update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
-    showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
+    // Its heart series goes with it, and comes back with Undo (UI-14).
+    const series = getSeries(session.id);
+    update(s => withSessions(s, s.sessions.filter(x => x.id !== session.id)));
+    deleteSeries(session.id);
+    showToast('Session deleted', 'Undo', () => {
+      update(s => withSessions(s, sortByStart([...s.sessions, removed])));
+      if (series.length) storeSeries(removed.id, series);
+    });
     onClose();
-  };
+  }
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose} palace="history.session">
       <div class="stack">
@@ -144,8 +157,8 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
               {e.sets.map((st, si) => (
                 <div key={si} class="set-grid">
                   <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={st.entered?.unit ?? u} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
-                  {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseInt((ev.target as HTMLInputElement).value) || 0 })} />}
+                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={st.entered?.unit ?? u} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
+                  {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseReps((ev.target as HTMLInputElement).value) ?? 0 })} />}
                   <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
                 </div>
               ))}
@@ -165,8 +178,8 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
 function Stats() {
   const s = state.value;
   const u = unit.value;
-  const w = weekSummary(s.sessions, today.value, s.customExercises);
-  const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
+  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedPerWeek.value);
+  const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
   const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;

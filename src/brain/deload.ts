@@ -2,14 +2,15 @@
  * F3.3: when the coach should offer a lighter week, reactive only. Any one of:
  *  (a) two or more main lifts plateaued or declining,
  *  (b) effort drifting harder on two or more lifts while weekly volume keeps rising,
- *  (c) a muscle's weekly sets have run above its band for two weeks straight,
+ *  (c) a muscle's weekly sets have run above its band for two weeks straight, together with a
+ *      plateaued or declining active main lift (D9),
  *  (d) readiness has read red on three or more of the last five days.
  * `readinessHistory` is the band for each of the last 5 days (index 0 = today), as scored by
  * derive() in coach/rules.ts — this module only counts them, it doesn't compute readiness itself.
  */
 import type { Exercise, Session } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { exerciseHistory } from './history';
+import { exerciseHistory, isActive, modeOf } from './history';
 import { effortDrift } from './effort';
 import { plateauStatus } from './trend';
 import { weeklyMuscleSets } from './exposure';
@@ -31,12 +32,15 @@ function mainLiftIds(sessions: Session[], custom: Exercise[]): string[] {
 
 export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = []): DeloadSuggestion {
   const mainIds = mainLiftIds(sessions, custom);
-  const histories = mainIds.map(id => exerciseHistory(sessions, id, custom));
+  // Only lifts trained in the last six weeks count (BR-05).
+  const lifts = mainIds.map(id => ({ id, h: exerciseHistory(sessions, id, custom) })).filter(x => isActive(x.h, today));
+  const histories = lifts.map(x => x.h);
 
-  const plateauedOrDeclining = histories.filter(h => {
-    const status = plateauStatus(h).status;
+  const stalled = lifts.filter(({ id, h }) => {
+    const status = plateauStatus(h, modeOf(id, custom)).status;
     return status === 'plateaued' || status === 'declining';
-  }).length;
+  });
+  const plateauedOrDeclining = stalled.length;
   if (plateauedOrDeclining >= 2) {
     return { suggest: true, reason: 'Two or more main lifts have plateaued or slipped over recent sessions.' };
   }
@@ -54,8 +58,10 @@ export function deloadTrigger(sessions: Session[], today: string, custom: Exerci
     const [, hi] = volumeBands(levels[m].levelIndex, m);
     return (weekly[0]?.sets[m] ?? 0) > hi && (weekly[1]?.sets[m] ?? 0) > hi;
   });
-  if (overBandTwoWeeks) {
-    return { suggest: true, reason: 'At least one muscle has run above its usual weekly range for two weeks straight.' };
+  // D9: volume above the band has diminishing returns but no harm threshold, so on its own it
+  // is not a reason to back off; only together with a stalled active main lift.
+  if (overBandTwoWeeks && plateauedOrDeclining >= 1) {
+    return { suggest: true, reason: 'A muscle has run above its usual weekly range for two weeks while a main lift has stalled.' };
   }
 
   const redDays = readinessHistory.filter(b => b === 'red').length;

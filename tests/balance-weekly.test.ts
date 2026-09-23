@@ -56,3 +56,16 @@ describe('coach', () => {
     for (const i of insights) expect(i.action.length).toBeGreaterThan(10);
   });
 });
+
+describe('balance counts exercise sets, not muscles touched (BR-17)', () => {
+  it('bench, row and squat at 4 sets each is balanced', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')).toBeNull();
+  });
+  it('push with no pull is flagged', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')?.pair).toBe('push_pull');
+  });
+});

@@ -81,6 +81,10 @@ export interface SetHeart {
 }
 
 export interface LoggedSet {
+  /** Stable id (R2.8), created with the set in a live session and kept in history. Older sets have none. */
+  id?: string;
+  /** Live session only: draft until committed. Dropped when the session is finished. */
+  status?: 'draft' | 'committed' | 'skipped';
   kg?: number;
   reps?: number;
   effort?: Effort;
@@ -191,12 +195,14 @@ export interface RestState {
 }
 
 export interface ActiveSession {
+  /** Created at start and kept as the finished Session's id (R2.8). */
+  id?: string;
   splitId: string;
   startedAt: string;
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;
