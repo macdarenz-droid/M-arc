@@ -9,7 +9,7 @@ import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays } from '@/core/dates';
-import { recoveryStatus, type MuscleRecovery } from '../recovery';
+import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory } from '../history';
 import { plateauStatus } from '../trend';
 import { effortDrift } from '../effort';
@@ -308,8 +308,8 @@ export const RULES: Rule[] = [
   {
     id: 'consistency.week-grade',
     run: ctx => {
-      const week = weekSummary(ctx.sessions, ctx.today, ctx.custom);
-      if (week.workouts === 0 && ctx.sessions.length === 0) {
+      // No sessions at all means an empty week too; no need to summarise it (BR-32).
+      if (ctx.sessions.length === 0) {
         return [{ id: 'first-session', category: 'consistency', priority: 50, title: 'Start with one session', noticed: 'Nothing logged yet.', means: 'The coach learns from what you log. The first sessions are the baseline.', action: 'Pick a split, log a few sets, and rate the effort.' }];
       }
       return [];
@@ -480,9 +480,12 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
  */
 export function readinessSeries(ctx: CoachContext, days = 5): Array<ReadinessResult | null> {
   const out: Array<ReadinessResult | null> = [];
+  const base = { sessions: ctx.sessions, custom: ctx.custom, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel };
+  // Doses depend on the sessions, not on the day asked about: build them once (BR-23).
+  const doses = muscleDoses(base);
   for (let i = 0; i < days; i++) {
     const day = addDays(ctx.today, -i);
-    const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: new Date(`${day}T23:59:59`).getTime(), profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
+    const recovery = recoveryAt(doses, { ...base, now: new Date(`${day}T23:59:59`).getTime() });
     const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
     out.push(readiness({
       today: day, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),

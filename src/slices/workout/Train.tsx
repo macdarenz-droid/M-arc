@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { HeartBpm, PulseLine } from '@/ui/PulseLine';
 import { useReorder } from './reorder';
@@ -309,7 +309,6 @@ function LiveSession() {
     if (openId) setOpen(state.value.active?.entries.findIndex(e => e.exerciseId === openId) ?? -1);
   });
   useEffect(() => acquireTicker(), []);
-  const elapsed = elapsedSec(a, nowMs.value);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
 
@@ -317,7 +316,7 @@ function LiveSession() {
     <div class="view">
       {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
       <div class="topbar" data-palace="train.start">
-        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><h1 class="num">{formatClock(elapsed)}</h1><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
+        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><LiveClock a={a} /><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
         <div class="row">
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
@@ -343,7 +342,7 @@ function LiveSession() {
           <div class="stack">
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
             <div class="grid-3">
-              <div class="stat"><b class="num">{formatClock(elapsed)}</b><span>duration</span></div>
+              <div class="stat"><b class="num">{formatClock(elapsedSec(a))}</b><span>duration</span></div>
               <div class="stat"><b>{a.entries.filter(e => e.sets.some(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0)).length}</b><span>exercises</span></div>
               <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length, 0)}</b><span>sets</span></div>
             </div>
@@ -387,6 +386,11 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
   );
 }
 
+/** The only part of the live screen that reads the 1 s clock (UI-10), so the cards do not re-render every second. */
+function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
+  return <h1 class="num">{formatClock(elapsedSec(a, nowMs.value))}</h1>;
+}
+
 function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; entry: NonNullable<ReturnType<typeof active>>['entries'][number]; open: boolean; onToggle: () => void; onDone: () => void }) {
   const s = state.value;
   const u = unit.value;
@@ -395,11 +399,14 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const recoveryPct = recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value);
   const profile = profileFor(entry.exerciseId, s.active?.gymId ?? activeGymId());
   const eu = mode === 'weighted' ? profile.unit : u;
-  const next = suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile });
+  const gymId = s.active?.gymId;
+  const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, recoveryPct];
+  // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile }), memoDeps);
   const [menu, setMenu] = useState(false);
   const [plates, setPlates] = useState(false);
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
-  const best = mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null;
+  const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
   const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
   const flipGroup = () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, eu === 'kg' ? 'lb' : 'kg'); showToast(`${eu === 'kg' ? 'lb' : 'kg'} for all ${g} here`); } };
   const [subOpen, setSubOpen] = useState(false);
@@ -407,12 +414,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const isTimed = mode === 'duration';
   const firstSet = entry.sets[0];
   const firstTarget = next.sets[0];
-  const autoreg = ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
+  const autoreg = useMemo(() => (ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
     ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile })
-    : null;
-  const priorE1rm = ex?.role === 'main' && mode === 'weighted' ? exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).at(-1)?.bestE1rm ?? 0 : 0;
+    : null), memoDeps);
+  const priorE1rm = useMemo(() => (ex?.role === 'main' && mode === 'weighted' ? exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).at(-1)?.bestE1rm ?? 0 : 0), memoDeps);
   const warmup = priorE1rm > 0 ? warmupSets(priorE1rm, profile) : null;
   const [warmupOpen, setWarmupOpen] = useState(false);
+  const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: previousSet(s.sessions, entry.exerciseId, j, s.customExercises), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
 
@@ -446,9 +454,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           )}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{eu}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
-            const prev = previousSet(s.sessions, entry.exerciseId, j, s.customExercises);
+            const { prev, pr } = perSet[j]!;
             const target = next.sets[Math.min(j, next.sets.length - 1)];
-            const pr = !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises);
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''}`}>

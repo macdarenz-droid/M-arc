@@ -82,6 +82,11 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - src/core/parse.ts (parseLoad/Reps/DurationSec/Minutes; comma decimal; ranges). WeightInput type=text inputMode=decimal via parseLoad. Train reps/duration, History editor, TimeQuestion/PastSession durations use the parsers; Save disabled on missing day/time, bad duration, future past-session start; logPastSession null → toast.
 - New CommitNumber primitive (local text, commit on blur/Enter, range-checked): Profile + Onboarding birth year (1900..now−10) and height (100..250).
 - Split rename and gym rename commit on sheet close and Enter. Toast keeps onDismiss in a ref, deps [message, action]. Today Start → requestStart + go('train') (check-in/pre-session sheets). ≤380 px set-grid CSS.
-### Layer: notifications — done — IDs: UI-02, PL-09, RG-18 (test alert part)
+### Layer: notifications — done, commit f022161 — IDs: UI-02, PL-09, RG-18 (test alert part)
 - notifications.ts: cached exactOk from checkExactNotificationSetting (boot + resume); rest alert isExactNotification: exactOk; training reminders isExactNotification: false; requestExactAlarm only from a Settings tap. No USE_EXACT_ALARM.
 - Settings → Reminders (native only): "Precise rest alerts" row when not granted; "Test rest alert (5 s)".
+### Layer: performance — done — IDs: BR-23, UI-10, BR-32
+- recovery: systemicFactor memoised per day inside sessionMuscleDoses; muscleDoses() + recoveryAt() exported, recoveryStatus = recoveryAt(muscleDoses()); readinessSeries builds doses once.
+- history: exerciseHistory cached per (sessions array, custom array, id) in WeakMaps; returns a copy.
+- Train: LiveClock is the only nowMs reader on the live screen; EntryCard memoises suggestNext, best, autoreg, priorE1rm and per-set prev/PR (deps: sessions, custom, units, goal, gym, entry, today, readiness, deload, recoveryPct; never profile).
+- rules week-grade: sessions.length === 0 check without weekSummary.

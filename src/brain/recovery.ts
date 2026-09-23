@@ -134,7 +134,7 @@ export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], a
   return Math.min(SYSTEMIC_CAP, factor);
 }
 
-interface Dose { sessionId: string; muscle: MuscleId; at: number; day: string; A: number; tau: number; drivers: Array<{ text: string; hours: number }> }
+export interface Dose { sessionId: string; muscle: MuscleId; at: number; day: string; A: number; tau: number; drivers: Array<{ text: string; hours: number }> }
 
 /** Every session's per-muscle dose and time constant, chronological. Pure over plain data. */
 function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel): Record<MuscleId, Dose[]> {
@@ -143,6 +143,8 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
   const lastTopKg = new Map<string, number>();
   const lastMuscleTouch = new Map<MuscleId, number>();
   const sorted = [...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+  // systemicFactor depends on the time only through its day (BR-23): one evaluation per day.
+  const systemicByDay = new Map<string, number>();
 
   for (const session of sorted) {
     const at = new Date(session.logging?.trainedEndAt || session.endedAt || session.startedAt).getTime();
@@ -192,7 +194,9 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
       if (sessionTopKg > 0) lastTopKg.set(meta.id, sessionTopKg);
     }
 
-    const systemic = systemicFactor(healthDays, sorted, at);
+    const atDay = dayKey(new Date(at));
+    let systemic = systemicByDay.get(atDay);
+    if (systemic === undefined) { systemic = systemicFactor(healthDays, sorted, at); systemicByDay.set(atDay, systemic); }
     const trainingAge = trainingAgePrior(trainingAgeMonths(profile, sorted, at));
     const age = agePrior(ageOf(profile, at));
 
@@ -265,9 +269,21 @@ export interface RecoveryInputs {
   recoveryModel?: RecoveryModel;
 }
 
+export type MuscleDoses = Record<MuscleId, Dose[]>;
+
+/** The per-muscle doses for a session list: build once, then evaluate at several times with recoveryAt. */
+export function muscleDoses(input: RecoveryInputs): MuscleDoses {
+  const { sessions, custom = [], profile = { name: '' }, healthDays = [], recoveryModel = { tauScale: {}, observations: {} } } = input;
+  return sessionMuscleDoses(sessions, custom, profile, healthDays, recoveryModel);
+}
+
 export function recoveryStatus(input: RecoveryInputs): MuscleRecovery[] {
-  const { sessions, custom = [], now = Date.now(), profile = { name: '' }, healthDays = [], checkIns = [], freshMarks = [], recoveryModel = { tauScale: {}, observations: {} } } = input;
-  const doses = sessionMuscleDoses(sessions, custom, profile, healthDays, recoveryModel);
+  return recoveryAt(muscleDoses(input), input);
+}
+
+/** Recovery at `input.now` from doses already built for the same sessions. */
+export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRecovery[] {
+  const { sessions, now = Date.now(), healthDays = [], checkIns = [], freshMarks = [], recoveryModel = { tauScale: {}, observations: {} } } = input;
   const today = dayKey(new Date(now));
   const systemicNow = Math.round(systemicFactor(healthDays, sessions, now) * 100) / 100;
 
