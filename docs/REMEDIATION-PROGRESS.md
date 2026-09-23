@@ -174,7 +174,7 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Screenshot gate: Apply → Undo within the window ("Undone"); in a second theme Undo is gone after 8 s.
 - `npm run check`: 736 passed (+ perf 3) · `npm run test:tz`: 736 × 3 zones · worker `npm ci && npm run check`: 71 passed · `npm run build && npm run gate`: PASS.
 
-## Phase R5 — agent side done; device checks pending
+## Phase R5 — done (agent side); device checks pending
 ### Layer: native Java — commits f96f91c, 1st R5 native commit — IDs: PL-03, PL-04, VX-01, PL-08, PL-13, PL-15, PL-10, PL-16, RG-20 (D2)
 - Health Connect: results delivered on `callbackExecutor` (cached pool), never on the single `executor` blocked on the latch; today's steps and active calories from two aggregates (local midnight → now), kcal = small calories / 1000; sleep/HR stay on the 48 h read; diagnose total in kcal.
 - WatchBridge: startScan/stopScan/connect/disconnect/status/diagnostics run on the main thread; `DeviceScanner.scanning` volatile; one `watchDevices { devices }` event, throttled to 500 ms with a trailing emit; status emitted after the scan starts. WatchService: SecurityException / IllegalStateException on the FGS start → state `paused` with a reason.
@@ -197,3 +197,5 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Health Connect numbers vs the Health Connect app (steps, active kcal); no 20 s stall on sync.
 - Watch scan/connect stress; FGS start with Bluetooth denied shows "paused".
 - Back gesture on 3-button and gesture navigation; edge-to-edge bars on Android 15/16 per theme.
+### Layer: gate — done
+- `npm run check`: 755 passed · worker 71 passed · `npm run build && npm run gate`: PASS (incl. service worker offline reload and build-B carry-over).
