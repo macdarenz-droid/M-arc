@@ -90,3 +90,13 @@ export function mindsetForDay(dayOfYear: number): Cue | null {
   if (dayOfYear % 2 === 0 || !MINDSET_CUES.length) return null;
   return MINDSET_CUES[Math.floor(dayOfYear / 2) % MINDSET_CUES.length]!;
 }
+
+/**
+ * QA-R3b-7: the quote shown on the other (even) days. Counting only those days, one step per
+ * quote day, so every quote comes round; days since 1970 would share their parity with the
+ * day of the year and show only half of them.
+ */
+export function sparkIndexForDay(dayOfYear: number, year: number, count: number): number {
+  if (count <= 0) return 0;
+  return (Math.floor(dayOfYear / 2) + year * 7) % count;
+}

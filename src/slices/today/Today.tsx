@@ -10,7 +10,7 @@ import { usePalaceFocus } from '@/escobar/palace/focus';
 import { daysBetween, formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
-import { mindsetForDay } from '@/brain/coach/cues';
+import { mindsetForDay, sparkIndexForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { requestStart } from '../workout/Train';
 import { setDayOff } from './dayOff';
@@ -33,11 +33,10 @@ export function Today() {
   const ready = rec.filter(r => !r.recovering && r.lastTrainedAt).length;
   const w = week.value;
   const top = insights.value[0];
-  const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
-  const spark = SPARKS[dayIndex]!;
   // ST-17: on odd days of the year a mindset note takes the quote slot.
   const dayOfYear = daysBetween(`${today.value.slice(0, 4)}-01-01`, today.value) + 1;
   const mindset = mindsetForDay(dayOfYear);
+  const spark = SPARKS[sparkIndexForDay(dayOfYear, Number(today.value.slice(0, 4)), SPARKS.length)]!;
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
   // RG-19 (D4): a scheduled day taken off reads as its own state and counts as unscheduled.

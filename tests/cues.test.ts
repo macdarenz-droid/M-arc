@@ -25,3 +25,15 @@ describe('every coaching cue can be shown (ST-17)', () => {
     expect(mindsetForDay(3)?.kind).toBe('mindset');
   });
 });
+
+describe('daily quotes alongside mindset days (QA-R3b-7)', () => {
+  it('every quote shows within a year', async () => {
+    const { mindsetForDay, sparkIndexForDay } = await import('@/brain/coach/cues');
+    const { SPARKS } = await import('@/data/sparks');
+    for (const year of [2027, 2028]) {
+      const seen = new Set<number>();
+      for (let d = 1; d <= 365; d++) if (!mindsetForDay(d)) seen.add(sparkIndexForDay(d, year, SPARKS.length));
+      expect(seen.size).toBe(SPARKS.length);
+    }
+  });
+});

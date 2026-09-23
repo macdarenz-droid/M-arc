@@ -344,3 +344,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-6 (low)
 - A watch max older than 12 months still decays toward the age estimate but never below it, so heart zones no longer drop about 10 bpm on the day the reading turns a year old.
+
+### QA-R3b-7 (low)
+- Today's quote comes from `sparkIndexForDay`, which steps once per quote day (the even days of the year). Every quote now comes round within a year. With days since 1970, the parity was locked to the mindset days, so only half the quotes ever showed.
