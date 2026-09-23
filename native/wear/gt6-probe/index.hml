@@ -9,5 +9,6 @@
   </div>
   <text class="label">Live heart rate · Gate A</text>
   <text class="status">{{state}}</text>
+  <input class="start" type="button" value="Start HR" onclick="start" />
   <input class="stop" type="button" value="Stop HR" onclick="stop" />
 </div>
