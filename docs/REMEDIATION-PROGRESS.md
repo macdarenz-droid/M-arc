@@ -247,3 +247,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - The relay spreads turns over 8 objects (`us-0`…`us-7`, all `enam`) by device, instead of one.
 - Tests updated for the new contract (not loosened): the IP row now carries `steps`; the relay test expects the device's shard name.
 - Not changed, by decision: requests with no Origin and self-minted device ids (QA-R0-1 part 3). The plan drops signed device ids (D15); the IP /64 key and the steps cap are what limit rotation.
+### QA-R1-1, QA-R1-2, QA-R1-3 (medium)
+- Quarantine with storage full moves the unreadable raw (removes the source key first, then writes the `.corrupt` copy), so boot is flagged and the data survives.
+- `repairState` needs a session start time: a missing or malformed day is derived from it, and a session with neither is dropped (counted in `dropped`). Covers boot, restore and other-tab loads.

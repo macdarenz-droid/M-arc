@@ -220,3 +220,24 @@ describe('lb history backfill (RG-02)', () => {
     expect(S.loadState(st).state.sessions[0]!.exercises[0]!.sets[0]!.entered).toBeUndefined();
   });
 });
+
+describe('quarantine with storage nearly full (QA-R1-1)', () => {
+  it('moves the unreadable data aside instead of losing it, and flags the boot', async () => {
+    const bad = JSON.stringify({ version: 2, sessions: [{ id: 'old1' }] });
+    // Room for the two copies already stored and nothing more.
+    const cap = bad.length * 2 + 10;
+    const st = memoryStorage({ onSet: (k, v, map) => {
+      const used = [...map.entries()].reduce((n, [key, val]) => n + (key === k ? 0 : val.length), 0);
+      if (used + v.length > cap) throw quota();
+    } });
+    st.map.set('marc.state.v1', bad);
+    st.map.set('marc.state.v1.backup', bad);
+    const S = await fresh();
+    S.initStore(st);
+    expect(S.bootRecovered.value).toBe(true);
+    const kept = [...st.map.entries()].filter(([k]) => k.endsWith('.corrupt')).map(([, v]) => v);
+    expect(kept).toContain(bad);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'A' } })); S.flushSave();
+    expect([...st.map.values()].some(v => v.includes('old1'))).toBe(true);
+  });
+});

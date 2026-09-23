@@ -48,11 +48,22 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
   const splits = splitsIn.filter(sp => typeof sp.id === 'string');
   c.dropped += splitsIn.length - splits.length;
   const splitIds = new Set(splits.map(sp => sp.id));
-  const sessions = objects<Session>(raw.sessions, c).map(ses => ({
-    ...ses,
-    id: typeof ses.id === 'string' ? ses.id : newId('s'),
-    exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => ({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
-  }));
+  const sessionsIn = objects<Session>(raw.sessions, c);
+  // QA-R1-2/3: a session needs a start time; its day comes from it when missing. Without either it is dropped.
+  const sessions = sessionsIn.flatMap(ses => {
+    const start = typeof ses.startedAt === 'string' && Number.isFinite(Date.parse(ses.startedAt)) ? ses.startedAt : null;
+    const day = typeof ses.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ses.day) ? ses.day : start ? dayKey(new Date(start)) : null;
+    if (!day) return [];
+    return [{
+      ...ses,
+      day,
+      startedAt: start ?? `${day}T12:00:00.000Z`,
+      endedAt: typeof ses.endedAt === 'string' && Number.isFinite(Date.parse(ses.endedAt)) ? ses.endedAt : (start ?? `${day}T12:00:00.000Z`),
+      id: typeof ses.id === 'string' ? ses.id : newId('s'),
+      exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => ({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
+    }];
+  });
+  c.dropped += sessionsIn.length - sessions.length;
   sessions.sort((a, b) => (a.startedAt ?? '') < (b.startedAt ?? '') ? -1 : (a.startedAt ?? '') > (b.startedAt ?? '') ? 1 : 0);
   const schedule = { ...(isObj(raw.schedule) ? raw.schedule : {}) } as Record<Weekday, string | null>;
   for (const d of Object.keys(schedule) as Weekday[]) { const v = schedule[d]; schedule[d] = typeof v === 'string' && splitIds.has(v) ? v : null; }
@@ -172,14 +183,26 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 let lastGoodRaw: string | null = null;
 let storageListener: ((e: StorageEvent) => void) | null = null;
 
-/** Keeps an unreadable raw aside once; never overwrites an identical copy. */
-function quarantine(storage: Storagelike, key: string, raw: string): boolean {
+/**
+ * Keeps an unreadable raw aside once; never overwrites an identical copy. With storage full
+ * (QA-R1-1) it moves the raw instead: `from` is removed first, freeing exactly the room the copy
+ * needs. `from` is about to be overwritten anyway.
+ */
+function quarantine(storage: Storagelike, key: string, raw: string, from: string): boolean {
   try {
     if (storage.getItem(key) !== raw) storage.setItem(key, raw);
     return true;
   } catch (err) {
-    console.warn('could not keep a copy of unreadable data', err);
-    return false;
+    try {
+      storage.removeItem(from);
+      storage.setItem(key, raw);
+      return true;
+    } catch (moveErr) {
+      // Put it back where it was rather than lose it.
+      try { storage.setItem(from, raw); } catch { /* nothing more to do */ }
+      console.warn('could not keep a copy of unreadable data', err, moveErr);
+      return false;
+    }
   }
 }
 
@@ -192,8 +215,8 @@ export function initStore(storage: Storagelike = localStorage): void {
     let mainRaw: string | null = null;
     let backupRaw: string | null = null;
     try { mainRaw = storage.getItem(STATE_KEY); backupRaw = storage.getItem(BACKUP_KEY); } catch { /* unreadable storage */ }
-    if (mainRaw != null && quarantine(storage, CORRUPT_KEY, mainRaw)) recovered = true;
-    if (backupRaw != null && (loaded.source === 'fresh' || loaded.source === 'legacy') && quarantine(storage, CORRUPT_BACKUP_KEY, backupRaw)) recovered = true;
+    if (mainRaw != null && quarantine(storage, CORRUPT_KEY, mainRaw, STATE_KEY)) recovered = true;
+    if (backupRaw != null && (loaded.source === 'fresh' || loaded.source === 'legacy') && quarantine(storage, CORRUPT_BACKUP_KEY, backupRaw, BACKUP_KEY)) recovered = true;
   }
   lastGoodRaw = loaded.raw;
   batch(() => {

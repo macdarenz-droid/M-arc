@@ -75,3 +75,22 @@ describe('heart store round trip (UI-14, ST-21)', () => {
     expect(exportHeart()).toEqual({});
   });
 });
+
+import { repairState } from '@/core/store';
+import { recoveryStatus } from '@/brain/recovery';
+describe('sessions without a date (QA-R1-2, QA-R1-3)', () => {
+  it('a restored session missing its day gets it from its start; one with neither is dropped', () => {
+    const noDay = { ...session('s2', '2026-09-21T10:00:00.000Z'), day: undefined };
+    const noDates = { ...session('s3', '2026-09-21T10:00:00.000Z'), day: undefined, startedAt: undefined };
+    const b = parseBackup(JSON.stringify({ ...withSessions(), sessions: [session('s1', '2026-09-20T10:00:00.000Z'), noDay, noDates] }), NOW);
+    if (!('kind' in b) || b.kind !== 'v37') throw new Error('kind');
+    expect(b.dropped).toBe(1);
+    expect(b.state.sessions.map(s => [s.id, s.day])).toEqual([['s1', '2026-09-20'], ['s2', '2026-09-21']]);
+    // What Today reads must not throw on the restored state.
+    expect(() => recoveryStatus({ sessions: b.state.sessions, custom: [], now: NOW, profile: b.state.profile, healthDays: [], checkIns: [], freshMarks: [], recoveryModel: b.state.recoveryModel })).not.toThrow();
+  });
+  it('boot repair does the same', () => {
+    const out = repairState({ ...freshState(), sessions: [{ ...session('x', '2026-09-21T10:00:00.000Z'), day: 7 }] as never });
+    expect(out.state.sessions[0]!.day).toBe('2026-09-21');
+  });
+});
