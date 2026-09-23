@@ -68,6 +68,8 @@ export interface LoopDeps {
   online?(): boolean;
   /** Base64 of a photo kept in IndexedDB or memory. */
   imageData?(id: string): { mediaType: string; data: string } | null;
+  /** Photos the model now has; their base64 can leave memory (IndexedDB keeps the thumbnail). */
+  imagesSent?(ids: string[]): void;
   applyEffect?(e: MemoryEffect): void;
   recordUsage?(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number }): void;
   persist?(c: Conversation): void;
@@ -457,6 +459,8 @@ export class EscobarLoop {
 
   /** Marks every photo in finished turns as sent, so later requests carry a stub (§6.2). */
   markImagesSent(): void {
+    const ids = this.conversation.messages.flatMap(m => (m.role === 'user' ? m.content.flatMap(b => (b.type === 'image_ref' && !b.sent ? [b.id] : [])) : []));
+    if (ids.length) this.deps.imagesSent?.(ids);
     const msgs = this.conversation.messages.map(m => (m.role === 'user' && m.content.some(b => b.type === 'image_ref' && !b.sent) ? { ...m, content: m.content.map(b => (b.type === 'image_ref' ? { ...b, sent: true } : b)) } : m));
     this.conversation = { ...this.conversation, messages: msgs };
     this.save();

@@ -180,6 +180,30 @@ export function newConversation(appVersion: string, mode: ConversationMode = 'ch
   return { id: `c_${now.getTime().toString(36)}_${rand}`, createdAt: iso, updatedAt: iso, title: '', mode, messages: [], ledger: [], appVersion, protocol: 2 };
 }
 
+/**
+ * RG-03 (D6): the old single-thread chat (`coach.askThread`) as a text-only conversation.
+ * Leading assistant turns go, consecutive same-role turns merge. Null when nothing is usable.
+ */
+export function legacyConversation(askThread: unknown, appVersion: string, now = new Date()): Conversation | null {
+  if (!Array.isArray(askThread)) return null;
+  const turns: Array<{ role: 'user' | 'assistant'; text: string }> = [];
+  for (const t of askThread as unknown[]) {
+    if (!t || typeof t !== 'object') continue;
+    const { role, text, content } = t as { role?: unknown; text?: unknown; content?: unknown };
+    const body = (typeof text === 'string' ? text : typeof content === 'string' ? content : '').trim();
+    if ((role !== 'user' && role !== 'assistant') || !body) continue;
+    if (!turns.length && role === 'assistant') continue;
+    const last = turns[turns.length - 1];
+    if (last && last.role === role) last.text += `\n\n${body}`;
+    else turns.push({ role, text: body });
+  }
+  if (!turns.length) return null;
+  const messages: StoredMessage[] = turns.map(t => (t.role === 'user'
+    ? { role: 'user', content: [{ type: 'text', text: t.text }] }
+    : { role: 'assistant', content: [{ type: 'text', text: t.text }], meta: { rendered: { answer: t.text } } }));
+  return { ...newConversation(appVersion, 'chat', now), title: 'Earlier conversation', messages };
+}
+
 /** Appends messages to one conversation (append-only, §2.8), titling it from the first user line. */
 export function appendMessages(store: ConversationStore, conversationId: string, messages: StoredMessage[], now = new Date()): ConversationStore {
   return {

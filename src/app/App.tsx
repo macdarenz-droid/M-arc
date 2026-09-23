@@ -12,7 +12,7 @@ import { GoalSheet, ScheduleSheet, WeeklyReviewSheet } from '@/slices/coach/Coac
 import { CheckInSheet } from '@/slices/workout/Train';
 import { MuscleDetail } from '@/slices/body/Body';
 import { SessionEditor } from '@/slices/history/History';
-import { MemoryPlaceholder } from '@/escobar/ui/MemoryPlaceholder';
+import { MemoryScreen } from '@/escobar/ui/MemoryScreen';
 import { palaceAnnouncement } from '@/escobar/palace/navigate';
 import { installPalaceDevHooks } from '@/escobar/palace/dev';
 import { Dock } from '@/escobar/ui/Dock';
@@ -61,7 +61,7 @@ function Panels() {
     case 'schedule': return <ScheduleSheet onClose={close} />;
     case 'weekly-review': return <WeeklyReviewSheet onClose={close} />;
     case 'checkin': return <CheckInSheet onClose={close} onDone={close} />;
-    case 'memory': return <MemoryPlaceholder onClose={close} />;
+    case 'memory': return <MemoryScreen onClose={close} />;
     case 'muscle': return p.params?.muscle ? <MuscleDetail key={p.params.muscle} muscle={p.params.muscle as MuscleId} onClose={close} /> : null;
     case 'session': {
       const sess = state.value.sessions.find(x => x.id === p.params?.sessionId);

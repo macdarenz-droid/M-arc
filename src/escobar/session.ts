@@ -14,8 +14,8 @@ import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
-import { emptyStore, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
-import { imageData } from './images';
+import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
+import { evictImages, imageData } from './images';
 import { escobarUi, loopView, online, proxyUrlOf, quotaResetAt } from './state';
 import { PROTECTED_MEMORY } from './tools/executor';
 import { isPlanRequest } from './ui/prompts';
@@ -184,6 +184,7 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
     focus: () => currentFocus.value,
     online: () => (typeof navigator === 'undefined' || navigator.onLine !== false) && !(online.value === false && Date.now() < offlineUntil),
     imageData,
+    imagesSent: evictImages,
     applyEffect,
     recordUsage,
     persist: c => { if (born !== epoch) return; if (mine()) persist(c); else persistQuietly(c); },
@@ -242,7 +243,21 @@ export function escobarToHalf(): void { escobarUi.value = { ...escobarUi.value, 
 /** Settings or the first-run explainer: turning the online coach on is explicit (§20). */
 export function setEscobarEnabled(on: boolean, sharing?: { health: boolean; body: boolean }): void {
   update(s => ({ ...s, escobar: { ...s.escobar, enabled: on, ...(sharing ? { sharing } : {}) } }));
-  if (on) { ensureDeviceId(); offlineUntil = 0; checkOnline(); }
+  if (on) { importLegacyThread(); ensureDeviceId(); offlineUntil = 0; checkOnline(); }
+}
+
+/** RG-03: on first enable, the old coach chat becomes "Earlier conversation" (once). */
+function importLegacyThread(): void {
+  const s = state.value;
+  const askThread = (s as unknown as { coach?: { askThread?: unknown } }).coach?.askThread;
+  if (s.escobar.legacyImported || !Array.isArray(askThread)) return;
+  loadConversations();
+  const c = legacyConversation(askThread, APP_VERSION);
+  if (c) {
+    const next = upsertConversation(storeSig.value, c, false);
+    storeSig.value = saveStore(next) ?? next;
+  }
+  update(x => ({ ...x, escobar: { ...x.escobar, legacyImported: true } }));
 }
 
 export function closeEscobar(): void { escobarUi.value = { ...escobarUi.value, open: false, contextRef: null }; }

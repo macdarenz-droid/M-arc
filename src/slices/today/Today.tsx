@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
@@ -92,6 +92,8 @@ export function Today() {
 
       <ReadinessCard />
 
+      <Pins />
+
       <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
@@ -144,6 +146,16 @@ export function Today() {
       )}
     </div>
   );
+}
+
+/** Escobar's pinned cards, loaded only when there are some so Today's bundle stays small. */
+function Pins() {
+  const has = state.value.escobar.pins.length > 0;
+  const [Comp, setComp] = useState<null | (() => preact.JSX.Element | null)>(null);
+  useEffect(() => {
+    if (has && !Comp) void import('@/escobar/ui/PinnedCards').then(m => setComp(() => m.PinnedCards)).catch(() => { /* offline chunk: skip */ });
+  }, [has]);
+  return has && Comp ? <Comp /> : null;
 }
 
 const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
