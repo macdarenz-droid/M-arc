@@ -92,7 +92,7 @@ export function Body() {
                   <span class="small">{muscleLabel(r.muscle)}</span>
                   <div class="bar" style={{ marginTop: 4 }}>
                     <span class="range" style={{ left: `${(r.band[0] / scaleMax) * 100}%`, width: `${((r.band[1] - r.band[0]) / scaleMax) * 100}%` }} />
-                    <i style={{ width: `${(r.thisWeekSets / scaleMax) * 100}%`, background: r.status === 'over' ? 'var(--warning)' : r.status === 'under' ? 'var(--text-3)' : 'var(--positive)' }} />
+                    <i style={{ width: `${(r.thisWeekSets / scaleMax) * 100}%`, background: r.thisWeekSets > r.band[1] ? 'var(--warning)' : 'var(--positive)' }} />
                   </div>
                 </Row>
               );

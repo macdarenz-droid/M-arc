@@ -263,7 +263,9 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
   const status = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(m => (muscles ? muscles.includes(m.muscle) : m.status !== 'unknown'));
   const history = weeklyVolumeHistory(s.sessions, ctx.today, weeks, s.customExercises);
   return capJson({
-    muscles: status.map(m => ({ muscle: m.muscle, thisWeekSets: m.thisWeekSets, medianSets: m.medianSets, band: m.band, status: m.status })),
+    // QA-R3a-8: status is judged on completed weeks, so the week it was judged on goes with it.
+    muscles: status.map(m => ({ muscle: m.muscle, thisWeekSets: m.thisWeekSets, lastWeekSets: m.lastWeekSets, medianSets: m.medianSets, band: m.band, status: m.status })),
+    statusJudgedOn: 'the last completed week (over also when this week is already above the band)',
     weeks: history.map(w => ({ week: w.week, sessions: w.sessions, sets: w.sets, volumeKg: w.volumeKg })),
   }, 5000);
 }

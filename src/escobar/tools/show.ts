@@ -94,7 +94,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const muscles = Array.isArray(params.muscles) ? (params.muscles as string[]).filter(m => MUSCLE_IDS.includes(m as MuscleId)) as MuscleId[] : undefined;
       intIn(params.weeks, 1, 12, 1, 'weeks');
       const rows = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(r => (muscles?.length ? muscles.includes(r.muscle) : r.status !== 'unknown')).sort((a, b) => b.thisWeekSets - a.thisWeekSets).slice(0, 12);
-      return { bars: rows.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), sets: r.thisWeekSets, band: r.band, status: r.status })), empty: rows.length ? undefined : 'No sets logged this week yet.' };
+      return { bars: rows.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), sets: r.thisWeekSets, lastWeekSets: r.lastWeekSets, band: r.band, status: r.status })), empty: rows.length ? undefined : 'No sets logged this week yet.' };
     }
     case 'readiness_gauge': {
       const r = readinessToday(ctx);

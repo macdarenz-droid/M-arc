@@ -160,3 +160,15 @@ describe('read tool details', () => {
     expect(R.getInsights({}, e).insights).toBeDefined();
   });
 });
+
+describe('volume status carries the week it was judged on (QA-R3a-1, QA-R3a-8)', () => {
+  it('get_volume and volume_bars include last week next to this week', async () => {
+    const six = ctxOf(sixMonthsState());
+    const v = R.getVolume({}, six) as { muscles: Array<{ lastWeekSets?: number; thisWeekSets: number }>; statusJudgedOn: string };
+    expect(v.muscles.every(m => typeof m.lastWeekSets === 'number')).toBe(true);
+    expect(v.statusJudgedOn).toMatch(/last completed week/);
+    const { summarize } = await import('@/escobar/tools/show');
+    const bars = summarize('volume_bars', {}, six) as { bars: Array<{ lastWeekSets?: number }> };
+    expect(bars.bars.every(b => typeof b.lastWeekSets === 'number')).toBe(true);
+  });
+});
