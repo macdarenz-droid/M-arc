@@ -21,7 +21,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -654,13 +654,16 @@ export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClos
 function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: () => void; onStart: () => void }) {
   const s = state.value;
   const age = s.profile.birthYear ? new Date().getFullYear() - s.profile.birthYear : null;
-  // BR-08: the brief quotes the same target the set rows will show.
+  // BR-08: the brief quotes the same target the set rows will show, with today's plan change
+  // from Escobar applied (QA-R4a-5, QA-R4a-9).
+  const planned = todaySplit(split, s.escobar.todayOverride, today.value);
   const targetFor = (exerciseId: string) => {
     const equipment = profileFor(exerciseId, s.units.activeGymId);
-    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, split.exercises.find(x => x.exerciseId === exerciseId)?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment });
+    const se = planned.exercises.find(x => x.exerciseId === exerciseId);
+    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, se?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment, ...(se?.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
     return { kg: n.sets[0]?.kg ?? n.kg, target: n.target, equipment };
   };
-  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });
+  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split: planned, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });
   return (
     <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
       <div class="stack">

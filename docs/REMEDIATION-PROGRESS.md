@@ -350,3 +350,9 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-8 (low)
 - A plateau suggestion keeps the load, so its reason cue is "confirm" (repeatability), not "reduce".
+
+### QA-R4a-5, QA-R4a-9 (low, same root cause)
+- "Before you start" builds its brief from `todaySplit()`, the split with today's Escobar change applied. Removed exercises are not quoted, swapped-in ones are, and each target gets the same `loadFactor` as the set rows.
+
+### QA-R4a-10 (low)
+- `plannedExercises`: a swap to an exercise already in the split drops the one swapped out, so the session and the Splits preview have one entry per exercise.

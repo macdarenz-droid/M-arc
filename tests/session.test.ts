@@ -292,3 +292,19 @@ describe('a one-day Escobar change is not a template change (QA-R4a-4)', () => {
     expect(changedFromPlan(a(), split)).toBe(true);
   });
 });
+
+import { plannedExercises, todaySplit } from '@/slices/workout/session';
+describe("the brief uses today's plan change (QA-R4a-5, QA-R4a-9)", () => {
+  it('drops a removed exercise and carries the load change', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove' as const, exerciseId: 'lib_cable_fly' }, { kind: 'load' as const, exerciseId: 'lib_barbell_bench_press', factor: 0.9 }] };
+    const t = todaySplit(split, o, '2026-09-22');
+    expect(t.exercises).toEqual([{ exerciseId: 'lib_barbell_bench_press', sets: 2, loadFactor: 0.9 }]);
+    expect(todaySplit(split, o, '2026-09-23').exercises).toEqual(split.exercises);
+  });
+});
+describe('a swap to an exercise already in the split (QA-R4a-10)', () => {
+  it('leaves one entry, not two', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_cable_fly' }] };
+    expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(['lib_cable_fly']);
+  });
+});

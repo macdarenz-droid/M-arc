@@ -86,13 +86,19 @@ export function plannedExercises(split: Split, override: TodayOverride | null, t
   let list: Array<{ exerciseId: string; sets: number; loadFactor?: number }> = split.exercises.map(e => ({ ...e }));
   if (!override || override.day !== today || override.splitId !== split.id) return list;
   for (const c of override.changes) {
-    if (c.kind === 'swap') list = list.map(e => (e.exerciseId === c.from ? { ...e, exerciseId: c.to } : e));
+    // QA-R4a-10: a swap to an exercise already in the list just drops the one swapped out.
+    if (c.kind === 'swap') list = list.some(e => e.exerciseId === c.to) ? list.filter(e => e.exerciseId !== c.from) : list.map(e => (e.exerciseId === c.from ? { ...e, exerciseId: c.to } : e));
     else if (c.kind === 'remove') list = list.filter(e => e.exerciseId !== c.exerciseId);
     else if (c.kind === 'add') { if (!list.some(e => e.exerciseId === c.exerciseId)) list.push({ exerciseId: c.exerciseId, sets: c.sets }); }
     else if (c.kind === 'sets') list = list.map(e => (e.exerciseId === c.exerciseId ? { ...e, sets: c.sets } : e));
     else if (c.kind === 'load') list = list.map(e => (e.exerciseId === c.exerciseId ? { ...e, loadFactor: c.factor } : e));
   }
   return list;
+}
+
+/** QA-R4a-5/9: the split as it will run today, for the "Before you start" brief. */
+export function todaySplit(split: Split, override: TodayOverride | null, today = todayKey()): Omit<Split, 'exercises'> & { exercises: Array<{ exerciseId: string; sets: number; loadFactor?: number }> } {
+  return { ...split, exercises: plannedExercises(split, override, today) };
 }
 
 export function startSession(split: Split): void {
