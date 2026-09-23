@@ -320,6 +320,13 @@ export function replaceState(next: AppState): void {
   persistNow();
 }
 
+/** QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come back from it. */
+export function resetState(next: AppState): void {
+  lastGoodRaw = null;
+  try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
+  replaceState(next);
+}
+
 export function flushSave(): void {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
   persistNow();

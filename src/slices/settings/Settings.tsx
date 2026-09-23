@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { bootSource, deleteRescueCopy, flushSave, replaceState, rescueRaw, state, update } from '@/core/store';
+import { bootSource, deleteRescueCopy, flushSave, replaceState, resetState, rescueRaw, state, update } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
 import { Button, Card, Field, Row, Section, Sheet, Toggle } from '@/ui/primitives';
 import { THEMES, THEME_IDS } from '@/theme/themes';
@@ -49,7 +49,7 @@ function restoreAll(b: Snapshot): void {
 }
 
 function resetEverything(): void {
-  replaceState(freshState());
+  resetState(freshState());
   clearEscobarStore();
   clearHeart();
   void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});

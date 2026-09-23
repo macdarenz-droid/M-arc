@@ -291,3 +291,11 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - The lb backfill runs inside `repairState` (it sees the raw state), so restore gets it too.
 ### QA-R1-5 (low)
 - With both copies kept aside, the rescue file holds both (crash-screen rescue format), so 'Delete rescue copy' after saving loses nothing.
+### QA-R1-6 (low)
+- Panel params keep an exerciseId that is in the person's history even when the library no longer has it.
+
+### QA-R1-7 (low)
+- Reset everything goes through `resetState`, which drops the daily restore point before saving, so the wiped history cannot come back from it.
+
+### QA-R7-1 (medium)
+- `.effort` rows are 44 px tall, so a button's 44 px hit area no longer reaches into the next row. The gate checks the point just below each row's Max button in the effort repair sheet. (The CSS and gate lines landed in the QA-R1-4 commit by mistake.)

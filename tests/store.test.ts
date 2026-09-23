@@ -255,3 +255,17 @@ describe('rescue file with both copies kept (QA-R1-5)', () => {
     expect(raw).toContain('{truncated');
   });
 });
+
+describe('reset everything (QA-R1-7)', () => {
+  it('leaves no old history in the daily restore point', async () => {
+    const st = memoryStorage();
+    st.map.set('marc.state.v1', JSON.stringify(withSession(freshState(), 'old1', '2026-09-20T10:00:00.000Z')));
+    st.map.set('marc.state.v1.backupDay', '2026-09-21');
+    const S = await fresh();
+    S.initStore(st);
+    S.resetState(freshState());
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'A' } })); S.flushSave();
+    expect(st.map.get('marc.state.v1.backup') ?? '').not.toContain('old1');
+    expect(st.map.get('marc.state.v1') ?? '').not.toContain('old1');
+  });
+});
