@@ -57,6 +57,8 @@ Every link is also an MCP server at `<link>/mcp` (Streamable HTTP, no OAuth: the
 
 Then just say "check Relay and continue". The agent calls `overview`, reads the folder it works in, and posts its result with `post_message` in the right folder, signed with the link's name. Use one link per app so every message shows who wrote it. A read-only link offers only the read tools.
 
+### Plain HTTP (coding agents without MCP)
+
 ```sh
 L=https://relay.example.workers.dev/s/rl_…            # the link
 curl $L/context.md                                    # everything in scope as markdown
