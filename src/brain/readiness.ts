@@ -7,7 +7,7 @@
 import type { CheckIn, DailyHealth, Exercise, Session, Split } from '@/core/models';
 import type { MuscleId } from '@/data/muscles';
 import type { MuscleRecovery } from './recovery';
-import { avg, stddev, clamp, sessionRpeLoad } from './recovery';
+import { acuteChronicRatio, avg, stddev, clamp } from './recovery';
 import { daysBetween } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 
@@ -81,7 +81,7 @@ export interface ReadinessInput {
   healthDays: DailyHealth[];
   /** Today's check-in, if any. */
   checkIn?: CheckIn;
-  /** The last 14+ days of check-ins (today's included, if present), for z-scoring today's against the user's own distribution. */
+  /** Past check-ins. readiness() itself keeps only the 30 days before `today` (today excluded), so callers may pass the whole list (BR-03). */
   checkInHistory: CheckIn[];
   /** Recovery status for every muscle, from recoveryStatus() (6.11). */
   recovery: MuscleRecovery[];
@@ -101,7 +101,8 @@ function targetMuscles(split: Split | undefined, custom: Exercise[]): MuscleId[]
 interface Weighted { key: string; weight: number; score: number | null; }
 
 export function readiness(input: ReadinessInput): ReadinessResult | null {
-  const { today, healthDays, checkIn, checkInHistory, recovery, scheduledSplit, custom, sessions } = input;
+  const { today, healthDays, checkIn, recovery, scheduledSplit, custom, sessions } = input;
+  const checkInHistory = input.checkInHistory.filter(c => { const d = daysBetween(c.day, today); return d > 0 && d <= 30; });
   const baselines = readinessBaselines(healthDays, today);
   const muscles = targetMuscles(scheduledSplit, custom);
   const drivers: string[] = [];
@@ -186,13 +187,8 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
 
   // Acute load (0.05): 7-day session load vs the 28-day mean, reusing the same ATL/CTL pattern
   // as the systemic recovery factor (6.11/F2.4).
-  let loadScore: number | null = null;
-  const ctlSessions = sessions.filter(s => withinDays(s.day, today, 28));
-  if (ctlSessions.length >= 3) {
-    const atl = sessions.filter(s => withinDays(s.day, today, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
-    const ctl = ctlSessions.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
-    if (ctl > 0) loadScore = clamp(1 - Math.max(0, atl / ctl - 1) / 0.5, 0, 1);
-  }
+  const ratio = acuteChronicRatio(sessions, today);
+  const loadScore: number | null = ratio == null ? null : clamp(1 - Math.max(0, ratio - 1) / 0.5, 0, 1);
 
   const W = READINESS_WEIGHTS;
   const weighted: Weighted[] = [

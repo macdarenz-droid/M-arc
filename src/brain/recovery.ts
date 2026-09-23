@@ -102,6 +102,21 @@ function withinDaysOfSession(session: Session, atMs: number, days: number): bool
   return withinDays(session.day, atMs, days);
 }
 
+/**
+ * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
+ * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at
+ * least 14 days back. A fixed 28-day divisor would otherwise spike the ratio for a new account.
+ */
+export function acuteChronicRatio(sessions: Session[], refDay: string): number | null {
+  const ago = (day: string) => daysBetween(day, refDay);
+  const chronic = sessions.filter(s => { const d = ago(s.day); return d >= 0 && d < 28; });
+  if (chronic.length < 3 || Math.max(...chronic.map(s => ago(s.day))) < 14) return null;
+  const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
+  if (!(ctl > 0)) return null;
+  const atl = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
+  return atl / ctl;
+}
+
 /** Whole-body slowdown from multi-day sleep debt, resting-HR deviation and acute training load. Never from one bad night. Capped. */
 export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], atMs: number): number {
   let factor = 1.0;
@@ -118,19 +133,8 @@ export function systemicFactor(healthDays: DailyHealth[], sessions: Session[], a
     if (sd > 0 && Math.abs(avg(rhr7) - avg(rhr28)) / sd > SYSTEMIC_RHR_SD) factor *= SYSTEMIC_RHR_FACTOR;
   }
 
-  // A fixed 28-day divisor understates chronic load for a new account with little history, which
-  // would spike the ratio for reasons that have nothing to do with overreaching. Only trust it once
-  // training has actually spanned most of that window.
-  const ctlSessions = sessions.filter(s => within(s.day, 28));
-  const oldestCtlDaysAgo = ctlSessions.length ? Math.max(...ctlSessions.map(s => daysBetween(s.day, ref))) : 0;
-  if (ctlSessions.length >= 3 && oldestCtlDaysAgo >= 14) {
-    const atl = sessions.filter(s => within(s.day, 7)).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
-    const ctl = ctlSessions.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
-    if (ctl > 0 && atl / ctl > SYSTEMIC_LOAD_RATIO) {
-      const extra = clamp(1 + (atl / ctl - SYSTEMIC_LOAD_RATIO) * 0.5, 1.0, SYSTEMIC_LOAD_FACTOR_MAX);
-      factor *= extra;
-    }
-  }
+  const ratio = acuteChronicRatio(sessions, ref);
+  if (ratio != null && ratio > SYSTEMIC_LOAD_RATIO) factor *= clamp(1 + (ratio - SYSTEMIC_LOAD_RATIO) * 0.5, 1.0, SYSTEMIC_LOAD_FACTOR_MAX);
   return Math.min(SYSTEMIC_CAP, factor);
 }
 
@@ -321,7 +325,10 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
 
     const tReady = input.pctOnly ? null : solveHours(list, fRef, last.at, now, READY_PCT);
     const tFull = input.pctOnly ? null : solveHours(list, fRef, last.at, now, FULL_PCT);
-    const readyInHours: [number, number] | null = tReady == null ? null : [Math.round(tReady * 0.85 * 10) / 10, Math.min(READY_TO_HOURS_CAP, Math.round(tReady * 1.15 * 10) / 10)];
+    // solveHours counts from the last session; ready/full times are shown from now (BR-02).
+    const r1 = (x: number) => Math.round(x * 10) / 10;
+    const elapsedH = Math.max(0, (now - last.at) / 3_600_000);
+    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
 
@@ -336,7 +343,7 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
       recovering: pct < READY_PCT,
       ready: pct >= READY_PCT,
       readyInHours,
-      fullInHours: tFull == null ? null : Math.round(tFull * 10) / 10,
+      fullInHours: tFull == null ? null : r1(Math.max(0, tFull - elapsedH)),
       confidence: confidenceFor(observations),
       drivers: last.drivers,
       systemicFactor: systemicNow,

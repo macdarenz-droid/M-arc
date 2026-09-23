@@ -51,6 +51,17 @@ describe('recovery model v2 (impulse-response)', () => {
     expect(max.fullInHours!).toBeGreaterThan(max.windowHours);
   });
 
+  it('ready and full times count down from now, not from the session (BR-02)', () => {
+    const end = Date.parse('2026-09-10T18:00:00.000Z');
+    const sessions = steadyStateSessions(100, 8, 'max', 9, end);
+    const atEnd = statusFor(sessions, end);
+    const later = statusFor(sessions, end + 24 * HOUR);
+    expect(later.fullInHours!).toBeCloseTo(atEnd.fullInHours! - 24, 0);
+    expect(later.readyInHours![1]).toBeLessThan(atEnd.readyInHours![1]);
+    const ready = statusFor(sessions, end + 6 * DAY);
+    expect(ready.readyInHours).toBeNull();
+  });
+
   it('eight max-effort sets take noticeably longer to be ready than three (plan: ~75h for eight)', () => {
     const end = Date.parse('2026-09-10T18:00:00.000Z');
     const threeSets = statusFor(steadyStateSessions(100, 8, 'max', 9, end), end);

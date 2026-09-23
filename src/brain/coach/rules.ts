@@ -8,9 +8,9 @@
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf, daysBetween, addDays } from '@/core/dates';
+import { formatHours, weekdayOf, daysBetween, addDays, weekStart } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
-import { exerciseHistory } from '../history';
+import { exerciseHistory, isActive, modeOf } from '../history';
 import { plateauStatus } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
@@ -18,7 +18,7 @@ import { weekSummary, daysSinceLastSession } from '../weekly';
 import { weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
-import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
+import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
@@ -67,6 +67,8 @@ export interface CoachContext {
 interface Derived {
   recovery: MuscleRecovery[];
   exerciseIds: Array<{ id: string; name: string }>;
+  /** Lifts trained in the last six weeks (BR-05): progress and effort rules skip the rest. */
+  activeIds: Array<{ id: string; name: string }>;
   readiness: ReadinessResult | null;
 }
 
@@ -75,9 +77,11 @@ function derive(ctx: CoachContext): Derived {
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
   const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
   const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
+  const exerciseIds = [...names].map(([id, name]) => ({ id, name }));
   return {
     recovery,
-    exerciseIds: [...names].map(([id, name]) => ({ id, name })),
+    exerciseIds,
+    activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
     readiness: readiness({
       today: ctx.today, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
       checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
@@ -140,9 +144,9 @@ export const RULES: Rule[] = [
   {
     id: 'progress.declining',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist);
+        const p = plateauStatus(hist, modeOf(id, ctx.custom));
         if (p.status !== 'declining' || p.confidence === 'low') return [];
         return [{
           id: `decline:${id}`, category: 'progress' as const, priority: 320,
@@ -157,9 +161,9 @@ export const RULES: Rule[] = [
   {
     id: 'progress.plateau',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist);
+        const p = plateauStatus(hist, modeOf(id, ctx.custom));
         if (p.status !== 'plateaued' || p.confidence === 'low') return [];
         return [{
           id: `plateau:${id}`, category: 'progress' as const, priority: 300,
@@ -189,7 +193,7 @@ export const RULES: Rule[] = [
   {
     id: 'readiness.effort-drift',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const drift = effortDrift(exerciseHistory(ctx.sessions, id, ctx.custom));
         if (drift.confidence !== 'high' || drift.status === 'stable' || drift.status === 'unknown') return [];
         return drift.status === 'harder'
@@ -318,20 +322,24 @@ export const RULES: Rule[] = [
   {
     id: 'progress.plateau-lever',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const meta = findExercise(id, ctx.custom);
-        if (meta?.role !== 'main') return [];
+        if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        if (hist.length < 6) return [];
-        const t = e1rmTrend(hist.slice(-12));
-        if (t.direction === 'unknown' || t.confidence === 'low' || Math.abs(t.slopePerWeek) >= 0.015) return [];
+        // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
+        const recent = hist.filter(h => daysBetween(h.day, ctx.today) <= 56);
+        if (recent.length < 6) return [];
+        const t = e1rmTrend(recent);
+        // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
+        if (!flatOver(recent)) return [];
         const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
         if (recentSessions.length < 6) return [];
 
         const primaryMuscle = meta.primary[0];
-        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, ctx.today, ctx.custom)[primaryMuscle] ?? 0) : 0;
+        // The last completed week (BR-07): this week is still being trained.
+        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, addDays(weekStart(ctx.today), -1), ctx.custom)[primaryMuscle] ?? 0) : 0;
         const fShare = failureShare(recentSessions);
-        const stale = isStale(hist);
+        const stale = isStale(hist, ctx.today);
 
         let lever: { means: string; action: string } | null = null;
         if (weekSets < 10) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
@@ -340,19 +348,19 @@ export const RULES: Rule[] = [
         if (!lever) return [];
 
         return [{
-          id: `plateau-lever:${id}`, category: 'progress', priority: 230, cadence: 'now', kind: 'plan', exerciseId: id,
+          id: `plateau-lever:${id}`, category: 'progress', priority: 305, cadence: 'now', kind: 'plan', exerciseId: id,
           title: `${name}: flat for a while, most likely lever`,
           noticed: `${name} has not moved over recent sessions.`,
           means: lever.means,
           action: lever.action,
-          evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: t.confidence },
+          evidence: { n: recent.length, window: `${recent.length} sessions`, confidence: t.confidence },
         }];
       }),
   },
   {
     id: 'readiness.effort-calibration',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
         if (hist.length < 2) return [];
         const obs = rirObservations(hist);
@@ -467,9 +475,17 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
     return !meta?.primary.some(m => recovering.has(m));
   });
   const seen = new Set<string>();
+  // BR-27: one progress insight per lift, the highest-priority one.
+  const progressFor = new Set<string>();
   return filtered
     .sort((a, b) => b.priority - a.priority)
     .filter(i => { if (seen.has(i.id)) return false; seen.add(i.id); return true; })
+    .filter(i => {
+      if (i.category !== 'progress' || !i.exerciseId) return true;
+      if (progressFor.has(i.exerciseId)) return false;
+      progressFor.add(i.exerciseId);
+      return true;
+    })
     .slice(0, limit);
 }
 

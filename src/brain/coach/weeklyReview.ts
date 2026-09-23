@@ -10,7 +10,7 @@ import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
-import { exerciseHistory, type ExerciseSessionSummary } from '../history';
+import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
 import { trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import type { Insight } from './rules';
@@ -85,14 +85,24 @@ export function expectedMonthlyRatePct(trainingAgeMonths: number | null): [numbe
   return [0.2, 0.5];
 }
 
-/** True once a lift's load, effort and e1RM trend have not moved for `weeks` weeks. */
-export function isStale(hist: ExerciseSessionSummary[], weeks = 6): boolean {
-  const recent = hist.slice(-weeks);
+/**
+ * Flat means the e1RM moved less than 1.5% in total over the window (BR-04): the fitted
+ * weekly slope times the weeks the window spans, not the weekly slope alone.
+ */
+export function flatOver(recent: ExerciseSessionSummary[]): boolean {
+  if (recent.length < 2) return false;
+  const t = e1rmTrend(recent);
+  const spanWeeks = daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) / 7;
+  return t.direction !== 'unknown' && Math.abs(t.slopePerWeek * spanWeeks) < 0.015;
+}
+
+/** True once a lift's load, effort and e1RM have not moved over the last `weeks` weeks, with a session in most of them. */
+export function isStale(hist: ExerciseSessionSummary[], today: string, weeks = 6): boolean {
+  const recent = hist.filter(h => daysBetween(h.day, today) <= weeks * 7);
   if (recent.length < weeks) return false;
   const sameLoad = new Set(recent.map(r => r.topKg)).size <= 1;
   const effortOk = recent.every(r => r.hasMax || r.effortCoverage > 0);
-  const t = e1rmTrend(recent);
-  return sameLoad && effortOk && t.direction !== 'unknown' && Math.abs(t.slopePerWeek) < 0.015;
+  return sameLoad && effortOk && flatOver(recent);
 }
 
 /** Rolling adherence over the last `days` days: planned days done / planned days that have passed. */
@@ -227,7 +237,9 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   // e1RM trend and progress vs training age, and staleness, per exercise the user actually does
   for (const { id, name } of exerciseIds) {
     const hist = exerciseHistory(sessions, id, custom);
-    if (hist.length < 4) continue;
+    if (hist.length < 4 || !isActive(hist, today)) continue;
+    // e1RM says nothing for assisted, body-weight or timed work (BR-06).
+    if (modeOf(id, custom) !== 'weighted') continue;
     const t = e1rmTrend(hist);
     if (t.direction === 'unknown') continue;
     const meta = findExercise(id, custom);
@@ -259,7 +271,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
       }
     }
 
-    if (isStale(hist)) {
+    if (isStale(hist, today)) {
       out.push({
         id: `weekly:stale:${id}`, category: 'progress', priority: 160, cadence: 'weekly', kind: 'tip', exerciseId: id,
         title: `${name}: same load for weeks`,

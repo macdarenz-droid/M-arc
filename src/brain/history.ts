@@ -52,6 +52,13 @@ export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[])
 }
 
 const NO_CUSTOM: Exercise[] = [];
+
+/** A lift counts as active while it was trained in the last six weeks (BR-05). */
+export const ACTIVE_LIFT_DAYS = 42;
+export function isActive(hist: ExerciseSessionSummary[], today: string): boolean {
+  const last = hist[hist.length - 1];
+  return !!last && daysBetween(last.day, today) <= ACTIVE_LIFT_DAYS;
+}
 /**
  * Results per sessions array and custom list (UI-10): state updates replace the arrays, so an
  * identity hit is always current. Callers get a copy, so sorting or reversing it is safe.

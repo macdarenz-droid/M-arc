@@ -90,3 +90,20 @@ describe('readinessSummaryText (F3.8)', () => {
     expect(readinessSummaryText({ score: 20, band: 'red', confidence: 'high', loadAdvice: 'reduce', drivers: [], calibrating: false })).toBe('Readiness: red (20). Ease off today.');
   });
 });
+
+describe('readiness windows (BR-03, BR-19)', () => {
+  const ci = (d: string, mood: 1 | 2 | 3 | 4 | 5): CheckIn => ({ day: d, mood, sleepQuality: 3 });
+  it('only the 30 days before today count as check-in history', () => {
+    const recent = [1, 2, 3, 4].map(o => ci(day(o), 3));
+    const stale = [40, 41, 42, 43, 44].map(o => ci(day(o), 5));
+    const withStale = readiness({ ...baseInput, checkIn: ci(today, 4), checkInHistory: [...recent, ...stale, ci(today, 1)] })!;
+    const clean = readiness({ ...baseInput, checkIn: ci(today, 4), checkInHistory: recent })!;
+    expect(withStale.score).toBe(clean.score);
+  });
+  it('the load part stays out until training spans 14 of the last 28 days', () => {
+    const young = [1, 3, 5].map(o => session(day(o), [{ id: 'lib_barbell_back_squat', sets: sets(100, 8, 'max', 5) }]));
+    expect(readiness({ ...baseInput, sessions: young })).toBeNull();
+    const spanned = [1, 3, 5, 20].map(o => session(day(o), [{ id: 'lib_barbell_back_squat', sets: sets(100, 8, 'max', 5) }]));
+    expect(readiness({ ...baseInput, sessions: spanned })).not.toBeNull();
+  });
+});

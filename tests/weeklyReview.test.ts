@@ -42,11 +42,16 @@ describe('isStale', () => {
   it('flags 6 sessions at the same load with no e1RM movement', () => {
     const days = ['2026-08-03', '2026-08-06', '2026-08-10', '2026-08-13', '2026-08-17', '2026-08-20'];
     const hist = days.map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 3) }]));
-    expect(isStale(exerciseHistory(hist, bench))).toBe(true);
+    expect(isStale(exerciseHistory(hist, bench), '2026-08-21')).toBe(true);
+  });
+  it('only looks at the last six weeks, and needs six sessions in them (BR-04)', () => {
+    const days = ['2026-08-03', '2026-08-06', '2026-08-10', '2026-08-13', '2026-08-17', '2026-08-20'];
+    const hist = exerciseHistory(days.map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 3) }])), bench);
+    expect(isStale(hist, '2026-09-20')).toBe(false);
   });
   it('does not flag a lift with too little history', () => {
     const hist = exerciseHistory([session('2026-09-01', [{ id: bench, sets: sets(60, 8) }])], bench);
-    expect(isStale(hist)).toBe(false);
+    expect(isStale(hist, '2026-09-02')).toBe(false);
   });
 });
 
