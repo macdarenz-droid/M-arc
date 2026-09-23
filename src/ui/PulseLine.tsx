@@ -1,7 +1,7 @@
 /**
  * The live heart line (owner's pick "E, layered trace"): a thin heartbeat trace across the top
- * of the screen, a sharp line over a blurred copy with a faint echo behind, and a top edge that
- * brightens on each beat. `HeartBpm` is the number beside it; both share one beat clock through
+ * of the screen, a sharp line over a blurred copy with a faint echo behind (no beating edge:
+ * the owner asked for the trace only). `HeartBpm` is the number beside it; both share one beat clock through
  * the `--pulse-beat` CSS variable. Colours come from the theme's `--accent`, so all five themes
  * follow. Under reduced motion the trace is drawn once and nothing beats.
  */
@@ -70,7 +70,6 @@ export function PulseLine({ bpm }: { bpm: number }) {
   return (
     <div class="pulse-line" aria-hidden="true">
       <canvas ref={canvas} />
-      <div class="pulse-edge" />
     </div>
   );
 }
