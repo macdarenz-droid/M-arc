@@ -87,12 +87,16 @@ function agePrior(age: number | null): number {
 }
 
 /** Session-RPE proxy load (no heart rate needed): effort-weighted minutes. */
+/** Sessions are never mutated in place (every edit makes a new object), so the load is remembered per object. */
+const rpeLoadCache = new WeakMap<Session, number>();
 export function sessionRpeLoad(session: Session): number {
+  const hit = rpeLoadCache.get(session);
+  if (hit !== undefined) return hit;
   const sets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet);
-  if (!sets.length) return 0;
   const weight = { easy: 4, ideal: 7, max: 10 } as const;
-  const avgWeight = avg(sets.map(s => weight[effortLabel(s) ?? 'ideal']));
-  return avgWeight * (session.durationSec / 60);
+  const load = sets.length ? avg(sets.map(s => weight[effortLabel(s) ?? 'ideal'])) * (session.durationSec / 60) : 0;
+  rpeLoadCache.set(session, load);
+  return load;
 }
 
 /**
@@ -313,7 +317,10 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     }
 
     const fRef = fRefFor(list, now);
-    let pct = pctAt(list, fRef, now, last.at);
+    // Every time evaluated below is now or later, so doses older than the lookback never count:
+    // drop them once instead of in each of the ~80 bisection steps.
+    const recent = list.filter(d => d.at >= now - IMPULSE_LOOKBACK_DAYS * 86_400_000);
+    let pct = pctAt(recent, fRef, now, last.at);
 
     // Soreness caps today's pct; it never raises it, and no soreness never implies ready either.
     const todaySoreness = checkIns.find(c => c.day === today)?.soreness?.[muscle];
@@ -321,8 +328,8 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     if (todaySoreness != null && todaySoreness >= SORENESS_CAP_MIN_RATING) pct = Math.min(pct, SORENESS_CAP_PCT);
     const soreToday = pct < modelPct && pct < READY_PCT;
 
-    const tReady = input.pctOnly ? null : solveHours(list, fRef, last.at, now, READY_PCT);
-    const tFull = input.pctOnly ? null : solveHours(list, fRef, last.at, now, FULL_PCT);
+    const tReady = input.pctOnly ? null : solveHours(recent, fRef, last.at, now, READY_PCT);
+    const tFull = input.pctOnly ? null : solveHours(recent, fRef, last.at, now, FULL_PCT);
     // solveHours counts from the last session; ready/full times are shown from now (BR-02).
     const r1 = (x: number) => Math.round(x * 10) / 10;
     const elapsedH = Math.max(0, (now - last.at) / 3_600_000);

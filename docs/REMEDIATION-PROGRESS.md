@@ -444,3 +444,9 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R7-5 (low)
 - Plan R7.4 kept lb display at 0.1. That stays for everything off the quarter-pound grid. A value that lands on .25 or .75 lb (1.25 lb add-ons) keeps its two decimals, so 26.25 lb no longer shows as 26.3 and warm-up ramps don't round one step up and the next down. Typed values still convert back exactly.
+
+### Perf headroom (follow-up to the QA-R4b-9 note)
+- `npm run check` failed once on `recoveryStatus(600)` at 60.4 ms against its 60 ms budget. The budget stays as it is. The code got faster instead:
+  - `sessionRpeLoad` is remembered per session object (sessions are never mutated), so the per-day acute:chronic windows stop recomputing it about 40 times per session.
+  - `recoveryAt` drops doses older than the lookback once, before the bisection.
+- `recoveryStatus(600)` now takes 30–33 ms, down from 53–60, and the dose build 29 ms, down from 56.
