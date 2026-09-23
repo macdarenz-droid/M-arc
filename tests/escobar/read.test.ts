@@ -65,6 +65,23 @@ describe('read tool details', () => {
     expect(() => R.getExerciseHistory({ exerciseId: 'lib_nope' }, six)).toThrow(/search_exercises/);
     expect(() => R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 60 }, six)).toThrow(/between 1 and 52/);
   });
+  it('exercise history is newest first, and capping drops the oldest (ES-01)', () => {
+    const full = R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 12 }, six);
+    const days = full.sessions.map(x => x.day);
+    expect(days).toEqual([...days].sort().reverse());
+    const long = R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 52 }, six);
+    const newest = sixMonthsState().sessions.filter(x => x.exercises.some(e => e.exerciseId === 'lib_barbell_bench_press')).at(-1)!.day;
+    expect(long.sessions[0]!.day).toBe(newest);
+    expect(JSON.stringify(long).length).toBeLessThanOrEqual(6200);
+  });
+  it('capJson drops from the chosen end', () => {
+    const data = { rows: Array.from({ length: 200 }, (_, i) => ({ i, pad: 'x'.repeat(20) })) };
+    const end = R.capJson(data, 1000);
+    const start = R.capJson(data, 1000, { dropFrom: 'start' });
+    expect(end.rows[0]!.i).toBe(0);
+    expect(start.rows.at(-1)!.i).toBe(199);
+    expect(start.rows[0]!.i).toBeGreaterThan(0);
+  });
   it('next target includes a warm-up for main lifts and the equipment unit', () => {
     const lb = sixMonthsState();
     lb.units.byExercise.gym_default = { lib_barbell_bench_press: { unit: 'lb', barKg: 20.412, plates: [45, 35, 25, 10, 5, 2.5], source: 'user', updatedAt: '' } };

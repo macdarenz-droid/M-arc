@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { summarize } from '@/escobar/tools/show';
+import { sampleEvenly, summarize } from '@/escobar/tools/show';
+import { exerciseHistory } from '@/brain/history';
 import { SHOW_COMPONENT_IDS } from '@/core/models';
 import { ctxOf, sixMonthsState, emptyState, NOW } from './fixtures';
 import { PPL6 } from '../fixtures/plans';
@@ -34,6 +35,22 @@ describe('show component summaries (§9)', () => {
     expect(s.first).toBe(s.points[0]!.value);
     expect(s.last).toBe(s.points.at(-1)!.value);
     expect(s.best).toBe(Math.max(...s.points.map(p => p.value)));
+  });
+  it('lift trend over a long window: first, last and best from all of it, 12 points spread evenly (ES-15)', () => {
+    const s = summarize('lift_trend', { exerciseId: 'lib_barbell_bench_press', weeks: 52 }, six) as { points: Array<{ day: string; value: number }>; first: number; last: number; best: number };
+    const hist = exerciseHistory(six.state.sessions, 'lib_barbell_bench_press');
+    expect(hist.length).toBeGreaterThan(12);
+    expect(s.points).toHaveLength(12);
+    expect(s.points[0]!.day).toBe(hist[0]!.day);
+    expect(s.points.at(-1)!.day).toBe(hist.at(-1)!.day);
+    expect(s.first).toBe(s.points[0]!.value);
+    expect(s.last).toBe(s.points.at(-1)!.value);
+    expect(s.best).toBe(Math.max(...hist.map(h => Math.round((h.bestE1rm || h.topKg) * 10) / 10)));
+  });
+  it('sampleEvenly keeps both ends and spreads the rest', () => {
+    expect(sampleEvenly([1, 2, 3], 12)).toEqual([1, 2, 3]);
+    const xs = Array.from({ length: 23 }, (_, i) => i);
+    expect(sampleEvenly(xs, 12)).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]);
   });
   it('compare periods reports a delta', () => {
     const s = summarize('compare_periods', PARAMS.compare_periods!, six) as { a: { value: number }; b: { value: number }; delta: number };

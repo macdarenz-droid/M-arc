@@ -34,6 +34,8 @@ describe('knowledge cards (§16.1)', () => {
   it('search ranks the obvious card first', () => {
     expect(searchCards('how much protein should I eat')[0]!.id).toBe('protein_intake');
     expect(searchCards('how many hours of sleep')[0]!.id).toBe('sleep_duration');
+    // ES-31: tags match whole words ('cut' is not in 'cutlery', 'age' not in 'garages').
+    expect(searchCards('cutlery garages')).toEqual([]);
     expect(searchCards('is creatine worth it')[0]!.id).toBe('creatine');
     expect(searchCards('plates on the bar in pounds')[0]!.id).toBe('units_and_plates');
     expect(searchCards('')).toEqual([]);

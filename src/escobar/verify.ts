@@ -150,7 +150,7 @@ export type SafetySignal = 'crisis' | 'pain_mentioned' | 'medical' | 'disordered
  * ES-14: "end it after 3 sets" and "I hurt myself on squats" are not crises; ongoing self-harm
  * ("I've been hurting myself") still is.
  */
-const CRISIS = /\b(kill(ing)? myself|suicid\w*|end my life|end it all|want to die|don'?t want to (live|be here)|self[- ]?harm|(want|going|trying) to hurt myself|harm(ing)? myself|hurt(ing)? myself on purpose|(been|keep|kept|started) hurting myself(?!\s+(on|at|during|doing|with|in|lifting|squatting|benching|training))|no reason to live|better off dead)\b/i;
+const CRISIS = /\b(kill(ing)? myself|suicid\w*|end my life|end it all|want to die|don'?t want to (live|be here)|self[- ]?harm\w*|(want|going|trying) to hurt myself|harm(ing)? myself|hurt(ing)? myself on purpose|(been|keep|kept|started) hurting myself(?!\s+(on|at|during|doing|with|in|lifting|squatting|benching|training))|no reason to live|better off dead)\b/i;
 const MEDICAL = /\b(chest pain|chest (hurts|tight)|faint(ed|ing)?|passed out|black(ed)? out|dizz(y|iness)|heart (racing|palpitations)|palpitations|can'?t breathe)\b/i;
 const PAIN = /\b(sharp pain|shooting pain|stabbing|numb(ness)?|tingl\w*|pins and needles|radiat\w*|pain|hurts?|injur\w*|strain(ed)?|sprain(ed)?|tweak(ed)?|pulled (a|my))\b/i;
 const EATING = /\b(starv\w*|not eating|stop(ped)? eating|purg\w*|throw(ing)? up after|binge\w*|500 calories|800 calories|lose \d{2,} ?(kg|lb|pounds|kilos) in (a|one|two|\d) (week|month)|laxatives?|skip(ping)? (all )?meals|burn off (what|everything) i ate)\b/i;

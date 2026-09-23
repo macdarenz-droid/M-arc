@@ -201,12 +201,15 @@ describe('agent loop (§13)', () => {
   });
 
   it('photos are sent once, then as a stub', async () => {
-    const { loop, transport } = setup([answer('A rack.'), answer('Ok.')], { imageData: id => (id === 'img1' ? { mediaType: 'image/jpeg', data: 'QUJD' } : null) });
+    const evicted: string[] = [];
+    const { loop, transport } = setup([answer('A rack.'), answer('Ok.')], { imageData: id => (id === 'img1' ? { mediaType: 'image/jpeg', data: 'QUJD' } : null), imagesSent: ids => evicted.push(...ids) });
     await loop.send({ text: 'what is this', images: [{ type: 'image_ref', id: 'img1', mediaType: 'image/jpeg', description: 'dumbbell rack' }] });
     await loop.send({ text: 'and now?' });
     expect(JSON.stringify(transport.bodies[0]!.messages)).toContain('"type":"image"');
     expect(JSON.stringify(transport.bodies[1]!.messages)).not.toContain('"type":"image"');
     expect(JSON.stringify(transport.bodies[1]!.messages)).toContain('[photo shared earlier: dumbbell rack]');
+    // ES-28: once sent, the photo's bytes leave memory.
+    expect(evicted).toEqual(['img1']);
   });
 });
 
