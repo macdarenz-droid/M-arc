@@ -1,6 +1,10 @@
-.page { width: 100%; height: 100%; background-color: #090f0d; flex-direction: column; align-items: center; justify-content: center; }
-.title { color: #acf8d0; font-size: 20px; height: 36px; }
-.heart { color: #eff9f2; font-size: 76px; height: 90px; }
-.label { color: #9dacA4; font-size: 18px; height: 28px; }
-.status { color: #eff9f2; font-size: 18px; width: 280px; height: 54px; text-align: center; }
-.stop { width: 180px; height: 52px; background-color: #acf8d0; color: #09130e; font-size: 22px; border-radius: 26px; }
+.page { width: 100%; height: 100%; background-color: #08090a; flex-direction: column; align-items: center; justify-content: center; }
+.header { width: 240px; height: 38px; flex-direction: row; justify-content: space-between; align-items: center; }
+.brand { color: #f7f8f8; font-size: 20px; font-weight: bold; }
+.phase { color: #8a8f98; font-size: 13px; }
+.metric { width: 240px; height: 116px; flex-direction: row; align-items: center; justify-content: center; }
+.heart { color: #f7f8f8; font-size: 78px; }
+.unit { color: #8a8f98; font-size: 17px; margin-left: 6px; }
+.label { color: #a6a9b2; font-size: 16px; height: 27px; text-align: center; }
+.status { color: #f7f8f8; font-size: 16px; width: 250px; height: 44px; text-align: center; }
+.stop { width: 188px; height: 48px; background-color: #5e6ad2; color: #f7f8f8; font-size: 20px; border-radius: 24px; }
