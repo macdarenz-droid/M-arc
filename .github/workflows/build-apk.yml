@@ -179,9 +179,16 @@ jobs:
           APK='android/app/build/outputs/apk/debug/app-debug.apk'
           "$BUILD_TOOLS/zipalign" -p -f 4 "$APK" "$RUNNER_TEMP/aligned.apk"
           "$BUILD_TOOLS/apksigner" sign --ks "$RUNNER_TEMP/marc-signing.p12" --ks-key-alias marc --ks-pass env:PW --key-pass env:PW --out "$APK" "$RUNNER_TEMP/aligned.apk"
-          FP=$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK" | awk -F': ' '/Signer #1 certificate SHA-256 digest/{print toupper($2); exit}' | sed 's/../&:/g; s/:$//')
           rm -f "$RUNNER_TEMP/marc-signing.p12" "$RUNNER_TEMP/aligned.apk"
-          if [ "$FP" != "$EXPECTED_SHA256" ]; then echo "::error::APK is signed with $FP, expected $EXPECTED_SHA256"; exit 1; fi
+          CERTS="$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK")"
+          # Every signer line must carry the expected digest (format differs between build-tools versions).
+          DIGESTS="$(printf '%s\n' "$CERTS" | grep -i 'certificate SHA-256 digest' | sed 's/.*: *//' | tr 'a-f' 'A-F' | sed 's/../&:/g; s/:$//' | sort -u)"
+          if [ "$DIGESTS" != "$EXPECTED_SHA256" ]; then
+            printf '%s\n' "$CERTS"
+            echo "::error::APK signer SHA-256 is '$DIGESTS', expected $EXPECTED_SHA256"
+            exit 1
+          fi
+          FP="$DIGESTS"
           echo "APK signer SHA-256: $FP"
 
       - name: No keystore may be committed in workflows
