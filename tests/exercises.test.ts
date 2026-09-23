@@ -14,3 +14,13 @@ describe('findExercise (ST-13)', () => {
     expect(findExerciseExact('Chest Pres')).toBeUndefined();
   });
 });
+
+describe('a longer name is not filed under the library name it contains (QA-R3b-3)', () => {
+  it('extra movement words make it a different exercise', () => {
+    expect(findExercise('Hack Squat Calf Raise')?.id).not.toBe(findExercise('Hack Squat')?.id);
+    expect(findExercise('Hack Squat Calf')?.id).not.toBe(findExercise('Hack Squat')?.id);
+  });
+  it('extra words that name no movement still match', () => {
+    expect(findExercise('Hack Squat heavy')?.id).toBe(findExercise('Hack Squat')?.id);
+  });
+});

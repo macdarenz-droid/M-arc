@@ -139,8 +139,21 @@ function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined 
   if (exact) return exact;
   const q = normalizeName(idOrName);
   if (q.length < 4) return undefined;
-  const hits = [...custom, ...LIBRARY].filter(e => normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name)));
+  const hits = [...custom, ...LIBRARY].filter(e => normalizeName(e.name).includes(q) || containsOnly(q, normalizeName(e.name)));
   return hits.length === 1 ? hits[0] : undefined;
+}
+
+let movementWords: Set<string> | null = null;
+/**
+ * QA-R3b-3: a longer name that contains a library name ("Hack Squat Calf Raise") is that exercise
+ * only when the extra words name no other movement. A word that appears in any library name
+ * ("calf", "raise") means it is a different exercise; words like "heavy" or "paused" do not.
+ */
+function containsOnly(q: string, name: string): boolean {
+  if (!name || !q.includes(name)) return false;
+  movementWords ??= new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2));
+  const own = new Set(name.split(' '));
+  return !q.replace(name, ' ').split(' ').some(w => w && !own.has(w) && movementWords!.has(w));
 }
 
 /**
@@ -153,7 +166,7 @@ export function findExerciseWithEquipment(name: string, equipment: string | unde
   const q = normalizeName(name);
   if (q.length < 4) return undefined;
   const eq = normalizeName(equipment).replace(/s\b/g, '');
-  const hits = [...custom, ...LIBRARY].filter(e => (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))) && normalizeName(e.equipment).replace(/s\b/g, '') === eq);
+  const hits = [...custom, ...LIBRARY].filter(e => (normalizeName(e.name).includes(q) || containsOnly(q, normalizeName(e.name))) && normalizeName(e.equipment).replace(/s\b/g, '') === eq);
   return hits.length === 1 ? hits[0] : undefined;
 }
 

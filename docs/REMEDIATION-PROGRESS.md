@@ -335,3 +335,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - In the person's unit now: record "up from" values (`formatRecordValue`), the effort-calibration note, the weight-updated note, the weekly weight trend, and the fallback load target.
 - Escobar's `get_records`, `records_list`, `get_session_debrief` and exercise detail pass the unit too; load records carry `unit`.
 - (The Finish-sheet `Elapsed` component for QA-R2d-3 landed in this commit's Train.tsx.)
+
+### QA-R3b-3 (low)
+- A name that contains a library name matches it only when the extra words name no other movement: a word from any library name ("calf", "raise") means a different exercise. So "Hack Squat Calf Raise" is no longer filed under Hack Squat, while "Hack Squat heavy" still is. This applies to the import path with equipment too.
