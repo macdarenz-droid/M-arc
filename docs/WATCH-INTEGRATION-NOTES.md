@@ -69,6 +69,21 @@ The remediation plan (R0–R8) and the watch gates edit the same files. Order:
 | Energy | (architecture §8) and **BR-30** | `energyFromWatch` and `energyFromHealthConnect` set gross = active, and `pickEnergy` has no caller. Decide calorie semantics before showing two totals; R7.1 otherwise deletes these helpers. |
 | Units | **RG-02, BR-06** | Old lb history shows 0.1–0.3 lb off until R1.1 backfills `entered`. Assisted-exercise progress reads as decline until R3.5. Send the load meaning and the entered unit, as the architecture says. |
 
+## 4a. Regression-analysis concerns (from comparing the base against `main`, v36 and the unmerged branches)
+
+| ID | Concern | What the watch builder must do |
+|---|---|---|
+| **RG-01** | The boot crash overlay stays armed after boot. **Any** unhandled promise rejection shows "M/ARC could not start" with a button that wipes all data. | Until R1.2 lands, every Wear Engine / plugin call must `.catch()`. One unhandled rejection from a new bridge is enough to put the reset button in front of the user. |
+| **RG-05** | `resolveSessionTiming` moves a session without re-sorting, so "last session" logic picks the wrong session. | Do not derive the watch's "Last time" from array order. Use `previousSet` / `exerciseHistory` (sorted by day), and wait for R2.4. |
+| **RG-08** | Heart series (`marc.heart.v1`) are not backed up, restored or deleted with their session. | If the watch adds heart data, store it through `core/heartStore.ts` after R1.3 extends backup/restore/delete. Do not create a new side store. |
+| **RG-04** | 30 exercise ids from the Escobar line were removed by revert `4d8ff4e`. An unknown id shows as a raw id (`lib_burpee`). | Snapshots must carry the display name stored in the session entry, never re-derive it from the id alone. |
+| **RG-15** | No unit tests cover `commitSet`, `finishSession`, `logPastSession`, `resolveSessionTiming`, store save/backup or restore. | Gate B tests extend `tests/session.test.ts` and `tests/store.test.ts` (R1/R2 create them). No change to these paths ships without a test. |
+| **RG-14 / PL-18** | The screenshot gate uses UTC fixture dates and about 120 fixed sleeps. | A Wear Engine stub pass added to the gate must use local dates and `locator.waitFor`, not `waitForTimeout`. |
+| **RG-20** | CI does not check that native classes are actually compiled into the APK. Missing native code has shipped silently before. | Add the Wear Engine plugin class to the dex check from R5.6 (ported from `d69b22e`). |
+| **RG-11** | `README.md` and `docs/ARCHITECTURE.md` describe the pre-coaching app (24/48/72 h recovery, 8 state keys, no Escobar or Worker). | Trust the code and the audit, not those two docs, until R7.5 rewrites them. |
+| **Branches** | `main` (`245c26a`) is older than the base. `phase-9-…`, `smartwatch-…` and `coach-brain` are unmerged. The smartwatch branch has a native HR recorder DB that WatchBridge superseded. | Base all work on `e34076f` plus these docs. Do not port code from the unmerged branches except the items listed in the audit §6.3. |
+| **ST-19** | Two PWA tabs overwrite each other's data. | Only relevant if a web/PWA watch path is ever added; the phone owner must stay single-writer. |
+
 ## 5. Privacy text must follow the data
 - `PermissionsRationaleActivity` says health data never leaves the device. Escobar already sends it when sharing is on (PL-10, fixed in R5.6). Wear Engine consent screens must describe the actual flows.
 - Android auto-backup stays enabled (decision D2). Mention it wherever health data handling is disclosed.
