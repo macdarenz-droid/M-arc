@@ -24,6 +24,9 @@ import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 
+/** The plateau lever only speaks once the lift's recent sessions span six of the eight weeks it looks at (spec: never at 3 weeks). */
+export const PLATEAU_MIN_SPAN_DAYS = 42;
+
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
 export interface Insight {
@@ -332,6 +335,8 @@ export const RULES: Rule[] = [
         // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
         const recent = hist.filter(h => daysBetween(h.day, ctx.today) <= 56);
         if (recent.length < 6) return [];
+        // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
+        if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];
         const t = e1rmTrend(recent);
         // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
         if (!flatOver(recent)) return [];

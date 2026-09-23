@@ -1,6 +1,7 @@
 /** Recency-weighted trend and plateau detection over an exercise's history. */
 import type { ExerciseSessionSummary } from './history';
 import type { ResistanceMode } from '@/core/models';
+import { daysBetween } from '@/core/dates';
 
 export type Direction = 'up' | 'flat' | 'down' | 'unknown';
 export type Confidence = 'low' | 'medium' | 'high';
@@ -59,8 +60,19 @@ export const PLATEAU_MIN_SESSIONS = 7;
  * For an assisted exercise (BR-06) less weight is progress: the weight direction is inverted,
  * and with the weight flat the best reps break the tie (volume would reward more assistance).
  */
+/** A break longer than this starts the lift's history over for plateau and trend (QA-R3a-6). */
+export const COMEBACK_GAP_DAYS = 28;
+
+/** The sessions since the last break longer than COMEBACK_GAP_DAYS: a comeback is not judged on months-old sessions. */
+export function sinceLastBreak<T extends { day: string }>(history: T[]): T[] {
+  for (let i = history.length - 1; i > 0; i--) {
+    if (daysBetween(history[i - 1]!.day, history[i]!.day) > COMEBACK_GAP_DAYS) return history.slice(i);
+  }
+  return history;
+}
+
 export function plateauStatus(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): { status: PlateauStatus; confidence: Confidence } {
-  const recent = history.slice(-PLATEAU_WINDOW);
+  const recent = sinceLastBreak(history).slice(-PLATEAU_WINDOW);
   if (recent.length < PLATEAU_MIN_SESSIONS) return { status: 'unknown', confidence: 'low' };
   if (mode === 'assisted') {
     const w = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
