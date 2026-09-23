@@ -373,7 +373,9 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  */
 export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
-  const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true });
+  // Only computed when some exercise has a max-effort comparison to learn from (most sessions have none).
+  let predictedMemo: MuscleRecovery[] | null = null;
+  const predicted = (): MuscleRecovery[] => (predictedMemo ??= recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true }));
   const tauScale = { ...recoveryModel.tauScale };
   const observations = { ...recoveryModel.observations };
   const touched = new Set<MuscleId>();
@@ -390,7 +392,7 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     for (const muscle of meta.primary) {
       if (touched.has(muscle)) continue;
       touched.add(muscle);
-      const predictedPct = predicted.find(r => r.muscle === muscle)?.pct ?? 50;
+      const predictedPct = predicted().find(r => r.muscle === muscle)?.pct ?? 50;
       const before = tauScale[muscle] ?? 1.0;
       const after = calibrateTauScale(before, predictedPct, deltaPct);
       if (after !== before) {

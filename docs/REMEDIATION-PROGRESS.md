@@ -256,3 +256,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - An emptied committed set is a draft while empty but keeps `at`, `restSec`, `fidelity` and `heart`; refilled, it is committed again with its original timing and rest is not restarted. The R2 session test that asserted the emptied set loses its time was updated for this contract (named in the test).
 ### QA-R2b-2, QA-R2b-4 (medium)
 - Already fixed by R4.1 (c00fb27): split delete has a targeted inverse that never touches `active`, and deleting the split being trained is a ToolError. Regression test added for the QA scenario (fails at origin/main, where the applier snapshots `active`).
+### QA-R2b-3, QA-R2b-5 (medium), QA-R2b-6 (low)
+- finishSession predicts from the whole history again (one call, ~40 ms at 600 sessions), so it judges against the number the app showed.
+- The rebuild's window covers the 28-day load ratio and layoff novelty (29 days, and at least F_ref sessions), anchors training age to the first session when none is set, and calibrates the sessions finishSession calibrates (everything but a session typed in afterwards: retro without `compressed`), including pre-logging `legacy` saves.
+- `calibrateAfterSession` only runs the recovery prediction when some exercise has a max-effort comparison. Perf fixture rebuild: 34 ms (budget 500 ms, unchanged). Worst case measured: 600 sessions with every exercise at max effort, 0.7 s, only on a History save.

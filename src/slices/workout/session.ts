@@ -10,7 +10,7 @@ import { hasEntry } from '@/brain/exposure';
 import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
 import { calibrateAfterSession } from '@/brain/recovery';
 import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
-import { IMPULSE_LOOKBACK_DAYS, F_REF_SESSION_LOOKBACK } from '@/data/recovery';
+import { IMPULSE_LOOKBACK_DAYS, F_REF_SESSION_LOOKBACK, NOVELTY_LAYOFF_DAYS } from '@/data/recovery';
 import { dayKey, todayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
@@ -23,13 +23,25 @@ export const REST_MIN = 15, REST_MAX = 600;
 /** Sessions oldest first by start (RG-05). Sort is stable, so equal starts keep their order. */
 export const sortByStart = (sessions: Session[]): Session[] => [...sessions].sort((x, y) => x.startedAt.localeCompare(y.startedAt));
 
-/** The sessions a recovery prediction at `atMs` can see: the lookback window, and at least the last few (F_ref). */
+/**
+ * The sessions a recovery prediction at `atMs` depends on: the 28-day load ratio and layoff
+ * window (which also cover the 7-day impulses), and at least the last few (F_ref). QA-R2b-3:
+ * 7 days lost the load ratio and novelty history.
+ */
+const PRIOR_WINDOW_DAYS = Math.max(IMPULSE_LOOKBACK_DAYS, NOVELTY_LAYOFF_DAYS, 28) + 1;
 function recentPrior(sorted: Session[], end: number, atMs: number): Session[] {
-  const cutoff = atMs - (IMPULSE_LOOKBACK_DAYS + 1) * 86_400_000;
+  const cutoff = atMs - PRIOR_WINDOW_DAYS * 86_400_000;
   let start = end;
   while (start > 0 && Date.parse(sorted[start - 1]!.startedAt) >= cutoff) start--;
   return sorted.slice(Math.max(0, Math.min(start, end - F_REF_SESSION_LOOKBACK)), end);
 }
+
+/**
+ * QA-R2b-6: the sessions finishSession calibrated from, so a rebuild learns from the same ones:
+ * everything finished in the app (live, mixed, compressed, and pre-logging 'legacy' saves), but
+ * not a session typed in afterwards (retro without 'compressed').
+ */
+const calibratesAtFinish = (sess: Session): boolean => !sess.logging || sess.logging.mode !== 'retro' || sess.logging.flags.includes('compressed');
 
 /**
  * UI-12: the recovery model is learned from live sessions in order. After history is edited or
@@ -38,12 +50,14 @@ function recentPrior(sorted: Session[], end: number, atMs: number): Session[] {
  */
 export function rebuildRecoveryModel(s: Pick<AppState, 'sessions' | 'customExercises' | 'profile' | 'healthDays'>): RecoveryModel {
   const sorted = sortByStart(s.sessions);
+  // The window drops the first session, which dates training age when none is set.
+  const profile = s.profile.trainingSince || !sorted[0] ? s.profile : { ...s.profile, trainingSince: sorted[0].day.slice(0, 7) };
   const lastSummary = new Map<string, ExerciseSessionSummary>();
   const keyOf = (exerciseId: string) => findExercise(exerciseId, s.customExercises)?.id ?? exerciseId;
   let model: RecoveryModel = { tauScale: {}, observations: {} };
   sorted.forEach((sess, i) => {
-    if (sess.logging?.mode === 'live') {
-      model = calibrateAfterSession(recentPrior(sorted, i, Date.parse(sess.startedAt)), sess, s.customExercises, s.profile, s.healthDays, model, id => lastSummary.get(keyOf(id)));
+    if (calibratesAtFinish(sess)) {
+      model = calibrateAfterSession(recentPrior(sorted, i, Date.parse(sess.startedAt)), sess, s.customExercises, profile, s.healthDays, model, id => lastSummary.get(keyOf(id)));
     }
     for (const e of sess.exercises) {
       const h = exerciseHistory([sess], e.exerciseId, s.customExercises);
@@ -344,7 +358,8 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     splits: saveTemplate && split
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) })) }))
       : s.splits,
-    recoveryModel: exercises.length ? calibrateAfterSession(recentPrior(sortByStart(s.sessions), s.sessions.length, Date.parse(session.startedAt)), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
+    // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
+    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
   }));
   flushSave();
   void cancelRestDone();

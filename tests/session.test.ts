@@ -226,3 +226,31 @@ describe('conditioning inputs (UI-20)', () => {
     expect(finishSession(false)!.session.exercises[0]!.sets[0]).toMatchObject({ kg: 32, distanceM: 40, durationSec: 35 });
   });
 });
+
+describe('recovery calibration sees what the app showed (QA-R2b-3, QA-R2b-5, QA-R2b-6)', () => {
+  const benchSplit: Split = { id: 'bp', name: 'Bench', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+  const mk = (i: number, startMs: number, kg: number): Session => { const st = new Date(startMs).toISOString(); return { id: `h${i}`, splitId: 'bp', splitName: 'Bench', day: st.slice(0, 10), startedAt: st, endedAt: new Date(startMs + 3_600_000).toISOString(), durationSec: 3600, exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'max' }] }], logging: { mode: 'live', flags: [] } as never }; };
+  // Bench every 60 h for most of a year: the full history says chest is 91 % recovered, the old 7-day window said 81 %.
+  const history = (): { sessions: Session[]; next: number } => { const sessions: Session[] = []; let t = Date.parse('2025-09-01T10:00:00Z'); for (let i = 0; i < 150; i++) { sessions.push(mk(i, t, 100)); t += 60 * 3_600_000; } return { sessions, next: t }; };
+
+  it('a 7 % drop at a well-recovered chest slows chest recovery (finish uses the whole history)', () => {
+    const { sessions, next } = history();
+    vi.setSystemTime(next);
+    replaceState({ ...freshState(), splits: [benchSplit], sessions });
+    startSession(benchSplit);
+    for (let j = 0; j < 3; j++) { setSet(0, j, { kg: 93, reps: 5, effort: 'max' }); vi.advanceTimersByTime(120_000); commitSet(0, j); }
+    finishSession(false);
+    expect(state.value.recoveryModel.tauScale.chest).toBeCloseTo(1.1);
+  });
+
+  it('a rebuild learns the same, and keeps what a compressed (retro) finish learned', () => {
+    const { sessions, next } = history();
+    const drop = { ...mk(999, next, 93), exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 93, reps: 5, effort: 'max' as const }] }] };
+    const base = { customExercises: [], profile: freshState().profile, healthDays: [] };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, drop] }).tauScale.chest).toBeCloseTo(1.1);
+    const compressed = { ...drop, logging: { mode: 'retro', flags: ['compressed'] } as never };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, compressed] }).tauScale.chest).toBeCloseTo(1.1);
+    const typedLater = { ...drop, logging: { mode: 'retro', flags: [] } as never };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, typedLater] }).tauScale.chest).toBeUndefined();
+  });
+});
