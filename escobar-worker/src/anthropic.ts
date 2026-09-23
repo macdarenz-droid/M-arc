@@ -10,6 +10,9 @@ import { WORKER_POLICY } from './prompt/policy';
 import { renderManifest } from './prompt/manifest';
 import type { Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
+import type { QuotaCounter } from './quotaDO';
+
+export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: boolean }> }
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -17,8 +20,11 @@ export interface Env {
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
+  MAX_TURNS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
+  QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
   QUOTA?: KVNamespace;
-  RATE?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+  RATE?: RateLimiter;
+  RATE_IP?: RateLimiter;
 }
 
 export const DEFAULT_MODEL = 'claude-opus-5';
@@ -63,17 +69,16 @@ const PRESERVED_THINKING = new Set(['claude-opus-5-5', 'claude-fable-5-1', 'clau
 
 /**
  * For models without mid-conversation system messages: fold each system message into a
- * <situation> text block on the preceding user message. Effort-only system messages are dropped.
+ * <situation> text block on the preceding user message.
  */
 export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['messages'] {
   const out: TurnBody['messages'] = [];
   for (const m of messages) {
     if (m.role !== 'system') { out.push(m); continue; }
-    if (typeof m.content !== 'string') continue;
     const prev = out[out.length - 1];
     if (!prev || prev.role !== 'user') continue;
     const blocks = typeof prev.content === 'string' ? [{ type: 'text', text: prev.content }] : [...(prev.content as unknown[])];
-    blocks.push({ type: 'text', text: `<situation>\n${m.content}\n</situation>` });
+    blocks.push({ type: 'text', text: `<situation>\n${m.content as string}\n</situation>` });
     out[out.length - 1] = { ...prev, content: blocks };
   }
   return out;
@@ -87,7 +92,6 @@ export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boole
   const tools = body.mode === 'brief' ? READ_TOOLS : cfg.conversational ? TOOLS : null;
   const format = FORMATS[body.mode];
   const betas = ['server-side-fallback-2026-07-01'];
-  if (body.messages.some(m => m.role === 'system' && Array.isArray(m.content))) betas.push('mid-conversation-output-config-2026-07-01');
   const preserved = PRESERVED_THINKING.has(model);
   if (preserved) betas.push('thinking-binding-controls-2026-08-01');
   const params = {

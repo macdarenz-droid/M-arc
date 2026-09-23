@@ -13,3 +13,5 @@ export default {
     });
   },
 };
+
+export { QuotaCounter } from './quotaDO';

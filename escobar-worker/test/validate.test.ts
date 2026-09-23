@@ -26,7 +26,8 @@ describe('POST /v2/turn validation (§12.2)', () => {
     expect(reason(turn({ messages: [{ role: 'assistant', content: [] }] }))).toMatch(/first message/);
     expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'b' }, user('c')] }))).toMatch(/last or followed by an assistant/);
     expect(reason(turn({ messages: [user('a'), { role: 'system', content: 'b' }, toolUse('t1'), toolResult('t1')] }))).toBe('ok');
-    expect(reason(turn({ messages: [user('a'), { role: 'system', content: [], output_config: { effort: 'high' } }] }))).toBe('ok');
+    // PL-06: effort-only system messages were accepted; the app never sends them, so they are refused.
+    expect(reason(turn({ messages: [user('a'), { role: 'system', content: [], output_config: { effort: 'high' } }] }))).toBe('effort-only system messages are not accepted');
     expect(reason(turn({ messages: [user('a'), { role: 'system', content: [], output_config: { effort: 'turbo' } }] }))).toMatch(/effort/);
   });
   it('user blocks are strict; assistant blocks pass through by type', () => {
