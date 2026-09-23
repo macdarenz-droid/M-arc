@@ -100,3 +100,18 @@ describe('programme during a session', () => {
     expect(() => buildAction('propose_program', { draft: PPL6, replaceExisting: true }, ctxOf(state.value))).toThrow(/session is running/);
   });
 });
+
+describe('split delete undo mid-workout (QA-R2b-2, QA-R2b-4)', () => {
+  it('undo keeps sets logged since, and the split being trained cannot be deleted', () => {
+    const [trained, other] = state.value.splits;
+    decide(proposal('propose_start_session', { splitId: trained!.id }), 'p1', 'apply');
+    const del = decide(proposal('propose_split', { action: 'delete', splitId: other!.id, name: other!.name, exercises: [] }, 'p2'), 'p2', 'apply');
+    expect(del.result.status).toBe('applied');
+    for (let j = 0; j < 2; j++) { setSet(0, j, { kg: 60, reps: 8 }); commitSet(0, j); }
+    const before = JSON.stringify(state.value.active);
+    decide(del.conversation, 'p2', 'undo', del.result.undo);
+    expect(state.value.splits.some(s => s.id === other!.id)).toBe(true);
+    expect(JSON.stringify(state.value.active)).toBe(before);
+    expect(() => buildAction('propose_split', { action: 'delete', splitId: trained!.id, name: trained!.name, exercises: [] }, ctxOf(state.value))).toThrow(/trained right now/);
+  });
+});

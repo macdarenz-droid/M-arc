@@ -254,3 +254,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - Health Connect part: already fixed by R5 (`backgroundHealthSync`: connected only, `prompt: false`, 10-min throttle). Notifications: `ensurePermission({ prompt })` only requests on a Settings tap (reminder controls, backup-reminder toggle); launch, resume, day-off and schedule edits only check. No more prompt on first launch either.
 ### QA-R2b-1 (medium)
 - An emptied committed set is a draft while empty but keeps `at`, `restSec`, `fidelity` and `heart`; refilled, it is committed again with its original timing and rest is not restarted. The R2 session test that asserted the emptied set loses its time was updated for this contract (named in the test).
+### QA-R2b-2, QA-R2b-4 (medium)
+- Already fixed by R4.1 (c00fb27): split delete has a targeted inverse that never touches `active`, and deleting the split being trained is a ToolError. Regression test added for the QA scenario (fails at origin/main, where the applier snapshots `active`).
