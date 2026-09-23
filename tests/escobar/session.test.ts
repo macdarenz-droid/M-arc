@@ -143,3 +143,28 @@ describe('plan mode sticks for follow-ups (QA-R4a-2)', () => {
     expect(loadStore().conversations.find(c => c.id === loadStore().activeId)?.mode).toBe('plan');
   });
 });
+
+import { replaceState, state as appState } from '@/core/store';
+import { freshState } from '@/core/models';
+import { prepare, setEscobarEnabled } from '@/escobar/session';
+describe('old coach chat carry-over (QA-R4b-1)', () => {
+  const withThread = (enabled: boolean, legacyImported = false) => {
+    const s = freshState();
+    replaceState({ ...s, escobar: { ...s.escobar, enabled, legacyImported }, coach: { askThread: [{ role: 'user', text: 'old question' }, { role: 'assistant', text: 'old answer' }] } } as never);
+  };
+  const earlier = () => loadStore().conversations.filter(c => c.title === 'Earlier conversation');
+  it('imports once for someone who already had Escobar on, and never twice', () => {
+    withThread(true);
+    prepare();
+    expect(earlier()).toHaveLength(1);
+    expect(appState.value.escobar.legacyImported).toBe(true);
+    prepare();
+    setEscobarEnabled(true);
+    expect(earlier()).toHaveLength(1);
+  });
+  it('does nothing once imported', () => {
+    withThread(true, true);
+    prepare();
+    expect(earlier()).toHaveLength(0);
+  });
+});

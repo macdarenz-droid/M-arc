@@ -245,7 +245,8 @@ export function background(): void { loop?.background(); }
 /** Called when the sheet mounts: load the conversation store and check the Worker. */
 export function prepare(): void {
   loadConversations();
-  if (state.value.escobar.enabled) checkOnline();
+  // QA-R4b-1: someone who turned Escobar on in an earlier build still gets the old chat, once.
+  if (state.value.escobar.enabled) { importLegacyThread(); checkOnline(); }
 }
 export function escobarToHalf(): void { escobarUi.value = { ...escobarUi.value, detent: 'half' }; }
 
