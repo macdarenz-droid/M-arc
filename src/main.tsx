@@ -63,6 +63,12 @@ try {
 
   if ('serviceWorker' in navigator && !(globalThis as { Capacitor?: unknown }).Capacitor) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => undefined); });
+    // ST-25: a new build took over. Mid-session the reload waits; otherwise offer it.
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || state.peek().active) return;
+      showToast('App updated', 'Reload', () => location.reload());
+    });
   }
 } catch (err) {
   (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);

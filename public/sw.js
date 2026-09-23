@@ -1,9 +1,49 @@
-// Offline cache for the PWA. The version changes on every build (see vite plugin in scripts/sw-version.mjs).
+// Offline cache for the PWA. The version and the asset list are stamped on every build
+// (scripts/sw-version.mjs).
 const CACHE = 'marc-__BUILD__';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
+// Every built asset, lazy chunks included, so the Escobar chunk works offline after the first visit (ST-04).
+const ASSETS = /*__ASSETS__*/[];
+const INDEX = new URL('./index.html', self.location).href;
+
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll([...CORE, ...ASSETS])).then(() => self.skipWaiting()));
+});
+
+// ST-20: an old tab still asks for its own hashed chunks, so /assets/ entries move into the new cache
+// before the old caches go.
+self.addEventListener('activate', e => {
+  e.waitUntil((async () => {
+    const next = await caches.open(CACHE);
+    for (const key of await caches.keys()) {
+      if (key === CACHE) continue;
+      const old = await caches.open(key);
+      for (const req of await old.keys()) {
+        if (new URL(req.url).pathname.includes('/assets/') && !(await next.match(req))) {
+          const res = await old.match(req);
+          if (res) await next.put(req, res);
+        }
+      }
+      await caches.delete(key);
+    }
+    await self.clients.claim();
+  })());
+});
+
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) return;
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res; }).catch(() => caches.match('./index.html'))));
+  const req = e.request;
+  if (req.method !== 'GET' || !req.url.startsWith(self.location.origin)) return;
+  // ST-03: navigations go to the network first so a new build is seen; the cached index is the fallback.
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then(res => {
+      if (res.ok) { const a = res.clone(), b = res.clone(); caches.open(CACHE).then(c => Promise.all([c.put(req, a), c.put(INDEX, b)])); }
+      return res;
+    }).catch(async () => (await caches.match(req)) || (await caches.match(INDEX)) || Response.error()));
+    return;
+  }
+  // Other same-origin GETs: cache first; only good same-origin answers are kept; a failure is an error, never HTML.
+  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+    if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+    return res;
+  }).catch(() => Response.error())));
 });

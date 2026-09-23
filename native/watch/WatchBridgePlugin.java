@@ -139,8 +139,9 @@ public class WatchBridgePlugin extends Plugin {
             Integer timeoutMs = call.getInt("timeoutMs", 20_000);
             if (scanner == null) scanner = new DeviceScanner(a, this::devicesChanged);
             // DeviceScanner reports "something changed"; the plugin re-reads its current device list each time.
-            emitStatus();
             scanner.start(timeoutMs == null ? 20_000 : timeoutMs);
+            // After start, so the UI sees "scanning" before the call resolves (UI-07).
+            emitStatus();
             call.resolve();
         });
     }

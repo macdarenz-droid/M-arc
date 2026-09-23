@@ -13,6 +13,7 @@ import { healthAvailable } from '@/native/health';
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
+import { HealthDiagnosticSheet } from './HealthDiagnostic';
 import { GymsSheet } from './Gyms';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { Logo } from '@/ui/Logo';
@@ -60,6 +61,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [confirmReset, setConfirmReset] = useState(false);
   usePalaceFocus('settings.theme');
   const [watchOpen, setWatchOpen] = useState(false);
+  const [healthFailed, setHealthFailed] = useState(false);
+  const [healthDiag, setHealthDiag] = useState(false);
   const [gymsOpen, setGymsOpen] = useState(false);
   const [pending, setPending] = useState<PendingRestore | null>(null);
   const [rescue, setRescue] = useState(() => rescueRaw() != null);
@@ -151,7 +154,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
-            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">Last Health Connect sync failed</span><div class="hint">See what was allowed and what was read</div></Row>}
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
               <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>
@@ -162,6 +166,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
+        {healthDiag && <HealthDiagnosticSheet onClose={() => setHealthDiag(false)} />}
         {gymsOpen && <GymsSheet onClose={() => setGymsOpen(false)} />}
 
         <EscobarSettings onClose={onClose} />
