@@ -36,8 +36,13 @@ turn a prior rejection into a later applied command. Receipts keep watch
 clock synchronization has been measured. This is an Android
 JVM simulation, not a test on a physical GT6/phone. CI copies the class into
 both APK build paths. No phone/watch path calls it yet. It does
-not calculate the phone's fidelity, rest or heart side effects or persist pending
-side effects in its transaction; those are required before Gate C. It does not
+not calculate the phone's fidelity, rest or heart side effects. It persists
+three keyed pending effect records in the same transaction as each applied set
+and receipt. Version 2 databases backfill them for applied receipts; rejected
+commands create none. Android tests cover reopening, replay, backfill and a
+failed pending effect insert rolling back the whole command. Resolving those
+effects with verified clock/heart inputs and rest policy is still required
+before Gate C. It does not
 replace the WebView's authoritative active session, so an APK
 containing the class is **not** a working watch command receiver.
 The internal applied receipt explicitly marks `sideEffectsStatus: not_implemented`;

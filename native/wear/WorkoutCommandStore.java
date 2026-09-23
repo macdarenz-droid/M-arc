@@ -23,16 +23,18 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     static final String CREATE_RECEIPTS = "CREATE TABLE receipts (session_id TEXT NOT NULL, command_id TEXT NOT NULL, fingerprint TEXT NOT NULL, result TEXT NOT NULL, PRIMARY KEY(session_id, command_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
     static final String ONE_ACTIVE_SESSION = "CREATE UNIQUE INDEX one_active_session ON sessions((1)) WHERE status IN ('active','paused')";
     static final String CREATE_SET_REVISIONS = "CREATE TABLE set_revisions (session_id TEXT NOT NULL, entry_id TEXT NOT NULL, set_id TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision >= 0), PRIMARY KEY(session_id, set_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
+    static final String CREATE_PENDING_EFFECTS = "CREATE TABLE pending_effects (session_id TEXT NOT NULL, command_id TEXT NOT NULL, effect TEXT NOT NULL CHECK(effect IN ('fidelity','rest','heart')), set_id TEXT NOT NULL, action_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('pending','resolved')), PRIMARY KEY(session_id, command_id, effect), FOREIGN KEY(session_id, command_id) REFERENCES receipts(session_id, command_id) ON DELETE RESTRICT)";
     private static final DateTimeFormatter UTC = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withResolverStyle(ResolverStyle.STRICT).withZone(ZoneOffset.UTC);
 
-    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 2); }
+    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 3); }
 
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SESSIONS);
         db.execSQL(CREATE_RECEIPTS);
         db.execSQL(ONE_ACTIVE_SESSION);
         db.execSQL(CREATE_SET_REVISIONS);
+        db.execSQL(CREATE_PENDING_EFFECTS);
     }
 
     @Override public void onConfigure(SQLiteDatabase db) {
@@ -41,14 +43,26 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion != 1 || newVersion != 2) throw new IllegalStateException("Workout database migration required");
-        db.execSQL(CREATE_SET_REVISIONS);
-        try (Cursor rows = db.rawQuery("SELECT session_id,snapshot FROM sessions", null)) {
+        if (newVersion != 3 || oldVersion < 1 || oldVersion > 2)
+            throw new IllegalStateException("Workout database migration required");
+        if (oldVersion == 1) {
+            db.execSQL(CREATE_SET_REVISIONS);
+            try (Cursor rows = db.rawQuery("SELECT session_id,snapshot FROM sessions", null)) {
+                while (rows.moveToNext()) {
+                    JSONObject snapshot = new JSONObject(rows.getString(1));
+                    insertSetRevisions(db, rows.getString(0), snapshot);
+                }
+            } catch (Exception e) { throw new IllegalStateException("Could not migrate watch set identities", e); }
+        }
+        db.execSQL(CREATE_PENDING_EFFECTS);
+        try (Cursor rows = db.rawQuery("SELECT session_id,command_id,result FROM receipts", null)) {
             while (rows.moveToNext()) {
-                JSONObject snapshot = new JSONObject(rows.getString(1));
-                insertSetRevisions(db, rows.getString(0), snapshot);
+                JSONObject receipt = new JSONObject(rows.getString(2));
+                if ("applied".equals(receipt.optString("status")))
+                    insertPendingEffects(db, rows.getString(0), rows.getString(1),
+                            receipt.getString("setId"), receipt.getString("actionAt"));
             }
-        } catch (Exception e) { throw new IllegalStateException("Could not migrate watch set identities", e); }
+        } catch (Exception e) { throw new IllegalStateException("Could not migrate watch pending effects", e); }
     }
 
     private static boolean id(String value) { return value != null && value.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,79}"); }
@@ -87,6 +101,20 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                 value.put("revision", 0);
                 db.insertOrThrow("set_revisions", null, value);
             }
+        }
+    }
+
+    private static void insertPendingEffects(SQLiteDatabase db, String sessionId, String commandId,
+                                             String setId, String actionAt) {
+        for (String effect : new String[]{"fidelity", "rest", "heart"}) {
+            ContentValues pending = new ContentValues();
+            pending.put("session_id", sessionId);
+            pending.put("command_id", commandId);
+            pending.put("effect", effect);
+            pending.put("set_id", setId);
+            pending.put("action_at", actionAt);
+            pending.put("status", "pending");
+            db.insertOrThrow("pending_effects", null, pending);
         }
     }
 
@@ -253,6 +281,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             receipt.put("fingerprint", fingerprint);
             receipt.put("result", resultJson);
             db.insertOrThrow("receipts", null, receipt);
+            insertPendingEffects(db, sessionId, commandId, setId, actionAt);
             db.setTransactionSuccessful();
             return new Result("applied", resultJson);
         } finally {
