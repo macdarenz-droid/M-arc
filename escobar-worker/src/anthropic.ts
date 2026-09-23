@@ -18,6 +18,8 @@ export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;
+  /** F7 (D12): per-mode model overrides; each falls back to MODEL. */
+  MODEL_CHAT?: string; MODEL_PLAN?: string; MODEL_LIVE?: string; MODEL_BRIEF?: string; MODEL_MOMENT?: string; MODEL_SUMMARIZE?: string;
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
@@ -87,8 +89,17 @@ export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['me
   return out;
 }
 
+/** A model id as the API names them; anything else in an override is ignored. */
+const MODEL_ID = /^claude-[a-z0-9.-]{2,60}$/;
+/** F7: the model for one mode: MODEL_<MODE> when set and well-formed, else MODEL, else the default. */
+export function modelFor(mode: TurnBody['mode'], env: Env): string {
+  const v = (env as Record<string, unknown>)[`MODEL_${mode.toUpperCase()}`];
+  if (typeof v === 'string' && MODEL_ID.test(v.trim())) return v.trim();
+  return env.MODEL || DEFAULT_MODEL;
+}
+
 export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boolean } = {}): MessageCreateParamsStreaming {
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(body.mode, env);
   const cfg = MODE_CONFIG[body.mode];
   const fold = opts.foldSystem ?? !supportsSystemMessages(model);
   const messages = (fold ? foldSystemMessages(body.messages) : body.messages) as BetaMessageParam[];

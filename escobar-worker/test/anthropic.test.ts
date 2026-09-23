@@ -119,3 +119,24 @@ describe('policy', () => {
     expect(WORKER_POLICY).toContain('You are Escobar');
   });
 });
+
+import { modelFor } from '../src/anthropic';
+describe('per-mode models (F7, D12)', () => {
+  it('MODEL_<MODE> overrides one mode; the rest keep MODEL', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_BRIEF: 'claude-sonnet-5' });
+    expect(modelFor('brief', env)).toBe('claude-sonnet-5');
+    expect(modelFor('chat', env)).toBe('claude-opus-5');
+    expect(P(turn({ mode: 'brief' }) as TurnBody, env).model).toBe('claude-sonnet-5');
+    expect(P(turn() as TurnBody, env).model).toBe('claude-opus-5');
+  });
+  it('a malformed override is ignored', () => {
+    expect(modelFor('chat', baseEnv({ MODEL: 'claude-opus-5', MODEL_CHAT: 'gpt-x; drop' }))).toBe('claude-opus-5');
+    expect(modelFor('chat', baseEnv({ MODEL_CHAT: ' claude-opus-5-5 ' }))).toBe('claude-opus-5-5');
+  });
+  it('a model without system messages gets them folded, per mode', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_LIVE: 'claude-sonnet-5' });
+    const live = P(turn({ mode: 'live' }) as TurnBody, env);
+    expect(JSON.stringify(live.messages)).toContain('<situation>');
+    expect(JSON.stringify(P(turn() as TurnBody, env).messages)).not.toContain('<situation>');
+  });
+});

@@ -3,7 +3,7 @@
  * relayed as server-sent events (§12.2, §12.4–12.6). Pure over injected deps so tests can
  * drive it with a scripted SDK stream.
  */
-import { buildParams, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
+import { buildParams, modelFor, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
 import { localStep, relayStep, type StepResult } from './upstream';
 import { validateTurn, stepsSinceUser, MAX_BODY_BYTES } from './validate';
 import { checkQuota, recordStep } from './quota';
@@ -83,7 +83,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   if (origin && !('Access-Control-Allow-Origin' in cors)) return new Response('forbidden origin', { status: 403 });
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (url.pathname === '/health' && req.method === 'GET') {
-    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, modes: MODES, quotas: !!(env.QUOTA_DO || env.QUOTA), relay: !!env.UPSTREAM, key: !!env.ANTHROPIC_API_KEY }, cors);
+    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, models: Object.fromEntries(MODES.map(m => [m, modelFor(m, env)])), modes: MODES, quotas: !!(env.QUOTA_DO || env.QUOTA), relay: !!env.UPSTREAM, key: !!env.ANTHROPIC_API_KEY }, cors);
   }
   if (url.pathname !== '/v2/turn') return json(404, { t: 'error', code: 'invalid', message: 'not found' }, cors);
   if (req.method !== 'POST') return fail(405, 'invalid', 'use POST', cors);
@@ -139,7 +139,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   const work = (async () => {
     const requestId = deps.requestId();
     emit({ t: 'start', requestId });
-    const model = env.MODEL || DEFAULT_MODEL;
+    const model = modelFor(body.mode, env);
     const turnSteps = stepsSinceUser(body.messages) + 1;
     // PL-20: with the relay bound, the Anthropic call leaves from the US, not from this edge.
     const step = (p: ReturnType<typeof buildParams>): Promise<StepResult> => env.UPSTREAM
