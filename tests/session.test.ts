@@ -100,6 +100,18 @@ describe('stable ids (R2.8)', () => {
     expect(commitSetById(id)).toBe(true);
     expect(a().entries[0]!.sets[0]!.at).toBe(at);
   });
+  it('a stable set target survives reordering without committing another exercise', () => {
+    start();
+    const target = a().entries[0]!.sets[0]!.id!;
+    const other = a().entries[1]!.sets[0]!.id!;
+    setSet(0, 0, { kg: 60, reps: 8 });
+    moveEntry(0, 1);
+    expect(commitSetById(target)).toBe(true);
+    expect(a().entries[1]!.sets[0]!.id).toBe(target);
+    expect(a().entries[1]!.sets[0]!.status).toBe('committed');
+    expect(a().entries[0]!.sets[0]!.id).toBe(other);
+    expect(a().entries[0]!.sets[0]!.at).toBeUndefined();
+  });
   it('actionAt in the past drives the set time, rest and rest timer', () => {
     start();
     setSet(0, 0, { kg: 60, reps: 8 });

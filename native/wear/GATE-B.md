@@ -19,22 +19,26 @@ phone plugin is diagnostic only. The full Gate B and Gate C remain open.
 
 `WorkoutCommandStore.java` is an **unconnected native storage primitive**. Its
 SQLite schema limits handover to one active/paused session, retains command
-receipts under that session, and its `commit` method writes a caller-prepared
-snapshot and receipt together after a revision and installation check. A
+receipts under that session and tracks the R2.8 set IDs and revisions. Its
+`completeSet` method checks installation, entry/set target, revision, draft
+values and action time inside a transaction, then marks the selected set
+committed and stores its receipt in that same transaction. A
 replayed ID reads the stored result; another fingerprint for the ID conflicts.
-The exact schema is tested with SQLite for rollback, duplicate IDs and a
-committed receipt. CI copies and compiles the Java source into both APK paths.
-No phone/watch path calls this class yet. It does not validate the set-level
-mutation or replace the WebView's authoritative active session, so an APK
+The exact schema is tested with SQLite for rollback, duplicate IDs, per-set
+revisions and a receipt that survives reopening the database. The SQL tests do
+not execute Android Java logic; the Android gate compiles that source. CI copies
+the class into both APK build paths. No phone/watch path calls it yet. It does
+not calculate the phone's fidelity, rest or heart side effects, and it does not
+replace the WebView's authoritative active session, so an APK
 containing the class is **not** a working watch command receiver.
 
-Next implementation: implement the native set mutation and explicit handover
-with the R2.8 set IDs, bind one watch installation through the actual
-transport, and stop all competing WebView writers during native ownership.
-Test a crash
-after commit but before reply, an old offline command after substitution, and
-a watch restart with its pending outbox. Do not wire C2's Complete button to
-the diagnostic channel before those tests pass.
+Next implementation: test the Java state machine on Android, add the phone's
+fidelity/rest/heart side effects and explicit single-writer handover, bind one
+watch installation through the actual transport, and stop all competing WebView
+writers during native ownership. Test a crash after commit but before reply,
+an old offline command after substitution, and a watch restart with its pending
+outbox. Do not wire C2's Complete button to the diagnostic channel before those
+tests pass.
 
 Huawei review and real GT6 evidence still govern transport, local heart
 sensor access, wake/background behavior, gestures and haptics. The current
