@@ -13,7 +13,7 @@ import { hasEntry } from '@/brain/exposure';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
-import { plannedThisWeek, weekSummary } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
@@ -96,10 +96,13 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
       </div>
       {open && (
         <div class="list" style={{ marginTop: 8 }}>
+          {session.note && <p class="small" data-palace="history.session-note">{session.note}</p>}
           {session.exercises.map((e, i) => (
             <Row key={i}>
               <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
+              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
+              {e.note && <div class="hint">Note: {e.note}</div>}
+              {state.value.exerciseNotes[e.exerciseId] && <div class="hint muted">Setup: {state.value.exerciseNotes[e.exerciseId]}</div>}
             </Row>
           ))}
         </div>
@@ -176,6 +179,27 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
 
 /* ---------- Stats ---------- */
 
+const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
+
+/** F8: 12 weeks of training volume as bars, in the display unit. */
+function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
+  const s = state.value;
+  const weeks = useMemo(() => weeklyVolumeHistory(s.sessions, today.value, 12, s.customExercises), [s.sessions, s.customExercises, today.value]);
+  const values = weeks.map(w => kgToDisplay(w.volumeKg, u));
+  const max = Math.max(1, ...values);
+  if (!weeks.some(w => w.volumeKg > 0)) return null;
+  const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
+  return (
+    <Card data-palace="history.weekly-volume">
+      <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
+      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks`}>
+        {weeks.map((w, i) => <i key={w.week} title={`${formatDay(w.week)}: ${fmt(values[i]!)} ${u}`} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />)}
+      </div>
+      <div class="row-between hint"><span>{formatDay(weeks[0]!.week)}</span><span>this week</span></div>
+    </Card>
+  );
+}
+
 function Stats() {
   const s = state.value;
   const u = unit.value;
@@ -206,6 +230,8 @@ function Stats() {
           </div>
         )}
       </Card>
+
+      <WeeklyVolumeChart u={u} />
 
       <Section title="Exercise progress" palace="history.exercise-stats" aside={exercise ? <AskAbout refTo={{ kind: 'exercise', id: exercise, label: `${exerciseIds.find(([id]) => id === exercise)?.[1] ?? 'Exercise'} trend` }} /> : undefined}>
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (

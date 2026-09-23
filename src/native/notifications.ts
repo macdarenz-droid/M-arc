@@ -122,9 +122,28 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
   }
 }
 
-export function onNotificationTap(handler: () => void): void {
+/** Taps report the notification's `extra.type` ('rest', 'training', 'backup'), so each can open its own place. */
+export function onNotificationTap(handler: (type: string | undefined) => void): void {
   if (!isNative()) return;
   try {
-    Promise.resolve(LocalNotifications.addListener('localNotificationActionPerformed', handler)).catch(() => undefined);
+    Promise.resolve(LocalNotifications.addListener('localNotificationActionPerformed', a => handler((a?.notification?.extra as { type?: string } | undefined)?.type))).catch(() => undefined);
   } catch { /* tapping a reminder just opens the app */ }
+}
+
+/** F5: outside 730000–820000, which syncTrainingReminders clears. */
+export const BACKUP_REMINDER_ID = 880101;
+
+/** F5: a weekly, inexact "save a backup" note on Sundays at 19:00; cancelled when off. */
+export async function syncBackupReminder(on: boolean): Promise<void> {
+  if (!isNative()) return;
+  try { await LocalNotifications.cancel({ notifications: [{ id: BACKUP_REMINDER_ID }] }); } catch { /* none pending */ }
+  if (!on || !(await ensurePermission())) return;
+  await ensureChannels();
+  try {
+    await LocalNotifications.schedule({ notifications: [{
+      id: BACKUP_REMINDER_ID, title: 'Save a backup of your training', body: 'Everything lives on this phone. A backup file keeps it safe.',
+      schedule: { on: { weekday: 1, hour: 19, minute: 0 }, allowWhileIdle: false }, channelId: CHANNELS.silent.id, extra: { type: 'backup' },
+      isExactNotification: false,
+    }] });
+  } catch { /* shown as off next time Settings opens */ }
 }

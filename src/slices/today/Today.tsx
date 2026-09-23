@@ -13,6 +13,7 @@ import { SPARKS } from '@/data/sparks';
 import { mindsetForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { requestStart } from '../workout/Train';
+import { setDayOff } from './dayOff';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
@@ -39,7 +40,9 @@ export function Today() {
   const mindset = mindsetForDay(dayOfYear);
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
-  const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';
+  // RG-19 (D4): a scheduled day taken off reads as its own state and counts as unscheduled.
+  const off = s.daysOff.includes(today.value);
+  const status = live ? 'live' : done.length ? 'done' : split ? (off ? 'off' : 'ready') : 'rest';
   usePalaceFocus('today.header', { status });
 
   return (
@@ -77,7 +80,18 @@ export function Today() {
             <div class="eyebrow">Scheduled today</div>
             <h2>{split.name}</h2>
             <p class="muted small">{split.exercises.length} exercises planned.</p>
-            <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            <div class="row">
+              <Button variant="primary" class="grow" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+              <Button variant="quiet" data-palace="today.day-off" onClick={() => setDayOff(today.value, true)}>Take today off</Button>
+            </div>
+          </div>
+        )}
+        {status === 'off' && split && (
+          <div class="stack-sm" data-palace="today.day-off">
+            <div class="eyebrow">Day off</div>
+            <h2>{split.name} can wait</h2>
+            <p class="muted small">Today counts as a rest day: your streak and this week's target leave it out.</p>
+            <div class="row"><Button onClick={() => { setDayOff(today.value, false); requestStart(split); go('train'); }}><IconPlay /> Train anyway</Button><Button variant="quiet" onClick={() => setDayOff(today.value, false)}>Undo day off</Button></div>
           </div>
         )}
         {status === 'rest' && (

@@ -7,7 +7,7 @@ import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
 import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
-import { profileOpen } from '@/app/router';
+import { openPanel, profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
 import { healthAvailable } from '@/native/health';
 import { syncAndStoreHealth } from './health';
@@ -20,11 +20,13 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
-import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, scheduleRestDone } from '@/native/notifications';
+import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, scheduleRestDone, syncBackupReminder } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { APP_VERSION } from '@/core/version';
-import { formatDay, formatLocalStamp, dayKey } from '@/core/dates';
+import { addDays, daysBetween, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { buildBackup, parseBackup } from './backup';
+import { sessionsToCsv } from './exportCsv';
+import { today } from '@/app/selectors';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
 type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
@@ -73,8 +75,25 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const backup = async () => {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    try { showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1))); } catch { showToast('Export failed'); }
+    try {
+      showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1)));
+      update(x => ({ ...x, lastBackupAt: new Date().toISOString() }));
+    } catch { showToast('Export failed'); }
   };
+  // RG-17: every filled-in set as CSV, loads as typed in the display unit.
+  const exportCsv = async (days: number | null) => {
+    const to = today.value;
+    const from = days ? addDays(to, -(days - 1)) : undefined;
+    const csv = sessionsToCsv(s.sessions, p.weightUnit, from, to);
+    try { showToast(await exportText(`marc-sessions-${days ? `${days}d` : 'all'}-${to}.csv`, csv)); } catch { showToast('Export failed'); }
+  };
+  const backupOn = p.backupReminder ?? isNative();
+  const backupAge = s.lastBackupAt ? daysBetween(s.lastBackupAt.slice(0, 10), today.value) : null;
+  // A tap on the backup reminder opens Settings at "Your data".
+  useEffect(() => {
+    if (openPanel.peek()?.params?.section !== 'data') return;
+    setTimeout(() => document.querySelector('[data-palace="settings.data"]')?.scrollIntoView({ block: 'start' }), 50);
+  }, []);
   const restore = async () => {
     const text = await pickFile();
     if (!text) return;
@@ -174,6 +193,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Your data" palace="settings.data">
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
+            <p class="hint" data-palace="settings.last-backup">{backupAge == null ? 'No backup exported yet.' : `Last backup: ${backupAge === 0 ? 'today' : `${backupAge} day${backupAge === 1 ? '' : 's'} ago`}.`}</p>
+            <div class="grid-2" data-palace="settings.csv"><Button onClick={() => void exportCsv(90)}>Export CSV (90 days)</Button><Button onClick={() => void exportCsv(null)}>Export CSV (all)</Button></div>
+            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v); }} />}><span class="small">Weekly backup reminder</span><div class="hint">Sunday evening, a note to save a backup file.</div></Row>}
             {pending && (
               <Card class="card-quiet" role="alertdialog">
                 <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>

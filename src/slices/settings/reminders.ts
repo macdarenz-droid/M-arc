@@ -13,7 +13,8 @@ export const reminderHealth = signal<ReminderHealth>({ status: 'Not checked yet'
  */
 export async function resyncReminders(): Promise<void> {
   const s = state.value;
-  const completed = new Set(s.sessions.map(x => x.day));
+  // A day taken off gets no training reminder either (RG-19).
+  const completed = new Set([...s.sessions.map(x => x.day), ...s.daysOff]);
   const r = todayReadiness.value;
   reminderHealth.value = await syncTrainingReminders(s.preferences.reminders, s.schedule, id => s.splits.find(sp => sp.id === id)?.name ?? 'Training', completed, r ? readinessSummaryText(r) : null);
 }

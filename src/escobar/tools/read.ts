@@ -32,6 +32,7 @@ import { autoregulationSuggestion } from '@/brain/coach/live';
 import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
 import { isWorkingSet } from '@/brain/exposure';
+import { one } from '../context/brief';
 import {
   progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
@@ -188,6 +189,8 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({
     exercise: exerciseName(ctx, id), exerciseId: id, weeks,
+    // F1: the person's own setup note (not health data).
+    ...(s.exerciseNotes[id] ? { setupNote: one(s.exerciseNotes[id]) } : {}),
     // Newest first, so capping drops the oldest sessions (ES-01).
     sessions: [...hist].reverse().map(h => ({ day: h.day, top: { ...(h.topKg > 0 ? loadOf(ctx, id, h.topKg) : {}), reps: h.topKg > 0 ? h.topReps : h.bestReps }, e1rm: h.bestE1rm > 0 ? r1(h.bestE1rm) : null, sets: h.sets.length, effortMix: effortMix(h.sets) })),
     plateau: { status: p.status, confidence: p.confidence },

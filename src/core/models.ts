@@ -210,7 +210,7 @@ export interface ActiveSession {
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;

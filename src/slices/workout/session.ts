@@ -4,7 +4,7 @@
  */
 import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
-import { state, update, flushSave } from '@/core/store';
+import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { hasEntry } from '@/brain/exposure';
 import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
@@ -199,6 +199,25 @@ export function addSet(entry: number): void {
   }) }));
 }
 
+/** F2 "Log warm-ups": puts the ramp in front of the working sets, once. They are logged, never counted. */
+export function logWarmups(entry: number, sets: Array<Pick<LoggedSet, 'kg' | 'entered' | 'reps'>>): void {
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry || e.sets.some(x => x.kind === 'warmup') ? e : { ...e, sets: [...sets.map(w => draftSet({ ...w, kind: 'warmup' })), ...e.sets] })) }));
+}
+
+/** F1: today's note for one exercise. */
+export function setEntryNote(entry: number, note: string): void {
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, note: note.slice(0, 500) || undefined })) }));
+}
+
+/** F1: the sticky setup note (seat height, grip) shown every time this exercise comes up. */
+export function setExerciseNote(exerciseId: string, note: string): void {
+  const text = note.trim().slice(0, MAX_EXERCISE_NOTE);
+  update(s => {
+    const { [exerciseId]: _old, ...rest } = s.exerciseNotes;
+    return { ...s, exerciseNotes: text ? { ...rest, [exerciseId]: text } : rest };
+  });
+}
+
 export function removeSet(entry: number, index: number): void {
   patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry || e.sets.length <= 1 ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })) }));
 }
@@ -281,14 +300,14 @@ export function restRemainingSec(a: ActiveSession, now = Date.now()): number | n
 export interface FinishSummary { session: Session; changedTemplate: boolean }
 
 /** Turn the active session into history. Sets that were never filled are dropped. */
-export function finishSession(saveTemplate: boolean): FinishSummary | null {
+export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
   const a = active();
   if (!a) return null;
   const split = state.value.splits.find(s => s.id === a.splitId);
   const now = new Date();
   const exercises = a.entries
     .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set) }))
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}) }))
     .filter(e => e.sets.length);
   const workingSets = exercises.flatMap(e => e.sets);
   const logging = liveSessionLogging({
@@ -309,6 +328,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     exercises,
     logging,
     gymId: a.gymId ?? state.value.units.activeGymId,
+    ...(opts.note?.trim() ? { note: opts.note.trim().slice(0, 1000) } : {}),
   });
   const templateIds = (split?.exercises ?? []).map(e => e.exerciseId).join('|');
   const sessionIds = a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
@@ -320,7 +340,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
     escobar: s.escobar.todayOverride?.splitId === a.splitId ? { ...s.escobar, todayOverride: null } : s.escobar,
     sessions: exercises.length ? sortByStart([...s.sessions, session]) : s.sessions,
     splits: saveTemplate && split
-      ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.length) })) }))
+      ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) })) }))
       : s.splits,
     recoveryModel: exercises.length ? calibrateAfterSession(recentPrior(sortByStart(s.sessions), s.sessions.length, Date.parse(session.startedAt)), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
   }));

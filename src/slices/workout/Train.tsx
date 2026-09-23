@@ -21,7 +21,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, addSet, active, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, logWarmups, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -304,6 +304,7 @@ function LiveSession() {
   const [open, setOpen] = useState<number>(a.entries.findIndex(e => !e.done && !e.skipped));
   const [picking, setPicking] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  const [sessionNote, setSessionNote] = useState('');
   // Hold an exercise and drag to reorder; the open card follows its exercise.
   const reorder = useReorder((from, to) => {
     const openId = a.entries[open]?.exerciseId;
@@ -348,7 +349,9 @@ function LiveSession() {
               <div class="stat"><b>{a.entries.filter(e => e.sets.some(isWorkingSet)).length}</b><span>exercises</span></div>
               <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0)}</b><span>sets</span></div>
             </div>
-            <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={!!split && split.exercises.map(e => e.exerciseId).join('|') !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|')} />
+            <EffortRepair a={a} />
+            <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
+            <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={!!split && split.exercises.map(e => e.exerciseId).join('|') !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|')} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
             <Button variant="danger" size="sm" onClick={() => { if (confirm('Discard this session? Nothing will be saved.')) { discardSession(); setFinishing(false); } }}>Discard session</Button>
           </div>
@@ -378,6 +381,24 @@ function WatchPill() {
   );
 }
 
+/** F9: before saving, the working sets that have no effort yet (max 12), rated inline. Skipping is fine. */
+function EffortRepair({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
+  const [skipped, setSkipped] = useState(false);
+  const missing = a.entries.flatMap((e, i) => (e.skipped ? [] : e.sets.map((set, j) => ({ i, j, e, set })))).filter(x => isWorkingSet(x.set) && !x.set.effort).slice(0, 12);
+  if (skipped || !missing.length) return null;
+  return (
+    <div class="stack-sm" data-palace="train.effort-repair">
+      <div class="row-between"><span class="small">How hard were these?</span><Button size="sm" variant="quiet" onClick={() => setSkipped(true)}>Skip</Button></div>
+      {missing.map(({ i, j, e, set }) => (
+        <div key={`${i}-${j}`} class="row-between">
+          <span class="hint ellipsis">{e.name} · set {j + 1}{set.reps ? ` · ${set.reps} reps` : ''}</span>
+          <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} onClick={() => setSet(i, j, { effort: ef.v })}>{ef.l}</button>)}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (saveTemplate: boolean) => void }) {
   if (!changed) return <Button variant="primary" onClick={() => onFinish(false)}><IconCheck /> Finish and save</Button>;
   return (
@@ -404,9 +425,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const gymId = s.active?.gymId;
   const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, recoveryPct];
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.length, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
+  const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  const sticky = s.exerciseNotes[entry.exerciseId];
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
   const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
@@ -433,6 +456,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
         <div class="grow">
           <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
+          {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setMenu(true); }}><IconMore /></Button>
@@ -453,6 +477,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               {warmupOpen && (
                 <div class="list" style={{ marginTop: 4 }}>
                   {warmup.map((st, i) => <Row key={i} trailing={<span class="hint num">{formatLoadable(loadableNear(st.kg, profile))} × {st.reps}</span>}><span class="small muted">Warm-up {i + 1}</span></Row>)}
+                  {/* F2: logged warm-ups are kept in history but never counted. */}
+                  {!entry.sets.some(x => x.kind === 'warmup') && <Button size="sm" variant="quiet" data-palace="train.log-warmups" onClick={() => logWarmups(index, warmup.map(st => { const l = loadableNear(st.kg, profile); return { kg: l.kg, entered: { value: l.value, unit: l.unit }, reps: st.reps }; }))}>Log warm-ups</Button>}
                 </div>
               )}
             </div>
@@ -460,11 +486,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{eu}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const { prev, pr } = perSet[j]!;
-            const target = next.sets[Math.min(j, next.sets.length - 1)];
+            // Warm-ups sit in front: working targets line up with the working sets.
+            const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
+            const target = set.kind === 'warmup' ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
-                  <span class="set-index">{j + 1}</span>
+                  <button type="button" class={`set-index set-kind ${set.kind ?? ''}`} aria-label={`Set ${j + 1} options`} onClick={() => setSetMenuAt(j)}>{set.kind === 'warmup' ? 'W' : set.kind === 'drop' ? 'D' : set.kind === 'failure' ? 'F' : j + 1}</button>
                   {isTimed ? (
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
@@ -488,6 +516,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
                   </span>
                 </div>
+                {mode === 'conditioning' && (
+                  // UI-20: carries and sled work log distance and time next to load and reps.
+                  <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
+                    <input type="number" inputMode="numeric" aria-label="Distance in metres" placeholder="m" value={set.distanceM ?? ''} onInput={e => { const v = Number((e.target as HTMLInputElement).value); setSet(index, j, { distanceM: v >= 1 && v <= 1000 ? Math.round(v) : undefined }); }} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" aria-label="Seconds" placeholder="s" value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                  </div>
+                )}
                 <SuspectChip set={set} best={best} dismissKey={`${s.active?.startedAt}|${entry.exerciseId}|${j}|${set.kg}`} onFix={alt => { setSet(index, j, { kg: alt.kg, entered: { value: alt.value, unit: alt.unit } }); setExerciseUnit(entry.exerciseId, alt.unit, 'suspect_fix'); }} />
               </div>
             );
@@ -503,10 +538,22 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
       {menu && (
         <Sheet title={entry.name} onClose={() => setMenu(false)}>
           <div class="stack-sm">
+            <Field label="Setup note (shown every time)"><input maxLength={200} value={sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onChange={e => setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value)} /></Field>
+            <Field label="Note for today"><input maxLength={500} value={entry.note ?? ''} onChange={e => setEntryNote(index, (e.target as HTMLInputElement).value)} /></Field>
             <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
             {ex && <Button variant="quiet" onClick={() => { setMenu(false); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => { removeEntry(index); setMenu(false); }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
+          </div>
+        </Sheet>
+      )}
+      {setMenuAt != null && entry.sets[setMenuAt] && (
+        <Sheet title={`Set ${setMenuAt + 1}`} onClose={() => setSetMenuAt(null)}>
+          <div class="stack-sm">
+            {([[undefined, 'Normal set'], ['warmup', 'Mark as warm-up'], ['drop', 'Mark as drop set'], ['failure', 'Mark as to failure']] as const).map(([k, label]) => (
+              <Button key={label} variant={entry.sets[setMenuAt]!.kind === k ? 'primary' : 'default'} onClick={() => { setSet(index, setMenuAt, k === 'failure' ? { kind: k, effort: 'max' } : { kind: k }); setSetMenuAt(null); }}>{label}</Button>
+            ))}
+            <p class="hint">Warm-ups are kept but never counted. Drop sets count for volume but not records. To failure counts as max effort.</p>
           </div>
         </Sheet>
       )}

@@ -8,10 +8,10 @@ import { resyncReminders } from './slices/settings/reminders';
 import { backgroundHealthSync } from './slices/settings/health';
 import { isNative } from './native/capacitor';
 import { installBackButton } from './native/back';
-import { onNotificationTap, refreshExactAlarm } from './native/notifications';
+import { onNotificationTap, refreshExactAlarm, syncBackupReminder } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
-import { go } from './app/router';
+import { go, showPanel } from './app/router';
 import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import './ui/styles.css';
@@ -60,7 +60,8 @@ try {
   void backgroundHealthSync();
 
   // Notification taps: rest done → Train, training day → Train.
-  onNotificationTap(() => go('train'));
+  onNotificationTap(type => { if (type === 'backup') showPanel('settings', { section: 'data' }); else go('train'); });
+  void syncBackupReminder(state.peek().preferences.backupReminder ?? isNative());
 
   // The web bundle defines window.Capacitor too (via @capacitor/core), so only isNative() tells the APK apart.
   if ('serviceWorker' in navigator && !isNative()) {
