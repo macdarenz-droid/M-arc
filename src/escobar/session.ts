@@ -46,15 +46,24 @@ let loaded = false;
 /** Bumped whenever the conversation store is replaced; a turn from an older epoch writes nothing (ES-07, R4.4). */
 let epoch = 0;
 
-// Reset or restore replaced the store underneath us: drop the loop and everything cached.
-onStoreReplaced(() => {
+/**
+ * Stops the running turn and clears what it showed. The stopped loop may no longer touch the UI
+ * (it is not the active loop), so its own "idle" never arrives: the switch has to say it (QA-R4a-1/3/8).
+ */
+function dropLoop(): void {
   loop?.stop();
   loop = null;
-  epoch++;
-  loaded = false;
   lastTurn.value = null;
   safetyCards.value = [];
   pendingUser.value = null;
+  loopView.value = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
+}
+
+// Reset or restore replaced the store underneath us: drop the loop and everything cached.
+onStoreReplaced(() => {
+  dropLoop();
+  epoch++;
+  loaded = false;
   activeConversation.value = null;
   storeSig.value = emptyStore();
   loadConversations();
@@ -264,26 +273,19 @@ export function closeEscobar(): void { escobarUi.value = { ...escobarUi.value, o
 
 export function startNewConversation(): void {
   loadConversations();
-  loop?.stop();
-  loop = null;
+  dropLoop();
   const c = newConversation(APP_VERSION, escobarUi.value.mode === 'plan' ? 'plan' : 'chat');
   persist(c);
-  lastTurn.value = null;
-  safetyCards.value = [];
-  loopView.value = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
 }
 
 export function selectConversation(id: string): void {
   loadConversations();
   const c = storeSig.value.conversations.find(x => x.id === id);
   if (!c) return;
-  loop?.stop();
-  loop = null;
+  dropLoop();
   const next = { ...storeSig.value, activeId: id };
   storeSig.value = saveStore(next) ?? next;
   activeConversation.value = c;
-  lastTurn.value = null;
-  safetyCards.value = [];
 }
 
 /**
@@ -296,7 +298,8 @@ function modeFor(text: string): EscobarMode {
   if (activeConversation.value?.mode === 'plan') return 'plan';
   if (ui === 'chat' && isPlanRequest(text)) {
     const c = activeConversation.value;
-    if (c) persist({ ...c, mode: 'plan' });
+    // QA-R4a-2: through updateConversation, so the running loop's own copy is plan too and its next save keeps it.
+    if (c) updateConversation({ ...c, mode: 'plan' });
     return 'plan';
   }
   return ui;
@@ -304,12 +307,10 @@ function modeFor(text: string): EscobarMode {
 
 /** Settings → Reset conversations. */
 export function resetConversations(): void {
-  loop?.stop();
-  loop = null;
+  dropLoop();
   epoch++;
   storeSig.value = saveStore(emptyStore()) ?? emptyStore();
   activeConversation.value = null;
-  lastTurn.value = null;
 }
 
 /** Replace the active conversation after a proposal decision (apply.ts). */

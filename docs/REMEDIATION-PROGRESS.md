@@ -272,3 +272,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R3a-6, QA-R3a-7 (medium)
 - `plateauStatus` looks only at sessions since the last break over 28 days (`sinceLastBreak`), so a comeback is not judged on months-old sessions (coach plateau notes and the deload trigger).
 - The plateau lever needs its 6+ sessions to span at least 42 days of the 56 it looks at (`PLATEAU_MIN_SPAN_DAYS`); two weeks of a 3x/week lift no longer reads as flat.
+### QA-R4a-1, QA-R4a-2, QA-R4a-3 (medium), QA-R4a-8 (low)
+- `dropLoop()` (new/select/reset conversation and store replaced) stops the turn and sets loopView idle, pendingUser null, lastTurn null and the safety cards empty: the stopped loop is no longer allowed to touch the UI, so the switch does it.
+- Plan mode is persisted through `updateConversation`, so the running loop's copy is plan too and a follow-up stays in plan mode.

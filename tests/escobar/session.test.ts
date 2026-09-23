@@ -94,3 +94,52 @@ describe('Escobar session flow (ES-09, ES-10)', () => {
     expect((await one).outcome).toBe('done');
   });
 });
+
+import { loopView } from '@/escobar/state';
+import { pendingUser, selectConversation } from '@/escobar/session';
+describe('switching mid-answer clears the turn (QA-R4a-1, QA-R4a-3, QA-R4a-8)', () => {
+  it('picking a past conversation or resetting mid-answer leaves Escobar idle, and a new send works', async () => {
+    setTransport({ async *turn() { for (const e of answer('Old.')) yield e; } });
+    await send({ text: 'an older question' });
+    const older = activeConversation.value!.id;
+    startNewConversation();
+    for (const action of [() => selectConversation(older), () => resetConversations()]) {
+      const g = gated();
+      setTransport(g.t);
+      const pending = send({ text: 'mid-answer' });
+      await tick();
+      expect(loopView.value.status).not.toBe('idle');
+      action();
+      expect(loopView.value.status).toBe('idle');
+      expect(pendingUser.value).toBeNull();
+      g.release();
+      await pending;
+      expect(loopView.value.status).toBe('idle');
+      setTransport({ async *turn() { for (const e of answer('Fine.')) yield e; } });
+      expect((await send({ text: 'after' })).outcome).toBe('done');
+    }
+  });
+  it('a new conversation mid-turn does not show the old question', async () => {
+    const g = gated();
+    setTransport(g.t);
+    const pending = send({ text: 'first question' });
+    await tick();
+    startNewConversation();
+    expect(pendingUser.value).toBeNull();
+    g.release();
+    await pending;
+    expect(pendingUser.value).toBeNull();
+  });
+});
+
+describe('plan mode sticks for follow-ups (QA-R4a-2)', () => {
+  it('after a programme request, the next message is still in plan mode and the conversation stays plan', async () => {
+    const modes: string[] = [];
+    setTransport({ async *turn(body) { modes.push((body as { mode: string }).mode); for (const e of answer('Ok.')) yield e; } });
+    await send({ text: 'hi there' });
+    await send({ text: 'Build me a 4-day programme' });
+    await send({ text: 'Looks good, swap bench for dips' });
+    expect(modes).toEqual(['chat', 'plan', 'plan']);
+    expect(loadStore().conversations.find(c => c.id === loadStore().activeId)?.mode).toBe('plan');
+  });
+});
