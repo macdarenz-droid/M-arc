@@ -5,6 +5,8 @@ const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', 
 // Every built asset, lazy chunks included, so the Escobar chunk works offline after the first visit (ST-04).
 const ASSETS = /*__ASSETS__*/[];
 const INDEX = new URL('./index.html', self.location).href;
+// Module scripts carry an Origin header; a server's `Vary: Origin` must not hide the installed copy.
+const MATCH = { ignoreVary: true };
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll([...CORE, ...ASSETS])).then(() => self.skipWaiting()));
@@ -19,7 +21,7 @@ self.addEventListener('activate', e => {
       if (key === CACHE) continue;
       const old = await caches.open(key);
       for (const req of await old.keys()) {
-        if (new URL(req.url).pathname.includes('/assets/') && !(await next.match(req))) {
+        if (new URL(req.url).pathname.includes('/assets/') && !(await next.match(req, MATCH))) {
           const res = await old.match(req);
           if (res) await next.put(req, res);
         }
@@ -38,11 +40,11 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(req).then(res => {
       if (res.ok) { const a = res.clone(), b = res.clone(); caches.open(CACHE).then(c => Promise.all([c.put(req, a), c.put(INDEX, b)])); }
       return res;
-    }).catch(async () => (await caches.match(req)) || (await caches.match(INDEX)) || Response.error()));
+    }).catch(async () => (await caches.match(req, MATCH)) || (await caches.match(INDEX, MATCH)) || Response.error()));
     return;
   }
   // Other same-origin GETs: cache first; only good same-origin answers are kept; a failure is an error, never HTML.
-  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+  e.respondWith(caches.match(req, MATCH).then(hit => hit || fetch(req).then(res => {
     if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return res;
   }).catch(() => Response.error())));

@@ -6,6 +6,7 @@ import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
 import { backgroundHealthSync } from './slices/settings/health';
+import { isNative } from './native/capacitor';
 import { installBackButton } from './native/back';
 import { onNotificationTap, refreshExactAlarm } from './native/notifications';
 import { startWatchListeners } from './native/watch';
@@ -61,7 +62,8 @@ try {
   // Notification taps: rest done → Train, training day → Train.
   onNotificationTap(() => go('train'));
 
-  if ('serviceWorker' in navigator && !(globalThis as { Capacitor?: unknown }).Capacitor) {
+  // The web bundle defines window.Capacitor too (via @capacitor/core), so only isNative() tells the APK apart.
+  if ('serviceWorker' in navigator && !isNative()) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => undefined); });
     // ST-25: a new build took over. Mid-session the reload waits; otherwise offer it.
     const hadController = !!navigator.serviceWorker.controller;

@@ -173,3 +173,27 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 ### Layer: gate — done
 - Screenshot gate: Apply → Undo within the window ("Undone"); in a second theme Undo is gone after 8 s.
 - `npm run check`: 736 passed (+ perf 3) · `npm run test:tz`: 736 × 3 zones · worker `npm ci && npm run check`: 71 passed · `npm run build && npm run gate`: PASS.
+
+## Phase R5 — agent side done; device checks pending
+### Layer: native Java — commits f96f91c, 1st R5 native commit — IDs: PL-03, PL-04, VX-01, PL-08, PL-13, PL-15, PL-10, PL-16, RG-20 (D2)
+- Health Connect: results delivered on `callbackExecutor` (cached pool), never on the single `executor` blocked on the latch; today's steps and active calories from two aggregates (local midnight → now), kcal = small calories / 1000; sleep/HR stay on the 48 h read; diagnose total in kcal.
+- WatchBridge: startScan/stopScan/connect/disconnect/status/diagnostics run on the main thread; `DeviceScanner.scanning` volatile; one `watchDevices { devices }` event, throttled to 500 ms with a trailing emit; status emitted after the scan starts. WatchService: SecurityException / IllegalStateException on the FGS start → state `paused` with a reason.
+- Rationale text (PL-10, "M/ARC", backup sentence per D2). patch_manifest enforces attributes on existing entries (idempotent, checked on a pre-seeded manifest); allowBackup left at default (D2).
+### Layer: TS bridges — commit ad7e1b1 — IDs: VX-01, UI-16, ST-16, PL-04, PL-13, UI-21, UI-08, research (back, safe area)
+- health.ts: kcalGuard (also heals stored healthDays and health.activeCalories on load), all-granted-failed → null, `lastHealthError`, `syncHealth({ prompt })` (only Settings prompts); `backgroundHealthSync` on cold start, resume and session start: connected only, 10-min throttle.
+- watch.ts: `watchDevices` batch (old per-device event kept one release), `watchDiagnostics`, state `paused`. heart.ts: dedupe by receivedAtEpochMs, `state.peek().active`, time base = active.startedAt (sessionStartMs removed).
+- Back: `ui/sheetStack.ts` (Sheet registers its onClose; `openSheets` derived), web history entries per sheet with popstate close and `go()` unwinding them first; `native/back.ts` Escobar → sheet → panel → Today → minimise, via `@capacitor/app` 8.1.1.
+- Safe area: every inset is `var(--safe-area-inset-X, env(safe-area-inset-X, 0px))`; SystemBars style from the theme bg luminance (paper → light bars).
+### Layer: UI — IDs: UI-07, UI-08, UI-16, RG-18, ST-03, ST-04, ST-20, ST-25
+- Watch sheet: scanning from the plugin state (local flag reset in `finally`), empty result and permission hints, Forget watch whenever an address is saved, Copy watch diagnostics. Settings: Connect/Sync prompt, "Last sync failed → Details" opens the Health diagnostic sheet (permission, missing, failed, values, Open permissions).
+- Found while building the gate: the PWA never registered its service worker, because `@capacitor/core` defines `window.Capacitor` on the web too; `main.tsx` now uses `isNative()`. Cache lookups use `ignoreVary` (module scripts carry Origin; `Vary: Origin` hid the installed bundle offline).
+- sw.js: navigations network-first (cached under the URL and index.html), other GETs cache-first and kept only when ok+basic, failures are Response.error(); ASSETS stamped by sw-version.mjs (fails without the marker); activate carries /assets/ into the new cache. "App updated · Reload" toast on controllerchange unless a session runs. index.html: first-paint colours per theme, id validated, no maximum-scale. Manifest id "./".
+### Layer: CI — IDs: RG-20, PL-16, research
+- Both workflows: dex check for HealthConnectNativePlugin and WatchBridgePlugin before signing, targetSdk/compileSdk ≥ 36, `"@capacitor/app"` in the plugin list, sw.js stamped. Signing steps untouched; agent guard passes.
+### Layer: tests — app 736 → 755
+- health-bridge (kcal guard, all-failed null, prompt:false never requests, stored values healed), watch (batch), heart-capture (dedupe, peek, restart time base), back (order), theme (index.html colours = THEMES, no maximum-scale, bar style).
+- Gate: offline reload renders; "build B" (new cache, old Escobar chunk deleted from the server) still opens Escobar in the old tab.
+### Needs device check (owner)
+- Health Connect numbers vs the Health Connect app (steps, active kcal); no 20 s stall on sync.
+- Watch scan/connect stress; FGS start with Bluetooth denied shows "paused".
+- Back gesture on 3-button and gesture navigation; edge-to-edge bars on Android 15/16 per theme.
