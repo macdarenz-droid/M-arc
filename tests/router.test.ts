@@ -32,3 +32,15 @@ describe('validatePanelParams (R1.2)', () => {
     expect(openPanel.value).toEqual({ id: 'settings' });
   });
 });
+
+describe('exercise ids from history (QA-R1-6)', () => {
+  it('keeps an id that is logged but not in the library, and still drops a made-up one', async () => {
+    const { replaceState } = await import('@/core/store');
+    const { freshState } = await import('@/core/models');
+    const { validatePanelParams } = await import('@/app/router');
+    const s = freshState();
+    replaceState({ ...s, sessions: [{ id: 's', splitId: 'x', splitName: 'X', day: '2026-09-20', startedAt: '2026-09-20T10:00:00.000Z', endedAt: '2026-09-20T11:00:00.000Z', durationSec: 60, exercises: [{ exerciseId: 'lib_gone_from_library', name: 'Old lift', sets: [{ kg: 20, reps: 5 }] }], logging: { mode: 'live', flags: [] } as never }] });
+    expect(validatePanelParams('exercise-stats', { exerciseId: 'lib_gone_from_library' })).toEqual({ exerciseId: 'lib_gone_from_library' });
+    expect(validatePanelParams('exercise-stats', { exerciseId: 'lib_made_up' })).toEqual({});
+  });
+});

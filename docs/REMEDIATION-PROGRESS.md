@@ -289,3 +289,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - `firstWorkingSet()` (brain/exposure): the live card's autoregulation tip and Escobar's live view start from the first non-warm-up set; Escobar plans and counts only working sets.
 ### QA-R1-4 (low)
 - The lb backfill runs inside `repairState` (it sees the raw state), so restore gets it too.
+### QA-R1-5 (low)
+- With both copies kept aside, the rescue file holds both (crash-screen rescue format), so 'Delete rescue copy' after saving loses nothing.

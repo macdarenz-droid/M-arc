@@ -45,7 +45,8 @@ export function validatePanelParams(_panel: PanelId, params: Record<string, stri
     if (typeof v !== 'string') continue;
     if (k === 'muscle' && !isMuscleId(v)) continue;
     if (k === 'sessionId' && !s.sessions.some(x => x.id === v)) continue;
-    if (k === 'exerciseId' && findExercise(v, s.customExercises)?.id !== v) continue;
+    // QA-R1-6: an id that is in the person's history counts even if the library no longer has it.
+    if (k === 'exerciseId' && findExercise(v, s.customExercises)?.id !== v && !s.sessions.some(x => x.exercises.some(e => e.exerciseId === v))) continue;
     if (k === 'view' && !(BODY_VIEWS as readonly string[]).includes(v)) continue;
     if (k === 'seg' && !(HISTORY_SEGS as readonly string[]).includes(v)) continue;
     out[k] = v;
