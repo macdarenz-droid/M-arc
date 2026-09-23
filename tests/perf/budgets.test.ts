@@ -45,8 +45,8 @@ import { newConversation } from '@/escobar/store';
 import type { StoredMessage } from '@/escobar/types';
 describe('Escobar history window (QA-R4b-9)', () => {
   const msgs: StoredMessage[] = [];
-  for (let i = 0; i < 300; i++) msgs.push({ role: 'user', content: [{ type: 'text', text: `q${i}` }] }, { role: 'assistant', content: [{ type: 'text', text: `a${i}` }] });
-  for (let i = 0; i < 40; i++) msgs.push({ role: 'user', content: [{ type: 'text', text: `big${i} ${'x'.repeat(12_000)}` }] }, { role: 'assistant', content: [{ type: 'text', text: 'ok' }] });
+  for (let i = 0; i < 300; i++) msgs.push({ role: 'user', content: [{ type: 'text', text: `q${i}` }] }, { role: 'assistant', content: [{ type: 'text', text: `a${i}` }] } as StoredMessage);
+  for (let i = 0; i < 40; i++) msgs.push({ role: 'user', content: [{ type: 'text', text: `big${i} ${'x'.repeat(12_000)}` }] }, { role: 'assistant', content: [{ type: 'text', text: 'ok' }] } as StoredMessage);
   const conv = { ...newConversation('t'), messages: msgs };
   it('windowMessages on a long chat with heavy recent turns under 40 ms', () => {
     const ms = timeIt(() => { windowMessages(conv, msgs); });

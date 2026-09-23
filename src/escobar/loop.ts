@@ -9,7 +9,7 @@ import type { AppState } from '@/core/models';
 import { buildBrief } from './context/brief';
 import type { EscobarMode } from './context/modes';
 import { executeTool, genericLabel, statusLabel, type MemoryEffect, type ToolOutcome } from './tools/executor';
-import { makeCtx, type ToolCtx } from './tools/context';
+import { makeCtx, redactDrivers, type ToolCtx } from './tools/context';
 import { DirectiveBuffer, checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
 import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
@@ -102,6 +102,40 @@ function deniedFor(use: { name: string; input: unknown } | undefined, sharing: {
   return null;
 }
 
+/**
+ * QA-R4b-2: other results recorded while sharing was on keep their training data but lose the
+ * health or body parts (heart numbers, resting-HR baselines, sleep, HR drivers; body weight and
+ * body fat), in both `data` and the `facts` map. Briefs lose their drivers and weight.
+ */
+const HEALTH_KEYS = new Set(['baselines', 'heart', 'watch', 'avgBpm', 'maxBpm', 'activeKcal', 'restingHr', 'restingHr7d', 'restingHr28d', 'hrv', 'sleep', 'sleepMinutes', 'sleep14dMedianMin']);
+const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat']);
+const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers)\b/i;
+const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat)\b/;
+function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown {
+  if (Array.isArray(v)) return v.map(x => scrub(x, sharing));
+  if (!isObj(v)) return v;
+  const out: Record<string, unknown> = {};
+  for (const [k, x] of Object.entries(v)) {
+    if (!sharing.health && HEALTH_KEYS.has(k)) continue;
+    if (!sharing.body && BODY_KEYS.has(k)) continue;
+    out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
+  }
+  return out;
+}
+function redactResult(content: string, sharing: { health: boolean; body: boolean }): string {
+  let parsed: unknown;
+  try { parsed = JSON.parse(content); } catch { return content; }
+  if (!isObj(parsed) || !('data' in parsed)) return content;
+  const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => typeof t !== 'string' || !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t))))) : parsed.facts;
+  return JSON.stringify({ ...parsed, data: scrub(parsed.data, sharing), facts });
+}
+function redactBrief(text: string, sharing: { health: boolean; body: boolean }): string {
+  let t = text;
+  if (!sharing.health) t = t.replace(/(advice [\w-]+) \([^)\n]*\)/g, '$1');
+  if (!sharing.body) t = t.replace(/, weight [\d.]+ kg/g, '');
+  return t;
+}
+
 /** The app-only parts (meta, image refs, sent flags) never reach the Worker (§12.2). */
 export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDeps['imageData'], sharing?: { health: boolean; body: boolean }): unknown[] {
   const uses = new Map<string, { name: string; input: unknown }>();
@@ -113,15 +147,17 @@ export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDep
     if (m.role !== 'user') continue;
     for (let j = m.content.length - 1; j >= 0 && inline.size < MAX_INLINE_IMAGES; j--) { const b = m.content[j]!; if (b.type === 'image_ref' && !b.sent) inline.add(b.id); }
   }
+  const partial = !!sharing && !(sharing.health && sharing.body);
   return messages.map(m => {
-    if (m.role === 'system') return { role: 'system', content: m.content };
+    if (m.role === 'system') return { role: 'system', content: partial ? redactBrief(m.content, sharing!) : m.content };
     if (m.role === 'assistant') return { role: 'assistant', content: m.content };
     const content = m.content.map((b: UserBlock) => {
       if (b.type === 'text') return { type: 'text', text: b.text };
       if (b.type === 'tool_result') {
         const denied = sharing ? deniedFor(uses.get(b.tool_use_id), sharing) : null;
         if (denied) return { type: 'tool_result', tool_use_id: b.tool_use_id, content: JSON.stringify({ data: { denied }, facts: {} }) };
-        return { type: 'tool_result', tool_use_id: b.tool_use_id, content: b.content, ...(b.is_error ? { is_error: true } : {}) };
+        const content = partial && typeof b.content === 'string' ? redactResult(b.content, sharing!) : b.content;
+        return { type: 'tool_result', tool_use_id: b.tool_use_id, content, ...(b.is_error ? { is_error: true } : {}) };
       }
       const img = !b.sent && imageData && inline.has(b.id) ? imageData(b.id) : null;
       if (img) return { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.data } };

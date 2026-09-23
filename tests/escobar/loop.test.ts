@@ -228,7 +228,7 @@ describe('agent loop (§13)', () => {
     const { loop, transport } = setup([answer('Noted.'), answer('Ok.'), answer('Sure.')]);
     await loop.send({ text: 'hi' });
     const long: StoredMessage[] = [];
-    for (let i = 0; i < 30; i++) long.push({ role: 'user', content: [{ type: 'text', text: `q${i} ${'z'.repeat(10_000)}` }] }, { role: 'assistant', content: [{ type: 'text', text: `a${i}` }] });
+    for (let i = 0; i < 30; i++) long.push({ role: 'user', content: [{ type: 'text', text: `q${i} ${'z'.repeat(10_000)}` }] }, { role: 'assistant', content: [{ type: 'text', text: `a${i}` }] } as StoredMessage);
     loop.conversation = { ...loop.conversation, messages: [...long, ...loop.conversation.messages], userTurns: 6 };
     await loop.send({ text: 'again' });
     await loop.send({ text: 'and again' });
@@ -273,5 +273,25 @@ describe('history window (§11.4)', () => {
     expect(Math.ceil(JSON.stringify(toRequestMessages(w)).length / 4)).toBeLessThanOrEqual(60_000);
     expect(JSON.stringify(w[0])).toContain('[later messages trimmed]');
     expect((w[1] as { role: string }).role).toBe('user');
+  });
+});
+
+describe('replayed health and body details once sharing is off (QA-R4b-2)', () => {
+  const brief: StoredMessage = { role: 'system', content: 'readiness amber 55, advice hold (resting heart rate up 6 bpm; sleep has been short)\nprofile: goal Strength, male, weight 80.5 kg' };
+  const uses: StoredMessage = { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'get_readiness', input: {} }, { type: 'tool_use', id: 't2', name: 'get_session', input: {} }] } as StoredMessage;
+  const results: StoredMessage = { role: 'user', content: [
+    { type: 'tool_result', tool_use_id: 't1', content: JSON.stringify({ data: { readiness: { score: 55, drivers: ['resting heart rate up 6 bpm', 'legs trained yesterday'] }, baselines: { restingHr7d: 58 } }, facts: { f1: 'readiness score = 55', f2: 'baselines restingHr7d = 58' } }) },
+    { type: 'tool_result', tool_use_id: 't2', content: JSON.stringify({ data: { sets: 12, heart: { avgBpm: 131, maxBpm: 170 } }, facts: { f3: 'sets = 12', f4: 'heart avgBpm = 131' } }) },
+  ] } as StoredMessage;
+  const msgs = [{ role: 'user', content: [{ type: 'text', text: 'hi' }] } as StoredMessage, brief, uses, results];
+  it('health off: no heart numbers, baselines or HR drivers; training data stays', () => {
+    const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: false, body: true }));
+    for (const gone of ['restingHr7d', '58', 'avgBpm', '131', 'resting heart rate', 'sleep has been short']) expect(out).not.toContain(gone);
+    for (const kept of ['legs trained yesterday', 'sets = 12', 'readiness score = 55', 'weight 80.5 kg']) expect(out).toContain(kept);
+  });
+  it('body off: the brief loses the body weight', () => {
+    const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body: false }));
+    expect(out).not.toContain('80.5');
+    expect(out).toContain('avgBpm');
   });
 });

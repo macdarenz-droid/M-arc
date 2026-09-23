@@ -386,3 +386,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R4b-3 (low)
 - When a step of the turn sends a trimmed window, the turn's first commit no longer writes this turn's brief lines back, so the next brief is full, including for turns without tools. While a chat stays over the window, each turn therefore gets a full brief (the plan's "force a full brief after any trim").
+
+### QA-R4b-2 (low)
+- When a sharing switch is off, replayed tool results that were not already denied are scrubbed of health keys (heart numbers, resting-HR baselines, sleep, watch, HR drivers) or body keys (body weight, body fat), in both `data` and the `facts` map. This covers get_readiness, get_session, the live session, readiness_gauge, session_summary and explain_method. Replayed briefs lose their readiness drivers or `weight N kg`. Training data stays.
+- Also fixed test typing from the QA-R4b-3 and QA-R4b-9 commits: assistant fixtures are cast to `StoredMessage`.
