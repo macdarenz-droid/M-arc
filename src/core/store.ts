@@ -287,8 +287,16 @@ export function persistNow(): boolean {
 }
 
 /** The kept-aside unreadable data, for the rescue file (ST-01). */
+/**
+ * What the Settings rescue row saves. QA-R1-5: when both copies were kept aside, the file holds
+ * both (in the crash screen's rescue format), so deleting the rescue copy never loses one.
+ */
 export function rescueRaw(storage: Storagelike = storageRef ?? localStorage): string | null {
-  try { return storage.getItem(CORRUPT_KEY) ?? storage.getItem(CORRUPT_BACKUP_KEY); } catch { return null; }
+  try {
+    const main = storage.getItem(CORRUPT_KEY), backup = storage.getItem(CORRUPT_BACKUP_KEY);
+    if (main != null && backup != null) return JSON.stringify({ app: 'M/ARC', kind: 'rescue', savedAt: new Date().toISOString(), keys: { [CORRUPT_KEY]: main, [CORRUPT_BACKUP_KEY]: backup } });
+    return main ?? backup;
+  } catch { return null; }
 }
 
 export function deleteRescueCopy(storage: Storagelike = storageRef ?? localStorage): void {

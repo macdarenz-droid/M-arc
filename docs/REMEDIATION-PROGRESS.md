@@ -287,3 +287,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - `volumeChartWeeks` returns oldest week first (weeklyVolumeHistory lists this week first); the chart and its 'this week' header read the right week.
 ### QA-R6-3 (medium), QA-R6-11 (low)
 - `firstWorkingSet()` (brain/exposure): the live card's autoregulation tip and Escobar's live view start from the first non-warm-up set; Escobar plans and counts only working sets.
+### QA-R1-4 (low)
+- The lb backfill runs inside `repairState` (it sees the raw state), so restore gets it too.

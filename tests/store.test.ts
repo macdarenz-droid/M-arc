@@ -241,3 +241,17 @@ describe('quarantine with storage nearly full (QA-R1-1)', () => {
     expect([...st.map.values()].some(v => v.includes('old1'))).toBe(true);
   });
 });
+
+describe('rescue file with both copies kept (QA-R1-5)', () => {
+  it('holds the main and the backup copy', async () => {
+    const st = memoryStorage();
+    const keep = JSON.stringify({ version: 2, sessions: [{ id: 'keep1' }] });
+    st.map.set('marc.state.v1', '{truncated');
+    st.map.set('marc.state.v1.backup', keep);
+    const S = await fresh();
+    S.initStore(st);
+    const raw = S.rescueRaw(st)!;
+    expect(raw).toContain('keep1');
+    expect(raw).toContain('{truncated');
+  });
+});
