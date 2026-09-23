@@ -200,13 +200,12 @@ export function getNextTarget(input: { exerciseId?: string; plannedSets?: number
   const r = readinessToday(ctx);
   const factor = todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === id);
   const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, { readiness: r, recoveryPct, deload: activeDeloadOf(ctx), equipment: profile, ...(factor && factor.kind === 'load' ? { loadFactor: factor.factor } : {}) });
-  const e1 = exerciseHistory(s.sessions, id, s.customExercises).at(-1)?.bestE1rm ?? 0;
   const ex = exerciseOf(ctx, id)!;
   return capJson({
     exercise: ex.name, exerciseId: id,
     target: sug.target, mode: sug.mode, kg: sug.kg, ...(sug.unit ? { unit: sug.unit, value: sug.value } : {}), reps: sug.reps, reason: sug.reason, confidence: sug.confidence,
     sets: sug.sets.map(x => ({ kg: x.kg, reps: x.reps, durationSec: x.durationSec, note: x.note })),
-    warmup: ex.role === 'main' && e1 > 0 ? warmupSets(e1, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
+    warmup: ex.role === 'main' && (sug.sets[0]?.kg ?? 0) > 0 ? warmupSets(sug.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
     recovery: ex.primary.map(m => ({ muscle: m, pct: recoveryAt(ctx).find(x => x.muscle === m)?.pct ?? 100 })),
   }, 3000);
 }

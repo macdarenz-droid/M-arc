@@ -376,7 +376,8 @@ export const RULES: Rule[] = [
           title: `${name}: you had more in reserve than rated`,
           noticed: sample ? `You rated ${b.effort} at ${sample.kg} kg, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
           means: 'That is normal, especially early on. Lifters usually underestimate how many reps they have left.',
-          action: `The coach will treat your ${b.effort} sets on ${name} as a little easier when estimating your max.`,
+          // D11: copy only; the bias is not applied to e1RM.
+          action: 'Rate by how many reps you had left: Ideal is about 2, Easy 3 or more.',
           evidence: { n: b.n, window: `${b.n} matched pairs`, confidence: b.n >= 5 ? 'medium' : 'low' },
         }];
       }),

@@ -48,3 +48,18 @@ describe('effortBiasByLabel', () => {
     expect(effortBiasByLabel(obs)[0]!.bias).toBe(3);
   });
 });
+
+describe('rirObservations counts one piece of evidence per label (BR-11)', () => {
+  it('three identical ideal sets against one max set are one observation', async () => {
+    const { rirObservations } = await import('@/brain/effortBias');
+    const { exerciseHistory } = await import('@/brain/history');
+    const { session } = await import('./helpers');
+    const b = 'lib_barbell_bench_press';
+    const hist = exerciseHistory([
+      session('2026-09-01', [{ id: b, sets: [{ kg: 60, reps: 8, effort: 'ideal' }, { kg: 60, reps: 8, effort: 'ideal' }, { kg: 60, reps: 7, effort: 'ideal' }] }]),
+      session('2026-09-04', [{ id: b, sets: [{ kg: 60, reps: 12, effort: 'max' }, { kg: 60, reps: 11, effort: 'max' }] }]),
+    ], b);
+    const obs = rirObservations(hist);
+    expect(obs).toEqual([{ day: '2026-09-01', kg: 60, otherEffort: 'ideal', impliedRir: 4 }]);
+  });
+});

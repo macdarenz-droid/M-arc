@@ -32,7 +32,9 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   }
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
-  const grade = workouts >= Math.max(3, plannedPerWeek) ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
+  // BR-22: the planned count is the target; 3 only when nothing is planned.
+  const target = plannedPerWeek > 0 ? plannedPerWeek : 3;
+  const grade = workouts >= target ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
     : workouts >= 2 ? { title: 'Building momentum', note: 'One or two more sessions makes this a full week.' }
     : workouts === 1 ? { title: 'Started', note: 'One session down. The next one is the one that counts.' }
     : { title: 'Start the week', note: 'Nothing logged yet. A short session still counts.' };

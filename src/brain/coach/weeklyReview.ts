@@ -102,17 +102,30 @@ export function adherenceRate(sessions: Session[], schedule: Record<string, stri
 }
 
 /** Exponentially weighted moving average of a weight log, and its weekly rate as % of body weight. */
+/**
+ * The weigh-in trend (BR-14): a least-squares line through the last 28 days (7+ entries spanning
+ * 14+ days), as % of the mean weight per week. `trendKg` is the line's value on the last day.
+ * The old EWMA started at the first entry and lagged, so a real loss read as half of it.
+ */
 export function weightTrendPctPerWeek(log: WeightEntry[]): { trendKg: number; pctPerWeek: number } | null {
   const sorted = [...log].sort((a, b) => a.day.localeCompare(b.day));
-  if (sorted.length < 7) return null;
-  const span = daysBetween(sorted[0]!.day, sorted[sorted.length - 1]!.day);
-  if (span < 14) return null;
-  let ewma = sorted[0]!.kg;
-  for (const e of sorted.slice(1)) ewma = 0.1 * e.kg + 0.9 * ewma;
-  const weeksSpan = Math.max(1, span / 7);
-  const first = sorted[0]!.kg;
-  const pctPerWeek = ((ewma - first) / first) * 100 / weeksSpan;
-  return { trendKg: Math.round(ewma * 10) / 10, pctPerWeek: Math.round(pctPerWeek * 100) / 100 };
+  if (!sorted.length) return null;
+  const lastDay = sorted[sorted.length - 1]!.day;
+  const recent = sorted.filter(e => daysBetween(e.day, lastDay) < 28);
+  if (recent.length < 7) return null;
+  const xs = recent.map(e => daysBetween(recent[0]!.day, e.day));
+  if (xs[xs.length - 1]! < 14) return null;
+  const ys = recent.map(e => e.kg);
+  const n = xs.length;
+  const mx = xs.reduce((a, b) => a + b, 0) / n;
+  const my = ys.reduce((a, b) => a + b, 0) / n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++) { num += (xs[i]! - mx) * (ys[i]! - my); den += (xs[i]! - mx) ** 2; }
+  if (!den || !my) return null;
+  const slopePerDay = num / den;
+  const trendKg = my + slopePerDay * (xs[n - 1]! - mx);
+  const pctPerWeek = (slopePerDay * 7 / my) * 100;
+  return { trendKg: Math.round(trendKg * 10) / 10, pctPerWeek: Math.round(pctPerWeek * 100) / 100 };
 }
 
 /** Share of main-lift working sets in each rep band, for the week. */
@@ -239,7 +252,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
 
       const [lo, hi] = expectedMonthlyRatePct(trainingAgeMonths);
       const pctPerMonth = pctPerWeek * 4.33;
-      if (t.confidence === 'high' && hist.length >= 6) {
+      // BR-13: a pace comparison only makes sense for a lift that is actually rising.
+      if (t.direction === 'up' && t.confidence === 'high' && hist.length >= 6) {
         const pace = pctPerMonth > hi ? 'faster than typical' : pctPerMonth < lo && pctPerMonth >= 0 ? 'slower than typical' : 'a typical pace';
         out.push({
           id: `weekly:pace:${id}`, category: 'progress', priority: 190, cadence: 'weekly', kind: 'data', exerciseId: id,

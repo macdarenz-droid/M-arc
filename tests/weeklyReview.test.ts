@@ -115,3 +115,20 @@ describe('weeklyReviewInsights', () => {
     for (const i of out) expect(i.evidence).toBeDefined();
   });
 });
+
+describe('weight trend and week grade (BR-14, BR-22)', () => {
+  it('a steady loss of 0.5 kg a week reads as that rate', async () => {
+    const { weightTrendPctPerWeek } = await import('@/brain/coach/weeklyReview');
+    const { addDays } = await import('@/core/dates');
+    const log = Array.from({ length: 10 }, (_, i) => ({ day: addDays('2026-08-25', i * 3), kg: 80 - (0.5 / 7) * i * 3 }));
+    const t = weightTrendPctPerWeek(log as never)!;
+    expect(t.pctPerWeek).toBeCloseTo((-0.5 / (80 - (0.5 / 7) * 13.5)) * 100, 1);
+    expect(weightTrendPctPerWeek(log.slice(0, 5) as never)).toBeNull();
+  });
+  it('the week grade uses the planned days as the target', async () => {
+    const { weekSummary } = await import('@/brain/weekly');
+    const two = [session('2026-09-14', [{ id: bench, sets: sets(60, 8) }]), session('2026-09-16', [{ id: bench, sets: sets(60, 8) }])];
+    expect(weekSummary(two, '2026-09-18', [], 2).grade.title).toBe('Strong week');
+    expect(weekSummary(two, '2026-09-18', [], 0).grade.title).toBe('Building momentum');
+  });
+});

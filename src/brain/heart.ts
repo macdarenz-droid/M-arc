@@ -24,7 +24,8 @@ export function hrMax(profile: Profile, observedMax?: { bpm: number; atMs: numbe
   const tanaka = age != null ? TANAKA.intercept - TANAKA.perYear * age : null;
   if (observedMax && observedMax.bpm >= 150) {
     const monthsOld = (nowMs - observedMax.atMs) / (30.44 * 86_400_000);
-    if (monthsOld <= OBSERVED_MAX_STALE_MONTHS) return { bpm: Math.round(observedMax.bpm), source: 'observed' };
+    // A session rarely reaches a true max, so a fresh observation never lowers the age estimate (BR-12).
+    if (monthsOld <= OBSERVED_MAX_STALE_MONTHS) return { bpm: Math.round(Math.max(observedMax.bpm, tanaka ?? 0)), source: 'observed' };
     if (tanaka != null) return { bpm: Math.round(observedMax.bpm + (tanaka - observedMax.bpm) * 0.25), source: 'observed' };
     return { bpm: Math.round(observedMax.bpm), source: 'observed' };
   }
@@ -54,6 +55,8 @@ export function downsampleToBuckets(samples: Array<{ tSec: number; bpm: number; 
  */
 export function observedHrMaxFromSeries(series: Array<[number, number]>): number | null {
   const bpms = series.map(p => p[1]);
+  // BR-12: the highest qualifying plateau, not the first one (usually the warm-up).
+  let best: number | null = null;
   for (let i = 0; i + 4 < bpms.length; i++) {
     const window = bpms.slice(i, i + 5);
     const plateau = Math.max(...window) - Math.min(...window) <= 3;
@@ -61,9 +64,11 @@ export function observedHrMaxFromSeries(series: Array<[number, number]>): number
     const plateauMax = Math.max(...window);
     if (plateauMax > 220) continue;
     const rampedIn = i === 0 || bpms[i - 1]! < plateauMax;
-    if (rampedIn) return Math.round(window.reduce((a, b) => a + b, 0) / window.length);
+    if (!rampedIn) continue;
+    const mean = Math.round(window.reduce((a, b) => a + b, 0) / window.length);
+    if (best == null || mean > best) best = mean;
   }
-  return null;
+  return best;
 }
 
 /** 7-day median of healthDays' restingHr, or the manual override. Never inferred from a session. */

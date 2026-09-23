@@ -417,8 +417,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const autoreg = useMemo(() => (ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
     ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile })
     : null), memoDeps);
-  const priorE1rm = useMemo(() => (ex?.role === 'main' && mode === 'weighted' ? exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).at(-1)?.bestE1rm ?? 0 : 0), memoDeps);
-  const warmup = priorE1rm > 0 ? warmupSets(priorE1rm, profile) : null;
+  // D10 / BR-09: warm-ups ramp to today's first working set, not to the e1RM.
+  const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
+  const warmup = useMemo(() => (workingKg && workingKg > 0 ? warmupSets(workingKg, profile) : null), [...memoDeps, workingKg]);
   const [warmupOpen, setWarmupOpen] = useState(false);
   const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: previousSet(s.sessions, entry.exerciseId, j, s.customExercises), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
@@ -596,7 +597,13 @@ export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClos
 function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: () => void; onStart: () => void }) {
   const s = state.value;
   const age = s.profile.birthYear ? new Date().getFullYear() - s.profile.birthYear : null;
-  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age });
+  // BR-08: the brief quotes the same target the set rows will show.
+  const targetFor = (exerciseId: string) => {
+    const equipment = profileFor(exerciseId, s.units.activeGymId);
+    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, split.exercises.find(x => x.exerciseId === exerciseId)?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment });
+    return { kg: n.sets[0]?.kg ?? n.kg, target: n.target, equipment };
+  };
+  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age, targetFor });
   return (
     <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
       <div class="stack">
