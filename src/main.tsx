@@ -14,6 +14,7 @@ import { startHeartCapture } from './slices/workout/heart';
 import { go, showPanel } from './app/router';
 import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
+import { pageIsCurrent } from './app/swUpdate';
 import './ui/styles.css';
 
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
@@ -70,7 +71,7 @@ try {
     const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!hadController || state.peek().active) return;
-      showToast('App updated', 'Reload', () => location.reload());
+      void pageIsCurrent().then(current => { if (!current) showToast('App updated', 'Reload', () => location.reload()); });
     });
   }
 } catch (err) {

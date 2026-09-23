@@ -413,3 +413,13 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - `plannedThisWeek` returns null when nothing is scheduled on any weekday. `weekSummary` aims for 3 only then. A week whose planned days were all taken off has a target of 0: a session makes it a Strong week, and none makes it "Rest week".
 - Escobar's `get_overview` `week.planned` uses `plannedThisWeek`, so days off are left out.
 - Test updated (it asserted the old encoding): the BR-22 "week grade uses the planned days" case passes null for "no schedule" instead of 0.
+
+### QA-R5b-2, QA-R5b-5 (low, same defect)
+- The manifest `id` is `./index.html`, which resolves to the same URL as `start_url`. That is the identity existing installs already have, and Chromium's recommendedId. `./` changed it.
+- **Needs device check:** an older install is not offered again as a second app.
+
+### QA-R5b-3 (low)
+- On activate, the service worker carries over only the previous build's own `/assets/` files, marked `x-marc-carried`, and never carries a carried file again. The cache holds at most two builds. Test: 10 simulated deploys with the real `sw.js` leave 8 entries instead of 40. The gate's build-B carry-over check still passes.
+
+### QA-R5b-4 (low)
+- On `controllerchange`, `pageIsCurrent()` checks whether the page's own entry script is one of the new build's files, rather than a carried one. "App updated · Reload" shows only when it is not. The first launch after a deploy (network-first, already current) no longer shows it.
