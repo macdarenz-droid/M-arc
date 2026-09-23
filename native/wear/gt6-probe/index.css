@@ -7,4 +7,5 @@
 .unit { color: #8a8f98; font-size: 17px; margin-left: 6px; }
 .label { color: #a6a9b2; font-size: 16px; height: 27px; text-align: center; }
 .status { color: #f7f8f8; font-size: 16px; width: 250px; height: 44px; text-align: center; }
-.stop { width: 188px; height: 48px; background-color: #5e6ad2; color: #f7f8f8; font-size: 20px; border-radius: 24px; }
+.start { width: 188px; height: 48px; background-color: #5e6ad2; color: #f7f8f8; font-size: 20px; border-radius: 24px; }
+.stop { width: 188px; height: 44px; background-color: #262735; color: #f7f8f8; font-size: 20px; border-radius: 24px; }
