@@ -12,7 +12,7 @@ import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, RecoveryModel,
 import { MUSCLE_BY_ID, MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise, setDamage } from '@/core/exercises';
 import { ROLE_WEIGHT, isWorkingSet, rolesFor } from './exposure';
-import { exerciseHistory } from './history';
+import { exerciseHistory, type ExerciseSessionSummary } from './history';
 import { daysBetween, dayKey } from '@/core/dates';
 import {
   EFFORT_IMPULSE, EFFORT_STRETCH, repFactor, HARD_SET_DIMINISH_AFTER, HARD_SET_DIMINISH_FACTOR,
@@ -340,7 +340,11 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  * against the e1RM change and nudges that muscle's tauScale. Pure: `priorSessions` must not yet
  * include `newSession`.
  */
-export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel): RecoveryModel {
+/**
+ * `prevSummary`, when given, returns the exercise's last summary before this session, so a
+ * full rebuild (UI-12) can pass a recent window as `priorSessions` without an O(n²) history scan.
+ */
+export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
   const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel });
   const tauScale = { ...recoveryModel.tauScale };
@@ -353,8 +357,7 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     const curHist = exerciseHistory([newSession], ex.exerciseId, custom);
     const cur = curHist[curHist.length - 1];
     if (!cur?.hasMax || cur.bestE1rm <= 0) continue;
-    const priorHist = exerciseHistory(priorSessions, ex.exerciseId, custom);
-    const prev = priorHist[priorHist.length - 1];
+    const prev = prevSummary ? prevSummary(ex.exerciseId) : (() => { const h = exerciseHistory(priorSessions, ex.exerciseId, custom); return h[h.length - 1]; })();
     if (!prev?.hasMax || prev.bestE1rm <= 0) continue;
     const deltaPct = ((cur.bestE1rm - prev.bestE1rm) / prev.bestE1rm) * 100;
     for (const muscle of meta.primary) {

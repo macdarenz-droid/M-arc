@@ -67,8 +67,9 @@ export function trainingStreak(sessions: Session[], schedule: Record<Weekday, st
 
 /** Days since the last logged session, or null when there is none. */
 export function daysSinceLastSession(sessions: Session[], today: string): number | null {
-  const last = sessions[sessions.length - 1];
-  return last ? daysBetween(last.day, today) : null;
+  // The latest day, whatever the list order (BR-29).
+  const lastDay = sessions.reduce((m, s) => (s.day > m ? s.day : m), '');
+  return lastDay ? daysBetween(lastDay, today) : null;
 }
 
 export interface WeekVolume {

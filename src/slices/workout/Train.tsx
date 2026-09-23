@@ -20,7 +20,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue } from '@/brain/coach/cues';
-import { addExerciseToSession, addSet, active, moveEntry, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -458,7 +458,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                       <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
-                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => { setSet(index, j, { effort: set.effort === ef.v ? undefined : ef.v }); }}>{ef.l}</button>)}</div>
+                  <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
+                    const effort = set.effort === ef.v ? undefined : ef.v;
+                    setSet(index, j, { effort });
+                    // UI-31: rating the set just done updates the running rest's heart target.
+                    const live = active();
+                    if (live?.rest && set.id && latestCommittedSetId(live) === set.id) setRestEffort(effort);
+                  }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
                   <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>

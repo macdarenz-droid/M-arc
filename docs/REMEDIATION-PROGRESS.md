@@ -66,8 +66,15 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 (skipped / not reproduced: none)
 
 ## Phase R2 — in progress
-### Layer: clock and dates — done — IDs: ST-05, ST-06, ST-07, UI-03, UI-09, RG-06, RG-07, VX-02, ST-08, ST-16, ST-18, BR-15, BR-25, ES-25, UI-04
+### Layer: clock and dates — done, commit d217c48 — IDs: ST-05, ST-06, ST-07, UI-03, UI-09, RG-06, RG-07, VX-02, ST-08, ST-16, ST-18, BR-15, BR-25, ES-25, UI-04
 - New src/app/clock.ts: today, nowMs, minuteNow, refreshClock (tz signature → resetDayCache), always-on 60 s interval, ref-counted acquireTicker. setTicking deleted; selectors re-export; recovery/coachContext read minuteNow.
 - main.tsx: visible → refreshClock + resyncReminders + syncAndStoreHealth; pageshow removed.
 - dayKey passes day keys through; adherenceRate uses weekdayOf and skips an unfinished today; fidelity/session midnight_crossing on local days; restingHr addDays; energy age parseDay; apply.ts todayKey; Train fallback day via dayKey. formatTimeOfDay + formatLocalStamp; Settings/Coach/Profile hints local.
 - `npm run test:tz` added (+ CI step in build-apk.yml and release-apk.yml). UTC-assuming tests fixed: heart Tanaka (local mid-year), fidelity midnight (local times), recovery soreness cap (dayKey). adherenceRate and energy-age tests pass after the code fix.
+### Layer: session write paths — done — IDs: UI-01, UI-31, RG-05, BR-29, UI-11, UI-24, UI-12, UI-19, R2.8
+- Commit-once (status/at guard), addSet carries load/reps only, emptied committed set drops its commit; setRestEffort + Train effort button (UI-31).
+- R2.8 ids: ActiveSession.id kept as Session.id, entry/set ids on every creation path, substitution = new entry id, status dropped at finish; normalize backfills ids for a loaded active only; setSetById / commitSetById({actionAt}) / removeEntryById, index functions wrap them.
+- sortByStart in finish, logPastSession, resolveSessionTiming; daysSinceLastSession uses max day; post/rules sort before slice.
+- deleteSplit keeps active; History editor: empty save → remove with Undo; rebuildRecoveryModel (linear: recent window + carried last summary; calibrateAfterSession got an optional prevSummary) on save/remove/undo.
+- Paused rest: adjustRest changes pausedRemainingSec; startRest while paused stores it; resume keeps effort/preSetBpm.
+- tests/reorder.test.ts updated for R2.8 (sets now carry ids) and now also asserts ids survive reorder.

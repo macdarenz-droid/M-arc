@@ -6,7 +6,8 @@ import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, Weight
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
-import type { LoggedSet, Session } from '@/core/models';
+import type { AppState, LoggedSet, Session } from '@/core/models';
+import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
@@ -124,23 +125,27 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
+  // Every history edit relearns the recovery model from what is left (UI-12).
+  const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
     const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
-    update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
+    // An edit that leaves no sets is a delete, with its Undo (UI-24).
+    if (!cleaned.exercises.length) { remove(); return; }
+    update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();
   };
-  const remove = () => {
+  function remove() {
     const removed = session;
     // Its heart series goes with it, and comes back with Undo (UI-14).
     const series = getSeries(session.id);
-    update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
+    update(s => withSessions(s, s.sessions.filter(x => x.id !== session.id)));
     deleteSeries(session.id);
     showToast('Session deleted', 'Undo', () => {
-      update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) }));
+      update(s => withSessions(s, sortByStart([...s.sessions, removed])));
       if (series.length) storeSeries(removed.id, series);
     });
     onClose();
-  };
+  }
   return (
     <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose} palace="history.session">
       <div class="stack">

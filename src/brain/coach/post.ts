@@ -99,7 +99,7 @@ export function restAndDensityInsight(session: Session, isStrengthGoal: boolean)
 /** |Delta duration| vs the median of the split's last 5 sessions. */
 export function durationDriftInsight(session: Session, priorSameSplit: Session[]): Insight | null {
   if (priorSameSplit.length < 5) return null;
-  const durations = priorSameSplit.slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
+  const durations = [...priorSameSplit].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
   const median = durations[Math.floor(durations.length / 2)]!;
   if (median <= 0) return null;
   const delta = (session.durationSec - median) / median;

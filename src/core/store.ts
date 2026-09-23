@@ -86,6 +86,16 @@ function normalize(s: AppState): AppState {
   return out;
 }
 
+/** R2.8: a loaded live session gets ids where it has none. Times are never invented. */
+function withActiveIds(a: AppState['active']): AppState['active'] {
+  if (!a || !Array.isArray(a.entries)) return a ?? null;
+  return {
+    ...a,
+    id: a.id ?? newId('s'),
+    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: (Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
+  };
+}
+
 function fill(s: AppState): AppState {
   const fresh = freshState();
   const weightUnit = s.preferences?.weightUnit === 'lb' ? 'lb' : 'kg';
@@ -111,6 +121,7 @@ function fill(s: AppState): AppState {
     sessions: (s.sessions ?? []).map(withLogging),
     escobar: normalizeEscobar(s.escobar),
     units: normalizeUnits(s.units, weightUnit),
+    active: withActiveIds(s.active),
   };
 }
 
