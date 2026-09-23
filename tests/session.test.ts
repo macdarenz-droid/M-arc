@@ -168,3 +168,50 @@ describe('rest while paused (UI-19)', () => {
 });
 
 export type { AppState };
+
+import { logWarmups, setEntryNote, setExerciseNote } from '@/slices/workout/session';
+describe('warm-ups, set kinds and notes (F1, F2)', () => {
+  it('2 warm-ups + 3 working sets: 5 stored, 3 counted, warm-ups never start rest', () => {
+    const three: Split = { ...split, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+    replaceState({ ...state.value, splits: [three] });
+    startSession(three);
+    logWarmups(0, [{ kg: 40, reps: 8 }, { kg: 60, reps: 5 }]);
+    logWarmups(0, [{ kg: 40, reps: 8 }]); // once only
+    expect(a().entries[0]!.sets.map(x => x.kind ?? 'working')).toEqual(['warmup', 'warmup', 'working', 'working', 'working']);
+    vi.advanceTimersByTime(60_000);
+    expect(commitSet(0, 0)).toBe(true);
+    expect(a().rest).toBeFalsy();
+    for (let j = 2; j < 5; j++) { setSet(0, j, { kg: 80, reps: 5 }); vi.advanceTimersByTime(90_000); commitSet(0, j); }
+    vi.advanceTimersByTime(60_000);
+    commitSet(0, 1);
+    const r = finishSession(false, { note: '  good day ' })!;
+    const stored = r.session.exercises[0]!.sets;
+    expect(stored).toHaveLength(5);
+    expect(stored.filter(x => x.kind !== 'warmup')).toHaveLength(3);
+    expect(r.session.note).toBe('good day');
+  });
+
+  it('a set to failure is stored with max effort; notes carry into history', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8, kind: 'failure', effort: 'max' });
+    commitSet(0, 0);
+    setEntryNote(0, 'elbows in');
+    setExerciseNote('lib_barbell_bench_press', 'Bench 3, grip ring');
+    const r = finishSession(false)!;
+    expect(r.session.exercises[0]).toMatchObject({ note: 'elbows in', sets: [{ kind: 'failure', effort: 'max' }] });
+    expect(state.value.exerciseNotes.lib_barbell_bench_press).toBe('Bench 3, grip ring');
+    setExerciseNote('lib_barbell_bench_press', '   ');
+    expect(state.value.exerciseNotes).toEqual({});
+  });
+});
+
+describe('conditioning inputs (UI-20)', () => {
+  it("a farmer's carry stores its distance", () => {
+    const carry: Split = { ...split, id: 'sp2', exercises: [{ exerciseId: 'lib_farmer_s_carry', sets: 1 }] };
+    replaceState({ ...state.value, splits: [carry] });
+    startSession(carry);
+    setSet(0, 0, { kg: 32, distanceM: 40, durationSec: 35 });
+    expect(commitSet(0, 0)).toBe(true);
+    expect(finishSession(false)!.session.exercises[0]!.sets[0]).toMatchObject({ kg: 32, distanceM: 40, durationSec: 35 });
+  });
+});

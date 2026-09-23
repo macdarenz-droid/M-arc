@@ -54,3 +54,15 @@ describe('loadForReps and roundToStep', () => {
     expect(roundToStep(84.0)).toBe(85);
   });
 });
+
+import { summarizeSets } from '@/brain/history';
+describe('e1RM and set kinds (F2)', () => {
+  it('ignores warm-ups and reads a set to failure as max effort', () => {
+    const s = summarizeSets('s', '2026-09-22', [{ kg: 100, reps: 5, kind: 'warmup', effort: 'easy' }, { kg: 80, reps: 5, kind: 'failure', effort: 'easy' }]);
+    expect(s.sets).toHaveLength(1);
+    expect(s.topKg).toBe(80);
+    expect(s.hasMax).toBe(true);
+    // Epley with 0 reps left: 80 × (1 + 5/30).
+    expect(Math.round(s.bestE1rm * 10) / 10).toBe(93.3);
+  });
+});
