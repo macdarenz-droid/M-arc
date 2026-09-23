@@ -7,13 +7,16 @@ create another identity scheme.
 `parseWatchCommand` validates a bounded `complete_set` envelope. `planSetCommand`
 checks the selected installation, session, entry, set and set revision. A retry
 with a recorded command ID returns its original receipt; reuse of that ID with
-different content is rejected. Reordering a set preserves its ID, while
+different content is rejected. Stored rejections return `replay_rejected` with
+their original rejection receipt; only a stored application returns `replay`.
+Reordering a set preserves its ID, while
 substitution/removal or a changed revision prevents silent retargeting.
 
 This is a **pure planning layer**. It does not call the current workout mutators,
 persist a command, transmit an acknowledgement, or tell the watch that a set is
-saved. `receiptForCommittedPlan` defines the record to write only after the
-workout mutation and receipt can be committed in one durable transaction. A
+saved. `receiptForCommittedPlan` shapes the applied receipt fields but only the
+native workout transaction can make them durable. Rejection receipts are made
+in that transaction too. A
 WebView `flushSave()` alone does not provide that transaction, and the current
 phone plugin is diagnostic only. The full Gate B and Gate C remain open.
 

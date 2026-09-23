@@ -25,13 +25,15 @@ export function parseWatchCommand(raw, maxBytes = 1024) {
 /** Return a plan only. The caller must atomically persist the workout and receipt before replying Saved. */
 export function planSetCommand(session, binding, revisions, receipts, command, now = Date.now()) {
   if (!command) return { status: 'invalid' };
+  if (!session) return { status: 'wrong_session' };
   if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
   // A command ID cannot be reused for a different payload, even after the original is applied.
   const recorded = Object.hasOwn(receipts, command.commandId) ? receipts[command.commandId] : undefined;
   if (recorded) return recorded.fingerprint === fingerprint(command)
-    ? { status: 'replay', receipt: recorded.result }
+    ? { status: recorded.result.status === 'applied' ? 'replay' : 'replay_rejected', receipt: recorded.result }
     : { status: 'command_id_conflict' };
-  if (!session || session.id !== command.sessionId) return { status: 'wrong_session' };
+  if (session.id !== command.sessionId) return { status: 'wrong_session' };
+  if (session.status === 'finished' || session.status === 'discarded') return { status: 'conflict' };
   if (session.pausedAt || session.status === 'paused') return { status: 'paused' };
   const actionTime = Date.parse(command.actionAt);
   const startTime = Date.parse(session.startedAt);
@@ -53,10 +55,14 @@ function fingerprint(c) {
     c.expectedSetRevision, c.actionAt].join('|');
 }
 
-/** Called only inside the same durable transaction as the resulting workout mutation. */
-export function receiptForCommittedPlan(command, plan, appliedRevision) {
+/** Shape an internal applied receipt; only the native transaction can make it durable. */
+export function receiptForCommittedPlan(command, plan, appliedRevision, receivedAt) {
   if (plan.status !== 'ready' || !Number.isSafeInteger(appliedRevision) || appliedRevision < 0) throw new Error('No durable result');
+  if (typeof receivedAt !== 'string' || !Number.isFinite(Date.parse(receivedAt))
+      || new Date(receivedAt).toISOString() !== receivedAt) throw new Error('Invalid receipt time');
   return { fingerprint: plan.fingerprint, result: { status: 'applied', commandId: command.commandId,
-    sessionId: command.sessionId, setId: command.setId, setRevision: plan.nextSetRevision,
-    sessionRevision: appliedRevision } };
+    sessionId: command.sessionId, entryId: command.entryId, setId: command.setId,
+    setRevision: plan.nextSetRevision, sessionRevision: appliedRevision,
+    actionAt: command.actionAt, receivedAt, clockConfidence: 'unverified',
+    sideEffectsStatus: 'not_implemented' } };
 }

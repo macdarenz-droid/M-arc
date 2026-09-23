@@ -17,9 +17,18 @@ test('shared Java/JS command fixtures agree on validation and conflict status', 
     const wire = { ...input, actionAt: '2026-09-23T19:00:00.000Z', ...(fixture.patch || {}),
       installationId: fixture.patch?.installationId ?? 'watch-1' };
     for (const key of fixture.remove || []) delete wire[key];
-    const command = parseWatchCommand(JSON.stringify(wire) + (fixture.suffix || ''));
-    const actual = command ? planSetCommand({ ...session, startedAt: '2026-09-23T18:59:00.000Z',
-      ...(fixture.paused ? { pausedAt: Date.parse('2026-09-23T19:00:00.000Z') } : {}) },
+    let raw = JSON.stringify(wire) + (fixture.suffix || '');
+    if (fixture.mutation) {
+      assert.ok(raw.includes(fixture.mutation.from), fixture.name);
+      raw = raw.replace(fixture.mutation.from, fixture.mutation.to);
+    }
+    const command = parseWatchCommand(raw);
+    const fixtureSession = fixture.closed ? null : { ...session, startedAt: '2026-09-23T18:59:00.000Z',
+      ...(fixture.paused ? { pausedAt: Date.parse('2026-09-23T19:00:00.000Z') } : {}),
+      entries: [{ ...session.entries[0], sets: [{ ...session.entries[0].sets[0],
+        ...(fixture.committed ? { status: 'committed', at: '2026-09-23T19:00:00.000Z' } : {}),
+        ...(fixture.incomplete ? { kg: undefined, reps: undefined } : {}) }] }] };
+    const actual = command ? planSetCommand(fixtureSession,
     { installationId: 'watch-1' }, fixture.revision ? { 'set-1': fixture.revision } : {}, {}, command,
     Date.parse('2026-09-23T19:05:00.000Z')).status : 'invalid';
     const normalized = actual === 'ready' ? 'accepted' : actual;
@@ -37,8 +46,12 @@ test('a valid set action is only a plan, with no Saved receipt before a durable 
 
 test('retry returns the original receipt; reusing its ID with other content is rejected', () => {
   const c = parse(); const plan = planSetCommand(session, binding, {}, {}, c, Date.parse('2026-09-23T10:00:02.000Z'));
-  const receipts = { 'command-1': receiptForCommittedPlan(c, plan, 5) };
-  assert.deepEqual(planSetCommand(null, binding, {}, receipts, c), { status: 'replay', receipt: receipts['command-1'].result });
+  const receipts = { 'command-1': receiptForCommittedPlan(c, plan, 5, '2026-09-23T10:00:03.000Z') };
+  assert.deepEqual(receipts['command-1'].result, { status: 'applied', commandId: 'command-1', sessionId: 's-1',
+    entryId: 'e-1', setId: 'set-1', setRevision: 1, sessionRevision: 5,
+    actionAt: input.actionAt, receivedAt: '2026-09-23T10:00:03.000Z',
+    clockConfidence: 'unverified', sideEffectsStatus: 'not_implemented' });
+  assert.deepEqual(planSetCommand({ ...session, status: 'finished' }, binding, {}, receipts, c), { status: 'replay', receipt: receipts['command-1'].result });
   assert.equal(planSetCommand(session, binding, {}, receipts, parse({ setId: 'set-2' })).status, 'command_id_conflict');
 });
 
@@ -49,7 +62,7 @@ test('a recorded time rejection stays rejected when the same ID is retried later
     command.commandId, command.entryId, command.setId, command.expectedSetRevision, command.actionAt].join('|');
   const result = planSetCommand(session, binding, {}, { [command.commandId]: { fingerprint, result: rejected } },
     command, Date.parse('2026-09-23T11:00:00.000Z'));
-  assert.deepEqual(result, { status: 'replay', receipt: rejected });
+  assert.deepEqual(result, { status: 'replay_rejected', receipt: rejected });
 });
 
 test('offline commands never retarget a reordered, substituted, or changed set', () => {

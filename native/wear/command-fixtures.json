@@ -1,12 +1,140 @@
 [
-  {"name":"valid", "expected":"accepted"},
-  {"name":"missing_revision", "patch":{"expectedSetRevision":null}, "remove":["expectedSetRevision"], "expected":"invalid"},
-  {"name":"revision_outside_java_range", "patch":{"expectedSetRevision":2147483648}, "expected":"invalid"},
-  {"name":"trailing_json", "suffix":" trailing", "expected":"invalid"},
-  {"name":"wrong_installation_precedes_wrong_session", "patch":{"installationId":"other","sessionId":"other"}, "expected":"wrong_installation"},
-  {"name":"wrong_session", "patch":{"sessionId":"other"}, "expected":"wrong_session"},
-  {"name":"paused", "paused":true, "expected":"paused"},
-  {"name":"removed_target", "patch":{"setId":"removed"}, "expected":"target_changed"},
-  {"name":"stale_revision", "revision":1, "expected":"revision_conflict"},
-  {"name":"future_time", "patch":{"actionAt":"2099-01-01T00:00:00.000Z"}, "expected":"time_needs_review"}
+  {
+    "name": "valid",
+    "expected": "accepted"
+  },
+  {
+    "name": "missing_revision",
+    "patch": {
+      "expectedSetRevision": null
+    },
+    "remove": [
+      "expectedSetRevision"
+    ],
+    "expected": "invalid"
+  },
+  {
+    "name": "revision_outside_java_range",
+    "patch": {
+      "expectedSetRevision": 2147483648
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "trailing_json",
+    "suffix": " trailing",
+    "expected": "invalid"
+  },
+  {
+    "name": "wrong_installation_precedes_wrong_session",
+    "patch": {
+      "installationId": "other",
+      "sessionId": "other"
+    },
+    "expected": "wrong_installation"
+  },
+  {
+    "name": "wrong_session",
+    "patch": {
+      "sessionId": "other"
+    },
+    "expected": "wrong_session"
+  },
+  {
+    "name": "paused",
+    "paused": true,
+    "expected": "paused"
+  },
+  {
+    "name": "removed_target",
+    "patch": {
+      "setId": "removed"
+    },
+    "expected": "target_changed"
+  },
+  {
+    "name": "stale_revision",
+    "revision": 1,
+    "expected": "revision_conflict"
+  },
+  {
+    "name": "future_time",
+    "patch": {
+      "actionAt": "2099-01-01T00:00:00.000Z"
+    },
+    "expected": "time_needs_review"
+  },
+  {
+    "name": "comment",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "\"v\":/*comment*/1"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "nul",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "\"v\":1\u0000"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "single_quotes",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "'v':1"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "unquoted_key",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "v:1"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "hex_number",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "\"v\":0x1"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "leading_zero_number",
+    "mutation": {
+      "from": "\"v\":1",
+      "to": "\"v\":00"
+    },
+    "expected": "invalid"
+  },
+  {
+    "name": "no_active_wrong_installation",
+    "closed": true,
+    "patch": {
+      "sessionId": "old",
+      "installationId": "other"
+    },
+    "expected": "wrong_session"
+  },
+  {
+    "name": "already_committed_fresh_revision",
+    "committed": true,
+    "expected": "target_changed"
+  },
+  {
+    "name": "already_committed_stale_revision",
+    "committed": true,
+    "revision": 1,
+    "expected": "target_changed"
+  },
+  {
+    "name": "incomplete_draft",
+    "incomplete": true,
+    "expected": "incomplete_draft"
+  }
 ]

@@ -67,6 +67,89 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
 
     private static boolean id(String value) { return value != null && value.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,79}"); }
 
+    /** JSONTokener permits JavaScript-invalid extensions; validate JSON grammar before decoding it. */
+    private static final class StrictJson {
+        private final String source;
+        private int position;
+        StrictJson(String source) { this.source = source; }
+        boolean valid() {
+            try { whitespace(); value(0); whitespace(); return position == source.length(); }
+            catch (IllegalArgumentException e) { return false; }
+        }
+        private void fail() { throw new IllegalArgumentException("Invalid JSON"); }
+        private void whitespace() {
+            while (position < source.length() && " \t\r\n".indexOf(source.charAt(position)) >= 0) position++;
+        }
+        private boolean consume(char c) {
+            if (position < source.length() && source.charAt(position) == c) { position++; return true; }
+            return false;
+        }
+        private void expect(char c) { if (!consume(c)) fail(); }
+        private void literal(String token) {
+            if (!source.startsWith(token, position)) fail();
+            position += token.length();
+        }
+        private void string() {
+            expect('"');
+            while (position < source.length()) {
+                char c = source.charAt(position++);
+                if (c == '"') return;
+                if (c < 0x20) fail();
+                if (c == '\\') {
+                    if (position == source.length()) fail();
+                    char escaped = source.charAt(position++);
+                    if (escaped == 'u') {
+                        for (int i = 0; i < 4; i++) {
+                            if (position == source.length() || "0123456789abcdefABCDEF".indexOf(source.charAt(position++)) < 0) fail();
+                        }
+                    } else if ("\"\\/bfnrt".indexOf(escaped) < 0) fail();
+                }
+            }
+            fail();
+        }
+        private void number() {
+            consume('-');
+            if (!consume('0')) {
+                if (position == source.length() || source.charAt(position) < '1' || source.charAt(position) > '9') fail();
+                do { position++; } while (position < source.length() && source.charAt(position) >= '0' && source.charAt(position) <= '9');
+            }
+            if (consume('.')) {
+                int start = position;
+                while (position < source.length() && source.charAt(position) >= '0' && source.charAt(position) <= '9') position++;
+                if (start == position) fail();
+            }
+            if (consume('e') || consume('E')) {
+                if (!consume('+')) consume('-');
+                int start = position;
+                while (position < source.length() && source.charAt(position) >= '0' && source.charAt(position) <= '9') position++;
+                if (start == position) fail();
+            }
+        }
+        private void value(int depth) {
+            if (depth > 32 || position == source.length()) fail();
+            char c = source.charAt(position);
+            if (c == '{') {
+                position++; whitespace();
+                if (consume('}')) return;
+                do { whitespace(); string(); whitespace(); expect(':'); whitespace(); value(depth + 1); whitespace();
+                    if (consume('}')) return;
+                    expect(','); whitespace();
+                } while (true);
+            } else if (c == '[') {
+                position++; whitespace();
+                if (consume(']')) return;
+                do { whitespace(); value(depth + 1); whitespace();
+                    if (consume(']')) return;
+                    expect(','); whitespace();
+                } while (true);
+            } else if (c == '"') string();
+            else if (c == 't') literal("true");
+            else if (c == 'f') literal("false");
+            else if (c == 'n') literal("null");
+            else number();
+        }
+    }
+
     private static String field(JSONObject object, String key) {
         Object value = object.opt(key);
         if (!(value instanceof String)) throw new IllegalArgumentException("Invalid " + key);
@@ -160,6 +243,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     Result completeSet(String raw) throws Exception {
         if (raw == null || raw.getBytes(StandardCharsets.UTF_8).length > 1024)
             return new Result("invalid", null);
+        if (!new StrictJson(raw).valid()) return new Result("invalid", null);
         JSONObject command;
         try {
             JSONTokener parser = new JSONTokener(raw);
@@ -213,8 +297,11 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             }
             try (Cursor c = db.rawQuery("SELECT fingerprint,result FROM receipts WHERE session_id=? AND command_id=?",
                     new String[]{sessionId, commandId})) {
-                if (c.moveToFirst()) return fingerprint.equals(c.getString(0))
-                        ? new Result("replay", c.getString(1)) : new Result("command_id_conflict", null);
+                if (c.moveToFirst()) {
+                    if (!fingerprint.equals(c.getString(0))) return new Result("command_id_conflict", null);
+                    String receipt = c.getString(1);
+                    return new Result("applied".equals(new JSONObject(receipt).optString("status")) ? "replay" : "replay_rejected", receipt);
+                }
             }
             JSONObject snapshot = new JSONObject(snapshotRaw);
             if ("paused".equals(sessionStatus))
@@ -230,7 +317,6 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                 if (!c.moveToFirst()) return reject(db, sessionId, commandId, fingerprint, actionAt, "target_changed");
                 setRevision = c.getInt(0);
             }
-            if (setRevision != expectedRevision) return reject(db, sessionId, commandId, fingerprint, actionAt, "revision_conflict");
             JSONObject target = null;
             JSONArray entries = snapshot.getJSONArray("entries");
             for (int i = 0; i < entries.length(); i++) {
@@ -246,6 +332,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             if (target == null || target.has("at") || "committed".equals(target.optString("status"))
                     || "skipped".equals(target.optString("status")))
                 return reject(db, sessionId, commandId, fingerprint, actionAt, "target_changed");
+            if (setRevision != expectedRevision) return reject(db, sessionId, commandId, fingerprint, actionAt, "revision_conflict");
             Object kg = target.opt("kg"), reps = target.opt("reps"), duration = target.opt("durationSec");
             boolean weighted = kg instanceof Number && Double.isFinite(((Number) kg).doubleValue())
                     && ((Number) kg).doubleValue() >= 0 && reps instanceof Number

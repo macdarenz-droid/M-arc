@@ -158,7 +158,7 @@ public class WorkoutCommandStoreTest {
         store.getWritableDatabase().execSQL("UPDATE sessions SET snapshot=? WHERE session_id='s-1'", new Object[]{correctedStart.toString()});
         store.close(); store = new WorkoutCommandStore(context);
         WorkoutCommandStore.Result replay = store.completeSet(raw);
-        assertEquals("replay", replay.status);
+        assertEquals("replay_rejected", replay.status);
         assertEquals(rejected.receipt, replay.receipt);
         assertFalse(set(saved(), "e-1", "set-1").has("at"));
         assertEquals(0, revision("set-1"));
@@ -179,7 +179,14 @@ public class WorkoutCommandStoreTest {
                 startedAt = "2026-09-23T18:59:00.000Z";
                 JSONObject initial = new JSONObject(snapshot(false));
                 if (fixture.optBoolean("paused")) initial.put("pausedAt", Instant.parse("2026-09-23T19:00:00.000Z").toEpochMilli());
+                if (fixture.optBoolean("committed") || fixture.optBoolean("incomplete")) {
+                    JSONObject set = set(initial, "e-1", "set-1");
+                    if (fixture.optBoolean("committed")) {
+                        set.put("status", "committed").put("at", "2026-09-23T19:00:00.000Z");
+                    } else { set.remove("kg"); set.remove("reps"); }
+                }
                 store.seed("s-1", "watch-1", initial.toString());
+                if (fixture.optBoolean("closed")) store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
                 if (fixture.optInt("revision") > 0)
                     store.getWritableDatabase().execSQL("UPDATE set_revisions SET revision=? WHERE set_id='set-1'", new Object[]{fixture.getInt("revision")});
                 JSONObject command = new JSONObject(command("c-fixture", "watch-1", "e-1", "set-1", 0, "2026-09-23T19:00:00.000Z"));
@@ -189,7 +196,14 @@ public class WorkoutCommandStoreTest {
                 }
                 JSONArray remove = fixture.optJSONArray("remove");
                 if (remove != null) for (int j = 0; j < remove.length(); j++) command.remove(remove.getString(j));
-                String status = store.completeSet(command.toString() + fixture.optString("suffix", "")).status;
+                String raw = command.toString() + fixture.optString("suffix", "");
+                JSONObject mutation = fixture.optJSONObject("mutation");
+                if (mutation != null) {
+                    String from = mutation.getString("from");
+                    assertTrue(fixture.getString("name"), raw.contains(from));
+                    raw = raw.replace(from, mutation.getString("to"));
+                }
+                String status = store.completeSet(raw).status;
                 assertEquals(fixture.getString("name"), fixture.getString("expected"), "applied".equals(status) ? "accepted" : status);
             }
         }
@@ -213,6 +227,21 @@ public class WorkoutCommandStoreTest {
                 UTC.format(Instant.now().plusSeconds(120)))).status);
         store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
         assertEquals("conflict", store.completeSet(command("c-closed", "watch-1", "e-1", "set-1", 0, actionAt)).status);
+        assertFalse(set(saved(), "e-1", "set-1").has("at"));
+    }
+
+    @Test public void pausedRejectionReplaysAsRejectionAfterReopen() throws Exception {
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='paused' WHERE session_id='s-1'");
+        String raw = command("c-paused", "watch-1", "e-1", "set-1", 0, actionAt);
+        WorkoutCommandStore.Result rejected = store.completeSet(raw);
+        assertEquals("paused", rejected.status);
+        assertEquals(0, pendingCount("c-paused"));
+        store.close(); store = new WorkoutCommandStore(context);
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='active' WHERE session_id='s-1'");
+        WorkoutCommandStore.Result replay = store.completeSet(raw);
+        assertEquals("replay_rejected", replay.status);
+        assertEquals("paused", new JSONObject(replay.receipt).getString("status"));
+        assertEquals(rejected.receipt, replay.receipt);
         assertFalse(set(saved(), "e-1", "set-1").has("at"));
     }
 
