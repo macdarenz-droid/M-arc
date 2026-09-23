@@ -103,3 +103,44 @@ describe('plain-words presentation', () => {
     expect(r.text).toBe('You held 67 kg then dropped to 47 kg, protein ⟦k:protein_intake⟧ helps.');
   });
 });
+
+import { PPL6 } from '../fixtures/plans';
+describe('apply every proposal kind (round trip)', () => {
+  beforeEach(() => { vi.useFakeTimers({ now: NOW, toFake: ['Date'] }); replaceState(twoWeeksState()); });
+  afterEach(() => { vi.useRealTimers(); });
+  const run = (name: string, input: Record<string, unknown>) => {
+    const p = buildProposal(name, input, ctxOf(state.value), 'p1');
+    const c = { ...newConversation('test', 'chat'), proposals: [{ ...p, status: 'awaiting' as const, messageIndex: 1 }] };
+    expect(canApply(name), name).toBe(true);
+    const a = decide(c, 'p1', 'apply');
+    expect(a.result.status, `${name}: ${a.result.message}`).toBe('applied');
+    return () => decide(a.conversation, 'p1', 'undo', a.result.undo);
+  };
+  it('creates a split and undoes it', () => {
+    const n = state.value.splits.length;
+    const undo = run('propose_split', { action: 'create', name: 'Upper Calisthenics', exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 4 }, { exerciseId: 'lib_barbell_bench_press', sets: 3 }] });
+    expect(state.value.splits).toHaveLength(n + 1);
+    expect(state.value.splits.at(-1)).toMatchObject({ name: 'Upper Calisthenics', exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 4 }, { exerciseId: 'lib_barbell_bench_press', sets: 3 }] });
+    undo();
+    expect(state.value.splits).toHaveLength(n);
+  });
+  it('saves a whole programme with its schedule', () => {
+    run('propose_program', { draft: { ...PPL6, schedule: { sun: null, mon: 'push', tue: null, wed: 'pull', thu: null, fri: 'legs', sat: null } }, replaceExisting: true });
+    expect(state.value.splits.map(s => s.name)).toEqual(['Push', 'Pull', 'Legs']);
+    const mon = state.value.splits.find(s => s.id === state.value.schedule.mon);
+    expect(mon?.name).toBe('Push');
+  });
+  it('changes a setting, the schedule, a check-in and adds a gym', () => {
+    run('propose_setting', { setting: { key: 'restDefaultSec', value: 150 } });
+    expect(state.value.preferences.restDefaultSec).toBe(150);
+    const id = state.value.splits[0]!.id;
+    run('propose_schedule', { week: { sun: id, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null } });
+    expect(state.value.schedule.sun).toBe(id);
+    run('propose_checkin', { sleepQuality: 4, mood: 3 });
+    expect(state.value.checkIns.at(-1)).toMatchObject({ sleepQuality: 4, mood: 3 });
+    const undoGym = run('propose_gym', { name: 'Home', defaultUnit: 'lb' });
+    expect(state.value.units.gyms.some(g => g.name === 'Home')).toBe(true);
+    undoGym();
+    expect(state.value.units.gyms.some(g => g.name === 'Home')).toBe(false);
+  });
+});
