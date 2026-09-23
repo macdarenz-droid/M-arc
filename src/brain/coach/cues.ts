@@ -69,9 +69,10 @@ export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: st
   if (exerciseMode === 'conditioning') return 'conditioning_baseline';
   if (mode === 'confirm_effort') return 'missing_effort';
   if (confidence === 'low' && ['confirm', 'hold', 'increase', 'reps', 'duration'].includes(mode)) return 'insufficient_history';
-  if (mode === 'confirm' || mode === 'hold') return 'confirm';
+  // QA-R3b-8: a plateau keeps the load, so its "why" is repeatability, never "lower it".
+  if (mode === 'confirm' || mode === 'hold' || mode === 'plateau') return 'confirm';
   if (mode === 'increase') return 'increase';
-  if (mode === 'reduce' || mode === 'plateau') return 'reduce';
+  if (mode === 'reduce') return 'reduce';
   if (mode === 'reentry') return 'reentry';
   if (mode === 'reps') return 'build_reps';
   return null;

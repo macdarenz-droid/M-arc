@@ -37,3 +37,11 @@ describe('daily quotes alongside mindset days (QA-R3b-7)', () => {
     }
   });
 });
+
+describe('the plateau hold (QA-R3b-8)', () => {
+  it('never shows a cue about lowering the weight', async () => {
+    const { reasonKeyFor } = await import('@/brain/coach/cues');
+    expect(reasonKeyFor('plateau', 'medium')).toBe('confirm');
+    expect(reasonKeyFor('reduce', 'medium')).toBe('reduce');
+  });
+});

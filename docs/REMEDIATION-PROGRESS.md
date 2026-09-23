@@ -347,3 +347,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-7 (low)
 - Today's quote comes from `sparkIndexForDay`, which steps once per quote day (the even days of the year). Every quote now comes round within a year. With days since 1970, the parity was locked to the mindset days, so only half the quotes ever showed.
+
+### QA-R3b-8 (low)
+- A plateau suggestion keeps the load, so its reason cue is "confirm" (repeatability), not "reduce".
