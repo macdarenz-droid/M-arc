@@ -265,7 +265,7 @@ Spec: `docs/ESCOBAR-ARCHITECTURE.md`. Branch: `claude/escobar-v2-implementation-
 
 ## EV3: Worker v2
 - worker: `escobar-worker/` (`src/{index,handler,anthropic,validate,quota}.ts`, `src/prompt/{policy,modes,manifest}.ts`, `src/tools.generated.json`, `wrangler.toml` name `marc-coach`, README), `scripts/escobar-tools.mjs` (`npm run escobar:tools`), app test `tests/escobar/tools-sync.test.ts`, CI step in `build-apk.yml`. Worker tests: `test/{validate,anthropic,handler,schema}.test.ts` (48).
-- Not deployed (owner action): `cd escobar-worker && npm ci && npx wrangler@4 deploy`.
+- Deployed 2026-09-23 through `.github/workflows/deploy-worker.yml`; `/health` answers `protocol: 2`, `model: claude-opus-5`, `key: true`.
 
 ## EV4: Loop, transport and verification
 - ai: `escobar/transport.ts` (SSE parser, HTTP transport, health), `escobar/verify.ts` (directives, stream buffer, grounding, repair text, safety signals), `escobar/loop.ts` (staging, steps and budgets, tool execution in block order, orphan closing, retry, repair round, abort/background/timeout, history window, offline reply, photos), `escobar/state.ts` (signals, proxy URL, prices). `Conversation` gains `proposals`, `briefLines`, `userTurns`. Tests: `tests/escobar/{transport,verify,loop}.test.ts` (40), including a full 6-step mocked conversation.
