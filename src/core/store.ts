@@ -1,4 +1,5 @@
 import { signal, batch } from '@preact/signals';
+import { navyBodyFat } from './bodyfat';
 import { freshState, newId, type AppState, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { convertLegacy, readLegacy } from './migrate';
 import { legacySessionLogging } from './sessionLogging';
@@ -133,6 +134,20 @@ function cleanNotes(v: unknown): Record<string, string> {
   return out;
 }
 
+/**
+ * QA-R3a-10: readings saved before BR-01 used the inch-converted formula and read about six
+ * points low. Their tape numbers are stored, so they are recomputed once, with the profile's
+ * sex and height, and marked. A reading that cannot be recomputed keeps its number.
+ */
+function healBodyReadings(body: AppState['body'], profile: Partial<AppState['profile']> | undefined): AppState['body'] {
+  const sex = profile?.sex, heightCm = profile?.heightCm;
+  return body.map(b => {
+    if (b.formula === 'navy-cm' || (sex !== 'male' && sex !== 'female') || heightCm == null) return b;
+    const pct = navyBodyFat({ sex, heightCm, neckCm: b.neckCm, waistCm: b.waistCm, hipCm: b.hipCm });
+    return pct == null ? b : { ...b, bodyFatPct: pct, formula: 'navy-cm' };
+  });
+}
+
 function fill(s: AppState): AppState {
   const fresh = freshState();
   const weightUnit = s.preferences?.weightUnit === 'lb' ? 'lb' : 'kg';
@@ -144,7 +159,7 @@ function fill(s: AppState): AppState {
     schedule: { ...fresh.schedule, ...s.schedule },
     health: { ...fresh.health, ...s.health, ...(s.health?.activeCalories != null && s.health.activeCalories > 20_000 ? { activeCalories: Math.round(s.health.activeCalories / 1000) } : {}) },
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
-    body: s.body ?? [],
+    body: healBodyReadings(s.body ?? [], s.profile),
     customExercises: s.customExercises ?? [],
     // VX-01: heal activeCalories stored as small calories by builds before the fix.
     healthDays: (s.healthDays ?? []).map(d => (d.activeCalories != null && d.activeCalories > 20_000 ? { ...d, activeCalories: Math.round(d.activeCalories / 1000) } : d)),

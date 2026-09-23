@@ -8,7 +8,7 @@ import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscle
 import { formatDay, formatHours } from '@/core/dates';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
 import { muscleVolumeStatus } from '@/brain/volume';
-import { navyBodyFat } from '@/brain/bodyfat';
+import { navyBodyFat } from '@/core/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
@@ -172,7 +172,7 @@ function BodyFat() {
   const save = () => {
     if (result == null) return;
     const r1 = (v: number) => Math.round(v * 10) / 10;
-    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: Number.isFinite(cm(height)) ? r1(cm(height)) : x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: r1(cm(neck)), waistCm: r1(cm(waist)), hipCm: Number.isFinite(cm(hip)) ? r1(cm(hip)) : undefined, bodyFatPct: result }] }));
+    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: Number.isFinite(cm(height)) ? r1(cm(height)) : x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: r1(cm(neck)), waistCm: r1(cm(waist)), hipCm: Number.isFinite(cm(hip)) ? r1(cm(hip)) : undefined, bodyFatPct: result, formula: 'navy-cm' }] }));
     setOpen(false);
   };
   return (

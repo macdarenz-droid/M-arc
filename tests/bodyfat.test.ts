@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { navyBodyFat } from '@/brain/bodyfat';
+import { navyBodyFat } from '@/core/bodyfat';
 
 describe('navyBodyFat (BR-01)', () => {
   it('uses the metric constants on centimetres', () => {

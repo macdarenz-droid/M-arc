@@ -286,3 +286,20 @@ describe('a live set copied by the old + Set (QA-R2d-4)', () => {
     expect(sets[1]!.id).not.toBe('set_a');
   });
 });
+
+describe('body-fat readings from before the cm formula (QA-R3a-10)', () => {
+  it('are recomputed once from their tape numbers; new ones are left alone', async () => {
+    const st = memoryStorage();
+    const base = freshState();
+    st.map.set('marc.state.v1', JSON.stringify({ ...base, profile: { ...base.profile, sex: 'male', heightCm: 180 }, body: [
+      { day: '2026-01-01', neckCm: 38, waistCm: 85, bodyFatPct: 9.8 },
+      { day: '2026-09-01', neckCm: 38, waistCm: 85, bodyFatPct: 16.1, formula: 'navy-cm' },
+    ] }));
+    const S = await fresh();
+    S.initStore(st);
+    const [old, cur] = S.state.value.body;
+    expect(old!.bodyFatPct).toBeCloseTo(16.1, 0);
+    expect(old!.formula).toBe('navy-cm');
+    expect(cur!.bodyFatPct).toBe(16.1);
+  });
+});

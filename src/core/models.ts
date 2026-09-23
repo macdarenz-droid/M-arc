@@ -337,6 +337,8 @@ export interface BodyMeasurement {
   waistCm: number;
   hipCm?: number;
   bodyFatPct: number;
+  /** QA-R3a-10: set on readings computed with the cm formula; older readings are recomputed once on load. */
+  formula?: 'navy-cm';
 }
 
 export interface HealthSnapshot {

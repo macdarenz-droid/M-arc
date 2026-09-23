@@ -317,3 +317,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3a-9 (low)
 - When today's soreness rating holds a muscle below ready after the model's own ready time has passed, the status has `soreToday` and no ready time. Body says "sore today" or "Held back by today's soreness rating", not "ready in under 1h".
+
+### QA-R3a-10 (low)
+- `navyBodyFat` moved from `brain/` to `core/bodyfat.ts` (pure math, no brain dependencies), so the store's repair can use it. Readings without `formula: 'navy-cm'` are recomputed once on load from their stored tape numbers and the profile's sex and height, then marked. New readings are saved with the mark. A reading that cannot be recomputed keeps its number.

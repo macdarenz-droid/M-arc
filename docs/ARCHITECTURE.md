@@ -5,7 +5,7 @@ M/ARC is a Preact + TypeScript app (signals for state) built by Vite into `www/`
 ```
 src/
   data/      static facts: exercises.json (153), muscles, goals, recovery and deload constants, coachCues.json, sparks
-  core/      models, dates, clock, units, exercise lookup, store (persistence + repair), heartStore,
+  core/      models, dates, clock, units, exercise lookup, body-fat formula, store (persistence + repair), heartStore,
              legacy migration, sessionLogging, rescue file, version
   brain/     pure functions: exposure, recovery, readiness, history, e1rm, effortBias, prs, trend,
              progression, deload, balance, volume, weekly, plan, heart, energy, fidelity, units,
