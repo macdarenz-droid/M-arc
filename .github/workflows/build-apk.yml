@@ -52,6 +52,7 @@ jobs:
         run: |
           node --test native/wear/probe.test.mjs
           node --test native/wear/commandProtocol.test.mjs
+          python3 native/wear/workout_store_test.py
           node native/wear/watch-lab-gate.mjs
       - name: Upload gate evidence
         if: always()
@@ -147,6 +148,7 @@ jobs:
           PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
           test -f "$PKG/HealthConnectNativePlugin.java" || { echo '::error::HealthConnectNativePlugin.java not copied into the Android project'; exit 1; }
           test -f "$PKG/wear/WearEnginePlugin.java" || { echo '::error::WearEnginePlugin.java not copied'; exit 1; }
+          test -f "$PKG/wear/WorkoutCommandStore.java" || { echo '::error::WorkoutCommandStore.java not copied'; exit 1; }
           test -f "$PKG/watch/WatchBridgePlugin.java" || { echo '::error::WatchBridgePlugin.java not copied into the Android project'; exit 1; }
           test -f "$PKG/watch/core/HeartRateMeasurement.java" || { echo '::error::watch/core sensor classes not copied into the Android project'; exit 1; }
           grep -q 'android.permission.health.READ_HEART_RATE' android/app/src/main/AndroidManifest.xml || { echo '::error::health permissions not patched into the manifest'; exit 1; }

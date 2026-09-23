@@ -62,6 +62,13 @@ describe('commit-once sets (UI-01)', () => {
 });
 
 describe('stable ids (R2.8)', () => {
+  it('a native handover snapshot has one stable identity for every live target', () => {
+    const live = start();
+    const ids = [live.id, ...live.entries.flatMap(e => [e.id, ...e.sets.map(s => s.id)])];
+    expect(ids.every(id => typeof id === 'string' && id.length > 0)).toBe(true);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(JSON.parse(JSON.stringify(live)).id).toBe(live.id);
+  });
   it('ids survive reorder and finish; the session keeps the live id', () => {
     const live = start();
     const ids = live.entries.map(e => [e.id, ...e.sets.map(s => s.id)]);

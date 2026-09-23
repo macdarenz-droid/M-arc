@@ -158,6 +158,7 @@ jobs:
           PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
           test -f "$PKG/HealthConnectNativePlugin.java" || exit 1
           test -f "$PKG/wear/WearEnginePlugin.java" || exit 1
+          test -f "$PKG/wear/WorkoutCommandStore.java" || exit 1
           test -f "$PKG/watch/WatchBridgePlugin.java" || exit 1
           test -f "$PKG/watch/core/HeartRateMeasurement.java" || exit 1
           grep -q 'android.permission.health.READ_HEART_RATE' android/app/src/main/AndroidManifest.xml || exit 1

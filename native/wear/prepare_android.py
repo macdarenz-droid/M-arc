@@ -29,6 +29,7 @@ if repo not in text:
 target = app / "src/main/java/com/mrcdrnzz/dailytracker/wear"
 target.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/WearEnginePlugin.java", target / "WearEnginePlugin.java")
+shutil.copyfile(ROOT / "native/wear/WorkoutCommandStore.java", target / "WorkoutCommandStore.java")
 # Capacitor's PluginManager loads these classpaths. Do not also register in MainActivity.
 registry = app / "src/main/assets/capacitor.plugins.json"
 plugins = json.loads(registry.read_text())

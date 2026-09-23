@@ -1,0 +1,60 @@
+"""Exercise the exact DDL embedded in WorkoutCommandStore against SQLite."""
+import re
+import sqlite3
+import unittest
+from pathlib import Path
+
+
+SOURCE = Path(__file__).with_name("WorkoutCommandStore.java").read_text()
+
+
+def schema(connection):
+    connection.execute("PRAGMA foreign_keys=ON")
+    for name in ("CREATE_SESSIONS", "CREATE_RECEIPTS", "ONE_ACTIVE_SESSION"):
+        match = re.search(rf'static final String {name} = "([^"\\]*)";', SOURCE)
+        assert match, f"missing executable {name} DDL"
+        connection.execute(match.group(1))
+
+
+class WorkoutStoreTests(unittest.TestCase):
+    def setUp(self):
+        self.db = sqlite3.connect(":memory:")
+        schema(self.db)
+        self.db.execute("INSERT INTO sessions VALUES (?,?,?,?,?)", ("s-1", "watch-1", 0, "active", '{"id":"s-1"}'))
+        self.db.commit()
+
+    def tearDown(self):
+        self.db.close()
+
+    def test_one_active_session_and_existing_ids(self):
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO sessions VALUES (?,?,?,?,?)", ("s-2", "watch-2", 0, "active", "{}"))
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO receipts VALUES (?,?,?,?)", ("unknown", "c", "fp", "{}"))
+        self.db.rollback()
+
+    def test_crash_before_commit_rolls_back_snapshot_and_receipt(self):
+        try:
+            self.db.execute("BEGIN")
+            self.db.execute("UPDATE sessions SET snapshot=?, revision=1 WHERE session_id='s-1'", ('{"id":"s-1","set":"done"}',))
+            self.db.execute("INSERT INTO receipts VALUES (?,?,?,?)", ("s-1", "c-1", "fp", '{"status":"applied"}'))
+            raise RuntimeError("simulated crash before transaction commit")
+        except RuntimeError:
+            self.db.rollback()
+        self.assertEqual(self.db.execute("SELECT revision,snapshot FROM sessions").fetchone(), (0, '{"id":"s-1"}'))
+        self.assertEqual(self.db.execute("SELECT count(*) FROM receipts").fetchone()[0], 0)
+
+    def test_committed_receipt_survives_reopen_and_command_id_cannot_duplicate(self):
+        self.db.execute("BEGIN")
+        self.db.execute("UPDATE sessions SET snapshot=?, revision=1 WHERE session_id='s-1'", ('{"id":"s-1","set":"done"}',))
+        self.db.execute("INSERT INTO receipts VALUES (?,?,?,?)", ("s-1", "c-1", "fp", '{"status":"applied"}'))
+        self.db.commit()
+        self.assertEqual(self.db.execute("SELECT result FROM receipts WHERE session_id=? AND command_id=?", ("s-1", "c-1")).fetchone()[0], '{"status":"applied"}')
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO receipts VALUES (?,?,?,?)", ("s-1", "c-1", "changed", "{}"))
+        self.db.rollback()
+        self.assertEqual(self.db.execute("SELECT revision FROM sessions").fetchone()[0], 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
