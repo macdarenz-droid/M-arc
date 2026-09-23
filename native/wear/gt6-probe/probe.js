@@ -31,7 +31,7 @@ export function createProbe(io) {
   }
   function heart(q) {
     stop();
-    if (typeof io.sensor.subscribeHeartRate !== 'function') { reply(q, 'unsupported'); return; }
+    if (typeof io.sensor.subscribeHeartRate !== 'function') { io.status('HR API unavailable'); reply(q, 'unsupported'); return; }
     hrId = q.id; seq = 0; lastSent = 0; deadline = io.now() + 300000;
     timer = io.setTimeout(stop, 300000);
     var currentId = hrId;
@@ -104,6 +104,7 @@ export function createProbe(io) {
   }
   return {
     receive: receive,
+    startLocal: function () { if (!disposed && !run) heart({ id: 'local-' + String(io.now()), op: 'hr_start' }); },
     stop: stop,
     show: function () { shows++; if (deadline && io.now() >= deadline) stop(); },
     hide: function () { hides++; },
