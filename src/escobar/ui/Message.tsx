@@ -184,6 +184,10 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
   const r: RenderedTurn | undefined = final?.m.meta.rendered;
   const answerText = r?.answer ?? (final ? parseDirectives(textOf(final.m.content)).text : '');
   const proposals = (conv.proposals ?? []).filter(p => p.messageIndex != null && indexes.includes(p.messageIndex));
+  const visibleUse = (u: ToolUse) => { const r = results.get(u.id); return !!r && !r.isError && (u.name === 'show' || u.name === 'navigate' || u.name === 'escalate'); };
+  const hasPreamble = assistant.some(a => (a.m.meta.rendered.preamble ?? []).some(p => parseDirectives(p).plain.trim()));
+  // While a turn is still running its tool steps show in the live area; draw nothing here until there is something to see.
+  if (live && !answerText && !proposals.length && !hasPreamble && !allUses.some(visibleUse)) return null;
   return (
     <div class="esc-turn">
       {assistant.map(({ i, m }) => {

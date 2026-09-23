@@ -546,6 +546,23 @@ for (const theme of themes) {
   if (!(await page.locator('.pulse-edge').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
   await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
+  if (theme === 'silent-black') {
+    // Hold-and-drag reorder in a live session: the first exercise dragged down lands lower.
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+    // Collapse the open card so the list is short and even.
+    await page.locator('.reorder-item .exname').first().click(); await page.waitForTimeout(200);
+    const before = await page.locator('.reorder-item .exname').allTextContents();
+    const box = await page.locator('.reorder-item').nth(0).boundingBox();
+    const next = await page.locator('.reorder-item').nth(1).boundingBox();
+    await page.mouse.move(box.x + 40, box.y + 24); await page.mouse.down(); await page.waitForTimeout(450);
+    for (let k = 1; k <= 10; k++) { await page.mouse.move(box.x + 40, box.y + 24 + (next.height + 12) * 1.2 * k / 10); await page.waitForTimeout(20); }
+    await page.mouse.up(); await page.waitForTimeout(300);
+    const after = await page.locator('.reorder-item .exname').allTextContents();
+    if (after[0] !== before[1] || after[1] !== before[0]) errors.push(`reorder: expected ${before[0]} to move below ${before[1]}, got ${after.slice(0, 3).join(', ')}`);
+    await page.screenshot({ path: `${OUT}/reorder-after.png` });
+  }
   await ctx.close();
 }
 
@@ -553,4 +570,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');

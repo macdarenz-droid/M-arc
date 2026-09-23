@@ -144,3 +144,24 @@ describe('apply every proposal kind (round trip)', () => {
     expect(state.value.units.gyms.some(g => g.name === 'Home')).toBe(false);
   });
 });
+
+import { currentTurn, isPlanWork } from '@/escobar/ui/PlanBoard';
+describe('plan whiteboard detection', () => {
+  const msgs: StoredMessage[] = [
+    { role: 'user', content: [{ type: 'text', text: 'old' }] },
+    { role: 'assistant', content: [{ type: 'tool_use', id: 'x', name: 'search_exercises', input: { pattern: 'hinge' } }], meta: { rendered: {} } },
+    { role: 'user', content: [{ type: 'text', text: 'Create a 3-day full body split' }] },
+    { role: 'assistant', content: [{ type: 'tool_use', id: 'a', name: 'search_exercises', input: { pattern: 'squat' } }, { type: 'tool_use', id: 'b', name: 'search_exercises', input: { pattern: 'hinge' } }], meta: { rendered: {} } },
+    { role: 'user', content: [{ type: 'tool_result', tool_use_id: 'a', content: JSON.stringify({ data: { exercises: [{ name: 'Back Squat' }] }, facts: {} }) }] },
+  ];
+  it('reads only the turn in progress', () => {
+    const t = currentTurn(msgs);
+    expect(t.uses.map(u => u.id)).toEqual(['a', 'b']);
+    expect(t.results.get('a')?.data).toEqual({ exercises: [{ name: 'Back Squat' }] });
+  });
+  it('switches on for two searches or any plan tool, not for one lookup', () => {
+    expect(isPlanWork(currentTurn(msgs).uses, [])).toBe(true);
+    expect(isPlanWork([{ id: 'q', name: 'search_exercises', input: {} }], [])).toBe(false);
+    expect(isPlanWork([], [{ id: 'e', name: 'evaluate_plan', label: '', done: false }])).toBe(true);
+  });
+});

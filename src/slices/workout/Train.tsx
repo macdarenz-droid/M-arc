@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { HeartBpm, PulseLine } from '@/ui/PulseLine';
+import { useReorder } from './reorder';
 import { openEscobar } from '@/escobar/ui/open';
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
@@ -19,7 +20,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue } from '@/brain/coach/cues';
-import { addExerciseToSession, addSet, active, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, addSet, active, moveEntry, adjustRest, stopRest, commitSet, discardSession, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -298,6 +299,12 @@ function LiveSession() {
   const [open, setOpen] = useState<number>(a.entries.findIndex(e => !e.done && !e.skipped));
   const [picking, setPicking] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  // Hold an exercise and drag to reorder; the open card follows its exercise.
+  const reorder = useReorder((from, to) => {
+    const openId = a.entries[open]?.exerciseId;
+    moveEntry(from, to);
+    if (openId) setOpen(state.value.active?.entries.findIndex(e => e.exerciseId === openId) ?? -1);
+  });
   useEffect(() => { setTicking(true); return () => setTicking(false); }, []);
   const elapsed = elapsedSec(a, nowMs.value);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
@@ -317,7 +324,13 @@ function LiveSession() {
       </div>
 
       <div class="stack">
-        {a.entries.map((entry, i) => <EntryCard key={`${entry.exerciseId}-${i}`} index={i} entry={entry} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} />)}
+        <div class={`stack reorder-list${reorder.dragging ? ' dragging' : ''}`} ref={reorder.listRef}>
+          {a.entries.map((entry, i) => (
+            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
+              <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} />
+            </div>
+          ))}
+        </div>
         <Button onClick={() => setPicking(true)}><IconPlus size={16} /> Add exercise to this session</Button>
       </div>
 

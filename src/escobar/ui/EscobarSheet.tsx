@@ -17,6 +17,7 @@ import { EscobarTurnView, UserBubble, AnswerText, turnsOf, type UserTurn } from 
 import { Escalation } from './Escalation';
 import { starterChips } from './prompts';
 import { ThinkingLine } from './Thinking';
+import { PlanBoard, currentTurn, isPlanWork } from './PlanBoard';
 import type { ImageBlockRef } from '../types';
 import type { SendInput, TurnResult } from '../loop';
 
@@ -97,6 +98,7 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
   const showPending = pending && (!conv || conv.messages.length <= pending.at);
   const r = todayReadiness.value;
   const lastEscobar = turns.length - 1;
+  const planWork = busy && isPlanWork(currentTurn(conv?.messages ?? []).uses, view.activity);
 
   if (!turns.length && !showPending && !last) {
     return (
@@ -117,8 +119,12 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
       {!busy && last?.notSent && <UserBubble msg={bubbleOf(last.input)} />}
       {busy && (
         <div class="esc-turn esc-live" aria-live="polite">
-          {view.activity.map(a => <div key={a.id} class={`esc-activity${a.done ? ' done' : ''}`}><span class="esc-spin" aria-hidden="true" />{a.label}</div>)}
-          {view.status === 'thinking' && !view.text && <ThinkingLine />}
+          {planWork ? <PlanBoard messages={conv?.messages ?? []} activity={view.activity} /> : (
+            <>
+              {view.activity.map(a => <div key={a.id} class={`esc-activity${a.done ? ' done' : ''}`}><span class="esc-spin" aria-hidden="true" />{a.label}</div>)}
+              {view.status === 'thinking' && !view.text && <ThinkingLine />}
+            </>
+          )}
           {view.status === 'verifying' && <ThinkingLine label="Checking the numbers…" />}
           {view.text && <AnswerText text={view.text} ledger={conv?.ledger ?? []} streaming />}
         </div>

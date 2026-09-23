@@ -361,3 +361,31 @@ svg { display: block; }
 .watch-pill .heart-bpm { background: transparent; padding: 0; }
 .heart-bpm-icon { width: 14px; height: 14px; color: var(--accent); transform: scale(calc(1 + var(--pulse-beat, 0) * 0.22)); }
 .heart-bpm-n { font-variant-numeric: tabular-nums; min-width: 2.2ch; }
+
+/* Escobar's plan whiteboard (while a split or programme is being built). */
+.plan-board { display: grid; gap: 10px; padding: 14px; border: 1px dashed var(--border-strong); border-radius: var(--radius-lg); background: var(--surface-1); }
+.plan-board-head { display: grid; gap: 2px; }
+.plan-board-head b { font-size: 15px; }
+.plan-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.plan-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border-subtle); font-size: 12.5px; color: var(--text); }
+.plan-chip-k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); }
+.plan-chip.pending { color: var(--text-3); }
+.plan-days { display: grid; gap: 6px; }
+.plan-day { display: grid; grid-template-columns: minmax(64px, auto) 1fr; gap: 10px; font-size: 13px; align-items: baseline; }
+.plan-day-name { font-weight: 600; color: var(--text); }
+.plan-day-list { color: var(--text-2); overflow-wrap: anywhere; }
+.plan-verdict { font-size: 12.5px; }
+.plan-verdict.ok { color: var(--positive); }
+.plan-verdict.warn { color: var(--warning); }
+@media (prefers-reduced-motion: no-preference) {
+  .plan-chip { animation: esc-fade 260ms ease-out; }
+  .plan-chip.pending { animation: esc-pulse 1.4s ease-in-out infinite; }
+  .plan-day { animation: esc-fade 300ms ease-out; }
+}
+
+/* Live session: hold an exercise and drag to reorder. No selection highlight, just movement. */
+.reorder-item { touch-action: pan-y; -webkit-touch-callout: none; }
+.reorder-list.dragging { user-select: none; -webkit-user-select: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .reorder-list.dragging .reorder-item { transition: transform 160ms ease; }
+}

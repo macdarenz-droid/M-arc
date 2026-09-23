@@ -112,6 +112,17 @@ export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void 
   patchActive(a => (a.entries.some(e => e.exerciseId === ex.id) ? a : { ...a, entries: [...a.entries, { exerciseId: ex.id, name: ex.name, sets: Array.from({ length: sets }, () => ({})), done: false, skipped: false }] }));
 }
 
+/** Reorder the live session: hold an exercise and drag it up or down. */
+export function moveEntry(from: number, to: number): void {
+  patchActive(a => {
+    if (from === to || from < 0 || to < 0 || from >= a.entries.length || to >= a.entries.length) return a;
+    const entries = [...a.entries];
+    const [item] = entries.splice(from, 1);
+    entries.splice(to, 0, item!);
+    return { ...a, entries };
+  });
+}
+
 export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }
