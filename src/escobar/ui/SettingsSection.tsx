@@ -47,7 +47,7 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
             </div>
             <Field label="Server" hint="Leave empty for the built-in server."><div class="row" style={{ gap: 8 }}><input value={url} placeholder={ESCOBAR_PROXY_URL} inputMode="url" onInput={x => setUrl((x.target as HTMLInputElement).value)} /><Button size="sm" onClick={saveUrl}>Save server</Button></div></Field>
             {!confirm ? <Button variant="quiet" onClick={() => setConfirm(true)}>Reset conversations</Button> : (
-              <Card class="card-quiet"><p class="small">Delete every conversation with Escobar? What he remembers stays until you clear it.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" onClick={() => { void import('../session').then(m => m.resetConversations()); void import('../images').then(m => m.clearImages()); setConfirm(false); showToast('Conversations deleted'); }}>Delete conversations</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete every conversation with Escobar? What he remembers stays until you clear it.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" onClick={() => { void Promise.all([import('../session').then(m => m.resetConversations()), import('../images').then(m => m.clearImages())]).then(() => showToast('Conversations deleted'), () => showToast('Could not load Escobar. Check your connection.')); setConfirm(false); }}>Delete conversations</Button></div></Card>
             )}
           </>
         )}

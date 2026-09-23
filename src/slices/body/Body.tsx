@@ -112,8 +112,9 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const s = state.value;
   usePalaceFocus('body.muscle', { muscle });
   const u = unit.value;
-  const r = recovery.value.find(x => x.muscle === muscle)!;
+  const r = recovery.value.find(x => x.muscle === muscle);
   const info = MUSCLE_BY_ID[muscle];
+  if (!info || !r) { queueMicrotask(onClose); return null; }
   const levels = trainingLevels(s.sessions, s.customExercises)[muscle];
   const direct = [...s.customExercises, ...LIBRARY].filter(e => e.primary.includes(muscle));
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));

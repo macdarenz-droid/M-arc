@@ -10,6 +10,7 @@ import { onNotificationTap } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
 import { go } from './app/router';
+import { ErrorBoundary } from './app/ErrorBoundary';
 import './ui/styles.css';
 
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
@@ -20,7 +21,20 @@ try {
   startWatchListeners();
   startHeartCapture();
 
-  render(<App />, document.getElementById('app')!);
+  render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('app')!);
+  (globalThis as { __marcBooted?: boolean }).__marcBooted = true;
+
+  // After boot, a stray error or rejected promise is reported once in a while, never a blank screen.
+  let lastErrorToast = 0;
+  const reportLate = (err: unknown) => {
+    console.error(err);
+    const now = Date.now();
+    if (now - lastErrorToast < 10_000) return;
+    lastErrorToast = now;
+    showToast('Something went wrong. Your data is saved.');
+  };
+  window.addEventListener('error', e => reportLate(e.error ?? e.message));
+  window.addEventListener('unhandledrejection', e => reportLate(e.reason));
 
   if (bootSource.value === 'legacy') {
     showToast(`Imported ${state.value.sessions.length} sessions from the previous version`);

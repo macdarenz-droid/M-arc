@@ -34,9 +34,14 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 (skipped / not reproduced: none)
 
 ## Phase R1 — in progress
-### Layer: core/store — done — IDs: ST-01, ST-10, ST-11, ST-19, RG-02, ST-09
+### Layer: core/store — done, commit 4f4cc86 — IDs: ST-01, ST-10, ST-11, ST-19, RG-02, ST-09
 - Quarantine to `marc.state.v1.corrupt` (main) and `marc.state.v1.backup.corrupt` (backup, when source is fresh/legacy); `bootRecovered` signal; `rescueRaw()` / `deleteRescueCopy()`.
 - persistNow: main write first, quota → drop backup + retry once; backup = previous good raw on the first save of each local day (`marc.state.v1.backupDay`), best-effort.
 - `repairState()` exported (deep repair + dropped count); normalize = repair + fill + RG-02 lb backfill (raw has no `units`, lb user).
 - storage listener for other tabs; toast when the local active session differs.
 - convertLegacy: lb → lb gym (ST-09) and the same lb backfill (decided: v36 loads carry the same 0.25 kg rounding; the round-trip check makes it a no-op otherwise).
+### Layer: app shell (crash containment) — done — IDs: ST-02, RG-01, ST-15, ST-14, UI-05, ES-29
+- index.html: `__marcBooted` gate, plain copy, "Save a copy of my data" (inline rescue, duplicated from src/core/rescue.ts on purpose), reset needs confirm().
+- main.tsx: ErrorBoundary around App, booted flag, late error/rejection toast throttled to 10 s. New src/app/ErrorBoundary.tsx, src/core/rescue.ts.
+- Lazy import catches: App EscobarMount, ui/open.ts, SettingsSection reset, Composer attach.
+- router.validatePanelParams + showPanel refuses a panel without its required param; goTo validates view/seg; executor navigate keeps only view/seg/muscle/exerciseId/sessionId and rejects a bad muscle; MuscleDetail guards itself.
