@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.health.connect.AggregateRecordsRequest;
+import android.health.connect.AggregateRecordsResponse;
 import android.health.connect.HealthConnectException;
 import android.health.connect.HealthConnectManager;
 import android.health.connect.ReadRecordsRequestUsingFilters;
@@ -15,6 +17,8 @@ import android.health.connect.datatypes.RestingHeartRateRecord;
 import android.health.connect.datatypes.Record;
 import android.health.connect.datatypes.SleepSessionRecord;
 import android.health.connect.datatypes.StepsRecord;
+import android.health.connect.datatypes.AggregationType;
+import android.health.connect.datatypes.units.Energy;
 import android.os.Build;
 import android.os.OutcomeReceiver;
 
@@ -30,6 +34,8 @@ import com.getcapacitor.annotation.Permission;
 import com.getcapacitor.annotation.PermissionCallback;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +58,11 @@ import java.util.concurrent.TimeUnit;
 )
 public class HealthConnectNativePlugin extends Plugin {
     private final Executor executor = Executors.newSingleThreadExecutor();
+    /**
+     * PL-03: Health Connect delivers results here, never on `executor`, whose only thread is
+     * blocked on the latch waiting for them (that was a 20 s deadlock per read).
+     */
+    private final Executor callbackExecutor = Executors.newCachedThreadPool();
 
     private boolean platformAvailable() {
         if (Build.VERSION.SDK_INT < 34) return false;
@@ -180,7 +191,7 @@ public class HealthConnectNativePlugin extends Plugin {
 
             CountDownLatch latch = new CountDownLatch(1);
             Holder<ReadRecordsResponse<T>> holder = new Holder<>();
-            hc.readRecords(builder.build(), executor,
+            hc.readRecords(builder.build(), callbackExecutor,
                     new OutcomeReceiver<ReadRecordsResponse<T>, HealthConnectException>() {
                         @Override
                         public void onResult(ReadRecordsResponse<T> result) {
@@ -206,6 +217,45 @@ public class HealthConnectNativePlugin extends Plugin {
         } while (pageToken != -1L);
 
         return all;
+    }
+
+    /**
+     * PL-04/VX-01: one aggregate (the builder takes a single type) over local midnight → now,
+     * so overlapping records from several apps are de-duplicated by Health Connect itself.
+     * Null when the permission is missing or the read failed (noted in `failed`).
+     */
+    private <T> T aggregateIfGranted(String permission, AggregationType<T> type, String label, JSArray failed) {
+        if (!hasHealthPermission(permission)) return null;
+        HealthConnectManager hc = manager();
+        if (hc == null) return null;
+        try {
+            Instant start = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
+            AggregateRecordsRequest<T> req = new AggregateRecordsRequest.Builder<T>(
+                    new TimeInstantRangeFilter.Builder().setStartTime(start).setEndTime(Instant.now()).build())
+                    .addAggregationType(type)
+                    .build();
+            CountDownLatch latch = new CountDownLatch(1);
+            Holder<AggregateRecordsResponse<T>> holder = new Holder<>();
+            hc.aggregate(req, callbackExecutor, new OutcomeReceiver<AggregateRecordsResponse<T>, HealthConnectException>() {
+                @Override
+                public void onResult(AggregateRecordsResponse<T> result) {
+                    holder.value = result;
+                    latch.countDown();
+                }
+
+                @Override
+                public void onError(@NonNull HealthConnectException error) {
+                    holder.error = error;
+                    latch.countDown();
+                }
+            });
+            if (!latch.await(20, TimeUnit.SECONDS)) throw new IllegalStateException("Health Connect aggregate timed out");
+            if (holder.error != null) throw holder.error;
+            return holder.value == null ? null : holder.value.get(type);
+        } catch (Exception e) {
+            failed.put(label + ": " + e.getClass().getSimpleName());
+            return null;
+        }
     }
 
     private JSObject permissionOnlyResult() {
@@ -236,18 +286,14 @@ public class HealthConnectNativePlugin extends Plugin {
                 Instant start = end.minus(2, ChronoUnit.DAYS);
                 JSArray failed = new JSArray();
 
-                List<StepsRecord> stepsRecords = readIfGranted(P_STEPS, StepsRecord.class, start, end, failed);
+                // Today's totals come from aggregates; the 48 h read keeps sleep and heart rate.
+                Long stepsTotal = aggregateIfGranted(P_STEPS, StepsRecord.STEPS_COUNT_TOTAL, "Steps", failed);
+                Energy energyTotal = aggregateIfGranted(P_CALORIES, ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL, "ActiveCalories", failed);
                 List<SleepSessionRecord> sleepRecords = readIfGranted(P_SLEEP, SleepSessionRecord.class, start, end, failed);
                 List<RestingHeartRateRecord> restingRecords = readIfGranted(P_RESTING, RestingHeartRateRecord.class, start, end, failed);
                 List<HeartRateRecord> heartRecords = readIfGranted(P_HEART, HeartRateRecord.class, start, end, failed);
-                List<ActiveCaloriesBurnedRecord> calorieRecords = readIfGranted(P_CALORIES, ActiveCaloriesBurnedRecord.class, start, end, failed);
 
-                long steps = 0;
-                Instant stepsTime = null;
-                for (StepsRecord r : stepsRecords) {
-                    steps += r.getCount();
-                    if (stepsTime == null || r.getEndTime().isAfter(stepsTime)) stepsTime = r.getEndTime();
-                }
+                long steps = stepsTotal == null ? 0 : stepsTotal;
 
                 long sleepMinutes = 0;
                 Instant sleepEnd = null;
@@ -279,12 +325,8 @@ public class HealthConnectNativePlugin extends Plugin {
                     }
                 }
 
-                double calories = 0;
-                Instant caloriesTime = null;
-                for (ActiveCaloriesBurnedRecord r : calorieRecords) {
-                    calories += r.getEnergy().getInCalories();
-                    if (caloriesTime == null || r.getEndTime().isAfter(caloriesTime)) caloriesTime = r.getEndTime();
-                }
+                // Energy.getInCalories() is small calories: kcal = / 1000.
+                long activeKcal = energyTotal == null ? 0 : Math.round(energyTotal.getInCalories() / 1000.0);
 
                 JSObject out = new JSObject();
                 out.put("needsPermission", false);
@@ -294,10 +336,10 @@ public class HealthConnectNativePlugin extends Plugin {
                 out.put("sleepMinutes", sleepMinutes);
                 out.put("restingHR", resting);
                 out.put("workoutHR", latestHr);
-                out.put("activeCalories", Math.round(calories));
+                out.put("activeCalories", activeKcal);
                 if (heartTime != null) out.put("heartRateTime", heartTime.toString());
-                if (stepsTime != null) out.put("stepsTime", stepsTime.toString());
-                if (caloriesTime != null) out.put("activeCaloriesTime", caloriesTime.toString());
+                if (stepsTotal != null) out.put("stepsTime", end.toString());
+                if (energyTotal != null) out.put("activeCaloriesTime", end.toString());
                 if (sleepEnd != null) out.put("sleepEndTime", sleepEnd.toString());
                 call.resolve(out);
             } catch (Exception e) {
@@ -343,7 +385,7 @@ public class HealthConnectNativePlugin extends Plugin {
                 out.put("heartRateRecords", heart.size());
                 out.put("heartRateSamples", samples);
                 out.put("activeCalorieRecords", calories.size());
-                out.put("activeCaloriesTotal", Math.round(totalCalories));
+                out.put("activeCaloriesTotal", Math.round(totalCalories / 1000.0));
                 out.put("missing", missingPermissions());
                 out.put("failed", failed);
                 call.resolve(out);
