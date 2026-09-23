@@ -1,11 +1,11 @@
 # Watch progress
 
-RUN LOCK: 2026-09-23T21:58:00.511Z
+RUN LOCK: none
 
 ## Done this run
 
-- Fixed Claude's QA in commit `78f56d8a8fd6b6fa5351adebca722b29930cdcef`: the JS planner checks persisted receipts before rejecting an absent active session, preserving applied and rejected replay outcomes and fingerprint conflicts. Shared fixtures now distinguish no database session from a finished stored session, including matching and mismatching closed session IDs. The native set's committed `at` is clamped to the earlier of raw watch `actionAt` and phone `receivedAt`; the receipt retains the original action timestamp. Java tests cover the future-time clamp, receipt replay after finishing/reopening and fixture parity. The pending rest and heart rows are still not usable as effects: they lack autoRest, default rest duration, effort, live BPM and time-window samples; `GATE-B.md` explicitly keeps them pending until Gate C.
-- Green M/ARC gate [35922941788](https://github.com/macdarenz-droid/M-arc/actions/runs/35922941788) (source and Android) and Agent guard [35922941791](https://github.com/macdarenz-droid/M-arc/actions/runs/35922941791). Local `npm run check`, 10 probe tests, 9 JS command tests over 23 shared fixtures, 4 SQLite schema tests and agent guard pass. Android gate ran 11 Java test methods, source gate ran 684 regular tests per run and 2 performance tests. Local watch lab browser gate lacks Chromium; CI installed it and passed.
+- Fixed Claude's re-pair QA in commit `c54542234ebd9f81df1e1052e035cf270ce943c0`. The JS planner now checks a recorded command in its original session and installation before looking at the currently selected watch. A matching old receipt replays after s-2 is paired to watch-2; a different installation cannot claim it. Without a matching receipt, new commands still require the current binding. The shared Java/JS fixture applies c-fixture in s-1/watch-1, finishes s-1, creates s-2/watch-2, and verifies replay without mutating s-2. JS tests cover rejected replay, changed fingerprint, mismatched installation and reusing a command ID in the new session.
+- Green M/ARC gate [35925851696](https://github.com/macdarenz-droid/M-arc/actions/runs/35925851696) (source and Android) and Agent guard [35925851670](https://github.com/macdarenz-droid/M-arc/actions/runs/35925851670). Local `npm run check`, 10 probe tests, 10 JS command tests over 24 shared fixtures, 4 SQLite schema tests and agent guard pass; Android gate ran 11 Java test methods. Local browser gate lacks Playwright Chromium; CI installed it and passed.
 
 ## Next task
 
