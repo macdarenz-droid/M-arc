@@ -7,7 +7,8 @@ import type { AppState, Exercise, LoadUnit } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
 import { daysBetween, dayKey, weekdayOf } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
-import { recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
+import { recoveryPctFor, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
+import { resolveProfile } from '@/brain/units';
 import { readiness, type ReadinessResult } from '@/brain/readiness';
 import type { CoachContext } from '@/brain/coach/rules';
 
@@ -70,6 +71,23 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
 /** Readiness drivers that come from health data (ES-12); check-in drivers stay. */
 const HEALTH_DRIVER = /resting heart rate|HRV|sleep has been short/i;
 export const redactDrivers = (drivers: string[], health: boolean): string[] => (health ? drivers : drivers.filter(d => !HEALTH_DRIVER.test(d)));
+
+/**
+ * Everything suggestNext needs to agree with the Train screen (ES-21): readiness, the
+ * exercise's recovery, an active deload, the gym's equipment and today's load override.
+ */
+export function progressionCtxFor(ctx: ToolCtx, exerciseId: string, gymId?: string) {
+  const s = ctx.state;
+  const equipment = resolveProfile(exerciseId, gymId ?? s.active?.gymId ?? s.units.activeGymId, s.units, exerciseOf(ctx, exerciseId));
+  const change = todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === exerciseId);
+  return {
+    readiness: readinessToday(ctx),
+    recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoveryAt(ctx)),
+    deload: activeDeloadOf(ctx),
+    equipment,
+    ...(change && change.kind === 'load' ? { loadFactor: change.factor } : {}),
+  };
+}
 
 export const activeDeloadOf = (ctx: ToolCtx) => { const d = ctx.state.deload; return d && d.endDay >= ctx.today ? d : null; };
 export const todayOverrideOf = (ctx: ToolCtx) => { const o = ctx.state.escobar.todayOverride; return o && o.day === ctx.today ? o : null; };

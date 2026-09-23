@@ -19,14 +19,15 @@ import { warmupSets } from '@/brain/coach/pre';
 import { pickCue } from '@/brain/coach/cues';
 import { substitutesFor } from '@/brain/substitute';
 import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
-import { resolveProfile } from '@/brain/units';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
-import { coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
+import { coachCtx, exerciseName, exerciseOf, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
 
 type P = Record<string, unknown>;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
 const lastN = <T>(xs: T[], n = 12): T[] => (xs.length > n ? xs.slice(-n) : xs);
+/** n items spread evenly, always keeping the first and the last. */
+export const sampleEvenly = <T>(xs: T[], n: number): T[] => (xs.length <= n ? xs : Array.from({ length: n }, (_, i) => xs[Math.round((i * (xs.length - 1)) / (n - 1))]!));
 const intIn = (v: unknown, lo: number, hi: number, def: number, name: string): number => {
   if (v == null) return def;
   const n = Math.round(Number(v));
@@ -57,10 +58,12 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const metric = params.metric === 'top_set' || params.metric === 'volume' ? params.metric : 'e1rm';
       const all = exerciseHistory(s.sessions, id, s.customExercises);
       const since = addDays(ctx.today, -weeks * 7);
-      const hist = lastN(all.filter(h => h.day >= since));
-      const val = (h: typeof hist[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg : Math.round(h.volume));
+      // ES-15: first/last/best over the whole window; the drawn points are 12 spread evenly across it.
+      const inWindow = all.filter(h => h.day >= since);
+      const val = (h: typeof inWindow[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg : Math.round(h.volume));
+      const hist = sampleEvenly(inWindow, 12);
       const points = hist.map(h => ({ day: h.day, value: val(h) }));
-      const values = points.map(p => p.value).filter(v => v > 0);
+      const values = inWindow.map(val).filter(v => v > 0);
       const p = plateauStatus(all);
       const t = trend(all.slice(-12).map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
       return {
@@ -145,8 +148,9 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'exercise_card': {
       const id = exId(ctx, params.exerciseId);
       const e = exerciseOf(ctx, id)!;
-      const profile = resolveProfile(id, s.units.activeGymId, s.units, e);
-      const next = suggestNext(s.sessions, id, s.goal, ctx.today, e.defaultSets, s.customExercises, { equipment: profile });
+      const pctx = progressionCtxFor(ctx, id);
+      const profile = pctx.equipment;
+      const next = suggestNext(s.sessions, id, s.goal, ctx.today, e.defaultSets, s.customExercises, pctx);
       const cue = pickCue(e, 'coach', `${ctx.today}|${id}`);
       return {
         exercise: e.name, exerciseId: id, equipment: e.equipment, primary: e.primary, secondary: e.secondary,

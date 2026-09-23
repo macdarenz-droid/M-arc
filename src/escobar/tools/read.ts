@@ -16,7 +16,7 @@ import { effortDrift } from '@/brain/effort';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { suggestNext } from '@/brain/progression';
 import { warmupSets } from '@/brain/coach/pre';
-import { recoveryPctFor, trainingAgeMonths } from '@/brain/recovery';
+import { trainingAgeMonths } from '@/brain/recovery';
 import { readinessBaselines } from '@/brain/readiness';
 import { coachInsights, deloadOffer, readinessSeries, CATEGORY_LABEL, type Insight } from '@/brain/coach/rules';
 import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
@@ -32,7 +32,7 @@ import { autoregulationSuggestion } from '@/brain/coach/live';
 import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
 import {
-  activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -41,7 +41,12 @@ const r1 = (v: number): number => Math.round(v * 10) / 10;
 const r2 = (v: number): number => Math.round(v * 100) / 100;
 
 /** Trims the longest arrays in a result until its JSON fits `maxBytes`. */
-export function capJson<T>(data: T, maxBytes: number): T {
+/**
+ * Trims the longest arrays until the JSON fits. Arrays must be ordered most-important-first: the
+ * default drops from the end; `dropFrom: 'start'` is for chronological arrays whose newest rows
+ * are at the end (ES-01).
+ */
+export function capJson<T>(data: T, maxBytes: number, { dropFrom = 'end' }: { dropFrom?: 'start' | 'end' } = {}): T {
   let json = JSON.stringify(data);
   if (json.length <= maxBytes) return data;
   const copy = JSON.parse(json) as unknown;
@@ -54,7 +59,7 @@ export function capJson<T>(data: T, maxBytes: number): T {
   for (let guard = 0; guard < 500 && json.length > budget; guard++) {
     const longest = arrays.filter(a => a.length > 1).sort((a, b) => JSON.stringify(b).length - JSON.stringify(a).length)[0];
     if (!longest) break;
-    longest.pop();
+    if (dropFrom === 'start') longest.shift(); else longest.pop();
     json = JSON.stringify(copy);
   }
   if (copy && typeof copy === 'object' && !Array.isArray(copy)) (copy as Record<string, unknown>).truncated = true;
@@ -182,7 +187,8 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({
     exercise: exerciseName(ctx, id), exerciseId: id, weeks,
-    sessions: hist.map(h => ({ day: h.day, top: { ...(h.topKg > 0 ? loadOf(ctx, id, h.topKg) : {}), reps: h.topKg > 0 ? h.topReps : h.bestReps }, e1rm: h.bestE1rm > 0 ? r1(h.bestE1rm) : null, sets: h.sets.length, effortMix: effortMix(h.sets) })),
+    // Newest first, so capping drops the oldest sessions (ES-01).
+    sessions: [...hist].reverse().map(h => ({ day: h.day, top: { ...(h.topKg > 0 ? loadOf(ctx, id, h.topKg) : {}), reps: h.topKg > 0 ? h.topReps : h.bestReps }, e1rm: h.bestE1rm > 0 ? r1(h.bestE1rm) : null, sets: h.sets.length, effortMix: effortMix(h.sets) })),
     plateau: { status: p.status, confidence: p.confidence },
     trend: { direction: t.direction, pctPerWeek: r2(t.slopePerWeek * 100), confidence: t.confidence },
     records,
@@ -195,11 +201,9 @@ export function getNextTarget(input: { exerciseId?: string; plannedSets?: number
   const id = exerciseArg(ctx, input.exerciseId);
   const s = ctx.state;
   const planned = int(input.plannedSets, 1, 6, 3, 'plannedSets');
-  const profile = resolveProfile(id, s.active?.gymId ?? s.units.activeGymId, s.units, exerciseOf(ctx, id));
-  const recoveryPct = recoveryPctFor(id, s.customExercises, recoveryAt(ctx));
-  const r = readinessToday(ctx);
-  const factor = todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === id);
-  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, { readiness: r, recoveryPct, deload: activeDeloadOf(ctx), equipment: profile, ...(factor && factor.kind === 'load' ? { loadFactor: factor.factor } : {}) });
+  const pctx = progressionCtxFor(ctx, id);
+  const profile = pctx.equipment;
+  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, pctx);
   const ex = exerciseOf(ctx, id)!;
   return capJson({
     exercise: ex.name, exerciseId: id,
@@ -317,7 +321,7 @@ export function getBody(input: { weeks?: number }, ctx: ToolCtx) {
     points: log.slice(-12).map(w => ({ day: w.day, kg: w.kg })),
     bodyFat: s.body.slice(-6).map(b => ({ day: b.day, pct: b.bodyFatPct })),
     bmi, heightCm: s.profile.heightCm ?? null,
-  }, 3000);
+  }, 3000, { dropFrom: 'start' });
 }
 
 export function getHealth(input: { days?: number }, ctx: ToolCtx) {
@@ -363,10 +367,11 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
   let autoreg: string | null = null;
   if (cur) {
     const ex = exerciseOf(ctx, cur.exerciseId);
-    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, cur.sets.length, s.customExercises, { deload: activeDeloadOf(ctx) });
+    const pctx = progressionCtxFor(ctx, cur.exerciseId, a.gymId);
+    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, cur.sets.length, s.customExercises, pctx);
     const first = cur.sets[0];
     const tgt = sug.sets[0];
-    if (ex?.role === 'main' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length })?.action ?? null;
+    if (ex?.role === 'main' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, ...(ex.mode === 'weighted' ? { equipment: pctx.equipment } : {}) })?.action ?? null;
   }
   return capJson({
     active: true,
@@ -413,8 +418,9 @@ export function getEquipment(input: { exerciseId?: string; gymId?: string }, ctx
   if (!input.exerciseId) return base;
   const id = exerciseArg(ctx, input.exerciseId);
   const ex = exerciseOf(ctx, id)!;
-  const p = resolveProfile(id, gymId, u, ex);
-  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, { equipment: p });
+  const pctx = progressionCtxFor(ctx, id, gymId);
+  const p = pctx.equipment;
+  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, pctx);
   const values = loadableValues(p);
   let near: number[] = [];
   if (sug.kg != null) {
