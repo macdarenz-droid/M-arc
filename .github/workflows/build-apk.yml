@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: npm
@@ -74,12 +74,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: npm
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -123,21 +123,6 @@ jobs:
           grep -q 'android.permission.BLUETOOTH_CONNECT' android/app/src/main/AndroidManifest.xml || { echo '::error::watch Bluetooth permissions not patched into the manifest'; exit 1; }
           grep -q 'foregroundServiceType="connectedDevice"' android/app/src/main/AndroidManifest.xml || { echo '::error::WatchService foreground service type not patched into the manifest'; exit 1; }
 
-      - name: Verify native classes in the APK
-        shell: bash
-        run: |
-          set -euo pipefail
-          # RG-20: sources can be copied and still miss the build; check the compiled classes.
-          APK="$(ls android/app/build/outputs/apk/debug/app-debug.apk | head -n 1)"
-          python3 - "$APK" <<'PYDEX'
-          import sys, zipfile
-          z = zipfile.ZipFile(sys.argv[1])
-          dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
-          for cls in (b'Lcom/mrcdrnzz/dailytracker/HealthConnectNativePlugin;', b'Lcom/mrcdrnzz/dailytracker/watch/WatchBridgePlugin;'):
-              if cls not in dex: raise SystemExit('::error::' + cls.decode() + ' is not in the APK dex')
-          print('native classes present in', sys.argv[1])
-          PYDEX
-
       - name: Decode the permanent signing key
         shell: bash
         env:
@@ -157,6 +142,21 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
+
+      - name: Verify native classes in the APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          # RG-20: sources can be copied and still miss the build; check the compiled classes.
+          APK="$(ls android/app/build/outputs/apk/debug/app-debug.apk | head -n 1)"
+          python3 - "$APK" <<'PYDEX'
+          import sys, zipfile
+          z = zipfile.ZipFile(sys.argv[1])
+          dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
+          for cls in (b'Lcom/mrcdrnzz/dailytracker/HealthConnectNativePlugin;', b'Lcom/mrcdrnzz/dailytracker/watch/WatchBridgePlugin;'):
+              if cls not in dex: raise SystemExit('::error::' + cls.decode() + ' is not in the APK dex')
+          print('native classes present in', sys.argv[1])
+          PYDEX
 
       - name: Sign with the permanent key and verify the fingerprint
         shell: bash
