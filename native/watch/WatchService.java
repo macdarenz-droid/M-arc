@@ -20,6 +20,8 @@ public final class WatchService extends Service {
     private static final UUID BATTERY_SERVICE = uuid(0x180F), BATTERY = uuid(0x2A19), CCCD = uuid(0x2902);
     public static final String STOP = "com.mrcdrnzz.dailytracker.watch.STOP";
     public LiveSession session = new LiveSession();
+    /** Why the last connect could not start the foreground service (PL-15); null when it did. */
+    public volatile String pausedReason;
     public String status = "Ready to connect", detail = "Turn on HR Data Broadcasts on your watch.";
     public String deviceName = "No watch connected";
     public boolean subscribed, running;
@@ -71,13 +73,20 @@ public final class WatchService extends Service {
         session = new LiveSession(); battery = null; batteryReceivedAt = 0; services.clear();
         device = selected; retries = 0;
         String name = selected.getName(); deviceName = name == null || name.trim().isEmpty() ? "Bluetooth sensor" : name;
+        pausedReason = null;
         running = true;
         try {
             startService(new Intent(this, WatchService.class));
             if (Build.VERSION.SDK_INT >= 29) startForeground(1,notification(),ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
             else startForeground(1,notification());
-            open();
-        } catch (RuntimeException e) { fail("Cannot start connection: " + e.getClass().getSimpleName(), false); }
+        } catch (SecurityException | IllegalStateException e) {
+            // IllegalStateException is the API 26-safe superclass of ForegroundServiceStartNotAllowedException (API 31+).
+            running = false; stopSelf();
+            pausedReason = e instanceof SecurityException ? "Nearby devices permission is needed to keep the watch connected." : "Android did not allow the watch connection to start from the background. Open M/ARC and try again.";
+            setStatus("Paused", pausedReason);
+            return;
+        } catch (RuntimeException e) { fail("Cannot start connection: " + e.getClass().getSimpleName(), false); return; }
+        open();
     }
     private void open() {
         if (!running || device == null) return;
