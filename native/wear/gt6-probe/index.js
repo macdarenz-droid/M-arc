@@ -20,9 +20,6 @@ export default {
       } catch (e) { page.state = 'SDK exception'; }
     }
     guarded(function () {
-      client = new P2pClient();
-      client.setPeerPkgName(PHONE_PACKAGE);
-      client.setPeerFingerPrint(PHONE_CERTIFICATE);
       probe = createProbe({
         now: function () { return Date.now(); },
         setTimeout: setTimeout, clearTimeout: clearTimeout, setInterval: setInterval, clearInterval: clearInterval,
@@ -32,6 +29,7 @@ export default {
         send: function (text) {
           var builder = new Builder(); builder.setDescription(text);
           var message = new Message(); message.builder = builder;
+          if (!client) { page.state = 'Phone link unavailable'; return; }
           return client.send(message, {
             onSuccess: function () {},
             onFailure: function () { page.state = 'Send failed'; },
@@ -39,6 +37,9 @@ export default {
           });
         }
       });
+      client = new P2pClient();
+      client.setPeerPkgName(PHONE_PACKAGE);
+      client.setPeerFingerPrint(PHONE_CERTIFICATE);
       return client.registerReceiver({
         onSuccess: function () { page.state = 'Ready for phone tests'; },
         onFailure: function () { page.state = 'Receiver failed'; },
