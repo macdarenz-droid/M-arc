@@ -17,6 +17,36 @@ if dependency not in text:
     if n != 1:
         raise SystemExit("Generated app dependencies block not found")
     gradle.write_text(text)
+test_deps = "testImplementation 'junit:junit:4.13.2'\n    testImplementation 'org.robolectric:robolectric:4.17'"
+if "org.robolectric:robolectric:4.17" not in text:
+    text, n = re.subn(r"(?m)^dependencies\s*\{", "dependencies {\n    " + test_deps, text, count=1)
+    if n != 1:
+        raise SystemExit("Generated test dependencies block not found")
+    gradle.write_text(text)
+test_options = """testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                jvmArgs += [
+                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                    '--add-opens=java.base/java.util=ALL-UNNAMED',
+                    '--add-opens=java.base/java.io=ALL-UNNAMED',
+                    '--add-opens=java.base/java.net=ALL-UNNAMED',
+                    '--add-opens=java.base/java.security=ALL-UNNAMED',
+                    '--add-opens=java.base/java.text=ALL-UNNAMED',
+                    '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED',
+                    '--add-opens=java.desktop/java.awt.font=ALL-UNNAMED',
+                    '--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+                ]
+            }
+        }
+    }
+    """
+if "includeAndroidResources = true" not in text:
+    text, n = re.subn(r"(?m)^android\s*\{", "android {\n    " + test_options, text, count=1)
+    if n != 1:
+        raise SystemExit("Generated Android block not found")
+    gradle.write_text(text)
 root_gradle = android / "build.gradle"
 text = root_gradle.read_text()
 repo = "maven { url 'https://developer.huawei.com/repo/' }"
@@ -30,6 +60,9 @@ target = app / "src/main/java/com/mrcdrnzz/dailytracker/wear"
 target.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/WearEnginePlugin.java", target / "WearEnginePlugin.java")
 shutil.copyfile(ROOT / "native/wear/WorkoutCommandStore.java", target / "WorkoutCommandStore.java")
+test_target = app / "src/test/java/com/mrcdrnzz/dailytracker/wear"
+test_target.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(ROOT / "native/wear/WorkoutCommandStoreTest.java", test_target / "WorkoutCommandStoreTest.java")
 # Capacitor's PluginManager loads these classpaths. Do not also register in MainActivity.
 registry = app / "src/main/assets/capacitor.plugins.json"
 plugins = json.loads(registry.read_text())

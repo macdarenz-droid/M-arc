@@ -25,15 +25,18 @@ values and action time inside a transaction, then marks the selected set
 committed and stores its receipt in that same transaction. A
 replayed ID reads the stored result; another fingerprint for the ID conflicts.
 The exact schema is tested with SQLite for rollback, duplicate IDs, per-set
-revisions and a receipt that survives reopening the database. The SQL tests do
-not execute Android Java logic; the Android gate compiles that source. CI copies
-the class into both APK build paths. No phone/watch path calls it yet. It does
+revisions and a receipt that survives reopening the database. The Android gate
+also runs `WorkoutCommandStoreTest` with Robolectric SDK 26 against the actual
+Java method, including reopened replay, wrong installation, stale revision,
+reordered target, invalid time and a failed receipt insert. This is an Android
+JVM simulation, not a test on a physical GT6/phone. CI copies the class into
+both APK build paths. No phone/watch path calls it yet. It does
 not calculate the phone's fidelity, rest or heart side effects, and it does not
 replace the WebView's authoritative active session, so an APK
 containing the class is **not** a working watch command receiver.
 
-Next implementation: test the Java state machine on Android, add the phone's
-fidelity/rest/heart side effects and explicit single-writer handover, bind one
+Next implementation: add the phone's fidelity/rest/heart side effects and
+explicit single-writer handover, bind one
 watch installation through the actual transport, and stop all competing WebView
 writers during native ownership. Test a crash after commit but before reply,
 an old offline command after substitution, and a watch restart with its pending
