@@ -24,6 +24,8 @@ export const escobarUi = signal<EscobarUi>({ open: false, detent: 'half', mode: 
 export const loopView = signal<LiveView>({ status: 'idle', text: '', preamble: [], activity: [], outcomes: [] });
 /** null = not checked yet. False for 60 s after a transport failure (§13). */
 export const online = signal<boolean | null>(null);
+/** QA-R4a-7: why the last health check failed ("Escobar isn't set up yet."), shown with the offline notice. */
+export const offlineReason = signal<string | null>(null);
 export const quotaResetAt = signal<number | null>(null);
 
 /** Per-model prices, $ per million tokens, for the rough cost estimate in Settings (§21). */

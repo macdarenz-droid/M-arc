@@ -200,6 +200,30 @@ describe('agent loop (§13)', () => {
     expect(loop.conversation.pendingDecisions).toEqual([]);
   });
 
+  it('QA-R4a-7 (ES-11): an error during the repair keeps the first answer, marked, and the message counts as sent', async () => {
+    const { loop } = setup([answer('Your bench went up to 987 kg last week.')]);
+    const r = await loop.send({ text: 'how is my bench' });
+    expect(r.outcome).toBe('error');
+    expect(r.notSent).toBe(false);
+    const last = loop.conversation.messages.filter(m => m.role === 'assistant').at(-1)!;
+    expect(JSON.stringify(last)).toContain('987');
+    expect(JSON.stringify(last.meta ?? {})).toContain('987');
+  });
+
+  it('QA-R4a-7 (ES-20): a decision recorded while a turn runs stays queued for the next brief', async () => {
+    let loopRef: EscobarLoop | null = null;
+    const { loop, transport } = setup([
+      () => { loopRef!.conversation = { ...loopRef!.conversation, pendingDecisions: [{ proposalId: 'p9', decision: 'applied', at: 'mid', title: 'Lighter bench' }] }; return answer('Noted.'); },
+      answer('Ok.'),
+    ]);
+    loopRef = loop;
+    await loop.send({ text: 'hi' });
+    expect(loop.conversation.pendingDecisions?.map(d => d.proposalId)).toEqual(['p9']);
+    await loop.send({ text: 'thanks' });
+    const brief = (transport.bodies[1]!.messages as Array<{ role: string; content: string }>).filter(m => m.role === 'system').at(-1)!.content;
+    expect(brief).toContain('proposal p9 "Lighter bench" → applied');
+  });
+
   it('photos are sent once, then as a stub', async () => {
     const evicted: string[] = [];
     const { loop, transport } = setup([answer('A rack.'), answer('Ok.')], { imageData: id => (id === 'img1' ? { mediaType: 'image/jpeg', data: 'QUJD' } : null), imagesSent: ids => evicted.push(...ids) });

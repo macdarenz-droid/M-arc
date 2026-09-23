@@ -16,7 +16,7 @@ import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
 import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { evictImages, imageData } from './images';
-import { escobarUi, loopView, online, proxyUrlOf, quotaResetAt } from './state';
+import { escobarUi, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
 import { PROTECTED_MEMORY } from './tools/executor';
 import { isPlanRequest } from './ui/prompts';
 import type { MemoryEffect } from './tools/executor';
@@ -135,6 +135,7 @@ export function checkOnline(): void {
   }
   void checkHealth(proxyUrlOf(state.value.escobar.proxyUrl)).then(r => {
     online.value = r.ok;
+    offlineReason.value = r.ok ? null : r.message ?? null;
     if (!r.ok) offlineUntil = Date.now() + 60_000;
   });
 }
@@ -225,7 +226,8 @@ export async function send(input: SendInput): Promise<TurnResult> {
   if (loopView.value.status !== 'idle') loopView.value = { ...loopView.value, status: 'idle' };
   lastTurn.value = { ...r, input };
   activeConversation.value = l.conversation;
-  if (r.error?.code === 'network') { online.value = false; offlineUntil = Date.now() + 60_000; }
+  // QA-R4a-6: after a dropped answer, check again once the back-off ends, not only on the next sheet open.
+  if (r.error?.code === 'network') { online.value = false; offlineUntil = Date.now() + 60_000; checkOnline(); }
   if (r.error?.code === 'quota' && r.error.retryAfter) quotaResetAt.value = Date.now() + r.error.retryAfter * 1000;
   // An auto navigation (§7.2) happens once the answer has landed, with the sheet at half height.
   const nav = r.outcomes.find(o => o.navigate?.auto)?.navigate;

@@ -356,3 +356,10 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R4a-10 (low)
 - `plannedExercises`: a swap to an exercise already in the split drops the one swapped out, so the session and the Splits preview have one entry per exercise.
+
+### QA-R4a-6 (low)
+- A network error in `send()` now also calls `checkOnline()`. Inside the 60 s back-off that schedules a re-check for when it ends, so the Coach tab's Escobar box comes back without reopening the sheet.
+
+### QA-R4a-7 (low)
+- The finding is test coverage. The code was already correct; the skeptic confirmed this by running it. Added loop tests: an error during the repair keeps the first answer, marked, with `notSent: false` (ES-11/ES-10), and a decision recorded mid-turn stays queued and reaches the next brief (ES-20). These tests pass before and after, as expected for a coverage item.
+- Also: the health check's reason (for example "Escobar isn't set up yet.") is kept in `offlineReason` and shown in the offline notice.
