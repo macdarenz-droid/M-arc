@@ -63,7 +63,7 @@ export function coachCtx(ctx: ToolCtx): CoachContext {
   return (m.coach ??= {
     sessions: s.sessions, splits: s.splits, schedule: s.schedule, custom: s.customExercises, today: ctx.today, now: ctx.now - (ctx.now % 60_000),
     profileHistory: s.profileHistory, profile: s.profile, healthDays: s.healthDays, checkIns: s.checkIns, freshMarks: s.freshMarks,
-    recoveryModel: s.recoveryModel, deload: s.deload, feedback: s.insightFeedback,
+    recoveryModel: s.recoveryModel, deload: s.deload, feedback: s.insightFeedback, unit: s.preferences.weightUnit,
   });
 }
 

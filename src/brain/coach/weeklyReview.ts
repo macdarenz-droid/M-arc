@@ -4,7 +4,8 @@
  * Each function below is one catalogue row; weeklyReviewInsights() assembles
  * the ones with enough evidence into Insight v2 objects.
  */
-import type { Exercise, Profile, Session, WeightEntry } from '@/core/models';
+import type { Exercise, LoadUnit, Profile, Session, WeightEntry } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -159,6 +160,8 @@ export interface WeeklyReviewInput {
   exerciseIds: Array<{ id: string; name: string }>;
   /** RG-19: days taken off count as unscheduled. */
   daysOff?: string[];
+  /** QA-R3b-5: body weight in the person's unit. */
+  unit?: LoadUnit;
 }
 
 /** Days logged in a calendar week before the weekly review appears. */
@@ -337,7 +340,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     const inRange = wt.pctPerWeek >= Math.min(lo, hi) && wt.pctPerWeek <= Math.max(lo, hi);
     out.push({
       id: 'weekly:weight-trend', category: 'data', priority: 130, cadence: 'weekly', kind: inRange ? 'praise' : 'tip',
-      title: `Trend weight ${wt.trendKg} kg, ${dir} ${Math.abs(wt.pctPerWeek)}% a week`,
+      title: `Trend weight ${Math.round(kgToDisplay(wt.trendKg, input.unit ?? 'kg') * 10) / 10} ${input.unit ?? 'kg'}, ${dir} ${Math.abs(wt.pctPerWeek)}% a week`,
       noticed: `Weight trend is ${dir} about ${Math.abs(wt.pctPerWeek)}% a week.`,
       means: inRange ? `That is inside the range that fits a ${g.name.toLowerCase()} goal.` : `That is outside the usual range for a ${g.name.toLowerCase()} goal (${lo} to ${hi}% a week).`,
       action: inRange ? 'No change needed.' : 'Worth a small adjustment to food if this keeps up for a few more weeks.',

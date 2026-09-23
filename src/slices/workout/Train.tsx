@@ -345,7 +345,7 @@ function LiveSession() {
           <div class="stack">
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
             <div class="grid-3">
-              <div class="stat"><b class="num">{formatClock(elapsedSec(a))}</b><span>duration</span></div>
+              <div class="stat"><b class="num" data-finish-duration><Elapsed a={a} /></b><span>duration</span></div>
               <div class="stat"><b>{a.entries.filter(e => e.sets.some(isWorkingSet)).length}</b><span>exercises</span></div>
               <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0)}</b><span>sets</span></div>
             </div>
@@ -410,6 +410,11 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
 }
 
 /** The only part of the live screen that reads the 1 s clock (UI-10), so the cards do not re-render every second. */
+/** QA-R2d-3: the Finish sheet's duration keeps ticking while the sheet is open. */
+function Elapsed({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
+  return <>{formatClock(elapsedSec(a, nowMs.value))}</>;
+}
+
 function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
   return <h1 class="num">{formatClock(elapsedSec(a, nowMs.value))}</h1>;
 }
@@ -655,7 +660,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
     const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, split.exercises.find(x => x.exerciseId === exerciseId)?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment });
     return { kg: n.sets[0]?.kg ?? n.kg, target: n.target, equipment };
   };
-  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age, targetFor });
+  const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });
   return (
     <Sheet title={`Before you start ${split.name}`} onClose={onClose}>
       <div class="stack">

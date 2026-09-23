@@ -12,7 +12,8 @@ import { GOAL_BY_ID } from '@/data/goals';
 import { modeOf, exerciseHistory } from '@/brain/history';
 import { liftTrend, plateauStatus } from '@/brain/trend';
 import { effortDrift } from '@/brain/effort';
-import { allRecords, PR_LABEL } from '@/brain/prs';
+import { allRecords, PR_LABEL, type PrKind } from '@/brain/prs';
+import { kgToDisplay } from '@/core/units';
 import { suggestNext } from '@/brain/progression';
 import { warmupSets } from '@/brain/coach/pre';
 import { trainingAgeMonths } from '@/brain/recovery';
@@ -161,7 +162,7 @@ export function getSession(input: { sessionId?: string }, ctx: ToolCtx) {
   const x = s.sessions.find(y => y.id === input.sessionId);
   if (!x) throw new ToolError('unknown sessionId; use get_sessions');
   const prior = s.sessions.filter(y => y.startedAt < x.startedAt);
-  const notes = postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength' }).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
+  const notes = postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
   const heart = s.escobar.sharing.health && x.heart ? { avgBpm: x.heart.avgBpm, maxBpm: x.heart.maxBpm, activeKcal: x.heart.energy?.activeKcal ?? null } : undefined;
   return capJson({
     sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), fidelity: x.logging?.mode,
@@ -185,7 +186,7 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const liftMode = modeOf(id, s.customExercises);
   const p = plateauStatus(all, liftMode);
   const t = liftTrend(all, liftMode);
-  const records = allRecords(s.sessions, s.customExercises).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
+  const records = allRecords(s.sessions, s.customExercises, s.preferences.weightUnit).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({
     exercise: exerciseName(ctx, id), exerciseId: id, weeks,
@@ -275,8 +276,11 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
 export function getRecords(input: { exerciseId?: string; limit?: number }, ctx: ToolCtx) {
   const limit = int(input.limit, 1, 20, 10, 'limit');
   const id = input.exerciseId != null ? exerciseArg(ctx, input.exerciseId) : undefined;
-  const list = allRecords(ctx.state.sessions, ctx.state.customExercises).filter(r => !id || r.exerciseId === id).slice(0, limit);
-  return capJson({ records: list.map(r => ({ exercise: r.exerciseName, exerciseId: r.exerciseId, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail, value: r2(r.value), previous: r2(r.previous) })) }, 4000);
+  const unit = ctx.state.preferences.weightUnit;
+  const list = allRecords(ctx.state.sessions, ctx.state.customExercises, unit).filter(r => !id || r.exerciseId === id).slice(0, limit);
+  // QA-R3b-2: a load record's numbers in the person's unit, like its detail.
+  const shown = (kind: PrKind, v: number) => (kind === 'heaviest' || kind === 'strength' ? kgToDisplay(v, unit) : r2(v));
+  return capJson({ records: list.map(r => ({ exercise: r.exerciseName, exerciseId: r.exerciseId, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail, value: shown(r.kind, r.value), previous: shown(r.kind, r.previous), ...(r.kind === 'heaviest' || r.kind === 'strength' ? { unit } : {}) })) }, 4000);
 }
 
 const insightOut = (i: Insight) => ({
@@ -290,7 +294,7 @@ export function getInsights(input: { includeSnoozed?: boolean }, ctx: ToolCtx) {
   const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50);
   const names = new Map<string, string>();
   for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
-  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff }, 6);
+  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit }, 6);
   const offer = deloadOffer(c);
   return capJson({ insights: list.map(insightOut), weeklyReview: weekly.map(insightOut), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);
 }

@@ -225,7 +225,7 @@ function useWeeklyReviewItems() {
   }, [s.sessions]);
   const items = weeklyReviewInsights({
     sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
-    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff, unit: s.preferences.weightUnit,
   }, 6);
   return items;
 }

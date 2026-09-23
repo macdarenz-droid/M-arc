@@ -45,6 +45,7 @@ const coachContext = computed((): CoachContext => ({
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
   healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks,
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
+  unit: state.value.preferences.weightUnit,
 }));
 export const insights = computed(() => coachInsights(coachContext.value, 3));
 /** null once its endDay passes — F3.3 "closes itself" is read-time gating, no mutation needed. */

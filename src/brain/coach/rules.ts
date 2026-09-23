@@ -5,6 +5,8 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
+import type { LoadUnit } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
@@ -65,6 +67,8 @@ export interface CoachContext {
   recoveryModel: RecoveryModel;
   deload: Deload | null;
   feedback: InsightFeedback[];
+  /** The display unit for loads and body weight in note text (QA-R3b-2, QA-R3b-5). */
+  unit?: LoadUnit;
 }
 
 interface Derived {
@@ -302,13 +306,15 @@ export const RULES: Rule[] = [
             action: `Suggested rest for this goal is ${g.restDefaultSec}s. Apply it from the goal sheet if you'd like.`,
           };
         }
-        const to = c.to as number;
-        const from = typeof c.from === 'number' ? c.from : null;
+        const u = ctx.unit ?? 'kg';
+        const w = (kg: number) => Math.round(kgToDisplay(kg, u) * 10) / 10;
+        const to = w(c.to as number);
+        const from = typeof c.from === 'number' ? w(c.from) : null;
         const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
         return {
           id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
-          title: `Weight updated to ${to} kg`,
-          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} kg, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} kg since your last entry.` : `You updated your weight to ${to} kg.`,
+          title: `Weight updated to ${to} ${u}`,
+          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} ${u}, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} ${u} since your last entry.` : `You updated your weight to ${to} ${u}.`,
           means: 'Saved to your weight log.',
           action: 'Nothing to do here. Keep weighing in for a trend, not just a jump.',
         };
@@ -379,7 +385,7 @@ export const RULES: Rule[] = [
         return [{
           id: `effort-calibration:${id}`, category: 'readiness', priority: 95, cadence: 'now', kind: 'data', exerciseId: id,
           title: `${name}: you had more in reserve than rated`,
-          noticed: sample ? `You rated ${b.effort} at ${sample.kg} kg, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
+          noticed: sample ? `You rated ${b.effort} at ${kgToDisplay(sample.kg, ctx.unit ?? 'kg')} ${ctx.unit ?? 'kg'}, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
           means: 'That is normal, especially early on. Lifters usually underestimate how many reps they have left.',
           // D11: copy only; the bias is not applied to e1RM.
           action: 'Rate by how many reps you had left: Ideal is about 2, Easy 3 or more.',

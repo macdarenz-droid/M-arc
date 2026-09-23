@@ -131,7 +131,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'records_list': {
       const id = params.exerciseId != null ? exId(ctx, params.exerciseId) : undefined;
       const limit = intIn(params.limit, 1, 10, 5, 'limit');
-      const rows = allRecords(s.sessions, s.customExercises).filter(r => !id || r.exerciseId === id).slice(0, limit);
+      const rows = allRecords(s.sessions, s.customExercises, s.preferences.weightUnit).filter(r => !id || r.exerciseId === id).slice(0, limit);
       return { records: rows.map(r => ({ exercise: r.exerciseName, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail })), empty: rows.length ? undefined : 'No records yet.' };
     }
     case 'plan_week': {

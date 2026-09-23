@@ -329,3 +329,9 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R2d-3 (low)
 - The Finish sheet's duration is its own small component that reads the ticking clock, so it keeps counting while the sheet is open. Gate: the value changes over 2 s.
+
+### QA-R3b-2, QA-R3b-5 (low, same root cause: coach text did not know the display unit)
+- `CoachContext`, the weekly review input and the pre-session input take `unit`, filled from preferences by the app and by Escobar.
+- In the person's unit now: record "up from" values (`formatRecordValue`), the effort-calibration note, the weight-updated note, the weekly weight trend, and the fallback load target.
+- Escobar's `get_records`, `records_list`, `get_session_debrief` and exercise detail pass the unit too; load records carry `unit`.
+- (The Finish-sheet `Elapsed` component for QA-R2d-3 landed in this commit's Train.tsx.)

@@ -22,6 +22,14 @@ export interface PersonalRecord {
   previous: number;
 }
 
+/** A record's number in words, loads in `unit` (QA-R3b-2). */
+export function formatRecordValue(kind: PrKind, v: number, unit: LoadUnit = 'kg'): string {
+  if (kind === 'heaviest' || kind === 'strength') return `${kgToDisplay(v, unit)} ${unit}`;
+  if (kind === 'best_duration') return `${v}s`;
+  if (kind === 'best_distance') return `${v} m`;
+  return `${v} reps`;
+}
+
 export const PR_LABEL: Record<PrKind, string> = {
   heaviest: 'Heaviest load',
   strength: 'Strength estimate',
