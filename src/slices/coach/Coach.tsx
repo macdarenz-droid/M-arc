@@ -23,6 +23,7 @@ import { closePanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { Hall } from '@/escobar/ui/Hall';
 import { AskAbout } from '@/escobar/ui/AskAbout';
+import { isWorkingSet } from '@/brain/exposure';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -306,7 +307,7 @@ function InsightFeedbackLog() {
 /** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
 function WhatCoachCanSee() {
   const s = state.value;
-  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0);
+  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(isWorkingSet);
   const ratedShare = recentSets.length ? recentSets.filter(x => x.effort).length / recentSets.length : null;
   const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
   const completeness = profileCompleteness(s.profile);

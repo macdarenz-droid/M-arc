@@ -11,7 +11,7 @@
 import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, RecoveryModel, Session } from '@/core/models';
 import { MUSCLE_BY_ID, MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise, setDamage } from '@/core/exercises';
-import { ROLE_WEIGHT, isWorkingSet, rolesFor } from './exposure';
+import { ROLE_WEIGHT, effortLabel, isWorkingSet, rolesFor } from './exposure';
 import { exerciseHistory, type ExerciseSessionSummary } from './history';
 import { daysBetween, dayKey } from '@/core/dates';
 import {
@@ -89,7 +89,7 @@ export function sessionRpeLoad(session: Session): number {
   const sets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet);
   if (!sets.length) return 0;
   const weight = { easy: 4, ideal: 7, max: 10 } as const;
-  const avgWeight = avg(sets.map(s => weight[s.effort ?? 'ideal']));
+  const avgWeight = avg(sets.map(s => weight[effortLabel(s) ?? 'ideal']));
   return avgWeight * (session.durationSec / 60);
 }
 
@@ -172,7 +172,8 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
         const rF = reps > 0 ? repFactor(reps) : 1.0;
         const loadFactor = meta.mode === 'weighted' && recentTop && recentTop > 0 && (set.kg ?? 0) > 0
           ? clamp((set.kg ?? 0) / recentTop, LOAD_FACTOR_MIN, LOAD_FACTOR_MAX) : 1.0;
-        const e = EFFORT_IMPULSE[set.effort ?? 'ideal'];
+        const effort = effortLabel(set) ?? 'ideal';
+        const e = EFFORT_IMPULSE[effort];
         const damage = setDamage({ id: meta.id, name: meta.name, role: meta.role }, reps);
         for (const r of rolesFor(meta)) {
           const roleW = ROLE_WEIGHT[r.role];
@@ -185,12 +186,12 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
           const L = roleW * e * rF * loadFactor * diminish * damage * novelty;
           const cur = perMuscle.get(r.muscle) ?? { total: 0, effortWeighted: 0, roleWeightSum: 0, topL: 0, topDriver: null };
           cur.total += L;
-          cur.effortWeighted += EFFORT_STRETCH[set.effort ?? 'ideal'] * L;
+          cur.effortWeighted += EFFORT_STRETCH[effort] * L;
           cur.roleWeightSum += roleW;
           // BR-31: the driver is the set with the biggest dose, and the set count is this exercise's own.
           if (!cur.topDriver || L > cur.topL) {
             cur.topL = L;
-            const reason = set.effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${working.length} set${working.length === 1 ? '' : 's'}`;
+            const reason = effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${working.length} set${working.length === 1 ? '' : 's'}`;
             cur.topDriver = { text: reason, hours: 0 };
           }
           perMuscle.set(r.muscle, cur);

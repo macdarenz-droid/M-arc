@@ -31,6 +31,7 @@ import { flagsForSet } from '@/brain/fidelity';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
+import { isWorkingSet } from '@/brain/exposure';
 import {
   progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
@@ -376,7 +377,7 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
   return capJson({
     active: true,
     split: s.splits.find(x => x.id === a.splitId)?.name ?? 'Workout', splitId: a.splitId, elapsedMin, paused: !!a.pausedAt,
-    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length, setsPlanned: cur.sets.length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
+    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(isWorkingSet).length, setsPlanned: cur.sets.length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
     entries: a.entries.map(e => ({ exerciseId: e.exerciseId, exercise: e.name, done: e.done, skipped: e.skipped, sets: e.sets.length })),
     restSecLeft: a.rest ? Math.max(0, Math.round((a.rest.endsAt - ctx.now) / 1000)) : null,
     adjustment: autoreg,

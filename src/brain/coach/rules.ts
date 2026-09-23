@@ -15,7 +15,7 @@ import { plateauStatus } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
-import { weeklyMuscleSets } from '../exposure';
+import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
@@ -268,7 +268,7 @@ export const RULES: Rule[] = [
     id: 'data.effort-missing',
     run: ctx => {
       const recent = [...ctx.sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-3);
-      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => (s.reps ?? 0) > 0);
+      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
       if (sets.length < 8) return [];
       const rated = sets.filter(s => s.effort).length / sets.length;
       if (rated >= 0.5) return [];

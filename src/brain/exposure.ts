@@ -26,12 +26,24 @@ export function rolesFor(exercise: Exercise): Array<{ muscle: MuscleId; role: Ro
   return out;
 }
 
-export function isWorkingSet(s: LoggedSet): boolean {
+/** F2: the set is filled in (reps, time or distance). Decides what is kept and committed. */
+export function hasEntry(s: Pick<LoggedSet, 'reps' | 'durationSec' | 'distanceM'>): boolean {
   return (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0;
 }
 
+/** A set that counts (exposure, volume, recovery, e1RM, records, progression): filled in and not a warm-up. */
+export function isWorkingSet(s: Pick<LoggedSet, 'reps' | 'durationSec' | 'distanceM' | 'kind'>): boolean {
+  return hasEntry(s) && s.kind !== 'warmup';
+}
+
+/** The effort a set stands for: a set taken to failure is max effort. */
+export function effortLabel(s: Pick<LoggedSet, 'effort' | 'kind'>): LoggedSet['effort'] {
+  return s.kind === 'failure' ? 'max' : s.effort;
+}
+
 export function effortOf(s: LoggedSet): number {
-  return s.effort ? EFFORT_MULT[s.effort] : 1;
+  const e = effortLabel(s);
+  return e ? EFFORT_MULT[e] : 1;
 }
 
 export type MuscleScore = Partial<Record<MuscleId, number>>;
@@ -91,7 +103,7 @@ export function effectiveSetsByMuscle(sessions: Session[], from: string, to: str
     for (const ex of s.exercises) {
       const meta = findExercise(ex.exerciseId, custom) ?? findExercise(ex.name, custom);
       if (!meta) continue;
-      const working = ex.sets.filter(set => isWorkingSet(set) && (countEasy || set.effort !== 'easy')).length;
+      const working = ex.sets.filter(set => isWorkingSet(set) && (countEasy || effortLabel(set) !== 'easy')).length;
       if (!working) continue;
       for (const r of rolesFor(meta)) {
         const w = SET_WEIGHT[r.role];

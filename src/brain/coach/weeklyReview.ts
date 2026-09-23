@@ -136,7 +136,7 @@ export function repMixShares(sessions: Session[], today: string, custom: Exercis
     .filter(s => s.day >= start && s.day < end)
     .flatMap(s => s.exercises.flatMap(e => (findExercise(e.exerciseId, custom)?.role === 'main' ? e.sets : [])))
     .filter(isWorkingSet)
-    .filter(s => (s.reps ?? 0) > 0);
+    .filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
   const n = sets.length;
   if (!n) return { low: 0, mid: 0, high: 0, n: 0, easyHighShare: 0 };
   const low = sets.filter(s => s.reps! <= 5).length / n;

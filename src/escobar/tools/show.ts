@@ -22,6 +22,7 @@ import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
 import { coachCtx, exerciseName, exerciseOf, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
+import { isWorkingSet } from '@/brain/exposure';
 
 type P = Record<string, unknown>;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
@@ -171,7 +172,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
         if (metric === 'sessions') return inP.length;
         if (metric === 'e1rm') return r1(Math.max(0, ...exerciseHistory(inP, exercise!, s.customExercises).map(h => h.bestE1rm)));
         let sets = 0, vol = 0;
-        for (const x of inP) for (const e of x.exercises) { if (exercise && e.exerciseId !== exercise) continue; for (const st of e.sets) { if ((st.reps ?? 0) > 0 || (st.durationSec ?? 0) > 0) { sets++; vol += (st.kg ?? 0) * (st.reps ?? 0); } } }
+        for (const x of inP) for (const e of x.exercises) { if (exercise && e.exerciseId !== exercise) continue; for (const st of e.sets) { if (isWorkingSet(st)) { sets++; vol += (st.kg ?? 0) * (st.reps ?? 0); } } }
         return metric === 'sets' ? sets : Math.round(vol);
       };
       const va = calc(a), vb = calc(b);

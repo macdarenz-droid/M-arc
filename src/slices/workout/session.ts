@@ -6,7 +6,7 @@ import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Sessi
 import { newId } from '@/core/models';
 import { state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
-import { isWorkingSet } from '@/brain/exposure';
+import { hasEntry } from '@/brain/exposure';
 import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
 import { calibrateAfterSession } from '@/brain/recovery';
 import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
@@ -120,7 +120,7 @@ export function resumeSession(): void {
 /** A set that is emptied after its commit loses its commit (UI-01): it is a draft again. */
 function patched(set: LoggedSet, patch: Partial<LoggedSet>): LoggedSet {
   const next = { ...set, ...patch };
-  if (isCommitted(set) && !isWorkingSet(next) && !('at' in patch)) {
+  if (isCommitted(set) && !hasEntry(next) && !('at' in patch)) {
     const { at: _at, restSec: _r, fidelity: _f, heart: _h, ...rest } = next;
     return { ...rest, status: 'draft' };
   }
@@ -151,7 +151,8 @@ function committedTimestamps(a: ActiveSession): number[] {
 export function commitSetById(setId: string, opts: { actionAt?: string } = {}): boolean {
   const a = active();
   const set = a?.entries.flatMap(e => e.sets).find(s => s.id === setId);
-  if (!a || !set || !isWorkingSet(set)) return false;
+  // F2: a filled-in warm-up commits too (it gets its time), it just never starts auto-rest.
+  if (!a || !set || !hasEntry(set)) return false;
   if (isCommitted(set)) return true;
   const action = opts.actionAt ? Date.parse(opts.actionAt) : NaN;
   const now = Number.isFinite(action) ? Math.min(action, Date.now()) : Date.now();
@@ -163,7 +164,7 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const startedAtMs = new Date(a.startedAt).getTime();
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   setSetById(setId, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
+  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
   void haptic.light();
   return true;
 }
@@ -287,7 +288,7 @@ export function finishSession(saveTemplate: boolean): FinishSummary | null {
   const now = new Date();
   const exercises = a.entries
     .filter(e => !e.skipped)
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet).map(({ status: _status, ...set }) => set) }))
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry).map(({ status: _status, ...set }) => set) }))
     .filter(e => e.sets.length);
   const workingSets = exercises.flatMap(e => e.sets);
   const logging = liveSessionLogging({
@@ -354,7 +355,7 @@ export function resolveSessionTiming(sessionId: string, trainedAtLocal: string, 
 /** "Log a past session": no timer, no rest banner. Every set is retro. */
 export function logPastSession(input: { splitId: string; trainedAtLocal: string; durationMin: number; entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[] }> }): FinishSummary | null {
   const split = state.value.splits.find(s => s.id === input.splitId);
-  const exercises = input.entries.map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(isWorkingSet) })).filter(e => e.sets.length);
+  const exercises = input.entries.map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length);
   if (!exercises.length) return null;
   const trainedAt = new Date(input.trainedAtLocal).toISOString();
   const trainedEndAt = new Date(new Date(input.trainedAtLocal).getTime() + input.durationMin * 60_000).toISOString();

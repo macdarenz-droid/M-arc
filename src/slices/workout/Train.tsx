@@ -42,6 +42,7 @@ import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
+import { isWorkingSet } from '@/brain/exposure';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -344,8 +345,8 @@ function LiveSession() {
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
             <div class="grid-3">
               <div class="stat"><b class="num">{formatClock(elapsedSec(a))}</b><span>duration</span></div>
-              <div class="stat"><b>{a.entries.filter(e => e.sets.some(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0)).length}</b><span>exercises</span></div>
-              <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length, 0)}</b><span>sets</span></div>
+              <div class="stat"><b>{a.entries.filter(e => e.sets.some(isWorkingSet)).length}</b><span>exercises</span></div>
+              <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0)}</b><span>sets</span></div>
             </div>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={!!split && split.exercises.map(e => e.exerciseId).join('|') !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|')} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
@@ -411,7 +412,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
   const flipGroup = () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, eu === 'kg' ? 'lb' : 'kg'); showToast(`${eu === 'kg' ? 'lb' : 'kg'} for all ${g} here`); } };
   const [subOpen, setSubOpen] = useState(false);
-  const logged = entry.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length;
+  const logged = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
   const firstSet = entry.sets[0];
   const firstTarget = next.sets[0];

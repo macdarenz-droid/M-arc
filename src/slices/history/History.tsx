@@ -9,6 +9,7 @@ import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, Session } from '@/core/models';
 import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
 import { parseDurationSec, parseReps } from '@/core/parse';
+import { hasEntry } from '@/brain/exposure';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
@@ -129,7 +130,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   // Every history edit relearns the recovery model from what is left (UI-12).
   const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
+    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
     if (!cleaned.exercises.length) { remove(); return; }
     update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
