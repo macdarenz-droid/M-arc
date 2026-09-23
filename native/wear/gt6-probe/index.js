@@ -49,6 +49,7 @@ export default {
   onShow: function () { if (probe) probe.show(); },
   onHide: function () { if (probe) probe.hide(); },
   swipe: function () { if (probe) probe.swipe(); },
+  start: function () { if (probe) probe.startLocal(); },
   stop: function () { if (probe) probe.stop(); },
   onDestroy: function () {
     if (probe) probe.dispose();
