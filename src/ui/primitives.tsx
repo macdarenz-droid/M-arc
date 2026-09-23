@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { signal } from '@preact/signals';
 import { IconX } from './icons';
+import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
@@ -49,20 +49,23 @@ export function Ring({ pct, size = 120, children }: { pct: number; size?: number
   return <div class="ring" style={{ '--p': Math.max(0, Math.min(100, pct)), width: size, height: size }}><div>{children}</div></div>;
 }
 
-/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. */
-export const openSheets = signal(0);
+/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. Derived from the sheet stack. */
+export const openSheets = openSheetCount;
 
 export function Sheet({ title, onClose, children, palace }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    openSheets.value++;
-    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
+    // R5.3: Back (Android or browser) closes the top sheet through its own onClose.
+    registerSheet(id, () => close.current());
+    return () => { unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>

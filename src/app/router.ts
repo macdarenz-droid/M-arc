@@ -2,6 +2,7 @@ import { signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId } from '@/data/muscles';
+import { closeAllSheets, sheetStack } from '@/ui/sheetStack';
 
 export type Tab = 'today' | 'train' | 'history' | 'body' | 'coach';
 export const TABS: Array<{ id: Tab; label: string }> = [
@@ -78,6 +79,12 @@ export const bodyView = signal<BodyView>('recovery');
 export const historySeg = signal<'log' | 'stats'>('log');
 
 export function go(t: Tab): void {
+  // R5.3: a sheet owns the current history entry; unwind those first so replaceState below
+  // does not overwrite one.
+  if (sheetStack.peek().length && (() => { try { return !!(history.state as { sheet?: string } | null)?.sheet; } catch { return false; } })()) {
+    closeAllSheets(() => go(t));
+    return;
+  }
   if (tab.value !== t) openPanel.value = null;
   tab.value = t;
   try { history.replaceState(null, '', `#${t}`); } catch { /* ignore */ }

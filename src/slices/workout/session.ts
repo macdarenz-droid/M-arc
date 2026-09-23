@@ -14,7 +14,7 @@ import { IMPULSE_LOOKBACK_DAYS, F_REF_SESSION_LOOKBACK } from '@/data/recovery';
 import { dayKey, todayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
-import { syncAndStoreHealth } from '@/slices/settings/health';
+import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
 import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
 
@@ -91,9 +91,9 @@ export function startSession(split: Split): void {
   const startedAt = new Date().toISOString();
   update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
   flushSave();
-  resetHeartCapture(startedAt);
+  resetHeartCapture();
   void haptic.medium();
-  void syncAndStoreHealth();
+  void backgroundHealthSync();
   const w = state.value.preferences.watch;
   if (w.autoConnectOnSession && w.deviceAddress) void connectWatch(w.deviceAddress);
 }

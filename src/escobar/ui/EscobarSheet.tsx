@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
 import { showPanel } from '@/app/router';
-import { openSheets, Button, Card, Row, Toggle } from '@/ui/primitives';
+import { Button, Card, Row, Toggle } from '@/ui/primitives';
 import { IconEscobar, IconMore, IconX, IconBack } from '@/ui/icons';
 import { escobarUi, loopView, online, quotaResetAt } from '../state';
 import * as S from '../session';
@@ -164,10 +164,9 @@ export function EscobarSheet() {
     if (!d) return;
     if (!d.open) d.showModal();
     S.prepare();
-    openSheets.value++;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
+    return () => { document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
 
   // Follow the stream only if the person was already at the bottom (§4.2).

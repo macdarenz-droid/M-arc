@@ -5,7 +5,8 @@ import { bootSource, flushSave, initStore, state } from './core/store';
 import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
-import { syncAndStoreHealth } from './slices/settings/health';
+import { backgroundHealthSync } from './slices/settings/health';
+import { installBackButton } from './native/back';
 import { onNotificationTap, refreshExactAlarm } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
@@ -20,6 +21,7 @@ try {
   initStore();
   setHapticsEnabled(state.value.preferences.haptics);
   startWatchListeners();
+  void installBackButton();
   startHeartCapture();
 
   render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('app')!);
@@ -49,12 +51,12 @@ try {
     refreshClock();
     void refreshExactAlarm();
     void resyncReminders();
-    void syncAndStoreHealth();
+    void backgroundHealthSync();
   });
   window.addEventListener('pagehide', flushSave);
   void refreshExactAlarm();
   void resyncReminders();
-  void syncAndStoreHealth();
+  void backgroundHealthSync();
 
   // Notification taps: rest done → Train, training day → Train.
   onNotificationTap(() => go('train'));
