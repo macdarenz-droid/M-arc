@@ -7,7 +7,6 @@ import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
 import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
-import { WEEKDAYS } from '@/core/models';
 import { watchStatus } from '@/native/watch';
 
 import { minuteNow, today } from './clock';
