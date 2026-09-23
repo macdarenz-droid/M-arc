@@ -63,6 +63,9 @@ shutil.copyfile(ROOT / "native/wear/WorkoutCommandStore.java", target / "Workout
 test_target = app / "src/test/java/com/mrcdrnzz/dailytracker/wear"
 test_target.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/WorkoutCommandStoreTest.java", test_target / "WorkoutCommandStoreTest.java")
+test_resources = app / "src/test/resources"
+test_resources.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(ROOT / "native/wear/command-fixtures.json", test_resources / "watch-command-fixtures.json")
 # Capacitor's PluginManager loads these classpaths. Do not also register in MainActivity.
 registry = app / "src/main/assets/capacitor.plugins.json"
 plugins = json.loads(registry.read_text())

@@ -9,7 +9,9 @@ export function parseWatchCommand(raw, maxBytes = 1024) {
   for (const key of ['installationId', 'sessionId', 'commandId', 'entryId', 'setId']) {
     if (typeof c[key] !== 'string' || !ID.test(c[key])) return null;
   }
-  if (!Number.isSafeInteger(c.expectedSetRevision) || c.expectedSetRevision < 0) return null;
+  // Native SQLite implementation stores set revisions in a signed Java int.
+  if (!Number.isSafeInteger(c.expectedSetRevision) || c.expectedSetRevision < 0
+      || c.expectedSetRevision > 2147483646) return null;
   if (typeof c.actionAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(c.actionAt)
       || !Number.isFinite(Date.parse(c.actionAt))
       || new Date(c.actionAt).toISOString() !== c.actionAt) return null;
@@ -30,6 +32,7 @@ export function planSetCommand(session, binding, revisions, receipts, command, n
     ? { status: 'replay', receipt: recorded.result }
     : { status: 'command_id_conflict' };
   if (!session || session.id !== command.sessionId) return { status: 'wrong_session' };
+  if (session.pausedAt || session.status === 'paused') return { status: 'paused' };
   const actionTime = Date.parse(command.actionAt);
   const startTime = Date.parse(session.startedAt);
   if (!Number.isFinite(startTime) || actionTime < startTime - 5000 || actionTime > now + 30000)

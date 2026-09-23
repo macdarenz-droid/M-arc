@@ -15,6 +15,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /** Inactive Gate B storage primitive. Call only on a background worker; no watch acknowledgement is wired. */
 final class WorkoutCommandStore extends SQLiteOpenHelper {
@@ -100,7 +101,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         values.put("session_id", sessionId);
         values.put("installation_id", installationId);
         values.put("revision", 0);
-        values.put("status", "active");
+        values.put("status", parsed.has("pausedAt") && !parsed.isNull("pausedAt") ? "paused" : "active");
         values.put("snapshot", snapshot);
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransactionNonExclusive();
@@ -111,12 +112,33 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         } finally { db.endTransaction(); }
     }
 
+    /** Terminal results for identified commands survive reconnects, including review/conflict decisions. */
+    private static Result reject(SQLiteDatabase db, String sessionId, String commandId,
+                                 String fingerprint, String actionAt, String status) throws Exception {
+        String resultJson = new JSONObject().put("status", status).put("commandId", commandId)
+                .put("sessionId", sessionId).put("actionAt", actionAt)
+                .put("receivedAt", UTC.format(Instant.now())).put("clockConfidence", "unverified").toString();
+        ContentValues receipt = new ContentValues();
+        receipt.put("session_id", sessionId);
+        receipt.put("command_id", commandId);
+        receipt.put("fingerprint", fingerprint);
+        receipt.put("result", resultJson);
+        db.insertOrThrow("receipts", null, receipt);
+        db.setTransactionSuccessful();
+        return new Result(status, resultJson);
+    }
+
     /** A draft set and its receipt commit together. No transport invokes this class yet. */
     Result completeSet(String raw) throws Exception {
         if (raw == null || raw.getBytes(StandardCharsets.UTF_8).length > 1024)
             return new Result("invalid", null);
         JSONObject command;
-        try { command = new JSONObject(raw); }
+        try {
+            JSONTokener parser = new JSONTokener(raw);
+            Object parsed = parser.nextValue();
+            if (!(parsed instanceof JSONObject) || parser.nextClean() != '\0') return new Result("invalid", null);
+            command = (JSONObject) parsed;
+        }
         catch (JSONException e) { return new Result("invalid", null); }
         Object version = command.opt("v");
         if (!(version instanceof Number) || ((Number) version).doubleValue() != 1
@@ -130,7 +152,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             setId = field(command, "setId"); actionAt = field(command, "actionAt");
             actionTime = timestamp(actionAt);
         } catch (IllegalArgumentException e) { return new Result("invalid", null); }
-        Object expected = command.get("expectedSetRevision");
+        Object expected = command.opt("expectedSetRevision");
         if (!id(sessionId) || !id(installationId) || !id(commandId) || !id(entryId) || !id(setId)
                 || !(expected instanceof Number) || ((Number) expected).doubleValue() < 0
                 || ((Number) expected).doubleValue() != Math.rint(((Number) expected).doubleValue())
@@ -144,11 +166,20 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         try {
             String snapshotRaw;
             int sessionRevision;
+            String sessionStatus;
             try (Cursor c = db.rawQuery("SELECT installation_id,revision,status,snapshot FROM sessions WHERE session_id=?",
                     new String[]{sessionId})) {
-                if (!c.moveToFirst()) return new Result("wrong_session", null);
+                if (!c.moveToFirst()) {
+                    // The selected installation is checked before a stale session ID, as in the JS planner.
+                    try (Cursor current = db.rawQuery("SELECT installation_id FROM sessions WHERE status IN ('active','paused') LIMIT 1", null)) {
+                        if (current.moveToFirst() && !installationId.equals(current.getString(0)))
+                            return new Result("wrong_installation", null);
+                    }
+                    return new Result("wrong_session", null);
+                }
                 if (!installationId.equals(c.getString(0))) return new Result("wrong_installation", null);
                 sessionRevision = c.getInt(1);
+                sessionStatus = c.getString(2);
                 snapshotRaw = c.getString(3);
                 // A retry of a committed command remains valid after the session closes.
             }
@@ -158,16 +189,20 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                         ? new Result("replay", c.getString(1)) : new Result("command_id_conflict", null);
             }
             JSONObject snapshot = new JSONObject(snapshotRaw);
+            if ("paused".equals(sessionStatus))
+                return reject(db, sessionId, commandId, fingerprint, actionAt, "paused");
+            if (!"active".equals(sessionStatus))
+                return reject(db, sessionId, commandId, fingerprint, actionAt, "conflict");
             long actionMs = actionTime.toEpochMilli(), startedMs = timestamp(snapshot.getString("startedAt")).toEpochMilli();
             if (actionMs < startedMs - 5000 || actionMs > System.currentTimeMillis() + 30000)
-                return new Result("time_needs_review", null);
+                return reject(db, sessionId, commandId, fingerprint, actionAt, "time_needs_review");
             int setRevision;
             try (Cursor c = db.rawQuery("SELECT revision FROM set_revisions WHERE session_id=? AND entry_id=? AND set_id=?",
                     new String[]{sessionId, entryId, setId})) {
-                if (!c.moveToFirst()) return new Result("target_changed", null);
+                if (!c.moveToFirst()) return reject(db, sessionId, commandId, fingerprint, actionAt, "target_changed");
                 setRevision = c.getInt(0);
             }
-            if (setRevision != expectedRevision) return new Result("revision_conflict", null);
+            if (setRevision != expectedRevision) return reject(db, sessionId, commandId, fingerprint, actionAt, "revision_conflict");
             JSONObject target = null;
             JSONArray entries = snapshot.getJSONArray("entries");
             for (int i = 0; i < entries.length(); i++) {
@@ -181,20 +216,24 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                 break;
             }
             if (target == null || target.has("at") || "committed".equals(target.optString("status"))
-                    || "skipped".equals(target.optString("status"))) return new Result("target_changed", null);
+                    || "skipped".equals(target.optString("status")))
+                return reject(db, sessionId, commandId, fingerprint, actionAt, "target_changed");
             Object kg = target.opt("kg"), reps = target.opt("reps"), duration = target.opt("durationSec");
             boolean weighted = kg instanceof Number && Double.isFinite(((Number) kg).doubleValue())
                     && ((Number) kg).doubleValue() >= 0 && reps instanceof Number
                     && ((Number) reps).doubleValue() > 0 && ((Number) reps).doubleValue() == Math.rint(((Number) reps).doubleValue());
             boolean timed = duration instanceof Number && Double.isFinite(((Number) duration).doubleValue())
                     && ((Number) duration).doubleValue() > 0;
-            if (!weighted && !timed) return new Result("incomplete_draft", null);
+            if (!weighted && !timed) return reject(db, sessionId, commandId, fingerprint, actionAt, "incomplete_draft");
             target.put("at", actionAt);
+            target.put("actionClockConfidence", "unverified");
             target.put("status", "committed");
             JSONObject receiptResult = new JSONObject().put("status", "applied").put("commandId", commandId)
                     .put("sessionId", sessionId).put("entryId", entryId).put("setId", setId)
                     .put("setRevision", setRevision + 1).put("sessionRevision", sessionRevision + 1)
-                    .put("actionAt", actionAt).put("receivedAt", UTC.format(Instant.now()));
+                    .put("actionAt", actionAt).put("receivedAt", UTC.format(Instant.now()))
+                    .put("clockConfidence", "unverified")
+                    .put("sideEffectsStatus", "not_implemented");
             String resultJson = receiptResult.toString();
             ContentValues session = new ContentValues();
             session.put("revision", sessionRevision + 1);
@@ -202,7 +241,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             int updated = db.update("sessions", session,
                     "session_id=? AND installation_id=? AND status='active' AND revision=?",
                     new String[]{sessionId, installationId, Integer.toString(sessionRevision)});
-            if (updated != 1) return new Result("conflict", null);
+            if (updated != 1) return reject(db, sessionId, commandId, fingerprint, actionAt, "conflict");
             ContentValues revision = new ContentValues();
             revision.put("revision", setRevision + 1);
             if (db.update("set_revisions", revision, "session_id=? AND entry_id=? AND set_id=? AND revision=?",

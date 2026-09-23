@@ -28,12 +28,20 @@ The exact schema is tested with SQLite for rollback, duplicate IDs, per-set
 revisions and a receipt that survives reopening the database. The Android gate
 also runs `WorkoutCommandStoreTest` with Robolectric SDK 26 against the actual
 Java method, including reopened replay, wrong installation, stale revision,
-reordered target, invalid time and a failed receipt insert. This is an Android
+reordered target, invalid time, malformed wire input, and a failed receipt
+insert. `command-fixtures.json` is read by both the Java and JS tests.
+Identified authorized rejections are stored as receipts, so a retry does not
+turn a prior rejection into a later applied command. Receipts keep watch
+`actionAt`, separate phone `receivedAt`, and `clockConfidence: unverified` until
+clock synchronization has been measured. This is an Android
 JVM simulation, not a test on a physical GT6/phone. CI copies the class into
 both APK build paths. No phone/watch path calls it yet. It does
-not calculate the phone's fidelity, rest or heart side effects, and it does not
+not calculate the phone's fidelity, rest or heart side effects or persist pending
+side effects in its transaction; those are required before Gate C. It does not
 replace the WebView's authoritative active session, so an APK
 containing the class is **not** a working watch command receiver.
+The internal applied receipt explicitly marks `sideEffectsStatus: not_implemented`;
+the Java test checks that marker. Do not expose that receipt to the watch as Saved.
 
 Next implementation: add the phone's fidelity/rest/heart side effects and
 explicit single-writer handover, bind one

@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -93,7 +96,12 @@ public class WorkoutCommandStoreTest {
         assertEquals("applied", applied.status);
         assertEquals(1, new JSONObject(applied.receipt).getInt("setRevision"));
         assertEquals(1, new JSONObject(applied.receipt).getInt("sessionRevision"));
+        assertEquals("unverified", new JSONObject(applied.receipt).getString("clockConfidence"));
+        assertEquals("not_implemented", new JSONObject(applied.receipt).getString("sideEffectsStatus"));
+        assertEquals(actionAt, new JSONObject(applied.receipt).getString("actionAt"));
+        assertNotEquals(actionAt, new JSONObject(applied.receipt).getString("receivedAt"));
         assertEquals(actionAt, set(saved(), "e-1", "set-1").getString("at"));
+        assertEquals("unverified", set(saved(), "e-1", "set-1").getString("actionClockConfidence"));
         assertEquals("committed", set(saved(), "e-1", "set-1").getString("status"));
         assertFalse(set(saved(), "e-2", "set-2").has("at"));
         assertEquals(1, revision("set-1"));
@@ -107,6 +115,62 @@ public class WorkoutCommandStoreTest {
         assertEquals("wrong_installation", store.completeSet(command("c-1", "other", "e-1", "set-1", 0, actionAt)).status);
         assertEquals("revision_conflict", store.completeSet(command("c-2", "watch-1", "e-1", "set-1", 0, actionAt)).status);
         assertEquals(1, revision("set-1"));
+    }
+
+    @Test public void missingRevisionReturnsInvalidInsteadOfThrowing() throws Exception {
+        JSONObject without = new JSONObject(command("c-missing", "watch-1", "e-1", "set-1", 0, actionAt));
+        without.remove("expectedSetRevision");
+        assertEquals("invalid", store.completeSet(without.toString()).status);
+        assertFalse(set(saved(), "e-1", "set-1").has("at"));
+    }
+
+    @Test public void identifiedRejectionSurvivesReopenAndCannotLaterApply() throws Exception {
+        String early = UTC.format(Instant.parse(startedAt).minusSeconds(60));
+        String raw = command("c-early", "watch-1", "e-1", "set-1", 0, early);
+        WorkoutCommandStore.Result rejected = store.completeSet(raw);
+        assertEquals("time_needs_review", rejected.status);
+        JSONObject result = new JSONObject(rejected.receipt);
+        assertEquals(early, result.getString("actionAt"));
+        assertEquals("unverified", result.getString("clockConfidence"));
+        assertTrue(result.has("receivedAt"));
+        JSONObject correctedStart = saved().put("startedAt", UTC.format(Instant.parse(startedAt).minusSeconds(120)));
+        store.getWritableDatabase().execSQL("UPDATE sessions SET snapshot=? WHERE session_id='s-1'", new Object[]{correctedStart.toString()});
+        store.close(); store = new WorkoutCommandStore(context);
+        WorkoutCommandStore.Result replay = store.completeSet(raw);
+        assertEquals("replay", replay.status);
+        assertEquals(rejected.receipt, replay.receipt);
+        assertFalse(set(saved(), "e-1", "set-1").has("at"));
+        assertEquals(0, revision("set-1"));
+        assertEquals("command_id_conflict", store.completeSet(command("c-early", "watch-1", "e-2", "set-2", 0, early)).status);
+    }
+
+    @Test public void sharedJavaAndJsFixturesAgree() throws Exception {
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("watch-command-fixtures.json")) {
+            assertNotNull("shared fixtures must be packaged into test resources", stream);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4096];
+            for (int read; (read = stream.read(buffer)) != -1;) output.write(buffer, 0, read);
+            JSONArray fixtures = new JSONArray(new String(output.toByteArray(), StandardCharsets.UTF_8));
+            for (int i = 0; i < fixtures.length(); i++) {
+                JSONObject fixture = fixtures.getJSONObject(i);
+                store.close(); context.deleteDatabase(DB); store = new WorkoutCommandStore(context);
+                startedAt = "2026-09-23T18:59:00.000Z";
+                JSONObject initial = new JSONObject(snapshot(false));
+                if (fixture.optBoolean("paused")) initial.put("pausedAt", Instant.parse("2026-09-23T19:00:00.000Z").toEpochMilli());
+                store.seed("s-1", "watch-1", initial.toString());
+                if (fixture.optInt("revision") > 0)
+                    store.getWritableDatabase().execSQL("UPDATE set_revisions SET revision=? WHERE set_id='set-1'", new Object[]{fixture.getInt("revision")});
+                JSONObject command = new JSONObject(command("c-fixture", "watch-1", "e-1", "set-1", 0, "2026-09-23T19:00:00.000Z"));
+                JSONObject patch = fixture.optJSONObject("patch");
+                if (patch != null) for (java.util.Iterator<String> keys = patch.keys(); keys.hasNext();) {
+                    String key = keys.next(); command.put(key, patch.get(key));
+                }
+                JSONArray remove = fixture.optJSONArray("remove");
+                if (remove != null) for (int j = 0; j < remove.length(); j++) command.remove(remove.getString(j));
+                String status = store.completeSet(command.toString() + fixture.optString("suffix", "")).status;
+                assertEquals(fixture.getString("name"), fixture.getString("expected"), "applied".equals(status) ? "accepted" : status);
+            }
+        }
     }
 
     @Test public void reorderKeepsTargetAndRemovedEntryCannotRetarget() throws Exception {
