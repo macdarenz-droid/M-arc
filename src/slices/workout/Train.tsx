@@ -42,7 +42,7 @@ import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
-import { isWorkingSet } from '@/brain/exposure';
+import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -437,7 +437,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [subOpen, setSubOpen] = useState(false);
   const logged = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
-  const firstSet = entry.sets[0];
+  // QA-R6-3: autoregulation reads the first working set; logged warm-ups sit in front of it.
+  const firstSet = firstWorkingSet(entry.sets);
   const firstTarget = next.sets[0];
   const autoreg = useMemo(() => (ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
     ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile })

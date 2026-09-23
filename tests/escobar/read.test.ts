@@ -189,3 +189,19 @@ describe('assisted lifts in Escobar (QA-R3a-2)', () => {
     expect((summarize('lift_trend', { exerciseId: id, weeks: 12 }, c) as { plateau: string }).plateau).toBe('progressing');
   });
 });
+
+describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
+  it('autoregulation reads the first working set, and warm-ups are not planned sets', () => {
+    const s = sixMonthsState();
+    const bench = 'lib_barbell_bench_press';
+    const warm = [{ id: 'w1', kg: 40, reps: 8, kind: 'warmup' as const, effort: 'easy' as const, at: new Date(NOW - 300_000).toISOString(), fidelity: 'live' as const }, { id: 'w2', kg: 55, reps: 5, kind: 'warmup' as const }];
+    const live = (first: Record<string, unknown>) => ({ ...s, active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: bench, name: 'Bench', done: false, skipped: false, sets: [...warm, { id: 's1', ...first }, { id: 's2' }, { id: 's3' }] }] } });
+    const target = R.getNextTarget({ exerciseId: bench, plannedSets: 3 }, ctxOf(s)) as { sets: Array<{ kg: number; reps: number }> };
+    const t = target.sets[0]!;
+    const easy = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: t.reps + 2, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null; current: { setsPlanned: number } };
+    expect(easy.adjustment).toMatch(/Try/);
+    expect(easy.current.setsPlanned).toBe(3);
+    const unrated = R.getLiveSession({}, ctxOf(live({}) as never)) as { adjustment: string | null };
+    expect(unrated.adjustment).toBeNull();
+  });
+});
