@@ -57,3 +57,10 @@ test('absent HR API reports unsupported', () => {
   const f = fixture(); delete f.io.sensor.subscribeHeartRate; f.send('hr_start');
   assert.equal(f.sent[0].status, 'unsupported');
 });
+
+test('local watch HR can be tested before phone messaging is authorized', () => {
+  const f = fixture(); f.probe.startLocal(); f.sample(112);
+  assert.deepEqual(f.values, [112]); assert.equal(f.sent.length, 0);
+  f.probe.stop(); f.sample(113);
+  assert.deepEqual(f.values, [112]);
+});
