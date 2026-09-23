@@ -561,12 +561,23 @@ for (const theme of themes) {
   const overflow = await page.evaluate(() => { const t = document.querySelector('.esc-thread'); return t ? t.scrollWidth - t.clientWidth : 0; });
   if (overflow > 1) errors.push(`${tag}: the thread scrolls sideways at 360 px`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-360.png` });
+  if (theme === themes.find(t => t !== 'silent-black')) {
+    // ES-03: Undo is offered right after Apply and gone once its 8 s window closes.
+    await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
+    const undo = page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true });
+    if (!(await undo.isVisible().catch(() => false))) errors.push(`${tag}: expected Undo right after Apply`);
+    await page.waitForTimeout(8300);
+    if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
+  }
   if (theme === 'silent-black') {
     await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
     if (!(await page.locator('.esc-pop').isVisible().catch(() => false))) errors.push(`${tag}: expected the citation popover`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await page.locator('.esc-proposal').getByText('Applied').isVisible().catch(() => false))) errors.push(`${tag}: expected "Applied" on the proposal`);
+    // ES-03: Undo inside its 8 s window reverses the change.
+    await page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true }).click(); await page.waitForTimeout(300);
+    if (!(await page.locator('.esc-proposal').getByText('Undone').isVisible().catch(() => false))) errors.push(`${tag}: expected "Undone" after Undo within the window`);
     await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
     // Stop mid-turn, then the offline fallback (find_in_app answered locally).
@@ -627,4 +638,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified.');

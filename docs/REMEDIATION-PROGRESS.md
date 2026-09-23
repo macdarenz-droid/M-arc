@@ -137,7 +137,7 @@ deploy-worker.yml runs on a push to `main` touching `escobar-worker/**`, or from
 2. Without merging: on a computer, `cd escobar-worker && npm ci && CLOUDFLARE_API_TOKEN=… npx wrangler deploy` from this branch.
 Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that branch's older Worker (its own workflow), without the relay: don't use it for this.
 
-## Phase R4 — in progress
+## Phase R4 — done
 ### Layer: apply/undo — done — IDs: ES-03, ES-04, ES-05, ES-02
 - Undo is a targeted inverse per kind (table in plan §R4.1); `active` is never restored; an inverse that can no longer apply throws UndoUnavailable → "Undo is no longer available." and nothing is recorded. Undo map keyed `${conversationId}:${proposalId}`; `appliedAt` stored; `undoOpen()` = applied < 8 s ago and an inverse exists; ProposalCard hides Undo after the window (timer re-render).
 - Live-session guards: programme replace and deleting the trained split are ToolErrors; fingerprints include the active split; the programme applier refuses while a session runs (no more `active: null`).
@@ -156,3 +156,20 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Photos: Composer 2 per message; at most the 2 newest unsent photos inline per request; decisions log line fixed (D3).
 - History window: estimated on the request form, keeps cutting at clean user turns until it fits (≤ 60k est. tokens, ≤ 400 entries); a trim forces a full brief. The existing window test's data was resized (ES-16 re-checks after the cut) and a new test covers repeated trimming.
 - Verification: sentences drop leading list markers (both sides); the chips directive is removed before grounding; new CRISIS pattern (plan §R4.8).
+### Layer: tools — done, commit c758e76 — IDs: ES-01, ES-15, ES-21, BR-18
+- capJson `{ dropFrom }`; get_exercise_history newest first (schema + tools.generated.json regenerated); get_body drops from the start.
+- lift_trend: first/last/best over the whole window, 12 points spread evenly (`sampleEvenly`).
+- `progressionCtxFor(ctx, exerciseId, gymId?)` → readiness, recoveryPct, deload, equipment, loadFactor; used by get_next_target, get_live_session (autoregulation gets equipment for weighted lifts), get_equipment and show exercise_card.
+### Layer: store, search, constants — done — IDs: ES-18, ES-30, ES-32
+- fitToBudget never drops the active conversation: `trimOldest` cuts at the first plain user message after the midpoint, sets `trimmed`, shifts rollingSummary.upTo.
+- Word-bounded keyword/title matching in palace/registry and knowledge/cards.
+- explain_method constants come from the brain: E1RM_MAX_REPS / E1RM_FULL_WEIGHT_REPS, BIAS_MIN_OBSERVATIONS / BIAS_CAP_REPS, READINESS_CALIBRATING_DAYS, DELOAD_TRIGGER. The effort-calibration copy no longer claims the bias changes strength estimates (it doesn't, per the plan).
+### Layer: UI — done — IDs: ES-22, ES-26, ES-27, ES-28, RG-03
+- Proactive toggle hidden. Pinned cards on Today via ShowComponent (lazy chunk, only when pins exist), `until >= today`, Unpin. MemoryScreen (delete per item, Forget everything with confirm) replaces MemoryPlaceholder. ShowComponent memoised. Citation popover ignores taps inside itself. images.ts: one memoised IndexedDB handle (reset on failure/close); sent photos leave memory (`imagesSent` dep).
+- R4.11: first enable imports `coach.askThread` as "Earlier conversation" (text only, leading assistant turns dropped, same-role turns merged) and sets legacyImported.
+### Layer: tests — done — app 684 → 736
+- New: tests/escobar/session.test.ts (5), apply.test.ts (7), privacy.test.ts (3). Extended: verify (30-phrase crisis table), read (newest first under the cap, capJson ends), show (52-week lift_trend, sampleEvenly), store (active trim, trimOldest, carry-over), palace and knowledge (whole-word matching), loop (sent photos evicted), knowledge (constants equal the brain's).
+- The phrase table found 'self-harming' missed by the plan's CRISIS (`self[- ]?harm\b`); now `self[- ]?harm\w*`.
+### Layer: gate — done
+- Screenshot gate: Apply → Undo within the window ("Undone"); in a second theme Undo is gone after 8 s.
+- `npm run check`: 736 passed (+ perf 3) · `npm run test:tz`: 736 × 3 zones · worker `npm ci && npm run check`: 71 passed · `npm run build && npm run gate`: PASS.
