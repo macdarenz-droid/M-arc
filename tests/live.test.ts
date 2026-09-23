@@ -85,4 +85,13 @@ describe('autoregulation without equipment never repeats the load (BR-18)', () =
     const down = autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: { kg: 40, reps: 4, effort: 'max', fidelity: 'live' }, targetKg: 40, targetReps: 8, historyCount: 5 })!;
     expect(down.action).toMatch(/^Drop to 37.5 kg/);
   });
+  it('a drop is always lighter and an increase always heavier, off-grid targets too (QA-R3b-1)', async () => {
+    const { autoregulationSuggestion } = await import('@/brain/coach/live');
+    const drop = (t: number) => autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: { kg: t, reps: 4, effort: 'max', fidelity: 'live' }, targetKg: t, targetReps: 8, historyCount: 5 })!.action;
+    const add = (t: number) => autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: { kg: t, reps: 10, effort: 'easy', fidelity: 'live' }, targetKg: t, targetReps: 8, historyCount: 5 })!.action;
+    for (const t of [44.9, 45.359, 64, 101.3]) {
+      expect(Number(/Drop to ([\d.]+) kg/.exec(drop(t))![1])).toBeLessThan(t);
+      expect(Number(/Try ([\d.]+) kg/.exec(add(t))![1])).toBeGreaterThan(t);
+    }
+  });
 });

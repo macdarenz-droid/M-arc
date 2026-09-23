@@ -320,3 +320,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3a-10 (low)
 - `navyBodyFat` moved from `brain/` to `core/bodyfat.ts` (pure math, no brain dependencies), so the store's repair can use it. Readings without `formula: 'navy-cm'` are recomputed once on load from their stored tape numbers and the profile's sex and height, then marked. New readings are saved with the mark. A reading that cannot be recomputed keeps its number.
+
+### QA-R3b-1 (low)
+- Without an equipment profile, live autoregulation rounds on the 2.5 kg grid strictly past the target in the direction it advises: a drop from 44.9 or 45.359 kg is 42.5 kg, never 45. Escobar's live-session tool already passes the gym's equipment (R4.7).
