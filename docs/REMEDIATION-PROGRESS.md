@@ -376,3 +376,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R4b-4 (low)
 - `fitToBudget` keeps at least 250 KB (`MIN_STORE_ROOM_BYTES`) for Escobar even when the main state and heart store fill the 4 MB total. The active conversation is trimmed, not dropped, for people with years of history.
 - Test updated: "size guard counts the main state and heart store against 4 MB" now uses 50 k-character conversations instead of 20 k, so they are above the new floor. Its assertions are unchanged.
+
+### QA-R4b-9 (low)
+- `windowMessages` serialises each message once and sizes each candidate cut from suffix sums. The count is the same as `JSON.stringify` of the slice. The fixture from the finding (300 short turns, then 40 × 12 KB) takes 1.8 ms, down from 188 ms. New perf budget: 40 ms.
+- Note: the existing `recoveryStatus(600)` budget (60 ms) measures 53–58 ms on this machine, with one 62.7 ms outlier. It measured the same before today's changes, so this is headroom, not a regression. Flag it if CI goes red on it.

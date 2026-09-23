@@ -139,9 +139,17 @@ const isPlainUser = (m: StoredMessage | undefined): boolean => !!m && m.role ===
  */
 export function windowMessages(conv: Conversation, messages: StoredMessage[]): StoredMessage[] {
   // ES-16: estimate on what is actually sent (no meta, photos as stubs, not inline base64).
-  const tokens = (ms: StoredMessage[]) => Math.ceil(JSON.stringify(toRequestMessages(ms)).length / 4);
-  const fits = (ms: StoredMessage[]) => tokens(ms) <= HISTORY_TOKEN_LIMIT && ms.length <= Math.min(HISTORY_ENTRY_LIMIT, 600);
-  if (fits(messages)) return messages;
+  // QA-R4b-9: each message is serialised once; a slice's length is the sum of its parts plus the
+  // commas and brackets, exactly what JSON.stringify of the slice would give.
+  const lens = toRequestMessages(messages).map(m => JSON.stringify(m).length);
+  const tail = new Array<number>(lens.length + 1).fill(0);
+  for (let i = lens.length - 1; i >= 0; i--) tail[i] = tail[i + 1]! + lens[i]!;
+  const fitsFrom = (cut: number) => {
+    const n = messages.length - cut;
+    const chars = n ? tail[cut]! + (n - 1) + 2 : 2;
+    return Math.ceil(chars / 4) <= HISTORY_TOKEN_LIMIT && n <= Math.min(HISTORY_ENTRY_LIMIT, 600);
+  };
+  if (fitsFrom(0)) return messages;
   const summary = conv.rollingSummary;
   let cut = summary && summary.upTo < messages.length && isPlainUser(messages[summary.upTo]) ? summary.upTo : -1;
   if (cut < 0) {
@@ -150,7 +158,7 @@ export function windowMessages(conv: Conversation, messages: StoredMessage[]): S
     if (cut >= messages.length) return messages;
   }
   // Still too big after the first cut: move on to later clean user turns until it fits.
-  while (!fits(messages.slice(cut))) {
+  while (!fitsFrom(cut)) {
     let next = cut + 1;
     while (next < messages.length && !isPlainUser(messages[next])) next++;
     if (next >= messages.length) break;
