@@ -133,7 +133,7 @@ public class WorkoutCommandStoreTest {
         assertEquals(3, pendingCount("c-1"));
         assertEquals("command_id_conflict", store.completeSet(command("c-1", "watch-1", "e-2", "set-2", 0, actionAt)).status);
         assertEquals("wrong_installation", store.completeSet(command("c-1", "other", "e-1", "set-1", 0, actionAt)).status);
-        assertEquals("revision_conflict", store.completeSet(command("c-2", "watch-1", "e-1", "set-1", 0, actionAt)).status);
+        assertEquals("target_changed", store.completeSet(command("c-2", "watch-1", "e-1", "set-1", 0, actionAt)).status);
         assertEquals(1, revision("set-1"));
     }
 
