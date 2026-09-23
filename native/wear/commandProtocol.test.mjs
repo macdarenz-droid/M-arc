@@ -42,9 +42,15 @@ test('reject malformed, oversized, incomplete and untrusted fields', () => {
   assert.equal(parse({ expectedSetRevision: -1 }), null);
   assert.equal(parse({ actionAt: 'not-a-date' }), null);
   assert.equal(parse({ actionAt: '2026-09-23' }), null);
+  assert.equal(parse({ actionAt: '2026-02-30T10:00:00.000Z' }), null);
   assert.equal(parse({ commandId: 'x|y' }), null);
   const incomplete = { ...session, entries: [{ id: 'e-1', sets: [{ id: 'set-1', status: 'draft' }] }] };
   assert.equal(planSetCommand(incomplete, binding, {}, {}, parse(), Date.parse('2026-09-23T10:00:02.000Z')).status, 'incomplete_draft');
+});
+
+test('a command ID matching an inherited object property is not a false replay', () => {
+  const c = parse({ commandId: 'constructor' });
+  assert.equal(planSetCommand(session, binding, {}, {}, c, Date.parse('2026-09-23T10:00:02.000Z')).status, 'ready');
 });
 
 test('a future or pre-session watch clock needs review instead of silently setting the time', () => {

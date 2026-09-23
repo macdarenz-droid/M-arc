@@ -11,7 +11,8 @@ export function parseWatchCommand(raw, maxBytes = 1024) {
   }
   if (!Number.isSafeInteger(c.expectedSetRevision) || c.expectedSetRevision < 0) return null;
   if (typeof c.actionAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(c.actionAt)
-      || !Number.isFinite(Date.parse(c.actionAt))) return null;
+      || !Number.isFinite(Date.parse(c.actionAt))
+      || new Date(c.actionAt).toISOString() !== c.actionAt) return null;
   return Object.freeze({
     v: 1, kind: 'complete_set', installationId: c.installationId, sessionId: c.sessionId,
     commandId: c.commandId, entryId: c.entryId, setId: c.setId,
@@ -24,7 +25,7 @@ export function planSetCommand(session, binding, revisions, receipts, command, n
   if (!command) return { status: 'invalid' };
   if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
   // A command ID cannot be reused for a different payload, even after the original is applied.
-  const recorded = receipts[command.commandId];
+  const recorded = Object.hasOwn(receipts, command.commandId) ? receipts[command.commandId] : undefined;
   if (recorded) return recorded.fingerprint === fingerprint(command)
     ? { status: 'replay', receipt: recorded.result }
     : { status: 'command_id_conflict' };
