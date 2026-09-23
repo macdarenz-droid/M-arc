@@ -100,7 +100,8 @@ Dependencies: R1 before R2 (shared store and test harness). R2's clock module be
 Status:
 - Steps 1–2: done. The key is created and stored as secrets.
 - Step 4: done on `claude/marc-regression-architecture-gegkbq`. Run 35866203809's APK was verified as signed `05:66:9A:…:F1:F5`, v2 and v3.
-- Left: the same `build-apk.yml` change on the branch the owner installs from, and owner steps 3 and 5.
+- The same change is on `claude/escobar-v2-implementation-eidx64` (commit 138edd6). Run 35867246854's APK was verified as signed `05:66…`.
+- Left: owner steps 3 and 5, and `release-apk.yml` (R0.8).
 
 Facts, from certificates extracted out of CI artifacts:
 - Five debug APKs have five different signing fingerprints. The Capacitor template has no `signingConfig`, and on the runner AGP does not read `~/.android/debug.keystore`, so it generates a fresh key on every build.
