@@ -478,7 +478,10 @@ for (const theme of themes) {
   await page.locator('.esc-hall-input').click();
   await page.waitForSelector('dialog.esc-sheet[open]');
   await page.waitForTimeout(250);
-  if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
+  if (theme === 'silent-black') {
+    for (const label of ['Share health data', 'Share body data']) if (!(await page.locator('dialog.esc-sheet').getByText(label, { exact: true }).isVisible().catch(() => false))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
+    await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
+  }
   await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
   await page.waitForTimeout(200);
   if (!(await page.getByText('Ask me anything.').isVisible().catch(() => false))) errors.push(`${tag}: expected the empty state`);

@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
 import { showPanel } from '@/app/router';
-import { openSheets, Button, Card, Toggle } from '@/ui/primitives';
+import { openSheets, Button, Card, Row, Toggle } from '@/ui/primitives';
 import { IconEscobar, IconMore, IconX, IconBack } from '@/ui/icons';
 import { escobarUi, loopView, online, quotaResetAt } from '../state';
 import * as S from '../session';
@@ -60,8 +60,11 @@ export function Explainer({ onDone }: { onDone?: () => void }) {
         <li>It goes through your M/ARC server to Anthropic, the model provider.</li>
       </ul>
       <p class="small muted">The rest of your history stays on the phone. Every answer shows what he looked at.</p>
-      <Toggle checked={health} onChange={setHealth} label="Share health data (sleep, heart rate)" />
-      <Toggle checked={body} onChange={setBody} label="Share body data (weight, measurements)" />
+      <div class="list">
+        <Row trailing={<Toggle checked={health} onChange={setHealth} label="Share health data" />}><span class="small">Share health data</span><div class="hint">Sleep, resting heart rate, heart rate during sessions.</div></Row>
+        <Row trailing={<Toggle checked={body} onChange={setBody} label="Share body data" />}><span class="small">Share body data</span><div class="hint">Weight and body measurements.</div></Row>
+      </div>
+      <p class="hint">You can change these any time in Settings → Escobar.</p>
       <Button variant="primary" block onClick={() => { S.setEscobarEnabled(true, { health, body }); onDone?.(); }}>Turn on Escobar</Button>
     </div>
   );
