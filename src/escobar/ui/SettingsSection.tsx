@@ -19,8 +19,8 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
   const e = state.value.escobar;
   const [confirm, setConfirm] = useState(false);
   const [url, setUrl] = useState(e.proxyUrl ?? '');
-  const u = e.usage.day === todayKey() ? e.usage : { turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
-  const cost = estimateCost(u);
+  const u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number } = e.usage.day === todayKey() ? e.usage : { turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
+  const cost = u.costUsd ?? estimateCost(u);
   const saveUrl = () => {
     const v = url.trim().replace(/\/$/, '');
     if (v && !/^https:\/\/[^\s/]+/.test(v)) { showToast('Use an https:// address'); return; }

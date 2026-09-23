@@ -98,7 +98,7 @@ describe('agent loop (§13)', () => {
     expect(c.messages.filter(m => m.role === 'assistant' && m.meta.rendered.revised)).toHaveLength(1);
     expect(c.userTurns).toBe(1);
     expect(c.ledger.length).toBeGreaterThan(10);
-    expect(usage).toEqual([{ turns: 1, inputTokens: 6000, outputTokens: 300, cacheReadTokens: 4800 }]);
+    expect(usage).toEqual([{ turns: 1, inputTokens: 6000, outputTokens: 300, cacheReadTokens: 4800, costUsd: expect.closeTo(0.0399, 6) }]); // F7: priced per step (claude-opus-5)
     expect(c.title).toBe('How am I doing, and should I change my goal?'.slice(0, 40));
   });
 
@@ -293,5 +293,20 @@ describe('replayed health and body details once sharing is off (QA-R4b-2)', () =
     const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body: false }));
     expect(out).not.toContain('80.5');
     expect(out).toContain('avgBpm');
+  });
+});
+
+describe('cost by the model that answered (F7)', () => {
+  it('each step is priced with its own model', async () => {
+    const got: Array<{ costUsd?: number }> = [];
+    const sonnet: StreamEvent[] = [{ t: 'text', d: 'Ok.' }, { t: 'final', content: [{ type: 'text', text: 'Ok.' }], stop_reason: 'end_turn', usage: { input_tokens: 1_000_000, output_tokens: 0 }, model: 'claude-sonnet-5' }];
+    const { loop } = setup([sonnet], { recordUsage: u => got.push(u) });
+    await loop.send({ text: 'hi' });
+    expect(got[0]!.costUsd).toBeCloseTo(2, 5);
+  });
+  it('a dated model id uses its alias price', async () => {
+    const { estimateCost } = await import('@/escobar/state');
+    expect(estimateCost({ inputTokens: 1_000_000, outputTokens: 0, cacheReadTokens: 0 }, 'claude-opus-5-5-20260901')).toBe(4);
+    expect(estimateCost({ inputTokens: 0, outputTokens: 1_000_000, cacheReadTokens: 0 }, 'claude-haiku-4-5')).toBe(5);
   });
 });

@@ -16,7 +16,7 @@ import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
 import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
 import { evictImages, imageData } from './images';
-import { escobarUi, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
+import { escobarUi, estimateCost, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
 import { PROTECTED_MEMORY } from './tools/executor';
 import { isPlanRequest } from './ui/prompts';
 import type { MemoryEffect } from './tools/executor';
@@ -168,11 +168,12 @@ function applyEffect(e: MemoryEffect): void {
   }
 }
 
-function recordUsage(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number }): void {
+function recordUsage(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number }): void {
   const day = todayKey();
   update(s => {
-    const cur = s.escobar.usage.day === day ? s.escobar.usage : { day, turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
-    return { ...s, escobar: { ...s.escobar, usage: { day, turns: cur.turns + u.turns, inputTokens: cur.inputTokens + u.inputTokens, outputTokens: cur.outputTokens + u.outputTokens, cacheReadTokens: cur.cacheReadTokens + u.cacheReadTokens } } };
+    const cur = s.escobar.usage.day === day ? s.escobar.usage : { day, turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, costUsd: 0 };
+    const costUsd = (cur.costUsd ?? estimateCost(cur)) + (u.costUsd ?? estimateCost(u));
+    return { ...s, escobar: { ...s.escobar, usage: { day, turns: cur.turns + u.turns, inputTokens: cur.inputTokens + u.inputTokens, outputTokens: cur.outputTokens + u.outputTokens, cacheReadTokens: cur.cacheReadTokens + u.cacheReadTokens, costUsd } } };
   });
 }
 

@@ -446,7 +446,8 @@ export interface EscobarState {
   todayOverride: TodayOverride | null;
   proactive: { enabled: boolean; shown: Record<string, string>; day: string; count: number };
   brief: DailyBrief | null;
-  usage: { day: string; turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number };
+  /** `costUsd` (F7): priced per step by the model that answered; absent on days recorded before it. */
+  usage: { day: string; turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number };
   /** The old single-thread chat (`coach.askThread`) has been imported once (§6.3). */
   legacyImported: boolean;
 }

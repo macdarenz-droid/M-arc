@@ -450,3 +450,30 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - `sessionRpeLoad` is remembered per session object (sessions are never mutated), so the per-day acute:chronic windows stop recomputing it about 40 times per session.
   - `recoveryAt` drops doses older than the lookback once, before the bisection.
 - `recoveryStatus(600)` now takes 30–33 ms, down from 53–60, and the dose build 29 ms, down from 56.
+
+## R8 (owner order: F7 → F6 → F10; F4 skipped; F11 waits for the owner's Health Connect confirmation)
+
+### F7 — per-mode model routing (D12). Design note
+- **What:** the Worker reads `MODEL_CHAT`, `MODEL_PLAN`, `MODEL_LIVE`, `MODEL_BRIEF`, `MODEL_MOMENT` and `MODEL_SUMMARIZE`, each falling back to `MODEL`. Per D12, `MODEL` stays `claude-opus-5` and no override is set; the owner chooses.
+  - A malformed override (anything that is not a model id) is ignored.
+  - `/health` lists each mode's model.
+  - System-message folding and the learned "no system role" set are per model, so a mode on a model without mid-conversation system messages gets `<situation>` blocks.
+- **App:** each step is priced by `final.model`, the model that actually answered, and the day's `usage.costUsd` adds those up. Settings shows it, and days recorded before this fall back to the old estimate. Dated ids use their alias's price. Haiku 4.5 and Fable 5 were added to the table.
+- **Prices checked on 2026-09-23** against platform.claude.com/docs/en/about-claude/pricing ($/MTok input · output · cache hit):
+
+  | Model | Input | Output | Cache hit |
+  |---|---|---|---|
+  | Opus 5.5 | 4 | 20 | 0.20 |
+  | Opus 5 | 5 | 25 | 0.50 |
+  | Sonnet 5 | 2 | 10 | 0.20 |
+  | Haiku 4.5 | 1 | 5 | 0.10 |
+  | Fable 5.1 | 10 | 50 | 0.25 |
+
+  The Sonnet 5 introductory price is now standard, so the planned rise to $3/$15 is cancelled.
+- **Recommendation for the owner (decided by research, not applied):**
+  - `MODEL = claude-opus-5-5`. It is cheaper than Opus 5 on every line (−20 % input and output, −60 % cache reads), and the Worker already handles its preserved thinking.
+  - `MODEL_BRIEF`, `MODEL_MOMENT` and `MODEL_SUMMARIZE` = `claude-sonnet-5`. These are short structured-JSON modes, at half Opus 5.5's price.
+  - Keep chat, plan and live on Opus.
+  - Haiku 4.5 is not recommended: the Worker sends adaptive thinking and effort, which were not verified on it.
+  - Switching models inside one conversation (chat ↔ live) loses the prompt cache for that step. Keep chat, plan and live on one model.
+- **Needs owner action:** set the vars in `escobar-worker/wrangler.toml` (or the dashboard) and merge to main to deploy. Worker changes are live only after that merge.

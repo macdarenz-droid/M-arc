@@ -35,10 +35,19 @@ export const PRICES: Record<string, { input: number; output: number; cacheRead: 
   'claude-opus-4-8': { input: 5, output: 25, cacheRead: 0.5 },
   'claude-sonnet-5': { input: 2, output: 10, cacheRead: 0.2 },
   'claude-fable-5-1': { input: 10, output: 50, cacheRead: 0.25 },
+  'claude-fable-5': { input: 10, output: 50, cacheRead: 1 },
+  'claude-haiku-4-5': { input: 1, output: 5, cacheRead: 0.1 },
 };
+// F7: checked against platform.claude.com/docs/en/about-claude/pricing on 2026-09-23.
+
+/** A dated id (claude-opus-5-20260901) uses its alias's price: the longest key it starts with. */
+function priceFor(model: string): { input: number; output: number; cacheRead: number } {
+  const key = Object.keys(PRICES).filter(k => model === k || model.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
+  return PRICES[key ?? 'claude-opus-5']!;
+}
 
 export function estimateCost(u: { inputTokens: number; outputTokens: number; cacheReadTokens: number }, model = 'claude-opus-5'): number {
-  const p = PRICES[model] ?? PRICES['claude-opus-5']!;
+  const p = priceFor(model);
   return (u.inputTokens * p.input + u.outputTokens * p.output + u.cacheReadTokens * p.cacheRead) / 1_000_000;
 }
 

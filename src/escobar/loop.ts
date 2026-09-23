@@ -15,6 +15,7 @@ import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
 import type { ContextRef, Conversation, Fact, ImageBlockRef, ProposalRecord, RenderedTurn, StoredMessage, UserBlock, Usage } from './types';
 import { titleFrom } from './store';
+import { estimateCost } from './state';
 
 export const STEP_BUDGET: Record<EscobarMode, number> = { chat: 8, live: 8, plan: 12, brief: 3, moment: 1, summarize: 1 };
 export const REPAIR_BUDGET = 3;
@@ -72,7 +73,8 @@ export interface LoopDeps {
   /** Photos the model now has; their base64 can leave memory (IndexedDB keeps the thumbnail). */
   imagesSent?(ids: string[]): void;
   applyEffect?(e: MemoryEffect): void;
-  recordUsage?(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number }): void;
+  /** `costUsd`: each step priced by the model that answered it (F7: modes can use different models). */
+  recordUsage?(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number }): void;
   persist?(c: Conversation): void;
   onUpdate?(v: LiveView): void;
   onSafety?(s: SafetySignal): void;
@@ -378,7 +380,7 @@ export class EscobarLoop {
     let stagedExtra: Partial<Conversation> = { ledger: [...this.conversation.ledger, ...brief.facts], briefLines: brief.lines, userTurns: (this.conversation.userTurns ?? 0) + 1 };
     let userCommitted = false;
     let firstAnswer: { parsed: ReturnType<typeof parseDirectives>; unverified: string[] } | null = null;
-    const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
+    const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, costUsd: 0 };
     let steps = 0;
     let budget = STEP_BUDGET[mode];
     let repaired = false;
@@ -416,7 +418,11 @@ export class EscobarLoop {
         const final = r.final!;
         const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage>> } | undefined;
         const its = u?.iterations?.length ? u.iterations : u ? [u] : [];
-        for (const it of its) { usage.inputTokens += it.input_tokens ?? 0; usage.outputTokens += it.output_tokens ?? 0; usage.cacheReadTokens += it.cache_read_input_tokens ?? 0; }
+        for (const it of its) {
+          const step = { inputTokens: it.input_tokens ?? 0, outputTokens: it.output_tokens ?? 0, cacheReadTokens: it.cache_read_input_tokens ?? 0 };
+          usage.inputTokens += step.inputTokens; usage.outputTokens += step.outputTokens; usage.cacheReadTokens += step.cacheReadTokens;
+          usage.costUsd += estimateCost(step, typeof final.model === 'string' ? final.model : undefined);
+        }
         if (staged) {
           const extra: Partial<Conversation> = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
           // QA-R4b-3: the first commit carries this turn's brief lines; after a trim they must not come back.

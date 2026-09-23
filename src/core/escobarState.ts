@@ -97,6 +97,7 @@ export function normalizeEscobar(raw: unknown): EscobarState {
       inputTokens: num(usage.inputTokens) ? usage.inputTokens : 0,
       outputTokens: num(usage.outputTokens) ? usage.outputTokens : 0,
       cacheReadTokens: num(usage.cacheReadTokens) ? usage.cacheReadTokens : 0,
+      ...(num(usage.costUsd) && usage.costUsd >= 0 ? { costUsd: usage.costUsd } : {}),
     },
     legacyImported: raw.legacyImported === true || fresh.legacyImported,
   };
