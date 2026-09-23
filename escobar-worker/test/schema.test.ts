@@ -38,4 +38,10 @@ describe('strict-schema lint (§8, §12.8)', () => {
     expect(strict.length).toBeLessThanOrEqual(20);
     expect(optional).toBeLessThanOrEqual(24);
   });
+  it('keeps union-typed parameters (type arrays or anyOf) in strict tools under the API limit of 16', () => {
+    // The API rejects a request with more than 16 (seen live: "limit: 16 parameters with unions").
+    let unions = 0;
+    for (const t of tools.filter(x => x.strict)) walk(t.input_schema, n => { if (Array.isArray(n.type) || 'anyOf' in n) unions++; });
+    expect(unions).toBeLessThanOrEqual(12);
+  });
 });

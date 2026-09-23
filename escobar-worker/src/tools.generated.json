@@ -850,8 +850,7 @@
      "draft"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "show",
@@ -2185,8 +2184,7 @@
      "replaceExisting"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_schedule",
@@ -2256,8 +2254,7 @@
      "week"
     ],
     "additionalProperties": false
-   },
-   "strict": true
+   }
   },
   {
    "name": "propose_goal",

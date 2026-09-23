@@ -43,9 +43,10 @@ describe('tool schema', () => {
       for (const r of (node.required as string[]) ?? []) expect(Object.keys(node.properties as object), `${t.name}${path} requires ${r}`).toContain(r);
     });
   });
-  it('strict only on action, memory tools and evaluate_plan', () => {
+  it('strict on action and memory tools, except the plan-draft ones (their 7 nullable weekdays each exceed the API union budget; the app validates them)', () => {
+    const PLAN_DRAFT_TOOLS = ['propose_program', 'propose_schedule'];
     for (const t of TOOLS) {
-      const shouldBeStrict = t.kind === 'act' || t.kind === 'memory' || t.name === 'evaluate_plan';
+      const shouldBeStrict = (t.kind === 'act' || t.kind === 'memory') && !PLAN_DRAFT_TOOLS.includes(t.name);
       expect(!!t.strict, t.name).toBe(shouldBeStrict);
     }
   });
