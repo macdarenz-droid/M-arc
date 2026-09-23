@@ -184,3 +184,11 @@ describe('active lifts and one note per lift (BR-05, BR-27)', () => {
     expect(out.filter(i => i.exerciseId === bench && i.category === 'progress')).toHaveLength(1);
   });
 });
+
+describe('heart notes after the session day (BR-26)', () => {
+  it('an effort mismatch from three days ago is no longer shown', () => {
+    const withHeart = (effort: 'easy' | 'ideal' | 'max', peakBpm: number) => ({ kg: 60, reps: 8, effort, heart: { peakBpm, endBpm: peakBpm } });
+    const sessions = [session('2026-09-15', [{ id: bench, sets: [withHeart('ideal', 160), withHeart('ideal', 170), withHeart('ideal', 180), withHeart('max', 190), withHeart('easy', 180)] }])];
+    expect(coachInsights({ ...baseCtx, sessions }, 20).some(i => i.id.startsWith('heart-mismatch'))).toBe(false);
+  });
+});

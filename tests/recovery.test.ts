@@ -197,3 +197,17 @@ describe('calibrateTauScale', () => {
     expect(calibrateTauScale(0.71, 60, 5)).toBeGreaterThanOrEqual(0.7);
   });
 });
+
+describe('recovery top driver (BR-31)', () => {
+  it('names the heaviest-dose exercise with its own set count', () => {
+    const end = Date.parse('2026-09-10T18:00:00.000Z');
+    // Earlier sessions so neither exercise is new or back from a layoff.
+    const prior = steadyStateSessions(140, 5, 'ideal', 3, end - 4 * DAY).map(x => ({ ...x, exercises: [...x.exercises, { exerciseId: 'lib_leg_extension', name: 'Leg extension', sets: sets(30, 15, 'easy', 2) }] }));
+    const s = sessionAt(new Date(end - HOUR).toISOString(), new Date(end).toISOString(), [
+      { id: QUADS_EX, sets: sets(140, 5, 'ideal', 4) },
+      { id: 'lib_leg_extension', sets: sets(30, 15, 'easy', 2) },
+    ]);
+    const q = statusFor([...prior, s], end);
+    expect(q.drivers[0]!.text).toMatch(/: 4 sets$/);
+  });
+});

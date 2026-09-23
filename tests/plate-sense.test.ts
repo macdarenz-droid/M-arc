@@ -236,3 +236,17 @@ describe('inferGym', () => {
     expect(inferGym([at('2026-09-15T18:00:00', 'gone')], gyms, now)).toBeNull();
   });
 });
+
+describe('plateBreakdown finds the best combination (BR-24)', () => {
+  it('90 kg on a 20 kg bar with 25/20/15 plates is 20 + 15 a side', async () => {
+    const { plateBreakdown } = await import('@/brain/units');
+    const b = plateBreakdown(90, { unit: 'kg', barKg: 20, plates: [25, 20, 15] } as never);
+    expect(b.perSide.map(p => ({ value: p.value, count: p.count }))).toEqual([{ value: 20, count: 1 }, { value: 15, count: 1 }]);
+    expect(b.exactTotalKg).toBe(90);
+  });
+  it('uses the fewest plates for a standard set', async () => {
+    const { plateBreakdown } = await import('@/brain/units');
+    const b = plateBreakdown(140, { unit: 'kg', barKg: 20, plates: [25, 20, 15, 10, 5, 2.5, 1.25] } as never);
+    expect(b.perSide.map(p => [p.value, p.count])).toEqual([[25, 2], [10, 1]]);
+  });
+});

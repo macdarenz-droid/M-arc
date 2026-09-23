@@ -419,6 +419,8 @@ export const RULES: Rule[] = [
     id: 'heart.effort-mismatch',
     run: ctx => {
       const last = ctx.sessions[ctx.sessions.length - 1];
+      // BR-26: a post-session note belongs to the day of the session and the day after.
+      if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
       const sets = last.exercises.flatMap(e => e.sets);
       const m = effortMismatch(sets);
@@ -437,6 +439,8 @@ export const RULES: Rule[] = [
     id: 'heart.drift',
     run: ctx => {
       const last = ctx.sessions[ctx.sessions.length - 1];
+      // BR-26: a post-session note belongs to the day of the session and the day after.
+      if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
       for (const ex of last.exercises) {
         const byLoad = new Map<number, typeof ex.sets>();

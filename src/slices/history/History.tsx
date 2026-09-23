@@ -179,7 +179,7 @@ function Stats() {
   const s = state.value;
   const u = unit.value;
   const w = weekSummary(s.sessions, today.value, s.customExercises, plannedPerWeek.value);
-  const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
+  const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
   const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;

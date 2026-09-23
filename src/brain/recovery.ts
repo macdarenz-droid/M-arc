@@ -153,7 +153,7 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
 
   for (const session of sorted) {
     const at = new Date(session.logging?.trainedEndAt || session.endedAt || session.startedAt).getTime();
-    const perMuscle = new Map<MuscleId, { total: number; effortWeighted: number; roleWeightSum: number; topDriver: { text: string; hours: number } | null }>();
+    const perMuscle = new Map<MuscleId, { total: number; effortWeighted: number; roleWeightSum: number; topL: number; topDriver: { text: string; hours: number } | null }>();
     const hardSetIndex = new Map<MuscleId, number>();
     const seenExerciseThisSession = new Set<string>();
 
@@ -183,12 +183,14 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
           const layoffNovelty = layoffDays >= NOVELTY_LAYOFF_DAYS ? NOVELTY_LAYOFF_FACTOR : 1.0;
           const novelty = Math.max(exerciseNovelty, layoffNovelty);
           const L = roleW * e * rF * loadFactor * diminish * damage * novelty;
-          const cur = perMuscle.get(r.muscle) ?? { total: 0, effortWeighted: 0, roleWeightSum: 0, topDriver: null };
+          const cur = perMuscle.get(r.muscle) ?? { total: 0, effortWeighted: 0, roleWeightSum: 0, topL: 0, topDriver: null };
           cur.total += L;
           cur.effortWeighted += EFFORT_STRETCH[set.effort ?? 'ideal'] * L;
           cur.roleWeightSum += roleW;
-          if (!cur.topDriver || L > 0) {
-            const reason = set.effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${Math.round(idx)} sets`;
+          // BR-31: the driver is the set with the biggest dose, and the set count is this exercise's own.
+          if (!cur.topDriver || L > cur.topL) {
+            cur.topL = L;
+            const reason = set.effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${working.length} set${working.length === 1 ? '' : 's'}`;
             cur.topDriver = { text: reason, hours: 0 };
           }
           perMuscle.set(r.muscle, cur);

@@ -34,3 +34,18 @@ describe('personal records', () => {
     expect(allRecords([a, b]).map(r => r.kind)).toEqual(['best_reps']);
   });
 });
+
+describe('records in the display unit (BR-28)', () => {
+  it('an lb user sees the load as typed', async () => {
+    const { allRecords } = await import('@/brain/prs');
+    const { session } = await import('./helpers');
+    const b = 'lib_barbell_bench_press';
+    const s = [
+      session('2026-09-01', [{ id: b, sets: [{ kg: 92.986, entered: { value: 205, unit: 'lb' }, reps: 5, effort: 'ideal' }] }]),
+      session('2026-09-05', [{ id: b, sets: [{ kg: 95.254, entered: { value: 210, unit: 'lb' }, reps: 5, effort: 'ideal' }] }]),
+    ];
+    const heaviest = allRecords(s, [], 'lb').find(r => r.kind === 'heaviest')!;
+    expect(heaviest.detail).toBe('210 lb × 5');
+    expect(allRecords(s).find(r => r.kind === 'heaviest')!.detail).toBe('95.25 kg × 5');
+  });
+});

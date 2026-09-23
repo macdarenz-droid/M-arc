@@ -76,3 +76,13 @@ describe('autoregulationSuggestion', () => {
     expect(autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: set({ kg: 80, reps: 10, effort: 'easy' }), targetKg: 0, targetReps: 8, historyCount: 5 })).toBeNull();
   });
 });
+
+describe('autoregulation without equipment never repeats the load (BR-18)', () => {
+  it('a step that rounds back to the target moves a full 2.5 kg', async () => {
+    const { autoregulationSuggestion } = await import('@/brain/coach/live');
+    const up = autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: { kg: 40, reps: 10, effort: 'easy', fidelity: 'live' }, targetKg: 40, targetReps: 8, historyCount: 5 })!;
+    expect(up.action).toBe('Try 42.5 kg for the next set.');
+    const down = autoregulationSuggestion({ exerciseId: 'x', exerciseName: 'X', firstSet: { kg: 40, reps: 4, effort: 'max', fidelity: 'live' }, targetKg: 40, targetReps: 8, historyCount: 5 })!;
+    expect(down.action).toMatch(/^Drop to 37.5 kg/);
+  });
+});
