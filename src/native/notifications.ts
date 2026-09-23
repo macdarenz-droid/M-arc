@@ -9,6 +9,8 @@ import type { Reminders, Weekday } from '@/core/models';
 import { addDays, parseDay, todayKey, weekdayOf } from '@/core/dates';
 
 const REST_ID = 880001;
+/** QA-R2c-4: the Settings test alert has its own id, so it never cancels a live rest's alert. */
+const TEST_REST_ID = 880002;
 const CHANNELS = {
   rest: { id: 'marc-rest-complete-v3', name: 'Rest complete', importance: 4, vibration: true },
   silent: { id: 'marc-training-silent', name: 'Training day (silent)', importance: 2, vibration: false },
@@ -73,6 +75,26 @@ export async function scheduleRestDone(atMs: number): Promise<void> {
       }],
     });
   } catch { /* best effort */ }
+}
+
+/**
+ * Settings → "Test rest alert": a rest alert in 5 s on its own id. False when notifications are
+ * not allowed or the schedule failed, so the toast never promises an alert that cannot come
+ * (QA-R2c-1). A tap, so it may ask for permission.
+ */
+export async function testRestAlert(inMs = 5000): Promise<boolean> {
+  if (!(await ensurePermission({ prompt: true }))) return false;
+  await ensureChannels();
+  try {
+    await LocalNotifications.schedule({
+      notifications: [{
+        id: TEST_REST_ID, title: 'Rest done', body: 'This is a test. Rest alerts will look like this.',
+        schedule: { at: new Date(Date.now() + inMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
+        isExactNotification: exactOk,
+      }],
+    });
+    return true;
+  } catch { return false; }
 }
 
 export async function cancelRestDone(): Promise<void> {

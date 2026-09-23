@@ -305,3 +305,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R1-9 (low)
 - A reset or restore of Escobar's store bumps `marc.escobar.v1.replaced`. Other tabs listen for it (and for a removed store or a cleared storage) and drop what they hold, so their next save cannot write the old conversations back.
+
+### QA-R2c-1, QA-R2c-4 (low)
+- "Test rest alert" calls `testRestAlert()`. It uses its own notification id (880002), so it no longer cancels a live rest's alert. It asks for permission (it is a tap), and when notifications are refused the toast says so instead of promising an alert. The Health Connect diagnostic part of R2c-1 was done in R5 (`lastHealthError`).

@@ -86,3 +86,24 @@ describe('weekly backup reminder (QA-R6-1)', () => {
     expect(seen).toEqual(['backup', 'training']);
   });
 });
+
+describe('Test rest alert (QA-R2c-1, QA-R2c-4)', () => {
+  it('uses its own id, so the live rest alert stays scheduled', async () => {
+    plugin.checkPermissions.mockResolvedValue({ display: 'granted' });
+    const N = await import('@/native/notifications');
+    await N.scheduleRestDone(Date.now() + 120_000);
+    const live = (plugin.schedule.mock.calls.at(-1) as unknown as [{ notifications: Array<{ id: number }> }])[0].notifications[0]!.id;
+    plugin.cancel.mockClear();
+    expect(await N.testRestAlert()).toBe(true);
+    const test = (plugin.schedule.mock.calls.at(-1) as unknown as [{ notifications: Array<{ id: number }> }])[0].notifications[0]!.id;
+    expect(test).not.toBe(live);
+    expect(plugin.cancel).not.toHaveBeenCalled();
+  });
+  it('reports a refusal instead of promising an alert', async () => {
+    plugin.checkPermissions.mockResolvedValue({ display: 'denied' });
+    plugin.requestPermissions.mockResolvedValue({ display: 'denied' });
+    const N = await import('@/native/notifications');
+    expect(await N.testRestAlert()).toBe(false);
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+});

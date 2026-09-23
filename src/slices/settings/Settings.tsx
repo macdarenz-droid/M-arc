@@ -20,7 +20,7 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
-import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, scheduleRestDone, syncBackupReminder } from '@/native/notifications';
+import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { APP_VERSION } from '@/core/version';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
@@ -152,7 +152,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             {isNative() && !exact && (
               <Row trailing={<Button size="sm" onClick={() => { void requestExactAlarm().then(setExact); }}>Allow</Button>}><span class="small" data-palace="settings.precise-rest">Precise rest alerts</span><div class="hint">Without this, Android may deliver the rest alert a little late.</div></Row>
             )}
-            {isNative() && <Button size="sm" onClick={() => { void scheduleRestDone(Date.now() + 5000); showToast('Lock the phone; an alert should arrive in 5 s'); }}>Test rest alert (5 s)</Button>}
+            {isNative() && <Button size="sm" onClick={() => { void testRestAlert().then(ok => showToast(ok ? 'Lock the phone; an alert should arrive in 5 s' : 'Notifications are off for M/ARC. Turn them on in the phone settings.')); }}>Test rest alert (5 s)</Button>}
             <p class="hint">Your choice stays on even if Android drops the queue. The app re-checks and repairs it when you come back.</p>
           </Card>
         </Section>
