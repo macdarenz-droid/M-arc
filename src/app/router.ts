@@ -1,4 +1,7 @@
 import { signal } from '@preact/signals';
+import { state } from '@/core/store';
+import { findExercise } from '@/core/exercises';
+import { isMuscleId } from '@/data/muscles';
 
 export type Tab = 'today' | 'train' | 'history' | 'body' | 'coach';
 export const TABS: Array<{ id: Tab; label: string }> = [
@@ -6,19 +9,77 @@ export const TABS: Array<{ id: Tab; label: string }> = [
   { id: 'train', label: 'Train' },
   { id: 'history', label: 'History' },
   { id: 'body', label: 'Body' },
-  { id: 'coach', label: 'Coach' },
+  { id: 'coach', label: 'Escobar' },
 ];
 
 function initial(): Tab {
-  const h = location.hash.replace('#', '');
+  const h = typeof location === 'undefined' ? '' : location.hash.replace('#', '');
   return TABS.some(t => t.id === h) ? (h as Tab) : 'today';
 }
 
 export const tab = signal<Tab>(initial());
-export const settingsOpen = signal(false);
+
+/**
+ * Sheets that Escobar (and anything else) can open by id (§7.2). Local sheet state was
+ * lifted here so a palace target can open, e.g., the muscle sheet for quads.
+ */
+export type PanelId =
+  | 'settings' | 'profile' | 'watch' | 'goal' | 'schedule' | 'checkin' | 'muscle'
+  | 'exercise-stats' | 'session' | 'weekly-review' | 'memory';
+export const PANEL_IDS: PanelId[] = ['settings', 'profile', 'watch', 'goal', 'schedule', 'checkin', 'muscle', 'exercise-stats', 'session', 'weekly-review', 'memory'];
+export interface OpenPanel { id: PanelId; params?: Record<string, string> }
+export const openPanel = signal<OpenPanel | null>(null);
+
+export const BODY_VIEWS = ['recovery', 'levels', 'week'] as const;
+export const HISTORY_SEGS = ['log', 'stats'] as const;
+/** The param each panel cannot open without. */
+const REQUIRED: Partial<Record<PanelId, string>> = { muscle: 'muscle', session: 'sessionId', 'exercise-stats': 'exerciseId' };
+
+/** Drops panel params that point at nothing (a made-up muscle, a deleted session), so no sheet renders from them. */
+export function validatePanelParams(_panel: PanelId, params: Record<string, string> | undefined): Record<string, string> | undefined {
+  if (!params) return params;
+  const s = state.value;
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (typeof v !== 'string') continue;
+    if (k === 'muscle' && !isMuscleId(v)) continue;
+    if (k === 'sessionId' && !s.sessions.some(x => x.id === v)) continue;
+    if (k === 'exerciseId' && findExercise(v, s.customExercises)?.id !== v) continue;
+    if (k === 'view' && !(BODY_VIEWS as readonly string[]).includes(v)) continue;
+    if (k === 'seg' && !(HISTORY_SEGS as readonly string[]).includes(v)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+export function showPanel(id: PanelId, params?: Record<string, string>): void {
+  const valid = validatePanelParams(id, params);
+  const need = REQUIRED[id];
+  if (need && !valid?.[need]) return;
+  openPanel.value = valid && Object.keys(valid).length ? { id, params: valid } : { id };
+}
+export function closePanel(id?: PanelId): void {
+  if (!id || openPanel.value?.id === id) openPanel.value = null;
+}
+
+/** A read/write alias onto `openPanel`, so older callers keep `settingsOpen.value = true`. */
+function panelFlag(id: PanelId) {
+  return {
+    get value(): boolean { return openPanel.value?.id === id; },
+    set value(v: boolean) { if (v) showPanel(id); else closePanel(id); },
+  };
+}
+export const settingsOpen = panelFlag('settings');
+export const profileOpen = panelFlag('profile');
+
+/** Per-tab view choices a palace target can set (Body's map view, History's segment). */
+export type BodyView = 'recovery' | 'levels' | 'week';
+export const bodyView = signal<BodyView>('recovery');
+export const historySeg = signal<'log' | 'stats'>('log');
 
 export function go(t: Tab): void {
+  if (tab.value !== t) openPanel.value = null;
   tab.value = t;
   try { history.replaceState(null, '', `#${t}`); } catch { /* ignore */ }
-  window.scrollTo({ top: 0 });
+  try { window.scrollTo({ top: 0 }); } catch { /* ignore */ }
 }

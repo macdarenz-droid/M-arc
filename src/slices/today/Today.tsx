@@ -1,15 +1,18 @@
 import { useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { insights, recovery, scheduledSplit, sessionsToday, streak, today, week } from '@/app/selectors';
+import { insights, recovery, scheduledSplit, sessionsToday, streak, today, todayReadiness, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
-import { formatDay, formatHours } from '@/core/dates';
+import { usePalaceFocus } from '@/escobar/palace/focus';
+import { daysBetween, formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
+import { mindsetForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
-import { startSession } from '../workout/session';
+import { requestStart } from '../workout/Train';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
@@ -31,24 +34,28 @@ export function Today() {
   const top = insights.value[0];
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
   const spark = SPARKS[dayIndex]!;
+  // ST-17: on odd days of the year a mindset note takes the quote slot.
+  const dayOfYear = daysBetween(`${today.value.slice(0, 4)}-01-01`, today.value) + 1;
+  const mindset = mindsetForDay(dayOfYear);
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
   const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';
+  usePalaceFocus('today.header', { status });
 
   return (
     <div class="view">
-      <div class="topbar">
+      <div class="topbar" data-palace="today.header">
         <div>
           <div class="row" style={{ gap: 8, marginBottom: 6 }}><LogoMark size={22} /><span class="eyebrow">{formatDay(today.value, { weekday: 'long', day: 'numeric', month: 'long' })}</span></div>
           <h1>{greeting()}{s.profile.name ? `, ${s.profile.name}` : ''}</h1>
         </div>
         <div class="row">
           {streak.value > 0 && <Chip tone="warning"><IconFlame size={14} /> {streak.value}</Chip>}
-          <Button variant="quiet" class="btn-icon" aria-label="Settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
+          <Button variant="quiet" class="btn-icon" aria-label="Settings" data-palace="today.settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
         </div>
       </div>
 
-      <Card class="card-accent">
+      <Card class="card-accent" data-palace="today.session-card">
         {status === 'live' && (
           <div class="stack-sm">
             <div class="eyebrow">Session in progress</div>
@@ -70,7 +77,7 @@ export function Today() {
             <div class="eyebrow">Scheduled today</div>
             <h2>{split.name}</h2>
             <p class="muted small">{split.exercises.length} exercises planned.</p>
-            <Button variant="primary" onClick={() => { startSession(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
           </div>
         )}
         {status === 'rest' && (
@@ -83,7 +90,9 @@ export function Today() {
         )}
       </Card>
 
-      <Section title="This week" aside={<span class="small muted">{w.grade.title}</span>}>
+      <ReadinessCard />
+
+      <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
           <div class="grid-3">
             <Stat value={w.workouts} label="workouts" />
@@ -94,7 +103,7 @@ export function Today() {
         </Card>
       </Section>
 
-      <Section title="Recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
+      <Section title="Recovery" palace="today.recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
         <Card>
           <div class="row" style={{ alignItems: 'flex-start' }}>
             <div style={{ width: 120, flex: 'none' }}><MuscleMap values={values} mode="recovery" compact /></div>
@@ -112,25 +121,55 @@ export function Today() {
         </Card>
       </Section>
 
-      {top && (
-        <Section title="Coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+      <Section title="Coach" palace="today.coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+        {top ? (
           <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
             <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>
             <h3 style={{ margin: '4px 0 6px' }}>{top.title}</h3>
             <p class="small muted">{top.action}</p>
           </Card>
-        </Section>
-      )}
+        ) : <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
+      </Section>
 
       {s.preferences.showSpark && (
-        <Section title="Daily spark">
+        <Section title="Daily spark" palace="today.spark">
           <Card class="card-quiet">
-            <div class="eyebrow">{spark.topic}</div>
-            <p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p>
-            <span class="hint">{spark.by}</span>
+            {mindset ? (
+              <><div class="eyebrow">Mindset</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{mindset.title}</p><span class="hint">{mindset.text}</span></>
+            ) : (
+              <><div class="eyebrow">{spark.topic}</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p><span class="hint">{spark.by}</span></>
+            )}
           </Card>
         </Section>
       )}
     </div>
+  );
+}
+
+const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
+const ADVICE_COPY = { normal: null, no_increase: 'Keep loads steady today — skip any increases.', reduce: 'Keep the load, but consider one fewer set.' } as const;
+
+/** F2.1: a tier with reasons above "This week", or a quiet connect/check-in prompt when there is nothing to show yet. */
+function ReadinessCard() {
+  const r = todayReadiness.value;
+  if (!r) {
+    return (
+      <Section title="Readiness" palace="today.readiness">
+        <Card class="card-quiet"><p class="small muted">Connect a watch or add a check-in to see your readiness.</p></Card>
+      </Section>
+    );
+  }
+  const advice = ADVICE_COPY[r.loadAdvice];
+  return (
+    <Section title="Readiness" palace="today.readiness">
+      <Card class={r.band === 'red' ? 'card-accent' : ''}>
+        <div class="row-between">
+          <h2 style={{ margin: 0 }}>{BAND_LABEL[r.band]}{r.calibrating ? ' · calibrating' : ''}</h2>
+          <span class="row" style={{ gap: 6 }}><span class="num small muted">{r.score}</span><AskAbout refTo={{ kind: 'readiness', id: 'today', label: 'Today’s readiness' }} /></span>
+        </div>
+        {r.drivers.length > 0 && <p class="small muted" style={{ marginTop: 6 }}>{r.drivers.join('. ')}.</p>}
+        {advice && <p class="small" style={{ marginTop: 6 }}>{advice}</p>}
+      </Card>
+    </Section>
   );
 }

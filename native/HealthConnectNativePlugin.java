@@ -26,6 +26,8 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,7 +38,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@CapacitorPlugin(name = "HealthConnectNative")
+@CapacitorPlugin(
+        name = "HealthConnectNative",
+        permissions = {
+                @Permission(alias = "health", strings = {
+                        "android.permission.health.READ_STEPS",
+                        "android.permission.health.READ_SLEEP",
+                        "android.permission.health.READ_HEART_RATE",
+                        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+                        "android.permission.health.READ_RESTING_HEART_RATE",
+                })
+        }
+)
 public class HealthConnectNativePlugin extends Plugin {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
@@ -55,11 +68,39 @@ public class HealthConnectNativePlugin extends Plugin {
                 getContext().checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    static final String P_STEPS = "android.permission.health.READ_STEPS";
+    static final String P_SLEEP = "android.permission.health.READ_SLEEP";
+    static final String P_HEART = "android.permission.health.READ_HEART_RATE";
+    static final String P_CALORIES = "android.permission.health.READ_ACTIVE_CALORIES_BURNED";
+    static final String P_RESTING = "android.permission.health.READ_RESTING_HEART_RATE";
+    static final String[] ALL = { P_STEPS, P_SLEEP, P_HEART, P_CALORIES, P_RESTING };
+
+    /** True when at least one data type may be read: each type is read on its own, so one refusal never blocks the rest. */
     private boolean hasReadPermissions() {
-        return hasHealthPermission("android.permission.health.READ_STEPS") &&
-                hasHealthPermission("android.permission.health.READ_SLEEP") &&
-                hasHealthPermission("android.permission.health.READ_HEART_RATE") &&
-                hasHealthPermission("android.permission.health.READ_ACTIVE_CALORIES_BURNED");
+        for (String p : ALL) if (hasHealthPermission(p)) return true;
+        return false;
+    }
+
+    private boolean hasAllReadPermissions() {
+        for (String p : ALL) if (!hasHealthPermission(p)) return false;
+        return true;
+    }
+
+    private JSArray missingPermissions() {
+        JSArray out = new JSArray();
+        for (String p : ALL) if (!hasHealthPermission(p)) out.put(p.substring(p.lastIndexOf('.') + 1));
+        return out;
+    }
+
+    /** Reads one record type if its permission is granted; a refusal or error for that type yields an empty list and is noted. */
+    private <T extends Record> List<T> readIfGranted(String permission, Class<T> cls, Instant start, Instant end, JSArray failed) {
+        if (!hasHealthPermission(permission)) return new ArrayList<>();
+        try {
+            return readRecords(cls, start, end);
+        } catch (Exception e) {
+            failed.put(cls.getSimpleName() + ": " + e.getClass().getSimpleName());
+            return new ArrayList<>();
+        }
     }
 
     @PluginMethod
@@ -87,6 +128,28 @@ public class HealthConnectNativePlugin extends Plugin {
         } catch (Exception e) {
             call.reject("Unable to open Health Connect permissions", e);
         }
+    }
+
+    @PluginMethod
+    public void requestPermissions(PluginCall call) {
+        if (!platformAvailable()) {
+            call.reject("Health Connect requires Android 14 or newer on this build.");
+            return;
+        }
+        if (hasAllReadPermissions()) {
+            JSObject out = new JSObject();
+            out.put("granted", true);
+            call.resolve(out);
+            return;
+        }
+        requestPermissionForAlias("health", call, "healthPermissionsCallback");
+    }
+
+    @PermissionCallback
+    private void healthPermissionsCallback(PluginCall call) {
+        JSObject out = new JSObject();
+        out.put("granted", hasReadPermissions());
+        call.resolve(out);
     }
 
     private static class Holder<T> {
@@ -171,12 +234,13 @@ public class HealthConnectNativePlugin extends Plugin {
             try {
                 Instant end = Instant.now();
                 Instant start = end.minus(2, ChronoUnit.DAYS);
+                JSArray failed = new JSArray();
 
-                List<StepsRecord> stepsRecords = readRecords(StepsRecord.class, start, end);
-                List<SleepSessionRecord> sleepRecords = readRecords(SleepSessionRecord.class, start, end);
-                List<RestingHeartRateRecord> restingRecords = readRecords(RestingHeartRateRecord.class, start, end);
-                List<HeartRateRecord> heartRecords = readRecords(HeartRateRecord.class, start, end);
-                List<ActiveCaloriesBurnedRecord> calorieRecords = readRecords(ActiveCaloriesBurnedRecord.class, start, end);
+                List<StepsRecord> stepsRecords = readIfGranted(P_STEPS, StepsRecord.class, start, end, failed);
+                List<SleepSessionRecord> sleepRecords = readIfGranted(P_SLEEP, SleepSessionRecord.class, start, end, failed);
+                List<RestingHeartRateRecord> restingRecords = readIfGranted(P_RESTING, RestingHeartRateRecord.class, start, end, failed);
+                List<HeartRateRecord> heartRecords = readIfGranted(P_HEART, HeartRateRecord.class, start, end, failed);
+                List<ActiveCaloriesBurnedRecord> calorieRecords = readIfGranted(P_CALORIES, ActiveCaloriesBurnedRecord.class, start, end, failed);
 
                 long steps = 0;
                 Instant stepsTime = null;
@@ -224,6 +288,8 @@ public class HealthConnectNativePlugin extends Plugin {
 
                 JSObject out = new JSObject();
                 out.put("needsPermission", false);
+                out.put("missing", missingPermissions());
+                out.put("failed", failed);
                 out.put("steps", steps);
                 out.put("sleepMinutes", sleepMinutes);
                 out.put("restingHR", resting);
@@ -258,10 +324,11 @@ public class HealthConnectNativePlugin extends Plugin {
             try {
                 Instant end = Instant.now();
                 Instant start = end.minus(7, ChronoUnit.DAYS);
-                List<SleepSessionRecord> sleep = readRecords(SleepSessionRecord.class, start, end);
-                List<RestingHeartRateRecord> resting = readRecords(RestingHeartRateRecord.class, start, end);
-                List<HeartRateRecord> heart = readRecords(HeartRateRecord.class, start, end);
-                List<ActiveCaloriesBurnedRecord> calories = readRecords(ActiveCaloriesBurnedRecord.class, start, end);
+                JSArray failed = new JSArray();
+                List<SleepSessionRecord> sleep = readIfGranted(P_SLEEP, SleepSessionRecord.class, start, end, failed);
+                List<RestingHeartRateRecord> resting = readIfGranted(P_RESTING, RestingHeartRateRecord.class, start, end, failed);
+                List<HeartRateRecord> heart = readIfGranted(P_HEART, HeartRateRecord.class, start, end, failed);
+                List<ActiveCaloriesBurnedRecord> calories = readIfGranted(P_CALORIES, ActiveCaloriesBurnedRecord.class, start, end, failed);
 
                 int samples = 0;
                 for (HeartRateRecord r : heart) samples += r.getSamples().size();
@@ -277,6 +344,8 @@ public class HealthConnectNativePlugin extends Plugin {
                 out.put("heartRateSamples", samples);
                 out.put("activeCalorieRecords", calories.size());
                 out.put("activeCaloriesTotal", Math.round(totalCalories));
+                out.put("missing", missingPermissions());
+                out.put("failed", failed);
                 call.resolve(out);
             } catch (Exception e) {
                 call.reject("Health Connect diagnostic failed", e);

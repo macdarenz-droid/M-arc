@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.json && vite build && node scripts/sw-version.mjs",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run && MARC_PERF=1 vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check": "npm run typecheck && npm run test && npm run build",
@@ -17,7 +17,9 @@
     "cap:copy": "cap copy android",
     "gate": "node scripts/screenshot-gate.mjs",
     "convert-backup": "esbuild scripts/convert-legacy-backup.ts --bundle --platform=node --format=esm --alias:@=./src --log-level=warning --outfile=node_modules/.cache/convert-backup.mjs && node node_modules/.cache/convert-backup.mjs",
-    "logo": "esbuild src/theme/themes.ts --bundle --format=esm --outfile=node_modules/.cache/logo-themes.mjs --log-level=warning && esbuild src/svg/logo.ts --bundle --format=esm --outfile=node_modules/.cache/logo-svg.mjs --log-level=warning && node scripts/render-logo.mjs"
+    "logo": "esbuild src/theme/themes.ts --bundle --format=esm --outfile=node_modules/.cache/logo-themes.mjs --log-level=warning && esbuild src/svg/logo.ts --bundle --format=esm --outfile=node_modules/.cache/logo-svg.mjs --log-level=warning && node scripts/render-logo.mjs",
+    "escobar:tools": "node scripts/escobar-tools.mjs",
+    "test:tz": "TZ=America/New_York vitest run && TZ=Asia/Manila vitest run"
   },
   "dependencies": {
     "@capacitor/android": "8.5.0",

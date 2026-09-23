@@ -1,18 +1,28 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, today, week } from '@/app/selectors';
+import { insights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
-import { GOALS, type GoalId } from '@/data/goals';
+import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
+import { trainingAgeMonths } from '@/brain/recovery';
+import { profileCompleteness } from '@/brain/onboarding';
+import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart, daysBetween, addDays, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
+import { profileFor } from '@/slices/workout/units';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
 import { resyncReminders } from '../settings/reminders';
+import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
+import { acceptDeload, saveInsightFeedback } from './coach';
+import { closePanel, showPanel } from '@/app/router';
+import { usePalaceFocus } from '@/escobar/palace/focus';
+import { Hall } from '@/escobar/ui/Hall';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -22,8 +32,8 @@ export function Coach() {
   const s = state.value;
   const list = insights.value;
   const [openInsight, setOpenInsight] = useState<Insight | null>(null);
-  const [goalOpen, setGoalOpen] = useState(false);
   const w = week.value;
+  usePalaceFocus('coach.header');
   const goal = GOALS.find(g => g.id === s.goal)!;
   const lastExercise = useMemo(() => { const last = s.sessions[s.sessions.length - 1]; return last?.exercises[0] ? findExercise(last.exercises[0].exerciseId, s.customExercises) : undefined; }, [s.sessions]);
   const [cueSeed, setCueSeed] = useState(0);
@@ -31,68 +41,104 @@ export function Coach() {
 
   return (
     <div class="view">
-      <div class="topbar"><div><div class="eyebrow">Coach</div><h1>What to do next</h1></div></div>
+      <div class="topbar" data-palace="coach.header"><div><div class="eyebrow">Escobar</div><h1>What to do next</h1></div></div>
 
-      <Card class="card-accent">
+      <Hall />
+
+      <WeeklyReviewCard />
+      <DeloadCard />
+
+      <Card class="card-accent" data-palace="coach.week-line">
         <div class="eyebrow">This week in one line</div>
         <p style={{ marginTop: 6 }}>{w.workouts} workout{w.workouts === 1 ? '' : 's'}, {w.sets} sets{w.records.length ? `, ${w.records.length} record${w.records.length > 1 ? 's' : ''}` : ''}. {w.grade.note}</p>
       </Card>
 
-      <Section title="Insights">
+      <Section title="Escobar’s notes" palace="coach.insights">
         <div class="stack-sm">
           {list.map(i => (
             <Card key={i.id} class="insight card-press" style={{ '--insight': INSIGHT_COLOR[i.category] }} onClick={() => setOpenInsight(i)}>
-              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+              <div class="row-between"><span class="insight-cat">{CATEGORY_LABEL[i.category]}</span><span class="row" style={{ gap: 4 }}><AskAbout refTo={{ kind: 'insight', id: i.id, label: i.title }} /><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></span></div>
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
+              <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>
+                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'helpful')}>Helpful</Button>
+                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'snoozed')}>Not now</Button>
+              </div>
             </Card>
           ))}
           {!list.length && <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
         </div>
       </Section>
+      <InsightFeedbackLog />
 
-      <Section title="Training goal" aside={<Button variant="quiet" size="sm" onClick={() => setGoalOpen(true)}>Change</Button>}>
-        <Card class="card-press" onClick={() => setGoalOpen(true)}>
-          <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.reps[0]}–{goal.reps[1]} reps{goal.accessoryReps ? ` (accessories ${goal.accessoryReps[0]}–${goal.accessoryReps[1]})` : ''}</div>
+      <Section title="Training goal" palace="coach.goal" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('goal')}>Change</Button>}>
+        <Card class="card-press" onClick={() => showPanel('goal')}>
+          <b>{goal.name}</b><div class="hint">{goal.tagline} · {goal.mainReps[0]}–{goal.mainReps[1]} reps (accessories {goal.accessoryReps[0]}–{goal.accessoryReps[1]})</div>
         </Card>
       </Section>
 
       <Schedule />
 
       {cue && (
-        <Section title={cue.kind === 'learn' ? 'Worth knowing' : 'Coach tip'} aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
+        <Section title={cue.kind === 'learn' ? 'Worth knowing' : 'Coach tip'} palace="coach.tip" aside={<Button variant="quiet" size="sm" onClick={() => setCueSeed(n => n + 1)}>Another</Button>}>
           <Card class="card-quiet"><b class="small">{cue.title}</b><p class="small muted" style={{ marginTop: 4 }}>{cue.text}</p>{lastExercise && <span class="hint">About {lastExercise.name}</span>}</Card>
         </Section>
       )}
 
-      <Section title="How the coach thinks">
+      <WhatCoachCanSee />
+
+      <Section title="How the coach thinks" palace="coach.thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery windows are 24, 48 or 72 hours depending on effort, and they only ever widen when your own history shows you need it.</p>
+            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
           </div>
         </Card>
       </Section>
 
       {openInsight && <InsightSheet insight={openInsight} onClose={() => setOpenInsight(null)} />}
-      {goalOpen && (
-        <Sheet title="Training goal" onClose={() => setGoalOpen(false)}>
-          <div class="stack-sm">
-            <p class="small muted">Your goal changes rep targets and the effort window. It does not change the exercises.</p>
-            {GOALS.map(g => <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { update(x => ({ ...x, goal: g.id as GoalId })); setGoalOpen(false); }}><b>{g.name}</b><div class="hint">{g.tagline} · {g.reps[0]}–{g.reps[1]} reps · {g.bestFor}</div></Card>)}
-          </div>
-        </Sheet>
-      )}
     </div>
+  );
+}
+
+/** Shared by the Coach tab and the profile dashboard: pick a goal, then offer its rest suggestion and templates. */
+export function GoalSheet({ onClose }: { onClose: () => void }) {
+  const s = state.value;
+  const [changedTo, setChangedTo] = useState<GoalId | null>(null);
+  const picked = changedTo ? GOAL_BY_ID[changedTo] : null;
+
+  return (
+    <Sheet title="Training goal" onClose={onClose} palace="panel.goal">
+      {!picked ? (
+        <div class="stack-sm">
+          <p class="small muted">Your goal sets rep targets, effort target, rest suggestion, weekly heavy-set and volume guidance and the weight trend the coach watches. It does not change your exercises.</p>
+          {GOALS.map(g => (
+            <Card key={g.id} class="card-press" style={{ borderColor: g.id === s.goal ? 'var(--accent)' : undefined }} onClick={() => { changeGoal(g.id); setChangedTo(g.id); }}>
+              <b>{g.name}</b><div class="hint">{g.tagline} · {g.mainReps[0]}–{g.mainReps[1]} reps · {g.bestFor}</div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div class="stack-sm">
+          <Card class="card-accent">
+            <b>{picked.name}</b>
+            <div class="hint">Main lifts {picked.mainReps[0]}–{picked.mainReps[1]} reps, accessories {picked.accessoryReps[0]}–{picked.accessoryReps[1]}. Your splits keep their exercises.</div>
+          </Card>
+          <Button onClick={() => applyGoalRest(picked.id)}>Apply {picked.restDefaultSec}s rest</Button>
+          <Button variant="quiet" onClick={() => addGoalTemplates(picked.id)}>Add starter templates for this goal</Button>
+          <Button variant="primary" onClick={onClose}>Done</Button>
+        </div>
+      )}
+    </Sheet>
   );
 }
 
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
-  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises) : null;
+  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises, { deload: activeDeload.value, equipment: profileFor(ex.id) }) : null;
   const hist = ex ? exerciseHistory(s.sessions, ex.id, s.customExercises).slice(-5).reverse() : [];
   return (
     <Sheet title={insight.title} onClose={onClose}>
@@ -112,8 +158,23 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
 
 function Schedule() {
   const s = state.value;
-  const [open, setOpen] = useState(false);
   const active = WEEKDAYS.filter(d => s.schedule[d]);
+  return (
+    <Section title="Weekly schedule" palace="coach.schedule" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('schedule')}>Edit</Button>}>
+      <Card class="card-press" onClick={() => showPanel('schedule')}>
+        <div class="row" style={{ justifyContent: 'space-between' }}>
+          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
+        </div>
+        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
+      </Card>
+    </Section>
+  );
+}
+
+/** Weekly schedule editor, opened as the `schedule` panel. */
+export function ScheduleSheet({ onClose }: { onClose: () => void }) {
+  const s = state.value;
+  usePalaceFocus('panel.schedule');
   const set = (d: Weekday, id: string | null) => { update(x => ({ ...x, schedule: { ...x.schedule, [d]: id } })); void resyncReminders(); };
   const autoArrange = (n: number) => {
     const slots: Record<number, Weekday[]> = { 1: ['mon'], 2: ['mon', 'thu'], 3: ['mon', 'wed', 'fri'], 4: ['mon', 'tue', 'thu', 'sat'], 5: ['mon', 'tue', 'wed', 'fri', 'sat'], 6: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'], 7: [...WEEKDAYS] };
@@ -123,26 +184,154 @@ function Schedule() {
     update(x => ({ ...x, schedule: sched })); void resyncReminders();
   };
   return (
-    <Section title="Weekly schedule" aside={<Button variant="quiet" size="sm" onClick={() => setOpen(true)}>Edit</Button>}>
-      <Card class="card-press" onClick={() => setOpen(true)}>
-        <div class="row" style={{ justifyContent: 'space-between' }}>
-          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
-        </div>
-        <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
-      </Card>
-      {open && (
-        <Sheet title="Weekly schedule" onClose={() => setOpen(false)}>
+    <Sheet title="Weekly schedule" onClose={onClose} palace="panel.schedule">
+      <div class="stack">
+        {!s.splits.length && <p class="small muted">Create a split first, then assign it to days.</p>}
+        {WEEKDAYS.map(d => (
+          <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
+            <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
+          </div>
+        ))}
+        {s.splits.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 6 }}>Quick arrange</div><div class="wrap">{[2, 3, 4, 5, 6].map(n => <Chip key={n} onClick={() => autoArrange(n)}>{n} days</Chip>)}</div></div>}
+      </div>
+    </Sheet>
+  );
+}
+
+/** Pinned at the top of Coach on the first open of a new week with >=5 logged days, until dismissed. */
+function WeeklyReviewCard() {
+  const s = state.value;
+  const thisWeek = weekStart(today.value);
+  const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
+  const enough = weekHasEnoughData(s.sessions, today.value);
+  if (dismissed || !enough) return null;
+  const items = useWeeklyReviewItems();
+  return (
+    <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
+      <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
+      <p style={{ marginTop: 6 }}>{items.length ? `${items.length} thing${items.length > 1 ? 's' : ''} worth knowing about this week.` : 'Steady week — nothing stands out either way.'}</p>
+    </Card>
+  );
+}
+
+function useWeeklyReviewItems() {
+  const s = state.value;
+  const exerciseIds = useMemo(() => {
+    const names = new Map<string, string>();
+    for (const sess of [...s.sessions].reverse()) for (const e of sess.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
+    return [...names].map(([id, name]) => ({ id, name }));
+  }, [s.sessions]);
+  const items = weeklyReviewInsights({
+    sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds,
+  }, 6);
+  return items;
+}
+
+/** The weekly review, opened as the `weekly-review` panel (from its card or by Escobar). */
+export function WeeklyReviewSheet({ onClose }: { onClose: () => void }) {
+  const items = useWeeklyReviewItems();
+  usePalaceFocus('panel.weekly-review');
+  const dismiss = () => { const wk = weekStart(today.value); update(x => ({ ...x, weeklyReviewDismissedWeek: wk })); };
+  const setOpen = (_: boolean) => { closePanel('weekly-review'); onClose(); };
+  return (
+        <Sheet title="Weekly review" onClose={onClose} palace="panel.weekly-review">
           <div class="stack">
-            {!s.splits.length && <p class="small muted">Create a split first, then assign it to days.</p>}
-            {WEEKDAYS.map(d => (
-              <div key={d} class="row"><span style={{ width: 44 }} class="small">{WEEKDAY_LABEL[d]}</span>
-                <select class="grow" value={s.schedule[d] ?? ''} onChange={e => set(d, (e.target as HTMLSelectElement).value || null)}><option value="">Rest</option>{s.splits.map(sp => <option key={sp.id} value={sp.id}>{sp.name}</option>)}</select>
-              </div>
+            {items.map(i => (
+              <Card key={i.id} class="card-quiet">
+                <b class="small">{i.title}</b>
+                <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
+                <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
+              </Card>
             ))}
-            {s.splits.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 6 }}>Quick arrange</div><div class="wrap">{[2, 3, 4, 5, 6].map(n => <Chip key={n} onClick={() => autoArrange(n)}>{n} days</Chip>)}</div></div>}
+            {!items.length && <p class="small muted">Nothing stood out this week, good or bad.</p>}
+            <Button variant="quiet" onClick={() => { dismiss(); setOpen(false); }}>Dismiss until next week</Button>
           </div>
         </Sheet>
+  );
+}
+
+/** F3.3: the active lighter week, or the coach's offer of one. Never shows both at once. */
+function DeloadCard() {
+  const active = activeDeload.value;
+  const suggestion = deloadSuggestion.value;
+  if (!active && !suggestion.suggest) return null;
+  return (
+    <Card class="card-accent">
+      {active ? (
+        <>
+          <div class="eyebrow">Lighter week</div>
+          <p style={{ marginTop: 6 }}>Day {Math.min(7, Math.max(1, daysBetween(active.startDay, today.value) + 1))} of 7. {active.reason}</p>
+          <p class="hint" style={{ marginTop: 4 }}>Sets and load are reduced across your plan through {active.endDay}.</p>
+        </>
+      ) : (
+        <>
+          <div class="eyebrow">Coach suggestion</div>
+          <p style={{ marginTop: 6 }}>{suggestion.reason}</p>
+          <Button style={{ marginTop: 8 }} onClick={() => acceptDeload(suggestion.reason)}>Take a lighter week</Button>
+        </>
       )}
+    </Card>
+  );
+}
+
+/** F3.6: a friendly label from an insight id's stable prefix, e.g. "volume:chest" -> "Volume". Feedback only keeps id/day/verdict, not the insight's own words, since those can change after the fact. */
+function labelForInsight(id: string): string {
+  const key = (id.split(':')[0] ?? id).replace(/[-_]/g, ' ');
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+/** F3.6: a short log of recent "Helpful"/"Not now" taps, so feedback does not just vanish. */
+function InsightFeedbackLog() {
+  const s = state.value;
+  const cutoff = addDays(today.value, -30);
+  const items = s.insightFeedback.filter(f => f.day >= cutoff).slice().reverse().slice(0, 10);
+  if (!items.length) return null;
+  return (
+    <Section title="Earlier this month">
+      <Card class="card-quiet">
+        <div class="list">
+          {items.map((f, i) => (
+            <Row key={`${f.id}:${f.day}:${i}`} trailing={<span class="hint">{f.verdict === 'helpful' ? 'Helpful' : 'Not now'}</span>}>
+              <span class="small">{labelForInsight(f.id)}</span>
+              <div class="hint">{f.day}</div>
+            </Row>
+          ))}
+        </div>
+      </Card>
+    </Section>
+  );
+}
+
+/** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
+function WhatCoachCanSee() {
+  const s = state.value;
+  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0);
+  const ratedShare = recentSets.length ? recentSets.filter(x => x.effort).length / recentSets.length : null;
+  const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
+  const completeness = profileCompleteness(s.profile);
+  const todayCheckIn = s.checkIns.find(c => c.day === today.value);
+  const rows: Array<{ label: string; value: string; unlocks?: string }> = [
+    { label: 'Sets logged', value: `${s.sessions.reduce((a, x) => a + x.exercises.reduce((b, e) => b + e.sets.length, 0), 0)} total` },
+    { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet', unlocks: ratedShare == null || ratedShare < 0.5 ? 'Rate sets so the coach can judge hard vs easy.' : undefined },
+    { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
+    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
+    { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
+    { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
+    { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
+  ];
+  return (
+    <Section title="What the coach can see" palace="coach.sees">
+      <Card class="card-quiet">
+        <div class="list">
+          {rows.map(r => (
+            <Row key={r.label} trailing={<span class="hint num">{r.value}</span>}>
+              <span class="small">{r.label}</span>
+              {r.unlocks && <div class="hint">{r.unlocks}</div>}
+            </Row>
+          ))}
+        </div>
+      </Card>
     </Section>
   );
 }

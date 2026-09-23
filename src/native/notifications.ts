@@ -16,6 +16,27 @@ const CHANNELS = {
   alert: { id: 'marc-training-alert', name: 'Training day (alert)', importance: 4, vibration: true },
 } as const;
 
+/**
+ * Whether Android lets this app schedule exact alarms (UI-02, PL-09). Cached; refreshed on
+ * resume. Plugin 8.3.x opens the "Alarms & reminders" screen on any exact schedule() it is not
+ * allowed to make, so nothing here schedules exact unless this is already granted.
+ */
+let exactOk = false;
+export const exactAlarmsAllowed = (): boolean => exactOk;
+
+export async function refreshExactAlarm(): Promise<boolean> {
+  if (!isNative()) { exactOk = false; return false; }
+  try { exactOk = (await LocalNotifications.checkExactNotificationSetting()).exact_alarm === 'granted'; } catch { exactOk = false; }
+  return exactOk;
+}
+
+/** Settings → "Precise rest alerts": the one place that opens the system screen, on a tap. */
+export async function requestExactAlarm(): Promise<boolean> {
+  if (!isNative()) return false;
+  try { await LocalNotifications.changeExactNotificationSetting(); } catch { /* not supported on this Android */ }
+  return refreshExactAlarm();
+}
+
 let channelsReady = false;
 async function ensureChannels(): Promise<void> {
   if (channelsReady || !isNative()) return;
@@ -43,6 +64,7 @@ export async function scheduleRestDone(atMs: number): Promise<void> {
       notifications: [{
         id: REST_ID, title: 'Rest done', body: 'Back to it. Your next set is ready.',
         schedule: { at: new Date(atMs), allowWhileIdle: true }, channelId: CHANNELS.rest.id, extra: { type: 'rest' },
+        isExactNotification: exactOk,
       }],
     });
   } catch { /* best effort */ }
@@ -58,8 +80,10 @@ export interface ReminderHealth { status: string; queued: number; ok: boolean }
 /**
  * Re-sync training reminders for the next 8 weeks from the schedule.
  * Returns a plain-words status; never changes the user's preference.
+ * `todayReadinessSummary` (F3.8) replaces today's body only: a day further out cannot know its
+ * own readiness yet, since that depends on health data that has not happened.
  */
-export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>): Promise<ReminderHealth> {
+export async function syncTrainingReminders(reminders: Reminders, schedule: Record<Weekday, string | null>, splitName: (id: string) => string, completedDays: Set<string>, todayReadinessSummary?: string | null): Promise<ReminderHealth> {
   if (!isNative()) return { status: 'Reminders need the Android app.', queued: 0, ok: false };
   await ensureChannels();
   let pending: Array<{ id: number }> = [];
@@ -79,10 +103,13 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
     at.setHours(hh ?? 17, mm ?? 30, 0, 0);
     if (at.getTime() <= Date.now()) continue;
     const [y, m, d] = day.split('-').map(Number);
+    const body = reminders.readinessSummary && day === today && todayReadinessSummary ? todayReadinessSummary : `${splitName(splitId)} is ready when you are.`;
     list.push({
       id: 730000 + (((y ?? 0) * 372 + (m ?? 0) * 31 + (d ?? 0)) % 90000),
-      title: 'Training day', body: `${splitName(splitId)} is ready when you are.`,
+      title: 'Training day', body,
       schedule: { at, allowWhileIdle: true }, channelId: CHANNELS[reminders.style].id, extra: { type: 'training', day, splitId },
+      // A reminder a few minutes late is fine; never trigger the exact-alarm settings screen for it.
+      isExactNotification: false,
     });
   }
   if (!list.length) return { status: 'On. No upcoming scheduled days.', queued: 0, ok: true };
@@ -97,5 +124,7 @@ export async function syncTrainingReminders(reminders: Reminders, schedule: Reco
 
 export function onNotificationTap(handler: () => void): void {
   if (!isNative()) return;
-  LocalNotifications.addListener('localNotificationActionPerformed', handler).catch(() => undefined);
+  try {
+    Promise.resolve(LocalNotifications.addListener('localNotificationActionPerformed', handler)).catch(() => undefined);
+  } catch { /* tapping a reminder just opens the app */ }
 }

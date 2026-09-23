@@ -38,8 +38,8 @@ function fnv(s: string): number {
   return h;
 }
 
-/** Rank: exercise-specific first, then movement, muscle, equipment, general. */
-function lane(c: Cue, ex: Exercise): number {
+/** Rank: exercise-specific first, then movement, muscle, equipment, general. -1 when the cue never applies. */
+export function lane(c: Cue, ex: Exercise): number {
   if (c.exerciseIds?.includes(ex.id)) return 0;
   if (c.patterns?.includes(ex.pattern)) return 1;
   if (c.muscles?.some(m => ex.primary.includes(m as never))) return 2;
@@ -58,4 +58,35 @@ export function pickCue(exercise: Exercise, kind: Cue['kind'], seed: string, rec
   if (!pool.length) pool = ranked.filter(x => x.lane <= best + 1 && !recent.includes(x.c.id));
   if (!pool.length) pool = ranked.filter(x => x.lane === best);
   return pool[fnv(`${exercise.id}|${seed}`) % pool.length]!.c;
+}
+
+/**
+ * ST-17: the reason cues ("why this target") match the kind of suggestion on the set rows, not
+ * an exercise, so pickCue never reached them. Which reason a suggestion is:
+ */
+export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: string): string | null {
+  if (mode === 'start') return 'start_zero_history';
+  if (exerciseMode === 'conditioning') return 'conditioning_baseline';
+  if (mode === 'confirm_effort') return 'missing_effort';
+  if (confidence === 'low' && ['confirm', 'hold', 'increase', 'reps', 'duration'].includes(mode)) return 'insufficient_history';
+  if (mode === 'confirm' || mode === 'hold') return 'confirm';
+  if (mode === 'increase') return 'increase';
+  if (mode === 'reduce' || mode === 'plateau') return 'reduce';
+  if (mode === 'reentry') return 'reentry';
+  if (mode === 'reps') return 'build_reps';
+  return null;
+}
+
+/** A short "why" note for the next-set reason, rotated by seed. */
+export function pickReasonCue(reason: string | null, seed: string): Cue | null {
+  if (!reason) return null;
+  const pool = CUES.filter(c => c.kind !== 'mindset' && c.reasons?.includes(reason));
+  return pool.length ? pool[fnv(`${reason}|${seed}`) % pool.length]! : null;
+}
+
+/** The mindset notes, rotated through Today's quote slot on odd days of the year. */
+export const MINDSET_CUES: Cue[] = CUES.filter(c => c.kind === 'mindset');
+export function mindsetForDay(dayOfYear: number): Cue | null {
+  if (dayOfYear % 2 === 0 || !MINDSET_CUES.length) return null;
+  return MINDSET_CUES[Math.floor(dayOfYear / 2) % MINDSET_CUES.length]!;
 }

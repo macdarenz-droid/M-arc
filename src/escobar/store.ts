@@ -1,0 +1,198 @@
+import type { Conversation, ConversationMode, ConversationStore, DecisionEvent, StoredMessage, UserBlock } from './types';
+
+/**
+ * The conversation store (§6.2): its own localStorage key, like heartStore, so a
+ * long chat history never slows or endangers the main state save. Written only when
+ * a message is committed or a decision recorded, never per streamed delta. A failed
+ * write is swallowed: Escobar's history is best-effort, the training log is not.
+ */
+
+export const ESCOBAR_KEY = 'marc.escobar.v1';
+export const MAX_CONVERSATIONS = 20;
+/** `marc.escobar.v1` on its own. */
+export const MAX_STORE_BYTES = 1_000_000;
+/** `marc.escobar.v1` + 2 × `marc.state.v1` (state and its backup) + `marc.heart.v1`. */
+export const MAX_TOTAL_BYTES = 4_000_000;
+const STATE_KEY = 'marc.state.v1';
+const HEART_KEY = 'marc.heart.v1';
+
+type Storagelike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+/** null = the real localStorage. The gate's mock swaps in a memory store so it never touches the saved key. */
+let storageOverride: Storagelike | null = null;
+export function setEscobarStorage(s: Storagelike | null): void { storageOverride = s; }
+function storage(): Storagelike | null {
+  if (storageOverride) return storageOverride;
+  try { return typeof localStorage === 'undefined' ? null : localStorage; } catch { return null; }
+}
+
+export function memoryStorage(): Storagelike {
+  const map = new Map<string, string>();
+  return { getItem: k => map.get(k) ?? null, setItem: (k, v) => { map.set(k, v); }, removeItem: k => { map.delete(k); } };
+}
+
+export function emptyStore(): ConversationStore { return { version: 1, activeId: null, conversations: [] }; }
+
+const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+
+function validConversation(v: unknown): v is Conversation {
+  return isObj(v) && typeof v.id === 'string' && typeof v.createdAt === 'string' && Array.isArray(v.messages) && Array.isArray(v.ledger);
+}
+
+export function loadStore(): ConversationStore {
+  const s = storage();
+  if (!s) return emptyStore();
+  try {
+    const raw = s.getItem(ESCOBAR_KEY);
+    if (!raw) return emptyStore();
+    return sanitizeStore(JSON.parse(raw));
+  } catch { return emptyStore(); }
+}
+
+/** Repairs a parsed store: drops malformed conversations, strips any inline photo bytes, caps the count. */
+export function sanitizeStore(v: unknown): ConversationStore {
+  if (!isObj(v) || v.version !== 1 || !Array.isArray(v.conversations)) return emptyStore();
+  const conversations = v.conversations.filter(validConversation).map(c => ({
+    ...c,
+    title: typeof c.title === 'string' ? c.title : '',
+    mode: (['chat', 'plan', 'live'] as const).includes(c.mode) ? c.mode : 'chat',
+    updatedAt: typeof c.updatedAt === 'string' ? c.updatedAt : c.createdAt,
+    messages: c.messages.map(pruneImages),
+    protocol: 2 as const,
+  }));
+  const activeId = typeof v.activeId === 'string' && conversations.some(c => c.id === v.activeId) ? v.activeId : null;
+  return capCount({ version: 1, activeId, conversations });
+}
+
+/**
+ * Photos never go into localStorage (§6.2). A base64 `image` block that slipped
+ * into a stored message becomes a text stub; an `image_ref` keeps only its id.
+ */
+export function pruneImages(m: StoredMessage): StoredMessage {
+  if (m.role !== 'user' || !Array.isArray(m.content)) return m;
+  let changed = false;
+  const content = m.content.map((b): UserBlock => {
+    const blk = b as unknown as Record<string, unknown>;
+    if (blk.type === 'image') { changed = true; return { type: 'text', text: '[photo shared earlier]' }; }
+    if (blk.type === 'image_ref' && ('data' in blk || 'dataUrl' in blk)) {
+      changed = true;
+      const { data: _d, dataUrl: _u, ...rest } = blk;
+      return rest as unknown as UserBlock;
+    }
+    return b;
+  });
+  return changed ? { ...m, content } : m;
+}
+
+/** Keeps at most 20 conversations: summarised ones leave first, then the oldest. Never the active one. */
+function capCount(store: ConversationStore): ConversationStore {
+  let conversations = store.conversations;
+  while (conversations.length > MAX_CONVERSATIONS) {
+    const victim = pickVictim(conversations, store.activeId);
+    if (!victim) break;
+    conversations = conversations.filter(c => c !== victim);
+  }
+  return conversations === store.conversations ? store : { ...store, conversations };
+}
+
+function pickVictim(conversations: Conversation[], activeId: string | null): Conversation | null {
+  const candidates = conversations.filter(c => c.id !== activeId);
+  if (!candidates.length) return null;
+  const byAge = [...candidates].sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+  return byAge.find(c => c.summarisedAt) ?? byAge[0] ?? null;
+}
+
+const bytes = (s: string | null): number => (s ? s.length * 2 : 0);
+
+/**
+ * Trims the store until it fits both size guards (§6.2), dropping summarised
+ * conversations first, then the oldest; the active conversation goes last.
+ * `others` is the size already taken by the main state (twice) and the heart store.
+ */
+export function fitToBudget(store: ConversationStore, others: number): { store: ConversationStore; raw: string } {
+  let cur = store;
+  let raw = JSON.stringify(cur);
+  const fits = (r: string): boolean => bytes(r) <= MAX_STORE_BYTES && bytes(r) + others <= MAX_TOTAL_BYTES;
+  while (!fits(raw) && cur.conversations.length) {
+    const victim = pickVictim(cur.conversations, cur.activeId) ?? cur.conversations[0]!;
+    const conversations = cur.conversations.filter(c => c !== victim);
+    cur = { ...cur, conversations, activeId: conversations.some(c => c.id === cur.activeId) ? cur.activeId : null };
+    raw = JSON.stringify(cur);
+  }
+  return { store: cur, raw };
+}
+
+/** Writes the store. Returns the store as actually written (it may have been pruned), or null on failure. */
+export function saveStore(store: ConversationStore): ConversationStore | null {
+  const s = storage();
+  if (!s) return null;
+  try {
+    const clean = capCount({ ...store, conversations: store.conversations.map(c => ({ ...c, messages: c.messages.map(pruneImages) })) });
+    const others = storageOverride ? 0 : 2 * bytes(s.getItem(STATE_KEY)) + bytes(s.getItem(HEART_KEY));
+    const { store: fitted, raw } = fitToBudget(clean, others);
+    s.setItem(ESCOBAR_KEY, raw);
+    return fitted;
+  } catch {
+    return null;
+  }
+}
+
+const replacedListeners = new Set<() => void>();
+/** Called after the whole store is cleared or restored, so the session drops what it holds (ES-07). */
+export function onStoreReplaced(fn: () => void): () => void {
+  replacedListeners.add(fn);
+  return () => replacedListeners.delete(fn);
+}
+function notifyReplaced(): void { for (const fn of replacedListeners) { try { fn(); } catch (e) { console.error(e); } } }
+
+export function clearStore(): void {
+  try { storage()?.removeItem(ESCOBAR_KEY); } catch { /* best-effort */ }
+  notifyReplaced();
+}
+
+export function newConversation(appVersion: string, mode: ConversationMode = 'chat', now = new Date()): Conversation {
+  const iso = now.toISOString();
+  const rand = Math.random().toString(16).slice(2, 8);
+  return { id: `c_${now.getTime().toString(36)}_${rand}`, createdAt: iso, updatedAt: iso, title: '', mode, messages: [], ledger: [], appVersion, protocol: 2 };
+}
+
+/** Appends messages to one conversation (append-only, §2.8), titling it from the first user line. */
+export function appendMessages(store: ConversationStore, conversationId: string, messages: StoredMessage[], now = new Date()): ConversationStore {
+  return {
+    ...store,
+    conversations: store.conversations.map(c => {
+      if (c.id !== conversationId) return c;
+      let title = c.title;
+      if (!title) {
+        const firstUser = messages.find(m => m.role === 'user' && !m.meta?.repair && m.content.some(b => b.type === 'text'));
+        const text = firstUser && firstUser.role === 'user' ? firstUser.content.find(b => b.type === 'text') : undefined;
+        if (text && text.type === 'text') title = text.text.replace(/^\[about:[^\]]*\]\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+      }
+      return { ...c, title, messages: [...c.messages, ...messages], updatedAt: now.toISOString() };
+    }),
+  };
+}
+
+export function upsertConversation(store: ConversationStore, c: Conversation, makeActive = true): ConversationStore {
+  const exists = store.conversations.some(x => x.id === c.id);
+  const conversations = exists ? store.conversations.map(x => (x.id === c.id ? c : x)) : [...store.conversations, c];
+  return capCount({ ...store, conversations, activeId: makeActive ? c.id : store.activeId });
+}
+
+/** Queues a decision for the next brief (§10.3); the conversation's messages are untouched. */
+export function recordDecision(store: ConversationStore, conversationId: string, d: DecisionEvent & { title: string }): ConversationStore {
+  return {
+    ...store,
+    conversations: store.conversations.map(c => (c.id === conversationId ? { ...c, pendingDecisions: [...(c.pendingDecisions ?? []), d] } : c)),
+  };
+}
+
+/** The whole store for the Settings backup. */
+export function exportAllEscobar(): ConversationStore { return loadStore(); }
+
+/** Restores the store from a backup. Anything malformed is dropped rather than failing the restore. */
+export function restoreEscobar(data: unknown): void {
+  if (data === undefined || data === null) return;
+  saveStore(sanitizeStore(data));
+  notifyReplaced();
+}

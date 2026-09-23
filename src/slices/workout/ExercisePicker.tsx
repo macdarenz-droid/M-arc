@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { Button, Chip, Field, Sheet } from '@/ui/primitives';
+import { Button, Chip, Field, Segmented, Sheet } from '@/ui/primitives';
 import { makeCustomExercise, searchExercises } from '@/core/exercises';
 import type { Exercise, ResistanceMode } from '@/core/models';
 import { MUSCLES, muscleLabel } from '@/data/muscles';
@@ -13,11 +13,12 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
   const [equipment, setEquipment] = useState('Machine');
   const [primary, setPrimary] = useState<string[]>([]);
   const [mode, setMode] = useState<ResistanceMode>('weighted');
+  const [role, setRole] = useState<'main' | 'accessory'>('accessory');
   const results = searchExercises(q, state.value.customExercises).filter(e => !exclude.includes(e.id));
 
   const create = () => {
     if (!name.trim() || !primary.length) return;
-    const ex = makeCustomExercise({ name, equipment, primary, mode });
+    const ex = makeCustomExercise({ name, equipment, primary, mode, role });
     saveCustomExercise(ex);
     onPick(ex);
   };
@@ -62,6 +63,9 @@ export function ExercisePicker({ onPick, onClose, exclude = [] }: { onPick: (ex:
             <div class="wrap">
               {MUSCLES.map(m => <Chip key={m.id} pressed={primary.includes(m.id)} onClick={() => setPrimary(p => (p.includes(m.id) ? p.filter(x => x !== m.id) : [...p, m.id].slice(-2)))}>{m.label}</Chip>)}
             </div>
+          </Field>
+          <Field label="Main lift or accessory" hint="Main lifts get your goal's main rep range; accessories get the accessory range.">
+            <Segmented value={role} options={[{ value: 'accessory', label: 'Accessory' }, { value: 'main', label: 'Main lift' }]} onChange={setRole} />
           </Field>
           <div class="row"><Button variant="quiet" onClick={() => setCustom(false)}>Back</Button><Button variant="primary" class="grow" disabled={!name.trim() || !primary.length} onClick={create}>Create and add</Button></div>
         </div>

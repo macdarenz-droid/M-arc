@@ -19,6 +19,61 @@
       if (t) document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
+  <script>
+    // A crash before Preact ever mounts (a bad bundle, a throw during boot) used to leave a
+    // silent blank screen — the CSS background paints, nothing else ever does, and there is
+    // no signal to diagnose from. This turns that into a visible, plain-words error with a
+    // self-service reset, wired up before the app module even loads so it catches everything.
+    // Once the app has rendered (__marcBooted), later errors only log: the app handles them itself.
+    // The rescue copy below duplicates src/core/rescue.ts on purpose: it must run before the bundle.
+    window.__marcBooted = false;
+    window.__marcRescue = function () {
+      var out = {};
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && (k.indexOf('marc.') === 0 || k === 'dailyTrackerPremium')) out[k] = localStorage.getItem(k);
+        }
+      } catch (e) {}
+      var text = JSON.stringify({ app: 'M/ARC', kind: 'rescue', savedAt: new Date().toISOString(), keys: out });
+      try {
+        var url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+        var a = document.createElement('a');
+        a.href = url; a.download = 'marc-rescue.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+      } catch (e) {
+        try { navigator.clipboard.writeText(text); } catch (e2) {}
+      }
+    };
+    window.__marcCrash = function (err) {
+      try {
+        var app = document.getElementById('app');
+        if (!app || app.getAttribute('data-crash-shown')) return;
+        app.setAttribute('data-crash-shown', '1');
+        var msg = (err && (err.stack || err.message)) || String(err);
+        var box = document.createElement('div');
+        box.style.cssText = 'min-height:100%;display:flex;flex-direction:column;gap:14px;padding:24px 20px;font-family:system-ui,-apple-system,sans-serif;color:#f1f1ee;background:#08090a;box-sizing:border-box;';
+        box.innerHTML =
+          '<h1 style="font-size:18px;margin:0;">M/ARC could not start</h1>' +
+          '<p style="font-size:13px;line-height:1.5;color:#9a9aa2;margin:0;">Something went wrong before the app loaded. Your data is still on this device unless you reset. Save a copy first, then screenshot this for support.</p>' +
+          '<pre style="font-size:11px;line-height:1.4;color:#c7c7cd;background:#151519;border:1px solid #2a2a31;border-radius:8px;padding:10px;overflow:auto;white-space:pre-wrap;max-height:40vh;margin:0;"></pre>' +
+          '<button type="button" data-rescue style="all:unset;background:#f1f1ee;color:#08090a;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Save a copy of my data</button>' +
+          '<button type="button" data-reset style="all:unset;background:#c0392b;color:#fff;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Reset app data and reload</button>';
+        box.querySelector('pre').textContent = msg;
+        box.querySelector('[data-rescue]').addEventListener('click', function () { window.__marcRescue(); });
+        box.querySelector('[data-reset]').addEventListener('click', function () {
+          if (!confirm('This deletes every workout on this device. Continue?')) return;
+          try { localStorage.clear(); } catch (e) {}
+          try { if (window.indexedDB && indexedDB.databases) { indexedDB.databases().then(function (dbs) { dbs.forEach(function (d) { indexedDB.deleteDatabase(d.name); }); }); } } catch (e) {}
+          location.reload();
+        });
+        app.appendChild(box);
+      } catch (e) { /* nothing more we can do from here */ }
+    };
+    window.addEventListener('error', function (e) { if (window.__marcBooted) { console.error(e.error || e.message); return; } window.__marcCrash(e.error || e.message); });
+    window.addEventListener('unhandledrejection', function (e) { if (window.__marcBooted) { console.error(e.reason); return; } window.__marcCrash(e.reason); });
+  </script>
 </head>
 <body>
   <div id="app"></div>

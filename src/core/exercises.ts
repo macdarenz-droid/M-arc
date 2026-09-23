@@ -21,6 +21,44 @@ interface RawExercise {
 
 const onlyMuscles = (list: string[]): MuscleId[] => list.filter(isMuscleId);
 
+/** Patterns whose exercises get the goal's main rep range. Everything else is an accessory. */
+const MAIN_PATTERNS = new Set(['squat', 'single_leg_squat', 'lunge', 'hip_hinge', 'horizontal_push', 'incline_push', 'vertical_push', 'vertical_pull', 'horizontal_pull']);
+/** hip_extension is a main pattern only for the barbell/machine hip thrust; glute bridges and kickbacks stay accessories. */
+const MAIN_IDS = new Set(['lib_hip_thrust']);
+
+export function roleOf(pattern: string, id: string): 'main' | 'accessory' {
+  return MAIN_PATTERNS.has(pattern) || MAIN_IDS.has(id) ? 'main' : 'accessory';
+}
+
+/** Eccentric-emphasis or lengthened-position movements (recovery.ts 6.11's damage factor 1.3). */
+const HIGH_DAMAGE_IDS = new Set([
+  'lib_romanian_deadlift', 'lib_dumbbell_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
+  'lib_bulgarian_split_squat', 'lib_walking_lunge', 'lib_reverse_lunge', 'lib_forward_lunge',
+  'lib_incline_dumbbell_curl', 'lib_preacher_curl',
+  'lib_pec_fly', 'lib_cable_fly', 'lib_low_to_high_cable_fly', 'lib_high_to_low_cable_fly', 'lib_dumbbell_fly',
+  'lib_rear_delt_fly', 'lib_cable_rear_delt_fly', 'lib_bent_over_dumbbell_rear_delt_fly',
+  'lib_machine_pullover', 'lib_dumbbell_pullover',
+]);
+/** Short-range machine or concentric-dominant work (damage factor 0.8). */
+const LOW_DAMAGE_IDS = new Set([
+  'lib_leg_extension', 'lib_sled_push', 'lib_sled_pull',
+  'lib_seated_calf_raise', 'lib_standing_calf_raise', 'lib_leg_press_calf_raise',
+]);
+const TEMPO_OR_PAUSE = /\b(tempo|pause)\b/i;
+
+/** Static per-exercise damage factor, before the dynamic "heavy main lift" bump below. */
+export function exerciseDamage(exercise: { id: string; name: string }): number {
+  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return 1.3;
+  if (LOW_DAMAGE_IDS.has(exercise.id)) return 0.8;
+  return 1.0;
+}
+
+/** The set's actual damage factor: the static value, bumped to at least 1.15 for a heavy main lift. */
+export function setDamage(exercise: { id: string; name: string; role: 'main' | 'accessory' }, reps: number): number {
+  const base = exerciseDamage(exercise);
+  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, 1.15) : base;
+}
+
 /** The built-in library, typed and with a resistance mode attached. */
 export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
   id: e.id,
@@ -33,11 +71,24 @@ export const LIBRARY: Exercise[] = (rawLibrary as RawExercise[]).map(e => ({
   pattern: e.pattern,
   defaultSets: e.defaultSets,
   mode: inferMode(e.id, e.equipment, e.name),
+  role: roleOf(e.pattern, e.id),
 }));
 
 const byId = new Map(LIBRARY.map(e => [e.id, e]));
 
+/** Name lookups run inside tight brain loops; the same few hundred strings recur, so remember them. */
+const normalized = new Map<string, string>();
+
 export function normalizeName(s: string): string {
+  const hit = normalized.get(s);
+  if (hit !== undefined) return hit;
+  const out = normalizeUncached(s);
+  if (normalized.size > 4000) normalized.clear();
+  normalized.set(s, out);
+  return out;
+}
+
+function normalizeUncached(s: string): string {
   return s
     .toLowerCase()
     .replace(/dumbell/g, 'dumbbell')
@@ -50,17 +101,60 @@ export function normalizeName(s: string): string {
     .trim();
 }
 
+/** Name → exercise answers per custom list (by identity), so repeated name lookups are O(1). */
+const byName = new WeakMap<Exercise[], Map<string, Exercise | undefined>>();
+const NO_CUSTOM: Exercise[] = [];
+
 /** Resolve an exercise by id, then by exact name or alias, across library and custom list. */
-export function findExercise(idOrName: string, custom: Exercise[] = []): Exercise | undefined {
+export function findExercise(idOrName: string, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
   const direct = byId.get(idOrName) ?? custom.find(c => c.id === idOrName);
   if (direct) return direct;
+  let memo = byName.get(custom);
+  if (!memo) { memo = new Map(); byName.set(custom, memo); }
+  if (memo.has(idOrName)) return memo.get(idOrName);
+  const found = findByName(idOrName, custom);
+  memo.set(idOrName, found);
+  return found;
+}
+
+function findByExactName(idOrName: string, custom: Exercise[]): Exercise | undefined {
   const q = normalizeName(idOrName);
   if (!q) return undefined;
-  const all = [...custom, ...LIBRARY];
   const singular = q.replace(/s\b/g, '');
   const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
-  return all.find(e => same(e.name) || e.aliases.some(same))
-    ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
+  return [...custom, ...LIBRARY].find(e => same(e.name) || e.aliases.some(same));
+}
+
+/**
+ * ST-13: the substring step answers only when exactly one exercise matches, so "Press" no longer
+ * resolves to whichever press happens to come first.
+ */
+function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
+  const exact = findByExactName(idOrName, custom);
+  if (exact) return exact;
+  const q = normalizeName(idOrName);
+  if (q.length < 4) return undefined;
+  const hits = [...custom, ...LIBRARY].filter(e => normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name)));
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+/**
+ * For imports that know the equipment ("Chest Press", Machine): the usual lookup, then, when the
+ * name alone is ambiguous, the one partial match whose equipment agrees (ST-13 kept this path).
+ */
+export function findExerciseWithEquipment(name: string, equipment: string | undefined, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  const found = findExercise(name, custom);
+  if (found || !equipment) return found;
+  const q = normalizeName(name);
+  if (q.length < 4) return undefined;
+  const eq = normalizeName(equipment).replace(/s\b/g, '');
+  const hits = [...custom, ...LIBRARY].filter(e => (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))) && normalizeName(e.equipment).replace(/s\b/g, '') === eq);
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+/** Id, custom id, or exact name/alias; never a substring guess. For writes that must not land on the wrong exercise. */
+export function findExerciseExact(nameOrId: string, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  return byId.get(nameOrId) ?? custom.find(c => c.id === nameOrId) ?? findByExactName(nameOrId, custom);
 }
 
 export function searchExercises(query: string, custom: Exercise[] = [], limit = 12): Exercise[] {
@@ -89,7 +183,7 @@ export function searchExercises(query: string, custom: Exercise[] = [], limit = 
 
 /** Build a custom exercise from plain form fields. Unknown muscle text is classified, never dropped silently. */
 export function makeCustomExercise(input: {
-  id?: string; name: string; equipment: string; primary: string[]; secondary?: string[]; mode?: ResistanceMode;
+  id?: string; name: string; equipment: string; primary: string[]; secondary?: string[]; mode?: ResistanceMode; role?: 'main' | 'accessory';
 }): Exercise {
   const toIds = (list: string[] | undefined) =>
     (list ?? []).map(v => (isMuscleId(v) ? v : classifyMuscleText(v))).filter((v): v is MuscleId => v != null);
@@ -104,6 +198,7 @@ export function makeCustomExercise(input: {
     pattern: 'other',
     defaultSets: 3,
     mode: input.mode ?? inferMode('', input.equipment, input.name),
+    role: input.role ?? 'accessory',
     custom: true,
   };
 }

@@ -1,7 +1,7 @@
 /** Per-exercise history, derived once from sessions and reused by every engine. */
 import type { Effort, Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { findExercise } from '@/core/exercises';
-import { estimatedOneRm } from '@/core/units';
+import { effectiveOneRm } from './e1rm';
 import { daysBetween } from '@/core/dates';
 import { isWorkingSet, EFFORT_MULT } from './exposure';
 
@@ -43,7 +43,7 @@ export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[])
     bestDurationSec: Math.max(0, ...working.map(s => s.durationSec ?? 0)),
     bestDistanceM: Math.max(0, ...working.map(s => s.distanceM ?? 0)),
     volume: working.reduce((a, s) => a + ((s.kg ?? 0) > 0 ? (s.kg ?? 0) * (s.reps ?? 0) : (s.reps ?? 0)), 0),
-    bestE1rm: Math.max(0, ...working.filter(s => (s.kg ?? 0) > 0 && (s.reps ?? 0) > 0 && (s.reps ?? 0) <= 10).map(s => estimatedOneRm(s.kg!, s.reps!))),
+    bestE1rm: Math.max(0, ...working.map(s => effectiveOneRm(s.kg ?? 0, s.reps ?? 0, s.effort) ?? 0)),
     effortCoverage: working.length ? withEffort.length / working.length : 0,
     avgEffort: efforts.length ? efforts.reduce((a, b) => a + b, 0) / efforts.length : 1,
     hasMax: withEffort.some(s => s.effort === 'max'),
@@ -51,8 +51,32 @@ export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[])
   };
 }
 
+const NO_CUSTOM: Exercise[] = [];
+
+/** A lift counts as active while it was trained in the last six weeks (BR-05). */
+export const ACTIVE_LIFT_DAYS = 42;
+export function isActive(hist: ExerciseSessionSummary[], today: string): boolean {
+  const last = hist[hist.length - 1];
+  return !!last && daysBetween(last.day, today) <= ACTIVE_LIFT_DAYS;
+}
+/**
+ * Results per sessions array and custom list (UI-10): state updates replace the arrays, so an
+ * identity hit is always current. Callers get a copy, so sorting or reversing it is safe.
+ */
+const historyCache = new WeakMap<Session[], WeakMap<Exercise[], Map<string, ExerciseSessionSummary[]>>>();
+
 /** All sessions where this exercise was logged, oldest first. */
-export function exerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[] = []): ExerciseSessionSummary[] {
+export function exerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[] = NO_CUSTOM): ExerciseSessionSummary[] {
+  let byCustom = historyCache.get(sessions);
+  if (!byCustom) { byCustom = new WeakMap(); historyCache.set(sessions, byCustom); }
+  let byId = byCustom.get(custom);
+  if (!byId) { byId = new Map(); byCustom.set(custom, byId); }
+  let hit = byId.get(exerciseId);
+  if (!hit) { hit = computeExerciseHistory(sessions, exerciseId, custom); byId.set(exerciseId, hit); }
+  return [...hit];
+}
+
+function computeExerciseHistory(sessions: Session[], exerciseId: string, custom: Exercise[]): ExerciseSessionSummary[] {
   const meta = findExercise(exerciseId, custom);
   const ids = new Set([exerciseId, meta?.id].filter(Boolean) as string[]);
   const out: ExerciseSessionSummary[] = [];

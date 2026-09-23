@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'preact/hooks';
+import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { today, unit } from '@/app/selectors';
-import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
+import { plannedPerWeek, today, unit } from '@/app/selectors';
+import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
-import { formatLoad } from '@/core/units';
-import type { LoggedSet, Session } from '@/core/models';
+import { formatLoad, kgToDisplay } from '@/core/units';
+import type { AppState, LoggedSet, Session } from '@/core/models';
+import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
+import { parseDurationSec, parseReps } from '@/core/parse';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
@@ -13,9 +16,15 @@ import { weekSummary } from '@/brain/weekly';
 import { muscleLabel } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
+import { Sparkline } from '@/ui/Sparkline';
+import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
+import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
+import { usePalaceFocus } from '@/escobar/palace/focus';
 
 export function History() {
-  const [seg, setSeg] = useState<'log' | 'stats'>('log');
+  const panel = openPanel.value;
+  const seg = panel?.id === 'exercise-stats' ? 'stats' : historySeg.value;
+  const setSeg = (v: 'log' | 'stats') => { historySeg.value = v; if (panel?.id === 'exercise-stats') closePanel('exercise-stats'); };
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div></div>
@@ -29,7 +38,8 @@ function Log() {
   const s = state.value;
   const [month, setMonth] = useState(() => today.value.slice(0, 7));
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [editing, setEditing] = useState<Session | null>(null);
+  const setEditing = (x: Session) => showPanel('session', { sessionId: x.id });
+  usePalaceFocus('history.calendar', selectedDay ? { day: selectedDay } : undefined);
   const trained = useMemo(() => new Set(s.sessions.map(x => x.day)), [s.sessions]);
   const first = parseDay(`${month}-01`);
   const startOffset = (first.getDay() + 6) % 7;
@@ -43,7 +53,7 @@ function Log() {
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
-      <Card>
+      <Card data-palace="history.calendar">
         <div class="row-between" style={{ marginBottom: 8 }}>
           <Button variant="quiet" class="btn-icon" aria-label="Previous month" onClick={() => shift(-1)}><IconBack /></Button>
           <b>{first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</b>
@@ -61,11 +71,10 @@ function Log() {
         </Section>
       )}
 
-      <Section title="Recent">
+      <Section title="Recent" palace="history.recent">
         {!recent.length && <Card><Empty icon={<IconCalendar size={30} />} title="No sessions yet">Finished workouts show up here.</Empty></Card>}
         <div class="stack-sm">{recent.map(x => <SessionCard key={x.id} session={x} onEdit={() => setEditing(x)} />)}</div>
       </Section>
-      {editing && <SessionEditor session={editing} onClose={() => setEditing(null)} />}
     </div>
   );
 }
@@ -77,7 +86,11 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   return (
     <Card class="card-press" onClick={() => setOpen(o => !o)}>
       <div class="row-between">
-        <div class="grow"><b>{session.splitName}</b><div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div></div>
+        <div class="grow">
+          <b>{session.splitName}</b>
+          <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
+          {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
+        </div>
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
       </div>
       {open && (
@@ -85,7 +98,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
           {session.exercises.map((e, i) => (
             <Row key={i}>
               <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map(st => setLabel(st, u)).join(' · ')}</div>
+              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
             </Row>
           ))}
         </div>
@@ -101,24 +114,41 @@ function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
   return `${load} × ${st.reps ?? 0}${st.effort ? ` ${st.effort[0]!.toUpperCase()}` : ''}`;
 }
 
-function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
+/** A tiny tag on sets typed in the other unit (§25.2 point 2). */
+export function UnitTag({ st, u }: { st: LoggedSet; u: 'kg' | 'lb' }) {
+  return st.entered && st.entered.unit !== u ? <span class="unit-tag" title={`Logged as ${st.entered.value} ${st.entered.unit}`}>{st.entered.unit}</span> : null;
+}
+
+/** One session, editable; opened as the `session` panel. */
+export function SessionEditor({ session, onClose }: { session: Session; onClose: () => void }) {
   const u = unit.value;
+  usePalaceFocus('history.session', { sessionId: session.id });
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
+  // Every history edit relearns the recovery model from what is left (UI-12).
+  const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
     const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
-    update(s => ({ ...s, sessions: s.sessions.map(x => (x.id === session.id ? cleaned : x)) }));
+    // An edit that leaves no sets is a delete, with its Undo (UI-24).
+    if (!cleaned.exercises.length) { remove(); return; }
+    update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();
   };
-  const remove = () => {
+  function remove() {
     const removed = session;
-    update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
-    showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
+    // Its heart series goes with it, and comes back with Undo (UI-14).
+    const series = getSeries(session.id);
+    update(s => withSessions(s, s.sessions.filter(x => x.id !== session.id)));
+    deleteSeries(session.id);
+    showToast('Session deleted', 'Undo', () => {
+      update(s => withSessions(s, sortByStart([...s.sessions, removed])));
+      if (series.length) storeSeries(removed.id, series);
+    });
     onClose();
-  };
+  }
   return (
-    <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose}>
+    <Sheet title={`${session.splitName} · ${formatDay(session.day)}`} onClose={onClose} palace="history.session">
       <div class="stack">
         {draft.exercises.map((e, ei) => (
           <Card key={ei} class="card-quiet">
@@ -127,8 +157,8 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
               {e.sets.map((st, si) => (
                 <div key={si} class="set-grid">
                   <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseInt((ev.target as HTMLInputElement).value) || 0 })} /> : <input type="number" step="0.5" value={st.kg ?? ''} placeholder="kg" onInput={ev => setField(ei, si, { kg: parseFloat((ev.target as HTMLInputElement).value) || undefined })} />}
-                  {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseInt((ev.target as HTMLInputElement).value) || 0 })} />}
+                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={st.entered?.unit ?? u} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
+                  {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseReps((ev.target as HTMLInputElement).value) ?? 0 })} />}
                   <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
                 </div>
               ))}
@@ -148,10 +178,14 @@ function SessionEditor({ session, onClose }: { session: Session; onClose: () => 
 function Stats() {
   const s = state.value;
   const u = unit.value;
-  const w = weekSummary(s.sessions, today.value, s.customExercises);
-  const records = useMemo(() => allRecords(s.sessions, s.customExercises).slice(0, 12), [s.sessions]);
+  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedPerWeek.value);
+  const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
-  const [exercise, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
+  const panel = openPanel.value;
+  const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;
+  const [picked, setExercise] = useState<string>(exerciseIds[0]?.[0] ?? '');
+  const exercise = fromPanel && exerciseIds.some(([id]) => id === fromPanel) ? fromPanel : picked;
+  usePalaceFocus(exercise ? 'history.exercise-stats' : 'history.week', exercise ? { exerciseId: exercise } : undefined);
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
@@ -159,7 +193,7 @@ function Stats() {
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
-      <Card>
+      <Card data-palace="history.week">
         <div class="eyebrow">This week</div>
         <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={`${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
         {muscleRows.length > 0 && (
@@ -172,10 +206,10 @@ function Stats() {
         )}
       </Card>
 
-      <Section title="Exercise progress">
+      <Section title="Exercise progress" palace="history.exercise-stats" aside={exercise ? <AskAbout refTo={{ kind: 'exercise', id: exercise, label: `${exerciseIds.find(([id]) => id === exercise)?.[1] ?? 'Exercise'} trend` }} /> : undefined}>
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
           <Card>
-            <select value={exercise} onChange={e => setExercise((e.target as HTMLSelectElement).value)}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
+            <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
                 <Sparkline points={hist.slice(-12).map(h => h.bestE1rm || h.topKg || h.bestReps)} />
@@ -184,7 +218,7 @@ function Stats() {
                   <Stat value={`${hist[hist.length - 1]!.topReps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
-                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map(st => setLabel(st, u)).join(' · ')}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
@@ -192,7 +226,7 @@ function Stats() {
         )}
       </Section>
 
-      <Section title="Records" aside={<Chip tone="warning"><IconTrophy size={12} /> {records.length}</Chip>}>
+      <Section title="Records" palace="history.records" aside={<Chip tone="warning"><IconTrophy size={12} /> {records.length}</Chip>}>
         <Card>
           {!records.length ? <p class="small muted">Records appear from your second session of an exercise onward.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>
@@ -201,14 +235,4 @@ function Stats() {
       </Section>
     </div>
   );
-}
-
-export function Sparkline({ points }: { points: number[] }) {
-  if (points.length < 2) return null;
-  const min = Math.min(...points), max = Math.max(...points);
-  const w = 300, h = 56, pad = 4;
-  const x = (i: number) => pad + (i / (points.length - 1)) * (w - pad * 2);
-  const y = (v: number) => h - pad - ((v - min) / Math.max(1e-6, max - min)) * (h - pad * 2);
-  const d = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p).toFixed(1)}`).join(' ');
-  return <svg class="sparkline" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true"><path d={d} fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" /><circle cx={x(points.length - 1)} cy={y(points[points.length - 1]!)} r="3" fill="var(--accent)" /></svg>;
 }

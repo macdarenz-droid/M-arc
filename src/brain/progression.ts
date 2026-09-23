@@ -10,13 +10,15 @@
  *  7. Trend clearly down             → keep the load, easier week, then rebuild.
  *  8. Otherwise                      → add a rep.
  */
-import type { Exercise, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
+import { loadableNear } from './units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
+import { daysBetween } from '@/core/dates';
 
-export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau';
+export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau' | 'deload';
 
 export interface Suggestion {
   mode: Mode;
@@ -28,7 +30,17 @@ export interface Suggestion {
   confidence: 'low' | 'medium' | 'high';
   /** Set-by-set targets for the next session. */
   sets: Array<{ kg: number | null; reps: number | null; durationSec: number | null; note: string }>;
+  /** With an equipment profile (§25.4): the target in the equipment's own unit, e.g. 55 lb. */
+  unit?: LoadUnit;
+  value?: number;
 }
+
+/** More than this many days away: repeat the last load once. */
+export const REENTRY_DAYS = 28;
+/** Primary-muscle recovery under this % holds the load. */
+export const RECOVERY_HOLD_PCT = 60;
+/** A load step never adds more than this share of the current load (from 10 kg up). */
+export const MAX_INCREASE_SHARE = 0.1;
 
 export function loadStep(kg: number): number {
   if (kg <= 10) return 1;
@@ -40,8 +52,12 @@ const half = (v: number) => Math.round(v * 2) / 2;
 
 export function repRange(exercise: Exercise | undefined, goal: GoalId): [number, number] {
   const g = GOAL_BY_ID[goal];
-  const isMain = !!exercise && /squat|hinge|horizontal_push|vertical_push|vertical_pull|horizontal_pull/.test(exercise.pattern);
-  return !isMain && g.accessoryReps ? g.accessoryReps : g.reps;
+  return exercise?.role === 'main' ? g.mainReps : g.accessoryReps;
+}
+
+/** True when the max-effort e1RM dropped 5% or more from the prior session at max effort too. */
+function e1rmDownAtMax(cur: ExerciseSessionSummary, prior: ExerciseSessionSummary): boolean {
+  return cur.hasMax && prior.hasMax && prior.bestE1rm > 0 && cur.bestE1rm > 0 && cur.bestE1rm <= prior.bestE1rm * 0.95;
 }
 
 function fmtRange(r: [number, number]): string {
@@ -56,7 +72,53 @@ function setPlan(count: number, kg: number | null, reps: number | null, duration
   return Array.from({ length: Math.max(1, Math.min(6, count)) }, () => ({ kg, reps, durationSec, note }));
 }
 
-export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = []): Suggestion {
+export interface ProgressionContext {
+  /** From brain/readiness.ts's readiness(). Red skips increases and drops a set; amber only blocks the increase. */
+  readiness?: { loadAdvice: 'normal' | 'no_increase' | 'reduce'; reason?: string } | null;
+  /** From brain/recovery.ts's recoveryStatus() for the exercise's primary muscle, 0-100. */
+  recoveryPct?: number;
+  /** Active lighter week (F3.3). Takes priority over readiness and recovery: it's a whole-week call, not a single day's. */
+  deload?: Deload | null;
+  /** What the equipment really loads (§25.4). Targets snap to it: up for increases, down for reductions and deloads. */
+  equipment?: EquipmentProfile;
+  /** Today's load change from an applied Escobar adjustment (§10.4), applied like a deload's loadFactor. */
+  loadFactor?: number;
+}
+
+const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
+
+/** Restates a suggestion's loads as loads the equipment can make, in its own unit. */
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile): Suggestion {
+  if (s.kg == null) return s;
+  const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
+  const snap = loadableNear(s.kg, profile, dir);
+  const oldLabel = `${s.kg} kg`;
+  return {
+    ...s,
+    kg: snap.kg,
+    unit: snap.unit,
+    value: snap.value,
+    target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${snap.value} ${snap.unit}`) : s.target,
+    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: loadableNear(x.kg, profile, dir).kg })),
+  };
+}
+
+/** Scales a suggestion's loads by today's adjustment factor (§10.4), rounding down like a deload. */
+function applyLoadFactor(s: Suggestion, f: number): Suggestion {
+  if (s.kg == null || !(f > 0) || f === 1) return s;
+  const down = half(s.kg * f);
+  const oldLabel = `${s.kg} kg`;
+  return { ...s, kg: down, target: s.target.replace(oldLabel, `${down} kg`), reason: `${s.reason} Adjusted for today.`, sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: half(x.kg * f) })) };
+}
+
+export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
+  let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
+  if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
+  if (ctx?.equipment && modeOf(exerciseId, custom) === 'weighted') s = snapToEquipment(s, ctx.equipment);
+  return s;
+}
+
+function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   const meta = findExercise(exerciseId, custom);
   const mode: ResistanceMode = modeOf(exerciseId, custom);
   const range = repRange(meta, goal);
@@ -80,8 +142,21 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
     return { mode: 'duration', target: `Hold ${next}s`, kg: null, reps: null, reason: last.hasMax ? 'Last hold was max effort. Repeat it before adding time.' : 'Add five seconds to your best hold.', confidence: conf, sets: setPlan(setCount, null, null, next, last.hasMax ? 'Repeat' : 'Add 5s') };
   }
 
-  if (gap > 28) {
+  if (gap > REENTRY_DAYS) {
     return { mode: 'reentry', target: mode === 'weighted' ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
+  }
+
+  if (ctx?.deload) {
+    const d = ctx.deload;
+    const dayN = Math.min(7, Math.max(1, daysBetween(d.startDay, today) + 1));
+    const reason = `Lighter week, day ${dayN} of 7.`;
+    const deloadSets = Math.max(1, Math.round(setCount * d.setFactor));
+    if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
+      const reps = last.bestReps;
+      return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload') };
+    }
+    const down = half(last.topKg * d.loadFactor);
+    return { mode: 'deload', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(deloadSets, down, range[0], null, 'Deload') };
   }
 
   const recent = hist.slice(-3);
@@ -97,15 +172,29 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   const holdSets = (note: string, reps = Math.min(range[1], Math.max(range[0], last.topReps + 1))) => setPlan(setCount, topKg, reps, null, note);
   const holdTarget = `${topKg} kg · ${fmtRange(range)}`;
 
+  if (ctx?.readiness?.loadAdvice === 'reduce') {
+    const fewer = Math.max(1, setCount - 1);
+    return { mode: 'hold', target: holdTarget, kg: topKg, reps: range, reason: ctx.readiness.reason ?? 'Readiness is low today. Keep the load and drop a set.', confidence: conf, sets: setPlan(fewer, topKg, range[0], null, 'Readiness: one fewer set') };
+  }
+
   if (coverage < 0.5 && hist.length >= 2) {
     return { mode: 'confirm_effort', target: holdTarget, kg: topKg, reps: range, reason: 'Most recent sets have no effort rating. Keep the load and rate each set so the coach can judge the next step.', confidence: 'low', sets: holdSets('Log effort') };
   }
 
   const prev = hist[hist.length - 2];
+  const prev2 = hist[hist.length - 3];
+  // A range starting at 1-2 reps can never see "reps under the range" at max effort, so a
+  // falling e1RM over two consecutive max-effort sessions is the step-down signal instead.
   const belowAtMax = (r: ExerciseSessionSummary) => r.hasMax && r.topReps < range[0];
-  if (prev && belowAtMax(last) && belowAtMax(prev)) {
+  const stepDown = range[0] <= 2
+    ? !!prev && !!prev2 && e1rmDownAtMax(last, prev) && e1rmDownAtMax(prev, prev2)
+    : !!prev && belowAtMax(last) && belowAtMax(prev);
+  if (stepDown) {
     const down = Math.max(0, half(topKg - loadStep(topKg)));
-    return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason: 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.', confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
+    const reason = range[0] <= 2
+      ? 'Your estimated one-rep max has dropped at max effort for two sessions running. Take one step down and rebuild.'
+      : 'Two sessions in a row under the rep range at max effort. Take one step down and rebuild reps.';
+    return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
   }
 
   const plateau = plateauStatus(hist);
@@ -116,11 +205,15 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   if (cleanTop(last)) {
     const twoForTwo = !!prev && cleanTop(prev) && prev.topKg === topKg;
     const fastTrack = last.allEasy && hist.length >= 4;
-    if ((twoForTwo || fastTrack) && plateau.status !== 'declining') {
+    const readinessBlocksIncrease = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
+    if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && !readinessBlocksIncrease) {
       const step = loadStep(topKg);
-      const capped = topKg >= 10 ? Math.min(step, topKg * 0.1) : step;
+      const capped = topKg >= 10 ? Math.min(step, topKg * MAX_INCREASE_SHARE) : step;
       const up = half(topKg + Math.max(0.5, capped));
       return { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
+    }
+    if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && readinessBlocksIncrease) {
+      return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: ctx?.readiness?.reason ?? 'Recovery is under 60% for this muscle, so the load holds for now.', confidence: conf, sets: holdSets('Hold for now', range[1]) };
     }
     return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: 'You reached the top of the range once. Do it again at this load and the next step unlocks.', confidence: conf, sets: holdSets('Confirm', range[1]) };
   }

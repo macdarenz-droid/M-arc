@@ -1,5 +1,6 @@
 /** Recency-weighted trend and plateau detection over an exercise's history. */
 import type { ExerciseSessionSummary } from './history';
+import type { ResistanceMode } from '@/core/models';
 
 export type Direction = 'up' | 'flat' | 'down' | 'unknown';
 export type Confidence = 'low' | 'medium' | 'high';
@@ -35,9 +36,26 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';
 
 /** Looks at the last 8 sessions. Needs at least 7 to say anything. */
-export function plateauStatus(history: ExerciseSessionSummary[]): { status: PlateauStatus; confidence: Confidence } {
-  const recent = history.slice(-8);
-  if (recent.length < 7) return { status: 'unknown', confidence: 'low' };
+/** Plateau status looks at this many recent sessions and needs at least PLATEAU_MIN_SESSIONS. */
+export const PLATEAU_WINDOW = 8;
+export const PLATEAU_MIN_SESSIONS = 7;
+
+/**
+ * For an assisted exercise (BR-06) less weight is progress: the weight direction is inverted,
+ * and with the weight flat the best reps break the tie (volume would reward more assistance).
+ */
+export function plateauStatus(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): { status: PlateauStatus; confidence: Confidence } {
+  const recent = history.slice(-PLATEAU_WINDOW);
+  if (recent.length < PLATEAU_MIN_SESSIONS) return { status: 'unknown', confidence: 'low' };
+  if (mode === 'assisted') {
+    const w = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
+    const reps = trend(recent.map(r => ({ day: r.day, value: r.bestReps })));
+    const conf = w.confidence === 'low' ? reps.confidence : w.confidence;
+    const tie = reps.direction === 'up' ? 'progressing' : reps.direction === 'down' ? 'declining' : 'plateaued';
+    if (w.direction === 'down') return { status: 'progressing', confidence: conf };
+    if (w.direction === 'up') return { status: 'declining', confidence: conf };
+    return { status: tie, confidence: conf };
+  }
   const weight = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
   const volume = trend(recent.map(r => ({ day: r.day, value: r.volume })));
   const conf = weight.confidence === 'low' ? volume.confidence : weight.confidence;

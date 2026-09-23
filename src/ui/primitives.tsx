@@ -1,6 +1,10 @@
-import { useEffect, useId, useRef } from 'preact/hooks';
+import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
+import { signal } from '@preact/signals';
 import { IconX } from './icons';
+import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
+import { parseLoad } from '@/core/parse';
+import type { LoadUnit } from '@/core/models';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -33,8 +37,8 @@ export function Stat({ value, label, tone }: { value: ComponentChildren; label: 
   return <div class="stat"><b class={`num ${tone ? `${tone}-text` : ''}`}>{value}</b><span>{label}</span></div>;
 }
 
-export function Row({ children, trailing, onClick, class: cls = '' }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string }) {
-  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
+export function Row({ children, trailing, onClick, class: cls = '', palace }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string; palace?: string }) {
+  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} data-palace={palace} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
 }
 
 export function Bar({ pct, color }: { pct: number; color?: string }) {
@@ -45,7 +49,10 @@ export function Ring({ pct, size = 120, children }: { pct: number; size?: number
   return <div class="ring" style={{ '--p': Math.max(0, Math.min(100, pct)), width: size, height: size }}><div>{children}</div></div>;
 }
 
-export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children?: ComponentChildren }) {
+/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. */
+export const openSheets = signal(0);
+
+export function Sheet({ title, onClose, children, palace }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   useEffect(() => {
@@ -54,11 +61,12 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; if (d.open) d.close(); };
+    openSheets.value++;
+    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div class="sheet-panel">
+      <div class="sheet-panel" data-palace={palace}>
         <div class="sheet-grab" />
         <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
         {children}
@@ -68,18 +76,100 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
 }
 
 export function Toast({ message, action, onAction, onDismiss }: { message: string; action?: string; onAction?: () => void; onDismiss: () => void }) {
-  useEffect(() => { const t = setTimeout(onDismiss, action ? 5000 : 3000); return () => clearTimeout(t); }, [onDismiss, action]);
+  // The parent passes a new onDismiss each render; keep it in a ref so the timer is not reset (UI-28).
+  const dismiss = useRef(onDismiss);
+  dismiss.current = onDismiss;
+  useEffect(() => { const t = setTimeout(() => dismiss.current(), action ? 5000 : 3000); return () => clearTimeout(t); }, [message, action]);
   return <div class="toast" role="status"><span>{message}</span>{action && <button type="button" onClick={() => { onAction?.(); onDismiss(); }}>{action}</button>}</div>;
+}
+
+/**
+ * A number typed as text and committed on blur or Enter (UI-22): half-typed values ("19" on the
+ * way to "1990") are never saved. Out-of-range input reverts to the saved value.
+ */
+export function CommitNumber({ value, min, max, integer, onCommit, ...rest }: { value: number | undefined; min: number; max: number; integer?: boolean; onCommit: (v: number | undefined) => void } & Omit<JSX.HTMLAttributes<HTMLInputElement>, 'value' | 'min' | 'max'>) {
+  const shown = value != null ? String(value) : '';
+  const [text, setText] = useState(shown);
+  const focused = useRef(false);
+  if (!focused.current && text !== shown) setText(shown);
+  const commit = () => {
+    focused.current = false;
+    const t = text.trim().replace(',', '.');
+    if (!t) { if (value != null) onCommit(undefined); return; }
+    const v = Number(t);
+    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { setText(shown); return; }
+    if (v !== value) onCommit(v);
+  };
+  return <input {...rest} type="text" inputMode={integer ? 'numeric' : 'decimal'} value={text} onFocus={() => { focused.current = true; }} onInput={e => setText((e.target as HTMLInputElement).value)} onBlur={commit} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />;
 }
 
 export function Empty({ icon, title, children, action }: { icon?: ComponentChildren; title: string; children?: ComponentChildren; action?: ComponentChildren }) {
   return <div class="empty">{icon}<h3>{title}</h3>{children && <p class="small">{children}</p>}{action}</div>;
 }
 
-export function Section({ title, aside, children }: { title: string; aside?: ComponentChildren; children?: ComponentChildren }) {
-  return <section class="section"><div class="section-title"><h2>{title}</h2>{aside}</div>{children}</section>;
+export function Section({ title, aside, children, palace }: { title: string; aside?: ComponentChildren; children?: ComponentChildren; palace?: string }) {
+  return <section class="section" data-palace={palace}><div class="section-title"><h2>{title}</h2>{aside}</div>{children}</section>;
 }
 
 export function Field({ label, children, hint }: { label: string; children?: ComponentChildren; hint?: string }) {
   return <label class="stack-sm"><span class="small muted">{label}</span>{children}{hint && <span class="hint">{hint}</span>}</label>;
+}
+
+/**
+ * A weight input that keeps decimals while typing. A plain controlled `<input value={kgToDisplay(kg)}>`
+ * reformats on every keystroke, so "23." collapses back to "23" before a "5" can follow it — the
+ * displayed text only re-syncs from the committed kg while the field is not focused.
+ */
+export interface WeightChange { kg: number; entered: { value: number; unit: LoadUnit } }
+
+/**
+ * Plate Sense (§25.5): the entry unit is per exercise and gym, flipped with the pill at the
+ * input's right edge (long-press for the whole equipment group). What was typed is kept
+ * verbatim in `entered`, so 35 lb stays 35 lb. When the entry unit differs from the display
+ * unit, a second reading sits under the input.
+ */
+export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, onChange, onUnitFlip, onUnitLongPress }: {
+  kg: number | undefined;
+  entered?: { value: number; unit: LoadUnit };
+  entryUnit: LoadUnit;
+  displayUnit?: LoadUnit;
+  placeholder?: string;
+  onChange: (v: WeightChange | undefined) => void;
+  onUnitFlip?: () => void;
+  onUnitLongPress?: () => void;
+}) {
+  const shown = kg != null ? setLoadIn({ kg, entered }, entryUnit) : undefined;
+  const display = shown != null ? String(shown) : '';
+  const [text, setText] = useState(display);
+  const focused = useRef(false);
+  const press = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const long = useRef(false);
+  if (!focused.current && text !== display) setText(display);
+  const other = displayUnit && displayUnit !== entryUnit && kg != null && kg > 0 ? approxIn(kg, displayUnit) : null;
+  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; onUnitLongPress(); }, 550); };
+  const endPress = () => { if (press.current) { clearTimeout(press.current); press.current = null; } };
+  return (
+    <span class="weight-input">
+      <input
+        type="text" inputMode="decimal" autoComplete="off" placeholder={placeholder} value={text} aria-label={`Load in ${entryUnit}`}
+        onFocus={() => { focused.current = true; }}
+        onBlur={() => { focused.current = false; setText(display); }}
+        onInput={e => {
+          const raw = (e.target as HTMLInputElement).value;
+          setText(raw);
+          const v = parseLoad(raw, entryUnit);
+          onChange(v != null ? enteredLoad(v, entryUnit) : undefined);
+        }}
+      />
+      {onUnitFlip ? (
+        <button
+          type="button" class="unit-pill" aria-label={`Entry unit ${entryUnit}. Tap to switch to ${entryUnit === 'kg' ? 'lb' : 'kg'}`}
+          onPointerDown={startPress} onPointerUp={endPress} onPointerLeave={endPress} onPointerCancel={endPress}
+          onContextMenu={e => e.preventDefault()}
+          onClick={() => { if (long.current) { long.current = false; return; } onUnitFlip(); }}
+        >{entryUnit}</button>
+      ) : null}
+      {other && <span class="weight-approx">{other}</span>}
+    </span>
+  );
 }

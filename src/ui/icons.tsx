@@ -28,3 +28,14 @@ export const IconCalendar = ({ size = 18, ...p }: P) => <svg {...base(size)} {..
 export const IconBack = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}><path d="M15 6l-6 6 6 6" /></svg>;
 export const IconInfo = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>;
 export const IconMore = ({ size = 20, ...p }: P) => <svg {...base(size)} {...p}><circle cx="5" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /><circle cx="19" cy="12" r="1.5" fill="currentColor" /></svg>;
+export const IconSend = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M21 3L3 10.5l7.5 3L14 21l7-18z" /><path d="M10.5 13.5L21 3" /></svg>;
+export const IconCamera = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13" r="3.5" /></svg>;
+export const IconStop = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor" stroke="none" /></svg>;
+/**
+ * Escobar's mark: the owner's knot-and-plates logo (2026-09-23), used as a mask so it takes
+ * `currentColor` like every other icon and follows all five themes. While he's thinking the mark
+ * breathes (`.escobar-mark.thinking`), static under reduced motion.
+ */
+export const IconEscobar = ({ size = 22, thinking = false, class: cls, style }: P & { thinking?: boolean }) => (
+  <span class={`escobar-mark${thinking ? ' thinking' : ''} ${cls ?? ''}`} aria-hidden="true" style={{ width: `${size}px`, height: `${size}px`, ...(typeof style === 'object' ? style as Record<string, string> : {}) }} />
+);

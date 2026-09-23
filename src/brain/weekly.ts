@@ -32,7 +32,9 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   }
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
-  const grade = workouts >= Math.max(3, plannedPerWeek) ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
+  // BR-22: the planned count is the target; 3 only when nothing is planned.
+  const target = plannedPerWeek > 0 ? plannedPerWeek : 3;
+  const grade = workouts >= target ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
     : workouts >= 2 ? { title: 'Building momentum', note: 'One or two more sessions makes this a full week.' }
     : workouts === 1 ? { title: 'Started', note: 'One session down. The next one is the one that counts.' }
     : { title: 'Start the week', note: 'Nothing logged yet. A short session still counts.' };
@@ -67,6 +69,34 @@ export function trainingStreak(sessions: Session[], schedule: Record<Weekday, st
 
 /** Days since the last logged session, or null when there is none. */
 export function daysSinceLastSession(sessions: Session[], today: string): number | null {
-  const last = sessions[sessions.length - 1];
-  return last ? daysBetween(last.day, today) : null;
+  // The latest day, whatever the list order (BR-29).
+  const lastDay = sessions.reduce((m, s) => (s.day > m ? s.day : m), '');
+  return lastDay ? daysBetween(lastDay, today) : null;
+}
+
+export interface WeekVolume {
+  /** Monday of the week. */
+  week: string;
+  sessions: number;
+  sets: number;
+  volumeKg: number;
+  muscleSets: Partial<Record<MuscleId, number>>;
+}
+
+/** Per-week totals for the last `weeks` weeks, index 0 = this week (EV2, for compare_periods and get_volume). */
+export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 8, custom: Exercise[] = []): WeekVolume[] {
+  const muscle = weeklyMuscleSets(sessions, today, weeks, custom);
+  return muscle.map(m => {
+    const end = addDays(m.week, 6);
+    const inWeek = sessions.filter(s => s.day >= m.week && s.day <= end);
+    let sets = 0, volumeKg = 0;
+    for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
+      if (!isWorkingSet(x)) continue;
+      sets++;
+      if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+    }
+    const muscleSets: Partial<Record<MuscleId, number>> = {};
+    for (const [k, v] of Object.entries(m.sets) as Array<[MuscleId, number]>) muscleSets[k] = Math.round(v * 10) / 10;
+    return { week: m.week, sessions: inWeek.length, sets, volumeKg: Math.round(volumeKg), muscleSets };
+  });
 }

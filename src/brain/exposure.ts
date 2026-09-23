@@ -78,27 +78,37 @@ export interface WeeklyMuscleSets {
 }
 
 /** Effective sets per muscle for each of the last `weeks` weeks (index 0 = current). */
-export function weeklyMuscleSets(sessions: Session[], today: string, weeks = 4, custom: Exercise[] = []): WeeklyMuscleSets[] {
-  const start = weekStart(today);
-  const rows: WeeklyMuscleSets[] = Array.from({ length: weeks }, (_, i) => ({ week: addDays(start, -7 * i), sets: {} }));
+/**
+ * The one weekly set count (BR-16): effective sets per muscle for sessions with `from <= day < to`.
+ * Direct work counts 1, secondary 0.5, stabilisers 0 (SET_WEIGHT). `countEasy: false` leaves out
+ * sets rated easy, for "hard sets".
+ */
+export function effectiveSetsByMuscle(sessions: Session[], from: string, to: string, custom: Exercise[] = [], opts: { countEasy?: boolean } = {}): Partial<Record<MuscleId, number>> {
+  const countEasy = opts.countEasy ?? true;
+  const out: Partial<Record<MuscleId, number>> = {};
   for (const s of sessions) {
-    const ws = weekStart(s.day);
-    const idx = rows.findIndex(r => r.week === ws);
-    if (idx < 0) continue;
-    const row = rows[idx]!;
+    if (s.day < from || s.day >= to) continue;
     for (const ex of s.exercises) {
       const meta = findExercise(ex.exerciseId, custom) ?? findExercise(ex.name, custom);
       if (!meta) continue;
-      const working = ex.sets.filter(isWorkingSet).length;
+      const working = ex.sets.filter(set => isWorkingSet(set) && (countEasy || set.effort !== 'easy')).length;
       if (!working) continue;
       for (const r of rolesFor(meta)) {
         const w = SET_WEIGHT[r.role];
         if (!w) continue;
-        row.sets[r.muscle] = (row.sets[r.muscle] ?? 0) + working * w;
+        out[r.muscle] = (out[r.muscle] ?? 0) + working * w;
       }
     }
   }
-  return rows;
+  return out;
+}
+
+export function weeklyMuscleSets(sessions: Session[], today: string, weeks = 4, custom: Exercise[] = [], opts: { countEasy?: boolean } = {}): WeeklyMuscleSets[] {
+  const start = weekStart(today);
+  return Array.from({ length: weeks }, (_, i) => {
+    const week = addDays(start, -7 * i);
+    return { week, sets: effectiveSetsByMuscle(sessions, week, addDays(week, 7), custom, opts) };
+  });
 }
 
 /** Cumulative all-time training score per muscle, and a friendly level label. */

@@ -3,7 +3,7 @@ import { trainingBalance } from '@/brain/balance';
 import { trainingStreak, weekSummary } from '@/brain/weekly';
 import { coachInsights } from '@/brain/coach/rules';
 import { emptySchedule } from '@/core/models';
-import { session, sets } from './helpers';
+import { baseCoachExtras, session, sets } from './helpers';
 
 describe('balance', () => {
   it('flags heavy push with no pull over three weeks', () => {
@@ -43,16 +43,29 @@ describe('weekly', () => {
 
 describe('coach', () => {
   it('asks for a first session on an empty app', () => {
-    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = coachInsights({ sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now(), ...baseCoachExtras });
     expect(insights[0]?.id).toBe('first-session');
   });
   it('flags missing effort ratings and imbalance with plain words', () => {
     const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
     const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, null, 5) }, { id: 'lib_shoulder_press', sets: sets(30, 8, undefined, 4) }]));
-    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now() });
+    const insights = coachInsights({ sessions: s, splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: Date.now(), ...baseCoachExtras });
     const ids = insights.map(i => i.id);
     expect(ids).toContain('balance:push_pull');
     expect(ids).toContain('effort-missing');
     for (const i of insights) expect(i.action.length).toBeGreaterThan(10);
+  });
+});
+
+describe('balance counts exercise sets, not muscles touched (BR-17)', () => {
+  it('bench, row and squat at 4 sets each is balanced', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')).toBeNull();
+  });
+  it('push with no pull is flagged', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')?.pair).toBe('push_pull');
   });
 });

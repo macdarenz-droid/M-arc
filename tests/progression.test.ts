@@ -63,4 +63,44 @@ describe('progression', () => {
     expect(s.mode).toBe('duration');
     expect(s.sets[0]!.durationSec).toBe(45);
   });
+
+  describe('readiness context (F2.1)', () => {
+    const a = session('2026-09-12', [{ id: ex, sets: sets(60, 12) }]);
+    const b = session('2026-09-15', [{ id: ex, sets: sets(60, 12) }]);
+    it('red readiness holds the load and drops a set instead of increasing', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'reduce', reason: 'Readiness is red today.' } });
+      expect(s.mode).toBe('hold');
+      expect(s.sets.length).toBe(2);
+      expect(s.reason).toBe('Readiness is red today.');
+    });
+    it('amber (no_increase) holds at confirm instead of increasing', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'no_increase' } });
+      expect(s.mode).toBe('confirm');
+    });
+    it('low muscle recovery also blocks the increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { recoveryPct: 40 });
+      expect(s.mode).toBe('confirm');
+    });
+    it('normal readiness does not interfere with a genuine increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { readiness: { loadAdvice: 'normal' }, recoveryPct: 90 });
+      expect(s.mode).toBe('increase');
+    });
+  });
+
+  describe('deload context (F3.3)', () => {
+    const a = session('2026-09-12', [{ id: ex, sets: sets(60, 12, 'ideal', 3) }]);
+    const b = session('2026-09-15', [{ id: ex, sets: sets(60, 12, 'ideal', 3) }]);
+    const deload = { startDay: '2026-09-16', endDay: '2026-09-22', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+    it('cuts sets and load and names the day of the week', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { deload });
+      expect(s.mode).toBe('deload');
+      expect(s.kg).toBe(54);
+      expect(s.sets.length).toBe(2);
+      expect(s.reason).toBe('Lighter week, day 3 of 7.');
+    });
+    it('takes priority over a genuine increase', () => {
+      const s = suggestNext([a, b], ex, 'lean', today, 3, [], { deload, readiness: { loadAdvice: 'normal' }, recoveryPct: 90 });
+      expect(s.mode).toBe('deload');
+    });
+  });
 });

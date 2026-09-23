@@ -17,7 +17,9 @@ export default defineConfig({
     assetsInlineLimit: 4096,
   },
   test: {
-    include: ['tests/**/*.test.ts'],
+    // Timing budgets run alone (MARC_PERF=1) so parallel test files don't skew them.
+    include: process.env.MARC_PERF ? ['tests/perf/**/*.test.ts'] : ['tests/**/*.test.ts'],
+    exclude: process.env.MARC_PERF ? ['node_modules/**'] : ['node_modules/**', 'tests/perf/**'],
     environment: 'node',
   },
 });
