@@ -101,3 +101,17 @@ describe('a later partial sync keeps what the morning sync had (QA-R5a-1)', () =
   });
 });
 type HealthSummaryRawLike = import('@/native/health').HealthSummaryRaw;
+
+describe('a sync across midnight (QA-R5a-3)', () => {
+  afterEach(() => { delete (globalThis as { Capacitor?: unknown }).Capacitor; vi.useRealTimers(); });
+  it("does not store the ended day's totals under the new day", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 23, 23, 59, 59, 500));
+    (globalThis as { Capacitor?: unknown }).Capacitor = { isNativePlatform: () => true, Plugins: { HealthConnectNative: { readSummary: async () => { vi.setSystemTime(new Date(2026, 8, 24, 0, 0, 0, 400)); return { needsPermission: false, steps: 12000, activeCalories: 600, sleepMinutes: 420 }; } } } };
+    const d = await syncHealth();
+    expect(d?.day).toBe('2026-09-24');
+    expect(d?.steps).toBeUndefined();
+    expect(d?.activeCalories).toBeUndefined();
+    expect(d?.sleepMinutes).toBe(420);
+  });
+});

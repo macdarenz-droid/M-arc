@@ -401,3 +401,10 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - The watch sheet reads `needsLocation` from `watchPermissionState()`, on open and on each scan, and shows `watchPermissionHint()`. It names Location on Android 8–11 and Nearby devices on 12+.
 - Not done here: forwarding the scanner's "Bluetooth is off" message from `native/watch/WatchBridgePlugin.java`. That is native Java outside this finding's scope, and it needs a device check.
 - **Needs device check:** Android 11 phone → deny Location → the hint names Location.
+
+### QA-R5a-3 (low)
+- `syncHealth` notes the day when the reads start. If midnight passed before they finished, the "since midnight" aggregates (steps, active calories) are dropped from that sync instead of being stored under the new day. Sleep and heart rate use windows and are kept.
+
+### QA-R5a-4 (low)
+- Decided by research: a full total for a past day needs a native read of yesterday's aggregates (HealthConnectNativePlugin, Java), which can't be checked here without a device. Instead, Escobar's `get_health` now labels each day's steps and calories with `totalsAsOf` (the last sync's time that day) and a note, so the coach no longer treats partial totals as full ones.
+- **Next dependency / owner decision:** add a native "yesterday" aggregate read if full past-day totals matter.

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as R from '@/escobar/tools/read';
-import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW } from './fixtures';
+import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW, TODAY } from './fixtures';
+import { addDays as addDaysLocal } from '@/core/dates';
 
 const bytes = (v: unknown) => JSON.stringify(v).length;
 const CASES: Array<[string, (ctx: ReturnType<typeof ctxOf>) => unknown, number]> = [
@@ -215,5 +216,17 @@ describe('assisted lifts in the live view (QA-R4b-5)', () => {
     const state = { ...s, sessions: [...s.sessions, past].sort((a, b) => a.startedAt.localeCompare(b.startedAt)), active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: id, name: 'Assisted Pull-up', done: false, skipped: false, sets: [{ id: 's1', kg: 20, reps: 12, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }, { id: 's2' }] }] } };
     const l = R.getLiveSession({}, ctxOf(state as never)) as { adjustment: string | null };
     expect(l.adjustment).toBeNull();
+  });
+});
+
+describe('get_health totals (QA-R5a-4)', () => {
+  it("say a day's steps are as of its last sync", () => {
+    const s = sixMonthsState();
+    const day = addDaysLocal(TODAY, -1);
+    const synced = new Date(`${day}T18:00:00`).toISOString();
+    const st = { ...s, healthDays: [{ day, steps: 6000, activeCalories: 300, source: 'health_connect', syncedAt: synced }] };
+    const h = R.getHealth({ days: 7 }, ctxOf(st as never)) as { days: Array<{ day: string; totalsAsOf?: string }>; note: string };
+    expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('18:00');
+    expect(h.note).toMatch(/last sync/);
   });
 });

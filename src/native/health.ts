@@ -84,6 +84,7 @@ export let lastHealthError: HealthError | null = null;
 export async function syncHealth({ prompt = false }: { prompt?: boolean } = {}): Promise<DailyHealth | null> {
   const p = plugin();
   if (!p?.readSummary) { lastHealthError = { needsPermission: false, missing: [], failed: [], message: 'Health Connect is not available in this build.' }; return null; }
+  const startDay = dayKey(new Date());
   try {
     let r = await p.readSummary();
     if (r.needsPermission && prompt) {
@@ -99,7 +100,11 @@ export async function syncHealth({ prompt = false }: { prompt?: boolean } = {}):
       await p.requestPermissions();
       r = await p.readSummary();
     }
-    const day = mapHealthSummary(r, dayKey(new Date()), new Date().toISOString());
+    // QA-R5a-3: steps and calories are "since midnight" aggregates. If midnight passed during the
+    // reads they may be the day that ended, so they are not stored under the new day.
+    const endDay = dayKey(new Date());
+    if (endDay !== startDay) r = { ...r, steps: undefined, activeCalories: undefined };
+    const day = mapHealthSummary(r, endDay, new Date().toISOString());
     // QA-R5a-1: a partial failure is reported too (Settings shows Details), not only a total one.
     lastHealthError = !day ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed ?? [], message: 'Health Connect answered, but every read failed.', raw: r }
       : r.failed?.length ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed, message: 'Some health data could not be read. What was read is saved.', raw: r }

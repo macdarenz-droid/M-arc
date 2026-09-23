@@ -5,7 +5,7 @@
  */
 import type { LoggedSet, Session } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
-import { addDays, daysBetween, weekdayOf } from '@/core/dates';
+import { addDays, dayKey, daysBetween, weekdayOf } from '@/core/dates';
 import { LIBRARY, searchExercises } from '@/core/exercises';
 import { MUSCLE_BY_ID, MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
@@ -334,12 +334,19 @@ export function getBody(input: { weeks?: number }, ctx: ToolCtx) {
   }, 3000, { dropFrom: 'start' });
 }
 
+const asOf = (syncedAt: string, day: string): string => {
+  const t = new Date(syncedAt);
+  return dayKey(t) === day ? t.toTimeString().slice(0, 5) : 'end of day';
+};
+
 export function getHealth(input: { days?: number }, ctx: ToolCtx) {
   const days = int(input.days, 1, 30, 7, 'days');
   const since = addDays(ctx.today, -days + 1);
   const list = ctx.state.healthDays.filter(d => d.day >= since).sort((a, b) => b.day.localeCompare(a.day));
   return capJson({
-    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null })),
+    // QA-R5a-4: a day's steps and calories are what the last sync that day read, not a full total.
+    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.syncedAt, d.day) } : {}) })),
+    note: 'steps and activeKcal are totals as of the last sync that day (totalsAsOf), so a past day can be lower than its real total.',
     restingHr7d: restingHr(ctx.state.healthDays, ctx.state.profile, ctx.today),
     hrvAvailable: list.some(d => d.lnRmssd != null),
   }, 4000);
