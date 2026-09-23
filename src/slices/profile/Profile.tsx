@@ -1,7 +1,7 @@
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
-import { Button, Card, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
+import { Button, Card, CommitNumber, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
 import { showToast } from '@/app/toast';
 import { formatLocalStamp } from '@/core/dates';
 import { profileCompleteness, isWeightTypo } from '@/brain/onboarding';
@@ -31,7 +31,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
         <Section title="About you" palace="profile.about">
           <Card class="stack-sm">
             <Field label="Birth year" hint="Unlocks: heart-rate zones, age-adjusted recovery. ">
-              <input type="number" value={s.profile.birthYear ?? ''} onInput={e => { const v = parseInt((e.target as HTMLInputElement).value, 10); setBirthYear(Number.isFinite(v) ? v : undefined); }} />
+              <CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v)} />
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'birthYear'))}</span>
             </Field>
             <Field label="Sex" hint="Unlocks: calories, relative-strength comparisons.">
@@ -39,7 +39,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'sex'))}</span>
             </Field>
             <Field label="Height (cm)" hint="Unlocks: calories, body-fat estimate.">
-              <input type="number" value={s.profile.heightCm ?? ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); setHeight(Number.isFinite(v) ? v : undefined); }} />
+              <CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v)} />
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'heightCm'))}</span>
             </Field>
           </Card>

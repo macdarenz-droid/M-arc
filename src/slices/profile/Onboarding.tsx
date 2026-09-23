@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
-import { Button, Card, Field, Segmented, Sheet } from '@/ui/primitives';
+import { Button, Card, CommitNumber, Field, Segmented, Sheet } from '@/ui/primitives';
 import { profileCompleteness, type OnboardingTrigger } from '@/brain/onboarding';
 import { GOALS, type GoalId } from '@/data/goals';
 import { changeGoal, completeOnboarding, dismissOnboarding, logWeight, markWatchPrompted, reviewOnboarding, setBirthYear, setHeight, setSex, setTrainingSince } from './profile';
@@ -69,8 +69,8 @@ function OnboardingForm({ onDone }: { onDone: () => void }) {
     <Sheet title="Add my details" onClose={onDone}>
       <div class="stack">
         <Field label="Body weight (kg)"><input type="number" autofocus value={weight} onInput={e => setWeight((e.target as HTMLInputElement).value)} /></Field>
-        <Field label="Height (cm)"><input type="number" value={s.profile.heightCm ?? ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); setHeight(Number.isFinite(v) ? v : undefined, 'onboarding'); }} /></Field>
-        <Field label="Birth year"><input type="number" value={s.profile.birthYear ?? ''} onInput={e => { const v = parseInt((e.target as HTMLInputElement).value, 10); setBirthYear(Number.isFinite(v) ? v : undefined, 'onboarding'); }} /></Field>
+        <Field label="Height (cm)"><CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v, 'onboarding')} /></Field>
+        <Field label="Birth year"><CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v, 'onboarding')} /></Field>
         <Field label="Sex"><Segmented value={s.profile.sex ?? 'male'} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v, 'onboarding')} /></Field>
         <Field label="Training since" hint="Or leave blank if you're new.">
           <div class="row"><input type="month" value={s.profile.trainingSince ?? ''} onInput={e => setTrainingSince((e.target as HTMLInputElement).value || undefined, 'onboarding')} /><Button variant="quiet" size="sm" onClick={() => setTrainingSince(new Date().toISOString().slice(0, 7), 'onboarding')}>I'm new</Button></div>

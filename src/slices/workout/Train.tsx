@@ -10,6 +10,7 @@ import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
 import { dayKey, formatClock } from '@/core/dates';
+import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -56,6 +57,8 @@ const pendingTimeQuestion = signal<FinishSummary | null>(null);
 const loggingPast = signal<Split | null>(null);
 /** Set when the user taps "Start" — shows the check-in (if not done today) then the pre-session brief before the timer begins. */
 const startingSplit = signal<Split | null>(null);
+/** UI-17: start from anywhere through the same check-in and pre-session sheets as the Train tab. */
+export function requestStart(split: Split): void { startingSplit.value = split; }
 /** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
 const checkInDismissed = signal(false);
 
@@ -99,14 +102,14 @@ function GymSheet({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState('');
   const [renaming, setRenaming] = useState<string | null>(null);
   return (
-    <Sheet title="Where are you training?" onClose={onClose}>
+    <Sheet title="Where are you training?" onClose={() => { if (renaming) renameGym(renaming, name); onClose(); }}>
       <div class="stack">
         <div class="list">
           {s.units.gyms.map(g => (
             <div key={g.id} class="list-row">
               <div class="grow pressable" onClick={() => { setActiveGym(g.id); onClose(); }}>
                 {renaming === g.id
-                  ? <input value={name} maxLength={28} onClick={e => e.stopPropagation()} onInput={e => setName((e.target as HTMLInputElement).value)} onBlur={() => { renameGym(g.id, name); setRenaming(null); }} />
+                  ? <input value={name} maxLength={28} onClick={e => e.stopPropagation()} onInput={e => setName((e.target as HTMLInputElement).value)} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} onBlur={() => { renameGym(g.id, name); setRenaming(null); }} />
                   : <div class="row">{g.name}{g.id === s.units.activeGymId && <Chip tone="accent">Here now</Chip>}</div>}
                 <div class="hint">Mostly {g.defaultUnit}</div>
               </div>
@@ -257,9 +260,9 @@ function SplitEditor({ split, onClose, onDeleted }: { split: Split; onClose: () 
   const [confirm, setConfirm] = useState(false);
   const fresh = s.splits.find(x => x.id === split.id) ?? split;
   return (
-    <Sheet title="Edit split" onClose={onClose}>
+    <Sheet title="Edit split" onClose={() => { renameSplit(split.id, name); onClose(); }}>
       <div class="stack">
-        <Field label="Name"><input value={name} maxLength={28} onInput={e => setName((e.target as HTMLInputElement).value)} onBlur={() => renameSplit(split.id, name)} /></Field>
+        <Field label="Name"><input value={name} maxLength={28} onInput={e => setName((e.target as HTMLInputElement).value)} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} onBlur={() => renameSplit(split.id, name)} /></Field>
         <div class="list">
           {fresh.exercises.map((se, i) => {
             const ex = findExercise(se.exerciseId, s.customExercises);
@@ -451,11 +454,11 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
                   <span class="set-index">{j + 1}</span>
                   {isTimed ? (
-                    <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
                       <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={mode === 'weighted' ? flip : undefined} onUnitLongPress={mode === 'weighted' ? flipGroup : undefined} />
-                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseInt((e.target as HTMLInputElement).value) || undefined })} onBlur={() => commitSet(index, j)} />
+                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
@@ -613,14 +616,16 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
     const sorted = [...durations].sort((a, b) => a - b);
     return Math.round(sorted[Math.floor(sorted.length / 2)]!);
   };
-  const [duration, setDuration] = useState(medianLiveMinutes());
+  const [durText, setDurText] = useState(() => String(medianLiveMinutes()));
+  const duration = parseMinutes(durText) ?? medianLiveMinutes();
   const guessedTime = s.preferences.reminders.enabled ? s.preferences.reminders.time : '17:00';
   const now = Date.now();
   // Never default to a session that would end in the future: fall back to "ended just now" instead.
-  const guessedEndsInFuture = new Date(`${summary.session.day}T${guessedTime}`).getTime() + duration * 60_000 > now;
-  const fallbackStart = new Date(now - duration * 60_000);
+  const guessedEndsInFuture = new Date(`${summary.session.day}T${guessedTime}`).getTime() + medianLiveMinutes() * 60_000 > now;
+  const fallbackStart = new Date(now - medianLiveMinutes() * 60_000);
   const [day, setDay] = useState(guessedEndsInFuture ? dayKey(fallbackStart) : summary.session.day);
   const [time, setTime] = useState(guessedEndsInFuture ? fallbackStart.toTimeString().slice(0, 5) : guessedTime);
+  const valid = !!day && !!time && parseMinutes(durText) != null;
 
   const resolve = (timeSource: 'user' | 'schedule' | 'default', overrideDay?: string, overrideTime?: string) => {
     resolveSessionTiming(summary.session.id, `${overrideDay ?? day}T${overrideTime ?? time}`, duration, timeSource);
@@ -636,8 +641,8 @@ function TimeQuestionSheet({ summary, onResolved }: { summary: FinishSummary; on
           <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
           <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
         </div>
-        <Field label="Duration (minutes)"><input type="number" value={duration} onInput={e => setDuration(parseInt((e.target as HTMLInputElement).value, 10) || duration)} /></Field>
-        <div class="row"><Button variant="quiet" onClick={() => resolve('schedule')}>Skip</Button><Button variant="primary" class="grow" onClick={() => resolve('user')}>Save</Button></div>
+        <Field label="Duration (minutes)"><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
+        <div class="row"><Button variant="quiet" onClick={() => resolve('schedule')}>Skip</Button><Button variant="primary" class="grow" disabled={!valid} onClick={() => resolve('user')}>Save</Button></div>
         <Button variant="quiet" size="sm" onClick={() => {
           // The session ends now; start is `duration` minutes before that (never a future timestamp).
           const start = new Date(Date.now() - duration * 60_000);
@@ -655,7 +660,10 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
   const u = unit.value;
   const [day, setDay] = useState(today.value);
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 5)); // never defaults into the future
-  const [duration, setDuration] = useState(60);
+  const [durText, setDurText] = useState('60');
+  const duration = parseMinutes(durText);
+  const startsInFuture = !!day && !!time && new Date(`${day}T${time}`).getTime() > Date.now();
+  const valid = !!day && !!time && duration != null && !startsInFuture;
   const [entries, setEntries] = useState(() => split.exercises.map(se => {
     const ex = findExercise(se.exerciseId, s.customExercises);
     return { exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: Array.from({ length: se.sets }, () => ({}) as import('@/core/models').LoggedSet) };
@@ -665,8 +673,10 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
     setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((st, j) => (j !== si ? st : { ...st, ...patch })) })));
 
   const save = () => {
+    if (!valid || duration == null) return;
     const r = logPastSession({ splitId: split.id, trainedAtLocal: `${day}T${time}`, durationMin: duration, entries });
     if (r) onSaved(r);
+    else showToast('Add at least one set with reps');
   };
 
   return (
@@ -676,7 +686,7 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
           <Field label="Day"><input type="date" value={day} onInput={e => setDay((e.target as HTMLInputElement).value)} /></Field>
           <Field label="Start time"><input type="time" value={time} onInput={e => setTime((e.target as HTMLInputElement).value)} /></Field>
         </div>
-        <Field label="Duration (minutes)"><input type="number" value={duration} onInput={e => setDuration(parseInt((e.target as HTMLInputElement).value, 10) || duration)} /></Field>
+        <Field label="Duration (minutes)" hint={startsInFuture ? 'That start time is in the future.' : undefined}><input type="text" inputMode="numeric" value={durText} onInput={e => setDurText((e.target as HTMLInputElement).value)} /></Field>
         {entries.map((entry, ei) => (
           <Card key={entry.exerciseId}>
             <b class="small">{entry.name}</b>
@@ -685,7 +695,7 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
               <div key={si} class="set-grid">
                 <span class="set-index">{si + 1}</span>
                 <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
-                <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseInt((e.target as HTMLInputElement).value, 10) || undefined })} />
+                <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseReps((e.target as HTMLInputElement).value) })} />
                 <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
               </div>
             ))}
@@ -695,7 +705,7 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
             </div>
           </Card>
         ))}
-        <Button variant="primary" block onClick={save}>Save past session</Button>
+        <Button variant="primary" block disabled={!valid} onClick={save}>Save past session</Button>
       </div>
     </Sheet>
   );

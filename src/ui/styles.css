@@ -389,3 +389,11 @@ svg { display: block; }
 @media (prefers-reduced-motion: no-preference) {
   .reorder-list.dragging .reorder-item { transition: transform 160ms ease; }
 }
+
+/* UI-23: narrow phones keep the set row on one line with the load fully visible. */
+@media (max-width: 380px) {
+  .set-grid { grid-template-columns: 24px 1.3fr 1fr auto; gap: 6px; }
+  .effort button { width: 26px; height: 30px; }
+  .set-grid .weight-input input { padding-right: 24px; padding-left: 6px; }
+  .unit-pill { right: 2px; min-width: 22px; }
+}

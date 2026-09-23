@@ -11,7 +11,7 @@ import { formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
-import { startSession } from '../workout/session';
+import { requestStart } from '../workout/Train';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
@@ -73,7 +73,7 @@ export function Today() {
             <div class="eyebrow">Scheduled today</div>
             <h2>{split.name}</h2>
             <p class="muted small">{split.exercises.length} exercises planned.</p>
-            <Button variant="primary" onClick={() => { startSession(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
           </div>
         )}
         {status === 'rest' && (
