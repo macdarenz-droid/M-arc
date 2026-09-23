@@ -188,6 +188,8 @@ export class EscobarLoop {
   private latestSend = 0;
   private controller: AbortController | null = null;
   private abortReason: TurnOutcome | null = null;
+  /** QA-R4b-3: a step of this turn sent a trimmed window, so the next brief must be full. */
+  private trimmedThisTurn = false;
   view: LiveView = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
 
   constructor(conversation: Conversation, deps: LoopDeps) {
@@ -260,7 +262,10 @@ export class EscobarLoop {
     const s = this.deps.getState();
     const windowed = windowMessages(this.conversation, messages);
     // After a trim the next brief is sent in full: the diff it would build on may be cut off.
-    if (windowed !== messages && this.conversation.briefLines) this.conversation = { ...this.conversation, briefLines: undefined };
+    if (windowed !== messages) {
+      this.trimmedThisTurn = true;
+      if (this.conversation.briefLines) this.conversation = { ...this.conversation, briefLines: undefined };
+    }
     const body = {
       protocol: 2, mode, appVersion: this.deps.appVersion, manifest: this.deps.manifest(),
       messages: toRequestMessages(windowed, this.deps.imageData, s.escobar.sharing),
@@ -324,6 +329,7 @@ export class EscobarLoop {
     const gen = this.generation = ++genCounter;
     this.latestSend = gen;
     this.abortReason = null;
+    this.trimmedThisTurn = false;
     const controller = this.controller = new AbortController();
     const timer = setTimeout(() => this.abort('timeout'), this.deps.wallClockMs ?? WALL_CLOCK_MS);
     this.update({ status: 'thinking', text: '', preamble: [], activity: [], outcomes: [] });
@@ -376,7 +382,9 @@ export class EscobarLoop {
         const its = u?.iterations?.length ? u.iterations : u ? [u] : [];
         for (const it of its) { usage.inputTokens += it.input_tokens ?? 0; usage.outputTokens += it.output_tokens ?? 0; usage.cacheReadTokens += it.cache_read_input_tokens ?? 0; }
         if (staged) {
-          const extra = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
+          const extra: Partial<Conversation> = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
+          // QA-R4b-3: the first commit carries this turn's brief lines; after a trim they must not come back.
+          if (this.trimmedThisTurn) extra.briefLines = undefined;
           this.commit(staged, extra);
           staged = null; stagedExtra = {}; userCommitted = true;
         }

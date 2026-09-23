@@ -383,3 +383,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R4b-5 (low)
 - Escobar's live-session tool gives autoregulation advice only for weighted main lifts, like Train. An assisted pull-up no longer gets "Try 22.5 kg", which would mean more help.
+
+### QA-R4b-3 (low)
+- When a step of the turn sends a trimmed window, the turn's first commit no longer writes this turn's brief lines back, so the next brief is full, including for turns without tools. While a chat stays over the window, each turn therefore gets a full brief (the plan's "force a full brief after any trim").

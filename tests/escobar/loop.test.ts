@@ -224,6 +224,18 @@ describe('agent loop (§13)', () => {
     expect(brief).toContain('proposal p9 "Lighter bench" → applied');
   });
 
+  it('QA-R4b-3: after a trimmed window, the next brief is full, even for a turn without tools', async () => {
+    const { loop, transport } = setup([answer('Noted.'), answer('Ok.'), answer('Sure.')]);
+    await loop.send({ text: 'hi' });
+    const long: StoredMessage[] = [];
+    for (let i = 0; i < 30; i++) long.push({ role: 'user', content: [{ type: 'text', text: `q${i} ${'z'.repeat(10_000)}` }] }, { role: 'assistant', content: [{ type: 'text', text: `a${i}` }] });
+    loop.conversation = { ...loop.conversation, messages: [...long, ...loop.conversation.messages], userTurns: 6 };
+    await loop.send({ text: 'again' });
+    await loop.send({ text: 'and again' });
+    const third = (transport.bodies[2]!.messages as Array<{ role: string; content: string }>).filter(m => m.role === 'system').at(-1)!.content;
+    expect(third.startsWith('(changes since the last brief)')).toBe(false);
+  });
+
   it('photos are sent once, then as a stub', async () => {
     const evicted: string[] = [];
     const { loop, transport } = setup([answer('A rack.'), answer('Ok.')], { imageData: id => (id === 'img1' ? { mediaType: 'image/jpeg', data: 'QUJD' } : null), imagesSent: ids => evicted.push(...ids) });
