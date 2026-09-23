@@ -23,7 +23,7 @@ import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
 import { addExerciseToSession, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
-import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
+import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
@@ -450,7 +450,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     : null), memoDeps);
   // D10 / BR-09: warm-ups ramp to today's first working set, not to the e1RM.
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
-  const warmup = useMemo(() => (workingKg && workingKg > 0 ? warmupSets(workingKg, profile) : null), [...memoDeps, workingKg]);
+  const warmup = useMemo(() => warmupOffer(workingKg, profile), [...memoDeps, workingKg]);
   const [warmupOpen, setWarmupOpen] = useState(false);
   const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: previousSet(s.sessions, entry.exerciseId, j, s.customExercises), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */

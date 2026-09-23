@@ -338,3 +338,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-3 (low)
 - A name that contains a library name matches it only when the extra words name no other movement: a word from any library name ("calf", "raise") means a different exercise. So "Hack Squat Calf Raise" is no longer filed under Hack Squat, while "Hack Squat heavy" still is. This applies to the import path with equipment too.
+
+### QA-R3b-4 (low)
+- Train asks `warmupOffer()`, which returns null when the ramp is empty (a working set on the empty bar), so no "Show warm-up" toggle opens an empty list.

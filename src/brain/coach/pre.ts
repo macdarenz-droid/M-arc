@@ -56,6 +56,12 @@ export const WARMUP_REPS = [8, 5, 2];
  * equipment's loads. A step that snaps to the working load or above is dropped, so the last
  * warm-up is never heavier than the work. Shared by the brief, Train and Escobar.
  */
+/** QA-R3b-4: the warm-up Train offers, or null when there is none (an empty-bar working set). */
+export function warmupOffer(workingKg: number | null | undefined, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> | null {
+  const w = workingKg != null && workingKg > 0 ? warmupSets(workingKg, equipment) : [];
+  return w.length ? w : null;
+}
+
 export function warmupSets(workingKg: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {
   if (!(workingKg > 0)) return [];
   return WARMUP_PCTS
