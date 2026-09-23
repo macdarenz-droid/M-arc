@@ -5,7 +5,7 @@
  */
 import { freshState, freshUnits, newId, type AppState, type Effort, type Exercise, type LoggedExercise, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { WEEKDAYS } from './models';
-import { findExercise, makeCustomExercise } from './exercises';
+import { findExercise, findExerciseWithEquipment, makeCustomExercise } from './exercises';
 import { dayKey } from './dates';
 import { backfillLegacyLbEntries } from './units';
 import { isGoalId } from '@/data/goals';
@@ -106,7 +106,7 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   const resolveExercise = (name: string | undefined, type?: string, muscle?: string, key?: string): { id: string; name: string } => {
     const label = (name ?? '').trim() || 'Exercise';
     const byKey = key ? findExercise(libraryIdByCustomKey.get(key) ?? key) : undefined;
-    const found = byKey ?? findExercise(label, customExercises);
+    const found = byKey ?? findExerciseWithEquipment(label, type, customExercises);
     if (found) return { id: found.id, name: found.name };
     const nameKey = label.toLowerCase();
     let custom = customByName.get(nameKey);

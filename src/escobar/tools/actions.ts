@@ -5,7 +5,7 @@
  */
 import type { AppState, EquipmentProfile, TodayChange, Weekday } from '@/core/models';
 import { WEEKDAYS, MAX_GYMS, MAX_PINS, SHOW_COMPONENT_IDS } from '@/core/models';
-import { findExercise } from '@/core/exercises';
+import { findExercise, findExerciseExact } from '@/core/exercises';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, isGoalId } from '@/data/goals';
 import { WEEKDAY_LABEL, addDays } from '@/core/dates';
@@ -38,8 +38,10 @@ const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 
 const isInt = (v: unknown, lo: number, hi: number): v is number => typeof v === 'number' && Number.isInteger(v) && v >= lo && v <= hi;
 
 function exerciseId(ctx: ToolCtx, v: unknown, where: string): string {
-  if (typeof v !== 'string' || !findExercise(v, ctx.state.customExercises)) throw new ToolError(`${where}: unknown exerciseId ${String(v)}; use search_exercises`);
-  return findExercise(v, ctx.state.customExercises)!.id;
+  // ST-13: exact ids and names only; a proposal must never land on a guessed exercise.
+  const ex = typeof v === 'string' ? findExerciseExact(v, ctx.state.customExercises) : undefined;
+  if (!ex) throw new ToolError(`${where}: unknown exerciseId ${String(v)}; use search_exercises`);
+  return ex.id;
 }
 
 function exerciseList(ctx: ToolCtx, v: unknown): Array<{ exerciseId: string; sets: number }> {
@@ -326,7 +328,7 @@ export function buildAction(name: string, raw: unknown, ctx: ToolCtx): Built {
     case 'propose_custom_exercise': {
       const nm = typeof i.name === 'string' ? i.name.trim() : '';
       if (!nm || nm.length > 60) throw new ToolError('name must be 1–60 characters');
-      if (findExercise(nm, s.customExercises)) throw new ToolError(`${nm} already exists; use search_exercises`);
+      if (findExerciseExact(nm, s.customExercises)) throw new ToolError(`${nm} already exists; use search_exercises`);
       const primary = Array.isArray(i.primary) ? i.primary : [];
       if (primary.length < 1 || primary.length > 2 || primary.some(m => !MUSCLE_IDS.includes(m as MuscleId))) throw new ToolError('primary must be 1–2 muscle ids');
       const secondary = Array.isArray(i.secondary) ? i.secondary : [];

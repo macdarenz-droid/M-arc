@@ -92,7 +92,7 @@ export function Coach() {
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and only ever widens when your own history shows you need it.</p>
+            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
           </div>
         </Card>

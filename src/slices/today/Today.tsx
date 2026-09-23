@@ -7,9 +7,10 @@ import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { formatDay, formatHours } from '@/core/dates';
+import { daysBetween, formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
+import { mindsetForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { requestStart } from '../workout/Train';
 import { INSIGHT_COLOR } from '../coach/Coach';
@@ -33,6 +34,9 @@ export function Today() {
   const top = insights.value[0];
   const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
   const spark = SPARKS[dayIndex]!;
+  // ST-17: on odd days of the year a mindset note takes the quote slot.
+  const dayOfYear = daysBetween(`${today.value.slice(0, 4)}-01-01`, today.value) + 1;
+  const mindset = mindsetForDay(dayOfYear);
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
   const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';
@@ -130,9 +134,11 @@ export function Today() {
       {s.preferences.showSpark && (
         <Section title="Daily spark" palace="today.spark">
           <Card class="card-quiet">
-            <div class="eyebrow">{spark.topic}</div>
-            <p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p>
-            <span class="hint">{spark.by}</span>
+            {mindset ? (
+              <><div class="eyebrow">Mindset</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{mindset.title}</p><span class="hint">{mindset.text}</span></>
+            ) : (
+              <><div class="eyebrow">{spark.topic}</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p><span class="hint">{spark.by}</span></>
+            )}
           </Card>
         </Section>
       )}

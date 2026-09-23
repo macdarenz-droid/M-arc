@@ -20,7 +20,7 @@ import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
-import { pickCue } from '@/brain/coach/cues';
+import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
 import { addExerciseToSession, addSet, active, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupSets } from '@/brain/coach/pre';
@@ -424,6 +424,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: previousSet(s.sessions, entry.exerciseId, j, s.customExercises), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
+  const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode), `${today.value}|${entry.exerciseId}`);
 
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
@@ -438,6 +439,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
       {open && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
+          {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <a onClick={() => setSubOpen(true)}>See substitutes</a> or ease off today.</p>

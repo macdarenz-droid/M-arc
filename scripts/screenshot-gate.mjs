@@ -197,7 +197,7 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Add my details' }).click();
   await page.waitForTimeout(250);
   await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
-  await page.locator('input[type="number"]').first().fill('80');
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
   await page.getByText('Strength focus').click();
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Save', exact: true }).click();

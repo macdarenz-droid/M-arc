@@ -117,14 +117,44 @@ export function findExercise(idOrName: string, custom: Exercise[] = NO_CUSTOM): 
   return found;
 }
 
-function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
+function findByExactName(idOrName: string, custom: Exercise[]): Exercise | undefined {
   const q = normalizeName(idOrName);
   if (!q) return undefined;
-  const all = [...custom, ...LIBRARY];
   const singular = q.replace(/s\b/g, '');
   const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
-  return all.find(e => same(e.name) || e.aliases.some(same))
-    ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
+  return [...custom, ...LIBRARY].find(e => same(e.name) || e.aliases.some(same));
+}
+
+/**
+ * ST-13: the substring step answers only when exactly one exercise matches, so "Press" no longer
+ * resolves to whichever press happens to come first.
+ */
+function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
+  const exact = findByExactName(idOrName, custom);
+  if (exact) return exact;
+  const q = normalizeName(idOrName);
+  if (q.length < 4) return undefined;
+  const hits = [...custom, ...LIBRARY].filter(e => normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name)));
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+/**
+ * For imports that know the equipment ("Chest Press", Machine): the usual lookup, then, when the
+ * name alone is ambiguous, the one partial match whose equipment agrees (ST-13 kept this path).
+ */
+export function findExerciseWithEquipment(name: string, equipment: string | undefined, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  const found = findExercise(name, custom);
+  if (found || !equipment) return found;
+  const q = normalizeName(name);
+  if (q.length < 4) return undefined;
+  const eq = normalizeName(equipment).replace(/s\b/g, '');
+  const hits = [...custom, ...LIBRARY].filter(e => (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))) && normalizeName(e.equipment).replace(/s\b/g, '') === eq);
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+/** Id, custom id, or exact name/alias; never a substring guess. For writes that must not land on the wrong exercise. */
+export function findExerciseExact(nameOrId: string, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  return byId.get(nameOrId) ?? custom.find(c => c.id === nameOrId) ?? findByExactName(nameOrId, custom);
 }
 
 export function searchExercises(query: string, custom: Exercise[] = [], limit = 12): Exercise[] {
