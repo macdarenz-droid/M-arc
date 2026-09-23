@@ -18,6 +18,7 @@ Two agents work on this repo **at the same time**, and a supervisor session (Cla
 
 | Guard message | Fix |
 |---|---|
+| **STOPPED by Claude (supervisor)** | Claude, the supervisor, stopped the branch on purpose. Read `SUPERVISOR-STOP.md` at the repo root, do what it says, and delete it in the commit that does it. |
 | **Signing step removed**, **Fingerprint changed**, **Release fingerprint changed** | Restore the steps "Decode the permanent signing key", "Sign with the permanent key and verify the fingerprint" and the `EXPECTED_SHA256` value exactly as on `origin/main`. Never rotate, regenerate or replace the key. |
 | **Keystore committed**, **Key file committed** | Remove it (`git rm --cached`), add it to `.gitignore`, and tell the owner, because it is public now. Read keys only from secrets. |
 | **Watch agent outside its files** | The watch branch must not change `escobar-worker/`, `src/escobar/`, `src/brain/` or the remediation docs. Revert those paths to `origin/main`. If the watch genuinely needs a change there, write it down for the owner instead. |

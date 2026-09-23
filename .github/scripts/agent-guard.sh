@@ -10,6 +10,21 @@ fail=0; warnn=0
 err()  { echo "::error title=$1::$2 FIX: $3 (see $RULES)"; fail=1; }
 warn() { echo "::warning title=$1::$2 FIX: $3 (see $RULES)"; warnn=1; }
 
+# Rule 0: a stop issued by the supervisor (Claude, acting for the owner). While SUPERVISOR-STOP.md
+# exists this check fails and prints it. Resuming also requires the merge the note asks for.
+if [ -f SUPERVISOR-STOP.md ]; then
+  echo "::error title=STOPPED by Claude (supervisor)::This branch was stopped on purpose by Claude, the supervising agent for the owner. Read SUPERVISOR-STOP.md at the repo root (printed below) and do what it says before any other work."
+  echo "----- SUPERVISOR-STOP.md -----"; cat SUPERVISOR-STOP.md; echo "------------------------------"
+  fail=1
+fi
+case "$BRANCH" in
+  codex/*)
+    REQUIRED_MAIN='4f98b522aba726aae6bf328ae2cc98156f3a8bb1'   # PR #4 merge (R0-R3 + permanent signing). Resume condition for the watch branch.
+    if ! git merge-base --is-ancestor "$REQUIRED_MAIN" HEAD 2>/dev/null; then
+      err 'Required merge missing' "this branch does not contain main commit ${REQUIRED_MAIN:0:7} (PR #4: R0-R3 and the permanent signing key)." 'git fetch origin main && git merge origin/main, keeping both sides (see SUPERVISOR-STOP.md / docs/AGENT-RULES.md).'
+    fi ;;
+esac
+
 # Rule 1: one permanent signing identity (Huawei Wear Engine is registered to it).
 if [ -f .github/workflows/build-apk.yml ]; then
   grep -q 'Sign with the permanent key and verify the fingerprint' .github/workflows/build-apk.yml \
