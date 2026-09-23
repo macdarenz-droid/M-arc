@@ -137,8 +137,17 @@ export function saveStore(store: ConversationStore): ConversationStore | null {
   }
 }
 
+const replacedListeners = new Set<() => void>();
+/** Called after the whole store is cleared or restored, so the session drops what it holds (ES-07). */
+export function onStoreReplaced(fn: () => void): () => void {
+  replacedListeners.add(fn);
+  return () => replacedListeners.delete(fn);
+}
+function notifyReplaced(): void { for (const fn of replacedListeners) { try { fn(); } catch (e) { console.error(e); } } }
+
 export function clearStore(): void {
   try { storage()?.removeItem(ESCOBAR_KEY); } catch { /* best-effort */ }
+  notifyReplaced();
 }
 
 export function newConversation(appVersion: string, mode: ConversationMode = 'chat', now = new Date()): Conversation {
@@ -185,4 +194,5 @@ export function exportAllEscobar(): ConversationStore { return loadStore(); }
 export function restoreEscobar(data: unknown): void {
   if (data === undefined || data === null) return;
   saveStore(sanitizeStore(data));
+  notifyReplaced();
 }

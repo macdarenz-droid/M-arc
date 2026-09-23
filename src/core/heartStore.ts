@@ -9,11 +9,23 @@ const MAX_SESSIONS = 60;
 
 export type HeartSeriesStore = Record<string, Array<[number, number]>>;
 
+const isPlainObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+const isPoint = (p: unknown): p is [number, number] => Array.isArray(p) && p.length === 2 && typeof p[0] === 'number' && typeof p[1] === 'number' && Number.isFinite(p[0]) && Number.isFinite(p[1]);
+
 function read(storage: Pick<Storage, 'getItem'> = localStorage): HeartSeriesStore {
   try {
     const raw = storage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as HeartSeriesStore) : {};
+    const v: unknown = raw ? JSON.parse(raw) : {};
+    return isPlainObject(v) ? (v as HeartSeriesStore) : {};
   } catch { return {}; }
+}
+
+/** Keeps only series that are lists of [time, bpm] number pairs (UI-14). */
+function sanitize(v: unknown): HeartSeriesStore {
+  if (!isPlainObject(v)) return {};
+  const out: HeartSeriesStore = {};
+  for (const [id, series] of Object.entries(v)) if (Array.isArray(series)) out[id] = series.filter(isPoint);
+  return out;
 }
 
 function write(v: HeartSeriesStore, storage: Pick<Storage, 'setItem'> = localStorage): void {
@@ -43,6 +55,11 @@ export function deleteSeries(sessionId: string): void {
 
 export function exportHeart(): HeartSeriesStore { return read(); }
 
-export function restoreHeart(data: HeartSeriesStore | undefined): void {
-  if (data) write(data);
+export function restoreHeart(data: unknown): void {
+  if (data === undefined || data === null) return;
+  write(sanitize(data));
+}
+
+export function clearHeart(storage: Pick<Storage, 'removeItem'> = localStorage): void {
+  try { storage.removeItem(KEY); } catch { /* nothing stored */ }
 }

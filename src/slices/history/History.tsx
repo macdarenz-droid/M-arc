@@ -16,6 +16,7 @@ import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
+import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 
 export function History() {
@@ -130,8 +131,14 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   };
   const remove = () => {
     const removed = session;
+    // Its heart series goes with it, and comes back with Undo (UI-14).
+    const series = getSeries(session.id);
     update(s => ({ ...s, sessions: s.sessions.filter(x => x.id !== session.id) }));
-    showToast('Session deleted', 'Undo', () => update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) })));
+    deleteSeries(session.id);
+    showToast('Session deleted', 'Undo', () => {
+      update(s => ({ ...s, sessions: [...s.sessions, removed].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) }));
+      if (series.length) storeSeries(removed.id, series);
+    });
     onClose();
   };
   return (

@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { bootSource, flushSave, replaceState, state, update } from '@/core/store';
+import { bootSource, deleteRescueCopy, flushSave, replaceState, rescueRaw, state, update } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
 import { Button, Card, Field, Row, Section, Sheet, Toggle } from '@/ui/primitives';
 import { THEMES, THEME_IDS } from '@/theme/themes';
@@ -15,12 +15,43 @@ import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
 import { GymsSheet } from './Gyms';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
+import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
+import { cancelRestDone } from '@/native/notifications';
+import { APP_VERSION } from '@/core/version';
+import { formatDay, dayKey } from '@/core/dates';
+import { buildBackup, parseBackup } from './backup';
 
-export const APP_VERSION = '37.0.0';
+type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
+type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
+
+/** Everything a restore or reset replaces, so Undo can put it back. */
+function snapshot(): Snapshot { return { state: state.value, escobar: exportAllEscobar(), heart: exportHeart() }; }
+
+/** After the state is replaced: timers, haptics and reminders follow the new state. */
+function afterReplace(): void {
+  void cancelRestDone();
+  setHapticsEnabled(state.value.preferences.haptics);
+  void resyncReminders();
+}
+
+function restoreAll(b: Snapshot): void {
+  replaceState(b.state);
+  restoreEscobar(b.escobar);
+  restoreHeart(b.heart);
+  afterReplace();
+}
+
+function resetEverything(): void {
+  replaceState(freshState());
+  clearEscobarStore();
+  clearHeart();
+  void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
+  try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
+  afterReplace();
+}
 
 export function Settings({ onClose }: { onClose: () => void }) {
   const s = state.value;
@@ -29,32 +60,38 @@ export function Settings({ onClose }: { onClose: () => void }) {
   usePalaceFocus('settings.theme');
   const [watchOpen, setWatchOpen] = useState(false);
   const [gymsOpen, setGymsOpen] = useState(false);
+  const [pending, setPending] = useState<PendingRestore | null>(null);
+  const [rescue, setRescue] = useState(() => rescueRaw() != null);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    try { showToast(await exportText(name, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s, escobar: exportAllEscobar() }, null, 1))); } catch { showToast('Export failed'); }
+    try { showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1))); } catch { showToast('Export failed'); }
   };
   const restore = async () => {
     const text = await pickFile();
     if (!text) return;
-    try {
-      const parsed = JSON.parse(text) as { state?: AppState; escobar?: unknown } | AppState;
-      const legacy = asLegacyRoot(parsed);
-      if (legacy) {
-        // A backup from the previous version of the app: convert it on the way in.
-        const converted = convertLegacy(legacy);
-        replaceState(converted);
-        showToast(`Imported ${converted.sessions.length} sessions from the old backup`);
-        return;
-      }
-      const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
-      if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
-      replaceState({ ...next, health: { connected: false } });
-      if ('escobar' in parsed) restoreEscobar(parsed.escobar);
-      showToast(`Restored ${next.sessions.length} sessions`);
-    } catch { showToast('That file is not an M/ARC backup'); }
+    const b = parseBackup(text);
+    if ('error' in b) { showToast(b.error); return; }
+    if (b.kind === 'legacy') { setPending({ next: b.state, from: 'the previous version', label: 'the old backup' }); return; }
+    const when = b.exportedAt && Number.isFinite(Date.parse(b.exportedAt)) ? formatDay(dayKey(b.exportedAt)) : 'this file';
+    setPending({ next: b.state, escobar: b.escobar, heart: b.heart, from: when, label: b.dropped ? `the backup (${b.dropped} damaged item${b.dropped === 1 ? '' : 's'} skipped)` : 'the backup' });
+  };
+  const applyRestore = (r: PendingRestore) => {
+    const before = snapshot();
+    // Health Connect permission belongs to this device, not the backup.
+    replaceState({ ...r.next, health: { connected: false } });
+    if (r.escobar !== undefined) restoreEscobar(r.escobar);
+    if (r.heart !== undefined) restoreHeart(r.heart);
+    afterReplace();
+    setPending(null);
+    showToast(`Restored ${r.next.sessions.length} sessions from ${r.label}`, 'Undo', () => restoreAll(before));
+  };
+  const saveRescue = async () => {
+    const raw = rescueRaw();
+    if (raw == null) { setRescue(false); return; }
+    try { showToast(await exportText('marc-rescue-data.json', raw)); } catch { showToast('Export failed'); }
   };
 
   return (
@@ -125,9 +162,20 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Your data" palace="settings.data">
           <Card class="stack-sm">
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
+            {pending && (
+              <Card class="card-quiet" role="alertdialog">
+                <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>
+                <div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setPending(null)}>Cancel</Button><Button variant="danger" onClick={() => applyRestore(pending)}>Replace</Button></div>
+              </Card>
+            )}
+            {rescue && (
+              <Row trailing={<div class="row"><Button size="sm" onClick={() => void saveRescue()}>Save rescue file</Button><Button size="sm" variant="quiet" onClick={() => { deleteRescueCopy(); setRescue(false); showToast('Rescue copy deleted'); }}>Delete rescue copy</Button></div>}>
+                <span class="small" data-palace="settings.rescue">Unreadable data kept aside</span><div class="hint">A copy of saved data the app could not read at start.</div>
+              </Row>
+            )}
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); clearEscobarStore(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>
