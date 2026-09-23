@@ -23,7 +23,8 @@ test('shared Java/JS command fixtures agree on validation and conflict status', 
       raw = raw.replace(fixture.mutation.from, fixture.mutation.to);
     }
     const command = parseWatchCommand(raw);
-    const fixtureSession = fixture.closed ? null : { ...session, startedAt: '2026-09-23T18:59:00.000Z',
+    const fixtureSession = fixture.noSession ? null : { ...session, startedAt: '2026-09-23T18:59:00.000Z',
+      ...(fixture.closed ? { status: 'finished' } : {}),
       ...(fixture.paused ? { pausedAt: Date.parse('2026-09-23T19:00:00.000Z') } : {}),
       entries: [{ ...session.entries[0], sets: [{ ...session.entries[0].sets[0],
         ...(fixture.committed ? { status: 'committed', at: '2026-09-23T19:00:00.000Z' } : {}),
@@ -52,6 +53,9 @@ test('retry returns the original receipt; reusing its ID with other content is r
     actionAt: input.actionAt, receivedAt: '2026-09-23T10:00:03.000Z',
     clockConfidence: 'unverified', sideEffectsStatus: 'not_implemented' });
   assert.deepEqual(planSetCommand({ ...session, status: 'finished' }, binding, {}, receipts, c), { status: 'replay', receipt: receipts['command-1'].result });
+  assert.deepEqual(planSetCommand(null, binding, {}, receipts, c), { status: 'replay', receipt: receipts['command-1'].result });
+  assert.equal(planSetCommand(null, binding, {}, receipts, parse({ setId: 'set-2' })).status, 'command_id_conflict');
+  assert.equal(planSetCommand(null, { installationId: 'other' }, {}, receipts, c).status, 'wrong_installation');
   assert.equal(planSetCommand(session, binding, {}, receipts, parse({ setId: 'set-2' })).status, 'command_id_conflict');
 });
 
@@ -63,6 +67,8 @@ test('a recorded time rejection stays rejected when the same ID is retried later
   const result = planSetCommand(session, binding, {}, { [command.commandId]: { fingerprint, result: rejected } },
     command, Date.parse('2026-09-23T11:00:00.000Z'));
   assert.deepEqual(result, { status: 'replay_rejected', receipt: rejected });
+  assert.deepEqual(planSetCommand(null, binding, {}, { [command.commandId]: { fingerprint, result: rejected } }, command),
+    { status: 'replay_rejected', receipt: rejected });
 });
 
 test('offline commands never retarget a reordered, substituted, or changed set', () => {

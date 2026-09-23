@@ -144,6 +144,25 @@ public class WorkoutCommandStoreTest {
         assertFalse(set(saved(), "e-1", "set-1").has("at"));
     }
 
+    @Test public void acceptedFutureActionClampsStoredSetToReceiptTime() throws Exception {
+        String future = UTC.format(Instant.now().plusSeconds(20));
+        String raw = command("c-future", "watch-1", "e-1", "set-1", 0, future);
+        WorkoutCommandStore.Result result = store.completeSet(raw);
+        assertEquals("applied", result.status);
+        JSONObject receipt = new JSONObject(result.receipt);
+        assertEquals(future, receipt.getString("actionAt"));
+        assertTrue(Instant.parse(future).isAfter(Instant.parse(receipt.getString("receivedAt"))));
+        assertEquals(receipt.getString("receivedAt"), set(saved(), "e-1", "set-1").getString("at"));
+        assertEquals("unverified", set(saved(), "e-1", "set-1").getString("actionClockConfidence"));
+        assertEquals("not_implemented", receipt.getString("sideEffectsStatus"));
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
+        store.close(); store = new WorkoutCommandStore(context);
+        WorkoutCommandStore.Result replay = store.completeSet(raw);
+        assertEquals("replay", replay.status);
+        assertEquals(result.receipt, replay.receipt);
+        assertEquals(receipt.getString("receivedAt"), set(saved(), "e-1", "set-1").getString("at"));
+    }
+
     @Test public void identifiedRejectionSurvivesReopenAndCannotLaterApply() throws Exception {
         String early = UTC.format(Instant.parse(startedAt).minusSeconds(60));
         String raw = command("c-early", "watch-1", "e-1", "set-1", 0, early);
@@ -185,7 +204,7 @@ public class WorkoutCommandStoreTest {
                         set.put("status", "committed").put("at", "2026-09-23T19:00:00.000Z");
                     } else { set.remove("kg"); set.remove("reps"); }
                 }
-                store.seed("s-1", "watch-1", initial.toString());
+                if (!fixture.optBoolean("noSession")) store.seed("s-1", "watch-1", initial.toString());
                 if (fixture.optBoolean("closed")) store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished' WHERE session_id='s-1'");
                 if (fixture.optInt("revision") > 0)
                     store.getWritableDatabase().execSQL("UPDATE set_revisions SET revision=? WHERE set_id='set-1'", new Object[]{fixture.getInt("revision")});

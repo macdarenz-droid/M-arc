@@ -340,13 +340,16 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             boolean timed = duration instanceof Number && Double.isFinite(((Number) duration).doubleValue())
                     && ((Number) duration).doubleValue() > 0;
             if (!weighted && !timed) return reject(db, sessionId, commandId, fingerprint, actionAt, "incomplete_draft");
-            target.put("at", actionAt);
+            Instant receivedTime = Instant.now();
+            String receivedAt = UTC.format(receivedTime);
+            String effectiveAt = UTC.format(actionTime.isAfter(receivedTime) ? receivedTime : actionTime);
+            target.put("at", effectiveAt);
             target.put("actionClockConfidence", "unverified");
             target.put("status", "committed");
             JSONObject receiptResult = new JSONObject().put("status", "applied").put("commandId", commandId)
                     .put("sessionId", sessionId).put("entryId", entryId).put("setId", setId)
                     .put("setRevision", setRevision + 1).put("sessionRevision", sessionRevision + 1)
-                    .put("actionAt", actionAt).put("receivedAt", UTC.format(Instant.now()))
+                    .put("actionAt", actionAt).put("receivedAt", receivedAt)
                     .put("clockConfidence", "unverified")
                     .put("sideEffectsStatus", "not_implemented");
             String resultJson = receiptResult.toString();

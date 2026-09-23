@@ -44,7 +44,14 @@ three keyed pending effect records in the same transaction as each applied set
 and receipt. Version 2 databases backfill them for applied receipts; rejected
 commands create none. Android tests cover reopening, replay, backfill and a
 failed pending effect insert rolling back the whole command. Resolving those
-effects with verified clock/heart inputs and rest policy is still required
+effects with verified clock/heart inputs and rest policy is still required.
+The rows contain only set ID and raw action time; they do **not** carry
+`autoRest`, default rest duration, effort, live BPM at commit, or the
+time-window samples that `startRest` and `heartForSet` need. They cannot be
+processed from the current rows alone. Native completion clamps the set's
+stored `at` to the earlier of watch `actionAt` and phone `receivedAt`,
+while the receipt preserves the raw watch timestamp for review. This is still
+not a resolved side effect and no watch Saved acknowledgement is connected
 before Gate C. It does not
 replace the WebView's authoritative active session, so an APK
 containing the class is **not** a working watch command receiver.

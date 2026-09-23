@@ -25,13 +25,16 @@ export function parseWatchCommand(raw, maxBytes = 1024) {
 /** Return a plan only. The caller must atomically persist the workout and receipt before replying Saved. */
 export function planSetCommand(session, binding, revisions, receipts, command, now = Date.now()) {
   if (!command) return { status: 'invalid' };
-  if (!session) return { status: 'wrong_session' };
-  if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
   // A command ID cannot be reused for a different payload, even after the original is applied.
   const recorded = Object.hasOwn(receipts, command.commandId) ? receipts[command.commandId] : undefined;
+  if (!session && !recorded) return { status: 'wrong_session' };
+  if (session && (session.status === 'finished' || session.status === 'discarded')
+      && session.id !== command.sessionId && !recorded) return { status: 'wrong_session' };
+  if (command.installationId !== binding.installationId) return { status: 'wrong_installation' };
   if (recorded) return recorded.fingerprint === fingerprint(command)
     ? { status: recorded.result.status === 'applied' ? 'replay' : 'replay_rejected', receipt: recorded.result }
     : { status: 'command_id_conflict' };
+  if (!session) return { status: 'wrong_session' };
   if (session.id !== command.sessionId) return { status: 'wrong_session' };
   if (session.status === 'finished' || session.status === 'discarded') return { status: 'conflict' };
   if (session.pausedAt || session.status === 'paused') return { status: 'paused' };

@@ -136,5 +136,26 @@
     "name": "incomplete_draft",
     "incomplete": true,
     "expected": "incomplete_draft"
+  },
+  {
+    "name": "closed_matching_session",
+    "closed": true,
+    "expected": "conflict"
+  },
+  {
+    "name": "closed_wrong_installation",
+    "closed": true,
+    "patch": {
+      "installationId": "other"
+    },
+    "expected": "wrong_installation"
+  },
+  {
+    "name": "no_session_wrong_installation",
+    "noSession": true,
+    "patch": {
+      "installationId": "other"
+    },
+    "expected": "wrong_session"
   }
 ]
