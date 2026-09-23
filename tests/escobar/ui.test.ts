@@ -88,3 +88,18 @@ describe('apply (EV5 slice)', () => {
     expect(state.value.goal).toBe(before);
   });
 });
+
+import { pastTense, splitCitations } from '@/escobar/ui/present';
+describe('plain-words presentation', () => {
+  it('turns activity labels into past tense', () => {
+    expect(pastTense('Reading your Lat Pulldown history…')).toBe('Read your Lat Pulldown history');
+    expect(pastTense('Counting your weekly sets…')).toBe('Counted your weekly sets');
+    expect(pastTense('Drawing lift trend…')).toBe('Drew lift trend');
+    expect(pastTense('Something else')).toBe('Something else');
+  });
+  it('gathers a sentence’s fact citations into one list and keeps card citations', () => {
+    const r = splitCitations('You held 67 kg ⟦f4⟧ then dropped to 47 kg ⟦f5⟧⟦f6⟧, protein ⟦k:protein_intake⟧ helps ⟦f4,f7⟧.');
+    expect(r.ids).toEqual(['f4', 'f5', 'f6', 'f7']);
+    expect(r.text).toBe('You held 67 kg then dropped to 47 kg, protein ⟦k:protein_intake⟧ helps.');
+  });
+});

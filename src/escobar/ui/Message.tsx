@@ -15,6 +15,10 @@ import { ShowComponent } from './components';
 import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
 import { imageData } from '../images';
+import { state } from '@/core/store';
+import { makeCtx } from '../tools/context';
+import { statusLabel } from '../tools/executor';
+import { pastTense, splitCitations } from './present';
 import type { Conversation, Fact, ProposalRecord, RenderedTurn, StoredMessage, UserBlock } from '../types';
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -67,17 +71,19 @@ export function UserBubble({ msg }: { msg: UserTurn['msg'] }) {
 /** Answer text → paragraphs, bullets, sentences, citations; unverified sentences muted (§14.3). */
 export function AnswerText({ text, ledger, unverified, streaming }: { text: string; ledger: Fact[]; unverified?: string[]; streaming?: boolean }) {
   const bad = new Set((unverified ?? []).map(s => s.trim()));
-  const order: string[] = [];
-  const numberOf = (id: string) => { let n = order.indexOf(id); if (n < 0) { order.push(id); n = order.length - 1; } return n + 1; };
   const paras = text.split(/\n{2,}/);
+  let cites = 0;
   const sentence = (raw: string, key: number) => {
-    const parts = raw.split(/(⟦[^⟧]*⟧|\*\*[^*]+\*\*)/g).filter(Boolean);
+    const { text: stripped, ids } = splitCitations(raw);
+    const parts = stripped.split(/(⟦[^⟧]*⟧|\*\*[^*]+\*\*)/g).filter(Boolean);
     const body = parts.map((p, i) => {
       if (p.startsWith('⟦k:')) { const id = p.slice(3, -1); return <CardCitation key={i} id={id} card={CARD_BY_ID[id]} />; }
-      if (p.startsWith('⟦')) return p.slice(1, -1).split(',').map(id => id.trim()).map(id => <Citation key={`${i}${id}`} n={numberOf(id)} fact={ledger.find(f => f.id === id)} />);
+      if (p.startsWith('⟦')) return null;
       if (p.startsWith('**')) return <b key={i}>{p.slice(2, -2)}</b>;
       return p;
     });
+    const facts = ids.map(id => ledger.find(f => f.id === id)).filter((f): f is Fact => !!f);
+    if (facts.length) body.push(<Citation key="cite" n={++cites} facts={facts} />);
     const plain = parseDirectives(raw).plain.trim();
     return bad.has(plain) ? <span key={key} class="esc-unverified" title="Unverified number">{body}<span class="esc-unverified-hint"> Unverified number</span> </span> : <span key={key}>{body} </span>;
   };
@@ -125,10 +131,18 @@ function NavigateCard({ target, params }: { target: string; params?: Record<stri
   );
 }
 
+function prettyOutput(content: string): string {
+  try {
+    const j = JSON.parse(content) as { data?: unknown };
+    return JSON.stringify(j && typeof j === 'object' && 'data' in j ? j.data : j, null, 1).slice(0, 4000);
+  } catch { return content.slice(0, 4000); }
+}
+
 function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { content: string; isError: boolean }> }) {
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState<string | null>(null);
   if (!uses.length) return null;
+  const ctx = makeCtx(state.value);
   return (
     <div class="esc-drawer">
       <button type="button" class="esc-drawer-toggle small" aria-expanded={open} onClick={() => setOpen(o => !o)}>What Escobar looked at ({uses.length}) <IconChevronDown size={14} /></button>
@@ -136,12 +150,19 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
         <ul class="esc-drawer-list small">
           {uses.map(u => {
             const r = results.get(u.id);
+            const inputs = Object.entries(u.input).filter(([, v]) => v != null && typeof v !== 'object');
             return (
               <li key={u.id}>
                 <button type="button" class="esc-drawer-item" aria-expanded={shown === u.id} onClick={() => setShown(s => (s === u.id ? null : u.id))}>
-                  <code>{u.name}</code> <span class="muted">{JSON.stringify(u.input).slice(0, 80)}</span>{r?.isError && <span class="esc-err"> · failed</span>}
+                  {pastTense(statusLabel(u.name, u.input, ctx))}{r?.isError && <span class="esc-err"> · didn’t work</span>}
                 </button>
-                {shown === u.id && <pre class="esc-drawer-out">{r ? r.content.slice(0, 4000) : 'No result'}</pre>}
+                {shown === u.id && (
+                  <div class="esc-drawer-detail">
+                    {inputs.length > 0 && <div class="hint">Asked for: {inputs.map(([k, v]) => `${k.replace(/([A-Z])/g, ' $1').toLowerCase()} ${String(v).replace(/^lib_/, '').replace(/_/g, ' ')}`).join(', ')}</div>}
+                    <div class="hint">Data sent to Escobar:</div>
+                    <pre class="esc-drawer-out">{r ? prettyOutput(r.content) : 'No result'}</pre>
+                  </div>
+                )}
               </li>
             );
           })}

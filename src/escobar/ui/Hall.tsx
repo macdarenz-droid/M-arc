@@ -11,19 +11,22 @@ import { IconChevron, IconEscobar } from '@/ui/icons';
 import { online } from '../state';
 import { starterChips } from './prompts';
 import { openAndSend, openEscobar } from './open';
+import { useTypewriter } from './typewriter';
 
 function HallComposer() {
   const s = state.value;
   const on = s.escobar.enabled;
   const off = on && online.value === false;
+  const chips = starterChips(s, todayReadiness.value);
+  const hint = useTypewriter(chips, 'Ask Escobar…', on && !off);
   return (
     <Card class="esc-hall" data-palace="coach.hall">
       <div class="row" style={{ gap: 10 }}>
         <IconEscobar size={28} />
-        <button type="button" class="esc-hall-input" onClick={() => openEscobar({ detent: 'full' })} disabled={off}>{on ? 'Ask Escobar…' : 'Turn on Escobar'}</button>
+        <button type="button" class="esc-hall-input" onClick={() => openEscobar({ detent: 'full' })} disabled={off}>{on ? hint : 'Turn on Escobar'}</button>
       </div>
       {off && <p class="small muted">Escobar is offline. Your notes below still update.</p>}
-      {on && !off && <div class="esc-chips">{starterChips(s, todayReadiness.value).slice(0, 3).map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => openAndSend(c)}>{c}</button>)}</div>}
+      {on && !off && <div class="esc-chips">{chips.slice(0, 3).map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => openAndSend(c)}>{c}</button>)}</div>}
       {!on && <p class="small muted">An AI coach that knows your training and this app. You choose what it sees.</p>}
     </Card>
   );

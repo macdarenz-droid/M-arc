@@ -16,6 +16,7 @@ import { Composer } from './Composer';
 import { EscobarTurnView, UserBubble, AnswerText, turnsOf, type UserTurn } from './Message';
 import { Escalation } from './Escalation';
 import { starterChips } from './prompts';
+import { ThinkingLine } from './Thinking';
 import type { ImageBlockRef } from '../types';
 import type { SendInput, TurnResult } from '../loop';
 
@@ -114,8 +115,8 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
       {busy && (
         <div class="esc-turn esc-live" aria-live="polite">
           {view.activity.map(a => <div key={a.id} class={`esc-activity${a.done ? ' done' : ''}`}><span class="esc-spin" aria-hidden="true" />{a.label}</div>)}
-          {view.status === 'thinking' && !view.text && <div class="esc-activity"><span class="esc-spin" aria-hidden="true" />Thinking…</div>}
-          {view.status === 'verifying' && <div class="esc-activity"><span class="esc-spin" aria-hidden="true" />Checking the numbers…</div>}
+          {view.status === 'thinking' && !view.text && <ThinkingLine />}
+          {view.status === 'verifying' && <ThinkingLine label="Checking the numbers…" />}
           {view.text && <AnswerText text={view.text} ledger={conv?.ledger ?? []} streaming />}
         </div>
       )}
@@ -210,6 +211,7 @@ export function EscobarSheet() {
             draft={ui.draft}
             contextRef={ui.contextRef}
             notice={notice}
+            suggestions={ui.mode === 'live' ? [] : starterChips(state.value, todayReadiness.value)}
             placeholder={ui.mode === 'live' ? 'Quick question mid-session…' : 'Ask Escobar…'}
             onSend={send}
             onStop={() => S.stop()}

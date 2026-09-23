@@ -3,6 +3,7 @@
  * send / stop, and the pending "About: …" context chip.
  */
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { useTypewriter } from './typewriter';
 import { IconCamera, IconSend, IconStop, IconX } from '@/ui/icons';
 import { pickAndCompressPhoto } from '@/native/photo';
 import { putImage, imageData } from '../images';
@@ -11,13 +12,15 @@ import type { ContextRef, ImageBlockRef } from '../types';
 export const MAX_CHARS = 2000;
 const MAX_PHOTOS = 3;
 
-export function Composer({ busy, draft, contextRef, disabled, placeholder, notice, onSend, onStop, onClearRef, onFocus, autoFocus }: {
+export function Composer({ busy, draft, contextRef, disabled, placeholder, notice, suggestions, onSend, onStop, onClearRef, onFocus, autoFocus }: {
   busy: boolean;
   draft?: string;
   contextRef?: ContextRef | null;
   disabled?: boolean;
   placeholder?: string;
   notice?: string;
+  /** Typed into the empty bar one after another. */
+  suggestions?: string[];
   onSend: (text: string, images: ImageBlockRef[]) => void;
   onStop?: () => void;
   onClearRef?: () => void;
@@ -26,6 +29,7 @@ export function Composer({ busy, draft, contextRef, disabled, placeholder, notic
 }) {
   const [text, setText] = useState(draft ?? '');
   const [images, setImages] = useState<ImageBlockRef[]>([]);
+  const hint = useTypewriter(suggestions ?? [], placeholder ?? 'Ask Escobar…', !text && !busy && !disabled);
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => { if (draft != null) setText(draft); }, [draft]);
   useEffect(() => {
@@ -71,7 +75,7 @@ export function Composer({ busy, draft, contextRef, disabled, placeholder, notic
           maxLength={MAX_CHARS}
           value={text}
           disabled={disabled}
-          placeholder={placeholder ?? 'Ask Escobar…'}
+          placeholder={hint}
           aria-label="Message Escobar"
           onInput={e => setText((e.currentTarget as HTMLTextAreaElement).value)}
           onFocus={onFocus}
