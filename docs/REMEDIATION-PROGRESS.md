@@ -363,3 +363,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R4a-7 (low)
 - The finding is test coverage. The code was already correct; the skeptic confirmed this by running it. Added loop tests: an error during the repair keeps the first answer, marked, with `notSent: false` (ES-11/ES-10), and a decision recorded mid-turn stays queued and reaches the next brief (ES-20). These tests pass before and after, as expected for a coverage item.
 - Also: the health check's reason (for example "Escobar isn't set up yet.") is kept in `offlineReason` and shown in the offline notice.
+
+### QA-R4a-11 (low)
+- Undo on "adjust today" says "Undo is no longer available" once a session of that split has started since the change was applied (live or finished). It no longer reports "Undone" while the running session keeps the change.

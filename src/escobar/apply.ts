@@ -110,8 +110,15 @@ const APPLIERS: Record<string, Applier> = {
   },
   propose_today: input => {
     const before = state.value.escobar.todayOverride;
-    update(s => ({ ...s, escobar: { ...s.escobar, todayOverride: { day: todayKey(), splitId: String(input.splitId), reason: String(input.reason ?? ''), changes: input.changes as TodayChange[] } } }));
-    return { message: 'Today’s session adjusted', undo: () => update(s => ({ ...s, escobar: { ...s.escobar, todayOverride: before } })) };
+    const splitId = String(input.splitId);
+    const appliedAt = Date.now();
+    update(s => ({ ...s, escobar: { ...s.escobar, todayOverride: { day: todayKey(), splitId, reason: String(input.reason ?? ''), changes: input.changes as TodayChange[] } } }));
+    return { message: 'Today’s session adjusted', undo: () => {
+      // QA-R4a-11: once a session of this split started with the change, undo cannot reach it.
+      const used = (x: { splitId: string | null; startedAt: string } | null | undefined) => !!x && x.splitId === splitId && Date.parse(x.startedAt) >= appliedAt;
+      if (used(state.value.active) || state.value.sessions.some(used)) throw new UndoUnavailable();
+      update(s => ({ ...s, escobar: { ...s.escobar, todayOverride: before } }));
+    } };
   },
   propose_deload: input => {
     const before = state.value.deload;

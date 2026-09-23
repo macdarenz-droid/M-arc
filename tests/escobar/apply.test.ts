@@ -35,6 +35,19 @@ describe('undo inverses (ES-02)', () => {
     expect(u.conversation).toBe(a.conversation);
   });
 
+  it('QA-R4a-11: skip-today → the session starts → undo is no longer available', () => {
+    const split = state.value.splits[0]!;
+    const skip = split.exercises.at(-1)!.exerciseId;
+    const t = decide(proposal('propose_today', { splitId: split.id, reason: 'sore', changes: [{ kind: 'remove', exerciseId: skip }] }, 'p1'), 'p1', 'apply');
+    expect(t.result.status).toBe('applied');
+    const s2 = decide({ ...t.conversation, proposals: [...(t.conversation.proposals ?? []), { ...buildProposal('propose_start_session', { splitId: split.id }, ctxOf(state.value), 'p2'), status: 'awaiting', messageIndex: 1 }] }, 'p2', 'apply');
+    expect(s2.result.status).toBe('applied');
+    expect(state.value.active!.entries.some(e => e.exerciseId === skip)).toBe(false);
+    const u = decide(s2.conversation, 'p1', 'undo', t.result.undo);
+    expect(u.result).toMatchObject({ ok: false, message: 'Undo is no longer available.' });
+    expect(state.value.escobar.todayOverride).not.toBeNull();
+  });
+
   it('start session → untouched → undo discards it', () => {
     const a = decide(proposal('propose_start_session', { splitId: state.value.splits[0]!.id }), 'p1', 'apply');
     expect(state.value.active).toBeTruthy();
