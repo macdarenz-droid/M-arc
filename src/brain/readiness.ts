@@ -62,6 +62,8 @@ function zScore(value: number, series: number[]): number | null {
 export const READINESS_WEIGHTS = { checkIn: 0.35, sleep: 0.25, recovery: 0.15, rhr: 0.10, hrv: 0.10, load: 0.05 } as const;
 export const READINESS_GREEN_AT = 67;
 export const READINESS_RED_AT = 33;
+/** Under this many days of check-ins and sleep, the score reads as calibrating. */
+export const READINESS_CALIBRATING_DAYS = 14;
 
 export type LoadAdvice = 'normal' | 'no_increase' | 'reduce';
 export type ReadinessBand = 'green' | 'amber' | 'red';
@@ -209,7 +211,7 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
   const confidence = present.length >= 4 ? 'high' : present.length >= 2 ? 'medium' : 'low';
   const distinctCheckInDays = new Set(checkInHistory.map(c => c.day)).size;
   const sleepDays = healthDays.filter(d => d.sleepMinutes != null).length;
-  const calibrating = distinctCheckInDays < 14 && sleepDays < 14;
+  const calibrating = distinctCheckInDays < READINESS_CALIBRATING_DAYS && sleepDays < READINESS_CALIBRATING_DAYS;
 
   return { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating };
 }

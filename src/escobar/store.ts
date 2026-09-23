@@ -114,12 +114,36 @@ export function fitToBudget(store: ConversationStore, others: number): { store: 
   let raw = JSON.stringify(cur);
   const fits = (r: string): boolean => bytes(r) <= MAX_STORE_BYTES && bytes(r) + others <= MAX_TOTAL_BYTES;
   while (!fits(raw) && cur.conversations.length) {
-    const victim = pickVictim(cur.conversations, cur.activeId) ?? cur.conversations[0]!;
+    const victim = pickVictim(cur.conversations, cur.activeId);
+    if (!victim) {
+      // ES-18: the active conversation is never dropped; its oldest half goes instead.
+      const active = cur.conversations.find(c => c.id === cur.activeId);
+      const shorter = active && trimOldest(active);
+      if (!shorter) { cur = { ...cur, conversations: cur.conversations.filter(c => c !== (active ?? cur.conversations[0])), activeId: null }; raw = JSON.stringify(cur); continue; }
+      cur = { ...cur, conversations: cur.conversations.map(c => (c === active ? shorter : c)) };
+      raw = JSON.stringify(cur);
+      continue;
+    }
     const conversations = cur.conversations.filter(c => c !== victim);
     cur = { ...cur, conversations, activeId: conversations.some(c => c.id === cur.activeId) ? cur.activeId : null };
     raw = JSON.stringify(cur);
   }
   return { store: cur, raw };
+}
+
+const isPlainUser = (m: StoredMessage | undefined): boolean => !!m && m.role === 'user' && !m.meta?.repair && !m.content.some(b => b.type === 'tool_result');
+
+/** Drops messages up to the first plain user message after the midpoint; null when nothing can go. */
+export function trimOldest(c: Conversation): Conversation | null {
+  let cut = Math.max(1, Math.floor(c.messages.length / 2));
+  while (cut < c.messages.length && !isPlainUser(c.messages[cut])) cut++;
+  if (cut >= c.messages.length) return null;
+  const rs = c.rollingSummary;
+  return {
+    ...c, messages: c.messages.slice(cut), trimmed: true,
+    // The summary still describes what came before; it now starts at the first kept message.
+    ...(rs ? { rollingSummary: { text: rs.text, upTo: Math.max(0, rs.upTo - cut) } } : {}),
+  };
 }
 
 /** Writes the store. Returns the store as actually written (it may have been pruned), or null on failure. */

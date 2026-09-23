@@ -95,6 +95,8 @@ export interface Conversation {
   briefLines?: Record<string, string>;
   /** User turns so far (the brief is sent in full on the first and every 5th). */
   userTurns?: number;
+  /** Set when storage limits dropped this conversation's oldest messages (ES-18). */
+  trimmed?: boolean;
   appVersion: string;
   protocol: 2;
 }

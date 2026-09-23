@@ -22,7 +22,7 @@ import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
-import { deloadTrigger, type DeloadSuggestion } from '../deload';
+import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -526,5 +526,5 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays));
 }

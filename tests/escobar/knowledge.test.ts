@@ -4,6 +4,12 @@ import { explainMethod, METHOD_INDEX } from '@/escobar/knowledge/methods';
 import { METHOD_IDS } from '@/escobar/knowledge/methodIds';
 import { PALACE } from '@/escobar/palace/registry';
 import { ctxOf, sixMonthsState, emptyState } from './fixtures';
+import { READINESS_CALIBRATING_DAYS, READINESS_GREEN_AT, READINESS_RED_AT, READINESS_WEIGHTS } from '@/brain/readiness';
+import { E1RM_FULL_WEIGHT_REPS, E1RM_MAX_REPS, EPLEY_DIVISOR, RIR_BY_EFFORT, effectiveOneRm } from '@/brain/e1rm';
+import { BIAS_CAP_REPS, BIAS_MIN_OBSERVATIONS } from '@/brain/effortBias';
+import { DELOAD_TRIGGER } from '@/brain/deload';
+import { MAX_INCREASE_SHARE, RECOVERY_HOLD_PCT, REENTRY_DAYS } from '@/brain/progression';
+import { WARMUP_PCTS } from '@/brain/coach/pre';
 
 describe('knowledge cards (§16.1)', () => {
   it('has at least 45 well-formed cards with sources', () => {
@@ -61,5 +67,17 @@ describe('explain_method (§16.2)', () => {
     expect(explainMethod('hr_zones', six).personal.hrMaxSource).toBe('tanaka');
     expect(explainMethod('progression', six).personal.goal).toBe('Lean muscle');
     expect(explainMethod('recovery', ctxOf(emptyState())).personal.trainingAgeMonths).toBe('unknown');
+  });
+  it('states the same constants the brain runs on (ES-32)', () => {
+    const c = (t: Parameters<typeof explainMethod>[0]) => explainMethod(t, six).constants;
+    expect(c('readiness')).toMatchObject({ greenAt: READINESS_GREEN_AT, redAt: READINESS_RED_AT, calibratingDays: READINESS_CALIBRATING_DAYS, weight_checkIn: READINESS_WEIGHTS.checkIn, weight_load: READINESS_WEIGHTS.load });
+    expect(c('e1rm')).toEqual({ epleyDivisor: EPLEY_DIVISOR, rirEasy: RIR_BY_EFFORT.easy, rirIdeal: RIR_BY_EFFORT.ideal, rirMax: RIR_BY_EFFORT.max, maxReps: E1RM_MAX_REPS, halfWeightAboveReps: E1RM_FULL_WEIGHT_REPS });
+    expect(c('effort_calibration')).toMatchObject({ observationsNeeded: BIAS_MIN_OBSERVATIONS, biasCap: BIAS_CAP_REPS });
+    expect(c('deload_trigger')).toMatchObject({ plateauedLifts: DELOAD_TRIGGER.stalledLifts, readinessRedDays: DELOAD_TRIGGER.readinessRedDays, readinessWindowDays: DELOAD_TRIGGER.readinessWindowDays, overBandWeeks: DELOAD_TRIGGER.overBandWeeks });
+    expect(c('progression')).toMatchObject({ reentryDays: REENTRY_DAYS, recoveryHoldPct: RECOVERY_HOLD_PCT, maxIncreaseShare: MAX_INCREASE_SHARE });
+    expect(c('warmup').set1Pct).toBe(WARMUP_PCTS[0]);
+    // The numbers are the ones the brain uses, not just labels: the cut-off really is where e1RM stops.
+    expect(effectiveOneRm(100, E1RM_MAX_REPS, 'max')).not.toBeNull();
+    expect(effectiveOneRm(100, E1RM_MAX_REPS + 1, 'max')).toBeNull();
   });
 });

@@ -8,17 +8,21 @@ import type { Effort } from '@/core/models';
 export const RIR_BY_EFFORT: Record<Effort, number> = { easy: 3, ideal: 2, max: 0 };
 
 export const EPLEY_DIVISOR = 30;
+/** Sets above this many reps give no estimate. */
+export const E1RM_MAX_REPS = 10;
+/** Sets above this many reps weigh half in an aggregate. */
+export const E1RM_FULL_WEIGHT_REPS = 6;
 
 /** Epley with effectiveReps = reps + RIR(effort). Null for sets outside 1-10 reps or with no load. */
 export function effectiveOneRm(kg: number, reps: number, effort?: Effort, rirBias = 0): number | null {
-  if (!(kg > 0) || !(reps > 0) || reps > 10) return null;
+  if (!(kg > 0) || !(reps > 0) || reps > E1RM_MAX_REPS) return null;
   const rir = Math.max(0, RIR_BY_EFFORT[effort ?? 'ideal'] + rirBias);
   return kg * (1 + (reps + rir) / EPLEY_DIVISOR);
 }
 
 /** Sets of 7-10 reps carry more estimation error than sets of 6 or fewer; weight them at half in an aggregate. */
 export function e1rmWeight(reps: number): number {
-  return reps > 6 ? 0.5 : 1;
+  return reps > E1RM_FULL_WEIGHT_REPS ? 0.5 : 1;
 }
 
 export function roundToStep(kg: number, step = 2.5): number {
