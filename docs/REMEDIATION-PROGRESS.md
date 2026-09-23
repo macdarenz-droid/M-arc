@@ -8,6 +8,8 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 ## Owner actions (collected; STOP once at the end)
 - [x] R0 + R0.9 Worker deployed from main (PR #4 merge, run 35880696979 green; its /health step requires protocol 2, key, quotas and relay)
 - [ ] R0.9 (PL-20): the affected user on the failing Wi-Fi opens https://marc-coach.mmarcdarenz.workers.dev/cdn-cgi/trace (expect colo=HKG) and sends Escobar a message
+- [ ] R7.5 (D7): confirm, then move `legacy/v36/` to a tag and delete the folder
+- [ ] R5: device checks listed under Phase R5
 - [ ] R0: if the deploy fails because Durable Objects are unavailable, run `npx wrangler kv namespace create QUOTA` and bind `QUOTA` in wrangler.toml
 - [ ] R0.0: keep the encrypted key backup → add the new fingerprint in AppGallery Connect → backup, uninstall, reinstall, restore → delete SECRETS_WRITE_TOKEN and the `marc-debug-signing-v1` caches
 
@@ -217,3 +219,19 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - exposure (kinds, warm-ups add no weekly sets), prs (warm-up/drop never a record), e1rm (warm-up ignored, failure = max), session (2 warm-ups + 3 working = 5 stored / 3 counted, no rest on warm-up, notes, farmer's carry distance), r6-features (CSV rows/quoting/filter, days off in streak/adherence/target, normalize, library modes, notes).
 ### Layer: gate — done
 - Screenshot gate: day-off state on Today, setup note under the exercise name, logged warm-ups (W) in the live card, CSV row in Settings; page width checked. `npm run check`: 769 passed · worker 71 · `npm run build && npm run gate`: PASS.
+
+## Phase R7 — done (agent side)
+### Layer: deletions — commit 1aea4ca — IDs: ST-22, RG-13, BR-30, ES-24, UI-32, PL-15
+- Removed after `grep -rnw` showed zero callers: store computeds, `hoursSince`, `withinDaysOfSession`/`withinDays`, `energyFromWatch`, `pickEnergy`, `dailyActiveKcal`, `weeklyEnergy`, `e1rmWeight`, `isRealChange` (and their tests: 769 → 760), `brain/index.ts`, `Bar`, `Ring` + `.ring`, `IconClock/Spark/Moon/Heart`, `REST_STEP`, `profile.setName`, `show.weeklyTotals`, `read.weeklySetsFor/e1rmOf`, `actions.equipmentGroupOf`, `context.plannedPerWeek/displayUnit`, `selectors.plannedPerWeek`, worker `MODE_ADDENDUM`, Java `LiveSession` average/min/max/total/lastReceivedAt, `batteryReceivedAt`, `HealthConnectNativePlugin.diagnose` (R5 uses `lastHealthError`), `.watch-pill .dot.live`. The watch branch uses none of them. Kept `energyFromHealthConnect`, `isDuplicateSession`, `retroSessionLogging`.
+- `loadImage` is now used: sent-photo thumbnails load from IndexedDB (the R4 eviction had left them as a "Photo" placeholder). explain_method no longer claims 7–10 rep sets weigh half.
+### Layer: dedupe — commits 81a3ad2, prepare-android — IDs: ST-23, RG-16, ES-24, RG-12, UI-29
+- `DAMAGE_*` from data/recovery; `DirectiveBuffer` in the loop; `titleFrom()` and `withPendingDecision()` shared by loop/store/apply; RestBanner on `restRemainingSec`; `native/filePicker.ts` (null on cancel) for backups and photos; `core/sessionLogging.ts` (re-exported by brain/fidelity); `APP_VERSION = __APP_VERSION__` from package.json via Vite `define` and `scripts/build-convert.mjs` (the converter imports it too); version 37.1.0 (D13); esbuild a direct devDependency; `scripts/**/*.ts` in tsconfig.
+- `scripts/prepare-android.sh` generates the Android project for both workflows (the release icon background had drifted to #06131B).
+### Layer: CI and gate — IDs: PL-17, PL-18, RG-14
+- Release: version name `<package.json>.<run>`, code `major × 1,000,000 + run`; a green "M/ARC gate" run on the SHA is required (`actions: read`, `gh run list`), else the gate runs in the release job; action majors aligned on v4.
+- Gate: local-date fixtures, `visible()` (locator.waitFor, 5 s) for every "should appear" check, one retry of the 150 ms first-feedback check on a fresh page, console errors fail the pulse pass; CI runs the gate a second time with `TZ=Pacific/Auckland`.
+- Adaptive icon: `render-logo.mjs --android` renders the padded foreground (mark inside the 66/108 safe zone) and a monochrome layer per density into `native/res/`, with `mipmap-anydpi-v26` XML; `prepare-android.sh` copies them.
+### Layer: copy, a11y, hooks — IDs: UI-25, RG-10, UI-26, UI-30, ST-24
+- Editor hint and `k lb` volume for lb users; `HeartBpm` role=img; RestBanner announces "Rest done" once through a polite live region; `Row` activates on Enter/Space; `Segmented` sets `aria-selected`; effort buttons get a 44 px tall hit area (sideways it stops at the 4 px gap); `WeeklyReviewCard` calls its hook before returning. ST-24: lb display stays at 0.1 (decision).
+### Layer: docs — RG-11
+- README and docs/ARCHITECTURE.md rewritten to match the code (layers incl. escobar/, escobar-worker/, assets/; impulse-response recovery; 2.5 % records with effort-aware Epley; progression inputs; the full AppState key list and side stores; workflows on every branch).
