@@ -168,7 +168,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
             </div>
           </Card>
         ))}
-        <p class="hint">Sets with 0 reps are removed on save. Loads are in kg here.{u === 'lb' ? ' Your display unit is lb elsewhere.' : ''}</p>
+        <p class="hint">Sets with 0 reps are removed on save. Each load is shown in the unit it was logged in; tap the pill to switch.</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}
       </div>
@@ -219,7 +219,7 @@ function Stats() {
     <div class="stack" style={{ marginTop: 14 }}>
       <Card data-palace="history.week">
         <div class="eyebrow">This week</div>
-        <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={`${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
+        <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={u === 'lb' ? `${Math.round(kgToDisplay(w.volumeKg, 'lb') / 100) / 10}k lb` : `${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
         {muscleRows.length > 0 && (
           <div class="stack-sm" style={{ marginTop: 14 }}>
             {muscleRows.map(([m, v]) => { const prev = (w.previousMuscleSets as Record<string, number>)[m] ?? 0; return (

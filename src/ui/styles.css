@@ -156,7 +156,9 @@ svg { display: block; }
 .exercise-note { display: flex; align-items: center; gap: 4px; }
 .conditioning-extra input { width: 0; flex: 1 1 0; min-width: 0; }
 .effort { display: flex; gap: 4px; }
-.effort button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text-3); }
+.effort button { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); font-size: 11px; font-weight: 700; color: var(--text-3); }
+/* UI-30: a 44 px tall hit area without moving the row (sideways it stops at the gap to the next button). */
+.effort button::before { content: ""; position: absolute; inset: -7px -2px; }
 .effort button[aria-pressed="true"].easy { background: var(--positive); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].ideal { background: var(--info); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].max { background: var(--negative); color: #fff; border-color: transparent; }

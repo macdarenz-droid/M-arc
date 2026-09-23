@@ -205,8 +205,9 @@ function WeeklyReviewCard() {
   const thisWeek = weekStart(today.value);
   const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
   const enough = weekHasEnoughData(s.sessions, today.value);
-  if (dismissed || !enough) return null;
+  // UI-30: hooks run on every render, before any early return.
   const items = useWeeklyReviewItems();
+  if (dismissed || !enough) return null;
   return (
     <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
       <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>

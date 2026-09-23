@@ -869,7 +869,9 @@ export function RestBanner() {
   const pct = a.rest.totalSec ? Math.min(100, 100 - (remaining / a.rest.totalSec) * 100) : 100;
   const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
   return (
-    <div class={`rest ${done ? 'done' : ''}`} role="status">
+    <div class={`rest ${done ? 'done' : ''}`}>
+      {/* UI-26: announced once when rest ends, not every second of the countdown. */}
+      <span class="sr-only" aria-live="polite">{done ? 'Rest done' : ''}</span>
       <div>
         <div class="clock">{done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining)}</div>
         <div class="hint">{done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
