@@ -101,6 +101,12 @@ export function implausibleReps(reps: number, isHeavyMainLift: boolean): boolean
 }
 
 /** A load within 5% of 2.2x or 0.45x the exercise's recent best: kg and lb likely got mixed up. */
+/** QA-R6-9: warm-ups and drop sets are light on purpose, so they are never a kg/lb slip. */
+export function setUnitSuspect(set: { kg?: number; kind?: LoggedSet['kind'] }, recentBestKg: number | null): boolean {
+  if (set.kind === 'warmup' || set.kind === 'drop' || set.kg == null) return false;
+  return unitSuspect(set.kg, recentBestKg);
+}
+
 export function unitSuspect(kg: number, recentBestKg: number | null): boolean {
   if (!recentBestKg || recentBestKg <= 0 || kg <= 0) return false;
   const ratio = kg / recentBestKg;

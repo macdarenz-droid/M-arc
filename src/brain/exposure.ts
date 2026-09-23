@@ -38,6 +38,9 @@ export function isWorkingSet(s: Pick<LoggedSet, 'reps' | 'durationSec' | 'distan
 
 /** QA-R6-3: the set autoregulation and targets start from: the first one that is not a warm-up. */
 export const firstWorkingSet = <T extends Pick<LoggedSet, 'kind'>>(sets: T[]): T | undefined => sets.find(x => x.kind !== 'warmup');
+/** QA-R6-8: a row's place among the working sets (history holds working sets only); null for a warm-up. */
+export const workingIndex = (sets: Array<Pick<LoggedSet, 'kind'>>, j: number): number | null =>
+  sets[j]?.kind === 'warmup' ? null : j - sets.slice(0, j).filter(x => x.kind === 'warmup').length;
 
 /** The effort a set stands for: a set taken to failure is max effort. */
 export function effortLabel(s: Pick<LoggedSet, 'effort' | 'kind'>): LoggedSet['effort'] {

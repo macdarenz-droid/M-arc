@@ -37,12 +37,12 @@ import { recentLiveBpms } from './heart';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { activeGymId, addGym, profileFor, setActiveGym, setEquipmentUnit, setExerciseUnit, setGymDefaultUnit, renameGym } from './units';
 import { formatLoadable, formatPerSide, inferGym, loadableNear, plateBreakdown } from '@/brain/units';
-import { suspectAlternative, unitSuspect } from '@/brain/fidelity';
+import { setUnitSuspect, suspectAlternative } from '@/brain/fidelity';
 import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
-import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
+import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -454,7 +454,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
   const warmup = useMemo(() => warmupOffer(workingKg, profile), [...memoDeps, workingKg]);
   const [warmupOpen, setWarmupOpen] = useState(false);
-  const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: previousSet(s.sessions, entry.exerciseId, j, s.customExercises), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
+  const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode), `${today.value}|${entry.exerciseId}`);
@@ -573,7 +573,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
 
 /** A committed load that looks like a kg/lb slip (§25.2 point 3): one tap converts it and remembers the unit. */
 function SuspectChip({ set, best, dismissKey, onFix }: { set: LoggedSet; best: number | null; dismissKey: string; onFix: (alt: { unit: LoadUnit; value: number; kg: number }) => void }) {
-  if (!set.at || set.kg == null || !unitSuspect(set.kg, best) || suspectDismissed.value.has(dismissKey)) return null;
+  if (!set.at || set.kg == null || !setUnitSuspect(set, best) || suspectDismissed.value.has(dismissKey)) return null;
   // What was typed, read in the other unit.
   const typed = set.entered?.value ?? set.kg;
   const typedUnit = set.entered?.unit ?? 'kg';

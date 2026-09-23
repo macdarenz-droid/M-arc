@@ -427,3 +427,11 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R6-5 (low)
 - A conditioning lift logged by distance or time progresses by distance (+5 m, or +10 m from 100 m) or time (+5 s) at the same load. It repeats after a max effort or a long gap, and in a lighter week it keeps the distance at a lighter load. New mode `distance`. It never shows "1 reps".
 - Train: a loaded carry uses the gym's equipment unit and the unit flip, and "Last:" shows load · distance (or time).
+
+### QA-R6-6, QA-R6-8, QA-R6-9 (low)
+- R6-6's remaining call sites:
+  - The autoregulation tip and Escobar's live plan were fixed in QA-R6-3/11 (`firstWorkingSet`).
+  - The negative backup age was fixed by `backupAgeDays` (local day).
+  - The other two are R6-8 and R6-9 below.
+- R6-8: the "Last:" hints use each row's place among the working sets (`workingIndex`). Warm-up rows get none, so the first working set shows last time's first set.
+- R6-9: the kg/lb slip chip uses `setUnitSuspect`, which never flags a warm-up or a drop set.
