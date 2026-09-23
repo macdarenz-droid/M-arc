@@ -3,7 +3,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import { handle } from '../src/handler';
 import { UpstreamRelay } from '../src/upstreamRelay';
 import { mapError, REGION_MESSAGE, type ClientLike } from '../src/anthropic';
-import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn } from './helpers';
+import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
+import { relayShard } from '../src/upstream';
 
 const TEXT = [{ type: 'text', text: 'Answered from the US.' }];
 const original = UpstreamRelay.makeClient;
@@ -31,7 +32,8 @@ describe('UpstreamRelay (PL-20)', () => {
     const edge = vi.fn();
     const r = await handle(post(turn()), baseEnv({ UPSTREAM: ns as never }), { ...deps(mockClient([])), makeClient: edge });
     const ev = await sse(r);
-    expect(ns.calls).toEqual([{ name: 'us', hint: 'enam' }]);
+    // QA-R0-5: one of RELAY_SHARDS objects, chosen by device, all pinned to eastern North America.
+    expect(ns.calls).toEqual([{ name: `us-${relayShard(DEVICE)}`, hint: 'enam' }]);
     expect(edge).not.toHaveBeenCalled();
     expect(client.calls).toHaveLength(1);
     expect(ev.filter(e => e.t === 'text').map(e => e.d).join('')).toBe('Answered from the US.');

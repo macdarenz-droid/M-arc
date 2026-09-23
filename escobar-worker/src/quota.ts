@@ -8,12 +8,12 @@ import type { Env } from './anthropic';
 import type { Limits, QuotaKeys } from './quotaDO';
 
 export interface DeviceUsage { turns: number; steps: number; out: number }
-export const DEFAULTS = { turns: 80, steps: 400, out: 400_000, ipTurns: 300, globalSteps: 20_000, globalOut: 3_000_000 };
+export const DEFAULTS = { turns: 80, steps: 400, out: 400_000, ipTurns: 300, ipSteps: 1500, globalSteps: 20_000, globalOut: 3_000_000 };
 
 const num = (v: string | undefined, d: number): number => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : d; };
 export const limits = (env: Env): Limits => ({
   device: { turns: num(env.MAX_TURNS_PER_DEVICE, DEFAULTS.turns), steps: num(env.MAX_STEPS_PER_DEVICE, DEFAULTS.steps), out: num(env.MAX_OUTPUT_PER_DEVICE, DEFAULTS.out) },
-  ip: { turns: num(env.MAX_TURNS_PER_IP, DEFAULTS.ipTurns) },
+  ip: { turns: num(env.MAX_TURNS_PER_IP, DEFAULTS.ipTurns), steps: num(env.MAX_STEPS_PER_IP, DEFAULTS.ipSteps) },
   global: { steps: num(env.MAX_STEPS_TOTAL, DEFAULTS.globalSteps), out: num(env.MAX_OUTPUT_TOTAL, DEFAULTS.globalOut) },
 });
 

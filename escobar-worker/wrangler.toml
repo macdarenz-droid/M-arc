@@ -20,6 +20,7 @@ MAX_TURNS_PER_DEVICE = "80"
 MAX_STEPS_PER_DEVICE = "400"
 MAX_OUTPUT_PER_DEVICE = "400000"
 MAX_TURNS_PER_IP = "300"
+MAX_STEPS_PER_IP = "1500"
 MAX_STEPS_TOTAL = "20000"
 MAX_OUTPUT_TOTAL = "3000000"
 # Web origins allowed to call this Worker (the PWA). The Android app sends capacitor://localhost or no Origin.

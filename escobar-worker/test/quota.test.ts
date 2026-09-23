@@ -41,7 +41,7 @@ function fakeNamespace() {
   return ns;
 }
 
-const LIM: Limits = { device: { turns: 80, steps: 400, out: 400_000 }, ip: { turns: 300 }, global: { steps: 20_000, out: 3_000_000 } };
+const LIM: Limits = { device: { turns: 80, steps: 400, out: 400_000 }, ip: { turns: 300, steps: 1500 }, global: { steps: 20_000, out: 3_000_000 } };
 const KEYS = { device: DEVICE, ip: '203.0.113.7' };
 const TEXT = [{ type: 'text', text: 'ok' }];
 
@@ -53,7 +53,7 @@ describe('QuotaCounter Durable Object (PL-01, PL-07)', () => {
     const c = new QuotaCounter(state as never, {} as never);
     await Promise.all(Array.from({ length: 5 }, () => c.add(KEYS, { steps: 1, out: 40, turns: 1 })));
     expect(state.data.get(`d:${DEVICE}`)).toEqual({ turns: 5, steps: 5, out: 200 });
-    expect(state.data.get('i:203.0.113.7')).toEqual({ turns: 5 });
+    expect(state.data.get('i:203.0.113.7')).toEqual({ turns: 5, steps: 5 });
     expect(state.data.get('g')).toEqual({ steps: 5, out: 200 });
   });
   it('sets one cleanup alarm three days out and clears everything when it fires', async () => {
@@ -70,7 +70,7 @@ describe('QuotaCounter Durable Object (PL-01, PL-07)', () => {
     expect(c.check(KEYS, LIM)).toEqual({ ok: true });
     await c.add(KEYS, { steps: 1, out: 10, turns: 1 });
     expect(c.check(KEYS, { ...LIM, device: { ...LIM.device, turns: 1 } })).toEqual({ ok: false, scope: 'device' });
-    expect(c.check({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1 } })).toEqual({ ok: false, scope: 'ip' });
+    expect(c.check({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1, steps: 1500 } })).toEqual({ ok: false, scope: 'ip' });
     expect(c.check({ device: 'dev_other000000000000000000', ip: '198.51.100.1' }, { ...LIM, global: { steps: 1_000, out: 10 } })).toEqual({ ok: false, scope: 'global' });
   });
 });
@@ -110,7 +110,7 @@ describe('handler with QUOTA_DO', () => {
     const next = turn({ messages: [{ role: 'user', content: 'go' }, { role: 'assistant', content: toolStep }, { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't', content: '{}' }] }] });
     await sse(await handle(post(next), e, deps(mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]))));
     expect(counters(ns).get(`d:${DEVICE}`)).toEqual({ turns: 1, steps: 2, out: 80 });
-    expect(counters(ns).get('i:unknown')).toEqual({ turns: 1 });
+    expect(counters(ns).get('i:unknown')).toEqual({ turns: 1, steps: 2 });
   });
   it('rotating device ids from one IP hit 429 from RATE_IP', async () => {
     const seen = new Map<string, number>();
@@ -143,5 +143,51 @@ describe('handler with QUOTA_DO', () => {
     expect(JSON.parse(line)).toEqual({ requestId: 'req_1', colo: null, mode: 'chat', model: 'claude-opus-5', stop_reason: 'end_turn', in: 100, out: 40, cacheRead: 80, cacheWrite: 0, steps: 1, ms: 0 });
     expect(line).not.toContain(DEVICE);
     expect(line).not.toContain('readiness');
+  });
+});
+
+describe('billed steps are counted however they end (QA-R0-1, QA-R0-2, QA-R0-3)', () => {
+  const setup = (extra: Partial<Env> = {}) => { const ns = fakeNamespace(); return { ns, env: baseEnv({ QUOTA_DO: ns as never, ...extra }) }; };
+  const rows = (ns: ReturnType<typeof fakeNamespace>) => ns.objects.get('2026-09-22')?.state.data ?? new Map();
+  /** Runs a turn to the end of its background work, reading only the first chunk when `hangUp`. */
+  async function run(env: Env, script: Parameters<typeof mockClient>[0][number], hangUp = false, headers: Record<string, string> = {}) {
+    const pending: Promise<unknown>[] = [];
+    const r = await handle(post(turn(), headers), env, deps(mockClient([script]), { waitUntil: p => { pending.push(p); } }));
+    if (r.status !== 200) return r.status;
+    if (hangUp) { const reader = r.body!.getReader(); await reader.read(); await reader.read(); await reader.cancel(); } else await sse(r);
+    await Promise.all(pending);
+    return r.status;
+  }
+  const LONG = [{ type: 'text', text: 'x'.repeat(300) }];
+
+  it('a caller who hangs up mid-answer is counted, so the daily cap still trips', async () => {
+    const { ns, env } = setup({ MAX_TURNS_PER_DEVICE: '2' });
+    const statuses: number[] = [];
+    for (let i = 0; i < 4; i++) statuses.push(await run(env, { events: eventsFor(LONG), final: finalMessage(LONG), hang: true }, true));
+    expect(statuses).toEqual([200, 200, 429, 429]);
+    const d = rows(ns).get(`d:${DEVICE}`) as { turns: number; steps: number; out: number };
+    expect(d.turns).toBe(2);
+    expect(d.steps).toBe(2);
+    expect(d.out).toBeGreaterThan(0);
+  });
+  it('a refusal and a mid-stream error are counted too', async () => {
+    const { ns, env } = setup();
+    const refused = finalMessage([], 'refusal', { usage: { input_tokens: 10, output_tokens: 12 } });
+    await run(env, { events: eventsFor(TEXT), final: refused });
+    expect(rows(ns).get(`d:${DEVICE}`)).toEqual({ turns: 1, steps: 1, out: 12 });
+    await run(env, { events: eventsFor(LONG), throwAt: 4, error: new Error('overloaded mid-stream') });
+    expect((rows(ns).get(`d:${DEVICE}`) as { steps: number }).steps).toBe(2);
+  });
+  it('an error before any output is not counted (nothing was billed)', async () => {
+    const { ns, env } = setup();
+    await run(env, { events: eventsFor(TEXT), throwAt: 0, error: new Error('refused at the door') });
+    expect(rows(ns).get(`d:${DEVICE}`)).toBeUndefined();
+  });
+  it('the per-IP cap counts steps, so endless tool-call turns from rotating devices stop', async () => {
+    const { env } = setup({ MAX_STEPS_PER_IP: '2' });
+    const toolStep = [{ type: 'tool_use', id: 't', name: 'get_overview', input: {} }];
+    const statuses: number[] = [];
+    for (let i = 0; i < 4; i++) statuses.push(await run(env, { events: eventsFor(toolStep), final: finalMessage(toolStep, 'tool_use') }, false, { 'x-escobar-device': `dev_${String(i).padStart(24, '0')}`, 'cf-connecting-ip': '203.0.113.9' }));
+    expect(statuses).toEqual([200, 200, 429, 429]);
   });
 });

@@ -21,7 +21,7 @@ export interface Env {
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
-  MAX_TURNS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
+  MAX_TURNS_PER_IP?: string; MAX_STEPS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
   QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
   /** Makes every Anthropic call from a US location (PL-20). Without it the call leaves from the edge. */
   UPSTREAM?: DurableObjectNamespace<UpstreamRelay>;
@@ -188,7 +188,7 @@ export const IDLE_TIMEOUT_MS = 60_000;
  * when an error or refusal was emitted instead. `emittedAny` tells the caller whether a
  * retry is still safe.
  */
-export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean }> {
+export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean; refused?: boolean; outputTokens?: number }> {
   const idleMs = opts.idleMs ?? IDLE_TIMEOUT_MS;
   const controller = new AbortController();
   opts.signal?.addEventListener('abort', () => controller.abort());
@@ -227,7 +227,8 @@ export async function runStep(client: ClientLike, params: MessageCreateParamsStr
     if (final.stop_reason === 'refusal') {
       const cat = (final as unknown as { stop_details?: { category?: string | null } | null }).stop_details?.category ?? null;
       emit({ t: 'refusal', category: cat });
-      return { final: null, emittedAny };
+      // A refusal is still billed (QA-R0-3): report its output so the handler can count it.
+      return { final: null, emittedAny, refused: true, outputTokens: final.usage?.output_tokens ?? 0 };
     }
     const content = pruneFallback(final.content as unknown[]);
     emit({ t: 'final', content, stop_reason: final.stop_reason, usage: final.usage, model: final.model });

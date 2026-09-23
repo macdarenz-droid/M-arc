@@ -178,3 +178,32 @@ describe('input hardening and disconnects (PL-14, PL-05)', () => {
     expect(abortedAt - cancelledAt).toBeLessThan(50);
   });
 });
+
+import { ipBucket, readCapped } from '../src/handler';
+describe('IP keys and body caps (QA-R0-1, QA-R0-4)', () => {
+  it('keys IPv6 callers by their /64 and leaves IPv4 alone', () => {
+    expect(ipBucket('2001:db8:abcd:12:1::5')).toBe('2001:db8:abcd:12::/64');
+    expect(ipBucket('2001:0db8:abcd:0012:ffff:ffff:ffff:ffff')).toBe('2001:db8:abcd:12::/64');
+    expect(ipBucket('2001:db8::1')).toBe('2001:db8:0:0::/64');
+    expect(ipBucket('203.0.113.7')).toBe('203.0.113.7');
+  });
+  it('two addresses in one /64 share the per-IP rate limit', async () => {
+    const seen = new Map<string, number>();
+    const RATE_IP = { limit: async ({ key }: { key: string }) => { seen.set(key, (seen.get(key) ?? 0) + 1); return { success: true }; } };
+    for (const ip of ['2001:db8:1:2::a', '2001:db8:1:2:ffff::b']) {
+      const r = await handle(post(turn(), { 'cf-connecting-ip': ip }), baseEnv({ RATE_IP } as never), deps(mockClient([{ events: eventsFor([{ type: 'text', text: 'ok' }]), final: finalMessage([{ type: 'text', text: 'ok' }]) }])));
+      await sse(r);
+    }
+    expect([...seen.entries()]).toEqual([['2001:db8:1:2::/64', 2]]);
+  });
+  it('a streamed body with no content-length is refused before it is read in full', async () => {
+    let pulled = 0;
+    const MB = new Uint8Array(1_000_000).fill(32);
+    const body = new ReadableStream<Uint8Array>({ pull(c) { pulled++; if (pulled > 5) c.close(); else c.enqueue(MB); } });
+    const req = new Request('https://marc-coach.example/v2/turn', { method: 'POST', body, headers: { 'x-escobar-device': DEVICE }, duplex: 'half' } as RequestInit);
+    const r = await handle(req, baseEnv(), deps(mockClient([])));
+    expect(r.status).toBe(413);
+    expect(pulled).toBeLessThanOrEqual(4);
+    expect(await readCapped(new Request('https://x', { method: 'POST', body: 'hé' }), 10)).toEqual({ text: 'hé', bytes: 3 });
+  });
+});

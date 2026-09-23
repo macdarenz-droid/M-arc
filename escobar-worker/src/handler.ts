@@ -41,6 +41,41 @@ const json = (status: number, body: unknown, cors: Record<string, string>, extra
 const fail = (status: number, code: ErrorCode, message: string, cors: Record<string, string>, retryAfter?: number) =>
   json(status, { t: 'error', code, message, ...(retryAfter ? { retryAfter } : {}) }, cors, retryAfter ? { 'retry-after': String(retryAfter) } : {});
 
+/** Whether the API billed this step: it produced output, finished, refused, or was cut off after starting. */
+export const billed = (r: StepResult): boolean => !!r.final || !!r.refused || r.emittedAny || !!r.aborted || !!r.timedOut;
+
+/**
+ * QA-R0-1: rate and daily limits key an IPv6 caller by its /64, the block one subscriber usually
+ * controls, so rotating addresses inside it gains nothing. IPv4 stays as is.
+ */
+export function ipBucket(ip: string): string {
+  if (!ip.includes(':')) return ip;
+  const [head, tail = ''] = ip.toLowerCase().split('::');
+  const h = head ? head.split(':') : [];
+  const t = tail ? tail.split(':') : [];
+  const groups = ip.includes('::') ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill('0'), ...t] : h;
+  return `${groups.slice(0, 4).map(g => (g || '0').replace(/^0+(?=.)/, '')).join(':')}::/64`;
+}
+
+/** The request body, read in chunks and stopped at `max` bytes (null when over). */
+export async function readCapped(req: Request, max: number): Promise<{ text: string; bytes: number } | null> {
+  if (!req.body) return { text: '', bytes: 0 };
+  const reader = req.body.getReader();
+  const parts: Uint8Array[] = [];
+  let bytes = 0;
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    if (bytes > max) { void reader.cancel().catch(() => {}); return null; }
+    parts.push(value);
+  }
+  const all = new Uint8Array(bytes);
+  let at = 0;
+  for (const p of parts) { all.set(p, at); at += p.byteLength; }
+  return { text: new TextDecoder().decode(all), bytes };
+}
+
 export async function handle(req: Request, env: Env, deps: Deps): Promise<Response> {
   const url = new URL(req.url);
   const origin = req.headers.get('origin');
@@ -58,9 +93,10 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
 
   const declared = Number(req.headers.get('content-length') ?? 'NaN');
   if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) return fail(413, 'invalid', 'body over 3 MB', cors);
-  const text = await req.text();
-  const bytes = new TextEncoder().encode(text).byteLength;
-  if (bytes > MAX_BODY_BYTES) return fail(413, 'invalid', 'body over 3 MB', cors);
+  // QA-R0-4: a body without content-length is read chunk by chunk and refused as soon as it passes the cap.
+  const read = await readCapped(req, MAX_BODY_BYTES);
+  if (!read) return fail(413, 'invalid', 'body over 3 MB', cors);
+  const { text, bytes } = read;
   let raw: unknown;
   try { raw = JSON.parse(text); } catch { return fail(400, 'invalid', 'body is not JSON', cors); }
   const v = validateTurn(raw, bytes);
@@ -70,7 +106,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   if (env.RATE) {
     try { const r = await env.RATE.limit({ key: device }); if (!r.success) return fail(429, 'rate', 'Slow down a little: too many requests this minute.', cors, 60); } catch { /* binding unavailable: allow */ }
   }
-  const ip = req.headers.get('cf-connecting-ip') ?? 'unknown';
+  const ip = ipBucket(req.headers.get('cf-connecting-ip') ?? 'unknown');
   // The Cloudflare location serving this request (e.g. HKG): the first thing to check for PL-20.
   const colo = (req as Request & { cf?: { colo?: string } }).cf?.colo ?? null;
   if (env.RATE_IP) {
@@ -91,7 +127,13 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   const gone = () => { closed = true; upstream.abort(); };
   writer.closed.catch(gone);
   const write = (s: string) => { if (!closed) void writer.write(enc.encode(s)).catch(gone); };
-  const emit = (e: SseEvent) => write(`data: ${JSON.stringify(e)}\n\n`);
+  // Characters of model output sent so far: the billed-output estimate when a step has no final message.
+  let outChars = 0;
+  const emit = (e: SseEvent) => {
+    if (e.t === 'text') outChars += e.d.length;
+    else if (e.t === 'tool_input') outChars += JSON.stringify(e.input ?? '').length;
+    write(`data: ${JSON.stringify(e)}\n\n`);
+  };
   const heartbeat = setInterval(() => write(': ping\n\n'), deps.heartbeatMs ?? HEARTBEAT_MS);
 
   const work = (async () => {
@@ -101,7 +143,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
     const turnSteps = stepsSinceUser(body.messages) + 1;
     // PL-20: with the relay bound, the Anthropic call leaves from the US, not from this edge.
     const step = (p: ReturnType<typeof buildParams>): Promise<StepResult> => env.UPSTREAM
-      ? relayStep(env, p, emit, { idleMs: deps.idleMs, signal: upstream.signal })
+      ? relayStep(env, p, emit, { idleMs: deps.idleMs, signal: upstream.signal, shardKey: device })
       : localStep(deps.makeClient(env), p, emit, { idleMs: deps.idleMs, signal: upstream.signal });
     let params = buildParams(body, env);
     let res = await step(params);
@@ -117,8 +159,11 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
     }
     const usage = (res.final?.usage ?? {}) as { input_tokens?: number; output_tokens?: number; cache_read_input_tokens?: number | null; cache_creation_input_tokens?: number | null };
     console.log(JSON.stringify({ requestId, colo, mode: body.mode, model: res.final?.model ?? model, stop_reason: res.final?.stop_reason ?? null, in: usage.input_tokens ?? 0, out: usage.output_tokens ?? 0, cacheRead: usage.cache_read_input_tokens ?? 0, cacheWrite: usage.cache_creation_input_tokens ?? 0, steps: turnSteps, ms: deps.now() - now }));
-    if (res.final) {
-      const p = recordStep(env, keys, now, { turnEnded: res.final.stop_reason !== 'tool_use', outputTokens: res.final.usage?.output_tokens ?? 0, turnSteps });
+    // QA-R0-1/2/3: every step the API bills is counted: a finished one, a refusal, and one cut short by
+    // a hang-up, a timeout or a mid-stream error. Only an error before any output (nothing billed) is not.
+    if (billed(res)) {
+      const outputTokens = res.final?.usage?.output_tokens ?? res.outputTokens ?? Math.ceil(outChars / 3);
+      const p = recordStep(env, keys, now, { turnEnded: res.final ? res.final.stop_reason !== 'tool_use' : true, outputTokens, turnSteps });
       if (deps.waitUntil) deps.waitUntil(p); else await p;
     }
   })().catch(() => emit({ t: 'error', code: 'upstream', message: 'The coach is unavailable right now.' })).finally(() => {

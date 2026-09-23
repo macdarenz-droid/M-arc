@@ -235,3 +235,15 @@ Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that bra
 - Editor hint and `k lb` volume for lb users; `HeartBpm` role=img; RestBanner announces "Rest done" once through a polite live region; `Row` activates on Enter/Space; `Segmented` sets `aria-selected`; effort buttons get a 44 px tall hit area (sideways it stops at the 4 px gap); `WeeklyReviewCard` calls its hook before returning. ST-24: lb display stays at 0.1 (decision).
 ### Layer: docs — RG-11
 - README and docs/ARCHITECTURE.md rewritten to match the code (layers incl. escobar/, escobar-worker/, assets/; impulse-response recovery; 2.5 % records with effort-aware Epley; progression inputs; the full AppState key list and side stores; workflows on every branch).
+
+## QA fixes (docs/qa/LIVE-QA.md on claude/marc-regression-architecture-gegkbq, 104 items; section W is the watch agent's)
+Order: high → medium → low. Each fix has a test that fails before and passes after.
+
+### QA-R0-1, QA-R0-2 (HIGH), QA-R0-3, QA-R0-4, QA-R0-5 — Worker. **Live only after the owner merges to main** (deploy-worker.yml)
+- Every billed step is recorded: finished, refused (the API's own output count), and cut short by a hang-up, a timeout or a mid-stream error (output estimated from what was streamed). An error before any output is not billed and not counted. A step with no final message ends the turn.
+- The per-IP daily cap now counts steps as well as turns (`MAX_STEPS_PER_IP`, default 1500), so tool-call-only turns from rotating device ids stop.
+- IPv6 callers are keyed by their /64 for RATE_IP and the daily IP counters.
+- A body without content-length is read in chunks and refused as soon as it passes 3 MB (no second TextEncoder copy).
+- The relay spreads turns over 8 objects (`us-0`…`us-7`, all `enam`) by device, instead of one.
+- Tests updated for the new contract (not loosened): the IP row now carries `steps`; the relay test expects the device's shard name.
+- Not changed, by decision: requests with no Origin and self-minted device ids (QA-R0-1 part 3). The plan drops signed device ids (D15); the IP /64 key and the steps cap are what limit rotation.
