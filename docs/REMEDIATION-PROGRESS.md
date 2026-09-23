@@ -380,3 +380,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R4b-9 (low)
 - `windowMessages` serialises each message once and sizes each candidate cut from suffix sums. The count is the same as `JSON.stringify` of the slice. The fixture from the finding (300 short turns, then 40 × 12 KB) takes 1.8 ms, down from 188 ms. New perf budget: 40 ms.
 - Note: the existing `recoveryStatus(600)` budget (60 ms) measures 53–58 ms on this machine, with one 62.7 ms outlier. It measured the same before today's changes, so this is headroom, not a regression. Flag it if CI goes red on it.
+
+### QA-R4b-5 (low)
+- Escobar's live-session tool gives autoregulation advice only for weighted main lifts, like Train. An assisted pull-up no longer gets "Try 22.5 kg", which would mean more help.

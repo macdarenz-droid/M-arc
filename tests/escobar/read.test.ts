@@ -205,3 +205,15 @@ describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
     expect(unrated.adjustment).toBeNull();
   });
 });
+
+describe('assisted lifts in the live view (QA-R4b-5)', () => {
+  it('get no load advice, like Train', async () => {
+    const { sessionAt } = await import('../helpers');
+    const s = sixMonthsState();
+    const id = 'lib_assisted_pull_up';
+    const past = sessionAt(new Date(NOW - 49 * 86_400_000).toISOString(), new Date(NOW - 49 * 86_400_000 + 3_600_000).toISOString(), [{ id, sets: [{ kg: 20, reps: 8, effort: 'ideal' }] }]);
+    const state = { ...s, sessions: [...s.sessions, past].sort((a, b) => a.startedAt.localeCompare(b.startedAt)), active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: id, name: 'Assisted Pull-up', done: false, skipped: false, sets: [{ id: 's1', kg: 20, reps: 12, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }, { id: 's2' }] }] } };
+    const l = R.getLiveSession({}, ctxOf(state as never)) as { adjustment: string | null };
+    expect(l.adjustment).toBeNull();
+  });
+});
