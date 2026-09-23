@@ -226,6 +226,26 @@ for (const theme of themes) {
   await page2.waitForTimeout(250);
   if ((await card.locator('.set-kind.warmup').count()) < 1) errors.push(`${tag}: expected warm-up sets in the live card`);
   await card.screenshot({ path: `${OUT}/silent-black-warmups-note.png` });
+  // QA-R7-1: in the finish sheet's effort list, a tap just below a set's 'Max' never rates the set below.
+  for (let j = 0; j < 6; j++) { await page2.locator('.set-grid input[inputmode="numeric"]').nth(j).fill('8', { timeout: 1000 }).catch(() => {}); }
+  await page2.getByRole('button', { name: 'Finish', exact: true }).click(); await page2.waitForTimeout(250);
+  const repair = page2.locator('[data-palace="train.effort-repair"]');
+  if (await visible(repair)) {
+    const misses = await repair.evaluate(el => {
+      const rows = [...el.querySelectorAll('.effort')];
+      const bad = [];
+      for (let i = 0; i + 1 < rows.length; i++) {
+        const btn = rows[i].querySelector('button.max').getBoundingClientRect();
+        for (let dy = 1; dy <= 8; dy++) {
+          const hit = document.elementFromPoint(btn.left + btn.width / 2, btn.bottom + dy);
+          if (hit && rows[i + 1].contains(hit)) bad.push(`row ${i} +${dy}px`);
+        }
+      }
+      return bad;
+    });
+    if (misses.length) errors.push(`${tag}: taps below a 'Max' land on the next set: ${misses.join(', ')}`);
+  } else errors.push(`${tag}: expected the effort repair list on the finish sheet`);
+  await page2.keyboard.press('Escape'); await page2.waitForTimeout(150);
   const width = await page2.evaluate(() => document.documentElement.scrollWidth);
   if (width > 390) errors.push(`${tag}: the live screen is ${width} px wide`);
   await page2.locator('nav.nav button', { hasText: /^(Today)$/ }).click(); await page2.waitForTimeout(200);

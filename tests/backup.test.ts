@@ -104,3 +104,16 @@ describe('last backup age in local days (QA-R6-1, QA-R6-7)', () => {
     expect(backupAgeDays(undefined, '2026-09-22')).toBeNull();
   });
 });
+
+import { formatSetLoad } from '@/core/units';
+describe('restoring an lb backup from before units (QA-R1-4)', () => {
+  it('shows 225 lb as typed, like the boot path', () => {
+    const s = { ...freshState(), preferences: { ...freshState().preferences, weightUnit: 'lb' as const }, sessions: [{ ...session('s1', '2026-09-20T10:00:00.000Z'), exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 102.0, reps: 5 }] }] }] } as unknown as Record<string, unknown>;
+    delete s.units;
+    const b = parseBackup(JSON.stringify(s), NOW);
+    if (!('kind' in b) || b.kind !== 'v37') throw new Error('kind');
+    const set = b.state.sessions[0]!.exercises[0]!.sets[0]!;
+    expect(set.entered).toEqual({ value: 225, unit: 'lb' });
+    expect(formatSetLoad(set, 'lb')).toBe('225 lb');
+  });
+});

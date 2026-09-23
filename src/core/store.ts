@@ -83,18 +83,19 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
     schedule,
     ...lists,
   };
-  return { state: fill(repaired), dropped: c.dropped };
+  let out = fill(repaired);
+  // RG-02 / QA-R1-4: an lb user's history from before per-set units displays exactly as typed. Done
+  // here, where the raw state is still visible, so boot and restore both backfill it.
+  const savedBeforeUnits = !Object.prototype.hasOwnProperty.call(raw, 'units');
+  if (savedBeforeUnits && raw.preferences?.weightUnit === 'lb') {
+    out = { ...out, sessions: backfillLegacyLbEntries(out.sessions), active: out.active && Array.isArray(out.active.entries) ? { ...out.active, entries: out.active.entries.map(e => ({ ...e, sets: backfillLegacyLbSets(e.sets ?? []) })) } : out.active };
+  }
+  return { state: out, dropped: c.dropped };
 }
 
 /** Fill in fields added after a state was first saved, after a deep repair. */
 function normalize(s: AppState): AppState {
-  let out = repairState(s).state;
-  // RG-02: an lb user's history from before per-set units displays exactly as typed.
-  const savedBeforeUnits = !Object.prototype.hasOwnProperty.call(s, 'units');
-  if (savedBeforeUnits && s.preferences?.weightUnit === 'lb') {
-    out = { ...out, sessions: backfillLegacyLbEntries(out.sessions), active: out.active && Array.isArray(out.active.entries) ? { ...out.active, entries: out.active.entries.map(e => ({ ...e, sets: backfillLegacyLbSets(e.sets ?? []) })) } : out.active };
-  }
-  return out;
+  return repairState(s).state;
 }
 
 /** R2.8: a loaded live session gets ids where it has none. Times are never invented. */
