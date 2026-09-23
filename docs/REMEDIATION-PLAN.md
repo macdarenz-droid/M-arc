@@ -1,7 +1,8 @@
 # M/ARC remediation and upgrade plan (R0–R8)
 
-Built from [`QA-REGRESSION-AUDIT.md`](QA-REGRESSION-AUDIT.md) (161 findings, 104 confirmed by adversarial verification) and the improvement research in [`qa/research.json`](qa/research.json).
+Built from [`QA-REGRESSION-AUDIT.md`](QA-REGRESSION-AUDIT.md) (162 findings: 161 from the audit, 104 of them confirmed by adversarial verification, plus PL-19 found in follow-up) and the improvement research in [`qa/research.json`](qa/research.json).
 Base: `e34076f` (`claude/escobar-v2-implementation-eidx64`). This branch, `claude/marc-regression-architecture-gegkbq`, is that commit plus these documents.
+Watch companion (GT6, Huawei Wear Engine): [`WATCH-ARCHITECTURE.md`](WATCH-ARCHITECTURE.md) and [`WATCH-INTEGRATION-NOTES.md`](WATCH-INTEGRATION-NOTES.md). The watch gates build on R0–R2 (see the ordering table in the notes).
 
 ---
 
@@ -25,6 +26,15 @@ Base: `e34076f` (`claude/escobar-v2-implementation-eidx64`). This branch, `claud
 - New persisted fields must be optional or defaulted in `core/store.ts normalize()` (Escobar fields in `core/escobarState.ts`), so old saves and backups still load.
 - The Escobar tool schema is generated: after editing `src/escobar/tools/schema.ts`, run `npm run escobar:tools`. `tests/escobar/tools-sync.test.ts` enforces this.
 
+### 1.1a Protected identity (never change)
+| What | Value |
+|---|---|
+| Android package | `com.mrcdrnzz.dailytracker` |
+| Huawei App ID | `119100049` (Wear Engine application submitted, pending) |
+| App signing certificate SHA-256 (Huawei fingerprint #1) | `05:A0:B1:32:DB:B1:E1:7D:ED:E7:51:78:92:0D:32:B2:7A:EE:54:DC:70:CB:FD:D1:78:3A:FE:38:F8:F1:A6:E8` |
+
+Never rotate or replace this signing key. Never register another key in slot #1. Every CI-built APK must be signed with it once R0.0 is done. Never commit the Huawei app secret or `agconnect-services.json` (the repo is public).
+
 ### 1.2 Commands
 | What | Command |
 |---|---|
@@ -46,7 +56,7 @@ Base: `e34076f` (`claude/escobar-v2-implementation-eidx64`). This branch, `claud
 
 | # | Decision | Default | Why |
 |---|---|---|---|
-| D1 🔑 | Debug signing key in `build-apk.yml` (PL-02) | **Step A**: the owner copies the current base64 into repo secret `MARC_DEBUG_KEYSTORE_B64`. Only then does the agent swap the literal for the secret. **Step B** (rotation) later, at a time the owner chooses. | Rotating changes the APK signature. The owner must export a backup, uninstall, reinstall and restore, or all local workouts are lost. |
+| D1 🔑 | Signing identity (PL-19, PL-02) | **Rescue `05:A0…A6:E8` from the escobar-branch cache into secret `MARC_DEBUG_KEYSTORE_B64` (R0.0). Never rotate it.** Remove the cache step and the embedded `1E:13` keystore; CI pins the fingerprint. | It is the key Huawei Wear Engine is registered to and the key of the installed app. Rotating it breaks Wear Engine and forces an uninstall, which wipes local workouts. |
 | D2 | Android auto-backup (`allowBackup`) | **Keep enabled.** Update the privacy text to say Android device backup may include app data. | It is the only automatic safety net for a local-first app (the smartwatch branch disabled it). |
 | D3 | Photos per Escobar message (ES-13) | **2** (client cap). Fix the decision line. | 3 × 1.2 MB exceeds the Worker's 3 MB body limit. |
 | D4 | "Day off" semantics (RG-19) | A marked day off on a scheduled day counts as unscheduled for streak, adherence and week grade. | v36 parity. |
@@ -66,9 +76,9 @@ Base: `e34076f` (`claude/escobar-v2-implementation-eidx64`). This branch, `claud
 
 | Phase | Goal | Findings | Size | Suggested executor |
 |---|---|---|---|---|
-| **R0** | Stop Worker money exposure; move secrets out of the repo | 8 | M | Opus 5.5 · medium (high for the Durable Object) |
+| **R0** | Rescue the signing key; stop Worker money exposure | 9 | M | Opus 5.5 · medium (high for the Durable Object) |
 | **R1** | No silent data loss: store, crash box, restore/reset, heart backup | 19 | L | Opus 5.5 · medium |
-| **R2** | Live session and clock correctness, time zones, performance, notifications | 33 | L | Opus 5.5 · medium |
+| **R2** | Live session and clock correctness, time zones, performance, notifications, stable ids for the watch | 33 + R2.8 | L | Opus 5.5 · medium |
 | **R3** | Coach numbers users act on | 31 | L | Opus 5.5 · medium |
 | **R4** | Escobar integrity: undo, races, privacy, tools | 29 | L | Opus 5.5 · medium (high for session/loop races) |
 | **R5** | Android native and PWA platform: Health Connect, watch, back, safe area, SW | 19 + 4 research | L | Opus 5.5 · medium |
@@ -82,8 +92,35 @@ Dependencies: R1 before R2 (shared store and test harness). R2's clock module be
 
 ## R0. Worker spend and CI secrets
 
-**Why first**: the Worker is live and anyone can spend the Anthropic key (PL-01, critical).
-**Layers**: worker → CI → gate.
+**Why first**: the Worker is live and anyone can spend the Anthropic key (PL-01, critical). The app's signing key can be lost within a week (PL-19).
+**Layers**: signing rescue → worker → CI → gate.
+
+### R0.0 Signing identity rescue (PL-19, PL-02) 🔑: do this first; deadline ≈ 2026-09-30
+Facts:
+- Debug APKs are signed by whatever `~/.android/debug.keystore` the Actions cache `marc-debug-signing-v1` restores. That cache is per branch, and a branch without its own entry falls back to `main`'s.
+- The escobar branch cache holds `05:A0…A6:E8`, the key registered with Huawei. `main`'s cache holds `7E:BC…`. The embedded literal is `1E:13…` and is used only on a cache miss.
+- GitHub deletes caches that go unused for 7 days. Until this step is done, the owner installs only escobar-branch builds, and that branch must build at least every 6 days.
+
+Steps:
+1. Owner: add repo secret `KEY_EXPORT_PASSPHRASE` (≥ 32 random characters).
+2. Agent (with the owner's explicit OK to push to `claude/escobar-v2-implementation-eidx64`): add `.github/workflows/export-debug-key.yml`.
+   - Trigger: `push` on that branch, `paths` = the file itself.
+   - Steps:
+     - `actions/cache/restore@v4` with `path: ~/.android/debug.keystore`, `key: marc-debug-signing-v1`, `fail-on-cache-miss: true`;
+     - `keytool -list -v … -storepass android`: fail unless the SHA256 line equals the pinned value;
+     - `openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:KEY_EXPORT_PASSPHRASE -in … -out debug.keystore.enc`;
+     - `actions/upload-artifact@v4` with `retention-days: 1`.
+   - Never print the key.
+3. Owner: download the artifact and run `openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in debug.keystore.enc -out debug.keystore`. Check that `keytool -list -v -keystore debug.keystore -storepass android` shows `05:A0…A6:E8`. Keep an offline copy (password manager). Then `base64 -w0 debug.keystore` → secret `MARC_DEBUG_KEYSTORE_B64`.
+4. Agent, once the owner confirms, in `build-apk.yml`:
+   - delete the `Preserve development signing identity` cache step and the embedded literal;
+   - decode `${{ secrets.MARC_DEBUG_KEYSTORE_B64 }}`, and fail with `::error::` if it is empty;
+   - after `assembleDebug`, parse the APK v2 signing block (a small Python step like `docs/qa` used, or `apksigner verify --print-certs`) and fail unless the SHA-256 equals repo variable `MARC_DEBUG_SHA256` (default the pinned value);
+   - add `! grep -rE 'MII[A-Za-z0-9+/]{100,}' .github/workflows`.
+   Remove the export workflow in the same change.
+5. Owner: delete the Actions caches named `marc-debug-signing-v1` (Actions → Caches) and the `KEY_EXPORT_PASSPHRASE` secret.
+
+Test: the next CI run on any branch produces an APK signed `05:A0…A6:E8`. Check it with the same certificate extraction.
 
 ### R0.1 Atomic quota store (PL-01 part 1, PL-07)
 - New `escobar-worker/src/quotaDO.ts`: `export class QuotaCounter extends DurableObject` (from `cloudflare:workers`), SQLite-backed, one instance per UTC day (`env.QUOTA_DO.idFromName(dayKey(now))`). A Durable Object is single-threaded, so read-modify-write through `this.ctx.storage.get/put` is atomic. RPC methods:
@@ -119,12 +156,8 @@ Log one structured line per step: `{ requestId, mode, model, stop_reason, in, ou
 - Pin wrangler: `cd escobar-worker && npm i -D -E wrangler@4` (commit the lockfile) and use `npx wrangler deploy`.
 - The `/health` check step must also fail when `quotas !== true`.
 
-### R0.8 Keystore out of the repo (PL-02, D1) 🔑
-Only after the owner confirms that secret `MARC_DEBUG_KEYSTORE_B64` exists:
-- Replace the literal with `${{ secrets.MARC_DEBUG_KEYSTORE_B64 }}`. If the secret is empty, fail with `::error::MARC_DEBUG_KEYSTORE_B64 secret missing`.
-- Bump the cache key to `marc-debug-signing-v2`.
-- Add a CI step: `! grep -rE 'MII[A-Za-z0-9+/]{100,}' .github/workflows`.
-- Until the owner confirms, leave the file unchanged and list it under Owner actions.
+### R0.8 Release signing fingerprint (companion to R0.0)
+In `release-apk.yml`, after signing, print the APK signer SHA-256. If repo variable `MARC_RELEASE_SHA256` is set, fail on mismatch. The release key must never replace Huawei fingerprint #1; if release builds are ever used with Wear Engine, the owner adds the release fingerprint to slot #2.
 
 ### R0 tests
 `escobar-worker/test/`:
@@ -137,7 +170,7 @@ Only after the owner confirms that secret `MARC_DEBUG_KEYSTORE_B64` exists:
 - a user block with `cache_control` is rejected;
 - a cancelled response body aborts the mock stream within 50 ms.
 
-**Done when**: Worker `npm run check` and app `npm run check` are green, and the gate passes. Owner actions logged: dispatch "Deploy Escobar Worker", then confirm `/health` shows `quotas: true`; D1 Step A.
+**Done when**: Worker `npm run check` and app `npm run check` are green, and the gate passes. An APK from this phase's branch is signed `05:A0…A6:E8`. Owner actions logged: dispatch "Deploy Escobar Worker", then confirm `/health` shows `quotas: true`; R0.0 steps 1, 3 and 5.
 
 ---
 
@@ -277,6 +310,22 @@ Never use `USE_EXACT_ALARM`.
 
 ### R2.7 Small UI
 UI-23: add the `@media (max-width: 380px)` set-grid rules from findings.json.
+
+### R2.8 Stable identities for the live session (watch Gate B foundation)
+Required by the watch companion (WATCH-ARCHITECTURE §5). Do it here, once, so the watch work does not invent a second scheme.
+- `ActiveSession.id` is created at `startSession` (`newId('s')`) and **kept** as `Session.id` in `finishSession`. Today the id is created at finish.
+- `ActiveSession.entries[].id` (`newId('e')`) and `LoggedSet.id` (`newId('set')`) are created whenever an entry or set is created (start, add exercise, `addSet`, substitute; a substitution gets a **new** entry id). Reordering keeps ids.
+- `LoggedSet.status?: 'draft' | 'committed' | 'skipped'` inside the active session only. `commitSet` sets `'committed'` (the R2.3 commit-once guard checks `status === 'committed' || set.at`). `finishSession` drops `status` and keeps `id` in history.
+- `normalize` backfills missing ids for a loaded `active` session only, and never fabricates `at` times. History sets without ids stay valid.
+- Add id-based mutators next to the index ones: `setSetById(setId, patch)`, `commitSetById(setId, opts?: { actionAt?: string })`, `removeEntryById`. The index functions become thin wrappers that Train keeps using. `actionAt` (a credible action time) drives fidelity and `restSec` instead of `Date.now()` when given; the receipt time is `Date.now()`.
+- Out of scope here (Gate B adds them): command receipts, revisions, the native service.
+
+Tests in `tests/session.test.ts`:
+- ids survive reorder and finish (`Session.id === active.id`);
+- a substitution creates a new entry id;
+- `commitSetById` twice gives one commit;
+- `actionAt` in the past sets fidelity and rest from that time;
+- an old active session without ids gets ids and no times.
 
 ### R2 tests
 - `tests/clock.test.ts`:
@@ -582,6 +631,7 @@ Rewrite `README.md` and `docs/ARCHITECTURE.md` to match the code (RG-11): layers
 | F7 | Per-mode model routing (D12) | medium / S | Worker env `MODEL_CHAT`, `MODEL_PLAN`, `MODEL_LIVE`, … falling back to `MODEL`. Check `SYSTEM_MESSAGE_MODELS` / fold behaviour per model. Client `estimateCost` by `final.model`. Verify prices before choosing models. |
 | F10 | Near-miss records + chronic-skip rule (phase-9 port) | medium / M | Port from `detectors/nearmiss.ts` and `detectors/skips.ts` onto `prs.ts` / `rules.ts`. |
 | F11 | Health Connect history read + write sessions | medium / M | Optional `READ_HEALTH_DATA_HISTORY` to seed baselines. `WRITE_EXERCISE` writes `ExerciseSessionRecord` on finish. Update the rationale text. |
+| W | Watch companion (GT6) | high / L | Follow `WATCH-ARCHITECTURE.md` Gates A–E and the ordering and constraints in `WATCH-INTEGRATION-NOTES.md`. Gate A (feasibility) may start after R0.0. Gate B builds on R1 + R2 (R2.8 ids). Gate D's native workout service needs its own design pass. |
 | Backlog (design first) | Android 16 Live Update notification for session and rest; mesocycles/blocks; home-screen widget; body measurements + progress photos; exercise demo links; optional numeric RIR; coach backtest harness (coach-brain `cbb29a7`) | | Each needs a T3 design doc before implementation. |
 
 ---
@@ -595,6 +645,8 @@ Rewrite `README.md` and `docs/ARCHITECTURE.md` to match the code (RG-11): layers
 - Do not import `escobar/session` from the main bundle (keeps the 148 KB chunk lazy).
 - Do not remove `legacy/v36`, delete branches or rotate the signing key without the owner's answer.
 - Do not deploy the Worker or trigger workflows yourself. List them as owner actions.
+- Do not rotate, regenerate or replace the app signing key, and do not register other fingerprints in Huawei slot #1 (§1.1a).
+- Do not push to `claude/escobar-v2-implementation-eidx64` except for the R0.0 export workflow, and only with the owner's explicit OK.
 
 ## 12. Test additions summary
 New files:
@@ -619,7 +671,7 @@ D1: pending · D2: default · … (record any non-default answer here)
 
 ## Owner actions (collected; STOP once at the end)
 - [ ] R0: dispatch "Deploy Escobar Worker", confirm /health quotas:true
-- [ ] D1 Step A: add secret MARC_DEBUG_KEYSTORE_B64
+- [ ] R0.0: add KEY_EXPORT_PASSPHRASE → decrypt artifact → set MARC_DEBUG_KEYSTORE_B64 → delete caches
 
 ## Phase R0 — <status>
 ### Layer: worker — done, commit <sha> — IDs: …

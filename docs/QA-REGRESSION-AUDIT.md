@@ -42,17 +42,17 @@ Green CI does not mean correct here. The unit tests cover pure brain functions, 
 7. **The coach states wrong numbers users act on.** Body fat uses metric constants on inch values (BR-01). "Ready in" is measured from training instead of from now (BR-02). Readiness gives opposite bands in Train and in Coach (BR-03). The plateau threshold is 1.5 %/week instead of 1.5 % over 8 weeks (BR-04). Abandoned lifts trigger decline and deload offers forever (BR-05). Volume is "under" for every muscle each Monday (BR-07). The pre-session load ignores goal, deload and gym units (BR-08).
 8. **Escobar's Undo corrupts state (ES-03/04/05).** Undo restores whole state slices, including the live session, at any later time. After a reload it does nothing but is still reported as "undone". Applying a programme discards a running workout.
 9. **The clock is frozen when no timer runs (ST-05 / VX-02).** Recovery, readiness and insights are computed at boot time or at the last tick. While a timer runs they are recomputed every second (ST-07 / BR-23 / UI-10), about 30–120 ms of work per tick.
-10. **Private debug signing key committed** in `build-apk.yml` (PL-02). Anyone can sign an APK that installs as an update over the owner's debug build.
+10. **The app's signing identity lives only in a per-branch CI cache (PL-19, found in follow-up).** The key registered with Huawei for Wear Engine (`05:A0…A6:E8`) signs only builds from the escobar branch. Other branches sign with `7E:BC…`, and GitHub deletes the cache after 7 days unused. The committed debug keystore (PL-02, `1E:13…`) is only the cache-miss fallback, so it is low severity.
 
 ## 4. Totals
 
 | Severity | Count | | Phase | Items |
 |---|---|---|---|---|
-| critical | 1 | | R0 Worker and CI secrets | 8 |
-| high | 24 | | R1 Data safety | 19 |
-| medium | 74 | | R2 Live session, clock, time zones, performance | 33 |
-| low | 62 | | R3 Coach numbers | 31 |
-| **total** | **161** | | R4 Escobar integrity | 29 |
+| critical | 1 | | R0 Worker and CI secrets | 9 |
+| high | 25 | | R1 Data safety | 19 |
+| medium | 73 | | R2 Live session, clock, time zones, performance | 33 |
+| low | 63 | | R3 Coach numbers | 31 |
+| **total** | **162** | | R4 Escobar integrity | 29 |
 | | | | R5 Android and PWA platform | 19 |
 | | | | R6 Parity restores | 4 |
 | | | | R7 Cleanup, CI, docs | 18 |
@@ -73,7 +73,7 @@ Severities are the final, verifier-adjusted values.
 | Escobar | SSE transport, ledger/citations, palace navigation, brief, mock transport | loop (ES-09/10/20), read tools (ES-01/21), show (ES-15), photos (ES-13), privacy gates (ES-12), memory (ES-30) | undo (ES-03/04), today override (ES-02), plan mode (ES-17), offline latch (ES-08), store vs reset (ES-07), pins/proactive/brief (stubs, ES-26) |
 | Native | haptics, photo pick, watch FGS type | watch plugin threading (PL-08), notifications (UI-02) | Health Connect sync (PL-03/04), HC diagnose (dead) |
 | Worker | `/health`, SSE relay, validation, error mapping | CORS (not access control), per-device rate limit | quotas (PL-01), disconnect abort (PL-05) |
-| CI | gate, debug APK, signed release, tools-sync | deploy-worker (PL-11), release versioning (PL-17) | committed keystore (PL-02) |
+| CI | gate, debug APK, signed release, tools-sync | deploy-worker (PL-11), release versioning (PL-17) | signing identity only in a per-branch cache (PL-19); committed fallback keystore (PL-02) |
 
 ## 6. Regression analysis
 
@@ -167,10 +167,11 @@ Sorted by phase, then severity. "unverified-low" means low severity and not put 
 | ID | Sev | Verdict | Cat | Location | Finding | Phase |
 |---|---|---|---|---|---|---|
 | PL-01 | critical | confirmed | security | `escobar-worker/wrangler.toml:33` | Escobar Worker is an unauthenticated open relay to the Anthropic key; quotas disabled in production | R0 |
-| PL-02 | medium (was critical) | confirmed | security | `.github/workflows/build-apk.yml:157` | Private Android debug signing key (PKCS12, password 'android') committed in the gate workflow | R0 |
+| PL-19 | high | confirmed | build-ci | `.github/workflows/build-apk.yml:148` | Debug signing identity lives only in per-branch Actions cache: differs by branch and is lost after 7 days unused | R0 |
 | PL-05 | medium | confirmed | perf | `escobar-worker/src/handler.ts:77` | Client disconnect never aborts the upstream model stream | R0 |
 | PL-06 | medium | confirmed | spec-drift | `escobar-worker/src/validate.ts:136` | decision-review: client-authored system messages and effort escalation accepted verbatim | R0 |
 | PL-07 | medium | confirmed | spec-drift | `escobar-worker/src/handler.ts:93` | decision-review: quota accounting undercounts — tool_use-terminated turns and intermediate steps are free; concurrent turns lose updates | R0 |
+| PL-02 | low (was critical) | confirmed | security | `.github/workflows/build-apk.yml:157` | Private Android debug signing key (PKCS12, password 'android') committed in the gate workflow | R0 |
 | PL-11 | low | unverified-low | build-ci | `.github/workflows/deploy-worker.yml:8` | decision-review: Worker deploy triggers only from the feature branch and is not gated by the full gate | R0 |
 | PL-12 | low | unverified-low | bug | `escobar-worker/src/validate.ts:44` | Validator lets clients add cache_control to user text blocks (app never does), exceeding the 4-breakpoint limit | R0 |
 | PL-14 | low | unverified-low | bug | `escobar-worker/src/handler.ts:59` | Worker reads the full body before any size check and measures size in UTF-16 units | R0 |
