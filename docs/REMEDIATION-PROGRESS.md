@@ -267,3 +267,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - get_volume and volume_bars send `lastWeekSets` (and get_volume says what status is judged on). Body's this-week bar colours by this week's own count against the band.
 ### QA-R3a-2 (medium)
 - `liftTrend(history, mode)` in brain/trend.ts: weighted uses the strength estimate, bodyweight best reps, duration longest hold, assisted the assistance load inverted. get_exercise_history and lift_trend pass the lift's mode to plateauStatus and use liftTrend.
+### QA-R3a-3, QA-R3a-4 (medium)
+- Upper = push + pull again (plan row 9), compared after dividing by `UPPER_PER_LOWER` (1.5): an even upper/lower split and a full-body week are both balanced; neglecting either region is still flagged. The shown ratio is the plain set ratio. COACHING-DECISIONS updated.
