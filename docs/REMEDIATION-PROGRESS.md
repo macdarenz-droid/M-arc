@@ -477,3 +477,21 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - Haiku 4.5 is not recommended: the Worker sends adaptive thinking and effort, which were not verified on it.
   - Switching models inside one conversation (chat ↔ live) loses the prompt cache for that step. Keep chat, plan and live on one model.
 - **Needs owner action:** set the vars in `escobar-worker/wrangler.toml` (or the dashboard) and merge to main to deploy. Worker changes are live only after that merge.
+
+### F6 — supersets and circuits. Design note
+- **Data:**
+  - `SplitExercise.group?: string`, and the same `group?` on a live entry and a finished session exercise.
+  - Exercises that share a group are adjacent. `normalizeGroups()` enforces that after every split edit and in state repair: a label that is not adjacent to its previous use is split, and a group of one loses its label.
+  - Two exercises make a superset, three or more a circuit. Letters (A, B …) are given in order for display.
+- **Editor:** each row but the last has a link button, "Superset with the next exercise", that joins or splits that pair. Moving or removing rows re-normalizes.
+- **Live session:**
+  - Entries copy `group` at start. Today's Escobar changes keep it on a swap and drop it for an added exercise.
+  - Grouped cards show a bracket and "Superset A · 1 of 2".
+  - **Rest rule:** `restDueAfter(entries, entryIndex, setId)` is a pure function in `session.ts`. After a working set in a group, auto-rest starts only when that round (the set's place among the entry's working sets) is committed for every exercise in the group that has that round. Otherwise the next exercise follows with no rest. Warm-ups never start rest, as before.
+- **Kept:**
+  - "Save as template" and the finished session keep the groups.
+  - The brain is unaffected: exposure, recovery and records read sets, not groups.
+- **Not in scope:**
+  - Escobar's split tools do not read or write groups, so an Escobar split update drops them.
+  - CSV export has no group column.
+  - Both are noted for later.
