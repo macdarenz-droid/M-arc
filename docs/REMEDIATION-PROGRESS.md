@@ -6,8 +6,8 @@ Branch: claude/marc-r0-remediation-ast5xs (from claude/marc-regression-architect
 D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 
 ## Owner actions (collected; STOP once at the end)
-- [ ] R0: dispatch "Deploy Escobar Worker", confirm /health quotas:true
-- [ ] R0.9 (PL-20): deploy the Worker (see "How the Worker gets deployed" below); then /health must show relay:true; the affected user on the failing Wi-Fi opens https://marc-coach.mmarcdarenz.workers.dev/cdn-cgi/trace (expect colo=HKG) and sends Escobar a message
+- [x] R0 + R0.9 Worker deployed from main (PR #4 merge, run 35880696979 green; its /health step requires protocol 2, key, quotas and relay)
+- [ ] R0.9 (PL-20): the affected user on the failing Wi-Fi opens https://marc-coach.mmarcdarenz.workers.dev/cdn-cgi/trace (expect colo=HKG) and sends Escobar a message
 - [ ] R0: if the deploy fails because Durable Objects are unavailable, run `npx wrangler kv namespace create QUOTA` and bind `QUOTA` in wrangler.toml
 - [ ] R0.0: keep the encrypted key backup → add the new fingerprint in AppGallery Connect → backup, uninstall, reinstall, restore → delete SECRETS_WRITE_TOKEN and the `marc-debug-signing-v1` caches
 
