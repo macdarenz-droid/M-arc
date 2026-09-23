@@ -238,8 +238,11 @@ export const RULES: Rule[] = [
         out.push({
           id: `volume:${row.muscle}`, category: 'focus', priority: 140,
           title: `${label}: ${under ? 'under' : 'over'} your usual range`,
-          noticed: `${label} got ${row.thisWeekSets} effective sets this week; your range is ${row.band[0]}–${row.band[1]}.`,
-          means: under ? 'Too little direct work for a while can slow progress on this muscle.' : 'Volume held well above your range adds fatigue without much extra growth.',
+          noticed: under || row.lastWeekSets >= row.thisWeekSets
+            ? `${label} got ${row.lastWeekSets} effective sets last week; your range is ${row.band[0]}–${row.band[1]}.`
+            : `${label} has ${row.thisWeekSets} effective sets this week already; your range is ${row.band[0]}–${row.band[1]}.`,
+          // D9: diminishing returns above the band, not a harm threshold.
+          means: under ? 'Too little direct work for a while can slow progress on this muscle.' : 'Above your usual range: more sets now bring smaller gains and cost more recovery.',
           action: under ? `Add one or two direct sets for ${label.toLowerCase()} this week.` : `Trim a set or two for ${label.toLowerCase()} next week.`,
           muscle: row.muscle,
         });

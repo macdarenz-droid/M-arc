@@ -4,7 +4,9 @@
  */
 import type { Exercise, Session } from '@/core/models';
 import { MUSCLE_BY_ID, type MuscleId } from '@/data/muscles';
-import { weeklyMuscleSets } from './exposure';
+import { isWorkingSet } from './exposure';
+import { findExercise } from '@/core/exercises';
+import { addDays, weekStart } from '@/core/dates';
 
 export interface Imbalance {
   pair: 'push_pull' | 'upper_lower';
@@ -22,14 +24,29 @@ const LABEL = { push: 'Push', pull: 'Pull', upper: 'Upper body', lower: 'Lower b
 export const BALANCE = { weeks: 3, minTotalSets: 12, ratio: 2, persistWeeks: 2 } as const;
 
 export function trainingBalance(sessions: Session[], today: string, custom: Exercise[] = [], intentionalFocus: MuscleId[] = []): Imbalance | null {
-  const weeks = weeklyMuscleSets(sessions, today, BALANCE.weeks, custom);
-  const bucketWeeks = weeks.map(w => {
+  // Per exercise set, not per muscle touched (BR-17): a bench set is one push set, however many
+  // muscles it hits. Its set is split evenly across the buckets of its primary muscles.
+  const start = weekStart(today);
+  const bucketWeeks = Array.from({ length: BALANCE.weeks }, (_, i) => {
+    const from = addDays(start, -7 * i), to = addDays(from, 7);
     const b = { push: 0, pull: 0, upper: 0, lower: 0 };
-    for (const [m, v] of Object.entries(w.sets) as Array<[MuscleId, number]>) {
-      const info = MUSCLE_BY_ID[m];
-      if (info.bucket === 'push') { b.push += v; b.upper += v; }
-      else if (info.bucket === 'pull') { b.pull += v; b.upper += v; }
-      else if (info.bucket === 'lower') b.lower += v;
+    for (const s of sessions) {
+      if (s.day < from || s.day >= to) continue;
+      for (const ex of s.exercises) {
+        const meta = findExercise(ex.exerciseId, custom) ?? findExercise(ex.name, custom);
+        if (!meta) continue;
+        const working = ex.sets.filter(isWorkingSet).length;
+        if (!working) continue;
+        const buckets = [...new Set(meta.primary.map(m => MUSCLE_BY_ID[m].bucket))].filter((x): x is 'push' | 'pull' | 'lower' => x === 'push' || x === 'pull' || x === 'lower');
+        if (!buckets.length) continue;
+        const share = working / buckets.length;
+        for (const k of buckets) {
+          b[k] += share;
+          // Upper is the mean of push and pull, so one push + one pull + one lower exercise reads as
+          // balanced (the finding's own test); summing them made every full-body week "upper-heavy".
+          if (k !== 'lower') b.upper += share / 2;
+        }
+      }
     }
     return b;
   });

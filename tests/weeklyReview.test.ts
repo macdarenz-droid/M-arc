@@ -11,10 +11,10 @@ const bench = 'lib_barbell_bench_press';
 const lateral = 'lib_dumbbell_lateral_raise';
 
 describe('hardSetsThisWeek and volumeBand', () => {
-  it('easy sets count half, ideal/max count full', () => {
+  it('easy sets are not hard sets; ideal/max count full (BR-16: easy used to count half)', () => {
     const s = session('2026-09-15', [{ id: bench, sets: [...sets(60, 8, 'easy', 2), ...sets(60, 8, 'ideal', 1)] }]); // Tue
     const out = hardSetsThisWeek([s], '2026-09-18', []);
-    expect(out.chest).toBeCloseTo(0.5 + 0.5 + 1, 5);
+    expect(out.chest).toBeCloseTo(1, 5);
   });
   it('bands match the plan thresholds', () => {
     expect(volumeBand(3)).toBe('low');

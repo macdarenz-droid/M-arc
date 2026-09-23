@@ -9,35 +9,16 @@ import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
-import { isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
+import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
 import { trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import type { Insight } from './rules';
 
-const EFFORT_FRACTION = { easy: 0.5, ideal: 1, max: 1 } as const;
-
-/** Fractional hard sets per muscle for the calendar week containing `today`. */
+/** Hard sets per muscle for the calendar week containing `today`: the shared count without easy sets (BR-16). */
 export function hardSetsThisWeek(sessions: Session[], today: string, custom: Exercise[] = []): Partial<Record<MuscleId, number>> {
   const start = weekStart(today);
-  const end = addDays(start, 7);
-  const out: Partial<Record<MuscleId, number>> = {};
-  for (const s of sessions) {
-    if (s.day < start || s.day >= end) continue;
-    for (const ex of s.exercises) {
-      const meta = findExercise(ex.exerciseId, custom);
-      if (!meta) continue;
-      for (const set of ex.sets.filter(isWorkingSet)) {
-        const frac = EFFORT_FRACTION[set.effort ?? 'ideal'];
-        for (const r of rolesFor(meta)) {
-          const w = ROLE_WEIGHT[r.role] * frac;
-          if (!w) continue;
-          out[r.muscle] = (out[r.muscle] ?? 0) + w;
-        }
-      }
-    }
-  }
-  return out;
+  return effectiveSetsByMuscle(sessions, start, addDays(start, 7), custom, { countEasy: false });
 }
 
 export type VolumeBand = 'low' | 'maintenance' | 'productive' | 'high';
