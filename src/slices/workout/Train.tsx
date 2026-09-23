@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
+import { HeartBpm, PulseLine } from '@/ui/PulseLine';
 import { openEscobar } from '@/escobar/ui/open';
-import { signal } from '@preact/signals';
+import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, setTicking, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
@@ -172,9 +173,13 @@ function Splits() {
 
   return (
     <div class="view">
+      {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
       <div class="topbar" data-palace="train.workouts">
         <div><div class="eyebrow">Train</div><h1>Workouts</h1></div>
-        <Button variant="quiet" size="sm" data-palace="train.new-split" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
+        <div class="row" style={{ gap: 8 }}>
+          {liveBpm.value != null && <HeartBpm bpm={liveBpm.value} />}
+          <Button variant="quiet" size="sm" data-palace="train.new-split" onClick={() => setCreating(true)} disabled={s.splits.length >= MAX_SPLITS}><IconPlus size={16} /> Split</Button>
+        </div>
       </div>
       <div class="row" style={{ marginBottom: 10 }}>
         <button type="button" class="chip chip-btn gym-chip" data-palace="train.gym-chip" aria-label={`Gym: ${gym?.name ?? ''}. Change gym`} onClick={() => setGymOpen(true)}>At: {gym?.name} <IconChevronDown size={14} /></button>
@@ -300,6 +305,7 @@ function LiveSession() {
 
   return (
     <div class="view">
+      {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
       <div class="topbar" data-palace="train.start">
         <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><h1 class="num">{formatClock(elapsed)}</h1><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
         <div class="row">
@@ -336,6 +342,9 @@ function LiveSession() {
 }
 
 /** bpm + freshness dot, tap to open the watch sheet (6.5). Hidden entirely on the web, same as haptics. */
+/** A heart rate to show only while the watch is streaming right now. */
+const liveBpm = computed(() => (watchStatus.value.freshness === 'LIVE' ? latestMeasurement.value?.bpm ?? null : null));
+
 function WatchPill() {
   const [open, setOpen] = useState(false);
   if (!watchSupported.value) return null;
@@ -345,8 +354,7 @@ function WatchPill() {
   return (
     <>
       <button type="button" class="watch-pill" aria-label="Watch" onClick={() => setOpen(true)}>
-        <span class={`dot ${live ? 'live' : ''}`} />
-        {bpm != null ? `${bpm} bpm` : 'Watch'}
+        {live && bpm != null ? <HeartBpm bpm={bpm} /> : <><span class="dot" />{bpm != null ? `${bpm} bpm` : 'Watch'}</>}
       </button>
       {open && <WatchSheet onClose={() => setOpen(false)} />}
     </>

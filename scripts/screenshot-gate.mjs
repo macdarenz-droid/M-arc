@@ -322,7 +322,7 @@ for (const theme of themes) {
   await page.screenshot({ path: `${OUT}/watch-sheet.png` });
   await page.getByRole('button', { name: 'Close' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.watch-pill .dot.live').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
+  if (!(await page.locator('.watch-pill .heart-bpm').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
   await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
 
   const inputs = page.locator('input[type="number"]');
@@ -527,8 +527,30 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Live heart line (owner's pick): a fake LIVE watch reading through the dev hook, the line and the
+// number on Train in all five themes, coloured by each theme's accent.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`pulse ${theme}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.dev', '1'); localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(300);
+  await page.evaluate(() => window.__pulse(128)); await page.waitForTimeout(300);
+  // A watch appearing can raise the "help the coach know you" sheet; dismiss it like a person would.
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); }
+  await page.waitForTimeout(600);
+  if (!(await page.locator('.pulse-line canvas').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the heart line on Train`);
+  if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
+  await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified.');

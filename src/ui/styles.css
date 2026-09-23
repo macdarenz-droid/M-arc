@@ -353,3 +353,12 @@ svg { display: block; }
 }
 @keyframes esc-lift { 0%, 100% { transform: translateY(2px); } 50% { transform: translateY(-3px); } }
 @keyframes esc-fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+/* Live heart line (owner's pick E): theme accent, beat from --pulse-beat set by PulseLine. */
+.pulse-line { position: fixed; left: 0; right: 0; top: env(safe-area-inset-top); height: 34px; z-index: 15; pointer-events: none; }
+.pulse-line canvas { display: block; width: 100%; height: 100%; }
+.pulse-edge { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: calc(0.18 + var(--pulse-beat, 0) * 0.82); box-shadow: 0 0 calc(4px + var(--pulse-beat, 0) * 16px) calc(var(--pulse-beat, 0) * 2px) var(--accent); }
+.heart-bpm { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--text); font-size: 13px; font-weight: 600; }
+.watch-pill .heart-bpm { background: transparent; padding: 0; }
+.heart-bpm-icon { width: 14px; height: 14px; color: var(--accent); transform: scale(calc(1 + var(--pulse-beat, 0) * 0.22)); }
+.heart-bpm-n { font-variant-numeric: tabular-nums; min-width: 2.2ch; }
