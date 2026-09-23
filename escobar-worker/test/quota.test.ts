@@ -140,7 +140,7 @@ describe('handler with QUOTA_DO', () => {
     await sse(await handle(post(turn()), env().env, deps(mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]))));
     expect(log).toHaveBeenCalledTimes(1);
     const line = String(log.mock.calls[0]![0]);
-    expect(JSON.parse(line)).toEqual({ requestId: 'req_1', mode: 'chat', model: 'claude-opus-5', stop_reason: 'end_turn', in: 100, out: 40, cacheRead: 80, cacheWrite: 0, steps: 1, ms: 0 });
+    expect(JSON.parse(line)).toEqual({ requestId: 'req_1', colo: null, mode: 'chat', model: 'claude-opus-5', stop_reason: 'end_turn', in: 100, out: 40, cacheRead: 80, cacheWrite: 0, steps: 1, ms: 0 });
     expect(line).not.toContain(DEVICE);
     expect(line).not.toContain('readiness');
   });

@@ -11,6 +11,7 @@ import { renderManifest } from './prompt/manifest';
 import type { Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
 import type { QuotaCounter } from './quotaDO';
+import type { UpstreamRelay } from './upstreamRelay';
 
 export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: boolean }> }
 
@@ -22,6 +23,8 @@ export interface Env {
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
   MAX_TURNS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
   QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
+  /** Makes every Anthropic call from a US location (PL-20). Without it the call leaves from the edge. */
+  UPSTREAM?: DurableObjectNamespace<UpstreamRelay>;
   QUOTA?: KVNamespace;
   RATE?: RateLimiter;
   RATE_IP?: RateLimiter;
@@ -136,7 +139,9 @@ export type SseEvent =
   | { t: 'refusal'; category: string | null }
   | { t: 'error'; code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 
-export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout';
+export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout';
+
+export const REGION_MESSAGE = "Escobar isn't available on this network right now. Try mobile data.";
 
 /** Maps SDK errors by type, never by message text (the one exception is the system-role probe below). */
 /** The API's own error text for a rejected request (no secrets in it), so a 400 can be diagnosed from the app or `wrangler tail`. */
@@ -153,7 +158,9 @@ export function mapError(err: unknown): { code: ErrorCode; message: string; retr
     const ra = Number(err.headers?.get?.('retry-after'));
     return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.', ...(Number.isFinite(ra) && ra > 0 ? { retryAfter: ra } : {}) };
   }
-  if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError) return { code: 'upstream_auth', message: 'The coach is not set up correctly.' };
+  // PL-20: Anthropic answers 403 by the caller's location; 401 is a bad key. Both keep the API's text.
+  if (err instanceof Anthropic.PermissionDeniedError) { const detail = errorDetail(err); return { code: 'upstream_region', message: REGION_MESSAGE, ...(detail ? { detail } : {}) }; }
+  if (err instanceof Anthropic.AuthenticationError) { const detail = errorDetail(err); return { code: 'upstream_auth', message: 'The coach is not set up correctly.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.UnprocessableEntityError || err instanceof Anthropic.NotFoundError) { const detail = errorDetail(err); return { code: 'invalid', message: 'The request was not accepted.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.APIError && err.status === 529) return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.' };
   if (err instanceof Anthropic.InternalServerError || err instanceof Anthropic.APIConnectionError || err instanceof Anthropic.APIError) return { code: 'upstream', message: 'The coach is unavailable right now.' };

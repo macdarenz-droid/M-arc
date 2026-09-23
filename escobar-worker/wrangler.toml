@@ -42,9 +42,18 @@ simple = { limit = 60, period = 60 }
 name = "QUOTA_DO"
 class_name = "QuotaCounter"
 
+# Every Anthropic call leaves from this object, pinned to eastern North America (PL-20).
+[[durable_objects.bindings]]
+name = "UPSTREAM"
+class_name = "UpstreamRelay"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["QuotaCounter"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["UpstreamRelay"]
 
 # Fallback only if Durable Objects are unavailable on the account: soft KV quotas.
 # Create the namespace once and paste its id here:

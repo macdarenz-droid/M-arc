@@ -12,7 +12,7 @@ const TEXT = [{ type: 'thinking', thinking: '', signature: 'sig' }, { type: 'tex
 describe('routes, CORS and device', () => {
   it('health answers protocol 2', async () => {
     const r = await handle(new Request('https://x/health'), baseEnv(), deps(mockClient([])));
-    expect(await r.json()).toEqual({ ok: true, protocol: 2, model: 'claude-opus-5', modes: ['chat', 'plan', 'live', 'brief', 'moment', 'summarize'], quotas: false, key: true });
+    expect(await r.json()).toEqual({ ok: true, protocol: 2, model: 'claude-opus-5', modes: ['chat', 'plan', 'live', 'brief', 'moment', 'summarize'], quotas: false, relay: false, key: true });
   });
   it('allows the app origins and configured web origins, refuses others', async () => {
     expect(corsHeaders('capacitor://localhost', baseEnv())['Access-Control-Allow-Origin']).toBe('capacitor://localhost');

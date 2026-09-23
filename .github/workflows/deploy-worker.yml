@@ -41,12 +41,12 @@ jobs:
           if [ -n "$ACCOUNT_ID" ]; then export CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID"; fi
           # wrangler is pinned in escobar-worker/package.json (installed by npm ci above).
           npx --no-install wrangler deploy
-      - name: Check /health answers protocol 2 with the key and quotas present
+      - name: Check /health answers protocol 2 with the key, quotas and US relay present
         run: |
           for i in 1 2 3 4 5 6; do
             body=$(curl -fsS https://marc-coach.mmarcdarenz.workers.dev/health || true)
             echo "$body"
-            if echo "$body" | grep -q '"protocol":2' && echo "$body" | grep -q '"key":true' && echo "$body" | grep -q '"quotas":true'; then exit 0; fi
+            if echo "$body" | grep -q '"protocol":2' && echo "$body" | grep -q '"key":true' && echo "$body" | grep -q '"quotas":true' && echo "$body" | grep -q '"relay":true'; then exit 0; fi
             sleep 5
           done
-          echo "::error::/health must show protocol 2, key:true and quotas:true (quotas:false means the Worker has no spend cap)"; exit 1
+          echo "::error::/health must show protocol 2, key:true, quotas:true (spend cap) and relay:true (US upstream, PL-20)"; exit 1

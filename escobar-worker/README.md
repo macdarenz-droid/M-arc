@@ -18,7 +18,7 @@ The app treats Escobar as online only when `GET /health` answers `protocol: 2`.
 
 ## Routes
 
-- `GET /health` → `{ok, protocol: 2, model, modes, quotas, key}` (`quotas` is true when `QUOTA_DO` or `QUOTA` is bound)
+- `GET /health` → `{ok, protocol: 2, model, modes, quotas, relay, key}` (`quotas` is true when `QUOTA_DO` or `QUOTA` is bound; `relay` when `UPSTREAM` is bound)
 - `POST /v2/turn` (header `x-escobar-device: dev_<24 hex>`) → `text/event-stream` of `data: {t: …}` events: `start`, `text`, `thinking`, `tool`, `tool_input`, `final`, `refusal`, `error`; `: ping` every 10 s. Validation, quota and rate failures are plain 400/429 JSON before the stream.
 
 ## Configure (wrangler.toml `[vars]`)
@@ -30,7 +30,9 @@ The app treats Escobar as online only when `GET /health` answers `protocol: 2`.
 
 Quotas live in the `QUOTA_DO` Durable Object (`src/quotaDO.ts`, one SQLite-backed instance per UTC day), which counts every model step exactly. If Durable Objects are unavailable on the account, bind the `QUOTA` KV namespace instead (`npx wrangler kv namespace create QUOTA`, then paste its id): those counters are soft and written once per user turn.
 
-Every step logs one JSON line (`requestId, mode, model, stop_reason, in, out, cacheRead, cacheWrite, steps, ms`), with no device id and no content; read it with `npx wrangler tail`.
+The Anthropic call runs in the `UPSTREAM` Durable Object (`src/upstreamRelay.ts`), pinned to eastern North America with `locationHint: 'enam'`, so it always leaves from the US. Anthropic refuses some locations, and Cloudflare serves each network from its nearest location (a Philippine ISP was routed to Hong Kong). A 403 reaches the app as `upstream_region`; a 401 stays `upstream_auth`; both carry the API's text as `detail`.
+
+Every step logs one JSON line (`requestId, colo, mode, model, stop_reason, in, out, cacheRead, cacheWrite, steps, ms`), with no device id and no content; read it with `npx wrangler tail`.
 
 ## Tools
 

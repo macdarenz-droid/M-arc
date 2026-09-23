@@ -7,6 +7,7 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 
 ## Owner actions (collected; STOP once at the end)
 - [ ] R0: dispatch "Deploy Escobar Worker", confirm /health quotas:true
+- [ ] R0.9 (PL-20): deploy the Worker (see "How the Worker gets deployed" below); then /health must show relay:true; the affected user on the failing Wi-Fi opens https://marc-coach.mmarcdarenz.workers.dev/cdn-cgi/trace (expect colo=HKG) and sends Escobar a message
 - [ ] R0: if the deploy fails because Durable Objects are unavailable, run `npx wrangler kv namespace create QUOTA` and bind `QUOTA` in wrangler.toml
 - [ ] R0.0: keep the encrypted key backup → add the new fingerprint in AppGallery Connect → backup, uninstall, reinstall, restore → delete SECRETS_WRITE_TOKEN and the `marc-debug-signing-v1` caches
 
@@ -119,3 +120,19 @@ D1: done (R0.0, key 05:66:9A…F1:F5) · D2–D15: default
 - Needs device check: Body fat inches entry; lb body weight entry; mindset note on Today on an odd day.
 - Next dependency: R4 (Escobar integrity) reads these brain outputs.
 (skipped / not reproduced: none)
+
+## R0 follow-ups (2026-09-23)
+### CI perf budgets — done, commit cdffb8c
+- CI run 35875534453 (older head, perf tests still in session.test.ts) failed rebuildRecoveryModel 539/500 and recoveryStatus 75/60. tests/perf-budget.ts times a fixed seeded 200k sort (median of 5; REFERENCE_MS 26 here); scale = max(1, measured/26); each budget asserts time < budget × scale and logs measured, scale and limit.
+### R0.9 Upstream location (PL-20) — done
+- src/upstreamRelay.ts `UpstreamRelay` DO (env.UPSTREAM.get(idFromName('us'), { locationHint: 'enam' })) runs the step and streams SSE back with an internal `_step` result; src/upstream.ts `localStep`/`relayStep`; the handler keeps validation, quotas, abort, retry, logging and uses the relay when bound. wrangler: UPSTREAM binding + migration v2 new_sqlite_classes ["UpstreamRelay"]. /health adds `relay`.
+- mapError: 403 → `upstream_region` ("Escobar isn't available on this network right now. Try mobile data.", the plan's wording), 401 → `upstream_auth`; both pass `detail`. Upstream errors log `{requestId, code, detail, colo}`; the step line includes `colo`.
+- App: `upstream_region` in transport ErrorCode and EscobarSheet's message map.
+- deploy-worker.yml health check now also requires relay:true.
+- Tests: worker 66 → 71 (relay path pinned to 'us'/'enam', no edge client; 403 via relay → upstream_region + detail + colo log; 401/403 split; disconnect aborts the relay's model stream < 50 ms); app transport test. Two exact-shape assertions gained the new `relay`/`colo` fields.
+
+### How the Worker gets deployed
+deploy-worker.yml runs on a push to `main` touching `escobar-worker/**`, or from "Run workflow". GitHub only shows "Run workflow" for a workflow that exists on the default branch, and `main` (245c26a) does not have this version. So:
+1. Open a pull request from `claude/marc-r0-remediation-ast5xs` into `main` and merge it. The merge is a push to main that touches `escobar-worker/`, so "Deploy Escobar Worker" runs by itself (it needs the existing `CLOUDFLARE_API_TOKEN` secret, and `CLOUDFLARE_ACCOUNT_ID` if the token sees several accounts). It fails unless /health shows protocol 2, key, quotas and relay.
+2. Without merging: on a computer, `cd escobar-worker && npm ci && CLOUDFLARE_API_TOKEN=… npx wrangler deploy` from this branch.
+Pushing to `claude/escobar-v2-implementation-eidx64` would still deploy that branch's older Worker (its own workflow), without the relay: don't use it for this.
