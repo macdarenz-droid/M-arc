@@ -26,6 +26,7 @@ permissions = [
     "android.permission.health.READ_SLEEP",
     "android.permission.health.READ_HEART_RATE",
     "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+    "android.permission.health.READ_RESTING_HEART_RATE",
 ]
 existing = {p.get(a("name")) for p in root.findall("uses-permission")}
 for name in permissions:

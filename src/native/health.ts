@@ -17,6 +17,10 @@ export interface HealthSummaryRaw {
   stepsTime?: string;
   activeCaloriesTime?: string;
   sleepEndTime?: string;
+  /** Read permissions not granted yet (e.g. READ_RESTING_HEART_RATE); the other types are still read. */
+  missing?: string[];
+  /** Types whose read failed even though allowed. */
+  failed?: string[];
 }
 
 interface HealthPlugin {
@@ -52,6 +56,10 @@ export function mapHealthSummary(r: HealthSummaryRaw, day: string, syncedAt: str
   };
 }
 
+const ASKED_KEY = 'marc.health.asked';
+function askedFor(): string { try { return localStorage.getItem(ASKED_KEY) ?? ''; } catch { return ''; } }
+function rememberAsked(v: string): void { try { localStorage.setItem(ASKED_KEY, v); } catch { /* storage blocked */ } }
+
 /** Reads today's Health Connect summary, prompting for permission once if needed. Null when unavailable or denied. */
 export async function syncHealth(): Promise<DailyHealth | null> {
   const p = plugin();
@@ -64,6 +72,13 @@ export async function syncHealth(): Promise<DailyHealth | null> {
       r = await p.readSummary();
     }
     if (r.needsPermission) return null;
+    // A permission added in a newer build (resting heart rate) is asked for once, not on every sync.
+    const missing = (r.missing ?? []).slice().sort().join(',');
+    if (missing && askedFor() !== missing && p.requestPermissions) {
+      rememberAsked(missing);
+      await p.requestPermissions();
+      r = await p.readSummary();
+    }
     return mapHealthSummary(r, dayKey(new Date()), new Date().toISOString());
   } catch {
     return null;

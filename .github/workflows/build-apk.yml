@@ -141,6 +141,7 @@ jobs:
           test -f "$PKG/watch/WatchBridgePlugin.java" || { echo '::error::WatchBridgePlugin.java not copied into the Android project'; exit 1; }
           test -f "$PKG/watch/core/HeartRateMeasurement.java" || { echo '::error::watch/core sensor classes not copied into the Android project'; exit 1; }
           grep -q 'android.permission.health.READ_HEART_RATE' android/app/src/main/AndroidManifest.xml || { echo '::error::health permissions not patched into the manifest'; exit 1; }
+          grep -q 'android.permission.health.READ_RESTING_HEART_RATE' android/app/src/main/AndroidManifest.xml || { echo '::error::resting heart rate permission missing: the plugin reads RestingHeartRateRecord'; exit 1; }
           grep -q 'android.permission.BLUETOOTH_CONNECT' android/app/src/main/AndroidManifest.xml || { echo '::error::watch Bluetooth permissions not patched into the manifest'; exit 1; }
           grep -q 'foregroundServiceType="connectedDevice"' android/app/src/main/AndroidManifest.xml || { echo '::error::WatchService foreground service type not patched into the manifest'; exit 1; }
 
