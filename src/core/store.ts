@@ -1,7 +1,7 @@
 import { signal, batch } from '@preact/signals';
 import { freshState, newId, type AppState, type Session, type Split, type Weekday } from './models';
 import { convertLegacy, readLegacy } from './migrate';
-import { legacySessionLogging } from '@/brain/fidelity';
+import { legacySessionLogging } from './sessionLogging';
 import { normalizeEscobar, normalizeUnits } from './escobarState';
 import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
 import { dayKey } from './dates';

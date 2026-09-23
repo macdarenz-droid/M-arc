@@ -9,6 +9,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { findExercise } from '@/core/exercises';
+import { APP_VERSION } from '@/core/version';
 
 const [input, output] = process.argv.slice(2);
 if (!input) { console.error('usage: convert-backup <old-backup.json> [output.json]'); process.exit(2); }
@@ -16,7 +17,7 @@ const legacy = asLegacyRoot(JSON.parse(readFileSync(input, 'utf8')));
 if (!legacy) { console.error('That file does not contain the previous app\'s data.'); process.exit(1); }
 const state = convertLegacy(legacy);
 const out = output ?? `marc-backup-converted-${new Date().toISOString().slice(0, 10)}.json`;
-writeFileSync(out, JSON.stringify({ app: 'M/ARC', version: '37.0.0', exportedAt: new Date().toISOString(), convertedFrom: 'legacy-full-backup', state }, null, 1) + '\n');
+writeFileSync(out, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), convertedFrom: 'legacy-full-backup', state }, null, 1) + '\n');
 
 const sets = state.sessions.reduce((a, s) => a + s.exercises.reduce((x, e) => x + e.sets.length, 0), 0);
 console.log(`Wrote ${out}`);

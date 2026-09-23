@@ -204,19 +204,20 @@ export function legacyConversation(askThread: unknown, appVersion: string, now =
   return { ...newConversation(appVersion, 'chat', now), title: 'Earlier conversation', messages };
 }
 
+/** A conversation's title: its first plain user line, without the context tag, 40 characters. */
+export function titleFrom(messages: StoredMessage[]): string {
+  const u = messages.find(m => m.role === 'user' && !m.meta?.repair && m.content.some(b => b.type === 'text'));
+  const t = u && u.role === 'user' ? u.content.find(b => b.type === 'text') : undefined;
+  return t && t.type === 'text' ? t.text.replace(/^\[about:[^\]]*\]\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 40) : '';
+}
+
 /** Appends messages to one conversation (append-only, §2.8), titling it from the first user line. */
 export function appendMessages(store: ConversationStore, conversationId: string, messages: StoredMessage[], now = new Date()): ConversationStore {
   return {
     ...store,
     conversations: store.conversations.map(c => {
       if (c.id !== conversationId) return c;
-      let title = c.title;
-      if (!title) {
-        const firstUser = messages.find(m => m.role === 'user' && !m.meta?.repair && m.content.some(b => b.type === 'text'));
-        const text = firstUser && firstUser.role === 'user' ? firstUser.content.find(b => b.type === 'text') : undefined;
-        if (text && text.type === 'text') title = text.text.replace(/^\[about:[^\]]*\]\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 40);
-      }
-      return { ...c, title, messages: [...c.messages, ...messages], updatedAt: now.toISOString() };
+      return { ...c, title: c.title || titleFrom(messages), messages: [...c.messages, ...messages], updatedAt: now.toISOString() };
     }),
   };
 }
@@ -229,10 +230,12 @@ export function upsertConversation(store: ConversationStore, c: Conversation, ma
 
 /** Queues a decision for the next brief (§10.3); the conversation's messages are untouched. */
 export function recordDecision(store: ConversationStore, conversationId: string, d: DecisionEvent & { title: string }): ConversationStore {
-  return {
-    ...store,
-    conversations: store.conversations.map(c => (c.id === conversationId ? { ...c, pendingDecisions: [...(c.pendingDecisions ?? []), d] } : c)),
-  };
+  return { ...store, conversations: store.conversations.map(c => (c.id === conversationId ? withPendingDecision(c, d) : c)) };
+}
+
+/** One conversation with a decision queued for its next brief. */
+export function withPendingDecision(c: Conversation, d: DecisionEvent & { title: string }): Conversation {
+  return { ...c, pendingDecisions: [...(c.pendingDecisions ?? []), d] };
 }
 
 /** The whole store for the Settings backup. */

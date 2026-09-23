@@ -18,7 +18,6 @@ export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
 export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
-export const plannedPerWeek = computed(() => WEEKDAYS.filter(d => state.value.schedule[d]).length);
 
 export const recovery = computed(() => recoveryStatus({ sessions: state.value.sessions, custom: state.value.customExercises, now: minuteNow.value, profile: state.value.profile, healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks, recoveryModel: state.value.recoveryModel }));
 export const todayCheckIn = computed(() => state.value.checkIns.find(c => c.day === today.value));

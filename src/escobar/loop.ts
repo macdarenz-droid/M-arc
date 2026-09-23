@@ -10,10 +10,11 @@ import { buildBrief } from './context/brief';
 import type { EscobarMode } from './context/modes';
 import { executeTool, genericLabel, statusLabel, type MemoryEffect, type ToolOutcome } from './tools/executor';
 import { makeCtx, type ToolCtx } from './tools/context';
-import { checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
+import { DirectiveBuffer, checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
 import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
 import type { ContextRef, Conversation, Fact, ImageBlockRef, ProposalRecord, RenderedTurn, StoredMessage, UserBlock, Usage } from './types';
+import { titleFrom } from './store';
 
 export const STEP_BUDGET: Record<EscobarMode, number> = { chat: 8, live: 8, plan: 12, brief: 3, moment: 1, summarize: 1 };
 export const REPAIR_BUDGET = 3;
@@ -195,13 +196,7 @@ export class EscobarLoop {
 
   private commit(messages: StoredMessage[], extra: Partial<Conversation> = {}): void {
     const c = this.conversation;
-    let title = c.title;
-    if (!title) {
-      const u = messages.find(m => m.role === 'user' && !m.meta?.repair && m.content.some(b => b.type === 'text'));
-      const t = u && u.role === 'user' ? u.content.find(b => b.type === 'text') : undefined;
-      if (t && t.type === 'text') title = t.text.replace(/^\[about:[^\]]*\]\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 40);
-    }
-    this.conversation = { ...c, ...extra, title, messages: [...c.messages, ...messages], updatedAt: new Date(this.deps.now()).toISOString() };
+    this.conversation = { ...c, ...extra, title: c.title || titleFrom(messages), messages: [...c.messages, ...messages], updatedAt: new Date(this.deps.now()).toISOString() };
   }
 
   private save(): void { this.deps.persist?.(this.conversation); }
@@ -267,7 +262,7 @@ export class EscobarLoop {
       let shown = false;
       let text = '';
       const activity: Activity[] = [...this.view.activity];
-      const buffer = { raw: '' };
+      const buffer = new DirectiveBuffer();
       try {
         for await (const ev of this.deps.transport.turn(body, signal)) {
           if (gen !== this.generation) return { stale: true };
@@ -275,9 +270,7 @@ export class EscobarLoop {
             case 'thinking': this.update({ status: 'thinking' }); break;
             case 'text': {
               shown = true;
-              buffer.raw += ev.d;
-              const open = buffer.raw.lastIndexOf('⟦'), close = buffer.raw.lastIndexOf('⟧');
-              text = parseDirectives(open > close ? buffer.raw.slice(0, open) : buffer.raw).text;
+              text = buffer.push(ev.d);
               this.update({ status: 'streaming', text });
               break;
             }

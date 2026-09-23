@@ -19,6 +19,7 @@ import { resyncReminders } from '@/slices/settings/reminders';
 import type { GoalId } from '@/data/goals';
 import { fingerprint } from './tools/actions';
 import type { Conversation, DecisionEvent, ProposalRecord } from './types';
+import { withPendingDecision } from './store';
 
 export interface ApplyResult { ok: boolean; status: ProposalRecord['status']; message: string; undo?: () => void }
 
@@ -220,11 +221,8 @@ export const canApply = (kind: string): boolean => kind in APPLIERS;
 
 function withDecision(c: Conversation, p: ProposalRecord, decision: DecisionEvent['decision'], result?: string): Conversation {
   const at = new Date().toISOString();
-  return {
-    ...c,
-    proposals: (c.proposals ?? []).map(x => (x.id === p.id ? { ...x, status: decision, ...(decision === 'applied' ? { appliedAt: at } : {}) } : x)),
-    pendingDecisions: [...(c.pendingDecisions ?? []), { proposalId: p.id, decision, at, title: p.title, ...(result ? { result } : {}) }],
-  };
+  const marked = { ...c, proposals: (c.proposals ?? []).map(x => (x.id === p.id ? { ...x, status: decision, ...(decision === 'applied' ? { appliedAt: at } : {}) } : x)) };
+  return withPendingDecision(marked, { proposalId: p.id, decision, at, title: p.title, ...(result ? { result } : {}) });
 }
 
 /** Pure decision step: returns the updated conversation and what happened. */

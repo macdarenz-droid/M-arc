@@ -86,20 +86,8 @@ export function retroSessionLogging(trainedAt: string, trainedEndAt: string, tim
   };
 }
 
-/** For a session that predates this field (an already-saved session, or a legacy v36 import). */
-export function legacySessionLogging(startedAt: string, endedAt: string): SessionLogging {
-  return {
-    mode: 'legacy',
-    trainedAt: startedAt,
-    trainedEndAt: endedAt || startedAt,
-    loggedAt: endedAt || startedAt,
-    timeSource: 'default',
-    liveShare: 0,
-    timingTrusted: false,
-    contentConfidence: 'medium',
-    flags: ['legacy'],
-  };
-}
+/** Lives in core so the store and the migration need not import the brain (RG-12). */
+export { legacySessionLogging } from '@/core/sessionLogging';
 
 /** kg more than 25% above the exercise's recent best, or a physically implausible absolute load. */
 export function implausibleLoad(kg: number, recentBestKg: number | null): boolean {

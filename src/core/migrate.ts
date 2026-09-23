@@ -9,7 +9,7 @@ import { findExercise, findExerciseWithEquipment, makeCustomExercise } from './e
 import { dayKey } from './dates';
 import { backfillLegacyLbEntries } from './units';
 import { isGoalId } from '@/data/goals';
-import { legacySessionLogging } from '@/brain/fidelity';
+import { legacySessionLogging } from './sessionLogging';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 
 export const LEGACY_KEY = 'dailyTrackerPremium';

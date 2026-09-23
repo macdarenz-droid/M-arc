@@ -1,6 +1,7 @@
 import rawLibrary from '@/data/exercises.json';
 import type { Exercise, ResistanceMode } from './models';
 import { classifyMuscleText, isMuscleId, type MuscleId } from '@/data/muscles';
+import { DAMAGE_DEFAULT, DAMAGE_HIGH, DAMAGE_LOW } from '@/data/recovery';
 
 const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank', 'lib_wall_sit', 'lib_hollow_body_hold']);
 const CONDITIONING_NAMES = new Set([
@@ -52,9 +53,9 @@ const TEMPO_OR_PAUSE = /\b(tempo|pause)\b/i;
 
 /** Static per-exercise damage factor, before the dynamic "heavy main lift" bump below. */
 export function exerciseDamage(exercise: { id: string; name: string }): number {
-  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return 1.3;
-  if (LOW_DAMAGE_IDS.has(exercise.id)) return 0.8;
-  return 1.0;
+  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return DAMAGE_HIGH;
+  if (LOW_DAMAGE_IDS.has(exercise.id)) return DAMAGE_LOW;
+  return DAMAGE_DEFAULT;
 }
 
 /** The set's actual damage factor: the static value, bumped to at least 1.15 for a heavy main lift. */

@@ -1,6 +1,7 @@
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { isNative } from './capacitor';
+import { pickFileRaw } from './filePicker';
 
 /** Save text on Android through the share sheet, or download it on the web. */
 export async function exportText(fileName: string, text: string, mime = 'application/json'): Promise<string> {
@@ -19,15 +20,8 @@ export async function exportText(fileName: string, text: string, mime = 'applica
   return `Downloaded ${fileName}.`;
 }
 
-export function pickFile(accept = 'application/json'): Promise<string | null> {
-  return new Promise(resolve => {
-    const input = document.createElement('input');
-    input.type = 'file'; input.accept = accept;
-    input.onchange = () => {
-      const f = input.files?.[0];
-      if (!f) return resolve(null);
-      f.text().then(resolve, () => resolve(null));
-    };
-    input.click();
-  });
+/** A chosen text file's contents; null when cancelled or unreadable. */
+export async function pickFile(accept = 'application/json'): Promise<string | null> {
+  const f = await pickFileRaw(accept);
+  return f ? f.text().catch(() => null) : null;
 }
