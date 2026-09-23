@@ -13,7 +13,8 @@ import { hasEntry } from '@/brain/exposure';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory } from '@/brain/history';
 import { trend } from '@/brain/trend';
-import { plannedThisWeek, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary } from '@/brain/weekly';
+import { volumeChartWeeks } from './volumeChart';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
@@ -183,10 +184,10 @@ const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
 /** F8: 12 weeks of training volume as bars, in the display unit. */
 function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const s = state.value;
-  const weeks = useMemo(() => weeklyVolumeHistory(s.sessions, today.value, 12, s.customExercises), [s.sessions, s.customExercises, today.value]);
-  const values = weeks.map(w => kgToDisplay(w.volumeKg, u));
+  const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u), [s.sessions, s.customExercises, today.value, u]);
+  const values = weeks.map(w => w.value);
   const max = Math.max(1, ...values);
-  if (!weeks.some(w => w.volumeKg > 0)) return null;
+  if (!values.some(v => v > 0)) return null;
   const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
   return (
     <Card data-palace="history.weekly-volume">
