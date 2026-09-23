@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+# Private device evidence and Huawei tooling outputs are never source artifacts.
+reports/
+*.hap
+*.p12
+*.p7b
+*.jks
+*.keystore
+agconnect-services.json
+wearengine.js

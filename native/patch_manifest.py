@@ -65,6 +65,22 @@ app = root.find("application")
 if app is None:
     raise SystemExit("<application> not found")
 
+# Gate A: public Huawei app identity only. No app secret or agconnect configuration.
+appid_name = "com.huawei.hms.client.appid"
+appid = next((x for x in app.findall("meta-data") if x.get(a("name")) == appid_name), None)
+if appid is None:
+    appid = ET.SubElement(app, "meta-data")
+    appid.set(a("name"), appid_name)
+elif appid.get(a("value")) != "119100049":
+    raise SystemExit("Unexpected Huawei app ID; refusing to overwrite")
+appid.set(a("value"), "119100049")
+queries = root.find("queries")
+if queries is None:
+    queries = ET.SubElement(root, "queries")
+for package in ("com.huawei.health", "com.huawei.hwid"):
+    if not any(x.get(a("name")) == package for x in queries.findall("package")):
+        ET.SubElement(queries, "package").set(a("name"), package)
+
 # WatchService (6.2): a foreground connected-device service, ported from Watch-test.
 watch_service = None
 for x in app.findall("service"):

@@ -1,0 +1,7 @@
+<div class="page" onswipe="swipe">
+  <text class="title">M/ARC · GATE A</text>
+  <text class="heart">{{bpm}}</text>
+  <text class="label">sensor bpm</text>
+  <text class="status">{{state}}</text>
+  <input class="stop" type="button" value="Stop HR" onclick="stop" />
+</div>
