@@ -69,3 +69,24 @@ describe('notes normalize (F1)', () => {
     expect(out.exerciseNotes).toEqual({ a: 'seat 4', d: 'x'.repeat(200) });
   });
 });
+
+import { weekSummary } from '@/brain/weekly';
+import * as R from '@/escobar/tools/read';
+import { ctxOf } from './escobar/fixtures';
+describe('a week whose planned days are all off (QA-R6-4, QA-R6-10, QA-R6-12)', () => {
+  const satOnly = { ...emptySchedule(), sat: 'sp' };
+  const wed = [session('2026-09-23', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }])];
+  it('keeps a Strong week when the only planned day is taken off after training', () => {
+    expect(weekSummary(wed, '2026-09-26', [], plannedThisWeek(satOnly, [], '2026-09-26')).grade.title).toBe('Strong week');
+    expect(weekSummary(wed, '2026-09-26', [], plannedThisWeek(satOnly, ['2026-09-26'], '2026-09-26')).grade.title).toBe('Strong week');
+  });
+  it('no schedule at all still aims for 3', () => {
+    expect(plannedThisWeek(emptySchedule(), [], '2026-09-26')).toBeNull();
+    expect(weekSummary(wed, '2026-09-26', [], null).grade.title).toBe('Started');
+  });
+  it("Escobar's overview leaves days off out of planned", () => {
+    const st = { ...freshState(), schedule: { ...emptySchedule(), mon: 'sp', wed: 'sp', fri: 'sp' }, daysOff: ['2026-09-23'] };
+    const o = R.getOverview({}, { ...ctxOf(st as never), today: '2026-09-22' }) as { week: { planned: number } };
+    expect(o.week.planned).toBe(2);
+  });
+});

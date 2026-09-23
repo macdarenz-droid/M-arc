@@ -92,7 +92,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   L.recovery = least.length ? least.map(x => `${muscleLabel(x.muscle).toLowerCase()} ${num(x.pct, `${muscleLabel(x.muscle)} recovery`, '%')}`).join(', ') : 'nothing logged';
 
   // RG-19: days taken off this week are not planned.
-  const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
+  const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today) ?? 0;
   const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
   L.week = `${num(w.workouts, 'sessions this week')} of ${num(planned, 'planned sessions this week')} planned sessions, ${num(w.sets, 'sets this week')} sets, ${num(w.records.length, 'records this week')} records`;
 

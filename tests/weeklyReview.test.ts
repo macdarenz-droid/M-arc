@@ -129,6 +129,6 @@ describe('weight trend and week grade (BR-14, BR-22)', () => {
     const { weekSummary } = await import('@/brain/weekly');
     const two = [session('2026-09-14', [{ id: bench, sets: sets(60, 8) }]), session('2026-09-16', [{ id: bench, sets: sets(60, 8) }])];
     expect(weekSummary(two, '2026-09-18', [], 2).grade.title).toBe('Strong week');
-    expect(weekSummary(two, '2026-09-18', [], 0).grade.title).toBe('Building momentum');
+    expect(weekSummary(two, '2026-09-18', [], null).grade.title).toBe('Building momentum'); // QA-R6-10: no schedule is null; 0 now means every planned day was taken off
   });
 });

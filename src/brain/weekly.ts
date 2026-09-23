@@ -19,7 +19,7 @@ export interface WeekSummary {
   grade: { title: string; note: string };
 }
 
-export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek = 3): WeekSummary {
+export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek: number | null = 3): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
   const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
@@ -32,9 +32,11 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   }
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
-  // BR-22: the planned count is the target; 3 only when nothing is planned.
-  const target = plannedPerWeek > 0 ? plannedPerWeek : 3;
-  const grade = workouts >= target ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
+  // BR-22: the planned count is the target; 3 only when there is no schedule at all (null).
+  // QA-R6-4/10: a week whose planned days were all taken off has a target of 0, not 3.
+  const target = plannedPerWeek ?? 3;
+  const grade = target === 0 && workouts === 0 ? { title: 'Rest week', note: 'Every planned day this week is a day off.' }
+    : workouts >= target ? { title: 'Strong week', note: 'You hit your planned sessions. Keep the standard.' }
     : workouts >= 2 ? { title: 'Building momentum', note: 'One or two more sessions makes this a full week.' }
     : workouts === 1 ? { title: 'Started', note: 'One session down. The next one is the one that counts.' }
     : { title: 'Start the week', note: 'Nothing logged yet. A short session still counts.' };
@@ -52,8 +54,12 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
  * scheduled day in the past does, and today's unfinished session does not.
  * Without a schedule it falls back to consecutive training days.
  */
-/** RG-19: scheduled days this week (Mon–Sun) that were not taken off; the weekSummary target. */
-export function plannedThisWeek(schedule: Record<Weekday, string | null>, daysOff: string[], today: string): number {
+/**
+ * RG-19: scheduled days this week (Mon–Sun) that were not taken off; the weekSummary target.
+ * Null when nothing is scheduled on any weekday (QA-R6-10), so "all taken off" (0) is not "no plan".
+ */
+export function plannedThisWeek(schedule: Record<Weekday, string | null>, daysOff: string[], today: string): number | null {
+  if (!Object.values(schedule).some(Boolean)) return null;
   const start = weekStart(today);
   const off = new Set(daysOff);
   let n = 0;

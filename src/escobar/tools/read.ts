@@ -116,7 +116,8 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
   const s = ctx.state;
   const split = scheduledSplitFor(ctx);
   const r = readinessToday(ctx);
-  const w = weekSummary(s.sessions, ctx.today, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, ctx.today));
+  const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
+  const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
   const deload = activeDeloadOf(ctx);
   const override = todayOverrideOf(ctx);
   return capJson({
@@ -127,7 +128,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     live: s.active ? { split: s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'Workout' } : null,
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
-    week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: WEEKDAYS.filter(d => s.schedule[d]).length },
+    week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: planned ?? 0 }, // QA-R6-12: days off are not planned
     streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
     lighterWeek: deload ? { day: Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,

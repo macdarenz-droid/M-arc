@@ -408,3 +408,8 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R5a-4 (low)
 - Decided by research: a full total for a past day needs a native read of yesterday's aggregates (HealthConnectNativePlugin, Java), which can't be checked here without a device. Instead, Escobar's `get_health` now labels each day's steps and calories with `totalsAsOf` (the last sync's time that day) and a note, so the coach no longer treats partial totals as full ones.
 - **Next dependency / owner decision:** add a native "yesterday" aggregate read if full past-day totals matter.
+
+### QA-R6-4, QA-R6-10, QA-R6-12 (low, same root cause)
+- `plannedThisWeek` returns null when nothing is scheduled on any weekday. `weekSummary` aims for 3 only then. A week whose planned days were all taken off has a target of 0: a session makes it a Strong week, and none makes it "Rest week".
+- Escobar's `get_overview` `week.planned` uses `plannedThisWeek`, so days off are left out.
+- Test updated (it asserted the old encoding): the BR-22 "week grade uses the planned days" case passes null for "no schedule" instead of 0.
