@@ -252,3 +252,5 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 - `repairState` needs a session start time: a missing or malformed day is derived from it, and a session with neither is dropped (counted in `dropped`). Covers boot, restore and other-tab loads.
 ### QA-R2a-1, QA-R2a-2 (medium), QA-R6-13 (low)
 - Health Connect part: already fixed by R5 (`backgroundHealthSync`: connected only, `prompt: false`, 10-min throttle). Notifications: `ensurePermission({ prompt })` only requests on a Settings tap (reminder controls, backup-reminder toggle); launch, resume, day-off and schedule edits only check. No more prompt on first launch either.
+### QA-R2b-1 (medium)
+- An emptied committed set is a draft while empty but keeps `at`, `restSec`, `fidelity` and `heart`; refilled, it is committed again with its original timing and rest is not restarted. The R2 session test that asserted the emptied set loses its time was updated for this contract (named in the test).

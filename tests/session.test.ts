@@ -38,15 +38,26 @@ describe('commit-once sets (UI-01)', () => {
     expect(again.fidelity).toBe(first.fidelity);
     expect(a().rest!.endsAt).toBe(endsAt);
   });
-  it('emptying a committed set makes it a draft again', () => {
+  // QA-R2b-1 changed this contract: an emptied set is a draft but keeps its commit, so a
+  // clear-and-retype correction neither moves its time nor restarts rest.
+  it('emptying a committed set makes it a draft that keeps its time; refilling commits it again', () => {
     start();
     setSet(0, 0, { kg: 60, reps: 8 });
+    vi.advanceTimersByTime(30_000);
     commitSet(0, 0);
+    const first = a().entries[0]!.sets[0]!;
+    setSet(1, 0, { kg: 20, reps: 10 });
+    vi.advanceTimersByTime(120_000);
+    commitSet(1, 0);
+    const endsAt = a().rest!.endsAt;
+    vi.advanceTimersByTime(45_000);
     setSet(0, 0, { reps: undefined });
+    expect(a().entries[0]!.sets[0]!.status).toBe('draft');
+    setSet(0, 0, { reps: 6 });
+    commitSet(0, 0);
     const s = a().entries[0]!.sets[0]!;
-    expect(s.at).toBeUndefined();
-    expect(s.fidelity).toBeUndefined();
-    expect(s.status).toBe('draft');
+    expect(s).toMatchObject({ reps: 6, status: 'committed', at: first.at, restSec: first.restSec, fidelity: first.fidelity });
+    expect(a().rest!.endsAt).toBe(endsAt);
   });
   it('addSet carries load and reps, never timing or effort', () => {
     start();

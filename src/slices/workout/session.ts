@@ -117,13 +117,15 @@ export function resumeSession(): void {
   });
 }
 
-/** A set that is emptied after its commit loses its commit (UI-01): it is a draft again. */
+/**
+ * A committed set that is emptied is a draft while empty (it is not kept if left that way), but
+ * it keeps its commit: correcting reps by clearing and retyping must not move its time or restart
+ * rest (QA-R2b-1). Refilled, it is committed again with its original timing.
+ */
 function patched(set: LoggedSet, patch: Partial<LoggedSet>): LoggedSet {
   const next = { ...set, ...patch };
-  if (isCommitted(set) && !hasEntry(next) && !('at' in patch)) {
-    const { at: _at, restSec: _r, fidelity: _f, heart: _h, ...rest } = next;
-    return { ...rest, status: 'draft' };
-  }
+  if (isCommitted(set) && !hasEntry(next) && !('at' in patch)) return { ...next, status: 'draft' };
+  if (set.status === 'draft' && next.at && hasEntry(next) && !('status' in patch)) return { ...next, status: 'committed' };
   return next;
 }
 
