@@ -2,8 +2,12 @@ import rawLibrary from '@/data/exercises.json';
 import type { Exercise, ResistanceMode } from './models';
 import { classifyMuscleText, isMuscleId, type MuscleId } from '@/data/muscles';
 
-const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank']);
-const CONDITIONING_NAMES = new Set(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry']);
+const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank', 'lib_wall_sit', 'lib_hollow_body_hold']);
+const CONDITIONING_NAMES = new Set([
+  'lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry',
+  'lib_burpee', 'lib_mountain_climbers', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope',
+  'lib_box_jump', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_jump_squat',
+]);
 const ASSISTED_HINT = /assisted/i;
 
 function inferMode(id: string, equipment: string, name: string): ResistanceMode {

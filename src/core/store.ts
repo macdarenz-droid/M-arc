@@ -96,6 +96,15 @@ function withActiveIds(a: AppState['active']): AppState['active'] {
   };
 }
 
+export const MAX_DAYS_OFF = 400;
+export const MAX_EXERCISE_NOTE = 200;
+function cleanNotes(v: unknown): Record<string, string> {
+  if (!isObj(v)) return {};
+  const out: Record<string, string> = {};
+  for (const [k, n] of Object.entries(v)) if (typeof n === 'string' && n.trim()) out[k] = n.trim().slice(0, MAX_EXERCISE_NOTE);
+  return out;
+}
+
 function fill(s: AppState): AppState {
   const fresh = freshState();
   const weightUnit = s.preferences?.weightUnit === 'lb' ? 'lb' : 'kg';
@@ -123,6 +132,8 @@ function fill(s: AppState): AppState {
     escobar: normalizeEscobar(s.escobar),
     units: normalizeUnits(s.units, weightUnit),
     active: withActiveIds(s.active),
+    daysOff: Array.isArray(s.daysOff) ? [...new Set(s.daysOff.filter((d): d is string => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort().slice(-MAX_DAYS_OFF) : [],
+    exerciseNotes: cleanNotes(s.exerciseNotes),
   };
 }
 
