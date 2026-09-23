@@ -52,13 +52,24 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
  * scheduled day in the past does, and today's unfinished session does not.
  * Without a schedule it falls back to consecutive training days.
  */
-export function trainingStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string): number {
+/** RG-19: scheduled days this week (Mon–Sun) that were not taken off; the weekSummary target. */
+export function plannedThisWeek(schedule: Record<Weekday, string | null>, daysOff: string[], today: string): number {
+  const start = weekStart(today);
+  const off = new Set(daysOff);
+  let n = 0;
+  for (let i = 0; i < 7; i++) { const d = addDays(start, i); if (schedule[weekdayOf(d)] && !off.has(d)) n++; }
+  return n;
+}
+
+export function trainingStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string, daysOff: string[] = []): number {
   const trained = new Set(sessions.filter(s => s.exercises.some(e => e.sets.some(isWorkingSet))).map(s => s.day));
+  const off = new Set(daysOff);
   const hasSchedule = WEEKDAYS.some(d => schedule[d]);
   let streak = 0;
   let day = today;
   for (let i = 0; i < 730; i++) {
-    const scheduled = hasSchedule ? !!schedule[weekdayOf(day)] : true;
+    // A day taken off is unscheduled: it neither breaks nor extends the streak.
+    const scheduled = off.has(day) ? false : hasSchedule ? !!schedule[weekdayOf(day)] : true;
     if (trained.has(day)) streak++;
     else if (scheduled && day !== today) break;
     else if (!hasSchedule && day !== today) break;

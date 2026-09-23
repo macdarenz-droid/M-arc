@@ -11,7 +11,7 @@ import { exerciseHistory } from '@/brain/history';
 import { plateauStatus, trend } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
-import { weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -109,7 +109,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'week_summary': {
       const off = intIn(params.offsetWeeks, 0, 8, 0, 'offsetWeeks');
       const day = addDays(weekStart(ctx.today), -7 * off + (off ? 6 : 0));
-      const w = weekSummary(s.sessions, off ? day : ctx.today, s.customExercises, WEEKDAYS.filter(d => s.schedule[d]).length || 3);
+      const w = weekSummary(s.sessions, off ? day : ctx.today, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, off ? day : ctx.today));
       return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, records: w.records.length, grade: w.grade.title };
     }
     case 'session_summary': {

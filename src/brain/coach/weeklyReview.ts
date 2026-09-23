@@ -87,14 +87,15 @@ export function isStale(hist: ExerciseSessionSummary[], today: string, weeks = 6
 }
 
 /** Rolling adherence over the last `days` days: planned days done / planned days that have passed. */
-export function adherenceRate(sessions: Session[], schedule: Record<string, string | null>, today: string, days = 28): number | null {
+export function adherenceRate(sessions: Session[], schedule: Record<string, string | null>, today: string, days = 28, daysOff: string[] = []): number | null {
   const doneDays = new Set(sessions.map(s => s.day));
+  const off = new Set(daysOff);
   let planned = 0, done = 0;
   // Today only counts once it has a session: an unfinished planned day is not a miss yet (BR-15).
   for (let i = doneDays.has(today) ? 0 : 1; i < days; i++) {
     const day = addDays(today, -i);
     const weekday = weekdayOf(day);
-    if (!schedule[weekday]) continue;
+    if (!schedule[weekday] || off.has(day)) continue;
     planned++;
     if (doneDays.has(day)) done++;
   }
@@ -156,6 +157,8 @@ export interface WeeklyReviewInput {
   weightLog: WeightEntry[];
   trainingAgeMonths: number | null;
   exerciseIds: Array<{ id: string; name: string }>;
+  /** RG-19: days taken off count as unscheduled. */
+  daysOff?: string[];
 }
 
 /** Days logged in a calendar week before the weekly review appears. */
@@ -279,7 +282,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   }
 
   // Adherence
-  const adherence = adherenceRate(sessions, schedule, today);
+  const adherence = adherenceRate(sessions, schedule, today, 28, input.daysOff ?? []);
   if (adherence != null) {
     if (adherence < 0.6) {
       out.push({

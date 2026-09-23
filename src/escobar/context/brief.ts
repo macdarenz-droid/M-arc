@@ -5,13 +5,12 @@
  * model can cite them. Health and body details only appear when shared.
  */
 import type { MemoryItem } from '@/core/models';
-import { WEEKDAYS } from '@/core/models';
 import { daysBetween, weekdayOf } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
 import { trainingAgeMonths, ageOf } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
-import { weekSummary, daysSinceLastSession } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
 import { resolveProfile } from '@/brain/units';
 import { activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, scheduledSplitFor, todayOverrideOf, type ToolCtx } from '../tools/context';
 import { MODE_ADDENDUM, type EscobarMode } from './modes';
@@ -92,9 +91,10 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const least = recoveryAt(ctx).filter(x => x.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, 3);
   L.recovery = least.length ? least.map(x => `${muscleLabel(x.muscle).toLowerCase()} ${num(x.pct, `${muscleLabel(x.muscle)} recovery`, '%')}`).join(', ') : 'nothing logged';
 
-  const planned = WEEKDAYS.filter(dd => s.schedule[dd]).length;
-  const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned || 3);
-  L.week = `${num(w.workouts, 'sessions this week')} of ${num(planned, 'planned sessions per week')} planned sessions, ${num(w.sets, 'sets this week')} sets, ${num(w.records.length, 'records this week')} records`;
+  // RG-19: days taken off this week are not planned.
+  const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
+  const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
+  L.week = `${num(w.workouts, 'sessions this week')} of ${num(planned, 'planned sessions this week')} planned sessions, ${num(w.sets, 'sets this week')} sets, ${num(w.records.length, 'records this week')} records`;
 
   const top = coachInsights(coachCtx(ctx), 5);
   L.top_insights = top.length ? top.map(i => `${i.id} "${one(i.title)}"`).join('; ') : 'none';

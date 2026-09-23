@@ -23,7 +23,7 @@ import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weekl
 import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { weeklyMuscleSets } from '@/brain/exposure';
-import { daysSinceLastSession, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { daysSinceLastSession, plannedThisWeek, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { restingHr, hrMax, zones, effortMismatch, intraSessionDrift } from '@/brain/heart';
 import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
@@ -116,7 +116,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
   const s = ctx.state;
   const split = scheduledSplitFor(ctx);
   const r = readinessToday(ctx);
-  const w = weekSummary(s.sessions, ctx.today, s.customExercises, WEEKDAYS.filter(d => s.schedule[d]).length || 3);
+  const w = weekSummary(s.sessions, ctx.today, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, ctx.today));
   const deload = activeDeloadOf(ctx);
   const override = todayOverrideOf(ctx);
   return capJson({
@@ -128,7 +128,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
     week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: WEEKDAYS.filter(d => s.schedule[d]).length },
-    streak: trainingStreak(s.sessions, s.schedule, ctx.today),
+    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
     lighterWeek: deload ? { day: Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
     daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today),
@@ -285,7 +285,7 @@ export function getInsights(input: { includeSnoozed?: boolean }, ctx: ToolCtx) {
   const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50);
   const names = new Map<string, string>();
   for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
-  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })) }, 6);
+  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff }, 6);
   const offer = deloadOffer(c);
   return capJson({ insights: list.map(insightOut), weeklyReview: weekly.map(insightOut), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);
 }

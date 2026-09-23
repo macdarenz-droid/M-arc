@@ -5,7 +5,7 @@ import { weekdayOf, daysBetween } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
-import { trainingStreak, weekSummary } from '@/brain/weekly';
+import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
 import { WEEKDAYS } from '@/core/models';
 import { watchStatus } from '@/native/watch';
@@ -32,8 +32,8 @@ export const todayReadiness = computed(() => readiness({
   custom: state.value.customExercises,
   sessions: state.value.sessions,
 }));
-export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value));
-export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
+export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedThisWeek(state.value.schedule, state.value.daysOff, today.value)));
+export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff));
 const coachContext = computed((): CoachContext => ({
   sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises,
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
