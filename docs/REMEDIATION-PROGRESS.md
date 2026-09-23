@@ -369,3 +369,10 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R4b-8 (low)
 - "What Escobar knows" shows the saved date as the phone's day (`dayKey(createdAt)`), not the UTC date in the timestamp.
+
+### QA-R4b-7 (low)
+- `trimOldest` shifts proposal cards with their messages and drops the cards whose message was cut, so after a restart no card vanishes or lands under the wrong answer.
+
+### QA-R4b-4 (low)
+- `fitToBudget` keeps at least 250 KB (`MIN_STORE_ROOM_BYTES`) for Escobar even when the main state and heart store fill the 4 MB total. The active conversation is trimmed, not dropped, for people with years of history.
+- Test updated: "size guard counts the main state and heart store against 4 MB" now uses 50 k-character conversations instead of 20 k, so they are above the new floor. Its assertions are unchanged.

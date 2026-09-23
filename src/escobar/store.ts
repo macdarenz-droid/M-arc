@@ -13,6 +13,8 @@ export const MAX_CONVERSATIONS = 20;
 export const MAX_STORE_BYTES = 1_000_000;
 /** `marc.escobar.v1` + 2 × `marc.state.v1` (state and its backup) + `marc.heart.v1`. */
 export const MAX_TOTAL_BYTES = 4_000_000;
+/** The room Escobar keeps even when the main state and heart store use the whole total budget. */
+export const MIN_STORE_ROOM_BYTES = 250_000;
 const STATE_KEY = 'marc.state.v1';
 const HEART_KEY = 'marc.heart.v1';
 
@@ -112,7 +114,10 @@ const bytes = (s: string | null): number => (s ? s.length * 2 : 0);
 export function fitToBudget(store: ConversationStore, others: number): { store: ConversationStore; raw: string } {
   let cur = store;
   let raw = JSON.stringify(cur);
-  const fits = (r: string): boolean => bytes(r) <= MAX_STORE_BYTES && bytes(r) + others <= MAX_TOTAL_BYTES;
+  // QA-R4b-4: a long training history can fill the total budget by itself; Escobar still keeps
+  // a small room, so the active conversation (trimmed) survives a restart.
+  const room = Math.max(MAX_TOTAL_BYTES - others, MIN_STORE_ROOM_BYTES);
+  const fits = (r: string): boolean => bytes(r) <= MAX_STORE_BYTES && bytes(r) <= room;
   while (!fits(raw) && cur.conversations.length) {
     const victim = pickVictim(cur.conversations, cur.activeId);
     if (!victim) {
@@ -143,6 +148,8 @@ export function trimOldest(c: Conversation): Conversation | null {
     ...c, messages: c.messages.slice(cut), trimmed: true,
     // The summary still describes what came before; it now starts at the first kept message.
     ...(rs ? { rollingSummary: { text: rs.text, upTo: Math.max(0, rs.upTo - cut) } } : {}),
+    // QA-R4b-7: cards follow their message; a card whose message was cut goes with it.
+    ...(c.proposals ? { proposals: c.proposals.filter(p => p.messageIndex == null || p.messageIndex >= cut).map(p => (p.messageIndex == null ? p : { ...p, messageIndex: p.messageIndex - cut })) } : {}),
   };
 }
 
