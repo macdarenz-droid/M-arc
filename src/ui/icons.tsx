@@ -32,14 +32,10 @@ export const IconSend = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}>
 export const IconCamera = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" /><circle cx="12" cy="13" r="3.5" /></svg>;
 export const IconStop = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor" stroke="none" /></svg>;
 /**
- * Escobar's mark (§4.3): a minimal crown over an arc (the M/ARC arc; the crown is the palace).
- * Three strokes; the jewel dot pulses while he's thinking (`.escobar-mark.thinking`), static under
- * reduced motion.
+ * Escobar's mark: the owner's knot-and-plates logo (2026-09-23), used as a mask so it takes
+ * `currentColor` like every other icon and follows all five themes. While he's thinking the mark
+ * breathes (`.escobar-mark.thinking`), static under reduced motion.
  */
-export const IconEscobar = ({ size = 22, thinking = false, ...p }: P & { thinking?: boolean }) => (
-  <svg {...base(size)} {...p} class={`escobar-mark${thinking ? ' thinking' : ''} ${p.class ?? ''}`}>
-    <path d="M6 12.5L5 6l4 3 3-4.5 3 4.5 4-3-1 6.5z" />
-    <path d="M4 19.5c2.2-2.6 5-3.9 8-3.9s5.8 1.3 8 3.9" />
-    <circle class="jewel" cx="12" cy="4.2" r="1" fill="currentColor" stroke="none" />
-  </svg>
+export const IconEscobar = ({ size = 22, thinking = false, class: cls, style }: P & { thinking?: boolean }) => (
+  <span class={`escobar-mark${thinking ? ' thinking' : ''} ${cls ?? ''}`} aria-hidden="true" style={{ width: `${size}px`, height: `${size}px`, ...(typeof style === 'object' ? style as Record<string, string> : {}) }} />
 );
