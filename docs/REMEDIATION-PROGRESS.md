@@ -341,3 +341,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R3b-4 (low)
 - Train asks `warmupOffer()`, which returns null when the ramp is empty (a working set on the empty bar), so no "Show warm-up" toggle opens an empty list.
+
+### QA-R3b-6 (low)
+- A watch max older than 12 months still decays toward the age estimate but never below it, so heart zones no longer drop about 10 bpm on the day the reading turns a year old.
