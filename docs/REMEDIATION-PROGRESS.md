@@ -299,3 +299,6 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 ### QA-R7-1 (medium)
 - `.effort` rows are 44 px tall, so a button's 44 px hit area no longer reaches into the next row. The gate checks the point just below each row's Max button in the effort repair sheet. (The CSS and gate lines landed in the QA-R1-4 commit by mistake.)
+
+### QA-R1-8 (low)
+- The error card adds "Reset app data" (behind a confirm, with a note to save a copy first). It uses the same wipe as the start-up crash screen, so a state that crashes on every render no longer traps the person.
