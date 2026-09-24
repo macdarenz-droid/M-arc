@@ -127,7 +127,7 @@ export function Today() {
               {recovering.slice(0, 4).map(r => (
                 <div key={r.muscle} class="row-between small">
                   <span>{muscleLabel(r.muscle)}</span>
-                  <span class="muted num">{r.pct}% · {formatHours(r.hoursLeft)}</span>
+                  <span class="muted num">{r.pct}% · {r.soreToday && !r.readyInHours && !r.hoursLeft ? 'sore today' : formatHours(r.hoursLeft)}</span>
                 </div>
               ))}
               {recovering.length > 4 && <span class="hint">+{recovering.length - 4} more recovering</span>}

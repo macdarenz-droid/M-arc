@@ -543,3 +543,6 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 #### QA2-FB-5
 - A committed set that is still empty when its field loses focus (`commitSetById` on blur) gives up its commit: its time, rest, fidelity and heart data are cleared. When it is filled for real later, it gets its own time and starts rest.
 - Clearing and retyping within the same field still keeps the original commit (QA-R2b-1, test unchanged).
+
+#### QA2-FC-5
+- A muscle held back by today's soreness after the model's own time has no full-recovery time either (`fullInHours` is null). Today says "sore today" instead of "under 1h", the muscle sheet no longer adds "fully recovered in about under 1h", and Escobar's `get_recovery` marks it `soreToday`.

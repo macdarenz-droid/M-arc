@@ -236,6 +236,8 @@ export function getRecovery(input: { muscles?: string[]; at?: string }, ctx: Too
       muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft),
       readyInHours: r.readyInHours ? r.readyInHours.map(Math.round) : null, fullInHours: r.fullInHours != null ? Math.round(r.fullInHours) : null,
       drivers: r.drivers.slice(0, 2).map(d => d.text), personalized: r.personalized, confidence: r.confidence, lastDay: r.lastDay,
+      // QA2-FC-5: held back by today's soreness rating, so the hours say nothing.
+      ...(r.soreToday ? { soreToday: true } : {}),
     })),
   }, 5000);
 }

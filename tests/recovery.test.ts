@@ -147,6 +147,7 @@ describe('recovery model v2 (impulse-response)', () => {
     expect(capped.recovering).toBe(true);
     expect(capped.readyInHours).toBeNull();
     expect(capped.soreToday).toBe(true);
+    expect(capped.fullInHours).toBeNull(); // QA2-FC-5
   });
 
   it('"Mark as fresh" overrides the model to 100%', () => {
