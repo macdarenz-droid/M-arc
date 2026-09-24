@@ -54,7 +54,9 @@ export class RelayStore extends DurableObject<Env> {
     const next = this.engine.nextWake()
     if (next == null) return
     const current = await this.ctx.storage.getAlarm()
-    if (current == null || next < current) await this.ctx.storage.setAlarm(Math.max(next, Date.now() + 50))
+    // While a tick is running, wake no sooner than 30 s: the running tick picks new work up itself.
+    const floor = Date.now() + (this.engine.isBusy() ? 30_000 : 50)
+    if (current == null || next < current) await this.ctx.storage.setAlarm(Math.max(next, floor))
   }
 }
 
@@ -64,7 +66,7 @@ export class UsEgress extends DurableObject<Env> {
     const allowed = ['api.openai.com', 'api.anthropic.com', 'generativelanguage.googleapis.com']
     if (this.env.OPENAI_BASE_URL) allowed.push(new URL(this.env.OPENAI_BASE_URL).host)
     if (!allowed.includes(new URL(req.url).host)) return new Response('Host not allowed', { status: 403 })
-    return fetch(req)
+    return fetch(req, { signal: AbortSignal.timeout(300_000) })
   }
 }
 

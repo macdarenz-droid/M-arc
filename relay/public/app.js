@@ -596,8 +596,8 @@ function agentDialog(a = null) {
   effort.value = a?.effort ?? ''
   const folder = h('select', {}, d.folders.map(f => h('option', { value: f.id }, where(f.id))))
   folder.value = a?.folder_id ?? S.folderId
-  const scope = h('select', {}, h('option', { value: 'project' }, 'The whole project'), h('option', { value: 'folder' }, 'Only its folder'))
-  scope.value = a && a.scope_id !== d.project.root_id ? 'folder' : 'project'
+  const scope = h('select', {}, h('option', { value: 'folder' }, 'Only its folder'), h('option', { value: 'project' }, 'The whole project'))
+  scope.value = !a || a.scope_id !== d.project.root_id ? 'folder' : 'project'
   const onMessage = check(a ? a.on_message : 1, 'Answers new messages in its folder')
   const onMention = check(a ? a.on_mention : 1, 'Answers when @mentioned in anything it can see')
   const every = h('select', {}, [[0, 'No scheduled check-ins'], [15, 'Every 15 minutes'], [60, 'Every hour'], [180, 'Every 3 hours'], [720, 'Twice a day'], [1440, 'Once a day']]

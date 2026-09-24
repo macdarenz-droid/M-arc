@@ -16,6 +16,14 @@ export type Fetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Re
 
 export const MAX_CHAIN = 6
 const MAX_STEPS = 8
+const RUN_TOKEN_BUDGET = 400_000
+const CALL_TIMEOUT_MS = 300_000
+const TICK_BUDGET_MS = 5 * 60_000
+const LEASE_MS = 20 * 60_000
+const TOKEN = /rl_[A-Za-z0-9]{32}/g
+/** Link tokens are write keys: never let an agent repeat one into a thread or file. */
+export const redact = (text: string) => text.replace(TOKEN, 'rl_[hidden]')
+const clip = (text: string, max: number, hint: string) => (text.length > max ? `${text.slice(0, max)}\n…(cut at ${max} characters; ${hint})` : text)
 const DEBOUNCE_MS = 1500
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/openai'
 export const KEY_NAMES: Record<string, string> = { openai: 'OPENAI_API_KEY', anthropic: 'ANTHROPIC_API_KEY', gemini: 'GEMINI_API_KEY' }
@@ -23,7 +31,9 @@ export const KEY_NAMES: Record<string, string> = { openai: 'OPENAI_API_KEY', ant
 interface ToolDef { name: string; description: string; inputSchema: Record<string, unknown> }
 type Exec = (name: string, args: Record<string, unknown>) => Promise<{ text: string; isError?: boolean }>
 interface Outcome { text: string; tokensIn: number; tokensOut: number; note?: string }
-interface Turn { system: string; prompt: string; tools: ToolDef[]; exec: Exec }
+interface Turn { system: string; prompt: string; tools: ToolDef[]; exec: Exec; alive: () => boolean }
+const STOPPED = 'Stopped: the agent was paused or removed'
+const OVER = `Stopped at the per-run budget of ${RUN_TOKEN_BUDGET} input tokens`
 
 const CONTINUE: ToolDef = {
   name: 'continue_later',
@@ -48,7 +58,7 @@ export class Engine {
   store: Store
   keys: Keys
   fetch: Fetch
-  private busy = false
+  private busyUntil = 0
   private again = false
 
   constructor(o: { store: Store; keys: Keys; fetch?: Fetch }) {
@@ -68,11 +78,21 @@ export class Engine {
     return this.store.nextWake()
   }
 
+  /** A lease rather than a flag: if a tick is ever cut off, the engine frees itself after LEASE_MS. */
+  isBusy(): boolean {
+    return Date.now() < this.busyUntil
+  }
+
   /** New message → queue the agents it concerns. Their own messages never wake themselves. */
   onMessage(m: Message) {
     const s = this.store
     for (const a of s.agents(m.project_id)) {
-      if (!a.enabled || m.via === a.link_id) continue
+      if (!a.enabled || m.via === a.link_id || s.runsToday(a) >= a.daily_runs) continue
+      // A link (or another agent) may only wake agents that see no more than it does.
+      if (m.via !== 'owner') {
+        const from = s.linkById(m.via)
+        if (!from || !s.subtree(from.folder_id).includes(a.scope_id)) continue
+      }
       const mentioned = !!a.on_mention && mentions(m.body, a.name)
       const home = !!a.on_message && m.folder_id === a.folder_id
       if (!mentioned && !home) continue
@@ -84,23 +104,26 @@ export class Engine {
 
   /** Runs whatever is due, one run at a time. Adapters call it from a Durable Object alarm or a timer. */
   async tick(): Promise<void> {
-    if (this.busy) {
+    if (this.isBusy()) {
       this.again = true
       return
     }
-    this.busy = true
+    this.busyUntil = Date.now() + LEASE_MS
+    const started = Date.now()
+    const inBudget = () => Date.now() - started < TICK_BUDGET_MS
     try {
+      this.store.expireRuns(this.store.now() - LEASE_MS)
       do {
         this.again = false
         this.checkins()
-        for (let n = 0; n < 12; n++) {
+        for (let n = 0; n < 12 && inBudget(); n++) {
           const run = this.store.nextDue(this.store.now())
           if (!run) break
           await this.execute(run)
         }
-      } while (this.again)
+      } while (this.again && inBudget())
     } finally {
-      this.busy = false
+      this.busyUntil = 0
     }
   }
 
@@ -111,7 +134,7 @@ export class Engine {
       s.setNextAt(a.id, now + a.every_min * 60_000)
       const link = s.linkById(a.link_id)
       const last = s.lastRunAt(a.id)
-      if (!link || (last && !s.activitySince(link.folder_id, last, link.id))) continue
+      if (!link || s.runsToday(a) >= a.daily_runs || (last && !s.activitySince(link.folder_id, last))) continue
       s.enqueue({ agent: a, folderId: a.folder_id, reason: 'schedule', due: now })
     }
   }
@@ -126,17 +149,28 @@ export class Engine {
       return done('skipped', { error: 'Agent was deleted' })
     }
     if (!a.enabled) return done('skipped', { error: 'Agent is paused' })
-    if (s.runsToday(a.id) >= a.daily_runs) return done('skipped', { error: `Daily limit of ${a.daily_runs} runs reached` })
+    if (s.runsToday(a) >= a.daily_runs) return done('skipped', { error: `Daily limit of ${a.daily_runs} runs reached` })
     const key = this.keys[a.provider as keyof Keys]
     if (!key) return done('error', { error: `No API key for ${a.provider}: set the ${KEY_NAMES[a.provider]} secret` })
     const link = s.linkById(a.link_id)
     if (!link) return done('error', { error: 'The agent lost its link' })
-    s.startRun(run.id)
+    s.startRun(run)
+    const alive = () => {
+      if (!s.linkById(link.id)) return false
+      try {
+        return !!s.agent(a.id).enabled
+      } catch {
+        return false
+      }
+    }
     try {
-      const v = view(s, s.origin(), link.token)
+      // The agent's own token never appears in its context: links it sees are relay:/… placeholders.
+      const v: View = { ...view(s, s.origin(), link.token), base: 'relay:' }
       const at = v.tree.find(t => t.f.id === run.folder_id)
       if (!at) throw new Error('That folder is outside this agent')
       const exec: Exec = async (name, args) => {
+        if (!alive()) return { text: STOPPED, isError: true }
+        for (const k of ['body', 'content']) if (typeof args[k] === 'string') args[k] = redact(args[k] as string)
         if (name === 'continue_later') {
           const minutes = Math.min(Math.max(Math.round(Number(args.minutes)) || 30, 1), 1440)
           s.enqueue({ agent: a, folderId: at.f.id, reason: 'followup', due: s.now() + minutes * 60_000, note: String(args.note ?? '') })
@@ -145,7 +179,7 @@ export class Engine {
         try {
           const r = await callTool(v, name, args)
           if (!r) return { text: `Unknown tool: ${name}`, isError: true }
-          return { text: r.content[0]?.text ?? '', isError: 'isError' in r ? !!r.isError : false }
+          return { text: clip(r.content[0]?.text ?? '', 40_000, 'ask for less, e.g. fetch one item'), isError: 'isError' in r ? !!r.isError : false }
         } catch (e) {
           if (e instanceof HttpError) return { text: e.message, isError: true }
           throw e
@@ -156,13 +190,14 @@ export class Engine {
         prompt: userPrompt(v, run, at),
         tools: [...TOOLS.filter(t => !('write' in t) || v.link.can_write), CONTINUE],
         exec,
+        alive,
       }
       const out =
         a.provider === 'anthropic' ? await this.anthropic(a, key, turn)
         : a.provider === 'openai' ? await this.openai(a, key, turn)
         : await this.chat(GEMINI_BASE, a, key, turn)
-      const reply = out.text.trim()
-      if (reply && !/^NO_REPLY\b/i.test(reply)) s.createMessage(at.f.id, { author: a.name, kind: a.kind, via: link.id }, { body: reply.slice(0, 100_000) })
+      const reply = redact(out.text.trim())
+      if (reply && alive() && !/^NO_REPLY\b/i.test(reply)) s.createMessage(at.f.id, { author: a.name, kind: a.kind, via: link.id }, { body: reply.slice(0, 100_000) })
       done('done', { tokens_in: out.tokensIn, tokens_out: out.tokensOut, error: out.note ?? null })
     } catch (e) {
       console.error('agent run failed', a.name, e)
@@ -172,7 +207,7 @@ export class Engine {
 
   // ── Claude: Messages API through the official SDK, manual tool loop ─────────
   private async anthropic(a: Agent, key: string, t: Turn): Promise<Outcome> {
-    const client = new Anthropic({ apiKey: key, fetch: this.fetch, maxRetries: 2 })
+    const client = new Anthropic({ apiKey: key, fetch: this.fetch, maxRetries: 2, timeout: CALL_TIMEOUT_MS })
     // Server-side refusal fallbacks on the models that support them.
     const fallback = /^claude-(opus-5|fable-5-1)$/.test(a.model)
     const tools: Anthropic.Beta.BetaTool[] = t.tools.map(d => ({ name: d.name, description: d.description, input_schema: d.inputSchema as Anthropic.Beta.BetaTool.InputSchema }))
@@ -180,6 +215,8 @@ export class Engine {
     let tokensIn = 0
     let tokensOut = 0
     for (let step = 0; step < MAX_STEPS; step++) {
+      if (!t.alive()) return { text: '', tokensIn, tokensOut, note: STOPPED }
+      if (tokensIn > RUN_TOKEN_BUDGET) return { text: '', tokensIn, tokensOut, note: OVER }
       const res = await client.beta.messages.create({
         model: a.model,
         max_tokens: 16000,
@@ -219,6 +256,8 @@ export class Engine {
     let tokensIn = 0
     let tokensOut = 0
     for (let step = 0; step < MAX_STEPS; step++) {
+      if (!t.alive()) return { text: '', tokensIn, tokensOut, note: STOPPED }
+      if (tokensIn > RUN_TOKEN_BUDGET) return { text: '', tokensIn, tokensOut, note: OVER }
       const data = (await this.post(`${base}/responses`, key, {
         model: a.model,
         instructions: t.system,
@@ -254,6 +293,8 @@ export class Engine {
     let tokensIn = 0
     let tokensOut = 0
     for (let step = 0; step < MAX_STEPS; step++) {
+      if (!t.alive()) return { text: '', tokensIn, tokensOut, note: STOPPED }
+      if (tokensIn > RUN_TOKEN_BUDGET) return { text: '', tokensIn, tokensOut, note: OVER }
       const data = (await this.post(`${base}/chat/completions`, key, { model: a.model, messages, tools, ...(a.effort ? { reasoning_effort: a.effort } : {}) })) as {
         choices?: { message?: { content?: string | null; tool_calls?: { id: string; function: { name: string; arguments?: string } }[] }; finish_reason?: string }[]
         usage?: { prompt_tokens?: number; completion_tokens?: number }
@@ -283,7 +324,10 @@ export class Engine {
   /** JSON POST with two retries on 429 and 5xx. */
   private async post(url: string, key: string, body: unknown): Promise<unknown> {
     for (let attempt = 0; ; attempt++) {
-      const res = await this.fetch(url, { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      const res = await this.fetch(url, {
+        method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify(body),
+        signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
+      })
       if (res.ok) return res.json()
       const detail = (await res.text().catch(() => '')).slice(0, 300)
       if (attempt < 2 && (res.status === 429 || res.status >= 500)) {
@@ -320,7 +364,8 @@ const WHY: Record<string, string> = {
 }
 
 function userPrompt(v: View, run: Run, at: View['tree'][number]): string {
-  const { messages } = v.store.messages(at.f.id, { limit: 30 })
+  const messages = v.store.messages(at.f.id, { limit: 30 }).messages
+    .map(m => ({ ...m, body: clip(m.body, 4000, `fetch "message:${m.id}" for the rest`) }))
   const files = v.store.files(at.f.id)
   return [
     `${WHY[run.reason] ?? WHY.manual}${run.trigger_id ? ` The message that woke you is message:${run.trigger_id}.` : ''}${run.note ? `\nNotes: ${run.note}` : ''}`,

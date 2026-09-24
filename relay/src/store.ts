@@ -23,7 +23,7 @@ export interface Author { author: string; kind: Kind; via: string }
 export interface Agent {
   id: string; project_id: string; link_id: string; name: string; kind: Kind; provider: string; model: string; effort: string
   instructions: string; folder_id: string; on_message: number; on_mention: number; every_min: number; daily_runs: number
-  enabled: number; next_at: number | null; created_at: number; updated_at: number
+  enabled: number; next_at: number | null; created_at: number; updated_at: number; day_start: number; day_runs: number
 }
 export interface AgentStat extends Agent { scope_id: string; runs_today: number; last_status: string | null; last_error: string | null; last_at: number | null }
 export interface Run {
@@ -143,7 +143,8 @@ export class Store {
           CREATE TABLE IF NOT EXISTS agents (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, link_id TEXT NOT NULL, name TEXT NOT NULL,
             kind TEXT NOT NULL, provider TEXT NOT NULL, model TEXT NOT NULL, effort TEXT NOT NULL DEFAULT '', instructions TEXT NOT NULL DEFAULT '',
             folder_id TEXT NOT NULL, on_message INTEGER NOT NULL DEFAULT 1, on_mention INTEGER NOT NULL DEFAULT 1, every_min INTEGER NOT NULL DEFAULT 0,
-            daily_runs INTEGER NOT NULL DEFAULT 30, enabled INTEGER NOT NULL DEFAULT 1, next_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
+            daily_runs INTEGER NOT NULL DEFAULT 30, enabled INTEGER NOT NULL DEFAULT 1, next_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+            day_start INTEGER NOT NULL DEFAULT 0, day_runs INTEGER NOT NULL DEFAULT 0);
           CREATE INDEX IF NOT EXISTS agents_project ON agents(project_id);
           CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, project_id TEXT NOT NULL, folder_id TEXT NOT NULL,
             reason TEXT NOT NULL, trigger_id TEXT, note TEXT NOT NULL DEFAULT '', status TEXT NOT NULL, due_at INTEGER NOT NULL,
@@ -395,7 +396,8 @@ export class Store {
   createMessage(folderId: string, who: Author, input: { body?: unknown; file_ids?: unknown }): Message {
     const folder = this.folder(folderId)
     const fileIds = Array.isArray(input.file_ids) ? input.file_ids.map(String).slice(0, 50) : []
-    const body = cleanBody(input.body, fileIds.length > 0)
+    // A link's messages never carry a link token (a write key) into a thread others read.
+    const body = who.via === 'owner' ? cleanBody(input.body, fileIds.length > 0) : cleanBody(input.body, fileIds.length > 0).replace(/rl_[A-Za-z0-9]{32}/g, 'rl_[hidden]')
     const m = this.sql.tx(() => {
       const id = randomId()
       const t = this.now()
@@ -597,7 +599,7 @@ export class Store {
     const day = this.now() - (this.now() % 86_400_000)
     return this.sql.all<AgentStat>(`
       SELECT a.*, l.folder_id AS scope_id,
-        (SELECT COUNT(*) FROM runs r WHERE r.agent_id = a.id AND r.started_at >= ?) AS runs_today,
+        CASE WHEN a.day_start = ? THEN a.day_runs ELSE 0 END AS runs_today,
         (SELECT r.status FROM runs r WHERE r.agent_id = a.id AND r.finished_at IS NOT NULL ORDER BY r.finished_at DESC LIMIT 1) AS last_status,
         (SELECT r.error FROM runs r WHERE r.agent_id = a.id AND r.finished_at IS NOT NULL ORDER BY r.finished_at DESC LIMIT 1) AS last_error,
         (SELECT MAX(r.finished_at) FROM runs r WHERE r.agent_id = a.id) AS last_at
@@ -646,7 +648,7 @@ export class Store {
     const t = this.now()
     const id = randomId()
     return this.sql.tx(() => {
-      const link = this.createLink(p.id, { name: f.name, kind: f.kind, folder_id: f.scope ?? p.root_id, can_write: true })
+      const link = this.createLink(p.id, { name: f.name, kind: f.kind, folder_id: f.scope ?? f.folder_id, can_write: true })
       this.sql.run(`UPDATE links SET agent_id = ? WHERE id = ?`, id, link.id)
       this.sql.run(
         `INSERT INTO agents (id, project_id, link_id, name, kind, provider, model, effort, instructions, folder_id, on_message, on_mention,
@@ -715,8 +717,11 @@ export class Store {
     return this.sql.get<Run>(`SELECT * FROM runs WHERE status = 'queued' AND due_at <= ? ORDER BY due_at LIMIT 1`, now)
   }
 
-  startRun(id: string) {
-    this.sql.run(`UPDATE runs SET status = 'running', started_at = ? WHERE id = ?`, this.now(), id)
+  /** Starting a run is what counts against the daily cap; the counter lives on the agent, so pruning runs never resets it. */
+  startRun(run: Run) {
+    const day = this.now() - (this.now() % 86_400_000)
+    this.sql.run(`UPDATE runs SET status = 'running', started_at = ? WHERE id = ?`, this.now(), run.id)
+    this.sql.run(`UPDATE agents SET day_runs = CASE WHEN day_start = ? THEN day_runs + 1 ELSE 1 END, day_start = ? WHERE id = ?`, day, day, run.agent_id)
     this.bump()
   }
 
@@ -726,7 +731,7 @@ export class Store {
     this.sql.run(`UPDATE runs SET status = ?, finished_at = ?, tokens_in = ?, tokens_out = ?, error = ? WHERE id = ?`,
       status, this.now(), o.tokens_in ?? 0, o.tokens_out ?? 0, o.error ?? null, id)
     this.sql.run(`DELETE FROM runs WHERE agent_id = ? AND status != 'queued' AND id NOT IN
-      (SELECT id FROM runs WHERE agent_id = ? ORDER BY due_at DESC LIMIT 200)`, r.agent_id, r.agent_id)
+      (SELECT id FROM runs WHERE agent_id = ? ORDER BY status = 'skipped', due_at DESC LIMIT 200)`, r.agent_id, r.agent_id)
     this.bump()
   }
 
@@ -738,9 +743,10 @@ export class Store {
     return this.sql.all(`SELECT agent_id, folder_id FROM runs WHERE project_id = ? AND status = 'running'`, projectId)
   }
 
-  runsToday(agentId: string): number {
+  runsToday(a: Agent): number {
     const day = this.now() - (this.now() % 86_400_000)
-    return Number(this.sql.get<{ n: number }>(`SELECT COUNT(*) AS n FROM runs WHERE agent_id = ? AND started_at >= ?`, agentId, day)?.n ?? 0)
+    const row = this.sql.get<{ day_start: number; day_runs: number }>(`SELECT day_start, day_runs FROM agents WHERE id = ?`, a.id)
+    return row && row.day_start === day ? row.day_runs : 0
   }
 
   lastRunAt(agentId: string): number {
@@ -756,12 +762,17 @@ export class Store {
     this.sql.run(`UPDATE agents SET next_at = ? WHERE id = ?`, t, id)
   }
 
-  /** Anything new below rootId since t that someone other than `exceptVia` wrote. */
-  activitySince(rootId: string, t: number, exceptVia: string): boolean {
+  /** Anything new below rootId since t from the owner or a non-agent link. Agents never keep each other's check-ins going. */
+  activitySince(rootId: string, t: number): boolean {
     return !!this.sql.get(
-      `${SUBTREE} SELECT 1 FROM messages m WHERE m.folder_id IN (SELECT id FROM t) AND m.created_at > ? AND m.via != ?
-       UNION ALL SELECT 1 FROM files f WHERE f.folder_id IN (SELECT id FROM t) AND f.updated_at > ? AND f.via != ? LIMIT 1`,
-      rootId, t, exceptVia, t, exceptVia)
+      `${SUBTREE} SELECT 1 FROM messages m WHERE m.folder_id IN (SELECT id FROM t) AND m.created_at > ? AND m.via NOT IN (SELECT link_id FROM agents)
+       UNION ALL SELECT 1 FROM files f WHERE f.folder_id IN (SELECT id FROM t) AND f.updated_at > ? AND f.via NOT IN (SELECT link_id FROM agents) LIMIT 1`,
+      rootId, t, t)
+  }
+
+  /** Stale runs (their worker was cut off) become errors instead of "working" forever. */
+  expireRuns(olderThan: number) {
+    this.sql.run(`UPDATE runs SET status = 'error', error = 'Timed out', finished_at = ? WHERE status = 'running' AND started_at < ?`, this.now(), olderThan)
   }
 
   /** Messages in a folder since the last one the owner wrote: how long agents have been talking among themselves. */

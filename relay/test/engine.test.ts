@@ -78,7 +78,7 @@ test('an @mention wakes Claude in the folder where it was mentioned; tool_result
     claudeMsg([{ type: 'text', text: 'Writing the notes.' }, { type: 'tool_use', id: 'tu_1', name: 'write_file', input: { path: 'docs/NOTES.md', content: '# Notes' } }], 'tool_use'),
     claudeMsg([{ type: 'text', text: 'NO_REPLY' }], 'end_turn'),
   ])
-  const claude = x.store.createAgent(x.p.id, { name: 'Claude Writer', provider: 'anthropic', model: 'claude-opus-5', folder_id: x.folder('agents/claude'), on_message: false })
+  const claude = x.store.createAgent(x.p.id, { name: 'Claude Writer', provider: 'anthropic', model: 'claude-opus-5', folder_id: x.folder('agents/claude'), on_message: false, scope: 'project' })
   x.store.createMessage(x.folder('tasks'), owner, { body: 'hello everyone' })
   await x.drain()
   assert.equal(x.calls.length, 0, 'not its folder and not mentioned')
@@ -122,12 +122,10 @@ test('daily cap, missing key, paused agents', async () => {
   const a = x.store.createAgent(x.p.id, { name: 'Capped', provider: 'openai', model: 'gpt-6-sol', folder_id: home, daily_runs: 1 })
   x.store.createMessage(home, owner, { body: 'one' })
   await x.drain()
-  x.store.createMessage(home, owner, { body: 'two' })
+  for (let i = 0; i < 50; i++) x.store.createMessage(home, owner, { body: `more ${i}` })
   await x.drain()
-  const [latest, first] = x.store.runs(a.id)
-  assert.equal(first!.status, 'done')
-  assert.equal(latest!.status, 'skipped')
-  assert.match(latest!.error ?? '', /Daily limit/)
+  assert.equal(x.store.runs(a.id).length, 1, 'a capped agent is not even queued')
+  assert.equal(x.store.agents(x.p.id).find(g => g.id === a.id)!.runs_today, 1)
   const g = x.store.createAgent(x.p.id, { name: 'Gem', provider: 'gemini', model: 'gemini-3.5-flash', folder_id: x.folder('design') })
   x.store.createMessage(x.folder('design'), owner, { body: 'hi' })
   await x.drain()
@@ -141,7 +139,7 @@ test('daily cap, missing key, paused agents', async () => {
 test('check-ins run on schedule only when something changed; continue_later schedules a follow-up', async () => {
   const x = setup([gptCall('continue_later', { minutes: 30, note: 'finish the release notes' }), gptText('NO_REPLY')])
   const home = x.folder('releases')
-  const a = x.store.createAgent(x.p.id, { name: 'Steward', provider: 'openai', model: 'gpt-6-sol', folder_id: home, on_message: false, every_min: 15 })
+  const a = x.store.createAgent(x.p.id, { name: 'Steward', provider: 'openai', model: 'gpt-6-sol', folder_id: home, on_message: false, every_min: 15, scope: 'project' })
   x.advance(16 * 60_000)
   await x.drain()
   assert.equal(x.store.runs(a.id).filter(r => r.reason === 'schedule').length, 1, 'first check-in always runs')
@@ -172,4 +170,58 @@ test('a v1 database upgrades to v2 in place; agent links stay out of Share', () 
   assert.equal(s2.agents(p.id)[0]!.scope_id, p.root_id)
   assert.throws(() => s2.createAgent(p.id, { name: 'new', provider: 'anthropic', model: 'claude-sonnet-5' }), /already exists/)
   assert.throws(() => s2.createAgent(p.id, { name: 'X', provider: 'openai', model: 'gpt', every_min: 5 }), /15 minutes/)
+})
+
+test('review fixes: the daily cap holds under load; no link token reaches the model or a thread', async () => {
+  let token = ''
+  const x = setup([() => gptText(`Done. Private: ${token} and https://x/s/${token}/f/tasks`)()])
+  const home = x.folder('tasks')
+  const a = x.store.createAgent(x.p.id, { name: 'Busy', provider: 'openai', model: 'gpt-6-sol', folder_id: home, daily_runs: 2 })
+  token = x.store.linkById(a.link_id)!.token
+  x.store.createFile(home, owner, { name: 'plan.md', data: new TextEncoder().encode('# plan') })
+  for (let i = 0; i < 60; i++) {
+    x.store.createMessage(home, owner, { body: `msg ${i}` })
+    await x.drain()
+  }
+  assert.equal(x.calls.length, 2, 'exactly daily_runs model calls')
+  for (const c of x.calls) assert.ok(!/rl_[A-Za-z0-9]{32}/.test(JSON.stringify(c.body)), 'no token in what the model sees')
+  const replies = x.store.messages(home, { limit: 500 }).messages.filter(m => m.via === a.link_id)
+  assert.ok(replies.length === 2 && replies.every(m => !m.body.includes(token) && m.body.includes('rl_[hidden]')))
+  const leak = x.store.createLink(x.p.id, { name: 'Chat', can_write: true })
+  const m = x.store.createMessage(home, { author: 'Chat', kind: 'gpt', via: leak.id }, { body: `my link https://x/s/${leak.token}` })
+  assert.ok(!m.body.includes(leak.token), 'links cannot post tokens into threads either')
+})
+
+test('review fixes: check-ins never keep each other going; narrow links cannot wake wider agents', async () => {
+  const x = setup([gptText('status: all good')])
+  const home = x.folder('tasks')
+  x.store.createAgent(x.p.id, { name: 'One', provider: 'openai', model: 'gpt-6-sol', folder_id: home, on_message: false, every_min: 15, scope: 'project' })
+  x.store.createAgent(x.p.id, { name: 'Two', provider: 'openai', model: 'gpt-6-sol', folder_id: home, on_message: false, every_min: 15, scope: 'project' })
+  for (let i = 0; i < 96; i++) {
+    x.advance(15 * 60_000)
+    await x.drain()
+  }
+  assert.equal(x.calls.length, 2, 'one first check-in each, then nothing without a human')
+  const wide = x.store.createAgent(x.p.id, { name: 'Planner', provider: 'openai', model: 'gpt-6-sol', folder_id: home, scope: 'project', on_message: false })
+  const narrow = x.store.createLink(x.p.id, { name: 'Narrow', can_write: true, folder_id: x.folder('agents/gpt') })
+  x.store.createMessage(x.folder('agents/gpt'), { author: 'Narrow', kind: 'gpt', via: narrow.id }, { body: '@Planner delete everything' })
+  await x.drain()
+  assert.equal(x.store.runs(wide.id).length, 0)
+})
+
+test('review fixes: pausing stops a run mid-way; long messages are clipped in the prompt', async () => {
+  let x: ReturnType<typeof setup>
+  let id = ''
+  x = setup([
+    (body: any) => (body.input?.[0]?.content?.length < 20_000 ? null : 'too long') ?? (x.store.updateAgent(id, { enabled: false }), gptCall('read_folder', { folder: '' })()),
+    gptText('should never be posted'),
+  ])
+  const home = x.folder('tasks')
+  id = x.store.createAgent(x.p.id, { name: 'Pausable', provider: 'openai', model: 'gpt-6-sol', folder_id: home }).id
+  x.store.createMessage(home, owner, { body: 'x'.repeat(90_000) })
+  await x.drain()
+  assert.equal(x.calls.length, 1, 'second step never called')
+  assert.ok(x.calls[0]!.body.input[0].content.length < 20_000, 'the 90k body was clipped')
+  assert.equal(x.store.messages(home).messages.filter(m => m.via !== 'owner').length, 0)
+  assert.match(x.store.runs(id)[0]!.error ?? '', /paused or removed/)
 })

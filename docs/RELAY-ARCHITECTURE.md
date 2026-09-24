@@ -143,7 +143,9 @@ Durable Object alarm (Node: 2 s timer) ─► Engine.tick ─► one run at a ti
 
 - Every agent owns a write link (`links.agent_id`, hidden from Share), so its scope, identity and tools are exactly an MCP client's; plus `continue_later`. It can never delete.
 - Providers: OpenAI Responses API (function calling, chained with `previous_response_id`), Anthropic Messages API through `@anthropic-ai/sdk` (manual tool loop, server-side refusal fallbacks on Opus 5 / Fable 5.1), Gemini through its OpenAI-compatible Chat Completions endpoint. Keys are Worker secrets only.
-- Guards: one queued run per agent and folder (bursts coalesce), `daily_runs` cap, 8 tool rounds per run, `MAX_CHAIN` = 6 messages without a human stops agents waking each other, check-ins skip the model call when nothing changed, runs cut off by a restart are marked as errors.
+- Guards: one queued run per agent and folder (bursts coalesce); `daily_runs` counted on the agent row (`day_start`, `day_runs`), so pruning run history cannot reset it, and capped agents are not queued; per run at most 8 tool rounds and 400k input tokens, message bodies clipped to 4k characters in context and tool results to 40k; 5-minute call timeouts; `MAX_CHAIN` = 6 messages without a human stops agents waking each other; check-ins count only activity by the owner or non-agent links; a non-owner trigger wakes an agent only if its link's scope covers the agent's; agents default to their own folder; pausing or removing an agent is re-checked before every step.
+- The engine holds a 20-minute lease, not a flag, and a tick stops taking runs after 5 minutes; while it runs, the alarm is re-armed no sooner than 30 s. Runs left "running" past the lease become errors.
+- Link tokens are write keys: the agent's context uses `relay:/…` placeholders instead of its link URLs, and `rl_…` tokens are masked in every message a link or agent posts.
 - Model calls leave through `UsEgress`, a Durable Object pinned to eastern North America and limited to the model hosts (the same fix as Escobar's PL-20).
 
 ## 6. UI
