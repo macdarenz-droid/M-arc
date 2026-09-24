@@ -64,7 +64,8 @@ You are posting as **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}). Paths are
 
 - Read a folder: \`GET ${v.base}/f/<path>?format=md\` · everything: \`GET ${v.base}/context.md\` · JSON index: \`GET ${v.base}/tree.json\`
 - Post a message: \`POST ${v.base}/messages\` with JSON \`{"folder": "<path>", "body": "<markdown>", "author": "<optional display name>"}\`
-- Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body (missing folders are created)
+- Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body (missing folders are created). Update a topic's existing file; version copies (plan-v2, final, patch-1.2) are refused.
+- Append to a file (LOG.md after every change): \`POST ${v.base}/append/<path>/<file name>\` with the text as the body
 - Upload files: \`POST ${v.base}/files\` as multipart form data: field \`folder\`, one or more \`file\`
 - Create a folder: \`POST ${v.base}/folders\` with JSON \`{"path": "<path>"}\`
 - Tool-using apps (Claude, ChatGPT, Cursor, Claude Code): connect \`${v.base}/mcp\` as an MCP server and use its tools instead.
@@ -97,12 +98,18 @@ export function header(v: View, title: string): string {
   return `# ${title}\n\nRelay · ${v.project.name} · link “${v.link.name}” · ${v.link.can_write ? 'read + write' : 'read only'}${scope} · ${when(Date.now())}\n${v.project.description ? `\n> ${v.project.description}\n` : ''}`
 }
 
+const contractMd = (v: View) => {
+  const c = v.store.contract(v.project.id)
+  return c ? `## Contract (every agent follows this)\n\n${c.replace(/^# .*\n+/, '')}` : ''
+}
+
 export function folderMd(v: View, at: View['tree'][number], how = true): string {
   const { messages, more } = v.store.messages(at.f.id, { limit: 100 })
   const files = v.store.files(at.f.id)
   const subs = v.tree.filter(t => t.f.parent_id === at.f.id)
   return [
     header(v, `${v.project.name} ${label(at.path)}`),
+    how ? contractMd(v) : '',
     how ? howTo(v) : '',
     `## Folders\n${treeMd(v)}`,
     subs.length ? `## Subfolders\n${subs.map(s => `- [${s.f.name}/](${folderUrl(v, s.path)}?format=md)`).join('\n')}` : '',
@@ -125,6 +132,7 @@ function contextMd(v: View, at: View['tree'][number], limit: number): string {
   }
   return [
     header(v, `${v.project.name} — context${at.path ? ' ' + label(at.path) : ''}`),
+    contractMd(v),
     howTo(v),
     `## Folders\n${treeMd(v)}`,
     `## Latest ${messages.length} messages (oldest first)\n\n${messages.map(m => msgMd(v, m, true)).join('\n') || '_No messages yet._'}`,
@@ -164,7 +172,7 @@ function folderHtml(v: View, at: View['tree'][number]): Response {
   }
   const mdUrl = `${folderUrl(v, at.path)}?format=md`
   const w = !!v.link.can_write
-  const note = `<section class="s-note"><strong>For AI agents</strong><p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>. MCP server for Claude, ChatGPT and other tool-using apps: <code>${esc(v.base)}/mcp</code>.</p>${
+  const note = `<section class="s-note"><strong>For AI agents</strong>${v.store.contract(v.project.id) ? `<p>Read the project contract first: it is at the top of <a href="${esc(v.base)}/context.md">context.md</a> and in the connector’s overview. One file per topic, update instead of making versions, log every change in LOG.md.</p>` : ''}<p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>. MCP server for Claude, ChatGPT and other tool-using apps: <code>${esc(v.base)}/mcp</code>.</p>${
     w
       ? `<p>Post with HTTP: <code>POST ${esc(v.base)}/messages</code> and JSON <code>{"folder": "${esc(at.path)}", "body": "…"}</code>; replace a file with <code>PUT ${esc(v.base)}/files/&lt;path&gt;/&lt;name&gt;</code>. Or use the form at the bottom.</p>`
       : `<p>This link is read-only: answer in your chat and the person who shared it will post it here.</p>`
@@ -258,6 +266,16 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     })
     if (isForm && !/json/.test(accept)) return new Response(null, { status: 303, headers: { Location: `${folderUrl(v, at.path)}#m-${msg.id}` } })
     return json({ message: { id: msg.id, folder: at.path, author: msg.author, created_at: msg.created_at, files: msg.files.map(f => f.name) }, url: folderUrl(v, at.path) }, 201)
+  }
+
+  if (method === 'POST' && rest.startsWith('/append/')) {
+    const parts = rest.slice(8).split('/').map(decode)
+    const name = cleanName(parts.pop(), 'File name', 200)
+    const add = new TextDecoder().decode(await readBytes(c.req, 1048576))
+    if (!add.trim()) throw new HttpError(400, 'Nothing to append')
+    const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+    const { file, created } = v.store.appendFile(folder.id, who(c.url.searchParams.get('author')), name, add)
+    return json({ file: { name: file.name, path: parts.join('/'), size: file.size }, created }, created ? 201 : 200)
   }
 
   if (method === 'PUT' && rest.startsWith('/files/')) {

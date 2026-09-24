@@ -44,8 +44,14 @@ const TOOLS = [
   {
     name: 'write_file', title: 'Create or replace a text file', write: true,
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
-    description: 'Create or replace a text file by path, e.g. "docs/PROJECT_STATE.md". Missing folders are created. Replacing overwrites the old content.',
+    description: 'Create or replace a text file by path, e.g. "PROJECT_STATE.md". Missing folders are created. Replacing overwrites the old content, so read it first. Update the existing file for a topic instead of making versions: new names like plan-v2, plan final, copy or patch-1.2 are refused when the topic already has a file. CONTRACT.md is the owner’s.',
     inputSchema: { type: 'object', properties: { path: str('Folder path and file name'), content: str('Full new content') }, required: ['path', 'content'] },
+  },
+  {
+    name: 'append_file', title: 'Append to a file', write: true,
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+    description: 'Add text to the end of a file, creating it if missing. Use it for LOG.md after every change: one line, "- YYYY-MM-DD HH:MM UTC · your name · path · what changed and why".',
+    inputSchema: { type: 'object', properties: { path: str('Folder path and file name, e.g. "LOG.md"'), text: str('Text to add at the end') }, required: ['path', 'text'] },
   },
   {
     name: 'create_folder', title: 'Create a folder', write: true,
@@ -55,7 +61,10 @@ const TOOLS = [
   },
 ]
 
+const contractOf = (v: View) => v.store.contract(v.project.id)
+
 const instructions = (v: View) =>
+  (contractOf(v) ? `This project has a contract every agent follows. Read it in full in overview (it is /CONTRACT.md) and keep to it: one file per topic, update instead of making versions, log every change in LOG.md with append_file.\n\n${contractOf(v)!.slice(0, 6000)}\n\n` : '') +
   `Relay is a shared workspace for the project "${v.project.name}". The person and several AI agents work in its folders; each folder has a thread of messages and files. ` +
   `You are "${v.link.name}" (${KINDS[v.link.kind]?.label ?? 'Agent'}) with ${v.link.can_write ? 'read and write' : 'read-only'} access. ` +
   'Call overview first. Read the folder you are working in before you act. ' +
@@ -71,11 +80,12 @@ function overview(v: View, n: number): string {
   const files = v.store.filesUnder(v.scope.id)
   return [
     header(v, `${v.project.name} — overview`),
-    `You are **${v.link.name}** (${KINDS[v.link.kind]?.label ?? 'Agent'}), ${v.link.can_write ? 'read + write: post_message, write_file, create_folder' : 'read only'}. Paths are relative to your link.`,
+    contractOf(v) ? `## Contract (every agent follows this)\n\n${contractOf(v)!.replace(/^# .*\n+/, '')}` : '',
+    `You are **${v.link.name}** (${KINDS[v.link.kind]?.label ?? 'Agent'}), ${v.link.can_write ? 'read + write: post_message, write_file, append_file, create_folder' : 'read only'}. Paths are relative to your link.`,
     `## Folders\n${treeMd(v)}`,
     `## Latest ${messages.length} messages (oldest first)\n\n${messages.map(m => `<!-- message:${m.id} -->\n${msgMd(v, m, true)}`).join('\n') || '_No messages yet._'}`,
     `## Files (fetch "file:<id>" or the path)\n${files.map(f => `${fileLine(v, f)} · file:${f.id}`).join('\n') || '_No files._'}`,
-  ].join('\n\n')
+  ].filter(Boolean).join('\n\n')
 }
 
 function fetchItem(v: View, id: string) {
@@ -148,6 +158,16 @@ async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
       const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
       const { file, created } = v.store.putFile(folder.id, who(), { name: fname, data: new TextEncoder().encode(content) })
       return text(`${created ? 'Created' : 'Replaced'} ${parts.length ? parts.join('/') + '/' : ''}${file.name} (${file.size} bytes, file:${file.id}).`)
+    }
+    case 'append_file': {
+      const parts = String(a.path ?? '').split('/').filter(Boolean)
+      const fname = cleanName(parts.pop(), 'File name', 200)
+      const add = String(a.text ?? '')
+      if (!add.trim()) return text('Nothing to append.', true)
+      if (add.length > 100_000) return text('Append at most 100,000 characters at a time.', true)
+      const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+      const { file, created } = v.store.appendFile(folder.id, who(), fname, add)
+      return text(`${created ? 'Created' : 'Appended to'} ${parts.length ? parts.join('/') + '/' : ''}${file.name} (${file.size} bytes).`)
     }
     case 'create_folder': {
       const f = v.store.ensurePath(v.scope.id, a.path)

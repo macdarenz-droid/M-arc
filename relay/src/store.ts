@@ -1,5 +1,6 @@
 import type { Sql, Val } from './sql.ts'
 import { KINDS, mimeFor } from '../public/shared.js'
+import { CONTRACT, LOG, PINNED, STATE, DEFAULT_CONTRACT, defaultLog, defaultState, topicKey } from './contract.ts'
 
 export type Kind = 'human' | 'claude' | 'gpt' | 'gemini' | 'agent'
 
@@ -94,6 +95,30 @@ export class Store {
     this.sql = sql
     this.now = now
     this.migrate()
+    if (!this.sql.get(`SELECT 1 FROM meta WHERE k = 'docs_seeded'`)) {
+      this.sql.tx(() => {
+        for (const p of this.sql.all<{ id: string }>(`SELECT id FROM projects`)) this.seedDocs(p.id)
+        this.sql.run(`INSERT OR REPLACE INTO meta (k, v) VALUES ('docs_seeded', '1')`)
+      })
+    }
+  }
+
+  /** CONTRACT.md, PROJECT_STATE.md and LOG.md at the project root, created only when missing. */
+  private seedDocs(projectId: string) {
+    const p = this.sql.get<Project>(`SELECT * FROM projects WHERE id = ?`, projectId)
+    if (!p) return
+    const relay: Author = { author: 'Relay', kind: 'agent', via: 'owner' }
+    const when = new Date(this.now()).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
+    const docs: [string, string][] = [[CONTRACT, DEFAULT_CONTRACT], [STATE, defaultState(p.name)], [LOG, defaultLog(when)]]
+    for (const [name, body] of docs)
+      if (!this.fileByName(p.root_id, name)) this.createFile(p.root_id, relay, { name, data: new TextEncoder().encode(body) })
+  }
+
+  /** The project's contract text, for every agent's instructions. */
+  contract(projectId: string): string | null {
+    const p = this.project(projectId)
+    const f = this.fileByName(p.root_id, CONTRACT)
+    return f ? new TextDecoder().decode(this.read(f.id)).slice(0, 12_000) : null
   }
 
   private migrate() {
@@ -180,6 +205,7 @@ export class Store {
         id, slug, name, description, root_id, t, t,
       )
       for (const p of paths) this.ensurePath(root_id, p)
+      this.seedDocs(id)
       this.bump()
       return this.project(id)
     })
@@ -401,7 +427,9 @@ export class Store {
 
   // ── files ───────────────────────────────────────────────────
   files(folderId: string): FileMeta[] {
-    return this.sql.all<FileMeta>(`SELECT * FROM files WHERE folder_id = ? ORDER BY name COLLATE NOCASE`, folderId)
+    return this.sql.all<FileMeta>(
+      `SELECT * FROM files WHERE folder_id = ?
+       ORDER BY CASE name WHEN ? THEN 0 WHEN ? THEN 1 WHEN ? THEN 2 ELSE 3 END, name COLLATE NOCASE`, folderId, ...PINNED)
   }
 
   /** Files in a folder and everything below it. */
@@ -449,6 +477,7 @@ export class Store {
   createFile(folderId: string, who: Author, input: { name: unknown; mime?: string; data: Uint8Array }): FileMeta {
     const folder = this.folder(folderId)
     const clean = cleanName(input.name, 'File name', 200)
+    this.guard(folder, clean, who)
     const mime = input.mime && /^[\w.+-]+\/[\w.+-]+$/.test(input.mime) ? input.mime : mimeFor(clean)
     return this.sql.tx(() => {
       const id = randomId()
@@ -467,6 +496,7 @@ export class Store {
 
   writeFile(id: string, data: Uint8Array, who?: Author): FileMeta {
     const f = this.file(id)
+    if (who) this.guard(this.folder(f.folder_id), f.name, who, true)
     this.sql.tx(() => {
       this.writeChunks(f.id, data)
       this.sql.run(`UPDATE files SET size = ?, updated_at = ? WHERE id = ?`, data.byteLength, this.now(), f.id)
@@ -474,6 +504,32 @@ export class Store {
       this.bump()
     })
     return this.file(f.id)
+  }
+
+  /**
+   * The contract, enforced for links (agents): CONTRACT.md is the owner's, and a new file may not duplicate
+   * the topic of one already in the folder (plan.md → plan-v2.md, plan final.md, patch-1 → patch-1.2).
+   */
+  private guard(folder: Folder, name: string, who: Author, existing = false) {
+    if (who.via === 'owner') return
+    if (!folder.parent_id && name.toLowerCase() === CONTRACT.toLowerCase())
+      throw new HttpError(403, 'CONTRACT.md is the owner’s. Propose a change in a message instead.')
+    if (existing) return
+    const key = topicKey(name)
+    const clash = this.files(folder.id).find(f => f.name.toLowerCase() === name.toLowerCase() || topicKey(f.name) === key)
+    if (clash)
+      throw new HttpError(409, `“${name}” would duplicate “${clash.name}” in this folder. Update “${clash.name}” instead (write_file, or append_file for logs), or give a genuinely new topic its own name.`)
+  }
+
+  /** Add text to the end of a file (logs), creating it when missing. */
+  appendFile(folderId: string, who: Author, rawName: unknown, text: string): { file: FileMeta; created: boolean } {
+    const name = cleanName(rawName, 'File name', 200)
+    const add = text.replace(/\s+$/, '') + '\n'
+    const existing = this.fileByName(folderId, name)
+    if (!existing) return { file: this.createFile(folderId, who, { name, data: new TextEncoder().encode(add) }), created: true }
+    const old = new TextDecoder().decode(this.read(existing.id))
+    const joined = old + (old && !old.endsWith('\n') ? '\n' : '') + add
+    return { file: this.writeFile(existing.id, new TextEncoder().encode(joined), who), created: false }
   }
 
   /** Create or replace by name in a folder (agents keeping a doc current). */

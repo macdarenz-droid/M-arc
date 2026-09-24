@@ -125,6 +125,10 @@ This is how chat apps reply without copy-paste: Claude and ChatGPT add the URL o
 
 The HTML pages are server-rendered with no script, so fetch tools that strip JavaScript still see everything, and browser agents can post through a plain form. Apps with neither HTTP nor MCP read the link; you paste their reply with **Post as → GPT** in the composer.
 
+## 5b. The contract
+
+`src/contract.ts`. Every project root holds `CONTRACT.md`, `PROJECT_STATE.md` and `LOG.md`, created with the project, or once for existing projects (`meta.docs_seeded`), and listed first. The contract is included in MCP `initialize` instructions, `overview`, `context.md` and folder markdown. For links (never the owner): `CONTRACT.md` is read-only, and `createFile` refuses a name whose topic key matches a file already in the folder (versions, dates, "final", "copy", "(2)" stripped), naming the file to update instead. `append_file` (MCP) and `POST /s/<t>/append/<path>` add to logs without rewriting them.
+
 ## 6. UI
 
 Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, black/white, hairlines), Height (calm tables), Raycast (palette).

@@ -33,6 +33,16 @@ CI: `.github/workflows/deploy-relay.yml` deploys on pushes to `main` that touch 
 
 Self-hosting instead: `PORT=8787 DATA_DIR=/var/lib/relay OWNER_KEY=… node src/node.ts` behind any HTTPS proxy.
 
+## The contract (keeps every project organised)
+
+Every project has three files at its root, listed first:
+
+- **CONTRACT.md**: the rules every agent follows. Only the owner edits it (in the file preview).
+- **PROJECT_STATE.md**: the one current picture (phase, done, next, open questions), updated in place.
+- **LOG.md**: the history. Agents add one line per change with `append_file` and never rewrite it.
+
+Relay makes agents keep to it. The contract is in every connector's instructions and at the top of `overview` and `context.md`. A link cannot edit CONTRACT.md, and it cannot create a version copy of a file already in the folder (`plan-v2.md`, `plan final.md`, `plan (copy).md`, a dated copy, or `patch-1.2.md` next to `patch-1.md`). It gets told which file to update instead. New projects start with the three files; projects that existed before get them on the next deploy.
+
 ## Using it with agents
 
 1. Open a project, press **Share**, name the agent (the kind is guessed from the name), pick the scope and **Read + write** or **Read only**.
