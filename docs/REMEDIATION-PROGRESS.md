@@ -570,3 +570,11 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FD-6, QA2-FD-10
 - An answer that arrives, and a dropped one, both clear `offlineReason`, so the offline notice no longer repeats an old "Escobar isn't set up yet." after a connection drop.
+
+#### QA2-FD-4, QA2-FD-8, QA2-FD-11, QA2-FD-12
+- **Health sharing off:** the replayed brief drops the whole driver group after "advice X". The brackets are matched, because the check-in driver has its own. No health driver survives and no stray ")" is left, which matches the live brief.
+- **Body sharing off:** "weight 80.5 [f13] kg", as real briefs tag it, is removed too.
+- **explain_method results:** the personal keys that `knowledge/methods.ts` drops live are scrubbed on replay, in `data` and `facts`: `restingHrBaseline`, `healthDaysLogged`, `zoneNFromBpm` for health; `restingKcalPerDay` for body.
+
+#### QA2-FD-5
+- Escobar's `recall` gives a memory's `since` as the phone's day, and Past conversations label rows with the local day (`dayKey`), matching the memory screen. The test fails without the fix under Asia/Manila (`npm run test:tz`).

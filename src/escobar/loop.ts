@@ -115,16 +115,18 @@ function deniedFor(use: { name: string; input: unknown } | undefined, sharing: {
  * health or body parts (heart numbers, resting-HR baselines, sleep, HR drivers; body weight and
  * body fat), in both `data` and the `facts` map. Briefs lose their drivers and weight.
  */
-const HEALTH_KEYS = new Set(['baselines', 'heart', 'watch', 'avgBpm', 'maxBpm', 'activeKcal', 'restingHr', 'restingHr7d', 'restingHr28d', 'hrv', 'sleep', 'sleepMinutes', 'sleep14dMedianMin']);
-const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat']);
-const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers)\b/i;
-const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat)\b/;
+// QA2-FD-4: plus the explain_method personal keys (knowledge/methods.ts drops the same ones live).
+const HEALTH_KEYS = new Set(['baselines', 'heart', 'watch', 'avgBpm', 'maxBpm', 'activeKcal', 'restingHr', 'restingHr7d', 'restingHr28d', 'hrv', 'sleep', 'sleepMinutes', 'sleep14dMedianMin', 'restingHrBaseline', 'healthDaysLogged']);
+const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat', 'restingKcalPerDay']);
+const HEALTH_KEY = (k: string) => HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k);
+const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers|healthDaysLogged|zone\d+FromBpm)\b/i;
+const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat|restingKcalPerDay)\b/;
 function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown {
   if (Array.isArray(v)) return v.map(x => scrub(x, sharing));
   if (!isObj(v)) return v;
   const out: Record<string, unknown> = {};
   for (const [k, x] of Object.entries(v)) {
-    if (!sharing.health && HEALTH_KEYS.has(k)) continue;
+    if (!sharing.health && HEALTH_KEY(k)) continue;
     if (!sharing.body && BODY_KEYS.has(k)) continue;
     out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
   }
@@ -137,10 +139,28 @@ function redactResult(content: string, sharing: { health: boolean; body: boolean
   const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => typeof t !== 'string' || !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t))))) : parsed.facts;
   return JSON.stringify({ ...parsed, data: scrub(parsed.data, sharing), facts });
 }
+/**
+ * QA2-FD-8, QA2-FD-11, QA2-FD-12: the readiness drivers after "advice X" are dropped whole, by
+ * matching brackets, since the check-in driver has brackets of its own. The live brief drops all of
+ * them when health sharing is off, so the replay does the same.
+ */
+function dropDrivers(line: string): string {
+  let out = '', i = 0;
+  const re = /advice [\w-]+ \(/g;
+  for (let m = re.exec(line); m; m = re.exec(line)) {
+    let depth = 1, j = m.index + m[0].length;
+    for (; j < line.length && depth > 0; j++) { if (line[j] === '(') depth++; else if (line[j] === ')') depth--; }
+    out += line.slice(i, m.index + m[0].length - 2);
+    i = j;
+    re.lastIndex = j;
+  }
+  return out + line.slice(i);
+}
 function redactBrief(text: string, sharing: { health: boolean; body: boolean }): string {
   let t = text;
-  if (!sharing.health) t = t.replace(/(advice [\w-]+) \([^)\n]*\)/g, '$1');
-  if (!sharing.body) t = t.replace(/, weight [\d.]+ kg/g, '');
+  if (!sharing.health) t = t.split('\n').map(dropDrivers).join('\n');
+  // QA2-FD-4: a real brief tags the number with its fact id ("weight 80.5 [f13] kg").
+  if (!sharing.body) t = t.replace(/, weight [\d.]+(?: \[f\d+\])? kg/g, '');
   return t;
 }
 
