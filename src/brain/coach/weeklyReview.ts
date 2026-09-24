@@ -12,7 +12,7 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
-import { trend } from '../trend';
+import { sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import type { Insight } from './rules';
 
@@ -236,7 +236,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
 
   // e1RM trend and progress vs training age, and staleness, per exercise the user actually does
   for (const { id, name } of exerciseIds) {
-    const hist = exerciseHistory(sessions, id, custom);
+    // QA2-FC-2: a comeback is judged only on the sessions since the break, as in plateauStatus.
+    const hist = sinceLastBreak(exerciseHistory(sessions, id, custom));
     if (hist.length < 4 || !isActive(hist, today)) continue;
     // e1RM says nothing for assisted, body-weight or timed work (BR-06).
     if (modeOf(id, custom) !== 'weighted') continue;

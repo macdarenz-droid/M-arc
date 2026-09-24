@@ -189,6 +189,21 @@ describe('assisted lifts in Escobar (QA-R3a-2)', () => {
     const { summarize } = await import('@/escobar/tools/show');
     expect((summarize('lift_trend', { exerciseId: id, weeks: 12 }, c) as { plateau: string }).plateau).toBe('progressing');
   });
+  it('more reps at the same assistance reads as up, not down (QA2-FC-4)', async () => {
+    const s = sixMonthsState();
+    const id = 'lib_assisted_pull_up';
+    const reps = [3, 3, 4, 4, 5, 5, 6, 6];
+    const sessions = reps.map((r, i) => {
+      const day = new Date(Date.UTC(2026, 6, 28 + i * 7)).toISOString().slice(0, 10);
+      return { id: `ar${i}`, splitId: 'x', splitName: 'Pull', day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: [{ exerciseId: id, name: 'Assisted Pull-Up', sets: [{ kg: 20, reps: r, effort: 'ideal' as const }] }], logging: { mode: 'live', flags: [] } as never };
+    });
+    const c = ctxOf({ ...s, sessions: [...s.sessions, ...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) });
+    const h = R.getExerciseHistory({ exerciseId: id, weeks: 12 }, c) as { plateau: { status: string }; trend: { direction: string } };
+    expect(h.plateau.status).toBe('progressing');
+    expect(h.trend.direction).toBe('up');
+    const { summarize } = await import('@/escobar/tools/show');
+    expect((summarize('lift_trend', { exerciseId: id, weeks: 12 }, c) as { trend: string }).trend).toBe('up');
+  });
 });
 
 describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {

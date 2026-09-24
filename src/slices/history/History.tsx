@@ -11,10 +11,10 @@ import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
 import { parseDurationSec, parseReps } from '@/core/parse';
 import { hasEntry } from '@/brain/exposure';
 import { allRecords, PR_LABEL } from '@/brain/prs';
-import { exerciseHistory } from '@/brain/history';
-import { trend } from '@/brain/trend';
+import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
+import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
@@ -212,7 +212,8 @@ function Stats() {
   const exercise = fromPanel && exerciseIds.some(([id]) => id === fromPanel) ? fromPanel : picked;
   usePalaceFocus(exercise ? 'history.exercise-stats' : 'history.week', exercise ? { exerciseId: exercise } : undefined);
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
-  const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
+  const mode = modeOf(exercise, s.customExercises);
+  const t = progressTrend(hist, mode);
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
 
@@ -239,14 +240,14 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist.slice(-12).map(h => h.bestE1rm || h.topKg || h.bestReps)} />
+                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} />
                 <div class="grid-3">
                   <Stat value={formatLoad(hist[hist.length - 1]!.topKg, u)} label="last top load" />
                   <Stat value={`${hist[hist.length - 1]!.topReps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
-                <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
+                <p class="hint">{progressHint(mode)}</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
           </Card>

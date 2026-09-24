@@ -13,7 +13,7 @@ import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
-import { plateauStatus } from '../trend';
+import { plateauStatus, sinceLastBreak } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
@@ -339,7 +339,8 @@ export const RULES: Rule[] = [
         if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
         // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
-        const recent = hist.filter(h => daysBetween(h.day, ctx.today) <= 56);
+        // QA2-FC-2/3: like plateauStatus, only the sessions since the last long break count.
+        const recent = sinceLastBreak(hist).filter(h => daysBetween(h.day, ctx.today) <= 56);
         if (recent.length < 6) return [];
         // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
         if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];

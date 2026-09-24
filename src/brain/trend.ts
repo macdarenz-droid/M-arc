@@ -37,16 +37,20 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
 /**
  * QA-R3a-2: the trend of what counts as progress for the lift's mode. Weighted: the strength
  * estimate (or top load). Bodyweight: best reps. Duration: longest hold. Assisted: the assistance
- * load, with the direction inverted (less help is up).
+ * load, with the direction inverted (less help is up); with it flat, the best reps, as in plateauStatus.
  */
 export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): Trend {
   const recent = history.slice(-12);
   if (mode === 'bodyweight') return trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
   if (mode === 'duration') return trend(recent.map(h => ({ day: h.day, value: h.bestDurationSec })));
-  const t = trend(recent.map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
-  if (mode !== 'assisted') return t;
-  const flipped: Direction = t.direction === 'up' ? 'down' : t.direction === 'down' ? 'up' : t.direction;
-  return { ...t, direction: flipped, slopePerWeek: -t.slopePerWeek };
+  if (mode === 'assisted') {
+    // QA2-FC-4: not the e1RM of the assistance, which rises with more reps and would read as down.
+    const help = trend(recent.map(h => ({ day: h.day, value: h.topKg })));
+    if (help.direction === 'up' || help.direction === 'down') return { ...help, direction: help.direction === 'up' ? 'down' : 'up', slopePerWeek: -help.slopePerWeek };
+    const reps = trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
+    return reps.direction === 'unknown' && help.direction === 'flat' ? help : reps;
+  }
+  return trend(recent.map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
 }
 
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';

@@ -132,3 +132,25 @@ describe('weight trend and week grade (BR-14, BR-22)', () => {
     expect(weekSummary(two, '2026-09-18', [], null).grade.title).toBe('Building momentum'); // QA-R6-10: no schedule is null; 0 now means every planned day was taken off
   });
 });
+
+describe('weekly e1RM review after a break (QA2-FC-2)', () => {
+  const profile: Profile = { name: 'Test' };
+  const review = (sessions: ReturnType<typeof session>[], today: string) => weeklyReviewInsights({
+    sessions, today, custom: [], schedule: emptySchedule(), goal: 'lean', profile,
+    weightLog: [], trainingAgeMonths: 24, exerciseIds: [{ id: bench, name: 'Barbell Bench Press' }],
+  }, 50).filter(i => i.id.startsWith('weekly:e1rm'));
+  it('sessions before a break do not make a comeback read as flat', () => {
+    const before = ['2026-07-29', '2026-07-31', '2026-08-03', '2026-08-05'].map(d => session(d, [{ id: bench, sets: sets(100, 5, 'ideal', 3) }]));
+    const after = ['2026-09-14', '2026-09-16', '2026-09-18'].map(d => session(d, [{ id: bench, sets: sets(100, 5, 'ideal', 3) }]));
+    expect(review([...before, ...after], '2026-09-19')).toEqual([]);
+  });
+  it('a rebuild after the break is judged on its own sessions: rising, not falling', async () => {
+    const { addDays } = await import('@/core/dates');
+    const before = ['2026-07-27', '2026-07-29', '2026-07-31', '2026-08-03', '2026-08-05', '2026-08-07'].map(d => session(d, [{ id: bench, sets: sets(100, 5, 'ideal', 3) }]));
+    const after = Array.from({ length: 10 }, (_, i) => session(addDays('2026-09-14', Math.round(i * 11 / 9)), [{ id: bench, sets: sets(85 + i, 5, 'ideal', 3) }]));
+    const e1rm = review([...before, ...after], '2026-09-26');
+    expect(e1rm.length).toBeGreaterThan(0);
+    expect(e1rm[0]!.title).not.toMatch(/falling/i);
+    expect(e1rm[0]!.title).toMatch(/rising/i);
+  });
+});
