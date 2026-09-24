@@ -319,7 +319,9 @@ test('contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it
   const init = await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 0, method: 'initialize', params: { protocolVersion: '2025-06-18' } } })
   assert.match(((await init.json()) as any).result.instructions, /One file per topic/)
   assert.match((await tool('overview', {})).content[0].text, /## Contract \(every agent follows this\)/)
-  assert.match(await (await call('GET', `/s/${link.token}/context.md`, { auth: false })).text(), /## Contract/)
+  const ctx = await (await call('GET', `/s/${link.token}/context.md`, { auth: false })).text()
+  assert.match(ctx, /## Contract/)
+  assert.equal(ctx.split('One file per topic, kept current').length - 1, 1, 'the contract appears once')
 
   assert.equal((await tool('write_file', { path: 'docs/plan.md', content: 'v1' })).isError, undefined)
   for (const dup of ['docs/plan-v2.md', 'docs/plan final.md', 'docs/Plan (copy).md', 'docs/plan 2026-09-24.md'])
