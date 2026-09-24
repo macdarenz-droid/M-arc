@@ -3,6 +3,7 @@
 import { HttpError, cleanName, segments, type Author, type FileMeta, type Folder, type FolderStat, type Link, type Message, type Project, type Store } from './store.ts'
 import { json, limited, rawResponse, readBytes, readForm, readJson, type Ctx } from './app.ts'
 import { KINDS, esc, fmtBytes, isText, renderMarkdown } from '../public/shared.js'
+import { CONTRACT } from './contract.ts'
 
 export interface View {
   store: Store
@@ -124,6 +125,8 @@ function contextMd(v: View, at: View['tree'][number], limit: number): string {
   let budget = 256 * 1024
   const texts: string[] = []
   for (const f of [...files].sort((a, b) => b.updated_at - a.updated_at)) {
+    // The contract is already at the top; don't spend tokens on it twice.
+    if (f.folder_id === v.project.root_id && f.name.toLowerCase() === CONTRACT.toLowerCase()) continue
     if (!isText(f.name, f.mime) || f.size > 48 * 1024 || f.size > budget) continue
     budget -= f.size
     const body = new TextDecoder().decode(v.store.read(f.id))
