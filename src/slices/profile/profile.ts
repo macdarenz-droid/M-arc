@@ -13,10 +13,6 @@ function recordChange(field: ProfileField, from: unknown, to: unknown, source: S
   update(s => ({ ...s, profileHistory: [...s.profileHistory, { at: new Date().toISOString(), field, from, to, source }].slice(-500) }));
 }
 
-export function setName(name: string): void {
-  update(s => ({ ...s, profile: { ...s.profile, name: name.slice(0, 30) } }));
-}
-
 export function setBirthYear(year: number | undefined, source: Source = 'user'): void {
   const from = state.value.profile.birthYear;
   update(s => ({ ...s, profile: { ...s.profile, birthYear: year } }));

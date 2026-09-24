@@ -49,3 +49,13 @@ describe('records in the display unit (BR-28)', () => {
     expect(allRecords(s).find(r => r.kind === 'heaviest')!.detail).toBe('95.25 kg × 5');
   });
 });
+
+describe('records and set kinds (F2)', () => {
+  it('a heavier warm-up or drop set never sets a record', () => {
+    const a = session('2026-09-01', [{ id: ex, sets: sets(60, 8) }]);
+    const b = session('2026-09-08', [{ id: ex, sets: [{ kg: 70, reps: 3, kind: 'warmup' }, { kg: 50, reps: 20, kind: 'drop' }, ...sets(60, 8)] }]);
+    expect(allRecords([a, b])).toEqual([]);
+    expect(isLiveRecord([a], ex, { kg: 70, reps: 8, kind: 'drop' })).toBe(false);
+    expect(isLiveRecord([a], ex, { kg: 70, reps: 8 })).toBe(true);
+  });
+});

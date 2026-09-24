@@ -165,3 +165,12 @@ describe('plan whiteboard detection', () => {
     expect(isPlanWork([], [{ id: 'e', name: 'evaluate_plan', label: '', done: false }])).toBe(true);
   });
 });
+
+describe('What Escobar knows: saved day (QA-R4b-8)', () => {
+  it("is the phone's local day", async () => {
+    const { savedDay } = await import('@/escobar/ui/MemoryScreen');
+    const { dayKey } = await import('@/core/dates');
+    const iso = '2026-09-22T22:30:00.000Z';
+    expect(savedDay(iso)).toBe(dayKey(new Date(iso)));
+  });
+});

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { plannedPerWeek, today, unit } from '@/app/selectors';
+import { today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
@@ -9,12 +9,13 @@ import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, Session } from '@/core/models';
 import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
 import { parseDurationSec, parseReps } from '@/core/parse';
+import { hasEntry } from '@/brain/exposure';
 import { allRecords, PR_LABEL } from '@/brain/prs';
-import { exerciseHistory } from '@/brain/history';
-import { trend } from '@/brain/trend';
-import { weekSummary } from '@/brain/weekly';
+import { exerciseHistory, modeOf } from '@/brain/history';
+import { plannedThisWeek, weekSummary } from '@/brain/weekly';
+import { volumeChartWeeks } from './volumeChart';
+import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
-import { findExercise } from '@/core/exercises';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
@@ -95,10 +96,13 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
       </div>
       {open && (
         <div class="list" style={{ marginTop: 8 }}>
+          {session.note && <p class="small" data-palace="history.session-note">{session.note}</p>}
           {session.exercises.map((e, i) => (
             <Row key={i}>
               <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
+              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
+              {e.note && <div class="hint">Note: {e.note}</div>}
+              {state.value.exerciseNotes[e.exerciseId] && <div class="hint muted">Setup: {state.value.exerciseNotes[e.exerciseId]}</div>}
             </Row>
           ))}
         </div>
@@ -129,7 +133,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   // Every history edit relearns the recovery model from what is left (UI-12).
   const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(s => (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0) })).filter(e => e.sets.length) };
+    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
     if (!cleaned.exercises.length) { remove(); return; }
     update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
@@ -165,7 +169,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
             </div>
           </Card>
         ))}
-        <p class="hint">Sets with 0 reps are removed on save. Loads are in kg here.{u === 'lb' ? ' Your display unit is lb elsewhere.' : ''}</p>
+        <p class="hint">Sets with 0 reps are removed on save. Each load is shown in the unit it was logged in; tap the pill to switch.</p>
         <Button variant="primary" onClick={save}>Save changes</Button>
         {!confirm ? <Button variant="danger" onClick={() => setConfirm(true)}><IconTrash size={16} /> Delete session</Button> : <div class="row"><Button variant="quiet" onClick={() => setConfirm(false)}>Keep</Button><Button variant="danger" class="grow" onClick={remove}>Yes, delete</Button></div>}
       </div>
@@ -175,10 +179,31 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
 
 /* ---------- Stats ---------- */
 
+const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
+
+/** F8: 12 weeks of training volume as bars, in the display unit. */
+function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
+  const s = state.value;
+  const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u), [s.sessions, s.customExercises, today.value, u]);
+  const values = weeks.map(w => w.value);
+  const max = Math.max(1, ...values);
+  if (!values.some(v => v > 0)) return null;
+  const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
+  return (
+    <Card data-palace="history.weekly-volume">
+      <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
+      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks`}>
+        {weeks.map((w, i) => <i key={w.week} title={`${formatDay(w.week)}: ${fmt(values[i]!)} ${u}`} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />)}
+      </div>
+      <div class="row-between hint"><span>{formatDay(weeks[0]!.week)}</span><span>this week</span></div>
+    </Card>
+  );
+}
+
 function Stats() {
   const s = state.value;
   const u = unit.value;
-  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedPerWeek.value);
+  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, today.value));
   const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
@@ -187,7 +212,8 @@ function Stats() {
   const exercise = fromPanel && exerciseIds.some(([id]) => id === fromPanel) ? fromPanel : picked;
   usePalaceFocus(exercise ? 'history.exercise-stats' : 'history.week', exercise ? { exerciseId: exercise } : undefined);
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
-  const t = trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
+  const mode = modeOf(exercise, s.customExercises);
+  const t = progressTrend(hist, mode);
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
 
@@ -195,7 +221,7 @@ function Stats() {
     <div class="stack" style={{ marginTop: 14 }}>
       <Card data-palace="history.week">
         <div class="eyebrow">This week</div>
-        <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={`${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
+        <div class="grid-3" style={{ marginTop: 8 }}><Stat value={w.workouts} label="workouts" /><Stat value={w.sets} label="sets" /><Stat value={u === 'lb' ? `${Math.round(kgToDisplay(w.volumeKg, 'lb') / 100) / 10}k lb` : `${Math.round(w.volumeKg / 1000 * 10) / 10}t`} label="volume" /></div>
         {muscleRows.length > 0 && (
           <div class="stack-sm" style={{ marginTop: 14 }}>
             {muscleRows.map(([m, v]) => { const prev = (w.previousMuscleSets as Record<string, number>)[m] ?? 0; return (
@@ -206,20 +232,22 @@ function Stats() {
         )}
       </Card>
 
+      <WeeklyVolumeChart u={u} />
+
       <Section title="Exercise progress" palace="history.exercise-stats" aside={exercise ? <AskAbout refTo={{ kind: 'exercise', id: exercise, label: `${exerciseIds.find(([id]) => id === exercise)?.[1] ?? 'Exercise'} trend` }} /> : undefined}>
         {!exerciseIds.length ? <Card class="card-quiet"><p class="small muted">Log two sessions of an exercise to see its trend.</p></Card> : (
           <Card>
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist.slice(-12).map(h => h.bestE1rm || h.topKg || h.bestReps)} />
+                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} />
                 <div class="grid-3">
                   <Stat value={formatLoad(hist[hist.length - 1]!.topKg, u)} label="last top load" />
                   <Stat value={`${hist[hist.length - 1]!.topReps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
-                <p class="hint">Trend uses an estimated one-rep strength score from sets of 10 reps or fewer. It is a guide, not a test.</p>
+                <p class="hint">{progressHint(mode)}</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
           </Card>

@@ -6,7 +6,7 @@
 import { signal } from '@preact/signals';
 import { isNative } from './capacitor';
 
-export type WatchState = 'unsupported' | 'permission' | 'idle' | 'scanning' | 'connecting' | 'connected' | 'reconnecting' | 'stopped';
+export type WatchState = 'unsupported' | 'permission' | 'idle' | 'scanning' | 'connecting' | 'connected' | 'reconnecting' | 'stopped' | 'paused';
 export type Freshness = 'LIVE' | 'DELAYED' | 'STALE' | 'WAITING' | 'CHECK_FIT' | 'DISCONNECTED';
 export interface WatchDevice { address: string; name: string; advertisesHeartRate: boolean; paired: boolean; rssi: number }
 export interface WatchStatus { state: WatchState; freshness: Freshness; deviceName?: string; battery?: number; message: string }
@@ -29,6 +29,7 @@ interface WatchPlugin {
   connect(opts: { address: string }): Promise<void>;
   disconnect(): Promise<void>;
   status(): Promise<WatchStatus>;
+  diagnostics?(): Promise<{ text: string }>;
   // The legacy Capacitor.Plugins proxy returns a bare handle on some builds, a Promise on others.
   addListener(eventName: string, cb: (data: unknown) => void): Promise<ListenerHandle> | ListenerHandle;
 }
@@ -60,10 +61,36 @@ export function startWatchListeners(): void {
   }).catch(() => undefined);
   listen(p, 'watchStatus', data => { watchStatus.value = data as WatchStatus; });
   listen(p, 'watchMeasurement', data => { latestMeasurement.value = data as WatchMeasurement; });
+  // PL-13: one batched, throttled event with the whole list; the old per-device event stays for one release.
+  listen(p, 'watchDevices', data => { scannedDevices.value = devicesFrom(data) ?? scannedDevices.value; });
   listen(p, 'watchDevice', data => {
     const d = data as WatchDevice;
     scannedDevices.value = [...scannedDevices.value.filter(x => x.address !== d.address), d];
   });
+}
+
+/** Reads a `watchDevices` payload; null when it isn't one. */
+export function devicesFrom(data: unknown): WatchDevice[] | null {
+  const list = (data as { devices?: unknown } | null)?.devices;
+  if (!Array.isArray(list)) return null;
+  return list.filter((d): d is WatchDevice => !!d && typeof (d as WatchDevice).address === 'string');
+}
+
+/** The service's status and connection log (UI-08); no addresses or heart-rate values. */
+export async function watchDiagnostics(): Promise<string | null> {
+  const p = plugin();
+  if (!p?.diagnostics) return null;
+  try { return (await p.diagnostics()).text; } catch { return null; }
+}
+
+/**
+ * QA-R5a-2, QA-R5b-1, QA-R5b-6: Android 11 and older find Bluetooth devices through the Location
+ * permission; only Android 12+ has "Nearby devices".
+ */
+export function watchPermissionHint(needsLocation: boolean): string {
+  return needsLocation
+    ? 'M/ARC needs the Location permission to find your watch (this Android version uses it for Bluetooth scans). Allow it in Android settings, then scan again.'
+    : 'M/ARC needs the Nearby devices permission to find your watch. Allow it in Android settings, then scan again.';
 }
 
 export async function watchPermissionState(): Promise<{ granted: boolean; needsLocation: boolean } | null> {

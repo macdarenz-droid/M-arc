@@ -14,3 +14,35 @@ describe('findExercise (ST-13)', () => {
     expect(findExerciseExact('Chest Pres')).toBeUndefined();
   });
 });
+
+describe('a longer name is not filed under the library name it contains (QA-R3b-3)', () => {
+  it('extra movement words make it a different exercise', () => {
+    expect(findExercise('Hack Squat Calf Raise')?.id).not.toBe(findExercise('Hack Squat')?.id);
+    expect(findExercise('Hack Squat Calf')?.id).not.toBe(findExercise('Hack Squat')?.id);
+  });
+  it('extra words that name no movement still match', () => {
+    expect(findExercise('Hack Squat heavy')?.id).toBe(findExercise('Hack Squat')?.id);
+  });
+});
+
+describe('the heavy main-lift damage floor (QA-R7-2, QA-R7-3)', () => {
+  it('comes from DAMAGE_HEAVY_MAIN, so changing it changes the model', async () => {
+    const { vi } = await import('vitest');
+    vi.resetModules();
+    vi.doMock('@/data/recovery', async orig => ({ ...(await orig<typeof import('@/data/recovery')>()), DAMAGE_HEAVY_MAIN: 1.5 }));
+    const { setDamage } = await import('@/core/exercises');
+    expect(setDamage({ id: 'x', name: 'Bench', role: 'main' }, 5)).toBe(1.5);
+    vi.doUnmock('@/data/recovery');
+    vi.resetModules();
+  });
+});
+
+describe('equipment words in legacy names (QA2-FC-7)', () => {
+  it('a name that adds only an equipment word still maps to the library exercise', async () => {
+    const { findExerciseWithEquipment } = await import('@/core/exercises');
+    const pairs: Array<[string, string, string]> = [['Leg Press Machine', 'Machine', 'Leg Press'], ['Cable Lat Pulldown', 'Cable', 'Lat Pulldown'], ['Seated Leg Curl Machine', 'Machine', 'Seated Leg Curl'], ['Hip Thrust Barbell', 'Barbell', 'Hip Thrust'], ['Cable Triceps Pushdown', 'Cable', 'Triceps Pushdown']];
+    for (const [name, eq, want] of pairs) expect(findExerciseWithEquipment(name, eq)?.name, name).toMatch(new RegExp(want, 'i'));
+    // A second movement still means a different exercise (QA-R3b-3).
+    expect(findExercise('Hack Squat Calf Raise')?.id).not.toBe(findExercise('Hack Squat')?.id);
+  });
+});

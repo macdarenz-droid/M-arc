@@ -8,6 +8,8 @@
 import type { ExerciseSessionSummary } from './history';
 import { daysBetween } from '@/core/dates';
 
+export const BIAS_MIN_OBSERVATIONS = 3;
+export const BIAS_CAP_REPS = 3;
 const ASSUMED_RIR: Record<'easy' | 'ideal', number> = { easy: 3, ideal: 2 };
 
 export interface RirObservation {
@@ -71,9 +73,9 @@ export function effortBiasByLabel(observations: RirObservation[]): EffortBias[] 
   }
   const out: EffortBias[] = [];
   for (const [effort, vals] of groups) {
-    if (vals.length < 3) continue;
+    if (vals.length < BIAS_MIN_OBSERVATIONS) continue;
     const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-    const bias = Math.max(-3, Math.min(3, mean - ASSUMED_RIR[effort]));
+    const bias = Math.max(-BIAS_CAP_REPS, Math.min(BIAS_CAP_REPS, mean - ASSUMED_RIR[effort]));
     out.push({ effort, bias, n: vals.length });
   }
   return out;

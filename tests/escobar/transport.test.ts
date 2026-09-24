@@ -56,7 +56,9 @@ describe('http transport', () => {
     expect(out[0]).toMatchObject({ t: 'error', code: 'network' });
   });
   it('health needs protocol 2', async () => {
-    expect((await checkHealth('https://w', (async () => new Response(JSON.stringify({ ok: true, protocol: 2, model: 'm' }))) as never)).ok).toBe(true);
+    expect((await checkHealth('https://w', (async () => new Response(JSON.stringify({ ok: true, protocol: 2, model: 'm', key: true }))) as never)).ok).toBe(true);
+    // ES-08: a Worker without its key is not "online".
+    expect(await checkHealth('https://w', (async () => new Response(JSON.stringify({ ok: true, protocol: 2, model: 'm', key: false }))) as never)).toEqual({ ok: false, message: "Escobar isn't set up yet." });
     expect((await checkHealth('https://w', (async () => new Response(JSON.stringify({ ok: true }))) as never)).ok).toBe(false);
     expect((await checkHealth('https://w', (async () => { throw new Error('x'); }) as never)).ok).toBe(false);
   });

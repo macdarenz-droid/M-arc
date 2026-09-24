@@ -56,7 +56,7 @@
   },
   {
    "name": "get_exercise_history",
-   "description": "Per-session history of one exercise: top set, strength estimate (e1RM), effort mix; plus plateau status, trend, records and effort drift. Call it for any question about progress, stalls or a specific lift.",
+   "description": "Per-session history of one exercise, newest session first: top set, strength estimate (e1RM), effort mix; plus plateau status, trend, records and effort drift. Call it for any question about progress, stalls or a specific lift.",
    "input_schema": {
     "type": "object",
     "properties": {

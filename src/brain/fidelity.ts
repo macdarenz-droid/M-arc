@@ -86,20 +86,8 @@ export function retroSessionLogging(trainedAt: string, trainedEndAt: string, tim
   };
 }
 
-/** For a session that predates this field (an already-saved session, or a legacy v36 import). */
-export function legacySessionLogging(startedAt: string, endedAt: string): SessionLogging {
-  return {
-    mode: 'legacy',
-    trainedAt: startedAt,
-    trainedEndAt: endedAt || startedAt,
-    loggedAt: endedAt || startedAt,
-    timeSource: 'default',
-    liveShare: 0,
-    timingTrusted: false,
-    contentConfidence: 'medium',
-    flags: ['legacy'],
-  };
-}
+/** Lives in core so the store and the migration need not import the brain (RG-12). */
+export { legacySessionLogging } from '@/core/sessionLogging';
 
 /** kg more than 25% above the exercise's recent best, or a physically implausible absolute load. */
 export function implausibleLoad(kg: number, recentBestKg: number | null): boolean {
@@ -113,6 +101,12 @@ export function implausibleReps(reps: number, isHeavyMainLift: boolean): boolean
 }
 
 /** A load within 5% of 2.2x or 0.45x the exercise's recent best: kg and lb likely got mixed up. */
+/** QA-R6-9: warm-ups and drop sets are light on purpose, so they are never a kg/lb slip. */
+export function setUnitSuspect(set: { kg?: number; kind?: LoggedSet['kind'] }, recentBestKg: number | null): boolean {
+  if (set.kind === 'warmup' || set.kind === 'drop' || set.kg == null) return false;
+  return unitSuspect(set.kg, recentBestKg);
+}
+
 export function unitSuspect(kg: number, recentBestKg: number | null): boolean {
   if (!recentBestKg || recentBestKg <= 0 || kg <= 0) return false;
   const ratio = kg / recentBestKg;
@@ -153,7 +147,8 @@ export function flagsForSet(set: LoggedSet, recentBestKg: number | null, isHeavy
   const reps = set.reps ?? 0;
   if (kg > 0 && implausibleLoad(kg, recentBestKg)) flags.push('implausible_load');
   if (reps > 0 && implausibleReps(reps, isHeavyMainLift)) flags.push('implausible_reps');
-  if (kg > 0 && unitSuspect(kg, recentBestKg)) flags.push('unit_suspect');
+  // QA2-FE-3, QA2-FE-4: a warm-up or drop set is light on purpose, never a kg/lb slip.
+  if (kg > 0 && setUnitSuspect(set, recentBestKg)) flags.push('unit_suspect');
   if (futureTime(set.at, nowMs)) flags.push('future_time');
   return flags;
 }

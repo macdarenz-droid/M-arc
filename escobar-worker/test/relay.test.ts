@@ -3,7 +3,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import { handle } from '../src/handler';
 import { UpstreamRelay } from '../src/upstreamRelay';
 import { mapError, REGION_MESSAGE, type ClientLike } from '../src/anthropic';
-import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn } from './helpers';
+import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
+import { relayShard } from '../src/upstream';
 
 const TEXT = [{ type: 'text', text: 'Answered from the US.' }];
 const original = UpstreamRelay.makeClient;
@@ -31,7 +32,8 @@ describe('UpstreamRelay (PL-20)', () => {
     const edge = vi.fn();
     const r = await handle(post(turn()), baseEnv({ UPSTREAM: ns as never }), { ...deps(mockClient([])), makeClient: edge });
     const ev = await sse(r);
-    expect(ns.calls).toEqual([{ name: 'us', hint: 'enam' }]);
+    // QA-R0-5: one of RELAY_SHARDS objects, chosen by device, all pinned to eastern North America.
+    expect(ns.calls).toEqual([{ name: `us-${relayShard(DEVICE)}`, hint: 'enam' }]);
     expect(edge).not.toHaveBeenCalled();
     expect(client.calls).toHaveLength(1);
     expect(ev.filter(e => e.t === 'text').map(e => e.d).join('')).toBe('Answered from the US.');
@@ -81,5 +83,33 @@ describe('disconnects reach the relay (PL-05 with PL-20)', () => {
     await vi.waitFor(() => { expect(signal).toBeDefined(); }, { timeout: 200 });
     await reader.cancel();
     await vi.waitFor(() => { expect(signal!.aborted).toBe(true); }, { timeout: 50, interval: 2 });
+  });
+});
+
+describe('relay shard choice (QA2-FA-5)', () => {
+  it('a caller cannot pick a shard from its device id: the same id lands on different shards under different instance seeds', () => {
+    const seen = new Set<number>();
+    for (let seed = 0; seed < 64; seed++) seen.add(relayShard(DEVICE, seed));
+    expect(seen.size).toBe(8);
+    // Two ids that share a shard under one seed do not keep sharing it under the others.
+    const a = 'dev_000000000000000000000001', b = 'dev_000000000000000000000009';
+    let together = 0;
+    for (let seed = 0; seed < 64; seed++) if (relayShard(a, seed) === relayShard(b, seed)) together++;
+    expect(together).toBeLessThan(32);
+  });
+});
+
+describe('Worker global scope (deploy error 10021)', () => {
+  it('loading the Worker makes no random values; the shard seed is made on first use', async () => {
+    vi.resetModules();
+    const spy = vi.spyOn(crypto, 'getRandomValues');
+    const mod = await import('../src/upstream');
+    await import('../src/index');
+    expect(spy).not.toHaveBeenCalled();
+    mod.relayShard('dev_000000000000000000000001');
+    expect(spy).toHaveBeenCalledTimes(1);
+    mod.relayShard('dev_000000000000000000000002');
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
   });
 });

@@ -26,7 +26,8 @@ export function hrMax(profile: Profile, observedMax?: { bpm: number; atMs: numbe
     const monthsOld = (nowMs - observedMax.atMs) / (30.44 * 86_400_000);
     // A session rarely reaches a true max, so a fresh observation never lowers the age estimate (BR-12).
     if (monthsOld <= OBSERVED_MAX_STALE_MONTHS) return { bpm: Math.round(Math.max(observedMax.bpm, tanaka ?? 0)), source: 'observed' };
-    if (tanaka != null) return { bpm: Math.round(observedMax.bpm + (tanaka - observedMax.bpm) * 0.25), source: 'observed' };
+    // QA-R3b-6: an old observation never lowers the age estimate either.
+    if (tanaka != null) return { bpm: Math.round(Math.max(tanaka, observedMax.bpm + (tanaka - observedMax.bpm) * 0.25)), source: 'observed' };
     return { bpm: Math.round(observedMax.bpm), source: 'observed' };
   }
   if (tanaka != null) return { bpm: Math.round(tanaka), source: 'tanaka' };

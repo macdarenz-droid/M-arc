@@ -14,9 +14,11 @@ import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
 import { currentFocus } from './palace/focus';
-import { emptyStore, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
-import { imageData } from './images';
-import { escobarUi, loopView, online, proxyUrlOf, quotaResetAt } from './state';
+import { emptyStore, legacyConversation, loadStore, memoryStorage, newConversation, onStoreReplaced, saveStore, setEscobarStorage, upsertConversation } from './store';
+import { evictImages, imageData } from './images';
+import { escobarUi, estimateCost, loopView, offlineReason, online, proxyUrlOf, quotaResetAt } from './state';
+import { PROTECTED_MEMORY } from './tools/executor';
+import { isPlanRequest } from './ui/prompts';
 import type { MemoryEffect } from './tools/executor';
 import type { Conversation, ConversationStore, ContextRef } from './types';
 import type { EscobarMode } from './context/modes';
@@ -44,15 +46,24 @@ let loaded = false;
 /** Bumped whenever the conversation store is replaced; a turn from an older epoch writes nothing (ES-07, R4.4). */
 let epoch = 0;
 
-// Reset or restore replaced the store underneath us: drop the loop and everything cached.
-onStoreReplaced(() => {
+/**
+ * Stops the running turn and clears what it showed. The stopped loop may no longer touch the UI
+ * (it is not the active loop), so its own "idle" never arrives: the switch has to say it (QA-R4a-1/3/8).
+ */
+function dropLoop(): void {
   loop?.stop();
   loop = null;
-  epoch++;
-  loaded = false;
   lastTurn.value = null;
   safetyCards.value = [];
   pendingUser.value = null;
+  loopView.value = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
+}
+
+// Reset or restore replaced the store underneath us: drop the loop and everything cached.
+onStoreReplaced(() => {
+  dropLoop();
+  epoch++;
+  loaded = false;
   activeConversation.value = null;
   storeSig.value = emptyStore();
   loadConversations();
@@ -99,23 +110,56 @@ function loadConversations(): void {
 
 function persist(c: Conversation): void {
   const next = upsertConversation(storeSig.value, c, true);
-  storeSig.value = saveStore(next) ?? next;
+  const saved = saveStore(next);
+  storeSig.value = saved ?? next;
+  // ES-30: the store keeps the active conversation; if it still could not fit, say so once.
+  if (saved && !saved.conversations.some(x => x.id === c.id) && !warnedMissing) { warnedMissing = true; showToast('This conversation is too long to save. Start a new one.'); }
   activeConversation.value = c;
 }
+let warnedMissing = false;
 
+/** A loop that is no longer the active one (a new conversation or a reset started mid-turn) only saves quietly. */
+function persistQuietly(c: Conversation): void {
+  const next = upsertConversation(storeSig.value, c, false);
+  storeSig.value = saveStore(next) ?? next;
+}
+
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
 export function checkOnline(): void {
   if (devMode()) { online.value = true; return; }
   if (typeof navigator !== 'undefined' && navigator.onLine === false) { online.value = false; return; }
-  if (Date.now() < offlineUntil) return;
+  // ES-08: inside the back-off, check again when it ends rather than never.
+  if (Date.now() < offlineUntil) {
+    if (!retryTimer) retryTimer = setTimeout(() => { retryTimer = null; checkOnline(); }, offlineUntil - Date.now() + 50);
+    return;
+  }
   void checkHealth(proxyUrlOf(state.value.escobar.proxyUrl)).then(r => {
     online.value = r.ok;
-    if (!r.ok) offlineUntil = Date.now() + 60_000;
+    offlineReason.value = r.ok ? null : r.message ?? null;
+    if (!r.ok) {
+      offlineUntil = Date.now() + 60_000;
+      // QA2-FD-3: still unreachable, so check again when this back-off ends (only while Escobar is on).
+      if (state.value.escobar.enabled) checkOnline();
+    }
   });
+}
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('online', () => { offlineUntil = 0; checkOnline(); });
 }
 
 function applyEffect(e: MemoryEffect): void {
   if (e.type === 'remember') {
-    update(s => ({ ...s, escobar: { ...s.escobar, memory: [...s.escobar.memory, e.item].slice(-MAX_MEMORY_ITEMS) } }));
+    update(s => {
+      let memory = [...s.escobar.memory];
+      // ES-31: make room by dropping the oldest item that is not an injury, equipment or an agreement.
+      while (memory.length >= MAX_MEMORY_ITEMS) {
+        const i = memory.findIndex(m => !PROTECTED_MEMORY.has(m.kind));
+        if (i < 0) return s;
+        memory.splice(i, 1);
+      }
+      memory = [...memory, e.item];
+      return { ...s, escobar: { ...s.escobar, memory } };
+    });
     showToast(`Escobar will remember: ${e.item.text}`, 'Undo', () => update(s => ({ ...s, escobar: { ...s.escobar, memory: s.escobar.memory.filter(m => m.id !== e.item.id) } })));
   } else if (e.type === 'forget') {
     const gone: MemoryItem | undefined = state.value.escobar.memory.find(m => m.id === e.id);
@@ -128,11 +172,12 @@ function applyEffect(e: MemoryEffect): void {
   }
 }
 
-function recordUsage(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number }): void {
+function recordUsage(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number }): void {
   const day = todayKey();
   update(s => {
-    const cur = s.escobar.usage.day === day ? s.escobar.usage : { day, turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
-    return { ...s, escobar: { ...s.escobar, usage: { day, turns: cur.turns + u.turns, inputTokens: cur.inputTokens + u.inputTokens, outputTokens: cur.outputTokens + u.outputTokens, cacheReadTokens: cur.cacheReadTokens + u.cacheReadTokens } } };
+    const cur = s.escobar.usage.day === day ? s.escobar.usage : { day, turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, costUsd: 0 };
+    const costUsd = (cur.costUsd ?? estimateCost(cur)) + (u.costUsd ?? estimateCost(u));
+    return { ...s, escobar: { ...s.escobar, usage: { day, turns: cur.turns + u.turns, inputTokens: cur.inputTokens + u.inputTokens, outputTokens: cur.outputTokens + u.outputTokens, cacheReadTokens: cur.cacheReadTokens + u.cacheReadTokens, costUsd } } };
   });
 }
 
@@ -143,26 +188,35 @@ async function getLoop(mode: EscobarMode): Promise<EscobarLoop> {
   if (!conv) { conv = newConversation(APP_VERSION, mode === 'plan' ? 'plan' : mode === 'live' ? 'live' : 'chat'); persist(conv); }
   if (loop && loop.conversation.id === conv.id) return loop;
   const born = epoch;
-  loop = new EscobarLoop(conv, {
+  // ES-06: each loop's callbacks touch the shared signals only while it is the active loop.
+  const mine = (): boolean => loop === created;
+  const created: EscobarLoop = new EscobarLoop(conv, {
     transport: t,
     getState: (): AppState => state.value,
     now: () => Date.now(),
     appVersion: APP_VERSION,
     manifest: () => MANIFEST,
     focus: () => currentFocus.value,
-    online: () => online.value !== false && (typeof navigator === 'undefined' || navigator.onLine !== false),
+    online: () => (typeof navigator === 'undefined' || navigator.onLine !== false) && !(online.value === false && Date.now() < offlineUntil),
     imageData,
+    imagesSent: evictImages,
     applyEffect,
     recordUsage,
-    persist: c => { if (born === epoch) persist(c); },
-    onUpdate: v => { loopView.value = v; },
-    onSafety: s => { if (!safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
+    persist: c => { if (born !== epoch) return; if (mine()) persist(c); else persistQuietly(c); },
+    onUpdate: v => { if (mine()) loopView.value = v; },
+    onSafety: s => { if (mine() && !safetyCards.value.includes(s)) safetyCards.value = [...safetyCards.value, s]; },
   });
-  return loop;
+  loop = created;
+  return created;
 }
 
 export async function send(input: SendInput): Promise<TurnResult> {
-  const mode = escobarUi.value.mode;
+  // ES-10: one turn at a time; the text waits in the composer.
+  if (loop?.busy) {
+    escobarUi.value = { ...escobarUi.value, draft: input.text };
+    return { outcome: 'error', error: { code: 'invalid', message: 'Escobar is still answering.' }, outcomes: [], signals: [] };
+  }
+  const mode = modeFor(input.text);
   // First feedback within 150 ms (§21): show the message and "Thinking…" before any await.
   lastTurn.value = null;
   pendingUser.value = { input, at: activeConversation.value?.messages.length ?? 0 };
@@ -171,12 +225,15 @@ export async function send(input: SendInput): Promise<TurnResult> {
   const sentIn = epoch;
   if (!activeConversation.value?.messages.length) pendingUser.value = { input, at: 0 };
   const r = await l.send(input, mode);
-  if (sentIn !== epoch) return r;
+  if (sentIn !== epoch || loop !== l) return r;
+  // QA2-FD-6, QA2-FD-10: an answer that arrived clears the last health check's reason.
+  if (r.outcome === 'done' || r.outcome === 'refusal' || r.outcome === 'step_limit' || r.outcome === 'cut_off') { online.value = true; offlineReason.value = null; }
   pendingUser.value = null;
   if (loopView.value.status !== 'idle') loopView.value = { ...loopView.value, status: 'idle' };
   lastTurn.value = { ...r, input };
   activeConversation.value = l.conversation;
-  if (r.error?.code === 'network') { online.value = false; offlineUntil = Date.now() + 60_000; }
+  // QA-R4a-6: after a dropped answer, check again once the back-off ends, not only on the next sheet open.
+  if (r.error?.code === 'network') { online.value = false; offlineReason.value = null; offlineUntil = Date.now() + 60_000; checkOnline(); }
   if (r.error?.code === 'quota' && r.error.retryAfter) quotaResetAt.value = Date.now() + r.error.retryAfter * 1000;
   // An auto navigation (§7.2) happens once the answer has landed, with the sheet at half height.
   const nav = r.outcomes.find(o => o.navigate?.auto)?.navigate;
@@ -196,49 +253,73 @@ export function background(): void { loop?.background(); }
 /** Called when the sheet mounts: load the conversation store and check the Worker. */
 export function prepare(): void {
   loadConversations();
-  if (state.value.escobar.enabled) checkOnline();
+  // QA-R4b-1: someone who turned Escobar on in an earlier build still gets the old chat, once.
+  if (state.value.escobar.enabled) { importLegacyThread(); checkOnline(); }
 }
 export function escobarToHalf(): void { escobarUi.value = { ...escobarUi.value, detent: 'half' }; }
 
 /** Settings or the first-run explainer: turning the online coach on is explicit (§20). */
 export function setEscobarEnabled(on: boolean, sharing?: { health: boolean; body: boolean }): void {
   update(s => ({ ...s, escobar: { ...s.escobar, enabled: on, ...(sharing ? { sharing } : {}) } }));
-  if (on) { ensureDeviceId(); offlineUntil = 0; checkOnline(); }
+  if (on) { importLegacyThread(); ensureDeviceId(); offlineUntil = 0; checkOnline(); }
+}
+
+/** RG-03: on first enable, the old coach chat becomes "Earlier conversation" (once). */
+function importLegacyThread(): void {
+  const s = state.value;
+  const askThread = (s as unknown as { coach?: { askThread?: unknown } }).coach?.askThread;
+  if (s.escobar.legacyImported || !Array.isArray(askThread)) return;
+  loadConversations();
+  const c = legacyConversation(askThread, APP_VERSION);
+  if (c) {
+    const next = upsertConversation(storeSig.value, c, false);
+    storeSig.value = saveStore(next) ?? next;
+  }
+  update(x => ({ ...x, escobar: { ...x.escobar, legacyImported: true } }));
 }
 
 export function closeEscobar(): void { escobarUi.value = { ...escobarUi.value, open: false, contextRef: null }; }
 
 export function startNewConversation(): void {
   loadConversations();
-  loop?.stop();
-  loop = null;
+  dropLoop();
   const c = newConversation(APP_VERSION, escobarUi.value.mode === 'plan' ? 'plan' : 'chat');
   persist(c);
-  lastTurn.value = null;
-  safetyCards.value = [];
-  loopView.value = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
 }
 
 export function selectConversation(id: string): void {
   loadConversations();
   const c = storeSig.value.conversations.find(x => x.id === id);
   if (!c) return;
-  loop?.stop();
-  loop = null;
+  dropLoop();
   const next = { ...storeSig.value, activeId: id };
   storeSig.value = saveStore(next) ?? next;
   activeConversation.value = c;
-  lastTurn.value = null;
-  safetyCards.value = [];
+}
+
+/**
+ * ES-17: plan mode sticks once a conversation is about a programme; a chat turns into one when
+ * the person asks for a programme; live wins while a session runs.
+ */
+function modeFor(text: string): EscobarMode {
+  const ui = escobarUi.value.mode;
+  if (state.value.active && ui === 'live') return 'live';
+  if (activeConversation.value?.mode === 'plan') return 'plan';
+  if (ui === 'chat' && isPlanRequest(text)) {
+    const c = activeConversation.value;
+    // QA-R4a-2: through updateConversation, so the running loop's own copy is plan too and its next save keeps it.
+    if (c) updateConversation({ ...c, mode: 'plan' });
+    return 'plan';
+  }
+  return ui;
 }
 
 /** Settings → Reset conversations. */
 export function resetConversations(): void {
-  loop?.stop();
-  loop = null;
+  dropLoop();
+  epoch++;
   storeSig.value = saveStore(emptyStore()) ?? emptyStore();
   activeConversation.value = null;
-  lastTurn.value = null;
 }
 
 /** Replace the active conversation after a proposal decision (apply.ts). */

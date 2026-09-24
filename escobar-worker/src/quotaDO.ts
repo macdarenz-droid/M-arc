@@ -5,13 +5,13 @@
  */
 import { DurableObject } from 'cloudflare:workers';
 
-export type Limits = { device: { turns: number; steps: number; out: number }; ip: { turns: number }; global: { steps: number; out: number } };
+export type Limits = { device: { turns: number; steps: number; out: number }; ip: { turns: number; steps: number }; global: { steps: number; out: number } };
 export type QuotaKeys = { device: string; ip: string };
 export type QuotaDelta = { steps: number; out: number; turns: number };
 export type QuotaCheck = { ok: true } | { ok: false; scope: 'device' | 'ip' | 'global' };
 
 type DeviceRow = { turns: number; steps: number; out: number };
-type IpRow = { turns: number };
+type IpRow = { turns: number; steps?: number };
 type GlobalRow = { steps: number; out: number };
 
 const RETENTION_MS = 3 * 86_400_000;
@@ -24,7 +24,8 @@ export class QuotaCounter extends DurableObject {
     const d = kv.get<DeviceRow>(`d:${keys.device}`) ?? { turns: 0, steps: 0, out: 0 };
     if (d.turns >= lim.device.turns || d.steps >= lim.device.steps || d.out >= lim.device.out) return { ok: false, scope: 'device' };
     const i = kv.get<IpRow>(`i:${keys.ip}`) ?? { turns: 0 };
-    if (i.turns >= lim.ip.turns) return { ok: false, scope: 'ip' };
+    // Steps too: a turn that never ends (every step a tool call) must still hit the IP cap.
+    if (i.turns >= lim.ip.turns || (i.steps ?? 0) >= lim.ip.steps) return { ok: false, scope: 'ip' };
     const g = kv.get<GlobalRow>('g') ?? { steps: 0, out: 0 };
     if (g.steps >= lim.global.steps || g.out >= lim.global.out) return { ok: false, scope: 'global' };
     return { ok: true };
@@ -35,7 +36,7 @@ export class QuotaCounter extends DurableObject {
     const d = kv.get<DeviceRow>(`d:${keys.device}`) ?? { turns: 0, steps: 0, out: 0 };
     kv.put(`d:${keys.device}`, { turns: d.turns + delta.turns, steps: d.steps + delta.steps, out: d.out + delta.out });
     const i = kv.get<IpRow>(`i:${keys.ip}`) ?? { turns: 0 };
-    kv.put(`i:${keys.ip}`, { turns: i.turns + delta.turns });
+    kv.put(`i:${keys.ip}`, { turns: i.turns + delta.turns, steps: (i.steps ?? 0) + delta.steps });
     const g = kv.get<GlobalRow>('g') ?? { steps: 0, out: 0 };
     kv.put('g', { steps: g.steps + delta.steps, out: g.out + delta.out });
     // Counters are already written; the alarm only schedules this day's cleanup.

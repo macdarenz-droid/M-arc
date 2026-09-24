@@ -15,6 +15,21 @@ async function png(svg, size, out, bg = 'transparent') {
   await page.locator('svg').first().screenshot({ path: out, omitBackground: bg === 'transparent' });
 }
 
+// R7.3 adaptive icon (Android 8+): a transparent foreground with the mark inside the 66/108 safe
+// zone, plus a monochrome layer for themed icons, per density. `--android` renders only these.
+const DENSITIES = { 'mipmap-mdpi': 108, 'mipmap-hdpi': 162, 'mipmap-xhdpi': 216, 'mipmap-xxhdpi': 324, 'mipmap-xxxhdpi': 432 };
+{
+  const t = THEMES['silent-black'].tokens;
+  const fg = { ink: t.text, accent: t.accent, bg: t.bg };
+  const mono = { ink: '#ffffff', accent: '#ffffff', bg: 'transparent' };
+  for (const [dir, px] of Object.entries(DENSITIES)) {
+    mkdirSync(`native/res/${dir}`, { recursive: true });
+    await png(markSvg(fg, { size: px, padding: 12 }), px, `native/res/${dir}/ic_launcher_foreground.png`);
+    await png(markSvg(mono, { size: px, padding: 12 }), px, `native/res/${dir}/ic_launcher_monochrome.png`);
+  }
+}
+if (process.argv.includes('--android')) { await browser.close(); console.log('rendered native/res adaptive icon layers'); process.exit(0); }
+
 mkdirSync('branding', { recursive: true });
 for (const id of THEME_IDS) {
   const t = THEMES[id].tokens;

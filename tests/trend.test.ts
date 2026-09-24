@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { plateauStatus, trend } from '@/brain/trend';
+import { liftTrend, plateauStatus, trend } from '@/brain/trend';
 import { exerciseHistory } from '@/brain/history';
 import { session } from './helpers';
 
@@ -19,6 +19,26 @@ describe('plateauStatus for assisted work (BR-06)', () => {
   });
   it('weighted work is unchanged: more load is progress', () => {
     expect(plateauStatus(hist(i => 40 + i * 2.5, () => 8)).status).toBe('progressing');
+  });
+});
+
+describe('liftTrend for assisted work (QA2-FC-4)', () => {
+  it('more reps at the same assistance is up, as plateauStatus says', () => {
+    const reps = [3, 3, 4, 4, 5, 5, 6, 6];
+    const h = hist(() => 20, i => reps[i]!);
+    expect(plateauStatus(h, 'assisted').status).toBe('progressing');
+    expect(liftTrend(h, 'assisted').direction).toBe('up');
+    expect(liftTrend(hist(() => 20, i => 8 - Math.floor(i / 2)), 'assisted').direction).toBe('down');
+  });
+  it('less assistance is up and more is down, whatever the reps do', () => {
+    expect(liftTrend(hist(i => 40 - i * 2.5, () => 8), 'assisted').direction).toBe('up');
+    expect(liftTrend(hist(i => 40 - i * 2.5, i => 8 - Math.floor(i / 3)), 'assisted').direction).toBe('up');
+    const more = liftTrend(hist(i => 20 + i * 2.5, () => 8), 'assisted');
+    expect(more.direction).toBe('down');
+    expect(more.slopePerWeek).toBeLessThan(0);
+  });
+  it('same assistance and same reps is flat', () => {
+    expect(liftTrend(hist(() => 30, () => 8), 'assisted').direction).toBe('flat');
   });
 });
 

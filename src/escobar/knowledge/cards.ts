@@ -26,7 +26,7 @@ export function searchCards(query: string, limit = 4): KnowledgeCard[] {
   const words = q.split(' ').filter(w => w.length > 2 && !STOP.has(w));
   const scored = KNOWLEDGE.map(c => {
     let score = 0;
-    for (const t of c.tags) { const tt = norm(t); if (q.includes(tt)) score += 5 + tt.split(' ').length; else if (words.some(w => tt.split(' ').includes(w))) score += 2; }
+    for (const t of c.tags) { const tt = norm(t); if (` ${q} `.includes(` ${tt} `)) score += 5 + tt.split(' ').length; else if (words.some(w => tt.split(' ').includes(w))) score += 2; }
     const title = norm(c.title);
     for (const w of words) { if (title.includes(w)) score += 3; else if (norm(c.statement).includes(w)) score += 1; }
     return { c, score };

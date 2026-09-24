@@ -4,14 +4,15 @@
  * Each function below is one catalogue row; weeklyReviewInsights() assembles
  * the ones with enough evidence into Insight v2 objects.
  */
-import type { Exercise, Profile, Session, WeightEntry } from '@/core/models';
+import type { Exercise, LoadUnit, Profile, Session, WeightEntry } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
-import { trend } from '../trend';
+import { sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import type { Insight } from './rules';
 
@@ -87,14 +88,15 @@ export function isStale(hist: ExerciseSessionSummary[], today: string, weeks = 6
 }
 
 /** Rolling adherence over the last `days` days: planned days done / planned days that have passed. */
-export function adherenceRate(sessions: Session[], schedule: Record<string, string | null>, today: string, days = 28): number | null {
+export function adherenceRate(sessions: Session[], schedule: Record<string, string | null>, today: string, days = 28, daysOff: string[] = []): number | null {
   const doneDays = new Set(sessions.map(s => s.day));
+  const off = new Set(daysOff);
   let planned = 0, done = 0;
   // Today only counts once it has a session: an unfinished planned day is not a miss yet (BR-15).
   for (let i = doneDays.has(today) ? 0 : 1; i < days; i++) {
     const day = addDays(today, -i);
     const weekday = weekdayOf(day);
-    if (!schedule[weekday]) continue;
+    if (!schedule[weekday] || off.has(day)) continue;
     planned++;
     if (doneDays.has(day)) done++;
   }
@@ -136,7 +138,7 @@ export function repMixShares(sessions: Session[], today: string, custom: Exercis
     .filter(s => s.day >= start && s.day < end)
     .flatMap(s => s.exercises.flatMap(e => (findExercise(e.exerciseId, custom)?.role === 'main' ? e.sets : [])))
     .filter(isWorkingSet)
-    .filter(s => (s.reps ?? 0) > 0);
+    .filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
   const n = sets.length;
   if (!n) return { low: 0, mid: 0, high: 0, n: 0, easyHighShare: 0 };
   const low = sets.filter(s => s.reps! <= 5).length / n;
@@ -156,6 +158,10 @@ export interface WeeklyReviewInput {
   weightLog: WeightEntry[];
   trainingAgeMonths: number | null;
   exerciseIds: Array<{ id: string; name: string }>;
+  /** RG-19: days taken off count as unscheduled. */
+  daysOff?: string[];
+  /** QA-R3b-5: body weight in the person's unit. */
+  unit?: LoadUnit;
 }
 
 /** Days logged in a calendar week before the weekly review appears. */
@@ -230,7 +236,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
 
   // e1RM trend and progress vs training age, and staleness, per exercise the user actually does
   for (const { id, name } of exerciseIds) {
-    const hist = exerciseHistory(sessions, id, custom);
+    // QA2-FC-2: a comeback is judged only on the sessions since the break, as in plateauStatus.
+    const hist = sinceLastBreak(exerciseHistory(sessions, id, custom));
     if (hist.length < 4 || !isActive(hist, today)) continue;
     // e1RM says nothing for assisted, body-weight or timed work (BR-06).
     if (modeOf(id, custom) !== 'weighted') continue;
@@ -279,7 +286,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   }
 
   // Adherence
-  const adherence = adherenceRate(sessions, schedule, today);
+  const adherence = adherenceRate(sessions, schedule, today, 28, input.daysOff ?? []);
   if (adherence != null) {
     if (adherence < 0.6) {
       out.push({
@@ -334,7 +341,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     const inRange = wt.pctPerWeek >= Math.min(lo, hi) && wt.pctPerWeek <= Math.max(lo, hi);
     out.push({
       id: 'weekly:weight-trend', category: 'data', priority: 130, cadence: 'weekly', kind: inRange ? 'praise' : 'tip',
-      title: `Trend weight ${wt.trendKg} kg, ${dir} ${Math.abs(wt.pctPerWeek)}% a week`,
+      title: `Trend weight ${Math.round(kgToDisplay(wt.trendKg, input.unit ?? 'kg') * 10) / 10} ${input.unit ?? 'kg'}, ${dir} ${Math.abs(wt.pctPerWeek)}% a week`,
       noticed: `Weight trend is ${dir} about ${Math.abs(wt.pctPerWeek)}% a week.`,
       means: inRange ? `That is inside the range that fits a ${g.name.toLowerCase()} goal.` : `That is outside the usual range for a ${g.name.toLowerCase()} goal (${lo} to ${hi}% a week).`,
       action: inRange ? 'No change needed.' : 'Worth a small adjustment to food if this keeps up for a few more weeks.',

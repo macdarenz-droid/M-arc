@@ -1,84 +1,102 @@
 # Architecture
 
-M/ARC is a Preact + TypeScript app built with Vite into `www/`, which Capacitor wraps for Android and the service worker serves as a PWA. The code is split into layers that only depend downward, and into vertical slices that own one screen each.
+M/ARC is a Preact + TypeScript app (signals for state) built by Vite into `www/`. Capacitor wraps `www/` for Android and a service worker serves it as a PWA. The optional online coach, Escobar, talks to a Cloudflare Worker in `escobar-worker/`, which calls the Claude API. The code is split into layers that only depend downward, and into vertical slices that each own a screen.
 
 ```
 src/
-  data/      static facts: exercises.json, muscles, goals, templates, coachCues.json, sparks
-  core/      models, dates, units, exercise lookup, store (persistence), legacy migration
-  brain/     pure functions: exposure, recovery, history, prs, trend, progression, balance,
-             effort, weekly, bodyfat, coach/rules (rules as data), coach/cues
-  theme/     five themes as one token contract + the engine that applies them
-  ui/        stylesheet, primitives (Card, Button, Sheet, Toggle ...), icons, MuscleMap
-  svg/       generated body parts for the muscle map (from body-muscles)
-  native/    Capacitor bridges with web fallbacks: haptics, notifications, share, health
-  app/       shell, bottom nav router, shared selectors, toast
-  slices/    today, workout (splits, live session), history (+stats), body, coach, settings
-tests/       vitest, pure logic only
+  data/      static facts: exercises.json (153), muscles, goals, recovery and deload constants, coachCues.json, sparks
+  core/      models, dates, clock, units, exercise lookup, body-fat formula, store (persistence + repair), heartStore,
+             legacy migration, sessionLogging, rescue file, version
+  brain/     pure functions: exposure, recovery, readiness, history, e1rm, effortBias, prs, trend,
+             progression, deload, balance, volume, weekly, plan, heart, energy, fidelity, units,
+             coach/ (rules as data, pre/live/post-session notes, weekly review, cues)
+  theme/     five themes on one token contract, and the engine that applies them (and the Android bar style)
+  ui/        stylesheet, primitives (Card, Button, Sheet, Toggle, WeightInput …), sheet stack, icons, MuscleMap, PulseLine
+  svg/       the logo and the body parts for the muscle map
+  assets/    images bundled by Vite (the Escobar mark)
+  native/    Capacitor bridges with web fallbacks: Health Connect, watch (BLE), notifications, haptics,
+             share and file picker, photo, Android back button
+  app/       shell, router (tabs + panels), selectors, toast, error boundary
+  slices/    today, workout (live session, heart capture), history, body, coach, profile, settings
+  escobar/   the online coach, loaded lazily: loop, transport, store, verify, apply, tools/, context/,
+             knowledge/, palace/ (in-app navigation), ui/
+escobar-worker/   Cloudflare Worker: validation, quotas (Durable Object), US-pinned upstream relay, SSE relay
+native/           Java for Android (Health Connect, watch service and plugin, rationale activity),
+                  patch_manifest.py and the adaptive icon layers under native/res/
+scripts/          build helpers: sw-version, prepare-android.sh, render-logo, escobar-tools, screenshot-gate
+tests/            vitest (node), including tests/escobar/ and machine-scaled timing budgets in tests/perf/
 ```
 
 Rules of thumb:
 
-- `brain/` never imports from `ui/`, `slices/` or `native/`. Every function takes plain data and returns plain data, so it is testable and reusable by any screen.
-- Screens read from `core/store` signals and change state only through `update()`.
-- Copy shown to the user is plain words. No "backend", "authority", "semantic" or version numbers in the UI.
+- `brain/` never imports from `ui/`, `slices/`, `native/` or `escobar/`. Every function takes plain data and returns plain data.
+- Screens read `core/store` signals and change state only through `update()`.
+- The main bundle never imports `escobar/session`: Escobar loads on first use. The same goes for pinned cards on Today.
+- Copy is plain words. No "backend", "authority" or version numbers in the UI, apart from the version line in Settings.
 
-## State
+## State and side stores
 
-One object, one key (`marc.state.v1`), saved 250 ms after a change and flushed when the app is hidden. The previous save is kept under a backup key. Shape lives in `core/models.ts`:
+`marc.state.v1` holds one `AppState` object, saved 250 ms after a change and flushed when the app is hidden. Its keys (`core/models.ts`):
 
-- `splits[]`: templates with exercises, set counts, a colour and up to two focus muscles.
-- `schedule`: weekday → split id or null.
-- `sessions[]`: finished workouts. Each exercise has an id (library `lib_*` or `custom_*`) and its sets `{kg, reps, effort, durationSec, distanceM}`.
-- `active`: the live session, so it survives an app restart.
-- `customExercises[]`, `preferences`, `profile`, `body[]` (body-fat readings), `health`.
+`version`, `createdAt`, `profile`, `goal`, `splits`, `schedule`, `sessions`, `active` (the live session, so it survives a restart), `customExercises`, `preferences`, `body`, `health`, `healthDays`, `weightLog`, `profileHistory`, `onboarding`, `checkIns`, `recoveryModel`, `freshMarks`, `weeklyReviewDismissedWeek`, `deload`, `insightFeedback`, `legacyImportedAt`, `escobar` (settings, memory, pins, today's plan change), `units` (gyms and equipment profiles), `daysOff`, `exerciseNotes`, `lastBackupAt`.
 
-`core/migrate.ts` converts the old `dailyTrackerPremium` root once, read-only. Per-exercise completed records are preferred, whole-session snapshots fill the gaps, timed sessions supply durations, and custom splits, day names, schedule, goal, units and reminder settings carry over.
+Other storage:
+
+| Key | What |
+|---|---|
+| `marc.state.v1.backup` | The previous good save, refreshed on the first save of each local day (`marc.state.v1.backupDay`). |
+| `marc.state.v1.corrupt`, `marc.state.v1.backup.corrupt` | A saved state the app could not read, kept aside for the rescue file. |
+| `marc.heart.v1` | Heart-rate series per session (`core/heartStore.ts`). |
+| `marc.escobar.v1` | Escobar conversations (`escobar/store.ts`), trimmed to size, never the active one. |
+| IndexedDB `marc-escobar-img` | Photos sent to Escobar; never in localStorage. |
+| `marc.theme`, `marc.health.asked`, `marc.dev` | Theme, the last Health Connect permission prompt, the developer flag. |
+
+Loading goes through `repairState()`: bad list items are dropped, ids filled in, missing fields defaulted, old values healed (for example active calories stored in small calories). A state that cannot be parsed is quarantined, not overwritten. `core/migrate.ts` converts the old `dailyTrackerPremium` root once, read-only.
 
 ## How the coach thinks
 
-Everything below is in `src/brain/`, each file a few screens long.
+All in `src/brain/`.
 
-**Muscle exposure** (`exposure.ts`). A set counts toward a muscle by role: main muscle 1.0, helping muscle 0.55, stabiliser 0.25, scaled by effort (easy 0.9, ideal 1.0, max 1.1). Weekly "effective sets" use 1.0 for main and 0.5 for helping muscles. Levels are a cumulative score.
+**Sets.** `hasEntry` (reps, time or distance) decides what is kept. `isWorkingSet` (filled in and not a warm-up) decides what counts for exposure, volume, recovery, e1RM, records and progression. A set taken to failure counts as max effort. Drop sets count for volume but never for records.
 
-**Recovery** (`recovery.ts`). Window = 24 h after all-easy work, 48 h after ideal, 72 h after all-max, from the most recent day the muscle was worked. If the user's own history shows short-rest sessions performed clearly worse (needs 5 samples in each group), the window widens by up to 1.4×. It never shrinks.
+**Exposure** (`exposure.ts`). A set counts toward a muscle by role (main, helper, stabiliser) and effort. Weekly effective sets count 1 for the main muscle and ½ for a helper; each muscle's band depends on its training level.
 
-**Records** (`prs.ts`). The first session is a baseline. Records are heavier load, a better one-rep estimate (sets of 10 or fewer, +1 %), more reps at a load, most reps (bodyweight), longest hold, furthest carry. Volume is never a record.
+**Recovery** (`recovery.ts`, constants in `data/recovery.ts`). An impulse-response model. Every working set leaves an impulse sized by role, effort, reps, load against recent top load, exercise damage and novelty. Impulses decay fast then slow (a fast share and a slow share with an 18 h base time constant), stack over the last 7 days, and are compared with the muscle's own typical session dose. 90 % is ready for hard work, 97 % is full. A whole-body factor from sleep, resting heart rate and training load slows every muscle slightly. After each session the model calibrates a per-muscle time-constant scale from how the next session went (`recoveryModel`), rebuilt from history when sessions are edited.
 
-**Next session** (`progression.ts`), in order: no history → start light by equipment; more than 28 days away → repeat last load; effort missing on most recent sets → keep load and rate; two sessions under the range at max effort → one step down (1 / 2 / 2.5 kg by load band); top of the range twice without max effort (or once when everything felt easy) → one step up, capped at 10 %; top of the range once → confirm; otherwise add a rep.
+**Readiness** (`readiness.ts`). A 0–100 score from the check-in, sleep, recovery of today's muscles, resting heart rate, HRV and recent load, re-weighted when inputs are missing. Green from 67, red at 33 or below; calibrating under 14 days of data.
 
-**Trend and plateau** (`trend.ts`): recency-weighted regression, needs 4 points; plateau needs 7 of the last 8 sessions.
+**Strength estimate** (`e1rm.ts`). Epley with the effort label as reps in reserve (easy 3, ideal 2, max 0), for sets of 10 reps or fewer. `effortBias.ts` notices when your ratings run optimistic and says so in a tip; it does not change the estimate.
 
-**Balance** (`balance.ts`): push vs pull and upper vs lower over three weeks, with gates (12 sets total, two active weeks, ratio ≥ 2 persisting two weeks). A chosen focus muscle softens the warning.
+**Records** (`prs.ts`). The first session is a baseline. Records: heavier load, a strength estimate more than 2.5 % above the previous best, more reps at a load, most reps (bodyweight), longest hold, furthest carry. Loads are shown in the unit they were typed in.
 
-**Coach rules** (`coach/rules.ts`) are a list of objects. Each looks at the same context and returns insights with `title`, `noticed`, `means`, `action` and a priority. Recovery outranks a plateau on a lift that targets the recovering muscle. To add a rule, append one object. To change the words, edit strings.
+**Next session** (`progression.ts`). Inputs: history, goal rep ranges, today's readiness, the exercise's recovery, an active lighter week, the gym's equipment, and any load change Escobar applied for today. In order: nothing logged → start light; more than 28 days away → repeat the last load; effort missing → repeat and rate; two sessions under the range at max effort → one step down; top of the range twice without max effort → one step up (at most 10 %); top of the range once → confirm; otherwise add a rep. Amber readiness or a primary muscle under 60 % recovered holds the load. Loads snap to what the equipment can make.
 
-**Cues** (`coach/cues.ts`): 422 short tips matched by exercise, movement, muscle or equipment, rotated deterministically.
+**Lighter week** (`deload.ts`). Offered when two main lifts stall, effort drifts harder on two lifts while volume climbs, a muscle runs over its band two weeks in a row while a lift stalls, or readiness was red on 3 of the last 5 days.
 
-## Themes
+**Coach notes** (`coach/`). Rules are data: each looks at the same context and returns notes with `title`, `noticed`, `means`, `action` and a priority. Pre-session, live (autoregulation after the first set) and post-session notes, a weekly review, and 400+ cues matched by exercise, pattern, muscle or equipment.
 
-`theme/themes.ts` defines one token contract (background, three surfaces, three borders, three text levels, accent, semantic colours, shadow, muscle-map body/line, radii, font) and five themes:
+**Days off.** A scheduled day taken off counts as unscheduled for the streak, adherence and this week's target, and gets no reminder.
 
-| id | name | after |
-|---|---|---|
-| `silent-black` | Silent Black (default) | Linear, Vercel |
-| `paper` | Paper | Notion |
-| `ember` | Ember | Raycast |
-| `emerald` | Emerald | Supabase |
-| `midnight` | Midnight | Stripe |
+## Escobar
 
-The engine writes the tokens as CSS custom properties per `[data-theme]`, sets `<html data-theme>`, updates `<meta name="theme-color">` and persists the choice under `marc.theme`. The first paint uses the saved theme from an inline script in `index.html`, so there is no flash. To add a theme, add one entry; the test suite checks the contract is complete.
+`escobar/` runs a tool loop against the Worker. The app sends a brief (what changed since the last turn), the conversation and a tool manifest. The model answers with text and tool calls; tools run on the phone (`tools/read.ts`, `show.ts`, `calc.ts`) against local data, and only their results go back. Every number in an answer is checked against the facts the tools returned (`verify.ts`); unsupported numbers are repaired once, then marked. Changes are proposals (`tools/actions.ts`) that you apply with a tap and can undo for 8 seconds (`apply.ts`). Health and body data leave the phone only with their sharing switch on, and are redacted from replayed history once a switch is turned off.
 
-## Muscle map
+`escobar-worker/` validates each request, counts quotas in a Durable Object (per device, per IP, global), and relays the model stream as server-sent events. Every Claude API call leaves from an `UpstreamRelay` Durable Object pinned to the eastern US, so users whose nearest Cloudflare location the API refuses can still use Escobar.
 
-`svg/bodyMuscles.ts` holds the 89 body parts of the low-poly figure from the `body-muscles` package (Apache 2.0, see `THIRD_PARTY_NOTICES.md`). It is generated by `scripts/extract-body-muscles.mjs`, which also maps each part id onto one of the 24 muscle keys (for example `chest-lower-*` → `chest`, `gluteus-medius-*` → `abductors`); head, hands, knees, feet and spine stay plain body. `ui/MuscleMap.tsx` fills each part with a `color-mix()` of theme tokens: recovery uses negative → warning → positive, emphasis uses accent strength, roles use accent tiers. Switching the theme re-colours the map with no extra code. Brachialis and rotator cuff have no part of their own and light a neighbour only when that neighbour is idle.
+## Platform
 
-## Native
+- **Android** (`native/`): Health Connect reads today's steps and active calories as aggregates, and sleep and heart rate over 48 h, on a callback executor. Background syncs never show a permission dialog. The watch service keeps a BLE heart-rate connection in a foreground service. `@capacitor/app` handles the back button: Escobar, then the top sheet, then the panel, then Today, then the app goes to the background.
+- **PWA** (`public/sw.js`): navigations are network-first with the cached index as the fallback. Other files are cache-first. Every built file, lazy chunks included, is installed with the app. Old chunks carry over to a new version, so an open tab keeps working after an update.
+- **Themes** (`theme/`): one token contract, five themes (Silent Black default, Paper, Ember, Emerald, Midnight). The first paint uses the saved theme's colours from `index.html`; the Android status and navigation bars follow the theme.
 
-`native/notifications.ts` schedules a rest-complete alert (exact, allow-while-idle) and training-day reminders for the next eight weeks from the schedule. The user's reminder preference is stored in state; Android's scheduling health is reported separately and re-checked on every `pageshow`. Haptics use the Capacitor plugin with a `navigator.vibrate` fallback. Export writes to the app cache and opens the Android share sheet, or downloads on the web.
+## Builds
+
+See the README. `scripts/prepare-android.sh` generates the Android project for both workflows. `docs/AGENT-RULES.md` lists the rules the agent guard enforces.
 
 ## Adding things
 
-- **Exercise**: append to `data/exercises.json` (id, name, equipment, primary/secondary/stabilizers muscle ids, aliases, pattern). Duration and conditioning exercises are listed in `core/exercises.ts`.
-- **Coach rule**: add an object to `RULES` in `brain/coach/rules.ts` and a test.
-- **Screen**: add a folder under `slices/`, a tab in `app/router.ts` and a case in `app/App.tsx`.
+- **Exercise**: append to `data/exercises.json` (id, name, equipment, muscles, aliases, pattern). Duration and conditioning ids are listed in `core/exercises.ts`.
+- **Coach rule**: add an object to `RULES` in `brain/coach/rules.ts`, and a test.
+- **Escobar tool**: add it to `escobar/tools/schema.ts` and its handler. Then run `npm run escobar:tools` so the Worker's copy matches; a test checks they are in sync.
+- **Screen**: a folder under `slices/`, a tab or panel in `app/router.ts`, and a case in `app/App.tsx`.
+- **Theme**: one entry in `theme/themes.ts`, plus its first-paint colours in `index.html`. The tests check both.

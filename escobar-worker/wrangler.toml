@@ -9,6 +9,15 @@ compatibility_flags = ["nodejs_compat", "enable_request_signal"]
 [vars]
 # Default model and per-mode effort; change here without touching code.
 MODEL = "claude-opus-5"
+# F7: per-mode models, each falling back to MODEL. The owner picks; see docs/REMEDIATION-PROGRESS.md (F7) for verified prices.
+# Only models that take adaptive thinking and effort are used (MODE_MODELS in src/anthropic.ts; not Haiku 4.5).
+# Any other value is ignored, that mode keeps MODEL, and /health lists it under ignoredModels, which fails the deploy check.
+# MODEL_CHAT = ""
+# MODEL_PLAN = ""
+# MODEL_LIVE = ""
+# MODEL_BRIEF = ""
+# MODEL_MOMENT = ""
+# MODEL_SUMMARIZE = ""
 # EFFORT_CHAT = "medium"
 # EFFORT_PLAN = "high"
 # EFFORT_LIVE = "low"
@@ -20,6 +29,7 @@ MAX_TURNS_PER_DEVICE = "80"
 MAX_STEPS_PER_DEVICE = "400"
 MAX_OUTPUT_PER_DEVICE = "400000"
 MAX_TURNS_PER_IP = "300"
+MAX_STEPS_PER_IP = "1500"
 MAX_STEPS_TOTAL = "20000"
 MAX_OUTPUT_TOTAL = "3000000"
 # Web origins allowed to call this Worker (the PWA). The Android app sends capacitor://localhost or no Origin.

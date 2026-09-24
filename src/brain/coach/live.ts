@@ -30,9 +30,13 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
   const equipment = input.equipment;
   const snap = (kg: number, dir: 'up' | 'down'): string => {
     if (!equipment) {
-      // BR-18: rounding can land back on the target (a 1.6 kg step on 64 kg); nudge a full 2.5.
-      const v = roundToStep(kg);
-      return `${Math.abs(v - targetKg) < 0.01 ? Math.max(0, targetKg + (dir === 'up' ? 2.5 : -2.5)) : v} kg`;
+      // BR-18, QA-R3b-1: on the 2.5 kg grid, strictly past the target in the asked direction
+      // (a 44.9 kg target never "drops" to 45, a 64 kg target never stays at 64).
+      const g = 2.5, eps = 0.01;
+      const v = dir === 'up'
+        ? Math.max(Math.ceil((kg - eps) / g) * g, Math.ceil((targetKg + eps) / g) * g)
+        : Math.min(Math.floor((kg + eps) / g) * g, Math.floor((targetKg - eps) / g) * g);
+      return `${Math.max(0, roundToStep(v, 0.5))} kg`;
     }
     const l = loadableNear(kg, equipment, dir);
     // Never "add load" to the same load: step to the next rung.
@@ -40,6 +44,8 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
     const moved = same ? loadableNear(dir === 'up' ? l.kg + 0.02 : l.kg - 0.02, equipment, dir) : l;
     return `${moved.value} ${moved.unit}`;
   };
+  /** QA2-FC-6: whether the equipment has any load lighter than the target (not at the empty bar). */
+  const canGoLighter = !equipment || loadableNear(targetKg - 0.02, equipment, 'down').kg < targetKg - 0.01;
 
   if (firstSet.effort === 'easy' && firstSet.reps >= targetReps) {
     const next = snap(targetKg + step, 'up');
@@ -53,6 +59,17 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
     };
   }
   if (firstSet.effort === 'max' && firstSet.reps < targetReps - 1) {
+    if (!canGoLighter) {
+      const here = loadableNear(targetKg, equipment!, 'nearest');
+      return {
+        id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,
+        title: `${exerciseName}: ease off`,
+        noticed: `Missed target at max effort: ${firstSet.reps} of ${targetReps}.`,
+        means: 'There is no lighter load than this one, so the reps and the rest are what can change today.',
+        action: `Stay at ${here.value} ${here.unit}, rest a little longer, and stop each set a rep short of max.`,
+        evidence: { n: 1, window: 'this set', confidence: 'high' },
+      };
+    }
     const next = snap(targetKg - step, 'down');
     return {
       id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,

@@ -3,18 +3,18 @@
  * components, proposal / navigate / escalation cards, the verified answer with citations,
  * and the "What Escobar looked at" drawer. Everything redraws from the stored messages.
  */
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { Button, Card } from '@/ui/primitives';
 import { IconChevronDown } from '@/ui/icons';
 import { goTo } from '../palace/navigate';
 import { PALACE_BY_ID } from '../palace/registry';
 import { CARD_BY_ID } from '../knowledge/cards';
 import { parseDirectives } from '../verify';
-import { onProposal, canApply } from '../apply';
+import { onProposal, canApply, undoOpen, UNDO_WINDOW_MS } from '../apply';
 import { ShowComponent } from './components';
 import { Citation, CardCitation } from './Citation';
 import { Escalation } from './Escalation';
-import { imageData } from '../images';
+import { imageData, loadImage } from '../images';
 import { state } from '@/core/store';
 import { makeCtx } from '../tools/context';
 import { statusLabel } from '../tools/executor';
@@ -62,7 +62,7 @@ export function UserBubble({ msg }: { msg: UserTurn['msg'] }) {
   return (
     <div class="esc-user">
       {refs.map(r => <span key={r.id} class="chip chip-accent esc-ref">About: {r.label}</span>)}
-      {imgs.length > 0 && <div class="esc-thumbs">{imgs.map(i => { const d = imageData(i.id); return d ? <img key={i.id} src={`data:${d.mediaType};base64,${d.data}`} alt={i.description ?? 'Attached photo'} /> : <span key={i.id} class="esc-thumb-missing small muted">Photo</span>; })}</div>}
+      {imgs.length > 0 && <div class="esc-thumbs">{imgs.map(i => <Thumb key={i.id} id={i.id} alt={i.description ?? 'Attached photo'} />)}</div>}
       {text && <div class="esc-bubble">{text}</div>}
     </div>
   );
@@ -84,7 +84,7 @@ export function AnswerText({ text, ledger, unverified, streaming }: { text: stri
     });
     const facts = ids.map(id => ledger.find(f => f.id === id)).filter((f): f is Fact => !!f);
     if (facts.length) body.push(<Citation key="cite" n={++cites} facts={facts} />);
-    const plain = parseDirectives(raw).plain.trim();
+    const plain = parseDirectives(raw).plain.trim().replace(/^[-•]\s+/, '');
     return bad.has(plain) ? <span key={key} class="esc-unverified" title="Unverified number">{body}<span class="esc-unverified-hint"> Unverified number</span> </span> : <span key={key}>{body} </span>;
   };
   return (
@@ -98,8 +98,16 @@ export function AnswerText({ text, ledger, unverified, streaming }: { text: stri
   );
 }
 
-export function ProposalCard({ p }: { p: ProposalRecord }) {
+export function ProposalCard({ p, conversationId }: { p: ProposalRecord; conversationId: string }) {
   const [busy, setBusy] = useState(false);
+  // ES-03: Undo shows only inside its window, and the card re-renders when the window closes.
+  const [, tick] = useState(0);
+  const open = p.status === 'applied' && undoOpen(conversationId, p);
+  useEffect(() => {
+    if (!open || !p.appliedAt) return;
+    const t = setTimeout(() => tick(n => n + 1), Math.max(0, Date.parse(p.appliedAt) + UNDO_WINDOW_MS - Date.now()) + 50);
+    return () => clearTimeout(t);
+  }, [open, p.appliedAt]);
   const act = async (choice: 'apply' | 'dismiss' | 'undo') => { setBusy(true); try { await onProposal(p.id, choice); } finally { setBusy(false); } };
   return (
     <Card class="esc-proposal" data-proposal={p.status}>
@@ -111,7 +119,7 @@ export function ProposalCard({ p }: { p: ProposalRecord }) {
           <Button variant="quiet" size="sm" disabled={busy} onClick={() => act('dismiss')}>Not now</Button>
         </div>
       )}
-      {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span><button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button></div>}
+      {p.status === 'applied' && <div class="small row" style={{ gap: 8 }}><span class="muted">Applied</span>{open && <button type="button" class="esc-link" onClick={() => act('undo')}>Undo</button>}</div>}
       {p.status === 'dismissed' && <div class="small muted">Dismissed</div>}
       {p.status === 'undone' && <div class="small muted">Undone</div>}
       {p.status === 'stale' && <div class="small muted">Out of date. Ask again for a fresh one.</div>}
@@ -212,7 +220,7 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
           </div>
         );
       })}
-      {proposals.map(p => <ProposalCard key={p.id} p={p} />)}
+      {proposals.map(p => <ProposalCard key={p.id} p={p} conversationId={conv.id} />)}
       {earlier.filter(a => a.m.meta.rendered.revised).map(a => (
         <details key={a.i} class="esc-revised small"><summary>Earlier draft (revised)</summary><p class="muted">{parseDirectives(textOf(a.m.content)).plain}</p></details>
       ))}
@@ -221,4 +229,16 @@ export function EscobarTurnView({ conv, indexes, live, last, onChip }: { conv: C
       {!live && last && !!r?.chips?.length && <div class="esc-chips">{r.chips.map(c => <button type="button" key={c} class="chip chip-btn" onClick={() => onChip?.(c)}>{c}</button>)}</div>}
     </div>
   );
+}
+
+/** A sent photo's thumbnail: memory while it is fresh, then IndexedDB (ES-28 evicts sent photos from memory). */
+function Thumb({ id, alt }: { id: string; alt: string }) {
+  const [img, setImg] = useState(() => imageData(id));
+  useEffect(() => {
+    if (img) return;
+    let live = true;
+    void loadImage(id).then(v => { if (live && v) setImg(v); });
+    return () => { live = false; };
+  }, [id]);
+  return img ? <img src={`data:${img.mediaType};base64,${img.data}`} alt={alt} /> : <span class="esc-thumb-missing small muted">Photo</span>;
 }

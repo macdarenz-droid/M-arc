@@ -5,8 +5,11 @@
  * render or apply). Tool results are JSON text `{data, facts}` (§14.1).
  */
 import type { MemoryItem, MemoryKind } from '@/core/models';
-import { MAX_MEMORY_TEXT, MEMORY_KINDS } from '@/core/models';
-import { addDays } from '@/core/dates';
+import { MAX_MEMORY_ITEMS, MAX_MEMORY_TEXT, MEMORY_KINDS } from '@/core/models';
+
+/** Memory kinds that are never evicted to make room (ES-31). */
+export const PROTECTED_MEMORY = new Set<MemoryKind>(['injury', 'equipment', 'agreement']);
+import { addDays, dayKey } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId, MUSCLE_IDS } from '@/data/muscles';
 import { captureFacts } from '../ledger';
@@ -116,7 +119,7 @@ function read(name: string, input: Record<string, unknown>, ctx: ToolCtx): unkno
       const kind = typeof input.kind === 'string' ? input.kind : undefined;
       const q = typeof input.query === 'string' ? normText(input.query) : '';
       const items = ctx.state.escobar.memory.filter(m => (!kind || m.kind === kind) && (!q || normText(m.text).includes(q) || q.split(' ').some(w => w.length > 3 && normText(m.text).includes(w))));
-      return { items: items.slice(-20).map(m => ({ memoryId: m.id, kind: m.kind, text: m.text, since: m.createdAt.slice(0, 10), ...(m.expiresOn ? { expiresOn: m.expiresOn } : {}) })) };
+      return { items: items.slice(-20).map(m => ({ memoryId: m.id, kind: m.kind, text: m.text, since: dayKey(new Date(m.createdAt)), /* QA2-FD-5: the phone's day */ ...(m.expiresOn ? { expiresOn: m.expiresOn } : {}) })) };
     }
     default: throw new R.ToolError(`unknown tool ${name}`);
   }
@@ -215,8 +218,10 @@ export function executeTool(use: ToolUse, env: ExecEnv): ToolOutcome {
         if (dup) return { ...base, content: JSON.stringify({ data: { alreadyKnown: true, memoryId: dup.id }, facts: {} }) };
         const days = input.expiresInDays == null ? (kind === 'injury' ? 42 : undefined) : Number(input.expiresInDays);
         if (days != null && (!Number.isInteger(days) || days < 1 || days > 365)) throw new R.ToolError('expiresInDays must be 1–365');
+        // ES-31: at the cap only facts, preferences, goals and episodes make room; injuries, equipment and agreements never do.
+        if (e.memory.length >= MAX_MEMORY_ITEMS && !e.memory.some(m => !PROTECTED_MEMORY.has(m.kind))) throw new R.ToolError('memory is full; ask the person to forget something first');
         const iso = new Date(ctx.now).toISOString();
-        const item: MemoryItem = { id: `m${ctx.now.toString(36)}${e.memory.length}`, kind, text, source: 'user_said', createdAt: iso, updatedAt: iso, ...(days ? { expiresOn: addDays(ctx.today, days) } : {}) };
+        const item: MemoryItem = { id: `m${ctx.now.toString(36)}${Math.random().toString(36).slice(2, 6)}`, kind, text, source: 'user_said', createdAt: iso, updatedAt: iso, ...(days ? { expiresOn: addDays(ctx.today, days) } : {}) };
         return { ...base, effect: { type: 'remember', item }, content: JSON.stringify({ data: { remembered: true, memoryId: item.id, ...(item.expiresOn ? { reviewOn: item.expiresOn } : {}) }, facts: {} }) };
       }
     }

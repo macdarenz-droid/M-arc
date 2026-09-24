@@ -220,3 +220,86 @@ describe('lb history backfill (RG-02)', () => {
     expect(S.loadState(st).state.sessions[0]!.exercises[0]!.sets[0]!.entered).toBeUndefined();
   });
 });
+
+describe('quarantine with storage nearly full (QA-R1-1)', () => {
+  it('moves the unreadable data aside instead of losing it, and flags the boot', async () => {
+    const bad = JSON.stringify({ version: 2, sessions: [{ id: 'old1' }] });
+    // Room for the two copies already stored and nothing more.
+    const cap = bad.length * 2 + 10;
+    const st = memoryStorage({ onSet: (k, v, map) => {
+      const used = [...map.entries()].reduce((n, [key, val]) => n + (key === k ? 0 : val.length), 0);
+      if (used + v.length > cap) throw quota();
+    } });
+    st.map.set('marc.state.v1', bad);
+    st.map.set('marc.state.v1.backup', bad);
+    const S = await fresh();
+    S.initStore(st);
+    expect(S.bootRecovered.value).toBe(true);
+    const kept = [...st.map.entries()].filter(([k]) => k.endsWith('.corrupt')).map(([, v]) => v);
+    expect(kept).toContain(bad);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'A' } })); S.flushSave();
+    expect([...st.map.values()].some(v => v.includes('old1'))).toBe(true);
+  });
+});
+
+describe('rescue file with both copies kept (QA-R1-5)', () => {
+  it('holds the main and the backup copy', async () => {
+    const st = memoryStorage();
+    const keep = JSON.stringify({ version: 2, sessions: [{ id: 'keep1' }] });
+    st.map.set('marc.state.v1', '{truncated');
+    st.map.set('marc.state.v1.backup', keep);
+    const S = await fresh();
+    S.initStore(st);
+    const raw = S.rescueRaw(st)!;
+    expect(raw).toContain('keep1');
+    expect(raw).toContain('{truncated');
+  });
+});
+
+describe('reset everything (QA-R1-7)', () => {
+  it('leaves no old history in the daily restore point', async () => {
+    const st = memoryStorage();
+    st.map.set('marc.state.v1', JSON.stringify(withSession(freshState(), 'old1', '2026-09-20T10:00:00.000Z')));
+    st.map.set('marc.state.v1.backupDay', '2026-09-21');
+    const S = await fresh();
+    S.initStore(st);
+    S.resetState(freshState());
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'A' } })); S.flushSave();
+    expect(st.map.get('marc.state.v1.backup') ?? '').not.toContain('old1');
+    expect(st.map.get('marc.state.v1') ?? '').not.toContain('old1');
+  });
+});
+
+describe('a live set copied by the old + Set (QA-R2d-4)', () => {
+  it('keeps the typed values and drops the copied commit time, rest and heart', async () => {
+    const st = memoryStorage();
+    const set1 = { id: 'set_a', status: 'committed', kg: 60, reps: 8, at: '2026-09-22T10:05:00.000Z', restSec: 90, heart: { peak: 150 } };
+    const active = { id: 's_live', splitId: null, startedAt: '2026-09-22T09:50:00.000Z', entries: [{ id: 'e1', exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [set1, { ...set1, effort: undefined }] }] };
+    st.map.set('marc.state.v1', JSON.stringify({ ...freshState(), active }));
+    const S = await fresh();
+    S.initStore(st);
+    const sets = S.state.value.active!.entries[0]!.sets;
+    expect(sets[0]!.at).toBe(set1.at);
+    expect(sets[1]!.kg).toBe(60);
+    expect(sets[1]!.at).toBeUndefined();
+    expect(sets[1]!.heart).toBeUndefined();
+    expect(sets[1]!.id).not.toBe('set_a');
+  });
+});
+
+describe('body-fat readings from before the cm formula (QA-R3a-10)', () => {
+  it('are recomputed once from their tape numbers; new ones are left alone', async () => {
+    const st = memoryStorage();
+    const base = freshState();
+    st.map.set('marc.state.v1', JSON.stringify({ ...base, profile: { ...base.profile, sex: 'male', heightCm: 180 }, body: [
+      { day: '2026-01-01', neckCm: 38, waistCm: 85, bodyFatPct: 9.8 },
+      { day: '2026-09-01', neckCm: 38, waistCm: 85, bodyFatPct: 16.1, formula: 'navy-cm' },
+    ] }));
+    const S = await fresh();
+    S.initStore(st);
+    const [old, cur] = S.state.value.body;
+    expect(old!.bodyFatPct).toBeCloseTo(16.1, 0);
+    expect(old!.formula).toBe('navy-cm');
+    expect(cur!.bodyFatPct).toBe(16.1);
+  });
+});

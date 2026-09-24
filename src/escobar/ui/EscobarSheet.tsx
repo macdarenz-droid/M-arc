@@ -3,13 +3,14 @@
  * open Sheet, with half / full detents, a header with status and menu, the thread, and the
  * composer. Loaded lazily from App.tsx the first time Escobar opens.
  */
+import { dayKey } from '@/core/dates';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
 import { showPanel } from '@/app/router';
-import { openSheets, Button, Card, Row, Toggle } from '@/ui/primitives';
+import { Button, Card, Row, Toggle } from '@/ui/primitives';
 import { IconEscobar, IconMore, IconX, IconBack } from '@/ui/icons';
-import { escobarUi, loopView, online, quotaResetAt } from '../state';
+import { escobarUi, loopView, offlineReason, online, quotaResetAt } from '../state';
 import * as S from '../session';
 import { goTo } from '../palace/navigate';
 import { Composer } from './Composer';
@@ -83,7 +84,7 @@ function PastConversations({ onBack }: { onBack: () => void }) {
       {!list.length && <p class="small muted">No conversations yet.</p>}
       {list.map(c => (
         <button type="button" key={c.id} class="esc-past" onClick={() => { S.selectConversation(c.id); onBack(); }}>
-          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{c.updatedAt.slice(0, 10)}</span>
+          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{dayKey(new Date(c.updatedAt))}</span>
         </button>
       ))}
     </div>
@@ -164,10 +165,9 @@ export function EscobarSheet() {
     if (!d) return;
     if (!d.open) d.showModal();
     S.prepare();
-    openSheets.value++;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
+    return () => { document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
 
   // Follow the stream only if the person was already at the bottom (§4.2).
@@ -194,7 +194,7 @@ export function EscobarSheet() {
     else if (dy > 60) { if (escobarUi.value.detent === 'full') S.escobarToHalf(); else S.closeEscobar(); }
   };
 
-  const notice = online.value === false ? 'Escobar is offline. He can still point you around the app.' : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
+  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''} He can still point you around the app.` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
   const mode = ui.mode === 'live' ? ' · live' : ui.mode === 'plan' ? ' · planning' : '';
 
   return (

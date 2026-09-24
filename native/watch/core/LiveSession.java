@@ -9,9 +9,8 @@ public final class LiveSession {
     public static final int MAX_POINTS = 900;
     public final List<Point> points = new ArrayList<>();
     public long packets, samples, firstElapsed = -1, lastElapsed = -1, lastPacketElapsed = -1;
-    public long lastReceivedAt;
-    public int min = Integer.MAX_VALUE, max, lastBpm;
-    public double total, lastIntervalSeconds;
+    public int lastBpm;
+    public double lastIntervalSeconds;
     public Boolean contact;
     public Integer energyKj;
     public List<Double> rrMillis = java.util.Collections.emptyList();
@@ -23,8 +22,7 @@ public final class LiveSession {
         contact = m.contactDetected; energyKj = m.energyKj; rrMillis = m.rrMillis;
         if (Boolean.FALSE.equals(contact) || m.bpm == 0) { rrMillis = java.util.Collections.emptyList(); return; }
         if (firstElapsed < 0) firstElapsed = elapsed;
-        samples++; lastBpm = m.bpm; lastElapsed = elapsed; lastReceivedAt = wallTime;
-        min = Math.min(min, m.bpm); max = Math.max(max, m.bpm); total += m.bpm;
+        samples++; lastBpm = m.bpm; lastElapsed = elapsed;
         points.add(new Point(elapsed, wallTime, m.bpm));
         if (points.size() > MAX_POINTS) points.remove(0);
     }
@@ -37,5 +35,4 @@ public final class LiveSession {
         if (age <= 15_000) return "DELAYED";
         return "STALE";
     }
-    public int average() { return samples == 0 ? 0 : (int)Math.round(total / samples); }
 }

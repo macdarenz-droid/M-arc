@@ -13,6 +13,10 @@ export interface StepResult {
   aborted?: boolean;
   /** The model refused mid-conversation system messages: retry with <situation> blocks. */
   systemRole?: boolean;
+  /** A content refusal (stop_reason refusal): billed, so counted like a finished step. */
+  refused?: boolean;
+  /** Output tokens the API reported for a step with no final message (a refusal). */
+  outputTokens?: number;
   error?: { code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 }
 
@@ -21,16 +25,35 @@ export const RESULT_EVENT = '_step';
 
 export async function localStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal }): Promise<StepResult> {
   const r = await runStep(client, params, emit, opts);
-  if (!r.error) return { final: r.final, emittedAny: r.emittedAny };
+  if (!r.error) return { final: r.final, emittedAny: r.emittedAny, ...(r.refused ? { refused: true, outputTokens: r.outputTokens ?? 0 } : {}) };
   const aborted = r.error instanceof Anthropic.APIUserAbortError || !!opts.signal?.aborted;
   if (r.timedOut || aborted) return { final: null, emittedAny: r.emittedAny, timedOut: r.timedOut, aborted };
   return { final: null, emittedAny: r.emittedAny, systemRole: isSystemRoleRejection(r.error), error: mapError(r.error) };
 }
 
 /** Runs the step in the UpstreamRelay pinned to eastern North America and relays its events. */
-export async function relayStep(env: Env, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal }): Promise<StepResult> {
+/** QA-R0-5: turns spread over a few relay objects (all in eastern North America), so one burst of photo turns cannot exhaust a single object's memory for everyone. */
+export const RELAY_SHARDS = 8;
+/**
+ * QA2-FA-5: the device id is chosen by the caller, so the shard hash is seeded with a value picked
+ * when this Worker instance starts. A caller cannot work out which ids land on which shard, so
+ * cannot aim a burst at a chosen group of members. The relay keeps no state, so a device may use
+ * a different shard in another instance.
+ */
+// Workers forbid random values in global scope (deploy error 10021), so the seed is made on first use.
+let shardSeed: number | null = null;
+const instanceSeed = (): number => (shardSeed ??= crypto.getRandomValues(new Uint32Array(1))[0]!);
+export const relayShard = (key: string, seed = instanceSeed()): number => {
+  let h = (0x811c9dc5 ^ seed) >>> 0;
+  for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619) >>> 0;
+  // A 32-bit finalizer (murmur3 fmix32), so every bit of the id reaches the low bits the shard uses.
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b) >>> 0; h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35) >>> 0; h ^= h >>> 16;
+  return (h >>> 0) % RELAY_SHARDS;
+};
+
+export async function relayStep(env: Env, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal; shardKey?: string }): Promise<StepResult> {
   const ns = env.UPSTREAM!;
-  const stub = ns.get(ns.idFromName('us'), { locationHint: 'enam' });
+  const stub = ns.get(ns.idFromName(`us-${relayShard(opts.shardKey ?? '')}`), { locationHint: 'enam' });
   const unavailable: StepResult = { final: null, emittedAny: false, error: { code: 'upstream', message: 'The coach is unavailable right now.' } };
   let res: Response;
   try {

@@ -25,8 +25,8 @@ jobs:
       run:
         working-directory: escobar-worker
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
       - run: npm ci
@@ -41,12 +41,12 @@ jobs:
           if [ -n "$ACCOUNT_ID" ]; then export CLOUDFLARE_ACCOUNT_ID="$ACCOUNT_ID"; fi
           # wrangler is pinned in escobar-worker/package.json (installed by npm ci above).
           npx --no-install wrangler deploy
-      - name: Check /health answers protocol 2 with the key, quotas and US relay present
+      - name: Check /health answers protocol 2 with the key, quotas and US relay present and no model override ignored
         run: |
           for i in 1 2 3 4 5 6; do
             body=$(curl -fsS https://marc-coach.mmarcdarenz.workers.dev/health || true)
             echo "$body"
-            if echo "$body" | grep -q '"protocol":2' && echo "$body" | grep -q '"key":true' && echo "$body" | grep -q '"quotas":true' && echo "$body" | grep -q '"relay":true'; then exit 0; fi
+            if echo "$body" | grep -q '"protocol":2' && echo "$body" | grep -q '"key":true' && echo "$body" | grep -q '"quotas":true' && echo "$body" | grep -q '"relay":true' && echo "$body" | grep -q '"ignoredModels":\[\]'; then exit 0; fi
             sleep 5
           done
-          echo "::error::/health must show protocol 2, key:true, quotas:true (spend cap) and relay:true (US upstream, PL-20)"; exit 1
+          echo "::error::/health must show protocol 2, key:true, quotas:true (spend cap), relay:true (US upstream, PL-20) and ignoredModels:[] (every MODEL_<MODE> usable, QA2-F7-3)"; exit 1

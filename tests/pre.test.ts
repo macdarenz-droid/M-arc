@@ -70,3 +70,13 @@ describe('preSessionInsights', () => {
     expect(out.find(i => i.id === `pre:warmup:${bench}`)!.action).toMatch(/^32.5 x 8, 45 x 5, 52.5 x 2/);
   });
 });
+
+describe('no warm-up toggle for an empty-bar working set (QA-R3b-4)', () => {
+  it('offers nothing when every step would be the bar', async () => {
+    const { warmupOffer } = await import('@/brain/coach/pre');
+    const { defaultProfile } = await import('@/brain/units');
+    expect(warmupOffer(20, defaultProfile('Barbell', 'kg'))).toBeNull();
+    expect(warmupOffer(100, defaultProfile('Barbell', 'kg'))!.length).toBeGreaterThan(0);
+    expect(warmupOffer(null)).toBeNull();
+  });
+});

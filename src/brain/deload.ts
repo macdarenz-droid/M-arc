@@ -30,6 +30,9 @@ function mainLiftIds(sessions: Session[], custom: Exercise[]): string[] {
   return [...ids].filter(id => findExercise(id, custom)?.role === 'main');
 }
 
+/** The thresholds behind deloadTrigger, shared with explain_method. `readinessWindowDays` is what callers pass. */
+export const DELOAD_TRIGGER = { stalledLifts: 2, driftLifts: 2, overBandWeeks: 2, readinessRedDays: 3, readinessWindowDays: 5 } as const;
+
 export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = []): DeloadSuggestion {
   const mainIds = mainLiftIds(sessions, custom);
   // Only lifts trained in the last six weeks count (BR-05).
@@ -41,19 +44,19 @@ export function deloadTrigger(sessions: Session[], today: string, custom: Exerci
     return status === 'plateaued' || status === 'declining';
   });
   const plateauedOrDeclining = stalled.length;
-  if (plateauedOrDeclining >= 2) {
+  if (plateauedOrDeclining >= DELOAD_TRIGGER.stalledLifts) {
     return { suggest: true, reason: 'Two or more main lifts have plateaued or slipped over recent sessions.' };
   }
 
   const totalsByWeek = weeklyMuscleSets(sessions, today, 3, custom).map(w => Object.values(w.sets).reduce((a, v) => a + (v ?? 0), 0));
   const volumeRising = totalsByWeek.length === 3 && totalsByWeek[0]! >= totalsByWeek[1]! && totalsByWeek[1]! >= totalsByWeek[2]! && totalsByWeek[0]! > totalsByWeek[2]!;
   const harderCount = histories.filter(h => effortDrift(h).status === 'harder').length;
-  if (harderCount >= 2 && volumeRising) {
+  if (harderCount >= DELOAD_TRIGGER.driftLifts && volumeRising) {
     return { suggest: true, reason: 'Effort has been drifting harder on two or more lifts while weekly volume keeps climbing.' };
   }
 
   const levels = trainingLevels(sessions, custom);
-  const weekly = weeklyMuscleSets(sessions, today, 2, custom);
+  const weekly = weeklyMuscleSets(sessions, today, DELOAD_TRIGGER.overBandWeeks, custom);
   const overBandTwoWeeks = MUSCLE_IDS.some(m => {
     const [, hi] = volumeBands(levels[m].levelIndex, m);
     return (weekly[0]?.sets[m] ?? 0) > hi && (weekly[1]?.sets[m] ?? 0) > hi;
@@ -65,7 +68,7 @@ export function deloadTrigger(sessions: Session[], today: string, custom: Exerci
   }
 
   const redDays = readinessHistory.filter(b => b === 'red').length;
-  if (redDays >= 3) {
+  if (redDays >= DELOAD_TRIGGER.readinessRedDays) {
     return { suggest: true, reason: 'Readiness has read red on three or more of the last five days.' };
   }
 

@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import Anthropic from '@anthropic-ai/sdk';
 import { QuotaCounter, type Limits } from '../src/quotaDO';
-import { handle } from '../src/handler';
+import { handle, CUT_SHORT_TOKENS_PER_SEC } from '../src/handler';
 import { checkQuota, recordStep } from '../src/quota';
-import type { Env } from '../src/anthropic';
+import { UpstreamRelay } from '../src/upstreamRelay';
+import type { ClientLike, Env } from '../src/anthropic';
 import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
 
 /** In-memory Durable Object storage: `kv` is synchronous like SyncKvStorage; the alarm calls yield. */
@@ -41,7 +43,7 @@ function fakeNamespace() {
   return ns;
 }
 
-const LIM: Limits = { device: { turns: 80, steps: 400, out: 400_000 }, ip: { turns: 300 }, global: { steps: 20_000, out: 3_000_000 } };
+const LIM: Limits = { device: { turns: 80, steps: 400, out: 400_000 }, ip: { turns: 300, steps: 1500 }, global: { steps: 20_000, out: 3_000_000 } };
 const KEYS = { device: DEVICE, ip: '203.0.113.7' };
 const TEXT = [{ type: 'text', text: 'ok' }];
 
@@ -53,7 +55,7 @@ describe('QuotaCounter Durable Object (PL-01, PL-07)', () => {
     const c = new QuotaCounter(state as never, {} as never);
     await Promise.all(Array.from({ length: 5 }, () => c.add(KEYS, { steps: 1, out: 40, turns: 1 })));
     expect(state.data.get(`d:${DEVICE}`)).toEqual({ turns: 5, steps: 5, out: 200 });
-    expect(state.data.get('i:203.0.113.7')).toEqual({ turns: 5 });
+    expect(state.data.get('i:203.0.113.7')).toEqual({ turns: 5, steps: 5 });
     expect(state.data.get('g')).toEqual({ steps: 5, out: 200 });
   });
   it('sets one cleanup alarm three days out and clears everything when it fires', async () => {
@@ -70,7 +72,7 @@ describe('QuotaCounter Durable Object (PL-01, PL-07)', () => {
     expect(c.check(KEYS, LIM)).toEqual({ ok: true });
     await c.add(KEYS, { steps: 1, out: 10, turns: 1 });
     expect(c.check(KEYS, { ...LIM, device: { ...LIM.device, turns: 1 } })).toEqual({ ok: false, scope: 'device' });
-    expect(c.check({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1 } })).toEqual({ ok: false, scope: 'ip' });
+    expect(c.check({ device: 'dev_other000000000000000000', ip: KEYS.ip }, { ...LIM, ip: { turns: 1, steps: 1500 } })).toEqual({ ok: false, scope: 'ip' });
     expect(c.check({ device: 'dev_other000000000000000000', ip: '198.51.100.1' }, { ...LIM, global: { steps: 1_000, out: 10 } })).toEqual({ ok: false, scope: 'global' });
   });
 });
@@ -110,7 +112,7 @@ describe('handler with QUOTA_DO', () => {
     const next = turn({ messages: [{ role: 'user', content: 'go' }, { role: 'assistant', content: toolStep }, { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't', content: '{}' }] }] });
     await sse(await handle(post(next), e, deps(mockClient([{ events: eventsFor(TEXT), final: finalMessage(TEXT) }]))));
     expect(counters(ns).get(`d:${DEVICE}`)).toEqual({ turns: 1, steps: 2, out: 80 });
-    expect(counters(ns).get('i:unknown')).toEqual({ turns: 1 });
+    expect(counters(ns).get('i:unknown')).toEqual({ turns: 1, steps: 2 });
   });
   it('rotating device ids from one IP hit 429 from RATE_IP', async () => {
     const seen = new Map<string, number>();
@@ -143,5 +145,163 @@ describe('handler with QUOTA_DO', () => {
     expect(JSON.parse(line)).toEqual({ requestId: 'req_1', colo: null, mode: 'chat', model: 'claude-opus-5', stop_reason: 'end_turn', in: 100, out: 40, cacheRead: 80, cacheWrite: 0, steps: 1, ms: 0 });
     expect(line).not.toContain(DEVICE);
     expect(line).not.toContain('readiness');
+  });
+});
+
+describe('billed steps are counted however they end (QA-R0-1, QA-R0-2, QA-R0-3)', () => {
+  const setup = (extra: Partial<Env> = {}) => { const ns = fakeNamespace(); return { ns, env: baseEnv({ QUOTA_DO: ns as never, ...extra }) }; };
+  const rows = (ns: ReturnType<typeof fakeNamespace>) => ns.objects.get('2026-09-22')?.state.data ?? new Map();
+  /** Runs a turn to the end of its background work, reading only the first chunk when `hangUp`. */
+  async function run(env: Env, script: Parameters<typeof mockClient>[0][number], hangUp = false, headers: Record<string, string> = {}) {
+    const pending: Promise<unknown>[] = [];
+    const r = await handle(post(turn(), headers), env, deps(mockClient([script]), { waitUntil: p => { pending.push(p); } }));
+    if (r.status !== 200) return r.status;
+    if (hangUp) { const reader = r.body!.getReader(); await reader.read(); await reader.read(); await reader.cancel(); } else await sse(r);
+    await Promise.all(pending);
+    return r.status;
+  }
+  const LONG = [{ type: 'text', text: 'x'.repeat(300) }];
+
+  it('a caller who hangs up mid-answer is counted, so the daily cap still trips', async () => {
+    const { ns, env } = setup({ MAX_TURNS_PER_DEVICE: '2' });
+    const statuses: number[] = [];
+    for (let i = 0; i < 4; i++) statuses.push(await run(env, { events: eventsFor(LONG), final: finalMessage(LONG), hang: true }, true));
+    expect(statuses).toEqual([200, 200, 429, 429]);
+    const d = rows(ns).get(`d:${DEVICE}`) as { turns: number; steps: number; out: number };
+    expect(d.turns).toBe(2);
+    expect(d.steps).toBe(2);
+    expect(d.out).toBeGreaterThan(0);
+  });
+  it('a refusal and a mid-stream error are counted too', async () => {
+    const { ns, env } = setup();
+    const refused = finalMessage([], 'refusal', { usage: { input_tokens: 10, output_tokens: 12 } });
+    await run(env, { events: eventsFor(TEXT), final: refused });
+    expect(rows(ns).get(`d:${DEVICE}`)).toEqual({ turns: 1, steps: 1, out: 12 });
+    await run(env, { events: eventsFor(LONG), throwAt: 4, error: new Error('overloaded mid-stream') });
+    expect((rows(ns).get(`d:${DEVICE}`) as { steps: number }).steps).toBe(2);
+  });
+  it('an error before any output is not counted (nothing was billed)', async () => {
+    const { ns, env } = setup();
+    await run(env, { events: eventsFor(TEXT), throwAt: 0, error: new Error('refused at the door') });
+    expect(rows(ns).get(`d:${DEVICE}`)).toBeUndefined();
+  });
+  it('the per-IP cap counts steps, so endless tool-call turns from rotating devices stop', async () => {
+    const { env } = setup({ MAX_STEPS_PER_IP: '2' });
+    const toolStep = [{ type: 'tool_use', id: 't', name: 'get_overview', input: {} }];
+    const statuses: number[] = [];
+    for (let i = 0; i < 4; i++) statuses.push(await run(env, { events: eventsFor(toolStep), final: finalMessage(toolStep, 'tool_use') }, false, { 'x-escobar-device': `dev_${String(i).padStart(24, '0')}`, 'cf-connecting-ip': '203.0.113.9' }));
+    expect(statuses).toEqual([200, 200, 429, 429]);
+  });
+});
+
+describe('thinking the caller never sees is counted when a step is cut short (QA2-FA-1..4)', () => {
+  const originalRelayClient = UpstreamRelay.makeClient;
+  afterEach(() => { UpstreamRelay.makeClient = originalRelayClient; });
+  const setup = (extra: Partial<Env> = {}) => { const ns = fakeNamespace(); return { ns, env: baseEnv({ QUOTA_DO: ns as never, ...extra }) }; };
+  const row = (ns: ReturnType<typeof fakeNamespace>) => ns.objects.get('2026-09-22')?.state.data.get(`d:${DEVICE}`);
+  const clock = () => ({ t: Date.parse('2026-09-22T12:00:00Z') });
+  const untilAbort = (signal?: AbortSignal) => new Promise((_, rej) => {
+    if (signal?.aborted) rej(new Anthropic.APIUserAbortError());
+    signal?.addEventListener('abort', () => rej(new Anthropic.APIUserAbortError()));
+  });
+  /**
+   * One step as the API streams it by default (thinking display "omitted"): the thinking block carries no
+   * text, `thinkMs` passes on the clock while the model thinks, then a short answer (or `fail`, or it keeps
+   * thinking until the caller goes away when `stopIn` is 'thinking').
+   */
+  function thinkingClient(c: { t: number }, o: { thinkMs: number; fail?: unknown; stopIn?: 'thinking' }): ClientLike {
+    return { beta: { messages: { stream(_p, opts) {
+      return {
+        async *[Symbol.asyncIterator]() {
+          yield { type: 'message_start', message: finalMessage([]) } as never;
+          yield { type: 'content_block_start', index: 0, content_block: { type: 'thinking', thinking: '', signature: '' } } as never;
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'thinking_delta', thinking: '' } } as never;
+          c.t += o.thinkMs;
+          if (o.fail) throw o.fail;
+          if (o.stopIn === 'thinking') await untilAbort(opts?.signal);
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'signature_delta', signature: 'sig' } } as never;
+          yield { type: 'content_block_stop', index: 0 } as never;
+          yield { type: 'content_block_start', index: 1, content_block: { type: 'text', text: '' } } as never;
+          yield { type: 'content_block_delta', index: 1, delta: { type: 'text_delta', text: 'Here is your plan.' } } as never;
+          await untilAbort(opts?.signal);
+        },
+        finalMessage: () => new Promise(() => {}),
+        abort() {},
+      };
+    } } } };
+  }
+  /** A UPSTREAM namespace backed by one real UpstreamRelay running `client`. */
+  function relayNs(client: ClientLike) {
+    UpstreamRelay.makeClient = () => client;
+    const relay = new UpstreamRelay({ waitUntil: () => {} } as never, {} as never);
+    return { idFromName: (n: string) => n, get: () => ({ fetch: (url: string, init: RequestInit) => relay.fetch(new Request(url, init)) }) };
+  }
+  /** Sends one turn and hangs up as soon as `marker` has arrived; resolves once the step is recorded. */
+  async function hangUpAfter(env: Env, client: ClientLike, c: { t: number }, mode: string, marker: string) {
+    const pending: Promise<unknown>[] = [];
+    const r = await handle(post(turn({ mode })), env, { ...deps(client), now: () => c.t, waitUntil: p => { pending.push(p); } });
+    if (r.status !== 200) return r.status;
+    const reader = r.body!.getReader();
+    const dec = new TextDecoder();
+    let seen = '';
+    while (!seen.includes(marker)) { const { value, done } = await reader.read(); if (done) break; seen += dec.decode(value, { stream: true }); }
+    await reader.cancel();
+    await Promise.all(pending);
+    return r.status;
+  }
+
+  it('a hang-up right after the answer starts counts the minute of hidden thinking, so the output cap trips', async () => {
+    const c = clock();
+    const { ns, env } = setup({ MAX_OUTPUT_PER_DEVICE: '1000' });
+    const client = thinkingClient(c, { thinkMs: 60_000 });
+    expect(await hangUpAfter(env, client, c, 'plan', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 60 * CUT_SHORT_TOKENS_PER_SEC });
+    expect(await hangUpAfter(env, client, c, 'plan', '"t":"text"')).toBe(429);
+  });
+  it('the same through the US relay', async () => {
+    const c = clock();
+    const client = thinkingClient(c, { thinkMs: 60_000 });
+    const { ns, env } = setup({ MAX_OUTPUT_PER_DEVICE: '1000', UPSTREAM: relayNs(client) as never });
+    expect(await hangUpAfter(env, mockClient([]), c, 'plan', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 60 * CUT_SHORT_TOKENS_PER_SEC });
+    expect(await hangUpAfter(env, mockClient([]), c, 'plan', '"t":"text"')).toBe(429);
+  });
+  it('a hang-up while the model is still thinking is counted by how long it thought', async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    expect(await hangUpAfter(env, thinkingClient(c, { thinkMs: 45_000, stopIn: 'thinking' }), c, 'chat', '"t":"thinking"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 45 * CUT_SHORT_TOKENS_PER_SEC });
+  });
+  it("the estimate never passes the step's max_tokens", async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    expect(await hangUpAfter(env, thinkingClient(c, { thinkMs: 600_000 }), c, 'live', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 4000 });
+  });
+  it('an API error after a thinking-only phase is counted too (QA2-FA-3)', async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    const boom = new Anthropic.InternalServerError(500, { type: 'error', error: { type: 'api_error', message: 'boom' } }, 'boom', new Headers());
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const ev = await sse(await handle(post(turn()), env, { ...deps(thinkingClient(c, { thinkMs: 30_000, fail: boom })), now: () => c.t }));
+    expect(ev.map(e => e.t)).toEqual(['start', 'thinking', 'error']);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 30 * CUT_SHORT_TOKENS_PER_SEC });
+  });
+});
+
+describe('a stall or cancel before any output is not a used turn (QA2-FA-6)', () => {
+  it('two stalled requests do not use up the day', async () => {
+    const ns = fakeNamespace();
+    const env = baseEnv({ QUOTA_DO: ns as never, MAX_TURNS_PER_DEVICE: '2' });
+    const statuses: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const pending: Promise<unknown>[] = [];
+      const r = await handle(post(turn()), env, { ...deps(mockClient([{ events: [], hang: true }]), { idleMs: 10 }), waitUntil: p => { pending.push(p); } });
+      statuses.push(r.status);
+      await sse(r);
+      await Promise.all(pending);
+    }
+    expect(statuses).toEqual([200, 200, 200]);
+    expect(ns.objects.get('2026-09-22')?.state.data.get(`d:${DEVICE}`)).toBeUndefined();
   });
 });

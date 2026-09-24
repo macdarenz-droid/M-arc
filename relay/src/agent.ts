@@ -1,0 +1,296 @@
+// Agent links: /s/<token>. Server-rendered HTML with no script (readable by any fetch tool, postable by browser agents),
+// the same content as markdown for agents, JSON for tools, and path-based writes for agents that can send HTTP.
+import { HttpError, cleanName, segments, type Author, type FileMeta, type Folder, type FolderStat, type Link, type Message, type Project, type Store } from './store.ts'
+import { json, limited, rawResponse, readBytes, readForm, readJson, type Ctx } from './app.ts'
+import { KINDS, esc, fmtBytes, isText, renderMarkdown } from '../public/shared.js'
+
+export interface View {
+  store: Store
+  link: Link
+  project: Project
+  scope: Folder
+  base: string
+  tree: { f: FolderStat; path: string; depth: number }[]
+}
+
+const enc = (path: string) => path.split('/').map(encodeURIComponent).join('/')
+export const folderUrl = (v: View, path: string) => (path ? `${v.base}/f/${enc(path)}` : v.base)
+export const rawUrl = (v: View, f: FileMeta) => `${v.base}/raw/${f.id}/${encodeURIComponent(f.name)}`
+export const when = (t: number) => new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
+const label = (path: string) => '/' + path
+const decode = (s: string) => {
+  try {
+    return decodeURIComponent(s)
+  } catch {
+    throw new HttpError(400, 'Bad URL encoding')
+  }
+}
+
+export function view(store: Store, origin: string, token: string): View {
+  const link = store.linkByToken(token)
+  if (!link) throw new HttpError(404, 'This link is not valid, or it was revoked')
+  const project = store.project(link.project_id)
+  const scope = store.folder(link.folder_id)
+  const all = store.folders(project.id)
+  const kids = new Map<string, FolderStat[]>()
+  for (const f of all) if (f.parent_id) kids.set(f.parent_id, [...(kids.get(f.parent_id) ?? []), f])
+  const tree: View['tree'] = []
+  const walk = (f: FolderStat, path: string, depth: number) => {
+    tree.push({ f, path, depth })
+    for (const k of kids.get(f.id) ?? []) walk(k, path ? `${path}/${k.name}` : k.name, depth + 1)
+  }
+  const root = all.find(f => f.id === scope.id)
+  if (root) walk(root, '', 0)
+  return { store, link, project, scope, base: `${origin}/s/${token}`, tree }
+}
+
+const node = (v: View, folderId: string) => v.tree.find(t => t.f.id === folderId)
+export const pathOf = (v: View, folderId: string) => node(v, folderId)?.path ?? ''
+
+export function folderAt(v: View, path: unknown): View['tree'][number] {
+  const want = segments(path).join('/').toLowerCase()
+  const hit = v.tree.find(t => t.path.toLowerCase() === want)
+  if (!hit) throw new HttpError(404, `No folder “${want || '/'}” in this link`)
+  return hit
+}
+
+// ── markdown for agents ─────────────────────────────────────────
+function howTo(v: View): string {
+  const l = v.link
+  if (!l.can_write)
+    return `## How to use this link\nThis link is **read-only**. Read what you need, then answer in your chat; the person who shared it will post your reply here.\n\n- As an MCP server (read tools only): \`${v.base}/mcp\`\n- A folder as markdown: \`GET ${v.base}/f/<path>?format=md\`\n- Everything at once: \`GET ${v.base}/context.md\`\n- Raw files: the links in the file lists.\n`
+  return `## How to use this link
+You are posting as **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}). Paths are relative to this link's folder; \`""\` is its root.
+
+- Read a folder: \`GET ${v.base}/f/<path>?format=md\` · everything: \`GET ${v.base}/context.md\` · JSON index: \`GET ${v.base}/tree.json\`
+- Post a message: \`POST ${v.base}/messages\` with JSON \`{"folder": "<path>", "body": "<markdown>", "author": "<optional display name>"}\`
+- Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body (missing folders are created)
+- Upload files: \`POST ${v.base}/files\` as multipart form data: field \`folder\`, one or more \`file\`
+- Create a folder: \`POST ${v.base}/folders\` with JSON \`{"path": "<path>"}\`
+- Tool-using apps (Claude, ChatGPT, Cursor, Claude Code): connect \`${v.base}/mcp\` as an MCP server and use its tools instead.
+- No HTTP tool? Use the form on ${v.base} in a browser, or answer in chat and the person will paste it.
+
+\`\`\`sh
+curl -X POST ${v.base}/messages -H 'content-type: application/json' \\
+  -d '{"folder": "", "body": "Done: …"}'
+\`\`\`
+`
+}
+
+export function msgMd(v: View, m: Message, withFolder: boolean): string {
+  const where = withFolder ? ` · in ${label(pathOf(v, m.folder_id))}` : ''
+  const files = m.files.length ? '\n\nAttachments: ' + m.files.map(f => `[${f.name}](${rawUrl(v, f)}) (${fmtBytes(f.size)})`).join(', ') : ''
+  return `### ${m.author} (${KINDS[m.kind]?.label ?? m.kind}) · ${when(m.created_at)}${where}\n\n${m.body}${files}\n`
+}
+
+export const fileLine = (v: View, f: FileMeta, path = pathOf(v, f.folder_id)) =>
+  `- [${path ? path + '/' : ''}${f.name}](${rawUrl(v, f)}) · ${fmtBytes(f.size)} · ${f.author} · ${when(f.updated_at)}`
+
+export function treeMd(v: View): string {
+  return v.tree
+    .map(t => `${'  '.repeat(t.depth)}- ${t.depth ? t.f.name + '/' : '/'} — ${t.f.messages} messages, ${t.f.files} files`)
+    .join('\n')
+}
+
+export function header(v: View, title: string): string {
+  const scope = v.scope.parent_id ? ` · scope: ${v.scope.name}/` : ''
+  return `# ${title}\n\nRelay · ${v.project.name} · link “${v.link.name}” · ${v.link.can_write ? 'read + write' : 'read only'}${scope} · ${when(Date.now())}\n${v.project.description ? `\n> ${v.project.description}\n` : ''}`
+}
+
+export function folderMd(v: View, at: View['tree'][number], how = true): string {
+  const { messages, more } = v.store.messages(at.f.id, { limit: 100 })
+  const files = v.store.files(at.f.id)
+  const subs = v.tree.filter(t => t.f.parent_id === at.f.id)
+  return [
+    header(v, `${v.project.name} ${label(at.path)}`),
+    how ? howTo(v) : '',
+    `## Folders\n${treeMd(v)}`,
+    subs.length ? `## Subfolders\n${subs.map(s => `- [${s.f.name}/](${folderUrl(v, s.path)}?format=md)`).join('\n')}` : '',
+    `## Thread ${label(at.path)}${more ? ' (latest 100)' : ''}\n\n${messages.map(m => msgMd(v, m, false)).join('\n') || '_No messages yet._'}`,
+    `## Files in ${label(at.path)}\n${files.map(f => fileLine(v, f)).join('\n') || '_No files._'}`,
+  ].filter(Boolean).join('\n\n') + '\n'
+}
+
+function contextMd(v: View, at: View['tree'][number], limit: number): string {
+  const messages = v.store.recent(at.f.id, limit)
+  const files = v.store.filesUnder(at.f.id)
+  let budget = 256 * 1024
+  const texts: string[] = []
+  for (const f of [...files].sort((a, b) => b.updated_at - a.updated_at)) {
+    if (!isText(f.name, f.mime) || f.size > 48 * 1024 || f.size > budget) continue
+    budget -= f.size
+    const body = new TextDecoder().decode(v.store.read(f.id))
+    const fence = '`'.repeat(Math.max(3, ...[...body.matchAll(/`+/g)].map(m => m[0].length + 1)))
+    texts.push(`### ${pathOf(v, f.folder_id) ? pathOf(v, f.folder_id) + '/' : ''}${f.name}\n\n${fence}\n${body}\n${fence}`)
+  }
+  return [
+    header(v, `${v.project.name} — context${at.path ? ' ' + label(at.path) : ''}`),
+    howTo(v),
+    `## Folders\n${treeMd(v)}`,
+    `## Latest ${messages.length} messages (oldest first)\n\n${messages.map(m => msgMd(v, m, true)).join('\n') || '_No messages yet._'}`,
+    `## Files\n${files.map(f => fileLine(v, f)).join('\n') || '_No files._'}`,
+    texts.length ? `## Text file contents (newest first, up to 48 KB each)\n\n${texts.join('\n\n')}` : '',
+  ].filter(Boolean).join('\n\n') + '\n'
+}
+
+// ── HTML for people and browsing agents ─────────────────────────
+function avatar(kind: string, author: string) {
+  const g = KINDS[kind]?.glyph || (author.trim()[0] ?? '?').toUpperCase()
+  return `<span class="av" data-kind="${esc(kind)}" aria-hidden="true">${esc(g)}</span>`
+}
+
+function msgHtml(v: View, m: Message, withFolder: boolean): string {
+  const path = pathOf(v, m.folder_id)
+  const where = withFolder ? ` <a class="s-where" href="${esc(folderUrl(v, path))}">${esc(label(path))}</a>` : ''
+  const files = m.files.length
+    ? `<ul class="s-atts">${m.files.map(f => `<li><a href="${esc(rawUrl(v, f))}">${esc(f.name)}</a> <span>${fmtBytes(f.size)}</span></li>`).join('')}</ul>`
+    : ''
+  return `<article class="s-msg" id="m-${m.id}"><header>${avatar(m.kind, m.author)}<strong>${esc(m.author)}</strong>${m.kind === 'human' ? '' : `<span class="kind" data-kind="${esc(m.kind)}">${esc(KINDS[m.kind]?.label ?? m.kind)}</span>`}<time datetime="${new Date(m.created_at).toISOString()}">${when(m.created_at)}</time>${where}</header><div class="md">${renderMarkdown(m.body)}</div>${files}</article>`
+}
+
+function page(v: View, title: string, body: string, md: string): Response {
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="dark light"><title>${esc(title)} · Relay</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/app.css"><link rel="alternate" type="text/markdown" href="${esc(md)}"></head><body class="share">${body}</body></html>`
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } })
+}
+
+function folderHtml(v: View, at: View['tree'][number]): Response {
+  const { messages, more } = v.store.messages(at.f.id, { limit: 100 })
+  const files = v.store.files(at.f.id)
+  const crumbs = [`<a href="${esc(v.base)}">${esc(v.scope.parent_id ? v.scope.name : v.project.name)}</a>`]
+  let acc = ''
+  for (const seg of at.path ? at.path.split('/') : []) {
+    acc = acc ? `${acc}/${seg}` : seg
+    crumbs.push(`<a href="${esc(folderUrl(v, acc))}">${esc(seg)}</a>`)
+  }
+  const mdUrl = `${folderUrl(v, at.path)}?format=md`
+  const w = !!v.link.can_write
+  const note = `<section class="s-note"><strong>For AI agents</strong><p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>. MCP server for Claude, ChatGPT and other tool-using apps: <code>${esc(v.base)}/mcp</code>.</p>${
+    w
+      ? `<p>Post with HTTP: <code>POST ${esc(v.base)}/messages</code> and JSON <code>{"folder": "${esc(at.path)}", "body": "…"}</code>; replace a file with <code>PUT ${esc(v.base)}/files/&lt;path&gt;/&lt;name&gt;</code>. Or use the form at the bottom.</p>`
+      : `<p>This link is read-only: answer in your chat and the person who shared it will post it here.</p>`
+  }</section>`
+  const tree = `<nav class="s-tree" aria-label="Folders">${v.tree
+    .map(t => `<a class="d${Math.min(t.depth, 6)}${t.f.id === at.f.id ? ' on' : ''}" href="${esc(folderUrl(v, t.path))}">${esc(t.depth ? t.f.name : '/')}<span>${t.f.messages + t.f.files || ''}</span></a>`)
+    .join('')}</nav>`
+  const recent =
+    at.f.id === v.scope.id
+      ? v.store.recent(v.scope.id, 12, at.f.id)
+      : []
+  const fileRows = files
+    .map(f => `<tr><td><a href="${esc(rawUrl(v, f))}">${esc(f.name)}</a></td><td>${fmtBytes(f.size)}</td><td>${esc(f.author)}</td><td>${when(f.updated_at)}</td></tr>`)
+    .join('')
+  const options = v.tree.map(t => `<option value="${esc(t.path)}"${t.f.id === at.f.id ? ' selected' : ''}>${esc(label(t.path))}</option>`).join('')
+  const form = w
+    ? `<form class="s-form" method="post" action="${esc(v.base)}/messages" enctype="multipart/form-data"><h2>Post</h2><div class="row"><label>Folder <select name="folder">${options}</select></label><label>As <input name="author" value="${esc(v.link.name)}" maxlength="60"></label></div><textarea name="body" rows="6" placeholder="Markdown…"></textarea><div class="row"><input type="file" name="file" multiple><button type="submit">Post</button></div></form>`
+    : ''
+  const body = `<header class="s-head"><a class="s-brand" href="${esc(v.base)}"><span class="logo" aria-hidden="true"></span>Relay</a><nav class="crumbs">${crumbs.join('<i>/</i>')}</nav><span class="s-badge${w ? ' w' : ''}">${w ? 'Read + write' : 'Read only'} · ${esc(v.link.name)}</span></header>
+<main class="s-main">${tree}<div class="s-col">${note}
+<section><h2>Thread <span>${esc(label(at.path))}${more ? ' · latest 100' : ''}</span></h2>${messages.map(m => msgHtml(v, m, false)).join('') || '<p class="s-empty">No messages yet.</p>'}</section>
+<section><h2>Files <span>${files.length}</span></h2>${fileRows ? `<div class="table"><table><thead><tr><th>Name</th><th>Size</th><th>By</th><th>Updated</th></tr></thead><tbody>${fileRows}</tbody></table></div>` : '<p class="s-empty">No files.</p>'}</section>
+${recent.length ? `<section><h2>Recent in other folders</h2>${recent.map(m => msgHtml(v, m, true)).join('')}</section>` : ''}
+${form}</div></main>`
+  return page(v, `${v.project.name} ${label(at.path)}`, body, mdUrl)
+}
+
+const markdown = (text: string) => new Response(text, { headers: { 'Content-Type': 'text/markdown; charset=utf-8', 'Cache-Control': 'no-store' } })
+
+// ── router ──────────────────────────────────────────────────────
+export async function agentRoute(c: Ctx): Promise<Response> {
+  const m = c.url.pathname.match(/^\/s\/([^/]+)(\/.*)?$/)
+  if (!m) throw new HttpError(404, 'Not found')
+  const v = view(c.store, c.url.origin, m[1] ?? '')
+  const rest = (m[2] ?? '').replace(/\/+$/, '')
+  const method = c.req.method
+  const accept = c.req.headers.get('accept') ?? ''
+  const wantsMd = c.url.searchParams.get('format') === 'md' || /text\/markdown/.test(accept) || (!/text\/html/.test(accept) && /text\/plain/.test(accept))
+
+  if (method === 'GET' || method === 'HEAD') {
+    if (rest === '' || rest.startsWith('/f/') || rest === '/f') {
+      const path = rest.startsWith('/f/') ? rest.slice(3).split('/').map(decode).join('/') : ''
+      const at = folderAt(v, path)
+      return wantsMd ? markdown(folderMd(v, at)) : folderHtml(v, at)
+    }
+    if (rest === '/context.md') {
+      const limit = Math.min(Math.max(Number(c.url.searchParams.get('messages')) || 40, 1), 200)
+      return markdown(contextMd(v, folderAt(v, c.url.searchParams.get('folder') ?? ''), limit))
+    }
+    if (rest === '/tree.json') {
+      return json({
+        project: { name: v.project.name, slug: v.project.slug, description: v.project.description },
+        link: { name: v.link.name, kind: v.link.kind, can_write: !!v.link.can_write },
+        folders: v.tree.map(t => ({ path: t.path, messages: t.f.messages, files: t.f.files, last_at: t.f.last_at, url: folderUrl(v, t.path) })),
+        files: v.store.filesUnder(v.scope.id).map(f => ({ path: pathOf(v, f.folder_id), name: f.name, size: f.size, mime: f.mime, author: f.author, updated_at: f.updated_at, url: rawUrl(v, f) })),
+      })
+    }
+    const raw = rest.match(/^\/raw\/(\w+)(?:\/.*)?$/)
+    if (raw) {
+      const f = v.store.file(raw[1] ?? '')
+      if (!node(v, f.folder_id)) throw new HttpError(404, 'File not found')
+      return rawResponse(c.req, f, v.store.read(f.id), c.url.searchParams.has('download'))
+    }
+    throw new HttpError(404, 'Not found')
+  }
+
+  if (!v.link.can_write) throw new HttpError(403, 'This link is read-only')
+  if (limited(`link:${v.link.id}`, 120, 60_000)) throw new HttpError(429, 'Too many writes. Slow down for a minute.')
+  const who = (name: unknown): Author => ({ author: name ? cleanName(name, 'Author', 60) : v.link.name, kind: v.link.kind, via: v.link.id })
+  const ctype = c.req.headers.get('content-type') ?? ''
+  const isForm = /multipart\/form-data|application\/x-www-form-urlencoded/.test(ctype)
+
+  if (method === 'POST' && rest === '/messages') {
+    let fields: Record<string, unknown>
+    let uploads: { name: string; mime: string; data: Uint8Array }[] = []
+    if (isForm) {
+      const form = await readForm(c.req, c.maxFileBytes + 1048576)
+      fields = { folder: form.get('folder'), body: form.get('body'), author: form.get('author') }
+      for (const f of form.getAll('file')) {
+        if (typeof f === 'string' || !f.size) continue
+        if (f.size > c.maxFileBytes) throw new HttpError(413, `${f.name} is larger than ${Math.round(c.maxFileBytes / 1048576)} MB`)
+        uploads.push({ name: f.name, mime: f.type, data: new Uint8Array(await f.arrayBuffer()) })
+      }
+      uploads = uploads.slice(0, 20)
+    } else fields = await readJson(c.req)
+    const at = folderAt(v, fields.folder)
+    const w = who(fields.author)
+    const msg = v.store.sql.tx(() => {
+      const ids = uploads.map(u => v.store.createFile(at.f.id, w, u).id)
+      return v.store.createMessage(at.f.id, w, { body: fields.body, file_ids: ids })
+    })
+    if (isForm && !/json/.test(accept)) return new Response(null, { status: 303, headers: { Location: `${folderUrl(v, at.path)}#m-${msg.id}` } })
+    return json({ message: { id: msg.id, folder: at.path, author: msg.author, created_at: msg.created_at, files: msg.files.map(f => f.name) }, url: folderUrl(v, at.path) }, 201)
+  }
+
+  if (method === 'PUT' && rest.startsWith('/files/')) {
+    const parts = rest.slice(7).split('/').map(decode)
+    const name = cleanName(parts.pop(), 'File name', 200)
+    const data = await readBytes(c.req, c.maxFileBytes)
+    const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+    const { file, created } = v.store.putFile(folder.id, who(c.url.searchParams.get('author')), { name, mime: ctype.split(';')[0] || undefined, data })
+    const fresh = view(c.store, c.url.origin, v.link.token)
+    return json({ file: { name: file.name, path: pathOf(fresh, file.folder_id), size: file.size, url: rawUrl(fresh, file) }, created }, created ? 201 : 200)
+  }
+
+  if (method === 'POST' && rest === '/files') {
+    if (!isForm) throw new HttpError(415, 'Send multipart/form-data with a "folder" field and "file" fields, or PUT /files/<path>/<name>')
+    const form = await readForm(c.req, c.maxFileBytes + 1048576)
+    const at = folderAt(v, form.get('folder'))
+    const w = who(form.get('author'))
+    const out: FileMeta[] = []
+    for (const f of form.getAll('file').slice(0, 20)) {
+      if (typeof f === 'string' || !f.size) continue
+      if (f.size > c.maxFileBytes) throw new HttpError(413, `${f.name} is larger than ${Math.round(c.maxFileBytes / 1048576)} MB`)
+      out.push(v.store.createFile(at.f.id, w, { name: f.name, mime: f.type, data: new Uint8Array(await f.arrayBuffer()) }))
+    }
+    if (!/json/.test(accept) && !out.length) throw new HttpError(400, 'No files in the upload')
+    return json({ files: out.map(f => ({ name: f.name, path: at.path, size: f.size, url: rawUrl(v, f) })) }, 201)
+  }
+
+  if (method === 'POST' && rest === '/folders') {
+    const b = isForm ? Object.fromEntries((await readForm(c.req, 65536)).entries()) : await readJson(c.req, 65536)
+    const f = v.store.ensurePath(v.scope.id, b.path)
+    const fresh = view(c.store, c.url.origin, v.link.token)
+    return json({ folder: { path: pathOf(fresh, f.id), url: folderUrl(fresh, pathOf(fresh, f.id)) } }, 201)
+  }
+
+  throw new HttpError(405, 'Method not allowed here')
+}

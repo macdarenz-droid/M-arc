@@ -5,13 +5,16 @@ import { bootSource, flushSave, initStore, state } from './core/store';
 import { setHapticsEnabled } from './native/haptics';
 import { showToast } from './app/toast';
 import { resyncReminders } from './slices/settings/reminders';
-import { syncAndStoreHealth } from './slices/settings/health';
-import { onNotificationTap, refreshExactAlarm } from './native/notifications';
+import { backgroundHealthSync } from './slices/settings/health';
+import { isNative } from './native/capacitor';
+import { installBackButton } from './native/back';
+import { onNotificationTap, refreshExactAlarm, syncBackupReminder } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
-import { go } from './app/router';
+import { go, showPanel } from './app/router';
 import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
+import { pageIsCurrent } from './app/swUpdate';
 import './ui/styles.css';
 
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
@@ -20,6 +23,7 @@ try {
   initStore();
   setHapticsEnabled(state.value.preferences.haptics);
   startWatchListeners();
+  void installBackButton();
   startHeartCapture();
 
   render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('app')!);
@@ -49,18 +53,26 @@ try {
     refreshClock();
     void refreshExactAlarm();
     void resyncReminders();
-    void syncAndStoreHealth();
+    void backgroundHealthSync();
   });
   window.addEventListener('pagehide', flushSave);
   void refreshExactAlarm();
   void resyncReminders();
-  void syncAndStoreHealth();
+  void backgroundHealthSync();
 
   // Notification taps: rest done → Train, training day → Train.
-  onNotificationTap(() => go('train'));
+  onNotificationTap(type => { if (type === 'backup') showPanel('settings', { section: 'data' }); else go('train'); });
+  void syncBackupReminder(state.peek().preferences.backupReminder ?? isNative());
 
-  if ('serviceWorker' in navigator && !(globalThis as { Capacitor?: unknown }).Capacitor) {
+  // The web bundle defines window.Capacitor too (via @capacitor/core), so only isNative() tells the APK apart.
+  if ('serviceWorker' in navigator && !isNative()) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => undefined); });
+    // ST-25: a new build took over. Mid-session the reload waits; otherwise offer it.
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || state.peek().active) return;
+      void pageIsCurrent().then(current => { if (!current) showToast('App updated', 'Reload', () => location.reload()); });
+    });
   }
 } catch (err) {
   (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);

@@ -105,3 +105,15 @@ describe('executor', () => {
     expect(genericLabel('get_overview')).toBe('Looking into it…');
   });
 });
+
+describe("recall dates (QA2-FD-5)", () => {
+  it("a memory's 'since' is the phone's day, as on the memory screen", async () => {
+    const { dayKey } = await import('@/core/dates');
+    const s = twoWeeksState();
+    const createdAt = '2026-09-22T22:30:00.000Z';
+    const st = { ...s, escobar: { ...s.escobar, memory: [{ id: 'm1', kind: 'injury' as const, text: 'Left shoulder', createdAt, source: 'user' }] } };
+    const e = { ctx: ctxOf(st as never), ledger: [] as Fact[], turn: 0, proposalCount: 0 };
+    const items = JSON.parse(executeTool({ id: 'tu_9', name: 'recall', input: { kind: 'injury' } }, e).content).data.items as Array<{ since: string }>;
+    expect(items[0]!.since).toBe(dayKey(new Date(createdAt)));
+  });
+});

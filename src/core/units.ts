@@ -7,10 +7,14 @@ const round = (v: number, places: number): number => { const f = 10 ** places; r
 /**
  * Canonical kg to a number in `unit`. kg keeps two decimals (1.25 kg plates survive);
  * lb rounds to 0.1, so any kg that came from a typed lb value (stored to 3 decimals)
- * converts back to exactly what was typed.
+ * converts back to exactly what was typed. QA-R7-5: a value on the quarter-pound grid
+ * (1.25 lb add-ons) keeps its two decimals, so 26.25 lb is not shown as 26.3.
  */
 export function kgToDisplay(kg: number, unit: LoadUnit): number {
-  return unit === 'lb' ? round(kg / KG_PER_LB, 1) : round(kg, 2);
+  if (unit !== 'lb') return round(kg, 2);
+  const lb = kg / KG_PER_LB;
+  const quarter = Math.round(lb * 4) / 4;
+  return Math.abs(lb - quarter) < 0.004 && !Number.isInteger(quarter * 2) ? quarter : round(lb, 1);
 }
 
 /** A typed value to canonical kg, unrounded to 3 decimals (§25.3), so it survives its own round trip. */

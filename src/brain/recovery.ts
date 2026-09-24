@@ -11,7 +11,7 @@
 import type { CheckIn, DailyHealth, Exercise, FreshMark, Profile, RecoveryModel, Session } from '@/core/models';
 import { MUSCLE_BY_ID, MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { findExercise, setDamage } from '@/core/exercises';
-import { ROLE_WEIGHT, isWorkingSet, rolesFor } from './exposure';
+import { ROLE_WEIGHT, effortLabel, isWorkingSet, rolesFor } from './exposure';
 import { exerciseHistory, type ExerciseSessionSummary } from './history';
 import { daysBetween, dayKey } from '@/core/dates';
 import {
@@ -48,6 +48,8 @@ export interface MuscleRecovery {
   confidence: 'low' | 'medium' | 'high';
   drivers: Array<{ text: string; hours: number }>;
   systemicFactor: number;
+  /** QA-R3a-9: today's soreness rating holds this muscle below ready; no clock time can say when that eases. */
+  soreToday?: boolean;
 }
 
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
@@ -85,21 +87,16 @@ function agePrior(age: number | null): number {
 }
 
 /** Session-RPE proxy load (no heart rate needed): effort-weighted minutes. */
+/** Sessions are never mutated in place (every edit makes a new object), so the load is remembered per object. */
+const rpeLoadCache = new WeakMap<Session, number>();
 export function sessionRpeLoad(session: Session): number {
+  const hit = rpeLoadCache.get(session);
+  if (hit !== undefined) return hit;
   const sets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet);
-  if (!sets.length) return 0;
   const weight = { easy: 4, ideal: 7, max: 10 } as const;
-  const avgWeight = avg(sets.map(s => weight[s.effort ?? 'ideal']));
-  return avgWeight * (session.durationSec / 60);
-}
-
-function withinDays(day: string, atMs: number, days: number): boolean {
-  const d = daysBetween(day, dayKey(new Date(atMs)));
-  return d >= 0 && d < days;
-}
-
-function withinDaysOfSession(session: Session, atMs: number, days: number): boolean {
-  return withinDays(session.day, atMs, days);
+  const load = sets.length ? avg(sets.map(s => weight[effortLabel(s) ?? 'ideal'])) * (session.durationSec / 60) : 0;
+  rpeLoadCache.set(session, load);
+  return load;
 }
 
 /**
@@ -172,7 +169,8 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
         const rF = reps > 0 ? repFactor(reps) : 1.0;
         const loadFactor = meta.mode === 'weighted' && recentTop && recentTop > 0 && (set.kg ?? 0) > 0
           ? clamp((set.kg ?? 0) / recentTop, LOAD_FACTOR_MIN, LOAD_FACTOR_MAX) : 1.0;
-        const e = EFFORT_IMPULSE[set.effort ?? 'ideal'];
+        const effort = effortLabel(set) ?? 'ideal';
+        const e = EFFORT_IMPULSE[effort];
         const damage = setDamage({ id: meta.id, name: meta.name, role: meta.role }, reps);
         for (const r of rolesFor(meta)) {
           const roleW = ROLE_WEIGHT[r.role];
@@ -185,12 +183,12 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
           const L = roleW * e * rF * loadFactor * diminish * damage * novelty;
           const cur = perMuscle.get(r.muscle) ?? { total: 0, effortWeighted: 0, roleWeightSum: 0, topL: 0, topDriver: null };
           cur.total += L;
-          cur.effortWeighted += EFFORT_STRETCH[set.effort ?? 'ideal'] * L;
+          cur.effortWeighted += EFFORT_STRETCH[effort] * L;
           cur.roleWeightSum += roleW;
           // BR-31: the driver is the set with the biggest dose, and the set count is this exercise's own.
           if (!cur.topDriver || L > cur.topL) {
             cur.topL = L;
-            const reason = set.effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${working.length} set${working.length === 1 ? '' : 's'}`;
+            const reason = effort === 'max' ? `${meta.name}: max effort` : layoffNovelty > 1 ? `${meta.name}: first time in a while` : exerciseNovelty > 1 ? `${meta.name}: new exercise` : `${meta.name}: ${working.length} set${working.length === 1 ? '' : 's'}`;
             cur.topDriver = { text: reason, hours: 0 };
           }
           perMuscle.set(r.muscle, cur);
@@ -319,18 +317,25 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     }
 
     const fRef = fRefFor(list, now);
-    let pct = pctAt(list, fRef, now, last.at);
+    // Every time evaluated below is now or later, so doses older than the lookback never count:
+    // drop them once instead of in each of the ~80 bisection steps.
+    const recent = list.filter(d => d.at >= now - IMPULSE_LOOKBACK_DAYS * 86_400_000);
+    let pct = pctAt(recent, fRef, now, last.at);
 
     // Soreness caps today's pct; it never raises it, and no soreness never implies ready either.
     const todaySoreness = checkIns.find(c => c.day === today)?.soreness?.[muscle];
+    const modelPct = pct;
     if (todaySoreness != null && todaySoreness >= SORENESS_CAP_MIN_RATING) pct = Math.min(pct, SORENESS_CAP_PCT);
+    const soreToday = pct < modelPct && pct < READY_PCT;
 
-    const tReady = input.pctOnly ? null : solveHours(list, fRef, last.at, now, READY_PCT);
-    const tFull = input.pctOnly ? null : solveHours(list, fRef, last.at, now, FULL_PCT);
+    const tReady = input.pctOnly ? null : solveHours(recent, fRef, last.at, now, READY_PCT);
+    const tFull = input.pctOnly ? null : solveHours(recent, fRef, last.at, now, FULL_PCT);
     // solveHours counts from the last session; ready/full times are shown from now (BR-02).
     const r1 = (x: number) => Math.round(x * 10) / 10;
     const elapsedH = Math.max(0, (now - last.at) / 3_600_000);
-    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
+    // Sore but past the model's own ready time: the soreness decides, not the clock.
+    const soreOnly = soreToday && tReady != null && tReady <= elapsedH;
+    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
 
@@ -345,10 +350,12 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
       recovering: pct < READY_PCT,
       ready: pct >= READY_PCT,
       readyInHours,
-      fullInHours: tFull == null ? null : r1(Math.max(0, tFull - elapsedH)),
+      // QA2-FC-5: held back by soreness past the model's own time, no clock time says when it is full either.
+      fullInHours: tFull == null || soreOnly ? null : r1(Math.max(0, tFull - elapsedH)),
       confidence: confidenceFor(observations),
       drivers: last.drivers,
       systemicFactor: systemicNow,
+      ...(soreToday ? { soreToday } : {}),
     };
   });
 }
@@ -381,7 +388,9 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  */
 export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
-  const predicted = recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true });
+  // Only computed when some exercise has a max-effort comparison to learn from (most sessions have none).
+  let predictedMemo: MuscleRecovery[] | null = null;
+  const predicted = (): MuscleRecovery[] => (predictedMemo ??= recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true }));
   const tauScale = { ...recoveryModel.tauScale };
   const observations = { ...recoveryModel.observations };
   const touched = new Set<MuscleId>();
@@ -398,7 +407,7 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
     for (const muscle of meta.primary) {
       if (touched.has(muscle)) continue;
       touched.add(muscle);
-      const predictedPct = predicted.find(r => r.muscle === muscle)?.pct ?? 50;
+      const predictedPct = predicted().find(r => r.muscle === muscle)?.pct ?? 50;
       const before = tauScale[muscle] ?? 1.0;
       const after = calibrateTauScale(before, predictedPct, deltaPct);
       if (after !== before) {

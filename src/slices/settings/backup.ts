@@ -3,6 +3,7 @@
  * backup, a bare saved state, or the previous app's data. Restored states go through the same
  * deep repair as saved ones (`repairState`), and the repair count is reported.
  */
+import { dayKey, daysBetween } from '@/core/dates';
 import { repairState } from '@/core/store';
 import type { AppState } from '@/core/models';
 import { asLegacyRoot, convertLegacy } from '@/core/migrate';
@@ -46,4 +47,10 @@ export function parseBackup(text: string, now = Date.now()): ParsedBackup {
     ...(typeof w.exportedAt === 'string' ? { exportedAt: w.exportedAt } : {}),
     dropped,
   };
+}
+
+/** QA-R6-1/7: whole local days since the last backup (the stamp is UTC; the day it fell on is local). */
+export function backupAgeDays(lastBackupAt: string | undefined, today: string): number | null {
+  if (!lastBackupAt || !Number.isFinite(Date.parse(lastBackupAt))) return null;
+  return Math.max(0, daysBetween(dayKey(new Date(lastBackupAt)), today));
 }

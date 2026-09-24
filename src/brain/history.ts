@@ -27,7 +27,8 @@ export interface ExerciseSessionSummary {
 }
 
 export function summarizeSets(sessionId: string, day: string, sets: LoggedSet[]): ExerciseSessionSummary {
-  const working = sets.filter(isWorkingSet);
+  // F2: warm-ups never count; a set to failure stands for max effort everywhere downstream.
+  const working = sets.filter(isWorkingSet).map(s => (s.kind === 'failure' && s.effort !== 'max' ? { ...s, effort: 'max' as const } : s));
   const topKg = Math.max(0, ...working.map(s => s.kg ?? 0));
   const topSets = working.filter(s => (s.kg ?? 0) === topKg);
   const topReps = Math.max(0, ...topSets.map(s => s.reps ?? 0));

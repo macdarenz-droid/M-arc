@@ -97,8 +97,9 @@ export interface GroundingResult {
   sentences: string[];
 }
 
-function sentencesOf(text: string): string[] {
-  return text.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(Boolean);
+/** Sentences without a leading list marker, so they compare equal to what the answer renders (ES-16). */
+export function sentencesOf(text: string): string[] {
+  return text.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim().replace(/^[-•]\s+/, '')).filter(Boolean);
 }
 
 function grounded(n: number, values: number[], lbValues: number[]): boolean {
@@ -119,7 +120,8 @@ export function checkGrounding(inp: GroundingInput): GroundingResult {
   const userNums = (inp.userTexts ?? []).flatMap(extractNumbers);
   const bad: number[] = [];
   const badSentences: string[] = [];
-  const rawSentences = sentencesOf(inp.answer);
+  // The trailing chips directive is not a sentence (its options would read as numbers).
+  const rawSentences = sentencesOf(inp.answer.replace(/⟦chips:[^⟧]*⟧\s*$/, ''));
   for (const rawSentence of rawSentences) {
     const cardIds = [...rawSentence.matchAll(/⟦k:([a-z0-9_]+)⟧/g)].map(m => m[1]!);
     const cardValues = inp.ledger.filter(f => cardIds.some(id => f.label.startsWith(`k:${id}`))).map(f => f.value);
@@ -144,7 +146,11 @@ export const repairInstruction = (nums: number[]): string =>
 
 export type SafetySignal = 'crisis' | 'pain_mentioned' | 'medical' | 'disordered_eating';
 
-const CRISIS = /\b(kill(ing)? myself|suicid\w*|end (it|my life)|want to die|don'?t want to (live|be here)|self[- ]?harm|hurt(ing)? myself|no reason to live|better off dead)\b/i;
+/**
+ * ES-14: "end it after 3 sets" and "I hurt myself on squats" are not crises; ongoing self-harm
+ * ("I've been hurting myself") still is.
+ */
+const CRISIS = /\b(kill(ing)? myself|suicid\w*|end my life|end it all|want to die|don'?t want to (live|be here)|self[- ]?harm\w*|(want|going|trying) to hurt myself|harm(ing)? myself|hurt(ing)? myself on purpose|(been|keep|kept|started) hurting myself(?!\s+(on|at|during|doing|with|in|lifting|squatting|benching|training))|no reason to live|better off dead)\b/i;
 const MEDICAL = /\b(chest pain|chest (hurts|tight)|faint(ed|ing)?|passed out|black(ed)? out|dizz(y|iness)|heart (racing|palpitations)|palpitations|can'?t breathe)\b/i;
 const PAIN = /\b(sharp pain|shooting pain|stabbing|numb(ness)?|tingl\w*|pins and needles|radiat\w*|pain|hurts?|injur\w*|strain(ed)?|sprain(ed)?|tweak(ed)?|pulled (a|my))\b/i;
 const EATING = /\b(starv\w*|not eating|stop(ped)? eating|purg\w*|throw(ing)? up after|binge\w*|500 calories|800 calories|lose \d{2,} ?(kg|lb|pounds|kilos) in (a|one|two|\d) (week|month)|laxatives?|skip(ping)? (all )?meals|burn off (what|everything) i ate)\b/i;

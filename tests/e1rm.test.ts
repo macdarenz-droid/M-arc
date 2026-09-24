@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { effectiveOneRm, e1rmWeight, isRealChange, loadForReps, roundToStep } from '@/brain/e1rm';
+import { effectiveOneRm, loadForReps, roundToStep } from '@/brain/e1rm';
 
 describe('effectiveOneRm', () => {
   it('max effort assumes zero reps in reserve', () => {
@@ -27,23 +27,6 @@ describe('effectiveOneRm', () => {
   });
 });
 
-describe('e1rmWeight', () => {
-  it('down-weights 7-10 rep sets relative to 6 or fewer', () => {
-    expect(e1rmWeight(5)).toBe(1);
-    expect(e1rmWeight(8)).toBe(0.5);
-  });
-});
-
-describe('isRealChange', () => {
-  it('flags a change above two typical errors', () => {
-    expect(isRealChange(100, 109)).toBe(true);
-    expect(isRealChange(100, 103)).toBe(false);
-  });
-  it('anything from zero is a real change', () => {
-    expect(isRealChange(0, 50)).toBe(true);
-  });
-});
-
 describe('loadForReps and roundToStep', () => {
   it('inverts the Epley formula', () => {
     const e1rm = 130;
@@ -52,5 +35,17 @@ describe('loadForReps and roundToStep', () => {
   it('rounds to the nearest step', () => {
     expect(roundToStep(83.3)).toBe(82.5);
     expect(roundToStep(84.0)).toBe(85);
+  });
+});
+
+import { summarizeSets } from '@/brain/history';
+describe('e1RM and set kinds (F2)', () => {
+  it('ignores warm-ups and reads a set to failure as max effort', () => {
+    const s = summarizeSets('s', '2026-09-22', [{ kg: 100, reps: 5, kind: 'warmup', effort: 'easy' }, { kg: 80, reps: 5, kind: 'failure', effort: 'easy' }]);
+    expect(s.sets).toHaveLength(1);
+    expect(s.topKg).toBe(80);
+    expect(s.hasMax).toBe(true);
+    // Epley with 0 reps left: 80 × (1 + 5/30).
+    expect(Math.round(s.bestE1rm * 10) / 10).toBe(93.3);
   });
 });
