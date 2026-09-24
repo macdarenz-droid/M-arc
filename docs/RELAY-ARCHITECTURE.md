@@ -125,29 +125,6 @@ This is how chat apps reply without copy-paste: Claude and ChatGPT add the URL o
 
 The HTML pages are server-rendered with no script, so fetch tools that strip JavaScript still see everything, and browser agents can post through a plain form. Apps with neither HTTP nor MCP read the link; you paste their reply with **Post as → GPT** in the composer.
 
-## 5b. Assigned agents (engine)
-
-Chat apps act only when a person types in them, so Relay runs agents itself. `src/engine.ts`:
-
-```
-new message ─► Store.onMessage ─► Engine.onMessage ─► enqueue(agent, folder)     (home folder, or @Name)
-check-in due / continue_later / Run now ───────────► enqueue
-Durable Object alarm (Node: 2 s timer) ─► Engine.tick ─► one run at a time:
-   view(agent's link) → system + folder context → provider loop (≤ 8 tool rounds) → reply posted as the agent
-```
-
-| table | columns |
-|---|---|
-| `agents` | id, project_id, link_id, name, kind, provider, model, effort, instructions, folder_id, on_message, on_mention, every_min, daily_runs, enabled, next_at, … |
-| `runs` | id, agent_id, project_id, folder_id, reason (message · mention · schedule · followup · manual), trigger_id, note, status (queued · running · done · error · skipped), due_at, started_at, finished_at, tokens_in, tokens_out, error |
-
-- Every agent owns a write link (`links.agent_id`, hidden from Share), so its scope, identity and tools are exactly an MCP client's; plus `continue_later`. It can never delete.
-- Providers: OpenAI Responses API (function calling, chained with `previous_response_id`), Anthropic Messages API through `@anthropic-ai/sdk` (manual tool loop, server-side refusal fallbacks on Opus 5 / Fable 5.1), Gemini through its OpenAI-compatible Chat Completions endpoint. Keys are Worker secrets only.
-- Guards: one queued run per agent and folder (bursts coalesce); `daily_runs` counted on the agent row (`day_start`, `day_runs`), so pruning run history cannot reset it, and capped agents are not queued; per run at most 8 tool rounds and 400k input tokens, message bodies clipped to 4k characters in context and tool results to 40k; 5-minute call timeouts; `MAX_CHAIN` = 6 messages without a human stops agents waking each other; check-ins count only activity by the owner or non-agent links; a non-owner trigger wakes an agent only if its link's scope covers the agent's; agents default to their own folder; pausing or removing an agent is re-checked before every step.
-- The engine holds a 20-minute lease, not a flag, and a tick stops taking runs after 5 minutes; while it runs, the alarm is re-armed no sooner than 30 s. Runs left "running" past the lease become errors.
-- Link tokens are write keys: the agent's context uses `relay:/…` placeholders instead of its link URLs, and `rl_…` tokens are masked in every message a link or agent posts.
-- Model calls leave through `UsEgress`, a Durable Object pinned to eastern North America and limited to the model hosts (the same fix as Escobar's PL-20).
-
 ## 6. UI
 
 Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, black/white, hairlines), Height (calm tables), Raycast (palette).
@@ -181,4 +158,4 @@ Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, blac
 
 ## 8. Later (not built)
 
-Per-thread spend ceilings in dollars · A2A agent cards · Multiple humans with roles · R2 for files over 25 MB · WebSocket push · per-link expiry · OAuth for MCP clients that require it.
+Multiple humans with roles · R2 for files over 25 MB · WebSocket push · per-link expiry · OAuth for MCP clients that require it.

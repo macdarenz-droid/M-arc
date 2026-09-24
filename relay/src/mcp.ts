@@ -10,7 +10,7 @@ const VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05']
 const READ = { readOnlyHint: true, openWorldHint: false }
 const str = (description: string) => ({ type: 'string', description })
 
-export const TOOLS = [
+const TOOLS = [
   {
     name: 'overview', title: 'Project overview', annotations: READ,
     description: 'Start here. Who you are in this Relay project, what you may do, the folder tree with counts, the latest messages and the file list.',
@@ -55,7 +55,7 @@ export const TOOLS = [
   },
 ]
 
-export const instructions = (v: View) =>
+const instructions = (v: View) =>
   `Relay is a shared workspace for the project "${v.project.name}". The person and several AI agents work in its folders; each folder has a thread of messages and files. ` +
   `You are "${v.link.name}" (${KINDS[v.link.kind]?.label ?? 'Agent'}) with ${v.link.can_write ? 'read and write' : 'read-only'} access. ` +
   'Call overview first. Read the folder you are working in before you act. ' +
@@ -108,8 +108,7 @@ function fetchItem(v: View, id: string) {
   return { id: `folder:${at.path}`, title: `/${at.path}`, text: folderMd(v, at, false), url: folderUrl(v, at.path), metadata: {} }
 }
 
-/** Runs one tool for a link. Shared by MCP clients and the agent engine. */
-export async function callTool(v: View, name: string, a: Record<string, unknown>) {
+async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
   const tool = TOOLS.find(t => t.name === name)
   if (!tool) return null
   if (tool.write) {
@@ -152,7 +151,7 @@ export async function callTool(v: View, name: string, a: Record<string, unknown>
     }
     case 'create_folder': {
       const f = v.store.ensurePath(v.scope.id, a.path)
-      return text(`Folder /${v.store.pathOf(f.id, v.scope.id)} is ready.`)
+      return text(`Folder /${view(c, v.link.token).tree.find(t => t.f.id === f.id)?.path ?? ''} is ready.`)
     }
   }
   return null
@@ -162,7 +161,7 @@ type Rpc = { jsonrpc?: string; id?: string | number | null; method?: string; par
 const reply = (id: Rpc['id'], result: unknown) => ({ jsonrpc: '2.0', id, result })
 const fail = (id: Rpc['id'], code: number, message: string) => ({ jsonrpc: '2.0', id: id ?? null, error: { code, message } })
 
-async function dispatch(v: View, m: Rpc) {
+async function dispatch(c: Ctx, v: View, m: Rpc) {
   const isNote = m.id === undefined
   if (m.jsonrpc !== '2.0' || typeof m.method !== 'string') return isNote ? null : fail(m.id, -32600, 'Invalid request')
   const p = m.params ?? {}
@@ -184,7 +183,7 @@ async function dispatch(v: View, m: Rpc) {
       const name = String(p.name ?? '')
       const args = (p.arguments && typeof p.arguments === 'object' ? p.arguments : {}) as Record<string, unknown>
       try {
-        const out = await callTool(v, name, args)
+        const out = await call(c, v, name, args)
         return out ? reply(m.id, out) : fail(m.id, -32602, `Unknown tool: ${name}`)
       } catch (e) {
         if (e instanceof HttpError) return reply(m.id, text(e.message, true))
@@ -211,7 +210,7 @@ const withCors = (res: Response) => {
 export async function mcpRoute(c: Ctx): Promise<Response> {
   if (c.req.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }))
   const token = c.url.pathname.split('/')[2] ?? ''
-  const v = view(c.store, c.url.origin, token)
+  const v = view(c, token)
   if (c.req.method !== 'POST')
     return withCors(new Response('Relay MCP endpoint: send JSON-RPC with POST (Streamable HTTP).\n', { status: 405, headers: { Allow: 'POST, OPTIONS', 'Content-Type': 'text/plain' } }))
   let msg: unknown
@@ -224,7 +223,7 @@ export async function mcpRoute(c: Ctx): Promise<Response> {
   const batch = (Array.isArray(msg) ? msg : [msg]).slice(0, 50) as Rpc[]
   const out = []
   for (const m of batch) {
-    const r = await dispatch(v, m && typeof m === 'object' ? m : {})
+    const r = await dispatch(c, v, m && typeof m === 'object' ? m : {})
     if (r) out.push(r)
   }
   if (!out.length) return withCors(new Response(null, { status: 202 }))

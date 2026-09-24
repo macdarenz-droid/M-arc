@@ -26,12 +26,12 @@ const decode = (s: string) => {
   }
 }
 
-export function view(store: Store, origin: string, token: string): View {
-  const link = store.linkByToken(token)
+export function view(c: Ctx, token: string): View {
+  const link = c.store.linkByToken(token)
   if (!link) throw new HttpError(404, 'This link is not valid, or it was revoked')
-  const project = store.project(link.project_id)
-  const scope = store.folder(link.folder_id)
-  const all = store.folders(project.id)
+  const project = c.store.project(link.project_id)
+  const scope = c.store.folder(link.folder_id)
+  const all = c.store.folders(project.id)
   const kids = new Map<string, FolderStat[]>()
   for (const f of all) if (f.parent_id) kids.set(f.parent_id, [...(kids.get(f.parent_id) ?? []), f])
   const tree: View['tree'] = []
@@ -41,7 +41,7 @@ export function view(store: Store, origin: string, token: string): View {
   }
   const root = all.find(f => f.id === scope.id)
   if (root) walk(root, '', 0)
-  return { store, link, project, scope, base: `${origin}/s/${token}`, tree }
+  return { store: c.store, link, project, scope, base: `${c.url.origin}/s/${token}`, tree }
 }
 
 const node = (v: View, folderId: string) => v.tree.find(t => t.f.id === folderId)
@@ -198,7 +198,7 @@ const markdown = (text: string) => new Response(text, { headers: { 'Content-Type
 export async function agentRoute(c: Ctx): Promise<Response> {
   const m = c.url.pathname.match(/^\/s\/([^/]+)(\/.*)?$/)
   if (!m) throw new HttpError(404, 'Not found')
-  const v = view(c.store, c.url.origin, m[1] ?? '')
+  const v = view(c, m[1] ?? '')
   const rest = (m[2] ?? '').replace(/\/+$/, '')
   const method = c.req.method
   const accept = c.req.headers.get('accept') ?? ''
@@ -266,7 +266,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     const data = await readBytes(c.req, c.maxFileBytes)
     const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
     const { file, created } = v.store.putFile(folder.id, who(c.url.searchParams.get('author')), { name, mime: ctype.split(';')[0] || undefined, data })
-    const fresh = view(c.store, c.url.origin, v.link.token)
+    const fresh = view(c, v.link.token)
     return json({ file: { name: file.name, path: pathOf(fresh, file.folder_id), size: file.size, url: rawUrl(fresh, file) }, created }, created ? 201 : 200)
   }
 
@@ -288,7 +288,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
   if (method === 'POST' && rest === '/folders') {
     const b = isForm ? Object.fromEntries((await readForm(c.req, 65536)).entries()) : await readJson(c.req, 65536)
     const f = v.store.ensurePath(v.scope.id, b.path)
-    const fresh = view(c.store, c.url.origin, v.link.token)
+    const fresh = view(c, v.link.token)
     return json({ folder: { path: pathOf(fresh, f.id), url: folderUrl(fresh, pathOf(fresh, f.id)) } }, 201)
   }
 
