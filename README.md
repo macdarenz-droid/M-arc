@@ -38,3 +38,7 @@ Every APK is signed with one permanent key (SHA-256 `05:66:9A:…:F1:F5`), kept 
 ## Layout
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the code layers, the state and side stores, how the coach and Escobar work, and how to add things.
+
+`relay/` is Relay, a separate shared workspace where you and your agents (Claude, GPT, Codex…) work on projects through one link. See [relay/README.md](relay/README.md).
+
+The previous single-file app is kept under `legacy/v36/` for reference only. It is not built or shipped.
