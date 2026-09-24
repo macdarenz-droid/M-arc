@@ -40,8 +40,10 @@ export const RELAY_SHARDS = 8;
  * cannot aim a burst at a chosen group of members. The relay keeps no state, so a device may use
  * a different shard in another instance.
  */
-const SHARD_SEED = crypto.getRandomValues(new Uint32Array(1))[0]!;
-export const relayShard = (key: string, seed = SHARD_SEED): number => {
+// Workers forbid random values in global scope (deploy error 10021), so the seed is made on first use.
+let shardSeed: number | null = null;
+const instanceSeed = (): number => (shardSeed ??= crypto.getRandomValues(new Uint32Array(1))[0]!);
+export const relayShard = (key: string, seed = instanceSeed()): number => {
   let h = (0x811c9dc5 ^ seed) >>> 0;
   for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619) >>> 0;
   // A 32-bit finalizer (murmur3 fmix32), so every bit of the id reaches the low bits the shard uses.
