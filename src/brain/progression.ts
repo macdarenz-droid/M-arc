@@ -18,7 +18,7 @@ import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } f
 import { plateauStatus } from './trend';
 import { daysBetween } from '@/core/dates';
 
-export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau' | 'deload';
+export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload';
 
 export interface Suggestion {
   mode: Mode;
@@ -140,6 +140,24 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const best = last.bestDurationSec || 20;
     const next = last.hasMax ? best : best + 5;
     return { mode: 'duration', target: `Hold ${next}s`, kg: null, reps: null, reason: last.hasMax ? 'Last hold was max effort. Repeat it before adding time.' : 'Add five seconds to your best hold.', confidence: conf, sets: setPlan(setCount, null, null, next, last.hasMax ? 'Repeat' : 'Add 5s') };
+  }
+
+  // QA-R6-5: a carry or sled logged by distance or time progresses by distance or time, never "1 reps".
+  if (mode === 'conditioning' && (last.bestDistanceM > 0 || last.bestDurationSec > 0)) {
+    const byDistance = last.bestDistanceM > 0;
+    const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
+    const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * ctx.deload.loadFactor) : last.topKg) : null;
+    const load = kg != null ? `${kg} kg · ` : '';
+    const u = byDistance ? ' m' : 's';
+    const step = byDistance ? (best >= 100 ? 10 : 5) : 5;
+    const repeat = !!ctx?.deload || gap > REENTRY_DAYS || last.hasMax;
+    const next = repeat ? best : best + step;
+    const reason = ctx?.deload ? 'Lighter week: the same distance at a lighter load, kept easy.'
+      : gap > REENTRY_DAYS ? `It has been ${gap} days. Repeat your last ${byDistance ? 'distance' : 'time'} once before adding anything.`
+      : last.hasMax ? `Last one was max effort. Match it before going ${byDistance ? 'further' : 'longer'}.`
+      : byDistance ? `Go ${step} m further at the same load.` : 'Add five seconds at the same load.';
+    const note = repeat ? (ctx?.deload ? 'Deload' : 'Match it') : `+${step}${u}`;
+    return { mode: byDistance ? 'distance' : 'duration', target: `${load}${next}${u}`, kg, reps: null, reason, confidence: gap > REENTRY_DAYS ? 'low' : conf, sets: setPlan(setCount, kg, null, byDistance ? null : next, note) };
   }
 
   if (gap > REENTRY_DAYS) {

@@ -23,6 +23,7 @@ import { closePanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { Hall } from '@/escobar/ui/Hall';
 import { AskAbout } from '@/escobar/ui/AskAbout';
+import { isWorkingSet } from '@/brain/exposure';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -204,8 +205,9 @@ function WeeklyReviewCard() {
   const thisWeek = weekStart(today.value);
   const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
   const enough = weekHasEnoughData(s.sessions, today.value);
-  if (dismissed || !enough) return null;
+  // UI-30: hooks run on every render, before any early return.
   const items = useWeeklyReviewItems();
+  if (dismissed || !enough) return null;
   return (
     <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
       <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
@@ -223,7 +225,7 @@ function useWeeklyReviewItems() {
   }, [s.sessions]);
   const items = weeklyReviewInsights({
     sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
-    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff, unit: s.preferences.weightUnit,
   }, 6);
   return items;
 }
@@ -306,7 +308,7 @@ function InsightFeedbackLog() {
 /** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
 function WhatCoachCanSee() {
   const s = state.value;
-  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0);
+  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(isWorkingSet);
   const ratedShare = recentSets.length ? recentSets.filter(x => x.effort).length / recentSets.length : null;
   const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
   const completeness = profileCompleteness(s.profile);

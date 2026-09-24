@@ -11,7 +11,8 @@ import { putImage, imageData } from '../images';
 import type { ContextRef, ImageBlockRef } from '../types';
 
 export const MAX_CHARS = 2000;
-const MAX_PHOTOS = 3;
+/** D3 / ES-13: two photos per message (3 × 1.2 MB would pass the Worker's 3 MB body limit). */
+const MAX_PHOTOS = 2;
 
 export function Composer({ busy, draft, contextRef, disabled, placeholder, notice, suggestions, onSend, onStop, onClearRef, onFocus, autoFocus }: {
   busy: boolean;

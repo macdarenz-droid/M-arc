@@ -69,9 +69,10 @@ export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: st
   if (exerciseMode === 'conditioning') return 'conditioning_baseline';
   if (mode === 'confirm_effort') return 'missing_effort';
   if (confidence === 'low' && ['confirm', 'hold', 'increase', 'reps', 'duration'].includes(mode)) return 'insufficient_history';
-  if (mode === 'confirm' || mode === 'hold') return 'confirm';
+  // QA-R3b-8: a plateau keeps the load, so its "why" is repeatability, never "lower it".
+  if (mode === 'confirm' || mode === 'hold' || mode === 'plateau') return 'confirm';
   if (mode === 'increase') return 'increase';
-  if (mode === 'reduce' || mode === 'plateau') return 'reduce';
+  if (mode === 'reduce') return 'reduce';
   if (mode === 'reentry') return 'reentry';
   if (mode === 'reps') return 'build_reps';
   return null;
@@ -89,4 +90,14 @@ export const MINDSET_CUES: Cue[] = CUES.filter(c => c.kind === 'mindset');
 export function mindsetForDay(dayOfYear: number): Cue | null {
   if (dayOfYear % 2 === 0 || !MINDSET_CUES.length) return null;
   return MINDSET_CUES[Math.floor(dayOfYear / 2) % MINDSET_CUES.length]!;
+}
+
+/**
+ * QA-R3b-7: the quote shown on the other (even) days. Counting only those days, one step per
+ * quote day, so every quote comes round; days since 1970 would share their parity with the
+ * day of the year and show only half of them.
+ */
+export function sparkIndexForDay(dayOfYear: number, year: number, count: number): number {
+  if (count <= 0) return 0;
+  return (Math.floor(dayOfYear / 2) + year * 7) % count;
 }

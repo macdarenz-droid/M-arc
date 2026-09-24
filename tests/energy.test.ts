@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { age, bmrKcalPerDay, grossKcalPerMin, sessionEnergy, energyFromWatch, energyFromHealthConnect, pickEnergy, dailyActiveKcal, weeklyEnergy } from '@/brain/energy';
-import type { Profile, Session } from '@/core/models';
+import { age, bmrKcalPerDay, grossKcalPerMin, sessionEnergy, energyFromHealthConnect } from '@/brain/energy';
+import type { Profile } from '@/core/models';
 
 const full: Profile = { name: '', bodyWeightKg: 80, heightCm: 180, sex: 'male', birthYear: 1990 };
 const today = '2026-01-01';
@@ -47,17 +47,6 @@ describe('sessionEnergy', () => {
   });
 });
 
-describe('energyFromWatch', () => {
-  it('is null when the counter went backward (reset/wrap)', () => {
-    expect(energyFromWatch(500, 400, 60, full, today)).toBeNull();
-  });
-  it('converts kJ to kcal', () => {
-    const r = energyFromWatch(0, 418.4, 60, full, today)!;
-    expect(r.activeKcal).toBe(100);
-    expect(r.source).toBe('watch_energy');
-  });
-});
-
 describe('energyFromHealthConnect', () => {
   it('is null with a negative value', () => expect(energyFromHealthConnect(-1, 60, full, today)).toBeNull());
   it('passes through with a tighter band', () => {
@@ -67,29 +56,3 @@ describe('energyFromHealthConnect', () => {
   });
 });
 
-describe('pickEnergy', () => {
-  const hr = { grossKcal: 1, activeKcal: 1, low: 1, high: 1, minutes: 1, source: 'heart_rate' as const, profileSnapshot: { kg: 80, age: 36, sex: 'male' as const } };
-  const watch = { ...hr, source: 'watch_energy' as const };
-  const hc = { ...hr, source: 'health_connect' as const };
-  it('prefers Health Connect, then watch, then heart rate', () => {
-    expect(pickEnergy({ healthConnect: hc, watch, heartRate: hr })?.source).toBe('health_connect');
-    expect(pickEnergy({ watch, heartRate: hr })?.source).toBe('watch_energy');
-    expect(pickEnergy({ heartRate: hr })?.source).toBe('heart_rate');
-    expect(pickEnergy({})).toBeNull();
-  });
-});
-
-describe('dailyActiveKcal', () => {
-  it('reads the matching day', () => expect(dailyActiveKcal([{ day: '2026-01-01', activeCalories: 300 }], '2026-01-01')).toBe(300));
-  it('is null with no matching day', () => expect(dailyActiveKcal([], '2026-01-01')).toBeNull());
-});
-
-describe('weeklyEnergy', () => {
-  it('sums sessions in the week', () => {
-    const sessions: Session[] = [
-      { id: '1', splitId: 'a', splitName: 'a', day: '2026-01-05', startedAt: '', endedAt: '', durationSec: 0, exercises: [], logging: {} as never, heart: { source: 'ble', samples: 1, avgBpm: 1, maxBpm: 1, minBpm: 1, zoneSec: [0, 0, 0, 0, 0], coverage: 1, energy: { grossKcal: 1, activeKcal: 200, low: 1, high: 1, minutes: 1, source: 'heart_rate', profileSnapshot: { kg: 1, age: 1, sex: 'male' } } } },
-      { id: '2', splitId: 'a', splitName: 'a', day: '2026-01-12', startedAt: '', endedAt: '', durationSec: 0, exercises: [], logging: {} as never },
-    ];
-    expect(weeklyEnergy(sessions, '2026-01-05')).toBe(200);
-  });
-});

@@ -2,7 +2,7 @@
 <html lang="en" data-theme="silent-black">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#08090a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -12,11 +12,20 @@
   <link rel="icon" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <title>M/ARC</title>
+  <style>
+    /* First paint in the saved theme's colours, before the bundle injects its tokens (ST-25).
+       tests/theme.test.ts keeps these equal to src/theme/themes.ts. */
+    html[data-theme="silent-black"], html[data-theme="silent-black"] body { background: #08090a; color: #f7f8f8; }
+    html[data-theme="paper"], html[data-theme="paper"] body { background: #ffffff; color: #37352f; }
+    html[data-theme="ember"], html[data-theme="ember"] body { background: #07080a; color: #ffffff; }
+    html[data-theme="emerald"], html[data-theme="emerald"] body { background: #0f0f0f; color: #ededed; }
+    html[data-theme="midnight"], html[data-theme="midnight"] body { background: #0a2540; color: #f6f9fc; }
+  </style>
   <script>
-    // Apply the saved theme before first paint so there is no flash.
+    // Apply the saved theme before first paint so there is no flash; an unknown id keeps the default.
     try {
       var t = localStorage.getItem('marc.theme');
-      if (t) document.documentElement.setAttribute('data-theme', t);
+      if (['silent-black', 'paper', 'ember', 'emerald', 'midnight'].indexOf(t) >= 0) document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
   <script>

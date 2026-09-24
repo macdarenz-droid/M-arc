@@ -6,7 +6,7 @@
 import type { Exercise, LoadUnit, Session } from '@/core/models';
 import { kgToDisplay } from '@/core/units';
 import { exerciseHistory, modeOf, type ExerciseSessionSummary } from '../history';
-import { recordsFor } from '../prs';
+import { formatRecordValue, recordsFor } from '../prs';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '../exposure';
 import type { Insight } from './rules';
@@ -26,7 +26,7 @@ export function recordsInsight(session: Session, priorSessions: Session[], custo
         id: `post:record:${session.id}:${r.exerciseId}:${r.kind}`, category: 'progress', priority: 310, cadence: 'post', kind: 'praise',
         exerciseId: r.exerciseId,
         title: `${r.exerciseName}: new record`,
-        noticed: r.kind === 'strength' ? `${r.detail}, up from about ${Math.round(kgToDisplay(r.previous, unit))} ${unit}.` : `${r.detail}, up from ${r.previous}.`,
+        noticed: r.kind === 'strength' ? `${r.detail}, up from about ${Math.round(kgToDisplay(r.previous, unit))} ${unit}.` : `${r.detail}, up from ${formatRecordValue(r.kind, r.previous, unit)}.`,
         means: 'That is a genuine personal best, not just a bigger number from more sets.',
         action: 'Nothing to do. Keep logging honestly and it will keep tracking.',
         evidence: { n: hist.length, window: `${hist.length} prior sessions`, confidence: hist.length >= 5 ? 'high' : 'medium' },

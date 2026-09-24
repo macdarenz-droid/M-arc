@@ -69,3 +69,21 @@ describe('balance counts exercise sets, not muscles touched (BR-17)', () => {
     expect(trainingBalance(s, '2026-09-18')?.pair).toBe('push_pull');
   });
 });
+
+describe('upper vs lower (QA-R3a-3, QA-R3a-4)', () => {
+  // Two upper days and two lower days a week for three weeks: 24 upper and 24 lower sets a week.
+  const weeks = ['2026-08-31', '2026-09-07', '2026-09-14'];
+  const upperDay = (d: string) => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 3) }, { id: 'lib_barbell_overhead_press', sets: sets(40, 8, 'ideal', 3) }, { id: 'lib_lat_pulldown', sets: sets(50, 8, 'ideal', 3) }]);
+  const lowerDay = (d: string) => session(d, [{ id: 'lib_barbell_back_squat', sets: sets(100, 5, 'ideal', 6) }, { id: 'lib_romanian_deadlift', sets: sets(80, 8, 'ideal', 3) }, { id: 'lib_leg_press', sets: sets(150, 10, 'ideal', 3) }]);
+  const plus = (d: string, n: number) => { const x = new Date(`${d}T12:00:00Z`); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+  it('an even upper/lower split is balanced', () => {
+    const s = weeks.flatMap(w => [upperDay(w), lowerDay(plus(w, 1)), upperDay(plus(w, 3)), lowerDay(plus(w, 4))]);
+    expect(trainingBalance(s, '2026-09-19')).toBeNull();
+  });
+  it('upper work with almost no legs is still flagged, and so is the reverse', () => {
+    const noLegs = weeks.flatMap(w => [upperDay(w), upperDay(plus(w, 3)), session(plus(w, 4), [{ id: 'lib_leg_press', sets: sets(150, 10, 'ideal', 2) }])]);
+    expect(trainingBalance(noLegs, '2026-09-19')).toMatchObject({ pair: 'upper_lower', strong: 'Upper body' });
+    const noUpper = weeks.flatMap(w => [lowerDay(w), lowerDay(plus(w, 3)), session(plus(w, 4), [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 2) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 2) }])]);
+    expect(trainingBalance(noUpper, '2026-09-19')).toMatchObject({ pair: 'upper_lower', strong: 'Lower body' });
+  });
+});

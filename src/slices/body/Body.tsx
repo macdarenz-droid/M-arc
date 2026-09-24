@@ -8,7 +8,7 @@ import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscle
 import { formatDay, formatHours } from '@/core/dates';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
 import { muscleVolumeStatus } from '@/brain/volume';
-import { navyBodyFat } from '@/brain/bodyfat';
+import { navyBodyFat } from '@/core/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { formatLoad } from '@/core/units';
@@ -60,7 +60,7 @@ export function Body() {
             <Card>
               {!recovering.length && <p class="small muted">{readyOnly.length || fullyRecovered.length ? 'Everything you have trained is ready for hard work.' : 'Nothing logged yet.'}</p>}
               <div class="list">{recovering.map(r => (
-                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : `${formatHours(r.hoursLeft)} left`}</span>}>
+                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'sore today' : `${formatHours(r.hoursLeft)} left`}</span>}>
                   <div class="row-between small"><span>{muscleLabel(r.muscle)}</span><span class="muted">{r.pct}% · {r.confidence}</span></div>
                   <div class="bar" style={{ marginTop: 4 }}><i style={{ width: `${r.pct}%`, background: r.pct >= 75 ? 'var(--positive)' : r.pct >= 40 ? 'var(--warning)' : 'var(--negative)' }} /></div>
                 </Row>
@@ -92,7 +92,7 @@ export function Body() {
                   <span class="small">{muscleLabel(r.muscle)}</span>
                   <div class="bar" style={{ marginTop: 4 }}>
                     <span class="range" style={{ left: `${(r.band[0] / scaleMax) * 100}%`, width: `${((r.band[1] - r.band[0]) / scaleMax) * 100}%` }} />
-                    <i style={{ width: `${(r.thisWeekSets / scaleMax) * 100}%`, background: r.status === 'over' ? 'var(--warning)' : r.status === 'under' ? 'var(--text-3)' : 'var(--positive)' }} />
+                    <i style={{ width: `${(r.thisWeekSets / scaleMax) * 100}%`, background: r.thisWeekSets > r.band[1] ? 'var(--warning)' : 'var(--positive)' }} />
                   </div>
                 </Row>
               );
@@ -130,7 +130,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
         </div>
         {r.recovering && (
           <p class="small muted">
-            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
+            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'Held back by today\'s soreness rating. Ready for hard work once it eases.' : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
             {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · adjusted to your own history' : ''}.
           </p>
         )}
@@ -172,7 +172,7 @@ function BodyFat() {
   const save = () => {
     if (result == null) return;
     const r1 = (v: number) => Math.round(v * 10) / 10;
-    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: Number.isFinite(cm(height)) ? r1(cm(height)) : x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: r1(cm(neck)), waistCm: r1(cm(waist)), hipCm: Number.isFinite(cm(hip)) ? r1(cm(hip)) : undefined, bodyFatPct: result }] }));
+    update(x => ({ ...x, profile: { ...x.profile, sex, heightCm: Number.isFinite(cm(height)) ? r1(cm(height)) : x.profile.heightCm }, body: [...x.body, { day: today.value, neckCm: r1(cm(neck)), waistCm: r1(cm(waist)), hipCm: Number.isFinite(cm(hip)) ? r1(cm(hip)) : undefined, bodyFatPct: result, formula: 'navy-cm' }] }));
     setOpen(false);
   };
   return (

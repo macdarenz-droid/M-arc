@@ -226,3 +226,12 @@ describe('observed HRmax (BR-12)', () => {
     expect(hrMax({ name: '', birthYear: 1990 }, { bpm: 195, atMs: now }, now).bpm).toBe(195);
   });
 });
+
+describe('an observed max turning 12 months old (QA-R3b-6)', () => {
+  it('never drops below the age estimate', () => {
+    const now = Date.parse('2026-09-20T12:00:00Z');
+    const p = profile({ birthYear: 1990 });
+    const at = (months: number) => hrMax(p, { bpm: 170, atMs: now - months * 30.44 * 86_400_000 }, now).bpm;
+    expect(at(13)).toBe(at(11));
+  });
+});

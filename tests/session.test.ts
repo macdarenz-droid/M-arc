@@ -38,15 +38,26 @@ describe('commit-once sets (UI-01)', () => {
     expect(again.fidelity).toBe(first.fidelity);
     expect(a().rest!.endsAt).toBe(endsAt);
   });
-  it('emptying a committed set makes it a draft again', () => {
+  // QA-R2b-1 changed this contract: an emptied set is a draft but keeps its commit, so a
+  // clear-and-retype correction neither moves its time nor restarts rest.
+  it('emptying a committed set makes it a draft that keeps its time; refilling commits it again', () => {
     start();
     setSet(0, 0, { kg: 60, reps: 8 });
+    vi.advanceTimersByTime(30_000);
     commitSet(0, 0);
+    const first = a().entries[0]!.sets[0]!;
+    setSet(1, 0, { kg: 20, reps: 10 });
+    vi.advanceTimersByTime(120_000);
+    commitSet(1, 0);
+    const endsAt = a().rest!.endsAt;
+    vi.advanceTimersByTime(45_000);
     setSet(0, 0, { reps: undefined });
+    expect(a().entries[0]!.sets[0]!.status).toBe('draft');
+    setSet(0, 0, { reps: 6 });
+    commitSet(0, 0);
     const s = a().entries[0]!.sets[0]!;
-    expect(s.at).toBeUndefined();
-    expect(s.fidelity).toBeUndefined();
-    expect(s.status).toBe('draft');
+    expect(s).toMatchObject({ reps: 6, status: 'committed', at: first.at, restSec: first.restSec, fidelity: first.fidelity });
+    expect(a().rest!.endsAt).toBe(endsAt);
   });
   it('addSet carries load and reps, never timing or effort', () => {
     start();
@@ -125,6 +136,14 @@ describe('history order and edits (RG-05, UI-11, UI-12)', () => {
     resolveSessionTiming(s3.id, '2026-09-11T09:00', 60, 'user');
     expect(state.value.sessions.map(s => s.id)).toEqual([s1.id, s3.id, s2.id]);
   });
+  it('a cleared day or time leaves the session as saved (QA-R2c-2, QA-R2d-2)', () => {
+    const s1 = past('2026-09-10');
+    replaceState({ ...freshState(), sessions: [s1] });
+    for (const at of ['T17:00', '2026-09-10T']) {
+      expect(() => resolveSessionTiming(s1.id, at, 60, 'schedule')).not.toThrow();
+      expect(state.value.sessions[0]!.startedAt).toBe(s1.startedAt);
+    }
+  });
   it('logPastSession inserts in sorted order', () => {
     const [s1, s2] = [past('2026-09-10'), past('2026-09-14')];
     replaceState({ ...freshState(), splits: [split], sessions: [s1, s2] });
@@ -168,3 +187,124 @@ describe('rest while paused (UI-19)', () => {
 });
 
 export type { AppState };
+
+import { logWarmups, setEntryNote, setExerciseNote } from '@/slices/workout/session';
+describe('warm-ups, set kinds and notes (F1, F2)', () => {
+  it('2 warm-ups + 3 working sets: 5 stored, 3 counted, warm-ups never start rest', () => {
+    const three: Split = { ...split, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+    replaceState({ ...state.value, splits: [three] });
+    startSession(three);
+    logWarmups(0, [{ kg: 40, reps: 8 }, { kg: 60, reps: 5 }]);
+    logWarmups(0, [{ kg: 40, reps: 8 }]); // once only
+    expect(a().entries[0]!.sets.map(x => x.kind ?? 'working')).toEqual(['warmup', 'warmup', 'working', 'working', 'working']);
+    vi.advanceTimersByTime(60_000);
+    expect(commitSet(0, 0)).toBe(true);
+    expect(a().rest).toBeFalsy();
+    for (let j = 2; j < 5; j++) { setSet(0, j, { kg: 80, reps: 5 }); vi.advanceTimersByTime(90_000); commitSet(0, j); }
+    vi.advanceTimersByTime(60_000);
+    commitSet(0, 1);
+    const r = finishSession(false, { note: '  good day ' })!;
+    const stored = r.session.exercises[0]!.sets;
+    expect(stored).toHaveLength(5);
+    expect(stored.filter(x => x.kind !== 'warmup')).toHaveLength(3);
+    expect(r.session.note).toBe('good day');
+  });
+
+  it('a set to failure is stored with max effort; notes carry into history', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8, kind: 'failure', effort: 'max' });
+    commitSet(0, 0);
+    setEntryNote(0, 'elbows in');
+    setExerciseNote('lib_barbell_bench_press', 'Bench 3, grip ring');
+    const r = finishSession(false)!;
+    expect(r.session.exercises[0]).toMatchObject({ note: 'elbows in', sets: [{ kind: 'failure', effort: 'max' }] });
+    expect(state.value.exerciseNotes.lib_barbell_bench_press).toBe('Bench 3, grip ring');
+    setExerciseNote('lib_barbell_bench_press', '   ');
+    expect(state.value.exerciseNotes).toEqual({});
+  });
+});
+
+describe('conditioning inputs (UI-20)', () => {
+  it("a farmer's carry stores its distance", () => {
+    const carry: Split = { ...split, id: 'sp2', exercises: [{ exerciseId: 'lib_farmer_s_carry', sets: 1 }] };
+    replaceState({ ...state.value, splits: [carry] });
+    startSession(carry);
+    setSet(0, 0, { kg: 32, distanceM: 40, durationSec: 35 });
+    expect(commitSet(0, 0)).toBe(true);
+    expect(finishSession(false)!.session.exercises[0]!.sets[0]).toMatchObject({ kg: 32, distanceM: 40, durationSec: 35 });
+  });
+});
+
+describe('recovery calibration sees what the app showed (QA-R2b-3, QA-R2b-5, QA-R2b-6)', () => {
+  const benchSplit: Split = { id: 'bp', name: 'Bench', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+  const mk = (i: number, startMs: number, kg: number): Session => { const st = new Date(startMs).toISOString(); return { id: `h${i}`, splitId: 'bp', splitName: 'Bench', day: st.slice(0, 10), startedAt: st, endedAt: new Date(startMs + 3_600_000).toISOString(), durationSec: 3600, exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'max' }] }], logging: { mode: 'live', flags: [] } as never }; };
+  // Bench every 60 h for most of a year: the full history says chest is 91 % recovered, the old 7-day window said 81 %.
+  const history = (): { sessions: Session[]; next: number } => { const sessions: Session[] = []; let t = Date.parse('2025-09-01T10:00:00Z'); for (let i = 0; i < 150; i++) { sessions.push(mk(i, t, 100)); t += 60 * 3_600_000; } return { sessions, next: t }; };
+
+  it('a 7 % drop at a well-recovered chest slows chest recovery (finish uses the whole history)', () => {
+    const { sessions, next } = history();
+    vi.setSystemTime(next);
+    replaceState({ ...freshState(), splits: [benchSplit], sessions });
+    startSession(benchSplit);
+    for (let j = 0; j < 3; j++) { setSet(0, j, { kg: 93, reps: 5, effort: 'max' }); vi.advanceTimersByTime(120_000); commitSet(0, j); }
+    finishSession(false);
+    expect(state.value.recoveryModel.tauScale.chest).toBeCloseTo(1.1);
+  });
+
+  it('a rebuild learns the same, and keeps what a compressed (retro) finish learned', () => {
+    const { sessions, next } = history();
+    const drop = { ...mk(999, next, 93), exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 93, reps: 5, effort: 'max' as const }] }] };
+    const base = { customExercises: [], profile: freshState().profile, healthDays: [] };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, drop] }).tauScale.chest).toBeCloseTo(1.1);
+    const compressed = { ...drop, logging: { mode: 'retro', flags: ['compressed'] } as never };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, compressed] }).tauScale.chest).toBeCloseTo(1.1);
+    const typedLater = { ...drop, logging: { mode: 'retro', flags: [] } as never };
+    expect(rebuildRecoveryModel({ ...base, sessions: [...sessions, typedLater] }).tauScale.chest).toBeUndefined();
+  });
+});
+
+import { recovery, todayReadiness } from '@/app/selectors';
+describe('typing into a live set does not recompute recovery (QA-R2d-1)', () => {
+  it('recovery and readiness keep their identity across set edits', () => {
+    start();
+    const r0 = recovery.value, t0 = todayReadiness.value;
+    setSet(0, 0, { kg: 60 });
+    setSet(0, 0, { reps: 8 });
+    expect(recovery.value).toBe(r0);
+    expect(todayReadiness.value).toBe(t0);
+    commitSet(0, 0);
+    expect(recovery.value).toBe(r0);
+  });
+});
+
+import { addExerciseToSession, changedFromPlan } from '@/slices/workout/session';
+describe('a one-day Escobar change is not a template change (QA-R4a-4)', () => {
+  it('skipping an exercise for today does not ask to save the split; adding one yourself does', () => {
+    replaceState({ ...state.value, escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove', exerciseId: 'lib_cable_fly' }] } } });
+    start();
+    expect(a().entries.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press']);
+    expect(changedFromPlan(a(), split)).toBe(false);
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    expect(finishSession(false)!.changedTemplate).toBe(false);
+    replaceState({ ...state.value, splits: [split] });
+    start();
+    addExerciseToSession(findExercise('lib_dumbbell_lateral_raise')!);
+    expect(changedFromPlan(a(), split)).toBe(true);
+  });
+});
+
+import { plannedExercises, todaySplit } from '@/slices/workout/session';
+describe("the brief uses today's plan change (QA-R4a-5, QA-R4a-9)", () => {
+  it('drops a removed exercise and carries the load change', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove' as const, exerciseId: 'lib_cable_fly' }, { kind: 'load' as const, exerciseId: 'lib_barbell_bench_press', factor: 0.9 }] };
+    const t = todaySplit(split, o, '2026-09-22');
+    expect(t.exercises).toEqual([{ exerciseId: 'lib_barbell_bench_press', sets: 2, loadFactor: 0.9 }]);
+    expect(todaySplit(split, o, '2026-09-23').exercises).toEqual(split.exercises);
+  });
+});
+describe('a swap to an exercise already in the split (QA-R4a-10)', () => {
+  it('leaves one entry, not two', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_cable_fly' }] };
+    expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(['lib_cable_fly']);
+  });
+});

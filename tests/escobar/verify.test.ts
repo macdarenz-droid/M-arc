@@ -76,6 +76,39 @@ describe('safety pre-screen (§19)', () => {
     ['I want to lose 10 kg in a week', 'disordered_eating'],
     ['I have been eating 500 calories a day', 'disordered_eating'],
   ])('%s → %s', (text, signal) => expect(safetySignals(text)).toContain(signal));
+  // ES-14: the crisis screen, phrase by phrase. `true` must raise 'crisis'; `false` must not.
+  it.each([
+    ['I want to kill myself', true],
+    ["I've been thinking about suicide", true],
+    ['having suicidal thoughts again', true],
+    ['I want to end my life', true],
+    ['sometimes I just want to end it all', true],
+    ["I don't want to live anymore", true],
+    ['I dont want to be here anymore', true],
+    ["I've been self-harming", true],
+    ['thinking about self harm', true],
+    ['I want to hurt myself', true],
+    ["I'm going to hurt myself tonight", true],
+    ['I keep harming myself', true],
+    ['I hurt myself on purpose', true],
+    ["I've been hurting myself", true],
+    ['I kept hurting myself last month', true],
+    ['there is no reason to live', true],
+    ["everyone would be better off dead without me, I'd be better off dead", true],
+    ['end it after 3 sets', false],
+    ['I hurt myself on squats', false],
+    ['I keep hurting myself doing deadlifts', false],
+    ["I've been hurting myself lifting too heavy", false],
+    ['started hurting myself benching wide', false],
+    ['this workout is killing me', false],
+    ['legs day will kill me', false],
+    ['I could die for a rest day', false],
+    ['my quads are dead after that', false],
+    ['end the session early?', false],
+    ['can I end my set at 8 reps', false],
+    ['I killed that PR', false],
+    ['harmless question: is creatine safe', false],
+  ] as const)('crisis screen: %s → %s', (text, crisis) => expect(safetySignals(text).includes('crisis')).toBe(crisis));
   it('ordinary questions carry no signal', () => {
     expect(safetySignals('Why is my readiness amber?')).toEqual([]);
     expect(safetySignals('Build me a 4-day programme')).toEqual([]);

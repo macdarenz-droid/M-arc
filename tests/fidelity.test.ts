@@ -100,3 +100,17 @@ describe('isDuplicateSession', () => {
     expect(isDuplicateSession(a, c)).toBe(false);
   });
 });
+
+describe('warm-ups and drop sets (QA-R6-6, QA-R6-8, QA-R6-9)', () => {
+  it('a light warm-up or drop set is never a kg/lb slip; a light working set still is', async () => {
+    const { setUnitSuspect } = await import('@/brain/fidelity');
+    expect(setUnitSuspect({ kg: 45, kind: 'warmup' }, 100)).toBe(false);
+    expect(setUnitSuspect({ kg: 45, kind: 'drop' }, 100)).toBe(false);
+    expect(setUnitSuspect({ kg: 45 }, 100)).toBe(true);
+  });
+  it("'Last:' hints line up with the working sets", async () => {
+    const { workingIndex } = await import('@/brain/exposure');
+    const rows = [{ kind: 'warmup' as const }, { kind: 'warmup' as const }, {}, {}, {}];
+    expect(rows.map((_, j) => workingIndex(rows, j))).toEqual([null, null, 0, 1, 2]);
+  });
+});

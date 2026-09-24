@@ -75,3 +75,45 @@ describe('heart store round trip (UI-14, ST-21)', () => {
     expect(exportHeart()).toEqual({});
   });
 });
+
+import { repairState } from '@/core/store';
+import { recoveryStatus } from '@/brain/recovery';
+describe('sessions without a date (QA-R1-2, QA-R1-3)', () => {
+  it('a restored session missing its day gets it from its start; one with neither is dropped', () => {
+    const noDay = { ...session('s2', '2026-09-21T10:00:00.000Z'), day: undefined };
+    const noDates = { ...session('s3', '2026-09-21T10:00:00.000Z'), day: undefined, startedAt: undefined };
+    const b = parseBackup(JSON.stringify({ ...withSessions(), sessions: [session('s1', '2026-09-20T10:00:00.000Z'), noDay, noDates] }), NOW);
+    if (!('kind' in b) || b.kind !== 'v37') throw new Error('kind');
+    expect(b.dropped).toBe(1);
+    expect(b.state.sessions.map(s => [s.id, s.day])).toEqual([['s1', '2026-09-20'], ['s2', '2026-09-21']]);
+    // What Today reads must not throw on the restored state.
+    expect(() => recoveryStatus({ sessions: b.state.sessions, custom: [], now: NOW, profile: b.state.profile, healthDays: [], checkIns: [], freshMarks: [], recoveryModel: b.state.recoveryModel })).not.toThrow();
+  });
+  it('boot repair does the same', () => {
+    const out = repairState({ ...freshState(), sessions: [{ ...session('x', '2026-09-21T10:00:00.000Z'), day: 7 }] as never });
+    expect(out.state.sessions[0]!.day).toBe('2026-09-21');
+  });
+});
+
+import { backupAgeDays } from '@/slices/settings/backup';
+describe('last backup age in local days (QA-R6-1, QA-R6-7)', () => {
+  it('a backup made late tonight or early this morning is from today, in every time zone', () => {
+    expect(backupAgeDays(new Date(2026, 8, 22, 23, 30).toISOString(), '2026-09-22')).toBe(0);
+    expect(backupAgeDays(new Date(2026, 8, 22, 0, 30).toISOString(), '2026-09-22')).toBe(0);
+    expect(backupAgeDays(new Date(2026, 8, 20, 12, 0).toISOString(), '2026-09-22')).toBe(2);
+    expect(backupAgeDays(undefined, '2026-09-22')).toBeNull();
+  });
+});
+
+import { formatSetLoad } from '@/core/units';
+describe('restoring an lb backup from before units (QA-R1-4)', () => {
+  it('shows 225 lb as typed, like the boot path', () => {
+    const s = { ...freshState(), preferences: { ...freshState().preferences, weightUnit: 'lb' as const }, sessions: [{ ...session('s1', '2026-09-20T10:00:00.000Z'), exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Bench', sets: [{ kg: 102.0, reps: 5 }] }] }] } as unknown as Record<string, unknown>;
+    delete s.units;
+    const b = parseBackup(JSON.stringify(s), NOW);
+    if (!('kind' in b) || b.kind !== 'v37') throw new Error('kind');
+    const set = b.state.sessions[0]!.exercises[0]!.sets[0]!;
+    expect(set.entered).toEqual({ value: 225, unit: 'lb' });
+    expect(formatSetLoad(set, 'lb')).toBe('225 lb');
+  });
+});

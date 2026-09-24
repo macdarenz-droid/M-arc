@@ -8,7 +8,7 @@ import type { MessageCreateParamsStreaming, BetaMessageParam, BetaRawMessageStre
 import generated from './tools.generated.json';
 import { WORKER_POLICY } from './prompt/policy';
 import { renderManifest } from './prompt/manifest';
-import type { Mode } from './prompt/modes';
+import { MODES, type Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
 import type { QuotaCounter } from './quotaDO';
 import type { UpstreamRelay } from './upstreamRelay';
@@ -18,10 +18,12 @@ export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;
+  /** F7 (D12): per-mode model overrides; each falls back to MODEL. */
+  MODEL_CHAT?: string; MODEL_PLAN?: string; MODEL_LIVE?: string; MODEL_BRIEF?: string; MODEL_MOMENT?: string; MODEL_SUMMARIZE?: string;
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
-  MAX_TURNS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
+  MAX_TURNS_PER_IP?: string; MAX_STEPS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
   QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
   /** Makes every Anthropic call from a US location (PL-20). Without it the call leaves from the edge. */
   UPSTREAM?: DurableObjectNamespace<UpstreamRelay>;
@@ -87,8 +89,31 @@ export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['me
   return out;
 }
 
+/**
+ * QA2-F7-3: the models a mode may be switched to. Each takes the request buildParams sends (adaptive
+ * thinking and output_config.effort from low to max). Anything else, a typo or a model such as Haiku
+ * 4.5 that rejects adaptive thinking, would fail every turn in that mode, so it is ignored. These ids
+ * have no dated snapshots, so an id with a date suffix is ignored like any other unknown id.
+ */
+const MODE_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-opus-4-8', 'claude-opus-4-7', 'claude-sonnet-5', 'claude-fable-5-1', 'claude-fable-5', 'claude-mythos-5-1', 'claude-mythos-5']);
+const overrideFor = (mode: TurnBody['mode'], env: Env): string | undefined => {
+  const v = (env as Record<string, unknown>)[`MODEL_${mode.toUpperCase()}`];
+  return typeof v === 'string' && v.trim() ? v.trim() : undefined;
+};
+const usableOverride = (v: string): boolean => MODE_MODELS.has(v);
+/** F7: the model for one mode: MODEL_<MODE> when set to a model the Worker can drive, else MODEL, else the default. */
+export function modelFor(mode: TurnBody['mode'], env: Env): string {
+  const v = overrideFor(mode, env);
+  if (v && usableOverride(v)) return v;
+  return env.MODEL || DEFAULT_MODEL;
+}
+/** QA2-F7-3: the modes whose MODEL_<MODE> is set but ignored, for /health and the deploy check. */
+export function ignoredModelOverrides(env: Env): Mode[] {
+  return MODES.filter(m => { const v = overrideFor(m, env); return !!v && !usableOverride(v); });
+}
+
 export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boolean } = {}): MessageCreateParamsStreaming {
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(body.mode, env);
   const cfg = MODE_CONFIG[body.mode];
   const fold = opts.foldSystem ?? !supportsSystemMessages(model);
   const messages = (fold ? foldSystemMessages(body.messages) : body.messages) as BetaMessageParam[];
@@ -188,7 +213,7 @@ export const IDLE_TIMEOUT_MS = 60_000;
  * when an error or refusal was emitted instead. `emittedAny` tells the caller whether a
  * retry is still safe.
  */
-export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean }> {
+export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean; refused?: boolean; outputTokens?: number }> {
   const idleMs = opts.idleMs ?? IDLE_TIMEOUT_MS;
   const controller = new AbortController();
   opts.signal?.addEventListener('abort', () => controller.abort());
@@ -227,7 +252,8 @@ export async function runStep(client: ClientLike, params: MessageCreateParamsStr
     if (final.stop_reason === 'refusal') {
       const cat = (final as unknown as { stop_details?: { category?: string | null } | null }).stop_details?.category ?? null;
       emit({ t: 'refusal', category: cat });
-      return { final: null, emittedAny };
+      // A refusal is still billed (QA-R0-3): report its output so the handler can count it.
+      return { final: null, emittedAny, refused: true, outputTokens: final.usage?.output_tokens ?? 0 };
     }
     const content = pruneFallback(final.content as unknown[]);
     emit({ t: 'final', content, stop_reason: final.stop_reason, usage: final.usage, model: final.model });

@@ -1,7 +1,8 @@
-import { signal, computed, batch } from '@preact/signals';
-import { freshState, newId, type AppState, type Session, type Split, type Weekday } from './models';
+import { signal, batch } from '@preact/signals';
+import { navyBodyFat } from './bodyfat';
+import { freshState, newId, type AppState, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { convertLegacy, readLegacy } from './migrate';
-import { legacySessionLogging } from '@/brain/fidelity';
+import { legacySessionLogging } from './sessionLogging';
 import { normalizeEscobar, normalizeUnits } from './escobarState';
 import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
 import { dayKey } from './dates';
@@ -48,11 +49,22 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
   const splits = splitsIn.filter(sp => typeof sp.id === 'string');
   c.dropped += splitsIn.length - splits.length;
   const splitIds = new Set(splits.map(sp => sp.id));
-  const sessions = objects<Session>(raw.sessions, c).map(ses => ({
-    ...ses,
-    id: typeof ses.id === 'string' ? ses.id : newId('s'),
-    exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => ({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
-  }));
+  const sessionsIn = objects<Session>(raw.sessions, c);
+  // QA-R1-2/3: a session needs a start time; its day comes from it when missing. Without either it is dropped.
+  const sessions = sessionsIn.flatMap(ses => {
+    const start = typeof ses.startedAt === 'string' && Number.isFinite(Date.parse(ses.startedAt)) ? ses.startedAt : null;
+    const day = typeof ses.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ses.day) ? ses.day : start ? dayKey(new Date(start)) : null;
+    if (!day) return [];
+    return [{
+      ...ses,
+      day,
+      startedAt: start ?? `${day}T12:00:00.000Z`,
+      endedAt: typeof ses.endedAt === 'string' && Number.isFinite(Date.parse(ses.endedAt)) ? ses.endedAt : (start ?? `${day}T12:00:00.000Z`),
+      id: typeof ses.id === 'string' ? ses.id : newId('s'),
+      exercises: objects<Session['exercises'][number]>(ses.exercises, c).map(e => ({ ...e, sets: objects<Session['exercises'][number]['sets'][number]>(e.sets, c) })),
+    }];
+  });
+  c.dropped += sessionsIn.length - sessions.length;
   sessions.sort((a, b) => (a.startedAt ?? '') < (b.startedAt ?? '') ? -1 : (a.startedAt ?? '') > (b.startedAt ?? '') ? 1 : 0);
   const schedule = { ...(isObj(raw.schedule) ? raw.schedule : {}) } as Record<Weekday, string | null>;
   for (const d of Object.keys(schedule) as Weekday[]) { const v = schedule[d]; schedule[d] = typeof v === 'string' && splitIds.has(v) ? v : null; }
@@ -72,28 +84,68 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
     schedule,
     ...lists,
   };
-  return { state: fill(repaired), dropped: c.dropped };
+  let out = fill(repaired);
+  // RG-02 / QA-R1-4: an lb user's history from before per-set units displays exactly as typed. Done
+  // here, where the raw state is still visible, so boot and restore both backfill it.
+  const savedBeforeUnits = !Object.prototype.hasOwnProperty.call(raw, 'units');
+  if (savedBeforeUnits && raw.preferences?.weightUnit === 'lb') {
+    out = { ...out, sessions: backfillLegacyLbEntries(out.sessions), active: out.active && Array.isArray(out.active.entries) ? { ...out.active, entries: out.active.entries.map(e => ({ ...e, sets: backfillLegacyLbSets(e.sets ?? []) })) } : out.active };
+  }
+  return { state: out, dropped: c.dropped };
 }
 
 /** Fill in fields added after a state was first saved, after a deep repair. */
 function normalize(s: AppState): AppState {
-  let out = repairState(s).state;
-  // RG-02: an lb user's history from before per-set units displays exactly as typed.
-  const savedBeforeUnits = !Object.prototype.hasOwnProperty.call(s, 'units');
-  if (savedBeforeUnits && s.preferences?.weightUnit === 'lb') {
-    out = { ...out, sessions: backfillLegacyLbEntries(out.sessions), active: out.active && Array.isArray(out.active.entries) ? { ...out.active, entries: out.active.entries.map(e => ({ ...e, sets: backfillLegacyLbSets(e.sets ?? []) })) } : out.active };
-  }
-  return out;
+  return repairState(s).state;
 }
 
 /** R2.8: a loaded live session gets ids where it has none. Times are never invented. */
+/**
+ * QA-R2d-4: the previous version's '+ Set' copied the whole last set, commit time, rest, heart
+ * and id included. A live set with the same commit time (or id) as the set before it is such a
+ * copy: it keeps the typed values and loses what only its commit can set.
+ */
+function uncopiedSets(sets: LoggedSet[]): LoggedSet[] {
+  return sets.map((set, i) => {
+    const prev = sets[i - 1];
+    if (!prev || !isObj(set) || !isObj(prev)) return set;
+    const copied = (set.at != null && set.at === prev.at) || (set.id != null && set.id === prev.id);
+    if (!copied) return set;
+    const { at: _at, restSec: _r, fidelity: _f, heart: _h, status: _s, id: _id, ...kept } = set;
+    return kept;
+  });
+}
+
 function withActiveIds(a: AppState['active']): AppState['active'] {
   if (!a || !Array.isArray(a.entries)) return a ?? null;
   return {
     ...a,
     id: a.id ?? newId('s'),
-    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: (Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
+    entries: a.entries.map(e => ({ ...e, id: e.id ?? newId('e'), sets: uncopiedSets(Array.isArray(e.sets) ? e.sets : []).map(set => (set.id ? set : { ...set, id: newId('set') })) })),
   };
+}
+
+export const MAX_DAYS_OFF = 400;
+export const MAX_EXERCISE_NOTE = 200;
+function cleanNotes(v: unknown): Record<string, string> {
+  if (!isObj(v)) return {};
+  const out: Record<string, string> = {};
+  for (const [k, n] of Object.entries(v)) if (typeof n === 'string' && n.trim()) out[k] = n.trim().slice(0, MAX_EXERCISE_NOTE);
+  return out;
+}
+
+/**
+ * QA-R3a-10: readings saved before BR-01 used the inch-converted formula and read about six
+ * points low. Their tape numbers are stored, so they are recomputed once, with the profile's
+ * sex and height, and marked. A reading that cannot be recomputed keeps its number.
+ */
+function healBodyReadings(body: AppState['body'], profile: Partial<AppState['profile']> | undefined): AppState['body'] {
+  const sex = profile?.sex, heightCm = profile?.heightCm;
+  return body.map(b => {
+    if (b.formula === 'navy-cm' || (sex !== 'male' && sex !== 'female') || heightCm == null) return b;
+    const pct = navyBodyFat({ sex, heightCm, neckCm: b.neckCm, waistCm: b.waistCm, hipCm: b.hipCm });
+    return pct == null ? b : { ...b, bodyFatPct: pct, formula: 'navy-cm' };
+  });
 }
 
 function fill(s: AppState): AppState {
@@ -105,11 +157,12 @@ function fill(s: AppState): AppState {
     profile: { ...fresh.profile, ...s.profile },
     preferences: { ...fresh.preferences, ...s.preferences, weightUnit, reminders: { ...fresh.preferences.reminders, ...s.preferences?.reminders }, watch: { ...fresh.preferences.watch, ...s.preferences?.watch }, rest: { ...fresh.preferences.rest, ...s.preferences?.rest } },
     schedule: { ...fresh.schedule, ...s.schedule },
-    health: { ...fresh.health, ...s.health },
+    health: { ...fresh.health, ...s.health, ...(s.health?.activeCalories != null && s.health.activeCalories > 20_000 ? { activeCalories: Math.round(s.health.activeCalories / 1000) } : {}) },
     splits: (s.splits ?? []).map(sp => ({ ...sp, focus: sp.focus ?? [], exercises: sp.exercises ?? [] })),
-    body: s.body ?? [],
+    body: healBodyReadings(s.body ?? [], s.profile),
     customExercises: s.customExercises ?? [],
-    healthDays: s.healthDays ?? [],
+    // VX-01: heal activeCalories stored as small calories by builds before the fix.
+    healthDays: (s.healthDays ?? []).map(d => (d.activeCalories != null && d.activeCalories > 20_000 ? { ...d, activeCalories: Math.round(d.activeCalories / 1000) } : d)),
     weightLog: s.weightLog ?? [],
     profileHistory: s.profileHistory ?? [],
     onboarding: { ...fresh.onboarding, ...s.onboarding, dismissedAt: s.onboarding?.dismissedAt ?? [] },
@@ -122,6 +175,8 @@ function fill(s: AppState): AppState {
     escobar: normalizeEscobar(s.escobar),
     units: normalizeUnits(s.units, weightUnit),
     active: withActiveIds(s.active),
+    daysOff: Array.isArray(s.daysOff) ? [...new Set(s.daysOff.filter((d): d is string => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort().slice(-MAX_DAYS_OFF) : [],
+    exerciseNotes: cleanNotes(s.exerciseNotes),
   };
 }
 
@@ -160,14 +215,26 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 let lastGoodRaw: string | null = null;
 let storageListener: ((e: StorageEvent) => void) | null = null;
 
-/** Keeps an unreadable raw aside once; never overwrites an identical copy. */
-function quarantine(storage: Storagelike, key: string, raw: string): boolean {
+/**
+ * Keeps an unreadable raw aside once; never overwrites an identical copy. With storage full
+ * (QA-R1-1) it moves the raw instead: `from` is removed first, freeing exactly the room the copy
+ * needs. `from` is about to be overwritten anyway.
+ */
+function quarantine(storage: Storagelike, key: string, raw: string, from: string): boolean {
   try {
     if (storage.getItem(key) !== raw) storage.setItem(key, raw);
     return true;
   } catch (err) {
-    console.warn('could not keep a copy of unreadable data', err);
-    return false;
+    try {
+      storage.removeItem(from);
+      storage.setItem(key, raw);
+      return true;
+    } catch (moveErr) {
+      // Put it back where it was rather than lose it.
+      try { storage.setItem(from, raw); } catch { /* nothing more to do */ }
+      console.warn('could not keep a copy of unreadable data', err, moveErr);
+      return false;
+    }
   }
 }
 
@@ -180,8 +247,8 @@ export function initStore(storage: Storagelike = localStorage): void {
     let mainRaw: string | null = null;
     let backupRaw: string | null = null;
     try { mainRaw = storage.getItem(STATE_KEY); backupRaw = storage.getItem(BACKUP_KEY); } catch { /* unreadable storage */ }
-    if (mainRaw != null && quarantine(storage, CORRUPT_KEY, mainRaw)) recovered = true;
-    if (backupRaw != null && (loaded.source === 'fresh' || loaded.source === 'legacy') && quarantine(storage, CORRUPT_BACKUP_KEY, backupRaw)) recovered = true;
+    if (mainRaw != null && quarantine(storage, CORRUPT_KEY, mainRaw, STATE_KEY)) recovered = true;
+    if (backupRaw != null && (loaded.source === 'fresh' || loaded.source === 'legacy') && quarantine(storage, CORRUPT_BACKUP_KEY, backupRaw, BACKUP_KEY)) recovered = true;
   }
   lastGoodRaw = loaded.raw;
   batch(() => {
@@ -251,8 +318,16 @@ export function persistNow(): boolean {
 }
 
 /** The kept-aside unreadable data, for the rescue file (ST-01). */
+/**
+ * What the Settings rescue row saves. QA-R1-5: when both copies were kept aside, the file holds
+ * both (in the crash screen's rescue format), so deleting the rescue copy never loses one.
+ */
 export function rescueRaw(storage: Storagelike = storageRef ?? localStorage): string | null {
-  try { return storage.getItem(CORRUPT_KEY) ?? storage.getItem(CORRUPT_BACKUP_KEY); } catch { return null; }
+  try {
+    const main = storage.getItem(CORRUPT_KEY), backup = storage.getItem(CORRUPT_BACKUP_KEY);
+    if (main != null && backup != null) return JSON.stringify({ app: 'M/ARC', kind: 'rescue', savedAt: new Date().toISOString(), keys: { [CORRUPT_KEY]: main, [CORRUPT_BACKUP_KEY]: backup } });
+    return main ?? backup;
+  } catch { return null; }
 }
 
 export function deleteRescueCopy(storage: Storagelike = storageRef ?? localStorage): void {
@@ -276,13 +351,23 @@ export function replaceState(next: AppState): void {
   persistNow();
 }
 
+/** QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come back from it. */
+export function resetState(next: AppState): void {
+  lastGoodRaw = null;
+  try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
+  replaceState(next);
+}
+
 export function flushSave(): void {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
   persistNow();
 }
 
-export const sessions = computed(() => state.value.sessions);
-export const splits = computed(() => state.value.splits);
-export const preferences = computed(() => state.value.preferences);
-export const customExercises = computed(() => state.value.customExercises);
-export const allExercisesLookup = computed(() => state.value.customExercises);
+/**
+ * QA2-FB-1: the error card's reset wipes storage and reloads. No save may follow, not even the
+ * one on unload (pagehide, visibilitychange), or the state that crashed is written straight back.
+ */
+export function stopSaving(): void {
+  if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+  storageRef = null;
+}

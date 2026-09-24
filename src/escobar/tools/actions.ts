@@ -10,7 +10,6 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, isGoalId } from '@/data/goals';
 import { WEEKDAY_LABEL, addDays } from '@/core/dates';
 import { isWeightTypo } from '@/brain/onboarding';
-import { equipmentGroup } from '@/brain/coach/cues';
 import { evaluatePlan, hasBlockingIssues, type PlanDraft } from '@/brain/plan';
 import { ToolError } from './read';
 import { exerciseName, scheduledSplitFor, type ToolCtx } from './context';
@@ -88,8 +87,8 @@ export function planDraftArg(v: unknown, ctx: ToolCtx): PlanDraft {
 
 export function touchedState(kind: string, input: Record<string, unknown>, s: AppState): unknown {
   switch (kind) {
-    case 'propose_split': return input.action === 'create' ? s.splits.length : s.splits.find(x => x.id === input.splitId) ?? null;
-    case 'propose_program': return [s.splits, s.schedule];
+    case 'propose_split': return input.action === 'create' ? s.splits.length : [s.splits.find(x => x.id === input.splitId) ?? null, s.active?.splitId ?? null];
+    case 'propose_program': return [s.splits, s.schedule, !!s.active];
     case 'propose_schedule': return [s.schedule, s.splits.map(x => x.id)];
     case 'propose_goal': return s.goal;
     case 'propose_today': return [s.escobar.todayOverride, s.splits.find(x => x.id === input.splitId)?.exercises ?? null, !!s.active];
@@ -129,6 +128,8 @@ function validateSplit(i: Record<string, unknown>, ctx: ToolCtx): Built {
   }
   const split = s.splits.find(x => x.id === i.splitId);
   if (!split) throw new ToolError(`unknown splitId; current splits: ${s.splits.map(x => `${x.id} (${x.name})`).join(', ') || 'none'}`);
+  // ES-05: never delete the split someone is training right now.
+  if (action === 'delete' && s.active?.splitId === split.id) throw new ToolError('that split is being trained right now');
   if (action === 'delete') return { title: `Delete split: ${split.name}`, input: { action, splitId: split.id, name: split.name, exercises: [] }, preview: [{ label: split.name, before: `${split.exercises.length} exercises`, after: 'deleted' }] };
   const exercises = exerciseList(ctx, i.exercises);
   if (!exercises.length) throw new ToolError('a split needs at least one exercise');
@@ -147,6 +148,7 @@ function validateProgram(i: Record<string, unknown>, ctx: ToolCtx): Built {
   const draft = planDraftArg(i.draft, ctx);
   const replace = i.replaceExisting === true;
   const s = ctx.state;
+  if (replace && s.active) throw new ToolError('a session is running; finish it before replacing the programme');
   if ((replace ? 0 : s.splits.length) + draft.splits.length > MAX_SPLITS) throw new ToolError(`that makes more than ${MAX_SPLITS} splits; set replaceExisting or use fewer`);
   const ev = evaluatePlan(draft, { goal: s.goal, custom: s.customExercises, sessions: s.sessions, today: ctx.today });
   if (hasBlockingIssues(ev)) throw new ToolError(`evaluate_plan finds blocking issues; revise and try again: ${ev.issues.filter(x => x.severity === 'block').map(x => x.text).join(' ')}`);
@@ -194,7 +196,7 @@ function validateToday(i: Record<string, unknown>, ctx: ToolCtx): Built {
       default: throw new ToolError(`changes[${n}].kind must be swap, remove, add, sets or load`);
     }
   });
-  const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.trim().slice(0, 140) : 'Adjusted for today';
+  const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.replace(/[\r\n]+/g, ' ').trim().slice(0, 140) : 'Adjusted for today';
   const preview = changes.map((c): DiffRow => {
     switch (c.kind) {
       case 'swap': return { label: exerciseName(ctx, c.from), before: 'planned', after: `swap for ${exerciseName(ctx, c.to)}` };
@@ -296,7 +298,7 @@ export function buildAction(name: string, raw: unknown, ctx: ToolCtx): Built {
     case 'propose_today': return validateToday(i, ctx);
     case 'propose_deload': {
       if (s.deload && s.deload.endDay >= ctx.today) throw new ToolError('a lighter week is already running');
-      const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.trim().slice(0, 140) : 'A lighter week to recover.';
+      const reason = typeof i.reason === 'string' && i.reason.trim() ? i.reason.replace(/[\r\n]+/g, ' ').trim().slice(0, 140) : 'A lighter week to recover.';
       return { title: 'Take a lighter week', input: { reason }, preview: [{ label: 'Next 7 days', before: 'normal', after: 'fewer sets, lighter loads' }, { label: 'Ends', after: addDays(ctx.today, 6) }] };
     }
     case 'propose_start_session': {
@@ -390,4 +392,4 @@ export function buildProposal(name: string, raw: unknown, ctx: ToolCtx, idHint?:
   };
 }
 
-export const equipmentGroupOf = (ctx: ToolCtx, exerciseId: string): string => equipmentGroup(findExercise(exerciseId, ctx.state.customExercises)?.equipment ?? '');
+

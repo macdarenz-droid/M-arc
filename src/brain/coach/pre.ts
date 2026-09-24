@@ -10,7 +10,7 @@ import { e1rmTrend } from './weeklyReview';
 import { loadForReps, roundToStep } from '../e1rm';
 import { loadableNear } from '../units';
 import { kgToDisplay } from '@/core/units';
-import type { EquipmentProfile } from '@/core/models';
+import type { EquipmentProfile, LoadUnit } from '@/core/models';
 import type { Insight } from './rules';
 
 export interface PreSessionInput {
@@ -25,10 +25,12 @@ export interface PreSessionInput {
    * has a load, the brief quotes it instead of recomputing one, and warm-ups ramp to it.
    */
   targetFor?: (exerciseId: string) => { kg: number | null; target: string; equipment?: EquipmentProfile } | null;
+  /** QA-R3b-2: loads in the person's unit. */
+  unit?: LoadUnit;
 }
 
 /** `load = e1RM_trend / (1 + (targetReps + 2) / 30)`, the ideal-effort assumption, ± 2.5%. */
-export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string, targetReps: number): Insight | null {
+export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string, targetReps: number, unit: LoadUnit = 'kg'): Insight | null {
   const withE1rm = hist.filter(h => h.bestE1rm > 0);
   if (withE1rm.length < 3) return null;
   const t = e1rmTrend(hist);
@@ -39,9 +41,9 @@ export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exer
   return {
     id: `pre:load-target:${exerciseId}`, category: 'progress', priority: 260, cadence: 'pre', kind: 'plan', exerciseId,
     title: `${exerciseName}: today's target load`,
-    noticed: `${exerciseName} e1RM trending toward about ${Math.round(last)} kg.`,
-    means: `For ${targetReps} at ideal effort, ${load - band} to ${load + band} kg should land right.`,
-    action: `Start around ${load} kg.`,
+    noticed: `${exerciseName} e1RM trending toward about ${Math.round(kgToDisplay(last, unit))} ${unit}.`,
+    means: `For ${targetReps} at ideal effort, ${kgToDisplay(load - band, unit)} to ${kgToDisplay(load + band, unit)} ${unit} should land right.`,
+    action: `Start around ${kgToDisplay(load, unit)} ${unit}.`,
     evidence: { n: withE1rm.length, window: `${withE1rm.length} sessions`, confidence: withE1rm.length >= 6 ? 'medium' : 'low' },
   };
 }
@@ -54,6 +56,12 @@ export const WARMUP_REPS = [8, 5, 2];
  * equipment's loads. A step that snaps to the working load or above is dropped, so the last
  * warm-up is never heavier than the work. Shared by the brief, Train and Escobar.
  */
+/** QA-R3b-4: the warm-up Train offers, or null when there is none (an empty-bar working set). */
+export function warmupOffer(workingKg: number | null | undefined, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> | null {
+  const w = workingKg != null && workingKg > 0 ? warmupSets(workingKg, equipment) : [];
+  return w.length ? w : null;
+}
+
 export function warmupSets(workingKg: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {
   if (!(workingKg > 0)) return [];
   return WARMUP_PCTS
@@ -114,7 +122,7 @@ export function preSessionInsights(input: PreSessionInput, limit = 3): Insight[]
           evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: hist.length >= 6 ? 'medium' : 'low' },
         });
       } else {
-        const target = workingLoadTarget(hist, se.exerciseId, meta.name, 8);
+        const target = workingLoadTarget(hist, se.exerciseId, meta.name, 8, input.unit);
         if (target) out.push(target);
       }
       if (!warmupShown) {

@@ -143,6 +143,10 @@ describe('recovery model v2 (impulse-response)', () => {
     const today = dayKey(now);
     const capped = statusFor([s], now, { checkIns: [{ day: today, soreness: { quads: 5 } }] });
     expect(capped.pct).toBeLessThanOrEqual(60);
+    // QA-R3a-9: past the model's ready time, the soreness decides: no 'ready in under 1h'.
+    expect(capped.recovering).toBe(true);
+    expect(capped.readyInHours).toBeNull();
+    expect(capped.soreToday).toBe(true);
   });
 
   it('"Mark as fresh" overrides the model to 100%', () => {

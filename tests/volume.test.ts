@@ -23,10 +23,11 @@ describe('muscleVolumeStatus (F3.2)', () => {
     const rows = muscleVolumeStatus([], today);
     expect(rows.find(r => r.muscle === 'chest')!.status).toBe('unknown');
   });
-  it('is under band with too few sets this week for a new lifter', () => {
+  // QA-R3a-5: a new lifter's first week has no full weeks behind it, so it is never 'under'.
+  it('a new lifter\'s first week is not judged under', () => {
     const s = [session(today, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 2) }])];
     const row = muscleVolumeStatus(s, today).find(r => r.muscle === 'chest')!;
-    expect(row.status).toBe('under');
+    expect(row.status).toBe('in');
     expect(row.thisWeekSets).toBe(2);
   });
   it('is over band with many sets this week for a new lifter', () => {
@@ -48,8 +49,17 @@ describe('muscleVolumeStatus judges completed weeks (BR-07)', () => {
   it('"under" needs two completed weeks below the band', () => {
     const one = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 6) }])];
     expect(muscleVolumeStatus(one, '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('in');
-    const two = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }])];
+    // Two full weeks (3 sessions each, QA-R3a-1) with chest below the band.
+    const legs = (day: string) => session(day, [{ id: 'lib_barbell_back_squat', sets: sets(100, 5, 'ideal', 3) }]);
+    const two = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), legs('2026-09-10'), legs('2026-09-12'), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), legs('2026-09-03'), legs('2026-09-05')];
     expect(muscleVolumeStatus(two, '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('under');
+    // The same sets over part weeks (one session each) are not enough to say 'under'.
+    const part = [session('2026-09-08', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-01', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }])];
+    expect(muscleVolumeStatus(part, '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('in');
+  });
+  it('the first week back after weeks off is not judged under (QA-R3a-1)', () => {
+    const s = [session('2026-08-03', [{ id: bench, sets: sets(60, 8, 'ideal', 10) }]), session('2026-09-15', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }]), session('2026-09-17', [{ id: bench, sets: sets(60, 8, 'ideal', 2) }])];
+    expect(muscleVolumeStatus(s, '2026-09-18').find(r => r.muscle === 'chest')!.status).toBe('in');
   });
   it('nothing in four weeks is unknown', () => {
     expect(muscleVolumeStatus([], '2026-09-14').find(r => r.muscle === 'chest')!.status).toBe('unknown');

@@ -19,8 +19,8 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
   const e = state.value.escobar;
   const [confirm, setConfirm] = useState(false);
   const [url, setUrl] = useState(e.proxyUrl ?? '');
-  const u = e.usage.day === todayKey() ? e.usage : { turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
-  const cost = estimateCost(u);
+  const u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number } = e.usage.day === todayKey() ? e.usage : { turns: 0, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
+  const cost = u.costUsd ?? estimateCost(u);
   const saveUrl = () => {
     const v = url.trim().replace(/\/$/, '');
     if (v && !/^https:\/\/[^\s/]+/.test(v)) { showToast('Use an https:// address'); return; }
@@ -39,7 +39,7 @@ export function EscobarSettings({ onClose }: { onClose: () => void }) {
             <Row trailing={<Toggle checked={e.sharing.health} label="Share health data" onChange={v => set({ sharing: { ...e.sharing, health: v } })} />}><span class="small">Share health data</span><div class="hint">Sleep, resting heart rate, session heart rate.</div></Row>
             <Row trailing={<Toggle checked={e.sharing.body} label="Share body data" onChange={v => set({ sharing: { ...e.sharing, body: v } })} />}><span class="small">Share body data</span><div class="hint">Weight and measurements.</div></Row>
             <Field label="Tone"><Segmented value={e.tone} options={[{ value: 'warm', label: 'Warm' }, { value: 'direct', label: 'Direct' }]} onChange={v => set({ tone: v })} /></Field>
-            <Row trailing={<Toggle checked={e.proactive.enabled} label="Proactive notes" onChange={v => set({ proactive: { ...e.proactive, enabled: v } })} />}><span class="small">Proactive notes</span><div class="hint">A short note after a session or on a Monday.</div></Row>
+            {/* ES-26: the Proactive notes toggle returns when proactive moments ship. */}
             <Row trailing={<Toggle checked={e.memoryEnabled} label="Let Escobar remember" onChange={v => set({ memoryEnabled: v })} />}><span class="small">Let Escobar remember</span><div class="hint">Injuries, equipment and preferences you mention.</div></Row>
             <Row trailing={<Button size="sm" onClick={() => { onClose(); showPanel('memory'); }}>View</Button>}><span class="small">What Escobar knows</span><div class="hint">{e.memory.length} item{e.memory.length === 1 ? '' : 's'}</div></Row>
             <div class="small" data-palace="settings.escobar-usage">

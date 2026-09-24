@@ -41,6 +41,8 @@ export interface Usage {
   output_tokens: number;
   cache_read_input_tokens?: number;
   cache_creation_input_tokens?: number;
+  /** The cache writes split by TTL (QA2-F7-4: priced at 1.25x or 2x input). */
+  cache_creation?: { ephemeral_5m_input_tokens?: number; ephemeral_1h_input_tokens?: number } | null;
 }
 
 export interface Fact {
@@ -95,6 +97,8 @@ export interface Conversation {
   briefLines?: Record<string, string>;
   /** User turns so far (the brief is sent in full on the first and every 5th). */
   userTurns?: number;
+  /** Set when storage limits dropped this conversation's oldest messages (ES-18). */
+  trimmed?: boolean;
   appVersion: string;
   protocol: 2;
 }
@@ -111,6 +115,8 @@ export interface ProposalRecord {
   createdAt: string;
   expiresOn: string;
   status: 'awaiting' | 'applied' | 'dismissed' | 'stale' | 'undone' | 'failed';
+  /** When it was applied: Undo is offered for UNDO_WINDOW_MS after this (ES-03). */
+  appliedAt?: string;
   /** The assistant message index that proposed it, so the card renders in its turn. */
   messageIndex?: number;
 }

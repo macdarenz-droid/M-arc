@@ -135,11 +135,11 @@ export function findInApp(query: string, limit = 5): PalaceEntry[] {
     for (const k of p.keywords) {
       const kk = norm(k);
       if (!kk) continue;
-      if (q.includes(kk)) score += 6 + kk.split(' ').length * 2;
+      if (` ${q} `.includes(` ${kk} `)) score += 6 + kk.split(' ').length * 2;
       else if (kk.split(' ').every(w => words.includes(w))) score += 4;
     }
     const title = norm(p.title);
-    if (q.includes(title)) score += 6;
+    if (` ${q} `.includes(` ${title} `)) score += 6;
     for (const w of words) {
       if (title.split(' ').includes(w)) score += 3;
       else if (norm(`${p.what} ${p.where}`).split(' ').includes(w)) score += 1;

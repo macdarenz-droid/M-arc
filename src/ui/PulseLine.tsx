@@ -33,7 +33,7 @@ export function PulseLine({ bpm }: { bpm: number }) {
 /** The heart-rate number with a heart that beats in time with the edge. */
 export function HeartBpm({ bpm }: { bpm: number }) {
   return (
-    <span class="heart-bpm" role="status" aria-label={`Heart rate ${bpm} beats a minute`}>
+    <span class="heart-bpm" role="img" aria-label={`Heart rate ${bpm} beats a minute`}>
       <svg class="heart-bpm-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" /></svg>
       <span class="heart-bpm-n">{bpm}</span>
     </span>

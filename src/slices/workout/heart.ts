@@ -6,7 +6,6 @@
  */
 import { effect } from '@preact/signals';
 import { latestMeasurement, watchStatus } from '@/native/watch';
-import { active } from './session';
 import { state } from '@/core/store';
 import { today } from '@/app/selectors';
 import { downsampleToBuckets, setHeartFromWindow, sessionHeartSummary, hrMax, restingHr, bestObservedHrMax } from '@/brain/heart';
@@ -16,14 +15,15 @@ import type { Session, SetHeart } from '@/core/models';
 
 interface RawSample { tSec: number; bpm: number; contact: boolean | null }
 let rawSamples: RawSample[] = [];
-let sessionStartMs = 0;
+/** The last measurement recorded: the plugin can re-deliver one, and a re-run effect sees the same one again. */
+let lastReceivedAt = -1;
 
-export function resetHeartCapture(startedAtIso: string): void {
+export function resetHeartCapture(): void {
   rawSamples = [];
-  sessionStartMs = new Date(startedAtIso).getTime();
+  lastReceivedAt = -1;
 }
 
-export function discardHeartCapture(): void { rawSamples = []; }
+export function discardHeartCapture(): void { rawSamples = []; lastReceivedAt = -1; }
 
 let capturing = false;
 
@@ -33,9 +33,13 @@ export function startHeartCapture(): void {
   capturing = true;
   effect(() => {
     const m = latestMeasurement.value;
-    if (!m || !active()) return;
-    const tSec = Math.round((m.receivedAtEpochMs - sessionStartMs) / 1000);
-    if (tSec < 0) return;
+    // Only the measurement drives this effect; the session is read without subscribing (UI-21).
+    const a = state.peek().active;
+    if (!m || !a || m.receivedAtEpochMs === lastReceivedAt) return;
+    // The time base is the session's own start, so a restart mid-session keeps the same clock.
+    const tSec = Math.round((m.receivedAtEpochMs - Date.parse(a.startedAt)) / 1000);
+    if (!Number.isFinite(tSec) || tSec < 0) return;
+    lastReceivedAt = m.receivedAtEpochMs;
     rawSamples.push({ tSec, bpm: m.bpm, contact: m.contact });
   });
 }

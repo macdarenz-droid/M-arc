@@ -5,24 +5,29 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
+import type { LoadUnit } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
-import { plateauStatus } from '../trend';
+import { plateauStatus, sinceLastBreak } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
-import { weeklyMuscleSets } from '../exposure';
+import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
-import { deloadTrigger, type DeloadSuggestion } from '../deload';
+import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
+
+/** The plateau lever only speaks once the lift's recent sessions span six of the eight weeks it looks at (spec: never at 3 weeks). */
+export const PLATEAU_MIN_SPAN_DAYS = 42;
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -62,6 +67,8 @@ export interface CoachContext {
   recoveryModel: RecoveryModel;
   deload: Deload | null;
   feedback: InsightFeedback[];
+  /** The display unit for loads and body weight in note text (QA-R3b-2, QA-R3b-5). */
+  unit?: LoadUnit;
 }
 
 interface Derived {
@@ -268,7 +275,7 @@ export const RULES: Rule[] = [
     id: 'data.effort-missing',
     run: ctx => {
       const recent = [...ctx.sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-3);
-      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => (s.reps ?? 0) > 0);
+      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
       if (sets.length < 8) return [];
       const rated = sets.filter(s => s.effort).length / sets.length;
       if (rated >= 0.5) return [];
@@ -299,13 +306,15 @@ export const RULES: Rule[] = [
             action: `Suggested rest for this goal is ${g.restDefaultSec}s. Apply it from the goal sheet if you'd like.`,
           };
         }
-        const to = c.to as number;
-        const from = typeof c.from === 'number' ? c.from : null;
+        const u = ctx.unit ?? 'kg';
+        const w = (kg: number) => Math.round(kgToDisplay(kg, u) * 10) / 10;
+        const to = w(c.to as number);
+        const from = typeof c.from === 'number' ? w(c.from) : null;
         const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
         return {
           id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
-          title: `Weight updated to ${to} kg`,
-          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} kg, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} kg since your last entry.` : `You updated your weight to ${to} kg.`,
+          title: `Weight updated to ${to} ${u}`,
+          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} ${u}, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} ${u} since your last entry.` : `You updated your weight to ${to} ${u}.`,
           means: 'Saved to your weight log.',
           action: 'Nothing to do here. Keep weighing in for a trend, not just a jump.',
         };
@@ -330,8 +339,11 @@ export const RULES: Rule[] = [
         if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
         // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
-        const recent = hist.filter(h => daysBetween(h.day, ctx.today) <= 56);
+        // QA2-FC-2/3: like plateauStatus, only the sessions since the last long break count.
+        const recent = sinceLastBreak(hist).filter(h => daysBetween(h.day, ctx.today) <= 56);
         if (recent.length < 6) return [];
+        // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
+        if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];
         const t = e1rmTrend(recent);
         // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
         if (!flatOver(recent)) return [];
@@ -374,7 +386,7 @@ export const RULES: Rule[] = [
         return [{
           id: `effort-calibration:${id}`, category: 'readiness', priority: 95, cadence: 'now', kind: 'data', exerciseId: id,
           title: `${name}: you had more in reserve than rated`,
-          noticed: sample ? `You rated ${b.effort} at ${sample.kg} kg, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
+          noticed: sample ? `You rated ${b.effort} at ${kgToDisplay(sample.kg, ctx.unit ?? 'kg')} ${ctx.unit ?? 'kg'}, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
           means: 'That is normal, especially early on. Lifters usually underestimate how many reps they have left.',
           // D11: copy only; the bias is not applied to e1RM.
           action: 'Rate by how many reps you had left: Ideal is about 2, Easy 3 or more.',
@@ -526,5 +538,5 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays));
 }

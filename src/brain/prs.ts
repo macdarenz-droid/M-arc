@@ -3,7 +3,7 @@
  * record. Records are about performance (heavier, stronger, more reps at a
  * load, longer hold, more distance), never about total volume.
  */
-import type { Exercise, LoadUnit, ResistanceMode, Session } from '@/core/models';
+import type { Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { formatSetLoad, kgToDisplay } from '@/core/units';
 import { exerciseHistory, modeOf, summarizeSets, type ExerciseSessionSummary } from './history';
 import { weekStart, addDays } from '@/core/dates';
@@ -20,6 +20,14 @@ export interface PersonalRecord {
   detail: string;
   value: number;
   previous: number;
+}
+
+/** A record's number in words, loads in `unit` (QA-R3b-2). */
+export function formatRecordValue(kind: PrKind, v: number, unit: LoadUnit = 'kg'): string {
+  if (kind === 'heaviest' || kind === 'strength') return `${kgToDisplay(v, unit)} ${unit}`;
+  if (kind === 'best_duration') return `${v}s`;
+  if (kind === 'best_distance') return `${v} m`;
+  return `${v} reps`;
 }
 
 export const PR_LABEL: Record<PrKind, string> = {
@@ -41,8 +49,15 @@ function repsAtLoadMap(rows: ExerciseSessionSummary[]): Map<number, number> {
 
 /** Records set in `current`, given all `prior` sessions of the same exercise. */
 /** BR-28: details read in `unit`, and a set typed in that unit reads exactly as typed. */
-export function recordsFor(current: ExerciseSessionSummary, prior: ExerciseSessionSummary[], mode: ResistanceMode, exerciseId: string, exerciseName: string, unit: LoadUnit = 'kg'): PersonalRecord[] {
-  if (!prior.length) return [];
+/** F2: drop sets count for volume but never set or hold a record. */
+function withoutDrops(r: ExerciseSessionSummary): ExerciseSessionSummary {
+  return r.sets.some(s => s.kind === 'drop') ? summarizeSets(r.sessionId, r.day, r.sets.filter(s => s.kind !== 'drop')) : r;
+}
+
+export function recordsFor(currentIn: ExerciseSessionSummary, priorIn: ExerciseSessionSummary[], mode: ResistanceMode, exerciseId: string, exerciseName: string, unit: LoadUnit = 'kg'): PersonalRecord[] {
+  if (!priorIn.length) return [];
+  const current = withoutDrops(currentIn);
+  const prior = priorIn.map(withoutDrops);
   const out: PersonalRecord[] = [];
   const base = { exerciseId, exerciseName, day: current.day };
   if (mode === 'weighted' || mode === 'conditioning') {
@@ -94,8 +109,8 @@ export function recordsInWeek(sessions: Session[], today: string, custom: Exerci
 }
 
 /** Live check while logging: would this set be a record right now? */
-export function isLiveRecord(sessions: Session[], exerciseId: string, set: { kg?: number; reps?: number }, custom: Exercise[] = []): boolean {
-  if (!isWorkingSet(set)) return false;
+export function isLiveRecord(sessions: Session[], exerciseId: string, set: { kg?: number; reps?: number; kind?: LoggedSet['kind'] }, custom: Exercise[] = []): boolean {
+  if (!isWorkingSet(set) || set.kind === 'drop') return false;
   const hist = exerciseHistory(sessions, exerciseId, custom);
   if (!hist.length) return false;
   const mode = modeOf(exerciseId, custom);

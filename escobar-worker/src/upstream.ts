@@ -13,6 +13,10 @@ export interface StepResult {
   aborted?: boolean;
   /** The model refused mid-conversation system messages: retry with <situation> blocks. */
   systemRole?: boolean;
+  /** A content refusal (stop_reason refusal): billed, so counted like a finished step. */
+  refused?: boolean;
+  /** Output tokens the API reported for a step with no final message (a refusal). */
+  outputTokens?: number;
   error?: { code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 }
 
@@ -21,16 +25,20 @@ export const RESULT_EVENT = '_step';
 
 export async function localStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal }): Promise<StepResult> {
   const r = await runStep(client, params, emit, opts);
-  if (!r.error) return { final: r.final, emittedAny: r.emittedAny };
+  if (!r.error) return { final: r.final, emittedAny: r.emittedAny, ...(r.refused ? { refused: true, outputTokens: r.outputTokens ?? 0 } : {}) };
   const aborted = r.error instanceof Anthropic.APIUserAbortError || !!opts.signal?.aborted;
   if (r.timedOut || aborted) return { final: null, emittedAny: r.emittedAny, timedOut: r.timedOut, aborted };
   return { final: null, emittedAny: r.emittedAny, systemRole: isSystemRoleRejection(r.error), error: mapError(r.error) };
 }
 
 /** Runs the step in the UpstreamRelay pinned to eastern North America and relays its events. */
-export async function relayStep(env: Env, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal }): Promise<StepResult> {
+/** QA-R0-5: turns spread over a few relay objects (all in eastern North America), so one burst of photo turns cannot exhaust a single object's memory for everyone. */
+export const RELAY_SHARDS = 8;
+export const relayShard = (key: string): number => { let h = 0; for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0; return h % RELAY_SHARDS; };
+
+export async function relayStep(env: Env, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal; shardKey?: string }): Promise<StepResult> {
   const ns = env.UPSTREAM!;
-  const stub = ns.get(ns.idFromName('us'), { locationHint: 'enam' });
+  const stub = ns.get(ns.idFromName(`us-${relayShard(opts.shardKey ?? '')}`), { locationHint: 'enam' });
   const unavailable: StepResult = { final: null, emittedAny: false, error: { code: 'upstream', message: 'The coach is unavailable right now.' } };
   let res: Response;
   try {

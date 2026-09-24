@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  ESCOBAR_KEY, MAX_CONVERSATIONS, appendMessages, emptyStore, exportAllEscobar, fitToBudget, loadStore, memoryStorage,
+  ESCOBAR_KEY, MAX_CONVERSATIONS, appendMessages, emptyStore, exportAllEscobar, fitToBudget, legacyConversation, loadStore, memoryStorage, trimOldest,
   newConversation, recordDecision, restoreEscobar, sanitizeStore, saveStore, setEscobarStorage, upsertConversation, clearStore,
 } from '@/escobar/store';
 import type { Conversation, ConversationStore, StoredMessage } from '@/escobar/types';
@@ -71,9 +71,57 @@ describe('conversation store', () => {
     expect(store.conversations.length).toBeLessThan(12);
     expect(store.conversations.at(-1)!.id).toBe('c11');
   });
+  it('size guard never drops the active conversation; it trims its oldest turns (ES-18)', () => {
+    let s: ConversationStore = emptyStore();
+    s = upsertConversation(s, conv(1), false);
+    s = appendMessages(s, 'c1', [user('small')]);
+    const msgs: StoredMessage[] = [];
+    for (let i = 0; i < 20; i++) msgs.push(user(`q${i} ${'w'.repeat(60_000)}`), assistant(`a${i}`));
+    s = appendMessages(upsertConversation(s, conv(2), true), 'c2', msgs);
+    const { store, raw } = fitToBudget(s, 0);
+    expect(raw.length * 2).toBeLessThanOrEqual(1_000_000);
+    expect(store.activeId).toBe('c2');
+    const active = store.conversations.find(c => c.id === 'c2')!;
+    expect(active.trimmed).toBe(true);
+    expect(active.messages[0]!.role).toBe('user');
+    expect(JSON.stringify(active.messages.at(-1))).toContain('a19');
+    expect(store.conversations.some(c => c.id === 'c1')).toBe(false);
+  });
+  it('keeps the active conversation when the training data alone fills the total budget (QA-R4b-4)', () => {
+    let s: ConversationStore = emptyStore();
+    s = appendMessages(upsertConversation(s, conv(1), false), 'c1', [user('old chat')]);
+    const msgs: StoredMessage[] = [];
+    for (let i = 0; i < 20; i++) msgs.push(user(`q${i} ${'w'.repeat(6_000)}`), assistant(`a${i}`));
+    s = appendMessages(upsertConversation(s, conv(2), true), 'c2', msgs);
+    const { store, raw } = fitToBudget(s, 4_000_000);
+    expect(store.activeId).toBe('c2');
+    expect(JSON.stringify(store.conversations.find(c => c.id === 'c2')!.messages.at(-1))).toContain('a19');
+    expect(raw.length * 2).toBeLessThanOrEqual(250_000);
+  });
+  it('trimOldest cuts at a plain user message after the midpoint and shifts the summary', () => {
+    const c = conv(3, { messages: [user('a'), assistant('b'), user('c'), assistant('d'), user('e'), assistant('f')], rollingSummary: { text: 'sum', upTo: 4 } });
+    const t = trimOldest(c)!;
+    expect(t.messages.map(m => (m.role === 'user' ? (m.content[0] as { text: string }).text : 'x'))).toEqual(['e', 'x']);
+    expect(t.rollingSummary).toEqual({ text: 'sum', upTo: 0 });
+    expect(trimOldest(conv(4, { messages: [user('only')] }))).toBeNull();
+  });
+  it('trimOldest moves proposal cards with their messages (QA-R4b-7)', () => {
+    const p = (id: string, messageIndex: number) => ({ id, name: 'propose_goal', input: {}, title: id, status: 'awaiting', messageIndex }) as never;
+    const c = conv(5, { messages: [user('a'), assistant('b'), user('c'), assistant('d'), user('e'), assistant('f')], proposals: [p('old', 1), p('kept', 5)] });
+    const t = trimOldest(c)!;
+    expect(t.proposals!.map(x => [x.id, x.messageIndex])).toEqual([['kept', 1]]);
+  });
+  it('the old coach chat becomes a text-only "Earlier conversation" (RG-03)', () => {
+    const c = legacyConversation([{ role: 'assistant', text: 'welcome' }, { role: 'user', text: 'hi' }, { role: 'user', text: 'again' }, { role: 'assistant', text: 'hello' }, { role: 'system', text: 'x' }, { role: 'user', text: '' }], 'test')!;
+    expect(c.title).toBe('Earlier conversation');
+    expect(c.messages.map(m => m.role)).toEqual(['user', 'assistant']);
+    expect(c.messages[0]!.content).toEqual([{ type: 'text', text: 'hi\n\nagain' }]);
+    expect(legacyConversation('nope', 'test')).toBeNull();
+    expect(legacyConversation([{ role: 'assistant', text: 'only me' }], 'test')).toBeNull();
+  });
   it('size guard counts the main state and heart store against 4 MB', () => {
     let s: ConversationStore = emptyStore();
-    for (let i = 0; i < 4; i++) s = appendMessages(upsertConversation(s, conv(i), false), `c${i}`, [user('z'.repeat(20_000))]);
+    for (let i = 0; i < 4; i++) s = appendMessages(upsertConversation(s, conv(i), false), `c${i}`, [user('z'.repeat(50_000))]); // QA-R4b-4: above the 250 KB room Escobar always keeps
     expect(fitToBudget(s, 0).store.conversations).toHaveLength(4);
     expect(fitToBudget(s, 3_900_000).store.conversations.length).toBeLessThan(4);
   });

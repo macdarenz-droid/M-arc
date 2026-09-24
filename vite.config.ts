@@ -1,11 +1,16 @@
 import { defineConfig } from 'vitest/config';
 import preact from '@preact/preset-vite';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
+
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string };
 
 // The Capacitor Android project and the PWA both consume `www/`.
 export default defineConfig({
   plugins: [preact()],
   base: './',
+  // R7.2: one version source for the app, backups and Escobar.
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
