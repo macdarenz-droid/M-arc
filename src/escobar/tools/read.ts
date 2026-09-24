@@ -350,7 +350,7 @@ export function getHealth(input: { days?: number }, ctx: ToolCtx) {
   const list = ctx.state.healthDays.filter(d => d.day >= since).sort((a, b) => b.day.localeCompare(a.day));
   return capJson({
     // QA-R5a-4: a day's steps and calories are what the last sync that day read, not a full total.
-    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.syncedAt, d.day) } : {}) })),
+    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.totalsSyncedAt ?? d.syncedAt, d.day) } : {}) /* QA2-FE-1 */ })),
     note: 'steps and activeKcal are totals as of the last sync that day (totalsAsOf), so a past day can be lower than its real total.',
     restingHr7d: restingHr(ctx.state.healthDays, ctx.state.profile, ctx.today),
     hrvAvailable: list.some(d => d.lnRmssd != null),

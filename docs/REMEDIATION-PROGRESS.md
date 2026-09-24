@@ -587,3 +587,13 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 - `flagsForSet` (Escobar's `get_session`) uses `setUnitSuspect`, so a warm-up or drop set is never flagged as a kg/lb slip.
 - Escobar's set output includes `kind`, and `get_sessions` counts working sets only.
 - Escobar's `loadOf` uses the app's `kgToDisplay`, so 26.25 lb reads as 26.25 there too.
+
+#### QA2-FE-1
+- A day records `totalsSyncedAt`, the time its steps or active calories were last read. A later sync that failed them keeps it, and Escobar's `totalsAsOf` uses it. A full past-day total still needs the native "yesterday" read, which remains an owner decision (QA-R5a-4).
+- Test updated, not loosened: the full-summary shape test now also expects `totalsSyncedAt`.
+
+#### QA2-FE-6
+- A sync that read only some data is marked `partial`. Settings titles its row "Last Health Connect sync was partial" instead of "failed", with the same Details.
+
+#### QA2-F7-5, QA2-F7-6
+- Fixed by the supervisor's W2 patch in round 2: each fallback attempt is priced by its own model, an attempt that declined before output is not billed, the price table is complete, and unknown ids get the dearest rates. Tests are in `tests/escobar/loop.test.ts`.

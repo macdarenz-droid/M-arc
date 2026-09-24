@@ -367,6 +367,8 @@ export interface DailyHealth {
   rmssdAt?: string;
   source: 'health_connect' | 'watch' | 'manual';
   syncedAt: string;
+  /** QA2-FE-1: when steps or active calories were last read; a later sync that failed them keeps this. */
+  totalsSyncedAt?: string;
 }
 
 /** The closed set of inline components Escobar can draw (§4.4). */

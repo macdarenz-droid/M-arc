@@ -15,6 +15,7 @@ describe('mapHealthSummary', () => {
       activeCalories: 310,
       source: 'health_connect',
       syncedAt: '2026-09-22T12:00:00Z',
+      totalsSyncedAt: '2026-09-22T12:00:00Z', // QA2-FE-1: when the day totals were read
     });
   });
 
@@ -113,5 +114,22 @@ describe('a sync across midnight (QA-R5a-3)', () => {
     expect(d?.steps).toBeUndefined();
     expect(d?.activeCalories).toBeUndefined();
     expect(d?.sleepMinutes).toBe(420);
+  });
+});
+
+describe('partial syncs (QA2-FE-1, QA2-FE-6)', () => {
+  afterEach(() => { delete (globalThis as { Capacitor?: unknown }).Capacitor; });
+  it('a sync that read only some data is titled partial, not failed', async () => {
+    (globalThis as { Capacitor?: unknown }).Capacitor = { isNativePlatform: () => true, Plugins: { HealthConnectNative: { readSummary: async () => ({ needsPermission: false, steps: 5000, failed: ['SleepSessionRecord: X'] }) } } };
+    const H = await import('@/native/health');
+    expect(await H.syncHealth()).toBeTruthy();
+    expect(H.healthSyncTitle(H.lastHealthError)).toBe('Last Health Connect sync was partial');
+    expect(H.healthSyncTitle({ needsPermission: false, missing: [], failed: [], message: 'x' })).toBe('Last Health Connect sync failed');
+  });
+  it('a later sync that failed the steps keeps the time the steps were read', () => {
+    const later = mapHealthSummary({ needsPermission: false, sleepMinutes: 400, failed: ['StepsRecord: X'] }, '2026-09-22', '2026-09-22T20:00:00Z');
+    expect(later?.totalsSyncedAt).toBeUndefined();
+    const merged = { ...{ day: '2026-09-22', steps: 6000, syncedAt: '2026-09-22T12:00:00Z', totalsSyncedAt: '2026-09-22T12:00:00Z', source: 'health_connect' as const }, ...Object.fromEntries(Object.entries(later!).filter(([, v]) => v !== undefined)) };
+    expect(merged.totalsSyncedAt).toBe('2026-09-22T12:00:00Z');
   });
 });

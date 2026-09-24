@@ -261,3 +261,13 @@ describe('Escobar loads and set kinds (QA2-FE-3, QA2-FE-5)', () => {
     expect(got.exercises[0]!.sets[0]!.kind).toBe('warmup');
   });
 });
+
+describe('get_health totals time (QA2-FE-1)', () => {
+  it('names when the steps were read, not a later sync that failed them', () => {
+    const s = sixMonthsState();
+    const day = addDaysLocal(TODAY, -1);
+    const st = { ...s, healthDays: [{ day, steps: 6000, source: 'health_connect', syncedAt: new Date(`${day}T20:00:00`).toISOString(), totalsSyncedAt: new Date(`${day}T12:00:00`).toISOString() }] };
+    const h = R.getHealth({ days: 7 }, ctxOf(st as never)) as { days: Array<{ day: string; totalsAsOf?: string }> };
+    expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('12:00');
+  });
+});
