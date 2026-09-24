@@ -181,7 +181,8 @@ const APPLIERS: Record<string, Applier> = {
   propose_reminder: input => {
     const before = state.value.preferences.reminders;
     update(s => ({ ...s, preferences: { ...s.preferences, reminders: { ...s.preferences.reminders, enabled: input.enabled === true, time: String(input.time), style: input.style as AppState['preferences']['reminders']['style'], readinessSummary: input.readinessSummary === true } } }));
-    syncReminders();
+    // QA2-FB-2: Apply is the person's own tap, like the Settings reminder toggle, so it may ask for notification permission.
+    void resyncReminders({ prompt: true });
     return { message: 'Reminders updated', undo: () => { update(s => ({ ...s, preferences: { ...s.preferences, reminders: before } })); syncReminders(); } };
   },
   propose_setting: input => {

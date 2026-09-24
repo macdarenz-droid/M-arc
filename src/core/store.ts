@@ -363,3 +363,11 @@ export function flushSave(): void {
   persistNow();
 }
 
+/**
+ * QA2-FB-1: the error card's reset wipes storage and reloads. No save may follow, not even the
+ * one on unload (pagehide, visibilitychange), or the state that crashed is written straight back.
+ */
+export function stopSaving(): void {
+  if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+  storageRef = null;
+}

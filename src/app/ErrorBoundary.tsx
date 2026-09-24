@@ -7,14 +7,19 @@
 import { Component, type ComponentChildren } from 'preact';
 import { buildRescueJson, saveRescueFile } from '@/core/rescue';
 import { exportText } from '@/native/share';
+import { stopSaving } from '@/core/store';
 
 export async function saveRescueCopy(): Promise<void> {
   const text = buildRescueJson();
   try { await exportText('marc-rescue.json', text); } catch { await saveRescueFile(text); }
 }
 
-/** The same wipe as the start-up crash screen in index.html: every stored key and the photo database. */
+/**
+ * The same wipe as the start-up crash screen in index.html: every stored key and the photo database.
+ * Saving stops first, so the save on unload cannot write the crashing state back (QA2-FB-1).
+ */
 export function resetAppData(storage: Pick<Storage, 'clear'> = localStorage, idb: Pick<IDBFactory, 'databases' | 'deleteDatabase'> | undefined = globalThis.indexedDB): void {
+  stopSaving();
   try { storage.clear(); } catch { /* storage unavailable */ }
   try { void idb?.databases?.().then(dbs => dbs.forEach(d => { if (d.name) idb.deleteDatabase(d.name); })).catch(() => {}); } catch { /* no IndexedDB */ }
 }
