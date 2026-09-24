@@ -107,3 +107,24 @@ describe('Test rest alert (QA-R2c-1, QA-R2c-4)', () => {
     expect(plugin.schedule).not.toHaveBeenCalled();
   });
 });
+
+describe('backup reminder and rest alert permission (QA2-FB-3, QA2-FB-4, QA2-FB-6)', () => {
+  it('the backup reminder reports when it could not be set, so Settings can say so', async () => {
+    plugin.checkPermissions.mockResolvedValue({ display: 'prompt' });
+    plugin.requestPermissions.mockResolvedValue({ display: 'granted' });
+    const N = await import('@/native/notifications');
+    expect(await N.syncBackupReminder(true)).toBe(false);
+    expect(N.backupReminderScheduled.value).toBe(false);
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    expect(await N.syncBackupReminder(true, { prompt: true })).toBe(true);
+    expect(N.backupReminderScheduled.value).toBe(true);
+  });
+  it('starting a rest never makes the plugin ask for permission', async () => {
+    plugin.checkPermissions.mockResolvedValue({ display: 'denied' });
+    const N = await import('@/native/notifications');
+    await N.scheduleRestDone(Date.now() + 90_000);
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    expect(plugin.requestPermissions).not.toHaveBeenCalled();
+    plugin.checkPermissions.mockResolvedValue({ display: 'granted' });
+  });
+});

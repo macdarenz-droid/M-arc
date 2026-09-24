@@ -4,6 +4,7 @@
  * actually scheduled anything, so a permission hiccup never flips the toggle.
  */
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { signal } from '@preact/signals';
 import { isNative } from './capacitor';
 import type { Reminders, Weekday } from '@/core/models';
 import { addDays, parseDay, todayKey, weekdayOf } from '@/core/dates';
@@ -64,6 +65,8 @@ export async function ensurePermission({ prompt = false }: { prompt?: boolean } 
 
 export async function scheduleRestDone(atMs: number): Promise<void> {
   if (!isNative()) return;
+  // QA2-FB-4: the plugin asks for permission itself on Android 13+; a rest timer never should.
+  if (!(await ensurePermission())) return;
   await ensureChannels();
   try {
     await LocalNotifications.cancel({ notifications: [{ id: REST_ID }] });
@@ -160,11 +163,17 @@ export function onNotificationTap(handler: (type: string | undefined) => void): 
 /** F5: outside 730000–820000, which syncTrainingReminders clears. */
 export const BACKUP_REMINDER_ID = 880101;
 
-/** F5: a weekly, inexact "save a backup" note on Sundays at 19:00; cancelled when off. */
-export async function syncBackupReminder(on: boolean, { prompt = false }: { prompt?: boolean } = {}): Promise<void> {
-  if (!isNative()) return;
+/**
+ * QA2-FB-3, QA2-FB-6: whether the weekly backup reminder is actually scheduled, so Settings can say
+ * when the switch reads on but notifications are off. Null until the first sync.
+ */
+export const backupReminderScheduled = signal<boolean | null>(null);
+
+/** F5: a weekly, inexact "save a backup" note on Sundays at 19:00; cancelled when off. Returns whether it is scheduled. */
+export async function syncBackupReminder(on: boolean, { prompt = false }: { prompt?: boolean } = {}): Promise<boolean> {
+  if (!isNative()) return false;
   try { await LocalNotifications.cancel({ notifications: [{ id: BACKUP_REMINDER_ID }] }); } catch { /* none pending */ }
-  if (!on || !(await ensurePermission({ prompt }))) return;
+  if (!on || !(await ensurePermission({ prompt }))) { backupReminderScheduled.value = false; return false; }
   await ensureChannels();
   try {
     await LocalNotifications.schedule({ notifications: [{
@@ -172,5 +181,7 @@ export async function syncBackupReminder(on: boolean, { prompt = false }: { prom
       schedule: { on: { weekday: 1, hour: 19, minute: 0 }, allowWhileIdle: false }, channelId: CHANNELS.silent.id, extra: { type: 'backup' },
       isExactNotification: false,
     }] });
-  } catch { /* shown as off next time Settings opens */ }
+    backupReminderScheduled.value = true;
+    return true;
+  } catch { backupReminderScheduled.value = false; return false; }
 }

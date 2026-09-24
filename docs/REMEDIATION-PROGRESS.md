@@ -532,3 +532,10 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 - The relay shard hash is seeded with a random value picked when each Worker instance starts. It uses FNV-1a with a murmur3 finalizer, so a caller cannot work out which device ids land on which shard, or aim a burst at a chosen group of members. The relay holds no state, so a device may use another shard in another instance.
 - Test: under 64 seeds, one id lands on all 8 shards, and two ids that differ only in their last character do not stay on the same shard. The first version, without the finalizer, failed this test, which is why the finalizer was added.
 - Live only after the owner merges to main.
+
+#### QA2-FB-3, QA2-FB-6 (same root cause)
+- `syncBackupReminder` returns whether the reminder is scheduled and sets `backupReminderScheduled`. When the switch reads on but nothing could be scheduled, Settings says "Not set: notifications are off for M/ARC." and offers "Allow notifications", which asks, because it is a tap. The untrue "shown as off" comment is gone.
+- **Needs device check:** a new Android 13+ install shows this line until notifications are allowed.
+
+#### QA2-FB-4
+- `scheduleRestDone` checks permission first and never lets the plugin ask on its own, so a rest timer no longer brings up the permission dialog mid-workout. The Settings test alert still asks, because it is a tap.
