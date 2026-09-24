@@ -23,11 +23,11 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     static final String CREATE_RECEIPTS = "CREATE TABLE receipts (session_id TEXT NOT NULL, command_id TEXT NOT NULL, fingerprint TEXT NOT NULL, result TEXT NOT NULL, PRIMARY KEY(session_id, command_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
     static final String ONE_ACTIVE_SESSION = "CREATE UNIQUE INDEX one_active_session ON sessions((1)) WHERE status IN ('active','paused')";
     static final String CREATE_SET_REVISIONS = "CREATE TABLE set_revisions (session_id TEXT NOT NULL, entry_id TEXT NOT NULL, set_id TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision >= 0), PRIMARY KEY(session_id, set_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
-    static final String CREATE_PENDING_EFFECTS = "CREATE TABLE pending_effects (session_id TEXT NOT NULL, command_id TEXT NOT NULL, effect TEXT NOT NULL CHECK(effect IN ('fidelity','rest','heart')), set_id TEXT NOT NULL, action_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('pending','resolved')), PRIMARY KEY(session_id, command_id, effect), FOREIGN KEY(session_id, command_id) REFERENCES receipts(session_id, command_id) ON DELETE RESTRICT)";
+    static final String CREATE_PENDING_EFFECTS = "CREATE TABLE pending_effects (session_id TEXT NOT NULL, command_id TEXT NOT NULL, effect TEXT NOT NULL CHECK(effect IN ('fidelity','rest','heart')), set_id TEXT NOT NULL, action_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('pending','resolved')), context TEXT, PRIMARY KEY(session_id, command_id, effect), FOREIGN KEY(session_id, command_id) REFERENCES receipts(session_id, command_id) ON DELETE RESTRICT)";
     private static final DateTimeFormatter UTC = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withResolverStyle(ResolverStyle.STRICT).withZone(ZoneOffset.UTC);
 
-    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 3); }
+    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 4); }
 
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SESSIONS);
@@ -43,7 +43,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion != 3 || oldVersion < 1 || oldVersion > 2)
+        if (newVersion != 4 || oldVersion < 1 || oldVersion > 3)
             throw new IllegalStateException("Workout database migration required");
         if (oldVersion == 1) {
             db.execSQL(CREATE_SET_REVISIONS);
@@ -54,15 +54,17 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                 }
             } catch (Exception e) { throw new IllegalStateException("Could not migrate watch set identities", e); }
         }
-        db.execSQL(CREATE_PENDING_EFFECTS);
-        try (Cursor rows = db.rawQuery("SELECT session_id,command_id,result FROM receipts", null)) {
-            while (rows.moveToNext()) {
-                JSONObject receipt = new JSONObject(rows.getString(2));
-                if ("applied".equals(receipt.optString("status")))
-                    insertPendingEffects(db, rows.getString(0), rows.getString(1),
-                            receipt.getString("setId"), receipt.getString("actionAt"));
-            }
-        } catch (Exception e) { throw new IllegalStateException("Could not migrate watch pending effects", e); }
+        if (oldVersion < 3) {
+            db.execSQL(CREATE_PENDING_EFFECTS);
+            try (Cursor rows = db.rawQuery("SELECT session_id,command_id,result FROM receipts", null)) {
+                while (rows.moveToNext()) {
+                    JSONObject receipt = new JSONObject(rows.getString(2));
+                    if ("applied".equals(receipt.optString("status")))
+                        insertPendingEffects(db, rows.getString(0), rows.getString(1),
+                                receipt.getString("setId"), receipt.getString("actionAt"), null);
+                }
+            } catch (Exception e) { throw new IllegalStateException("Could not migrate watch pending effects", e); }
+        } else db.execSQL("ALTER TABLE pending_effects ADD COLUMN context TEXT");
     }
 
     private static boolean id(String value) { return value != null && value.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,79}"); }
@@ -188,7 +190,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     }
 
     private static void insertPendingEffects(SQLiteDatabase db, String sessionId, String commandId,
-                                             String setId, String actionAt) {
+                                             String setId, String actionAt, String context) {
         for (String effect : new String[]{"fidelity", "rest", "heart"}) {
             ContentValues pending = new ContentValues();
             pending.put("session_id", sessionId);
@@ -197,8 +199,44 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             pending.put("set_id", setId);
             pending.put("action_at", actionAt);
             pending.put("status", "pending");
+            pending.put("context", context);
             db.insertOrThrow("pending_effects", null, pending);
         }
+    }
+
+    /** Immutable inputs available from the committed native snapshot; phone policy and sensor samples are still absent. */
+    private static JSONObject pendingContext(JSONObject before, JSONObject set, String entryId,
+                                             String effectiveAt, String receivedAt) throws Exception {
+        long at = timestamp(effectiveAt).toEpochMilli();
+        long last = Long.MIN_VALUE;
+        int recent = 0;
+        boolean valid = true;
+        JSONArray entries = before.getJSONArray("entries");
+        for (int i = 0; i < entries.length(); i++) {
+            JSONArray sets = entries.getJSONObject(i).getJSONArray("sets");
+            for (int j = 0; j < sets.length(); j++) {
+                JSONObject prior = sets.getJSONObject(j);
+                if (!prior.has("at") || prior.isNull("at")) continue;
+                try {
+                    long time = timestamp(prior.getString("at")).toEpochMilli();
+                    if (time <= at) {
+                        last = Math.max(last, time);
+                        if (at - time <= 15_000) recent++;
+                    }
+                } catch (Exception invalid) { valid = false; }
+            }
+        }
+        JSONObject context = new JSONObject().put("version", 1).put("entryId", entryId)
+                .put("effectiveAt", effectiveAt).put("receivedAt", receivedAt)
+                .put("sessionStartedAt", before.getString("startedAt"))
+                .put("timingInputsValid", valid)
+                .put("lastCommittedAt", last == Long.MIN_VALUE ? JSONObject.NULL : UTC.format(Instant.ofEpochMilli(last)))
+                .put("recentCommittedCount", recent)
+                .put("setKind", set.has("kind") ? set.get("kind") : JSONObject.NULL)
+                .put("setEffort", set.has("effort") ? set.get("effort") : JSONObject.NULL)
+                .put("missingInputs", new JSONArray().put("autoRest").put("restDefaultSec")
+                        .put("liveBpm").put("heartSamples"));
+        return context;
     }
 
     /** Explicit handover only. A second seed cannot replace a running or terminal workout. */
@@ -343,6 +381,8 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             Instant receivedTime = Instant.now();
             String receivedAt = UTC.format(receivedTime);
             String effectiveAt = UTC.format(actionTime.isAfter(receivedTime) ? receivedTime : actionTime);
+            // Capture before mutating target, so the new set cannot count as its own prior commit.
+            String effectContext = pendingContext(snapshot, target, entryId, effectiveAt, receivedAt).toString();
             target.put("at", effectiveAt);
             target.put("actionClockConfidence", "unverified");
             target.put("status", "committed");
@@ -371,7 +411,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             receipt.put("fingerprint", fingerprint);
             receipt.put("result", resultJson);
             db.insertOrThrow("receipts", null, receipt);
-            insertPendingEffects(db, sessionId, commandId, setId, actionAt);
+            insertPendingEffects(db, sessionId, commandId, setId, actionAt, effectContext);
             db.setTransactionSuccessful();
             return new Result("applied", resultJson);
         } finally {

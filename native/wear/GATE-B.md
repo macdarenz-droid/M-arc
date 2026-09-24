@@ -53,10 +53,13 @@ and receipt. Version 2 databases backfill them for applied receipts; rejected
 commands create none. Android tests cover reopening, replay, backfill and a
 failed pending effect insert rolling back the whole command. Resolving those
 effects with verified clock/heart inputs and rest policy is still required.
-The rows contain only set ID and raw action time; they do **not** carry
-`autoRest`, default rest duration, effort, live BPM at commit, or the
-time-window samples that `startRest` and `heartForSet` need. They cannot be
-processed from the current rows alone. Native completion clamps the set's
+Version 4 rows also retain a versioned context from the pre-commit snapshot:
+the effective and receipt times, session start, previous committed time,
+recent commit count, set kind and effort. Invalid prior timestamps are flagged
+for review. Older rows migrate with a null context and remain pending. These
+rows still lack authoritative `autoRest`, default rest duration, live BPM at
+commit and the time-window samples that `startRest` and `heartForSet` need.
+They cannot be processed from the current rows alone. Native completion clamps the set's
 stored `at` to the earlier of watch `actionAt` and phone `receivedAt`,
 while the receipt preserves the raw watch timestamp for review. This is still
 not a resolved side effect and no watch Saved acknowledgement is connected

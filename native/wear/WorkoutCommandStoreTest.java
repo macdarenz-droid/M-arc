@@ -83,6 +83,15 @@ public class WorkoutCommandStoreTest {
         }
     }
 
+    private JSONObject pendingContext(String commandId, String effect) throws Exception {
+        try (Cursor c = store.getReadableDatabase().rawQuery(
+                "SELECT context FROM pending_effects WHERE session_id='s-1' AND command_id=? AND effect=?",
+                new String[]{commandId, effect})) {
+            assertTrue(c.moveToFirst());
+            return new JSONObject(c.getString(0));
+        }
+    }
+
     private JSONObject set(JSONObject snapshot, String entryId, String setId) throws Exception {
         JSONArray entries = snapshot.getJSONArray("entries");
         for (int i = 0; i < entries.length(); i++) {
@@ -161,6 +170,55 @@ public class WorkoutCommandStoreTest {
         assertEquals("replay", replay.status);
         assertEquals(result.receipt, replay.receipt);
         assertEquals(receipt.getString("receivedAt"), set(saved(), "e-1", "set-1").getString("at"));
+    }
+
+    @Test public void pendingEffectsKeepPreCommitTimingAndSetInputsAcrossReopen() throws Exception {
+        JSONObject before = saved();
+        JSONObject second = set(before, "e-2", "set-2");
+        second.put("effort", "max").put("kind", "warmup");
+        store.getWritableDatabase().execSQL("UPDATE sessions SET snapshot=? WHERE session_id='s-1'", new Object[]{before.toString()});
+        String firstAt = UTC.format(Instant.now().minusSeconds(40));
+        String secondAt = UTC.format(Instant.now().minusSeconds(5));
+        assertEquals("applied", store.completeSet(command("c-first", "watch-1", "e-1", "set-1", 0, firstAt)).status);
+        JSONObject first = pendingContext("c-first", "fidelity");
+        assertTrue(first.isNull("lastCommittedAt"));
+        assertEquals(0, first.getInt("recentCommittedCount"));
+        assertEquals("applied", store.completeSet(command("c-second", "watch-1", "e-2", "set-2", 0, secondAt)).status);
+        JSONObject effectInputs = pendingContext("c-second", "rest");
+        assertEquals(1, effectInputs.getInt("version"));
+        assertEquals("e-2", effectInputs.getString("entryId"));
+        assertEquals(firstAt, effectInputs.getString("lastCommittedAt"));
+        assertEquals(secondAt, effectInputs.getString("effectiveAt"));
+        assertTrue(effectInputs.getBoolean("timingInputsValid"));
+        assertEquals(0, effectInputs.getInt("recentCommittedCount"));
+        assertEquals("warmup", effectInputs.getString("setKind"));
+        assertEquals("max", effectInputs.getString("setEffort"));
+        assertEquals("autoRest", effectInputs.getJSONArray("missingInputs").getString(0));
+        assertEquals(effectInputs.toString(), pendingContext("c-second", "heart").toString());
+        store.close(); store = new WorkoutCommandStore(context);
+        assertEquals(effectInputs.toString(), pendingContext("c-second", "rest").toString());
+        assertEquals("replay", store.completeSet(command("c-second", "watch-1", "e-2", "set-2", 0, secondAt)).status);
+        assertEquals(effectInputs.toString(), pendingContext("c-second", "rest").toString());
+    }
+
+    @Test public void corruptPriorTimeIsFlaggedForReviewWithoutInventingTiming() throws Exception {
+        JSONObject before = saved();
+        set(before, "e-1", "set-1").put("at", "not-a-time");
+        store.getWritableDatabase().execSQL("UPDATE sessions SET snapshot=? WHERE session_id='s-1'", new Object[]{before.toString()});
+        assertEquals("applied", store.completeSet(command("c-second", "watch-1", "e-2", "set-2", 0, actionAt)).status);
+        JSONObject context = pendingContext("c-second", "fidelity");
+        assertFalse(context.getBoolean("timingInputsValid"));
+        assertTrue(context.isNull("lastCommittedAt"));
+    }
+
+    @Test public void nearbyPriorCommitIsCountedWithoutCountingNewSet() throws Exception {
+        String firstAt = UTC.format(Instant.now().minusSeconds(12));
+        String secondAt = UTC.format(Instant.now().minusSeconds(4));
+        assertEquals("applied", store.completeSet(command("c-first", "watch-1", "e-1", "set-1", 0, firstAt)).status);
+        assertEquals("applied", store.completeSet(command("c-second", "watch-1", "e-2", "set-2", 0, secondAt)).status);
+        JSONObject context = pendingContext("c-second", "fidelity");
+        assertEquals(firstAt, context.getString("lastCommittedAt"));
+        assertEquals(1, context.getInt("recentCommittedCount"));
     }
 
     @Test public void identifiedRejectionSurvivesReopenAndCannotLaterApply() throws Exception {
@@ -334,5 +392,32 @@ public class WorkoutCommandStoreTest {
         assertEquals(3, pendingCount("c-applied"));
         assertEquals(0, pendingCount("c-rejected"));
         assertEquals(1, revision("set-1"));
+        try (Cursor c = store.getReadableDatabase().rawQuery(
+                "SELECT context FROM pending_effects WHERE command_id='c-applied'", null)) {
+            assertTrue(c.moveToFirst()); assertTrue(c.isNull(0));
+        }
+    }
+
+    @Test public void versionThreeUpgradeKeepsPendingRowsUnresolved() throws Exception {
+        store.close(); context.deleteDatabase(DB);
+        SQLiteDatabase old = context.openOrCreateDatabase(DB, Context.MODE_PRIVATE, null);
+        old.execSQL(WorkoutCommandStore.CREATE_SESSIONS);
+        old.execSQL(WorkoutCommandStore.CREATE_RECEIPTS);
+        old.execSQL(WorkoutCommandStore.ONE_ACTIVE_SESSION);
+        old.execSQL(WorkoutCommandStore.CREATE_SET_REVISIONS);
+        old.execSQL(WorkoutCommandStore.CREATE_PENDING_EFFECTS.replace(", context TEXT", ""));
+        old.execSQL("INSERT INTO sessions(session_id,installation_id,revision,status,snapshot) VALUES(?,?,?,?,?)",
+                new Object[]{"s-1", "watch-1", 1, "active", snapshot(false)});
+        old.execSQL("INSERT INTO receipts(session_id,command_id,fingerprint,result) VALUES(?,?,?,?)",
+                new Object[]{"s-1", "c-old", "fingerprint", new JSONObject().put("status", "applied").toString()});
+        old.execSQL("INSERT INTO pending_effects(session_id,command_id,effect,set_id,action_at,status) VALUES(?,?,?,?,?,?)",
+                new Object[]{"s-1", "c-old", "rest", "set-1", actionAt, "pending"});
+        old.setVersion(3); old.close();
+        store = new WorkoutCommandStore(context);
+        assertEquals(1, pendingCount("c-old"));
+        try (Cursor c = store.getReadableDatabase().rawQuery(
+                "SELECT context,status FROM pending_effects WHERE command_id='c-old'", null)) {
+            assertTrue(c.moveToFirst()); assertTrue(c.isNull(0)); assertEquals("pending", c.getString(1));
+        }
     }
 }
