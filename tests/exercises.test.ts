@@ -36,3 +36,13 @@ describe('the heavy main-lift damage floor (QA-R7-2, QA-R7-3)', () => {
     vi.resetModules();
   });
 });
+
+describe('equipment words in legacy names (QA2-FC-7)', () => {
+  it('a name that adds only an equipment word still maps to the library exercise', async () => {
+    const { findExerciseWithEquipment } = await import('@/core/exercises');
+    const pairs: Array<[string, string, string]> = [['Leg Press Machine', 'Machine', 'Leg Press'], ['Cable Lat Pulldown', 'Cable', 'Lat Pulldown'], ['Seated Leg Curl Machine', 'Machine', 'Seated Leg Curl'], ['Hip Thrust Barbell', 'Barbell', 'Hip Thrust'], ['Cable Triceps Pushdown', 'Cable', 'Triceps Pushdown']];
+    for (const [name, eq, want] of pairs) expect(findExerciseWithEquipment(name, eq)?.name, name).toMatch(new RegExp(want, 'i'));
+    // A second movement still means a different exercise (QA-R3b-3).
+    expect(findExercise('Hack Squat Calf Raise')?.id).not.toBe(findExercise('Hack Squat')?.id);
+  });
+});

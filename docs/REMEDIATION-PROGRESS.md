@@ -549,3 +549,6 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FC-6
 - When a max-effort first set misses on the lightest load the equipment can make (the empty 20 kg or 45 lb bar), the live tip no longer says "Drop to 20 kg". It says to stay at the bar, rest a little longer and stop each set a rep short of max. Above the bar it still drops a step.
+
+#### QA2-FC-7
+- Equipment words (every word of the library's equipment names, singular and plural) no longer count as another movement when a longer name contains a library name. "Leg Press Machine", "Cable Lat Pulldown", "Hip Thrust Barbell" and the others map to their library exercises again. "Hack Squat Calf Raise" is still a different exercise.
