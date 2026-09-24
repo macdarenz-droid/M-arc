@@ -15,12 +15,26 @@ import { go, showPanel } from './app/router';
 import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { pageIsCurrent } from './app/swUpdate';
+import { workoutOwnership } from './core/workoutOwnership';
+import { reconcilePhoneWorkout } from './native/workoutOwnership';
 import './ui/styles.css';
 
+let ownerChecked = false;
+(globalThis as { __marcCanResetWorkoutData?: () => boolean }).__marcCanResetWorkoutData =
+  () => ownerChecked && workoutOwnership.peek() === 'web';
+
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
-try {
+async function boot(): Promise<void> {
   installThemeEngine();
-  initStore();
+  initStore(localStorage, isNative());
+  if (isNative()) await reconcilePhoneWorkout();
+  ownerChecked = workoutOwnership.peek() === 'web';
+  // Keep recovery failures visible without starting phone writers or health capture.
+  if (workoutOwnership.peek() !== 'web') {
+    render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('app')!);
+    (globalThis as { __marcBooted?: boolean }).__marcBooted = true;
+    return;
+  }
   setHapticsEnabled(state.value.preferences.haptics);
   startWatchListeners();
   void installBackButton();
@@ -74,7 +88,8 @@ try {
       void pageIsCurrent().then(current => { if (!current) showToast('App updated', 'Reload', () => location.reload()); });
     });
   }
-} catch (err) {
-  (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);
-  throw err;
 }
+void boot().catch(err => {
+  (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);
+  console.error(err);
+});

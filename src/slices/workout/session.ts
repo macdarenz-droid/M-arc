@@ -5,6 +5,7 @@
 import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
+import { assertPhoneWorkoutWriter } from '@/core/workoutOwnership';
 import { findExercise } from '@/core/exercises';
 import { hasEntry } from '@/brain/exposure';
 import { classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
@@ -172,6 +173,7 @@ function committedTimestamps(a: ActiveSession): number[] {
  * relayed later): it drives fidelity and rest instead of the receipt time. Returns true if the set counts.
  */
 export function commitSetById(setId: string, opts: { actionAt?: string } = {}): boolean {
+  assertPhoneWorkoutWriter(); // Even a replay must not report success for a stale phone copy.
   const a = active();
   const set = a?.entries.flatMap(e => e.sets).find(s => s.id === setId);
   // QA2-FB-5: a set left empty when its field loses focus gives up its commit, so a later real
@@ -360,6 +362,7 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
 
 /** Turn the active session into history. Sets that were never filled are dropped. */
 export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
+  assertPhoneWorkoutWriter(); // Before heart-series export, history or timer side effects.
   const a = active();
   if (!a) return null;
   const split = state.value.splits.find(s => s.id === a.splitId);

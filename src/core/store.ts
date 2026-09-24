@@ -8,6 +8,7 @@ import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
 import { dayKey } from './dates';
 import { DEFAULT_GOAL, isGoalId } from '@/data/goals';
 import { showToast } from '@/app/toast';
+import { assertPhoneWorkoutWriter, initWorkoutOwnership, workoutOwnership, WORKOUT_HANDOVER_KEY } from './workoutOwnership';
 
 /** A session saved before `logging` existed gets a legacy backfill so every reader can rely on it being present. */
 function withLogging(s: Session): Session {
@@ -238,8 +239,9 @@ function quarantine(storage: Storagelike, key: string, raw: string, from: string
   }
 }
 
-export function initStore(storage: Storagelike = localStorage): void {
+export function initStore(storage: Storagelike = localStorage, requireNativeOwnerCheck = false): void {
   storageRef = storage;
+  initWorkoutOwnership(storage, requireNativeOwnerCheck);
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
   const loaded = loadState(storage);
   let recovered = false;
@@ -265,7 +267,12 @@ function listenToOtherTabs(): void {
   if (typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
   if (storageListener) window.removeEventListener('storage', storageListener);
   storageListener = (e: StorageEvent) => {
+    if (e.key === WORKOUT_HANDOVER_KEY) {
+      initWorkoutOwnership(storageRef!, true);
+      return;
+    }
     if (e.key !== STATE_KEY || !e.newValue) return;
+    try { assertPhoneWorkoutWriter(); } catch { return; }
     let parsed: unknown;
     try { parsed = JSON.parse(e.newValue); } catch { return; }
     if (!isState(parsed)) return;
@@ -342,25 +349,35 @@ function persistSoon(): void {
 
 /** Apply a change to the state. The updater must return a new object (spread). */
 export function update(fn: (s: AppState) => AppState): void {
+  assertPhoneWorkoutWriter(); // Before the updater: some existing updaters schedule timers.
   state.value = fn(state.value);
   persistSoon();
 }
 
 export function replaceState(next: AppState): void {
+  assertPhoneWorkoutWriter();
   state.value = normalize(next);
   persistNow();
 }
 
 /** QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come back from it. */
 export function resetState(next: AppState): void {
+  assertPhoneWorkoutWriter(); // Before deleting restore points or other state.
   lastGoodRaw = null;
   try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
   replaceState(next);
 }
 
-export function flushSave(): void {
+export function flushSave(): boolean {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-  persistNow();
+  return persistNow();
+}
+
+/** Ownership reconciliation only; never opens the WebView write gate. */
+export function projectOwnedWorkout(active: NonNullable<AppState['active']>): boolean {
+  if (workoutOwnership.peek() === 'web') throw new Error('Ownership reconciliation required');
+  state.value = { ...state.peek(), active };
+  return persistNow();
 }
 
 /**

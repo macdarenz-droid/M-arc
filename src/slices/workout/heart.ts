@@ -7,23 +7,33 @@
 import { effect } from '@preact/signals';
 import { latestMeasurement, watchStatus } from '@/native/watch';
 import { state } from '@/core/store';
+import { assertPhoneWorkoutWriter, workoutOwnership } from '@/core/workoutOwnership';
 import { today } from '@/app/selectors';
 import { downsampleToBuckets, setHeartFromWindow, sessionHeartSummary, hrMax, restingHr, bestObservedHrMax } from '@/brain/heart';
 import { sessionEnergy } from '@/brain/energy';
 import { storeSeries, exportHeart } from '@/core/heartStore';
 import type { Session, SetHeart } from '@/core/models';
 
-interface RawSample { tSec: number; bpm: number; contact: boolean | null }
+export interface RawSample { tSec: number; bpm: number; contact: boolean | null; receivedAtEpochMs: number; receivedAtElapsedMs: number }
 let rawSamples: RawSample[] = [];
 /** The last measurement recorded: the plugin can re-deliver one, and a re-run effect sees the same one again. */
 let lastReceivedAt = -1;
 
 export function resetHeartCapture(): void {
+  assertPhoneWorkoutWriter();
   rawSamples = [];
   lastReceivedAt = -1;
 }
 
-export function discardHeartCapture(): void { rawSamples = []; lastReceivedAt = -1; }
+export function discardHeartCapture(): void { assertPhoneWorkoutWriter(); rawSamples = []; lastReceivedAt = -1; }
+
+/** Detached input checkpoint, not a claim of native/live capture after handover. */
+export function captureHeartInputs(): RawSample[] { return rawSamples.map(s => ({ ...s })); }
+export function restoreHeartInputs(samples: RawSample[]): void {
+  if (workoutOwnership.peek() === 'web') throw new Error('Ownership reconciliation required');
+  rawSamples = samples.map(s => ({ ...s }));
+  lastReceivedAt = rawSamples.at(-1)?.receivedAtEpochMs ?? -1;
+}
 
 let capturing = false;
 
@@ -35,12 +45,12 @@ export function startHeartCapture(): void {
     const m = latestMeasurement.value;
     // Only the measurement drives this effect; the session is read without subscribing (UI-21).
     const a = state.peek().active;
-    if (!m || !a || m.receivedAtEpochMs === lastReceivedAt) return;
+    if (!m || !a || workoutOwnership.peek() !== 'web' || m.receivedAtEpochMs === lastReceivedAt) return;
     // The time base is the session's own start, so a restart mid-session keeps the same clock.
     const tSec = Math.round((m.receivedAtEpochMs - Date.parse(a.startedAt)) / 1000);
     if (!Number.isFinite(tSec) || tSec < 0) return;
     lastReceivedAt = m.receivedAtEpochMs;
-    rawSamples.push({ tSec, bpm: m.bpm, contact: m.contact });
+    rawSamples.push({ tSec, bpm: m.bpm, contact: m.contact, receivedAtEpochMs: m.receivedAtEpochMs, receivedAtElapsedMs: m.receivedAtElapsedMs });
   });
 }
 

@@ -8,6 +8,7 @@ import { Component, type ComponentChildren } from 'preact';
 import { buildRescueJson, saveRescueFile } from '@/core/rescue';
 import { exportText } from '@/native/share';
 import { stopSaving } from '@/core/store';
+import { assertPhoneWorkoutWriter, workoutOwnership } from '@/core/workoutOwnership';
 
 export async function saveRescueCopy(): Promise<void> {
   const text = buildRescueJson();
@@ -19,6 +20,7 @@ export async function saveRescueCopy(): Promise<void> {
  * Saving stops first, so the save on unload cannot write the crashing state back (QA2-FB-1).
  */
 export function resetAppData(storage: Pick<Storage, 'clear'> = localStorage, idb: Pick<IDBFactory, 'databases' | 'deleteDatabase'> | undefined = globalThis.indexedDB): void {
+  assertPhoneWorkoutWriter();
   stopSaving();
   try { storage.clear(); } catch { /* storage unavailable */ }
   try { void idb?.databases?.().then(dbs => dbs.forEach(d => { if (d.name) idb.deleteDatabase(d.name); })).catch(() => {}); } catch { /* no IndexedDB */ }
@@ -49,7 +51,7 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
             <button type="button" class="btn btn-primary" onClick={() => location.reload()}>Reload</button>
             <button type="button" class="btn" onClick={() => void saveRescueCopy()}>Save a copy of my data</button>
           </div>
-          <button type="button" class="btn btn-danger" onClick={confirmReset}>Reset app data</button>
+          {workoutOwnership.value === 'web' && <button type="button" class="btn btn-danger" onClick={confirmReset}>Reset app data</button>}
         </div>
       </div>
     );

@@ -11,7 +11,7 @@ SOURCE = Path(__file__).with_name("WorkoutCommandStore.java").read_text()
 
 def schema(connection):
     connection.execute("PRAGMA foreign_keys=ON")
-    for name in ("CREATE_SESSIONS", "CREATE_RECEIPTS", "ONE_ACTIVE_SESSION", "CREATE_SET_REVISIONS"):
+    for name in ("CREATE_SESSIONS", "CREATE_RECEIPTS", "ONE_ACTIVE_SESSION", "CREATE_SET_REVISIONS", "CREATE_HANDOVERS", "ONE_NATIVE_OWNER"):
         match = re.search(rf'static final String {name} = "([^"\\]*)";', SOURCE)
         assert match, f"missing executable {name} DDL"
         connection.execute(match.group(1))
@@ -74,6 +74,25 @@ class WorkoutStoreTests(unittest.TestCase):
         self.db.commit()
         self.assertEqual(self.db.execute("SELECT revision FROM set_revisions WHERE set_id='set-2'").fetchone()[0], 0)
         self.assertEqual(self.db.execute("SELECT result FROM receipts WHERE command_id='c-1'").fetchone()[0], '{"status":"applied"}')
+
+    def test_native_owner_requires_a_seed_and_is_unique_even_after_finish(self):
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-bad", "native", "missing", "watch-1", "{}", "{}"))
+        self.db.rollback()
+        self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-1", "native", "s-1", "watch-1", "{}", "{}"))
+        self.db.execute("UPDATE sessions SET status='finished' WHERE session_id='s-1'")
+        self.db.execute("INSERT INTO sessions VALUES (?,?,?,?,?)", ("s-2", "watch-2", 0, "active", "{}"))
+        self.db.commit()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-2", "native", "s-2", "watch-2", "{}", "{}"))
+        self.db.rollback()
+
+    def test_cancellation_id_cannot_be_inserted_again_as_native(self):
+        self.db.execute("INSERT INTO workout_handovers(handover_id,status) VALUES ('h-1','cancelled')")
+        self.db.commit()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-1", "native", "s-1", "watch-1", "{}", "{}"))
+        self.db.rollback()
 
 
 if __name__ == "__main__":

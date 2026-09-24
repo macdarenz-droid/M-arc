@@ -435,6 +435,7 @@ for (const theme of themes) {
     window.Capacitor = {
       isNativePlatform: () => true,
       Plugins: {
+        WearEngine: { workoutOwnership: async () => ({ owner: 'web' }) },
         WatchBridge: {
           isSupported: async () => ({ supported: true }),
           permissionState: async () => ({ granted: true, needsLocation: false }),
@@ -448,6 +449,10 @@ for (const theme of themes) {
         },
       },
     };
+    window.Capacitor.PluginHeaders = [{ name: 'WearEngine', methods: [{ name: 'workoutOwnership', rtype: 'promise' }] }];
+    const ownerStub = window.Capacitor.Plugins.WearEngine;
+    window.Capacitor.nativePromise = (name, method, args) => name === 'WearEngine'
+      ? ownerStub[method](args) : Promise.reject(new Error('Unexpected ownership stub call'));
     // A complete profile so the profile-onboarding sheet doesn't compete for the dialog top layer here.
     // A week of restingHr history so restTarget() has what it needs for a heart-mode rest screenshot (F1.2).
     const now = new Date().toISOString();

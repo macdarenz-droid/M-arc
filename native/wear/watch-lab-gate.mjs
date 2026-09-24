@@ -32,7 +32,11 @@ try {
         isSupported: async () => ({ supported: false }), permissionState: async () => ({ granted: false }),
         status: async () => ({ state: 'idle' }), addListener: async () => ({ remove: async () => {} })
       },
-      WearEngine: { execute: async options => {
+      WearEngine: { workoutOwnership: async () => {
+        const mode = localStorage.getItem('marc.test.owner');
+        if (mode === 'failed') throw new Error('Ownership unavailable');
+        return { owner: mode === 'blocked' ? 'blocked' : 'web' };
+      }, execute: async options => {
         window.__wearCalls.push(options.action);
         if (window.__rejectWear) throw new Error('Stub permission denied');
         if (options.action === 'begin') { report.active = true; report.run = 'stub-run'; event('begin'); }
@@ -47,7 +51,7 @@ try {
     // WearEngine uses registerPlugin (unlike the legacy WatchBridge wrapper). Supply
     // Capacitor's native method header so its real proxy routes to this same stub.
     const wearStub = window.Capacitor.Plugins.WearEngine;
-    window.Capacitor.PluginHeaders = [{ name: 'WearEngine', methods: [{ name: 'execute', rtype: 'promise' }] }];
+    window.Capacitor.PluginHeaders = [{ name: 'WearEngine', methods: [{ name: 'execute', rtype: 'promise' }, { name: 'workoutOwnership', rtype: 'promise' }] }];
     window.Capacitor.nativePromise = (name, method, args) => name === 'WearEngine'
       ? wearStub[method](args) : Promise.reject(new Error('Unexpected native stub call'));
     const now = new Date();
@@ -90,6 +94,15 @@ try {
   assert.deepEqual(errors, []);
   mkdirSync('screenshots', { recursive: true });
   await page.screenshot({ path: 'screenshots/watch-lab-stub.png' });
+  for (const mode of ['blocked', 'failed']) {
+    await page.evaluate(mode => localStorage.setItem('marc.test.owner', mode), mode);
+    await page.reload();
+    await page.getByRole('heading', { name: 'Workout recovery', exact: true }).waitFor();
+    assert.equal(await page.locator('nav.nav').count(), 0, 'No workout controls before ownership is verified');
+    assert.equal(await page.getByText('Reset local data', { exact: true }).count(), 0);
+    assert.deepEqual(errors, [], 'Recovery failures must not reach the crash handler');
+    await page.screenshot({ path: `screenshots/watch-ownership-${mode}.png` });
+  }
   console.log('Watch lab browser gate PASS: hidden by default; SDK acceptance distinct; rejection contained; stores unchanged.');
 } finally {
   if (browser) await browser.close();

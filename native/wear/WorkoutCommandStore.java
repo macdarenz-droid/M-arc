@@ -24,10 +24,12 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     static final String ONE_ACTIVE_SESSION = "CREATE UNIQUE INDEX one_active_session ON sessions((1)) WHERE status IN ('active','paused')";
     static final String CREATE_SET_REVISIONS = "CREATE TABLE set_revisions (session_id TEXT NOT NULL, entry_id TEXT NOT NULL, set_id TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision >= 0), PRIMARY KEY(session_id, set_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
     static final String CREATE_PENDING_EFFECTS = "CREATE TABLE pending_effects (session_id TEXT NOT NULL, command_id TEXT NOT NULL, effect TEXT NOT NULL CHECK(effect IN ('fidelity','rest','heart')), set_id TEXT NOT NULL, action_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('pending','resolved')), context TEXT, PRIMARY KEY(session_id, command_id, effect), FOREIGN KEY(session_id, command_id) REFERENCES receipts(session_id, command_id) ON DELETE RESTRICT)";
+    static final String CREATE_HANDOVERS = "CREATE TABLE workout_handovers (handover_id TEXT PRIMARY KEY NOT NULL, status TEXT NOT NULL CHECK(status IN ('native','cancelled')), session_id TEXT UNIQUE, installation_id TEXT, original_snapshot TEXT, inputs TEXT, CHECK(status='cancelled' OR (session_id IS NOT NULL AND installation_id IS NOT NULL AND original_snapshot IS NOT NULL AND inputs IS NOT NULL)), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
+    static final String ONE_NATIVE_OWNER = "CREATE UNIQUE INDEX one_native_owner ON workout_handovers((1)) WHERE status='native'";
     private static final DateTimeFormatter UTC = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withResolverStyle(ResolverStyle.STRICT).withZone(ZoneOffset.UTC);
 
-    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 4); }
+    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 5); }
 
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SESSIONS);
@@ -35,6 +37,8 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         db.execSQL(ONE_ACTIVE_SESSION);
         db.execSQL(CREATE_SET_REVISIONS);
         db.execSQL(CREATE_PENDING_EFFECTS);
+        db.execSQL(CREATE_HANDOVERS);
+        db.execSQL(ONE_NATIVE_OWNER);
     }
 
     @Override public void onConfigure(SQLiteDatabase db) {
@@ -43,7 +47,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion != 4 || oldVersion < 1 || oldVersion > 3)
+        if (newVersion != 5 || oldVersion < 1 || oldVersion > 4)
             throw new IllegalStateException("Workout database migration required");
         if (oldVersion == 1) {
             db.execSQL(CREATE_SET_REVISIONS);
@@ -64,7 +68,10 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                                 receipt.getString("setId"), receipt.getString("actionAt"), null);
                 }
             } catch (Exception e) { throw new IllegalStateException("Could not migrate watch pending effects", e); }
-        } else db.execSQL("ALTER TABLE pending_effects ADD COLUMN context TEXT");
+        } else if (oldVersion == 3) db.execSQL("ALTER TABLE pending_effects ADD COLUMN context TEXT");
+        // Never infer ownership of old, unconnected seed rows during migration.
+        db.execSQL(CREATE_HANDOVERS);
+        db.execSQL(ONE_NATIVE_OWNER);
     }
 
     private static boolean id(String value) { return value != null && value.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,79}"); }
@@ -168,8 +175,17 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         } catch (java.time.format.DateTimeParseException e) { throw new IllegalArgumentException("Invalid UTC time", e); }
     }
 
+    private static double numberIn(JSONObject object, String key, double low, double high) throws Exception {
+        Object value = object.get(key);
+        if (!(value instanceof Number)) throw new IllegalArgumentException("Invalid " + key);
+        double n = ((Number) value).doubleValue();
+        if (!Double.isFinite(n) || n < low || n > high) throw new IllegalArgumentException("Invalid " + key);
+        return n;
+    }
+
     private static void insertSetRevisions(SQLiteDatabase db, String sessionId, JSONObject snapshot) throws Exception {
         Set<String> identities = new HashSet<>();
+        identities.add(sessionId);
         JSONArray entries = snapshot.getJSONArray("entries");
         for (int i = 0; i < entries.length(); i++) {
             JSONObject entry = entries.getJSONObject(i);
@@ -241,6 +257,15 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
 
     /** Explicit handover only. A second seed cannot replace a running or terminal workout. */
     void seed(String sessionId, String installationId, String snapshot) throws Exception {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        try {
+            insertSeed(db, sessionId, installationId, snapshot);
+            db.setTransactionSuccessful();
+        } finally { db.endTransaction(); }
+    }
+
+    private static void insertSeed(SQLiteDatabase db, String sessionId, String installationId, String snapshot) throws Exception {
         if (!id(sessionId) || !id(installationId) || snapshot.getBytes(StandardCharsets.UTF_8).length > 1_048_576)
             throw new IllegalArgumentException("Invalid session handover");
         JSONObject parsed = new JSONObject(snapshot);
@@ -252,12 +277,109 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         values.put("revision", 0);
         values.put("status", parsed.has("pausedAt") && !parsed.isNull("pausedAt") ? "paused" : "active");
         values.put("snapshot", snapshot);
+        db.insertOrThrow("sessions", null, values);
+        insertSetRevisions(db, sessionId, parsed);
+    }
+
+    /** Same transaction as the seed. The original inputs remain recoverable after later mutations. */
+    JSONObject handover(JSONObject seed) throws Exception {
+        String token = field(seed, "handoverId"), installation = field(seed, "installationId");
+        String snapshot = field(seed, "snapshot"), inputs = field(seed, "inputs");
+        if (!id(token) || !id(installation) || snapshot.getBytes(StandardCharsets.UTF_8).length > 1_048_576
+                || inputs.getBytes(StandardCharsets.UTF_8).length > 1_048_576
+                || !new StrictJson(snapshot).valid() || !new StrictJson(inputs).valid())
+            throw new IllegalArgumentException("Invalid handover envelope");
+        JSONObject active = new JSONObject(snapshot), context = new JSONObject(inputs);
+        String sessionId = field(active, "id");
+        field(active, "splitId");
+        numberIn(active, "pausedMs", 0, Double.MAX_VALUE);
+        if (active.has("pausedAt") && !active.isNull("pausedAt")) numberIn(active, "pausedAt", 0, 8.64e15);
+        JSONArray entries = active.getJSONArray("entries");
+        for (int i = 0; i < entries.length(); i++) {
+            JSONObject entry = entries.getJSONObject(i);
+            field(entry, "exerciseId"); field(entry, "name");
+            if (!(entry.get("done") instanceof Boolean) || !(entry.get("skipped") instanceof Boolean))
+                throw new IllegalArgumentException("Invalid entry status");
+        }
+        if (numberIn(context, "version", 1, 1) != 1 || !sessionId.equals(field(context, "sessionId")))
+            throw new IllegalArgumentException("Invalid handover inputs");
+        timestamp(field(context, "capturedAt"));
+        JSONObject policy = context.getJSONObject("restPolicy"), rest = policy.getJSONObject("rest");
+        JSONArray heart = context.getJSONArray("heartSamples");
+        if (!(policy.get("autoRest") instanceof Boolean) || !"ble".equals(context.opt("heartSource"))
+                || !("time".equals(rest.opt("mode")) || "heart".equals(rest.opt("mode"))) || heart.length() > 14400)
+            throw new IllegalArgumentException("Invalid policy or heart inputs");
+        numberIn(policy, "restDefaultSec", 15, 600);
+        numberIn(rest, "heartTargetPct", 0, 1); numberIn(rest, "minSec", 0, 600);
+        for (int i = 0; i < heart.length(); i++) {
+            JSONObject sample = heart.getJSONObject(i);
+            numberIn(sample, "tSec", 0, Double.MAX_VALUE); numberIn(sample, "bpm", 1, 300);
+            numberIn(sample, "receivedAtEpochMs", 1, 8.64e15); numberIn(sample, "receivedAtElapsedMs", 0, Double.MAX_VALUE);
+            Object contact = sample.get("contact");
+            if (contact != JSONObject.NULL && !(contact instanceof Boolean)) throw new IllegalArgumentException("Invalid contact");
+        }
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransactionNonExclusive();
         try {
-            db.insertOrThrow("sessions", null, values);
-            insertSetRevisions(db, sessionId, parsed);
+            try (Cursor c = db.rawQuery("SELECT status,installation_id,original_snapshot,inputs FROM workout_handovers WHERE handover_id=?", new String[]{token})) {
+                if (c.moveToFirst()) {
+                    if (!"native".equals(c.getString(0)) || !installation.equals(c.getString(1))
+                            || !snapshot.equals(c.getString(2)) || !inputs.equals(c.getString(3)))
+                        throw new IllegalStateException("Handover cancelled or changed");
+                    return readOwnership(db);
+                }
+            }
+            if (!"web".equals(readOwnership(db).getString("owner")))
+                throw new IllegalStateException("Workout already has an owner");
+            insertSeed(db, sessionId, installation, snapshot);
+            ContentValues row = new ContentValues();
+            row.put("handover_id", token); row.put("status", "native");
+            row.put("session_id", sessionId); row.put("installation_id", installation);
+            row.put("original_snapshot", snapshot); row.put("inputs", inputs);
+            db.insertOrThrow("workout_handovers", null, row);
+            JSONObject result = readOwnership(db);
             db.setTransactionSuccessful();
+            return result;
+        } finally { db.endTransaction(); }
+    }
+
+    JSONObject readOwnership() throws Exception {
+        SQLiteDatabase db = getReadableDatabase();
+        db.beginTransactionNonExclusive();
+        try { return readOwnership(db); } finally { db.endTransaction(); }
+    }
+
+    private static JSONObject readOwnership(SQLiteDatabase db) throws Exception {
+        try (Cursor c = db.rawQuery("SELECT h.handover_id,h.installation_id,h.original_snapshot,h.inputs,s.snapshot FROM workout_handovers h JOIN sessions s ON s.session_id=h.session_id WHERE h.status='native'", null)) {
+            if (c.moveToFirst()) return new JSONObject().put("owner", "native")
+                    .put("seed", new JSONObject().put("handoverId", c.getString(0))
+                            .put("installationId", c.getString(1)).put("snapshot", c.getString(2)).put("inputs", c.getString(3)))
+                    .put("snapshot", c.getString(4));
+        }
+        try (Cursor c = db.rawQuery("SELECT 1 FROM sessions WHERE status IN ('active','paused') LIMIT 1", null)) {
+            if (c.moveToFirst()) return new JSONObject().put("owner", "blocked");
+        }
+        return new JSONObject().put("owner", "web");
+    }
+
+    /** Cancelling before a delayed handover arrives leaves a durable tombstone for its ID. */
+    JSONObject settleHandover(String token) throws Exception {
+        if (!id(token)) throw new IllegalArgumentException("Invalid handover ID");
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        try {
+            JSONObject owner = readOwnership(db);
+            if (!"web".equals(owner.getString("owner"))) return owner;
+            ContentValues cancelled = new ContentValues();
+            cancelled.put("handover_id", token); cancelled.put("status", "cancelled");
+            db.insertWithOnConflict("workout_handovers", null, cancelled, SQLiteDatabase.CONFLICT_IGNORE);
+            // INSERT OR IGNORE must not mask a storage failure or an unexpected native row.
+            try (Cursor c = db.rawQuery("SELECT status FROM workout_handovers WHERE handover_id=?", new String[]{token})) {
+                if (!c.moveToFirst() || !"cancelled".equals(c.getString(0)))
+                    throw new IllegalStateException("Cancellation not durable");
+            }
+            db.setTransactionSuccessful();
+            return owner.put("cancelledHandoverId", token);
         } finally { db.endTransaction(); }
     }
 

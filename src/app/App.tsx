@@ -27,6 +27,8 @@ import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
+import { ownershipMessage, workoutOwnership } from '@/core/workoutOwnership';
+import { saveRescueCopy } from './ErrorBoundary';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
 const recoveredSeen = signal(false);
@@ -72,6 +74,14 @@ function Panels() {
 }
 
 export function App() {
+  if (workoutOwnership.value !== 'web') return (
+    <main class="app"><div class="card" role="alert">
+      <h1>Workout recovery</h1><p>{ownershipMessage}</p>
+      <button type="button" class="btn" onClick={() => location.reload()}>Retry recovery</button>
+      <button type="button" class="btn" onClick={() => { void saveRescueCopy().catch(() => showToast('Could not export the recovery copy.')); }}>Save a recovery copy</button>
+      {toast.value && <p role="status">{toast.value.message}</p>}
+    </div></main>
+  );
   const t = tab.value;
   const live = !!state.value.active;
   const panel = openPanel.value?.id;

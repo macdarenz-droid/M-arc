@@ -1,6 +1,15 @@
 # M/ARC watch companion: architecture and feasibility review
 
-Date: 23 September 2026. Status: proposed architecture, before implementation.
+Date: 23 September 2026. Status: proposed architecture; implementation tracked separately below.
+
+24 September clarification: M/ARC is an **offline-capable Android workout
+tracker with an optional online AI coach (Escobar)**. Workout logging and its
+saved record are local; Escobar needs an internet connection when used. The
+Wear Engine application requests Basic device information/P2P for the phone
+app only. Communication requires M/ARC open in the foreground. Native storage
+and a foreground service do not establish support for communication while the
+phone app is inactive. The sections below remain a proposed architecture;
+`WATCH-PROGRESS.md` and `native/wear/GATE-B.md` track implemented boundaries.
 
 ## Decision in plain words
 
@@ -8,7 +17,9 @@ Build a small Huawei watch companion that controls the workout already running i
 
 The first engineering milestone must prove the connection and sensor capabilities on the actual GT6. Wear Engine approval does not by itself prove access to heart rate, RR, HRV, sleep, or Huawei Training Index. An API existing elsewhere in Huawei's ecosystem does not establish GT6 support.
 
-For the eventual phone-in-pocket experience, use an Android native workout service with durable storage. A foreground-only demonstration can precede that service, but must not be described as the completed product.
+Use durable native storage for recoverable workout ownership. Any eventual
+phone-in-pocket communication remains subject to Huawei's restrictions and
+actual device evidence; it is not a capability promised by this design.
 
 No application code, repository branch, or pull request was created for this review. No GT6 hardware test, SDK build, signing test, or new service approval was performed.
 

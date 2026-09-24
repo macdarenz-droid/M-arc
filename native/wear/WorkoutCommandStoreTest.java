@@ -420,4 +420,109 @@ public class WorkoutCommandStoreTest {
             assertTrue(c.moveToFirst()); assertTrue(c.isNull(0)); assertEquals("pending", c.getString(1));
         }
     }
+
+    private JSONObject handoverSeed() throws Exception {
+        JSONObject active = new JSONObject(snapshot(false)).put("splitId", "split-1").put("pausedMs", 0);
+        JSONArray entries = active.getJSONArray("entries");
+        for (int i = 0; i < entries.length(); i++) entries.getJSONObject(i)
+                .put("exerciseId", "exercise-" + i).put("name", "Exercise " + i).put("done", false).put("skipped", false);
+        return new JSONObject().put("handoverId", "h-1").put("installationId", "watch-1")
+                .put("snapshot", active.toString()).put("inputs", new JSONObject().put("version", 1)
+                        .put("sessionId", "s-1").put("capturedAt", actionAt)
+                        .put("restPolicy", new JSONObject().put("autoRest", true).put("restDefaultSec", 90)
+                                .put("rest", new JSONObject().put("mode", "time").put("heartTargetPct", 0.6).put("minSec", 30)))
+                        .put("heartSource", "ble").put("heartSamples", new JSONArray().put(new JSONObject()
+                                .put("tSec", 20).put("bpm", 128).put("contact", true)
+                                .put("receivedAtEpochMs", Instant.parse(startedAt).toEpochMilli() + 20000)
+                                .put("receivedAtElapsedMs", 90000))).toString());
+    }
+
+    private void emptyStore() {
+        store.close(); context.deleteDatabase(DB); store = new WorkoutCommandStore(context);
+    }
+
+    @Test public void handoverAndSeedCommitTogetherAndReplayDoesNotResetWorkout() throws Exception {
+        emptyStore();
+        JSONObject seed = handoverSeed();
+        assertEquals("web", store.readOwnership().getString("owner"));
+        assertEquals("native", store.handover(seed).getString("owner"));
+        assertEquals("applied", store.completeSet(command("c-handover", "watch-1", "e-1", "set-1", 0, actionAt)).status);
+        store.close(); store = new WorkoutCommandStore(context);
+        JSONObject replay = store.handover(seed);
+        assertEquals(seed.getString("inputs"), replay.getJSONObject("seed").getString("inputs"));
+        assertEquals(seed.getString("snapshot"), replay.getJSONObject("seed").getString("snapshot"));
+        assertEquals("committed", set(new JSONObject(replay.getString("snapshot")), "e-1", "set-1").getString("status"));
+        assertEquals("native", store.settleHandover("h-1").getString("owner"));
+        assertEquals(1, revision("set-1"));
+        try { store.handover(new JSONObject(seed.toString()).put("inputs", seed.getString("inputs") + " ")); fail("Changed inputs must conflict"); }
+        catch (IllegalStateException expected) { /* identical handover token cannot change its source */ }
+    }
+
+    @Test public void failedOwnerInsertRollsBackSeedAndSetIdentities() throws Exception {
+        emptyStore();
+        SQLiteDatabase db = store.getWritableDatabase();
+        db.execSQL("CREATE TRIGGER fail_owner BEFORE INSERT ON workout_handovers BEGIN SELECT RAISE(ABORT, 'disk failure'); END");
+        try { store.handover(handoverSeed()); fail("Owner insert should fail"); }
+        catch (android.database.SQLException expected) { /* no orphaned native seed */ }
+        assertEquals("web", store.readOwnership().getString("owner"));
+        for (String table : new String[]{"sessions", "set_revisions", "workout_handovers"}) {
+            try (Cursor c = db.rawQuery("SELECT count(*) FROM " + table, null)) { assertTrue(c.moveToFirst()); assertEquals(0, c.getInt(0)); }
+        }
+        db.execSQL("DROP TRIGGER fail_owner");
+        assertEquals("native", store.handover(handoverSeed()).getString("owner"));
+    }
+
+    @Test public void cancellationSurvivesReopenAndPreventsLateSeed() throws Exception {
+        emptyStore();
+        assertEquals("h-1", store.settleHandover("h-1").getString("cancelledHandoverId"));
+        store.close(); store = new WorkoutCommandStore(context);
+        try { store.handover(handoverSeed()); fail("Late cancelled handover must fail"); }
+        catch (IllegalStateException expected) { /* no delayed second writer */ }
+        assertEquals("web", store.readOwnership().getString("owner"));
+        assertEquals("h-1", store.settleHandover("h-1").getString("cancelledHandoverId"));
+        assertEquals("native", store.handover(handoverSeed().put("handoverId", "h-2")).getString("owner"));
+    }
+
+    @Test public void conflictingSessionOrMalformedSeedCannotCreateOwner() throws Exception {
+        assertEquals("blocked", store.readOwnership().getString("owner")); // old unowned primitive seed
+        try { store.handover(handoverSeed()); fail("Existing workout requires review"); }
+        catch (IllegalStateException expected) { /* preserve it */ }
+        emptyStore();
+        JSONObject seed = handoverSeed();
+        seed.put("snapshot", seed.getString("snapshot").replace("set-2", "set-1"));
+        try { store.handover(seed); fail("Duplicate identities must fail"); }
+        catch (IllegalArgumentException expected) { /* seed and marker both roll back */ }
+        assertEquals("web", store.readOwnership().getString("owner"));
+        seed = handoverSeed();
+        seed.put("inputs", new JSONObject(seed.getString("inputs")).put("sessionId", "another").toString());
+        try { store.handover(seed); fail("Input session must match"); }
+        catch (IllegalArgumentException expected) { /* no context retargeting */ }
+        assertEquals("web", store.readOwnership().getString("owner"));
+    }
+
+    @Test public void versionFourUpgradeKeepsUnownedRowsAndPendingContext() throws Exception {
+        assertEquals("applied", store.completeSet(command("c-v4", "watch-1", "e-1", "set-1", 0, actionAt)).status);
+        String before = pendingContext("c-v4", "rest").toString();
+        store.getWritableDatabase().execSQL("DROP TABLE workout_handovers");
+        store.getWritableDatabase().setVersion(4);
+        store.close(); store = new WorkoutCommandStore(context);
+        assertEquals("blocked", store.readOwnership().getString("owner"));
+        assertEquals(before, pendingContext("c-v4", "rest").toString());
+        assertEquals(3, pendingCount("c-v4"));
+        assertEquals(5, store.getReadableDatabase().getVersion());
+    }
+
+    @Test public void malformedHandoverContextCannotAcquireOwnership() throws Exception {
+        emptyStore();
+        for (String bad : new String[]{"version", "rest", "heart"}) {
+            JSONObject seed = handoverSeed(), inputs = new JSONObject(seed.getString("inputs"));
+            if ("version".equals(bad)) inputs.put("version", 1.5);
+            if ("rest".equals(bad)) inputs.getJSONObject("restPolicy").put("restDefaultSec", "90");
+            if ("heart".equals(bad)) inputs.getJSONArray("heartSamples").getJSONObject(0).put("receivedAtEpochMs", "unknown");
+            seed.put("inputs", inputs.toString());
+            try { store.handover(seed); fail("Malformed " + bad + " must fail"); }
+            catch (IllegalArgumentException expected) { /* no partial seed */ }
+            assertEquals("web", store.readOwnership().getString("owner"));
+        }
+    }
 }
