@@ -147,7 +147,8 @@ export function flagsForSet(set: LoggedSet, recentBestKg: number | null, isHeavy
   const reps = set.reps ?? 0;
   if (kg > 0 && implausibleLoad(kg, recentBestKg)) flags.push('implausible_load');
   if (reps > 0 && implausibleReps(reps, isHeavyMainLift)) flags.push('implausible_reps');
-  if (kg > 0 && unitSuspect(kg, recentBestKg)) flags.push('unit_suspect');
+  // QA2-FE-3, QA2-FE-4: a warm-up or drop set is light on purpose, never a kg/lb slip.
+  if (kg > 0 && setUnitSuspect(set, recentBestKg)) flags.push('unit_suspect');
   if (futureTime(set.at, nowMs)) flags.push('future_time');
   return flags;
 }

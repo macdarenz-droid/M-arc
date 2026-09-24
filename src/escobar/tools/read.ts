@@ -70,7 +70,8 @@ export function capJson<T>(data: T, maxBytes: number, { dropFrom = 'end' }: { dr
 /** A load in canonical kg plus the equipment's own reading. */
 export function loadOf(ctx: ToolCtx, exerciseId: string, kg: number): { kg: number; unit: 'kg' | 'lb'; value: number } {
   const profile = resolveProfile(exerciseId, ctx.state.units.activeGymId, ctx.state.units, exerciseOf(ctx, exerciseId));
-  const value = profile.unit === 'lb' ? r1(kg / 0.45359237) : r2(kg);
+  // QA2-FE-5: the app's own conversion, so quarter-pound loads (26.25 lb) read as on screen.
+  const value = kgToDisplay(kg, profile.unit);
   return { kg: r2(kg), unit: profile.unit, value };
 }
 
@@ -82,6 +83,7 @@ function setOut(ctx: ToolCtx, exerciseId: string, s: LoggedSet) {
   if (s.durationSec) o.durationSec = s.durationSec;
   if (s.distanceM) o.distanceM = s.distanceM;
   if (s.flags?.length) o.flags = s.flags;
+  if (s.kind) o.kind = s.kind; // QA2-FE-3: a warm-up or drop set says so
   return o;
 }
 
@@ -153,7 +155,7 @@ export function getSessions(input: { from?: string; to?: string; splitId?: strin
     count: list.length,
     sessions: list.map(x => ({
       sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60),
-      sets: x.exercises.reduce((a, e) => a + e.sets.length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
+      sets: x.exercises.reduce((a, e) => a + e.sets.filter(isWorkingSet).length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
     })),
   }, 5000);
 }

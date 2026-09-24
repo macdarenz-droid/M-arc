@@ -582,3 +582,8 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 #### QA2-FE-2, QA2-FE-7, QA2-FE-8
 - A loaded carry's target snaps to the gym's equipment like a weighted lift: "70 lb · 45 m", not "31.751 kg · 45 m". Without equipment, the load is rounded to the half kilo.
 - The distance/time branch is for carries and sleds only: a distance, or a time with no reps. Burpees, box jumps and wall balls logged with reps and seconds keep their rep goal ("16 reps").
+
+#### QA2-FE-3, QA2-FE-4, QA2-FE-5
+- `flagsForSet` (Escobar's `get_session`) uses `setUnitSuspect`, so a warm-up or drop set is never flagged as a kg/lb slip.
+- Escobar's set output includes `kind`, and `get_sessions` counts working sets only.
+- Escobar's `loadOf` uses the app's `kgToDisplay`, so 26.25 lb reads as 26.25 there too.
