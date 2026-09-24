@@ -41,7 +41,7 @@ Every project has three files at its root, listed first:
 - **PROJECT_STATE.md**: the one current picture (phase, done, next, open questions), updated in place.
 - **LOG.md**: the history. Agents add one line per change with `append_file` and never rewrite it.
 
-Relay makes agents keep to it. The contract is in every connector's instructions and at the top of `overview` and `context.md`. A link cannot edit CONTRACT.md, and it cannot create a version copy of a file already in the folder (`plan-v2.md`, `plan final.md`, `plan (copy).md`, a dated copy, or `patch-1.2.md` next to `patch-1.md`). It gets told which file to update instead. New projects start with the three files; projects that existed before get them on the next deploy.
+There is one contract for the whole workspace: when the owner edits CONTRACT.md in any project, every project's copy and every agent's instructions update, and new projects start with the latest version. Relay makes agents keep to it. The contract is in every connector's instructions and at the top of `overview` and `context.md`. A link cannot edit CONTRACT.md, and it cannot create a version copy of a file already in the folder (`plan-v2.md`, `plan final.md`, `plan (copy).md`, a dated copy, or `patch-1.2.md` next to `patch-1.md`). It gets told which file to update instead. New projects start with the three files; projects that existed before get them on the next deploy.
 
 ## Using it with agents
 

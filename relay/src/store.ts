@@ -109,16 +109,25 @@ export class Store {
     if (!p) return
     const relay: Author = { author: 'Relay', kind: 'agent', via: 'owner' }
     const when = new Date(this.now()).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
-    const docs: [string, string][] = [[CONTRACT, DEFAULT_CONTRACT], [STATE, defaultState(p.name)], [LOG, defaultLog(when)]]
+    const docs: [string, string][] = [[CONTRACT, this.contract()], [STATE, defaultState(p.name)], [LOG, defaultLog(when)]]
     for (const [name, body] of docs)
       if (!this.fileByName(p.root_id, name)) this.createFile(p.root_id, relay, { name, data: new TextEncoder().encode(body) })
   }
 
-  /** The project's contract text, for every agent's instructions. */
-  contract(projectId: string): string | null {
-    const p = this.project(projectId)
-    const f = this.fileByName(p.root_id, CONTRACT)
-    return f ? new TextDecoder().decode(this.read(f.id)).slice(0, 12_000) : null
+  /** One contract for the whole workspace: every project and every agent gets the same rules. */
+  contract(_projectId?: string): string {
+    return (this.sql.get<{ v: string }>(`SELECT v FROM meta WHERE k = 'contract'`)?.v ?? DEFAULT_CONTRACT).slice(0, 12_000)
+  }
+
+  /** The owner edited CONTRACT.md in one project: it becomes the contract, and every project's copy follows. */
+  private syncContract(data: Uint8Array, fromId: string) {
+    this.sql.run(`INSERT OR REPLACE INTO meta (k, v) VALUES ('contract', ?)`, new TextDecoder().decode(data))
+    const copies = this.sql.all<{ id: string }>(
+      `SELECT f.id FROM files f JOIN projects p ON p.root_id = f.folder_id WHERE f.name = ? COLLATE NOCASE AND f.id != ?`, CONTRACT, fromId)
+    for (const c of copies) {
+      this.writeChunks(c.id, data)
+      this.sql.run(`UPDATE files SET size = ?, updated_at = ? WHERE id = ?`, data.byteLength, this.now(), c.id)
+    }
   }
 
   private migrate() {
@@ -501,6 +510,7 @@ export class Store {
       this.writeChunks(f.id, data)
       this.sql.run(`UPDATE files SET size = ?, updated_at = ? WHERE id = ?`, data.byteLength, this.now(), f.id)
       if (who) this.sql.run(`UPDATE files SET author = ?, kind = ?, via = ? WHERE id = ?`, who.author, who.kind, who.via, f.id)
+      if (who?.via === 'owner' && f.name.toLowerCase() === CONTRACT.toLowerCase() && !this.folder(f.folder_id).parent_id) this.syncContract(data, f.id)
       this.bump()
     })
     return this.file(f.id)

@@ -894,6 +894,7 @@ function renderDrawer(force = false) {
   const text = isText(f.name, f.mime)
   const md = isMarkdown(f.name)
   const body = h('div.dbody')
+  if (f.name === 'CONTRACT.md' && f.folder_id === S.detail.project.root_id) body.append(h('p.hint', {}, 'Shared by every project: editing it here updates the rules everywhere.'))
   if (drawer.editing) {
     const ta = h('textarea.editor', { spellcheck: 'false', placeholder: 'Loading…' })
     const save = async () => {

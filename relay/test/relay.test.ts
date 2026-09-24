@@ -339,4 +339,13 @@ test('contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it
   assert.equal(http.status, 200)
   const owner = await j('POST', `/api/folders/${store.resolvePath(root, 'docs')!.id}/files?name=plan-v2.md`, { raw: 'owner may', type: 'text/markdown' })
   assert.equal(owner.status, 201, 'the owner is not restricted')
+
+  // One contract for all projects: the owner edits it anywhere, every project and agent follows.
+  const mine = store.fileByName(root, 'CONTRACT.md')!
+  assert.equal((await j('PUT', `/api/files/${mine.id}/raw`, { raw: '# Contract\n\n- Rule edited once', type: 'text/markdown' })).status, 200)
+  const sideCopy = store.fileByName(side.root_id, 'CONTRACT.md')!
+  assert.equal(new TextDecoder().decode(store.read(sideCopy.id)), '# Contract\n\n- Rule edited once')
+  assert.match(((await (await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 99, method: 'initialize', params: {} } })).json()) as any).result.instructions, /Rule edited once/)
+  const later = (await j('POST', '/api/projects', { body: { name: 'Later', template: 'empty' } })).data.project
+  assert.equal(new TextDecoder().decode(store.read(store.fileByName(later.root_id, 'CONTRACT.md')!.id)), '# Contract\n\n- Rule edited once')
 })
