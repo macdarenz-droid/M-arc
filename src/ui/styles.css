@@ -160,7 +160,8 @@ svg { display: block; }
 /* UI-30: a 44 px tall hit area. QA-R7-1: the row is 48 px tall, so the area stays inside it with
    2 px to spare and a tap up to 8 px below a button still lands in its own row, even where rows
    touch (the past-session list); sideways it stops at the gap to the next button. */
-.effort button::before { content: ""; position: absolute; inset: -7px -2px; }
+/* The inset is measured from the 28 px padding box inside the 1 px border, so -8px gives 44 px. */
+.effort button::before { content: ""; position: absolute; inset: -8px -2px; }
 .effort button[aria-pressed="true"].easy { background: var(--positive); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].ideal { background: var(--info); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].max { background: var(--negative); color: #fff; border-color: transparent; }

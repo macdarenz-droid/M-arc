@@ -458,7 +458,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
   - A malformed override (anything that is not a model id) is ignored.
   - `/health` lists each mode's model.
   - System-message folding and the learned "no system role" set are per model, so a mode on a model without mid-conversation system messages gets `<situation>` blocks.
-- **App:** each step is priced by `final.model`, the model that actually answered, and the day's `usage.costUsd` adds those up. Settings shows it, and days recorded before this fall back to the old estimate. Dated ids use their alias's price. Haiku 4.5 and Fable 5 were added to the table.
+- **App:** each step is priced by the model that ran it (each fallback attempt by its own model since QA2-F7-1; an attempt that declined before output is not billed), and the day's `usage.costUsd` adds those up. Settings shows it, and days recorded before this fall back to the old estimate. Dated ids use their alias's price. Haiku 4.5 and Fable 5 were added to the table.
 - **Prices checked on 2026-09-23** against platform.claude.com/docs/en/about-claude/pricing ($/MTok input · output · cache hit):
 
   | Model | Input | Output | Cache hit |
@@ -499,3 +499,24 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 ### QA-R7-1 follow-up (supervisor re-check)
 - The first R7-1 fix (44 px rows, which landed in the QA-R1-4 commit 14f0046) was only checked on the Finish sheet. The supervisor was right about the "Log a past session" rows: they touch, so a tap 7–8 px below set 1 still reached set 2. The new gate check reproduced this: `row 0 easy +7px, +8px`.
 - Fix: `.effort` rows are 48 px tall, so the 44 px hit area stays inside its row with 2 px to spare. The gate now runs the elementFromPoint check (1–8 px below every effort button must hit its own row or no effort row) on the past-session sheet as well as the Finish sheet.
+
+## QA round 2 (docs/qa/LIVE-QA-2.md and docs/qa/FIX-GUIDE.md on claude/marc-regression-architecture-gegkbq)
+
+The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-1. For the 2 high and 13 medium items still open, the supervisor wrote and verified the fixes (`docs/qa/fixes/ALL.patch`, including the four required follow-ups and the effort inset). `git apply` was blocked here, so the owner had them applied by hand, exactly as in the patch. Each has a test that fails without its source change; I re-checked this per group.
+
+- **QA2-FA-1..4 (Worker):** a step cut short before the API reports usage is charged 200 output tokens per second it ran (`CUT_SHORT_TOKENS_PER_SEC`), capped at `max_tokens`, or streamed characters / 3 if more. An error after a thinking-only phase is counted. Owner default: a normal cancel is over-counted about 2–4× against the daily cap.
+- **QA2-F7-3 (Worker):** `MODEL_<MODE>` must be an exact id in `MODE_MODELS` (models that take adaptive thinking and effort). Anything else is ignored: that mode keeps `MODEL`, `/health` lists it under `ignoredModels`, and the deploy check fails.
+- **QA2-FB-1:** the error card's reset calls `stopSaving()` before wiping, so the unload save cannot write the crashing state back.
+- **QA2-FB-2:** Escobar's reminder Apply resyncs with `prompt: true`, like the Settings toggle.
+- **QA2-FC-4:** assisted `liftTrend` follows the assistance (inverted), then best reps. It no longer uses the e1RM of the assistance.
+- **QA2-FC-1:** the History exercise card's trend, sparkline and hint follow the lift mode (`progressTrend.ts`). Weighted lifts are unchanged (owner default).
+- **QA2-FC-2, QA2-FC-3:** the plateau lever and the weekly e1RM review use only the sessions since the last break (`sinceLastBreak`).
+- **QA2-FD-1:** a new card's id is past the highest id kept, so a trim can't cause a repeat.
+- **QA2-F7-4, QA2-F7-1, QA2-F7-2 (app cost):**
+  - Cache writes are priced at 1.25× (5-minute) or 2× (1-hour) the input rate.
+  - Each fallback attempt is priced by its own model, and an attempt that declined before output is skipped.
+  - The price table is complete.
+  - Only an exact id or `alias-YYYYMMDD` matches a price; an unknown id gets the dearest rates.
+- **QA-R7-1 (again):** the effort `::before` inset is -8px, so the hit area is 44 px tall; the rows are 48 px.
+- **Worker changes (QA2-FA, QA2-F7-3) go live only when the owner merges to main.**
+- The 32 low items in LIVE-QA-2.md come next, each with a test.
