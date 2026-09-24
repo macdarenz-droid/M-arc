@@ -98,3 +98,18 @@ describe('relay shard choice (QA2-FA-5)', () => {
     expect(together).toBeLessThan(32);
   });
 });
+
+describe('Worker global scope (deploy error 10021)', () => {
+  it('loading the Worker makes no random values; the shard seed is made on first use', async () => {
+    vi.resetModules();
+    const spy = vi.spyOn(crypto, 'getRandomValues');
+    const mod = await import('../src/upstream');
+    await import('../src/index');
+    expect(spy).not.toHaveBeenCalled();
+    mod.relayShard('dev_000000000000000000000001');
+    expect(spy).toHaveBeenCalledTimes(1);
+    mod.relayShard('dev_000000000000000000000002');
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
+  });
+});

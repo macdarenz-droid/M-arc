@@ -597,3 +597,7 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-F7-5, QA2-F7-6
 - Fixed by the supervisor's W2 patch in round 2: each fallback attempt is priced by its own model, an attempt that declined before output is not billed, the price table is complete, and unknown ids get the dearest rates. Tests are in `tests/escobar/loop.test.ts`.
+
+#### QA2-FA-5 follow-up: the Worker deploy failed (Cloudflare error 10021)
+- The first FA-5 fix made the shard seed with `crypto.getRandomValues` at module load. Workers forbid random values in global scope, so "Deploy Escobar Worker" failed on the PR #7 merge and the upload was rejected. The Worker from PR #6 kept serving; nothing was down.
+- Fix: the seed is made on first use (`instanceSeed()`). New test: loading the Worker (`src/index`) makes no random values, and the first shard choice makes exactly one. It fails on the old code.
