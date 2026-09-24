@@ -41,6 +41,8 @@ export interface Usage {
   output_tokens: number;
   cache_read_input_tokens?: number;
   cache_creation_input_tokens?: number;
+  /** The cache writes split by TTL (QA2-F7-4: priced at 1.25x or 2x input). */
+  cache_creation?: { ephemeral_5m_input_tokens?: number; ephemeral_1h_input_tokens?: number } | null;
 }
 
 export interface Fact {

@@ -333,4 +333,58 @@ describe('cost by the model that answered (F7)', () => {
     expect(estimateCost({ inputTokens: 1_000_000, outputTokens: 0, cacheReadTokens: 0 }, 'claude-opus-5-5-20260901')).toBe(4);
     expect(estimateCost({ inputTokens: 0, outputTokens: 1_000_000, cacheReadTokens: 0 }, 'claude-haiku-4-5')).toBe(5);
   });
+
+  const oneStep = (usage: Record<string, unknown>, model: string): StreamEvent[] => [{ t: 'text', d: 'Ok.' }, { t: 'final', content: [{ type: 'text', text: 'Ok.' }], stop_reason: 'end_turn', usage, model }];
+  const recorded = async (steps: StreamEvent[]) => {
+    const got: Array<{ inputTokens: number; costUsd?: number }> = [];
+    const { loop } = setup([steps], { recordUsage: u => got.push(u) });
+    await loop.send({ text: 'hi' });
+    return got[0]!;
+  };
+
+  it('QA2-F7-4: cache writes are priced at the 1-hour and 5-minute write rates', async () => {
+    // Opus 5: $5 in, $25 out, 1h write $10, 5m write $6.25 per MTok.
+    const h1 = await recorded(oneStep({ input_tokens: 50, output_tokens: 300, cache_creation_input_tokens: 20_000, cache_creation: { ephemeral_5m_input_tokens: 0, ephemeral_1h_input_tokens: 20_000 } }, 'claude-opus-5'));
+    expect(h1.costUsd).toBeCloseTo(0.20775, 8);
+    const m5 = await recorded(oneStep({ input_tokens: 50, output_tokens: 300, cache_creation_input_tokens: 20_000, cache_creation: { ephemeral_5m_input_tokens: 20_000, ephemeral_1h_input_tokens: 0 } }, 'claude-opus-5'));
+    expect(m5.costUsd).toBeCloseTo(0.13275, 8);
+    // No TTL breakdown: the write is priced at the default 5-minute rate, never dropped.
+    const bare = await recorded(oneStep({ input_tokens: 50, output_tokens: 300, cache_creation_input_tokens: 20_000 }, 'claude-opus-5'));
+    expect(bare.costUsd).toBeCloseTo(0.13275, 8);
+  });
+
+  it('QA2-F7-1: a fallback turn prices each attempt by its own model and skips the unbilled declined attempt', async () => {
+    const it2 = (first: { input: number; output: number }) => ({ input_tokens: 412, output_tokens: 264, cache_read_input_tokens: 0, cache_creation_input_tokens: 0, iterations: [
+      { type: 'message', model: 'claude-opus-5-5', input_tokens: first.input, output_tokens: first.output, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+      { type: 'fallback_message', model: 'claude-opus-4-8', input_tokens: 412, output_tokens: 264, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 },
+    ] });
+    // Declined before any output: reported, not billed. Opus 4.8 serves 412 in / 264 out at $5/$25.
+    const pre = await recorded(oneStep(it2({ input: 535, output: 0 }), 'claude-opus-4-8'));
+    expect(pre.inputTokens).toBe(412);
+    expect(pre.costUsd).toBeCloseTo(0.00866, 8);
+    // Declined mid-output: billed at Opus 5.5's own rates ($4/$20), then the Opus 4.8 attempt.
+    const mid = await recorded(oneStep(it2({ input: 535, output: 40 }), 'claude-opus-4-8'));
+    expect(mid.inputTokens).toBe(947);
+    expect(mid.costUsd).toBeCloseTo(0.00294 + 0.00866, 8);
+  });
+
+  it('QA2-F7-1: every model the API serves has its own price; an unknown id is never priced below the dearest one', async () => {
+    const { estimateCost } = await import('@/escobar/state');
+    const perMTok = (model: string) => [estimateCost({ inputTokens: 1_000_000, outputTokens: 0, cacheReadTokens: 0 }, model), estimateCost({ inputTokens: 0, outputTokens: 1_000_000, cacheReadTokens: 0 }, model)];
+    expect(perMTok('claude-mythos-5-1')).toEqual([10, 50]);
+    expect(perMTok('claude-mythos-5')).toEqual([10, 50]);
+    expect(perMTok('claude-sonnet-4-6')).toEqual([3, 15]);
+    expect(perMTok('claude-sonnet-4-5-20250929')).toEqual([3, 15]);
+    expect(perMTok('claude-opus-4-7')).toEqual([5, 25]);
+    expect(perMTok('claude-opus-4-6')).toEqual([5, 25]);
+    expect(perMTok('claude-opus-4-5-20251101')).toEqual([5, 25]);
+    expect(perMTok('claude-something-9')).toEqual([10, 50]);
+    // A newer minor version is unknown, not its prefix's price (QA2-F7-1 follow-up).
+    expect(perMTok('claude-sonnet-5-5')).toEqual([10, 50]);
+    expect(perMTok('claude-opus-5-6')).toEqual([10, 50]);
+    expect(perMTok('claude-haiku-4-5-20251001')).toEqual([1, 5]);
+    // Cache reads per MTok: 0.025x on Fable/Mythos 5.1, 0.05x on Opus 5.5, 0.1x elsewhere.
+    expect(estimateCost({ inputTokens: 0, outputTokens: 0, cacheReadTokens: 1_000_000 }, 'claude-mythos-5-1')).toBe(0.25);
+    expect(estimateCost({ inputTokens: 0, outputTokens: 0, cacheReadTokens: 1_000_000 }, 'claude-sonnet-4-6')).toBeCloseTo(0.3, 10);
+  });
 });

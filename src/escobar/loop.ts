@@ -422,12 +422,19 @@ export class EscobarLoop {
         if (r.error) { result = finish({ outcome: 'error', error: r.error, outcomes, signals, notSent: !userCommitted }); break; }
         if (r.refusal) { this.update({ text: '' }); result = finish({ outcome: 'refusal', refusal: r.refusal, outcomes, signals, notSent: !userCommitted }); break; }
         const final = r.final!;
-        const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage>> } | undefined;
-        const its = u?.iterations?.length ? u.iterations : u ? [u] : [];
-        for (const it of its) {
-          const step = { inputTokens: it.input_tokens ?? 0, outputTokens: it.output_tokens ?? 0, cacheReadTokens: it.cache_read_input_tokens ?? 0 };
+        const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage> & { model?: string | null }> } | undefined;
+        const its: Array<Partial<Usage> & { model?: string | null }> = u?.iterations?.length ? u.iterations : u ? [u] : [];
+        for (const [i, it] of its.entries()) {
+          // QA2-F7-1: a fallback attempt that declined before any output is reported but not billed.
+          if (i < its.length - 1 && !it.output_tokens) continue;
+          // QA2-F7-4: cache writes by TTL; a write without the breakdown is priced at the 5-minute rate.
+          const cacheWrite1hTokens = it.cache_creation?.ephemeral_1h_input_tokens ?? 0;
+          const cacheWrite5mTokens = Math.max(it.cache_creation?.ephemeral_5m_input_tokens ?? 0, (it.cache_creation_input_tokens ?? 0) - cacheWrite1hTokens);
+          const step = { inputTokens: it.input_tokens ?? 0, outputTokens: it.output_tokens ?? 0, cacheReadTokens: it.cache_read_input_tokens ?? 0, cacheWrite5mTokens, cacheWrite1hTokens };
           usage.inputTokens += step.inputTokens; usage.outputTokens += step.outputTokens; usage.cacheReadTokens += step.cacheReadTokens;
-          usage.costUsd += estimateCost(step, typeof final.model === 'string' ? final.model : undefined);
+          // QA2-F7-1: each attempt at the rates of the model that ran it (a fallback turn mixes models).
+          const model = typeof it.model === 'string' ? it.model : typeof final.model === 'string' ? final.model : undefined;
+          usage.costUsd += estimateCost(step, model);
         }
         if (staged) {
           const extra: Partial<Conversation> = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
