@@ -504,7 +504,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-1. For the 2 high and 13 medium items still open, the supervisor wrote and verified the fixes (`docs/qa/fixes/ALL.patch`, including the four required follow-ups and the effort inset). `git apply` was blocked here, so the owner had them applied by hand, exactly as in the patch. Each has a test that fails without its source change; I re-checked this per group.
 
-- **QA2-FA-1..4 (Worker):** a step cut short before the API reports usage is charged 200 output tokens per second it ran (`CUT_SHORT_TOKENS_PER_SEC`), capped at `max_tokens`, or streamed characters / 3 if more. An error after a thinking-only phase is counted. Owner default: a normal cancel is over-counted about 2–4× against the daily cap.
+- **QA2-FA-1, QA2-FA-2, QA2-FA-3, QA2-FA-4 (Worker):** a step cut short before the API reports usage is charged 200 output tokens per second it ran (`CUT_SHORT_TOKENS_PER_SEC`), capped at `max_tokens`, or streamed characters / 3 if more. An error after a thinking-only phase is counted. Owner default: a normal cancel is over-counted about 2–4× against the daily cap.
 - **QA2-F7-3 (Worker):** `MODEL_<MODE>` must be an exact id in `MODE_MODELS` (models that take adaptive thinking and effort). Anything else is ignored: that mode keeps `MODEL`, `/health` lists it under `ignoredModels`, and the deploy check fails.
 - **QA2-FB-1:** the error card's reset calls `stopSaving()` before wiping, so the unload save cannot write the crashing state back.
 - **QA2-FB-2:** Escobar's reminder Apply resyncs with `prompt: true`, like the Settings toggle.
