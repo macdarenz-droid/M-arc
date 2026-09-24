@@ -268,3 +268,31 @@ priceFor: an id with no matching key now uses UNKNOWN_PRICE = the dearest rates 
 ## Low items
 
 The 32 low items are in `docs/qa/LIVE-QA-2.md`, each with evidence and most with a suggested fix. Fix them after the patches, a test for each, with the QA2 id in the commit message.
+
+## Update 2026-09-24: the follow-ups are done and verified
+
+The four REQUIRED FOLLOW-UP changes and the 44 px effort inset are now in `docs/qa/fixes/F.patch`, which applies on top of W1, B, C, D and W2. `docs/qa/fixes/ALL.patch` is the whole set as one patch against **3a65b2f**.
+
+The complete set was verified in a clean worktree at 3a65b2f with the branch's own `npm ci`:
+- `tsc`: clean.
+- vitest: 863 of 863 tests passed, including under `TZ=America/New_York` and `TZ=Asia/Manila`.
+- `MARC_PERF=1`: 3 of 3 passed.
+- Worker check: 88 of 88 passed.
+- `npm run build`: OK.
+- `npm run gate`: **PASS** (5 themes, past-session effort cross-row check included).
+
+The follow-up tests fail without their source change.
+
+Follow-up details:
+- **QA2-F7-3:** `usableOverride` accepts exact ids only, and the test now expects a dated id to be ignored.
+- **QA2-F7-1:** `priceFor` accepts an exact id or `alias-YYYYMMDD` only. `claude-sonnet-5-5` and `claude-opus-5-6` are priced as unknown, and `claude-haiku-4-5-20251001` resolves to Haiku.
+- **QA2-FC-2:** `weeklyReviewInsights` runs its e1RM loop on `sinceLastBreak(...)`. New tests: a comeback gives no "flat" note, and a rebuild reads "rising".
+- **QA2-FC-1:** new `progressValue` and `progressHint` in `progressTrend.ts`. The sparkline and hint follow the mode: assisted is plotted as negated assistance, bodyweight as reps, a hold as seconds.
+- **QA-R7-1:** `.effort button::before { inset: -8px -2px; }` gives 44 px tall. It stays -2px sideways so it doesn't overlap the next button in the 4 px gap. The review's -3px would have overlapped.
+
+Apply everything in one step:
+```sh
+git fetch origin claude/marc-regression-architecture-gegkbq
+git show origin/claude/marc-regression-architecture-gegkbq:docs/qa/fixes/ALL.patch | git apply --3way --index
+```
+If `git apply` is blocked, make the same edits by hand from the patch, then run the checks above.
