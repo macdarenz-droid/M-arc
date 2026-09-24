@@ -20,6 +20,18 @@ export interface Link {
   created_at: number; last_used_at: number | null
 }
 export interface Author { author: string; kind: Kind; via: string }
+export interface Agent {
+  id: string; project_id: string; link_id: string; name: string; kind: Kind; provider: string; model: string; effort: string
+  instructions: string; folder_id: string; on_message: number; on_mention: number; every_min: number; daily_runs: number
+  enabled: number; next_at: number | null; created_at: number; updated_at: number; day_start: number; day_runs: number
+}
+export interface AgentStat extends Agent { scope_id: string; runs_today: number; last_status: string | null; last_error: string | null; last_at: number | null }
+export interface Run {
+  id: string; agent_id: string; project_id: string; folder_id: string; reason: string; trigger_id: string | null; note: string
+  status: string; due_at: number; started_at: number | null; finished_at: number | null; tokens_in: number; tokens_out: number; error: string | null
+}
+/** Model providers Relay can run agents on, and the author kind their messages carry. */
+export const PROVIDERS: Record<string, Kind> = { openai: 'gpt', anthropic: 'claude', gemini: 'gemini' }
 
 export class HttpError extends Error {
   status: number
@@ -30,7 +42,7 @@ export class HttpError extends Error {
 }
 
 const CHUNK = 1 << 20
-const SCHEMA = 1
+const SCHEMA = 2
 // Durable Object SQLite allows 100 bound parameters per statement and 50-byte LIKE patterns.
 const BATCH = 90
 export const MAX_DEPTH = 24
@@ -89,6 +101,9 @@ export function segments(path: unknown): string[] {
 export class Store {
   sql: Sql
   now: () => number
+  /** Called after every new message (the agent engine listens here). */
+  onMessage?: (m: Message) => void
+  private origin_?: string
 
   constructor(sql: Sql, now: () => number = Date.now) {
     this.sql = sql
@@ -102,7 +117,7 @@ export class Store {
     const v = Number(s.get<{ v: string }>(`SELECT v FROM meta WHERE k='schema'`)?.v ?? 0)
     if (v >= SCHEMA) return
     s.tx(() => {
-      s.script(`
+      if (v < 1) s.script(`
         CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, slug TEXT NOT NULL UNIQUE, name TEXT NOT NULL,
           description TEXT NOT NULL DEFAULT '', root_id TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
         CREATE TABLE IF NOT EXISTS folders (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, parent_id TEXT, name TEXT NOT NULL,
@@ -123,6 +138,22 @@ export class Store {
         CREATE TABLE IF NOT EXISTS links (id TEXT PRIMARY KEY, token TEXT NOT NULL UNIQUE, project_id TEXT NOT NULL, folder_id TEXT NOT NULL,
           name TEXT NOT NULL, kind TEXT NOT NULL, can_write INTEGER NOT NULL, created_at INTEGER NOT NULL, last_used_at INTEGER);
       `)
+      if (v < 2) {
+        s.script(`
+          CREATE TABLE IF NOT EXISTS agents (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, link_id TEXT NOT NULL, name TEXT NOT NULL,
+            kind TEXT NOT NULL, provider TEXT NOT NULL, model TEXT NOT NULL, effort TEXT NOT NULL DEFAULT '', instructions TEXT NOT NULL DEFAULT '',
+            folder_id TEXT NOT NULL, on_message INTEGER NOT NULL DEFAULT 1, on_mention INTEGER NOT NULL DEFAULT 1, every_min INTEGER NOT NULL DEFAULT 0,
+            daily_runs INTEGER NOT NULL DEFAULT 30, enabled INTEGER NOT NULL DEFAULT 1, next_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+            day_start INTEGER NOT NULL DEFAULT 0, day_runs INTEGER NOT NULL DEFAULT 0);
+          CREATE INDEX IF NOT EXISTS agents_project ON agents(project_id);
+          CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, project_id TEXT NOT NULL, folder_id TEXT NOT NULL,
+            reason TEXT NOT NULL, trigger_id TEXT, note TEXT NOT NULL DEFAULT '', status TEXT NOT NULL, due_at INTEGER NOT NULL,
+            started_at INTEGER, finished_at INTEGER, tokens_in INTEGER NOT NULL DEFAULT 0, tokens_out INTEGER NOT NULL DEFAULT 0, error TEXT);
+          CREATE INDEX IF NOT EXISTS runs_queue ON runs(status, due_at);
+          CREATE INDEX IF NOT EXISTS runs_agent ON runs(agent_id, due_at);
+          ALTER TABLE links ADD COLUMN agent_id TEXT;
+        `)
+      }
       s.run(`INSERT OR REPLACE INTO meta (k, v) VALUES ('schema', ?)`, String(SCHEMA))
       s.run(`INSERT OR IGNORE INTO meta (k, v) VALUES ('seq', '0')`)
       if (v === 0 && !s.get(`SELECT 1 FROM projects`)) {
@@ -132,7 +163,8 @@ export class Store {
           body:
             'Welcome to **M/ARC** on Relay.\n\n- Every folder has a **Thread** and **Files**. Drop files anywhere.\n' +
             '- **Share** creates a link for Claude, GPT or any agent: read-only, or read + write.\n' +
-            '- Chat apps that cannot post: paste their reply with **as → GPT / Claude** in the composer.',
+            '- Chat apps reply on their own once connected: **Share → Connector**.\n' +
+            '- **Agents** (GPT, Claude, Gemini) can be assigned to a folder: Relay runs them when there is work.',
         })
       }
     })
@@ -201,7 +233,7 @@ export class Store {
     const p = this.project(id)
     this.sql.tx(() => {
       this.sql.run(`DELETE FROM chunks WHERE file_id IN (SELECT id FROM files WHERE project_id = ?)`, p.id)
-      for (const t of ['files', 'messages', 'links', 'folders']) this.sql.run(`DELETE FROM ${t} WHERE project_id = ?`, p.id)
+      for (const t of ['files', 'messages', 'links', 'folders', 'agents', 'runs']) this.sql.run(`DELETE FROM ${t} WHERE project_id = ?`, p.id)
       this.sql.run(`DELETE FROM projects WHERE id = ?`, p.id)
       this.bump()
     })
@@ -315,6 +347,9 @@ export class Store {
     const ids = this.subtree(f.id)
     this.sql.tx(() => {
       for (const id of ids) {
+        for (const a of this.sql.all<{ id: string }>(
+          `SELECT a.id FROM agents a LEFT JOIN links l ON l.id = a.link_id WHERE a.folder_id = ? OR l.folder_id = ?`, id, id))
+          this.dropAgent(a.id)
         this.sql.run(`DELETE FROM chunks WHERE file_id IN (SELECT id FROM files WHERE folder_id = ?)`, id)
         for (const t of ['files', 'messages', 'links']) this.sql.run(`DELETE FROM ${t} WHERE folder_id = ?`, id)
         this.sql.run(`DELETE FROM folders WHERE id = ?`, id)
@@ -361,8 +396,9 @@ export class Store {
   createMessage(folderId: string, who: Author, input: { body?: unknown; file_ids?: unknown }): Message {
     const folder = this.folder(folderId)
     const fileIds = Array.isArray(input.file_ids) ? input.file_ids.map(String).slice(0, 50) : []
-    const body = cleanBody(input.body, fileIds.length > 0)
-    return this.sql.tx(() => {
+    // A link's messages never carry a link token (a write key) into a thread others read.
+    const body = who.via === 'owner' ? cleanBody(input.body, fileIds.length > 0) : cleanBody(input.body, fileIds.length > 0).replace(/rl_[A-Za-z0-9]{32}/g, 'rl_[hidden]')
+    const m = this.sql.tx(() => {
       const id = randomId()
       const t = this.now()
       this.sql.run(
@@ -378,6 +414,12 @@ export class Store {
       this.bump()
       return this.message(id)
     })
+    try {
+      this.onMessage?.(m)
+    } catch (e) {
+      console.error('message hook failed', e)
+    }
+    return m
   }
 
   updateMessage(id: string, body: unknown): Message {
@@ -519,7 +561,7 @@ export class Store {
 
   // ── links ───────────────────────────────────────────────────
   links(projectId: string): Link[] {
-    return this.sql.all<Link>(`SELECT * FROM links WHERE project_id = ? ORDER BY created_at DESC`, projectId)
+    return this.sql.all<Link>(`SELECT * FROM links WHERE project_id = ? AND agent_id IS NULL ORDER BY created_at DESC`, projectId)
   }
 
   createLink(projectId: string, input: { name?: unknown; kind?: unknown; folder_id?: unknown; can_write?: unknown }): Link {
@@ -549,6 +591,213 @@ export class Store {
     const l = this.sql.get<Link>(`SELECT * FROM links WHERE token = ?`, token)
     if (l && (!l.last_used_at || this.now() - l.last_used_at > 60_000)) this.sql.run(`UPDATE links SET last_used_at = ? WHERE id = ?`, this.now(), l.id)
     return l
+  }
+
+  // ── agents ──────────────────────────────────────────────────
+  /** Agents with today's run count and their latest outcome. */
+  agents(projectId: string): AgentStat[] {
+    const day = this.now() - (this.now() % 86_400_000)
+    return this.sql.all<AgentStat>(`
+      SELECT a.*, l.folder_id AS scope_id,
+        CASE WHEN a.day_start = ? THEN a.day_runs ELSE 0 END AS runs_today,
+        (SELECT r.status FROM runs r WHERE r.agent_id = a.id AND r.finished_at IS NOT NULL ORDER BY r.finished_at DESC LIMIT 1) AS last_status,
+        (SELECT r.error FROM runs r WHERE r.agent_id = a.id AND r.finished_at IS NOT NULL ORDER BY r.finished_at DESC LIMIT 1) AS last_error,
+        (SELECT MAX(r.finished_at) FROM runs r WHERE r.agent_id = a.id) AS last_at
+      FROM agents a JOIN links l ON l.id = a.link_id WHERE a.project_id = ? ORDER BY a.name COLLATE NOCASE`, day, projectId)
+  }
+
+  agent(id: string): Agent {
+    const a = this.sql.get<Agent>(`SELECT * FROM agents WHERE id = ?`, id)
+    if (!a) throw new HttpError(404, 'Agent not found')
+    return a
+  }
+
+  linkById(id: string): Link | undefined {
+    return this.sql.get<Link>(`SELECT * FROM links WHERE id = ?`, id)
+  }
+
+  private agentFields(p: Project, input: Record<string, unknown>, cur?: Agent) {
+    const pick = <T>(k: string, d: T): unknown => (input[k] === undefined ? d : input[k])
+    const name = cleanName(pick('name', cur?.name), 'Agent name', 40)
+    if (this.sql.get(`SELECT 1 FROM agents WHERE project_id = ? AND name = ? COLLATE NOCASE AND id != ?`, p.id, name, cur?.id ?? ''))
+      throw new HttpError(409, `An agent named “${name}” already exists`)
+    const provider = String(pick('provider', cur?.provider ?? ''))
+    if (!(provider in PROVIDERS)) throw new HttpError(400, 'Provider must be openai, anthropic or gemini')
+    const model = String(pick('model', cur?.model ?? '')).trim()
+    if (!/^[\w.:/-]{1,80}$/.test(model)) throw new HttpError(400, 'Model id is missing or invalid')
+    const effort = String(pick('effort', cur?.effort ?? '') ?? '')
+    if (!['', 'low', 'medium', 'high'].includes(effort)) throw new HttpError(400, 'Effort must be low, medium or high')
+    const folder = this.folder(String(pick('folder_id', cur?.folder_id ?? p.root_id)))
+    if (folder.project_id !== p.id) throw new HttpError(400, 'Folder is not in this project')
+    const every = Math.round(Number(pick('every_min', cur?.every_min ?? 0)) || 0)
+    if (every !== 0 && (every < 15 || every > 10_080)) throw new HttpError(400, 'Check-ins run between every 15 minutes and once a week')
+    const flag = (k: string, d: number) => (input[k] === undefined ? d : input[k] ? 1 : 0)
+    return {
+      name, provider, kind: PROVIDERS[provider] as Kind, model, effort, folder_id: folder.id, every_min: every,
+      instructions: String(pick('instructions', cur?.instructions ?? '') ?? '').slice(0, 8000),
+      daily_runs: Math.min(Math.max(Math.round(Number(pick('daily_runs', cur?.daily_runs ?? 30)) || 30), 1), 500),
+      on_message: flag('on_message', cur?.on_message ?? 1), on_mention: flag('on_mention', cur?.on_mention ?? 1), enabled: flag('enabled', cur?.enabled ?? 1),
+      scope: pick('scope', undefined) === undefined ? undefined : pick('scope', undefined) === 'folder' ? folder.id : p.root_id,
+    }
+  }
+
+  /** An agent gets its own write link: identity, scope and permissions work exactly as for any link. */
+  createAgent(projectId: string, input: Record<string, unknown>): Agent {
+    const p = this.project(projectId)
+    const f = this.agentFields(p, input)
+    const t = this.now()
+    const id = randomId()
+    return this.sql.tx(() => {
+      const link = this.createLink(p.id, { name: f.name, kind: f.kind, folder_id: f.scope ?? f.folder_id, can_write: true })
+      this.sql.run(`UPDATE links SET agent_id = ? WHERE id = ?`, id, link.id)
+      this.sql.run(
+        `INSERT INTO agents (id, project_id, link_id, name, kind, provider, model, effort, instructions, folder_id, on_message, on_mention,
+           every_min, daily_runs, enabled, next_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        id, p.id, link.id, f.name, f.kind, f.provider, f.model, f.effort, f.instructions, f.folder_id, f.on_message, f.on_mention,
+        f.every_min, f.daily_runs, f.enabled, f.every_min ? t + f.every_min * 60_000 : null, t, t,
+      )
+      this.bump()
+      return this.agent(id)
+    })
+  }
+
+  updateAgent(id: string, input: Record<string, unknown>): Agent {
+    const cur = this.agent(id)
+    const f = this.agentFields(this.project(cur.project_id), input, cur)
+    const t = this.now()
+    return this.sql.tx(() => {
+      this.sql.run(
+        `UPDATE agents SET name = ?, kind = ?, provider = ?, model = ?, effort = ?, instructions = ?, folder_id = ?, on_message = ?, on_mention = ?,
+           every_min = ?, daily_runs = ?, enabled = ?, next_at = ?, updated_at = ? WHERE id = ?`,
+        f.name, f.kind, f.provider, f.model, f.effort, f.instructions, f.folder_id, f.on_message, f.on_mention, f.every_min, f.daily_runs,
+        f.enabled, f.every_min ? (cur.every_min === f.every_min && cur.next_at ? cur.next_at : t + f.every_min * 60_000) : null, t, cur.id,
+      )
+      this.sql.run(`UPDATE links SET name = ?, kind = ? WHERE id = ?`, f.name, f.kind, cur.link_id)
+      if (f.scope !== undefined) this.sql.run(`UPDATE links SET folder_id = ? WHERE id = ?`, f.scope, cur.link_id)
+      if (!f.enabled) this.sql.run(`DELETE FROM runs WHERE agent_id = ? AND status = 'queued'`, cur.id)
+      this.bump()
+      return this.agent(cur.id)
+    })
+  }
+
+  private dropAgent(id: string) {
+    const a = this.sql.get<Agent>(`SELECT * FROM agents WHERE id = ?`, id)
+    if (!a) return
+    this.sql.run(`DELETE FROM runs WHERE agent_id = ?`, a.id)
+    this.sql.run(`DELETE FROM links WHERE id = ?`, a.link_id)
+    this.sql.run(`DELETE FROM agents WHERE id = ?`, a.id)
+  }
+
+  deleteAgent(id: string) {
+    this.agent(id)
+    this.sql.tx(() => {
+      this.dropAgent(id)
+      this.bump()
+    })
+  }
+
+  // ── runs (the agent work queue) ─────────────────────────────
+  /** One queued run per agent and folder: a newer trigger joins the waiting run instead of adding another. */
+  enqueue(o: { agent: Agent; folderId: string; reason: string; due: number; triggerId?: string; note?: string }) {
+    const q = this.sql.get<Run>(`SELECT * FROM runs WHERE agent_id = ? AND folder_id = ? AND status = 'queued'`, o.agent.id, o.folderId)
+    if (q) {
+      const note = [q.note, o.note].filter(Boolean).join('\n').slice(0, 4000)
+      const reason = q.reason === 'mention' || o.reason === 'schedule' ? q.reason : o.reason
+      this.sql.run(`UPDATE runs SET due_at = MIN(due_at, ?), trigger_id = COALESCE(?, trigger_id), reason = ?, note = ? WHERE id = ?`,
+        o.due, o.triggerId ?? null, reason, note, q.id)
+      return
+    }
+    this.sql.run(
+      `INSERT INTO runs (id, agent_id, project_id, folder_id, reason, trigger_id, note, status, due_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'queued', ?)`,
+      randomId(), o.agent.id, o.agent.project_id, o.folderId, o.reason, o.triggerId ?? null, (o.note ?? '').slice(0, 4000), o.due,
+    )
+  }
+
+  nextDue(now: number): Run | undefined {
+    return this.sql.get<Run>(`SELECT * FROM runs WHERE status = 'queued' AND due_at <= ? ORDER BY due_at LIMIT 1`, now)
+  }
+
+  /** Starting a run is what counts against the daily cap; the counter lives on the agent, so pruning runs never resets it. */
+  startRun(run: Run) {
+    const day = this.now() - (this.now() % 86_400_000)
+    this.sql.run(`UPDATE runs SET status = 'running', started_at = ? WHERE id = ?`, this.now(), run.id)
+    this.sql.run(`UPDATE agents SET day_runs = CASE WHEN day_start = ? THEN day_runs + 1 ELSE 1 END, day_start = ? WHERE id = ?`, day, day, run.agent_id)
+    this.bump()
+  }
+
+  finishRun(id: string, status: 'done' | 'error' | 'skipped', o: { tokens_in?: number; tokens_out?: number; error?: string | null } = {}) {
+    const r = this.sql.get<Run>(`SELECT * FROM runs WHERE id = ?`, id)
+    if (!r) return
+    this.sql.run(`UPDATE runs SET status = ?, finished_at = ?, tokens_in = ?, tokens_out = ?, error = ? WHERE id = ?`,
+      status, this.now(), o.tokens_in ?? 0, o.tokens_out ?? 0, o.error ?? null, id)
+    this.sql.run(`DELETE FROM runs WHERE agent_id = ? AND status != 'queued' AND id NOT IN
+      (SELECT id FROM runs WHERE agent_id = ? ORDER BY status = 'skipped', due_at DESC LIMIT 200)`, r.agent_id, r.agent_id)
+    this.bump()
+  }
+
+  runs(agentId: string, limit = 20): Run[] {
+    return this.sql.all<Run>(`SELECT * FROM runs WHERE agent_id = ? ORDER BY due_at DESC LIMIT ?`, agentId, limit)
+  }
+
+  running(projectId: string): { agent_id: string; folder_id: string }[] {
+    return this.sql.all(`SELECT agent_id, folder_id FROM runs WHERE project_id = ? AND status = 'running'`, projectId)
+  }
+
+  runsToday(a: Agent): number {
+    const day = this.now() - (this.now() % 86_400_000)
+    const row = this.sql.get<{ day_start: number; day_runs: number }>(`SELECT day_start, day_runs FROM agents WHERE id = ?`, a.id)
+    return row && row.day_start === day ? row.day_runs : 0
+  }
+
+  lastRunAt(agentId: string): number {
+    return Number(this.sql.get<{ t: number }>(`SELECT MAX(started_at) AS t FROM runs WHERE agent_id = ?`, agentId)?.t ?? 0)
+  }
+
+  /** Agents whose scheduled check-in is due; the caller moves next_at forward. */
+  checkinsDue(now: number): Agent[] {
+    return this.sql.all<Agent>(`SELECT * FROM agents WHERE enabled = 1 AND every_min > 0 AND next_at <= ?`, now)
+  }
+
+  setNextAt(id: string, t: number) {
+    this.sql.run(`UPDATE agents SET next_at = ? WHERE id = ?`, t, id)
+  }
+
+  /** Anything new below rootId since t from the owner or a non-agent link. Agents never keep each other's check-ins going. */
+  activitySince(rootId: string, t: number): boolean {
+    return !!this.sql.get(
+      `${SUBTREE} SELECT 1 FROM messages m WHERE m.folder_id IN (SELECT id FROM t) AND m.created_at > ? AND m.via NOT IN (SELECT link_id FROM agents)
+       UNION ALL SELECT 1 FROM files f WHERE f.folder_id IN (SELECT id FROM t) AND f.updated_at > ? AND f.via NOT IN (SELECT link_id FROM agents) LIMIT 1`,
+      rootId, t, t)
+  }
+
+  /** Stale runs (their worker was cut off) become errors instead of "working" forever. */
+  expireRuns(olderThan: number) {
+    this.sql.run(`UPDATE runs SET status = 'error', error = 'Timed out', finished_at = ? WHERE status = 'running' AND started_at < ?`, this.now(), olderThan)
+  }
+
+  /** Messages in a folder since the last one the owner wrote: how long agents have been talking among themselves. */
+  chainLength(folderId: string): number {
+    return Number(this.sql.get<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM messages WHERE folder_id = ? AND created_at >
+         IFNULL((SELECT MAX(created_at) FROM messages WHERE folder_id = ? AND via = 'owner'), 0)`, folderId, folderId)?.n ?? 0)
+  }
+
+  /** When the engine should wake next: the earliest queued run or scheduled check-in. */
+  nextWake(): number | null {
+    const r = this.sql.get<{ t: number | null }>(`SELECT MIN(t) AS t FROM (
+      SELECT MIN(due_at) AS t FROM runs WHERE status = 'queued'
+      UNION ALL SELECT MIN(next_at) AS t FROM agents WHERE enabled = 1 AND every_min > 0)`)
+    return r?.t ?? null
+  }
+
+  /** The public origin, remembered from owner requests, for links inside agent context. */
+  origin(): string {
+    return this.origin_ ?? (this.origin_ = this.sql.get<{ v: string }>(`SELECT v FROM meta WHERE k = 'origin'`)?.v ?? 'http://localhost')
+  }
+  rememberOrigin(origin: string) {
+    if (this.origin() === origin) return
+    this.origin_ = origin
+    this.sql.run(`INSERT OR REPLACE INTO meta (k, v) VALUES ('origin', ?)`, origin)
   }
 
   // ── search ──────────────────────────────────────────────────

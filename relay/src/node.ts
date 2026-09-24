@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url'
 import { handle, isDynamic, secure } from './app.ts'
 import { nodeSql } from './sql.ts'
 import { Store, newToken } from './store.ts'
+import { Engine } from './engine.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const pub = resolve(here, '../public')
@@ -27,6 +28,9 @@ if (!ownerKey) {
 const db = new DatabaseSync(join(dataDir, 'relay.db'))
 db.exec('PRAGMA journal_mode = WAL')
 const store = new Store(nodeSql(db))
+const env = process.env
+const engine = new Engine({ store, keys: { openai: env.OPENAI_API_KEY, anthropic: env.ANTHROPIC_API_KEY, gemini: env.GEMINI_API_KEY, openaiBase: env.OPENAI_BASE_URL } })
+setInterval(() => void engine.tick().catch(e => console.error('engine', e)), 2000).unref()
 const maxFileBytes = (Number(process.env.MAX_FILE_MB) || 25) * 1048576
 const TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -70,7 +74,7 @@ async function serve(req: IncomingMessage, res: ServerResponse) {
     duplex: 'half',
   })
   const out = isDynamic(url.pathname)
-    ? await handle(request, { store, ownerKey, maxFileBytes, ip: req.socket.remoteAddress ?? '' })
+    ? await handle(request, { store, ownerKey, maxFileBytes, ip: req.socket.remoteAddress ?? '', providers: engine.providers() })
     : secure(await serveStatic(url), false)
   res.writeHead(out.status, Object.fromEntries(out.headers))
   if (out.body && req.method !== 'HEAD') res.end(Buffer.from(await out.arrayBuffer()))
