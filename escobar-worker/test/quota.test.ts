@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import Anthropic from '@anthropic-ai/sdk';
 import { QuotaCounter, type Limits } from '../src/quotaDO';
-import { handle } from '../src/handler';
+import { handle, CUT_SHORT_TOKENS_PER_SEC } from '../src/handler';
 import { checkQuota, recordStep } from '../src/quota';
-import type { Env } from '../src/anthropic';
+import { UpstreamRelay } from '../src/upstreamRelay';
+import type { ClientLike, Env } from '../src/anthropic';
 import { baseEnv, deps, eventsFor, finalMessage, mockClient, post, sse, turn, DEVICE } from './helpers';
 
 /** In-memory Durable Object storage: `kv` is synchronous like SyncKvStorage; the alarm calls yield. */
@@ -189,5 +191,100 @@ describe('billed steps are counted however they end (QA-R0-1, QA-R0-2, QA-R0-3)'
     const statuses: number[] = [];
     for (let i = 0; i < 4; i++) statuses.push(await run(env, { events: eventsFor(toolStep), final: finalMessage(toolStep, 'tool_use') }, false, { 'x-escobar-device': `dev_${String(i).padStart(24, '0')}`, 'cf-connecting-ip': '203.0.113.9' }));
     expect(statuses).toEqual([200, 200, 429, 429]);
+  });
+});
+
+describe('thinking the caller never sees is counted when a step is cut short (QA2-FA-1..4)', () => {
+  const originalRelayClient = UpstreamRelay.makeClient;
+  afterEach(() => { UpstreamRelay.makeClient = originalRelayClient; });
+  const setup = (extra: Partial<Env> = {}) => { const ns = fakeNamespace(); return { ns, env: baseEnv({ QUOTA_DO: ns as never, ...extra }) }; };
+  const row = (ns: ReturnType<typeof fakeNamespace>) => ns.objects.get('2026-09-22')?.state.data.get(`d:${DEVICE}`);
+  const clock = () => ({ t: Date.parse('2026-09-22T12:00:00Z') });
+  const untilAbort = (signal?: AbortSignal) => new Promise((_, rej) => {
+    if (signal?.aborted) rej(new Anthropic.APIUserAbortError());
+    signal?.addEventListener('abort', () => rej(new Anthropic.APIUserAbortError()));
+  });
+  /**
+   * One step as the API streams it by default (thinking display "omitted"): the thinking block carries no
+   * text, `thinkMs` passes on the clock while the model thinks, then a short answer (or `fail`, or it keeps
+   * thinking until the caller goes away when `stopIn` is 'thinking').
+   */
+  function thinkingClient(c: { t: number }, o: { thinkMs: number; fail?: unknown; stopIn?: 'thinking' }): ClientLike {
+    return { beta: { messages: { stream(_p, opts) {
+      return {
+        async *[Symbol.asyncIterator]() {
+          yield { type: 'message_start', message: finalMessage([]) } as never;
+          yield { type: 'content_block_start', index: 0, content_block: { type: 'thinking', thinking: '', signature: '' } } as never;
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'thinking_delta', thinking: '' } } as never;
+          c.t += o.thinkMs;
+          if (o.fail) throw o.fail;
+          if (o.stopIn === 'thinking') await untilAbort(opts?.signal);
+          yield { type: 'content_block_delta', index: 0, delta: { type: 'signature_delta', signature: 'sig' } } as never;
+          yield { type: 'content_block_stop', index: 0 } as never;
+          yield { type: 'content_block_start', index: 1, content_block: { type: 'text', text: '' } } as never;
+          yield { type: 'content_block_delta', index: 1, delta: { type: 'text_delta', text: 'Here is your plan.' } } as never;
+          await untilAbort(opts?.signal);
+        },
+        finalMessage: () => new Promise(() => {}),
+        abort() {},
+      };
+    } } } };
+  }
+  /** A UPSTREAM namespace backed by one real UpstreamRelay running `client`. */
+  function relayNs(client: ClientLike) {
+    UpstreamRelay.makeClient = () => client;
+    const relay = new UpstreamRelay({ waitUntil: () => {} } as never, {} as never);
+    return { idFromName: (n: string) => n, get: () => ({ fetch: (url: string, init: RequestInit) => relay.fetch(new Request(url, init)) }) };
+  }
+  /** Sends one turn and hangs up as soon as `marker` has arrived; resolves once the step is recorded. */
+  async function hangUpAfter(env: Env, client: ClientLike, c: { t: number }, mode: string, marker: string) {
+    const pending: Promise<unknown>[] = [];
+    const r = await handle(post(turn({ mode })), env, { ...deps(client), now: () => c.t, waitUntil: p => { pending.push(p); } });
+    if (r.status !== 200) return r.status;
+    const reader = r.body!.getReader();
+    const dec = new TextDecoder();
+    let seen = '';
+    while (!seen.includes(marker)) { const { value, done } = await reader.read(); if (done) break; seen += dec.decode(value, { stream: true }); }
+    await reader.cancel();
+    await Promise.all(pending);
+    return r.status;
+  }
+
+  it('a hang-up right after the answer starts counts the minute of hidden thinking, so the output cap trips', async () => {
+    const c = clock();
+    const { ns, env } = setup({ MAX_OUTPUT_PER_DEVICE: '1000' });
+    const client = thinkingClient(c, { thinkMs: 60_000 });
+    expect(await hangUpAfter(env, client, c, 'plan', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 60 * CUT_SHORT_TOKENS_PER_SEC });
+    expect(await hangUpAfter(env, client, c, 'plan', '"t":"text"')).toBe(429);
+  });
+  it('the same through the US relay', async () => {
+    const c = clock();
+    const client = thinkingClient(c, { thinkMs: 60_000 });
+    const { ns, env } = setup({ MAX_OUTPUT_PER_DEVICE: '1000', UPSTREAM: relayNs(client) as never });
+    expect(await hangUpAfter(env, mockClient([]), c, 'plan', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 60 * CUT_SHORT_TOKENS_PER_SEC });
+    expect(await hangUpAfter(env, mockClient([]), c, 'plan', '"t":"text"')).toBe(429);
+  });
+  it('a hang-up while the model is still thinking is counted by how long it thought', async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    expect(await hangUpAfter(env, thinkingClient(c, { thinkMs: 45_000, stopIn: 'thinking' }), c, 'chat', '"t":"thinking"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 45 * CUT_SHORT_TOKENS_PER_SEC });
+  });
+  it("the estimate never passes the step's max_tokens", async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    expect(await hangUpAfter(env, thinkingClient(c, { thinkMs: 600_000 }), c, 'live', '"t":"text"')).toBe(200);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 4000 });
+  });
+  it('an API error after a thinking-only phase is counted too (QA2-FA-3)', async () => {
+    const c = clock();
+    const { ns, env } = setup();
+    const boom = new Anthropic.InternalServerError(500, { type: 'error', error: { type: 'api_error', message: 'boom' } }, 'boom', new Headers());
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const ev = await sse(await handle(post(turn()), env, { ...deps(thinkingClient(c, { thinkMs: 30_000, fail: boom })), now: () => c.t }));
+    expect(ev.map(e => e.t)).toEqual(['start', 'thinking', 'error']);
+    expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 30 * CUT_SHORT_TOKENS_PER_SEC });
   });
 });

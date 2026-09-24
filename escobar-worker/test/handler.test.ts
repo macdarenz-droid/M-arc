@@ -12,7 +12,14 @@ const TEXT = [{ type: 'thinking', thinking: '', signature: 'sig' }, { type: 'tex
 describe('routes, CORS and device', () => {
   it('health answers protocol 2', async () => {
     const r = await handle(new Request('https://x/health'), baseEnv(), deps(mockClient([])));
-    expect(await r.json()).toEqual({ ok: true, protocol: 2, model: 'claude-opus-5', models: { chat: 'claude-opus-5', plan: 'claude-opus-5', live: 'claude-opus-5', brief: 'claude-opus-5', moment: 'claude-opus-5', summarize: 'claude-opus-5' }, modes: ['chat', 'plan', 'live', 'brief', 'moment', 'summarize'], quotas: false, relay: false, key: true }); // F7: /health lists each mode's model
+    expect(await r.json()).toEqual({ ok: true, protocol: 2, model: 'claude-opus-5', models: { chat: 'claude-opus-5', plan: 'claude-opus-5', live: 'claude-opus-5', brief: 'claude-opus-5', moment: 'claude-opus-5', summarize: 'claude-opus-5' }, modes: ['chat', 'plan', 'live', 'brief', 'moment', 'summarize'], quotas: false, relay: false, key: true, ignoredModels: [] }); // F7: /health lists each mode's model
+  });
+  it('health names the modes whose model override was ignored (QA2-F7-3), without echoing the value', async () => {
+    const r = await handle(new Request('https://x/health'), baseEnv({ MODEL_LIVE: 'claude-haiku-4-5', MODEL_BRIEF: 'claude-sonnet-5' }), deps(mockClient([])));
+    const body = (await r.json()) as { models: Record<string, string>; ignoredModels: string[] };
+    expect(body.ignoredModels).toEqual(['live']);
+    expect(body.models).toMatchObject({ live: 'claude-opus-5', brief: 'claude-sonnet-5' });
+    expect(JSON.stringify(body)).not.toContain('haiku');
   });
   it('allows the app origins and configured web origins, refuses others', async () => {
     expect(corsHeaders('capacitor://localhost', baseEnv())['Access-Control-Allow-Origin']).toBe('capacitor://localhost');

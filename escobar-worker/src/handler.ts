@@ -3,7 +3,7 @@
  * relayed as server-sent events (§12.2, §12.4–12.6). Pure over injected deps so tests can
  * drive it with a scripted SDK stream.
  */
-import { buildParams, modelFor, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
+import { buildParams, modelFor, ignoredModelOverrides, noSystemRole, DEFAULT_MODEL, type ClientLike, type Env, type SseEvent, type ErrorCode } from './anthropic';
 import { localStep, relayStep, type StepResult } from './upstream';
 import { validateTurn, stepsSinceUser, MAX_BODY_BYTES } from './validate';
 import { checkQuota, recordStep } from './quota';
@@ -45,6 +45,15 @@ const fail = (status: number, code: ErrorCode, message: string, cors: Record<str
 export const billed = (r: StepResult): boolean => !!r.final || !!r.refused || r.emittedAny || !!r.aborted || !!r.timedOut;
 
 /**
+ * QA2-FA-1..4: output tokens per second a step is taken to produce while it runs, for a step cut
+ * short before the API reported its usage. Thinking is billed as output but never streamed (display
+ * "omitted" is the default, so a thinking block arrives empty), so how long the step ran is the only
+ * measure of it. Set above the output speed of every model a mode can use, so the estimate does not
+ * fall below the bill; it never passes the step's max_tokens.
+ */
+export const CUT_SHORT_TOKENS_PER_SEC = 200;
+
+/**
  * QA-R0-1: rate and daily limits key an IPv6 caller by its /64, the block one subscriber usually
  * controls, so rotating addresses inside it gains nothing. IPv4 stays as is.
  */
@@ -83,7 +92,7 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   if (origin && !('Access-Control-Allow-Origin' in cors)) return new Response('forbidden origin', { status: 403 });
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (url.pathname === '/health' && req.method === 'GET') {
-    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, models: Object.fromEntries(MODES.map(m => [m, modelFor(m, env)])), modes: MODES, quotas: !!(env.QUOTA_DO || env.QUOTA), relay: !!env.UPSTREAM, key: !!env.ANTHROPIC_API_KEY }, cors);
+    return json(200, { ok: true, protocol: PROTOCOL, model: env.MODEL || DEFAULT_MODEL, models: Object.fromEntries(MODES.map(m => [m, modelFor(m, env)])), modes: MODES, quotas: !!(env.QUOTA_DO || env.QUOTA), relay: !!env.UPSTREAM, key: !!env.ANTHROPIC_API_KEY, ignoredModels: ignoredModelOverrides(env) }, cors);
   }
   if (url.pathname !== '/v2/turn') return json(404, { t: 'error', code: 'invalid', message: 'not found' }, cors);
   if (req.method !== 'POST') return fail(405, 'invalid', 'use POST', cors);
@@ -127,9 +136,12 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
   const gone = () => { closed = true; upstream.abort(); };
   writer.closed.catch(gone);
   const write = (s: string) => { if (!closed) void writer.write(enc.encode(s)).catch(gone); };
-  // Characters of model output sent so far: the billed-output estimate when a step has no final message.
+  // Characters of model output sent so far, and whether the model began its answer (thinking
+  // included): with the step's running time, the billed-output estimate when it has no final message.
   let outChars = 0;
+  let modelOutput = false;
   const emit = (e: SseEvent) => {
+    if (e.t === 'thinking' || e.t === 'text' || e.t === 'tool') modelOutput = true;
     if (e.t === 'text') outChars += e.d.length;
     else if (e.t === 'tool_input') outChars += JSON.stringify(e.input ?? '').length;
     write(`data: ${JSON.stringify(e)}\n\n`);
@@ -141,10 +153,14 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
     emit({ t: 'start', requestId });
     const model = modelFor(body.mode, env);
     const turnSteps = stepsSinceUser(body.messages) + 1;
+    let stepStart = now;
     // PL-20: with the relay bound, the Anthropic call leaves from the US, not from this edge.
-    const step = (p: ReturnType<typeof buildParams>): Promise<StepResult> => env.UPSTREAM
-      ? relayStep(env, p, emit, { idleMs: deps.idleMs, signal: upstream.signal, shardKey: device })
-      : localStep(deps.makeClient(env), p, emit, { idleMs: deps.idleMs, signal: upstream.signal });
+    const step = (p: ReturnType<typeof buildParams>): Promise<StepResult> => {
+      stepStart = deps.now();
+      return env.UPSTREAM
+        ? relayStep(env, p, emit, { idleMs: deps.idleMs, signal: upstream.signal, shardKey: device })
+        : localStep(deps.makeClient(env), p, emit, { idleMs: deps.idleMs, signal: upstream.signal });
+    };
     let params = buildParams(body, env);
     let res = await step(params);
     if (res.systemRole && !res.emittedAny) {
@@ -161,8 +177,11 @@ export async function handle(req: Request, env: Env, deps: Deps): Promise<Respon
     console.log(JSON.stringify({ requestId, colo, mode: body.mode, model: res.final?.model ?? model, stop_reason: res.final?.stop_reason ?? null, in: usage.input_tokens ?? 0, out: usage.output_tokens ?? 0, cacheRead: usage.cache_read_input_tokens ?? 0, cacheWrite: usage.cache_creation_input_tokens ?? 0, steps: turnSteps, ms: deps.now() - now }));
     // QA-R0-1/2/3: every step the API bills is counted: a finished one, a refusal, and one cut short by
     // a hang-up, a timeout or a mid-stream error. Only an error before any output (nothing billed) is not.
-    if (billed(res)) {
-      const outputTokens = res.final?.usage?.output_tokens ?? res.outputTokens ?? Math.ceil(outChars / 3);
+    if (billed(res) || modelOutput) {
+      // QA2-FA-1..4: a cut-short step is charged for the time it ran, which covers thinking the stream never shows.
+      const ranSec = Math.max(0, deps.now() - stepStart) / 1000;
+      const cutShort = Math.min(params.max_tokens, Math.max(Math.ceil(outChars / 3), Math.ceil(ranSec * CUT_SHORT_TOKENS_PER_SEC)));
+      const outputTokens = res.final?.usage?.output_tokens ?? res.outputTokens ?? cutShort;
       const p = recordStep(env, keys, now, { turnEnded: res.final ? res.final.stop_reason !== 'tool_use' : true, outputTokens, turnSteps });
       if (deps.waitUntil) deps.waitUntil(p); else await p;
     }

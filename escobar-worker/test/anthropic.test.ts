@@ -120,7 +120,7 @@ describe('policy', () => {
   });
 });
 
-import { modelFor } from '../src/anthropic';
+import { modelFor, ignoredModelOverrides } from '../src/anthropic';
 describe('per-mode models (F7, D12)', () => {
   it('MODEL_<MODE> overrides one mode; the rest keep MODEL', () => {
     const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_BRIEF: 'claude-sonnet-5' });
@@ -132,6 +132,16 @@ describe('per-mode models (F7, D12)', () => {
   it('a malformed override is ignored', () => {
     expect(modelFor('chat', baseEnv({ MODEL: 'claude-opus-5', MODEL_CHAT: 'gpt-x; drop' }))).toBe('claude-opus-5');
     expect(modelFor('chat', baseEnv({ MODEL_CHAT: ' claude-opus-5-5 ' }))).toBe('claude-opus-5-5');
+  });
+  it('QA2-F7-3: an override the Worker cannot drive (a typo, Haiku 4.5, a dated id) is ignored, so that mode keeps MODEL', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_LIVE: 'claude-haiku-4-5', MODEL_PLAN: 'claude-sonet-5', MODEL_BRIEF: 'claude-sonnet-5', MODEL_CHAT: 'claude-opus-5-5-20261001' });
+    expect(modelFor('live', env)).toBe('claude-opus-5');
+    expect(modelFor('plan', env)).toBe('claude-opus-5');
+    expect(P(turn({ mode: 'live' }) as TurnBody, env).model).toBe('claude-opus-5');
+    expect(modelFor('brief', env)).toBe('claude-sonnet-5');
+    expect(modelFor('chat', env)).toBe('claude-opus-5'); // these models have no dated ids; a date suffix would 404
+    expect(ignoredModelOverrides(env)).toEqual(['chat', 'plan', 'live']);
+    expect(ignoredModelOverrides(baseEnv({ MODEL_BRIEF: 'claude-sonnet-5' }))).toEqual([]);
   });
   it('a model without system messages gets them folded, per mode', () => {
     const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_LIVE: 'claude-sonnet-5' });

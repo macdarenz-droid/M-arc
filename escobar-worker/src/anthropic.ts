@@ -8,7 +8,7 @@ import type { MessageCreateParamsStreaming, BetaMessageParam, BetaRawMessageStre
 import generated from './tools.generated.json';
 import { WORKER_POLICY } from './prompt/policy';
 import { renderManifest } from './prompt/manifest';
-import type { Mode } from './prompt/modes';
+import { MODES, type Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
 import type { QuotaCounter } from './quotaDO';
 import type { UpstreamRelay } from './upstreamRelay';
@@ -89,13 +89,27 @@ export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['me
   return out;
 }
 
-/** A model id as the API names them; anything else in an override is ignored. */
-const MODEL_ID = /^claude-[a-z0-9.-]{2,60}$/;
-/** F7: the model for one mode: MODEL_<MODE> when set and well-formed, else MODEL, else the default. */
-export function modelFor(mode: TurnBody['mode'], env: Env): string {
+/**
+ * QA2-F7-3: the models a mode may be switched to. Each takes the request buildParams sends (adaptive
+ * thinking and output_config.effort from low to max). Anything else, a typo or a model such as Haiku
+ * 4.5 that rejects adaptive thinking, would fail every turn in that mode, so it is ignored. These ids
+ * have no dated snapshots, so an id with a date suffix is ignored like any other unknown id.
+ */
+const MODE_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-opus-4-8', 'claude-opus-4-7', 'claude-sonnet-5', 'claude-fable-5-1', 'claude-fable-5', 'claude-mythos-5-1', 'claude-mythos-5']);
+const overrideFor = (mode: TurnBody['mode'], env: Env): string | undefined => {
   const v = (env as Record<string, unknown>)[`MODEL_${mode.toUpperCase()}`];
-  if (typeof v === 'string' && MODEL_ID.test(v.trim())) return v.trim();
+  return typeof v === 'string' && v.trim() ? v.trim() : undefined;
+};
+const usableOverride = (v: string): boolean => MODE_MODELS.has(v);
+/** F7: the model for one mode: MODEL_<MODE> when set to a model the Worker can drive, else MODEL, else the default. */
+export function modelFor(mode: TurnBody['mode'], env: Env): string {
+  const v = overrideFor(mode, env);
+  if (v && usableOverride(v)) return v;
   return env.MODEL || DEFAULT_MODEL;
+}
+/** QA2-F7-3: the modes whose MODEL_<MODE> is set but ignored, for /health and the deploy check. */
+export function ignoredModelOverrides(env: Env): Mode[] {
+  return MODES.filter(m => { const v = overrideFor(m, env); return !!v && !usableOverride(v); });
 }
 
 export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boolean } = {}): MessageCreateParamsStreaming {

@@ -10,6 +10,8 @@ compatibility_flags = ["nodejs_compat", "enable_request_signal"]
 # Default model and per-mode effort; change here without touching code.
 MODEL = "claude-opus-5"
 # F7: per-mode models, each falling back to MODEL. The owner picks; see docs/REMEDIATION-PROGRESS.md (F7) for verified prices.
+# Only models that take adaptive thinking and effort are used (MODE_MODELS in src/anthropic.ts; not Haiku 4.5).
+# Any other value is ignored, that mode keeps MODEL, and /health lists it under ignoredModels, which fails the deploy check.
 # MODEL_CHAT = ""
 # MODEL_PLAN = ""
 # MODEL_LIVE = ""
