@@ -288,3 +288,20 @@ describe('thinking the caller never sees is counted when a step is cut short (QA
     expect(row(ns)).toEqual({ turns: 1, steps: 1, out: 30 * CUT_SHORT_TOKENS_PER_SEC });
   });
 });
+
+describe('a stall or cancel before any output is not a used turn (QA2-FA-6)', () => {
+  it('two stalled requests do not use up the day', async () => {
+    const ns = fakeNamespace();
+    const env = baseEnv({ QUOTA_DO: ns as never, MAX_TURNS_PER_DEVICE: '2' });
+    const statuses: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const pending: Promise<unknown>[] = [];
+      const r = await handle(post(turn()), env, { ...deps(mockClient([{ events: [], hang: true }]), { idleMs: 10 }), waitUntil: p => { pending.push(p); } });
+      statuses.push(r.status);
+      await sse(r);
+      await Promise.all(pending);
+    }
+    expect(statuses).toEqual([200, 200, 200]);
+    expect(ns.objects.get('2026-09-22')?.state.data.get(`d:${DEVICE}`)).toBeUndefined();
+  });
+});

@@ -85,3 +85,16 @@ describe('disconnects reach the relay (PL-05 with PL-20)', () => {
     await vi.waitFor(() => { expect(signal!.aborted).toBe(true); }, { timeout: 50, interval: 2 });
   });
 });
+
+describe('relay shard choice (QA2-FA-5)', () => {
+  it('a caller cannot pick a shard from its device id: the same id lands on different shards under different instance seeds', () => {
+    const seen = new Set<number>();
+    for (let seed = 0; seed < 64; seed++) seen.add(relayShard(DEVICE, seed));
+    expect(seen.size).toBe(8);
+    // Two ids that share a shard under one seed do not keep sharing it under the others.
+    const a = 'dev_000000000000000000000001', b = 'dev_000000000000000000000009';
+    let together = 0;
+    for (let seed = 0; seed < 64; seed++) if (relayShard(a, seed) === relayShard(b, seed)) together++;
+    expect(together).toBeLessThan(32);
+  });
+});

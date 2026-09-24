@@ -41,8 +41,11 @@ const json = (status: number, body: unknown, cors: Record<string, string>, extra
 const fail = (status: number, code: ErrorCode, message: string, cors: Record<string, string>, retryAfter?: number) =>
   json(status, { t: 'error', code, message, ...(retryAfter ? { retryAfter } : {}) }, cors, retryAfter ? { 'retry-after': String(retryAfter) } : {});
 
-/** Whether the API billed this step: it produced output, finished, refused, or was cut off after starting. */
-export const billed = (r: StepResult): boolean => !!r.final || !!r.refused || r.emittedAny || !!r.aborted || !!r.timedOut;
+/**
+ * Whether the API billed this step: it finished, refused or produced output. QA2-FA-6: a step that
+ * stalled or was cancelled before any output (thinking included, see modelOutput) is not counted.
+ */
+export const billed = (r: StepResult): boolean => !!r.final || !!r.refused || r.emittedAny;
 
 /**
  * QA2-FA-1..4: output tokens per second a step is taken to produce while it runs, for a step cut

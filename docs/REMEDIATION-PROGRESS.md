@@ -520,3 +520,15 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 - **QA-R7-1 (again):** the effort `::before` inset is -8px, so the hit area is 44 px tall; the rows are 48 px.
 - **Worker changes (QA2-FA, QA2-F7-3) go live only when the owner merges to main.**
 - The 32 low items in LIVE-QA-2.md come next, each with a test.
+
+### QA round 2, low items
+
+#### QA2-FA-6 (Worker)
+- `billed()` no longer counts a step that stalled or was cancelled before any output. A step still counts if it produced thinking (`modelOutput`), text or tools, finished, or refused.
+- Test: two stalled requests with `MAX_TURNS_PER_DEVICE=2` record nothing, and a third request still gets through.
+- Live only after the owner merges to main.
+
+#### QA2-FA-5 (Worker)
+- The relay shard hash is seeded with a random value picked when each Worker instance starts. It uses FNV-1a with a murmur3 finalizer, so a caller cannot work out which device ids land on which shard, or aim a burst at a chosen group of members. The relay holds no state, so a device may use another shard in another instance.
+- Test: under 64 seeds, one id lands on all 8 shards, and two ids that differ only in their last character do not stay on the same shard. The first version, without the finalizer, failed this test, which is why the finalizer was added.
+- Live only after the owner merges to main.
