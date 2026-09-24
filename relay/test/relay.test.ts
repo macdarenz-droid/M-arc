@@ -82,7 +82,7 @@ test('folders: unique names, no moving into itself, recursive delete', async () 
   await j('POST', `/api/folders/${b.id}/files?name=x.txt`, { raw: 'x', type: 'text/plain' })
   assert.equal((await j('DELETE', `/api/folders/${a.id}`)).status, 200)
   assert.equal(store.sql.get(`SELECT COUNT(*) AS n FROM messages WHERE folder_id = ?`, b.id)?.n, 0)
-  assert.equal(store.sql.get(`SELECT COUNT(*) AS n FROM chunks`)?.n, 0)
+  assert.equal(store.sql.get(`SELECT COUNT(*) AS n FROM chunks WHERE file_id NOT IN (SELECT id FROM files)`)?.n, 0)
 })
 
 test('messages carry attachments; files dedupe names and stream back exactly', async () => {
@@ -298,4 +298,56 @@ test('MCP: handshake, tools by permission, post / write / fetch / search inside 
   assert.equal((await call('GET', `/s/${w.token}/mcp`, { auth: false })).status, 405)
   assert.equal((await call('POST', `/s/rl_${'x'.repeat(32)}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 1, method: 'ping' } })).status, 404)
   assert.equal((await call('GET', '/.well-known/oauth-protected-resource', { auth: false })).status, 404)
+})
+
+test('contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it; no version copies; append-only logs', async () => {
+  const { j, call, store } = setup()
+  const d = (await j('GET', '/api/projects/m-arc')).data
+  const root = d.project.root_id
+  const names = (await j('GET', `/api/folders/${root}/files`)).data.files.map((f: any) => f.name)
+  assert.deepEqual(names.slice(0, 3), ['CONTRACT.md', 'PROJECT_STATE.md', 'LOG.md'])
+  const side = (await j('POST', '/api/projects', { body: { name: 'Side', template: 'empty' } })).data.project
+  assert.ok(store.contract(side.id)?.includes('One file per topic'))
+  assert.ok(['Low token use is the priority', 'Decide, don’t ask'.replace('’', "'"), 'No guessing', 'Review before moving on', 'Risk management'].every(r => store.contract(side.id)!.includes(r)))
+
+  const link = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'GPT', kind: 'gpt', can_write: true } })).data.link
+  let id = 0
+  const tool = async (name: string, args: unknown) => {
+    const res = await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: ++id, method: 'tools/call', params: { name, arguments: args } } })
+    return ((await res.json()) as any).result
+  }
+  const init = await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 0, method: 'initialize', params: { protocolVersion: '2025-06-18' } } })
+  assert.match(((await init.json()) as any).result.instructions, /One file per topic/)
+  assert.match((await tool('overview', {})).content[0].text, /## Contract \(every agent follows this\)/)
+  const ctx = await (await call('GET', `/s/${link.token}/context.md`, { auth: false })).text()
+  assert.match(ctx, /## Contract/)
+  assert.equal(ctx.split('One file per topic, kept current').length - 1, 1, 'the contract appears once')
+
+  assert.equal((await tool('write_file', { path: 'docs/plan.md', content: 'v1' })).isError, undefined)
+  for (const dup of ['docs/plan-v2.md', 'docs/plan final.md', 'docs/Plan (copy).md', 'docs/plan 2026-09-24.md'])
+    assert.match((await tool('write_file', { path: dup, content: 'x' })).content[0].text, /would duplicate “plan\.md”/, dup)
+  assert.equal((await tool('write_file', { path: 'docs/patch-1.md', content: 'a' })).isError, undefined)
+  assert.equal((await tool('write_file', { path: 'docs/patch-1.2.md', content: 'b' })).isError, true)
+  assert.equal((await tool('write_file', { path: 'docs/plan.md', content: 'v2' })).isError, undefined, 'updating the topic file is fine')
+  assert.equal((await tool('write_file', { path: 'docs/api-notes.md', content: 'new topic' })).isError, undefined)
+  assert.match((await tool('write_file', { path: 'CONTRACT.md', content: 'no rules' })).content[0].text, /owner/)
+  assert.ok(store.contract(d.project.id)?.includes('One file per topic'))
+
+  await tool('append_file', { path: 'LOG.md', text: '- 2026-09-24 10:00 UTC · GPT · docs/plan.md · first plan' })
+  await tool('append_file', { path: 'LOG.md', text: '- 2026-09-24 10:05 UTC · GPT · docs/api-notes.md · notes' })
+  const log = new TextDecoder().decode(store.read(store.fileByName(root, 'LOG.md')!.id))
+  assert.match(log, /project files created\n- 2026-09-24 10:00 UTC · GPT · docs\/plan\.md · first plan\n- 2026-09-24 10:05 UTC/)
+  const http = await call('POST', `/s/${link.token}/append/LOG.md`, { auth: false, raw: '- via http', type: 'text/plain' })
+  assert.equal(http.status, 200)
+  const owner = await j('POST', `/api/folders/${store.resolvePath(root, 'docs')!.id}/files?name=plan-v2.md`, { raw: 'owner may', type: 'text/markdown' })
+  assert.equal(owner.status, 201, 'the owner is not restricted')
+
+  // One contract for all projects: the owner edits it anywhere, every project and agent follows.
+  const mine = store.fileByName(root, 'CONTRACT.md')!
+  assert.equal((await j('PUT', `/api/files/${mine.id}/raw`, { raw: '# Contract\n\n- Rule edited once', type: 'text/markdown' })).status, 200)
+  const sideCopy = store.fileByName(side.root_id, 'CONTRACT.md')!
+  assert.equal(new TextDecoder().decode(store.read(sideCopy.id)), '# Contract\n\n- Rule edited once')
+  assert.match(((await (await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 99, method: 'initialize', params: {} } })).json()) as any).result.instructions, /Rule edited once/)
+  const later = (await j('POST', '/api/projects', { body: { name: 'Later', template: 'empty' } })).data.project
+  assert.equal(new TextDecoder().decode(store.read(store.fileByName(later.root_id, 'CONTRACT.md')!.id)), '# Contract\n\n- Rule edited once')
 })
