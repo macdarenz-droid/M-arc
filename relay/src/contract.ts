@@ -18,7 +18,7 @@ Every agent (Claude, GPT, Codex, …) and the owner follow these rules in this p
 - **Review before moving on.** After each task, look at what was built: the feature, its logic, how it works. If it meets the goal, go to the next task; if not, fix or improve it first.
 - **Precision at every layer:** code, tests, tasks, messages.
 - **Prevent, don't apologise.** Anything that could have been caught earlier (by reading, testing or reviewing) must be caught before it ships. No after-the-fact "I should have…".
-- **Quality.** Bugs are unavoidable, so every build gets regression tests and full QA.
+- **Quality.** Bugs are unavoidable. While building, check each change with focused tests and the review above. Full regression and full QA run once, on the finished build, not on every early patch.
 - **Risk management.** Name risks and their mitigations when designing, while building, and after release.
 
 ## 2. One file per topic, kept current
