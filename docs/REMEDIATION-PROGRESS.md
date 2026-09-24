@@ -552,3 +552,9 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FC-7
 - Equipment words (every word of the library's equipment names, singular and plural) no longer count as another movement when a longer name contains a library name. "Leg Press Machine", "Cable Lat Pulldown", "Hip Thrust Barbell" and the others map to their library exercises again. "Hack Squat Calf Raise" is still a different exercise.
+
+#### QA2-FC-8
+- The upper/lower balance note adds "A balanced week has about 1.5× as much upper body work as lower body work, since upper covers both push and pull." That way a "1.3×" lower-body lead reads as the lopsided week it is (`Imbalance.context`).
+
+#### QA2-FC-9
+- `reasonKeyFor` takes the suggestion's first set note. The "Change it up" plateau (a new rep range or a lighter week) gets the lighter-week ("reduce") cue again. The "keep this load" plateau keeps the repeatability ("confirm") cue from QA-R3b-8.

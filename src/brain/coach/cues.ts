@@ -64,12 +64,14 @@ export function pickCue(exercise: Exercise, kind: Cue['kind'], seed: string, rec
  * ST-17: the reason cues ("why this target") match the kind of suggestion on the set rows, not
  * an exercise, so pickCue never reached them. Which reason a suggestion is:
  */
-export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: string): string | null {
+export function reasonKeyFor(mode: string, confidence: string, exerciseMode?: string, setNote?: string): string | null {
   if (mode === 'start') return 'start_zero_history';
   if (exerciseMode === 'conditioning') return 'conditioning_baseline';
   if (mode === 'confirm_effort') return 'missing_effort';
   if (confidence === 'low' && ['confirm', 'hold', 'increase', 'reps', 'duration'].includes(mode)) return 'insufficient_history';
   // QA-R3b-8: a plateau keeps the load, so its "why" is repeatability, never "lower it".
+  // QA2-FC-9: the 'change it up' plateau (a new rep range or a lighter week) is not a repeat-it cue.
+  if (mode === 'plateau' && setNote === 'Change it up') return 'reduce';
   if (mode === 'confirm' || mode === 'hold' || mode === 'plateau') return 'confirm';
   if (mode === 'increase') return 'increase';
   if (mode === 'reduce') return 'reduce';
