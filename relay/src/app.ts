@@ -9,6 +9,8 @@ export interface Options {
   ownerKey?: string
   maxFileBytes: number
   ip: string
+  /** Which model providers have an API key, for agents. */
+  providers?: Record<string, boolean>
 }
 
 export interface Ctx extends Options {
@@ -171,7 +173,10 @@ const API: [string, RegExp, Handler][] = [
   ['POST', /^\/api\/projects$/, async c => json({ project: c.store.createProject(await readJson(c.req)) }, 201)],
   ['GET', /^\/api\/projects\/([\w-]+)$/, (c, id) => {
     const project = c.store.project(id)
-    return json({ project, folders: c.store.folders(project.id), links: c.store.links(project.id) })
+    return json({
+      project, folders: c.store.folders(project.id), links: c.store.links(project.id),
+      agents: c.store.agents(project.id), running: c.store.running(project.id),
+    })
   }],
   ['PATCH', /^\/api\/projects\/(\w+)$/, async (c, id) => json({ project: c.store.updateProject(id, await readJson(c.req)) })],
   ['DELETE', /^\/api\/projects\/(\w+)$/, (c, id) => (c.store.deleteProject(id), ok())],
@@ -216,6 +221,18 @@ const API: [string, RegExp, Handler][] = [
   }],
   ['POST', /^\/api\/projects\/(\w+)\/links$/, async (c, id) => json({ link: c.store.createLink(id, await readJson(c.req)) }, 201)],
   ['DELETE', /^\/api\/links\/(\w+)$/, (c, id) => (c.store.deleteLink(id), ok())],
+  ['POST', /^\/api\/projects\/(\w+)\/agents$/, async (c, id) => json({ agent: c.store.createAgent(id, await readJson(c.req)) }, 201)],
+  ['PATCH', /^\/api\/agents\/(\w+)$/, async (c, id) => json({ agent: c.store.updateAgent(id, await readJson(c.req)) })],
+  ['DELETE', /^\/api\/agents\/(\w+)$/, (c, id) => (c.store.deleteAgent(id), ok())],
+  ['GET', /^\/api\/agents\/(\w+)\/runs$/, (c, id) => (c.store.agent(id), json({ runs: c.store.runs(id) }))],
+  ['POST', /^\/api\/agents\/(\w+)\/run$/, async (c, id) => {
+    const a = c.store.agent(id)
+    const b = await readJson(c.req)
+    const folder = c.store.folder(String(b.folder_id || a.folder_id))
+    if (folder.project_id !== a.project_id) throw new HttpError(400, 'Folder is not in this project')
+    c.store.enqueue({ agent: a, folderId: folder.id, reason: 'manual', due: c.store.now(), note: String(b.note ?? '').slice(0, 2000) })
+    return json({ ok: true }, 202)
+  }],
   ['GET', /^\/api\/search$/, c => {
     const q = (c.url.searchParams.get('q') ?? '').trim().slice(0, 100)
     return json(q.length < 2 ? { messages: [], files: [] } : c.store.search(q))
@@ -239,8 +256,9 @@ async function api(c: Ctx): Promise<Response> {
     return json({ ok: true }, 200, { 'Set-Cookie': `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${c.https ? '; Secure' : ''}` })
 
   const via = await ownerVia(c)
-  if (path === '/api/me' && method === 'GET') return json({ owner: !!via, configured: !!c.ownerKey })
+  if (path === '/api/me' && method === 'GET') return json({ owner: !!via, configured: !!c.ownerKey, providers: via ? c.providers ?? {} : {} })
   if (!via) throw new HttpError(401, 'Sign in first')
+  c.store.rememberOrigin(c.url.origin)
   // A cross-site form can carry the cookie on a top-level POST but never a custom header.
   if (via === 'cookie' && method !== 'GET' && method !== 'HEAD' && c.req.headers.get('x-relay') !== '1')
     throw new HttpError(403, 'Missing x-relay header')

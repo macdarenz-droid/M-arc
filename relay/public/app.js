@@ -46,6 +46,8 @@ const ICONS = {
   external: '<path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>',
   eye: '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="2.5"/>',
   code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
+  bot: '<rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16.5h5"/>',
+  play: '<path d="M7 5v14l11-7z"/>',
   plug: '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
 }
 const icon = (n, cls = '') => h('span.i' + cls, { html: `<svg viewBox="0 0 24 24" ${P} aria-hidden="true">${ICONS[n] ?? ''}</svg>` })
@@ -545,6 +547,106 @@ function shareDialog(folderId = S.folderId) {
   setTimeout(() => name.focus())
 }
 
+// ── agents ─────────────────────────────────────────────────────
+const MODELS = {
+  openai: ['gpt-6-sol', 'gpt-6-astra', 'gpt-6-luna', 'gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna'],
+  anthropic: ['claude-opus-5', 'claude-opus-5-5', 'claude-sonnet-5', 'claude-haiku-4-5', 'claude-fable-5-1'],
+  gemini: ['gemini-3.5-flash', 'gemini-3.1-pro-preview'],
+}
+const KEY_NAMES = { openai: 'OPENAI_API_KEY', anthropic: 'ANTHROPIC_API_KEY', gemini: 'GEMINI_API_KEY' }
+const agentById = id => (S.detail?.agents ?? []).find(a => a.id === id)
+const handleOf = a => '@' + a.name.replace(/\s+/g, '')
+
+function agentRows() {
+  const d = S.detail
+  const rows = (d.agents ?? []).map(a => {
+    const busy = (d.running ?? []).some(r => r.agent_id === a.id)
+    const state = !a.enabled ? 'off' : busy ? 'busy' : a.last_status === 'error' ? 'err' : 'on'
+    return h('a.row.agent', { href: '#', onclick: e => { e.preventDefault(); agentDialog(a) }, title: a.last_error || `${a.model} · mention with ${handleOf(a)}` },
+      avatar(a.kind, a.name, '.xs'), h('span.name', {}, a.name), h('span.meta', {}, `${a.runs_today}/${a.daily_runs}`), h('i.state.' + state))
+  })
+  return h('div.agents', {}, h('div.section-label.sub', {}, h('span', {}, 'Agents'), h('button.icon-btn.sm', { title: 'Assign an agent', onclick: () => agentDialog() }, icon('plus'))),
+    rows.length ? rows : h('button.row.ghostrow', { onclick: () => agentDialog() }, icon('bot'), h('span.name', {}, 'Assign an agent')))
+}
+
+function check(on, label) {
+  const input = h('input', { type: 'checkbox', checked: !!on })
+  return { el: h('label.check', {}, input, h('span', {}, label)), get: () => input.checked }
+}
+
+function agentDialog(a = null) {
+  const d = S.detail
+  if (!d) return
+  const P = S.providers ?? {}
+  const name = h('input', { value: a?.name ?? '', placeholder: 'e.g. Reviewer, GPT, Planner', maxlength: 40 })
+  const provider = h('select', {}, [['openai', 'OpenAI · GPT'], ['anthropic', 'Anthropic · Claude'], ['gemini', 'Google · Gemini']]
+    .map(([v, l]) => h('option', { value: v }, l + (P[v] ? '' : ' · no API key yet'))))
+  provider.value = a?.provider ?? (P.openai ? 'openai' : P.anthropic ? 'anthropic' : P.gemini ? 'gemini' : 'openai')
+  const models = h('datalist', { id: 'relay-models' })
+  const model = h('input', { value: a?.model ?? '', list: 'relay-models', spellcheck: 'false' })
+  const keyHint = h('p.hint.warn')
+  const sync = () => {
+    models.replaceChildren(...MODELS[provider.value].map(m => h('option', { value: m })))
+    model.placeholder = MODELS[provider.value][0]
+    keyHint.textContent = P[provider.value] ? '' : `Add the ${KEY_NAMES[provider.value]} secret to the Worker first (npx wrangler secret put ${KEY_NAMES[provider.value]}), or runs will fail.`
+  }
+  provider.addEventListener('change', () => { if (!MODELS[provider.value].includes(model.value)) model.value = ''; sync() })
+  sync()
+  const effort = h('select', {}, [['', 'Model default'], ['low', 'Low'], ['medium', 'Medium'], ['high', 'High']].map(([v, l]) => h('option', { value: v }, l)))
+  effort.value = a?.effort ?? ''
+  const folder = h('select', {}, d.folders.map(f => h('option', { value: f.id }, where(f.id))))
+  folder.value = a?.folder_id ?? S.folderId
+  const scope = h('select', {}, h('option', { value: 'project' }, 'The whole project'), h('option', { value: 'folder' }, 'Only its folder'))
+  scope.value = a && a.scope_id !== d.project.root_id ? 'folder' : 'project'
+  const onMessage = check(a ? a.on_message : 1, 'Answers new messages in its folder')
+  const onMention = check(a ? a.on_mention : 1, 'Answers when @mentioned in anything it can see')
+  const every = h('select', {}, [[0, 'No scheduled check-ins'], [15, 'Every 15 minutes'], [60, 'Every hour'], [180, 'Every 3 hours'], [720, 'Twice a day'], [1440, 'Once a day']]
+    .map(([v, l]) => h('option', { value: v }, l)))
+  every.value = String(a?.every_min ?? 0)
+  const daily = h('input', { type: 'number', min: 1, max: 500, value: a?.daily_runs ?? 30 })
+  const role = h('textarea', { rows: 5, value: a?.instructions ?? '', placeholder: 'Role and rules. e.g. "You are the reviewer. When a HANDOFF lands here, check it against docs/ and list blocking issues first. Ask @Planner when scope is unclear."' })
+  const enabled = check(a ? a.enabled : 1, 'Active')
+  const runs = h('div.runs')
+  const payload = () => ({
+    name: name.value.trim(), provider: provider.value, model: model.value.trim() || model.placeholder, effort: effort.value,
+    folder_id: folder.value, scope: scope.value, on_message: onMessage.get(), on_mention: onMention.get(), every_min: Number(every.value),
+    daily_runs: Number(daily.value) || 30, instructions: role.value, enabled: enabled.get(),
+  })
+  const m = modal(a ? a.name : 'Assign an agent', h('form.form', {
+    onsubmit: async e => {
+      e.preventDefault()
+      const r = await mutate(() => (a ? api('PATCH', `/api/agents/${a.id}`, payload()) : api('POST', `/api/projects/${d.project.id}/agents`, payload())))
+      if (r) { m.close(); toast(a ? 'Saved' : `${r.agent.name} is on duty in ${where(r.agent.folder_id)}`) }
+    },
+  },
+  a ? null : h('p.hint', {}, 'Relay runs this agent itself through the provider’s API: it answers new messages in its folder, @mentions, and scheduled check-ins, and can keep working with follow-ups. No chat window needed. API usage is billed by the provider.'),
+  h('div.grid2', {}, field('Name', name), field('Provider', provider), field('Model', h('div', {}, model, models)), field('Effort', effort),
+    field('Works in', folder), field('Can see', scope)),
+  keyHint,
+  field('Role and instructions', role),
+  h('div.grid2', {}, h('div.checks', {}, onMessage.el, onMention.el, enabled.el), h('div.form', {}, field('Check-ins', every), field('Runs per day, at most', daily))),
+  a ? h('div.section-label', {}, 'Recent runs') : null, a ? runs : null,
+  actions(
+    a ? h('button.btn.danger.push', {
+      type: 'button',
+      onclick: async () => { if (await confirmBox(`Remove ${a.name}?`, 'It stops working immediately. Its messages stay.', 'Remove')) { await mutate(() => api('DELETE', `/api/agents/${a.id}`)); m.close() } },
+    }, icon('trash'), 'Remove') : null,
+    a ? h('button.btn', {
+      type: 'button', title: 'Run it now in the folder you are viewing (or its own)',
+      onclick: async () => {
+        const inScope = a.scope_id === d.project.root_id || chain(S.folderId).some(f => f.id === a.scope_id)
+        if (await mutate(() => api('POST', `/api/agents/${a.id}/run`, { folder_id: inScope ? S.folderId : a.folder_id }))) toast(`${a.name} will start in a moment`)
+      },
+    }, icon('play'), 'Run now') : null,
+    h('button.btn', { type: 'button', onclick: () => m.close() }, 'Cancel'),
+    h('button.btn.primary', { type: 'submit' }, a ? 'Save' : 'Assign'))), { cls: 'wide' })
+  setTimeout(() => (a ? null : name.focus()))
+  if (a) api('GET', `/api/agents/${a.id}/runs`).then(r => runs.replaceChildren(...(r.runs.length ? r.runs.slice(0, 8).map(x =>
+    h('div.run', { title: x.error ?? '' }, h('span.chip.' + x.status, {}, x.status), h('span', {}, x.reason), h('span.muted', {}, where(x.folder_id)),
+      h('span.grow.err', {}, x.error ?? ''), h('span.muted', {}, x.tokens_in ? `${Math.round((x.tokens_in + x.tokens_out) / 100) / 10}k tok` : ''),
+      h('span.muted', {}, rel(x.finished_at ?? x.started_at ?? x.due_at)))) : [h('p.hint', {}, 'No runs yet.')]))).catch(() => {})
+}
+
 // ── palette ────────────────────────────────────────────────────
 const fuzzy = (s, q) => { let i = 0; for (const c of s) if (c === q[i]) i++; return i === q.length }
 function snippet(body, q) {
@@ -565,6 +667,8 @@ function palette() {
     d && { label: 'New note here', icon: 'note', run: newNote },
     d && { label: 'Upload files here', icon: 'upload', run: pickUpload },
     d && { label: 'Share this folder', icon: 'link', run: () => shareDialog() },
+    d && { label: 'Assign an agent', icon: 'bot', run: () => agentDialog() },
+    ...(d?.agents ?? []).map(a => ({ label: `Agent: ${a.name}`, icon: 'bot', run: () => agentDialog(a) })),
     { label: 'Toggle theme', icon: isDark() ? 'sun' : 'moon', run: toggleTheme },
     { label: 'Sign out', icon: 'logout', run: logout },
   ].filter(Boolean).map(a => ({ ...a, hint: 'Action' }))
@@ -639,6 +743,7 @@ function loginView() {
       try {
         await api('POST', '/api/login', { key: key.value })
         S.owner = true
+        S.providers = (await api('GET', '/api/me')).providers ?? {}
         await loadProjects()
         await onRoute()
       } catch (x) { err.textContent = x.message; btn.disabled = false }
@@ -689,6 +794,7 @@ function renderSide() {
             h('span.name', {}, p.name), h('span.meta', {}, p.messages + p.files || ''),
             h('button.icon-btn.sm.hover', { title: 'Project', onclick: e => { stop(e); menu(e.currentTarget, projectMenu(p)) } }, icon('more'))),
           open ? h('div.tree', {}, tree) : null,
+          open ? agentRows() : null,
         ]
       }),
       S.projects.length ? null : h('p.side-empty', {}, 'No projects yet.')),
@@ -710,6 +816,9 @@ function renderBar() {
     h('nav.crumbs', {}, crumbs.flatMap((x, i) => (i ? [h('span.sep', {}, '/'), x] : [x]))),
     d ? h('div.tabs', { role: 'tablist' }, tab('thread', 'Thread', c?.messages), tab('files', 'Files', c?.files)) : null,
     h('div.grow'),
+    d ? h('div.here-agents', {}, (d.agents ?? []).filter(a => a.folder_id === S.folderId).map(a =>
+      h('button.icon-btn', { title: `${a.name} answers here · ${a.model}`, onclick: () => agentDialog(a) }, avatar(a.kind, a.name, '.sm')))) : null,
+    d ? h('button.btn.ghost.sm', { onclick: () => agentDialog(), title: 'Assign an agent that answers on its own' }, icon('bot'), h('span.lbl', {}, 'Agent')) : null,
     d ? h('button.btn.ghost.sm', { onclick: () => shareDialog(), title: 'Share with an agent' }, icon('link'), h('span.lbl', {}, 'Share')) : null,
     d ? h('button.icon-btn', { title: 'Upload files (U)', onclick: pickUpload }, icon('upload')) : null,
     d ? h('button.icon-btn', { title: 'New folder', onclick: () => newFolder() }, icon('folderPlus')) : null)
@@ -738,12 +847,11 @@ function emptyProjects() {
 function threadView() {
   const wrap = h('div.msgs')
   if (S.more) wrap.append(h('button.btn.sm.older', { onclick: loadOlder }, 'Load earlier messages'))
-  if (!S.msgs.length) {
+  if (!S.msgs.length)
     wrap.append(h('div.empty.small', {}, icon('thread', '.big'), h('h3', {}, `Nothing in ${where()} yet`),
-      h('p', {}, 'Write below, drop files, or share this folder with Claude, GPT or any agent.'),
-      h('button.btn.sm', { onclick: () => shareDialog() }, icon('link'), 'Share this folder')))
-    return wrap
-  }
+      h('p', {}, 'Write below, drop files, assign an agent that answers here on its own, or share this folder with a chat app.'),
+      h('div.actions.center', {}, h('button.btn.sm', { onclick: () => agentDialog() }, icon('bot'), 'Assign an agent'),
+        h('button.btn.sm', { onclick: () => shareDialog() }, icon('link'), 'Share this folder'))))
   let prev = null, day = ''
   for (const m of S.msgs) {
     const label = dayLabel(m.created_at)
@@ -751,6 +859,9 @@ function threadView() {
     wrap.append(msgEl(m, prev))
     prev = m
   }
+  const busy = (S.detail.running ?? []).filter(r => r.folder_id === S.folderId).map(r => agentById(r.agent_id)).filter(Boolean)
+  if (busy.length) wrap.append(h('div.working', {}, busy.map(a => avatar(a.kind, a.name, '.xs')),
+    h('span', {}, `${busy.map(a => a.name).join(', ')} ${busy.length > 1 ? 'are' : 'is'} working`), h('i.dots', {}, h('i'), h('i'), h('i'))))
   return wrap
 }
 
@@ -957,7 +1068,7 @@ async function boot() {
   document.body.append(layer, toasts)
   try {
     const me = await api('GET', '/api/me')
-    S.owner = me.owner; S.configured = me.configured
+    S.owner = me.owner; S.configured = me.configured; S.providers = me.providers ?? {}
     if (S.owner) await loadProjects()
   } catch (e) { toast(e.message) }
   await onRoute()

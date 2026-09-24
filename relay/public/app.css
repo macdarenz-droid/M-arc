@@ -234,6 +234,33 @@ textarea.editor { flex: 1; min-height: 60vh; resize: none; font: 12.5px/1.65 var
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .share-form { margin: 16px 0 4px; padding: 14px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--bg-side); }
 .modal .section-label { padding: 16px 0 6px; }
+.section-label.sub { padding: 14px 8px 4px 22px; }
+.row.agent { padding-left: 22px; }
+.row.agent .meta { display: inline; }
+.state { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--ok); }
+.state.off { background: var(--text-3); }
+.state.err { background: var(--danger); }
+.state.busy { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.row.ghostrow { width: calc(100% - 14px); margin-left: 14px; border: 0; background: none; color: var(--text-3); text-align: left; }
+.here-agents { display: flex; gap: 2px; }
+.working { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px 40px; color: var(--text-3); font-size: 12px; }
+.dots { display: inline-flex; gap: 3px; }
+.dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--text-3); animation: pulse 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
+.actions.center { justify-content: center; }
+.actions .push { margin-right: auto; }
+.checks { display: grid; gap: 8px; align-content: start; padding-top: 22px; }
+.check { display: flex; align-items: center; gap: 8px; color: var(--text-2); cursor: pointer; }
+.check input { width: auto; margin: 0; accent-color: var(--accent); }
+.hint.warn { color: #e0a84a; }
+.hint.warn:empty { display: none; }
+.runs { display: grid; gap: 2px; margin-bottom: 6px; }
+.run { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; font-size: 12px; }
+.run:hover { background: var(--bg-hover); }
+.run .err { color: var(--danger); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.chip { font-size: 11px; border-radius: 4px; padding: 0 6px; line-height: 18px; background: var(--bg-hover); color: var(--text-2); }
+.chip.done { color: var(--ok); } .chip.error { color: var(--danger); } .chip.running, .chip.queued { color: var(--accent); }
 .steps { margin: 0; padding-left: 20px; color: var(--text-2); display: grid; gap: 6px; }
 .steps strong { color: var(--text); font-weight: 500; }
 .links { display: grid; gap: 2px; }
