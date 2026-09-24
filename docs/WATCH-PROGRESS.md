@@ -11,7 +11,7 @@ RUN LOCK: none
 
 ## Next task
 
-- Gate B/C boundary: design and test explicit single-writer handover from `state.active` to native ownership after R4 write guards are merged. Capture the rest and heart inputs in a trustworthy native source, resolve fidelity/rest/heart effects and integrate them with the native transaction before connecting transport. Current rows are only pending markers with raw action time, and `sideEffectsStatus: not_implemented` remains accurate. The class is unconnected and its internal applied receipt must not be shown as watch Saved. Clock synchronization and confidence beyond `unverified` remain UNVERIFIED.
+- Implement and test explicit single-writer handover from the current WebView active session to native ownership. Freeze phone writes, preserve a recoverable pre-handover snapshot, capture the actual rest preferences and timestamped heart stream from the phone, commit the native seed and ownership marker atomically, and reconcile before allowing edits after boot. Only then resolve fidelity/rest/heart in a transaction and connect transport. Existing pending rows are partial and cannot be displayed as Saved.
 
 ## WAITING ON OWNER
 
