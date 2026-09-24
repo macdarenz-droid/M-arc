@@ -546,3 +546,6 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FC-5
 - A muscle held back by today's soreness after the model's own time has no full-recovery time either (`fullInHours` is null). Today says "sore today" instead of "under 1h", the muscle sheet no longer adds "fully recovered in about under 1h", and Escobar's `get_recovery` marks it `soreToday`.
+
+#### QA2-FC-6
+- When a max-effort first set misses on the lightest load the equipment can make (the empty 20 kg or 45 lb bar), the live tip no longer says "Drop to 20 kg". It says to stay at the bar, rest a little longer and stop each set a rep short of max. Above the bar it still drops a step.

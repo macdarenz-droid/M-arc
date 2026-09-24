@@ -44,6 +44,8 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
     const moved = same ? loadableNear(dir === 'up' ? l.kg + 0.02 : l.kg - 0.02, equipment, dir) : l;
     return `${moved.value} ${moved.unit}`;
   };
+  /** QA2-FC-6: whether the equipment has any load lighter than the target (not at the empty bar). */
+  const canGoLighter = !equipment || loadableNear(targetKg - 0.02, equipment, 'down').kg < targetKg - 0.01;
 
   if (firstSet.effort === 'easy' && firstSet.reps >= targetReps) {
     const next = snap(targetKg + step, 'up');
@@ -57,6 +59,17 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
     };
   }
   if (firstSet.effort === 'max' && firstSet.reps < targetReps - 1) {
+    if (!canGoLighter) {
+      const here = loadableNear(targetKg, equipment!, 'nearest');
+      return {
+        id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,
+        title: `${exerciseName}: ease off`,
+        noticed: `Missed target at max effort: ${firstSet.reps} of ${targetReps}.`,
+        means: 'There is no lighter load than this one, so the reps and the rest are what can change today.',
+        action: `Stay at ${here.value} ${here.unit}, rest a little longer, and stop each set a rep short of max.`,
+        evidence: { n: 1, window: 'this set', confidence: 'high' },
+      };
+    }
     const next = snap(targetKg - step, 'down');
     return {
       id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,
