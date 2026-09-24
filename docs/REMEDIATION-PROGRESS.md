@@ -564,3 +564,9 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
   - An exercise only Escobar brought in today (an add, or a swap's target) is not saved.
   - One Escobar took out today stays at its place.
 - A swap of an exercise to itself is refused by `propose_today` and is a no-op in `plannedExercises`. The QA-R4a-10 rule (a swap onto an exercise already present drops the source) had turned it into a removal.
+
+#### QA2-FD-3
+- A health check that fails again schedules the next one for when its back-off ends, so the Coach tab box recovers without reopening the sheet. It keeps checking only while Escobar is on, at most once a minute.
+
+#### QA2-FD-6, QA2-FD-10
+- An answer that arrives, and a dropped one, both clear `offlineReason`, so the offline notice no longer repeats an old "Escobar isn't set up yet." after a connection drop.
