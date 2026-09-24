@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { freshState, type ActiveSession } from '@/core/models';
-import { initStore, replaceState, resetState, state, update } from '@/core/store';
-import { assertPhoneWorkoutWriter, handoverWorkout, initWorkoutOwnership, reconcileWorkoutOwnership, WORKOUT_HANDOVER_KEY, workoutOwnership, type HandoverSeed, type OwnershipBackend, type OwnershipReply } from '@/core/workoutOwnership';
+import { flushSave, initStore, replaceState, resetState, state, update, updateWorkout } from '@/core/store';
+import { assertPhoneWorkoutWriter, checkingWorkoutOwnership, handoverWorkout, initWorkoutOwnership, reconcileWorkoutOwnership, WORKOUT_HANDOVER_KEY, workoutOwnership, workoutOwnershipNotice, type HandoverSeed, type OwnershipBackend, type OwnershipReply } from '@/core/workoutOwnership';
 import { workoutHandoverPhone } from '@/native/workoutOwnership';
 import { commitSetById, discardSession, finishSession, pauseSession, setSetById, startRest } from '@/slices/workout/session';
 import { captureHeartInputs, recentLiveBpms, resetHeartCapture, startHeartCapture } from '@/slices/workout/heart';
 import { latestMeasurement } from '@/native/watch';
 import { resetAppData } from '@/app/ErrorBoundary';
+import { session } from './helpers';
 
 const START = Date.parse('2026-09-24T10:00:00.000Z');
 const active = (): ActiveSession => ({ id: 's-1', splitId: 'split-1', startedAt: new Date(START).toISOString(), pausedMs: 0,
@@ -47,7 +48,7 @@ const begin = (b: OwnershipBackend) => handoverWorkout(b, workoutHandoverPhone, 
 const recover = (b: OwnershipBackend) => reconcileWorkoutOwnership(b, workoutHandoverPhone);
 
 describe('workout ownership handover', () => {
-  it('freezes all phone writers before capturing detached policy, rest and timestamped heart inputs', async () => {
+  it('freezes live writers before capturing detached policy, rest and timestamped heart inputs', async () => {
     latestMeasurement.value = { bpm: 128, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: START + 50000, receivedAtElapsedMs: 90000 };
     const b = backend();
     let finish!: (r: OwnershipReply) => void;
@@ -57,7 +58,7 @@ describe('workout ownership handover', () => {
     expect(workoutOwnership.value).toBe('transferring');
     const old = JSON.stringify(state.value);
     const updater = vi.fn(s => s);
-    for (const write of [() => update(updater), () => setSetById('set-1', { reps: 20 }), () => commitSetById('set-1'),
+    for (const write of [() => updateWorkout(updater), () => update(s => ({ ...s, active: null })), () => setSetById('set-1', { reps: 20 }), () => commitSetById('set-1'),
       () => pauseSession(), () => startRest(30), () => finishSession(false), discardSession,
       () => replaceState(freshState()), () => resetState(freshState())]) expect(write).toThrow(/editing is paused/);
     expect(updater).not.toHaveBeenCalled();
@@ -83,7 +84,7 @@ describe('workout ownership handover', () => {
     expect(await begin(b)).toBe(false);
     expect(workoutOwnership.value).toBe('blocked');
     initStore(storage, true);
-    expect(() => update(s => s)).toThrow();
+    expect(() => updateWorkout(s => s)).toThrow();
     expect(await recover(b)).toBe(true);
     expect(workoutOwnership.value).toBe('native');
     expect(b.settle).toHaveBeenCalledWith('handover-1');
@@ -123,13 +124,15 @@ describe('workout ownership handover', () => {
     await begin(b);
     storage.removeItem(WORKOUT_HANDOVER_KEY);
     initStore(storage, true);
-    expect(() => discardSession()).toThrow();
+    expect(workoutOwnership.value).toBe('web'); // No evidence until the native read returns.
+    expect(checkingWorkoutOwnership.value).toBe(true);
     expect(await recover(b)).toBe(true);
     expect(workoutOwnership.value).toBe('native');
+    expect(() => discardSession()).toThrow();
     expect(storage.getItem(WORKOUT_HANDOVER_KEY)).toBeTruthy();
   });
 
-  it('keeps corrupted checkpoints and rejected bridge calls blocked', async () => {
+  it('keeps corrupted checkpoints protected, including after later failed reads', async () => {
     storage.setItem(WORKOUT_HANDOVER_KEY, '{broken');
     initStore(storage, true);
     expect(await recover(backend())).toBe(false);
@@ -183,9 +186,100 @@ describe('workout ownership handover', () => {
   });
 
   it('checks another WebView marker before even running an updater', () => {
+    initWorkoutOwnership(storage, true);
     storage.setItem(WORKOUT_HANDOVER_KEY, '{bad');
     expect(assertPhoneWorkoutWriter).toThrow();
     expect(workoutOwnership.value).toBe('blocked');
+  });
+
+  it('keeps the phone writable while an optional read is pending, and after it rejects', async () => {
+    initStore(storage, true);
+    const b = backend();
+    let reject!: (err: Error) => void;
+    b.read = () => new Promise((_, no) => { reject = no; });
+    const check = recover(b);
+    expect(checkingWorkoutOwnership.value).toBe(true);
+    setSetById('set-1', { reps: 9 });
+    reject(new Error('WearEngine method unavailable'));
+    expect(await check).toBe(false);
+    expect(checkingWorkoutOwnership.value).toBe(false);
+    expect(workoutOwnership.value).toBe('web');
+    expect(workoutOwnershipNotice.value).toMatch(/keep using M\/ARC/);
+    setSetById('set-1', { reps: 10 });
+    expect(state.value.active!.entries[0]!.sets[0]!.reps).toBe(10);
+    expect(await recover(backend())).toBe(true);
+    expect(workoutOwnershipNotice.value).toBeNull();
+  });
+
+  it('allows history, settings and backup metadata during failed recovery, preserving the live copy and checkpoint', async () => {
+    const b = backend(); b.handover = async () => { throw new Error('reply lost'); };
+    await begin(b);
+    initStore(storage, true);
+    b.settle = async () => { throw new Error('unavailable'); };
+    expect(await recover(b)).toBe(false);
+    const live = state.value.active, marker = storage.getItem(WORKOUT_HANDOVER_KEY);
+    update(s => ({ ...s, preferences: { ...s.preferences, weightUnit: 'lb' },
+      sessions: [...s.sessions, { ...session('2026-09-23', []), id: 'old' }],
+      lastBackupAt: new Date().toISOString() }));
+    expect(flushSave()).toBe(true);
+    const saved = JSON.parse(storage.getItem('marc.state.v1')!);
+    expect(saved.preferences.weightUnit).toBe('lb');
+    expect(saved.sessions[0].id).toBe('old');
+    expect(saved.lastBackupAt).toBeTruthy();
+    expect(state.value.active).toBe(live);
+    expect(storage.getItem(WORKOUT_HANDOVER_KEY)).toBe(marker);
+    expect(() => discardSession()).toThrow();
+    expect(() => resetState(freshState())).toThrow();
+  });
+
+  it('retains a native owner actually read even if persisting its marker fails', async () => {
+    const b = backend(); await begin(b);
+    storage.removeItem(WORKOUT_HANDOVER_KEY);
+    initStore(storage, true);
+    const setItem = storage.setItem;
+    storage.setItem = (k, v) => { if (k === WORKOUT_HANDOVER_KEY) throw new Error('full'); setItem(k, v); };
+    expect(await recover(b)).toBe(false);
+    expect(workoutOwnership.value).toBe('blocked');
+    b.read = async () => { throw new Error('offline'); };
+    expect(await recover(b)).toBe(false);
+    expect(() => pauseSession()).toThrow();
+  });
+
+  it('never blocks web workout editing when localStorage reads throw or contain an obsolete native marker', () => {
+    storage.setItem(WORKOUT_HANDOVER_KEY, '{old native marker');
+    initStore(storage, false);
+    expect(workoutOwnership.value).toBe('web');
+    storage.getItem = () => { throw new Error('Storage denied'); };
+    initStore(storage, false);
+    expect(workoutOwnership.value).toBe('web');
+    expect(checkingWorkoutOwnership.value).toBe(false);
+    expect(() => replaceState({ ...freshState(), active: active() })).not.toThrow();
+    expect(() => setSetById('set-1', { reps: 11 })).not.toThrow();
+    expect(workoutOwnershipNotice.value).toBeNull();
+  });
+
+  it('still asks native when reading localStorage fails without any handover evidence', async () => {
+    storage.getItem = () => { throw new Error('Storage denied'); };
+    initStore(storage, true);
+    const b = backend(); b.read = vi.fn(async () => { throw new Error('Bridge missing'); });
+    expect(await recover(b)).toBe(false);
+    expect(b.read).toHaveBeenCalled();
+    expect(workoutOwnership.value).toBe('web');
+    expect(() => update(s => ({ ...s, active: active() }))).not.toThrow();
+  });
+
+  it('does not overwrite a marker that changes while a native reply is pending', async () => {
+    const b = backend();
+    let finish!: (r: OwnershipReply) => void, sent!: HandoverSeed;
+    b.handover = seed => { sent = seed; return new Promise(r => { finish = r; }); };
+    const transfer = begin(b);
+    const marker = JSON.parse(storage.getItem(WORKOUT_HANDOVER_KEY)!);
+    marker.seed.handoverId = 'h-other';
+    storage.setItem(WORKOUT_HANDOVER_KEY, JSON.stringify(marker));
+    finish({ owner: 'native', seed: sent, snapshot: sent.snapshot });
+    expect(await transfer).toBe(false);
+    expect(workoutOwnership.value).toBe('blocked');
+    expect(JSON.parse(storage.getItem(WORKOUT_HANDOVER_KEY)!).seed.handoverId).toBe('h-other');
   });
 
   it('restores the retained heart checkpoint after a cancelled handover and deduplicates the last sample', async () => {

@@ -27,6 +27,14 @@ try {
     const event = (kind, data = {}) => report.events.push({ n: report.events.length + 1, at: Date.now(), elapsed: performance.now(), kind, data, foreground: true, interactive: true });
     window.__wearCalls = [];
     window.__rejectWear = false;
+    window.__exports = [];
+    const nativeStubs = {
+      Filesystem: {
+        writeFile: async options => { window.__exports.push(options); },
+        getUri: async () => ({ uri: 'file:///synthetic-backup.json' }),
+      },
+      Share: { share: async () => ({}) },
+    };
     window.Capacitor = { isNativePlatform: () => true, Plugins: {
       WatchBridge: {
         isSupported: async () => ({ supported: false }), permissionState: async () => ({ granted: false }),
@@ -35,6 +43,15 @@ try {
       WearEngine: { workoutOwnership: async () => {
         const mode = localStorage.getItem('marc.test.owner');
         if (mode === 'failed') throw new Error('Ownership unavailable');
+        if (mode === 'slow') return new Promise(resolve => { window.__resolveOwner = resolve; });
+        if (mode === 'native') {
+          const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+          const snapshot = JSON.stringify(s.active);
+          const inputs = JSON.stringify({ version: 1, sessionId: s.active.id, capturedAt: new Date().toISOString(),
+            restPolicy: { autoRest: s.preferences.autoRest, restDefaultSec: s.preferences.restDefaultSec, rest: s.preferences.rest },
+            heartSource: 'ble', heartSamples: [] });
+          return { owner: 'native', snapshot, seed: { handoverId: 'h-native', installationId: 'watch-1', snapshot, inputs } };
+        }
         return { owner: mode === 'blocked' ? 'blocked' : 'web' };
       }, execute: async options => {
         window.__wearCalls.push(options.action);
@@ -51,9 +68,11 @@ try {
     // WearEngine uses registerPlugin (unlike the legacy WatchBridge wrapper). Supply
     // Capacitor's native method header so its real proxy routes to this same stub.
     const wearStub = window.Capacitor.Plugins.WearEngine;
-    window.Capacitor.PluginHeaders = [{ name: 'WearEngine', methods: [{ name: 'execute', rtype: 'promise' }, { name: 'workoutOwnership', rtype: 'promise' }] }];
-    window.Capacitor.nativePromise = (name, method, args) => name === 'WearEngine'
-      ? wearStub[method](args) : Promise.reject(new Error('Unexpected native stub call'));
+    nativeStubs.WearEngine = wearStub;
+    window.Capacitor.PluginHeaders = Object.entries(nativeStubs).map(([name, methods]) => ({ name,
+      methods: Object.keys(methods).map(name => ({ name, rtype: 'promise' })) }));
+    window.Capacitor.nativePromise = (name, method, args) => nativeStubs[name]?.[method]
+      ? nativeStubs[name][method](args) : Promise.reject(new Error('Unexpected native stub call'));
     const now = new Date();
     const localDay = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
     localStorage.setItem('marc.state.v1', JSON.stringify({
@@ -63,6 +82,20 @@ try {
       body: [], health: { connected: false }, healthDays: [{ day: localDay, restingHr: 60, source: 'manual' }], weightLog: [], profileHistory: [],
       onboarding: { dismissedAt: [], completedAt: now.toISOString() }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: []
     }));
+    if (localStorage.getItem('marc.test.active')) {
+      const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+      s.active = { id: 's-1', splitId: 'split-1', startedAt: now.toISOString(), pausedMs: 0,
+        entries: [{ id: 'e-1', exerciseId: 'lib_barbell_bench_press', name: 'Bench', done: false, skipped: false,
+          sets: [{ id: 'set-1', kg: 60, reps: 8, effort: 'ideal', status: 'draft' }] }],
+        rest: { endsAt: now.getTime() + 90000, totalSec: 90 } };
+      localStorage.setItem('marc.state.v1', JSON.stringify(s));
+    }
+    if (localStorage.getItem('marc.test.storage-denied')) {
+      // Test the browser platform independently of the native bridge stub.
+      delete window.CapacitorCustomPlatform;
+      window.Capacitor.isNativePlatform = () => false;
+      Storage.prototype.getItem = function () { throw new Error('Storage denied'); };
+    }
   });
   await page.goto(`http://localhost:${port}/`);
   await page.locator('nav.nav').waitFor();
@@ -90,20 +123,85 @@ try {
   await page.evaluate(() => { window.__rejectWear = true; });
   await page.getByRole('button', { name: 'echo', exact: true }).click();
   await page.getByRole('status').filter({ hasText: 'Stub permission denied' }).waitFor();
-  assert.equal(await page.getByText('Reset local data', { exact: true }).count(), 0);
+  const noCrashReset = async () => {
+    for (const name of ['Reset app data', 'Reset app data and reload'])
+      assert.equal(await page.getByRole('button', { name, exact: true }).count(), 0);
+  };
+  await noCrashReset();
   assert.deepEqual(errors, []);
   mkdirSync('screenshots', { recursive: true });
   await page.screenshot({ path: 'screenshots/watch-lab-stub.png' });
-  for (const mode of ['blocked', 'failed']) {
-    await page.evaluate(mode => localStorage.setItem('marc.test.owner', mode), mode);
+  // Rejected or timed-out optional reads must not take over the app (no lab action required).
+  await page.clock.install();
+  for (const mode of ['failed', 'slow']) {
+    await page.evaluate(mode => {
+      localStorage.setItem('marc.test.owner', mode);
+      localStorage.setItem('marc.test.active', 'yes');
+    }, mode);
     await page.reload();
-    await page.getByRole('heading', { name: 'Workout recovery', exact: true }).waitFor();
-    assert.equal(await page.locator('nav.nav').count(), 0, 'No workout controls before ownership is verified');
-    assert.equal(await page.getByText('Reset local data', { exact: true }).count(), 0);
-    assert.deepEqual(errors, [], 'Recovery failures must not reach the crash handler');
-    await page.screenshot({ path: `screenshots/watch-ownership-${mode}.png` });
+    await page.locator('nav.nav').waitFor({ timeout: 3000 });
+    if (mode === 'slow') {
+      await page.getByRole('status').filter({ hasText: 'Checking watch workout' }).waitFor();
+      await page.waitForFunction(() => !!window.__resolveOwner);
+      // The shell and live controls are usable before the real 12-second timeout resolves.
+      await page.locator('nav.nav button', { hasText: 'Live' }).click();
+      await page.getByRole('button', { name: 'Finish', exact: true }).waitFor();
+      await page.clock.fastForward(12001);
+    }
+    await page.getByRole('status').filter({ hasText: 'You can keep using M/ARC' }).waitFor();
+    await page.locator('nav.nav button', { hasText: 'Live' }).click();
+    await page.getByRole('button', { name: 'Finish', exact: true }).waitFor();
+    assert.equal(await page.getByRole('heading', { name: 'Workout recovery', exact: true }).count(), 0);
+    assert.deepEqual(await page.evaluate(() => window.__wearCalls), []);
+    await noCrashReset();
   }
-  console.log('Watch lab browser gate PASS: hidden by default; SDK acceptance distinct; rejection contained; stores unchanged.');
+
+  // A prepared checkpoint (even with a failing bridge), a read native owner, and a
+  // legacy native active record protect only the live workout. Other screens keep working.
+  for (const mode of ['failed', 'native', 'blocked']) {
+    await page.evaluate(mode => {
+      localStorage.setItem('marc.test.owner', mode);
+      localStorage.removeItem('marc.workout.handover.v1');
+      if (mode === 'failed') {
+        const snapshot = JSON.stringify(JSON.parse(localStorage.getItem('marc.state.v1')).active);
+        localStorage.setItem('marc.workout.handover.v1', JSON.stringify({ version: 1, phase: 'prepared',
+          seed: { handoverId: 'h-prepared', installationId: 'watch-1', snapshot, inputs: '{}' } }));
+      }
+    }, mode);
+    await page.reload();
+    await page.getByRole('status').filter({ hasText: 'Live workout needs recovery' }).waitFor();
+    await page.locator('nav.nav button', { hasText: 'Live' }).click();
+    await page.getByRole('heading', { name: 'Workout recovery', exact: true }).waitFor();
+    assert.equal(await page.getByRole('button', { name: 'Finish', exact: true }).count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'More rest', exact: true }).count(), 0);
+    await noCrashReset();
+    const frozen = await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+      return { active: s.active, marker: localStorage.getItem('marc.workout.handover.v1') };
+    });
+    await page.screenshot({ path: `screenshots/watch-ownership-${mode}.png` });
+    await page.locator('nav.nav button', { hasText: 'History' }).click();
+    await page.getByRole('heading', { name: 'Sessions', exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Settings and backup', exact: true }).click();
+    await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor();
+    await page.getByRole('button', { name: 'lb', exact: true }).click();
+    await page.getByRole('button', { name: 'Export backup', exact: true }).click();
+    await page.waitForFunction(() => window.__exports.length > 0 && !!JSON.parse(localStorage.getItem('marc.state.v1')).lastBackupAt);
+    const exported = await page.evaluate(() => JSON.parse(window.__exports[0].data));
+    assert.equal(exported.state.preferences.weightUnit, 'lb', 'Settings writes and backup export still work');
+    assert.deepEqual(exported.state.active, frozen.active, 'Backup keeps the protected live snapshot');
+    assert.equal(await page.evaluate(() => localStorage.getItem('marc.workout.handover.v1')), frozen.marker);
+    assert.equal(await page.getByRole('button', { name: 'Restore backup', exact: true }).isDisabled(), true);
+    assert.equal(await page.getByRole('button', { name: 'Reset workout data', exact: true }).count(), 0);
+    assert.deepEqual(errors, [], 'Recovery failures must not reach the crash handler');
+  }
+  await page.evaluate(() => localStorage.setItem('marc.test.storage-denied', 'yes'));
+  await page.reload();
+  await page.locator('nav.nav').waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Workout recovery', exact: true }).count(), 0);
+  await noCrashReset();
+  assert.deepEqual(errors, [], 'Unavailable web storage must not create watch recovery');
+  console.log('Watch lab browser gate PASS: isolated lab; immediate shell; optional-read failure/timeout; scoped recovery with history/settings/export; web storage denial.');
 } finally {
   if (browser) await browser.close();
   server.kill();

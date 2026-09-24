@@ -4,7 +4,7 @@
  */
 import type { ActiveSession, AppState, Exercise, LoggedSet, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
-import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
+import { MAX_EXERCISE_NOTE, state, update, updateWorkout, flushSave } from '@/core/store';
 import { assertPhoneWorkoutWriter } from '@/core/workoutOwnership';
 import { findExercise } from '@/core/exercises';
 import { hasEntry } from '@/brain/exposure';
@@ -72,7 +72,7 @@ export function rebuildRecoveryModel(s: Pick<AppState, 'sessions' | 'customExerc
 export function active(): ActiveSession | null { return state.value.active; }
 
 function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
-  update(s => (s.active ? { ...s, active: fn(s.active) } : s));
+  updateWorkout(s => (s.active ? { ...s, active: fn(s.active) } : s));
 }
 
 const draftSet = (from: Partial<LoggedSet> = {}): LoggedSet => ({ ...from, id: newId('set') });
@@ -104,6 +104,7 @@ export function todaySplit(split: Split, override: TodayOverride | null, today =
 }
 
 export function startSession(split: Split): void {
+  assertPhoneWorkoutWriter();
   if (state.value.active) return;
   const custom = state.value.customExercises;
   const entries: ActiveSession['entries'] = plannedExercises(split, state.value.escobar.todayOverride).map(se => {
@@ -111,7 +112,7 @@ export function startSession(split: Split): void {
     return { id: newId('e'), exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: blankSets(se.sets), done: false, skipped: false, ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) };
   });
   const startedAt = new Date().toISOString();
-  update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
+  updateWorkout(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
   flushSave();
   resetHeartCapture();
   void haptic.medium();
@@ -393,7 +394,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     ...(opts.note?.trim() ? { note: opts.note.trim().slice(0, 1000) } : {}),
   });
   const changedTemplate = changedFromPlan(a, split);
-  update(s => ({
+  updateWorkout(s => ({
     ...s,
     active: null,
     // ES-02: today's adjustment is used up by finishing this split (a discarded session keeps it).
@@ -463,7 +464,7 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
 }
 
 export function discardSession(): void {
-  update(s => ({ ...s, active: null }));
+  updateWorkout(s => ({ ...s, active: null }));
   flushSave();
   void cancelRestDone();
   discardHeartCapture();

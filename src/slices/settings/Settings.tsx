@@ -27,6 +27,7 @@ import { WatchLabEntry } from './WatchLab';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { backupAgeDays, buildBackup, parseBackup } from './backup';
 import { sessionsToCsv } from './exportCsv';
+import { workoutOwnership } from '@/core/workoutOwnership';
 import { today } from '@/app/selectors';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
@@ -59,6 +60,7 @@ function resetEverything(): void {
 }
 
 export function Settings({ onClose }: { onClose: () => void }) {
+  const workoutBlocked = workoutOwnership.value !== 'web';
   const s = state.value;
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
@@ -193,11 +195,12 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Your data" palace="settings.data">
           <Card class="stack-sm">
-            <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
+            <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button disabled={workoutBlocked} onClick={restore}>Restore backup</Button></div>
+            {workoutBlocked && <p class="hint">Restore and reset are paused while the live workout needs recovery. You can still export your data.</p>}
             <p class="hint" data-palace="settings.last-backup">{backupAge == null ? 'No backup exported yet.' : `Last backup: ${backupAge === 0 ? 'today' : `${backupAge} day${backupAge === 1 ? '' : 's'} ago`}.`}</p>
             <div class="grid-2" data-palace="settings.csv"><Button onClick={() => void exportCsv(90)}>Export CSV (90 days)</Button><Button onClick={() => void exportCsv(null)}>Export CSV (all)</Button></div>
             {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">{backupOn && backupReminderScheduled.value === false ? 'Not set: notifications are off for M/ARC.' : 'Sunday evening, a note to save a backup file.'}</div>{backupOn && backupReminderScheduled.value === false && <Button size="sm" onClick={() => { void syncBackupReminder(true, { prompt: true }).then(ok => { if (!ok) showToast('Notifications are off for M/ARC. Turn them on in the phone settings.'); }); }}>Allow notifications</Button>}</Row>}
-            {pending && (
+            {!workoutBlocked && pending && (
               <Card class="card-quiet" role="alertdialog">
                 <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>
                 <div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setPending(null)}>Cancel</Button><Button variant="danger" onClick={() => applyRestore(pending)}>Replace</Button></div>
@@ -209,9 +212,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
               </Row>
             )}
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
-            {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
+            {!workoutBlocked && (!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
               <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
-            )}
+            ))}
           </Card>
         </Section>
         <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><WatchLabEntry version={APP_VERSION} /></div>

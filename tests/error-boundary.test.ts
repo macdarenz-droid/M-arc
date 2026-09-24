@@ -3,6 +3,7 @@ import type { VNode } from 'preact';
 import { ErrorBoundary, resetAppData } from '@/app/ErrorBoundary';
 import { BACKUP_DAY_KEY, BACKUP_KEY, STATE_KEY, flushSave, initStore, update } from '@/core/store';
 import { freshState } from '@/core/models';
+import { initWorkoutOwnership, WORKOUT_HANDOVER_KEY } from '@/core/workoutOwnership';
 
 function memoryStorage(): Storage {
   const map = new Map<string, string>();
@@ -40,6 +41,19 @@ describe('the error card (QA-R1-8)', () => {
     await Promise.resolve(); await Promise.resolve();
     expect(clear).toHaveBeenCalled();
     expect(deleteDatabase).toHaveBeenCalledWith('marc-escobar-img');
+  });
+  it('offers the real reset label during an optional native check, but hides it for a known handover', () => {
+    const st = memoryStorage();
+    const b = new ErrorBoundary({}); b.state = { error: new Error('render failed') };
+    try {
+      initWorkoutOwnership(st, true);
+      expect(texts(b.render())).toContain('button:Reset app data');
+      st.setItem(WORKOUT_HANDOVER_KEY, '{damaged handover');
+      initWorkoutOwnership(st, true);
+      expect(texts(b.render())).not.toContain('button:Reset app data');
+      expect(() => resetAppData(st, undefined)).toThrow(/editing is paused/);
+      expect(st.getItem(WORKOUT_HANDOVER_KEY)).toBe('{damaged handover');
+    } finally { initWorkoutOwnership(memoryStorage()); }
   });
   it('QA2-FB-1: the save on unload does not write the crashing state back after the reset', () => {
     vi.useFakeTimers();

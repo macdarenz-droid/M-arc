@@ -79,18 +79,31 @@ with different inputs is rejected. Earlier databases keep their pending
 effects; an old active seed without an ownership record requires review.
 
 `src/core/workoutOwnership.ts` freezes the phone before flushing/capturing and
-stores a prepared recovery checkpoint before calling native. Every Android
-boot checks the native owner before starting the normal app. A lost marker
-does not hide a native owner. A lost response leaves edits blocked; recovery
+stores a prepared recovery checkpoint before calling native. Android renders
+the normal shell immediately, with a small checking status while it reads the
+native owner. A failed or timed-out optional read without a known handover
+shows a non-blocking notice and leaves phone workouts usable. An unreadable
+web localStorage cannot create native ownership or lock the web app. A native
+owner actually returned by the read is protected even if its local marker was
+lost or cannot be saved. A lost handover response leaves live edits blocked; recovery
 either reads the committed owner or atomically cancels the prepared request.
 Cancellation leaves a durable record so a late request cannot acquire
 ownership after phone editing resumes. A missing previously confirmed native
-owner, damaged checkpoint, storage error or bridge failure stays blocked.
-The recovery screen offers retry and a rescue copy, without a data reset.
+owner, damaged checkpoint, or failure while recovering a known handover keeps
+the live workout blocked. History, settings, health updates and backup export
+remain available. Only the Train/Live view shows recovery; rest controls are
+hidden. Restore/reset stay unavailable while they could erase the handover.
+The recovery view offers retry and a rescue copy, without a data reset.
 
-The store blocks updaters before their callbacks run, including restore/reset
-and coaching writes. Finish and completion are guarded before heart/history
-effects. The render and boot crash reset paths preserve unresolved ownership.
+The store guards live updaters before their callbacks run, and rejects an
+active-session replacement from general updates while ownership is protected.
+Unrelated immutable updates keep the same active-session reference and remain
+writable. Finish and completion are guarded before heart/history effects;
+restore/reset are guarded before deleting anything. The render crash reset
+preserves known ownership. The pre-bundle crash reset refuses only a stored
+handover marker, so a crash before owner-check initialization still has a way
+out. A marker changed during a pending native request cannot be overwritten by
+its late reply.
 Phone heart capture freezes during handover. On cancellation, the original
 rest deadline and captured samples are restored without restarting rest or
 duplicating the last sample. No second session/entry/set ID scheme is added.
@@ -105,10 +118,13 @@ or timing confidence. Rest/heart inputs are retained but not yet consumed by
 the pending-effect resolver. No Saved acknowledgement is enabled.
 
 Risk controls: native seed/owner rollback together; cancellation prevents late
-ownership; recovery data is retained on storage failure; unknown ownership
-blocks writers. Unit/JVM tests cover these boundaries and database migration.
-The browser gate checks that an ownership error cannot expose workout controls
-or a destructive crash reset. Real GT6 behavior remains unverified.
+ownership; known recovery data is retained on storage failure. Optional reads
+without evidence of handover do not freeze an ordinary phone workout. Unit/JVM
+tests cover these boundaries and database migration. The browser gate checks
+the immediate shell, failed/timed-out optional reads, known recovery with
+working history/settings/export, and absence of the real crash-reset labels.
+Pre-bundle tests exercise the actual inline reset handler on web and Android.
+Real GT6 behavior remains unverified.
 
 Next implementation: add continuous native heart capture with source/boot
 identity, phone command routing and completion/release reconciliation. Then

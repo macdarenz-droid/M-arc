@@ -8,7 +8,7 @@ import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
 import { dayKey } from './dates';
 import { DEFAULT_GOAL, isGoalId } from '@/data/goals';
 import { showToast } from '@/app/toast';
-import { assertPhoneWorkoutWriter, initWorkoutOwnership, workoutOwnership, WORKOUT_HANDOVER_KEY } from './workoutOwnership';
+import { assertPhoneWorkoutWriter, initWorkoutOwnership, refreshWorkoutOwnership, workoutOwnership, WORKOUT_HANDOVER_KEY } from './workoutOwnership';
 
 /** A session saved before `logging` existed gets a legacy backfill so every reader can rely on it being present. */
 function withLogging(s: Session): Session {
@@ -268,7 +268,7 @@ function listenToOtherTabs(): void {
   if (storageListener) window.removeEventListener('storage', storageListener);
   storageListener = (e: StorageEvent) => {
     if (e.key === WORKOUT_HANDOVER_KEY) {
-      initWorkoutOwnership(storageRef!, true);
+      refreshWorkoutOwnership();
       return;
     }
     if (e.key !== STATE_KEY || !e.newValue) return;
@@ -349,9 +349,19 @@ function persistSoon(): void {
 
 /** Apply a change to the state. The updater must return a new object (spread). */
 export function update(fn: (s: AppState) => AppState): void {
-  assertPhoneWorkoutWriter(); // Before the updater: some existing updaters schedule timers.
-  state.value = fn(state.value);
+  refreshWorkoutOwnership();
+  const before = state.peek();
+  const next = fn(before);
+  // History, settings and backup metadata remain writable during workout recovery.
+  if (next.active !== before.active) assertPhoneWorkoutWriter();
+  state.value = next;
   persistSoon();
+}
+
+/** Live updaters may schedule timers, so guard BEFORE their callbacks can run. */
+export function updateWorkout(fn: (s: AppState) => AppState): void {
+  assertPhoneWorkoutWriter();
+  update(fn);
 }
 
 export function replaceState(next: AppState): void {

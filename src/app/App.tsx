@@ -6,7 +6,7 @@ import { Coach } from '@/slices/coach/Coach';
 import { Settings } from '@/slices/settings/Settings';
 import { Profile } from '@/slices/profile/Profile';
 import { OnboardingSheet } from '@/slices/profile/Onboarding';
-import { closePanel, go, openPanel, tab, TABS, type Tab } from './router';
+import { closePanel, go, openPanel, showPanel, tab, TABS, type Tab } from './router';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { GoalSheet, ScheduleSheet, WeeklyReviewSheet } from '@/slices/coach/Coach';
 import { CheckInSheet } from '@/slices/workout/Train';
@@ -27,7 +27,7 @@ import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
-import { ownershipMessage, workoutOwnership } from '@/core/workoutOwnership';
+import { checkingWorkoutOwnership, ownershipMessage, workoutOwnership, workoutOwnershipNotice } from '@/core/workoutOwnership';
 import { saveRescueCopy } from './ErrorBoundary';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
@@ -62,7 +62,7 @@ function Panels() {
     case 'goal': return <GoalSheet onClose={close} />;
     case 'schedule': return <ScheduleSheet onClose={close} />;
     case 'weekly-review': return <WeeklyReviewSheet onClose={close} />;
-    case 'checkin': return <CheckInSheet onClose={close} onDone={close} />;
+    case 'checkin': return workoutOwnership.value === 'web' ? <CheckInSheet onClose={close} onDone={close} /> : null;
     case 'memory': return <MemoryScreen onClose={close} />;
     case 'muscle': return p.params?.muscle ? <MuscleDetail key={p.params.muscle} muscle={p.params.muscle as MuscleId} onClose={close} /> : null;
     case 'session': {
@@ -73,20 +73,31 @@ function Panels() {
   }
 }
 
-export function App() {
-  if (workoutOwnership.value !== 'web') return (
-    <main class="app"><div class="card" role="alert">
+function WorkoutRecovery() {
+  return (
+    <main class="card" aria-label="Workout recovery">
       <h1>Workout recovery</h1><p>{ownershipMessage}</p>
+      <p>History, settings and backup export are still available.</p>
       <button type="button" class="btn" onClick={() => location.reload()}>Retry recovery</button>
       <button type="button" class="btn" onClick={() => { void saveRescueCopy().catch(() => showToast('Could not export the recovery copy.')); }}>Save a recovery copy</button>
-      {toast.value && <p role="status">{toast.value.message}</p>}
-    </div></main>
+    </main>
   );
+}
+
+export function App() {
+  const workoutBlocked = workoutOwnership.value !== 'web';
   const t = tab.value;
   const live = !!state.value.active;
   const panel = openPanel.value?.id;
   return (
     <div class="app">
+      {checkingWorkoutOwnership.value && <div class="banner" role="status">Checking watch workout…</div>}
+      {workoutOwnershipNotice.value && <div class="banner" role="status">{workoutOwnershipNotice.value}</div>}
+      {workoutBlocked && <div class="banner warn" role="status">
+        Live workout needs recovery.
+        <button type="button" class="btn btn-quiet btn-sm" onClick={() => go('train')}>Workout recovery</button>
+        <button type="button" class="btn btn-quiet btn-sm" onClick={() => showPanel('settings', { section: 'data' })}>Settings and backup</button>
+      </div>}
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
       {bootRecovered.value && !recoveredSeen.value && (
         <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>
@@ -95,11 +106,11 @@ export function App() {
         </div>
       )}
       {t === 'today' && <Today />}
-      {t === 'train' && <Train />}
+      {t === 'train' && (workoutBlocked ? <WorkoutRecovery /> : <Train />)}
       {t === 'history' && <History />}
       {t === 'body' && <Body />}
       {t === 'coach' && <Coach />}
-      <RestBanner />
+      {!workoutBlocked && <RestBanner />}
       <nav class="nav" aria-label="Main">
         <div class="nav-inner">
           {TABS.map(x => { const Icon = ICON[x.id]; return (
@@ -113,7 +124,7 @@ export function App() {
       <Dock />
       <EscobarMount />
       <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
-      {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
+      {!workoutBlocked && panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast key={toast.value.id} message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );

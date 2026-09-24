@@ -72,15 +72,14 @@
         box.querySelector('pre').textContent = msg;
         box.querySelector('[data-rescue]').addEventListener('click', function () { window.__marcRescue(); });
         box.querySelector('[data-reset]').addEventListener('click', function () {
-          // Never erase the handover backup while the native owner is unknown.
+          // This handler also runs before the bundle starts. Only a stored handover
+          // is grounds to refuse reset; an uninitialised bridge is not an owner.
           try {
-            var nativePhone = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
-            if (localStorage.getItem('marc.workout.handover.v1') ||
-                (window.__marcCanResetWorkoutData ? !window.__marcCanResetWorkoutData() : nativePhone)) {
+            if (localStorage.getItem('marc.workout.handover.v1') !== null) {
               alert('Workout recovery must finish before resetting. Reload M/ARC or save a recovery copy.');
               return;
             }
-          } catch (e) { return; }
+          } catch (e) { /* unavailable web storage does not establish a handover */ }
           if (!confirm('This deletes every workout on this device. Continue?')) return;
           try { localStorage.clear(); } catch (e) {}
           try { if (window.indexedDB && indexedDB.databases) { indexedDB.databases().then(function (dbs) { dbs.forEach(function (d) { indexedDB.deleteDatabase(d.name); }); }); } } catch (e) {}
