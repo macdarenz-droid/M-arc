@@ -136,7 +136,11 @@ export function checkOnline(): void {
   void checkHealth(proxyUrlOf(state.value.escobar.proxyUrl)).then(r => {
     online.value = r.ok;
     offlineReason.value = r.ok ? null : r.message ?? null;
-    if (!r.ok) offlineUntil = Date.now() + 60_000;
+    if (!r.ok) {
+      offlineUntil = Date.now() + 60_000;
+      // QA2-FD-3: still unreachable, so check again when this back-off ends (only while Escobar is on).
+      if (state.value.escobar.enabled) checkOnline();
+    }
   });
 }
 if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
@@ -222,13 +226,14 @@ export async function send(input: SendInput): Promise<TurnResult> {
   if (!activeConversation.value?.messages.length) pendingUser.value = { input, at: 0 };
   const r = await l.send(input, mode);
   if (sentIn !== epoch || loop !== l) return r;
-  if (r.outcome === 'done' || r.outcome === 'refusal' || r.outcome === 'step_limit' || r.outcome === 'cut_off') online.value = true;
+  // QA2-FD-6, QA2-FD-10: an answer that arrived clears the last health check's reason.
+  if (r.outcome === 'done' || r.outcome === 'refusal' || r.outcome === 'step_limit' || r.outcome === 'cut_off') { online.value = true; offlineReason.value = null; }
   pendingUser.value = null;
   if (loopView.value.status !== 'idle') loopView.value = { ...loopView.value, status: 'idle' };
   lastTurn.value = { ...r, input };
   activeConversation.value = l.conversation;
   // QA-R4a-6: after a dropped answer, check again once the back-off ends, not only on the next sheet open.
-  if (r.error?.code === 'network') { online.value = false; offlineUntil = Date.now() + 60_000; checkOnline(); }
+  if (r.error?.code === 'network') { online.value = false; offlineReason.value = null; offlineUntil = Date.now() + 60_000; checkOnline(); }
   if (r.error?.code === 'quota' && r.error.retryAfter) quotaResetAt.value = Date.now() + r.error.retryAfter * 1000;
   // An auto navigation (§7.2) happens once the answer has landed, with the sheet at half height.
   const nav = r.outcomes.find(o => o.navigate?.auto)?.navigate;

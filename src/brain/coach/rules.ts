@@ -191,7 +191,7 @@ export const RULES: Rule[] = [
       return [{
         id: `balance:${b.pair}`, category: 'balance', priority: 200 + Math.min(20, b.severity * 3),
         title: `${b.weak} work is trailing`,
-        noticed: `${b.strong} work has been ${b.ratioLabel} your ${b.weak.toLowerCase()} work over the last three weeks.`,
+        noticed: `${b.strong} work has been ${b.ratioLabel} your ${b.weak.toLowerCase()} work over the last three weeks.${b.context ? ` ${b.context}` : ''}`,
         means: 'Lopsided weeks add up. Balanced work keeps joints happy and progress even.',
         action: `Add one or two ${b.weak.toLowerCase()} exercises to your next sessions.`,
       }];

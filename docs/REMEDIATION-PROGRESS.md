@@ -504,7 +504,7 @@ Order: high → medium → low. Each fix has a test that fails before and passes
 
 The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-1. For the 2 high and 13 medium items still open, the supervisor wrote and verified the fixes (`docs/qa/fixes/ALL.patch`, including the four required follow-ups and the effort inset). `git apply` was blocked here, so the owner had them applied by hand, exactly as in the patch. Each has a test that fails without its source change; I re-checked this per group.
 
-- **QA2-FA-1..4 (Worker):** a step cut short before the API reports usage is charged 200 output tokens per second it ran (`CUT_SHORT_TOKENS_PER_SEC`), capped at `max_tokens`, or streamed characters / 3 if more. An error after a thinking-only phase is counted. Owner default: a normal cancel is over-counted about 2–4× against the daily cap.
+- **QA2-FA-1, QA2-FA-2, QA2-FA-3, QA2-FA-4 (Worker):** a step cut short before the API reports usage is charged 200 output tokens per second it ran (`CUT_SHORT_TOKENS_PER_SEC`), capped at `max_tokens`, or streamed characters / 3 if more. An error after a thinking-only phase is counted. Owner default: a normal cancel is over-counted about 2–4× against the daily cap.
 - **QA2-F7-3 (Worker):** `MODEL_<MODE>` must be an exact id in `MODE_MODELS` (models that take adaptive thinking and effort). Anything else is ignored: that mode keeps `MODEL`, `/health` lists it under `ignoredModels`, and the deploy check fails.
 - **QA2-FB-1:** the error card's reset calls `stopSaving()` before wiping, so the unload save cannot write the crashing state back.
 - **QA2-FB-2:** Escobar's reminder Apply resyncs with `prompt: true`, like the Settings toggle.
@@ -520,3 +520,80 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 - **QA-R7-1 (again):** the effort `::before` inset is -8px, so the hit area is 44 px tall; the rows are 48 px.
 - **Worker changes (QA2-FA, QA2-F7-3) go live only when the owner merges to main.**
 - The 32 low items in LIVE-QA-2.md come next, each with a test.
+
+### QA round 2, low items
+
+#### QA2-FA-6 (Worker)
+- `billed()` no longer counts a step that stalled or was cancelled before any output. A step still counts if it produced thinking (`modelOutput`), text or tools, finished, or refused.
+- Test: two stalled requests with `MAX_TURNS_PER_DEVICE=2` record nothing, and a third request still gets through.
+- Live only after the owner merges to main.
+
+#### QA2-FA-5 (Worker)
+- The relay shard hash is seeded with a random value picked when each Worker instance starts. It uses FNV-1a with a murmur3 finalizer, so a caller cannot work out which device ids land on which shard, or aim a burst at a chosen group of members. The relay holds no state, so a device may use another shard in another instance.
+- Test: under 64 seeds, one id lands on all 8 shards, and two ids that differ only in their last character do not stay on the same shard. The first version, without the finalizer, failed this test, which is why the finalizer was added.
+- Live only after the owner merges to main.
+
+#### QA2-FB-3, QA2-FB-6 (same root cause)
+- `syncBackupReminder` returns whether the reminder is scheduled and sets `backupReminderScheduled`. When the switch reads on but nothing could be scheduled, Settings says "Not set: notifications are off for M/ARC." and offers "Allow notifications", which asks, because it is a tap. The untrue "shown as off" comment is gone.
+- **Needs device check:** a new Android 13+ install shows this line until notifications are allowed.
+
+#### QA2-FB-4
+- `scheduleRestDone` checks permission first and never lets the plugin ask on its own, so a rest timer no longer brings up the permission dialog mid-workout. The Settings test alert still asks, because it is a tap.
+
+#### QA2-FB-5
+- A committed set that is still empty when its field loses focus (`commitSetById` on blur) gives up its commit: its time, rest, fidelity and heart data are cleared. When it is filled for real later, it gets its own time and starts rest.
+- Clearing and retyping within the same field still keeps the original commit (QA-R2b-1, test unchanged).
+
+#### QA2-FC-5
+- A muscle held back by today's soreness after the model's own time has no full-recovery time either (`fullInHours` is null). Today says "sore today" instead of "under 1h", the muscle sheet no longer adds "fully recovered in about under 1h", and Escobar's `get_recovery` marks it `soreToday`.
+
+#### QA2-FC-6
+- When a max-effort first set misses on the lightest load the equipment can make (the empty 20 kg or 45 lb bar), the live tip no longer says "Drop to 20 kg". It says to stay at the bar, rest a little longer and stop each set a rep short of max. Above the bar it still drops a step.
+
+#### QA2-FC-7
+- Equipment words (every word of the library's equipment names, singular and plural) no longer count as another movement when a longer name contains a library name. "Leg Press Machine", "Cable Lat Pulldown", "Hip Thrust Barbell" and the others map to their library exercises again. "Hack Squat Calf Raise" is still a different exercise.
+
+#### QA2-FC-8
+- The upper/lower balance note adds "A balanced week has about 1.5× as much upper body work as lower body work, since upper covers both push and pull." That way a "1.3×" lower-body lead reads as the lopsided week it is (`Imbalance.context`).
+
+#### QA2-FC-9
+- `reasonKeyFor` takes the suggestion's first set note. The "Change it up" plateau (a new rep range or a lighter week) gets the lighter-week ("reduce") cue again. The "keep this load" plateau keeps the repeatability ("confirm") cue from QA-R3b-8.
+
+#### QA2-FD-2, QA2-FD-7, QA2-FD-9
+- "Save for future" builds the split with `templateFromSession`, which keeps the person's own changes and leaves out Escobar's one-day ones:
+  - An exercise only Escobar brought in today (an add, or a swap's target) is not saved.
+  - One Escobar took out today stays at its place.
+- A swap of an exercise to itself is refused by `propose_today` and is a no-op in `plannedExercises`. The QA-R4a-10 rule (a swap onto an exercise already present drops the source) had turned it into a removal.
+
+#### QA2-FD-3
+- A health check that fails again schedules the next one for when its back-off ends, so the Coach tab box recovers without reopening the sheet. It keeps checking only while Escobar is on, at most once a minute.
+
+#### QA2-FD-6, QA2-FD-10
+- An answer that arrives, and a dropped one, both clear `offlineReason`, so the offline notice no longer repeats an old "Escobar isn't set up yet." after a connection drop.
+
+#### QA2-FD-4, QA2-FD-8, QA2-FD-11, QA2-FD-12
+- **Health sharing off:** the replayed brief drops the whole driver group after "advice X". The brackets are matched, because the check-in driver has its own. No health driver survives and no stray ")" is left, which matches the live brief.
+- **Body sharing off:** "weight 80.5 [f13] kg", as real briefs tag it, is removed too.
+- **explain_method results:** the personal keys that `knowledge/methods.ts` drops live are scrubbed on replay, in `data` and `facts`: `restingHrBaseline`, `healthDaysLogged`, `zoneNFromBpm` for health; `restingKcalPerDay` for body.
+
+#### QA2-FD-5
+- Escobar's `recall` gives a memory's `since` as the phone's day, and Past conversations label rows with the local day (`dayKey`), matching the memory screen. The test fails without the fix under Asia/Manila (`npm run test:tz`).
+
+#### QA2-FE-2, QA2-FE-7, QA2-FE-8
+- A loaded carry's target snaps to the gym's equipment like a weighted lift: "70 lb · 45 m", not "31.751 kg · 45 m". Without equipment, the load is rounded to the half kilo.
+- The distance/time branch is for carries and sleds only: a distance, or a time with no reps. Burpees, box jumps and wall balls logged with reps and seconds keep their rep goal ("16 reps").
+
+#### QA2-FE-3, QA2-FE-4, QA2-FE-5
+- `flagsForSet` (Escobar's `get_session`) uses `setUnitSuspect`, so a warm-up or drop set is never flagged as a kg/lb slip.
+- Escobar's set output includes `kind`, and `get_sessions` counts working sets only.
+- Escobar's `loadOf` uses the app's `kgToDisplay`, so 26.25 lb reads as 26.25 there too.
+
+#### QA2-FE-1
+- A day records `totalsSyncedAt`, the time its steps or active calories were last read. A later sync that failed them keeps it, and Escobar's `totalsAsOf` uses it. A full past-day total still needs the native "yesterday" read, which remains an owner decision (QA-R5a-4).
+- Test updated, not loosened: the full-summary shape test now also expects `totalsSyncedAt`.
+
+#### QA2-FE-6
+- A sync that read only some data is marked `partial`. Settings titles its row "Last Health Connect sync was partial" instead of "failed", with the same Details.
+
+#### QA2-F7-5, QA2-F7-6
+- Fixed by the supervisor's W2 patch in round 2: each fallback attempt is priced by its own model, an attempt that declined before output is not billed, the price table is complete, and unknown ids get the dearest rates. Tests are in `tests/escobar/loop.test.ts`.

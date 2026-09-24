@@ -188,7 +188,7 @@ function validateToday(i: Record<string, unknown>, ctx: ToolCtx): Built {
     if (!isObj(c)) throw new ToolError(`changes[${n}] must be an object`);
     const need = (v: unknown) => { const id = exerciseId(ctx, v, `changes[${n}]`); if (!inSplit.has(id)) throw new ToolError(`changes[${n}]: ${exerciseName(ctx, id)} is not in ${split.name}`); return id; };
     switch (c.kind) {
-      case 'swap': return { kind: 'swap', from: need(c.from), to: exerciseId(ctx, c.to, `changes[${n}].to`) };
+      case 'swap': { const from = need(c.from), to = exerciseId(ctx, c.to, `changes[${n}].to`); if (to === from) throw new ToolError(`changes[${n}]: a swap needs a different exercise`); return { kind: 'swap', from, to }; } // QA2-FD-9
       case 'remove': return { kind: 'remove', exerciseId: need(c.exerciseId) };
       case 'add': if (!isInt(c.sets, 1, 6)) throw new ToolError(`changes[${n}].sets must be 1–6`); return { kind: 'add', exerciseId: exerciseId(ctx, c.exerciseId, `changes[${n}]`), sets: c.sets };
       case 'sets': if (!isInt(c.sets, 1, 6)) throw new ToolError(`changes[${n}].sets must be 1–6`); return { kind: 'sets', exerciseId: need(c.exerciseId), sets: c.sets };

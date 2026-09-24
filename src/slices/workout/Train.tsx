@@ -457,7 +457,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
-  const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode), `${today.value}|${entry.exerciseId}`);
+  const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
 
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>

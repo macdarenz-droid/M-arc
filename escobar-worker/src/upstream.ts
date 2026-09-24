@@ -34,7 +34,20 @@ export async function localStep(client: ClientLike, params: MessageCreateParamsS
 /** Runs the step in the UpstreamRelay pinned to eastern North America and relays its events. */
 /** QA-R0-5: turns spread over a few relay objects (all in eastern North America), so one burst of photo turns cannot exhaust a single object's memory for everyone. */
 export const RELAY_SHARDS = 8;
-export const relayShard = (key: string): number => { let h = 0; for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0; return h % RELAY_SHARDS; };
+/**
+ * QA2-FA-5: the device id is chosen by the caller, so the shard hash is seeded with a value picked
+ * when this Worker instance starts. A caller cannot work out which ids land on which shard, so
+ * cannot aim a burst at a chosen group of members. The relay keeps no state, so a device may use
+ * a different shard in another instance.
+ */
+const SHARD_SEED = crypto.getRandomValues(new Uint32Array(1))[0]!;
+export const relayShard = (key: string, seed = SHARD_SEED): number => {
+  let h = (0x811c9dc5 ^ seed) >>> 0;
+  for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619) >>> 0;
+  // A 32-bit finalizer (murmur3 fmix32), so every bit of the id reaches the low bits the shard uses.
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b) >>> 0; h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35) >>> 0; h ^= h >>> 16;
+  return (h >>> 0) % RELAY_SHARDS;
+};
 
 export async function relayStep(env: Env, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal; shardKey?: string }): Promise<StepResult> {
   const ns = env.UPSTREAM!;

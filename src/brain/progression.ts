@@ -114,7 +114,8 @@ function applyLoadFactor(s: Suggestion, f: number): Suggestion {
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
   if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
-  if (ctx?.equipment && modeOf(exerciseId, custom) === 'weighted') s = snapToEquipment(s, ctx.equipment);
+  // QA2-FE-2, QA2-FE-7: a loaded carry's target snaps to the gym's equipment too (70 lb, not 31.751 kg).
+  if (ctx?.equipment && (modeOf(exerciseId, custom) === 'weighted' || (modeOf(exerciseId, custom) === 'conditioning' && s.kg != null))) s = snapToEquipment(s, ctx.equipment);
   return s;
 }
 
@@ -143,10 +144,11 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   // QA-R6-5: a carry or sled logged by distance or time progresses by distance or time, never "1 reps".
-  if (mode === 'conditioning' && (last.bestDistanceM > 0 || last.bestDurationSec > 0)) {
+  // QA2-FE-8: only a carry or sled (distance, or time with no reps); a rep move logged with a time keeps its rep goal.
+  if (mode === 'conditioning' && (last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
-    const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * ctx.deload.loadFactor) : last.topKg) : null;
+    const kg = last.topKg > 0 ? half(ctx?.deload ? last.topKg * ctx.deload.loadFactor : last.topKg) : null;
     const load = kg != null ? `${kg} kg · ` : '';
     const u = byDistance ? ' m' : 's';
     const step = byDistance ? (best >= 100 ? 10 : 5) : 5;

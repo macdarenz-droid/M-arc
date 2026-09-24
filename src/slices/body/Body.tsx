@@ -130,7 +130,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
         </div>
         {r.recovering && (
           <p class="small muted">
-            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'Held back by today\'s soreness rating. Ready for hard work once it eases.' : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
+            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'Held back by today\'s soreness rating; ready for hard work once it eases' : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
             {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · adjusted to your own history' : ''}.
           </p>
         )}

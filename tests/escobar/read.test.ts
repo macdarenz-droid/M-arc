@@ -245,3 +245,29 @@ describe('get_health totals (QA-R5a-4)', () => {
     expect(h.note).toMatch(/last sync/);
   });
 });
+
+describe('Escobar loads and set kinds (QA2-FE-3, QA2-FE-5)', () => {
+  it('a quarter-pound load reads as on screen, and a warm-up says it is one', async () => {
+    const { displayToKg } = await import('@/core/units');
+    const s = sixMonthsState();
+    const gym = s.units.activeGymId;
+    const st = { ...s, units: { ...s.units, gyms: s.units.gyms.map(g => (g.id === gym ? { ...g, defaultUnit: 'lb' as const } : g)) } };
+    const c = ctxOf(st as never);
+    expect(R.loadOf(c, 'lib_dumbbell_biceps_curl', displayToKg(26.25, 'lb')).value).toBe(26.25);
+    const day = s.sessions.at(-1)!;
+    const withWarm = { ...day, id: 'warmx', exercises: [{ ...day.exercises[0]!, sets: [{ kg: 20, reps: 8, kind: 'warmup' as const }, ...day.exercises[0]!.sets] }] };
+    const c2 = ctxOf({ ...s, sessions: [...s.sessions.slice(0, -1), withWarm] } as never);
+    const got = R.getSession({ sessionId: 'warmx' }, c2) as { exercises: Array<{ sets: Array<{ kind?: string }> }> };
+    expect(got.exercises[0]!.sets[0]!.kind).toBe('warmup');
+  });
+});
+
+describe('get_health totals time (QA2-FE-1)', () => {
+  it('names when the steps were read, not a later sync that failed them', () => {
+    const s = sixMonthsState();
+    const day = addDaysLocal(TODAY, -1);
+    const st = { ...s, healthDays: [{ day, steps: 6000, source: 'health_connect', syncedAt: new Date(`${day}T20:00:00`).toISOString(), totalsSyncedAt: new Date(`${day}T12:00:00`).toISOString() }] };
+    const h = R.getHealth({ days: 7 }, ctxOf(st as never)) as { days: Array<{ day: string; totalsAsOf?: string }> };
+    expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('12:00');
+  });
+});

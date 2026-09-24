@@ -65,6 +65,7 @@ export function mapHealthSummary(r: HealthSummaryRaw, day: string, syncedAt: str
     activeCalories: kcalGuard(r.activeCalories) || undefined,
     source: 'health_connect',
     syncedAt,
+    ...(r.steps || kcalGuard(r.activeCalories) ? { totalsSyncedAt: syncedAt } : {}),
   };
 }
 
@@ -73,7 +74,10 @@ function askedFor(): string { try { return localStorage.getItem(ASKED_KEY) ?? ''
 function rememberAsked(v: string): void { try { localStorage.setItem(ASKED_KEY, v); } catch { /* storage blocked */ } }
 
 /** Why the last sync gave nothing (UI-16, RG-18): shown in Settings → Health diagnostic. Null after a good sync. */
-export interface HealthError { needsPermission: boolean; missing: string[]; failed: string[]; message: string; raw?: HealthSummaryRaw }
+export interface HealthError { needsPermission: boolean; missing: string[]; failed: string[]; message: string; raw?: HealthSummaryRaw; /** QA2-FE-6: some reads failed, what was read is saved. */ partial?: boolean }
+
+/** QA2-FE-6: the Settings row title for the last sync's problem. */
+export const healthSyncTitle = (e: HealthError | null): string => (e?.partial ? 'Last Health Connect sync was partial' : 'Last Health Connect sync failed');
 export let lastHealthError: HealthError | null = null;
 
 /**
@@ -107,7 +111,7 @@ export async function syncHealth({ prompt = false }: { prompt?: boolean } = {}):
     const day = mapHealthSummary(r, endDay, new Date().toISOString());
     // QA-R5a-1: a partial failure is reported too (Settings shows Details), not only a total one.
     lastHealthError = !day ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed ?? [], message: 'Health Connect answered, but every read failed.', raw: r }
-      : r.failed?.length ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed, message: 'Some health data could not be read. What was read is saved.', raw: r }
+      : r.failed?.length ? { needsPermission: false, missing: r.missing ?? [], failed: r.failed, message: 'Some health data could not be read. What was read is saved.', raw: r, partial: true }
       : null;
     return day;
   } catch (e) {

@@ -350,7 +350,8 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
       recovering: pct < READY_PCT,
       ready: pct >= READY_PCT,
       readyInHours,
-      fullInHours: tFull == null ? null : r1(Math.max(0, tFull - elapsedH)),
+      // QA2-FC-5: held back by soreness past the model's own time, no clock time says when it is full either.
+      fullInHours: tFull == null || soreOnly ? null : r1(Math.max(0, tFull - elapsedH)),
       confidence: confidenceFor(observations),
       drivers: last.drivers,
       systemicFactor: systemicNow,

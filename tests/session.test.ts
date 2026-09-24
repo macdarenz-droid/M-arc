@@ -3,7 +3,7 @@ import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
   addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel,
-  resolveSessionTiming, setSet, startRest, startSession, substituteEntry,
+  resolveSessionTiming, setSet, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
 import { deleteSplit } from '@/slices/workout/splits';
 import { findExercise } from '@/core/exercises';
@@ -37,6 +37,26 @@ describe('commit-once sets (UI-01)', () => {
     expect(again.restSec).toBe(first.restSec);
     expect(again.fidelity).toBe(first.fidelity);
     expect(a().rest!.endsAt).toBe(endsAt);
+  });
+  it('a set left empty on blur gives up its commit, so its later real entry gets its own time and rest (QA2-FB-5)', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(0, 0);
+    vi.advanceTimersByTime(30_000);
+    setSet(1, 0, { kg: 20, reps: 10 }); // the wrong set, by mistake
+    commitSet(1, 0);
+    setSet(1, 0, { reps: undefined, kg: undefined });
+    commitSet(1, 0); // the field loses focus with the set empty
+    expect(a().entries[1]!.sets[0]!.at).toBeUndefined();
+    stopRest();
+    vi.advanceTimersByTime(180_000);
+    setSet(1, 0, { kg: 20, reps: 10 }); // now for real
+    commitSet(1, 0);
+    const s = a().entries[1]!.sets[0]!;
+    expect(Date.parse(s.at!)).toBe(Date.now());
+    expect(s.restSec).toBe(210);
+    expect(a().rest).toBeTruthy();
   });
   // QA-R2b-1 changed this contract: an emptied set is a draft but keeps its commit, so a
   // clear-and-retype correction neither moves its time nor restarts rest.
@@ -306,5 +326,20 @@ describe('a swap to an exercise already in the split (QA-R4a-10)', () => {
   it('leaves one entry, not two', () => {
     const o = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_cable_fly' }] };
     expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(['lib_cable_fly']);
+  });
+});
+
+describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-7, QA2-FD-9)", () => {
+  it('a skip for today stays out of the saved split; the exercise the person added is saved', () => {
+    replaceState({ ...state.value, splits: [split], escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove', exerciseId: 'lib_cable_fly' }] } } });
+    start();
+    addExerciseToSession(findExercise('lib_dumbbell_lateral_raise')!);
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_cable_fly', 'lib_dumbbell_lateral_raise']);
+  });
+  it('a swap to itself is no change', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_barbell_bench_press' }] };
+    expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(split.exercises.map(e => e.exerciseId));
   });
 });

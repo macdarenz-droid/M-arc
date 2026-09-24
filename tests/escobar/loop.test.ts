@@ -388,3 +388,21 @@ describe('cost by the model that answered (F7)', () => {
     expect(estimateCost({ inputTokens: 0, outputTokens: 0, cacheReadTokens: 1_000_000 }, 'claude-sonnet-4-6')).toBeCloseTo(0.3, 10);
   });
 });
+
+describe('replay redaction with real brief text (QA2-FD-4, QA2-FD-8, QA2-FD-11, QA2-FD-12)', () => {
+  const brief: StoredMessage = { role: 'system', content: 'readiness amber 55 [f3], advice no_increase (how you feel today (soreness, sleep quality or mood); sleep has been short recently; resting heart rate is up over your usual)\nprofile: goal Strength, male, weight 80.5 [f13] kg, age 36' };
+  const use: StoredMessage = { role: 'assistant', content: [{ type: 'tool_use', id: 'm1', name: 'explain_method', input: { method: 'hr_zones' } }] } as StoredMessage;
+  const result: StoredMessage = { role: 'user', content: [{ type: 'tool_result', tool_use_id: 'm1', content: JSON.stringify({ data: { personal: { hrMax: 184, restingHrBaseline: 58, healthDaysLogged: 60, zone1FromBpm: 120, zone5FromBpm: 169, restingKcalPerDay: 1745 } }, facts: { f1: 'personal zone1FromBpm = 120', f2: 'personal restingKcalPerDay = 1745', f3: 'personal restingHrBaseline = 58' } }) }] } as StoredMessage;
+  const msgs = [{ role: 'user', content: [{ type: 'text', text: 'hi' }] } as StoredMessage, brief, use, result];
+  it('health off: no drivers survive, no stray bracket, and no zone or resting-HR numbers', () => {
+    const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: false, body: true }));
+    for (const gone of ['sleep has been short', 'resting heart rate', 'no_increase)', 'zone1FromBpm', '169', 'restingHrBaseline', 'healthDaysLogged']) expect(out).not.toContain(gone);
+    expect(out).toContain('advice no_increase\\nprofile');
+    expect(out).toContain('restingKcalPerDay');
+  });
+  it('body off: the tagged weight and resting calories are gone', () => {
+    const out = JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body: false }));
+    for (const gone of ['80.5', 'restingKcalPerDay', '1745']) expect(out).not.toContain(gone);
+    expect(out).toContain('age 36');
+  });
+});

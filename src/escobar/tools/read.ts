@@ -70,7 +70,8 @@ export function capJson<T>(data: T, maxBytes: number, { dropFrom = 'end' }: { dr
 /** A load in canonical kg plus the equipment's own reading. */
 export function loadOf(ctx: ToolCtx, exerciseId: string, kg: number): { kg: number; unit: 'kg' | 'lb'; value: number } {
   const profile = resolveProfile(exerciseId, ctx.state.units.activeGymId, ctx.state.units, exerciseOf(ctx, exerciseId));
-  const value = profile.unit === 'lb' ? r1(kg / 0.45359237) : r2(kg);
+  // QA2-FE-5: the app's own conversion, so quarter-pound loads (26.25 lb) read as on screen.
+  const value = kgToDisplay(kg, profile.unit);
   return { kg: r2(kg), unit: profile.unit, value };
 }
 
@@ -82,6 +83,7 @@ function setOut(ctx: ToolCtx, exerciseId: string, s: LoggedSet) {
   if (s.durationSec) o.durationSec = s.durationSec;
   if (s.distanceM) o.distanceM = s.distanceM;
   if (s.flags?.length) o.flags = s.flags;
+  if (s.kind) o.kind = s.kind; // QA2-FE-3: a warm-up or drop set says so
   return o;
 }
 
@@ -153,7 +155,7 @@ export function getSessions(input: { from?: string; to?: string; splitId?: strin
     count: list.length,
     sessions: list.map(x => ({
       sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60),
-      sets: x.exercises.reduce((a, e) => a + e.sets.length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
+      sets: x.exercises.reduce((a, e) => a + e.sets.filter(isWorkingSet).length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
     })),
   }, 5000);
 }
@@ -236,6 +238,8 @@ export function getRecovery(input: { muscles?: string[]; at?: string }, ctx: Too
       muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft),
       readyInHours: r.readyInHours ? r.readyInHours.map(Math.round) : null, fullInHours: r.fullInHours != null ? Math.round(r.fullInHours) : null,
       drivers: r.drivers.slice(0, 2).map(d => d.text), personalized: r.personalized, confidence: r.confidence, lastDay: r.lastDay,
+      // QA2-FC-5: held back by today's soreness rating, so the hours say nothing.
+      ...(r.soreToday ? { soreToday: true } : {}),
     })),
   }, 5000);
 }
@@ -346,7 +350,7 @@ export function getHealth(input: { days?: number }, ctx: ToolCtx) {
   const list = ctx.state.healthDays.filter(d => d.day >= since).sort((a, b) => b.day.localeCompare(a.day));
   return capJson({
     // QA-R5a-4: a day's steps and calories are what the last sync that day read, not a full total.
-    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.syncedAt, d.day) } : {}) })),
+    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.totalsSyncedAt ?? d.syncedAt, d.day) } : {}) /* QA2-FE-1 */ })),
     note: 'steps and activeKcal are totals as of the last sync that day (totalsAsOf), so a past day can be lower than its real total.',
     restingHr7d: restingHr(ctx.state.healthDays, ctx.state.profile, ctx.today),
     hrvAvailable: list.some(d => d.lnRmssd != null),

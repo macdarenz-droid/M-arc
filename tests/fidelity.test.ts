@@ -114,3 +114,11 @@ describe('warm-ups and drop sets (QA-R6-6, QA-R6-8, QA-R6-9)', () => {
     expect(rows.map((_, j) => workingIndex(rows, j))).toEqual([null, null, 0, 1, 2]);
   });
 });
+
+describe('flagsForSet and warm-ups (QA2-FE-3, QA2-FE-4)', () => {
+  it('a light warm-up or drop set is not flagged as a kg/lb slip; a light working set still is', () => {
+    expect(flagsForSet({ kg: 45, reps: 8, kind: 'warmup' }, 100, false)).not.toContain('unit_suspect');
+    expect(flagsForSet({ kg: 45, reps: 8, kind: 'drop' }, 100, false)).not.toContain('unit_suspect');
+    expect(flagsForSet({ kg: 45, reps: 8 }, 100, false)).toContain('unit_suspect');
+  });
+});

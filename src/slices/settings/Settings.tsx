@@ -9,7 +9,7 @@ import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { openPanel, profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
-import { healthAvailable, lastHealthError } from '@/native/health';
+import { healthAvailable, healthSyncTitle, lastHealthError } from '@/native/health';
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
@@ -20,7 +20,7 @@ import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
-import { cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
+import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
 import { APP_VERSION } from '@/core/version';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
@@ -174,7 +174,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
             <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : lastHealthError?.message ?? 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
-            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">Last Health Connect sync failed</span><div class="hint">See what was allowed and what was read</div></Row>}
+            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">{healthSyncTitle(lastHealthError)}</span><div class="hint">See what was allowed and what was read</div></Row>}
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
               <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>
@@ -195,7 +195,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
             <p class="hint" data-palace="settings.last-backup">{backupAge == null ? 'No backup exported yet.' : `Last backup: ${backupAge === 0 ? 'today' : `${backupAge} day${backupAge === 1 ? '' : 's'} ago`}.`}</p>
             <div class="grid-2" data-palace="settings.csv"><Button onClick={() => void exportCsv(90)}>Export CSV (90 days)</Button><Button onClick={() => void exportCsv(null)}>Export CSV (all)</Button></div>
-            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">Sunday evening, a note to save a backup file.</div></Row>}
+            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">{backupOn && backupReminderScheduled.value === false ? 'Not set: notifications are off for M/ARC.' : 'Sunday evening, a note to save a backup file.'}</div>{backupOn && backupReminderScheduled.value === false && <Button size="sm" onClick={() => { void syncBackupReminder(true, { prompt: true }).then(ok => { if (!ok) showToast('Notifications are off for M/ARC. Turn them on in the phone settings.'); }); }}>Allow notifications</Button>}</Row>}
             {pending && (
               <Card class="card-quiet" role="alertdialog">
                 <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>

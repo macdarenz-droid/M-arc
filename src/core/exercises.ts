@@ -151,7 +151,12 @@ let movementWords: Set<string> | null = null;
  */
 function containsOnly(q: string, name: string): boolean {
   if (!name || !q.includes(name)) return false;
-  movementWords ??= new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2));
+  // QA2-FC-7: equipment words ("machine", "cable", "barbell") say how, not which movement, so
+  // "Leg Press Machine" is still Leg Press.
+  if (!movementWords) {
+    const gear = new Set(LIBRARY.flatMap(e => normalizeName(e.equipment).split(' ')).flatMap(w => [w, w.replace(/s$/, ''), `${w}s`]));
+    movementWords = new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2 && !gear.has(w)));
+  }
   const own = new Set(name.split(' '));
   return !q.replace(name, ' ').split(' ').some(w => w && !own.has(w) && movementWords!.has(w));
 }

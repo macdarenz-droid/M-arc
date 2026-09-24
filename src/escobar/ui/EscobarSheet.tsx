@@ -3,6 +3,7 @@
  * open Sheet, with half / full detents, a header with status and menu, the thread, and the
  * composer. Loaded lazily from App.tsx the first time Escobar opens.
  */
+import { dayKey } from '@/core/dates';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
@@ -83,7 +84,7 @@ function PastConversations({ onBack }: { onBack: () => void }) {
       {!list.length && <p class="small muted">No conversations yet.</p>}
       {list.map(c => (
         <button type="button" key={c.id} class="esc-past" onClick={() => { S.selectConversation(c.id); onBack(); }}>
-          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{c.updatedAt.slice(0, 10)}</span>
+          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{dayKey(new Date(c.updatedAt))}</span>
         </button>
       ))}
     </div>
