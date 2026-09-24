@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { EscobarLoop, toRequestMessages, windowMessages, offlineReply, STEP_BUDGET, type LoopDeps } from '@/escobar/loop';
 import type { StreamEvent, Transport } from '@/escobar/transport';
-import { newConversation } from '@/escobar/store';
+import { newConversation, trimOldest } from '@/escobar/store';
+import { decide } from '@/escobar/apply';
 import type { Conversation, StoredMessage } from '@/escobar/types';
 import type { MemoryEffect } from '@/escobar/tools/executor';
 import { sixMonthsState, NOW } from './fixtures';
@@ -246,6 +247,29 @@ describe('agent loop (§13)', () => {
     expect(JSON.stringify(transport.bodies[1]!.messages)).toContain('[photo shared earlier: dumbbell rack]');
     // ES-28: once sent, the photo's bytes leave memory.
     expect(evicted).toEqual(['img1']);
+  });
+});
+
+describe('suggestion ids after a trim (QA2-FD-1)', () => {
+  it('a new card never takes the id of a card that survived the trim, so Apply or Dismiss acts on the card tapped', async () => {
+    const { loop } = setup([
+      tools(['a1', 'propose_goal', { goal: 'strength' }]), answer('Done.'),
+      tools(['a2', 'propose_goal', { goal: 'strength' }], ['a3', 'propose_deload', { reason: 'Tired' }]), answer('Done.'),
+      tools(['a4', 'propose_deload', { reason: 'Take a lighter week' }]), answer('Done.'),
+    ]);
+    await loop.send({ text: 'Switch my goal?' });
+    await loop.send({ text: 'Goal again, and a lighter week?' });
+    expect(loop.conversation.proposals!.map(p => p.id)).toEqual(['p1', 'p2', 'p3']);
+    // A long chat is stored (and reloaded) with its oldest half cut: p1 goes, p2 and p3 stay.
+    loop.conversation = trimOldest(loop.conversation)!;
+    expect(loop.conversation.proposals!.map(p => p.id)).toEqual(['p2', 'p3']);
+    await loop.send({ text: 'Just the lighter week then.' });
+    expect(loop.conversation.proposals!.map(p => p.id)).toEqual(['p2', 'p3', 'p4']);
+    const fresh = loop.conversation.proposals!.at(-1)!;
+    expect(fresh.input).toEqual({ reason: 'Take a lighter week' });
+    const { conversation } = decide(loop.conversation, fresh.id, 'dismiss');
+    expect(conversation.proposals!.map(p => p.status)).toEqual(['awaiting', 'awaiting', 'dismissed']);
+    expect(conversation.pendingDecisions!.at(-1)).toMatchObject({ proposalId: fresh.id, title: fresh.title });
   });
 });
 

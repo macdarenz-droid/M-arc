@@ -88,6 +88,12 @@ const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 
 const blocksOf = (m: StoredMessage): unknown[] => (Array.isArray(m.content) ? m.content : []);
 const toolUses = (content: unknown[]) => content.filter((b): b is { type: 'tool_use'; id: string; name: string; input: unknown } => isObj(b) && b.type === 'tool_use');
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
+/**
+ * QA2-FD-1: proposals issued so far, for the next card's id. A trim drops the oldest cards, so
+ * the number of cards kept can be lower than the highest id kept, and a new id would repeat it.
+ */
+const proposalsIssued = (proposals: ProposalRecord[]): number =>
+  proposals.reduce((n, p) => Math.max(n, Number(/^p(\d+)$/.exec(p.id)?.[1] ?? 0)), proposals.length);
 
 /** At most this many photos travel inline in one request (D3, ES-13); older ones go as stubs. */
 export const MAX_INLINE_IMAGES = 2;
@@ -473,7 +479,7 @@ export class EscobarLoop {
         const assistantIndex = this.conversation.messages.length - 1;
         for (const use of uses) {
           if (gen !== this.generation) break;
-          const o = executeTool(use, { ctx: this.ctx(), ledger, turn: this.conversation.userTurns ?? 0, proposalCount: proposals.length });
+          const o = executeTool(use, { ctx: this.ctx(), ledger, turn: this.conversation.userTurns ?? 0, proposalCount: proposalsIssued(proposals) });
           ledger = [...ledger, ...o.facts];
           if (o.proposal) proposals = [...proposals, { ...o.proposal, status: 'awaiting', messageIndex: assistantIndex } as ProposalRecord];
           if (o.effect) this.deps.applyEffect?.(o.effect);
