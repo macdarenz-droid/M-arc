@@ -143,9 +143,24 @@ try {
     if (mode === 'slow') {
       await page.getByRole('status').filter({ hasText: 'Checking watch workout' }).waitFor();
       await page.waitForFunction(() => !!window.__resolveOwner);
-      // The shell and live controls are usable before the real 12-second timeout resolves.
+      // Render the shell immediately, but do not allow edits that a late native owner would replace.
       await page.locator('nav.nav button', { hasText: 'Live' }).click();
-      await page.getByRole('button', { name: 'Finish', exact: true }).waitFor();
+      await page.getByRole('main', { name: 'Checking watch workout', exact: true }).waitFor();
+      assert.equal(await page.getByRole('button', { name: 'Finish', exact: true }).count(), 0);
+      assert.equal(await page.getByRole('button', { name: 'More rest', exact: true }).count(), 0);
+      assert.equal(await page.getByRole('heading', { name: 'Workout recovery', exact: true }).count(), 0);
+      const activeBefore = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active);
+      await page.locator('nav.nav button', { hasText: 'History' }).click();
+      await page.getByRole('heading', { name: 'Sessions', exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Settings and backup', exact: true }).click();
+      await page.getByRole('button', { name: 'lb', exact: true }).click();
+      await page.getByRole('button', { name: 'Export backup', exact: true }).click();
+      await page.waitForFunction(() => window.__exports.length > 0 && !!JSON.parse(localStorage.getItem('marc.state.v1')).lastBackupAt);
+      const exported = await page.evaluate(() => JSON.parse(window.__exports[0].data));
+      assert.equal(exported.state.preferences.weightUnit, 'lb');
+      assert.deepEqual(exported.state.active, activeBefore, 'Checking preserves the live workout while settings and exports work');
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
+      await page.getByRole('status').filter({ hasText: 'Checking watch workout' }).waitFor();
       await page.clock.fastForward(12001);
     }
     await page.getByRole('status').filter({ hasText: 'You can keep using M/ARC' }).waitFor();

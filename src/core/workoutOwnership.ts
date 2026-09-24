@@ -4,7 +4,7 @@ import { signal } from '@preact/signals';
 export const WORKOUT_HANDOVER_KEY = 'marc.workout.handover.v1';
 export type Ownership = 'web' | 'checking' | 'transferring' | 'native' | 'blocked';
 export const workoutOwnership = signal<Ownership>('web');
-/** An optional native read is status, not evidence that a handover exists. */
+/** Pending reads temporarily freeze live writes without establishing a known handover. */
 export const checkingWorkoutOwnership = signal(false);
 export const workoutOwnershipNotice = signal<string | null>(null);
 export const ownershipMessage = 'Workout editing is paused until recovery is complete. Reopen M/ARC to retry.';
@@ -64,17 +64,17 @@ export function initWorkoutOwnership(next: StorageLike, requireNativeCheck = fal
   nativeEnabled = requireNativeCheck; knownHandover = false;
   workoutOwnershipNotice.value = null;
   checkingWorkoutOwnership.value = requireNativeCheck;
-  workoutOwnership.value = 'web';
+  workoutOwnership.value = requireNativeCheck ? 'checking' : 'web';
   refreshWorkoutOwnership();
 }
 
 /** Web storage failures cannot manufacture a native owner. Known ownership stays sticky until settled. */
 export function refreshWorkoutOwnership(): void {
-  if (!nativeEnabled || workoutOwnership.peek() !== 'web') return;
+  if (!nativeEnabled || !['web', 'checking'].includes(workoutOwnership.peek())) return;
   try { if (checkpoint() || knownHandover) workoutOwnership.value = 'checking'; }
   catch {
     if (knownHandover) workoutOwnership.value = 'blocked';
-    else workoutOwnershipNotice.value = unavailableMessage;
+    else if (!checkingWorkoutOwnership.peek()) workoutOwnershipNotice.value = unavailableMessage;
   }
 }
 
@@ -130,11 +130,11 @@ export async function reconcileWorkoutOwnership(backend: OwnershipBackend, phone
   busy = true; nativeEnabled = true;
   const run = generation;
   checkingWorkoutOwnership.value = true;
+  workoutOwnership.value = 'checking'; // A missing local marker does not rule out a native owner.
   workoutOwnershipNotice.value = null;
   try {
     let prior: Checkpoint | null = null;
     try { prior = checkpoint(); } catch (err) { if (knownHandover) throw err; }
-    if (knownHandover) workoutOwnership.value = 'checking';
     const reply = prior?.phase === 'prepared' ? await backend.settle(prior.seed.handoverId) : await backend.read();
     if (run !== generation) return false;
     if (!prior) {

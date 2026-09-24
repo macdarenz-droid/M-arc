@@ -119,16 +119,32 @@ describe('workout ownership handover', () => {
     expect(workoutOwnership.value).toBe('blocked');
   });
 
-  it('queries native ownership even when its local marker is missing', async () => {
+  it('protects a lost-marker native workout before and during the boot read, without finishing a duplicate', async () => {
     const b = backend();
     await begin(b);
     storage.removeItem(WORKOUT_HANDOVER_KEY);
     initStore(storage, true);
-    expect(workoutOwnership.value).toBe('web'); // No evidence until the native read returns.
+    expect(workoutOwnership.value).toBe('checking');
     expect(checkingWorkoutOwnership.value).toBe(true);
-    expect(await recover(b)).toBe(true);
+    const before = JSON.stringify(state.value.active);
+    const checkLiveWriters = () => {
+      for (const write of [() => setSetById('set-1', { reps: 99 }), () => finishSession(false), discardSession])
+        expect(write).toThrow(/editing is paused/);
+      expect(JSON.stringify(state.value.active)).toBe(before);
+      expect(state.value.sessions).toHaveLength(0);
+    };
+    checkLiveWriters(); // Even before the asynchronous check is started.
+    const owner = await b.read();
+    let resolve!: (reply: OwnershipReply) => void;
+    b.read = () => new Promise(r => { resolve = r; });
+    const check = recover(b);
+    checkLiveWriters();
+    update(s => ({ ...s, preferences: { ...s.preferences, weightUnit: 'lb' } }));
+    resolve(owner);
+    expect(await check).toBe(true);
     expect(workoutOwnership.value).toBe('native');
-    expect(() => discardSession()).toThrow();
+    checkLiveWriters();
+    expect(state.value.preferences.weightUnit).toBe('lb');
     expect(storage.getItem(WORKOUT_HANDOVER_KEY)).toBeTruthy();
   });
 
@@ -185,26 +201,40 @@ describe('workout ownership handover', () => {
     expect(workoutOwnership.value).toBe('checking');
   });
 
-  it('checks another WebView marker before even running an updater', () => {
+  it('checks another WebView marker before even running an updater', async () => {
     initWorkoutOwnership(storage, true);
+    expect(await recover(backend())).toBe(true);
     storage.setItem(WORKOUT_HANDOVER_KEY, '{bad');
     expect(assertPhoneWorkoutWriter).toThrow();
     expect(workoutOwnership.value).toBe('blocked');
   });
 
-  it('keeps the phone writable while an optional read is pending, and after it rejects', async () => {
+  it.each(['web', 'failed'] as const)('blocks only live writes during an optional read, then unlocks after %s', async outcome => {
     initStore(storage, true);
     const b = backend();
     let reject!: (err: Error) => void;
-    b.read = () => new Promise((_, no) => { reject = no; });
+    let resolve!: (reply: OwnershipReply) => void;
+    b.read = () => new Promise((yes, no) => { resolve = yes; reject = no; });
     const check = recover(b);
     expect(checkingWorkoutOwnership.value).toBe(true);
-    setSetById('set-1', { reps: 9 });
-    reject(new Error('WearEngine method unavailable'));
-    expect(await check).toBe(false);
+    expect(workoutOwnership.value).toBe('checking');
+    const before = JSON.stringify(state.value.active);
+    for (const write of [() => setSetById('set-1', { reps: 9 }), () => finishSession(false), discardSession])
+      expect(write).toThrow(/editing is paused/);
+    update(s => ({ ...s, preferences: { ...s.preferences, weightUnit: 'lb' },
+      sessions: [session('2026-09-23', [])], lastBackupAt: new Date().toISOString() }));
+    expect(flushSave()).toBe(true);
+    expect(JSON.stringify(state.value.active)).toBe(before);
+    expect(state.value.preferences.weightUnit).toBe('lb');
+    expect(state.value.sessions).toHaveLength(1);
+    expect(JSON.parse(storage.getItem('marc.state.v1')!).lastBackupAt).toBeTruthy();
+    if (outcome === 'web') resolve({ owner: 'web' });
+    else reject(new Error('WearEngine method unavailable'));
+    expect(await check).toBe(outcome === 'web');
     expect(checkingWorkoutOwnership.value).toBe(false);
     expect(workoutOwnership.value).toBe('web');
-    expect(workoutOwnershipNotice.value).toMatch(/keep using M\/ARC/);
+    if (outcome === 'failed') expect(workoutOwnershipNotice.value).toMatch(/keep using M\/ARC/);
+    else expect(workoutOwnershipNotice.value).toBeNull();
     setSetById('set-1', { reps: 10 });
     expect(state.value.active!.entries[0]!.sets[0]!.reps).toBe(10);
     expect(await recover(backend())).toBe(true);

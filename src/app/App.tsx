@@ -74,6 +74,12 @@ function Panels() {
 }
 
 function WorkoutRecovery() {
+  if (checkingWorkoutOwnership.value) return (
+    <main class="card" aria-label="Checking watch workout">
+      <p>Live workout controls are temporarily unavailable while the watch workout is checked.</p>
+      <p>History, settings and backup export are still available.</p>
+    </main>
+  );
   return (
     <main class="card" aria-label="Workout recovery">
       <h1>Workout recovery</h1><p>{ownershipMessage}</p>
@@ -91,9 +97,12 @@ export function App() {
   const panel = openPanel.value?.id;
   return (
     <div class="app">
-      {checkingWorkoutOwnership.value && <div class="banner" role="status">Checking watch workout…</div>}
+      {checkingWorkoutOwnership.value && <div class="banner" role="status">
+        Checking watch workout…
+        <button type="button" class="btn btn-quiet btn-sm" onClick={() => showPanel('settings', { section: 'data' })}>Settings and backup</button>
+      </div>}
       {workoutOwnershipNotice.value && <div class="banner" role="status">{workoutOwnershipNotice.value}</div>}
-      {workoutBlocked && <div class="banner warn" role="status">
+      {workoutBlocked && !checkingWorkoutOwnership.value && <div class="banner warn" role="status">
         Live workout needs recovery.
         <button type="button" class="btn btn-quiet btn-sm" onClick={() => go('train')}>Workout recovery</button>
         <button type="button" class="btn btn-quiet btn-sm" onClick={() => showPanel('settings', { section: 'data' })}>Settings and backup</button>

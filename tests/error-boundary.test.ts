@@ -3,7 +3,7 @@ import type { VNode } from 'preact';
 import { ErrorBoundary, resetAppData } from '@/app/ErrorBoundary';
 import { BACKUP_DAY_KEY, BACKUP_KEY, STATE_KEY, flushSave, initStore, update } from '@/core/store';
 import { freshState } from '@/core/models';
-import { initWorkoutOwnership, WORKOUT_HANDOVER_KEY } from '@/core/workoutOwnership';
+import { initWorkoutOwnership, reconcileWorkoutOwnership, WORKOUT_HANDOVER_KEY } from '@/core/workoutOwnership';
 
 function memoryStorage(): Storage {
   const map = new Map<string, string>();
@@ -42,11 +42,15 @@ describe('the error card (QA-R1-8)', () => {
     expect(clear).toHaveBeenCalled();
     expect(deleteDatabase).toHaveBeenCalledWith('marc-escobar-img');
   });
-  it('offers the real reset label during an optional native check, but hides it for a known handover', () => {
+  it('offers reset after an optional read fails, but protects the workout while checking or recovering', async () => {
     const st = memoryStorage();
     const b = new ErrorBoundary({}); b.state = { error: new Error('render failed') };
     try {
       initWorkoutOwnership(st, true);
+      expect(texts(b.render())).not.toContain('button:Reset app data');
+      expect(() => resetAppData(st, undefined)).toThrow(/editing is paused/);
+      await reconcileWorkoutOwnership({ read: async () => { throw new Error('Bridge unavailable'); }, handover: vi.fn(), settle: vi.fn() },
+        { flush: vi.fn(), capture: vi.fn(), project: vi.fn() });
       expect(texts(b.render())).toContain('button:Reset app data');
       st.setItem(WORKOUT_HANDOVER_KEY, '{damaged handover');
       initWorkoutOwnership(st, true);

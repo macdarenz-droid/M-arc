@@ -81,7 +81,11 @@ effects; an old active seed without an ownership record requires review.
 `src/core/workoutOwnership.ts` freezes the phone before flushing/capturing and
 stores a prepared recovery checkpoint before calling native. Android renders
 the normal shell immediately, with a small checking status while it reads the
-native owner. A failed or timed-out optional read without a known handover
+native owner. Live writers stay blocked as `checking` from initialization until
+the read resolves, even without a local marker. History, settings and backup
+export stay usable during this check. This prevents a late native projection
+from overwriting a phone edit or duplicating a session finished on the phone.
+A failed or timed-out optional read without a known handover
 shows a non-blocking notice and leaves phone workouts usable. An unreadable
 web localStorage cannot create native ownership or lock the web app. A native
 owner actually returned by the read is protected even if its local marker was
@@ -118,11 +122,13 @@ or timing confidence. Rest/heart inputs are retained but not yet consumed by
 the pending-effect resolver. No Saved acknowledgement is enabled.
 
 Risk controls: native seed/owner rollback together; cancellation prevents late
-ownership; known recovery data is retained on storage failure. Optional reads
-without evidence of handover do not freeze an ordinary phone workout. Unit/JVM
+ownership; known recovery data is retained on storage failure. Pending native
+reads temporarily block live writes; a failed read with no known handover
+reopens them with a notice. Unit/JVM
 tests cover these boundaries and database migration. The browser gate checks
-the immediate shell, failed/timed-out optional reads, known recovery with
-working history/settings/export, and absence of the real crash-reset labels.
+the immediate shell with protected live controls, failed/timed-out optional
+reads, known recovery with working history/settings/export, and absence of the
+real crash-reset labels.
 Pre-bundle tests exercise the actual inline reset handler on web and Android.
 Real GT6 behavior remains unverified.
 
