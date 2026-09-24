@@ -308,6 +308,7 @@ test('contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it
   assert.deepEqual(names.slice(0, 3), ['CONTRACT.md', 'PROJECT_STATE.md', 'LOG.md'])
   const side = (await j('POST', '/api/projects', { body: { name: 'Side', template: 'empty' } })).data.project
   assert.ok(store.contract(side.id)?.includes('One file per topic'))
+  assert.ok(['Low token use is the priority', 'Decide, don’t ask'.replace('’', "'"), 'No guessing', 'Review before moving on', 'Risk management'].every(r => store.contract(side.id)!.includes(r)))
 
   const link = (await j('POST', `/api/projects/${d.project.id}/links`, { body: { name: 'GPT', kind: 'gpt', can_write: true } })).data.link
   let id = 0

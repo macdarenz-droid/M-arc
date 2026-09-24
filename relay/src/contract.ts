@@ -9,33 +9,45 @@ export const DEFAULT_CONTRACT = `# Contract
 
 Every agent (Claude, GPT, Codex, …) and the owner follow these rules in this project. Read them before you act. Only the owner edits this file: propose changes in a message.
 
-## 1. One file per topic, kept current
+## 1. How we work
+- **Low token use is the priority.** Read only what the task needs, write short, don't repeat context. Spend more only when a task is complex and truly needs it.
+- **Plain words.** When you explain or summarise for the owner, use plain, simple words.
+- **Short progress updates.** During a task, post what changed, in plain words, only when it matters.
+- **Decide, don't ask.** When something needs a decision, research first, pick the best logical option, apply it, and note why in LOG.md. Ask the owner only for input or an action no AI agent can do (a payment, a login, a secret, a check on a real device).
+- **No guessing, even on simple tasks.** Check the code, docs or data first. If you cannot verify something, say so.
+- **Review before moving on.** After each task, look at what was built: the feature, its logic, how it works. If it meets the goal, go to the next task; if not, fix or improve it first.
+- **Precision at every layer:** code, tests, tasks, messages.
+- **Prevent, don't apologise.** Anything that could have been caught earlier (by reading, testing or reviewing) must be caught before it ships. No after-the-fact "I should have…".
+- **Quality.** Bugs are unavoidable, so every build gets regression tests and full QA.
+- **Risk management.** Name risks and their mitigations when designing, while building, and after release.
+
+## 2. One file per topic, kept current
 - Before you create a file, look for one on the same topic (search, read the folder). If it exists, update it; don't start a new one.
 - No version copies. Names like \`plan-v2\`, \`plan final\`, \`plan copy\`, \`patch-1.2\` or a date in the name are refused when the topic's file already exists. Extend the existing file instead.
 - A new file is welcome when it covers something no file covers yet. Name it for its topic: \`UPPER_SNAKE.md\` for living documents, \`kebab-case.md\` for notes.
 - Agents delete nothing. If a file is obsolete, say so in LOG.md; the owner removes it.
 
-## 2. The three root files
+## 3. The three root files
 - \`CONTRACT.md\`: these rules (owner only).
 - \`PROJECT_STATE.md\`: the one current picture (phase, done, next, open questions). Replace outdated lines and keep it short. History does not go here.
 - \`LOG.md\`: the history. After every change or finished step, add one line at the bottom (append_file):
   \`- 2026-09-24 14:05 UTC · GPT · docs/PROJECT_STATE.md · what changed and why\`
   Never rewrite or remove past lines.
 
-## 3. Where things go
+## 4. Where things go
 - \`agents/<you>/\`: your own working thread and notes.
 - \`agents/handoffs/\`: handoffs between agents.
 - \`docs/\`: design and decisions, one file per subject with sections inside (one \`DECISIONS.md\`, not a file per decision).
 - \`tasks/\`, \`releases/\`: one checklist each, kept current.
 If this project's folders differ, keep the same idea: one place per kind of thing.
 
-## 4. Messages
+## 5. Messages
 - Post in the folder the work belongs to. One message per result, not per thought.
 - First line: the outcome. Refer to files by path; don't paste whole files.
 - Handoffs: Goal · Done · Decisions · Files to read · Acceptance criteria · Out of scope.
 - @mention someone only when you need them to act.
 
-## 5. Safety
+## 6. Safety
 - Never post secrets, keys or link URLs.
 - Read a file fully before you replace it. Keep what others wrote unless it is wrong, and log why you changed it.
 `
