@@ -578,3 +578,7 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FD-5
 - Escobar's `recall` gives a memory's `since` as the phone's day, and Past conversations label rows with the local day (`dayKey`), matching the memory screen. The test fails without the fix under Asia/Manila (`npm run test:tz`).
+
+#### QA2-FE-2, QA2-FE-7, QA2-FE-8
+- A loaded carry's target snaps to the gym's equipment like a weighted lift: "70 lb · 45 m", not "31.751 kg · 45 m". Without equipment, the load is rounded to the half kilo.
+- The distance/time branch is for carries and sleds only: a distance, or a time with no reps. Burpees, box jumps and wall balls logged with reps and seconds keep their rep goal ("16 reps").
