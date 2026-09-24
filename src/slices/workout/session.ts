@@ -87,7 +87,8 @@ export function plannedExercises(split: Split, override: TodayOverride | null, t
   if (!override || override.day !== today || override.splitId !== split.id) return list;
   for (const c of override.changes) {
     // QA-R4a-10: a swap to an exercise already in the list just drops the one swapped out.
-    if (c.kind === 'swap') list = list.some(e => e.exerciseId === c.to) ? list.filter(e => e.exerciseId !== c.from) : list.map(e => (e.exerciseId === c.from ? { ...e, exerciseId: c.to } : e));
+    // QA2-FD-9: a swap to itself changes nothing.
+    if (c.kind === 'swap') { if (c.to === c.from) continue; list = list.some(e => e.exerciseId === c.to) ? list.filter(e => e.exerciseId !== c.from) : list.map(e => (e.exerciseId === c.from ? { ...e, exerciseId: c.to } : e)); }
     else if (c.kind === 'remove') list = list.filter(e => e.exerciseId !== c.exerciseId);
     else if (c.kind === 'add') { if (!list.some(e => e.exerciseId === c.exerciseId)) list.push({ exerciseId: c.exerciseId, sets: c.sets }); }
     else if (c.kind === 'sets') list = list.map(e => (e.exerciseId === c.exerciseId ? { ...e, sets: c.sets } : e));
@@ -338,6 +339,25 @@ export function changedFromPlan(a: ActiveSession, split: Split | undefined, over
   return planned !== a.entries.filter(e => !e.skipped).map(e => e.exerciseId).join('|');
 }
 
+/**
+ * QA2-FD-2, QA2-FD-7: "Save for future" keeps the person's own changes and leaves out Escobar's
+ * one-day ones. An exercise only Escobar brought in today (an add or a swap's target) is not
+ * saved; one Escobar took out today (a remove or a swap's source) stays at its place in the split.
+ */
+export function templateFromSession(a: ActiveSession, split: Split, override: TodayOverride | null = state.value.escobar.todayOverride): Split['exercises'] {
+  const planned = new Set(plannedExercises(split, override, dayKey(new Date(a.startedAt))).map(e => e.exerciseId));
+  const inSplit = new Set(split.exercises.map(e => e.exerciseId));
+  const done = a.entries.filter(e => !e.skipped);
+  const doneIds = new Set(done.map(e => e.exerciseId));
+  const out = done
+    .filter(e => inSplit.has(e.exerciseId) || !planned.has(e.exerciseId))
+    .map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) }));
+  split.exercises.forEach((se, i) => {
+    if (!planned.has(se.exerciseId) && !doneIds.has(se.exerciseId)) out.splice(Math.min(i, out.length), 0, { ...se });
+  });
+  return out;
+}
+
 /** Turn the active session into history. Sets that were never filled are dropped. */
 export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
   const a = active();
@@ -377,7 +397,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     escobar: s.escobar.todayOverride?.splitId === a.splitId ? { ...s.escobar, todayOverride: null } : s.escobar,
     sessions: exercises.length ? sortByStart([...s.sessions, session]) : s.sessions,
     splits: saveTemplate && split
-      ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: a.entries.filter(e => !e.skipped).map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) })) }))
+      ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: templateFromSession(a, split, s.escobar.todayOverride) }))
       : s.splits,
     // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
     recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,

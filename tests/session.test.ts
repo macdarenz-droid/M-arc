@@ -328,3 +328,18 @@ describe('a swap to an exercise already in the split (QA-R4a-10)', () => {
     expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(['lib_cable_fly']);
   });
 });
+
+describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-7, QA2-FD-9)", () => {
+  it('a skip for today stays out of the saved split; the exercise the person added is saved', () => {
+    replaceState({ ...state.value, splits: [split], escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'sore', changes: [{ kind: 'remove', exerciseId: 'lib_cable_fly' }] } } });
+    start();
+    addExerciseToSession(findExercise('lib_dumbbell_lateral_raise')!);
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_cable_fly', 'lib_dumbbell_lateral_raise']);
+  });
+  it('a swap to itself is no change', () => {
+    const o = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_barbell_bench_press' }] };
+    expect(plannedExercises(split, o, '2026-09-22').map(e => e.exerciseId)).toEqual(split.exercises.map(e => e.exerciseId));
+  });
+});

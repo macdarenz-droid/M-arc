@@ -558,3 +558,9 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FC-9
 - `reasonKeyFor` takes the suggestion's first set note. The "Change it up" plateau (a new rep range or a lighter week) gets the lighter-week ("reduce") cue again. The "keep this load" plateau keeps the repeatability ("confirm") cue from QA-R3b-8.
+
+#### QA2-FD-2, QA2-FD-7, QA2-FD-9
+- "Save for future" builds the split with `templateFromSession`, which keeps the person's own changes and leaves out Escobar's one-day ones:
+  - An exercise only Escobar brought in today (an add, or a swap's target) is not saved.
+  - One Escobar took out today stays at its place.
+- A swap of an exercise to itself is refused by `propose_today` and is a no-op in `plannedExercises`. The QA-R4a-10 rule (a swap onto an exercise already present drops the source) had turned it into a removal.
