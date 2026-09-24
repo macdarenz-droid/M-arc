@@ -3,7 +3,7 @@ import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
   addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel,
-  resolveSessionTiming, setSet, startRest, startSession, substituteEntry,
+  resolveSessionTiming, setSet, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
 import { deleteSplit } from '@/slices/workout/splits';
 import { findExercise } from '@/core/exercises';
@@ -37,6 +37,26 @@ describe('commit-once sets (UI-01)', () => {
     expect(again.restSec).toBe(first.restSec);
     expect(again.fidelity).toBe(first.fidelity);
     expect(a().rest!.endsAt).toBe(endsAt);
+  });
+  it('a set left empty on blur gives up its commit, so its later real entry gets its own time and rest (QA2-FB-5)', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(0, 0);
+    vi.advanceTimersByTime(30_000);
+    setSet(1, 0, { kg: 20, reps: 10 }); // the wrong set, by mistake
+    commitSet(1, 0);
+    setSet(1, 0, { reps: undefined, kg: undefined });
+    commitSet(1, 0); // the field loses focus with the set empty
+    expect(a().entries[1]!.sets[0]!.at).toBeUndefined();
+    stopRest();
+    vi.advanceTimersByTime(180_000);
+    setSet(1, 0, { kg: 20, reps: 10 }); // now for real
+    commitSet(1, 0);
+    const s = a().entries[1]!.sets[0]!;
+    expect(Date.parse(s.at!)).toBe(Date.now());
+    expect(s.restSec).toBe(210);
+    expect(a().rest).toBeTruthy();
   });
   // QA-R2b-1 changed this contract: an emptied set is a draft but keeps its commit, so a
   // clear-and-retype correction neither moves its time nor restarts rest.

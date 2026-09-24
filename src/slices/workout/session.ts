@@ -173,6 +173,12 @@ function committedTimestamps(a: ActiveSession): number[] {
 export function commitSetById(setId: string, opts: { actionAt?: string } = {}): boolean {
   const a = active();
   const set = a?.entries.flatMap(e => e.sets).find(s => s.id === setId);
+  // QA2-FB-5: a set left empty when its field loses focus gives up its commit, so a later real
+  // entry gets its own time and rest instead of the mistaken one's.
+  if (a && set && !hasEntry(set) && set.at) {
+    setSetById(setId, { at: undefined, restSec: undefined, fidelity: undefined, heart: undefined, status: 'draft' });
+    return false;
+  }
   // F2: a filled-in warm-up commits too (it gets its time), it just never starts auto-rest.
   if (!a || !set || !hasEntry(set)) return false;
   if (isCommitted(set)) return true;

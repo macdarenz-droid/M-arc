@@ -539,3 +539,7 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 
 #### QA2-FB-4
 - `scheduleRestDone` checks permission first and never lets the plugin ask on its own, so a rest timer no longer brings up the permission dialog mid-workout. The Settings test alert still asks, because it is a tap.
+
+#### QA2-FB-5
+- A committed set that is still empty when its field loses focus (`commitSetById` on blur) gives up its commit: its time, rest, fidelity and heart data are cleared. When it is filled for real later, it gets its own time and starts rest.
+- Clearing and retyping within the same field still keeps the original commit (QA-R2b-1, test unchanged).
