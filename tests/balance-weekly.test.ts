@@ -87,3 +87,17 @@ describe('upper vs lower (QA-R3a-3, QA-R3a-4)', () => {
     expect(trainingBalance(noUpper, '2026-09-19')).toMatchObject({ pair: 'upper_lower', strong: 'Lower body' });
   });
 });
+
+describe('upper/lower balance text (QA2-FC-8)', () => {
+  it('a lower-body-heavy split explains what balanced looks like, so 1.3× reads right', async () => {
+    const { trainingBalance } = await import('@/brain/balance');
+    const upper = (d: string) => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_row', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_overhead_press', sets: sets(40, 8, 'ideal', 3) }, { id: 'lib_lat_pulldown', sets: sets(50, 10, 'ideal', 3) }]);
+    const lower = (d: string) => session(d, [{ id: 'lib_barbell_back_squat', sets: sets(80, 6, 'ideal', 8) }, { id: 'lib_romanian_deadlift', sets: sets(70, 8, 'ideal', 4) }, { id: 'lib_leg_press', sets: sets(120, 10, 'ideal', 4) }]);
+    const days = ['2026-09-01', '2026-09-02', '2026-09-04', '2026-09-05', '2026-09-08', '2026-09-09', '2026-09-11', '2026-09-12', '2026-09-15', '2026-09-16', '2026-09-18', '2026-09-19'];
+    const sessions = days.map((d, i) => (i % 2 ? lower(d) : upper(d)));
+    const b = trainingBalance(sessions, '2026-09-20');
+    expect(b?.pair).toBe('upper_lower');
+    expect(b?.weak).toBe('Upper body');
+    expect(b?.context).toMatch(/1\.5× as much upper body work/);
+  });
+});

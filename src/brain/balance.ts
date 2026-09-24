@@ -16,6 +16,8 @@ export interface Imbalance {
   ratioLabel: string;
   severity: number;
   weeks: number;
+  /** QA2-FC-8: what balanced looks like for this pair, when the plain ratio alone would mislead. */
+  context?: string;
 }
 
 const LABEL = { push: 'Push', pull: 'Pull', upper: 'Upper body', lower: 'Lower body' } as const;
@@ -79,7 +81,8 @@ export function trainingBalance(sessions: Session[], today: string, custom: Exer
     // The label states the plain set ratio the person can check; the decision used the scaled one.
     const rawStrong = strong / weight(strongKey), rawWeak = weak / weight(weakKey);
     const shown = rawWeak === 0 ? 99 : rawStrong / rawWeak;
-    return { pair, strong: LABEL[strongKey], weak: LABEL[weakKey], ratio, ratioLabel: shown >= 4 ? '4×+' : `${Math.round(shown * 10) / 10}×`, severity, weeks: persist };
+    return { pair, strong: LABEL[strongKey], weak: LABEL[weakKey], ratio, ratioLabel: shown >= 4 ? '4×+' : `${Math.round(shown * 10) / 10}×`, severity, weeks: persist,
+      ...(pair === 'upper_lower' ? { context: `A balanced week has about ${UPPER_PER_LOWER}× as much upper body work as lower body work, since upper covers both push and pull.` } : {}) };
   };
   const candidates = [evaluate('push', 'pull', 'push_pull'), evaluate('upper', 'lower', 'upper_lower')].filter((x): x is Imbalance => x != null);
   candidates.sort((x, y) => y.severity - x.severity);
