@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { nextUpCore, targetKgPh, targetRepsPh } from '@/slices/workout/Train';
+import { isNextUpCandidate, nextUpCore, targetKgPh, targetRepsPh } from '@/slices/workout/Train';
 
 describe('A1/A9: the next-up set label', () => {
   it('targetKgPh prefers today\'s target, then last time, then bw, then empty', () => {
@@ -26,5 +26,24 @@ describe('A1/A9: the next-up set label', () => {
 
   it('nextUpCore is null with nothing to log yet', () => {
     expect(nextUpCore('', 'kg', '')).toBeNull();
+  });
+});
+
+describe('A1: isNextUpCandidate', () => {
+  it('is a candidate when there is something to log and it is not already logged', () => {
+    expect(isNextUpCandidate('60 kg × 8', false, undefined)).toBe(true);
+  });
+  it('is not a candidate once committed', () => {
+    expect(isNextUpCandidate('60 kg × 8', true, undefined)).toBe(false);
+  });
+  it('is not a candidate with nothing to log', () => {
+    expect(isNextUpCandidate(null, false, undefined)).toBe(false);
+  });
+  it('is never a candidate for a warm-up, logged or not', () => {
+    expect(isNextUpCandidate('20 kg × 10', false, 'warmup')).toBe(false);
+  });
+  it('a drop or failure set can still be a candidate', () => {
+    expect(isNextUpCandidate('60 kg × 8', false, 'drop')).toBe(true);
+    expect(isNextUpCandidate('60 kg × 8', false, 'failure')).toBe(true);
   });
 });

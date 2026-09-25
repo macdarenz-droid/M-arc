@@ -1120,6 +1120,97 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// A1: tapping the next-up hint row ("Log as planned") fills and logs that set with exactly the
+// values it was already showing, moves on to the following set, and its wider tap target never
+// steals a tap from the effort row above it or the row below it.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A1 log as planned';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  if ((await page.locator('.set-grid.committed').count()) !== 0) errors.push(`${tag}: expected nothing committed on a fresh exercise`);
+  const fillRowCount0 = await page.locator('.fill-row').count();
+  if (fillRowCount0 !== 1) errors.push(`${tag}: expected exactly one .fill-row on a fresh exercise, got ${fillRowCount0}`);
+
+  // QA-R7-1 style: the wider hit area must not reach into the effort row above or the row below.
+  const hitAreaBleed = await page.evaluate(() => {
+    const bad = [];
+    const fillRow = document.querySelector('.fill-row');
+    const card = fillRow?.closest('.exercise');
+    if (fillRow && card) {
+      for (const btn of card.querySelectorAll('.effort button')) {
+        const r = btn.getBoundingClientRect();
+        for (let dy = 1; dy <= 8; dy++) {
+          const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom + dy);
+          if (hit === fillRow || fillRow.contains(hit)) bad.push(`effort button +${dy}px hit the fill-row`);
+        }
+      }
+      const fr = fillRow.getBoundingClientRect();
+      for (let dy = 7; dy <= 10; dy++) {
+        const hit = document.elementFromPoint(fr.left + fr.width / 2, fr.bottom + dy);
+        if (hit === fillRow || fillRow.contains(hit)) bad.push(`+${dy}px below the fill-row still hit it`);
+      }
+    }
+    const kgInput = card?.querySelector('.set-grid input');
+    if (kgInput) {
+      const r = kgInput.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom - 2);
+      if (hit !== kgInput) bad.push('the kg input itself is not hit 2px above its own bottom edge');
+    }
+    return bad;
+  });
+  if (hitAreaBleed.length) errors.push(`${tag}: ${hitAreaBleed.join('; ')}`);
+
+  const before = await page.evaluate(() => {
+    // The header row is a .set-grid too, but only a data row has real <input> children.
+    const row = [...document.querySelectorAll('.exercise.active .set-grid')].find(g => g.querySelector('input'));
+    const inputs = row ? [...row.querySelectorAll('input')] : [];
+    // Set 2's hint row is still a plain div at this point (set 1 holds the fill-row); its height
+    // right before it becomes the fill-row is what must not change (no min-height on .fill-row).
+    const set2RowHeight = [...document.querySelectorAll('.exercise.active .set-grid + .row-between')][1]?.getBoundingClientRect().height ?? null;
+    return { kgPh: inputs[0]?.placeholder ?? null, repsPh: inputs[1]?.placeholder ?? null, set2RowHeight };
+  });
+
+  await page.locator('.fill-row').click();
+  await page.waitForTimeout(150);
+  if (!(await visible(page.locator('.rest')))) errors.push(`${tag}: expected the rest banner after tapping 'Log as planned'`);
+  const after = await page.evaluate(() => {
+    const committed = [...document.querySelectorAll('.set-grid.committed')];
+    const committedHasFillRow = committed.some(g => g.nextElementSibling?.classList.contains('fill-row'));
+    const inputs = committed[0] ? [...committed[0].querySelectorAll('input')] : [];
+    const fillRowHeight = document.querySelector('.fill-row')?.getBoundingClientRect().height ?? null;
+    return { committedCount: committed.length, committedHasFillRow, kgVal: inputs[0]?.value ?? null, repsVal: inputs[1]?.value ?? null, fillRowCount: document.querySelectorAll('.fill-row').length, fillRowHeight };
+  });
+  if (after.committedCount !== 1) errors.push(`${tag}: expected 1 committed set after tapping, got ${after.committedCount}`);
+  if (after.committedHasFillRow) errors.push(`${tag}: the now-committed set 1 still has a fill-row`);
+  if (after.fillRowCount !== 1) errors.push(`${tag}: expected set 2 to have the fill-row now, got ${after.fillRowCount} fill-row(s)`);
+  if (before.kgPh && after.kgVal !== before.kgPh) errors.push(`${tag}: logged kg ${after.kgVal} does not match the shown placeholder ${before.kgPh}`);
+  if (before.repsPh && after.repsVal !== before.repsPh) errors.push(`${tag}: logged reps ${after.repsVal} does not match the shown placeholder ${before.repsPh}`);
+  if (before.set2RowHeight != null && after.fillRowHeight != null && Math.abs(before.set2RowHeight - after.fillRowHeight) > 1) {
+    errors.push(`${tag}: set 2's row height changed from ${before.set2RowHeight} to ${after.fillRowHeight} when it became the fill-row`);
+  }
+
+  // A typed reps value survives a tap on the (now set 2's) fill-row.
+  const repsInput = page.locator('.exercise.active .set-grid:not(.committed) input').nth(1);
+  await repsInput.fill('6');
+  await page.locator('.fill-row').click();
+  await page.waitForTimeout(150);
+  const typedReps = await page.evaluate(() => [...document.querySelectorAll('.set-grid.committed')].at(-1)?.querySelectorAll('input')[1]?.value ?? null);
+  if (typedReps !== '6') errors.push(`${tag}: typed reps '6' were overwritten by the fill-row, got '${typedReps}'`);
+
+  await ctx.close();
+}
+
 // QA5-1b..4b: a regression guard for QA5-1..4. Those fixes had no probe of their own — the gate
 // still passed against the pre-fix build, so undoing any of them would go unnoticed. In-app
 // Reduce motion only (OS no-preference), the exact path the original bugs were in.

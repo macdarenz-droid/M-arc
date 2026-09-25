@@ -108,6 +108,12 @@ svg { display: block; }
 .stack-sm { display: grid; gap: 8px; }
 .row { display: flex; align-items: center; gap: 10px; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+/* A1: "Log as planned" — the plain hint row for the next set to do becomes a button, same size. */
+.fill-row { position: relative; width: 100%; text-align: left; font: inherit; color: inherit; transition: color var(--dur-press) var(--ease-standard); }
+.fill-row::before { content: ""; position: absolute; inset: -2px 0 -6px; }
+.fill-row:active { color: var(--text); }
+/* Same line-height as the plain .hint it replaces, so nothing jumps when next-up moves down a set. */
+.fill-row .num { font-size: 12px; }
 .grow { flex: 1; min-width: 0; }
 .wrap { display: flex; flex-wrap: wrap; gap: 8px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

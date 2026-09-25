@@ -13,7 +13,7 @@ import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
-import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
+import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
@@ -86,6 +86,12 @@ export function targetRepsPh(target: { reps: number | null } | undefined, prev: 
 export function nextUpCore(kgPh: string, unitLabel: string, repsPh: string): string | null {
   if (!repsPh) return null;
   return !kgPh || kgPh === 'bw' ? `${repsPh} reps` : `${kgPh} ${unitLabel} × ${repsPh}`;
+}
+/** A1: whether a set is a standing candidate for "Log as planned" — has something to log, isn't
+ * logged yet, and isn't a warm-up (warm-ups are optional and never auto-filled). The first such
+ * set on the card, in order, is the one that gets the fill-row. */
+export function isNextUpCandidate(core: string | null, committed: boolean, kind: LoggedSet['kind']): boolean {
+  return core != null && !committed && kind !== 'warmup';
 }
 
 export function Train() {
@@ -535,11 +541,17 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             </div>
           )}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{eu}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
-          {entry.sets.map((set, j) => {
+          {(() => { let nextUpFound = false; return entry.sets.map((set, j) => {
             const { prev, pr } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
             const target = set.kind === 'warmup' ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
+            // A1: the first not-yet-logged, non-warmup working set on this card can be tapped to
+            // fill and log itself with exactly the values its own placeholders show.
+            const core = !isTimed && mode !== 'conditioning' ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
+            const isNextUp = !nextUpFound && isNextUpCandidate(core, isCommitted(set), set.kind);
+            if (isNextUp) nextUpFound = true;
+            const lastHint = prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`}>
@@ -560,13 +572,25 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     if (live?.rest && set.id && latestCommittedSetId(live) === set.id) setRestEffort(effort);
                   }}>{ef.l}</button>)}</div>
                 </div>
-                <div class="row-between" style={{ marginTop: 2 }}>
-                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
-                  <span class="row" style={{ gap: 6 }}>
-                    {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                    {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
-                  </span>
-                </div>
+                {isNextUp ? (
+                  <button type="button" class="row-between fill-row" style={{ marginTop: 2 }} data-palace="train.log-planned" aria-label={`Log ${core}`} onClick={() => {
+                    const kgNum = target?.kg ?? prev?.kg;
+                    const v = kgNum != null && set.kg == null && mode !== 'bodyweight' ? enteredLoad(kgToDisplay(kgNum, eu), eu) : null;
+                    setSet(index, j, { ...(v ? { kg: v.kg, entered: v.entered } : {}), ...(set.reps == null ? { reps: target?.reps ?? prev?.reps } : {}) });
+                    commitSet(index, j);
+                  }}>
+                    <span class="hint">{lastHint}</span>
+                    <span class="row" style={{ gap: 6, color: 'var(--text-2)' }}><span class="num">Log {core}</span><IconCheck size={16} /></span>
+                  </button>
+                ) : (
+                  <div class="row-between" style={{ marginTop: 2 }}>
+                    <span class="hint">{lastHint}</span>
+                    <span class="row" style={{ gap: 6 }}>
+                      {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
+                      {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
+                    </span>
+                  </div>
+                )}
                 {mode === 'conditioning' && (
                   // UI-20: carries and sled work log distance and time next to load and reps.
                   <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
@@ -577,7 +601,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 <SuspectChip set={set} best={best} dismissKey={`${s.active?.startedAt}|${entry.exerciseId}|${j}|${set.kg}`} onFix={alt => { setSet(index, j, { kg: alt.kg, entered: { value: alt.value, unit: alt.unit } }); setExerciseUnit(entry.exerciseId, alt.unit, 'suspect_fix'); }} />
               </div>
             );
-          })}
+          }); })()}
           <div class="row">
             <Button variant="quiet" size="sm" onClick={() => addSet(index)}><IconPlus size={14} /> Set</Button>
             <Button variant="quiet" size="sm" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={14} /> Set</Button>
