@@ -1,7 +1,84 @@
 /* Global styles. Colours and radii come from the theme tokens on <html>. */
+/* tokens:start */
+:root {
+  /* durations */
+  --dur-press: 100ms; --dur-fast: 150ms; --dur-base: 200ms; --dur-enter: 240ms; --dur-exit: 160ms;
+  --dur-sheet: 320ms; --dur-sheet-exit: 200ms; --dur-spring: 310ms; --dur-bounce: 460ms;
+  --stagger: 40ms; --delay-content: 60ms;
+  /* easings */
+  --ease-standard: cubic-bezier(.2,0,0,1);      /* M3 standard: colour, opacity, small moves */
+  --ease-enter: cubic-bezier(.05,.7,.1,1);      /* M3 emphasized-decelerate */
+  --ease-exit: cubic-bezier(.3,0,.8,.15);       /* M3 emphasized-accelerate, exits only */
+  --ease-drawer: cubic-bezier(.32,.72,0,1);     /* Vaul, sheets */
+  --ease-linear: linear;                        /* timers, progress, hold fill */
+  --ease-spring: var(--ease-enter);             /* fallback when linear() is unsupported */
+  --ease-spring-bounce: var(--ease-enter);
+  /* distances and scales */
+  --shift-sheet: 100%; --shift-md: 16px; --shift-sm: 8px;
+  --scale-in: .96; --scale-press: .97; --scale-press-sm: .95; --scale-press-card: .985;
+  --lift-scale: 1.02; --scale-pop: .9; --scale-swell: 1.02; --enter-opacity: 1;
+  /* type: size / line-height / tracking */
+  --fs-cap: 11px; --lh-cap: 14px; --ls-cap: .06em;
+  --fs-meta: 12px; --lh-meta: 16px;
+  --fs-small: 13px; --lh-small: 18px; --ls-small: -.003em;
+  --fs-body: 15px; --lh-body: 20px; --ls-body: -.009em;
+  --fs-title: 17px; --lh-title: 22px; --ls-title: -.013em;
+  --fs-stat: 22px; --lh-stat: 26px; --ls-stat: -.018em;
+  --fs-h1: 28px; --lh-h1: 34px; --ls-h1: -.021em; --fs-h1-narrow: 24px;
+  --fs-display: 40px; --lh-display: 44px; --ls-display: -.022em;
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600;
+  /* space */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  /* radius (theme radii stay in themes.ts) */
+  --radius-xs: 4px; --radius-pill: 999px;
+  /* elevation */
+  --shadow-float: 0 1px 2px rgba(0,0,0,.5), 0 12px 32px -8px rgba(0,0,0,.6);
+  --shadow-thumb: 0 1px 2px rgba(0,0,0,.25);
+  --scrim: rgba(0,0,0,.5);
+  /* layout */
+  --nav-h: 58px; --float-gap: 12px;
+  --inset-b: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --float-bottom: calc(var(--nav-h) + var(--float-gap) + var(--inset-b)); /* = 70px + inset, same as today */
+  --rest-h: 0px; /* RestBanner writes the real value on <html> (I1) */
+  /* layers */
+  --z-dock: 19; --z-nav: 20; --z-rest: 25; --z-toast: 30;
+}
+[data-theme="paper"] {
+  --shadow-float: 0 1px 2px rgba(0,0,0,.08), 0 12px 32px -8px rgba(0,0,0,.18);
+  --shadow-thumb: 0 1px 2px rgba(0,0,0,.12);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    /* derived by the research agent's own simulation of M3 spring params, not published values: unverified, tune by eye */
+    --ease-spring: linear(0,0.123,0.351,0.562,0.725,0.838,0.912,0.955,0.979,0.992,0.998,1,1.001,1.001,1);          /* ζ0.9 k700, use with --dur-spring */
+    --ease-spring-bounce: linear(0,0.106,0.323,0.554,0.748,0.889,0.978,1.025,1.043,1.044,1.036,1.026,1.016,1.008,1.003,1,0.998,0.998,0.998,0.999,1); /* ζ0.7 k500, 4.5% overshoot, use with --dur-bounce */
+  }
+}
+html[data-motion="reduce"] {
+  --shift-sheet: 0px; --shift-md: 0px; --shift-sm: 0px;
+  --scale-in: 1; --scale-press: 1; --scale-press-sm: 1; --scale-press-card: 1;
+  --lift-scale: 1; --scale-pop: 1; --scale-swell: 1; --enter-opacity: 0;
+  --dur-enter: 150ms; --dur-sheet: 150ms; --dur-exit: 100ms; --dur-sheet-exit: 100ms;
+  --dur-spring: 150ms; --dur-bounce: 150ms; --stagger: 0ms; --delay-content: 0ms;
+  --ease-spring: var(--ease-standard); --ease-spring-bounce: var(--ease-standard);
+}
+/* tokens:end */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+/* QA5-17: theme.ts adds this class for two rAFs around a theme switch, so every colour transition
+   (theme cards, .card-press, .esc-dock, ...) snaps to the new theme on the same frame as the
+   [data-theme] attribute instead of each fading over its own ~150ms and showing a grey flash. */
+html.theme-switching *, html.theme-switching *::before, html.theme-switching *::after { transition: none !important; }
+/* F2: no long-press text selection on controls (inputs, textarea and message text stay selectable). */
+button, [role="button"], .card-press, .list-row.pressable, .chip-btn, .seg button, .tab, .toggle, .set-kind, .nav button, .theme-card, .cal .day, .watch-pill {
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+/* QA5-8: raw --accent measures under 3:1 (F2's non-text contrast floor) against surface-2/3 in
+   Midnight; mixing it toward --text lifts every theme's worst case to >=3.16:1 (Midnight itself
+   4.57/4.11/3.67/3.16 on bg/surface-1/2/3), without a per-theme override. */
+:root { --focus-ring: color-mix(in srgb, var(--accent) 80%, var(--text)); }
+:where(button, [role="button"], a, [tabindex]):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 body { min-height: 100dvh; line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
@@ -17,9 +94,8 @@ svg { display: block; }
 ::selection { background: var(--accent-soft); }
 
 .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
-.view { animation: view-in 220ms cubic-bezier(.2,.8,.2,1); }
+.view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .view, .sheet, .toast { animation: none !important; } * { transition: none !important; } }
 
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
@@ -43,11 +119,38 @@ svg { display: block; }
 .card { background: var(--surface-1); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 16px; }
 .card-quiet { background: transparent; border: 1px solid var(--border-subtle); }
 .card-accent { background: linear-gradient(180deg, var(--accent-soft), transparent 70%), var(--surface-1); border-color: var(--border); }
-.card-press { transition: transform 120ms ease, border-color 120ms ease; }
-.card-press:active { transform: scale(.985); border-color: var(--border-strong); }
+.card-press { transition: transform var(--dur-press) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard); }
+.card-press:active { transform: scale(var(--scale-press-card)); border-color: var(--border-strong); background: var(--surface-2); transition: none; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); transition: transform 100ms ease, background 120ms ease, border-color 120ms ease; white-space: nowrap; }
-.btn:active { transform: scale(.97); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 14px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); transition: transform var(--dur-base) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); white-space: nowrap; }
+.btn:active { transform: scale(var(--scale-press)); transition-duration: var(--dur-press); }
+/* F2 press language: small controls use the standalone `scale` property (not `transform`) so a
+   control that already positions itself with `transform` (.unit-pill's translateY(-50%)) keeps
+   that transform instead of the press losing it (CSS Transforms 2 order; see the plan's §1 note). */
+.chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x { transition: scale var(--dur-base) var(--ease-standard); }
+.chip-btn:active, .watch-pill:active, .esc-live-btn:active, .seg button:active, .tab:active, .unit-pill:active, .esc-chip-x:active { scale: var(--scale-press-sm); transition-duration: var(--dur-press); }
+/* QA5-2: under reduce, --scale-press/-sm collapse to 1, so a scale-only press gave zero feedback
+   (breaking §1/F3's "movement becomes crossfades, never zero feedback"). An opacity dip instead. */
+html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x) { transition: opacity var(--dur-press) var(--ease-standard); }
+html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x):active { opacity: .7; }
+/* Frequent controls (Calm rule): a colour change only, no scale. */
+.effort button, .set-kind { transition: background-color var(--dur-press) var(--ease-standard); }
+/* QA5-18: on surface-1 the step to surface-2 is ~1.03:1 in the dark themes (Silent Black, Ember,
+   Emerald, Midnight) — imperceptible under gym lighting. A neutral overlay reads at any surface. */
+.effort button:active, .set-kind:active { background: color-mix(in srgb, var(--text) 10%, transparent); transition: none; }
+/* Surfaces on surface-1: press to surface-2, release fades back. */
+.theme-card, .cal .day { transition: background-color var(--dur-fast) var(--ease-standard); }
+/* QA5-11: .cal .day.trained/.selected match .cal .day:active at equal specificity (0,3,0) and
+   come later, so pressing a trained day (the common case) changed nothing; :not(.selected) lifts
+   this to (0,4,0), which beats .trained. .selected already has a strong fill of its own. */
+.theme-card:active, .cal .day:active:not(.selected) { background: color-mix(in srgb, var(--text) 8%, var(--surface-1)); transition: none; }
+/* Already-surface-2 rows: press to surface-3 so the press is still visible. QA5-11: .esc-menu is
+   itself surface-2 (:367), so .esc-menu button moved here from the group above, where its press
+   was invisible against its own panel's background. */
+.list-row.pressable, .esc-past, .esc-dock, .esc-menu button { transition: background-color var(--dur-fast) var(--ease-standard); }
+.list-row.pressable:active, .esc-past:active, .esc-dock:active, .esc-menu button:active { background: var(--surface-3); transition: none; }
+.nav button svg { transition: opacity var(--dur-press) var(--ease-standard); }
+.nav button:active svg { opacity: .6; transition: none; }
 .btn:disabled { opacity: .45; pointer-events: none; }
 .btn-primary { background: var(--accent); border-color: transparent; color: var(--on-accent); }
 .btn-solid { background: var(--text); border-color: transparent; color: var(--bg); }
@@ -76,13 +179,18 @@ svg { display: block; }
 
 .list { display: grid; min-width: 0; }
 .list > * { min-width: 0; }
-.list-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); min-height: 52px; min-width: 0; overflow: hidden; }
+/* QA5-16: overflow:hidden clipped the focus ring's right edge on a flush-right trailing control
+   (a toggle, "Manage"); overflow:clip with a margin still clips text overflow (min-width:0 keeps
+   truncation working) but gives the ring 4px of room outside the box. */
+.list-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); min-height: 52px; min-width: 0; overflow: clip; overflow-clip-margin: 4px; }
 .list-row:last-child { border-bottom: 0; }
 .list-row.pressable { cursor: pointer; margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: var(--radius-sm); }
-.list-row.pressable:active { background: var(--surface-2); }
 
-.toggle { position: relative; width: 46px; height: 28px; border-radius: 999px; background: var(--surface-3); border: 1px solid var(--border); transition: background 160ms ease; flex: none; }
-.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--text); transition: transform 160ms ease; }
+.toggle { position: relative; width: 46px; height: 28px; border-radius: 999px; background: var(--surface-3); border: 1px solid var(--border); transition: background var(--dur-base) var(--ease-standard); flex: none; }
+/* QA5-13: the disabled Reduce motion switch (forced on when the OS already asks for it) otherwise
+   looks identical to an enabled one — full opacity, pointer cursor — though taps do nothing. */
+.toggle:disabled { opacity: .45; cursor: default; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--text); transition: transform var(--dur-base) var(--ease-standard); }
 .toggle[aria-checked="true"] { background: var(--accent); border-color: transparent; }
 .toggle[aria-checked="true"]::after { transform: translateX(18px); background: var(--on-accent); }
 
@@ -93,7 +201,7 @@ svg { display: block; }
 
 
 /* Bottom navigation */
-.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--border-subtle); padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)); }
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-nav); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--border-subtle); padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)); }
 .nav-inner { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
 .nav button { display: grid; justify-items: center; gap: 3px; padding: 10px 0 8px; min-height: 58px; color: var(--text-3); font-size: 11px; font-weight: 600; }
 .nav button[aria-current="page"] { color: var(--text); }
@@ -103,19 +211,28 @@ svg { display: block; }
 /* Sheets */
 .sheet { border: 0; padding: 0; background: transparent; max-width: 560px; width: 100%; margin: auto 0 0 auto; margin-inline: auto; max-height: 92dvh; }
 .sheet::backdrop { background: rgba(0,0,0,.55); backdrop-filter: blur(2px); }
-.sheet-panel { background: var(--surface-1); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 8px 16px calc(20px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); max-height: 92dvh; overflow: auto; animation: sheet-in 240ms cubic-bezier(.2,.8,.2,1); }
+.sheet-panel { background: var(--surface-1); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 8px 16px calc(20px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); max-height: 92dvh; overflow: auto; animation: sheet-in var(--dur-sheet) var(--ease-drawer); }
+.sheet-panel:focus { outline: none; }
 @keyframes sheet-in { from { transform: translateY(24px); opacity: .4; } to { transform: none; opacity: 1; } }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 4px auto 14px; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
-.toast { position: fixed; left: 50%; bottom: calc(124px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: 30; display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow); animation: view-in 200ms ease; width: max-content; max-width: calc(100% - 32px); }
+.toast { position: fixed; left: 50%; bottom: calc(124px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow); animation: view-in var(--dur-base) var(--ease-standard); width: max-content; max-width: calc(100% - 32px); }
 .toast button { color: var(--accent); font-weight: 700; }
+/* QA5-4: .view's translateY and the toast's view-in both fight the toast's own translateX(-50%)
+   centring, and neither is gated for reduce (unlike everything F3 touched) — under reduce they
+   used to run animation:none entirely. Fall back to an opacity-only fade until I9/F13 (which
+   remove the .view transform and give the toast its own non-transform centring) land properly. */
+@keyframes fade-in { from { opacity: 0; } }
+:where(html[data-motion="reduce"]) :is(.view, .toast) { animation-name: fade-in; }
 
 .empty { text-align: center; padding: 28px 16px; color: var(--text-2); display: grid; gap: 8px; justify-items: center; }
 .empty svg { color: var(--text-3); }
 
 /* Split tabs strip */
-.tabs-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+/* QA5-16: split tabs lost the top of their focus ring to the strip's own scroll clipping; the
+   extra padding gives the ring room, and the matching negative margin keeps the tabs in place. */
+.tabs-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 4px 8px; margin: -2px -4px 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .tabs-strip::-webkit-scrollbar { display: none; }
 .tab { flex: none; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); font-weight: 600; font-size: 13px; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
 .tab[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
@@ -133,14 +250,10 @@ svg { display: block; }
   background-size: 220% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
-  .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
-  .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
-}
+html:not([data-motion="reduce"]) .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
+html[data-motion="reduce"] .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
+html[data-motion="reduce"] .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
 @keyframes exercise-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -40% 0; } }
 @keyframes exercise-breathe {
   0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 0 0 transparent; }
@@ -150,7 +263,12 @@ svg { display: block; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
 .set-grid input { min-height: 40px; padding: 6px 10px; text-align: center; }
 .set-index { font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; }
-.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 32px; border-radius: 8px; cursor: pointer; }
+/* QA5-9: all:unset resets everything, including the user-select:none (:70) and background-color
+   transition (:127) set on .set-kind earlier at equal specificity — later source order wins, so
+   both were silently undone. Restated here, after all:unset. */
+.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 32px; border-radius: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: background-color var(--dur-press) var(--ease-standard); }
+/* `all: unset` above (specificity 0,1,0) beats the zero-specificity :where() focus-visible rule. */
+.set-kind:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
 .set-kind.warmup { color: var(--warning); }
 .set-kind.drop, .set-kind.failure { color: var(--accent); }
 .exercise-note { display: flex; align-items: center; gap: 4px; }
@@ -171,7 +289,7 @@ svg { display: block; }
 .watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
 
 /* Rest banner */
-.rest { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(70px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); z-index: 25; max-width: 560px; width: calc(100% - 32px); background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
+.rest { position: fixed; left: 0; right: 0; margin-inline: auto; transform: none; bottom: var(--float-bottom); z-index: var(--z-rest); max-width: 560px; width: calc(100% - 32px); background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 14px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; }
 .rest .clock { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; min-width: 72px; }
 .rest.done { border-color: var(--positive); }
 
@@ -185,7 +303,7 @@ svg { display: block; }
 .body-map { width: 100%; height: auto; max-height: 62vh; margin: 0 auto; }
 .map-label { text-align: center; font-size: 11px; color: var(--text-3); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
 .body-part { fill: var(--map-body); stroke: var(--map-line); stroke-width: .12; stroke-linejoin: round; }
-.muscle { fill: var(--map-body); stroke: var(--map-line); stroke-width: .12; stroke-linejoin: round; transition: fill 400ms ease; cursor: pointer; }
+.muscle { fill: var(--map-body); stroke: var(--map-line); stroke-width: .12; stroke-linejoin: round; transition: fill var(--dur-base) var(--ease-standard); cursor: pointer; }
 .muscle.lit { fill: var(--muscle-fill); stroke: color-mix(in srgb, var(--text) 35%, transparent); }
 .muscle.selected { stroke: var(--text); stroke-width: .3; }
 .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--text-2); }
@@ -241,20 +359,16 @@ svg { display: block; }
 
 /* Palace spotlight (§7.2): a ring on the element Escobar is pointing at. */
 .palace-spotlight { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius-md); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
-@media (prefers-reduced-motion: no-preference) {
-  .palace-spotlight { animation: palace-glow 1.6s ease-out; }
-  @keyframes palace-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 40% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); } 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
-}
+html:not([data-motion="reduce"]) .palace-spotlight { animation: palace-glow 1.6s ease-out; }
+@keyframes palace-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 40% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); } 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* Escobar (§4): every colour from theme tokens; every animation has a reduced-motion fallback. */
 .escobar-mark { display: inline-block; flex: none; background-color: currentColor; -webkit-mask: url('../assets/escobar-mark.png') center / contain no-repeat; mask: url('../assets/escobar-mark.png') center / contain no-repeat; }
-@media (prefers-reduced-motion: no-preference) {
-  .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
-  .esc-caret { animation: esc-blink 1s step-end infinite; }
-  .esc-spin { animation: esc-rot 0.9s linear infinite; }
-  .esc-sheet .esc-panel { transition: height 220ms cubic-bezier(.2,.8,.2,1); }
-}
+html:not([data-motion="reduce"]) .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .esc-caret { animation: esc-blink 1s step-end infinite; }
+html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infinite; }
+html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(--dur-base) var(--ease-standard); }
 @keyframes esc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @keyframes esc-blink { 50% { opacity: 0; } }
 @keyframes esc-rot { to { transform: rotate(360deg); } }
@@ -272,7 +386,9 @@ svg { display: block; }
 .esc-menu { position: absolute; right: 44px; top: 42px; z-index: 2; display: grid; min-width: 210px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); overflow: hidden; }
 .esc-menu button { text-align: left; padding: 12px 14px; min-height: 44px; font-size: 14px; color: var(--text); }
 .esc-menu button + button { border-top: 1px solid var(--border-subtle); }
-.esc-thread { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 0; }
+/* QA5-16: the message thread is a scroll container too, so a focused link/citation near its edge
+   lost its ring the same way; 4px of horizontal padding plus a matching negative margin. */
+.esc-thread { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 4px; margin-inline: -4px; }
 .esc-thread-inner { display: grid; gap: 14px; }
 .esc-empty { display: grid; justify-items: center; text-align: center; gap: 12px; padding: 18px 4px; color: var(--text-2); }
 .esc-empty svg, .esc-empty .escobar-mark { color: var(--accent); }
@@ -334,7 +450,7 @@ svg { display: block; }
 .esc-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .esc-send { flex: none; }
 
-.esc-dock { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(70px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); z-index: 19; display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: 40px; padding: 0 16px 0 12px; border-radius: 999px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); font-size: 13px; font-weight: 600; }
+.esc-dock { position: fixed; left: 0; right: 0; margin-inline: auto; width: max-content; transform: none; bottom: var(--float-bottom); z-index: var(--z-dock); display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: 40px; padding: 0 16px 0 12px; border-radius: 999px; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); font-size: 13px; font-weight: 600; }
 .esc-dock span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .esc-dock svg, .esc-dock .escobar-mark { color: var(--accent); flex: none; }
 .esc-dock-off { background: var(--surface-1); color: var(--text-2); box-shadow: none; }
@@ -353,10 +469,8 @@ svg { display: block; }
 .esc-drawer-detail { display: grid; gap: 4px; margin-top: 4px; }
 .esc-thinking { color: var(--text-2); }
 .esc-lift { display: inline-flex; color: var(--accent); }
-@media (prefers-reduced-motion: no-preference) {
-  .esc-lift { animation: esc-lift 0.9s ease-in-out infinite; }
-  .esc-thinking-text { animation: esc-fade 260ms ease-out; }
-}
+html:not([data-motion="reduce"]) .esc-lift { animation: esc-lift 0.9s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .esc-thinking-text { animation: esc-fade var(--dur-enter) var(--ease-enter); }
 @keyframes esc-lift { 0%, 100% { transform: translateY(2px); } 50% { transform: translateY(-3px); } }
 @keyframes esc-fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 
@@ -383,18 +497,14 @@ svg { display: block; }
 .plan-verdict { font-size: 12.5px; }
 .plan-verdict.ok { color: var(--positive); }
 .plan-verdict.warn { color: var(--warning); }
-@media (prefers-reduced-motion: no-preference) {
-  .plan-chip { animation: esc-fade 260ms ease-out; }
-  .plan-chip.pending { animation: esc-pulse 1.4s ease-in-out infinite; }
-  .plan-day { animation: esc-fade 300ms ease-out; }
-}
+html:not([data-motion="reduce"]) .plan-chip { animation: esc-fade var(--dur-enter) var(--ease-enter); }
+html:not([data-motion="reduce"]) .plan-chip.pending { animation: esc-pulse 1.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .plan-day { animation: esc-fade var(--dur-enter) var(--ease-enter); }
 
 /* Live session: hold an exercise and drag to reorder. No selection highlight, just movement. */
 .reorder-item { touch-action: pan-y; -webkit-touch-callout: none; }
 .reorder-list.dragging { user-select: none; -webkit-user-select: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .reorder-list.dragging .reorder-item { transition: transform 160ms ease; }
-}
+html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transition: transform var(--dur-base) var(--ease-standard); }
 
 /* UI-23: narrow phones keep the set row on one line with the load fully visible. */
 @media (max-width: 380px) {
@@ -424,9 +534,13 @@ svg { display: block; }
 .share-style { text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
 /* QA4-15: 44 px tap targets; the visible dot stays 6 px. */
 .share-dots { display: flex; justify-content: center; gap: 0; }
-.share-dots button { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; padding: 0; }
-.share-dots button::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--border-strong); transition: width .2s ease; }
-.share-dots button.on::before { width: 18px; background: var(--accent); }
+.share-dots button { position: relative; width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; padding: 0; }
+.share-dots button::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--border-strong); transition: opacity var(--dur-base) var(--ease-standard); }
+/* QA5-12: width is not a compositor property (§1); the "on" pill is a second, pre-sized layer
+   that fades/scales in instead of the dot growing. */
+.share-dots button::after { content: ""; position: absolute; inset: 0; margin: auto; width: 18px; height: 6px; border-radius: 3px; background: var(--accent); opacity: 0; scale: .34 1; transition: opacity var(--dur-base) var(--ease-standard), scale var(--dur-base) var(--ease-standard); }
+.share-dots button.on::before { opacity: 0; }
+.share-dots button.on::after { opacity: 1; scale: 1; }
 .share-empty { text-align: center; }
 .share-opts { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .share-size { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }

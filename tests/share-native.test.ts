@@ -96,4 +96,12 @@ describe('QA4-14: the carousel follows Reduce motion', () => {
       expect(carouselScroll()).toBe('smooth');
     } finally { vi.unstubAllGlobals(); }
   });
+
+  it('QA5-7: also scrolls instantly for the in-app Reduce motion toggle, with no OS setting', () => {
+    try {
+      vi.stubGlobal('document', { documentElement: { dataset: { motion: 'reduce' } } });
+      vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false })));
+      expect(carouselScroll()).toBe('auto');
+    } finally { vi.unstubAllGlobals(); }
+  });
 });

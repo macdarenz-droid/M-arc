@@ -5,6 +5,7 @@ import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
+import { haptic } from '@/native/haptics';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -29,8 +30,8 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
   return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
 }
 
-export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
-  return <button type="button" role="switch" aria-checked={checked} aria-label={label} class="toggle" onClick={() => onChange(!checked)} />;
+export function Toggle({ checked, onChange, label, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
+  return <button type="button" role="switch" aria-checked={checked} aria-disabled={disabled} disabled={disabled} aria-label={label} class="toggle" onClick={() => { void haptic.toggle(!checked); onChange(!checked); }} />;
 }
 
 export function Stat({ value, label, tone }: { value: ComponentChildren; label: string; tone?: 'positive' | 'warning' | 'negative' }) {
@@ -54,6 +55,10 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
+    // QA5-1: a child that already asks for focus (e.g. a form's first field) wins over the
+    // panel's own autofocus, which exists only so a sheet with no such child still gets focus.
+    const panel = d.querySelector<HTMLElement>('.sheet-panel');
+    if (panel?.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -63,7 +68,7 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div class="sheet-panel" data-palace={palace}>
+      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
         <div class="sheet-grab" />
         <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
         {children}
@@ -94,7 +99,7 @@ export function CommitNumber({ value, min, max, integer, onCommit, ...rest }: { 
     const t = text.trim().replace(',', '.');
     if (!t) { if (value != null) onCommit(undefined); return; }
     const v = Number(t);
-    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { setText(shown); return; }
+    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { void haptic.reject(); setText(shown); return; }
     if (v !== value) onCommit(v);
   };
   return <input {...rest} type="text" inputMode={integer ? 'numeric' : 'decimal'} value={text} onFocus={() => { focused.current = true; }} onInput={e => setText((e.target as HTMLInputElement).value)} onBlur={commit} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />;

@@ -1,3 +1,4 @@
+import '@/ui/motion';
 import { render } from 'preact';
 import { App } from './app/App';
 import { installThemeEngine } from './theme/engine';

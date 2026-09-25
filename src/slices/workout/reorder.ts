@@ -40,7 +40,7 @@ export function useReorder(onMove: (from: number, to: number) => void) {
       started = true;
       live.current = { from: index, to: index, dy: 0, tops: rects.map(r => r.top), heights: rects.map(r => r.height), step };
       setDrag(live.current);
-      void haptic.light();
+      void haptic.dragStart();
     };
     const timer = setTimeout(begin, HOLD_MS);
     const move = (m: PointerEvent) => {
@@ -52,7 +52,7 @@ export function useReorder(onMove: (from: number, to: number) => void) {
       const dy = m.clientY - startY;
       const centre = d.tops[d.from]! + d.heights[d.from]! / 2 + dy;
       const to = d.tops.filter((t, j) => j !== d.from && t + d.heights[j]! / 2 < centre).length;
-      if (to !== d.to) void haptic.light();
+      if (to !== d.to) void haptic.tick();
       live.current = { ...d, dy, to };
       setDrag(live.current);
     };

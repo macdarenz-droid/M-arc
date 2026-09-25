@@ -113,7 +113,7 @@ export function startSession(split: Split): void {
   update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
   flushSave();
   resetHeartCapture();
-  void haptic.medium();
+  void haptic.confirm();
   void backgroundHealthSync();
   const w = state.value.preferences.watch;
   if (w.autoConnectOnSession && w.deviceAddress) void connectWatch(w.deviceAddress);
@@ -198,7 +198,7 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   setSetById(setId, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart, status: 'committed' });
   if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
-  void haptic.light();
+  void haptic.confirm();
   return true;
 }
 
@@ -257,7 +257,7 @@ export function removeSet(entry: number, index: number): void {
 
 export function markDone(entry: number, done = true): void {
   patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false })) }));
-  if (done) void haptic.success();
+  if (done) void haptic.confirm(); else void haptic.tick();
 }
 
 export function skipEntry(entry: number, skipped = true): void {
@@ -506,7 +506,7 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
   };
   update(s => ({ ...s, sessions: sortByStart([...s.sessions, session]) }));
   flushSave();
-  void haptic.success();
+  void haptic.confirm();
   return { session, changedTemplate: false };
 }
 

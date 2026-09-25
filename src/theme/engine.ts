@@ -42,6 +42,11 @@ export function installThemeEngine(doc: Document = document): void {
   effect(() => {
     const id = themeId.value;
     const theme = THEMES[id];
+    // QA5-17: without this, every transitioning element (theme cards, .card-press, .esc-dock)
+    // fades to the new theme over its own ~150ms instead of switching on the same frame as
+    // everything else, showing a grey flash mid-transition.
+    doc.documentElement.classList.add('theme-switching');
+    requestAnimationFrame(() => requestAnimationFrame(() => doc.documentElement.classList.remove('theme-switching')));
     doc.documentElement.setAttribute('data-theme', id);
     doc.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.tokens.chrome);
     // R5.4: edge-to-edge on Android 15+: the status and nav bar icons follow the theme.
