@@ -361,8 +361,24 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
     for (const c of override.changes) if (c.kind === 'sets') overriddenSets.add(c.exerciseId);
   }
   const splitSetsById = new Map(split.exercises.map(se => [se.exerciseId, se.sets]));
+  // QA3-8: a swap's target that the person substituted away during the session (not Escobar's
+  // target as-is) replaces the swapped-away exercise at its own split slot; it is not an addition,
+  // and the swapped-away exercise is not restored alongside it.
+  const plannedList = plannedExercises(split, override, today);
+  const substituteForFrom = new Map<string, { exerciseId: string; sets: number }>();
+  if (override && override.day === today && override.splitId === split.id) {
+    for (const c of override.changes) {
+      if (c.kind !== 'swap') continue;
+      const idx = plannedList.findIndex(e => e.exerciseId === c.to);
+      const live = idx >= 0 ? a.entries[idx] : undefined;
+      if (live && !live.skipped && live.exerciseId !== c.to) {
+        substituteForFrom.set(c.from, { exerciseId: live.exerciseId, sets: Math.max(1, live.sets.filter(x => x.kind !== 'warmup').length) });
+      }
+    }
+  }
+  const substitutedIds = new Set([...substituteForFrom.values()].map(v => v.exerciseId));
   const out = done
-    .filter(e => inSplit.has(e.exerciseId) || !planned.has(e.exerciseId))
+    .filter(e => (inSplit.has(e.exerciseId) || !planned.has(e.exerciseId)) && !substitutedIds.has(e.exerciseId))
     .map(e => {
       const liveCount = Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length);
       return { exerciseId: e.exerciseId, sets: overriddenSets.has(e.exerciseId) ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
@@ -377,7 +393,8 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
       const pos = out.findIndex(o => o.exerciseId === split.exercises[j]!.exerciseId);
       if (pos !== -1) { insertAt = pos + 1; break; }
     }
-    out.splice(insertAt, 0, { ...se });
+    const sub = substituteForFrom.get(se.exerciseId);
+    out.splice(insertAt, 0, sub ? { ...sub } : { ...se });
   });
   return out;
 }

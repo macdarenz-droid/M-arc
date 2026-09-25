@@ -403,4 +403,19 @@ describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-
       'lib_barbell_bench_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_shoulder_press', 'lib_triceps_pushdown',
     ]);
   });
+  it("QA3-8: substituting Escobar's one-day swap replaces the original slot, not adds a fifth exercise", () => {
+    replaceState({
+      ...state.value, splits: [split],
+      escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_dumbbell_bench_press' }] } },
+    });
+    start(); // entries: DB bench (today's swap target), cable fly
+    expect(a().entries[0]!.exerciseId).toBe('lib_dumbbell_bench_press');
+    substituteEntry(0, findExercise('lib_incline_barbell_bench_press')!); // the person's own further swap
+    setSet(0, 0, { kg: 40, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 10 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_incline_barbell_bench_press', 'lib_cable_fly',
+    ]);
+  });
 });
