@@ -183,6 +183,10 @@ for (const theme of themes) {
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250); await shot('coach');
   if (theme === 'silent-black') { await page.locator('.insight').first().click(); await page.waitForTimeout(300); await shot('insight'); await page.keyboard.press('Escape'); }
   await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300); await shot('settings');
+  // QA5-5b(a): every context here runs under reducedMotion:'reduce' (F5), so this is already the
+  // "Settings under OS reduce" case the F3 spec calls for a probe of; nothing had checked it.
+  const rm = await page.getByRole('switch', { name: 'Reduce motion' }).evaluate(e => ({ d: e.disabled, c: e.getAttribute('aria-checked') }));
+  if (!rm.d || rm.c !== 'true') errors.push(`${theme}: Reduce motion switch under OS reduce is ${JSON.stringify(rm)}, expected disabled+checked`);
   if (theme === 'silent-black') {
     await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
@@ -724,6 +728,11 @@ for (const theme of themes) {
     tick();
   }));
   let firstFeedbackMs = await measureFeedback(page);
+  // QA5-5b(b): this context runs under reduce; the Escobar Thinking line's esc-lift/esc-fade are
+  // both gated on html:not([data-motion="reduce"]) (F1/F3) — nothing had checked that gate holds
+  // for this specific live state, only that Today has no loop at rest (:902, which can't fail).
+  const loops = await page.evaluate(() => document.getAnimations().filter(a => a.effect && a.effect.getTiming().iterations === Infinity).map(a => a.animationName));
+  if (loops.length) errors.push(`${tag}: infinite animation(s) while Thinking under reduce: ${loops.join(', ')}`);
   if (firstFeedbackMs > 150) {
     // PL-18: one retry on a fresh page of the same context, so a slow runner tick does not fail the gate.
     const again = await ctx.newPage();
@@ -1022,6 +1031,37 @@ for (const theme of themes) {
     return [...s];
   });
   if (xs.length !== 1) errors.push(`${tag}: toast moved while appearing: left ${xs.join(' -> ')}`);
+  await ctx.close();
+}
+
+// QA5-5b(c): F2's own acceptance checks (a computed press-state change and back within 250ms of
+// release, no ring on the onboarding sheet's own buttons, a solid ring on keyboard focus and none
+// on a mouse click) had no gate probe anywhere. Full motion (no reducedMotion key): under reduce,
+// .seg/.tab/etc. answer with opacity instead of scale (QA5-2), so scale/transform here would read
+// as unchanged for the wrong reason.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'F2 press/focus';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`); await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  const onbRing = await page.evaluate(() => [...document.querySelectorAll('dialog[open] button')].filter(b => getComputedStyle(b).outlineStyle !== 'none').length);
+  if (onbRing) errors.push(`${tag}: ${onbRing} onboarding button(s) show a focus ring`);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  const press = async (l, prop) => { const b = await l.boundingBox(); const read = () => l.evaluate((e, p) => getComputedStyle(e)[p], prop); const rest = await read(); await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.down(); await page.waitForTimeout(120); const down = await read(); await page.mouse.up(); await page.waitForTimeout(250); const back = await read().catch(() => rest); if (down === rest || back !== rest) errors.push(`${tag}: press ${prop} rest=${rest} down=${down} +250ms=${back}`); };
+  await press(page.locator('.nav button svg').first(), 'opacity');
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+  await press(page.locator('dialog[open] .seg button').first(), 'scale');
+  await press(page.locator('dialog[open] .theme-card').first(), 'backgroundColor');
+  await page.keyboard.press('Tab');
+  const kb = await page.evaluate(() => ({ cls: document.activeElement?.className, o: getComputedStyle(document.activeElement).outlineStyle }));
+  if (kb.o !== 'solid') errors.push(`${tag}: keyboard Tab focus ring is ${JSON.stringify(kb)}`);
+  await page.locator('dialog[open] .seg button').first().click(); await page.waitForTimeout(100);
+  const mc = await page.evaluate(() => ({ cls: document.activeElement?.className, o: getComputedStyle(document.activeElement).outlineStyle }));
+  if (mc.o !== 'none') errors.push(`${tag}: mouse click shows a focus ring ${JSON.stringify(mc)}`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+  await press(page.locator('.btn', { hasText: 'Take today off' }), 'transform');
   await ctx.close();
 }
 
