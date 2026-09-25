@@ -110,7 +110,20 @@ public final class WorkoutHeartRecorder {
                                 .put("coverage", "unverified").put("writeFailed", true));
                     }
                     success.accept(result);
-                } catch (Exception e) { failure.run(); }
+                } catch (Exception e) {
+                    if ("read".equals(action)) {
+                        try {
+                            // Read only a known core schema; never use this to acknowledge a write,
+                            // cancel a prepared handover or infer that the phone owns the workout.
+                            JSONObject recovered = WorkoutCommandStore.readKnownOwnerWithoutUpgrade(context);
+                            recovered.put("heartCapture", new JSONObject().put("available", false)
+                                    .put("coverage", "unverified").put("writeFailed", true));
+                            success.accept(recovered);
+                            return;
+                        } catch (Exception unavailable) { /* Retain the existing failed-read policy. */ }
+                    }
+                    failure.run();
+                }
             });
         } catch (RuntimeException e) { failure.run(); }
     }

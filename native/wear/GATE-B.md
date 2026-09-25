@@ -149,8 +149,9 @@ times before posting to the main thread. Delayed callbacks cannot acquire a
 later workout, and the database rechecks that exact owner in the insert
 transaction. The journal retains an anonymous BLE connection ID, packet
 sequence, phone boot identity, receipt clocks, BPM and contact state. Explicit
-connections get a new source ID; automatic reconnects keep it. No Bluetooth
-address/name is stored in the journal or diagnostics. Contact=false and zero
+connections get a new source ID; automatic reconnects keep it. The journal
+stores neither Bluetooth addresses nor device names, and capture adds no HR
+values or identifiers to diagnostics. Contact=false and zero
 BPM remain raw evidence, not usable live readings. A future resolver must filter
 them and handle gaps before deriving heart effects.
 
@@ -177,6 +178,9 @@ The local ownership reply includes capture counts, pending/write-failure state
 and `coverage: unverified`. The current UI does not consume this extra metadata.
 Failure to read optional capture metadata still returns any confirmed native
 owner, so a lost phone marker cannot reopen live editing through that failure.
+If the journal migration itself fails, a read-only fallback can recover a
+confirmed owner from core schema 5 or 6. It never acknowledges a write,
+cancels a handover or concludes that ownership is back on the phone.
 The uncommitted queue tail, periods before owner recovery, disconnections and
 process death can leave gaps. This is continuous recording only while the
 existing BLE service actually receives packets for a confirmed native owner;

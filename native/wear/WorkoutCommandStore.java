@@ -20,6 +20,7 @@ import org.json.JSONTokener;
 
 /** Inactive Gate B storage primitive. Call only on a background worker; no watch acknowledgement is wired. */
 final class WorkoutCommandStore extends SQLiteOpenHelper {
+    private static final String DATABASE = "marc_watch_workout_v1.db";
     static final String CREATE_SESSIONS = "CREATE TABLE sessions (session_id TEXT PRIMARY KEY NOT NULL, installation_id TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision >= 0), status TEXT NOT NULL CHECK(status IN ('active','paused','finished','discarded')), snapshot TEXT NOT NULL)";
     static final String CREATE_RECEIPTS = "CREATE TABLE receipts (session_id TEXT NOT NULL, command_id TEXT NOT NULL, fingerprint TEXT NOT NULL, result TEXT NOT NULL, PRIMARY KEY(session_id, command_id), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
     static final String ONE_ACTIVE_SESSION = "CREATE UNIQUE INDEX one_active_session ON sessions((1)) WHERE status IN ('active','paused')";
@@ -33,7 +34,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     private static final DateTimeFormatter UTC = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withResolverStyle(ResolverStyle.STRICT).withZone(ZoneOffset.UTC);
 
-    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 6); }
+    WorkoutCommandStore(Context context) { super(context, DATABASE, null, 6); }
 
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SESSIONS);
@@ -362,6 +363,18 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         db.beginTransactionNonExclusive();
         try { return readOwnership(db); } finally { db.endTransaction(); }
+    }
+
+    /** A failed optional v6 journal upgrade must not hide an already committed v5 owner. */
+    static JSONObject readKnownOwnerWithoutUpgrade(Context context) throws Exception {
+        try (SQLiteDatabase db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE).getPath(), null,
+                SQLiteDatabase.OPEN_READONLY)) {
+            int version = db.getVersion();
+            if (version != 5 && version != 6) throw new IllegalStateException("Unknown ownership schema");
+            JSONObject result = readOwnership(db); // The native seed/snapshot join is one atomic query.
+            if (!"native".equals(result.getString("owner"))) throw new IllegalStateException("No confirmed native owner");
+            return result;
+        }
     }
 
     /** Only an explicit, still-running native handover can receive samples. Never adopt a legacy seed. */

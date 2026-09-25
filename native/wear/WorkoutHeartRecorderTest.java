@@ -355,6 +355,38 @@ public class WorkoutHeartRecorderTest {
         assertEquals(original.getString("inputs"), store.readOwnership().getJSONObject("seed").getString("inputs"));
     }
 
+    @Test public void failedOptionalJournalUpgradeStillReturnsCommittedOwnerWithoutWriting() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        JSONObject before = store.readOwnership();
+        SQLiteDatabase db = store.getWritableDatabase();
+        db.execSQL("DROP TABLE heart_samples"); db.execSQL("DROP TABLE heart_capture");
+        db.setVersion(5);
+        db.execSQL("CREATE TABLE heart_capture (incompatible_column TEXT)"); // Force the optional upgrade to fail.
+        store.close();
+        Worker worker = new Worker();
+        WorkoutHeartRecorder recorder = recorder(worker);
+        assertNull(recorder.targetAtReceipt());
+        JSONObject recovered = read(recorder, worker);
+        assertEquals("native", recovered.getString("owner"));
+        assertEquals(before.getJSONObject("seed").toString(), recovered.getJSONObject("seed").toString());
+        assertEquals(before.getString("snapshot"), recovered.getString("snapshot"));
+        assertFalse(recovered.getJSONObject("heartCapture").getBoolean("available"));
+        assertNull(recorder.targetAtReceipt()); // No recording through a failed journal upgrade.
+        for (String action : new String[]{"handover", "settle"}) {
+            AtomicReference<Boolean> rejected = new AtomicReference<>(false);
+            recorder.ownership(action, seed("h-1", "s-1"), "h-1",
+                    result -> fail("Read-only recovery cannot acknowledge " + action), () -> rejected.set(true));
+            worker.finish();
+            assertTrue(rejected.get());
+        }
+        try (SQLiteDatabase unchanged = SQLiteDatabase.openDatabase(context.getDatabasePath(DB).getPath(), null, SQLiteDatabase.OPEN_READONLY)) {
+            assertEquals(5, unchanged.getVersion());
+            try (Cursor c = unchanged.rawQuery("PRAGMA table_info(heart_capture)", null)) {
+                assertTrue(c.moveToFirst()); assertEquals("incompatible_column", c.getString(1)); assertFalse(c.moveToNext());
+            }
+        }
+    }
+
     @Test public void failedOptionalNativeBootstrapDoesNotStopBleOrStartAnOwner() throws Exception {
         store.getWritableDatabase().setVersion(99); // Simulate an unreadable/incompatible optional database.
         store.close();
