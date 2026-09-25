@@ -244,7 +244,10 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
 .set-grid input { min-height: 40px; padding: 6px 10px; text-align: center; }
 .set-index { font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; }
-.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 32px; border-radius: 8px; cursor: pointer; }
+/* QA5-9: all:unset resets everything, including the user-select:none (:70) and background-color
+   transition (:127) set on .set-kind earlier at equal specificity — later source order wins, so
+   both were silently undone. Restated here, after all:unset. */
+.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 32px; border-radius: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: background-color var(--dur-press) var(--ease-standard); }
 /* `all: unset` above (specificity 0,1,0) beats the zero-specificity :where() focus-visible rule. */
 .set-kind:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
 .set-kind.warmup { color: var(--warning); }
