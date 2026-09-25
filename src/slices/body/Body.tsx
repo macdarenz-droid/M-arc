@@ -11,7 +11,7 @@ import { muscleVolumeStatus } from '@/brain/volume';
 import { navyBodyFat } from '@/core/bodyfat';
 import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
-import { formatLoad } from '@/core/units';
+import { modeLoadText } from '@/brain/bodyweight';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
 import { bodyView, openPanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
@@ -139,7 +139,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
         <div>
           <div class="eyebrow" style={{ marginBottom: 6 }}>Your exercises for this muscle</div>
           {!logged.length && <p class="small muted">Nothing logged for this muscle yet.</p>}
-          <div class="list">{logged.slice(0, 6).map(({ e, h }) => { const last = h[h.length - 1]!; return <Row key={e.id} trailing={<span class="hint">{formatDay(last.day)}</span>}><div class="small">{e.name}</div><div class="hint">{last.topKg ? `${formatLoad(last.topKg, u)} × ${last.topReps}` : `${last.bestReps || last.bestDurationSec} ${last.bestDurationSec ? 's' : 'reps'}`} · {h.length} sessions</div></Row>; })}</div>
+          <div class="list">{logged.slice(0, 6).map(({ e, h }) => { const last = h[h.length - 1]!; return <Row key={e.id} trailing={<span class="hint">{formatDay(last.day)}</span>}><div class="small">{e.name}</div><div class="hint">{last.topKg ? `${modeLoadText({ kg: last.topKg }, e.mode, u)} × ${last.topReps}` : `${last.bestReps || last.bestDurationSec} ${last.bestDurationSec ? 's' : 'reps'}`} · {h.length} sessions</div></Row>; })}</div>
         </div>
         <div>
           <div class="eyebrow" style={{ marginBottom: 6 }}>Exercises that target it directly</div>

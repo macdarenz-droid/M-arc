@@ -5,7 +5,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
-import { today, unit } from '@/app/selectors';
+import { today, unit, bodyWeightAt } from '@/app/selectors';
 import type { Session } from '@/core/models';
 import { Sheet } from '@/ui/primitives';
 import { IconCamera, IconDownload, IconShare, IconX } from '@/ui/icons';
@@ -63,8 +63,8 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   const say = (msg: string) => { setStatus(msg); clearTimeout(statusTimer.current); if (msg) statusTimer.current = window.setTimeout(() => setStatus(''), 2600); };
   useEffect(() => () => clearTimeout(statusTimer.current), []);
 
-  const data = useMemo(() => cardData({ sessions: s.sessions, custom: s.customExercises, unit: u, today: today.value, period, session: workout, seen }),
-    [s.sessions, s.customExercises, u, today.value, period, workout, seen]);
+  const data = useMemo(() => cardData({ sessions: s.sessions, custom: s.customExercises, unit: u, today: today.value, period, session: workout, seen, bodyWeight: bodyWeightAt.value }),
+    [s.sessions, s.customExercises, u, today.value, period, workout, seen, bodyWeightAt.value]);
   const theme = themeId.value;
   const svgs = useMemo(() => CARD_STYLES.map(st => cardSvg(data, st.id, format, paletteFor(THEMES[theme]), { photo, mark: markUrl })), [data, format, theme, photo]);
   const urls = useMemo(() => svgs.map(x => URL.createObjectURL(new Blob([x], { type: 'image/svg+xml' }))), [svgs]);

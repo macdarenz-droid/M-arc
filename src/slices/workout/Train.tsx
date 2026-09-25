@@ -5,7 +5,7 @@ import { useReorder } from './reorder';
 import { openEscobar } from '@/escobar/ui/open';
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
+import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
@@ -15,6 +15,7 @@ import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
+import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/brain/bodyweight';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
@@ -427,6 +428,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
+  const bwHint = bodyweightHint(ex, bodyWeightAt.value?.(today.value) ?? null, u);
   const recoveryPct = recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value);
   const profile = profileFor(entry.exerciseId, s.active?.gymId ?? activeGymId());
   // QA-R6-5: a loaded carry uses the gym's equipment unit too.
@@ -494,7 +496,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               )}
             </div>
           )}
-          <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{eu}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
+          {bwHint && <p class="hint">{bwHint}</p>}
+          <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {entry.sets.map((set, j) => {
             const { prev, pr } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
@@ -508,7 +511,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
                       <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
@@ -521,7 +524,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                   }}>{ef.l}</button>)}</div>
                 </div>
                 <div class="row-between" style={{ marginTop: 2 }}>
-                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
+                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
                   <span class="row" style={{ gap: 6 }}>
                     {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
                     {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
@@ -773,11 +776,11 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
         {entries.map((entry, ei) => (
           <Card key={entry.exerciseId}>
             <b class="small">{entry.name}</b>
-            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{profileFor(entry.exerciseId).unit}</span><span class="hint">reps</span><span class="hint">effort</span></div>
+            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{loadColumnLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)}</span><span class="hint">reps</span><span class="hint">effort</span></div>
             {entry.sets.map((set, si) => (
               <div key={si} class="set-grid">
                 <span class="set-index">{si + 1}</span>
-                <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
+                <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} ariaLabel={loadAriaLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
                 <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseReps((e.target as HTMLInputElement).value) })} />
                 <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
               </div>

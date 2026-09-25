@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { today, unit } from '@/app/selectors';
+import { today, unit, bodyWeightAt } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
-import type { AppState, LoggedSet, Session } from '@/core/models';
+import type { AppState, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
 import { parseDurationSec, parseReps } from '@/core/parse';
 import { hasEntry } from '@/brain/exposure';
@@ -16,6 +16,8 @@ import { allRecords, PR_LABEL } from '@/brain/prs';
 import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
+import { findExercise } from '@/core/exercises';
+import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel } from '@/brain/bodyweight';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
@@ -110,7 +112,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
           {session.exercises.map((e, i) => (
             <Row key={i}>
               <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</div>
+              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u, modeOf(e.exerciseId, state.value.customExercises))}<UnitTag st={st} u={u} /></span>)}</div>
               {e.note && <div class="hint">Note: {e.note}</div>}
               {state.value.exerciseNotes[e.exerciseId] && <div class="hint muted">Setup: {state.value.exerciseNotes[e.exerciseId]}</div>}
             </Row>
@@ -124,10 +126,10 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   );
 }
 
-function setLabel(st: LoggedSet, u: 'kg' | 'lb'): string {
+function setLabel(st: LoggedSet, u: 'kg' | 'lb', mode: ResistanceMode): string {
   if (st.durationSec) return `${st.durationSec}s`;
   if (st.distanceM) return `${st.distanceM} m${st.kg ? ` @ ${formatLoad(st.kg, u)}` : ''}`;
-  const load = st.kg ? formatLoad(st.kg, u) : 'bw';
+  const load = mode === 'bodyweight' || mode === 'assisted' ? modeLoadText({ kg: st.kg }, mode, u) : st.kg ? formatLoad(st.kg, u) : 'bw';
   return `${load} × ${st.reps ?? 0}${st.effort ? ` ${st.effort[0]!.toUpperCase()}` : ''}`;
 }
 
@@ -174,7 +176,7 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
               {e.sets.map((st, si) => (
                 <div key={si} class="set-grid">
                   <span class="set-index">{si + 1}</span>
-                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={st.entered?.unit ?? u} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
+                  {st.durationSec != null ? <input type="number" value={st.durationSec} onInput={ev => setField(ei, si, { durationSec: parseDurationSec((ev.target as HTMLInputElement).value) ?? 0 })} /> : <WeightInput kg={st.kg} entered={st.entered} entryUnit={st.entered?.unit ?? u} displayUnit={u} placeholder={loadColumnLabel(modeOf(e.exerciseId, state.value.customExercises), st.entered?.unit ?? u)} ariaLabel={loadAriaLabel(modeOf(e.exerciseId, state.value.customExercises), st.entered?.unit ?? u)} onChange={v => setField(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setField(ei, si, st.kg != null ? { entered: { value: kgToDisplay(st.kg, (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg'), unit: (st.entered?.unit ?? u) === 'kg' ? 'lb' : 'kg' } } : {})} />}
                   {st.durationSec != null ? <span class="hint">seconds</span> : <input type="number" value={st.reps ?? ''} placeholder="reps" onInput={ev => setField(ei, si, { reps: parseReps((ev.target as HTMLInputElement).value) ?? 0 })} />}
                   <select value={st.effort ?? ''} onChange={ev => setField(ei, si, { effort: ((ev.target as HTMLSelectElement).value || undefined) as LoggedSet['effort'] })}><option value="">—</option><option value="easy">Easy</option><option value="ideal">Ideal</option><option value="max">Max</option></select>
                 </div>
@@ -197,7 +199,8 @@ const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
 /** F8: 12 weeks of training volume as bars, in the display unit. */
 function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const s = state.value;
-  const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u), [s.sessions, s.customExercises, today.value, u]);
+  const bw = bodyWeightAt.value;
+  const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u, 12, bw), [s.sessions, s.customExercises, today.value, u, bw]);
   const values = weeks.map(w => w.value);
   const max = Math.max(1, ...values);
   if (!values.some(v => v > 0)) return null;
@@ -216,7 +219,7 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
 function Stats() {
   const s = state.value;
   const u = unit.value;
-  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, today.value));
+  const w = weekSummary(s.sessions, today.value, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, today.value), bodyWeightAt.value);
   const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
@@ -227,6 +230,7 @@ function Stats() {
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const mode = modeOf(exercise, s.customExercises);
   const t = progressTrend(hist, mode);
+  const lastTop = hist.length ? lastTopStats(hist[hist.length - 1]!, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
 
@@ -255,11 +259,11 @@ function Stats() {
               <div class="stack-sm" style={{ marginTop: 12 }}>
                 <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} />
                 <div class="grid-3">
-                  <Stat value={formatLoad(hist[hist.length - 1]!.topKg, u)} label="last top load" />
-                  <Stat value={`${hist[hist.length - 1]!.topReps}`} label="reps at top" />
+                  <Stat value={lastTop!.load} label="last top load" />
+                  <Stat value={`${lastTop!.reps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
-                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">{progressHint(mode)}</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}

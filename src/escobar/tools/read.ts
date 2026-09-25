@@ -23,6 +23,7 @@ import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weekl
 import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { daysSinceLastSession, plannedThisWeek, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { bodyWeightResolver } from '@/brain/bodyweight';
 import { restingHr, hrMax, zones, effortMismatch, intraSessionDrift } from '@/brain/heart';
 import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
@@ -273,11 +274,14 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
   const s = ctx.state;
   const status = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(m => (muscles ? muscles.includes(m.muscle) : m.status !== 'unknown'));
   const history = weeklyVolumeHistory(s.sessions, ctx.today, weeks, s.customExercises);
+  // F13b: with body-weight sharing on, effectiveKg matches Stats' weekly volume (docs/F13-BODYWEIGHT-LOAD.md §10).
+  const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;
+  const withBw = bw ? weeklyVolumeHistory(s.sessions, ctx.today, weeks, s.customExercises, bw) : null;
   return capJson({
     // QA-R3a-8: status is judged on completed weeks, so the week it was judged on goes with it.
     muscles: status.map(m => ({ muscle: m.muscle, thisWeekSets: m.thisWeekSets, lastWeekSets: m.lastWeekSets, medianSets: m.medianSets, band: m.band, status: m.status })),
     statusJudgedOn: 'the last completed week (over also when this week is already above the band)',
-    weeks: history.map(w => ({ week: w.week, sessions: w.sessions, sets: w.sets, volumeKg: w.volumeKg })),
+    weeks: history.map((w, i) => ({ week: w.week, sessions: w.sessions, sets: w.sets, volumeKg: w.volumeKg, ...(withBw ? { effectiveKg: withBw[i]!.volumeKg } : {}) })),
   }, 5000);
 }
 
