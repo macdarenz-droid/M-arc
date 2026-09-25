@@ -121,6 +121,10 @@ svg { display: block; }
    that transform instead of the press losing it (CSS Transforms 2 order; see the plan's §1 note). */
 .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x { transition: scale var(--dur-base) var(--ease-standard); }
 .chip-btn:active, .watch-pill:active, .esc-live-btn:active, .seg button:active, .tab:active, .unit-pill:active, .esc-chip-x:active { scale: var(--scale-press-sm); transition-duration: var(--dur-press); }
+/* QA5-2: under reduce, --scale-press/-sm collapse to 1, so a scale-only press gave zero feedback
+   (breaking §1/F3's "movement becomes crossfades, never zero feedback"). An opacity dip instead. */
+html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x) { transition: opacity var(--dur-press) var(--ease-standard); }
+html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x):active { opacity: .7; }
 /* Frequent controls (Calm rule): a colour change only, no scale. */
 .effort button, .set-kind { transition: background-color var(--dur-press) var(--ease-standard); }
 .effort button:active, .set-kind:active { background: var(--surface-2); transition: none; }
