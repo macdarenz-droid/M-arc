@@ -71,3 +71,68 @@ Passed. Nobody can get stuck unable to log a set. No new permissions are needed.
 - **QA4-W5 · CI doesn't prove the Java test classes ran** (build-apk.yml:140-143).
   - Parse the test-results XML.
   - Require both classes with tests > 0 and no failures, errors or skips.
+
+## Re-check of the QA3 fixes (PR #13 @ 616e369)
+
+Fixed as specified: QA3-1, QA3-4, QA3-5, QA3-9, QA3-10. The seven below were reproduced by a skeptic at 616e369. Each fix was run in a worktree and the full suite passes. Add every listed test, and put the id in the commit message (e.g. "QA3-2b: …").
+
+- **QA3-2b · The gear check broke exact library matches and split customs** (src/core/exercises.ts:202; src/core/migrate.ts:108).
+  - Lost library matches: 'Straight-Bar Triceps Pushdown', 'bar pushdown', 'straight bar pressdown' and 'landmine t bar row' no longer resolve to their library entries.
+  - Split customs: 'DB Skull Crusher' and 'Dumbbell Skull Crusher' now become two customs instead of one.
+  - Still merging: the legacy key 'Cable Hammer Curl|Cable' still merges into lib_hammer_curl.
+  - Fix:
+    - exercises.ts:202 → `if (found) return findExerciseExact(name, custom) === found || gearAgrees(name, found.equipment) ? found : undefined;`
+    - migrate.ts: import findExerciseExact; at :108 resolve `byKey` with `findExerciseExact(...)`, not `findExercise`.
+  - Tests:
+    - `findExerciseWithEquipment('bar pushdown','Cable')?.id === 'lib_straight_bar_triceps_pushdown'`
+    - The two skull-crusher rows (type '') give 1 custom.
+    - Key 'Cable Hammer Curl|Cable' does not map to lib_hammer_curl.
+- **QA3-3b · Above the rack, lb users see odd numbers** (progression.ts:99, :161). A 225 lb trap-bar carry shows '224.9 lb · 45 m'.
+  - Fix at :161: `const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * ctx.deload.loadFactor) : ctx?.equipment ? last.topKg : half(last.topKg)) : null;`
+  - Fix at :99: replace the early return with a restatement in the profile unit: `if (conditioning && s.kg > loadableTopKg(profile) + 0.01) { const value = kgToDisplay(s.kg, profile.unit); return { ...s, unit: profile.unit, value, target: s.target.replace(`${s.kg} kg`, `${value} ${profile.unit}`) }; }` (import kgToDisplay from '@/core/units').
+  - Test: 225 lb carry, defaultProfile('Dumbbells','lb') → '225 lb · 45 m', value 225.
+- **QA3-11b · Carries now always snap down, even in a normal week** (progression.ts:91).
+  - Examples: 32 kg becomes 30 kg next to 'same load', and an Escobar ×1.05 increase is lost.
+  - Fix:
+    - :91 → remove `distance: 'down', duration: 'down'`.
+    - snapToEquipment gets a `force?: 'up' | 'down'` parameter, with `const dir = force ?? SNAP_DIRECTION[s.mode] ?? 'nearest'`.
+    - In suggestNext, force 'down' only when `ctx.deload` or `0 < ctx.loadFactor < 1`. Never force 'up'.
+  - Tests:
+    - 75 lb carry on the lb ladder → 75.
+    - 32 kg carry → 32.5.
+    - 30 kg carry with loadFactor 1.05 → 32.5.
+    - DB bench 25 kg with loadFactor 0.95 → 22.5.
+    - Lighter-week 32 kg → 27.5 still passes.
+- **QA3-6b · Save-for-future overwrites sets the person added themselves** (session.ts:358-384). Split 1 set, Escobar sets 3, the person adds 2 (5 done): it saves 1.
+  - Fix: `overriddenSets = new Map<string, number>()` (the last 'sets' change wins). Save the split's count only when `overriddenSets.get(id) === liveCount`; otherwise save liveCount.
+  - Test: split 2, override 4, addSet twice → saves 6.
+- **QA3-7b · The restore position is wrong when combined with a substitution** (session.ts:392).
+  - Fix: in the backward search also match `substituteForFrom.get(nid)?.exerciseId`.
+  - Test: split [bench, DB shoulder press, fly]; swap bench→DB bench; remove shoulder press; substitute DB bench→incline → [incline, DB shoulder press, fly].
+- **QA3-8b · Saving can drop the swapped-away lift from the split** (session.ts:367-377 matches by index). Split [bench, fly], swap bench→DB bench, drag fly to the top, Save: bench is lost.
+  - Fix: match by lineage, not by index.
+    - models.ts:213: add optional `plannedId?: string` to the active entry.
+    - substituteEntry sets `plannedId: e.plannedId ?? e.exerciseId`.
+    - Replace the index lookup with: for each swap (skip `c.to === c.from` or `inSplit.has(c.to)`): `const live = done.find(e => e.plannedId === c.to && e.exerciseId !== c.to); if (live && live.exerciseId !== c.from) substituteForFrom.set(c.from, { exerciseId: live.exerciseId, sets: Math.max(1, live.sets.filter(x => x.kind !== 'warmup').length) });`
+  - Tests (each after swap bench→DB bench):
+    - moveEntry(1,0) keeps bench.
+    - Split [fly, bench, lateral] + removeEntry(0) → [bench, lateral].
+    - substituteEntry(0, bench) → [bench, fly].
+    - Split [bench, DB bench, fly] + sub DB→incline → [bench, incline, fly].
+    - The existing QA3-8 test still expects [incline, fly].
+- **QA3-12b · Targets read '1 reps' again for custom carries and some library conditioning moves** (progression.ts:158 gates on 3 hard-coded ids, not on mode).
+  - Fix: `const carryOrSled = CARRY_OR_SLED_IDS.has(exerciseId) || (!!meta?.custom && mode === 'conditioning'); if (mode === 'conditioning' && (carryOrSled ? last.bestDistanceM > 0 || last.bestDurationSec > 0 : last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {`
+  - Tests:
+    - Custom 'Yoke Walk' 100 kg × 20 m → '100 kg · 25 m'.
+    - 100 kg × 30 s → '100 kg · 35s'.
+    - 100 kg × 30 s + 8 reps → a duration goal.
+    - lib_battle_ropes 30 s → '35s'.
+    - lib_bear_crawl 20 m → '25 m'.
+
+## Re-check of the watch fixes (@ 8fc26d8)
+
+QA4-W3, W4 and W5 are fixed. Signing and the pinned fingerprint are untouched. Reset can't wipe a live watch workout.
+
+W1 and W2 have two gaps. Neither can happen while handover is disabled. Re-check both when handover is switched on:
+- 'Delete once settled/exported' only reaches cancelled handovers.
+- A mid-workout write failure shows its notice only at the next app start.
