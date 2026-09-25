@@ -164,10 +164,14 @@ is sampled at receipt, including time while the phone sleeps. These identities
 are local to this phone; they establish no watch clock mapping. Clock jumps
 are retained unchanged, not silently converted into measurement times.
 
-Disk work stays off the BLE/main thread. Each owner has at most 128 pending
-packets; drains handle 32 at a time and yield to queued ownership work. A failed
-write retains its bounded tail and retries on the next packet or ownership
-read without a busy loop. Overflow increments a loss count. The database
+Disk work stays off the BLE/main thread on one scheduled worker with one open
+store. Each owner has at most 128 pending packets. Writes batch every 5 seconds
+or at 32 packets, whichever comes first; full batches yield between drains.
+Ownership reads flush the bounded tail before replying. Service stop rejects new
+packets, flushes, cancels its timer and closes the worker's store. Failed stop
+flushes retain the bounded in-process tail for a later read/service restart;
+process death can still lose it. A failed write retries on the next packet,
+ownership read or service restart without a busy loop. Overflow increments a loss count. The database
 keeps at most 14,400 samples per handover, preserves its existing prefix when
 full, and atomically stores counters with each batch. Replayed sample IDs
 cannot duplicate data, while conflicting reuse rolls back the batch. Version 5

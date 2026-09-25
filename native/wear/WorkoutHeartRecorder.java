@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 import org.json.JSONObject;
 
 /**
@@ -19,10 +22,14 @@ import org.json.JSONObject;
  */
 public final class WorkoutHeartRecorder {
     static final int MAX_PENDING = 128, BATCH_SIZE = 32;
+    static final long FLUSH_INTERVAL_MS = 5000;
     private static final String PROCESS_CLOCK = "process-" + UUID.randomUUID();
     private static WorkoutHeartRecorder instance;
     private final Context context;
-    private final Executor worker;
+    private final Scheduler worker;
+    private final Supplier<WorkoutCommandStore> storeFactory;
+    private WorkoutCommandStore store; // Only the worker may open, use or close it.
+    private volatile boolean captureEnabled = true;
     private ClockIdentity clock;
     private volatile Target target;
     private final ArrayDeque<String> captureErrors = new ArrayDeque<>();
@@ -35,21 +42,63 @@ public final class WorkoutHeartRecorder {
     public synchronized String diagnostics() { return String.join("\n", captureErrors); }
     public static synchronized String processDiagnostics() { return instance == null ? "" : instance.diagnostics(); }
 
+    interface Scheduler extends Executor { Runnable later(Runnable task, long delayMs); }
+    private static Scheduler serialWorker() {
+        ScheduledExecutorService serial = Executors.newSingleThreadScheduledExecutor();
+        return new Scheduler() {
+            public void execute(Runnable task) { serial.execute(task); }
+            public Runnable later(Runnable task, long delayMs) {
+                java.util.concurrent.ScheduledFuture<?> scheduled = serial.schedule(task, delayMs, TimeUnit.MILLISECONDS);
+                return () -> scheduled.cancel(false);
+            }
+        };
+    }
     public static synchronized WorkoutHeartRecorder get(Context context) {
-        if (instance == null) instance = new WorkoutHeartRecorder(context.getApplicationContext(),
-                Executors.newSingleThreadExecutor());
+        if (instance == null) instance = new WorkoutHeartRecorder(context.getApplicationContext(), serialWorker());
         return instance;
     }
 
-    /** Injectable serial executor lets tests hold disk work while real receipt times keep moving. */
-    WorkoutHeartRecorder(Context context, Executor worker) {
+    WorkoutHeartRecorder(Context context, Scheduler worker) { this(context, worker, () -> new WorkoutCommandStore(context)); }
+    /** Injectable worker/clock and store factory exercise real SQLite with deterministic timing. */
+    WorkoutHeartRecorder(Context context, Scheduler worker, Supplier<WorkoutCommandStore> factory) {
         this.context = context;
         this.worker = worker;
-        worker.execute(() -> {
+        this.storeFactory = factory;
+        submit(() -> {
             clock = clockIdentity(() -> Settings.Global.getInt(context.getContentResolver(), Settings.Global.BOOT_COUNT, -1), this::captureFailure);
-            try (WorkoutCommandStore store = new WorkoutCommandStore(context)) { refreshTarget(store); }
+            try { refreshTarget(store()); }
             catch (Exception error) { captureFailure(error); /* Ordinary BLE remains usable. */ }
         });
+    }
+
+    private WorkoutCommandStore store() {
+        if (store == null) {
+            WorkoutCommandStore opened = storeFactory.get();
+            try { opened.getWritableDatabase(); store = opened; }
+            catch (RuntimeException error) { opened.close(); throw error; }
+        }
+        return store;
+    }
+    private void closeStore() {
+        WorkoutCommandStore prior = store; store = null;
+        if (prior != null) try { prior.close(); } catch (RuntimeException error) { captureFailure(error); }
+    }
+    private void submit(Runnable task) {
+        try { worker.execute(task); } catch (RuntimeException error) { captureFailure(error); }
+    }
+    public void serviceStarted() {
+        captureEnabled = true;
+        submit(() -> {
+            try {
+                refreshTarget(store());
+                Target current = target;
+                if (current != null) synchronized (current) { schedule(current); }
+            } catch (Exception error) { captureFailure(error); }
+        });
+    }
+    public void serviceStopped() {
+        captureEnabled = false; // Late BLE callbacks cannot reopen a stopped service's store.
+        submit(() -> { try { flush(target); } finally { closeStore(); } });
     }
 
     record ClockIdentity(String id, String scope) {}
@@ -77,11 +126,13 @@ public final class WorkoutHeartRecorder {
         private final ClockIdentity clock;
         private final ArrayDeque<Sample> pending = new ArrayDeque<>();
         private long dropped;
-        private boolean scheduled, writeFailed;
+        private boolean scheduled, immediate, writeFailed;
+        private long dispatch;
+        private Runnable cancelTimer;
         private Target(String handoverId, ClockIdentity clock) { this.handoverId = handoverId; this.clock = clock; }
     }
 
-    public Target targetAtReceipt() { return target; }
+    public Target targetAtReceipt() { return captureEnabled ? target : null; }
 
     private void refreshTarget(WorkoutCommandStore store) {
         String owner = store.heartOwner();
@@ -94,7 +145,10 @@ public final class WorkoutHeartRecorder {
     void ownership(String action, JSONObject seed, String token, Consumer<JSONObject> success, Runnable failure) {
         try {
             worker.execute(() -> {
-                try (WorkoutCommandStore store = new WorkoutCommandStore(context)) {
+                try {
+                    // A reply must include every buffered receipt up to this bounded flush.
+                    flush(target);
+                    WorkoutCommandStore store = store();
                     JSONObject result;
                     switch (action) {
                         case "read": result = store.readOwnership(); break;
@@ -110,7 +164,7 @@ public final class WorkoutHeartRecorder {
                             Target current = target;
                             if (current != null) synchronized (current) {
                                 capture.put("pendingSamples", current.pending.size()).put("writeFailed", current.writeFailed);
-                                schedule(current); // Retry a retained tail after an earlier storage failure.
+                                // flush() already made one bounded retry; never spin on failure.
                             }
                             result.put("heartCapture", capture.put("available", true));
                         }
@@ -144,7 +198,7 @@ public final class WorkoutHeartRecorder {
     /** Called on the service thread after parsing, with times/owner captured on the BLE callback. */
     public void record(Target atReceipt, String sourceId, long sequence, HeartRateMeasurement measurement,
                        long epochMs, long elapsedMs) {
-        if (atReceipt == null) return;
+        if (atReceipt == null || !captureEnabled) return;
         synchronized (atReceipt) {
             try {
                 Sample sample = new Sample(sourceId, sequence, epochMs, elapsedMs, measurement.bpm, measurement.contactDetected);
@@ -155,36 +209,77 @@ public final class WorkoutHeartRecorder {
         }
     }
 
-    /** Caller holds the target lock; one queued drain at a time bounds worker pressure. */
+    /** Caller holds the target lock. A size threshold promotes an existing timer immediately. */
     private void schedule(Target current) {
-        if (current.scheduled || (current.pending.isEmpty() && current.dropped == 0)) return;
-        current.scheduled = true;
-        try { worker.execute(() -> drain(current)); }
-        catch (RuntimeException e) { captureFailure(e); current.scheduled = false; current.writeFailed = true; }
+        if (!captureEnabled || (current.pending.isEmpty() && current.dropped == 0)) return;
+        boolean immediate = current.pending.size() >= BATCH_SIZE;
+        if (current.scheduled && (current.immediate || !immediate)) return;
+        cancelDrain(current);
+        long dispatch = current.dispatch;
+        current.scheduled = true; current.immediate = immediate;
+        Runnable task = () -> {
+            synchronized (current) {
+                if (current.dispatch != dispatch) return; // Timer cancelled/promoted/flushed.
+                current.scheduled = false; current.cancelTimer = null;
+            }
+            // An old owner's delayed timer is not necessarily the current target at stop.
+            if (!captureEnabled) return;
+            if (drainBatch(current) >= 0) synchronized (current) { schedule(current); }
+        };
+        try {
+            if (immediate) worker.execute(task);
+            else current.cancelTimer = worker.later(task, FLUSH_INTERVAL_MS);
+        } catch (RuntimeException error) {
+            captureFailure(error); current.scheduled = false; current.writeFailed = true;
+        }
     }
 
-    private void drain(Target current) {
+    private void cancelDrain(Target current) {
+        current.dispatch++;
+        if (current.cancelTimer != null) current.cancelTimer.run();
+        current.cancelTimer = null; current.scheduled = false;
+    }
+
+    /** Worker only. At most MAX_PENDING receipts; newly arriving packets cannot starve a read/stop. */
+    private void flush(Target current) {
+        if (current == null) return;
+        int remaining;
+        synchronized (current) {
+            cancelDrain(current);
+            remaining = current.pending.size();
+            if (remaining == 0 && current.dropped == 0) return;
+        }
+        do {
+            int drained = drainBatch(current);
+            if (drained < 0) return; // Retain tail and failed status until the next packet/read/start.
+            remaining -= drained;
+            if (drained == 0) break;
+        } while (remaining > 0);
+        synchronized (current) { schedule(current); }
+    }
+
+    private int drainBatch(Target current) {
         List<Sample> batch = new ArrayList<>();
         long lost;
         synchronized (current) {
             for (Sample sample : current.pending) { batch.add(sample); if (batch.size() == BATCH_SIZE) break; }
             lost = current.dropped;
         }
-        // Do not hold the service's queue lock while doing any database work.
-        try (WorkoutCommandStore store = new WorkoutCommandStore(context)) {
-            boolean owned = store.appendHeart(current.handoverId, current.clock.id(), current.clock.scope(), batch, lost);
+        // Never hold the BLE queue lock during database I/O. One connection, one transaction/batch.
+        try {
+            boolean owned = store().appendHeart(current.handoverId, current.clock.id(), current.clock.scope(), batch, lost);
             synchronized (current) {
                 if (owned) {
                     for (int i = 0; i < batch.size(); i++) current.pending.removeFirst();
                     current.dropped -= lost;
                 } else { current.pending.clear(); current.dropped = 0; }
-                current.scheduled = false; current.writeFailed = false;
-                schedule(current); // Yield to already queued ownership work between small batches.
+                current.writeFailed = false;
             }
-        } catch (Exception e) {
-            captureFailure(e);
-            synchronized (current) { current.scheduled = false; current.writeFailed = true; }
-            // Preserve the bounded tail. A new packet or ownership read retries it; no busy loop.
+            return batch.size();
+        } catch (Exception error) {
+            captureFailure(error);
+            synchronized (current) { current.writeFailed = true; }
+            return -1;
         }
     }
 }

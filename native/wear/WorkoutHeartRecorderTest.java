@@ -17,7 +17,6 @@ import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,14 +39,33 @@ public class WorkoutHeartRecorderTest {
     private static final long WALL = 1_790_300_000_000L;
     private Context context;
     private WorkoutCommandStore store;
+    private final java.util.Map<WorkoutHeartRecorder, Worker> recorders = new java.util.LinkedHashMap<>();
 
-    private static final class Worker implements Executor {
+    private static final class Worker implements WorkoutHeartRecorder.Scheduler {
         final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
+        final java.util.ArrayList<Timer> timers = new java.util.ArrayList<>();
+        long now;
+        private static class Timer { long at; Runnable task; boolean cancelled; Timer(long at, Runnable task) { this.at = at; this.task = task; } }
         public void execute(Runnable task) { tasks.addLast(task); }
+        public Runnable later(Runnable task, long delayMs) {
+            Timer timer = new Timer(now + delayMs, task); timers.add(timer); return () -> timer.cancelled = true;
+        }
+        void ready() { int limit = 1000; while (!tasks.isEmpty()) { assertTrue("Busy retry loop", --limit > 0); next(); } }
+        void advance(long ms) {
+            now += ms;
+            for (Timer timer : List.copyOf(timers)) if (timer.at <= now || timer.cancelled) {
+                timers.remove(timer); if (!timer.cancelled) execute(timer.task);
+            }
+            ready();
+        }
         void next() { assertFalse("No queued work", tasks.isEmpty()); tasks.removeFirst().run(); }
         void finish() {
             int limit = 1000;
-            while (!tasks.isEmpty()) { assertTrue("Busy retry loop", --limit > 0); next(); }
+            while (!tasks.isEmpty() || timers.stream().anyMatch(t -> !t.cancelled)) {
+                assertTrue("Busy retry loop", --limit > 0);
+                if (!tasks.isEmpty()) next();
+                else advance(Math.max(0, timers.stream().filter(t -> !t.cancelled).mapToLong(t -> t.at).min().orElse(now) - now));
+            }
         }
     }
 
@@ -58,7 +76,10 @@ public class WorkoutHeartRecorderTest {
         store = new WorkoutCommandStore(context);
     }
 
-    @After public void tearDown() { store.close(); context.deleteDatabase(DB); }
+    @After public void tearDown() {
+        recorders.forEach((recorder, worker) -> { recorder.serviceStopped(); worker.finish(); });
+        store.close(); context.deleteDatabase(DB);
+    }
 
     private JSONObject seed(String handover, String session) throws Exception {
         JSONObject active = new JSONObject().put("id", session).put("splitId", "split-1")
@@ -96,6 +117,7 @@ public class WorkoutHeartRecorderTest {
 
     private WorkoutHeartRecorder recorder(Worker worker) {
         WorkoutHeartRecorder recorder = new WorkoutHeartRecorder(context, worker);
+        recorders.put(recorder, worker);
         worker.finish();
         return recorder;
     }
@@ -227,17 +249,17 @@ public class WorkoutHeartRecorderTest {
         assertEquals("native", store.readOwnership().getString("owner"));
     }
 
-    @Test public void queueIsBoundedAndOwnershipRequestsRunBetweenBatches() throws Exception {
+    @Test public void queueIsBoundedAndOwnershipReadFlushesItsRetainedTail() throws Exception {
         store.handover(seed("h-1", "s-1"));
         Worker worker = new Worker();
         WorkoutHeartRecorder recorder = recorder(worker);
         for (int i = 1; i <= WorkoutHeartRecorder.MAX_PENDING + 10; i++)
             recorder.record(recorder.targetAtReceipt(), "ble-1", i, hr(128), WALL + i, i);
         assertEquals(1, worker.tasks.size());
-        JSONObject reply = read(recorder, worker); // First small batch, then ownership, before the tail.
+        JSONObject reply = read(recorder, worker); // Read flushes the entire bounded tail before returning metadata.
         JSONObject capture = reply.getJSONObject("heartCapture");
-        assertEquals(WorkoutHeartRecorder.BATCH_SIZE, capture.getInt("retainedSamples"));
-        assertEquals(WorkoutHeartRecorder.MAX_PENDING - WorkoutHeartRecorder.BATCH_SIZE, capture.getInt("pendingSamples"));
+        assertEquals(WorkoutHeartRecorder.MAX_PENDING, capture.getInt("retainedSamples"));
+        assertEquals(0, capture.getInt("pendingSamples"));
         assertEquals(10, capture.getLong("droppedSamples"));
         assertEquals("unverified", capture.getString("coverage"));
         worker.finish();
@@ -464,6 +486,80 @@ public class WorkoutHeartRecorderTest {
         for (String secret : List.of("h-1", "s-1", "ble-private", "bpm128", "private", "INSERT", "heart_samples"))
             assertFalse(diagnostic.contains(secret));
         assertTrue(service(recorder).diagnostics().contains(diagnostic));
+    }
+
+    @Test public void batchesAtFiveSecondsOrSizeUsingOneWorkerOwnedStore() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        Worker worker = new Worker(); java.util.concurrent.atomic.AtomicInteger opens = new java.util.concurrent.atomic.AtomicInteger();
+        WorkoutHeartRecorder recorder = new WorkoutHeartRecorder(context, worker, () -> { opens.incrementAndGet(); return new WorkoutCommandStore(context); });
+        worker.ready();
+        for (int i = 1; i <= 5; i++) { recorder.record(recorder.targetAtReceipt(), "ble-1", i, hr(128), WALL + i, i); worker.ready(); }
+        assertEquals(0, count("heart_samples"));
+        worker.advance(4999); assertEquals(0, count("heart_samples"));
+        worker.advance(1); assertEquals(5, count("heart_samples"));
+        for (int i = 6; i <= 5 + WorkoutHeartRecorder.BATCH_SIZE; i++)
+            recorder.record(recorder.targetAtReceipt(), "ble-1", i, hr(128), WALL + i, i);
+        worker.ready(); assertEquals(5 + WorkoutHeartRecorder.BATCH_SIZE, count("heart_samples"));
+        worker.advance(5000); // Cancelled timer cannot replay a drained batch.
+        assertEquals(5 + WorkoutHeartRecorder.BATCH_SIZE, count("heart_samples"));
+        assertEquals(1, opens.get());
+        read(recorder, worker); assertEquals(1, opens.get());
+        recorder.serviceStopped(); worker.ready();
+    }
+
+    @Test public void ownershipReadAndServiceStopFlushShortBatchesBeforeClosing() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        Worker worker = new Worker(); java.util.ArrayList<SQLiteDatabase> opened = new java.util.ArrayList<>();
+        WorkoutHeartRecorder recorder = new WorkoutHeartRecorder(context, worker, () -> {
+            WorkoutCommandStore s = new WorkoutCommandStore(context); opened.add(s.getWritableDatabase()); return s;
+        });
+        worker.ready();
+        recorder.record(recorder.targetAtReceipt(), "ble-1", 1, hr(128), WALL, 1000);
+        assertEquals(0, count("heart_samples"));
+        assertEquals(1, read(recorder, worker).getJSONObject("heartCapture").getInt("retainedSamples"));
+        recorder.record(recorder.targetAtReceipt(), "ble-1", 2, hr(128), WALL + 1, 1001);
+        WorkoutHeartRecorder.Target stopped = recorder.targetAtReceipt();
+        recorder.serviceStopped(); worker.ready();
+        assertEquals(2, count("heart_samples")); assertFalse(opened.get(0).isOpen());
+        assertNull(recorder.targetAtReceipt());
+        recorder.record(stopped, "ble-1", 3, hr(128), WALL + 2, 1002); worker.finish();
+        assertEquals(2, count("heart_samples")); assertEquals(1, opened.size());
+        recorder.serviceStarted(); worker.ready();
+        assertEquals(2, opened.size()); assertNotNull(recorder.targetAtReceipt());
+        recorder.record(recorder.targetAtReceipt(), "ble-1", 4, hr(128), WALL + 3, 1003);
+        worker.advance(5000); assertEquals(3, count("heart_samples"));
+        recorder.serviceStopped(); worker.ready();
+    }
+
+    @Test public void failedStopFlushClosesStoreRetainsTailAndRetriesOnRestart() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        Worker worker = new Worker(); WorkoutHeartRecorder recorder = recorder(worker);
+        store.getWritableDatabase().execSQL("CREATE TRIGGER fail_stop BEFORE INSERT ON heart_samples BEGIN SELECT RAISE(ABORT,'test'); END");
+        recorder.record(recorder.targetAtReceipt(), "ble-1", 1, hr(128), WALL, 1000);
+        recorder.serviceStopped(); worker.finish();
+        assertEquals(0, count("heart_samples"));
+        store.getWritableDatabase().execSQL("DROP TRIGGER fail_stop");
+        recorder.serviceStarted(); worker.finish();
+        assertEquals(1, count("heart_samples"));
+        assertFalse(read(recorder, worker).getJSONObject("heartCapture").getBoolean("writeFailed"));
+        recorder.serviceStopped(); worker.finish();
+    }
+
+    @Test public void staleOwnerTimerCannotReopenStoreAfterServiceStop() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        Worker worker = new Worker(); java.util.concurrent.atomic.AtomicInteger opens = new java.util.concurrent.atomic.AtomicInteger();
+        WorkoutHeartRecorder recorder = new WorkoutHeartRecorder(context, worker, () -> { opens.incrementAndGet(); return new WorkoutCommandStore(context); });
+        worker.ready();
+        WorkoutHeartRecorder.Target old = recorder.targetAtReceipt();
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished'");
+        store.getWritableDatabase().execSQL("UPDATE workout_handovers SET status='cancelled'");
+        store.handover(seed("h-2", "s-2"));
+        read(recorder, worker);
+        // An already queued callback still holds the old ticket after the new owner is read.
+        recorder.record(old, "ble-old", 1, hr(128), WALL, 1000);
+        recorder.serviceStopped(); worker.ready();
+        worker.advance(5000);
+        assertEquals(1, opens.get()); assertEquals(0, count("heart_samples"));
     }
 
 }

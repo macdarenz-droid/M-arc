@@ -55,7 +55,7 @@ public final class WatchService extends Service {
     };
     @Override public void onCreate() {
         super.onCreate();
-        try { heartRecorder = WorkoutHeartRecorder.get(getApplicationContext()); }
+        try { heartRecorder = WorkoutHeartRecorder.get(getApplicationContext()); heartRecorder.serviceStarted(); }
         catch (RuntimeException ignored) { /* Optional native capture cannot stop existing BLE. */ }
         NotificationChannel channel = new NotificationChannel("watch_sync", "Watch connection", NotificationManager.IMPORTANCE_LOW);
         channel.setDescription("Keeps the watch connected while the screen is off");
@@ -276,6 +276,7 @@ public final class WatchService extends Service {
     }
     @Override public void onDestroy() {
         listener = null; running = false; handler.removeCallbacksAndMessages(null); closeGatt();
+        if (heartRecorder != null) heartRecorder.serviceStopped();
         unregisterReceiver(bluetoothState); super.onDestroy();
     }
 }
