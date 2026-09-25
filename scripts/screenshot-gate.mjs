@@ -970,6 +970,61 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA5-1b..4b: a regression guard for QA5-1..4. Those fixes had no probe of their own — the gate
+// still passed against the pre-fix build, so undoing any of them would go unnoticed. In-app
+// Reduce motion only (OS no-preference), the exact path the original bugs were in.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'in-app reduce';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); localStorage.setItem('marc.motion', 'reduce'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  const closeSheet = async () => { await page.locator('dialog[open] [aria-label="Close"]').last().click(); await page.waitForTimeout(250); };
+  // QA5-1: a sheet whose form has an autofocus field opens with the caret in it, not on the panel.
+  await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(300);
+  if (!(await page.evaluate(() => !!document.activeElement?.matches('dialog[open] input[inputmode="decimal"]')))) errors.push(`${tag}: 'Add my details' did not focus its body-weight field`);
+  await closeSheet();
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  // QA5-4: a view fades in without moving.
+  const moved = await page.evaluate(async () => {
+    const seen = new Set();
+    [...document.querySelectorAll('nav.nav button')].find(b => /^(Train|Live)$/.test(b.textContent.trim())).click();
+    for (const t0 = performance.now(); performance.now() - t0 < 250;) { await new Promise(r => requestAnimationFrame(r)); const v = document.querySelector('.view'); if (v) seen.add(getComputedStyle(v).transform); }
+    return [...seen].filter(t => t !== 'none');
+  });
+  if (moved.length) errors.push(`${tag}: .view moves on entry: ${moved.slice(0, 2).join(' | ')}`);
+  await page.waitForTimeout(200);
+  await page.locator('[data-palace="train.new-split"]').click(); await page.waitForTimeout(300);
+  if (!(await page.evaluate(() => !!document.activeElement?.matches('dialog[open] input[placeholder="e.g. Upper A"]')))) errors.push(`${tag}: 'New split' did not focus its name field`);
+  await closeSheet();
+  // QA5-2: a primary button dims while pressed (scale is 1 under reduce).
+  const start = page.getByRole('button', { name: /^Start / }).first();
+  const bb = await start.boundingBox();
+  await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await page.mouse.down(); await page.waitForTimeout(200);
+  const pressOp = await start.evaluate(e => getComputedStyle(e).opacity);
+  await page.mouse.move(1, 1); await page.mouse.up(); await page.waitForTimeout(150);
+  if (!(+pressOp < 1)) errors.push(`${tag}: pressing Start gave no feedback (opacity ${pressOp})`);
+  // QA5-3: the active exercise keeps a static ring and a solid name colour.
+  await start.click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const ax = await page.evaluate(() => { const e = document.querySelector('.exercise.active'); const n = e?.querySelector('.exname'); return e && n && { ring: getComputedStyle(e).boxShadow, name: getComputedStyle(n).color }; });
+  if (!ax || ax.ring === 'none' || ax.name === 'rgba(0, 0, 0, 0)') errors.push(`${tag}: active exercise lost its ring or name colour: ${JSON.stringify(ax)}`);
+  // QA5-4: the toast stays centred while it fades in.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  const xs = await page.evaluate(async () => {
+    [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Test haptic').click();
+    const s = new Set();
+    for (const t0 = performance.now(); performance.now() - t0 < 400;) { await new Promise(r => requestAnimationFrame(r)); const t = document.querySelector('.toast'); if (t) s.add(Math.round(t.getBoundingClientRect().left)); }
+    return [...s];
+  });
+  if (xs.length !== 1) errors.push(`${tag}: toast moved while appearing: left ${xs.join(' -> ')}`);
+  await ctx.close();
+}
+
 // F5: determinism — Today, History and the live Train clock render byte-identical 300ms apart, so
 // an animation still settling on capture (rather than a real difference) never slips through.
 {
