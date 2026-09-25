@@ -34,6 +34,7 @@ import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { GOALS } from '@/data/goals';
 import { watchSupported, watchStatus, latestMeasurement } from '@/native/watch';
+import { restAlertsDenied } from '@/native/notifications';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { recentLiveBpms } from './heart';
 import { usePalaceFocus } from '@/escobar/palace/focus';
@@ -895,6 +896,8 @@ export function RestBanner() {
       <div>
         <div class="clock">{done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining)}</div>
         <div class="hint">{done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
+        {/* QA3-1: Android has firmly denied notifications, so no alert is coming for this rest. */}
+        {restAlertsDenied.value && <div class="hint danger-text">Rest alerts are off — Settings → Precise rest alerts</div>}
       </div>
       <div class="grow"><div class="bar"><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div></div>
       {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}

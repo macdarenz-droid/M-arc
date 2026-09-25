@@ -63,10 +63,26 @@ export async function ensurePermission({ prompt = false }: { prompt?: boolean } 
   } catch { return false; }
 }
 
+/**
+ * QA3-1: true once a check finds notifications firmly denied, so the rest banner/Train can
+ * point the person at Settings. A never-asked ('prompt') state is not denial.
+ */
+export const restAlertsDenied = signal(false);
+
+/** Re-checks the OS permission without asking for it. Call on boot/resume, like refreshExactAlarm. */
+export async function refreshRestPermission(): Promise<boolean> {
+  if (!isNative()) { restAlertsDenied.value = false; return false; }
+  try { restAlertsDenied.value = (await LocalNotifications.checkPermissions()).display === 'denied'; }
+  catch { restAlertsDenied.value = false; }
+  return restAlertsDenied.value;
+}
+
 export async function scheduleRestDone(atMs: number): Promise<void> {
   if (!isNative()) return;
   // QA2-FB-4: the plugin asks for permission itself on Android 13+; a rest timer never should.
-  if (!(await ensurePermission())) return;
+  // QA3-1: only a firm refusal skips scheduling. A never-asked ('prompt') state still schedules,
+  // so the plugin's own Android 13+ prompt gets a chance to ask, as it did before eefa356.
+  if (await refreshRestPermission()) return;
   await ensureChannels();
   try {
     await LocalNotifications.cancel({ notifications: [{ id: REST_ID }] });

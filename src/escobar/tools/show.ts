@@ -11,7 +11,7 @@ import { modeOf, exerciseHistory } from '@/brain/history';
 import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
-import { plannedThisWeek, weekSummary } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary, workingTotals } from '@/brain/weekly';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -21,8 +21,8 @@ import { substitutesFor } from '@/brain/substitute';
 import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
-import { coachCtx, exerciseName, exerciseOf, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
-import { workingTotals } from '@/brain/weekly';
+import { coachCtx, exerciseName, exerciseOf, hoursLeftOut, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
+import { isWorkingSet } from '@/brain/exposure';
 
 type P = Record<string, unknown>;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
@@ -91,7 +91,8 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       return {
         at: new Date(at).toISOString().slice(0, 16),
         muscles: Object.fromEntries(rec.map(r => [r.muscle, r.pct])),
-        least: least.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft) })),
+        // QA3-5: a sore flag and a nulled hoursLeft, like get_recovery already does.
+        least: least.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: hoursLeftOut(r), ...(r.soreToday ? { soreToday: true } : {}) })),
         empty: rec.length ? undefined : 'Nothing logged yet.',
       };
     }
@@ -120,11 +121,13 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'session_summary': {
       const x = s.sessions.find(y => y.id === params.sessionId);
       if (!x) throw new ToolError('unknown sessionId; use get_sessions');
+      // QA3-10: a warm-up is not a working set, in the count or the effort tally - workingTotals
+      // is the one sum for "how many working sets", shared with compare_periods.
       const e = x.exercises.map(ex => {
         const top = ex.sets.filter(st => (st.kg ?? 0) > 0).sort((a, b) => (b.kg ?? 0) - (a.kg ?? 0))[0];
-        return { exercise: ex.name, sets: ex.sets.length, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
+        return { exercise: ex.name, sets: workingTotals([ex], s.customExercises).sets, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
       });
-      const all = x.exercises.flatMap(ex => ex.sets);
+      const all = x.exercises.flatMap(ex => ex.sets.filter(isWorkingSet));
       return {
         sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), exercises: e.slice(0, 12),
         effort: { easy: all.filter(z => z.effort === 'easy').length, ideal: all.filter(z => z.effort === 'ideal').length, max: all.filter(z => z.effort === 'max').length },

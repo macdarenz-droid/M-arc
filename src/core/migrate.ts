@@ -5,7 +5,7 @@
  */
 import { freshState, freshUnits, newId, type AppState, type Effort, type Exercise, type LoggedExercise, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { WEEKDAYS } from './models';
-import { findExercise, findExerciseWithEquipment, makeCustomExercise } from './exercises';
+import { findExercise, findExerciseExact, findExerciseWithEquipment, makeCustomExercise } from './exercises';
 import { dayKey } from './dates';
 import { backfillLegacyLbEntries } from './units';
 import { isGoalId } from '@/data/goals';
@@ -105,7 +105,9 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   }
   const resolveExercise = (name: string | undefined, type?: string, muscle?: string, key?: string): { id: string; name: string } => {
     const label = (name ?? '').trim() || 'Exercise';
-    const byKey = key ? findExercise(libraryIdByCustomKey.get(key) ?? key) : undefined;
+    // QA3-2b: a legacy key is an id or an exact name, never a fuzzy guess - "Cable Hammer
+    // Curl|Cable" must not resolve via a substring match into the wrong library exercise.
+    const byKey = key ? findExerciseExact(libraryIdByCustomKey.get(key) ?? key, customExercises) : undefined;
     const found = byKey ?? findExerciseWithEquipment(label, type, customExercises);
     if (found) return { id: found.id, name: found.name };
     const nameKey = label.toLowerCase();

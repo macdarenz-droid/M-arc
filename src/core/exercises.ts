@@ -9,6 +9,12 @@ const CONDITIONING_NAMES = new Set([
   'lib_burpee', 'lib_mountain_climbers', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope',
   'lib_box_jump', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_jump_squat',
 ]);
+/**
+ * QA3-12: the conditioning moves that always progress by distance or time, never reps - a carry
+ * or sled, unlike rep-based conditioning (burpees, jump rope, ...). Decided by which exercise it
+ * is, not by which fields happen to be filled on its last set.
+ */
+export const CARRY_OR_SLED_IDS = new Set(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry']);
 const ASSISTED_HINT = /assisted/i;
 
 function inferMode(id: string, equipment: string, name: string): ResistanceMode {
@@ -143,6 +149,31 @@ function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined 
   return hits.length === 1 ? hits[0] : undefined;
 }
 
+/**
+ * QA3-2: a fixed list, not every word that appears in some exercise's equipment field. Multi-word
+ * equipment ("Leg Press", "Dip Station", "Jump Rope", "Medicine Ball", "Resistance Band") must not
+ * strip real movement words ("leg", "press", "dip", "jump", "rope", "ball", "band") out of
+ * `movementWords`, or "Leg Press Hack Squat" resolves to Hack Squat (QA-R3b-3 again).
+ */
+const GEAR_WORDS = new Set(['barbell', 'dumbbell', 'cable', 'machine', 'ez', 'bar', 'kettlebell', 'smith', 'trap']);
+
+/** A word's gear identity, ignoring singular/plural ("dumbbell"/"dumbbells") and abbreviations already folded by normalizeName. */
+function gearWordsIn(text: string): string[] {
+  return normalizeName(text).split(' ').map(w => w.replace(/s\b/g, '')).filter(w => GEAR_WORDS.has(w));
+}
+
+/**
+ * QA3-2: a name's gear word ("Dumbbell Skull Crusher") must agree with the matched exercise's own
+ * equipment, or it is a different exercise (an EZ-bar Skull Crusher done with a dumbbell isn't the
+ * same lift). No gear word in the name means nothing to disagree with.
+ */
+function gearAgrees(name: string, equipment: string): boolean {
+  const named = gearWordsIn(name);
+  if (!named.length) return true;
+  const has = new Set(gearWordsIn(equipment));
+  return named.every(w => has.has(w));
+}
+
 let movementWords: Set<string> | null = null;
 /**
  * QA-R3b-3: a longer name that contains a library name ("Hack Squat Calf Raise") is that exercise
@@ -154,8 +185,7 @@ function containsOnly(q: string, name: string): boolean {
   // QA2-FC-7: equipment words ("machine", "cable", "barbell") say how, not which movement, so
   // "Leg Press Machine" is still Leg Press.
   if (!movementWords) {
-    const gear = new Set(LIBRARY.flatMap(e => normalizeName(e.equipment).split(' ')).flatMap(w => [w, w.replace(/s$/, ''), `${w}s`]));
-    movementWords = new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2 && !gear.has(w)));
+    movementWords = new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2 && !GEAR_WORDS.has(w.replace(/s\b/g, ''))));
   }
   const own = new Set(name.split(' '));
   return !q.replace(name, ' ').split(' ').some(w => w && !own.has(w) && movementWords!.has(w));
@@ -167,7 +197,13 @@ function containsOnly(q: string, name: string): boolean {
  */
 export function findExerciseWithEquipment(name: string, equipment: string | undefined, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
   const found = findExercise(name, custom);
-  if (found || !equipment) return found;
+  // QA3-2: a gear word in the name that disagrees with the match's own equipment means a
+  // different exercise, not a merge; the caller (the old-app importer) makes a custom one instead.
+  // QA3-2b: only for a fuzzy/substring match. An exact id, name or alias match (library or
+  // custom) is never rejected on gear alone - "bar pushdown" is still Straight-Bar Triceps
+  // Pushdown even though "bar" also disagrees with its Cable equipment.
+  if (found) return findExerciseExact(name, custom) === found || gearAgrees(name, found.equipment) ? found : undefined;
+  if (!equipment) return undefined;
   const q = normalizeName(name);
   if (q.length < 4) return undefined;
   const eq = normalizeName(equipment).replace(/s\b/g, '');

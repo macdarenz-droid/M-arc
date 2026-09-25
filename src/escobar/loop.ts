@@ -121,12 +121,23 @@ const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', '
 const HEALTH_KEY = (k: string) => HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k);
 const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers|healthDaysLogged|zone\d+FromBpm)\b/i;
 const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat|restingKcalPerDay)\b/;
+// QA3-9: a fact literally saying "hrMax" (explain_method's ledger label), dropped like the field
+// itself unless it is the age-based (Tanaka) estimate.
+const HRMAX_FACT = /\bhrMax\b/i;
+/** Whether an hrMax anywhere in this value is the age-based (Tanaka) one, not a personal reading. */
+function hrMaxIsAgeSourced(v: unknown): boolean {
+  if (Array.isArray(v)) return v.some(hrMaxIsAgeSourced);
+  if (!isObj(v)) return false;
+  return v.hrMaxSource === 'tanaka' || Object.values(v).some(hrMaxIsAgeSourced);
+}
 function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown {
   if (Array.isArray(v)) return v.map(x => scrub(x, sharing));
   if (!isObj(v)) return v;
   const out: Record<string, unknown> = {};
   for (const [k, x] of Object.entries(v)) {
     if (!sharing.health && HEALTH_KEY(k)) continue;
+    // QA3-9: hrMax is personal unless it's the age-based (Tanaka) estimate, mirroring methods.ts's live rule.
+    if (!sharing.health && k === 'hrMax' && v.hrMaxSource !== 'tanaka') continue;
     if (!sharing.body && BODY_KEYS.has(k)) continue;
     out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
   }
@@ -136,7 +147,12 @@ function redactResult(content: string, sharing: { health: boolean; body: boolean
   let parsed: unknown;
   try { parsed = JSON.parse(content); } catch { return content; }
   if (!isObj(parsed) || !('data' in parsed)) return content;
-  const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => typeof t !== 'string' || !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t))))) : parsed.facts;
+  const keepHrMax = hrMaxIsAgeSourced(parsed.data);
+  const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => {
+    if (typeof t !== 'string') return true;
+    if (!sharing.health && HRMAX_FACT.test(t) && !keepHrMax) return false;
+    return !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t)));
+  })) : parsed.facts;
   return JSON.stringify({ ...parsed, data: scrub(parsed.data, sharing), facts });
 }
 /**

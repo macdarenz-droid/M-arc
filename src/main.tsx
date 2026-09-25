@@ -8,7 +8,7 @@ import { resyncReminders } from './slices/settings/reminders';
 import { backgroundHealthSync } from './slices/settings/health';
 import { isNative } from './native/capacitor';
 import { installBackButton } from './native/back';
-import { onNotificationTap, refreshExactAlarm, syncBackupReminder } from './native/notifications';
+import { onNotificationTap, refreshExactAlarm, refreshRestPermission, syncBackupReminder } from './native/notifications';
 import { startWatchListeners } from './native/watch';
 import { startHeartCapture } from './slices/workout/heart';
 import { go, showPanel } from './app/router';
@@ -52,11 +52,13 @@ try {
     if (document.visibilityState === 'hidden') { flushSave(); return; }
     refreshClock();
     void refreshExactAlarm();
+    void refreshRestPermission();
     void resyncReminders();
     void backgroundHealthSync();
   });
   window.addEventListener('pagehide', flushSave);
   void refreshExactAlarm();
+  void refreshRestPermission();
   void resyncReminders();
   void backgroundHealthSync();
 

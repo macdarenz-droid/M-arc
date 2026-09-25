@@ -51,6 +51,17 @@ describe('read tool details', () => {
     expect(() => R.getSessions({ limit: 50 }, six)).toThrow(/between 1 and 20/);
     expect(() => R.getSessions({ from: 'yesterday' }, six)).toThrow(/YYYY-MM-DD/);
   });
+  it('QA3-10: a session\'s set count leaves out warm-ups', async () => {
+    const { session } = await import('../helpers');
+    const s = session('2026-09-10', [{ id: 'lib_barbell_bench_press', sets: [
+      { kg: 40, reps: 10, kind: 'warmup', effort: 'easy' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+    ] }]);
+    const ctx = ctxOf({ ...six.state, sessions: [...six.state.sessions, s] });
+    const row = R.getSessions({ limit: 1 }, ctx).sessions.find((r: { sessionId: string }) => r.sessionId === s.id) as { sets: number };
+    expect(row.sets).toBe(2);
+  });
   it('one session has every set and no heart without sharing', () => {
     const id = R.getSessions({ limit: 1 }, six).sessions[0]!.sessionId;
     const s = R.getSession({ sessionId: id }, six);
@@ -159,6 +170,33 @@ describe('read tool details', () => {
     expect(R.getOverview({}, e).scheduled).toBeNull();
     expect(R.getRecovery({}, e).muscles).toEqual([]);
     expect(R.getInsights({}, e).insights).toBeDefined();
+  });
+});
+
+describe('QA3-5: soreness-held-back muscles carry a sore flag, not a bare hoursLeft:0', () => {
+  it('get_overview leastRecovered and recovery_map both flag it and null the hours', async () => {
+    const { freshState } = await import('@/core/models');
+    const { makeCtx } = await import('@/escobar/tools/context');
+    const { sessionAt, sets } = await import('../helpers');
+    const { summarize } = await import('@/escobar/tools/show');
+    const soreState = {
+      ...freshState(),
+      sessions: [sessionAt('2026-09-01T17:00:00.000Z', '2026-09-01T18:00:00.000Z', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'easy', 1) }])],
+      checkIns: [{ day: '2026-09-22', soreness: { chest: 5 as const } }],
+    };
+    const ctx = makeCtx(soreState, Date.parse('2026-09-22T18:00:00'));
+    const chest = R.getOverview({}, ctx).leastRecovered.find((m: { muscle: string }) => m.muscle === 'chest') as { pct: number; hoursLeft: number | null; soreToday?: boolean };
+    expect(chest.pct).toBeLessThanOrEqual(60);
+    expect(chest.soreToday).toBe(true);
+    expect(chest.hoursLeft).toBeNull();
+    const map = summarize('recovery_map', {}, ctx) as { least: Array<{ muscle: string; hoursLeft: number | null; soreToday?: boolean }> };
+    const chestMap = map.least.find(m => m.muscle === 'chest')!;
+    expect(chestMap.soreToday).toBe(true);
+    expect(chestMap.hoursLeft).toBeNull();
+    // get_recovery already flagged soreToday (QA2-FC-5); its hoursLeft gets the same null for consistency.
+    const rec = R.getRecovery({}, ctx).muscles.find((m: { muscle: string }) => m.muscle === 'chest') as { hoursLeft: number | null; soreToday?: boolean };
+    expect(rec.soreToday).toBe(true);
+    expect(rec.hoursLeft).toBeNull();
   });
 });
 

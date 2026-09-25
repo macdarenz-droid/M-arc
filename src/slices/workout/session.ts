@@ -176,8 +176,12 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const set = a?.entries.flatMap(e => e.sets).find(s => s.id === setId);
   // QA2-FB-5: a set left empty when its field loses focus gives up its commit, so a later real
   // entry gets its own time and rest instead of the mistaken one's.
+  // QA3-4: only when it is the most recently committed set - a mistaken commit is always the
+  // last one. Clearing and retyping an earlier set must not move its time or restart rest.
   if (a && set && !hasEntry(set) && set.at) {
-    setSetById(setId, { at: undefined, restSec: undefined, fidelity: undefined, heart: undefined, status: 'draft' });
+    if (latestCommittedSetId(a) === setId) {
+      setSetById(setId, { at: undefined, restSec: undefined, fidelity: undefined, heart: undefined, status: 'draft' });
+    }
     return false;
   }
   // F2: a filled-in warm-up commits too (it gets its time), it just never starts auto-rest.
@@ -285,7 +289,9 @@ export function removeEntry(entry: number): void {
 
 /** F3.7: swap this entry for a substitute, e.g. a recovering muscle or a balance nudge. Blank sets: a different exercise's numbers would not mean the same thing. */
 export function substituteEntry(entry: number, ex: Exercise): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length) })) }));
+  // QA3-8b: keeps the slot's original planned exerciseId (through any earlier substitution too),
+  // so templateFromSession can find it by lineage even after a reorder or another substitution.
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
 }
 
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
@@ -345,15 +351,60 @@ export function changedFromPlan(a: ActiveSession, split: Split | undefined, over
  * saved; one Escobar took out today (a remove or a swap's source) stays at its place in the split.
  */
 export function templateFromSession(a: ActiveSession, split: Split, override: TodayOverride | null = state.value.escobar.todayOverride): Split['exercises'] {
-  const planned = new Set(plannedExercises(split, override, dayKey(new Date(a.startedAt))).map(e => e.exerciseId));
+  const today = dayKey(new Date(a.startedAt));
+  const planned = new Set(plannedExercises(split, override, today).map(e => e.exerciseId));
   const inSplit = new Set(split.exercises.map(e => e.exerciseId));
   const done = a.entries.filter(e => !e.skipped);
   const doneIds = new Set(done.map(e => e.exerciseId));
+  // QA3-6: today's one-day set-count change from Escobar is not saved either; the exercise keeps
+  // the split's own count, not however many sets today's override made the live entry start with.
+  // QA3-6b: only when the live count still matches the override exactly. Adding (or removing) sets
+  // yourself beyond that one-day bump is your own change, and saves what you actually did.
+  const overriddenSets = new Map<string, number>();
+  if (override && override.day === today && override.splitId === split.id) {
+    for (const c of override.changes) if (c.kind === 'sets') overriddenSets.set(c.exerciseId, c.sets);
+  }
+  const splitSetsById = new Map(split.exercises.map(se => [se.exerciseId, se.sets]));
+  // QA3-8: a swap's target that the person substituted away during the session (not Escobar's
+  // target as-is) replaces the swapped-away exercise at its own split slot; it is not an addition,
+  // and the swapped-away exercise is not restored alongside it.
+  // QA3-8b: found by lineage (plannedId), not by array position - a reorder (moveEntry) or an
+  // earlier removeEntry shifts indices, so looking a swap target up by its position in the
+  // planned order could land on a different, unrelated entry and invent a false substitution.
+  const substituteForFrom = new Map<string, { exerciseId: string; sets: number }>();
+  if (override && override.day === today && override.splitId === split.id) {
+    for (const c of override.changes) {
+      if (c.kind !== 'swap' || c.to === c.from || inSplit.has(c.to)) continue;
+      const live = done.find(e => e.plannedId === c.to && e.exerciseId !== c.to);
+      if (live && live.exerciseId !== c.from) {
+        substituteForFrom.set(c.from, { exerciseId: live.exerciseId, sets: Math.max(1, live.sets.filter(x => x.kind !== 'warmup').length) });
+      }
+    }
+  }
+  const substitutedIds = new Set([...substituteForFrom.values()].map(v => v.exerciseId));
   const out = done
-    .filter(e => inSplit.has(e.exerciseId) || !planned.has(e.exerciseId))
-    .map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) }));
+    .filter(e => (inSplit.has(e.exerciseId) || !planned.has(e.exerciseId)) && !substitutedIds.has(e.exerciseId))
+    .map(e => {
+      const liveCount = Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length);
+      const overridden = overriddenSets.get(e.exerciseId);
+      return { exerciseId: e.exerciseId, sets: overridden === liveCount ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
+    });
+  // QA3-7: `out` is shorter than `split.exercises` once a person's own skips drop out of it, so an
+  // Escobar-removed exercise's own split index no longer lines up with a position in `out`.
+  // Insert it right after its nearest preceding split neighbour that made it into `out`.
   split.exercises.forEach((se, i) => {
-    if (!planned.has(se.exerciseId) && !doneIds.has(se.exerciseId)) out.splice(Math.min(i, out.length), 0, { ...se });
+    if (planned.has(se.exerciseId) || doneIds.has(se.exerciseId)) return;
+    let insertAt = 0;
+    for (let j = i - 1; j >= 0; j--) {
+      // QA3-7b: a preceding neighbour that was itself a substituted swap never appears under its
+      // own id in `out` - only its substitute does (QA3-8). Match either.
+      // QA3-7c: or the person's own substitute for it (substituteEntry keeps plannedId = the split id).
+      const nid = split.exercises[j]!.exerciseId;
+      const pos = out.findIndex(o => o.exerciseId === nid || o.exerciseId === substituteForFrom.get(nid)?.exerciseId || done.some(e => e.exerciseId === o.exerciseId && e.plannedId === nid));
+      if (pos !== -1) { insertAt = pos + 1; break; }
+    }
+    const sub = substituteForFrom.get(se.exerciseId);
+    out.splice(insertAt, 0, sub ? { ...sub } : { ...se });
   });
   return out;
 }

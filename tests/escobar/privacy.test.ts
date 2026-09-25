@@ -40,4 +40,25 @@ describe('privacy when health sharing is off (ES-12)', () => {
     expect(replay(false)).not.toContain('restingHr');
     expect(replay(false)).toContain('health_sharing_off');
   });
+
+  it("QA3-9: a past explain_method result's personal hrMax is dropped from replay, in data and facts", () => {
+    const msgs: StoredMessage[] = [
+      { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'explain_method', input: { topic: 'hr_zones' } }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't1', content: JSON.stringify({ data: { personal: { hrMax: 185, hrMaxSource: 'observed' } }, facts: { f1: 'personal hrMax = 185 bpm' } }) }] },
+    ];
+    const replay = (health: boolean) => JSON.stringify(toRequestMessages(msgs, undefined, { health, body: true }));
+    expect(replay(true)).toContain('185');
+    expect(replay(false)).not.toContain('185');
+    expect(replay(false)).not.toMatch(/personal hrMax/i);
+  });
+
+  it('QA3-9: an age-based (Tanaka) hrMax is not personal, so it survives replay with health off', () => {
+    const msgs: StoredMessage[] = [
+      { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'explain_method', input: { topic: 'hr_zones' } }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't1', content: JSON.stringify({ data: { personal: { hrMax: 190, hrMaxSource: 'tanaka' } }, facts: { f1: 'personal hrMax = 190 bpm' } }) }] },
+    ];
+    const replay = (health: boolean) => JSON.stringify(toRequestMessages(msgs, undefined, { health, body: true }));
+    expect(replay(false)).toContain('190');
+    expect(replay(false)).toMatch(/personal hrMax/i);
+  });
 });
