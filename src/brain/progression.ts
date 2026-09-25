@@ -170,7 +170,12 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   // QA2-FE-8: only a carry or sled; a rep-based conditioning move (a burpee) logged with a time keeps its rep goal.
   // QA3-12: decided by which exercise this is (CARRY_OR_SLED_IDS), not by which fields were filled -
   // a timed carry or sled logged with reps too still gets its distance/time goal, never a rep one.
-  if (mode === 'conditioning' && CARRY_OR_SLED_IDS.has(exerciseId) && (last.bestDistanceM > 0 || last.bestDurationSec > 0)) {
+  // QA3-12b: CARRY_OR_SLED_IDS only lists three library ids. A custom conditioning exercise (no
+  // library id to match) and other library conditioning moves logged by distance or time alone
+  // (battle ropes, bear crawl, ...) still need a goal; they keep the original fields-based rule,
+  // which already gives a rep goal only when reps were actually logged (QA2-FE-8).
+  const carryOrSled = CARRY_OR_SLED_IDS.has(exerciseId) || (!!meta?.custom && mode === 'conditioning');
+  if (mode === 'conditioning' && (carryOrSled ? last.bestDistanceM > 0 || last.bestDurationSec > 0 : last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
     // QA3-3b: with an equipment profile to restate against later, keep the raw kg so an lb entry

@@ -208,3 +208,22 @@ describe('QA3-11b: carries snap down only for a genuine reduction, never in a no
     expect(n.kg).toBe(27.5);
   });
 });
+
+describe('QA3-12b: a custom or non-listed conditioning move still gets its own distance/time goal', () => {
+  it('a custom carry (no library id) progresses by distance, then time, even logged with reps too', async () => {
+    const { makeCustomExercise } = await import('@/core/exercises');
+    const yoke = makeCustomExercise({ id: 'custom_yoke_walk', name: 'Yoke Walk', equipment: 'Other', primary: ['quads'], mode: 'conditioning' });
+    const byDistance = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, distanceM: 20, effort: 'ideal' }] }])];
+    expect(suggestNext(byDistance, yoke.id, 'lean', '2026-09-14', 3, [yoke]).target).toBe('100 kg · 25 m');
+    const byTime = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, durationSec: 30, effort: 'ideal' }] }])];
+    expect(suggestNext(byTime, yoke.id, 'lean', '2026-09-14', 3, [yoke]).target).toBe('100 kg · 35s');
+    const withReps = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, durationSec: 30, reps: 8, effort: 'ideal' }] }])];
+    expect(suggestNext(withReps, yoke.id, 'lean', '2026-09-14', 3, [yoke]).mode).toBe('duration');
+  });
+  it('library conditioning moves outside CARRY_OR_SLED_IDS still get a distance/time goal when logged that way', () => {
+    const ropes = [session('2026-09-10', [{ id: 'lib_battle_ropes', sets: [{ durationSec: 30, effort: 'ideal' }] }])];
+    expect(suggestNext(ropes, 'lib_battle_ropes', 'lean', '2026-09-14').target).toBe('35s');
+    const crawl = [session('2026-09-10', [{ id: 'lib_bear_crawl', sets: [{ distanceM: 20, effort: 'ideal' }] }])];
+    expect(suggestNext(crawl, 'lib_bear_crawl', 'lean', '2026-09-14').target).toBe('25 m');
+  });
+});
