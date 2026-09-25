@@ -113,3 +113,29 @@ describe('legacy full backup file', () => {
     expect(state.customExercises).toHaveLength(0);
   });
 });
+
+describe('QA3-2b: the gear check (QA3-2) never breaks an exact match or trusts a legacy key blindly', () => {
+  it("two spellings of the same custom exercise (type '') collapse into one custom", () => {
+    const twoNames = {
+      workouts: {
+        completedExercises: [
+          { id: 'x1', day: 'push', dayKey: '2026-09-10', name: 'DB Skull Crusher', type: '', muscle: 'Triceps', sets: [{ kg: 20, reps: 10 }], finalizedAt: '2026-09-10T08:00:00.000Z' },
+          { id: 'x2', day: 'push', dayKey: '2026-09-10', name: 'Dumbbell Skull Crusher', type: '', muscle: 'Triceps', sets: [{ kg: 20, reps: 8 }], finalizedAt: '2026-09-10T08:05:00.000Z' },
+        ],
+      },
+    };
+    const state = convertLegacy(twoNames as never, new Date('2026-09-18T00:00:00.000Z'));
+    expect(state.customExercises).toHaveLength(1);
+  });
+  it("a legacy 'Name|Equipment' exerciseKey never merges into the wrong library exercise", () => {
+    const keyed = {
+      workouts: {
+        completedExercises: [
+          { id: 'y1', day: 'pull', dayKey: '2026-09-10', exerciseKey: 'Cable Hammer Curl|Cable', name: 'Cable Hammer Curl', type: 'Cable', muscle: 'Biceps', sets: [{ kg: 15, reps: 10 }], finalizedAt: '2026-09-10T08:00:00.000Z' },
+        ],
+      },
+    };
+    const state = convertLegacy(keyed as never, new Date('2026-09-18T00:00:00.000Z'));
+    expect(state.sessions[0]!.exercises[0]!.exerciseId).not.toBe('lib_hammer_curl');
+  });
+});

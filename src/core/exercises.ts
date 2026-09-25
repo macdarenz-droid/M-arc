@@ -199,7 +199,10 @@ export function findExerciseWithEquipment(name: string, equipment: string | unde
   const found = findExercise(name, custom);
   // QA3-2: a gear word in the name that disagrees with the match's own equipment means a
   // different exercise, not a merge; the caller (the old-app importer) makes a custom one instead.
-  if (found) return gearAgrees(name, found.equipment) ? found : undefined;
+  // QA3-2b: only for a fuzzy/substring match. An exact id, name or alias match (library or
+  // custom) is never rejected on gear alone - "bar pushdown" is still Straight-Bar Triceps
+  // Pushdown even though "bar" also disagrees with its Cable equipment.
+  if (found) return findExerciseExact(name, custom) === found || gearAgrees(name, found.equipment) ? found : undefined;
   if (!equipment) return undefined;
   const q = normalizeName(name);
   if (q.length < 4) return undefined;

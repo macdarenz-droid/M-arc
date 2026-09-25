@@ -60,3 +60,12 @@ describe('QA3-2: an import never merges into a different-equipment lift', () => 
     expect(findExerciseWithEquipment('Smith Machine Romanian Deadlift', 'Smith Machine')?.id).not.toBe(findExercise('Romanian Deadlift')?.id);
   });
 });
+
+describe('QA3-2b: the gear check exempts an exact library or custom match', () => {
+  it('an exact alias with a gear word in its own text still resolves (the gear check is for fuzzy matches only)', async () => {
+    const { findExerciseWithEquipment } = await import('@/core/exercises');
+    expect(findExerciseWithEquipment('bar pushdown', 'Cable')?.id).toBe('lib_straight_bar_triceps_pushdown');
+    expect(findExerciseWithEquipment('straight bar pressdown', 'Cable')?.id).toBe('lib_straight_bar_triceps_pushdown');
+    expect(findExerciseWithEquipment('landmine t bar row', 'Landmine')?.id).toBe('lib_landmine_row');
+  });
+});
