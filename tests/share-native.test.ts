@@ -1,4 +1,4 @@
-/** F12 Save / Share (Capacitor mocked): QA4-11 native cache, QA4-12 web Share gesture. */
+/** F12 Save / Share (Capacitor mocked): QA4-11 native cache, QA4-12 web Share gesture, QA4-13 load failure. */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const calls: string[] = [];
@@ -13,6 +13,8 @@ vi.mock('@/native/capacitor', () => ({ isNative: () => native.on }));
 
 import { saveImage, shareImage } from '@/native/share';
 import { pngCache } from '@/slices/share/png';
+import { shareLoadFailed } from '@/slices/share/lazy';
+import { toast } from '@/app/toast';
 
 const png = new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], { type: 'image/png' });
 
@@ -62,5 +64,21 @@ describe('QA4-12: the web Share keeps its tap', () => {
       expect(await shareImage('card.png', png, 'My card')).toEqual({ outcome: 'retry', message: 'Ready, tap Share again' });
       expect(await shareImage('card.png', png, 'My card')).toEqual({ outcome: 'shared', message: '' });
     } finally { vi.unstubAllGlobals(); native.on = true; }
+  });
+});
+
+describe('QA4-13: a failed load of the share code offers Reload', () => {
+  it('closes the sheet and shows a toast whose action reloads the app', () => {
+    const reload = vi.fn();
+    vi.stubGlobal('location', { reload });
+    try {
+      const onClose = vi.fn();
+      shareLoadFailed(onClose);
+      expect(onClose).toHaveBeenCalledOnce();
+      expect(toast.value?.message).toBe('Could not load sharing.');
+      expect(toast.value?.action).toBe('Reload');
+      toast.value?.onAction?.();
+      expect(reload).toHaveBeenCalledOnce();
+    } finally { vi.unstubAllGlobals(); }
   });
 });
