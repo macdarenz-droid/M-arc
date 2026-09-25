@@ -1,3 +1,5 @@
+import { PENDING_WORKOUT_RESET_KEY, wipeNativeWorkoutData } from './workoutReset';
+import { workoutOwnershipNotice } from '@/core/workoutOwnership';
 import { registerPlugin } from '@capacitor/core';
 import type { ActiveSession } from '@/core/models';
 import { newId } from '@/core/models';
@@ -87,7 +89,18 @@ export const workoutHandoverPhone: HandoverPhone = {
   },
 };
 
-export const reconcilePhoneWorkout = (): Promise<boolean> => reconcileWorkoutOwnership(nativeWorkoutOwner, workoutHandoverPhone);
+export async function reconcilePhoneWorkout(): Promise<boolean> {
+  let resetFailed = false;
+  try {
+    if (localStorage.getItem(PENDING_WORKOUT_RESET_KEY) === 'pending') {
+      await wipeNativeWorkoutData();
+      localStorage.removeItem(PENDING_WORKOUT_RESET_KEY);
+    }
+  } catch { resetFailed = true; }
+  const result = await reconcileWorkoutOwnership(nativeWorkoutOwner, workoutHandoverPhone);
+  if (resetFailed) workoutOwnershipNotice.value = 'Could not finish resetting watch workout data. Reopen M/ARC to retry.';
+  return result;
+}
 /** Infrastructure only. No screen, device callback or watch command invokes this. */
 export const preparePhoneWorkoutHandover = (installationId: string): Promise<boolean> =>
   handoverWorkout(nativeWorkoutOwner, workoutHandoverPhone, newId('handover'), installationId);

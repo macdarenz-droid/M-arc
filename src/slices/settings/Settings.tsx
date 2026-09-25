@@ -50,8 +50,8 @@ function restoreAll(b: Snapshot): void {
   afterReplace();
 }
 
-function resetEverything(): void {
-  resetState(freshState());
+async function resetEverything(): Promise<void> {
+  await resetState(freshState());
   clearEscobarStore();
   clearHeart();
   void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
@@ -213,7 +213,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!workoutBlocked && (!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { void resetEverything().then(() => { setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }).catch(() => showToast('Could not reset workout data. Reopen M/ARC and try again.')); }}>Reset everything</Button></div></Card>
             ))}
           </Card>
         </Section>

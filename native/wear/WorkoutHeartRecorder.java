@@ -88,6 +88,7 @@ public final class WorkoutHeartRecorder {
                     JSONObject result;
                     switch (action) {
                         case "read": result = store.readOwnership(); break;
+                        case "reset": result = store.resetForPhone(); break;
                         case "settle": result = store.settleHandover(token); break;
                         case "handover": result = store.handover(seed); break;
                         default: throw new IllegalArgumentException("Unknown ownership action");

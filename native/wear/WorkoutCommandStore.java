@@ -459,6 +459,45 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         return new JSONObject().put("owner", "web");
     }
 
+    /** Delete child rows first: both journal foreign keys deliberately use RESTRICT. */
+    private static void deleteHeartJournal(SQLiteDatabase db, String token) {
+        db.delete("heart_samples", "handover_id=?", new String[]{token});
+        db.delete("heart_capture", "handover_id=?", new String[]{token});
+    }
+
+    /** Future export completion calls this ONLY after durable export/import acknowledgement.
+     * A terminal status alone never deletes evidence. No UI or transport calls this hook yet. */
+    void acknowledgeHeartExport(String token) {
+        if (!id(token)) throw new IllegalArgumentException("Invalid handover ID");
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        try {
+            try (Cursor c = db.rawQuery("SELECT s.status FROM workout_handovers h JOIN sessions s ON s.session_id=h.session_id WHERE h.handover_id=?", new String[]{token})) {
+                if (!c.moveToFirst() || !("finished".equals(c.getString(0)) || "discarded".equals(c.getString(0))))
+                    throw new IllegalStateException("Heart capture is still live or unknown");
+            }
+            deleteHeartJournal(db, token);
+            db.setTransactionSuccessful();
+        } finally { db.endTransaction(); }
+    }
+
+    /** Worker-serialized reset, refusing even a native owner whose phone marker was lost. */
+    JSONObject resetForPhone() throws Exception {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        try {
+            if (!"web".equals(readOwnership(db).getString("owner")))
+                throw new IllegalStateException("Workout recovery required before reset");
+            for (String table : new String[]{"heart_samples", "heart_capture", "pending_effects", "receipts", "set_revisions"})
+                db.delete(table, null, null);
+            // Keep cancellation IDs only: an old timed-out seed must not resurrect erased data.
+            db.execSQL("UPDATE workout_handovers SET session_id=NULL,installation_id=NULL,original_snapshot=NULL,inputs=NULL WHERE status='cancelled'");
+            db.delete("sessions", null, null);
+            db.setTransactionSuccessful();
+            return new JSONObject().put("owner", "web").put("reset", true);
+        } finally { db.endTransaction(); }
+    }
+
     /** Cancelling before a delayed handover arrives leaves a durable tombstone for its ID. */
     JSONObject settleHandover(String token) throws Exception {
         if (!id(token)) throw new IllegalArgumentException("Invalid handover ID");
@@ -475,6 +514,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
                 if (!c.moveToFirst() || !"cancelled".equals(c.getString(0)))
                     throw new IllegalStateException("Cancellation not durable");
             }
+            deleteHeartJournal(db, token);
             db.setTransactionSuccessful();
             return owner.put("cancelledHandoverId", token);
         } finally { db.endTransaction(); }

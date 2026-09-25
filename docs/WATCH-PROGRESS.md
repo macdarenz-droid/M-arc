@@ -1,8 +1,10 @@
 # Watch progress
 
-RUN LOCK: none
+RUN LOCK: Codex — five pre-handover QA lows (2026-09-25)
 
 ## Done this run
+
+- In progress: five pre-handover QA fixes, one commit each. Regression tests precede implementation. Cleanup/reset/backup exclusions first; then capture diagnostics, batched worker storage, checking-state heart retention and CI XML proof. Handover remains disabled. Signing steps and fingerprint are unchanged.
 
 - Added owner-scoped native BLE recording in `dbf4fea`, with upgrade recovery hardened in `1a97136`: version 6 journal, anonymous source/boot identity, callback receipt clocks, bounded worker queue/storage, loss counts and retained-tail retries. Normal phone/legacy workouts cannot start native recording; delayed packets cannot move to a later owner. Optional heart metadata or journal-migration failure cannot hide a confirmed native owner; read-only recovery cannot cancel or acknowledge a write. Original JS checkpoints and pending effects stay unchanged. Added 16 service/store JVM regressions and 2 SQLite schema regressions. Local checks pass: all 912 unit tests, 3 performance budgets, TypeScript/build, 20 watch protocol/probe tests, 8 SQLite schema tests and agent guard. [M/ARC gate 36116901417](https://github.com/macdarenz-droid/M-arc/actions/runs/36116901417) passed for `1a97136`: all three unit-test time zones, both browser runs, Watch Lab/recovery checks, all 37 native JVM tests, APK native-class checks and permanent signing. [Agent guard 36116901429](https://github.com/macdarenz-droid/M-arc/actions/runs/36116901429) passed. Handover remains disabled; no main merge or real GT6 verification. Native heart export/completion and coverage handling remain next. See `native/wear/GATE-B.md` for boundaries and failure controls.
 

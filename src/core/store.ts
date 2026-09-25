@@ -8,7 +8,7 @@ import { backfillLegacyLbEntries, backfillLegacyLbSets } from './units';
 import { dayKey } from './dates';
 import { DEFAULT_GOAL, isGoalId } from '@/data/goals';
 import { showToast } from '@/app/toast';
-import { assertPhoneWorkoutWriter, initWorkoutOwnership, refreshWorkoutOwnership, workoutOwnership, WORKOUT_HANDOVER_KEY } from './workoutOwnership';
+import { assertPhoneWorkoutWriter, resetWorkoutData, initWorkoutOwnership, refreshWorkoutOwnership, workoutOwnership, WORKOUT_HANDOVER_KEY } from './workoutOwnership';
 
 /** A session saved before `logging` existed gets a legacy backfill so every reader can rely on it being present. */
 function withLogging(s: Session): Session {
@@ -371,11 +371,13 @@ export function replaceState(next: AppState): void {
 }
 
 /** QA-R1-7: Reset everything. The daily restore point goes too, so the wiped history cannot come back from it. */
-export function resetState(next: AppState): void {
-  assertPhoneWorkoutWriter(); // Before deleting restore points or other state.
-  lastGoodRaw = null;
-  try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
-  replaceState(next);
+export function resetState(next: AppState): void | Promise<void> {
+  return resetWorkoutData(() => {
+    lastGoodRaw = null;
+    try { storageRef?.removeItem(BACKUP_KEY); storageRef?.removeItem(BACKUP_DAY_KEY); } catch { /* nothing to delete */ }
+    state.value = normalize(next);
+    persistNow();
+  });
 }
 
 export function flushSave(): boolean {

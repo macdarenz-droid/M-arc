@@ -10,11 +10,12 @@ function bootCrash(native: boolean, marker: string | null, oldResetHook?: () => 
   const box = { style: {}, innerHTML: '', querySelector: (selector: string) => ({
     textContent: '', addEventListener: (_: string, cb: () => void) => clicks.set(selector, cb),
   }) };
+  const setItem = vi.fn();
   const clear = vi.fn(), reload = vi.fn(), confirm = vi.fn(() => true), alert = vi.fn();
   const context = {
     window: { __marcCanResetWorkoutData: oldResetHook, Capacitor: { isNativePlatform: () => native }, addEventListener: vi.fn() },
     document: { getElementById: () => ({ getAttribute: () => null, setAttribute: vi.fn(), appendChild: vi.fn() }), createElement: () => box },
-    localStorage: { getItem: () => { if (readFails) throw new Error('Storage denied'); return marker; }, clear },
+    localStorage: { getItem: () => { if (readFails) throw new Error('Storage denied'); return marker; }, clear, setItem },
     location: { reload }, confirm, alert,
   };
   runInNewContext(script, context);
@@ -22,7 +23,7 @@ function bootCrash(native: boolean, marker: string | null, oldResetHook?: () => 
   win.__marcCrash(new Error('crash before first render'));
   expect(box.innerHTML).toContain('Reset app data and reload');
   clicks.get('[data-reset]')!();
-  return { clear, reload, confirm, alert };
+  return { clear, reload, confirm, alert, setItem };
 }
 
 describe('early crash-screen reset', () => {
@@ -50,4 +51,10 @@ describe('early crash-screen reset', () => {
     expect(result.clear).toHaveBeenCalledOnce();
     expect(result.reload).toHaveBeenCalledOnce();
   });
+});
+
+it('queues the native wipe across a crash before the bridge can be imported', () => {
+  const result = bootCrash(true, null);
+  expect(result.setItem).toHaveBeenCalledWith('marc.workout.reset.v1', 'pending');
+  expect(result.reload).toHaveBeenCalledOnce();
 });

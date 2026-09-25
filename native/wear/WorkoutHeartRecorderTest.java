@@ -399,4 +399,56 @@ public class WorkoutHeartRecorderTest {
         assertEquals(1, service.session.samples); assertEquals(128, service.session.lastBpm);
         assertTrue(worker.tasks.isEmpty());
     }
+    @Test public void heartCleanupRequiresSettlementOrConfirmedExportAndDeletesChildrenFirst() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        store.appendHeart("h-1", "boot-7", "boot", List.of(sample("ble-1", 1, WALL, 1000, 128)), 0);
+        assertThrows(IllegalStateException.class, () -> store.acknowledgeHeartExport("h-1"));
+        store.settleHandover("h-1"); // A read/settle of a live owner is not a release or export.
+        assertEquals(1, count("heart_samples"));
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='finished'");
+        store.readOwnership(); // Finishing alone is not proof that the evidence was exported.
+        assertEquals(1, count("heart_samples"));
+        store.acknowledgeHeartExport("h-1");
+        store.acknowledgeHeartExport("h-1"); // Crash/retry acknowledgement is harmless.
+        assertEquals(0, count("heart_samples")); assertEquals(0, count("heart_capture"));
+        assertEquals(1, count("sessions")); assertEquals(1, count("workout_handovers"));
+    }
+
+    @Test public void settledJournalCleanupRollsBackTogetherAndPreservesCancellation() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        store.appendHeart("h-1", "boot-7", "boot", List.of(sample("ble-1", 1, WALL, 1000, 128)), 0);
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='discarded'");
+        store.getWritableDatabase().execSQL("UPDATE workout_handovers SET status='cancelled'");
+        store.getWritableDatabase().execSQL("CREATE TRIGGER fail_cleanup BEFORE DELETE ON heart_capture BEGIN SELECT RAISE(ABORT,'test'); END");
+        assertThrows(Exception.class, () -> store.settleHandover("h-1"));
+        assertEquals(1, count("heart_samples")); assertEquals(1, count("heart_capture"));
+        store.getWritableDatabase().execSQL("DROP TRIGGER fail_cleanup");
+        assertEquals("web", store.settleHandover("h-1").getString("owner"));
+        assertEquals(0, count("heart_samples")); assertEquals(0, count("heart_capture"));
+        assertThrows(Exception.class, () -> store.handover(seed("h-1", "s-1")));
+    }
+
+    @Test public void nativeResetRefusesAnOwnerThenWipesSettledWorkoutDataAtomically() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        store.appendHeart("h-1", "boot-7", "boot", List.of(sample("ble-1", 1, WALL, 1000, 128)), 0);
+        assertThrows(IllegalStateException.class, () -> store.resetForPhone());
+        assertEquals(1, count("heart_samples"));
+        store.getWritableDatabase().execSQL("UPDATE sessions SET status='discarded'");
+        store.getWritableDatabase().execSQL("UPDATE workout_handovers SET status='cancelled'");
+        store.getWritableDatabase().execSQL("CREATE TRIGGER fail_reset BEFORE DELETE ON sessions BEGIN SELECT RAISE(ABORT,'test'); END");
+        assertThrows(Exception.class, () -> store.resetForPhone());
+        assertEquals(1, count("heart_samples"));
+        store.getWritableDatabase().execSQL("DROP TRIGGER fail_reset");
+        Worker worker = new Worker(); WorkoutHeartRecorder recorder = recorder(worker);
+        AtomicReference<JSONObject> reply = new AtomicReference<>();
+        recorder.ownership("reset", null, null, reply::set, () -> fail("Reset failed")); worker.finish();
+        assertTrue(reply.get().getBoolean("reset"));
+        for (String table : List.of("heart_samples", "heart_capture", "pending_effects", "receipts", "set_revisions", "sessions"))
+            assertEquals(table, 0, count(table));
+        assertNull(recorder.targetAtReceipt());
+        assertEquals("web", store.readOwnership().getString("owner"));
+        // Retain only cancellation IDs so a delayed pre-reset seed cannot resurrect a workout.
+        assertThrows(Exception.class, () -> store.handover(seed("h-1", "s-1")));
+    }
+
 }

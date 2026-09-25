@@ -81,7 +81,12 @@
             }
           } catch (e) { /* unavailable web storage does not establish a handover */ }
           if (!confirm('This deletes every workout on this device. Continue?')) return;
-          try { localStorage.clear(); } catch (e) {}
+          try {
+            localStorage.clear();
+            // The native bridge may not be importable yet. Finish its wipe on the next boot.
+            if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())
+              localStorage.setItem('marc.workout.reset.v1', 'pending');
+          } catch (e) {}
           try { if (window.indexedDB && indexedDB.databases) { indexedDB.databases().then(function (dbs) { dbs.forEach(function (d) { indexedDB.deleteDatabase(d.name); }); }); } } catch (e) {}
           location.reload();
         });

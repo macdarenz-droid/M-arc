@@ -174,6 +174,17 @@ cannot duplicate data, while conflicting reuse rolls back the batch. Version 5
 upgrades preserve ownership, original JS inputs and pending command effects;
 they do not fabricate native provenance for old samples.
 
+Settling a cancelled handover deletes its journal children before its capture header,
+in the same transaction. Terminal status alone never deletes unexported evidence.
+The guarded `acknowledgeHeartExport` hook deletes terminal journals only after a
+future export/import caller confirms durable export; that caller is not yet wired.
+Reset waits for the worker's native wipe before erasing phone data and refuses any
+known native owner, including a lost phone marker. Only cancellation IDs survive
+reset, stripped of all workout/session/installation/input data, to reject delayed
+old seeds. The pre-bundle crash reset queues native cleanup for the next boot.
+Both Android backup formats exclude the journal DB and its WAL/SHM/journal files;
+other app backup rules are preserved. No workout evidence relies on Auto Backup.
+
 The local ownership reply includes capture counts, pending/write-failure state
 and `coverage: unverified`. The current UI does not consume this extra metadata.
 Failure to read optional capture metadata still returns any confirmed native

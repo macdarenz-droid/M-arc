@@ -1,5 +1,6 @@
 /** Crash-safe WebView → native ownership. No workout UI starts a handover yet. */
 import { signal } from '@preact/signals';
+import { wipeNativeWorkoutData } from '@/native/workoutReset';
 
 export const WORKOUT_HANDOVER_KEY = 'marc.workout.handover.v1';
 export type Ownership = 'web' | 'checking' | 'transferring' | 'native' | 'blocked';
@@ -169,4 +170,24 @@ export async function handoverWorkout(backend: OwnershipBackend, phone: Handover
     if (run === generation) failed();
     return false;
   } finally { if (run === generation) busy = false; }
+}
+
+/** Reset protects live writers until the native journal has actually been erased. */
+export function resetWorkoutData(afterWipe: () => void): void | Promise<void> {
+  assertPhoneWorkoutWriter();
+  const pending = wipeNativeWorkoutData();
+  if (!pending) { afterWipe(); return; }
+  const run = generation;
+  busy = true;
+  workoutOwnership.value = 'checking';
+  checkingWorkoutOwnership.value = true;
+  return pending.then(() => {
+    if (generation !== run) throw new Error('Workout changed during reset');
+    afterWipe();
+  }).finally(() => {
+    if (generation === run) {
+      busy = false; checkingWorkoutOwnership.value = false;
+      workoutOwnership.value = 'web'; refreshWorkoutOwnership();
+    }
+  });
 }
