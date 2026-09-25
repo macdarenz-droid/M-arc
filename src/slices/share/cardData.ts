@@ -10,7 +10,7 @@ import { kgToDisplay, setLoadIn } from '@/core/units';
 import { workingTotals } from '@/brain/weekly';
 import { allRecords, type PersonalRecord } from '@/brain/prs';
 import { effectiveSetsByMuscle, isWorkingSet } from '@/brain/exposure';
-import { summarizeSets } from '@/brain/history';
+import { modeOf, summarizeSets } from '@/brain/history';
 import type { MuscleId } from '@/data/muscles';
 import { WEIGHT_THINGS } from '@/data/weights';
 
@@ -91,38 +91,45 @@ function periodWords(period: Exclude<SharePeriod, 'workout'>, from: string, to: 
   return { label: `Since ${my(from)}`, title: 'All time', sub: `${my(from)} – today` };
 }
 
-/** Volume of one exercise's working sets, in `unit`, as receipt text. */
-function lineValue(volumeKg: number, unit: LoadUnit): string {
+/** Volume of one exercise's working sets, in `unit`, as receipt text. Assisted work counts sets (QA4-1). */
+function lineValue(volumeKg: number, unit: LoadUnit, assisted = false, sets = 0): string {
+  if (assisted) return `${groupInt(sets)} sets`;
   return volumeKg > 0 ? volumeShort(kgToDisplay(volumeKg, unit), unit) : 'BW';
 }
 
-function workoutLines(session: Session, unit: LoadUnit, prIds: Set<string>): CardLine[] {
+function workoutLines(session: Session, unit: LoadUnit, prIds: Set<string>, custom: Exercise[]): CardLine[] {
   const out: CardLine[] = [];
   for (const e of session.exercises) {
     const sum = summarizeSets(session.id, session.day, e.sets);
     if (!sum.sets.length) continue;
     const n = sum.sets.length;
-    const top = sum.sets.find(s => (s.kg ?? 0) === sum.topKg && sum.topKg > 0);
-    const detail = top ? `${n}×${sum.topReps} @${setLoadIn(top, unit)}`
+    const assisted = modeOf(e.exerciseId, custom) === 'assisted';
+    // Assisted: the hardest set is the one with the least help.
+    const loaded = sum.sets.filter(s => (s.kg ?? 0) > 0);
+    const top = assisted ? loaded.reduce<typeof loaded[number] | undefined>((a, s) => (!a || (s.kg ?? 0) < (a.kg ?? 0) ? s : a), undefined)
+      : sum.sets.find(s => (s.kg ?? 0) === sum.topKg && sum.topKg > 0);
+    const detail = top ? `${n}×${top.reps ?? 0} @${setLoadIn(top, unit)}${assisted ? ' assist' : ''}`
       : sum.bestDurationSec > 0 && !sum.bestReps ? `${n}×${sum.bestDurationSec}s`
       : `${n}×${sum.bestReps}`;
-    const { volumeKg } = workingTotals([e]);
-    out.push({ exerciseId: e.exerciseId, name: e.name, detail, value: lineValue(volumeKg, unit), volumeKg, pr: prIds.has(e.exerciseId) });
+    const { volumeKg } = workingTotals([e], custom);
+    out.push({ exerciseId: e.exerciseId, name: e.name, detail, value: lineValue(volumeKg, unit, assisted, n), volumeKg, pr: prIds.has(e.exerciseId) });
   }
   return out.sort((a, b) => b.volumeKg - a.volumeKg);
 }
 
-function periodLines(inRange: Session[], unit: LoadUnit, prIds: Set<string>): CardLine[] {
-  const by = new Map<string, { name: string; count: number; volumeKg: number }>();
+function periodLines(inRange: Session[], unit: LoadUnit, prIds: Set<string>, custom: Exercise[]): CardLine[] {
+  const by = new Map<string, { name: string; count: number; sets: number; volumeKg: number }>();
   for (const s of inRange) for (const e of s.exercises) {
     if (!e.sets.some(isWorkingSet)) continue;
-    const row = by.get(e.exerciseId) ?? { name: e.name, count: 0, volumeKg: 0 };
+    const row = by.get(e.exerciseId) ?? { name: e.name, count: 0, sets: 0, volumeKg: 0 };
+    const t = workingTotals([e], custom);
     row.name = e.name;
     row.count++;
-    row.volumeKg += workingTotals([e]).volumeKg;
+    row.sets += t.sets;
+    row.volumeKg += t.volumeKg;
     by.set(e.exerciseId, row);
   }
-  return [...by].map(([exerciseId, r]) => ({ exerciseId, name: r.name, detail: `×${r.count}`, value: lineValue(r.volumeKg, unit), volumeKg: r.volumeKg, pr: prIds.has(exerciseId) }))
+  return [...by].map(([exerciseId, r]) => ({ exerciseId, name: r.name, detail: `×${r.count}`, value: lineValue(r.volumeKg, unit, modeOf(exerciseId, custom) === 'assisted', r.sets), volumeKg: r.volumeKg, pr: prIds.has(exerciseId) }))
     .sort((a, b) => b.volumeKg - a.volumeKg || a.name.localeCompare(b.name));
 }
 
@@ -139,7 +146,7 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
     const s = input.session ?? null;
     const exIds = new Set(s?.exercises.map(e => e.exerciseId) ?? []);
     const recs = s ? records.filter(r => r.day === s.day && exIds.has(r.exerciseId)) : [];
-    const totals = workingTotals(s?.exercises ?? []);
+    const totals = workingTotals(s?.exercises ?? [], custom);
     return {
       period, unit,
       label: !s ? 'Today' : s.day === today ? 'Today' : dm(s.day),
@@ -153,13 +160,13 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
       volume: Math.round(kgToDisplay(totals.volumeKg, unit)),
       records: recs,
       muscleSets: s ? effectiveSetsByMuscle([s], s.day, addDays(s.day, 1), custom) : {},
-      lines: s ? workoutLines(s, unit, new Set(recs.map(r => r.exerciseId))) : [],
+      lines: s ? workoutLines(s, unit, new Set(recs.map(r => r.exerciseId)), custom) : [],
     };
   }
   const from = periodStart(period, today, sessions);
   const inRange = sessions.filter(s => s.day >= from && s.day <= today);
   const recs = records.filter(r => r.day >= from && r.day <= today);
-  const totals = workingTotals(inRange.flatMap(s => s.exercises));
+  const totals = workingTotals(inRange.flatMap(s => s.exercises), custom);
   return {
     period, unit, ...periodWords(period, from, today), from, to: today,
     sessions: inRange.length,
@@ -169,7 +176,7 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
     volume: Math.round(kgToDisplay(totals.volumeKg, unit)),
     records: recs,
     muscleSets: effectiveSetsByMuscle(inRange, from, addDays(today, 1), custom),
-    lines: periodLines(inRange, unit, new Set(recs.map(r => r.exerciseId))),
+    lines: periodLines(inRange, unit, new Set(recs.map(r => r.exerciseId)), custom),
   };
 }
 
