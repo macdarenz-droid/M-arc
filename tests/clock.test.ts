@@ -31,6 +31,15 @@ describe('the clock (R2.1)', () => {
     expect(calls.n - before).toBe(1);
     release();
   });
+  it('F6: acquireTicker syncs nowMs immediately, before the first 1s tick', async () => {
+    const C = await import('@/app/clock');
+    // A prior holder could leave nowMs stale; move the clock forward without advancing timers,
+    // the way real time passes between an old ticker's last tick and a new mount's first render.
+    vi.setSystemTime(new Date(Date.now() + 5000));
+    const release = C.acquireTicker();
+    expect(C.nowMs.value).toBe(Date.now());
+    release();
+  });
   it('with no ticker, the minute interval still moves minuteNow and today', async () => {
     const C = await import('@/app/clock');
     const m0 = C.minuteNow.value;

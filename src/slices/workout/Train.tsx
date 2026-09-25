@@ -867,8 +867,10 @@ export function RestBanner() {
   const a = s.active;
   useEffect(() => (a?.rest ? acquireTicker() : undefined), [!!a?.rest]);
   if (!a?.rest) return null;
-  const now = nowMs.value;
-  const remaining = restRemainingSec(a, now) ?? 0;
+  // F6: nowMs can still be a hair stale on the first frame (acquireTicker resolves in an effect,
+  // after paint), which used to read as remaining = total+1s and a full-width bar. Clamp both ends.
+  const now = Math.max(nowMs.value, Date.now());
+  const remaining = Math.min(a.rest.totalSec, restRemainingSec(a, now) ?? 0);
   const timeDone = remaining <= 0;
 
   // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
@@ -887,7 +889,7 @@ export function RestBanner() {
     }
   }
   const done = timeDone || heartReady;
-  const pct = a.rest.totalSec ? Math.min(100, 100 - (remaining / a.rest.totalSec) * 100) : 100;
+  const pct = a.rest.totalSec ? Math.max(0, Math.min(100, 100 - (remaining / a.rest.totalSec) * 100)) : 100;
   const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
   return (
     <div class={`rest ${done ? 'done' : ''}`}>

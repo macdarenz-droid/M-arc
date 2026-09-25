@@ -882,7 +882,7 @@ for (const theme of themes) {
 // exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
 // their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
 {
-  const HAS = { restFix: false, sheetExit: false };
+  const HAS = { restFix: true, sheetExit: false };
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   const tag = 'motion smoke';
