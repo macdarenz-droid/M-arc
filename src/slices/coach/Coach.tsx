@@ -15,7 +15,7 @@ import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { profileFor } from '@/slices/workout/units';
 import { exerciseHistory } from '@/brain/history';
-import { formatLoad } from '@/core/units';
+import { modeLoadText } from '@/brain/bodyweight';
 import { resyncReminders } from '../settings/reminders';
 import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
 import { acceptDeload, saveInsightFeedback } from './coach';
@@ -151,7 +151,7 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
           <div><span>Do next</span><span>{insight.action}</span></div>
         </div>
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
-        {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
+        {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${modeLoadText({ kg: h.topKg }, ex?.mode ?? 'weighted', s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
       </div>
     </Sheet>
   );
