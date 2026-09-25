@@ -342,3 +342,31 @@ describe('optional native heart capture notice', () => {
     initWorkoutOwnership(memory()); expect(workoutHeartCaptureNotice.value).toBeNull();
   });
 });
+
+describe('heart evidence during an ownership check', () => {
+  const measure = (second: number) => { latestMeasurement.value = { bpm: 100 + second, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: START + second * 1000, receivedAtElapsedMs: second * 1000 }; };
+  it.each(['web', 'failed', 'native'] as const)('retains checking samples unless ownership resolves native: %s', async outcome => {
+    measure(1);
+    const seed: HandoverSeed = { handoverId: 'h-check', installationId: 'watch-1', ...workoutHandoverPhone.capture() };
+    let resolve!: (reply: OwnershipReply) => void, reject!: (e: Error) => void;
+    const b = backend(); b.read = () => new Promise((yes, no) => { resolve = yes; reject = no; });
+    const pending = recover(b);
+    measure(2); measure(3); measure(3);
+    expect(() => setSetById('set-1', { reps: 9 })).toThrow(/editing is paused/);
+    if (outcome === 'failed') reject(new Error('Timeout'));
+    else resolve(outcome === 'native' ? { owner: 'native', seed, snapshot: seed.snapshot } : { owner: 'web' });
+    await pending;
+    expect(captureHeartInputs().map(x => x.bpm)).toEqual(outcome === 'native' ? [101] : [101, 102, 103]);
+    if (outcome !== 'native') { measure(3); measure(4); expect(recentLiveBpms(9)).toEqual([101, 102, 103, 104]); }
+  });
+  it('merges checking evidence after a cancelled prepared handover restores the checkpoint', async () => {
+    measure(1);
+    const b = backend(); b.handover = async () => { throw new Error('Not delivered'); };
+    await begin(b);
+    let settle!: (reply: OwnershipReply) => void;
+    b.settle = () => new Promise(resolve => { settle = resolve; });
+    const pending = recover(b); measure(2);
+    settle({ owner: 'web', cancelledHandoverId: 'handover-1' }); await pending;
+    expect(recentLiveBpms(9)).toEqual([101, 102]);
+  });
+});

@@ -108,7 +108,11 @@ preserves known ownership. The pre-bundle crash reset refuses only a stored
 handover marker, so a crash before owner-check initialization still has a way
 out. A marker changed during a pending native request cannot be overwritten by
 its late reply.
-Phone heart capture freezes during handover. On cancellation, the original
+During a pending ownership check, phone BLE evidence is buffered for the exact
+session (up to 14,400 samples) while live writers stay blocked. A phone-owned or
+failed optional read retains it; a confirmed native owner discards that provisional
+buffer. Cancellation merges it with restored checkpoint samples without duplicates.
+It never attaches evidence to another session. Phone capture freezes during handover. On cancellation, the original
 rest deadline and captured samples are restored without restarting rest or
 duplicating the last sample. No second session/entry/set ID scheme is added.
 
