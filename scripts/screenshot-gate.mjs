@@ -972,6 +972,10 @@ for (const theme of themes) {
   await page.waitForSelector('.nav');
   await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  // QA5-6: the legacy fixture's "Imported N sessions" boot toast (main.tsx, 3000ms, no action)
+  // leaves at unpredictable points relative to the fixed waits below on a loaded CI runner, so a
+  // twiceMatch pair can straddle it (visible in shot A, gone in shot B) with no real regression.
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(250);
 
   const twiceMatch = async (name, opts = {}) => {
