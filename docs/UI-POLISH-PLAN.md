@@ -143,10 +143,11 @@ Silent: bottom-nav tab taps (remove App.tsx:96 haptic), Segmented view switchers
 | b2a Logging and rest (PR 1) | F6, I1, A9, F7, A1, A8, F9, F8 | Rest banner starts right, glides, shows the next set, ticks 3-2-1; logged sets look logged; one-tap 'Log 60 kg × 8'; keyboard Next moves through the set; PR pill pops once; bigger live targets |
 | b2b Live card (PR 2) | I2, I3, I4, F10, I5, A2 | Cards fold smoothly and auto-advance; calm active card; coach notes behind 'Why'; Undo for removals, hold to discard; tidy finish screen; sticky live header with progress line |
 | b3 Sheets and toasts | I6, A3, I7, F13 | Sheets slide up and down, pull to dismiss; coach sheet follows the finger; toasts centred, swipe away, easy Undo |
-| b4 Native | A4, F11 | Crisp phone-native clicks; screen stays on during a workout; no white flash at launch |
+| b4 Native | A4, F11, O1 | Crisp phone-native clicks; screen stays on during a workout; no white flash at launch; a thin, smooth logo animation at launch |
 | b5 Navigation and lists | I9, I10, I11, A5 | Tabs keep their scroll; re-tap goes to top; sliding segment thumb; lifted drag-reorder with auto-scroll; swipe to delete a past session; swipe months |
 | b6 Charts | I12, A6 | Crisp trend line with labels; current week obvious; scrub a chart to read values |
 | b7 Visual system | I13, I14, I15, I16, I17, I18, I19 | Real typeface; readable small text; calmer colour; visible layers; one spacing rhythm; even icons; designed empty state |
+| b8 Body tab (owner picks, §6b) | O2, O3 | Muscle panel as a clear recovery timeline with real dates; a compact recovery list |
 
 Order inside a batch = order in the table. Cross-batch dependencies: I1 needs F1 re-centring; F5 smoke (2) needs F6, smoke (1) needs I6; I2 scroll-margin uses A2's `--live-top-h` (falls back to 0); A3/A5/A6/F13 use the `track()` added in A3 and the gate `touchDrag` helper added in A3; I14's contrast probe needs the Paper text-2 change in I14 before I16 lands.
 
@@ -486,6 +487,131 @@ Manual device check (owner, Android phone, APK), per batch that touches it:
 - Gestures (b3, b5): sheet pull from handle and from scrolled-top content; list scroll inside sheets never drags the sheet; toast swipe; History row swipe does not fire Android back; calendar swipe; reorder with auto-scroll.
 - Keyboard (A8): Next/Done labels; the focused row stays above the keyboard.
 - Screen stays on through a 5-minute rest (A4); cold start shows no white frame (F11).
+
+## 6b. Owner picks (added 2026-09-25)
+
+The owner chose these from rendered samples. Build them as written and don't redesign them. O1 goes in b4, after F11. O2 and O3 form **b8 Body tab**, after b7 so they use its type and colours. O3 is waiting on the owner's pick.
+
+#### O1 Launch animation "Bar path", thin, no glow (owner pick B1) — must, b4
+- **User sees:** on cold start, a thin M/ARC line draws itself. The accent dot glides down into the dip like a controlled rep, then the line rises out and "M/ARC" fades into focus. The animation takes 1.6 s, and a tap skips it. With Reduce motion on, the finished logo shows until the app is ready.
+- **Reference:** artifact X93gWEa8SQvZyNUAQ1WizZ, variant B1. Copy its geometry and timings exactly.
+- **Files:**
+  - index.html: inline markup, style and script, so it paints before the bundle loads.
+  - src/main.tsx: one call after `render`.
+  - scripts/screenshot-gate.mjs: probes.
+- **Spec:**
+  - **Overlay.** Put `<div id="launch" aria-hidden="true">` in `<body>` before `#app`. It is `position:fixed; inset:0; z-index:2147483000`, and its background is the theme bg.
+  - **Theme colours.** An inline script reads `localStorage['marc.theme']` in try/catch and picks bg/ink/accent from this map. Unknown or missing values use silent-black. The values match src/theme/themes.ts:
+    - silent-black #08090a/#f7f8f8/#5e6ad2
+    - paper #ffffff/#37352f/#2383e2
+    - ember #07080a/#ffffff/#ff6363
+    - emerald #0f0f0f/#ededed/#3ecf8e
+    - midnight #0a2540/#f6f9fc/#635bff
+    Add a unit test that reads themes.ts and asserts the map matches, so a theme edit can't drift.
+  - **SVG.** `viewBox="0 0 180 320"`, `preserveAspectRatio="xMidYMid meet"`, filling the overlay. The contents are exactly the B1 build:
+    - `<g class="settle">` wraps a `<g transform="translate(47 100) scale(1.34)">`.
+    - The path is `M8 40H16L22 22L30 50L36 30L40 40H56` with `pathLength=100`, stroke = ink, `stroke-width=2.6`, round caps and joins, `stroke-dasharray=100` and `stroke-dashoffset=100`.
+    - Two chained SMIL `<animate>` on `stroke-dashoffset`:
+      - 100 → 45.93 over 0.72 s, `keySplines=".45 0 .25 1"`;
+      - then 45.93 → 0 over 0.5 s, `keySplines=".35 0 .2 1"`, `begin="<id>.end"`.
+    - A dot `<circle r=3.1 fill=accent>` with `<animateMotion>` along the same path: `keyPoints="0;0.5407"`, 0.72 s, the same spline, `fill=freeze`.
+    - The word is `<text x=90 y=196 text-anchor=middle>`, `font: 500 17px Inter, system-ui, sans-serif`, `letter-spacing:1.2px`, reading `M<tspan fill=accent>/</tspan>ARC`.
+    - No glow circle (that was B2).
+  - **CSS.** `.settle` uses `transform-box: view-box; transform-origin: 50% 45%` and animation `settle 1600ms cubic-bezier(.16,1,.3,1)`, from `scale(.975)` and opacity 0, with opacity 1 at 12%. The word animates `reveal 700ms cubic-bezier(.22,1,.36,1) 1050ms both`, from `translateY(5px)` and `blur(5px)` at opacity 0. Start both SMIL animations with `beginElement()` from the inline script.
+  - **Reduce motion.** Treat it as on when `matchMedia('(prefers-reduced-motion: reduce)').matches` or `localStorage['marc.motion']==='reduce'`, the same rule as src/ui/motion.ts `apply()`. Then:
+    - no SMIL and no CSS animation;
+    - `stroke-dashoffset=0`, the dot at `cx=30 cy=50`, the word at opacity 1.
+  - **Exit.** src/main.tsx calls `window.__marcLaunchReady?.()` straight after `render(...)`. The overlay leaves when the app is ready AND 1750 ms have passed since the script started. Under reduce, 0 ms. A `pointerdown` on the overlay also ends the wait.
+    - Leaving means: set `pointer-events:none`, fade opacity to 0 over 240 ms with `cubic-bezier(.3,0,.8,.15)` (100 ms under reduce), then `remove()`.
+    - Hard cap: remove it 4000 ms after start whatever happens.
+    - `window.__marcCrash` removes `#launch` first, so the error box is never hidden.
+  - **When it shows.** Only on a cold start, which happens because index.html runs once. It never shows on resume.
+  - **No hold.** Never block input once the app is ready: `pointer-events:none` is set before the fade starts.
+- **Acceptance** (gate):
+  - The existing contexts use `reducedMotion:'reduce'`. There, `#launch` is gone within 300 ms of `.nav` appearing, and the existing probes stay unchanged and pass.
+  - New context with `reducedMotion:'no-preference'`. The inline script sets `window.__marcLaunchT0 = performance.now()`, and all times below are measured from it with `waitForFunction`:
+    - `#launch svg path` exists;
+    - at 250 ms, `getComputedStyle(path).strokeDashoffset` parses to a value strictly between 46 and 100. This was checked in Chromium on 2026-09-25: the computed style reflects SMIL, reading 75.3px at 250 ms;
+    - at 1400 ms it is ≤ 1;
+    - `#launch` is gone by 2400 ms;
+    - in a fresh page, a click at 300 ms removes it by 700 ms.
+  - Paper: with `marc.theme=paper` set before load, the overlay's computed background is `rgb(255, 255, 255)`.
+  - Calling `__marcCrash('x')` removes `#launch`, and the crash box is visible.
+  - Owner device check: smooth on a cold start, and no white frame in Silent Black.
+- **Risk:** Low. The failure mode is an overlay that never leaves. The 4000 ms cap, the crash hook and `pointer-events:none` on ready cover it.
+
+#### O2 Muscle panel: recovery timeline (owner pick B) — must, b8
+- **User sees:** today's panel is scattered: three stats, a long sentence with "2d to 3d", a duplicate "at a glance" line, and an exercise list that repeats itself. It becomes one clear panel:
+  - a big % with a status pill;
+  - a bar from "Trained" to "Full" with real dates;
+  - four short facts;
+  - two buttons;
+  - "Logged / Try next" tabs.
+- **Reference:** artifact Hw5r18ZiFcyAKkXLL7EsNa, option B.
+- **Files:**
+  - src/slices/body/Body.tsx `MuscleDetail` (:111-150 at f86a8b5);
+  - src/ui/styles.css (new `.mtl-*` classes using tokens only);
+  - scripts/screenshot-gate.mjs.
+- **Spec:**
+  - **Remove** the "{label} at a glance" row (:125), the grid-3 stats (:126-130), the sentence (:131-136) and the chips section (:144-147).
+  - **Header row:**
+    - `${r.pct}%` in large tabular numbers, then "recovered".
+    - Right-aligned pill:
+      - "Held back by soreness" (warning) when `r.soreToday && !r.hoursLeft`;
+      - else "Recovering" (warning) when `r.recovering`;
+      - else "Ready" (positive).
+    - Never trained (`!r.lastTrainedAt`): show "—" and the pill "Not trained yet" (neutral).
+  - **Timeline** (only when `r.lastTrainedAt`):
+    - A 6 px track. The fill width is `r.pct%`, toned as today's Stat tone (:127). A 1 px tick sits at `READY_PCT%` (src/data/recovery.ts:61).
+    - Below it is a three-column label row:
+      - "Trained" + `formatDay(r.lastDay, {weekday:'short', day:'numeric'})`;
+      - "Ready" + the window;
+      - "Full" + the date.
+    - Each date is the day key of now + hours, shown as "Today" if it is today, else as `formatDay(key, {weekday:'short', day:'numeric'})`.
+    - Ready window from `r.readyInHours [lo, hi]`: "Mon 28 – Tue 29", or a single day when lo and hi fall on the same day.
+    - Full from `r.fullInHours`.
+    - If `readyInHours` is null and the muscle is recovering (the soreness case), Ready reads "When soreness eases". If it is not recovering, both read "Now".
+  - **Facts** (a key/value list, keys in text-2):
+    - "Last session": the most recently logged exercise for this muscle (`logged[0]`), then " · N sets". N counts that session's sets with `isWorkingSet` (src/brain/exposure.ts:34). Write "1 set" / "N sets".
+    - "Level": `levels.level`.
+    - "Accuracy": low → "Rough guess for now", medium → "Getting there", high → "Good". Add " · fitted to you" when `r.personalized`.
+    - After the list comes the `r.drivers` text line, kept as today (:137).
+  - **Actions row:**
+    - "Mark as fresh" as a real secondary button, only when `r.recovering`. It uses the existing `markFresh` (:121), with the hint below: "Use it if this muscle already feels ready."
+    - "Ask Escobar" button: reuse `AskAbout` with the same refTo. Style it as a button with that label if its current look is a small link; don't change its behaviour.
+  - **Tabs:**
+    - `Segmented` (src/ui/primitives.tsx:29) with the options `Logged · ${logged.length}` and `Try next · ${tryNext.length}`.
+    - `tryNext` = `direct` minus the exercises in `logged`, capped at 10.
+    - Default tab: Logged when `logged.length`, else Try next.
+    - Logged rows, up to 6:
+      - the name;
+      - the hint `Best ${load} × ${reps} · ${n} ${n===1?'session':'sessions'}`, where Best is the history entry with the highest `topKg` (ties go to higher `topReps`). With no load, use the best `bestReps` reps or `bestDurationSec` s over history.
+      - Trailing: `formatDay(last.day, {weekday:'short', day:'numeric'})`.
+    - Try next rows:
+      - the name, plus the equipment in text-2.
+      - When a workout is live (`state.value.active`) and the exercise isn't in it: a trailing "Add" button that calls `addExerciseToSession(ex)` (src/slices/workout/session.ts:267) and shows the toast `Added ${name} to today's workout`.
+      - When it's already in the workout: the hint "In workout".
+      - No workout live: no button.
+    - Empty states: "Nothing logged for this muscle yet." / "You already do every listed exercise for this muscle."
+  - **Palace.** Keep `usePalaceFocus('body.muscle', …)` and the Sheet palace id. Add a palace attribute `body.muscle-tabs` on the Segmented wrapper.
+- **Acceptance** (gate, 360 and 390 px, Silent Black and Paper):
+  - Seeded data: a leg session on day −2, plus one older split squat session.
+    - Glutes shows a % and a pill, and the timeline has three labels with real day names, none containing "d to".
+    - Nothing overflows horizontally, and no text is clipped (`scrollWidth ≤ clientWidth` on each label).
+    - Tabs read "Logged · 2" and "Try next · 8" for that seed.
+    - No text says "at a glance", "1 sessions" or "Low confidence".
+    - The Logged and Try next lists share no exercise.
+  - With a live workout: tapping Add on a Try next row adds that entry to `state.active.entries`, and the row then shows "In workout".
+  - Never-trained muscle: "Not trained yet", no timeline, and Try next is selected.
+  - Unit tests for the date-window helper:
+    - same day;
+    - across midnight;
+    - lo today and hi tomorrow;
+    - null window.
+- **Risk:** Low: display only. It reads no new data and writes only through the existing `markFresh` and `addExerciseToSession`.
+
+#### O3 Recovery list redesign — b8, waiting on the owner's pick
+- **Reference:** artifact 37p3RrJRgx1ezxxvUT6Gxt, options 1–5. The spec gets written here once the owner picks one.
 
 ## 7. Not doing and Later
 
