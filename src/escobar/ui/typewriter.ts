@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { reduced as isReducedMotion } from '@/ui/motion';
 
 /**
  * An empty chat bar types a suggested question, holds it, deletes it, then types the next
@@ -9,8 +10,7 @@ export function useTypewriter(lines: string[], fallback: string, active = true):
   const key = lines.join('|');
   useEffect(() => {
     if (!active || !lines.length) { setShown(fallback); return; }
-    let reduced = false;
-    try { reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* no matchMedia */ }
+    const reduced = isReducedMotion();
     let line = 0, len = 0, phase: 'type' | 'hold' | 'delete' | 'rest' = 'rest';
     let timer: ReturnType<typeof setTimeout>;
     const tick = () => {

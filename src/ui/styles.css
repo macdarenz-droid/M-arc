@@ -88,7 +88,6 @@ svg { display: block; }
 .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
 .view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .view, .sheet, .toast { animation: none !important; } * { transition: none !important; } }
 
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
@@ -218,10 +217,8 @@ svg { display: block; }
   background-size: 220% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
-  .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
-}
+html:not([data-motion="reduce"]) .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
 @media (prefers-reduced-motion: reduce) {
   .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
   .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
@@ -328,20 +325,16 @@ svg { display: block; }
 
 /* Palace spotlight (§7.2): a ring on the element Escobar is pointing at. */
 .palace-spotlight { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius-md); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
-@media (prefers-reduced-motion: no-preference) {
-  .palace-spotlight { animation: palace-glow 1.6s ease-out; }
-  @keyframes palace-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 40% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); } 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
-}
+html:not([data-motion="reduce"]) .palace-spotlight { animation: palace-glow 1.6s ease-out; }
+@keyframes palace-glow { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 40% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent); } 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 0%, transparent); } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* Escobar (§4): every colour from theme tokens; every animation has a reduced-motion fallback. */
 .escobar-mark { display: inline-block; flex: none; background-color: currentColor; -webkit-mask: url('../assets/escobar-mark.png') center / contain no-repeat; mask: url('../assets/escobar-mark.png') center / contain no-repeat; }
-@media (prefers-reduced-motion: no-preference) {
-  .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
-  .esc-caret { animation: esc-blink 1s step-end infinite; }
-  .esc-spin { animation: esc-rot 0.9s linear infinite; }
-  .esc-sheet .esc-panel { transition: height var(--dur-base) var(--ease-standard); }
-}
+html:not([data-motion="reduce"]) .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .esc-caret { animation: esc-blink 1s step-end infinite; }
+html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infinite; }
+html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(--dur-base) var(--ease-standard); }
 @keyframes esc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @keyframes esc-blink { 50% { opacity: 0; } }
 @keyframes esc-rot { to { transform: rotate(360deg); } }
@@ -440,10 +433,8 @@ svg { display: block; }
 .esc-drawer-detail { display: grid; gap: 4px; margin-top: 4px; }
 .esc-thinking { color: var(--text-2); }
 .esc-lift { display: inline-flex; color: var(--accent); }
-@media (prefers-reduced-motion: no-preference) {
-  .esc-lift { animation: esc-lift 0.9s ease-in-out infinite; }
-  .esc-thinking-text { animation: esc-fade var(--dur-enter) var(--ease-enter); }
-}
+html:not([data-motion="reduce"]) .esc-lift { animation: esc-lift 0.9s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .esc-thinking-text { animation: esc-fade var(--dur-enter) var(--ease-enter); }
 @keyframes esc-lift { 0%, 100% { transform: translateY(2px); } 50% { transform: translateY(-3px); } }
 @keyframes esc-fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 
@@ -470,18 +461,14 @@ svg { display: block; }
 .plan-verdict { font-size: 12.5px; }
 .plan-verdict.ok { color: var(--positive); }
 .plan-verdict.warn { color: var(--warning); }
-@media (prefers-reduced-motion: no-preference) {
-  .plan-chip { animation: esc-fade var(--dur-enter) var(--ease-enter); }
-  .plan-chip.pending { animation: esc-pulse 1.4s ease-in-out infinite; }
-  .plan-day { animation: esc-fade var(--dur-enter) var(--ease-enter); }
-}
+html:not([data-motion="reduce"]) .plan-chip { animation: esc-fade var(--dur-enter) var(--ease-enter); }
+html:not([data-motion="reduce"]) .plan-chip.pending { animation: esc-pulse 1.4s ease-in-out infinite; }
+html:not([data-motion="reduce"]) .plan-day { animation: esc-fade var(--dur-enter) var(--ease-enter); }
 
 /* Live session: hold an exercise and drag to reorder. No selection highlight, just movement. */
 .reorder-item { touch-action: pan-y; -webkit-touch-callout: none; }
 .reorder-list.dragging { user-select: none; -webkit-user-select: none; }
-@media (prefers-reduced-motion: no-preference) {
-  .reorder-list.dragging .reorder-item { transition: transform var(--dur-base) var(--ease-standard); }
-}
+html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transition: transform var(--dur-base) var(--ease-standard); }
 
 /* UI-23: narrow phones keep the set row on one line with the load fully visible. */
 @media (max-width: 380px) {

@@ -6,6 +6,7 @@ import { bodyView, go, historySeg, openPanel, validatePanelParams, type BodyView
 import { state } from '@/core/store';
 import { PALACE_BY_ID, type PalaceTarget } from './registry';
 import { signal } from '@preact/signals';
+import { reduced } from '@/ui/motion';
 
 /** The aria-live announcement for the last spotlight. */
 export const palaceAnnouncement = signal('');
@@ -41,8 +42,7 @@ export function spotlight(anchor: string, label?: string): boolean {
   // Prefer the one inside the top-most open dialog, else the last rendered.
   const el = els.reverse().find(x => x.closest('dialog[open]')) ?? els[0];
   if (!el) return false;
-  const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+  el.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
   el.classList.remove('palace-spotlight');
   void el.offsetWidth;
   el.classList.add('palace-spotlight');

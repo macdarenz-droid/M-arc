@@ -40,15 +40,52 @@ export function springEase(): string {
   return v || EASE.enter;
 }
 
+const MOTION_PREF_KEY = 'marc.motion';
+
+function readPref(): 'reduce' | null {
+  if (!hasDom()) return null;
+  try { return localStorage.getItem(MOTION_PREF_KEY) === 'reduce' ? 'reduce' : null; } catch { return null; }
+}
+
+function writePref(p: 'reduce' | null): void {
+  if (!hasDom()) return;
+  try {
+    if (p === 'reduce') localStorage.setItem(MOTION_PREF_KEY, 'reduce');
+    else localStorage.removeItem(MOTION_PREF_KEY);
+  } catch { /* storage unavailable (private mode, quota) */ }
+}
+
+const mq = hasDom() ? matchMedia('(prefers-reduced-motion: reduce)') : null;
 const reducedListeners = new Set<(r: boolean) => void>();
+
+function apply(): void {
+  if (!hasDom()) return;
+  const on = !!mq?.matches || readPref() === 'reduce';
+  if (on) document.documentElement.dataset.motion = 'reduce';
+  else delete document.documentElement.dataset.motion;
+  for (const cb of reducedListeners) cb(on);
+}
+
+mq?.addEventListener('change', apply);
+apply();
+
+/** In-app override on top of the OS setting (Settings › Feedback › Reduce motion). */
+export function setMotionPref(p: 'reduce' | null): void {
+  writePref(p);
+  apply();
+}
+
+/** Whether the in-app override is set, independent of the OS setting (for the Settings toggle). */
+export function motionPrefIsReduce(): boolean {
+  return readPref() === 'reduce';
+}
+
+/** Whether the OS itself requests reduced motion (the Settings toggle is disabled and forced on when true). */
+export function osReducedMotion(): boolean {
+  return !!mq?.matches;
+}
 
 export function onReducedChange(cb: (r: boolean) => void): () => void {
   reducedListeners.add(cb);
   return () => reducedListeners.delete(cb);
-}
-
-/** Called whenever the reduce-motion state may have changed (OS pref or in-app toggle). */
-export function notifyReducedChange(): void {
-  const r = reduced();
-  for (const cb of reducedListeners) cb(r);
 }

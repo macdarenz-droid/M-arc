@@ -22,6 +22,7 @@ import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } fro
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
 import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
+import { onReducedChange, osReducedMotion, motionPrefIsReduce, setMotionPref } from '@/ui/motion';
 import { APP_VERSION } from '@/core/version';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { backupAgeDays, buildBackup, parseBackup } from './backup';
@@ -70,6 +71,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
   const [rescue, setRescue] = useState(() => rescueRaw() != null);
   const [exact, setExact] = useState(exactAlarmsAllowed());
   useEffect(() => { void refreshExactAlarm().then(setExact); }, []);
+  const [motionOn, setMotionOn] = useState(() => osReducedMotion() || motionPrefIsReduce());
+  useEffect(() => onReducedChange(setMotionOn), []);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
@@ -160,6 +163,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Feedback" palace="settings.haptics">
           <Card>
             <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span><div class="hint">{hapticSupport() === 'native' ? 'Android haptics' : hapticSupport() === 'web' ? 'Browser vibration' : 'No vibration on this device'}</div></Row>
+            <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
             <Button size="sm" onClick={() => { void haptic.warning(); showToast('Sent a test buzz'); }}>Test haptic</Button>
           </Card>
         </Section>
