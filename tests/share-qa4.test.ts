@@ -1,7 +1,7 @@
 /** QA4 (LIVE-QA-4, "Share cards"): one block per finding; each fails without its fix. */
 import { describe, it, expect } from 'vitest';
 import { session, sets } from './helpers';
-import { cardData, isEmptyCard, latestSession } from '@/slices/share/cardData';
+import { cardData, isEmptyCard, latestSession, timeText } from '@/slices/share/cardData';
 import { hasWorkingSets } from '@/brain/exposure';
 import { cardFileName, cardSvg, paletteFor } from '@/slices/share/cards';
 import { THEMES } from '@/theme/themes';
@@ -136,5 +136,19 @@ describe('QA4-9: a bodyweight-only card headlines sets, not "0 kg lifted"', () =
   it('the receipt drops TOTAL LIFTED', () => {
     expect(cardSvg(d, 'receipt', 'story', pal)).not.toContain('TOTAL LIFTED');
     expect(cardSvg(d, 'receipt', 'square', pal)).not.toContain('TOTAL LIFTED');
+  });
+});
+
+describe('QA4-10: period time says "+" when some sessions have no recorded duration', () => {
+  const timed = session('2026-09-21', [{ id: BENCH, sets: sets(60, 5) }]); // 1 h
+  const legacy = { ...session('2026-09-22', [{ id: BENCH, sets: sets(60, 5) }]), durationSec: 0 };
+  const week = (ss: Session[]) => cardData({ sessions: ss, custom: [], unit: 'kg', today: TODAY, period: 'week' });
+  it('a known total with a gap reads as a minimum', () => {
+    expect(timeText(week([timed, legacy]))).toBe('1 h 0 m+');
+    expect(week([timed, legacy]).timePartial).toBe(true);
+  });
+  it('all timed: no "+"; nothing timed: a dash', () => {
+    expect(timeText(week([timed]))).toBe('1 h 0 m');
+    expect(timeText(week([legacy]))).toBe('—');
   });
 });

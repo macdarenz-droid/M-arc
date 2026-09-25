@@ -39,6 +39,8 @@ export interface ShareCardData {
   sessions: number;
   sets: number;
   durationSec: number;
+  /** Some session in the period has no recorded duration, so `durationSec` is a minimum (QA4-10). */
+  timePartial: boolean;
   volumeKg: number;
   /** Volume in `unit`, rounded to a whole number. */
   volume: number;
@@ -170,6 +172,7 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
       sessions: s ? 1 : 0,
       sets: totals.sets,
       durationSec: s?.durationSec ?? 0,
+      timePartial: false,
       volumeKg: Math.round(totals.volumeKg),
       volume: Math.round(kgToDisplay(totals.volumeKg, unit)),
       records: recs,
@@ -186,6 +189,7 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
     sessions: inRange.length,
     sets: totals.sets,
     durationSec: inRange.reduce((a, s) => a + (s.durationSec || 0), 0),
+    timePartial: inRange.some(s => !(s.durationSec > 0)),
     volumeKg: Math.round(totals.volumeKg),
     volume: Math.round(kgToDisplay(totals.volumeKg, unit)),
     records: recs,
@@ -211,14 +215,16 @@ export function volumeShort(volume: number, unit: LoadUnit): string {
 }
 
 /** Training time: a workout as a clock (58:12), a period in hours and minutes (3 h 52 m, 131 h). */
-export function timeText(d: Pick<ShareCardData, 'period' | 'durationSec'>): string {
+export function timeText(d: Pick<ShareCardData, 'period' | 'durationSec'> & { timePartial?: boolean }): string {
   // Imported and past sessions can have no recorded duration: a dash, not "0 m".
   if (!(d.durationSec > 0)) return '—';
   if (d.period === 'workout') return formatClock(d.durationSec);
   const mins = Math.round(d.durationSec / 60);
   const h = Math.floor(mins / 60), m = mins % 60;
-  if (h >= 100) return `${h} h`;
-  return h ? `${h} h ${m} m` : `${m} m`;
+  // QA4-10: with untimed sessions in the period the total is a minimum.
+  const plus = d.timePartial ? '+' : '';
+  if (h >= 100) return `${h} h${plus}`;
+  return `${h ? `${h} h ${m} m` : `${m} m`}${plus}`;
 }
 
 /** The most of one thing a card will count: "≈ 188 red 25 kg plates" reads well, "≈ 4,000 gold bars" doesn't. */
