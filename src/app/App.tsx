@@ -27,7 +27,7 @@ import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
 import { haptic } from '@/native/haptics';
-import { checkingWorkoutOwnership, ownershipMessage, workoutOwnership, workoutOwnershipNotice } from '@/core/workoutOwnership';
+import { checkingWorkoutOwnership, ownershipMessage, workoutOwnership, workoutOwnershipNotice, workoutHeartCaptureNotice } from '@/core/workoutOwnership';
 import { saveRescueCopy } from './ErrorBoundary';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
@@ -101,6 +101,7 @@ export function App() {
         Checking watch workout…
         <button type="button" class="btn btn-quiet btn-sm" onClick={() => showPanel('settings', { section: 'data' })}>Settings and backup</button>
       </div>}
+      {workoutHeartCaptureNotice.value && <div class="banner small" role="status">{workoutHeartCaptureNotice.value}</div>}
       {workoutOwnershipNotice.value && <div class="banner" role="status">{workoutOwnershipNotice.value}</div>}
       {workoutBlocked && !checkingWorkoutOwnership.value && <div class="banner warn" role="status">
         Live workout needs recovery.

@@ -98,7 +98,7 @@ public class WearEnginePlugin extends Plugin {
         return new JSObject().put("schema", 1).put("run", run).put("active", active)
             .put("authorized", authorized).put("receiverReady", receiverReady).put("devices", deviceList)
             .put("events", new JSArray(events)).put("dropped", dropped).put("persisted", persisted)
-            .put("environment", environment);
+            .put("environment", environment).put("heartCaptureErrors", WorkoutHeartRecorder.processDiagnostics());
     }
     private void persist() {
         final String json = snapshot().toString();

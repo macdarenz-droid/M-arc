@@ -270,6 +270,7 @@ public final class WatchService extends Service {
         return "Status: " + status + "\nDetails: " + detail + "\nPackets received: " + session.packets
             + "\nLast packet interval (s): " + session.lastIntervalSeconds
             + "\n\nDiscovered GATT services and characteristics:\n" + String.join("\n",services)
+            + "\n\nWorkout heart capture errors (exception classes only):\n" + (heartRecorder == null ? "" : heartRecorder.diagnostics())
             + "\n\nConnection log:\n" + String.join("\n",logs)
             + "\n\nNo Bluetooth addresses, heart-rate values or Health Connect records included.\n";
     }

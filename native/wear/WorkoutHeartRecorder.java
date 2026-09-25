@@ -25,6 +25,15 @@ public final class WorkoutHeartRecorder {
     private final Executor worker;
     private ClockIdentity clock;
     private volatile Target target;
+    private final ArrayDeque<String> captureErrors = new ArrayDeque<>();
+
+    private synchronized void captureFailure(Exception error) {
+        captureErrors.addLast(error.getClass().getSimpleName());
+        while (captureErrors.size() > 32) captureErrors.removeFirst();
+    }
+    /** Exception classes only: never messages, SQL, IDs, sensor values or stack traces. */
+    public synchronized String diagnostics() { return String.join("\n", captureErrors); }
+    public static synchronized String processDiagnostics() { return instance == null ? "" : instance.diagnostics(); }
 
     public static synchronized WorkoutHeartRecorder get(Context context) {
         if (instance == null) instance = new WorkoutHeartRecorder(context.getApplicationContext(),
@@ -37,18 +46,19 @@ public final class WorkoutHeartRecorder {
         this.context = context;
         this.worker = worker;
         worker.execute(() -> {
-            clock = clockIdentity(() -> Settings.Global.getInt(context.getContentResolver(), Settings.Global.BOOT_COUNT, -1));
+            clock = clockIdentity(() -> Settings.Global.getInt(context.getContentResolver(), Settings.Global.BOOT_COUNT, -1), this::captureFailure);
             try (WorkoutCommandStore store = new WorkoutCommandStore(context)) { refreshTarget(store); }
-            catch (Exception ignored) { /* An optional native read must never break ordinary BLE. */ }
+            catch (Exception error) { captureFailure(error); /* Ordinary BLE remains usable. */ }
         });
     }
 
     record ClockIdentity(String id, String scope) {}
-    static ClockIdentity clockIdentity(IntSupplier bootCount) {
+    static ClockIdentity clockIdentity(IntSupplier bootCount) { return clockIdentity(bootCount, error -> {}); }
+    private static ClockIdentity clockIdentity(IntSupplier bootCount, Consumer<Exception> failure) {
         try {
             int count = bootCount.getAsInt();
             if (count >= 0) return new ClockIdentity("boot-" + count, "boot");
-        } catch (RuntimeException ignored) { /* Not available on this device. */ }
+        } catch (RuntimeException error) { failure.accept(error); }
         // Never infer a boot from wall time; unknown boot identity is process-local only.
         return new ClockIdentity(PROCESS_CLOCK, "process");
     }
@@ -105,6 +115,7 @@ public final class WorkoutHeartRecorder {
                             result.put("heartCapture", capture.put("available", true));
                         }
                     } catch (Exception captureUnavailable) {
+                        captureFailure(captureUnavailable);
                         // Optional capture metadata must never turn a confirmed owner into a failed
                         // ownership read (the phone may be recovering a lost local marker).
                         result.put("heartCapture", new JSONObject().put("available", false)
@@ -112,6 +123,7 @@ public final class WorkoutHeartRecorder {
                     }
                     success.accept(result);
                 } catch (Exception e) {
+                    captureFailure(e);
                     if ("read".equals(action)) {
                         try {
                             // Read only a known core schema; never use this to acknowledge a write,
@@ -121,12 +133,12 @@ public final class WorkoutHeartRecorder {
                                     .put("coverage", "unverified").put("writeFailed", true));
                             success.accept(recovered);
                             return;
-                        } catch (Exception unavailable) { /* Retain the existing failed-read policy. */ }
+                        } catch (Exception unavailable) { captureFailure(unavailable); }
                     }
                     failure.run();
                 }
             });
-        } catch (RuntimeException e) { failure.run(); }
+        } catch (RuntimeException e) { captureFailure(e); failure.run(); }
     }
 
     /** Called on the service thread after parsing, with times/owner captured on the BLE callback. */
@@ -138,7 +150,7 @@ public final class WorkoutHeartRecorder {
                 Sample sample = new Sample(sourceId, sequence, epochMs, elapsedMs, measurement.bpm, measurement.contactDetected);
                 if (atReceipt.pending.size() < MAX_PENDING) atReceipt.pending.addLast(sample);
                 else atReceipt.dropped++;
-            } catch (IllegalArgumentException invalid) { atReceipt.dropped++; }
+            } catch (IllegalArgumentException invalid) { captureFailure(invalid); atReceipt.dropped++; }
             schedule(atReceipt);
         }
     }
@@ -148,7 +160,7 @@ public final class WorkoutHeartRecorder {
         if (current.scheduled || (current.pending.isEmpty() && current.dropped == 0)) return;
         current.scheduled = true;
         try { worker.execute(() -> drain(current)); }
-        catch (RuntimeException e) { current.scheduled = false; current.writeFailed = true; }
+        catch (RuntimeException e) { captureFailure(e); current.scheduled = false; current.writeFailed = true; }
     }
 
     private void drain(Target current) {
@@ -170,6 +182,7 @@ public final class WorkoutHeartRecorder {
                 schedule(current); // Yield to already queued ownership work between small batches.
             }
         } catch (Exception e) {
+            captureFailure(e);
             synchronized (current) { current.scheduled = false; current.writeFailed = true; }
             // Preserve the bounded tail. A new packet or ownership read retries it; no busy loop.
         }

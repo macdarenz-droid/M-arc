@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { freshState, type ActiveSession } from '@/core/models';
 import { flushSave, initStore, replaceState, resetState, state, update, updateWorkout } from '@/core/store';
-import { assertPhoneWorkoutWriter, checkingWorkoutOwnership, handoverWorkout, initWorkoutOwnership, reconcileWorkoutOwnership, WORKOUT_HANDOVER_KEY, workoutOwnership, workoutOwnershipNotice, type HandoverSeed, type OwnershipBackend, type OwnershipReply } from '@/core/workoutOwnership';
+import { assertPhoneWorkoutWriter, checkingWorkoutOwnership, handoverWorkout, initWorkoutOwnership, reconcileWorkoutOwnership, WORKOUT_HANDOVER_KEY, workoutOwnership, workoutOwnershipNotice, workoutHeartCaptureNotice, type HandoverSeed, type OwnershipBackend, type OwnershipReply } from '@/core/workoutOwnership';
 import { workoutHandoverPhone } from '@/native/workoutOwnership';
 import { commitSetById, discardSession, finishSession, pauseSession, setSetById, startRest } from '@/slices/workout/session';
 import { captureHeartInputs, recentLiveBpms, resetHeartCapture, startHeartCapture } from '@/slices/workout/heart';
@@ -321,5 +321,24 @@ describe('workout ownership handover', () => {
     expect(await recover(b)).toBe(true);
     latestMeasurement.value = { ...sample };
     expect(recentLiveBpms(10)).toEqual([128]);
+  });
+});
+
+describe('optional native heart capture notice', () => {
+  it.each([{ available: false }, { available: true, writeFailed: true }])('shows a non-blocking note for %j without losing the owner', async heartCapture => {
+    const b = backend();
+    const handover = b.handover;
+    b.handover = async seed => ({ ...await handover(seed), heartCapture });
+    expect(await begin(b)).toBe(true);
+    expect(workoutOwnership.value).toBe('native');
+    expect(workoutHeartCaptureNotice.value).toBe("Watch heart rate isn't being saved for this workout");
+    expect(() => update(s => ({ ...s, profile: { ...s.profile, name: 'Usable settings' } }))).not.toThrow();
+    expect(flushSave()).toBe(true);
+    await recover({ ...b, read: async () => ({ ...await b.read(), heartCapture: { available: true, writeFailed: false } }) });
+    expect(workoutHeartCaptureNotice.value).toBeNull();
+  });
+  it('does not invent a heart failure for legacy replies or a phone-owned workout', async () => {
+    await begin(backend()); expect(workoutHeartCaptureNotice.value).toBeNull();
+    initWorkoutOwnership(memory()); expect(workoutHeartCaptureNotice.value).toBeNull();
   });
 });

@@ -451,4 +451,19 @@ public class WorkoutHeartRecorderTest {
         assertThrows(Exception.class, () -> store.handover(seed("h-1", "s-1")));
     }
 
+    @Test public void captureDiagnosticsContainOnlyExceptionClassesAndAreBounded() throws Exception {
+        store.handover(seed("h-1", "s-1"));
+        Worker worker = new Worker(); WorkoutHeartRecorder recorder = recorder(worker);
+        store.getWritableDatabase().execSQL("CREATE TRIGGER fail_private BEFORE INSERT ON heart_samples BEGIN SELECT RAISE(ABORT,'private h-1 s-1 ble-private bpm128'); END");
+        recorder.record(recorder.targetAtReceipt(), "ble-private", 1, hr(128), WALL, 1000); worker.finish();
+        for (int i = 0; i < 40; i++) { read(recorder, worker); worker.finish(); }
+        String diagnostic = recorder.diagnostics();
+        assertFalse(diagnostic.isEmpty());
+        assertTrue(diagnostic.split("\n").length <= 32);
+        for (String line : diagnostic.split("\n")) assertTrue(line, line.matches("[A-Za-z0-9_.$]+Exception"));
+        for (String secret : List.of("h-1", "s-1", "ble-private", "bpm128", "private", "INSERT", "heart_samples"))
+            assertFalse(diagnostic.contains(secret));
+        assertTrue(service(recorder).diagnostics().contains(diagnostic));
+    }
+
 }

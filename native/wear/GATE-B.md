@@ -186,7 +186,10 @@ Both Android backup formats exclude the journal DB and its WAL/SHM/journal files
 other app backup rules are preserved. No workout evidence relies on Auto Backup.
 
 The local ownership reply includes capture counts, pending/write-failure state
-and `coverage: unverified`. The current UI does not consume this extra metadata.
+and `coverage: unverified`. The UI shows a small, non-blocking note when capture is unavailable or a write
+failed: "Watch heart rate isn't being saved for this workout". Healthy subsequent
+metadata clears the note. Diagnostics retain only the last 32 exception class
+names, never exception messages, SQL, workout IDs or heart values.
 Failure to read optional capture metadata still returns any confirmed native
 owner, so a lost phone marker cannot reopen live editing through that failure.
 If the journal migration itself fails, a read-only fallback can recover a

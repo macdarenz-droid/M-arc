@@ -8,6 +8,7 @@ export const workoutOwnership = signal<Ownership>('web');
 /** Pending reads temporarily freeze live writes without establishing a known handover. */
 export const checkingWorkoutOwnership = signal(false);
 export const workoutOwnershipNotice = signal<string | null>(null);
+export const workoutHeartCaptureNotice = signal<string | null>(null);
 export const ownershipMessage = 'Workout editing is paused until recovery is complete. Reopen M/ARC to retry.';
 const unavailableMessage = 'Could not check the watch workout. You can keep using M/ARC on your phone.';
 type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
@@ -15,7 +16,7 @@ export interface HandoverSeed { handoverId: string; installationId: string; snap
 interface Checkpoint { version: 1; phase: 'prepared' | 'native'; seed: HandoverSeed }
 export type OwnershipReply =
   | { owner: 'web'; cancelledHandoverId?: string }
-  | { owner: 'native'; seed: HandoverSeed; snapshot: string }
+  | { owner: 'native'; seed: HandoverSeed; snapshot: string; heartCapture?: { available?: boolean; writeFailed?: boolean } }
   | { owner: 'blocked' };
 export interface OwnershipBackend {
   read(): Promise<OwnershipReply>;
@@ -64,6 +65,7 @@ export function initWorkoutOwnership(next: StorageLike, requireNativeCheck = fal
   generation++; busy = false; storage = next;
   nativeEnabled = requireNativeCheck; knownHandover = false;
   workoutOwnershipNotice.value = null;
+  workoutHeartCaptureNotice.value = null;
   checkingWorkoutOwnership.value = requireNativeCheck;
   workoutOwnership.value = requireNativeCheck ? 'checking' : 'web';
   refreshWorkoutOwnership();
@@ -92,6 +94,8 @@ function applyReply(reply: OwnershipReply, prior: Checkpoint | null, phone: Hand
       throw new Error('Workout handover changed during request');
   }
   if (reply?.owner === 'native') {
+    workoutHeartCaptureNotice.value = reply.heartCapture?.available === false || reply.heartCapture?.writeFailed === true
+      ? "Watch heart rate isn't being saved for this workout" : null;
     knownHandover = true; // A read owner remains protected even if caching/validation fails.
     workoutOwnership.value = 'checking';
     if (!validSeed(reply.seed) || !bounded(reply.snapshot) || (prior && !sameSeed(prior.seed, reply.seed)))
@@ -114,6 +118,7 @@ function applyReply(reply: OwnershipReply, prior: Checkpoint | null, phone: Hand
     throw new Error('Known workout handover requires recovery');
   }
   knownHandover = false;
+  workoutHeartCaptureNotice.value = null;
   workoutOwnership.value = 'web';
   return true;
 }
