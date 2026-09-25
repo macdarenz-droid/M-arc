@@ -55,7 +55,7 @@ Fix them in this order. Each fix gets a test that fails before and passes after,
   - `sessionsToday` also includes a session whose `endedAt` falls on today, when it ended within the last 6 hours.
   - QA8-1 and QA8-2 use the same helper, e.g. `trainedToday(sessions, today, now)` in src/app/selectors.ts or src/core/dates.ts, one function for all three.
   - The stored `day` stays the start day, so there's no data change.
-- **Test:** a session from Fri 23:30 to Sat 00:40, checked at Sat 05:30: `trainedToday` is true. Checked at Sat 18:00: false. Checked on Fri at 23:59: true.
+- **Test:** a session from Fri 23:30 to Sat 00:40, checked at Sat 05:30: `trainedToday` is true. Checked at Sat 18:00: false. The session still counts as Fri 25 in History.
 
 ## Rejected (not a bug)
 - A worry that Escobar's get_plan/get_overview would describe today's split as still to do: the model already gets `trainedToday`, so no change.
