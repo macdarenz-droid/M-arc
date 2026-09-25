@@ -152,3 +152,23 @@ W1 and W2 have two gaps. Neither can happen while handover is disabled. Re-check
   - Also, both low:
     - (a) show.ts:63 lift_trend 'volume': for an assisted exercise, use the sum of reps.
     - (b) cardData.ts:119-123: for assisted exercises, pick the top from all working sets sorted by kg ascending. When top.kg is 0, omit the '@… assist' load.
+
+## Re-check of the QA3 b-fixes (PR #13 @ 7bd7487)
+
+Fixed: QA3-2b, 6b, 8b (including stored sessions without plannedId), 11b and 12b. The original QA3-2, 3, 11 and 12 scenarios still pass, and the show.ts merge keeps both sides. Two small follow-ups:
+
+- **QA3-7c (a regression vs main) · The wrong spot again after the person's own swap** (session.ts:402).
+  - Examples:
+    - Split [bench, DB shoulder press, fly]. Escobar removes shoulder press, and the person swaps bench for incline. It saves [shoulder press, incline, fly].
+    - Split [row, bench, fly]. Escobar swaps bench, and the person swaps row for pulldown. It saves [bench, pulldown, fly].
+  - Fix: `const pos = out.findIndex(o => o.exerciseId === nid || o.exerciseId === substituteForFrom.get(nid)?.exerciseId || done.some(e => e.exerciseId === o.exerciseId && e.plannedId === nid));` with the comment "QA3-7c: or the person's own substitute for it (substituteEntry keeps plannedId = the split id)."
+  - Tests: both examples above, expecting [incline, DB shoulder press, fly] and [pulldown, bench, fly].
+- **QA3-3c · Above the rack, lb users still see odd numbers in a lighter week or under an Escobar factor.** A 225 lb carry gives 202.8 / 213.8 / 235.9 lb. (Main capped these at 150 lb, so this is not a regression.)
+  - Fix: add a 5th parameter `scaled = false` to snapToEquipment.
+  - In suggestNext: `const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);`, passed as the 5th argument.
+  - In the above-the-rack branch, before `const value`: `if (scaled && profile.unit === 'lb') { const p = loadableNear(s.kg, { unit: 'lb', step: 5, source: 'default', updatedAt: '' }, force ?? 'nearest'); return { ...s, kg: p.kg, unit: p.unit, value: p.value, target: s.target.replace(`${s.kg} kg`, `${p.value} lb`), sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: p.kg })) }; }`
+  - The lb-only guard leaves kg users unchanged.
+  - Tests with a 225 lb carry (kg 102.058, entered 225 lb, 40 m):
+    - lighter week 0.9 → '200 lb · 40 m';
+    - loadFactor 0.95 → '210 lb · 45 m';
+    - loadFactor 1.05 → '235 lb · 45 m'.
