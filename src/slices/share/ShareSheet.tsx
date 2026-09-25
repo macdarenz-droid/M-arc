@@ -16,7 +16,7 @@ import { saveImage, shareImage } from '@/native/share';
 import markUrl from '@/assets/escobar-mark.png?inline';
 import { WEIGHT_THINGS } from '@/data/weights';
 import { cardData, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
-import { CARD_PX, CARD_STYLES, cardSvg, paletteFor, type CardFormat } from './cards';
+import { CARD_PX, CARD_STYLES, cardFileName, cardSvg, paletteFor, type CardFormat } from './cards';
 
 const STYLE_KEY = 'marc.share.style';
 const readStyle = (): number => { try { const n = Number(localStorage.getItem(STYLE_KEY)); return Number.isInteger(n) && n >= 0 && n < CARD_STYLES.length ? n : 0; } catch { return 0; } };
@@ -105,7 +105,6 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   };
 
   const style = CARD_STYLES[current] ?? CARD_STYLES[0]!;
-  const fileName = `marc-${period}-${style.id}-${format === 'story' ? '9x16' : '1x1'}-${data.to}.png`;
   const empty = data.sessions === 0;
   const run = async (kind: 'save' | 'share') => {
     if (busy || empty) return;
@@ -113,6 +112,7 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
     try {
       const px = CARD_PX[format];
       const png = await svgToPng(svgs[current]!, px.w, px.h);
+      const fileName = cardFileName({ period, style: style.id, format, to: data.to, now: new Date(), sessionId: period === 'workout' ? workout?.id : null });
       const r = kind === 'save' ? await saveImage(fileName, png) : await shareImage(fileName, png, `My M/ARC ${style.name.toLowerCase()}`);
       if (r.message) say(r.message);
       // The card on screen keeps its line; the next one opened picks another.

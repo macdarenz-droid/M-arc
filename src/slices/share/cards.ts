@@ -19,6 +19,16 @@ export const CARD_STYLES: Array<{ id: CardStyle; name: string }> = [
 ];
 /** Export size in pixels. */
 export const CARD_PX: Record<CardFormat, { w: number; h: number }> = { story: { w: 1080, h: 1920 }, square: { w: 1080, h: 1080 } };
+/**
+ * The saved PNG's name. Local time to the second, plus the session on a workout card, so a second
+ * Save never overwrites the first (QA4-4): two sessions on one day, or the same card with a new photo.
+ */
+export function cardFileName(o: { period: string; style: CardStyle; format: CardFormat; to: string; now: Date; sessionId?: string | null }): string {
+  const p2 = (n: number) => String(n).padStart(2, '0');
+  const time = `${p2(o.now.getHours())}${p2(o.now.getMinutes())}${p2(o.now.getSeconds())}`;
+  const sid = o.sessionId ? `-${o.sessionId.replace(/[^A-Za-z0-9_-]/g, '')}` : '';
+  return `marc-${o.period}-${o.style}-${o.format === 'story' ? '9x16' : '1x1'}-${o.to}-${time}${sid}.png`;
+}
 const W = 360;
 const H: Record<CardFormat, number> = { story: 640, square: 360 };
 

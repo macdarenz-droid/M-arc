@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { session, sets } from './helpers';
 import { cardData } from '@/slices/share/cardData';
+import { cardFileName } from '@/slices/share/cards';
 import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly';
 import { modeOf } from '@/brain/history';
 import type { Session } from '@/core/models';
@@ -50,5 +51,22 @@ describe('QA4-2: carries, sleds and loaded holds read as distance or time, not "
   it('period lines use the same BW rule', () => {
     const d = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'week' });
     expect([line(d, FARMER).value, line(d, SLED).value, line(d, PLANK).value]).toEqual(['—', 'BW', '—']);
+  });
+});
+
+describe('QA4-4: every Save gets its own file name', () => {
+  const at = (h: number, m: number, sec: number) => new Date(2026, 8, 23, h, m, sec);
+  it('adds the local time, and the session id on workout cards', () => {
+    expect(cardFileName({ period: 'week', style: 'poster', format: 'story', to: TODAY, now: at(9, 5, 7) })).toBe('marc-week-poster-9x16-2026-09-23-090507.png');
+    expect(cardFileName({ period: 'workout', style: 'receipt', format: 'square', to: TODAY, now: at(18, 0, 0), sessionId: 's_mf2x_ab12' })).toBe('marc-workout-receipt-1x1-2026-09-23-180000-s_mf2x_ab12.png');
+  });
+  it('two saves a second apart, or two sessions on one day, never share a name', () => {
+    const a = cardFileName({ period: 'week', style: 'poster', format: 'story', to: TODAY, now: at(9, 5, 7) });
+    expect(cardFileName({ period: 'week', style: 'poster', format: 'story', to: TODAY, now: at(9, 5, 8) })).not.toBe(a);
+    const s1 = cardFileName({ period: 'workout', style: 'poster', format: 'story', to: TODAY, now: at(9, 5, 7), sessionId: 's_1' });
+    expect(cardFileName({ period: 'workout', style: 'poster', format: 'story', to: TODAY, now: at(9, 5, 7), sessionId: 's_2' })).not.toBe(s1);
+  });
+  it('keeps odd characters out of the name', () => {
+    expect(cardFileName({ period: 'workout', style: 'poster', format: 'story', to: TODAY, now: at(1, 2, 3), sessionId: 'a/b c:d' })).toBe('marc-workout-poster-9x16-2026-09-23-010203-abcd.png');
   });
 });
