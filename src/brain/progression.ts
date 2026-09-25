@@ -11,7 +11,7 @@
  *  8. Otherwise                      → add a rep.
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
-import { loadableNear } from './units';
+import { loadableNear, loadableTopKg } from './units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
@@ -85,11 +85,18 @@ export interface ProgressionContext {
   loadFactor?: number;
 }
 
-const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
+// QA3-11: distance/duration are a conditioning carry or sled's own modes. Their load never rises
+// on its own (only a deload or an Escobar cut factor changes it, always downward), so they always
+// snap down; 'nearest' could round back up past an intentional reduction.
+const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down', distance: 'down', duration: 'down' };
 
 /** Restates a suggestion's loads as loads the equipment can make, in its own unit. */
-function snapToEquipment(s: Suggestion, profile: EquipmentProfile): Suggestion {
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false): Suggestion {
   if (s.kg == null) return s;
+  // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
+  // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
+  // field groups them together.
+  if (conditioning && s.kg > loadableTopKg(profile) + 0.01) return s;
   const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
   const snap = loadableNear(s.kg, profile, dir);
   const oldLabel = `${s.kg} kg`;
@@ -115,7 +122,8 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
   if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
   // QA2-FE-2, QA2-FE-7: a loaded carry's target snaps to the gym's equipment too (70 lb, not 31.751 kg).
-  if (ctx?.equipment && (modeOf(exerciseId, custom) === 'weighted' || (modeOf(exerciseId, custom) === 'conditioning' && s.kg != null))) s = snapToEquipment(s, ctx.equipment);
+  const mode = modeOf(exerciseId, custom);
+  if (ctx?.equipment && (mode === 'weighted' || (mode === 'conditioning' && s.kg != null))) s = snapToEquipment(s, ctx.equipment, mode === 'conditioning');
   return s;
 }
 

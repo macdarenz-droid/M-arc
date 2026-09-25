@@ -135,3 +135,21 @@ describe('carries in lb and timed rep moves (QA2-FE-2, QA2-FE-7, QA2-FE-8)', () 
     expect(n.target).toBe('16 reps');
   });
 });
+
+describe('QA3-3, QA3-11: a conditioning load never snaps across the ladder', () => {
+  it('a trap-bar carry heavier than the dumbbell rack keeps its logged load, not capped at 60 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 100, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.target).toBe('100 kg · 45 m');
+    expect(n.kg).toBe(100);
+  });
+  it('a lighter-week carry snaps down, never up towards last time\'s load', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), deload });
+    // half(32 * 0.9) = 29 kg, unreachable on the 2.5 kg-step ladder; 'nearest' rounds up to 30, 'down' picks 27.5.
+    expect(n.kg).toBe(27.5);
+  });
+});
