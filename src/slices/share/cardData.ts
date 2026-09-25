@@ -156,8 +156,7 @@ function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
   const records = allRecords(sessions, custom, unit);
   if (period === 'workout') {
     const s = input.session ?? null;
-    const exIds = new Set(s?.exercises.map(e => e.exerciseId) ?? []);
-    const recs = s ? records.filter(r => r.day === s.day && exIds.has(r.exerciseId)) : [];
+    const recs = s ? records.filter(r => r.sessionId === s.id) : [];
     const totals = workingTotals(s?.exercises ?? [], custom);
     return {
       period, unit,

@@ -12,6 +12,8 @@ import { isWorkingSet } from './exposure';
 export type PrKind = 'heaviest' | 'strength' | 'reps_at_load' | 'best_reps' | 'best_duration' | 'best_distance';
 
 export interface PersonalRecord {
+  /** The session that set it: a day can hold two sessions (QA4-7). */
+  sessionId: string;
   exerciseId: string;
   exerciseName: string;
   day: string;
@@ -59,7 +61,7 @@ export function recordsFor(currentIn: ExerciseSessionSummary, priorIn: ExerciseS
   const current = withoutDrops(currentIn);
   const prior = priorIn.map(withoutDrops);
   const out: PersonalRecord[] = [];
-  const base = { exerciseId, exerciseName, day: current.day };
+  const base = { sessionId: current.sessionId, exerciseId, exerciseName, day: current.day };
   if (mode === 'weighted' || mode === 'conditioning') {
     const prevTop = Math.max(0, ...prior.map(p => p.topKg));
     const topSet = current.sets.find(s => s.kg === current.topKg) ?? { kg: current.topKg };

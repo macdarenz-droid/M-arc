@@ -5,6 +5,7 @@ import { cardData } from '@/slices/share/cardData';
 import { cardFileName } from '@/slices/share/cards';
 import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly';
 import { modeOf } from '@/brain/history';
+import { allRecords } from '@/brain/prs';
 import type { Session } from '@/core/models';
 
 const TODAY = '2026-09-23';
@@ -84,5 +85,21 @@ describe('QA4-6: ramped sets are not written as if every set was at the top load
   it('assisted ramps name the least help; bodyweight ramps the best reps', () => {
     expect(lines([{ kg: 40, reps: 10 }, { kg: 35, reps: 10 }, { kg: 30, reps: 8 }], ASSIST)).toBe('3 sets, top 8@30 assist');
     expect(lines([{ reps: 12 }, { reps: 10 }, { reps: 9 }], 'lib_push_up')).toBe('3 sets, top 12');
+  });
+});
+
+describe("QA4-7: a workout card shows only its own session's records", () => {
+  it('records carry their session, and a second session that day keeps its PRs to itself', () => {
+    const first = session('2026-09-15', [{ id: BENCH, sets: sets(60, 5) }]);
+    const am = session('2026-09-22', [{ id: BENCH, sets: sets(70, 5) }]);
+    const pm = { ...session('2026-09-22', [{ id: BENCH, sets: sets(75, 5) }]), startedAt: '2026-09-22T19:00:00.000Z' };
+    const all = [first, am, pm];
+    const recs = allRecords(all);
+    expect(recs.every(r => typeof r.sessionId === 'string')).toBe(true);
+    expect(recs.filter(r => r.sessionId === pm.id).length).toBeGreaterThan(0);
+    const card = (s: Session) => cardData({ sessions: all, custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s });
+    expect(card(am).records.every(r => r.sessionId === am.id)).toBe(true);
+    expect(card(pm).records.every(r => r.sessionId === pm.id)).toBe(true);
+    expect(card(am).records.length + card(pm).records.length).toBe(recs.filter(r => r.day === '2026-09-22').length);
   });
 });
