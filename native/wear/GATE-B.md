@@ -217,6 +217,10 @@ listener, delayed callbacks across handover, restart/reopen, source/boot changes
 wall-clock rollback, replay/conflicting IDs, malformed/contact/zero readings,
 bounded queues and journals, failed write retries, migration and failed optional
 bootstrap. These are JVM simulations; physical GT6 evidence is still pending.
+CI removes old reports before Gradle and then parses the JUnit XML, requiring
+both `WorkoutCommandStoreTest` and `WorkoutHeartRecorderTest` to contain actual
+cases with tests > 0 and zero failures, errors or skips. Missing, malformed,
+duplicate or contradictory reports fail the gate. Signing steps are unchanged.
 
 Next implementation: add phone command routing and completion/release
 reconciliation, including draining/exporting native heart evidence. Then

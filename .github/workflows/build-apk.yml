@@ -56,6 +56,7 @@ jobs:
           node --test native/wear/probe.test.mjs
           node --test native/wear/commandProtocol.test.mjs
           python3 native/wear/workout_store_test.py
+          python3 native/wear/test_native_test_results.py
           node native/wear/watch-lab-gate.mjs
       - name: Upload gate evidence
         if: always()
@@ -140,7 +141,9 @@ jobs:
           test -f android/app/src/test/java/com/mrcdrnzz/dailytracker/wear/WorkoutCommandStoreTest.java
           cd android
           chmod +x gradlew
+          rm -rf app/build/test-results/testDebugUnitTest
           ./gradlew --no-daemon :app:testDebugUnitTest --tests com.mrcdrnzz.dailytracker.wear.WorkoutCommandStoreTest --tests com.mrcdrnzz.dailytracker.wear.WorkoutHeartRecorderTest
+          python3 ../native/wear/check_native_test_results.py app/build/test-results/testDebugUnitTest
 
       - name: Decode the permanent signing key
         shell: bash
