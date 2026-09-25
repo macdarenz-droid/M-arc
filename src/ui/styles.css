@@ -173,7 +173,10 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 
 .list { display: grid; min-width: 0; }
 .list > * { min-width: 0; }
-.list-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); min-height: 52px; min-width: 0; overflow: hidden; }
+/* QA5-16: overflow:hidden clipped the focus ring's right edge on a flush-right trailing control
+   (a toggle, "Manage"); overflow:clip with a margin still clips text overflow (min-width:0 keeps
+   truncation working) but gives the ring 4px of room outside the box. */
+.list-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); min-height: 52px; min-width: 0; overflow: clip; overflow-clip-margin: 4px; }
 .list-row:last-child { border-bottom: 0; }
 .list-row.pressable { cursor: pointer; margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: var(--radius-sm); }
 
@@ -221,7 +224,9 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .empty svg { color: var(--text-3); }
 
 /* Split tabs strip */
-.tabs-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+/* QA5-16: split tabs lost the top of their focus ring to the strip's own scroll clipping; the
+   extra padding gives the ring room, and the matching negative margin keeps the tabs in place. */
+.tabs-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 4px 8px; margin: -2px -4px 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .tabs-strip::-webkit-scrollbar { display: none; }
 .tab { flex: none; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); font-weight: 600; font-size: 13px; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
 .tab[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
@@ -375,7 +380,9 @@ html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(
 .esc-menu { position: absolute; right: 44px; top: 42px; z-index: 2; display: grid; min-width: 210px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); overflow: hidden; }
 .esc-menu button { text-align: left; padding: 12px 14px; min-height: 44px; font-size: 14px; color: var(--text); }
 .esc-menu button + button { border-top: 1px solid var(--border-subtle); }
-.esc-thread { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 0; }
+/* QA5-16: the message thread is a scroll container too, so a focused link/citation near its edge
+   lost its ring the same way; 4px of horizontal padding plus a matching negative margin. */
+.esc-thread { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px 4px; margin-inline: -4px; }
 .esc-thread-inner { display: grid; gap: 14px; }
 .esc-empty { display: grid; justify-items: center; text-align: center; gap: 12px; padding: 18px 4px; color: var(--text-2); }
 .esc-empty svg, .esc-empty .escobar-mark { color: var(--accent); }
