@@ -92,7 +92,7 @@ function WeighIn() {
   };
 
   return (
-    <Field label={`Body weight (${u})`}>
+    <Field label={`Body weight (${u})`} hint="Also counts as the load on bodyweight exercises.">
       <div class="row"><input type="text" inputMode="decimal" value={value} onInput={e => { setValue((e.target as HTMLInputElement).value); setConfirming(false); }} /><Button size="sm" onClick={save}>Weigh in</Button></div>
       {confirming && <Card class="card-quiet"><p class="small">That's a big jump from {formatLoad(s.profile.bodyWeightKg, u)}. Save anyway?</p><div class="row" style={{ marginTop: 8 }}><Button variant="quiet" size="sm" onClick={() => setConfirming(false)}>Cancel</Button><Button size="sm" onClick={save}>Save {value} {u}</Button></div></Card>}
     </Field>

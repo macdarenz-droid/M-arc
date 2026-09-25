@@ -6,21 +6,34 @@ import { isWorkingSet, weeklyMuscleSets } from './exposure';
 import { recordsInWeek, type PersonalRecord } from './prs';
 import { modeOf } from './history';
 import type { MuscleId } from '@/data/muscles';
+import { findExercise } from '@/core/exercises';
+import { bodyweightShare, effectiveLoadKg, type BodyWeightAt } from './bodyweight';
 
 /**
  * Working sets and volume (kg × reps of loaded working sets), unrounded. The one volume sum for weeks and share cards (F12).
- * QA4-1: an assisted exercise's kg is the machine's help, not weight lifted, so its sets count and its volume doesn't.
+ * QA4-1: an assisted exercise's kg is the machine's help, not weight lifted; with body weight (F13) an assisted set counts bw × share − help.
  */
-export function workingTotals(exercises: LoggedExercise[], custom: Exercise[] = []): { sets: number; volumeKg: number } {
+export function workingTotals(exercises: LoggedExercise[], custom: Exercise[] = [], bwKg: number | null = null): { sets: number; volumeKg: number } {
   let sets = 0, volumeKg = 0;
   for (const e of exercises) {
-    const assisted = modeOf(e.exerciseId, custom) === 'assisted';
+    const mode = modeOf(e.exerciseId, custom);
+    const share = bwKg != null ? bodyweightShare(findExercise(e.exerciseId, custom)) : null;
     for (const x of e.sets) {
       if (!isWorkingSet(x)) continue;
       sets++;
-      if (!assisted && (x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+      const eff = effectiveLoadKg(x.kg, mode, share, bwKg);
+      if (eff != null) volumeKg += eff * (x.reps ?? 0);
+      else if (mode !== 'assisted' && (x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
     }
   }
+  return { sets, volumeKg };
+}
+
+/** F13: workingTotals with each session's own body weight. No resolver: exactly the pre-F13 flat sum. */
+export function sessionTotals(sessions: Session[], custom: Exercise[] = [], bw?: BodyWeightAt): { sets: number; volumeKg: number } {
+  if (!bw) return workingTotals(sessions.flatMap(s => s.exercises), custom);
+  let sets = 0, volumeKg = 0;
+  for (const s of sessions) { const t = workingTotals(s.exercises, custom, bw(s.day)); sets += t.sets; volumeKg += t.volumeKg; }
   return { sets, volumeKg };
 }
 
@@ -37,12 +50,12 @@ export interface WeekSummary {
   grade: { title: string; note: string };
 }
 
-export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek: number | null = 3): WeekSummary {
+export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek: number | null = 3, bw?: BodyWeightAt): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
   const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
-  const { sets, volumeKg } = workingTotals(inWeek.flatMap(s => s.exercises), custom);
+  const { sets, volumeKg } = sessionTotals(inWeek, custom, bw);
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
   // BR-22: the planned count is the target; 3 only when there is no schedule at all (null).
@@ -114,12 +127,12 @@ export interface WeekVolume {
 }
 
 /** Per-week totals for the last `weeks` weeks, index 0 = this week (EV2, for compare_periods and get_volume). */
-export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 8, custom: Exercise[] = []): WeekVolume[] {
+export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 8, custom: Exercise[] = [], bw?: BodyWeightAt): WeekVolume[] {
   const muscle = weeklyMuscleSets(sessions, today, weeks, custom);
   return muscle.map(m => {
     const end = addDays(m.week, 6);
     const inWeek = sessions.filter(s => s.day >= m.week && s.day <= end);
-    const { sets, volumeKg } = workingTotals(inWeek.flatMap(s => s.exercises), custom);
+    const { sets, volumeKg } = sessionTotals(inWeek, custom, bw);
     const muscleSets: Partial<Record<MuscleId, number>> = {};
     for (const [k, v] of Object.entries(m.sets) as Array<[MuscleId, number]>) muscleSets[k] = Math.round(v * 10) / 10;
     return { week: m.week, sessions: inWeek.length, sets, volumeKg: Math.round(volumeKg), muscleSets };

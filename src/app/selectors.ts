@@ -8,6 +8,7 @@ import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rul
 import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
+import { bodyWeightResolver } from '@/brain/bodyweight';
 
 import { minuteNow, today } from './clock';
 
@@ -25,6 +26,8 @@ export const scheduledSplit = computed(() => { const id = scheduledSplitId.value
 const field = <K extends keyof typeof state.value>(k: K) => computed(() => state.value[k]);
 const sessions = field('sessions'), customExercises = field('customExercises'), profile = field('profile'), healthDays = field('healthDays');
 const checkIns = field('checkIns'), freshMarks = field('freshMarks'), recoveryModel = field('recoveryModel');
+const weightLog = field('weightLog');
+export const bodyWeightAt = computed(() => bodyWeightResolver({ weightLog: weightLog.value, profile: profile.value }));
 
 export const recovery = computed(() => recoveryStatus({ sessions: sessions.value, custom: customExercises.value, now: minuteNow.value, profile: profile.value, healthDays: healthDays.value, checkIns: checkIns.value, freshMarks: freshMarks.value, recoveryModel: recoveryModel.value }));
 export const todayCheckIn = computed(() => checkIns.value.find(c => c.day === today.value));

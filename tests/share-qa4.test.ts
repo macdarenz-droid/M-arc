@@ -11,6 +11,7 @@ import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly'
 import { modeOf } from '@/brain/history';
 import { allRecords } from '@/brain/prs';
 import type { Session } from '@/core/models';
+import { bodyWeightResolver } from '@/brain/bodyweight';
 
 const TODAY = '2026-09-23';
 const ASSIST = 'lib_assisted_pull_up', BENCH = 'lib_barbell_bench_press';
@@ -172,5 +173,82 @@ describe('QA4-1b: assistance is never volume, in Escobar too', () => {
     const card = (list: Session['exercises'][number]['sets']) => { const x = session('2026-09-22', [{ id: ASSIST, name: 'A', sets: list }]); return cardData({ sessions: [x], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: x }).lines[0]!.detail; };
     expect(card([{ kg: 20, reps: 8 }, { reps: 5 }])).toBe('2 sets, top 5');
     expect(card([{ kg: 20, reps: 8 }, { kg: 10, reps: 6 }])).toBe('2 sets, top 6@10 assist');
+  });
+});
+
+describe('F13: body weight on share cards', () => {
+  const bw80 = bodyWeightResolver({ weightLog: [{ day: '2026-09-01', kg: 80 }], profile: { name: 'T' } })!;
+  const PU = 'lib_pull_up';
+
+  describe('QA4-9 fixture with body weight', () => {
+    const s = session('2026-09-22', [{ id: 'lib_push_up', name: 'Push-Up', sets: [{ reps: 20 }, { reps: 18 }, { reps: 15 }] }, { id: PU, name: 'Pull-Up', sets: [{ reps: 8 }, { reps: 7 }] }]);
+    const d = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s, bodyWeight: bw80 });
+
+    it('volumeKg totals push-ups (53 reps × 51.2) plus pull-ups (15 × 80), rounded', () => {
+      expect(d.volumeKg).toBe(3914);
+    });
+    it('line values, push-ups sorted first', () => {
+      expect(d.lines[0]!.exerciseId).toBe('lib_push_up');
+      expect(d.lines[0]!.value).toBe('2,714 kg');
+      expect(d.lines[1]!.exerciseId).toBe(PU);
+      expect(d.lines[1]!.value).toBe('1,200 kg');
+    });
+    it('poster reads KG LIFTED, receipt reads TOTAL LIFTED', () => {
+      const pal = paletteFor(THEMES['silent-black']);
+      const svg = cardSvg(d, 'poster', 'story', pal);
+      expect(svg).toMatch(/KG LIFTED/i);
+      expect(svg).not.toMatch(/SETS DONE/i);
+      expect(cardSvg(d, 'receipt', 'story', pal)).toContain('TOTAL LIFTED');
+    });
+  });
+
+  describe('QA4-1 fixture with body weight', () => {
+    const s: Session = session('2026-09-22', [{ id: ASSIST, name: 'Assisted Pull-Up', sets: sets(40, 10) }, { id: BENCH, name: 'Barbell Bench Press', sets: sets(60, 5) }]);
+
+    it('assisted line counts kg, not sets, once body weight is known', () => {
+      const w = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s, bodyWeight: bw80 });
+      const line = w.lines.find(l => l.exerciseId === ASSIST)!;
+      expect(line.value).toBe('1,200 kg');
+      expect(line.volumeKg).toBe(1200);
+      expect(line.detail).toBe('3×10 @40 assist');
+    });
+    it('week card volume is (80−40)×30 + 900', () => {
+      const week = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'week', bodyWeight: bw80 });
+      expect(week.volumeKg).toBe(2100);
+    });
+  });
+
+  it('weighted pull-up: value counts body weight, detail is unchanged', () => {
+    const s = session('2026-09-22', [{ id: PU, name: 'Pull-Up', sets: sets(10, 5) }]);
+    const withBw = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s, bodyWeight: bw80 });
+    const line1 = withBw.lines[0]!;
+    expect(line1.detail).toBe('3×5 @+10');
+    expect(line1.value).toBe('1,350 kg');
+
+    const noBw = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s });
+    const line2 = noBw.lines[0]!;
+    expect(line2.detail).toBe('3×5 @+10');
+    expect(line2.value).toBe('150 kg');
+  });
+
+  it('bodyWeight: () => null matches no bodyWeight at all', () => {
+    const s9 = session('2026-09-22', [{ id: 'lib_push_up', name: 'Push-Up', sets: [{ reps: 20 }, { reps: 18 }, { reps: 15 }] }, { id: PU, name: 'Pull-Up', sets: [{ reps: 8 }, { reps: 7 }] }]);
+    const noneA = cardData({ sessions: [s9], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s9 });
+    const nullFnA = cardData({ sessions: [s9], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s9, bodyWeight: () => null });
+    expect(nullFnA).toEqual(noneA);
+
+    const s1: Session = session('2026-09-22', [{ id: ASSIST, name: 'Assisted Pull-Up', sets: sets(40, 10) }, { id: BENCH, name: 'Barbell Bench Press', sets: sets(60, 5) }]);
+    const noneB = cardData({ sessions: [s1], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s1 });
+    const nullFnB = cardData({ sessions: [s1], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s1, bodyWeight: () => null });
+    expect(nullFnB).toEqual(noneB);
+  });
+
+  it('month card sums each session\'s own weigh-in', () => {
+    const log = [{ day: '2026-09-01', kg: 80 }, { day: '2026-09-21', kg: 70 }];
+    const r = bodyWeightResolver({ weightLog: log, profile: { name: 'T' } })!;
+    const a = session('2026-09-02', [{ id: PU, sets: sets(0, 8) }]);
+    const b = session('2026-09-22', [{ id: PU, sets: sets(0, 8) }]);
+    const month = cardData({ sessions: [a, b], custom: [], unit: 'kg', today: TODAY, period: 'month', bodyWeight: r });
+    expect(month.volumeKg).toBe(3600);
   });
 });
