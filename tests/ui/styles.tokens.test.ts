@@ -42,6 +42,9 @@ function parseVars(block: string): Record<string, string> {
 }
 
 const TIME_RE = /\b\d*\.?\d+m?s\b/;
+// Every ::view-transition-* pseudo-element takes a (name) argument (::view-transition-old(root),
+// -group(name), ...); the bare `-name` form (no parens) never matches a real one.
+const VT_RE = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;
 const DECL_PROPS = ['transition', 'transition-duration', 'transition-delay', 'animation', 'animation-duration', 'animation-delay'];
 
 interface Decl { prop: string; value: string; }
@@ -77,13 +80,14 @@ describe('styles.css motion token lint (F1)', () => {
   });
 
   it('has no bare time literal inside a ::view-transition-* rule', () => {
-    // QA5-10: every ::view-transition-* pseudo-element takes a (name) argument
-    // (::view-transition-old(root), -group(name), ...); the bare form has none.
-    const re = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;
+    // QA5-10b: check the whole body against TIME_RE directly, not just declarations findDeclarations
+    // recognizes (DECL_PROPS) — the spec says "any declaration", and a custom property such as
+    // `--vt-d: 200ms` used by animation-duration:var(--vt-d) was invisible to the DECL_PROPS scan.
     const offenders: string[] = [];
+    const re = new RegExp(VT_RE);
     let m: RegExpExecArray | null;
     while ((m = re.exec(withoutTokens))) {
-      for (const decl of findDeclarations(m[1] ?? '')) if (TIME_RE.test(decl.value)) offenders.push(decl.value);
+      if (TIME_RE.test(m[1] ?? '')) offenders.push((m[1] ?? '').trim());
     }
     expect(offenders).toEqual([]);
   });
@@ -116,13 +120,17 @@ describe('styles.css motion token lint (F1)', () => {
       expect(offenders).toEqual([{ prop: 'transition', value: 'opacity 200ms' }]);
     });
     it('the ::view-transition-old(name) form', () => {
-      const re = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;
-      const m = re.exec('::view-transition-old(root){animation-duration:200ms}');
+      const m = new RegExp(VT_RE).exec('::view-transition-old(root){animation-duration:200ms}');
       expect(m?.[1]).toBe('animation-duration:200ms');
-      expect(findDeclarations(m![1]!).some(d => TIME_RE.test(d.value))).toBe(true);
+      expect(TIME_RE.test(m![1]!)).toBe(true);
     });
     it('animation-iteration-count: infinite as a standalone longhand', () => {
       expect(/animation-iteration-count\s*:\s*infinite/.test('.x{animation: esc-fade var(--dur-base); animation-iteration-count: infinite;}')).toBe(true);
+    });
+    it('QA5-10b: a custom property with a time literal inside a view-transition body', () => {
+      // e.g. ::view-transition-group(root){animation-name:x; --vt-d: 200ms} — DECL_PROPS never
+      // sees a custom property, so only a whole-body TIME_RE scan catches this.
+      expect(TIME_RE.test('animation-name:x; --vt-d: 200ms')).toBe(true);
     });
   });
 
