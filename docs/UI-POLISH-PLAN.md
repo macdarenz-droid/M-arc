@@ -147,7 +147,7 @@ Silent: bottom-nav tab taps (remove App.tsx:96 haptic), Segmented view switchers
 | b5 Navigation and lists | I9, I10, I11, A5 | Tabs keep their scroll; re-tap goes to top; sliding segment thumb; lifted drag-reorder with auto-scroll; swipe to delete a past session; swipe months |
 | b6 Charts | I12, A6 | Crisp trend line with labels; current week obvious; scrub a chart to read values |
 | b7 Visual system | I13, I14, I15, I16, I17, I18, I19 | Real typeface; readable small text; calmer colour; visible layers; one spacing rhythm; even icons; designed empty state |
-| b8 Body tab (owner picks, §6b) | O2, O3 | Muscle panel as a clear recovery timeline with real dates; a compact recovery list |
+| b8 Body tab (owner picks, §6b) | O2, O3 | Muscle panel as a clear recovery timeline with real dates; recovery list as a ring grid grouped by the day each muscle is ready |
 
 Order inside a batch = order in the table. Cross-batch dependencies: I1 needs F1 re-centring; F5 smoke (2) needs F6, smoke (1) needs I6; I2 scroll-margin uses A2's `--live-top-h` (falls back to 0); A3/A5/A6/F13 use the `track()` added in A3 and the gate `touchDrag` helper added in A3; I14's contrast probe needs the Paper text-2 change in I14 before I16 lands.
 
@@ -490,7 +490,7 @@ Manual device check (owner, Android phone, APK), per batch that touches it:
 
 ## 6b. Owner picks (added 2026-09-25)
 
-The owner chose these from rendered samples. Build them as written and don't redesign them. O1 goes in b4, after F11. O2 and O3 form **b8 Body tab**, after b7 so they use its type and colours. O3 is waiting on the owner's pick.
+The owner chose these from rendered samples. Build them as written and don't redesign them. O1 goes in b4, after F11. O2 and O3 form **b8 Body tab**, after b7 so they use its type and colours. O3 is the owner's ring-grid pick (sample 1).
 
 #### O1 Launch animation "Bar path", thin, no glow (owner pick B1) — must, b4
 - **User sees:** on cold start, a thin M/ARC line draws itself. The accent dot glides down into the dip like a controlled rep, then the line rises out and "M/ARC" fades into focus. The animation takes 1.6 s, and a tap skips it. With Reduce motion on, the finished logo shows until the app is ready.
@@ -610,8 +610,66 @@ The owner chose these from rendered samples. Build them as written and don't red
     - null window.
 - **Risk:** Low: display only. It reads no new data and writes only through the existing `markFresh` and `addExerciseToSession`.
 
-#### O3 Recovery list redesign — b8, waiting on the owner's pick
-- **Reference:** artifact 37p3RrJRgx1ezxxvUT6Gxt, options 1–5. The spec gets written here once the owner picks one.
+#### O3 Recovery list: "Ready times" grouped by day (owner pick: ring grid sample 1, plain, no gradient) — must, b8
+- **User sees:** the long "Recovering" list becomes one compact card. Rings sit in 2 columns, grouped Today · Sat 26, Tomorrow · Sun 27 and Later, each with a real ready window. A tap shows the details right under the finger.
+- **Reference:** artifact TRgcJvWmJAqfY6Ved9i5ZX, sample 1. The owner declined the gradient styles (UCZw7QwjyCsHtiFnvU5rxw). Use the app's tokens, not the sample's colours.
+- **Files:**
+  - src/slices/body/Body.tsx: the recovery Sections, Body.tsx:57-76 at f86a8b5 (re-find them on current main).
+  - src/core/dates.ts: a pure `readyWindow` helper.
+  - src/ui/styles.css: `.rt-*` classes, tokens only.
+  - tests/readyTimes.test.ts (new).
+  - scripts/screenshot-gate.mjs.
+- **Spec:**
+  - **Sections.** Replace the "Recovering" and "Ready for hard work" Sections with one Section, "Ready times". The aside reads "Low confidence" (or "Medium confidence" / "High confidence") when every listed muscle shares that level, and "Mixed confidence" otherwise. Keep "Fully recovered" as it is. Keep palace id `body.recovering` on the new Section, and put `body.ready` on the Ready now row.
+  - **Card.** The existing `.card`, with padding 0 4px 4px.
+    - First row: "Ready now", with the count on the right, or "None yet". These are today's `readyOnly` muscles; their tiles show "Full by {time}" from fullInHours, or "Ready".
+    - Then these groups, by the calendar day of latest = now + readyInHours[1] (a latest of exactly midnight counts as the day before): "Today · {Sat 26}", "Tomorrow · {Sun 27}", "Later".
+    - Sore muscles with no window go in a final "Sore today" group, with the time "Not today".
+    - Recovering muscles with no window that aren't sore go in Later, with the time taken from today's `${formatHours(hoursLeft)} left`.
+  - **Group header.** 32px, label 13px 600 in text, count 13px in text-2.
+  - **Lines.**
+    - Lines of 2 tiles (grid 1fr 1fr). An odd last tile spans both columns, with its time right-aligned.
+    - Between lines inside a group: a 1px border-subtle divider, inset 8px.
+    - Sort: latest ascending, then earliest ascending, then pct descending, then name.
+  - **Tile.**
+    - A `<button>`: min-height 52, padding 0 6px 0 8px, gap 8, radius-sm. Ring 40.
+    - Name 14/18 600 in text; time 12/16 500 in text-2; tabular numbers.
+    - If any name or time overflows (scrollWidth > clientWidth), the card switches to one column. Watch this with a ResizeObserver.
+  - **Ring.**
+    - SVG 40, r 17, stroke 4, track `var(--surface-3)`.
+    - Arc from 12 o'clock clockwise, `stroke-dasharray = C·min(pct,90)/90` (C = 106.81), so a full circle means 90% (ready). At ≥90 draw a full circle.
+    - Colours: ≥90 `var(--positive)`, 75–89 `var(--warning)`, <75 `var(--text-2)`.
+    - Ready tick: `rect x19 y0 w2 h6` in `var(--text)`. Not drawn at ≥90, or when sore.
+    - Sore: dashed track in text-2 (`3.2 2.14`), no arc.
+    - Number centred, 13px 600, no % sign.
+  - **Times.** A pure helper, unit-tested:
+    - 12-hour clock, lowercase am/pm, "midnight"/"noon", separator " – ".
+    - Earliest rounds to the nearest hour; latest rounds up.
+    - Today and Tomorrow tiles show hours only: "2 – 5 pm", "6 pm – midnight", "9 pm – 3 am".
+    - Later tiles show days only: "Mon – Tue".
+    - Detail text: "Ready Sat 26, 7 – 8 am" or "Ready Sat 26, 9 pm – Sun 27, 3 am".
+  - **Tap.**
+    - The tile gets surface-3. A strip opens directly under that line, spanning both columns, with a 12×6 caret pointing at the tapped ring (left 28px, or 50% + 28px for the right column).
+    - The strip is one button: surface-3, radius-md, padding 10 36 10 12.
+      - Row 1: the name (15/20 600), and on the right in text-2 "{90−pct}% to go", "Ready" or "Sore today".
+      - Row 2: "Ready …" (14/20 500).
+      - Row 3: "Full {day, time} · {Level} confidence" (12/16, text-2).
+      - A chevron on the right.
+    - Tapping the strip calls `setSelected(muscle)`, which opens the O2 muscle panel.
+    - Tapping the same tile closes the strip. Only one is open at a time.
+    - Keep the tapped tile under the finger: measure its top before and after the change, then `window.scrollBy` the difference.
+    - While a strip is open, freeze the order. The minute recompute updates numbers only.
+    - Motion: grid-template-rows 0fr→1fr over var(--dur-base) var(--ease-enter), with content fading over var(--dur-fast). Under `html[data-motion="reduce"]`, use the clamped tokens.
+  - **Accessibility.** Tiles carry aria-expanded and aria-controls, and the label "{name}, {pct} percent, ready {window}".
+- **Acceptance:**
+  - Gate at 360 and 390 px, in Paper and Silent Black, with seeded data:
+    - the groups and counts equal the helper's output;
+    - no text is clipped and there is no horizontal scroll;
+    - a tap opens the strip under the tapped line, and the tile moves ≤2px;
+    - tapping the strip opens the muscle panel;
+    - the palace targets `body.recovering` and `body.ready` still resolve.
+  - Unit tests for the helper: same day; across midnight; an end at exactly midnight; later days; a null window; sore.
+- **Risk:** Low: display only, with no data changes.
 
 ## 7. Not doing and Later
 
