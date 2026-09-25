@@ -239,7 +239,9 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
       setOneColumn(nameEl.scrollWidth > nameEl.clientWidth + 0.5 || timeEl.scrollWidth > timeEl.clientWidth + 0.5);
     };
     probe();
-    const ro = new ResizeObserver(probe);
+    // rAF-deferred: measuring synchronously inside the callback can itself change layout
+    // (setOneColumn re-renders), which trips the browser's "ResizeObserver loop" warning.
+    const ro = new ResizeObserver(() => requestAnimationFrame(probe));
     ro.observe(el);
     return () => ro.disconnect();
   }, [longestName, longestTime]);
