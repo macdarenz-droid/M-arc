@@ -393,7 +393,10 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
     if (planned.has(se.exerciseId) || doneIds.has(se.exerciseId)) return;
     let insertAt = 0;
     for (let j = i - 1; j >= 0; j--) {
-      const pos = out.findIndex(o => o.exerciseId === split.exercises[j]!.exerciseId);
+      // QA3-7b: a preceding neighbour that was itself a substituted swap never appears under its
+      // own id in `out` - only its substitute does (QA3-8). Match either.
+      const nid = split.exercises[j]!.exerciseId;
+      const pos = out.findIndex(o => o.exerciseId === nid || o.exerciseId === substituteForFrom.get(nid)?.exerciseId);
       if (pos !== -1) { insertAt = pos + 1; break; }
     }
     const sub = substituteForFrom.get(se.exerciseId);

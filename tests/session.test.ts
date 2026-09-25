@@ -432,4 +432,31 @@ describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-
       'lib_incline_barbell_bench_press', 'lib_cable_fly',
     ]);
   });
+  it('QA3-7b: a removed exercise restores after a substituted swap, not before it', () => {
+    const three: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [
+        { exerciseId: 'lib_barbell_bench_press', sets: 2 }, // bench - swapped to DB bench today
+        { exerciseId: 'lib_dumbbell_shoulder_press', sets: 1 }, // removed today
+        { exerciseId: 'lib_cable_fly', sets: 1 }, // fly
+      ],
+    };
+    replaceState({
+      ...state.value, splits: [three],
+      escobar: {
+        ...state.value.escobar, todayOverride: {
+          day: '2026-09-22', splitId: 'sp', reason: 'x',
+          changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_dumbbell_bench_press' }, { kind: 'remove' as const, exerciseId: 'lib_dumbbell_shoulder_press' }],
+        },
+      },
+    });
+    startSession(three); // entries: DB bench, fly (shoulder press removed, never an entry)
+    substituteEntry(0, findExercise('lib_incline_barbell_bench_press')!); // the person's own further swap
+    setSet(0, 0, { kg: 40, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 10 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_incline_barbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_cable_fly',
+    ]);
+  });
 });
