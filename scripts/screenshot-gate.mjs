@@ -1161,6 +1161,96 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Hotfix regression #2 (masking / overwrite on Skip, Put back, Substitute, Remove): those buttons
+// used to call setMenu(false) directly, bypassing the same flush the sheet's own Close/back path
+// got. A typed-then-reverted edit leaves the local draft non-null (the browser's native 'change'
+// only fires when the value differs from what it was at focus time, so reverting to the original
+// text never fires it), so the stale draft masked whatever another tab or device had since saved.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe-mask';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const card = page.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  const stickyInput = page.getByLabel('Setup note (shown every time)');
+  await stickyInput.click();
+  await page.keyboard.type('X');
+  await page.keyboard.press('Backspace');
+  if ((await stickyInput.inputValue()) !== '') errors.push(`${tag}: setup note draft is not back to its original (empty) text before the Skip tap`);
+  await page.getByRole('button', { name: 'Skip today', exact: true }).click();
+  await page.waitForTimeout(200);
+
+  // Another tab/device saves a setup note for this exercise while ours held a stale reverted draft.
+  const exerciseId = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0].exerciseId);
+  await page.evaluate(exId => {
+    const st = JSON.parse(localStorage.getItem('marc.state.v1'));
+    st.exerciseNotes = { ...st.exerciseNotes, [exId]: 'From another tab' };
+    const json = JSON.stringify(st);
+    localStorage.setItem('marc.state.v1', json);
+    // Same-document writes never raise 'storage'; dispatching it by hand stands in for the second tab.
+    window.dispatchEvent(new StorageEvent('storage', { key: 'marc.state.v1', newValue: json, storageArea: localStorage }));
+  }, exerciseId);
+  await page.waitForTimeout(200);
+
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Setup note (shown every time)').inputValue()) !== 'From another tab') errors.push(`${tag}: a stale reverted draft masked another tab's saved setup note`);
+  await page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click();
+  await ctx.close();
+}
+
+// Hotfix regression #3 (index staleness): "Note for today" saves by array index. Removing an entry
+// without first blurring the note field (a real tap always blurs first and is unaffected — this
+// reproduces the no-blur path, e.g. the Sheet's own unmount) used to let the pending draft, once
+// flushed after the array had already shifted, land on whichever exercise now sat at that index.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe-index';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.map(e => e.exerciseId));
+  if (before.length < 2) errors.push(`${tag}: expected at least 2 exercises in this session to test index staleness`);
+
+  const card = page.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  const noteInput = page.getByLabel('Note for today');
+  await noteInput.click();
+  await page.keyboard.type('Should not leak');
+  if ((await noteInput.inputValue()) !== 'Should not leak') errors.push(`${tag}: note field did not take the typed text`);
+  // element.click() (no prior pointer interaction) skips the browser's default click-blurs-the-
+  // previously-focused-field step; a real tap does blur first and is unaffected by this bug.
+  await page.evaluate(() => {
+    const btn = [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Remove from this session');
+    btn?.click();
+  });
+  await page.waitForTimeout(300);
+
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.map(e => ({ id: e.exerciseId, note: e.note ?? null })));
+  if (after.length !== before.length - 1) errors.push(`${tag}: expected the entry to actually be removed (before ${before.length}, after ${after.length})`);
+  if (after.some(e => e.note === 'Should not leak')) errors.push(`${tag}: the note leaked onto another exercise after a no-blur Remove`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
