@@ -86,13 +86,16 @@ export interface ProgressionContext {
   loadFactor?: number;
 }
 
-// QA3-11: distance/duration are a conditioning carry or sled's own modes. Their load never rises
-// on its own (only a deload or an Escobar cut factor changes it, always downward), so they always
-// snap down; 'nearest' could round back up past an intentional reduction.
-const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down', distance: 'down', duration: 'down' };
+const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
 
-/** Restates a suggestion's loads as loads the equipment can make, in its own unit. */
-function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false): Suggestion {
+/**
+ * Restates a suggestion's loads as loads the equipment can make, in its own unit.
+ * QA3-11b: `force` overrides the mode-based direction. A carry/sled (mode 'distance'/'duration')
+ * has no direction of its own in SNAP_DIRECTION, so without a genuine reduction in effect it snaps
+ * 'nearest' like anything else - blanket 'down' rounded a normal-week 32 kg carry down to 30 for no
+ * reason, and swallowed an Escobar increase entirely.
+ */
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down'): Suggestion {
   if (s.kg == null) return s;
   // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
   // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
@@ -104,7 +107,7 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
     const oldLabel = `${s.kg} kg`;
     return { ...s, unit: profile.unit, value, target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${value} ${profile.unit}`) : s.target };
   }
-  const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
+  const dir = force ?? SNAP_DIRECTION[s.mode] ?? 'nearest';
   const snap = loadableNear(s.kg, profile, dir);
   const oldLabel = `${s.kg} kg`;
   return {
@@ -130,7 +133,12 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
   if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
   // QA2-FE-2, QA2-FE-7: a loaded carry's target snaps to the gym's equipment too (70 lb, not 31.751 kg).
   const mode = modeOf(exerciseId, custom);
-  if (ctx?.equipment && (mode === 'weighted' || (mode === 'conditioning' && s.kg != null))) s = snapToEquipment(s, ctx.equipment, mode === 'conditioning');
+  if (ctx?.equipment && (mode === 'weighted' || (mode === 'conditioning' && s.kg != null))) {
+    // QA3-11b: force the snap down only for a genuine reduction (a lighter week, or an Escobar
+    // cut factor below 1) - never up, and never at all in a normal week.
+    const force = ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1) ? 'down' : undefined;
+    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force);
+  }
   return s;
 }
 

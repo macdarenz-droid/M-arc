@@ -174,3 +174,37 @@ describe('QA3-3b: above the rack, an lb user still sees their own clean number',
     expect(n.unit).toBe('lb');
   });
 });
+
+describe('QA3-11b: carries snap down only for a genuine reduction, never in a normal week', () => {
+  it('a 75 lb carry on the lb ladder stays 75', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 34.019, entered: { value: 75, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.value).toBe(75);
+  });
+  it('a normal-week 32 kg carry rounds to its nearest rung (32.5), not forced down to 30', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.kg).toBe(32.5);
+  });
+  it('an Escobar ×1.05 increase on a 30 kg carry is not lost to a forced-down snap', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 30, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 1.05 });
+    expect(n.kg).toBe(32.5);
+  });
+  it('an Escobar ×0.95 cut on a 25 kg DB bench is not rounded back up', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_dumbbell_bench_press', sets: [{ kg: 25, reps: 8, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_dumbbell_bench_press', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 0.95 });
+    expect(n.kg).toBe(22.5);
+  });
+  it('a lighter-week 32 kg carry still snaps down to 27.5 (QA3-11)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), deload });
+    expect(n.kg).toBe(27.5);
+  });
+});
