@@ -186,6 +186,8 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   // (battle ropes, bear crawl, ...) still need a goal; they keep the original fields-based rule,
   // which already gives a rep goal only when reps were actually logged (QA2-FE-8).
   const carryOrSled = CARRY_OR_SLED_IDS.has(exerciseId) || (!!meta?.custom && mode === 'conditioning');
+  // Part B (F13): a carry/sled or custom conditioning move logged as kg × reps shows its weight in the target too.
+  const carryLoad = carryOrSled && last.topKg > 0;
   if (mode === 'conditioning' && (carryOrSled ? last.bestDistanceM > 0 || last.bestDurationSec > 0 : last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
@@ -206,7 +208,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   if (gap > REENTRY_DAYS) {
-    return { mode: 'reentry', target: mode === 'weighted' ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
+    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
   }
 
   if (ctx?.deload) {
@@ -216,6 +218,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const deloadSets = Math.max(1, Math.round(setCount * d.setFactor));
     if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
       const reps = last.bestReps;
+      if (carryLoad) { const down = half(last.topKg * d.loadFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload') }; }
       return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload') };
     }
     const down = half(last.topKg * d.loadFactor);
@@ -228,6 +231,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
     const reps = last.bestReps;
     const nextReps = last.hasMax ? reps : reps + 1;
+    if (carryLoad) {
+      const kg = ctx?.equipment ? last.topKg : half(last.topKg);
+      return { mode: 'reps', target: `${kg} kg · ${nextReps} reps`, kg, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, kg, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
+    }
     return { mode: 'reps', target: `${nextReps} reps`, kg: null, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, null, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
   }
 
