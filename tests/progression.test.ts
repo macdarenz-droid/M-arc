@@ -227,3 +227,23 @@ describe('QA3-12b: a custom or non-listed conditioning move still gets its own d
     expect(suggestNext(crawl, 'lib_bear_crawl', 'lean', '2026-09-14').target).toBe('25 m');
   });
 });
+
+describe('QA3-3c: above the rack, a scaled lb carry still lands on a clean number', () => {
+  const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 102.058, entered: { value: 225, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+  it('a lighter week (0.9) reads as 200 lb, not a rounded-kg conversion', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), deload });
+    expect(n.target).toBe('200 lb · 40 m');
+  });
+  it('an Escobar ×0.95 cut reads as 210 lb', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), loadFactor: 0.95 });
+    expect(n.target).toBe('210 lb · 45 m');
+  });
+  it('an Escobar ×1.05 increase reads as 235 lb', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), loadFactor: 1.05 });
+    expect(n.target).toBe('235 lb · 45 m');
+  });
+});

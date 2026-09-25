@@ -95,7 +95,7 @@ const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', r
  * 'nearest' like anything else - blanket 'down' rounded a normal-week 32 kg carry down to 30 for no
  * reason, and swallowed an Escobar increase entirely.
  */
-function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down'): Suggestion {
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down', scaled = false): Suggestion {
   if (s.kg == null) return s;
   // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
   // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
@@ -103,6 +103,14 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
   // QA3-3b: still restated in the profile's own unit, or an lb user sees a rounded-kg conversion
   // (225 lb read back as "224.9 lb") instead of their own clean number.
   if (conditioning && s.kg > loadableTopKg(profile) + 0.01) {
+    // QA3-3c: a lighter week or an Escobar factor already rounded the kg to the nearest half kg,
+    // which does not land on a clean lb number. Re-snap to a virtual 5 lb ladder instead of just
+    // converting that half-kg value.
+    if (scaled && profile.unit === 'lb') {
+      const p = loadableNear(s.kg, { unit: 'lb', step: 5, source: 'default', updatedAt: '' }, force ?? 'nearest');
+      const oldLabel = `${s.kg} kg`;
+      return { ...s, kg: p.kg, unit: p.unit, value: p.value, target: s.target.replace(oldLabel, `${p.value} lb`), sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: p.kg })) };
+    }
     const value = kgToDisplay(s.kg, profile.unit);
     const oldLabel = `${s.kg} kg`;
     return { ...s, unit: profile.unit, value, target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${value} ${profile.unit}`) : s.target };
@@ -137,7 +145,10 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
     // QA3-11b: force the snap down only for a genuine reduction (a lighter week, or an Escobar
     // cut factor below 1) - never up, and never at all in a normal week.
     const force = ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1) ? 'down' : undefined;
-    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force);
+    // QA3-3c: a lighter week or any Escobar load factor scales the kg with half(), losing the
+    // precision an above-the-rack lb restatement needs to land on a clean number.
+    const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);
+    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled);
   }
   return s;
 }
