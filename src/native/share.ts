@@ -43,7 +43,7 @@ async function shareCachedFile(fileName: string, base64: string, dialogTitle: st
   catch (e) { if (/cancel/i.test(String((e as Error)?.message ?? e))) return false; throw e; }
 }
 
-export type ImageOutcome = 'saved' | 'shared' | 'downloaded' | 'cancelled';
+export type ImageOutcome = 'saved' | 'shared' | 'downloaded' | 'cancelled' | 'retry';
 
 /**
  * F12 Save: on Android, a PNG in Documents/M-ARC. Where the OS gives no access to Documents
@@ -74,7 +74,12 @@ export async function shareImage(fileName: string, blob: Blob, title: string): P
   const file = typeof File === 'function' ? new File([blob], fileName, { type: blob.type || 'image/png' }) : null;
   if (file && typeof nav.share === 'function' && nav.canShare?.({ files: [file] })) {
     try { await nav.share({ files: [file], title }); return { outcome: 'shared', message: '' }; }
-    catch (e) { if ((e as DOMException)?.name === 'AbortError') return { outcome: 'cancelled', message: '' }; }
+    catch (e) {
+      const name = (e as DOMException)?.name;
+      if (name === 'AbortError') return { outcome: 'cancelled', message: '' };
+      // QA4-12: the tap no longer counts as a gesture. The card is ready now, so a second tap shares it.
+      if (name === 'NotAllowedError') return { outcome: 'retry', message: 'Ready, tap Share again' };
+    }
   }
   download(blob, fileName);
   return { outcome: 'downloaded', message: `Sharing isn't available here, so it was downloaded` };

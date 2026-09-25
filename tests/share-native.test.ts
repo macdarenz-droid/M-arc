@@ -1,4 +1,4 @@
-/** F12 Save / Share on the native path (Capacitor mocked). QA4-11. */
+/** F12 Save / Share (Capacitor mocked): QA4-11 native cache, QA4-12 web Share gesture. */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const calls: string[] = [];
@@ -8,9 +8,11 @@ const fs = vi.hoisted(() => ({
 const share = vi.hoisted(() => ({ share: vi.fn() }));
 vi.mock('@capacitor/filesystem', () => ({ Filesystem: fs, Directory: { Cache: 'CACHE', Documents: 'DOCUMENTS' } }));
 vi.mock('@capacitor/share', () => ({ Share: share }));
-vi.mock('@/native/capacitor', () => ({ isNative: () => true }));
+const native = vi.hoisted(() => ({ on: true }));
+vi.mock('@/native/capacitor', () => ({ isNative: () => native.on }));
 
 import { saveImage, shareImage } from '@/native/share';
+import { pngCache } from '@/slices/share/png';
 
 const png = new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], { type: 'image/png' });
 
@@ -37,5 +39,28 @@ describe('QA4-11: shared cards do not pile up in the cache', () => {
     fs.writeFile.mockImplementationOnce(async () => { throw new Error('denied'); });
     await saveImage('b.png', png);
     expect(calls).toEqual(['rmdir MARC Share', 'write CACHE MARC Share/b.png iVBORw==', 'share']);
+  });
+});
+
+describe('QA4-12: the web Share keeps its tap', () => {
+  it('pngCache renders a card once and again only when the card changes; a failed render is retried', async () => {
+    const render = vi.fn(async (svg: string) => new Blob([svg]));
+    const cache = pngCache(render);
+    const a1 = cache.get('<svg a/>', 1, 1), a2 = cache.get('<svg a/>', 1, 1);
+    expect(a1).toBe(a2);
+    await cache.get('<svg b/>', 1, 1);
+    expect(render).toHaveBeenCalledTimes(2);
+    const failing = pngCache(vi.fn().mockRejectedValueOnce(new Error('x')).mockResolvedValue(new Blob(['ok'])));
+    await expect(failing.get('<svg/>', 1, 1)).rejects.toThrow('x');
+    await expect(failing.get('<svg/>', 1, 1)).resolves.toBeInstanceOf(Blob);
+  });
+  it('NotAllowedError keeps the card and asks for another tap instead of downloading', async () => {
+    native.on = false;
+    const webShare = vi.fn().mockRejectedValueOnce(Object.assign(new Error('no gesture'), { name: 'NotAllowedError' })).mockResolvedValueOnce(undefined);
+    vi.stubGlobal('navigator', { share: webShare, canShare: () => true });
+    try {
+      expect(await shareImage('card.png', png, 'My card')).toEqual({ outcome: 'retry', message: 'Ready, tap Share again' });
+      expect(await shareImage('card.png', png, 'My card')).toEqual({ outcome: 'shared', message: '' });
+    } finally { vi.unstubAllGlobals(); native.on = true; }
   });
 });

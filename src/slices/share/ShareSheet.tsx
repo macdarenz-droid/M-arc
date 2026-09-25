@@ -17,6 +17,7 @@ import markUrl from '@/assets/escobar-mark.png?inline';
 import { WEIGHT_THINGS } from '@/data/weights';
 import { cardData, isEmptyCard, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
 import { CARD_PX, CARD_STYLES, cardFileName, cardSvg, paletteFor, type CardFormat } from './cards';
+import { pngCache } from './png';
 
 const STYLE_KEY = 'marc.share.style';
 const readStyle = (): number => { try { const n = Number(localStorage.getItem(STYLE_KEY)); return Number.isInteger(n) && n >= 0 && n < CARD_STYLES.length ? n : 0; } catch { return 0; } };
@@ -25,24 +26,6 @@ const writeStyle = (i: number) => { try { localStorage.setItem(STYLE_KEY, String
 const SEEN_KEY = 'marc.share.seen';
 const readSeen = (): string[] => { try { const v: unknown = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '[]'); return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []; } catch { return []; } };
 const markSeen = (id: string) => { try { localStorage.setItem(SEEN_KEY, JSON.stringify([...readSeen().filter(x => x !== id), id].slice(-WEIGHT_THINGS.length))); } catch { /* repeats just become possible */ } };
-
-/** Draws an SVG card onto a canvas at export size and encodes it as PNG. */
-export async function svgToPng(svg: string, w: number, h: number): Promise<Blob> {
-  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
-  try {
-    const img = new Image();
-    img.src = url;
-    await img.decode();
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Canvas 2D context unavailable');
-    ctx.drawImage(img, 0, 0, w, h);
-    return await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => (b ? resolve(b) : reject(new Error('Could not encode the card'))), 'image/png'));
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
 
 export interface ShareSheetProps {
   /** The chip selected when the sheet opens. */
@@ -64,6 +47,7 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   const [status, setStatus] = useState('');
   const [seen] = useState(readSeen);
   const carousel = useRef<HTMLDivElement>(null);
+  const pngs = useRef(pngCache());
   const statusTimer = useRef(0);
   const say = (msg: string) => { setStatus(msg); clearTimeout(statusTimer.current); if (msg) statusTimer.current = window.setTimeout(() => setStatus(''), 2600); };
   useEffect(() => () => clearTimeout(statusTimer.current), []);
@@ -81,6 +65,13 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
     const c = carousel.current;
     if (el && c) c.scrollLeft = el.offsetLeft - (c.clientWidth - el.clientWidth) / 2;
   }, [format]);
+
+  // QA4-12: draw the PNG of the card that settles on screen, so Share doesn't spend the tap waiting for it.
+  useEffect(() => {
+    if (isEmptyCard(data)) return;
+    const t = window.setTimeout(() => { const px = CARD_PX[format]; void pngs.current.get(svgs[current]!, px.w, px.h).catch(() => undefined); }, 250);
+    return () => clearTimeout(t);
+  }, [svgs, current, format]);
 
   const onScroll = () => {
     const c = carousel.current;
@@ -111,12 +102,12 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
     setBusy(true);
     try {
       const px = CARD_PX[format];
-      const png = await svgToPng(svgs[current]!, px.w, px.h);
+      const png = await pngs.current.get(svgs[current]!, px.w, px.h);
       const fileName = cardFileName({ period, style: style.id, format, to: data.to, now: new Date(), sessionId: period === 'workout' ? workout?.id : null });
       const r = kind === 'save' ? await saveImage(fileName, png) : await shareImage(fileName, png, `My M/ARC ${style.name.toLowerCase()}`);
       if (r.message) say(r.message);
       // The card on screen keeps its line; the next one opened picks another.
-      if (r.outcome !== 'cancelled' && style.id === 'poster' && data.compare) markSeen(data.compare.id);
+      if ((r.outcome === 'saved' || r.outcome === 'shared' || r.outcome === 'downloaded') && style.id === 'poster' && data.compare) markSeen(data.compare.id);
     } catch {
       say(kind === 'save' ? "Couldn't save the card" : "Couldn't share the card");
     } finally {
