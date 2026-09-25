@@ -63,7 +63,7 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div class="sheet-panel" data-palace={palace}>
+      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
         <div class="sheet-grab" />
         <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
         {children}
