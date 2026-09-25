@@ -34,3 +34,14 @@ Fix these three, each with a test that fails before and passes after, and put th
   - When `effA`/`effB` are present, also return `effectiveDelta: r1(effB - effA)` and `effectiveDeltaPct: effA ? r1(((effB - effA) / effA) * 100) : null`, straight after `deltaPct`.
   - Add both keys to BODY_KEYS (loop.ts:120), and add `effectiveDelta\w*` to BODY_FACT (loop.ts:123). `\beffective\b` doesn't match them.
 - **Test:** effectiveDelta is −570 with sharing on, is absent with sharing off, and is removed on replay.
+
+## Re-check at e90aeaa: all three fixed, PR #16 merged (2ff7c88)
+
+QA6-1, QA6-2 and QA6-3 match the fixes above, and each new test fails without its fix. With sharing off, the coach output is byte-identical to main. vitest (1,075) passed, and so did MARC_PERF, both time zones, tsc and `npm run gate`. No test lost a line.
+
+Two low follow-ups. They don't block; fold them into the next batch that touches History or the gate.
+- **QA6-4 · A set label can split across lines**, leaving a lone "I" or "10 I" at the start of the next line. This happens in 224 of 480 rows at 360 px, against 80 on main. Nothing overlaps or gets clipped.
+  - **Fix** (History.tsx:266, the trailing span): wrap each set's label in a no-wrap span, so lines break only at " · ". `<span key={i}>{i ? ' · ' : ''}<span style="white-space:nowrap">{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span></span>`
+  - Never put nowrap on the outer per-set span: that removes every break point and overflows by 110–186 px.
+- **QA6-5 · Make the gate probe stricter.** The QA6-2 overlap check measures `.grow`, not the date text, so on its own it misses an overflowing date.
+  - **Fix:** measure `row.querySelector(':scope > .grow .small') ?? row.querySelector(':scope > .grow')`.
