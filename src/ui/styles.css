@@ -195,6 +195,10 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .list-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); min-height: 52px; min-width: 0; overflow: clip; overflow-clip-margin: 4px; }
 .list-row:last-child { border-bottom: 0; }
 .list-row.pressable { cursor: pointer; margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: var(--radius-sm); }
+/* QA6-2: a bodyweight/assisted set label (e.g. "BW+10 kg × 5") is longer than a plain kg one, so the
+   date cell must stop shrinking and the set text must wrap right-aligned instead of overlapping it. */
+.list-row.stat-hist-row > .grow { flex: none; }
+.list-row.stat-hist-row > .hint { flex: 1 1 0; min-width: 0; text-align: right; }
 
 .toggle { position: relative; width: 46px; height: 28px; border-radius: 999px; background: var(--surface-3); border: 1px solid var(--border); transition: background var(--dur-base) var(--ease-standard); flex: none; }
 /* QA5-13: the disabled Reduce motion switch (forced on when the OS already asks for it) otherwise

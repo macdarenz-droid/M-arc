@@ -5,7 +5,7 @@ import { useReorder } from './reorder';
 import { openEscobar } from '@/escobar/ui/open';
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
-import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
+import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
@@ -15,6 +15,7 @@ import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
+import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/brain/bodyweight';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
@@ -462,6 +463,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const u = unit.value;
   const ex: Exercise | undefined = findExercise(entry.exerciseId, s.customExercises);
   const mode = ex?.mode ?? 'weighted';
+  const bwHint = bodyweightHint(ex, bodyWeightAt.value?.(today.value) ?? null, u);
   const recoveryPct = recoveryPctFor(entry.exerciseId, s.customExercises, recoverySelector.value);
   const profile = profileFor(entry.exerciseId, s.active?.gymId ?? activeGymId());
   // QA-R6-5: a loaded carry uses the gym's equipment unit too.
@@ -472,6 +474,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
   const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<string | null>(null);
+  const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
   const sticky = s.exerciseNotes[entry.exerciseId];
@@ -507,6 +511,18 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
+  // QA-hotfix2: `index` can point at a different entry by the time this fires (e.g. a remove just
+  // ahead of it shifted the array), so only write "Note for today" while it still names this entry.
+  const commitNoteDraft = (value: string) => { if (active()?.entries[index]?.id === entry.id) setEntryNote(index, value); };
+  /** Flushes any pending note drafts and clears them before closing the menu sheet, however it closes
+   * (Close/back/backdrop, or one of Skip/Put back/Substitute/Remove below, which used to bypass this). */
+  const closeMenu = () => {
+    if (stickyDraft != null) setExerciseNote(entry.exerciseId, stickyDraft);
+    if (noteDraft != null) commitNoteDraft(noteDraft);
+    setStickyDraft(null);
+    setNoteDraft(null);
+    setMenu(false);
+  };
 
   // F9: a PR pops in once, the moment its set commits — never again on remount (a tab switch).
   const seenPrRef = useRef<Set<string> | null>(null);
@@ -549,7 +565,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
-        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setMenu(true); }}><IconMore /></Button>
+        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
         <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
       </div>
       {open && (
@@ -573,7 +589,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               )}
             </div>
           )}
-          <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{eu}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
+          {bwHint && <p class="hint">{bwHint}</p>}
+          <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {(() => { let nextUpFound = false; return entry.sets.map((set, j) => {
             const { prev, pr } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
@@ -584,7 +601,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             const core = !isTimed && mode !== 'conditioning' ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
             const isNextUp = !nextUpFound && isNextUpCandidate(core, isCommitted(set), set.kind);
             if (isNextUp) nextUpFound = true;
-            const lastHint = prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${formatSetLoad(prev, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
+            const lastHint = prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
             return (
               <div key={j}>
                 <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`}>
@@ -593,7 +610,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
                       <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
@@ -644,13 +661,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </div>
       )}
       {menu && (
-        <Sheet title={entry.name} onClose={() => setMenu(false)}>
+        <Sheet title={entry.name} onClose={closeMenu}>
           <div class="stack-sm">
-            <Field label="Setup note (shown every time)"><input maxLength={200} value={sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onChange={e => setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value)} /></Field>
-            <Field label="Note for today"><input maxLength={500} value={entry.note ?? ''} onChange={e => setEntryNote(index, (e.target as HTMLInputElement).value)} /></Field>
-            <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
-            {ex && <Button variant="quiet" onClick={() => { setMenu(false); setSubOpen(true); }}>Substitute exercise</Button>}
-            <Button variant="danger" onClick={() => { removeEntry(index); setMenu(false); }}>Remove from this session</Button>
+            <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
+            <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
+            <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
+            <Button variant="danger" onClick={() => { closeMenu(); removeEntry(index); }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
         </Sheet>
@@ -870,11 +887,11 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
         {entries.map((entry, ei) => (
           <Card key={entry.exerciseId}>
             <b class="small">{entry.name}</b>
-            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{profileFor(entry.exerciseId).unit}</span><span class="hint">reps</span><span class="hint">effort</span></div>
+            <div class="set-grid" style={{ marginTop: 6 }}><span class="set-index">Set</span><span class="hint">{loadColumnLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)}</span><span class="hint">reps</span><span class="hint">effort</span></div>
             {entry.sets.map((set, si) => (
               <div key={si} class="set-grid">
                 <span class="set-index">{si + 1}</span>
-                <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
+                <WeightInput kg={set.kg} entered={set.entered} entryUnit={profileFor(entry.exerciseId).unit} displayUnit={u} ariaLabel={loadAriaLabel(findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted', profileFor(entry.exerciseId).unit)} onChange={v => patchSet(ei, si, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={() => setExerciseUnit(entry.exerciseId, profileFor(entry.exerciseId).unit === 'kg' ? 'lb' : 'kg')} />
                 <input type="number" inputMode="numeric" value={set.reps ?? ''} onInput={e => patchSet(ei, si, { reps: parseReps((e.target as HTMLInputElement).value) })} />
                 <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => patchSet(ei, si, { effort: set.effort === ef.v ? undefined : ef.v })}>{ef.l}</button>)}</div>
               </div>

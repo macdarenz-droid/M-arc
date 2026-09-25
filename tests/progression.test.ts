@@ -247,3 +247,46 @@ describe('QA3-3c: above the rack, a scaled lb carry still lands on a clean numbe
     expect(n.target).toBe('235 lb · 45 m');
   });
 });
+
+describe('F13 Part B: a carry logged as kg × reps shows its weight in the target', () => {
+  const id = 'lib_farmer_s_carry';
+
+  it('adds a rep at the same load', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toBe('32 kg · 3 reps');
+    expect(n.kg).toBe(32);
+    expect(n.mode).toBe('reps');
+  });
+
+  it('re-entry after 44 days repeats the load, with a rep range', () => {
+    const h = [session('2026-08-01', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toMatch(/^32 kg · \d+–\d+ reps$/);
+    expect(n.kg).toBe(32);
+  });
+
+  it('a deload week scales the kg down, no equipment', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, id, 'lean', '2026-09-15', 3, [], { deload });
+    expect(n.target).toBe('29 kg · 2 reps · easy');
+    expect(n.kg).toBe(29);
+  });
+
+  it('a lb-equipment carry snaps its target to the ladder', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 31.751, entered: { value: 70, unit: 'lb' }, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.target).toBe('70 lb · 3 reps');
+  });
+
+  it('bodyweight and assisted moves, and a carry with no kg logged, are unaffected pins', () => {
+    const sled = suggestNext([session('2026-09-10', [{ id: 'lib_sled_push', sets: [{ reps: 10, effort: 'ideal' }] }])], 'lib_sled_push', 'lean', '2026-09-14');
+    expect(sled.target).toBe('11 reps');
+    expect(sled.kg).toBeNull();
+    const pushup = suggestNext([session('2026-09-10', [{ id: 'lib_push_up', sets: sets(0, 10) }])], 'lib_push_up', 'lean', '2026-09-14');
+    expect(pushup.target).toBe('11 reps');
+    expect(pushup.kg).toBeNull();
+  });
+});

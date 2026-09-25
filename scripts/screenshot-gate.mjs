@@ -255,6 +255,60 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA6-2: on Stats > Exercise progress, a bodyweight/assisted set label ("BW+10 kg × 5",
+// "20 kg assist") is longer than a plain kg one, so on a 360 px phone the date cell must not
+// overlap the set text.
+{
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`stat-hist-row: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `s${offset}-${id}`, splitId: 'sp1', splitName: 'Pull', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const pullUp = [0, 1, 2].map(() => ({ kg: 10, reps: 5, effort: 'ideal' }));
+    const assisted = [0, 1, 2].map(() => ({ kg: 20, reps: 10, effort: 'ideal' }));
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(10, 'lib_pull_up', 'Pull-Up', pullUp), sess(6, 'lib_pull_up', 'Pull-Up', pullUp), sess(3, 'lib_pull_up', 'Pull-Up', pullUp),
+        sess(9, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted), sess(5, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted), sess(2, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  for (const label of ['Pull-Up', 'Assisted Pull-Up']) {
+    await page.locator('select').first().selectOption({ label });
+    await page.waitForTimeout(200);
+    await settle(page); await page.screenshot({ path: `${OUT}/silent-black-stat-hist-row-${label.toLowerCase().replace(/\s+/g, '-')}.png` });
+    // Scoped by the Section's own data-palace, not by the stat-hist-row class, so this probe still
+    // finds the rows (and so still fails on overlap) if the class were ever removed by mistake.
+    const rows = await page.evaluate(() => [...document.querySelectorAll('[data-palace="history.exercise-stats"] .list .list-row')].map(row => {
+      const date = row.querySelector(':scope > .grow');
+      const setText = row.querySelector(':scope > .hint');
+      const dr = date.getBoundingClientRect(), sr = setText.getBoundingClientRect();
+      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.querySelector('.small')?.getClientRects().length ?? date.getClientRects().length };
+    }));
+    if (!rows.length) errors.push(`stat-hist-row ${label}: expected recent-session rows on Exercise progress`);
+    for (const r of rows) {
+      if (r.dateRight > r.setLeft) errors.push(`stat-hist-row ${label}: the date (right ${r.dateRight}) overlaps the set text (left ${r.setLeft})`);
+      if (r.dateLines > 1) errors.push(`stat-hist-row ${label}: the date wrapped onto ${r.dateLines} lines`);
+    }
+  }
+  await ctx.close();
+}
+
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -1535,6 +1589,150 @@ for (const width of [390, 360]) {
   // LiveClock (Train.tsx) is the only h1.num on the live screen; masked along with the rest clock
   // since both tick every second and would otherwise never match frame to frame.
   await twiceMatch('live train clock', { mask: [page.locator('.rest .clock'), page.locator('h1.num')] });
+  await ctx.close();
+}
+
+// Hotfix regression: an exercise's "Note for today" and "Setup note" inputs are controlled by the
+// live store value and only saved on the native 'change' event (blur/Enter). During a live
+// session, `recovery` (app/selectors.ts) is a computed signal keyed on the ticking `minuteNow`
+// signal; every wall-clock minute rollover recomputes it, which re-renders every open EntryCard —
+// including one with its notes sheet open — and resets an unsaved, still-focused input back to the
+// last-committed value. Playwright's virtual clock crosses that minute boundary deterministically,
+// without a real 60 s wait and without any date-dependent locator.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  // Installed before navigation so the app's own 1 s ticker (acquireTicker, app/clock.ts) is
+  // created against the virtual clock and actually advances when fast-forwarded below.
+  await page.clock.install({ time: Date.now() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const card = page.locator('.card.exercise').first();
+  const openMenu = () => card.getByRole('button', { name: 'Options', exact: true }).click();
+  const closeMenu = () => page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click();
+  // 65 s of virtual time guarantees a minute rollover regardless of where the wall clock started.
+  const crossAMinute = () => page.clock.fastForward(65_000);
+
+  // "Note for today": typed but not yet blurred, must survive a minute rolling over mid-edit,
+  // and must still be there after closing and reopening the sheet.
+  await openMenu(); await page.waitForTimeout(200);
+  const noteInput = page.getByLabel('Note for today');
+  await noteInput.fill('Seat 5 test');
+  await crossAMinute(); await page.waitForTimeout(200);
+  if ((await noteInput.inputValue()) !== 'Seat 5 test') errors.push(`${tag}: "Note for today" was wiped when a minute rolled over mid-edit`);
+  await closeMenu(); await page.waitForTimeout(200);
+  await openMenu(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Note for today').inputValue()) !== 'Seat 5 test') errors.push(`${tag}: "Note for today" did not survive closing and reopening the sheet`);
+
+  // "Setup note (shown every time)": same two checks.
+  const stickyInput = page.getByLabel('Setup note (shown every time)');
+  await stickyInput.fill('Seat 5 setup test');
+  await crossAMinute(); await page.waitForTimeout(200);
+  if ((await stickyInput.inputValue()) !== 'Seat 5 setup test') errors.push(`${tag}: "Setup note" was wiped when a minute rolled over mid-edit`);
+  await closeMenu(); await page.waitForTimeout(200);
+  await openMenu(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Setup note (shown every time)').inputValue()) !== 'Seat 5 setup test') errors.push(`${tag}: "Setup note" did not survive closing and reopening the sheet`);
+  await closeMenu();
+  await ctx.close();
+}
+
+// Hotfix regression #2 (masking / overwrite on Skip, Put back, Substitute, Remove): those buttons
+// used to call setMenu(false) directly, bypassing the same flush the sheet's own Close/back path
+// got. A typed-then-reverted edit leaves the local draft non-null (the browser's native 'change'
+// only fires when the value differs from what it was at focus time, so reverting to the original
+// text never fires it), so the stale draft masked whatever another tab or device had since saved.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe-mask';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const card = page.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  const stickyInput = page.getByLabel('Setup note (shown every time)');
+  await stickyInput.click();
+  await page.keyboard.type('X');
+  await page.keyboard.press('Backspace');
+  if ((await stickyInput.inputValue()) !== '') errors.push(`${tag}: setup note draft is not back to its original (empty) text before the Skip tap`);
+  await page.getByRole('button', { name: 'Skip today', exact: true }).click();
+  await page.waitForTimeout(200);
+
+  // Another tab/device saves a setup note for this exercise while ours held a stale reverted draft.
+  const exerciseId = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries[0].exerciseId);
+  await page.evaluate(exId => {
+    const st = JSON.parse(localStorage.getItem('marc.state.v1'));
+    st.exerciseNotes = { ...st.exerciseNotes, [exId]: 'From another tab' };
+    const json = JSON.stringify(st);
+    localStorage.setItem('marc.state.v1', json);
+    // Same-document writes never raise 'storage'; dispatching it by hand stands in for the second tab.
+    window.dispatchEvent(new StorageEvent('storage', { key: 'marc.state.v1', newValue: json, storageArea: localStorage }));
+  }, exerciseId);
+  await page.waitForTimeout(200);
+
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Setup note (shown every time)').inputValue()) !== 'From another tab') errors.push(`${tag}: a stale reverted draft masked another tab's saved setup note`);
+  await page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click();
+  await ctx.close();
+}
+
+// Hotfix regression #3 (index staleness): "Note for today" saves by array index. Removing an entry
+// without first blurring the note field (a real tap always blurs first and is unaffected — this
+// reproduces the no-blur path, e.g. the Sheet's own unmount) used to let the pending draft, once
+// flushed after the array had already shifted, land on whichever exercise now sat at that index.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe-index';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.map(e => e.exerciseId));
+  if (before.length < 2) errors.push(`${tag}: expected at least 2 exercises in this session to test index staleness`);
+
+  const card = page.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  const noteInput = page.getByLabel('Note for today');
+  await noteInput.click();
+  await page.keyboard.type('Should not leak');
+  if ((await noteInput.inputValue()) !== 'Should not leak') errors.push(`${tag}: note field did not take the typed text`);
+  // element.click() (no prior pointer interaction) skips the browser's default click-blurs-the-
+  // previously-focused-field step; a real tap does blur first and is unaffected by this bug.
+  await page.evaluate(() => {
+    const btn = [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Remove from this session');
+    btn?.click();
+  });
+  await page.waitForTimeout(300);
+
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.map(e => ({ id: e.exerciseId, note: e.note ?? null })));
+  if (after.length !== before.length - 1) errors.push(`${tag}: expected the entry to actually be removed (before ${before.length}, after ${after.length})`);
+  if (after.some(e => e.note === 'Should not leak')) errors.push(`${tag}: the note leaked onto another exercise after a no-blur Remove`);
   await ctx.close();
 }
 

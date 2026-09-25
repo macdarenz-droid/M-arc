@@ -130,12 +130,13 @@ export interface WeightChange { kg: number; entered: { value: number; unit: Load
  * verbatim in `entered`, so 35 lb stays 35 lb. When the entry unit differs from the display
  * unit, a second reading sits under the input.
  */
-export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, onChange, onUnitFlip, onUnitLongPress, setField, onFieldKeyDown }: {
+export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, ariaLabel, onChange, onUnitFlip, onUnitLongPress, setField, onFieldKeyDown }: {
   kg: number | undefined;
   entered?: { value: number; unit: LoadUnit };
   entryUnit: LoadUnit;
   displayUnit?: LoadUnit;
   placeholder?: string;
+  ariaLabel?: string;
   onChange: (v: WeightChange | undefined) => void;
   onUnitFlip?: () => void;
   onUnitLongPress?: () => void;
@@ -157,7 +158,7 @@ export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, 
   return (
     <span class="weight-input">
       <input
-        type="text" inputMode="decimal" autoComplete="off" placeholder={placeholder} value={text} aria-label={`Load in ${entryUnit}`}
+        type="text" inputMode="decimal" autoComplete="off" placeholder={placeholder} value={text} aria-label={ariaLabel ?? `Load in ${entryUnit}`}
         {...(setField ? { 'data-set-field': 'kg', enterKeyHint: 'next' as const, onKeyDown: onFieldKeyDown } : {})}
         onFocus={e => { focused.current = true; if (setField) (e.target as HTMLInputElement).select(); }}
         onBlur={() => { focused.current = false; setText(display); }}

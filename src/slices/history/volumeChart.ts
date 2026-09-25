@@ -2,8 +2,9 @@
 import type { Exercise, LoadUnit, Session } from '@/core/models';
 import { kgToDisplay } from '@/core/units';
 import { weeklyVolumeHistory } from '@/brain/weekly';
+import type { BodyWeightAt } from '@/brain/bodyweight';
 
-export function volumeChartWeeks(sessions: Session[], today: string, custom: Exercise[], unit: LoadUnit, weeks = 12): Array<{ week: string; value: number }> {
+export function volumeChartWeeks(sessions: Session[], today: string, custom: Exercise[], unit: LoadUnit, weeks = 12, bw?: BodyWeightAt): Array<{ week: string; value: number }> {
   // weeklyVolumeHistory lists this week first.
-  return weeklyVolumeHistory(sessions, today, weeks, custom).map(w => ({ week: w.week, value: kgToDisplay(w.volumeKg, unit) })).reverse();
+  return weeklyVolumeHistory(sessions, today, weeks, custom, bw).map(w => ({ week: w.week, value: kgToDisplay(w.volumeKg, unit) })).reverse();
 }
