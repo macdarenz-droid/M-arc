@@ -32,3 +32,23 @@ describe('QA4-1: assisted exercises add no volume', () => {
     expect(p.lines.find(l => l.exerciseId === ASSIST)!.value).toBe('3 sets');
   });
 });
+
+describe('QA4-2: carries, sleds and loaded holds read as distance or time, not "×0 … BW"', () => {
+  const FARMER = 'lib_farmer_s_carry', SLED = 'lib_sled_push', PLANK = 'lib_plank';
+  const s: Session = session('2026-09-22', [
+    { id: FARMER, name: "Farmer's Carry", sets: Array.from({ length: 3 }, () => ({ kg: 32, distanceM: 40 })) },
+    { id: SLED, name: 'Sled Push', sets: Array.from({ length: 3 }, () => ({ distanceM: 20 })) },
+    { id: PLANK, name: 'Plank', sets: Array.from({ length: 3 }, () => ({ kg: 20, durationSec: 60 })) },
+  ]);
+  const line = (d: ReturnType<typeof cardData>, id: string) => d.lines.find(l => l.exerciseId === id)!;
+  it('workout lines', () => {
+    const d = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s });
+    expect([line(d, FARMER).detail, line(d, FARMER).value]).toEqual(['3×40 m @32', '—']);
+    expect([line(d, SLED).detail, line(d, SLED).value]).toEqual(['3×20 m', 'BW']);
+    expect([line(d, PLANK).detail, line(d, PLANK).value]).toEqual(['3×60s @20', '—']);
+  });
+  it('period lines use the same BW rule', () => {
+    const d = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'week' });
+    expect([line(d, FARMER).value, line(d, SLED).value, line(d, PLANK).value]).toEqual(['—', 'BW', '—']);
+  });
+});

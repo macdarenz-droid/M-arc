@@ -4,7 +4,7 @@
  * muscle sets from `effectiveSetsByMuscle`, per-exercise tops from `summarizeSets`.
  * Loads are in the person's unit. Pure, so it is tested without a DOM.
  */
-import type { Exercise, LoadUnit, Session } from '@/core/models';
+import type { Exercise, LoadUnit, LoggedSet, Session } from '@/core/models';
 import { addDays, formatClock, formatDay, parseDay, dayKey, weekStart } from '@/core/dates';
 import { kgToDisplay, setLoadIn } from '@/core/units';
 import { workingTotals } from '@/brain/weekly';
@@ -91,11 +91,17 @@ function periodWords(period: Exclude<SharePeriod, 'workout'>, from: string, to: 
   return { label: `Since ${my(from)}`, title: 'All time', sub: `${my(from)} – today` };
 }
 
-/** Volume of one exercise's working sets, in `unit`, as receipt text. Assisted work counts sets (QA4-1). */
-function lineValue(volumeKg: number, unit: LoadUnit, assisted = false, sets = 0): string {
-  if (assisted) return `${groupInt(sets)} sets`;
-  return volumeKg > 0 ? volumeShort(kgToDisplay(volumeKg, unit), unit) : 'BW';
+/**
+ * Volume of one exercise's working sets, in `unit`, as receipt text. Assisted work counts sets (QA4-1).
+ * With no volume, "BW" only when nothing was loaded; a loaded carry or hold reads "—" (QA4-2).
+ */
+function lineValue(volumeKg: number, unit: LoadUnit, o: { assisted?: boolean; sets?: number; loaded?: boolean } = {}): string {
+  if (o.assisted) return `${groupInt(o.sets ?? 0)} sets`;
+  if (volumeKg > 0) return volumeShort(kgToDisplay(volumeKg, unit), unit);
+  return o.loaded ? '—' : 'BW';
 }
+
+const isLoaded = (sets: LoggedSet[]) => sets.some(x => isWorkingSet(x) && (x.kg ?? 0) > 0);
 
 function workoutLines(session: Session, unit: LoadUnit, prIds: Set<string>, custom: Exercise[]): CardLine[] {
   const out: CardLine[] = [];
@@ -108,28 +114,32 @@ function workoutLines(session: Session, unit: LoadUnit, prIds: Set<string>, cust
     const loaded = sum.sets.filter(s => (s.kg ?? 0) > 0);
     const top = assisted ? loaded.reduce<typeof loaded[number] | undefined>((a, s) => (!a || (s.kg ?? 0) < (a.kg ?? 0) ? s : a), undefined)
       : sum.sets.find(s => (s.kg ?? 0) === sum.topKg && sum.topKg > 0);
-    const detail = top ? `${n}×${top.reps ?? 0} @${setLoadIn(top, unit)}${assisted ? ' assist' : ''}`
-      : sum.bestDurationSec > 0 && !sum.bestReps ? `${n}×${sum.bestDurationSec}s`
-      : `${n}×${sum.bestReps}`;
+    const load = top ? ` @${setLoadIn(top, unit)}${assisted ? ' assist' : ''}` : '';
+    // QA4-2: a set with no reps (a carry, a sled, a hold) is measured in metres, then seconds.
+    const detail = top && (top.reps ?? 0) > 0 ? `${n}×${top.reps}${load}`
+      : sum.bestDistanceM > 0 ? `${n}×${sum.bestDistanceM} m${load}`
+      : sum.bestDurationSec > 0 ? `${n}×${sum.bestDurationSec}s${load}`
+      : `${n}×${sum.bestReps}${load}`;
     const { volumeKg } = workingTotals([e], custom);
-    out.push({ exerciseId: e.exerciseId, name: e.name, detail, value: lineValue(volumeKg, unit, assisted, n), volumeKg, pr: prIds.has(e.exerciseId) });
+    out.push({ exerciseId: e.exerciseId, name: e.name, detail, value: lineValue(volumeKg, unit, { assisted, sets: n, loaded: isLoaded(e.sets) }), volumeKg, pr: prIds.has(e.exerciseId) });
   }
   return out.sort((a, b) => b.volumeKg - a.volumeKg);
 }
 
 function periodLines(inRange: Session[], unit: LoadUnit, prIds: Set<string>, custom: Exercise[]): CardLine[] {
-  const by = new Map<string, { name: string; count: number; sets: number; volumeKg: number }>();
+  const by = new Map<string, { name: string; count: number; sets: number; volumeKg: number; loaded: boolean }>();
   for (const s of inRange) for (const e of s.exercises) {
     if (!e.sets.some(isWorkingSet)) continue;
-    const row = by.get(e.exerciseId) ?? { name: e.name, count: 0, sets: 0, volumeKg: 0 };
+    const row = by.get(e.exerciseId) ?? { name: e.name, count: 0, sets: 0, volumeKg: 0, loaded: false };
     const t = workingTotals([e], custom);
+    row.loaded ||= isLoaded(e.sets);
     row.name = e.name;
     row.count++;
     row.sets += t.sets;
     row.volumeKg += t.volumeKg;
     by.set(e.exerciseId, row);
   }
-  return [...by].map(([exerciseId, r]) => ({ exerciseId, name: r.name, detail: `×${r.count}`, value: lineValue(r.volumeKg, unit, modeOf(exerciseId, custom) === 'assisted', r.sets), volumeKg: r.volumeKg, pr: prIds.has(exerciseId) }))
+  return [...by].map(([exerciseId, r]) => ({ exerciseId, name: r.name, detail: `×${r.count}`, value: lineValue(r.volumeKg, unit, { assisted: modeOf(exerciseId, custom) === 'assisted', sets: r.sets, loaded: r.loaded }), volumeKg: r.volumeKg, pr: prIds.has(exerciseId) }))
     .sort((a, b) => b.volumeKg - a.volumeKg || a.name.localeCompare(b.name));
 }
 
