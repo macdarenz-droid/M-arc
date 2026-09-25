@@ -122,7 +122,8 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       // F13b: with body-weight sharing on, the coach's volume matches Stats (docs/F13-BODYWEIGHT-LOAD.md §10).
       const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;
       const withBw = bw ? weekSummary(s.sessions, target, s.customExercises, planned, bw) : null;
-      return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, records: w.records.length, grade: w.grade.title, ...(withBw ? { withBodyweightKg: withBw.volumeKg } : {}) };
+      // QA6-1: withBodyweightKg goes right after volumeKg so it lands inside the Generic card's first 6 rows.
+      return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, ...(withBw ? { withBodyweightKg: withBw.volumeKg } : {}), records: w.records.length, grade: w.grade.title };
     }
     case 'session_summary': {
       const x = s.sessions.find(y => y.id === params.sessionId);

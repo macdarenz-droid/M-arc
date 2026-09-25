@@ -30,6 +30,12 @@ describe('F13b: week_summary', () => {
     expect(on.volumeKg).toBe(0);
     expect(on.withBodyweightKg).toBe(1920);
   });
+
+  it("QA6-1: withBodyweightKg lands in the Generic card's first 6 scalar rows", () => {
+    const on = summarize('week_summary', {}, ctxOf(stateWith(true)));
+    const scalarKeys = Object.entries(on).filter(([, v]) => typeof v === 'number' || typeof v === 'string').slice(0, 6).map(([k]) => k);
+    expect(scalarKeys).toContain('withBodyweightKg');
+  });
 });
 
 describe('F13b: get_volume', () => {
