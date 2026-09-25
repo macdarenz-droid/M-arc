@@ -135,13 +135,15 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg button, .tab, .unit-pill, .esc-chip-x):active { opacity: .7; }
 /* Frequent controls (Calm rule): a colour change only, no scale. */
 .effort button, .set-kind { transition: background-color var(--dur-press) var(--ease-standard); }
-.effort button:active, .set-kind:active { background: var(--surface-2); transition: none; }
+/* QA5-18: on surface-1 the step to surface-2 is ~1.03:1 in the dark themes (Silent Black, Ember,
+   Emerald, Midnight) — imperceptible under gym lighting. A neutral overlay reads at any surface. */
+.effort button:active, .set-kind:active { background: color-mix(in srgb, var(--text) 10%, transparent); transition: none; }
 /* Surfaces on surface-1: press to surface-2, release fades back. */
 .theme-card, .cal .day { transition: background-color var(--dur-fast) var(--ease-standard); }
 /* QA5-11: .cal .day.trained/.selected match .cal .day:active at equal specificity (0,3,0) and
    come later, so pressing a trained day (the common case) changed nothing; :not(.selected) lifts
    this to (0,4,0), which beats .trained. .selected already has a strong fill of its own. */
-.theme-card:active, .cal .day:active:not(.selected) { background: var(--surface-2); transition: none; }
+.theme-card:active, .cal .day:active:not(.selected) { background: color-mix(in srgb, var(--text) 8%, var(--surface-1)); transition: none; }
 /* Already-surface-2 rows: press to surface-3 so the press is still visible. QA5-11: .esc-menu is
    itself surface-2 (:367), so .esc-menu button moved here from the group above, where its press
    was invisible against its own panel's background. */
