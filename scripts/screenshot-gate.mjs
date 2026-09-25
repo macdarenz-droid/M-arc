@@ -626,7 +626,7 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
       .map(b => { const r = b.getBoundingClientRect(); return { t: b.getAttribute('aria-label') || b.textContent, w: Math.round(r.width), h: Math.round(r.height) }; })
       .filter(x => x.w < 44 || x.h < 44).map(x => `${x.t} ${x.w}×${x.h}`));
     if (small.length) errors.push(`share-fit ${w}×${h}: tap targets under 44 px: ${small.join(', ')}`);
-    if (w === 360) await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` });
+    if (w === 360) { await page.waitForTimeout(300); await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` }); }
     await page.keyboard.press('Escape'); await page.waitForTimeout(250);
   }
   await ctx.close();
