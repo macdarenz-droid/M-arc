@@ -55,6 +55,10 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
+    // QA5-1: a child that already asks for focus (e.g. a form's first field) wins over the
+    // panel's own autofocus, which exists only so a sheet with no such child still gets focus.
+    const panel = d.querySelector<HTMLElement>('.sheet-panel');
+    if (panel?.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
