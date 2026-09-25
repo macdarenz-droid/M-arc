@@ -621,6 +621,11 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
       return !(r.top >= 0 && r.bottom <= innerHeight && hit && b.contains(hit));
     }).map(b => b.textContent));
     if (off.length) errors.push(`share-fit ${w}×${h} inset ${inset}: off screen or covered: ${off.join(', ')}`);
+    // QA4-15: every control in the sheet is at least 44 × 44 px.
+    const small = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .share-dots button, dialog[open] .share-size button, dialog[open] .share-actions button')]
+      .map(b => { const r = b.getBoundingClientRect(); return { t: b.getAttribute('aria-label') || b.textContent, w: Math.round(r.width), h: Math.round(r.height) }; })
+      .filter(x => x.w < 44 || x.h < 44).map(x => `${x.t} ${x.w}×${x.h}`));
+    if (small.length) errors.push(`share-fit ${w}×${h}: tap targets under 44 px: ${small.join(', ')}`);
     if (w === 360) await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` });
     await page.keyboard.press('Escape'); await page.waitForTimeout(250);
   }

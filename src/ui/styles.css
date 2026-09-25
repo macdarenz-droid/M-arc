@@ -422,14 +422,15 @@ svg { display: block; }
 .share-slide img { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-drag: none; }
 .share-slide.see-through { background-color: #d9d9d9; background-image: linear-gradient(45deg, #bdbdbd 25%, transparent 25%), linear-gradient(-45deg, #bdbdbd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #bdbdbd 75%), linear-gradient(-45deg, transparent 75%, #bdbdbd 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0; }
 .share-style { text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
-.share-dots { display: flex; justify-content: center; gap: 2px; }
-.share-dots button { width: 22px; height: 22px; display: grid; place-items: center; background: none; border: 0; padding: 0; }
+/* QA4-15: 44 px tap targets; the visible dot stays 6 px. */
+.share-dots { display: flex; justify-content: center; gap: 0; }
+.share-dots button { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; padding: 0; }
 .share-dots button::before { content: ""; width: 6px; height: 6px; border-radius: 3px; background: var(--border-strong); transition: width .2s ease; }
 .share-dots button.on::before { width: 18px; background: var(--accent); }
 .share-empty { text-align: center; }
 .share-opts { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .share-size { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
-.share-size button { font-size: 12.5px; font-weight: 600; color: var(--text-2); background: transparent; border: 0; padding: 0 14px; min-height: 36px; font-variant-numeric: tabular-nums; }
+.share-size button { font-size: 12.5px; font-weight: 600; color: var(--text-2); background: transparent; border: 0; padding: 0 14px; min-height: 44px; font-variant-numeric: tabular-nums; }
 .share-size button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
 /* QA4-5: on a short screen the cards push the buttons below the fold, so they stick to the sheet's bottom edge. */
 /* The bar also covers the panel's bottom padding (20px + safe area), so nothing scrolls into view beneath it. */
