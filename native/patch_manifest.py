@@ -45,6 +45,9 @@ attributed_permissions = [
     ("android.permission.ACCESS_FINE_LOCATION", {"maxSdkVersion": "30"}),
     ("android.permission.FOREGROUND_SERVICE", {}),
     ("android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE", {}),
+    # F12 Save (QA4-3): Documents/M-ARC on Android 8-10 needs storage access; Android 11+ never asks.
+    ("android.permission.WRITE_EXTERNAL_STORAGE", {"maxSdkVersion": "29"}),
+    ("android.permission.READ_EXTERNAL_STORAGE", {"maxSdkVersion": "29"}),
 ]
 # PL-16: an entry a plugin already contributed still gets the required attributes.
 for name, attrs in attributed_permissions:
@@ -69,6 +72,9 @@ if not any(f.get(a("name")) == "android.hardware.bluetooth_le" for f in root.fin
 app = root.find("application")
 if app is None:
     raise SystemExit("<application> not found")
+
+# F12 Save (QA4-3): Android 10 only reaches Documents with legacy storage; later versions ignore it.
+app.set(a("requestLegacyExternalStorage"), "true")
 
 # WatchService (6.2): a foreground connected-device service, ported from Watch-test.
 watch_service = None

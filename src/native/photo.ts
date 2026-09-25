@@ -16,9 +16,9 @@ export interface CapturedPhoto { mediaType: 'image/jpeg'; data: string }
 
 const pickFile = (): Promise<File | null> => pickFileRaw('image/*');
 
-async function toCanvas(file: File): Promise<HTMLCanvasElement> {
+async function toCanvas(file: File, maxDimension: number): Promise<HTMLCanvasElement> {
   const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
@@ -45,16 +45,18 @@ function canvasToBase64(canvas: HTMLCanvasElement, quality: number): Promise<str
  * Opens the camera/gallery picker, downscales to at most 900px on the long
  * side and re-encodes as JPEG, stepping quality down until it is
  * comfortably small. Returns null when the person cancels rather than
- * throwing, since cancelling is not an error.
+ * throwing, since cancelling is not an error. Share cards (F12) ask for a
+ * larger photo, since it fills a 1080×1920 image and never leaves the phone.
  */
-export async function pickAndCompressPhoto(): Promise<CapturedPhoto | null> {
+export async function pickAndCompressPhoto(opts: { maxDimension?: number; targetChars?: number } = {}): Promise<CapturedPhoto | null> {
   const file = await pickFile();
   if (!file) return null;
-  const canvas = await toCanvas(file);
+  const canvas = await toCanvas(file, opts.maxDimension ?? MAX_DIMENSION);
+  const target = opts.targetChars ?? TARGET_CHARS;
   let data = '';
   for (const quality of QUALITY_STEPS) {
     data = await canvasToBase64(canvas, quality);
-    if (data.length <= TARGET_CHARS) break;
+    if (data.length <= target) break;
   }
   return { mediaType: 'image/jpeg', data };
 }
