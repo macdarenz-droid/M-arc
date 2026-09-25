@@ -128,7 +128,8 @@ for (const theme of themes) {
     await page.locator('.effort button.ideal').nth(1).click();
     await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
     await page.locator('.effort button.max').nth(2).click();
-    await page.getByRole('button', { name: 'Set', exact: true }).first().click(); await page.waitForTimeout(150);
+    // F8: '+ Set' became an icon-only button (aria-label 'Add set').
+    await page.getByRole('button', { name: 'Add set' }).first().click(); await page.waitForTimeout(150);
     const inputs2 = page.locator('.set-grid input');
     await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
     await page.locator('.effort button.ideal').nth(3).click();
@@ -1350,6 +1351,61 @@ for (const theme of themes) {
   const afterSwitch = await page.evaluate(() => { const b = document.querySelector('.pr-badge'); return { exists: !!b, hasPop: !!b?.classList.contains('pop') }; });
   if (!afterSwitch.exists) errors.push(`${tag}: expected the .pr-badge to still be there after a tab switch`);
   if (afterSwitch.hasPop) errors.push(`${tag}: the badge replayed .pop after a tab switch back`);
+
+  await ctx.close();
+}
+
+// F8: every live control is a real >=44px tap target (QA-R7-1 style: elementFromPoint at its
+// centre +/-21px still resolves to it or a descendant), at both 390 and 360px, and the topbar
+// controls fit on one line even at 360px.
+for (const width of [390, 360]) {
+  const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `F8 tap targets ${width}px`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const topbarWrap = await page.evaluate(() => {
+    const row = document.querySelector('.topbar .row');
+    if (!row || !row.children.length) return 0;
+    const tops = [...row.children].map(c => c.getBoundingClientRect().top);
+    return Math.max(...tops) - Math.min(...tops);
+  });
+  if (topbarWrap > 2) errors.push(`${tag}: the live topbar controls wrapped onto more than one line (top spread ${topbarWrap.toFixed(1)}px)`);
+
+  const misses = await page.evaluate(() => {
+    const check = (el, label) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      for (const dy of [-21, 21]) {
+        const hit = document.elementFromPoint(cx, cy + dy);
+        if (!(hit === el || el.contains(hit))) return `${label}: (${cx.toFixed(0)},${(cy + dy).toFixed(0)}) missed (hit ${hit ? hit.className || hit.tagName : 'nothing'})`;
+      }
+      return null;
+    };
+    const byText = (sel, text) => [...document.querySelectorAll(sel)].find(b => b.textContent.trim() === text);
+    const controls = [
+      [byText('.topbar button', 'Finish'), 'Finish'],
+      [document.querySelector('[aria-label="Pause"], [aria-label="Resume"]'), 'Pause/Resume'],
+      [document.querySelector('.exercise.active .set-kind'), '.set-kind'],
+      [document.querySelector('[aria-label="Add set"]'), 'Add set'],
+      [document.querySelector('[aria-label="Remove last set"]'), 'Remove last set'],
+      [byText('.exercise.active button', 'Done with exercise') || byText('.exercise.active button', 'Undo done'), 'Done with exercise/Undo done'],
+      [byText('.exercise.active button', 'See substitutes'), 'See substitutes'],
+      [document.querySelector('.watch-pill'), '.watch-pill'],
+    ];
+    return controls.map(([el, label]) => check(el, label)).filter(Boolean);
+  });
+  if (misses.length) errors.push(`${tag}: ${misses.join('; ')}`);
 
   await ctx.close();
 }

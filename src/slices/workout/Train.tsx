@@ -362,7 +362,7 @@ function LiveSession() {
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
-          <Button variant="solid" size="sm" onClick={() => setFinishing(true)}>Finish</Button>
+          <Button size="sm" class="tap" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
       </div>
 
@@ -558,12 +558,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
-            <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <a onClick={() => setSubOpen(true)}>See substitutes</a> or ease off today.</p>
+            <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
           {cue && <p class="hint muted">{cue.text}</p>}
           {warmup && (
             <div class="warmup">
-              <button type="button" class="btn btn-quiet btn-sm" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
+              <button type="button" class="btn btn-quiet btn-sm tap" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
               {warmupOpen && (
                 <div class="list" style={{ marginTop: 4 }}>
                   {warmup.map((st, i) => <Row key={i} trailing={<span class="hint num">{formatLoadable(loadableNear(st.kg, profile))} × {st.reps}</span>}><span class="small muted">Warm-up {i + 1}</span></Row>)}
@@ -636,10 +636,10 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             );
           }); })()}
           <div class="row">
-            <Button variant="quiet" size="sm" onClick={() => addSet(index)}><IconPlus size={14} /> Set</Button>
-            <Button variant="quiet" size="sm" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={14} /> Set</Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Add set" onClick={() => addSet(index)}><IconPlus size={20} /></Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
             <span class="grow" />
-            <Button variant={entry.done ? 'default' : 'solid'} size="sm" onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
+            <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
           </div>
         </div>
       )}

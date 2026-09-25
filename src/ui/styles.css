@@ -163,8 +163,10 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .btn-quiet { background: transparent; border-color: transparent; color: var(--text-2); }
 .btn-danger { background: transparent; border-color: var(--negative); color: var(--negative); }
 .btn-sm { min-height: 34px; padding: 0 12px; font-size: 13px; }
+/* F8: a live-screen control that must still meet the 44px target despite the compact .btn-sm size. */
+.btn-sm.tap { min-height: 44px; }
 .btn-block { width: 100%; }
-.btn-icon { width: 40px; min-height: 40px; padding: 0; border-radius: 50%; }
+.btn-icon { width: 44px; min-height: 44px; padding: 0; border-radius: 50%; }
 
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: var(--text-2); background: var(--surface-2); white-space: nowrap; min-height: 28px; }
 .chip-accent { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
@@ -172,11 +174,13 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .chip-warning { background: color-mix(in srgb, var(--warning) 16%, transparent); border-color: transparent; color: var(--warning); }
 .chip-negative { background: color-mix(in srgb, var(--negative) 16%, transparent); border-color: transparent; color: var(--negative); }
 .chip-info { background: color-mix(in srgb, var(--info) 16%, transparent); border-color: transparent; color: var(--info); }
-.chip-btn { cursor: pointer; min-height: 36px; padding: 6px 12px; }
+.chip-btn { position: relative; cursor: pointer; min-height: 36px; padding: 6px 12px; }
 .chip-btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
+.chip-btn::before { content: ""; position: absolute; inset: -4px; }
 
 .seg { display: flex; padding: 3px; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); gap: 2px; }
-.seg button { flex: 1; min-height: 34px; border-radius: calc(var(--radius-md) - 3px); font-size: 13px; font-weight: 600; color: var(--text-2); }
+.seg button { position: relative; flex: 1; min-height: 34px; border-radius: calc(var(--radius-md) - 3px); font-size: 13px; font-weight: 600; color: var(--text-2); }
+.seg button::before { content: ""; position: absolute; inset: -5px 0; }
 .seg button[aria-pressed="true"] { background: var(--surface-1); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.18); }
 
 .stat { display: grid; gap: 2px; }
@@ -240,7 +244,8 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
    extra padding gives the ring room, and the matching negative margin keeps the tabs in place. */
 .tabs-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 4px 8px; margin: -2px -4px 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .tabs-strip::-webkit-scrollbar { display: none; }
-.tab { flex: none; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); font-weight: 600; font-size: 13px; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
+.tab { position: relative; flex: none; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); font-weight: 600; font-size: 13px; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
+.tab::before { content: ""; position: absolute; inset: -3px 0; }
 .tab[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
 .tab i { width: 8px; height: 8px; border-radius: 50%; background: var(--dot, var(--accent)); }
 
@@ -267,14 +272,14 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 }
 .set-grid { display: grid; grid-template-columns: 32px 1fr 1fr auto; gap: 8px; align-items: center; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
-.set-grid input { min-height: 40px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
+.set-grid input { min-height: 44px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
 /* F7: a logged set's fields recede, so the next set to do stays the brightest row. */
 .set-grid.committed input:not(:focus) { background: transparent; border-color: var(--border-subtle); }
 .set-index { font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; }
 /* QA5-9: all:unset resets everything, including the user-select:none (:70) and background-color
    transition (:127) set on .set-kind earlier at equal specificity — later source order wins, so
    both were silently undone. Restated here, after all:unset. */
-.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 32px; border-radius: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: background-color var(--dur-press) var(--ease-standard); }
+.set-kind { all: unset; box-sizing: border-box; font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; min-height: 44px; border-radius: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: background-color var(--dur-press) var(--ease-standard); }
 /* `all: unset` above (specificity 0,1,0) beats the zero-specificity :where() focus-visible rule. */
 .set-kind:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
 .set-kind.warmup { color: var(--warning); }
@@ -299,7 +304,8 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 .pr-badge svg { color: var(--positive); }
 .pr-badge.pop { animation: pr-pop var(--dur-bounce) var(--ease-spring-bounce); }
 @keyframes pr-pop { from { opacity: 0; scale: var(--scale-pop); } }
-.watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.watch-pill { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.watch-pill::before { content: ""; position: absolute; inset: -4px 0; }
 .watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
 
 /* Rest banner (I1) */
@@ -376,6 +382,10 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .suspect-chip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 6px; padding: 8px 10px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--warning) 12%, transparent); color: var(--text); font-size: 13px; }
 .suspect-chip .grow { flex: 1 1 160px; }
 .target-link { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; }
+/* F8: 'See substitutes' — a text-sized link still needs a real tap target, unlike .target-link
+   (:557 in the gate), whose parent .hint.ellipsis clips, so no hit extension there. */
+.link-btn { position: relative; color: inherit; text-decoration: underline; font: inherit; }
+.link-btn::before { content: ""; position: absolute; inset: -8px -4px; }
 .plate-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .plate { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
 .gym-chip { display: inline-flex; align-items: center; gap: 4px; }
@@ -440,10 +450,12 @@ html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(
 .esc-cite::before { content: ''; position: absolute; inset: -14px -10px; }
 .esc-cite-card { color: var(--accent); }
 .esc-pop { position: absolute; left: 0; top: 1.6em; z-index: 3; width: min(260px, 70vw); display: grid; gap: 4px; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); font-size: 12.5px; line-height: 1.4; color: var(--text); }
-.esc-drawer-toggle { display: inline-flex; align-items: center; gap: 4px; color: var(--text-3); min-height: 32px; }
+.esc-drawer-toggle { position: relative; display: inline-flex; align-items: center; gap: 4px; color: var(--text-3); min-height: 32px; }
+.esc-drawer-toggle::before { content: ""; position: absolute; inset: -6px 0; }
 .esc-drawer-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 .esc-drawer-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
-.esc-drawer-item { text-align: left; color: var(--text-2); overflow-wrap: anywhere; min-height: 32px; }
+.esc-drawer-item { position: relative; text-align: left; color: var(--text-2); overflow-wrap: anywhere; min-height: 32px; }
+.esc-drawer-item::before { content: ""; position: absolute; inset: -6px 0; }
 .esc-drawer-item code { color: var(--text); font-size: 12px; }
 .esc-drawer-out { margin: 6px 0 0; max-height: 180px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 8px; color: var(--text-2); }
 .esc-err { color: var(--negative); }
@@ -460,7 +472,8 @@ html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(
 .esc-comp-stats { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
 .esc-comp-generic { display: grid; gap: 4px; }
 .esc-comp-empty { padding: 12px 0; }
-.esc-link { color: var(--accent); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; }
+.esc-link { position: relative; color: var(--accent); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; min-height: 32px; }
+.esc-link::before { content: ""; position: absolute; inset: -6px 0; }
 .esc-past { display: grid; text-align: left; gap: 2px; padding: 10px 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface-2); }
 .esc-result, .esc-notsent { padding-left: 14px; }
 
@@ -468,7 +481,8 @@ html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(
 .esc-notice { color: var(--text-2); }
 .esc-pending { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .esc-thumb { position: relative; }
-.esc-chip-x { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 2px; border-radius: 50%; color: inherit; }
+.esc-chip-x { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 2px; border-radius: 50%; color: inherit; }
+.esc-chip-x::before { content: ""; position: absolute; inset: -12px; }
 .esc-thumb .esc-chip-x { position: absolute; top: -6px; right: -6px; background: var(--surface-2); border: 1px solid var(--border); }
 .esc-input-row { display: flex; align-items: flex-end; gap: 6px; }
 .esc-textarea { flex: 1; min-width: 0; resize: none; min-height: 44px; max-height: 140px; padding: 11px 12px; line-height: 1.4; border-radius: var(--radius-md); background: var(--surface-2); border: 1px solid var(--border); outline: none; color: var(--text); }
@@ -482,7 +496,7 @@ html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(
 .esc-ask { width: 32px; min-height: 32px; color: var(--text-3); }
 .esc-ask::before { content: ''; position: absolute; inset: -6px; }
 .esc-ask { position: relative; }
-.esc-live-btn { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--border); }
+.esc-live-btn { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--border); }
 .esc-hall { display: grid; gap: 10px; margin-top: 14px; }
 .esc-hall svg, .esc-hall .escobar-mark { color: var(--accent); flex: none; }
 .esc-hall-input { flex: 1; text-align: left; min-height: 44px; padding: 0 14px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-3); font-size: 15px; }
