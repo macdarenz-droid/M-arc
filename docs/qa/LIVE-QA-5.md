@@ -211,3 +211,129 @@ Use a neutral overlay instead of surface-2: `.effort button:active, .set-kind:ac
 - **Fix:**
 
 Swap lines 166 and 167 so the order is Haptic feedback row, Test haptic button, then the Reduce motion row.
+
+## Re-check of the QA5 fixes (PR #14 @ b2d0b94)
+
+All 19 fixes work for the user. This was checked in real Chromium under three settings: normal motion, OS reduce, and the in-app toggle only. At normal motion, static screens still match main. QA5-6 through QA5-9 and QA5-11 through QA5-18 are done. Four follow-ups remain, all small:
+
+### QA5-1b … QA5-4b · The four fixes have no regression test
+The b2d0b94 gate still passes against the old 8913d74 build, so undoing these fixes would go unnoticed.
+
+**Fix:** paste this block into scripts/screenshot-gate.mjs just before `// F5: determinism`. It was verified to pass on b2d0b94 and to fail on 8913d74 with 6 errors, covering QA5-1 (both fields), QA5-2, QA5-3 and QA5-4 (view and toast).
+
+```js
+// QA5-1..4 guards: in-app Reduce motion only (OS no-preference) — the path the old code broke.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'in-app reduce';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); localStorage.setItem('marc.motion', 'reduce'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  const closeSheet = async () => { await page.locator('dialog[open] [aria-label="Close"]').last().click(); await page.waitForTimeout(250); };
+  // QA5-1: a sheet whose form has an autofocus field opens with the caret in it, not on the panel.
+  await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(300);
+  if (!(await page.evaluate(() => !!document.activeElement?.matches('dialog[open] input[inputmode="decimal"]')))) errors.push(`${tag}: 'Add my details' did not focus its body-weight field`);
+  await closeSheet();
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  // QA5-4: a view fades in without moving.
+  const moved = await page.evaluate(async () => {
+    const seen = new Set();
+    [...document.querySelectorAll('nav.nav button')].find(b => /^(Train|Live)$/.test(b.textContent.trim())).click();
+    for (const t0 = performance.now(); performance.now() - t0 < 250;) { await new Promise(r => requestAnimationFrame(r)); const v = document.querySelector('.view'); if (v) seen.add(getComputedStyle(v).transform); }
+    return [...seen].filter(t => t !== 'none');
+  });
+  if (moved.length) errors.push(`${tag}: .view moves on entry: ${moved.slice(0, 2).join(' | ')}`);
+  await page.waitForTimeout(200);
+  await page.locator('[data-palace="train.new-split"]').click(); await page.waitForTimeout(300);
+  if (!(await page.evaluate(() => !!document.activeElement?.matches('dialog[open] input[placeholder="e.g. Upper A"]')))) errors.push(`${tag}: 'New split' did not focus its name field`);
+  await closeSheet();
+  // QA5-2: a primary button dims while pressed (scale is 1 under reduce).
+  const start = page.getByRole('button', { name: /^Start / }).first();
+  const bb = await start.boundingBox();
+  await page.mouse.move(bb.x + bb.width / 2, bb.y + bb.height / 2); await page.mouse.down(); await page.waitForTimeout(200);
+  const pressOp = await start.evaluate(e => getComputedStyle(e).opacity);
+  await page.mouse.move(1, 1); await page.mouse.up(); await page.waitForTimeout(150);
+  if (!(+pressOp < 1)) errors.push(`${tag}: pressing Start gave no feedback (opacity ${pressOp})`);
+  // QA5-3: the active exercise keeps a static ring and a solid name colour.
+  await start.click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const ax = await page.evaluate(() => { const e = document.querySelector('.exercise.active'); const n = e?.querySelector('.exname'); return e && n && { ring: getComputedStyle(e).boxShadow, name: getComputedStyle(n).color }; });
+  if (!ax || ax.ring === 'none' || ax.name === 'rgba(0, 0, 0, 0)') errors.push(`${tag}: active exercise lost its ring or name colour: ${JSON.stringify(ax)}`);
+  // QA5-4: the toast stays centred while it fades in.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  const xs = await page.evaluate(async () => {
+    [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Test haptic').click();
+    const s = new Set();
+    for (const t0 = performance.now(); performance.now() - t0 < 400;) { await new Promise(r => requestAnimationFrame(r)); const t = document.querySelector('.toast'); if (t) s.add(Math.round(t.getBoundingClientRect().left)); }
+    return [...s];
+  });
+  if (xs.length !== 1) errors.push(`${tag}: toast moved while appearing: left ${xs.join(' -> ')}`);
+  await ctx.close();
+}
+```
+
+### QA5-5b · Two F2/F3 probes are still missing from the gate
+**Found:** scripts/screenshot-gate.mjs:803-809 and :887-915. The code matches the spec exactly and no existing assertion was removed or loosened. npm run gate on b2d0b94 PASSES (exit 0). I checked the probes can fail by running a cut-down gate (the pulse, motion-smoke and determinism blocks) on deliberately broken b2d0b94 builds. Each break was caught with the right message: (1) mq change listener removed gives 'OS reduce did not set data-motion live' plus the 150ms error; (2) PulseLine stopped after one frame gives '--pulse-beat is not animating'; (3) tap highlight removed; (4) setMotionPref not saving gives 'toggle did not apply' and 'did not survive reload'; (5) reduce --dur-sheet set to 320ms; (6) data-motion never cleared gives 'stayed after OS reduce went off'; (7) .toggle on --dur-enter gives '0.15s'; (8) panel autofocus and tabIndex removed trips the '.sheet-panel' focus check. Removing only the panel's autofocus is not caught, but Chromium falls back to focusing the panel anyway, so the result is the same. On 8913d74 these probes pass, as expected: they guard behaviour that already worked there. Gap (a): the spec's 'toggle disabled and checked under OS reduce' check is still missing, although the commit message says it was added. Fix, after :185 (Settings under OS reduce): `const rm = await page.getByRole('switch', { name: 'Reduce motion' }).evaluate(e => ({ d: e.disabled, c: e.getAttribute('aria-checked') })); if (!rm.d || rm.c !== 'true') errors.push(`${theme}: Reduce motion switch under OS reduce is ${JSON.stringify(rm)}, expected disabled+checked`);`. I checked the live values are disabled true and aria-checked 'true'. Gap (b): the check at :902 can never fail. Today has 0 infinite animations even at full motion; the live-session check in the QA5-3 note replaces it.
+
+**Fix:**
+
+(a) Apply the claim's snippet after scripts/screenshot-gate.mjs:185 as written.
+
+(b) Keep :902 (it guards Today against a future loop). After :726 (`let firstFeedbackMs = await measureFeedback(page);`), in the Escobar block (reducedMotion 'reduce'), add:
+const loops = await page.evaluate(() => document.getAnimations().filter(a => a.effect && a.effect.getTiming().iterations === Infinity).map(a => a.animationName));
+if (loops.length) errors.push(`${tag}: infinite animation(s) while Thinking under reduce: ${loops.join(', ')}`);
+
+(c) F2 probes: insert this new block before `// F5: determinism`:
+{ const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); const page = await ctx.newPage(); const tag = 'F2 press/focus';
+page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+await page.goto(`http://localhost:${PORT}/`); await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+const onbRing = await page.evaluate(() => [...document.querySelectorAll('dialog[open] button')].filter(b => getComputedStyle(b).outlineStyle !== 'none').length);
+if (onbRing) errors.push(`${tag}: ${onbRing} onboarding button(s) show a focus ring`);
+await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+const press = async (l, prop) => { const b = await l.boundingBox(); const read = () => l.evaluate((e, p) => getComputedStyle(e)[p], prop); const rest = await read(); await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.down(); await page.waitForTimeout(120); const down = await read(); await page.mouse.up(); await page.waitForTimeout(250); const back = await read().catch(() => rest); if (down === rest || back !== rest) errors.push(`${tag}: press ${prop} rest=${rest} down=${down} +250ms=${back}`); };
+await press(page.locator('.nav button svg').first(), 'opacity');
+await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+await press(page.locator('dialog[open] .seg button').first(), 'scale');
+await press(page.locator('dialog[open] .theme-card').first(), 'backgroundColor');
+await page.keyboard.press('Tab');
+const kb = await page.evaluate(() => ({ cls: document.activeElement?.className, o: getComputedStyle(document.activeElement).outlineStyle }));
+if (kb.o !== 'solid') errors.push(`${tag}: keyboard Tab focus ring is ${JSON.stringify(kb)}`);
+await page.locator('dialog[open] .seg button').first().click(); await page.waitForTimeout(100);
+const mc = await page.evaluate(() => ({ cls: document.activeElement?.className, o: getComputedStyle(document.activeElement).outlineStyle }));
+if (mc.o !== 'none') errors.push(`${tag}: mouse click shows a focus ring ${JSON.stringify(mc)}`);
+await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+await press(page.locator('.btn', { hasText: 'Take today off' }), 'transform');
+await ctx.close(); }
+
+This block runs in its own context, so clicking 'Take today off' cannot affect the determinism shots. My CSS breaks did not include a theme-card one, so I have not shown that the theme-card check can fail.
+
+### QA5-10b · The token lint still misses a literal in a custom property inside a view-transition body
+**Found:** 4404efd. The declaration regex, the (name) form of ::view-transition-*, and the animation-iteration-count longhand are fixed, with self-tests. I appended all 4 QA snippets to styles.css: each now fails the lint. What is left: tests/ui/styles.tokens.test.ts:86 still checks the view-transition body only through findDeclarations (transition/animation properties), not the whole body the spec asked for. `::view-transition-group(root){animation-name:x; --vt-d: 200ms}` still passes (checked: 11/11 green). Fix: replace line 86 with `if (TIME_RE.test(m[1] ?? '')) offenders.push((m[1] ?? '').trim());`. Nit: the self-test at about :117 copies the regex instead of sharing one const with :82, so the two can drift apart. No gate was loosened.
+
+**Fix:**
+
+tests/ui/styles.tokens.test.ts:86. Replace
+`      for (const decl of findDeclarations(m[1] ?? '')) if (TIME_RE.test(decl.value)) offenders.push(decl.value);`
+with
+`      if (TIME_RE.test(m[1] ?? '')) offenders.push((m[1] ?? '').trim());`
+
+Optional nit:
+- Hoist `const VT_RE = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;` next to TIME_RE (:44). Use `new RegExp(VT_RE)` at :82 and :119 so each use gets a fresh lastIndex.
+- Change :122 to `expect(TIME_RE.test(m![1]!)).toBe(true);`.
+- Add a self-test that `TIME_RE.test('animation-name:x; --vt-d: 200ms')` is true.
+
+### QA5-19b · "Test haptic" still reads as part of Reduce motion
+**Found:** b2d0b94, Settings.tsx:165-167. The order matches the spec. But the only divider is still the Haptic row's border-bottom, which sits between 'Haptic feedback' and 'Test haptic'. No divider separates 'Test haptic' from 'Reduce motion': it is now the last row, and .list-row:last-child has border 0. So the button, flush under the rule, still groups visually with the row below it. The section also got 1px shorter (460 vs 462 device px). Seen in the Feedback section crop, 8913d74 vs head. Fix: order the rows Reduce motion, Haptic feedback, then the Test haptic Button. The Haptic plus Test haptic pair then renders exactly like main's, just moved down.
+
+**Fix:**
+
+In src/slices/settings/Settings.tsx, move the Reduce motion `<Row …label="Reduce motion" …>` line (now line 167) up above the Haptic feedback Row (line 165). The Feedback card then reads:
+  1. Reduce motion Row
+  2. Haptic feedback Row
+  3. `<Button size="sm" …>Test haptic</Button>` (still the last child)
+Reduce motion is then no longer the last child, so it gets its own divider. The Haptic plus Test haptic pair renders exactly like main (Haptic row, its rule, then the button flush under it at the bottom of the card), and the card height goes back to 213.17 CSS px. This is a one-line move; nothing else changes.
