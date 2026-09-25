@@ -398,8 +398,9 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
     for (let j = i - 1; j >= 0; j--) {
       // QA3-7b: a preceding neighbour that was itself a substituted swap never appears under its
       // own id in `out` - only its substitute does (QA3-8). Match either.
+      // QA3-7c: or the person's own substitute for it (substituteEntry keeps plannedId = the split id).
       const nid = split.exercises[j]!.exerciseId;
-      const pos = out.findIndex(o => o.exerciseId === nid || o.exerciseId === substituteForFrom.get(nid)?.exerciseId);
+      const pos = out.findIndex(o => o.exerciseId === nid || o.exerciseId === substituteForFrom.get(nid)?.exerciseId || done.some(e => e.exerciseId === o.exerciseId && e.plannedId === nid));
       if (pos !== -1) { insertAt = pos + 1; break; }
     }
     const sub = substituteForFrom.get(se.exerciseId);

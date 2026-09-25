@@ -510,3 +510,51 @@ describe("QA3-8b: the swap-target substitution is found by lineage, not array po
     ]);
   });
 });
+
+describe('QA3-7c: the wrong spot again after the person\'s own swap (not an Escobar one)', () => {
+  it('the person substitutes bench directly (no Escobar swap on it); shoulder press restores after the substitute', () => {
+    const three: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [
+        { exerciseId: 'lib_barbell_bench_press', sets: 2 },
+        { exerciseId: 'lib_dumbbell_shoulder_press', sets: 1 }, // removed today
+        { exerciseId: 'lib_cable_fly', sets: 1 },
+      ],
+    };
+    replaceState({
+      ...state.value, splits: [three],
+      escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'remove' as const, exerciseId: 'lib_dumbbell_shoulder_press' }] } },
+    });
+    startSession(three); // entries: bench, fly (shoulder press removed, never an entry)
+    substituteEntry(0, findExercise('lib_incline_barbell_bench_press')!); // the person's own swap, not Escobar's
+    setSet(0, 0, { kg: 40, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 10 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_incline_barbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_cable_fly',
+    ]);
+  });
+  it("Escobar swaps bench; the person separately swaps row for pulldown", () => {
+    const three: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [
+        { exerciseId: 'lib_barbell_row', sets: 2 },
+        { exerciseId: 'lib_barbell_bench_press', sets: 2 }, // swapped to DB bench today
+        { exerciseId: 'lib_cable_fly', sets: 1 },
+      ],
+    };
+    replaceState({
+      ...state.value, splits: [three],
+      escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_dumbbell_bench_press' }] } },
+    });
+    startSession(three); // entries: row, DB bench, fly
+    substituteEntry(0, findExercise('lib_lat_pulldown')!); // the person's own swap of row, unrelated to Escobar's
+    setSet(0, 0, { kg: 40, reps: 10 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 8 }); commitSet(1, 0);
+    setSet(2, 0, { kg: 15, reps: 12 }); commitSet(2, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_lat_pulldown', 'lib_barbell_bench_press', 'lib_cable_fly',
+    ]);
+  });
+});
