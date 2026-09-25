@@ -942,10 +942,20 @@ for (const theme of themes) {
       const bar = document.querySelector('.rest .bar > i');
       if (!clock || !bar) return null;
       const track = bar.parentElement.getBoundingClientRect().width;
-      return { clock: clock.textContent, fillPct: track ? (bar.getBoundingClientRect().width / track) * 100 : 0 };
+      return {
+        clock: clock.textContent,
+        total: document.querySelector('.rest .hint')?.textContent?.replace(/^Rest · /, ''),
+        fillPct: track ? (bar.getBoundingClientRect().width / track) * 100 : 0,
+      };
     });
     if (!rest) errors.push(`${tag}: expected the rest banner after committing set 1`);
-    else if (rest.fillPct > 10) errors.push(`${tag}: the rest bar fill is ${rest.fillPct.toFixed(1)}% at +100ms, expected <=10%`);
+    else {
+      if (rest.fillPct > 10) errors.push(`${tag}: the rest bar fill is ${rest.fillPct.toFixed(1)}% at +100ms, expected <=10%`);
+      // QA5-14: this is the actual F6 regression (a stale total+1s clock on the first frame) —
+      // a fix that only corrected the bar would still pass without this.
+      const sec = s => s.split(':').reduce((a, n) => a * 60 + Number(n), 0);
+      if (rest.total && ![sec(rest.total), sec(rest.total) - 1].includes(sec(rest.clock))) errors.push(`${tag}: first-frame rest clock ${rest.clock}, expected ${rest.total} or 1s less`);
+    }
   } else {
     console.log(`${tag}: restFix skipped`);
   }
