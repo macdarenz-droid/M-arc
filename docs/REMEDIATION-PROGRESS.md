@@ -671,6 +671,7 @@ Built from the design study "M/ARC Share Sheet, round 3" (claude.ai artifact EY1
 ### QA round 4 on share cards (docs/qa/LIVE-QA-4.md, "Share cards", QA4-1 … QA4-15)
 One commit per id. Each has a test that fails without its fix (unit tests in `tests/share-qa4.test.ts`, `tests/share-native.test.ts` and `tests/android-manifest.test.ts`, and gate checks for the layout).
 - **QA4-1:** assisted exercises add sets but no volume, because their kg is the machine's help. `workingTotals` takes `custom`, and Stats (`weekSummary`, `weeklyVolumeHistory`) and the card pass it, so they stay equal. The receipt reads "3×10 @40 assist · 3 sets".
+- **QA4-1b:** Escobar's `compare_periods` now uses `workingTotals`, so it agrees with Stats and the card. For an assisted lift, `lift_trend`'s volume is its reps, not kg. The card's top assisted set is the one with the least help, and a set with no help prints no load.
 - **QA4-2:** carries, sleds and holds read "3×40 m @32" or "3×60s @20". A line with no volume is "BW" only when nothing was loaded; otherwise it is "—".
 - **QA4-3:** `patch_manifest.py` declares WRITE/READ_EXTERNAL_STORAGE capped at API 29, and `requestLegacyExternalStorage` for Android 10. The new test runs the real script. This supersedes the "manifest off limits" note in the risks above: Android 8–10 Save now asks for the permission and writes to Documents, with the share-sheet fallback kept. The signing steps are untouched.
 - **QA4-4:** the saved file name adds the local time to the second, and on a workout card the session id (`cardFileName`).

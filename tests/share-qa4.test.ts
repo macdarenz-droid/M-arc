@@ -5,6 +5,8 @@ import { cardData, isEmptyCard, latestSession, timeText } from '@/slices/share/c
 import { hasWorkingSets } from '@/brain/exposure';
 import { cardFileName, cardSvg, paletteFor } from '@/slices/share/cards';
 import { THEMES } from '@/theme/themes';
+import { summarize } from '@/escobar/tools/show';
+import { ctxOf, emptyState } from './escobar/fixtures';
 import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly';
 import { modeOf } from '@/brain/history';
 import { allRecords } from '@/brain/prs';
@@ -150,5 +152,25 @@ describe('QA4-10: period time says "+" when some sessions have no recorded durat
   it('all timed: no "+"; nothing timed: a dash', () => {
     expect(timeText(week([timed]))).toBe('1 h 0 m');
     expect(timeText(week([legacy]))).toBe('—');
+  });
+});
+
+describe('QA4-1b: assistance is never volume, in Escobar too', () => {
+  const s: Session = session('2026-09-22', [{ id: ASSIST, name: 'Assisted Pull-Up', sets: sets(40, 10) }, { id: BENCH, name: 'Barbell Bench Press', sets: sets(60, 5) }]);
+  const ctx = ctxOf({ ...emptyState(), sessions: [s] });
+  it('compare_periods volume matches weeklyVolumeHistory (900, not 2,100)', () => {
+    const r = summarize('compare_periods', { metric: 'volume', a: { from: '2026-09-14', to: '2026-09-20' }, b: { from: '2026-09-21', to: '2026-09-27' } }, ctx) as { b: { value: number } };
+    expect(r.b.value).toBe(weeklyVolumeHistory([s], TODAY, 1)[0]!.volumeKg);
+    expect(r.b.value).toBe(900);
+  });
+  it("(a) lift_trend's volume for an assisted lift is its reps", () => {
+    const r = summarize('lift_trend', { exerciseId: ASSIST, weeks: 4, metric: 'volume' }, ctx) as { points: Array<{ value: number }>; unit: string };
+    expect(r.points.map(p => p.value)).toEqual([30]);
+    expect(r.unit).toBe('reps');
+  });
+  it('(b) the top assisted set is the least help, down to none, which prints no load', () => {
+    const card = (list: Session['exercises'][number]['sets']) => { const x = session('2026-09-22', [{ id: ASSIST, name: 'A', sets: list }]); return cardData({ sessions: [x], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: x }).lines[0]!.detail; };
+    expect(card([{ kg: 20, reps: 8 }, { reps: 5 }])).toBe('2 sets, top 5');
+    expect(card([{ kg: 20, reps: 8 }, { kg: 10, reps: 6 }])).toBe('2 sets, top 6@10 assist');
   });
 });
