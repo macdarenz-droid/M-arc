@@ -110,16 +110,18 @@ function workoutLines(session: Session, unit: LoadUnit, prIds: Set<string>, cust
     if (!sum.sets.length) continue;
     const n = sum.sets.length;
     const assisted = modeOf(e.exerciseId, custom) === 'assisted';
-    // Assisted: the hardest set is the one with the least help.
-    const loaded = sum.sets.filter(s => (s.kg ?? 0) > 0);
-    const top = assisted ? loaded.reduce<typeof loaded[number] | undefined>((a, s) => (!a || (s.kg ?? 0) < (a.kg ?? 0) ? s : a), undefined)
-      : sum.sets.find(s => (s.kg ?? 0) === sum.topKg && sum.topKg > 0);
-    const load = top ? ` @${setLoadIn(top, unit)}${assisted ? ' assist' : ''}` : '';
+    const w = sum.sets;
+    const loaded = w.filter(x => (x.kg ?? 0) > 0);
+    // The top set: the heaviest (assisted: the least help), then the most reps, metres, seconds.
+    const better = (a: LoggedSet, b: LoggedSet) => (b.reps ?? 0) - (a.reps ?? 0) || (b.distanceM ?? 0) - (a.distanceM ?? 0) || (b.durationSec ?? 0) - (a.durationSec ?? 0);
+    const pool = loaded.length ? loaded : w;
+    const top = [...pool].sort((a, b) => (loaded.length ? (assisted ? (a.kg ?? 0) - (b.kg ?? 0) : (b.kg ?? 0) - (a.kg ?? 0)) : 0) || better(a, b))[0]!;
     // QA4-2: a set with no reps (a carry, a sled, a hold) is measured in metres, then seconds.
-    const detail = top && (top.reps ?? 0) > 0 ? `${n}×${top.reps}${load}`
-      : sum.bestDistanceM > 0 ? `${n}×${sum.bestDistanceM} m${load}`
-      : sum.bestDurationSec > 0 ? `${n}×${sum.bestDurationSec}s${load}`
-      : `${n}×${sum.bestReps}${load}`;
+    const measure = (x: LoggedSet) => ((x.reps ?? 0) > 0 ? `${x.reps}` : (x.distanceM ?? 0) > 0 ? `${x.distanceM} m` : (x.durationSec ?? 0) > 0 ? `${x.durationSec}s` : '0');
+    const load = loaded.length ? `@${setLoadIn(top, unit)}${assisted ? ' assist' : ''}` : '';
+    // QA4-6: "3×5 @80" only when every working set was the same; a ramp names its top set.
+    const same = w.every(x => x.kg === w[0]!.kg && x.reps === w[0]!.reps && x.distanceM === w[0]!.distanceM && x.durationSec === w[0]!.durationSec);
+    const detail = same ? `${n}×${measure(top)}${load ? ` ${load}` : ''}` : `${n} sets, top ${measure(top)}${load}`;
     const { volumeKg } = workingTotals([e], custom);
     out.push({ exerciseId: e.exerciseId, name: e.name, detail, value: lineValue(volumeKg, unit, { assisted, sets: n, loaded: isLoaded(e.sets) }), volumeKg, pr: prIds.has(e.exerciseId) });
   }

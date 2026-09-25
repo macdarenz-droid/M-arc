@@ -70,3 +70,19 @@ describe('QA4-4: every Save gets its own file name', () => {
     expect(cardFileName({ period: 'workout', style: 'poster', format: 'story', to: TODAY, now: at(1, 2, 3), sessionId: 'a/b c:d' })).toBe('marc-workout-poster-9x16-2026-09-23-010203-abcd.png');
   });
 });
+
+describe('QA4-6: ramped sets are not written as if every set was at the top load', () => {
+  const lines = (sets: Session['exercises'][number]['sets'], id = BENCH) => {
+    const s = session('2026-09-22', [{ id, name: 'X', sets }]);
+    return cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s }).lines[0]!.detail;
+  };
+  it('identical sets keep the short form', () => expect(lines(sets(80, 5))).toBe('3×5 @80'));
+  it('a ramp shows the set count and the top set', () => {
+    expect(lines([{ kg: 60, reps: 5 }, { kg: 70, reps: 5 }, { kg: 80, reps: 5 }])).toBe('3 sets, top 5@80');
+    expect(lines([{ kg: 80, reps: 5 }, { kg: 80, reps: 4 }, { kg: 80, reps: 3 }])).toBe('3 sets, top 5@80');
+  });
+  it('assisted ramps name the least help; bodyweight ramps the best reps', () => {
+    expect(lines([{ kg: 40, reps: 10 }, { kg: 35, reps: 10 }, { kg: 30, reps: 8 }], ASSIST)).toBe('3 sets, top 8@30 assist');
+    expect(lines([{ reps: 12 }, { reps: 10 }, { reps: 9 }], 'lib_push_up')).toBe('3 sets, top 12');
+  });
+});
