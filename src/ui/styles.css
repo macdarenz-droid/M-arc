@@ -198,6 +198,12 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 
 .toast { position: fixed; left: 50%; bottom: calc(124px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow); animation: view-in var(--dur-base) var(--ease-standard); width: max-content; max-width: calc(100% - 32px); }
 .toast button { color: var(--accent); font-weight: 700; }
+/* QA5-4: .view's translateY and the toast's view-in both fight the toast's own translateX(-50%)
+   centring, and neither is gated for reduce (unlike everything F3 touched) — under reduce they
+   used to run animation:none entirely. Fall back to an opacity-only fade until I9/F13 (which
+   remove the .view transform and give the toast its own non-transform centring) land properly. */
+@keyframes fade-in { from { opacity: 0; } }
+:where(html[data-motion="reduce"]) :is(.view, .toast) { animation-name: fade-in; }
 
 .empty { text-align: center; padding: 28px 16px; color: var(--text-2); display: grid; gap: 8px; justify-items: center; }
 .empty svg { color: var(--text-3); }
