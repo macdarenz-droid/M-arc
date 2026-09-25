@@ -13,7 +13,7 @@
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { loadableNear, loadableTopKg } from './units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { findExercise, startingLoadKg } from '@/core/exercises';
+import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
 import { daysBetween } from '@/core/dates';
@@ -152,8 +152,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   // QA-R6-5: a carry or sled logged by distance or time progresses by distance or time, never "1 reps".
-  // QA2-FE-8: only a carry or sled (distance, or time with no reps); a rep move logged with a time keeps its rep goal.
-  if (mode === 'conditioning' && (last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
+  // QA2-FE-8: only a carry or sled; a rep-based conditioning move (a burpee) logged with a time keeps its rep goal.
+  // QA3-12: decided by which exercise this is (CARRY_OR_SLED_IDS), not by which fields were filled -
+  // a timed carry or sled logged with reps too still gets its distance/time goal, never a rep one.
+  if (mode === 'conditioning' && CARRY_OR_SLED_IDS.has(exerciseId) && (last.bestDistanceM > 0 || last.bestDurationSec > 0)) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
     const kg = last.topKg > 0 ? half(ctx?.deload ? last.topKg * ctx.deload.loadFactor : last.topKg) : null;

@@ -9,6 +9,12 @@ const CONDITIONING_NAMES = new Set([
   'lib_burpee', 'lib_mountain_climbers', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope',
   'lib_box_jump', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_jump_squat',
 ]);
+/**
+ * QA3-12: the conditioning moves that always progress by distance or time, never reps - a carry
+ * or sled, unlike rep-based conditioning (burpees, jump rope, ...). Decided by which exercise it
+ * is, not by which fields happen to be filled on its last set.
+ */
+export const CARRY_OR_SLED_IDS = new Set(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry']);
 const ASSISTED_HINT = /assisted/i;
 
 function inferMode(id: string, equipment: string, name: string): ResistanceMode {

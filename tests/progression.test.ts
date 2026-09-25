@@ -120,6 +120,16 @@ describe('carries progress by distance or time (QA-R6-5)', () => {
     const timed = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, effort: 'ideal' }] }])];
     expect(suggestNext(timed, id, 'lean', '2026-09-14').target).toBe('24 kg · 65s');
   });
+  it('QA3-12: a timed carry or sled logged with reps still gets a duration goal, never a rep one', () => {
+    const carry = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, reps: 8, effort: 'ideal' }] }])];
+    const cn = suggestNext(carry, id, 'lean', '2026-09-14');
+    expect(cn.mode).toBe('duration');
+    expect(cn.target).toBe('24 kg · 65s');
+    const sled = [session('2026-09-10', [{ id: 'lib_sled_push', sets: [{ kg: 40, distanceM: 20, reps: 10, effort: 'ideal' }] }])];
+    const sn = suggestNext(sled, 'lib_sled_push', 'lean', '2026-09-14');
+    expect(sn.mode).toBe('distance');
+    expect(sn.target).toBe('40 kg · 25 m');
+  });
 });
 
 describe('carries in lb and timed rep moves (QA2-FE-2, QA2-FE-7, QA2-FE-8)', () => {
