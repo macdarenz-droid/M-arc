@@ -133,11 +133,16 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .effort button, .set-kind { transition: background-color var(--dur-press) var(--ease-standard); }
 .effort button:active, .set-kind:active { background: var(--surface-2); transition: none; }
 /* Surfaces on surface-1: press to surface-2, release fades back. */
-.theme-card, .cal .day, .esc-menu button { transition: background-color var(--dur-fast) var(--ease-standard); }
-.theme-card:active, .cal .day:active, .esc-menu button:active { background: var(--surface-2); transition: none; }
-/* Already-surface-2 rows: press to surface-3 so the press is still visible. */
-.list-row.pressable, .esc-past, .esc-dock { transition: background-color var(--dur-fast) var(--ease-standard); }
-.list-row.pressable:active, .esc-past:active, .esc-dock:active { background: var(--surface-3); transition: none; }
+.theme-card, .cal .day { transition: background-color var(--dur-fast) var(--ease-standard); }
+/* QA5-11: .cal .day.trained/.selected match .cal .day:active at equal specificity (0,3,0) and
+   come later, so pressing a trained day (the common case) changed nothing; :not(.selected) lifts
+   this to (0,4,0), which beats .trained. .selected already has a strong fill of its own. */
+.theme-card:active, .cal .day:active:not(.selected) { background: var(--surface-2); transition: none; }
+/* Already-surface-2 rows: press to surface-3 so the press is still visible. QA5-11: .esc-menu is
+   itself surface-2 (:367), so .esc-menu button moved here from the group above, where its press
+   was invisible against its own panel's background. */
+.list-row.pressable, .esc-past, .esc-dock, .esc-menu button { transition: background-color var(--dur-fast) var(--ease-standard); }
+.list-row.pressable:active, .esc-past:active, .esc-dock:active, .esc-menu button:active { background: var(--surface-3); transition: none; }
 .nav button svg { transition: opacity var(--dur-press) var(--ease-standard); }
 .nav button:active svg { opacity: .6; transition: none; }
 .btn:disabled { opacity: .45; pointer-events: none; }
