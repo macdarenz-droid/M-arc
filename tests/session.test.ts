@@ -377,6 +377,20 @@ describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-
     const bench = state.value.splits[0]!.exercises.find(e => e.exerciseId === 'lib_barbell_bench_press')!;
     expect(bench.sets).toBe(2); // the split's own count, not today's 4
   });
+  it("QA3-6b: adding sets yourself beyond Escobar's one-day bump still saves what you did", () => {
+    replaceState({ ...state.value, splits: [split], escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'sets' as const, exerciseId: 'lib_barbell_bench_press', sets: 4 }] } } });
+    start();
+    expect(a().entries[0]!.sets.length).toBe(4); // today's override applied live
+    addSet(0);
+    addSet(0);
+    expect(a().entries[0]!.sets.length).toBe(6); // the person's own two extra sets
+    for (let j = 0; j < 6; j++) { setSet(0, j, { kg: 60, reps: 8 }); commitSet(0, j); }
+    setSet(1, 0, { kg: 20, reps: 10 });
+    commitSet(1, 0);
+    finishSession(true);
+    const bench = state.value.splits[0]!.exercises.find(e => e.exerciseId === 'lib_barbell_bench_press')!;
+    expect(bench.sets).toBe(6); // what was actually done, not the split's original 2
+  });
   it('QA3-7: a split exercise Escobar removed today is restored after its nearest present neighbour', () => {
     const wide: Split = {
       id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',

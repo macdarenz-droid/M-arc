@@ -356,9 +356,11 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
   const doneIds = new Set(done.map(e => e.exerciseId));
   // QA3-6: today's one-day set-count change from Escobar is not saved either; the exercise keeps
   // the split's own count, not however many sets today's override made the live entry start with.
-  const overriddenSets = new Set<string>();
+  // QA3-6b: only when the live count still matches the override exactly. Adding (or removing) sets
+  // yourself beyond that one-day bump is your own change, and saves what you actually did.
+  const overriddenSets = new Map<string, number>();
   if (override && override.day === today && override.splitId === split.id) {
-    for (const c of override.changes) if (c.kind === 'sets') overriddenSets.add(c.exerciseId);
+    for (const c of override.changes) if (c.kind === 'sets') overriddenSets.set(c.exerciseId, c.sets);
   }
   const splitSetsById = new Map(split.exercises.map(se => [se.exerciseId, se.sets]));
   // QA3-8: a swap's target that the person substituted away during the session (not Escobar's
@@ -381,7 +383,8 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
     .filter(e => (inSplit.has(e.exerciseId) || !planned.has(e.exerciseId)) && !substitutedIds.has(e.exerciseId))
     .map(e => {
       const liveCount = Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length);
-      return { exerciseId: e.exerciseId, sets: overriddenSets.has(e.exerciseId) ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
+      const overridden = overriddenSets.get(e.exerciseId);
+      return { exerciseId: e.exerciseId, sets: overridden === liveCount ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
     });
   // QA3-7: `out` is shorter than `split.exercises` once a person's own skips drop out of it, so an
   // Escobar-removed exercise's own split index no longer lines up with a position in `out`.
