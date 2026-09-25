@@ -9,7 +9,7 @@ import { addDays, formatClock, formatDay, parseDay, dayKey, weekStart } from '@/
 import { kgToDisplay, setLoadIn } from '@/core/units';
 import { workingTotals } from '@/brain/weekly';
 import { allRecords, type PersonalRecord } from '@/brain/prs';
-import { effectiveSetsByMuscle, isWorkingSet } from '@/brain/exposure';
+import { effectiveSetsByMuscle, hasWorkingSets, isWorkingSet } from '@/brain/exposure';
 import { modeOf, summarizeSets } from '@/brain/history';
 import type { MuscleId } from '@/data/muscles';
 import { WEIGHT_THINGS } from '@/data/weights';
@@ -65,9 +65,12 @@ export interface CardInput {
 const NUM = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 });
 export const groupInt = (v: number): string => NUM.format(Math.round(v));
 
-/** The newest session by start time, for "This workout" when no session was picked. */
+/** A card with no working sets: Save and Share stay off. */
+export const isEmptyCard = (d: Pick<ShareCardData, 'sets'>): boolean => d.sets === 0;
+
+/** The newest session with working sets, by start time, for "This workout" when no session was picked. */
 export function latestSession(sessions: Session[]): Session | null {
-  return sessions.reduce<Session | null>((best, s) => (!best || `${s.day}|${s.startedAt}` > `${best.day}|${best.startedAt}` ? s : best), null);
+  return sessions.filter(hasWorkingSets).reduce<Session | null>((best, s) => (!best || `${s.day}|${s.startedAt}` > `${best.day}|${best.startedAt}` ? s : best), null);
 }
 
 function periodStart(period: Exclude<SharePeriod, 'workout'>, today: string, sessions: Session[]): string {

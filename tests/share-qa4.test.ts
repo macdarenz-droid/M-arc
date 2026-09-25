@@ -1,7 +1,8 @@
 /** QA4 (LIVE-QA-4, "Share cards"): one block per finding; each fails without its fix. */
 import { describe, it, expect } from 'vitest';
 import { session, sets } from './helpers';
-import { cardData } from '@/slices/share/cardData';
+import { cardData, isEmptyCard, latestSession } from '@/slices/share/cardData';
+import { hasWorkingSets } from '@/brain/exposure';
 import { cardFileName } from '@/slices/share/cards';
 import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly';
 import { modeOf } from '@/brain/history';
@@ -101,5 +102,20 @@ describe("QA4-7: a workout card shows only its own session's records", () => {
     expect(card(am).records.every(r => r.sessionId === am.id)).toBe(true);
     expect(card(pm).records.every(r => r.sessionId === pm.id)).toBe(true);
     expect(card(am).records.length + card(pm).records.length).toBe(recs.filter(r => r.day === '2026-09-22').length);
+  });
+});
+
+describe('QA4-8: a warm-up-only session is not shareable', () => {
+  const warm = session('2026-09-22', [{ id: BENCH, sets: [{ kind: 'warmup', kg: 20, reps: 10 }, { kind: 'warmup', kg: 40, reps: 5 }] }]);
+  const real = session('2026-09-20', [{ id: BENCH, sets: sets(60, 5) }]);
+  it('hasWorkingSets tells them apart', () => {
+    expect(hasWorkingSets(warm)).toBe(false);
+    expect(hasWorkingSets(real)).toBe(true);
+  });
+  it('its card is empty, and "This workout" on Stats skips it for the newest real session', () => {
+    expect(isEmptyCard(cardData({ sessions: [real, warm], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: warm }))).toBe(true);
+    expect(isEmptyCard(cardData({ sessions: [real, warm], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: real }))).toBe(false);
+    expect(latestSession([real, warm])?.id).toBe(real.id);
+    expect(latestSession([warm])).toBeNull();
   });
 });

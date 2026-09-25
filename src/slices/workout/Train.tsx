@@ -10,6 +10,7 @@ import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
+import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
@@ -828,7 +829,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           </Card>
         </Section>
       )}
-      {sets > 0 && <Button block data-palace="train.share" onClick={() => setSharing(true)} style={{ marginTop: 16 }}><IconShare size={18} /> Share workout</Button>}
+      {hasWorkingSets(session) && <Button block data-palace="train.share" onClick={() => setSharing(true)} style={{ marginTop: 16 }}><IconShare size={18} /> Share workout</Button>}
       {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
       {debrief.length > 0 && (
         <Section title="Debrief">

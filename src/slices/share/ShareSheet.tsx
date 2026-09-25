@@ -15,7 +15,7 @@ import { pickAndCompressPhoto } from '@/native/photo';
 import { saveImage, shareImage } from '@/native/share';
 import markUrl from '@/assets/escobar-mark.png?inline';
 import { WEIGHT_THINGS } from '@/data/weights';
-import { cardData, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
+import { cardData, isEmptyCard, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
 import { CARD_PX, CARD_STYLES, cardFileName, cardSvg, paletteFor, type CardFormat } from './cards';
 
 const STYLE_KEY = 'marc.share.style';
@@ -105,7 +105,7 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   };
 
   const style = CARD_STYLES[current] ?? CARD_STYLES[0]!;
-  const empty = data.sessions === 0;
+  const empty = isEmptyCard(data);
   const run = async (kind: 'save' | 'share') => {
     if (busy || empty) return;
     setBusy(true);

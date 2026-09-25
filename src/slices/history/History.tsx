@@ -5,6 +5,7 @@ import { today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
 import { IconBack, IconCalendar, IconChevron, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
+import { hasWorkingSets } from '@/brain/exposure';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, Session } from '@/core/models';
@@ -32,7 +33,7 @@ export function History() {
     <div class="view">
       <div class="topbar">
         <div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div>
-        {seg === 'stats' && state.value.sessions.length > 0 && <Button variant="quiet" class="btn-icon" aria-label="Share your stats" data-palace="history.share" onClick={() => setSharing(true)}><IconShare size={20} /></Button>}
+        {seg === 'stats' && state.value.sessions.some(hasWorkingSets) && <Button variant="quiet" class="btn-icon" aria-label="Share your stats" data-palace="history.share" onClick={() => setSharing(true)}><IconShare size={20} /></Button>}
       </div>
       {sharing && <ShareSheet initial="week" onClose={() => setSharing(false)} />}
       <Segmented value={seg} onChange={setSeg} options={[{ value: 'log', label: 'Log' }, { value: 'stats', label: 'Stats' }]} />
@@ -100,7 +101,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
           <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
           {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
         </div>
-        <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>
+        {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
       </div>
       {open && (
