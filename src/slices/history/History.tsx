@@ -3,7 +3,9 @@ import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
-import { IconBack, IconCalendar, IconChevron, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconBack, IconCalendar, IconChevron, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
+import { ShareSheet } from '@/slices/share/lazy';
+import { hasWorkingSets } from '@/brain/exposure';
 import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, Session } from '@/core/models';
@@ -26,9 +28,14 @@ export function History() {
   const panel = openPanel.value;
   const seg = panel?.id === 'exercise-stats' ? 'stats' : historySeg.value;
   const setSeg = (v: 'log' | 'stats') => { historySeg.value = v; if (panel?.id === 'exercise-stats') closePanel('exercise-stats'); };
+  const [sharing, setSharing] = useState(false);
   return (
     <div class="view">
-      <div class="topbar"><div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div></div>
+      <div class="topbar">
+        <div><div class="eyebrow">History</div><h1>{seg === 'log' ? 'Sessions' : 'Stats'}</h1></div>
+        {seg === 'stats' && state.value.sessions.some(hasWorkingSets) && <Button variant="quiet" class="btn-icon" aria-label="Share your stats" data-palace="history.share" onClick={() => setSharing(true)}><IconShare size={20} /></Button>}
+      </div>
+      {sharing && <ShareSheet initial="week" onClose={() => setSharing(false)} />}
       <Segmented value={seg} onChange={setSeg} options={[{ value: 'log', label: 'Log' }, { value: 'stats', label: 'Stats' }]} />
       {seg === 'log' ? <Log /> : <Stats />}
     </div>
@@ -84,7 +91,9 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   const u = unit.value;
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const [open, setOpen] = useState(false);
+  const [sharing, setSharing] = useState(false);
   return (
+    <>
     <Card class="card-press" onClick={() => setOpen(o => !o)}>
       <div class="row-between">
         <div class="grow">
@@ -92,6 +101,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
           <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
           {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
         </div>
+        {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}
         <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
       </div>
       {open && (
@@ -108,6 +118,9 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
         </div>
       )}
     </Card>
+    {/* Outside the card, so taps inside the sheet don't open or close it. */}
+    {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
+    </>
   );
 }
 

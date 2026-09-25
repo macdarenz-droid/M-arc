@@ -11,7 +11,7 @@ import { modeOf, exerciseHistory } from '@/brain/history';
 import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
-import { plannedThisWeek, weekSummary } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary, workingTotals } from '@/brain/weekly';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -61,16 +61,19 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const since = addDays(ctx.today, -weeks * 7);
       // ES-15: first/last/best over the whole window; the drawn points are 12 spread evenly across it.
       const inWindow = all.filter(h => h.day >= since);
-      const val = (h: typeof inWindow[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg : Math.round(h.volume));
+      // QA-R3a-2: judged by the lift's mode (less assistance is progress).
+      const liftMode = modeOf(id, s.customExercises);
+      // QA4-1b: an assisted lift's "volume" is its reps; the kg is the machine's help.
+      const assistedVolume = metric === 'volume' && liftMode === 'assisted';
+      const val = (h: typeof inWindow[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg
+        : assistedVolume ? h.sets.reduce((a, x) => a + (x.reps ?? 0), 0) : Math.round(h.volume));
       const hist = sampleEvenly(inWindow, 12);
       const points = hist.map(h => ({ day: h.day, value: val(h) }));
       const values = inWindow.map(val).filter(v => v > 0);
-      // QA-R3a-2: judged by the lift's mode (less assistance is progress).
-      const liftMode = modeOf(id, s.customExercises);
       const p = plateauStatus(all, liftMode);
       const t = liftTrend(all, liftMode);
       return {
-        exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: metric === 'volume' ? 'kg' : 'kg', weeks, points,
+        exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: assistedVolume ? 'reps' : 'kg', weeks, points,
         first: values[0] ?? null, last: values.at(-1) ?? null, best: values.length ? Math.max(...values) : null,
         plateau: p.status, trend: t.direction,
         empty: !points.length ? `No ${exerciseName(ctx, id)} sessions in the last ${weeks} weeks.` : undefined,
@@ -118,10 +121,11 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'session_summary': {
       const x = s.sessions.find(y => y.id === params.sessionId);
       if (!x) throw new ToolError('unknown sessionId; use get_sessions');
-      // QA3-10: a warm-up is not a working set, in the count or the effort tally.
+      // QA3-10: a warm-up is not a working set, in the count or the effort tally - workingTotals
+      // is the one sum for "how many working sets", shared with compare_periods.
       const e = x.exercises.map(ex => {
         const top = ex.sets.filter(st => (st.kg ?? 0) > 0).sort((a, b) => (b.kg ?? 0) - (a.kg ?? 0))[0];
-        return { exercise: ex.name, sets: ex.sets.filter(isWorkingSet).length, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
+        return { exercise: ex.name, sets: workingTotals([ex], s.customExercises).sets, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
       });
       const all = x.exercises.flatMap(ex => ex.sets.filter(isWorkingSet));
       return {
@@ -175,8 +179,8 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
         const inP = s.sessions.filter(x => x.day >= p.from && x.day <= p.to);
         if (metric === 'sessions') return inP.length;
         if (metric === 'e1rm') return r1(Math.max(0, ...exerciseHistory(inP, exercise!, s.customExercises).map(h => h.bestE1rm)));
-        let sets = 0, vol = 0;
-        for (const x of inP) for (const e of x.exercises) { if (exercise && e.exerciseId !== exercise) continue; for (const st of e.sets) { if (isWorkingSet(st)) { sets++; vol += (st.kg ?? 0) * (st.reps ?? 0); } } }
+        // QA4-1b: the one volume sum, so assistance is never counted as weight lifted.
+        const { sets, volumeKg: vol } = workingTotals(inP.flatMap(x => x.exercises).filter(e => !exercise || e.exerciseId === exercise), s.customExercises);
         return metric === 'sets' ? sets : Math.round(vol);
       };
       const va = calc(a), vb = calc(b);

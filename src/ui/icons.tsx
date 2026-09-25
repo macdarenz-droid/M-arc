@@ -35,3 +35,5 @@ export const IconStop = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}>
 export const IconEscobar = ({ size = 22, thinking = false, class: cls, style }: P & { thinking?: boolean }) => (
   <span class={`escobar-mark${thinking ? ' thinking' : ''} ${cls ?? ''}`} aria-hidden="true" style={{ width: `${size}px`, height: `${size}px`, ...(typeof style === 'object' ? style as Record<string, string> : {}) }} />
 );
+export const IconShare = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 15V4M7 9l5-5 5 5M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5" /></svg>;
+export const IconDownload = ({ size = 18, ...p }: P) => <svg {...base(size)} {...p}><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>;
