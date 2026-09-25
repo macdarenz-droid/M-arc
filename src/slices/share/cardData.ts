@@ -12,6 +12,7 @@ import { allRecords, type PersonalRecord } from '@/brain/prs';
 import { effectiveSetsByMuscle, isWorkingSet } from '@/brain/exposure';
 import { summarizeSets } from '@/brain/history';
 import type { MuscleId } from '@/data/muscles';
+import { WEIGHT_THINGS } from '@/data/weights';
 
 export type SharePeriod = 'workout' | 'week' | 'month' | 'quarter' | 'year' | 'all';
 export const SHARE_PERIODS: Array<{ id: SharePeriod; label: string }> = [
@@ -45,6 +46,8 @@ export interface ShareCardData {
   muscleSets: Partial<Record<MuscleId, number>>;
   /** Heaviest volume first. */
   lines: CardLine[];
+  /** The poster's "≈ 3 hippos" line, or null when nothing fits. */
+  compare: { id: string; text: string } | null;
 }
 
 export interface CardInput {
@@ -55,6 +58,8 @@ export interface CardInput {
   period: SharePeriod;
   /** The workout for `period: 'workout'`. */
   session?: Session | null;
+  /** Comparison ids used by recent shares, oldest first, so the next card picks something new. */
+  seen?: string[];
 }
 
 const NUM = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 });
@@ -123,6 +128,11 @@ function periodLines(inRange: Session[], unit: LoadUnit, prIds: Set<string>): Ca
 
 /** Everything a card shows for one period. With no session for 'workout', the card is empty. */
 export function cardData(input: CardInput): ShareCardData {
+  const base = cardNumbers(input);
+  return { ...base, compare: volumeCompare(base.volumeKg, { unit: input.unit, seed: `${base.period}|${base.from}|${base.to}|${base.volumeKg}`, seen: input.seen }) };
+}
+
+function cardNumbers(input: CardInput): Omit<ShareCardData, 'compare'> {
   const { sessions, custom, unit, today, period } = input;
   const records = allRecords(sessions, custom, unit);
   if (period === 'workout') {
@@ -190,12 +200,28 @@ export function timeText(d: Pick<ShareCardData, 'period' | 'durationSec'>): stri
   return h ? `${h} h ${m} m` : `${m} m`;
 }
 
-/** A playful weight comparison from the kg total: small cars, elephants, blue whales. */
-export function volumeCompare(volumeKg: number): string {
-  const t = volumeKg / 1000;
-  if (t <= 0) return '';
-  if (t < 3) { const n = Math.max(1, Math.round(t / 1.5)); return `≈ ${n} small car${n === 1 ? '' : 's'}`; }
-  if (t < 150) { const n = Math.max(1, Math.round(t / 6)); return `≈ ${n} elephant${n === 1 ? '' : 's'}`; }
-  const n = Math.round(t / 150);
-  return `≈ ${n} blue whale${n === 1 ? '' : 's'}`;
+/** The most of one thing a card will count: "≈ 188 red 25 kg plates" reads well, "≈ 4,000 gold bars" doesn't. */
+export const MAX_COMPARE_COUNT = 200;
+
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+
+/**
+ * A playful comparison for the kg total, from the WEIGHT_THINGS library: only things that give a
+ * count of 1 to MAX_COMPARE_COUNT, gym kit in the lifter's unit. `seed` shuffles the choice per
+ * card; `seen` (oldest first) holds what recent shares used, so the pick is something not shown
+ * yet, or the one shown longest ago once every option has had a turn.
+ */
+export function volumeCompare(volumeKg: number, opts: { unit?: LoadUnit; seed?: string; seen?: string[] } = {}): { id: string; text: string } | null {
+  const fits = WEIGHT_THINGS.filter(t => (!t.unit || t.unit === (opts.unit ?? 'kg')) && volumeKg / t.kg >= 0.95 && Math.round(volumeKg / t.kg) <= MAX_COMPARE_COUNT);
+  if (!fits.length) return null;
+  const seed = opts.seed ?? '';
+  const order = [...fits].sort((a, b) => hash(`${seed}|${a.id}`) - hash(`${seed}|${b.id}`));
+  const seen = opts.seen ?? [];
+  const pick = order.find(t => !seen.includes(t.id)) ?? order.reduce((best, t) => (seen.indexOf(t.id) < seen.indexOf(best.id) ? t : best));
+  const n = Math.max(1, Math.round(volumeKg / pick.kg));
+  return { id: pick.id, text: `≈ ${groupInt(n)} ${n === 1 ? pick.one : pick.many}` };
 }

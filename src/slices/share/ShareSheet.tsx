@@ -14,12 +14,17 @@ import { THEMES } from '@/theme/themes';
 import { pickAndCompressPhoto } from '@/native/photo';
 import { saveImage, shareImage } from '@/native/share';
 import markUrl from '@/assets/escobar-mark.png?inline';
+import { WEIGHT_THINGS } from '@/data/weights';
 import { cardData, latestSession, SHARE_PERIODS, type SharePeriod } from './cardData';
 import { CARD_PX, CARD_STYLES, cardSvg, paletteFor, type CardFormat } from './cards';
 
 const STYLE_KEY = 'marc.share.style';
 const readStyle = (): number => { try { const n = Number(localStorage.getItem(STYLE_KEY)); return Number.isInteger(n) && n >= 0 && n < CARD_STYLES.length ? n : 0; } catch { return 0; } };
 const writeStyle = (i: number) => { try { localStorage.setItem(STYLE_KEY, String(i)); } catch { /* the choice just isn't remembered */ } };
+/** Poster comparisons already shared, oldest first, so the next card says something new. */
+const SEEN_KEY = 'marc.share.seen';
+const readSeen = (): string[] => { try { const v: unknown = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '[]'); return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []; } catch { return []; } };
+const markSeen = (id: string) => { try { localStorage.setItem(SEEN_KEY, JSON.stringify([...readSeen().filter(x => x !== id), id].slice(-WEIGHT_THINGS.length))); } catch { /* repeats just become possible */ } };
 
 /** Draws an SVG card onto a canvas at export size and encodes it as PNG. */
 export async function svgToPng(svg: string, w: number, h: number): Promise<Blob> {
@@ -57,13 +62,14 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   const [photo, setPhoto] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
+  const [seen] = useState(readSeen);
   const carousel = useRef<HTMLDivElement>(null);
   const statusTimer = useRef(0);
   const say = (msg: string) => { setStatus(msg); clearTimeout(statusTimer.current); if (msg) statusTimer.current = window.setTimeout(() => setStatus(''), 2600); };
   useEffect(() => () => clearTimeout(statusTimer.current), []);
 
-  const data = useMemo(() => cardData({ sessions: s.sessions, custom: s.customExercises, unit: u, today: today.value, period, session: workout }),
-    [s.sessions, s.customExercises, u, today.value, period, workout]);
+  const data = useMemo(() => cardData({ sessions: s.sessions, custom: s.customExercises, unit: u, today: today.value, period, session: workout, seen }),
+    [s.sessions, s.customExercises, u, today.value, period, workout, seen]);
   const theme = themeId.value;
   const svgs = useMemo(() => CARD_STYLES.map(st => cardSvg(data, st.id, format, paletteFor(THEMES[theme]), { photo, mark: markUrl })), [data, format, theme, photo]);
   const urls = useMemo(() => svgs.map(x => URL.createObjectURL(new Blob([x], { type: 'image/svg+xml' }))), [svgs]);
@@ -109,6 +115,8 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
       const png = await svgToPng(svgs[current]!, px.w, px.h);
       const r = kind === 'save' ? await saveImage(fileName, png) : await shareImage(fileName, png, `My M/ARC ${style.name.toLowerCase()}`);
       if (r.message) say(r.message);
+      // The card on screen keeps its line; the next one opened picks another.
+      if (r.outcome !== 'cancelled' && style.id === 'poster' && data.compare) markSeen(data.compare.id);
     } catch {
       say(kind === 'save' ? "Couldn't save the card" : "Couldn't share the card");
     } finally {

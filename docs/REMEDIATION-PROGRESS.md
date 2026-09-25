@@ -617,7 +617,11 @@ Built from the design study "M/ARC Share Sheet, round 3" (claude.ai artifact EY1
 - Muscle sets come from `effectiveSetsByMuscle`. The receipt's top set and load come from `summarizeSets` and `setLoadIn`, so a load typed in lb reads exactly as typed.
 - Time is the sum of `durationSec`. A session with no recorded time shows "—", not "0 m".
 - Periods: Week is Monday to today, like `weekSummary`, and the tests check that the two agree. Month is from the 1st, 3 months from the 1st of the month two months back, and Year from 1 January, each to today. All time runs from the first session.
-- Wording only: the poster's comparison line (≈ small cars / elephants / blue whales) comes from the design. It divides the kg total by fixed sizes and is not a training number.
+- Wording only: the poster's comparison line ("≈ 3 hippos") is not a training number. It divides the kg total by the weight of a real thing.
+  - **Library:** `src/data/weights.ts` holds 34 things in 7 groups: gym kit, animals, a dinosaur, vehicles, space, landmarks and objects. Each weight is a published figure, with its source in `note`; living things use a typical adult.
+  - **Gym kit follows the unit:** kg lifters see red 25 kg plates and 20 kg bars, lb lifters see 45 lb plates and bars.
+  - **Readable counts only:** a thing qualifies when the total is at least 0.95 of it and the count is at most 200 (`MAX_COMPARE_COUNT`). So a light workout gets pandas or plates, and a big year gets whales, jets or the Statue of Liberty.
+  - **No repeats (owner ask):** each card shuffles the qualifying things by its own period, dates and total. Saving or sharing a Poster records its thing in `marc.share.seen` on the device, and the next card picks one not shown yet. Only when every option has had a turn does the one shown longest ago come back. The card on screen keeps its line, so the preview doesn't change after sharing.
 
 ### Drawing and export
 - `src/slices/share/cards.ts` draws each card as one standalone SVG on a 360-wide grid (360×640 story, 360×360 square).
@@ -649,7 +653,8 @@ Built from the design study "M/ARC Share Sheet, round 3" (claude.ai artifact EY1
   - Every period in kg and in lb: range, sessions, sets, volume, time, records and muscle sets, each equal to the brain function's own result.
   - Week equals `weekSummary`.
   - One workout with a bench press typed as 135 lb: it reads "@135" in lb, it is a record, and its detail is "135 lb × 8".
-  - Number wording, and that each style × size is a standalone SVG at export size with no CSS variables left. Names are escaped, and a long name is cut before its sets and load.
+  - Number wording, and that each style × size is a standalone SVG at export size with no CSS variables left.
+  - The comparison library: unique ids, every thing reachable, counts from 1 to 200 in words, gym kit in the right unit, and no repeat until every option has had a turn. Names are escaped, and a long name is cut before its sets and load.
 - **Gate:**
   - Screenshots of the sheet from a History session and from Stats, in all five themes: `<theme>-share-session.png`, `<theme>-share-stats.png`.
   - From the finish screen in silent-black: `silent-black-share-finish.png`. That walk is the only one that finishes a session.

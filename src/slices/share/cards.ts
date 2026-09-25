@@ -8,7 +8,7 @@ import type { Theme } from '@/theme/themes';
 import type { MuscleId } from '@/data/muscles';
 import { BACK_PARTS, BACK_VIEWBOX, FRONT_PARTS, FRONT_VIEWBOX, type BodyPart } from '@/svg/bodyMuscles';
 import { markSvg } from '@/svg/logo';
-import { groupInt, timeText, volumeCompare, volumeHero, volumeShort, type ShareCardData } from './cardData';
+import { groupInt, timeText, volumeHero, volumeShort, type ShareCardData } from './cardData';
 
 export type CardStyle = 'poster' | 'sticker' | 'receipt';
 export type CardFormat = 'story' | 'square';
@@ -138,7 +138,7 @@ function poster(c: Ctx): string {
   const hero = volumeHero(c.d.volume, c.d.unit);
   const big = sq ? 78 : 104;
   const title = clip([c.d.title, c.d.sub].filter(Boolean).join(' · '), sq ? 38 : 36);
-  const fun = volumeCompare(c.d.volumeKg);
+  const fun = c.d.compare?.text ?? '';
   // Rule, title, big number, unit, comparison: stacked and centred between the top row and the numbers.
   // The comma of "2,780" drops below the baseline, so the unit sits a quarter of the size lower.
   const heroH = 3 + 6 + 16 + 6 + big * 0.8 + big * 0.24 + 14 + (fun ? 6 + 14 : 0);

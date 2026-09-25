@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { session, sets } from './helpers';
-import { cardData, latestSession, timeText, volumeCompare, volumeHero, volumeShort, type SharePeriod } from '@/slices/share/cardData';
+import { cardData, latestSession, MAX_COMPARE_COUNT, timeText, volumeCompare, volumeHero, volumeShort, type SharePeriod } from '@/slices/share/cardData';
+import { WEIGHT_THINGS } from '@/data/weights';
 import { CARD_PX, CARD_STYLES, cardSvg, mix, paletteFor, type CardFormat } from '@/slices/share/cards';
 import { effectiveSetsByMuscle } from '@/brain/exposure';
 import { allRecords } from '@/brain/prs';
@@ -115,7 +116,58 @@ describe('F12 share card data', () => {
     expect(timeText({ period: 'month', durationSec: 1_800 })).toBe('30 m');
     expect(timeText({ period: 'year', durationSec: 131 * 3600 + 600 })).toBe('131 h');
     expect([timeText({ period: 'workout', durationSec: 0 }), timeText({ period: 'all', durationSec: 0 })]).toEqual(['—', '—']);
-    expect([volumeCompare(0), volumeCompare(2_000), volumeCompare(29_840), volumeCompare(1_104_000)]).toEqual(['', '≈ 1 small car', '≈ 5 elephants', '≈ 7 blue whales']);
+  });
+
+  it('the comparison library: unique ids, real weights, each thing reachable', () => {
+    expect(new Set(WEIGHT_THINGS.map(t => t.id)).size).toBe(WEIGHT_THINGS.length);
+    expect(WEIGHT_THINGS.length).toBeGreaterThanOrEqual(30);
+    expect(new Set(WEIGHT_THINGS.map(t => t.group)).size).toBeGreaterThanOrEqual(6);
+    for (const t of WEIGHT_THINGS) {
+      expect(t.kg, t.id).toBeGreaterThan(0);
+      expect(t.note.length, t.id).toBeGreaterThan(0);
+      expect(volumeCompare(t.kg * 3, { unit: t.unit ?? 'kg', seen: WEIGHT_THINGS.filter(x => x.id !== t.id).map(x => x.id) })?.id, t.id).toBe(t.id);
+    }
+  });
+
+  it('a comparison is a readable count of one thing, in words', () => {
+    expect(volumeCompare(0)).toBeNull();
+    expect(volumeCompare(5)).toBeNull();
+    for (const kg of [300, 1_810, 4_710, 29_840, 297_300, 1_104_000, 20_000_000]) {
+      for (const seed of ['a', 'b', 'c']) {
+        const c = volumeCompare(kg, { seed })!;
+        const t = WEIGHT_THINGS.find(x => x.id === c.id)!;
+        const n = Math.round(kg / t.kg);
+        expect(n, `${kg} ${t.id}`).toBeGreaterThanOrEqual(1);
+        expect(n, `${kg} ${t.id}`).toBeLessThanOrEqual(MAX_COMPARE_COUNT);
+        expect(c.text).toBe(`≈ ${n.toLocaleString('en-GB')} ${n === 1 ? t.one : t.many}`);
+      }
+    }
+    expect(volumeCompare(6_000, { seen: WEIGHT_THINGS.filter(x => x.id !== 'elephant').map(x => x.id) })!.text).toBe('≈ 1 African elephant');
+  });
+
+  it('gym kit follows the unit: kg plates for kg lifters, 45 lb plates for lb lifters', () => {
+    const ids = (unit: LoadUnit) => new Set(Array.from({ length: 60 }, (_, i) => volumeCompare(2_000, { unit, seed: String(i) })!.id));
+    expect(ids('kg').has('plate-45lb')).toBe(false);
+    expect(ids('lb').has('plate-25kg')).toBe(false);
+    expect([...ids('kg')].some(id => id === 'plate-25kg' || id === 'barbell-20kg')).toBe(true);
+    expect([...ids('lb')].some(id => id === 'plate-45lb' || id === 'barbell-45lb')).toBe(true);
+  });
+
+  it('no repeats: each share picks something not shown yet until every option has had a turn', () => {
+    const kg = 12_000;
+    const options = WEIGHT_THINGS.filter(t => (!t.unit || t.unit === 'kg') && kg / t.kg >= 0.95 && Math.round(kg / t.kg) <= MAX_COMPARE_COUNT).map(t => t.id);
+    expect(options.length).toBeGreaterThanOrEqual(10);
+    const seen: string[] = [];
+    for (let i = 0; i < options.length; i++) seen.push(volumeCompare(kg, { seed: 'same card', seen })!.id);
+    expect([...seen].sort()).toEqual([...options].sort());
+    // Once all were used, the one shown longest ago comes back first.
+    expect(volumeCompare(kg, { seed: 'same card', seen })!.id).toBe(seen[0]);
+  });
+
+  it('different cards start on different things', () => {
+    const all = history();
+    const picks = new Set((['week', 'month', 'quarter', 'year', 'all'] as const).map(period => cardData({ sessions: all, custom: [], unit: 'kg', today: TODAY, period }).compare?.id));
+    expect(picks.size).toBeGreaterThanOrEqual(3);
   });
 });
 
