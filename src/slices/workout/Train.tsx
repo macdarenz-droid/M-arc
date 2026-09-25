@@ -48,6 +48,7 @@ import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
 import { haptic } from '@/native/haptics';
 import { durFor } from '@/ui/motion';
+import { celebrateOnce } from './celebrate';
 import { isNative } from '@/native/capacitor';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
@@ -507,6 +508,21 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
 
+  // F9: a PR pops in once, the moment its set commits — never again on remount (a tab switch).
+  const seenPrRef = useRef<Set<string> | null>(null);
+  const [popIds, setPopIds] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    const committedPrIds = entry.sets.filter((set, j) => perSet[j]?.pr && isCommitted(set) && set.id).map(set => set.id!);
+    if (!seenPrRef.current) { seenPrRef.current = new Set(committedPrIds); return; }
+    const freshIds = committedPrIds.filter(id => !seenPrRef.current!.has(id));
+    if (!freshIds.length) return;
+    for (const id of freshIds) seenPrRef.current.add(id);
+    setPopIds(prev => new Set([...prev, ...freshIds]));
+    const t = setTimeout(() => setPopIds(prev => { const next = new Set(prev); for (const id of freshIds) next.delete(id); return next; }), durFor('bounce'));
+    if (s.active && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
+    return () => clearTimeout(t);
+  }, [entry.sets, perSet]);
+
   // A9: while this card is open, tell the rest banner what the next set to do is.
   useEffect(() => {
     if (!open || isTimed || mode === 'conditioning') { if (open) nextUpHint.value = null; return undefined; }
@@ -604,7 +620,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <span class="hint">{lastHint}</span>
                     <span class="row" style={{ gap: 6 }}>
                       {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                      {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
+                      {pr && isCommitted(set) && <span class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> PR</span>}
                     </span>
                   </div>
                 )}

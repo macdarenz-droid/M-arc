@@ -1262,6 +1262,98 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// F9: a small 'PR' pill with an inline trophy pops in once when a record set is logged — not
+// while it's still just a promising, uncommitted number — and does not replay on a tab switch.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `F9 pr-badge ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([t]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = { id: 's1', splitId: 'sp1', splitName: 'Upper', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 50, reps: 8, effort: 'ideal' }, { kg: 50, reps: 8, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(3)}T17:00:00.000Z`, trainedEndAt: `${day(3)}T18:00:00.000Z`, loggedAt: `${day(3)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [{ day: day(0), sleepQuality: 4 }], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  }, [theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  // 80kg beats the 50kg history: a clear live record, well before it is committed.
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('80'); await inputs.nth(1).fill('5');
+  await page.waitForTimeout(80);
+  if (await page.locator('.pr-badge').count()) errors.push(`${tag}: a .pr-badge showed for an uncommitted record`);
+  await inputs.nth(1).blur();
+  await page.waitForTimeout(80);
+  const popState = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    const running = badge ? document.getAnimations().some(a => a.effect?.target === badge && a.playState === 'running') : false;
+    return { exists: !!badge, hasPop: !!badge?.classList.contains('pop'), running };
+  });
+  if (!popState.exists) errors.push(`${tag}: expected a .pr-badge once the record set is committed`);
+  if (!popState.hasPop) errors.push(`${tag}: expected the freshly-committed record's badge to have .pop`);
+  if (!popState.running) errors.push(`${tag}: expected a running pr-pop animation on the fresh badge`);
+
+  // Trophy and text sit on the same visual line.
+  const align = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    const svg = badge?.querySelector('svg');
+    if (!badge || !svg) return null;
+    const textNode = [...badge.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    const range = document.createRange();
+    if (textNode) range.selectNodeContents(textNode); else range.selectNodeContents(badge);
+    const textRect = range.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    return Math.abs((svgRect.top + svgRect.bottom) / 2 - (textRect.top + textRect.bottom) / 2);
+  });
+  if (align != null && align > 2) errors.push(`${tag}: trophy/text centre-y off by ${align.toFixed(1)}px, expected <=2`);
+
+  // WCAG: the badge text against its own composited background.
+  const contrast = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    if (!badge) return null;
+    const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    const cs = getComputedStyle(badge);
+    const fg = parseRgba(cs.color);
+    const own = parseRgba(cs.backgroundColor);
+    let node = badge.parentElement, under = { r: 255, g: 255, b: 255 };
+    while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+    const mix = (f, b, a) => f * a + b * (1 - a);
+    const bg = own ? { r: mix(own.r, under.r, own.a), g: mix(own.g, under.g, own.a), b: mix(own.b, under.b, own.a) } : under;
+    const lin = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+    const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+    const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
+    return l1 > l2 ? l1 / l2 : l2 / l1;
+  });
+  if (contrast != null && contrast < 4.5) errors.push(`${tag}: pr-badge text contrast ${contrast.toFixed(2)} < 4.5`);
+
+  // A tab switch away and back does not replay the pop.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(300);
+  const afterSwitch = await page.evaluate(() => { const b = document.querySelector('.pr-badge'); return { exists: !!b, hasPop: !!b?.classList.contains('pop') }; });
+  if (!afterSwitch.exists) errors.push(`${tag}: expected the .pr-badge to still be there after a tab switch`);
+  if (afterSwitch.hasPop) errors.push(`${tag}: the badge replayed .pop after a tab switch back`);
+
+  await ctx.close();
+}
+
 // QA5-1b..4b: a regression guard for QA5-1..4. Those fixes had no probe of their own — the gate
 // still passed against the pre-fix build, so undoing any of them would go unnoticed. In-app
 // Reduce motion only (OS no-preference), the exact path the original bugs were in.

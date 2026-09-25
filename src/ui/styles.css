@@ -294,7 +294,11 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 .effort button[aria-pressed="true"].ideal { background: var(--info); color: #fff; border-color: transparent; }
 .effort button[aria-pressed="true"].max { background: var(--negative); color: #fff; border-color: transparent; }
 .hint { font-size: 12px; color: var(--text-3); }
-.pr-badge { color: var(--warning); font-weight: 700; font-size: 12px; }
+/* F9 */
+.pr-badge { display: inline-flex; align-items: center; gap: var(--sp-1); padding: 2px 8px; border-radius: var(--radius-pill); font-size: var(--fs-meta); font-weight: var(--fw-semibold); color: var(--text); background: color-mix(in srgb, var(--positive) 14%, transparent); border: 1px solid color-mix(in srgb, var(--positive) 35%, transparent); }
+.pr-badge svg { color: var(--positive); }
+.pr-badge.pop { animation: pr-pop var(--dur-bounce) var(--ease-spring-bounce); }
+@keyframes pr-pop { from { opacity: 0; scale: var(--scale-pop); } }
 .watch-pill { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-1); color: var(--text); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .watch-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
 
