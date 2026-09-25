@@ -21,7 +21,7 @@ import { substitutesFor } from '@/brain/substitute';
 import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
-import { coachCtx, exerciseName, exerciseOf, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
+import { coachCtx, exerciseName, exerciseOf, hoursLeftOut, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
 import { isWorkingSet } from '@/brain/exposure';
 
 type P = Record<string, unknown>;
@@ -88,7 +88,8 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       return {
         at: new Date(at).toISOString().slice(0, 16),
         muscles: Object.fromEntries(rec.map(r => [r.muscle, r.pct])),
-        least: least.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft) })),
+        // QA3-5: a sore flag and a nulled hoursLeft, like get_recovery already does.
+        least: least.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: hoursLeftOut(r), ...(r.soreToday ? { soreToday: true } : {}) })),
         empty: rec.length ? undefined : 'Nothing logged yet.',
       };
     }

@@ -98,7 +98,7 @@
   },
   {
    "name": "get_recovery",
-   "description": "Recovery per muscle: percent, hours until ready, when fully recovered, top drivers and confidence. Pass `at` (ISO, up to 7 days ahead) to project. Use for soreness, readiness to train a muscle, or scheduling.",
+   "description": "Recovery per muscle: percent, hours until ready, when fully recovered, top drivers and confidence. Pass `at` (ISO, up to 7 days ahead) to project. `soreToday` marks a muscle that today's soreness rating alone is holding back, past what the model's clock would otherwise say; hoursLeft and fullInHours are null there rather than a misleading 0. Use for soreness, readiness to train a muscle, or scheduling.",
    "input_schema": {
     "type": "object",
     "properties": {
