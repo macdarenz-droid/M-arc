@@ -60,22 +60,16 @@ public class WearEnginePlugin extends Plugin {
 
     /** Local SQLite only. Never sends a watch acknowledgement or touches lab diagnostics. */
     @PluginMethod public void workoutOwnership(PluginCall call) {
-        disk.execute(() -> {
-            try (WorkoutCommandStore store = new WorkoutCommandStore(getContext().getApplicationContext())) {
-                String action = call.getString("action", "");
-                JSONObject result;
-                switch (action) {
-                    case "read": result = store.readOwnership(); break;
-                    case "settle": result = store.settleHandover(call.getString("handoverId")); break;
-                    case "handover": result = store.handover(call.getObject("seed")); break;
-                    default: throw new IllegalArgumentException("Unknown ownership action");
-                }
-                call.resolve(new JSObject(result.toString()));
-            } catch (Exception e) {
-                // No workout payload or arbitrary database error goes into diagnostics.
-                call.reject("Workout ownership could not be verified.");
-            }
-        });
+        try {
+            WorkoutHeartRecorder.get(getContext()).ownership(call.getString("action", ""), call.getObject("seed"),
+                    call.getString("handoverId"), result -> {
+                        try { call.resolve(new JSObject(result.toString())); }
+                        catch (Exception e) { call.reject("Workout ownership could not be verified."); }
+                    }, () -> call.reject("Workout ownership could not be verified."));
+        } catch (RuntimeException e) {
+            // No workout payload or arbitrary database error goes into diagnostics.
+            call.reject("Workout ownership could not be verified.");
+        }
     }
 
     private JSObject obj(String key, Object value) { return new JSObject().put(key, value); }

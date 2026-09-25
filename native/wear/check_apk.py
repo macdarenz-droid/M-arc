@@ -10,7 +10,7 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
     if not any(p.get("classpath") == cls for p in plugins):
         raise SystemExit("WearEnginePlugin missing from Capacitor APK registration")
     dex = [apk.read(name) for name in apk.namelist() if name.startswith("classes") and name.endswith(".dex")]
-    for name in [cls, "com.mrcdrnzz.dailytracker.wear.WorkoutCommandStore", "com.mrcdrnzz.dailytracker.HealthConnectNativePlugin", "com.mrcdrnzz.dailytracker.watch.WatchBridgePlugin"]:
+    for name in [cls, "com.mrcdrnzz.dailytracker.wear.WorkoutCommandStore", "com.mrcdrnzz.dailytracker.wear.WorkoutHeartRecorder", "com.mrcdrnzz.dailytracker.HealthConnectNativePlugin", "com.mrcdrnzz.dailytracker.watch.WatchBridgePlugin"]:
         descriptor = ("L" + name.replace(".", "/") + ";").encode()
         if not any(descriptor in part for part in dex):
             raise SystemExit(f"Native class missing from APK DEX: {name}")

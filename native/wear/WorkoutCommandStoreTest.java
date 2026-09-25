@@ -465,7 +465,7 @@ public class WorkoutCommandStoreTest {
         try { store.handover(handoverSeed()); fail("Owner insert should fail"); }
         catch (android.database.SQLException expected) { /* no orphaned native seed */ }
         assertEquals("web", store.readOwnership().getString("owner"));
-        for (String table : new String[]{"sessions", "set_revisions", "workout_handovers"}) {
+        for (String table : new String[]{"sessions", "set_revisions", "workout_handovers", "heart_capture", "heart_samples"}) {
             try (Cursor c = db.rawQuery("SELECT count(*) FROM " + table, null)) { assertTrue(c.moveToFirst()); assertEquals(0, c.getInt(0)); }
         }
         db.execSQL("DROP TRIGGER fail_owner");
@@ -503,13 +503,15 @@ public class WorkoutCommandStoreTest {
     @Test public void versionFourUpgradeKeepsUnownedRowsAndPendingContext() throws Exception {
         assertEquals("applied", store.completeSet(command("c-v4", "watch-1", "e-1", "set-1", 0, actionAt)).status);
         String before = pendingContext("c-v4", "rest").toString();
+        store.getWritableDatabase().execSQL("DROP TABLE heart_samples");
+        store.getWritableDatabase().execSQL("DROP TABLE heart_capture");
         store.getWritableDatabase().execSQL("DROP TABLE workout_handovers");
         store.getWritableDatabase().setVersion(4);
         store.close(); store = new WorkoutCommandStore(context);
         assertEquals("blocked", store.readOwnership().getString("owner"));
         assertEquals(before, pendingContext("c-v4", "rest").toString());
         assertEquals(3, pendingCount("c-v4"));
-        assertEquals(5, store.getReadableDatabase().getVersion());
+        assertEquals(6, store.getReadableDatabase().getVersion());
     }
 
     @Test public void malformedHandoverContextCannotAcquireOwnership() throws Exception {

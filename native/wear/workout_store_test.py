@@ -11,7 +11,7 @@ SOURCE = Path(__file__).with_name("WorkoutCommandStore.java").read_text()
 
 def schema(connection):
     connection.execute("PRAGMA foreign_keys=ON")
-    for name in ("CREATE_SESSIONS", "CREATE_RECEIPTS", "ONE_ACTIVE_SESSION", "CREATE_SET_REVISIONS", "CREATE_HANDOVERS", "ONE_NATIVE_OWNER"):
+    for name in ("CREATE_SESSIONS", "CREATE_RECEIPTS", "ONE_ACTIVE_SESSION", "CREATE_SET_REVISIONS", "CREATE_HANDOVERS", "ONE_NATIVE_OWNER", "CREATE_HEART_CAPTURE", "CREATE_HEART_SAMPLES"):
         match = re.search(rf'static final String {name} = "([^"\\]*)";', SOURCE)
         assert match, f"missing executable {name} DDL"
         connection.execute(match.group(1))
@@ -93,6 +93,38 @@ class WorkoutStoreTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-1", "native", "s-1", "watch-1", "{}", "{}"))
         self.db.rollback()
+
+    def test_heart_identity_is_scoped_to_handover_source_and_boot(self):
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO heart_capture(handover_id) VALUES ('missing')")
+        self.db.rollback()
+        self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-1", "native", "s-1", "watch-1", "{}", "{}"))
+        self.db.execute("INSERT INTO heart_capture(handover_id) VALUES ('h-1')")
+        sample = ("h-1", "ble", "ble-1", "boot-7", "boot", 1, 100000, 1000, 128, 1)
+        self.db.execute("INSERT INTO heart_samples VALUES (?,?,?,?,?,?,?,?,?,?)", sample)
+        self.db.commit()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("INSERT INTO heart_samples VALUES (?,?,?,?,?,?,?,?,?,?)", sample)
+        self.db.rollback()
+        self.db.execute("INSERT INTO heart_samples VALUES (?,?,?,?,?,?,?,?,?,?)", (*sample[:2], "ble-2", *sample[3:]))
+        self.db.execute("INSERT INTO heart_samples VALUES (?,?,?,?,?,?,?,?,?,?)", (*sample[:3], "boot-8", *sample[4:]))
+        self.db.commit()
+        self.db.close()
+        self.db = sqlite3.connect(self.path)
+        self.assertEqual(self.db.execute("SELECT count(*) FROM heart_samples").fetchone()[0], 3)
+
+    def test_capture_counters_and_sample_insert_roll_back_together(self):
+        self.db.execute("INSERT INTO workout_handovers VALUES (?,?,?,?,?,?)", ("h-1", "native", "s-1", "watch-1", "{}", "{}"))
+        self.db.execute("INSERT INTO heart_capture(handover_id) VALUES ('h-1')")
+        self.db.commit()
+        self.db.execute("BEGIN")
+        self.db.execute("INSERT INTO heart_samples VALUES ('h-1','ble','ble-1','boot-7','boot',1,100000,1000,0,0)")
+        self.db.execute("UPDATE heart_capture SET retained_count=1,dropped_count=2 WHERE handover_id='h-1'")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.db.execute("UPDATE heart_capture SET retained_count=14401 WHERE handover_id='h-1'")
+        self.db.rollback()
+        self.assertEqual(self.db.execute("SELECT count(*) FROM heart_samples").fetchone()[0], 0)
+        self.assertEqual(self.db.execute("SELECT retained_count,dropped_count FROM heart_capture").fetchone(), (0, 0))
 
 
 if __name__ == "__main__":

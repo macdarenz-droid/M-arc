@@ -60,9 +60,11 @@ target = app / "src/main/java/com/mrcdrnzz/dailytracker/wear"
 target.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/WearEnginePlugin.java", target / "WearEnginePlugin.java")
 shutil.copyfile(ROOT / "native/wear/WorkoutCommandStore.java", target / "WorkoutCommandStore.java")
+shutil.copyfile(ROOT / "native/wear/WorkoutHeartRecorder.java", target / "WorkoutHeartRecorder.java")
 test_target = app / "src/test/java/com/mrcdrnzz/dailytracker/wear"
 test_target.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/WorkoutCommandStoreTest.java", test_target / "WorkoutCommandStoreTest.java")
+shutil.copyfile(ROOT / "native/wear/WorkoutHeartRecorderTest.java", test_target / "WorkoutHeartRecorderTest.java")
 test_resources = app / "src/test/resources"
 test_resources.mkdir(parents=True, exist_ok=True)
 shutil.copyfile(ROOT / "native/wear/command-fixtures.json", test_resources / "watch-command-fixtures.json")

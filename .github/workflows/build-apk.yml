@@ -140,7 +140,7 @@ jobs:
           test -f android/app/src/test/java/com/mrcdrnzz/dailytracker/wear/WorkoutCommandStoreTest.java
           cd android
           chmod +x gradlew
-          ./gradlew --no-daemon :app:testDebugUnitTest --tests com.mrcdrnzz.dailytracker.wear.WorkoutCommandStoreTest
+          ./gradlew --no-daemon :app:testDebugUnitTest --tests com.mrcdrnzz.dailytracker.wear.WorkoutCommandStoreTest --tests com.mrcdrnzz.dailytracker.wear.WorkoutHeartRecorderTest
 
       - name: Decode the permanent signing key
         shell: bash

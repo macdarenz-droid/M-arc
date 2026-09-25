@@ -11,6 +11,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +27,13 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     static final String CREATE_PENDING_EFFECTS = "CREATE TABLE pending_effects (session_id TEXT NOT NULL, command_id TEXT NOT NULL, effect TEXT NOT NULL CHECK(effect IN ('fidelity','rest','heart')), set_id TEXT NOT NULL, action_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('pending','resolved')), context TEXT, PRIMARY KEY(session_id, command_id, effect), FOREIGN KEY(session_id, command_id) REFERENCES receipts(session_id, command_id) ON DELETE RESTRICT)";
     static final String CREATE_HANDOVERS = "CREATE TABLE workout_handovers (handover_id TEXT PRIMARY KEY NOT NULL, status TEXT NOT NULL CHECK(status IN ('native','cancelled')), session_id TEXT UNIQUE, installation_id TEXT, original_snapshot TEXT, inputs TEXT, CHECK(status='cancelled' OR (session_id IS NOT NULL AND installation_id IS NOT NULL AND original_snapshot IS NOT NULL AND inputs IS NOT NULL)), FOREIGN KEY(session_id) REFERENCES sessions(session_id) ON DELETE RESTRICT)";
     static final String ONE_NATIVE_OWNER = "CREATE UNIQUE INDEX one_native_owner ON workout_handovers((1)) WHERE status='native'";
+    static final int MAX_HEART_SAMPLES = 14400;
+    static final String CREATE_HEART_CAPTURE = "CREATE TABLE heart_capture (handover_id TEXT PRIMARY KEY NOT NULL, retained_count INTEGER NOT NULL DEFAULT 0 CHECK(retained_count BETWEEN 0 AND 14400), dropped_count INTEGER NOT NULL DEFAULT 0 CHECK(dropped_count >= 0), FOREIGN KEY(handover_id) REFERENCES workout_handovers(handover_id) ON DELETE RESTRICT)";
+    static final String CREATE_HEART_SAMPLES = "CREATE TABLE heart_samples (handover_id TEXT NOT NULL, source TEXT NOT NULL CHECK(source='ble'), source_id TEXT NOT NULL, boot_id TEXT NOT NULL, clock_scope TEXT NOT NULL CHECK(clock_scope IN ('boot','process')), sequence INTEGER NOT NULL CHECK(sequence > 0), received_at_epoch_ms INTEGER NOT NULL CHECK(received_at_epoch_ms BETWEEN 1 AND 8640000000000000), received_at_elapsed_ms INTEGER NOT NULL CHECK(received_at_elapsed_ms >= 0), bpm INTEGER NOT NULL CHECK(bpm BETWEEN 0 AND 300), contact INTEGER CHECK(contact IN (0,1)), PRIMARY KEY(handover_id,source_id,boot_id,sequence), FOREIGN KEY(handover_id) REFERENCES heart_capture(handover_id) ON DELETE RESTRICT)";
     private static final DateTimeFormatter UTC = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withResolverStyle(ResolverStyle.STRICT).withZone(ZoneOffset.UTC);
 
-    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 5); }
+    WorkoutCommandStore(Context context) { super(context, "marc_watch_workout_v1.db", null, 6); }
 
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_SESSIONS);
@@ -39,6 +43,8 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         db.execSQL(CREATE_PENDING_EFFECTS);
         db.execSQL(CREATE_HANDOVERS);
         db.execSQL(ONE_NATIVE_OWNER);
+        db.execSQL(CREATE_HEART_CAPTURE);
+        db.execSQL(CREATE_HEART_SAMPLES);
     }
 
     @Override public void onConfigure(SQLiteDatabase db) {
@@ -47,7 +53,7 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
     }
 
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (newVersion != 5 || oldVersion < 1 || oldVersion > 4)
+        if (newVersion != 6 || oldVersion < 1 || oldVersion > 5)
             throw new IllegalStateException("Workout database migration required");
         if (oldVersion == 1) {
             db.execSQL(CREATE_SET_REVISIONS);
@@ -70,8 +76,14 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             } catch (Exception e) { throw new IllegalStateException("Could not migrate watch pending effects", e); }
         } else if (oldVersion == 3) db.execSQL("ALTER TABLE pending_effects ADD COLUMN context TEXT");
         // Never infer ownership of old, unconnected seed rows during migration.
-        db.execSQL(CREATE_HANDOVERS);
-        db.execSQL(ONE_NATIVE_OWNER);
+        if (oldVersion < 5) {
+            db.execSQL(CREATE_HANDOVERS);
+            db.execSQL(ONE_NATIVE_OWNER);
+        }
+        db.execSQL(CREATE_HEART_CAPTURE);
+        db.execSQL(CREATE_HEART_SAMPLES);
+        // Old JS checkpoints have no native source/boot identity. Keep them unchanged, not relabelled.
+        db.execSQL("INSERT INTO heart_capture(handover_id) SELECT handover_id FROM workout_handovers WHERE status='native'");
     }
 
     private static boolean id(String value) { return value != null && value.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,79}"); }
@@ -337,6 +349,9 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
             row.put("session_id", sessionId); row.put("installation_id", installation);
             row.put("original_snapshot", snapshot); row.put("inputs", inputs);
             db.insertOrThrow("workout_handovers", null, row);
+            ContentValues capture = new ContentValues();
+            capture.put("handover_id", token);
+            db.insertOrThrow("heart_capture", null, capture);
             JSONObject result = readOwnership(db);
             db.setTransactionSuccessful();
             return result;
@@ -347,6 +362,75 @@ final class WorkoutCommandStore extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         db.beginTransactionNonExclusive();
         try { return readOwnership(db); } finally { db.endTransaction(); }
+    }
+
+    /** Only an explicit, still-running native handover can receive samples. Never adopt a legacy seed. */
+    String heartOwner() {
+        try (Cursor c = getReadableDatabase().rawQuery(
+                "SELECT h.handover_id FROM workout_handovers h JOIN sessions s ON s.session_id=h.session_id WHERE h.status='native' AND s.status IN ('active','paused')", null)) {
+            return c.moveToFirst() ? c.getString(0) : null;
+        }
+    }
+
+    /** Receipt-time evidence only: a bounded queue/disk tail can be lost at process death. */
+    JSONObject heartCapture(String token) throws Exception {
+        try (Cursor c = getReadableDatabase().rawQuery(
+                "SELECT retained_count,dropped_count FROM heart_capture WHERE handover_id=?", new String[]{token})) {
+            if (!c.moveToFirst()) throw new IllegalStateException("Missing heart capture record");
+            return new JSONObject().put("retainedSamples", c.getInt(0)).put("droppedSamples", c.getLong(1))
+                    .put("capacityReached", c.getInt(0) == MAX_HEART_SAMPLES)
+                    .put("coverage", "unverified").put("timeBasis", "phone_receipt");
+        }
+    }
+
+    /**
+     * Never looks up a new owner for delayed samples. Identity, data and capture counters commit
+     * together; replay is harmless, conflicting reuse fails, and a full journal keeps its prefix.
+     */
+    boolean appendHeart(String token, String bootId, String clockScope,
+                        List<WorkoutHeartRecorder.Sample> samples, long dropped) {
+        if (!id(token) || !id(bootId) || !("boot".equals(clockScope) || "process".equals(clockScope))
+                || samples.size() > WorkoutHeartRecorder.MAX_PENDING || dropped < 0)
+            throw new IllegalArgumentException("Invalid native heart batch");
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        try {
+            if (!token.equals(heartOwner())) return false;
+            int retained;
+            long lost;
+            try (Cursor c = db.rawQuery("SELECT retained_count,dropped_count FROM heart_capture WHERE handover_id=?", new String[]{token})) {
+                if (!c.moveToFirst()) throw new IllegalStateException("Missing heart capture record");
+                retained = c.getInt(0); lost = Math.addExact(c.getLong(1), dropped);
+            }
+            for (WorkoutHeartRecorder.Sample sample : samples) {
+                try (Cursor c = db.rawQuery("SELECT clock_scope,received_at_epoch_ms,received_at_elapsed_ms,bpm,contact FROM heart_samples WHERE handover_id=? AND source_id=? AND boot_id=? AND sequence=?",
+                        new String[]{token, sample.sourceId(), bootId, Long.toString(sample.sequence())})) {
+                    if (c.moveToFirst()) {
+                        boolean sameContact = sample.contact() == null ? c.isNull(4)
+                                : !c.isNull(4) && (sample.contact() ? 1 : 0) == c.getInt(4);
+                        if (!clockScope.equals(c.getString(0)) || c.getLong(1) != sample.epochMs()
+                                || c.getLong(2) != sample.elapsedMs() || c.getInt(3) != sample.bpm() || !sameContact)
+                            throw new IllegalStateException("Heart sample identity reused");
+                        continue;
+                    }
+                }
+                if (retained == MAX_HEART_SAMPLES) { lost = Math.addExact(lost, 1); continue; }
+                ContentValues row = new ContentValues();
+                row.put("handover_id", token); row.put("source", "ble"); row.put("source_id", sample.sourceId());
+                row.put("boot_id", bootId); row.put("clock_scope", clockScope); row.put("sequence", sample.sequence());
+                row.put("received_at_epoch_ms", sample.epochMs()); row.put("received_at_elapsed_ms", sample.elapsedMs());
+                row.put("bpm", sample.bpm());
+                if (sample.contact() == null) row.putNull("contact"); else row.put("contact", sample.contact() ? 1 : 0);
+                db.insertOrThrow("heart_samples", null, row);
+                retained++;
+            }
+            ContentValues capture = new ContentValues();
+            capture.put("retained_count", retained); capture.put("dropped_count", lost);
+            if (db.update("heart_capture", capture, "handover_id=?", new String[]{token}) != 1)
+                throw new IllegalStateException("Heart capture update failed");
+            db.setTransactionSuccessful();
+            return true;
+        } finally { db.endTransaction(); }
     }
 
     private static JSONObject readOwnership(SQLiteDatabase db) throws Exception {

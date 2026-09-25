@@ -11,6 +11,7 @@ import android.os.*;
 import com.mrcdrnzz.dailytracker.R;
 import com.mrcdrnzz.dailytracker.watch.core.HeartRateMeasurement;
 import com.mrcdrnzz.dailytracker.watch.core.LiveSession;
+import com.mrcdrnzz.dailytracker.wear.WorkoutHeartRecorder;
 import java.util.*;
 
 /** A foreground BLE adapter; the plugin is only a viewer. All state runs on the main thread. Ported from Watch-test. */
@@ -32,6 +33,9 @@ public final class WatchService extends Service {
     private final IBinder binder = new LocalBinder();
     private BluetoothGatt gatt;
     private BluetoothDevice device;
+    private volatile WorkoutHeartRecorder heartRecorder;
+    /** Anonymous connection identity; never a Bluetooth address/name. Automatic reconnects keep it. */
+    private String heartSourceId;
     private Runnable listener;
     private int retries;
     private long lastNotification;
@@ -51,6 +55,8 @@ public final class WatchService extends Service {
     };
     @Override public void onCreate() {
         super.onCreate();
+        try { heartRecorder = WorkoutHeartRecorder.get(getApplicationContext()); }
+        catch (RuntimeException ignored) { /* Optional native capture cannot stop existing BLE. */ }
         NotificationChannel channel = new NotificationChannel("watch_sync", "Watch connection", NotificationManager.IMPORTANCE_LOW);
         channel.setDescription("Keeps the watch connected while the screen is off");
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
@@ -69,7 +75,7 @@ public final class WatchService extends Service {
     public void connect(BluetoothDevice selected) {
         disconnect();
         if (!permitted()) { setStatus("Permission needed", "Allow Nearby devices to connect."); return; }
-        session = new LiveSession(); battery = null; services.clear();
+        session = new LiveSession(); heartSourceId = "ble-" + UUID.randomUUID(); battery = null; services.clear();
         device = selected; retries = 0;
         String name = selected.getName(); deviceName = name == null || name.trim().isEmpty() ? "Bluetooth sensor" : name;
         pausedReason = null;
@@ -218,13 +224,20 @@ public final class WatchService extends Service {
         });
     }
     private void receive(BluetoothGatt g, UUID characteristic, byte[] bytes) {
-        handler.post(() -> { if (g == gatt) handle(characteristic,bytes); });
+        // These are phone receipt times, not sensor measurement times. Do not stamp a delayed drain.
+        long elapsed = SystemClock.elapsedRealtime(), epoch = System.currentTimeMillis();
+        WorkoutHeartRecorder.Target owner = heartRecorder == null ? null : heartRecorder.targetAtReceipt();
+        handler.post(() -> { if (g == gatt) handle(characteristic,bytes,epoch,elapsed,owner); });
     }
     private void handle(UUID characteristic, byte[] value) {
+        handle(characteristic, value, System.currentTimeMillis(), SystemClock.elapsedRealtime(), null);
+    }
+    private void handle(UUID characteristic, byte[] value, long epoch, long elapsed, WorkoutHeartRecorder.Target owner) {
         if (HR.equals(characteristic)) {
             try {
                 HeartRateMeasurement m = HeartRateMeasurement.parse(value);
-                session.accept(m,SystemClock.elapsedRealtime(),System.currentTimeMillis()); retries = 0;
+                session.accept(m,elapsed,epoch); retries = 0;
+                if (heartRecorder != null) heartRecorder.record(owner, heartSourceId, session.packets, m, epoch, elapsed);
                 detail = "Direct Bluetooth • " + deviceName;
                 changed();
             } catch (IllegalArgumentException e) { log("Ignored malformed HR packet: " + e.getMessage()); }

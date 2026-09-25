@@ -117,8 +117,9 @@ caller**. A native-owned workout stays read-only in this build. There is no
 ownership release/import path yet; do not activate handover for real workouts.
 The heart buffer contains only samples received by the current WebView, with
 phone receive wall/elapsed times. It does not recover samples lost before
-handover or establish continuous native capture, watch clock synchronization,
-or timing confidence. Rest/heart inputs are retained but not yet consumed by
+handover or establish watch clock synchronization or timing confidence. The
+separate native journal below starts only after confirmed ownership; it does
+not relabel this older JS buffer. Rest/heart inputs are retained but not yet consumed by
 the pending-effect resolver. No Saved acknowledgement is enabled.
 
 Risk controls: native seed/owner rollback together; cancellation prevents late
@@ -132,8 +133,67 @@ real crash-reset labels.
 Pre-bundle tests exercise the actual inline reset handler on web and Android.
 Real GT6 behavior remains unverified.
 
-Next implementation: add continuous native heart capture with source/boot
-identity, phone command routing and completion/release reconciliation. Then
+## Native BLE heart journal
+
+Version 6 adds a bounded heart journal under the existing handover ID. The
+existing `WatchService` sends parsed BLE packets to `WorkoutHeartRecorder`
+without requiring a WebView listener. Its process-owned worker also serializes
+local ownership operations. It recovers a confirmed owner asynchronously and
+accepts data only for that owner's active/paused session. A normal phone
+workout, old unowned native seed, failed optional read or closed session cannot
+start native recording. No new UI, permission, automatic connection or Wear
+Engine receiver is enabled.
+
+The BLE callback captures its owner ticket and phone wall/elapsed receipt
+times before posting to the main thread. Delayed callbacks cannot acquire a
+later workout, and the database rechecks that exact owner in the insert
+transaction. The journal retains an anonymous BLE connection ID, packet
+sequence, phone boot identity, receipt clocks, BPM and contact state. Explicit
+connections get a new source ID; automatic reconnects keep it. No Bluetooth
+address/name is stored in the journal or diagnostics. Contact=false and zero
+BPM remain raw evidence, not usable live readings. A future resolver must filter
+them and handle gaps before deriving heart effects.
+
+Phone boot identity uses Android's local
+[`BOOT_COUNT`](https://developer.android.com/reference/android/provider/Settings.Global#BOOT_COUNT).
+If it is unavailable, a random process identity is marked with `clock_scope=process`;
+it is never guessed from wall time or reused across process restarts.
+[`elapsedRealtime`](https://developer.android.com/reference/android/os/SystemClock#elapsedRealtime())
+is sampled at receipt, including time while the phone sleeps. These identities
+are local to this phone; they establish no watch clock mapping. Clock jumps
+are retained unchanged, not silently converted into measurement times.
+
+Disk work stays off the BLE/main thread. Each owner has at most 128 pending
+packets; drains handle 32 at a time and yield to queued ownership work. A failed
+write retains its bounded tail and retries on the next packet or ownership
+read without a busy loop. Overflow increments a loss count. The database
+keeps at most 14,400 samples per handover, preserves its existing prefix when
+full, and atomically stores counters with each batch. Replayed sample IDs
+cannot duplicate data, while conflicting reuse rolls back the batch. Version 5
+upgrades preserve ownership, original JS inputs and pending command effects;
+they do not fabricate native provenance for old samples.
+
+The local ownership reply includes capture counts, pending/write-failure state
+and `coverage: unverified`. The current UI does not consume this extra metadata.
+Failure to read optional capture metadata still returns any confirmed native
+owner, so a lost phone marker cannot reopen live editing through that failure.
+The uncommitted queue tail, periods before owner recovery, disconnections and
+process death can leave gaps. This is continuous recording only while the
+existing BLE service actually receives packets for a confirmed native owner;
+it is not a guarantee of uninterrupted capture. Native samples are not yet
+imported into phone history or backup, and no effect resolver consumes them.
+Handover must remain disabled until completion/release, export and coverage
+handling are implemented. The BLE foreground service does not establish that
+Wear Engine works with the phone locked or in the background.
+
+Regression coverage exercises the real service receive path without a plugin
+listener, delayed callbacks across handover, restart/reopen, source/boot changes,
+wall-clock rollback, replay/conflicting IDs, malformed/contact/zero readings,
+bounded queues and journals, failed write retries, migration and failed optional
+bootstrap. These are JVM simulations; physical GT6 evidence is still pending.
+
+Next implementation: add phone command routing and completion/release
+reconciliation, including draining/exporting native heart evidence. Then
 resolve fidelity/rest/heart atomically and bind one verified watch installation
 through actual transport. Test a crash after commit but before reply,
 an old offline command after substitution, and a watch restart with its pending

@@ -1,8 +1,10 @@
 # Watch progress
 
-RUN LOCK: none
+RUN LOCK: native heart capture implementation and validation in progress (2026-09-25)
 
 ## Done this run
+
+- Added owner-scoped native BLE recording behind the existing, still-disabled handover path: version 6 journal, anonymous source/boot identity, callback receipt clocks, bounded worker queue/storage, loss counts and retained-tail retries. Normal phone/legacy workouts cannot start native recording; delayed packets cannot move to a later owner. Optional heart metadata failure cannot hide a confirmed native owner. Original JS checkpoints and pending effects stay unchanged. Added 15 service/store JVM regressions and 2 SQLite schema regressions. Local checks pass: all 912 unit tests, 3 performance budgets, TypeScript/build, 20 watch protocol/probe tests, 8 SQLite schema tests and agent guard. Native JVM, browser and APK validation are pending CI; the local Android toolchain is unavailable. Details and remaining limits are in `native/wear/GATE-B.md`.
 
 - Closed the latent boot-read race from Claude's QA of `06369f0` in code commit `0870eac`: native initialization and every ownership read keep live writers in `checking` until the read resolves. A lost marker cannot permit set edits, Finish or Discard before a native projection arrives. History, settings and backup export remain usable; a failed/timed-out read with no known handover still reopens phone editing with a notice. The shell shows checking instead of a premature recovery warning. Updated the ownership, crash-reset and browser regressions. Local checks pass: 27 focused tests, all 912 unit tests, 3 performance budgets, TypeScript and production build. [M/ARC gate 36031152523](https://github.com/macdarenz-droid/M-arc/actions/runs/36031152523) passed for `0870eac`: all three unit-test time zones, both browser runs, pending-read navigation/export/timeout regression, native transactions, APK checks and permanent signing. [Agent guard 36031152620](https://github.com/macdarenz-droid/M-arc/actions/runs/36031152620) passed. Handover remains unwired to UI/transport; no main merge.
 
@@ -17,7 +19,7 @@ RUN LOCK: none
 
 ## Next task
 
-- Add continuous native heart capture with source/boot identity, phone command routing and completion/release reconciliation. Then consume the retained rest/heart inputs and resolve fidelity/rest/heart in the native transaction before connecting transport. The handover function remains unused by screens and transport until those paths are ready. Existing pending rows are partial and cannot be displayed as Saved.
+- Add phone command routing and completion/release reconciliation, including draining/exporting the native heart journal and handling coverage gaps. Then consume retained rest/heart inputs and resolve fidelity/rest/heart in the native transaction before connecting transport. The handover function remains unused by screens and transport until those paths are ready. Existing pending rows are partial and cannot be displayed as Saved.
 
 ## WAITING ON OWNER
 
