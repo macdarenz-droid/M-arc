@@ -40,6 +40,15 @@ export function recoveryAt(ctx: ToolCtx, atMs = ctx.now): MuscleRecovery[] {
   return (m.recovery ??= run());
 }
 
+/**
+ * QA3-5: hoursLeft is 0 whenever the model's own clock has nothing left to say, which is also
+ * true once soreness alone is holding a muscle back past that clock (soreToday, recovery.ts's
+ * soreOnly). A bare 0 there reads as "ready very soon"; null says the clock has no opinion.
+ */
+export function hoursLeftOut(r: MuscleRecovery): number | null {
+  return r.soreToday && r.hoursLeft === 0 ? null : Math.round(r.hoursLeft);
+}
+
 export function scheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
   const id = ctx.state.schedule[weekdayOf(day)];
   return id ? ctx.state.splits.find(sp => sp.id === id) : undefined;

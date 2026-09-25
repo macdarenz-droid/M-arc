@@ -33,7 +33,7 @@ import { findInApp } from '../palace/registry';
 import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
 import { one } from '../context/brief';
 import {
-  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -111,7 +111,10 @@ const musclesArg = (v: unknown): MuscleId[] | undefined => {
 };
 
 function least(ctx: ToolCtx, n = 3, atMs = ctx.now) {
-  return recoveryAt(ctx, atMs).filter(r => r.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, n).map(r => ({ muscle: r.muscle, pct: r.pct, hoursLeft: Math.round(r.hoursLeft) }));
+  // QA3-5: a sore flag and a nulled hoursLeft, like get_recovery already does.
+  return recoveryAt(ctx, atMs).filter(r => r.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, n).map(r => ({
+    muscle: r.muscle, pct: r.pct, hoursLeft: hoursLeftOut(r), ...(r.soreToday ? { soreToday: true } : {}),
+  }));
 }
 
 export function getOverview(_: unknown, ctx: ToolCtx) {
@@ -235,7 +238,7 @@ export function getRecovery(input: { muscles?: string[]; at?: string }, ctx: Too
   return capJson({
     at: new Date(atMs).toISOString().slice(0, 16),
     muscles: list.sort((a, b) => a.pct - b.pct).map(r => ({
-      muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft),
+      muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: hoursLeftOut(r),
       readyInHours: r.readyInHours ? r.readyInHours.map(Math.round) : null, fullInHours: r.fullInHours != null ? Math.round(r.fullInHours) : null,
       drivers: r.drivers.slice(0, 2).map(d => d.text), personalized: r.personalized, confidence: r.confidence, lastDay: r.lastDay,
       // QA2-FC-5: held back by today's soreness rating, so the hours say nothing.

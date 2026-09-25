@@ -210,7 +210,7 @@ export interface ActiveSession {
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string; /** QA3-8b: the exerciseId this slot was planned as before a substitution changed it, so saving can find it by lineage instead of by array position. */ plannedId?: string }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;

@@ -102,6 +102,12 @@ export function loadableValues(profile: EquipmentProfile): number[] {
   return out;
 }
 
+/** The heaviest load this equipment can make, in canonical kg. Infinity when the profile has no real ceiling. */
+export function loadableTopKg(profile: EquipmentProfile): number {
+  const values = loadableValues(profile);
+  return values.length ? r(values[values.length - 1]! * factor(profile.unit), 3) : Infinity;
+}
+
 export interface Loadable { kg: number; value: number; unit: LoadUnit }
 
 /** Snaps a canonical kg target to the nearest load the equipment really has. `up` for increases, `down` for reductions. */
