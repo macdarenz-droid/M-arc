@@ -66,6 +66,10 @@ html[data-motion="reduce"] {
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+/* QA5-17: theme.ts adds this class for two rAFs around a theme switch, so every colour transition
+   (theme cards, .card-press, .esc-dock, ...) snaps to the new theme on the same frame as the
+   [data-theme] attribute instead of each fading over its own ~150ms and showing a grey flash. */
+html.theme-switching *, html.theme-switching *::before, html.theme-switching *::after { transition: none !important; }
 /* F2: no long-press text selection on controls (inputs, textarea and message text stay selectable). */
 button, [role="button"], .card-press, .list-row.pressable, .chip-btn, .seg button, .tab, .toggle, .set-kind, .nav button, .theme-card, .cal .day, .watch-pill {
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
