@@ -1211,6 +1211,57 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// A8: the keyboard's action key moves kg -> reps -> the next set's kg (Done on the last set),
+// and focusing a filled field selects it so typing replaces the value instead of appending.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A8 keyboard flow';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const kgFields = page.locator('.exercise.active [data-set-field="kg"]');
+  const repsFields = page.locator('.exercise.active [data-set-field="reps"]');
+  const lastRepsHint = await repsFields.last().getAttribute('enterkeyhint');
+  if (lastRepsHint !== 'done') errors.push(`${tag}: the last set's reps field enterkeyhint is '${lastRepsHint}', expected 'done'`);
+  const firstRepsHint = await repsFields.first().getAttribute('enterkeyhint');
+  if (firstRepsHint !== 'next') errors.push(`${tag}: set 1's reps field enterkeyhint is '${firstRepsHint}', expected 'next'`);
+  const kgHint = await kgFields.first().getAttribute('enterkeyhint');
+  if (kgHint !== 'next') errors.push(`${tag}: the kg field enterkeyhint is '${kgHint}', expected 'next'`);
+
+  await kgFields.first().click();
+  await page.keyboard.type('60');
+  await page.keyboard.press('Enter');
+  let active = await page.evaluate(() => document.activeElement === document.querySelectorAll('.exercise.active [data-set-field="reps"]')[0]);
+  if (!active) errors.push(`${tag}: Enter after kg did not focus the reps field`);
+  await page.keyboard.type('8');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(80);
+  const committed = await page.locator('.set-grid.committed').count();
+  if (committed !== 1) errors.push(`${tag}: expected set 1 committed after Enter on reps, got ${committed} committed`);
+  active = await page.evaluate(() => document.activeElement === document.querySelectorAll('.exercise.active [data-set-field="kg"]')[1]);
+  if (!active) errors.push(`${tag}: Enter after reps did not move to set 2's kg field`);
+
+  // Focusing a filled field selects it, so typing replaces instead of appending.
+  await kgFields.nth(1).click();
+  await page.keyboard.type('60');
+  await page.evaluate(() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur());
+  await kgFields.nth(1).click();
+  await page.keyboard.type('62.5');
+  const finalKg = await kgFields.nth(1).inputValue();
+  if (finalKg !== '62.5') errors.push(`${tag}: refocusing a filled kg field and typing gave '${finalKg}', expected '62.5' (select-on-focus)`);
+
+  await ctx.close();
+}
+
 // QA5-1b..4b: a regression guard for QA5-1..4. Those fixes had no probe of their own — the gate
 // still passed against the pre-fix build, so undoing any of them would go unnoticed. In-app
 // Reduce motion only (OS no-preference), the exact path the original bugs were in.

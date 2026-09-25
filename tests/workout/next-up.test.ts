@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isNextUpCandidate, nextUpCore, targetKgPh, targetRepsPh } from '@/slices/workout/Train';
+import { isNextUpCandidate, nextSetField, nextUpCore, targetKgPh, targetRepsPh } from '@/slices/workout/Train';
 
 describe('A1/A9: the next-up set label', () => {
   it('targetKgPh prefers today\'s target, then last time, then bw, then empty', () => {
@@ -45,5 +45,19 @@ describe('A1: isNextUpCandidate', () => {
   it('a drop or failure set can still be a candidate', () => {
     expect(isNextUpCandidate('60 kg × 8', false, 'drop')).toBe(true);
     expect(isNextUpCandidate('60 kg × 8', false, 'failure')).toBe(true);
+  });
+});
+
+describe('A8: nextSetField', () => {
+  const fields = ['set1-kg', 'set1-reps', 'set2-kg', 'set2-reps'];
+  it('moves to the next field in order', () => {
+    expect(nextSetField(fields, 'set1-kg')).toBe('set1-reps');
+    expect(nextSetField(fields, 'set1-reps')).toBe('set2-kg');
+  });
+  it('is null past the last field, so Enter blurs instead', () => {
+    expect(nextSetField(fields, 'set2-reps')).toBeNull();
+  });
+  it('is null for a field not in the list', () => {
+    expect(nextSetField(fields, 'nope')).toBeNull();
   });
 });

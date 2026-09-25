@@ -93,6 +93,12 @@ export function nextUpCore(kgPh: string, unitLabel: string, repsPh: string): str
 export function isNextUpCandidate(core: string | null, committed: boolean, kind: LoggedSet['kind']): boolean {
   return core != null && !committed && kind !== 'warmup';
 }
+/** A8: the field after `current` in `fields` (DOM order), or null past the last one — Enter then
+ * blurs instead, which commits the reps field the same as tapping away. */
+export function nextSetField<T>(fields: readonly T[], current: T): T | null {
+  const i = fields.indexOf(current);
+  return i >= 0 && i + 1 < fields.length ? fields[i + 1]! : null;
+}
 
 export function Train() {
   const s = state.value;
@@ -472,6 +478,17 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
   const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
   const flipGroup = () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, eu === 'kg' ? 'lb' : 'kg'); showToast(`${eu === 'kg' ? 'lb' : 'kg'} for all ${g} here`); } };
+  // A8: Enter moves kg -> reps -> the next set's kg, in DOM order; past the last field it blurs
+  // (the reps field's blur already commits, same as tapping away).
+  const onSetFieldKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter' || e.isComposing) return;
+    e.preventDefault();
+    const target = e.target as HTMLInputElement;
+    const root = target.closest('.exercise');
+    const fields = root ? [...root.querySelectorAll<HTMLElement>('[data-set-field]')] : [];
+    const next = nextSetField(fields, target as HTMLElement);
+    if (next) next.focus(); else target.blur();
+  };
   const [subOpen, setSubOpen] = useState(false);
   const logged = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
@@ -560,8 +577,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
-                      <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
+                      <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
