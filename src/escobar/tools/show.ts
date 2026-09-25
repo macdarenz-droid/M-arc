@@ -12,6 +12,7 @@ import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, workingTotals } from '@/brain/weekly';
+import { bodyWeightResolver } from '@/brain/bodyweight';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -115,8 +116,13 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'week_summary': {
       const off = intIn(params.offsetWeeks, 0, 8, 0, 'offsetWeeks');
       const day = addDays(weekStart(ctx.today), -7 * off + (off ? 6 : 0));
-      const w = weekSummary(s.sessions, off ? day : ctx.today, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, off ? day : ctx.today));
-      return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, records: w.records.length, grade: w.grade.title };
+      const target = off ? day : ctx.today;
+      const planned = plannedThisWeek(s.schedule, s.daysOff, target);
+      const w = weekSummary(s.sessions, target, s.customExercises, planned);
+      // F13b: with body-weight sharing on, the coach's volume matches Stats (docs/F13-BODYWEIGHT-LOAD.md §10).
+      const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;
+      const withBw = bw ? weekSummary(s.sessions, target, s.customExercises, planned, bw) : null;
+      return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, records: w.records.length, grade: w.grade.title, ...(withBw ? { withBodyweightKg: withBw.volumeKg } : {}) };
     }
     case 'session_summary': {
       const x = s.sessions.find(y => y.id === params.sessionId);
@@ -175,16 +181,30 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const a = period(params.a, 'a'), b = period(params.b, 'b');
       const exercise = params.exerciseId != null ? exId(ctx, params.exerciseId) : undefined;
       if (metric === 'e1rm' && !exercise) throw new ToolError('e1rm needs an exerciseId');
-      const calc = (p: { from: string; to: string }): number => {
+      // F13b: with body-weight sharing on, "effective" volume matches Stats (docs/F13-BODYWEIGHT-LOAD.md §10).
+      const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;
+      const calc = (p: { from: string; to: string }, withBw?: typeof bw): number => {
         const inP = s.sessions.filter(x => x.day >= p.from && x.day <= p.to);
         if (metric === 'sessions') return inP.length;
         if (metric === 'e1rm') return r1(Math.max(0, ...exerciseHistory(inP, exercise!, s.customExercises).map(h => h.bestE1rm)));
         // QA4-1b: the one volume sum, so assistance is never counted as weight lifted.
+        if (withBw) {
+          let sets = 0, vol = 0;
+          for (const x of inP) { const t = workingTotals(x.exercises.filter(e => !exercise || e.exerciseId === exercise), s.customExercises, withBw(x.day)); sets += t.sets; vol += t.volumeKg; }
+          return metric === 'sets' ? sets : Math.round(vol);
+        }
         const { sets, volumeKg: vol } = workingTotals(inP.flatMap(x => x.exercises).filter(e => !exercise || e.exerciseId === exercise), s.customExercises);
         return metric === 'sets' ? sets : Math.round(vol);
       };
       const va = calc(a), vb = calc(b);
-      return { metric, ...(exercise ? { exercise: exerciseName(ctx, exercise) } : {}), a: { ...a, value: va }, b: { ...b, value: vb }, delta: r1(vb - va), deltaPct: va ? r1(((vb - va) / va) * 100) : null };
+      const effA = bw && metric === 'volume' ? calc(a, bw) : null;
+      const effB = bw && metric === 'volume' ? calc(b, bw) : null;
+      return {
+        metric, ...(exercise ? { exercise: exerciseName(ctx, exercise) } : {}),
+        a: { ...a, value: va, ...(effA != null ? { effective: effA } : {}) },
+        b: { ...b, value: vb, ...(effB != null ? { effective: effB } : {}) },
+        delta: r1(vb - va), deltaPct: va ? r1(((vb - va) / va) * 100) : null,
+      };
     }
     case 'body_trend': {
       const weeks = intIn(params.weeks, 4, 52, 12, 'weeks');

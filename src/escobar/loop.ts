@@ -117,10 +117,10 @@ function deniedFor(use: { name: string; input: unknown } | undefined, sharing: {
  */
 // QA2-FD-4: plus the explain_method personal keys (knowledge/methods.ts drops the same ones live).
 const HEALTH_KEYS = new Set(['baselines', 'heart', 'watch', 'avgBpm', 'maxBpm', 'activeKcal', 'restingHr', 'restingHr7d', 'restingHr28d', 'hrv', 'sleep', 'sleepMinutes', 'sleep14dMedianMin', 'restingHrBaseline', 'healthDaysLogged']);
-const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat', 'restingKcalPerDay']);
+const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat', 'restingKcalPerDay', 'withBodyweightKg', 'effectiveKg', 'effective']);
 const HEALTH_KEY = (k: string) => HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k);
 const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers|healthDaysLogged|zone\d+FromBpm)\b/i;
-const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat|restingKcalPerDay)\b/;
+const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat|restingKcalPerDay|withBodyweightKg|effectiveKg|effective)\b/;
 // QA3-9: a fact literally saying "hrMax" (explain_method's ledger label), dropped like the field
 // itself unless it is the age-based (Tanaka) estimate.
 const HRMAX_FACT = /\bhrMax\b/i;
