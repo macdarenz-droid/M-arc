@@ -663,7 +663,25 @@ Built from the design study "M/ARC Share Sheet, round 3" (claude.ai artifact EY1
   - Save must download a PNG of exactly 1080×1920 and 1080×1080, over 5 kB.
 
 ### Risks and mitigations
-- **Android 8–10 Save:** Documents needs a storage permission, or legacy storage on Android 10, and the manifest is off limits here (native/). Save asks for the permission. If the write still fails, it opens the share sheet instead ("Choose where to save it"), so the card is never lost. Android 11+ writes directly. **Needs a check on a real device:** Save and Share on the APK (Android 11+, and one older phone if available).
+- **Android 8–10 Save:** Documents needs a storage permission, or legacy storage on Android 10. Both are now declared (QA4-3). Save asks for the permission. If the write still fails, it opens the share sheet instead ("Choose where to save it"), so the card is never lost. Android 11+ writes directly. **Needs a check on a real device:** Save and Share on the APK (Android 11+, and one older phone if available).
 - **Web Share on desktop browsers:** most cannot share files, so they fall back to a download, with a status line saying so.
 - **Big photos:** limited to 1920 px and about 2.2 MB of JPEG before they enter the SVG. Each preview is a blob URL, revoked when it changes or the sheet closes.
 - **System fonts differ by phone:** the layout keeps room for wider fallbacks, and the big number has a fit guard.
+
+### QA round 4 on share cards (docs/qa/LIVE-QA-4.md, "Share cards", QA4-1 … QA4-15)
+One commit per id. Each has a test that fails without its fix (unit tests in `tests/share-qa4.test.ts`, `tests/share-native.test.ts` and `tests/android-manifest.test.ts`, and gate checks for the layout).
+- **QA4-1:** assisted exercises add sets but no volume, because their kg is the machine's help. `workingTotals` takes `custom`, and Stats (`weekSummary`, `weeklyVolumeHistory`) and the card pass it, so they stay equal. The receipt reads "3×10 @40 assist · 3 sets".
+- **QA4-2:** carries, sleds and holds read "3×40 m @32" or "3×60s @20". A line with no volume is "BW" only when nothing was loaded; otherwise it is "—".
+- **QA4-3:** `patch_manifest.py` declares WRITE/READ_EXTERNAL_STORAGE capped at API 29, and `requestLegacyExternalStorage` for Android 10. The new test runs the real script. This supersedes the "manifest off limits" note in the risks above: Android 8–10 Save now asks for the permission and writes to Documents, with the share-sheet fallback kept. The signing steps are untouched.
+- **QA4-4:** the saved file name adds the local time to the second, and on a workout card the session id (`cardFileName`).
+- **QA4-5:** the action bar is sticky and covers the panel's bottom padding and safe area. The status line floats above it. The gate checks 360×640 and 390×844 with 0, 24 and 48 px insets.
+- **QA4-6:** "3×5 @80" only when every working set was the same. A ramp reads "3 sets, top 5@80".
+- **QA4-7:** records carry `sessionId`, and a workout card shows only its own records.
+- **QA4-8:** Share buttons need a working set (`hasWorkingSets`), and a 0-set card can't be saved. The set counts on the finish screen and in History are unchanged.
+- **QA4-9:** with no loaded volume, the poster and sticker headline "sets done", and the receipt has no TOTAL LIFTED line.
+- **QA4-10:** period time gets "+" when a session in the period has no duration.
+- **QA4-11:** `Cache/MARC Share` is cleared before each new card is written.
+- **QA4-12:** the PNG of the card on screen is drawn ahead of the tap (`share/png.ts`). A NotAllowedError keeps the card and says "Ready, tap Share again".
+- **QA4-13:** a failed chunk load shows "Could not load sharing." with a Reload button.
+- **QA4-14:** the carousel jumps instead of gliding under Reduce motion.
+- **QA4-15:** the dots and the size toggle are 44 px tap targets, and the gate checks every sheet control.
