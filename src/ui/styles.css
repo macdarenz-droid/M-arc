@@ -223,10 +223,8 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 }
 html:not([data-motion="reduce"]) .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
 html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
-  .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
-}
+html[data-motion="reduce"] .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
+html[data-motion="reduce"] .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
 @keyframes exercise-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -40% 0; } }
 @keyframes exercise-breathe {
   0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 0 0 transparent; }
