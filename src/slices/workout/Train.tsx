@@ -23,7 +23,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -68,6 +68,25 @@ const startingSplit = signal<Split | null>(null);
 export function requestStart(split: Split): void { startingSplit.value = split; }
 /** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
 const checkInDismissed = signal(false);
+/** A9: the open card's next set to do, "62.5 kg × 8" (the exact A1 label), for the rest banner. */
+export const nextUpHint = signal<string | null>(null);
+
+/** A1/A8/A9: the kg placeholder a set's input shows — today's target, else last time's, else 'bw'. */
+export function targetKgPh(target: { kg: number | null } | undefined, prev: { kg?: number | null } | null | undefined, eu: LoadUnit, mode: string): string {
+  if (target?.kg != null) return String(kgToDisplay(target.kg, eu));
+  if (prev?.kg != null) return String(kgToDisplay(prev.kg, eu));
+  return mode === 'bodyweight' ? 'bw' : '';
+}
+/** A1/A8/A9: the reps placeholder a set's input shows — today's target, else last time's. */
+export function targetRepsPh(target: { reps: number | null } | undefined, prev: { reps?: number | null } | null | undefined): string {
+  return String(target?.reps ?? prev?.reps ?? '');
+}
+/** A1/A9: the exact text for a set that can be tapped to fill-and-log itself ("62.5 kg × 8", or
+ * "8 reps" for bodyweight/no load). Null when there is no reps target to show at all. */
+export function nextUpCore(kgPh: string, unitLabel: string, repsPh: string): string | null {
+  if (!repsPh) return null;
+  return !kgPh || kgPh === 'bw' ? `${repsPh} reps` : `${kgPh} ${unitLabel} × ${repsPh}`;
+}
 
 export function Train() {
   const s = state.value;
@@ -465,6 +484,24 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
 
+  // A9: while this card is open, tell the rest banner what the next set to do is.
+  useEffect(() => {
+    if (!open || isTimed || mode === 'conditioning') { if (open) nextUpHint.value = null; return undefined; }
+    let warmups = 0;
+    let core: string | null = null;
+    for (let j = 0; j < entry.sets.length; j++) {
+      const set = entry.sets[j]!;
+      if (set.kind === 'warmup') { warmups++; continue; }
+      if (isCommitted(set)) continue;
+      const wj = j - warmups;
+      const target = next.sets[Math.min(wj, next.sets.length - 1)];
+      core = nextUpCore(targetKgPh(target, perSet[j]!.prev, eu, mode), eu, targetRepsPh(target, perSet[j]!.prev));
+      break;
+    }
+    nextUpHint.value = core;
+    return () => { nextUpHint.value = null; };
+  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
+
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
@@ -511,8 +548,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
-                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
+                      <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
@@ -926,7 +963,8 @@ export function RestBanner() {
     frame = {
       done,
       clockText: done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining),
-      hintText: done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(rest.totalSec)}`,
+      // A9: the open card's next set, when there is one to show.
+      hintText: done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : nextUpHint.value ? `Next · ${nextUpHint.value}` : `Rest · ${formatClock(rest.totalSec)}`,
     };
     lastFrame.current = frame;
   }

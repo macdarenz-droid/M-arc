@@ -955,9 +955,13 @@ for (const theme of themes) {
       // width%, so its getBoundingClientRect().width is always the full track. Read the fill from
       // the transform matrix's e (translateX in px) instead: -track = empty, 0 = full.
       const m = new DOMMatrixReadOnly(getComputedStyle(bar).transform);
+      // A9: the hint can now read 'Next · …' instead of 'Rest · m:ss' whenever the open card has
+      // another set to do, so the configured total comes from the bar's own WAAPI duration
+      // (created at ~totalSec remaining) instead of parsing the hint text.
+      const anim = document.getAnimations().find(a => a.effect && a.effect.target === bar);
       return {
         clock: clock.textContent,
-        total: document.querySelector('.rest .hint')?.textContent?.replace(/^Rest · /, ''),
+        totalMs: anim ? anim.effect.getComputedTiming().duration : null,
         fillPct: track ? Math.max(0, Math.min(100, (1 + m.e / track) * 100)) : 0,
       };
     });
@@ -966,8 +970,12 @@ for (const theme of themes) {
       if (rest.fillPct > 10) errors.push(`${tag}: the rest bar fill is ${rest.fillPct.toFixed(1)}% at +100ms, expected <=10%`);
       // QA5-14: this is the actual F6 regression (a stale total+1s clock on the first frame) —
       // a fix that only corrected the bar would still pass without this.
-      const sec = s => s.split(':').reduce((a, n) => a * 60 + Number(n), 0);
-      if (rest.total && ![sec(rest.total), sec(rest.total) - 1].includes(sec(rest.clock))) errors.push(`${tag}: first-frame rest clock ${rest.clock}, expected ${rest.total} or 1s less`);
+      if (rest.totalMs == null) errors.push(`${tag}: no rest bar animation to read the configured length from`);
+      else {
+        const sec = s => s.split(':').reduce((a, n) => a * 60 + Number(n), 0);
+        const totalSec = Math.round(rest.totalMs / 1000);
+        if (![totalSec, totalSec - 1].includes(sec(rest.clock))) errors.push(`${tag}: first-frame rest clock ${rest.clock}, expected ${totalSec} or 1s less`);
+      }
     }
   } else {
     console.log(`${tag}: restFix skipped`);
@@ -1047,6 +1055,42 @@ for (const theme of themes) {
   if (!(await page.locator('.rest.leaving').count())) errors.push(`${tag}: expected .rest.leaving right after Skip`);
   await page.waitForTimeout(250);
   if (await page.locator('.rest').count()) errors.push(`${tag}: expected .rest gone by 250ms after Skip`);
+
+  await ctx.close();
+}
+
+// A9: the rest banner shows what to do next, and falls back to the plain clock once nothing is
+// left to log on the open card.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A9 next-up hint';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const inputs = page.locator('.set-grid input');
+  const rowCount = (await inputs.count()) / 2;
+  if (rowCount < 2) errors.push(`${tag}: expected at least 2 sets on the first exercise, got ${rowCount}`);
+
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.waitForTimeout(80);
+  let hint = await page.locator('.rest .hint').first().textContent();
+  if (!hint?.startsWith('Next · ')) errors.push(`${tag}: expected 'Next · …' after committing set 1 of ${rowCount}, got '${hint}'`);
+
+  for (let s = 1; s < rowCount; s++) {
+    await inputs.nth(s * 2).fill('50'); await inputs.nth(s * 2 + 1).fill('8'); await inputs.nth(s * 2 + 1).blur();
+    await page.waitForTimeout(80);
+  }
+  hint = await page.locator('.rest .hint').first().textContent();
+  if (!/^Rest · \d+:\d{2}$/.test(hint ?? '')) errors.push(`${tag}: expected 'Rest · m:ss' once every set on the card is logged, got '${hint}'`);
 
   await ctx.close();
 }
