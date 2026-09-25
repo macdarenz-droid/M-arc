@@ -46,3 +46,17 @@ describe('equipment words in legacy names (QA2-FC-7)', () => {
     expect(findExercise('Hack Squat Calf Raise')?.id).not.toBe(findExercise('Hack Squat')?.id);
   });
 });
+
+describe('QA3-2: an import never merges into a different-equipment lift', () => {
+  it('a multi-word equipment name (Leg Press) is still a real movement word (QA-R3b-3)', () => {
+    expect(findExercise('Leg Press Hack Squat')?.id).not.toBe(findExercise('Hack Squat')?.id);
+  });
+  it('a named lift merges only when its gear word agrees with the target equipment', async () => {
+    const { findExerciseWithEquipment } = await import('@/core/exercises');
+    // Each of these names a gear word that disagrees with the only library match's equipment.
+    expect(findExerciseWithEquipment('Dumbbell Skull Crusher', 'Dumbbell')?.id).not.toBe(findExercise('Skull Crusher')?.id);
+    expect(findExerciseWithEquipment('Cable Hammer Curl', 'Cable')?.id).not.toBe(findExercise('Hammer Curl')?.id);
+    expect(findExerciseWithEquipment('Kettlebell Sumo Deadlift', 'Kettlebell')?.id).not.toBe(findExercise('Sumo Deadlift')?.id);
+    expect(findExerciseWithEquipment('Smith Machine Romanian Deadlift', 'Smith Machine')?.id).not.toBe(findExercise('Romanian Deadlift')?.id);
+  });
+});
