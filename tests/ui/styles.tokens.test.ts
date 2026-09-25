@@ -48,7 +48,10 @@ interface Decl { prop: string; value: string; }
 
 function findDeclarations(source: string): Decl[] {
   const decls: Decl[] = [];
-  const re = new RegExp(`\\b(${DECL_PROPS.join('|')})\\s*:\\s*([^;]+);`, 'g');
+  // QA5-10: terminate on `;` OR `}` (a block's last declaration often omits the semicolon), and
+  // anchor on a real delimiter before the property name instead of a bare \b (so e.g. a selector
+  // ending in a class named `...-transition` can't be mistaken for the property).
+  const re = new RegExp(`(?:^|[{;\\s])(${DECL_PROPS.join('|')})\\s*:\\s*([^;}]+)`, 'g');
   let m: RegExpExecArray | null;
   while ((m = re.exec(source))) {
     const [, prop, value] = m;
@@ -74,7 +77,9 @@ describe('styles.css motion token lint (F1)', () => {
   });
 
   it('has no bare time literal inside a ::view-transition-* rule', () => {
-    const re = /::view-transition-[\w-]+\s*\{([^}]*)\}/g;
+    // QA5-10: every ::view-transition-* pseudo-element takes a (name) argument
+    // (::view-transition-old(root), -group(name), ...); the bare form has none.
+    const re = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;
     const offenders: string[] = [];
     let m: RegExpExecArray | null;
     while ((m = re.exec(withoutTokens))) {
@@ -97,6 +102,28 @@ describe('styles.css motion token lint (F1)', () => {
       return !ALLOW.includes(animationNameOf(d.value));
     });
     expect(offenders).toEqual([]);
+  });
+
+  // QA5-10: the check above only reads DECL_PROPS (transition*/animation*), so the longhand
+  // animation-iteration-count: infinite (not in DECL_PROPS) slipped past it entirely, ALLOW or not.
+  it('has no `animation-iteration-count: infinite` (the longhand form) anywhere', () => {
+    expect(/animation-iteration-count\s*:\s*infinite/.test(withoutTokens)).toBe(false);
+  });
+
+  describe('the lint itself catches what QA5-10 found', () => {
+    it('a semicolon-less last declaration', () => {
+      const offenders = findDeclarations('.x { color: red; transition: opacity 200ms }').filter(d => TIME_RE.test(d.value));
+      expect(offenders).toEqual([{ prop: 'transition', value: 'opacity 200ms' }]);
+    });
+    it('the ::view-transition-old(name) form', () => {
+      const re = /::view-transition(?:-[\w-]+)?(?:\([^)]*\))?\s*\{([^}]*)\}/g;
+      const m = re.exec('::view-transition-old(root){animation-duration:200ms}');
+      expect(m?.[1]).toBe('animation-duration:200ms');
+      expect(findDeclarations(m![1]!).some(d => TIME_RE.test(d.value))).toBe(true);
+    });
+    it('animation-iteration-count: infinite as a standalone longhand', () => {
+      expect(/animation-iteration-count\s*:\s*infinite/.test('.x{animation: esc-fade var(--dur-base); animation-iteration-count: infinite;}')).toBe(true);
+    });
   });
 
   it('git grep for cubic-bezier( on the CSS file only matches inside the token range', () => {
