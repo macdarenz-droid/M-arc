@@ -2,7 +2,7 @@
  * Taking the person somewhere in the app (§7.2): close any open sheet, switch tab,
  * open the panel, then spotlight the element once it has rendered.
  */
-import { bodyView, go, historySeg, openPanel, type BodyView, type PanelId } from '@/app/router';
+import { bodyView, go, historySeg, openPanel, validatePanelParams, type BodyView, type PanelId } from '@/app/router';
 import { state } from '@/core/store';
 import { PALACE_BY_ID, type PalaceTarget } from './registry';
 import { signal } from '@preact/signals';
@@ -56,7 +56,7 @@ export async function goTo(target: string | PalaceTarget, extraParams?: Record<s
   const entry = typeof target === 'string' ? PALACE_BY_ID[target] : undefined;
   const t: PalaceTarget | undefined = typeof target === 'string' ? entry?.target : target;
   if (!t) return false;
-  const params = { ...(t.params ?? {}), ...(extraParams ?? {}) };
+  const params = validatePanelParams(t.panel ?? 'settings', { ...(t.params ?? {}), ...(extraParams ?? {}) }) ?? {};
   closeOpenSheets();
   openPanel.value = null;
   await frame();
@@ -65,7 +65,8 @@ export async function goTo(target: string | PalaceTarget, extraParams?: Record<s
   if (t.tab === 'history' && params.seg) historySeg.value = params.seg === 'stats' ? 'stats' : 'log';
   if (t.panel) {
     const p = resolvePanelParams(t.panel, Object.keys(params).length ? params : undefined);
-    openPanel.value = p ? { id: t.panel, params: p } : { id: t.panel };
+    const need = t.panel === 'session' ? 'sessionId' : t.panel === 'exercise-stats' ? 'exerciseId' : t.panel === 'muscle' ? 'muscle' : null;
+    if (!need || p?.[need]) openPanel.value = p ? { id: t.panel, params: p } : { id: t.panel };
   }
   await frame();
   await frame();

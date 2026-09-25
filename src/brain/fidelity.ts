@@ -6,6 +6,7 @@
  */
 import type { LoadUnit, LoggedSet, Session, SessionLogging, SetFidelity, SetFlag } from '@/core/models';
 import { KG_PER_LB } from '@/core/units';
+import { dayKey } from '@/core/dates';
 
 /** A commit is "delayed" (timing not trusted) when it is part of a burst or outside a plausible rest/set gap. */
 /** A commit gap in this range (seconds) reads as logged live; 3+ commits within 15 s is a burst. */
@@ -52,8 +53,8 @@ export function liveSessionLogging(input: {
   const flags: string[] = [];
   if (compressed) flags.push('compressed');
   if (burstShare >= 0.3 && !compressed) flags.push('burst');
-  const trainedDay = startedAt.slice(0, 10);
-  const loggedDay = endedAt.slice(0, 10);
+  const trainedDay = dayKey(startedAt);
+  const loggedDay = dayKey(endedAt);
   if (trainedDay !== loggedDay) flags.push('midnight_crossing');
   return {
     mode,
@@ -70,8 +71,8 @@ export function liveSessionLogging(input: {
 
 /** Built by the "when did you train?" sheet, or the "Log a past session" flow. */
 export function retroSessionLogging(trainedAt: string, trainedEndAt: string, timeSource: SessionLogging['timeSource'], loggedAt = new Date().toISOString()): SessionLogging {
-  const trainedDay = trainedAt.slice(0, 10);
-  const loggedDay = loggedAt.slice(0, 10);
+  const trainedDay = dayKey(trainedAt);
+  const loggedDay = dayKey(loggedAt);
   return {
     mode: 'retro',
     trainedAt,
@@ -85,20 +86,8 @@ export function retroSessionLogging(trainedAt: string, trainedEndAt: string, tim
   };
 }
 
-/** For a session that predates this field (an already-saved session, or a legacy v36 import). */
-export function legacySessionLogging(startedAt: string, endedAt: string): SessionLogging {
-  return {
-    mode: 'legacy',
-    trainedAt: startedAt,
-    trainedEndAt: endedAt || startedAt,
-    loggedAt: endedAt || startedAt,
-    timeSource: 'default',
-    liveShare: 0,
-    timingTrusted: false,
-    contentConfidence: 'medium',
-    flags: ['legacy'],
-  };
-}
+/** Lives in core so the store and the migration need not import the brain (RG-12). */
+export { legacySessionLogging } from '@/core/sessionLogging';
 
 /** kg more than 25% above the exercise's recent best, or a physically implausible absolute load. */
 export function implausibleLoad(kg: number, recentBestKg: number | null): boolean {
@@ -112,6 +101,12 @@ export function implausibleReps(reps: number, isHeavyMainLift: boolean): boolean
 }
 
 /** A load within 5% of 2.2x or 0.45x the exercise's recent best: kg and lb likely got mixed up. */
+/** QA-R6-9: warm-ups and drop sets are light on purpose, so they are never a kg/lb slip. */
+export function setUnitSuspect(set: { kg?: number; kind?: LoggedSet['kind'] }, recentBestKg: number | null): boolean {
+  if (set.kind === 'warmup' || set.kind === 'drop' || set.kg == null) return false;
+  return unitSuspect(set.kg, recentBestKg);
+}
+
 export function unitSuspect(kg: number, recentBestKg: number | null): boolean {
   if (!recentBestKg || recentBestKg <= 0 || kg <= 0) return false;
   const ratio = kg / recentBestKg;
@@ -152,7 +147,8 @@ export function flagsForSet(set: LoggedSet, recentBestKg: number | null, isHeavy
   const reps = set.reps ?? 0;
   if (kg > 0 && implausibleLoad(kg, recentBestKg)) flags.push('implausible_load');
   if (reps > 0 && implausibleReps(reps, isHeavyMainLift)) flags.push('implausible_reps');
-  if (kg > 0 && unitSuspect(kg, recentBestKg)) flags.push('unit_suspect');
+  // QA2-FE-3, QA2-FE-4: a warm-up or drop set is light on purpose, never a kg/lb slip.
+  if (kg > 0 && setUnitSuspect(set, recentBestKg)) flags.push('unit_suspect');
   if (futureTime(set.at, nowMs)) flags.push('future_time');
   return flags;
 }

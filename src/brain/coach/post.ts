@@ -3,15 +3,16 @@
  * finishes and stored with it (Session.debrief), so later renders show the
  * same numbers rather than drifting as history grows.
  */
-import type { Exercise, Session } from '@/core/models';
+import type { Exercise, LoadUnit, Session } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import { exerciseHistory, modeOf, type ExerciseSessionSummary } from '../history';
-import { recordsFor } from '../prs';
+import { formatRecordValue, recordsFor } from '../prs';
 import { findExercise } from '@/core/exercises';
 import { isWorkingSet } from '../exposure';
 import type { Insight } from './rules';
 
 /** Records set in this session, tiered by kind, only from sets logged live (timing-independent content is fine at any fidelity). */
-export function recordsInsight(session: Session, priorSessions: Session[], custom: Exercise[] = []): Insight[] {
+export function recordsInsight(session: Session, priorSessions: Session[], custom: Exercise[] = [], unit: LoadUnit = 'kg'): Insight[] {
   const out: Insight[] = [];
   for (const ex of session.exercises) {
     const meta = findExercise(ex.exerciseId, custom);
@@ -19,13 +20,13 @@ export function recordsInsight(session: Session, priorSessions: Session[], custo
     const current: ExerciseSessionSummary = exerciseHistory([session], ex.exerciseId, custom)[0]!;
     if (!current) continue;
     const mode = modeOf(ex.exerciseId, custom);
-    const records = recordsFor(current, hist, mode, ex.exerciseId, meta?.name ?? ex.name);
+    const records = recordsFor(current, hist, mode, ex.exerciseId, meta?.name ?? ex.name, unit);
     for (const r of records) {
       out.push({
         id: `post:record:${session.id}:${r.exerciseId}:${r.kind}`, category: 'progress', priority: 310, cadence: 'post', kind: 'praise',
         exerciseId: r.exerciseId,
         title: `${r.exerciseName}: new record`,
-        noticed: `${r.detail}, up from ${r.previous}.`,
+        noticed: r.kind === 'strength' ? `${r.detail}, up from about ${Math.round(kgToDisplay(r.previous, unit))} ${unit}.` : `${r.detail}, up from ${formatRecordValue(r.kind, r.previous, unit)}.`,
         means: 'That is a genuine personal best, not just a bigger number from more sets.',
         action: 'Nothing to do. Keep logging honestly and it will keep tracking.',
         evidence: { n: hist.length, window: `${hist.length} prior sessions`, confidence: hist.length >= 5 ? 'high' : 'medium' },
@@ -74,22 +75,28 @@ export function effortMixInsight(session: Session): Insight | null {
 }
 
 /** Median rest before compound sets, and whether reps fell off across the session. */
-export function restAndDensityInsight(session: Session, isStrengthGoal: boolean): Insight | null {
-  const compoundSets = session.exercises.flatMap(e => e.sets).filter(isWorkingSet).filter(s => s.restSec != null);
-  if (compoundSets.length < 4) return null;
-  const rests = compoundSets.map(s => s.restSec!).sort((a, b) => a - b);
+/**
+ * BR-20: judged per main exercise with 3+ working sets, never across different lifts. Reps fell
+ * when an exercise's last set has 25% fewer reps than its first. The rest median leaves out each
+ * exercise's first set (its "rest" is the changeover from the last exercise).
+ */
+export function restAndDensityInsight(session: Session, isStrengthGoal: boolean, custom: Exercise[] = []): Insight | null {
+  const mains = session.exercises
+    .filter(e => findExercise(e.exerciseId, custom)?.role === 'main')
+    .map(e => e.sets.filter(isWorkingSet))
+    .filter(sets => sets.length >= 3);
+  const rests = mains.flatMap(sets => sets.slice(1)).map(s => s.restSec).filter((r): r is number => r != null).sort((a, b) => a - b);
+  if (rests.length < 3) return null;
   const medianRest = rests[Math.floor(rests.length / 2)]!;
-  const first = compoundSets.slice(0, Math.ceil(compoundSets.length / 3));
-  const last = compoundSets.slice(-Math.ceil(compoundSets.length / 3));
-  const avgReps = (xs: typeof compoundSets) => xs.reduce((a, s) => a + (s.reps ?? 0), 0) / xs.length;
-  const firstReps = avgReps(first), lastReps = avgReps(last);
-  const repsFell = firstReps > 0 && (firstReps - lastReps) / firstReps >= 0.25;
+  const fell = mains.map(sets => ({ first: sets[0]!.reps ?? 0, last: sets[sets.length - 1]!.reps ?? 0 })).filter(x => x.first > 0 && (x.first - x.last) / x.first >= 0.25);
   const threshold = isStrengthGoal ? 120 : 90;
-  if (medianRest >= threshold || !repsFell) return null;
+  if (medianRest >= threshold || !fell.length) return null;
+  const firstReps = fell[0]!.first, lastReps = fell[0]!.last;
+  const compoundSets = mains.flat();
   return {
     id: `post:rest:${session.id}`, category: 'progress', priority: 180, cadence: 'post', kind: 'tip',
     title: `Median rest ${medianRest}s`,
-    noticed: `Median rest before sets was ${medianRest}s, and reps fell from about ${Math.round(firstReps)} to ${Math.round(lastReps)} across the session.`,
+    noticed: `Median rest before sets was ${medianRest}s, and reps on a main lift fell from ${firstReps} on the first set to ${lastReps} on the last.`,
     means: `On heavy sets, ${isStrengthGoal ? '2 to 3 minutes' : '90 seconds or more'} keeps reps up.`,
     action: 'Take a little longer before the next heavy set.',
     evidence: { n: compoundSets.length, window: 'this session', confidence: 'medium' },
@@ -99,7 +106,7 @@ export function restAndDensityInsight(session: Session, isStrengthGoal: boolean)
 /** |Delta duration| vs the median of the split's last 5 sessions. */
 export function durationDriftInsight(session: Session, priorSameSplit: Session[]): Insight | null {
   if (priorSameSplit.length < 5) return null;
-  const durations = priorSameSplit.slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
+  const durations = [...priorSameSplit].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-5).map(s => s.durationSec).sort((a, b) => a - b);
   const median = durations[Math.floor(durations.length / 2)]!;
   if (median <= 0) return null;
   const delta = (session.durationSec - median) / median;
@@ -120,6 +127,8 @@ export interface PostSessionInput {
   priorSessions: Session[];
   custom: Exercise[];
   isStrengthGoal: boolean;
+  /** The display unit for record text (BR-28). */
+  unit?: LoadUnit;
 }
 
 export function postSessionInsights(input: PostSessionInput, limit = 4): Insight[] {
@@ -129,9 +138,9 @@ export function postSessionInsights(input: PostSessionInput, limit = 4): Insight
   // rows (records, effort mix) accept every logging fidelity.
   const timingTrusted = session.logging?.timingTrusted ?? true;
   const out: Insight[] = [
-    ...recordsInsight(session, priorSessions, custom),
+    ...recordsInsight(session, priorSessions, custom, input.unit ?? 'kg'),
     effortMixInsight(session),
-    timingTrusted ? restAndDensityInsight(session, isStrengthGoal) : null,
+    timingTrusted ? restAndDensityInsight(session, isStrengthGoal, custom) : null,
     timingTrusted ? durationDriftInsight(session, priorSameSplit) : null,
   ].filter((i): i is Insight => !!i);
   return out.sort((a, b) => b.priority - a.priority).slice(0, limit);

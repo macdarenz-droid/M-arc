@@ -9,7 +9,8 @@ import { exerciseHistory } from '../history';
 import { e1rmTrend } from './weeklyReview';
 import { loadForReps, roundToStep } from '../e1rm';
 import { loadableNear } from '../units';
-import type { EquipmentProfile } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
+import type { EquipmentProfile, LoadUnit } from '@/core/models';
 import type { Insight } from './rules';
 
 export interface PreSessionInput {
@@ -19,10 +20,17 @@ export interface PreSessionInput {
   split: Split;
   profile: Profile;
   age: number | null;
+  /**
+   * BR-08: the same target Train shows on the set rows (readiness, deload, equipment). When it
+   * has a load, the brief quotes it instead of recomputing one, and warm-ups ramp to it.
+   */
+  targetFor?: (exerciseId: string) => { kg: number | null; target: string; equipment?: EquipmentProfile } | null;
+  /** QA-R3b-2: loads in the person's unit. */
+  unit?: LoadUnit;
 }
 
 /** `load = e1RM_trend / (1 + (targetReps + 2) / 30)`, the ideal-effort assumption, ± 2.5%. */
-export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string, targetReps: number): Insight | null {
+export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string, targetReps: number, unit: LoadUnit = 'kg'): Insight | null {
   const withE1rm = hist.filter(h => h.bestE1rm > 0);
   if (withE1rm.length < 3) return null;
   const t = e1rmTrend(hist);
@@ -33,9 +41,9 @@ export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exer
   return {
     id: `pre:load-target:${exerciseId}`, category: 'progress', priority: 260, cadence: 'pre', kind: 'plan', exerciseId,
     title: `${exerciseName}: today's target load`,
-    noticed: `${exerciseName} e1RM trending toward about ${Math.round(last)} kg.`,
-    means: `For ${targetReps} at ideal effort, ${load - band} to ${load + band} kg should land right.`,
-    action: `Start around ${load} kg.`,
+    noticed: `${exerciseName} e1RM trending toward about ${Math.round(kgToDisplay(last, unit))} ${unit}.`,
+    means: `For ${targetReps} at ideal effort, ${kgToDisplay(load - band, unit)} to ${kgToDisplay(load + band, unit)} ${unit} should land right.`,
+    action: `Start around ${kgToDisplay(load, unit)} ${unit}.`,
     evidence: { n: withE1rm.length, window: `${withE1rm.length} sessions`, confidence: withE1rm.length >= 6 ? 'medium' : 'low' },
   };
 }
@@ -43,21 +51,36 @@ export function workingLoadTarget(hist: ReturnType<typeof exerciseHistory>, exer
 export const WARMUP_PCTS = [0.5, 0.7, 0.85];
 export const WARMUP_REPS = [8, 5, 2];
 
-/** F3.4: 50% x 8, 70% x 5, 85% x 2 of the trend e1RM, rounded to a load step. Shared by the pre-session brief's text and Train's collapsed warm-up rows. */
-export function warmupSets(e1rm: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {
-  return WARMUP_PCTS.map((p, i) => ({ kg: equipment ? loadableNear(e1rm * p, equipment, 'nearest').kg : roundToStep(e1rm * p), reps: WARMUP_REPS[i]! }));
+/**
+ * F3.4 / D10 (BR-09): 50% x 8, 70% x 5, 85% x 2 of the **first working set**, snapped to the
+ * equipment's loads. A step that snaps to the working load or above is dropped, so the last
+ * warm-up is never heavier than the work. Shared by the brief, Train and Escobar.
+ */
+/** QA-R3b-4: the warm-up Train offers, or null when there is none (an empty-bar working set). */
+export function warmupOffer(workingKg: number | null | undefined, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> | null {
+  const w = workingKg != null && workingKg > 0 ? warmupSets(workingKg, equipment) : [];
+  return w.length ? w : null;
 }
 
-export function warmupRamp(hist: ReturnType<typeof exerciseHistory>, exerciseId: string, exerciseName: string): Insight | null {
-  const last = hist[hist.length - 1];
-  if (!last || last.bestE1rm <= 0) return null;
-  const steps = warmupSets(last.bestE1rm);
+export function warmupSets(workingKg: number, equipment?: EquipmentProfile): Array<{ kg: number; reps: number }> {
+  if (!(workingKg > 0)) return [];
+  return WARMUP_PCTS
+    .map((p, i) => ({ kg: equipment ? loadableNear(workingKg * p, equipment, 'nearest').kg : roundToStep(workingKg * p), reps: WARMUP_REPS[i]! }))
+    .filter(w => w.kg > 0 && w.kg < workingKg - 1e-9);
+}
+
+export function warmupRamp(workingKg: number | null | undefined, exerciseId: string, exerciseName: string, equipment?: EquipmentProfile): Insight | null {
+  if (workingKg == null || !(workingKg > 0)) return null;
+  const steps = warmupSets(workingKg, equipment);
+  if (!steps.length) return null;
+  const unit = equipment?.unit ?? 'kg';
+  const show = (kg: number) => `${kgToDisplay(kg, unit)}${unit === 'lb' ? ' lb' : ''}`;
   return {
     id: `pre:warmup:${exerciseId}`, category: 'progress', priority: 120, cadence: 'pre', kind: 'tip', exerciseId,
     title: `${exerciseName}: warm-up ramp`,
     noticed: 'A short ramp before your working sets.',
     means: 'A gradual ramp readies the lift without adding real fatigue.',
-    action: `${steps[0]!.kg} x ${steps[0]!.reps}, ${steps[1]!.kg} x ${steps[1]!.reps}, ${steps[2]!.kg} x ${steps[2]!.reps}, then your working sets.`,
+    action: `${steps.map(w => `${show(w.kg)} x ${w.reps}`).join(', ')}, then your working sets.`,
     evidence: { n: 1, window: 'today', confidence: 'high' },
   };
 }
@@ -88,10 +111,22 @@ export function preSessionInsights(input: PreSessionInput, limit = 3): Insight[]
     const hist = exerciseHistory(sessions, se.exerciseId, custom);
     if (!hist.length) continue;
     if (meta.role === 'main') {
-      const target = workingLoadTarget(hist, se.exerciseId, meta.name, 8);
-      if (target) out.push(target);
+      const t = input.targetFor?.(se.exerciseId) ?? null;
+      if (t && t.kg != null) {
+        out.push({
+          id: `pre:load-target:${se.exerciseId}`, category: 'progress', priority: 260, cadence: 'pre', kind: 'plan', exerciseId: se.exerciseId,
+          title: `${meta.name}: today's target load`,
+          noticed: `The same target your set rows will show.`,
+          means: 'It already accounts for today\'s readiness, a lighter week and the loads your equipment has.',
+          action: `Start around ${t.target}.`,
+          evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: hist.length >= 6 ? 'medium' : 'low' },
+        });
+      } else {
+        const target = workingLoadTarget(hist, se.exerciseId, meta.name, 8, input.unit);
+        if (target) out.push(target);
+      }
       if (!warmupShown) {
-        const warmup = warmupRamp(hist, se.exerciseId, meta.name);
+        const warmup = warmupRamp(t?.kg, se.exerciseId, meta.name, t?.equipment);
         if (warmup) { out.push(warmup); warmupShown = true; }
       }
     }

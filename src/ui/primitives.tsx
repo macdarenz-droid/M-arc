@@ -1,8 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
-import { signal } from '@preact/signals';
 import { IconX } from './icons';
+import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
+import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
@@ -25,7 +26,7 @@ export function Chip({ children, tone, pressed, onClick, class: cls = '' }: { ch
 }
 
 export function Segmented<T extends string>({ value, options, onChange }: { value: T; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
-  return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
+  return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
 }
 
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
@@ -37,31 +38,28 @@ export function Stat({ value, label, tone }: { value: ComponentChildren; label: 
 }
 
 export function Row({ children, trailing, onClick, class: cls = '', palace }: { children?: ComponentChildren; trailing?: ComponentChildren; onClick?: () => void; class?: string; palace?: string }) {
-  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} data-palace={palace} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
+  // UI-30: a pressable row works from the keyboard too.
+  const onKeyDown = onClick ? (e: KeyboardEvent) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) { e.preventDefault(); onClick(); } } : undefined;
+  return <div class={`list-row ${onClick ? 'pressable' : ''} ${cls}`} data-palace={palace} onClick={onClick} onKeyDown={onKeyDown} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}><div class="grow">{children}</div>{trailing}</div>;
 }
 
-export function Bar({ pct, color }: { pct: number; color?: string }) {
-  return <div class="bar"><i style={{ width: `${Math.max(0, Math.min(100, pct))}%`, background: color }} /></div>;
-}
-
-export function Ring({ pct, size = 120, children }: { pct: number; size?: number; children?: ComponentChildren }) {
-  return <div class="ring" style={{ '--p': Math.max(0, Math.min(100, pct)), width: size, height: size }}><div>{children}</div></div>;
-}
-
-/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. */
-export const openSheets = signal(0);
+/** How many Sheets are open, so floating things (the Escobar dock) can hide under them. Derived from the sheet stack. */
+export const openSheets = openSheetCount;
 
 export function Sheet({ title, onClose, children, palace }: { title: string; onClose: () => void; children?: ComponentChildren; palace?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    openSheets.value++;
-    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
+    // R5.3: Back (Android or browser) closes the top sheet through its own onClose.
+    registerSheet(id, () => close.current());
+    return () => { unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
   return (
     <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -75,8 +73,31 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
 }
 
 export function Toast({ message, action, onAction, onDismiss }: { message: string; action?: string; onAction?: () => void; onDismiss: () => void }) {
-  useEffect(() => { const t = setTimeout(onDismiss, action ? 5000 : 3000); return () => clearTimeout(t); }, [onDismiss, action]);
+  // The parent passes a new onDismiss each render; keep it in a ref so the timer is not reset (UI-28).
+  const dismiss = useRef(onDismiss);
+  dismiss.current = onDismiss;
+  useEffect(() => { const t = setTimeout(() => dismiss.current(), action ? 5000 : 3000); return () => clearTimeout(t); }, [message, action]);
   return <div class="toast" role="status"><span>{message}</span>{action && <button type="button" onClick={() => { onAction?.(); onDismiss(); }}>{action}</button>}</div>;
+}
+
+/**
+ * A number typed as text and committed on blur or Enter (UI-22): half-typed values ("19" on the
+ * way to "1990") are never saved. Out-of-range input reverts to the saved value.
+ */
+export function CommitNumber({ value, min, max, integer, onCommit, ...rest }: { value: number | undefined; min: number; max: number; integer?: boolean; onCommit: (v: number | undefined) => void } & Omit<JSX.HTMLAttributes<HTMLInputElement>, 'value' | 'min' | 'max'>) {
+  const shown = value != null ? String(value) : '';
+  const [text, setText] = useState(shown);
+  const focused = useRef(false);
+  if (!focused.current && text !== shown) setText(shown);
+  const commit = () => {
+    focused.current = false;
+    const t = text.trim().replace(',', '.');
+    if (!t) { if (value != null) onCommit(undefined); return; }
+    const v = Number(t);
+    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { setText(shown); return; }
+    if (v !== value) onCommit(v);
+  };
+  return <input {...rest} type="text" inputMode={integer ? 'numeric' : 'decimal'} value={text} onFocus={() => { focused.current = true; }} onInput={e => setText((e.target as HTMLInputElement).value)} onBlur={commit} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />;
 }
 
 export function Empty({ icon, title, children, action }: { icon?: ComponentChildren; title: string; children?: ComponentChildren; action?: ComponentChildren }) {
@@ -127,14 +148,14 @@ export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, 
   return (
     <span class="weight-input">
       <input
-        type="number" inputMode="decimal" step="any" placeholder={placeholder} value={text} aria-label={`Load in ${entryUnit}`}
+        type="text" inputMode="decimal" autoComplete="off" placeholder={placeholder} value={text} aria-label={`Load in ${entryUnit}`}
         onFocus={() => { focused.current = true; }}
         onBlur={() => { focused.current = false; setText(display); }}
         onInput={e => {
           const raw = (e.target as HTMLInputElement).value;
           setText(raw);
-          const v = parseFloat(raw);
-          onChange(Number.isFinite(v) ? enteredLoad(v, entryUnit) : undefined);
+          const v = parseLoad(raw, entryUnit);
+          onChange(v != null ? enteredLoad(v, entryUnit) : undefined);
         }}
       />
       {onUnitFlip ? (

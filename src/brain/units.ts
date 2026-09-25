@@ -132,17 +132,33 @@ export interface PlateBreakdown {
   remainderKg: number;
 }
 
-/** Plates per side for a barbell total, greedy from the heaviest plate. Works for a kg bar with lb plates too. */
+/**
+ * Plates per side for a barbell total (BR-24): the largest per-side sum the plates can make at or
+ * under the target, with the fewest plates. A DP over cents in the plate unit, like plateSums;
+ * greedy failed on sets like 25/20/15 (35 = 20 + 15, not 25 + nothing). Works for a kg bar with
+ * lb plates too.
+ */
 export function plateBreakdown(totalKg: number, profile: EquipmentProfile): PlateBreakdown {
   const f = factor(profile.unit);
   const barKg = profile.barKg ?? (profile.unit === 'lb' ? LB_BAR_KG : 20);
   const plates = (profile.plates?.length ? profile.plates : profile.unit === 'lb' ? LB_PLATES : KG_PLATES).slice().sort((a, b) => b - a);
-  let left = Math.max(0, (totalKg - barKg) / 2 / f);
-  const perSide: PlateBreakdown['perSide'] = [];
-  for (const p of plates) {
-    const count = Math.floor((left + 0.02) / p);
-    if (count > 0) { perSide.push({ value: p, unit: profile.unit, count }); left -= count * p; }
+  const target = Math.floor((Math.max(0, (totalKg - barKg) / 2 / f) + 0.02) * 100);
+  const cents = plates.map(p => Math.round(p * 100)).filter(p => p > 0);
+  const count = new Int32Array(target + 1).fill(-1);
+  const via = new Int32Array(target + 1).fill(-1);
+  count[0] = 0;
+  for (let v = 1; v <= target; v++) {
+    for (let i = 0; i < cents.length; i++) {
+      const c = cents[i]!;
+      if (c > v || count[v - c]! < 0) continue;
+      if (count[v]! < 0 || count[v - c]! + 1 < count[v]!) { count[v] = count[v - c]! + 1; via[v] = i; }
+    }
   }
+  let v = target;
+  while (v > 0 && count[v]! < 0) v--;
+  const used = new Map<number, number>();
+  while (v > 0) { const i = via[v]!; used.set(i, (used.get(i) ?? 0) + 1); v -= cents[i]!; }
+  const perSide: PlateBreakdown['perSide'] = [...used].sort((a, b) => a[0] - b[0]).map(([i, n]) => ({ value: plates[i]!, unit: profile.unit, count: n }));
   const sideKg = perSide.reduce((a, x) => a + x.value * x.count, 0) * f;
   const exactTotalKg = r(barKg + 2 * sideKg, 3);
   return { perSide, barKg, exactTotalKg, remainderKg: r(totalKg - exactTotalKg, 3) };

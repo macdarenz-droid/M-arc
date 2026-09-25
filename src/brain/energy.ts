@@ -3,11 +3,12 @@
  * too for the resting-metabolism correction. Any of the four missing
  * returns null everywhere, never a number the coach can't stand behind.
  */
-import type { Profile, Session, SessionEnergy } from '@/core/models';
+import type { Profile, SessionEnergy } from '@/core/models';
+import { parseDay } from '@/core/dates';
 
 export function age(profile: Profile, today: string): number | null {
   if (!profile.birthYear) return null;
-  return new Date(today).getFullYear() - profile.birthYear;
+  return parseDay(today).getFullYear() - profile.birthYear;
 }
 
 interface EnergyProfile { bodyWeightKg: number; heightCm: number; sex: 'male' | 'female'; ageYears: number }
@@ -75,20 +76,6 @@ export function sessionEnergy(input: SessionEnergyInput): SessionEnergy | null {
   };
 }
 
-/** The BLE energy field is a cumulative kJ counter that can reset or wrap; only usable end >= start. */
-export function energyFromWatch(startKj: number, endKj: number, minutes: number, profile: Profile, today: string): SessionEnergy | null {
-  if (endKj < startKj || !profile.bodyWeightKg || !profile.sex) return null;
-  const a = age(profile, today);
-  if (a == null) return null;
-  const activeKcal = (endKj - startKj) / 4.184;
-  const band = activeKcal * 0.10;
-  return {
-    grossKcal: Math.round(activeKcal), activeKcal: Math.round(activeKcal),
-    low: Math.round(Math.max(0, activeKcal - band)), high: Math.round(activeKcal + band),
-    minutes: Math.round(minutes), source: 'watch_energy',
-    profileSnapshot: { kg: profile.bodyWeightKg, age: a, sex: profile.sex },
-  };
-}
 
 /** From a Health Connect ActiveCaloriesBurnedRecord total already aggregated over the session window. */
 export function energyFromHealthConnect(activeKcalInRange: number, minutes: number, profile: Profile, today: string): SessionEnergy | null {
@@ -104,17 +91,5 @@ export function energyFromHealthConnect(activeKcalInRange: number, minutes: numb
   };
 }
 
-/** Health Connect (session window) > watch energy field > heart-rate formula. One source, never summed. */
-export function pickEnergy(candidates: { healthConnect?: SessionEnergy | null; watch?: SessionEnergy | null; heartRate?: SessionEnergy | null }): SessionEnergy | null {
-  return candidates.healthConnect ?? candidates.watch ?? candidates.heartRate ?? null;
-}
 
-export function dailyActiveKcal(healthDays: Array<{ day: string; activeCalories?: number }>, day: string): number | null {
-  return healthDays.find(d => d.day === day)?.activeCalories ?? null;
-}
 
-export function weeklyEnergy(sessions: Session[], weekStartDay: string): number {
-  const weekEnd = new Date(weekStartDay); weekEnd.setDate(weekEnd.getDate() + 7);
-  const endKey = weekEnd.toISOString().slice(0, 10);
-  return sessions.filter(s => s.day >= weekStartDay && s.day < endKey).reduce((sum, s) => sum + (s.heart?.energy?.activeKcal ?? 0), 0);
-}

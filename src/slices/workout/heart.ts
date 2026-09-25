@@ -6,24 +6,55 @@
  */
 import { effect } from '@preact/signals';
 import { latestMeasurement, watchStatus } from '@/native/watch';
-import { active } from './session';
 import { state } from '@/core/store';
+import { assertPhoneWorkoutWriter, workoutOwnership } from '@/core/workoutOwnership';
 import { today } from '@/app/selectors';
 import { downsampleToBuckets, setHeartFromWindow, sessionHeartSummary, hrMax, restingHr, bestObservedHrMax } from '@/brain/heart';
 import { sessionEnergy } from '@/brain/energy';
 import { storeSeries, exportHeart } from '@/core/heartStore';
 import type { Session, SetHeart } from '@/core/models';
 
-interface RawSample { tSec: number; bpm: number; contact: boolean | null }
+export interface RawSample { tSec: number; bpm: number; contact: boolean | null; receivedAtEpochMs: number; receivedAtElapsedMs: number }
 let rawSamples: RawSample[] = [];
-let sessionStartMs = 0;
-
-export function resetHeartCapture(startedAtIso: string): void {
-  rawSamples = [];
-  sessionStartMs = new Date(startedAtIso).getTime();
+/** The last measurement recorded: the plugin can re-deliver one, and a re-run effect sees the same one again. */
+let lastReceivedAt = -1;
+// Provisional receipt evidence while the phone's live writers are frozen at boot.
+let checkingSamples: RawSample[] = [];
+let checkingSession: string | null = null;
+const sessionKey = (a: NonNullable<ReturnType<typeof state.peek>['active']>): string => JSON.stringify([a.id, a.startedAt]);
+function clearCheckingSamples(): void { checkingSamples = []; checkingSession = null; }
+function settleCheckingSamples(): void {
+  const owner = workoutOwnership.value;
+  if (owner === 'native') { clearCheckingSamples(); return; }
+  if (owner !== 'web' || !checkingSamples.length) return;
+  const a = state.peek().active;
+  if (a && sessionKey(a) === checkingSession) {
+    const seen = new Set(rawSamples.map(s => `${s.receivedAtEpochMs}:${s.receivedAtElapsedMs}`));
+    for (const sample of checkingSamples) {
+      const key = `${sample.receivedAtEpochMs}:${sample.receivedAtElapsedMs}`;
+      if (!seen.has(key)) { rawSamples.push(sample); seen.add(key); }
+    }
+    lastReceivedAt = rawSamples.at(-1)?.receivedAtEpochMs ?? -1;
+  }
+  clearCheckingSamples(); // Evidence can never move into a different session.
 }
 
-export function discardHeartCapture(): void { rawSamples = []; }
+export function resetHeartCapture(): void {
+  assertPhoneWorkoutWriter();
+  rawSamples = [];
+  lastReceivedAt = -1;
+  clearCheckingSamples();
+}
+
+export function discardHeartCapture(): void { resetHeartCapture(); }
+
+/** Detached input checkpoint, not a claim of native/live capture after handover. */
+export function captureHeartInputs(): RawSample[] { return rawSamples.map(s => ({ ...s })); }
+export function restoreHeartInputs(samples: RawSample[]): void {
+  if (workoutOwnership.peek() === 'web') throw new Error('Ownership reconciliation required');
+  rawSamples = samples.map(s => ({ ...s }));
+  lastReceivedAt = rawSamples.at(-1)?.receivedAtEpochMs ?? -1;
+}
 
 let capturing = false;
 
@@ -31,12 +62,26 @@ let capturing = false;
 export function startHeartCapture(): void {
   if (capturing) return;
   capturing = true;
+  effect(settleCheckingSamples);
   effect(() => {
     const m = latestMeasurement.value;
-    if (!m || !active()) return;
-    const tSec = Math.round((m.receivedAtEpochMs - sessionStartMs) / 1000);
-    if (tSec < 0) return;
-    rawSamples.push({ tSec, bpm: m.bpm, contact: m.contact });
+    // Only the measurement drives this effect; the session is read without subscribing (UI-21).
+    const a = state.peek().active;
+    const owner = workoutOwnership.peek();
+    if (!m || !a || !['web', 'checking'].includes(owner) || m.receivedAtEpochMs === lastReceivedAt) return;
+    // The time base is the session's own start, so a restart mid-session keeps the same clock.
+    const tSec = Math.round((m.receivedAtEpochMs - Date.parse(a.startedAt)) / 1000);
+    if (!Number.isFinite(tSec) || tSec < 0) return;
+    const sample = { tSec, bpm: m.bpm, contact: m.contact, receivedAtEpochMs: m.receivedAtEpochMs, receivedAtElapsedMs: m.receivedAtElapsedMs };
+    if (owner === 'checking') {
+      const key = sessionKey(a);
+      if (key !== checkingSession) { checkingSamples = []; checkingSession = key; }
+      if (checkingSamples.at(-1)?.receivedAtEpochMs !== m.receivedAtEpochMs && checkingSamples.length < 14400)
+        checkingSamples.push(sample);
+    } else {
+      lastReceivedAt = m.receivedAtEpochMs;
+      rawSamples.push(sample);
+    }
   });
 }
 

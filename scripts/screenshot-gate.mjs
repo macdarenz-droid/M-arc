@@ -4,7 +4,7 @@
 // Run: node scripts/screenshot-gate.mjs   (set MARC_CHROMIUM to a chrome binary to skip the bundled one)
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -25,8 +25,11 @@ for (let i = 0; ; i++) {
 }
 console.log('preview ready on', PORT);
 
+/** PL-18: wait up to 5 s for something that should appear, instead of a fixed sleep + isVisible. */
+const visible = (locator, timeout = 5000) => locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
+
 // Realistic legacy data so the migration path is exercised end to end.
-const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
 const rec = (i, offset, dayKey, name, type, muscle, sets, kg0) => ({ id: `r${i}`, day: dayKey, dayKey: day(offset), name, type, muscle, finalizedAt: iso(offset), sets: Array.from({ length: sets }, (_, k) => ({ kg: kg0, reps: 8 + (k % 2), effort: k === sets - 1 ? 'max' : 'ideal' })) });
 const completed = [];
@@ -71,8 +74,26 @@ for (const theme of themes) {
   if (theme === 'silent-black') {
     // Log a past session: no timer, no rest banner.
     await page.getByRole('button', { name: 'Log a past session' }).click(); await page.waitForTimeout(250); await shot('past-session');
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('40'); await pastInputs.nth(2).fill('10');
+    // QA-R7-1: in the past-session rows too, a tap 1-8 px below any effort button hits its own row or no effort row.
+    const pastMisses = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('dialog[open] .effort')];
+      const bad = [];
+      rows.forEach((row, i) => {
+        for (const b of row.querySelectorAll('button')) {
+          const r = b.getBoundingClientRect();
+          for (let dy = 1; dy <= 8; dy++) {
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom + dy);
+            const other = hit?.closest('.effort');
+            if (other && other !== row) bad.push(`row ${i} ${b.className} +${dy}px`);
+          }
+        }
+      });
+      return { rows: rows.length, bad };
+    });
+    if (pastMisses.rows < 2) errors.push(`${theme}: expected several effort rows in the past-session sheet, found ${pastMisses.rows}`);
+    if (pastMisses.bad.length) errors.push(`${theme}: past-session taps below an effort button land on another set: ${pastMisses.bad.slice(0, 4).join(', ')}`);
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('40'); await pastInputs.nth(1).fill('10');
     await page.locator('.effort button.easy').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click(); await page.waitForTimeout(400);
     await page.getByRole('button', { name: 'Done', exact: true }).click(); await page.waitForTimeout(250);
@@ -83,7 +104,7 @@ for (const theme of themes) {
     // Four rated sets so the post-session debrief has enough evidence to show an effort-mix row.
     // Set 1 is easy at/above the placeholder target, so in-session autoregulation (6.13, cadence
     // 'live') suggests more load right under the exercise.
-    const inputs = page.locator('input[type="number"]');
+    const inputs = page.locator('.set-grid input');
     const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
     const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
     await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
@@ -93,11 +114,18 @@ for (const theme of themes) {
     await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
     await page.locator('.effort button.max').nth(2).click();
     await page.getByRole('button', { name: 'Set', exact: true }).first().click(); await page.waitForTimeout(150);
-    const inputs2 = page.locator('input[type="number"]');
+    const inputs2 = page.locator('.set-grid input');
     await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
     await page.locator('.effort button.ideal').nth(3).click();
     await page.waitForTimeout(300); await shot('live');
-    if (!(await page.getByText('for the next set').isVisible().catch(() => false))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
+    // R2.1: the rest clock keeps ticking after leaving the live screen.
+    const clock0 = await page.locator('.rest .clock').textContent().catch(() => null);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click();
+    await page.waitForTimeout(2100);
+    const clock1 = await page.locator('.rest .clock').textContent().catch(() => null);
+    if (!clock0 || clock0 === clock1) errors.push(`${theme}: the rest clock stopped after switching to Today (${clock0} → ${clock1})`);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    if (!(await visible(page.getByText('for the next set')))) errors.push(`${theme}: expected an in-session autoregulation line after an easy first set`);
     await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300); await shot('finish-sheet');
     await page.getByRole('button', { name: /Finish and save|Just today/ }).click(); await page.waitForTimeout(400);
     // A scripted finish is always fast enough to be "compressed", so the time question shows up here every run.
@@ -107,7 +135,7 @@ for (const theme of themes) {
       await page.waitForTimeout(400);
     }
     await shot('summary');
-    if (!(await page.getByText('Debrief', { exact: true }).isVisible().catch(() => false))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
+    if (!(await visible(page.getByText('Debrief', { exact: true })))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
     await page.getByRole('button', { name: 'Done', exact: true }).click();
   }
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
@@ -121,9 +149,141 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300); await shot('profile-dashboard');
     await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   }
+  if (theme === 'silent-black') {
+    // R1.2: after boot, a stray rejection or throw must not replace the app with the crash screen.
+    await page.evaluate(() => { void Promise.reject(new Error('gate-injected-x')); setTimeout(() => { throw new Error('gate-injected-y'); }); });
+    await page.waitForTimeout(400);
+    for (let k = errors.length - 1; k >= 0; k--) if (errors[k].includes('gate-injected')) errors.splice(k, 1);
+    if (await page.getByText('could not start').isVisible().catch(() => false)) errors.push(`${theme}: a post-boot error showed the crash screen`);
+    if (!(await page.locator('.nav').isVisible())) errors.push(`${theme}: the app disappeared after a post-boot error`);
+    // QA-R2c-3: the same toast twice restarts its timer (the second one lasts its full 3 s).
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+    const buzz = page.getByRole('button', { name: 'Test haptic' });
+    await buzz.click(); await page.waitForTimeout(2000); await buzz.click(); await page.waitForTimeout(2200);
+    if (!(await page.locator('.toast', { hasText: 'Sent a test buzz' }).isVisible().catch(() => false))) errors.push(`${theme}: a repeated toast closed on the first toast's timer`);
+    await page.waitForTimeout(1200);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+    // R1.3: export a backup, reset everything, restore it: the session count must match.
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export backup' }).click()]);
+    const { readFile } = await import('node:fs/promises');
+    const backupText = await readFile(await download.path(), 'utf8');
+    await page.getByRole('button', { name: 'Reset workout data' }).click();
+    await page.getByRole('button', { name: 'Reset everything' }).click(); await page.waitForTimeout(300);
+    const afterReset = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: 'Restore backup' }).click()]);
+    await chooser.setFiles({ name: 'marc-backup.json', mimeType: 'application/json', buffer: Buffer.from(backupText) });
+    await page.getByRole('button', { name: 'Replace', exact: true }).click(); await page.waitForTimeout(400);
+    await shot('restored');
+    const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.length);
+    console.log(theme, 'backup round trip:', before, '→ reset', afterReset, '→ restored', after);
+    if (afterReset !== 0 || after !== before) errors.push(`${theme}: backup round trip lost sessions (${before} → ${afterReset} → ${after})`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  }
   const state = await page.evaluate(() => ({ ...JSON.parse(localStorage.getItem('marc.state.v1')), legacy: !!localStorage.getItem('dailyTrackerPremium') }));
   console.log(theme, 'sessions:', state.sessions.length, 'splits:', state.splits.map(s => s.name).join(','), 'legacy untouched:', state.legacy);
   if (state.sessions.length < 25 || !state.legacy || state.splits.length !== 3) errors.push(`${theme}: legacy import produced unexpected state`);
+  await ctx.close();
+}
+
+// R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
+{
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`narrow: ${e.message}`));
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const load = page.locator('.set-grid .weight-input input').first();
+  await load.fill('102.5');
+  await page.waitForTimeout(150);
+  const fit = await load.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }));
+  await page.screenshot({ path: `${OUT}/silent-black-set-grid-360.png` });
+  console.log('narrow set grid:', fit);
+  if (fit.scroll > fit.client) errors.push(`narrow: the load input clips 102.5 at 360 px (${fit.scroll} > ${fit.client})`);
+  const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (pageWidth > 360) errors.push(`narrow: the live screen is ${pageWidth} px wide on a 360 px phone`);
+  await ctx.close();
+}
+
+// R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'r6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  // Every weekday scheduled, so today is a training day whatever the date. Written by an init
+  // script on a fresh page: editing storage under the running app loses to its own save on unload.
+  const patched = await page.evaluate(() => { const st = JSON.parse(localStorage.getItem('marc.state.v1')); const id = st.splits[0].id; for (const d of ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']) st.schedule[d] = id; return JSON.stringify(st); });
+  await page.close();
+  const page2 = await ctx.newPage();
+  page2.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page2.addInitScript(json => { if (!sessionStorage.getItem('r6.patched')) { sessionStorage.setItem('r6.patched', '1'); localStorage.setItem('marc.state.v1', json); } }, patched);
+  await page2.goto(`http://localhost:${PORT}/`); await page2.waitForSelector('.nav'); await page2.waitForTimeout(300);
+  await page2.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {});
+  await page2.getByRole('button', { name: 'Take today off' }).click().catch(() => errors.push(`${tag}: no "Take today off" on a scheduled day`));
+  await page2.waitForTimeout(250);
+  if (!(await visible(page2.getByText('Day off', { exact: true })))) errors.push(`${tag}: expected the day-off state on Today`);
+  await page2.screenshot({ path: `${OUT}/silent-black-day-off.png` });
+  await page2.getByRole('button', { name: 'Undo day off' }).click().catch(() => {});
+  await page2.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page2.waitForTimeout(250);
+  await page2.getByRole('button', { name: /^Start / }).first().click(); await page2.waitForTimeout(300);
+  if (await page2.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page2.getByRole('button', { name: 'Skip' }).click(); await page2.waitForTimeout(300); }
+  await page2.getByRole('button', { name: /^Start / }).first().click(); await page2.waitForTimeout(400);
+  const card = page2.locator('.card.exercise').first();
+  await card.getByRole('button', { name: 'Options', exact: true }).click(); await page2.waitForTimeout(200);
+  await page2.locator('[data-palace="train.exercise-note-edit"]').fill('Seat 4, narrow grip');
+  await page2.locator('[data-palace="train.exercise-note-edit"]').blur();
+  await page2.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click(); await page2.waitForTimeout(200);
+  if (!(await visible(card.locator('.exercise-note')))) errors.push(`${tag}: expected the setup note under the exercise name`);
+  await page2.getByRole('button', { name: 'Show warm-up' }).first().click().catch(() => errors.push(`${tag}: no warm-up on the first main lift`));
+  await page2.getByRole('button', { name: 'Log warm-ups' }).first().click().catch(() => errors.push(`${tag}: no "Log warm-ups"`));
+  await page2.waitForTimeout(250);
+  if ((await card.locator('.set-kind.warmup').count()) < 1) errors.push(`${tag}: expected warm-up sets in the live card`);
+  await card.screenshot({ path: `${OUT}/silent-black-warmups-note.png` });
+  // QA-R7-1: in the finish sheet's effort list, a tap just below a set's 'Max' never rates the set below.
+  for (let j = 0; j < 6; j++) { await page2.locator('.set-grid input[inputmode="numeric"]').nth(j).fill('8', { timeout: 1000 }).catch(() => {}); }
+  await page2.getByRole('button', { name: 'Finish', exact: true }).click(); await page2.waitForTimeout(250);
+  const repair = page2.locator('[data-palace="train.effort-repair"]');
+  if (await visible(repair)) {
+    const misses = await repair.evaluate(el => {
+      const rows = [...el.querySelectorAll('.effort')];
+      const bad = [];
+      for (let i = 0; i + 1 < rows.length; i++) {
+        const btn = rows[i].querySelector('button.max').getBoundingClientRect();
+        for (let dy = 1; dy <= 8; dy++) {
+          const hit = document.elementFromPoint(btn.left + btn.width / 2, btn.bottom + dy);
+          if (hit && rows[i + 1].contains(hit)) bad.push(`row ${i} +${dy}px`);
+        }
+      }
+      return bad;
+    });
+    if (misses.length) errors.push(`${tag}: taps below a 'Max' land on the next set: ${misses.join(', ')}`);
+  } else errors.push(`${tag}: expected the effort repair list on the finish sheet`);
+  // QA-R2d-3: the finish sheet's duration keeps ticking while the sheet is open.
+  const dur = page2.locator('[data-finish-duration]');
+  const d0 = await dur.textContent().catch(() => null); await page2.waitForTimeout(2100);
+  const d1 = await dur.textContent().catch(() => null);
+  if (!d0 || d0 === d1) errors.push(`${tag}: the finish sheet's duration froze at ${d0}`);
+  await page2.keyboard.press('Escape'); await page2.waitForTimeout(150);
+  const width = await page2.evaluate(() => document.documentElement.scrollWidth);
+  if (width > 390) errors.push(`${tag}: the live screen is ${width} px wide`);
+  await page2.locator('nav.nav button', { hasText: /^(Today)$/ }).click(); await page2.waitForTimeout(200);
+  await page2.locator('[data-palace="today.settings"]').click(); await page2.waitForTimeout(300);
+  const csv = page2.locator('[data-palace="settings.csv"]');
+  await csv.scrollIntoViewIfNeeded().catch(() => {});
+  if (!(await visible(csv))) errors.push(`${tag}: expected the CSV export row in Settings`);
+  else await csv.screenshot({ path: `${OUT}/silent-black-csv-row.png` });
   await ctx.close();
 }
 
@@ -140,7 +300,7 @@ for (const theme of themes) {
   await page.getByRole('button', { name: 'Add my details' }).click();
   await page.waitForTimeout(250);
   await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
-  await page.locator('input[type="number"]').first().fill('80');
+  await page.locator('label:has-text("Body weight") input').first().fill('80');
   await page.getByText('Strength focus').click();
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -171,7 +331,7 @@ for (const theme of themes) {
   const now = new Date();
   const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-  const dayStr = (offset) => { const d = new Date(monday); d.setDate(monday.getDate() + offset); return d.toISOString().slice(0, 10); };
+  const dayStr = (offset) => { const d = new Date(monday); d.setDate(monday.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const todayOffset = (now.getDay() + 6) % 7;
   const days = [];
   for (let n = 0; n < 5; n++) days.push(dayStr(Math.min(n, todayOffset)));
@@ -180,9 +340,9 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Log a past session' }).click();
     await page.waitForTimeout(200);
     await page.locator('input[type="date"]').fill(dayKey);
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('50');
-    await pastInputs.nth(2).fill('10');
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('50');
+    await pastInputs.nth(1).fill('10');
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
@@ -192,7 +352,7 @@ for (const theme of themes) {
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
-  if (!(await page.getByText('Weekly review').isVisible().catch(() => false))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
+  if (!(await visible(page.getByText('Weekly review')))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
   await page.getByText('Weekly review').click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-weekly-review-sheet.png` });
@@ -209,7 +369,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`readiness console: ${m.text()}`); });
   await page.addInitScript(() => {
     const now = new Date().toISOString();
-    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
     const healthDays = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 75 : 55, source: 'health_connect', syncedAt: now }));
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
@@ -224,7 +384,7 @@ for (const theme of themes) {
   await page.waitForSelector('.nav');
   await page.waitForTimeout(300);
   await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
-  if (!(await page.getByRole('heading', { name: /^Readiness:/ }).isVisible().catch(() => false))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
+  if (!(await visible(page.getByRole('heading', { name: /^Readiness:/ })))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
 
   // A "two-for-two clean top" history that would otherwise suggest an increase.
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
@@ -234,9 +394,9 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Log a past session' }).click();
     await page.waitForTimeout(200);
     const d = new Date(); d.setDate(d.getDate() - offset);
-    await page.locator('input[type="date"]').fill(d.toISOString().slice(0, 10));
-    const pastInputs = page.locator('input[type="number"]');
-    await pastInputs.nth(1).fill('50'); await pastInputs.nth(2).fill('12');
+    await page.locator('input[type="date"]').fill(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+    const pastInputs = page.locator('.set-grid input');
+    await pastInputs.nth(0).fill('50'); await pastInputs.nth(1).fill('12');
     await page.locator('.effort button.ideal').first().click();
     await page.getByRole('button', { name: 'Save past session' }).click();
     await page.waitForTimeout(300);
@@ -275,6 +435,7 @@ for (const theme of themes) {
     window.Capacitor = {
       isNativePlatform: () => true,
       Plugins: {
+        WearEngine: { workoutOwnership: async () => ({ owner: 'web' }) },
         WatchBridge: {
           isSupported: async () => ({ supported: true }),
           permissionState: async () => ({ granted: true, needsLocation: false }),
@@ -288,10 +449,14 @@ for (const theme of themes) {
         },
       },
     };
+    window.Capacitor.PluginHeaders = [{ name: 'WearEngine', methods: [{ name: 'workoutOwnership', rtype: 'promise' }] }];
+    const ownerStub = window.Capacitor.Plugins.WearEngine;
+    window.Capacitor.nativePromise = (name, method, args) => name === 'WearEngine'
+      ? ownerStub[method](args) : Promise.reject(new Error('Unexpected ownership stub call'));
     // A complete profile so the profile-onboarding sheet doesn't compete for the dialog top layer here.
     // A week of restingHr history so restTarget() has what it needs for a heart-mode rest screenshot (F1.2).
     const now = new Date().toISOString();
-    const healthDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return { day: d.toISOString().slice(0, 10), restingHr: 60, source: 'health_connect', syncedAt: now }; });
+    const healthDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return { day: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`, restingHr: 60, source: 'health_connect', syncedAt: now }; });
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
       goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
@@ -322,16 +487,16 @@ for (const theme of themes) {
   await page.screenshot({ path: `${OUT}/watch-sheet.png` });
   await page.getByRole('button', { name: 'Close' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.watch-pill .heart-bpm').isVisible().catch(() => false))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
+  if (!(await visible(page.locator('.watch-pill .heart-bpm')))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
   await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
 
-  const inputs = page.locator('input[type="number"]');
+  const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
   await page.locator('.effort button.ideal').first().click();
   await page.waitForTimeout(200);
-  if (!(await page.getByText(/^peak /).isVisible().catch(() => false))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
+  if (!(await visible(page.getByText(/^peak /)))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
   await page.screenshot({ path: `${OUT}/watch-rest-heart-mode.png` });
-  if (!(await page.getByText('Resting until heart rate settles').isVisible().catch(() => false))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
+  if (!(await visible(page.getByText('Resting until heart rate settles')))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
 
   await page.getByRole('button', { name: 'Finish' }).click();
   await page.waitForTimeout(200);
@@ -342,7 +507,7 @@ for (const theme of themes) {
     await page.waitForTimeout(400);
   }
   await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
-  if (!(await page.getByRole('heading', { name: 'Heart' }).isVisible().catch(() => false))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
+  if (!(await visible(page.getByRole('heading', { name: 'Heart' })))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
   await ctx.close();
 }
 
@@ -357,7 +522,7 @@ for (const theme of themes) {
     if (localStorage.getItem('marc.state.v1')) return;
     localStorage.setItem('marc.theme', t);
     const now = new Date().toISOString();
-    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return d.toISOString().slice(0, 10); };
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
     const sess = (offset) => ({ id: `s${offset}`, splitId: 'sp1', splitName: 'Upper', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
       exercises: [
         { exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [0, 1, 2].map(() => ({ kg: 80, reps: 8, effort: 'ideal' })) },
@@ -380,23 +545,23 @@ for (const theme of themes) {
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('[data-palace="train.gym-chip"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
+  if (!(await visible(page.locator('[data-palace="train.gym-chip"]')))) errors.push(`plate-sense ${theme}: expected the gym chip on Train idle`);
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   // The barbell entry opens first. A 2.2× slip on its first set shows the suspect chip.
-  const inputs = page.locator('input[type="number"]');
+  const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.suspect-chip').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
+  if (!(await visible(page.locator('.suspect-chip')))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
   await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
   await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
   await page.waitForTimeout(200);
-  if (!(await page.locator('.weight-approx').first().isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
+  if (!(await visible(page.locator('.weight-approx').first()))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
   // Plate sheet from the barbell target.
   await page.locator('.target-link').first().click();
   await page.waitForTimeout(300);
-  if (!(await page.locator('[data-palace="train.plate-sheet"]').isVisible().catch(() => false))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
+  if (!(await visible(page.locator('[data-palace="train.plate-sheet"]')))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
   await page.screenshot({ path: `${OUT}/${theme}-plate-sheet.png` });
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   // The dumbbell entry, typed in lb.
@@ -471,7 +636,7 @@ for (const theme of themes) {
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.evaluate(() => document.querySelector('.toast button')?.click());
   await page.waitForTimeout(100);
-  if (!(await page.locator('.esc-dock').isVisible().catch(() => false))) errors.push(`${tag}: expected the dock on Today`);
+  if (!(await visible(page.locator('.esc-dock')))) errors.push(`${tag}: expected the dock on Today`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-dock-today.png` });
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-hall.png` });
@@ -479,24 +644,37 @@ for (const theme of themes) {
   await page.waitForSelector('dialog.esc-sheet[open]');
   await page.waitForTimeout(250);
   if (theme === 'silent-black') {
-    for (const label of ['Share health data', 'Share body data']) if (!(await page.locator('dialog.esc-sheet').getByText(label, { exact: true }).isVisible().catch(() => false))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
+    for (const label of ['Share health data', 'Share body data']) if (!(await visible(page.locator('dialog.esc-sheet').getByText(label, { exact: true })))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
   }
   await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
   await page.waitForTimeout(200);
-  if (!(await page.getByText('Ask me anything.').isVisible().catch(() => false))) errors.push(`${tag}: expected the empty state`);
+  if (!(await visible(page.getByText('Ask me anything.')))) errors.push(`${tag}: expected the empty state`);
   if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-empty.png` });
   await page.locator('.esc-textarea').fill('How is my chest press going?');
-  const firstFeedbackMs = await page.evaluate(() => new Promise(res => {
+  const measureFeedback = p => p.evaluate(() => new Promise(res => {
     const t0 = performance.now();
     document.querySelector('.esc-send').click();
     const tick = () => { if (document.querySelector('.esc-live')?.textContent?.includes('Thinking…')) res(performance.now() - t0); else if (performance.now() - t0 > 2000) res(9999); else requestAnimationFrame(tick); };
     tick();
   }));
-  if (firstFeedbackMs > 150) errors.push(`${tag}: "Thinking…" took ${Math.round(firstFeedbackMs)} ms (budget 150)`);
+  let firstFeedbackMs = await measureFeedback(page);
+  if (firstFeedbackMs > 150) {
+    // PL-18: one retry on a fresh page of the same context, so a slow runner tick does not fail the gate.
+    const again = await ctx.newPage();
+    await again.goto(`http://localhost:${PORT}/`);
+    await again.waitForSelector('.nav');
+    await again.locator('nav.nav button', { hasText: 'Escobar' }).click();
+    await again.locator('.esc-hall-input').click();
+    await again.waitForSelector('.esc-textarea');
+    await again.locator('.esc-textarea').fill('How is my chest press going?');
+    firstFeedbackMs = await measureFeedback(again);
+    await again.close();
+  }
+  if (firstFeedbackMs > 150) errors.push(`${tag}: "Thinking…" took ${Math.round(firstFeedbackMs)} ms (budget 150, after one retry)`);
   await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-proposal'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock conversation did not finish`));
   await page.waitForTimeout(200);
-  if (!(await page.locator('.esc-comp[data-component="lift_trend"] .sparkline').isVisible().catch(() => false))) errors.push(`${tag}: expected the lift_trend chart`);
+  if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .sparkline')))) errors.push(`${tag}: expected the lift_trend chart`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
@@ -504,21 +682,32 @@ for (const theme of themes) {
   const overflow = await page.evaluate(() => { const t = document.querySelector('.esc-thread'); return t ? t.scrollWidth - t.clientWidth : 0; });
   if (overflow > 1) errors.push(`${tag}: the thread scrolls sideways at 360 px`);
   await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-360.png` });
+  if (theme === themes.find(t => t !== 'silent-black')) {
+    // ES-03: Undo is offered right after Apply and gone once its 8 s window closes.
+    await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
+    const undo = page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true });
+    if (!(await visible(undo))) errors.push(`${tag}: expected Undo right after Apply`);
+    await page.waitForTimeout(8300);
+    if (await undo.isVisible().catch(() => false)) errors.push(`${tag}: Undo still showing after 8 s`);
+  }
   if (theme === 'silent-black') {
     await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
-    if (!(await page.locator('.esc-pop').isVisible().catch(() => false))) errors.push(`${tag}: expected the citation popover`);
+    if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
-    if (!(await page.locator('.esc-proposal').getByText('Applied').isVisible().catch(() => false))) errors.push(`${tag}: expected "Applied" on the proposal`);
+    if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
+    // ES-03: Undo inside its 8 s window reverses the change.
+    await page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true }).click(); await page.waitForTimeout(300);
+    if (!(await visible(page.locator('.esc-proposal').getByText('Undone')))) errors.push(`${tag}: expected "Undone" after Undo within the window`);
     await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
     // Stop mid-turn, then the offline fallback (find_in_app answered locally).
     await page.locator('.esc-textarea').fill('And my legs?'); await page.locator('.esc-send').click(); await page.waitForTimeout(60);
     await page.getByRole('button', { name: 'Stop', exact: true }).click(); await page.waitForTimeout(300);
-    if (!(await page.getByText('Stopped.').isVisible().catch(() => false))) errors.push(`${tag}: expected "Stopped." after Stop`);
+    if (!(await visible(page.getByText('Stopped.')))) errors.push(`${tag}: expected "Stopped." after Stop`);
     await ctx.setOffline(true);
     await page.locator('.esc-textarea').fill('where are my records'); await page.locator('.esc-send').click(); await page.waitForTimeout(400);
-    if (!(await page.locator('.esc-local').isVisible().catch(() => false))) errors.push(`${tag}: expected the offline palace answer`);
+    if (!(await visible(page.locator('.esc-local')))) errors.push(`${tag}: expected the offline palace answer`);
     await page.screenshot({ path: `${OUT}/${theme}-escobar-offline.png` });
     await ctx.setOffline(false);
   }
@@ -533,6 +722,7 @@ for (const theme of themes) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`pulse ${theme}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`pulse ${theme} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.dev', '1'); localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
@@ -543,7 +733,7 @@ for (const theme of themes) {
   // A watch appearing can raise the "help the coach know you" sheet; dismiss it like a person would.
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); }
   await page.waitForTimeout(600);
-  if (!(await page.locator('.pulse-edge').isVisible().catch(() => false))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
+  if (!(await visible(page.locator('.pulse-edge')))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
   await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {
@@ -566,8 +756,49 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// R5.5 service worker: an offline reload still renders the app, and after a new build (new cache,
+// the old Escobar chunk gone from the server) the already-open tab can still open Escobar.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  const tag = 'service worker';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { localStorage.setItem('marc.dev', '1'); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  const later = async () => { if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); } };
+  await later();
+  const controlled = await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 }).then(() => true).catch(() => false);
+  if (!controlled) errors.push(`${tag}: the service worker never took control`);
+  await ctx.setOffline(true);
+  await page.reload();
+  if (!(await page.waitForSelector('.nav', { timeout: 10000 }).then(() => true).catch(() => false))) errors.push(`${tag}: offline reload did not render the app`);
+  await ctx.setOffline(false);
+  await later();
+  const swPath = join(ROOT, 'www/sw.js');
+  const swA = readFileSync(swPath, 'utf8');
+  const chunk = readdirSync(join(ROOT, 'www/assets')).find(f => f.startsWith('EscobarSheet-'));
+  const chunkPath = join(ROOT, 'www/assets', chunk);
+  const chunkBytes = readFileSync(chunkPath);
+  try {
+    // "Build B": a new cache name, and the old hashed chunk no longer on the server.
+    writeFileSync(swPath, swA.replace(/marc-\d{14}/, 'marc-99999999999999').replace(`"./assets/${chunk}",`, '').replace(`,"./assets/${chunk}"`, ''));
+    unlinkSync(chunkPath);
+    await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r?.update(); });
+    const swapped = await page.waitForFunction(() => caches.keys().then(k => k.length === 1 && k[0] === 'marc-99999999999999'), null, { timeout: 15000 }).then(() => true).catch(() => false);
+    if (!swapped) errors.push(`${tag}: build B's service worker did not activate`);
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+    await page.locator('.esc-hall-input').click();
+    if (!(await page.waitForSelector('dialog.esc-sheet[open]', { timeout: 10000 }).then(() => true).catch(() => false))) errors.push(`${tag}: Escobar did not open after build B`);
+  } finally {
+    writeFileSync(swPath, swA);
+    writeFileSync(chunkPath, chunkBytes);
+  }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, watch stub verified, plate sense verified, palace verified, escobar verified, heart line verified, reorder verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified.');

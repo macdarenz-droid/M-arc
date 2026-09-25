@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as R from '@/escobar/tools/read';
-import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW } from './fixtures';
+import { FIXTURES, ctxOf, sixMonthsState, twoWeeksState, emptyState, NOW, TODAY } from './fixtures';
+import { addDays as addDaysLocal } from '@/core/dates';
 
 const bytes = (v: unknown) => JSON.stringify(v).length;
 const CASES: Array<[string, (ctx: ReturnType<typeof ctxOf>) => unknown, number]> = [
@@ -64,6 +65,23 @@ describe('read tool details', () => {
     expect(['progressing', 'plateaued', 'declining', 'unknown']).toContain(h.plateau.status);
     expect(() => R.getExerciseHistory({ exerciseId: 'lib_nope' }, six)).toThrow(/search_exercises/);
     expect(() => R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 60 }, six)).toThrow(/between 1 and 52/);
+  });
+  it('exercise history is newest first, and capping drops the oldest (ES-01)', () => {
+    const full = R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 12 }, six);
+    const days = full.sessions.map(x => x.day);
+    expect(days).toEqual([...days].sort().reverse());
+    const long = R.getExerciseHistory({ exerciseId: 'lib_barbell_bench_press', weeks: 52 }, six);
+    const newest = sixMonthsState().sessions.filter(x => x.exercises.some(e => e.exerciseId === 'lib_barbell_bench_press')).at(-1)!.day;
+    expect(long.sessions[0]!.day).toBe(newest);
+    expect(JSON.stringify(long).length).toBeLessThanOrEqual(6200);
+  });
+  it('capJson drops from the chosen end', () => {
+    const data = { rows: Array.from({ length: 200 }, (_, i) => ({ i, pad: 'x'.repeat(20) })) };
+    const end = R.capJson(data, 1000);
+    const start = R.capJson(data, 1000, { dropFrom: 'start' });
+    expect(end.rows[0]!.i).toBe(0);
+    expect(start.rows.at(-1)!.i).toBe(199);
+    expect(start.rows[0]!.i).toBeGreaterThan(0);
   });
   it('next target includes a warm-up for main lifts and the equipment unit', () => {
     const lb = sixMonthsState();
@@ -141,5 +159,115 @@ describe('read tool details', () => {
     expect(R.getOverview({}, e).scheduled).toBeNull();
     expect(R.getRecovery({}, e).muscles).toEqual([]);
     expect(R.getInsights({}, e).insights).toBeDefined();
+  });
+});
+
+describe('volume status carries the week it was judged on (QA-R3a-1, QA-R3a-8)', () => {
+  it('get_volume and volume_bars include last week next to this week', async () => {
+    const six = ctxOf(sixMonthsState());
+    const v = R.getVolume({}, six) as { muscles: Array<{ lastWeekSets?: number; thisWeekSets: number }>; statusJudgedOn: string };
+    expect(v.muscles.every(m => typeof m.lastWeekSets === 'number')).toBe(true);
+    expect(v.statusJudgedOn).toMatch(/last completed week/);
+    const { summarize } = await import('@/escobar/tools/show');
+    const bars = summarize('volume_bars', {}, six) as { bars: Array<{ lastWeekSets?: number }> };
+    expect(bars.bars.every(b => typeof b.lastWeekSets === 'number')).toBe(true);
+  });
+});
+
+describe('assisted lifts in Escobar (QA-R3a-2)', () => {
+  it('less assistance over time reads as progress in get_exercise_history and lift_trend', async () => {
+    const s = sixMonthsState();
+    const id = 'lib_assisted_pull_up';
+    const sessions = Array.from({ length: 8 }, (_, i) => {
+      const day = new Date(Date.UTC(2026, 6, 28 + i * 7)).toISOString().slice(0, 10);
+      return { id: `ap${i}`, splitId: 'x', splitName: 'Pull', day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: [{ exerciseId: id, name: 'Assisted Pull-Up', sets: [{ kg: 40 - i * 4, reps: 8, effort: 'ideal' as const }] }], logging: { mode: 'live', flags: [] } as never };
+    });
+    const c = ctxOf({ ...s, sessions: [...s.sessions, ...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) });
+    const h = R.getExerciseHistory({ exerciseId: id, weeks: 12 }, c) as { plateau: { status: string }; trend: { direction: string } };
+    expect(h.plateau.status).toBe('progressing');
+    expect(h.trend.direction).toBe('up');
+    const { summarize } = await import('@/escobar/tools/show');
+    expect((summarize('lift_trend', { exerciseId: id, weeks: 12 }, c) as { plateau: string }).plateau).toBe('progressing');
+  });
+  it('more reps at the same assistance reads as up, not down (QA2-FC-4)', async () => {
+    const s = sixMonthsState();
+    const id = 'lib_assisted_pull_up';
+    const reps = [3, 3, 4, 4, 5, 5, 6, 6];
+    const sessions = reps.map((r, i) => {
+      const day = new Date(Date.UTC(2026, 6, 28 + i * 7)).toISOString().slice(0, 10);
+      return { id: `ar${i}`, splitId: 'x', splitName: 'Pull', day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: [{ exerciseId: id, name: 'Assisted Pull-Up', sets: [{ kg: 20, reps: r, effort: 'ideal' as const }] }], logging: { mode: 'live', flags: [] } as never };
+    });
+    const c = ctxOf({ ...s, sessions: [...s.sessions, ...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)) });
+    const h = R.getExerciseHistory({ exerciseId: id, weeks: 12 }, c) as { plateau: { status: string }; trend: { direction: string } };
+    expect(h.plateau.status).toBe('progressing');
+    expect(h.trend.direction).toBe('up');
+    const { summarize } = await import('@/escobar/tools/show');
+    expect((summarize('lift_trend', { exerciseId: id, weeks: 12 }, c) as { trend: string }).trend).toBe('up');
+  });
+});
+
+describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
+  it('autoregulation reads the first working set, and warm-ups are not planned sets', () => {
+    const s = sixMonthsState();
+    const bench = 'lib_barbell_bench_press';
+    const warm = [{ id: 'w1', kg: 40, reps: 8, kind: 'warmup' as const, effort: 'easy' as const, at: new Date(NOW - 300_000).toISOString(), fidelity: 'live' as const }, { id: 'w2', kg: 55, reps: 5, kind: 'warmup' as const }];
+    const live = (first: Record<string, unknown>) => ({ ...s, active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: bench, name: 'Bench', done: false, skipped: false, sets: [...warm, { id: 's1', ...first }, { id: 's2' }, { id: 's3' }] }] } });
+    const target = R.getNextTarget({ exerciseId: bench, plannedSets: 3 }, ctxOf(s)) as { sets: Array<{ kg: number; reps: number }> };
+    const t = target.sets[0]!;
+    const easy = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: t.reps + 2, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null; current: { setsPlanned: number } };
+    expect(easy.adjustment).toMatch(/Try/);
+    expect(easy.current.setsPlanned).toBe(3);
+    const unrated = R.getLiveSession({}, ctxOf(live({}) as never)) as { adjustment: string | null };
+    expect(unrated.adjustment).toBeNull();
+  });
+});
+
+describe('assisted lifts in the live view (QA-R4b-5)', () => {
+  it('get no load advice, like Train', async () => {
+    const { sessionAt } = await import('../helpers');
+    const s = sixMonthsState();
+    const id = 'lib_assisted_pull_up';
+    const past = sessionAt(new Date(NOW - 49 * 86_400_000).toISOString(), new Date(NOW - 49 * 86_400_000 + 3_600_000).toISOString(), [{ id, sets: [{ kg: 20, reps: 8, effort: 'ideal' }] }]);
+    const state = { ...s, sessions: [...s.sessions, past].sort((a, b) => a.startedAt.localeCompare(b.startedAt)), active: { id: 'a', splitId: s.splits[0]!.id, startedAt: new Date(NOW - 600_000).toISOString(), pausedMs: 0, gymId: s.units.activeGymId, entries: [{ id: 'e', exerciseId: id, name: 'Assisted Pull-up', done: false, skipped: false, sets: [{ id: 's1', kg: 20, reps: 12, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }, { id: 's2' }] }] } };
+    const l = R.getLiveSession({}, ctxOf(state as never)) as { adjustment: string | null };
+    expect(l.adjustment).toBeNull();
+  });
+});
+
+describe('get_health totals (QA-R5a-4)', () => {
+  it("say a day's steps are as of its last sync", () => {
+    const s = sixMonthsState();
+    const day = addDaysLocal(TODAY, -1);
+    const synced = new Date(`${day}T18:00:00`).toISOString();
+    const st = { ...s, healthDays: [{ day, steps: 6000, activeCalories: 300, source: 'health_connect', syncedAt: synced }] };
+    const h = R.getHealth({ days: 7 }, ctxOf(st as never)) as { days: Array<{ day: string; totalsAsOf?: string }>; note: string };
+    expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('18:00');
+    expect(h.note).toMatch(/last sync/);
+  });
+});
+
+describe('Escobar loads and set kinds (QA2-FE-3, QA2-FE-5)', () => {
+  it('a quarter-pound load reads as on screen, and a warm-up says it is one', async () => {
+    const { displayToKg } = await import('@/core/units');
+    const s = sixMonthsState();
+    const gym = s.units.activeGymId;
+    const st = { ...s, units: { ...s.units, gyms: s.units.gyms.map(g => (g.id === gym ? { ...g, defaultUnit: 'lb' as const } : g)) } };
+    const c = ctxOf(st as never);
+    expect(R.loadOf(c, 'lib_dumbbell_biceps_curl', displayToKg(26.25, 'lb')).value).toBe(26.25);
+    const day = s.sessions.at(-1)!;
+    const withWarm = { ...day, id: 'warmx', exercises: [{ ...day.exercises[0]!, sets: [{ kg: 20, reps: 8, kind: 'warmup' as const }, ...day.exercises[0]!.sets] }] };
+    const c2 = ctxOf({ ...s, sessions: [...s.sessions.slice(0, -1), withWarm] } as never);
+    const got = R.getSession({ sessionId: 'warmx' }, c2) as { exercises: Array<{ sets: Array<{ kind?: string }> }> };
+    expect(got.exercises[0]!.sets[0]!.kind).toBe('warmup');
+  });
+});
+
+describe('get_health totals time (QA2-FE-1)', () => {
+  it('names when the steps were read, not a later sync that failed them', () => {
+    const s = sixMonthsState();
+    const day = addDaysLocal(TODAY, -1);
+    const st = { ...s, healthDays: [{ day, steps: 6000, source: 'health_connect', syncedAt: new Date(`${day}T20:00:00`).toISOString(), totalsSyncedAt: new Date(`${day}T12:00:00`).toISOString() }] };
+    const h = R.getHealth({ days: 7 }, ctxOf(st as never)) as { days: Array<{ day: string; totalsAsOf?: string }> };
+    expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('12:00');
   });
 });

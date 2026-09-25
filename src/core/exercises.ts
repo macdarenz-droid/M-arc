@@ -1,9 +1,14 @@
 import rawLibrary from '@/data/exercises.json';
 import type { Exercise, ResistanceMode } from './models';
 import { classifyMuscleText, isMuscleId, type MuscleId } from '@/data/muscles';
+import { DAMAGE_DEFAULT, DAMAGE_HEAVY_MAIN, DAMAGE_HIGH, DAMAGE_LOW } from '@/data/recovery';
 
-const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank']);
-const CONDITIONING_NAMES = new Set(['lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry']);
+const DURATION_NAMES = new Set(['lib_plank', 'lib_side_plank', 'lib_wall_sit', 'lib_hollow_body_hold']);
+const CONDITIONING_NAMES = new Set([
+  'lib_sled_push', 'lib_sled_pull', 'lib_farmer_s_carry',
+  'lib_burpee', 'lib_mountain_climbers', 'lib_jumping_jacks', 'lib_high_knees', 'lib_jump_rope',
+  'lib_box_jump', 'lib_battle_ropes', 'lib_medicine_ball_slam', 'lib_wall_ball', 'lib_bear_crawl', 'lib_jump_squat',
+]);
 const ASSISTED_HINT = /assisted/i;
 
 function inferMode(id: string, equipment: string, name: string): ResistanceMode {
@@ -48,15 +53,15 @@ const TEMPO_OR_PAUSE = /\b(tempo|pause)\b/i;
 
 /** Static per-exercise damage factor, before the dynamic "heavy main lift" bump below. */
 export function exerciseDamage(exercise: { id: string; name: string }): number {
-  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return 1.3;
-  if (LOW_DAMAGE_IDS.has(exercise.id)) return 0.8;
-  return 1.0;
+  if (HIGH_DAMAGE_IDS.has(exercise.id) || TEMPO_OR_PAUSE.test(exercise.name)) return DAMAGE_HIGH;
+  if (LOW_DAMAGE_IDS.has(exercise.id)) return DAMAGE_LOW;
+  return DAMAGE_DEFAULT;
 }
 
-/** The set's actual damage factor: the static value, bumped to at least 1.15 for a heavy main lift. */
+/** The set's actual damage factor: the static value, bumped to at least DAMAGE_HEAVY_MAIN for a heavy main lift (QA-R7-2, QA-R7-3). */
 export function setDamage(exercise: { id: string; name: string; role: 'main' | 'accessory' }, reps: number): number {
   const base = exerciseDamage(exercise);
-  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, 1.15) : base;
+  return exercise.role === 'main' && reps > 0 && reps <= 5 ? Math.max(base, DAMAGE_HEAVY_MAIN) : base;
 }
 
 /** The built-in library, typed and with a resistance mode attached. */
@@ -117,14 +122,62 @@ export function findExercise(idOrName: string, custom: Exercise[] = NO_CUSTOM): 
   return found;
 }
 
-function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
+function findByExactName(idOrName: string, custom: Exercise[]): Exercise | undefined {
   const q = normalizeName(idOrName);
   if (!q) return undefined;
-  const all = [...custom, ...LIBRARY];
   const singular = q.replace(/s\b/g, '');
   const same = (a: string) => { const n = normalizeName(a); return n === q || n.replace(/s\b/g, '') === singular; };
-  return all.find(e => same(e.name) || e.aliases.some(same))
-    ?? all.find(e => q.length >= 4 && (normalizeName(e.name).includes(q) || q.includes(normalizeName(e.name))));
+  return [...custom, ...LIBRARY].find(e => same(e.name) || e.aliases.some(same));
+}
+
+/**
+ * ST-13: the substring step answers only when exactly one exercise matches, so "Press" no longer
+ * resolves to whichever press happens to come first.
+ */
+function findByName(idOrName: string, custom: Exercise[]): Exercise | undefined {
+  const exact = findByExactName(idOrName, custom);
+  if (exact) return exact;
+  const q = normalizeName(idOrName);
+  if (q.length < 4) return undefined;
+  const hits = [...custom, ...LIBRARY].filter(e => normalizeName(e.name).includes(q) || containsOnly(q, normalizeName(e.name)));
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+let movementWords: Set<string> | null = null;
+/**
+ * QA-R3b-3: a longer name that contains a library name ("Hack Squat Calf Raise") is that exercise
+ * only when the extra words name no other movement. A word that appears in any library name
+ * ("calf", "raise") means it is a different exercise; words like "heavy" or "paused" do not.
+ */
+function containsOnly(q: string, name: string): boolean {
+  if (!name || !q.includes(name)) return false;
+  // QA2-FC-7: equipment words ("machine", "cable", "barbell") say how, not which movement, so
+  // "Leg Press Machine" is still Leg Press.
+  if (!movementWords) {
+    const gear = new Set(LIBRARY.flatMap(e => normalizeName(e.equipment).split(' ')).flatMap(w => [w, w.replace(/s$/, ''), `${w}s`]));
+    movementWords = new Set(LIBRARY.flatMap(e => normalizeName(e.name).split(' ')).filter(w => w.length > 2 && !gear.has(w)));
+  }
+  const own = new Set(name.split(' '));
+  return !q.replace(name, ' ').split(' ').some(w => w && !own.has(w) && movementWords!.has(w));
+}
+
+/**
+ * For imports that know the equipment ("Chest Press", Machine): the usual lookup, then, when the
+ * name alone is ambiguous, the one partial match whose equipment agrees (ST-13 kept this path).
+ */
+export function findExerciseWithEquipment(name: string, equipment: string | undefined, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  const found = findExercise(name, custom);
+  if (found || !equipment) return found;
+  const q = normalizeName(name);
+  if (q.length < 4) return undefined;
+  const eq = normalizeName(equipment).replace(/s\b/g, '');
+  const hits = [...custom, ...LIBRARY].filter(e => (normalizeName(e.name).includes(q) || containsOnly(q, normalizeName(e.name))) && normalizeName(e.equipment).replace(/s\b/g, '') === eq);
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
+/** Id, custom id, or exact name/alias; never a substring guess. For writes that must not land on the wrong exercise. */
+export function findExerciseExact(nameOrId: string, custom: Exercise[] = NO_CUSTOM): Exercise | undefined {
+  return byId.get(nameOrId) ?? custom.find(c => c.id === nameOrId) ?? findByExactName(nameOrId, custom);
 }
 
 export function searchExercises(query: string, custom: Exercise[] = [], limit = 12): Exercise[] {

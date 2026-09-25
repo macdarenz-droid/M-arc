@@ -31,3 +31,10 @@ describe('deloadTrigger (F3.3)', () => {
     expect(r.suggest).toBe(false);
   });
 });
+
+describe('deloadTrigger over-band rule (D9)', () => {
+  it('two weeks above the band alone is not a reason for a lighter week', () => {
+    const s = ['2026-09-08', '2026-09-10', '2026-09-14', '2026-09-16'].map((d, i) => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60 + i * 2.5, 8, 'ideal', 6) }]));
+    expect(deloadTrigger(s, today, [], []).suggest).toBe(false);
+  });
+});

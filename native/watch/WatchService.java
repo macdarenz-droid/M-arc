@@ -11,6 +11,7 @@ import android.os.*;
 import com.mrcdrnzz.dailytracker.R;
 import com.mrcdrnzz.dailytracker.watch.core.HeartRateMeasurement;
 import com.mrcdrnzz.dailytracker.watch.core.LiveSession;
+import com.mrcdrnzz.dailytracker.wear.WorkoutHeartRecorder;
 import java.util.*;
 
 /** A foreground BLE adapter; the plugin is only a viewer. All state runs on the main thread. Ported from Watch-test. */
@@ -20,17 +21,21 @@ public final class WatchService extends Service {
     private static final UUID BATTERY_SERVICE = uuid(0x180F), BATTERY = uuid(0x2A19), CCCD = uuid(0x2902);
     public static final String STOP = "com.mrcdrnzz.dailytracker.watch.STOP";
     public LiveSession session = new LiveSession();
+    /** Why the last connect could not start the foreground service (PL-15); null when it did. */
+    public volatile String pausedReason;
     public String status = "Ready to connect", detail = "Turn on HR Data Broadcasts on your watch.";
     public String deviceName = "No watch connected";
     public boolean subscribed, running;
     public Integer battery;
-    public long batteryReceivedAt;
     public final List<String> services = new ArrayList<>();
     private final ArrayDeque<String> logs = new ArrayDeque<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final IBinder binder = new LocalBinder();
     private BluetoothGatt gatt;
     private BluetoothDevice device;
+    private volatile WorkoutHeartRecorder heartRecorder;
+    /** Anonymous connection identity; never a Bluetooth address/name. Automatic reconnects keep it. */
+    private String heartSourceId;
     private Runnable listener;
     private int retries;
     private long lastNotification;
@@ -50,6 +55,8 @@ public final class WatchService extends Service {
     };
     @Override public void onCreate() {
         super.onCreate();
+        try { heartRecorder = WorkoutHeartRecorder.get(getApplicationContext()); heartRecorder.serviceStarted(); }
+        catch (RuntimeException ignored) { /* Optional native capture cannot stop existing BLE. */ }
         NotificationChannel channel = new NotificationChannel("watch_sync", "Watch connection", NotificationManager.IMPORTANCE_LOW);
         channel.setDescription("Keeps the watch connected while the screen is off");
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
@@ -68,16 +75,23 @@ public final class WatchService extends Service {
     public void connect(BluetoothDevice selected) {
         disconnect();
         if (!permitted()) { setStatus("Permission needed", "Allow Nearby devices to connect."); return; }
-        session = new LiveSession(); battery = null; batteryReceivedAt = 0; services.clear();
+        session = new LiveSession(); heartSourceId = "ble-" + UUID.randomUUID(); battery = null; services.clear();
         device = selected; retries = 0;
         String name = selected.getName(); deviceName = name == null || name.trim().isEmpty() ? "Bluetooth sensor" : name;
+        pausedReason = null;
         running = true;
         try {
             startService(new Intent(this, WatchService.class));
             if (Build.VERSION.SDK_INT >= 29) startForeground(1,notification(),ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
             else startForeground(1,notification());
-            open();
-        } catch (RuntimeException e) { fail("Cannot start connection: " + e.getClass().getSimpleName(), false); }
+        } catch (SecurityException | IllegalStateException e) {
+            // IllegalStateException is the API 26-safe superclass of ForegroundServiceStartNotAllowedException (API 31+).
+            running = false; stopSelf();
+            pausedReason = e instanceof SecurityException ? "Nearby devices permission is needed to keep the watch connected." : "Android did not allow the watch connection to start from the background. Open M/ARC and try again.";
+            setStatus("Paused", pausedReason);
+            return;
+        } catch (RuntimeException e) { fail("Cannot start connection: " + e.getClass().getSimpleName(), false); return; }
+        open();
     }
     private void open() {
         if (!running || device == null) return;
@@ -210,18 +224,25 @@ public final class WatchService extends Service {
         });
     }
     private void receive(BluetoothGatt g, UUID characteristic, byte[] bytes) {
-        handler.post(() -> { if (g == gatt) handle(characteristic,bytes); });
+        // These are phone receipt times, not sensor measurement times. Do not stamp a delayed drain.
+        long elapsed = SystemClock.elapsedRealtime(), epoch = System.currentTimeMillis();
+        WorkoutHeartRecorder.Target owner = heartRecorder == null ? null : heartRecorder.targetAtReceipt();
+        handler.post(() -> { if (g == gatt) handle(characteristic,bytes,epoch,elapsed,owner); });
     }
     private void handle(UUID characteristic, byte[] value) {
+        handle(characteristic, value, System.currentTimeMillis(), SystemClock.elapsedRealtime(), null);
+    }
+    private void handle(UUID characteristic, byte[] value, long epoch, long elapsed, WorkoutHeartRecorder.Target owner) {
         if (HR.equals(characteristic)) {
             try {
                 HeartRateMeasurement m = HeartRateMeasurement.parse(value);
-                session.accept(m,SystemClock.elapsedRealtime(),System.currentTimeMillis()); retries = 0;
+                session.accept(m,elapsed,epoch); retries = 0;
+                if (heartRecorder != null) heartRecorder.record(owner, heartSourceId, session.packets, m, epoch, elapsed);
                 detail = "Direct Bluetooth • " + deviceName;
                 changed();
             } catch (IllegalArgumentException e) { log("Ignored malformed HR packet: " + e.getMessage()); }
         } else if (BATTERY.equals(characteristic) && value.length == 1 && (value[0] & 255) <= 100) {
-            battery = value[0] & 255; batteryReceivedAt = System.currentTimeMillis(); changed();
+            battery = value[0] & 255; changed();
         }
     }
     private void setStatus(String title, String text) { status = title; detail = text; log(title); changed(); }
@@ -249,11 +270,13 @@ public final class WatchService extends Service {
         return "Status: " + status + "\nDetails: " + detail + "\nPackets received: " + session.packets
             + "\nLast packet interval (s): " + session.lastIntervalSeconds
             + "\n\nDiscovered GATT services and characteristics:\n" + String.join("\n",services)
+            + "\n\nWorkout heart capture errors (exception classes only):\n" + (heartRecorder == null ? "" : heartRecorder.diagnostics())
             + "\n\nConnection log:\n" + String.join("\n",logs)
             + "\n\nNo Bluetooth addresses, heart-rate values or Health Connect records included.\n";
     }
     @Override public void onDestroy() {
         listener = null; running = false; handler.removeCallbacksAndMessages(null); closeGatt();
+        if (heartRecorder != null) heartRecorder.serviceStopped();
         unregisterReceiver(bluetoothState); super.onDestroy();
     }
 }

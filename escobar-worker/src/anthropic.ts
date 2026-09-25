@@ -8,17 +8,28 @@ import type { MessageCreateParamsStreaming, BetaMessageParam, BetaRawMessageStre
 import generated from './tools.generated.json';
 import { WORKER_POLICY } from './prompt/policy';
 import { renderManifest } from './prompt/manifest';
-import type { Mode } from './prompt/modes';
+import { MODES, type Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
+import type { QuotaCounter } from './quotaDO';
+import type { UpstreamRelay } from './upstreamRelay';
+
+export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: boolean }> }
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
   MODEL?: string;
+  /** F7 (D12): per-mode model overrides; each falls back to MODEL. */
+  MODEL_CHAT?: string; MODEL_PLAN?: string; MODEL_LIVE?: string; MODEL_BRIEF?: string; MODEL_MOMENT?: string; MODEL_SUMMARIZE?: string;
   EFFORT_CHAT?: string; EFFORT_PLAN?: string; EFFORT_LIVE?: string; EFFORT_BRIEF?: string; EFFORT_MOMENT?: string; EFFORT_SUMMARIZE?: string;
   ALLOWED_ORIGINS?: string;
   MAX_TURNS_PER_DEVICE?: string; MAX_STEPS_PER_DEVICE?: string; MAX_OUTPUT_PER_DEVICE?: string; MAX_STEPS_TOTAL?: string;
+  MAX_TURNS_PER_IP?: string; MAX_STEPS_PER_IP?: string; MAX_OUTPUT_TOTAL?: string;
+  QUOTA_DO?: DurableObjectNamespace<QuotaCounter>;
+  /** Makes every Anthropic call from a US location (PL-20). Without it the call leaves from the edge. */
+  UPSTREAM?: DurableObjectNamespace<UpstreamRelay>;
   QUOTA?: KVNamespace;
-  RATE?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
+  RATE?: RateLimiter;
+  RATE_IP?: RateLimiter;
 }
 
 export const DEFAULT_MODEL = 'claude-opus-5';
@@ -63,31 +74,52 @@ const PRESERVED_THINKING = new Set(['claude-opus-5-5', 'claude-fable-5-1', 'clau
 
 /**
  * For models without mid-conversation system messages: fold each system message into a
- * <situation> text block on the preceding user message. Effort-only system messages are dropped.
+ * <situation> text block on the preceding user message.
  */
 export function foldSystemMessages(messages: TurnBody['messages']): TurnBody['messages'] {
   const out: TurnBody['messages'] = [];
   for (const m of messages) {
     if (m.role !== 'system') { out.push(m); continue; }
-    if (typeof m.content !== 'string') continue;
     const prev = out[out.length - 1];
     if (!prev || prev.role !== 'user') continue;
     const blocks = typeof prev.content === 'string' ? [{ type: 'text', text: prev.content }] : [...(prev.content as unknown[])];
-    blocks.push({ type: 'text', text: `<situation>\n${m.content}\n</situation>` });
+    blocks.push({ type: 'text', text: `<situation>\n${m.content as string}\n</situation>` });
     out[out.length - 1] = { ...prev, content: blocks };
   }
   return out;
 }
 
+/**
+ * QA2-F7-3: the models a mode may be switched to. Each takes the request buildParams sends (adaptive
+ * thinking and output_config.effort from low to max). Anything else, a typo or a model such as Haiku
+ * 4.5 that rejects adaptive thinking, would fail every turn in that mode, so it is ignored. These ids
+ * have no dated snapshots, so an id with a date suffix is ignored like any other unknown id.
+ */
+const MODE_MODELS = new Set(['claude-opus-5-5', 'claude-opus-5', 'claude-opus-4-8', 'claude-opus-4-7', 'claude-sonnet-5', 'claude-fable-5-1', 'claude-fable-5', 'claude-mythos-5-1', 'claude-mythos-5']);
+const overrideFor = (mode: TurnBody['mode'], env: Env): string | undefined => {
+  const v = (env as Record<string, unknown>)[`MODEL_${mode.toUpperCase()}`];
+  return typeof v === 'string' && v.trim() ? v.trim() : undefined;
+};
+const usableOverride = (v: string): boolean => MODE_MODELS.has(v);
+/** F7: the model for one mode: MODEL_<MODE> when set to a model the Worker can drive, else MODEL, else the default. */
+export function modelFor(mode: TurnBody['mode'], env: Env): string {
+  const v = overrideFor(mode, env);
+  if (v && usableOverride(v)) return v;
+  return env.MODEL || DEFAULT_MODEL;
+}
+/** QA2-F7-3: the modes whose MODEL_<MODE> is set but ignored, for /health and the deploy check. */
+export function ignoredModelOverrides(env: Env): Mode[] {
+  return MODES.filter(m => { const v = overrideFor(m, env); return !!v && !usableOverride(v); });
+}
+
 export function buildParams(body: TurnBody, env: Env, opts: { foldSystem?: boolean } = {}): MessageCreateParamsStreaming {
-  const model = env.MODEL || DEFAULT_MODEL;
+  const model = modelFor(body.mode, env);
   const cfg = MODE_CONFIG[body.mode];
   const fold = opts.foldSystem ?? !supportsSystemMessages(model);
   const messages = (fold ? foldSystemMessages(body.messages) : body.messages) as BetaMessageParam[];
   const tools = body.mode === 'brief' ? READ_TOOLS : cfg.conversational ? TOOLS : null;
   const format = FORMATS[body.mode];
   const betas = ['server-side-fallback-2026-07-01'];
-  if (body.messages.some(m => m.role === 'system' && Array.isArray(m.content))) betas.push('mid-conversation-output-config-2026-07-01');
   const preserved = PRESERVED_THINKING.has(model);
   if (preserved) betas.push('thinking-binding-controls-2026-08-01');
   const params = {
@@ -132,7 +164,9 @@ export type SseEvent =
   | { t: 'refusal'; category: string | null }
   | { t: 'error'; code: ErrorCode; message: string; retryAfter?: number; detail?: string };
 
-export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout';
+export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout';
+
+export const REGION_MESSAGE = "Escobar isn't available on this network right now. Try mobile data.";
 
 /** Maps SDK errors by type, never by message text (the one exception is the system-role probe below). */
 /** The API's own error text for a rejected request (no secrets in it), so a 400 can be diagnosed from the app or `wrangler tail`. */
@@ -149,7 +183,9 @@ export function mapError(err: unknown): { code: ErrorCode; message: string; retr
     const ra = Number(err.headers?.get?.('retry-after'));
     return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.', ...(Number.isFinite(ra) && ra > 0 ? { retryAfter: ra } : {}) };
   }
-  if (err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError) return { code: 'upstream_auth', message: 'The coach is not set up correctly.' };
+  // PL-20: Anthropic answers 403 by the caller's location; 401 is a bad key. Both keep the API's text.
+  if (err instanceof Anthropic.PermissionDeniedError) { const detail = errorDetail(err); return { code: 'upstream_region', message: REGION_MESSAGE, ...(detail ? { detail } : {}) }; }
+  if (err instanceof Anthropic.AuthenticationError) { const detail = errorDetail(err); return { code: 'upstream_auth', message: 'The coach is not set up correctly.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.BadRequestError || err instanceof Anthropic.UnprocessableEntityError || err instanceof Anthropic.NotFoundError) { const detail = errorDetail(err); return { code: 'invalid', message: 'The request was not accepted.', ...(detail ? { detail } : {}) }; }
   if (err instanceof Anthropic.APIError && err.status === 529) return { code: 'upstream_busy', message: 'The coach is busy. Try again in a moment.' };
   if (err instanceof Anthropic.InternalServerError || err instanceof Anthropic.APIConnectionError || err instanceof Anthropic.APIError) return { code: 'upstream', message: 'The coach is unavailable right now.' };
@@ -177,7 +213,7 @@ export const IDLE_TIMEOUT_MS = 60_000;
  * when an error or refusal was emitted instead. `emittedAny` tells the caller whether a
  * retry is still safe.
  */
-export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean }> {
+export async function runStep(client: ClientLike, params: MessageCreateParamsStreaming, emit: (e: SseEvent) => void, opts: { idleMs?: number; signal?: AbortSignal } = {}): Promise<{ final: BetaMessage | null; emittedAny: boolean; error?: unknown; timedOut?: boolean; refused?: boolean; outputTokens?: number }> {
   const idleMs = opts.idleMs ?? IDLE_TIMEOUT_MS;
   const controller = new AbortController();
   opts.signal?.addEventListener('abort', () => controller.abort());
@@ -216,7 +252,8 @@ export async function runStep(client: ClientLike, params: MessageCreateParamsStr
     if (final.stop_reason === 'refusal') {
       const cat = (final as unknown as { stop_details?: { category?: string | null } | null }).stop_details?.category ?? null;
       emit({ t: 'refusal', category: cat });
-      return { final: null, emittedAny };
+      // A refusal is still billed (QA-R0-3): report its output so the handler can count it.
+      return { final: null, emittedAny, refused: true, outputTokens: final.usage?.output_tokens ?? 0 };
     }
     const content = pruneFallback(final.content as unknown[]);
     emit({ t: 'final', content, stop_reason: final.stop_reason, usage: final.usage, model: final.model });

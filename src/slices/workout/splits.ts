@@ -34,7 +34,6 @@ export function deleteSplit(id: string): void {
     ...s,
     splits: s.splits.filter(sp => sp.id !== id),
     schedule: Object.fromEntries(Object.entries(s.schedule).map(([d, v]) => [d, v === id ? null : v])) as typeof s.schedule,
-    active: s.active?.splitId === id ? null : s.active,
   }));
 }
 

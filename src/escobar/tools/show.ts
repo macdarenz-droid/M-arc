@@ -7,11 +7,11 @@ import type { ShowComponentId } from '@/core/models';
 import { SHOW_COMPONENT_IDS, WEEKDAYS } from '@/core/models';
 import { addDays, weekStart } from '@/core/dates';
 import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
-import { exerciseHistory } from '@/brain/history';
-import { plateauStatus, trend } from '@/brain/trend';
+import { modeOf, exerciseHistory } from '@/brain/history';
+import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
-import { weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -19,14 +19,16 @@ import { warmupSets } from '@/brain/coach/pre';
 import { pickCue } from '@/brain/coach/cues';
 import { substitutesFor } from '@/brain/substitute';
 import { weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
-import { resolveProfile } from '@/brain/units';
 import { ToolError, getHeartSession, loadOf } from './read';
 import { planDraftArg } from './actions';
-import { coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, type ToolCtx } from './context';
+import { coachCtx, exerciseName, exerciseOf, progressionCtxFor, readinessToday, recoveryAt, redactDrivers, type ToolCtx } from './context';
+import { isWorkingSet } from '@/brain/exposure';
 
 type P = Record<string, unknown>;
 const r1 = (v: number): number => Math.round(v * 10) / 10;
 const lastN = <T>(xs: T[], n = 12): T[] => (xs.length > n ? xs.slice(-n) : xs);
+/** n items spread evenly, always keeping the first and the last. */
+export const sampleEvenly = <T>(xs: T[], n: number): T[] => (xs.length <= n ? xs : Array.from({ length: n }, (_, i) => xs[Math.round((i * (xs.length - 1)) / (n - 1))]!));
 const intIn = (v: unknown, lo: number, hi: number, def: number, name: string): number => {
   if (v == null) return def;
   const n = Math.round(Number(v));
@@ -57,12 +59,16 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const metric = params.metric === 'top_set' || params.metric === 'volume' ? params.metric : 'e1rm';
       const all = exerciseHistory(s.sessions, id, s.customExercises);
       const since = addDays(ctx.today, -weeks * 7);
-      const hist = lastN(all.filter(h => h.day >= since));
-      const val = (h: typeof hist[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg : Math.round(h.volume));
+      // ES-15: first/last/best over the whole window; the drawn points are 12 spread evenly across it.
+      const inWindow = all.filter(h => h.day >= since);
+      const val = (h: typeof inWindow[number]) => (metric === 'e1rm' ? r1(h.bestE1rm || h.topKg) : metric === 'top_set' ? h.topKg : Math.round(h.volume));
+      const hist = sampleEvenly(inWindow, 12);
       const points = hist.map(h => ({ day: h.day, value: val(h) }));
-      const values = points.map(p => p.value).filter(v => v > 0);
-      const p = plateauStatus(all);
-      const t = trend(all.slice(-12).map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+      const values = inWindow.map(val).filter(v => v > 0);
+      // QA-R3a-2: judged by the lift's mode (less assistance is progress).
+      const liftMode = modeOf(id, s.customExercises);
+      const p = plateauStatus(all, liftMode);
+      const t = liftTrend(all, liftMode);
       return {
         exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: metric === 'volume' ? 'kg' : 'kg', weeks, points,
         first: values[0] ?? null, last: values.at(-1) ?? null, best: values.length ? Math.max(...values) : null,
@@ -90,11 +96,11 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const muscles = Array.isArray(params.muscles) ? (params.muscles as string[]).filter(m => MUSCLE_IDS.includes(m as MuscleId)) as MuscleId[] : undefined;
       intIn(params.weeks, 1, 12, 1, 'weeks');
       const rows = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(r => (muscles?.length ? muscles.includes(r.muscle) : r.status !== 'unknown')).sort((a, b) => b.thisWeekSets - a.thisWeekSets).slice(0, 12);
-      return { bars: rows.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), sets: r.thisWeekSets, band: r.band, status: r.status })), empty: rows.length ? undefined : 'No sets logged this week yet.' };
+      return { bars: rows.map(r => ({ muscle: r.muscle, label: muscleLabel(r.muscle), sets: r.thisWeekSets, lastWeekSets: r.lastWeekSets, band: r.band, status: r.status })), empty: rows.length ? undefined : 'No sets logged this week yet.' };
     }
     case 'readiness_gauge': {
       const r = readinessToday(ctx);
-      return r ? { score: r.score, band: r.band, confidence: r.confidence, calibrating: r.calibrating, drivers: r.drivers, loadAdvice: r.loadAdvice } : { score: null, empty: 'No readiness yet: add a check-in or connect health data.' };
+      return r ? { score: r.score, band: r.band, confidence: r.confidence, calibrating: r.calibrating, drivers: redactDrivers(r.drivers, s.escobar.sharing.health), loadAdvice: r.loadAdvice } : { score: null, empty: 'No readiness yet: add a check-in or connect health data.' };
     }
     case 'readiness_history': {
       const days = intIn(params.days, 7, 30, 14, 'days');
@@ -105,7 +111,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'week_summary': {
       const off = intIn(params.offsetWeeks, 0, 8, 0, 'offsetWeeks');
       const day = addDays(weekStart(ctx.today), -7 * off + (off ? 6 : 0));
-      const w = weekSummary(s.sessions, off ? day : ctx.today, s.customExercises, WEEKDAYS.filter(d => s.schedule[d]).length || 3);
+      const w = weekSummary(s.sessions, off ? day : ctx.today, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, off ? day : ctx.today));
       return { week: w.start, workouts: w.workouts, sets: w.sets, volumeKg: w.volumeKg, records: w.records.length, grade: w.grade.title };
     }
     case 'session_summary': {
@@ -125,7 +131,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'records_list': {
       const id = params.exerciseId != null ? exId(ctx, params.exerciseId) : undefined;
       const limit = intIn(params.limit, 1, 10, 5, 'limit');
-      const rows = allRecords(s.sessions, s.customExercises).filter(r => !id || r.exerciseId === id).slice(0, limit);
+      const rows = allRecords(s.sessions, s.customExercises, s.preferences.weightUnit).filter(r => !id || r.exerciseId === id).slice(0, limit);
       return { records: rows.map(r => ({ exercise: r.exerciseName, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail })), empty: rows.length ? undefined : 'No records yet.' };
     }
     case 'plan_week': {
@@ -145,14 +151,14 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'exercise_card': {
       const id = exId(ctx, params.exerciseId);
       const e = exerciseOf(ctx, id)!;
-      const profile = resolveProfile(id, s.units.activeGymId, s.units, e);
-      const next = suggestNext(s.sessions, id, s.goal, ctx.today, e.defaultSets, s.customExercises, { equipment: profile });
-      const e1 = exerciseHistory(s.sessions, id, s.customExercises).at(-1)?.bestE1rm ?? 0;
+      const pctx = progressionCtxFor(ctx, id);
+      const profile = pctx.equipment;
+      const next = suggestNext(s.sessions, id, s.goal, ctx.today, e.defaultSets, s.customExercises, pctx);
       const cue = pickCue(e, 'coach', `${ctx.today}|${id}`);
       return {
         exercise: e.name, exerciseId: id, equipment: e.equipment, primary: e.primary, secondary: e.secondary,
         next: { target: next.target, reason: next.reason },
-        warmup: e.role === 'main' && e1 > 0 ? warmupSets(e1, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
+        warmup: e.role === 'main' && (next.sets[0]?.kg ?? 0) > 0 ? warmupSets(next.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
         cue: cue?.text ?? null, substitutes: substitutesFor(e, s.customExercises).slice(0, 3).map(x => x.name),
       };
     }
@@ -168,7 +174,7 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
         if (metric === 'sessions') return inP.length;
         if (metric === 'e1rm') return r1(Math.max(0, ...exerciseHistory(inP, exercise!, s.customExercises).map(h => h.bestE1rm)));
         let sets = 0, vol = 0;
-        for (const x of inP) for (const e of x.exercises) { if (exercise && e.exerciseId !== exercise) continue; for (const st of e.sets) { if ((st.reps ?? 0) > 0 || (st.durationSec ?? 0) > 0) { sets++; vol += (st.kg ?? 0) * (st.reps ?? 0); } } }
+        for (const x of inP) for (const e of x.exercises) { if (exercise && e.exerciseId !== exercise) continue; for (const st of e.sets) { if (isWorkingSet(st)) { sets++; vol += (st.kg ?? 0) * (st.reps ?? 0); } } }
         return metric === 'sets' ? sets : Math.round(vol);
       };
       const va = calc(a), vb = calc(b);
@@ -184,5 +190,3 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
   }
 }
 
-/** Weekly totals used by compare-style views. */
-export const weeklyTotals = (ctx: ToolCtx, weeks: number) => weeklyVolumeHistory(ctx.state.sessions, ctx.today, weeks, ctx.state.customExercises);

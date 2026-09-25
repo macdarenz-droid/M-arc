@@ -1,16 +1,20 @@
 /** Citation chips (§4.2, §14.2): a tiny superscript that opens the fact's source. */
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
-/** Open state for a popover that closes on the next tap anywhere. */
-function usePopover(): [boolean, () => void] {
+/**
+ * Open state for a popover that closes on the next tap outside it (ES-28). A tap inside
+ * its own wrapper is left alone, so the button's own click can toggle it shut.
+ */
+function usePopover(): [boolean, () => void, (el: HTMLElement | null) => void] {
   const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (!open) return;
-    const close = () => setOpen(false);
-    const t = setTimeout(() => document.addEventListener('pointerdown', close, { once: true }), 0);
+    const close = (e: Event) => { if (wrap.current && e.target instanceof Node && wrap.current.contains(e.target)) return; setOpen(false); };
+    const t = setTimeout(() => document.addEventListener('pointerdown', close), 0);
     return () => { clearTimeout(t); document.removeEventListener('pointerdown', close); };
   }, [open]);
-  return [open, () => setOpen(o => !o)];
+  return [open, () => setOpen(o => !o), el => { wrap.current = el; }];
 }
 import type { KnowledgeCard } from '../knowledge/cards';
 import type { Fact } from '../types';
@@ -25,10 +29,10 @@ export const sourceLabel = (f: Fact): string => SOURCE[f.source.tool] ?? f.sourc
 
 /** One quiet marker per sentence; its popover lists every fact the sentence used. */
 export function Citation({ n, facts }: { n: number; facts: Fact[] }) {
-  const [open, toggle] = usePopover();
+  const [open, toggle, ref] = usePopover();
   if (!facts.length) return null;
   return (
-    <span class="esc-cite-wrap">
+    <span class="esc-cite-wrap" ref={ref}>
       <button type="button" class="esc-cite" aria-expanded={open} aria-label={`Sources for this sentence (${facts.length})`} onClick={toggle}>{n}</button>
       {open && (
         <span class="esc-pop" role="note">
@@ -40,10 +44,10 @@ export function Citation({ n, facts }: { n: number; facts: Fact[] }) {
 }
 
 export function CardCitation({ id, card }: { id: string; card?: KnowledgeCard }) {
-  const [open, toggle] = usePopover();
+  const [open, toggle, ref] = usePopover();
   if (!card) return null;
   return (
-    <span class="esc-cite-wrap">
+    <span class="esc-cite-wrap" ref={ref}>
       <button type="button" class="esc-cite esc-cite-card" aria-expanded={open} aria-label={`Evidence: ${card.title}`} onClick={toggle}>ev</button>
       {open && <span class="esc-pop" role="note" data-card={id}><b>{card.title}</b><span>{card.statement}</span><span class="muted">Evidence: {card.rating}{card.sources[0] ? ` · ${card.sources[0].title} (${card.sources[0].year})` : ''}</span></span>}
     </span>

@@ -34,3 +34,28 @@ describe('personal records', () => {
     expect(allRecords([a, b]).map(r => r.kind)).toEqual(['best_reps']);
   });
 });
+
+describe('records in the display unit (BR-28)', () => {
+  it('an lb user sees the load as typed', async () => {
+    const { allRecords } = await import('@/brain/prs');
+    const { session } = await import('./helpers');
+    const b = 'lib_barbell_bench_press';
+    const s = [
+      session('2026-09-01', [{ id: b, sets: [{ kg: 92.986, entered: { value: 205, unit: 'lb' }, reps: 5, effort: 'ideal' }] }]),
+      session('2026-09-05', [{ id: b, sets: [{ kg: 95.254, entered: { value: 210, unit: 'lb' }, reps: 5, effort: 'ideal' }] }]),
+    ];
+    const heaviest = allRecords(s, [], 'lb').find(r => r.kind === 'heaviest')!;
+    expect(heaviest.detail).toBe('210 lb × 5');
+    expect(allRecords(s).find(r => r.kind === 'heaviest')!.detail).toBe('95.25 kg × 5');
+  });
+});
+
+describe('records and set kinds (F2)', () => {
+  it('a heavier warm-up or drop set never sets a record', () => {
+    const a = session('2026-09-01', [{ id: ex, sets: sets(60, 8) }]);
+    const b = session('2026-09-08', [{ id: ex, sets: [{ kg: 70, reps: 3, kind: 'warmup' }, { kg: 50, reps: 20, kind: 'drop' }, ...sets(60, 8)] }]);
+    expect(allRecords([a, b])).toEqual([]);
+    expect(isLiveRecord([a], ex, { kg: 70, reps: 8, kind: 'drop' })).toBe(false);
+    expect(isLiveRecord([a], ex, { kg: 70, reps: 8 })).toBe(true);
+  });
+});

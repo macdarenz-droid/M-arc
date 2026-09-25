@@ -104,3 +104,34 @@ describe('progression', () => {
     });
   });
 });
+
+describe('carries progress by distance or time (QA-R6-5)', () => {
+  const id = 'lib_farmer_s_carry';
+  it('a carry logged as 32 kg × 40 m aims 5 m further at the same load, never "1 reps"', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }, { kg: 32, distanceM: 35, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toBe('32 kg · 45 m');
+    expect(n.target).not.toMatch(/reps/);
+    expect(n.mode).toBe('distance');
+  });
+  it('a max-effort carry repeats its distance; a timed one adds five seconds', () => {
+    const max = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'max' }] }])];
+    expect(suggestNext(max, id, 'lean', '2026-09-14').target).toBe('32 kg · 40 m');
+    const timed = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, effort: 'ideal' }] }])];
+    expect(suggestNext(timed, id, 'lean', '2026-09-14').target).toBe('24 kg · 65s');
+  });
+});
+
+describe('carries in lb and timed rep moves (QA2-FE-2, QA2-FE-7, QA2-FE-8)', () => {
+  it('a carry done with 70 lb dumbbells targets 70 lb, not 31.751 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 31.751, entered: { value: 70, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    expect(suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') }).target).toBe('70 lb · 45 m');
+    expect(suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14').target).not.toMatch(/31\.751/);
+  });
+  it('burpees logged with reps and seconds keep a rep goal', () => {
+    const h = [session('2026-09-10', [{ id: 'lib_burpee', sets: [{ reps: 15, durationSec: 45, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_burpee', 'lean', '2026-09-14');
+    expect(n.target).toBe('16 reps');
+  });
+});

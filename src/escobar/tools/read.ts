@@ -5,25 +5,24 @@
  */
 import type { LoggedSet, Session } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
-import { addDays, daysBetween, weekdayOf } from '@/core/dates';
+import { addDays, dayKey, daysBetween, weekdayOf } from '@/core/dates';
 import { LIBRARY, searchExercises } from '@/core/exercises';
 import { MUSCLE_BY_ID, MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
-import { exerciseHistory } from '@/brain/history';
-import { effectiveOneRm } from '@/brain/e1rm';
-import { plateauStatus, trend } from '@/brain/trend';
+import { modeOf, exerciseHistory } from '@/brain/history';
+import { liftTrend, plateauStatus } from '@/brain/trend';
 import { effortDrift } from '@/brain/effort';
-import { allRecords, PR_LABEL } from '@/brain/prs';
+import { allRecords, PR_LABEL, type PrKind } from '@/brain/prs';
+import { kgToDisplay } from '@/core/units';
 import { suggestNext } from '@/brain/progression';
 import { warmupSets } from '@/brain/coach/pre';
-import { recoveryPctFor, trainingAgeMonths } from '@/brain/recovery';
+import { trainingAgeMonths } from '@/brain/recovery';
 import { readinessBaselines } from '@/brain/readiness';
 import { coachInsights, deloadOffer, readinessSeries, CATEGORY_LABEL, type Insight } from '@/brain/coach/rules';
 import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
-import { weeklyMuscleSets } from '@/brain/exposure';
-import { daysSinceLastSession, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
+import { daysSinceLastSession, plannedThisWeek, trainingStreak, weekSummary, weeklyVolumeHistory } from '@/brain/weekly';
 import { restingHr, hrMax, zones, effortMismatch, intraSessionDrift } from '@/brain/heart';
 import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
@@ -31,8 +30,10 @@ import { flagsForSet } from '@/brain/fidelity';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { loadableNear, loadableValues, resolveProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
+import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
+import { one } from '../context/brief';
 import {
-  activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -41,7 +42,12 @@ const r1 = (v: number): number => Math.round(v * 10) / 10;
 const r2 = (v: number): number => Math.round(v * 100) / 100;
 
 /** Trims the longest arrays in a result until its JSON fits `maxBytes`. */
-export function capJson<T>(data: T, maxBytes: number): T {
+/**
+ * Trims the longest arrays until the JSON fits. Arrays must be ordered most-important-first: the
+ * default drops from the end; `dropFrom: 'start'` is for chronological arrays whose newest rows
+ * are at the end (ES-01).
+ */
+export function capJson<T>(data: T, maxBytes: number, { dropFrom = 'end' }: { dropFrom?: 'start' | 'end' } = {}): T {
   let json = JSON.stringify(data);
   if (json.length <= maxBytes) return data;
   const copy = JSON.parse(json) as unknown;
@@ -54,7 +60,7 @@ export function capJson<T>(data: T, maxBytes: number): T {
   for (let guard = 0; guard < 500 && json.length > budget; guard++) {
     const longest = arrays.filter(a => a.length > 1).sort((a, b) => JSON.stringify(b).length - JSON.stringify(a).length)[0];
     if (!longest) break;
-    longest.pop();
+    if (dropFrom === 'start') longest.shift(); else longest.pop();
     json = JSON.stringify(copy);
   }
   if (copy && typeof copy === 'object' && !Array.isArray(copy)) (copy as Record<string, unknown>).truncated = true;
@@ -64,7 +70,8 @@ export function capJson<T>(data: T, maxBytes: number): T {
 /** A load in canonical kg plus the equipment's own reading. */
 export function loadOf(ctx: ToolCtx, exerciseId: string, kg: number): { kg: number; unit: 'kg' | 'lb'; value: number } {
   const profile = resolveProfile(exerciseId, ctx.state.units.activeGymId, ctx.state.units, exerciseOf(ctx, exerciseId));
-  const value = profile.unit === 'lb' ? r1(kg / 0.45359237) : r2(kg);
+  // QA2-FE-5: the app's own conversion, so quarter-pound loads (26.25 lb) read as on screen.
+  const value = kgToDisplay(kg, profile.unit);
   return { kg: r2(kg), unit: profile.unit, value };
 }
 
@@ -76,6 +83,7 @@ function setOut(ctx: ToolCtx, exerciseId: string, s: LoggedSet) {
   if (s.durationSec) o.durationSec = s.durationSec;
   if (s.distanceM) o.distanceM = s.distanceM;
   if (s.flags?.length) o.flags = s.flags;
+  if (s.kind) o.kind = s.kind; // QA2-FE-3: a warm-up or drop set says so
   return o;
 }
 
@@ -110,7 +118,8 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
   const s = ctx.state;
   const split = scheduledSplitFor(ctx);
   const r = readinessToday(ctx);
-  const w = weekSummary(s.sessions, ctx.today, s.customExercises, WEEKDAYS.filter(d => s.schedule[d]).length || 3);
+  const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
+  const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
   const deload = activeDeloadOf(ctx);
   const override = todayOverrideOf(ctx);
   return capJson({
@@ -121,8 +130,8 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     live: s.active ? { split: s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'Workout' } : null,
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
-    week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: WEEKDAYS.filter(d => s.schedule[d]).length },
-    streak: trainingStreak(s.sessions, s.schedule, ctx.today),
+    week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: planned ?? 0 }, // QA-R6-12: days off are not planned
+    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
     lighterWeek: deload ? { day: Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
     daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today),
@@ -146,7 +155,7 @@ export function getSessions(input: { from?: string; to?: string; splitId?: strin
     count: list.length,
     sessions: list.map(x => ({
       sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60),
-      sets: x.exercises.reduce((a, e) => a + e.sets.length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
+      sets: x.exercises.reduce((a, e) => a + e.sets.filter(isWorkingSet).length, 0), topLifts: topLifts(ctx, x), fidelity: x.logging?.mode ?? 'legacy',
     })),
   }, 5000);
 }
@@ -156,7 +165,7 @@ export function getSession(input: { sessionId?: string }, ctx: ToolCtx) {
   const x = s.sessions.find(y => y.id === input.sessionId);
   if (!x) throw new ToolError('unknown sessionId; use get_sessions');
   const prior = s.sessions.filter(y => y.startedAt < x.startedAt);
-  const notes = postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength' }).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
+  const notes = postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
   const heart = s.escobar.sharing.health && x.heart ? { avgBpm: x.heart.avgBpm, maxBpm: x.heart.maxBpm, activeKcal: x.heart.energy?.activeKcal ?? null } : undefined;
   return capJson({
     sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), fidelity: x.logging?.mode,
@@ -176,13 +185,18 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const all = exerciseHistory(s.sessions, id, s.customExercises);
   const since = addDays(ctx.today, -weeks * 7);
   const hist = all.filter(h => h.day >= since);
-  const p = plateauStatus(all);
-  const t = trend(all.slice(-12).map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
-  const records = allRecords(s.sessions, s.customExercises).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
+  // QA-R3a-2: judged by the lift's mode (less assistance is progress).
+  const liftMode = modeOf(id, s.customExercises);
+  const p = plateauStatus(all, liftMode);
+  const t = liftTrend(all, liftMode);
+  const records = allRecords(s.sessions, s.customExercises, s.preferences.weightUnit).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({
     exercise: exerciseName(ctx, id), exerciseId: id, weeks,
-    sessions: hist.map(h => ({ day: h.day, top: { ...(h.topKg > 0 ? loadOf(ctx, id, h.topKg) : {}), reps: h.topKg > 0 ? h.topReps : h.bestReps }, e1rm: h.bestE1rm > 0 ? r1(h.bestE1rm) : null, sets: h.sets.length, effortMix: effortMix(h.sets) })),
+    // F1: the person's own setup note (not health data).
+    ...(s.exerciseNotes[id] ? { setupNote: one(s.exerciseNotes[id]) } : {}),
+    // Newest first, so capping drops the oldest sessions (ES-01).
+    sessions: [...hist].reverse().map(h => ({ day: h.day, top: { ...(h.topKg > 0 ? loadOf(ctx, id, h.topKg) : {}), reps: h.topKg > 0 ? h.topReps : h.bestReps }, e1rm: h.bestE1rm > 0 ? r1(h.bestE1rm) : null, sets: h.sets.length, effortMix: effortMix(h.sets) })),
     plateau: { status: p.status, confidence: p.confidence },
     trend: { direction: t.direction, pctPerWeek: r2(t.slopePerWeek * 100), confidence: t.confidence },
     records,
@@ -195,18 +209,15 @@ export function getNextTarget(input: { exerciseId?: string; plannedSets?: number
   const id = exerciseArg(ctx, input.exerciseId);
   const s = ctx.state;
   const planned = int(input.plannedSets, 1, 6, 3, 'plannedSets');
-  const profile = resolveProfile(id, s.active?.gymId ?? s.units.activeGymId, s.units, exerciseOf(ctx, id));
-  const recoveryPct = recoveryPctFor(id, s.customExercises, recoveryAt(ctx));
-  const r = readinessToday(ctx);
-  const factor = todayOverrideOf(ctx)?.changes.find(c => c.kind === 'load' && c.exerciseId === id);
-  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, { readiness: r, recoveryPct, deload: activeDeloadOf(ctx), equipment: profile, ...(factor && factor.kind === 'load' ? { loadFactor: factor.factor } : {}) });
-  const e1 = exerciseHistory(s.sessions, id, s.customExercises).at(-1)?.bestE1rm ?? 0;
+  const pctx = progressionCtxFor(ctx, id);
+  const profile = pctx.equipment;
+  const sug = suggestNext(s.sessions, id, s.goal, ctx.today, planned, s.customExercises, pctx);
   const ex = exerciseOf(ctx, id)!;
   return capJson({
     exercise: ex.name, exerciseId: id,
     target: sug.target, mode: sug.mode, kg: sug.kg, ...(sug.unit ? { unit: sug.unit, value: sug.value } : {}), reps: sug.reps, reason: sug.reason, confidence: sug.confidence,
     sets: sug.sets.map(x => ({ kg: x.kg, reps: x.reps, durationSec: x.durationSec, note: x.note })),
-    warmup: ex.role === 'main' && e1 > 0 ? warmupSets(e1, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
+    warmup: ex.role === 'main' && (sug.sets[0]?.kg ?? 0) > 0 ? warmupSets(sug.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
     recovery: ex.primary.map(m => ({ muscle: m, pct: recoveryAt(ctx).find(x => x.muscle === m)?.pct ?? 100 })),
   }, 3000);
 }
@@ -227,6 +238,8 @@ export function getRecovery(input: { muscles?: string[]; at?: string }, ctx: Too
       muscle: r.muscle, label: muscleLabel(r.muscle), pct: r.pct, hoursLeft: Math.round(r.hoursLeft),
       readyInHours: r.readyInHours ? r.readyInHours.map(Math.round) : null, fullInHours: r.fullInHours != null ? Math.round(r.fullInHours) : null,
       drivers: r.drivers.slice(0, 2).map(d => d.text), personalized: r.personalized, confidence: r.confidence, lastDay: r.lastDay,
+      // QA2-FC-5: held back by today's soreness rating, so the hours say nothing.
+      ...(r.soreToday ? { soreToday: true } : {}),
     })),
   }, 5000);
 }
@@ -244,7 +257,7 @@ export function getReadiness(input: { day?: string; historyDays?: number }, ctx:
   const health = s.escobar.sharing.health;
   return capJson({
     day: day ?? ctx.today,
-    readiness: r ? { score: r.score, band: r.band, loadAdvice: r.loadAdvice, confidence: r.confidence, calibrating: r.calibrating, ...(health ? { drivers: r.drivers } : { drivers: r.drivers.filter(d => !/heart|sleep|hrv/i.test(d)) }) } : null,
+    readiness: r ? { score: r.score, band: r.band, loadAdvice: r.loadAdvice, confidence: r.confidence, calibrating: r.calibrating, drivers: redactDrivers(r.drivers, health) } : null,
     ...(health ? { baselines: { restingHr7d: b.restingHr7d != null ? r1(b.restingHr7d) : null, restingHr28d: b.restingHr28d != null ? r1(b.restingHr28d) : null, sleep14dMedianMin: b.sleep14dMedian } } : {}),
     checkInToday: !!s.checkIns.find(c => c.day === ctx.today),
     ...(historyDays ? { history: series.slice(0, historyDays).map((x, i) => ({ day: addDays(ctx.today, -i), band: x?.band ?? null, score: x?.score ?? null })) } : {}),
@@ -258,7 +271,9 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
   const status = muscleVolumeStatus(s.sessions, ctx.today, s.customExercises).filter(m => (muscles ? muscles.includes(m.muscle) : m.status !== 'unknown'));
   const history = weeklyVolumeHistory(s.sessions, ctx.today, weeks, s.customExercises);
   return capJson({
-    muscles: status.map(m => ({ muscle: m.muscle, thisWeekSets: m.thisWeekSets, medianSets: m.medianSets, band: m.band, status: m.status })),
+    // QA-R3a-8: status is judged on completed weeks, so the week it was judged on goes with it.
+    muscles: status.map(m => ({ muscle: m.muscle, thisWeekSets: m.thisWeekSets, lastWeekSets: m.lastWeekSets, medianSets: m.medianSets, band: m.band, status: m.status })),
+    statusJudgedOn: 'the last completed week (over also when this week is already above the band)',
     weeks: history.map(w => ({ week: w.week, sessions: w.sessions, sets: w.sets, volumeKg: w.volumeKg })),
   }, 5000);
 }
@@ -266,8 +281,11 @@ export function getVolume(input: { weeks?: number; muscles?: string[] }, ctx: To
 export function getRecords(input: { exerciseId?: string; limit?: number }, ctx: ToolCtx) {
   const limit = int(input.limit, 1, 20, 10, 'limit');
   const id = input.exerciseId != null ? exerciseArg(ctx, input.exerciseId) : undefined;
-  const list = allRecords(ctx.state.sessions, ctx.state.customExercises).filter(r => !id || r.exerciseId === id).slice(0, limit);
-  return capJson({ records: list.map(r => ({ exercise: r.exerciseName, exerciseId: r.exerciseId, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail, value: r2(r.value), previous: r2(r.previous) })) }, 4000);
+  const unit = ctx.state.preferences.weightUnit;
+  const list = allRecords(ctx.state.sessions, ctx.state.customExercises, unit).filter(r => !id || r.exerciseId === id).slice(0, limit);
+  // QA-R3b-2: a load record's numbers in the person's unit, like its detail.
+  const shown = (kind: PrKind, v: number) => (kind === 'heaviest' || kind === 'strength' ? kgToDisplay(v, unit) : r2(v));
+  return capJson({ records: list.map(r => ({ exercise: r.exerciseName, exerciseId: r.exerciseId, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail, value: shown(r.kind, r.value), previous: shown(r.kind, r.previous), ...(r.kind === 'heaviest' || r.kind === 'strength' ? { unit } : {}) })) }, 4000);
 }
 
 const insightOut = (i: Insight) => ({
@@ -281,7 +299,7 @@ export function getInsights(input: { includeSnoozed?: boolean }, ctx: ToolCtx) {
   const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50);
   const names = new Map<string, string>();
   for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
-  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })) }, 6);
+  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit }, 6);
   const offer = deloadOffer(c);
   return capJson({ insights: list.map(insightOut), weeklyReview: weekly.map(insightOut), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);
 }
@@ -318,15 +336,22 @@ export function getBody(input: { weeks?: number }, ctx: ToolCtx) {
     points: log.slice(-12).map(w => ({ day: w.day, kg: w.kg })),
     bodyFat: s.body.slice(-6).map(b => ({ day: b.day, pct: b.bodyFatPct })),
     bmi, heightCm: s.profile.heightCm ?? null,
-  }, 3000);
+  }, 3000, { dropFrom: 'start' });
 }
+
+const asOf = (syncedAt: string, day: string): string => {
+  const t = new Date(syncedAt);
+  return dayKey(t) === day ? t.toTimeString().slice(0, 5) : 'end of day';
+};
 
 export function getHealth(input: { days?: number }, ctx: ToolCtx) {
   const days = int(input.days, 1, 30, 7, 'days');
   const since = addDays(ctx.today, -days + 1);
   const list = ctx.state.healthDays.filter(d => d.day >= since).sort((a, b) => b.day.localeCompare(a.day));
   return capJson({
-    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null })),
+    // QA-R5a-4: a day's steps and calories are what the last sync that day read, not a full total.
+    days: list.map(d => ({ day: d.day, sleepMin: d.sleepMinutes ?? null, restingHr: d.restingHr ?? null, steps: d.steps ?? null, activeKcal: d.activeCalories ?? null, ...(d.syncedAt && (d.steps != null || d.activeCalories != null) ? { totalsAsOf: asOf(d.totalsSyncedAt ?? d.syncedAt, d.day) } : {}) /* QA2-FE-1 */ })),
+    note: 'steps and activeKcal are totals as of the last sync that day (totalsAsOf), so a past day can be lower than its real total.',
     restingHr7d: restingHr(ctx.state.healthDays, ctx.state.profile, ctx.today),
     hrvAvailable: list.some(d => d.lnRmssd != null),
   }, 4000);
@@ -364,15 +389,19 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
   let autoreg: string | null = null;
   if (cur) {
     const ex = exerciseOf(ctx, cur.exerciseId);
-    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, cur.sets.length, s.customExercises, { deload: activeDeloadOf(ctx) });
-    const first = cur.sets[0];
+    const pctx = progressionCtxFor(ctx, cur.exerciseId, a.gymId);
+    // QA-R6-3/11: warm-ups are neither planned working sets nor the first set autoregulation reads.
+    const working = cur.sets.filter(x => x.kind !== 'warmup');
+    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, Math.max(1, working.length), s.customExercises, pctx);
+    const first = firstWorkingSet(cur.sets);
     const tgt = sug.sets[0];
-    if (ex?.role === 'main' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length })?.action ?? null;
+    // QA-R4b-5: like Train, weighted main lifts only; on an assisted lift more kg means more help.
+    if (ex?.role === 'main' && ex.mode === 'weighted' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, equipment: pctx.equipment })?.action ?? null;
   }
   return capJson({
     active: true,
     split: s.splits.find(x => x.id === a.splitId)?.name ?? 'Workout', splitId: a.splitId, elapsedMin, paused: !!a.pausedAt,
-    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0).length, setsPlanned: cur.sets.length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
+    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(isWorkingSet).length, setsPlanned: cur.sets.filter(x => x.kind !== 'warmup').length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
     entries: a.entries.map(e => ({ exerciseId: e.exerciseId, exercise: e.name, done: e.done, skipped: e.skipped, sets: e.sets.length })),
     restSecLeft: a.rest ? Math.max(0, Math.round((a.rest.endsAt - ctx.now) / 1000)) : null,
     adjustment: autoreg,
@@ -414,8 +443,9 @@ export function getEquipment(input: { exerciseId?: string; gymId?: string }, ctx
   if (!input.exerciseId) return base;
   const id = exerciseArg(ctx, input.exerciseId);
   const ex = exerciseOf(ctx, id)!;
-  const p = resolveProfile(id, gymId, u, ex);
-  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, { equipment: p });
+  const pctx = progressionCtxFor(ctx, id, gymId);
+  const p = pctx.equipment;
+  const sug = suggestNext(ctx.state.sessions, id, ctx.state.goal, ctx.today, 3, ctx.state.customExercises, pctx);
   const values = loadableValues(p);
   let near: number[] = [];
   if (sug.kg != null) {
@@ -436,11 +466,3 @@ export function findInAppTool(input: { query?: string }) {
   return { results: findInApp(input.query, 5).map(p => ({ id: p.id, title: p.title, where: p.where, what: p.what, ...(p.how ? { how: p.how } : {}) })) };
 }
 
-/** Everything in weekly sets for one muscle over N weeks, for compare and show. */
-export function weeklySetsFor(ctx: ToolCtx, weeks: number, muscles?: MuscleId[]) {
-  return weeklyMuscleSets(ctx.state.sessions, ctx.today, weeks, ctx.state.customExercises).map(w => ({
-    week: w.week, sets: Object.fromEntries((Object.entries(w.sets) as Array<[MuscleId, number]>).filter(([m]) => !muscles || muscles.includes(m)).map(([m, v]) => [m, r1(v)])),
-  }));
-}
-
-export const e1rmOf = (kg: number, reps: number, effort?: 'easy' | 'ideal' | 'max') => effectiveOneRm(kg, reps, effort);

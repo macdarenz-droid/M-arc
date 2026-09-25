@@ -81,6 +81,10 @@ export interface SetHeart {
 }
 
 export interface LoggedSet {
+  /** Stable id (R2.8), created with the set in a live session and kept in history. Older sets have none. */
+  id?: string;
+  /** Live session only: draft until committed. Dropped when the session is finished. */
+  status?: 'draft' | 'committed' | 'skipped';
   kg?: number;
   reps?: number;
   effort?: Effort;
@@ -95,12 +99,18 @@ export interface LoggedSet {
   heart?: SetHeart;
   /** Exactly what was typed and in which unit (§25). `kg` stays the canonical number; display in the entered unit uses this verbatim. */
   entered?: { value: number; unit: LoadUnit };
+  /** F2: a warm-up is logged but never counted; a drop set counts but sets no record; to failure implies max effort. */
+  kind?: SetKind;
 }
+
+export type SetKind = 'warmup' | 'drop' | 'failure';
 
 export interface LoggedExercise {
   exerciseId: string;
   name: string;
   sets: LoggedSet[];
+  /** F1: a note for this exercise in this session. */
+  note?: string;
 }
 
 /** How a session was logged, and how much its timing can be trusted. See brain/fidelity.ts. */
@@ -164,6 +174,8 @@ export interface Session {
   heart?: SessionHeart;
   /** The gym this session was trained at (§25). */
   gymId?: string;
+  /** F1: a note for the whole session, from the finish screen. */
+  note?: string;
 }
 
 export interface SplitExercise {
@@ -191,12 +203,14 @@ export interface RestState {
 }
 
 export interface ActiveSession {
+  /** Created at start and kept as the finished Session's id (R2.8). */
+  id?: string;
   splitId: string;
   startedAt: string;
   pausedMs: number;
   pausedAt?: number;
   /** Working copy of the exercises for this session. */
-  entries: Array<{ exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean }>;
+  entries: Array<{ id?: string; exerciseId: string; name: string; sets: LoggedSet[]; done: boolean; skipped: boolean; /** Today's applied load change from Escobar (ES-02). */ loadFactor?: number; /** F1: today's note for this exercise. */ note?: string }>;
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;
@@ -237,6 +251,8 @@ export interface Preferences {
   showSpark: boolean;
   watch: WatchPreference;
   rest: RestPreference;
+  /** F5: a weekly "save a backup" notification (default on in the Android app). */
+  backupReminder?: boolean;
 }
 
 export interface Profile {
@@ -266,7 +282,7 @@ export interface ProfileChange {
   field: ProfileField;
   from: unknown;
   to: unknown;
-  source: 'user' | 'onboarding' | 'health_connect' | 'migration';
+  source: 'user' | 'onboarding' | 'health_connect' | 'migration' | 'escobar';
 }
 
 export interface Onboarding {
@@ -321,6 +337,8 @@ export interface BodyMeasurement {
   waistCm: number;
   hipCm?: number;
   bodyFatPct: number;
+  /** QA-R3a-10: set on readings computed with the cm formula; older readings are recomputed once on load. */
+  formula?: 'navy-cm';
 }
 
 export interface HealthSnapshot {
@@ -349,6 +367,8 @@ export interface DailyHealth {
   rmssdAt?: string;
   source: 'health_connect' | 'watch' | 'manual';
   syncedAt: string;
+  /** QA2-FE-1: when steps or active calories were last read; a later sync that failed them keeps this. */
+  totalsSyncedAt?: string;
 }
 
 /** The closed set of inline components Escobar can draw (§4.4). */
@@ -428,7 +448,8 @@ export interface EscobarState {
   todayOverride: TodayOverride | null;
   proactive: { enabled: boolean; shown: Record<string, string>; day: string; count: number };
   brief: DailyBrief | null;
-  usage: { day: string; turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number };
+  /** `costUsd` (F7): priced per step by the model that answered; absent on days recorded before it. */
+  usage: { day: string; turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number };
   /** The old single-thread chat (`coach.askThread`) has been imported once (§6.3). */
   legacyImported: boolean;
 }
@@ -492,6 +513,12 @@ export interface AppState {
   escobar: EscobarState;
   /** Gyms and equipment units (§25). */
   units: UnitsState;
+  /** RG-19 (D4): local days the person took off; a scheduled day off counts as unscheduled. Capped at 400. */
+  daysOff: string[];
+  /** F1: a sticky setup note per exercise id (seat height, grip), max 200 characters. */
+  exerciseNotes: Record<string, string>;
+  /** F5: when the last backup was exported. */
+  lastBackupAt?: string;
 }
 
 export function emptySchedule(): Record<Weekday, string | null> {
@@ -532,6 +559,8 @@ export function freshState(now = new Date()): AppState {
     insightFeedback: [],
     escobar: freshEscobar(),
     units: freshUnits('kg', now),
+    daysOff: [],
+    exerciseNotes: {},
   };
 }
 

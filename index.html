@@ -2,7 +2,7 @@
 <html lang="en" data-theme="silent-black">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#08090a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -12,11 +12,20 @@
   <link rel="icon" href="./icon-192.png" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <title>M/ARC</title>
+  <style>
+    /* First paint in the saved theme's colours, before the bundle injects its tokens (ST-25).
+       tests/theme.test.ts keeps these equal to src/theme/themes.ts. */
+    html[data-theme="silent-black"], html[data-theme="silent-black"] body { background: #08090a; color: #f7f8f8; }
+    html[data-theme="paper"], html[data-theme="paper"] body { background: #ffffff; color: #37352f; }
+    html[data-theme="ember"], html[data-theme="ember"] body { background: #07080a; color: #ffffff; }
+    html[data-theme="emerald"], html[data-theme="emerald"] body { background: #0f0f0f; color: #ededed; }
+    html[data-theme="midnight"], html[data-theme="midnight"] body { background: #0a2540; color: #f6f9fc; }
+  </style>
   <script>
-    // Apply the saved theme before first paint so there is no flash.
+    // Apply the saved theme before first paint so there is no flash; an unknown id keeps the default.
     try {
       var t = localStorage.getItem('marc.theme');
-      if (t) document.documentElement.setAttribute('data-theme', t);
+      if (['silent-black', 'paper', 'ember', 'emerald', 'midnight'].indexOf(t) >= 0) document.documentElement.setAttribute('data-theme', t);
     } catch (e) {}
   </script>
   <script>
@@ -24,6 +33,28 @@
     // silent blank screen — the CSS background paints, nothing else ever does, and there is
     // no signal to diagnose from. This turns that into a visible, plain-words error with a
     // self-service reset, wired up before the app module even loads so it catches everything.
+    // Once the app has rendered (__marcBooted), later errors only log: the app handles them itself.
+    // The rescue copy below duplicates src/core/rescue.ts on purpose: it must run before the bundle.
+    window.__marcBooted = false;
+    window.__marcRescue = function () {
+      var out = {};
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && (k.indexOf('marc.') === 0 || k === 'dailyTrackerPremium')) out[k] = localStorage.getItem(k);
+        }
+      } catch (e) {}
+      var text = JSON.stringify({ app: 'M/ARC', kind: 'rescue', savedAt: new Date().toISOString(), keys: out });
+      try {
+        var url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+        var a = document.createElement('a');
+        a.href = url; a.download = 'marc-rescue.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+      } catch (e) {
+        try { navigator.clipboard.writeText(text); } catch (e2) {}
+      }
+    };
     window.__marcCrash = function (err) {
       try {
         var app = document.getElementById('app');
@@ -34,20 +65,36 @@
         box.style.cssText = 'min-height:100%;display:flex;flex-direction:column;gap:14px;padding:24px 20px;font-family:system-ui,-apple-system,sans-serif;color:#f1f1ee;background:#08090a;box-sizing:border-box;';
         box.innerHTML =
           '<h1 style="font-size:18px;margin:0;">M/ARC could not start</h1>' +
-          '<p style="font-size:13px;line-height:1.5;color:#9a9aa2;margin:0;">Something went wrong before the app loaded. Your saved workouts are untouched. Screenshot this for support, or reset the app\'s local data below.</p>' +
+          '<p style="font-size:13px;line-height:1.5;color:#9a9aa2;margin:0;">Something went wrong before the app loaded. Your data is still on this device unless you reset. Save a copy first, then screenshot this for support.</p>' +
           '<pre style="font-size:11px;line-height:1.4;color:#c7c7cd;background:#151519;border:1px solid #2a2a31;border-radius:8px;padding:10px;overflow:auto;white-space:pre-wrap;max-height:40vh;margin:0;"></pre>' +
-          '<button type="button" style="all:unset;background:#c0392b;color:#fff;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Reset app data and reload</button>';
+          '<button type="button" data-rescue style="all:unset;background:#f1f1ee;color:#08090a;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Save a copy of my data</button>' +
+          '<button type="button" data-reset style="all:unset;background:#c0392b;color:#fff;font-weight:600;font-size:14px;padding:12px;border-radius:10px;text-align:center;cursor:pointer;">Reset app data and reload</button>';
         box.querySelector('pre').textContent = msg;
-        box.querySelector('button').addEventListener('click', function () {
-          try { localStorage.clear(); } catch (e) {}
+        box.querySelector('[data-rescue]').addEventListener('click', function () { window.__marcRescue(); });
+        box.querySelector('[data-reset]').addEventListener('click', function () {
+          // This handler also runs before the bundle starts. Only a stored handover
+          // is grounds to refuse reset; an uninitialised bridge is not an owner.
+          try {
+            if (localStorage.getItem('marc.workout.handover.v1') !== null) {
+              alert('Workout recovery must finish before resetting. Reload M/ARC or save a recovery copy.');
+              return;
+            }
+          } catch (e) { /* unavailable web storage does not establish a handover */ }
+          if (!confirm('This deletes every workout on this device. Continue?')) return;
+          try {
+            localStorage.clear();
+            // The native bridge may not be importable yet. Finish its wipe on the next boot.
+            if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())
+              localStorage.setItem('marc.workout.reset.v1', 'pending');
+          } catch (e) {}
           try { if (window.indexedDB && indexedDB.databases) { indexedDB.databases().then(function (dbs) { dbs.forEach(function (d) { indexedDB.deleteDatabase(d.name); }); }); } } catch (e) {}
           location.reload();
         });
         app.appendChild(box);
       } catch (e) { /* nothing more we can do from here */ }
     };
-    window.addEventListener('error', function (e) { window.__marcCrash(e.error || e.message); });
-    window.addEventListener('unhandledrejection', function (e) { window.__marcCrash(e.reason); });
+    window.addEventListener('error', function (e) { if (window.__marcBooted) { console.error(e.error || e.message); return; } window.__marcCrash(e.error || e.message); });
+    window.addEventListener('unhandledrejection', function (e) { if (window.__marcBooted) { console.error(e.reason); return; } window.__marcCrash(e.reason); });
   </script>
 </head>
 <body>

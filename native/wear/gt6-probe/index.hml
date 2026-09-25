@@ -1,0 +1,14 @@
+<div class="page" onswipe="swipe">
+  <div class="header">
+    <text class="brand">M/ARC</text>
+    <text class="phase">WATCH LAB</text>
+  </div>
+  <div class="metric">
+    <text class="heart">{{bpm}}</text>
+    <text class="unit">BPM</text>
+  </div>
+  <text class="label">Live heart rate · Gate A</text>
+  <text class="status">{{state}}</text>
+  <input class="start" type="button" value="Start HR" onclick="start" />
+  <input class="stop" type="button" value="Stop HR" onclick="stop" />
+</div>

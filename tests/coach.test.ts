@@ -170,3 +170,64 @@ describe('deloadOffer (F3.3)', () => {
     expect(out.suggest).toBe(true);
   });
 });
+
+describe('active lifts and one note per lift (BR-05, BR-27)', () => {
+  const flat = (days: string[]) => days.map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 3) }]));
+  const eight = ['2026-06-01', '2026-06-04', '2026-06-08', '2026-06-11', '2026-06-15', '2026-06-18', '2026-06-22', '2026-06-25'];
+  it('a lift not trained for six weeks gets no plateau note', () => {
+    const out = coachInsights({ ...baseCtx, sessions: flat(eight) }, 20);
+    expect(out.some(i => i.exerciseId === bench && i.category === 'progress')).toBe(false);
+  });
+  it('an active flat lift gets exactly one progress note', () => {
+    const recent = ['2026-07-27', '2026-07-30', '2026-08-03', '2026-08-06', '2026-08-10', '2026-08-13', '2026-08-17', '2026-08-20', '2026-08-24', '2026-08-31', '2026-09-07', '2026-09-14'];
+    const out = coachInsights({ ...baseCtx, sessions: flat(recent) }, 20);
+    expect(out.filter(i => i.exerciseId === bench && i.category === 'progress')).toHaveLength(1);
+  });
+});
+
+describe('heart notes after the session day (BR-26)', () => {
+  it('an effort mismatch from three days ago is no longer shown', () => {
+    const withHeart = (effort: 'easy' | 'ideal' | 'max', peakBpm: number) => ({ kg: 60, reps: 8, effort, heart: { peakBpm, endBpm: peakBpm } });
+    const sessions = [session('2026-09-15', [{ id: bench, sets: [withHeart('ideal', 160), withHeart('ideal', 170), withHeart('ideal', 180), withHeart('max', 190), withHeart('easy', 180)] }])];
+    expect(coachInsights({ ...baseCtx, sessions }, 20).some(i => i.id.startsWith('heart-mismatch'))).toBe(false);
+  });
+});
+
+describe('plateau needs time and ignores the time before a break (QA-R3a-6, QA-R3a-7)', () => {
+  it('two weeks of a 3x/week lift is not a plateau', () => {
+    const days = ['2026-09-07', '2026-09-09', '2026-09-11', '2026-09-14', '2026-09-16', '2026-09-18'];
+    const sessions = days.map((d, i) => session(d, [{ id: bench, sets: sets(100 + i * 0.25, 5, 'ideal', 1) }]));
+    expect(coachInsights({ ...baseCtx, sessions }, 20).some(i => i.id.startsWith('plateau-lever'))).toBe(false);
+  });
+  it('a comeback after months away is not judged on the old sessions', async () => {
+    const { deloadTrigger } = await import('@/brain/deload');
+    const squat = 'lib_barbell_back_squat';
+    const old = ['2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16', '2026-02-23'];
+    const sessions = [
+      ...old.map((d, i) => session(d, [{ id: bench, sets: sets(100 - i * 2.5, 5, 'max', 3) }, { id: squat, sets: sets(140 - i * 2.5, 5, 'max', 3) }])),
+      session('2026-09-21', [{ id: bench, sets: sets(80, 5, 'ideal', 3) }, { id: squat, sets: sets(120, 5, 'ideal', 3) }]),
+    ];
+    const out = coachInsights({ ...baseCtx, sessions }, 20);
+    expect(out.some(i => i.id.startsWith('plateau:'))).toBe(false);
+    expect(deloadTrigger(sessions, '2026-09-23').suggest).toBe(false);
+  });
+  it('the plateau lever is not judged on sessions from before a five-week break (QA2-FC-2)', () => {
+    const before = ['2026-07-29', '2026-07-31', '2026-08-03', '2026-08-05'];
+    const after = ['2026-09-14', '2026-09-16', '2026-09-18'];
+    const sessions = [...before, ...after].map(d => session(d, [{ id: bench, sets: sets(100, 5, 'ideal', 3) }]));
+    const out = coachInsights({ ...baseCtx, today: '2026-09-19', now: new Date('2026-09-19T12:00:00Z').getTime(), sessions }, 20);
+    expect(out.some(i => i.id.startsWith('plateau-lever'))).toBe(false);
+    // Seven flat weeks after the break are enough on their own.
+    const back = ['2026-07-24', '2026-07-31', '2026-08-07', '2026-08-14', '2026-08-21', '2026-08-28', '2026-09-04', '2026-09-11', '2026-09-18'];
+    const flatAfter = ['2026-05-01', '2026-05-08', ...back].map(d => session(d, [{ id: bench, sets: sets(100, 5, 'ideal', 1) }]));
+    expect(coachInsights({ ...baseCtx, today: '2026-09-19', now: new Date('2026-09-19T12:00:00Z').getTime(), sessions: flatAfter }, 20).some(i => i.id === `plateau-lever:${bench}`)).toBe(true);
+  });
+  it('one stray session a month before two weeks of training does not make a plateau (QA2-FC-3)', () => {
+    const days = ['2026-09-07', '2026-09-09', '2026-09-11', '2026-09-14', '2026-09-16', '2026-09-18'];
+    const ctx = { ...baseCtx, today: '2026-09-19', now: new Date('2026-09-19T12:00:00Z').getTime() };
+    for (const n of [1, 3]) {
+      const sessions = [session('2026-08-07', [{ id: bench, sets: sets(100, 5, 'ideal', n) }]), ...days.map((d, i) => session(d, [{ id: bench, sets: sets(100 + i * 0.25, 5, 'ideal', n) }]))];
+      expect(coachInsights({ ...ctx, sessions }, 20).some(i => i.id.startsWith('plateau-lever'))).toBe(false);
+    }
+  });
+});

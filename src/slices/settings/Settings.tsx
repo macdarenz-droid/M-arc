@@ -1,5 +1,5 @@
-import { useState } from 'preact/hooks';
-import { bootSource, flushSave, replaceState, state, update } from '@/core/store';
+import { useEffect, useState } from 'preact/hooks';
+import { bootSource, deleteRescueCopy, flushSave, replaceState, resetState, rescueRaw, state, update } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
 import { Button, Card, Field, Row, Section, Sheet, Toggle } from '@/ui/primitives';
 import { THEMES, THEME_IDS } from '@/theme/themes';
@@ -7,54 +7,119 @@ import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
 import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
-import { profileOpen } from '@/app/router';
+import { openPanel, profileOpen } from '@/app/router';
 import { reminderHealth, resyncReminders } from './reminders';
-import { healthAvailable } from '@/native/health';
+import { healthAvailable, healthSyncTitle, lastHealthError } from '@/native/health';
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
+import { HealthDiagnosticSheet } from './HealthDiagnostic';
 import { GymsSheet } from './Gyms';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { asLegacyRoot, convertLegacy } from '@/core/migrate';
 import { Logo } from '@/ui/Logo';
 import { EscobarSettings } from '@/escobar/ui/SettingsSection';
 import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } from '@/escobar/store';
+import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
+import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
+import { isNative } from '@/native/capacitor';
+import { APP_VERSION } from '@/core/version';
+import { WatchLabEntry } from './WatchLab';
+import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
+import { backupAgeDays, buildBackup, parseBackup } from './backup';
+import { sessionsToCsv } from './exportCsv';
+import { workoutOwnership } from '@/core/workoutOwnership';
+import { today } from '@/app/selectors';
 
-export const APP_VERSION = '37.0.0';
+type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
+type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
+
+/** Everything a restore or reset replaces, so Undo can put it back. */
+function snapshot(): Snapshot { return { state: state.value, escobar: exportAllEscobar(), heart: exportHeart() }; }
+
+/** After the state is replaced: timers, haptics and reminders follow the new state. */
+function afterReplace(): void {
+  void cancelRestDone();
+  setHapticsEnabled(state.value.preferences.haptics);
+  void resyncReminders();
+}
+
+function restoreAll(b: Snapshot): void {
+  replaceState(b.state);
+  restoreEscobar(b.escobar);
+  restoreHeart(b.heart);
+  afterReplace();
+}
+
+async function resetEverything(): Promise<void> {
+  await resetState(freshState());
+  clearEscobarStore();
+  clearHeart();
+  void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
+  try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
+  afterReplace();
+}
 
 export function Settings({ onClose }: { onClose: () => void }) {
+  const workoutBlocked = workoutOwnership.value !== 'web';
   const s = state.value;
   const p = s.preferences;
   const [confirmReset, setConfirmReset] = useState(false);
   usePalaceFocus('settings.theme');
   const [watchOpen, setWatchOpen] = useState(false);
+  const [healthFailed, setHealthFailed] = useState(false);
+  const [healthDiag, setHealthDiag] = useState(false);
   const [gymsOpen, setGymsOpen] = useState(false);
+  const [pending, setPending] = useState<PendingRestore | null>(null);
+  const [rescue, setRescue] = useState(() => rescueRaw() != null);
+  const [exact, setExact] = useState(exactAlarmsAllowed());
+  useEffect(() => { void refreshExactAlarm().then(setExact); }, []);
   const setPref = (patch: Partial<AppState['preferences']>) => update(x => ({ ...x, preferences: { ...x.preferences, ...patch } }));
 
   const backup = async () => {
     flushSave();
     const name = `marc-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    try { showToast(await exportText(name, JSON.stringify({ app: 'M/ARC', version: APP_VERSION, exportedAt: new Date().toISOString(), state: s, escobar: exportAllEscobar() }, null, 1))); } catch { showToast('Export failed'); }
+    try {
+      showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1)));
+      update(x => ({ ...x, lastBackupAt: new Date().toISOString() }));
+    } catch { showToast('Export failed'); }
   };
+  // RG-17: every filled-in set as CSV, loads as typed in the display unit.
+  const exportCsv = async (days: number | null) => {
+    const to = today.value;
+    const from = days ? addDays(to, -(days - 1)) : undefined;
+    const csv = sessionsToCsv(s.sessions, p.weightUnit, from, to);
+    try { showToast(await exportText(`marc-sessions-${days ? `${days}d` : 'all'}-${to}.csv`, csv)); } catch { showToast('Export failed'); }
+  };
+  const backupOn = p.backupReminder ?? isNative();
+  const backupAge = backupAgeDays(s.lastBackupAt, today.value);
+  // A tap on the backup reminder opens Settings at "Your data".
+  useEffect(() => {
+    if (openPanel.peek()?.params?.section !== 'data') return;
+    setTimeout(() => document.querySelector('[data-palace="settings.data"]')?.scrollIntoView({ block: 'start' }), 50);
+  }, []);
   const restore = async () => {
     const text = await pickFile();
     if (!text) return;
-    try {
-      const parsed = JSON.parse(text) as { state?: AppState; escobar?: unknown } | AppState;
-      const legacy = asLegacyRoot(parsed);
-      if (legacy) {
-        // A backup from the previous version of the app: convert it on the way in.
-        const converted = convertLegacy(legacy);
-        replaceState(converted);
-        showToast(`Imported ${converted.sessions.length} sessions from the old backup`);
-        return;
-      }
-      const next = 'state' in parsed && parsed.state ? parsed.state : (parsed as AppState);
-      if (next.version !== 1 || !Array.isArray(next.sessions)) throw new Error('bad');
-      replaceState({ ...next, health: { connected: false } });
-      if ('escobar' in parsed) restoreEscobar(parsed.escobar);
-      showToast(`Restored ${next.sessions.length} sessions`);
-    } catch { showToast('That file is not an M/ARC backup'); }
+    const b = parseBackup(text);
+    if ('error' in b) { showToast(b.error); return; }
+    if (b.kind === 'legacy') { setPending({ next: b.state, from: 'the previous version', label: 'the old backup' }); return; }
+    const when = b.exportedAt && Number.isFinite(Date.parse(b.exportedAt)) ? formatDay(dayKey(b.exportedAt)) : 'this file';
+    setPending({ next: b.state, escobar: b.escobar, heart: b.heart, from: when, label: b.dropped ? `the backup (${b.dropped} damaged item${b.dropped === 1 ? '' : 's'} skipped)` : 'the backup' });
+  };
+  const applyRestore = (r: PendingRestore) => {
+    const before = snapshot();
+    // Health Connect permission belongs to this device, not the backup.
+    replaceState({ ...r.next, health: { connected: false } });
+    if (r.escobar !== undefined) restoreEscobar(r.escobar);
+    if (r.heart !== undefined) restoreHeart(r.heart);
+    afterReplace();
+    setPending(null);
+    showToast(`Restored ${r.next.sessions.length} sessions from ${r.label}`, 'Undo', () => restoreAll(before));
+  };
+  const saveRescue = async () => {
+    const raw = rescueRaw();
+    if (raw == null) { setRescue(false); return; }
+    try { showToast(await exportText('marc-rescue-data.json', raw)); } catch { showToast('Export failed'); }
   };
 
   return (
@@ -83,10 +148,14 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Reminders" palace="settings.reminders">
           <Card>
-            <Row trailing={<Toggle checked={p.reminders.enabled} onChange={v => { setPref({ reminders: { ...p.reminders, enabled: v } }); void resyncReminders(); }} label="Training day reminders" />}><span class="small">Training day reminder</span><div class="hint">{reminderHealth.value.status}</div></Row>
-            <Row trailing={<input type="time" style={{ width: 120 }} value={p.reminders.time} onChange={e => { setPref({ reminders: { ...p.reminders, time: (e.target as HTMLInputElement).value } }); void resyncReminders(); }} />}><span class="small">Time</span></Row>
-            <Row trailing={<select style={{ width: 120 }} value={p.reminders.style} onChange={e => { setPref({ reminders: { ...p.reminders, style: (e.target as HTMLSelectElement).value as never } }); void resyncReminders(); }}><option value="silent">Silent</option><option value="vibrate">Vibrate</option><option value="alert">Alert</option></select>}><span class="small">Style</span></Row>
-            <Row trailing={<Toggle checked={!!p.reminders.readinessSummary} onChange={v => { setPref({ reminders: { ...p.reminders, readinessSummary: v } }); void resyncReminders(); }} label="Readiness in the reminder" />}><span class="small" data-palace="settings.readiness-reminder">Morning readiness summary</span><div class="hint">Swaps today's reminder for your readiness, when there is one to show.</div></Row>
+            <Row trailing={<Toggle checked={p.reminders.enabled} onChange={v => { setPref({ reminders: { ...p.reminders, enabled: v } }); void resyncReminders({ prompt: true }); }} label="Training day reminders" />}><span class="small">Training day reminder</span><div class="hint">{reminderHealth.value.status}</div></Row>
+            <Row trailing={<input type="time" style={{ width: 120 }} value={p.reminders.time} onChange={e => { setPref({ reminders: { ...p.reminders, time: (e.target as HTMLInputElement).value } }); void resyncReminders({ prompt: true }); }} />}><span class="small">Time</span></Row>
+            <Row trailing={<select style={{ width: 120 }} value={p.reminders.style} onChange={e => { setPref({ reminders: { ...p.reminders, style: (e.target as HTMLSelectElement).value as never } }); void resyncReminders({ prompt: true }); }}><option value="silent">Silent</option><option value="vibrate">Vibrate</option><option value="alert">Alert</option></select>}><span class="small">Style</span></Row>
+            <Row trailing={<Toggle checked={!!p.reminders.readinessSummary} onChange={v => { setPref({ reminders: { ...p.reminders, readinessSummary: v } }); void resyncReminders({ prompt: true }); }} label="Readiness in the reminder" />}><span class="small" data-palace="settings.readiness-reminder">Morning readiness summary</span><div class="hint">Swaps today's reminder for your readiness, when there is one to show.</div></Row>
+            {isNative() && !exact && (
+              <Row trailing={<Button size="sm" onClick={() => { void requestExactAlarm().then(setExact); }}>Allow</Button>}><span class="small" data-palace="settings.precise-rest">Precise rest alerts</span><div class="hint">Without this, Android may deliver the rest alert a little late.</div></Row>
+            )}
+            {isNative() && <Button size="sm" onClick={() => { void testRestAlert().then(ok => showToast(ok ? 'Lock the phone; an alert should arrive in 5 s' : 'Notifications are off for M/ARC. Turn them on in the phone settings.')); }}>Test rest alert (5 s)</Button>}
             <p class="hint">Your choice stays on even if Android drops the queue. The app re-checks and repairs it when you come back.</p>
           </Card>
         </Section>
@@ -107,7 +176,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
         <Section title="Watch and health" palace="settings.health">
           <Card class="stack-sm">
-            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth(); showToast(ok ? 'Health data updated' : 'Could not read Health Connect'); }}>Sync</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync?.slice(0, 16).replace('T', ' ')}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            <Row trailing={healthAvailable() ? <Button size="sm" onClick={async () => { const ok = await syncAndStoreHealth({ prompt: true }); setHealthFailed(!ok); showToast(ok ? 'Health data updated' : lastHealthError?.message ?? 'Could not read Health Connect'); }}>{s.health.connected ? 'Sync' : 'Connect'}</Button> : undefined}><span class="small">Android Health Connect</span><div class="hint">{healthAvailable() ? (s.health.connected ? `Last sync ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'Not connected') : 'Available in the Android app'}</div></Row>
+            {healthFailed && <Row trailing={<Button size="sm" variant="quiet" onClick={() => setHealthDiag(true)}>Details</Button>}><span class="small">{healthSyncTitle(lastHealthError)}</span><div class="hint">See what was allowed and what was read</div></Row>}
             {watchSupported.value && <Row trailing={<Button size="sm" onClick={() => setWatchOpen(true)}>Open</Button>}><span class="small">Watch</span><div class="hint">{watchStatus.value.state === 'connected' ? `Connected · ${watchStatus.value.deviceName ?? ''}` : 'Not connected'}</div></Row>}
             {watchStatus.value.state === 'connected' && (
               <Row trailing={<Toggle checked={p.rest.mode === 'heart'} onChange={v => setPref({ rest: { ...p.rest, mode: v ? 'heart' : 'time' } })} label="Rest ends by heart rate" />}>
@@ -118,20 +188,36 @@ export function Settings({ onClose }: { onClose: () => void }) {
           </Card>
         </Section>
         {watchOpen && <WatchSheet onClose={() => setWatchOpen(false)} />}
+        {healthDiag && <HealthDiagnosticSheet onClose={() => setHealthDiag(false)} />}
         {gymsOpen && <GymsSheet onClose={() => setGymsOpen(false)} />}
 
         <EscobarSettings onClose={onClose} />
 
         <Section title="Your data" palace="settings.data">
           <Card class="stack-sm">
-            <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button onClick={restore}>Restore backup</Button></div>
-            <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
-            {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { replaceState(freshState()); clearEscobarStore(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+            <div class="grid-2"><Button onClick={backup}>Export backup</Button><Button disabled={workoutBlocked} onClick={restore}>Restore backup</Button></div>
+            {workoutBlocked && <p class="hint">Restore and reset are paused while the live workout needs recovery. You can still export your data.</p>}
+            <p class="hint" data-palace="settings.last-backup">{backupAge == null ? 'No backup exported yet.' : `Last backup: ${backupAge === 0 ? 'today' : `${backupAge} day${backupAge === 1 ? '' : 's'} ago`}.`}</p>
+            <div class="grid-2" data-palace="settings.csv"><Button onClick={() => void exportCsv(90)}>Export CSV (90 days)</Button><Button onClick={() => void exportCsv(null)}>Export CSV (all)</Button></div>
+            {isNative() && <Row trailing={<Toggle checked={backupOn} label="Weekly backup reminder" onChange={v => { setPref({ backupReminder: v }); void syncBackupReminder(v, { prompt: true }); }} />}><span class="small">Weekly backup reminder</span><div class="hint">{backupOn && backupReminderScheduled.value === false ? 'Not set: notifications are off for M/ARC.' : 'Sunday evening, a note to save a backup file.'}</div>{backupOn && backupReminderScheduled.value === false && <Button size="sm" onClick={() => { void syncBackupReminder(true, { prompt: true }).then(ok => { if (!ok) showToast('Notifications are off for M/ARC. Turn them on in the phone settings.'); }); }}>Allow notifications</Button>}</Row>}
+            {!workoutBlocked && pending && (
+              <Card class="card-quiet" role="alertdialog">
+                <p class="small">Replace <b>{s.sessions.length}</b> sessions on this device with <b>{pending.next.sessions.length}</b> sessions from {pending.from}?</p>
+                <div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setPending(null)}>Cancel</Button><Button variant="danger" onClick={() => applyRestore(pending)}>Replace</Button></div>
+              </Card>
             )}
+            {rescue && (
+              <Row trailing={<div class="row"><Button size="sm" onClick={() => void saveRescue()}>Save rescue file</Button><Button size="sm" variant="quiet" onClick={() => { deleteRescueCopy(); setRescue(false); showToast('Rescue copy deleted'); }}>Delete rescue copy</Button></div>}>
+                <span class="small" data-palace="settings.rescue">Unreadable data kept aside</span><div class="hint">A copy of saved data the app could not read at start.</div>
+              </Row>
+            )}
+            <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
+            {!workoutBlocked && (!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { void resetEverything().then(() => { setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }).catch(() => showToast('Could not reset workout data. Reopen M/ARC and try again.')); }}>Reset everything</Button></div></Card>
+            ))}
           </Card>
         </Section>
-        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><WatchLabEntry version={APP_VERSION} /></div>
       </div>
     </Sheet>
   );

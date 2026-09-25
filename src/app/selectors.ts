@@ -1,53 +1,51 @@
 /** Derived, memoised views over the store that several screens share. */
-import { computed, signal } from '@preact/signals';
+import { computed } from '@preact/signals';
 import { state } from '@/core/store';
-import { todayKey, weekdayOf, daysBetween } from '@/core/dates';
+import { weekdayOf, daysBetween } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
-import { trainingStreak, weekSummary } from '@/brain/weekly';
+import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
-import { WEEKDAYS } from '@/core/models';
 import { watchStatus } from '@/native/watch';
 
-/** The current day key. Re-evaluated every minute so midnight rolls over. */
-export const today = signal(todayKey());
-setInterval(() => { const k = todayKey(); if (k !== today.value) today.value = k; }, 60_000);
+import { minuteNow, today } from './clock';
 
-/** A clock that ticks every second while something needs it (session, rest). */
-export const nowMs = signal(Date.now());
-let ticker: ReturnType<typeof setInterval> | null = null;
-export function setTicking(on: boolean): void {
-  if (on && !ticker) ticker = setInterval(() => { nowMs.value = Date.now(); }, 1000);
-  if (!on && ticker) { clearInterval(ticker); ticker = null; }
-}
+export { today, nowMs, minuteNow, acquireTicker, refreshClock } from './clock';
 
 export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
 export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
-export const plannedPerWeek = computed(() => WEEKDAYS.filter(d => state.value.schedule[d]).length);
 
-const quantizedNow = () => nowMs.value - (nowMs.value % 60_000);
-export const recovery = computed(() => recoveryStatus({ sessions: state.value.sessions, custom: state.value.customExercises, now: quantizedNow(), profile: state.value.profile, healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks, recoveryModel: state.value.recoveryModel }));
-export const todayCheckIn = computed(() => state.value.checkIns.find(c => c.day === today.value));
+/**
+ * QA-R2d-1: one computed per state field. A computed only notifies when its value changes
+ * identity, so typing into a live set (a new `active`) no longer re-runs recovery and readiness.
+ */
+const field = <K extends keyof typeof state.value>(k: K) => computed(() => state.value[k]);
+const sessions = field('sessions'), customExercises = field('customExercises'), profile = field('profile'), healthDays = field('healthDays');
+const checkIns = field('checkIns'), freshMarks = field('freshMarks'), recoveryModel = field('recoveryModel');
+
+export const recovery = computed(() => recoveryStatus({ sessions: sessions.value, custom: customExercises.value, now: minuteNow.value, profile: profile.value, healthDays: healthDays.value, checkIns: checkIns.value, freshMarks: freshMarks.value, recoveryModel: recoveryModel.value }));
+export const todayCheckIn = computed(() => checkIns.value.find(c => c.day === today.value));
 export const todayReadiness = computed(() => readiness({
   today: today.value,
-  healthDays: state.value.healthDays,
+  healthDays: healthDays.value,
   checkIn: todayCheckIn.value,
-  checkInHistory: state.value.checkIns.filter(c => c.day !== today.value && daysBetween(c.day, today.value) <= 30),
+  checkInHistory: checkIns.value.filter(c => c.day !== today.value && daysBetween(c.day, today.value) <= 30),
   recovery: recovery.value,
   scheduledSplit: scheduledSplit.value,
-  custom: state.value.customExercises,
-  sessions: state.value.sessions,
+  custom: customExercises.value,
+  sessions: sessions.value,
 }));
-export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedPerWeek.value || 3));
-export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value));
+export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedThisWeek(state.value.schedule, state.value.daysOff, today.value)));
+export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff));
 const coachContext = computed((): CoachContext => ({
   sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises,
-  today: today.value, now: quantizedNow(), profileHistory: state.value.profileHistory, profile: state.value.profile,
+  today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
   healthDays: state.value.healthDays, checkIns: state.value.checkIns, freshMarks: state.value.freshMarks,
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
+  unit: state.value.preferences.weightUnit,
 }));
 export const insights = computed(() => coachInsights(coachContext.value, 3));
 /** null once its endDay passes — F3.3 "closes itself" is read-time gating, no mutation needed. */

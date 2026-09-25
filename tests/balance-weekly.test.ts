@@ -56,3 +56,48 @@ describe('coach', () => {
     for (const i of insights) expect(i.action.length).toBeGreaterThan(10);
   });
 });
+
+describe('balance counts exercise sets, not muscles touched (BR-17)', () => {
+  it('bench, row and squat at 4 sets each is balanced', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')).toBeNull();
+  });
+  it('push with no pull is flagged', () => {
+    const days = ['2026-09-01', '2026-09-04', '2026-09-08', '2026-09-11', '2026-09-15'];
+    const s = days.map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 4) }, { id: 'lib_barbell_back_squat', sets: sets(100, 8, 'ideal', 4) }]));
+    expect(trainingBalance(s, '2026-09-18')?.pair).toBe('push_pull');
+  });
+});
+
+describe('upper vs lower (QA-R3a-3, QA-R3a-4)', () => {
+  // Two upper days and two lower days a week for three weeks: 24 upper and 24 lower sets a week.
+  const weeks = ['2026-08-31', '2026-09-07', '2026-09-14'];
+  const upperDay = (d: string) => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 3) }, { id: 'lib_barbell_overhead_press', sets: sets(40, 8, 'ideal', 3) }, { id: 'lib_lat_pulldown', sets: sets(50, 8, 'ideal', 3) }]);
+  const lowerDay = (d: string) => session(d, [{ id: 'lib_barbell_back_squat', sets: sets(100, 5, 'ideal', 6) }, { id: 'lib_romanian_deadlift', sets: sets(80, 8, 'ideal', 3) }, { id: 'lib_leg_press', sets: sets(150, 10, 'ideal', 3) }]);
+  const plus = (d: string, n: number) => { const x = new Date(`${d}T12:00:00Z`); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+  it('an even upper/lower split is balanced', () => {
+    const s = weeks.flatMap(w => [upperDay(w), lowerDay(plus(w, 1)), upperDay(plus(w, 3)), lowerDay(plus(w, 4))]);
+    expect(trainingBalance(s, '2026-09-19')).toBeNull();
+  });
+  it('upper work with almost no legs is still flagged, and so is the reverse', () => {
+    const noLegs = weeks.flatMap(w => [upperDay(w), upperDay(plus(w, 3)), session(plus(w, 4), [{ id: 'lib_leg_press', sets: sets(150, 10, 'ideal', 2) }])]);
+    expect(trainingBalance(noLegs, '2026-09-19')).toMatchObject({ pair: 'upper_lower', strong: 'Upper body' });
+    const noUpper = weeks.flatMap(w => [lowerDay(w), lowerDay(plus(w, 3)), session(plus(w, 4), [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 2) }, { id: 'lib_barbell_row', sets: sets(50, 8, 'ideal', 2) }])]);
+    expect(trainingBalance(noUpper, '2026-09-19')).toMatchObject({ pair: 'upper_lower', strong: 'Lower body' });
+  });
+});
+
+describe('upper/lower balance text (QA2-FC-8)', () => {
+  it('a lower-body-heavy split explains what balanced looks like, so 1.3× reads right', async () => {
+    const { trainingBalance } = await import('@/brain/balance');
+    const upper = (d: string) => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_row', sets: sets(60, 8, 'ideal', 3) }, { id: 'lib_barbell_overhead_press', sets: sets(40, 8, 'ideal', 3) }, { id: 'lib_lat_pulldown', sets: sets(50, 10, 'ideal', 3) }]);
+    const lower = (d: string) => session(d, [{ id: 'lib_barbell_back_squat', sets: sets(80, 6, 'ideal', 8) }, { id: 'lib_romanian_deadlift', sets: sets(70, 8, 'ideal', 4) }, { id: 'lib_leg_press', sets: sets(120, 10, 'ideal', 4) }]);
+    const days = ['2026-09-01', '2026-09-02', '2026-09-04', '2026-09-05', '2026-09-08', '2026-09-09', '2026-09-11', '2026-09-12', '2026-09-15', '2026-09-16', '2026-09-18', '2026-09-19'];
+    const sessions = days.map((d, i) => (i % 2 ? lower(d) : upper(d)));
+    const b = trainingBalance(sessions, '2026-09-20');
+    expect(b?.pair).toBe('upper_lower');
+    expect(b?.weak).toBe('Upper body');
+    expect(b?.context).toMatch(/1\.5× as much upper body work/);
+  });
+});

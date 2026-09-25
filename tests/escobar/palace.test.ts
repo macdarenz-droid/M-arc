@@ -58,6 +58,8 @@ describe('find_in_app ranking', () => {
   it('returns at most 5 and nothing for empty or nonsense queries', () => {
     expect(findInApp('sets').length).toBeLessThanOrEqual(5);
     expect(findInApp('')).toEqual([]);
+    // ES-31: keywords match whole words only ('ai' is not in 'maintenance', 'rest' not in 'restorer').
+    expect(findInApp('maintenance restorer')).toEqual([]);
     expect(findInApp('zzqx')).toEqual([]);
   });
 });
