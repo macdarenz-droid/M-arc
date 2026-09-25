@@ -205,3 +205,9 @@ export function formatFullBy(now: number, fullInHours: number | null): string {
   if (fullInHours == null) return 'Ready';
   return `Full by ${hourLabelFull(ceilHour(now + fullInHours * 3_600_000))}`;
 }
+
+/** "Sat 26, 6 pm": day + time, for the ready-times detail strip's "Full …" line. */
+export function formatFullAt(now: number, fullInHours: number): string {
+  const at = ceilHour(now + fullInHours * 3_600_000);
+  return `${formatDay(dayKey(at), { weekday: 'short', day: 'numeric' })}, ${hourLabelFull(at)}`;
+}
