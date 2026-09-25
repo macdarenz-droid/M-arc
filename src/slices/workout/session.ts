@@ -367,8 +367,17 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
       const liveCount = Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length);
       return { exerciseId: e.exerciseId, sets: overriddenSets.has(e.exerciseId) ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
     });
+  // QA3-7: `out` is shorter than `split.exercises` once a person's own skips drop out of it, so an
+  // Escobar-removed exercise's own split index no longer lines up with a position in `out`.
+  // Insert it right after its nearest preceding split neighbour that made it into `out`.
   split.exercises.forEach((se, i) => {
-    if (!planned.has(se.exerciseId) && !doneIds.has(se.exerciseId)) out.splice(Math.min(i, out.length), 0, { ...se });
+    if (planned.has(se.exerciseId) || doneIds.has(se.exerciseId)) return;
+    let insertAt = 0;
+    for (let j = i - 1; j >= 0; j--) {
+      const pos = out.findIndex(o => o.exerciseId === split.exercises[j]!.exerciseId);
+      if (pos !== -1) { insertAt = pos + 1; break; }
+    }
+    out.splice(insertAt, 0, { ...se });
   });
   return out;
 }

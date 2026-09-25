@@ -3,7 +3,7 @@ import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
   addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel,
-  resolveSessionTiming, setSet, startRest, startSession, stopRest, substituteEntry,
+  resolveSessionTiming, setSet, skipEntry, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
 import { deleteSplit } from '@/slices/workout/splits';
 import { findExercise } from '@/core/exercises';
@@ -376,5 +376,31 @@ describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-
     finishSession(true);
     const bench = state.value.splits[0]!.exercises.find(e => e.exerciseId === 'lib_barbell_bench_press')!;
     expect(bench.sets).toBe(2); // the split's own count, not today's 4
+  });
+  it('QA3-7: a split exercise Escobar removed today is restored after its nearest present neighbour', () => {
+    const wide: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [
+        { exerciseId: 'lib_barbell_bench_press', sets: 2 }, // A
+        { exerciseId: 'lib_cable_fly', sets: 1 }, // B - the person skips it today
+        { exerciseId: 'lib_dumbbell_lateral_raise', sets: 1 }, // C
+        { exerciseId: 'lib_dumbbell_shoulder_press', sets: 1 }, // D - Escobar removes it today
+        { exerciseId: 'lib_triceps_pushdown', sets: 1 }, // E
+      ],
+    };
+    replaceState({
+      ...state.value, splits: [wide],
+      escobar: { ...state.value.escobar, todayOverride: { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'remove' as const, exerciseId: 'lib_dumbbell_shoulder_press' }] } },
+    });
+    startSession(wide); // entries: A, B, C, E (D excluded by the override, never even an entry)
+    skipEntry(1); // the person's own skip of B, not Escobar's
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    setSet(0, 1, { kg: 60, reps: 8 }); commitSet(0, 1);
+    setSet(2, 0, { kg: 20, reps: 12 }); commitSet(2, 0);
+    setSet(3, 0, { kg: 20, reps: 10 }); commitSet(3, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_barbell_bench_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_shoulder_press', 'lib_triceps_pushdown',
+    ]);
   });
 });
