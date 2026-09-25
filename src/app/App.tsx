@@ -26,7 +26,6 @@ import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
-import { haptic } from '@/native/haptics';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
 const recoveredSeen = signal(false);
@@ -93,7 +92,7 @@ export function App() {
       <nav class="nav" aria-label="Main">
         <div class="nav-inner">
           {TABS.map(x => { const Icon = ICON[x.id]; return (
-            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { go(x.id); void haptic.light(); }}>
+            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { go(x.id); }}>
               <Icon size={22} /><span>{x.id === 'train' && live ? 'Live' : x.label}</span>
             </button>
           ); })}

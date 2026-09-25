@@ -128,7 +128,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Theme" palace="settings.theme">
           <div class="theme-grid">
             {THEME_IDS.map(id => { const t = THEMES[id]; const k = t.tokens; return (
-              <button type="button" key={id} class="theme-card" aria-pressed={themeId.value === id} onClick={() => { setTheme(id); void haptic.light(); }}>
+              <button type="button" key={id} class="theme-card" aria-pressed={themeId.value === id} onClick={() => setTheme(id)}>
                 <div class="theme-preview" style={{ background: k.bg }}><i style={{ top: 8, width: '55%', background: k.text, opacity: .9 }} /><i style={{ top: 22, background: k.surface3 }} /><i style={{ top: 36, width: 40, background: k.accent }} /></div>
                 <div><b class="small">{t.name}</b><div class="hint">After {t.inspiredBy}</div></div>
               </button>
@@ -164,7 +164,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <Card>
             <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span><div class="hint">{hapticSupport() === 'native' ? 'Android haptics' : hapticSupport() === 'web' ? 'Browser vibration' : 'No vibration on this device'}</div></Row>
             <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
-            <Button size="sm" onClick={() => { void haptic.warning(); showToast('Sent a test buzz'); }}>Test haptic</Button>
+            <Button size="sm" onClick={() => { void haptic.confirm(); showToast('Sent a test buzz'); }}>Test haptic</Button>
           </Card>
         </Section>
 
@@ -213,7 +213,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
-              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.warning(); }}>Reset everything</Button></div></Card>
+              <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.confirm(); }}>Reset everything</Button></div></Card>
             )}
           </Card>
         </Section>

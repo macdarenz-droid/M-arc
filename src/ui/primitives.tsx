@@ -5,6 +5,7 @@ import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
+import { haptic } from '@/native/haptics';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -30,7 +31,7 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
 }
 
 export function Toggle({ checked, onChange, label, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
-  return <button type="button" role="switch" aria-checked={checked} aria-disabled={disabled} disabled={disabled} aria-label={label} class="toggle" onClick={() => onChange(!checked)} />;
+  return <button type="button" role="switch" aria-checked={checked} aria-disabled={disabled} disabled={disabled} aria-label={label} class="toggle" onClick={() => { void haptic.toggle(!checked); onChange(!checked); }} />;
 }
 
 export function Stat({ value, label, tone }: { value: ComponentChildren; label: string; tone?: 'positive' | 'warning' | 'negative' }) {
@@ -94,7 +95,7 @@ export function CommitNumber({ value, min, max, integer, onCommit, ...rest }: { 
     const t = text.trim().replace(',', '.');
     if (!t) { if (value != null) onCommit(undefined); return; }
     const v = Number(t);
-    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { setText(shown); return; }
+    if (!Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v))) { void haptic.reject(); setText(shown); return; }
     if (v !== value) onCommit(v);
   };
   return <input {...rest} type="text" inputMode={integer ? 'numeric' : 'decimal'} value={text} onFocus={() => { focused.current = true; }} onInput={e => setText((e.target as HTMLInputElement).value)} onBlur={commit} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />;
