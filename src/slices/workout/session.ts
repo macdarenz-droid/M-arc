@@ -349,13 +349,24 @@ export function changedFromPlan(a: ActiveSession, split: Split | undefined, over
  * saved; one Escobar took out today (a remove or a swap's source) stays at its place in the split.
  */
 export function templateFromSession(a: ActiveSession, split: Split, override: TodayOverride | null = state.value.escobar.todayOverride): Split['exercises'] {
-  const planned = new Set(plannedExercises(split, override, dayKey(new Date(a.startedAt))).map(e => e.exerciseId));
+  const today = dayKey(new Date(a.startedAt));
+  const planned = new Set(plannedExercises(split, override, today).map(e => e.exerciseId));
   const inSplit = new Set(split.exercises.map(e => e.exerciseId));
   const done = a.entries.filter(e => !e.skipped);
   const doneIds = new Set(done.map(e => e.exerciseId));
+  // QA3-6: today's one-day set-count change from Escobar is not saved either; the exercise keeps
+  // the split's own count, not however many sets today's override made the live entry start with.
+  const overriddenSets = new Set<string>();
+  if (override && override.day === today && override.splitId === split.id) {
+    for (const c of override.changes) if (c.kind === 'sets') overriddenSets.add(c.exerciseId);
+  }
+  const splitSetsById = new Map(split.exercises.map(se => [se.exerciseId, se.sets]));
   const out = done
     .filter(e => inSplit.has(e.exerciseId) || !planned.has(e.exerciseId))
-    .map(e => ({ exerciseId: e.exerciseId, sets: Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length) }));
+    .map(e => {
+      const liveCount = Math.max(1, e.sets.filter(x => x.kind !== 'warmup').length);
+      return { exerciseId: e.exerciseId, sets: overriddenSets.has(e.exerciseId) ? splitSetsById.get(e.exerciseId) ?? liveCount : liveCount };
+    });
   split.exercises.forEach((se, i) => {
     if (!planned.has(se.exerciseId) && !doneIds.has(se.exerciseId)) out.splice(Math.min(i, out.length), 0, { ...se });
   });
