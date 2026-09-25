@@ -951,10 +951,14 @@ for (const theme of themes) {
       const bar = document.querySelector('.rest .bar > i');
       if (!clock || !bar) return null;
       const track = bar.parentElement.getBoundingClientRect().width;
+      // I1: the bar is a fixed-width (100%) element moved by a WAAPI translateX, not an inline
+      // width%, so its getBoundingClientRect().width is always the full track. Read the fill from
+      // the transform matrix's e (translateX in px) instead: -track = empty, 0 = full.
+      const m = new DOMMatrixReadOnly(getComputedStyle(bar).transform);
       return {
         clock: clock.textContent,
         total: document.querySelector('.rest .hint')?.textContent?.replace(/^Rest · /, ''),
-        fillPct: track ? (bar.getBoundingClientRect().width / track) * 100 : 0,
+        fillPct: track ? Math.max(0, Math.min(100, (1 + m.e / track) * 100)) : 0,
       };
     });
     if (!rest) errors.push(`${tag}: expected the rest banner after committing set 1`);
@@ -976,6 +980,74 @@ for (const theme of themes) {
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// I1: the rest banner rises in with a running animation, its bar glides continuously via WAAPI
+// (rebuilt, not stepped, when the remaining time changes), its buttons are real tap targets, and
+// it exits (a `.leaving` class, then gone) instead of vanishing in one frame.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I1 rest banner';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.waitForTimeout(60);
+
+  const entering = await page.evaluate(() => {
+    const el = document.querySelector('.rest');
+    return !!el && document.getAnimations().some(a => a.effect?.target === el && a.playState === 'running');
+  });
+  if (!entering) errors.push(`${tag}: .rest has no running enter animation right after it appears`);
+
+  const barInfo = await page.evaluate(() => {
+    const bar = document.querySelector('.rest .bar > i');
+    const clockText = document.querySelector('.rest .clock')?.textContent ?? '';
+    const anim = bar && document.getAnimations().find(a => a.effect?.target === bar);
+    return anim ? { duration: anim.effect.getComputedTiming().duration, clockText, playState: anim.playState } : null;
+  });
+  if (!barInfo) errors.push(`${tag}: no WAAPI animation found on the rest bar`);
+  else {
+    if (barInfo.playState !== 'running') errors.push(`${tag}: the rest bar animation is ${barInfo.playState}, expected running`);
+    const sec = str => str.split(':').reduce((n, part) => n * 60 + Number(part), 0);
+    const expectedMs = sec(barInfo.clockText) * 1000;
+    if (Math.abs(barInfo.duration - expectedMs) > 1500) errors.push(`${tag}: bar duration ${barInfo.duration}ms does not track the clock (${barInfo.clockText})`);
+  }
+
+  // +15 changes the rest's end time, so the old bar animation is cancelled and a fresh one runs.
+  await page.locator('.rest').getByRole('button', { name: 'More rest' }).click();
+  await page.waitForTimeout(50);
+  const afterAdjust = await page.evaluate(() => {
+    const bar = document.querySelector('.rest .bar > i');
+    const anims = document.getAnimations().filter(a => a.effect?.target === bar);
+    return { count: anims.length, running: anims.filter(a => a.playState === 'running').length };
+  });
+  if (afterAdjust.count !== 1 || afterAdjust.running !== 1) errors.push(`${tag}: expected exactly one running bar animation after +15, got ${JSON.stringify(afterAdjust)}`);
+
+  for (const name of ['Less rest', 'More rest']) {
+    const h = await page.locator('.rest').getByRole('button', { name }).evaluate(el => el.getBoundingClientRect().height);
+    if (h < 44) errors.push(`${tag}: '${name}' is ${h.toFixed(1)}px tall, expected >=44`);
+  }
+  const skipH = await page.locator('.rest').getByRole('button', { name: 'Skip' }).evaluate(el => el.getBoundingClientRect().height);
+  if (skipH < 44) errors.push(`${tag}: 'Skip' is ${skipH.toFixed(1)}px tall, expected >=44`);
+
+  // Skip plays the exit animation instead of the banner vanishing in one frame.
+  await page.locator('.rest').getByRole('button', { name: 'Skip' }).click();
+  await page.waitForTimeout(30);
+  if (!(await page.locator('.rest.leaving').count())) errors.push(`${tag}: expected .rest.leaving right after Skip`);
+  await page.waitForTimeout(250);
+  if (await page.locator('.rest').count()) errors.push(`${tag}: expected .rest gone by 250ms after Skip`);
+
   await ctx.close();
 }
 

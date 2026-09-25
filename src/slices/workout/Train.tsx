@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { HeartBpm, PulseLine } from '@/ui/PulseLine';
 import { useReorder } from './reorder';
@@ -46,6 +46,9 @@ import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { haptic } from '@/native/haptics';
+import { durFor } from '@/ui/motion';
+import { isNative } from '@/native/capacitor';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -862,49 +865,139 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   );
 }
 
+/** I1: the rest bar's WAAPI keyframes — starts at the fraction of totalSec already elapsed, always ends full. */
+export function restBarKeyframes(remainingMs: number, totalSec: number): [string, string] {
+  const p0 = totalSec > 0 ? 1 - remainingMs / (totalSec * 1000) : 1;
+  return [`translateX(${(p0 - 1) * 100}%)`, 'translateX(0)'];
+}
+
+/** I1: what the banner shows; kept in a ref through the ~200ms exit animation, since `a.rest` is already gone by then. */
+interface RestFrame { done: boolean; clockText: string; hintText: string }
+
 export function RestBanner() {
   const s = state.value;
   const a = s.active;
-  useEffect(() => (a?.rest ? acquireTicker() : undefined), [!!a?.rest]);
-  if (!a?.rest) return null;
-  // F6: nowMs can still be a hair stale on the first frame (acquireTicker resolves in an effect,
-  // after paint), which used to read as remaining = total+1s and a full-width bar. Clamp both ends.
-  const now = Math.max(nowMs.value, Date.now());
-  const remaining = Math.min(a.rest.totalSec, restRemainingSec(a, now) ?? 0);
-  const timeDone = remaining <= 0;
+  const rest = a?.rest;
+  useEffect(() => (rest ? acquireTicker() : undefined), [!!rest]);
 
-  // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
-  const heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && a.rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
-  let heartReady = false;
-  let currentBpm: number | undefined;
-  let targetBpm: number | undefined;
-  if (heartMode) {
-    const restingBpm = restingHr(s.healthDays, s.profile, today.value);
-    if (restingBpm != null) {
-      const elapsedSec = Math.max(0, a.rest.totalSec - remaining);
-      const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: a.rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: a.rest.effort, elapsedSec });
-      heartReady = r.ready;
-      targetBpm = r.readyBpm;
-      currentBpm = latestMeasurement.value?.bpm;
-    }
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const lastFrame = useRef<RestFrame | null>(null);
+  const lastTickSec = useRef<number | null>(null);
+  const lastGoEndsAt = useRef<number | null>(null);
+  const [wasResting, setWasResting] = useState(!!rest);
+  const [leaving, setLeaving] = useState(false);
+  const [goPulse, setGoPulse] = useState(false);
+
+  // I1.1: catch the resting -> not-resting edge during this render (not in an effect), so the
+  // banner never renders null for a frame between the rest ending and the exit animation starting.
+  if (!!rest !== wasResting) {
+    setWasResting(!!rest);
+    setLeaving(!rest);
   }
-  const done = timeDone || heartReady;
-  const pct = a.rest.totalSec ? Math.max(0, Math.min(100, 100 - (remaining / a.rest.totalSec) * 100)) : 100;
-  const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
+
+  let frame: RestFrame | null = null;
+  let remaining = 0;
+  let done = false;
+  let heartMode = false;
+  if (rest && a) {
+    // F6: nowMs can still be a hair stale on the first frame (acquireTicker resolves in an
+    // effect, after paint). Clamp both ends so remaining never reads over total or under zero.
+    const now = Math.max(nowMs.value, Date.now());
+    remaining = Math.min(rest.totalSec, restRemainingSec(a, now) ?? 0);
+    const timeDone = remaining <= 0;
+    // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
+    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
+    let heartReady = false;
+    let currentBpm: number | undefined;
+    let targetBpm: number | undefined;
+    if (heartMode) {
+      const restingBpm = restingHr(s.healthDays, s.profile, today.value);
+      if (restingBpm != null) {
+        const elapsedSec = Math.max(0, rest.totalSec - remaining);
+        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
+        heartReady = r.ready;
+        targetBpm = r.readyBpm;
+        currentBpm = latestMeasurement.value?.bpm;
+      }
+    }
+    done = timeDone || heartReady;
+    const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
+    frame = {
+      done,
+      clockText: done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining),
+      hintText: done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(rest.totalSec)}`,
+    };
+    lastFrame.current = frame;
+  }
+
+  // I1.4: a tick at 3, 2, 1 seconds left (timer mode; heart mode has no countdown to tick).
+  const secLeft = rest && !done && !heartMode ? Math.ceil(remaining) : null;
+  useEffect(() => {
+    if (secLeft != null && secLeft !== lastTickSec.current && (secLeft === 3 || secLeft === 2 || secLeft === 1)) void haptic.tick();
+    lastTickSec.current = secLeft;
+  }, [secLeft]);
+
+  // I1.3: the card swells once and, on the web (native's own scheduled notification already
+  // vibrates), the phone gets a distinct alert — once per rest, only while the tab is visible.
+  useEffect(() => {
+    if (!rest || !done || document.visibilityState !== 'visible' || lastGoEndsAt.current === rest.endsAt) return;
+    lastGoEndsAt.current = rest.endsAt;
+    if (!isNative()) void haptic.alert();
+    setGoPulse(true);
+    const t = setTimeout(() => setGoPulse(false), durFor('bounce'));
+    return () => clearTimeout(t);
+  }, [rest?.endsAt, done]);
+
+  // I1.1: the exit animation plays for durFor('exit')+40ms, then the banner unmounts.
+  useEffect(() => {
+    if (!leaving) return;
+    const t = setTimeout(() => setLeaving(false), durFor('exit') + 40);
+    return () => clearTimeout(t);
+  }, [leaving]);
+
+  // I1.2: the bar glides continuously via WAAPI, rebuilt only when the rest actually changes
+  // (start, ±15, pause/resume) or the moment it finishes — never stepped once a second.
+  useEffect(() => {
+    const i = barRef.current;
+    if (!rest || !i) return undefined;
+    const ms = rest.endsAt - Date.now();
+    const [from, to] = restBarKeyframes(ms, rest.totalSec);
+    const anim = i.animate([{ transform: from }, { transform: to }], { duration: Math.max(0, ms), easing: 'linear', fill: 'forwards' });
+    if (a?.pausedAt) anim.pause();
+    return () => anim.cancel();
+  }, [rest?.endsAt, rest?.totalSec, !!a?.pausedAt, done]);
+
+  // I1.6: reserve space for the banner, so it never sits over the last button, a toast or the dock.
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-rest', !!rest);
+    if (!rest) { document.documentElement.style.removeProperty('--rest-h'); return undefined; }
+    const el = rootRef.current;
+    if (!el) return undefined;
+    const sync = () => document.documentElement.style.setProperty('--rest-h', `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [!!rest]);
+  useEffect(() => () => { document.documentElement.toggleAttribute('data-rest', false); document.documentElement.style.removeProperty('--rest-h'); }, []);
+
+  const shown = frame ?? (leaving ? lastFrame.current : null);
+  if (!shown) return null;
   return (
-    <div class={`rest ${done ? 'done' : ''}`}>
+    <div ref={rootRef} class={`rest ${shown.done ? 'done' : ''} ${leaving ? 'leaving' : ''} ${goPulse ? 'go' : ''}`}>
       {/* UI-26: announced once when rest ends, not every second of the countdown. */}
-      <span class="sr-only" aria-live="polite">{done ? 'Rest done' : ''}</span>
+      <span class="sr-only" aria-live="polite">{shown.done ? 'Rest done' : ''}</span>
       <div>
-        <div class="clock">{done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining)}</div>
-        <div class="hint">{done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
+        <div class="clock">{shown.clockText}</div>
+        <div class="hint">{shown.hintText}</div>
         {/* QA3-1: Android has firmly denied notifications, so no alert is coming for this rest. */}
         {restAlertsDenied.value && <div class="hint danger-text">Rest alerts are off — Settings → Precise rest alerts</div>}
       </div>
-      <div class="grow"><div class="bar"><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div></div>
-      {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
-      {!done && <Button variant="quiet" size="sm" aria-label="More rest" onClick={() => adjustRest(15)}>+15</Button>}
-      <Button size="sm" onClick={() => stopRest()}>{done ? 'OK' : 'Skip'}</Button>
+      <div class="grow"><div class="bar"><i ref={barRef} /></div></div>
+      {!shown.done && <Button variant="quiet" class="rest-btn" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
+      {!shown.done && <Button variant="quiet" class="rest-btn" aria-label="More rest" onClick={() => adjustRest(15)}>+15</Button>}
+      <Button class="rest-btn" onClick={() => stopRest()}>{shown.done ? 'OK' : 'Skip'}</Button>
     </div>
   );
 }
