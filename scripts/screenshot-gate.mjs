@@ -800,6 +800,13 @@ for (const theme of themes) {
   await page.waitForTimeout(600);
   if (!(await visible(page.locator('.pulse-edge')))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
+  // QA5-5: this context is the one kept at no-preference specifically to cover PulseLine's rAF
+  // loop (not a CSS animation, so document.getAnimations() never sees it) — but nothing had ever
+  // asserted that --pulse-beat actually changes over time; a break in the rAF loop would still
+  // leave '.pulse-edge' visible (its opacity/box-shadow read the CSS var, and simply not updating
+  // it produces one static frame that still passes the visibility check above).
+  const beats = await page.evaluate(async () => { const s = new Set(); for (let k = 0; k < 8; k++) { s.add(document.documentElement.style.getPropertyValue('--pulse-beat')); await new Promise(r => setTimeout(r, 60)); } return s.size; });
+  if (beats < 2) errors.push(`pulse ${theme}: --pulse-beat is not animating`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {
     // Hold-and-drag reorder in a live session: the first exercise dragged down lands lower.
@@ -876,8 +883,36 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
   await page.waitForTimeout(400);
-  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
-  await page.waitForTimeout(250);
+
+  // QA5-5: F1/F2/F3's own "Gate:" acceptance checks had no probe anywhere (vitest or gate), and
+  // every context above now forces OS reduce, so the in-app toggle and the live mq listener were
+  // never exercised at all. This block runs at full motion first, then flips reduced motion on
+  // and off (OS, then the in-app toggle, then a reload) and checks each one.
+  const ms = v => parseFloat(v) * (v.trim().endsWith('ms') ? 1 : 1000); // build minifies 320ms to .32s
+  const mstate = () => page.evaluate(() => ({ attr: document.documentElement.dataset.motion ?? null, sheet: getComputedStyle(document.documentElement).getPropertyValue('--dur-sheet'), pref: localStorage.getItem('marc.motion') }));
+  const f2 = await page.evaluate(() => ({ panel: !!document.activeElement?.classList.contains('sheet-panel'), tap: getComputedStyle(document.documentElement).webkitTapHighlightColor }));
+  if (!f2.panel) errors.push(`${tag}: onboarding sheet did not focus .sheet-panel`);
+  if (f2.tap !== 'rgba(0, 0, 0, 0)') errors.push(`${tag}: html tap highlight is ${f2.tap}`);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  let m = await mstate();
+  if (m.attr !== null || ms(m.sheet) !== 320) errors.push(`${tag}: expected full motion, got ${JSON.stringify(m)}`);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  if (!(await page.waitForFunction(() => document.documentElement.dataset.motion === 'reduce', null, { timeout: 2000 }).then(() => true).catch(() => false))) errors.push(`${tag}: OS reduce did not set data-motion live`);
+  if (ms((await mstate()).sheet) !== 150) errors.push(`${tag}: --dur-sheet is not 150ms under reduce`);
+  if ((await page.evaluate(() => document.getAnimations().filter(a => a.effect && a.effect.getTiming().iterations === Infinity).length)) !== 0) errors.push(`${tag}: infinite animation on Today under reduce`);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  if (!(await page.waitForFunction(() => !document.documentElement.dataset.motion, null, { timeout: 2000 }).then(() => true).catch(() => false))) errors.push(`${tag}: data-motion stayed after OS reduce went off`);
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  await page.getByRole('switch', { name: 'Reduce motion' }).click(); await page.waitForTimeout(100);
+  m = await mstate();
+  if (m.attr !== 'reduce' || m.pref !== 'reduce') errors.push(`${tag}: Reduce motion toggle did not apply: ${JSON.stringify(m)}`);
+  const td = await page.locator('.toggle').first().evaluate(el => getComputedStyle(el).transitionDuration);
+  if (td !== '0.2s') errors.push(`${tag}: .toggle transition-duration under reduce is ${td}`);
+  await page.reload(); await page.waitForSelector('.nav');
+  m = await mstate();
+  if (m.attr !== 'reduce' || m.pref !== 'reduce') errors.push(`${tag}: Reduce motion did not survive reload`);
+  await page.evaluate(() => localStorage.removeItem('marc.motion'));
+  await page.reload(); await page.waitForSelector('.nav');
 
   // (1) A sheet slides down and is gone, instead of vanishing in one frame.
   if (HAS.sheetExit) {
