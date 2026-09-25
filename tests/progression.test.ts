@@ -163,3 +163,14 @@ describe('QA3-3, QA3-11: a conditioning load never snaps across the ladder', () 
     expect(n.kg).toBe(27.5);
   });
 });
+
+describe('QA3-3b: above the rack, an lb user still sees their own clean number', () => {
+  it('a 225 lb trap-bar carry reads as 225 lb, not a rounded-kg conversion', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 102.058, entered: { value: 225, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.target).toBe('225 lb · 45 m');
+    expect(n.value).toBe(225);
+    expect(n.unit).toBe('lb');
+  });
+});

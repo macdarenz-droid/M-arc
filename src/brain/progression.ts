@@ -12,6 +12,7 @@
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { loadableNear, loadableTopKg } from './units';
+import { kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
@@ -96,7 +97,13 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
   // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
   // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
   // field groups them together.
-  if (conditioning && s.kg > loadableTopKg(profile) + 0.01) return s;
+  // QA3-3b: still restated in the profile's own unit, or an lb user sees a rounded-kg conversion
+  // (225 lb read back as "224.9 lb") instead of their own clean number.
+  if (conditioning && s.kg > loadableTopKg(profile) + 0.01) {
+    const value = kgToDisplay(s.kg, profile.unit);
+    const oldLabel = `${s.kg} kg`;
+    return { ...s, unit: profile.unit, value, target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${value} ${profile.unit}`) : s.target };
+  }
   const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
   const snap = loadableNear(s.kg, profile, dir);
   const oldLabel = `${s.kg} kg`;
@@ -158,7 +165,9 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (mode === 'conditioning' && CARRY_OR_SLED_IDS.has(exerciseId) && (last.bestDistanceM > 0 || last.bestDurationSec > 0)) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
-    const kg = last.topKg > 0 ? half(ctx?.deload ? last.topKg * ctx.deload.loadFactor : last.topKg) : null;
+    // QA3-3b: with an equipment profile to restate against later, keep the raw kg so an lb entry
+    // (already stored to 3 decimals) round-trips to its own clean number instead of a half-kg one.
+    const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * ctx.deload.loadFactor) : ctx?.equipment ? last.topKg : half(last.topKg)) : null;
     const load = kg != null ? `${kg} kg · ` : '';
     const u = byDistance ? ' m' : 's';
     const step = byDistance ? (best >= 100 ? 10 : 5) : 5;
