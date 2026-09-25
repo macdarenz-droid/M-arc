@@ -8,7 +8,8 @@ import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
-import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
+import { ShareSheet } from '@/slices/share/lazy';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
@@ -802,6 +803,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   /** F3.5: a "did you know" cue on the finish screen, for whichever main lift the session actually trained. */
   const learnExercise = findExercise((session.exercises.find(e => findExercise(e.exerciseId, s.customExercises)?.role === 'main') ?? session.exercises[0])?.exerciseId ?? '', s.customExercises);
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
+  const [sharing, setSharing] = useState(false);
   return (
     <div class="view">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div><AskAbout refTo={{ kind: 'session', id: session.id, label: `${session.splitName} session` }} /></div>
@@ -826,6 +828,8 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           </Card>
         </Section>
       )}
+      {sets > 0 && <Button block data-palace="train.share" onClick={() => setSharing(true)} style={{ marginTop: 16 }}><IconShare size={18} /> Share workout</Button>}
+      {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
       {debrief.length > 0 && (
         <Section title="Debrief">
           <div class="stack-sm">

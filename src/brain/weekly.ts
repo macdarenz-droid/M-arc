@@ -1,10 +1,21 @@
 /** This week at a glance, the training streak, and the week grade. */
-import type { Exercise, Session, Weekday } from '@/core/models';
+import type { Exercise, LoggedExercise, Session, Weekday } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
 import { addDays, daysBetween, weekStart, weekdayOf } from '@/core/dates';
 import { isWorkingSet, weeklyMuscleSets } from './exposure';
 import { recordsInWeek, type PersonalRecord } from './prs';
 import type { MuscleId } from '@/data/muscles';
+
+/** Working sets and volume (kg × reps of loaded working sets), unrounded. The one volume sum for weeks and share cards (F12). */
+export function workingTotals(exercises: LoggedExercise[]): { sets: number; volumeKg: number } {
+  let sets = 0, volumeKg = 0;
+  for (const e of exercises) for (const x of e.sets) {
+    if (!isWorkingSet(x)) continue;
+    sets++;
+    if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
+  }
+  return { sets, volumeKg };
+}
 
 export interface WeekSummary {
   start: string;
@@ -24,12 +35,7 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   const end = addDays(start, 6);
   const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
-  let sets = 0, volumeKg = 0;
-  for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
-    if (!isWorkingSet(x)) continue;
-    sets++;
-    if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
-  }
+  const { sets, volumeKg } = workingTotals(inWeek.flatMap(s => s.exercises));
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
   const workouts = inWeek.length;
   // BR-22: the planned count is the target; 3 only when there is no schedule at all (null).
@@ -106,12 +112,7 @@ export function weeklyVolumeHistory(sessions: Session[], today: string, weeks = 
   return muscle.map(m => {
     const end = addDays(m.week, 6);
     const inWeek = sessions.filter(s => s.day >= m.week && s.day <= end);
-    let sets = 0, volumeKg = 0;
-    for (const s of inWeek) for (const e of s.exercises) for (const x of e.sets) {
-      if (!isWorkingSet(x)) continue;
-      sets++;
-      if ((x.kg ?? 0) > 0) volumeKg += (x.kg ?? 0) * (x.reps ?? 0);
-    }
+    const { sets, volumeKg } = workingTotals(inWeek.flatMap(s => s.exercises));
     const muscleSets: Partial<Record<MuscleId, number>> = {};
     for (const [k, v] of Object.entries(m.sets) as Array<[MuscleId, number]>) muscleSets[k] = Math.round(v * 10) / 10;
     return { week: m.week, sessions: inWeek.length, sets, volumeKg: Math.round(volumeKg), muscleSets };

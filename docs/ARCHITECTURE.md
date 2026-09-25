@@ -17,7 +17,7 @@ src/
   native/    Capacitor bridges with web fallbacks: Health Connect, watch (BLE), notifications, haptics,
              share and file picker, photo, Android back button
   app/       shell, router (tabs + panels), selectors, toast, error boundary
-  slices/    today, workout (live session, heart capture), history, body, coach, profile, settings
+  slices/    today, workout (live session, heart capture), history, body, coach, profile, settings, share (F12 share cards)
   escobar/   the online coach, loaded lazily: loop, transport, store, verify, apply, tools/, context/,
              knowledge/, palace/ (in-app navigation), ui/
 escobar-worker/   Cloudflare Worker: validation, quotas (Durable Object), US-pinned upstream relay, SSE relay

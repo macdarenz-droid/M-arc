@@ -601,3 +601,64 @@ The supervisor re-checked the QA commits: 79 of 96 were fully fixed, plus QA-R7-
 #### QA2-FA-5 follow-up: the Worker deploy failed (Cloudflare error 10021)
 - The first FA-5 fix made the shard seed with `crypto.getRandomValues` at module load. Workers forbid random values in global scope, so "Deploy Escobar Worker" failed on the PR #7 merge and the upload was rejected. The Worker from PR #6 kept serving; nothing was down.
 - Fix: the seed is made on first use (`instanceSeed()`). New test: loading the Worker (`src/index`) makes no random values, and the first shard choice makes exactly one. It fails on the old code.
+
+## F12 — share cards
+
+Built from the design study "M/ARC Share Sheet, round 3" (claude.ai artifact EY1LvnQv4mjiXwSgB4aHum), limited to what the handoff asked for: the Poster, Sticker (with the muscle body map) and Receipt styles; This workout, Week, Month, 3 months, Year and All time; Story 9:16 and Square 1:1; and Photo, Save and Share. The study's other three styles (Muscle map, Consistency, Progress) and its colour swatches were not asked for. The swatches were a demo of the five themes: the cards take the active theme's tokens instead.
+
+### Where it opens
+- **Finish screen:** "Share workout", above the Debrief. Shown only when the session has sets. Opens on This workout.
+- **History → Log:** a share icon on every session card. Opens on that session. The sheet renders outside the card, so taps inside it don't fold the card.
+- **History → Stats:** a share icon in the top bar, shown once there is a session. Opens on Week, with all six period chips. Here "This workout" is the newest session.
+
+### Numbers (no new formulas)
+- `src/slices/share/cardData.ts` is pure and tested. Sets and volume come from `workingTotals`: the working-set loop that `weekSummary` and `weeklyVolumeHistory` already ran, moved into one exported function. Both now call it, and their results are unchanged.
+- Records come from `allRecords` in the person's unit, filtered to the period. The e1RM "strength" records come with them.
+- Muscle sets come from `effectiveSetsByMuscle`. The receipt's top set and load come from `summarizeSets` and `setLoadIn`, so a load typed in lb reads exactly as typed.
+- Time is the sum of `durationSec`. A session with no recorded time shows "—", not "0 m".
+- Periods: Week is Monday to today, like `weekSummary`, and the tests check that the two agree. Month is from the 1st, 3 months from the 1st of the month two months back, and Year from 1 January, each to today. All time runs from the first session.
+- Wording only: the poster's comparison line (≈ small cars / elephants / blue whales) comes from the design. It divides the kg total by fixed sizes and is not a training number.
+
+### Drawing and export
+- `src/slices/share/cards.ts` draws each card as one standalone SVG on a 360-wide grid (360×640 story, 360×360 square).
+  - The sheet shows it as an `<img>` from a blob URL.
+  - Save and Share draw that same SVG onto a canvas at 3× and encode a PNG: 1080×1920 or 1080×1080. What you see is what you share.
+- Theme tokens are resolved to plain colours in JS (`mix`, `alpha`), because an SVG drawn as an image has no access to the page's CSS variables.
+  - The sticker's body map uses the app's `bodyMuscles` paths, lit by effective sets with the MuscleMap's shade rule, including its brachialis and rotator-cuff aliases.
+  - Over a photo, and on the see-through sticker, text is white on a dark scrim or shadow.
+- Fonts: SVG images can't use web fonts, so the cards use system fonts: the theme's font stack, a condensed family for the big numbers (Roboto Condensed on Android) and a monospace family for the receipt. If a condensed font is missing, a long big number is squeezed to fit.
+- **No new dependency.** Canvas, SVG and Blob are built in, and `@capacitor/filesystem` and `@capacitor/share` were already installed.
+- **Own chunk:** the sheet and card code (27 kB, 14 kB gzipped) load the first time Share is tapped (`src/slices/share/lazy.tsx`, like Escobar's sheet). The service worker pre-caches that chunk, so sharing works offline. Adding it to the main bundle would have grown it by 30 kB. The main bundle was already over Vite's 500 kB warning before F12 (522 kB on main, 526 kB now).
+
+### Photo, Save, Share
+- **Photo:** uses `src/native/photo.ts`. It now takes optional `maxDimension` and `targetChars`, and the defaults are unchanged, so Escobar's composer behaves as before. Cards ask for a 1920 px photo, since it fills a 1080×1920 image and never leaves the phone. Tap again to remove it.
+- **Save:**
+  - Android: `@capacitor/filesystem` writes the PNG to Documents/M-ARC.
+  - Web: a download.
+- **Share:**
+  - Android: `@capacitor/share` with the file from the app cache.
+  - Web: the Web Share API with the file where `navigator.canShare({ files })` allows it. Otherwise a download. Cancelling is not an error.
+- The sheet has its own status line. The app toast would sit behind the open dialog.
+- The chosen style is remembered per device (`marc.share.style`).
+
+### Palace
+- New entries: `train.share` (targets Start, like `train.finish`), `history.session-share` and `history.share`. The anchors test and the gate's goTo check cover them.
+
+### Tests
+- `tests/share-cards.test.ts`:
+  - Every period in kg and in lb: range, sessions, sets, volume, time, records and muscle sets, each equal to the brain function's own result.
+  - Week equals `weekSummary`.
+  - One workout with a bench press typed as 135 lb: it reads "@135" in lb, it is a record, and its detail is "135 lb × 8".
+  - Number wording, and that each style × size is a standalone SVG at export size with no CSS variables left. Names are escaped, and a long name is cut before its sets and load.
+- **Gate:**
+  - Screenshots of the sheet from a History session and from Stats, in all five themes: `<theme>-share-session.png`, `<theme>-share-stats.png`.
+  - From the finish screen in silent-black: `silent-black-share-finish.png`. That walk is the only one that finishes a session.
+  - Stats must open on Week.
+  - All three cards must draw.
+  - Save must download a PNG of exactly 1080×1920 and 1080×1080, over 5 kB.
+
+### Risks and mitigations
+- **Android 8–10 Save:** Documents needs a storage permission, or legacy storage on Android 10, and the manifest is off limits here (native/). Save asks for the permission. If the write still fails, it opens the share sheet instead ("Choose where to save it"), so the card is never lost. Android 11+ writes directly. **Needs a check on a real device:** Save and Share on the APK (Android 11+, and one older phone if available).
+- **Web Share on desktop browsers:** most cannot share files, so they fall back to a download, with a status line saying so.
+- **Big photos:** limited to 1920 px and about 2.2 MB of JPEG before they enter the SVG. Each preview is a blob URL, revoked when it changes or the sheet closes.
+- **System fonts differ by phone:** the layout keeps room for wider fallbacks, and the big number has a fit guard.

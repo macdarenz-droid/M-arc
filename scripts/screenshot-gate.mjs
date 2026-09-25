@@ -25,6 +25,11 @@ for (let i = 0; ; i++) {
 }
 console.log('preview ready on', PORT);
 
+/** F12: a PNG's width and height from its header, or null when the bytes are not a PNG. */
+const pngSize = (buf) => (buf.length > 24 && buf.readUInt32BE(0) === 0x89504e47 && buf.readUInt32BE(4) === 0x0d0a1a0a ? { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) } : null);
+/** F12: the share sheet is open and every card preview has drawn. */
+const shareSheetReady = (page) => page.waitForFunction(() => { const imgs = [...document.querySelectorAll('dialog[open] .share-slide img')]; return imgs.length === 3 && imgs.every(i => i.complete && i.naturalWidth > 0); }, null, { timeout: 8000 }).then(() => true).catch(() => false);
+
 /** PL-18: wait up to 5 s for something that should appear, instead of a fixed sleep + isVisible. */
 const visible = (locator, timeout = 5000) => locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
 
@@ -136,10 +141,33 @@ for (const theme of themes) {
     }
     await shot('summary');
     if (!(await visible(page.getByText('Debrief', { exact: true })))) errors.push(`${theme}: expected a post-session debrief on the finish screen`);
+    // F12: "Share workout" on the finish screen opens the sheet on This workout; Save writes a real PNG at both sizes.
+    await page.getByRole('button', { name: 'Share workout' }).click();
+    if (!(await shareSheetReady(page))) errors.push(`${theme}: the share sheet's cards did not draw from the finish screen`);
+    await shot('share-finish');
+    for (const [label, w, h] of [['9:16', 1080, 1920], ['1:1', 1080, 1080]]) {
+      await page.locator('dialog[open] .share-size button', { hasText: label }).click();
+      await shareSheetReady(page);
+      const dl = page.waitForEvent('download', { timeout: 10000 }).catch(() => null);
+      await page.locator('dialog[open] .share-actions button', { hasText: 'Save' }).click();
+      const d = await dl;
+      const buf = d ? readFileSync(await d.path()) : Buffer.alloc(0);
+      const size = pngSize(buf);
+      if (!size || size.w !== w || size.h !== h || buf.length < 5000) errors.push(`${theme}: share card ${label} was not a ${w}×${h} PNG (${size ? `${size.w}×${size.h}` : 'no PNG'}, ${buf.length} bytes)`);
+    }
+    await page.keyboard.press('Escape'); await page.waitForTimeout(250);
     await page.getByRole('button', { name: 'Done', exact: true }).click();
   }
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250); await shot('history');
+  // F12: the share icon on a session card, and Share on Stats (which opens on Week).
+  await page.locator('[data-palace="history.session-share"]').first().click();
+  if (!(await shareSheetReady(page))) errors.push(`${theme}: the share sheet's cards did not draw from a History session`);
+  await shot('share-session'); await page.keyboard.press('Escape'); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250); await shot('stats');
+  await page.getByRole('button', { name: 'Share your stats' }).click();
+  if (!(await shareSheetReady(page))) errors.push(`${theme}: the share sheet's cards did not draw from Stats`);
+  if ((await page.locator('dialog[open] .share-chips [aria-pressed="true"]').textContent().catch(() => '')) !== 'Week') errors.push(`${theme}: Stats share should open on Week`);
+  await shot('share-stats'); await page.keyboard.press('Escape'); await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300); await shot('body');
   if (theme === 'silent-black') { await page.locator('path.muscle').nth(2).click({ force: true }); await page.waitForTimeout(300); await shot('muscle-detail'); await page.keyboard.press('Escape'); await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(250); await shot('levels'); }
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250); await shot('coach');
@@ -796,4 +824,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points and PNG export at 9:16 and 1:1 verified.');
