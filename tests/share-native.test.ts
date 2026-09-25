@@ -14,6 +14,7 @@ vi.mock('@/native/capacitor', () => ({ isNative: () => native.on }));
 import { saveImage, shareImage } from '@/native/share';
 import { pngCache } from '@/slices/share/png';
 import { shareLoadFailed } from '@/slices/share/lazy';
+import { carouselScroll } from '@/slices/share/ShareSheet';
 import { toast } from '@/app/toast';
 
 const png = new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], { type: 'image/png' });
@@ -79,6 +80,20 @@ describe('QA4-13: a failed load of the share code offers Reload', () => {
       expect(toast.value?.action).toBe('Reload');
       toast.value?.onAction?.();
       expect(reload).toHaveBeenCalledOnce();
+    } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+describe('QA4-14: the carousel follows Reduce motion', () => {
+  it("scrolls instantly when the person asked for reduced motion, smoothly otherwise", () => {
+    const mm = (reduce: boolean) => vi.fn((q: string) => ({ matches: reduce && q === '(prefers-reduced-motion: reduce)' }));
+    try {
+      vi.stubGlobal('matchMedia', mm(true));
+      expect(carouselScroll()).toBe('auto');
+      vi.stubGlobal('matchMedia', mm(false));
+      expect(carouselScroll()).toBe('smooth');
+      vi.stubGlobal('matchMedia', undefined);
+      expect(carouselScroll()).toBe('smooth');
     } finally { vi.unstubAllGlobals(); }
   });
 });

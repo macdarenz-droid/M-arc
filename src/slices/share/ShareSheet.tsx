@@ -27,6 +27,11 @@ const SEEN_KEY = 'marc.share.seen';
 const readSeen = (): string[] => { try { const v: unknown = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '[]'); return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []; } catch { return []; } };
 const markSeen = (id: string) => { try { localStorage.setItem(SEEN_KEY, JSON.stringify([...readSeen().filter(x => x !== id), id].slice(-WEIGHT_THINGS.length))); } catch { /* repeats just become possible */ } };
 
+/** QA4-14: the carousel jumps instead of gliding when the person asked for reduced motion. */
+export function carouselScroll(): ScrollBehavior {
+  try { return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'; } catch { return 'smooth'; }
+}
+
 export interface ShareSheetProps {
   /** The chip selected when the sheet opens. */
   initial: SharePeriod;
@@ -83,7 +88,7 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
   };
   const goTo = (i: number) => {
     const c = carousel.current, el = c?.children[i] as HTMLElement | undefined;
-    if (c && el) c.scrollTo({ left: el.offsetLeft - (c.clientWidth - el.clientWidth) / 2, behavior: 'smooth' });
+    if (c && el) c.scrollTo({ left: el.offsetLeft - (c.clientWidth - el.clientWidth) / 2, behavior: carouselScroll() });
     setCurrent(i); writeStyle(i);
   };
 
