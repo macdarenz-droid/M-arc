@@ -600,6 +600,33 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA4-5: the share sheet's Photo / Save / Share stay on screen and tappable on a short phone and a
+// tall one, with a 0, 24 or 48 px bottom safe area (set through --safe-area-inset-bottom).
+for (const [w, h] of [[360, 640], [390, 844]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`share-fit ${w}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  for (const inset of [0, 24, 48]) {
+    await page.evaluate(i => document.documentElement.style.setProperty('--safe-area-inset-bottom', `${i}px`), inset);
+    await page.getByRole('button', { name: 'Share your stats' }).click();
+    await shareSheetReady(page);
+    const off = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .share-actions button')].filter(b => {
+      const r = b.getBoundingClientRect(); const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return !(r.top >= 0 && r.bottom <= innerHeight && hit && b.contains(hit));
+    }).map(b => b.textContent));
+    if (off.length) errors.push(`share-fit ${w}×${h} inset ${inset}: off screen or covered: ${off.join(', ')}`);
+    if (w === 360) await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` });
+    await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  }
+  await ctx.close();
+}
+
 // Palace (§7, EV1): every registry entry resolves. goTo each id through the dev hooks and assert its
 // anchor is visible (silent-black), then screenshot three spotlights in all five themes.
 for (const theme of themes) {
@@ -824,4 +851,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points and PNG export at 9:16 and 1:1 verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified.');

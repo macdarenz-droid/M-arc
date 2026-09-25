@@ -155,8 +155,8 @@ export function ShareSheet({ initial, session, onClose }: ShareSheetProps) {
           <button type="button" class="btn" onClick={() => void togglePhoto()}>{photo ? <IconX size={18} /> : <IconCamera size={18} />}{photo ? 'Remove' : 'Photo'}</button>
           <button type="button" class="btn" disabled={busy || empty} onClick={() => void run('save')}><IconDownload size={18} />Save</button>
           <button type="button" class="btn btn-primary" disabled={busy || empty} onClick={() => void run('share')}><IconShare size={18} />Share</button>
+          <div class="share-status" role="status" aria-live="polite">{status}</div>
         </div>
-        <div class="share-status" role="status" aria-live="polite">{status}</div>
       </div>
     </Sheet>
   );
