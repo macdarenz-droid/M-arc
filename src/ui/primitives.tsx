@@ -171,7 +171,7 @@ export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, 
           onClick={() => { if (long.current) { long.current = false; return; } onUnitFlip(); }}
         >{entryUnit}</button>
       ) : null}
-      {other && <span class="weight-approx">{other}</span>}
+      {displayUnit && displayUnit !== entryUnit && <span class="weight-approx">{other ?? ' '}</span>}
     </span>
   );
 }

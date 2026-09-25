@@ -84,7 +84,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 input, select { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; min-height: 44px; width: 100%; outline: none; }
 input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-input[type="number"] { font-variant-numeric: tabular-nums; }
+input[type="number"], input[inputmode="decimal"], input[inputmode="numeric"] { font-variant-numeric: tabular-nums; }
 h1, h2, h3, p { margin: 0; }
 h1 { font-size: 28px; letter-spacing: -0.02em; font-weight: 650; line-height: 1.15; }
 h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
@@ -261,7 +261,9 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 }
 .set-grid { display: grid; grid-template-columns: 32px 1fr 1fr auto; gap: 8px; align-items: center; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
-.set-grid input { min-height: 40px; padding: 6px 10px; text-align: center; }
+.set-grid input { min-height: 40px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
+/* F7: a logged set's fields recede, so the next set to do stays the brightest row. */
+.set-grid.committed input:not(:focus) { background: transparent; border-color: var(--border-subtle); }
 .set-index { font-size: 12px; color: var(--text-3); font-weight: 600; text-align: center; }
 /* QA5-9: all:unset resets everything, including the user-select:none (:70) and background-color
    transition (:127) set on .set-kind earlier at equal specificity — later source order wins, so
@@ -271,6 +273,8 @@ html[data-motion="reduce"] .exercise.active .exname { color: var(--text); backgr
 .set-kind:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
 .set-kind.warmup { color: var(--warning); }
 .set-kind.drop, .set-kind.failure { color: var(--accent); }
+/* F7: once logged, a set's number/letter turns the same positive colour regardless of kind. */
+.set-kind.committed { color: var(--positive); }
 .exercise-note { display: flex; align-items: center; gap: 4px; }
 .conditioning-extra input { width: 0; flex: 1 1 0; min-width: 0; }
 .effort { display: flex; gap: 4px; align-items: center; min-height: 48px; }
@@ -357,7 +361,7 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .unit-pill { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); min-width: 26px; height: 22px; padding: 0 5px; border-radius: 999px; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border: 0; line-height: 22px; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
 .unit-pill::before { content: ''; position: absolute; inset: -11px -6px; }
 .set-grid .weight-input input { padding-right: 30px; }
-.weight-approx { font-size: 11px; color: var(--text-3); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.weight-approx { font-size: 11px; color: var(--text-3); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; min-height: 16px; }
 .unit-tag { display: inline-block; margin-left: 4px; padding: 0 4px; border-radius: 4px; font-size: 10px; font-weight: 700; color: var(--text-3); border: 1px solid var(--border-subtle); vertical-align: 1px; }
 .suspect-chip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 6px; padding: 8px 10px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--warning) 12%, transparent); color: var(--text); font-size: 13px; }
 .suspect-chip .grow { flex: 1 1 160px; }

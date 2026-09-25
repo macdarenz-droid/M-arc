@@ -590,6 +590,24 @@ for (const theme of themes) {
   const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
+  // F7: the committed set recedes (a checkmark, faded fields) instead of looking like a draft one.
+  const f7 = await page.evaluate(() => {
+    const committed = document.querySelectorAll('.set-grid.committed');
+    const kind = committed[0]?.querySelector('.set-kind');
+    const committedInput = committed[0]?.querySelector('input');
+    const draftInput = document.querySelector('.set-grid:not(.committed) input');
+    return {
+      committedCount: committed.length,
+      hasCheck: !!kind?.querySelector('svg'),
+      committedBg: committedInput ? getComputedStyle(committedInput).backgroundColor : null,
+      draftBg: draftInput ? getComputedStyle(draftInput).backgroundColor : null,
+      fontVariant: committedInput ? getComputedStyle(committedInput).fontVariantNumeric : null,
+    };
+  });
+  if (f7.committedCount !== 1) errors.push(`plate-sense ${theme}: expected 1 .set-grid.committed after committing set 1, got ${f7.committedCount}`);
+  if (!f7.hasCheck) errors.push(`plate-sense ${theme}: expected the committed set's set-kind to show a checkmark`);
+  if (!f7.committedBg || f7.committedBg === f7.draftBg) errors.push(`plate-sense ${theme}: committed vs draft input background did not differ (${f7.committedBg} vs ${f7.draftBg})`);
+  if (f7.fontVariant !== 'tabular-nums') errors.push(`plate-sense ${theme}: kg input font-variant-numeric is ${f7.fontVariant}, expected tabular-nums`);
   if (!(await visible(page.locator('.suspect-chip')))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
   await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
@@ -605,7 +623,14 @@ for (const theme of themes) {
   await page.getByText('Dumbbell Bench Press').first().click();
   await page.waitForTimeout(200);
   const dbInput = page.locator('.exercise.active input[aria-label="Load in lb"]').first();
-  await dbInput.fill('55');
+  // F7: kg (display) differs from lb (entry) here, so `.weight-approx` is already reserved on
+  // mount — the row must not grow the moment a digit resolves it to a real conversion.
+  const rowHeight = () => page.evaluate(() => document.querySelector('.exercise.active input[aria-label="Load in lb"]').closest('.set-grid').getBoundingClientRect().height);
+  const rowBefore = await rowHeight();
+  await dbInput.pressSequentially('5');
+  const rowAfterFirstDigit = await rowHeight();
+  if (Math.abs(rowAfterFirstDigit - rowBefore) > 0.5) errors.push(`plate-sense ${theme}: set row height changed after the first digit (${rowBefore} -> ${rowAfterFirstDigit})`);
+  await dbInput.pressSequentially('5');
   await page.waitForTimeout(150);
   const pill = page.locator('.exercise.active .unit-pill').first();
   if ((await pill.textContent())?.trim() !== 'lb') errors.push(`plate-sense ${theme}: expected the dumbbell pill in lb`);
