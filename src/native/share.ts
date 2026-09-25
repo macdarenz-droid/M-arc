@@ -23,18 +23,20 @@ function download(blob: Blob, fileName: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
-function blobToBase64(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '');
-    reader.onerror = () => reject(reader.error ?? new Error('Could not read the image'));
-    reader.readAsDataURL(blob);
-  });
+async function blobToBase64(blob: Blob): Promise<string> {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
 }
+
+const SHARE_DIR = 'MARC Share';
 
 /** Android's share sheet for a file written to the app cache. False when the person backs out. */
 async function shareCachedFile(fileName: string, base64: string, dialogTitle: string): Promise<boolean> {
-  const path = `MARC Share/${fileName}`;
+  // QA4-11: only the card being shared stays in the cache; earlier cards (and their photos) go.
+  await Filesystem.rmdir({ path: SHARE_DIR, directory: Directory.Cache, recursive: true }).catch(() => undefined);
+  const path = `${SHARE_DIR}/${fileName}`;
   await Filesystem.writeFile({ path, data: base64, directory: Directory.Cache, recursive: true });
   const { uri } = await Filesystem.getUri({ path, directory: Directory.Cache });
   try { await Share.share({ title: fileName, files: [uri], dialogTitle }); return true; }
