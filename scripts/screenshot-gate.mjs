@@ -1061,7 +1061,9 @@ for (const theme of themes) {
   const mc = await page.evaluate(() => ({ cls: document.activeElement?.className, o: getComputedStyle(document.activeElement).outlineStyle }));
   if (mc.o !== 'none') errors.push(`${tag}: mouse click shows a focus ring ${JSON.stringify(mc)}`);
   await page.keyboard.press('Escape'); await page.waitForTimeout(300);
-  await press(page.locator('.btn', { hasText: 'Take today off' }), 'transform');
+  // QA5-5c: 'Take today off' (Today.tsx:84) only shows on some days, so this probe depended on
+  // the real-world date; 'Start ...' on Train is always there regardless of day.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250); await press(page.getByRole('button', { name: /^Start / }).first(), 'transform');
   await ctx.close();
 }
 
