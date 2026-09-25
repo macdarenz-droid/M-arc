@@ -68,3 +68,21 @@ describe('show component summaries (§9)', () => {
     expect(() => summarize('bogus', {}, six)).toThrow(/unknown component/);
   });
 });
+
+describe('QA3-10: session_summary counts working sets only', () => {
+  it('warm-ups are left out of the set count and the effort tally', async () => {
+    const { session } = await import('../helpers');
+    const s = session('2026-09-10', [{ id: 'lib_barbell_bench_press', sets: [
+      { kg: 40, reps: 10, kind: 'warmup', effort: 'easy' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 6, effort: 'max' },
+    ] }]);
+    const ctx = ctxOf({ ...six.state, sessions: [...six.state.sessions, s] });
+    const out = summarize('session_summary', { sessionId: s.id }, ctx) as {
+      exercises: Array<{ sets: number }>; effort: { easy: number; ideal: number; max: number };
+    };
+    expect(out.exercises[0]!.sets).toBe(3);
+    expect(out.effort).toEqual({ easy: 0, ideal: 2, max: 1 });
+  });
+});

@@ -51,6 +51,17 @@ describe('read tool details', () => {
     expect(() => R.getSessions({ limit: 50 }, six)).toThrow(/between 1 and 20/);
     expect(() => R.getSessions({ from: 'yesterday' }, six)).toThrow(/YYYY-MM-DD/);
   });
+  it('QA3-10: a session\'s set count leaves out warm-ups', async () => {
+    const { session } = await import('../helpers');
+    const s = session('2026-09-10', [{ id: 'lib_barbell_bench_press', sets: [
+      { kg: 40, reps: 10, kind: 'warmup', effort: 'easy' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+    ] }]);
+    const ctx = ctxOf({ ...six.state, sessions: [...six.state.sessions, s] });
+    const row = R.getSessions({ limit: 1 }, ctx).sessions.find((r: { sessionId: string }) => r.sessionId === s.id) as { sets: number };
+    expect(row.sets).toBe(2);
+  });
   it('one session has every set and no heart without sharing', () => {
     const id = R.getSessions({ limit: 1 }, six).sessions[0]!.sessionId;
     const s = R.getSession({ sessionId: id }, six);

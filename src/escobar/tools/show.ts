@@ -118,11 +118,12 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
     case 'session_summary': {
       const x = s.sessions.find(y => y.id === params.sessionId);
       if (!x) throw new ToolError('unknown sessionId; use get_sessions');
+      // QA3-10: a warm-up is not a working set, in the count or the effort tally.
       const e = x.exercises.map(ex => {
         const top = ex.sets.filter(st => (st.kg ?? 0) > 0).sort((a, b) => (b.kg ?? 0) - (a.kg ?? 0))[0];
-        return { exercise: ex.name, sets: ex.sets.length, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
+        return { exercise: ex.name, sets: ex.sets.filter(isWorkingSet).length, ...(top ? { top: { ...loadOf(ctx, ex.exerciseId, top.kg!), reps: top.reps ?? 0 } } : {}) };
       });
-      const all = x.exercises.flatMap(ex => ex.sets);
+      const all = x.exercises.flatMap(ex => ex.sets.filter(isWorkingSet));
       return {
         sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), exercises: e.slice(0, 12),
         effort: { easy: all.filter(z => z.effort === 'easy').length, ideal: all.filter(z => z.effort === 'ideal').length, max: all.filter(z => z.effort === 'max').length },
