@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
-  addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel,
+  addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel, removeEntry,
   resolveSessionTiming, setSet, skipEntry, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
 import { deleteSplit } from '@/slices/workout/splits';
@@ -457,6 +457,56 @@ describe("Save for future leaves out Escobar's one-day change (QA2-FD-2, QA2-FD-
     finishSession(true);
     expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
       'lib_incline_barbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_cable_fly',
+    ]);
+  });
+});
+
+describe("QA3-8b: the swap-target substitution is found by lineage, not array position", () => {
+  const swapBenchOverride = { day: '2026-09-22', splitId: 'sp', reason: 'x', changes: [{ kind: 'swap' as const, from: 'lib_barbell_bench_press', to: 'lib_dumbbell_bench_press' }] };
+  it('reordering the live entries (moveEntry) still keeps the swapped-away bench on save', () => {
+    replaceState({ ...state.value, splits: [split], escobar: { ...state.value.escobar, todayOverride: swapBenchOverride } });
+    start(); // entries: DB bench, fly
+    moveEntry(1, 0); // fly to the top; no substitution happened
+    setSet(0, 0, { kg: 20, reps: 10 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 40, reps: 8 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_cable_fly']);
+  });
+  it('removing an earlier entry (removeEntry) still keeps the swapped-away bench on save', () => {
+    const three: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [{ exerciseId: 'lib_cable_fly', sets: 1 }, { exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_dumbbell_lateral_raise', sets: 1 }],
+    };
+    replaceState({ ...state.value, splits: [three], escobar: { ...state.value.escobar, todayOverride: swapBenchOverride } });
+    startSession(three); // entries: fly, DB bench, lateral raise
+    removeEntry(0); // drop fly
+    setSet(0, 0, { kg: 40, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 12 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_dumbbell_lateral_raise']);
+  });
+  it('substituting the swap target back to the original exercise keeps just that one entry', () => {
+    replaceState({ ...state.value, splits: [split], escobar: { ...state.value.escobar, todayOverride: swapBenchOverride } });
+    start(); // entries: DB bench, fly
+    substituteEntry(0, findExercise('lib_barbell_bench_press')!); // back to plain bench
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 10 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual(['lib_barbell_bench_press', 'lib_cable_fly']);
+  });
+  it('a swap to an exercise already in the split (QA-R4a-10) still restores bench on its own', () => {
+    const withDbBench: Split = {
+      id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_dumbbell_bench_press', sets: 2 }, { exerciseId: 'lib_cable_fly', sets: 1 }],
+    };
+    replaceState({ ...state.value, splits: [withDbBench], escobar: { ...state.value.escobar, todayOverride: swapBenchOverride } });
+    startSession(withDbBench); // entries: DB bench, fly (bench was dropped: the split already had DB bench, QA-R4a-10)
+    substituteEntry(0, findExercise('lib_incline_barbell_bench_press')!);
+    setSet(0, 0, { kg: 40, reps: 8 }); commitSet(0, 0);
+    setSet(1, 0, { kg: 20, reps: 10 }); commitSet(1, 0);
+    finishSession(true);
+    expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
+      'lib_barbell_bench_press', 'lib_incline_barbell_bench_press', 'lib_cable_fly',
     ]);
   });
 });

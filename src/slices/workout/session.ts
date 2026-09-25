@@ -289,7 +289,9 @@ export function removeEntry(entry: number): void {
 
 /** F3.7: swap this entry for a substitute, e.g. a recovering muscle or a balance nudge. Blank sets: a different exercise's numbers would not mean the same thing. */
 export function substituteEntry(entry: number, ex: Exercise): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length) })) }));
+  // QA3-8b: keeps the slot's original planned exerciseId (through any earlier substitution too),
+  // so templateFromSession can find it by lineage even after a reorder or another substitution.
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, id: newId('e'), exerciseId: ex.id, name: ex.name, sets: blankSets(e.sets.length), plannedId: e.plannedId ?? e.exerciseId })) }));
 }
 
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
@@ -366,14 +368,15 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
   // QA3-8: a swap's target that the person substituted away during the session (not Escobar's
   // target as-is) replaces the swapped-away exercise at its own split slot; it is not an addition,
   // and the swapped-away exercise is not restored alongside it.
-  const plannedList = plannedExercises(split, override, today);
+  // QA3-8b: found by lineage (plannedId), not by array position - a reorder (moveEntry) or an
+  // earlier removeEntry shifts indices, so looking a swap target up by its position in the
+  // planned order could land on a different, unrelated entry and invent a false substitution.
   const substituteForFrom = new Map<string, { exerciseId: string; sets: number }>();
   if (override && override.day === today && override.splitId === split.id) {
     for (const c of override.changes) {
-      if (c.kind !== 'swap') continue;
-      const idx = plannedList.findIndex(e => e.exerciseId === c.to);
-      const live = idx >= 0 ? a.entries[idx] : undefined;
-      if (live && !live.skipped && live.exerciseId !== c.to) {
+      if (c.kind !== 'swap' || c.to === c.from || inSplit.has(c.to)) continue;
+      const live = done.find(e => e.plannedId === c.to && e.exerciseId !== c.to);
+      if (live && live.exerciseId !== c.from) {
         substituteForFrom.set(c.from, { exerciseId: live.exerciseId, sets: Math.max(1, live.sets.filter(x => x.kind !== 'warmup').length) });
       }
     }
