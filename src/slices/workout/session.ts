@@ -176,8 +176,12 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const set = a?.entries.flatMap(e => e.sets).find(s => s.id === setId);
   // QA2-FB-5: a set left empty when its field loses focus gives up its commit, so a later real
   // entry gets its own time and rest instead of the mistaken one's.
+  // QA3-4: only when it is the most recently committed set - a mistaken commit is always the
+  // last one. Clearing and retyping an earlier set must not move its time or restart rest.
   if (a && set && !hasEntry(set) && set.at) {
-    setSetById(setId, { at: undefined, restSec: undefined, fidelity: undefined, heart: undefined, status: 'draft' });
+    if (latestCommittedSetId(a) === setId) {
+      setSetById(setId, { at: undefined, restSec: undefined, fidelity: undefined, heart: undefined, status: 'draft' });
+    }
     return false;
   }
   // F2: a filled-in warm-up commits too (it gets its time), it just never starts auto-rest.

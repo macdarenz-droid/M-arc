@@ -79,6 +79,30 @@ describe('commit-once sets (UI-01)', () => {
     expect(s).toMatchObject({ reps: 6, status: 'committed', at: first.at, restSec: first.restSec, fidelity: first.fidelity });
     expect(a().rest!.endsAt).toBe(endsAt);
   });
+  it('QA3-4: clearing and retyping an earlier set on blur keeps its time and rest', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(0, 0);
+    const first = { ...a().entries[0]!.sets[0]! };
+    vi.advanceTimersByTime(60_000);
+    setSet(0, 1, { kg: 60, reps: 8 });
+    commitSet(0, 1); // set 1 is now the most recently committed set
+    const endsAt = a().rest!.endsAt;
+    vi.advanceTimersByTime(20_000);
+    // Correcting set 0 (the earlier one): clear it, then the field loses focus while empty.
+    setSet(0, 0, { reps: undefined, kg: undefined });
+    commitSet(0, 0);
+    expect(a().entries[0]!.sets[0]!.at).toBe(first.at);
+    expect(a().entries[0]!.sets[0]!.restSec).toBe(first.restSec);
+    vi.advanceTimersByTime(5_000);
+    setSet(0, 0, { kg: 60, reps: 6 });
+    commitSet(0, 0);
+    const s = a().entries[0]!.sets[0]!;
+    expect(s.at).toBe(first.at);
+    expect(s.restSec).toBe(first.restSec);
+    expect(a().rest!.endsAt).toBe(endsAt);
+  });
   it('addSet carries load and reps, never timing or effort', () => {
     start();
     setSet(1, 0, { kg: 60, reps: 8, effort: 'max' });
