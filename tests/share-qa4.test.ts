@@ -3,7 +3,8 @@ import { describe, it, expect } from 'vitest';
 import { session, sets } from './helpers';
 import { cardData, isEmptyCard, latestSession } from '@/slices/share/cardData';
 import { hasWorkingSets } from '@/brain/exposure';
-import { cardFileName } from '@/slices/share/cards';
+import { cardFileName, cardSvg, paletteFor } from '@/slices/share/cards';
+import { THEMES } from '@/theme/themes';
 import { weekSummary, weeklyVolumeHistory, workingTotals } from '@/brain/weekly';
 import { modeOf } from '@/brain/history';
 import { allRecords } from '@/brain/prs';
@@ -117,5 +118,23 @@ describe('QA4-8: a warm-up-only session is not shareable', () => {
     expect(isEmptyCard(cardData({ sessions: [real, warm], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: real }))).toBe(false);
     expect(latestSession([real, warm])?.id).toBe(real.id);
     expect(latestSession([warm])).toBeNull();
+  });
+});
+
+describe('QA4-9: a bodyweight-only card headlines sets, not "0 kg lifted"', () => {
+  const s = session('2026-09-22', [{ id: 'lib_push_up', name: 'Push-Up', sets: [{ reps: 20 }, { reps: 18 }, { reps: 15 }] }, { id: 'lib_pull_up', name: 'Pull-Up', sets: [{ reps: 8 }, { reps: 7 }] }]);
+  const d = cardData({ sessions: [s], custom: [], unit: 'kg', today: TODAY, period: 'workout', session: s });
+  const pal = paletteFor(THEMES['silent-black']);
+  it('poster and sticker show the 5 working sets as "sets done"', () => {
+    for (const style of ['poster', 'sticker'] as const) {
+      const svg = cardSvg(d, style, 'story', pal);
+      expect(svg, style).not.toMatch(/KG LIFTED/i);
+      expect(svg, style).toMatch(/SETS DONE/i);
+      expect(svg, style).toMatch(/>5</);
+    }
+  });
+  it('the receipt drops TOTAL LIFTED', () => {
+    expect(cardSvg(d, 'receipt', 'story', pal)).not.toContain('TOTAL LIFTED');
+    expect(cardSvg(d, 'receipt', 'square', pal)).not.toContain('TOTAL LIFTED');
   });
 });

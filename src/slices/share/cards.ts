@@ -140,12 +140,17 @@ function coachMark(c: Ctx, mark: string): string {
     + `<rect x="${r(x)}" y="${r(y)}" width="${s}" height="${s}" fill="${c.pal.accent}" fill-opacity="0.9" mask="url(#em)"/>`;
 }
 
+/** The headline number: weight lifted, or working sets when nothing was loaded (QA4-9: never "0 kg lifted"). */
+function heroOf(d: ShareCardData): { big: string; unit: string } {
+  return d.volume > 0 ? volumeHero(d.volume, d.unit) : { big: groupInt(d.sets), unit: 'sets done' };
+}
+
 /* ---------- A. Poster ---------- */
 
 function poster(c: Ctx): string {
   const sq = c.f === 'square';
   const pad = sq ? 24 : 26, top = sq ? 22 : 96, bottom = c.h - (sq ? 34 : 160);
-  const hero = volumeHero(c.d.volume, c.d.unit);
+  const hero = heroOf(c.d);
   const big = sq ? 78 : 104;
   const title = clip([c.d.title, c.d.sub].filter(Boolean).join(' · '), sq ? 38 : 36);
   const fun = c.d.compare?.text ?? '';
@@ -187,7 +192,7 @@ function figures(x: number, y: number, height: number, c: Ctx): string {
 function sticker(c: Ctx): string {
   const sq = c.f === 'square';
   const cx = W / 2, gap = sq ? 8 : 14, val = sq ? 30 : 40, figH = sq ? 0 : 92;
-  const hero = volumeHero(c.d.volume, c.d.unit);
+  const hero = heroOf(c.d);
   const rows: Array<[string, string, boolean]> = [
     c.d.period === 'workout' ? [clip(c.d.title, 30), timeText(c.d), false] : ['Sessions', groupInt(c.d.sessions), false],
     [hero.unit.replace(/^k lb/, 'thousand lb'), hero.big, false],
@@ -264,7 +269,7 @@ function receipt(c: Ctx): string {
   for (const [n, v, acc] of summary) body += acc ? line(n, v, { starValue: true, valueFill: c.pal.accent }) : line(n, v);
   body += dash();
   y -= lh * 0.35;
-  body += line('TOTAL LIFTED', volumeShort(c.d.volume, c.d.unit).toUpperCase(), { bold: true, size: fs + 2 });
+  if (c.d.volume > 0) body += line('TOTAL LIFTED', volumeShort(c.d.volume, c.d.unit).toUpperCase(), { bold: true, size: fs + 2 });
   y += 8;
   let bx = 0; const bars: string[] = [];
   for (let i = 0; i < 44; i++) { const bw = ((i * 7) % 3) + 1; bars.push(`<rect x="${r(bx)}" y="0" width="${bw}" height="${barH}" fill="${PAPER_INK}"/>`); bx += bw + 1.5; }
