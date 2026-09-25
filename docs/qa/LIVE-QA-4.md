@@ -136,3 +136,19 @@ QA4-W3, W4 and W5 are fixed. Signing and the pinned fingerprint are untouched. R
 W1 and W2 have two gaps. Neither can happen while handover is disabled. Re-check both when handover is switched on:
 - 'Delete once settled/exported' only reaches cancelled handovers.
 - A mid-workout write failure shows its notice only at the next app start.
+
+## Re-check of the share-card fixes (PR #12 @ 2c0bb73)
+
+14 of 15 are fixed. QA4-1 is partly fixed: History, Stats, the volume chart, and Escobar's get_volume, week_summary and brief all now agree with the card.
+
+- **QA4-1b · Escobar's compare_periods still counts assistance as volume**
+  - Where: src/escobar/tools/show.ts:176-177.
+  - Repro: Assisted Pull-Up 3×10 @40 plus Bench 3×5 @60 gives 2100 in compare_periods, but 900 everywhere else.
+  - Fix:
+    - Replace the loop with `const { sets, volumeKg: vol } = workingTotals(inP.flatMap(x => x.exercises).filter(e => !exercise || e.exerciseId === exercise), s.customExercises);`
+    - Import `workingTotals` from '@/brain/weekly'.
+    - Drop the unused `isWorkingSet` import (:25).
+  - Test: compare_periods volume for that week === `weeklyVolumeHistory([s], TODAY, 1)[0].volumeKg` (900).
+  - Also, both low:
+    - (a) show.ts:63 lift_trend 'volume': for an assisted exercise, use the sum of reps.
+    - (b) cardData.ts:119-123: for assisted exercises, pick the top from all working sets sorted by kg ascending. When top.kg is 0, omit the '@… assist' load.
