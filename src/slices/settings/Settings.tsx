@@ -163,8 +163,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Feedback" palace="settings.haptics">
           <Card>
             <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span><div class="hint">{hapticSupport() === 'native' ? 'Android haptics' : hapticSupport() === 'web' ? 'Browser vibration' : 'No vibration on this device'}</div></Row>
-            <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
             <Button size="sm" onClick={() => { void haptic.confirm(); showToast('Sent a test buzz'); }}>Test haptic</Button>
+            <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
           </Card>
         </Section>
 
