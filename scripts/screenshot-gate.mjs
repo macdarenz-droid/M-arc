@@ -254,6 +254,60 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA6-2: on Stats > Exercise progress, a bodyweight/assisted set label ("BW+10 kg × 5",
+// "20 kg assist") is longer than a plain kg one, so on a 360 px phone the date cell must not
+// overlap the set text.
+{
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`stat-hist-row: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `s${offset}-${id}`, splitId: 'sp1', splitName: 'Pull', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const pullUp = [0, 1, 2].map(() => ({ kg: 10, reps: 5, effort: 'ideal' }));
+    const assisted = [0, 1, 2].map(() => ({ kg: 20, reps: 10, effort: 'ideal' }));
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(10, 'lib_pull_up', 'Pull-Up', pullUp), sess(6, 'lib_pull_up', 'Pull-Up', pullUp), sess(3, 'lib_pull_up', 'Pull-Up', pullUp),
+        sess(9, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted), sess(5, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted), sess(2, 'lib_assisted_pull_up', 'Assisted Pull-Up', assisted),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  for (const label of ['Pull-Up', 'Assisted Pull-Up']) {
+    await page.locator('select').first().selectOption({ label });
+    await page.waitForTimeout(200);
+    await settle(page); await page.screenshot({ path: `${OUT}/silent-black-stat-hist-row-${label.toLowerCase().replace(/\s+/g, '-')}.png` });
+    // Scoped by the Section's own data-palace, not by the stat-hist-row class, so this probe still
+    // finds the rows (and so still fails on overlap) if the class were ever removed by mistake.
+    const rows = await page.evaluate(() => [...document.querySelectorAll('[data-palace="history.exercise-stats"] .list .list-row')].map(row => {
+      const date = row.querySelector(':scope > .grow');
+      const setText = row.querySelector(':scope > .hint');
+      const dr = date.getBoundingClientRect(), sr = setText.getBoundingClientRect();
+      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.querySelector('.small')?.getClientRects().length ?? date.getClientRects().length };
+    }));
+    if (!rows.length) errors.push(`stat-hist-row ${label}: expected recent-session rows on Exercise progress`);
+    for (const r of rows) {
+      if (r.dateRight > r.setLeft) errors.push(`stat-hist-row ${label}: the date (right ${r.dateRight}) overlaps the set text (left ${r.setLeft})`);
+      if (r.dateLines > 1) errors.push(`stat-hist-row ${label}: the date wrapped onto ${r.dateLines} lines`);
+    }
+  }
+  await ctx.close();
+}
+
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });

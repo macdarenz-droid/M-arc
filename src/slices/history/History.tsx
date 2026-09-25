@@ -263,7 +263,7 @@ function Stats() {
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
-                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
+                <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">{progressHint(mode)}</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far. The trend line appears after the second.</p>}
