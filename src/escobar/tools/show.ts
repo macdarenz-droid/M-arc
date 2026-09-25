@@ -205,6 +205,8 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
         a: { ...a, value: va, ...(effA != null ? { effective: effA } : {}) },
         b: { ...b, value: vb, ...(effB != null ? { effective: effB } : {}) },
         delta: r1(vb - va), deltaPct: va ? r1(((vb - va) / va) * 100) : null,
+        // QA6-3: the coach's own delta, so it never points the opposite way to Stats' effective totals.
+        ...(effA != null && effB != null ? { effectiveDelta: r1(effB - effA), effectiveDeltaPct: effA ? r1(((effB - effA) / effA) * 100) : null } : {}),
       };
     }
     case 'body_trend': {

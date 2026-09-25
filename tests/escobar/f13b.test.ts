@@ -69,6 +69,44 @@ describe('F13b: compare_periods', () => {
   });
 });
 
+describe('F13b: compare_periods effectiveDelta (QA6-3)', () => {
+  const dayA = '2026-09-10', dayB = '2026-09-15';
+  const stateFor = (bodySharing: boolean): AppState => {
+    const base = emptyState();
+    return {
+      ...base,
+      sessions: [session(dayA, [{ id: PU, sets: sets(0, 8) }]), session(dayB, [{ id: PU, sets: sets(10, 5) }])],
+      weightLog: [{ day: '2026-09-01', kg: 80 }],
+      escobar: { ...base.escobar, sharing: { health: false, body: bodySharing } },
+    };
+  };
+  const params = { metric: 'volume', a: { from: dayA, to: dayA }, b: { from: dayB, to: dayB } };
+
+  it('effectiveDelta is -570 with sharing on; absent with sharing off', () => {
+    const off = summarize('compare_periods', params, ctxOf(stateFor(false))) as { delta: number; effectiveDelta?: number; effectiveDeltaPct?: number };
+    expect(off.delta).toBe(150);
+    expect(off).not.toHaveProperty('effectiveDelta');
+    expect(off).not.toHaveProperty('effectiveDeltaPct');
+
+    const on = summarize('compare_periods', params, ctxOf(stateFor(true))) as { delta: number; effectiveDelta?: number; effectiveDeltaPct?: number };
+    expect(on.delta).toBe(150);
+    expect(on.effectiveDelta).toBe(-570);
+    expect(on.effectiveDeltaPct).toBeCloseTo(-29.7, 1);
+  });
+
+  it('effectiveDelta is removed on replay once sharing is off', () => {
+    const msgs: StoredMessage[] = [
+      { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'compare_periods', input: params }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't1', content: '{"data":{"delta":150,"effectiveDelta":-570,"effectiveDeltaPct":-29.7}}' }] },
+    ];
+    const replay = (body: boolean) => JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body }));
+    expect(replay(true)).toContain('-570');
+    expect(replay(false)).not.toContain('-570');
+    expect(replay(false)).toContain('150');
+    expect(replay(false)).not.toContain('effectiveDelta');
+  });
+});
+
 describe('F13b: withBodyweightKg is redacted from replay once body sharing is off (ES-12)', () => {
   it('a past week_summary result loses withBodyweightKg but keeps volumeKg', () => {
     const msgs: StoredMessage[] = [
