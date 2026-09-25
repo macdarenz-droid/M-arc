@@ -1107,6 +1107,60 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// Hotfix regression: an exercise's "Note for today" and "Setup note" inputs are controlled by the
+// live store value and only saved on the native 'change' event (blur/Enter). During a live
+// session, `recovery` (app/selectors.ts) is a computed signal keyed on the ticking `minuteNow`
+// signal; every wall-clock minute rollover recomputes it, which re-renders every open EntryCard —
+// including one with its notes sheet open — and resets an unsaved, still-focused input back to the
+// last-committed value. Playwright's virtual clock crosses that minute boundary deterministically,
+// without a real 60 s wait and without any date-dependent locator.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'notes-wipe';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  // Installed before navigation so the app's own 1 s ticker (acquireTicker, app/clock.ts) is
+  // created against the virtual clock and actually advances when fast-forwarded below.
+  await page.clock.install({ time: Date.now() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const card = page.locator('.card.exercise').first();
+  const openMenu = () => card.getByRole('button', { name: 'Options', exact: true }).click();
+  const closeMenu = () => page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click();
+  // 65 s of virtual time guarantees a minute rollover regardless of where the wall clock started.
+  const crossAMinute = () => page.clock.fastForward(65_000);
+
+  // "Note for today": typed but not yet blurred, must survive a minute rolling over mid-edit,
+  // and must still be there after closing and reopening the sheet.
+  await openMenu(); await page.waitForTimeout(200);
+  const noteInput = page.getByLabel('Note for today');
+  await noteInput.fill('Seat 5 test');
+  await crossAMinute(); await page.waitForTimeout(200);
+  if ((await noteInput.inputValue()) !== 'Seat 5 test') errors.push(`${tag}: "Note for today" was wiped when a minute rolled over mid-edit`);
+  await closeMenu(); await page.waitForTimeout(200);
+  await openMenu(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Note for today').inputValue()) !== 'Seat 5 test') errors.push(`${tag}: "Note for today" did not survive closing and reopening the sheet`);
+
+  // "Setup note (shown every time)": same two checks.
+  const stickyInput = page.getByLabel('Setup note (shown every time)');
+  await stickyInput.fill('Seat 5 setup test');
+  await crossAMinute(); await page.waitForTimeout(200);
+  if ((await stickyInput.inputValue()) !== 'Seat 5 setup test') errors.push(`${tag}: "Setup note" was wiped when a minute rolled over mid-edit`);
+  await closeMenu(); await page.waitForTimeout(200);
+  await openMenu(); await page.waitForTimeout(200);
+  if ((await page.getByLabel('Setup note (shown every time)').inputValue()) !== 'Seat 5 setup test') errors.push(`${tag}: "Setup note" did not survive closing and reopening the sheet`);
+  await closeMenu();
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();

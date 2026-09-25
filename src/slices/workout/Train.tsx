@@ -437,6 +437,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
   const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<string | null>(null);
+  const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
   const sticky = s.exerciseNotes[entry.exerciseId];
@@ -547,10 +549,16 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </div>
       )}
       {menu && (
-        <Sheet title={entry.name} onClose={() => setMenu(false)}>
+        <Sheet title={entry.name} onClose={() => {
+          if (stickyDraft != null) setExerciseNote(entry.exerciseId, stickyDraft);
+          if (noteDraft != null) setEntryNote(index, noteDraft);
+          setStickyDraft(null);
+          setNoteDraft(null);
+          setMenu(false);
+        }}>
           <div class="stack-sm">
-            <Field label="Setup note (shown every time)"><input maxLength={200} value={sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onChange={e => setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value)} /></Field>
-            <Field label="Note for today"><input maxLength={500} value={entry.note ?? ''} onChange={e => setEntryNote(index, (e.target as HTMLInputElement).value)} /></Field>
+            <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
+            <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { setEntryNote(index, (e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
             {ex && <Button variant="quiet" onClick={() => { setMenu(false); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => { removeEntry(index); setMenu(false); }}>Remove from this session</Button>
