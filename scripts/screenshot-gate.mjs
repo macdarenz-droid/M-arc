@@ -7,6 +7,7 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, 'screenshots');
@@ -33,6 +34,15 @@ const shareSheetReady = (page) => page.waitForFunction(() => { const imgs = [...
 /** PL-18: wait up to 5 s for something that should appear, instead of a fixed sleep + isVisible. */
 const visible = (locator, timeout = 5000) => locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
 
+/** F5: let a short-lived animation finish before a screenshot, instead of guessing a fixed delay.
+ * Ignores long-running (rest bar) and paused animations, so it never becomes a second fixed wait. */
+const settle = (page) => page.evaluate(() => Promise.race([
+  Promise.all(document.getAnimations().filter(a => a.playState === 'running' && a.effect && a.effect.getComputedTiming().endTime <= 1000).map(a => a.finished.catch(() => {}))),
+  new Promise(r => setTimeout(r, 1000)),
+])).catch(() => {});
+
+const sha1 = (buf) => createHash('sha1').update(buf).digest('hex');
+
 // Realistic legacy data so the migration path is exercised end to end.
 const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
@@ -58,7 +68,7 @@ const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { execut
 const themes = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'];
 const errors = [];
 for (const theme of themes) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${theme}: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`${theme} console: ${m.text()}`); });
@@ -67,7 +77,7 @@ for (const theme of themes) {
   console.log(theme, 'loaded');
   await page.waitForSelector('.nav');
   await page.waitForTimeout(400);
-  const shot = (name) => page.screenshot({ path: `${OUT}/${theme}-${name}.png` });
+  const shot = async (name) => { await settle(page); return page.screenshot({ path: `${OUT}/${theme}-${name}.png` }); };
   await shot('today');
   // A profile with no birth year/height/sex and no completed onboarding shows the "help the
   // coach know you" sheet on top of Today (even on the legacy-import fixture) — screenshot it,
@@ -217,7 +227,7 @@ for (const theme of themes) {
 
 // R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
 {
-  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`narrow: ${e.message}`));
   await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
@@ -232,7 +242,7 @@ for (const theme of themes) {
   await load.fill('102.5');
   await page.waitForTimeout(150);
   const fit = await load.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }));
-  await page.screenshot({ path: `${OUT}/silent-black-set-grid-360.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-set-grid-360.png` });
   console.log('narrow set grid:', fit);
   if (fit.scroll > fit.client) errors.push(`narrow: the load input clips 102.5 at 360 px (${fit.scroll} > ${fit.client})`);
   const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
@@ -242,7 +252,7 @@ for (const theme of themes) {
 
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const tag = 'r6';
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
@@ -262,7 +272,7 @@ for (const theme of themes) {
   await page2.getByRole('button', { name: 'Take today off' }).click().catch(() => errors.push(`${tag}: no "Take today off" on a scheduled day`));
   await page2.waitForTimeout(250);
   if (!(await visible(page2.getByText('Day off', { exact: true })))) errors.push(`${tag}: expected the day-off state on Today`);
-  await page2.screenshot({ path: `${OUT}/silent-black-day-off.png` });
+  await settle(page2); await page2.screenshot({ path: `${OUT}/silent-black-day-off.png` });
   await page2.getByRole('button', { name: 'Undo day off' }).click().catch(() => {});
   await page2.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page2.waitForTimeout(250);
   await page2.getByRole('button', { name: /^Start / }).first().click(); await page2.waitForTimeout(300);
@@ -278,7 +288,7 @@ for (const theme of themes) {
   await page2.getByRole('button', { name: 'Log warm-ups' }).first().click().catch(() => errors.push(`${tag}: no "Log warm-ups"`));
   await page2.waitForTimeout(250);
   if ((await card.locator('.set-kind.warmup').count()) < 1) errors.push(`${tag}: expected warm-up sets in the live card`);
-  await card.screenshot({ path: `${OUT}/silent-black-warmups-note.png` });
+  await settle(page2); await card.screenshot({ path: `${OUT}/silent-black-warmups-note.png` });
   // QA-R7-1: in the finish sheet's effort list, a tap just below a set's 'Max' never rates the set below.
   for (let j = 0; j < 6; j++) { await page2.locator('.set-grid input[inputmode="numeric"]').nth(j).fill('8', { timeout: 1000 }).catch(() => {}); }
   await page2.getByRole('button', { name: 'Finish', exact: true }).click(); await page2.waitForTimeout(250);
@@ -311,14 +321,14 @@ for (const theme of themes) {
   const csv = page2.locator('[data-palace="settings.csv"]');
   await csv.scrollIntoViewIfNeeded().catch(() => {});
   if (!(await visible(csv))) errors.push(`${tag}: expected the CSV export row in Settings`);
-  else await csv.screenshot({ path: `${OUT}/silent-black-csv-row.png` });
+  else { await settle(page2); await csv.screenshot({ path: `${OUT}/silent-black-csv-row.png` }); }
   await ctx.close();
 }
 
 // A fresh (non-legacy) profile so the onboarding form and a goal-change insight are visible
 // without the legacy fixture's own progress insights outranking them in the top 3.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`fresh-profile: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`fresh-profile console: ${m.text()}`); });
@@ -327,7 +337,7 @@ for (const theme of themes) {
   await page.waitForTimeout(300);
   await page.getByRole('button', { name: 'Add my details' }).click();
   await page.waitForTimeout(250);
-  await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-onboarding-form.png` });
   await page.locator('label:has-text("Body weight") input').first().fill('80');
   await page.getByText('Strength focus').click();
   await page.waitForTimeout(200);
@@ -337,14 +347,14 @@ for (const theme of themes) {
   await page.waitForTimeout(250);
   const insightTitles = await page.locator('.insight h3').allTextContents();
   if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
-  await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
   await ctx.close();
 }
 
 // A fresh profile with >=5 sessions logged this calendar week, so the weekly review
 // card (6.13, cadence 'weekly') appears on Coach without waiting a real week.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`weekly-review: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`weekly-review console: ${m.text()}`); });
@@ -379,11 +389,11 @@ for (const theme of themes) {
   }
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-weekly-review.png` });
   if (!(await visible(page.getByText('Weekly review')))) errors.push('weekly-review: expected the weekly review card on Coach after 5 sessions this week');
   await page.getByText('Weekly review').click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/silent-black-weekly-review-sheet.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-weekly-review-sheet.png` });
   await ctx.close();
 }
 
@@ -391,7 +401,7 @@ for (const theme of themes) {
 // tier with reasons instead of the empty "connect a watch" prompt, and a lift that would otherwise
 // suggest an increase holds instead once readiness is red (the progression hook, 6.4).
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`readiness: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`readiness console: ${m.text()}`); });
@@ -411,7 +421,7 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
   if (!(await visible(page.getByRole('heading', { name: /^Readiness:/ })))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
 
   // A "two-for-two clean top" history that would otherwise suggest an increase.
@@ -437,7 +447,7 @@ for (const theme of themes) {
   await page.waitForTimeout(300);
   await page.getByRole('button', { name: /^Start / }).first().click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/silent-black-readiness-holds-train.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-readiness-holds-train.png` });
   if (await page.getByText('Add one step').isVisible().catch(() => false)) errors.push('readiness: expected red readiness to remove the load increase in Train');
   await ctx.close();
 }
@@ -449,7 +459,7 @@ for (const theme of themes) {
 // Plain viewport, no touch/mobile emulation: the touch-event path made clicks on the effort
 // buttons flaky here, unlike the theme passes above which never type into a live set mid-flow.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`watch-stub: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`watch-stub console: ${m.text()}`); });
@@ -507,18 +517,18 @@ for (const theme of themes) {
   await page.waitForTimeout(300);
   await page.getByText('Test Watch').click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/watch-sheet.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/watch-sheet.png` });
   await page.getByRole('button', { name: 'Close' }).click();
   await page.waitForTimeout(200);
   if (!(await visible(page.locator('.watch-pill .heart-bpm')))) errors.push('watch-stub: expected the live pill to reach LIVE inside a session');
-  await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/watch-pill-live.png` });
 
   const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('50'); await inputs.nth(1).fill('10'); await inputs.nth(1).blur();
   await page.locator('.effort button.ideal').first().click();
   await page.waitForTimeout(200);
   if (!(await visible(page.getByText(/^peak /)))) errors.push('watch-stub: expected a per-set peak badge after a live commit');
-  await page.screenshot({ path: `${OUT}/watch-rest-heart-mode.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/watch-rest-heart-mode.png` });
   if (!(await visible(page.getByText('Resting until heart rate settles')))) errors.push('watch-stub: expected the heart-mode rest banner ("N -> N") after a live commit with rest.mode=heart');
 
   await page.getByRole('button', { name: 'Finish' }).click();
@@ -529,7 +539,7 @@ for (const theme of themes) {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.waitForTimeout(400);
   }
-  await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/watch-finish-heart.png` });
   if (!(await visible(page.getByRole('heading', { name: 'Heart' })))) errors.push('watch-stub: expected a Heart card on the finish screen after a session with heart data');
   await ctx.close();
 }
@@ -537,7 +547,7 @@ for (const theme of themes) {
 // Plate Sense (§25): an lb dumbbell at a kg gym shows the entry pill in lb with the "≈ kg" reading
 // under it; a barbell target opens the plate sheet; a 2.2× slip shows the suspect chip. 5 themes.
 for (const theme of themes) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`plate-sense ${theme}: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`plate-sense ${theme} console: ${m.text()}`); });
@@ -577,7 +587,7 @@ for (const theme of themes) {
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
   if (!(await visible(page.locator('.suspect-chip')))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
-  await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
   await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
   await page.waitForTimeout(200);
   if (!(await visible(page.locator('.weight-approx').first()))) errors.push(`plate-sense ${theme}: expected the ≈ kg reading once the bench is in lb`);
@@ -585,7 +595,7 @@ for (const theme of themes) {
   await page.locator('.target-link').first().click();
   await page.waitForTimeout(300);
   if (!(await visible(page.locator('[data-palace="train.plate-sheet"]')))) errors.push(`plate-sense ${theme}: expected the plate sheet`);
-  await page.screenshot({ path: `${OUT}/${theme}-plate-sheet.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-plate-sheet.png` });
   await page.keyboard.press('Escape'); await page.waitForTimeout(200);
   // The dumbbell entry, typed in lb.
   await page.getByText('Dumbbell Bench Press').first().click();
@@ -603,7 +613,7 @@ for (const theme of themes) {
 // QA4-5: the share sheet's Photo / Save / Share stay on screen and tappable on a short phone and a
 // tall one, with a 0, 24 or 48 px bottom safe area (set through --safe-area-inset-bottom).
 for (const [w, h] of [[360, 640], [390, 844]]) {
-  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`share-fit ${w}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
@@ -626,7 +636,7 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
       .map(b => { const r = b.getBoundingClientRect(); return { t: b.getAttribute('aria-label') || b.textContent, w: Math.round(r.width), h: Math.round(r.height) }; })
       .filter(x => x.w < 44 || x.h < 44).map(x => `${x.t} ${x.w}×${x.h}`));
     if (small.length) errors.push(`share-fit ${w}×${h}: tap targets under 44 px: ${small.join(', ')}`);
-    if (w === 360) { await page.waitForTimeout(300); await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` }); }
+    if (w === 360) { await page.waitForTimeout(300); await settle(page); await page.screenshot({ path: `${OUT}/silent-black-share-360-inset${inset}.png` }); }
     await page.keyboard.press('Escape'); await page.waitForTimeout(250);
   }
   await ctx.close();
@@ -635,7 +645,7 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
 // Palace (§7, EV1): every registry entry resolves. goTo each id through the dev hooks and assert its
 // anchor is visible (silent-black), then screenshot three spotlights in all five themes.
 for (const theme of themes) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`palace ${theme}: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`palace ${theme} console: ${m.text()}`); });
@@ -666,7 +676,7 @@ for (const theme of themes) {
   for (const id of ['body.recovering', 'settings.gyms', 'history.records']) {
     await page.evaluate(id => window.__palace.goTo(id), id);
     await page.waitForTimeout(250);
-    await page.screenshot({ path: `${OUT}/${theme}-spotlight-${id.replace('.', '-')}.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-spotlight-${id.replace('.', '-')}.png` });
   }
   await ctx.close();
 }
@@ -675,7 +685,7 @@ for (const theme of themes) {
 // conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
 for (const theme of themes) {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const tag = `escobar ${theme}`;
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
@@ -692,20 +702,20 @@ for (const theme of themes) {
   await page.evaluate(() => document.querySelector('.toast button')?.click());
   await page.waitForTimeout(100);
   if (!(await visible(page.locator('.esc-dock')))) errors.push(`${tag}: expected the dock on Today`);
-  await page.screenshot({ path: `${OUT}/${theme}-escobar-dock-today.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-dock-today.png` });
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
-  await page.screenshot({ path: `${OUT}/${theme}-escobar-hall.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-hall.png` });
   await page.locator('.esc-hall-input').click();
   await page.waitForSelector('dialog.esc-sheet[open]');
   await page.waitForTimeout(250);
   if (theme === 'silent-black') {
     for (const label of ['Share health data', 'Share body data']) if (!(await visible(page.locator('dialog.esc-sheet').getByText(label, { exact: true })))) errors.push(`${tag}: expected the explainer switch label "${label}"`);
-    await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-explainer.png` });
   }
   await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
   await page.waitForTimeout(200);
   if (!(await visible(page.getByText('Ask me anything.')))) errors.push(`${tag}: expected the empty state`);
-  if (theme === 'silent-black') await page.screenshot({ path: `${OUT}/${theme}-escobar-empty.png` });
+  if (theme === 'silent-black') { await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-empty.png` }); }
   await page.locator('.esc-textarea').fill('How is my chest press going?');
   const measureFeedback = p => p.evaluate(() => new Promise(res => {
     const t0 = performance.now();
@@ -732,11 +742,11 @@ for (const theme of themes) {
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .sparkline')))) errors.push(`${tag}: expected the lift_trend chart`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
-  await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
   await page.setViewportSize({ width: 360, height: 780 }); await page.waitForTimeout(200);
   const overflow = await page.evaluate(() => { const t = document.querySelector('.esc-thread'); return t ? t.scrollWidth - t.clientWidth : 0; });
   if (overflow > 1) errors.push(`${tag}: the thread scrolls sideways at 360 px`);
-  await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-360.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-360.png` });
   if (theme === themes.find(t => t !== 'silent-black')) {
     // ES-03: Undo is offered right after Apply and gone once its 8 s window closes.
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
@@ -748,14 +758,14 @@ for (const theme of themes) {
   if (theme === 'silent-black') {
     await page.locator('.esc-answer .esc-cite').first().click(); await page.waitForTimeout(100);
     if (!(await visible(page.locator('.esc-pop')))) errors.push(`${tag}: expected the citation popover`);
-    await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-citation.png` });
     await page.locator('.esc-proposal').getByRole('button', { name: 'Apply', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await visible(page.locator('.esc-proposal').getByText('Applied')))) errors.push(`${tag}: expected "Applied" on the proposal`);
     // ES-03: Undo inside its 8 s window reverses the change.
     await page.locator('.esc-proposal').getByRole('button', { name: 'Undo', exact: true }).click(); await page.waitForTimeout(300);
     if (!(await visible(page.locator('.esc-proposal').getByText('Undone')))) errors.push(`${tag}: expected "Undone" after Undo within the window`);
     await page.locator('.esc-drawer-toggle').last().click(); await page.waitForTimeout(100);
-    await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-drawer.png` });
     // Stop mid-turn, then the offline fallback (find_in_app answered locally).
     await page.locator('.esc-textarea').fill('And my legs?'); await page.locator('.esc-send').click(); await page.waitForTimeout(60);
     await page.getByRole('button', { name: 'Stop', exact: true }).click(); await page.waitForTimeout(300);
@@ -763,7 +773,7 @@ for (const theme of themes) {
     await ctx.setOffline(true);
     await page.locator('.esc-textarea').fill('where are my records'); await page.locator('.esc-send').click(); await page.waitForTimeout(400);
     if (!(await visible(page.locator('.esc-local')))) errors.push(`${tag}: expected the offline palace answer`);
-    await page.screenshot({ path: `${OUT}/${theme}-escobar-offline.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-offline.png` });
     await ctx.setOffline(false);
   }
   const touched = await page.evaluate(() => localStorage.getItem('marc.escobar.v1'));
@@ -790,7 +800,7 @@ for (const theme of themes) {
   await page.waitForTimeout(600);
   if (!(await visible(page.locator('.pulse-edge')))) errors.push(`pulse ${theme}: expected the pulsing edge on Train`);
   if (!(await page.locator('.heart-bpm').first().textContent().catch(() => ''))?.includes('128')) errors.push(`pulse ${theme}: expected the heart-rate number`);
-  await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {
     // Hold-and-drag reorder in a live session: the first exercise dragged down lands lower.
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -806,7 +816,7 @@ for (const theme of themes) {
     await page.mouse.up(); await page.waitForTimeout(300);
     const after = await page.locator('.reorder-item .exname').allTextContents();
     if (after[0] !== before[1] || after[1] !== before[0]) errors.push(`reorder: expected ${before[0]} to move below ${before[1]}, got ${after.slice(0, 3).join(', ')}`);
-    await page.screenshot({ path: `${OUT}/reorder-after.png` });
+    await settle(page); await page.screenshot({ path: `${OUT}/reorder-after.png` });
   }
   await ctx.close();
 }
@@ -814,7 +824,7 @@ for (const theme of themes) {
 // R5.5 service worker: an offline reload still renders the app, and after a new build (new cache,
 // the old Escobar chunk gone from the server) the already-open tab can still open Escobar.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const tag = 'service worker';
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
@@ -852,8 +862,107 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// F5: motion smoke — full-motion (no-preference) run so a later batch's real animations are
+// exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
+// their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
+{
+  const HAS = { restFix: false, sheetExit: false };
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'motion smoke';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+
+  // (1) A sheet slides down and is gone, instead of vanishing in one frame.
+  if (HAS.sheetExit) {
+    await page.locator('[data-palace="today.settings"]').click();
+    await page.waitForSelector('dialog.sheet[open]');
+    await page.getByRole('button', { name: 'Close' }).click();
+    await page.waitForTimeout(60);
+    if (!(await page.locator('dialog.sheet[open].closing').count())) errors.push(`${tag}: expected dialog.sheet[open].closing at +60ms`);
+    await page.waitForTimeout(340);
+    if (await page.locator('dialog.sheet[open]').count()) errors.push(`${tag}: expected no dialog.sheet[open] by +400ms`);
+  } else {
+    console.log(`${tag}: sheetExit skipped`);
+  }
+
+  // (2) The rest banner reads the configured time with an empty bar on its first frame, not a
+  // stale total+1s with a full bar.
+  if (HAS.restFix) {
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    const inputs = page.locator('.set-grid input');
+    await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+    await page.waitForTimeout(100);
+    const rest = await page.evaluate(() => {
+      const clock = document.querySelector('.rest .clock');
+      const bar = document.querySelector('.rest .bar > i');
+      if (!clock || !bar) return null;
+      const track = bar.parentElement.getBoundingClientRect().width;
+      return { clock: clock.textContent, fillPct: track ? (bar.getBoundingClientRect().width / track) * 100 : 0 };
+    });
+    if (!rest) errors.push(`${tag}: expected the rest banner after committing set 1`);
+    else if (rest.fillPct > 10) errors.push(`${tag}: the rest bar fill is ${rest.fillPct.toFixed(1)}% at +100ms, expected <=10%`);
+  } else {
+    console.log(`${tag}: restFix skipped`);
+  }
+
+  // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
+  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin', 'exercise-breathe', 'exercise-shimmer'];
+  const unlisted = await page.evaluate(allow => document.getAnimations()
+    .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
+    .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
+    .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
+  if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// F5: determinism — Today, History and the live Train clock render byte-identical 300ms apart, so
+// an animation still settling on capture (rather than a real difference) never slips through.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'determinism';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+
+  const twiceMatch = async (name, opts = {}) => {
+    await settle(page);
+    const a = await page.screenshot(opts);
+    await page.waitForTimeout(300);
+    await settle(page);
+    const b = await page.screenshot(opts);
+    if (sha1(a) !== sha1(b)) errors.push(`${tag}: ${name} was not identical 300ms apart`);
+  };
+
+  await twiceMatch('today');
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await twiceMatch('history');
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  // LiveClock (Train.tsx) is the only h1.num on the live screen; masked along with the rest clock
+  // since both tick every second and would otherwise never match frame to frame.
+  await twiceMatch('live train clock', { mask: [page.locator('.rest .clock'), page.locator('h1.num')] });
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5).');
