@@ -37,7 +37,7 @@ export function Sparkline({ points, dates, height = 56, labels = false }: { poin
       </svg>
       {labels && (
         <>
-          <div class="sparkline-minmax">
+          <div class="sparkline-minmax" style={{ height: `${height}px` }}>
             <span class="num" style={{ top: `${(y(max) / height) * 100}%` }}>{fmt(max)}</span>
             {max !== min && <span class="num" style={{ top: `${(y(min) / height) * 100}%` }}>{fmt(min)}</span>}
           </div>

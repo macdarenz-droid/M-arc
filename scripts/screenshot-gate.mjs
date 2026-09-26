@@ -418,6 +418,69 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA13-4: the sparkline's min/max labels must sit at the lowest/highest plotted point, not drift
+// down into the dates row below the chart.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-4';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-4-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const check = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const svg = wrap?.querySelector('svg.sparkline');
+    const path = svg?.querySelector('path');
+    const d = path?.getAttribute('d') ?? '';
+    const nums = (d.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+    const ys = [];
+    for (let i = 1; i < nums.length; i += 2) ys.push(nums[i]);
+    if (!ys.length) return null;
+    const lowestY = Math.max(...ys); // largest svg-y = the chart's lowest value
+    const highestY = Math.min(...ys); // smallest svg-y = the chart's highest value
+    const svgRect = svg.getBoundingClientRect();
+    const vbHeight = svg.viewBox.baseVal.height;
+    const toScreenY = svgY => svgRect.top + (svgY / vbHeight) * svgRect.height;
+    const spans = [...wrap.querySelectorAll('.sparkline-minmax span')];
+    const centerOf = el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2; };
+    return {
+      maxDiff: spans[0] ? Math.abs(centerOf(spans[0]) - toScreenY(highestY)) : null,
+      minDiff: spans[1] ? Math.abs(centerOf(spans[1]) - toScreenY(lowestY)) : null,
+    };
+  });
+  if (!check) errors.push(`${tag}: expected the exercise-progress sparkline with labels`);
+  else {
+    if (check.maxDiff != null && check.maxDiff > 3) errors.push(`${tag}: the max label is ${check.maxDiff.toFixed(1)}px from the highest plotted point (budget 3px)`);
+    if (check.minDiff != null && check.minDiff > 3) errors.push(`${tag}: the min label is ${check.minDiff.toFixed(1)}px from the lowest plotted point (budget 3px)`);
+  }
+  await ctx.close();
+}
+
 // O4: "Work done, by effort" bars per exercise — legend, no page scroll, no overlap, tap selects a bar.
 {
   for (const width of [360, 390]) {
