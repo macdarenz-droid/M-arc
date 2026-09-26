@@ -3,6 +3,7 @@ import { state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { isMuscleId } from '@/data/muscles';
 import { closeAllSheets, sheetStack } from '@/ui/sheetStack';
+import { reduced } from '@/ui/motion';
 
 export type Tab = 'today' | 'train' | 'history' | 'body' | 'coach';
 export const TABS: Array<{ id: Tab; label: string }> = [
@@ -78,6 +79,30 @@ export const profileOpen = panelFlag('profile');
 export type BodyView = 'recovery' | 'levels' | 'week';
 export const bodyView = signal<BodyView>('recovery');
 export const historySeg = signal<'log' | 'stats'>('log');
+
+/** I9: each tab keeps its own scroll position, restored when you switch back to it. */
+const scrollMemo = new Map<Tab, number>();
+
+/** Pure decision for a nav tap, split out so it can be unit-tested without a DOM: the current tab
+ * re-tapped scrolls to top; any other tab remembers where you left off and restores it. */
+export function navTapTarget(current: Tab, t: Tab, scrollY: number): { top: boolean; y: number } {
+  if (t === current) return { top: true, y: 0 };
+  scrollMemo.set(current, scrollY);
+  return { top: false, y: scrollMemo.get(t) ?? 0 };
+}
+
+/** The bottom nav's own tap handler (App.tsx) — everything else still calls `go()` directly and
+ * always lands at the top (palace navigation, a notification tap, Back, Today's own links). */
+export function navTap(t: Tab): void {
+  const hasWindow = typeof window !== 'undefined';
+  const { top, y } = navTapTarget(tab.value, t, hasWindow ? window.scrollY : 0);
+  if (top) {
+    if (hasWindow) window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' });
+    return;
+  }
+  go(t);
+  if (hasWindow) requestAnimationFrame(() => window.scrollTo(0, y));
+}
 
 export function go(t: Tab): void {
   // R5.3: a sheet owns the current history entry; unwind those first so replaceState below

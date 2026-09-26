@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { closePanel, openPanel, showPanel, validatePanelParams } from '@/app/router';
+import { closePanel, navTapTarget, openPanel, showPanel, validatePanelParams } from '@/app/router';
 import { state } from '@/core/store';
 import { freshState } from '@/core/models';
 
@@ -30,6 +30,21 @@ describe('validatePanelParams (R1.2)', () => {
     expect(openPanel.value).toEqual({ id: 'muscle', params: { muscle: 'quads' } });
     showPanel('settings');
     expect(openPanel.value).toEqual({ id: 'settings' });
+  });
+});
+
+describe('navTapTarget (I9)', () => {
+  it('re-tapping the current tab always scrolls to top', () => {
+    expect(navTapTarget('train', 'train', 700)).toEqual({ top: true, y: 0 });
+  });
+  it('remembers where each tab was scrolled to and restores it when you come back', () => {
+    // Scroll Train to 700, leave for Today (Today has never been scrolled: restores to 0).
+    expect(navTapTarget('train', 'today', 700)).toEqual({ top: false, y: 0 });
+    // Leaving Today (at 0) back to Train restores the 700 it remembered.
+    expect(navTapTarget('today', 'train', 0)).toEqual({ top: false, y: 700 });
+  });
+  it('a tab never visited restores to 0', () => {
+    expect(navTapTarget('today', 'body', 0)).toEqual({ top: false, y: 0 });
   });
 });
 

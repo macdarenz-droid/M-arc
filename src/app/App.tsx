@@ -6,7 +6,7 @@ import { Coach } from '@/slices/coach/Coach';
 import { Settings } from '@/slices/settings/Settings';
 import { Profile } from '@/slices/profile/Profile';
 import { OnboardingSheet } from '@/slices/profile/Onboarding';
-import { closePanel, go, openPanel, tab, TABS, type Tab } from './router';
+import { closePanel, navTap, openPanel, tab, TABS, type Tab } from './router';
 import { WatchSheet } from '@/slices/settings/Watch';
 import { GoalSheet, ScheduleSheet, WeeklyReviewSheet } from '@/slices/coach/Coach';
 import { CheckInSheet } from '@/slices/workout/Train';
@@ -96,7 +96,7 @@ export function App() {
       <nav class="nav" aria-label="Main">
         <div class="nav-inner">
           {TABS.map(x => { const Icon = ICON[x.id]; return (
-            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { go(x.id); }}>
+            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { navTap(x.id); }}>
               <Icon size={22} /><span>{x.id === 'train' && live ? 'Live' : x.label}</span>
             </button>
           ); })}
