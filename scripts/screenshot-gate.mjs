@@ -1540,6 +1540,20 @@ for (const theme of themes) {
   };
   await swipeAway(60, 0);
   await swipeAway(0, 60);
+
+  // QA11-3: a plain tap (pointerdown then pointerup with no real movement) used to pause the
+  // countdown via track()'s onStart and never resume it — neither tracker had a gesture to end,
+  // so it stayed paused forever. A tap always fires both events regardless, so the toast must
+  // still dismiss on its normal schedule.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await removeAndGetToast();
+  const tapBox = await page.locator('.toast').boundingBox();
+  await page.mouse.move(tapBox.x + 10, tapBox.y + tapBox.height / 2);
+  await page.mouse.down(); await page.mouse.up();
+  await page.waitForTimeout(5400);
+  if (await page.locator('.toast').count()) errors.push(`${tag} (QA11-3): a tapped toast is still on screen 5.4s later — its countdown never resumed`);
+  await page.locator('.toast').getByRole('button', { name: 'Undo' }).click().catch(() => {});
+  await page.waitForTimeout(350);
   await ctx.close();
 }
 

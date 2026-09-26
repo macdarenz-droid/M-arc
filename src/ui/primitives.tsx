@@ -266,7 +266,6 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
     const el = ref.current;
     if (!el) return;
     const untracks: Array<() => void> = [];
-    const onStart = () => { if (!leavingRef.current) pauseTimer(); };
     const finish = (dist: number, dir: 'x' | 'y') => {
       if (leavingRef.current) return;
       // Reduced motion (or no WAAPI): the ordinary crossfade exit, same as the timeout's own —
@@ -286,7 +285,7 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
       anim.finished.then(() => { el.style.transform = ''; resumeTimer(); }).catch(() => { el.style.transform = ''; resumeTimer(); });
     };
     untracks.push(track(el, {
-      axis: 'x', capture: 'afterSlop', onStart,
+      axis: 'x', capture: 'afterSlop',
       onMove: d => { if (!leavingRef.current && !reduced()) el.style.transform = `translateX(${d}px)`; },
       onEnd: (d, v) => {
         if (leavingRef.current) return;
@@ -295,7 +294,7 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
       onCancel: () => { if (!leavingRef.current) springBack(); },
     }));
     untracks.push(track(el, {
-      axis: 'y', capture: 'afterSlop', onStart,
+      axis: 'y', capture: 'afterSlop',
       onMove: d => { if (!leavingRef.current && !reduced() && d > 0) el.style.transform = `translateY(${d}px)`; },
       onEnd: (d, v) => {
         if (leavingRef.current) return;
@@ -307,8 +306,15 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
     return () => untracks.forEach(u => u());
   }, []);
 
+  // QA11-3: pause/resume live on the toast's own pointer lifecycle, independent of track() —
+  // track() only calls onEnd/onCancel once a gesture has crossed slop, so a plain tap (pointerdown
+  // then pointerup with no real movement) used to pause the countdown via track()'s onStart and
+  // never resume it, since neither tracker had anything to end. A tap always fires pointerdown and
+  // pointerup regardless, so this always un-pauses.
+  const onPointerDown = () => { if (!leavingRef.current) pauseTimer(); };
+  const onPointerUp = () => { if (!leavingRef.current) resumeTimer(); };
   return (
-    <div class={`toast ${leaving ? 'leaving' : ''}`} ref={ref} role="status">
+    <div class={`toast ${leaving ? 'leaving' : ''}`} ref={ref} role="status" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
       <span>{message}</span>
       {action && <button type="button" onClick={() => { onAction?.(); leave(); }}>{action}</button>}
     </div>
