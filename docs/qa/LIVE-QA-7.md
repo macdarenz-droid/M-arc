@@ -57,3 +57,16 @@ Each fix has its own commit: 878a43b, f9ec60a, 0c659ab, abfd623 and 4a8200d. Eac
 - QA7-5: the swapped-bounds test fails before and passes after.
 
 The gate and test diff since 18a6635 is +116 lines with no deletions. Re-measured at 320/360/390 px in both themes: 102/102 checks pass. tsc passed, and vitest passed (1,110). CI is green on 4a8200d: guard, source-gate (includes the gate) and android-gate. The local gate run stalled at the R5.5 service-worker step in the QA sandbox, as on untouched HEAD. CI's gate passed, so this is not a product issue.
+
+## QA7-6 · High (found on main CI at bbf1fbf) · At some times of day the Ready-times card drops to one column at 360 px
+
+- **What happened:** the main gate run at 08:10 UTC failed with "ready-times QA7-2 (Front shoulders): expected 2 columns, got 1". The same tree passed the PR gate at 07:48 UTC (2e232e9 and bbf1fbf have identical trees).
+- **Cause:** the tile time text depends on the clock. Time strings reach 16 characters ("10 pm – midnight", "11 pm – midnight") whenever a muscle's window ends near midnight, and that can happen at any hour of the day. `.rt-tile-time` is nowrap, so a 16-character time overflows the 2-column text slot at 360 px (about 97 px), and the QA7-2 probe switches the whole card to one column. Users on 360 px phones see the layout flip with the time of day. The gate probe runs on the real clock, so it passes or fails by the hour.
+- **Fix:**
+  - In a 2-column tile, the time may break after the dash. Render it as `<span class="nw">10 pm</span> – <span class="nw">midnight</span>` with `.rt-tile-time { white-space: normal }` and `.rt-tile-time .nw { white-space: nowrap }`, capped at 2 lines. Tiles may grow past 52 px; every tile in a row stretches to match.
+  - The one-column fallback now fires only when a single nowrap part (one time end or one name word) can't fit.
+  - Full-span tiles and the detail strip stay on one line.
+- **Gate:**
+  - Pin the clock for every ready-times probe (Playwright `page.clock.install({ time })` or the gate's virtual clock) so results don't depend on when CI runs.
+  - Add a sweep at 360 px with the Front shoulders seed, at 06:00, 11:30, 17:00, 21:45 and 23:30 local time. Assert 2 columns at every time, no clipped text (scrollWidth ≤ clientWidth), and no horizontal scroll.
+- **Test:** a unit test that the longest `tileText` over a 24 h sweep is at most 16 characters, and that each part (before and after the dash) is at most 8 characters, so each part fits on one line.
