@@ -217,8 +217,10 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
           const isCurrent = i === weeks.length - 1;
           return (
             <div key={w.week} class="volume-bar-col">
-              {isCurrent && <span class="volume-bar-value num">{fmt(values[i]!)}</span>}
-              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />
+              {/* QA13-3: the label sits inside the bar (absolutely, above it) so it never eats into the bar's own height. */}
+              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }}>
+                {isCurrent && <span class="volume-bar-value num">{fmt(values[i]!)}</span>}
+              </i>
             </div>
           );
         })}
