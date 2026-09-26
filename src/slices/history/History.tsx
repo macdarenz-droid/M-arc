@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit, bodyWeightAt } from '@/app/selectors';
@@ -17,7 +17,8 @@ import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
 import { findExercise } from '@/core/exercises';
-import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel } from '@/brain/bodyweight';
+import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
+import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
@@ -244,6 +245,17 @@ function Stats() {
   const lastTop = hist.length ? lastTopStats(hist[hist.length - 1]!, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
+  // O4: the same last 12 sessions as the trend line, split into easy/right/max/unrated work.
+  const hist12 = hist.slice(-12);
+  const bwAt = (day: string, addedKg: number): number | null => {
+    const bw = bodyWeightAt.value;
+    return bw ? effectiveLoadKg(addedKg, mode, bodyweightShare(findExercise(exercise, s.customExercises)), bw(day)) : null;
+  };
+  const effortKg = effortSplit(hist12, mode, bwAt);
+  const effortInSets = effortUsesSets(hist12, mode);
+  const effortPoints = effortInSets ? effortKg : effortKg.map(p => ({ day: p.day, easy: kgToDisplay(p.easy, u), ideal: kgToDisplay(p.ideal, u), max: kgToDisplay(p.max, u), unrated: kgToDisplay(p.unrated, u) }));
+  const [selectedBar, setSelectedBar] = useState<number | null>(null);
+  useEffect(() => setSelectedBar(null), [exercise]);
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
@@ -268,12 +280,16 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} dates={hist.slice(-12).map(h => h.day)} height={96} labels />
+                <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels />
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
+                <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
+                {selectedBar != null && hist12[selectedBar] && (
+                  <p class="hint">{formatDay(hist12[selectedBar]!.day)} · {hist12[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>
+                )}
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}<span style={{ whiteSpace: 'nowrap' }}>{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">{progressHint(mode)}</p>
               </div>

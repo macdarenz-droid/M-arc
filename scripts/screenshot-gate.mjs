@@ -367,6 +367,65 @@ for (const theme of themes) {
   }
 }
 
+// O4: "Work done, by effort" bars per exercise — legend, no page scroll, no overlap, tap selects a bar.
+{
+  for (const width of [360, 390]) {
+    for (const theme of ['silent-black', 'paper']) {
+      const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      const tag = `o4-${theme}-${width}`;
+      page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+      await page.addInitScript(t => {
+        const now = new Date().toISOString();
+        const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+        const sess = (offset, id, name, sets) => ({ id: `o4-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+          exercises: [{ exerciseId: id, name, sets }],
+          logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+        localStorage.setItem('marc.theme', t);
+        localStorage.setItem('marc.state.v1', JSON.stringify({
+          version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+          goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+          sessions: [
+            sess(40, 'lib_bench_press', 'Bench Press', [{ kg: 100, reps: 5, effort: 'easy' }, { kg: 100, reps: 5, effort: 'easy' }]),
+            sess(30, 'lib_bench_press', 'Bench Press', [{ kg: 100, reps: 5, effort: 'ideal' }, { kg: 100, reps: 5 }]),
+            sess(20, 'lib_bench_press', 'Bench Press', [{ kg: 110, reps: 5, effort: 'ideal' }, { kg: 110, reps: 5, effort: 'max' }]),
+            sess(10, 'lib_bench_press', 'Bench Press', [{ kg: 110, reps: 5, effort: 'max' }, { kg: 110, reps: 5, kind: 'failure' }]),
+            sess(2, 'lib_bench_press', 'Bench Press', [{ kg: 120, reps: 5, effort: 'ideal' }, { kg: 120, reps: 5, effort: 'ideal' }]),
+          ],
+          active: null, customExercises: [],
+          preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+          body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+          onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+        }));
+      }, theme);
+      await page.goto(`http://localhost:${PORT}/`);
+      await page.waitForSelector('.nav');
+      await page.waitForTimeout(300);
+      await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+      await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+      await settle(page); await page.screenshot({ path: `${OUT}/${theme}-effort-bars-${width}.png` });
+      const check = await page.evaluate(() => {
+        const bars = [...document.querySelectorAll('.effort-bar-col')];
+        const rects = bars.map(b => b.getBoundingClientRect());
+        let overlap = false;
+        for (let i = 1; i < rects.length; i++) if (rects[i]?.left < (rects[i - 1]?.right ?? 0) - 0.5) overlap = true;
+        const legendHasUnrated = document.querySelector('.effort-legend')?.textContent?.includes('Not rated') ?? false;
+        return { count: bars.length, overlap, legendHasUnrated, pageWidth: document.documentElement.scrollWidth };
+      });
+      if (check.count < 4) errors.push(`${tag}: expected the effort bars chart with at least 4 sessions`);
+      if (check.overlap) errors.push(`${tag}: effort bar columns overlap`);
+      if (!check.legendHasUnrated) errors.push(`${tag}: expected "Not rated" in the legend (an unrated set is seeded)`);
+      if (check.pageWidth > width) errors.push(`${tag}: the page scrolls horizontally at ${width}px (scrollWidth ${check.pageWidth})`);
+      // Tapping a bar selects it (and, per Stats, reveals that session's logged sets below the chart).
+      await page.locator('.effort-bar-col').first().click();
+      await page.waitForTimeout(150);
+      const selected = await page.evaluate(() => document.querySelector('.effort-bar-col[aria-pressed="true"]') != null);
+      if (!selected) errors.push(`${tag}: tapping a bar should select it`);
+      await ctx.close();
+    }
+  }
+}
+
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -895,6 +954,9 @@ for (const theme of themes) {
   });
   if (Math.round(escSpark.h) !== 56) errors.push(`${tag}: Escobar sparkline is ${escSpark.h}px tall, expected 56`);
   if (escSpark.hasLabels) errors.push(`${tag}: Escobar sparkline should render with no labels`);
+  // O4: the same effort split renders under the sparkline, static (no tap).
+  if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .effort-bars')))) errors.push(`${tag}: expected the lift_trend effort bars`);
+  if ((await page.locator('.esc-comp[data-component="lift_trend"] .effort-bar-col[type="button"]').count()) > 0) errors.push(`${tag}: Escobar's effort bars should not be tappable`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
