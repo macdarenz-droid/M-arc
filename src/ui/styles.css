@@ -111,6 +111,13 @@ svg { display: block; }
 .finish-done { position: sticky; bottom: calc(var(--float-bottom) + var(--sp-2)); z-index: 5; padding-top: var(--sp-3); background: linear-gradient(to top, var(--bg) 60%, transparent); }
 
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
+/* A2: the live screen's sticky clock + controls bar, with a progress hairline along its bottom edge. */
+.live-top { position: sticky; top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); z-index: 10; margin-inline: -16px; padding: 6px 16px; max-height: 56px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 calc(-1 * var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 0 var(--bg); }
+.live-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--border-subtle); }
+.live-progress i { display: block; height: 100%; transform-origin: left; background: var(--accent); transition: transform var(--dur-base) var(--ease-standard), background-color var(--dur-base) var(--ease-standard); }
+.live-progress i.full { background: var(--positive); }
+.live-clock-wrap { display: flex; align-items: center; gap: 8px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
 .muted { color: var(--text-2); }
 .faint { color: var(--text-3); }

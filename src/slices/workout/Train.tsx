@@ -356,6 +356,19 @@ function LiveSession() {
   useEffect(() => acquireTicker(), []);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
+  // A2: the fraction of planned working sets already committed, for the sticky header's hairline.
+  const planned = a.entries.filter(e => !e.skipped).flatMap(e => e.sets).filter(x => x.kind !== 'warmup');
+  const progress = planned.filter(x => isCommitted(x) && isWorkingSet(x)).length / (planned.length || 1);
+  const liveTopRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = liveTopRef.current;
+    if (!el) return undefined;
+    const sync = () => document.documentElement.style.setProperty('--live-top-h', `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => { ro.disconnect(); document.documentElement.style.removeProperty('--live-top-h'); };
+  }, []);
   // I2: once the next card has unfolded (or after a timeout, if it never does), glide the page so
   // it sits just under the sticky header — never while a keyboard could be about to pop up.
   const scrollToEntry = (i: number) => {
@@ -374,14 +387,23 @@ function LiveSession() {
   return (
     <div class="view">
       {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
-      <div class="topbar" data-palace="train.start">
-        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><LiveClock a={a} /><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
+      <div class="topbar">
+        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
+      </div>
+      {/* A2: a compact bar (clock left, controls right) that stays put once the list scrolls under it,
+          with a hairline underneath that fills as working sets get logged. */}
+      <div class="topbar live-top" ref={liveTopRef} data-palace="train.start">
+        <div class="live-clock-wrap">
+          <span class="live-dot" style={{ background: a.pausedAt ? 'var(--text-2)' : 'var(--accent)' }} />
+          <LiveClock a={a} />
+        </div>
         <div class="row">
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
           <Button size="sm" class="tap" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
+        <div class="live-progress" aria-hidden="true"><i class={progress >= 1 ? 'full' : ''} style={{ transform: `scaleX(${progress})` }} /></div>
       </div>
 
       <div class="stack">
