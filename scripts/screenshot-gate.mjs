@@ -1611,11 +1611,17 @@ for (const width of [390, 360]) {
 }
 
 // O3: Body recovery "Ready times" — ring tiles grouped by day, tap to open a detail strip.
-// All session times are hours-ago-from-now, computed once here and read back through the
-// page's own clock (day labels, "today"/"tomorrow" checks) — no fixed calendar dates.
+// QA7-6: main CI went red because these probes ran on the real wall clock — a tile time like
+// "10 pm – midnight" only appears near certain hours, and the same tree passed or failed the
+// "2 columns" check depending purely on when CI happened to run. Every block below pins the
+// page's clock (Playwright's clock.install, which starts ticking normally from that instant —
+// nothing else needs to change) to a fixed instant, and session times are hours-ago-from-that,
+// not from Date.now().
 {
-  const rtSess = (hoursAgo, id, name, kg, effort, sets) => {
-    const at = Date.now() - hoursAgo * 3_600_000;
+  const RT_PINNED_NOW = new Date();
+  RT_PINNED_NOW.setHours(12, 0, 0, 0);
+  const rtSess = (hoursAgo, id, name, kg, effort, sets, refMs = RT_PINNED_NOW.getTime()) => {
+    const at = refMs - hoursAgo * 3_600_000;
     const d = new Date(at);
     const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     return {
@@ -1654,8 +1660,12 @@ for (const width of [390, 360]) {
     return true;
   };
 
-  const openRtBody = async (page, stateJson, theme) => {
+  const openRtBody = async (page, stateJson, theme, pinnedMs = RT_PINNED_NOW.getTime()) => {
     await page.addInitScript(([json, t]) => { localStorage.setItem('marc.state.v1', json); localStorage.setItem('marc.theme', t); }, [stateJson, theme]);
+    // Installed before navigation: the clock then ticks normally from this instant (Playwright's
+    // clock.install does not pause it), so every timer/CSS transition behaves exactly as with the
+    // real clock — only "now" itself is fixed, removing the time-of-day flakiness (QA7-6).
+    await page.clock.install({ time: pinnedMs });
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav');
     await page.waitForTimeout(250);
@@ -1780,15 +1790,21 @@ for (const width of [390, 360]) {
     }
   }
 
-  // QA7-2: a long, common muscle name ("Front shoulders") must not force the whole card to one
-  // column — it wraps to 2 lines inside the 52px tile instead. 360px is the tightest column width.
-  {
-    const tag = 'ready-times QA7-2 (Front shoulders)';
+  // QA7-2/QA7-6: a long, common muscle name ("Front shoulders") — and, at some times of day, a
+  // long time string ("10 pm – midnight") — must not force the whole card to one column at
+  // 360px, the tightest column width. Swept across pinned times of day (QA7-6): a tile's ready
+  // time depends on the clock, so this must hold at every hour, not just whenever CI happens to
+  // run — a fixed `hoursAgo` combined with a shifting "now" naturally sweeps the resulting ready
+  // time through many hour-of-day labels, including some landing on/near midnight.
+  for (const [h, m] of [[6, 0], [11, 30], [17, 0], [21, 45], [23, 30]]) {
+    const pinned = new Date(); pinned.setHours(h, m, 0, 0);
+    const pinnedMs = pinned.getTime();
+    const tag = `ready-times QA7-6 (Front shoulders @ ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')})`;
     const ctx = await browser.newContext({ viewport: { width: 360, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
-    await openRtBody(page, rtStateJson([rtSess(2, 'e1', 'Barbell Overhead Press', 30, 'ideal', 3)]), 'silent-black');
+    await openRtBody(page, rtStateJson([rtSess(30, 'e1', 'Barbell Overhead Press', 30, 'ideal', 3, pinnedMs)]), 'silent-black', pinnedMs);
     const tileWithName = page.locator('button.rt-tile', { hasText: 'Front shoulders' }).first();
     if (!(await tileWithName.count())) {
       errors.push(`${tag}: expected a "Front shoulders" tile with this seed`);
@@ -1801,8 +1817,10 @@ for (const width of [390, 360]) {
       const nameBox = await nameEl.evaluate(el => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, height: el.getBoundingClientRect().height }));
       if (nameBox.scrollWidth > nameBox.clientWidth + 0.5) errors.push(`${tag}: "Front shoulders" is clipped horizontally (scrollWidth ${nameBox.scrollWidth} > clientWidth ${nameBox.clientWidth})`);
       if (nameBox.height > 36.5) errors.push(`${tag}: "Front shoulders" name box is ${nameBox.height.toFixed(1)}px tall (want <= 36px)`);
-      const tileHeight = await tileWithName.evaluate(el => el.getBoundingClientRect().height);
-      if (Math.abs(tileHeight - 52) > 1) errors.push(`${tag}: tile height is ${tileHeight.toFixed(1)}px (want 52px)`);
+      const timeEl = tileWithName.locator('.rt-tile-time');
+      const timeBox = await timeEl.evaluate(el => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, text: el.textContent }));
+      if (timeBox.scrollWidth > timeBox.clientWidth + 0.5) errors.push(`${tag}: time "${timeBox.text}" is clipped horizontally (scrollWidth ${timeBox.scrollWidth} > clientWidth ${timeBox.clientWidth})`);
+      if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push(`${tag}: horizontal scroll on the Body tab`);
     }
     await ctx.close();
   }
