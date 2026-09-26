@@ -1,4 +1,8 @@
 import { signal } from '@preact/signals';
+import { state } from '@/core/store';
+import { findExercise } from '@/core/exercises';
+import { isMuscleId } from '@/data/muscles';
+import { closeAllSheets, sheetStack } from '@/ui/sheetStack';
 
 export type Tab = 'today' | 'train' | 'history' | 'body' | 'coach';
 export const TABS: Array<{ id: Tab; label: string }> = [
@@ -27,8 +31,34 @@ export const PANEL_IDS: PanelId[] = ['settings', 'profile', 'watch', 'goal', 'sc
 export interface OpenPanel { id: PanelId; params?: Record<string, string> }
 export const openPanel = signal<OpenPanel | null>(null);
 
+export const BODY_VIEWS = ['recovery', 'levels', 'week'] as const;
+export const HISTORY_SEGS = ['log', 'stats'] as const;
+/** The param each panel cannot open without. */
+const REQUIRED: Partial<Record<PanelId, string>> = { muscle: 'muscle', session: 'sessionId', 'exercise-stats': 'exerciseId' };
+
+/** Drops panel params that point at nothing (a made-up muscle, a deleted session), so no sheet renders from them. */
+export function validatePanelParams(_panel: PanelId, params: Record<string, string> | undefined): Record<string, string> | undefined {
+  if (!params) return params;
+  const s = state.value;
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (typeof v !== 'string') continue;
+    if (k === 'muscle' && !isMuscleId(v)) continue;
+    if (k === 'sessionId' && !s.sessions.some(x => x.id === v)) continue;
+    // QA-R1-6: an id that is in the person's history counts even if the library no longer has it.
+    if (k === 'exerciseId' && findExercise(v, s.customExercises)?.id !== v && !s.sessions.some(x => x.exercises.some(e => e.exerciseId === v))) continue;
+    if (k === 'view' && !(BODY_VIEWS as readonly string[]).includes(v)) continue;
+    if (k === 'seg' && !(HISTORY_SEGS as readonly string[]).includes(v)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
 export function showPanel(id: PanelId, params?: Record<string, string>): void {
-  openPanel.value = params ? { id, params } : { id };
+  const valid = validatePanelParams(id, params);
+  const need = REQUIRED[id];
+  if (need && !valid?.[need]) return;
+  openPanel.value = valid && Object.keys(valid).length ? { id, params: valid } : { id };
 }
 export function closePanel(id?: PanelId): void {
   if (!id || openPanel.value?.id === id) openPanel.value = null;
@@ -50,6 +80,12 @@ export const bodyView = signal<BodyView>('recovery');
 export const historySeg = signal<'log' | 'stats'>('log');
 
 export function go(t: Tab): void {
+  // R5.3: a sheet owns the current history entry; unwind those first so replaceState below
+  // does not overwrite one.
+  if (sheetStack.peek().length && (() => { try { return !!(history.state as { sheet?: string } | null)?.sheet; } catch { return false; } })()) {
+    closeAllSheets(() => go(t));
+    return;
+  }
   if (tab.value !== t) openPanel.value = null;
   tab.value = t;
   try { history.replaceState(null, '', `#${t}`); } catch { /* ignore */ }

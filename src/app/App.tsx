@@ -12,20 +12,25 @@ import { GoalSheet, ScheduleSheet, WeeklyReviewSheet } from '@/slices/coach/Coac
 import { CheckInSheet } from '@/slices/workout/Train';
 import { MuscleDetail } from '@/slices/body/Body';
 import { SessionEditor } from '@/slices/history/History';
-import { MemoryPlaceholder } from '@/escobar/ui/MemoryPlaceholder';
+import { MemoryScreen } from '@/escobar/ui/MemoryScreen';
 import { palaceAnnouncement } from '@/escobar/palace/navigate';
 import { installPalaceDevHooks } from '@/escobar/palace/dev';
 import { Dock } from '@/escobar/ui/Dock';
 import { escobarUi } from '@/escobar/state';
 import { useEffect, useState } from 'preact/hooks';
+import { signal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
 import type { MuscleId } from '@/data/muscles';
-import { toast } from './toast';
+import { showToast, toast } from './toast';
 import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
-import { saveError, state } from '@/core/store';
-import { haptic } from '@/native/haptics';
+import { bootRecovered, saveError, state } from '@/core/store';
+import { keepAwake, keepAwakePref } from '@/native/keepAwake';
+import { launchOverlayGone } from './launch';
+
+/** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
+const recoveredSeen = signal(false);
 
 const ICON: Record<Tab, (p: { size?: number }) => preact.JSX.Element> = { today: IconSun, train: IconDumbbell, history: IconCalendar, body: IconBody, coach: IconEscobar };
 
@@ -36,7 +41,10 @@ function EscobarMount() {
   const open = escobarUi.value.open;
   const [Comp, setComp] = useState<FunctionComponent | null>(null);
   useEffect(() => {
-    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet));
+    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet)).catch(() => {
+      escobarUi.value = { ...escobarUi.value, open: false, contextRef: null };
+      showToast('Could not load Escobar. Check your connection.');
+    });
   }, [open, Comp]);
   return open && Comp ? <Comp /> : null;
 }
@@ -54,7 +62,7 @@ function Panels() {
     case 'schedule': return <ScheduleSheet onClose={close} />;
     case 'weekly-review': return <WeeklyReviewSheet onClose={close} />;
     case 'checkin': return <CheckInSheet onClose={close} onDone={close} />;
-    case 'memory': return <MemoryPlaceholder onClose={close} />;
+    case 'memory': return <MemoryScreen onClose={close} />;
     case 'muscle': return p.params?.muscle ? <MuscleDetail key={p.params.muscle} muscle={p.params.muscle as MuscleId} onClose={close} /> : null;
     case 'session': {
       const sess = state.value.sessions.find(x => x.id === p.params?.sessionId);
@@ -68,9 +76,17 @@ export function App() {
   const t = tab.value;
   const live = !!state.value.active;
   const panel = openPanel.value?.id;
+  const wantAwake = keepAwakePref.value;
+  useEffect(() => { void keepAwake(live && wantAwake); return () => { void keepAwake(false); }; }, [live, wantAwake]);
   return (
     <div class="app">
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
+      {bootRecovered.value && !recoveredSeen.value && (
+        <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>
+          We couldn't read your latest saved data. A copy was kept. Settings → Your data → Save rescue file.
+          <button type="button" class="btn btn-quiet btn-sm" style={{ marginLeft: 8 }} onClick={() => { recoveredSeen.value = true; }}>OK</button>
+        </div>
+      )}
       {t === 'today' && <Today />}
       {t === 'train' && <Train />}
       {t === 'history' && <History />}
@@ -80,7 +96,7 @@ export function App() {
       <nav class="nav" aria-label="Main">
         <div class="nav-inner">
           {TABS.map(x => { const Icon = ICON[x.id]; return (
-            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { go(x.id); void haptic.light(); }}>
+            <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { go(x.id); }}>
               <Icon size={22} /><span>{x.id === 'train' && live ? 'Live' : x.label}</span>
             </button>
           ); })}
@@ -90,8 +106,8 @@ export function App() {
       <Dock />
       <EscobarMount />
       <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
-      {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
-      {toast.value && <Toast message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
+      {launchOverlayGone.value && panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
+      {toast.value && <Toast key={toast.value.id} message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );
 }

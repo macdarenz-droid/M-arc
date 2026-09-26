@@ -3,6 +3,8 @@
  * `summarize` (the same object the model got back), so it never draws a model's number.
  * EV5 draws lift_trend; the rest render their summary as a compact card until EV6.
  */
+import type { ComponentChildren } from 'preact';
+import { useMemo } from 'preact/hooks';
 import { state } from '@/core/store';
 import { Card, Chip } from '@/ui/primitives';
 import { Sparkline } from '@/ui/Sparkline';
@@ -35,12 +37,14 @@ function Generic({ s }: { s: S }) {
   return <div class="esc-comp-generic small">{rows.map(([k, v]) => <div key={k} class="row-between"><span class="muted">{k.replace(/([A-Z])/g, ' $1').toLowerCase()}</span><span>{typeof v === 'number' ? num(v) : String(v).slice(0, 40)}</span></div>)}</div>;
 }
 
-export function ShowComponent({ component, params, caption }: { component: string; params: S; caption?: string }) {
-  let s: S | null = null;
-  try { s = summarize(component, params, makeCtx(state.value)); } catch { s = null; }
+export function ShowComponent({ component, params, caption, action }: { component: string; params: S; caption?: string; action?: ComponentChildren }) {
+  const app = state.value;
+  const key = JSON.stringify(params);
+  // ES-28: summarising walks history; only redo it when the inputs change.
+  const s = useMemo<S | null>(() => { try { return summarize(component, params, makeCtx(app)); } catch { return null; } }, [component, key, app]);
   return (
     <Card class="esc-comp" data-component={component}>
-      {caption && <div class="eyebrow">{caption}</div>}
+      {(caption || action) && <div class="row-between">{caption ? <div class="eyebrow">{caption}</div> : <span />}{action}</div>}
       {!s ? <div class="esc-comp-empty small muted">Couldn’t draw that with the data on this phone.</div>
         : component === 'lift_trend' ? <LiftTrend s={s} /> : <Generic s={s} />}
     </Card>

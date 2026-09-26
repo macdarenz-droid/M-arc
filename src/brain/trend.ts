@@ -1,5 +1,7 @@
 /** Recency-weighted trend and plateau detection over an exercise's history. */
 import type { ExerciseSessionSummary } from './history';
+import type { ResistanceMode } from '@/core/models';
+import { daysBetween } from '@/core/dates';
 
 export type Direction = 'up' | 'flat' | 'down' | 'unknown';
 export type Confidence = 'low' | 'medium' | 'high';
@@ -32,6 +34,25 @@ export function trend(points: Array<{ day: string; value: number }>): Trend {
   return { direction, slopePerWeek: rel, confidence, points: n };
 }
 
+/**
+ * QA-R3a-2: the trend of what counts as progress for the lift's mode. Weighted: the strength
+ * estimate (or top load). Bodyweight: best reps. Duration: longest hold. Assisted: the assistance
+ * load, with the direction inverted (less help is up); with it flat, the best reps, as in plateauStatus.
+ */
+export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): Trend {
+  const recent = history.slice(-12);
+  if (mode === 'bodyweight') return trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
+  if (mode === 'duration') return trend(recent.map(h => ({ day: h.day, value: h.bestDurationSec })));
+  if (mode === 'assisted') {
+    // QA2-FC-4: not the e1RM of the assistance, which rises with more reps and would read as down.
+    const help = trend(recent.map(h => ({ day: h.day, value: h.topKg })));
+    if (help.direction === 'up' || help.direction === 'down') return { ...help, direction: help.direction === 'up' ? 'down' : 'up', slopePerWeek: -help.slopePerWeek };
+    const reps = trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
+    return reps.direction === 'unknown' && help.direction === 'flat' ? help : reps;
+  }
+  return trend(recent.map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+}
+
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';
 
 /** Looks at the last 8 sessions. Needs at least 7 to say anything. */
@@ -39,9 +60,33 @@ export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown
 export const PLATEAU_WINDOW = 8;
 export const PLATEAU_MIN_SESSIONS = 7;
 
-export function plateauStatus(history: ExerciseSessionSummary[]): { status: PlateauStatus; confidence: Confidence } {
-  const recent = history.slice(-PLATEAU_WINDOW);
+/**
+ * For an assisted exercise (BR-06) less weight is progress: the weight direction is inverted,
+ * and with the weight flat the best reps break the tie (volume would reward more assistance).
+ */
+/** A break longer than this starts the lift's history over for plateau and trend (QA-R3a-6). */
+export const COMEBACK_GAP_DAYS = 28;
+
+/** The sessions since the last break longer than COMEBACK_GAP_DAYS: a comeback is not judged on months-old sessions. */
+export function sinceLastBreak<T extends { day: string }>(history: T[]): T[] {
+  for (let i = history.length - 1; i > 0; i--) {
+    if (daysBetween(history[i - 1]!.day, history[i]!.day) > COMEBACK_GAP_DAYS) return history.slice(i);
+  }
+  return history;
+}
+
+export function plateauStatus(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): { status: PlateauStatus; confidence: Confidence } {
+  const recent = sinceLastBreak(history).slice(-PLATEAU_WINDOW);
   if (recent.length < PLATEAU_MIN_SESSIONS) return { status: 'unknown', confidence: 'low' };
+  if (mode === 'assisted') {
+    const w = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
+    const reps = trend(recent.map(r => ({ day: r.day, value: r.bestReps })));
+    const conf = w.confidence === 'low' ? reps.confidence : w.confidence;
+    const tie = reps.direction === 'up' ? 'progressing' : reps.direction === 'down' ? 'declining' : 'plateaued';
+    if (w.direction === 'down') return { status: 'progressing', confidence: conf };
+    if (w.direction === 'up') return { status: 'declining', confidence: conf };
+    return { status: tie, confidence: conf };
+  }
   const weight = trend(recent.map(r => ({ day: r.day, value: r.topKg })));
   const volume = trend(recent.map(r => ({ day: r.day, value: r.volume })));
   const conf = weight.confidence === 'low' ? volume.confidence : weight.confidence;

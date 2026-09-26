@@ -104,3 +104,189 @@ describe('progression', () => {
     });
   });
 });
+
+describe('carries progress by distance or time (QA-R6-5)', () => {
+  const id = 'lib_farmer_s_carry';
+  it('a carry logged as 32 kg × 40 m aims 5 m further at the same load, never "1 reps"', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }, { kg: 32, distanceM: 35, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toBe('32 kg · 45 m');
+    expect(n.target).not.toMatch(/reps/);
+    expect(n.mode).toBe('distance');
+  });
+  it('a max-effort carry repeats its distance; a timed one adds five seconds', () => {
+    const max = [session('2026-09-10', [{ id, sets: [{ kg: 32, distanceM: 40, effort: 'max' }] }])];
+    expect(suggestNext(max, id, 'lean', '2026-09-14').target).toBe('32 kg · 40 m');
+    const timed = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, effort: 'ideal' }] }])];
+    expect(suggestNext(timed, id, 'lean', '2026-09-14').target).toBe('24 kg · 65s');
+  });
+  it('QA3-12: a timed carry or sled logged with reps still gets a duration goal, never a rep one', () => {
+    const carry = [session('2026-09-10', [{ id, sets: [{ kg: 24, durationSec: 60, reps: 8, effort: 'ideal' }] }])];
+    const cn = suggestNext(carry, id, 'lean', '2026-09-14');
+    expect(cn.mode).toBe('duration');
+    expect(cn.target).toBe('24 kg · 65s');
+    const sled = [session('2026-09-10', [{ id: 'lib_sled_push', sets: [{ kg: 40, distanceM: 20, reps: 10, effort: 'ideal' }] }])];
+    const sn = suggestNext(sled, 'lib_sled_push', 'lean', '2026-09-14');
+    expect(sn.mode).toBe('distance');
+    expect(sn.target).toBe('40 kg · 25 m');
+  });
+});
+
+describe('carries in lb and timed rep moves (QA2-FE-2, QA2-FE-7, QA2-FE-8)', () => {
+  it('a carry done with 70 lb dumbbells targets 70 lb, not 31.751 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 31.751, entered: { value: 70, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    expect(suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') }).target).toBe('70 lb · 45 m');
+    expect(suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14').target).not.toMatch(/31\.751/);
+  });
+  it('burpees logged with reps and seconds keep a rep goal', () => {
+    const h = [session('2026-09-10', [{ id: 'lib_burpee', sets: [{ reps: 15, durationSec: 45, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_burpee', 'lean', '2026-09-14');
+    expect(n.target).toBe('16 reps');
+  });
+});
+
+describe('QA3-3, QA3-11: a conditioning load never snaps across the ladder', () => {
+  it('a trap-bar carry heavier than the dumbbell rack keeps its logged load, not capped at 60 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 100, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.target).toBe('100 kg · 45 m');
+    expect(n.kg).toBe(100);
+  });
+  it('a lighter-week carry snaps down, never up towards last time\'s load', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), deload });
+    // half(32 * 0.9) = 29 kg, unreachable on the 2.5 kg-step ladder; 'nearest' rounds up to 30, 'down' picks 27.5.
+    expect(n.kg).toBe(27.5);
+  });
+});
+
+describe('QA3-3b: above the rack, an lb user still sees their own clean number', () => {
+  it('a 225 lb trap-bar carry reads as 225 lb, not a rounded-kg conversion', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 102.058, entered: { value: 225, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.target).toBe('225 lb · 45 m');
+    expect(n.value).toBe(225);
+    expect(n.unit).toBe('lb');
+  });
+});
+
+describe('QA3-11b: carries snap down only for a genuine reduction, never in a normal week', () => {
+  it('a 75 lb carry on the lb ladder stays 75', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 34.019, entered: { value: 75, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.value).toBe(75);
+  });
+  it('a normal-week 32 kg carry rounds to its nearest rung (32.5), not forced down to 30', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.kg).toBe(32.5);
+  });
+  it('an Escobar ×1.05 increase on a 30 kg carry is not lost to a forced-down snap', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 30, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 1.05 });
+    expect(n.kg).toBe(32.5);
+  });
+  it('an Escobar ×0.95 cut on a 25 kg DB bench is not rounded back up', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_dumbbell_bench_press', sets: [{ kg: 25, reps: 8, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_dumbbell_bench_press', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 0.95 });
+    expect(n.kg).toBe(22.5);
+  });
+  it('a lighter-week 32 kg carry still snaps down to 27.5 (QA3-11)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), deload });
+    expect(n.kg).toBe(27.5);
+  });
+});
+
+describe('QA3-12b: a custom or non-listed conditioning move still gets its own distance/time goal', () => {
+  it('a custom carry (no library id) progresses by distance, then time, even logged with reps too', async () => {
+    const { makeCustomExercise } = await import('@/core/exercises');
+    const yoke = makeCustomExercise({ id: 'custom_yoke_walk', name: 'Yoke Walk', equipment: 'Other', primary: ['quads'], mode: 'conditioning' });
+    const byDistance = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, distanceM: 20, effort: 'ideal' }] }])];
+    expect(suggestNext(byDistance, yoke.id, 'lean', '2026-09-14', 3, [yoke]).target).toBe('100 kg · 25 m');
+    const byTime = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, durationSec: 30, effort: 'ideal' }] }])];
+    expect(suggestNext(byTime, yoke.id, 'lean', '2026-09-14', 3, [yoke]).target).toBe('100 kg · 35s');
+    const withReps = [session('2026-09-10', [{ id: yoke.id, sets: [{ kg: 100, durationSec: 30, reps: 8, effort: 'ideal' }] }])];
+    expect(suggestNext(withReps, yoke.id, 'lean', '2026-09-14', 3, [yoke]).mode).toBe('duration');
+  });
+  it('library conditioning moves outside CARRY_OR_SLED_IDS still get a distance/time goal when logged that way', () => {
+    const ropes = [session('2026-09-10', [{ id: 'lib_battle_ropes', sets: [{ durationSec: 30, effort: 'ideal' }] }])];
+    expect(suggestNext(ropes, 'lib_battle_ropes', 'lean', '2026-09-14').target).toBe('35s');
+    const crawl = [session('2026-09-10', [{ id: 'lib_bear_crawl', sets: [{ distanceM: 20, effort: 'ideal' }] }])];
+    expect(suggestNext(crawl, 'lib_bear_crawl', 'lean', '2026-09-14').target).toBe('25 m');
+  });
+});
+
+describe('QA3-3c: above the rack, a scaled lb carry still lands on a clean number', () => {
+  const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 102.058, entered: { value: 225, unit: 'lb' }, distanceM: 40, effort: 'ideal' }] }])];
+  it('a lighter week (0.9) reads as 200 lb, not a rounded-kg conversion', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), deload });
+    expect(n.target).toBe('200 lb · 40 m');
+  });
+  it('an Escobar ×0.95 cut reads as 210 lb', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), loadFactor: 0.95 });
+    expect(n.target).toBe('210 lb · 45 m');
+  });
+  it('an Escobar ×1.05 increase reads as 235 lb', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb'), loadFactor: 1.05 });
+    expect(n.target).toBe('235 lb · 45 m');
+  });
+});
+
+describe('F13 Part B: a carry logged as kg × reps shows its weight in the target', () => {
+  const id = 'lib_farmer_s_carry';
+
+  it('adds a rep at the same load', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toBe('32 kg · 3 reps');
+    expect(n.kg).toBe(32);
+    expect(n.mode).toBe('reps');
+  });
+
+  it('re-entry after 44 days repeats the load, with a rep range', () => {
+    const h = [session('2026-08-01', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14');
+    expect(n.target).toMatch(/^32 kg · \d+–\d+ reps$/);
+    expect(n.kg).toBe(32);
+  });
+
+  it('a deload week scales the kg down, no equipment', () => {
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 32, reps: 2, effort: 'ideal' }] }])];
+    const deload = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 1, loadFactor: 0.9 };
+    const n = suggestNext(h, id, 'lean', '2026-09-15', 3, [], { deload });
+    expect(n.target).toBe('29 kg · 2 reps · easy');
+    expect(n.kg).toBe(29);
+  });
+
+  it('a lb-equipment carry snaps its target to the ladder', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id, sets: [{ kg: 31.751, entered: { value: 70, unit: 'lb' }, reps: 2, effort: 'ideal' }] }])];
+    const n = suggestNext(h, id, 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.target).toBe('70 lb · 3 reps');
+  });
+
+  it('bodyweight and assisted moves, and a carry with no kg logged, are unaffected pins', () => {
+    const sled = suggestNext([session('2026-09-10', [{ id: 'lib_sled_push', sets: [{ reps: 10, effort: 'ideal' }] }])], 'lib_sled_push', 'lean', '2026-09-14');
+    expect(sled.target).toBe('11 reps');
+    expect(sled.kg).toBeNull();
+    const pushup = suggestNext([session('2026-09-10', [{ id: 'lib_push_up', sets: sets(0, 10) }])], 'lib_push_up', 'lean', '2026-09-14');
+    expect(pushup.target).toBe('11 reps');
+    expect(pushup.kg).toBeNull();
+  });
+});

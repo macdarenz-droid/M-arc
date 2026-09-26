@@ -3,7 +3,7 @@
  * CapacitorHttp out of the path (it buffers responses and would kill streaming).
  */
 
-export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream' | 'timeout' | 'network' | 'offline';
+export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout' | 'network' | 'offline';
 
 export type StreamEvent =
   | { t: 'start'; requestId: string }
@@ -105,14 +105,17 @@ export function httpTransport(opts: { url: () => string; device: () => string; f
 }
 
 /** The proxy counts as online only when /health answers protocol 2 (§12.9). */
-export async function checkHealth(url: string, fetchImpl: typeof fetch = fetch, timeoutMs = 5000): Promise<{ ok: boolean; model?: string }> {
+/** Online only when the Worker answers protocol 2 with its key present (ES-08). */
+export async function checkHealth(url: string, fetchImpl: typeof fetch = fetch, timeoutMs = 5000): Promise<{ ok: boolean; model?: string; message?: string }> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const r = await fetchImpl(`${url.replace(/\/$/, '')}/health`, { signal: ctrl.signal });
     if (!r.ok) return { ok: false };
-    const j = (await r.json()) as { protocol?: number; model?: string };
-    return j?.protocol === 2 ? { ok: true, model: j.model } : { ok: false };
+    const j = (await r.json()) as { protocol?: number; model?: string; key?: boolean };
+    if (j?.protocol !== 2) return { ok: false };
+    if (j.key !== true) return { ok: false, message: "Escobar isn't set up yet." };
+    return { ok: true, model: j.model };
   } catch {
     return { ok: false };
   } finally {

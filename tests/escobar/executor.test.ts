@@ -48,6 +48,12 @@ describe('executor', () => {
     const o = run('navigate', { target: 'body.recovering', auto: true });
     expect(o.navigate).toMatchObject({ target: 'body.recovering', auto: true, title: 'Recovering muscles' });
     expect(run('navigate', { target: 'nowhere' }).isError).toBe(true);
+    // R1.2: only known keys pass, and a made-up muscle is an error that lists the real ones.
+    const kept = run('navigate', { target: 'body.recovering', params: [{ key: 'muscle', value: 'quads' }, { key: 'evil', value: 'x' }] });
+    expect(kept.navigate!.params).toEqual({ muscle: 'quads' });
+    const bad = run('navigate', { target: 'body.recovering', params: [{ key: 'muscle', value: 'wings' }] });
+    expect(bad.isError).toBe(true);
+    expect(parse(bad.content).error).toMatch(/muscle must be one of .*chest/);
   });
   it('actions return awaiting_user with a proposal and deterministic ids', () => {
     const e = { ...env(twoWeeksState()), proposalCount: 4 };
@@ -97,5 +103,17 @@ describe('executor', () => {
     expect(statusLabel('evaluate_plan', {}, ctx)).toBe('Checking the plan against your volume and recovery…');
     expect(genericLabel('propose_split')).toBe('Preparing a change…');
     expect(genericLabel('get_overview')).toBe('Looking into it…');
+  });
+});
+
+describe("recall dates (QA2-FD-5)", () => {
+  it("a memory's 'since' is the phone's day, as on the memory screen", async () => {
+    const { dayKey } = await import('@/core/dates');
+    const s = twoWeeksState();
+    const createdAt = '2026-09-22T22:30:00.000Z';
+    const st = { ...s, escobar: { ...s.escobar, memory: [{ id: 'm1', kind: 'injury' as const, text: 'Left shoulder', createdAt, source: 'user' }] } };
+    const e = { ctx: ctxOf(st as never), ledger: [] as Fact[], turn: 0, proposalCount: 0 };
+    const items = JSON.parse(executeTool({ id: 'tu_9', name: 'recall', input: { kind: 'injury' } }, e).content).data.items as Array<{ since: string }>;
+    expect(items[0]!.since).toBe(dayKey(new Date(createdAt)));
   });
 });

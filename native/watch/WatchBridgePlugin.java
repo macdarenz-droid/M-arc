@@ -45,6 +45,11 @@ public class WatchBridgePlugin extends Plugin {
     private boolean bound;
     private DeviceScanner scanner;
     private long lastEmittedElapsed = -1;
+    /** watchDevices is throttled to one per 500 ms, with a trailing emit (PL-13). */
+    private static final long DEVICES_EVERY_MS = 500;
+    private long lastDevicesAt = 0;
+    private boolean devicesQueued = false;
+    private final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
 
     private boolean needsLocation() { return Build.VERSION.SDK_INT <= 30; }
 
@@ -109,6 +114,7 @@ public class WatchBridgePlugin extends Plugin {
 
     @Override
     protected void handleOnDestroy() {
+        main.removeCallbacksAndMessages(null);
         if (scanner != null) scanner.stop();
         if (service != null) service.setListener(null);
         if (bound) { try { getContext().unbindService(connection); } catch (RuntimeException ignored) { } }
@@ -123,45 +129,69 @@ public class WatchBridgePlugin extends Plugin {
         @Override public void onServiceDisconnected(ComponentName name) { service = null; }
     };
 
+    // PL-08: plugin methods run on Capacitor's plugin thread, while the scanner and the service
+    // live on the main looper; every body that touches them hops to the main thread.
     @PluginMethod
     public void startScan(PluginCall call) {
-        BluetoothAdapter a = adapter();
-        if (a == null || !blePermitted()) { call.reject("Bluetooth unavailable or not permitted"); return; }
-        Integer timeoutMs = call.getInt("timeoutMs", 20_000);
-        if (scanner == null) scanner = new DeviceScanner(a, this::emitDevices);
-        // DeviceScanner reports "something changed"; the plugin re-reads its current device list each time.
-        emitStatus();
-        scanner.start(timeoutMs == null ? 20_000 : timeoutMs);
-        call.resolve();
+        getBridge().executeOnMainThread(() -> {
+            BluetoothAdapter a = adapter();
+            if (a == null || !blePermitted()) { call.reject("Bluetooth unavailable or not permitted"); return; }
+            Integer timeoutMs = call.getInt("timeoutMs", 20_000);
+            if (scanner == null) scanner = new DeviceScanner(a, this::devicesChanged);
+            // DeviceScanner reports "something changed"; the plugin re-reads its current device list each time.
+            scanner.start(timeoutMs == null ? 20_000 : timeoutMs);
+            // After start, so the UI sees "scanning" before the call resolves (UI-07).
+            emitStatus();
+            call.resolve();
+        });
     }
 
     @PluginMethod
     public void stopScan(PluginCall call) {
-        if (scanner != null) scanner.stop();
-        call.resolve();
+        getBridge().executeOnMainThread(() -> {
+            if (scanner != null) scanner.stop();
+            emitStatus();
+            call.resolve();
+        });
     }
 
     @PluginMethod
     public void connect(PluginCall call) {
-        String address = call.getString("address");
-        BluetoothAdapter a = adapter();
-        if (address == null || a == null || !blePermitted() || service == null) { call.reject("Cannot connect"); return; }
-        if (scanner != null) scanner.stop();
-        try {
-            BluetoothDevice device = a.getRemoteDevice(address);
-            service.connect(device);
-            call.resolve();
-        } catch (IllegalArgumentException e) { call.reject("Invalid device address"); }
+        getBridge().executeOnMainThread(() -> {
+            String address = call.getString("address");
+            BluetoothAdapter a = adapter();
+            if (address == null || a == null || !blePermitted() || service == null) { call.reject("Cannot connect"); return; }
+            if (scanner != null) scanner.stop();
+            try {
+                BluetoothDevice device = a.getRemoteDevice(address);
+                service.connect(device);
+                call.resolve();
+            } catch (IllegalArgumentException e) { call.reject("Invalid device address"); }
+        });
     }
 
     @PluginMethod
     public void disconnect(PluginCall call) {
-        if (service != null) service.disconnect();
-        call.resolve();
+        getBridge().executeOnMainThread(() -> {
+            if (service != null) service.disconnect();
+            call.resolve();
+        });
     }
 
     @PluginMethod
-    public void status(PluginCall call) { call.resolve(statusObject()); }
+    public void status(PluginCall call) {
+        getBridge().executeOnMainThread(() -> call.resolve(statusObject()));
+    }
+
+    /** UI-08: the service's status and connection log, with no addresses or heart-rate values. */
+    @PluginMethod
+    public void diagnostics(PluginCall call) {
+        getBridge().executeOnMainThread(() -> {
+            JSObject out = new JSObject();
+            out.put("text", service == null ? "Watch service not running.\n" : service.diagnostics());
+            call.resolve(out);
+        });
+    }
 
     private String freshness() {
         if (service == null || !service.running) return "DISCONNECTED";
@@ -172,6 +202,7 @@ public class WatchBridgePlugin extends Plugin {
         if (adapter() == null) return "unsupported";
         if (!blePermitted()) return "permission";
         if (scanner != null && scanner.scanning) return "scanning";
+        if (service != null && !service.running && service.pausedReason != null) return "paused";
         if (service == null || !service.running) return "idle";
         if (service.subscribed) return "connected";
         return "Connecting".equals(service.status) ? "connecting" : "reconnecting";
@@ -206,15 +237,32 @@ public class WatchBridgePlugin extends Plugin {
         }
     }
 
+    /** Called on the main looper whenever the scan list changes; emits at most every 500 ms, always ending on the latest list. */
+    private void devicesChanged() {
+        long now = SystemClock.elapsedRealtime();
+        long wait = lastDevicesAt + DEVICES_EVERY_MS - now;
+        if (wait <= 0) { emitDevices(); return; }
+        if (devicesQueued) return;
+        devicesQueued = true;
+        main.postDelayed(() -> { devicesQueued = false; emitDevices(); }, wait);
+    }
+
     private void emitDevices() {
-        for (DeviceScanner.Found f : scanner.devices) {
+        lastDevicesAt = SystemClock.elapsedRealtime();
+        JSArray list = new JSArray();
+        if (scanner != null) for (DeviceScanner.Found f : scanner.devices) {
             JSObject d = new JSObject();
             d.put("address", f.device.getAddress());
             d.put("name", f.name);
             d.put("advertisesHeartRate", f.advertisesHeartRate);
             d.put("paired", f.paired);
             d.put("rssi", f.rssi);
-            notifyListeners("watchDevice", d);
+            list.put(d);
         }
+        JSObject out = new JSObject();
+        out.put("devices", list);
+        notifyListeners("watchDevices", out);
+        // The scan state lives in the status too; a finished scan must reach the UI.
+        emitStatus();
     }
 }

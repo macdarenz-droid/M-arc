@@ -69,22 +69,27 @@ export function muscleLabel(id: string): string {
 
 /** Free-text muscle labels (from custom exercises or old data) to a key. */
 export function classifyMuscleText(raw: string): MuscleId | null {
-  const q = raw.toLowerCase();
+  const q = raw.toLowerCase().trim();
+  // ST-12: an exact label ("Mid back", "Rear delts") wins before any pattern.
+  const exact = MUSCLES.find(m => m.label.toLowerCase() === q || m.id === q.replace(/\s+/g, '_'));
+  if (exact) return exact.id;
   const rules: Array<[RegExp, MuscleId]> = [
     [/upper chest|incline/, 'upper_chest'],
     [/chest|pec/, 'chest'],
-    [/rear delt|posterior delt/, 'rear_delts'],
-    [/front delt|anterior delt/, 'front_delts'],
+    [/serratus/, 'core'],
+    [/rear delt|posterior delt|rear shoulder/, 'rear_delts'],
+    [/front delt|anterior delt|front shoulder/, 'front_delts'],
     [/side delt|lateral delt|shoulder/, 'side_delts'],
     [/rotator/, 'rotator_cuff'],
     [/tricep/, 'triceps'],
     [/brachialis/, 'brachialis'],
     [/bicep/, 'biceps'],
-    [/forearm|grip|wrist/, 'forearms'],
+    [/forearm|grip|wrist|brachioradialis/, 'forearms'],
     [/\blat\b|lats|latissimus/, 'lats'],
+    // Lower back before mid back, or "lower back" would match the generic \bback\b.
+    [/lower back|erector|spinal/, 'lower_back'],
     [/mid back|rhomboid|upper back|\bback\b/, 'mid_back'],
     [/trap/, 'upper_traps'],
-    [/lower back|erector|spinal/, 'lower_back'],
     [/oblique/, 'obliques'],
     [/abs|abdominal/, 'abs'],
     [/core/, 'core'],

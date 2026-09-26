@@ -8,8 +8,9 @@ import * as REC from '@/data/recovery';
 import { VOLUME_BANDS, VOLUME_OFFSET } from '@/data/volume';
 import { GOAL_BY_ID } from '@/data/goals';
 import { DELOAD_DAYS, DELOAD_LOAD_FACTOR, DELOAD_SET_FACTOR } from '@/data/deload';
-import { READINESS_GREEN_AT, READINESS_RED_AT, READINESS_WEIGHTS } from '@/brain/readiness';
-import { EPLEY_DIVISOR, RIR_BY_EFFORT } from '@/brain/e1rm';
+import { READINESS_CALIBRATING_DAYS, READINESS_GREEN_AT, READINESS_RED_AT, READINESS_WEIGHTS } from '@/brain/readiness';
+import { E1RM_MAX_REPS, EPLEY_DIVISOR, RIR_BY_EFFORT } from '@/brain/e1rm';
+import { DELOAD_TRIGGER } from '@/brain/deload';
 import { ROLE_WEIGHT, SET_WEIGHT, LEVELS, trainingLevels } from '@/brain/exposure';
 import { MIN_REST_SEC, REST_RESERVE_PCT, REST_RISE_BPM, TANAKA, ZONE_RESERVE_PCTS, hrMax, restingHr, zones } from '@/brain/heart';
 import { BURST_COUNT, COMPRESSED_SEC_PER_SET, LIVE_GAP_SEC } from '@/brain/fidelity';
@@ -18,7 +19,7 @@ import { MAX_INCREASE_SHARE, RECOVERY_HOLD_PCT, REENTRY_DAYS } from '@/brain/pro
 import { PLATEAU_MIN_SESSIONS, PLATEAU_WINDOW } from '@/brain/trend';
 import { BALANCE } from '@/brain/balance';
 import { WEEKLY_REVIEW_DAYS } from '@/brain/coach/weeklyReview';
-import { effortBiasByLabel, rirObservations } from '@/brain/effortBias';
+import { BIAS_CAP_REPS, BIAS_MIN_OBSERVATIONS, effortBiasByLabel, rirObservations } from '@/brain/effortBias';
 import { exerciseHistory } from '@/brain/history';
 import { trainingAgeMonths, ageOf } from '@/brain/recovery';
 import { volumeBands } from '@/brain/volume';
@@ -67,9 +68,9 @@ const METHODS: Record<MethodId, Builder> = {
     const days = new Set(ctx.state.checkIns.map(c => c.day)).size;
     const rhr = restingHr(ctx.state.healthDays, ctx.state.profile, ctx.today);
     return {
-      summary: `A 0–100 score from what is available today: your check-in (${READINESS_WEIGHTS.checkIn}), sleep against your own need (${READINESS_WEIGHTS.sleep}), recovery of today's muscles (${READINESS_WEIGHTS.recovery}), resting heart rate against your baseline (${READINESS_WEIGHTS.rhr}), HRV (${READINESS_WEIGHTS.hrv}) and recent load (${READINESS_WEIGHTS.load}). Missing inputs are left out and the rest re-weighted. Green from ${READINESS_GREEN_AT}, red at ${READINESS_RED_AT} or below. Amber blocks load increases; red also drops a set. Under 14 days of history it says "calibrating".`,
+      summary: `A 0–100 score from what is available today: your check-in (${READINESS_WEIGHTS.checkIn}), sleep against your own need (${READINESS_WEIGHTS.sleep}), recovery of today's muscles (${READINESS_WEIGHTS.recovery}), resting heart rate against your baseline (${READINESS_WEIGHTS.rhr}), HRV (${READINESS_WEIGHTS.hrv}) and recent load (${READINESS_WEIGHTS.load}). Missing inputs are left out and the rest re-weighted. Green from ${READINESS_GREEN_AT}, red at ${READINESS_RED_AT} or below. Amber blocks load increases; red also drops a set. Under ${READINESS_CALIBRATING_DAYS} days of history it says "calibrating".`,
       inputs: ['check-in (sleep quality, mood, soreness)', 'sleep minutes', 'resting heart rate', 'HRV when a device sends it', 'recovery of the scheduled muscles', '7-day vs 28-day training load'],
-      constants: { ...Object.fromEntries(Object.entries(READINESS_WEIGHTS).map(([k, v]) => [`weight_${k}`, v])), greenAt: READINESS_GREEN_AT, redAt: READINESS_RED_AT, calibratingDays: 14 },
+      constants: { ...Object.fromEntries(Object.entries(READINESS_WEIGHTS).map(([k, v]) => [`weight_${k}`, v])), greenAt: READINESS_GREEN_AT, redAt: READINESS_RED_AT, calibratingDays: READINESS_CALIBRATING_DAYS },
       personal: { checkInDays: days, restingHrBaseline: rhr ?? 'none', healthDaysLogged: ctx.state.healthDays.length },
     };
   },
@@ -94,15 +95,15 @@ const METHODS: Record<MethodId, Builder> = {
     };
   },
   deload_trigger: () => ({
-    summary: `A lighter week is offered when two or more main lifts have plateaued or slipped, when effort drifts harder on two lifts while weekly volume keeps climbing, when a muscle runs above its band two weeks in a row, or when readiness was red on 3 of the last 5 days. Accepted, it lasts ${DELOAD_DAYS} days with sets × ${DELOAD_SET_FACTOR} and loads × ${DELOAD_LOAD_FACTOR}, then closes itself.`,
+    summary: `A lighter week is offered when ${DELOAD_TRIGGER.stalledLifts} or more main lifts have plateaued or slipped, when effort drifts harder on ${DELOAD_TRIGGER.driftLifts} lifts while weekly volume keeps climbing, when a muscle runs above its band ${DELOAD_TRIGGER.overBandWeeks} weeks in a row while a lift has stalled, or when readiness was red on ${DELOAD_TRIGGER.readinessRedDays} of the last ${DELOAD_TRIGGER.readinessWindowDays} days. Accepted, it lasts ${DELOAD_DAYS} days with sets × ${DELOAD_SET_FACTOR} and loads × ${DELOAD_LOAD_FACTOR}, then closes itself.`,
     inputs: ['plateau status of main lifts', 'effort drift', 'weekly volume', 'readiness over the last 5 days'],
-    constants: { plateauedLifts: 2, readinessRedDays: 3, readinessWindowDays: 5, overBandWeeks: 2, deloadDays: DELOAD_DAYS, setFactor: DELOAD_SET_FACTOR, loadFactor: DELOAD_LOAD_FACTOR },
+    constants: { plateauedLifts: DELOAD_TRIGGER.stalledLifts, readinessRedDays: DELOAD_TRIGGER.readinessRedDays, readinessWindowDays: DELOAD_TRIGGER.readinessWindowDays, overBandWeeks: DELOAD_TRIGGER.overBandWeeks, deloadDays: DELOAD_DAYS, setFactor: DELOAD_SET_FACTOR, loadFactor: DELOAD_LOAD_FACTOR },
     personal: {},
   }),
   e1rm: () => ({
-    summary: `The strength estimate uses Epley with the effort label as reps in reserve: load × (1 + (reps + reps left) / ${EPLEY_DIVISOR}), where easy counts ${RIR_BY_EFFORT.easy} reps left, ideal ${RIR_BY_EFFORT.ideal} and max ${RIR_BY_EFFORT.max}. Only sets of 10 reps or fewer count, and sets of 7–10 weigh half in trends. It's a guide, not a test.`,
+    summary: `The strength estimate uses Epley with the effort label as reps in reserve: load × (1 + (reps + reps left) / ${EPLEY_DIVISOR}), where easy counts ${RIR_BY_EFFORT.easy} reps left, ideal ${RIR_BY_EFFORT.ideal} and max ${RIR_BY_EFFORT.max}. Only sets of ${E1RM_MAX_REPS} reps or fewer count; the session's best set is its estimate. It's a guide, not a test.`,
     inputs: ['load', 'reps', 'effort'],
-    constants: { epleyDivisor: EPLEY_DIVISOR, rirEasy: RIR_BY_EFFORT.easy, rirIdeal: RIR_BY_EFFORT.ideal, rirMax: RIR_BY_EFFORT.max, maxReps: 10, halfWeightAboveReps: 6 },
+    constants: { epleyDivisor: EPLEY_DIVISOR, rirEasy: RIR_BY_EFFORT.easy, rirIdeal: RIR_BY_EFFORT.ideal, rirMax: RIR_BY_EFFORT.max, maxReps: E1RM_MAX_REPS },
     personal: {},
   }),
   plateau: () => ({
@@ -115,15 +116,15 @@ const METHODS: Record<MethodId, Builder> = {
     const obs = mainLiftIds(ctx).flatMap(id => rirObservations(exerciseHistory(ctx.state.sessions, id, ctx.state.customExercises)));
     const bias = effortBiasByLabel(obs);
     return {
-      summary: 'When a later max-effort set shows how many reps you really had left, the app compares it with how you rated earlier sets at that load. After 3 such observations per label it learns your bias (capped at ±3 reps) and adjusts strength estimates.',
+      summary: `When a later max-effort set shows how many reps you really had left, the app compares it with how you rated earlier sets at that load. After ${BIAS_MIN_OBSERVATIONS} such observations per label it learns your bias (capped at ±${BIAS_CAP_REPS} reps) and points it out in a coach tip. Strength estimates keep the standard reps-left values.`,
       inputs: ['sets rated easy or ideal', 'later max-effort sets at the same load'],
-      constants: { assumedRirEasy: RIR_BY_EFFORT.easy, assumedRirIdeal: RIR_BY_EFFORT.ideal, observationsNeeded: 3, biasCap: 3 },
+      constants: { assumedRirEasy: RIR_BY_EFFORT.easy, assumedRirIdeal: RIR_BY_EFFORT.ideal, observationsNeeded: BIAS_MIN_OBSERVATIONS, biasCap: BIAS_CAP_REPS },
       personal: Object.fromEntries(bias.map(b => [`${b.effort} bias (reps)`, r2(b.bias)])),
     };
   },
   warmup: () => ({
-    summary: `Before a main lift: ${WARMUP_PCTS.map((p, i) => `${Math.round(p * 100)}% × ${WARMUP_REPS[i]}`).join(', ')} of your trend strength estimate, snapped to loads the equipment has.`,
-    inputs: ['latest strength estimate for the lift', 'equipment profile'],
+    summary: `Before a main lift: ${WARMUP_PCTS.map((p, i) => `${Math.round(p * 100)}% × ${WARMUP_REPS[i]}`).join(', ')} of your first working set, snapped to loads the equipment has; a step at or above the working load is left out.`,
+    inputs: ['your first working set for the lift', 'equipment profile'],
     constants: Object.fromEntries(WARMUP_PCTS.flatMap((p, i) => [[`set${i + 1}Pct`, p], [`set${i + 1}Reps`, WARMUP_REPS[i]!]])),
     personal: {},
   }),
@@ -186,9 +187,21 @@ const METHODS: Record<MethodId, Builder> = {
   }),
 };
 
+/** ES-12: personal numbers that come from health or body data leave the answer when that sharing is off. */
+const HEALTH_KEYS = new Set(['restingHrBaseline', 'healthDaysLogged', 'restingHr']);
+const BODY_KEYS = new Set(['restingKcalPerDay']);
+
 export function explainMethod(topic: MethodId, ctx: ToolCtx): MethodExplanation {
-  const b = METHODS[topic];
-  return { topic, ...b(ctx) };
+  const b = METHODS[topic](ctx);
+  const { health, body } = ctx.state.escobar.sharing;
+  if (health && body) return { topic, ...b };
+  const personal = Object.fromEntries(Object.entries(b.personal ?? {}).filter(([k]) => {
+    if (!health && (HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k))) return false;
+    if (!health && k === 'hrMax' && b.personal?.hrMaxSource !== 'tanaka') return false;
+    if (!body && BODY_KEYS.has(k)) return false;
+    return true;
+  }));
+  return { topic, ...b, personal };
 }
 
 /** The method index sent in the manifest (§7.3): topic → one line. */

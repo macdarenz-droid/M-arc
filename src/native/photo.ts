@@ -5,6 +5,8 @@
  * the Capacitor WebView and in a browser, so no extra native plugin or
  * permission is needed to declare.
  */
+import { pickFileRaw } from './filePicker';
+
 const MAX_DIMENSION = 900;
 const QUALITY_STEPS = [0.72, 0.55, 0.4];
 /** Base64 chars; comfortably under the proxy's per-request cap even before overhead. */
@@ -12,28 +14,11 @@ const TARGET_CHARS = 700_000;
 
 export interface CapturedPhoto { mediaType: 'image/jpeg'; data: string }
 
-function pickFile(): Promise<File | null> {
-  return new Promise(resolve => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    // No "capture" attribute: that forces the camera open directly with no
-    // way back out to the gallery or Files. Leaving it off shows the normal
-    // Android/iOS chooser (camera, gallery, files), which is what a photo
-    // taken earlier or a screenshot of a programme needs.
-    input.style.display = 'none';
-    const done = (file: File | null) => { resolve(file); input.remove(); };
-    input.addEventListener('change', () => done(input.files?.[0] ?? null), { once: true });
-    // Cancelling the picker fires "change" with no file on some browsers, "cancel" on others.
-    input.addEventListener('cancel', () => done(null), { once: true });
-    document.body.appendChild(input);
-    input.click();
-  });
-}
+const pickFile = (): Promise<File | null> => pickFileRaw('image/*');
 
-async function toCanvas(file: File): Promise<HTMLCanvasElement> {
+async function toCanvas(file: File, maxDimension: number): Promise<HTMLCanvasElement> {
   const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
@@ -60,16 +45,18 @@ function canvasToBase64(canvas: HTMLCanvasElement, quality: number): Promise<str
  * Opens the camera/gallery picker, downscales to at most 900px on the long
  * side and re-encodes as JPEG, stepping quality down until it is
  * comfortably small. Returns null when the person cancels rather than
- * throwing, since cancelling is not an error.
+ * throwing, since cancelling is not an error. Share cards (F12) ask for a
+ * larger photo, since it fills a 1080×1920 image and never leaves the phone.
  */
-export async function pickAndCompressPhoto(): Promise<CapturedPhoto | null> {
+export async function pickAndCompressPhoto(opts: { maxDimension?: number; targetChars?: number } = {}): Promise<CapturedPhoto | null> {
   const file = await pickFile();
   if (!file) return null;
-  const canvas = await toCanvas(file);
+  const canvas = await toCanvas(file, opts.maxDimension ?? MAX_DIMENSION);
+  const target = opts.targetChars ?? TARGET_CHARS;
   let data = '';
   for (const quality of QUALITY_STEPS) {
     data = await canvasToBase64(canvas, quality);
-    if (data.length <= TARGET_CHARS) break;
+    if (data.length <= target) break;
   }
   return { mediaType: 'image/jpeg', data };
 }

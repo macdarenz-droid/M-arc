@@ -18,7 +18,8 @@ describe('hrMax', () => {
     expect(r.source).toBe('tanaka');
   });
   it('falls back to Tanaka from birth year', () => {
-    const r = hrMax(profile({ birthYear: 1990 }), null, new Date('2026-01-01').getTime());
+    // Local mid-year, so the year is 2026 in every time zone (the UTC midnight of 1 Jan is 2025 in New York).
+    const r = hrMax(profile({ birthYear: 1990 }), null, new Date(2026, 5, 1).getTime());
     expect(r).toEqual({ bpm: Math.round(208 - 0.7 * 36), source: 'tanaka' });
   });
   it('decays a stale observed max toward Tanaka past 12 months', () => {
@@ -212,5 +213,25 @@ describe('intraSessionDrift', () => {
   });
   it('is null below 3 sets with heart data', () => {
     expect(intraSessionDrift([set(150, 20)])).toBeNull();
+  });
+});
+
+describe('observed HRmax (BR-12)', () => {
+  it('takes the highest plateau and never goes below the age estimate', async () => {
+    const { observedHrMaxFromSeries, hrMax } = await import('@/brain/heart');
+    const series: Array<[number, number]> = [[0, 120], [5, 150], [10, 151], [15, 150], [20, 152], [25, 151], [30, 140], [35, 175], [40, 176], [45, 177], [50, 176], [55, 175]];
+    expect(observedHrMaxFromSeries(series)).toBe(176);
+    const now = new Date(2026, 5, 1).getTime();
+    expect(hrMax({ name: '', birthYear: 1990 }, { bpm: 170, atMs: now }, now).bpm).toBe(Math.round(208 - 0.7 * 36));
+    expect(hrMax({ name: '', birthYear: 1990 }, { bpm: 195, atMs: now }, now).bpm).toBe(195);
+  });
+});
+
+describe('an observed max turning 12 months old (QA-R3b-6)', () => {
+  it('never drops below the age estimate', () => {
+    const now = Date.parse('2026-09-20T12:00:00Z');
+    const p = profile({ birthYear: 1990 });
+    const at = (months: number) => hrMax(p, { bpm: 170, atMs: now - months * 30.44 * 86_400_000 }, now).bpm;
+    expect(at(13)).toBe(at(11));
   });
 });

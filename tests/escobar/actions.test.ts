@@ -94,3 +94,14 @@ describe('proposal validation (§10.2)', () => {
     expect(fingerprint('propose_split', input, { ...s, splits: s.splits.map(x => (x.id === 'sp_push' ? { ...x, name: 'Push A' } : x)) })).not.toBe(a);
   });
 });
+
+describe('today swaps (QA2-FD-9)', () => {
+  it('a swap of an exercise to itself is refused', async () => {
+    const { buildAction } = await import('@/escobar/tools/actions');
+    const { ctxOf, twoWeeksState } = await import('./fixtures');
+    const s = twoWeeksState();
+    const sp = s.splits[0]!;
+    const id = sp.exercises[0]!.exerciseId;
+    expect(() => buildAction('propose_today', { splitId: sp.id, reason: 'x', changes: [{ kind: 'swap', from: id, to: id }] }, ctxOf(s))).toThrow(/different exercise/);
+  });
+});

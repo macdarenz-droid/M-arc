@@ -1,15 +1,18 @@
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { useState } from 'preact/hooks';
 import { state } from '@/core/store';
-import { Button, Card, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
+import { Button, Card, CommitNumber, Field, Row, Section, Segmented, Sheet } from '@/ui/primitives';
 import { showToast } from '@/app/toast';
+import { formatLocalStamp } from '@/core/dates';
+import { displayToKg, formatLoad, kgToDisplay } from '@/core/units';
+import { parseLoad } from '@/core/parse';
 import { profileCompleteness, isWeightTypo } from '@/brain/onboarding';
 import { GOAL_BY_ID } from '@/data/goals';
 import { GoalSheet } from '@/slices/coach/Coach';
 import { lastChangeAt, logWeight, setBirthYear, setHeight, setPlannedDays, setSex, setTrainingSince } from './profile';
 
 function updatedHint(at: string | undefined): string {
-  return at ? `Updated ${at.slice(0, 10)}` : 'Not set';
+  return at ? `Updated ${formatLocalStamp(at)}` : 'Not set';
 }
 
 export function Profile({ onClose }: { onClose: () => void }) {
@@ -30,7 +33,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
         <Section title="About you" palace="profile.about">
           <Card class="stack-sm">
             <Field label="Birth year" hint="Unlocks: heart-rate zones, age-adjusted recovery. ">
-              <input type="number" value={s.profile.birthYear ?? ''} onInput={e => { const v = parseInt((e.target as HTMLInputElement).value, 10); setBirthYear(Number.isFinite(v) ? v : undefined); }} />
+              <CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v)} />
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'birthYear'))}</span>
             </Field>
             <Field label="Sex" hint="Unlocks: calories, relative-strength comparisons.">
@@ -38,7 +41,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'sex'))}</span>
             </Field>
             <Field label="Height (cm)" hint="Unlocks: calories, body-fat estimate.">
-              <input type="number" value={s.profile.heightCm ?? ''} onInput={e => { const v = parseFloat((e.target as HTMLInputElement).value); setHeight(Number.isFinite(v) ? v : undefined); }} />
+              <CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v)} />
               <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'heightCm'))}</span>
             </Field>
           </Card>
@@ -71,14 +74,17 @@ export function Profile({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** Body weight is typed and shown in the display unit and stored in kg (UI-18, RG-09). */
 function WeighIn() {
   const s = state.value;
-  const [value, setValue] = useState(String(s.profile.bodyWeightKg ?? ''));
+  const u = s.preferences.weightUnit;
+  const [value, setValue] = useState(s.profile.bodyWeightKg != null ? String(kgToDisplay(s.profile.bodyWeightKg, u)) : '');
   const [confirming, setConfirming] = useState(false);
 
   const save = () => {
-    const kg = parseFloat(value);
-    if (!Number.isFinite(kg) || kg <= 0) return;
+    const typed = parseLoad(value, u);
+    if (typed == null || typed <= 0) return;
+    const kg = displayToKg(typed, u);
     if (!confirming && isWeightTypo(kg, s.profile.bodyWeightKg)) { setConfirming(true); return; }
     logWeight(kg);
     setConfirming(false);
@@ -86,9 +92,9 @@ function WeighIn() {
   };
 
   return (
-    <Field label="Body weight (kg)">
-      <div class="row"><input type="number" value={value} onInput={e => { setValue((e.target as HTMLInputElement).value); setConfirming(false); }} /><Button size="sm" onClick={save}>Weigh in</Button></div>
-      {confirming && <Card class="card-quiet"><p class="small">That's a big jump from {s.profile.bodyWeightKg} kg. Save anyway?</p><div class="row" style={{ marginTop: 8 }}><Button variant="quiet" size="sm" onClick={() => setConfirming(false)}>Cancel</Button><Button size="sm" onClick={save}>Save {value} kg</Button></div></Card>}
+    <Field label={`Body weight (${u})`} hint="Also counts as the load on bodyweight exercises.">
+      <div class="row"><input type="text" inputMode="decimal" value={value} onInput={e => { setValue((e.target as HTMLInputElement).value); setConfirming(false); }} /><Button size="sm" onClick={save}>Weigh in</Button></div>
+      {confirming && <Card class="card-quiet"><p class="small">That's a big jump from {formatLoad(s.profile.bodyWeightKg, u)}. Save anyway?</p><div class="row" style={{ marginTop: 8 }}><Button variant="quiet" size="sm" onClick={() => setConfirming(false)}>Cancel</Button><Button size="sm" onClick={save}>Save {value} {u}</Button></div></Card>}
     </Field>
   );
 }

@@ -57,6 +57,29 @@ describe('restAndDensityInsight', () => {
   });
 });
 
+describe('restAndDensityInsight per lift (BR-20)', () => {
+  it('a light accessory after a heavy lift does not read as reps falling', () => {
+    const s = session('2026-09-01', [
+      { id: bench, sets: [{ kg: 100, reps: 5, effort: 'ideal', restSec: 60 }, { kg: 100, reps: 5, effort: 'ideal', restSec: 60 }, { kg: 100, reps: 5, effort: 'ideal', restSec: 60 }] },
+      { id: 'lib_cable_fly', sets: [{ kg: 20, reps: 15, effort: 'ideal', restSec: 60 }, { kg: 20, reps: 15, effort: 'ideal', restSec: 60 }, { kg: 20, reps: 15, effort: 'ideal', restSec: 60 }] },
+    ]);
+    expect(restAndDensityInsight(s, false)).toBeNull();
+  });
+  it('names the drop within one main lift', () => {
+    const s = session('2026-09-01', [{ id: bench, sets: [8, 8, 7, 5].map(reps => ({ kg: 100, reps, effort: 'ideal' as const, restSec: 60 })) }]);
+    expect(restAndDensityInsight(s, false)!.noticed).toContain('fell from 8 on the first set to 5 on the last');
+  });
+});
+
+describe('strength record text (BR-21)', () => {
+  it('rounds the previous estimate', () => {
+    const prior = session('2026-08-01', [{ id: bench, sets: [{ kg: 80, reps: 7, effort: 'max' }] }]);
+    const now = session('2026-09-01', [{ id: bench, sets: [{ kg: 85, reps: 8, effort: 'max' }] }]);
+    const rec = recordsInsight(now, [prior]).find(i => i.id.endsWith(':strength'))!;
+    expect(rec.noticed).toMatch(/up from about \d+ kg\.$/);
+  });
+});
+
 describe('durationDriftInsight', () => {
   it('needs 5 prior sessions of the same split', () => {
     const s = session('2026-09-18', [{ id: bench, sets: sets(60, 8) }]);

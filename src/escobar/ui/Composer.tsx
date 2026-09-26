@@ -6,11 +6,13 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { useTypewriter } from './typewriter';
 import { IconCamera, IconSend, IconStop, IconX } from '@/ui/icons';
 import { pickAndCompressPhoto } from '@/native/photo';
+import { showToast } from '@/app/toast';
 import { putImage, imageData } from '../images';
 import type { ContextRef, ImageBlockRef } from '../types';
 
 export const MAX_CHARS = 2000;
-const MAX_PHOTOS = 3;
+/** D3 / ES-13: two photos per message (3 × 1.2 MB would pass the Worker's 3 MB body limit). */
+const MAX_PHOTOS = 2;
 
 export function Composer({ busy, draft, contextRef, disabled, placeholder, notice, suggestions, onSend, onStop, onClearRef, onFocus, autoFocus }: {
   busy: boolean;
@@ -49,7 +51,8 @@ export function Composer({ busy, draft, contextRef, disabled, placeholder, notic
     setImages([]);
   };
   const attach = async () => {
-    const p = await pickAndCompressPhoto();
+    let p: Awaited<ReturnType<typeof pickAndCompressPhoto>>;
+    try { p = await pickAndCompressPhoto(); } catch { showToast("Couldn't read that photo"); return; }
     if (!p) return;
     const id = `img_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
     putImage(id, p);

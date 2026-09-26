@@ -37,7 +37,8 @@ describe('liveSessionLogging', () => {
     expect(l.flags).toContain('compressed');
   });
   it('flags a session that crosses midnight', () => {
-    const l = liveSessionLogging({ setFidelities: ['live'], startedAt: '2026-09-18T23:50:00.000Z', endedAt: '2026-09-19T00:10:00.000Z', loggedDurationSec: 1200, workingSetCount: 1 });
+    // Local midnight: the crossing is judged on the person's calendar, not UTC's (ST-18).
+    const l = liveSessionLogging({ setFidelities: ['live'], startedAt: new Date(2026, 8, 18, 23, 50).toISOString(), endedAt: new Date(2026, 8, 19, 0, 10).toISOString(), loggedDurationSec: 1200, workingSetCount: 1 });
     expect(l.flags).toContain('midnight_crossing');
   });
 });
@@ -97,5 +98,27 @@ describe('isDuplicateSession', () => {
     const c = session('2026-09-19', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]);
     expect(isDuplicateSession(a, b)).toBe(false);
     expect(isDuplicateSession(a, c)).toBe(false);
+  });
+});
+
+describe('warm-ups and drop sets (QA-R6-6, QA-R6-8, QA-R6-9)', () => {
+  it('a light warm-up or drop set is never a kg/lb slip; a light working set still is', async () => {
+    const { setUnitSuspect } = await import('@/brain/fidelity');
+    expect(setUnitSuspect({ kg: 45, kind: 'warmup' }, 100)).toBe(false);
+    expect(setUnitSuspect({ kg: 45, kind: 'drop' }, 100)).toBe(false);
+    expect(setUnitSuspect({ kg: 45 }, 100)).toBe(true);
+  });
+  it("'Last:' hints line up with the working sets", async () => {
+    const { workingIndex } = await import('@/brain/exposure');
+    const rows = [{ kind: 'warmup' as const }, { kind: 'warmup' as const }, {}, {}, {}];
+    expect(rows.map((_, j) => workingIndex(rows, j))).toEqual([null, null, 0, 1, 2]);
+  });
+});
+
+describe('flagsForSet and warm-ups (QA2-FE-3, QA2-FE-4)', () => {
+  it('a light warm-up or drop set is not flagged as a kg/lb slip; a light working set still is', () => {
+    expect(flagsForSet({ kg: 45, reps: 8, kind: 'warmup' }, 100, false)).not.toContain('unit_suspect');
+    expect(flagsForSet({ kg: 45, reps: 8, kind: 'drop' }, 100, false)).not.toContain('unit_suspect');
+    expect(flagsForSet({ kg: 45, reps: 8 }, 100, false)).toContain('unit_suspect');
   });
 });

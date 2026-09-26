@@ -5,24 +5,29 @@
  *
  * To add a rule: append one object. To change the words: edit the strings.
  */
+import type { LoadUnit } from '@/core/models';
+import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf, daysBetween, addDays } from '@/core/dates';
-import { recoveryStatus, type MuscleRecovery } from '../recovery';
-import { exerciseHistory } from '../history';
-import { plateauStatus } from '../trend';
+import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
+import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
+import { exerciseHistory, isActive, modeOf } from '../history';
+import { plateauStatus, sinceLastBreak } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
-import { weeklyMuscleSets } from '../exposure';
+import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
-import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
+import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
-import { deloadTrigger, type DeloadSuggestion } from '../deload';
+import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
+
+/** The plateau lever only speaks once the lift's recent sessions span six of the eight weeks it looks at (spec: never at 3 weeks). */
+export const PLATEAU_MIN_SPAN_DAYS = 42;
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -62,12 +67,24 @@ export interface CoachContext {
   recoveryModel: RecoveryModel;
   deload: Deload | null;
   feedback: InsightFeedback[];
+  /** The display unit for loads and body weight in note text (QA-R3b-2, QA-R3b-5). */
+  unit?: LoadUnit;
 }
 
 interface Derived {
   recovery: MuscleRecovery[];
   exerciseIds: Array<{ id: string; name: string }>;
+  /** Lifts trained in the last six weeks (BR-05): progress and effort rules skip the rest. */
+  activeIds: Array<{ id: string; name: string }>;
   readiness: ReadinessResult | null;
+}
+
+/** QA8-2: the next scheduled split (and its weekday) after `day`, resolved to the actual Split. */
+function nextScheduledSplitOf(splits: Split[], schedule: Record<Weekday, string | null>, day: string): { split: Split; weekday: Weekday } | null {
+  const n = nextScheduled(schedule, day);
+  if (!n) return null;
+  const split = splits.find(s => s.id === n.splitId);
+  return split ? { split, weekday: n.weekday } : null;
 }
 
 function derive(ctx: CoachContext): Derived {
@@ -75,12 +92,15 @@ function derive(ctx: CoachContext): Derived {
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
   const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
   const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
+  const exerciseIds = [...names].map(([id, name]) => ({ id, name }));
   return {
     recovery,
-    exerciseIds: [...names].map(([id, name]) => ({ id, name })),
+    exerciseIds,
+    activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
     readiness: readiness({
-      today: ctx.today, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+      today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
+      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
     }),
   };
 }
@@ -125,6 +145,37 @@ export const RULES: Rule[] = [
       for (const se of split.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => primaryMuscles.add(m));
       const worst = d.recovery.filter(r => primaryMuscles.has(r.muscle) && !r.ready).sort((a, b) => a.pct - b.pct)[0];
       if (!worst) return [];
+      // QA8-1: the split that caused this fatigue is already done today (or ended today within the
+      // last 6h, per QA8-4) — re-warning about it just re-reports the fatigue it just caused.
+      const doneToday = trainedTodaySessions(ctx.sessions, ctx.today, ctx.now);
+      if (doneToday.some(s => s.splitId === split.id) || worst.lastDay === ctx.today) {
+        const next = nextScheduled(ctx.schedule, ctx.today);
+        let body = 'Rest and recover.';
+        if (next) {
+          const nextSplit = ctx.splits.find(s => s.id === next.splitId);
+          const label = nextSplit?.name ?? 'your next session';
+          let warn = '';
+          if (nextSplit) {
+            const nextPrimary = new Set<MuscleId>();
+            for (const se of nextSplit.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => nextPrimary.add(m));
+            const hoursAhead = daysBetween(ctx.today, next.day) * 24;
+            const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && r.hoursLeft > hoursAhead).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
+            if (notReady) {
+              const window = notReady.readyInHours ? `in ${formatHours(notReady.readyInHours[0])}–${formatHours(notReady.readyInHours[1])}` : `in about ${formatHours(notReady.hoursLeft)}`;
+              warn = ` ${muscleLabel(notReady.muscle)} should be ready ${window}.`;
+            }
+          }
+          body = `Next: ${label} on ${WEEKDAY_LABEL[next.weekday]}.${warn}`;
+        }
+        return [{
+          id: `recovery.done-today:${split.id}`,
+          category: 'recovery', priority: 335,
+          title: `Done today: ${split.name}`,
+          noticed: `${split.name} is done for today.`,
+          means: body,
+          action: 'Recover well before the next one.',
+        }];
+      }
       const firm = worst.pct < 60;
       return [{
         id: `scheduled-conflict:${split.id}:${worst.muscle}`,
@@ -140,9 +191,9 @@ export const RULES: Rule[] = [
   {
     id: 'progress.declining',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist);
+        const p = plateauStatus(hist, modeOf(id, ctx.custom));
         if (p.status !== 'declining' || p.confidence === 'low') return [];
         return [{
           id: `decline:${id}`, category: 'progress' as const, priority: 320,
@@ -157,9 +208,9 @@ export const RULES: Rule[] = [
   {
     id: 'progress.plateau',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist);
+        const p = plateauStatus(hist, modeOf(id, ctx.custom));
         if (p.status !== 'plateaued' || p.confidence === 'low') return [];
         return [{
           id: `plateau:${id}`, category: 'progress' as const, priority: 300,
@@ -180,7 +231,7 @@ export const RULES: Rule[] = [
       return [{
         id: `balance:${b.pair}`, category: 'balance', priority: 200 + Math.min(20, b.severity * 3),
         title: `${b.weak} work is trailing`,
-        noticed: `${b.strong} work has been ${b.ratioLabel} your ${b.weak.toLowerCase()} work over the last three weeks.`,
+        noticed: `${b.strong} work has been ${b.ratioLabel} your ${b.weak.toLowerCase()} work over the last three weeks.${b.context ? ` ${b.context}` : ''}`,
         means: 'Lopsided weeks add up. Balanced work keeps joints happy and progress even.',
         action: `Add one or two ${b.weak.toLowerCase()} exercises to your next sessions.`,
       }];
@@ -189,7 +240,7 @@ export const RULES: Rule[] = [
   {
     id: 'readiness.effort-drift',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const drift = effortDrift(exerciseHistory(ctx.sessions, id, ctx.custom));
         if (drift.confidence !== 'high' || drift.status === 'stable' || drift.status === 'unknown') return [];
         return drift.status === 'harder'
@@ -234,8 +285,11 @@ export const RULES: Rule[] = [
         out.push({
           id: `volume:${row.muscle}`, category: 'focus', priority: 140,
           title: `${label}: ${under ? 'under' : 'over'} your usual range`,
-          noticed: `${label} got ${row.thisWeekSets} effective sets this week; your range is ${row.band[0]}–${row.band[1]}.`,
-          means: under ? 'Too little direct work for a while can slow progress on this muscle.' : 'Volume held well above your range adds fatigue without much extra growth.',
+          noticed: under || row.lastWeekSets >= row.thisWeekSets
+            ? `${label} got ${row.lastWeekSets} effective sets last week; your range is ${row.band[0]}–${row.band[1]}.`
+            : `${label} has ${row.thisWeekSets} effective sets this week already; your range is ${row.band[0]}–${row.band[1]}.`,
+          // D9: diminishing returns above the band, not a harm threshold.
+          means: under ? 'Too little direct work for a while can slow progress on this muscle.' : 'Above your usual range: more sets now bring smaller gains and cost more recovery.',
           action: under ? `Add one or two direct sets for ${label.toLowerCase()} this week.` : `Trim a set or two for ${label.toLowerCase()} next week.`,
           muscle: row.muscle,
         });
@@ -260,8 +314,8 @@ export const RULES: Rule[] = [
   {
     id: 'data.effort-missing',
     run: ctx => {
-      const recent = ctx.sessions.slice(-3);
-      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => (s.reps ?? 0) > 0);
+      const recent = [...ctx.sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-3);
+      const sets = recent.flatMap(s => s.exercises.flatMap(e => e.sets)).filter(s => isWorkingSet(s) && (s.reps ?? 0) > 0);
       if (sets.length < 8) return [];
       const rated = sets.filter(s => s.effort).length / sets.length;
       if (rated >= 0.5) return [];
@@ -292,13 +346,15 @@ export const RULES: Rule[] = [
             action: `Suggested rest for this goal is ${g.restDefaultSec}s. Apply it from the goal sheet if you'd like.`,
           };
         }
-        const to = c.to as number;
-        const from = typeof c.from === 'number' ? c.from : null;
+        const u = ctx.unit ?? 'kg';
+        const w = (kg: number) => Math.round(kgToDisplay(kg, u) * 10) / 10;
+        const to = w(c.to as number);
+        const from = typeof c.from === 'number' ? w(c.from) : null;
         const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
         return {
           id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
-          title: `Weight updated to ${to} kg`,
-          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} kg, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} kg since your last entry.` : `You updated your weight to ${to} kg.`,
+          title: `Weight updated to ${to} ${u}`,
+          noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} ${u}, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} ${u} since your last entry.` : `You updated your weight to ${to} ${u}.`,
           means: 'Saved to your weight log.',
           action: 'Nothing to do here. Keep weighing in for a trend, not just a jump.',
         };
@@ -308,8 +364,8 @@ export const RULES: Rule[] = [
   {
     id: 'consistency.week-grade',
     run: ctx => {
-      const week = weekSummary(ctx.sessions, ctx.today, ctx.custom);
-      if (week.workouts === 0 && ctx.sessions.length === 0) {
+      // No sessions at all means an empty week too; no need to summarise it (BR-32).
+      if (ctx.sessions.length === 0) {
         return [{ id: 'first-session', category: 'consistency', priority: 50, title: 'Start with one session', noticed: 'Nothing logged yet.', means: 'The coach learns from what you log. The first sessions are the baseline.', action: 'Pick a split, log a few sets, and rate the effort.' }];
       }
       return [];
@@ -318,20 +374,27 @@ export const RULES: Rule[] = [
   {
     id: 'progress.plateau-lever',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const meta = findExercise(id, ctx.custom);
-        if (meta?.role !== 'main') return [];
+        if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        if (hist.length < 6) return [];
-        const t = e1rmTrend(hist.slice(-12));
-        if (t.direction === 'unknown' || t.confidence === 'low' || Math.abs(t.slopePerWeek) >= 0.015) return [];
-        const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).slice(-6);
+        // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
+        // QA2-FC-2/3: like plateauStatus, only the sessions since the last long break count.
+        const recent = sinceLastBreak(hist).filter(h => daysBetween(h.day, ctx.today) <= 56);
+        if (recent.length < 6) return [];
+        // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
+        if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];
+        const t = e1rmTrend(recent);
+        // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
+        if (!flatOver(recent)) return [];
+        const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
         if (recentSessions.length < 6) return [];
 
         const primaryMuscle = meta.primary[0];
-        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, ctx.today, ctx.custom)[primaryMuscle] ?? 0) : 0;
+        // The last completed week (BR-07): this week is still being trained.
+        const weekSets = primaryMuscle ? (hardSetsThisWeek(ctx.sessions, addDays(weekStart(ctx.today), -1), ctx.custom)[primaryMuscle] ?? 0) : 0;
         const fShare = failureShare(recentSessions);
-        const stale = isStale(hist);
+        const stale = isStale(hist, ctx.today);
 
         let lever: { means: string; action: string } | null = null;
         if (weekSets < 10) lever = { means: `Weekly volume for ${muscleLabel(primaryMuscle!).toLowerCase()} is on the low side (about ${Math.round(weekSets)} hard sets).`, action: 'Add 3 to 4 sets at ideal effort across two sessions.' };
@@ -340,19 +403,19 @@ export const RULES: Rule[] = [
         if (!lever) return [];
 
         return [{
-          id: `plateau-lever:${id}`, category: 'progress', priority: 230, cadence: 'now', kind: 'plan', exerciseId: id,
+          id: `plateau-lever:${id}`, category: 'progress', priority: 305, cadence: 'now', kind: 'plan', exerciseId: id,
           title: `${name}: flat for a while, most likely lever`,
           noticed: `${name} has not moved over recent sessions.`,
           means: lever.means,
           action: lever.action,
-          evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: t.confidence },
+          evidence: { n: recent.length, window: `${recent.length} sessions`, confidence: t.confidence },
         }];
       }),
   },
   {
     id: 'readiness.effort-calibration',
     run: (ctx, d) =>
-      d.exerciseIds.flatMap(({ id, name }) => {
+      d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
         if (hist.length < 2) return [];
         const obs = rirObservations(hist);
@@ -363,9 +426,10 @@ export const RULES: Rule[] = [
         return [{
           id: `effort-calibration:${id}`, category: 'readiness', priority: 95, cadence: 'now', kind: 'data', exerciseId: id,
           title: `${name}: you had more in reserve than rated`,
-          noticed: sample ? `You rated ${b.effort} at ${sample.kg} kg, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
+          noticed: sample ? `You rated ${b.effort} at ${kgToDisplay(sample.kg, ctx.unit ?? 'kg')} ${ctx.unit ?? 'kg'}, then a later max set at the same load beat it by ${sample.impliedRir} reps.` : `Your ${b.effort} sets on ${name} usually have more reps in reserve than the label assumes.`,
           means: 'That is normal, especially early on. Lifters usually underestimate how many reps they have left.',
-          action: `The coach will treat your ${b.effort} sets on ${name} as a little easier when estimating your max.`,
+          // D11: copy only; the bias is not applied to e1RM.
+          action: 'Rate by how many reps you had left: Ideal is about 2, Easy 3 or more.',
           evidence: { n: b.n, window: `${b.n} matched pairs`, confidence: b.n >= 5 ? 'medium' : 'low' },
         }];
       }),
@@ -380,7 +444,8 @@ export const RULES: Rule[] = [
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
           title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.',
           means: 'Training hard today would work against you more than for you.',
-          action: 'Keep loads where they are, or drop a set on the hardest lifts.',
+          // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
+          action: r.postSessionAdvice ?? 'Keep loads where they are, or drop a set on the hardest lifts.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
@@ -389,7 +454,7 @@ export const RULES: Rule[] = [
           id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
           title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.',
           means: 'Not a reason to skip, just not a day to chase a new best.',
-          action: 'Keep today’s loads where they are.',
+          action: r.postSessionAdvice ?? 'Keep today’s loads where they are.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
@@ -407,6 +472,8 @@ export const RULES: Rule[] = [
     id: 'heart.effort-mismatch',
     run: ctx => {
       const last = ctx.sessions[ctx.sessions.length - 1];
+      // BR-26: a post-session note belongs to the day of the session and the day after.
+      if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
       const sets = last.exercises.flatMap(e => e.sets);
       const m = effortMismatch(sets);
@@ -425,6 +492,8 @@ export const RULES: Rule[] = [
     id: 'heart.drift',
     run: ctx => {
       const last = ctx.sessions[ctx.sessions.length - 1];
+      // BR-26: a post-session note belongs to the day of the session and the day after.
+      if (!last || daysBetween(last.day, ctx.today) > 1) return [];
       if (!last) return [];
       for (const ex of last.exercises) {
         const byLoad = new Map<number, typeof ex.sets>();
@@ -467,9 +536,17 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
     return !meta?.primary.some(m => recovering.has(m));
   });
   const seen = new Set<string>();
+  // BR-27: one progress insight per lift, the highest-priority one.
+  const progressFor = new Set<string>();
   return filtered
     .sort((a, b) => b.priority - a.priority)
     .filter(i => { if (seen.has(i.id)) return false; seen.add(i.id); return true; })
+    .filter(i => {
+      if (i.category !== 'progress' || !i.exerciseId) return true;
+      if (progressFor.has(i.exerciseId)) return false;
+      progressFor.add(i.exerciseId);
+      return true;
+    })
     .slice(0, limit);
 }
 
@@ -480,13 +557,18 @@ export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
  */
 export function readinessSeries(ctx: CoachContext, days = 5): Array<ReadinessResult | null> {
   const out: Array<ReadinessResult | null> = [];
+  const base = { sessions: ctx.sessions, custom: ctx.custom, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel };
+  // Doses depend on the sessions, not on the day asked about: build them once (BR-23).
+  const doses = muscleDoses(base);
   for (let i = 0; i < days; i++) {
     const day = addDays(ctx.today, -i);
-    const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: new Date(`${day}T23:59:59`).getTime(), profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
+    const now = new Date(`${day}T23:59:59`).getTime();
+    const recovery = recoveryAt(doses, { ...base, now });
     const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
     out.push(readiness({
-      today: day, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+      today: day, now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit,
+      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, day), custom: ctx.custom, sessions: ctx.sessions,
     }));
   }
   return out;
@@ -499,5 +581,5 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays));
 }

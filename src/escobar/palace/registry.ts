@@ -60,6 +60,7 @@ export const PALACE: PalaceEntry[] = [
   e('train.unit-pill', 'Unit pill', 'Train → during a session → kg / lb on each weight box', 'Flips the entry unit for this exercise at this gym. Long-press for the whole equipment group.', ['unit', 'kg', 'lb', 'pounds', 'kilos', 'dumbbells in pounds', 'convert'], { tab: 'train', ...START }),
   e('train.plate-math', 'Plate math', 'Train → during a session → tap a barbell target', 'Shows the plates per side for the target, in the plates’ own unit.', ['plates', 'plate math', 'per side', 'bar', 'barbell', 'load the bar'], { tab: 'train', ...START }),
   e('train.finish', 'Finish a session', 'Train → during a session → Finish', 'Saves the session, asks when you trained if it looks logged later, and shows the debrief.', ['finish', 'save', 'end', 'done', 'debrief', 'summary'], { tab: 'train', ...START }, { methods: ['fidelity', 'records'] }),
+  e('train.share', 'Share a workout', 'Train → after Finish → Share workout', 'Right after a session, makes a share card for it: a poster, a stats sticker or a gym receipt, to save or share.', ['share', 'share workout', 'post workout', 'story', 'card', 'brag'], { tab: 'train', ...START }),
 
   // History
   e('history.calendar', 'Training calendar', 'History tab → Log', 'A month calendar with trained days marked. Tap a day to see its sessions.', ['calendar', 'history', 'month', 'days', 'log'], { tab: 'history', params: { seg: 'log' } }),
@@ -68,6 +69,8 @@ export const PALACE: PalaceEntry[] = [
   e('history.week', 'This week in numbers', 'History tab → Stats', 'Workouts, sets, volume and effective sets per muscle, against last week.', ['stats', 'volume', 'tonnage', 'week', 'effective sets'], { tab: 'history', params: { seg: 'stats' } }, { methods: ['volume_bands'] }),
   e('history.exercise-stats', 'Exercise progress', 'History tab → Stats → Exercise progress', 'The trend of one exercise: strength estimate, top load, recent sessions.', ['progress', 'trend', 'chart', 'exercise', 'e1rm', 'one rep max', 'strength', 'stall', 'plateau'], { tab: 'history', panel: 'exercise-stats' }, { methods: ['e1rm', 'plateau'] }),
   e('history.records', 'Records', 'History tab → Stats → Records', 'Your personal records: heaviest load, best reps, best estimated max, volume.', ['records', 'pr', 'personal best', 'pb'], { tab: 'history', params: { seg: 'stats' } }, { methods: ['records'] }),
+  e('history.share', 'Share your stats', 'History tab → Stats → share icon, top right', 'Makes a picture of your week, month, 3 months, year or all time to save or share: a poster, a stats sticker with your muscle map, or a gym receipt.', ['share', 'share card', 'story', 'instagram', 'poster', 'sticker', 'receipt', 'picture', 'image', 'post'], { tab: 'history', params: { seg: 'stats' } }),
+  e('history.session-share', 'Share a session', 'History tab → Log → share icon on a session', 'Makes a share card for that one workout, with an optional photo, as a 9:16 story or a 1:1 square.', ['share session', 'share workout', 'share card', 'story', 'photo'], { tab: 'history', params: { seg: 'log' } }),
 
   // Body
   e('body.map', 'Muscle map', 'Body tab', 'A front/back map shaded by recovery, this week’s sets, or training level. Tap a muscle.', ['body', 'muscle map', 'map', 'muscles'], { tab: 'body', params: { view: 'recovery' } }, { methods: ['recovery'] }),
@@ -135,11 +138,11 @@ export function findInApp(query: string, limit = 5): PalaceEntry[] {
     for (const k of p.keywords) {
       const kk = norm(k);
       if (!kk) continue;
-      if (q.includes(kk)) score += 6 + kk.split(' ').length * 2;
+      if (` ${q} `.includes(` ${kk} `)) score += 6 + kk.split(' ').length * 2;
       else if (kk.split(' ').every(w => words.includes(w))) score += 4;
     }
     const title = norm(p.title);
-    if (q.includes(title)) score += 6;
+    if (` ${q} `.includes(` ${title} `)) score += 6;
     for (const w of words) {
       if (title.split(' ').includes(w)) score += 3;
       else if (norm(`${p.what} ${p.where}`).split(' ').includes(w)) score += 1;

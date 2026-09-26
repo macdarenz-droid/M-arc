@@ -11,14 +11,15 @@
  *  8. Otherwise                      → add a rep.
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
-import { loadableNear } from './units';
+import { loadableNear, loadableTopKg } from './units';
+import { kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { findExercise, startingLoadKg } from '@/core/exercises';
+import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
 import { daysBetween } from '@/core/dates';
 
-export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'plateau' | 'deload';
+export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload';
 
 export interface Suggestion {
   mode: Mode;
@@ -87,10 +88,34 @@ export interface ProgressionContext {
 
 const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
 
-/** Restates a suggestion's loads as loads the equipment can make, in its own unit. */
-function snapToEquipment(s: Suggestion, profile: EquipmentProfile): Suggestion {
+/**
+ * Restates a suggestion's loads as loads the equipment can make, in its own unit.
+ * QA3-11b: `force` overrides the mode-based direction. A carry/sled (mode 'distance'/'duration')
+ * has no direction of its own in SNAP_DIRECTION, so without a genuine reduction in effect it snaps
+ * 'nearest' like anything else - blanket 'down' rounded a normal-week 32 kg carry down to 30 for no
+ * reason, and swallowed an Escobar increase entirely.
+ */
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down', scaled = false): Suggestion {
   if (s.kg == null) return s;
-  const dir = SNAP_DIRECTION[s.mode] ?? 'nearest';
+  // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
+  // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
+  // field groups them together.
+  // QA3-3b: still restated in the profile's own unit, or an lb user sees a rounded-kg conversion
+  // (225 lb read back as "224.9 lb") instead of their own clean number.
+  if (conditioning && s.kg > loadableTopKg(profile) + 0.01) {
+    // QA3-3c: a lighter week or an Escobar factor already rounded the kg to the nearest half kg,
+    // which does not land on a clean lb number. Re-snap to a virtual 5 lb ladder instead of just
+    // converting that half-kg value.
+    if (scaled && profile.unit === 'lb') {
+      const p = loadableNear(s.kg, { unit: 'lb', step: 5, source: 'default', updatedAt: '' }, force ?? 'nearest');
+      const oldLabel = `${s.kg} kg`;
+      return { ...s, kg: p.kg, unit: p.unit, value: p.value, target: s.target.replace(oldLabel, `${p.value} lb`), sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: p.kg })) };
+    }
+    const value = kgToDisplay(s.kg, profile.unit);
+    const oldLabel = `${s.kg} kg`;
+    return { ...s, unit: profile.unit, value, target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${value} ${profile.unit}`) : s.target };
+  }
+  const dir = force ?? SNAP_DIRECTION[s.mode] ?? 'nearest';
   const snap = loadableNear(s.kg, profile, dir);
   const oldLabel = `${s.kg} kg`;
   return {
@@ -114,7 +139,17 @@ function applyLoadFactor(s: Suggestion, f: number): Suggestion {
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
   if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
-  if (ctx?.equipment && modeOf(exerciseId, custom) === 'weighted') s = snapToEquipment(s, ctx.equipment);
+  // QA2-FE-2, QA2-FE-7: a loaded carry's target snaps to the gym's equipment too (70 lb, not 31.751 kg).
+  const mode = modeOf(exerciseId, custom);
+  if (ctx?.equipment && (mode === 'weighted' || (mode === 'conditioning' && s.kg != null))) {
+    // QA3-11b: force the snap down only for a genuine reduction (a lighter week, or an Escobar
+    // cut factor below 1) - never up, and never at all in a normal week.
+    const force = ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1) ? 'down' : undefined;
+    // QA3-3c: a lighter week or any Escobar load factor scales the kg with half(), losing the
+    // precision an above-the-rack lb restatement needs to land on a clean number.
+    const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);
+    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled);
+  }
   return s;
 }
 
@@ -142,8 +177,38 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'duration', target: `Hold ${next}s`, kg: null, reps: null, reason: last.hasMax ? 'Last hold was max effort. Repeat it before adding time.' : 'Add five seconds to your best hold.', confidence: conf, sets: setPlan(setCount, null, null, next, last.hasMax ? 'Repeat' : 'Add 5s') };
   }
 
+  // QA-R6-5: a carry or sled logged by distance or time progresses by distance or time, never "1 reps".
+  // QA2-FE-8: only a carry or sled; a rep-based conditioning move (a burpee) logged with a time keeps its rep goal.
+  // QA3-12: decided by which exercise this is (CARRY_OR_SLED_IDS), not by which fields were filled -
+  // a timed carry or sled logged with reps too still gets its distance/time goal, never a rep one.
+  // QA3-12b: CARRY_OR_SLED_IDS only lists three library ids. A custom conditioning exercise (no
+  // library id to match) and other library conditioning moves logged by distance or time alone
+  // (battle ropes, bear crawl, ...) still need a goal; they keep the original fields-based rule,
+  // which already gives a rep goal only when reps were actually logged (QA2-FE-8).
+  const carryOrSled = CARRY_OR_SLED_IDS.has(exerciseId) || (!!meta?.custom && mode === 'conditioning');
+  // Part B (F13): a carry/sled or custom conditioning move logged as kg × reps shows its weight in the target too.
+  const carryLoad = carryOrSled && last.topKg > 0;
+  if (mode === 'conditioning' && (carryOrSled ? last.bestDistanceM > 0 || last.bestDurationSec > 0 : last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
+    const byDistance = last.bestDistanceM > 0;
+    const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
+    // QA3-3b: with an equipment profile to restate against later, keep the raw kg so an lb entry
+    // (already stored to 3 decimals) round-trips to its own clean number instead of a half-kg one.
+    const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * ctx.deload.loadFactor) : ctx?.equipment ? last.topKg : half(last.topKg)) : null;
+    const load = kg != null ? `${kg} kg · ` : '';
+    const u = byDistance ? ' m' : 's';
+    const step = byDistance ? (best >= 100 ? 10 : 5) : 5;
+    const repeat = !!ctx?.deload || gap > REENTRY_DAYS || last.hasMax;
+    const next = repeat ? best : best + step;
+    const reason = ctx?.deload ? 'Lighter week: the same distance at a lighter load, kept easy.'
+      : gap > REENTRY_DAYS ? `It has been ${gap} days. Repeat your last ${byDistance ? 'distance' : 'time'} once before adding anything.`
+      : last.hasMax ? `Last one was max effort. Match it before going ${byDistance ? 'further' : 'longer'}.`
+      : byDistance ? `Go ${step} m further at the same load.` : 'Add five seconds at the same load.';
+    const note = repeat ? (ctx?.deload ? 'Deload' : 'Match it') : `+${step}${u}`;
+    return { mode: byDistance ? 'distance' : 'duration', target: `${load}${next}${u}`, kg, reps: null, reason, confidence: gap > REENTRY_DAYS ? 'low' : conf, sets: setPlan(setCount, kg, null, byDistance ? null : next, note) };
+  }
+
   if (gap > REENTRY_DAYS) {
-    return { mode: 'reentry', target: mode === 'weighted' ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
+    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
   }
 
   if (ctx?.deload) {
@@ -153,6 +218,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const deloadSets = Math.max(1, Math.round(setCount * d.setFactor));
     if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
       const reps = last.bestReps;
+      if (carryLoad) { const down = half(last.topKg * d.loadFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload') }; }
       return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload') };
     }
     const down = half(last.topKg * d.loadFactor);
@@ -165,6 +231,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
     const reps = last.bestReps;
     const nextReps = last.hasMax ? reps : reps + 1;
+    if (carryLoad) {
+      const kg = ctx?.equipment ? last.topKg : half(last.topKg);
+      return { mode: 'reps', target: `${kg} kg · ${nextReps} reps`, kg, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, kg, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
+    }
     return { mode: 'reps', target: `${nextReps} reps`, kg: null, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, null, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
   }
 

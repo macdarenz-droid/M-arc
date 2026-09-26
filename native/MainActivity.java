@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         registerPlugin(HealthConnectNativePlugin.class);
         registerPlugin(WatchBridgePlugin.class);
+        registerPlugin(NativeUiPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

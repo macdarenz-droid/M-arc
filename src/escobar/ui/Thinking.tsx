@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import { IconDumbbell } from '@/ui/icons';
+import { reduced } from '@/ui/motion';
 
 type I = (p: { size?: number }) => JSX.Element;
 const svg = (size = 18) => ({ width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.8, 'stroke-linecap': 'round' as const, 'stroke-linejoin': 'round' as const, 'aria-hidden': true });
@@ -27,8 +28,6 @@ export const THINKING_LINES = [
   'Checking the form…',
 ];
 const ICONS: I[] = [Dumbbell, Plate, Kettlebell, Barbell];
-
-const reduced = (): boolean => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 
 export function ThinkingLine({ label }: { label?: string }) {
   const [i, setI] = useState(0);

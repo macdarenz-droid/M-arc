@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
@@ -7,11 +7,13 @@ import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { formatDay, formatHours } from '@/core/dates';
+import { daysBetween, formatDay, formatHours } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
+import { mindsetForDay, sparkIndexForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
-import { startSession } from '../workout/session';
+import { requestStart } from '../workout/Train';
+import { setDayOff } from './dayOff';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
@@ -31,11 +33,15 @@ export function Today() {
   const ready = rec.filter(r => !r.recovering && r.lastTrainedAt).length;
   const w = week.value;
   const top = insights.value[0];
-  const [dayIndex] = useState(() => Math.floor(new Date(today.value).getTime() / 86_400_000) % SPARKS.length);
-  const spark = SPARKS[dayIndex]!;
+  // ST-17: on odd days of the year a mindset note takes the quote slot.
+  const dayOfYear = daysBetween(`${today.value.slice(0, 4)}-01-01`, today.value) + 1;
+  const mindset = mindsetForDay(dayOfYear);
+  const spark = SPARKS[sparkIndexForDay(dayOfYear, Number(today.value.slice(0, 4)), SPARKS.length)]!;
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
-  const status = live ? 'live' : done.length ? 'done' : split ? 'ready' : 'rest';
+  // RG-19 (D4): a scheduled day taken off reads as its own state and counts as unscheduled.
+  const off = s.daysOff.includes(today.value);
+  const status = live ? 'live' : done.length ? 'done' : split ? (off ? 'off' : 'ready') : 'rest';
   usePalaceFocus('today.header', { status });
 
   return (
@@ -73,7 +79,18 @@ export function Today() {
             <div class="eyebrow">Scheduled today</div>
             <h2>{split.name}</h2>
             <p class="muted small">{split.exercises.length} exercises planned.</p>
-            <Button variant="primary" onClick={() => { startSession(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+            <div class="row">
+              <Button variant="primary" class="grow" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+              <Button variant="quiet" data-palace="today.day-off" onClick={() => setDayOff(today.value, true)}>Take today off</Button>
+            </div>
+          </div>
+        )}
+        {status === 'off' && split && (
+          <div class="stack-sm" data-palace="today.day-off">
+            <div class="eyebrow">Day off</div>
+            <h2>{split.name} can wait</h2>
+            <p class="muted small">Today counts as a rest day: your streak and this week's target leave it out.</p>
+            <div class="row"><Button onClick={() => { setDayOff(today.value, false); requestStart(split); go('train'); }}><IconPlay /> Train anyway</Button><Button variant="quiet" onClick={() => setDayOff(today.value, false)}>Undo day off</Button></div>
           </div>
         )}
         {status === 'rest' && (
@@ -87,6 +104,8 @@ export function Today() {
       </Card>
 
       <ReadinessCard />
+
+      <Pins />
 
       <Section title="This week" palace="today.week" aside={<span class="small muted">{w.grade.title}</span>}>
         <Card>
@@ -108,7 +127,7 @@ export function Today() {
               {recovering.slice(0, 4).map(r => (
                 <div key={r.muscle} class="row-between small">
                   <span>{muscleLabel(r.muscle)}</span>
-                  <span class="muted num">{r.pct}% · {formatHours(r.hoursLeft)}</span>
+                  <span class="muted num">{r.pct}% · {r.soreToday && !r.readyInHours && !r.hoursLeft ? 'sore today' : formatHours(r.hoursLeft)}</span>
                 </div>
               ))}
               {recovering.length > 4 && <span class="hint">+{recovering.length - 4} more recovering</span>}
@@ -130,14 +149,26 @@ export function Today() {
       {s.preferences.showSpark && (
         <Section title="Daily spark" palace="today.spark">
           <Card class="card-quiet">
-            <div class="eyebrow">{spark.topic}</div>
-            <p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p>
-            <span class="hint">{spark.by}</span>
+            {mindset ? (
+              <><div class="eyebrow">Mindset</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{mindset.title}</p><span class="hint">{mindset.text}</span></>
+            ) : (
+              <><div class="eyebrow">{spark.topic}</div><p style={{ margin: '8px 0 6px', fontSize: 16 }}>{spark.text}</p><span class="hint">{spark.by}</span></>
+            )}
           </Card>
         </Section>
       )}
     </div>
   );
+}
+
+/** Escobar's pinned cards, loaded only when there are some so Today's bundle stays small. */
+function Pins() {
+  const has = state.value.escobar.pins.length > 0;
+  const [Comp, setComp] = useState<null | (() => preact.JSX.Element | null)>(null);
+  useEffect(() => {
+    if (has && !Comp) void import('@/escobar/ui/PinnedCards').then(m => setComp(() => m.PinnedCards)).catch(() => { /* offline chunk: skip */ });
+  }, [has]);
+  return has && Comp ? <Comp /> : null;
 }
 
 const BAND_LABEL = { green: 'Green', amber: 'Amber', red: 'Red' } as const;
@@ -153,7 +184,8 @@ function ReadinessCard() {
       </Section>
     );
   }
-  const advice = ADVICE_COPY[r.loadAdvice];
+  // QA8-2: once today's session is done, ADVICE_COPY's pre-workout wording no longer applies.
+  const advice = r.postSessionAdvice ?? ADVICE_COPY[r.loadAdvice];
   return (
     <Section title="Readiness" palace="today.readiness">
       <Card class={r.band === 'red' ? 'card-accent' : ''}>

@@ -45,9 +45,17 @@ attributed_permissions = [
     ("android.permission.ACCESS_FINE_LOCATION", {"maxSdkVersion": "30"}),
     ("android.permission.FOREGROUND_SERVICE", {}),
     ("android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE", {}),
+    # F12 Save (QA4-3): Documents/M-ARC on Android 8-10 needs storage access; Android 11+ never asks.
+    ("android.permission.WRITE_EXTERNAL_STORAGE", {"maxSdkVersion": "29"}),
+    ("android.permission.READ_EXTERNAL_STORAGE", {"maxSdkVersion": "29"}),
 ]
+# PL-16: an entry a plugin already contributed still gets the required attributes.
 for name, attrs in attributed_permissions:
     if name in existing:
+        for node in root.findall("uses-permission"):
+            if node.get(a("name")) == name:
+                for k, v in attrs.items():
+                    node.set(a(k), v)
         continue
     node = ET.Element("uses-permission")
     node.set(a("name"), name)
@@ -65,6 +73,9 @@ app = root.find("application")
 if app is None:
     raise SystemExit("<application> not found")
 
+# F12 Save (QA4-3): Android 10 only reaches Documents with legacy storage; later versions ignore it.
+app.set(a("requestLegacyExternalStorage"), "true")
+
 # WatchService (6.2): a foreground connected-device service, ported from Watch-test.
 watch_service = None
 for x in app.findall("service"):
@@ -74,8 +85,8 @@ for x in app.findall("service"):
 if watch_service is None:
     watch_service = ET.SubElement(app, "service")
     watch_service.set(a("name"), ".watch.WatchService")
-    watch_service.set(a("foregroundServiceType"), "connectedDevice")
-    watch_service.set(a("exported"), "false")
+watch_service.set(a("foregroundServiceType"), "connectedDevice")
+watch_service.set(a("exported"), "false")
 
 # Health Connect privacy/rationale activity.
 activity = None
@@ -86,7 +97,7 @@ for x in app.findall("activity"):
 if activity is None:
     activity = ET.SubElement(app, "activity")
     activity.set(a("name"), ".PermissionsRationaleActivity")
-    activity.set(a("exported"), "true")
+activity.set(a("exported"), "true")
 
 # Required Android 14+ alias for Health Connect permission usage/privacy entry.
 alias = None

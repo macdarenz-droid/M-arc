@@ -59,16 +59,15 @@ describe('request assembly (§12.3)', () => {
     expect(p.thinking.block_binding).toEqual({ prefix_mismatch_behavior: 'drop_block' });
     expect(p.betas).toContain('thinking-binding-controls-2026-08-01');
   });
-  it('effort-change system messages add the mid-conversation output config beta', () => {
-    const b = body({ messages: [{ role: 'user', content: 'a' }, { role: 'system', content: [], output_config: { effort: 'high' } }] });
-    expect(P(b).betas).toContain('mid-conversation-output-config-2026-07-01');
+  it('never sends the mid-conversation output config beta (PL-06: effort-only system messages are refused)', () => {
+    expect(P(body()).betas).not.toContain('mid-conversation-output-config-2026-07-01');
   });
   it('models without system messages get <situation> blocks', () => {
     const p = P(body(), baseEnv({ MODEL: 'claude-sonnet-5' }));
     expect(p.messages).toHaveLength(1);
     expect(p.messages[0].content.at(-1).text).toBe('<situation>\nnow: tue 2026-09-22\n</situation>');
-    const folded = foldSystemMessages([{ role: 'user', content: 'a' }, { role: 'system', content: [] as never, output_config: { effort: 'low' } }]);
-    expect(folded).toEqual([{ role: 'user', content: 'a' }]);
+    const folded = foldSystemMessages([{ role: 'user', content: 'a' }, { role: 'system', content: 'b' }]);
+    expect(folded).toEqual([{ role: 'user', content: [{ type: 'text', text: 'a' }, { type: 'text', text: '<situation>\nb\n</situation>' }] }]);
   });
   it('mode budgets match §12.3', () => {
     expect(Object.fromEntries(Object.entries(MODE_CONFIG).map(([k, v]) => [k, v.maxTokens]))).toEqual({ chat: 16000, plan: 32000, live: 4000, brief: 3000, moment: 3000, summarize: 4000 });
@@ -118,5 +117,36 @@ describe('policy', () => {
     expect(WORKER_POLICY.length).toBeLessThan(14_000);
     expect(WORKER_POLICY).not.toMatch(/\b(MUST|NEVER|ALWAYS|IMPORTANT|CRITICAL)\b/);
     expect(WORKER_POLICY).toContain('You are Escobar');
+  });
+});
+
+import { modelFor, ignoredModelOverrides } from '../src/anthropic';
+describe('per-mode models (F7, D12)', () => {
+  it('MODEL_<MODE> overrides one mode; the rest keep MODEL', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_BRIEF: 'claude-sonnet-5' });
+    expect(modelFor('brief', env)).toBe('claude-sonnet-5');
+    expect(modelFor('chat', env)).toBe('claude-opus-5');
+    expect(P(turn({ mode: 'brief' }) as TurnBody, env).model).toBe('claude-sonnet-5');
+    expect(P(turn() as TurnBody, env).model).toBe('claude-opus-5');
+  });
+  it('a malformed override is ignored', () => {
+    expect(modelFor('chat', baseEnv({ MODEL: 'claude-opus-5', MODEL_CHAT: 'gpt-x; drop' }))).toBe('claude-opus-5');
+    expect(modelFor('chat', baseEnv({ MODEL_CHAT: ' claude-opus-5-5 ' }))).toBe('claude-opus-5-5');
+  });
+  it('QA2-F7-3: an override the Worker cannot drive (a typo, Haiku 4.5, a dated id) is ignored, so that mode keeps MODEL', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_LIVE: 'claude-haiku-4-5', MODEL_PLAN: 'claude-sonet-5', MODEL_BRIEF: 'claude-sonnet-5', MODEL_CHAT: 'claude-opus-5-5-20261001' });
+    expect(modelFor('live', env)).toBe('claude-opus-5');
+    expect(modelFor('plan', env)).toBe('claude-opus-5');
+    expect(P(turn({ mode: 'live' }) as TurnBody, env).model).toBe('claude-opus-5');
+    expect(modelFor('brief', env)).toBe('claude-sonnet-5');
+    expect(modelFor('chat', env)).toBe('claude-opus-5'); // these models have no dated ids; a date suffix would 404
+    expect(ignoredModelOverrides(env)).toEqual(['chat', 'plan', 'live']);
+    expect(ignoredModelOverrides(baseEnv({ MODEL_BRIEF: 'claude-sonnet-5' }))).toEqual([]);
+  });
+  it('a model without system messages gets them folded, per mode', () => {
+    const env = baseEnv({ MODEL: 'claude-opus-5', MODEL_LIVE: 'claude-sonnet-5' });
+    const live = P(turn({ mode: 'live' }) as TurnBody, env);
+    expect(JSON.stringify(live.messages)).toContain('<situation>');
+    expect(JSON.stringify(P(turn() as TurnBody, env).messages)).not.toContain('<situation>');
   });
 });

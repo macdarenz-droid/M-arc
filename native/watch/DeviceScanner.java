@@ -16,7 +16,8 @@ final class DeviceScanner {
         Found(BluetoothDevice device) { this.device=device; }
     }
     final List<Found> devices = new ArrayList<>();
-    boolean scanning;
+    /** Read from the plugin thread, written on the main looper (PL-08). */
+    volatile boolean scanning;
     String message="";
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final BluetoothAdapter adapter;

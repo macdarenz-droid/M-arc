@@ -3,13 +3,18 @@
  * open Sheet, with half / full detents, a header with status and menu, the thread, and the
  * composer. Loaded lazily from App.tsx the first time Escobar opens.
  */
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { dayKey } from '@/core/dates';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { state } from '@/core/store';
 import { todayReadiness } from '@/app/selectors';
 import { showPanel } from '@/app/router';
-import { openSheets, Button, Card, Row, Toggle } from '@/ui/primitives';
+import { Button, Card, Row, Toggle } from '@/ui/primitives';
 import { IconEscobar, IconMore, IconX, IconBack } from '@/ui/icons';
-import { escobarUi, loopView, online, quotaResetAt } from '../state';
+import { haptic } from '@/native/haptics';
+import { track } from '@/ui/gesture';
+import { durFor, EASE, reduced, springEase } from '@/ui/motion';
+import { FULL_FRAC, HALF_FRAC, resolveEscobarRelease } from '../detent';
+import { escobarUi, loopView, offlineReason, online, quotaResetAt, registerEscobarClose, unregisterEscobarClose } from '../state';
 import * as S from '../session';
 import { goTo } from '../palace/navigate';
 import { Composer } from './Composer';
@@ -23,6 +28,13 @@ import type { SendInput, TurnResult } from '../loop';
 
 export const EMPTY_LINE = 'I know every rep you’ve logged and every corner of this app. Ask me anything.';
 
+// I7: the exit animation lives here (it needs to measure and animate this component's own
+// panel), but it registers into state.ts rather than keeping its own module-level hook — state.ts
+// is always loaded (native/back.ts needs it for the hardware Back button), and this file is not
+// (it's fetched lazily, the first time Escobar opens), so a caller reaching this export directly
+// would otherwise pull the whole chat sheet into the main bundle just to close it.
+export { requestEscobarClose } from '../state';
+
 function statusText(): string {
   const v = loopView.value.status;
   if (v !== 'idle') return 'thinking…';
@@ -31,11 +43,15 @@ function statusText(): string {
   return 'online';
 }
 
+export const REGION_LINE = "Escobar isn't available on this network right now. Try mobile data.";
+
 function resultLine(r: TurnResult): string | null {
   switch (r.outcome) {
     case 'error':
       if (r.error?.code === 'quota') return 'Escobar is resting until tomorrow (daily limit reached).';
       if (r.error?.code === 'rate') return 'Too many messages at once. Try again in a minute.';
+      // PL-20: the coach's provider refuses some network locations; this is not a setup problem.
+      if (r.error?.code === 'upstream_region') return REGION_LINE;
       return r.error?.message || 'Escobar couldn’t answer. Try again.';
     case 'refusal': return 'Escobar can’t help with that one.';
     case 'step_limit': return 'That took too many steps. Try a narrower question.';
@@ -79,7 +95,7 @@ function PastConversations({ onBack }: { onBack: () => void }) {
       {!list.length && <p class="small muted">No conversations yet.</p>}
       {list.map(c => (
         <button type="button" key={c.id} class="esc-past" onClick={() => { S.selectConversation(c.id); onBack(); }}>
-          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{c.updatedAt.slice(0, 10)}</span>
+          <b class="small">{c.title || 'New conversation'}</b><span class="hint">{dayKey(new Date(c.updatedAt))}</span>
         </button>
       ))}
     </div>
@@ -146,25 +162,125 @@ function Thread({ onChip }: { onChip: (t: string) => void }) {
 export function EscobarSheet() {
   const ui = escobarUi.value;
   const ref = useRef<HTMLDialogElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const grabRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const atBottom = useRef(true);
   const [menu, setMenu] = useState(false);
   const [past, setPast] = useState(false);
-  const drag = useRef<{ y: number } | null>(null);
   const enabled = state.value.escobar.enabled;
   const view = loopView.value;
   const busy = view.status !== 'idle';
 
+  const closingRef = useRef(false);
+  const requestCloseRef = useRef<() => void>(() => S.closeEscobar());
+  const requestClose = () => requestCloseRef.current();
+  // I7: shared with the generic FLIP effect below, so a drag's own settle animation can mark its
+  // detent change as already accounted for (see `settle()`) instead of leaving a stale "before"
+  // rect for that effect to (wrongly) re-animate against once the state write it triggers commits.
+  const detentRef = useRef(ui.detent);
+  const rectRef = useRef<DOMRect | null>(null);
+
   useEffect(() => {
     const d = ref.current;
-    if (!d) return;
+    const p = panelRef.current;
+    if (!d || !p) return;
     if (!d.open) d.showModal();
     S.prepare();
-    openSheets.value++;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { openSheets.value = Math.max(0, openSheets.value - 1); document.body.style.overflow = prev; if (d.open) d.close(); };
+    closingRef.current = false;
+
+    // I7: the panel slides down and the scrim fades before the sheet actually unmounts — same
+    // shape as an ordinary Sheet's requestClose (I6). Every close path (X, backdrop, menu,
+    // onCancel, Back) routes through this instead of calling S.closeEscobar() straight away.
+    requestCloseRef.current = () => {
+      if (closingRef.current) return;
+      closingRef.current = true;
+      d.classList.add('closing');
+      if (!p.animate) { S.closeEscobar(); return; }
+      const r = reduced();
+      const anim = p.animate(
+        [{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${r ? 0 : p.offsetHeight}px)`, opacity: r ? 0 : 1 }],
+        { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' },
+      );
+      anim.finished.then(() => S.closeEscobar()).catch(() => S.closeEscobar());
+    };
+    registerEscobarClose(() => requestCloseRef.current());
+
+    // A3/I7: drag the grab zone (or double-tap it) between half, full and closed. During the drag
+    // the panel is forced to full height (94dvh) and follows the finger via translateY — a fixed
+    // height avoids animating the CSS height property (janky); the resting half/full sizes are
+    // plain CSS on `.esc-panel`, swapped back in only once the release animation lands exactly on
+    // one of them (a FLIP: measuring the pre/post rect below handles every OTHER detent change —
+    // a double-tap, the composer taking focus, escobarToHalf() elsewhere — the same way).
+    let dragStartOffset = 0;
+    const untrack = track(grabRef.current!, {
+      axis: 'y',
+      capture: 'down',
+      canStart: e => !(e.target as HTMLElement).closest('button'),
+      onStart: () => {
+        dragStartOffset = escobarUi.value.detent === 'half' ? (FULL_FRAC - HALF_FRAC) * window.innerHeight : 0;
+        p.style.height = `${FULL_FRAC * window.innerHeight}px`;
+        p.style.transform = `translateY(${dragStartOffset}px)`;
+      },
+      onMove: dy => {
+        const hFull = FULL_FRAC * window.innerHeight;
+        p.style.transform = `translateY(${Math.min(hFull, Math.max(0, dragStartOffset + dy))}px)`;
+      },
+      onEnd: (dy, v) => {
+        const vh = window.innerHeight;
+        const hFull = FULL_FRAC * vh;
+        const offset = Math.min(hFull, Math.max(0, dragStartOffset + dy));
+        if (Math.abs(dy) < 1 && Math.abs(v) < 0.01) { p.style.transform = dragStartOffset ? `translateY(${dragStartOffset}px)` : ''; p.style.height = ''; return; }
+        const nearest = resolveEscobarRelease(offset, v, vh);
+        const dur = Math.abs(nearest.pos - offset) < 200 ? durFor('spring') : durFor('bounce');
+        if (nearest.name === 'closed') {
+          if (closingRef.current) return;
+          closingRef.current = true;
+          d.classList.add('closing');
+          const anim = p.animate([{ transform: `translateY(${offset}px)` }, { transform: `translateY(${hFull}px)` }], { duration: dur, easing: EASE.exit, fill: 'forwards' });
+          anim.finished.then(() => S.closeEscobar()).catch(() => S.closeEscobar());
+          return;
+        }
+        const anim = p.animate([{ transform: `translateY(${offset}px)` }, { transform: `translateY(${nearest.pos}px)` }], { duration: dur, easing: springEase() });
+        const settle = () => {
+          p.style.transform = ''; p.style.height = '';
+          // Mark this transition as already handled before writing the signal, so the render it
+          // triggers finds detentRef already equal to the new value and the generic FLIP effect
+          // below (which would otherwise compare against a rect from well before this drag) skips.
+          detentRef.current = nearest.name as 'half' | 'full';
+          rectRef.current = p.getBoundingClientRect();
+          if (escobarUi.value.detent !== nearest.name) { escobarUi.value = { ...escobarUi.value, detent: nearest.name as 'half' | 'full' }; void haptic.tick(); }
+        };
+        anim.finished.then(settle).catch(settle);
+      },
+      onCancel: () => { p.style.transform = ''; p.style.height = ''; },
+    });
+
+    return () => { unregisterEscobarClose(); untrack(); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
+
+  // I7: any OTHER detent change (double-tap, the composer taking focus, escobarToHalf()
+  // elsewhere) swaps the half/full CSS class instantly — this FLIPs the resulting jump into a
+  // running animation instead, by measuring the panel's position from just before the render
+  // that changed it to just after.
+  useLayoutEffect(() => {
+    const p = panelRef.current;
+    if (p && detentRef.current !== ui.detent && rectRef.current && !reduced()) {
+      const before = rectRef.current;
+      const after = p.getBoundingClientRect();
+      const dy = before.top - after.top;
+      if (Math.abs(dy) >= 1) {
+        p.animate(
+          [{ transform: `translateY(${dy}px)` }, { transform: 'translateY(0)' }],
+          { duration: Math.abs(dy) < 200 ? durFor('spring') : durFor('bounce'), easing: springEase() },
+        );
+      }
+    }
+    detentRef.current = ui.detent;
+    rectRef.current = p ? p.getBoundingClientRect() : null;
+  });
 
   // Follow the stream only if the person was already at the bottom (§4.2).
   useEffect(() => {
@@ -180,34 +296,24 @@ export function EscobarSheet() {
     void S.send({ text: text || 'What do you see in this photo?', ...(images.length ? { images } : {}), ...(ref0 ? { contextRefs: [ref0] } : {}) });
   };
 
-  const onPointerDown = (e: PointerEvent) => { drag.current = { y: e.clientY }; (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); };
-  const onPointerUp = (e: PointerEvent) => {
-    const d = drag.current;
-    drag.current = null;
-    if (!d) return;
-    const dy = e.clientY - d.y;
-    if (dy < -40) escobarUi.value = { ...escobarUi.value, detent: 'full' };
-    else if (dy > 60) { if (escobarUi.value.detent === 'full') S.escobarToHalf(); else S.closeEscobar(); }
-  };
-
-  const notice = online.value === false ? 'Escobar is offline. He can still point you around the app.' : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
+  const notice = online.value === false ? `Escobar is offline.${offlineReason.value ? ` ${offlineReason.value}` : ''} He can still point you around the app.` : quotaResetAt.value && quotaResetAt.value > Date.now() ? 'Escobar is resting until tomorrow (daily limit reached).' : undefined;
   const mode = ui.mode === 'live' ? ' · live' : ui.mode === 'plan' ? ' · planning' : '';
 
   return (
-    <dialog ref={ref} class={`esc-sheet esc-${ui.detent}`} aria-labelledby="esc-title" onCancel={e => { e.preventDefault(); S.closeEscobar(); }} onClick={e => { if (e.target === e.currentTarget) S.closeEscobar(); }}>
-      <div class="esc-panel" data-palace="escobar.sheet">
-        <div class="esc-grab-zone" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onDblClick={() => { escobarUi.value = { ...escobarUi.value, detent: ui.detent === 'full' ? 'half' : 'full' }; }}><div class="sheet-grab" /></div>
+    <dialog ref={ref} class={`esc-sheet esc-${ui.detent}`} aria-labelledby="esc-title" onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
+      <div class="esc-panel" data-palace="escobar.sheet" ref={panelRef}>
+        <div class="esc-grab-zone" ref={grabRef} onDblClick={() => { escobarUi.value = { ...escobarUi.value, detent: ui.detent === 'full' ? 'half' : 'full' }; }}><div class="sheet-grab" /></div>
         <header class="esc-head">
           <IconEscobar size={26} thinking={busy} />
           <div class="esc-head-text"><h2 id="esc-title">Escobar</h2><span class="hint" role="status">{statusText()}{mode}</span></div>
           <button type="button" class="btn btn-quiet btn-icon" aria-label="Escobar menu" aria-expanded={menu} onClick={() => setMenu(m => !m)}><IconMore /></button>
-          <button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={() => S.closeEscobar()}><IconX /></button>
+          <button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button>
           {menu && (
             <div class="esc-menu" role="menu">
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(false); S.startNewConversation(); }}>New conversation</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); setPast(true); }}>Past conversations</button>
               <button type="button" role="menuitem" onClick={() => { setMenu(false); S.escobarToHalf(); showPanel('memory'); }}>What Escobar knows</button>
-              <button type="button" role="menuitem" onClick={() => { setMenu(false); S.closeEscobar(); void goTo('settings.escobar'); }}>Coach settings</button>
+              <button type="button" role="menuitem" onClick={() => { setMenu(false); requestClose(); void goTo('settings.escobar'); }}>Coach settings</button>
             </div>
           )}
         </header>

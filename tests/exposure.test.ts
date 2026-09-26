@@ -26,3 +26,22 @@ describe('exposure', () => {
     expect(levels.calves.level).toBe('New');
   });
 });
+
+import { effortLabel, hasEntry, isWorkingSet } from '@/brain/exposure';
+describe('set kinds (F2)', () => {
+  it('a warm-up is filled in but not a working set; drop and failure count', () => {
+    expect(hasEntry({ reps: 10, kind: 'warmup' } as never)).toBe(true);
+    expect(isWorkingSet({ reps: 10, kind: 'warmup' })).toBe(false);
+    expect(isWorkingSet({ reps: 10, kind: 'drop' })).toBe(true);
+    expect(isWorkingSet({ reps: 10, kind: 'failure' })).toBe(true);
+    expect(isWorkingSet({})).toBe(false);
+    expect(effortLabel({ kind: 'failure', effort: 'easy' })).toBe('max');
+    expect(effortLabel({ effort: 'ideal' })).toBe('ideal');
+  });
+  it('warm-ups add no weekly sets', () => {
+    const today = '2026-09-22';
+    const plain = session(today, [{ id: 'lib_barbell_bench_press', sets: sets(80, 5) }]);
+    const warm = session(today, [{ id: 'lib_barbell_bench_press', sets: [{ kg: 40, reps: 8, kind: 'warmup' }, { kg: 60, reps: 5, kind: 'warmup' }, ...sets(80, 5)] }]);
+    expect(weeklyMuscleSets([warm], today, 1)).toEqual(weeklyMuscleSets([plain], today, 1));
+  });
+});

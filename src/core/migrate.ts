@@ -3,12 +3,13 @@
  * (localStorage key "dailyTrackerPremium"). The old key is never written
  * or removed, so the old build keeps working if it is ever reinstalled.
  */
-import { freshState, newId, type AppState, type Effort, type Exercise, type LoggedExercise, type LoggedSet, type Session, type Split, type Weekday } from './models';
+import { freshState, freshUnits, newId, type AppState, type Effort, type Exercise, type LoggedExercise, type LoggedSet, type Session, type Split, type Weekday } from './models';
 import { WEEKDAYS } from './models';
-import { findExercise, makeCustomExercise } from './exercises';
+import { findExercise, findExerciseExact, findExerciseWithEquipment, makeCustomExercise } from './exercises';
 import { dayKey } from './dates';
+import { backfillLegacyLbEntries } from './units';
 import { isGoalId } from '@/data/goals';
-import { legacySessionLogging } from '@/brain/fidelity';
+import { legacySessionLogging } from './sessionLogging';
 import { isMuscleId, type MuscleId } from '@/data/muscles';
 
 export const LEGACY_KEY = 'dailyTrackerPremium';
@@ -104,8 +105,10 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
   }
   const resolveExercise = (name: string | undefined, type?: string, muscle?: string, key?: string): { id: string; name: string } => {
     const label = (name ?? '').trim() || 'Exercise';
-    const byKey = key ? findExercise(libraryIdByCustomKey.get(key) ?? key) : undefined;
-    const found = byKey ?? findExercise(label, customExercises);
+    // QA3-2b: a legacy key is an id or an exact name, never a fuzzy guess - "Cable Hammer
+    // Curl|Cable" must not resolve via a substring match into the wrong library exercise.
+    const byKey = key ? findExerciseExact(libraryIdByCustomKey.get(key) ?? key, customExercises) : undefined;
+    const found = byKey ?? findExerciseWithEquipment(label, type, customExercises);
     if (found) return { id: found.id, name: found.name };
     const nameKey = label.toLowerCase();
     let custom = customByName.get(nameKey);
@@ -228,7 +231,12 @@ export function convertLegacy(legacy: LegacyRoot, now = new Date()): AppState {
     state.schedule[d as Weekday] = v && splitIdByKey.has(v) ? splitIdByKey.get(v)! : null;
   }
   if (isGoalId(w.trainingProgram)) state.goal = w.trainingProgram;
-  if (legacy.preferences?.units?.weight === 'lb') state.preferences.weightUnit = 'lb';
+  if (legacy.preferences?.units?.weight === 'lb') {
+    state.preferences.weightUnit = 'lb';
+    // ST-09: an lb gym, so entry defaults to lb; RG-02: old loads display exactly as typed.
+    state.units = freshUnits('lb', now);
+    state.sessions = backfillLegacyLbEntries(state.sessions);
+  }
   const rest = w.sessionSettings?.restDefaultSec ?? w.restDefaultSec;
   if (typeof rest === 'number' && rest >= 15 && rest <= 600) state.preferences.restDefaultSec = rest;
   const autoRest = w.sessionSettings?.autoRest ?? w.autoRest;

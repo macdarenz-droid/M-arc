@@ -9,11 +9,13 @@ import type { AppState } from '@/core/models';
 import { buildBrief } from './context/brief';
 import type { EscobarMode } from './context/modes';
 import { executeTool, genericLabel, statusLabel, type MemoryEffect, type ToolOutcome } from './tools/executor';
-import { makeCtx, type ToolCtx } from './tools/context';
-import { checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
+import { makeCtx, redactDrivers, type ToolCtx } from './tools/context';
+import { DirectiveBuffer, checkGrounding, parseDirectives, repairInstruction, safetySignals, type ParsedAnswer, type SafetySignal } from './verify';
 import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
 import type { ContextRef, Conversation, Fact, ImageBlockRef, ProposalRecord, RenderedTurn, StoredMessage, UserBlock, Usage } from './types';
+import { titleFrom } from './store';
+import { estimateCost } from './state';
 
 export const STEP_BUDGET: Record<EscobarMode, number> = { chat: 8, live: 8, plan: 12, brief: 3, moment: 1, summarize: 1 };
 export const REPAIR_BUDGET = 3;
@@ -68,8 +70,11 @@ export interface LoopDeps {
   online?(): boolean;
   /** Base64 of a photo kept in IndexedDB or memory. */
   imageData?(id: string): { mediaType: string; data: string } | null;
+  /** Photos the model now has; their base64 can leave memory (IndexedDB keeps the thumbnail). */
+  imagesSent?(ids: string[]): void;
   applyEffect?(e: MemoryEffect): void;
-  recordUsage?(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number }): void;
+  /** `costUsd`: each step priced by the model that answered it (F7: modes can use different models). */
+  recordUsage?(u: { turns: number; inputTokens: number; outputTokens: number; cacheReadTokens: number; costUsd?: number }): void;
   persist?(c: Conversation): void;
   onUpdate?(v: LiveView): void;
   onSafety?(s: SafetySignal): void;
@@ -83,16 +88,122 @@ const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 
 const blocksOf = (m: StoredMessage): unknown[] => (Array.isArray(m.content) ? m.content : []);
 const toolUses = (content: unknown[]) => content.filter((b): b is { type: 'tool_use'; id: string; name: string; input: unknown } => isObj(b) && b.type === 'tool_use');
 const textOf = (content: unknown[]) => content.filter((b): b is { type: 'text'; text: string } => isObj(b) && b.type === 'text').map(b => b.text).join('');
+/**
+ * QA2-FD-1: proposals issued so far, for the next card's id. A trim drops the oldest cards, so
+ * the number of cards kept can be lower than the highest id kept, and a new id would repeat it.
+ */
+const proposalsIssued = (proposals: ProposalRecord[]): number =>
+  proposals.reduce((n, p) => Math.max(n, Number(/^p(\d+)$/.exec(p.id)?.[1] ?? 0)), proposals.length);
+
+/** At most this many photos travel inline in one request (D3, ES-13); older ones go as stubs. */
+export const MAX_INLINE_IMAGES = 2;
+
+/**
+ * ES-12: results of health or body tools recorded while sharing was on are replayed as denied
+ * once that sharing is off, so switching it off also covers what was said before.
+ */
+function deniedFor(use: { name: string; input: unknown } | undefined, sharing: { health: boolean; body: boolean }): string | null {
+  if (!use) return null;
+  const component = isObj(use.input) ? use.input.component : undefined;
+  if (!sharing.health && (use.name === 'get_health' || use.name === 'get_heart_session' || (use.name === 'show' && component === 'heart_session'))) return 'health_sharing_off';
+  if (!sharing.body && (use.name === 'get_body' || (use.name === 'show' && component === 'body_trend'))) return 'body_sharing_off';
+  return null;
+}
+
+/**
+ * QA-R4b-2: other results recorded while sharing was on keep their training data but lose the
+ * health or body parts (heart numbers, resting-HR baselines, sleep, HR drivers; body weight and
+ * body fat), in both `data` and the `facts` map. Briefs lose their drivers and weight.
+ */
+// QA2-FD-4: plus the explain_method personal keys (knowledge/methods.ts drops the same ones live).
+const HEALTH_KEYS = new Set(['baselines', 'heart', 'watch', 'avgBpm', 'maxBpm', 'activeKcal', 'restingHr', 'restingHr7d', 'restingHr28d', 'hrv', 'sleep', 'sleepMinutes', 'sleep14dMedianMin', 'restingHrBaseline', 'healthDaysLogged']);
+const BODY_KEYS = new Set(['bodyWeightKg', 'weight', 'weightKg', 'bodyFatPct', 'bodyFat', 'restingKcalPerDay', 'withBodyweightKg', 'effectiveKg', 'effective', 'effectiveDelta', 'effectiveDeltaPct']);
+const HEALTH_KEY = (k: string) => HEALTH_KEYS.has(k) || /^zone\d+FromBpm$/.test(k);
+const HEALTH_FACT = /\b(baselines|heart|watch|avgBpm|maxBpm|activeKcal|restingHr\w*|hrv|sleep\w*|drivers|healthDaysLogged|zone\d+FromBpm)\b/i;
+const BODY_FACT = /\b(bodyWeightKg|weight|weightKg|bodyFatPct|bodyFat|restingKcalPerDay|withBodyweightKg|effectiveKg|effective)\b|effectiveDelta\w*/;
+// QA3-9: a fact literally saying "hrMax" (explain_method's ledger label), dropped like the field
+// itself unless it is the age-based (Tanaka) estimate.
+const HRMAX_FACT = /\bhrMax\b/i;
+/** Whether an hrMax anywhere in this value is the age-based (Tanaka) one, not a personal reading. */
+function hrMaxIsAgeSourced(v: unknown): boolean {
+  if (Array.isArray(v)) return v.some(hrMaxIsAgeSourced);
+  if (!isObj(v)) return false;
+  return v.hrMaxSource === 'tanaka' || Object.values(v).some(hrMaxIsAgeSourced);
+}
+function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown {
+  if (Array.isArray(v)) return v.map(x => scrub(x, sharing));
+  if (!isObj(v)) return v;
+  const out: Record<string, unknown> = {};
+  for (const [k, x] of Object.entries(v)) {
+    if (!sharing.health && HEALTH_KEY(k)) continue;
+    // QA3-9: hrMax is personal unless it's the age-based (Tanaka) estimate, mirroring methods.ts's live rule.
+    if (!sharing.health && k === 'hrMax' && v.hrMaxSource !== 'tanaka') continue;
+    if (!sharing.body && BODY_KEYS.has(k)) continue;
+    out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
+  }
+  return out;
+}
+function redactResult(content: string, sharing: { health: boolean; body: boolean }): string {
+  let parsed: unknown;
+  try { parsed = JSON.parse(content); } catch { return content; }
+  if (!isObj(parsed) || !('data' in parsed)) return content;
+  const keepHrMax = hrMaxIsAgeSourced(parsed.data);
+  const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => {
+    if (typeof t !== 'string') return true;
+    if (!sharing.health && HRMAX_FACT.test(t) && !keepHrMax) return false;
+    return !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t)));
+  })) : parsed.facts;
+  return JSON.stringify({ ...parsed, data: scrub(parsed.data, sharing), facts });
+}
+/**
+ * QA2-FD-8, QA2-FD-11, QA2-FD-12: the readiness drivers after "advice X" are dropped whole, by
+ * matching brackets, since the check-in driver has brackets of its own. The live brief drops all of
+ * them when health sharing is off, so the replay does the same.
+ */
+function dropDrivers(line: string): string {
+  let out = '', i = 0;
+  const re = /advice [\w-]+ \(/g;
+  for (let m = re.exec(line); m; m = re.exec(line)) {
+    let depth = 1, j = m.index + m[0].length;
+    for (; j < line.length && depth > 0; j++) { if (line[j] === '(') depth++; else if (line[j] === ')') depth--; }
+    out += line.slice(i, m.index + m[0].length - 2);
+    i = j;
+    re.lastIndex = j;
+  }
+  return out + line.slice(i);
+}
+function redactBrief(text: string, sharing: { health: boolean; body: boolean }): string {
+  let t = text;
+  if (!sharing.health) t = t.split('\n').map(dropDrivers).join('\n');
+  // QA2-FD-4: a real brief tags the number with its fact id ("weight 80.5 [f13] kg").
+  if (!sharing.body) t = t.replace(/, weight [\d.]+(?: \[f\d+\])? kg/g, '');
+  return t;
+}
 
 /** The app-only parts (meta, image refs, sent flags) never reach the Worker (§12.2). */
-export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDeps['imageData']): unknown[] {
+export function toRequestMessages(messages: StoredMessage[], imageData?: LoopDeps['imageData'], sharing?: { health: boolean; body: boolean }): unknown[] {
+  const uses = new Map<string, { name: string; input: unknown }>();
+  if (sharing && !(sharing.health && sharing.body)) for (const m of messages) if (m.role === 'assistant') for (const u of toolUses(m.content)) uses.set(u.id, { name: u.name, input: u.input });
+  // The newest unsent photos are inlined, up to the cap.
+  const inline = new Set<string>();
+  if (imageData) for (let i = messages.length - 1; i >= 0 && inline.size < MAX_INLINE_IMAGES; i--) {
+    const m = messages[i]!;
+    if (m.role !== 'user') continue;
+    for (let j = m.content.length - 1; j >= 0 && inline.size < MAX_INLINE_IMAGES; j--) { const b = m.content[j]!; if (b.type === 'image_ref' && !b.sent) inline.add(b.id); }
+  }
+  const partial = !!sharing && !(sharing.health && sharing.body);
   return messages.map(m => {
-    if (m.role === 'system') return { role: 'system', content: m.content };
+    if (m.role === 'system') return { role: 'system', content: partial ? redactBrief(m.content, sharing!) : m.content };
     if (m.role === 'assistant') return { role: 'assistant', content: m.content };
     const content = m.content.map((b: UserBlock) => {
       if (b.type === 'text') return { type: 'text', text: b.text };
-      if (b.type === 'tool_result') return { type: 'tool_result', tool_use_id: b.tool_use_id, content: b.content, ...(b.is_error ? { is_error: true } : {}) };
-      const img = !b.sent && imageData ? imageData(b.id) : null;
+      if (b.type === 'tool_result') {
+        const denied = sharing ? deniedFor(uses.get(b.tool_use_id), sharing) : null;
+        if (denied) return { type: 'tool_result', tool_use_id: b.tool_use_id, content: JSON.stringify({ data: { denied }, facts: {} }) };
+        const content = partial && typeof b.content === 'string' ? redactResult(b.content, sharing!) : b.content;
+        return { type: 'tool_result', tool_use_id: b.tool_use_id, content, ...(b.is_error ? { is_error: true } : {}) };
+      }
+      const img = !b.sent && imageData && inline.has(b.id) ? imageData(b.id) : null;
       if (img) return { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.data } };
       return { type: 'text', text: `[photo shared earlier${b.description ? `: ${b.description}` : ''}]` };
     });
@@ -107,8 +218,18 @@ const isPlainUser = (m: StoredMessage | undefined): boolean => !!m && m.role ===
  * in the request (never in the store) by the rolling summary, or trimmed at a clean user turn.
  */
 export function windowMessages(conv: Conversation, messages: StoredMessage[]): StoredMessage[] {
-  const tokens = (ms: StoredMessage[]) => Math.ceil(JSON.stringify(ms).length / 4);
-  if (tokens(messages) <= HISTORY_TOKEN_LIMIT && messages.length <= HISTORY_ENTRY_LIMIT) return messages;
+  // ES-16: estimate on what is actually sent (no meta, photos as stubs, not inline base64).
+  // QA-R4b-9: each message is serialised once; a slice's length is the sum of its parts plus the
+  // commas and brackets, exactly what JSON.stringify of the slice would give.
+  const lens = toRequestMessages(messages).map(m => JSON.stringify(m).length);
+  const tail = new Array<number>(lens.length + 1).fill(0);
+  for (let i = lens.length - 1; i >= 0; i--) tail[i] = tail[i + 1]! + lens[i]!;
+  const fitsFrom = (cut: number) => {
+    const n = messages.length - cut;
+    const chars = n ? tail[cut]! + (n - 1) + 2 : 2;
+    return Math.ceil(chars / 4) <= HISTORY_TOKEN_LIMIT && n <= Math.min(HISTORY_ENTRY_LIMIT, 600);
+  };
+  if (fitsFrom(0)) return messages;
   const summary = conv.rollingSummary;
   let cut = summary && summary.upTo < messages.length && isPlainUser(messages[summary.upTo]) ? summary.upTo : -1;
   if (cut < 0) {
@@ -116,7 +237,14 @@ export function windowMessages(conv: Conversation, messages: StoredMessage[]): S
     while (cut < messages.length && !isPlainUser(messages[cut])) cut++;
     if (cut >= messages.length) return messages;
   }
-  const head: StoredMessage = { role: 'user', content: [{ type: 'text', text: summary && cut === summary.upTo ? `[summary of earlier conversation] ${summary.text}` : '[earlier conversation trimmed]' }] };
+  // Still too big after the first cut: move on to later clean user turns until it fits.
+  while (!fitsFrom(cut)) {
+    let next = cut + 1;
+    while (next < messages.length && !isPlainUser(messages[next])) next++;
+    if (next >= messages.length) break;
+    cut = next;
+  }
+  const head: StoredMessage = { role: 'user', content: [{ type: 'text', text: summary && cut === summary.upTo ? `[summary of earlier conversation] ${summary.text}` : summary && cut > summary.upTo ? `[summary of earlier conversation] ${summary.text} [later messages trimmed]` : '[earlier conversation trimmed]' }] };
   const rest = messages.slice(cut);
   // Two user messages in a row are merged by the API; keep the shape simple.
   return [head, ...rest];
@@ -136,8 +264,12 @@ export class EscobarLoop {
   conversation: Conversation;
   private deps: LoopDeps;
   private generation = 0;
+  /** The generation of the most recent send: only it may set the view idle (ES-09). */
+  private latestSend = 0;
   private controller: AbortController | null = null;
   private abortReason: TurnOutcome | null = null;
+  /** QA-R4b-3: a step of this turn sent a trimmed window, so the next brief must be full. */
+  private trimmedThisTurn = false;
   view: LiveView = { status: 'idle', text: '', preamble: [], activity: [], outcomes: [] };
 
   constructor(conversation: Conversation, deps: LoopDeps) {
@@ -154,13 +286,7 @@ export class EscobarLoop {
 
   private commit(messages: StoredMessage[], extra: Partial<Conversation> = {}): void {
     const c = this.conversation;
-    let title = c.title;
-    if (!title) {
-      const u = messages.find(m => m.role === 'user' && !m.meta?.repair && m.content.some(b => b.type === 'text'));
-      const t = u && u.role === 'user' ? u.content.find(b => b.type === 'text') : undefined;
-      if (t && t.type === 'text') title = t.text.replace(/^\[about:[^\]]*\]\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 40);
-    }
-    this.conversation = { ...c, ...extra, title, messages: [...c.messages, ...messages], updatedAt: new Date(this.deps.now()).toISOString() };
+    this.conversation = { ...c, ...extra, title: c.title || titleFrom(messages), messages: [...c.messages, ...messages], updatedAt: new Date(this.deps.now()).toISOString() };
   }
 
   private save(): void { this.deps.persist?.(this.conversation); }
@@ -203,7 +329,8 @@ export class EscobarLoop {
     const c = this.conversation;
     const b = buildBrief({
       ctx: this.ctx(), mode, turnIndex: c.userTurns ?? 0, previous: c.briefLines ?? null, ledger: c.ledger,
-      pending: (c.proposals ?? []).filter(p => p.status === 'awaiting').map(p => ({ id: p.id, title: p.title })),
+      // ES-32: an expired suggestion is no longer pending.
+      pending: (c.proposals ?? []).filter(p => p.status === 'awaiting' && p.expiresOn >= this.ctx().today).map(p => ({ id: p.id, title: p.title })),
       decisions: (c.pendingDecisions ?? []).map(d => ({ proposalId: d.proposalId, title: d.title, decision: d.decision })),
       signals,
     });
@@ -213,16 +340,22 @@ export class EscobarLoop {
   /** Streams one step. Retries once for busy/timeout when nothing reached the screen yet. */
   private async step(messages: StoredMessage[], mode: EscobarMode, signal: AbortSignal, gen: number): Promise<{ final?: Extract<StreamEvent, { t: 'final' }>; error?: TurnResult['error']; refusal?: { category: string | null }; stale?: boolean }> {
     const s = this.deps.getState();
+    const windowed = windowMessages(this.conversation, messages);
+    // After a trim the next brief is sent in full: the diff it would build on may be cut off.
+    if (windowed !== messages) {
+      this.trimmedThisTurn = true;
+      if (this.conversation.briefLines) this.conversation = { ...this.conversation, briefLines: undefined };
+    }
     const body = {
       protocol: 2, mode, appVersion: this.deps.appVersion, manifest: this.deps.manifest(),
-      messages: toRequestMessages(windowMessages(this.conversation, messages), this.deps.imageData),
+      messages: toRequestMessages(windowed, this.deps.imageData, s.escobar.sharing),
       unit: s.preferences.weightUnit, tone: s.escobar.tone,
     };
     for (let attempt = 0; ; attempt++) {
       let shown = false;
       let text = '';
       const activity: Activity[] = [...this.view.activity];
-      const buffer = { raw: '' };
+      const buffer = new DirectiveBuffer();
       try {
         for await (const ev of this.deps.transport.turn(body, signal)) {
           if (gen !== this.generation) return { stale: true };
@@ -230,9 +363,7 @@ export class EscobarLoop {
             case 'thinking': this.update({ status: 'thinking' }); break;
             case 'text': {
               shown = true;
-              buffer.raw += ev.d;
-              const open = buffer.raw.lastIndexOf('⟦'), close = buffer.raw.lastIndexOf('⟧');
-              text = parseDirectives(open > close ? buffer.raw.slice(0, open) : buffer.raw).text;
+              text = buffer.push(ev.d);
               this.update({ status: 'streaming', text });
               break;
             }
@@ -272,17 +403,26 @@ export class EscobarLoop {
     for (const s of signals) if (s === 'crisis' || s === 'medical') this.deps.onSafety?.(s);
     const outcomes: ToolOutcome[] = [];
     if (this.deps.online && !this.deps.online()) return { outcome: 'offline', local: offlineReply(input.text), outcomes, signals, notSent: true };
+    // ES-09: a new send supersedes one still running.
+    if (this.busy) this.abort('stale');
 
     const gen = this.generation = ++genCounter;
+    this.latestSend = gen;
     this.abortReason = null;
+    this.trimmedThisTurn = false;
     const controller = this.controller = new AbortController();
     const timer = setTimeout(() => this.abort('timeout'), this.deps.wallClockMs ?? WALL_CLOCK_MS);
     this.update({ status: 'thinking', text: '', preamble: [], activity: [], outcomes: [] });
 
     const brief = this.briefMessage(mode, signals);
     let staged: StoredMessage[] | null = [this.userMessage(input), brief.msg];
-    let stagedExtra: Partial<Conversation> = { ledger: [...this.conversation.ledger, ...brief.facts], briefLines: brief.lines, userTurns: (this.conversation.userTurns ?? 0) + 1, pendingDecisions: [] };
-    const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 };
+    // ES-20: the brief reported these decisions; any recorded while this turn runs stay queued.
+    const decisionKey = (d: { proposalId: string; decision: string; at: string }) => `${d.proposalId}|${d.decision}|${d.at}`;
+    const reported = new Set((this.conversation.pendingDecisions ?? []).map(decisionKey));
+    let stagedExtra: Partial<Conversation> = { ledger: [...this.conversation.ledger, ...brief.facts], briefLines: brief.lines, userTurns: (this.conversation.userTurns ?? 0) + 1 };
+    let userCommitted = false;
+    let firstAnswer: { parsed: ReturnType<typeof parseDirectives>; unverified: string[] } | null = null;
+    const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, costUsd: 0 };
     let steps = 0;
     let budget = STEP_BUDGET[mode];
     let repaired = false;
@@ -292,14 +432,16 @@ export class EscobarLoop {
     const finish = (r: TurnResult): TurnResult => {
       clearTimeout(timer);
       if (usage.outputTokens || usage.inputTokens) this.deps.recordUsage?.({ turns: 1, ...usage });
-      this.update({ status: 'idle' });
-      if (!staged) this.markImagesSent(); else this.save();
+      // ES-11: a repair that did not finish still shows the first answer, with its unchecked numbers marked.
+      if (r.outcome !== 'done' && firstAnswer && firstAnswerIndex >= 0) this.setRendered(firstAnswerIndex, { answer: firstAnswer.parsed.text, chips: firstAnswer.parsed.chips, unverified: firstAnswer.unverified });
+      if (this.latestSend === gen) this.update({ status: 'idle' });
+      if (userCommitted) this.markImagesSent(); else this.save();
       return r;
     };
     const exitAborted = (): TurnResult => {
       const reason = this.abortReason ?? 'stale';
       this.closeOrphans(reason === 'aborted' ? 'aborted' : reason === 'backgrounded' ? 'backgrounded' : reason === 'timeout' ? 'timeout' : 'stale');
-      return finish({ outcome: reason, outcomes, signals, notSent: !!staged });
+      return finish({ outcome: reason, outcomes, signals, notSent: !userCommitted });
     };
 
     try {
@@ -313,13 +455,30 @@ export class EscobarLoop {
         const pending = staged ? [...this.conversation.messages, ...staged] : this.conversation.messages;
         const r = await this.step(pending, mode, controller.signal, gen);
         if (r.stale || gen !== this.generation) { result = exitAborted(); break; }
-        if (r.error) { result = finish({ outcome: 'error', error: r.error, outcomes, signals, notSent: !!staged }); break; }
-        if (r.refusal) { this.update({ text: '' }); result = finish({ outcome: 'refusal', refusal: r.refusal, outcomes, signals, notSent: !!staged }); break; }
+        if (r.error) { result = finish({ outcome: 'error', error: r.error, outcomes, signals, notSent: !userCommitted }); break; }
+        if (r.refusal) { this.update({ text: '' }); result = finish({ outcome: 'refusal', refusal: r.refusal, outcomes, signals, notSent: !userCommitted }); break; }
         const final = r.final!;
-        const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage>> } | undefined;
-        const its = u?.iterations?.length ? u.iterations : u ? [u] : [];
-        for (const it of its) { usage.inputTokens += it.input_tokens ?? 0; usage.outputTokens += it.output_tokens ?? 0; usage.cacheReadTokens += it.cache_read_input_tokens ?? 0; }
-        if (staged) { this.commit(staged, stagedExtra); staged = null; stagedExtra = {}; }
+        const u = final.usage as Partial<Usage> & { iterations?: Array<Partial<Usage> & { model?: string | null }> } | undefined;
+        const its: Array<Partial<Usage> & { model?: string | null }> = u?.iterations?.length ? u.iterations : u ? [u] : [];
+        for (const [i, it] of its.entries()) {
+          // QA2-F7-1: a fallback attempt that declined before any output is reported but not billed.
+          if (i < its.length - 1 && !it.output_tokens) continue;
+          // QA2-F7-4: cache writes by TTL; a write without the breakdown is priced at the 5-minute rate.
+          const cacheWrite1hTokens = it.cache_creation?.ephemeral_1h_input_tokens ?? 0;
+          const cacheWrite5mTokens = Math.max(it.cache_creation?.ephemeral_5m_input_tokens ?? 0, (it.cache_creation_input_tokens ?? 0) - cacheWrite1hTokens);
+          const step = { inputTokens: it.input_tokens ?? 0, outputTokens: it.output_tokens ?? 0, cacheReadTokens: it.cache_read_input_tokens ?? 0, cacheWrite5mTokens, cacheWrite1hTokens };
+          usage.inputTokens += step.inputTokens; usage.outputTokens += step.outputTokens; usage.cacheReadTokens += step.cacheReadTokens;
+          // QA2-F7-1: each attempt at the rates of the model that ran it (a fallback turn mixes models).
+          const model = typeof it.model === 'string' ? it.model : typeof final.model === 'string' ? final.model : undefined;
+          usage.costUsd += estimateCost(step, model);
+        }
+        if (staged) {
+          const extra: Partial<Conversation> = userCommitted ? stagedExtra : { ...stagedExtra, pendingDecisions: (this.conversation.pendingDecisions ?? []).filter(d => !reported.has(decisionKey(d))) };
+          // QA-R4b-3: the first commit carries this turn's brief lines; after a trim they must not come back.
+          if (this.trimmedThisTurn) extra.briefLines = undefined;
+          this.commit(staged, extra);
+          staged = null; stagedExtra = {}; userCommitted = true;
+        }
         const content = final.content;
         const uses = toolUses(content);
         const preamble = uses.length ? textOf(content).trim() : '';
@@ -338,7 +497,7 @@ export class EscobarLoop {
           const parsed = parseDirectives(raw);
           const grounding = checkGrounding({ answer: raw, ledger: this.conversation.ledger, userTexts: this.userTexts() });
           const idx = this.conversation.messages.length - 1;
-          if (firstAnswerIndex < 0) firstAnswerIndex = idx;
+          if (firstAnswerIndex < 0) { firstAnswerIndex = idx; firstAnswer = { parsed, unverified: grounding.ok ? [] : grounding.sentences }; }
           if (!grounding.ok && !repaired) {
             repaired = true;
             budget = steps + REPAIR_BUDGET;
@@ -346,6 +505,7 @@ export class EscobarLoop {
             staged = [{ role: 'user', content: [{ type: 'text', text: REPAIR_TEXT }], meta: { repair: true } }, { role: 'system', content: repairInstruction(grounding.ungrounded) }];
             continue;
           }
+          firstAnswer = null;
           const revised = firstAnswerIndex !== idx;
           this.setRendered(idx, { answer: parsed.text, chips: parsed.chips, ...(grounding.ok ? {} : { unverified: grounding.sentences }) });
           if (revised) this.setRendered(firstAnswerIndex, { revised: true });
@@ -362,7 +522,7 @@ export class EscobarLoop {
         const assistantIndex = this.conversation.messages.length - 1;
         for (const use of uses) {
           if (gen !== this.generation) break;
-          const o = executeTool(use, { ctx: this.ctx(), ledger, turn: this.conversation.userTurns ?? 0, proposalCount: proposals.length });
+          const o = executeTool(use, { ctx: this.ctx(), ledger, turn: this.conversation.userTurns ?? 0, proposalCount: proposalsIssued(proposals) });
           ledger = [...ledger, ...o.facts];
           if (o.proposal) proposals = [...proposals, { ...o.proposal, status: 'awaiting', messageIndex: assistantIndex } as ProposalRecord];
           if (o.effect) this.deps.applyEffect?.(o.effect);
@@ -378,9 +538,9 @@ export class EscobarLoop {
       }
     } catch {
       if (gen !== this.generation) result = exitAborted();
-      else { this.closeOrphans('error'); result = finish({ outcome: 'error', error: { code: 'network', message: 'Something went wrong.' }, outcomes, signals, notSent: !!staged }); }
+      else { this.closeOrphans('error'); result = finish({ outcome: 'error', error: { code: 'network', message: 'Something went wrong.' }, outcomes, signals, notSent: !userCommitted }); }
     }
-    this.controller = null;
+    if (this.controller === controller) this.controller = null;
     return result!;
   }
 
@@ -399,6 +559,8 @@ export class EscobarLoop {
 
   /** Marks every photo in finished turns as sent, so later requests carry a stub (§6.2). */
   markImagesSent(): void {
+    const ids = this.conversation.messages.flatMap(m => (m.role === 'user' ? m.content.flatMap(b => (b.type === 'image_ref' && !b.sent ? [b.id] : [])) : []));
+    if (ids.length) this.deps.imagesSent?.(ids);
     const msgs = this.conversation.messages.map(m => (m.role === 'user' && m.content.some(b => b.type === 'image_ref' && !b.sent) ? { ...m, content: m.content.map(b => (b.type === 'image_ref' ? { ...b, sent: true } : b)) } : m));
     this.conversation = { ...this.conversation, messages: msgs };
     this.save();

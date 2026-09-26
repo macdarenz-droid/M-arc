@@ -10,12 +10,12 @@ import { trainingAgeMonths } from '@/brain/recovery';
 import { profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL, weekStart, daysBetween, addDays } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart, daysBetween, addDays, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { profileFor } from '@/slices/workout/units';
 import { exerciseHistory } from '@/brain/history';
-import { formatLoad } from '@/core/units';
+import { modeLoadText } from '@/brain/bodyweight';
 import { resyncReminders } from '../settings/reminders';
 import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
 import { acceptDeload, saveInsightFeedback } from './coach';
@@ -23,6 +23,7 @@ import { closePanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { Hall } from '@/escobar/ui/Hall';
 import { AskAbout } from '@/escobar/ui/AskAbout';
+import { isWorkingSet } from '@/brain/exposure';
 
 export const INSIGHT_COLOR: Record<Category, string> = {
   recovery: 'var(--positive)', progress: 'var(--warning)', readiness: 'var(--info)', balance: 'var(--accent)', focus: 'var(--accent)', consistency: 'var(--warning)', data: 'var(--text-3)',
@@ -92,7 +93,7 @@ export function Coach() {
           <div class="stack-sm small muted">
             <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
-            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and only ever widens when your own history shows you need it.</p>
+            <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
           </div>
         </Card>
@@ -150,7 +151,7 @@ function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => v
           <div><span>Do next</span><span>{insight.action}</span></div>
         </div>
         {next && <Card class="card-quiet"><div class="eyebrow">Next session</div><b>{next.target}</b><p class="small muted" style={{ marginTop: 4 }}>{next.reason}</p></Card>}
-        {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${formatLoad(h.topKg, s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
+        {hist.length > 0 && <div><div class="eyebrow" style={{ marginBottom: 4 }}>Recent sessions</div><div class="list">{hist.map(h => <Row key={h.sessionId} trailing={<span class="hint num">{h.topKg ? `${modeLoadText({ kg: h.topKg }, ex?.mode ?? 'weighted', s.preferences.weightUnit)} × ${h.topReps}` : `${h.bestReps} reps`}</span>}><span class="small">{h.day}</span></Row>)}</div></div>}
       </div>
     </Sheet>
   );
@@ -204,8 +205,9 @@ function WeeklyReviewCard() {
   const thisWeek = weekStart(today.value);
   const dismissed = s.weeklyReviewDismissedWeek === thisWeek;
   const enough = weekHasEnoughData(s.sessions, today.value);
-  if (dismissed || !enough) return null;
+  // UI-30: hooks run on every render, before any early return.
   const items = useWeeklyReviewItems();
+  if (dismissed || !enough) return null;
   return (
     <Card class="card-accent card-press" onClick={() => showPanel('weekly-review')}>
       <div class="row-between"><span class="eyebrow">Weekly review</span><IconChevron size={16} style={{ color: 'var(--text-3)' }} /></div>
@@ -223,7 +225,7 @@ function useWeeklyReviewItems() {
   }, [s.sessions]);
   const items = weeklyReviewInsights({
     sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
-    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff, unit: s.preferences.weightUnit,
   }, 6);
   return items;
 }
@@ -306,7 +308,7 @@ function InsightFeedbackLog() {
 /** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
 function WhatCoachCanSee() {
   const s = state.value;
-  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(x => (x.reps ?? 0) > 0 || (x.durationSec ?? 0) > 0);
+  const recentSets = s.sessions.slice(-3).flatMap(x => x.exercises.flatMap(e => e.sets)).filter(isWorkingSet);
   const ratedShare = recentSets.length ? recentSets.filter(x => x.effort).length / recentSets.length : null;
   const liveShare = recentSets.length ? recentSets.filter(x => x.fidelity === 'live').length / recentSets.length : null;
   const completeness = profileCompleteness(s.profile);
@@ -315,7 +317,7 @@ function WhatCoachCanSee() {
     { label: 'Sets logged', value: `${s.sessions.reduce((a, x) => a + x.exercises.reduce((b, e) => b + e.sets.length, 0), 0)} total` },
     { label: 'Effort ratings', value: ratedShare != null ? `${Math.round(ratedShare * 100)}% of recent sets` : 'none yet', unlocks: ratedShare == null || ratedShare < 0.5 ? 'Rate sets so the coach can judge hard vs easy.' : undefined },
     { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
-    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync?.slice(0, 10) ?? ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
+    { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
     { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
     { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },

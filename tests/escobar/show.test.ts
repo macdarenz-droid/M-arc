@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { summarize } from '@/escobar/tools/show';
+import { sampleEvenly, summarize } from '@/escobar/tools/show';
+import { exerciseHistory } from '@/brain/history';
 import { SHOW_COMPONENT_IDS } from '@/core/models';
 import { ctxOf, sixMonthsState, emptyState, NOW } from './fixtures';
 import { PPL6 } from '../fixtures/plans';
@@ -35,6 +36,22 @@ describe('show component summaries (§9)', () => {
     expect(s.last).toBe(s.points.at(-1)!.value);
     expect(s.best).toBe(Math.max(...s.points.map(p => p.value)));
   });
+  it('lift trend over a long window: first, last and best from all of it, 12 points spread evenly (ES-15)', () => {
+    const s = summarize('lift_trend', { exerciseId: 'lib_barbell_bench_press', weeks: 52 }, six) as { points: Array<{ day: string; value: number }>; first: number; last: number; best: number };
+    const hist = exerciseHistory(six.state.sessions, 'lib_barbell_bench_press');
+    expect(hist.length).toBeGreaterThan(12);
+    expect(s.points).toHaveLength(12);
+    expect(s.points[0]!.day).toBe(hist[0]!.day);
+    expect(s.points.at(-1)!.day).toBe(hist.at(-1)!.day);
+    expect(s.first).toBe(s.points[0]!.value);
+    expect(s.last).toBe(s.points.at(-1)!.value);
+    expect(s.best).toBe(Math.max(...hist.map(h => Math.round((h.bestE1rm || h.topKg) * 10) / 10)));
+  });
+  it('sampleEvenly keeps both ends and spreads the rest', () => {
+    expect(sampleEvenly([1, 2, 3], 12)).toEqual([1, 2, 3]);
+    const xs = Array.from({ length: 23 }, (_, i) => i);
+    expect(sampleEvenly(xs, 12)).toEqual([0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]);
+  });
   it('compare periods reports a delta', () => {
     const s = summarize('compare_periods', PARAMS.compare_periods!, six) as { a: { value: number }; b: { value: number }; delta: number };
     expect(s.delta).toBe(Math.round((s.b.value - s.a.value) * 10) / 10);
@@ -49,5 +66,23 @@ describe('show component summaries (§9)', () => {
     expect(() => summarize('lift_trend', { exerciseId: 'lib_barbell_bench_press', weeks: 2 }, six)).toThrow(/4–52/);
     expect(() => summarize('compare_periods', { metric: 'e1rm', a: { from: '2026-08-01', to: '2026-08-31' }, b: { from: '2026-09-01', to: '2026-09-21' } }, six)).toThrow(/exerciseId/);
     expect(() => summarize('bogus', {}, six)).toThrow(/unknown component/);
+  });
+});
+
+describe('QA3-10: session_summary counts working sets only', () => {
+  it('warm-ups are left out of the set count and the effort tally', async () => {
+    const { session } = await import('../helpers');
+    const s = session('2026-09-10', [{ id: 'lib_barbell_bench_press', sets: [
+      { kg: 40, reps: 10, kind: 'warmup', effort: 'easy' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 8, effort: 'ideal' },
+      { kg: 60, reps: 6, effort: 'max' },
+    ] }]);
+    const ctx = ctxOf({ ...six.state, sessions: [...six.state.sessions, s] });
+    const out = summarize('session_summary', { sessionId: s.id }, ctx) as {
+      exercises: Array<{ sets: number }>; effort: { easy: number; ideal: number; max: number };
+    };
+    expect(out.exercises[0]!.sets).toBe(3);
+    expect(out.effort).toEqual({ easy: 0, ideal: 2, max: 1 });
   });
 });

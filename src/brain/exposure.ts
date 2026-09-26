@@ -26,12 +26,33 @@ export function rolesFor(exercise: Exercise): Array<{ muscle: MuscleId; role: Ro
   return out;
 }
 
-export function isWorkingSet(s: LoggedSet): boolean {
+/** F2: the set is filled in (reps, time or distance). Decides what is kept and committed. */
+export function hasEntry(s: Pick<LoggedSet, 'reps' | 'durationSec' | 'distanceM'>): boolean {
   return (s.reps ?? 0) > 0 || (s.durationSec ?? 0) > 0 || (s.distanceM ?? 0) > 0;
 }
 
+/** A set that counts (exposure, volume, recovery, e1RM, records, progression): filled in and not a warm-up. */
+export function isWorkingSet(s: Pick<LoggedSet, 'reps' | 'durationSec' | 'distanceM' | 'kind'>): boolean {
+  return hasEntry(s) && s.kind !== 'warmup';
+}
+
+/** QA-R6-3: the set autoregulation and targets start from: the first one that is not a warm-up. */
+/** A session with at least one working set; a warm-up-only one has nothing to share (QA4-8). */
+export const hasWorkingSets = (s: Pick<Session, 'exercises'>): boolean => s.exercises.some(e => e.sets.some(isWorkingSet));
+
+export const firstWorkingSet = <T extends Pick<LoggedSet, 'kind'>>(sets: T[]): T | undefined => sets.find(x => x.kind !== 'warmup');
+/** QA-R6-8: a row's place among the working sets (history holds working sets only); null for a warm-up. */
+export const workingIndex = (sets: Array<Pick<LoggedSet, 'kind'>>, j: number): number | null =>
+  sets[j]?.kind === 'warmup' ? null : j - sets.slice(0, j).filter(x => x.kind === 'warmup').length;
+
+/** The effort a set stands for: a set taken to failure is max effort. */
+export function effortLabel(s: Pick<LoggedSet, 'effort' | 'kind'>): LoggedSet['effort'] {
+  return s.kind === 'failure' ? 'max' : s.effort;
+}
+
 export function effortOf(s: LoggedSet): number {
-  return s.effort ? EFFORT_MULT[s.effort] : 1;
+  const e = effortLabel(s);
+  return e ? EFFORT_MULT[e] : 1;
 }
 
 export type MuscleScore = Partial<Record<MuscleId, number>>;
@@ -78,27 +99,37 @@ export interface WeeklyMuscleSets {
 }
 
 /** Effective sets per muscle for each of the last `weeks` weeks (index 0 = current). */
-export function weeklyMuscleSets(sessions: Session[], today: string, weeks = 4, custom: Exercise[] = []): WeeklyMuscleSets[] {
-  const start = weekStart(today);
-  const rows: WeeklyMuscleSets[] = Array.from({ length: weeks }, (_, i) => ({ week: addDays(start, -7 * i), sets: {} }));
+/**
+ * The one weekly set count (BR-16): effective sets per muscle for sessions with `from <= day < to`.
+ * Direct work counts 1, secondary 0.5, stabilisers 0 (SET_WEIGHT). `countEasy: false` leaves out
+ * sets rated easy, for "hard sets".
+ */
+export function effectiveSetsByMuscle(sessions: Session[], from: string, to: string, custom: Exercise[] = [], opts: { countEasy?: boolean } = {}): Partial<Record<MuscleId, number>> {
+  const countEasy = opts.countEasy ?? true;
+  const out: Partial<Record<MuscleId, number>> = {};
   for (const s of sessions) {
-    const ws = weekStart(s.day);
-    const idx = rows.findIndex(r => r.week === ws);
-    if (idx < 0) continue;
-    const row = rows[idx]!;
+    if (s.day < from || s.day >= to) continue;
     for (const ex of s.exercises) {
       const meta = findExercise(ex.exerciseId, custom) ?? findExercise(ex.name, custom);
       if (!meta) continue;
-      const working = ex.sets.filter(isWorkingSet).length;
+      const working = ex.sets.filter(set => isWorkingSet(set) && (countEasy || effortLabel(set) !== 'easy')).length;
       if (!working) continue;
       for (const r of rolesFor(meta)) {
         const w = SET_WEIGHT[r.role];
         if (!w) continue;
-        row.sets[r.muscle] = (row.sets[r.muscle] ?? 0) + working * w;
+        out[r.muscle] = (out[r.muscle] ?? 0) + working * w;
       }
     }
   }
-  return rows;
+  return out;
+}
+
+export function weeklyMuscleSets(sessions: Session[], today: string, weeks = 4, custom: Exercise[] = [], opts: { countEasy?: boolean } = {}): WeeklyMuscleSets[] {
+  const start = weekStart(today);
+  return Array.from({ length: weeks }, (_, i) => {
+    const week = addDays(start, -7 * i);
+    return { week, sets: effectiveSetsByMuscle(sessions, week, addDays(week, 7), custom, opts) };
+  });
 }
 
 /** Cumulative all-time training score per muscle, and a friendly level label. */
