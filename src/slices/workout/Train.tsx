@@ -510,6 +510,24 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     wasOpenRef.current = open;
     return undefined;
   }, [open]);
+  // I4: the coach prose (target reason, reason cue, learn cue) sits behind "Why this target",
+  // folded the same way as the card body itself (I2's ex-body pattern).
+  const [why, setWhy] = useState(false);
+  const [whyClosing, setWhyClosing] = useState(false);
+  const [whySettled, setWhySettled] = useState(false);
+  const whyBodyRef = useRef<HTMLDivElement | null>(null);
+  const wasWhyRef = useRef(why);
+  useEffect(() => {
+    if (wasWhyRef.current && !why) {
+      setWhyClosing(true);
+      setWhySettled(false);
+      const t = setTimeout(() => setWhyClosing(false), durFor('enter') + 60);
+      wasWhyRef.current = why;
+      return () => clearTimeout(t);
+    }
+    wasWhyRef.current = why;
+    return undefined;
+  }, [why]);
   const sticky = s.exerciseNotes[entry.exerciseId];
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
@@ -604,13 +622,22 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="ex-body-inner">
         {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
-          <p class="hint">{next.reason}</p>
-          {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
-          {cue && <p class="hint muted">{cue.text}</p>}
+          <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
+          <div class={`ex-body ${why ? 'open' : ''} ${whySettled ? 'settled' : ''}`} ref={whyBodyRef} onTransitionEnd={e => { if (e.target === whyBodyRef.current && why) setWhySettled(true); }}>
+            <div class="ex-body-inner">
+            {(why || whyClosing) && (
+            <div class="stack-sm">
+              <p class="hint">{next.reason}</p>
+              {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
+              {cue && <p class="hint muted">{cue.text}</p>}
+            </div>
+            )}
+            </div>
+          </div>
           {warmup && (
             <div class="warmup">
               <button type="button" class="btn btn-quiet btn-sm tap" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>

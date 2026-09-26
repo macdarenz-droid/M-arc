@@ -390,6 +390,8 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
    (:557 in the gate), whose parent .hint.ellipsis clips, so no hit extension there. */
 .link-btn { position: relative; color: inherit; text-decoration: underline; font: inherit; }
 .link-btn::before { content: ""; position: absolute; inset: -14px -4px; }
+/* I4: "Why this target" — the coach prose sits behind it, so set 1 starts near the top of the open card. */
+.why-toggle { color: var(--text-2); font-size: var(--fs-small); display: inline-flex; align-items: center; gap: var(--sp-1); text-decoration: none; }
 .plate-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .plate { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
 .gym-chip { display: inline-flex; align-items: center; gap: 4px; }
