@@ -2,6 +2,13 @@
 
 The owner's rules. Relay's CONTRACT.md carries the same ones.
 
+## ULTIMATE RULE (owner, 2026-09-26): above every other rule, mode or permission
+Use the fewest agents and the lowest model tier that give the same result.
+- Do it yourself when you can. One agent per job at most.
+- No panels, judges, parallel duplicates or multi-lens reviews unless one agent truly cannot do the job.
+- Permission to use many agents (a "window", ultracode or a workflow mode) is NOT a reason to use them.
+- Low token use, precise, high quality: the same quality bar, with tests that fail before and pass after.
+
 - Keep token use low. Read only what the task needs, write short, don't repeat context. Spend more only when a task is complex and truly needs it.
 - Explain and summarise for the owner in plain, simple words.
 - During a task, post short plain-word updates only when something important changed.
