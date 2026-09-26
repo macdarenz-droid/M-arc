@@ -28,12 +28,15 @@ export function Chip({ children, tone, pressed, onClick, class: cls = '' }: { ch
     : <span class={classes}>{children}</span>;
 }
 
-export function Segmented<T extends string>({ value, options, onChange }: { value: T; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
+export function Segmented<T extends string>({ value, options, onChange }: { value: T | undefined; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
   // I10: a raised thumb glides under the chosen option instead of it getting its own background.
-  const i = Math.max(0, options.findIndex(o => o.value === value));
+  // BUG-8: `value` can be undefined (e.g. Profile's Sex control before it's ever been set) — no
+  // option is pressed then, and the thumb has nowhere to sit, so it's hidden rather than parked
+  // at index 0.
+  const i = options.findIndex(o => o.value === value);
   return (
     <div class="seg" role="tablist">
-      <span class="seg-thumb" aria-hidden="true" style={{ width: `calc((100% - 6px) / ${options.length})`, transform: `translateX(${i * 100}%)` }} />
+      {i >= 0 && <span class="seg-thumb" aria-hidden="true" style={{ width: `calc((100% - 6px) / ${options.length})`, transform: `translateX(${i * 100}%)` }} />}
       {options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}
     </div>
   );
