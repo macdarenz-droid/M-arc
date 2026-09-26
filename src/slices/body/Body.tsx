@@ -105,6 +105,10 @@ interface RtLayout { readyNow: MuscleId[]; groups: RtGroup[] }
 
 const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hoursLeft: r.hoursLeft, soreToday: r.soreToday });
 
+/** QA7-6: a tile's time text as its unbreakable parts ("10 pm – midnight" -> ["10 pm", "midnight"]),
+ * so the line can only break at the dash, never inside "10 pm". */
+const nwParts = (text: string): string[] => text.split(' – ');
+
 /** The Section aside: a confidence summary across every muscle the card lists (Ready now + the day groups). */
 function confidenceAside(rec: MuscleRecovery[]): string | undefined {
   const listed = rec.filter(r => r.lastTrainedAt && r.pct < FULL_PCT);
@@ -167,7 +171,9 @@ function RtTile({ r, now, group, full, expanded, onClick, tileRef }: {
       <RtRing pct={r.pct} sore={!!r.soreToday} />
       <span class="rt-tile-info">
         <span class="rt-tile-name">{muscleLabel(r.muscle)}</span>
-        <span class="rt-tile-time">{tileText}</span>
+        <span class="rt-tile-time">
+          {nwParts(tileText).flatMap((part, i) => i === 0 ? [<span class="nw" key={i}>{part}</span>] : [' – ', <span class="nw" key={i}>{part}</span>])}
+        </span>
       </span>
     </button>
   );
@@ -224,8 +230,10 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
   const shown = openMuscle && frozenRef.current ? frozenRef.current : layout;
   const allMuscles = useMemo(() => [...shown.readyNow, ...shown.groups.flatMap(g => g.muscles)], [shown]);
   const longestName = useMemo(() => allMuscles.map(muscleLabel).reduce((a, b) => (b.length > a.length ? b : a), ''), [allMuscles]);
+  // QA7-6: the widest single unbreakable part ("10 pm", "midnight"), not the whole "10 pm –
+  // midnight" string — the fallback should only fire when one such part can't fit.
   const longestTime = useMemo(() => allMuscles
-    .map(m => { const r = byId.get(m)!; return shown.readyNow.includes(m) ? formatFullBy(now, r.fullInHours) : readyGroupFor(now, rtGroupInput(r)).tileText; })
+    .flatMap(m => { const r = byId.get(m)!; const t = shown.readyNow.includes(m) ? formatFullBy(now, r.fullInHours) : readyGroupFor(now, rtGroupInput(r)).tileText; return nwParts(t); })
     .reduce((a, b) => (b.length > a.length ? b : a), ''), [allMuscles, byId, now, shown]);
 
   // QA-O3: a muscle name or time that would overflow its 2-column tile switches the whole card
@@ -241,7 +249,10 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
       // QA7-2: a name may now wrap to 2 lines, so overflow can be either axis — a name still
       // too wide for its column (an unbreakable word), or too tall (would need a 3rd line).
       const nameOverflows = nameEl.scrollWidth > nameEl.clientWidth + 0.5 || nameEl.scrollHeight > nameEl.clientHeight + 1;
-      setOneColumn(nameOverflows || timeEl.scrollWidth > timeEl.clientWidth + 0.5 || timeEl.scrollHeight > timeEl.clientHeight + 1);
+      // QA7-6: only a single unbreakable time part failing to fit its own line counts — the
+      // combined "part – part" text is allowed (expected) to wrap onto 2 lines.
+      const timeOverflows = timeEl.scrollWidth > timeEl.clientWidth + 0.5;
+      setOneColumn(nameOverflows || timeOverflows);
     };
     probe();
     // rAF-deferred: measuring synchronously inside the callback can itself change layout
@@ -296,7 +307,7 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
             <span class="rt-ring-spacer" />
             <span class="rt-tile-info">
               <span class="rt-tile-name rt-probe-name">{longestName}</span>
-              <span class="rt-tile-time rt-probe-time">{longestTime}</span>
+              <span class="rt-tile-time rt-probe-time"><span class="nw">{longestTime}</span></span>
             </span>
           </div>
         </div>

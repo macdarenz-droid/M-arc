@@ -675,7 +675,9 @@ button.effort-bar-col[aria-pressed="true"] .effort-bar-stack { outline: 2px soli
 .rt-tile-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .rt-tile-full .rt-tile-info { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 8px; }
 .rt-tile-name { font-size: 14px; line-height: 18px; font-weight: 600; color: var(--text); overflow: hidden; white-space: normal; overflow-wrap: normal; max-height: 36px; }
-.rt-tile-time { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rt-tile-time { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: normal; max-height: 32px; overflow: hidden; }
+.rt-tile-time .nw { white-space: nowrap; }
+.rt-tile-full .rt-tile-time { white-space: nowrap; max-height: none; }
 .rt-detail-wrap { display: grid; grid-template-rows: 0fr; grid-column: 1 / -1; transition: grid-template-rows var(--dur-base) var(--ease-enter); }
 .rt-detail-wrap.open { grid-template-rows: 1fr; }
 .rt-detail-wrap > .rt-detail { overflow: hidden; }

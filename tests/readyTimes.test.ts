@@ -106,3 +106,23 @@ describe('formatFullBy', () => {
     expect(formatFullBy(Date.now(), null)).toBe('Ready');
   });
 });
+
+// QA7-6: a nowrap tileText overflowed its 2-column tile whenever it reached 16 characters
+// ("10 pm – midnight"). The UI fix lets it wrap after the dash instead; this guards the
+// underlying assumption that each side of the dash is short enough to sit on one line.
+describe('tile time text stays within the 2-column wrap budget', () => {
+  it('over a 24h sweep, tileText is at most 16 chars and each dash-separated part at most 8', () => {
+    const base = new Date(2026, 8, 26, 0, 0, 0).getTime();
+    const windows: Array<[number, number]> = [[0, 1], [0.5, 2], [1, 3], [2, 5], [3, 6], [5, 9], [8, 13]];
+    for (let h = 0; h < 24; h++) {
+      const now = base + h * 3_600_000;
+      for (const [lo, hi] of windows) {
+        const w = readyWindow(now, lo, hi);
+        expect(w.tileText.length, `${w.tileText} at hour ${h}, [${lo},${hi}]`).toBeLessThanOrEqual(16);
+        for (const part of w.tileText.split(' – ')) {
+          expect(part.length, `"${part}" in "${w.tileText}" at hour ${h}, [${lo},${hi}]`).toBeLessThanOrEqual(8);
+        }
+      }
+    }
+  });
+});
