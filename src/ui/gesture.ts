@@ -27,6 +27,13 @@ export function rubber(d: number): number {
   return RUBBER_MAX_PX * (1 - 1 / (1 + d / 80));
 }
 
+/** QA11-4: a sheet's body-drag (scrolled-to-top content, dragged down to close) must only engage
+ * for a genuinely vertical touch — a horizontal scroller, or a diagonal touch, at scrollTop 0
+ * must not get taken over just because dy happens to be positive. */
+export function isVerticalDrag(dy: number, dx: number): boolean {
+  return dy > 0 && dy > AXIS_RATIO * Math.abs(dx);
+}
+
 export interface TrackHandlers {
   /** The axis this drag is locked to once past slop. */
   axis: 'x' | 'y';

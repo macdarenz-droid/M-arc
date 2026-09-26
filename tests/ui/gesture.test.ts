@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rubber, RUBBER_MAX_PX } from '@/ui/gesture';
+import { isVerticalDrag, rubber, RUBBER_MAX_PX } from '@/ui/gesture';
 
 describe('rubber() (A3)', () => {
   it('is 0 at 0 distance', () => {
@@ -16,5 +16,17 @@ describe('rubber() (A3)', () => {
   });
   it('approaches RUBBER_MAX_PX asymptotically for a large pull', () => {
     expect(rubber(100000)).toBeGreaterThan(RUBBER_MAX_PX * 0.99);
+  });
+});
+
+describe('isVerticalDrag() (QA11-4)', () => {
+  it('rejects a mostly-horizontal touch even though dy is positive', () => {
+    expect(isVerticalDrag(2, 30)).toBe(false);
+  });
+  it('accepts a mostly-vertical downward touch', () => {
+    expect(isVerticalDrag(20, 2)).toBe(true);
+  });
+  it('rejects an upward touch regardless of axis dominance', () => {
+    expect(isVerticalDrag(-20, 2)).toBe(false);
   });
 });

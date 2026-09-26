@@ -7,7 +7,7 @@ import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -143,6 +143,7 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
     let bodyTouchId: number | null = null;
     let bodyDragging = false;
     let bodyStartY = 0;
+    let bodyStartX = 0;
     let bodySamples: { t: number; y: number }[] = [];
     const onPanelScroll = () => { lastScrollAt = Date.now(); top?.classList.toggle('scrolled', panel.scrollTop > 0); };
     const velocityOf = (now: number, y: number) => {
@@ -158,7 +159,7 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
       if ((e.target as HTMLElement).closest('.sheet-panel') !== panel) return;
       const t = e.touches[0];
       if (!t) return;
-      bodyTouchId = t.identifier; bodyStartY = t.clientY; bodyDragging = false; bodySamples = [{ t: performance.now(), y: t.clientY }];
+      bodyTouchId = t.identifier; bodyStartY = t.clientY; bodyStartX = t.clientX; bodyDragging = false; bodySamples = [{ t: performance.now(), y: t.clientY }];
     };
     const onTouchMove = (e: TouchEvent) => {
       if (bodyTouchId == null) return;
@@ -166,11 +167,14 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
       if (!t) return;
       const dy = t.clientY - bodyStartY;
       if (!bodyDragging) {
+        const dx = t.clientX - bodyStartX;
         const target = e.target as HTMLElement;
         const isFormEl = !!target.closest('input, textarea, select, [contenteditable]');
         const sel = typeof getSelection === 'function' ? getSelection() : null;
         const hasSelection = !!sel && sel.toString().length > 0;
-        if (panel.scrollTop <= 0 && dy > 0 && !isFormEl && !hasSelection && Date.now() - lastScrollAt >= SCROLL_LOCK_MS) bodyDragging = true;
+        // QA11-4: without a vertical-dominance check, a horizontal scroller (or a diagonal touch)
+        // at the panel's own scrollTop 0 got taken over as a close-drag.
+        if (panel.scrollTop <= 0 && isVerticalDrag(dy, dx) && !isFormEl && !hasSelection && Date.now() - lastScrollAt >= SCROLL_LOCK_MS) bodyDragging = true;
         else { bodyTouchId = null; return; }
       }
       e.preventDefault();
