@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { recovery, today, unit } from '@/app/selectors';
+import { minuteNow, recovery, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
-import { formatDay, formatHours } from '@/core/dates';
+import { addDays, dayKey, formatDay, formatFullAt, formatFullBy, formatHours, readyGroupFor } from '@/core/dates';
+import { durFor } from '@/ui/motion';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { navyBodyFat } from '@/core/bodyfat';
@@ -13,8 +14,10 @@ import { LIBRARY } from '@/core/exercises';
 import { exerciseHistory } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
+import type { MuscleRecovery } from '@/brain/recovery';
 import { bodyView, openPanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
+import { IconChevron } from '@/ui/icons';
 
 type View = 'recovery' | 'levels' | 'week';
 
@@ -38,8 +41,6 @@ export function Body() {
       ? Object.fromEntries(MUSCLES.map(m => [m.id, levels[m.id].levelIndex ? (levels[m.id].levelIndex / (LEVELS.length - 1)) * 100 : undefined]))
       : Object.fromEntries((Object.entries(weekSets) as Array<[MuscleId, number]>).map(([m, v]) => [m, (v / maxWeek) * 100]));
   const mode: MapMode = view === 'recovery' ? 'recovery' : 'emphasis';
-  const recovering = rec.filter(r => r.recovering).sort((a, b) => a.pct - b.pct);
-  const readyOnly = rec.filter(r => r.ready && r.pct < FULL_PCT && r.lastTrainedAt);
   const fullyRecovered = rec.filter(r => r.pct >= FULL_PCT && r.lastTrainedAt);
   const wholeBody = rec.find(r => r.systemicFactor > 1);
 
@@ -56,19 +57,8 @@ export function Body() {
 
       {view === 'recovery' && (
         <>
-          <Section title="Recovering" palace="body.recovering" aside={<span class="small muted">{recovering.length}</span>}>
-            <Card>
-              {!recovering.length && <p class="small muted">{readyOnly.length || fullyRecovered.length ? 'Everything you have trained is ready for hard work.' : 'Nothing logged yet.'}</p>}
-              <div class="list">{recovering.map(r => (
-                <Row key={r.muscle} onClick={() => setSelected(r.muscle)} trailing={<span class="hint num">{r.readyInHours ? `ready in ${formatHours(r.readyInHours[0])}–${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'sore today' : `${formatHours(r.hoursLeft)} left`}</span>}>
-                  <div class="row-between small"><span>{muscleLabel(r.muscle)}</span><span class="muted">{r.pct}% · {r.confidence}</span></div>
-                  <div class="bar" style={{ marginTop: 4 }}><i style={{ width: `${r.pct}%`, background: r.pct >= 75 ? 'var(--positive)' : r.pct >= 40 ? 'var(--warning)' : 'var(--negative)' }} /></div>
-                </Row>
-              ))}</div>
-            </Card>
-          </Section>
-          <Section title="Ready for hard work" palace="body.ready" aside={<span class="small muted">{readyOnly.length}</span>}>
-            <Card><div class="wrap">{readyOnly.map(r => <Chip key={r.muscle} onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)} · {r.pct}%</Chip>)}{!readyOnly.length && <span class="small muted">Muscles between ready and fully recovered show here.</span>}</div></Card>
+          <Section title="Ready times" palace="body.recovering" aside={<span class="small muted">{confidenceAside(rec)}</span>}>
+            <ReadyTimesCard rec={rec} setSelected={setSelected} />
           </Section>
           <Section title="Fully recovered" palace="body.full" aside={<span class="small muted">{fullyRecovered.length}</span>}>
             <Card><div class="wrap">{fullyRecovered.map(r => <Chip key={r.muscle} tone="positive" onClick={() => setSelected(r.muscle)}>{muscleLabel(r.muscle)}</Chip>)}{!fullyRecovered.length && <span class="small muted">Trained muscles show here once fully recovered.</span>}</div></Card>
@@ -104,6 +94,224 @@ export function Body() {
 
       <BodyFat />
     </div>
+  );
+}
+
+// O3: "Ready times" — the recovery list as ring tiles grouped by the day each muscle is ready.
+
+type RtGroupKey = 'today' | 'tomorrow' | 'later' | 'sore';
+interface RtGroup { key: RtGroupKey; label: string; muscles: MuscleId[] }
+interface RtLayout { readyNow: MuscleId[]; groups: RtGroup[] }
+
+const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hoursLeft: r.hoursLeft, soreToday: r.soreToday });
+
+/** The Section aside: a confidence summary across every muscle the card lists (Ready now + the day groups). */
+function confidenceAside(rec: MuscleRecovery[]): string | undefined {
+  const listed = rec.filter(r => r.lastTrainedAt && r.pct < FULL_PCT);
+  if (!listed.length) return undefined;
+  const first = listed[0]!.confidence;
+  const cap = first.charAt(0).toUpperCase() + first.slice(1);
+  return listed.every(r => r.confidence === first) ? `${cap} confidence` : 'Mixed confidence';
+}
+
+function buildRtLayout(rec: MuscleRecovery[], now: number): RtLayout {
+  const readyOnly = rec.filter(r => r.ready && r.pct < FULL_PCT && r.lastTrainedAt);
+  const recoveringList = rec.filter(r => r.recovering);
+  const withGroup = recoveringList.map(r => ({ r, g: readyGroupFor(now, rtGroupInput(r)) }));
+  const cmp = (a: typeof withGroup[number], b: typeof withGroup[number]) =>
+    a.g.latestMs - b.g.latestMs || a.g.earliestMs - b.g.earliestMs || b.r.pct - a.r.pct || muscleLabel(a.r.muscle).localeCompare(muscleLabel(b.r.muscle));
+  const byKey = (k: RtGroupKey) => withGroup.filter(x => x.g.group === k).sort(cmp).map(x => x.r.muscle);
+
+  const todayKey = dayKey(now);
+  const tomorrowKey = addDays(todayKey, 1);
+  const groups: RtGroup[] = [];
+  const push = (key: RtGroupKey, label: string) => { const muscles = byKey(key); if (muscles.length) groups.push({ key, label, muscles }); };
+  push('today', `Today · ${formatDay(todayKey, { weekday: 'short', day: 'numeric' })}`);
+  push('tomorrow', `Tomorrow · ${formatDay(tomorrowKey, { weekday: 'short', day: 'numeric' })}`);
+  push('later', 'Later');
+  push('sore', 'Sore today');
+
+  const readyNow = [...readyOnly]
+    .sort((a, b) => (a.fullInHours ?? Infinity) - (b.fullInHours ?? Infinity) || b.pct - a.pct || muscleLabel(a.muscle).localeCompare(muscleLabel(b.muscle)))
+    .map(r => r.muscle);
+
+  return { readyNow, groups };
+}
+
+/** 40px ring: an arc to READY_PCT (a full circle means ready), a tick at the ready mark, dashed track when sore. */
+function RtRing({ pct, sore }: { pct: number; sore?: boolean }) {
+  const C = 106.81; // 2 * PI * 17 (r=17)
+  const dash = (C * Math.min(pct, READY_PCT)) / READY_PCT;
+  const color = pct >= READY_PCT ? 'var(--positive)' : pct >= 75 ? 'var(--warning)' : 'var(--text-2)';
+  return (
+    <svg width="40" height="40" viewBox="0 0 40 40" class="rt-ring" aria-hidden="true">
+      <circle cx="20" cy="20" r="17" fill="none" stroke="var(--surface-3)" stroke-width="4" stroke-dasharray={sore ? '3.2 2.14' : undefined} />
+      {!sore && <circle cx="20" cy="20" r="17" fill="none" stroke={color} stroke-width="4" stroke-linecap="round" stroke-dasharray={`${dash} ${C}`} transform="rotate(-90 20 20)" />}
+      {!sore && pct < READY_PCT && <rect x="19" y="0" width="2" height="6" fill="var(--text)" />}
+      <text x="20" y="20" text-anchor="middle" dominant-baseline="central">{Math.round(pct)}</text>
+    </svg>
+  );
+}
+
+function RtTile({ r, now, group, full, expanded, onClick, tileRef }: {
+  r: MuscleRecovery; now: number; group: RtGroupKey | 'ready'; full: boolean; expanded: boolean;
+  onClick: () => void; tileRef: (el: HTMLButtonElement | null) => void;
+}) {
+  const tileText = group === 'ready' ? formatFullBy(now, r.fullInHours) : readyGroupFor(now, rtGroupInput(r)).tileText;
+  const windowLabel = group === 'ready' ? 'now' : tileText;
+  return (
+    <button type="button" ref={tileRef} class={`rt-tile ${full ? 'rt-tile-full' : ''} ${expanded ? 'open' : ''}`}
+      aria-expanded={expanded} aria-controls={`rt-detail-${r.muscle}`}
+      aria-label={`${muscleLabel(r.muscle)}, ${r.pct} percent, ready ${windowLabel}`}
+      onClick={onClick}>
+      <RtRing pct={r.pct} sore={!!r.soreToday} />
+      <span class="rt-tile-info">
+        <span class="rt-tile-name">{muscleLabel(r.muscle)}</span>
+        <span class="rt-tile-time">{tileText}</span>
+      </span>
+    </button>
+  );
+}
+
+/** The strip under a tapped line: name + status, the ready window, and the full time + confidence. Tapping it opens the muscle panel. */
+function RtDetail({ r, now, col, full, oneColumn, onOpen }: { r: MuscleRecovery; now: number; col: number; full: boolean; oneColumn: boolean; onOpen: () => void }) {
+  const headline = r.ready ? 'Ready' : r.soreToday && !r.readyInHours ? 'Sore today' : `${READY_PCT - r.pct}% to go`;
+  const readyLine = r.ready ? 'Ready now' : readyGroupFor(now, rtGroupInput(r)).detailText;
+  const fullLine = r.fullInHours != null ? `Full ${formatFullAt(now, r.fullInHours)}` : null;
+  const confidenceCap = r.confidence.charAt(0).toUpperCase() + r.confidence.slice(1);
+  const caretLeft = full || oneColumn || col === 0 ? '28px' : 'calc(50% + 28px)';
+  return (
+    <button type="button" class="rt-detail" id={`rt-detail-${r.muscle}`} onClick={onOpen}>
+      <span class="rt-caret" style={{ left: caretLeft }} aria-hidden="true" />
+      <span class="rt-detail-row1"><b>{muscleLabel(r.muscle)}</b><span class="muted">{headline}</span></span>
+      <span class="rt-detail-row2">{readyLine}</span>
+      <span class="rt-detail-row3">{[fullLine, `${confidenceCap} confidence`].filter((x): x is string => !!x).join(' · ')}</span>
+      <IconChevron class="rt-detail-chevron" size={16} />
+    </button>
+  );
+}
+
+function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelected: (m: MuscleId) => void }) {
+  const now = minuteNow.value;
+  const byId = useMemo(() => new Map(rec.map(r => [r.muscle, r] as const)), [rec]);
+  const layout = useMemo(() => buildRtLayout(rec, now), [rec, now]);
+
+  const [openMuscle, setOpenMuscle] = useState<MuscleId | null>(null);
+  const [openCol, setOpenCol] = useState(0);
+  const [renderedMuscle, setRenderedMuscle] = useState<MuscleId | null>(null);
+  const frozenRef = useRef<RtLayout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tileRefs = useRef(new Map<MuscleId, HTMLButtonElement>());
+  const [oneColumn, setOneColumn] = useState(false);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
+
+  // QA-O3: while a strip is open, the grouping/order is frozen so the grid never reshuffles
+  // under the finger; the numbers shown still come from the live `rec` on every minute tick.
+  useEffect(() => {
+    if (openMuscle) {
+      if (!frozenRef.current) frozenRef.current = layout;
+      setRenderedMuscle(openMuscle);
+      return;
+    }
+    frozenRef.current = null;
+    if (renderedMuscle == null) return undefined;
+    const t = setTimeout(() => setRenderedMuscle(null), durFor('base') + 20);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openMuscle]);
+
+  const shown = openMuscle && frozenRef.current ? frozenRef.current : layout;
+  const allMuscles = useMemo(() => [...shown.readyNow, ...shown.groups.flatMap(g => g.muscles)], [shown]);
+  const longestName = useMemo(() => allMuscles.map(muscleLabel).reduce((a, b) => (b.length > a.length ? b : a), ''), [allMuscles]);
+  const longestTime = useMemo(() => allMuscles
+    .map(m => { const r = byId.get(m)!; return shown.readyNow.includes(m) ? formatFullBy(now, r.fullInHours) : readyGroupFor(now, rtGroupInput(r)).tileText; })
+    .reduce((a, b) => (b.length > a.length ? b : a), ''), [allMuscles, byId, now, shown]);
+
+  // QA-O3: a muscle name or time that would overflow its 2-column tile switches the whole card
+  // to one column. Measured against a hidden 50%-width probe so it works in both directions
+  // (narrowing AND widening) regardless of the card's current column mode.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return undefined;
+    const probe = () => {
+      const nameEl = el.querySelector<HTMLElement>('.rt-probe-name');
+      const timeEl = el.querySelector<HTMLElement>('.rt-probe-time');
+      if (!nameEl || !timeEl) return;
+      // QA7-2: a name may now wrap to 2 lines, so overflow can be either axis — a name still
+      // too wide for its column (an unbreakable word), or too tall (would need a 3rd line).
+      const nameOverflows = nameEl.scrollWidth > nameEl.clientWidth + 0.5 || nameEl.scrollHeight > nameEl.clientHeight + 1;
+      setOneColumn(nameOverflows || timeEl.scrollWidth > timeEl.clientWidth + 0.5 || timeEl.scrollHeight > timeEl.clientHeight + 1);
+    };
+    probe();
+    // rAF-deferred: measuring synchronously inside the callback can itself change layout
+    // (setOneColumn re-renders), which trips the browser's "ResizeObserver loop" warning.
+    const ro = new ResizeObserver(() => requestAnimationFrame(probe));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [longestName, longestTime]);
+
+  const onTile = (muscle: MuscleId, col: number) => {
+    const el = tileRefs.current.get(muscle);
+    const before = el?.getBoundingClientRect().top;
+    setOpenMuscle(cur => (cur === muscle ? null : muscle));
+    setOpenCol(col);
+    if (before == null) return;
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
+      const after = tileRefs.current.get(muscle)?.getBoundingClientRect().top;
+      if (after == null) return;
+      const delta = after - before;
+      if (Math.abs(delta) > 0.5) window.scrollBy(0, delta);
+    }, durFor('base') + 30);
+  };
+
+  const renderLines = (muscles: MuscleId[], group: RtGroupKey | 'ready') => {
+    const lines: MuscleId[][] = [];
+    for (let i = 0; i < muscles.length; i += 2) lines.push(muscles.slice(i, i + 2));
+    return lines.map((line, li) => {
+      const lineHasOpen = renderedMuscle != null && line.includes(renderedMuscle);
+      return (
+        <div key={line.join('-')}>
+          {li > 0 && <div class="rt-divider" />}
+          <div class={`rt-line ${oneColumn ? 'one-col' : ''}`}>
+            {line.map((m, ci) => (
+              <RtTile key={m} r={byId.get(m)!} now={now} group={group} full={line.length === 1} expanded={openMuscle === m}
+                onClick={() => onTile(m, ci)} tileRef={el => { if (el) tileRefs.current.set(m, el); else tileRefs.current.delete(m); }} />
+            ))}
+          </div>
+          <div class={`rt-detail-wrap ${openMuscle != null && line.includes(openMuscle) ? 'open' : ''}`}>
+            {lineHasOpen && <RtDetail r={byId.get(renderedMuscle!)!} now={now} col={openCol} full={line.length === 1} oneColumn={oneColumn} onOpen={() => setSelected(renderedMuscle!)} />}
+          </div>
+        </div>
+      );
+    });
+  };
+
+  return (
+    <Card style={{ padding: '0 4px 4px' }}>
+      <div ref={containerRef} class="rt-card-body">
+        <div class="rt-probe" aria-hidden="true">
+          <div class="rt-tile">
+            <span class="rt-ring-spacer" />
+            <span class="rt-tile-info">
+              <span class="rt-tile-name rt-probe-name">{longestName}</span>
+              <span class="rt-tile-time rt-probe-time">{longestTime}</span>
+            </span>
+          </div>
+        </div>
+        <div data-palace="body.ready">
+          <div class="rt-group-head"><span>Ready now</span><span class="muted">{shown.readyNow.length || 'None yet'}</span></div>
+          {renderLines(shown.readyNow, 'ready')}
+        </div>
+        {shown.groups.map(g => (
+          <div key={g.key}>
+            <div class="rt-group-head"><span>{g.label}</span><span class="muted">{g.muscles.length}</span></div>
+            {renderLines(g.muscles, g.key)}
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 
