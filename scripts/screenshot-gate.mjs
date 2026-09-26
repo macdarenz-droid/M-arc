@@ -396,6 +396,7 @@ for (const theme of themes) {
     });
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav');
+    await launchGone(page);
     await page.waitForTimeout(300);
     await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
     await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -451,6 +452,7 @@ for (const theme of themes) {
   });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
+  await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -503,6 +505,7 @@ for (const theme of themes) {
   });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
+  await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -564,6 +567,7 @@ for (const theme of themes) {
   });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
+  await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -603,6 +607,7 @@ for (const theme of themes) {
   });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
+  await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -666,6 +671,7 @@ for (const theme of themes) {
       }, theme);
       await page.goto(`http://localhost:${PORT}/`);
       await page.waitForSelector('.nav');
+      await launchGone(page);
       await page.waitForTimeout(300);
       await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
       await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -721,6 +727,7 @@ for (const theme of themes) {
   });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav');
+  await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
