@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
-  addSet, adjustRest, commitSet, commitSetById, finishSession, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel, removeEntry,
+  addSet, adjustRest, commitSet, commitSetById, finishSession, isCommitted, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel, removeEntry,
   resolveSessionTiming, setSet, skipEntry, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
 import { deleteSplit } from '@/slices/workout/splits';
@@ -113,6 +113,13 @@ describe('commit-once sets (UI-01)', () => {
     for (const k of ['at', 'restSec', 'fidelity', 'heart', 'flags', 'effort', 'status'] as const) expect(added[k]).toBeUndefined();
     expect(added.id).toBeTruthy();
     expect(added.id).not.toBe(a().entries[1]!.sets[0]!.id);
+  });
+  it('F7: isCommitted follows the real commit, not just a filled-in draft', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 });
+    expect(isCommitted(a().entries[0]!.sets[0]!)).toBe(false);
+    commitSet(0, 0);
+    expect(isCommitted(a().entries[0]!.sets[0]!)).toBe(true);
   });
 });
 

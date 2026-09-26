@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { HeartBpm, PulseLine } from '@/ui/PulseLine';
 import { useReorder } from './reorder';
@@ -13,7 +13,7 @@ import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
-import { formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
+import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
 import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/brain/bodyweight';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
@@ -24,7 +24,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -47,6 +47,10 @@ import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { haptic } from '@/native/haptics';
+import { durFor } from '@/ui/motion';
+import { celebrateOnce } from './celebrate';
+import { isNative } from '@/native/capacitor';
 
 const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> = [
   { v: 'easy', l: 'E', title: 'Easy: 3 or more reps left' },
@@ -66,6 +70,37 @@ const startingSplit = signal<Split | null>(null);
 export function requestStart(split: Split): void { startingSplit.value = split; }
 /** "Skip" on the check-in sheet, so it doesn't reappear for the rest of this app session. */
 const checkInDismissed = signal(false);
+/** A9: the open card's next set to do, "62.5 kg × 8" (the exact A1 label), for the rest banner. */
+export const nextUpHint = signal<string | null>(null);
+
+/** A1/A8/A9: the kg placeholder a set's input shows — today's target, else last time's, else 'bw'. */
+export function targetKgPh(target: { kg: number | null } | undefined, prev: { kg?: number | null } | null | undefined, eu: LoadUnit, mode: string): string {
+  if (target?.kg != null) return String(kgToDisplay(target.kg, eu));
+  if (prev?.kg != null) return String(kgToDisplay(prev.kg, eu));
+  return mode === 'bodyweight' ? 'bw' : '';
+}
+/** A1/A8/A9: the reps placeholder a set's input shows — today's target, else last time's. */
+export function targetRepsPh(target: { reps: number | null } | undefined, prev: { reps?: number | null } | null | undefined): string {
+  return String(target?.reps ?? prev?.reps ?? '');
+}
+/** A1/A9: the exact text for a set that can be tapped to fill-and-log itself ("62.5 kg × 8", or
+ * "8 reps" for bodyweight/no load). Null when there is no reps target to show at all. */
+export function nextUpCore(kgPh: string, unitLabel: string, repsPh: string): string | null {
+  if (!repsPh) return null;
+  return !kgPh || kgPh === 'bw' ? `${repsPh} reps` : `${kgPh} ${unitLabel} × ${repsPh}`;
+}
+/** A1: whether a set is a standing candidate for "Log as planned" — has something to log, isn't
+ * logged yet, and isn't a warm-up (warm-ups are optional and never auto-filled). The first such
+ * set on the card, in order, is the one that gets the fill-row. */
+export function isNextUpCandidate(core: string | null, committed: boolean, kind: LoggedSet['kind']): boolean {
+  return core != null && !committed && kind !== 'warmup';
+}
+/** A8: the field after `current` in `fields` (DOM order), or null past the last one — Enter then
+ * blurs instead, which commits the reps field the same as tapping away. */
+export function nextSetField<T>(fields: readonly T[], current: T): T | null {
+  const i = fields.indexOf(current);
+  return i >= 0 && i + 1 < fields.length ? fields[i + 1]! : null;
+}
 
 export function Train() {
   const s = state.value;
@@ -328,7 +363,7 @@ function LiveSession() {
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
-          <Button variant="solid" size="sm" onClick={() => setFinishing(true)}>Finish</Button>
+          <Button size="sm" class="tap" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
       </div>
 
@@ -448,6 +483,17 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
   const flip = () => setExerciseUnit(entry.exerciseId, eu === 'kg' ? 'lb' : 'kg');
   const flipGroup = () => { if (ex) { const g = equipmentGroup(ex.equipment); setEquipmentUnit(g, eu === 'kg' ? 'lb' : 'kg'); showToast(`${eu === 'kg' ? 'lb' : 'kg'} for all ${g} here`); } };
+  // A8: Enter moves kg -> reps -> the next set's kg, in DOM order; past the last field it blurs
+  // (the reps field's blur already commits, same as tapping away).
+  const onSetFieldKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== 'Enter' || e.isComposing) return;
+    e.preventDefault();
+    const target = e.target as HTMLInputElement;
+    const root = target.closest('.exercise');
+    const fields = root ? [...root.querySelectorAll<HTMLElement>('[data-set-field]')] : [];
+    const next = nextSetField(fields, target as HTMLElement);
+    if (next) next.focus(); else target.blur();
+  };
   const [subOpen, setSubOpen] = useState(false);
   const logged = entry.sets.filter(isWorkingSet).length;
   const isTimed = mode === 'duration';
@@ -478,6 +524,39 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     setMenu(false);
   };
 
+  // F9: a PR pops in once, the moment its set commits — never again on remount (a tab switch).
+  const seenPrRef = useRef<Set<string> | null>(null);
+  const [popIds, setPopIds] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    const committedPrIds = entry.sets.filter((set, j) => perSet[j]?.pr && isCommitted(set) && set.id).map(set => set.id!);
+    if (!seenPrRef.current) { seenPrRef.current = new Set(committedPrIds); return; }
+    const freshIds = committedPrIds.filter(id => !seenPrRef.current!.has(id));
+    if (!freshIds.length) return;
+    for (const id of freshIds) seenPrRef.current.add(id);
+    setPopIds(prev => new Set([...prev, ...freshIds]));
+    const t = setTimeout(() => setPopIds(prev => { const next = new Set(prev); for (const id of freshIds) next.delete(id); return next; }), durFor('bounce'));
+    if (s.active && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
+    return () => clearTimeout(t);
+  }, [entry.sets, perSet]);
+
+  // A9: while this card is open, tell the rest banner what the next set to do is.
+  useEffect(() => {
+    if (!open || isTimed || mode === 'conditioning') { if (open) nextUpHint.value = null; return undefined; }
+    let warmups = 0;
+    let core: string | null = null;
+    for (let j = 0; j < entry.sets.length; j++) {
+      const set = entry.sets[j]!;
+      if (set.kind === 'warmup') { warmups++; continue; }
+      if (isCommitted(set)) continue;
+      const wj = j - warmups;
+      const target = next.sets[Math.min(wj, next.sets.length - 1)];
+      core = nextUpCore(targetKgPh(target, perSet[j]!.prev, eu, mode), eu, targetRepsPh(target, perSet[j]!.prev));
+      break;
+    }
+    nextUpHint.value = core;
+    return () => { nextUpHint.value = null; };
+  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
+
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
       <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
@@ -495,12 +574,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
-            <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <a onClick={() => setSubOpen(true)}>See substitutes</a> or ease off today.</p>
+            <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
           {cue && <p class="hint muted">{cue.text}</p>}
           {warmup && (
             <div class="warmup">
-              <button type="button" class="btn btn-quiet btn-sm" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
+              <button type="button" class="btn btn-quiet btn-sm tap" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
               {warmupOpen && (
                 <div class="list" style={{ marginTop: 4 }}>
                   {warmup.map((st, i) => <Row key={i} trailing={<span class="hint num">{formatLoadable(loadableNear(st.kg, profile))} × {st.reps}</span>}><span class="small muted">Warm-up {i + 1}</span></Row>)}
@@ -512,21 +591,27 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           )}
           {bwHint && <p class="hint">{bwHint}</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
-          {entry.sets.map((set, j) => {
+          {(() => { let nextUpFound = false; return entry.sets.map((set, j) => {
             const { prev, pr } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
             const target = set.kind === 'warmup' ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
+            // A1: the first not-yet-logged, non-warmup working set on this card can be tapped to
+            // fill and log itself with exactly the values its own placeholders show.
+            const core = !isTimed && mode !== 'conditioning' ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
+            const isNextUp = !nextUpFound && isNextUpCandidate(core, isCommitted(set), set.kind);
+            if (isNextUp) nextUpFound = true;
+            const lastHint = prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
             return (
               <div key={j}>
-                <div class={`set-grid ${isTimed ? 'duration' : ''}`}>
-                  <button type="button" class={`set-index set-kind ${set.kind ?? ''}`} aria-label={`Set ${j + 1} options`} onClick={() => setSetMenuAt(j)}>{set.kind === 'warmup' ? 'W' : set.kind === 'drop' ? 'D' : set.kind === 'failure' ? 'F' : j + 1}</button>
+                <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`}>
+                  <button type="button" class={`set-index set-kind ${set.kind ?? ''} ${isCommitted(set) ? 'committed' : ''}`} aria-label={isCommitted(set) ? `Set ${j + 1}, logged. Options` : `Set ${j + 1} options`} onClick={() => setSetMenuAt(j)}>{isCommitted(set) && set.kind !== 'warmup' && set.kind !== 'drop' && set.kind !== 'failure' ? <IconCheck size={16} /> : set.kind === 'warmup' ? 'W' : set.kind === 'drop' ? 'D' : set.kind === 'failure' ? 'F' : j + 1}</button>
                   {isTimed ? (
                     <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={target?.kg != null ? String(kgToDisplay(target.kg, eu)) : prev?.kg != null ? String(kgToDisplay(prev.kg, eu)) : mode === 'bodyweight' ? 'bw' : ''} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} />
-                      <input type="number" inputMode="numeric" placeholder={String(target?.reps ?? prev?.reps ?? '')} value={set.reps ?? ''} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
+                      <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
@@ -537,13 +622,25 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     if (live?.rest && set.id && latestCommittedSetId(live) === set.id) setRestEffort(effort);
                   }}>{ef.l}</button>)}</div>
                 </div>
-                <div class="row-between" style={{ marginTop: 2 }}>
-                  <span class="hint">{prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? ''}</span>
-                  <span class="row" style={{ gap: 6 }}>
-                    {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                    {pr && <span class="pr-badge"><IconTrophy size={12} /> Record</span>}
-                  </span>
-                </div>
+                {isNextUp ? (
+                  <button type="button" class="row-between fill-row" style={{ marginTop: 2 }} data-palace="train.log-planned" aria-label={`Log ${core}`} onClick={() => {
+                    const kgNum = target?.kg ?? prev?.kg;
+                    const v = kgNum != null && set.kg == null && mode !== 'bodyweight' ? enteredLoad(kgToDisplay(kgNum, eu), eu) : null;
+                    setSet(index, j, { ...(v ? { kg: v.kg, entered: v.entered } : {}), ...(set.reps == null ? { reps: target?.reps ?? prev?.reps } : {}) });
+                    commitSet(index, j);
+                  }}>
+                    <span class="hint">{lastHint}</span>
+                    <span class="row" style={{ gap: 6, color: 'var(--text-2)' }}><span class="num">Log {core}</span><IconCheck size={16} /></span>
+                  </button>
+                ) : (
+                  <div class="row-between" style={{ marginTop: 2 }}>
+                    <span class="hint">{lastHint}</span>
+                    <span class="row" style={{ gap: 6 }}>
+                      {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
+                      {pr && isCommitted(set) && <span class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> PR</span>}
+                    </span>
+                  </div>
+                )}
                 {mode === 'conditioning' && (
                   // UI-20: carries and sled work log distance and time next to load and reps.
                   <div class="row conditioning-extra" style={{ gap: 8, marginTop: 4 }}>
@@ -554,12 +651,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                 <SuspectChip set={set} best={best} dismissKey={`${s.active?.startedAt}|${entry.exerciseId}|${j}|${set.kg}`} onFix={alt => { setSet(index, j, { kg: alt.kg, entered: { value: alt.value, unit: alt.unit } }); setExerciseUnit(entry.exerciseId, alt.unit, 'suspect_fix'); }} />
               </div>
             );
-          })}
+          }); })()}
           <div class="row">
-            <Button variant="quiet" size="sm" onClick={() => addSet(index)}><IconPlus size={14} /> Set</Button>
-            <Button variant="quiet" size="sm" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={14} /> Set</Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Add set" onClick={() => addSet(index)}><IconPlus size={20} /></Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
             <span class="grow" />
-            <Button variant={entry.done ? 'default' : 'solid'} size="sm" onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
+            <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
           </div>
         </div>
       )}
@@ -879,47 +976,140 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   );
 }
 
+/** I1: the rest bar's WAAPI keyframes — starts at the fraction of totalSec already elapsed, always ends full. */
+export function restBarKeyframes(remainingMs: number, totalSec: number): [string, string] {
+  const p0 = totalSec > 0 ? 1 - remainingMs / (totalSec * 1000) : 1;
+  return [`translateX(${(p0 - 1) * 100}%)`, 'translateX(0)'];
+}
+
+/** I1: what the banner shows; kept in a ref through the ~200ms exit animation, since `a.rest` is already gone by then. */
+interface RestFrame { done: boolean; clockText: string; hintText: string }
+
 export function RestBanner() {
   const s = state.value;
   const a = s.active;
-  useEffect(() => (a?.rest ? acquireTicker() : undefined), [!!a?.rest]);
-  if (!a?.rest) return null;
-  const now = nowMs.value;
-  const remaining = restRemainingSec(a, now) ?? 0;
-  const timeDone = remaining <= 0;
+  const rest = a?.rest;
+  useEffect(() => (rest ? acquireTicker() : undefined), [!!rest]);
 
-  // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
-  const heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && a.rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
-  let heartReady = false;
-  let currentBpm: number | undefined;
-  let targetBpm: number | undefined;
-  if (heartMode) {
-    const restingBpm = restingHr(s.healthDays, s.profile, today.value);
-    if (restingBpm != null) {
-      const elapsedSec = Math.max(0, a.rest.totalSec - remaining);
-      const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: a.rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: a.rest.effort, elapsedSec });
-      heartReady = r.ready;
-      targetBpm = r.readyBpm;
-      currentBpm = latestMeasurement.value?.bpm;
-    }
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const lastFrame = useRef<RestFrame | null>(null);
+  const lastTickSec = useRef<number | null>(null);
+  const lastGoEndsAt = useRef<number | null>(null);
+  const [wasResting, setWasResting] = useState(!!rest);
+  const [leaving, setLeaving] = useState(false);
+  const [goPulse, setGoPulse] = useState(false);
+
+  // I1.1: catch the resting -> not-resting edge during this render (not in an effect), so the
+  // banner never renders null for a frame between the rest ending and the exit animation starting.
+  if (!!rest !== wasResting) {
+    setWasResting(!!rest);
+    setLeaving(!rest);
   }
-  const done = timeDone || heartReady;
-  const pct = a.rest.totalSec ? Math.min(100, 100 - (remaining / a.rest.totalSec) * 100) : 100;
-  const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
+
+  let frame: RestFrame | null = null;
+  let remaining = 0;
+  let done = false;
+  let heartMode = false;
+  if (rest && a) {
+    // F6: nowMs can still be a hair stale on the first frame (acquireTicker resolves in an
+    // effect, after paint). Clamp both ends so remaining never reads over total or under zero.
+    const now = Math.max(nowMs.value, Date.now());
+    remaining = Math.min(rest.totalSec, restRemainingSec(a, now) ?? 0);
+    const timeDone = remaining <= 0;
+    // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
+    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
+    let heartReady = false;
+    let currentBpm: number | undefined;
+    let targetBpm: number | undefined;
+    if (heartMode) {
+      const restingBpm = restingHr(s.healthDays, s.profile, today.value);
+      if (restingBpm != null) {
+        const elapsedSec = Math.max(0, rest.totalSec - remaining);
+        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
+        heartReady = r.ready;
+        targetBpm = r.readyBpm;
+        currentBpm = latestMeasurement.value?.bpm;
+      }
+    }
+    done = timeDone || heartReady;
+    const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
+    frame = {
+      done,
+      clockText: done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining),
+      // A9: the open card's next set, when there is one to show.
+      hintText: done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : nextUpHint.value ? `Next · ${nextUpHint.value}` : `Rest · ${formatClock(rest.totalSec)}`,
+    };
+    lastFrame.current = frame;
+  }
+
+  // I1.4: a tick at 3, 2, 1 seconds left (timer mode; heart mode has no countdown to tick).
+  const secLeft = rest && !done && !heartMode ? Math.ceil(remaining) : null;
+  useEffect(() => {
+    if (secLeft != null && secLeft !== lastTickSec.current && (secLeft === 3 || secLeft === 2 || secLeft === 1)) void haptic.tick();
+    lastTickSec.current = secLeft;
+  }, [secLeft]);
+
+  // I1.3: the card swells once and, on the web (native's own scheduled notification already
+  // vibrates), the phone gets a distinct alert — once per rest, only while the tab is visible.
+  useEffect(() => {
+    if (!rest || !done || document.visibilityState !== 'visible' || lastGoEndsAt.current === rest.endsAt) return;
+    lastGoEndsAt.current = rest.endsAt;
+    if (!isNative()) void haptic.alert();
+    setGoPulse(true);
+    const t = setTimeout(() => setGoPulse(false), durFor('bounce'));
+    return () => clearTimeout(t);
+  }, [rest?.endsAt, done]);
+
+  // I1.1: the exit animation plays for durFor('exit')+40ms, then the banner unmounts.
+  useEffect(() => {
+    if (!leaving) return;
+    const t = setTimeout(() => setLeaving(false), durFor('exit') + 40);
+    return () => clearTimeout(t);
+  }, [leaving]);
+
+  // I1.2: the bar glides continuously via WAAPI, rebuilt only when the rest actually changes
+  // (start, ±15, pause/resume) or the moment it finishes — never stepped once a second.
+  useEffect(() => {
+    const i = barRef.current;
+    if (!rest || !i) return undefined;
+    const ms = rest.endsAt - Date.now();
+    const [from, to] = restBarKeyframes(ms, rest.totalSec);
+    const anim = i.animate([{ transform: from }, { transform: to }], { duration: Math.max(0, ms), easing: 'linear', fill: 'forwards' });
+    if (a?.pausedAt) anim.pause();
+    return () => anim.cancel();
+  }, [rest?.endsAt, rest?.totalSec, !!a?.pausedAt, done]);
+
+  // I1.6: reserve space for the banner, so it never sits over the last button, a toast or the dock.
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-rest', !!rest);
+    if (!rest) { document.documentElement.style.removeProperty('--rest-h'); return undefined; }
+    const el = rootRef.current;
+    if (!el) return undefined;
+    const sync = () => document.documentElement.style.setProperty('--rest-h', `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [!!rest]);
+  useEffect(() => () => { document.documentElement.toggleAttribute('data-rest', false); document.documentElement.style.removeProperty('--rest-h'); }, []);
+
+  const shown = frame ?? (leaving ? lastFrame.current : null);
+  if (!shown) return null;
   return (
-    <div class={`rest ${done ? 'done' : ''}`}>
+    <div ref={rootRef} class={`rest ${shown.done ? 'done' : ''} ${leaving ? 'leaving' : ''} ${goPulse ? 'go' : ''}`}>
       {/* UI-26: announced once when rest ends, not every second of the countdown. */}
-      <span class="sr-only" aria-live="polite">{done ? 'Rest done' : ''}</span>
+      <span class="sr-only" aria-live="polite">{shown.done ? 'Rest done' : ''}</span>
       <div>
-        <div class="clock">{done ? 'Go' : showBpm ? `${currentBpm} → ${targetBpm}` : formatClock(remaining)}</div>
-        <div class="hint">{done ? 'Rest done. Next set.' : showBpm ? 'Resting until heart rate settles' : `Rest · ${formatClock(a.rest.totalSec)}`}</div>
+        <div class="clock">{shown.clockText}</div>
+        <div class="hint">{shown.hintText}</div>
         {/* QA3-1: Android has firmly denied notifications, so no alert is coming for this rest. */}
         {restAlertsDenied.value && <div class="hint danger-text">Rest alerts are off — Settings → Precise rest alerts</div>}
       </div>
-      <div class="grow"><div class="bar"><i style={{ width: `${pct}%`, background: done ? 'var(--positive)' : undefined }} /></div></div>
-      {!done && <Button variant="quiet" size="sm" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
-      {!done && <Button variant="quiet" size="sm" aria-label="More rest" onClick={() => adjustRest(15)}>+15</Button>}
-      <Button size="sm" onClick={() => stopRest()}>{done ? 'OK' : 'Skip'}</Button>
+      <div class="grow"><div class="bar"><i ref={barRef} /></div></div>
+      {!shown.done && <Button variant="quiet" class="rest-btn" aria-label="Less rest" onClick={() => adjustRest(-15)}>-15</Button>}
+      {!shown.done && <Button variant="quiet" class="rest-btn" aria-label="More rest" onClick={() => adjustRest(15)}>+15</Button>}
+      <Button class="rest-btn" onClick={() => stopRest()}>{shown.done ? 'OK' : 'Skip'}</Button>
     </div>
   );
 }
