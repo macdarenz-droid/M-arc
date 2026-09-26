@@ -6,6 +6,7 @@ import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
+import { HOLD_CONFIRM_MS } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -103,6 +104,83 @@ export function CommitNumber({ value, min, max, integer, onCommit, ...rest }: { 
     if (v !== value) onCommit(v);
   };
   return <input {...rest} type="text" inputMode={integer ? 'numeric' : 'decimal'} value={text} onFocus={() => { focused.current = true; }} onInput={e => setText((e.target as HTMLInputElement).value)} onBlur={commit} onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />;
+}
+
+/**
+ * F10: a destructive action that fills in as you hold it, instead of a grey system confirm() —
+ * so it's undoable-by-intent (you can let go before it fires) rather than a modal to dismiss.
+ * Twin for TalkBack/keyboard-without-hold: a tap arms "Tap again to confirm" for 3s, a second
+ * tap within that window confirms. No app-state imports beyond haptics — this also backs the
+ * error boundary, which must render after a crash regardless of app state.
+ */
+export function HoldButton({ label, onConfirm, ms = HOLD_CONFIRM_MS, size, class: cls = '' }: {
+  label: string; onConfirm: () => void; ms?: number; size?: 'sm'; class?: string;
+}) {
+  const [holding, setHolding] = useState(false);
+  const [armed, setArmed] = useState(false);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdCompleted = useRef(false);
+  const armedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (holdTimer.current) clearTimeout(holdTimer.current); if (armedTimer.current) clearTimeout(armedTimer.current); }, []);
+
+  const startHold = () => {
+    if (holdTimer.current) return;
+    holdCompleted.current = false;
+    setHolding(true);
+    holdTimer.current = setTimeout(() => {
+      holdTimer.current = null;
+      holdCompleted.current = true;
+      setHolding(false);
+      try { void haptic.confirm(); } catch { /* haptics unavailable */ }
+      onConfirm();
+    }, ms);
+  };
+  const cancelHold = () => {
+    if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+    setHolding(false);
+  };
+  /** A tap too short to complete the hold: TalkBack's synthesized click (detail 0), or a real
+   * keyboard tap of Enter/Space (keydown's preventDefault below stops the browser's own click for
+   * those, so this is the only path for them) — arms "Tap again to confirm" for 3s; a second tap
+   * within that window confirms. */
+  const armTap = () => {
+    if (armedTimer.current) { clearTimeout(armedTimer.current); armedTimer.current = null; }
+    if (armed) {
+      setArmed(false);
+      try { void haptic.confirm(); } catch { /* haptics unavailable */ }
+      onConfirm();
+    } else {
+      setArmed(true);
+      armedTimer.current = setTimeout(() => setArmed(false), 3000);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      class={`btn btn-danger hold ${holding ? 'holding' : ''} ${size ? `btn-${size}` : ''} ${cls}`}
+      style={{ '--hold-ms': `${ms}ms` }}
+      aria-label={armed ? 'Tap again to confirm' : `${label}, press and hold`}
+      onPointerDown={startHold}
+      onPointerUp={cancelHold}
+      onPointerLeave={cancelHold}
+      onPointerCancel={cancelHold}
+      onKeyDown={e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); startHold(); } }}
+      onKeyUp={e => {
+        if (e.key !== ' ' && e.key !== 'Enter') return;
+        // A full hold already confirmed via the timer; nothing else to do on release.
+        if (holdCompleted.current) { holdCompleted.current = false; return; }
+        cancelHold();
+        armTap();
+      }}
+      onClick={e => {
+        // A synthesized activation (TalkBack) carries no pointer, so detail is 0. A real keyboard
+        // tap is handled by onKeyUp instead (preventDefault in onKeyDown stops its own click).
+        if (e.detail !== 0) return;
+        armTap();
+      }}
+    >{armed ? 'Tap again to confirm' : label}</button>
+  );
 }
 
 export function Empty({ icon, title, children, action }: { icon?: ComponentChildren; title: string; children?: ComponentChildren; action?: ComponentChildren }) {

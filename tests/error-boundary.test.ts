@@ -28,10 +28,12 @@ const texts = (n: unknown): string[] => {
 describe('the error card (QA-R1-8)', () => {
   it('offers a reset, so a crash on every render has a way out', () => {
     const b = new ErrorBoundary({});
-    b.state = { error: new Error('x') };
+    b.state = { error: new Error('x'), holding: false, armed: false };
     const out = texts(b.render());
     expect(out).toContain('button:Reload');
-    expect(out).toContain('button:Reset app data');
+    expect(out).toContain('button:Hold to delete everything');
+    // QA10-4: the hold button alone doesn't say what it deletes.
+    expect(out).toContain('Deletes every workout on this device. Save a copy first if unsure.');
   });
   it('the reset clears storage and the photo database', async () => {
     const clear = vi.fn();

@@ -7,7 +7,7 @@ import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
-import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
@@ -24,12 +24,12 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
-import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
+import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, insertExerciseInSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
@@ -46,9 +46,9 @@ import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
-import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { firstWorkingSet, hasEntry, isWorkingSet, workingIndex } from '@/brain/exposure';
 import { haptic } from '@/native/haptics';
-import { durFor } from '@/ui/motion';
+import { durFor, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
 import { isNative } from '@/native/capacitor';
 
@@ -62,6 +62,9 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
 const lastFinish = signal<FinishSummary | null>(null);
 /** Set instead of lastFinish when the just-saved session looks logged after training. */
 const pendingTimeQuestion = signal<FinishSummary | null>(null);
+/** I5: whether Train is currently showing the finish sheet/screen, so the coach dock (which would
+ * otherwise reappear once `active` clears) stays hidden until Done is tapped. */
+export const finishShowing = computed(() => !!lastFinish.value || !!pendingTimeQuestion.value);
 /** Set when the user taps "Log a past session" from the split list. */
 const loggingPast = signal<Split | null>(null);
 /** Set when the user taps "Start" — shows the check-in (if not done today) then the pre-session brief before the timer begins. */
@@ -315,7 +318,7 @@ function SplitEditor({ split, onClose, onDeleted }: { split: Split; onClose: () 
                   <span class="num small" style={{ minWidth: 44, textAlign: 'center' }}>{se.sets} sets</span>
                   <Button variant="quiet" class="btn-icon" aria-label="More sets" onClick={() => setSplitSets(split.id, se.exerciseId, se.sets + 1)}><IconPlus size={16} /></Button>
                   <Button variant="quiet" class="btn-icon" aria-label="Move up" disabled={i === 0} onClick={() => moveExercise(split.id, i, i - 1)}><IconChevronDown size={16} style={{ transform: 'rotate(180deg)' }} /></Button>
-                  <Button variant="quiet" class="btn-icon" aria-label="Remove" onClick={() => removeExerciseFromSplit(split.id, se.exerciseId)}><IconTrash size={16} /></Button>
+                  <Button variant="quiet" class="btn-icon" aria-label="Remove" onClick={() => { removeExerciseFromSplit(split.id, se.exerciseId); showToast('Removed', 'Undo', () => insertExerciseInSplit(split.id, i, se)); }}><IconTrash size={16} /></Button>
                 </div>
               </div>
             );
@@ -353,25 +356,61 @@ function LiveSession() {
   useEffect(() => acquireTicker(), []);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
+  // A2: the fraction of planned working sets already committed, for the sticky header's hairline.
+  const planned = a.entries.filter(e => !e.skipped).flatMap(e => e.sets).filter(x => x.kind !== 'warmup');
+  const progress = planned.filter(x => isCommitted(x) && isWorkingSet(x)).length / (planned.length || 1);
+  const liveTopRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = liveTopRef.current;
+    if (!el) return undefined;
+    const sync = () => document.documentElement.style.setProperty('--live-top-h', `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => { ro.disconnect(); document.documentElement.style.removeProperty('--live-top-h'); };
+  }, []);
+  // I2: once the next card has unfolded (or after a timeout, if it never does), glide the page so
+  // it sits just under the sticky header — never while a keyboard could be about to pop up.
+  const scrollToEntry = (i: number) => {
+    if (i < 0) return;
+    requestAnimationFrame(() => {
+      const body = document.querySelector<HTMLElement>(`[data-entry-index="${i}"] .ex-body`);
+      const go = () => document.querySelector(`[data-entry-index="${i}"] .exercise`)?.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
+      if (!body) { setTimeout(go, durFor('enter') + 60); return; }
+      let done2 = false;
+      const onEnd = (e: TransitionEvent) => { if (e.target === body && e.propertyName === 'grid-template-rows') { done2 = true; body.removeEventListener('transitionend', onEnd); go(); } };
+      body.addEventListener('transitionend', onEnd);
+      setTimeout(() => { if (!done2) { body.removeEventListener('transitionend', onEnd); go(); } }, durFor('enter') + 60);
+    });
+  };
 
   return (
     <div class="view">
       {liveBpm.value != null && <PulseLine bpm={liveBpm.value} />}
-      <div class="topbar" data-palace="train.start">
-        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><LiveClock a={a} /><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
+      <div class="topbar">
+        <div><div class="eyebrow">{a.pausedAt ? 'Paused' : 'Live'}</div><span class="hint">{split?.name ?? 'Workout'} · {done}/{a.entries.length} done</span></div>
+      </div>
+      {/* A2: a compact bar (clock left, controls right) that stays put once the list scrolls under it,
+          with a hairline underneath that fills as working sets get logged. */}
+      <div class="topbar live-top" ref={liveTopRef} data-palace="train.start">
+        <div class="live-clock-wrap">
+          <span class="live-dot" style={{ background: a.pausedAt ? 'var(--text-2)' : 'var(--accent)' }} />
+          <LiveClock a={a} />
+        </div>
         <div class="row">
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
           <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
           <Button size="sm" class="tap" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
+        <div class="live-progress" aria-hidden="true"><i class={progress >= 1 ? 'full' : ''} style={{ transform: `scaleX(${progress})` }} /></div>
       </div>
 
       <div class="stack">
         <div class={`stack reorder-list${reorder.dragging ? ' dragging' : ''}`} ref={reorder.listRef}>
           {a.entries.map((entry, i) => (
-            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
-              <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} />
+            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" data-entry-index={i} style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
+              <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); scrollToEntry(next); }} />
             </div>
           ))}
         </div>
@@ -385,14 +424,14 @@ function LiveSession() {
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
             <div class="grid-3">
               <div class="stat"><b class="num" data-finish-duration><Elapsed a={a} /></b><span>duration</span></div>
-              <div class="stat"><b>{a.entries.filter(e => e.sets.some(isWorkingSet)).length}</b><span>exercises</span></div>
-              <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0)}</b><span>sets</span></div>
+              {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
+              {(() => { const nSets = a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0); return <div class="stat"><b class="num">{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div>; })()}
             </div>
             <EffortRepair a={a} />
             <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={changedFromPlan(a, split)} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
-            <Button variant="danger" size="sm" onClick={() => { if (confirm('Discard this session? Nothing will be saved.')) { discardSession(); setFinishing(false); } }}>Discard session</Button>
+            <HoldButton size="sm" class="tap" label="Hold to discard" onConfirm={() => { discardSession(); setFinishing(false); }} />
           </div>
         </Sheet>
       )}
@@ -478,6 +517,42 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  // I2: `closing` keeps the body mounted from open->false until its fold transition finishes, so
+  // the content doesn't vanish mid-animation; `settled` lifts the clip once fully open, so focus
+  // rings and the palace spotlight are not cut off at rest.
+  const [closing, setClosing] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const wasOpenRef = useRef(open);
+  useEffect(() => {
+    if (wasOpenRef.current && !open) {
+      setClosing(true);
+      setSettled(false);
+      const t = setTimeout(() => setClosing(false), durFor('enter') + 60);
+      wasOpenRef.current = open;
+      return () => clearTimeout(t);
+    }
+    wasOpenRef.current = open;
+    return undefined;
+  }, [open]);
+  // I4: the coach prose (target reason, reason cue, learn cue) sits behind "Why this target",
+  // folded the same way as the card body itself (I2's ex-body pattern).
+  const [why, setWhy] = useState(false);
+  const [whyClosing, setWhyClosing] = useState(false);
+  const [whySettled, setWhySettled] = useState(false);
+  const whyBodyRef = useRef<HTMLDivElement | null>(null);
+  const wasWhyRef = useRef(why);
+  useEffect(() => {
+    if (wasWhyRef.current && !why) {
+      setWhyClosing(true);
+      setWhySettled(false);
+      const t = setTimeout(() => setWhyClosing(false), durFor('enter') + 60);
+      wasWhyRef.current = why;
+      return () => clearTimeout(t);
+    }
+    wasWhyRef.current = why;
+    return undefined;
+  }, [why]);
   const sticky = s.exerciseNotes[entry.exerciseId];
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
@@ -558,25 +633,36 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
 
   return (
-    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
-      <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
+    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`}>
+      <div class="row-between ex-head" onClick={onToggle} role="button" aria-expanded={open} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}>
         <div class="grow">
           <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
           {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
-        <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
+        <IconChevronDown class={`chev ${open ? 'up' : ''}`} />
       </div>
-      {open && (
+      <div class={`ex-body ${open ? 'open' : ''} ${settled ? 'settled' : ''}`} ref={bodyRef} onTransitionEnd={e => { if (e.target === bodyRef.current && open) setSettled(true); }}>
+        <div class="ex-body-inner">
+        {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
-          <p class="hint">{next.reason}</p>
-          {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
           {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
-          {cue && <p class="hint muted">{cue.text}</p>}
+          <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
+          <div class={`ex-body ${why ? 'open' : ''} ${whySettled ? 'settled' : ''}`} ref={whyBodyRef} onTransitionEnd={e => { if (e.target === whyBodyRef.current && why) setWhySettled(true); }}>
+            <div class="ex-body-inner">
+            {(why || whyClosing) && (
+            <div class="stack-sm">
+              <p class="hint">{next.reason}</p>
+              {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
+              {cue && <p class="hint muted">{cue.text}</p>}
+            </div>
+            )}
+            </div>
+          </div>
           {warmup && (
             <div class="warmup">
               <button type="button" class="btn btn-quiet btn-sm tap" onClick={() => setWarmupOpen(o => !o)}>{warmupOpen ? 'Hide warm-up' : 'Show warm-up'}</button>
@@ -654,12 +740,20 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           }); })()}
           <div class="row">
             <Button variant="quiet" class="btn-icon" aria-label="Add set" onClick={() => addSet(index)}><IconPlus size={20} /></Button>
-            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => {
+              const n = entry.sets.length - 1;
+              const removed = entry.sets[n]!;
+              removeSet(index, n);
+              const a = active();
+              if (hasEntry(removed) && a?.id && entry.id) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(a.id!, entry.id!, n, removed));
+            }} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
             <span class="grow" />
             <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
           </div>
         </div>
-      )}
+        )}
+        </div>
+      </div>
       {menu && (
         <Sheet title={entry.name} onClose={closeMenu}>
           <div class="stack-sm">
@@ -667,7 +761,18 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
-            <Button variant="danger" onClick={() => { closeMenu(); removeEntry(index); }}>Remove from this session</Button>
+            <Button variant="danger" onClick={() => {
+              // QA10-1: closeMenu() just above commits any pending "Note for today" draft to the
+              // store, so `entry` (the render-time prop) is now stale — re-read it by id, or the
+              // note that was just typed is lost when Undo restores the old, note-less object.
+              closeMenu();
+              const a = active();
+              const at = a ? a.entries.findIndex(x => x.id === entry.id) : -1;
+              if (!a?.id || at < 0) return;
+              const e = a.entries[at]!;
+              removeEntry(at);
+              showToast(`${e.name} removed`, 'Undo', () => insertEntry(a.id!, at, e));
+            }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
         </Sheet>
@@ -679,6 +784,14 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               <Button key={label} variant={entry.sets[setMenuAt]!.kind === k ? 'primary' : 'default'} onClick={() => { setSet(index, setMenuAt, k === 'failure' ? { kind: k, effort: 'max' } : { kind: k }); setSetMenuAt(null); }}>{label}</Button>
             ))}
             <p class="hint">Warm-ups are kept but never counted. Drop sets count for volume but not records. To failure counts as max effort.</p>
+            <Button variant="danger" disabled={entry.sets.length <= 1} onClick={() => {
+              const n = setMenuAt!;
+              const removed = entry.sets[n]!;
+              removeSet(index, n);
+              setSetMenuAt(null);
+              const a = active();
+              if (a?.id && entry.id) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(a.id!, entry.id!, n, removed));
+            }}>Delete set</Button>
           </div>
         </Sheet>
       )}
@@ -921,10 +1034,10 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
   const [sharing, setSharing] = useState(false);
   return (
-    <div class="view">
+    <div class="view reveal">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div><AskAbout refTo={{ kind: 'session', id: session.id, label: `${session.splitName} session` }} /></div>
-      <Card class="card-accent">
-        <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
+      <Card>
+        <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b class="num">{session.exercises.length}</b><span>exercise{session.exercises.length === 1 ? '' : 's'}</span></div><div class="stat"><b class="num">{sets}</b><span>set{sets === 1 ? '' : 's'}</span></div></div>
       </Card>
       {session.heart && (
         <Section title="Heart">
@@ -971,7 +1084,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           {sets === 0 && <p class="small muted" style={{ marginTop: 10 }}>No sets were logged, so nothing was added to history.</p>}
         </Card>
       </Section>
-      <div class="stack-sm" style={{ marginTop: 16 }}><Button variant="primary" onClick={onClose}>Done</Button></div>
+      <div class="finish-done"><Button variant="primary" block onClick={onClose}>Done</Button></div>
     </div>
   );
 }
