@@ -124,8 +124,12 @@ svg { display: block; }
 .small { font-size: 13px; }
 .tiny { font-size: 12px; }
 .num { font-variant-numeric: tabular-nums; }
-.stack { display: grid; gap: 12px; }
-.stack-sm { display: grid; gap: 8px; }
+/* QA10-7: without an explicit column template, a long nowrap child (a long exercise name) sizes
+   the implicit column to its own content instead of the viewport, widening the whole grid — the
+   live screen at 320px scrolled sideways. minmax(0, 1fr) lets a child shrink and wrap/ellipsis
+   inside the column instead of pushing it wider. */
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.stack-sm { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 .row { display: flex; align-items: center; gap: 10px; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 /* A1: "Log as planned" — the plain hint row for the next set to do becomes a button, same size. */
