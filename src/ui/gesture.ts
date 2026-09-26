@@ -104,7 +104,12 @@ export function track(el: HTMLElement, h: TrackHandlers): () => void {
     const dOther = other(e.clientX, e.clientY);
     if (!locked) {
       if (Math.abs(dPrimary) < SLOP_PX && Math.abs(dOther) < SLOP_PX) return;
-      if (Math.abs(dPrimary) <= AXIS_RATIO * Math.abs(dOther)) { reset(); h.onCancel?.(); return; }
+      // QA11-2: this tracker never locked onto its axis — the gesture belongs to whichever other
+      // tracker (or native scroll) the dominant axis matches, so this is not this tracker's
+      // cancel to report (same "never crossed slop" rule as finish()'s wasLocked check below).
+      // For two trackers sharing one element (the toast's x/y pair), calling onCancel here used
+      // to make the tracker that *didn't* lock fight the one that did.
+      if (Math.abs(dPrimary) <= AXIS_RATIO * Math.abs(dOther)) { reset(); return; }
       locked = true;
       if (h.capture !== 'down') { try { el.setPointerCapture(e.pointerId); } catch { /* unsupported */ } }
     }
