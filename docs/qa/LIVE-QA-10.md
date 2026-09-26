@@ -51,4 +51,22 @@ F10's Undo can lose or misplace workout data. Fix the items below, each with a t
 
 ## UI skeptic
 
-Pending; will be appended below.
+`npm run gate` passed. Measured at 320/360/390 px in Paper and Silent Black, with and without reduced motion. These pass:
+- **I2:** the fold transitions and the chevron turns. Auto-advance lands at 68 px against a 56 px header.
+- **I3:** no `exercise-*` animations, and the border differs between states.
+- **I4:** the first set grid sits at 303 px at 360×740.
+- **I5:** the textarea uses theme radii, the singulars are right, and Done is in view at 320×568.
+- **A2:** the header stays sticky, and the hairline scaleX is exactly 2/17.
+- **Reduced motion:** passes.
+
+**QA10-5 · Medium · The hold-to-discard button is only 34 px tall.** Train.tsx:434 renders `<HoldButton size="sm" …>`, and `.btn-sm` is 34 px (styles.css:185). F10 didn't ask for `sm` here.
+- **Fix:** add the existing F8 class, `<HoldButton size="sm" class="tap" …>`, so `.btn-sm.tap` becomes 44 px. HoldButton must pass `class` through. Checked by injection: 34 → 44 px.
+- **Gate probe:** the Discard button is at least 44 px tall at 360.
+
+**QA10-6 · Low · Exercise card headers show no press feedback.** I2 asks for "class `ex-head` with the F2 surface press", but styles.css has no `.ex-head` rule. On press the background stays transparent.
+- **Fix:** reuse the `.theme-card` press (styles.css:167-171): `.ex-head { transition: background-color var(--dur-fast) var(--ease-standard); } .ex-head:active { background: color-mix(in srgb, var(--text) 8%, var(--surface-1)); transition: none; }`. Checked by injection.
+
+**QA10-7 · Medium (also on main) · At 320 px the live screen scrolls sideways.** `scrollWidth` is 356 against `clientWidth` 320 in both themes. Cards are 301–340 px against 288, which clips the effort labels, the record badge and button edges.
+- **Cause:** `.stack`/`.stack-sm` (styles.css:127-128) are grids with no `grid-template-columns`. The implicit auto column grows to the full width of nowrap `.ellipsis` names such as "Dumbbell Shoulder Press" (Train.tsx:639, 641), so the ellipsis never engages. The same rules are on main, so this isn't new in b2b, but it fails this batch's "no horizontal scroll" acceptance.
+- **Fix:** `.stack, .stack-sm { grid-template-columns: minmax(0, 1fr); }`. Checked by injection: scrollWidth 356 → 320, cards 288 px, names end in an ellipsis.
+- This changes every `.stack`, so the gate must also assert no horizontal scroll (`scrollWidth ≤ clientWidth`) at 320 px on Today, Train (live, with a long exercise name), Body, History and Settings, in both themes.
