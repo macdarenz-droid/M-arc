@@ -58,4 +58,37 @@ Fix them in this order. Each fix gets a test that fails before and passes after,
 - **Test:** a session from Fri 23:30 to Sat 00:40, checked at Sat 05:30: `trainedToday` is true. Checked at Sat 18:00: false. The session still counts as Fri 25 in History.
 
 ## Rejected (not a bug)
-- A worry that Escobar's get_plan/get_overview would describe today's split as still to do: the model already gets `trainedToday`, so no change.
+- ~~A worry that Escobar's get_plan/get_overview would describe today's split as still to do: the model already gets `trainedToday`, so no change.~~ Wrong for a session that crosses midnight; see QA8-5 below.
+
+## Re-check at 0e54220 (main a46f72a merged in)
+
+QA8-1..4 are verified. Each id's tests fail with only its src change reverted and pass when restored:
+- QA8-1: 36 of 41 fail before;
+- QA8-2: 2 of 16;
+- QA8-3: 2 of 44;
+- QA8-4: 1 of 3.
+
+With no session today (yesterday, 2 days ago, or empty history), the coach insights, readiness, Escobar brief and selectors are byte-identical to main. The edge cases pass under UTC, Manila and New York, plus the New York fall-back on 2026-11-01:
+- a session from 23:30 to 00:40;
+- a session that ended more than 6 h ago and yesterday;
+- two sessions today;
+- an active session.
+
+The stored day never changes. On web, finishSession → resyncReminders doesn't throw or double-schedule. Body weight stays scrubbed with sharing off. The tests diff is additive only. tsc passed, and vitest passed (1,128).
+
+Two call sites were missed. Fix them before merge, each with a test that fails before and passes after:
+
+**QA8-5 · Medium · Escobar's get_overview misses a session that crossed midnight.**
+- **Cause:** read.ts:133 still uses `s.sessions.filter(x => x.day === ctx.today)`. `daysSinceLastSession` (weekly.ts:114-118, used at read.ts:141 and brief.ts:72) goes by `s.day` only.
+- **Repro:** a session from 23:30 to 00:40, then get_overview at 01:00 returns `trainedToday: []` and `daysSinceLastSession: 1`, with SPLIT 2 still scheduled. That's the owner's bug through the coach's tools.
+- **Fix:**
+  - read.ts:133: `trainedToday: trainedTodaySessions(s.sessions, ctx.today, ctx.now).map(x => x.splitName)`.
+  - weekly.ts: `daysSinceLastSession(sessions, today, now?: number)` returns `0` when `now != null && trainedToday(sessions, today, now)`, and otherwise behaves exactly as today. Pass `ctx.now` at read.ts:141 and brief.ts:72. Leave rules.ts:303 as is.
+
+**QA8-6 · Medium · The brief contradicts itself.**
+- **Cause:** brief.ts:88 builds "done today: …" from `x.day === ctx.today`. In the same repro, the readiness part says "Today's session is done …", but there's no "done today" segment and `L.now` doesn't say trained today.
+- **Fix:** use `trainedTodaySessions(s.sessions, ctx.today, ctx.now)` for both the check and the list at brief.ts:88.
+- **Test:** in the repro, the brief lists "done today: SPLIT 2 …" and says trained today.
+
+**Both:**
+- With no session today, the output must stay byte-identical to main. Add that case to the existing no-op test.
