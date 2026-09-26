@@ -2384,6 +2384,30 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
+// mutation that always calls beginElement() regardless of `reduce` would still pass every other
+// O1 probe (they only check timing), so assert the finished state directly, right after load.
+{
+  const tag = 'launch reduce draws nothing (QA12-3)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  const state = await page.evaluate(() => {
+    const path = document.querySelector('#launch svg path');
+    const dot = document.getElementById('launch-dot');
+    return {
+      dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
+      cx: dot ? dot.getAttribute('cx') : null,
+      cy: dot ? dot.getAttribute('cy') : null,
+    };
+  });
+  if (state.dashoffset !== '0px' && state.dashoffset !== '0') errors.push(`${tag}: expected the path's strokeDashoffset to be 0 right after load, got ${state.dashoffset}`);
+  if (state.cx !== '30' || state.cy !== '50') errors.push(`${tag}: expected #launch-dot at cx=30 cy=50 right after load, got cx=${state.cx} cy=${state.cy}`);
+  await ctx.close();
+}
+
 // O1: launch overlay "Bar path" timing, under full motion, measured from window.__marcLaunchT0
 // (set by the inline script in index.html at its very first line).
 {
