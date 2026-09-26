@@ -11,11 +11,12 @@ import { escobarUi, online } from '../state';
 import { currentFocus } from '../palace/focus';
 import { contextRefFor, dockPromptFor } from './prompts';
 import { askAbout, openEscobar } from './open';
+import { finishShowing } from '@/slices/workout/Train';
 
 export function Dock() {
   const s = state.value;
   if (openSheets.value > 0 || escobarUi.value.open) return null;
-  if (tab.value === 'train' && s.active) return null;
+  if (tab.value === 'train' && (s.active || finishShowing.value)) return null;
   const focus = currentFocus.value;
   const on = s.escobar.enabled && online.value !== false;
   const prompt = on ? dockPromptFor(focus, s, todayReadiness.value) : 'Ask Escobar';

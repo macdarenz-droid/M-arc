@@ -100,7 +100,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
       <div class="row-between">
         <div class="grow">
           <b>{session.splitName}</b>
-          <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercises · {sets} sets{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
+          <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercise{session.exercises.length === 1 ? '' : 's'} · {sets} set{sets === 1 ? '' : 's'}{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
           {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
         </div>
         {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}

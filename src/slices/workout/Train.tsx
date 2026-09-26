@@ -62,6 +62,9 @@ const EFFORTS: Array<{ v: 'easy' | 'ideal' | 'max'; l: string; title: string }> 
 const lastFinish = signal<FinishSummary | null>(null);
 /** Set instead of lastFinish when the just-saved session looks logged after training. */
 const pendingTimeQuestion = signal<FinishSummary | null>(null);
+/** I5: whether Train is currently showing the finish sheet/screen, so the coach dock (which would
+ * otherwise reappear once `active` clears) stays hidden until Done is tapped. */
+export const finishShowing = computed(() => !!lastFinish.value || !!pendingTimeQuestion.value);
 /** Set when the user taps "Log a past session" from the split list. */
 const loggingPast = signal<Split | null>(null);
 /** Set when the user taps "Start" — shows the check-in (if not done today) then the pre-session brief before the timer begins. */
@@ -399,8 +402,8 @@ function LiveSession() {
             {remaining.length > 0 && <p class="small muted">{remaining.length} exercise{remaining.length > 1 ? 's' : ''} not marked done. Anything with logged sets is still saved. Skipping does not remove them from your split.</p>}
             <div class="grid-3">
               <div class="stat"><b class="num" data-finish-duration><Elapsed a={a} /></b><span>duration</span></div>
-              <div class="stat"><b>{a.entries.filter(e => e.sets.some(isWorkingSet)).length}</b><span>exercises</span></div>
-              <div class="stat"><b>{a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0)}</b><span>sets</span></div>
+              {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
+              {(() => { const nSets = a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0); return <div class="stat"><b class="num">{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div>; })()}
             </div>
             <EffortRepair a={a} />
             <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
@@ -1001,10 +1004,10 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
   const learnCue = learnExercise ? pickCue(learnExercise, 'learn', `${session.day}|${learnExercise.id}`) : null;
   const [sharing, setSharing] = useState(false);
   return (
-    <div class="view">
+    <div class="view reveal">
       <div class="topbar"><div><div class="eyebrow">Session saved</div><h1>{session.splitName} done</h1></div><AskAbout refTo={{ kind: 'session', id: session.id, label: `${session.splitName} session` }} /></div>
-      <Card class="card-accent">
-        <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b>{session.exercises.length}</b><span>exercises</span></div><div class="stat"><b>{sets}</b><span>sets</span></div></div>
+      <Card>
+        <div class="grid-3"><div class="stat"><b class="num">{formatClock(session.durationSec)}</b><span>duration</span></div><div class="stat"><b class="num">{session.exercises.length}</b><span>exercise{session.exercises.length === 1 ? '' : 's'}</span></div><div class="stat"><b class="num">{sets}</b><span>set{sets === 1 ? '' : 's'}</span></div></div>
       </Card>
       {session.heart && (
         <Section title="Heart">
@@ -1051,7 +1054,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           {sets === 0 && <p class="small muted" style={{ marginTop: 10 }}>No sets were logged, so nothing was added to history.</p>}
         </Card>
       </Section>
-      <div class="stack-sm" style={{ marginTop: 16 }}><Button variant="primary" onClick={onClose}>Done</Button></div>
+      <div class="finish-done"><Button variant="primary" block onClick={onClose}>Done</Button></div>
     </div>
   );
 }
