@@ -128,7 +128,8 @@ for (const theme of themes) {
     await page.locator('.effort button.ideal').nth(1).click();
     await inputs.nth(4).fill('70'); await inputs.nth(5).fill('7'); await inputs.nth(5).blur();
     await page.locator('.effort button.max').nth(2).click();
-    await page.getByRole('button', { name: 'Set', exact: true }).first().click(); await page.waitForTimeout(150);
+    // F8: '+ Set' became an icon-only button (aria-label 'Add set').
+    await page.getByRole('button', { name: 'Add set' }).first().click(); await page.waitForTimeout(150);
     const inputs2 = page.locator('.set-grid input');
     await inputs2.nth(6).fill('70'); await inputs2.nth(7).fill('6'); await inputs2.nth(7).blur();
     await page.locator('.effort button.ideal').nth(3).click();
@@ -644,6 +645,24 @@ for (const theme of themes) {
   const inputs = page.locator('.set-grid input');
   await inputs.nth(0).fill('176'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
   await page.waitForTimeout(200);
+  // F7: the committed set recedes (a checkmark, faded fields) instead of looking like a draft one.
+  const f7 = await page.evaluate(() => {
+    const committed = document.querySelectorAll('.set-grid.committed');
+    const kind = committed[0]?.querySelector('.set-kind');
+    const committedInput = committed[0]?.querySelector('input');
+    const draftInput = document.querySelector('.set-grid:not(.committed) input');
+    return {
+      committedCount: committed.length,
+      hasCheck: !!kind?.querySelector('svg'),
+      committedBg: committedInput ? getComputedStyle(committedInput).backgroundColor : null,
+      draftBg: draftInput ? getComputedStyle(draftInput).backgroundColor : null,
+      fontVariant: committedInput ? getComputedStyle(committedInput).fontVariantNumeric : null,
+    };
+  });
+  if (f7.committedCount !== 1) errors.push(`plate-sense ${theme}: expected 1 .set-grid.committed after committing set 1, got ${f7.committedCount}`);
+  if (!f7.hasCheck) errors.push(`plate-sense ${theme}: expected the committed set's set-kind to show a checkmark`);
+  if (!f7.committedBg || f7.committedBg === f7.draftBg) errors.push(`plate-sense ${theme}: committed vs draft input background did not differ (${f7.committedBg} vs ${f7.draftBg})`);
+  if (f7.fontVariant !== 'tabular-nums') errors.push(`plate-sense ${theme}: kg input font-variant-numeric is ${f7.fontVariant}, expected tabular-nums`);
   if (!(await visible(page.locator('.suspect-chip')))) errors.push(`plate-sense ${theme}: expected the unit-slip chip after a 2.2× load`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-plate-suspect.png` });
   await page.locator('.suspect-chip').getByRole('button', { name: 'Yes, lb' }).click();
@@ -659,7 +678,14 @@ for (const theme of themes) {
   await page.getByText('Dumbbell Bench Press').first().click();
   await page.waitForTimeout(200);
   const dbInput = page.locator('.exercise.active input[aria-label="Load in lb"]').first();
-  await dbInput.fill('55');
+  // F7: kg (display) differs from lb (entry) here, so `.weight-approx` is already reserved on
+  // mount — the row must not grow the moment a digit resolves it to a real conversion.
+  const rowHeight = () => page.evaluate(() => document.querySelector('.exercise.active input[aria-label="Load in lb"]').closest('.set-grid').getBoundingClientRect().height);
+  const rowBefore = await rowHeight();
+  await dbInput.pressSequentially('5');
+  const rowAfterFirstDigit = await rowHeight();
+  if (Math.abs(rowAfterFirstDigit - rowBefore) > 0.5) errors.push(`plate-sense ${theme}: set row height changed after the first digit (${rowBefore} -> ${rowAfterFirstDigit})`);
+  await dbInput.pressSequentially('5');
   await page.waitForTimeout(150);
   const pill = page.locator('.exercise.active .unit-pill').first();
   if ((await pill.textContent())?.trim() !== 'lb') errors.push(`plate-sense ${theme}: expected the dumbbell pill in lb`);
@@ -936,7 +962,7 @@ for (const theme of themes) {
 // exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
 // their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
 {
-  const HAS = { restFix: false, sheetExit: false };
+  const HAS = { restFix: true, sheetExit: false };
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   const tag = 'motion smoke';
@@ -1005,10 +1031,18 @@ for (const theme of themes) {
       const bar = document.querySelector('.rest .bar > i');
       if (!clock || !bar) return null;
       const track = bar.parentElement.getBoundingClientRect().width;
+      // I1: the bar is a fixed-width (100%) element moved by a WAAPI translateX, not an inline
+      // width%, so its getBoundingClientRect().width is always the full track. Read the fill from
+      // the transform matrix's e (translateX in px) instead: -track = empty, 0 = full.
+      const m = new DOMMatrixReadOnly(getComputedStyle(bar).transform);
+      // A9: the hint can now read 'Next · …' instead of 'Rest · m:ss' whenever the open card has
+      // another set to do, so the configured total comes from the bar's own WAAPI duration
+      // (created at ~totalSec remaining) instead of parsing the hint text.
+      const anim = document.getAnimations().find(a => a.effect && a.effect.target === bar);
       return {
         clock: clock.textContent,
-        total: document.querySelector('.rest .hint')?.textContent?.replace(/^Rest · /, ''),
-        fillPct: track ? (bar.getBoundingClientRect().width / track) * 100 : 0,
+        totalMs: anim ? anim.effect.getComputedTiming().duration : null,
+        fillPct: track ? Math.max(0, Math.min(100, (1 + m.e / track) * 100)) : 0,
       };
     });
     if (!rest) errors.push(`${tag}: expected the rest banner after committing set 1`);
@@ -1016,8 +1050,12 @@ for (const theme of themes) {
       if (rest.fillPct > 10) errors.push(`${tag}: the rest bar fill is ${rest.fillPct.toFixed(1)}% at +100ms, expected <=10%`);
       // QA5-14: this is the actual F6 regression (a stale total+1s clock on the first frame) —
       // a fix that only corrected the bar would still pass without this.
-      const sec = s => s.split(':').reduce((a, n) => a * 60 + Number(n), 0);
-      if (rest.total && ![sec(rest.total), sec(rest.total) - 1].includes(sec(rest.clock))) errors.push(`${tag}: first-frame rest clock ${rest.clock}, expected ${rest.total} or 1s less`);
+      if (rest.totalMs == null) errors.push(`${tag}: no rest bar animation to read the configured length from`);
+      else {
+        const sec = s => s.split(':').reduce((a, n) => a * 60 + Number(n), 0);
+        const totalSec = Math.round(rest.totalMs / 1000);
+        if (![totalSec, totalSec - 1].includes(sec(rest.clock))) errors.push(`${tag}: first-frame rest clock ${rest.clock}, expected ${totalSec} or 1s less`);
+      }
     }
   } else {
     console.log(`${tag}: restFix skipped`);
@@ -1030,6 +1068,399 @@ for (const theme of themes) {
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// I1: the rest banner rises in with a running animation, its bar glides continuously via WAAPI
+// (rebuilt, not stepped, when the remaining time changes), its buttons are real tap targets, and
+// it exits (a `.leaving` class, then gone) instead of vanishing in one frame.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I1 rest banner';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.waitForTimeout(60);
+
+  const entering = await page.evaluate(() => {
+    const el = document.querySelector('.rest');
+    return !!el && document.getAnimations().some(a => a.effect?.target === el && a.playState === 'running');
+  });
+  if (!entering) errors.push(`${tag}: .rest has no running enter animation right after it appears`);
+
+  const barInfo = await page.evaluate(() => {
+    const bar = document.querySelector('.rest .bar > i');
+    const clockText = document.querySelector('.rest .clock')?.textContent ?? '';
+    const anim = bar && document.getAnimations().find(a => a.effect?.target === bar);
+    return anim ? { duration: anim.effect.getComputedTiming().duration, clockText, playState: anim.playState } : null;
+  });
+  if (!barInfo) errors.push(`${tag}: no WAAPI animation found on the rest bar`);
+  else {
+    if (barInfo.playState !== 'running') errors.push(`${tag}: the rest bar animation is ${barInfo.playState}, expected running`);
+    const sec = str => str.split(':').reduce((n, part) => n * 60 + Number(part), 0);
+    const expectedMs = sec(barInfo.clockText) * 1000;
+    if (Math.abs(barInfo.duration - expectedMs) > 1500) errors.push(`${tag}: bar duration ${barInfo.duration}ms does not track the clock (${barInfo.clockText})`);
+  }
+
+  // +15 changes the rest's end time, so the old bar animation is cancelled and a fresh one runs.
+  await page.locator('.rest').getByRole('button', { name: 'More rest' }).click();
+  await page.waitForTimeout(50);
+  const afterAdjust = await page.evaluate(() => {
+    const bar = document.querySelector('.rest .bar > i');
+    const anims = document.getAnimations().filter(a => a.effect?.target === bar);
+    return { count: anims.length, running: anims.filter(a => a.playState === 'running').length };
+  });
+  if (afterAdjust.count !== 1 || afterAdjust.running !== 1) errors.push(`${tag}: expected exactly one running bar animation after +15, got ${JSON.stringify(afterAdjust)}`);
+
+  for (const name of ['Less rest', 'More rest']) {
+    const h = await page.locator('.rest').getByRole('button', { name }).evaluate(el => el.getBoundingClientRect().height);
+    if (h < 44) errors.push(`${tag}: '${name}' is ${h.toFixed(1)}px tall, expected >=44`);
+  }
+  const skipH = await page.locator('.rest').getByRole('button', { name: 'Skip' }).evaluate(el => el.getBoundingClientRect().height);
+  if (skipH < 44) errors.push(`${tag}: 'Skip' is ${skipH.toFixed(1)}px tall, expected >=44`);
+
+  // Skip plays the exit animation instead of the banner vanishing in one frame.
+  await page.locator('.rest').getByRole('button', { name: 'Skip' }).click();
+  await page.waitForTimeout(30);
+  if (!(await page.locator('.rest.leaving').count())) errors.push(`${tag}: expected .rest.leaving right after Skip`);
+  await page.waitForTimeout(250);
+  if (await page.locator('.rest').count()) errors.push(`${tag}: expected .rest gone by 250ms after Skip`);
+
+  await ctx.close();
+}
+
+// A9: the rest banner shows what to do next, and falls back to the plain clock once nothing is
+// left to log on the open card.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A9 next-up hint';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const inputs = page.locator('.set-grid input');
+  const rowCount = (await inputs.count()) / 2;
+  if (rowCount < 2) errors.push(`${tag}: expected at least 2 sets on the first exercise, got ${rowCount}`);
+
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.waitForTimeout(80);
+  let hint = await page.locator('.rest .hint').first().textContent();
+  if (!hint?.startsWith('Next · ')) errors.push(`${tag}: expected 'Next · …' after committing set 1 of ${rowCount}, got '${hint}'`);
+
+  for (let s = 1; s < rowCount; s++) {
+    await inputs.nth(s * 2).fill('50'); await inputs.nth(s * 2 + 1).fill('8'); await inputs.nth(s * 2 + 1).blur();
+    await page.waitForTimeout(80);
+  }
+  hint = await page.locator('.rest .hint').first().textContent();
+  if (!/^Rest · \d+:\d{2}$/.test(hint ?? '')) errors.push(`${tag}: expected 'Rest · m:ss' once every set on the card is logged, got '${hint}'`);
+
+  await ctx.close();
+}
+
+// A1: tapping the next-up hint row ("Log as planned") fills and logs that set with exactly the
+// values it was already showing, moves on to the following set, and its wider tap target never
+// steals a tap from the effort row above it or the row below it.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A1 log as planned';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  if ((await page.locator('.set-grid.committed').count()) !== 0) errors.push(`${tag}: expected nothing committed on a fresh exercise`);
+  const fillRowCount0 = await page.locator('.fill-row').count();
+  if (fillRowCount0 !== 1) errors.push(`${tag}: expected exactly one .fill-row on a fresh exercise, got ${fillRowCount0}`);
+
+  // QA-R7-1 style: the wider hit area must not reach into the effort row above or the row below.
+  const hitAreaBleed = await page.evaluate(() => {
+    const bad = [];
+    const fillRow = document.querySelector('.fill-row');
+    const card = fillRow?.closest('.exercise');
+    if (fillRow && card) {
+      for (const btn of card.querySelectorAll('.effort button')) {
+        const r = btn.getBoundingClientRect();
+        for (let dy = 1; dy <= 8; dy++) {
+          const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom + dy);
+          if (hit === fillRow || fillRow.contains(hit)) bad.push(`effort button +${dy}px hit the fill-row`);
+        }
+      }
+      const fr = fillRow.getBoundingClientRect();
+      for (let dy = 7; dy <= 10; dy++) {
+        const hit = document.elementFromPoint(fr.left + fr.width / 2, fr.bottom + dy);
+        if (hit === fillRow || fillRow.contains(hit)) bad.push(`+${dy}px below the fill-row still hit it`);
+      }
+    }
+    const kgInput = card?.querySelector('.set-grid input');
+    if (kgInput) {
+      const r = kgInput.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.bottom - 2);
+      if (hit !== kgInput) bad.push('the kg input itself is not hit 2px above its own bottom edge');
+    }
+    return bad;
+  });
+  if (hitAreaBleed.length) errors.push(`${tag}: ${hitAreaBleed.join('; ')}`);
+
+  const before = await page.evaluate(() => {
+    // The header row is a .set-grid too, but only a data row has real <input> children.
+    const row = [...document.querySelectorAll('.exercise.active .set-grid')].find(g => g.querySelector('input'));
+    const inputs = row ? [...row.querySelectorAll('input')] : [];
+    // Set 2's hint row is still a plain div at this point (set 1 holds the fill-row); its height
+    // right before it becomes the fill-row is what must not change (no min-height on .fill-row).
+    const set2RowHeight = [...document.querySelectorAll('.exercise.active .set-grid + .row-between')][1]?.getBoundingClientRect().height ?? null;
+    return { kgPh: inputs[0]?.placeholder ?? null, repsPh: inputs[1]?.placeholder ?? null, set2RowHeight };
+  });
+
+  await page.locator('.fill-row').click();
+  await page.waitForTimeout(150);
+  if (!(await visible(page.locator('.rest')))) errors.push(`${tag}: expected the rest banner after tapping 'Log as planned'`);
+  const after = await page.evaluate(() => {
+    const committed = [...document.querySelectorAll('.set-grid.committed')];
+    const committedHasFillRow = committed.some(g => g.nextElementSibling?.classList.contains('fill-row'));
+    const inputs = committed[0] ? [...committed[0].querySelectorAll('input')] : [];
+    const fillRowHeight = document.querySelector('.fill-row')?.getBoundingClientRect().height ?? null;
+    return { committedCount: committed.length, committedHasFillRow, kgVal: inputs[0]?.value ?? null, repsVal: inputs[1]?.value ?? null, fillRowCount: document.querySelectorAll('.fill-row').length, fillRowHeight };
+  });
+  if (after.committedCount !== 1) errors.push(`${tag}: expected 1 committed set after tapping, got ${after.committedCount}`);
+  if (after.committedHasFillRow) errors.push(`${tag}: the now-committed set 1 still has a fill-row`);
+  if (after.fillRowCount !== 1) errors.push(`${tag}: expected set 2 to have the fill-row now, got ${after.fillRowCount} fill-row(s)`);
+  if (before.kgPh && after.kgVal !== before.kgPh) errors.push(`${tag}: logged kg ${after.kgVal} does not match the shown placeholder ${before.kgPh}`);
+  if (before.repsPh && after.repsVal !== before.repsPh) errors.push(`${tag}: logged reps ${after.repsVal} does not match the shown placeholder ${before.repsPh}`);
+  if (before.set2RowHeight != null && after.fillRowHeight != null && Math.abs(before.set2RowHeight - after.fillRowHeight) > 1) {
+    errors.push(`${tag}: set 2's row height changed from ${before.set2RowHeight} to ${after.fillRowHeight} when it became the fill-row`);
+  }
+
+  // A typed reps value survives a tap on the (now set 2's) fill-row.
+  const repsInput = page.locator('.exercise.active .set-grid:not(.committed) input').nth(1);
+  await repsInput.fill('6');
+  await page.locator('.fill-row').click();
+  await page.waitForTimeout(150);
+  const typedReps = await page.evaluate(() => [...document.querySelectorAll('.set-grid.committed')].at(-1)?.querySelectorAll('input')[1]?.value ?? null);
+  if (typedReps !== '6') errors.push(`${tag}: typed reps '6' were overwritten by the fill-row, got '${typedReps}'`);
+
+  await ctx.close();
+}
+
+// A8: the keyboard's action key moves kg -> reps -> the next set's kg (Done on the last set),
+// and focusing a filled field selects it so typing replaces the value instead of appending.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A8 keyboard flow';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const kgFields = page.locator('.exercise.active [data-set-field="kg"]');
+  const repsFields = page.locator('.exercise.active [data-set-field="reps"]');
+  const lastRepsHint = await repsFields.last().getAttribute('enterkeyhint');
+  if (lastRepsHint !== 'done') errors.push(`${tag}: the last set's reps field enterkeyhint is '${lastRepsHint}', expected 'done'`);
+  const firstRepsHint = await repsFields.first().getAttribute('enterkeyhint');
+  if (firstRepsHint !== 'next') errors.push(`${tag}: set 1's reps field enterkeyhint is '${firstRepsHint}', expected 'next'`);
+  const kgHint = await kgFields.first().getAttribute('enterkeyhint');
+  if (kgHint !== 'next') errors.push(`${tag}: the kg field enterkeyhint is '${kgHint}', expected 'next'`);
+
+  await kgFields.first().click();
+  await page.keyboard.type('60');
+  await page.keyboard.press('Enter');
+  let active = await page.evaluate(() => document.activeElement === document.querySelectorAll('.exercise.active [data-set-field="reps"]')[0]);
+  if (!active) errors.push(`${tag}: Enter after kg did not focus the reps field`);
+  await page.keyboard.type('8');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(80);
+  const committed = await page.locator('.set-grid.committed').count();
+  if (committed !== 1) errors.push(`${tag}: expected set 1 committed after Enter on reps, got ${committed} committed`);
+  active = await page.evaluate(() => document.activeElement === document.querySelectorAll('.exercise.active [data-set-field="kg"]')[1]);
+  if (!active) errors.push(`${tag}: Enter after reps did not move to set 2's kg field`);
+
+  // Focusing a filled field selects it, so typing replaces instead of appending.
+  await kgFields.nth(1).click();
+  await page.keyboard.type('60');
+  await page.evaluate(() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur());
+  await kgFields.nth(1).click();
+  await page.keyboard.type('62.5');
+  const finalKg = await kgFields.nth(1).inputValue();
+  if (finalKg !== '62.5') errors.push(`${tag}: refocusing a filled kg field and typing gave '${finalKg}', expected '62.5' (select-on-focus)`);
+
+  await ctx.close();
+}
+
+// F9: a small 'PR' pill with an inline trophy pops in once when a record set is logged — not
+// while it's still just a promising, uncommitted number — and does not replay on a tab switch.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `F9 pr-badge ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([t]) => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = { id: 's1', splitId: 'sp1', splitName: 'Upper', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 50, reps: 8, effort: 'ideal' }, { kg: 50, reps: 8, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(3)}T17:00:00.000Z`, trainedEndAt: `${day(3)}T18:00:00.000Z`, loggedAt: `${day(3)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [{ day: day(0), sleepQuality: 4 }], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  }, [theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  // 80kg beats the 50kg history: a clear live record, well before it is committed.
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('80'); await inputs.nth(1).fill('5');
+  await page.waitForTimeout(80);
+  if (await page.locator('.pr-badge').count()) errors.push(`${tag}: a .pr-badge showed for an uncommitted record`);
+  await inputs.nth(1).blur();
+  await page.waitForTimeout(80);
+  const popState = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    const running = badge ? document.getAnimations().some(a => a.effect?.target === badge && a.playState === 'running') : false;
+    return { exists: !!badge, hasPop: !!badge?.classList.contains('pop'), running };
+  });
+  if (!popState.exists) errors.push(`${tag}: expected a .pr-badge once the record set is committed`);
+  if (!popState.hasPop) errors.push(`${tag}: expected the freshly-committed record's badge to have .pop`);
+  if (!popState.running) errors.push(`${tag}: expected a running pr-pop animation on the fresh badge`);
+
+  // Trophy and text sit on the same visual line.
+  const align = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    const svg = badge?.querySelector('svg');
+    if (!badge || !svg) return null;
+    const textNode = [...badge.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    const range = document.createRange();
+    if (textNode) range.selectNodeContents(textNode); else range.selectNodeContents(badge);
+    const textRect = range.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    return Math.abs((svgRect.top + svgRect.bottom) / 2 - (textRect.top + textRect.bottom) / 2);
+  });
+  if (align != null && align > 2) errors.push(`${tag}: trophy/text centre-y off by ${align.toFixed(1)}px, expected <=2`);
+
+  // WCAG: the badge text against its own composited background.
+  const contrast = await page.evaluate(() => {
+    const badge = document.querySelector('.pr-badge');
+    if (!badge) return null;
+    const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    const cs = getComputedStyle(badge);
+    const fg = parseRgba(cs.color);
+    const own = parseRgba(cs.backgroundColor);
+    let node = badge.parentElement, under = { r: 255, g: 255, b: 255 };
+    while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+    const mix = (f, b, a) => f * a + b * (1 - a);
+    const bg = own ? { r: mix(own.r, under.r, own.a), g: mix(own.g, under.g, own.a), b: mix(own.b, under.b, own.a) } : under;
+    const lin = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+    const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+    const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
+    return l1 > l2 ? l1 / l2 : l2 / l1;
+  });
+  if (contrast != null && contrast < 4.5) errors.push(`${tag}: pr-badge text contrast ${contrast.toFixed(2)} < 4.5`);
+
+  // A tab switch away and back does not replay the pop.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(300);
+  const afterSwitch = await page.evaluate(() => { const b = document.querySelector('.pr-badge'); return { exists: !!b, hasPop: !!b?.classList.contains('pop') }; });
+  if (!afterSwitch.exists) errors.push(`${tag}: expected the .pr-badge to still be there after a tab switch`);
+  if (afterSwitch.hasPop) errors.push(`${tag}: the badge replayed .pop after a tab switch back`);
+
+  await ctx.close();
+}
+
+// F8: every live control is a real >=44px tap target (QA-R7-1 style: elementFromPoint at its
+// centre +/-21px still resolves to it or a descendant), at both 390 and 360px, and the topbar
+// controls fit on one line even at 360px.
+for (const width of [390, 360]) {
+  const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `F8 tap targets ${width}px`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const topbarWrap = await page.evaluate(() => {
+    const row = document.querySelector('.topbar .row');
+    if (!row || !row.children.length) return 0;
+    const tops = [...row.children].map(c => c.getBoundingClientRect().top);
+    return Math.max(...tops) - Math.min(...tops);
+  });
+  if (topbarWrap > 2) errors.push(`${tag}: the live topbar controls wrapped onto more than one line (top spread ${topbarWrap.toFixed(1)}px)`);
+
+  const misses = await page.evaluate(() => {
+    const check = (el, label) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      for (const dy of [-21, 21]) {
+        const hit = document.elementFromPoint(cx, cy + dy);
+        if (!(hit === el || el.contains(hit))) return `${label}: (${cx.toFixed(0)},${(cy + dy).toFixed(0)}) missed (hit ${hit ? hit.className || hit.tagName : 'nothing'})`;
+      }
+      return null;
+    };
+    const byText = (sel, text) => [...document.querySelectorAll(sel)].find(b => b.textContent.trim() === text);
+    const controls = [
+      [byText('.topbar button', 'Finish'), 'Finish'],
+      [document.querySelector('[aria-label="Pause"], [aria-label="Resume"]'), 'Pause/Resume'],
+      [document.querySelector('.exercise.active .set-kind'), '.set-kind'],
+      [document.querySelector('[aria-label="Add set"]'), 'Add set'],
+      [document.querySelector('[aria-label="Remove last set"]'), 'Remove last set'],
+      [byText('.exercise.active button', 'Done with exercise') || byText('.exercise.active button', 'Undo done'), 'Done with exercise/Undo done'],
+      [byText('.exercise.active button', 'See substitutes'), 'See substitutes'],
+      [document.querySelector('.watch-pill'), '.watch-pill'],
+    ];
+    return controls.map(([el, label]) => check(el, label)).filter(Boolean);
+  });
+  if (misses.length) errors.push(`${tag}: ${misses.join('; ')}`);
+
   await ctx.close();
 }
 

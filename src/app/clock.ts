@@ -53,6 +53,9 @@ let ticker: ReturnType<typeof setInterval> | null = null;
 /** Starts the 1 s ticker until every holder has released it. The release is idempotent. */
 export function acquireTicker(): () => void {
   holders++;
+  // F6: sync nowMs immediately, so a reader that mounts right after (the rest banner's first
+  // frame) does not compute against whatever stale value the last holder left behind.
+  batch(() => { nowMs.value = Date.now(); });
   if (!ticker) {
     ticker = setInterval(() => {
       const now = Date.now();

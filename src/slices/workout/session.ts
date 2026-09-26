@@ -77,7 +77,7 @@ function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
 
 const draftSet = (from: Partial<LoggedSet> = {}): LoggedSet => ({ ...from, id: newId('set') });
 const blankSets = (n: number): LoggedSet[] => Array.from({ length: n }, () => draftSet());
-const isCommitted = (set: LoggedSet): boolean => set.status === 'committed' || !!set.at;
+export const isCommitted = (set: LoggedSet): boolean => set.status === 'committed' || !!set.at;
 
 /**
  * ES-02: the split as today's applied Escobar adjustment reshapes it (swap, remove, add, sets,
