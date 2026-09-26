@@ -269,24 +269,11 @@ html[data-motion="reduce"] .ex-body { transition: none; }
 .chev.up { transform: rotate(180deg); }
 .skipped { opacity: .55; transition: opacity var(--dur-base) var(--ease-standard); }
 
-/* The exercise you currently have open: a slow breathing glow on the card edge, and the
-   name sweeps between the theme's dim and full text tones so it reads as "live" without
-   relying on any one accent color existing on every theme. */
-.exercise.active { border-color: var(--border-strong); }
-.exercise.active .exname {
-  background: linear-gradient(100deg, var(--text-3) 30%, var(--text) 50%, var(--text-3) 70%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-html:not([data-motion="reduce"]) .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
-html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
-html[data-motion="reduce"] .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
-html[data-motion="reduce"] .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
-@keyframes exercise-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -40% 0; } }
-@keyframes exercise-breathe {
-  0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 0 0 transparent; }
-  50% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 22px 2px color-mix(in srgb, var(--accent) 35%, transparent); }
-}
+/* I3: the exercise you currently have open carries a steady accent hairline — no loop, so the
+   phone runs cooler. The card stays surface-1 (inputs are surface-2, so a surface-2 card would
+   erase draft fields). */
+.exercise.active { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.exercise.active .exname { color: var(--text); }
 .set-grid { display: grid; grid-template-columns: 32px 1fr 1fr auto; gap: 8px; align-items: center; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
 .set-grid input { min-height: 44px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }

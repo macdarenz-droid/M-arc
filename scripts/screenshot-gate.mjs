@@ -894,8 +894,16 @@ for (const theme of themes) {
   // asserted that --pulse-beat actually changes over time; a break in the rAF loop would still
   // leave '.pulse-edge' visible (its opacity/box-shadow read the CSS var, and simply not updating
   // it produces one static frame that still passes the visibility check above).
-  const beats = await page.evaluate(async () => { const s = new Set(); for (let k = 0; k < 8; k++) { s.add(document.documentElement.style.getPropertyValue('--pulse-beat')); await new Promise(r => setTimeout(r, 60)); } return s.size; });
-  if (beats < 2) errors.push(`pulse ${theme}: --pulse-beat is not animating`);
+  // I3: the loop now writes --pulse-beat on the PulseLine root and each .heart-bpm-icon, never on
+  // <html> (a per-frame write there forces a style recalc across the whole page).
+  const pulse = await page.evaluate(async () => {
+    const root = document.querySelector('.pulse-line');
+    const s = new Set(); const htmlVals = new Set();
+    for (let k = 0; k < 8; k++) { s.add(root?.style.getPropertyValue('--pulse-beat')); htmlVals.add(document.documentElement.style.getPropertyValue('--pulse-beat')); await new Promise(r => setTimeout(r, 60)); }
+    return { rootBeats: s.size, htmlVals: [...htmlVals] };
+  });
+  if (pulse.rootBeats < 2) errors.push(`pulse ${theme}: --pulse-beat is not animating`);
+  if (pulse.htmlVals.some(v => v !== '')) errors.push(`pulse ${theme}: --pulse-beat leaked onto <html> (${pulse.htmlVals.join(',')})`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {
     // Hold-and-drag reorder in a live session: the first exercise dragged down lands lower.
@@ -1062,7 +1070,9 @@ for (const theme of themes) {
   }
 
   // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
-  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin', 'exercise-breathe', 'exercise-shimmer'];
+  // I3 dropped exercise-breathe/exercise-shimmer, so a live screen showing an active card must not
+  // have any infinite animation left running on it at all.
+  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
@@ -1500,12 +1510,18 @@ for (const width of [390, 360]) {
   const pressOp = await start.evaluate(e => getComputedStyle(e).opacity);
   await page.mouse.move(1, 1); await page.mouse.up(); await page.waitForTimeout(150);
   if (!(+pressOp < 1)) errors.push(`${tag}: pressing Start gave no feedback (opacity ${pressOp})`);
-  // QA5-3: the active exercise keeps a static ring and a solid name colour.
+  // QA5-3/I3: the active exercise keeps a static accent-tinted border and a solid name colour
+  // (no ring, no loop — I3 dropped the box-shadow breathing glow for a steady hairline).
   await start.click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
-  const ax = await page.evaluate(() => { const e = document.querySelector('.exercise.active'); const n = e?.querySelector('.exname'); return e && n && { ring: getComputedStyle(e).boxShadow, name: getComputedStyle(n).color }; });
-  if (!ax || ax.ring === 'none' || ax.name === 'rgba(0, 0, 0, 0)') errors.push(`${tag}: active exercise lost its ring or name colour: ${JSON.stringify(ax)}`);
+  const ax = await page.evaluate(() => {
+    const e = document.querySelector('.exercise.active');
+    const other = document.querySelector('.exercise:not(.active)');
+    const n = e?.querySelector('.exname');
+    return e && n && { activeBorder: getComputedStyle(e).borderColor, otherBorder: other ? getComputedStyle(other).borderColor : null, name: getComputedStyle(n).color };
+  });
+  if (!ax || ax.name === 'rgba(0, 0, 0, 0)' || (ax.otherBorder != null && ax.activeBorder === ax.otherBorder)) errors.push(`${tag}: active exercise lost its border tint or name colour: ${JSON.stringify(ax)}`);
   // QA5-4: the toast stays centred while it fades in.
   await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
   await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);

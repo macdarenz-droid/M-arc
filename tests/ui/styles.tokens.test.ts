@@ -7,10 +7,9 @@ const cssPath = fileURLToPath(new URL('../../src/ui/styles.css', import.meta.url
 const css = readFileSync(cssPath, 'utf8');
 
 // Animation names allowed to keep a literal, infinite-running duration: the handful of
-// decorative loops the plan keeps outside the token system. exercise-breathe/exercise-shimmer
-// are a batch-b1-only addition — I3 (batch b2b) deletes both rules, at which point they come
-// out of this list again.
-const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin', 'exercise-breathe', 'exercise-shimmer'];
+// decorative loops the plan keeps outside the token system. I3 (batch b2b) deleted the
+// exercise-breathe/exercise-shimmer loops, so they are gone from this list too.
+const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
 
 const TOKENS_START = '/* tokens:start */';
 const TOKENS_END = '/* tokens:end */';
