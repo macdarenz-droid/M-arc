@@ -1490,8 +1490,8 @@ for (const theme of themes) {
 // swipe-to-dismiss in any of the three directions it recognizes (never Undo on a swipe away).
 // The centring fix itself (no sideways jump) is QA5-4's existing probe, further down.
 {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-  const page = await ctx.newPage();
+  let ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  let page = await ctx.newPage();
   const tag = 'F13 toast';
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
@@ -1518,6 +1518,30 @@ for (const theme of themes) {
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  // QA11-3/QA11-6: each of these lets its toast's countdown run out without Undo, permanently
+  // removing an exercise (same as a real user who never taps Undo) — with only 3 exercises in
+  // this fixture's push split, that exhausts the list after the two swipeAway() calls below plus
+  // one more, and the next removeAndGetToast() times out finding a `.card.exercise` that no
+  // longer exists. A fresh, isolated context (like every other gate block already uses, just one
+  // per un-Undone removal instead of one per theme) sidesteps that entirely — localStorage.clear()
+  // alone isn't enough (the live session is restored from IndexedDB regardless), and clearing
+  // IndexedDB in place races the still-open connection from this same page/tab.
+  const freshLiveSession = async () => {
+    await ctx.close();
+    ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(150);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  };
 
   const removeAndGetToast = async () => {
     await page.locator('.card.exercise').first().getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
@@ -1586,7 +1610,7 @@ for (const theme of themes) {
   // countdown via track()'s onStart and never resume it — neither tracker had a gesture to end,
   // so it stayed paused forever. A tap always fires both events regardless, so the toast must
   // still dismiss on its normal schedule.
-  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await freshLiveSession();
   await removeAndGetToast();
   const tapBox = await page.locator('.toast').boundingBox();
   await page.mouse.move(tapBox.x + 10, tapBox.y + tapBox.height / 2);
@@ -1598,7 +1622,7 @@ for (const theme of themes) {
 
   // QA11-6: holding the toast pauses its countdown, and releasing resumes it with the time that
   // was left — not a fresh one.
-  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await freshLiveSession();
   await removeAndGetToast();
   await page.waitForTimeout(1500);
   const holdBox = await page.locator('.toast').boundingBox();
