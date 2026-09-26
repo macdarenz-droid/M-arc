@@ -2267,6 +2267,52 @@ for (const width of [390, 360]) {
   await ctx.close();
 }
 
+// QA10-7: no horizontal scroll at 320px on the screens most likely to carry a long nowrap child —
+// the fix (.stack/.stack-sm grid-template-columns) touches every stack in the app, so this checks
+// it didn't just move the overflow somewhere else. Body is checked with real training history
+// loaded (the `legacy` fixture), so its Ready-times card (O3) renders real tiles, not an empty
+// state, in both a dark and a light theme.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 320, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `qa10-7 320 ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+
+  const noScroll = async label => {
+    const width = await page.evaluate(() => document.documentElement.scrollWidth);
+    const client = await page.evaluate(() => document.documentElement.clientWidth);
+    if (width > client + 1) errors.push(`${tag}: horizontal scroll on ${label} (scrollWidth ${width} > clientWidth ${client})`);
+  };
+
+  await noScroll('Today');
+
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const rtTiles = await page.locator('button.rt-tile').count();
+  if (rtTiles === 0) errors.push(`${tag}: expected the Ready-times card to render real tiles from the legacy fixture on Body`);
+  await noScroll('Body (Ready-times seeded)');
+
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await noScroll('History');
+
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  await noScroll('Settings');
+  await page.locator('dialog[open] [aria-label="Close"]').last().click().catch(() => {}); await page.waitForTimeout(200);
+
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  await noScroll('Train (live)');
+
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
