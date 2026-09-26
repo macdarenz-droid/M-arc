@@ -43,6 +43,35 @@ const settle = (page) => page.evaluate(() => Promise.race([
 
 const sha1 = (buf) => createHash('sha1').update(buf).digest('hex');
 
+/** A3: a realistic single-finger touch drag via CDP — Playwright's mouse() only ever produces
+ * mouse/pointer input, never a real Touch, and our gesture code (A3/I7/F13) reads touch identity
+ * and Pointer Events that a synthesized mouse drag won't exercise the same way. Linear from
+ * (x0,y0) to (x1,y1) over `ms`, in ~16ms steps. */
+async function touchDrag(page, x0, y0, x1, y1, ms) {
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: y0 }] });
+    if (ms <= 150) {
+      // A fast flick: one round-trip straight to the end point. Each CDP call carries its own
+      // real (unpaced) latency here (tens of ms) — spreading a short, fast gesture over several
+      // small steps would let that latency dilute the measured velocity below the fling
+      // threshold, exactly backwards from what a real flick produces.
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x1, y: y1 }] });
+    } else {
+      const steps = Math.min(10, Math.max(3, Math.round(ms / 150)));
+      for (let i = 1; i <= steps; i++) {
+        const x = x0 + (x1 - x0) * (i / steps);
+        const y = y0 + (y1 - y0) * (i / steps);
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y }] });
+        await new Promise(r => setTimeout(r, ms / steps));
+      }
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  } finally {
+    await cdp.detach().catch(() => {});
+  }
+}
+
 // Realistic legacy data so the migration path is exercised end to end.
 const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
@@ -1145,6 +1174,90 @@ for (const theme of themes) {
   await page.waitForTimeout(30);
   const r = await tyOf();
   if (!r || r.ty !== 0 || !(r.opacity < 1)) errors.push(`${tag}: expected a reduced-motion crossfade (ty 0, opacity < 1) at +30ms, got ${JSON.stringify(r)}`);
+  await ctx.close();
+}
+
+// A3: pulling a sheet down by its handle/title, or by its own content once scrolled to the top,
+// dismisses it past a quarter of its height or on a fast flick; short of both, it springs back.
+// Starting on scrollable content (not at its top) or on typed input never moves the sheet.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'A3 sheet swipe';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  // Nested sheets (e.g. ExercisePicker inside SplitEditor) render as a dialog literally nested
+  // inside the outer one's markup — always the topmost/last in DOM order, and the one actually
+  // interactive.
+  const panelBox = () => page.locator('dialog.sheet[open] .sheet-panel').last().boundingBox();
+  const panelTy = () => page.evaluate(() => {
+    const panels = [...document.querySelectorAll('dialog.sheet[open] .sheet-panel')];
+    const p = panels.at(-1);
+    if (!p) return null;
+    const t = getComputedStyle(p).transform;
+    return t === 'none' ? 0 : new DOMMatrixReadOnly(t).f;
+  });
+  const topScrollTop = (v) => page.evaluate(val => {
+    const panels = [...document.querySelectorAll('dialog.sheet[open] .sheet-panel')];
+    const p = panels.at(-1);
+    if (!p) return null;
+    if (val != null) p.scrollTop = val;
+    return p.scrollTop;
+  }, v);
+  const openCount = () => page.locator('dialog.sheet[open]').count();
+
+  // (a) A slow drag (well under the fling speed) past a quarter of the panel height closes it.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+  let box = await panelBox();
+  const dist40 = box.height * 0.4;
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 10 + dist40, Math.round(dist40 / 0.15));
+  await page.waitForTimeout(300);
+  if (await openCount()) errors.push(`${tag}: a slow 40%-of-height drag did not close the sheet`);
+
+  // (b) A short, slow drag springs back; the sheet stays open.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+  box = await panelBox();
+  const dist10 = box.height * 0.1;
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 10 + dist10, Math.round(dist10 / 0.15));
+  await page.waitForTimeout(450);
+  const tyBack = await panelTy();
+  if (tyBack !== 0) errors.push(`${tag}: expected the panel back at ty 0 after a short drag, got ${tyBack}`);
+  if (!(await openCount())) errors.push(`${tag}: a short 10%-of-height drag closed the sheet`);
+
+  // (c) A fast 60px/100ms flick closes even well under a quarter of the height.
+  box = await panelBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 70, 100);
+  await page.waitForTimeout(300);
+  if (await openCount()) errors.push(`${tag}: a fast 60px/100ms flick did not close the sheet`);
+
+  // (d) Scrolled content: dragging the body scrolls the list; the sheet itself never moves or closes.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
+  await page.waitForSelector('dialog.sheet[open].nested'); await page.waitForTimeout(300);
+  await topScrollTop(300);
+  await page.waitForTimeout(150);
+  const scrollBefore = await topScrollTop();
+  box = await panelBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 100, 200);
+  await page.waitForTimeout(150);
+  const scrollAfter = await topScrollTop();
+  if (!(scrollAfter < scrollBefore)) errors.push(`${tag}: expected dragging scrolled content upward, scrollTop ${scrollBefore} -> ${scrollAfter}`);
+  if ((await panelTy()) !== 0) errors.push(`${tag}: the sheet moved while its scrolled content was dragged`);
+  if ((await openCount()) < 2) errors.push(`${tag}: the sheet closed while its scrolled content was dragged`);
+
+  // (e) Starting on the search input never moves the sheet.
+  await topScrollTop(0);
+  const ibox = await page.locator('dialog.sheet[open] .sheet-panel').last().locator('input').first().boundingBox();
+  await touchDrag(page, ibox.x + ibox.width / 2, ibox.y + ibox.height / 2, ibox.x + ibox.width / 2, ibox.y + ibox.height / 2 + 150, 200);
+  await page.waitForTimeout(150);
+  if ((await panelTy()) !== 0) errors.push(`${tag}: the sheet moved while dragging from the search input`);
+  if ((await openCount()) < 2) errors.push(`${tag}: the sheet closed while dragging from the search input`);
   await ctx.close();
 }
 

@@ -2,12 +2,12 @@ import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
 import { markClosing, openSheetCount, registerSheet, sheetStack, unregisterSheet } from './sheetStack';
-import { durFor, EASE, reduced } from './motion';
+import { durFor, EASE, reduced, springEase } from './motion';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { HOLD_CONFIRM_MS } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -65,8 +65,8 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
     if (!d) return;
     // QA5-1: a child that already asks for focus (e.g. a form's first field) wins over the
     // panel's own autofocus, which exists only so a sheet with no such child still gets focus.
-    const panel = d.querySelector<HTMLElement>('.sheet-panel');
-    if (panel?.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
+    const panel = d.querySelector<HTMLElement>('.sheet-panel')!;
+    if (panel.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -90,12 +90,124 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
     };
     // R5.3: Back (Android or browser) closes the top sheet through its own exit animation.
     registerSheet(id, () => close.current(), () => requestCloseRef.current());
-    return () => { unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close(); };
+
+    // A3: pull the sheet down by its handle/title, or by its content once scrolled to the top,
+    // to dismiss it. Follows the finger 1:1 (rubber-banded above 0), the scrim lightens with it,
+    // and release either finishes the close (past a quarter of the panel, or a fast flick) or
+    // springs back. No haptic (this isn't a threshold-arm gesture like A5's swipe-to-delete).
+    const applyFollow = (y: number) => {
+      panel.style.transform = `translateY(${y >= 0 ? y : -rubber(-y)}px)`;
+      const h = panel.offsetHeight || 1;
+      d.style.setProperty('--scrim-o', String(Math.max(0, 1 - Math.max(0, y) / h)));
+    };
+    const clearFollow = () => { panel.style.transform = ''; d.style.removeProperty('--scrim-o'); };
+    const finishDrag = (y: number, v: number) => {
+      const h = panel.offsetHeight || 1;
+      const shouldClose = y > 0 && (v >= FLING_PX_PER_MS || y >= SHEET_CLOSE_FRACTION * h);
+      if (!shouldClose) {
+        const anim = panel.animate([{ transform: `translateY(${y}px)` }, { transform: 'translateY(0)' }], { duration: durFor('spring'), easing: springEase() });
+        anim.finished.then(clearFollow).catch(clearFollow);
+        d.style.removeProperty('--scrim-o');
+        return;
+      }
+      if (closingRef.current) return;
+      closingRef.current = true;
+      d.classList.add('closing');
+      markClosing(id);
+      const ms = Math.min(Math.max((h - y) / Math.max(v, 0.001), 120), durFor('sheetExit'));
+      const anim = panel.animate([{ transform: `translateY(${y}px)` }, { transform: `translateY(${h}px)` }], { duration: ms, easing: EASE.exit, fill: 'forwards' });
+      anim.finished.then(() => close.current()).catch(() => close.current());
+    };
+    // Reduced motion: no live follow (a continuously-moving finger can't sensibly crossfade); the
+    // release still decides by the same distance/velocity threshold, closing via the ordinary
+    // (crossfade) requestClose, or leaving the panel exactly where it already was (untouched).
+    const onDragMove = (y: number) => { if (!reduced()) applyFollow(y); };
+    const onDragEnd = (y: number, v: number) => {
+      if (reduced()) { if (y > 0 && (v >= FLING_PX_PER_MS || y >= SHEET_CLOSE_FRACTION * (panel.offsetHeight || 1))) requestCloseRef.current(); return; }
+      finishDrag(y, v);
+    };
+    const onDragCancel = () => { if (!reduced()) clearFollow(); };
+
+    const top = d.querySelector<HTMLElement>('.sheet-top');
+    const untrack = top ? track(top, {
+      axis: 'y', capture: 'down',
+      canStart: e => !(e.target as HTMLElement).closest('button'),
+      onMove: onDragMove, onEnd: onDragEnd, onCancel: onDragCancel,
+    }) : () => {};
+
+    // Body drag: only the sheet's own content, scrolled to its very top, dragging down starts
+    // it — otherwise native scroll (or text selection) proceeds untouched. Decided on the first
+    // touchmove of each touch only. Uses raw Touch events (not track()) so it can defer to native
+    // scroll conditionally instead of capturing the pointer up front.
+    let lastScrollAt = 0;
+    let bodyTouchId: number | null = null;
+    let bodyDragging = false;
+    let bodyStartY = 0;
+    let bodySamples: { t: number; y: number }[] = [];
+    const onPanelScroll = () => { lastScrollAt = Date.now(); top?.classList.toggle('scrolled', panel.scrollTop > 0); };
+    const velocityOf = (now: number, y: number) => {
+      const first = bodySamples[0];
+      if (!first || now - first.t <= 0) return 0;
+      return (y - first.y) / (now - first.t);
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      if (bodyTouchId != null || (e.target as HTMLElement).closest('.sheet-top')) return;
+      // A nested sheet's own listener already claims a touch inside it — without this, the
+      // bubbled event would also reach this (outer) sheet, which has no reason to think it's
+      // scrolled and would wrongly grab (and preventDefault) the inner sheet's own scroll/drag.
+      if ((e.target as HTMLElement).closest('.sheet-panel') !== panel) return;
+      const t = e.touches[0];
+      if (!t) return;
+      bodyTouchId = t.identifier; bodyStartY = t.clientY; bodyDragging = false; bodySamples = [{ t: performance.now(), y: t.clientY }];
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (bodyTouchId == null) return;
+      const t = [...e.touches].find(x => x.identifier === bodyTouchId);
+      if (!t) return;
+      const dy = t.clientY - bodyStartY;
+      if (!bodyDragging) {
+        const target = e.target as HTMLElement;
+        const isFormEl = !!target.closest('input, textarea, select, [contenteditable]');
+        const sel = typeof getSelection === 'function' ? getSelection() : null;
+        const hasSelection = !!sel && sel.toString().length > 0;
+        if (panel.scrollTop <= 0 && dy > 0 && !isFormEl && !hasSelection && Date.now() - lastScrollAt >= SCROLL_LOCK_MS) bodyDragging = true;
+        else { bodyTouchId = null; return; }
+      }
+      e.preventDefault();
+      bodySamples.push({ t: performance.now(), y: t.clientY });
+      while (bodySamples.length > 2 && bodySamples[0]!.t < performance.now() - 200) bodySamples.shift();
+      onDragMove(dy);
+    };
+    const endBodyDrag = (e: TouchEvent) => {
+      if (bodyTouchId == null) return;
+      const t = [...e.changedTouches].find(x => x.identifier === bodyTouchId);
+      bodyTouchId = null;
+      if (!bodyDragging) return;
+      bodyDragging = false;
+      const dy = t ? t.clientY - bodyStartY : 0;
+      onDragEnd(dy, velocityOf(performance.now(), t ? t.clientY : bodyStartY));
+    };
+    const onTouchCancel = () => { if (bodyDragging) onDragCancel(); bodyTouchId = null; bodyDragging = false; };
+    panel.addEventListener('scroll', onPanelScroll, { passive: true });
+    panel.addEventListener('touchstart', onTouchStart, { passive: true });
+    panel.addEventListener('touchmove', onTouchMove, { passive: false });
+    panel.addEventListener('touchend', endBodyDrag, { passive: true });
+    panel.addEventListener('touchcancel', onTouchCancel, { passive: true });
+
+    return () => {
+      unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close();
+      untrack();
+      panel.removeEventListener('scroll', onPanelScroll);
+      panel.removeEventListener('touchstart', onTouchStart);
+      panel.removeEventListener('touchmove', onTouchMove);
+      panel.removeEventListener('touchend', endBodyDrag);
+      panel.removeEventListener('touchcancel', onTouchCancel);
+    };
   }, []);
   const requestClose = () => requestCloseRef.current();
   return (
     <dialog ref={ref} class={`sheet ${nested ? 'nested' : ''}`} aria-labelledby={id} onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
-      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus onScroll={e => { e.currentTarget.querySelector('.sheet-top')?.classList.toggle('scrolled', e.currentTarget.scrollTop > 0); }}>
+      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
         <div class="sheet-top">
           <div class="sheet-grab" />
           <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button></div>
