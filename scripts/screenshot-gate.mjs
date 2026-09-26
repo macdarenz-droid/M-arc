@@ -1261,6 +1261,108 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I7: the Escobar sheet slides in like other sheets, tracks the finger between half and full
+// while dragging, and flings to the nearest detent (or closed) on release. Full motion — under
+// reduce the drag never live-follows, so there is nothing to measure mid-drag.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I7 escobar sheet';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(60);
+
+  // (1) Entry: a running sheet-in on open.
+  const enterRunning = await page.evaluate(() => document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName === 'sheet-in' && a.effect?.target?.classList?.contains('esc-panel')));
+  if (!enterRunning) errors.push(`${tag}: expected .esc-panel to have a running sheet-in right after open`);
+  await page.waitForTimeout(400);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click().catch(() => {});
+  await page.waitForTimeout(300);
+
+  const panelState = () => page.evaluate(() => {
+    const p = document.querySelector('.esc-panel');
+    const d = document.querySelector('dialog.esc-sheet[open]');
+    if (!p) return null;
+    const t = getComputedStyle(p).transform;
+    return { height: p.getBoundingClientRect().height, ty: t === 'none' ? 0 : new DOMMatrixReadOnly(t).f, closing: !!d?.classList.contains('closing') };
+  });
+  const grabBox = () => page.locator('.esc-grab-zone').boundingBox();
+  const vh = 844;
+  const hFull = 0.94 * vh, hHalf = 0.62 * vh;
+  const near = (a, b) => Math.abs(a - b) <= 14;
+
+  // Hall.tsx's esc-hall-input opens Escobar straight to 'full' (openEscobar({detent:'full'})).
+  let s = await panelState();
+  if (!s || !near(s.height, hFull)) errors.push(`${tag}: expected to open at full detent from the Hall input, got ${JSON.stringify(s)}`);
+
+  // (2) A fast 60px up drag ends at full (height ~= 94dvh, no transform).
+  let box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 - 60, 100);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || s.ty !== 0) errors.push(`${tag}: expected full detent after a fast up drag, got ${JSON.stringify(s)}`);
+
+  // (3) A slow 30px down drag from full returns to full.
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 30, 1000);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || s.ty !== 0) errors.push(`${tag}: expected to stay at full after a slow 30px down drag, got ${JSON.stringify(s)}`);
+
+  // Drag down to half, slowly, to set up (4).
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + (hFull - hHalf), 1400);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hHalf)) errors.push(`${tag}: expected half detent before the flick-close case, got ${JSON.stringify(s)}`);
+
+  // (4) A fast down flick from half closes, .closing first.
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 80, 100);
+  await page.waitForTimeout(30);
+  s = await panelState();
+  if (!s?.closing) errors.push(`${tag}: expected dialog.esc-sheet.closing right after a fast down flick from half`);
+  // The remaining distance to "closed" from a modest 80px flick is well past 200px, so this
+  // settle runs at durFor('bounce') (460ms full motion), not the shorter 'spring' — give it room.
+  await page.waitForTimeout(700);
+  if (await page.locator('dialog.esc-sheet[open]').count()) errors.push(`${tag}: expected the Escobar sheet gone after its close animation`);
+
+  // (5) Back routes through the same requestEscobarClose() as the X button and backdrop click
+  // (native/back.ts calls it directly; verified at the unit level in tests/back.test.ts), so its
+  // exit is the same animation exercised by (4) above.
+
+  // (6) Focusing the composer from half animates instead of jumping. Hall.tsx's esc-hall-input
+  // always reopens at full, so drag down to half first.
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(400);
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + (hFull - hHalf), 1400);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hHalf)) errors.push(`${tag}: expected half detent to set up the composer-focus case, got ${JSON.stringify(s)}`);
+  await page.locator('.esc-textarea').click();
+  const animating = await page.evaluate(() => document.getAnimations().some(a => a.playState === 'running' && a.effect?.target?.classList?.contains('esc-panel')));
+  if (!animating) errors.push(`${tag}: expected a running animation on .esc-panel right after focusing the composer from half`);
+  // The FLIP travels half -> full (~270px, >= 200), so this one settles at durFor('bounce')
+  // (460ms full motion), not 'spring'.
+  await page.waitForTimeout(700);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || Math.abs(s.ty) > 1) errors.push(`${tag}: expected full detent after focusing the composer, got ${JSON.stringify(s)}`);
+  await ctx.close();
+}
+
 // I1: the rest banner rises in with a running animation, its bar glides continuously via WAAPI
 // (rebuilt, not stepped, when the remaining time changes), its buttons are real tap targets, and
 // it exits (a `.leaving` class, then gone) instead of vanishing in one frame.

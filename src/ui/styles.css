@@ -446,14 +446,14 @@ html:not([data-motion="reduce"]) .palace-spotlight { animation: palace-glow 1.6s
 html:not([data-motion="reduce"]) .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
 html:not([data-motion="reduce"]) .esc-caret { animation: esc-blink 1s step-end infinite; }
 html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infinite; }
-html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(--dur-base) var(--ease-standard); }
 @keyframes esc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @keyframes esc-blink { 50% { opacity: 0; } }
 @keyframes esc-rot { to { transform: rotate(360deg); } }
 
 .esc-sheet { border: 0; padding: 0; background: transparent; max-width: 560px; width: 100%; margin: auto auto 0; max-height: 100dvh; overflow: visible; }
-.esc-sheet::backdrop { background: rgba(0,0,0,.45); }
-.esc-panel { display: flex; flex-direction: column; background: var(--surface-1); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 0 16px calc(10px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+.esc-sheet::backdrop { background: var(--scrim); animation: scrim-in var(--dur-sheet) var(--ease-standard); }
+.esc-sheet.closing::backdrop { animation: scrim-out var(--dur-sheet-exit) var(--ease-exit) forwards; }
+.esc-panel { display: flex; flex-direction: column; background: var(--surface-2); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 0 16px calc(10px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); animation: sheet-in var(--dur-sheet) var(--ease-drawer); }
 .esc-half .esc-panel { height: 62dvh; }
 .esc-full .esc-panel { height: 94dvh; }
 .esc-grab-zone { padding: 6px 0 2px; touch-action: none; cursor: grab; }
