@@ -70,3 +70,26 @@ The gate and test diff since 18a6635 is +116 lines with no deletions. Re-measure
   - Pin the clock for every ready-times probe (Playwright `page.clock.install({ time })` or the gate's virtual clock) so results don't depend on when CI runs.
   - Add a sweep at 360 px with the Front shoulders seed, at 06:00, 11:30, 17:00, 21:45 and 23:30 local time. Assert 2 columns at every time, no clipped text (scrollWidth ≤ clientWidth), and no horizontal scroll.
 - **Test:** a unit test that the longest `tileText` over a 24 h sweep is at most 16 characters, and that each part (before and after the dash) is at most 8 characters, so each part fits on one line.
+
+## Re-check of QA7-6 at 0fc1de5 (PR #22): fixed
+
+- **Review at 9d75ffe:** the code fix was right, but the gate had 3 gaps. The 52 px height check was deleted with nothing in its place, the time box was only checked on width, and nothing proved the sweep ever reached the midnight case. All 3 were fixed in 0fc1de5.
+- **Independent check (throwaway worktree, sweep block copied verbatim):**
+
+| pinned time | tile time | columns | tile height |
+|---|---|---|---|
+| 06:00 | 11 am – 1 pm | 2 | 52 |
+| 11:30 | 4 – 7 pm | 2 | 52 |
+| 17:00 | 10 pm – midnight | 2 | 68 |
+| 21:45 | 3 – 5 am | 2 | 52 |
+| 23:30 | 4 – 7 am | 2 | 52 |
+
+- **Before the fix** (Body.tsx and styles.css reverted to bbf1fbf): exactly 2 errors, both at 17:00: "forced the card to one column" and "expected 2 columns, got 1". The other 4 points are unchanged.
+- **No loosening:** the only assertion removed, the fixed 52 px height, is replaced by stricter checks:
+  - the height is between 51 and 69 px (the CSS gives exactly 52 or 68);
+  - the height is exactly 52 ±1 when the name and the time each fit on one line;
+  - tile heights in a row match;
+  - no horizontal or vertical clipping.
+
+  tests/readyTimes.test.ts only gains lines. Every ready-times probe now runs on a pinned clock, so the result no longer depends on when CI runs.
+- **Coder's run:** tsc clean, vitest passed (1,143), `npm run gate` PASS.
