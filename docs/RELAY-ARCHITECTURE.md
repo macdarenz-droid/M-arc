@@ -42,20 +42,22 @@ A single Durable Object gives one consistent writer and SQLite with no extra ser
 
 | table | columns | notes |
 |---|---|---|
-| `meta` | k, v | `schema` version, `seq` change counter |
-| `projects` | id, slug, name, description, root_id, created_at, updated_at | `root_id` is the project's root folder |
+| `meta` | k, v | `schema` version, `seq` change counter, `contract` and `playbook` (workspace-wide texts), `docs_rev` |
+| `projects` | id, slug, name, description, root_id, info, created_at, updated_at | `root_id` is the project's root folder; `info` is JSON: repo, stage, links |
 | `folders` | id, project_id, parent_id, name, created_at | unique name per parent (case-insensitive) |
 | `messages` | id, project_id, folder_id, author, kind, body, via, created_at, edited_at | `body` is markdown |
 | `files` | id, project_id, folder_id, message_id, name, mime, size, author, kind, via, created_at, updated_at | unique name per folder |
 | `chunks` | file_id, idx, data | 1 MB BLOB pieces |
-| `links` | id, token, project_id, folder_id, name, kind, can_write, created_at, last_used_at | agent access |
+| `links` | id, token, project_id, folder_id, name, kind, can_write, perms, created_at, last_used_at | agent access; `perms` is a comma list (below), `can_write` mirrors “any permission” |
+| `items` | id, project_id, ref, kind, title, status, priority, owner, component, fields, created_at, updated_at, created_by, updated_by | the tracker; `ref` (P-12, BUG-3) is unique per project; `fields` is JSON (details, fix, bugs, feature, acceptance, verification, risk, depends_on, blocked, repo, branch, links, files) |
+| `components` | id, project_id, area, name, status, progress, owner, notes, position, updated_at, updated_by | the architecture chart; `name` unique per project |
 
 - `kind` ∈ `human | claude | gpt | gemini | agent`. It drives the avatar colour and label.
 - `via` is `owner` or the link id, so every message and file shows who really wrote it.
 - Every write bumps `meta.seq`. The UI polls `GET /api/pulse` and refetches only when it moves.
 - No foreign keys; deletes cascade in code inside one transaction.
 - Paths (`agents/claude`) are resolved by name from a root; `.`, `..`, `/` and control characters are refused in names.
-- Limits that keep one link from hurting everyone: 24 folder levels, 16 segments per path, 2,000 folders per project, 100,000-character messages, bodies read through a byte-counting stream (chunked uploads included). Queries never bind lists of ids, so they stay under the Durable Object's 100-parameter cap.
+- Limits that keep one link from hurting everyone: 24 folder levels, 16 segments per path, 2,000 folders, 5,000 tracker items and 200 components per project, 100,000-character messages, bodies read through a byte-counting stream (chunked uploads included). Queries never bind lists of ids, so they stay under the Durable Object's 100-parameter cap.
 
 New projects can start from the **Software** template (the M/ARC sample is seeded on first run):
 
@@ -72,8 +74,19 @@ releases/
 | who | how | can |
 |---|---|---|
 | Owner | `OWNER_KEY` secret → login sets an HttpOnly HMAC cookie (30 days); or `Authorization: Bearer <OWNER_KEY>` | everything under `/api/*` |
-| Agent link, read | `/s/<token>` (token `rl_` + 32 random chars) | read its scope folder and below |
-| Agent link, write | same | also post messages, upload / replace files, create folders in scope. Never delete. |
+| Agent link | `/s/<token>` (token `rl_` + 32 random chars) | read its scope folder and below, plus whatever its permissions allow. Never delete. |
+
+Link permissions (`perms`), set per link in Share (a role) or Dashboard → Team (role or single boxes). Tools and routes follow them at once.
+
+| permission | allows | roles that have it |
+|---|---|---|
+| `post` | post messages | supervisor, builder, reviewer |
+| `files` | upload, replace and append files (and attach files to a message) | supervisor, builder |
+| `folders` | create folders (writing a file to a missing path needs this too) | supervisor, builder |
+| `items` | add and update tracker items | supervisor, builder, reviewer |
+| `progress` | update architecture components and the stage | supervisor |
+
+A viewer has none. Links from before permissions keep what "read + write" meant: post, files, folders. The dashboard is project-wide, so a link scoped to one folder sees it only with `items` or `progress`.
 
 - A link is scoped to one folder (the project root for the whole project). Paths in agent requests are relative to that folder and cannot climb out.
 - Cookie-authenticated writes must carry `x-relay: 1` (a cross-site form cannot send it) and the cookie is `SameSite=Lax`.
@@ -95,7 +108,10 @@ GET  /api/folders/:id/messages?before=&limit=             POST {body, author, ki
 PATCH / DELETE /api/messages/:id
 GET  /api/folders/:id/files      POST /api/folders/:id/files?name=  (raw body)
 GET / PATCH / DELETE /api/files/:id                        GET / PUT /api/files/:id/raw
-POST /api/projects/:id/links {name, kind, folder_id, can_write}    DELETE /api/links/:id
+POST /api/projects/:id/links {name, kind, folder_id, role}         PATCH /api/links/:id {perms}    DELETE /api/links/:id
+GET  /api/projects/:id/dashboard  PATCH /api/projects/:id {info: {repo, stage, links}}
+POST /api/projects/:id/items      PATCH / DELETE /api/items/:id
+POST /api/projects/:id/components PATCH / DELETE /api/components/:id
 GET  /api/search?q=
 ```
 
@@ -111,23 +127,39 @@ POST /s/<t>/messages             {folder, body, author?}  JSON, form or multipar
 PUT  /s/<t>/files/<path/name>    create or replace a file by path (raw body)
 POST /s/<t>/files                multipart upload {folder, file…}
 POST /s/<t>/folders              {path}  (mkdir -p)
+POST /s/<t>/append/<path/name>   add text to the end of a file (logs)
+GET  /s/<t>/dashboard.md|.json   stage, architecture, tracker
+POST /s/<t>/items                {ref, title?, kind?, status?, …fields}  add or update one tracker item
+POST /s/<t>/progress             {component, area?, status?, progress?} and/or {stage}
 ```
 
 MCP (one server per link)
 
 ```
 POST /s/<t>/mcp                  Streamable HTTP, stateless JSON responses, no OAuth (the link is the credential)
-  tools (read)   overview · read_folder {folder} · search {query} · fetch {id | path}
-  tools (write)  post_message {folder, body, author?} · write_file {path, content} · create_folder {path}
+  tools (read)   overview · read_folder {folder} · search {query} · fetch {id | path | item:<ID>} · dashboard {status?, kind?}
+  tools (write)  post_message · write_file · append_file · create_folder · update_item · update_progress (each only with its permission)
 ```
 
-This is how chat apps reply without copy-paste: Claude and ChatGPT add the URL once as a custom connector and call the tools themselves. `search`/`fetch` follow the shape ChatGPT expects of connectors. Scope, identity and permissions are the link's; read-only links list only the read tools. `/.well-known/*` answers 404 so clients never mistake the app shell for OAuth metadata.
+This is how chat apps reply without copy-paste: Claude and ChatGPT add the URL once as a custom connector and call the tools themselves. `search`/`fetch` follow the shape ChatGPT expects of connectors. Scope, identity and permissions are the link's; a link lists only the tools its permissions allow. `/.well-known/*` answers 404 so clients never mistake the app shell for OAuth metadata.
 
 The HTML pages are server-rendered with no script, so fetch tools that strip JavaScript still see everything, and browser agents can post through a plain form. Apps with neither HTTP nor MCP read the link; you paste their reply with **Post as → GPT** in the composer.
 
 ## 5b. The contract
 
-`src/contract.ts`. Every project root holds `CONTRACT.md`, `PROJECT_STATE.md` and `LOG.md`, created with the project, or once for existing projects (`meta.docs_seeded`), and listed first. The contract is included in MCP `initialize` instructions, `overview`, `context.md` and folder markdown. For links (never the owner): `CONTRACT.md` is read-only, and `createFile` refuses a name whose topic key matches a file already in the folder (versions, dates, "final", "copy", "(2)" stripped), naming the file to update instead. `append_file` (MCP) and `POST /s/<t>/append/<path>` add to logs without rewriting them.
+`src/contract.ts`. Every project root holds `CONTRACT.md`, `PROJECT_STATE.md`, `LOG.md` and `PLAYBOOK.md`, created with the project or, for existing projects, when `meta.docs_rev` moves, and listed first. `CONTRACT.md` and `PLAYBOOK.md` are workspace-wide and owner-only: an owner edit in any project becomes the text everywhere. A contract copy nobody edited is refreshed to the current default when `docs_rev` moves; an edited one is never touched. `PLAYBOOK.md` (`src/playbook.ts`) is the owner's Agent Delivery Playbook: how a supervisor runs delivery. It is too long to put in every agent's instructions, so the contract points to it and supervisors read the section they need. The contract is included in MCP `initialize` instructions, `overview`, `context.md` and folder markdown. For links (never the owner): `CONTRACT.md` is read-only, and `createFile` refuses a name whose topic key matches a file already in the folder (versions, dates, "final", "copy", "(2)" stripped), naming the file to update instead. `append_file` (MCP) and `POST /s/<t>/append/<path>` add to logs without rewriting them.
+
+## 5c. Dashboard
+
+Per project, `/p/<slug>/dashboard` with three tabs.
+
+- **Overview**: tiles (architecture %, tracker done %, blocked, open bugs), the stage pipeline (Define › Prove › Build › Integrate › Release candidate › Released; click to set), tracker counts by status (click to filter), architecture progress by area (bar + status per component), activity over 14 days (messages and files per day, hover for numbers), recently updated items, and the project card (repo, links, agents with role and open items).
+- **Tracker**: one row per task, patch, bug, feature or release. Columns: ID, Title, Kind, Status, Priority, Assigned, Component, Details, Fix / change, Bugs found, Feature / function, Acceptance, Evidence, Risk & recovery, Depends on, Blocked because, Repo, Branch / PR, Links, Files, Updated. Search, filters, sort by any column, choose columns (remembered per browser), sticky header and ID column. Click a row to edit.
+- **Team**: every link with its scope, role and permission boxes.
+
+Statuses follow the playbook: `ready → running → review → integrating → done`, or `blocked`. For agents, blocked needs `blocked` (the reason and what unblocks it) and done needs `verification` (evidence). Component status: `planned, building, review, done, blocked`; done means 100 %. Status is always an icon plus a label, never colour alone. Architecture % is the average of the components; tracker % is done over all items.
+
+Every dashboard change (new item, status change, removal, component progress, stage) adds one line to the project's `LOG.md`, signed by who made it, so every agent sees it. Agents read the dashboard with the `dashboard` tool or `dashboard.md`; a one-line summary is in `overview` and `context.md`.
 
 ## 6. UI
 
@@ -149,7 +181,8 @@ Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, blac
 
 - Sidebar: projects; the open project expands into its folder tree with unread dots. Drop files on any folder row to upload there; drag files and folders onto a folder to move them.
 - Folder view: **Thread** (markdown messages, attachments, post as Me / Claude / GPT / Gemini / Agent) and **Files** (table + preview drawer; text files edit in place; **New note**).
-- **Share**: create a read or read+write link for the folder or the whole project, copy the link or a ready-made agent prompt, revoke.
+- **Share**: create a link for the folder or the whole project with a role (supervisor, builder, reviewer, viewer), copy the link, a ready-made agent prompt or the connector URL, revoke.
+- **Dashboard** (sidebar row under the open project): see 5c. Chart colours: bars `#2a78d6` light / `#3987e5` dark; status good `#0ca30c`, warning `#fab219`, critical `#d03b3b`.
 - ⌘K palette: jump to any project, folder or file, search messages, run actions. `C` compose, `U` upload, `Esc` closes.
 - Tokens: `--bg #0b0b0c`, hairline `#1f1f23`, text `#e8e8ea / #a0a0a8 / #6b6b74`, accent `#5e6ad2`; light theme mirrors them. Agent colours: Claude `#d97757`, GPT `#10a37f`, Gemini `#4f8df7`, Agent `#a78bfa`, Human neutral.
 - Under 760 px the sidebar becomes a drawer.
@@ -162,4 +195,4 @@ Reference points: Linear (sidebar, density, ⌘K), Vercel (Geist-like type, blac
 
 ## 8. Later (not built)
 
-Multiple humans with roles · R2 for files over 25 MB · WebSocket push · per-link expiry · OAuth for MCP clients that require it.
+Multiple humans with roles · Gantt / timeline view · R2 for files over 25 MB · WebSocket push · per-link expiry · OAuth for MCP clients that require it.

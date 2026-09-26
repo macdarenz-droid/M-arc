@@ -1,5 +1,5 @@
 // Platform-agnostic HTTP layer: owner API (/api), agent links (/s/<token>), health. Adapters: worker.ts, node.ts.
-import { HttpError, Store, asKind, cleanName, type Author, type FileMeta } from './store.ts'
+import { HttpError, Store, asKind, cleanName, permsOf, type Author, type FileMeta, type Link } from './store.ts'
 import { agentRoute } from './agent.ts'
 import { mcpRoute } from './mcp.ts'
 import { isImage, isText } from '../public/shared.js'
@@ -160,6 +160,7 @@ export function rawResponse(req: Request, f: FileMeta, data: Uint8Array, downloa
 // ── owner API ───────────────────────────────────────────────────
 type Handler = (c: Ctx, ...p: string[]) => Promise<Response> | Response
 const ok = () => json({ ok: true })
+const linkOut = (l: Link) => ({ ...l, perms: permsOf(l) })
 
 function owner(c: Ctx, b: Record<string, unknown>): Author {
   return { author: b.author ? cleanName(b.author, 'Author', 60) : 'Owner', kind: b.kind ? asKind(b.kind) : 'human', via: 'owner' }
@@ -171,9 +172,36 @@ const API: [string, RegExp, Handler][] = [
   ['POST', /^\/api\/projects$/, async c => json({ project: c.store.createProject(await readJson(c.req)) }, 201)],
   ['GET', /^\/api\/projects\/([\w-]+)$/, (c, id) => {
     const project = c.store.project(id)
-    return json({ project, folders: c.store.folders(project.id), links: c.store.links(project.id) })
+    return json({ project, info: c.store.info(project.id), folders: c.store.folders(project.id), links: c.store.links(project.id).map(linkOut) })
   }],
-  ['PATCH', /^\/api\/projects\/(\w+)$/, async (c, id) => json({ project: c.store.updateProject(id, await readJson(c.req)) })],
+  ['PATCH', /^\/api\/projects\/(\w+)$/, async (c, id) => {
+    const b = await readJson(c.req)
+    const info = b.info && typeof b.info === 'object' ? { ...(b.info as Record<string, unknown>) } : undefined
+    if (info?.stage !== undefined) c.store.setStage(id, owner(c, {}), info.stage)
+    if (info) delete info.stage
+    return json({ project: c.store.updateProject(id, { ...b, info }), info: c.store.info(id) })
+  }],
+  ['GET', /^\/api\/projects\/(\w+)\/dashboard$/, (c, id) => json(c.store.dashboard(id))],
+  ['POST', /^\/api\/projects\/(\w+)\/items$/, async (c, id) => {
+    const b = await readJson(c.req)
+    const ref = String(b.ref ?? '').trim().toLowerCase()
+    if (c.store.items(id).some(i => i.ref.toLowerCase() === ref)) throw new HttpError(409, `An item with ID “${String(b.ref).trim()}” already exists`)
+    return json({ item: c.store.upsertItem(id, owner(c, {}), b).item }, 201)
+  }],
+  ['PATCH', /^\/api\/items\/(\w+)$/, async (c, id) => json({ item: c.store.upsertItem(c.store.item(id).project_id, owner(c, {}), await readJson(c.req), id).item })],
+  ['DELETE', /^\/api\/items\/(\w+)$/, (c, id) => (c.store.deleteItem(id, owner(c, {})), ok())],
+  ['POST', /^\/api\/projects\/(\w+)\/components$/, async (c, id) => {
+    const b = await readJson(c.req)
+    const name = String(b.name ?? '').trim().toLowerCase()
+    if (c.store.components(id).some(x => x.name.toLowerCase() === name)) throw new HttpError(409, `A component named “${String(b.name).trim()}” already exists`)
+    return json({ component: c.store.upsertComponent(id, owner(c, {}), b).component }, 201)
+  }],
+  ['PATCH', /^\/api\/components\/(\w+)$/, async (c, id) => {
+    const cur = c.store.sql.get<{ project_id: string }>(`SELECT project_id FROM components WHERE id = ?`, id)
+    if (!cur) throw new HttpError(404, 'Component not found')
+    return json({ component: c.store.upsertComponent(cur.project_id, owner(c, {}), await readJson(c.req), id).component })
+  }],
+  ['DELETE', /^\/api\/components\/(\w+)$/, (c, id) => (c.store.deleteComponent(id, owner(c, {})), ok())],
   ['DELETE', /^\/api\/projects\/(\w+)$/, (c, id) => (c.store.deleteProject(id), ok())],
   ['POST', /^\/api\/projects\/(\w+)\/folders$/, async (c, id) => {
     const b = await readJson(c.req)
@@ -214,7 +242,8 @@ const API: [string, RegExp, Handler][] = [
     c.store.file(id)
     return json({ file: c.store.writeFile(id, await readBytes(c.req, c.maxFileBytes), { author: 'Owner', kind: 'human', via: 'owner' }) })
   }],
-  ['POST', /^\/api\/projects\/(\w+)\/links$/, async (c, id) => json({ link: c.store.createLink(id, await readJson(c.req)) }, 201)],
+  ['POST', /^\/api\/projects\/(\w+)\/links$/, async (c, id) => json({ link: linkOut(c.store.createLink(id, await readJson(c.req))) }, 201)],
+  ['PATCH', /^\/api\/links\/(\w+)$/, async (c, id) => json({ link: linkOut(c.store.setLinkPerms(id, (await readJson(c.req)).perms)) })],
   ['DELETE', /^\/api\/links\/(\w+)$/, (c, id) => (c.store.deleteLink(id), ok())],
   ['GET', /^\/api\/search$/, c => {
     const q = (c.url.searchParams.get('q') ?? '').trim().slice(0, 100)

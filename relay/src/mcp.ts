@@ -1,16 +1,18 @@
 // MCP server per agent link: POST /s/<token>/mcp (Streamable HTTP, stateless, JSON responses).
 // Chat apps that cannot send HTTP themselves (Claude.ai, ChatGPT) add this URL once as a connector, then read and
-// post through tools. Scope, identity and permissions are the link's; read-only links only list the read tools.
-import { HttpError, cleanName, type Author } from './store.ts'
+// post through tools. Scope, identity and permissions are the link's; a link lists only the tools its permissions allow.
+import { HttpError, can, cleanName, permsOf, type Author, type Perm } from './store.ts'
 import { json, limited, readBody, type Ctx } from './app.ts'
-import { fileLine, folderAt, folderMd, folderUrl, header, msgMd, pathOf, rawUrl, treeMd, view, when, type View } from './agent.ts'
-import { KINDS, isText } from '../public/shared.js'
+import { accessText, dashboardLine, dashboardMd, fileLine, findItem, folderAt, folderMd, folderUrl, header, itemMd, msgMd, need, pathOf, rawUrl, seesDashboard, treeMd, updateItem, updateProgress, view, when, writeFolder, type View } from './agent.ts'
+import { COMPONENT_STATUS, ITEM_FIELDS, ITEM_KINDS, ITEM_STATUS, KINDS, PRIORITIES, STAGES, isText } from '../public/shared.js'
 
 const VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05']
 const READ = { readOnlyHint: true, openWorldHint: false }
 const str = (description: string) => ({ type: 'string', description })
+const oneOf = (list: readonly string[], description: string) => ({ type: 'string', enum: [...list], description })
+const WRITE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false }
 
-const TOOLS = [
+const TOOLS: { name: string; title: string; perm?: Perm; dashboard?: true; annotations: object; description: string; inputSchema: object }[] = [
   {
     name: 'overview', title: 'Project overview', annotations: READ,
     description: 'Start here. Who you are in this Relay project, what you may do, the folder tree with counts, the latest messages and the file list.',
@@ -28,11 +30,11 @@ const TOOLS = [
   },
   {
     name: 'fetch', title: 'Fetch', annotations: READ,
-    description: 'Full content by id: "file:<id>" (text files in full), "message:<id>", "folder:<path>", or a plain path such as "docs/PROJECT_STATE.md".',
+    description: 'Full content by id: "file:<id>" (text files in full), "message:<id>", "folder:<path>", "item:<ID>" (a tracker item\'s full card), or a plain path such as "docs/PROJECT_STATE.md".',
     inputSchema: { type: 'object', properties: { id: str('An id from search or overview, or a path') }, required: ['id'] },
   },
   {
-    name: 'post_message', title: 'Post a message', write: true,
+    name: 'post_message', title: 'Post a message', perm: 'post',
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     description: 'Post a markdown message to a folder\'s thread: results, hand-offs, questions, answers. It is signed with your link\'s name.',
     inputSchema: {
@@ -42,35 +44,71 @@ const TOOLS = [
     },
   },
   {
-    name: 'write_file', title: 'Create or replace a text file', write: true,
+    name: 'write_file', title: 'Create or replace a text file', perm: 'files',
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
     description: 'Create or replace a text file by path, e.g. "PROJECT_STATE.md". Missing folders are created. Replacing overwrites the old content, so read it first. Update the existing file for a topic instead of making versions: new names like plan-v2, plan final, copy or patch-1.2 are refused when the topic already has a file. CONTRACT.md is the owner’s.',
     inputSchema: { type: 'object', properties: { path: str('Folder path and file name'), content: str('Full new content') }, required: ['path', 'content'] },
   },
   {
-    name: 'append_file', title: 'Append to a file', write: true,
+    name: 'append_file', title: 'Append to a file', perm: 'files',
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     description: 'Add text to the end of a file, creating it if missing. Use it for LOG.md after every change: one line, "- YYYY-MM-DD HH:MM UTC · your name · path · what changed and why".',
     inputSchema: { type: 'object', properties: { path: str('Folder path and file name, e.g. "LOG.md"'), text: str('Text to add at the end') }, required: ['path', 'text'] },
   },
   {
-    name: 'create_folder', title: 'Create a folder', write: true,
+    name: 'create_folder', title: 'Create a folder', perm: 'folders',
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description: 'Create a folder (and any missing parents), e.g. "agents/gpt/notes".',
     inputSchema: { type: 'object', properties: { path: str('Folder path') }, required: ['path'] },
   },
+  {
+    name: 'dashboard', title: 'Project dashboard', annotations: READ, dashboard: true,
+    description: 'The project dashboard: release stage, architecture progress per component, and the tracker table (ID, kind, status, priority, owner, title). Fetch "item:<ID>" for an item\'s full card.',
+    inputSchema: { type: 'object', properties: { status: oneOf(ITEM_STATUS, 'Only items with this status'), kind: oneOf(ITEM_KINDS, 'Only items of this kind') } },
+  },
+  {
+    name: 'update_item', title: 'Add or update a tracker item', perm: 'items', annotations: { ...WRITE, idempotentHint: true },
+    description: 'Add or update one tracker item (task, patch, bug, feature, release) by its ID, e.g. "P-12" or "BUG-3". Only the fields you pass change. Status runs ready → running → review → integrating → done, or blocked. Blocked needs "blocked" (the reason and what unblocks it); done needs "verification" (the evidence: tests, review, PR). New items and status changes are logged in LOG.md for you.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ref: str('The item ID, e.g. "P-12"'), title: str('Short title (needed for a new item)'),
+        kind: oneOf(ITEM_KINDS, 'Kind (default task)'), status: oneOf(ITEM_STATUS, 'Status (default ready)'), priority: oneOf(PRIORITIES, 'Priority (default medium)'),
+        owner: str('Assigned agent or person'), component: str('Architecture component it belongs to'),
+        ...Object.fromEntries((ITEM_FIELDS as [string, string][]).map(([k, label]) => [k, str(label)])),
+      },
+      required: ['ref'],
+    },
+  },
+  {
+    name: 'update_progress', title: 'Update architecture progress or stage', perm: 'progress', annotations: { ...WRITE, idempotentHint: true },
+    description: 'Keep the architecture chart and the release stage current (supervisors). Pass a component by name (created if new) with its status and progress 0–100, and/or the project stage. Changes are logged in LOG.md for you.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        component: str('Component name, e.g. "Auth API"'), area: str('Group on the chart, e.g. "Backend"'),
+        status: oneOf(COMPONENT_STATUS, 'Component status (done sets 100%)'), progress: { type: 'integer', minimum: 0, maximum: 100, description: 'Percent complete' },
+        owner: str('Who builds it'), notes: str('Short note'), stage: oneOf(STAGES, 'Project release stage'),
+      },
+    },
+  },
 ]
+
+/** The tools this link may use: read tools, the dashboard where it is in scope, and the writes it is allowed. */
+const toolsFor = (v: View) => TOOLS.filter(t => (t.perm ? can(v.link, t.perm) : !t.dashboard || seesDashboard(v)))
 
 const contractOf = (v: View) => v.store.contract(v.project.id)
 
 const instructions = (v: View) =>
   (contractOf(v) ? `This project has a contract every agent follows. Read it in full in overview (it is /CONTRACT.md) and keep to it: one file per topic, update instead of making versions, log every change in LOG.md with append_file.\n\n${contractOf(v)!.slice(0, 6000)}\n\n` : '') +
   `Relay is a shared workspace for the project "${v.project.name}". The person and several AI agents work in its folders; each folder has a thread of messages and files. ` +
-  `You are "${v.link.name}" (${KINDS[v.link.kind]?.label ?? 'Agent'}) with ${v.link.can_write ? 'read and write' : 'read-only'} access. ` +
+  `You are "${v.link.name}" (${KINDS[v.link.kind]?.label ?? 'Agent'}), ${accessText(v.link)}. ` +
   'Call overview first. Read the folder you are working in before you act. ' +
-  (v.link.can_write
-    ? 'When you finish a step, post the result with post_message to the folder it belongs to, and keep shared documents current with write_file. Never post secrets.'
-    : 'You cannot post; answer in the chat.')
+  (can(v.link, 'post') ? 'When you finish a step, post the result with post_message to the folder it belongs to. ' : 'You cannot post; answer in the chat. ') +
+  (can(v.link, 'files') ? 'Keep shared documents current with write_file and log changes with append_file. ' : '') +
+  (can(v.link, 'items') ? 'Keep your tracker items current with update_item. ' : '') +
+  (can(v.link, 'progress') ? 'You update progress: keep the architecture chart and stage current with update_progress, and follow PLAYBOOK.md. ' : '') +
+  'Never post secrets.'
 
 const text = (t: string, isError = false) => ({ content: [{ type: 'text', text: t }], ...(isError ? { isError: true } : {}) })
 const snippet = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, 140)
@@ -81,7 +119,8 @@ function overview(v: View, n: number): string {
   return [
     header(v, `${v.project.name} — overview`),
     contractOf(v) ? `## Contract (every agent follows this)\n\n${contractOf(v)!.replace(/^# .*\n+/, '')}` : '',
-    `You are **${v.link.name}** (${KINDS[v.link.kind]?.label ?? 'Agent'}), ${v.link.can_write ? 'read + write: post_message, write_file, append_file, create_folder' : 'read only'}. Paths are relative to your link.`,
+    `You are **${v.link.name}** (${KINDS[v.link.kind]?.label ?? 'Agent'}), ${accessText(v.link)}. Your tools: ${toolsFor(v).map(t => t.name).join(', ')}. Paths are relative to your link.`,
+    dashboardLine(v),
     `## Folders\n${treeMd(v)}`,
     `## Latest ${messages.length} messages (oldest first)\n\n${messages.map(m => `<!-- message:${m.id} -->\n${msgMd(v, m, true)}`).join('\n') || '_No messages yet._'}`,
     `## Files (fetch "file:<id>" or the path)\n${files.map(f => `${fileLine(v, f)} · file:${f.id}`).join('\n') || '_No files._'}`,
@@ -100,6 +139,10 @@ function fetchItem(v: View, id: string) {
     return { id: `file:${f.id}`, title: `${path ? path + '/' : ''}${f.name}`, text: body, url: rawUrl(v, f), metadata: { author: f.author, updated: when(f.updated_at), size: f.size } }
   }
   if (id.startsWith('file:')) return fileDoc(id.slice(5))
+  if (id.startsWith('item:')) {
+    const it = findItem(v, id.slice(5))
+    return { id: `item:${it.ref}`, title: `${it.ref} · ${it.title}`, text: itemMd(it), url: `${v.base}/dashboard.md`, metadata: { status: it.status, kind: it.kind, owner: it.owner } }
+  }
   if (id.startsWith('message:')) {
     const m = v.store.message(id.slice(8))
     if (!inScope(m.folder_id)) throw new HttpError(404, 'Not found in this link')
@@ -121,8 +164,9 @@ function fetchItem(v: View, id: string) {
 async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
   const tool = TOOLS.find(t => t.name === name)
   if (!tool) return null
-  if (tool.write) {
-    if (!v.link.can_write) return text('This link is read-only. Answer in the chat instead.', true)
+  if (tool.perm) {
+    if (!permsOf(v.link).length) return text('This link is read-only. Answer in the chat instead.', true)
+    need(v, tool.perm)
     if (limited(`link:${v.link.id}`, 120, 60_000)) return text('Too many writes. Wait a minute.', true)
   }
   const who = (): Author => ({ author: a.author ? cleanName(a.author, 'Author', 60) : v.link.name, kind: v.link.kind, via: v.link.id })
@@ -155,7 +199,7 @@ async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
       const fname = cleanName(parts.pop(), 'File name', 200)
       const content = String(a.content ?? '')
       if (content.length > 2_000_000) return text('Content is larger than 2 MB. Split it into smaller files.', true)
-      const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+      const folder = writeFolder(v, parts.join('/'))
       const { file, created } = v.store.putFile(folder.id, who(), { name: fname, data: new TextEncoder().encode(content) })
       return text(`${created ? 'Created' : 'Replaced'} ${parts.length ? parts.join('/') + '/' : ''}${file.name} (${file.size} bytes, file:${file.id}).`)
     }
@@ -165,7 +209,7 @@ async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
       const add = String(a.text ?? '')
       if (!add.trim()) return text('Nothing to append.', true)
       if (add.length > 100_000) return text('Append at most 100,000 characters at a time.', true)
-      const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+      const folder = writeFolder(v, parts.join('/'))
       const { file, created } = v.store.appendFile(folder.id, who(), fname, add)
       return text(`${created ? 'Created' : 'Appended to'} ${parts.length ? parts.join('/') + '/' : ''}${file.name} (${file.size} bytes).`)
     }
@@ -173,6 +217,12 @@ async function call(c: Ctx, v: View, name: string, a: Record<string, unknown>) {
       const f = v.store.ensurePath(v.scope.id, a.path)
       return text(`Folder /${view(c, v.link.token).tree.find(t => t.f.id === f.id)?.path ?? ''} is ready.`)
     }
+    case 'dashboard':
+      return text(dashboardMd(v, { status: a.status, kind: a.kind }))
+    case 'update_item':
+      return text(updateItem(v, who(), a))
+    case 'update_progress':
+      return text(updateProgress(v, who(), a))
   }
   return null
 }
@@ -191,14 +241,14 @@ async function dispatch(c: Ctx, v: View, m: Rpc) {
       return reply(m.id, {
         protocolVersion: VERSIONS.includes(asked) ? asked : VERSIONS[1],
         capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: 'relay', title: `Relay · ${v.project.name}`, version: '1.1.0' },
+        serverInfo: { name: 'relay', title: `Relay · ${v.project.name}`, version: '1.2.0' },
         instructions: instructions(v),
       })
     }
     case 'ping':
       return isNote ? null : reply(m.id, {})
     case 'tools/list':
-      return reply(m.id, { tools: TOOLS.filter(t => !t.write || v.link.can_write).map(({ write: _w, ...t }) => t) })
+      return reply(m.id, { tools: toolsFor(v).map(({ perm: _p, dashboard: _d, ...t }) => t) })
     case 'tools/call': {
       const name = String(p.name ?? '')
       const args = (p.arguments && typeof p.arguments === 'object' ? p.arguments : {}) as Record<string, unknown>
