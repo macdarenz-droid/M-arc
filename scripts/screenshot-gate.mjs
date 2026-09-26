@@ -2441,6 +2441,32 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// QA12-1: a real first install (no seeded profile at all) shows OnboardingSheet, whose native
+// <dialog> paints in the browser's top layer above any z-index including #launch's. Before the
+// fix, the dialog opened at 0ms and swallowed the tap meant to skip the launch overlay. Keeps
+// the existing seeded "launch skip (O1)" probe above; this is the unseeded case next to it.
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch skip, first run (QA12-1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  await elapsedAtLeast(page, 300);
+  const cx = 195, cy = 422; // viewport centre (390x844)
+  const hit = await page.evaluate(([x, y]) => {
+    const el = document.elementFromPoint(x, y);
+    return { inLaunch: !!el?.closest('#launch'), inDialog: !!el?.closest('dialog[open]') };
+  }, [cx, cy]);
+  if (!hit.inLaunch || hit.inDialog) errors.push(`${tag}: at 300ms the centre point should hit #launch, not a dialog: ${JSON.stringify(hit)}`);
+  await page.mouse.click(cx, cy);
+  await elapsedAtLeast(page, 600);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: a real mouse click at 300ms should have removed #launch by 600ms`);
+  if (!(await visible(page.locator('dialog[open]')))) errors.push(`${tag}: expected the onboarding sheet to open once #launch is gone`);
+  await ctx.close();
+}
+
 // O1: the theme colour map, and the crash hook clearing the overlay.
 {
   const tag = 'launch theme+crash (O1)';
