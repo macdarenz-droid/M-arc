@@ -7,7 +7,7 @@ import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, LONG_PRESS_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -29,7 +29,14 @@ export function Chip({ children, tone, pressed, onClick, class: cls = '' }: { ch
 }
 
 export function Segmented<T extends string>({ value, options, onChange }: { value: T; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
-  return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
+  // I10: a raised thumb glides under the chosen option instead of it getting its own background.
+  const i = Math.max(0, options.findIndex(o => o.value === value));
+  return (
+    <div class="seg" role="tablist">
+      <span class="seg-thumb" aria-hidden="true" style={{ width: `calc((100% - 6px) / ${options.length})`, transform: `translateX(${i * 100}%)` }} />
+      {options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}
+    </div>
+  );
 }
 
 export function Toggle({ checked, onChange, label, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
@@ -472,7 +479,8 @@ export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, 
   const long = useRef(false);
   if (!focused.current && text !== display) setText(display);
   const other = displayUnit && displayUnit !== entryUnit && kg != null && kg > 0 ? approxIn(kg, displayUnit) : null;
-  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; onUnitLongPress(); }, 550); };
+  // I11: one long-press timing everywhere, not this control's own 550ms.
+  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; void haptic.longPress(); onUnitLongPress(); }, LONG_PRESS_MS); };
   const endPress = () => { if (press.current) { clearTimeout(press.current); press.current = null; } };
   return (
     <span class="weight-input">

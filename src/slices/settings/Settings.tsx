@@ -22,7 +22,7 @@ import { clearStore as clearEscobarStore, exportAllEscobar, restoreEscobar } fro
 import { clearHeart, exportHeart, restoreHeart } from '@/core/heartStore';
 import { backupReminderScheduled, cancelRestDone, exactAlarmsAllowed, refreshExactAlarm, requestExactAlarm, syncBackupReminder, testRestAlert } from '@/native/notifications';
 import { isNative } from '@/native/capacitor';
-import { onReducedChange, osReducedMotion, motionPrefIsReduce, setMotionPref } from '@/ui/motion';
+import { onReducedChange, osReducedMotion, motionPrefIsReduce, reduced, setMotionPref } from '@/ui/motion';
 import { APP_VERSION } from '@/core/version';
 import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { backupAgeDays, buildBackup, parseBackup } from './backup';
@@ -47,6 +47,21 @@ function restoreAll(b: Snapshot): void {
   restoreEscobar(b.escobar);
   restoreHeart(b.heart);
   afterReplace();
+}
+
+/** I10: one crossfade of the whole page via the View Transitions API when it's available and
+ * motion isn't reduced; otherwise the data-theme-switching fallback (a hard, instant cut — see
+ * styles.css) covers whatever the root view-transition snapshot doesn't (e.g. this very dialog,
+ * a top-layer element, which is unverified to be included in it). */
+function switchTheme(id: Parameters<typeof setTheme>[0]): void {
+  const run = () => setTheme(id);
+  if (!reduced() && 'startViewTransition' in document) {
+    document.startViewTransition(run);
+    return;
+  }
+  document.documentElement.setAttribute('data-theme-switching', '');
+  run();
+  requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.removeAttribute('data-theme-switching')));
 }
 
 function resetEverything(): void {
@@ -128,7 +143,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <Section title="Theme" palace="settings.theme">
           <div class="theme-grid">
             {THEME_IDS.map(id => { const t = THEMES[id]; const k = t.tokens; return (
-              <button type="button" key={id} class="theme-card" aria-pressed={themeId.value === id} onClick={() => setTheme(id)}>
+              <button type="button" key={id} class="theme-card" aria-pressed={themeId.value === id} onClick={() => switchTheme(id)}>
                 <div class="theme-preview" style={{ background: k.bg }}><i style={{ top: 8, width: '55%', background: k.text, opacity: .9 }} /><i style={{ top: 22, background: k.surface3 }} /><i style={{ top: 36, width: 40, background: k.accent }} /></div>
                 <div><b class="small">{t.name}</b><div class="hint">After {t.inspiredBy}</div></div>
               </button>
