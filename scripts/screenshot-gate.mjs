@@ -1789,6 +1789,36 @@ for (const width of [390, 360]) {
     await ctx.close();
   }
 
+  // QA7-4: the scroll-keep timer must not fire against a screen the user has since left. Tapping
+  // a tile starts a ~230ms setTimeout that reads the tapped tile's DOM node back out of a ref map;
+  // without clearing the old timer and deleting refs on unmount, a stale (detached) node's
+  // getBoundingClientRect() reads as all-zero rather than null, so leaving the tab within that
+  // window scrolls whatever screen is now showing.
+  {
+    const tag = 'ready-times QA7-4';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await openRtBody(page, rtStateJson(rtMainSessions), 'silent-black');
+    const tile = page.locator('button.rt-tile').first();
+    await tapEl(page, tile);
+    // Switch tabs well inside the durFor('base')+30 window, then wait past it, and compare the
+    // NEW screen's own scroll position before/after (not Body's — a different page entirely).
+    await page.waitForTimeout(60);
+    await page.locator('nav.nav button', { hasText: 'Today' }).click();
+    await page.waitForTimeout(50);
+    // A non-zero baseline: the bug's stray delta is a large negative number (the Body tile's real
+    // top minus a stale node's all-zero rect), which at scrollY 0 clamps to 0 either way and
+    // hides the bug. Scrolling down first makes an unwanted reset to 0 visible.
+    await page.evaluate(() => window.scrollTo(0, 300));
+    const scrollYBefore = await page.evaluate(() => window.scrollY);
+    await page.waitForTimeout(400);
+    const scrollYAfter = await page.evaluate(() => window.scrollY);
+    if (Math.abs(scrollYAfter - scrollYBefore) > 0.5) errors.push(`${tag}: leaving the Body tab mid-timer scrolled the new screen (${scrollYBefore} -> ${scrollYAfter})`);
+    await ctx.close();
+  }
+
   // A minute tick while a strip is open: the grouping/order freezes (no reshuffle, no crash),
   // even though `recovery` (app/selectors.ts) recomputes on every minuteNow rollover. Playwright's
   // virtual clock crosses the minute boundary deterministically, the same technique the

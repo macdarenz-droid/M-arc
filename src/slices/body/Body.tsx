@@ -203,6 +203,8 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
   const containerRef = useRef<HTMLDivElement>(null);
   const tileRefs = useRef(new Map<MuscleId, HTMLButtonElement>());
   const [oneColumn, setOneColumn] = useState(false);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
 
   // QA-O3: while a strip is open, the grouping/order is frozen so the grid never reshuffles
   // under the finger; the numbers shown still come from the live `rec` on every minute tick.
@@ -255,7 +257,8 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
     setOpenMuscle(cur => (cur === muscle ? null : muscle));
     setOpenCol(col);
     if (before == null) return;
-    setTimeout(() => {
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
       const after = tileRefs.current.get(muscle)?.getBoundingClientRect().top;
       if (after == null) return;
       const delta = after - before;
@@ -274,7 +277,7 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
           <div class={`rt-line ${oneColumn ? 'one-col' : ''}`}>
             {line.map((m, ci) => (
               <RtTile key={m} r={byId.get(m)!} now={now} group={group} full={line.length === 1} expanded={openMuscle === m}
-                onClick={() => onTile(m, ci)} tileRef={el => { if (el) tileRefs.current.set(m, el); }} />
+                onClick={() => onTile(m, ci)} tileRef={el => { if (el) tileRefs.current.set(m, el); else tileRefs.current.delete(m); }} />
             ))}
           </div>
           <div class={`rt-detail-wrap ${openMuscle != null && line.includes(openMuscle) ? 'open' : ''}`}>
