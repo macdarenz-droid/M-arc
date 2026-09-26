@@ -105,8 +105,7 @@
       <g class="settle">
         <g transform="translate(47 100) scale(1.34)">
           <path id="launch-path" d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="100" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="100" stroke-dashoffset="100" style="stroke: var(--launch-ink, #f7f8f8)">
-            <animate id="launch-off1" attributeName="stroke-dashoffset" begin="indefinite" from="100" to="45.93" dur="0.72s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".45 0 .25 1"></animate>
-            <animate attributeName="stroke-dashoffset" begin="launch-off1.end" from="45.93" to="0" dur="0.5s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".35 0 .2 1"></animate>
+            <animate id="launch-off1" attributeName="stroke-dashoffset" begin="indefinite" values="100;45.93;0" dur="1.22s" fill="freeze" calcMode="spline" keyTimes="0;0.590164;1" keySplines=".45 0 .25 1;.35 0 .2 1"></animate>
           </path>
           <circle id="launch-dot" r="3.1" style="fill: var(--launch-accent, #5e6ad2)">
             <animateMotion id="launch-motion" begin="indefinite" dur="0.72s" fill="freeze" calcMode="spline" keyPoints="0;0.5407" keyTimes="0;1" keySplines=".45 0 .25 1" path="M8 40H16L22 22L30 50L36 30L40 40H56"></animateMotion>
