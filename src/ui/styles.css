@@ -614,7 +614,7 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transiti
 .rt-ring text { font-size: 13px; font-weight: 600; fill: var(--text); font-variant-numeric: tabular-nums; }
 .rt-tile-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .rt-tile-full .rt-tile-info { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 8px; }
-.rt-tile-name { font-size: 14px; line-height: 18px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rt-tile-name { font-size: 14px; line-height: 18px; font-weight: 600; color: var(--text); overflow: hidden; white-space: normal; overflow-wrap: normal; max-height: 36px; }
 .rt-tile-time { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rt-detail-wrap { display: grid; grid-template-rows: 0fr; grid-column: 1 / -1; transition: grid-template-rows var(--dur-base) var(--ease-enter); }
 .rt-detail-wrap.open { grid-template-rows: 1fr; }

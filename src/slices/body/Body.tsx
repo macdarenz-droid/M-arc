@@ -236,7 +236,10 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
       const nameEl = el.querySelector<HTMLElement>('.rt-probe-name');
       const timeEl = el.querySelector<HTMLElement>('.rt-probe-time');
       if (!nameEl || !timeEl) return;
-      setOneColumn(nameEl.scrollWidth > nameEl.clientWidth + 0.5 || timeEl.scrollWidth > timeEl.clientWidth + 0.5);
+      // QA7-2: a name may now wrap to 2 lines, so overflow can be either axis — a name still
+      // too wide for its column (an unbreakable word), or too tall (would need a 3rd line).
+      const nameOverflows = nameEl.scrollWidth > nameEl.clientWidth + 0.5 || nameEl.scrollHeight > nameEl.clientHeight + 1;
+      setOneColumn(nameOverflows || timeEl.scrollWidth > timeEl.clientWidth + 0.5 || timeEl.scrollHeight > timeEl.clientHeight + 1);
     };
     probe();
     // rAF-deferred: measuring synchronously inside the callback can itself change layout

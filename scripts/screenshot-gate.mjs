@@ -1762,6 +1762,33 @@ for (const width of [390, 360]) {
     }
   }
 
+  // QA7-2: a long, common muscle name ("Front shoulders") must not force the whole card to one
+  // column — it wraps to 2 lines inside the 52px tile instead. 360px is the tightest column width.
+  {
+    const tag = 'ready-times QA7-2 (Front shoulders)';
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await openRtBody(page, rtStateJson([rtSess(2, 'e1', 'Barbell Overhead Press', 30, 'ideal', 3)]), 'silent-black');
+    const tileWithName = page.locator('button.rt-tile', { hasText: 'Front shoulders' }).first();
+    if (!(await tileWithName.count())) {
+      errors.push(`${tag}: expected a "Front shoulders" tile with this seed`);
+    } else {
+      const lineHasOneCol = await tileWithName.evaluate(el => !!el.closest('.rt-line.one-col'));
+      if (lineHasOneCol) errors.push(`${tag}: "Front shoulders" forced the card to one column at 360px`);
+      const cols = await tileWithName.evaluate(el => getComputedStyle(el.closest('.rt-line')).gridTemplateColumns.trim().split(' ').length);
+      if (cols !== 2) errors.push(`${tag}: expected 2 columns, got ${cols}`);
+      const nameEl = tileWithName.locator('.rt-tile-name');
+      const nameBox = await nameEl.evaluate(el => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, height: el.getBoundingClientRect().height }));
+      if (nameBox.scrollWidth > nameBox.clientWidth + 0.5) errors.push(`${tag}: "Front shoulders" is clipped horizontally (scrollWidth ${nameBox.scrollWidth} > clientWidth ${nameBox.clientWidth})`);
+      if (nameBox.height > 36.5) errors.push(`${tag}: "Front shoulders" name box is ${nameBox.height.toFixed(1)}px tall (want <= 36px)`);
+      const tileHeight = await tileWithName.evaluate(el => el.getBoundingClientRect().height);
+      if (Math.abs(tileHeight - 52) > 1) errors.push(`${tag}: tile height is ${tileHeight.toFixed(1)}px (want 52px)`);
+    }
+    await ctx.close();
+  }
+
   // A minute tick while a strip is open: the grouping/order freezes (no reshuffle, no crash),
   // even though `recovery` (app/selectors.ts) recomputes on every minuteNow rollover. Playwright's
   // virtual clock crosses the minute boundary deterministically, the same technique the
