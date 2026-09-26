@@ -1,7 +1,7 @@
 /** Derived, memoised views over the store that several screens share. */
 import { computed } from '@preact/signals';
 import { state } from '@/core/store';
-import { weekdayOf, daysBetween, nextScheduled } from '@/core/dates';
+import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
@@ -63,7 +63,8 @@ export const insights = computed(() => coachInsights(coachContext.value, 3));
 /** null once its endDay passes — F3.3 "closes itself" is read-time gating, no mutation needed. */
 export const activeDeload = computed(() => { const d = state.value.deload; return d && d.endDay >= today.value ? d : null; });
 export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
-export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+/** QA8-4: also counts a session that started before midnight and ended today, within the last 6 hours. */
+export const sessionsToday = computed(() => trainedTodaySessions(state.value.sessions, today.value, minuteNow.value));
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;
   return shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
