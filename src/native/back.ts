@@ -2,7 +2,7 @@
  * Android back (R5.3, required with targetSdk 36's predictive back): the Escobar chat, then the
  * top sheet, then the open panel, then Today; on Today the app goes to the background.
  */
-import { escobarUi } from '@/escobar/state';
+import { escobarUi, requestEscobarClose } from '@/escobar/state';
 import { closePanel, go, openPanel, tab } from '@/app/router';
 import { closeTopSheet } from '@/ui/sheetStack';
 import { isNative } from './capacitor';
@@ -11,7 +11,7 @@ export type BackAction = 'escobar' | 'sheet' | 'panel' | 'today' | 'minimize';
 
 /** Does one step of Back and says which. `minimize` is left to the caller. */
 export function handleBack(): BackAction {
-  if (escobarUi.value.open) { escobarUi.value = { ...escobarUi.value, open: false, contextRef: null }; return 'escobar'; }
+  if (escobarUi.value.open) { requestEscobarClose(); return 'escobar'; }
   if (closeTopSheet()) return 'sheet';
   if (openPanel.value) { closePanel(); return 'panel'; }
   if (tab.value !== 'today') { go('today'); return 'today'; }

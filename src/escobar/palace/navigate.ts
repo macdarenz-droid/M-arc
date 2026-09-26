@@ -7,16 +7,27 @@ import { state } from '@/core/store';
 import { PALACE_BY_ID, type PalaceTarget } from './registry';
 import { signal } from '@preact/signals';
 import { reduced } from '@/ui/motion';
+import { closeAllSheets, sheetStack } from '@/ui/sheetStack';
 
 /** The aria-live announcement for the last spotlight. */
 export const palaceAnnouncement = signal('');
 
 const SPOTLIGHT_MS = 1600;
 
-function closeOpenSheets(): void {
-  if (typeof document === 'undefined') return;
-  // A Sheet closes through its own onCancel (Escape), which runs its owner's onClose.
-  document.querySelectorAll('dialog.sheet[open]').forEach(d => d.dispatchEvent(new Event('cancel', { cancelable: true })));
+/**
+ * I6 regression: this used to dispatch a native 'cancel' event on every open `dialog.sheet`
+ * independently, each running its own `history.back()` (via unregisterSheet) to drop its history
+ * entry. Rapid, repeated palace navigation (e.g. gate-testing every settings.* anchor back to
+ * back) calls this on every hop, so those `history.back()` calls stack up faster than the browser
+ * reliably delivers their popstate events; a stray one can land after a *later* sheet has already
+ * pushed its own entry and get read as a real Back press, closing the wrong (just-opened) sheet.
+ * closeAllSheets already solves exactly this for the same reason (router.ts's go()) — one batched
+ * `history.go(-n)` instead of N separate `history.back()` calls — so reuse it here instead of
+ * rolling a second, narrower mechanism.
+ */
+function closeOpenSheets(): Promise<void> {
+  if (typeof document === 'undefined' || !sheetStack.peek().length) return Promise.resolve();
+  return new Promise(resolve => closeAllSheets(resolve));
 }
 
 const frame = (): Promise<void> => new Promise(r => (typeof requestAnimationFrame === 'undefined' ? setTimeout(r, 16) : requestAnimationFrame(() => r())));
@@ -57,7 +68,7 @@ export async function goTo(target: string | PalaceTarget, extraParams?: Record<s
   const t: PalaceTarget | undefined = typeof target === 'string' ? entry?.target : target;
   if (!t) return false;
   const params = validatePanelParams(t.panel ?? 'settings', { ...(t.params ?? {}), ...(extraParams ?? {}) }) ?? {};
-  closeOpenSheets();
+  await closeOpenSheets();
   openPanel.value = null;
   await frame();
   go(t.tab);

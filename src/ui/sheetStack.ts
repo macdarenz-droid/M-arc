@@ -6,7 +6,7 @@
 import { computed, signal } from '@preact/signals';
 import { isNative } from '@/native/capacitor';
 
-interface Entry { id: string; close: () => void; pushed: boolean; popped: boolean }
+interface Entry { id: string; close: () => void; requestClose: () => void; pushed: boolean; popped: boolean; closing: boolean }
 export const sheetStack = signal<Entry[]>([]);
 export const openSheetCount = computed(() => sheetStack.value.length);
 
@@ -17,10 +17,22 @@ const stateSheet = (): string | undefined => { try { return (history.state as { 
 let ignorePops = 0;
 let afterUnwind: (() => void) | null = null;
 
-export function registerSheet(id: string, close: () => void): void {
-  const e: Entry = { id, close, pushed: false, popped: false };
+/**
+ * `close` unmounts instantly (used by closeAllSheets, a programmatic close-everything from
+ * router navigation). `requestClose` runs the sheet's own exit animation first (I6); it defaults
+ * to `close` for a caller that has none. Real Back presses (closeTopSheet) always go through it.
+ */
+export function registerSheet(id: string, close: () => void, requestClose: () => void = close): void {
+  const e: Entry = { id, close, requestClose, pushed: false, popped: false, closing: false };
   if (hasHistory()) { try { history.pushState({ sheet: id }, ''); e.pushed = true; } catch { /* sandboxed */ } }
   sheetStack.value = [...sheetStack.value, e];
+}
+
+/** I6: marks a sheet as mid-exit so closeTopSheet (a second Back during its animation) reaches
+ * the sheet below instead of re-triggering this one's own close. */
+export function markClosing(id: string): void {
+  const e = sheetStack.value.find(x => x.id === id);
+  if (e) e.closing = true;
 }
 
 export function unregisterSheet(id: string): void {
@@ -31,12 +43,14 @@ export function unregisterSheet(id: string): void {
   if (e.pushed && !e.popped && stateSheet() === id) { ignorePops++; try { history.back(); } catch { ignorePops--; } }
 }
 
-/** Closes the top sheet. True when there was one. */
+/** Closes the top (not already exiting) sheet. True when there was one. */
 export function closeTopSheet(fromPop = false): boolean {
-  const top = sheetStack.value.at(-1);
+  const stack = sheetStack.value;
+  let top: Entry | undefined;
+  for (let i = stack.length - 1; i >= 0; i--) { if (!stack[i]!.closing) { top = stack[i]; break; } }
   if (!top) return false;
   if (fromPop) top.popped = true;
-  top.close();
+  top.requestClose();
   return true;
 }
 
@@ -45,7 +59,11 @@ export function closeAllSheets(then: () => void): void {
   const all = [...sheetStack.value].reverse();
   const pushed = all.filter(e => e.pushed && !e.popped).length;
   for (const e of all) { e.popped = true; e.close(); }
-  if (pushed > 0 && hasHistory() && stateSheet()) { ignorePops += pushed; afterUnwind = then; try { history.go(-pushed); return; } catch { ignorePops -= pushed; afterUnwind = null; } }
+  // QA11-1: history.go(-n) is one navigation, and real Chromium/WebView fires exactly one
+  // popstate for it regardless of n — not one per entry it traverses. ignorePops must only ever
+  // count "one navigation we caused", or it overcounts, never reaches 0, and afterUnwind (and
+  // anything awaiting this, like goTo()) hangs forever; the next real Back is then swallowed too.
+  if (pushed > 0 && hasHistory() && stateSheet()) { ignorePops += 1; afterUnwind = then; try { history.go(-pushed); return; } catch { ignorePops -= 1; afterUnwind = null; } }
   then();
 }
 
