@@ -2,6 +2,13 @@
 
 The owner's rules. Relay's CONTRACT.md carries the same ones.
 
+## ULTIMATE RULE (owner, 2026-09-26): above every other rule, mode or permission
+Use what's necessary for high-quality output and a fast workflow, while saving tokens.
+- Run agents in parallel when that makes the work faster or better. That is why we work in parallel.
+- Never add agents that duplicate or re-check each other without need.
+- Use a strong model for hard judgement and a lighter one for mechanical steps. Do small things yourself.
+- Quality is never traded away: tests fail before and pass after, and nothing is loosened.
+
 - Keep token use low. Read only what the task needs, write short, don't repeat context. Spend more only when a task is complex and truly needs it.
 - Explain and summarise for the owner in plain, simple words.
 - During a task, post short plain-word updates only when something important changed.
