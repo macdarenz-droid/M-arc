@@ -18,7 +18,7 @@ npx cap sync android
 
 PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
 mkdir -p "$PKG"
-cp native/MainActivity.java native/HealthConnectNativePlugin.java native/PermissionsRationaleActivity.java "$PKG/"
+cp native/MainActivity.java native/HealthConnectNativePlugin.java native/PermissionsRationaleActivity.java native/NativeUiPlugin.java "$PKG/"
 mkdir -p "$PKG/watch/core" && cp native/watch/*.java "$PKG/watch/" && cp native/watch/core/*.java "$PKG/watch/core/"
 python3 native/patch_manifest.py android/app/src/main/AndroidManifest.xml
 

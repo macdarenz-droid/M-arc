@@ -27,7 +27,10 @@ function throttled(kind: Kind): boolean {
   return false;
 }
 
-interface NativeUiPlugin { haptic(opts: { type: Kind; on?: boolean }): Promise<{ played: boolean } | void> }
+interface NativeUiPlugin {
+  haptic(opts: { type: Kind; on?: boolean }): Promise<{ played: boolean } | void>;
+  peak?(opts: { type: 'success' | 'alert' }): Promise<{ played: boolean } | void>;
+}
 
 function nativeUiPlugin(): NativeUiPlugin | null {
   const cap = (globalThis as { Capacitor?: { Plugins?: Record<string, NativeUiPlugin> } }).Capacitor;
@@ -36,11 +39,17 @@ function nativeUiPlugin(): NativeUiPlugin | null {
 
 /** The A4 native plugin, when it exists in this build. Maps `type` (and `on` for toggle/threshold)
  * to the platform HapticFeedbackConstants / VibrationEffect on the native side (§3). A rejection
- * or a `{played:false}` reply (older API level, missing constant) falls through to Capacitor. */
+ * or a `{played:false}` reply (older API level, missing constant) falls through to Capacitor.
+ * success/alert go through the plugin's `peak` composition method instead of `haptic`. */
 async function viaNativeUi(kind: Kind, on?: boolean): Promise<boolean> {
   const p = nativeUiPlugin();
   if (!p) return false;
   try {
+    if (kind === 'success' || kind === 'alert') {
+      if (typeof p.peak !== 'function') return false;
+      const r = await p.peak({ type: kind });
+      return !(r && (r as { played?: boolean }).played === false);
+    }
     const r = await p.haptic(on === undefined ? { type: kind } : { type: kind, on });
     return !(r && (r as { played?: boolean }).played === false);
   } catch { return false; }

@@ -26,6 +26,8 @@ import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
+import { keepAwake, keepAwakePref } from '@/native/keepAwake';
+import { launchOverlayGone } from './launch';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
 const recoveredSeen = signal(false);
@@ -74,6 +76,8 @@ export function App() {
   const t = tab.value;
   const live = !!state.value.active;
   const panel = openPanel.value?.id;
+  const wantAwake = keepAwakePref.value;
+  useEffect(() => { void keepAwake(live && wantAwake); return () => { void keepAwake(false); }; }, [live, wantAwake]);
   return (
     <div class="app">
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}
@@ -102,7 +106,7 @@ export function App() {
       <Dock />
       <EscobarMount />
       <div class="sr-only" aria-live="polite">{palaceAnnouncement.value}</div>
-      {panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
+      {launchOverlayGone.value && panel !== 'settings' && panel !== 'profile' && onboardingTrigger.value && <OnboardingSheet trigger={onboardingTrigger.value} onClose={() => {}} />}
       {toast.value && <Toast key={toast.value.id} message={toast.value.message} action={toast.value.action} onAction={toast.value.onAction} onDismiss={() => { toast.value = null; }} />}
     </div>
   );
