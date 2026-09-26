@@ -119,14 +119,17 @@ export function HoldButton({ label, onConfirm, ms = HOLD_CONFIRM_MS, size, class
   const [holding, setHolding] = useState(false);
   const [armed, setArmed] = useState(false);
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdCompleted = useRef(false);
   const armedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (holdTimer.current) clearTimeout(holdTimer.current); if (armedTimer.current) clearTimeout(armedTimer.current); }, []);
 
   const startHold = () => {
     if (holdTimer.current) return;
+    holdCompleted.current = false;
     setHolding(true);
     holdTimer.current = setTimeout(() => {
       holdTimer.current = null;
+      holdCompleted.current = true;
       setHolding(false);
       try { void haptic.confirm(); } catch { /* haptics unavailable */ }
       onConfirm();
@@ -135,6 +138,21 @@ export function HoldButton({ label, onConfirm, ms = HOLD_CONFIRM_MS, size, class
   const cancelHold = () => {
     if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
     setHolding(false);
+  };
+  /** A tap too short to complete the hold: TalkBack's synthesized click (detail 0), or a real
+   * keyboard tap of Enter/Space (keydown's preventDefault below stops the browser's own click for
+   * those, so this is the only path for them) — arms "Tap again to confirm" for 3s; a second tap
+   * within that window confirms. */
+  const armTap = () => {
+    if (armedTimer.current) { clearTimeout(armedTimer.current); armedTimer.current = null; }
+    if (armed) {
+      setArmed(false);
+      try { void haptic.confirm(); } catch { /* haptics unavailable */ }
+      onConfirm();
+    } else {
+      setArmed(true);
+      armedTimer.current = setTimeout(() => setArmed(false), 3000);
+    }
   };
 
   return (
@@ -148,20 +166,18 @@ export function HoldButton({ label, onConfirm, ms = HOLD_CONFIRM_MS, size, class
       onPointerLeave={cancelHold}
       onPointerCancel={cancelHold}
       onKeyDown={e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); startHold(); } }}
-      onKeyUp={e => { if (e.key === ' ' || e.key === 'Enter') cancelHold(); }}
+      onKeyUp={e => {
+        if (e.key !== ' ' && e.key !== 'Enter') return;
+        // A full hold already confirmed via the timer; nothing else to do on release.
+        if (holdCompleted.current) { holdCompleted.current = false; return; }
+        cancelHold();
+        armTap();
+      }}
       onClick={e => {
-        // A synthesized activation (TalkBack, or a keyboard tap the handlers above already timed
-        // out on) carries no pointer, so detail is 0 — the tap-twice twin for that case only.
+        // A synthesized activation (TalkBack) carries no pointer, so detail is 0. A real keyboard
+        // tap is handled by onKeyUp instead (preventDefault in onKeyDown stops its own click).
         if (e.detail !== 0) return;
-        if (armedTimer.current) { clearTimeout(armedTimer.current); armedTimer.current = null; }
-        if (armed) {
-          setArmed(false);
-          try { void haptic.confirm(); } catch { /* haptics unavailable */ }
-          onConfirm();
-        } else {
-          setArmed(true);
-          armedTimer.current = setTimeout(() => setArmed(false), 3000);
-        }
+        armTap();
       }}
     >{armed ? 'Tap again to confirm' : label}</button>
   );

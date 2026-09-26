@@ -33,6 +33,7 @@ export function resetAppData(storage: Pick<Storage, 'clear'> = localStorage, idb
 export class ErrorBoundary extends Component<{ children?: ComponentChildren }, { error: unknown; holding: boolean; armed: boolean }> {
   override state = { error: null as unknown, holding: false, armed: false };
   private holdTimer: ReturnType<typeof setTimeout> | null = null;
+  private holdCompleted = false;
   private armedTimer: ReturnType<typeof setTimeout> | null = null;
 
   override componentDidCatch(error: unknown): void {
@@ -52,8 +53,9 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
 
   private startHold = (): void => {
     if (this.holdTimer) return;
+    this.holdCompleted = false;
     this.setState({ holding: true });
-    this.holdTimer = setTimeout(() => { this.holdTimer = null; this.setState({ holding: false }); this.confirmReset(); }, HOLD_CONFIRM_MS);
+    this.holdTimer = setTimeout(() => { this.holdTimer = null; this.holdCompleted = true; this.setState({ holding: false }); this.confirmReset(); }, HOLD_CONFIRM_MS);
   };
 
   private cancelHold = (): void => {
@@ -62,12 +64,24 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
   };
 
   /** Twin for TalkBack/keyboard-without-hold: a tap arms "Tap again to confirm" for 3s. */
-  private onHoldClick = (e: MouseEvent): void => {
-    if (e.detail !== 0) return;
+  private armTap = (): void => {
     if (this.armedTimer) { clearTimeout(this.armedTimer); this.armedTimer = null; }
     if (this.state.armed) { this.setState({ armed: false }); this.confirmReset(); return; }
     this.setState({ armed: true });
     this.armedTimer = setTimeout(() => { this.armedTimer = null; this.setState({ armed: false }); }, 3000);
+  };
+
+  /** A synthesized activation (TalkBack) carries no pointer, so detail is 0. A real keyboard tap
+   * is handled by onKeyUp instead (preventDefault in onKeyDown stops its own click). */
+  private onHoldClick = (e: MouseEvent): void => {
+    if (e.detail !== 0) this.armTap();
+  };
+
+  private onHoldKeyUp = (e: KeyboardEvent): void => {
+    if (e.key !== ' ' && e.key !== 'Enter') return;
+    if (this.holdCompleted) { this.holdCompleted = false; return; }
+    this.cancelHold();
+    this.armTap();
   };
 
   render() {
@@ -94,7 +108,7 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
             onPointerLeave={this.cancelHold}
             onPointerCancel={this.cancelHold}
             onKeyDown={e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); this.startHold(); } }}
-            onKeyUp={e => { if (e.key === ' ' || e.key === 'Enter') this.cancelHold(); }}
+            onKeyUp={this.onHoldKeyUp}
             onClick={this.onHoldClick}
           >{armed ? 'Tap again to confirm' : 'Hold to delete everything'}</button>
         </div>
