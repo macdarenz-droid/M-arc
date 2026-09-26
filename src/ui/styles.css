@@ -397,7 +397,11 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .chain > div { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: 14px; }
 .chain > div > span:first-child { color: var(--text-3); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding-top: 2px; }
 
-.sparkline { width: 100%; height: 56px; }
+.sparkline-wrap { position: relative; width: 100%; }
+.sparkline { display: block; width: 100%; height: 56px; }
+.sparkline-minmax { position: absolute; inset: 0; right: 2px; pointer-events: none; }
+.sparkline-minmax span { position: absolute; right: 0; transform: translateY(-50%); font-size: var(--fs-cap); color: var(--text-2); background: var(--surface-1); padding: 0 2px; }
+.sparkline-dates { margin-top: 2px; font-size: var(--fs-cap); color: var(--text-2); }
 .banner { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 13px; }
 .banner.warn { border-color: var(--warning); }
 .danger-text { color: var(--negative); }
@@ -590,9 +594,13 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transiti
   .unit-pill { right: 2px; min-width: 22px; }
   .card.exercise .row { flex-wrap: wrap; }
 }
-.volume-bars { display: flex; align-items: flex-end; gap: 4px; height: 72px; margin: 10px 0 6px; }
-.volume-bars i { flex: 1 1 0; min-width: 0; background: var(--accent); border-radius: 3px 3px 0 0; opacity: .85; }
-.volume-bars i:last-child { opacity: 1; }
+.volume-bars { position: relative; display: flex; align-items: flex-end; gap: var(--sp-1); height: 72px; margin: 10px 0 6px; }
+.volume-bar-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 2px; }
+.volume-bars i { display: block; width: 100%; background: color-mix(in srgb, var(--text) 14%, transparent); border-radius: var(--radius-xs) var(--radius-xs) 0 0; }
+.volume-bars i.current { background: var(--accent); }
+.volume-bar-value { font-size: var(--fs-meta); color: var(--text-2); white-space: nowrap; }
+.volume-avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border-strong); }
+.volume-avg span { position: absolute; right: 0; top: -14px; font-size: var(--fs-cap); color: var(--text-2); white-space: nowrap; }
 
 /* F12 share sheet: chips, a swipeable card carousel, size, and Photo / Save / Share */
 .share-sheet { display: grid; gap: 10px; }

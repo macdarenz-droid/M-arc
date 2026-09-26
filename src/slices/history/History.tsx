@@ -205,13 +205,24 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const max = Math.max(1, ...values);
   if (!values.some(v => v > 0)) return null;
   const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
   return (
     <Card data-palace="history.weekly-volume">
       <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
-      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks`}>
-        {weeks.map((w, i) => <i key={w.week} title={`${formatDay(w.week)}: ${fmt(values[i]!)} ${u}`} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />)}
+      {/* I12: no title attrs (touch never shows a tooltip); the current week is accent with its value above it. */}
+      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks, average ${fmt(avg)} ${u}`}>
+        <div class="volume-avg" style={{ bottom: `${Math.min(100, (avg / max) * 100)}%` }}><span class="num">avg {fmt(avg)}</span></div>
+        {weeks.map((w, i) => {
+          const isCurrent = i === weeks.length - 1;
+          return (
+            <div key={w.week} class="volume-bar-col">
+              {isCurrent && <span class="volume-bar-value num">{fmt(values[i]!)}</span>}
+              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />
+            </div>
+          );
+        })}
       </div>
-      <div class="row-between hint"><span>{formatDay(weeks[0]!.week)}</span><span>this week</span></div>
+      <div class="row-between hint"><span>{formatDay(weeks[0]!.week, { day: 'numeric', month: 'short' })}</span><span>{formatDay(weeks[weeks.length - 1]!.week, { day: 'numeric', month: 'short' })}</span></div>
     </Card>
   );
 }
@@ -257,7 +268,7 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} />
+                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} dates={hist.slice(-12).map(h => h.day)} height={96} labels />
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />

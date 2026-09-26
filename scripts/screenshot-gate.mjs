@@ -311,6 +311,62 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I12: an undistorted sparkline (round end dot) and labelled, current-week-highlighted volume bars.
+{
+  for (const width of [390, 560]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: width < 500, hasTouch: width < 500, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `i12-${width}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(() => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sess = (offset, id, name, sets) => ({ id: `i12-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: id, name, sets }],
+        logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+      const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [
+          sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+          sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+          sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+        ],
+        active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+    await settle(page); await page.screenshot({ path: `${OUT}/silent-black-history-stats-${width}.png` });
+    const result = await page.evaluate(() => {
+      const bars = document.querySelector('[data-palace="history.weekly-volume"] .volume-bars');
+      const hasTitle = !!bars?.querySelector('[title]');
+      const current = bars?.querySelector('i.current');
+      const currentBg = current ? getComputedStyle(current).backgroundColor : null;
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = 'var(--accent)';
+      document.body.appendChild(probe);
+      const accentBg = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline circle:last-of-type');
+      const dr = dot ? dot.getBoundingClientRect() : null;
+      return { hasTitle, currentBg, accentBg, dot: dr ? { w: dr.width, h: dr.height } : null };
+    });
+    if (result.hasTitle) errors.push(`${tag}: .volume-bars still has a title attribute`);
+    if (!result.currentBg || result.currentBg !== result.accentBg) errors.push(`${tag}: current-week bar background (${result.currentBg}) should equal --accent (${result.accentBg})`);
+    if (!result.dot) errors.push(`${tag}: expected the sparkline's end dot`);
+    else if (Math.abs(result.dot.w - result.dot.h) > 0.5) errors.push(`${tag}: sparkline end dot is ${result.dot.w}x${result.dot.h} (should be round, not stretched by an uneven viewBox)`);
+    await ctx.close();
+  }
+}
+
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -831,6 +887,14 @@ for (const theme of themes) {
   await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-proposal'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock conversation did not finish`));
   await page.waitForTimeout(200);
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .sparkline')))) errors.push(`${tag}: expected the lift_trend chart`);
+  // I12: Escobar's sparkline stays the static 56px chart with no scrub/date labels.
+  const escSpark = await page.evaluate(() => {
+    const svg = document.querySelector('.esc-comp[data-component="lift_trend"] .sparkline');
+    const wrap = svg?.closest('.sparkline-wrap');
+    return { h: svg ? svg.getBoundingClientRect().height : 0, hasLabels: !!(wrap && wrap.querySelector('.sparkline-minmax, .sparkline-dates')) };
+  });
+  if (Math.round(escSpark.h) !== 56) errors.push(`${tag}: Escobar sparkline is ${escSpark.h}px tall, expected 56`);
+  if (escSpark.hasLabels) errors.push(`${tag}: Escobar sparkline should render with no labels`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
