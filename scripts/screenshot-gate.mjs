@@ -796,6 +796,46 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I6 regression: goTo() used to close the previous sheet by dispatching 'cancel' on every open
+// dialog directly, each running its own history.back() (via unregisterSheet) independently. Rapid
+// back-to-back palace navigation (this is exactly what the loop above already does, and is how
+// this was first caught) calls that on every hop, faster than the browser reliably delivers each
+// popstate — a stray one can land after a *later* sheet has already pushed its own history entry
+// and get misread as a real Back press, closing the wrong (just-opened) sheet. Fixed by routing
+// through closeAllSheets (router.ts's go() already relies on it for the same reason: one batched
+// history.go(-n) instead of N separate history.back() calls). This block pins the regression on
+// its own terms — many settings.* hops in a row, the exact shape that exposed it — independent of
+// the broader loop above (whose >=65 threshold could mask a partial regression).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'palace rapid settings nav';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const ids = await page.evaluate(() => window.__palace.ids);
+  const anchors = await page.evaluate(() => window.__palace.anchors);
+  const settingsIds = ids.filter(id => id.startsWith('settings.') || id.startsWith('profile.'));
+  const unresolved = [];
+  for (const id of settingsIds) {
+    const ok = await page.evaluate(id => window.__palace.goTo(id), id);
+    await page.waitForTimeout(60);
+    const visible = await page.locator(`[data-palace="${anchors[id]}"]`).last().isVisible().catch(() => false);
+    if (!ok || !visible) unresolved.push(id);
+  }
+  if (unresolved.length) errors.push(`${tag}: anchors not visible after rapid consecutive goTo(): ${unresolved.join(', ')}`);
+  await ctx.close();
+}
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
 // conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
