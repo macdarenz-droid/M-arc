@@ -842,7 +842,7 @@ for (const theme of themes) {
   }, [JSON.stringify(legacy)]);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   const ids = await page.evaluate(() => window.__palace.ids);
@@ -876,7 +876,7 @@ for (const theme of themes) {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
   }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   // Two sheets open: Settings, then Gyms nested inside it.
   await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
@@ -1227,7 +1227,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   const tyOf = async () => page.evaluate(() => {
@@ -1293,7 +1293,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   // Nested sheets (e.g. ExercisePicker inside SplitEditor) render as a dialog literally nested
@@ -1422,7 +1422,7 @@ for (const theme of themes) {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
   }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
   await page.locator('.esc-hall-input').click();
@@ -1520,7 +1520,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   // (1) Soft exit: a plain (no-action) toast's timeout adds .leaving, then the toast is gone
@@ -1558,7 +1558,7 @@ for (const theme of themes) {
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
     await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
     await page.goto(`http://localhost:${PORT}/`);
-    await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(150);
     await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -1591,7 +1591,7 @@ for (const theme of themes) {
 
   for (const theme of themes) {
     await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, theme);
-    await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
     await removeAndGetToast();
     const contrast = await page.evaluate(() => {
@@ -1611,7 +1611,7 @@ for (const theme of themes) {
     await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
   }
   await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, 'silent-black');
-  await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
 
   // (4) Swipe away in any of the three recognized directions dismisses without running Undo.
   const entriesOf = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.length);
