@@ -295,6 +295,9 @@ html[data-motion="reduce"] .ex-body { transition: none; }
 .chev { transition: transform var(--dur-base) var(--ease-standard); color: var(--text-3); }
 .chev.up { transform: rotate(180deg); }
 .skipped { opacity: .55; transition: opacity var(--dur-base) var(--ease-standard); }
+/* QA10-6: the card header (I2) is a tap target like any other surface — it had no press feedback. */
+.ex-head { transition: background-color var(--dur-fast) var(--ease-standard); }
+.ex-head:active { background: color-mix(in srgb, var(--text) 8%, var(--surface-1)); transition: none; }
 
 /* I3: the exercise you currently have open carries a steady accent hairline — no loop, so the
    phone runs cooler. The card stays surface-1 (inputs are surface-2, so a surface-2 card would
