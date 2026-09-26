@@ -29,6 +29,22 @@ function extractBlock(source: string, selector: string): string {
   return source.slice(open + 1, close);
 }
 
+/** Like extractBlock, but tracks brace depth — needed for a rule whose body itself contains braces
+ * (a @keyframes block's `from { ... }`/`to { ... }`), where extractBlock's first-`}` shortcut would
+ * stop at the inner rule's closing brace instead of the outer one's. */
+function extractBalanced(source: string, marker: string): string {
+  const at = source.indexOf(marker);
+  if (at === -1) throw new Error(`marker not found: ${marker}`);
+  const open = source.indexOf('{', at);
+  let depth = 0;
+  let i = open;
+  for (; i < source.length; i++) {
+    if (source[i] === '{') depth++;
+    else if (source[i] === '}') { depth--; if (depth === 0) break; }
+  }
+  return source.slice(open + 1, i);
+}
+
 function parseVars(block: string): Record<string, string> {
   const out: Record<string, string> = {};
   const re = /--([\w-]+)\s*:\s*([^;]+);/g;
@@ -165,5 +181,15 @@ describe('styles.css motion token lint (F1)', () => {
       const reducedMs = Number(reducedRaw.replace('ms', ''));
       expect(REDUCED_DUR[key], `REDUCED_DUR.${key} vs --${cssVar} under reduce`).toBe(reducedMs);
     }
+  });
+});
+
+// I9: switching tabs is a quick crossfade (opacity only) — the 6px translateY it used to carry is
+// gone, since App.tsx's nav now does its own scrollTo per tab (a competing transform would fight it).
+describe('I9: .view is a crossfade, not a slide', () => {
+  it('the view-in keyframes contain only opacity', () => {
+    const body = extractBalanced(css, '@keyframes view-in');
+    expect(body).toMatch(/opacity/);
+    expect(body).not.toMatch(/transform/);
   });
 });

@@ -689,7 +689,7 @@ The owner chose these from rendered samples. Build them as written and don't red
   - Timed, distance and carry exercises with no kg: count working sets instead, and label the axis "sets".
 - **Chart:**
   - Stacked bars, easy at the bottom, then right, then max, then unrated on top.
-  - Colours: easy `var(--text-3)`, right `var(--accent)`, max `var(--warning)`, unrated `var(--surface-3)`. Legend: "Easy · Right · Max", plus "Not rated" only when some sets are unrated.
+  - Colours: easy `var(--text-2)`, right `var(--accent)`, max `var(--warning)`, unrated a hatched fill (`--text-3` stripes) with a `--text-2` outline; each at least 3:1 against the card in both themes (amended 2026-09-26 by QA13-6: `--text-3` and `--surface-3` measured below 3:1). Legend: "Easy · Right · Max", plus "Not rated" only when some sets are unrated.
   - The total sits above each bar in tabular numbers, as "2,250" or "2.7t" when ≥10,000. Dates below, e.g. "3 Sept".
   - Bars are 38px wide at 390 px, scaled to the widest session. With more than 8 sessions, scroll horizontally inside the card, never the page, and open scrolled to the latest.
   - The tallest bar is 120 px, with no y-axis.

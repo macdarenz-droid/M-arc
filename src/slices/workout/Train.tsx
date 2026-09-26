@@ -217,6 +217,11 @@ function Splits() {
   }, []);
 
   usePalaceFocus('train.workouts', split ? { splitId: split.id } : undefined);
+  // I10: the active split tab scrolls into view (it can be off-screen in a long strip).
+  useEffect(() => {
+    if (!split) return;
+    document.querySelector<HTMLElement>('.tabs-strip .tab[aria-pressed="true"]')?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: reduced() ? 'auto' : 'smooth' });
+  }, [split?.id]);
 
   return (
     <div class="view">
@@ -409,7 +414,7 @@ function LiveSession() {
       <div class="stack">
         <div class={`stack reorder-list${reorder.dragging ? ' dragging' : ''}`} ref={reorder.listRef}>
           {a.entries.map((entry, i) => (
-            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" data-entry-index={i} style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
+            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class={`reorder-item ${reorder.isLifted(i) ? 'lifted' : ''}`} data-entry-index={i} style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
               <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); scrollToEntry(next); }} />
             </div>
           ))}
