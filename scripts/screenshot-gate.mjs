@@ -1884,6 +1884,37 @@ for (const width of [390, 360]) {
     const cols = await page.evaluate(() => { const l = document.querySelector('.rt-line'); return l ? getComputedStyle(l).gridTemplateColumns.trim().split(' ').length : 0; });
     if (cols !== 1) errors.push(`ready-times 320: expected the one-column layout, got ${cols} column(s)`);
     if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push('ready-times 320: horizontal scroll on the Body tab');
+
+    // QA7-3: in one-column mode every tile's ring sits on the left, so the caret must too — even
+    // for a tile that was originally the second (right) one of its pair. Find one dynamically (the
+    // seed's exact grouping shifts slightly with the real clock), rather than assuming an index.
+    const secondIndex = await page.evaluate(() => {
+      const allTiles = [...document.querySelectorAll('button.rt-tile')];
+      for (const line of document.querySelectorAll('.rt-line')) {
+        const tiles = [...line.querySelectorAll('button.rt-tile')];
+        if (tiles.length === 2) return allTiles.indexOf(tiles[1]);
+      }
+      return -1;
+    });
+    if (secondIndex < 0) {
+      errors.push('ready-times 320 QA7-3: expected at least one 2-tile line to test the caret against');
+    } else {
+      const secondTile = page.locator('button.rt-tile').nth(secondIndex);
+      await tapEl(page, secondTile);
+      await page.waitForTimeout(300);
+      const caretCheck = await page.evaluate((idx) => {
+        const tile = [...document.querySelectorAll('button.rt-tile')][idx];
+        const ring = tile?.querySelector('.rt-ring');
+        const caret = document.querySelector('.rt-detail-wrap.open .rt-caret');
+        if (!ring || !caret) return null;
+        const r = ring.getBoundingClientRect();
+        const c = caret.getBoundingClientRect();
+        return { ringCenter: r.left + r.width / 2, caretCenter: c.left + c.width / 2 };
+      }, secondIndex);
+      if (!caretCheck) errors.push('ready-times 320 QA7-3: expected an open strip with a caret after tapping the second-in-pair tile');
+      else if (Math.abs(caretCheck.caretCenter - caretCheck.ringCenter) > 8) errors.push(`ready-times 320 QA7-3: caret centre (${caretCheck.caretCenter.toFixed(1)}) is ${Math.abs(caretCheck.caretCenter - caretCheck.ringCenter).toFixed(1)}px from the ring centre (${caretCheck.ringCenter.toFixed(1)}), want <= 8px`);
+    }
+
     await ctx.close();
   }
 

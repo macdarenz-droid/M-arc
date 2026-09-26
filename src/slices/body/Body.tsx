@@ -174,12 +174,12 @@ function RtTile({ r, now, group, full, expanded, onClick, tileRef }: {
 }
 
 /** The strip under a tapped line: name + status, the ready window, and the full time + confidence. Tapping it opens the muscle panel. */
-function RtDetail({ r, now, col, full, onOpen }: { r: MuscleRecovery; now: number; col: number; full: boolean; onOpen: () => void }) {
+function RtDetail({ r, now, col, full, oneColumn, onOpen }: { r: MuscleRecovery; now: number; col: number; full: boolean; oneColumn: boolean; onOpen: () => void }) {
   const headline = r.ready ? 'Ready' : r.soreToday && !r.readyInHours ? 'Sore today' : `${READY_PCT - r.pct}% to go`;
   const readyLine = r.ready ? 'Ready now' : readyGroupFor(now, rtGroupInput(r)).detailText;
   const fullLine = r.fullInHours != null ? `Full ${formatFullAt(now, r.fullInHours)}` : null;
   const confidenceCap = r.confidence.charAt(0).toUpperCase() + r.confidence.slice(1);
-  const caretLeft = full || col === 0 ? '28px' : 'calc(50% + 28px)';
+  const caretLeft = full || oneColumn || col === 0 ? '28px' : 'calc(50% + 28px)';
   return (
     <button type="button" class="rt-detail" id={`rt-detail-${r.muscle}`} onClick={onOpen}>
       <span class="rt-caret" style={{ left: caretLeft }} aria-hidden="true" />
@@ -278,7 +278,7 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
             ))}
           </div>
           <div class={`rt-detail-wrap ${openMuscle != null && line.includes(openMuscle) ? 'open' : ''}`}>
-            {lineHasOpen && <RtDetail r={byId.get(renderedMuscle!)!} now={now} col={openCol} full={line.length === 1} onOpen={() => setSelected(renderedMuscle!)} />}
+            {lineHasOpen && <RtDetail r={byId.get(renderedMuscle!)!} now={now} col={openCol} full={line.length === 1} oneColumn={oneColumn} onOpen={() => setSelected(renderedMuscle!)} />}
           </div>
         </div>
       );
