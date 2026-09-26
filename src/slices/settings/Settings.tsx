@@ -5,6 +5,7 @@ import { Button, Card, Field, HoldButton, Row, Section, Sheet, Toggle } from '@/
 import { THEMES, THEME_IDS } from '@/theme/themes';
 import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
+import { keepAwakePref, setKeepAwakePref } from '@/native/keepAwake';
 import { exportText, pickFile } from '@/native/share';
 import { showToast } from '@/app/toast';
 import { openPanel, profileOpen } from '@/app/router';
@@ -164,6 +165,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <Card>
             <Row trailing={<Toggle checked={motionOn} disabled={osReducedMotion()} onChange={v => setMotionPref(v ? 'reduce' : null)} label="Reduce motion" />}><span class="small">Reduce motion</span><div class="hint">Always on when your phone asks for less motion.</div></Row>
             <Row trailing={<Toggle checked={p.haptics} onChange={v => { setPref({ haptics: v }); setHapticsEnabled(v); }} label="Haptic feedback" />}><span class="small">Haptic feedback</span><div class="hint">{hapticSupport() === 'native' ? 'Android haptics' : hapticSupport() === 'web' ? 'Browser vibration' : 'No vibration on this device'}</div></Row>
+            <Row trailing={<Toggle checked={keepAwakePref.value} onChange={setKeepAwakePref} label="Keep screen on during workouts" />}><span class="small">Keep screen on during workouts</span><div class="hint">Stays on while a workout is live.</div></Row>
             <Button size="sm" onClick={() => { void haptic.confirm(); showToast('Sent a test buzz'); }}>Test haptic</Button>
           </Card>
         </Section>

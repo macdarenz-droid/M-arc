@@ -17,9 +17,10 @@ const native = vi.hoisted(() => ({ on: true }));
 vi.mock('@/native/capacitor', () => ({ isNative: () => native.on }));
 
 type NativeUiHaptic = (o: { type: string; on?: boolean }) => Promise<{ played: boolean } | void>;
-function setNativeUi(fn?: NativeUiHaptic): void {
-  (globalThis as { Capacitor?: { Plugins?: { NativeUi?: { haptic: NativeUiHaptic } } } }).Capacitor =
-    fn ? { Plugins: { NativeUi: { haptic: fn } } } : undefined;
+type NativeUiPeak = (o: { type: string }) => Promise<{ played: boolean } | void>;
+function setNativeUi(fn?: NativeUiHaptic, peak?: NativeUiPeak): void {
+  (globalThis as { Capacitor?: { Plugins?: { NativeUi?: { haptic: NativeUiHaptic; peak?: NativeUiPeak } } } }).Capacitor =
+    fn ? { Plugins: { NativeUi: { haptic: fn, peak } } } : undefined;
 }
 
 beforeEach(() => {
@@ -95,6 +96,32 @@ describe('haptics with a mocked NativeUi plugin', () => {
     const { haptic } = await import('@/native/haptics');
     await haptic.reject();
     expect(impact).toHaveBeenCalledWith({ style: 'MEDIUM' });
+  });
+
+  it('success() calls NativeUi.peak, not NativeUi.haptic', async () => {
+    const hapticFn = vi.fn<NativeUiHaptic>(async () => ({ played: true }));
+    const peakFn = vi.fn<NativeUiPeak>(async () => ({ played: true }));
+    setNativeUi(hapticFn, peakFn);
+    const { haptic } = await import('@/native/haptics');
+    await haptic.success();
+    expect(peakFn).toHaveBeenCalledWith({ type: 'success' });
+    expect(hapticFn).not.toHaveBeenCalled();
+    expect(notification).not.toHaveBeenCalled();
+  });
+
+  it('success() with {played:false} from peak falls through to Capacitor notification Success', async () => {
+    const peakFn = vi.fn<NativeUiPeak>(async () => ({ played: false }));
+    setNativeUi(vi.fn<NativeUiHaptic>(async () => ({ played: true })), peakFn);
+    const { haptic } = await import('@/native/haptics');
+    await haptic.success();
+    expect(notification).toHaveBeenCalledWith({ type: 'SUCCESS' });
+  });
+
+  it('a NativeUi plugin without peak() falls through to Capacitor for success()', async () => {
+    setNativeUi(vi.fn<NativeUiHaptic>(async () => ({ played: true })));
+    const { haptic } = await import('@/native/haptics');
+    await haptic.success();
+    expect(notification).toHaveBeenCalledWith({ type: 'SUCCESS' });
   });
 });
 

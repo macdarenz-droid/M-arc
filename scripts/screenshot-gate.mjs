@@ -34,6 +34,16 @@ const shareSheetReady = (page) => page.waitForFunction(() => { const imgs = [...
 /** PL-18: wait up to 5 s for something that should appear, instead of a fixed sleep + isVisible. */
 const visible = (locator, timeout = 5000) => locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
 
+/** QA12-1: OnboardingSheet now opens only once the O1 launch overlay (#launch) has left, so any
+ * block that goes on to check for or dismiss its "Later" button must wait for #launch to be gone
+ * first, or the sheet hasn't opened yet (an isVisible() check reads false) or opens moments later
+ * and steals the next click (its native <dialog> paints above any z-index). A no-op wherever
+ * #launch is already gone (every reduced-motion context, almost immediately). */
+async function launchGone(page) {
+  await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+}
+
 /** F5: let a short-lived animation finish before a screenshot, instead of guessing a fixed delay.
  * Ignores long-running (rest bar) and paused animations, so it never becomes a second fixed wait. */
 const settle = (page) => page.evaluate(() => Promise.race([
@@ -108,6 +118,19 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   console.log(theme, 'loaded');
   await page.waitForSelector('.nav');
+  // O1: every context here runs under reducedMotion:'reduce', so the launch overlay's own
+  // wait is 0ms and it should be gone (or gone within one fade) very shortly after .nav shows.
+  // (No launchGone() here on purpose — this measures the raw gap it would otherwise pre-wait out.)
+  const launchGoneMs = await page.evaluate(() => new Promise(resolve => {
+    const t = performance.now();
+    const check = () => {
+      if (!document.getElementById('launch')) { resolve(performance.now() - t); return; }
+      if (performance.now() - t > 1000) { resolve(Infinity); return; }
+      setTimeout(check, 10);
+    };
+    check();
+  }));
+  if (launchGoneMs > 300) errors.push(`${theme}: #launch overlay took ${Math.round(launchGoneMs)}ms to leave after .nav appeared (want <=300ms)`);
   await page.waitForTimeout(400);
   const shot = async (name) => { await settle(page); return page.screenshot({ path: `${OUT}/${theme}-${name}.png` }); };
   await shot('today');
@@ -269,7 +292,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`narrow: ${e.message}`));
   await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -316,7 +339,7 @@ for (const theme of themes) {
     }));
   });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -798,7 +821,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   // Every weekday scheduled, so today is a training day whatever the date. Written by an init
   // script on a fresh page: editing storage under the running app loses to its own save on unload.
@@ -807,7 +830,7 @@ for (const theme of themes) {
   const page2 = await ctx.newPage();
   page2.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page2.addInitScript(json => { if (!sessionStorage.getItem('r6.patched')) { sessionStorage.setItem('r6.patched', '1'); localStorage.setItem('marc.state.v1', json); } }, patched);
-  await page2.goto(`http://localhost:${PORT}/`); await page2.waitForSelector('.nav'); await page2.waitForTimeout(300);
+  await page2.goto(`http://localhost:${PORT}/`); await page2.waitForSelector('.nav'); await launchGone(page2); await page2.waitForTimeout(300);
   await page2.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {});
   await page2.getByRole('button', { name: 'Take today off' }).click().catch(() => errors.push(`${tag}: no "Take today off" on a scheduled day`));
   await page2.waitForTimeout(250);
@@ -873,7 +896,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`fresh-profile: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`fresh-profile console: ${m.text()}`); });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   await page.getByRole('button', { name: 'Add my details' }).click();
   await page.waitForTimeout(250);
@@ -899,7 +922,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`weekly-review: ${e.message}`));
   page.on('console', m => { if (m.type() === 'error') errors.push(`weekly-review console: ${m.text()}`); });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click();
   await page.waitForTimeout(200);
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
@@ -959,7 +982,7 @@ for (const theme of themes) {
     }));
   });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   await settle(page); await page.screenshot({ path: `${OUT}/silent-black-readiness-card.png` });
   if (!(await visible(page.getByRole('heading', { name: /^Readiness:/ })))) errors.push('readiness: expected a real readiness tier on Today with 7+ days of health data');
@@ -1040,7 +1063,7 @@ for (const theme of themes) {
     }));
   });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.getByRole('button', { name: 'Use Push / Pull / Legs' }).click();
@@ -1114,7 +1137,7 @@ for (const theme of themes) {
     }));
   }, [theme]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'Train' }).click();
   await page.waitForTimeout(200);
@@ -1183,7 +1206,7 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
   page.on('pageerror', e => errors.push(`share-fit ${w}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
   await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
@@ -1221,7 +1244,7 @@ for (const theme of themes) {
   }, [JSON.stringify(legacy), theme]);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   const ids = await page.evaluate(() => window.__palace.ids);
@@ -1269,7 +1292,7 @@ for (const theme of themes) {
   }, [JSON.stringify(legacy)]);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   const ids = await page.evaluate(() => window.__palace.ids);
@@ -1303,7 +1326,7 @@ for (const theme of themes) {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
   }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   // Two sheets open: Settings, then Gyms nested inside it.
   await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
@@ -1343,7 +1366,7 @@ for (const theme of themes) {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
   }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.evaluate(() => document.querySelector('.toast button')?.click());
@@ -1380,7 +1403,7 @@ for (const theme of themes) {
     // PL-18: one retry on a fresh page of the same context, so a slow runner tick does not fail the gate.
     const again = await ctx.newPage();
     await again.goto(`http://localhost:${PORT}/`);
-    await again.waitForSelector('.nav');
+    await again.waitForSelector('.nav'); await launchGone(again);
     await again.locator('nav.nav button', { hasText: 'Escobar' }).click();
     await again.locator('.esc-hall-input').click();
     await again.waitForSelector('.esc-textarea');
@@ -1453,7 +1476,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`pulse ${theme} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.dev', '1'); localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(300);
@@ -1508,7 +1531,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { localStorage.setItem('marc.dev', '1'); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   const later = async () => { if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); } };
   await later();
   const controlled = await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 15000 }).then(() => true).catch(() => false);
@@ -1552,7 +1575,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(400);
 
   // QA5-5: F1/F2/F3's own "Gate:" acceptance checks had no probe anywhere (vitest or gate), and
@@ -1579,11 +1602,11 @@ for (const theme of themes) {
   if (m.attr !== 'reduce' || m.pref !== 'reduce') errors.push(`${tag}: Reduce motion toggle did not apply: ${JSON.stringify(m)}`);
   const td = await page.locator('.toggle').first().evaluate(el => getComputedStyle(el).transitionDuration);
   if (td !== '0.2s') errors.push(`${tag}: .toggle transition-duration under reduce is ${td}`);
-  await page.reload(); await page.waitForSelector('.nav');
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page);
   m = await mstate();
   if (m.attr !== 'reduce' || m.pref !== 'reduce') errors.push(`${tag}: Reduce motion did not survive reload`);
   await page.evaluate(() => localStorage.removeItem('marc.motion'));
-  await page.reload(); await page.waitForSelector('.nav');
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page);
 
   // (1) A sheet slides down and is gone, instead of vanishing in one frame.
   if (HAS.sheetExit) {
@@ -1665,7 +1688,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   const tyOf = async () => page.evaluate(() => {
@@ -1731,7 +1754,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   // Nested sheets (e.g. ExercisePicker inside SplitEditor) render as a dialog literally nested
@@ -1860,7 +1883,7 @@ for (const theme of themes) {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
   }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
   await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
   await page.locator('.esc-hall-input').click();
@@ -1958,7 +1981,7 @@ for (const theme of themes) {
   page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
 
   // (1) Soft exit: a plain (no-action) toast's timeout adds .leaving, then the toast is gone
@@ -1996,7 +2019,7 @@ for (const theme of themes) {
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
     await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
     await page.goto(`http://localhost:${PORT}/`);
-    await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(150);
     await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
     await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
@@ -2029,7 +2052,7 @@ for (const theme of themes) {
 
   for (const theme of themes) {
     await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, theme);
-    await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
     await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
     await removeAndGetToast();
     const contrast = await page.evaluate(() => {
@@ -2049,7 +2072,7 @@ for (const theme of themes) {
     await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
   }
   await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, 'silent-black');
-  await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
 
   // (4) Swipe away in any of the three recognized directions dismisses without running Undo.
   const entriesOf = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.length);
@@ -2109,7 +2132,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
   await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -2176,7 +2199,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
   await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -2213,7 +2236,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
   await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -2303,7 +2326,7 @@ for (const theme of themes) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
   await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -2372,7 +2395,7 @@ for (const theme of themes) {
     }));
   }, [theme]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
   await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
@@ -2447,7 +2470,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
   await page.locator('.toast').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -2502,7 +2525,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); localStorage.setItem('marc.motion', 'reduce'); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
   const closeSheet = async () => { await page.locator('dialog[open] [aria-label="Close"]').last().click(); await page.waitForTimeout(250); };
   // QA5-1: a sheet whose form has an autofocus field opens with the caret in it, not on the panel.
   await page.getByRole('button', { name: 'Add my details' }).click(); await page.waitForTimeout(300);
@@ -2564,7 +2587,12 @@ for (const width of [390, 360]) {
   const tag = 'F2 press/focus';
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
-  await page.goto(`http://localhost:${PORT}/`); await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.goto(`http://localhost:${PORT}/`); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
+  // O1: this is the one block using raw page.mouse.*, which (unlike a locator .click(), which
+  // retries until unobscured) hits whatever is at those coordinates right now. Under full motion
+  // (this context has no reducedMotion key, on purpose: QA5-2) the launch overlay still covers
+  // the screen for up to ~1750ms, so wait for it to clear before any coordinate-based press.
+  await page.locator('#launch').waitFor({ state: 'detached', timeout: 4500 }).catch(() => {});
   const onbRing = await page.evaluate(() => [...document.querySelectorAll('dialog[open] button')].filter(b => getComputedStyle(b).outlineStyle !== 'none').length);
   if (onbRing) errors.push(`${tag}: ${onbRing} onboarding button(s) show a focus ring`);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
@@ -2595,7 +2623,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.waitForTimeout(400);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   // QA5-6: the legacy fixture's "Imported N sessions" boot toast (main.tsx, 3000ms, no action)
@@ -2683,7 +2711,7 @@ for (const width of [390, 360]) {
     // real clock — only "now" itself is fixed, removing the time-of-day flakiness (QA7-6).
     await page.clock.install({ time: pinnedMs });
     await page.goto(`http://localhost:${PORT}/`);
-    await page.waitForSelector('.nav');
+    await page.waitForSelector('.nav'); await launchGone(page);
     await page.waitForTimeout(250);
     if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
     await page.locator('nav.nav button', { hasText: 'Body' }).click();
@@ -2922,7 +2950,7 @@ for (const width of [390, 360]) {
     // the virtual clock and actually advances when fast-forwarded below.
     await page.clock.install({ time: Date.now() });
     await page.goto(`http://localhost:${PORT}/`);
-    await page.waitForSelector('.nav');
+    await page.waitForSelector('.nav'); await launchGone(page);
     await page.waitForTimeout(250);
     if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
     await page.locator('nav.nav button', { hasText: 'Body' }).click();
@@ -3069,7 +3097,7 @@ for (const width of [390, 360]) {
   // created against the virtual clock and actually advances when fast-forwarded below.
   await page.clock.install({ time: Date.now() });
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -3118,7 +3146,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -3165,7 +3193,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -3206,7 +3234,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -3284,7 +3312,7 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
   await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
@@ -3349,7 +3377,7 @@ for (const theme of ['silent-black', 'paper']) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
-  await page.waitForSelector('.nav');
+  await page.waitForSelector('.nav'); await launchGone(page);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
   await page.waitForTimeout(250);
 
@@ -3380,6 +3408,180 @@ for (const theme of ['silent-black', 'paper']) {
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
   await noScroll('Train (live)');
 
+  await ctx.close();
+}
+
+// QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
+// mutation that always calls beginElement() regardless of `reduce` would still pass every other
+// O1 probe (they only check timing), so assert the finished state directly, right after load.
+{
+  const tag = 'launch reduce draws nothing (QA12-3)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  const state = await page.evaluate(() => {
+    const path = document.querySelector('#launch svg path');
+    const dot = document.getElementById('launch-dot');
+    return {
+      dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
+      cx: dot ? dot.getAttribute('cx') : null,
+      cy: dot ? dot.getAttribute('cy') : null,
+    };
+  });
+  if (state.dashoffset !== '0px' && state.dashoffset !== '0') errors.push(`${tag}: expected the path's strokeDashoffset to be 0 right after load, got ${state.dashoffset}`);
+  if (state.cx !== '30' || state.cy !== '50') errors.push(`${tag}: expected #launch-dot at cx=30 cy=50 right after load, got cx=${state.cx} cy=${state.cy}`);
+  await ctx.close();
+}
+
+// O1: launch overlay "Bar path" timing, under full motion, measured from window.__marcLaunchT0
+// (set by the inline script in index.html at its very first line).
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch (O1)';
+
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+
+  if ((await page.locator('#launch svg path').count()) === 0) errors.push(`${tag}: expected #launch svg path to exist`);
+
+  await elapsedAtLeast(page, 250);
+  const offAt250 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#launch svg path')).strokeDashoffset));
+  if (!(offAt250 > 46 && offAt250 < 100)) errors.push(`${tag}: at 250ms strokeDashoffset should be strictly between 46 and 100, got ${offAt250}`);
+
+  await elapsedAtLeast(page, 1400);
+  const offAt1400 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#launch svg path')).strokeDashoffset));
+  if (!(offAt1400 <= 1)) errors.push(`${tag}: at 1400ms strokeDashoffset should be <=1, got ${offAt1400}`);
+
+  await elapsedAtLeast(page, 2400);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: expected #launch to be gone by 2400ms`);
+  await ctx.close();
+}
+
+// O1: a tap skips the overlay.
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch skip (O1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  // A complete profile so the onboarding sheet's native <dialog> (top layer, above any z-index)
+  // can't sit over #launch and steal the click.
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  await elapsedAtLeast(page, 300);
+  await page.locator('#launch').click({ force: true }).catch(() => {});
+  await elapsedAtLeast(page, 700);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: a click at 300ms should have removed #launch by 700ms`);
+  await ctx.close();
+}
+
+// QA12-1: a real first install (no seeded profile at all) shows OnboardingSheet, whose native
+// <dialog> paints in the browser's top layer above any z-index including #launch's. Before the
+// fix, the dialog opened at 0ms and swallowed the tap meant to skip the launch overlay. Keeps
+// the existing seeded "launch skip (O1)" probe above; this is the unseeded case next to it.
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch skip, first run (QA12-1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  await elapsedAtLeast(page, 300);
+  const cx = 195, cy = 422; // viewport centre (390x844)
+  const hit = await page.evaluate(([x, y]) => {
+    const el = document.elementFromPoint(x, y);
+    return { inLaunch: !!el?.closest('#launch'), inDialog: !!el?.closest('dialog[open]') };
+  }, [cx, cy]);
+  if (!hit.inLaunch || hit.inDialog) errors.push(`${tag}: at 300ms the centre point should hit #launch, not a dialog: ${JSON.stringify(hit)}`);
+  await page.mouse.click(cx, cy);
+  await elapsedAtLeast(page, 600);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: a real mouse click at 300ms should have removed #launch by 600ms`);
+  if (!(await visible(page.locator('dialog[open]')))) errors.push(`${tag}: expected the onboarding sheet to open once #launch is gone`);
+  await ctx.close();
+}
+
+// O1: the theme colour map, and the crash hook clearing the overlay.
+{
+  const tag = 'launch theme+crash (O1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => localStorage.setItem('marc.theme', 'paper'));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('#launch');
+  const bg = await page.evaluate(() => getComputedStyle(document.getElementById('launch')).backgroundColor);
+  if (bg !== 'rgb(255, 255, 255)') errors.push(`${tag}: paper theme overlay background should be rgb(255, 255, 255), got ${bg}`);
+  await page.evaluate(() => window.__marcCrash('x'));
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: __marcCrash should remove #launch`);
+  if (!(await visible(page.getByText('M/ARC could not start')))) errors.push(`${tag}: __marcCrash should show the crash box`);
+  await ctx.close();
+}
+
+// A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
+// is mocked here (isNativePlatform forced true) since this gate runs the web build.
+{
+  const tag = 'keepAwake (A4)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => {
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    window.__keepAwakeCalls = [];
+    // Capacitor's own web core (bundled in the app) overwrites a plain `window.Capacitor`
+    // override, but respects the official CapacitorCustomPlatform escape hatch (see the
+    // watch-stub block above) for reporting a non-web platform.
+    window.CapacitorCustomPlatform = { name: 'android' };
+    window.Capacitor = { isNativePlatform: () => true, Plugins: { NativeUi: {
+      haptic: () => Promise.resolve({ played: false }),
+      peak: () => Promise.resolve({ played: false }),
+      keepAwake: o => { window.__keepAwakeCalls.push(o.on); return Promise.resolve(); },
+    } } };
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(200);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const callsAfterStart = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  if (!callsAfterStart.includes(true)) errors.push(`${tag}: expected keepAwake(true) once a workout went live, got ${JSON.stringify(callsAfterStart)}`);
+  await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).click().catch(() => {}); await page.waitForTimeout(400);
+  if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(400); }
+  const callsAfterFinish = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  if (callsAfterFinish[callsAfterFinish.length - 1] !== false) errors.push(`${tag}: expected keepAwake(false) once the workout finished, got ${JSON.stringify(callsAfterFinish)}`);
+  // QA12-2: a one-shot "keepAwake(true) only once per app lifetime" mutation still passed the
+  // block above. Start a second workout and prove it comes back on. The finish screen needs an
+  // explicit Done tap to leave (gate :126/:182/:460/:514); without it, Train never returns to
+  // an idle, startable state.
+  await page.getByRole('button', { name: 'Done', exact: true }).click().catch(() => {}); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const callsAfterSecondStart = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  const last2 = callsAfterSecondStart.slice(-2);
+  if (last2.length !== 2 || last2[0] !== false || last2[1] !== true) errors.push(`${tag} (QA12-2): expected __keepAwakeCalls to end [..., false, true] after a second workout starts, got ${JSON.stringify(callsAfterSecondStart)}`);
   await ctx.close();
 }
 
