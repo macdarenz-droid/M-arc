@@ -3536,6 +3536,101 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-9: a month swipe's exit animation fills forwards and was never cancelled, so once the next
+// month's plain enter animation finished, the old exit's fill re-applied and left the grid at
+// opacity 0, translated one width sideways, which widened the whole page and stretched the fixed
+// bottom bar. On purpose, this context carries no reducedMotion — under reduce the animation
+// branch never runs at all, which is exactly how the existing A5 gate block missed this.
+{
+  const tag = 'BUG-9';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  const innerWidth = await page.evaluate(() => window.innerWidth);
+  const monthLabelSel = '[data-palace="history.calendar"] b';
+  const monthLatest = await page.locator(monthLabelSel).textContent();
+
+  // A: while the touch is still held (no touchEnd yet), a 60%-of-width rightward drag must not
+  // have widened the page.
+  let calBox = await page.locator('.cal').boundingBox();
+  const cdp = await page.context().newCDPSession(page);
+  const ax0 = calBox.x + calBox.width * 0.1, ay0 = calBox.y + calBox.height / 2;
+  const ax1 = calBox.x + calBox.width * 0.7;
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: ax0, y: ay0 }] });
+  for (let i = 1; i <= 6; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: ax0 + (ax1 - ax0) * (i / 6), y: ay0 }] });
+    await new Promise(r => setTimeout(r, 30));
+  }
+  const midDragWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (midDragWidth > innerWidth) errors.push(`${tag} A: mid-drag scrollWidth ${midDragWidth} > innerWidth ${innerWidth}`);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await cdp.detach().catch(() => {});
+
+  // B: after the release, a second swipe back, and one swipe forward — each time, wait 1500ms,
+  // then the grid must be visible in place, with no animation left, and the page must not have
+  // widened, keeping every nav.nav button on screen.
+  const settled = async (label) => {
+    await page.waitForTimeout(1500);
+    const cal = await page.evaluate(() => { const el = document.querySelector('.cal'); const cs = getComputedStyle(el); return { opacity: cs.opacity, transform: cs.transform, anims: el.getAnimations().length }; });
+    if (cal.opacity !== '1') errors.push(`${tag} B (${label}): expected .cal opacity 1, got ${cal.opacity}`);
+    if (cal.transform !== 'none') errors.push(`${tag} B (${label}): expected .cal transform none, got ${cal.transform}`);
+    if (cal.anims !== 0) errors.push(`${tag} B (${label}): expected .cal to have 0 animations left, got ${cal.anims}`);
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (scrollWidth > innerWidth) errors.push(`${tag} B (${label}): scrollWidth ${scrollWidth} > innerWidth ${innerWidth}`);
+    const bad = await page.evaluate(w => [...document.querySelectorAll('nav.nav button')].map(b => b.getBoundingClientRect()).filter(r => r.left < 0 || r.right > w).length, innerWidth);
+    if (bad) errors.push(`${tag} B (${label}): ${bad} nav.nav button rect(s) fall outside [0, ${innerWidth}]`);
+    return page.locator(monthLabelSel).textContent();
+  };
+
+  const monthAfterFirst = await settled('after the release');
+  if (monthAfterFirst === monthLatest) errors.push(`${tag} B: expected the month to change after the swipe back, stayed on ${monthLatest}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, 300);
+  const monthAfterSecond = await settled('after a second swipe back');
+  if (monthAfterSecond === monthAfterFirst) errors.push(`${tag} B: expected a second swipe back to change the month again, stayed on ${monthAfterFirst}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, 300);
+  const monthAfterForward = await settled('after one forward swipe');
+  if (monthAfterForward !== monthAfterFirst) errors.push(`${tag} B: expected the forward swipe to return to the previous month (${monthAfterFirst}), got ${monthAfterForward}`);
+
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-9-calendar.png` });
+
+  // C: full-motion row swipe-delete, then Undo — the restored row must render in place, not
+  // stuck off to the side or invisible, and the page must still fit the screen.
+  const countBefore = await page.locator('.swipe-row').count();
+  if (!countBefore) errors.push(`${tag} C: expected at least one session row`);
+  else {
+    const box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag} C: expected a "Session deleted" toast with Undo`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag} C: could not click Undo`));
+      await page.waitForTimeout(1500);
+      const restored = await page.evaluate(() => { const c = document.querySelector('.swipe-row .card'); if (!c) return null; const cs = getComputedStyle(c); return { opacity: cs.opacity, transform: cs.transform }; });
+      if (!restored) errors.push(`${tag} C: expected the restored row's .card to be present`);
+      else {
+        if (restored.opacity !== '1') errors.push(`${tag} C: expected the restored row's .card opacity 1, got ${restored.opacity}`);
+        if (restored.transform !== 'none') errors.push(`${tag} C: expected the restored row's .card transform none, got ${restored.transform}`);
+      }
+      const scrollWidthAfterUndo = await page.evaluate(() => document.documentElement.scrollWidth);
+      if (scrollWidthAfterUndo > innerWidth) errors.push(`${tag} C: scrollWidth ${scrollWidthAfterUndo} > innerWidth ${innerWidth} after Undo`);
+    }
+  }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
