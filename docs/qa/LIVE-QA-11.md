@@ -70,3 +70,29 @@ Fix the items below. Each needs a test or gate probe that fails before and passe
 
 ## Rejected
 - **"The F13 swipe-no-Undo gate reads storage too early":** it doesn't reproduce. The 300 ms wait comes after the drag finishes, so the mutation is caught every time (3 of 3 runs).
+
+## Re-check at 6522b37: all 8 fixed, merged as item 2
+An independent check used a throwaway worktree per finding. Each fix's source change was put back on its own (for the test-only findings, the bug was put back in by a small code change). Each test fails before the fix and passes after it:
+
+| id | fix commit | before the fix | at 6522b37 |
+|---|---|---|---|
+| QA11-1 | 85d9c39 | goTo() with 2 sheets open never finished within 4 s (the popstate counter stuck at 1) | pass: it finishes, and one Back closes the sheet |
+| QA11-2 | f855d3b | the up-down tracker received `cancel` during a sideways drag | pass: no cancel, move or end |
+| QA11-3 | 0e5cdd5 + 475e49c | a tapped toast was still on screen 5.4 s and 10.4 s later (tried with 0 px and 1 px mouse taps and a 1 px touch tap) | pass: gone by 5.4 s in all three |
+| QA11-4 | 90494e8 | `isVerticalDrag` missing, and when changed to `dy > 0` the horizontal case failed | pass: 6/6 |
+| QA11-5 | 7b9a6b4 | the backdrop jumped to full opacity when the sheet sprang back | pass |
+| QA11-6 | 9d31208 + 475e49c | the probe fails if the toast restarts from full time or loses the time left | pass: 1 s after release it's still there, 3.9 s after it's gone (it had about 3.25 s left) |
+| QA11-7 | 66eee52 | with "skip a sheet that's already closing" removed, the test fails | pass |
+| QA11-8 | eea603c | the test fails if Back skips the coach's closing animation (2 variants tried) | pass |
+
+- **No loosening.** Tests and gate: +243 / −6. The 6 removed lines are two `const`→`let`, two imports that gained names, one `beforeEach` that gained a reset, and the only-sore date line.
+- **Only-sore line (6522b37).** The check-in date now uses the pinned local day. Checked in TZ Pacific/Auckland at 13:00Z and 23:30Z, and in Los Angeles: the old line fails, the new one matches.
+- **Checks run:**
+  - `npm run check`: 1,158 tests.
+  - `npm run test:tz`: New York and Manila.
+  - The full gate as CI runs it, in `TZ=Pacific/Auckland`: "Screenshot gate PASS", 74/74 palace, no page errors.
+- **CI on 6522b37:** guard, source-gate and android-gate all green. The head contains main at b55986a. No Worker, watch or CI files are changed.
+- **Follow-ups for item 8 (not blocking):**
+  - QA11-4: only the `isVerticalDrag` helper is tested, not its use inside Sheet. Add a gate probe: a horizontal touch doesn't move the sheet; a vertical one does.
+  - QA11-3: the gate taps with 0 px only. The 1 px and touch taps were checked only in a standalone run.
+  - Toast gestures and the coach sheet's closing animation still need a real-phone check.
