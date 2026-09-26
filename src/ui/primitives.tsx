@@ -7,7 +7,7 @@ import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, track } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -218,12 +218,101 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   );
 }
 
+/**
+ * F13: a swiped-away toast never runs its Undo (only a tap on the button does) — leave() is the
+ * one path that ever tears this down without it, whether the timer, a swipe, or (soon) something
+ * else calls it.
+ */
 export function Toast({ message, action, onAction, onDismiss }: { message: string; action?: string; onAction?: () => void; onDismiss: () => void }) {
   // The parent passes a new onDismiss each render; keep it in a ref so the timer is not reset (UI-28).
   const dismiss = useRef(onDismiss);
   dismiss.current = onDismiss;
-  useEffect(() => { const t = setTimeout(() => dismiss.current(), action ? 5000 : 3000); return () => clearTimeout(t); }, [message, action]);
-  return <div class="toast" role="status"><span>{message}</span>{action && <button type="button" onClick={() => { onAction?.(); onDismiss(); }}>{action}</button>}</div>;
+  const [leaving, setLeaving] = useState(false);
+  const leavingRef = useRef(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const remaining = useRef(action ? 5000 : 3000);
+  const runningSince = useRef(0);
+
+  const leave = () => {
+    if (leavingRef.current) return;
+    leavingRef.current = true;
+    setLeaving(true);
+    setTimeout(() => dismiss.current(), durFor('exit'));
+  };
+  const clearTimer = () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
+  const startTimer = (ms: number) => { clearTimer(); runningSince.current = Date.now(); timer.current = setTimeout(leave, ms); };
+  const pauseTimer = () => {
+    if (!timer.current) return;
+    remaining.current = Math.max(0, remaining.current - (Date.now() - runningSince.current));
+    clearTimer();
+  };
+  const resumeTimer = () => { if (!leavingRef.current && !timer.current) startTimer(remaining.current); };
+
+  useEffect(() => {
+    remaining.current = action ? 5000 : 3000;
+    startTimer(remaining.current);
+    const onVis = () => { if (document.hidden) pauseTimer(); else resumeTimer(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { clearTimer(); document.removeEventListener('visibilitychange', onVis); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message, action]);
+
+  // Swipe away: horizontal either way, or straight down (never up — that reads as "toward the
+  // content behind it", not a dismiss). Two trackers on the same element; whichever axis the
+  // gesture actually locks onto is the one that ever calls onMove/onEnd, the other aborts itself
+  // past slop (track()'s own axis-ratio check).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const untracks: Array<() => void> = [];
+    const onStart = () => { if (!leavingRef.current) pauseTimer(); };
+    const finish = (dist: number, dir: 'x' | 'y') => {
+      if (leavingRef.current) return;
+      // Reduced motion (or no WAAPI): the ordinary crossfade exit, same as the timeout's own —
+      // a live slide isn't shown either way, so there's nothing left to continue mid-gesture.
+      if (!el.animate || reduced()) { leave(); return; }
+      leavingRef.current = true;
+      setLeaving(true);
+      const push = dist + Math.sign(dist || 1) * 300;
+      const from = dir === 'x' ? `translateX(${dist}px)` : `translateY(${dist}px)`;
+      const to = dir === 'x' ? `translateX(${push}px)` : `translateY(${push}px)`;
+      const anim = el.animate([{ transform: from, opacity: 1 }, { transform: to, opacity: 0 }], { duration: durFor('exit'), easing: EASE.exit, fill: 'forwards' });
+      anim.finished.then(() => dismiss.current()).catch(() => dismiss.current());
+    };
+    const springBack = () => {
+      if (!el.animate) { el.style.transform = ''; resumeTimer(); return; }
+      const anim = el.animate([{ transform: el.style.transform || 'none' }, { transform: 'none' }], { duration: durFor('spring'), easing: springEase() });
+      anim.finished.then(() => { el.style.transform = ''; resumeTimer(); }).catch(() => { el.style.transform = ''; resumeTimer(); });
+    };
+    untracks.push(track(el, {
+      axis: 'x', capture: 'afterSlop', onStart,
+      onMove: d => { if (!leavingRef.current && !reduced()) el.style.transform = `translateX(${d}px)`; },
+      onEnd: (d, v) => {
+        if (leavingRef.current) return;
+        if (Math.abs(d) >= TOAST_SWIPE_PX || Math.abs(v) >= TOAST_FLING_PX_PER_MS) finish(d, 'x'); else springBack();
+      },
+      onCancel: () => { if (!leavingRef.current) springBack(); },
+    }));
+    untracks.push(track(el, {
+      axis: 'y', capture: 'afterSlop', onStart,
+      onMove: d => { if (!leavingRef.current && !reduced() && d > 0) el.style.transform = `translateY(${d}px)`; },
+      onEnd: (d, v) => {
+        if (leavingRef.current) return;
+        if (d <= 0) { resumeTimer(); return; }
+        if (d >= TOAST_SWIPE_PX || v >= TOAST_FLING_PX_PER_MS) finish(d, 'y'); else springBack();
+      },
+      onCancel: () => { if (!leavingRef.current) springBack(); },
+    }));
+    return () => untracks.forEach(u => u());
+  }, []);
+
+  return (
+    <div class={`toast ${leaving ? 'leaving' : ''}`} ref={ref} role="status">
+      <span>{message}</span>
+      {action && <button type="button" onClick={() => { onAction?.(); leave(); }}>{action}</button>}
+    </div>
+  );
 }
 
 /**

@@ -1363,6 +1363,104 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// F13: toast — a soft exit (no vanish-in-one-frame), a large enough and readable Undo, and
+// swipe-to-dismiss in any of the three directions it recognizes (never Undo on a swipe away).
+// The centring fix itself (no sideways jump) is QA5-4's existing probe, further down.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'F13 toast';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  // (1) Soft exit: a plain (no-action) toast's timeout adds .leaving, then the toast is gone
+  // within 250ms — never a one-frame vanish.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  await page.evaluate(() => { [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Test haptic')?.click(); });
+  await page.waitForTimeout(60);
+  if (!(await page.locator('.toast').count())) errors.push(`${tag}: expected a toast after Test haptic`);
+  await page.waitForTimeout(3050);
+  if (!(await page.locator('.toast.leaving').count())) errors.push(`${tag}: expected .toast.leaving right after its 3s timeout`);
+  await page.waitForTimeout(250);
+  if (await page.locator('.toast').count()) errors.push(`${tag}: expected the toast gone within 250ms of .leaving`);
+  await page.getByRole('button', { name: 'Close' }).click(); await page.waitForTimeout(300);
+
+  // (2)+(3) An action (Undo) toast: button hit target and contrast, per theme. Removing an
+  // exercise (F10) is the simplest reliable way to get one.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const removeAndGetToast = async () => {
+    await page.locator('.card.exercise').first().getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+    await page.evaluate(() => { const b = [...document.querySelectorAll('dialog[open] button')].find(x => x.textContent.trim() === 'Remove from this session'); b?.click(); });
+    await page.waitForTimeout(250);
+  };
+  await removeAndGetToast();
+  const hit = await page.evaluate(() => {
+    const btn = document.querySelector('.toast button');
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const pts = [[cx, cy], [cx - 21, cy], [cx + 21, cy], [cx, cy - 21], [cx, cy + 21]];
+    return { height: r.height, hits: pts.map(([x, y]) => document.elementFromPoint(x, y) === btn || btn.contains(document.elementFromPoint(x, y))) };
+  });
+  if (!hit) errors.push(`${tag}: expected a toast with an Undo button after removing an exercise`);
+  else {
+    // min-height:32px in CSS; tolerate the sub-pixel rounding a 2x devicePixelRatio rect can show.
+    if (hit.height < 31.5) errors.push(`${tag}: Undo button is ${hit.height.toFixed(2)}px tall, expected >= 32`);
+    if (!hit.hits.every(Boolean)) errors.push(`${tag}: Undo button missed a hit-test within 21px of its centre: ${JSON.stringify(hit.hits)}`);
+  }
+  // Undo it back so the next check starts from a clean, full entry list again.
+  await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
+
+  for (const theme of themes) {
+    await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, theme);
+    await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    await removeAndGetToast();
+    const contrast = await page.evaluate(() => {
+      const btn = document.querySelector('.toast button');
+      const toast = document.querySelector('.toast');
+      if (!btn || !toast) return null;
+      const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+      const fg = parseRgba(getComputedStyle(btn).color);
+      const bg = parseRgba(getComputedStyle(toast).backgroundColor);
+      if (!fg || !bg) return null;
+      const lin = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+      const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+      const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
+      return l1 > l2 ? l1 / l2 : l2 / l1;
+    });
+    if (contrast != null && contrast < 4.5) errors.push(`${tag} ${theme}: toast button contrast ${contrast.toFixed(2)} < 4.5`);
+    await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
+  }
+  await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, 'silent-black');
+  await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+
+  // (4) Swipe away in any of the three recognized directions dismisses without running Undo.
+  const entriesOf = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.length);
+  const swipeAway = async (dx, dy) => {
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    const before = await entriesOf();
+    await removeAndGetToast();
+    const box = await page.locator('.toast').boundingBox();
+    await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2 + dx, box.y + box.height / 2 + dy, 100);
+    await page.waitForTimeout(300);
+    if (await page.locator('.toast').count()) errors.push(`${tag}: expected the toast gone after a ${dx || 0}/${dy || 0}px swipe`);
+    const after = await entriesOf();
+    if (after !== before - 1) errors.push(`${tag}: a swiped-away toast ran Undo (entries ${before} -> ${after}, expected ${before - 1})`);
+  };
+  await swipeAway(60, 0);
+  await swipeAway(0, 60);
+  await ctx.close();
+}
+
 // I1: the rest banner rises in with a running animation, its bar glides continuously via WAAPI
 // (rebuilt, not stepped, when the remaining time changes), its buttons are real tap targets, and
 // it exits (a `.leaving` class, then gone) instead of vanishing in one frame.

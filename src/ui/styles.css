@@ -266,14 +266,16 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 4px auto 14px; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
-.toast { position: fixed; left: 50%; bottom: calc(124px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow); animation: view-in var(--dur-base) var(--ease-standard); width: max-content; max-width: calc(100% - 32px); }
-.toast button { color: var(--accent); font-weight: 700; }
-/* QA5-4: .view's translateY and the toast's view-in both fight the toast's own translateX(-50%)
-   centring, and neither is gated for reduce (unlike everything F3 touched) — under reduce they
-   used to run animation:none entirely. Fall back to an opacity-only fade until I9/F13 (which
-   remove the .view transform and give the toast its own non-transform centring) land properly. */
+/* F13: centred with left/right/margin-inline, never translateX(-50%) — the scale in toast-in
+   would otherwise multiply that centring translation sideways (CSS Transforms 2 matrix order). */
+.toast { position: fixed; left: 0; right: 0; margin-inline: auto; bottom: calc(124px + var(--inset-b)); transform: none; width: max-content; max-width: calc(100% - 32px); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); touch-action: none; display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow-float); transform-origin: 50% 100%; animation: toast-in var(--dur-enter) var(--ease-enter); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(var(--shift-sm)) scale(var(--scale-in)); } }
+.toast.leaving { animation: toast-out var(--dur-exit) var(--ease-exit) forwards; }
+@keyframes toast-out { to { opacity: 0; transform: translateY(calc(var(--shift-sm) / 2)); } }
+.toast button { position: relative; min-height: 32px; padding: 0 4px; margin-left: var(--sp-2); color: inherit; font-weight: var(--fw-semibold); text-decoration: underline; text-underline-offset: 3px; }
+.toast button::before { content: ''; position: absolute; inset: -8px; }
 @keyframes fade-in { from { opacity: 0; } }
-:where(html[data-motion="reduce"]) :is(.view, .toast) { animation-name: fade-in; }
+:where(html[data-motion="reduce"]) .view { animation-name: fade-in; }
 
 .empty { text-align: center; padding: 28px 16px; color: var(--text-2); display: grid; gap: 8px; justify-items: center; }
 .empty svg { color: var(--text-3); }
