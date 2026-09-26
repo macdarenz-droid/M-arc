@@ -24,3 +24,8 @@ Checked at 93a42cc with two sonnet reviewers (code and tests; real CDP touch at 
   - Fade the guide line and dot out over the same token.
   - Under reduced motion, swap instantly.
 - **Test:** extend the `// A6:` gate block. Right after release (full motion), the readout or guide must be mid-transition: opacity strictly between 0 and 1 on some frame within `--dur-fast`, or a running animation. Under `reducedMotion:'reduce'` the swap stays instant. The test must fail at 93a42cc.
+
+## Re-check at 4eaa244: QA14-1 fixed
+- **Before the fix:** with the src and style hunks reverted, the new `qa14-1` probe fails ("should crossfade … not snap instantly").
+- **At 4eaa244:** it passes. Under full motion it caught opacity 0.16 with a running animation; under reduced motion the swap is instant.
+- **Nothing loosened.** `npm run check` passes.
