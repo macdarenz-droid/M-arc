@@ -81,3 +81,36 @@ describe('palace manifest (§7.3)', () => {
     expect(m.body.components).toHaveLength(14);
   });
 });
+
+describe('the brief lists a midnight-crossing session as done today (QA8-6)', () => {
+  it('a session from 23:30 to 00:40, briefed at 01:00, lines up as done today', async () => {
+    const { freshState } = await import('@/core/models');
+    const { makeCtx } = await import('@/escobar/tools/context');
+    const { sessionAt } = await import('../helpers');
+    const { dayKey } = await import('@/core/dates');
+    const started = new Date(2026, 8, 25, 23, 30);
+    const finishedLate = { ...sessionAt(started.toISOString(), new Date(2026, 8, 26, 0, 40).toISOString(), []), splitId: 'split_lower', splitName: 'SPLIT 2 - LOWER AND CORE', day: dayKey(started) };
+    const state = { ...freshState(), sessions: [finishedLate] };
+    const ctx = makeCtx(state, new Date(2026, 8, 26, 1, 0).getTime());
+    const b = buildBrief({ ctx, mode: 'chat', turnIndex: 0, ledger: [] });
+    const today = b.text.split('\n').find(l => l.startsWith('today:'))!;
+    expect(today).toContain('done today: SPLIT 2 - LOWER AND CORE');
+  });
+});
+
+describe('the brief without a session today is byte-identical to before QA8-6', () => {
+  it('the "now" and "today" lines match the plain day-based reading', () => {
+    const ctx = ctxOf(sixMonthsState());
+    const b = buildBrief({ ctx, mode: 'chat', turnIndex: 0, ledger: [] });
+    const plainDoneToday = ctx.state.sessions.filter(x => x.day === ctx.today);
+    const nowLine = b.text.split('\n').find(l => l.startsWith('now:'))!;
+    const todayLine = b.text.split('\n').find(l => l.startsWith('today:'))!;
+    expect(todayLine.includes('done today:')).toBe(plainDoneToday.length > 0);
+    if (plainDoneToday.length) expect(todayLine).toContain(`done today: ${plainDoneToday.map(x => x.splitName).join(', ')}`);
+    // the pre-QA8-5 formula: the latest session day, whatever the list order (BR-29)
+    const lastDay = ctx.state.sessions.reduce((m, s) => (s.day > m ? s.day : m), '');
+    const plainSince = lastDay ? Math.round((Date.parse(ctx.today) - Date.parse(lastDay)) / 86_400_000) : null;
+    expect(nowLine.includes('trained today')).toBe(plainSince === 0);
+    expect(nowLine.includes('no sessions logged yet')).toBe(plainSince == null);
+  });
+});
