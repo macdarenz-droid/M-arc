@@ -1311,6 +1311,47 @@ for (const theme of themes) {
   if (tyBack !== 0) errors.push(`${tag}: expected the panel back at ty 0 after a short drag, got ${tyBack}`);
   if (!(await openCount())) errors.push(`${tag}: a short 10%-of-height drag closed the sheet`);
 
+  // (b2) QA11-5: the backdrop's scrim opacity follows the drag 1:1 while held. On a spring-back
+  // release it used to jump straight to full opacity the instant the finger lifted, well before
+  // the panel had actually animated back to rest — a visible backdrop "pop". It must stay at
+  // (close to) the held value right after release, and only reach full opacity once the panel
+  // settles.
+  const backdropOpacity = () => page.evaluate(() => {
+    const d = document.querySelector('dialog.sheet[open]');
+    return d ? parseFloat(getComputedStyle(d, '::backdrop').opacity) : null;
+  });
+  box = await panelBox();
+  const dist10b = box.height * 0.1;
+  const x0b = box.x + box.width / 2;
+  const y0b = box.y + 10;
+  const y1b = y0b + dist10b;
+  const dragMs = Math.round(dist10b / 0.15);
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    // Paced multi-step move (same pacing touchDrag uses for a slow drag) so the tracker's
+    // velocity estimate reflects a genuine slow drag, not a single-jump "flick" that would
+    // fling the sheet closed instead of springing back.
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0b, y: y0b }] });
+    const steps = Math.min(10, Math.max(3, Math.round(dragMs / 150)));
+    for (let s = 1; s <= steps; s++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x0b, y: y0b + (y1b - y0b) * (s / steps) }] });
+      await new Promise(r => setTimeout(r, dragMs / steps));
+    }
+    // Hold at the final position without moving: the velocity estimate decays toward the held
+    // position's own (near-zero) recent motion, same as a finger paused mid-drag.
+    await page.waitForTimeout(150);
+    const heldOpacity = await backdropOpacity();
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    const rightAfterRelease = await backdropOpacity();
+    if (heldOpacity == null || rightAfterRelease == null || Math.abs(rightAfterRelease - heldOpacity) > 0.02) errors.push(`${tag} (QA11-5): expected backdrop opacity right after release (${rightAfterRelease}) within 0.02 of its held value (${heldOpacity})`);
+    await page.waitForTimeout(500);
+    const settledOpacity = await backdropOpacity();
+    if (settledOpacity == null || Math.abs(settledOpacity - 1) > 0.02) errors.push(`${tag} (QA11-5): expected backdrop opacity back at 1 once the panel is back at rest, got ${settledOpacity}`);
+    if (!(await openCount())) errors.push(`${tag} (QA11-5): sheet should remain open after a short spring-back drag`);
+  } finally {
+    await cdp.detach().catch(() => {});
+  }
+
   // (c) A fast 60px/100ms flick closes even well under a quarter of the height.
   box = await panelBox();
   await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 70, 100);

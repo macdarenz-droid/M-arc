@@ -106,8 +106,10 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
       const shouldClose = y > 0 && (v >= FLING_PX_PER_MS || y >= SHEET_CLOSE_FRACTION * h);
       if (!shouldClose) {
         const anim = panel.animate([{ transform: `translateY(${y}px)` }, { transform: 'translateY(0)' }], { duration: durFor('spring'), easing: springEase() });
+        // QA11-5: clearFollow() already removes --scrim-o once the panel settles back to rest
+        // (anim.finished above). Removing it here too, immediately on release, snapped the
+        // backdrop straight to full opacity while the panel was still visibly mid-spring-back.
         anim.finished.then(clearFollow).catch(clearFollow);
-        d.style.removeProperty('--scrim-o');
         return;
       }
       if (closingRef.current) return;
