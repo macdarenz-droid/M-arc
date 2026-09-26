@@ -294,11 +294,13 @@ for (const theme of themes) {
     await settle(page); await page.screenshot({ path: `${OUT}/silent-black-stat-hist-row-${label.toLowerCase().replace(/\s+/g, '-')}.png` });
     // Scoped by the Section's own data-palace, not by the stat-hist-row class, so this probe still
     // finds the rows (and so still fails on overlap) if the class were ever removed by mistake.
+    // QA6-5: this used to measure `.grow` (the date cell's wrapper), not the date text itself, so
+    // an overflowing date could miss the check entirely if the wrapper stayed narrow.
     const rows = await page.evaluate(() => [...document.querySelectorAll('[data-palace="history.exercise-stats"] .list .list-row')].map(row => {
-      const date = row.querySelector(':scope > .grow');
+      const date = row.querySelector(':scope > .grow .small') ?? row.querySelector(':scope > .grow');
       const setText = row.querySelector(':scope > .hint');
       const dr = date.getBoundingClientRect(), sr = setText.getBoundingClientRect();
-      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.querySelector('.small')?.getClientRects().length ?? date.getClientRects().length };
+      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.getClientRects().length };
     }));
     if (!rows.length) errors.push(`stat-hist-row ${label}: expected recent-session rows on Exercise progress`);
     for (const r of rows) {
@@ -894,8 +896,16 @@ for (const theme of themes) {
   // asserted that --pulse-beat actually changes over time; a break in the rAF loop would still
   // leave '.pulse-edge' visible (its opacity/box-shadow read the CSS var, and simply not updating
   // it produces one static frame that still passes the visibility check above).
-  const beats = await page.evaluate(async () => { const s = new Set(); for (let k = 0; k < 8; k++) { s.add(document.documentElement.style.getPropertyValue('--pulse-beat')); await new Promise(r => setTimeout(r, 60)); } return s.size; });
-  if (beats < 2) errors.push(`pulse ${theme}: --pulse-beat is not animating`);
+  // I3: the loop now writes --pulse-beat on the PulseLine root and each .heart-bpm-icon, never on
+  // <html> (a per-frame write there forces a style recalc across the whole page).
+  const pulse = await page.evaluate(async () => {
+    const root = document.querySelector('.pulse-line');
+    const s = new Set(); const htmlVals = new Set();
+    for (let k = 0; k < 8; k++) { s.add(root?.style.getPropertyValue('--pulse-beat')); htmlVals.add(document.documentElement.style.getPropertyValue('--pulse-beat')); await new Promise(r => setTimeout(r, 60)); }
+    return { rootBeats: s.size, htmlVals: [...htmlVals] };
+  });
+  if (pulse.rootBeats < 2) errors.push(`pulse ${theme}: --pulse-beat is not animating`);
+  if (pulse.htmlVals.some(v => v !== '')) errors.push(`pulse ${theme}: --pulse-beat leaked onto <html> (${pulse.htmlVals.join(',')})`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-pulse-train.png`, clip: { x: 0, y: 0, width: 390, height: 220 } });
   if (theme === 'silent-black') {
     // Hold-and-drag reorder in a live session: the first exercise dragged down lands lower.
@@ -1062,7 +1072,9 @@ for (const theme of themes) {
   }
 
   // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
-  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin', 'exercise-breathe', 'exercise-shimmer'];
+  // I3 dropped exercise-breathe/exercise-shimmer, so a live screen showing an active card must not
+  // have any infinite animation left running on it at all.
+  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
@@ -1500,12 +1512,18 @@ for (const width of [390, 360]) {
   const pressOp = await start.evaluate(e => getComputedStyle(e).opacity);
   await page.mouse.move(1, 1); await page.mouse.up(); await page.waitForTimeout(150);
   if (!(+pressOp < 1)) errors.push(`${tag}: pressing Start gave no feedback (opacity ${pressOp})`);
-  // QA5-3: the active exercise keeps a static ring and a solid name colour.
+  // QA5-3/I3: the active exercise keeps a static accent-tinted border and a solid name colour
+  // (no ring, no loop — I3 dropped the box-shadow breathing glow for a steady hairline).
   await start.click(); await page.waitForTimeout(300);
   if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
-  const ax = await page.evaluate(() => { const e = document.querySelector('.exercise.active'); const n = e?.querySelector('.exname'); return e && n && { ring: getComputedStyle(e).boxShadow, name: getComputedStyle(n).color }; });
-  if (!ax || ax.ring === 'none' || ax.name === 'rgba(0, 0, 0, 0)') errors.push(`${tag}: active exercise lost its ring or name colour: ${JSON.stringify(ax)}`);
+  const ax = await page.evaluate(() => {
+    const e = document.querySelector('.exercise.active');
+    const other = document.querySelector('.exercise:not(.active)');
+    const n = e?.querySelector('.exname');
+    return e && n && { activeBorder: getComputedStyle(e).borderColor, otherBorder: other ? getComputedStyle(other).borderColor : null, name: getComputedStyle(n).color };
+  });
+  if (!ax || ax.name === 'rgba(0, 0, 0, 0)' || (ax.otherBorder != null && ax.activeBorder === ax.otherBorder)) errors.push(`${tag}: active exercise lost its border tint or name colour: ${JSON.stringify(ax)}`);
   // QA5-4: the toast stays centred while it fades in.
   await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
   await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
@@ -2105,6 +2123,193 @@ for (const width of [390, 360]) {
   const after = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.map(e => ({ id: e.exerciseId, note: e.note ?? null })));
   if (after.length !== before.length - 1) errors.push(`${tag}: expected the entry to actually be removed (before ${before.length}, after ${after.length})`);
   if (after.some(e => e.note === 'Should not leak')) errors.push(`${tag}: the note leaked onto another exercise after a no-blur Remove`);
+  await ctx.close();
+}
+
+// QA10-3: F10's own acceptance checks (docs/UI-POLISH-PLAN.md F10) were never added, which is how
+// QA10-1 and QA10-2 shipped. Undo round-trips (identity-based, not index-based) for every removal,
+// plus the hold-to-confirm timing and its keyboard twin.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'f10-undo';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const activeEntries = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries);
+  // store.ts debounces the localStorage write 250ms after each update() call, resetting on every
+  // new call — so a read right after this needs a clean gap past that, not just past the click.
+  const clickUndo = async () => { await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350); };
+
+  // QA10-1: a note typed but not yet blurred still survives Remove -> Undo (closeMenu() commits
+  // the draft to the store; the fix re-reads the entry by id afterwards instead of using the
+  // stale render-time prop).
+  const before1 = await activeEntries();
+  const removedId = before1[0].id;
+  await page.locator('.card.exercise').first().getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+  const noteInput = page.getByLabel('Note for today');
+  await noteInput.click();
+  await page.keyboard.type('QA10-1 note');
+  await page.evaluate(() => { const btn = [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Remove from this session'); btn?.click(); });
+  await page.waitForTimeout(250);
+  await clickUndo();
+  const after1 = await activeEntries();
+  if (after1.length !== before1.length) errors.push(`${tag}: remove exercise + Undo left ${after1.length} entries, expected ${before1.length}`);
+  const restored1 = after1.find(e => e.id === removedId);
+  if (!restored1) errors.push(`${tag}: Undo did not restore the removed entry (same id)`);
+  else if (restored1.note !== 'QA10-1 note') errors.push(`${tag}: QA10-1 regressed — the note typed just before Remove was dropped by Undo (got ${JSON.stringify(restored1.note)})`);
+
+  // Remove last set -> Undo: same id, same position, rest of the entry untouched. Undo only
+  // shows for a set that actually had something logged (hasEntry), so give the last set reps
+  // first — a fresh set's blank draft would silently skip the toast and hang clickUndo().
+  const beforeSets = await activeEntries();
+  const firstEntry = beforeSets.find(e => e.id === removedId);
+  if (!firstEntry || firstEntry.sets.length < 2) errors.push(`${tag}: expected the first entry to have >=2 sets to test 'Remove last set'`);
+  else {
+    const card = page.locator(`.card.exercise:has-text("${firstEntry.name}")`).first();
+    await card.locator('[data-set-field="reps"]').last().click();
+    await page.keyboard.type('5');
+    await page.keyboard.press('Tab');
+    // store.ts debounces the localStorage write 250ms after update(); activeEntries() reads
+    // localStorage, so every read here needs to clear that window or it sees stale data.
+    await page.waitForTimeout(300);
+    const beforeRemove = (await activeEntries()).find(e => e.id === removedId).sets;
+    await card.getByRole('button', { name: 'Remove last set' }).click(); await page.waitForTimeout(200);
+    await clickUndo();
+    const afterSets = (await activeEntries()).find(e => e.id === removedId).sets;
+    if (JSON.stringify(afterSets) !== JSON.stringify(beforeRemove)) errors.push(`${tag}: 'Remove last set' + Undo did not restore the original sets (ids/order): before=${JSON.stringify(beforeRemove)} after=${JSON.stringify(afterSets)}`);
+  }
+
+  // Delete set 2 of 3 (set menu) -> Undo: original order restored.
+  const entryForDelete = (await activeEntries()).find(e => e.id === removedId);
+  const cardD = page.locator(`.card.exercise:has-text("${entryForDelete.name}")`).first();
+  while ((await cardD.locator('.set-kind').count()) < 3) {
+    await cardD.getByRole('button', { name: 'Add set' }).click(); await page.waitForTimeout(100);
+  }
+  await page.waitForTimeout(300); // clear store.ts's 250ms save debounce before reading state
+  const beforeDelete = (await activeEntries()).find(e => e.id === removedId).sets;
+  await cardD.locator('.set-kind').nth(1).click(); await page.waitForTimeout(200); // set 2's options
+  await page.getByRole('button', { name: 'Delete set', exact: true }).click(); await page.waitForTimeout(200);
+  await clickUndo();
+  const afterDelete = (await activeEntries()).find(e => e.id === removedId).sets;
+  if (JSON.stringify(afterDelete) !== JSON.stringify(beforeDelete)) errors.push(`${tag}: 'Delete set' 2 of 3 + Undo did not restore the original order`);
+
+  await ctx.close();
+}
+
+// QA10-3 (continued): the split editor's Remove + Undo, and HoldButton's hold-timing / keyboard
+// tap-twice twin, each on a fresh session so they don't interact with the flow above.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'f10-undo-2';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+
+  // Split editor Remove -> Undo: same position and sets. The editor's own Sheet stays open after
+  // Remove (by design — you're still editing), but a <dialog> in showModal() paints in the
+  // browser's top layer, above any ordinary position:fixed element including .toast — so the
+  // toast is there but genuinely unreachable until the sheet closes, same as for a real user.
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(250);
+  const beforeSplit = await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('marc.state.v1')); return s.splits[0].exercises; });
+  if (beforeSplit.length < 2) errors.push(`${tag}: expected >=2 exercises in the first split to test the split editor's Remove`);
+  else {
+    await page.locator('dialog[open] .list-row').first().getByRole('button', { name: 'Remove' }).click(); await page.waitForTimeout(200);
+    await page.locator('dialog[open] [aria-label="Close"]').last().click(); await page.waitForTimeout(200);
+    await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
+    const afterSplit = await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('marc.state.v1')); return s.splits[0].exercises; });
+    if (JSON.stringify(afterSplit) !== JSON.stringify(beforeSplit)) errors.push(`${tag}: split editor Remove + Undo did not restore position and sets`);
+  }
+
+  // Hold-to-discard: a short hold does nothing, a full hold discards.
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Finish', exact: true }).click(); await page.waitForTimeout(300);
+  const holdBtn = page.getByRole('button', { name: 'Hold to discard, press and hold' });
+  const box = await holdBtn.boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down(); await page.waitForTimeout(300); await page.mouse.up();
+  await page.waitForTimeout(150);
+  if (!(await visible(holdBtn))) errors.push(`${tag}: a 300ms hold discarded the session (expected nothing to happen)`);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down(); await page.waitForTimeout(850); await page.mouse.up();
+  await page.waitForTimeout(200);
+  const activeAfterHold = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active);
+  if (activeAfterHold !== null) errors.push(`${tag}: an 850ms hold did not discard the session`);
+
+  // Keyboard twin: Enter arms "Tap again to confirm", a second Enter confirms.
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Finish', exact: true }).click(); await page.waitForTimeout(300);
+  const holdBtn2 = page.getByRole('button', { name: 'Hold to discard, press and hold' });
+  await holdBtn2.focus();
+  await page.keyboard.press('Enter'); await page.waitForTimeout(100);
+  if (!(await visible(page.getByRole('button', { name: 'Tap again to confirm' })))) errors.push(`${tag}: one keyboard Enter did not show 'Tap again to confirm'`);
+  await page.keyboard.press('Enter'); await page.waitForTimeout(250);
+  const activeAfterKeyboard = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active);
+  if (activeAfterKeyboard !== null) errors.push(`${tag}: a second keyboard Enter did not confirm the discard`);
+
+  await ctx.close();
+}
+
+// QA10-7: no horizontal scroll at 320px on the screens most likely to carry a long nowrap child —
+// the fix (.stack/.stack-sm grid-template-columns) touches every stack in the app, so this checks
+// it didn't just move the overflow somewhere else. Body is checked with real training history
+// loaded (the `legacy` fixture), so its Ready-times card (O3) renders real tiles, not an empty
+// state, in both a dark and a light theme.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 320, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `qa10-7 320 ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('marc.theme', t); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+
+  const noScroll = async label => {
+    const width = await page.evaluate(() => document.documentElement.scrollWidth);
+    const client = await page.evaluate(() => document.documentElement.clientWidth);
+    if (width > client + 1) errors.push(`${tag}: horizontal scroll on ${label} (scrollWidth ${width} > clientWidth ${client})`);
+  };
+
+  await noScroll('Today');
+
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const rtTiles = await page.locator('button.rt-tile').count();
+  if (rtTiles === 0) errors.push(`${tag}: expected the Ready-times card to render real tiles from the legacy fixture on Body`);
+  await noScroll('Body (Ready-times seeded)');
+
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await noScroll('History');
+
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  await noScroll('Settings');
+  await page.locator('dialog[open] [aria-label="Close"]').last().click().catch(() => {}); await page.waitForTimeout(200);
+
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  await noScroll('Train (live)');
+
   await ctx.close();
 }
 

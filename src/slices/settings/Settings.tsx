@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { bootSource, deleteRescueCopy, flushSave, replaceState, resetState, rescueRaw, state, update } from '@/core/store';
 import { freshState, type AppState } from '@/core/models';
-import { Button, Card, Field, Row, Section, Sheet, Toggle } from '@/ui/primitives';
+import { Button, Card, Field, HoldButton, Row, Section, Sheet, Toggle } from '@/ui/primitives';
 import { THEMES, THEME_IDS } from '@/theme/themes';
 import { setTheme, themeId } from '@/theme/engine';
 import { haptic, hapticSupport, setHapticsEnabled } from '@/native/haptics';
@@ -207,7 +207,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
               </Card>
             )}
             {rescue && (
-              <Row trailing={<div class="row"><Button size="sm" onClick={() => void saveRescue()}>Save rescue file</Button><Button size="sm" variant="quiet" onClick={() => { deleteRescueCopy(); setRescue(false); showToast('Rescue copy deleted'); }}>Delete rescue copy</Button></div>}>
+              <Row trailing={<div class="row"><Button size="sm" onClick={() => void saveRescue()}>Save rescue file</Button><HoldButton size="sm" label="Hold to delete" onConfirm={() => { deleteRescueCopy(); setRescue(false); showToast('Rescue copy deleted'); }} /></div>}>
                 <span class="small" data-palace="settings.rescue">Unreadable data kept aside</span><div class="hint">A copy of saved data the app could not read at start.</div>
               </Row>
             )}

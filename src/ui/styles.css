@@ -40,6 +40,7 @@
   --inset-b: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --float-bottom: calc(var(--nav-h) + var(--float-gap) + var(--inset-b)); /* = 70px + inset, same as today */
   --rest-h: 0px; /* RestBanner writes the real value on <html> (I1) */
+  --live-top-h: 0px; /* the sticky live header writes the real value on <html> (A2) */
   /* layers */
   --z-dock: 19; --z-nav: 20; --z-rest: 25; --z-toast: 30;
 }
@@ -82,8 +83,10 @@ button, [role="button"], .card-press, .list-row.pressable, .chip-btn, .seg butto
 body { min-height: 100dvh; line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
-input, select { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; min-height: 44px; width: 100%; outline: none; }
-input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+input, select, textarea { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; min-height: 44px; width: 100%; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+/* I5: the session note was a bare browser textarea; match the app's inputs. */
+textarea { resize: none; min-height: 88px; line-height: 1.4; font-size: 16px; }
 input[type="number"], input[inputmode="decimal"], input[inputmode="numeric"] { font-variant-numeric: tabular-nums; }
 h1, h2, h3, p { margin: 0; }
 h1 { font-size: 28px; letter-spacing: -0.02em; font-weight: 650; line-height: 1.15; }
@@ -96,16 +99,37 @@ svg { display: block; }
 .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
 .view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* I5: the finish screen settles in top to bottom instead of fading as one block, and reserves
+   room at the bottom so Done never needs the coach dock (hidden separately) or a big map to move out of its way. */
+.view.reveal { animation: none; padding-bottom: 72px; }
+.reveal > *:nth-child(-n+5) { animation: reveal-in var(--dur-enter) var(--ease-enter) both; }
+.reveal > *:nth-child(2) { animation-delay: var(--stagger); }
+.reveal > *:nth-child(3) { animation-delay: calc(var(--stagger) * 2); }
+.reveal > *:nth-child(4) { animation-delay: calc(var(--stagger) * 3); }
+.reveal > *:nth-child(5) { animation-delay: calc(var(--stagger) * 4); }
+@keyframes reveal-in { from { opacity: 0; translate: 0 var(--shift-sm); } }
+.finish-done { position: sticky; bottom: calc(var(--float-bottom) + var(--sp-2)); z-index: 5; padding-top: var(--sp-3); background: linear-gradient(to top, var(--bg) 60%, transparent); }
 
 .topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
+/* A2: the live screen's sticky clock + controls bar, with a progress hairline along its bottom edge. */
+.live-top { position: sticky; top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); z-index: 10; margin-inline: -16px; padding: 6px 16px; max-height: 56px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 calc(-1 * var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 0 var(--bg); }
+.live-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--border-subtle); }
+.live-progress i { display: block; height: 100%; transform-origin: left; background: var(--accent); transition: transform var(--dur-base) var(--ease-standard), background-color var(--dur-base) var(--ease-standard); }
+.live-progress i.full { background: var(--positive); }
+.live-clock-wrap { display: flex; align-items: center; gap: 8px; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
 .muted { color: var(--text-2); }
 .faint { color: var(--text-3); }
 .small { font-size: 13px; }
 .tiny { font-size: 12px; }
 .num { font-variant-numeric: tabular-nums; }
-.stack { display: grid; gap: 12px; }
-.stack-sm { display: grid; gap: 8px; }
+/* QA10-7: without an explicit column template, a long nowrap child (a long exercise name) sizes
+   the implicit column to its own content instead of the viewport, widening the whole grid — the
+   live screen at 320px scrolled sideways. minmax(0, 1fr) lets a child shrink and wrap/ellipsis
+   inside the column instead of pushing it wider. */
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.stack-sm { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 .row { display: flex; align-items: center; gap: 10px; }
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 /* A1: "Log as planned" — the plain hint row for the next set to do becomes a button, same size. */
@@ -167,6 +191,10 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .btn-sm.tap { min-height: 44px; }
 .btn-block { width: 100%; }
 .btn-icon { width: 44px; min-height: 44px; padding: 0; border-radius: 50%; }
+/* F10: a destructive hold fills in from the left as the finger stays down, instead of a system confirm(). */
+.hold { position: relative; overflow: hidden; }
+.hold::before { content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); background: color-mix(in srgb, var(--negative) 22%, transparent); transition: transform var(--dur-fast) var(--ease-standard); }
+.hold.holding::before { transform: scaleX(1); transition: transform var(--hold-ms) var(--ease-linear); }
 
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: var(--text-2); background: var(--surface-2); white-space: nowrap; min-height: 28px; }
 .chip-accent { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
@@ -254,26 +282,28 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .tab i { width: 8px; height: 8px; border-radius: 50%; background: var(--dot, var(--accent)); }
 
 /* Exercise card and set rows */
-.exercise { padding: 12px 14px; }
+.exercise { padding: 12px 14px; scroll-margin-top: calc(var(--live-top-h) + var(--sp-3)); transition: border-color var(--dur-base) var(--ease-standard); }
+/* I2: the open body folds via grid-template-rows, never height (F1 §1: compositor + this one layout exception). */
+.ex-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-enter) var(--ease-standard); }
+.ex-body.open { grid-template-rows: 1fr; }
+.ex-body-inner { min-height: 0; overflow: clip; overflow-clip-margin: 6px; }
+/* Focus rings, the palace spotlight and effort hit areas need room once the fold has settled. */
+.ex-body.open.settled .ex-body-inner { overflow: visible; }
+.ex-body-inner > * { opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
+.ex-body.open .ex-body-inner > * { opacity: 1; transition-delay: var(--delay-content); }
+html[data-motion="reduce"] .ex-body { transition: none; }
+.chev { transition: transform var(--dur-base) var(--ease-standard); color: var(--text-3); }
+.chev.up { transform: rotate(180deg); }
+.skipped { opacity: .55; transition: opacity var(--dur-base) var(--ease-standard); }
+/* QA10-6: the card header (I2) is a tap target like any other surface — it had no press feedback. */
+.ex-head { transition: background-color var(--dur-fast) var(--ease-standard); }
+.ex-head:active { background: color-mix(in srgb, var(--text) 8%, var(--surface-1)); transition: none; }
 
-/* The exercise you currently have open: a slow breathing glow on the card edge, and the
-   name sweeps between the theme's dim and full text tones so it reads as "live" without
-   relying on any one accent color existing on every theme. */
-.exercise.active { border-color: var(--border-strong); }
-.exercise.active .exname {
-  background: linear-gradient(100deg, var(--text-3) 30%, var(--text) 50%, var(--text-3) 70%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-html:not([data-motion="reduce"]) .exercise.active { animation: exercise-breathe 2.4s ease-in-out infinite; }
-html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2.2s linear infinite; }
-html[data-motion="reduce"] .exercise.active { box-shadow: 0 0 0 1px var(--accent), 0 0 20px -4px var(--accent); }
-html[data-motion="reduce"] .exercise.active .exname { color: var(--text); background: none; -webkit-background-clip: unset; background-clip: unset; }
-@keyframes exercise-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -40% 0; } }
-@keyframes exercise-breathe {
-  0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent), 0 0 0 0 transparent; }
-  50% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 22px 2px color-mix(in srgb, var(--accent) 35%, transparent); }
-}
+/* I3: the exercise you currently have open carries a steady accent hairline — no loop, so the
+   phone runs cooler. The card stays surface-1 (inputs are surface-2, so a surface-2 card would
+   erase draft fields). */
+.exercise.active { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.exercise.active .exname { color: var(--text); }
 .set-grid { display: grid; grid-template-columns: 32px 1fr 1fr auto; gap: 8px; align-items: center; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
 .set-grid input { min-height: 44px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
@@ -390,6 +420,8 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
    (:557 in the gate), whose parent .hint.ellipsis clips, so no hit extension there. */
 .link-btn { position: relative; color: inherit; text-decoration: underline; font: inherit; }
 .link-btn::before { content: ""; position: absolute; inset: -14px -4px; }
+/* I4: "Why this target" — the coach prose sits behind it, so set 1 starts near the top of the open card. */
+.why-toggle { color: var(--text-2); font-size: var(--fs-small); display: inline-flex; align-items: center; gap: var(--sp-1); text-decoration: none; }
 .plate-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .plate { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
 .gym-chip { display: inline-flex; align-items: center; gap: 4px; }

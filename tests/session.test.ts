@@ -6,10 +6,10 @@ vi.mock('@/slices/settings/reminders', () => remindersMock);
 import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
-  addSet, adjustRest, commitSet, commitSetById, finishSession, isCommitted, logPastSession, moveEntry, pauseSession, rebuildRecoveryModel, removeEntry,
-  resolveSessionTiming, setSet, skipEntry, startRest, startSession, stopRest, substituteEntry,
+  addSet, adjustRest, commitSet, commitSetById, discardSession, finishSession, insertEntry, insertSet, isCommitted, logPastSession, moveEntry, pauseSession,
+  rebuildRecoveryModel, removeEntry, removeSet, resolveSessionTiming, setSet, skipEntry, startRest, startSession, stopRest, substituteEntry,
 } from '@/slices/workout/session';
-import { deleteSplit } from '@/slices/workout/splits';
+import { addExerciseToSplit, deleteSplit, insertExerciseInSplit, removeExerciseFromSplit } from '@/slices/workout/splits';
 import { findExercise } from '@/core/exercises';
 import { sessionAt, sets, baseCoachExtras } from './helpers';
 
@@ -578,5 +578,111 @@ describe('finishSession resyncs reminders (QA8-3)', () => {
     remindersMock.resyncReminders.mockClear();
     finishSession(false);
     expect(remindersMock.resyncReminders).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('F10/QA10-2: Undo restores by identity, not index', () => {
+  it('happy path: insertEntry restores the exact removed entry at its position', () => {
+    const before = structuredClone(start().entries);
+    const removed = a().entries[0]!;
+    removeEntry(0);
+    insertEntry(a().id!, 0, removed);
+    expect(a().entries).toEqual(before);
+  });
+
+  it('Repro A: Undo is a no-op once the session has moved on (discard + a new session)', () => {
+    start();
+    const removed = a().entries[0]!;
+    const sessionAId = a().id!;
+    removeEntry(0);
+    discardSession();
+    startSession(split); // session B
+    const beforeB = structuredClone(a().entries);
+    insertEntry(sessionAId, 0, removed);
+    expect(a().entries).toEqual(beforeB);
+    expect(a().entries.some(e => e.id === removed.id)).toBe(false);
+  });
+
+  it('a second Undo tap (duplicate entry id) is a no-op', () => {
+    start();
+    const removed = a().entries[0]!;
+    removeEntry(0);
+    const sessionId = a().id!;
+    insertEntry(sessionId, 0, removed);
+    insertEntry(sessionId, 0, removed);
+    expect(a().entries.filter(e => e.id === removed.id).length).toBe(1);
+  });
+
+  it('happy path: insertSet restores the exact removed set at its position', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 }); commitSet(0, 0); // give the entry a real committed set too
+    const before = structuredClone(a().entries[0]!.sets);
+    const entryId = a().entries[0]!.id!;
+    const removed = a().entries[0]!.sets[0]!;
+    removeSet(0, 0);
+    insertSet(a().id!, entryId, 0, removed);
+    expect(a().entries[0]!.sets).toEqual(before);
+  });
+
+  it('Repro B: Undo targets the set\'s own entry by id, not whichever entry now sits at that index after a reorder', () => {
+    start(); // entries: bench (0, 2 sets), fly (1, 1 set)
+    const benchId = a().entries[0]!.id!;
+    const removed = a().entries[0]!.sets[0]!;
+    removeSet(0, 0); // bench: 1 set left
+    moveEntry(0, 1); // reorder: fly is now first, bench is now second
+    insertSet(a().id!, benchId, 0, removed);
+    const bench = a().entries.find(e => e.id === benchId)!;
+    const fly = a().entries.find(e => e.id !== benchId)!;
+    expect(bench.sets.some(s => s.id === removed.id)).toBe(true);
+    expect(fly.sets.some(s => s.id === removed.id)).toBe(false);
+  });
+
+  it('insertSet is a no-op once the entry itself is gone', () => {
+    start();
+    const entryId = a().entries[0]!.id!;
+    const removed = a().entries[0]!.sets[0]!;
+    removeSet(0, 0);
+    removeEntry(0);
+    const beforeEntries = structuredClone(a().entries);
+    insertSet(a().id!, entryId, 0, removed);
+    expect(a().entries).toEqual(beforeEntries);
+  });
+
+  it('a second Undo tap (duplicate set id) is a no-op', () => {
+    start();
+    const entryId = a().entries[0]!.id!;
+    const removed = a().entries[0]!.sets[0]!;
+    removeSet(0, 0);
+    const sessionId = a().id!;
+    insertSet(sessionId, entryId, 0, removed);
+    insertSet(sessionId, entryId, 0, removed);
+    const entry = a().entries.find(e => e.id === entryId)!;
+    expect(entry.sets.filter(s => s.id === removed.id).length).toBe(1);
+  });
+
+  it('happy path: insertExerciseInSplit restores the exact removed exercise at its position', () => {
+    const before = structuredClone(state.value.splits[0]!.exercises);
+    const se = before[0]!;
+    removeExerciseFromSplit(split.id, se.exerciseId);
+    insertExerciseInSplit(split.id, 0, se);
+    expect(state.value.splits[0]!.exercises).toEqual(before);
+  });
+
+  it("Repro C: insertExerciseInSplit is a no-op once the exercise is already back (added from the picker)", () => {
+    const se = state.value.splits[0]!.exercises[0]!;
+    removeExerciseFromSplit(split.id, se.exerciseId);
+    addExerciseToSplit(split.id, findExercise(se.exerciseId)!); // re-added from the picker, a fresh call
+    const beforeUndo = structuredClone(state.value.splits[0]!.exercises);
+    insertExerciseInSplit(split.id, 0, se); // a stale Undo tap
+    expect(state.value.splits[0]!.exercises).toEqual(beforeUndo);
+    expect(state.value.splits[0]!.exercises.filter(x => x.exerciseId === se.exerciseId).length).toBe(1);
+  });
+
+  it('insertExerciseInSplit is a no-op once the split itself is gone', () => {
+    const se = state.value.splits[0]!.exercises[0]!;
+    removeExerciseFromSplit(split.id, se.exerciseId);
+    deleteSplit(split.id);
+    insertExerciseInSplit(split.id, 0, se);
+    expect(state.value.splits.find(s => s.id === split.id)).toBeUndefined();
   });
 });

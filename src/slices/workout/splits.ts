@@ -52,6 +52,17 @@ export function removeExerciseFromSplit(id: string, exerciseId: string): void {
   update(s => ({ ...s, splits: s.splits.map(sp => (sp.id === id ? { ...sp, exercises: sp.exercises.filter(e => e.exerciseId !== exerciseId) } : sp)) }));
 }
 
+/** F10/QA10-2: Undo for the split editor's Remove — restores the exact exercise entry at its
+ * original position. No-op if the split is gone or already has this exercise (a stale toast, or a
+ * second Undo tap after the exercise was re-added from the picker). */
+export function insertExerciseInSplit(id: string, at: number, se: Split['exercises'][number]): void {
+  update(s => ({ ...s, splits: s.splits.map(sp => {
+    if (sp.id !== id || sp.exercises.some(x => x.exerciseId === se.exerciseId)) return sp;
+    const i = Math.max(0, Math.min(at, sp.exercises.length));
+    return { ...sp, exercises: [...sp.exercises.slice(0, i), se, ...sp.exercises.slice(i)] };
+  }) }));
+}
+
 export function setSplitSets(id: string, exerciseId: string, sets: number): void {
   update(s => ({ ...s, splits: s.splits.map(sp => (sp.id === id ? { ...sp, exercises: sp.exercises.map(e => (e.exerciseId === exerciseId ? { ...e, sets: Math.max(1, Math.min(10, sets)) } : e)) } : sp)) }));
 }
