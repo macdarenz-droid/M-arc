@@ -118,6 +118,7 @@ jobs:
           grep -q '"@capacitor/app"' "$PLUGINS" || { echo '::error::@capacitor/app plugin missing from the APK (Android back button)'; exit 1; }
           PKG='android/app/src/main/java/com/mrcdrnzz/dailytracker'
           test -f "$PKG/HealthConnectNativePlugin.java" || { echo '::error::HealthConnectNativePlugin.java not copied into the Android project'; exit 1; }
+          test -f "$PKG/NativeUiPlugin.java" || { echo '::error::NativeUiPlugin.java not copied into the Android project'; exit 1; }
           test -f "$PKG/watch/WatchBridgePlugin.java" || { echo '::error::WatchBridgePlugin.java not copied into the Android project'; exit 1; }
           test -f "$PKG/watch/core/HeartRateMeasurement.java" || { echo '::error::watch/core sensor classes not copied into the Android project'; exit 1; }
           grep -q 'android.permission.health.READ_HEART_RATE' android/app/src/main/AndroidManifest.xml || { echo '::error::health permissions not patched into the manifest'; exit 1; }
@@ -155,7 +156,7 @@ jobs:
           import sys, zipfile
           z = zipfile.ZipFile(sys.argv[1])
           dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
-          for cls in (b'Lcom/mrcdrnzz/dailytracker/HealthConnectNativePlugin;', b'Lcom/mrcdrnzz/dailytracker/watch/WatchBridgePlugin;'):
+          for cls in (b'Lcom/mrcdrnzz/dailytracker/HealthConnectNativePlugin;', b'Lcom/mrcdrnzz/dailytracker/NativeUiPlugin;', b'Lcom/mrcdrnzz/dailytracker/watch/WatchBridgePlugin;'):
               if cls not in dex: raise SystemExit('::error::' + cls.decode() + ' is not in the APK dex')
           print('native classes present in', sys.argv[1])
           PYDEX

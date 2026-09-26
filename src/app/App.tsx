@@ -26,6 +26,7 @@ import { onboardingTrigger } from './selectors';
 import { Toast } from '@/ui/primitives';
 import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui/icons';
 import { bootRecovered, saveError, state } from '@/core/store';
+import { keepAwake, keepAwakePref } from '@/native/keepAwake';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
 const recoveredSeen = signal(false);
@@ -74,6 +75,8 @@ export function App() {
   const t = tab.value;
   const live = !!state.value.active;
   const panel = openPanel.value?.id;
+  const wantAwake = keepAwakePref.value;
+  useEffect(() => { void keepAwake(live && wantAwake); return () => { void keepAwake(false); }; }, [live, wantAwake]);
   return (
     <div class="app">
       {saveError.value && <div class="banner warn" role="alert" style={{ marginBottom: 12 }}>{saveError.value}</div>}

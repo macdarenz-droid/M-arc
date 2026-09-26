@@ -2386,6 +2386,40 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
+// is mocked here (isNativePlatform forced true) since this gate runs the web build.
+{
+  const tag = 'keepAwake (A4)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => {
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+    window.__keepAwakeCalls = [];
+    window.Capacitor = { isNativePlatform: () => true, Plugins: { NativeUi: {
+      haptic: () => Promise.resolve({ played: false }),
+      peak: () => Promise.resolve({ played: false }),
+      keepAwake: o => { window.__keepAwakeCalls.push(o.on); return Promise.resolve(); },
+    } } };
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(200);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const callsAfterStart = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  if (!callsAfterStart.includes(true)) errors.push(`${tag}: expected keepAwake(true) once a workout went live, got ${JSON.stringify(callsAfterStart)}`);
+  await page.getByRole('button', { name: 'Finish' }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /Finish and save|Just today/ }).click().catch(() => {}); await page.waitForTimeout(400);
+  if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(400); }
+  const callsAfterFinish = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  if (callsAfterFinish[callsAfterFinish.length - 1] !== false) errors.push(`${tag}: expected keepAwake(false) once the workout finished, got ${JSON.stringify(callsAfterFinish)}`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
