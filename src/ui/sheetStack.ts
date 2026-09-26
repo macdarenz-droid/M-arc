@@ -59,7 +59,11 @@ export function closeAllSheets(then: () => void): void {
   const all = [...sheetStack.value].reverse();
   const pushed = all.filter(e => e.pushed && !e.popped).length;
   for (const e of all) { e.popped = true; e.close(); }
-  if (pushed > 0 && hasHistory() && stateSheet()) { ignorePops += pushed; afterUnwind = then; try { history.go(-pushed); return; } catch { ignorePops -= pushed; afterUnwind = null; } }
+  // QA11-1: history.go(-n) is one navigation, and real Chromium/WebView fires exactly one
+  // popstate for it regardless of n — not one per entry it traverses. ignorePops must only ever
+  // count "one navigation we caused", or it overcounts, never reaches 0, and afterUnwind (and
+  // anything awaiting this, like goTo()) hangs forever; the next real Back is then swallowed too.
+  if (pushed > 0 && hasHistory() && stateSheet()) { ignorePops += 1; afterUnwind = then; try { history.go(-pushed); return; } catch { ignorePops -= 1; afterUnwind = null; } }
   then();
 }
 

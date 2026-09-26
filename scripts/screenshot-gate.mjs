@@ -836,6 +836,48 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA11-1: closeAllSheets used to overcount ignorePops by the number of sheets it closed instead
+// of by 1 — one history.go(-n) is one navigation and fires exactly one popstate in real
+// Chromium/WebView, regardless of n. With 2+ sheets open, ignorePops never reached 0, so goTo()
+// (which awaits closeAllSheets since the I6-regression fix) hung forever, and the next real Back
+// was silently swallowed (eaten decrementing a counter that never belonged to it).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'QA11-1 nested sheets + goTo + Back';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  // Two sheets open: Settings, then Gyms nested inside it.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Manage' }).first().click();
+  await page.waitForSelector('dialog.sheet[open].nested');
+  const anchor = await page.evaluate(() => window.__palace.anchors['settings.reminders']);
+  const done = await Promise.race([
+    page.evaluate(() => window.__palace.goTo('settings.reminders')),
+    new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), 4000)),
+  ]);
+  if (done === 'TIMEOUT') errors.push(`${tag}: goTo() with 2 sheets open did not resolve within 4s (ignorePops likely stuck)`);
+  else {
+    await page.waitForTimeout(60);
+    if (!(await page.locator(`[data-palace="${anchor}"]`).last().isVisible().catch(() => false))) errors.push(`${tag}: settings.reminders not visible after goTo() with 2 sheets open`);
+    const openAfterGoTo = await page.locator('dialog.sheet[open]').count();
+    if (openAfterGoTo !== 1) errors.push(`${tag}: expected exactly one sheet open after goTo(), got ${openAfterGoTo}`);
+    // One real Back must close it cleanly — proof ignorePops isn't left stuck above 0.
+    await page.goBack();
+    await page.waitForTimeout(350);
+    if (await page.locator('dialog.sheet[open]').count()) errors.push(`${tag}: expected the sheet gone after a single real Back`);
+  }
+  await ctx.close();
+}
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
 // conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
