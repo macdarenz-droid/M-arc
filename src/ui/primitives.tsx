@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
-import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
+import { markClosing, openSheetCount, registerSheet, sheetStack, unregisterSheet } from './sheetStack';
+import { durFor, EASE, reduced } from './motion';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
@@ -53,6 +54,12 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   const id = useId();
   const close = useRef(onClose);
   close.current = onClose;
+  const closingRef = useRef(false);
+  const requestCloseRef = useRef<() => void>(() => close.current());
+  // I6: a sheet opened while another is already open dims nothing further (its own backdrop is
+  // transparent) — the bottom sheet keeps the one real scrim. Decided once, before this sheet
+  // registers itself, from whatever is already on the stack.
+  const [nested] = useState(() => sheetStack.value.length > 0);
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
@@ -63,15 +70,36 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    // R5.3: Back (Android or browser) closes the top sheet through its own onClose.
-    registerSheet(id, () => close.current());
+    closingRef.current = false;
+    // I6: the panel slides down and the scrim fades before the sheet actually unmounts — every
+    // close path (X, backdrop, Back, onCancel) routes through this instead of calling onClose
+    // straight away. A second call while already closing is a no-op (one exit, ever).
+    requestCloseRef.current = () => {
+      if (closingRef.current) return;
+      closingRef.current = true;
+      d.classList.add('closing');
+      markClosing(id);
+      const p = d.querySelector<HTMLElement>('.sheet-panel');
+      if (!p || !p.animate) { close.current(); return; }
+      const r = reduced();
+      const anim = p.animate(
+        [{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${r ? 0 : p.offsetHeight}px)`, opacity: r ? 0 : 1 }],
+        { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' },
+      );
+      anim.finished.then(() => close.current()).catch(() => close.current());
+    };
+    // R5.3: Back (Android or browser) closes the top sheet through its own exit animation.
+    registerSheet(id, () => close.current(), () => requestCloseRef.current());
     return () => { unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close(); };
   }, []);
+  const requestClose = () => requestCloseRef.current();
   return (
-    <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
-        <div class="sheet-grab" />
-        <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
+    <dialog ref={ref} class={`sheet ${nested ? 'nested' : ''}`} aria-labelledby={id} onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
+      <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus onScroll={e => { e.currentTarget.querySelector('.sheet-top')?.classList.toggle('scrolled', e.currentTarget.scrollTop > 0); }}>
+        <div class="sheet-top">
+          <div class="sheet-grab" />
+          <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button></div>
+        </div>
         {children}
       </div>
     </dialog>

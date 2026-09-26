@@ -972,7 +972,7 @@ for (const theme of themes) {
 // exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
 // their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
 {
-  const HAS = { restFix: true, sheetExit: false };
+  const HAS = { restFix: true, sheetExit: true };
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   const tag = 'motion smoke';
@@ -1080,6 +1080,71 @@ for (const theme of themes) {
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// I6: sheets rise from the edge and leave the same way, the header stays put while content
+// scrolls under it, and a second Back during one sheet's exit reaches the sheet below.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I6 sheets';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  const tyOf = async () => page.evaluate(() => {
+    const p = document.querySelector('dialog.sheet[open] .sheet-panel');
+    if (!p) return null;
+    const m = new DOMMatrixReadOnly(getComputedStyle(p).transform);
+    return { ty: m.f, opacity: Number(getComputedStyle(p).opacity) };
+  });
+
+  // (1) Entry, full motion: well into the slide at 30ms, settled by 400ms.
+  await page.locator('[data-palace="today.settings"]').click();
+  await page.waitForTimeout(30);
+  let t = await tyOf();
+  if (!t || !(t.ty > 50)) errors.push(`${tag}: expected the panel > 50px down at +30ms, got ${JSON.stringify(t)}`);
+  await page.waitForTimeout(400);
+  t = await tyOf();
+  if (!t || t.ty !== 0) errors.push(`${tag}: expected the panel settled (ty 0) at +400ms, got ${JSON.stringify(t)}`);
+
+  // (2) Sticky header + Close reachable after scrolling. Also opens the nested Gyms sheet for (3).
+  await page.evaluate(() => { const p = document.querySelector('dialog.sheet[open] .sheet-panel'); if (p) p.scrollTop = 800; });
+  await page.waitForTimeout(50);
+  const scrolled = await page.evaluate(() => {
+    const top = document.querySelector('dialog.sheet[open] .sheet-top');
+    const panel = document.querySelector('dialog.sheet[open] .sheet-panel');
+    const close = [...document.querySelectorAll('dialog.sheet[open] button')].find(b => b.getAttribute('aria-label') === 'Close');
+    return { has: !!top?.classList.contains('scrolled'), closeTop: close?.getBoundingClientRect().top, panelTop: panel?.getBoundingClientRect().top };
+  });
+  if (!scrolled.has) errors.push(`${tag}: expected .sheet-top.scrolled after scrolling the panel`);
+  if (scrolled.closeTop == null || scrolled.panelTop == null || scrolled.closeTop < scrolled.panelTop) errors.push(`${tag}: Close button scrolled out of view: ${JSON.stringify(scrolled)}`);
+
+  // (3) A second Back mid-exit reaches the sheet below it. Settings -> nested Gyms sheet, then
+  // Back twice quickly (the first starts Gyms' exit; the second must close Settings too).
+  await page.getByRole('button', { name: 'Manage' }).first().click();
+  await page.waitForSelector('dialog.sheet[open].nested');
+  await page.goBack();
+  await page.waitForTimeout(30);
+  const midExit = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open]')].map(d => d.classList.contains('closing')));
+  if (midExit.length < 2 || !midExit[midExit.length - 1]) errors.push(`${tag}: expected the top (Gyms) sheet mid-exit after one Back, got ${JSON.stringify(midExit)}`);
+  await page.goBack();
+  await page.waitForTimeout(30);
+  const bothClosing = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open]')].every(d => d.classList.contains('closing')));
+  if (midExit.length >= 2 && !bothClosing) errors.push(`${tag}: expected the sheet below to also start closing on a second Back`);
+  await page.waitForTimeout(400);
+  if (await page.locator('dialog.sheet[open]').count()) errors.push(`${tag}: expected every sheet gone 400ms after both exits started`);
+
+  // (4) Reduced motion: a crossfade (ty stays 0, opacity < 1 mid-fade), never a bare snap.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('[data-palace="today.settings"]').click();
+  await page.waitForTimeout(30);
+  const r = await tyOf();
+  if (!r || r.ty !== 0 || !(r.opacity < 1)) errors.push(`${tag}: expected a reduced-motion crossfade (ty 0, opacity < 1) at +30ms, got ${JSON.stringify(r)}`);
   await ctx.close();
 }
 
