@@ -439,6 +439,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
   const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<string | null>(null);
+  const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
   const sticky = s.exerciseNotes[entry.exerciseId];
@@ -463,6 +465,18 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
+  // QA-hotfix2: `index` can point at a different entry by the time this fires (e.g. a remove just
+  // ahead of it shifted the array), so only write "Note for today" while it still names this entry.
+  const commitNoteDraft = (value: string) => { if (active()?.entries[index]?.id === entry.id) setEntryNote(index, value); };
+  /** Flushes any pending note drafts and clears them before closing the menu sheet, however it closes
+   * (Close/back/backdrop, or one of Skip/Put back/Substitute/Remove below, which used to bypass this). */
+  const closeMenu = () => {
+    if (stickyDraft != null) setExerciseNote(entry.exerciseId, stickyDraft);
+    if (noteDraft != null) commitNoteDraft(noteDraft);
+    setStickyDraft(null);
+    setNoteDraft(null);
+    setMenu(false);
+  };
 
   return (
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
@@ -472,7 +486,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
-        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setMenu(true); }}><IconMore /></Button>
+        <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
         <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
       </div>
       {open && (
@@ -550,13 +564,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </div>
       )}
       {menu && (
-        <Sheet title={entry.name} onClose={() => setMenu(false)}>
+        <Sheet title={entry.name} onClose={closeMenu}>
           <div class="stack-sm">
-            <Field label="Setup note (shown every time)"><input maxLength={200} value={sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onChange={e => setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value)} /></Field>
-            <Field label="Note for today"><input maxLength={500} value={entry.note ?? ''} onChange={e => setEntryNote(index, (e.target as HTMLInputElement).value)} /></Field>
-            <Button onClick={() => { skipEntry(index, !entry.skipped); setMenu(false); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
-            {ex && <Button variant="quiet" onClick={() => { setMenu(false); setSubOpen(true); }}>Substitute exercise</Button>}
-            <Button variant="danger" onClick={() => { removeEntry(index); setMenu(false); }}>Remove from this session</Button>
+            <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
+            <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
+            <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
+            <Button variant="danger" onClick={() => { closeMenu(); removeEntry(index); }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
         </Sheet>
