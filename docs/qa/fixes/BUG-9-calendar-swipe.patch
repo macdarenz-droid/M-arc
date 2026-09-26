@@ -1,0 +1,36 @@
+diff --git a/src/slices/history/History.tsx b/src/slices/history/History.tsx
+index 9beeb71..840bf8a 100644
+--- a/src/slices/history/History.tsx
++++ b/src/slices/history/History.tsx
+@@ -111,6 +111,9 @@ function Log() {
+         if (reduced() || !el.animate) { el.style.transform = ''; shift(dir); return; }
+         const out = el.animate([{ transform: el.style.transform || 'none', opacity: 1 }, { transform: `translateX(${-dir * width}px)`, opacity: 0 }], { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' });
+         const afterOut = () => {
++          // BUG-9: `out` fills forwards, so it must be cancelled or it keeps the grid invisible and
++          // one width off to the side after the next month's enter animation ends.
++          out.cancel();
+           shift(dir);
+           el.style.transform = `translateX(${dir * width * 0.3}px)`;
+           el.style.opacity = '0';
+@@ -128,7 +131,7 @@ function Log() {
+ 
+   return (
+     <div class="stack" style={{ marginTop: 14 }}>
+-      <Card data-palace="history.calendar">
++      <Card class="cal-card" data-palace="history.calendar">
+         <div class="row-between" style={{ marginBottom: 8 }}>
+           <Button variant="quiet" class="btn-icon" aria-label="Previous month" onClick={() => shift(-1)}><IconBack /></Button>
+           <b>{first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</b>
+diff --git a/src/ui/styles.css b/src/ui/styles.css
+index a803016..fee88e6 100644
+--- a/src/ui/styles.css
++++ b/src/ui/styles.css
+@@ -411,6 +411,8 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
+ .swipe-row.armed .swipe-bg svg { scale: 1.15; opacity: 1; }
+ 
+ /* Calendar */
++/* BUG-9: the month swipe slides the grid up to one width sideways; clip it to its card so it never widens the page. */
++.cal-card { overflow-x: clip; }
+ .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; touch-action: pan-y; }
+ .cal .dow { text-align: center; font-size: 11px; color: var(--text-3); font-weight: 600; padding: 4px 0; }
+ .cal .day { aspect-ratio: 1; display: grid; place-items: center; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-2); position: relative; }
