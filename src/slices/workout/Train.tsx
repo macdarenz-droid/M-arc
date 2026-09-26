@@ -744,7 +744,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               const n = entry.sets.length - 1;
               const removed = entry.sets[n]!;
               removeSet(index, n);
-              if (hasEntry(removed)) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(index, n, removed));
+              const a = active();
+              if (hasEntry(removed) && a?.id && entry.id) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(a.id!, entry.id!, n, removed));
             }} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
             <span class="grow" />
             <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
@@ -761,10 +762,16 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => {
+              // QA10-1: closeMenu() just above commits any pending "Note for today" draft to the
+              // store, so `entry` (the render-time prop) is now stale — re-read it by id, or the
+              // note that was just typed is lost when Undo restores the old, note-less object.
               closeMenu();
-              const e = entry;
-              removeEntry(index);
-              showToast(`${e.name} removed`, 'Undo', () => insertEntry(index, e));
+              const a = active();
+              const at = a ? a.entries.findIndex(x => x.id === entry.id) : -1;
+              if (!a?.id || at < 0) return;
+              const e = a.entries[at]!;
+              removeEntry(at);
+              showToast(`${e.name} removed`, 'Undo', () => insertEntry(a.id!, at, e));
             }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
@@ -782,7 +789,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               const removed = entry.sets[n]!;
               removeSet(index, n);
               setSetMenuAt(null);
-              showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(index, n, removed));
+              const a = active();
+              if (a?.id && entry.id) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(a.id!, entry.id!, n, removed));
             }}>Delete set</Button>
           </div>
         </Sheet>

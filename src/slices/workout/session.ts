@@ -255,10 +255,19 @@ export function removeSet(entry: number, index: number): void {
   patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry || e.sets.length <= 1 ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })) }));
 }
 
-/** F10: Undo for "Remove last set"/"Delete set" — restores the exact set object (id included), so
- * a heart-capture or fidelity link made to it survives. `at` is clamped to the entry's current length. */
-export function insertSet(entry: number, at: number, set: LoggedSet): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: [...e.sets.slice(0, Math.max(0, Math.min(at, e.sets.length))), set, ...e.sets.slice(Math.max(0, Math.min(at, e.sets.length)))] })) }));
+/** F10/QA10-2: Undo for "Remove last set"/"Delete set" — restores the exact set object (id
+ * included), so a heart-capture or fidelity link made to it survives. Identity-checked, not
+ * index-based: a no-op unless this is still the same session, the entry is still there, and no
+ * set with this id is already present (a stale toast, or a second Undo tap). `at` is clamped to
+ * the entry's current length. */
+export function insertSet(sessionId: string, entryId: string, at: number, set: LoggedSet): void {
+  patchActive(a => {
+    if (a.id !== sessionId) return a;
+    const i = a.entries.findIndex(e => e.id === entryId);
+    if (i < 0 || a.entries[i]!.sets.some(x => x.id === set.id)) return a;
+    const clamped = Math.max(0, Math.min(at, a.entries[i]!.sets.length));
+    return { ...a, entries: a.entries.map((e, j) => (j !== i ? e : { ...e, sets: [...e.sets.slice(0, clamped), set, ...e.sets.slice(clamped)] })) };
+  });
 }
 
 export function markDone(entry: number, done = true): void {
@@ -293,10 +302,16 @@ export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
 }
 
-/** F10: Undo for "Remove from this session" — restores the exact entry object (id included), at
- * its original position, clamped to the current entry count. */
-export function insertEntry(at: number, entry: ActiveSession['entries'][number]): void {
-  patchActive(a => { const i = Math.max(0, Math.min(at, a.entries.length)); return { ...a, entries: [...a.entries.slice(0, i), entry, ...a.entries.slice(i)] }; });
+/** F10/QA10-2: Undo for "Remove from this session" — restores the exact entry object (id
+ * included), at its original position, clamped to the current entry count. Identity-checked: a
+ * no-op unless this is still the same session and no entry with this id is already present (a
+ * stale toast — the session ended and a new one started — or a second Undo tap). */
+export function insertEntry(sessionId: string, at: number, entry: ActiveSession['entries'][number]): void {
+  patchActive(a => {
+    if (a.id !== sessionId || a.entries.some(e => e.id === entry.id)) return a;
+    const i = Math.max(0, Math.min(at, a.entries.length));
+    return { ...a, entries: [...a.entries.slice(0, i), entry, ...a.entries.slice(i)] };
+  });
 }
 
 /** F3.7: swap this entry for a substitute, e.g. a recovering muscle or a balance nudge. Blank sets: a different exercise's numbers would not mean the same thing. */
