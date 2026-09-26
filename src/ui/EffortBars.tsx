@@ -12,10 +12,14 @@ export interface EffortPoint { day: string; easy: number; ideal: number; max: nu
 
 const TALLEST_PX = 120;
 
-/** Timed/distance/carry work has no kg to split, so the bars count working sets instead (F13). */
+/**
+ * Timed/distance/carry work has no kg × reps to split, so the bars count working sets instead
+ * (F13). QA13-2: a carry or sled logs kg and distance/time with no reps, so kg alone (with reps
+ * defaulting to 0) isn't "has kg" — it must have both, or every bar is a 0-height stub.
+ */
 export function effortUsesSets(history: ExerciseSessionSummary[], mode: ResistanceMode): boolean {
   if (mode === 'duration') return true;
-  if (mode === 'conditioning') return !history.some(h => h.sets.some(s => (s.kg ?? 0) > 0));
+  if (mode === 'conditioning') return !history.some(h => h.sets.some(s => (s.kg ?? 0) > 0 && (s.reps ?? 0) > 0));
   return false;
 }
 

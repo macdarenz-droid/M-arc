@@ -56,6 +56,19 @@ describe('effortSplit (O4)', () => {
     expect(effortSplit(h, 'conditioning', noBw)[0]!.ideal).toBe(320);
   });
 
+  it("QA13-2: a Farmer's Carry (kg and distance/time, no reps) counts sets, not a 0 kg stub", () => {
+    const carry = (kg: number): LoggedSet[] => [{ kg, distanceM: 20, effort: 'ideal' } as LoggedSet];
+    const h = [
+      summarizeSets('s1', '2024-01-01', carry(32)),
+      summarizeSets('s2', '2024-01-08', carry(36)),
+      summarizeSets('s3', '2024-01-15', carry(40)),
+    ];
+    expect(effortUsesSets(h, 'conditioning')).toBe(true);
+    const points = effortSplit(h, 'conditioning', noBw);
+    expect(points.every(p => p.ideal === 1)).toBe(true);
+    expect(points.some(p => p.easy + p.ideal + p.max + p.unrated > 0)).toBe(true);
+  });
+
   it('a conditioning move with no kg (distance/time only) counts sets', () => {
     const sets = [{ distanceM: 100, effort: 'ideal' }] as LoggedSet[];
     const h = [summarizeSets('s1', '2024-01-01', sets)];
