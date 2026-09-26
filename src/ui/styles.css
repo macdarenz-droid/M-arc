@@ -40,6 +40,7 @@
   --inset-b: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
   --float-bottom: calc(var(--nav-h) + var(--float-gap) + var(--inset-b)); /* = 70px + inset, same as today */
   --rest-h: 0px; /* RestBanner writes the real value on <html> (I1) */
+  --live-top-h: 0px; /* the sticky live header writes the real value on <html> (A2) */
   /* layers */
   --z-dock: 19; --z-nav: 20; --z-rest: 25; --z-toast: 30;
 }
@@ -254,7 +255,19 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .tab i { width: 8px; height: 8px; border-radius: 50%; background: var(--dot, var(--accent)); }
 
 /* Exercise card and set rows */
-.exercise { padding: 12px 14px; }
+.exercise { padding: 12px 14px; scroll-margin-top: calc(var(--live-top-h) + var(--sp-3)); transition: border-color var(--dur-base) var(--ease-standard); }
+/* I2: the open body folds via grid-template-rows, never height (F1 §1: compositor + this one layout exception). */
+.ex-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-enter) var(--ease-standard); }
+.ex-body.open { grid-template-rows: 1fr; }
+.ex-body-inner { min-height: 0; overflow: clip; overflow-clip-margin: 6px; }
+/* Focus rings, the palace spotlight and effort hit areas need room once the fold has settled. */
+.ex-body.open.settled .ex-body-inner { overflow: visible; }
+.ex-body-inner > * { opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
+.ex-body.open .ex-body-inner > * { opacity: 1; transition-delay: var(--delay-content); }
+html[data-motion="reduce"] .ex-body { transition: none; }
+.chev { transition: transform var(--dur-base) var(--ease-standard); color: var(--text-3); }
+.chev.up { transform: rotate(180deg); }
+.skipped { opacity: .55; transition: opacity var(--dur-base) var(--ease-standard); }
 
 /* The exercise you currently have open: a slow breathing glow on the card edge, and the
    name sweeps between the theme's dim and full text tones so it reads as "live" without

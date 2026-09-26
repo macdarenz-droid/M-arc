@@ -48,7 +48,7 @@ import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
 import { haptic } from '@/native/haptics';
-import { durFor } from '@/ui/motion';
+import { durFor, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
 import { isNative } from '@/native/capacitor';
 
@@ -353,6 +353,20 @@ function LiveSession() {
   useEffect(() => acquireTicker(), []);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;
+  // I2: once the next card has unfolded (or after a timeout, if it never does), glide the page so
+  // it sits just under the sticky header — never while a keyboard could be about to pop up.
+  const scrollToEntry = (i: number) => {
+    if (i < 0) return;
+    requestAnimationFrame(() => {
+      const body = document.querySelector<HTMLElement>(`[data-entry-index="${i}"] .ex-body`);
+      const go = () => document.querySelector(`[data-entry-index="${i}"] .exercise`)?.scrollIntoView({ block: 'start', behavior: reduced() ? 'auto' : 'smooth' });
+      if (!body) { setTimeout(go, durFor('enter') + 60); return; }
+      let done2 = false;
+      const onEnd = (e: TransitionEvent) => { if (e.target === body && e.propertyName === 'grid-template-rows') { done2 = true; body.removeEventListener('transitionend', onEnd); go(); } };
+      body.addEventListener('transitionend', onEnd);
+      setTimeout(() => { if (!done2) { body.removeEventListener('transitionend', onEnd); go(); } }, durFor('enter') + 60);
+    });
+  };
 
   return (
     <div class="view">
@@ -370,8 +384,8 @@ function LiveSession() {
       <div class="stack">
         <div class={`stack reorder-list${reorder.dragging ? ' dragging' : ''}`} ref={reorder.listRef}>
           {a.entries.map((entry, i) => (
-            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
-              <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); }} />
+            <div key={`${entry.exerciseId}#${a.entries.slice(0, i).filter(e => e.exerciseId === entry.exerciseId).length}`} class="reorder-item" data-entry-index={i} style={reorder.styleFor(i)} onPointerDown={reorder.onPointerDown(i)}>
+              <EntryCard index={i} entry={entry} open={open === i} onToggle={() => { if (reorder.clickAllowed()) setOpen(open === i ? -1 : i); }} onDone={() => { markDone(i); const next = a.entries.findIndex((e, j) => j !== i && !e.done && !e.skipped); setOpen(next); scrollToEntry(next); }} />
             </div>
           ))}
         </div>
@@ -478,6 +492,24 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  // I2: `closing` keeps the body mounted from open->false until its fold transition finishes, so
+  // the content doesn't vanish mid-animation; `settled` lifts the clip once fully open, so focus
+  // rings and the palace spotlight are not cut off at rest.
+  const [closing, setClosing] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const wasOpenRef = useRef(open);
+  useEffect(() => {
+    if (wasOpenRef.current && !open) {
+      setClosing(true);
+      setSettled(false);
+      const t = setTimeout(() => setClosing(false), durFor('enter') + 60);
+      wasOpenRef.current = open;
+      return () => clearTimeout(t);
+    }
+    wasOpenRef.current = open;
+    return undefined;
+  }, [open]);
   const sticky = s.exerciseNotes[entry.exerciseId];
   const barbell = !!(profile.plates?.length || profile.barKg) && mode === 'weighted';
   const best = useMemo(() => (mode === 'weighted' ? recentBestKg(s.sessions, entry.exerciseId, s.customExercises) : null), memoDeps);
@@ -558,17 +590,19 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
 
   return (
-    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet' : ''}`} style={{ opacity: entry.skipped ? .55 : 1 }}>
-      <div class="row-between" onClick={onToggle} role="button" aria-expanded={open}>
+    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`}>
+      <div class="row-between ex-head" onClick={onToggle} role="button" aria-expanded={open} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}>
         <div class="grow">
           <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
           {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
-        <IconChevronDown style={{ transform: open ? 'rotate(180deg)' : 'none', color: 'var(--text-3)' }} />
+        <IconChevronDown class={`chev ${open ? 'up' : ''}`} />
       </div>
-      {open && (
+      <div class={`ex-body ${open ? 'open' : ''} ${settled ? 'settled' : ''}`} ref={bodyRef} onTransitionEnd={e => { if (e.target === bodyRef.current && open) setSettled(true); }}>
+        <div class="ex-body-inner">
+        {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
           <p class="hint">{next.reason}</p>
           {reasonCue && <p class="hint muted" data-cue={reasonCue.id}><b>{reasonCue.title}.</b> {reasonCue.text}</p>}
@@ -659,7 +693,9 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
           </div>
         </div>
-      )}
+        )}
+        </div>
+      </div>
       {menu && (
         <Sheet title={entry.name} onClose={closeMenu}>
           <div class="stack-sm">
