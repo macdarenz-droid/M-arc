@@ -151,7 +151,7 @@ export interface ReadyWindow {
  * copy. `lo`/`hi` are hours from now; the earliest rounds to the nearest hour, the latest rounds up.
  */
 export function readyWindow(now: number, lo: number, hi: number): ReadyWindow {
-  const earliest = roundNearestHour(now + lo * 3_600_000);
+  const earliest = roundNearestHour(now + Math.min(lo, hi) * 3_600_000);
   const latest = ceilHour(now + Math.max(lo, hi) * 3_600_000);
   if (earliest.getTime() > latest.getTime()) earliest.setTime(latest.getTime());
 

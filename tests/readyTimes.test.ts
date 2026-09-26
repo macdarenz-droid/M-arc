@@ -63,6 +63,12 @@ describe('readyWindow', () => {
     expect(w.earliestMs).toBe(w.latestMs);
   });
 
+  // QA7-5: recovery.ts always gives lo <= hi today, so this guards a defensive-only case.
+  it('is symmetric in lo/hi: a swapped pair builds the same window', () => {
+    const now = new Date(2026, 8, 26, 12, 0, 0).getTime();
+    expect(readyWindow(now, 50, 5)).toEqual(readyWindow(now, 5, 50));
+  });
+
 });
 
 describe('readyGroupFor', () => {
