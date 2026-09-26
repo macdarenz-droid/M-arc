@@ -246,12 +246,19 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const remaining = useRef(action ? 5000 : 3000);
   const runningSince = useRef(0);
+  // A toast is replaced (a new `key`, a fresh instance) rather than updated in place, so an exit
+  // timer or WAAPI animation started by THIS instance must never call dismiss() once it's gone —
+  // `dismiss.current()` closes over the module-level `toast` signal, so a late call from a
+  // superseded instance would null out whatever toast has shown since (App.tsx's Toast usage).
+  const mountedRef = useRef(true);
+  useEffect(() => () => { mountedRef.current = false; }, []);
+  const safeDismiss = () => { if (mountedRef.current) dismiss.current(); };
 
   const leave = () => {
     if (leavingRef.current) return;
     leavingRef.current = true;
     setLeaving(true);
-    setTimeout(() => dismiss.current(), durFor('exit'));
+    setTimeout(safeDismiss, durFor('exit'));
   };
   const clearTimer = () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
   const startTimer = (ms: number) => { clearTimer(); runningSince.current = Date.now(); timer.current = setTimeout(leave, ms); };
@@ -290,7 +297,7 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
       const from = dir === 'x' ? `translateX(${dist}px)` : `translateY(${dist}px)`;
       const to = dir === 'x' ? `translateX(${push}px)` : `translateY(${push}px)`;
       const anim = el.animate([{ transform: from, opacity: 1 }, { transform: to, opacity: 0 }], { duration: durFor('exit'), easing: EASE.exit, fill: 'forwards' });
-      anim.finished.then(() => dismiss.current()).catch(() => dismiss.current());
+      anim.finished.then(safeDismiss).catch(safeDismiss);
     };
     const springBack = () => {
       if (!el.animate) { el.style.transform = ''; resumeTimer(); return; }

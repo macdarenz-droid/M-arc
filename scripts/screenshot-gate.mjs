@@ -3199,13 +3199,16 @@ for (const theme of ['silent-black', 'paper']) {
     await page.waitForTimeout(400);
     const countAfterDelete = await page.locator('.swipe-row').count();
     if (countAfterDelete !== countBefore - 1) errors.push(`${tag}: expected one fewer session after a 70% swipe, before ${countBefore} after ${countAfterDelete}`);
-    if (!(await page.locator('.toast', { hasText: 'Session deleted' }).isVisible().catch(() => false))) errors.push(`${tag}: expected a "Session deleted" toast with Undo`);
-    await page.locator('.toast button', { hasText: 'Undo' }).click();
-    await page.waitForTimeout(200);
-    const countAfterUndo = await page.locator('.swipe-row').count();
-    if (countAfterUndo !== countBefore) errors.push(`${tag}: Undo should restore the deleted session, before ${countBefore} after ${countAfterUndo}`);
-    const firstLabelAfterUndo = await page.locator('.swipe-row').nth(0).locator('b').first().textContent();
-    if (firstLabelAfterUndo !== firstLabel) errors.push(`${tag}: Undo restored a different session (${firstLabelAfterUndo} vs ${firstLabel})`);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) { errors.push(`${tag}: expected a "Session deleted" toast with Undo`); }
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag}: could not click the Undo button`));
+      await page.waitForTimeout(200);
+      const countAfterUndo = await page.locator('.swipe-row').count();
+      if (countAfterUndo !== countBefore) errors.push(`${tag}: Undo should restore the deleted session, before ${countBefore} after ${countAfterUndo}`);
+      const firstLabelAfterUndo = await page.locator('.swipe-row').nth(0).locator('b').first().textContent();
+      if (firstLabelAfterUndo !== firstLabel) errors.push(`${tag}: Undo restored a different session (${firstLabelAfterUndo} vs ${firstLabel})`);
+    }
   }
 
   // Calendar: starts on today's month, the latest one shown. A leftward swipe (finger moves
