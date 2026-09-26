@@ -21,6 +21,23 @@ export interface EscobarUi {
 }
 export const escobarUi = signal<EscobarUi>({ open: false, detent: 'half', mode: 'chat', contextRef: null, draft: '' });
 
+/**
+ * I7: the sheet's exit animation (slide + scrim fade) lives inside EscobarSheet.tsx, a lazy chunk
+ * fetched only once Escobar first opens — but native/back.ts (the hardware Back button) is always
+ * loaded, so it needs a way to reach that animation without pulling the whole chunk into the main
+ * bundle. EscobarSheet registers itself here on mount; every close path (X, backdrop, menu,
+ * onCancel, Back) calls requestEscobarClose() instead of writing `open: false` directly. Never
+ * unregistered (not needed: `open` is only ever true while it's registered, in real use), but
+ * defensively falls back to an instant close so a caller with no mounted sheet can't get stuck.
+ */
+let escobarCloseRequest: (() => void) | null = null;
+export function registerEscobarClose(fn: () => void): void { escobarCloseRequest = fn; }
+export function unregisterEscobarClose(): void { escobarCloseRequest = null; }
+export function requestEscobarClose(): void {
+  if (escobarCloseRequest) escobarCloseRequest();
+  else escobarUi.value = { ...escobarUi.value, open: false, contextRef: null };
+}
+
 export const loopView = signal<LiveView>({ status: 'idle', text: '', preamble: [], activity: [], outcomes: [] });
 /** null = not checked yet. False for 60 s after a transport failure (§13). */
 export const online = signal<boolean | null>(null);

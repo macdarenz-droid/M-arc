@@ -252,21 +252,30 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 
 /* Sheets */
 .sheet { border: 0; padding: 0; background: transparent; max-width: 560px; width: 100%; margin: auto 0 0 auto; margin-inline: auto; max-height: 92dvh; }
-.sheet::backdrop { background: rgba(0,0,0,.55); backdrop-filter: blur(2px); }
-.sheet-panel { background: var(--surface-1); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 8px 16px calc(20px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); max-height: 92dvh; overflow: auto; animation: sheet-in var(--dur-sheet) var(--ease-drawer); }
+.sheet::backdrop { background: var(--scrim); opacity: var(--scrim-o, 1); animation: scrim-in var(--dur-sheet) var(--ease-standard); }
+.sheet.nested::backdrop { background: transparent; }
+.sheet.closing::backdrop { animation: scrim-out var(--dur-sheet-exit) var(--ease-exit) forwards; }
+@keyframes scrim-in { from { opacity: 0; } }
+@keyframes scrim-out { to { opacity: 0; } }
+.sheet-panel { background: var(--surface-2); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 8px 16px calc(20px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); max-height: 92dvh; overflow: auto; overscroll-behavior: contain; animation: sheet-in var(--dur-sheet) var(--ease-drawer); }
 .sheet-panel:focus { outline: none; }
-@keyframes sheet-in { from { transform: translateY(24px); opacity: .4; } to { transform: none; opacity: 1; } }
+@keyframes sheet-in { from { transform: translateY(var(--shift-sheet)); opacity: var(--enter-opacity); } }
+.sheet-top { position: sticky; top: -8px; z-index: 1; background: var(--surface-2); margin: -8px -16px 0; padding: 8px 16px 0; touch-action: none; }
+.sheet-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--border-subtle); opacity: 0; transition: opacity var(--dur-fast) var(--ease-standard); }
+.sheet-top.scrolled::after { opacity: 1; }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 4px auto 14px; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 
-.toast { position: fixed; left: 50%; bottom: calc(124px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow); animation: view-in var(--dur-base) var(--ease-standard); width: max-content; max-width: calc(100% - 32px); }
-.toast button { color: var(--accent); font-weight: 700; }
-/* QA5-4: .view's translateY and the toast's view-in both fight the toast's own translateX(-50%)
-   centring, and neither is gated for reduce (unlike everything F3 touched) — under reduce they
-   used to run animation:none entirely. Fall back to an opacity-only fade until I9/F13 (which
-   remove the .view transform and give the toast its own non-transform centring) land properly. */
+/* F13: centred with left/right/margin-inline, never translateX(-50%) — the scale in toast-in
+   would otherwise multiply that centring translation sideways (CSS Transforms 2 matrix order). */
+.toast { position: fixed; left: 0; right: 0; margin-inline: auto; bottom: calc(124px + var(--inset-b)); transform: none; width: max-content; max-width: calc(100% - 32px); background: var(--text); color: var(--bg); padding: 10px 14px; border-radius: 999px; font-size: 13px; text-align: center; font-weight: 600; z-index: var(--z-toast); touch-action: none; display: flex; gap: 12px; align-items: center; box-shadow: var(--shadow-float); transform-origin: 50% 100%; animation: toast-in var(--dur-enter) var(--ease-enter); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(var(--shift-sm)) scale(var(--scale-in)); } }
+.toast.leaving { animation: toast-out var(--dur-exit) var(--ease-exit) forwards; }
+@keyframes toast-out { to { opacity: 0; transform: translateY(calc(var(--shift-sm) / 2)); } }
+.toast button { position: relative; min-height: 32px; padding: 0 4px; margin-left: var(--sp-2); color: inherit; font-weight: var(--fw-semibold); text-decoration: underline; text-underline-offset: 3px; }
+.toast button::before { content: ''; position: absolute; inset: -8px; }
 @keyframes fade-in { from { opacity: 0; } }
-:where(html[data-motion="reduce"]) :is(.view, .toast) { animation-name: fade-in; }
+:where(html[data-motion="reduce"]) .view { animation-name: fade-in; }
 
 .empty { text-align: center; padding: 28px 16px; color: var(--text-2); display: grid; gap: 8px; justify-items: center; }
 .empty svg { color: var(--text-3); }
@@ -444,14 +453,14 @@ html:not([data-motion="reduce"]) .palace-spotlight { animation: palace-glow 1.6s
 html:not([data-motion="reduce"]) .escobar-mark.thinking { animation: esc-pulse 1.4s ease-in-out infinite; }
 html:not([data-motion="reduce"]) .esc-caret { animation: esc-blink 1s step-end infinite; }
 html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infinite; }
-html:not([data-motion="reduce"]) .esc-sheet .esc-panel { transition: height var(--dur-base) var(--ease-standard); }
 @keyframes esc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @keyframes esc-blink { 50% { opacity: 0; } }
 @keyframes esc-rot { to { transform: rotate(360deg); } }
 
 .esc-sheet { border: 0; padding: 0; background: transparent; max-width: 560px; width: 100%; margin: auto auto 0; max-height: 100dvh; overflow: visible; }
-.esc-sheet::backdrop { background: rgba(0,0,0,.45); }
-.esc-panel { display: flex; flex-direction: column; background: var(--surface-1); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 0 16px calc(10px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+.esc-sheet::backdrop { background: var(--scrim); animation: scrim-in var(--dur-sheet) var(--ease-standard); }
+.esc-sheet.closing::backdrop { animation: scrim-out var(--dur-sheet-exit) var(--ease-exit) forwards; }
+.esc-panel { display: flex; flex-direction: column; background: var(--surface-2); border: 1px solid var(--border); border-bottom: 0; border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding: 0 16px calc(10px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); animation: sheet-in var(--dur-sheet) var(--ease-drawer); }
 .esc-half .esc-panel { height: 62dvh; }
 .esc-full .esc-panel { height: 94dvh; }
 .esc-grab-zone { padding: 6px 0 2px; touch-action: none; cursor: grab; }
