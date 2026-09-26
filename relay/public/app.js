@@ -1,5 +1,5 @@
 // Relay web app. No framework, no build: a small DOM helper, one state object, region renders.
-import { KINDS, fmtBytes, isImage, isMarkdown, isText, renderMarkdown } from './shared.js'
+import { COMPONENT_STATUS, ITEM_FIELDS, ITEM_KINDS, ITEM_STATUS, KINDS, PERMS, PRIORITIES, ROLES, STAGES, fmtBytes, isImage, isMarkdown, isText, renderMarkdown, roleOf } from './shared.js'
 
 // ── helpers ────────────────────────────────────────────────────
 function h(tag, props, ...kids) {
@@ -47,6 +47,7 @@ const ICONS = {
   eye: '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z"/><circle cx="12" cy="12" r="2.5"/>',
   code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
   plug: '<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/>',
+  chart: '<path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/>',
 }
 const icon = (n, cls = '') => h('span.i' + cls, { html: `<svg viewBox="0 0 24 24" ${P} aria-hidden="true">${ICONS[n] ?? ''}</svg>` })
 const stop = e => { e.preventDefault(); e.stopPropagation() }
@@ -78,7 +79,7 @@ const initials = s => s.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').
 
 // ── state ──────────────────────────────────────────────────────
 const S = {
-  owner: false, configured: true, projects: [], detail: null, folderId: null, tab: 'thread', fileId: null,
+  owner: false, configured: true, projects: [], detail: null, folderId: null, tab: 'thread', fileId: null, page: 'folder', dtab: 'overview', dash: null,
   msgs: [], more: false, files: [], seq: -1, drafts: {}, pending: [], editing: null, editText: null,
 }
 let seen = store.get('seen', {})
@@ -175,9 +176,15 @@ async function onRoute() {
     }
     knowAll()
   }
-  const folderId = parts[2] === 'f' && fmap().has(parts[3]) ? parts[3] : S.detail.project.root_id
+  const page = parts[2] === 'dashboard' ? 'dashboard' : 'folder'
+  const folderId = page === 'folder' && parts[2] === 'f' && fmap().has(parts[3]) ? parts[3] : S.detail.project.root_id
   const moved = folderId !== S.folderId
-  Object.assign(S, { folderId, tab: q.get('tab') === 'files' ? 'files' : 'thread', fileId: q.get('file') })
+  const dtab = ['tracker', 'team'].includes(q.get('tab')) ? q.get('tab') : 'overview'
+  if (page === 'dashboard' && (S.page !== 'dashboard' || S.dashFor !== S.detail.project.id)) {
+    S.dash = null
+    await loadDash()
+  }
+  Object.assign(S, { page, dtab, folderId, tab: page === 'folder' && q.get('tab') === 'files' ? 'files' : 'thread', fileId: page === 'folder' ? q.get('file') : null })
   if (moved) {
     Object.assign(S, { msgs: [], files: [], more: false, pending: [], editing: null })
     composer = null
@@ -227,6 +234,7 @@ async function refresh() {
     knowAll()
     if (!fmap().has(S.folderId)) return go(`/p/${d.project.slug}`, true)
     await loadFolder()
+    if (S.page === 'dashboard') await loadDash()
     markSeen(S.folderId)
   }
   render()
@@ -493,10 +501,12 @@ function agentPrompt(l, url) {
     `Open this link first and read it: ${url}`,
     `It has the folders, recent messages and files${l.can_write ? ', and explains how to post back' : ''}.`,
     `If the Relay connector (MCP) is available to you, use its tools instead: call overview first${l.can_write ? ', then post your results with post_message and keep shared docs current with write_file' : ''}.`,
+    l.perms?.includes('progress') ? 'You are a supervisor: follow PLAYBOOK.md, and keep the dashboard current (update_item for tracker items, update_progress for architecture progress and the stage).'
+      : l.perms?.includes('items') ? 'Keep your tracker items on the dashboard current with update_item.' : null,
     l.can_write
       ? 'When you finish a step, post your result there yourself. Only if you have no way to send it, give me the text.'
       : 'You have read-only access: answer here.',
-  ].join('\n')
+  ].filter(Boolean).join('\n')
 }
 
 const guessKind = s => (/claude|opus|sonnet|haiku|fable|anthropic/i.test(s) ? 'claude' : /gpt|codex|openai|o\d\b/i.test(s) ? 'gpt' : /gemini|google/i.test(s) ? 'gemini' : 'agent')
@@ -508,12 +518,12 @@ function shareDialog(folderId = S.folderId) {
   const kind = h('select', { onchange: () => { kind.picked = true } }, Object.entries(KINDS).filter(([k]) => k !== 'human').map(([k, v]) => h('option', { value: k }, v.label)))
   const name = h('input', { placeholder: 'e.g. GPT-5.6, Claude Code, Codex', maxlength: 60, oninput: () => { if (!kind.picked) kind.value = guessKind(name.value) } })
   const scope = h('select', {}, h('option', { value: rootId }, 'Whole project'), folderId !== rootId ? h('option', { value: folderId }, `Only ${where(folderId)}`) : null)
-  const access = h('select', {}, h('option', { value: '1' }, 'Read + write'), h('option', { value: '0' }, 'Read only'))
+  const access = h('select', { value: 'builder' }, Object.keys(ROLES).map(r => h('option', { value: r }, cap(r))))
   const list = h('div.links')
   const row = l => {
     const url = `${location.origin}/s/${l.token}`
     return h('div.link', {}, avatar(l.kind, l.name, '.sm'),
-      h('div.linfo', {}, h('strong', {}, l.name), h('span', {}, `${scopeName(l.folder_id)} · ${l.can_write ? 'read + write' : 'read only'} · ${l.last_used_at ? 'opened ' + rel(l.last_used_at) : 'not opened yet'}`)),
+      h('div.linfo', {}, h('strong', {}, l.name), h('span', {}, `${scopeName(l.folder_id)} · ${cap(roleOf(l.perms))} · ${l.last_used_at ? 'opened ' + rel(l.last_used_at) : 'not opened yet'}`)),
       h('button.btn.sm', { title: 'Copy link', onclick: () => copy(url, 'Link copied') }, icon('link'), h('span.lbl', {}, 'Link')),
       h('button.btn.sm', { title: 'Copy a ready-made prompt for the agent', onclick: () => copy(agentPrompt(l, url), 'Prompt copied') }, icon('copy'), h('span.lbl', {}, 'Prompt')),
       h('button.btn.sm', { title: 'Copy the MCP connector URL (Claude, ChatGPT, Cursor, Claude Code)', onclick: () => copy(`${url}/mcp`, 'Connector URL copied') }, icon('plug'), h('span.lbl', {}, 'Connector')),
@@ -527,17 +537,17 @@ function shareDialog(folderId = S.folderId) {
   const form = h('form.form.share-form', {
     onsubmit: async e => {
       e.preventDefault()
-      const r = await mutate(() => api('POST', `/api/projects/${d.project.id}/links`, { name: name.value.trim() || KINDS[kind.value].label, kind: kind.value, folder_id: scope.value, can_write: access.value === '1' }))
+      const r = await mutate(() => api('POST', `/api/projects/${d.project.id}/links`, { name: name.value.trim() || KINDS[kind.value].label, kind: kind.value, folder_id: scope.value, role: access.value }))
       if (r) { name.value = ''; draw(); copy(`${location.origin}/s/${r.link.token}`, 'Link created and copied') }
     },
-  }, h('div.grid2', {}, field('Agent name', name), field('Kind', kind), field('Scope', scope), field('Access', access)),
+  }, h('div.grid2', {}, field('Agent name', name), field('Kind', kind), field('Scope', scope), field('Role', access)),
   actions(h('button.btn.primary', { type: 'submit' }, icon('link'), 'Create link')))
   modal(`Share ${d.project.name}`, h('div', {},
-    h('p.hint', {}, 'A link opens the project (or one folder) for whoever has it. Read + write links can also post and upload. Revoke any time.'),
+    h('p.hint', {}, 'A link opens the project (or one folder) for whoever has it. The role sets what the agent may change: supervisor (everything, including progress), builder, reviewer, or viewer (read only). Fine-tune it in Dashboard → Team. Revoke any time.'),
     form, h('div.section-label', {}, 'Links'), list,
     h('div.section-label', {}, 'Let chat apps reply on their own'),
     h('ol.steps', {},
-      h('li', {}, 'Create a read + write link for the app, then press ', h('strong', {}, 'Connector'), ' to copy its MCP URL.'),
+      h('li', {}, 'Create a link for the app (builder or supervisor), then press ', h('strong', {}, 'Connector'), ' to copy its MCP URL.'),
       h('li', {}, h('strong', {}, 'Claude'), ': Settings → Connectors → Add custom connector → paste the URL. Turn it on in a chat from the tools menu.'),
       h('li', {}, h('strong', {}, 'ChatGPT'), ': Settings → Apps & Connectors → Advanced → Developer mode on → Create → paste the URL, authentication: none. Pick it in a chat from the + menu.'),
       h('li', {}, 'Ask: “Check Relay and continue.” The agent reads with overview and posts with post_message.'))), { cls: 'wide' })
@@ -565,6 +575,8 @@ function palette() {
     d && { label: 'New note here', icon: 'note', run: newNote },
     d && { label: 'Upload files here', icon: 'upload', run: pickUpload },
     d && { label: 'Share this folder', icon: 'link', run: () => shareDialog() },
+    d && { label: 'Open the dashboard', icon: 'chart', run: () => go(dashUrl()) },
+    d && { label: 'Open the tracker', icon: 'chart', run: () => go(dashUrl('tracker')) },
     { label: 'Toggle theme', icon: isDark() ? 'sun' : 'moon', run: toggleTheme },
     { label: 'Sign out', icon: 'logout', run: logout },
   ].filter(Boolean).map(a => ({ ...a, hint: 'Action' }))
@@ -662,7 +674,7 @@ function renderSide() {
   const walk = (id, depth) => {
     for (const f of kids.get(id) ?? []) {
       const has = kids.has(f.id), shut = !!collapsed[f.id], on = f.id === S.folderId
-      tree.push(h('a.row.folder' + (on ? '.on' : '') + (unread(f) ? '.unread' : ''), {
+      tree.push(h('a.row.folder' + (on && S.page === 'folder' ? '.on' : '') + (unread(f) ? '.unread' : ''), {
         href: urlFor({ folderId: f.id, tab: on ? S.tab : 'thread' }), onclick: nav, draggable: 'true',
         ondragstart: e => dragItem(e, 'folder', f.id), vars: { '--d': depth }, ...dropTarget(f.id),
       },
@@ -684,10 +696,13 @@ function renderSide() {
       S.projects.map(p => {
         const open = d?.project.id === p.id
         return [
-          h('a.row.project' + (open && S.folderId === p.root_id ? '.on' : ''), { href: `/p/${p.slug}`, onclick: nav, ...dropTarget(p.root_id) },
+          h('a.row.project' + (open && S.folderId === p.root_id && S.page === 'folder' ? '.on' : ''), { href: `/p/${p.slug}`, onclick: nav, ...dropTarget(p.root_id) },
             h('span.pav', { vars: { '--h': hue(p.name) } }, p.name.trim()[0]?.toUpperCase() ?? '?'),
             h('span.name', {}, p.name), h('span.meta', {}, p.messages + p.files || ''),
             h('button.icon-btn.sm.hover', { title: 'Project', onclick: e => { stop(e); menu(e.currentTarget, projectMenu(p)) } }, icon('more'))),
+          open ? h('a.row.dashrow' + (S.page === 'dashboard' ? '.on' : ''), { href: dashUrl(), onclick: nav, vars: { '--d': 1 } },
+            h('span.twisty'), icon('chart'), h('span.name', {}, 'Dashboard'),
+            S.dashFor === p.id && S.dash?.counts.byStatus.blocked ? h('span.meta', { title: 'Blocked items' }, stIcon('blocked'), S.dash.counts.byStatus.blocked) : null) : null,
           open ? h('div.tree', {}, tree) : null,
         ]
       }),
@@ -698,6 +713,17 @@ function renderSide() {
 
 function renderBar() {
   const d = S.detail
+  if (d && S.page === 'dashboard') {
+    const dt = (t, label, n) => h('a.tab' + (S.dtab === t ? '.on' : ''), { href: dashUrl(t), onclick: nav, role: 'tab' }, label, n ? h('span.count', {}, n) : null)
+    return bar.replaceChildren(...[
+      h('button.icon-btn.menu-btn', { 'aria-label': 'Menu', onclick: () => document.body.classList.toggle('nav-open') }, icon('menu')),
+      h('nav.crumbs.dash-crumbs', {}, h('a.crumb', { href: `/p/${encodeURIComponent(d.project.slug)}`, onclick: nav }, d.project.name), h('span.sep', {}, '/'), h('span.crumb.here', {}, 'Dashboard')),
+      h('div.tabs', { role: 'tablist' }, dt('overview', 'Overview'), dt('tracker', 'Tracker', S.dash?.items.length), dt('team', 'Team', d.links.length)),
+      h('div.grow'),
+      h('button.btn.ghost.sm', { onclick: () => shareDialog(d.project.root_id), title: 'Share with an agent' }, icon('link'), h('span.lbl', {}, 'Share')),
+      S.dtab === 'tracker' ? h('button.btn.primary.sm', { onclick: () => itemDialog(), title: 'New item' }, icon('plus'), h('span.lbl', {}, 'New item')) : null,
+    ].filter(Boolean))
+  }
   const c = cur()
   const crumbs = d
     ? chain(S.folderId).map((f, i, a) => i === a.length - 1
@@ -719,6 +745,21 @@ function renderBar() {
 function renderView() {
   const d = S.detail
   if (!d) { view.className = 'view'; view.replaceChildren(emptyProjects()); return }
+  if (S.page === 'dashboard') {
+    // Keep focus, caret and scroll when the dashboard redraws (live updates, filters as you type).
+    const a = document.activeElement
+    const k = view.contains(a) ? a.dataset.k : null
+    const caret = k && a.tagName === 'INPUT' ? a.selectionStart : null
+    const top = view.scrollTop, left = view.querySelector('.twrap')?.scrollLeft ?? 0
+    view.className = 'view dashboard'
+    view.replaceChildren(dashView())
+    view.scrollTop = top
+    const w = view.querySelector('.twrap')
+    if (w) w.scrollLeft = left
+    const el = k && view.querySelector(`[data-k="${k}"]`)
+    if (el) { el.focus(); if (caret != null) el.setSelectionRange(caret, caret) }
+    return
+  }
   if (S.tab === 'files') { view.className = 'view files'; view.replaceChildren(filesView()); return }
   if (S.editing && view.contains(document.activeElement)) return
   const nearBottom = view.scrollHeight - view.scrollTop - view.clientHeight < 120
@@ -844,7 +885,7 @@ function buildComposer() {
 }
 
 function renderSlot() {
-  if (!S.detail || S.tab !== 'thread') return slot.replaceChildren()
+  if (!S.detail || S.tab !== 'thread' || S.page === 'dashboard') return slot.replaceChildren()
   if (!composer || composer.folderId !== S.folderId) composer = buildComposer()
   if (slot.firstChild !== composer.el) slot.replaceChildren(composer.el)
 }
@@ -894,7 +935,7 @@ function renderDrawer(force = false) {
   const text = isText(f.name, f.mime)
   const md = isMarkdown(f.name)
   const body = h('div.dbody')
-  if (f.name === 'CONTRACT.md' && f.folder_id === S.detail.project.root_id) body.append(h('p.hint', {}, 'Shared by every project: editing it here updates the rules everywhere.'))
+  if (['CONTRACT.md', 'PLAYBOOK.md'].includes(f.name) && f.folder_id === S.detail.project.root_id) body.append(h('p.hint', {}, `Shared by every project: editing it here updates ${f.name === 'CONTRACT.md' ? 'the rules' : 'the playbook'} everywhere. Only you can edit it.`))
   if (drawer.editing) {
     const ta = h('textarea.editor', { spellcheck: 'false', placeholder: 'Loading…' })
     const save = async () => {
@@ -928,6 +969,302 @@ function renderDrawer(force = false) {
       h('button.icon-btn', { title: 'Close (Esc)', onclick: closeFile }, icon('x'))),
     body)
   if (el) el.replaceWith(next); else layer.append(next)
+}
+
+// ── dashboard ──────────────────────────────────────────────────
+const cap = s => (s ? s[0].toUpperCase() + s.slice(1) : '')
+const dashUrl = (tab = 'overview') => `/p/${encodeURIComponent(S.detail.project.slug)}/dashboard${tab !== 'overview' ? '?tab=' + tab : ''}`
+async function loadDash() {
+  const id = S.detail.project.id
+  try { S.dash = await api('GET', `/api/projects/${id}/dashboard`); S.dashFor = id } catch (e) { toast(e.message) }
+}
+
+// Status: a tone (colour) plus an icon and a label, never colour alone.
+const TONE = { ready: 'idle', planned: 'idle', running: 'active', building: 'active', integrating: 'active', review: 'warn', done: 'good', blocked: 'crit' }
+const RING = '<circle cx="12" cy="12" r="7"/>'
+const ST_ICON = {
+  ready: RING, planned: '<circle cx="12" cy="12" r="7" stroke-dasharray="3 3.3"/>',
+  running: RING + '<path d="M12 5a7 7 0 0 1 0 14z" fill="currentColor"/>', building: RING + '<path d="M12 5a7 7 0 0 1 0 14z" fill="currentColor"/>',
+  review: RING + '<path d="M12 12V5a7 7 0 1 1-7 7z" fill="currentColor"/>',
+  integrating: '<circle cx="7" cy="6" r="2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="12" r="2"/><path d="M7 8v8M7 9c0 3 3 3 8 3"/>',
+  done: RING + '<path d="m8.8 12.2 2.2 2.2 4.3-4.6"/>', blocked: RING + '<path d="M7.2 16.8 16.8 7.2"/>',
+}
+const stIcon = s => h('span.i', { html: `<svg viewBox="0 0 24 24" ${P} aria-hidden="true">${ST_ICON[s] ?? RING}</svg>` })
+const pill = (s, title) => h('span.st', { 'data-tone': TONE[s] ?? 'idle', title }, stIcon(s), cap(s))
+const PRIO = { high: '↑', medium: '–', low: '↓' }
+const meter = (v, cls = '') => h('span.meter' + cls, { role: 'img', 'aria-label': `${Math.round(v * 100)}%` }, h('i', { vars: { '--v': Math.max(0, Math.min(1, v)) } }))
+
+const COLS = [['ref', 'ID'], ['title', 'Title'], ['kind', 'Kind'], ['status', 'Status'], ['priority', 'Priority'], ['owner', 'Assigned'], ['component', 'Component'], ...ITEM_FIELDS, ['updated_at', 'Updated']]
+const DEFAULT_HIDDEN = ['component', 'acceptance', 'verification', 'risk', 'depends_on', 'blocked', 'branch']
+let hiddenCols = store.get('hiddenCols', DEFAULT_HIDDEN)
+const TF = { q: '', status: '', kind: '', owner: '', sort: 'ref', dir: 1 }
+const itemVal = (it, k) => (k in it && k !== 'fields' ? it[k] : it.fields[k]) ?? ''
+const REF_PREFIX = { task: 'T', patch: 'P', bug: 'BUG', feature: 'F', release: 'R' }
+function nextRef(kind) {
+  const pre = REF_PREFIX[kind] ?? 'T'
+  const n = Math.max(0, ...(S.dash?.items ?? []).map(i => i.ref.match(new RegExp(`^${pre}-(\\d+)$`, 'i'))?.[1]).filter(Boolean).map(Number))
+  return `${pre}-${n + 1}`
+}
+const linkByName = name => S.detail.links.find(l => l.name.toLowerCase() === String(name).toLowerCase())
+const who = name => (name ? h('span.by', {}, avatar(linkByName(name)?.kind ?? (/owner|me/i.test(name) ? 'human' : 'agent'), name, '.xs'), h('span', {}, name)) : h('span.muted', {}, '—'))
+const urls = s => String(s).split(/[\s,]+/).filter(u => /^https?:\/\/\S+$/i.test(u))
+function linkList(s) {
+  const list = urls(s)
+  const rest = String(s).split(/[\s,]+/).filter(x => x && !list.includes(x)).join(' ')
+  return h('span.urls', {}, list.map(u => h('a', { href: u, target: '_blank', rel: 'noopener', onclick: e => e.stopPropagation(), title: u }, u.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 48))), rest ? h('span', {}, rest) : null)
+}
+const repoEl = r => {
+  const url = /^https?:\/\//i.test(r) ? r : /^[\w.-]+\/[\w.-]+$/.test(r) ? `https://github.com/${r}` : null
+  return url ? h('a', { href: url, target: '_blank', rel: 'noopener', onclick: e => e.stopPropagation() }, r) : h('span', {}, r)
+}
+
+function dashView() {
+  const d = S.dash
+  if (!d) return h('div.empty.small', {}, h('p', {}, 'Loading the dashboard…'))
+  return S.dtab === 'tracker' ? trackerView(d) : S.dtab === 'team' ? teamView() : overviewView(d)
+}
+
+function overviewView(d) {
+  const c = d.counts
+  const tile = (label, value, sub, extra, tone) => h('div.tile', { 'data-tone': tone }, h('span.tlabel', {}, label), h('strong.tval', {}, value), sub ? h('span.tsub', {}, sub) : null, extra)
+  const stage = STAGES.indexOf(d.info.stage)
+  const tiles = h('div.tiles', {},
+    tile('Architecture', d.progress.architecture == null ? '—' : d.progress.architecture + '%', `${d.components.length} component${d.components.length === 1 ? '' : 's'}`, meter((d.progress.architecture ?? 0) / 100)),
+    tile('Tracker done', d.progress.tasks == null ? '—' : d.progress.tasks + '%', `${c.byStatus.done} of ${c.total} items`, meter((d.progress.tasks ?? 0) / 100)),
+    tile('Blocked', String(c.byStatus.blocked), c.byStatus.blocked ? 'need a decision' : 'nothing blocked', c.byStatus.blocked ? pill('blocked') : null, c.byStatus.blocked ? 'crit' : null),
+    tile('Open bugs', String(c.openBugs), `${c.byKind.bug} bug${c.byKind.bug === 1 ? '' : 's'} logged`))
+  const stages = h('ol.stages', { 'aria-label': 'Release stage' }, STAGES.map((s, i) => h('li' + (i < stage ? '.past' : i === stage ? '.now' : ''), {},
+    h('button', { title: i === stage ? 'Current stage' : `Set the stage to ${s}`, onclick: () => i !== stage && setStage(s) }, h('span.sn', {}, i < stage ? '✓' : i + 1), h('span', {}, s)))))
+  const byStatus = h('div.counts', {}, ITEM_STATUS.map(s => h('button.count-tile', { onclick: () => { Object.assign(TF, { status: s, kind: '', q: '' }); go(dashUrl('tracker')) }, title: `Show ${s} items` },
+    pill(s), h('strong', {}, String(c.byStatus[s] ?? 0)))))
+  const recent = [...d.items].sort((a, b) => b.updated_at - a.updated_at).slice(0, 6)
+  return h('div.dash', {},
+    tiles,
+    card('Stage', null, stages),
+    card('Tracker by status', h('a.btn.ghost.sm', { href: dashUrl('tracker'), onclick: nav }, 'Open tracker'), byStatus),
+    h('div.dgrid', {},
+      card('Architecture progress', h('button.btn.ghost.sm', { onclick: () => componentDialog() }, icon('plus'), 'Component'), archBoard(d.components)),
+      card('Activity, last 14 days', null, activityChart(d.activity))),
+    h('div.dgrid', {},
+      card('Recently updated', null, recent.length
+        ? h('div.mini', {}, recent.map(it => h('button.mrow', { onclick: () => itemDialog(it) }, h('code', {}, it.ref), h('span.mtitle', {}, it.title), pill(it.status), h('span.muted', { title: full(it.updated_at) }, `${it.updated_by} · ${rel(it.updated_at)}`))))
+        : h('p.hint', {}, 'No tracker items yet.')),
+      card('Project', h('button.btn.ghost.sm', { onclick: editInfo }, icon('edit'), 'Edit'), infoCard(d))))
+}
+const card = (title, action, body) => h('section.card', {}, h('div.card-head', {}, h('h3', {}, title), h('div.grow'), action), body)
+
+function archBoard(comps) {
+  if (!comps.length) return h('p.hint', {}, 'Add the parts of your architecture (for example Auth API, Web app, Database). Supervisor agents keep their status and progress current with update_progress.')
+  const areas = new Map()
+  for (const c of comps) areas.set(c.area || 'General', [...(areas.get(c.area || 'General') ?? []), c])
+  return h('div.arch', {}, [...areas].map(([area, list]) => h('div.area', {},
+    h('div.area-head', {}, h('span', {}, area), h('span.muted', {}, `${Math.round(list.reduce((a, c) => a + c.progress, 0) / list.length)}%`)),
+    list.map(c => h('button.comp', { onclick: () => componentDialog(c), title: [c.notes, `Updated ${rel(c.updated_at)} by ${c.updated_by}`].filter(Boolean).join('\n') },
+      h('span.cname', {}, c.name, c.owner ? h('span.muted', {}, ' · ' + c.owner) : null), pill(c.status), meter(c.progress / 100, '.wide'), h('span.cpct', {}, c.progress + '%'))))))
+}
+
+function activityChart(days) {
+  const vals = days.map(x => x.messages + x.files)
+  const peak = Math.max(1, ...vals)
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000].find(s => s * 2 >= peak) ?? Math.ceil(peak / 2)
+  const top = step * 2
+  const tip = h('div.tip', { hidden: true })
+  const plot = h('div.plot')
+  const day = t => new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' })
+  const show = (col, text) => {
+    tip.textContent = text; tip.hidden = false
+    const half = tip.offsetWidth / 2
+    tip.style.left = `${Math.max(half, Math.min(col.offsetLeft + col.offsetWidth / 2, plot.clientWidth - half))}px`
+  }
+  const cols = days.map((x, i) => {
+    const text = `${day(x.day)} · ${x.messages} message${x.messages === 1 ? '' : 's'}, ${x.files} file${x.files === 1 ? '' : 's'}`
+    const col = h('div.col', { tabindex: 0, 'aria-label': text, onpointerenter: () => show(col, text), onfocus: () => show(col, text), onpointerleave: () => (tip.hidden = true), onblur: () => (tip.hidden = true) },
+      vals[i] ? h('i.vbar', { vars: { '--v': vals[i] / top } }) : null)
+    return col
+  })
+  plot.append(h('div.gl', { vars: { '--y': 1 } }), h('div.gl', { vars: { '--y': 0.5 } }), h('div.gl.base', { vars: { '--y': 0 } }), h('div.cols', {}, cols), tip)
+  const total = vals.reduce((a, b) => a + b, 0)
+  return h('div.chart', {},
+    h('p.hint', {}, `${total} update${total === 1 ? '' : 's'} (messages and files) in 14 days`),
+    h('div.chart-body', {}, h('div.yaxis', {}, h('span', {}, top), h('span', {}, step), h('span', {}, 0)), plot),
+    h('div.xaxis', {}, h('span', {}, day(days[0].day)), h('span', {}, day(days[7].day)), h('span', {}, 'Today')))
+}
+
+function infoCard(d) {
+  const agents = S.detail.links
+  const open = name => d.items.filter(i => i.owner.toLowerCase() === name.toLowerCase() && i.status !== 'done').length
+  return h('div.info', {},
+    h('div.kv', {}, h('span.muted', {}, 'Repo'), d.info.repo ? repoEl(d.info.repo) : h('span.muted', {}, 'Not set')),
+    h('div.kv', {}, h('span.muted', {}, 'Links'), d.info.links.length ? h('span.urls', {}, d.info.links.map(l => h('a', { href: l.url, target: '_blank', rel: 'noopener' }, l.label || l.url))) : h('span.muted', {}, 'None')),
+    h('div.kv.top', {}, h('span.muted', {}, 'Agents'), agents.length
+      ? h('div.agents', {}, agents.map(l => h('div.agent', {}, avatar(l.kind, l.name, '.xs'), h('span', {}, l.name), h('span.role', {}, cap(roleOf(l.perms))), h('span.muted', {}, `${open(l.name)} open`))))
+      : h('span.muted', {}, 'No agent links yet')),
+    h('p.hint', {}, 'Every dashboard change is also written to LOG.md, so all agents see it.'))
+}
+
+async function setStage(stage) {
+  const r = await mutate(() => api('PATCH', `/api/projects/${S.detail.project.id}`, { info: { stage } }))
+  if (r) toast(`Stage set to ${stage}`)
+}
+
+function editInfo() {
+  const d = S.dash
+  const repo = h('input', { value: d.info.repo, placeholder: 'owner/repo or a URL', maxlength: 300 })
+  const links = h('textarea', { rows: 4, value: d.info.links.map(l => `${l.label} | ${l.url}`).join('\n'), placeholder: 'Live site | https://…\nFigma | https://…' })
+  const m = modal('Project details', h('form.form', {
+    onsubmit: async e => {
+      e.preventDefault()
+      const list = links.value.split('\n').map(x => x.trim()).filter(Boolean).map(x => { const i = x.lastIndexOf('|'); return i < 0 ? { label: '', url: x } : { label: x.slice(0, i).trim(), url: x.slice(i + 1).trim() } })
+      if (await mutate(() => api('PATCH', `/api/projects/${S.detail.project.id}`, { info: { repo: repo.value, links: list } }))) m.close()
+    },
+  }, field('Repository', repo), field('Links', links, 'One per line: label | https://… (only http and https links are kept)'),
+  actions(h('button.btn', { type: 'button', onclick: () => m.close() }, 'Cancel'), h('button.btn.primary', { type: 'submit' }, 'Save'))))
+  setTimeout(() => repo.focus())
+}
+
+function trackerView(d) {
+  const owners = [...new Set(d.items.map(i => i.owner).filter(Boolean))].sort()
+  const q = TF.q.trim().toLowerCase()
+  const rows = d.items.filter(i => (!TF.status || i.status === TF.status) && (!TF.kind || i.kind === TF.kind) && (!TF.owner || i.owner === TF.owner) &&
+    (!q || [i.ref, i.title, i.owner, i.component, ...Object.values(i.fields)].some(x => String(x).toLowerCase().includes(q))))
+  const order = { status: ITEM_STATUS, priority: PRIORITIES, kind: ITEM_KINDS }
+  const k = TF.sort
+  rows.sort((a, b) => TF.dir * (order[k] ? order[k].indexOf(a[k]) - order[k].indexOf(b[k])
+    : k === 'updated_at' ? a.updated_at - b.updated_at
+      : String(itemVal(a, k)).localeCompare(String(itemVal(b, k)), undefined, { numeric: true, sensitivity: 'base' })))
+  const sel = (key, all, list, label = cap) => h('select.sm', { 'data-k': 'f-' + key, 'aria-label': key, value: TF[key], onchange: e => { TF[key] = e.target.value; renderView() } },
+    h('option', { value: '' }, all), list.map(x => h('option', { value: x }, label(x))))
+  const cols = COLS.filter(([c]) => !hiddenCols.includes(c))
+  const cell = (it, c) => {
+    const v = itemVal(it, c)
+    if (c === 'ref') return h('code', {}, v)
+    if (c === 'status') return pill(v, it.status === 'blocked' ? it.fields.blocked : undefined)
+    if (c === 'priority') return h('span.prio', { 'data-p': v }, PRIO[v], ' ', cap(v))
+    if (c === 'owner') return who(v)
+    if (c === 'kind') return h('span.tag', {}, cap(v))
+    if (c === 'updated_at') return h('span.muted', { title: `${full(v)} · ${it.updated_by}` }, rel(v))
+    if (!v) return h('span.muted', {}, '—')
+    if (c === 'links') return linkList(v)
+    if (c === 'repo') return repoEl(v)
+    return h('span.clamp', { title: v }, v)
+  }
+  const head = h('tr', {}, cols.map(([c, label]) => h('th', { 'data-c': c, 'aria-sort': TF.sort === c ? (TF.dir > 0 ? 'ascending' : 'descending') : null },
+    h('button', { onclick: () => { TF.dir = TF.sort === c ? -TF.dir : 1; TF.sort = c; renderView() } }, label, TF.sort === c ? (TF.dir > 0 ? ' ↑' : ' ↓') : ''))))
+  const body = rows.map(it => h('tr', { tabindex: 0, onclick: () => itemDialog(it), onkeydown: e => e.key === 'Enter' && itemDialog(it) }, cols.map(([c]) => h('td', { 'data-c': c }, cell(it, c)))))
+  return h('div.tracker', {},
+    h('div.ttools', {},
+      h('label.tsearch', {}, icon('search'), h('input', { 'data-k': 'q', value: TF.q, placeholder: 'Filter by ID, title, agent, text…', oninput: e => { TF.q = e.target.value; renderView() } })),
+      sel('status', 'All statuses', ITEM_STATUS), sel('kind', 'All kinds', ITEM_KINDS), owners.length ? sel('owner', 'Anyone', owners, x => x) : null,
+      h('button.btn.sm', { onclick: columnsDialog }, 'Columns'),
+      h('span.muted.tcount', {}, rows.length === d.items.length ? `${rows.length} item${rows.length === 1 ? '' : 's'}` : `${rows.length} of ${d.items.length}`)),
+    d.items.length
+      ? rows.length ? h('div.twrap', {}, h('table.tt', {}, h('thead', {}, head), h('tbody', {}, body))) : h('p.hint.pad', {}, 'Nothing matches these filters.')
+      : h('div.empty.small', {}, icon('box', '.big'), h('h3', {}, 'No items yet'),
+        h('p', {}, 'Every task, patch, bug, feature and release is one row. Agents with tracker permission add and update them with update_item; you can too.'),
+        h('button.btn.sm.primary', { onclick: () => itemDialog() }, icon('plus'), 'New item')))
+}
+
+function columnsDialog() {
+  const box = h('div.checks', {}, COLS.filter(([c]) => c !== 'ref').map(([c, label]) => h('label.check', {},
+    h('input', { type: 'checkbox', checked: !hiddenCols.includes(c), onchange: e => { hiddenCols = e.target.checked ? hiddenCols.filter(x => x !== c) : [...hiddenCols, c]; store.set('hiddenCols', hiddenCols); renderView() } }), label)))
+  const m = modal('Columns', h('div.form', {}, box, actions(h('button.btn', { onclick: () => { hiddenCols = DEFAULT_HIDDEN; store.set('hiddenCols', hiddenCols); renderView(); m.close() } }, 'Reset'), h('button.btn.primary', { onclick: () => m.close() }, 'Done'))))
+}
+
+function itemDialog(it) {
+  const d = S.dash
+  const v = it ?? { ref: nextRef('task'), kind: 'task', status: 'ready', priority: 'medium', owner: '', component: '', title: '', fields: {} }
+  let refTouched = !!it
+  const ref = h('input', { value: v.ref, maxlength: 40, required: true, oninput: () => (refTouched = true) })
+  const title = h('input', { value: v.title, maxlength: 200, required: true, placeholder: 'What is it, in a few words' })
+  const pick = (list, val) => h('select', { value: val }, list.map(x => h('option', { value: x }, cap(x))))
+  const kind = pick(ITEM_KINDS, v.kind)
+  kind.addEventListener('change', () => { if (!refTouched) ref.value = nextRef(kind.value) })
+  const status = pick(ITEM_STATUS, v.status)
+  const priority = pick(PRIORITIES, v.priority)
+  const owner = h('input', { value: v.owner, maxlength: 60, list: 'dl-owners', placeholder: 'Agent or person' })
+  const component = h('input', { value: v.component, maxlength: 80, list: 'dl-comps', placeholder: 'Optional' })
+  const areas = Object.fromEntries(ITEM_FIELDS.map(([k]) => [k, h('textarea', { rows: k === 'details' ? 3 : 2, maxlength: 4000, value: v.fields[k] ?? '' })]))
+  const hints = { blocked: 'Needed when blocked: the reason and what unblocks it', verification: 'Needed for done: tests, review, PR', links: 'Separate with spaces or new lines', files: 'Separate with spaces or new lines' }
+  const body = () => ({ ref: ref.value, title: title.value, kind: kind.value, status: status.value, priority: priority.value, owner: owner.value, component: component.value, ...Object.fromEntries(Object.entries(areas).map(([k, el]) => [k, el.value])) })
+  const m = modal(it ? `${it.ref} · ${it.title}` : 'New tracker item', h('form.form.item-form', {
+    onsubmit: async e => {
+      e.preventDefault()
+      const r = await mutate(() => (it ? api('PATCH', `/api/items/${it.id}`, body()) : api('POST', `/api/projects/${S.detail.project.id}/items`, body())))
+      if (r) m.close()
+    },
+  },
+  h('datalist', { id: 'dl-owners' }, [...new Set(['Owner', ...S.detail.links.map(l => l.name)])].map(n => h('option', { value: n }))),
+  h('datalist', { id: 'dl-comps' }, d.components.map(c => h('option', { value: c.name }))),
+  h('div.grid3', {}, field('ID', ref), field('Kind', kind), field('Status', status), field('Priority', priority), field('Assigned', owner), field('Component', component)),
+  field('Title', title),
+  field('Details', areas.details),
+  h('div.grid2', {}, ITEM_FIELDS.filter(([k]) => k !== 'details').map(([k, label]) => field(label, areas[k], hints[k]))),
+  it ? h('p.hint', {}, `Added by ${it.created_by} ${rel(it.created_at)} · updated by ${it.updated_by} ${rel(it.updated_at)}`) : null,
+  actions(
+    it ? h('button.btn.danger', { type: 'button', onclick: async () => { if (await confirmBox(`Delete ${it.ref}?`, 'The item is removed from the tracker. LOG.md keeps a line about it.')) { await mutate(() => api('DELETE', `/api/items/${it.id}`)); m.close() } } }, icon('trash'), 'Delete') : null,
+    h('div.grow'),
+    h('button.btn', { type: 'button', onclick: () => m.close() }, 'Cancel'), h('button.btn.primary', { type: 'submit' }, it ? 'Save' : 'Add item'))), { cls: 'wide' })
+  setTimeout(() => title.focus())
+}
+
+function componentDialog(c) {
+  const d = S.dash
+  const name = h('input', { value: c?.name ?? '', maxlength: 80, required: true, placeholder: 'e.g. Auth API' })
+  const area = h('input', { value: c?.area ?? '', maxlength: 80, list: 'dl-areas', placeholder: 'e.g. Backend' })
+  const status = h('select', { value: c?.status ?? 'planned' }, COMPONENT_STATUS.map(x => h('option', { value: x }, cap(x))))
+  const out = h('output', {}, `${c?.progress ?? 0}%`)
+  const progress = h('input', { type: 'range', min: 0, max: 100, step: 5, value: c?.progress ?? 0, oninput: () => (out.textContent = progress.value + '%') })
+  status.addEventListener('change', () => { if (status.value === 'done') { progress.value = 100; out.textContent = '100%' } })
+  const owner = h('input', { value: c?.owner ?? '', maxlength: 60, list: 'dl-owners2', placeholder: 'Optional' })
+  const notes = h('textarea', { rows: 3, maxlength: 1000, value: c?.notes ?? '' })
+  const m = modal(c ? c.name : 'New component', h('form.form', {
+    onsubmit: async e => {
+      e.preventDefault()
+      const b = { name: name.value, area: area.value, status: status.value, progress: Number(progress.value), owner: owner.value, notes: notes.value }
+      if (await mutate(() => (c ? api('PATCH', `/api/components/${c.id}`, b) : api('POST', `/api/projects/${S.detail.project.id}/components`, b)))) m.close()
+    },
+  },
+  h('datalist', { id: 'dl-areas' }, [...new Set(d.components.map(x => x.area).filter(Boolean))].map(a => h('option', { value: a }))),
+  h('datalist', { id: 'dl-owners2' }, S.detail.links.map(l => h('option', { value: l.name }))),
+  h('div.grid2', {}, field('Name', name), field('Area', area), field('Status', status), field('Owner', owner)),
+  field('Progress', h('div.range', {}, progress, out)), field('Notes', notes),
+  c ? h('p.hint', {}, `Updated by ${c.updated_by} ${rel(c.updated_at)}`) : null,
+  actions(
+    c ? h('button.btn.danger', { type: 'button', onclick: async () => { if (await confirmBox(`Delete ${c.name}?`, 'It is removed from the architecture chart.')) { await mutate(() => api('DELETE', `/api/components/${c.id}`)); m.close() } } }, icon('trash'), 'Delete') : null,
+    h('div.grow'),
+    h('button.btn', { type: 'button', onclick: () => m.close() }, 'Cancel'), h('button.btn.primary', { type: 'submit' }, c ? 'Save' : 'Add'))))
+  setTimeout(() => name.focus())
+}
+
+const ROLE_TEXT = {
+  supervisor: 'Everything, including architecture progress and the stage. Follows PLAYBOOK.md.',
+  builder: 'Posts, files, folders and tracker items.',
+  reviewer: 'Posts and tracker items (moves work to done, with evidence).',
+  viewer: 'Reads only.',
+}
+const PERM_SHORT = { post: 'Post', files: 'Files', folders: 'Folders', items: 'Tracker', progress: 'Progress' }
+async function setPerms(l, perms) {
+  const r = await mutate(() => api('PATCH', `/api/links/${l.id}`, { perms }))
+  if (r) toast(`${l.name}: ${cap(roleOf(r.link.perms))}`)
+}
+function teamView() {
+  const links = S.detail.links
+  const rootId = S.detail.project.root_id
+  const roles = h('div.roles', {}, Object.entries(ROLE_TEXT).map(([r, t]) => h('div.role-row', {}, h('strong', {}, cap(r)), h('span.muted', {}, t))))
+  if (!links.length)
+    return h('div.dash', {}, card('Roles', null, roles), h('div.empty.small', {}, icon('link', '.big'), h('h3', {}, 'No agents yet'), h('p', {}, 'Share the project with an agent, then choose what it may change here.'), h('button.btn.sm.primary', { onclick: () => shareDialog(rootId) }, icon('link'), 'Share')))
+  const rows = links.map(l => h('tr', {},
+    h('td', {}, h('span.by', {}, avatar(l.kind, l.name, '.sm'), h('strong', {}, l.name))),
+    h('td.muted', {}, l.folder_id === rootId ? 'Whole project' : '/' + pathOf(l.folder_id)),
+    h('td', {}, h('select.sm', { 'aria-label': `Role of ${l.name}`, value: roleOf(l.perms), onchange: e => e.target.value !== 'custom' && setPerms(l, ROLES[e.target.value]) },
+      [...Object.keys(ROLES), ...(roleOf(l.perms) === 'custom' ? ['custom'] : [])].map(r => h('option', { value: r }, cap(r))))),
+    PERMS.map(([p, label]) => h('td.c', {}, h('input', { type: 'checkbox', 'aria-label': `${l.name}: ${label}`, title: label, checked: l.perms.includes(p),
+      onchange: e => setPerms(l, e.target.checked ? [...l.perms, p] : l.perms.filter(x => x !== p)) }))),
+    h('td.muted', {}, l.last_used_at ? rel(l.last_used_at) : 'never')))
+  return h('div.dash', {},
+    card('Agents and permissions', h('button.btn.ghost.sm', { onclick: () => shareDialog(rootId) }, icon('plus'), 'New link'),
+      h('div.twrap.team', {}, h('table.tt', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Agent'), h('th', {}, 'Scope'), h('th', {}, 'Role'), PERMS.map(([p, label]) => h('th.c', { title: label }, PERM_SHORT[p])), h('th', {}, 'Last opened'))), h('tbody', {}, rows)))),
+    card('Roles', null, h('div', {}, roles, h('p.hint', {}, 'Changes apply at once: the agent’s tools and its link follow the new permissions. Only you edit CONTRACT.md and PLAYBOOK.md, and agents never delete anything.'))))
 }
 
 // ── keys & boot ────────────────────────────────────────────────

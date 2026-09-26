@@ -174,3 +174,35 @@ export function renderMarkdown(src, depth = 0) {
   }
   return out
 }
+
+// ── dashboard vocabulary (shared by the server and the app) ──────────────────
+/** Task-board states from the Agent Delivery Playbook. Done = integrated and accepted. */
+export const ITEM_STATUS = ['ready', 'running', 'review', 'integrating', 'done', 'blocked']
+export const ITEM_KINDS = ['task', 'patch', 'bug', 'feature', 'release']
+export const PRIORITIES = ['high', 'medium', 'low']
+/** Free-text fields of a tracker item, in column order. */
+export const ITEM_FIELDS = [
+  ['details', 'Details'], ['fix', 'Fix / change'], ['bugs', 'Bugs found'], ['feature', 'Feature / function'],
+  ['acceptance', 'Acceptance'], ['verification', 'Evidence'], ['risk', 'Risk & recovery'], ['depends_on', 'Depends on'],
+  ['blocked', 'Blocked because'], ['repo', 'Repo'], ['branch', 'Branch / PR'], ['links', 'Links'], ['files', 'Files'],
+]
+export const COMPONENT_STATUS = ['planned', 'building', 'review', 'done', 'blocked']
+/** Release stages from the playbook (§9). */
+export const STAGES = ['Define', 'Prove', 'Build', 'Integrate', 'Release candidate', 'Released']
+/** What a link may change. Reading is always allowed. */
+export const PERMS = [
+  ['post', 'Post messages'], ['files', 'Add and edit files'], ['folders', 'Create folders'],
+  ['items', 'Add and update tracker items'], ['progress', 'Update progress and stage'],
+]
+/** Role presets (playbook §7: one supervisor, builders, an on-demand reviewer). */
+export const ROLES = {
+  supervisor: ['post', 'files', 'folders', 'items', 'progress'],
+  builder: ['post', 'files', 'folders', 'items'],
+  reviewer: ['post', 'items'],
+  viewer: [],
+}
+/** The role a permission set matches, or 'custom'. @param {string[]} perms */
+export const roleOf = perms => {
+  const key = [...perms].sort().join(',')
+  return Object.entries(ROLES).find(([, p]) => [...p].sort().join(',') === key)?.[0] ?? 'custom'
+}

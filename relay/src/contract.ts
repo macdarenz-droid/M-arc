@@ -2,10 +2,14 @@
 export const CONTRACT = 'CONTRACT.md'
 export const STATE = 'PROJECT_STATE.md'
 export const LOG = 'LOG.md'
+export const PLAYBOOK = 'PLAYBOOK.md'
 /** Root files listed first, in this order. */
-export const PINNED = [CONTRACT, STATE, LOG]
+export const PINNED = [CONTRACT, STATE, LOG, PLAYBOOK]
+/** Workspace-wide, owner-only documents: one copy in every project, edited once. */
+export const SHARED_DOCS = [CONTRACT, PLAYBOOK]
 
-export const DEFAULT_CONTRACT = `# Contract
+/** The first published contract; kept so an unedited copy can be upgraded in place. */
+export const CONTRACT_V1 = `# Contract
 
 Every agent (Claude, GPT, Codex, …) and the owner follow these rules in this project. Read them before you act. Only the owner edits this file: propose changes in a message.
 
@@ -51,6 +55,18 @@ If this project's folders differ, keep the same idea: one place per kind of thin
 - Never post secrets, keys or link URLs.
 - Read a file fully before you replace it. Keep what others wrote unless it is wrong, and log why you changed it.
 `
+
+/** The current default: v1 plus the playbook and the Dashboard tracker. */
+export const DEFAULT_CONTRACT = CONTRACT_V1
+  .replace(
+    "- \`LOG.md\`: the history.",
+    "- \`PLAYBOOK.md\`: how the supervisor runs delivery (owner only). Supervisors follow it; everyone reads only the section they need.\n- \`LOG.md\`: the history.",
+  )
+  .replace('## 3. The three root files', '## 3. The root files')
+  .replace(
+    "- \`tasks/\`, \`releases/\`: one checklist each, kept current.",
+    "- **Dashboard tracker**: every task, patch, bug, feature and release is one item, kept current with update_item (not in files). Blocked needs a reason and what unblocks it; done means integrated and accepted, with evidence.\n- **Dashboard progress**: architecture components and the release stage, kept current with update_progress (supervisors).",
+  )
 
 export const defaultState = (project: string) => `# ${project}: project state
 

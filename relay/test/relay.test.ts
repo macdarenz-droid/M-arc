@@ -270,8 +270,9 @@ test('MCP: handshake, tools by permission, post / write / fetch / search inside 
   assert.equal(note.headers.get('access-control-allow-origin'), '*')
 
   const names = async (t: string) => (await rpc(t, 'tools/list')).result.tools.map((x: any) => x.name)
-  assert.deepEqual(await names(r.token), ['overview', 'read_folder', 'search', 'fetch'])
-  assert.ok((await names(w.token)).includes('post_message'))
+  assert.deepEqual(await names(r.token), ['overview', 'read_folder', 'search', 'fetch', 'dashboard'])
+  // A write link from before permissions keeps post, files and folders; scoped to a folder it has no dashboard.
+  assert.deepEqual(await names(w.token), ['overview', 'read_folder', 'search', 'fetch', 'post_message', 'write_file', 'append_file', 'create_folder'])
 
   const posted = await tool(w.token, 'post_message', { folder: 'gpt', body: 'Reviewed. **Ship it.**' })
   assert.match(posted.content[0].text, /Posted to \/gpt as ChatGPT/)
@@ -350,4 +351,132 @@ test('contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it
   assert.match(((await (await call('POST', `/s/${link.token}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: 99, method: 'initialize', params: {} } })).json()) as any).result.instructions, /Rule edited once/)
   const later = (await j('POST', '/api/projects', { body: { name: 'Later', template: 'empty' } })).data.project
   assert.equal(new TextDecoder().decode(store.read(store.fileByName(later.root_id, 'CONTRACT.md')!.id)), '# Contract\n\n- Rule edited once')
+})
+
+test('dashboard: tracker items, architecture progress, stage, role permissions, logged changes', async () => {
+  const { j, call } = setup()
+  const d = (await j('GET', '/api/projects/m-arc')).data
+  const pid = d.project.id
+  const agents = d.folders.find((f: any) => f.name === 'agents')
+  const link = async (body: object) => (await j('POST', `/api/projects/${pid}/links`, { body })).data.link
+  const sup = await link({ name: 'Supervisor', kind: 'claude', role: 'supervisor' })
+  const rev = await link({ name: 'Reviewer', kind: 'gpt', role: 'reviewer' })
+  const scoped = await link({ name: 'Scoped', kind: 'gpt', folder_id: agents.id, can_write: true })
+  assert.deepEqual(sup.perms, ['post', 'files', 'folders', 'items', 'progress'])
+  assert.deepEqual(rev.perms, ['post', 'items'])
+
+  // Owner: items with details, a unique ID, filters by kind/status in the dashboard.
+  const add = await j('POST', `/api/projects/${pid}/items`, { body: { ref: 'P-1', title: 'Login screen', kind: 'patch', owner: 'Supervisor', fix: 'Null session', bugs: 'Crash on empty password' } })
+  assert.equal(add.status, 201)
+  assert.equal((await j('POST', `/api/projects/${pid}/items`, { body: { ref: 'p-1', title: 'Dup' } })).status, 409)
+  assert.equal((await j('POST', `/api/projects/${pid}/items`, { body: { ref: 'P-2', title: 'x', status: 'nope' } })).status, 400)
+  const edited = (await j('PATCH', `/api/items/${add.data.item.id}`, { body: { status: 'running', priority: 'high' } })).data.item
+  assert.equal(edited.fields.fix, 'Null session')
+  assert.equal(edited.status, 'running')
+
+  // MCP: tools follow the role; supervisor keeps progress current; reviewer can't.
+  let id = 0
+  const rpc = async (t: string, method: string, params: unknown = {}) =>
+    ((await (await call('POST', `/s/${t}/mcp`, { auth: false, body: { jsonrpc: '2.0', id: ++id, method, params } })).json()) as any).result
+  const tool = async (t: string, name: string, args: unknown) => (await rpc(t, 'tools/call', { name, arguments: args }))
+  const names = async (t: string) => (await rpc(t, 'tools/list')).tools.map((x: any) => x.name)
+  assert.ok((await names(sup.token)).includes('update_progress'))
+  assert.deepEqual(await names(rev.token), ['overview', 'read_folder', 'search', 'fetch', 'post_message', 'dashboard', 'update_item'])
+  assert.ok(!(await names(scoped.token)).includes('dashboard'))
+  assert.match((await tool(sup.token, 'update_progress', { component: 'Auth API', area: 'Backend', status: 'building', progress: 60 })).content[0].text, /Added Backend \/ Auth API: building, 60%/)
+  await tool(sup.token, 'update_progress', { component: 'Web app', area: 'Frontend', status: 'done', progress: 10, stage: 'Build' })
+  const bad = await tool(rev.token, 'update_progress', { stage: 'Released' })
+  assert.ok(bad.isError && /Unknown tool|may not/.test(bad.content[0].text))
+  assert.match(JSON.stringify(await tool(scoped.token, 'fetch', { id: 'item:P-1' })), /scoped to one folder/)
+
+  // Playbook rules for agents: blocked needs a reason, done needs evidence.
+  assert.match((await tool(rev.token, 'update_item', { ref: 'P-1', status: 'blocked' })).content[0].text, /Blocked needs a reason/)
+  assert.match((await tool(rev.token, 'update_item', { ref: 'P-1', status: 'done' })).content[0].text, /Done needs evidence/)
+  assert.match((await tool(rev.token, 'update_item', { ref: 'P-1', status: 'done', verification: 'PR #12, 14 tests' })).content[0].text, /Updated P-1/)
+  assert.match((await tool(rev.token, 'update_item', { ref: 'BUG-1', title: 'Flaky upload', kind: 'bug' })).content[0].text, /Added BUG-1/)
+  const card = JSON.parse((await tool(rev.token, 'fetch', { id: 'item:p-1' })).content[0].text)
+  assert.match(card.text, /\*\*Evidence:\*\* PR #12/)
+
+  // HTTP for coding agents, and the markdown view.
+  assert.equal((await call('POST', `/s/${rev.token}/progress`, { auth: false, body: { stage: 'Integrate' } })).status, 403)
+  assert.equal((await call('POST', `/s/${sup.token}/items`, { auth: false, body: { ref: 'F-1', title: 'Search', kind: 'feature' } })).status, 200)
+  const md = await (await call('GET', `/s/${sup.token}/dashboard.md`, { auth: false })).text()
+  assert.match(md, /\*\*Build\*\*/)
+  assert.match(md, /\| Frontend \| Web app \| done \| 100% \|/)
+  assert.match(md, /\| P-1 \| patch \| done \|/)
+
+  // Owner view: counts, progress, activity; changes are logged in LOG.md for every agent.
+  const dash = (await j('GET', `/api/projects/${pid}/dashboard`)).data
+  assert.equal(dash.info.stage, 'Build')
+  assert.equal(dash.progress.architecture, 80)
+  assert.deepEqual([dash.counts.total, dash.counts.byStatus.done, dash.counts.openBugs], [3, 1, 1])
+  assert.equal(dash.activity.length, 14)
+  const log = await (await call('GET', `/s/${sup.token}/f/?format=md`, { auth: false })).text()
+  assert.ok(log.includes('Dashboard: stage Build'))
+  const logFile = (await j('GET', `/api/folders/${d.project.root_id}/files`)).data.files.find((f: any) => f.name === 'LOG.md')
+  const logText = await (await call('GET', `/api/files/${logFile.id}/raw`)).text()
+  for (const line of ['Owner · dashboard · added P-1', 'Reviewer · dashboard · P-1 running → done', 'Supervisor · dashboard · stage Define → Build', 'Backend / Auth API (building, 60%)'])
+    assert.ok(logText.includes(line), line)
+
+  // Owner changes permissions; a link without progress loses the tool at once.
+  const patched = (await j('PATCH', `/api/links/${sup.id}`, { body: { perms: ['post', 'items'] } })).data.link
+  assert.deepEqual(patched.perms, ['post', 'items'])
+  assert.ok(!(await names(sup.token)).includes('update_progress'))
+  assert.equal((await j('PATCH', `/api/links/${sup.id}`, { body: { perms: ['root'] } })).status, 400)
+  const none = (await j('PATCH', `/api/links/${sup.id}`, { body: { perms: [] } })).data.link
+  assert.equal(none.can_write, 0)
+  assert.equal((await call('POST', `/s/${sup.token}/items`, { auth: false, body: { ref: 'X', title: 'x' } })).status, 403)
+
+  // Stage and project links by the owner; bad stage refused; delete cleans up.
+  assert.equal((await j('PATCH', `/api/projects/${pid}`, { body: { info: { stage: 'Nope' } } })).status, 400)
+  const info = (await j('PATCH', `/api/projects/${pid}`, { body: { info: { repo: 'macdarenz-droid/M-arc', links: [{ label: 'Live', url: 'https://relay.test' }, { label: 'x', url: 'javascript:alert(1)' }] } } })).data.info
+  assert.deepEqual([info.stage, info.repo, info.links.length], ['Build', 'macdarenz-droid/M-arc', 1])
+  const comp = dash.components.find((c: any) => c.name === 'Auth API')
+  assert.equal((await j('DELETE', `/api/components/${comp.id}`)).status, 200)
+  assert.equal((await j('DELETE', `/api/items/${add.data.item.id}`)).status, 200)
+  assert.equal((await j('GET', `/api/projects/${pid}/dashboard`)).data.counts.total, 2)
+})
+
+test('upgrade from the previous schema: dashboard tables, playbook in every project, unedited contract refreshed', async () => {
+  const { DEFAULT_CONTRACT, CONTRACT_V1 } = await import('../src/contract.ts')
+  const db = new DatabaseSync(':memory:')
+  const sql = durableLimits(nodeSql(db))
+  const first = new Store(sql)
+  first.createProject({ name: 'Second' })
+  const roots = first.sql.all<{ root_id: string }>(`SELECT root_id FROM projects`)
+  // Put the database back the way the live one was: schema 2, contract v1, no playbook, no dashboard.
+  db.exec(`DROP TABLE items; DROP TABLE components; ALTER TABLE links DROP COLUMN perms; ALTER TABLE projects DROP COLUMN info;
+    UPDATE meta SET v = '2' WHERE k = 'schema'; DELETE FROM meta WHERE k = 'docs_rev'; INSERT INTO meta (k, v) VALUES ('docs_seeded', '1')`)
+  db.prepare(`INSERT OR REPLACE INTO meta (k, v) VALUES ('contract', ?)`).run(CONTRACT_V1)
+  const owner = { author: 'Owner', kind: 'human' as const, via: 'owner' }
+  for (const r of roots) {
+    const pb = first.fileByName(r.root_id, 'PLAYBOOK.md')!
+    db.prepare(`DELETE FROM files WHERE id = ?`).run(pb.id)
+    const c = first.fileByName(r.root_id, 'CONTRACT.md')!
+    first.writeFile(c.id, new TextEncoder().encode(CONTRACT_V1))
+  }
+  const up = new Store(sql)
+  assert.equal(up.sql.get<{ v: string }>(`SELECT v FROM meta WHERE k = 'schema'`)!.v, '3')
+  for (const r of roots) {
+    assert.equal(new TextDecoder().decode(up.read(up.fileByName(r.root_id, 'CONTRACT.md')!.id)), DEFAULT_CONTRACT)
+    assert.ok(new TextDecoder().decode(up.read(up.fileByName(r.root_id, 'PLAYBOOK.md')!.id)).startsWith('# Agent Delivery Playbook'))
+    assert.deepEqual(up.files(r.root_id).slice(0, 4).map(f => f.name), ['CONTRACT.md', 'PROJECT_STATE.md', 'LOG.md', 'PLAYBOOK.md'])
+  }
+  assert.equal(up.contract(), DEFAULT_CONTRACT)
+  assert.deepEqual(up.dashboard(up.projects()[0]!.id).counts.total, 0)
+
+  // The playbook is the owner's and workspace-wide, like the contract.
+  const [a, b] = roots
+  const pbA = up.fileByName(a!.root_id, 'PLAYBOOK.md')!
+  const link = up.createLink(up.projects().find(p => p.root_id === a!.root_id)!.id, { name: 'GPT', can_write: true })
+  assert.throws(() => up.writeFile(pbA.id, new TextEncoder().encode('x'), { author: 'GPT', kind: 'gpt', via: link.id }), /PLAYBOOK.md is the owner/)
+  up.writeFile(pbA.id, new TextEncoder().encode('# Playbook\nmine'), owner)
+  assert.equal(new TextDecoder().decode(up.read(up.fileByName(b!.root_id, 'PLAYBOOK.md')!.id)), '# Playbook\nmine')
+
+  // An owner-edited contract is never replaced by an upgrade.
+  up.writeFile(up.fileByName(a!.root_id, 'CONTRACT.md')!.id, new TextEncoder().encode('# Mine'), owner)
+  db.exec(`DELETE FROM meta WHERE k = 'docs_rev'`)
+  const again = new Store(sql)
+  assert.equal(again.contract(), '# Mine')
+  assert.equal(new TextDecoder().decode(again.read(again.fileByName(b!.root_id, 'CONTRACT.md')!.id)), '# Mine')
 })
