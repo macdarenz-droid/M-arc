@@ -309,3 +309,29 @@ describe('get_health totals time (QA2-FE-1)', () => {
     expect(h.days.find(d => d.day === day)!.totalsAsOf).toBe('12:00');
   });
 });
+
+describe('get_overview counts a midnight-crossing session as trained today (QA8-5)', () => {
+  it('a session from 23:30 to 00:40, read at 01:00, is trainedToday with daysSinceLastSession 0', async () => {
+    const { freshState } = await import('@/core/models');
+    const { makeCtx } = await import('@/escobar/tools/context');
+    const { sessionAt } = await import('../helpers');
+    const { dayKey } = await import('@/core/dates');
+    const started = new Date(2026, 8, 25, 23, 30);
+    const finishedLate = { ...sessionAt(started.toISOString(), new Date(2026, 8, 26, 0, 40).toISOString(), []), splitId: 'split_lower', splitName: 'SPLIT 2 - LOWER AND CORE', day: dayKey(started) };
+    const state = { ...freshState(), sessions: [finishedLate] };
+    const ctx = makeCtx(state, new Date(2026, 8, 26, 1, 0).getTime());
+    const o = R.getOverview({}, ctx) as { trainedToday: string[]; daysSinceLastSession: number | null };
+    expect(o.trainedToday).toEqual(['SPLIT 2 - LOWER AND CORE']);
+    expect(o.daysSinceLastSession).toBe(0);
+  });
+});
+
+describe('get_overview without a session today is byte-identical to before QA8-5', () => {
+  it('trainedToday and daysSinceLastSession match the plain day-based reading', () => {
+    const six = ctxOf(sixMonthsState());
+    const o = R.getOverview({}, six) as { trainedToday: string[]; daysSinceLastSession: number | null };
+    expect(o.trainedToday).toEqual(six.state.sessions.filter(x => x.day === six.today).map(x => x.splitName));
+    const lastDay = six.state.sessions.reduce((m, s) => (s.day > m ? s.day : m), '');
+    expect(o.daysSinceLastSession).toBe(lastDay ? Math.round((Date.parse(six.today) - Date.parse(lastDay)) / 86_400_000) : null);
+  });
+});

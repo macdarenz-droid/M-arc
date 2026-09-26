@@ -1,7 +1,7 @@
 /** This week at a glance, the training streak, and the week grade. */
 import type { Exercise, LoggedExercise, Session, Weekday } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
-import { addDays, daysBetween, weekStart, weekdayOf } from '@/core/dates';
+import { addDays, daysBetween, weekStart, weekdayOf, trainedToday } from '@/core/dates';
 import { isWorkingSet, weeklyMuscleSets } from './exposure';
 import { recordsInWeek, type PersonalRecord } from './prs';
 import { modeOf } from './history';
@@ -111,7 +111,10 @@ export function trainingStreak(sessions: Session[], schedule: Record<Weekday, st
 }
 
 /** Days since the last logged session, or null when there is none. */
-export function daysSinceLastSession(sessions: Session[], today: string): number | null {
+export function daysSinceLastSession(sessions: Session[], today: string, now?: number): number | null {
+  // QA8-5: a session that ended today within the last 6h (started before midnight) counts as
+  // today even though its stored day is still yesterday's.
+  if (now != null && trainedToday(sessions, today, now)) return 0;
   // The latest day, whatever the list order (BR-29).
   const lastDay = sessions.reduce((m, s) => (s.day > m ? s.day : m), '');
   return lastDay ? daysBetween(lastDay, today) : null;

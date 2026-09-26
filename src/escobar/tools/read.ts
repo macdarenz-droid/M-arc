@@ -5,7 +5,7 @@
  */
 import type { LoggedSet, Session } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
-import { addDays, dayKey, daysBetween, weekdayOf } from '@/core/dates';
+import { addDays, dayKey, daysBetween, weekdayOf, trainedTodaySessions } from '@/core/dates';
 import { LIBRARY, searchExercises } from '@/core/exercises';
 import { MUSCLE_BY_ID, MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
@@ -130,7 +130,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     today: ctx.today,
     weekday: weekdayOf(ctx.today),
     scheduled: split ? { splitId: split.id, split: split.name, exercises: split.exercises.length } : null,
-    trainedToday: s.sessions.filter(x => x.day === ctx.today).map(x => x.splitName),
+    trainedToday: trainedTodaySessions(s.sessions, ctx.today, ctx.now).map(x => x.splitName),
     live: s.active ? { split: s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'Workout' } : null,
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
@@ -138,7 +138,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
     lighterWeek: deload ? { day: Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
-    daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today),
+    daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today, ctx.now),
   }, 1200);
 }
 
