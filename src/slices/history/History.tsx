@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit, bodyWeightAt } from '@/app/selectors';
@@ -25,6 +25,24 @@ import { Sparkline } from '@/ui/Sparkline';
 import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
 import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
 import { usePalaceFocus } from '@/escobar/palace/focus';
+import { haptic } from '@/native/haptics';
+import { durFor, EASE, reduced, springEase } from '@/ui/motion';
+import { EDGE_IGNORE_PX, FLING_PX_PER_MS, rubber, SWIPE_COMMIT_FRACTION, SWIPE_FLING_MIN_PX, track } from '@/ui/gesture';
+
+/** Every session delete (a swipe or the editor's own Delete) goes through this, so both get the
+ * same Undo (restores the exact session, its heart series included). */
+function withSessions(s: AppState, sessions: Session[]): AppState {
+  return { ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) };
+}
+function deleteSessionWithUndo(session: Session): void {
+  const series = getSeries(session.id);
+  update(s => withSessions(s, s.sessions.filter(x => x.id !== session.id)));
+  deleteSeries(session.id);
+  showToast('Session deleted', 'Undo', () => {
+    update(s => withSessions(s, sortByStart([...s.sessions, session])));
+    if (series.length) storeSeries(session.id, series);
+  });
+}
 
 export function History() {
   const panel = openPanel.value;
@@ -61,6 +79,53 @@ function Log() {
   const recent = [...s.sessions].reverse().slice(0, 30);
   const daySessions = selectedDay ? s.sessions.filter(x => x.day === selectedDay) : [];
 
+  // A5: swipe the calendar grid sideways to page months, the same axis lock and edge-ignore as
+  // every other horizontal gesture. Swiping forward past the current month only rubber-bands —
+  // there is nothing to see there — the prev/next buttons are unaffected either way.
+  const calRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = calRef.current;
+    if (!el) return undefined;
+    let width = el.getBoundingClientRect().width || 1;
+    const atLatest = month >= today.value.slice(0, 7);
+    const springBack = () => {
+      if (reduced() || !el.animate) { el.style.transform = ''; return; }
+      const anim = el.animate([{ transform: el.style.transform || 'none' }, { transform: 'none' }], { duration: durFor('spring'), easing: springEase() });
+      anim.finished.then(() => { el.style.transform = ''; }).catch(() => { el.style.transform = ''; });
+    };
+    const untrack = track(el, {
+      axis: 'x',
+      canStart: e => e.clientX > EDGE_IGNORE_PX && e.clientX < window.innerWidth - EDGE_IGNORE_PX,
+      onStart: () => { width = el.getBoundingClientRect().width || 1; },
+      onMove: d => {
+        if (reduced()) return;
+        if (d < 0 && atLatest) { el.style.transform = `translateX(${-rubber(-d)}px)`; return; }
+        el.style.transform = `translateX(${Math.sign(d) * Math.min(Math.abs(d), width)}px)`;
+      },
+      onEnd: (d, v) => {
+        const blocked = d < 0 && atLatest;
+        const commit = !blocked && (Math.abs(d) >= 0.3 * width || Math.abs(v) >= FLING_PX_PER_MS);
+        if (!commit) { springBack(); return; }
+        const dir = d < 0 ? 1 : -1;
+        void haptic.tick();
+        if (reduced() || !el.animate) { el.style.transform = ''; shift(dir); return; }
+        const out = el.animate([{ transform: el.style.transform || 'none', opacity: 1 }, { transform: `translateX(${-dir * width}px)`, opacity: 0 }], { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' });
+        const afterOut = () => {
+          shift(dir);
+          el.style.transform = `translateX(${dir * width * 0.3}px)`;
+          el.style.opacity = '0';
+          requestAnimationFrame(() => {
+            const inAnim = el.animate([{ transform: `translateX(${dir * width * 0.3}px)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: durFor('enter'), easing: EASE.enter });
+            inAnim.finished.then(() => { el.style.transform = ''; el.style.opacity = ''; }).catch(() => { el.style.transform = ''; el.style.opacity = ''; });
+          });
+        };
+        out.finished.then(afterOut).catch(afterOut);
+      },
+      onCancel: springBack,
+    });
+    return untrack;
+  }, [month]);
+
   return (
     <div class="stack" style={{ marginTop: 14 }}>
       <Card data-palace="history.calendar">
@@ -69,7 +134,7 @@ function Log() {
           <b>{first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</b>
           <Button variant="quiet" class="btn-icon" aria-label="Next month" onClick={() => shift(1)}><IconChevron /></Button>
         </div>
-        <div class="cal">
+        <div class="cal" ref={calRef}>
           {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <div key={i} class="dow">{d}</div>)}
           {cells.map(c => <button type="button" key={c.key} class={`day ${c.other ? 'other' : ''} ${trained.has(c.key) ? 'trained' : ''} ${c.key === today.value ? 'today' : ''} ${c.key === selectedDay ? 'selected' : ''}`} onClick={() => setSelectedDay(c.key === selectedDay ? null : c.key)}>{parseInt(c.key.slice(8))}</button>)}
         </div>
@@ -94,35 +159,91 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
   const sets = session.exercises.reduce((a, e) => a + e.sets.length, 0);
   const [open, setOpen] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const draggedRef = useRef(false);
+  // A5: swipe the row left to reveal a delete zone; past halfway (or a fast flick) it commits with
+  // the same Undo as the editor's own Delete. Reuses gesture.ts's shared `track()` (A3).
+  useEffect(() => {
+    const el = rowRef.current;
+    const card = el?.querySelector<HTMLElement>('.card') ?? null;
+    const icon = el?.querySelector<HTMLElement>('.swipe-bg svg') ?? null;
+    if (!el || !card) return undefined;
+    let width = el.getBoundingClientRect().width || 1;
+    let armed = false;
+    const setArmed = (on: boolean) => {
+      if (armed === on) return;
+      armed = on;
+      void haptic.threshold(on);
+      el.classList.toggle('armed', on);
+      if (on && icon) { icon.style.opacity = ''; icon.style.scale = ''; }
+    };
+    const springBack = () => {
+      setArmed(false);
+      if (reduced() || !card.animate) { card.style.transform = ''; return; }
+      const anim = card.animate([{ transform: card.style.transform || 'none' }, { transform: 'none' }], { duration: durFor('spring'), easing: springEase() });
+      anim.finished.then(() => { card.style.transform = ''; }).catch(() => { card.style.transform = ''; });
+    };
+    const untrack = track(el, {
+      axis: 'x',
+      canStart: e => e.clientX > EDGE_IGNORE_PX && e.clientX < window.innerWidth - EDGE_IGNORE_PX,
+      onStart: () => { width = el.getBoundingClientRect().width || 1; draggedRef.current = false; },
+      onMove: d => {
+        draggedRef.current = true;
+        const armedNow = d < 0 && Math.abs(d) >= SWIPE_COMMIT_FRACTION * width;
+        if (!reduced()) {
+          const x = d < 0 ? Math.max(d, -width) : rubber(d);
+          card.style.transform = `translateX(${x}px)`;
+          if (!armedNow && icon) {
+            const reveal = Math.min(1, Math.max(0, -d) / 72);
+            icon.style.opacity = String(reveal);
+            icon.style.scale = String(0.6 + 0.4 * reveal);
+          }
+        }
+        setArmed(armedNow);
+      },
+      onEnd: (d, v) => {
+        const armedNow = d < 0 && Math.abs(d) >= SWIPE_COMMIT_FRACTION * width;
+        const flung = !reduced() && d < 0 && v <= -FLING_PX_PER_MS && Math.abs(d) >= SWIPE_FLING_MIN_PX;
+        if (!(armedNow || flung)) { springBack(); return; }
+        setArmed(false);
+        if (reduced() || !card.animate) { deleteSessionWithUndo(session); return; }
+        const anim = card.animate([{ transform: card.style.transform || 'none', opacity: 1 }, { transform: `translateX(-${width}px)`, opacity: 0 }], { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' });
+        anim.finished.then(() => deleteSessionWithUndo(session)).catch(() => deleteSessionWithUndo(session));
+      },
+      onCancel: springBack,
+    });
+    return untrack;
+  }, [session.id]);
   return (
-    <>
-    <Card class="card-press" onClick={() => setOpen(o => !o)}>
-      <div class="row-between">
-        <div class="grow">
-          <b>{session.splitName}</b>
-          <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercise{session.exercises.length === 1 ? '' : 's'} · {sets} set{sets === 1 ? '' : 's'}{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
-          {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
+    <div class="swipe-row" ref={rowRef}>
+      <div class="swipe-bg" aria-hidden="true"><IconTrash size={20} /></div>
+      <Card class="card-press" onClick={() => { if (draggedRef.current) { draggedRef.current = false; return; } setOpen(o => !o); }}>
+        <div class="row-between">
+          <div class="grow">
+            <b>{session.splitName}</b>
+            <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercise{session.exercises.length === 1 ? '' : 's'} · {sets} set{sets === 1 ? '' : 's'}{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
+            {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
+          </div>
+          {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}
+          <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
         </div>
-        {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}
-        <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
-      </div>
-      {open && (
-        <div class="list" style={{ marginTop: 8 }}>
-          {session.note && <p class="small" data-palace="history.session-note">{session.note}</p>}
-          {session.exercises.map((e, i) => (
-            <Row key={i}>
-              <div class="small">{e.name}</div>
-              <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u, modeOf(e.exerciseId, state.value.customExercises))}<UnitTag st={st} u={u} /></span>)}</div>
-              {e.note && <div class="hint">Note: {e.note}</div>}
-              {state.value.exerciseNotes[e.exerciseId] && <div class="hint muted">Setup: {state.value.exerciseNotes[e.exerciseId]}</div>}
-            </Row>
-          ))}
-        </div>
-      )}
-    </Card>
-    {/* Outside the card, so taps inside the sheet don't open or close it. */}
-    {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
-    </>
+        {open && (
+          <div class="list" style={{ marginTop: 8 }}>
+            {session.note && <p class="small" data-palace="history.session-note">{session.note}</p>}
+            {session.exercises.map((e, i) => (
+              <Row key={i}>
+                <div class="small">{e.name}</div>
+                <div class="hint">{e.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{st.kind ? <span class="muted">{KIND_TAG[st.kind]} </span> : null}{setLabel(st, u, modeOf(e.exerciseId, state.value.customExercises))}<UnitTag st={st} u={u} /></span>)}</div>
+                {e.note && <div class="hint">Note: {e.note}</div>}
+                {state.value.exerciseNotes[e.exerciseId] && <div class="hint muted">Setup: {state.value.exerciseNotes[e.exerciseId]}</div>}
+              </Row>
+            ))}
+          </div>
+        )}
+      </Card>
+      {/* Outside the card, so taps inside the sheet don't open or close it. */}
+      {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
+    </div>
   );
 }
 
@@ -145,25 +266,16 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   const [draft, setDraft] = useState<Session>(() => JSON.parse(JSON.stringify(session)));
   const [confirm, setConfirm] = useState(false);
   const setField = (ei: number, si: number, patch: Partial<LoggedSet>) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.map((s, j) => (j !== si ? s : { ...s, ...patch })) })) }));
-  // Every history edit relearns the recovery model from what is left (UI-12).
-  const withSessions = (s: AppState, sessions: Session[]): AppState => ({ ...s, sessions, recoveryModel: rebuildRecoveryModel({ ...s, sessions }) });
   const save = () => {
     const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
     if (!cleaned.exercises.length) { remove(); return; }
+    // Every history edit relearns the recovery model from what is left (UI-12).
     update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();
   };
   function remove() {
-    const removed = session;
-    // Its heart series goes with it, and comes back with Undo (UI-14).
-    const series = getSeries(session.id);
-    update(s => withSessions(s, s.sessions.filter(x => x.id !== session.id)));
-    deleteSeries(session.id);
-    showToast('Session deleted', 'Undo', () => {
-      update(s => withSessions(s, sortByStart([...s.sessions, removed])));
-      if (series.length) storeSeries(removed.id, series);
-    });
+    deleteSessionWithUndo(session);
     onClose();
   }
   return (

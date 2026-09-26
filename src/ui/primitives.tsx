@@ -7,7 +7,7 @@ import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, LONG_PRESS_MS, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -28,9 +28,18 @@ export function Chip({ children, tone, pressed, onClick, class: cls = '' }: { ch
     : <span class={classes}>{children}</span>;
 }
 
-/** BUG-8: `value` may be `undefined` (nothing chosen yet); no option is then pressed. */
 export function Segmented<T extends string>({ value, options, onChange }: { value: T | undefined; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
-  return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
+  // I10: a raised thumb glides under the chosen option instead of it getting its own background.
+  // BUG-8: `value` can be undefined (e.g. Profile's Sex control before it's ever been set) — no
+  // option is pressed then, and the thumb has nowhere to sit, so it's hidden rather than parked
+  // at index 0.
+  const i = options.findIndex(o => o.value === value);
+  return (
+    <div class="seg" role="tablist">
+      {i >= 0 && <span class="seg-thumb" aria-hidden="true" style={{ width: `calc((100% - 6px) / ${options.length})`, transform: `translateX(${i * 100}%)` }} />}
+      {options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}
+    </div>
+  );
 }
 
 export function Toggle({ checked, onChange, label, disabled }: { checked: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
@@ -240,12 +249,19 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const remaining = useRef(action ? 5000 : 3000);
   const runningSince = useRef(0);
+  // A toast is replaced (a new `key`, a fresh instance) rather than updated in place, so an exit
+  // timer or WAAPI animation started by THIS instance must never call dismiss() once it's gone —
+  // `dismiss.current()` closes over the module-level `toast` signal, so a late call from a
+  // superseded instance would null out whatever toast has shown since (App.tsx's Toast usage).
+  const mountedRef = useRef(true);
+  useEffect(() => () => { mountedRef.current = false; }, []);
+  const safeDismiss = () => { if (mountedRef.current) dismiss.current(); };
 
   const leave = () => {
     if (leavingRef.current) return;
     leavingRef.current = true;
     setLeaving(true);
-    setTimeout(() => dismiss.current(), durFor('exit'));
+    setTimeout(safeDismiss, durFor('exit'));
   };
   const clearTimer = () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
   const startTimer = (ms: number) => { clearTimer(); runningSince.current = Date.now(); timer.current = setTimeout(leave, ms); };
@@ -284,7 +300,7 @@ export function Toast({ message, action, onAction, onDismiss }: { message: strin
       const from = dir === 'x' ? `translateX(${dist}px)` : `translateY(${dist}px)`;
       const to = dir === 'x' ? `translateX(${push}px)` : `translateY(${push}px)`;
       const anim = el.animate([{ transform: from, opacity: 1 }, { transform: to, opacity: 0 }], { duration: durFor('exit'), easing: EASE.exit, fill: 'forwards' });
-      anim.finished.then(() => dismiss.current()).catch(() => dismiss.current());
+      anim.finished.then(safeDismiss).catch(safeDismiss);
     };
     const springBack = () => {
       if (!el.animate) { el.style.transform = ''; resumeTimer(); return; }
@@ -473,7 +489,8 @@ export function WeightInput({ kg, entered, entryUnit, displayUnit, placeholder, 
   const long = useRef(false);
   if (!focused.current && text !== display) setText(display);
   const other = displayUnit && displayUnit !== entryUnit && kg != null && kg > 0 ? approxIn(kg, displayUnit) : null;
-  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; onUnitLongPress(); }, 550); };
+  // I11: one long-press timing everywhere, not this control's own 550ms.
+  const startPress = () => { long.current = false; if (onUnitLongPress) press.current = setTimeout(() => { long.current = true; void haptic.longPress(); onUnitLongPress(); }, LONG_PRESS_MS); };
   const endPress = () => { if (press.current) { clearTimeout(press.current); press.current = null; } };
   return (
     <span class="weight-input">

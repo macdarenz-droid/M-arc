@@ -2950,6 +2950,287 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// I9: tabs keep their own scroll position, and re-tapping the current tab glides back to the top.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'I9 tab scroll';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  const maxScroll = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+  const target = Math.max(40, Math.min(300, maxScroll));
+  await page.evaluate(y => window.scrollTo(0, y), target);
+  await page.waitForTimeout(50);
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(200);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click();
+  await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  const restored = await page.evaluate(() => window.scrollY);
+  if (Math.abs(restored - target) > 4) errors.push(`${tag}: expected scrollY ~${target} back on Train, got ${restored}`);
+
+  // Re-tapping the tab already showing glides to the top (reduced motion: instant).
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click();
+  const reachedTop = await page.waitForFunction(() => window.scrollY === 0, null, { timeout: 800 }).then(() => true).catch(() => false);
+  if (!reachedTop) errors.push(`${tag}: re-tapping the current tab did not reach scrollY 0 within 800ms`);
+  await ctx.close();
+}
+
+// I10: the segmented thumb glides to the selected option, the raw (thumb-less) .seg keeps its old
+// fill, split tabs scroll the active one into view, and a theme change fires a view transition.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I10 segmented/theme';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+  await page.locator('.seg button', { hasText: 'Stats' }).click();
+  await page.waitForTimeout(450);
+  const segCmp = await page.evaluate(() => {
+    const seg = document.querySelector('.seg');
+    const thumb = seg?.querySelector('.seg-thumb');
+    const btn = [...(seg?.querySelectorAll('button[role="tab"]') ?? [])].find(b => b.getAttribute('aria-pressed') === 'true');
+    if (!thumb || !btn) return null;
+    const t = thumb.getBoundingClientRect(); const b = btn.getBoundingClientRect();
+    return { dx: Math.abs(t.x - b.x), dw: Math.abs(t.width - b.width) };
+  });
+  if (!segCmp) errors.push(`${tag}: expected a .seg-thumb tracking the selected History tab`);
+  else if (segCmp.dx > 1 || segCmp.dw > 1) errors.push(`${tag}: thumb rect drifted from the selected button by ${JSON.stringify(segCmp)}`);
+  const thumbVsTrack = await page.evaluate((themes) => {
+    const seg = document.querySelector('.seg');
+    const thumb = seg?.querySelector('.seg-thumb');
+    if (!seg || !thumb) return [];
+    const before = document.documentElement.getAttribute('data-theme');
+    const bad = [];
+    for (const t of themes) {
+      document.documentElement.setAttribute('data-theme', t);
+      if (getComputedStyle(thumb).backgroundColor === getComputedStyle(seg).backgroundColor) bad.push(t);
+    }
+    if (before) document.documentElement.setAttribute('data-theme', before);
+    return bad;
+  }, themes);
+  if (thumbVsTrack.length) errors.push(`${tag}: thumb background equals track background in ${thumbVsTrack.join(', ')}`);
+
+  // A 3-option control (Body's view switcher): the thumb still tracks index 2.
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  await page.locator('.seg button', { hasText: 'Levels' }).click();
+  await page.waitForTimeout(450);
+  const segCmp3 = await page.evaluate(() => {
+    const seg = document.querySelector('.seg');
+    const thumb = seg?.querySelector('.seg-thumb');
+    const btn = [...(seg?.querySelectorAll('button[role="tab"]') ?? [])].find(b => b.getAttribute('aria-pressed') === 'true');
+    if (!thumb || !btn) return null;
+    const t = thumb.getBoundingClientRect(); const b = btn.getBoundingClientRect();
+    return { dx: Math.abs(t.x - b.x), dw: Math.abs(t.width - b.width) };
+  });
+  if (!segCmp3) errors.push(`${tag}: expected a .seg-thumb on the 3-option Body switcher`);
+  else if (segCmp3.dx > 1 || segCmp3.dw > 1) errors.push(`${tag}: 3-option thumb rect drifted by ${JSON.stringify(segCmp3)}`);
+
+  // Split tabs: the active one scrolls into the strip's visible area.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  const tabCount = await page.locator('.tabs-strip .tab').count();
+  if (tabCount >= 2) {
+    await page.locator('.tabs-strip .tab').last().click();
+    await page.waitForTimeout(500);
+    const within = await page.evaluate(() => {
+      const strip = document.querySelector('.tabs-strip');
+      const tab = strip?.querySelector('.tab[aria-pressed="true"]');
+      if (!strip || !tab) return false;
+      const sr = strip.getBoundingClientRect(); const tr = tab.getBoundingClientRect();
+      return tr.left >= sr.left - 1 && tr.right <= sr.right + 1;
+    });
+    if (!within) errors.push(`${tag}: expected the selected split tab to have scrolled into view`);
+  }
+
+  // Theme: a startViewTransition-backed change (spied), plus the raw Settings .seg and Toggle.
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(150);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  await page.evaluate(() => { window.__vtCalls = 0; if ('startViewTransition' in document) { const orig = document.startViewTransition.bind(document); document.startViewTransition = cb => { window.__vtCalls++; return orig(cb); }; } });
+  const cards = page.locator('dialog[open] .theme-card');
+  const cardCount = await cards.count();
+  let pickIdx = -1;
+  for (let k = 0; k < cardCount; k++) { if ((await cards.nth(k).getAttribute('aria-pressed')) !== 'true') { pickIdx = k; break; } }
+  if (pickIdx >= 0) {
+    await cards.nth(pickIdx).click();
+    await page.waitForTimeout(400);
+    const supportsVT = await page.evaluate(() => 'startViewTransition' in document);
+    if (supportsVT) { const calls = await page.evaluate(() => window.__vtCalls); if (!calls) errors.push(`${tag}: expected document.startViewTransition to be called on a theme change`); }
+  }
+  const rawSeg = await page.evaluate(() => {
+    const seg = [...document.querySelectorAll('dialog[open] .seg')].find(s => !s.querySelector('.seg-thumb'));
+    const pressed = seg?.querySelector('button[aria-pressed="true"]');
+    const other = seg ? [...seg.querySelectorAll('button')].find(b => b !== pressed) : null;
+    return pressed && other ? { pressedBg: getComputedStyle(pressed).backgroundColor, otherBg: getComputedStyle(other).backgroundColor } : null;
+  });
+  if (!rawSeg) errors.push(`${tag}: expected a raw (thumb-less) .seg in Settings`);
+  else if (rawSeg.pressedBg === rawSeg.otherBg) errors.push(`${tag}: raw .seg's selected option has no visible fill`);
+  const toggleDur = await page.evaluate(() => { const t = document.querySelector('dialog[open] .toggle'); return t ? getComputedStyle(t).transitionDuration : null; });
+  if (!toggleDur || !toggleDur.includes('0.2s')) errors.push(`${tag}: expected .toggle transition-duration to include 0.2s, got ${toggleDur}`);
+  await ctx.close();
+}
+
+// I11: hold-to-reorder lifts with depth, auto-scrolls near the edges, settles on drop, and every
+// long-press (including the unit-pill's) fires at the same 400ms.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 700 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I11 reorder';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  // Unit-pill long-press fires around 400ms everywhere (bounded window, to keep this deterministic).
+  const pillBox = await page.locator('.unit-pill').first().boundingBox();
+  if (!pillBox) errors.push(`${tag}: expected a .unit-pill on the open live card`);
+  else {
+    // The flipGroup toast reads "<unit> for all <equipment> here" — filtered so the boot-time
+    // "Imported N sessions..." toast (main.tsx) already on screen can't be mistaken for it.
+    const flipToast = page.locator('.toast', { hasText: 'for all' });
+    await page.mouse.move(pillBox.x + pillBox.width / 2, pillBox.y + pillBox.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(300);
+    const early = await flipToast.count();
+    await page.waitForTimeout(200);
+    const late = await flipToast.count();
+    await page.mouse.up();
+    if (early !== 0) errors.push(`${tag}: unit-pill long-press fired before 300ms`);
+    if (late === 0) errors.push(`${tag}: unit-pill long-press had not fired by 500ms`);
+  }
+
+  // Collapse the open card so the list is short and even, same as the pulse-block reorder check.
+  await page.locator('.reorder-item .exname').first().click(); await page.waitForTimeout(200);
+  const box = await page.locator('.reorder-item').nth(0).boundingBox();
+  await page.mouse.move(box.x + 40, box.y + 24);
+  await page.mouse.down();
+  await page.waitForTimeout(450); // past REORDER_HOLD_MS (320ms)
+  const liftedScale = await page.evaluate(() => { const el = document.querySelector('.reorder-item.lifted'); return el ? getComputedStyle(el).scale : null; });
+  if (liftedScale == null) errors.push(`${tag}: expected .reorder-item.lifted after a >320ms hold`);
+  else if (Math.abs(parseFloat(liftedScale) - 1.02) > 0.005) errors.push(`${tag}: expected computed scale 1.02 while lifted, got ${liftedScale}`);
+
+  // Auto-scroll: holding near the bottom nav's top edge for ~1s scrolls the page down.
+  const navBox = await page.locator('.nav').boundingBox();
+  const beforeScroll = await page.evaluate(() => window.scrollY);
+  await page.mouse.move(box.x + 40, navBox.y - 20);
+  await page.waitForTimeout(1000);
+  const afterScroll = await page.evaluate(() => window.scrollY);
+  if (!(afterScroll > beforeScroll)) errors.push(`${tag}: expected auto-scroll to increase scrollY near the bottom edge, ${beforeScroll} -> ${afterScroll}`);
+
+  await page.mouse.move(box.x + 40, box.y + 24);
+  await page.waitForTimeout(100);
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+  const stillLifted = await page.locator('.reorder-item.lifted').count();
+  if (stillLifted) errors.push(`${tag}: expected .lifted removed once the drop has settled`);
+  await settle(page); await page.screenshot({ path: `${OUT}/reorder-settled.png` });
+  await ctx.close();
+}
+
+// A5: swipe a History session row left to delete it (with Undo); swipe the calendar to page months.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'A5 swipe';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  const countBefore = await page.locator('.swipe-row').count();
+  if (!countBefore) errors.push(`${tag}: expected at least one session row`);
+  else {
+    // (a) A vertical drag on a row scrolls the page; the row never moves horizontally.
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    let box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y - 120, 200);
+    await page.waitForTimeout(150);
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    const cardTx = await page.evaluate(() => { const c = document.querySelector('.swipe-row .card'); const t = getComputedStyle(c).transform; return t === 'none' ? 0 : new DOMMatrixReadOnly(t).e; });
+    if (!(scrollAfter > scrollBefore)) errors.push(`${tag}: expected a vertical drag on a row to scroll the page, ${scrollBefore} -> ${scrollAfter}`);
+    if (Math.abs(cardTx) > 0.5) errors.push(`${tag}: expected no horizontal move from a vertical drag, got translateX ${cardTx}`);
+    await page.evaluate(y => window.scrollTo(0, y), scrollBefore);
+    await page.waitForTimeout(150);
+
+    // (b) A drag starting 20px from the right edge does nothing (EDGE_IGNORE_PX is 32).
+    box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width - 20, box.y + box.height / 2, box.x + box.width - 120, box.y + box.height / 2, 200);
+    await page.waitForTimeout(150);
+    if (await page.locator('.swipe-row.armed').count()) errors.push(`${tag}: a drag starting 20px from the edge should do nothing`);
+
+    // (c) A short (-20%) drag springs back; nothing is deleted.
+    box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width * 0.8, box.y + box.height / 2, box.x + box.width * 0.6, box.y + box.height / 2, 250);
+    await page.waitForTimeout(500);
+    const countAfterShort = await page.locator('.swipe-row').count();
+    if (countAfterShort !== countBefore) errors.push(`${tag}: a 20% drag should not delete a session (before ${countBefore}, after ${countAfterShort})`);
+    const cardTxBack = await page.evaluate(() => { const c = document.querySelector('.swipe-row .card'); const t = getComputedStyle(c).transform; return t === 'none' ? 0 : new DOMMatrixReadOnly(t).e; });
+    if (Math.abs(cardTxBack) > 1) errors.push(`${tag}: expected the row back at translateX 0 after a short drag, got ${cardTxBack}`);
+
+    // (d) A -70% drag deletes with Undo, and Undo restores the same session.
+    const firstLabel = await page.locator('.swipe-row').nth(0).locator('b').first().textContent();
+    box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const countAfterDelete = await page.locator('.swipe-row').count();
+    if (countAfterDelete !== countBefore - 1) errors.push(`${tag}: expected one fewer session after a 70% swipe, before ${countBefore} after ${countAfterDelete}`);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) { errors.push(`${tag}: expected a "Session deleted" toast with Undo`); }
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag}: could not click the Undo button`));
+      await page.waitForTimeout(200);
+      const countAfterUndo = await page.locator('.swipe-row').count();
+      if (countAfterUndo !== countBefore) errors.push(`${tag}: Undo should restore the deleted session, before ${countBefore} after ${countAfterUndo}`);
+      const firstLabelAfterUndo = await page.locator('.swipe-row').nth(0).locator('b').first().textContent();
+      if (firstLabelAfterUndo !== firstLabel) errors.push(`${tag}: Undo restored a different session (${firstLabelAfterUndo} vs ${firstLabel})`);
+    }
+  }
+
+  // Calendar: starts on today's month, the latest one shown. A leftward swipe (finger moves
+  // toward the leading edge, paging forward) has nothing past it, so it only rubber-bands.
+  const monthLabelSel = '[data-palace="history.calendar"] b';
+  const monthLatest = await page.locator(monthLabelSel).textContent();
+  let calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, 300);
+  await page.waitForTimeout(400);
+  const monthAfterForward = await page.locator(monthLabelSel).textContent();
+  if (monthAfterForward !== monthLatest) errors.push(`${tag}: expected swiping past the current month to do nothing, went from ${monthLatest} to ${monthAfterForward}`);
+
+  // A rightward swipe (paging back) is always allowed and changes the shown month.
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, 300);
+  await page.waitForTimeout(400);
+  const monthAfterBack = await page.locator(monthLabelSel).textContent();
+  if (monthAfterBack === monthLatest) errors.push(`${tag}: expected the calendar swipe to change the shown month (stayed on ${monthLatest})`);
+  await settle(page); await page.screenshot({ path: `${OUT}/a5-history-swipe.png` });
+  await ctx.close();
+}
+
 // QA12-3: under reduce, the drawing animation is skipped outright (not just faded fast). A
 // mutation that always calls beginElement() regardless of `reduce` would still pass every other
 // O1 probe (they only check timing), so assert the finished state directly, right after load.
