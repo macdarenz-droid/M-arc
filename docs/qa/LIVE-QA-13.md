@@ -68,3 +68,20 @@ Fix the items below. Each needs a test or gate probe that fails before and passe
   | 09-26 | 60×15 E, 55×15 I, 55×12 I | easy 900, ideal 1485 |
 
   Assert those exact splits and the totals.
+
+## Re-check at 50464d2: all seven fixed
+
+An independent check in a throwaway worktree reverted each fix's src and style change on its own. Each test fails before and passes after:
+
+| id | fix commit | before the fix | at 50464d2 |
+|---|---|---|---|
+| QA13-1 | 1614d22 | the replay still contains `450` with body sharing off | pass; session_summary's `effort` count object is kept |
+| QA13-2 | ce2bb6f | `effortUsesSets(conditioning)` is false for kg with no reps | pass |
+| QA13-3 | 783b6c7 | bar at 100% draws 53.2 px of 72 | pass |
+| QA13-4 | 65ca776 | min label 16.3 px from the lowest point (3 px allowed) | pass |
+| QA13-5 | 0d66adb | 3 tap targets 44 × 42.2 px | pass |
+| QA13-6 | 50464d2 | easy is 2.6:1 in Paper; unrated has no outline | pass: easy fill and unrated outline are 5.01:1 in Paper and 5.86:1 in Silent Black; solid and hatched look clearly different |
+| QA13-7 | aa7f9b1 | test only | pass: exact per-day splits and totals 2,250 / 2,050 / 2,700 / 2,385 |
+
+- **No loosening:** tests and gate +261 / −0.
+- **Before merge:** the branch still needs to merge main (b55986a), and A6 comes after item 2. It merges after items 2, 3 and 4.
