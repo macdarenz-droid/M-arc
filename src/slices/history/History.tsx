@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { track, SCRUB_HOLD_MS } from '@/ui/gesture';
 import { haptic } from '@/native/haptics';
+import { durFor, reduced } from '@/ui/motion';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit, bodyWeightAt } from '@/app/selectors';
@@ -199,6 +200,37 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
 
 const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
 
+/**
+ * QA14-1: the readout above a scrubbed chart crossfades from the scrubbed value back to the
+ * latest one on release, instead of snapping in one frame. Two spans (old fading out, current
+ * fading in) toggle their opacity a frame after mount (the QA5-17 double-rAF idiom, so the browser
+ * paints the starting opacity before the transition-triggering class lands). `reduced()` collapses
+ * the fade to 0ms via an inline duration, so the swap is instant without a second code path.
+ */
+function ChartReadout({ text }: { text: string }) {
+  const [old, setOld] = useState<string | null>(null);
+  const [leaving, setLeaving] = useState(false);
+  const curRef = useRef(text);
+  useEffect(() => {
+    if (curRef.current === text) return undefined;
+    const prev = curRef.current;
+    curRef.current = text;
+    setOld(prev);
+    setLeaving(false);
+    const ms = reduced() ? 0 : durFor('fast');
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setLeaving(true)));
+    const t = setTimeout(() => { setOld(null); setLeaving(false); }, ms);
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+  }, [text]);
+  const ms = reduced() ? 0 : durFor('fast');
+  return (
+    <div class="chart-readout">
+      {old != null && <span class={`num readout-old${leaving ? ' leaving' : ''}`} style={{ transitionDuration: `${ms}ms` }} aria-hidden="true">{old}</span>}
+      <span class={`num readout-cur${old != null && !leaving ? ' entering' : ''}`} style={{ transitionDuration: `${ms}ms` }}>{text}</span>
+    </div>
+  );
+}
+
 /** F8: 12 weeks of training volume as bars, in the display unit. */
 function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const s = state.value;
@@ -267,7 +299,7 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
     <Card data-palace="history.weekly-volume">
       <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
       {/* A6: the readout tracks a finger-drag or keyboard scrub; at rest it shows the latest week. */}
-      <div class="chart-readout"><span class="num">{readout}</span></div>
+      <ChartReadout text={readout} />
       {/* I12: no title attrs (touch never shows a tooltip); the current week is accent with its value above it. */}
       <div class="volume-bars" ref={barsRef} tabIndex={0} role="slider" aria-valuemin={0} aria-valuemax={weeks.length - 1} aria-valuenow={volIdx} aria-valuetext={readout} onKeyDown={onKeyDown}>
         <div class="volume-avg" style={{ bottom: `${Math.min(100, (avg / max) * 100)}%` }}><span class="num">avg {fmt(avg)}</span></div>
@@ -346,7 +378,7 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <div class="chart-readout"><span class="num">{sparkReadout}</span></div>
+                <ChartReadout text={sparkReadout} />
                 <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />

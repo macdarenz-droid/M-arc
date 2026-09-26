@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { formatDay } from '@/core/dates';
 import { track, SCRUB_HOLD_MS } from '@/ui/gesture';
 import { haptic } from '@/native/haptics';
+import { durFor, reduced } from '@/ui/motion';
 
 const PAD = 6;
 const fmt = (v: number): string => String(Math.round(v * 10) / 10);
@@ -17,6 +18,9 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(0);
   const [scrubIndex, setScrubIndex] = useState<number | null>(null);
+  // QA14-1: the guide/dot stay mounted at the last touched point and fade out (rather than vanish)
+  // on release, so displayIndex keeps that position after scrubIndex reverts to null.
+  const [displayIndex, setDisplayIndex] = useState<number | null>(null);
   const idxRef = useRef<number | null>(null);
   // I12: read the real pixel width before paint, so the viewBox never scales non-uniformly (the
   // old preserveAspectRatio="none" stretched the end dot into an ellipse on any width but 300).
@@ -33,8 +37,8 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
     if (i === idxRef.current) return;
     idxRef.current = i;
     setScrubIndex(i);
+    if (i !== null) { setDisplayIndex(i); haptic.tick(); }
     onScrubIndex?.(i);
-    if (i !== null) haptic.tick();
   };
   // A6: drag past SLOP_PX (track()'s own axis-x lock) or hold SCRUB_HOLD_MS without moving — either
   // starts the scrub; releasing either way snaps back to the latest point.
@@ -97,10 +101,11 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
         <path d={d} fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         <circle cx={lastX} cy={lastY} r="6.5" fill="var(--accent-soft)" />
         <circle cx={lastX} cy={lastY} r="3.5" fill="var(--accent)" />
-        {scrub && scrubIndex != null && (
+        {scrub && displayIndex != null && (
           <>
-            <line class="sparkline-guide" x1={x(scrubIndex)} x2={x(scrubIndex)} y1={0} y2={height} />
-            <circle class="sparkline-guide-dot" cx={x(scrubIndex)} cy={y(points[scrubIndex]!)} r="4" />
+            {/* QA14-1: opacity (not presence) tracks scrubIndex, so release fades the guide out over --dur-fast instead of an instant vanish; reduced() zeroes the transition itself for an instant swap. */}
+            <line class="sparkline-guide" x1={x(displayIndex)} x2={x(displayIndex)} y1={0} y2={height} style={{ opacity: scrubIndex != null ? 1 : 0, transitionDuration: `${reduced() ? 0 : durFor('fast')}ms` }} />
+            <circle class="sparkline-guide-dot" cx={x(displayIndex)} cy={y(points[displayIndex]!)} r="4" style={{ opacity: scrubIndex != null ? 1 : 0, transitionDuration: `${reduced() ? 0 : durFor('fast')}ms` }} />
           </>
         )}
       </svg>

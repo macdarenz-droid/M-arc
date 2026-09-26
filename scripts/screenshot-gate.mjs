@@ -749,7 +749,7 @@ for (const theme of themes) {
 
   // Sparkline: touchDrag 10%->90% changes the readout at least 3 times, and it returns to the latest value within 300ms of release.
   {
-    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .num';
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .readout-cur';
     const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
     const box = await scrollClear(wrap);
     const restText = await page.locator(readoutSel).textContent();
@@ -768,6 +768,20 @@ for (const theme of themes) {
     if (restTextNow !== restText) errors.push(`${tag}: sparkline readout at rest changed from "${restText}" to "${restTextNow}"`);
   }
 
+  // QA14-1, under reduced motion (this whole context): release must stay an instant swap, never
+  // a fractional-opacity frame — the same drag as above, sampled right after release.
+  {
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    await touchDrag(page, box.x + box.width * 0.2, box.y + box.height / 2, box.x + box.width * 0.6, box.y + box.height / 2, 250);
+    const opacities = await page.evaluate(() => {
+      const old = document.querySelector('[data-palace="history.exercise-stats"] .chart-readout .readout-old');
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide-dot');
+      return [old, dot].filter(Boolean).map(el => parseFloat(getComputedStyle(el).opacity));
+    });
+    if (opacities.some(o => o > 0 && o < 1)) errors.push(`${tag}: under reduced motion, release should be an instant swap, not a fade (opacities: ${JSON.stringify(opacities)})`);
+  }
+
   // A vertical drag on the sparkline scrolls the page (touch-action:pan-y), it doesn't scrub.
   {
     const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
@@ -780,7 +794,7 @@ for (const theme of themes) {
 
   // Keyboard: focus + ArrowLeft changes the readout and aria-valuenow.
   {
-    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .num';
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .readout-cur';
     const slider = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
     await slider.focus();
     const before = { text: await page.locator(readoutSel).textContent(), now: await slider.getAttribute('aria-valuenow') };
@@ -796,7 +810,7 @@ for (const theme of themes) {
   // least once mid-drag (checked live via MutationObserver — the release reverts it before a
   // post-drag read would ever see the change), and dims the non-selected bars while it's held.
   {
-    const readoutSel = '[data-palace="history.weekly-volume"] .chart-readout .num';
+    const readoutSel = '[data-palace="history.weekly-volume"] .chart-readout .readout-cur';
     const bars = page.locator('[data-palace="history.weekly-volume"] .volume-bars');
     const box = await scrollClear(bars);
     const restText = await page.locator(readoutSel).textContent();
@@ -817,6 +831,63 @@ for (const theme of themes) {
     const backText = await page.locator(readoutSel).textContent();
     if (backText !== restText) errors.push(`${tag}: weekly volume readout did not return to "${restText}" after release (got "${backText}")`);
   }
+  await ctx.close();
+}
+
+// QA14-1: under full motion, letting go of a chart scrub must crossfade, not snap in one frame.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  const tag = 'qa14-1';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa14-1-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+  const vh = page.viewportSize().height;
+  let box = await wrap.boundingBox();
+  const overlap = box.y + box.height - (vh - 150);
+  if (overlap > 0) { await page.evaluate(d => window.scrollBy(0, d), overlap); await page.waitForTimeout(50); box = await wrap.boundingBox(); }
+  await touchDrag(page, box.x + box.width * 0.2, box.y + box.height / 2, box.x + box.width * 0.6, box.y + box.height / 2, 250);
+  // Sample a few times across the --dur-fast window right after release: at least one frame must
+  // catch a fractional opacity, or a running (non-idle) Web Animation.
+  let midTransition = false;
+  for (let i = 0; i < 6 && !midTransition; i++) {
+    await page.waitForTimeout(20);
+    midTransition = await page.evaluate(() => {
+      const old = document.querySelector('[data-palace="history.exercise-stats"] .chart-readout .readout-old');
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide-dot');
+      const line = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide');
+      const fractional = [old, dot, line].filter(Boolean).some(el => { const o = parseFloat(getComputedStyle(el).opacity); return o > 0 && o < 1; });
+      const running = [old, dot, line].filter(Boolean).some(el => el.getAnimations().some(a => a.playState === 'running'));
+      return fractional || running;
+    });
+  }
+  if (!midTransition) errors.push(`${tag}: releasing a chart scrub under full motion should crossfade (a mid-transition frame within ~120ms of release), not snap instantly`);
   await ctx.close();
 }
 

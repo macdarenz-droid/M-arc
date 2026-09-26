@@ -414,9 +414,17 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .sparkline-minmax span { position: absolute; right: 0; transform: translateY(-50%); font-size: var(--fs-cap); color: var(--text-2); background: var(--surface-1); padding: 0 2px; }
 .sparkline-dates { margin-top: 2px; font-size: var(--fs-cap); color: var(--text-2); }
 /* A6: the scrub guide (a thin rule and dot at the touched/keyboard-selected point) and the readout line shared by the sparkline and the volume bars. */
-.sparkline-guide { stroke: var(--border-strong); stroke-width: 1; }
-.sparkline-guide-dot { fill: var(--accent); stroke: var(--bg); stroke-width: 2; }
-.chart-readout { font-size: var(--fs-small); color: var(--text-2); margin-bottom: 4px; }
+/* QA14-1: the base rule uses the token; the inline transitionDuration Sparkline.tsx sets per-render
+   overrides it to 0 under reduced motion (a literal in the stylesheet would fail the F1 lint). */
+.sparkline-guide { stroke: var(--border-strong); stroke-width: 1; transition: opacity var(--dur-fast) var(--ease-standard); }
+.sparkline-guide-dot { fill: var(--accent); stroke: var(--bg); stroke-width: 2; transition: opacity var(--dur-fast) var(--ease-standard); }
+.chart-readout { position: relative; font-size: var(--fs-small); color: var(--text-2); margin-bottom: 4px; }
+/* QA14-1: the inline transitionDuration ChartReadout sets per-render overrides this token to 0
+   under reduced motion, so the swap is instant there without a literal ms in the stylesheet. */
+.readout-old, .readout-cur { display: block; transition: opacity var(--dur-fast) var(--ease-standard); }
+.readout-old { position: absolute; left: 0; top: 0; opacity: 1; }
+.readout-old.leaving { opacity: 0; }
+.readout-cur.entering { opacity: 0; }
 .banner { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 13px; }
 .banner.warn { border-color: var(--warning); }
 .danger-text { color: var(--negative); }
