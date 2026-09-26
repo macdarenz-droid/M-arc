@@ -4,7 +4,7 @@
  * signals, so tools stay pure and testable.
  */
 import type { AppState, Exercise } from '@/core/models';
-import { daysBetween, dayKey, weekdayOf } from '@/core/dates';
+import { daysBetween, dayKey, weekdayOf, nextScheduled } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { recoveryPctFor, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
 import { resolveProfile } from '@/brain/units';
@@ -54,14 +54,23 @@ export function scheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
   return id ? ctx.state.splits.find(sp => sp.id === id) : undefined;
 }
 
+/** QA8-2: the next scheduled split after `day`, resolved to the actual Split. */
+export function nextScheduledSplitFor(ctx: ToolCtx, day = ctx.today) {
+  const n = nextScheduled(ctx.state.schedule, day);
+  if (!n) return null;
+  const split = ctx.state.splits.find(sp => sp.id === n.splitId);
+  return split ? { split, weekday: n.weekday } : null;
+}
+
 export function readinessToday(ctx: ToolCtx): ReadinessResult | null {
   const m = memo(ctx);
   if (m.readiness !== undefined) return m.readiness;
   const s = ctx.state;
   m.readiness = readiness({
-    today: ctx.today, healthDays: s.healthDays, checkIn: s.checkIns.find(c => c.day === ctx.today),
+    today: ctx.today, now: ctx.now, healthDays: s.healthDays, checkIn: s.checkIns.find(c => c.day === ctx.today),
     checkInHistory: s.checkIns.filter(c => c.day !== ctx.today && daysBetween(c.day, ctx.today) <= 30),
-    recovery: recoveryAt(ctx), scheduledSplit: scheduledSplitFor(ctx), custom: s.customExercises, sessions: s.sessions,
+    recovery: recoveryAt(ctx), scheduledSplit: scheduledSplitFor(ctx), next: nextScheduledSplitFor(ctx),
+    custom: s.customExercises, sessions: s.sessions,
   });
   return m.readiness;
 }

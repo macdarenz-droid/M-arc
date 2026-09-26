@@ -79,6 +79,14 @@ interface Derived {
   readiness: ReadinessResult | null;
 }
 
+/** QA8-2: the next scheduled split (and its weekday) after `day`, resolved to the actual Split. */
+function nextScheduledSplitOf(splits: Split[], schedule: Record<Weekday, string | null>, day: string): { split: Split; weekday: Weekday } | null {
+  const n = nextScheduled(schedule, day);
+  if (!n) return null;
+  const split = splits.find(s => s.id === n.splitId);
+  return split ? { split, weekday: n.weekday } : null;
+}
+
 function derive(ctx: CoachContext): Derived {
   const names = new Map<string, string>();
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
@@ -90,8 +98,9 @@ function derive(ctx: CoachContext): Derived {
     exerciseIds,
     activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
     readiness: readiness({
-      today: ctx.today, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+      today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
+      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
     }),
   };
 }
@@ -435,7 +444,8 @@ export const RULES: Rule[] = [
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
           title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.',
           means: 'Training hard today would work against you more than for you.',
-          action: 'Keep loads where they are, or drop a set on the hardest lifts.',
+          // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
+          action: r.postSessionAdvice ?? 'Keep loads where they are, or drop a set on the hardest lifts.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
@@ -444,7 +454,7 @@ export const RULES: Rule[] = [
           id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
           title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.',
           means: 'Not a reason to skip, just not a day to chase a new best.',
-          action: 'Keep today’s loads where they are.',
+          action: r.postSessionAdvice ?? 'Keep today’s loads where they are.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
@@ -552,11 +562,13 @@ export function readinessSeries(ctx: CoachContext, days = 5): Array<ReadinessRes
   const doses = muscleDoses(base);
   for (let i = 0; i < days; i++) {
     const day = addDays(ctx.today, -i);
-    const recovery = recoveryAt(doses, { ...base, now: new Date(`${day}T23:59:59`).getTime() });
+    const now = new Date(`${day}T23:59:59`).getTime();
+    const recovery = recoveryAt(doses, { ...base, now });
     const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
     out.push(readiness({
-      today: day, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit, custom: ctx.custom, sessions: ctx.sessions,
+      today: day, now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
+      checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit,
+      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, day), custom: ctx.custom, sessions: ctx.sessions,
     }));
   }
   return out;

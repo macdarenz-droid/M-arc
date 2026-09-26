@@ -78,7 +78,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const r = readinessToday(ctx);
   const parts: string[] = [];
   parts.push(split ? `scheduled ${one(split.name)} (splitId ${split.id})` : 'rest day');
-  if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
+  if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${r.postSessionAdvice ? ` (${one(r.postSessionAdvice)})` : ''}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
   else parts.push('readiness none (no check-in or health data)');
   const deload = activeDeloadOf(ctx);
   if (deload) parts.push(`lighter week day ${num(Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), 'lighter week day')} of 7`);

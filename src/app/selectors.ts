@@ -1,7 +1,7 @@
 /** Derived, memoised views over the store that several screens share. */
 import { computed } from '@preact/signals';
 import { state } from '@/core/store';
-import { weekdayOf, daysBetween } from '@/core/dates';
+import { weekdayOf, daysBetween, nextScheduled } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
@@ -18,6 +18,13 @@ export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
 export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
+/** QA8-2: the next scheduled split after today, resolved to the actual Split. */
+export const nextScheduledSplit = computed(() => {
+  const n = nextScheduled(state.value.schedule, today.value);
+  if (!n) return null;
+  const split = splitById(n.splitId);
+  return split ? { split, weekday: n.weekday } : null;
+});
 
 /**
  * QA-R2d-1: one computed per state field. A computed only notifies when its value changes
@@ -33,11 +40,13 @@ export const recovery = computed(() => recoveryStatus({ sessions: sessions.value
 export const todayCheckIn = computed(() => checkIns.value.find(c => c.day === today.value));
 export const todayReadiness = computed(() => readiness({
   today: today.value,
+  now: minuteNow.value,
   healthDays: healthDays.value,
   checkIn: todayCheckIn.value,
   checkInHistory: checkIns.value.filter(c => c.day !== today.value && daysBetween(c.day, today.value) <= 30),
   recovery: recovery.value,
   scheduledSplit: scheduledSplit.value,
+  next: nextScheduledSplit.value,
   custom: customExercises.value,
   sessions: sessions.value,
 }));
