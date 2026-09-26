@@ -111,6 +111,9 @@ function Log() {
         if (reduced() || !el.animate) { el.style.transform = ''; shift(dir); return; }
         const out = el.animate([{ transform: el.style.transform || 'none', opacity: 1 }, { transform: `translateX(${-dir * width}px)`, opacity: 0 }], { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' });
         const afterOut = () => {
+          // BUG-9: `out` fills forwards, so it must be cancelled or it keeps the grid invisible and
+          // one width off to the side after the next month's enter animation ends.
+          out.cancel();
           shift(dir);
           el.style.transform = `translateX(${dir * width * 0.3}px)`;
           el.style.opacity = '0';
@@ -128,7 +131,7 @@ function Log() {
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
-      <Card data-palace="history.calendar">
+      <Card class="cal-card" data-palace="history.calendar">
         <div class="row-between" style={{ marginBottom: 8 }}>
           <Button variant="quiet" class="btn-icon" aria-label="Previous month" onClick={() => shift(-1)}><IconBack /></Button>
           <b>{first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</b>

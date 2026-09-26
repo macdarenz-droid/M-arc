@@ -196,7 +196,7 @@ Priority: **P0** unblock, **P1** highest coaching value per effort, **P2** stron
 - **F3.3 Deload state**: trigger when (a) two or more main lifts plateaued or declining, or (b) effort drift harder on 2+ lifts with rising weekly volume for 3 weeks, or (c) readiness red for 3 of the last 5 days. Coach offers "Take a lighter week"; accepting sets `deload = {startDay, endDay, reason}`; progression then targets minus 30 to 40% sets and minus 10% load with `mode: 'deload'`; a week later the coach closes it and returns to normal targets.
 - **F3.4 Warm-up sets** for weighted main lifts from the next target: 50% × 8, 70% × 5, 85% × 2 (rounded to the load step), shown collapsed above the working sets.
 - **F3.5 Cues in the live session**: `pickCue(exercise, 'coach')` for the open exercise (one line under the target), `learn` cue on the finish screen. Track shown cues per exercise to rotate.
-- **F3.6 Insight feedback**: "Helpful / Not now" on each insight card; snoozed insights are hidden for 7 days; a small insight log in Coach ("Earlier this month").
+- **F3.6 Insight feedback**: "Helpful / Not now" on each insight card. Helpful hides the card for the rest of the day, Not now for 7 days, each with an Undo toast; hidden notes sit behind one "N notes hidden" row with Show again (COACH-FB replaced the "Earlier this month" log).
 - **F3.7 Exercise substitution** when a muscle is recovering or an insight suggests balance work: pick from `LIBRARY` by pattern and equipment group with the same primary muscle.
 - **F3.8 Morning coach notification** (optional, off by default): readiness summary at the reminder time on training days.
 

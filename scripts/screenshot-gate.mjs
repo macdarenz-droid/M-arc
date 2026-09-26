@@ -3405,6 +3405,232 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// COACH-FB: on Escobar's notes, Helpful and Not now hide the tapped note at once, with the chat
+// path's toast and a working Undo; a quick second tap cannot hide the note that slides into the
+// same spot; saved feedback keeps one record per (note, day); the raw "Earlier this month" log is
+// gone; hidden notes sit behind one quiet row that opens to their titles, each with Show again;
+// a hidden note stays hidden after a reload.
+{
+  const tag = 'COACH-FB';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  const openNotes = async () => {
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.getByRole('button', { name: 'Later' }).click({ timeout: 1500 }).catch(() => {});
+    await page.waitForTimeout(200);
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+    await page.locator('[data-palace="coach.insights"]').evaluate(e => e.scrollIntoView({ block: 'center' }));
+    await page.waitForTimeout(100);
+  };
+  const titles = () => page.locator('.insight h3').allTextContents();
+  const firstBtn = (name) => page.locator('.insight').first().getByRole('button', { name, exact: true });
+  const toastText = async () => (await page.locator('.toast span').first().textContent({ timeout: 1000 }).catch(() => '')) ?? '';
+  const centre = async (loc) => { const b = await loc.boundingBox(); return b ? [b.x + b.width / 2, b.y + b.height / 2] : null; };
+  await page.goto(`http://localhost:${PORT}/`);
+  await openNotes();
+  const t0 = await titles();
+  if (t0.length !== 3) errors.push(`${tag}: expected 3 notes on the legacy fixture, got ${t0.length}`);
+  // CFB-G1: Helpful hides the note at once, with the same toast as the chat path.
+  await firstBtn('Helpful').tap(); await page.waitForTimeout(200);
+  if ((await titles()).includes(t0[0])) errors.push(`${tag}: "${t0[0]}" still shown after Helpful`);
+  if (!(await toastText()).includes('Marked helpful')) errors.push(`${tag}: expected the "Marked helpful" toast`);
+  // CFB-G2: Undo on that toast brings it back.
+  await page.locator('.toast').getByRole('button', { name: 'Undo', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Undo on the toast`));
+  await page.waitForTimeout(200);
+  if (JSON.stringify(await titles()) !== JSON.stringify(t0)) errors.push(`${tag}: Undo did not restore the notes, got: ${(await titles()).join(' | ')}`);
+  // CFB-G3: Not now hides the note; a second tap 100 ms later, on the note that slid into its place, is ignored.
+  await page.waitForTimeout(600);
+  const p1 = await centre(firstBtn('Not now'));
+  if (p1) await page.touchscreen.tap(p1[0], p1[1]);
+  await page.waitForTimeout(100);
+  const p2 = await centre(firstBtn('Not now'));
+  if (p2) await page.touchscreen.tap(p2[0], p2[1]);
+  await page.waitForTimeout(300);
+  const t3 = await titles();
+  if (t3.includes(t0[0])) errors.push(`${tag}: "${t0[0]}" still shown after Not now`);
+  if (!t3.includes(t0[1])) errors.push(`${tag}: a quick second tap also hid "${t0[1]}"`);
+  if (!(await toastText()).includes('Snoozed for 7 days')) errors.push(`${tag}: expected the "Snoozed for 7 days" toast`);
+  // CFB-G4: saved data holds one record per (note, day) after Helpful, Undo, Not now on the same note.
+  await page.waitForTimeout(400);
+  const fb = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}').insightFeedback || []);
+  const keys = fb.map(f => `${f.id}|${f.day}`);
+  if (new Set(keys).size !== keys.length) errors.push(`${tag}: duplicate saved feedback records: ${JSON.stringify(fb)}`);
+  // CFB-G5: the raw log is gone.
+  if (await page.getByText('Earlier this month').count()) errors.push(`${tag}: the raw "Earlier this month" log is still shown`);
+  // CFB-G6: one quiet row that opens to the hidden note's title.
+  const row = page.locator('.notes-hidden');
+  if (!(await visible(row.getByText('1 note hidden', { exact: true }), 1500))) errors.push(`${tag}: expected a "1 note hidden" row`);
+  await row.getByRole('button', { name: 'Show', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Show on the hidden row`));
+  await page.waitForTimeout(200);
+  if (!(await visible(row.getByText(t0[0], { exact: true }), 1500))) errors.push(`${tag}: the hidden list does not name "${t0[0]}"`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-coach-fb-hidden.png` });
+  // CFB-G7: after a reload the note is still hidden and still listed; Show again brings it back and the row goes.
+  await page.reload();
+  await openNotes();
+  if ((await titles()).includes(t0[0])) errors.push(`${tag}: "${t0[0]}" came back after a reload`);
+  await row.getByRole('button', { name: 'Show', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no hidden row after a reload`));
+  await page.waitForTimeout(200);
+  await row.getByRole('button', { name: 'Show again', exact: true }).first().tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Show again`));
+  await page.waitForTimeout(200);
+  if (!(await titles()).includes(t0[0])) errors.push(`${tag}: Show again did not bring back "${t0[0]}"`);
+  if (await row.count()) errors.push(`${tag}: the hidden row is still shown with nothing hidden`);
+  await ctx.close();
+}
+
+// BUG-8: a saved height/weight must not read "Not set" just because it has no profileHistory
+// entry, sex must not look chosen when it was never saved, and the Escobar tab's Profile row
+// must name what's missing (and read complete once it is).
+{
+  const tag = 'BUG-8';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', birthYear: 1998, heightCm: 164, bodyWeightKg: 70 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [{ day: '2026-09-20', kg: 70 }], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.waitForTimeout(250);
+  await page.locator('.list-row', { hasText: 'Weight, height, birth year' }).getByRole('button', { name: 'Open', exact: true }).click();
+  await page.waitForTimeout(250);
+  const fieldHints = (label) => page.evaluate((lbl) => {
+    const l = [...document.querySelectorAll('dialog[open] label.stack-sm')].find(el => el.querySelector('.small.muted')?.textContent === lbl);
+    return l ? [...l.querySelectorAll('.hint')].map(h => h.textContent) : null;
+  }, label);
+  // BUG-8 A: sex never looks chosen when it was never saved.
+  const sexPressed = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .seg button')].map(b => b.getAttribute('aria-pressed')));
+  if (sexPressed.some(p => p === 'true')) errors.push(`${tag}: a Sex option shows pressed although sex was never saved (${JSON.stringify(sexPressed)})`);
+  // BUG-8 items 1-2: height was saved (no profileHistory entry) and must read "Saved", not "Not set".
+  const heightHints = await fieldHints('Height (cm)');
+  if (!heightHints || heightHints[0] !== 'Saved') errors.push(`${tag}: expected the Height hint to read "Saved", got ${JSON.stringify(heightHints)}`);
+  // Weight was saved and logged (no profileHistory entry either) and must read "Saved", not "Not set".
+  const weightHint = await page.locator('dialog[open] .hint', { hasText: 'weigh-in' }).first().textContent();
+  if (!weightHint?.startsWith('Saved')) errors.push(`${tag}: expected the Body weight hint to start with "Saved", got "${weightHint}"`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-bug-8-profile.png` });
+  // A real tap on Male (the first Sex option): it saves, and the hint becomes "Updated …".
+  await page.locator('dialog[open] .seg button').first().tap();
+  await page.waitForTimeout(200);
+  const sexHints = await fieldHints('Sex');
+  if (!sexHints || !sexHints[0]?.startsWith('Updated')) errors.push(`${tag}: expected the Sex hint to read "Updated …" after tapping Male, got ${JSON.stringify(sexHints)}`);
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.waitForTimeout(200);
+  // BUG-8 item 3: the Escobar tab's Profile row now reads complete.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+  await page.locator('[data-palace="coach.sees"]').evaluate(e => e.scrollIntoView({ block: 'center' }));
+  if (!(await visible(page.getByText('All 4 details', { exact: true }), 1500))) errors.push(`${tag}: expected the Escobar tab's Profile row to read "All 4 details" once sex is set`);
+  await ctx.close();
+}
+
+// BUG-9: a month swipe's exit animation fills forwards and was never cancelled, so once the next
+// month's plain enter animation finished, the old exit's fill re-applied and left the grid at
+// opacity 0, translated one width sideways, which widened the whole page and stretched the fixed
+// bottom bar. On purpose, this context carries no reducedMotion — under reduce the animation
+// branch never runs at all, which is exactly how the existing A5 gate block missed this.
+{
+  const tag = 'BUG-9';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  const innerWidth = await page.evaluate(() => window.innerWidth);
+  const monthLabelSel = '[data-palace="history.calendar"] b';
+  const monthLatest = await page.locator(monthLabelSel).textContent();
+
+  // A: while the touch is still held (no touchEnd yet), a 60%-of-width rightward drag must not
+  // have widened the page.
+  let calBox = await page.locator('.cal').boundingBox();
+  const cdp = await page.context().newCDPSession(page);
+  const ax0 = calBox.x + calBox.width * 0.1, ay0 = calBox.y + calBox.height / 2;
+  const ax1 = calBox.x + calBox.width * 0.7;
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: ax0, y: ay0 }] });
+  for (let i = 1; i <= 6; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: ax0 + (ax1 - ax0) * (i / 6), y: ay0 }] });
+    await new Promise(r => setTimeout(r, 30));
+  }
+  const midDragWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (midDragWidth > innerWidth) errors.push(`${tag} A: mid-drag scrollWidth ${midDragWidth} > innerWidth ${innerWidth}`);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await cdp.detach().catch(() => {});
+
+  // B: after the release, a second swipe back, and one swipe forward — each time, wait 1500ms,
+  // then the grid must be visible in place, with no animation left, and the page must not have
+  // widened, keeping every nav.nav button on screen.
+  const settled = async (label) => {
+    await page.waitForTimeout(1500);
+    const cal = await page.evaluate(() => { const el = document.querySelector('.cal'); const cs = getComputedStyle(el); return { opacity: cs.opacity, transform: cs.transform, anims: el.getAnimations().length }; });
+    if (cal.opacity !== '1') errors.push(`${tag} B (${label}): expected .cal opacity 1, got ${cal.opacity}`);
+    if (cal.transform !== 'none') errors.push(`${tag} B (${label}): expected .cal transform none, got ${cal.transform}`);
+    if (cal.anims !== 0) errors.push(`${tag} B (${label}): expected .cal to have 0 animations left, got ${cal.anims}`);
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (scrollWidth > innerWidth) errors.push(`${tag} B (${label}): scrollWidth ${scrollWidth} > innerWidth ${innerWidth}`);
+    const bad = await page.evaluate(w => [...document.querySelectorAll('nav.nav button')].map(b => b.getBoundingClientRect()).filter(r => r.left < 0 || r.right > w).length, innerWidth);
+    if (bad) errors.push(`${tag} B (${label}): ${bad} nav.nav button rect(s) fall outside [0, ${innerWidth}]`);
+    return page.locator(monthLabelSel).textContent();
+  };
+
+  const monthAfterFirst = await settled('after the release');
+  if (monthAfterFirst === monthLatest) errors.push(`${tag} B: expected the month to change after the swipe back, stayed on ${monthLatest}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, 300);
+  const monthAfterSecond = await settled('after a second swipe back');
+  if (monthAfterSecond === monthAfterFirst) errors.push(`${tag} B: expected a second swipe back to change the month again, stayed on ${monthAfterFirst}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, 300);
+  const monthAfterForward = await settled('after one forward swipe');
+  if (monthAfterForward !== monthAfterFirst) errors.push(`${tag} B: expected the forward swipe to return to the previous month (${monthAfterFirst}), got ${monthAfterForward}`);
+
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-9-calendar.png` });
+
+  // C: full-motion row swipe-delete, then Undo — the restored row must render in place, not
+  // stuck off to the side or invisible, and the page must still fit the screen.
+  const countBefore = await page.locator('.swipe-row').count();
+  if (!countBefore) errors.push(`${tag} C: expected at least one session row`);
+  else {
+    const box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag} C: expected a "Session deleted" toast with Undo`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag} C: could not click Undo`));
+      await page.waitForTimeout(1500);
+      const restored = await page.evaluate(() => { const c = document.querySelector('.swipe-row .card'); if (!c) return null; const cs = getComputedStyle(c); return { opacity: cs.opacity, transform: cs.transform }; });
+      if (!restored) errors.push(`${tag} C: expected the restored row's .card to be present`);
+      else {
+        if (restored.opacity !== '1') errors.push(`${tag} C: expected the restored row's .card opacity 1, got ${restored.opacity}`);
+        if (restored.transform !== 'none') errors.push(`${tag} C: expected the restored row's .card transform none, got ${restored.transform}`);
+      }
+      const scrollWidthAfterUndo = await page.evaluate(() => document.documentElement.scrollWidth);
+      if (scrollWidthAfterUndo > innerWidth) errors.push(`${tag} C: scrollWidth ${scrollWidthAfterUndo} > innerWidth ${innerWidth} after Undo`);
+    }
+  }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();

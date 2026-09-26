@@ -411,6 +411,8 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .swipe-row.armed .swipe-bg svg { scale: 1.15; opacity: 1; }
 
 /* Calendar */
+/* BUG-9: the month swipe slides the grid up to one width sideways; clip it to its card so it never widens the page. */
+.cal-card { overflow-x: clip; }
 .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; touch-action: pan-y; }
 .cal .dow { text-align: center; font-size: 11px; color: var(--text-3); font-weight: 600; padding: 4px 0; }
 .cal .day { aspect-ratio: 1; display: grid; place-items: center; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-2); position: relative; }
