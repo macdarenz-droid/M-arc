@@ -2519,6 +2519,18 @@ for (const theme of ['silent-black', 'paper']) {
   if (await page.getByRole('heading', { name: 'When did you train?' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(400); }
   const callsAfterFinish = await page.evaluate(() => window.__keepAwakeCalls.slice());
   if (callsAfterFinish[callsAfterFinish.length - 1] !== false) errors.push(`${tag}: expected keepAwake(false) once the workout finished, got ${JSON.stringify(callsAfterFinish)}`);
+  // QA12-2: a one-shot "keepAwake(true) only once per app lifetime" mutation still passed the
+  // block above. Start a second workout and prove it comes back on. The finish screen needs an
+  // explicit Done tap to leave (gate :126/:182/:460/:514); without it, Train never returns to
+  // an idle, startable state.
+  await page.getByRole('button', { name: 'Done', exact: true }).click().catch(() => {}); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  const callsAfterSecondStart = await page.evaluate(() => window.__keepAwakeCalls.slice());
+  const last2 = callsAfterSecondStart.slice(-2);
+  if (last2.length !== 2 || last2[0] !== false || last2[1] !== true) errors.push(`${tag} (QA12-2): expected __keepAwakeCalls to end [..., false, true] after a second workout starts, got ${JSON.stringify(callsAfterSecondStart)}`);
   await ctx.close();
 }
 
