@@ -2414,6 +2414,19 @@ for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  // A complete profile so the onboarding sheet's native <dialog> (top layer, above any z-index)
+  // can't sit over #launch and steal the click.
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
   await elapsedAtLeast(page, 300);
@@ -2444,12 +2457,16 @@ for (const theme of ['silent-black', 'paper']) {
 // is mocked here (isNativePlatform forced true) since this gate runs the web build.
 {
   const tag = 'keepAwake (A4)';
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson]) => {
     if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
     window.__keepAwakeCalls = [];
+    // Capacitor's own web core (bundled in the app) overwrites a plain `window.Capacitor`
+    // override, but respects the official CapacitorCustomPlatform escape hatch (see the
+    // watch-stub block above) for reporting a non-web platform.
+    window.CapacitorCustomPlatform = { name: 'android' };
     window.Capacitor = { isNativePlatform: () => true, Plugins: { NativeUi: {
       haptic: () => Promise.resolve({ played: false }),
       peak: () => Promise.resolve({ played: false }),
