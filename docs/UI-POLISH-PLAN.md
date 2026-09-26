@@ -633,8 +633,8 @@ The owner chose these from rendered samples. Build them as written and don't red
     - Sort: latest ascending, then earliest ascending, then pct descending, then name.
   - **Tile.**
     - A `<button>`: min-height 52, padding 0 6px 0 8px, gap 8, radius-sm. Ring 40.
-    - Name 14/18 600 in text; time 12/16 500 in text-2; tabular numbers.
-    - If any name or time overflows (scrollWidth > clientWidth), the card switches to one column. Watch this with a ResizeObserver.
+    - Name 14/18 600 in text, wrapping to at most 2 lines (QA7-2); time 12/16 500 in text-2, no wrap; tabular numbers.
+    - If any time, or any single word of a name, overflows (scrollWidth > clientWidth, or a name taller than 2 lines), the card switches to one column. Watch this with a ResizeObserver.
   - **Ring.**
     - SVG 40, r 17, stroke 4, track `var(--surface-3)`.
     - Arc from 12 o'clock clockwise, `stroke-dasharray = C·min(pct,90)/90` (C = 106.81), so a full circle means 90% (ready). At ≥90 draw a full circle.
