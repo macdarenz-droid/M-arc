@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readinessBaselines, readiness, readinessSummaryText, type ReadinessInput } from '@/brain/readiness';
-import type { CheckIn, DailyHealth } from '@/core/models';
+import type { CheckIn, DailyHealth, Split } from '@/core/models';
 import type { MuscleRecovery } from '@/brain/recovery';
 import { session, sets } from './helpers';
 
@@ -13,7 +13,7 @@ const mr = (muscle: MuscleRecovery['muscle'], pct: number): MuscleRecovery => ({
 });
 
 const baseInput: ReadinessInput = {
-  today, healthDays: [], checkIn: undefined, checkInHistory: [], recovery: [], scheduledSplit: undefined, custom: [], sessions: [],
+  today, now: Date.parse(`${today}T12:00:00Z`), healthDays: [], checkIn: undefined, checkInHistory: [], recovery: [], scheduledSplit: undefined, custom: [], sessions: [],
 };
 
 describe('readinessBaselines', () => {
@@ -105,5 +105,36 @@ describe('readiness windows (BR-03, BR-19)', () => {
     expect(readiness({ ...baseInput, sessions: young })).toBeNull();
     const spanned = [1, 3, 5, 20].map(o => session(day(o), [{ id: 'lib_barbell_back_squat', sets: sets(100, 8, 'max', 5) }]));
     expect(readiness({ ...baseInput, sessions: spanned })).not.toBeNull();
+  });
+});
+
+describe('readiness after training is done for the day (QA8-2)', () => {
+  const splitUpper: Split = { id: 'upper', name: 'Upper', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+  const redInputs = () => {
+    const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 70 : 55, source: 'health_connect' as const, syncedAt: today }));
+    return { healthDays, recovery: [mr('chest', 20), mr('triceps', 25)] };
+  };
+
+  it('a session today with a red band points the driver and advice at the next split, not today', () => {
+    const sessions = [session(today, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal', 3) }])];
+    const r = readiness({ ...baseInput, ...redInputs(), sessions, next: { split: splitUpper, weekday: 'mon' } });
+    expect(r).not.toBeNull();
+    expect(r!.band).toBe('red'); // QA8-2: the colour band itself is unchanged
+    expect(r!.drivers.some(d => d.includes('for Upper on Mon'))).toBe(true);
+    expect(r!.drivers.every(d => !d.includes('you would train today'))).toBe(true);
+    expect(r!.postSessionAdvice).toBe("Today's session is done. Recover well; Upper is next on Mon.");
+  });
+
+  it('without a session today, the result is byte-identical to before this fix (no postSessionAdvice, old driver wording)', () => {
+    const r = readiness({ ...baseInput, ...redInputs(), scheduledSplit: splitUpper, next: { split: splitUpper, weekday: 'mon' } });
+    expect(r).not.toBeNull();
+    expect(r!.postSessionAdvice).toBeUndefined();
+    expect(r!.drivers).toContain('the muscles you would train today are not fully recovered');
+    expect(JSON.stringify(r)).toBe(JSON.stringify({ score: r!.score, band: r!.band, confidence: r!.confidence, loadAdvice: r!.loadAdvice, drivers: r!.drivers, calibrating: r!.calibrating }));
+  });
+
+  it('readinessSummaryText prefers postSessionAdvice once today is done', () => {
+    expect(readinessSummaryText({ score: 20, band: 'red', confidence: 'high', loadAdvice: 'reduce', drivers: [], calibrating: false, postSessionAdvice: "Today's session is done. Recover well; Upper is next on Mon." }))
+      .toBe("Readiness: red (20). Today's session is done. Recover well; Upper is next on Mon.");
   });
 });

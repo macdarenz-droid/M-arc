@@ -184,7 +184,8 @@ function ReadinessCard() {
       </Section>
     );
   }
-  const advice = ADVICE_COPY[r.loadAdvice];
+  // QA8-2: once today's session is done, ADVICE_COPY's pre-workout wording no longer applies.
+  const advice = r.postSessionAdvice ?? ADVICE_COPY[r.loadAdvice];
   return (
     <Section title="Readiness" palace="today.readiness">
       <Card class={r.band === 'red' ? 'card-accent' : ''}>

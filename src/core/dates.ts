@@ -1,4 +1,4 @@
-import type { Weekday } from './models';
+import type { Session, Weekday } from './models';
 import { WEEKDAYS } from './models';
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -55,6 +55,32 @@ export function weekStart(key: string): string {
 
 export function daysBetween(a: string, b: string): number {
   return Math.round((dayMs(b) - dayMs(a)) / 86_400_000);
+}
+
+/**
+ * QA8-4: sessions that count as "trained today" — dated today, or ended today within the last
+ * 6 hours (started before midnight, finished just after). Read-only: never changes the stored
+ * `day`, history or records. QA8-1, QA8-2, QA8-3 and `sessionsToday` all share this.
+ */
+export function trainedTodaySessions(sessions: Session[], today: string, now: number): Session[] {
+  return sessions.filter(s => s.day === today || (dayKey(s.endedAt) === today && now - new Date(s.endedAt).getTime() <= 6 * 3600_000));
+}
+
+export function trainedToday(sessions: Session[], today: string, now: number): boolean {
+  return trainedTodaySessions(sessions, today, now).length > 0;
+}
+
+export interface NextScheduled { splitId: string; weekday: Weekday; day: string }
+
+/** The next scheduled split strictly after `today`, walking forward at most `maxDays`. Null when nothing is scheduled in that window (QA8-1, QA8-2). */
+export function nextScheduled(schedule: Record<Weekday, string | null>, today: string, maxDays = 7): NextScheduled | null {
+  for (let i = 1; i <= maxDays; i++) {
+    const day = addDays(today, i);
+    const weekday = weekdayOf(day);
+    const splitId = schedule[weekday];
+    if (splitId) return { splitId, weekday, day };
+  }
+  return null;
 }
 
 export const WEEKDAY_LABEL: Record<Weekday, string> = {
