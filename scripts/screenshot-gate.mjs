@@ -53,6 +53,35 @@ const settle = (page) => page.evaluate(() => Promise.race([
 
 const sha1 = (buf) => createHash('sha1').update(buf).digest('hex');
 
+/** A3: a realistic single-finger touch drag via CDP — Playwright's mouse() only ever produces
+ * mouse/pointer input, never a real Touch, and our gesture code (A3/I7/F13) reads touch identity
+ * and Pointer Events that a synthesized mouse drag won't exercise the same way. Linear from
+ * (x0,y0) to (x1,y1) over `ms`, in ~16ms steps. */
+async function touchDrag(page, x0, y0, x1, y1, ms) {
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0, y: y0 }] });
+    if (ms <= 150) {
+      // A fast flick: one round-trip straight to the end point. Each CDP call carries its own
+      // real (unpaced) latency here (tens of ms) — spreading a short, fast gesture over several
+      // small steps would let that latency dilute the measured velocity below the fling
+      // threshold, exactly backwards from what a real flick produces.
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x1, y: y1 }] });
+    } else {
+      const steps = Math.min(10, Math.max(3, Math.round(ms / 150)));
+      for (let i = 1; i <= steps; i++) {
+        const x = x0 + (x1 - x0) * (i / steps);
+        const y = y0 + (y1 - y0) * (i / steps);
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y }] });
+        await new Promise(r => setTimeout(r, ms / steps));
+      }
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  } finally {
+    await cdp.detach().catch(() => {});
+  }
+}
+
 // Realistic legacy data so the migration path is exercised end to end.
 const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
@@ -790,6 +819,88 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I6 regression: goTo() used to close the previous sheet by dispatching 'cancel' on every open
+// dialog directly, each running its own history.back() (via unregisterSheet) independently. Rapid
+// back-to-back palace navigation (this is exactly what the loop above already does, and is how
+// this was first caught) calls that on every hop, faster than the browser reliably delivers each
+// popstate — a stray one can land after a *later* sheet has already pushed its own history entry
+// and get misread as a real Back press, closing the wrong (just-opened) sheet. Fixed by routing
+// through closeAllSheets (router.ts's go() already relies on it for the same reason: one batched
+// history.go(-n) instead of N separate history.back() calls). This block pins the regression on
+// its own terms — many settings.* hops in a row, the exact shape that exposed it — independent of
+// the broader loop above (whose >=65 threshold could mask a partial regression).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'palace rapid settings nav';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const ids = await page.evaluate(() => window.__palace.ids);
+  const anchors = await page.evaluate(() => window.__palace.anchors);
+  const settingsIds = ids.filter(id => id.startsWith('settings.') || id.startsWith('profile.'));
+  const unresolved = [];
+  for (const id of settingsIds) {
+    const ok = await page.evaluate(id => window.__palace.goTo(id), id);
+    await page.waitForTimeout(60);
+    const visible = await page.locator(`[data-palace="${anchors[id]}"]`).last().isVisible().catch(() => false);
+    if (!ok || !visible) unresolved.push(id);
+  }
+  if (unresolved.length) errors.push(`${tag}: anchors not visible after rapid consecutive goTo(): ${unresolved.join(', ')}`);
+  await ctx.close();
+}
+
+// QA11-1: closeAllSheets used to overcount ignorePops by the number of sheets it closed instead
+// of by 1 — one history.go(-n) is one navigation and fires exactly one popstate in real
+// Chromium/WebView, regardless of n. With 2+ sheets open, ignorePops never reached 0, so goTo()
+// (which awaits closeAllSheets since the I6-regression fix) hung forever, and the next real Back
+// was silently swallowed (eaten decrementing a counter that never belonged to it).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'QA11-1 nested sheets + goTo + Back';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  // Two sheets open: Settings, then Gyms nested inside it.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Manage' }).first().click();
+  await page.waitForSelector('dialog.sheet[open].nested');
+  const anchor = await page.evaluate(() => window.__palace.anchors['settings.reminders']);
+  const done = await Promise.race([
+    page.evaluate(() => window.__palace.goTo('settings.reminders')),
+    new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), 4000)),
+  ]);
+  if (done === 'TIMEOUT') errors.push(`${tag}: goTo() with 2 sheets open did not resolve within 4s (ignorePops likely stuck)`);
+  else {
+    await page.waitForTimeout(60);
+    if (!(await page.locator(`[data-palace="${anchor}"]`).last().isVisible().catch(() => false))) errors.push(`${tag}: settings.reminders not visible after goTo() with 2 sheets open`);
+    const openAfterGoTo = await page.locator('dialog.sheet[open]').count();
+    if (openAfterGoTo !== 1) errors.push(`${tag}: expected exactly one sheet open after goTo(), got ${openAfterGoTo}`);
+    // One real Back must close it cleanly — proof ignorePops isn't left stuck above 0.
+    await page.goBack();
+    await page.waitForTimeout(350);
+    if (await page.locator('dialog.sheet[open]').count()) errors.push(`${tag}: expected the sheet gone after a single real Back`);
+  }
+  await ctx.close();
+}
+
 // Escobar (§23 EV5): the mock transport (marc.dev=1, in-memory store, no network) plays a recorded
 // conversation with a lift_trend chart, a citation, chips and a proposal card. Screenshot it in all
 // five themes at 390 and 360 px, plus the dock on Today and the Hall; "Thinking…" within 150 ms.
@@ -995,7 +1106,7 @@ for (const theme of themes) {
 // exercised end to end, not just under the reduced-motion contexts above. HAS flags flip true as
 // their batch lands (F6 restFix, I6 sheetExit); until then each logs 'skipped' instead of failing.
 {
-  const HAS = { restFix: true, sheetExit: false };
+  const HAS = { restFix: true, sheetExit: true };
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   const tag = 'motion smoke';
@@ -1103,6 +1214,450 @@ for (const theme of themes) {
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// I6: sheets rise from the edge and leave the same way, the header stays put while content
+// scrolls under it, and a second Back during one sheet's exit reaches the sheet below.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I6 sheets';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  const tyOf = async () => page.evaluate(() => {
+    const p = document.querySelector('dialog.sheet[open] .sheet-panel');
+    if (!p) return null;
+    const m = new DOMMatrixReadOnly(getComputedStyle(p).transform);
+    return { ty: m.f, opacity: Number(getComputedStyle(p).opacity) };
+  });
+
+  // (1) Entry, full motion: well into the slide at 30ms, settled by 400ms.
+  await page.locator('[data-palace="today.settings"]').click();
+  await page.waitForTimeout(30);
+  let t = await tyOf();
+  if (!t || !(t.ty > 50)) errors.push(`${tag}: expected the panel > 50px down at +30ms, got ${JSON.stringify(t)}`);
+  await page.waitForTimeout(400);
+  t = await tyOf();
+  if (!t || t.ty !== 0) errors.push(`${tag}: expected the panel settled (ty 0) at +400ms, got ${JSON.stringify(t)}`);
+
+  // (2) Sticky header + Close reachable after scrolling. Also opens the nested Gyms sheet for (3).
+  await page.evaluate(() => { const p = document.querySelector('dialog.sheet[open] .sheet-panel'); if (p) p.scrollTop = 800; });
+  await page.waitForTimeout(50);
+  const scrolled = await page.evaluate(() => {
+    const top = document.querySelector('dialog.sheet[open] .sheet-top');
+    const panel = document.querySelector('dialog.sheet[open] .sheet-panel');
+    const close = [...document.querySelectorAll('dialog.sheet[open] button')].find(b => b.getAttribute('aria-label') === 'Close');
+    return { has: !!top?.classList.contains('scrolled'), closeTop: close?.getBoundingClientRect().top, panelTop: panel?.getBoundingClientRect().top };
+  });
+  if (!scrolled.has) errors.push(`${tag}: expected .sheet-top.scrolled after scrolling the panel`);
+  if (scrolled.closeTop == null || scrolled.panelTop == null || scrolled.closeTop < scrolled.panelTop) errors.push(`${tag}: Close button scrolled out of view: ${JSON.stringify(scrolled)}`);
+
+  // (3) A second Back mid-exit reaches the sheet below it. Settings -> nested Gyms sheet, then
+  // Back twice quickly (the first starts Gyms' exit; the second must close Settings too).
+  await page.getByRole('button', { name: 'Manage' }).first().click();
+  await page.waitForSelector('dialog.sheet[open].nested');
+  await page.goBack();
+  await page.waitForTimeout(30);
+  const midExit = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open]')].map(d => d.classList.contains('closing')));
+  if (midExit.length < 2 || !midExit[midExit.length - 1]) errors.push(`${tag}: expected the top (Gyms) sheet mid-exit after one Back, got ${JSON.stringify(midExit)}`);
+  await page.goBack();
+  await page.waitForTimeout(30);
+  const bothClosing = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open]')].every(d => d.classList.contains('closing')));
+  if (midExit.length >= 2 && !bothClosing) errors.push(`${tag}: expected the sheet below to also start closing on a second Back`);
+  await page.waitForTimeout(400);
+  if (await page.locator('dialog.sheet[open]').count()) errors.push(`${tag}: expected every sheet gone 400ms after both exits started`);
+
+  // (4) Reduced motion: a crossfade (ty stays 0, opacity < 1 mid-fade), never a bare snap.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('[data-palace="today.settings"]').click();
+  await page.waitForTimeout(30);
+  const r = await tyOf();
+  if (!r || r.ty !== 0 || !(r.opacity < 1)) errors.push(`${tag}: expected a reduced-motion crossfade (ty 0, opacity < 1) at +30ms, got ${JSON.stringify(r)}`);
+  await ctx.close();
+}
+
+// A3: pulling a sheet down by its handle/title, or by its own content once scrolled to the top,
+// dismisses it past a quarter of its height or on a fast flick; short of both, it springs back.
+// Starting on scrollable content (not at its top) or on typed input never moves the sheet.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'A3 sheet swipe';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  // Nested sheets (e.g. ExercisePicker inside SplitEditor) render as a dialog literally nested
+  // inside the outer one's markup — always the topmost/last in DOM order, and the one actually
+  // interactive.
+  const panelBox = () => page.locator('dialog.sheet[open] .sheet-panel').last().boundingBox();
+  const panelTy = () => page.evaluate(() => {
+    const panels = [...document.querySelectorAll('dialog.sheet[open] .sheet-panel')];
+    const p = panels.at(-1);
+    if (!p) return null;
+    const t = getComputedStyle(p).transform;
+    return t === 'none' ? 0 : new DOMMatrixReadOnly(t).f;
+  });
+  const topScrollTop = (v) => page.evaluate(val => {
+    const panels = [...document.querySelectorAll('dialog.sheet[open] .sheet-panel')];
+    const p = panels.at(-1);
+    if (!p) return null;
+    if (val != null) p.scrollTop = val;
+    return p.scrollTop;
+  }, v);
+  const openCount = () => page.locator('dialog.sheet[open]').count();
+
+  // (a) A slow drag (well under the fling speed) past a quarter of the panel height closes it.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+  let box = await panelBox();
+  const dist40 = box.height * 0.4;
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 10 + dist40, Math.round(dist40 / 0.15));
+  await page.waitForTimeout(300);
+  if (await openCount()) errors.push(`${tag}: a slow 40%-of-height drag did not close the sheet`);
+
+  // (b) A short, slow drag springs back; the sheet stays open.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(400);
+  box = await panelBox();
+  const dist10 = box.height * 0.1;
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 10 + dist10, Math.round(dist10 / 0.15));
+  await page.waitForTimeout(450);
+  const tyBack = await panelTy();
+  if (tyBack !== 0) errors.push(`${tag}: expected the panel back at ty 0 after a short drag, got ${tyBack}`);
+  if (!(await openCount())) errors.push(`${tag}: a short 10%-of-height drag closed the sheet`);
+
+  // (b2) QA11-5: the backdrop's scrim opacity follows the drag 1:1 while held. On a spring-back
+  // release it used to jump straight to full opacity the instant the finger lifted, well before
+  // the panel had actually animated back to rest — a visible backdrop "pop". It must stay at
+  // (close to) the held value right after release, and only reach full opacity once the panel
+  // settles.
+  const backdropOpacity = () => page.evaluate(() => {
+    const d = document.querySelector('dialog.sheet[open]');
+    return d ? parseFloat(getComputedStyle(d, '::backdrop').opacity) : null;
+  });
+  box = await panelBox();
+  const dist10b = box.height * 0.1;
+  const x0b = box.x + box.width / 2;
+  const y0b = box.y + 10;
+  const y1b = y0b + dist10b;
+  const dragMs = Math.round(dist10b / 0.15);
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    // Paced multi-step move (same pacing touchDrag uses for a slow drag) so the tracker's
+    // velocity estimate reflects a genuine slow drag, not a single-jump "flick" that would
+    // fling the sheet closed instead of springing back.
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x0b, y: y0b }] });
+    const steps = Math.min(10, Math.max(3, Math.round(dragMs / 150)));
+    for (let s = 1; s <= steps; s++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x0b, y: y0b + (y1b - y0b) * (s / steps) }] });
+      await new Promise(r => setTimeout(r, dragMs / steps));
+    }
+    // Hold at the final position without moving: the velocity estimate decays toward the held
+    // position's own (near-zero) recent motion, same as a finger paused mid-drag.
+    await page.waitForTimeout(150);
+    const heldOpacity = await backdropOpacity();
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    const rightAfterRelease = await backdropOpacity();
+    if (heldOpacity == null || rightAfterRelease == null || Math.abs(rightAfterRelease - heldOpacity) > 0.02) errors.push(`${tag} (QA11-5): expected backdrop opacity right after release (${rightAfterRelease}) within 0.02 of its held value (${heldOpacity})`);
+    await page.waitForTimeout(500);
+    const settledOpacity = await backdropOpacity();
+    if (settledOpacity == null || Math.abs(settledOpacity - 1) > 0.02) errors.push(`${tag} (QA11-5): expected backdrop opacity back at 1 once the panel is back at rest, got ${settledOpacity}`);
+    if (!(await openCount())) errors.push(`${tag} (QA11-5): sheet should remain open after a short spring-back drag`);
+  } finally {
+    await cdp.detach().catch(() => {});
+  }
+
+  // (c) A fast 60px/100ms flick closes even well under a quarter of the height.
+  box = await panelBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + 10, box.x + box.width / 2, box.y + 70, 100);
+  await page.waitForTimeout(300);
+  if (await openCount()) errors.push(`${tag}: a fast 60px/100ms flick did not close the sheet`);
+
+  // (d) Scrolled content: dragging the body scrolls the list; the sheet itself never moves or closes.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.locator('[data-palace="train.edit-split"]').first().click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
+  await page.waitForSelector('dialog.sheet[open].nested'); await page.waitForTimeout(300);
+  await topScrollTop(300);
+  await page.waitForTimeout(150);
+  const scrollBefore = await topScrollTop();
+  box = await panelBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 100, 200);
+  await page.waitForTimeout(150);
+  const scrollAfter = await topScrollTop();
+  if (!(scrollAfter < scrollBefore)) errors.push(`${tag}: expected dragging scrolled content upward, scrollTop ${scrollBefore} -> ${scrollAfter}`);
+  if ((await panelTy()) !== 0) errors.push(`${tag}: the sheet moved while its scrolled content was dragged`);
+  if ((await openCount()) < 2) errors.push(`${tag}: the sheet closed while its scrolled content was dragged`);
+
+  // (e) Starting on the search input never moves the sheet.
+  await topScrollTop(0);
+  const ibox = await page.locator('dialog.sheet[open] .sheet-panel').last().locator('input').first().boundingBox();
+  await touchDrag(page, ibox.x + ibox.width / 2, ibox.y + ibox.height / 2, ibox.x + ibox.width / 2, ibox.y + ibox.height / 2 + 150, 200);
+  await page.waitForTimeout(150);
+  if ((await panelTy()) !== 0) errors.push(`${tag}: the sheet moved while dragging from the search input`);
+  if ((await openCount()) < 2) errors.push(`${tag}: the sheet closed while dragging from the search input`);
+  await ctx.close();
+}
+
+// I7: the Escobar sheet slides in like other sheets, tracks the finger between half and full
+// while dragging, and flings to the nearest detent (or closed) on release. Full motion — under
+// reduce the drag never live-follows, so there is nothing to measure mid-drag.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = 'I7 escobar sheet';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', 'silent-black');
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(60);
+
+  // (1) Entry: a running sheet-in on open.
+  const enterRunning = await page.evaluate(() => document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName === 'sheet-in' && a.effect?.target?.classList?.contains('esc-panel')));
+  if (!enterRunning) errors.push(`${tag}: expected .esc-panel to have a running sheet-in right after open`);
+  await page.waitForTimeout(400);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click().catch(() => {});
+  await page.waitForTimeout(300);
+
+  const panelState = () => page.evaluate(() => {
+    const p = document.querySelector('.esc-panel');
+    const d = document.querySelector('dialog.esc-sheet[open]');
+    if (!p) return null;
+    const t = getComputedStyle(p).transform;
+    return { height: p.getBoundingClientRect().height, ty: t === 'none' ? 0 : new DOMMatrixReadOnly(t).f, closing: !!d?.classList.contains('closing') };
+  });
+  const grabBox = () => page.locator('.esc-grab-zone').boundingBox();
+  const vh = 844;
+  const hFull = 0.94 * vh, hHalf = 0.62 * vh;
+  const near = (a, b) => Math.abs(a - b) <= 14;
+
+  // Hall.tsx's esc-hall-input opens Escobar straight to 'full' (openEscobar({detent:'full'})).
+  let s = await panelState();
+  if (!s || !near(s.height, hFull)) errors.push(`${tag}: expected to open at full detent from the Hall input, got ${JSON.stringify(s)}`);
+
+  // (2) A fast 60px up drag ends at full (height ~= 94dvh, no transform).
+  let box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 - 60, 100);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || s.ty !== 0) errors.push(`${tag}: expected full detent after a fast up drag, got ${JSON.stringify(s)}`);
+
+  // (3) A slow 30px down drag from full returns to full.
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 30, 1000);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || s.ty !== 0) errors.push(`${tag}: expected to stay at full after a slow 30px down drag, got ${JSON.stringify(s)}`);
+
+  // Drag down to half, slowly, to set up (4).
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + (hFull - hHalf), 1400);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hHalf)) errors.push(`${tag}: expected half detent before the flick-close case, got ${JSON.stringify(s)}`);
+
+  // (4) A fast down flick from half closes, .closing first.
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + 80, 100);
+  await page.waitForTimeout(30);
+  s = await panelState();
+  if (!s?.closing) errors.push(`${tag}: expected dialog.esc-sheet.closing right after a fast down flick from half`);
+  // The remaining distance to "closed" from a modest 80px flick is well past 200px, so this
+  // settle runs at durFor('bounce') (460ms full motion), not the shorter 'spring' — give it room.
+  await page.waitForTimeout(700);
+  if (await page.locator('dialog.esc-sheet[open]').count()) errors.push(`${tag}: expected the Escobar sheet gone after its close animation`);
+
+  // (5) Back routes through the same requestEscobarClose() as the X button and backdrop click
+  // (native/back.ts calls it directly; verified at the unit level in tests/back.test.ts), so its
+  // exit is the same animation exercised by (4) above.
+
+  // (6) Focusing the composer from half animates instead of jumping. Hall.tsx's esc-hall-input
+  // always reopens at full, so drag down to half first.
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]');
+  await page.waitForTimeout(400);
+  box = await grabBox();
+  await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 + (hFull - hHalf), 1400);
+  await page.waitForTimeout(400);
+  s = await panelState();
+  if (!s || !near(s.height, hHalf)) errors.push(`${tag}: expected half detent to set up the composer-focus case, got ${JSON.stringify(s)}`);
+  await page.locator('.esc-textarea').click();
+  const animating = await page.evaluate(() => document.getAnimations().some(a => a.playState === 'running' && a.effect?.target?.classList?.contains('esc-panel')));
+  if (!animating) errors.push(`${tag}: expected a running animation on .esc-panel right after focusing the composer from half`);
+  // The FLIP travels half -> full (~270px, >= 200), so this one settles at durFor('bounce')
+  // (460ms full motion), not 'spring'.
+  await page.waitForTimeout(700);
+  s = await panelState();
+  if (!s || !near(s.height, hFull) || Math.abs(s.ty) > 1) errors.push(`${tag}: expected full detent after focusing the composer, got ${JSON.stringify(s)}`);
+  await ctx.close();
+}
+
+// F13: toast — a soft exit (no vanish-in-one-frame), a large enough and readable Undo, and
+// swipe-to-dismiss in any of the three directions it recognizes (never Undo on a swipe away).
+// The centring fix itself (no sideways jump) is QA5-4's existing probe, further down.
+{
+  let ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  let page = await ctx.newPage();
+  const tag = 'F13 toast';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+
+  // (1) Soft exit: a plain (no-action) toast's timeout adds .leaving, then the toast is gone
+  // within 250ms — never a one-frame vanish.
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  await page.evaluate(() => { [...document.querySelectorAll('dialog[open] button')].find(b => b.textContent.trim() === 'Test haptic')?.click(); });
+  await page.waitForTimeout(60);
+  if (!(await page.locator('.toast').count())) errors.push(`${tag}: expected a toast after Test haptic`);
+  await page.waitForTimeout(3050);
+  if (!(await page.locator('.toast.leaving').count())) errors.push(`${tag}: expected .toast.leaving right after its 3s timeout`);
+  await page.waitForTimeout(250);
+  if (await page.locator('.toast').count()) errors.push(`${tag}: expected the toast gone within 250ms of .leaving`);
+  await page.getByRole('button', { name: 'Close' }).click(); await page.waitForTimeout(300);
+
+  // (2)+(3) An action (Undo) toast: button hit target and contrast, per theme. Removing an
+  // exercise (F10) is the simplest reliable way to get one.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+
+  // QA11-3/QA11-6: each of these lets its toast's countdown run out without Undo, permanently
+  // removing an exercise (same as a real user who never taps Undo) — with only 3 exercises in
+  // this fixture's push split, that exhausts the list after the two swipeAway() calls below plus
+  // one more, and the next removeAndGetToast() times out finding a `.card.exercise` that no
+  // longer exists. A fresh, isolated context (like every other gate block already uses, just one
+  // per un-Undone removal instead of one per theme) sidesteps that entirely — localStorage.clear()
+  // alone isn't enough (the live session is restored from IndexedDB regardless), and clearing
+  // IndexedDB in place races the still-open connection from this same page/tab.
+  const freshLiveSession = async () => {
+    await ctx.close();
+    ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(150);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
+  };
+
+  const removeAndGetToast = async () => {
+    await page.locator('.card.exercise').first().getByRole('button', { name: 'Options', exact: true }).click(); await page.waitForTimeout(200);
+    await page.evaluate(() => { const b = [...document.querySelectorAll('dialog[open] button')].find(x => x.textContent.trim() === 'Remove from this session'); b?.click(); });
+    await page.waitForTimeout(250);
+  };
+  await removeAndGetToast();
+  const hit = await page.evaluate(() => {
+    const btn = document.querySelector('.toast button');
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const pts = [[cx, cy], [cx - 21, cy], [cx + 21, cy], [cx, cy - 21], [cx, cy + 21]];
+    return { height: r.height, hits: pts.map(([x, y]) => document.elementFromPoint(x, y) === btn || btn.contains(document.elementFromPoint(x, y))) };
+  });
+  if (!hit) errors.push(`${tag}: expected a toast with an Undo button after removing an exercise`);
+  else {
+    // min-height:32px in CSS; tolerate the sub-pixel rounding a 2x devicePixelRatio rect can show.
+    if (hit.height < 31.5) errors.push(`${tag}: Undo button is ${hit.height.toFixed(2)}px tall, expected >= 32`);
+    if (!hit.hits.every(Boolean)) errors.push(`${tag}: Undo button missed a hit-test within 21px of its centre: ${JSON.stringify(hit.hits)}`);
+  }
+  // Undo it back so the next check starts from a clean, full entry list again.
+  await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
+
+  for (const theme of themes) {
+    await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, theme);
+    await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    await removeAndGetToast();
+    const contrast = await page.evaluate(() => {
+      const btn = document.querySelector('.toast button');
+      const toast = document.querySelector('.toast');
+      if (!btn || !toast) return null;
+      const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+      const fg = parseRgba(getComputedStyle(btn).color);
+      const bg = parseRgba(getComputedStyle(toast).backgroundColor);
+      if (!fg || !bg) return null;
+      const lin = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+      const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+      const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
+      return l1 > l2 ? l1 / l2 : l2 / l1;
+    });
+    if (contrast != null && contrast < 4.5) errors.push(`${tag} ${theme}: toast button contrast ${contrast.toFixed(2)} < 4.5`);
+    await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
+  }
+  await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, 'silent-black');
+  await page.reload(); await page.waitForSelector('.nav'); await page.waitForTimeout(300);
+
+  // (4) Swipe away in any of the three recognized directions dismisses without running Undo.
+  const entriesOf = () => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).active.entries.length);
+  const swipeAway = async (dx, dy) => {
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+    const before = await entriesOf();
+    await removeAndGetToast();
+    const box = await page.locator('.toast').boundingBox();
+    await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2 + dx, box.y + box.height / 2 + dy, 100);
+    await page.waitForTimeout(300);
+    if (await page.locator('.toast').count()) errors.push(`${tag}: expected the toast gone after a ${dx || 0}/${dy || 0}px swipe`);
+    const after = await entriesOf();
+    if (after !== before - 1) errors.push(`${tag}: a swiped-away toast ran Undo (entries ${before} -> ${after}, expected ${before - 1})`);
+  };
+  await swipeAway(60, 0);
+  await swipeAway(0, 60);
+
+  // QA11-3: a plain tap (pointerdown then pointerup with no real movement) used to pause the
+  // countdown via track()'s onStart and never resume it — neither tracker had a gesture to end,
+  // so it stayed paused forever. A tap always fires both events regardless, so the toast must
+  // still dismiss on its normal schedule.
+  await freshLiveSession();
+  await removeAndGetToast();
+  const tapBox = await page.locator('.toast').boundingBox();
+  await page.mouse.move(tapBox.x + 10, tapBox.y + tapBox.height / 2);
+  await page.mouse.down(); await page.mouse.up();
+  await page.waitForTimeout(5400);
+  if (await page.locator('.toast').count()) errors.push(`${tag} (QA11-3): a tapped toast is still on screen 5.4s later — its countdown never resumed`);
+  await page.locator('.toast').getByRole('button', { name: 'Undo' }).click().catch(() => {});
+  await page.waitForTimeout(350);
+
+  // QA11-6: holding the toast pauses its countdown, and releasing resumes it with the time that
+  // was left — not a fresh one.
+  await freshLiveSession();
+  await removeAndGetToast();
+  await page.waitForTimeout(1500);
+  const holdBox = await page.locator('.toast').boundingBox();
+  await page.mouse.move(holdBox.x + 10, holdBox.y + holdBox.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(3800); // total elapsed since show: ~5300ms, past the un-paused 5000ms deadline
+  if (!(await page.locator('.toast').count())) errors.push(`${tag} (QA11-6): expected the held toast still on screen past its un-paused deadline`);
+  await page.mouse.up();
+  await page.waitForTimeout(1000);
+  if (!(await page.locator('.toast').count())) errors.push(`${tag} (QA11-6): expected the toast still on screen ~1s after release (~3.5s of its ~3.5s remaining), not gone already`);
+  await page.waitForTimeout(2900); // remaining ~2.5s plus the exit animation
+  if (await page.locator('.toast').count()) errors.push(`${tag} (QA11-6): expected the toast gone once its remaining time (not a fresh countdown) elapsed`);
   await ctx.close();
 }
 

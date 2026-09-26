@@ -1,12 +1,13 @@
 import { useEffect, useId, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren, JSX } from 'preact';
 import { IconX } from './icons';
-import { openSheetCount, registerSheet, unregisterSheet } from './sheetStack';
+import { markClosing, openSheetCount, registerSheet, sheetStack, unregisterSheet } from './sheetStack';
+import { durFor, EASE, reduced, springEase } from './motion';
 import { approxIn, enteredLoad, setLoadIn } from '@/core/units';
 import { parseLoad } from '@/core/parse';
 import type { LoadUnit } from '@/core/models';
 import { haptic } from '@/native/haptics';
-import { HOLD_CONFIRM_MS } from '@/ui/gesture';
+import { FLING_PX_PER_MS, HOLD_CONFIRM_MS, isVerticalDrag, rubber, SCROLL_LOCK_MS, SHEET_CLOSE_FRACTION, TOAST_FLING_PX_PER_MS, TOAST_SWIPE_PX, track } from '@/ui/gesture';
 
 type Div = JSX.HTMLAttributes<HTMLDivElement>;
 
@@ -53,37 +54,277 @@ export function Sheet({ title, onClose, children, palace }: { title: string; onC
   const id = useId();
   const close = useRef(onClose);
   close.current = onClose;
+  const closingRef = useRef(false);
+  const requestCloseRef = useRef<() => void>(() => close.current());
+  // I6: a sheet opened while another is already open dims nothing further (its own backdrop is
+  // transparent) — the bottom sheet keeps the one real scrim. Decided once, before this sheet
+  // registers itself, from whatever is already on the stack.
+  const [nested] = useState(() => sheetStack.value.length > 0);
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
     // QA5-1: a child that already asks for focus (e.g. a form's first field) wins over the
     // panel's own autofocus, which exists only so a sheet with no such child still gets focus.
-    const panel = d.querySelector<HTMLElement>('.sheet-panel');
-    if (panel?.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
+    const panel = d.querySelector<HTMLElement>('.sheet-panel')!;
+    if (panel.querySelector('[autofocus]')) panel.removeAttribute('autofocus');
     if (!d.open) d.showModal();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    // R5.3: Back (Android or browser) closes the top sheet through its own onClose.
-    registerSheet(id, () => close.current());
-    return () => { unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close(); };
+    closingRef.current = false;
+    // I6: the panel slides down and the scrim fades before the sheet actually unmounts — every
+    // close path (X, backdrop, Back, onCancel) routes through this instead of calling onClose
+    // straight away. A second call while already closing is a no-op (one exit, ever).
+    requestCloseRef.current = () => {
+      if (closingRef.current) return;
+      closingRef.current = true;
+      d.classList.add('closing');
+      markClosing(id);
+      const p = d.querySelector<HTMLElement>('.sheet-panel');
+      if (!p || !p.animate) { close.current(); return; }
+      const r = reduced();
+      const anim = p.animate(
+        [{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${r ? 0 : p.offsetHeight}px)`, opacity: r ? 0 : 1 }],
+        { duration: durFor('sheetExit'), easing: EASE.exit, fill: 'forwards' },
+      );
+      anim.finished.then(() => close.current()).catch(() => close.current());
+    };
+    // R5.3: Back (Android or browser) closes the top sheet through its own exit animation.
+    registerSheet(id, () => close.current(), () => requestCloseRef.current());
+
+    // A3: pull the sheet down by its handle/title, or by its content once scrolled to the top,
+    // to dismiss it. Follows the finger 1:1 (rubber-banded above 0), the scrim lightens with it,
+    // and release either finishes the close (past a quarter of the panel, or a fast flick) or
+    // springs back. No haptic (this isn't a threshold-arm gesture like A5's swipe-to-delete).
+    const applyFollow = (y: number) => {
+      panel.style.transform = `translateY(${y >= 0 ? y : -rubber(-y)}px)`;
+      const h = panel.offsetHeight || 1;
+      d.style.setProperty('--scrim-o', String(Math.max(0, 1 - Math.max(0, y) / h)));
+    };
+    const clearFollow = () => { panel.style.transform = ''; d.style.removeProperty('--scrim-o'); };
+    const finishDrag = (y: number, v: number) => {
+      const h = panel.offsetHeight || 1;
+      const shouldClose = y > 0 && (v >= FLING_PX_PER_MS || y >= SHEET_CLOSE_FRACTION * h);
+      if (!shouldClose) {
+        const anim = panel.animate([{ transform: `translateY(${y}px)` }, { transform: 'translateY(0)' }], { duration: durFor('spring'), easing: springEase() });
+        // QA11-5: clearFollow() already removes --scrim-o once the panel settles back to rest
+        // (anim.finished above). Removing it here too, immediately on release, snapped the
+        // backdrop straight to full opacity while the panel was still visibly mid-spring-back.
+        anim.finished.then(clearFollow).catch(clearFollow);
+        return;
+      }
+      if (closingRef.current) return;
+      closingRef.current = true;
+      d.classList.add('closing');
+      markClosing(id);
+      const ms = Math.min(Math.max((h - y) / Math.max(v, 0.001), 120), durFor('sheetExit'));
+      const anim = panel.animate([{ transform: `translateY(${y}px)` }, { transform: `translateY(${h}px)` }], { duration: ms, easing: EASE.exit, fill: 'forwards' });
+      anim.finished.then(() => close.current()).catch(() => close.current());
+    };
+    // Reduced motion: no live follow (a continuously-moving finger can't sensibly crossfade); the
+    // release still decides by the same distance/velocity threshold, closing via the ordinary
+    // (crossfade) requestClose, or leaving the panel exactly where it already was (untouched).
+    const onDragMove = (y: number) => { if (!reduced()) applyFollow(y); };
+    const onDragEnd = (y: number, v: number) => {
+      if (reduced()) { if (y > 0 && (v >= FLING_PX_PER_MS || y >= SHEET_CLOSE_FRACTION * (panel.offsetHeight || 1))) requestCloseRef.current(); return; }
+      finishDrag(y, v);
+    };
+    const onDragCancel = () => { if (!reduced()) clearFollow(); };
+
+    const top = d.querySelector<HTMLElement>('.sheet-top');
+    const untrack = top ? track(top, {
+      axis: 'y', capture: 'down',
+      canStart: e => !(e.target as HTMLElement).closest('button'),
+      onMove: onDragMove, onEnd: onDragEnd, onCancel: onDragCancel,
+    }) : () => {};
+
+    // Body drag: only the sheet's own content, scrolled to its very top, dragging down starts
+    // it — otherwise native scroll (or text selection) proceeds untouched. Decided on the first
+    // touchmove of each touch only. Uses raw Touch events (not track()) so it can defer to native
+    // scroll conditionally instead of capturing the pointer up front.
+    let lastScrollAt = 0;
+    let bodyTouchId: number | null = null;
+    let bodyDragging = false;
+    let bodyStartY = 0;
+    let bodyStartX = 0;
+    let bodySamples: { t: number; y: number }[] = [];
+    const onPanelScroll = () => { lastScrollAt = Date.now(); top?.classList.toggle('scrolled', panel.scrollTop > 0); };
+    const velocityOf = (now: number, y: number) => {
+      const first = bodySamples[0];
+      if (!first || now - first.t <= 0) return 0;
+      return (y - first.y) / (now - first.t);
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      if (bodyTouchId != null || (e.target as HTMLElement).closest('.sheet-top')) return;
+      // A nested sheet's own listener already claims a touch inside it — without this, the
+      // bubbled event would also reach this (outer) sheet, which has no reason to think it's
+      // scrolled and would wrongly grab (and preventDefault) the inner sheet's own scroll/drag.
+      if ((e.target as HTMLElement).closest('.sheet-panel') !== panel) return;
+      const t = e.touches[0];
+      if (!t) return;
+      bodyTouchId = t.identifier; bodyStartY = t.clientY; bodyStartX = t.clientX; bodyDragging = false; bodySamples = [{ t: performance.now(), y: t.clientY }];
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (bodyTouchId == null) return;
+      const t = [...e.touches].find(x => x.identifier === bodyTouchId);
+      if (!t) return;
+      const dy = t.clientY - bodyStartY;
+      if (!bodyDragging) {
+        const dx = t.clientX - bodyStartX;
+        const target = e.target as HTMLElement;
+        const isFormEl = !!target.closest('input, textarea, select, [contenteditable]');
+        const sel = typeof getSelection === 'function' ? getSelection() : null;
+        const hasSelection = !!sel && sel.toString().length > 0;
+        // QA11-4: without a vertical-dominance check, a horizontal scroller (or a diagonal touch)
+        // at the panel's own scrollTop 0 got taken over as a close-drag.
+        if (panel.scrollTop <= 0 && isVerticalDrag(dy, dx) && !isFormEl && !hasSelection && Date.now() - lastScrollAt >= SCROLL_LOCK_MS) bodyDragging = true;
+        else { bodyTouchId = null; return; }
+      }
+      e.preventDefault();
+      bodySamples.push({ t: performance.now(), y: t.clientY });
+      while (bodySamples.length > 2 && bodySamples[0]!.t < performance.now() - 200) bodySamples.shift();
+      onDragMove(dy);
+    };
+    const endBodyDrag = (e: TouchEvent) => {
+      if (bodyTouchId == null) return;
+      const t = [...e.changedTouches].find(x => x.identifier === bodyTouchId);
+      bodyTouchId = null;
+      if (!bodyDragging) return;
+      bodyDragging = false;
+      const dy = t ? t.clientY - bodyStartY : 0;
+      onDragEnd(dy, velocityOf(performance.now(), t ? t.clientY : bodyStartY));
+    };
+    const onTouchCancel = () => { if (bodyDragging) onDragCancel(); bodyTouchId = null; bodyDragging = false; };
+    panel.addEventListener('scroll', onPanelScroll, { passive: true });
+    panel.addEventListener('touchstart', onTouchStart, { passive: true });
+    panel.addEventListener('touchmove', onTouchMove, { passive: false });
+    panel.addEventListener('touchend', endBodyDrag, { passive: true });
+    panel.addEventListener('touchcancel', onTouchCancel, { passive: true });
+
+    return () => {
+      unregisterSheet(id); document.body.style.overflow = prev; if (d.open) d.close();
+      untrack();
+      panel.removeEventListener('scroll', onPanelScroll);
+      panel.removeEventListener('touchstart', onTouchStart);
+      panel.removeEventListener('touchmove', onTouchMove);
+      panel.removeEventListener('touchend', endBodyDrag);
+      panel.removeEventListener('touchcancel', onTouchCancel);
+    };
   }, []);
+  const requestClose = () => requestCloseRef.current();
   return (
-    <dialog ref={ref} class="sheet" aria-labelledby={id} onCancel={e => { e.preventDefault(); onClose(); }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <dialog ref={ref} class={`sheet ${nested ? 'nested' : ''}`} aria-labelledby={id} onCancel={e => { e.preventDefault(); requestClose(); }} onClick={e => { if (e.target === e.currentTarget) requestClose(); }}>
       <div class="sheet-panel" data-palace={palace} tabIndex={-1} autofocus>
-        <div class="sheet-grab" />
-        <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={onClose}><IconX /></button></div>
+        <div class="sheet-top">
+          <div class="sheet-grab" />
+          <div class="sheet-head"><h2 id={id}>{title}</h2><button type="button" class="btn btn-quiet btn-icon" aria-label="Close" onClick={requestClose}><IconX /></button></div>
+        </div>
         {children}
       </div>
     </dialog>
   );
 }
 
+/**
+ * F13: a swiped-away toast never runs its Undo (only a tap on the button does) — leave() is the
+ * one path that ever tears this down without it, whether the timer, a swipe, or (soon) something
+ * else calls it.
+ */
 export function Toast({ message, action, onAction, onDismiss }: { message: string; action?: string; onAction?: () => void; onDismiss: () => void }) {
   // The parent passes a new onDismiss each render; keep it in a ref so the timer is not reset (UI-28).
   const dismiss = useRef(onDismiss);
   dismiss.current = onDismiss;
-  useEffect(() => { const t = setTimeout(() => dismiss.current(), action ? 5000 : 3000); return () => clearTimeout(t); }, [message, action]);
-  return <div class="toast" role="status"><span>{message}</span>{action && <button type="button" onClick={() => { onAction?.(); onDismiss(); }}>{action}</button>}</div>;
+  const [leaving, setLeaving] = useState(false);
+  const leavingRef = useRef(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const remaining = useRef(action ? 5000 : 3000);
+  const runningSince = useRef(0);
+
+  const leave = () => {
+    if (leavingRef.current) return;
+    leavingRef.current = true;
+    setLeaving(true);
+    setTimeout(() => dismiss.current(), durFor('exit'));
+  };
+  const clearTimer = () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
+  const startTimer = (ms: number) => { clearTimer(); runningSince.current = Date.now(); timer.current = setTimeout(leave, ms); };
+  const pauseTimer = () => {
+    if (!timer.current) return;
+    remaining.current = Math.max(0, remaining.current - (Date.now() - runningSince.current));
+    clearTimer();
+  };
+  const resumeTimer = () => { if (!leavingRef.current && !timer.current) startTimer(remaining.current); };
+
+  useEffect(() => {
+    remaining.current = action ? 5000 : 3000;
+    startTimer(remaining.current);
+    const onVis = () => { if (document.hidden) pauseTimer(); else resumeTimer(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { clearTimer(); document.removeEventListener('visibilitychange', onVis); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message, action]);
+
+  // Swipe away: horizontal either way, or straight down (never up — that reads as "toward the
+  // content behind it", not a dismiss). Two trackers on the same element; whichever axis the
+  // gesture actually locks onto is the one that ever calls onMove/onEnd, the other aborts itself
+  // past slop (track()'s own axis-ratio check).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const untracks: Array<() => void> = [];
+    const finish = (dist: number, dir: 'x' | 'y') => {
+      if (leavingRef.current) return;
+      // Reduced motion (or no WAAPI): the ordinary crossfade exit, same as the timeout's own —
+      // a live slide isn't shown either way, so there's nothing left to continue mid-gesture.
+      if (!el.animate || reduced()) { leave(); return; }
+      leavingRef.current = true;
+      setLeaving(true);
+      const push = dist + Math.sign(dist || 1) * 300;
+      const from = dir === 'x' ? `translateX(${dist}px)` : `translateY(${dist}px)`;
+      const to = dir === 'x' ? `translateX(${push}px)` : `translateY(${push}px)`;
+      const anim = el.animate([{ transform: from, opacity: 1 }, { transform: to, opacity: 0 }], { duration: durFor('exit'), easing: EASE.exit, fill: 'forwards' });
+      anim.finished.then(() => dismiss.current()).catch(() => dismiss.current());
+    };
+    const springBack = () => {
+      if (!el.animate) { el.style.transform = ''; resumeTimer(); return; }
+      const anim = el.animate([{ transform: el.style.transform || 'none' }, { transform: 'none' }], { duration: durFor('spring'), easing: springEase() });
+      anim.finished.then(() => { el.style.transform = ''; resumeTimer(); }).catch(() => { el.style.transform = ''; resumeTimer(); });
+    };
+    untracks.push(track(el, {
+      axis: 'x', capture: 'afterSlop',
+      onMove: d => { if (!leavingRef.current && !reduced()) el.style.transform = `translateX(${d}px)`; },
+      onEnd: (d, v) => {
+        if (leavingRef.current) return;
+        if (Math.abs(d) >= TOAST_SWIPE_PX || Math.abs(v) >= TOAST_FLING_PX_PER_MS) finish(d, 'x'); else springBack();
+      },
+      onCancel: () => { if (!leavingRef.current) springBack(); },
+    }));
+    untracks.push(track(el, {
+      axis: 'y', capture: 'afterSlop',
+      onMove: d => { if (!leavingRef.current && !reduced() && d > 0) el.style.transform = `translateY(${d}px)`; },
+      onEnd: (d, v) => {
+        if (leavingRef.current) return;
+        if (d <= 0) { resumeTimer(); return; }
+        if (d >= TOAST_SWIPE_PX || v >= TOAST_FLING_PX_PER_MS) finish(d, 'y'); else springBack();
+      },
+      onCancel: () => { if (!leavingRef.current) springBack(); },
+    }));
+    return () => untracks.forEach(u => u());
+  }, []);
+
+  // QA11-3: pause/resume live on the toast's own pointer lifecycle, independent of track() —
+  // track() only calls onEnd/onCancel once a gesture has crossed slop, so a plain tap (pointerdown
+  // then pointerup with no real movement) used to pause the countdown via track()'s onStart and
+  // never resume it, since neither tracker had anything to end. A tap always fires pointerdown and
+  // pointerup regardless, so this always un-pauses.
+  const onPointerDown = () => { if (!leavingRef.current) pauseTimer(); };
+  const onPointerUp = () => { if (!leavingRef.current) resumeTimer(); };
+  return (
+    <div class={`toast ${leaving ? 'leaving' : ''}`} ref={ref} role="status" onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
+      <span>{message}</span>
+      {action && <button type="button" onClick={() => { onAction?.(); leave(); }}>{action}</button>}
+    </div>
+  );
 }
 
 /**

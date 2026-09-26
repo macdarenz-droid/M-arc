@@ -57,7 +57,7 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
     const used = new Set([...css.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]!));
     const defined = new Set([...css.matchAll(/(--[\w-]+)\s*:/g), ...themeToCss(THEMES.paper).matchAll(/(--[\w-]+)\s*:/g)].map(m => m[1]!));
     // Set from a style attribute or by the platform.
-    const inline = new Set(['--dot', '--insight', '--muscle-fill', '--pulse-beat', '--hold-ms', '--safe-area-inset-bottom', '--safe-area-inset-top']);
+    const inline = new Set(['--dot', '--insight', '--muscle-fill', '--pulse-beat', '--hold-ms', '--safe-area-inset-bottom', '--safe-area-inset-top', '--scrim-o']);
     expect([...used].filter(v => !defined.has(v) && !inline.has(v))).toEqual([]);
   });
 });
