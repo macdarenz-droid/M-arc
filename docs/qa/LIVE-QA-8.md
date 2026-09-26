@@ -92,3 +92,12 @@ Two call sites were missed. Fix them before merge, each with a test that fails b
 
 **Both:**
 - With no session today, the output must stay byte-identical to main. Add that case to the existing no-op test.
+
+## Re-check at dad7e83: QA8-5 and QA8-6 fixed
+
+The commits are 4128266 (QA8-5) and dad7e83 (QA8-6), and the diff matches the spec above line for line:
+- `daysSinceLastSession(…, now?)` returns 0 only when `trainedToday`;
+- read.ts:133/141 and brief.ts:72/88 use `trainedTodaySessions` / `ctx.now`;
+- rules.ts is untouched.
+
+With those 3 src files reverted to 0e54220, the two new midnight-crossing tests fail (brief "done today"; get_overview `trainedToday` with `daysSinceLastSession 0`), and they pass on HEAD: 92/92 across brief.test.ts and read.test.ts. The new no-session-today tests pin both surfaces to the plain day-based output.
