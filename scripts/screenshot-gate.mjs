@@ -1161,8 +1161,216 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// O3: Body recovery "Ready times" — ring tiles grouped by day, tap to open a detail strip.
+// All session times are hours-ago-from-now, computed once here and read back through the
+// page's own clock (day labels, "today"/"tomorrow" checks) — no fixed calendar dates.
+{
+  const rtSess = (hoursAgo, id, name, kg, effort, sets) => {
+    const at = Date.now() - hoursAgo * 3_600_000;
+    const d = new Date(at);
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return {
+      id, splitId: 'sp1', splitName: 'Custom', day, startedAt: new Date(at).toISOString(), endedAt: new Date(at + 1_800_000).toISOString(), durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets: Array.from({ length: sets }, () => ({ kg, reps: 8, effort })) }],
+      logging: { mode: 'live', trainedAt: new Date(at).toISOString(), trainedEndAt: new Date(at + 1_800_000).toISOString(), loggedAt: new Date(at + 1_800_000).toISOString(), timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+    };
+  };
+  const rtStateJson = (sessions, checkIns = []) => JSON.stringify({
+    version: 1, createdAt: new Date().toISOString(), profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+    goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions, active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: new Date().toISOString() }, checkIns, recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  // A spread across recovery bands: fresh + max effort (deep in "Later"), a day-old moderate
+  // session (typically "Today"/"Tomorrow"), and an older easy session (often "Ready now").
+  const rtMainSessions = [
+    rtSess(1, 'rt1', 'Barbell Curl', 20, 'max', 4),
+    rtSess(20, 'rt2', 'Leg Press', 150, 'ideal', 4),
+    rtSess(30, 'rt3', 'Lat Pulldown', 55, 'easy', 3),
+  ];
+
+  // A real click via mouse coordinates, at 20% across the element rather than dead centre:
+  // the Escobar dock is a small pill horizontally centred and fixed near the bottom of the
+  // viewport (styles.css `.esc-dock`), so a full-width row's exact centre can sit right under
+  // it. Raw coordinates also avoid locator.click()'s own actionability re-scroll, which would
+  // be mistaken for the tile moving in the "stays under the finger" checks below.
+  const tapEl = async (page, locator) => {
+    if (!(await locator.count().catch(() => 0))) return false;
+    await locator.scrollIntoViewIfNeeded().catch(() => {});
+    const box = await locator.boundingBox({ timeout: 2000 }).catch(() => null);
+    if (!box) return false;
+    await page.mouse.click(box.x + box.width * 0.2, box.y + box.height / 2);
+    return true;
+  };
+
+  const openRtBody = async (page, stateJson, theme) => {
+    await page.addInitScript(([json, t]) => { localStorage.setItem('marc.state.v1', json); localStorage.setItem('marc.theme', t); }, [stateJson, theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await page.waitForTimeout(250);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+    await page.locator('nav.nav button', { hasText: 'Body' }).click();
+    await page.waitForTimeout(350);
+    // Bring the "Ready times" card to the top of the viewport: the muscle map above it is tall,
+    // and a detail strip opening right at the bottom of a short page can otherwise grow under
+    // the fixed bottom nav (.esc-dock/.nav sit above page content there, per z-dock/z-nav).
+    await page.evaluate(() => document.querySelector('[data-palace="body.recovering"]')?.scrollIntoView({ block: 'start' }));
+    await page.waitForTimeout(150);
+  };
+
+  for (const width of [360, 390]) {
+    for (const theme of ['paper', 'silent-black']) {
+      const tag = `ready-times ${theme} ${width}`;
+      const ctx = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+      page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+      await openRtBody(page, rtStateJson(rtMainSessions), theme);
+
+      // The groups and counts equal the helper's output: every rendered tile belongs to exactly
+      // one group, and the group header's own count matches how many tiles it actually contains.
+      const dump = await page.evaluate(() => {
+        const groups = [...document.querySelectorAll('.rt-group-head')].map(h => ({ label: h.children[0]?.textContent ?? '', count: h.children[1]?.textContent ?? '' }));
+        return { groups, tiles: document.querySelectorAll('button.rt-tile').length };
+      });
+      if (!dump.groups.some(g => g.label === 'Ready now')) errors.push(`${tag}: expected a "Ready now" row`);
+      const total = dump.groups.reduce((a, g) => a + (Number(g.count) || 0), 0);
+      if (dump.tiles !== total) errors.push(`${tag}: ${dump.tiles} tiles rendered but group counts sum to ${total} (${JSON.stringify(dump.groups)})`);
+      const dayLabels = await page.evaluate(() => {
+        const fmt = (d) => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric' });
+        const now = new Date();
+        const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+        return { today: fmt(now), tomorrow: fmt(tomorrow) };
+      });
+      const todayGroup = dump.groups.find(g => g.label.startsWith('Today'));
+      if (todayGroup && !todayGroup.label.includes(dayLabels.today)) errors.push(`${tag}: "Today" header "${todayGroup.label}" does not include today's date ${dayLabels.today}`);
+      const tomorrowGroup = dump.groups.find(g => g.label.startsWith('Tomorrow'));
+      if (tomorrowGroup && !tomorrowGroup.label.includes(dayLabels.tomorrow)) errors.push(`${tag}: "Tomorrow" header "${tomorrowGroup.label}" does not include tomorrow's date ${dayLabels.tomorrow}`);
+
+      await settle(page);
+      await page.screenshot({ path: `${OUT}/${theme}-ready-times-${width}.png` });
+
+      // No text is clipped and there is no horizontal scroll.
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('.rt-tile-name, .rt-tile-time')]
+        .filter(n => !n.classList.contains('rt-probe-name') && !n.classList.contains('rt-probe-time'))
+        .filter(n => n.scrollWidth > n.clientWidth + 1).map(n => n.textContent));
+      if (clipped.length) errors.push(`${tag}: clipped ready-times text: ${clipped.join(', ')}`);
+      if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push(`${tag}: horizontal scroll on the Body tab`);
+
+      const firstTile = page.locator('button.rt-tile').first();
+      if (await firstTile.count()) {
+        // A tap opens the strip under the tapped line, and the tile moves at most 2px. Taps use
+        // real mouse coordinates (tapEl), not locator.click()'s own actionability scroll, so the
+        // only scroll that can happen is ours.
+        await firstTile.scrollIntoViewIfNeeded();
+        const beforeTop = await firstTile.evaluate(el => el.getBoundingClientRect().top);
+        await tapEl(page, firstTile);
+        await page.waitForTimeout(300);
+        const afterTop = await firstTile.evaluate(el => el.getBoundingClientRect().top);
+        if (Math.abs(afterTop - beforeTop) > 2) errors.push(`${tag}: tapped tile moved ${Math.abs(afterTop - beforeTop).toFixed(1)}px opening the strip (want <= 2px)`);
+        const detail = page.locator('.rt-detail-wrap.open .rt-detail');
+        if (!(await visible(detail))) errors.push(`${tag}: expected an open detail strip after tapping a tile`);
+
+        // Tapping the strip opens the muscle panel.
+        await tapEl(page, detail);
+        await page.waitForTimeout(300);
+        if (!(await visible(page.locator('dialog.sheet[open]')))) errors.push(`${tag}: tapping the detail strip did not open the muscle panel`);
+        await page.locator('dialog.sheet[open]').last().getByRole('button', { name: 'Close' }).click().catch(() => {});
+        await page.waitForTimeout(200);
+
+        // Tapping the same tile twice closes it.
+        if ((await firstTile.getAttribute('aria-expanded')) !== 'true') errors.push(`${tag}: expected aria-expanded=true on the still-open tapped tile`);
+        await tapEl(page, firstTile);
+        await page.waitForTimeout(300);
+        if ((await firstTile.getAttribute('aria-expanded')) !== 'false') errors.push(`${tag}: tapping the same tile twice should close it (aria-expanded=false)`);
+        if (await visible(page.locator('.rt-detail-wrap.open .rt-detail'))) errors.push(`${tag}: a detail strip is still open after closing the only open tile`);
+
+        // Switching tiles across groups keeps the newly tapped tile under the finger.
+        const otherTile = page.locator('button.rt-tile').nth(Math.min(3, (await page.locator('button.rt-tile').count()) - 1));
+        await otherTile.scrollIntoViewIfNeeded();
+        const before2 = await otherTile.evaluate(el => el.getBoundingClientRect().top);
+        await tapEl(page, otherTile);
+        await page.waitForTimeout(300);
+        const after2 = await otherTile.evaluate(el => el.getBoundingClientRect().top);
+        if (Math.abs(after2 - before2) > 2) errors.push(`${tag}: switching tiles moved the newly tapped tile ${Math.abs(after2 - before2).toFixed(1)}px (want <= 2px)`);
+
+        // A theme switch while a strip is open does not throw and the strip keeps showing.
+        await page.evaluate(() => { document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') === 'paper' ? 'silent-black' : 'paper'); });
+        await page.waitForTimeout(200);
+        if (!(await visible(page.locator('.rt-detail-wrap.open .rt-detail')))) errors.push(`${tag}: the open strip disappeared across a theme switch`);
+      }
+      await ctx.close();
+    }
+  }
+
+  // Edge cases: nothing logged, only sore muscles, a single trained muscle, 20+ muscles at once,
+  // 320 px (the one-column switch) and full motion (no-preference) — each a quick smoke check.
+  const edgeCases = [
+    { tag: 'nothing-logged', sessions: [] },
+    { tag: 'only-sore', sessions: [rtSess(96, 'e1', 'Barbell Curl', 20, 'easy', 1)], checkIns: [{ day: new Date().toISOString().slice(0, 10), soreness: { biceps: 5, brachialis: 5 } }] },
+    { tag: 'single-muscle', sessions: [rtSess(5, 'e1', 'Barbell Curl', 20, 'ideal', 3)] },
+    {
+      tag: '20-plus-muscles',
+      sessions: [
+        ['Barbell Curl', 20], ['Leg Press', 150], ['Lat Pulldown', 55], ['Overhead Press', 30], ['Triceps Pushdown', 25],
+        ['Seated Cable Row', 50], ['Hammer Curl', 12], ['Romanian Deadlift', 60], ['Standing Calf Raise', 40], ['Chest Press', 50],
+        ['Cable Crunch', 20], ['Hip Thrust', 80], ['Cable Lateral Raise', 8], ['Face Pull', 15], ['Leg Curl', 40],
+        ['Leg Extension', 45], ['Hip Abduction', 30], ['Hip Adduction', 30], ['Reverse Fly', 10], ['Wrist Curl', 8],
+        ['Ab Wheel Rollout', 15], ['Farmer Carry', 30],
+      ].map(([name, kg], i) => rtSess(1 + i * 3, `e${i}`, name, kg, i % 3 === 0 ? 'max' : i % 3 === 1 ? 'easy' : 'ideal', 3)),
+    },
+  ];
+  for (const { tag, sessions, checkIns } of edgeCases) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`ready-times ${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`ready-times ${tag} console: ${m.text()}`); });
+    await openRtBody(page, rtStateJson(sessions, checkIns), 'silent-black');
+    const readyNowRow = await page.evaluate(() => document.querySelector('[data-palace="body.ready"] .rt-group-head')?.textContent);
+    if (!readyNowRow) errors.push(`ready-times ${tag}: expected the "Ready now" row (data-palace="body.ready") to render`);
+    const tiles = page.locator('button.rt-tile');
+    const n = await tiles.count();
+    if (n > 0) { await tiles.first().click(); await page.waitForTimeout(250); await tiles.first().click(); await page.waitForTimeout(150); }
+    if (tag === 'only-sore' && !(await page.evaluate(() => [...document.querySelectorAll('.rt-group-head')].some(h => h.textContent?.startsWith('Sore today'))))) {
+      errors.push(`ready-times ${tag}: expected a "Sore today" group`);
+    }
+    if (tag === 'nothing-logged' && n !== 0) errors.push(`ready-times ${tag}: expected zero tiles`);
+    await ctx.close();
+  }
+
+  // 320px: the one-column switch, and no clipped text / no horizontal scroll there either.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 320, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`ready-times 320: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`ready-times 320 console: ${m.text()}`); });
+    await openRtBody(page, rtStateJson(rtMainSessions), 'silent-black');
+    const cols = await page.evaluate(() => { const l = document.querySelector('.rt-line'); return l ? getComputedStyle(l).gridTemplateColumns.trim().split(' ').length : 0; });
+    if (cols !== 1) errors.push(`ready-times 320: expected the one-column layout, got ${cols} column(s)`);
+    if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push('ready-times 320: horizontal scroll on the Body tab');
+    await ctx.close();
+  }
+
+  // Full motion (no-preference): the grid-rows/opacity transition opens and settles without error.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`ready-times motion: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`ready-times motion console: ${m.text()}`); });
+    await openRtBody(page, rtStateJson(rtMainSessions), 'silent-black');
+    const tile = page.locator('button.rt-tile').first();
+    await tile.click();
+    await settle(page);
+    await page.waitForTimeout(300);
+    if (!(await visible(page.locator('.rt-detail-wrap.open .rt-detail')))) errors.push('ready-times motion: expected the strip open under full motion');
+    await ctx.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5).');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), and O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases) verified.');

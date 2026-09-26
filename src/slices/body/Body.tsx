@@ -284,7 +284,7 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
 
   return (
     <Card style={{ padding: '0 4px 4px' }}>
-      <div ref={containerRef}>
+      <div ref={containerRef} class="rt-card-body">
         <div class="rt-probe" aria-hidden="true">
           <div class="rt-tile">
             <span class="rt-ring-spacer" />

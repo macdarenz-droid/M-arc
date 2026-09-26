@@ -559,6 +559,7 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transiti
 .share-status:empty { padding: 0; background: none; }
 
 /* O3: Body recovery "Ready times" — ring tiles grouped by day, with an inline detail strip. */
+.rt-card-body { position: relative; }
 .rt-probe { position: absolute; visibility: hidden; height: 0; overflow: hidden; width: 50%; pointer-events: none; }
 .rt-group-head { display: flex; align-items: center; justify-content: space-between; height: 32px; padding: 0 8px; font-size: 13px; font-weight: 600; color: var(--text); }
 .rt-group-head .muted { font-weight: 400; color: var(--text-2); }
