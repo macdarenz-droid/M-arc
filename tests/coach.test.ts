@@ -259,12 +259,23 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
     expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
   });
 
-  it('nothing done today: the old warning behaves exactly as before', () => {
+  it('nothing done today: the old warning is byte-identical to main, field for field', () => {
     const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
     const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession] };
     const out = coachInsights(ctx, 20);
     const warning = out.find(i => i.id.startsWith('scheduled-conflict'));
     expect(warning).toBeDefined();
-    expect(warning!.title).toContain('SPLIT 2 - LOWER AND CORE today, but');
+    const pct = warning!.title.match(/(\d+)%/)![1];
+    const firm = Number(pct) < 60;
+    expect(warning).toEqual({
+      id: 'scheduled-conflict:split_lower:hamstrings',
+      category: 'recovery', priority: firm ? 380 : 340,
+      title: `SPLIT 2 - LOWER AND CORE today, but hamstrings is only ${pct}% recovered`,
+      noticed: `SPLIT 2 - LOWER AND CORE is scheduled today and works hamstrings directly. It is about ${pct}% recovered.`,
+      means: firm ? 'Training this hard right now works against the muscle you are trying to build.' : 'You can still train productively at this level; the hardest sets just will not be at their best.',
+      action: firm ? 'Swap to another split today, or keep SPLIT 2 - LOWER AND CORE light and put the hard sets elsewhere.' : 'Reorder SPLIT 2 - LOWER AND CORE so this muscle comes later, or go a little lighter on it today.',
+      muscle: 'hamstrings',
+    });
+    expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
   });
 });
