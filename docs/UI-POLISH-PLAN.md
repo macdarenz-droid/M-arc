@@ -145,7 +145,7 @@ Silent: bottom-nav tab taps (remove App.tsx:96 haptic), Segmented view switchers
 | b3 Sheets and toasts | I6, A3, I7, F13 | Sheets slide up and down, pull to dismiss; coach sheet follows the finger; toasts centred, swipe away, easy Undo |
 | b4 Native | A4, F11, O1 | Crisp phone-native clicks; screen stays on during a workout; no white flash at launch; a thin, smooth logo animation at launch |
 | b5 Navigation and lists | I9, I10, I11, A5 | Tabs keep their scroll; re-tap goes to top; sliding segment thumb; lifted drag-reorder with auto-scroll; swipe to delete a past session; swipe months |
-| b6 Charts | I12, A6 | Crisp trend line with labels; current week obvious; scrub a chart to read values |
+| b6 Charts | I12, A6, O4 | Crisp trend line with labels; current week obvious; scrub a chart to read values; work-by-effort bars per exercise (also in Escobar) |
 | b7 Visual system | I13, I14, I15, I16, I17, I18, I19 | Real typeface; readable small text; calmer colour; visible layers; one spacing rhythm; even icons; designed empty state |
 | b8 Body tab (owner picks, §6b) | O2, O3 | Muscle panel as a clear recovery timeline with real dates; recovery list as a ring grid grouped by the day each muscle is ready |
 
@@ -670,6 +670,41 @@ The owner chose these from rendered samples. Build them as written and don't red
     - the palace targets `body.recovering` and `body.ready` still resolve.
   - Unit tests for the helper: same day; across midnight; an end at exactly midnight; later days; a null window; sore.
 - **Risk:** Low: display only, with no data changes.
+
+#### O4 Exercise progress: "Work done, by effort" chart (owner pick: progress option 2) — must, b6
+- **User sees:** under the existing trend line, a bar per session showing the kg lifted on that exercise, split into Easy, Right and Max. It shows whether you're doing more work, and whether you're pushing harder or easier. Escobar draws the same chart when asked about an exercise.
+- **Reference:** artifact Fg7CqN85hUcvjoAvVUrxzU, option 2. Use the app's tokens.
+- **Files:**
+  - src/ui/EffortBars.tsx (new; one component, shared with Escobar);
+  - src/slices/history/History.tsx (Exercise progress card);
+  - src/escobar/tools/show.ts (`lift_trend` gains the per-session effort split);
+  - src/escobar/ui/components/index.tsx (LiftTrend renders EffortBars under its sparkline);
+  - src/ui/styles.css;
+  - tests/effortBars.test.ts;
+  - scripts/screenshot-gate.mjs.
+- **Data** (pure helper, unit-tested): `effortSplit(history, mode, bwAt)`.
+  - Per session (the same last 12 as the trend), take the working sets only (`isWorkingSet`).
+  - Split kg into easy, ideal, max and unrated, using `LoggedSet.effort` (models.ts:90). `kind: 'failure'` counts as max (models.ts:102).
+  - kg = load × reps. For bodyweight and assisted exercises use the F13 effective load (`effectiveLoadKg`, src/brain/bodyweight.ts:61). With no body weight saved, those sets count as 0 kg, which is the same rule as Stats.
+  - Timed, distance and carry exercises with no kg: count working sets instead, and label the axis "sets".
+- **Chart:**
+  - Stacked bars, easy at the bottom, then right, then max, then unrated on top.
+  - Colours: easy `var(--text-3)`, right `var(--accent)`, max `var(--warning)`, unrated `var(--surface-3)`. Legend: "Easy · Right · Max", plus "Not rated" only when some sets are unrated.
+  - The total sits above each bar in tabular numbers, as "2,250" or "2.7t" when ≥10,000. Dates below, e.g. "3 Sept".
+  - Bars are 38px wide at 390 px, scaled to the widest session. With more than 8 sessions, scroll horizontally inside the card, never the page, and open scrolled to the latest.
+  - The tallest bar is 120 px, with no y-axis.
+  - One summary line under it: "Most work: 2,700 kg on 19 Sept." plus "Latest session had no max sets." when that's true.
+  - Tapping a bar selects it and shows that session's sets, the same text as the history rows. Once A6 lands, a finger scrub works the same way.
+  - Units follow the kg/lb setting.
+- **Escobar:**
+  - `lift_trend` adds `effort: [{day, easy, ideal, max, unrated}]` (numbers only; no body weight unless `sharing.body`, per BODY_KEYS).
+  - LiftTrend draws EffortBars under the sparkline at 120 px, with no tap.
+  - The existing fact labels stay unchanged, so the verifier can still ground numbers.
+- **Acceptance:**
+  - Unit tests: the owner's Leg Press sessions give totals 2,250 / 2,050 / 2,700 / 2,385, split as in the artifact; failure counts as max; unrated sets are shown; bodyweight sets with and without a saved body weight; a timed exercise counts sets.
+  - Gate at 360 and 390 px, Paper and Silent Black: no page scroll, labels don't overlap, a tap selects a bar, and the Escobar lift_trend card shows the bars.
+  - With `sharing.body` off, lift_trend output has no body-weight-derived numbers.
+- **Risk:** Low. Read-only display. Totals must match Stats (the same working-set and body weight rules), and a test covers that.
 
 ## 7. Not doing and Later
 
