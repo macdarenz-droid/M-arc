@@ -1,8 +1,8 @@
 // Agent links: /s/<token>. Server-rendered HTML with no script (readable by any fetch tool, postable by browser agents),
 // the same content as markdown for agents, JSON for tools, and path-based writes for agents that can send HTTP.
-import { HttpError, cleanName, segments, type Author, type FileMeta, type Folder, type FolderStat, type Link, type Message, type Project, type Store } from './store.ts'
+import { HttpError, can, cleanName, permsOf, segments, type Author, type FileMeta, type Folder, type FolderStat, type Item, type Link, type Message, type Perm, type Project, type Store } from './store.ts'
 import { json, limited, rawResponse, readBytes, readForm, readJson, type Ctx } from './app.ts'
-import { KINDS, esc, fmtBytes, isText, renderMarkdown } from '../public/shared.js'
+import { ITEM_FIELDS, KINDS, PERMS, STAGES, esc, fmtBytes, isText, renderMarkdown, roleOf } from '../public/shared.js'
 import { CONTRACT } from './contract.ts'
 
 export interface View {
@@ -55,28 +55,122 @@ export function folderAt(v: View, path: unknown): View['tree'][number] {
   return hit
 }
 
+// ── permissions ─────────────────────────────────────────────────
+const PERM_LABEL = Object.fromEntries(PERMS) as Record<Perm, string>
+/** "supervisor: post messages, add and edit files, …" or "read only". */
+export const accessText = (l: Link) => {
+  const p = permsOf(l)
+  return p.length ? `${roleOf(p)} (may ${p.map(x => PERM_LABEL[x].toLowerCase()).join(', ')})` : 'read only'
+}
+export function need(v: View, p: Perm) {
+  if (!can(v.link, p)) throw new HttpError(403, `This link may not ${PERM_LABEL[p].toLowerCase()}. The owner can allow it in Share.`)
+}
+/** The folder a write goes to. Missing folders are created only when the link may create folders. */
+export function writeFolder(v: View, path: string): Folder {
+  if (can(v.link, 'folders')) return v.store.ensurePath(v.scope.id, path)
+  const f = v.store.resolvePath(v.scope.id, path)
+  if (!f) throw new HttpError(404, `Folder “${path}” does not exist, and this link may not create folders.`)
+  return f
+}
+/** The dashboard is project-wide: links shared at the project root, or allowed to update it, see it. */
+export const seesDashboard = (v: View) => !v.scope.parent_id || can(v.link, 'items') || can(v.link, 'progress')
+function needDashboard(v: View) {
+  if (!seesDashboard(v)) throw new HttpError(403, 'This link is scoped to one folder; the project dashboard is not part of it.')
+}
+
+// ── dashboard for agents ────────────────────────────────────────
+const cell = (s: string) => s.replace(/\s+/g, ' ').replace(/\|/g, '\\|').trim() || '—'
+
+export function itemMd(it: Item): string {
+  const fields = (ITEM_FIELDS as [string, string][]).filter(([k]) => it.fields[k]).map(([k, label]) => `**${label}:** ${it.fields[k]}`)
+  return [
+    `### ${it.ref} · ${it.title}`,
+    `${it.kind} · ${it.status} · ${it.priority} priority${it.owner ? ` · owner ${it.owner}` : ''}${it.component ? ` · ${it.component}` : ''} · updated ${when(it.updated_at)} by ${it.updated_by}`,
+    ...fields,
+  ].join('\n\n')
+}
+
+export function dashboardMd(v: View, filter: { status?: unknown; kind?: unknown } = {}): string {
+  needDashboard(v)
+  const d = v.store.dashboard(v.project.id)
+  const st = String(filter.status ?? '').toLowerCase()
+  const kd = String(filter.kind ?? '').toLowerCase()
+  const items = d.items.filter(i => (!st || i.status === st) && (!kd || i.kind === kd))
+  const stage = STAGES.map(s => (s === d.info.stage ? `**${s}**` : s)).join(' › ')
+  const pct = (n: number | null) => (n == null ? 'not set' : `${n}%`)
+  const comps = d.components.length
+    ? `| Area | Component | Status | Progress | Owner |\n|---|---|---|---|---|\n${d.components.map(c => `| ${cell(c.area)} | ${cell(c.name)} | ${c.status} | ${c.progress}% | ${cell(c.owner)} |`).join('\n')}`
+    : '_No components yet. A supervisor adds them with update_progress._'
+  const rows = items.slice(0, 300)
+  const table = rows.length
+    ? `| ID | Kind | Status | Priority | Owner | Title |\n|---|---|---|---|---|---|\n${rows.map(i => `| ${cell(i.ref)} | ${i.kind} | ${i.status}${i.status === 'blocked' && i.fields.blocked ? `: ${cell(i.fields.blocked).slice(0, 80)}` : ''} | ${i.priority} | ${cell(i.owner)} | ${cell(i.title)} |`).join('\n')}${items.length > rows.length ? `\n\n_${items.length - rows.length} more; filter by status or kind._` : ''}`
+    : '_No items._'
+  return [
+    header(v, `${v.project.name} — dashboard`),
+    `Stage: ${stage}\n\nArchitecture ${pct(d.progress.architecture)} · tracker ${pct(d.progress.tasks)} done (${d.counts.byStatus.done} of ${d.counts.total}) · ${d.counts.byStatus.blocked} blocked · ${d.counts.openBugs} open bugs${d.info.repo ? ` · repo ${d.info.repo}` : ''}`,
+    `## Architecture\n${comps}`,
+    `## Tracker${st || kd ? ` (${[st, kd].filter(Boolean).join(', ')})` : ''}: ${items.length} items (fetch "item:<ID>" for the full card)\n${table}`,
+  ].join('\n\n') + '\n'
+}
+
+export function dashboardLine(v: View): string {
+  if (!seesDashboard(v)) return ''
+  const d = v.store.dashboard(v.project.id)
+  return `Dashboard: stage ${d.info.stage} · architecture ${d.progress.architecture ?? '–'}% · ${d.counts.total} items, ${d.counts.byStatus.blocked} blocked, ${d.counts.openBugs} open bugs. Read it with the dashboard tool or ${v.base}/dashboard.md.`
+}
+
+export function findItem(v: View, ref: string): Item {
+  needDashboard(v)
+  const it = v.store.items(v.project.id).find(i => i.ref.toLowerCase() === ref.trim().toLowerCase())
+  if (!it) throw new HttpError(404, `No item “${ref}”`)
+  return it
+}
+
+export function updateItem(v: View, who: Author, a: Record<string, unknown>): string {
+  need(v, 'items')
+  if (!String(a.ref ?? '').trim()) throw new HttpError(400, 'Pass the item ID as ref, e.g. "P-12"')
+  const { item, created } = v.store.upsertItem(v.project.id, who, a)
+  return `${created ? 'Added' : 'Updated'} ${item.ref} “${item.title}”: ${item.kind}, ${item.status}, ${item.priority}${item.owner ? `, owner ${item.owner}` : ''}.`
+}
+
+export function updateProgress(v: View, who: Author, a: Record<string, unknown>): string {
+  need(v, 'progress')
+  const out: string[] = []
+  if (a.stage !== undefined && a.stage !== '') {
+    v.store.setStage(v.project.id, who, a.stage)
+    out.push(`Stage is ${v.store.info(v.project.id).stage}.`)
+  }
+  if (a.component !== undefined || a.name !== undefined) {
+    const { component: c, created } = v.store.upsertComponent(v.project.id, who, a)
+    out.push(`${created ? 'Added' : 'Updated'} ${c.area ? c.area + ' / ' : ''}${c.name}: ${c.status}, ${c.progress}%.`)
+  }
+  if (!out.length) throw new HttpError(400, 'Pass a component (with status and/or progress) or a stage')
+  return out.join(' ')
+}
+
 // ── markdown for agents ─────────────────────────────────────────
 function howTo(v: View): string {
   const l = v.link
-  if (!l.can_write)
-    return `## How to use this link\nThis link is **read-only**. Read what you need, then answer in your chat; the person who shared it will post your reply here.\n\n- As an MCP server (read tools only): \`${v.base}/mcp\`\n- A folder as markdown: \`GET ${v.base}/f/<path>?format=md\`\n- Everything at once: \`GET ${v.base}/context.md\`\n- Raw files: the links in the file lists.\n`
+  const dash = seesDashboard(v) ? ` · dashboard: \`GET ${v.base}/dashboard.md\` (or \`.json\`)` : ''
+  if (!permsOf(l).length)
+    return `## How to use this link\nThis link is **read-only**. Read what you need, then answer in your chat; the person who shared it will post your reply here.\n\n- As an MCP server (read tools only): \`${v.base}/mcp\`\n- A folder as markdown: \`GET ${v.base}/f/<path>?format=md\`\n- Everything at once: \`GET ${v.base}/context.md\`${dash}\n- Raw files: the links in the file lists.\n`
+  const lines = [
+    `- Read a folder: \`GET ${v.base}/f/<path>?format=md\` · everything: \`GET ${v.base}/context.md\` · JSON index: \`GET ${v.base}/tree.json\`${dash}`,
+    can(l, 'post') && `- Post a message: \`POST ${v.base}/messages\` with JSON \`{"folder": "<path>", "body": "<markdown>", "author": "<optional display name>"}\``,
+    can(l, 'files') && `- Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body. Update a topic's existing file; version copies (plan-v2, final, patch-1.2) are refused.`,
+    can(l, 'files') && `- Append to a file (LOG.md after every change): \`POST ${v.base}/append/<path>/<file name>\` with the text as the body`,
+    can(l, 'files') && `- Upload files: \`POST ${v.base}/files\` as multipart form data: field \`folder\`, one or more \`file\``,
+    can(l, 'folders') && `- Create a folder: \`POST ${v.base}/folders\` with JSON \`{"path": "<path>"}\``,
+    can(l, 'items') && `- Add or update a tracker item: \`POST ${v.base}/items\` with JSON \`{"ref": "P-12", "title": "…", "kind": "patch", "status": "running", "owner": "${l.name}"}\`; only the fields you send change. Blocked needs \`blocked\` (the reason and what unblocks it); done needs \`verification\` (the evidence).`,
+    can(l, 'progress') && `- Update architecture progress or the stage: \`POST ${v.base}/progress\` with JSON \`{"component": "Auth API", "area": "Backend", "status": "building", "progress": 60}\` or \`{"stage": "Integrate"}\``,
+    `- Tool-using apps (Claude, ChatGPT, Cursor, Claude Code): connect \`${v.base}/mcp\` as an MCP server and use its tools instead.`,
+    can(l, 'post') && `- No HTTP tool? Use the form on ${v.base} in a browser, or answer in chat and the person will paste it.`,
+  ].filter(Boolean)
   return `## How to use this link
-You are posting as **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}). Paths are relative to this link's folder; \`""\` is its root.
+You are **${l.name}** (${KINDS[l.kind]?.label ?? 'Agent'}), ${accessText(l)}. Paths are relative to this link's folder; \`""\` is its root.
 
-- Read a folder: \`GET ${v.base}/f/<path>?format=md\` · everything: \`GET ${v.base}/context.md\` · JSON index: \`GET ${v.base}/tree.json\`
-- Post a message: \`POST ${v.base}/messages\` with JSON \`{"folder": "<path>", "body": "<markdown>", "author": "<optional display name>"}\`
-- Create or replace a file: \`PUT ${v.base}/files/<path>/<file name>\` with the raw content as the body (missing folders are created). Update a topic's existing file; version copies (plan-v2, final, patch-1.2) are refused.
-- Append to a file (LOG.md after every change): \`POST ${v.base}/append/<path>/<file name>\` with the text as the body
-- Upload files: \`POST ${v.base}/files\` as multipart form data: field \`folder\`, one or more \`file\`
-- Create a folder: \`POST ${v.base}/folders\` with JSON \`{"path": "<path>"}\`
-- Tool-using apps (Claude, ChatGPT, Cursor, Claude Code): connect \`${v.base}/mcp\` as an MCP server and use its tools instead.
-- No HTTP tool? Use the form on ${v.base} in a browser, or answer in chat and the person will paste it.
-
-\`\`\`sh
-curl -X POST ${v.base}/messages -H 'content-type: application/json' \\
-  -d '{"folder": "", "body": "Done: …"}'
-\`\`\`
-`
+${lines.join('\n')}
+${can(l, 'post') ? `\n\`\`\`sh\ncurl -X POST ${v.base}/messages -H 'content-type: application/json' \\\n  -d '{"folder": "", "body": "Done: …"}'\n\`\`\`\n` : ''}`
 }
 
 export function msgMd(v: View, m: Message, withFolder: boolean): string {
@@ -96,7 +190,7 @@ export function treeMd(v: View): string {
 
 export function header(v: View, title: string): string {
   const scope = v.scope.parent_id ? ` · scope: ${v.scope.name}/` : ''
-  return `# ${title}\n\nRelay · ${v.project.name} · link “${v.link.name}” · ${v.link.can_write ? 'read + write' : 'read only'}${scope} · ${when(Date.now())}\n${v.project.description ? `\n> ${v.project.description}\n` : ''}`
+  return `# ${title}\n\nRelay · ${v.project.name} · link “${v.link.name}” · ${accessText(v.link)}${scope} · ${when(Date.now())}\n${v.project.description ? `\n> ${v.project.description}\n` : ''}`
 }
 
 const contractMd = (v: View) => {
@@ -112,6 +206,7 @@ export function folderMd(v: View, at: View['tree'][number], how = true): string 
     header(v, `${v.project.name} ${label(at.path)}`),
     how ? contractMd(v) : '',
     how ? howTo(v) : '',
+    how ? dashboardLine(v) : '',
     `## Folders\n${treeMd(v)}`,
     subs.length ? `## Subfolders\n${subs.map(s => `- [${s.f.name}/](${folderUrl(v, s.path)}?format=md)`).join('\n')}` : '',
     `## Thread ${label(at.path)}${more ? ' (latest 100)' : ''}\n\n${messages.map(m => msgMd(v, m, false)).join('\n') || '_No messages yet._'}`,
@@ -137,6 +232,7 @@ function contextMd(v: View, at: View['tree'][number], limit: number): string {
     header(v, `${v.project.name} — context${at.path ? ' ' + label(at.path) : ''}`),
     contractMd(v),
     howTo(v),
+    dashboardLine(v),
     `## Folders\n${treeMd(v)}`,
     `## Latest ${messages.length} messages (oldest first)\n\n${messages.map(m => msgMd(v, m, true)).join('\n') || '_No messages yet._'}`,
     `## Files\n${files.map(f => fileLine(v, f)).join('\n') || '_No files._'}`,
@@ -174,12 +270,13 @@ function folderHtml(v: View, at: View['tree'][number]): Response {
     crumbs.push(`<a href="${esc(folderUrl(v, acc))}">${esc(seg)}</a>`)
   }
   const mdUrl = `${folderUrl(v, at.path)}?format=md`
-  const w = !!v.link.can_write
+  const w = can(v.link, 'post')
+  const role = permsOf(v.link).length ? roleOf(permsOf(v.link)) : ''
   const note = `<section class="s-note"><strong>For AI agents</strong>${v.store.contract(v.project.id) ? `<p>Read the project contract first: it is at the top of <a href="${esc(v.base)}/context.md">context.md</a> and in the connector’s overview. One file per topic, update instead of making versions, log every change in LOG.md.</p>` : ''}<p>This page as markdown: <a href="${esc(mdUrl)}">${esc(mdUrl)}</a>. The whole ${v.scope.parent_id ? 'folder' : 'project'} in one document: <a href="${esc(v.base)}/context.md">context.md</a>. JSON index: <a href="${esc(v.base)}/tree.json">tree.json</a>. MCP server for Claude, ChatGPT and other tool-using apps: <code>${esc(v.base)}/mcp</code>.</p>${
     w
       ? `<p>Post with HTTP: <code>POST ${esc(v.base)}/messages</code> and JSON <code>{"folder": "${esc(at.path)}", "body": "…"}</code>; replace a file with <code>PUT ${esc(v.base)}/files/&lt;path&gt;/&lt;name&gt;</code>. Or use the form at the bottom.</p>`
-      : `<p>This link is read-only: answer in your chat and the person who shared it will post it here.</p>`
-  }</section>`
+      : `<p>This link ${role ? 'cannot post' : 'is read-only'}: answer in your chat and the person who shared it will post it here.</p>`
+  }${seesDashboard(v) ? `<p>Project dashboard (stage, architecture progress, tracker): <a href="${esc(v.base)}/dashboard.md">dashboard.md</a> · <a href="${esc(v.base)}/dashboard.json">dashboard.json</a>.</p>` : ''}</section>`
   const tree = `<nav class="s-tree" aria-label="Folders">${v.tree
     .map(t => `<a class="d${Math.min(t.depth, 6)}${t.f.id === at.f.id ? ' on' : ''}" href="${esc(folderUrl(v, t.path))}">${esc(t.depth ? t.f.name : '/')}<span>${t.f.messages + t.f.files || ''}</span></a>`)
     .join('')}</nav>`
@@ -192,9 +289,9 @@ function folderHtml(v: View, at: View['tree'][number]): Response {
     .join('')
   const options = v.tree.map(t => `<option value="${esc(t.path)}"${t.f.id === at.f.id ? ' selected' : ''}>${esc(label(t.path))}</option>`).join('')
   const form = w
-    ? `<form class="s-form" method="post" action="${esc(v.base)}/messages" enctype="multipart/form-data"><h2>Post</h2><div class="row"><label>Folder <select name="folder">${options}</select></label><label>As <input name="author" value="${esc(v.link.name)}" maxlength="60"></label></div><textarea name="body" rows="6" placeholder="Markdown…"></textarea><div class="row"><input type="file" name="file" multiple><button type="submit">Post</button></div></form>`
+    ? `<form class="s-form" method="post" action="${esc(v.base)}/messages" enctype="multipart/form-data"><h2>Post</h2><div class="row"><label>Folder <select name="folder">${options}</select></label><label>As <input name="author" value="${esc(v.link.name)}" maxlength="60"></label></div><textarea name="body" rows="6" placeholder="Markdown…"></textarea><div class="row">${can(v.link, 'files') ? '<input type="file" name="file" multiple>' : '<span></span>'}<button type="submit">Post</button></div></form>`
     : ''
-  const body = `<header class="s-head"><a class="s-brand" href="${esc(v.base)}"><span class="logo" aria-hidden="true"></span>Relay</a><nav class="crumbs">${crumbs.join('<i>/</i>')}</nav><span class="s-badge${w ? ' w' : ''}">${w ? 'Read + write' : 'Read only'} · ${esc(v.link.name)}</span></header>
+  const body = `<header class="s-head"><a class="s-brand" href="${esc(v.base)}"><span class="logo" aria-hidden="true"></span>Relay</a><nav class="crumbs">${crumbs.join('<i>/</i>')}</nav><span class="s-badge${role ? ' w' : ''}">${role ? role[0]!.toUpperCase() + role.slice(1) : 'Read only'} · ${esc(v.link.name)}</span></header>
 <main class="s-main">${tree}<div class="s-col">${note}
 <section><h2>Thread <span>${esc(label(at.path))}${more ? ' · latest 100' : ''}</span></h2>${messages.map(m => msgHtml(v, m, false)).join('') || '<p class="s-empty">No messages yet.</p>'}</section>
 <section><h2>Files <span>${files.length}</span></h2>${fileRows ? `<div class="table"><table><thead><tr><th>Name</th><th>Size</th><th>By</th><th>Updated</th></tr></thead><tbody>${fileRows}</tbody></table></div>` : '<p class="s-empty">No files.</p>'}</section>
@@ -228,10 +325,16 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     if (rest === '/tree.json') {
       return json({
         project: { name: v.project.name, slug: v.project.slug, description: v.project.description },
-        link: { name: v.link.name, kind: v.link.kind, can_write: !!v.link.can_write },
+        link: { name: v.link.name, kind: v.link.kind, can_write: !!v.link.can_write, perms: permsOf(v.link) },
         folders: v.tree.map(t => ({ path: t.path, messages: t.f.messages, files: t.f.files, last_at: t.f.last_at, url: folderUrl(v, t.path) })),
         files: v.store.filesUnder(v.scope.id).map(f => ({ path: pathOf(v, f.folder_id), name: f.name, size: f.size, mime: f.mime, author: f.author, updated_at: f.updated_at, url: rawUrl(v, f) })),
       })
+    }
+    if (rest === '/dashboard.md') return markdown(dashboardMd(v, { status: c.url.searchParams.get('status'), kind: c.url.searchParams.get('kind') }))
+    if (rest === '/dashboard.json') {
+      needDashboard(v)
+      const { activity: _a, ...d } = v.store.dashboard(v.project.id)
+      return json(d)
     }
     const raw = rest.match(/^\/raw\/(\w+)(?:\/.*)?$/)
     if (raw) {
@@ -242,7 +345,7 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     throw new HttpError(404, 'Not found')
   }
 
-  if (!v.link.can_write) throw new HttpError(403, 'This link is read-only')
+  if (!permsOf(v.link).length) throw new HttpError(403, 'This link is read-only')
   if (limited(`link:${v.link.id}`, 120, 60_000)) throw new HttpError(429, 'Too many writes. Slow down for a minute.')
   const who = (name: unknown): Author => ({ author: name ? cleanName(name, 'Author', 60) : v.link.name, kind: v.link.kind, via: v.link.id })
   const ctype = c.req.headers.get('content-type') ?? ''
@@ -261,6 +364,8 @@ export async function agentRoute(c: Ctx): Promise<Response> {
       }
       uploads = uploads.slice(0, 20)
     } else fields = await readJson(c.req)
+    need(v, 'post')
+    if (uploads.length) need(v, 'files')
     const at = folderAt(v, fields.folder)
     const w = who(fields.author)
     const msg = v.store.sql.tx(() => {
@@ -276,7 +381,8 @@ export async function agentRoute(c: Ctx): Promise<Response> {
     const name = cleanName(parts.pop(), 'File name', 200)
     const add = new TextDecoder().decode(await readBytes(c.req, 1048576))
     if (!add.trim()) throw new HttpError(400, 'Nothing to append')
-    const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+    need(v, 'files')
+    const folder = writeFolder(v, parts.join('/'))
     const { file, created } = v.store.appendFile(folder.id, who(c.url.searchParams.get('author')), name, add)
     return json({ file: { name: file.name, path: parts.join('/'), size: file.size }, created }, created ? 201 : 200)
   }
@@ -284,14 +390,16 @@ export async function agentRoute(c: Ctx): Promise<Response> {
   if (method === 'PUT' && rest.startsWith('/files/')) {
     const parts = rest.slice(7).split('/').map(decode)
     const name = cleanName(parts.pop(), 'File name', 200)
+    need(v, 'files')
     const data = await readBytes(c.req, c.maxFileBytes)
-    const folder = v.store.ensurePath(v.scope.id, parts.join('/'))
+    const folder = writeFolder(v, parts.join('/'))
     const { file, created } = v.store.putFile(folder.id, who(c.url.searchParams.get('author')), { name, mime: ctype.split(';')[0] || undefined, data })
     const fresh = view(c, v.link.token)
     return json({ file: { name: file.name, path: pathOf(fresh, file.folder_id), size: file.size, url: rawUrl(fresh, file) }, created }, created ? 201 : 200)
   }
 
   if (method === 'POST' && rest === '/files') {
+    need(v, 'files')
     if (!isForm) throw new HttpError(415, 'Send multipart/form-data with a "folder" field and "file" fields, or PUT /files/<path>/<name>')
     const form = await readForm(c.req, c.maxFileBytes + 1048576)
     const at = folderAt(v, form.get('folder'))
@@ -307,10 +415,18 @@ export async function agentRoute(c: Ctx): Promise<Response> {
   }
 
   if (method === 'POST' && rest === '/folders') {
+    need(v, 'folders')
     const b = isForm ? Object.fromEntries((await readForm(c.req, 65536)).entries()) : await readJson(c.req, 65536)
     const f = v.store.ensurePath(v.scope.id, b.path)
     const fresh = view(c, v.link.token)
     return json({ folder: { path: pathOf(fresh, f.id), url: folderUrl(fresh, pathOf(fresh, f.id)) } }, 201)
+  }
+
+  if (method === 'POST' && (rest === '/items' || rest === '/progress')) {
+    const b = await readJson(c.req, 65536)
+    const w = who(b.author)
+    const message = rest === '/items' ? updateItem(v, w, b) : updateProgress(v, w, b)
+    return json({ ok: true, message })
   }
 
   throw new HttpError(405, 'Method not allowed here')

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Agent guard: enforces docs/AGENT-RULES.md on every push. Two agents work on this repo in
-# parallel (remediation: claude/marc-r*, watch: codex/*). Each failure prints WHY and the FIX.
+# Agent guard: enforces docs/AGENT-RULES.md on every push. Claude builders work on claude/*
+# branches and the watch agent on codex/*. Each failure prints WHY and the FIX.
 set -uo pipefail
 BRANCH="${GUARD_BRANCH:-${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
 BASE_REF="${GUARD_BASE:-origin/main}"
@@ -40,9 +40,9 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
       HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
       [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
       ;;
-    claude/marc-r*)
+    claude/*)
       HIT=$(echo "$CHANGED" | grep -E '^(native/wear/|src/native/wearEngine\.ts|src/slices/settings/WatchLab\.tsx)' || true)
-      [ -z "$HIT" ] || err 'Remediation agent in watch files' "the remediation branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
+      [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
       ;;
   esac
   BEHIND=$(git rev-list --count "HEAD..$BASE_REF" 2>/dev/null || echo 0)
