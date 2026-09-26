@@ -10,7 +10,7 @@ import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf, daysBetween, addDays, weekStart } from '@/core/dates';
+import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
 import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
 import { plateauStatus, sinceLastBreak } from '../trend';
@@ -136,6 +136,37 @@ export const RULES: Rule[] = [
       for (const se of split.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => primaryMuscles.add(m));
       const worst = d.recovery.filter(r => primaryMuscles.has(r.muscle) && !r.ready).sort((a, b) => a.pct - b.pct)[0];
       if (!worst) return [];
+      // QA8-1: the split that caused this fatigue is already done today (or ended today within the
+      // last 6h, per QA8-4) — re-warning about it just re-reports the fatigue it just caused.
+      const doneToday = trainedTodaySessions(ctx.sessions, ctx.today, ctx.now);
+      if (doneToday.some(s => s.splitId === split.id) || worst.lastDay === ctx.today) {
+        const next = nextScheduled(ctx.schedule, ctx.today);
+        let body = 'Rest and recover.';
+        if (next) {
+          const nextSplit = ctx.splits.find(s => s.id === next.splitId);
+          const label = nextSplit?.name ?? 'your next session';
+          let warn = '';
+          if (nextSplit) {
+            const nextPrimary = new Set<MuscleId>();
+            for (const se of nextSplit.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => nextPrimary.add(m));
+            const hoursAhead = daysBetween(ctx.today, next.day) * 24;
+            const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && r.hoursLeft > hoursAhead).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
+            if (notReady) {
+              const window = notReady.readyInHours ? `in ${formatHours(notReady.readyInHours[0])}–${formatHours(notReady.readyInHours[1])}` : `in about ${formatHours(notReady.hoursLeft)}`;
+              warn = ` ${muscleLabel(notReady.muscle)} should be ready ${window}.`;
+            }
+          }
+          body = `Next: ${label} on ${WEEKDAY_LABEL[next.weekday]}.${warn}`;
+        }
+        return [{
+          id: `recovery.done-today:${split.id}`,
+          category: 'recovery', priority: 335,
+          title: `Done today: ${split.name}`,
+          noticed: `${split.name} is done for today.`,
+          means: body,
+          action: 'Recover well before the next one.',
+        }];
+      }
       const firm = worst.pct < 60;
       return [{
         id: `scheduled-conflict:${split.id}:${worst.muscle}`,

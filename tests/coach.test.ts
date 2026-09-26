@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { coachInsights, deloadOffer } from '@/brain/coach/rules';
-import { emptySchedule } from '@/core/models';
-import { baseCoachExtras, session, sets } from './helpers';
+import { emptySchedule, type Split } from '@/core/models';
+import { baseCoachExtras, session, sessionAt, sets } from './helpers';
 
 const baseCtx = { sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), ...baseCoachExtras };
 const bench = 'lib_barbell_bench_press';
@@ -229,5 +229,42 @@ describe('plateau needs time and ignores the time before a break (QA-R3a-6, QA-R
       const sessions = [session('2026-08-07', [{ id: bench, sets: sets(100, 5, 'ideal', n) }]), ...days.map((d, i) => session(d, [{ id: bench, sets: sets(100 + i * 0.25, 5, 'ideal', n) }]))];
       expect(coachInsights({ ...ctx, sessions }, 20).some(i => i.id.startsWith('plateau-lever'))).toBe(false);
     }
+  });
+});
+
+describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
+  const HAM = 'lib_seated_leg_curl';
+  const splitLower: Split = { id: 'split_lower', name: 'SPLIT 2 - LOWER AND CORE', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: HAM, sets: 3 }] };
+  const splitUpper: Split = { id: 'split_upper', name: 'Upper', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: bench, sets: 3 }] };
+  const schedule = { ...emptySchedule(), sat: 'split_lower', mon: 'split_upper' };
+
+  it('the owner\'s case: finishing SPLIT 2 just past midnight does not re-warn about the fatigue it just caused', () => {
+    // Started Fri 23:30, ended Sat 00:40; checked Sat 01:00, still inside the 6h window (QA8-4).
+    const finishedLate = sessionAt('2026-09-25T23:30:00.000Z', '2026-09-26T00:40:00.000Z', [{ id: HAM, sets: sets(40, 12, 'max', 4) }], 'split_lower');
+    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T01:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [finishedLate] };
+    const out = coachInsights(ctx, 20);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
+    const doneToday = out.find(i => i.id === 'recovery.done-today:split_lower');
+    expect(doneToday).toBeDefined();
+    expect(doneToday!.title).toBe('Done today: SPLIT 2 - LOWER AND CORE');
+    expect(doneToday!.means).toContain('Next: Upper on Mon');
+  });
+
+  it('a different, unscheduled split done today keeps the old warning when the scheduled split is still pending', () => {
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+    const todaysChestSession = session('2026-09-26', [{ id: bench, sets: sets(60, 8, 'ideal', 3) }], 'split_chest');
+    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession, todaysChestSession] };
+    const out = coachInsights(ctx, 20);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(true);
+    expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
+  });
+
+  it('nothing done today: the old warning behaves exactly as before', () => {
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession] };
+    const out = coachInsights(ctx, 20);
+    const warning = out.find(i => i.id.startsWith('scheduled-conflict'));
+    expect(warning).toBeDefined();
+    expect(warning!.title).toContain('SPLIT 2 - LOWER AND CORE today, but');
   });
 });
