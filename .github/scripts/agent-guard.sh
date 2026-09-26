@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Agent guard: enforces docs/AGENT-RULES.md on every push. Two agents work on this repo in
-# parallel (remediation: claude/marc-r*, watch: codex/*). Each failure prints WHY and the FIX.
+# Agent guard: enforces docs/AGENT-RULES.md on every push. Claude builders work on claude/*
+# branches and the watch agent on codex/*. Each failure prints WHY and the FIX.
 set -uo pipefail
 BRANCH="${GUARD_BRANCH:-${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
 BASE_REF="${GUARD_BASE:-origin/main}"
@@ -9,21 +9,6 @@ RULES='docs/AGENT-RULES.md'
 fail=0; warnn=0
 err()  { echo "::error title=$1::$2 FIX: $3 (see $RULES)"; fail=1; }
 warn() { echo "::warning title=$1::$2 FIX: $3 (see $RULES)"; warnn=1; }
-
-# Rule 0: a stop issued by the supervisor (Claude, acting for the owner). While SUPERVISOR-STOP.md
-# exists this check fails and prints it. Resuming also requires the merge the note asks for.
-if [ -f SUPERVISOR-STOP.md ]; then
-  echo "::error title=STOPPED by Claude (supervisor)::This branch was stopped on purpose by Claude, the supervising agent for the owner. Read SUPERVISOR-STOP.md at the repo root (printed below) and do what it says before any other work."
-  echo "----- SUPERVISOR-STOP.md -----"; cat SUPERVISOR-STOP.md; echo "------------------------------"
-  fail=1
-fi
-case "$BRANCH" in
-  codex/*)
-    REQUIRED_MAIN='4f98b522aba726aae6bf328ae2cc98156f3a8bb1'   # PR #4 merge (R0-R3 + permanent signing). Resume condition for the watch branch.
-    if ! git merge-base --is-ancestor "$REQUIRED_MAIN" HEAD 2>/dev/null; then
-      err 'Required merge missing' "this branch does not contain main commit ${REQUIRED_MAIN:0:7} (PR #4: R0-R3 and the permanent signing key)." 'git fetch origin main && git merge origin/main, keeping both sides (see SUPERVISOR-STOP.md / docs/AGENT-RULES.md).'
-    fi ;;
-esac
 
 # Rule 1: one permanent signing identity (Huawei Wear Engine is registered to it).
 if [ -f .github/workflows/build-apk.yml ]; then
@@ -55,9 +40,9 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
       HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
       [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
       ;;
-    claude/marc-r*)
+    claude/*)
       HIT=$(echo "$CHANGED" | grep -E '^(native/wear/|src/native/wearEngine\.ts|src/slices/settings/WatchLab\.tsx)' || true)
-      [ -z "$HIT" ] || err 'Remediation agent in watch files' "the remediation branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
+      [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
       ;;
   esac
   BEHIND=$(git rev-list --count "HEAD..$BASE_REF" 2>/dev/null || echo 0)

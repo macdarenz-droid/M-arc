@@ -10,7 +10,7 @@ The owner approved this on 2026-09-26. It runs after item 9 and the fix loop for
 2. **Coach server protection** (code in escobar-worker/; the owner deploys):
    - requests per install and per IP are limited, with a size cap;
    - a daily spending guard (a token budget counter): when the budget is used up, the coach returns a friendly "coach is resting, try later";
-   - an uptime alert hook.
+   - an uptime alert hook that reuses what exists (the `/health` endpoint plus a scheduled check that posts to Relay). A new alerting provider needs the owner's approval first.
 3. **In the app:**
    - a training and AI disclaimer in onboarding and in the coach sheet ("not medical advice; the coach can be wrong");
    - a clear message when the coach is unreachable or resting;

@@ -18,61 +18,62 @@ The owner's rules. Relay's CONTRACT.md carries the same ones.
 
 Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor keeps this section current. If the Agent guard check fails, read docs/AGENT-RULES.md.
 
-**Roles**
-- **Supervisor** (one Claude session): owns the task board (Relay `tasks/TASKS.md`), the merge queue and these rules. It reacts to PR and CI events rather than polling.
+**Roles:**
+- **Supervisor** (one Claude session): owns the task board (Relay `tasks/TASKS.md`), the merge queue and these rules.
 - **Builders** (one session per task, on a `claude/*` branch): build and test only what their task card lists.
-- **Reviewer** (on demand, fresh context): checks a finished diff against its spec and failure paths. Builders never approve their own work.
-- **Watch agent** (GPT/Codex, `codex/gt6-gate-a-watch-lab`): owns the watch files below. Agents never merge its PR.
+- **Reviewer** (fresh context, on demand): checks a finished diff against its spec. Builders never approve their own work.
+- **Watch agent** (GPT/Codex, `codex/gt6-gate-a-watch-lab`): agents never merge its PR.
 
-**What agents may do without asking**
-- Build, test and push on their own `claude/*` branch, and open draft PRs.
-- The supervisor may merge an app PR into `main` once its QA passes and every check is green on a head that contains the latest `main`.
+**Agents may, without asking:** build, test and push on their own `claude/*` branch, and open draft PRs.
 
-**Only the owner**
-- Deploys the Escobar Worker. Merging anything under `escobar-worker/**` into `main` deploys it, so those changes go in a separate PR that the owner merges.
-- Decides anything about the signing key, keystores or Huawei secrets.
-- Publishes releases and store listings, and sets spending caps.
-- Approves new kinds of stored or sent user data, new paid services or providers, and any spending. Test calls to the live coach use the owner's AI key.
+**Only the owner:**
+- deploys the Escobar Worker (merging anything under `escobar-worker/**` into `main` deploys it, so those changes go in a separate PR that the owner merges);
+- decides anything about the signing key, keystores or Huawei secrets;
+- publishes releases and store listings;
+- approves new kinds of stored or sent user data, new paid services or providers, and any spending (test calls to the live coach use the owner's AI key).
 
-**Never, whoever asks**
+**Never, whoever asks:**
 - Commit keys or secrets; the repo is public.
-- Rotate or replace the signing key `05:66:9A:…:F1:F5`.
-- Push to `main` directly.
+- Touch the signing steps, `EXPECTED_SHA256` or keystore handling, or rotate or replace the key `05:66:9A:…:F1:F5`.
+- Push directly to `main` or `claude/escobar-v2-implementation-eidx64`.
+- Rewrite history (rebase, amend, force-push) on a branch you don't own.
 - Skip, loosen or delete a test or guard check to get green.
-- Get past a permission denial through another agent.
+- Work around a permission or classifier denial by any means, including through another agent.
 
-**File ownership** (one owner per shared file)
+**File ownership** (one owner per shared file):
 
 | Path | Owner | Rule for everyone else |
 |---|---|---|
-| `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`, its row in `Settings.tsx`, its lines in CI | watch agent | Never change. The guard fails the push. |
+| `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx` | watch agent | Never change. The guard fails the push. |
+| The Watch-lab row in `Settings.tsx`, the watch agent's lines in CI | watch agent | Never change. Only review catches these, not the guard. |
 | `escobar-worker/**` | the owner deploys | Separate PR; the owner merges it. |
-| `.github/**`, `scripts/prepare-android.sh`, `native/patch_manifest.py` | supervisor | Add checks only. Never touch the signing steps, `EXPECTED_SHA256`, keystore handling or the watch agent's lines. |
-| `package.json`, `package-lock.json` | supervisor | No new dependency without the supervisor's OK. The lockfile comes from npm, never hand edits. |
+| `.github/**`, `scripts/prepare-android.sh`, `native/patch_manifest.py` | supervisor | Add checks only. |
+| `package.json`, `package-lock.json` | supervisor | No new dependency without the supervisor's OK. The lockfile comes from npm. |
 | Saved data shape (`src/core/models.ts`, `src/core/store.ts`, migrations) | the owner approves | New kinds of saved data need the owner's approval first. |
 | `scripts/screenshot-gate.mjs`, `tests/theme.test.ts` | shared, add-only | Add your own blocks, named with your task IDs. Never edit, move or delete another task's block. When merging `main`, keep both sides. |
-| `src/ui/styles.css` | the task card that owns shared styles | Others add rules only for their own new components, in one block marked with the task ID. |
+| `src/ui/styles.css` | the task card that owns shared styles | Others change only rules for components their card names, in one block marked with the task ID. |
 | `src/app/App.tsx`, `src/main.tsx` | supervisor | Smallest possible wiring change, called out in the PR. |
 
-**Task card** (the supervisor gives one to every builder; it links to the spec rather than copying it)
+**Builders:**
+- Work from a task card. Its fields: `id`, `outcome`, `base`, `depends_on`, `read_first`, `write_scope`, `reserved_paths`, `acceptance` (criterion IDs, including failure paths), `design_reference`, `connectivity`, `verification`, `risk_and_recovery`, `return`.
+- Open a draft PR as soon as your first commit is pushed; push after every finished task.
+- Merge `origin/main` (with a merge commit) before asking for review.
+- Map every acceptance criterion to evidence: a unit test, a gate probe or a recorded device check. A bug fix needs a test that fails before and passes after.
+- In the PR body, list the head commit, the changed paths, the evidence for each criterion, what needs a real phone, and open risks.
+- After two failed tries of the same approach with no new evidence, stop and tell the supervisor.
 
-`id` · `outcome` · `base` (branch + commit) · `depends_on` · `read_first` · `write_scope` · `reserved_paths` · `acceptance` (criterion IDs, including failure paths) · `design_reference` · `connectivity` · `verification` (commands) · `risk_and_recovery` · `return` (head commit, changed paths, evidence, open risks)
+**Supervisor:**
+- Reacts to PR and CI events, not polling.
+- Merges an app PR only when:
+  - its review passed;
+  - every check is green on a head that contains the latest `main`;
+  - every lower-numbered item on the owner's checklist has merged (builds may run ahead in parallel lanes; merges may not).
+- After each merge, sends the owner the installable APK from that commit's green CI run, after checking that the fingerprint step passed.
+- Re-reviews when `main` changed in files the PR touches or in the shared files above.
+- Treats evidence as valid only for the exact commit or APK it ran on. The release candidate gets its full regression run again after its last change.
+- Task states: ready → running → review → integrating → done (merged and accepted). A blocked task names its reason and what unblocks it.
 
-**Builders**
-- Open a draft PR as soon as your first commit is pushed, so every push runs CI and the supervisor hears about it.
-- Push after every finished task.
-- Merge `origin/main` before asking for review. Use a merge commit; never rebase or force-push a shared branch.
-
-**Task states and evidence**
-- **States:** ready → running → review → integrating → done. A blocked task carries its reason and what unblocks it.
-  - "Done" means merged into `main` and accepted.
-  - Release status lives in `docs/RELEASE-READINESS.md`.
-- **Evidence:** every acceptance criterion maps to evidence: a unit test, a gate probe or a recorded device check. One test may cover several criteria. A bug fix needs a test that fails before the fix and passes after it.
-- **When to re-review:** if `main` changed in files the PR touches, or in the shared files above. A docs-only change on `main` needs only a clean merge and green CI.
-- **Exact build:** evidence counts only for the exact commit or APK it ran on. The release candidate gets its full regression run again after its last change.
-- **Stuck:** after two failed tries of the same approach with no new evidence, stop and hand it to the supervisor.
-
-**Commands**
+**Commands:**
 - `npm ci`
 - `npm run typecheck`
 - `npm test`
