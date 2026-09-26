@@ -1554,6 +1554,22 @@ for (const theme of themes) {
   if (await page.locator('.toast').count()) errors.push(`${tag} (QA11-3): a tapped toast is still on screen 5.4s later — its countdown never resumed`);
   await page.locator('.toast').getByRole('button', { name: 'Undo' }).click().catch(() => {});
   await page.waitForTimeout(350);
+
+  // QA11-6: holding the toast pauses its countdown, and releasing resumes it with the time that
+  // was left — not a fresh one.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await removeAndGetToast();
+  await page.waitForTimeout(1500);
+  const holdBox = await page.locator('.toast').boundingBox();
+  await page.mouse.move(holdBox.x + 10, holdBox.y + holdBox.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(3800); // total elapsed since show: ~5300ms, past the un-paused 5000ms deadline
+  if (!(await page.locator('.toast').count())) errors.push(`${tag} (QA11-6): expected the held toast still on screen past its un-paused deadline`);
+  await page.mouse.up();
+  await page.waitForTimeout(1000);
+  if (!(await page.locator('.toast').count())) errors.push(`${tag} (QA11-6): expected the toast still on screen ~1s after release (~3.5s of its ~3.5s remaining), not gone already`);
+  await page.waitForTimeout(2900); // remaining ~2.5s plus the exit animation
+  if (await page.locator('.toast').count()) errors.push(`${tag} (QA11-6): expected the toast gone once its remaining time (not a fresh countdown) elapsed`);
   await ctx.close();
 }
 
