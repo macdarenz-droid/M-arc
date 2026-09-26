@@ -1,7 +1,7 @@
 /** Derived, memoised views over the store that several screens share. */
 import { computed } from '@preact/signals';
 import { state } from '@/core/store';
-import { weekdayOf, daysBetween } from '@/core/dates';
+import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
@@ -18,6 +18,13 @@ export const unit = computed(() => state.value.preferences.weightUnit);
 export const splitById = (id: string) => state.value.splits.find(s => s.id === id);
 export const scheduledSplitId = computed(() => state.value.schedule[weekdayOf(today.value)]);
 export const scheduledSplit = computed(() => { const id = scheduledSplitId.value; return id ? splitById(id) : undefined; });
+/** QA8-2: the next scheduled split after today, resolved to the actual Split. */
+export const nextScheduledSplit = computed(() => {
+  const n = nextScheduled(state.value.schedule, today.value);
+  if (!n) return null;
+  const split = splitById(n.splitId);
+  return split ? { split, weekday: n.weekday } : null;
+});
 
 /**
  * QA-R2d-1: one computed per state field. A computed only notifies when its value changes
@@ -33,11 +40,13 @@ export const recovery = computed(() => recoveryStatus({ sessions: sessions.value
 export const todayCheckIn = computed(() => checkIns.value.find(c => c.day === today.value));
 export const todayReadiness = computed(() => readiness({
   today: today.value,
+  now: minuteNow.value,
   healthDays: healthDays.value,
   checkIn: todayCheckIn.value,
   checkInHistory: checkIns.value.filter(c => c.day !== today.value && daysBetween(c.day, today.value) <= 30),
   recovery: recovery.value,
   scheduledSplit: scheduledSplit.value,
+  next: nextScheduledSplit.value,
   custom: customExercises.value,
   sessions: sessions.value,
 }));
@@ -54,7 +63,8 @@ export const insights = computed(() => coachInsights(coachContext.value, 3));
 /** null once its endDay passes — F3.3 "closes itself" is read-time gating, no mutation needed. */
 export const activeDeload = computed(() => { const d = state.value.deload; return d && d.endDay >= today.value ? d : null; });
 export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
-export const sessionsToday = computed(() => state.value.sessions.filter(s => s.day === today.value));
+/** QA8-4: also counts a session that started before midnight and ended today, within the last 6 hours. */
+export const sessionsToday = computed(() => trainedTodaySessions(state.value.sessions, today.value, minuteNow.value));
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;
   return shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);

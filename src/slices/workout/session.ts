@@ -16,6 +16,7 @@ import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
 import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
+import { resyncReminders } from '@/slices/settings/reminders';
 import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600;
@@ -481,6 +482,8 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
   }));
   flushSave();
+  // QA8-3: a reminder scheduled before this session started may still be queued for today.
+  void resyncReminders();
   void cancelRestDone();
   void haptic.success();
   return { session, changedTemplate };

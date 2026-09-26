@@ -5,7 +5,7 @@
  * model can cite them. Health and body details only appear when shared.
  */
 import type { MemoryItem } from '@/core/models';
-import { daysBetween, weekdayOf } from '@/core/dates';
+import { daysBetween, weekdayOf, trainedTodaySessions } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
 import { trainingAgeMonths, ageOf } from '@/brain/recovery';
@@ -69,7 +69,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const e = s.escobar;
   const L: Record<string, string> = {};
   const d = new Date(ctx.now);
-  const since = daysSinceLastSession(s.sessions, ctx.today);
+  const since = daysSinceLastSession(s.sessions, ctx.today, ctx.now);
   L.now = `${weekdayOf(ctx.today)} ${ctx.today}, ${TIME_OF_DAY(d.getHours())} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}; ${since == null ? 'no sessions logged yet' : since === 0 ? 'trained today' : `last session ${num(since, 'days since last session', 'days')} ago`}`;
   const f = ctx.focus;
   L.screen = f ? `${f.id}${f.details ? ' ' + Object.entries(f.details).map(([k, v]) => `${k}=${v}`).join(' ') : ''}` : 'unknown';
@@ -78,14 +78,15 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const r = readinessToday(ctx);
   const parts: string[] = [];
   parts.push(split ? `scheduled ${one(split.name)} (splitId ${split.id})` : 'rest day');
-  if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
+  if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${r.postSessionAdvice ? ` (${one(r.postSessionAdvice)})` : ''}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
   else parts.push('readiness none (no check-in or health data)');
   const deload = activeDeloadOf(ctx);
   if (deload) parts.push(`lighter week day ${num(Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), 'lighter week day')} of 7`);
   const o = todayOverrideOf(ctx);
   if (o) parts.push(`today adjusted: ${one(o.reason)}`);
   if (s.active) parts.push(`live session: ${one(s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'workout')}`);
-  if (s.sessions.some(x => x.day === ctx.today)) parts.push(`done today: ${s.sessions.filter(x => x.day === ctx.today).map(x => one(x.splitName)).join(', ')}`);
+  const doneToday = trainedTodaySessions(s.sessions, ctx.today, ctx.now);
+  if (doneToday.length) parts.push(`done today: ${doneToday.map(x => one(x.splitName)).join(', ')}`);
   L.today = parts.join('; ');
 
   const least = recoveryAt(ctx).filter(x => x.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, 3);
