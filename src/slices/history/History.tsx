@@ -17,7 +17,8 @@ import { exerciseHistory, modeOf } from '@/brain/history';
 import { plannedThisWeek, weekSummary } from '@/brain/weekly';
 import { volumeChartWeeks } from './volumeChart';
 import { findExercise } from '@/core/exercises';
-import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel } from '@/brain/bodyweight';
+import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
+import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
@@ -27,7 +28,7 @@ import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { haptic } from '@/native/haptics';
 import { durFor, EASE, reduced, springEase } from '@/ui/motion';
-import { EDGE_IGNORE_PX, FLING_PX_PER_MS, rubber, SWIPE_COMMIT_FRACTION, SWIPE_FLING_MIN_PX, track } from '@/ui/gesture';
+import { EDGE_IGNORE_PX, FLING_PX_PER_MS, rubber, SWIPE_COMMIT_FRACTION, SWIPE_FLING_MIN_PX, SCRUB_HOLD_MS, track } from '@/ui/gesture';
 
 /** Every session delete (a swipe or the editor's own Delete) goes through this, so both get the
  * same Undo (restores the exact session, its heart series included). */
@@ -308,6 +309,37 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
 
 const KIND_TAG = { warmup: 'W', drop: 'D', failure: 'F' } as const;
 
+/**
+ * QA14-1: the readout above a scrubbed chart crossfades from the scrubbed value back to the
+ * latest one on release, instead of snapping in one frame. Two spans (old fading out, current
+ * fading in) toggle their opacity a frame after mount (the QA5-17 double-rAF idiom, so the browser
+ * paints the starting opacity before the transition-triggering class lands). `reduced()` collapses
+ * the fade to 0ms via an inline duration, so the swap is instant without a second code path.
+ */
+function ChartReadout({ text }: { text: string }) {
+  const [old, setOld] = useState<string | null>(null);
+  const [leaving, setLeaving] = useState(false);
+  const curRef = useRef(text);
+  useEffect(() => {
+    if (curRef.current === text) return undefined;
+    const prev = curRef.current;
+    curRef.current = text;
+    setOld(prev);
+    setLeaving(false);
+    const ms = reduced() ? 0 : durFor('fast');
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setLeaving(true)));
+    const t = setTimeout(() => { setOld(null); setLeaving(false); }, ms);
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+  }, [text]);
+  const ms = reduced() ? 0 : durFor('fast');
+  return (
+    <div class="chart-readout">
+      {old != null && <span class={`num readout-old${leaving ? ' leaving' : ''}`} style={{ transitionDuration: `${ms}ms` }} aria-hidden="true">{old}</span>}
+      <span class={`num readout-cur${old != null && !leaving ? ' entering' : ''}`} style={{ transitionDuration: `${ms}ms` }}>{text}</span>
+    </div>
+  );
+}
+
 /** F8: 12 weeks of training volume as bars, in the display unit. */
 function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const s = state.value;
@@ -315,15 +347,84 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u, 12, bw), [s.sessions, s.customExercises, today.value, u, bw]);
   const values = weeks.map(w => w.value);
   const max = Math.max(1, ...values);
+  const [volScrub, setVolScrub] = useState<number | null>(null);
+  const idxRef = useRef<number | null>(null);
+  const barsRef = useRef<HTMLDivElement>(null);
+  const updateVolIndex = (i: number | null) => {
+    if (i === idxRef.current) return;
+    idxRef.current = i;
+    setVolScrub(i);
+    if (i !== null) haptic.tick();
+  };
+  // A6: nearest bar column by x (accounts for the row's own gaps), same drag/hold start rule as the sparkline.
+  useEffect(() => {
+    const el = barsRef.current;
+    if (!el || weeks.length < 2) return undefined;
+    const nearestIndex = (clientX: number): number => {
+      const cols = [...el.querySelectorAll<HTMLElement>('.volume-bar-col')];
+      let best = 0, bestDist = Infinity;
+      cols.forEach((c, i) => { const r = c.getBoundingClientRect(); const dist = Math.abs(r.left + r.width / 2 - clientX); if (dist < bestDist) { bestDist = dist; best = i; } });
+      return best;
+    };
+    let startX = 0;
+    let holdTimer: number | null = null;
+    let dragging = false;
+    const clearHold = () => { if (holdTimer != null) { window.clearTimeout(holdTimer); holdTimer = null; } };
+    const onPointerDown = (e: PointerEvent) => {
+      startX = e.clientX;
+      clearHold();
+      holdTimer = window.setTimeout(() => { dragging = true; updateVolIndex(nearestIndex(startX)); }, SCRUB_HOLD_MS);
+    };
+    const end = () => { clearHold(); if (dragging) { dragging = false; updateVolIndex(null); } };
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    const untrack = track(el, {
+      axis: 'x', capture: 'afterSlop',
+      onMove: d => { clearHold(); dragging = true; updateVolIndex(nearestIndex(startX + d)); },
+      onEnd: end,
+      onCancel: end,
+    });
+    return () => {
+      clearHold();
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
+      untrack();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weeks.length]);
   if (!values.some(v => v > 0)) return null;
   const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const volIdx = volScrub ?? weeks.length - 1;
+  const readout = `${fmt(values[volIdx]!)} ${u} · wk of ${formatDay(weeks[volIdx]!.week, { day: 'numeric', month: 'short' })}`;
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); updateVolIndex(Math.max(0, volIdx - 1)); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); updateVolIndex(Math.min(weeks.length - 1, volIdx + 1)); }
+    else if (e.key === 'Escape') updateVolIndex(null);
+  };
   return (
     <Card data-palace="history.weekly-volume">
       <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
-      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks`}>
-        {weeks.map((w, i) => <i key={w.week} title={`${formatDay(w.week)}: ${fmt(values[i]!)} ${u}`} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }} />)}
+      {/* A6: the readout tracks a finger-drag or keyboard scrub; at rest it shows the latest week. */}
+      <ChartReadout text={readout} />
+      {/* I12: no title attrs (touch never shows a tooltip); the current week is accent with its value above it. */}
+      <div class="volume-bars" ref={barsRef} tabIndex={0} role="slider" aria-valuemin={0} aria-valuemax={weeks.length - 1} aria-valuenow={volIdx} aria-valuetext={readout} onKeyDown={onKeyDown}>
+        <div class="volume-avg" style={{ bottom: `${Math.min(100, (avg / max) * 100)}%` }}><span class="num">avg {fmt(avg)}</span></div>
+        {weeks.map((w, i) => {
+          const isCurrent = i === weeks.length - 1;
+          return (
+            <div key={w.week} class="volume-bar-col">
+              {/* QA13-3: the label sits inside the bar (absolutely, above it) so it never eats into the bar's own height. */}
+              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%`, opacity: volScrub != null && i !== volScrub ? .45 : undefined }}>
+                {isCurrent && <span class="volume-bar-value num">{fmt(values[i]!)}</span>}
+              </i>
+            </div>
+          );
+        })}
       </div>
-      <div class="row-between hint"><span>{formatDay(weeks[0]!.week)}</span><span>this week</span></div>
+      <div class="row-between hint"><span>{formatDay(weeks[0]!.week, { day: 'numeric', month: 'short' })}</span><span>{formatDay(weeks[weeks.length - 1]!.week, { day: 'numeric', month: 'short' })}</span></div>
     </Card>
   );
 }
@@ -345,6 +446,23 @@ function Stats() {
   const lastTop = hist.length ? lastTopStats(hist[hist.length - 1]!, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
+  // O4: the same last 12 sessions as the trend line, split into easy/right/max/unrated work.
+  const hist12 = hist.slice(-12);
+  const bwAt = (day: string, addedKg: number): number | null => {
+    const bw = bodyWeightAt.value;
+    return bw ? effectiveLoadKg(addedKg, mode, bodyweightShare(findExercise(exercise, s.customExercises)), bw(day)) : null;
+  };
+  const effortKg = effortSplit(hist12, mode, bwAt);
+  const effortInSets = effortUsesSets(hist12, mode);
+  const effortPoints = effortInSets ? effortKg : effortKg.map(p => ({ day: p.day, easy: kgToDisplay(p.easy, u), ideal: kgToDisplay(p.ideal, u), max: kgToDisplay(p.max, u), unrated: kgToDisplay(p.unrated, u) }));
+  const [selectedBar, setSelectedBar] = useState<number | null>(null);
+  const [sparkScrub, setSparkScrub] = useState<number | null>(null);
+  useEffect(() => { setSelectedBar(null); setSparkScrub(null); }, [exercise]);
+  // A6: the sparkline's readout shows the scrubbed session's actual top set, not just its plotted value.
+  const sparkIdx = sparkScrub ?? hist12.length - 1;
+  const sparkSession = hist12[sparkIdx];
+  const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
+  const sparkReadout = sparkSession && sparkStats ? `${sparkStats.load} × ${sparkStats.reps} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}` : '';
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
@@ -369,12 +487,17 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist.slice(-12).map(h => progressValue(h, mode))} />
+                <ChartReadout text={sparkReadout} />
+                <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />
                   <Stat value={t.direction === 'up' ? 'Improving' : t.direction === 'down' ? 'Slipping' : t.direction === 'flat' ? 'Steady' : 'Early'} label={`trend · ${t.confidence}`} tone={t.direction === 'up' ? 'positive' : t.direction === 'down' ? 'warning' : undefined} />
                 </div>
+                <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
+                {selectedBar != null && hist12[selectedBar] && (
+                  <p class="hint">{formatDay(hist12[selectedBar]!.day)} · {hist12[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>
+                )}
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}<span style={{ whiteSpace: 'nowrap' }}>{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
                 <p class="hint">{progressHint(mode)}</p>
               </div>

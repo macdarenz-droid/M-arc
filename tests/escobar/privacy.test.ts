@@ -61,4 +61,23 @@ describe('privacy when health sharing is off (ES-12)', () => {
     expect(replay(false)).toContain('190');
     expect(replay(false)).toMatch(/personal hrMax/i);
   });
+
+  it('QA13-1: a stored lift_trend effort[] loses its body-weight-derived kg once body sharing is off', () => {
+    const msgs: StoredMessage[] = [
+      { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'show', input: { component: 'lift_trend', params: { exerciseId: 'lib_pull_up' } } }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't1', content: JSON.stringify({ data: { effort: [{ day: '2026-09-01', easy: 0, ideal: 450, max: 0, unrated: 0 }] } }) }] },
+    ];
+    const replay = (body: boolean) => JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body }));
+    expect(replay(true)).toContain('450');
+    expect(replay(false)).not.toContain('450');
+  });
+
+  it("QA13-1: session_summary's own (non-array) effort tally is untouched by the same key name", () => {
+    const msgs: StoredMessage[] = [
+      { role: 'assistant', content: [{ type: 'tool_use', id: 't1', name: 'session_summary', input: { sessionId: 's1' } }], meta: { rendered: {} } },
+      { role: 'user', content: [{ type: 'tool_result', tool_use_id: 't1', content: JSON.stringify({ data: { effort: { easy: 1, ideal: 2, max: 0 } } }) }] },
+    ];
+    const replay = (body: boolean) => JSON.stringify(toRequestMessages(msgs, undefined, { health: true, body }));
+    expect(replay(false)).toContain('ideal\\":2');
+  });
 });

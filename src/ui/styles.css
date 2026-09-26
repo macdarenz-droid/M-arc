@@ -80,7 +80,8 @@ button, [role="button"], .card-press, .list-row.pressable, .chip-btn, .seg butto
    4.57/4.11/3.67/3.16 on bg/surface-1/2/3), without a per-theme override. */
 :root { --focus-ring: color-mix(in srgb, var(--accent) 80%, var(--text)); }
 :where(button, [role="button"], a, [tabindex]):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-body { min-height: 100dvh; line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
+/* A6: overscroll-behavior-x:none stops a horizontal chart-scrub drag from triggering the browser's own swipe-navigation gesture (distinct from touch-action, which only governs scrolling). */
+body { min-height: 100dvh; line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 input, select, textarea { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; min-height: 44px; width: 100%; outline: none; }
@@ -433,7 +434,24 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 .chain > div { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: 14px; }
 .chain > div > span:first-child { color: var(--text-3); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding-top: 2px; }
 
-.sparkline { width: 100%; height: 56px; }
+.sparkline-wrap { position: relative; width: 100%; }
+.sparkline { display: block; width: 100%; height: 56px; }
+/* QA13-4: top/left/right (not inset:0) plus an inline height on the element, so it always matches the SVG's own height and never stretches down into the dates row below. */
+.sparkline-minmax { position: absolute; top: 0; left: 0; right: 2px; pointer-events: none; }
+.sparkline-minmax span { position: absolute; right: 0; transform: translateY(-50%); font-size: var(--fs-cap); color: var(--text-2); background: var(--surface-1); padding: 0 2px; }
+.sparkline-dates { margin-top: 2px; font-size: var(--fs-cap); color: var(--text-2); }
+/* A6: the scrub guide (a thin rule and dot at the touched/keyboard-selected point) and the readout line shared by the sparkline and the volume bars. */
+/* QA14-1: the base rule uses the token; the inline transitionDuration Sparkline.tsx sets per-render
+   overrides it to 0 under reduced motion (a literal in the stylesheet would fail the F1 lint). */
+.sparkline-guide { stroke: var(--border-strong); stroke-width: 1; transition: opacity var(--dur-fast) var(--ease-standard); }
+.sparkline-guide-dot { fill: var(--accent); stroke: var(--bg); stroke-width: 2; transition: opacity var(--dur-fast) var(--ease-standard); }
+.chart-readout { position: relative; font-size: var(--fs-small); color: var(--text-2); margin-bottom: 4px; }
+/* QA14-1: the inline transitionDuration ChartReadout sets per-render overrides this token to 0
+   under reduced motion, so the swap is instant there without a literal ms in the stylesheet. */
+.readout-old, .readout-cur { display: block; transition: opacity var(--dur-fast) var(--ease-standard); }
+.readout-old { position: absolute; left: 0; top: 0; opacity: 1; }
+.readout-old.leaving { opacity: 0; }
+.readout-cur.entering { opacity: 0; }
 .banner { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 13px; }
 .banner.warn { border-color: var(--warning); }
 .danger-text { color: var(--negative); }
@@ -634,9 +652,38 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item:not(.lifte
   .unit-pill { right: 2px; min-width: 22px; }
   .card.exercise .row { flex-wrap: wrap; }
 }
-.volume-bars { display: flex; align-items: flex-end; gap: 4px; height: 72px; margin: 10px 0 6px; }
-.volume-bars i { flex: 1 1 0; min-width: 0; background: var(--accent); border-radius: 3px 3px 0 0; opacity: .85; }
-.volume-bars i:last-child { opacity: 1; }
+/* QA13-3: padding-top reserves room for the current-week label above the bar, so a 100% bar still measures the full 72px column instead of losing its own height to the label. */
+/* A6: touch-action:pan-y makes the whole row the scrub hit area without blocking vertical page scroll. */
+.volume-bars { position: relative; display: flex; align-items: flex-end; gap: var(--sp-1); height: 72px; margin: 10px 0 6px; padding-top: 18px; touch-action: pan-y; }
+.volume-bar-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.volume-bars i { position: relative; display: block; width: 100%; background: color-mix(in srgb, var(--text) 14%, transparent); border-radius: var(--radius-xs) var(--radius-xs) 0 0; transition: opacity var(--dur-fast) var(--ease-standard); }
+.volume-bars i.current { background: var(--accent); }
+.volume-bar-value { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 2px; font-size: var(--fs-meta); color: var(--text-2); white-space: nowrap; }
+.volume-avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border-strong); }
+.volume-avg span { position: absolute; right: 0; top: -14px; font-size: var(--fs-cap); color: var(--text-2); white-space: nowrap; }
+
+/* O4: "Work done, by effort" stacked bars, shared with Escobar's lift_trend card. */
+.effort-chart { margin-top: 12px; min-width: 0; }
+.effort-legend { display: flex; align-items: center; font-size: var(--fs-cap); color: var(--text-2); margin-bottom: 6px; }
+.effort-swatch { display: inline-block; width: 8px; height: 8px; border-radius: var(--radius-xs); margin: 0 4px 0 0; }
+/* QA13-6: --text-3/--surface-3 measured under 3:1 in both themes (spec amended 2026-09-26). Easy
+   is now --text-2; unrated is a hatched fill with a solid outline so it can't be mistaken for easy. */
+.effort-swatch.easy { background: var(--text-2); }
+.effort-swatch.ideal { background: var(--accent); }
+.effort-swatch.max { background: var(--warning); }
+.effort-swatch.unrated { background: repeating-linear-gradient(45deg, var(--text-3) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--text-2); }
+.effort-bars { display: flex; align-items: flex-end; gap: var(--sp-2); overflow-x: auto; padding-bottom: 2px; min-width: 0; max-width: 100%; }
+/* QA13-5: a session with every total at 0 draws only the total/date text, no bar — min-height keeps the tap target at 44px regardless. */
+.effort-bar-col { flex: 0 0 auto; min-width: 44px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; background: none; border: 0; padding: 0; font: inherit; color: inherit; }
+.effort-bar-total { font-size: var(--fs-meta); color: var(--text-2); white-space: nowrap; }
+.effort-bar-stack { width: 38px; display: flex; flex-direction: column-reverse; border-radius: var(--radius-xs) var(--radius-xs) 0 0; overflow: hidden; }
+.effort-bar-stack i { display: block; width: 100%; }
+.effort-bar-stack i.easy { background: var(--text-2); }
+.effort-bar-stack i.ideal { background: var(--accent); }
+.effort-bar-stack i.max { background: var(--warning); }
+.effort-bar-stack i.unrated { background: repeating-linear-gradient(45deg, var(--text-3) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--text-2); }
+.effort-bar-date { font-size: var(--fs-cap); color: var(--text-2); white-space: nowrap; }
+button.effort-bar-col[aria-pressed="true"] .effort-bar-stack { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 /* F12 share sheet: chips, a swipeable card carousel, size, and Photo / Save / Share */
 .share-sheet { display: grid; gap: 10px; }
