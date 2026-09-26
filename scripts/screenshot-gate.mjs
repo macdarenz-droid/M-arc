@@ -520,6 +520,64 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// QA13-6: "Easy" and "Not rated" must read as clearly different, and each at ≥3:1 against the card.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-6-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.theme', 'paper');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(10, 'lib_bench_press', 'Bench Press', [{ kg: 60, reps: 5, effort: 'easy' }, { kg: 60, reps: 5 }]),
+        sess(2, 'lib_bench_press', 'Bench Press', [{ kg: 60, reps: 5, effort: 'easy' }, { kg: 60, reps: 5 }]),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const contrast = (fg, bg) => {
+    const toRgb = s => s.match(/[\d.]+/g).map(Number);
+    const lin = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    const L1 = lum(toRgb(fg)), L2 = lum(toRgb(bg));
+    return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+  };
+  const check = await page.evaluate(() => {
+    const card = document.querySelector('[data-palace="history.exercise-stats"] .card');
+    const surface1 = getComputedStyle(card).backgroundColor;
+    const easySwatch = document.querySelector('.effort-legend .effort-swatch.easy') ?? document.querySelector('.effort-bar-stack i.easy');
+    const unratedEl = document.querySelector('.effort-legend .effort-swatch.unrated') ?? document.querySelector('.effort-bar-stack i.unrated');
+    const easyColor = easySwatch ? getComputedStyle(easySwatch).backgroundColor : null;
+    const unratedOutline = unratedEl ? (getComputedStyle(unratedEl).boxShadow || getComputedStyle(unratedEl).outlineColor) : null;
+    const unratedFillColor = unratedEl ? getComputedStyle(unratedEl).backgroundColor : null;
+    return { surface1, easyColor, unratedOutline, unratedFillColor, hasUnratedLegend: !!document.querySelector('.effort-legend')?.textContent?.includes('Not rated') };
+  });
+  if (!check.easyColor) errors.push(`${tag}: expected an "easy" swatch/segment to measure`);
+  else if (contrast(check.easyColor, check.surface1) < 3) errors.push(`${tag}: "easy" colour ${check.easyColor} is under 3:1 against ${check.surface1}`);
+  if (check.hasUnratedLegend) {
+    if (check.easyColor && check.unratedFillColor && check.easyColor === check.unratedFillColor) errors.push(`${tag}: "easy" and "Not rated" use the identical fill colour`);
+    if (!check.unratedOutline || check.unratedOutline === 'none') errors.push(`${tag}: expected "Not rated" to have a distinct outline, not a plain flat fill`);
+  }
+  await ctx.close();
+}
+
 // O4: "Work done, by effort" bars per exercise — legend, no page scroll, no overlap, tap selects a bar.
 {
   for (const width of [360, 390]) {

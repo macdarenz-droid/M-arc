@@ -608,20 +608,22 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item { transiti
 .effort-chart { margin-top: 12px; min-width: 0; }
 .effort-legend { display: flex; align-items: center; font-size: var(--fs-cap); color: var(--text-2); margin-bottom: 6px; }
 .effort-swatch { display: inline-block; width: 8px; height: 8px; border-radius: var(--radius-xs); margin: 0 4px 0 0; }
-.effort-swatch.easy { background: var(--text-3); }
+/* QA13-6: --text-3/--surface-3 measured under 3:1 in both themes (spec amended 2026-09-26). Easy
+   is now --text-2; unrated is a hatched fill with a solid outline so it can't be mistaken for easy. */
+.effort-swatch.easy { background: var(--text-2); }
 .effort-swatch.ideal { background: var(--accent); }
 .effort-swatch.max { background: var(--warning); }
-.effort-swatch.unrated { background: var(--surface-3); }
+.effort-swatch.unrated { background: repeating-linear-gradient(45deg, var(--text-3) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--text-2); }
 .effort-bars { display: flex; align-items: flex-end; gap: var(--sp-2); overflow-x: auto; padding-bottom: 2px; min-width: 0; max-width: 100%; }
 /* QA13-5: a session with every total at 0 draws only the total/date text, no bar — min-height keeps the tap target at 44px regardless. */
 .effort-bar-col { flex: 0 0 auto; min-width: 44px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; background: none; border: 0; padding: 0; font: inherit; color: inherit; }
 .effort-bar-total { font-size: var(--fs-meta); color: var(--text-2); white-space: nowrap; }
 .effort-bar-stack { width: 38px; display: flex; flex-direction: column-reverse; border-radius: var(--radius-xs) var(--radius-xs) 0 0; overflow: hidden; }
 .effort-bar-stack i { display: block; width: 100%; }
-.effort-bar-stack i.easy { background: var(--text-3); }
+.effort-bar-stack i.easy { background: var(--text-2); }
 .effort-bar-stack i.ideal { background: var(--accent); }
 .effort-bar-stack i.max { background: var(--warning); }
-.effort-bar-stack i.unrated { background: var(--surface-3); }
+.effort-bar-stack i.unrated { background: repeating-linear-gradient(45deg, var(--text-3) 0 2px, transparent 2px 5px); box-shadow: inset 0 0 0 1px var(--text-2); }
 .effort-bar-date { font-size: var(--fs-cap); color: var(--text-2); white-space: nowrap; }
 button.effort-bar-col[aria-pressed="true"] .effort-bar-stack { outline: 2px solid var(--accent); outline-offset: 1px; }
 
