@@ -1561,6 +1561,11 @@ for (const width of [390, 360]) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), 'silent-black']);
   await page.goto(`http://localhost:${PORT}/`); await page.waitForSelector('.nav'); await page.waitForTimeout(400);
+  // O1: this is the one block using raw page.mouse.*, which (unlike a locator .click(), which
+  // retries until unobscured) hits whatever is at those coordinates right now. Under full motion
+  // (this context has no reducedMotion key, on purpose: QA5-2) the launch overlay still covers
+  // the screen for up to ~1750ms, so wait for it to clear before any coordinate-based press.
+  await page.locator('#launch').waitFor({ state: 'detached', timeout: 4500 }).catch(() => {});
   const onbRing = await page.evaluate(() => [...document.querySelectorAll('dialog[open] button')].filter(b => getComputedStyle(b).outlineStyle !== 'none').length);
   if (onbRing) errors.push(`${tag}: ${onbRing} onboarding button(s) show a focus ring`);
   await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
