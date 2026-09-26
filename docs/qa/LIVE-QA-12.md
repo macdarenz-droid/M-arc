@@ -76,3 +76,8 @@ An independent check ran in a throwaway worktree. Each app change was put back o
 - **Checks run:** `npm run check` and `npm run test:tz` (1,152 tests each), and the full gate: "Screenshot gate PASS".
 - **Still to do before merge:** the one-line only-sore gate fix, a gate bug already on main (it dates a check-in in UTC, so it fails in CI from 12:00 to 24:00 UTC), and a green CI. This PR merges after item 2.
 - **Update, 13:40Z: CI green at 3217b32.** That commit is the one-line only-sore fix: the check-in now uses the pinned local day. All three checks pass: guard, source-gate and android-gate. The source-gate ran 13:22–13:36Z, inside the 12:00–24:00Z window where the old line failed at e54279b, so CI shows the fix working. Ready to merge once item 2 has merged.
+- **Merged as item 3, 14:47Z, at 4ffc679.**
+  - 3ecbf3b brings in main b204c87 (item 2) as a clean merge commit.
+  - 4ffc679 adds `launchGone(…)` after `waitForSelector('.nav')` in PR #25's new gate blocks: 9 lines, nothing else.
+  - Against main, all 44 gate lines this PR removes are `waitForSelector('.nav')` lines that come back with `launchGone` added. Every other line removed outside the gate is this PR's own reviewed change.
+  - CI on 4ffc679 is green (guard, source-gate, android-gate), and main b204c87 CI was green.
