@@ -1301,16 +1301,66 @@ for (const theme of themes) {
         await page.waitForTimeout(200);
         if (!(await visible(page.locator('.rt-detail-wrap.open .rt-detail')))) errors.push(`${tag}: the open strip disappeared across a theme switch`);
       }
+
+      // Odd counts in a group render its last tile spanning both columns (rt-tile-full).
+      if (!(await page.locator('.rt-tile-full').count())) errors.push(`${tag}: expected at least one odd-count full-span tile with this seed`);
+
       await ctx.close();
     }
   }
 
-  // Edge cases: nothing logged, only sore muscles, a single trained muscle, 20+ muscles at once,
-  // 320 px (the one-column switch) and full motion (no-preference) — each a quick smoke check.
+  // A minute tick while a strip is open: the grouping/order freezes (no reshuffle, no crash),
+  // even though `recovery` (app/selectors.ts) recomputes on every minuteNow rollover. Playwright's
+  // virtual clock crosses the minute boundary deterministically, the same technique the
+  // notes-wipe regression test below uses, without a real 60 s wait.
+  {
+    const tag = 'ready-times minute-tick';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+    await page.addInitScript(([json, t]) => { localStorage.setItem('marc.state.v1', json); localStorage.setItem('marc.theme', t); }, [rtStateJson(rtMainSessions), 'silent-black']);
+    // Installed before navigation so the app's own minute/1s clock (app/clock.ts) ticks against
+    // the virtual clock and actually advances when fast-forwarded below.
+    await page.clock.install({ time: Date.now() });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await page.waitForTimeout(250);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+    await page.locator('nav.nav button', { hasText: 'Body' }).click();
+    await page.waitForTimeout(350);
+    await page.evaluate(() => document.querySelector('[data-palace="body.recovering"]')?.scrollIntoView({ block: 'start' }));
+    await page.waitForTimeout(150);
+
+    const layoutOf = () => page.evaluate(() => ({
+      groups: [...document.querySelectorAll('.rt-group-head')].map(h => h.children[0]?.textContent),
+      names: [...document.querySelectorAll('.rt-tile-name:not(.rt-probe-name)')].map(n => n.textContent),
+    }));
+    const firstTile = page.locator('button.rt-tile').first();
+    await tapEl(page, firstTile);
+    await page.waitForTimeout(300);
+    if (!(await visible(page.locator('.rt-detail-wrap.open .rt-detail')))) errors.push(`${tag}: expected an open strip before the tick`);
+    const before = await layoutOf();
+
+    await page.clock.fastForward(65_000); // crosses a minute boundary
+    await page.waitForTimeout(300);
+
+    if (!(await visible(page.locator('.rt-detail-wrap.open .rt-detail')))) errors.push(`${tag}: the open strip closed across a minute tick`);
+    const after = await layoutOf();
+    if (JSON.stringify(after) !== JSON.stringify(before)) errors.push(`${tag}: the grouping/order changed across a minute tick while a strip was open (before ${JSON.stringify(before)}, after ${JSON.stringify(after)})`);
+    await ctx.close();
+  }
+
+  // Edge cases: nothing logged, only sore muscles, a single trained muscle, everything ready or
+  // fully recovered, 20+ muscles at once, 320 px (the one-column switch) and full motion
+  // (no-preference) — each a quick smoke check.
   const edgeCases = [
     { tag: 'nothing-logged', sessions: [] },
     { tag: 'only-sore', sessions: [rtSess(96, 'e1', 'Barbell Curl', 20, 'easy', 1)], checkIns: [{ day: new Date().toISOString().slice(0, 10), soreness: { biceps: 5, brachialis: 5 } }] },
     { tag: 'single-muscle', sessions: [rtSess(5, 'e1', 'Barbell Curl', 20, 'ideal', 3)] },
+    // Well past ready (easy, 1 set, 30h+ ago): nothing recovering, so no Today/Tomorrow/Later/Sore
+    // group should render at all — only "Ready now" (or "Fully recovered", a different Section).
+    { tag: 'everything-ready-or-full', sessions: [rtSess(36, 'e1', 'Standing Calf Raise', 40, 'easy', 1), rtSess(40, 'e2', 'Ab Wheel Rollout', 15, 'easy', 1)] },
     {
       tag: '20-plus-muscles',
       sessions: [
@@ -1337,6 +1387,10 @@ for (const theme of themes) {
       errors.push(`ready-times ${tag}: expected a "Sore today" group`);
     }
     if (tag === 'nothing-logged' && n !== 0) errors.push(`ready-times ${tag}: expected zero tiles`);
+    if (tag === 'everything-ready-or-full') {
+      const dayGroups = await page.evaluate(() => [...document.querySelectorAll('.rt-group-head')].map(h => h.children[0]?.textContent).filter(l => l !== 'Ready now'));
+      if (dayGroups.length) errors.push(`ready-times ${tag}: expected no Today/Tomorrow/Later/Sore groups, got ${JSON.stringify(dayGroups)}`);
+    }
     await ctx.close();
   }
 
