@@ -176,7 +176,7 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .chip-info { background: color-mix(in srgb, var(--info) 16%, transparent); border-color: transparent; color: var(--info); }
 .chip-btn { position: relative; cursor: pointer; min-height: 36px; padding: 6px 12px; }
 .chip-btn[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
-.chip-btn::before { content: ""; position: absolute; inset: -4px; }
+.chip-btn::before { content: ""; position: absolute; inset: -4px 0; }
 
 .seg { display: flex; padding: 3px; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); gap: 2px; }
 .seg button { position: relative; flex: 1; min-height: 34px; border-radius: calc(var(--radius-md) - 3px); font-size: 13px; font-weight: 600; color: var(--text-2); }
@@ -389,7 +389,7 @@ html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bot
 /* F8: 'See substitutes' — a text-sized link still needs a real tap target, unlike .target-link
    (:557 in the gate), whose parent .hint.ellipsis clips, so no hit extension there. */
 .link-btn { position: relative; color: inherit; text-decoration: underline; font: inherit; }
-.link-btn::before { content: ""; position: absolute; inset: -8px -4px; }
+.link-btn::before { content: ""; position: absolute; inset: -14px -4px; }
 .plate-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .plate { display: inline-grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 999px; border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
 .gym-chip { display: inline-flex; align-items: center; gap: 4px; }
