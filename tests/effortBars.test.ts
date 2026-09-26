@@ -76,6 +76,24 @@ describe('effortSplit (O4)', () => {
     expect(effortSplit(h, 'conditioning', noBw)[0]!.ideal).toBe(1);
   });
 
+  it('QA13-7: the owner\'s Leg Press reference sessions give the plan\'s exact splits and totals', () => {
+    const h = [
+      summarizeSets('s1', '2026-08-25', [set(40, 15, 'easy'), set(50, 15, 'easy'), set(60, 15, 'ideal')]),
+      summarizeSets('s2', '2026-09-03', [set(40, 15, 'easy'), set(50, 15, 'ideal'), set(70, 10, 'max')]),
+      summarizeSets('s3', '2026-09-19', [set(60, 15, 'easy'), set(60, 15, 'ideal'), set(60, 15, 'max')]),
+      summarizeSets('s4', '2026-09-26', [set(60, 15, 'easy'), set(55, 15, 'ideal'), set(55, 12, 'ideal')]),
+    ];
+    const points = effortSplit(h, 'weighted', noBw);
+    expect(points).toEqual([
+      { day: '2026-08-25', easy: 1350, ideal: 900, max: 0, unrated: 0 },
+      { day: '2026-09-03', easy: 600, ideal: 750, max: 700, unrated: 0 },
+      { day: '2026-09-19', easy: 900, ideal: 900, max: 900, unrated: 0 },
+      { day: '2026-09-26', easy: 900, ideal: 1485, max: 0, unrated: 0 },
+    ]);
+    const totals = points.map(p => p.easy + p.ideal + p.max + p.unrated);
+    expect(totals).toEqual([2250, 2050, 2700, 2385]);
+  });
+
   it('totals across every bucket equal the session\'s own load × reps sum', () => {
     const raw: Array<[number, number, LoggedSet['effort']]> = [[50, 5, 'easy'], [60, 5, 'ideal'], [70, 5, 'max'], [70, 5, 'ideal']];
     const h = [summarizeSets('s1', '2024-01-01', raw.map(([kg, reps, effort]) => set(kg, reps, effort)))];
