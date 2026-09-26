@@ -1,4 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+const remindersMock = vi.hoisted(() => ({ resyncReminders: vi.fn(async () => undefined) }));
+vi.mock('@/slices/settings/reminders', () => remindersMock);
+
 import { replaceState, state } from '@/core/store';
 import { freshState, type AppState, type Session, type Split } from '@/core/models';
 import {
@@ -556,5 +560,16 @@ describe('QA3-7c: the wrong spot again after the person\'s own swap (not an Esco
     expect(state.value.splits[0]!.exercises.map(e => e.exerciseId)).toEqual([
       'lib_lat_pulldown', 'lib_barbell_bench_press', 'lib_cable_fly',
     ]);
+  });
+});
+
+describe('finishSession resyncs reminders (QA8-3)', () => {
+  it('calls resyncReminders once, so a stale same-day reminder gets cancelled', () => {
+    start();
+    setSet(0, 0, { kg: 60, reps: 8 });
+    commitSet(0, 0);
+    remindersMock.resyncReminders.mockClear();
+    finishSession(false);
+    expect(remindersMock.resyncReminders).toHaveBeenCalledTimes(1);
   });
 });
