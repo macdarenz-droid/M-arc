@@ -168,6 +168,10 @@ html[data-motion="reduce"] :is(.btn, .chip-btn, .watch-pill, .esc-live-btn, .seg
 .btn-sm.tap { min-height: 44px; }
 .btn-block { width: 100%; }
 .btn-icon { width: 44px; min-height: 44px; padding: 0; border-radius: 50%; }
+/* F10: a destructive hold fills in from the left as the finger stays down, instead of a system confirm(). */
+.hold { position: relative; overflow: hidden; }
+.hold::before { content: ""; position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); background: color-mix(in srgb, var(--negative) 22%, transparent); transition: transform var(--dur-fast) var(--ease-standard); }
+.hold.holding::before { transform: scaleX(1); transition: transform var(--hold-ms) var(--ease-linear); }
 
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); color: var(--text-2); background: var(--surface-2); white-space: nowrap; min-height: 28px; }
 .chip-accent { background: var(--accent-soft); border-color: transparent; color: var(--accent); }

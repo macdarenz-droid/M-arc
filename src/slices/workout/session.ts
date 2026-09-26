@@ -255,6 +255,12 @@ export function removeSet(entry: number, index: number): void {
   patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry || e.sets.length <= 1 ? e : { ...e, sets: e.sets.filter((_, j) => j !== index) })) }));
 }
 
+/** F10: Undo for "Remove last set"/"Delete set" — restores the exact set object (id included), so
+ * a heart-capture or fidelity link made to it survives. `at` is clamped to the entry's current length. */
+export function insertSet(entry: number, at: number, set: LoggedSet): void {
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, sets: [...e.sets.slice(0, Math.max(0, Math.min(at, e.sets.length))), set, ...e.sets.slice(Math.max(0, Math.min(at, e.sets.length)))] })) }));
+}
+
 export function markDone(entry: number, done = true): void {
   patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false })) }));
   if (done) void haptic.confirm(); else void haptic.tick();
@@ -285,6 +291,12 @@ export function removeEntryById(entryId: string): void {
 
 export function removeEntry(entry: number): void {
   patchActive(a => ({ ...a, entries: a.entries.filter((_, i) => i !== entry) }));
+}
+
+/** F10: Undo for "Remove from this session" — restores the exact entry object (id included), at
+ * its original position, clamped to the current entry count. */
+export function insertEntry(at: number, entry: ActiveSession['entries'][number]): void {
+  patchActive(a => { const i = Math.max(0, Math.min(at, a.entries.length)); return { ...a, entries: [...a.entries.slice(0, i), entry, ...a.entries.slice(i)] }; });
 }
 
 /** F3.7: swap this entry for a substitute, e.g. a recovering muscle or a balance nudge. Blank sets: a different exercise's numbers would not mean the same thing. */

@@ -7,7 +7,7 @@ import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
 import { saveCheckIn } from '@/slices/readiness/checkIn';
-import { Button, Card, Chip, Empty, Field, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
+import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
@@ -24,12 +24,12 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
-import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
+import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, insertExerciseInSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
 import { MuscleMap } from '@/ui/MuscleMap';
@@ -46,7 +46,7 @@ import { equipmentGroup } from '@/brain/coach/cues';
 import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
-import { firstWorkingSet, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { firstWorkingSet, hasEntry, isWorkingSet, workingIndex } from '@/brain/exposure';
 import { haptic } from '@/native/haptics';
 import { durFor, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
@@ -315,7 +315,7 @@ function SplitEditor({ split, onClose, onDeleted }: { split: Split; onClose: () 
                   <span class="num small" style={{ minWidth: 44, textAlign: 'center' }}>{se.sets} sets</span>
                   <Button variant="quiet" class="btn-icon" aria-label="More sets" onClick={() => setSplitSets(split.id, se.exerciseId, se.sets + 1)}><IconPlus size={16} /></Button>
                   <Button variant="quiet" class="btn-icon" aria-label="Move up" disabled={i === 0} onClick={() => moveExercise(split.id, i, i - 1)}><IconChevronDown size={16} style={{ transform: 'rotate(180deg)' }} /></Button>
-                  <Button variant="quiet" class="btn-icon" aria-label="Remove" onClick={() => removeExerciseFromSplit(split.id, se.exerciseId)}><IconTrash size={16} /></Button>
+                  <Button variant="quiet" class="btn-icon" aria-label="Remove" onClick={() => { removeExerciseFromSplit(split.id, se.exerciseId); showToast('Removed', 'Undo', () => insertExerciseInSplit(split.id, i, se)); }}><IconTrash size={16} /></Button>
                 </div>
               </div>
             );
@@ -406,7 +406,7 @@ function LiveSession() {
             <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={changedFromPlan(a, split)} />
             <Button variant="quiet" onClick={() => setFinishing(false)}>Keep going</Button>
-            <Button variant="danger" size="sm" onClick={() => { if (confirm('Discard this session? Nothing will be saved.')) { discardSession(); setFinishing(false); } }}>Discard session</Button>
+            <HoldButton size="sm" label="Hold to discard" onConfirm={() => { discardSession(); setFinishing(false); }} />
           </div>
         </Sheet>
       )}
@@ -715,7 +715,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           }); })()}
           <div class="row">
             <Button variant="quiet" class="btn-icon" aria-label="Add set" onClick={() => addSet(index)}><IconPlus size={20} /></Button>
-            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => removeSet(index, entry.sets.length - 1)} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
+            <Button variant="quiet" class="btn-icon" aria-label="Remove last set" onClick={() => {
+              const n = entry.sets.length - 1;
+              const removed = entry.sets[n]!;
+              removeSet(index, n);
+              if (hasEntry(removed)) showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(index, n, removed));
+            }} disabled={entry.sets.length <= 1}><IconMinus size={20} /></Button>
             <span class="grow" />
             <Button variant={entry.done ? 'default' : 'primary'} onClick={entry.done ? () => markDone(index, false) : onDone}>{entry.done ? 'Undo done' : 'Done with exercise'}</Button>
           </div>
@@ -730,7 +735,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
-            <Button variant="danger" onClick={() => { closeMenu(); removeEntry(index); }}>Remove from this session</Button>
+            <Button variant="danger" onClick={() => {
+              closeMenu();
+              const e = entry;
+              removeEntry(index);
+              showToast(`${e.name} removed`, 'Undo', () => insertEntry(index, e));
+            }}>Remove from this session</Button>
             {ex && <p class="hint">{ex.equipment} · main: {ex.primary.map(muscleLabel).join(', ')}{ex.secondary.length ? ` · helps: ${ex.secondary.map(muscleLabel).join(', ')}` : ''}</p>}
           </div>
         </Sheet>
@@ -742,6 +752,13 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
               <Button key={label} variant={entry.sets[setMenuAt]!.kind === k ? 'primary' : 'default'} onClick={() => { setSet(index, setMenuAt, k === 'failure' ? { kind: k, effort: 'max' } : { kind: k }); setSetMenuAt(null); }}>{label}</Button>
             ))}
             <p class="hint">Warm-ups are kept but never counted. Drop sets count for volume but not records. To failure counts as max effort.</p>
+            <Button variant="danger" disabled={entry.sets.length <= 1} onClick={() => {
+              const n = setMenuAt!;
+              const removed = entry.sets[n]!;
+              removeSet(index, n);
+              setSetMenuAt(null);
+              showToast(`Set ${n + 1} removed`, 'Undo', () => insertSet(index, n, removed));
+            }}>Delete set</Button>
           </div>
         </Sheet>
       )}
