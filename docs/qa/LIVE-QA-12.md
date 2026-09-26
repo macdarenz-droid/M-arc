@@ -60,3 +60,18 @@ Fix the items below. Each needs a test or gate probe that fails before and passe
 
 ## Rejected
 - **"haptics.ts web fallback has no tests":** true, but it's the same on main (F4) and this PR didn't change it. Noted for item 8.
+
+## Re-check at e54279b: all three fixed
+An independent check ran in a throwaway worktree. Each app change was put back one at a time; each test fails before the fix and passes after it:
+
+| id | fix commit | before the fix | at e54279b |
+|---|---|---|---|
+| QA12-1 | db8ce84 + e54279b | onboarding shown unconditionally: at 300 ms the centre is the dialog, a real click never removes #launch | pass: #launch is hit, removed, then onboarding opens |
+| QA12-2 | 6de7e9d | "keep awake once per app lifetime" mutation: calls end `[…, false, false]` | pass: calls end `[…, false, true]` |
+| QA12-3 | 4bb4b25 | "always animate" mutation under reduced motion: dash offset 99.1 px, dot has no cx/cy | pass: offset 0 px, dot at 30/50 |
+
+- **No loosening.** Every removed gate line comes back unchanged, with only `launchGone(…)` added after `waitForSelector('.nav')`. On purpose, the O1 timing probe doesn't use it.
+- **`launchGone` hides no bug.** It waits up to 5 s for #launch to be gone; index.html's own cap removes it at 4 s. If #launch stayed, the next click would fail hard.
+- **Other sheets.** OnboardingSheet is the only sheet that opens itself at start-up. It covers the first-run, watch and weekly-review prompts, and the new gate covers all three.
+- **Checks run:** `npm run check` and `npm run test:tz` (1,152 tests each), and the full gate: "Screenshot gate PASS".
+- **Still to do before merge:** the one-line only-sore gate fix, a gate bug already on main (it dates a check-in in UTC, so it fails in CI from 12:00 to 24:00 UTC), and a green CI. This PR merges after item 2.
