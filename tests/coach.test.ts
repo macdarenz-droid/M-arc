@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { coachInsights, deloadOffer } from '@/brain/coach/rules';
 import { emptySchedule, type Split } from '@/core/models';
+import { dayKey } from '@/core/dates';
 import { baseCoachExtras, session, sessionAt, sets } from './helpers';
+
+// Local wall-clock instant (not a UTC 'Z' string), so this passes under any TZ npm run test:tz picks.
+const local = (y: number, m: number, d: number, h: number, mi: number): Date => new Date(y, m - 1, d, h, mi);
 
 const baseCtx = { sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), ...baseCoachExtras };
 const bench = 'lib_barbell_bench_press';
@@ -240,8 +244,11 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
 
   it('the owner\'s case: finishing SPLIT 2 just past midnight does not re-warn about the fatigue it just caused', () => {
     // Started Fri 23:30, ended Sat 00:40; checked Sat 01:00, still inside the 6h window (QA8-4).
-    const finishedLate = sessionAt('2026-09-25T23:30:00.000Z', '2026-09-26T00:40:00.000Z', [{ id: HAM, sets: sets(40, 12, 'max', 4) }], 'split_lower');
-    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T01:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [finishedLate] };
+    const started = local(2026, 9, 25, 23, 30);
+    // Like finishSession() (dayKey(trainedAt)), not the helper's UTC-slice shortcut: the stored
+    // day must be the local start day for this to test the midnight-crossing branch, not the plain one.
+    const finishedLate = { ...sessionAt(started.toISOString(), local(2026, 9, 26, 0, 40).toISOString(), [{ id: HAM, sets: sets(40, 12, 'max', 4) }], 'split_lower'), day: dayKey(started) };
+    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: local(2026, 9, 26, 1, 0).getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [finishedLate] };
     const out = coachInsights(ctx, 20);
     expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
     const doneToday = out.find(i => i.id === 'recovery.done-today:split_lower');
