@@ -1,0 +1,54 @@
+# Live QA round 10: UI polish b2b, the live card (PR #21)
+
+Checked PR #21 at 6dba847 against main d1e63b1 with one code reviewer and one UI skeptic.
+
+- **Passes:** I2, I3 (PulseLine no longer writes to `<html>`; breathe and shimmer are gone and the infinite-animation allow-list is tighter), I4, I5, A2, QA6-4 and QA6-5 match the spec. ErrorBoundary, Dock, Settings and PulseLine changes are all required by F10, I5 or I3. No stored-data change: the three new insert functions only, and migrate is untouched. The edited tests are tightened or like-for-like, and none is loosened.
+- **Checks:** tsc, vitest (1,096) and the vite build passed.
+
+F10's Undo can lose or misplace workout data. Fix the items below, each with a test or gate probe that fails before and passes after, and put the id in the commit message.
+
+## High
+
+**QA10-1 · Undo after 'Remove from this session' drops the note just typed.**
+- **Cause:** Train.tsx:763-768 runs `closeMenu()`, which commits a pending "Note for today" draft to the store. It then captures `const e = entry`, the render-time prop, which doesn't have that note. Undo re-inserts `e`, so the note is gone. §6/F10 said to read `a.entries[index]`.
+- **Repro:** type a note (onInput only) → Remove → Undo. `entries[i].note` is undefined.
+- **Fix:** after `closeMenu()`, read from the store by id:
+  ```tsx
+  const a = active(); const at = a ? a.entries.findIndex(x => x.id === entry.id) : -1;
+  if (!a || at < 0) return;
+  const e = a.entries[at]!;
+  removeEntry(at);
+  showToast(`${e.name} removed`, 'Undo', () => insertEntry(a.id, at, e));
+  ```
+- **Test:** set a note draft → remove → undo. The entry deep-equals the store entry just before the remove, note included.
+
+**QA10-2 · Undo is index-based and ignores which session it came from, so it can put data in the wrong place.** The toast outlives tab changes, discard and new sessions (App.tsx:94), and `insertEntry`/`insertSet` only check that some session is active (session.ts:73, 260, 298). This is my spec gap: F10 said to restore by index.
+- **Repro A:** remove an exercise in session A → hold to discard → start session B → Undo. A's exercise appears in B.
+- **Repro B:** Delete set on exercise 3 → reorder (Train.tsx:353 `moveEntry`) → Undo. The set lands in whichever exercise is now third.
+- **Repro C:** remove a split exercise in the split editor → add it back from the picker → Undo. The split holds the same exercise twice; `addExerciseToSplit` normally refuses this.
+- **Fix:** restore by identity, and do nothing when the target is gone.
+  - session.ts `insertEntry(sessionId: string, at: number, entry)` does nothing unless `a.id === sessionId` and no entry already has `entry.id`.
+  - session.ts `insertSet(sessionId: string, entryId: string, at: number, set)` does nothing unless `a.id === sessionId`, the entry with `entryId` exists, and no set in it already has `set.id`. It inserts into that entry, with `at` clamped.
+  - splits.ts `insertExerciseInSplit` does nothing if the split is gone or already has `se.exerciseId`.
+  - Update the three Train.tsx call sites (:747, :767, :785) to pass `active()!.id` and `entry.id`.
+- **Tests (vitest, session.ts and splits.ts only):**
+  - Repros A, B and C each leave state unchanged after Undo.
+  - Pressing Undo twice inserts once.
+  - The happy paths deep-equal the pre-remove state.
+
+**QA10-3 · F10's acceptance checks were never added.** No test or gate probe mentions `HoldButton`, `insertEntry`, `insertSet` or `insertExerciseInSplit`. That's why QA10-1 and QA10-2 shipped. Add the F10 gate block from docs/UI-POLISH-PLAN.md (F10 Acceptance):
+- remove exercise 2 → Undo → entries deep-equal;
+- Remove last set → Undo → same id and position;
+- delete set 2 of 3 → Undo → original order;
+- split editor remove → Undo → same position and sets;
+- Discard: a 300 ms hold does nothing, an 850 ms hold discards;
+- keyboard: Enter shows 'Tap again to confirm', and Enter again confirms.
+
+## Low
+
+**QA10-4 · The reset button lost its warning.** ErrorBoundary.tsx:78-97 swapped `confirm('This deletes every workout on this device. Save a copy first if unsure. Continue?')` for the hold button, and nothing now says what will be deleted.
+- **Fix:** put `<p class="hint">Deletes every workout on this device. Save a copy first if unsure.</p>` above the hold button. The error-boundary test asserts that text.
+
+## UI skeptic
+
+Pending; will be appended below.
