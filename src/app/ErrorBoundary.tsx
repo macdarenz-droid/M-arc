@@ -82,6 +82,8 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
             <button type="button" class="btn btn-primary" onClick={() => location.reload()}>Reload</button>
             <button type="button" class="btn" onClick={() => void saveRescueCopy()}>Save a copy of my data</button>
           </div>
+          {/* QA10-4: the hold button alone doesn't say what it deletes, unlike the confirm() it replaced. */}
+          <p class="hint">Deletes every workout on this device. Save a copy first if unsure.</p>
           <button
             type="button"
             class={`btn btn-danger hold ${holding ? 'holding' : ''}`}
