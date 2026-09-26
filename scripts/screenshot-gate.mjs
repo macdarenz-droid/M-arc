@@ -294,11 +294,13 @@ for (const theme of themes) {
     await settle(page); await page.screenshot({ path: `${OUT}/silent-black-stat-hist-row-${label.toLowerCase().replace(/\s+/g, '-')}.png` });
     // Scoped by the Section's own data-palace, not by the stat-hist-row class, so this probe still
     // finds the rows (and so still fails on overlap) if the class were ever removed by mistake.
+    // QA6-5: this used to measure `.grow` (the date cell's wrapper), not the date text itself, so
+    // an overflowing date could miss the check entirely if the wrapper stayed narrow.
     const rows = await page.evaluate(() => [...document.querySelectorAll('[data-palace="history.exercise-stats"] .list .list-row')].map(row => {
-      const date = row.querySelector(':scope > .grow');
+      const date = row.querySelector(':scope > .grow .small') ?? row.querySelector(':scope > .grow');
       const setText = row.querySelector(':scope > .hint');
       const dr = date.getBoundingClientRect(), sr = setText.getBoundingClientRect();
-      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.querySelector('.small')?.getClientRects().length ?? date.getClientRects().length };
+      return { dateRight: dr.right, setLeft: sr.left, dateLines: date.getClientRects().length };
     }));
     if (!rows.length) errors.push(`stat-hist-row ${label}: expected recent-session rows on Exercise progress`);
     for (const r of rows) {
