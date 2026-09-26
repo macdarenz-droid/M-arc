@@ -1795,7 +1795,15 @@ for (const width of [390, 360]) {
   // 360px, the tightest column width. Swept across pinned times of day (QA7-6): a tile's ready
   // time depends on the clock, so this must hold at every hour, not just whenever CI happens to
   // run — a fixed `hoursAgo` combined with a shifting "now" naturally sweeps the resulting ready
-  // time through many hour-of-day labels, including some landing on/near midnight.
+  // time through many hour-of-day labels. hoursAgo=44 was chosen (scripts/_tmp-qa76-calc.ts, not
+  // kept) because it makes the 17:00 point land on the exact bug case: earliest rounds to a
+  // two-digit hour and latest ceils to midnight, giving the maximal 16-char "10 pm – midnight".
+  // .rt-tile has no vertical padding (styles.css), so its height is exactly the stacked content:
+  // name (max 36px, 2 lines) + time (max 32px, 2 lines) = 68px when both wrap, 52px (matching
+  // .rt-tile's min-height) when both sit on one line.
+  const RT_QA76_MAX_TILE_HEIGHT = 68;
+  const RT_QA76_ONE_LINE_HEIGHT = 52;
+  const rtQa76Texts = [];
   for (const [h, m] of [[6, 0], [11, 30], [17, 0], [21, 45], [23, 30]]) {
     const pinned = new Date(); pinned.setHours(h, m, 0, 0);
     const pinnedMs = pinned.getTime();
@@ -1804,7 +1812,7 @@ for (const width of [390, 360]) {
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
-    await openRtBody(page, rtStateJson([rtSess(30, 'e1', 'Barbell Overhead Press', 30, 'ideal', 3, pinnedMs)]), 'silent-black', pinnedMs);
+    await openRtBody(page, rtStateJson([rtSess(44, 'e1', 'Barbell Overhead Press', 30, 'ideal', 3, pinnedMs)]), 'silent-black', pinnedMs);
     const tileWithName = page.locator('button.rt-tile', { hasText: 'Front shoulders' }).first();
     if (!(await tileWithName.count())) {
       errors.push(`${tag}: expected a "Front shoulders" tile with this seed`);
@@ -1818,11 +1826,39 @@ for (const width of [390, 360]) {
       if (nameBox.scrollWidth > nameBox.clientWidth + 0.5) errors.push(`${tag}: "Front shoulders" is clipped horizontally (scrollWidth ${nameBox.scrollWidth} > clientWidth ${nameBox.clientWidth})`);
       if (nameBox.height > 36.5) errors.push(`${tag}: "Front shoulders" name box is ${nameBox.height.toFixed(1)}px tall (want <= 36px)`);
       const timeEl = tileWithName.locator('.rt-tile-time');
-      const timeBox = await timeEl.evaluate(el => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, text: el.textContent }));
+      const timeBox = await timeEl.evaluate(el => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, scrollHeight: el.scrollHeight, clientHeight: el.clientHeight, text: el.textContent }));
       if (timeBox.scrollWidth > timeBox.clientWidth + 0.5) errors.push(`${tag}: time "${timeBox.text}" is clipped horizontally (scrollWidth ${timeBox.scrollWidth} > clientWidth ${timeBox.clientWidth})`);
+      // QA7-6: max-height:32px + overflow:hidden hides a 3rd line rather than clipping it visibly,
+      // so a width-only check would miss it silently. Guard the vertical crop too.
+      if (timeBox.scrollHeight > timeBox.clientHeight + 1) errors.push(`${tag}: time "${timeBox.text}" is clipped vertically (scrollHeight ${timeBox.scrollHeight} > clientHeight ${timeBox.clientHeight})`);
       if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push(`${tag}: horizontal scroll on the Body tab`);
+      rtQa76Texts.push(timeBox.text ?? '');
+
+      // QA7-6: never drop the tile-height assertion — replace it with the exact bound the CSS
+      // gives (name max 36px + time max 32px, no vertical padding on .rt-tile).
+      const tileHeight = await tileWithName.evaluate(el => el.getBoundingClientRect().height);
+      if (tileHeight < RT_QA76_ONE_LINE_HEIGHT - 1 || tileHeight > RT_QA76_MAX_TILE_HEIGHT + 1) {
+        errors.push(`${tag}: tile height is ${tileHeight.toFixed(1)}px (want between ${RT_QA76_ONE_LINE_HEIGHT - 1} and ${RT_QA76_MAX_TILE_HEIGHT + 1})`);
+      }
+      const nameFitsOneLine = nameBox.height <= 18.5;
+      const timeFitsOneLine = timeBox.clientHeight <= 16.5;
+      if (nameFitsOneLine && timeFitsOneLine && Math.abs(tileHeight - RT_QA76_ONE_LINE_HEIGHT) > 1) {
+        errors.push(`${tag}: name and time both fit one line but tile height is ${tileHeight.toFixed(1)}px (want ${RT_QA76_ONE_LINE_HEIGHT} +-1)`);
+      }
+
+      // Every tile sharing this row (2-column grid) must render at the same height, or the row
+      // looks broken even when neither individual tile is clipped.
+      const rowHeights = await tileWithName.evaluate(el => Array.from(el.closest('.rt-line').querySelectorAll('.rt-tile')).map(t => t.getBoundingClientRect().height));
+      const maxRowHeight = Math.max(...rowHeights);
+      const minRowHeight = Math.min(...rowHeights);
+      if (maxRowHeight - minRowHeight > 1) errors.push(`${tag}: tiles in the same row have mismatched heights (${rowHeights.map(h2 => h2.toFixed(1)).join(', ')})`);
     }
     await ctx.close();
+  }
+  // QA7-6: prove the sweep actually reaches the reported bug case, not just 5 arbitrary points —
+  // at least one pinned time must produce the maximal 16-char "<hour> <am|pm> - midnight" string.
+  if (!rtQa76Texts.some(t => t.length === 16 && t.endsWith('midnight'))) {
+    errors.push(`ready-times QA7-6: sweep never hit the 16-char "<hour> - midnight" case (saw: ${rtQa76Texts.map(t => `"${t}"`).join(', ')})`);
   }
 
   // QA7-4: the scroll-keep timer must not fire against a screen the user has since left. Tapping
