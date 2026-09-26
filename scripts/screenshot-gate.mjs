@@ -1966,7 +1966,7 @@ for (const width of [390, 360]) {
   // (no-preference) — each a quick smoke check.
   const edgeCases = [
     { tag: 'nothing-logged', sessions: [] },
-    { tag: 'only-sore', sessions: [rtSess(96, 'e1', 'Barbell Curl', 20, 'easy', 1)], checkIns: [{ day: new Date().toISOString().slice(0, 10), soreness: { biceps: 5, brachialis: 5 } }] },
+    { tag: 'only-sore', sessions: [rtSess(96, 'e1', 'Barbell Curl', 20, 'easy', 1)], checkIns: [{ day: `${RT_PINNED_NOW.getFullYear()}-${String(RT_PINNED_NOW.getMonth() + 1).padStart(2, '0')}-${String(RT_PINNED_NOW.getDate()).padStart(2, '0')}`, soreness: { biceps: 5, brachialis: 5 } }] },
     { tag: 'single-muscle', sessions: [rtSess(5, 'e1', 'Barbell Curl', 20, 'ideal', 3)] },
     // Well past ready (easy, 1 set, 30h+ ago): nothing recovering, so no Today/Tomorrow/Later/Sore
     // group should render at all — only "Ready now" (or "Fully recovered", a different Section).
