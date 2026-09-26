@@ -379,7 +379,7 @@ Each returns immediately with `{proposalId, status: 'awaiting_user', preview}` a
 | `propose_custom_exercise` | `{name, equipment, primary[1–2], secondary[], mode, role}` | `makeCustomExercise` plus `saveCustomExercise` |
 | `propose_reminder` | `{enabled, time?: 'HH:MM', style?, readinessSummary?}` | preferences update plus `resyncReminders()` |
 | `propose_setting` | `anyOf` per key: `rest.mode` (`'time'\|'heart'`, the real field is `preferences.rest.mode`), `autoRest`, `restDefaultSec`, `weightUnit`, `showSpark`, `haptics` | `update()` on preferences (`setHapticsEnabled` too for haptics) |
-| `snooze_insight` | `{insightId, verdict: 'snoozed'\|'helpful'}` | `saveInsightFeedback` (applied immediately; low risk; Undo shown) |
+| `snooze_insight` | `{insightId, verdict: 'snoozed'\|'helpful'}` | `giveInsightFeedback`, the same helper as the Escobar tab's buttons (applied immediately; one record per note and day; Undo puts back only that record) |
 | `propose_equipment_profile` | `{scope: 'exercise'\|'equipment', exerciseId?, equipmentGroup?, gymId, profile}` | `units.byExercise` / `units.byEquipment` (validated per §25.6), Undo |
 | `propose_gym` | `{name, defaultUnit}` | Adds the gym to `units.gyms` and sets it active |
 | `escalate` | `{kind: 'pain'\|'medical'\|'crisis'\|'disordered_eating', note?}` | Renders the fixed card (§19); no state write |
