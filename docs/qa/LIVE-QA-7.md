@@ -45,3 +45,15 @@ Fix these five, each with a test or gate probe that fails before and passes afte
 - **Cause:** dates.ts:156 clamps `earliest` down to `latest` without taking `min(lo, hi)`. `readyWindow(now, 50, 5)` builds the whole window from 50 h. recovery.ts always gives lo ≤ hi today, so this is defensive only.
 - **Fix:** `const earliest = roundNearestHour(now + Math.min(lo, hi) * 3_600_000);`. `latest` already uses `Math.max(lo, hi)`; keep the clamp line.
 - **Test:** `readyWindow(now, 50, 5)` equals `readyWindow(now, 5, 50)`.
+
+## Re-check at 4a8200d: all five fixed
+
+Each fix has its own commit: 878a43b, f9ec60a, 0c659ab, abfd623 and 4a8200d. Each new probe or test fails with only its src change reverted and passes when restored.
+
+- QA7-1: the wrap measures 28 px before and 90 px after.
+- QA7-2: 1 column before, 2 after.
+- QA7-3: the caret sits 145 px from the ring before and 6 px after.
+- QA7-4: scrollY moved 300 → 201 before and stays at 300 after.
+- QA7-5: the swapped-bounds test fails before and passes after.
+
+The gate and test diff since 18a6635 is +116 lines with no deletions. Re-measured at 320/360/390 px in both themes: 102/102 checks pass. tsc passed, and vitest passed (1,110). CI is green on 4a8200d: guard, source-gate (includes the gate) and android-gate. The local gate run stalled at the R5.5 service-worker step in the QA sandbox, as on untouched HEAD. CI's gate passed, so this is not a product issue.
