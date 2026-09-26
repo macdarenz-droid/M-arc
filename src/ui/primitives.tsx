@@ -28,7 +28,8 @@ export function Chip({ children, tone, pressed, onClick, class: cls = '' }: { ch
     : <span class={classes}>{children}</span>;
 }
 
-export function Segmented<T extends string>({ value, options, onChange }: { value: T; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
+/** BUG-8: `value` may be `undefined` (nothing chosen yet); no option is then pressed. */
+export function Segmented<T extends string>({ value, options, onChange }: { value: T | undefined; options: Array<{ value: T; label: string }>; onChange: (v: T) => void }) {
   return <div class="seg" role="tablist">{options.map(o => <button type="button" role="tab" key={o.value} aria-selected={o.value === value} aria-pressed={o.value === value} onClick={() => onChange(o.value)}>{o.label}</button>)}</div>;
 }
 

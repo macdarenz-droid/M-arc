@@ -7,7 +7,7 @@ import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules
 import { pickCue, type Cue } from '@/brain/coach/cues';
 import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
 import { trainingAgeMonths } from '@/brain/recovery';
-import { profileCompleteness } from '@/brain/onboarding';
+import { missingProfileSummary, profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
 import { WEEKDAY_LABEL, weekStart, daysBetween, formatLocalStamp } from '@/core/dates';
@@ -317,7 +317,7 @@ function WhatCoachCanSee() {
     { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
     { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
     { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
-    { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
+    { label: 'Profile', value: missingProfileSummary(completeness) },
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
   ];
   return (

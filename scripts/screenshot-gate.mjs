@@ -3199,6 +3199,62 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-8: a saved height/weight must not read "Not set" just because it has no profileHistory
+// entry, sex must not look chosen when it was never saved, and the Escobar tab's Profile row
+// must name what's missing (and read complete once it is).
+{
+  const tag = 'BUG-8';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', birthYear: 1998, heightCm: 164, bodyWeightKg: 70 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [{ day: '2026-09-20', kg: 70 }], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.waitForTimeout(250);
+  await page.locator('.list-row', { hasText: 'Weight, height, birth year' }).getByRole('button', { name: 'Open', exact: true }).click();
+  await page.waitForTimeout(250);
+  const fieldHints = (label) => page.evaluate((lbl) => {
+    const l = [...document.querySelectorAll('dialog[open] label.stack-sm')].find(el => el.querySelector('.small.muted')?.textContent === lbl);
+    return l ? [...l.querySelectorAll('.hint')].map(h => h.textContent) : null;
+  }, label);
+  // BUG-8 A: sex never looks chosen when it was never saved.
+  const sexPressed = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .seg button')].map(b => b.getAttribute('aria-pressed')));
+  if (sexPressed.some(p => p === 'true')) errors.push(`${tag}: a Sex option shows pressed although sex was never saved (${JSON.stringify(sexPressed)})`);
+  // BUG-8 items 1-2: height was saved (no profileHistory entry) and must read "Saved", not "Not set".
+  const heightHints = await fieldHints('Height (cm)');
+  if (!heightHints || heightHints[0] !== 'Saved') errors.push(`${tag}: expected the Height hint to read "Saved", got ${JSON.stringify(heightHints)}`);
+  // Weight was saved and logged (no profileHistory entry either) and must read "Saved", not "Not set".
+  const weightHint = await page.locator('dialog[open] .hint', { hasText: 'weigh-in' }).first().textContent();
+  if (!weightHint?.startsWith('Saved')) errors.push(`${tag}: expected the Body weight hint to start with "Saved", got "${weightHint}"`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-bug-8-profile.png` });
+  // A real tap on Male (the first Sex option): it saves, and the hint becomes "Updated …".
+  await page.locator('dialog[open] .seg button').first().tap();
+  await page.waitForTimeout(200);
+  const sexHints = await fieldHints('Sex');
+  if (!sexHints || !sexHints[0]?.startsWith('Updated')) errors.push(`${tag}: expected the Sex hint to read "Updated …" after tapping Male, got ${JSON.stringify(sexHints)}`);
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.waitForTimeout(200);
+  // BUG-8 item 3: the Escobar tab's Profile row now reads complete.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+  await page.locator('[data-palace="coach.sees"]').evaluate(e => e.scrollIntoView({ block: 'center' }));
+  if (!(await visible(page.getByText('All 4 details', { exact: true }), 1500))) errors.push(`${tag}: expected the Escobar tab's Profile row to read "All 4 details" once sex is set`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
