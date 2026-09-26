@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { track, SCRUB_HOLD_MS } from '@/ui/gesture';
+import { haptic } from '@/native/haptics';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
 import { today, unit, bodyWeightAt } from '@/app/selectors';
@@ -204,21 +206,77 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
   const weeks = useMemo(() => volumeChartWeeks(s.sessions, today.value, s.customExercises, u, 12, bw), [s.sessions, s.customExercises, today.value, u, bw]);
   const values = weeks.map(w => w.value);
   const max = Math.max(1, ...values);
+  const [volScrub, setVolScrub] = useState<number | null>(null);
+  const idxRef = useRef<number | null>(null);
+  const barsRef = useRef<HTMLDivElement>(null);
+  const updateVolIndex = (i: number | null) => {
+    if (i === idxRef.current) return;
+    idxRef.current = i;
+    setVolScrub(i);
+    if (i !== null) haptic.tick();
+  };
+  // A6: nearest bar column by x (accounts for the row's own gaps), same drag/hold start rule as the sparkline.
+  useEffect(() => {
+    const el = barsRef.current;
+    if (!el || weeks.length < 2) return undefined;
+    const nearestIndex = (clientX: number): number => {
+      const cols = [...el.querySelectorAll<HTMLElement>('.volume-bar-col')];
+      let best = 0, bestDist = Infinity;
+      cols.forEach((c, i) => { const r = c.getBoundingClientRect(); const dist = Math.abs(r.left + r.width / 2 - clientX); if (dist < bestDist) { bestDist = dist; best = i; } });
+      return best;
+    };
+    let startX = 0;
+    let holdTimer: number | null = null;
+    let dragging = false;
+    const clearHold = () => { if (holdTimer != null) { window.clearTimeout(holdTimer); holdTimer = null; } };
+    const onPointerDown = (e: PointerEvent) => {
+      startX = e.clientX;
+      clearHold();
+      holdTimer = window.setTimeout(() => { dragging = true; updateVolIndex(nearestIndex(startX)); }, SCRUB_HOLD_MS);
+    };
+    const end = () => { clearHold(); if (dragging) { dragging = false; updateVolIndex(null); } };
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    const untrack = track(el, {
+      axis: 'x', capture: 'afterSlop',
+      onMove: d => { clearHold(); dragging = true; updateVolIndex(nearestIndex(startX + d)); },
+      onEnd: end,
+      onCancel: end,
+    });
+    return () => {
+      clearHold();
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
+      untrack();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weeks.length]);
   if (!values.some(v => v > 0)) return null;
   const fmt = (v: number) => (v >= 10_000 ? `${Math.round(v / 100) / 10}k` : String(Math.round(v)));
   const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const volIdx = volScrub ?? weeks.length - 1;
+  const readout = `${fmt(values[volIdx]!)} ${u} · wk of ${formatDay(weeks[volIdx]!.week, { day: 'numeric', month: 'short' })}`;
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); updateVolIndex(Math.max(0, volIdx - 1)); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); updateVolIndex(Math.min(weeks.length - 1, volIdx + 1)); }
+    else if (e.key === 'Escape') updateVolIndex(null);
+  };
   return (
     <Card data-palace="history.weekly-volume">
       <div class="row-between"><div class="eyebrow">Weekly volume</div><span class="hint">{fmt(values[values.length - 1] ?? 0)} {u} this week</span></div>
+      {/* A6: the readout tracks a finger-drag or keyboard scrub; at rest it shows the latest week. */}
+      <div class="chart-readout"><span class="num">{readout}</span></div>
       {/* I12: no title attrs (touch never shows a tooltip); the current week is accent with its value above it. */}
-      <div class="volume-bars" role="img" aria-label={`Weekly volume, last ${weeks.length} weeks, average ${fmt(avg)} ${u}`}>
+      <div class="volume-bars" ref={barsRef} tabIndex={0} role="slider" aria-valuemin={0} aria-valuemax={weeks.length - 1} aria-valuenow={volIdx} aria-valuetext={readout} onKeyDown={onKeyDown}>
         <div class="volume-avg" style={{ bottom: `${Math.min(100, (avg / max) * 100)}%` }}><span class="num">avg {fmt(avg)}</span></div>
         {weeks.map((w, i) => {
           const isCurrent = i === weeks.length - 1;
           return (
             <div key={w.week} class="volume-bar-col">
               {/* QA13-3: the label sits inside the bar (absolutely, above it) so it never eats into the bar's own height. */}
-              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%` }}>
+              <i class={isCurrent ? 'current' : ''} style={{ height: `${Math.max(2, (values[i]! / max) * 100)}%`, opacity: volScrub != null && i !== volScrub ? .45 : undefined }}>
                 {isCurrent && <span class="volume-bar-value num">{fmt(values[i]!)}</span>}
               </i>
             </div>
@@ -257,7 +315,13 @@ function Stats() {
   const effortInSets = effortUsesSets(hist12, mode);
   const effortPoints = effortInSets ? effortKg : effortKg.map(p => ({ day: p.day, easy: kgToDisplay(p.easy, u), ideal: kgToDisplay(p.ideal, u), max: kgToDisplay(p.max, u), unrated: kgToDisplay(p.unrated, u) }));
   const [selectedBar, setSelectedBar] = useState<number | null>(null);
-  useEffect(() => setSelectedBar(null), [exercise]);
+  const [sparkScrub, setSparkScrub] = useState<number | null>(null);
+  useEffect(() => { setSelectedBar(null); setSparkScrub(null); }, [exercise]);
+  // A6: the sparkline's readout shows the scrubbed session's actual top set, not just its plotted value.
+  const sparkIdx = sparkScrub ?? hist12.length - 1;
+  const sparkSession = hist12[sparkIdx];
+  const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
+  const sparkReadout = sparkSession && sparkStats ? `${sparkStats.load} × ${sparkStats.reps} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}` : '';
 
   return (
     <div class="stack" style={{ marginTop: 14 }}>
@@ -282,7 +346,8 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels />
+                <div class="chart-readout"><span class="num">{sparkReadout}</span></div>
+                <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
                 <div class="grid-3">
                   <Stat value={lastTop!.load} label="last top load" />
                   <Stat value={`${lastTop!.reps}`} label="reps at top" />

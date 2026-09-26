@@ -93,7 +93,10 @@ const legacy = {
   preferences: { units: { weight: 'kg' } }, user: { profile: { displayName: 'Marc', bodyWeightKg: 78 } },
 };
 
-const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox'] });
+// A6: disable Chromium's own swipe-to-navigate gesture, which a horizontal CDP touch drag can
+// otherwise trigger (it consumes the touch as browser navigation before any page JS sees it,
+// navigating to about:blank since these fresh contexts have no earlier history entry).
+const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
 const themes = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'];
 const errors = [];
 for (const theme of themes) {
@@ -664,6 +667,127 @@ for (const theme of themes) {
       await ctx.close();
     }
   }
+}
+
+// A6: scrub the sparkline and the weekly volume bars with a finger or the keyboard.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'a6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `a6-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+
+  // The fixed bottom nav and the Escobar dock float over the last ~150px of the viewport; scroll
+  // a chart clear of both before dragging on it, so the touch actually reaches the chart.
+  const scrollClear = async locator => {
+    const vh = page.viewportSize().height;
+    let box = await locator.boundingBox();
+    const overlap = box.y + box.height - (vh - 150);
+    if (overlap > 0) {
+      await page.evaluate(d => window.scrollBy(0, d), overlap);
+      await page.waitForTimeout(50);
+      box = await locator.boundingBox();
+    }
+    return box;
+  };
+
+  // Sparkline: touchDrag 10%->90% changes the readout at least 3 times, and it returns to the latest value within 300ms of release.
+  {
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .num';
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    const restText = await page.locator(readoutSel).textContent();
+    await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      window.__a6 = [el?.textContent ?? ''];
+      window.__a6obs = new MutationObserver(() => window.__a6.push(el?.textContent ?? ''));
+      window.__a6obs.observe(el, { characterData: true, childList: true, subtree: true });
+    }, readoutSel);
+    await touchDrag(page, box.x + box.width * 0.1, box.y + box.height / 2, box.x + box.width * 0.9, box.y + box.height / 2, 400);
+    const seen = await page.evaluate(() => new Set(window.__a6).size);
+    if (seen < 3) errors.push(`${tag}: sparkline readout changed ${seen - 1} time(s) during a 10%->90% drag, expected >= 3`);
+    const backToRest = await page.waitForFunction(sel => document.querySelector(sel)?.textContent === window.__a6[0], readoutSel, { timeout: 300 }).then(() => true).catch(() => false);
+    if (!backToRest) errors.push(`${tag}: sparkline readout did not return to the latest value within 300ms of release`);
+    const restTextNow = await page.locator(readoutSel).textContent();
+    if (restTextNow !== restText) errors.push(`${tag}: sparkline readout at rest changed from "${restText}" to "${restTextNow}"`);
+  }
+
+  // A vertical drag on the sparkline scrolls the page (touch-action:pan-y), it doesn't scrub.
+  {
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 - 200, 200);
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    if (scrollAfter <= scrollBefore) errors.push(`${tag}: a vertical drag on the sparkline should scroll the page (was ${scrollBefore}, now ${scrollAfter})`);
+  }
+
+  // Keyboard: focus + ArrowLeft changes the readout and aria-valuenow.
+  {
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .num';
+    const slider = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    await slider.focus();
+    const before = { text: await page.locator(readoutSel).textContent(), now: await slider.getAttribute('aria-valuenow') };
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForTimeout(50);
+    const after = { text: await page.locator(readoutSel).textContent(), now: await slider.getAttribute('aria-valuenow') };
+    if (after.text === before.text) errors.push(`${tag}: ArrowLeft on the focused sparkline should change the readout`);
+    if (after.now === before.now) errors.push(`${tag}: ArrowLeft on the focused sparkline should change aria-valuenow`);
+    await page.keyboard.press('Escape');
+  }
+
+  // The weekly volume bars get the same touch behaviour: a horizontal drag changes the readout at
+  // least once mid-drag (checked live via MutationObserver — the release reverts it before a
+  // post-drag read would ever see the change), and dims the non-selected bars while it's held.
+  {
+    const readoutSel = '[data-palace="history.weekly-volume"] .chart-readout .num';
+    const bars = page.locator('[data-palace="history.weekly-volume"] .volume-bars');
+    const box = await scrollClear(bars);
+    const restText = await page.locator(readoutSel).textContent();
+    await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      window.__a6vol = [el?.textContent ?? ''];
+      window.__a6volDim = false;
+      window.__a6volObs = new MutationObserver(() => {
+        window.__a6vol.push(el?.textContent ?? '');
+        if ([...document.querySelectorAll('[data-palace="history.weekly-volume"] .volume-bars i')].some(b => parseFloat(getComputedStyle(b).opacity) < 1)) window.__a6volDim = true;
+      });
+      window.__a6volObs.observe(el, { characterData: true, childList: true, subtree: true });
+    }, readoutSel);
+    await touchDrag(page, box.x + box.width * 0.15, box.y + box.height / 2, box.x + box.width * 0.85, box.y + box.height / 2, 400);
+    const [seenVol, dimmed] = await page.evaluate(() => [new Set(window.__a6vol).size, window.__a6volDim]);
+    if (seenVol < 2) errors.push(`${tag}: dragging across the weekly volume bars should change the readout`);
+    if (!dimmed) errors.push(`${tag}: mid-drag, at least one non-selected volume bar should be dimmed`);
+    const backText = await page.locator(readoutSel).textContent();
+    if (backText !== restText) errors.push(`${tag}: weekly volume readout did not return to "${restText}" after release (got "${backText}")`);
+  }
+  await ctx.close();
 }
 
 // R6: a day off on Today, a sticky setup note on a live card, logged warm-ups, and the CSV row in Settings.
