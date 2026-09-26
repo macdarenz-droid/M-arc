@@ -35,6 +35,21 @@ describe('first paint (ST-25)', () => {
   });
 });
 
+describe('launch overlay theme map (O1)', () => {
+  it('index.html THEME map matches src/theme/themes.ts bg/text/accent for every theme', () => {
+    const script = /var THEME = \{([\s\S]*?)\};/.exec(readFileSync('index.html', 'utf8'));
+    expect(script).not.toBeNull();
+    // eslint-disable-next-line no-eval
+    const THEME = new Function(`return {${script![1]}};`)() as Record<string, { bg: string; ink: string; accent: string }>;
+    for (const id of THEME_IDS) {
+      expect(THEME[id], id).toBeDefined();
+      expect(THEME[id]!.bg.toLowerCase()).toBe(THEMES[id].tokens.bg.toLowerCase());
+      expect(THEME[id]!.ink.toLowerCase()).toBe(THEMES[id].tokens.text.toLowerCase());
+      expect(THEME[id]!.accent.toLowerCase()).toBe(THEMES[id].tokens.accent.toLowerCase());
+    }
+  });
+});
+
 describe('stylesheet custom properties (QA-R7-4)', () => {
   it('every var() the stylesheet reads is a theme token, defined in the sheet, or set inline by a component', async () => {
     const { readFileSync } = await import('node:fs');

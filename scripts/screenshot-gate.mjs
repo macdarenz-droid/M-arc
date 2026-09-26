@@ -76,6 +76,18 @@ for (const theme of themes) {
   await page.goto(`http://localhost:${PORT}/`);
   console.log(theme, 'loaded');
   await page.waitForSelector('.nav');
+  // O1: every context here runs under reducedMotion:'reduce', so the launch overlay's own
+  // wait is 0ms and it should be gone (or gone within one fade) very shortly after .nav shows.
+  const launchGoneMs = await page.evaluate(() => new Promise(resolve => {
+    const t = performance.now();
+    const check = () => {
+      if (!document.getElementById('launch')) { resolve(performance.now() - t); return; }
+      if (performance.now() - t > 1000) { resolve(Infinity); return; }
+      setTimeout(check, 10);
+    };
+    check();
+  }));
+  if (launchGoneMs > 300) errors.push(`${theme}: #launch overlay took ${Math.round(launchGoneMs)}ms to leave after .nav appeared (want <=300ms)`);
   await page.waitForTimeout(400);
   const shot = async (name) => { await settle(page); return page.screenshot({ path: `${OUT}/${theme}-${name}.png` }); };
   await shot('today');
@@ -2310,6 +2322,67 @@ for (const theme of ['silent-black', 'paper']) {
   await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400);
   await noScroll('Train (live)');
 
+  await ctx.close();
+}
+
+// O1: launch overlay "Bar path" timing, under full motion, measured from window.__marcLaunchT0
+// (set by the inline script in index.html at its very first line).
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch (O1)';
+
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+
+  if ((await page.locator('#launch svg path').count()) === 0) errors.push(`${tag}: expected #launch svg path to exist`);
+
+  await elapsedAtLeast(page, 250);
+  const offAt250 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#launch svg path')).strokeDashoffset));
+  if (!(offAt250 > 46 && offAt250 < 100)) errors.push(`${tag}: at 250ms strokeDashoffset should be strictly between 46 and 100, got ${offAt250}`);
+
+  await elapsedAtLeast(page, 1400);
+  const offAt1400 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('#launch svg path')).strokeDashoffset));
+  if (!(offAt1400 <= 1)) errors.push(`${tag}: at 1400ms strokeDashoffset should be <=1, got ${offAt1400}`);
+
+  await elapsedAtLeast(page, 2400);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: expected #launch to be gone by 2400ms`);
+  await ctx.close();
+}
+
+// O1: a tap skips the overlay.
+{
+  const elapsedAtLeast = (page, ms) => page.waitForFunction(target => performance.now() - window.__marcLaunchT0 >= target, ms, { timeout: 8000 });
+  const tag = 'launch skip (O1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
+  await elapsedAtLeast(page, 300);
+  await page.locator('#launch').click({ force: true }).catch(() => {});
+  await elapsedAtLeast(page, 700);
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: a click at 300ms should have removed #launch by 700ms`);
+  await ctx.close();
+}
+
+// O1: the theme colour map, and the crash hook clearing the overlay.
+{
+  const tag = 'launch theme+crash (O1)';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => localStorage.setItem('marc.theme', 'paper'));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('#launch');
+  const bg = await page.evaluate(() => getComputedStyle(document.getElementById('launch')).backgroundColor);
+  if (bg !== 'rgb(255, 255, 255)') errors.push(`${tag}: paper theme overlay background should be rgb(255, 255, 255), got ${bg}`);
+  await page.evaluate(() => window.__marcCrash('x'));
+  if (await page.evaluate(() => !!document.getElementById('launch'))) errors.push(`${tag}: __marcCrash should remove #launch`);
+  if (!(await visible(page.getByText('M/ARC could not start')))) errors.push(`${tag}: __marcCrash should show the crash box`);
   await ctx.close();
 }
 

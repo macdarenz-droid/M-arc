@@ -29,6 +29,7 @@ try {
 
   render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('app')!);
   (globalThis as { __marcBooted?: boolean }).__marcBooted = true;
+  (globalThis as { __marcLaunchReady?: () => void }).__marcLaunchReady?.();
 
   // After boot, a stray error or rejected promise is reported once in a while, never a blank screen.
   let lastErrorToast = 0;
