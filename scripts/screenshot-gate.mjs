@@ -1703,6 +1703,28 @@ for (const width of [390, 360]) {
         if (Math.abs(afterTop - beforeTop) > 2) errors.push(`${tag}: tapped tile moved ${Math.abs(afterTop - beforeTop).toFixed(1)}px opening the strip (want <= 2px)`);
         const detail = page.locator('.rt-detail-wrap.open .rt-detail');
         if (!(await visible(detail))) errors.push(`${tag}: expected an open detail strip after tapping a tile`);
+        // QA7-1: the wrap must actually grow to 1fr, not stay a clipped sliver — check real
+        // geometry, not just visible() (which passed even at a 28px sliver with rows 2/3 clipped).
+        const geo = await page.evaluate(() => {
+          const wrap = document.querySelector('.rt-detail-wrap.open');
+          const row3 = wrap?.querySelector('.rt-detail-row3');
+          const chevron = wrap?.querySelector('.rt-detail-chevron');
+          const heads = [...document.querySelectorAll('.rt-group-head')];
+          const wrapRect = wrap?.getBoundingClientRect();
+          const nextHead = heads.find(h => h.getBoundingClientRect().top >= (wrapRect?.bottom ?? Infinity) - 1) ?? heads[heads.length - 1];
+          return {
+            wrapHeight: wrapRect?.height ?? 0,
+            row3Bottom: row3?.getBoundingClientRect().bottom ?? null,
+            chevronBottom: chevron?.getBoundingClientRect().bottom ?? null,
+            wrapBottom: wrapRect?.bottom ?? null,
+            nextHeadTop: nextHead?.getBoundingClientRect().top ?? null,
+            detailBottom: wrap?.querySelector('.rt-detail')?.getBoundingClientRect().bottom ?? null,
+          };
+        });
+        if (geo.wrapHeight < 80) errors.push(`${tag}: detail wrap is only ${geo.wrapHeight.toFixed(1)}px tall (want >= 80px, QA7-1)`);
+        if (geo.row3Bottom != null && geo.wrapBottom != null && geo.row3Bottom > geo.wrapBottom + 1) errors.push(`${tag}: row3 bottom (${geo.row3Bottom}) is below the wrap bottom (${geo.wrapBottom}), clipped (QA7-1)`);
+        if (geo.chevronBottom != null && geo.wrapBottom != null && geo.chevronBottom > geo.wrapBottom + 1) errors.push(`${tag}: chevron bottom (${geo.chevronBottom}) is below the wrap bottom (${geo.wrapBottom}), clipped (QA7-1)`);
+        if (geo.nextHeadTop != null && geo.detailBottom != null && geo.nextHeadTop < geo.detailBottom - 1) errors.push(`${tag}: the next group header (top ${geo.nextHeadTop}) overlaps the open strip (bottom ${geo.detailBottom}, QA7-1)`);
 
         // Tapping the strip opens the muscle panel.
         await tapEl(page, detail);
