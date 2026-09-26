@@ -70,3 +70,24 @@ F10's Undo can lose or misplace workout data. Fix the items below, each with a t
 - **Cause:** `.stack`/`.stack-sm` (styles.css:127-128) are grids with no `grid-template-columns`. The implicit auto column grows to the full width of nowrap `.ellipsis` names such as "Dumbbell Shoulder Press" (Train.tsx:639, 641), so the ellipsis never engages. The same rules are on main, so this isn't new in b2b, but it fails this batch's "no horizontal scroll" acceptance.
 - **Fix:** `.stack, .stack-sm { grid-template-columns: minmax(0, 1fr); }`. Checked by injection: scrollWidth 356 → 320, cards 288 px, names end in an ellipsis.
 - This changes every `.stack`, so the gate must also assert no horizontal scroll (`scrollWidth ≤ clientWidth`) at 320 px on Today, Train (live, with a long exercise name), Body, History and Settings, in both themes.
+
+## Re-check at 4e6048e: all seven fixed
+
+Each check fails with only its fix reverted and passes on HEAD:
+
+| id | fix commit | check | before the fix | at HEAD |
+|---|---|---|---|---|
+| QA10-1 / QA10-2 | 15236d7 | vitest repros A, B and C, double Undo, happy paths; gate `f10-undo` for the note typed before Remove | each repro fails; the note comes back undefined | pass |
+| QA10-3 | 958d745 | F10 gate block | keyboard Enter didn't arm 'Tap again to confirm' (`preventDefault` blocked the click) | pass |
+| QA10-4 | d0242e9 | reset warning test | warning text missing | pass |
+| QA10-5 | 8170487 | Discard button height | 34 px | 44 px |
+| QA10-6 | 5869198 | `.ex-head:active` rule | missing | present |
+| QA10-7 | ad198de, 4e6048e | live Train screen width at 320 px | scrollWidth 356 | 320 in both themes |
+
+- **HoldButton:** 300 ms does nothing, 850 ms confirms once, keyboard tap-twice confirms, a keyboard hold confirms once, and both timers are cleared on unmount.
+- **No loosening:** the tests and gate diff since 6dba847 is +779 / −4. The 4 deleted lines are a summary log line and import reformatting. The merge 46f6f8e keeps every O3/QA7 gate probe verbatim.
+- **`.stack` widths at 320 px, compared with a main build:**
+  - Today, Body, History and Coach stay at 288 px.
+  - The live Train screen goes from 339.7 to 288 px, and Settings from 403.6 to 286 px. Both are overflows that already exist on main, now fixed.
+  - Nothing that should be full width got narrower.
+- **Checks:** tsc passed, vitest passed (1,120) and the build passed. CI is green on 4e6048e (guard, source-gate with the gate, android-gate). The local gate stalls at the R5.5 service-worker step in the QA sandbox, as before, so the QA10 probes were re-run standalone with the same fixtures and assertions.
