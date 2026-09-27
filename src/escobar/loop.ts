@@ -138,7 +138,10 @@ function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown
     if (!sharing.health && HEALTH_KEY(k)) continue;
     // QA3-9: hrMax is personal unless it's the age-based (Tanaka) estimate, mirroring methods.ts's live rule.
     if (!sharing.health && k === 'hrMax' && v.hrMaxSource !== 'tanaka') continue;
-    if (!sharing.body && BODY_KEYS.has(k)) continue;
+    // QA13-1: a stored lift_trend effort[] is per-day body-weight-derived kg once sharing.body is
+    // off, same as any other BODY_KEYS field — Array.isArray keeps session_summary's unrelated
+    // effort count object (not an array) untouched.
+    if (!sharing.body && (BODY_KEYS.has(k) || (k === 'effort' && Array.isArray(x)))) continue;
     out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
   }
   return out;

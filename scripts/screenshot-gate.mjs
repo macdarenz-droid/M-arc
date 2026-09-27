@@ -103,7 +103,10 @@ const legacy = {
   preferences: { units: { weight: 'kg' } }, user: { profile: { displayName: 'Marc', bodyWeightKg: 78 } },
 };
 
-const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox'] });
+// A6: disable Chromium's own swipe-to-navigate gesture, which a horizontal CDP touch drag can
+// otherwise trigger (it consumes the touch as browser navigation before any page JS sees it,
+// navigating to about:blank since these fresh contexts have no earlier history entry).
+const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), args: ['--no-sandbox', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
 const themes = ['silent-black', 'paper', 'ember', 'emerald', 'midnight'];
 const errors = [];
 for (const theme of themes) {
@@ -486,6 +489,531 @@ for (const theme of themes) {
       if (r.dateLines > 1) errors.push(`stat-hist-row ${label}: the date wrapped onto ${r.dateLines} lines`);
     }
   }
+  await ctx.close();
+}
+
+// I12: an undistorted sparkline (round end dot) and labelled, current-week-highlighted volume bars.
+{
+  for (const width of [390, 560]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: width < 500, hasTouch: width < 500, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const tag = `i12-${width}`;
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await page.addInitScript(() => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sess = (offset, id, name, sets) => ({ id: `i12-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+        exercises: [{ exerciseId: id, name, sets }],
+        logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+      const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [
+          sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+          sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+          sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+        ],
+        active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+    await settle(page); await page.screenshot({ path: `${OUT}/silent-black-history-stats-${width}.png` });
+    const result = await page.evaluate(() => {
+      const bars = document.querySelector('[data-palace="history.weekly-volume"] .volume-bars');
+      const hasTitle = !!bars?.querySelector('[title]');
+      const current = bars?.querySelector('i.current');
+      const currentBg = current ? getComputedStyle(current).backgroundColor : null;
+      const probe = document.createElement('div');
+      probe.style.backgroundColor = 'var(--accent)';
+      document.body.appendChild(probe);
+      const accentBg = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline circle:last-of-type');
+      const dr = dot ? dot.getBoundingClientRect() : null;
+      return { hasTitle, currentBg, accentBg, dot: dr ? { w: dr.width, h: dr.height } : null };
+    });
+    if (result.hasTitle) errors.push(`${tag}: .volume-bars still has a title attribute`);
+    if (!result.currentBg || result.currentBg !== result.accentBg) errors.push(`${tag}: current-week bar background (${result.currentBg}) should equal --accent (${result.accentBg})`);
+    if (!result.dot) errors.push(`${tag}: expected the sparkline's end dot`);
+    else if (Math.abs(result.dot.w - result.dot.h) > 0.5) errors.push(`${tag}: sparkline end dot is ${result.dot.w}x${result.dot.h} (should be round, not stretched by an uneven viewBox)`);
+    await ctx.close();
+  }
+}
+
+// QA13-3: the current-week volume bar's label must never eat into the bar's own height.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-3';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-3-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const check = await page.evaluate(() => {
+    const container = document.querySelector('[data-palace="history.weekly-volume"] .volume-bars');
+    const bars = [...container.querySelectorAll('i')];
+    const cs = getComputedStyle(container);
+    const contentH = container.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    return bars.map(b => {
+      const pct = parseFloat(b.style.height) || 0;
+      const expected = (pct / 100) * contentH;
+      const actual = b.getBoundingClientRect().height;
+      return { pct, expected: Math.round(expected * 10) / 10, actual: Math.round(actual * 10) / 10, diff: Math.abs(expected - actual), current: b.classList.contains('current') };
+    });
+  });
+  const bad = check.filter(c => c.diff > 1);
+  if (bad.length) errors.push(`${tag}: volume bar height doesn't match its inline %, ±1px: ${JSON.stringify(bad)}`);
+  if (!check.some(c => c.current)) errors.push(`${tag}: expected a current-week bar to check`);
+  await ctx.close();
+}
+
+// QA13-4: the sparkline's min/max labels must sit at the lowest/highest plotted point, not drift
+// down into the dates row below the chart.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-4';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-4-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const check = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const svg = wrap?.querySelector('svg.sparkline');
+    const path = svg?.querySelector('path');
+    const d = path?.getAttribute('d') ?? '';
+    const nums = (d.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+    const ys = [];
+    for (let i = 1; i < nums.length; i += 2) ys.push(nums[i]);
+    if (!ys.length) return null;
+    const lowestY = Math.max(...ys); // largest svg-y = the chart's lowest value
+    const highestY = Math.min(...ys); // smallest svg-y = the chart's highest value
+    const svgRect = svg.getBoundingClientRect();
+    const vbHeight = svg.viewBox.baseVal.height;
+    const toScreenY = svgY => svgRect.top + (svgY / vbHeight) * svgRect.height;
+    const spans = [...wrap.querySelectorAll('.sparkline-minmax span')];
+    const centerOf = el => { const r = el.getBoundingClientRect(); return (r.top + r.bottom) / 2; };
+    return {
+      maxDiff: spans[0] ? Math.abs(centerOf(spans[0]) - toScreenY(highestY)) : null,
+      minDiff: spans[1] ? Math.abs(centerOf(spans[1]) - toScreenY(lowestY)) : null,
+    };
+  });
+  if (!check) errors.push(`${tag}: expected the exercise-progress sparkline with labels`);
+  else {
+    if (check.maxDiff != null && check.maxDiff > 3) errors.push(`${tag}: the max label is ${check.maxDiff.toFixed(1)}px from the highest plotted point (budget 3px)`);
+    if (check.minDiff != null && check.minDiff > 3) errors.push(`${tag}: the min label is ${check.minDiff.toFixed(1)}px from the lowest plotted point (budget 3px)`);
+  }
+  await ctx.close();
+}
+
+// QA13-5: an all-zero effort chart (no saved body weight) still keeps a 44px tap target per bar.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-5';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-5-${offset}-${id}`, splitId: 'sp1', splitName: 'Pull', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const pullUp = [{ kg: 0, reps: 8, effort: 'ideal' }, { kg: 0, reps: 8, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      // No profile.bodyWeightKg and no weightLog: every bodyweight set's effective load is null (0 kg).
+      version: 1, createdAt: now, profile: { name: 'Marc', heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(20, 'lib_pull_up', 'Pull-Up', pullUp), sess(10, 'lib_pull_up', 'Pull-Up', pullUp), sess(2, 'lib_pull_up', 'Pull-Up', pullUp),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const check = await page.evaluate(() => [...document.querySelectorAll('.effort-bar-col')].map(el => { const r = el.getBoundingClientRect(); return { w: r.width, h: r.height }; }));
+  if (!check.length) errors.push(`${tag}: expected the all-zero effort chart's bar columns`);
+  const tooSmall = check.filter(c => c.w < 44 || c.h < 44);
+  if (tooSmall.length) errors.push(`${tag}: ${tooSmall.length} effort-bar-col tap target(s) under 44x44px: ${JSON.stringify(tooSmall)}`);
+  await ctx.close();
+}
+
+// QA13-6: "Easy" and "Not rated" must read as clearly different, and each at ≥3:1 against the card.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'qa13-6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa13-6-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    localStorage.setItem('marc.theme', 'paper');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(10, 'lib_bench_press', 'Bench Press', [{ kg: 60, reps: 5, effort: 'easy' }, { kg: 60, reps: 5 }]),
+        sess(2, 'lib_bench_press', 'Bench Press', [{ kg: 60, reps: 5, effort: 'easy' }, { kg: 60, reps: 5 }]),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+  const contrast = (fg, bg) => {
+    const toRgb = s => s.match(/[\d.]+/g).map(Number);
+    const lin = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    const L1 = lum(toRgb(fg)), L2 = lum(toRgb(bg));
+    return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+  };
+  const check = await page.evaluate(() => {
+    const card = document.querySelector('[data-palace="history.exercise-stats"] .card');
+    const surface1 = getComputedStyle(card).backgroundColor;
+    const easySwatch = document.querySelector('.effort-legend .effort-swatch.easy') ?? document.querySelector('.effort-bar-stack i.easy');
+    const unratedEl = document.querySelector('.effort-legend .effort-swatch.unrated') ?? document.querySelector('.effort-bar-stack i.unrated');
+    const easyColor = easySwatch ? getComputedStyle(easySwatch).backgroundColor : null;
+    const unratedOutline = unratedEl ? (getComputedStyle(unratedEl).boxShadow || getComputedStyle(unratedEl).outlineColor) : null;
+    const unratedFillColor = unratedEl ? getComputedStyle(unratedEl).backgroundColor : null;
+    return { surface1, easyColor, unratedOutline, unratedFillColor, hasUnratedLegend: !!document.querySelector('.effort-legend')?.textContent?.includes('Not rated') };
+  });
+  if (!check.easyColor) errors.push(`${tag}: expected an "easy" swatch/segment to measure`);
+  else if (contrast(check.easyColor, check.surface1) < 3) errors.push(`${tag}: "easy" colour ${check.easyColor} is under 3:1 against ${check.surface1}`);
+  if (check.hasUnratedLegend) {
+    if (check.easyColor && check.unratedFillColor && check.easyColor === check.unratedFillColor) errors.push(`${tag}: "easy" and "Not rated" use the identical fill colour`);
+    if (!check.unratedOutline || check.unratedOutline === 'none') errors.push(`${tag}: expected "Not rated" to have a distinct outline, not a plain flat fill`);
+  }
+  await ctx.close();
+}
+
+// O4: "Work done, by effort" bars per exercise — legend, no page scroll, no overlap, tap selects a bar.
+{
+  for (const width of [360, 390]) {
+    for (const theme of ['silent-black', 'paper']) {
+      const ctx = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      const tag = `o4-${theme}-${width}`;
+      page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+      await page.addInitScript(t => {
+        const now = new Date().toISOString();
+        const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+        const sess = (offset, id, name, sets) => ({ id: `o4-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+          exercises: [{ exerciseId: id, name, sets }],
+          logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+        localStorage.setItem('marc.theme', t);
+        localStorage.setItem('marc.state.v1', JSON.stringify({
+          version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+          goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+          sessions: [
+            sess(40, 'lib_bench_press', 'Bench Press', [{ kg: 100, reps: 5, effort: 'easy' }, { kg: 100, reps: 5, effort: 'easy' }]),
+            sess(30, 'lib_bench_press', 'Bench Press', [{ kg: 100, reps: 5, effort: 'ideal' }, { kg: 100, reps: 5 }]),
+            sess(20, 'lib_bench_press', 'Bench Press', [{ kg: 110, reps: 5, effort: 'ideal' }, { kg: 110, reps: 5, effort: 'max' }]),
+            sess(10, 'lib_bench_press', 'Bench Press', [{ kg: 110, reps: 5, effort: 'max' }, { kg: 110, reps: 5, kind: 'failure' }]),
+            sess(2, 'lib_bench_press', 'Bench Press', [{ kg: 120, reps: 5, effort: 'ideal' }, { kg: 120, reps: 5, effort: 'ideal' }]),
+          ],
+          active: null, customExercises: [],
+          preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+          body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+          onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+        }));
+      }, theme);
+      await page.goto(`http://localhost:${PORT}/`);
+      await page.waitForSelector('.nav');
+      await launchGone(page);
+      await page.waitForTimeout(300);
+      await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+      await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+      await settle(page); await page.screenshot({ path: `${OUT}/${theme}-effort-bars-${width}.png` });
+      const check = await page.evaluate(() => {
+        const bars = [...document.querySelectorAll('.effort-bar-col')];
+        const rects = bars.map(b => b.getBoundingClientRect());
+        let overlap = false;
+        for (let i = 1; i < rects.length; i++) if (rects[i]?.left < (rects[i - 1]?.right ?? 0) - 0.5) overlap = true;
+        const legendHasUnrated = document.querySelector('.effort-legend')?.textContent?.includes('Not rated') ?? false;
+        return { count: bars.length, overlap, legendHasUnrated, pageWidth: document.documentElement.scrollWidth };
+      });
+      if (check.count < 4) errors.push(`${tag}: expected the effort bars chart with at least 4 sessions`);
+      if (check.overlap) errors.push(`${tag}: effort bar columns overlap`);
+      if (!check.legendHasUnrated) errors.push(`${tag}: expected "Not rated" in the legend (an unrated set is seeded)`);
+      if (check.pageWidth > width) errors.push(`${tag}: the page scrolls horizontally at ${width}px (scrollWidth ${check.pageWidth})`);
+      // Tapping a bar selects it (and, per Stats, reveals that session's logged sets below the chart).
+      await page.locator('.effort-bar-col').first().click();
+      await page.waitForTimeout(150);
+      const selected = await page.evaluate(() => document.querySelector('.effort-bar-col[aria-pressed="true"]') != null);
+      if (!selected) errors.push(`${tag}: tapping a bar should select it`);
+      await ctx.close();
+    }
+  }
+}
+
+// A6: scrub the sparkline and the weekly volume bars with a finger or the keyboard.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'a6';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `a6-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  await settle(page);
+
+  // The fixed bottom nav and the Escobar dock float over the last ~150px of the viewport; scroll
+  // a chart clear of both before dragging on it, so the touch actually reaches the chart.
+  const scrollClear = async locator => {
+    const vh = page.viewportSize().height;
+    let box = await locator.boundingBox();
+    const overlap = box.y + box.height - (vh - 150);
+    if (overlap > 0) {
+      await page.evaluate(d => window.scrollBy(0, d), overlap);
+      await page.waitForTimeout(50);
+      box = await locator.boundingBox();
+    }
+    return box;
+  };
+
+  // Sparkline: touchDrag 10%->90% changes the readout at least 3 times, and it returns to the latest value within 300ms of release.
+  {
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .readout-cur';
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    const restText = await page.locator(readoutSel).textContent();
+    await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      window.__a6 = [el?.textContent ?? ''];
+      window.__a6obs = new MutationObserver(() => window.__a6.push(el?.textContent ?? ''));
+      window.__a6obs.observe(el, { characterData: true, childList: true, subtree: true });
+    }, readoutSel);
+    await touchDrag(page, box.x + box.width * 0.1, box.y + box.height / 2, box.x + box.width * 0.9, box.y + box.height / 2, 400);
+    const seen = await page.evaluate(() => new Set(window.__a6).size);
+    if (seen < 3) errors.push(`${tag}: sparkline readout changed ${seen - 1} time(s) during a 10%->90% drag, expected >= 3`);
+    const backToRest = await page.waitForFunction(sel => document.querySelector(sel)?.textContent === window.__a6[0], readoutSel, { timeout: 300 }).then(() => true).catch(() => false);
+    if (!backToRest) errors.push(`${tag}: sparkline readout did not return to the latest value within 300ms of release`);
+    const restTextNow = await page.locator(readoutSel).textContent();
+    if (restTextNow !== restText) errors.push(`${tag}: sparkline readout at rest changed from "${restText}" to "${restTextNow}"`);
+  }
+
+  // QA14-1, under reduced motion (this whole context): release must stay an instant swap, never
+  // a fractional-opacity frame — the same drag as above, sampled right after release.
+  {
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    await touchDrag(page, box.x + box.width * 0.2, box.y + box.height / 2, box.x + box.width * 0.6, box.y + box.height / 2, 250);
+    const opacities = await page.evaluate(() => {
+      const old = document.querySelector('[data-palace="history.exercise-stats"] .chart-readout .readout-old');
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide-dot');
+      return [old, dot].filter(Boolean).map(el => parseFloat(getComputedStyle(el).opacity));
+    });
+    if (opacities.some(o => o > 0 && o < 1)) errors.push(`${tag}: under reduced motion, release should be an instant swap, not a fade (opacities: ${JSON.stringify(opacities)})`);
+  }
+
+  // A vertical drag on the sparkline scrolls the page (touch-action:pan-y), it doesn't scrub.
+  {
+    const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    const box = await scrollClear(wrap);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    await touchDrag(page, box.x + box.width / 2, box.y + box.height / 2, box.x + box.width / 2, box.y + box.height / 2 - 200, 200);
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    if (scrollAfter <= scrollBefore) errors.push(`${tag}: a vertical drag on the sparkline should scroll the page (was ${scrollBefore}, now ${scrollAfter})`);
+  }
+
+  // Keyboard: focus + ArrowLeft changes the readout and aria-valuenow.
+  {
+    const readoutSel = '[data-palace="history.exercise-stats"] .chart-readout .readout-cur';
+    const slider = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+    await slider.focus();
+    const before = { text: await page.locator(readoutSel).textContent(), now: await slider.getAttribute('aria-valuenow') };
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForTimeout(50);
+    const after = { text: await page.locator(readoutSel).textContent(), now: await slider.getAttribute('aria-valuenow') };
+    if (after.text === before.text) errors.push(`${tag}: ArrowLeft on the focused sparkline should change the readout`);
+    if (after.now === before.now) errors.push(`${tag}: ArrowLeft on the focused sparkline should change aria-valuenow`);
+    await page.keyboard.press('Escape');
+  }
+
+  // The weekly volume bars get the same touch behaviour: a horizontal drag changes the readout at
+  // least once mid-drag (checked live via MutationObserver — the release reverts it before a
+  // post-drag read would ever see the change), and dims the non-selected bars while it's held.
+  {
+    const readoutSel = '[data-palace="history.weekly-volume"] .chart-readout .readout-cur';
+    const bars = page.locator('[data-palace="history.weekly-volume"] .volume-bars');
+    const box = await scrollClear(bars);
+    const restText = await page.locator(readoutSel).textContent();
+    await page.evaluate(sel => {
+      const el = document.querySelector(sel);
+      window.__a6vol = [el?.textContent ?? ''];
+      window.__a6volDim = false;
+      window.__a6volObs = new MutationObserver(() => {
+        window.__a6vol.push(el?.textContent ?? '');
+        if ([...document.querySelectorAll('[data-palace="history.weekly-volume"] .volume-bars i')].some(b => parseFloat(getComputedStyle(b).opacity) < 1)) window.__a6volDim = true;
+      });
+      window.__a6volObs.observe(el, { characterData: true, childList: true, subtree: true });
+    }, readoutSel);
+    await touchDrag(page, box.x + box.width * 0.15, box.y + box.height / 2, box.x + box.width * 0.85, box.y + box.height / 2, 400);
+    const [seenVol, dimmed] = await page.evaluate(() => [new Set(window.__a6vol).size, window.__a6volDim]);
+    if (seenVol < 2) errors.push(`${tag}: dragging across the weekly volume bars should change the readout`);
+    if (!dimmed) errors.push(`${tag}: mid-drag, at least one non-selected volume bar should be dimmed`);
+    const backText = await page.locator(readoutSel).textContent();
+    if (backText !== restText) errors.push(`${tag}: weekly volume readout did not return to "${restText}" after release (got "${backText}")`);
+  }
+  await ctx.close();
+}
+
+// QA14-1: under full motion, letting go of a chart scrub must crossfade, not snap in one frame.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+  const page = await ctx.newPage();
+  const tag = 'qa14-1';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = (offset, id, name, sets) => ({ id: `qa14-1-${offset}-${id}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T17:00:00.000Z`, endedAt: `${day(offset)}T17:30:00.000Z`, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: id, name, sets }],
+      logging: { mode: 'live', trainedAt: `${day(offset)}T17:00:00.000Z`, trainedEndAt: `${day(offset)}T17:30:00.000Z`, loggedAt: `${day(offset)}T17:30:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+    const sets = kg => [{ kg, reps: 5, effort: 'ideal' }, { kg, reps: 5, effort: 'ideal' }];
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [
+        sess(60, 'lib_bench_press', 'Bench Press', sets(60)), sess(45, 'lib_bench_press', 'Bench Press', sets(70)),
+        sess(30, 'lib_bench_press', 'Bench Press', sets(80)), sess(20, 'lib_bench_press', 'Bench Press', sets(85)),
+        sess(10, 'lib_bench_press', 'Bench Press', sets(90)), sess(2, 'lib_bench_press', 'Bench Press', sets(100)),
+      ],
+      active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav');
+  await launchGone(page);
+  await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  const wrap = page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap');
+  const vh = page.viewportSize().height;
+  let box = await wrap.boundingBox();
+  const overlap = box.y + box.height - (vh - 150);
+  if (overlap > 0) { await page.evaluate(d => window.scrollBy(0, d), overlap); await page.waitForTimeout(50); box = await wrap.boundingBox(); }
+  await touchDrag(page, box.x + box.width * 0.2, box.y + box.height / 2, box.x + box.width * 0.6, box.y + box.height / 2, 250);
+  // Sample a few times across the --dur-fast window right after release: at least one frame must
+  // catch a fractional opacity, or a running (non-idle) Web Animation.
+  let midTransition = false;
+  for (let i = 0; i < 6 && !midTransition; i++) {
+    await page.waitForTimeout(20);
+    midTransition = await page.evaluate(() => {
+      const old = document.querySelector('[data-palace="history.exercise-stats"] .chart-readout .readout-old');
+      const dot = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide-dot');
+      const line = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-guide');
+      const fractional = [old, dot, line].filter(Boolean).some(el => { const o = parseFloat(getComputedStyle(el).opacity); return o > 0 && o < 1; });
+      const running = [old, dot, line].filter(Boolean).some(el => el.getAnimations().some(a => a.playState === 'running'));
+      return fractional || running;
+    });
+  }
+  if (!midTransition) errors.push(`${tag}: releasing a chart scrub under full motion should crossfade (a mid-transition frame within ~120ms of release), not snap instantly`);
   await ctx.close();
 }
 
@@ -1100,6 +1628,17 @@ for (const theme of themes) {
   await page.waitForFunction(() => window.__escobar.status() === 'idle' && document.querySelector('.esc-proposal'), null, { timeout: 15000 }).catch(() => errors.push(`${tag}: the mock conversation did not finish`));
   await page.waitForTimeout(200);
   if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .sparkline')))) errors.push(`${tag}: expected the lift_trend chart`);
+  // I12: Escobar's sparkline stays the static 56px chart with no scrub/date labels.
+  const escSpark = await page.evaluate(() => {
+    const svg = document.querySelector('.esc-comp[data-component="lift_trend"] .sparkline');
+    const wrap = svg?.closest('.sparkline-wrap');
+    return { h: svg ? svg.getBoundingClientRect().height : 0, hasLabels: !!(wrap && wrap.querySelector('.sparkline-minmax, .sparkline-dates')) };
+  });
+  if (Math.round(escSpark.h) !== 56) errors.push(`${tag}: Escobar sparkline is ${escSpark.h}px tall, expected 56`);
+  if (escSpark.hasLabels) errors.push(`${tag}: Escobar sparkline should render with no labels`);
+  // O4: the same effort split renders under the sparkline, static (no tap).
+  if (!(await visible(page.locator('.esc-comp[data-component="lift_trend"] .effort-bars')))) errors.push(`${tag}: expected the lift_trend effort bars`);
+  if ((await page.locator('.esc-comp[data-component="lift_trend"] .effort-bar-col[type="button"]').count()) > 0) errors.push(`${tag}: Escobar's effort bars should not be tappable`);
   if ((await page.locator('.esc-answer .esc-cite').count()) < 1) errors.push(`${tag}: expected a citation in the answer`);
   if ((await page.locator('.esc-chips .chip').count()) < 3) errors.push(`${tag}: expected three follow-up chips`);
   await settle(page); await page.screenshot({ path: `${OUT}/${theme}-escobar-chat-390.png` });
@@ -3537,6 +4076,232 @@ for (const theme of ['silent-black', 'paper']) {
   const callsAfterSecondStart = await page.evaluate(() => window.__keepAwakeCalls.slice());
   const last2 = callsAfterSecondStart.slice(-2);
   if (last2.length !== 2 || last2[0] !== false || last2[1] !== true) errors.push(`${tag} (QA12-2): expected __keepAwakeCalls to end [..., false, true] after a second workout starts, got ${JSON.stringify(callsAfterSecondStart)}`);
+  await ctx.close();
+}
+
+// COACH-FB: on Escobar's notes, Helpful and Not now hide the tapped note at once, with the chat
+// path's toast and a working Undo; a quick second tap cannot hide the note that slides into the
+// same spot; saved feedback keeps one record per (note, day); the raw "Earlier this month" log is
+// gone; hidden notes sit behind one quiet row that opens to their titles, each with Show again;
+// a hidden note stays hidden after a reload.
+{
+  const tag = 'COACH-FB';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  const openNotes = async () => {
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.getByRole('button', { name: 'Later' }).click({ timeout: 1500 }).catch(() => {});
+    await page.waitForTimeout(200);
+    await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+    await page.locator('[data-palace="coach.insights"]').evaluate(e => e.scrollIntoView({ block: 'center' }));
+    await page.waitForTimeout(100);
+  };
+  const titles = () => page.locator('.insight h3').allTextContents();
+  const firstBtn = (name) => page.locator('.insight').first().getByRole('button', { name, exact: true });
+  const toastText = async () => (await page.locator('.toast span').first().textContent({ timeout: 1000 }).catch(() => '')) ?? '';
+  const centre = async (loc) => { const b = await loc.boundingBox(); return b ? [b.x + b.width / 2, b.y + b.height / 2] : null; };
+  await page.goto(`http://localhost:${PORT}/`);
+  await openNotes();
+  const t0 = await titles();
+  if (t0.length !== 3) errors.push(`${tag}: expected 3 notes on the legacy fixture, got ${t0.length}`);
+  // CFB-G1: Helpful hides the note at once, with the same toast as the chat path.
+  await firstBtn('Helpful').tap(); await page.waitForTimeout(200);
+  if ((await titles()).includes(t0[0])) errors.push(`${tag}: "${t0[0]}" still shown after Helpful`);
+  if (!(await toastText()).includes('Marked helpful')) errors.push(`${tag}: expected the "Marked helpful" toast`);
+  // CFB-G2: Undo on that toast brings it back.
+  await page.locator('.toast').getByRole('button', { name: 'Undo', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Undo on the toast`));
+  await page.waitForTimeout(200);
+  if (JSON.stringify(await titles()) !== JSON.stringify(t0)) errors.push(`${tag}: Undo did not restore the notes, got: ${(await titles()).join(' | ')}`);
+  // CFB-G3: Not now hides the note; a second tap 100 ms later, on the note that slid into its place, is ignored.
+  await page.waitForTimeout(600);
+  const p1 = await centre(firstBtn('Not now'));
+  if (p1) await page.touchscreen.tap(p1[0], p1[1]);
+  await page.waitForTimeout(100);
+  const p2 = await centre(firstBtn('Not now'));
+  if (p2) await page.touchscreen.tap(p2[0], p2[1]);
+  await page.waitForTimeout(300);
+  const t3 = await titles();
+  if (t3.includes(t0[0])) errors.push(`${tag}: "${t0[0]}" still shown after Not now`);
+  if (!t3.includes(t0[1])) errors.push(`${tag}: a quick second tap also hid "${t0[1]}"`);
+  if (!(await toastText()).includes('Snoozed for 7 days')) errors.push(`${tag}: expected the "Snoozed for 7 days" toast`);
+  // CFB-G4: saved data holds one record per (note, day) after Helpful, Undo, Not now on the same note.
+  await page.waitForTimeout(400);
+  const fb = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') || '{}').insightFeedback || []);
+  const keys = fb.map(f => `${f.id}|${f.day}`);
+  if (new Set(keys).size !== keys.length) errors.push(`${tag}: duplicate saved feedback records: ${JSON.stringify(fb)}`);
+  // CFB-G5: the raw log is gone.
+  if (await page.getByText('Earlier this month').count()) errors.push(`${tag}: the raw "Earlier this month" log is still shown`);
+  // CFB-G6: one quiet row that opens to the hidden note's title.
+  const row = page.locator('.notes-hidden');
+  if (!(await visible(row.getByText('1 note hidden', { exact: true }), 1500))) errors.push(`${tag}: expected a "1 note hidden" row`);
+  await row.getByRole('button', { name: 'Show', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Show on the hidden row`));
+  await page.waitForTimeout(200);
+  if (!(await visible(row.getByText(t0[0], { exact: true }), 1500))) errors.push(`${tag}: the hidden list does not name "${t0[0]}"`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-coach-fb-hidden.png` });
+  // CFB-G7: after a reload the note is still hidden and still listed; Show again brings it back and the row goes.
+  await page.reload();
+  await openNotes();
+  if ((await titles()).includes(t0[0])) errors.push(`${tag}: "${t0[0]}" came back after a reload`);
+  await row.getByRole('button', { name: 'Show', exact: true }).tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no hidden row after a reload`));
+  await page.waitForTimeout(200);
+  await row.getByRole('button', { name: 'Show again', exact: true }).first().tap({ timeout: 1500 }).catch(() => errors.push(`${tag}: no Show again`));
+  await page.waitForTimeout(200);
+  if (!(await titles()).includes(t0[0])) errors.push(`${tag}: Show again did not bring back "${t0[0]}"`);
+  if (await row.count()) errors.push(`${tag}: the hidden row is still shown with nothing hidden`);
+  await ctx.close();
+}
+
+// BUG-8: a saved height/weight must not read "Not set" just because it has no profileHistory
+// entry, sex must not look chosen when it was never saved, and the Escobar tab's Profile row
+// must name what's missing (and read complete once it is).
+{
+  const tag = 'BUG-8';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', birthYear: 1998, heightCm: 164, bodyWeightKg: 70 },
+      goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [{ day: '2026-09-20', kg: 70 }], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.waitForTimeout(250);
+  await page.locator('.list-row', { hasText: 'Weight, height, birth year' }).getByRole('button', { name: 'Open', exact: true }).click();
+  await page.waitForTimeout(250);
+  const fieldHints = (label) => page.evaluate((lbl) => {
+    const l = [...document.querySelectorAll('dialog[open] label.stack-sm')].find(el => el.querySelector('.small.muted')?.textContent === lbl);
+    return l ? [...l.querySelectorAll('.hint')].map(h => h.textContent) : null;
+  }, label);
+  // BUG-8 A: sex never looks chosen when it was never saved.
+  const sexPressed = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .seg button')].map(b => b.getAttribute('aria-pressed')));
+  if (sexPressed.some(p => p === 'true')) errors.push(`${tag}: a Sex option shows pressed although sex was never saved (${JSON.stringify(sexPressed)})`);
+  // BUG-8 items 1-2: height was saved (no profileHistory entry) and must read "Saved", not "Not set".
+  const heightHints = await fieldHints('Height (cm)');
+  if (!heightHints || heightHints[0] !== 'Saved') errors.push(`${tag}: expected the Height hint to read "Saved", got ${JSON.stringify(heightHints)}`);
+  // Weight was saved and logged (no profileHistory entry either) and must read "Saved", not "Not set".
+  const weightHint = await page.locator('dialog[open] .hint', { hasText: 'weigh-in' }).first().textContent();
+  if (!weightHint?.startsWith('Saved')) errors.push(`${tag}: expected the Body weight hint to start with "Saved", got "${weightHint}"`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-bug-8-profile.png` });
+  // A real tap on Male (the first Sex option): it saves, and the hint becomes "Updated …".
+  await page.locator('dialog[open] .seg button').first().tap();
+  await page.waitForTimeout(200);
+  const sexHints = await fieldHints('Sex');
+  if (!sexHints || !sexHints[0]?.startsWith('Updated')) errors.push(`${tag}: expected the Sex hint to read "Updated …" after tapping Male, got ${JSON.stringify(sexHints)}`);
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.waitForTimeout(200);
+  // BUG-8 item 3: the Escobar tab's Profile row now reads complete.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(300);
+  await page.locator('[data-palace="coach.sees"]').evaluate(e => e.scrollIntoView({ block: 'center' }));
+  if (!(await visible(page.getByText('All 4 details', { exact: true }), 1500))) errors.push(`${tag}: expected the Escobar tab's Profile row to read "All 4 details" once sex is set`);
+  await ctx.close();
+}
+
+// BUG-9: a month swipe's exit animation fills forwards and was never cancelled, so once the next
+// month's plain enter animation finished, the old exit's fill re-applied and left the grid at
+// opacity 0, translated one width sideways, which widened the whole page and stretched the fixed
+// bottom bar. On purpose, this context carries no reducedMotion — under reduce the animation
+// branch never runs at all, which is exactly how the existing A5 gate block missed this.
+{
+  const tag = 'BUG-9';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+  await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+
+  const innerWidth = await page.evaluate(() => window.innerWidth);
+  const monthLabelSel = '[data-palace="history.calendar"] b';
+  const monthLatest = await page.locator(monthLabelSel).textContent();
+
+  // A: while the touch is still held (no touchEnd yet), a 60%-of-width rightward drag must not
+  // have widened the page.
+  let calBox = await page.locator('.cal').boundingBox();
+  const cdp = await page.context().newCDPSession(page);
+  const ax0 = calBox.x + calBox.width * 0.1, ay0 = calBox.y + calBox.height / 2;
+  const ax1 = calBox.x + calBox.width * 0.7;
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: ax0, y: ay0 }] });
+  for (let i = 1; i <= 6; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: ax0 + (ax1 - ax0) * (i / 6), y: ay0 }] });
+    await new Promise(r => setTimeout(r, 30));
+  }
+  const midDragWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  if (midDragWidth > innerWidth) errors.push(`${tag} A: mid-drag scrollWidth ${midDragWidth} > innerWidth ${innerWidth}`);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await cdp.detach().catch(() => {});
+
+  // B: after the release, a second swipe back, and one swipe forward — each time, wait 1500ms,
+  // then the grid must be visible in place, with no animation left, and the page must not have
+  // widened, keeping every nav.nav button on screen.
+  const settled = async (label) => {
+    await page.waitForTimeout(1500);
+    const cal = await page.evaluate(() => { const el = document.querySelector('.cal'); const cs = getComputedStyle(el); return { opacity: cs.opacity, transform: cs.transform, anims: el.getAnimations().length }; });
+    if (cal.opacity !== '1') errors.push(`${tag} B (${label}): expected .cal opacity 1, got ${cal.opacity}`);
+    if (cal.transform !== 'none') errors.push(`${tag} B (${label}): expected .cal transform none, got ${cal.transform}`);
+    if (cal.anims !== 0) errors.push(`${tag} B (${label}): expected .cal to have 0 animations left, got ${cal.anims}`);
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (scrollWidth > innerWidth) errors.push(`${tag} B (${label}): scrollWidth ${scrollWidth} > innerWidth ${innerWidth}`);
+    const bad = await page.evaluate(w => [...document.querySelectorAll('nav.nav button')].map(b => b.getBoundingClientRect()).filter(r => r.left < 0 || r.right > w).length, innerWidth);
+    if (bad) errors.push(`${tag} B (${label}): ${bad} nav.nav button rect(s) fall outside [0, ${innerWidth}]`);
+    return page.locator(monthLabelSel).textContent();
+  };
+
+  const monthAfterFirst = await settled('after the release');
+  if (monthAfterFirst === monthLatest) errors.push(`${tag} B: expected the month to change after the swipe back, stayed on ${monthLatest}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, 300);
+  const monthAfterSecond = await settled('after a second swipe back');
+  if (monthAfterSecond === monthAfterFirst) errors.push(`${tag} B: expected a second swipe back to change the month again, stayed on ${monthAfterFirst}`);
+
+  calBox = await page.locator('.cal').boundingBox();
+  await touchDrag(page, calBox.x + calBox.width * 0.9, calBox.y + calBox.height / 2, calBox.x + calBox.width * 0.1, calBox.y + calBox.height / 2, 300);
+  const monthAfterForward = await settled('after one forward swipe');
+  if (monthAfterForward !== monthAfterFirst) errors.push(`${tag} B: expected the forward swipe to return to the previous month (${monthAfterFirst}), got ${monthAfterForward}`);
+
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-9-calendar.png` });
+
+  // C: full-motion row swipe-delete, then Undo — the restored row must render in place, not
+  // stuck off to the side or invisible, and the page must still fit the screen.
+  const countBefore = await page.locator('.swipe-row').count();
+  if (!countBefore) errors.push(`${tag} C: expected at least one session row`);
+  else {
+    const box = await page.locator('.swipe-row').nth(0).boundingBox();
+    await touchDrag(page, box.x + box.width * 0.9, box.y + box.height / 2, box.x + box.width * 0.15, box.y + box.height / 2, 300);
+    await page.waitForTimeout(400);
+    const undoBtn = page.locator('.toast button', { hasText: 'Undo' });
+    if (!(await visible(page.locator('.toast', { hasText: 'Session deleted' })))) errors.push(`${tag} C: expected a "Session deleted" toast with Undo`);
+    else {
+      await undoBtn.click().catch(() => errors.push(`${tag} C: could not click Undo`));
+      await page.waitForTimeout(1500);
+      const restored = await page.evaluate(() => { const c = document.querySelector('.swipe-row .card'); if (!c) return null; const cs = getComputedStyle(c); return { opacity: cs.opacity, transform: cs.transform }; });
+      if (!restored) errors.push(`${tag} C: expected the restored row's .card to be present`);
+      else {
+        if (restored.opacity !== '1') errors.push(`${tag} C: expected the restored row's .card opacity 1, got ${restored.opacity}`);
+        if (restored.transform !== 'none') errors.push(`${tag} C: expected the restored row's .card transform none, got ${restored.transform}`);
+      }
+      const scrollWidthAfterUndo = await page.evaluate(() => document.documentElement.scrollWidth);
+      if (scrollWidthAfterUndo > innerWidth) errors.push(`${tag} C: scrollWidth ${scrollWidthAfterUndo} > innerWidth ${innerWidth} after Undo`);
+    }
+  }
   await ctx.close();
 }
 

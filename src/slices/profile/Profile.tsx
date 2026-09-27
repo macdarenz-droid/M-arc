@@ -11,8 +11,11 @@ import { GOAL_BY_ID } from '@/data/goals';
 import { GoalSheet } from '@/slices/coach/Coach';
 import { lastChangeAt, logWeight, setBirthYear, setHeight, setPlannedDays, setSex, setTrainingSince } from './profile';
 
-function updatedHint(at: string | undefined): string {
-  return at ? `Updated ${formatLocalStamp(at)}` : 'Not set';
+/** BUG-8: honest hints — a saved value never reads "Not set" just because it has no history entry
+ * (onboarding, an import, Health Connect or a backup restore skip `profileHistory`). */
+export function statusHint(value: unknown, at: string | undefined): string {
+  if (value == null) return 'Not set';
+  return at ? `Updated ${formatLocalStamp(at)}` : 'Saved';
 }
 
 export function Profile({ onClose }: { onClose: () => void }) {
@@ -34,15 +37,15 @@ export function Profile({ onClose }: { onClose: () => void }) {
           <Card class="stack-sm">
             <Field label="Birth year" hint="Unlocks: heart-rate zones, age-adjusted recovery. ">
               <CommitNumber value={s.profile.birthYear} min={1900} max={new Date().getFullYear() - 10} integer onCommit={v => setBirthYear(v)} />
-              <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'birthYear'))}</span>
+              <span class="hint">{statusHint(s.profile.birthYear, lastChangeAt(s.profileHistory, 'birthYear'))}</span>
             </Field>
             <Field label="Sex" hint="Unlocks: calories, relative-strength comparisons.">
-              <Segmented value={s.profile.sex ?? 'male'} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v)} />
-              <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'sex'))}</span>
+              <Segmented value={s.profile.sex} options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]} onChange={v => setSex(v)} />
+              <span class="hint">{statusHint(s.profile.sex, lastChangeAt(s.profileHistory, 'sex'))}</span>
             </Field>
             <Field label="Height (cm)" hint="Unlocks: calories, body-fat estimate.">
               <CommitNumber value={s.profile.heightCm} min={100} max={250} onCommit={v => setHeight(v)} />
-              <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'heightCm'))}</span>
+              <span class="hint">{statusHint(s.profile.heightCm, lastChangeAt(s.profileHistory, 'heightCm'))}</span>
             </Field>
           </Card>
         </Section>
@@ -50,7 +53,7 @@ export function Profile({ onClose }: { onClose: () => void }) {
         <Section title="Body" palace="profile.weigh-in">
           <Card class="stack-sm">
             <WeighIn />
-            <span class="hint">{updatedHint(lastChangeAt(s.profileHistory, 'bodyWeightKg'))} · {s.weightLog.length} weigh-in{s.weightLog.length === 1 ? '' : 's'} logged</span>
+            <span class="hint">{statusHint(s.profile.bodyWeightKg, lastChangeAt(s.profileHistory, 'bodyWeightKg'))} · {s.weightLog.length} weigh-in{s.weightLog.length === 1 ? '' : 's'} logged</span>
           </Card>
         </Section>
 

@@ -520,25 +520,64 @@ export const RULES: Rule[] = [
   },
 ];
 
-/** Run every rule, drop duplicates per target, keep the most important. */
-export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
+/** COACH-FB: why a note is hidden today. */
+export interface InsightHide { verdict: InsightFeedback['verdict']; day: string }
+
+/** COACH-FB: "Not now" hides a note for 7 days from its day (the F3.6 rule, unchanged); "Helpful" hides it for the rest of that day. */
+export function feedbackHides(f: InsightFeedback, today: string): boolean {
+  return f.verdict === 'snoozed' ? daysBetween(f.day, today) < 7 : f.day === today;
+}
+
+/** COACH-FB: every note id hidden today and why. A snooze outranks a helpful; among snoozes the latest day wins. Duplicate records collapse. */
+export function hiddenInsightIds(feedback: InsightFeedback[], today: string): Map<string, InsightHide> {
+  const out = new Map<string, InsightHide>();
+  for (const f of feedback) {
+    if (!feedbackHides(f, today)) continue;
+    const cur = out.get(f.id);
+    if (!cur || (f.verdict === 'snoozed' && (cur.verdict === 'helpful' || f.day > cur.day))) out.set(f.id, { verdict: f.verdict, day: f.day });
+  }
+  return out;
+}
+
+/** COACH-FB: every rule's insights, minus lift insights a recovering muscle already explains. Feedback is not applied here. */
+export function runInsightRules(ctx: CoachContext): Insight[] {
   const d = derive(ctx);
   const all = RULES.flatMap(r => {
     try { return r.run(ctx, d); } catch { return []; }
   });
   // A recovery insight about a muscle explains plateau/readiness on lifts that target it.
   const recovering = new Set(all.filter(i => i.category === 'recovery').map(i => i.muscle));
-  const snoozedIds = new Set(ctx.feedback.filter(f => f.verdict === 'snoozed' && daysBetween(f.day, ctx.today) < 7).map(f => f.id));
-  const filtered = all.filter(i => {
-    if (snoozedIds.has(i.id)) return false;
+  return all.filter(i => {
     if (!i.exerciseId || recovering.size === 0) return true;
     const meta = findExercise(i.exerciseId, ctx.custom);
     return !meta?.primary.some(m => recovering.has(m));
   });
+}
+
+/** Run every rule, drop duplicates per target, keep the most important. */
+export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
+  return rankInsights(runInsightRules(ctx), hiddenInsightIds(ctx.feedback, ctx.today), limit);
+}
+
+/** COACH-FB: hidden notes that would be back in the top `limit` if shown again (each checked on its own), highest priority first. */
+export function hiddenBackOnBoard(list: Insight[], hidden: ReadonlyMap<string, InsightHide>, limit = 3): Array<{ insight: Insight } & InsightHide> {
+  const out: Array<{ insight: Insight } & InsightHide> = [];
+  for (const [id, why] of hidden) {
+    const others = new Map(hidden);
+    others.delete(id);
+    const back = rankInsights(list, others, limit).find(i => i.id === id);
+    if (back) out.push({ insight: back, ...why });
+  }
+  return out.sort((a, b) => b.insight.priority - a.insight.priority);
+}
+
+/** COACH-FB: drop hidden ids, then rank. Never sorts `list` in place (selectors share it). */
+export function rankInsights(list: Insight[], hidden: ReadonlyMap<string, unknown>, limit = 3): Insight[] {
   const seen = new Set<string>();
   // BR-27: one progress insight per lift, the highest-priority one.
   const progressFor = new Set<string>();
-  return filtered
+  return list
+    .filter(i => !hidden.has(i.id))
     .sort((a, b) => b.priority - a.priority)
     .filter(i => { if (seen.has(i.id)) return false; seen.add(i.id); return true; })
     .filter(i => {

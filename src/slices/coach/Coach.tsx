@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'preact/hooks';
 import { state, update } from '@/core/store';
-import { insights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
+import { insights, hiddenInsights, today, week, activeDeload, deloadSuggestion } from '@/app/selectors';
 import { Button, Card, Chip, Row, Section, Sheet } from '@/ui/primitives';
 import { IconChevron, IconInfo } from '@/ui/icons';
 import { CATEGORY_LABEL, type Category, type Insight } from '@/brain/coach/rules';
 import { pickCue, type Cue } from '@/brain/coach/cues';
 import { weekHasEnoughData, weeklyReviewInsights } from '@/brain/coach/weeklyReview';
 import { trainingAgeMonths } from '@/brain/recovery';
-import { profileCompleteness } from '@/brain/onboarding';
+import { missingProfileSummary, profileCompleteness } from '@/brain/onboarding';
 import { GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
 import { WEEKDAYS, type Weekday } from '@/core/models';
-import { WEEKDAY_LABEL, weekStart, daysBetween, addDays, formatLocalStamp } from '@/core/dates';
+import { WEEKDAY_LABEL, weekStart, daysBetween, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
 import { profileFor } from '@/slices/workout/units';
@@ -18,7 +18,7 @@ import { exerciseHistory } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { resyncReminders } from '../settings/reminders';
 import { addGoalTemplates, applyGoalRest, changeGoal } from '../profile/profile';
-import { acceptDeload, saveInsightFeedback } from './coach';
+import { acceptDeload, feedbackTap, restoreInsight } from './coach';
 import { closePanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { Hall } from '@/escobar/ui/Hall';
@@ -62,15 +62,15 @@ export function Coach() {
               <h3 style={{ margin: '4px 0 6px' }}>{i.title}</h3>
               <p class="small muted">{i.action}</p>
               <div class="row" style={{ marginTop: 8, gap: 8 }} onClick={e => e.stopPropagation()}>
-                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'helpful')}>Helpful</Button>
-                <Button variant="quiet" size="sm" onClick={() => saveInsightFeedback(i.id, 'snoozed')}>Not now</Button>
+                <Button variant="quiet" size="sm" onClick={() => feedbackTap(i.id, 'helpful')}>Helpful</Button>
+                <Button variant="quiet" size="sm" onClick={() => feedbackTap(i.id, 'snoozed')}>Not now</Button>
               </div>
             </Card>
           ))}
           {!list.length && <Card class="card-quiet"><p class="small muted">No strong signals right now. Keep logging and rating effort.</p></Card>}
+          <HiddenNotes />
         </div>
       </Section>
-      <InsightFeedbackLog />
 
       <Section title="Training goal" palace="coach.goal" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('goal')}>Change</Button>}>
         <Card class="card-press" onClick={() => showPanel('goal')}>
@@ -277,32 +277,30 @@ function DeloadCard() {
   );
 }
 
-/** F3.6: a friendly label from an insight id's stable prefix, e.g. "volume:chest" -> "Volume". Feedback only keeps id/day/verdict, not the insight's own words, since those can change after the fact. */
-function labelForInsight(id: string): string {
-  const key = (id.split(':')[0] ?? id).replace(/[-_]/g, ' ');
-  return key.charAt(0).toUpperCase() + key.slice(1);
+/** COACH-FB: one quiet row when notes are hidden; it opens to their current titles, each with Show again. Replaces the F3.6 "Earlier this month" log. */
+function HiddenNotes() {
+  const hidden = hiddenInsights.value;
+  const [open, setOpen] = useState(false);
+  if (!hidden.length) return null;
+  return (
+    <div class="list notes-hidden">
+      <Row trailing={<Button variant="quiet" size="sm" aria-expanded={open} onClick={() => setOpen(o => !o)}>{open ? 'Hide' : 'Show'}</Button>}>
+        <span class="small muted">{hidden.length} note{hidden.length === 1 ? '' : 's'} hidden</span>
+      </Row>
+      {open && hidden.map(h => (
+        <Row key={h.insight.id} trailing={<Button variant="quiet" size="sm" onClick={() => restoreInsight(h.insight.id)}>Show again</Button>}>
+          <span class="small">{h.insight.title}</span>
+          <div class="hint">{h.verdict === 'helpful' ? 'Helpful · back tomorrow' : backIn(h.day)}</div>
+        </Row>
+      ))}
+    </div>
+  );
 }
 
-/** F3.6: a short log of recent "Helpful"/"Not now" taps, so feedback does not just vanish. */
-function InsightFeedbackLog() {
-  const s = state.value;
-  const cutoff = addDays(today.value, -30);
-  const items = s.insightFeedback.filter(f => f.day >= cutoff).slice().reverse().slice(0, 10);
-  if (!items.length) return null;
-  return (
-    <Section title="Earlier this month">
-      <Card class="card-quiet">
-        <div class="list">
-          {items.map((f, i) => (
-            <Row key={`${f.id}:${f.day}:${i}`} trailing={<span class="hint">{f.verdict === 'helpful' ? 'Helpful' : 'Not now'}</span>}>
-              <span class="small">{labelForInsight(f.id)}</span>
-              <div class="hint">{f.day}</div>
-            </Row>
-          ))}
-        </div>
-      </Card>
-    </Section>
-  );
+/** COACH-FB: "Not now · back in N days" for a snooze made on `day` (it lasts 7 days). */
+function backIn(day: string): string {
+  const n = Math.min(7, Math.max(1, 7 - daysBetween(day, today.value)));
+  return `Not now · back in ${n} day${n === 1 ? '' : 's'}`;
 }
 
 /** 6.12.6: what the coach is actually working from right now, and what each missing input unlocks. */
@@ -319,7 +317,7 @@ function WhatCoachCanSee() {
     { label: 'Set timing', value: liveShare != null ? `${Math.round(liveShare * 100)}% logged live` : 'none yet', unlocks: liveShare != null && liveShare < 0.5 ? 'Logging as you go unlocks rest and pacing insights.' : undefined },
     { label: 'Health Connect', value: s.health.connected ? `synced ${s.health.lastSync ? formatLocalStamp(s.health.lastSync) : ''}` : 'not connected', unlocks: s.health.connected ? undefined : 'Sleep and resting heart rate unlock readiness.' },
     { label: "Today's check-in", value: todayCheckIn ? 'added' : 'not added', unlocks: todayCheckIn ? undefined : 'Soreness-based swaps.' },
-    { label: 'Profile', value: `${completeness.done} of ${completeness.of} details`, unlocks: completeness.complete ? undefined : 'Calories, heart-rate zones and age-adjusted recovery.' },
+    { label: 'Profile', value: missingProfileSummary(completeness) },
     { label: 'Weigh-ins', value: `${s.weightLog.length} logged`, unlocks: s.weightLog.length < 7 ? 'A weight trend, not just a jump.' : undefined },
   ];
   return (

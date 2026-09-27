@@ -12,7 +12,8 @@ import { liftTrend, plateauStatus } from '@/brain/trend';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { readinessSeries } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, workingTotals } from '@/brain/weekly';
-import { bodyWeightResolver } from '@/brain/bodyweight';
+import { bodyWeightResolver, bodyweightShare, effectiveLoadKg } from '@/brain/bodyweight';
+import { effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
@@ -73,8 +74,16 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const values = inWindow.map(val).filter(v => v > 0);
       const p = plateauStatus(all, liftMode);
       const t = liftTrend(all, liftMode);
+      // O4: the per-session effort split. A bodyweight/assisted load only reaches Escobar with
+      // sharing.body on (BODY_KEYS/BODY_FACT in loop.ts scrub by key name, not by value, so the
+      // numbers themselves must never be body-weight-derived when sharing is off).
+      const bw = s.escobar.sharing.body ? bodyWeightResolver(s) : undefined;
+      const share = bodyweightShare(exerciseOf(ctx, id));
+      const bwAt = (day: string, addedKg: number) => (bw ? effectiveLoadKg(addedKg, liftMode, share, bw(day)) : null);
+      const effort = effortSplit(hist, liftMode, bwAt).map(e => ({ day: e.day, easy: r1(e.easy), ideal: r1(e.ideal), max: r1(e.max), unrated: r1(e.unrated) }));
+      const effortUnit = effortUsesSets(hist, liftMode) ? 'sets' : 'kg';
       return {
-        exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: assistedVolume ? 'reps' : 'kg', weeks, points,
+        exercise: exerciseName(ctx, id), exerciseId: id, metric, unit: assistedVolume ? 'reps' : 'kg', weeks, points, effort, effortUnit,
         first: values[0] ?? null, last: values.at(-1) ?? null, best: values.length ? Math.max(...values) : null,
         plateau: p.status, trend: t.direction,
         empty: !points.length ? `No ${exerciseName(ctx, id)} sessions in the last ${weeks} weeks.` : undefined,

@@ -8,6 +8,7 @@ import { useMemo } from 'preact/hooks';
 import { state } from '@/core/store';
 import { Card, Chip } from '@/ui/primitives';
 import { Sparkline } from '@/ui/Sparkline';
+import { EffortBars, type EffortPoint } from '@/ui/EffortBars';
 import { makeCtx } from '../../tools/context';
 import { summarize } from '../../tools/show';
 
@@ -16,12 +17,15 @@ const num = (v: unknown): string => (typeof v === 'number' ? String(Math.round(v
 
 function LiftTrend({ s }: { s: S }) {
   const pts = (s.points as Array<{ day: string; value: number }>) ?? [];
+  const effort = (s.effort as EffortPoint[]) ?? [];
   const unit = s.metric === 'volume' ? 'kg volume' : 'kg';
   const chip = s.plateau === 'plateaued' ? <Chip tone="warning">Stalled</Chip> : s.trend === 'up' ? <Chip tone="positive">Rising</Chip> : s.trend === 'down' ? <Chip tone="negative">Dipping</Chip> : <Chip>Steady</Chip>;
   return (
     <>
       <div class="row-between"><b class="small">{String(s.exercise)}</b>{pts.length > 1 && chip}</div>
       {pts.length > 1 ? <Sparkline points={pts.map(p => p.value)} /> : <div class="esc-comp-empty small muted">{String(s.empty ?? 'Not enough sessions to draw a line yet.')}</div>}
+      {/* O4: the same effort split as History's chart, static (no tap) at Escobar's fixed height. */}
+      {effort.length > 1 && <EffortBars points={effort} unit={String(s.effortUnit ?? 'kg')} tappable={false} />}
       <div class="esc-comp-stats small">
         <span><span class="muted">First</span> {num(s.first)}</span>
         <span><span class="muted">Last</span> {num(s.last)}</span>
