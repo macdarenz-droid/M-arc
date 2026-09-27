@@ -45,9 +45,10 @@ export interface Guide {
   sample(): Sample;
   /** markup and CSS for the given scheme (dark or light); no hex colours, tokens only */
   stage(scheme: Scheme): Stage;
-  /** the rig's derived colour tokens for the scheme, as a style string (rigVars) */
+  /** the rig's derived colour tokens for the scheme, as a style string (rigVars); for tests and the fixture, not for the player (R1-12) */
   rigVars(scheme: Scheme): string;
 }
+// RIG_CSS is a real `export const RIG_CSS: string` in src/formguide/rig/paint.ts (GU-7a-1), never a `declare` here
+// (a declare emits no runtime binding and breaks `vite build`). GU-7a-2 imports it from '@/formguide/rig/paint';
+// until 7a-1 merges, its stubGuide.ts exports its own RIG_CSS and 7a-4 switches the import.
 
-/** the paint every Guide shares: figure, equipment, guide and overlay classes (the demo's BASE_CSS minus the player chrome and the CSS-animation classes) */
-export declare const RIG_CSS: string;
