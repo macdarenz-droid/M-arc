@@ -180,21 +180,34 @@ Width check: 44 + 8 + 104 + 8 + 184 = 348 of 358.
 
 ### 2.3 Figure and equipment paint (derived from theme tokens, set on the root)
 
+Two rig-only variables ride in the same root style hole as `themeVars()`, written by `rigVars(theme)` (`rig-final/gen.mjs`): `--lit` / `--shd`, what a lit or a shaded facet mixes toward (`--text` / `--bg` in dark themes, `--bg` / `--text` in light ones), and `--hi` / `--lo`, how much of the base tone a light or a dark facet keeps (90% / 78% dark, 76% / 90% light); also `--rim-k` (62% dark, 35% light). Dark themes shade mostly by darkening, light ones mostly by lightening.
+
 | Role | Value | Contrast on `--surface-1` (worst theme) |
 |---|---|---|
-| Body fill | `var(--map-body)` (same as the muscle map) | fill only |
-| Figure and equipment outline `--fg-line` | `color-mix(in srgb, var(--text) 60%, var(--surface-1))`, 1.5 units (1.25 on equipment), round joins, `vector-effect: non-scaling-stroke` | 3.55:1 (Paper); 5.7-7.2:1 in dark themes |
-| Main muscle | `var(--accent)` | 2.98:1 Midnight (the outline carries the shape; muscles are also listed in text) |
-| Helper muscle | `color-mix(in srgb, var(--accent) 45%, var(--map-body))` | tint only |
+| Body fill `--body` (the T-shirt's own tone) | `color-mix(in srgb, var(--map-body) 88%, var(--text))` | fill only |
+| Skin, shorts, shoe, sole, hair | `--skin` = `color-mix(in srgb, var(--body) 92%, var(--text))`; `--shorts` = `color-mix(in srgb, var(--body) 78%, var(--text))`; `--shoe` = `color-mix(in srgb, var(--body) 50%, var(--shd))`; `--sole` = `color-mix(in srgb, var(--body) 45%, var(--lit))`; `--hair` = `color-mix(in srgb, var(--body) 50%, var(--shd))` | fill only |
+| 3-tone shading (light, mid, dark per surface, skin/T-shirt/shorts/shoe/hair and the equipment faces alike) | `X-hi = color-mix(in srgb, X var(--hi), var(--lit))`; `X-lo = color-mix(in srgb, X var(--lo), var(--shd))` | tint only |
+| Figure outline `--fg-line` (one silhouette per body layer: a 3-unit stroke drawn under the fills, so 1.5 shows) | `color-mix(in srgb, var(--text) 60%, var(--surface-1))` dark themes, 70% light, round joins, `vector-effect: non-scaling-stroke` | at least 4.6:1 on the stage, 3.1:1 over the body, every theme |
+| Rim (thin lighter line just inside the outline) `--rim` | `color-mix(in srgb, var(--body) var(--rim-k), var(--lit))`, 1.1 units drawn under the fill so 0.55 shows | at least 1.25:1 over the outline |
+| Frame outline `--fg-frame` (pads, frame, plates, rails, guide rods) | `color-mix(in srgb, var(--text) 38%, var(--surface-1))` dark, 56% light | at least 3.18:1 |
+| Main muscle | `var(--accent)`; effort cue: opacity 0.75 (setup pose) rising to 1.0 (end pose), never below 0.75 | 2.98:1 Midnight (the outline carries the shape; muscles are also listed in text) |
+| Helper muscle | `color-mix(in srgb, var(--accent) 45%, var(--body))` | tint only |
+| Target-muscle glow `gw` (a halo under the main muscle) | `var(--accent)`, 5 units wide, stroke-opacity 0.3; element opacity = the move progress p: 0 at setup, rising through the lift, 1.0 through the hold (the hardest point), falling back to 0 through the return and reset | never flashes at the rep restart |
+| Secondary-motion facet (a brace inside the torso; the shoulder-blade edge or, front view, the collarbone line) | the surface's own tone, fill-opacity 0.75, class `tn`; opacity also = p, no `rotate()` | shape change only; fixed joints stay fixed |
+| Contact shadow | three stacked ellipses in `--scrim`, fill-opacity 0.16 (radii 1, 0.72, 0.44), no filter, under the feet and (chest press) under the seat | |
 | Metal moving parts `--fg-metal` (handles, bar, dumbbells, carriage) | `color-mix(in srgb, var(--text) 72%, var(--surface-1))` | 4.9:1 Paper, 7.6+ dark |
+| Equipment faces, plain / light / dark (plate bevels, dumbbell top and end faces) | `var(--equip)` (= `var(--surface-3)`) / `--equip-hi` / `--equip-lo` (3-tone formula above) | fill only |
+| Grip texture (handle ribs, dumbbell knurl) `--metal-lo` | `color-mix(in srgb, var(--fg-metal) 50%, var(--surface-1))` | |
+| Pad seams `--seam` | `color-mix(in srgb, var(--fg-frame) 70%, var(--equip))`, dashed 1.6 1.2 | |
 | Cables `--fg-cable` | `color-mix(in srgb, var(--text) 55%, var(--surface-1))`, 1.25 units | 3.1:1 Paper, 5.0+ dark |
-| Pads, frame, plates | fill `var(--surface-3)`, outline `--fg-line` | outline carries it |
+| Far side (depth cue): far leg, far lever or handle only, never a far arm | `--body-far` = map-body 50% into `--surface-1`; `--shorts-far` / `--shoe-far` = shorts / shoe 45% into `--surface-1`; outline `--fg-line-far` = text 30% into `--surface-1`, 2.4 units (1.2 shows) | |
+| Pads, frame, plates | fill `var(--surface-3)`, outline `--fg-frame` | outline carries it |
 | Stack pin, path traces, zoom rings, direction arrows | `var(--accent)`; traces dashed 4 3, 1.5 units | |
 | Floor | `var(--border)` 1 unit line from x 16 to 342 at y 258 | |
 
-The app's muscle map uses `--map-line` for outlines; at the player's size that fails 3:1 in Silent Black (about 1.6:1), so the player uses `--fg-line`. This is the one deliberate difference from the muscle map look.
+The app's muscle map uses `--map-line` for outlines; at the player's size that fails 3:1 in Silent Black (about 1.6:1), so the player uses `--fg-line` / `--fg-frame` instead, and paints only the inner facet lines with `--map-line`. This is the one deliberate difference from the muscle map look.
 
-Low-poly rule: every body part is a straight-edged polygon (head = 8-sided, limbs = tapered 4-6 sided shapes, torso = 6-8 sided), with a round joint cap (circle, body fill) at shoulder, elbow, hip and knee so rotations never show gaps.
+Low-poly rule: every body part is a straight-edged polygon (head = a skull-and-jaw shape, limbs = tapered 4-6 sided shapes, torso = 6-8 sided), with a round joint cap (circle, body fill) at shoulder, elbow, hip and knee so rotations never show gaps. Clothing (T-shirt with a neckline and sleeve hem at mid upper arm, shorts above the knee, shoes with a sole and toe cap, a hair cap), the head (skull and jaw, an ear, and in side views a subtle nose and brow line; no eyes or mouth), and the hands (a palm, four fingers wrapping the handle, and a thumb) are drawn as extra low-poly facets inside these same parts, never as new joints (`rig-final/RIG.md` section 20). Every fill, tone and stroke above is a theme token or a `color-mix()` of tokens; none is a literal colour outside the token definitions (`rig-final/gen.mjs`, `BASE_CSS` and `rigVars()`).
 
 ### 2.4 Rig
 
@@ -202,16 +215,18 @@ Units are stage viewBox units (1 unit is about 1 CSS px).
 
 | Segment | Length | Drawn width (near to far end) |
 |---|---|---|
-| Head | circle-like octagon r 11 | |
-| Neck | 6 | 9 |
-| Torso, hip joint to shoulder joint | 62 | 26 chest depth (side) / 44 shoulder width (front) |
-| Upper arm | 38 | 11 to 9 |
-| Forearm to grip centre | 40 | 9 to 7 |
+| Head | a skull-and-jaw shape, not a plain octagon: about 20 wide (22.6 with the nose, side view; 23.8 with the ears, front view) x 23.2-23.6 tall | |
+| Neck | 4 to 8 visible | 11 to 16, widening into the trapezius slope |
+| Torso, hip joint to shoulder joint | 62 | 26-28 deep (side); 42 at the shoulders, 28 at the waist (front) |
+| Upper arm | 38 | 11 to 12 |
+| Forearm to grip centre | 40 | 9.6 to 7.2 |
 | Thigh | 50 | 17 to 12 |
 | Shin, knee to ankle | 47 | 11 to 8 |
-| Foot, heel to toe | 22, ankle 5 above the sole | |
+| Foot | heel -6 to toe 17.5 (23.5 long), sole at ankle + 5 | |
 
-Nesting (`<g>` per joint, each with its own class and keyframes): hip → torso → neck/head and shoulder → upper arm → elbow → forearm → hand → held equipment (handle, bar or dumbbell). Legs hang from the hip group. Equipment that the hand holds is nested in the hand group, so the grip can never come apart; the equipment's own track (carriage, cable, stack) is keyframed at the same percentages.
+Figure detail (`rig-final/RIG.md` section 20), drawn as extra low-poly facets inside these same parts, never as new joints: a hair cap and sheen, an ear, and in side views a subtle nose and brow line (no eyes or mouth); a fitted T-shirt (collar band, sleeve hem at mid upper arm) over the torso and upper arm, shorts (hem above the knee) over the thigh, and a shoe (collar, toe cap, sole); each hand shows a palm, a thumb and four fingers wrapping the handle. Muscle facets (deltoid cap, pecs, lats, biceps, triceps, forearm taper, glutes, quads, hamstrings, calves) are cut inside the same body, upper-arm and lower-arm layers, split at a clothing hem where one crosses it. Equipment gains matching surface detail (section 7): grip ribs on handles, a top bevel on each weight plate, hex faces and a recessed end on the dumbbell heads, pulley and hub rims, and stitched pad seams.
+
+Nesting (`<g>` per joint, each with its own class and keyframes): hip → torso → neck/head and shoulder → upper arm → elbow → forearm → hand → held equipment (handle, bar or dumbbell). Legs hang from the hip group. Equipment that the hand holds is nested in the hand group, so the grip can never come apart; the equipment's own track (carriage, cable, stack) is keyframed at the same percentages. Every body layer draws its outline, then its rim, then its fill, tone facets, glow and muscles (section 2.3), in that order, so no seam shows where parts overlap.
 
 Side-view sign rule (figure faces right, +x). Every limb is drawn hanging straight down in its local frame. SVG `rotate(θ)`: positive = clockwise on screen.
 - Torso lean back L degrees: `rotate(-L)` about the hip. Lean forward F: `rotate(+F)`.
@@ -230,9 +245,9 @@ Standard rep (presses, pulls, raises, curls, pushdowns): 4.0 s at 1x.
 
 | Phase | % of rep | Time at 1x | Easing |
 |---|---|---|---|
-| Lift, press or pull | 0-25% (mid pose at 12.5%) | 1.0 s | 0-12.5% `cubic-bezier(.4,0,1,1)`, 12.5-25% `cubic-bezier(0,0,.6,1)` |
+| Lift, press or pull | 0-25% (mid pose at 12.5%) | 1.0 s | minimum-jerk, `p(x) = 10x^3 - 15x^4 + 6x^5`; a solved pose every 0.5% of the rep (lat pulldown: every 0.25% in this phase), joined by straight lines |
 | Hold | 25-37.5% | 0.5 s | hold |
-| Lower or return | 37.5-87.5% (mid pose at 62.5%) | 2.0 s | 37.5-62.5% `cubic-bezier(.4,0,1,1)`, 62.5-87.5% `cubic-bezier(0,0,.6,1)` |
+| Lower or return | 37.5-87.5% (mid pose at 62.5%) | 2.0 s | minimum-jerk, `p(x) = 10x^3 - 15x^4 + 6x^5`; a solved pose every 0.5% of the rep |
 | Reset pause | 87.5-100% | 0.5 s | hold |
 
 Around the World: 5.0 s (out and over 0-40%, mid at 20%; hold 40-50%; back 50-90%, mid at 70%; pause 90-100%). Arm Circles: 2.0 s per circle, even speed (linear), two caption halves.
@@ -310,13 +325,15 @@ Biomechanics truth table (real body angles):
 | Shoulder blades | back and down | back and down | 0 | fixed |
 | Hips, knees (about 90), feet flat | | | 0 | fixed |
 
-Rig key poses (3D pole-vector solve, RIG.md section 9: pole0 points at the setup elbow, pole1 = norm([0, 0.95, 1]), blended as p to the 4th power (QA round 3: the small end bend points down and a little out, so the side view shows it); grip z 42.99 → 6. SVG rotates relative to the parent; fu = upper-arm foreshortening. Full table: `anim-machine-chest-press/PLAYER.md` sections 3 and 13):
+Rig key poses (3D pole-vector solve, RIG.md section 9: pole0 points at the setup elbow, pole1 = norm([0, 0.95, 1]), blended as p to the 4th power (QA round 3: the small end bend points down and a little out, so the side view shows it); grip z 42.99 → 6. SVG rotates relative to the parent; fu = upper-arm foreshortening. Timing is minimum-jerk (section 2.5); the hand's place on the press path is a fitted pace s = pace(PACE, p) of the minimum-jerk move progress p, not p itself (RIG.md sections 8 and 20; COACHING-DECISIONS.md D-S4), so grip x is linear in the path place s, not in p. Full table: `anim-machine-chest-press/PLAYER.md` sections 3 and 13):
 
 | % | Grip (x,y) | Elbow (x,y) | Lever | Upper arm | fu | Forearm | Elbow inside | Arm out from side | Arm forward | Stack lift |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 0, 87.5, 100 | (181,155.44) | (144.5,166) | 13 | 14.04 | 0.597 | -120.18 | 88.0 | 53.4 | -14.0 | 0 |
-| 12.5, 62.5 | (203.5,158) | (164.21,163.99) | 0 | -35.41 | 0.645 | -63.26 | 101.7 | 49.8 | 35.4 | 11.25 |
+| 12.5, 62.5 | (203.16,158) | (163.86,164.03) | 0.19 | -34.69 | 0.641 | -64.04 | 101.2 | 50.1 | 34.7 | 11.08 |
 | 25, 37.5 | (226,155.44) | (186.06,153.57) | -13 | -75.14 | 0.982 | -12.19 | 162.5 | 10.9 | 75.1 | 22.5 |
+
+The 12.5/62.5% row is the pose at s = 0.5, a little short of the geometric midpoint of the press (grip x 203.5, lever 0): the fitted pace eases the hand in a little earlier so the elbow's angle stays smooth through the move (smoothness check (c) 2.64x lift / 2.67x return, RIG.md section 20).
 
 Shoulder travel: arm forward -14.0 → 75.1 = 89.2 degrees (truth table: about 95; checked 88-100). QA round 3 gave up 4.5 degrees at the end so the pause shows a bend you can see from the side (elbow drawn at 167.8 degrees, 4.1 below the shoulder-to-grip line), not a lockout.
 
@@ -495,7 +512,7 @@ Info block:
 ### 3.5 Dumbbell Lateral Raise → `Player-DumbbellLateralRaise.dc.html`
 
 - Camera: **front view**. Reason: the arms move out to the sides, so only the front shows how high they go and that the shoulders stay down.
-- Equipment: two hex dumbbells, seen end-on at the hands (hexagon r 8, squashed to 0.92 tall, `--fg-metal`; the handle end is metal, not accent); floor.
+- Equipment: two hex dumbbells, seen end-on from a little above (hex end face r 5.8, squashed to 0.92 tall, `--fg-metal`; the handle end is metal, not accent), the head centred 13.3 below the grip so the whole hand, holding a knurled handle, shows above the weight; floor.
 - Anchors: standing, feet hip-width; hip joints (169,156) and (189,156); shoulders (157,94) and (201,94), fixed height (no shrug); head centre (179,73) (at 77 the chin covered the neck).
 - Arms: screen-right arm `rotate(-A)`, screen-left `rotate(+A)`; forearm keeps a constant 15-degree soft bend (screen-right `rotate(+15)`, screen-left `rotate(-15)`), so at the top the hands sit a little below the elbows. Right hand travels (206.8,171.2) → (277.2,107).
 - Muscles: main Side shoulders; helps Upper traps.
@@ -522,7 +539,7 @@ Captions: "Raise to shoulder height, 1 s" / "Pause, shoulders down" / "Lower slo
 | Path | 179, 135, 1.2 | Out to the sides and up to shoulder height, no higher. |
 | Elbows | 179, 113, 2.2 | A soft bend in your elbows that stays the same up and down. |
 
-Why these chips (final rig, `rig-final/RIG.md` sections 15 and 17): the first draft's Grip chip (242, 139, 2.0) "Light grip. Palms face the floor at the top." became Shoulders (179, 90, 2.2), because the hands are hidden behind the end-on dumbbells, so a grip cue cannot be shown; shrugging is a listed common mistake and this view shows it. Path moved from (179, 120, 1.25) to (179, 135, 1.2), because at 120 the bottom of the path sat under the caption bubble. Elbows moved from (224, 113) to (179, 113), because at 224 the screen-left elbow ring was cut by the stage edge and left the stage near the top of the rep. Grip close-ups stay on Machine Chest Press and Lat Pulldown. Overlays: Shoulders draws accent lines just off both shoulder slopes and two "keep down" arrows; Path uses the always-on dashed hand paths and growing trails; Elbows puts an accent ring on each elbow that moves with the arm.
+Why these chips (final rig, `rig-final/RIG.md` sections 15 and 17): the first draft's Grip chip (242, 139, 2.0) "Light grip. Palms face the floor at the top." became Shoulders (179, 90, 2.2), because the whole hand now shows above the smaller, lower dumbbell head, but a light grip and which way the palms face still cannot be seen from the front; shrugging is a listed common mistake and this view shows it. Path moved from (179, 120, 1.25) to (179, 135, 1.2), because at 120 the bottom of the path sat under the caption bubble. Elbows moved from (224, 113) to (179, 113), because at 224 the screen-left elbow ring was cut by the stage edge and left the stage near the top of the rep. Grip close-ups stay on Machine Chest Press and Lat Pulldown. Overlays: Shoulders draws accent lines just off both shoulder slopes and two "keep down" arrows; Path uses the always-on dashed hand paths and growing trails; Elbows puts an accent ring on each elbow that moves with the arm.
 
 Pictures: 1 "Stand tall, elbows soft"; 2 "Lift out to the sides"; 3 "Stop at shoulder height"; 4 "Lower slowly, 2 s". A zoom chip in Pictures shows one still (pose 1, or pose 3 for Path), and the caption line under it shows that picture's caption.
 
@@ -589,7 +606,7 @@ Info block:
 ### 3.7 Dumbbell Biceps Curl → `Player-DumbbellBicepsCurl.dc.html` (not animated in this demo; owner: exactly 3)
 
 - Camera: **side view**. Reason: shows the elbow staying pinned at the side while only the forearm moves.
-- Equipment: dumbbell seen end-on in the hand (hexagon r 8, `--fg-metal`); floor.
+- Equipment: dumbbell seen end-on in the hand (the shared rig's hex dumbbell: end face r 5.8, centred 13.3 below the grip, knurled handle; RIG.md §7); floor.
 - Anchors: standing, hip (170,156), torso upright, shoulder (170,94), elbow near (170,132).
 - Muscles: main Biceps; helps Forearms.
 
