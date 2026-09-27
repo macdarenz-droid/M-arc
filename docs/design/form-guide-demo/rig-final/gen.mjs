@@ -400,21 +400,44 @@ let clipSeq = 0;   // clipPath ids for the glow, stable across builds
 function fillPart(p, roles = {}, opt = {}) {
   const cloth = p.cloth || 'skin';
   if (opt.far) return `<polygon class="${FAR_CLOTH[cloth]}" points="${pts(p.base)}"/>` + (p.regions || []).filter(r => r.far).map(r => `<polygon class="${FAR_CLOTH[r.cloth || cloth]}" points="${pts(r.poly)}"/>`).join('');
-  let s = `<polygon class="${toneCls(cloth, null)}" points="${pts(p.base)}"/>`, glow = '', mus = '';
+  let s = `<polygon class="${toneCls(cloth, null)}" points="${pts(p.base)}"/>`, glow = '', mus = '', hotHelp = '', hotMain = '';
+  // opt.tap: the exercise's muscle table (spec 2.10). A role polygon then carries a class hole (cls<Id>, so the tapped
+  // region gets .sel) and an invisible hotspot copy with the button semantics and a 30 px halo, painted last in this
+  // part, the target's after the helpers' (30 px wide, or 44 px minus the region's shortest side for a thin region, so every
+  // hit box is at least 44 px). A halo must never take a tap meant for a neighbouring muscle's own fill, so a
+  // stroke-less core copy of every region is collected into opt.cores[opt.coreKey] and painted by the exercise after all
+  // halos (in a repeated joint chain, or the static figure group at the end of the scene): a tap on a muscle's visible
+  // fill always wins; the halo only claims the empty space around it (D-R7).
+  const hole = (m, cls) => { if (!m) return `class="${cls}"`; m.cls = cls; return `class="${cls}" data-class="cls${m.Id}"`; };
+  const hot = (m, poly) => { if (opt.cores) { const k = opt.coreKey || 'body'; opt.cores[k] = opt.cores[k] || { help: '', main: '' }; opt.cores[k][m.role] += `<polygon class="hot hot-core" data-muscle="${m.region}" data-hot="${m.index}" points="${pts(poly)}"/>`; }
+    // the halo is 30 px, or wider for a thin region, so the hit box is at least 44 px on its short side at 1x
+    const xs = poly.map(q => q[0]), ys = poly.map(q => q[1]), thin = Math.min(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)), halo = Math.max(30, Math.ceil(44 - thin));
+    return `<polygon class="hot"${halo > 30 ? ` style="stroke-width:${halo}px"` : ''} role="button" tabindex="0" aria-label="${m.common}, ${m.role === 'main' ? 'target muscle' : 'helps'}" data-muscle="${m.region}" data-hot="${m.index}" points="${pts(poly)}"/>`; };
   for (const r of p.regions || []) {
-    const role = r.muscle && roles[r.muscle];
-    if (role === 'main') { mus += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; }
-    else if (role === 'help') mus += `<polygon class="mh${opt.helpFade ? ` anim ${opt.helpFade}` : ''}" points="${pts(r.poly)}"/>`;
+    const role = r.muscle && roles[r.muscle], m = opt.tap && role ? opt.tap.find(x => x.region === r.muscle) : null;
+    if (role === 'main') { mus += `<polygon ${hole(m, `mm anim ${opt.effort || ''}`.trim())} points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; if (m) hotMain += hot(m, r.poly); }
+    else if (role === 'help') { mus += `<polygon ${hole(m, `mh${opt.helpFade ? ` anim ${opt.helpFade}` : ''}`)} points="${pts(r.poly)}"/>`; if (m) hotHelp += hot(m, r.poly); }
     else if (r.ten) { if (opt.ten) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)} tn anim ${opt.ten}" points="${pts(r.poly)}"/>`; }
     else if (r.tone || r.cloth) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`;
     else if (r.facet) s += `<polygon class="fc" points="${pts(r.poly)}"/>`;
   }
   // the glow halo is clipped to the part's own silhouette, so it never spills past the outline as a fringe
   if (glow) { const id = `${opt.glow}-clip${clipSeq++}`; glow = `<clipPath id="${id}"><polygon points="${pts(p.base)}"/></clipPath><g clip-path="url(#${id})">${glow}</g>`; }
-  return s + glow + mus;
+  return s + glow + mus + hotHelp + hotMain;
 }
 const olPart = (p, far) => `<polygon class="${far ? 'olkf' : 'olk'}" points="${pts(p.base)}"/>`;
 const rimPart = p => `<polygon class="rim" points="${pts(p.base)}"/>`;
+// Muscle info on tap (spec 2.10): the exercise's table of tappable muscles. Its roles must be exactly the rig's roles map
+// (asserted here at build time), every line ends with a full stop, and the ids get their camel-case form for the holes.
+function muscleTable(list, roles, label) {
+  const want = JSON.stringify(Object.entries(roles).sort()), got = JSON.stringify(list.map(m => [m.region, m.role]).sort());
+  if (want !== got) throw new Error(`${label}: muscle table roles ${got} differ from the rig's roles ${want}`);
+  for (const m of list) { if (!m.common || !m.anatomical || !/\.$/.test(m.line)) throw new Error(`${label}: bad muscle line for ${m.region}`); }
+  return list.map((m, index) => ({ ...m, index, Id: m.id[0].toUpperCase() + m.id.slice(1) }));
+}
+const muscleText = m => `${m.common} (${m.anatomical}), ${m.role === 'main' ? 'target' : 'helps'}. ${m.line}`;
+// the core copies collected for one chain, helpers first, the target last
+const cores = (c, k) => (c[k] ? c[k].help + c[k].main : '');
 // pass-aware helper: P(part) returns the outline, rim or fill markup for the current pass
 const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.far) : pass === 'rim' ? (opt.far ? '' : rimPart(p)) : fillPart(p, roles, opt));
 // all three passes of one layer, in order
@@ -577,6 +600,7 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .stack{display:inline-grid}.stack>span{grid-area:1/1;white-space:nowrap}
 .bubble{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:8px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:13px;line-height:18px;color:var(--text)}
 .bubble .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px}
+.bubble .bt{min-width:0}.bubble b{font-weight:600}
 .pics{position:absolute;inset:1px;display:none;padding:6px;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,128px);background:var(--surface-1);border-radius:var(--radius-lg)}
 .pics.on{display:grid}
 .tile{position:relative;display:flex;flex-direction:column;background:var(--surface-2);border-radius:var(--radius-md);overflow:hidden}
@@ -618,6 +642,11 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .fc{fill:var(--body-facet);stroke:var(--map-line);stroke-width:.6px;stroke-linejoin:round}
 .mm{fill:var(--muscle-main);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}
 .mh{fill:var(--muscle-help);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}
+.mm.sel,.mh.sel{stroke:var(--text);stroke-width:calc(var(--sw) * 1.5px)}
+/* muscle hotspots (spec 2.10): an invisible copy of the region with a 30 px non-scaling stroke, so every tap target is at least 44 px */
+.hot{fill:transparent;stroke:transparent;stroke-width:30px;stroke-linejoin:round;pointer-events:all;cursor:pointer}
+.hot-core{stroke:none;stroke-width:0}
+.pics .hot{pointer-events:none}
 /* ---- equipment paint ---- */
 .eq{fill:var(--equip);stroke:var(--fg-frame);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
 .eqm{fill:var(--equip);stroke:var(--fg-metal);stroke-width:calc(var(--sw) * 1.2px);stroke-linejoin:round}
@@ -632,7 +661,7 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .rod{fill:none;stroke:var(--fg-frame);stroke-width:calc(var(--sw) * 1.1px)}
 .cable{fill:none;stroke:var(--fg-cable);stroke-width:calc(var(--sw) * 1.25px);stroke-linecap:round}
 .floor{stroke:var(--border);stroke-width:1px}
-.b,.bf,.olk,.olkf,.rim,.fc,.mm,.mh,.eq,.eqm,.eqf,.rod,.cable,.floor,.knurl,.seam,.prim{vector-effect:non-scaling-stroke}
+.b,.bf,.olk,.olkf,.rim,.fc,.mm,.mh,.hot,.eq,.eqm,.eqf,.rod,.cable,.floor,.knurl,.seam,.prim{vector-effect:non-scaling-stroke}
 /* ---- guides: path, progress trail, zoom overlays, arrows (accent) ---- */
 .guide{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3;opacity:.6}
 .trail{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1 1}
@@ -676,7 +705,7 @@ class Component extends DCLogic {
     let rm = false;
     try { rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { rm = false; }
     const auto = on(props.autoplay) && !rm;
-    this.state = { playing: auto, started: auto, ended: false, speed: 1, mode: rm ? 'pics' : 'anim', zoom: null, gen: 'a', elapsed: 0, rm: rm, freeze: null };
+    this.state = { playing: auto, started: auto, ended: false, speed: 1, mode: rm ? 'pics' : 'anim', bubble: null, gen: 'a', elapsed: 0, rm: rm, freeze: null };
     this.timer = null;
   }
   componentDidMount() { if (this.state.playing) this.startClock(); }
@@ -693,7 +722,7 @@ class Component extends DCLogic {
   togglePlay() {
     const s = this.state;
     if (s.rm) return;
-    if (s.mode !== 'anim') { this.setState({ mode: 'anim', zoom: null, gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false, freeze: null }, () => this.startClock()); return; }
+    if (s.mode !== 'anim') { this.setState({ mode: 'anim', bubble: null, gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false, freeze: null }, () => this.startClock()); return; }
     if (s.ended) { this.setState({ gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false, freeze: null }, () => this.startClock()); return; }
     if (s.playing) { this.stopClock(); this.setState({ playing: false }); return; }
     this.setState({ playing: true, started: true, freeze: null }, () => this.startClock());
@@ -707,30 +736,61 @@ class Component extends DCLogic {
   setMode(m) {
     if (m === this.state.mode || (this.state.rm && m === 'anim')) return;
     this.stopClock();
-    this.setState({ mode: m, zoom: null, gen: this.flip(), elapsed: 0, playing: false, started: false, ended: false, freeze: null });
+    this.setState({ mode: m, bubble: null, gen: this.flip(), elapsed: 0, playing: false, started: false, ended: false, freeze: null });
   }
+  // The bubble state is one of { kind: 'zoom', id } (a zoom chip), { kind: 'muscle', id } (a tapped muscle) or null: a
+  // zoom and a muscle bubble never show together (spec 2.10).
   pickZoom(id) {
-    const s = this.state, z = s.zoom === id ? null : id;
-    this.setState(s.mode === 'pics' ? { zoom: z, gen: this.flip() } : { zoom: z });
+    const s = this.state, z = s.bubble && s.bubble.kind === 'zoom' && s.bubble.id === id ? null : { kind: 'zoom', id: id };
+    this.setState(s.mode === 'pics' ? { bubble: z, gen: this.flip() } : { bubble: z });
+  }
+  tapMuscle(id, e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    this.tapAt = Date.now();
+    const s = this.state;
+    if (s.mode !== 'anim') return;
+    this.setState({ bubble: s.bubble && s.bubble.kind === 'muscle' && s.bubble.id === id ? null : { kind: 'muscle', id: id } });
+  }
+  keyMuscle(id, e) {
+    if (e && e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    if (e && e.preventDefault) e.preventDefault();
+    this.tapMuscle(id, e);
+  }
+  tapStage(e) {   // a tap on the stage background closes a muscle bubble (never a zoom; the hotspot's own tap wins)
+    if (Date.now() - (this.tapAt || 0) < 80) return;
+    if (e && e.target && e.target.closest && e.target.closest('.bubble')) return;
+    const s = this.state;
+    if (s.bubble && s.bubble.kind === 'muscle') this.setState({ bubble: null });
   }
   renderVals() {
     const s = this.state, p = this.props, loop = on(p.loop), dur = this.repDur();
-    const still = s.mode === 'pics' && !!s.zoom;
-    let play = s.playing && s.mode === 'anim' ? 'running' : 'paused', delay = 0;
-    if (still) delay = -(s.zoom === EX.pathChip ? EX.picsAt[2] : EX.picsAt[0]) * dur;
-    if (s.freeze !== null) { play = 'paused'; delay = -s.freeze * dur; }
-    const chip = EX.chips.find(c => c.id === s.zoom);
+    const zoom = s.bubble && s.bubble.kind === 'zoom' ? s.bubble.id : null;
     const anim = s.mode === 'anim';
-    return {
+    const mus = anim && s.bubble && s.bubble.kind === 'muscle' ? EX.muscles.find(m => m.id === s.bubble.id) : null;
+    const still = s.mode === 'pics' && !!zoom;
+    let play = s.playing && s.mode === 'anim' ? 'running' : 'paused', delay = 0;
+    if (still) delay = -(zoom === EX.pathChip ? EX.picsAt[2] : EX.picsAt[0]) * dur;
+    if (s.freeze !== null) { play = 'paused'; delay = -s.freeze * dur; }
+    const chip = EX.chips.find(c => c.id === zoom);
+    const out = {};
+    for (const m of EX.muscles) {   // per muscle: its class hole (cls<Id>, .sel while tapped) and its tap and key handlers (tap<Id>, key<Id>)
+      out['cls' + m.Id] = m.cls + (mus && mus.id === m.id ? ' sel' : '');
+      out['tap' + m.Id] = e => this.tapMuscle(m.id, e);
+      out['key' + m.Id] = e => this.keyMuscle(m.id, e);
+    }
+    return Object.assign(out, {
       rootStyle: `${themeVars(p.theme)};${rigVars(p.theme)};--play:${play};--dur:${dur}s;--iter:${loop ? 'infinite' : 3};--sets:${loop ? 'infinite' : 1};--delay:${delay}s`,
       rootClass: `player gen-${s.gen}`,
-      camClass: `cam zoom-${s.zoom}`,
-      picsClass: s.zoom ? 'pics zoomed' : (s.mode === 'pics' ? 'pics on' : 'pics'),
+      camClass: `cam zoom-${zoom}`,
+      picsClass: zoom ? 'pics zoomed' : (s.mode === 'pics' ? 'pics on' : 'pics'),
       showRepPill: anim && !chip,                 // a zoom view shows only the scene and its bubble
       showSlow: anim && s.speed === 0.5,
       showCamLabel: anim && !chip,
-      showBubble: !!chip,
-      bubbleText: chip ? chip.caption : '',
+      showBubble: !!chip || !!mus,
+      bubbleDotStyle: 'background:var(' + (mus ? (mus.role === 'main' ? '--muscle-main' : '--muscle-help') : '--accent') + ')',
+      bubbleName: mus ? mus.common : '',
+      bubbleRest: mus ? '(' + mus.anatomical + '), ' + (mus.role === 'main' ? 'target' : 'helps') + '. ' + mus.line : (chip ? chip.caption : ''),
+      bubbleText: mus ? mus.common + ' (' + mus.anatomical + '), ' + (mus.role === 'main' ? 'target' : 'helps') + '. ' + mus.line : (chip ? chip.caption : ''),
       showIdle: anim && !s.started && !s.ended && s.freeze === null,
       showEnded: anim && s.ended,
       showCaps: (anim && (s.started || s.freeze !== null) && !s.ended) || still,
@@ -742,11 +802,13 @@ class Component extends DCLogic {
       speed1: s.speed === 1, speedHalf: s.speed === 0.5,
       modeAnim: anim, modePics: !anim, animDisabled: s.rm,
       hint: s.rm ? 'Pictures shown because your phone is set to reduce motion.' : (anim ? 'Tap a zoom chip to look closer. Tap it again to zoom out.' : 'Four key moments of one rep.'),
-      chips: EX.chips.map(c => ({ id: c.id, label: c.label, pressed: s.zoom === c.id, pick: () => this.pickZoom(c.id) })),
+      chips: EX.chips.map(c => ({ id: c.id, label: c.label, pressed: zoom === c.id, pick: () => this.pickZoom(c.id) })),
+      hots: EX.muscles.map(m => ({ id: m.id, tap: out['tap' + m.Id], key: out['key' + m.Id] })),
+      tapStage: e => this.tapStage(e),
       togglePlay: () => this.togglePlay(),
       speedTo1: () => this.setSpeed(1), speedToHalf: () => this.setSpeed(0.5),
       toAnim: () => this.setMode('anim'), toPics: () => this.setMode('pics'),
-    };
+    });
   }
 }
 
@@ -764,17 +826,19 @@ function bind(c) {
   all('[data-disabled]').forEach(el => { el.disabled = !!v[el.dataset.disabled]; });
   all('[data-click]').forEach(el => { el.onclick = v[el.dataset.click]; });
   all('[data-chip]').forEach(el => { const ch = v.chips[+el.dataset.chip]; el.setAttribute('aria-pressed', String(ch.pressed)); el.onclick = ch.pick; });
+  all('[data-hot]').forEach(el => { const h = v.hots[+el.dataset.hot]; el.onclick = h.tap; el.onkeydown = h.key; });
 }
 const q = new URLSearchParams(location.search);
 const props = { theme: q.get('theme') || 'silent-black', autoplay: q.get('autoplay') !== '0', loop: q.get('loop') !== '0' };
 const comp = new Component(props);
 if (q.get('mode') === 'pics') Object.assign(comp.state, { mode: 'pics', playing: false, started: false });
-if (q.get('zoom')) comp.state.zoom = q.get('zoom');
+if (q.get('zoom')) comp.state.bubble = { kind: 'zoom', id: q.get('zoom') };
+if (q.get('muscle')) comp.state.bubble = { kind: 'muscle', id: q.get('muscle') };
 if (q.get('speed') === '0.5') comp.state.speed = 0.5;
 if (q.has('t')) Object.assign(comp.state, { freeze: Math.min(1, Math.max(0, +q.get('t') || 0)), playing: false, started: true });
 comp.freeze = t => comp.setState({ freeze: t, playing: false, started: true });
 bind(comp); comp.componentDidMount(); window.__rig = comp;
-document.getElementById('harness-note').textContent = 'Harness only: theme ' + props.theme + (comp.state.freeze !== null ? ', frozen at t = ' + comp.state.freeze : ', live') + '. Query: ?theme= &t= &zoom= &mode=pics &loop=0 &autoplay=0 &speed=0.5';
+document.getElementById('harness-note').textContent = 'Harness only: theme ' + props.theme + (comp.state.freeze !== null ? ', frozen at t = ' + comp.state.freeze : ', live') + '. Query: ?theme= &t= &zoom= &muscle= &mode=pics &loop=0 &autoplay=0 &speed=0.5';
 `;
 
 // ---------------------------------------------------------------------------
@@ -792,7 +856,8 @@ function arrowSvg(a, k = 1) { // a = { from:[x,y], to:[x,y] } in scene units; k 
 }
 
 function page(ex) {
-  const exPublic = { rep: ex.rep, picsAt: ex.picsAt, pathChip: 'path', chips: ex.chips };
+  const exPublic = { rep: ex.rep, picsAt: ex.picsAt, pathChip: 'path', chips: ex.chips, muscles: ex.muscles.map(m => ({ region: m.region, id: m.id, Id: m.Id, common: m.common, anatomical: m.anatomical, role: m.role, line: m.line, cls: m.cls })) };
+  if (ex.muscles.some(m => !m.cls)) throw new Error(ex.id + ': a muscle in the table has no drawn region with a role');
   const logic = `const THEMES = ${JSON.stringify(THEMES)};\n${themeVars.toString()}\n${rigVars.toString()}\nconst EX = ${JSON.stringify(exPublic)};\nconst on = ${on.toString()};\n${Component.toString()}`;
   const tiles = ex.pics.map((cap, i) => `<div class="tile"><svg viewBox="${ex.tileBox.join(' ')}" aria-hidden="true"><use href="#rig-${ex.id}" style="--play:paused;--sw:.75;--delay:calc(var(--dur) * -${ex.picsAt[i]})"/>${ex.arrows[i] ? arrowSvg(ex.arrows[i], 1.5) : ''}</svg><span class="badge">${i + 1}</span><p>${cap}</p></div>`).join('');
   const defaultStyle = `${themeVars('silent-black')};${rigVars('silent-black')};--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s`;
@@ -812,14 +877,14 @@ ${ex.css}
 </head>
 <body>
 <div class="player gen-a" data-class="rootClass" data-style="rootStyle" style="${defaultStyle}">
-<div class="stage">
+<div class="stage" data-click="tapStage">
 <svg class="scene" viewBox="0 0 358 276" aria-hidden="true"><g class="cam zoom-null" data-class="camClass"><g id="rig-${ex.id}">
 ${ex.scene}
 </g>${ex.staticOverlays || ''}</g></svg>
 <div class="pill-row" data-if="showRepPill"><span class="pill"><span class="stack"><span class="repx r1">${ex.repWord} 1 of 3</span><span class="repx r2">${ex.repWord} 2 of 3</span><span class="repx r3">${ex.repWord} 3 of 3</span></span></span><span class="pill pill-accent" data-if="showSlow" hidden>Slow motion</span></div>
 <div class="cam-label" data-if="showCamLabel">${ex.cam}</div>
 <div class="pics" data-class="picsClass">${tiles}</div>
-<div class="bubble" data-if="showBubble" hidden><span class="dot"></span><span data-text="bubbleText"></span></div>
+<div class="bubble" data-if="showBubble" hidden><span class="dot" data-style="bubbleDotStyle"></span><span class="bt"><b data-text="bubbleName"></b> <span data-text="bubbleRest"></span></span></div>
 </div>
 <div class="cap-row"><span class="cap"><span data-if="showIdle" hidden>Tap Play to watch 3 slow reps.</span><span data-if="showEnded" hidden>Done. Tap Replay to watch again.</span><span class="stack" data-if="showCaps">${ex.caps.map((c, i) => `<span class="capx c${i + 1}">${c}</span>`).join('')}</span><span data-if="showPicsLine" hidden>${ex.picsLine}</span></span><span class="tempo" data-if="showTempo">${ex.tempo}</span></div>
 <div class="chips">${ex.chips.map((c, i) => `<button class="chip chip-btn" type="button" aria-pressed="false" data-chip="${i}">${ICON.zoom}${c.label}</button>`).join('')}</div>
@@ -864,6 +929,11 @@ function chestPress() {
   const Z0 = ez0 + dz0;                          // hand further out than the elbow at setup
   const pole0 = norm([E0[0] - S[0], E0[1] - S[1], ez0]), pole1 = norm([-0.1, 0.6, 0.8]);
   const roles = { chest: 'main', frontDelts: 'help', triceps: 'help' };
+  const muscles = muscleTable([
+    { region: 'chest', id: 'chest', common: 'Chest', anatomical: 'pectoralis major', role: 'main', line: 'Pushes the handles away; hardest as the arms straighten.' },
+    { region: 'frontDelts', id: 'frontDelts', common: 'Front delts', anatomical: 'anterior deltoid', role: 'help', line: 'Lifts the upper arms forward with the chest.' },
+    { region: 'triceps', id: 'triceps', common: 'Triceps', anatomical: 'triceps brachii', role: 'help', line: 'Straightens the elbows at the end of the press.' },
+  ], roles, 'chest press');
   const FAR = [5, -3];
   // Place on the hand path from the timing progress q (see pace()). Inside poseAt, p is that place: grip x, grip
   // z and the pole blend are all linear in it.
@@ -926,10 +996,14 @@ ${kf('cp-ten', p => `opacity:${n3(p)}`)}
     const Pp = passer(pass, roles, { far });
     return `<g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)">${Pp(SIDE.hipCap)}${Pp(SIDE.thigh)}<g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)">${Pp(SIDE.kneeCap)}${Pp(SIDE.shin)}${Pp(SIDE.foot)}</g></g>`;
   };
-  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'cp-eff', glow: 'cp-ten', ten: 'cp-ten' }); return `${Pp(SIDE.neck)}${Pp(SIDE.torso)}${Pp(SIDE.head)}${leg(pass)}`; };
-  const upper = pass => { const Pp = passer(pass, roles); return `<g class="j anim cp-ul">${Pp(SIDE.upperArm)}</g>${Pp(SIDE.deltoid)}`; };
+  const CORES = {};   // stroke-less hotspot cores per joint chain, painted after every halo (see fillPart)
+  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'cp-eff', glow: 'cp-ten', ten: 'cp-ten', tap: muscles, cores: CORES, coreKey: 'body' }); return `${Pp(SIDE.neck)}${Pp(SIDE.torso)}${Pp(SIDE.head)}${leg(pass)}`; };
+  const upper = pass => `<g class="j anim cp-ul">${passer(pass, roles, { tap: muscles, cores: CORES, coreKey: 'ul' })(SIDE.upperArm)}</g>${passer(pass, roles, { tap: muscles, cores: CORES, coreKey: 'ua' })(SIDE.deltoid)}`;
   const lower = pass => { const Pp = passer(pass, roles); return `${Pp(SIDE.elbowCap)}<g class="j anim cp-fl">${Pp(SIDE.forearm)}</g><g class="j anim cp-hd">${Pp(SIDE.fist)}${pass === 'fill' ? `<circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/>` : ''}</g>`; };
-  const arm = `<g class="j anim cp-ua arm-near">${armLayer(upper, lower, m => `<g class="j anim cp-fa">${m}</g>`)}</g>`;
+  const armBody = armLayer(upper, lower, m => `<g class="j anim cp-fa">${m}</g>`);
+  const arm = `<g class="j anim cp-ua arm-near">${armBody}</g>`;
+  // hotspot cores in drawing order, after every halo: the torso's, then the arm's in a repeated arm chain (same keyframes)
+  const armCores = `<g class="j anim cp-ua"><g class="j anim cp-ul">${cores(CORES, 'ul')}</g>${cores(CORES, 'ua')}</g>`;
   const leverG = far => `<g class="j anim cp-lever${far ? ' far-lever' : ' lever-near'}"><polygon class="${far ? 'eqf' : 'eqm'}" points="${pts([[P[0] - 2.6, P[1]], [P[0] + 2.6, P[1]], [P[0] + 2.6, P[1] + R - HALF + 1], [P[0] - 2.6, P[1] + R - HALF + 1]])}"/><rect class="${far ? 'hdf' : 'hd'}" x="${n2(P[0] - 3.2)}" y="${n2(P[1] + R - HALF)}" width="6.4" height="${far ? HALF + 8 : 2 * HALF}" rx="3"/>${far ? '' : `<path class="knurl" d="${[-11, -9.6, -8.2, 8.2, 9.6, 11].map(d => `M${n2(P[0] - 3.2)} ${n2(P[1] + R + d)}h6.4`).join('')}"/>`}</g>`;
   let still = '', moving = '';
   for (let i = 0; i < 10; i++) {
@@ -944,16 +1018,18 @@ ${kf('cp-ten', p => `opacity:${n3(p)}`)}
   const tip = al => [P[0] - RT * Math.sin(rad(al)), P[1] + RT * Math.cos(rad(al))];
   const trailPts = Array.from({ length: 33 }, (_, i) => tip(a0 + (a1 - a0) * i / 32));
   const trailD = 'M' + trailPts.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L');
+  const bodyMarkup = layer(bodyLayer);   // built first (with `arm` below): the layers collect the hotspot cores
   const scene = `<line class="floor" x1="16" y1="258" x2="342" y2="258"/>
 ${shadow(208, 258, 17, 2.6)}
 <g class="machine-back"><rect class="eq" x="20" y="250" width="162" height="8" rx="1.5"/><line class="rod" x1="32" y1="56" x2="32" y2="250"/><line class="rod" x1="68" y1="56" x2="68" y2="250"/>${still}<g class="j anim cp-stack">${moving}</g><rect class="eq" x="88" y="52" width="12" height="198" rx="1.5"/><rect class="eq" x="22" y="44" width="192" height="10" rx="2"/><line class="cable j anim cp-cable" x1="50" y1="61" x2="50" y2="106"/><circle class="eqm" cx="55" cy="61" r="5.2"/><circle class="prim" cx="55" cy="61" r="3.2"/><circle class="hd" cx="55" cy="61" r="1.2"/><line class="cable" x1="55" y1="55.8" x2="${n2(P[0] - 6)}" y2="55.8"/></g>
 <g class="far-side" transform="translate(${FAR[0]} ${FAR[1]})">${leverG(true)}<g transform="translate(${H[0]} ${H[1]})">${leg('ol', true)}${leg('fill', true)}</g></g>
 <g class="machine-front"><rect class="eq" x="150" y="222" width="9" height="28"/><rect class="eq" x="100" y="168" width="26" height="8"/><rect class="eq" x="124.5" y="108" width="13" height="104" rx="4"/><rect class="eq" x="118" y="214" width="82" height="10" rx="4"/><rect class="seam" x="126.6" y="110.2" width="8.8" height="99.6" rx="2.6"/><rect class="seam" x="120.2" y="216.2" width="77.6" height="5.6" rx="2.2"/></g>
 ${shadow(166, 214.4, 34, 2.2)}
-<g class="figure" transform="translate(${H[0]} ${H[1]})">${layer(bodyLayer)}</g>
+<g class="figure" transform="translate(${H[0]} ${H[1]})">${bodyMarkup}</g>
 ${leverG(false)}<circle class="eqm" cx="${P[0]}" cy="${P[1]}" r="7"/><circle class="prim" cx="${P[0]}" cy="${P[1]}" r="4.6"/><circle class="rod" cx="${P[0]}" cy="${P[1]}" r="2"/>
 <path class="guide" d="${trailD}"/><path class="trail j anim cp-trail" d="${trailD}" pathLength="1"/>
 <g class="figure-arm" transform="translate(${H[0]} ${H[1]})">${arm}</g>
+<g class="figure-hot" transform="translate(${H[0]} ${H[1]})">${cores(CORES, 'body')}${armCores}</g>
 <rect class="ov ov-seat ovs" x="116" y="212" width="86" height="14" rx="5"/><rect class="ov ov-seat ovs" x="148" y="224" width="13" height="26" rx="2"/>`;
   const mid = pose(0.5);
   const tipMid = tip(mid.alpha);
@@ -971,13 +1047,13 @@ ${leverG(false)}<circle class="eqm" cx="${P[0]}" cy="${P[1]}" r="7"/><circle cla
     picsAt: [0, 0.125, 0.31, 0.625],
     tileBox: [96, 104, 160, 158],
     arrows: [null, { from: [tipMid[0] - 12, tipMid[1] + 9], to: [tipMid[0] + 14, tipMid[1] + 9] }, null, { from: [tipMid[0] + 14, tipMid[1] + 9], to: [tipMid[0] - 12, tipMid[1] + 9] }],
-    css, scene,
+    css, scene, muscles,
   };
   fs.writeFileSync(path.join(DIR, 'chest-press.html'), page(ex));
   const row = q => ({ p: n2(q.p), grip: [n2(q.G[0]), n2(q.G[1]), n2(q.G[2])], elbow: q.E.map(n2), lever: n2(q.alpha), upper: n2(q.ua), fu: n3(q.fu), fore: n2(q.fa), ff: n3(q.ff), inside: n2(q.inside), outFromSide: n2(q.outFromSide), forward: n2(q.forward), lift: n2(q.lift) });
   return {
     maxDrift, keyTable: [0, 0.25, 0.5, 0.75, 1].map(p => row(pose(p))),
-    setup: { Z0, Z1, ez0, pole0, pole1, X0, X1, P, R, E0, S, PACE }, smooth,
+    setup: { Z0, Z1, ez0, pole0, pole1, X0, X1, P, R, E0, S, PACE }, smooth, muscles: muscles.map(muscleText),
     series: { gz: dense.map(q => q.G[2]), ez: dense.map(q => q.E[2]), fu: sampled.map(q => q.fu), inside: dense.map(q => q.inside) },
     truth: { startInside: pose(0).inside, endInside: pose(1).inside, startOut: pose(0).outFromSide, endForward: pose(1).forward, startElbowX: pose(0).E[0], minFu: Math.min(...dense.map(q => q.fu)), setupFu: pose(0).fu },
     geo: { H, P, R, HALF, FAR, shoulder: [S[0], S[1]] },
@@ -990,6 +1066,10 @@ ${leverG(false)}<circle class="eqm" cx="${P[0]}" cy="${P[1]}" r="7"/><circle cla
 function lateralRaise() {
   const H = [179, 156];
   const roles = { sideDelts: 'main', upperTraps: 'help' };
+  const muscles = muscleTable([
+    { region: 'sideDelts', id: 'sideDelts', common: 'Side delts', anatomical: 'lateral deltoid', role: 'main', line: 'Lifts the arms out to the sides; hardest near shoulder height.' },
+    { region: 'upperTraps', id: 'upperTraps', common: 'Upper traps', anatomical: 'upper trapezius', role: 'help', line: 'Steadies the shoulder blades; keep them down, no shrug.' },
+  ], roles, 'lateral raise');
   const A = p => 12 + 76 * p;     // arm out from the side, degrees
   const BEND = 15;                // constant soft elbow
   const DROP = 20;                // trail runs 20 below the grip: just under the dumbbell, never under the arm
@@ -1032,27 +1112,30 @@ ${kf('lr-hlp', p => `opacity:${n3(1 - 0.3 * p)}`)}
   };
   const side = s => {
     const M = s === 'r' ? (p => p) : mirPart, g = s === 'r' ? 22 : -22;
-    const up = pass => { const Pp = passer(pass, roles, { effort: 'lr-eff', glow: 'lr-ten' }); return `${Pp(M(FR.upperArmR))}${Pp(M(FR.deltoidR))}`; };
+    const up = pass => { const Pp = passer(pass, roles, { effort: 'lr-eff', glow: 'lr-ten', tap: muscles, cores: CORES, coreKey: 'ua-' + s }); return `${Pp(M(FR.upperArmR))}${Pp(M(FR.deltoidR))}`; };
     const lo = pass => { const Pp = passer(pass, roles); return `${Pp(M(FR.elbowCapR))}${Pp(M(FR.forearmR))}${Pp(M(FR.fistR))}`; };
     return `<g class="j anim lr-ua-${s} arm-${s}">${armLayer(up, lo, (m, pass) => `<g class="j lr-fa-${s}">${m}${pass === 'fill' ? `<circle class="ov ov-elbows ovs" cx="${g}" cy="-24" r="8"/><g class="j anim lr-db-${s}">${dumbbell(g, 16)}</g>` : ''}</g>`)}</g>`;
   };
   const legs = pass => { const Pp = passer(pass, roles); return ['r', 'l'].map(s => { const M = s === 'r' ? (p => p) : mirPart; return `${Pp(M(FR.thighR))}${Pp(M(FR.kneeCapR))}${Pp(M(FR.shinR))}${Pp(M(FR.footR))}`; }).join(''); };
   // the upper-trap helper tint eases off (1 -> 0.7) as the delts take over: the traps stay down, no shrug (secondary motion, opacity only)
-  const bodyLayer = pass => { const Pp = passer(pass, roles, { ten: 'lr-ten', helpFade: 'lr-hlp' }); return `${legs(pass)}${Pp(FR.neck)}${Pp(FR.torso)}${Pp(FR.head)}`; };
+  const CORES = {};   // stroke-less hotspot cores per joint chain, painted after every halo (see fillPart)
+  const bodyLayer = pass => { const Pp = passer(pass, roles, { ten: 'lr-ten', helpFade: 'lr-hlp', tap: muscles, cores: CORES, coreKey: 'body' }); return `${legs(pass)}${Pp(FR.neck)}${Pp(FR.torso)}${Pp(FR.head)}`; };
   const grip = (p, sgn) => { const a = A(p); const E = [22 + 38 * Math.sin(rad(a)), -62 + 38 * Math.cos(rad(a))]; const Gp = [E[0] + 40 * Math.sin(rad(a - BEND)), E[1] + 40 * Math.cos(rad(a - BEND))]; return [sgn * Gp[0], Gp[1]]; };
   const trailR = Array.from({ length: 33 }, (_, i) => { const g = grip(i / 32, 1); return [g[0], g[1] + DROP]; });
   const trailL = trailR.map(([x, y]) => [-x, y]);
   const dR = 'M' + trailR.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L'), dL = 'M' + trailL.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L');
   const trapR = [[7, -75], [17.5, -72], [24, -67.5]];                 // 4 to 5 units above the trap slope
   const downR = { from: [H[0] + 30, H[1] - 90], to: [H[0] + 30, H[1] - 75] }, downL = { from: [H[0] - 30, H[1] - 90], to: [H[0] - 30, H[1] - 75] };
+  const bodyMarkup = layer(bodyLayer), sideL = side('l'), sideR = side('r');   // built first: they collect the hotspot cores
   const scene = `<line class="floor" x1="16" y1="258" x2="342" y2="258"/>
 ${shadow(H[0], 258, 30, 3)}
 <g class="figure" transform="translate(${H[0]} ${H[1]})">
-${layer(bodyLayer)}
+${bodyMarkup}
 <path class="guide" d="${dR}"/><path class="guide" d="${dL}"/><path class="trail j anim lr-trail" d="${dR}" pathLength="1"/><path class="trail j anim lr-trail" d="${dL}" pathLength="1"/>
-${side('l')}
-${side('r')}
+${sideL}
+${sideR}
 <polyline class="ov ov-shoulders ovs" points="${pts(trapR)}"/><polyline class="ov ov-shoulders ovs" points="${pts(mir(trapR))}"/>
+${cores(CORES, 'body')}${['l', 'r'].map(s => `<g class="j anim lr-ua-${s}">${cores(CORES, 'ua-' + s)}</g>`).join('')}
 </g>`;
   const staticOverlays = `<g class="ov ov-shoulders">${arrowSvg(downR)}${arrowSvg(downL)}</g>`;
   // arrows for tiles 2 and 4: outside the right trail at p = 0.5, along the tangent
@@ -1074,12 +1157,12 @@ ${side('r')}
     picsAt: [0, 0.125, 0.31, 0.625],
     tileBox: [66, 51, 226, 213],
     arrows: [null, up, null, { from: up.to, to: up.from }],
-    css, scene, staticOverlays,
+    css, scene, staticOverlays, muscles,
   };
   fs.writeFileSync(path.join(DIR, 'lateral-raise.html'), page(ex));
   const key = p => { const g = grip(p, 1); return { p: n2(p), A: n2(A(p)), outFromSide: n2(A(p)), inside: n2(180 - BEND), gripR: [n2(g[0] + H[0]), n2(g[1] + H[1])] }; };
   const smooth = smoothNumbers(u => { const p = progress(u); return { A: A(p), db: A(p) - BEND, g: grip(p, 1) }; }, ['A', 'db'], q => q.g);
-  return { smooth, keyTable: [0, 0.25, 0.5, 0.75, 1].map(key), truth: { startA: A(0), endA: A(1), topGripY: grip(1, 1)[1] + H[1], shoulderY: 94 }, geo: { H }, parts: { dumbbellR: dumbbell(22, 16) } };
+  return { smooth, muscles: muscles.map(muscleText), keyTable: [0, 0.25, 0.5, 0.75, 1].map(key), truth: { startA: A(0), endA: A(1), topGripY: grip(1, 1)[1] + H[1], shoulderY: 94 }, geo: { H }, parts: { dumbbellR: dumbbell(22, 16) } };
 }
 
 // ===========================================================================

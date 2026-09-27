@@ -2,12 +2,12 @@
 // player's shoot.cjs (UPGRADE-BRIEF.md quality bar; the lat pulldown review found the lats hidden at the squeeze).
 // It counts the accent-coloured pixels of the main-muscle polygons (.mm) in a screenshot of the stage at the setup pose
 // (t 0) and in the hold (t 0.3), with the effort cue and the glow neutralised (opacity 1, glow hidden) and every other
-// accent element hidden (guides, trail, pin, overlays, arrows, pills, badges; helper muscles painted in the body tone),
+// accent element hidden (guides, trail, pin, overlays, arrows, pills, badges, the muscle hotspots; helper muscles painted in the body tone),
 // so only the muscle itself counts, minus whatever other parts cover it. It passes when the hold shows at least 97 % of
 // the setup area (a rotated polygon changes its pixel count by about 1 % through anti-aliasing) and prints both counts.
 // page: an open Playwright page at the player (its harness exposes window.__rig.freeze); cfg: { label }; check(ok, msg).
 async function muscleAreaCheck(page, cfg, check) {
-  await page.addStyleTag({ content: '.gw,.guide,.trail,.pin,.ov,.arrow,.arrow-head,.pill-row,.cam-label,.badge{display:none!important}.mm{opacity:1!important;animation:none!important}.mh{fill:var(--body)!important}' });
+  await page.addStyleTag({ content: '.gw,.hot,.guide,.trail,.pin,.ov,.arrow,.arrow-head,.pill-row,.cam-label,.badge{display:none!important}.mm{opacity:1!important;animation:none!important}.mh{fill:var(--body)!important}' });
   const accent = await page.evaluate(() => getComputedStyle(document.querySelector('.player')).getPropertyValue('--accent').trim());
   const hex = accent.match(/^#([0-9a-f]{6})$/i);
   const rgb = hex ? [0, 2, 4].map(i => parseInt(hex[1].slice(i, i + 2), 16)) : null;

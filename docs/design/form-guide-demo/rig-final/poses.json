@@ -158,6 +158,11 @@
    "b": 0.04075665618216258,
    "c": 2.00000000000995
   },
+  "muscles": [
+   "Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.",
+   "Front delts (anterior deltoid), helps. Lifts the upper arms forward with the chest.",
+   "Triceps (triceps brachii), helps. Straightens the elbows at the end of the press."
+  ],
   "series": {
    "gz": [
     38.557193660636514,
@@ -716,6 +721,10 @@
    "b": 0.031026439659514973,
    "c": 2.352941176474859
   },
+  "muscles": [
+   "Side delts (lateral deltoid), target. Lifts the arms out to the sides; hardest near shoulder height.",
+   "Upper traps (upper trapezius), helps. Steadies the shoulder blades; keep them down, no shrug."
+  ],
   "keyTable": [
    {
     "p": "0",

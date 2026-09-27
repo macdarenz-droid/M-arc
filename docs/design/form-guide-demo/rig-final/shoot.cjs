@@ -70,8 +70,8 @@ for (const c of poses.contrast) {
   };
   const shot = async (page, name) => { await (await page.$('.player')).screenshot({ path: path.join(OUT, name) }); };
   const EX = [
-    { id: 'cp', file: 'chest-press.html', chips: ['grip', 'path', 'seat'], ua: '.cp-ua' },
-    { id: 'lr', file: 'lateral-raise.html', chips: ['shoulders', 'path', 'elbows'], ua: '.lr-ua-r' },
+    { id: 'cp', file: 'chest-press.html', chips: ['grip', 'path', 'seat'], ua: '.cp-ua', muscles: ['chest', 'frontDelts'] },
+    { id: 'lr', file: 'lateral-raise.html', chips: ['shoulders', 'path', 'elbows'], ua: '.lr-ua-r', muscles: ['sideDelts', 'upperTraps'] },
   ];
 
   // 2a. required matrix: t = 0, 0.25, 0.5, 0.75 in dark (silent-black) and paper
@@ -88,6 +88,8 @@ for (const c of poses.contrast) {
     for (const theme of ['silent-black', 'paper']) { const { page, ctx } = await open(ex.file, `?mode=pics&theme=${theme}`); await shot(page, `${ex.id}_pictures_${theme}.png`); await ctx.close(); }
     { const { page, ctx } = await open(ex.file, `?mode=pics&zoom=path`, { wait: 600 }); await shot(page, `${ex.id}_pictures-still-path.png`); await ctx.close(); }
     for (const theme of ['ember', 'emerald', 'midnight']) { const { page, ctx } = await open(ex.file, `?theme=${theme}&t=0.125`); await shot(page, `${ex.id}_${theme}_t0.125.png`); await ctx.close(); }
+    // muscle info bubbles (spec 2.10): the target and the first helper open at the hold, dark and Paper
+    for (const theme of ['silent-black', 'paper']) for (const m of ex.muscles) { const { page, ctx } = await open(ex.file, `?t=0.3&theme=${theme}&muscle=${m}`); await shot(page, `${ex.id}_muscle-${m}_${theme}.png`); await ctx.close(); }
   }
   { const { page, ctx } = await open('chest-press.html', `?t=0.05&zoom=grip&theme=paper`, { wait: 600 }); await shot(page, `cp_zoom-grip_paper.png`); await ctx.close(); }
 
@@ -289,15 +291,18 @@ for (const c of poses.contrast) {
       `lateral raise: upper-trap helper tint eases 1 -> 0.7 with the lift and back (traps stay down): ${o ? `${o[0].toFixed(2)} at setup, ${o[120].toFixed(2)} through the hold, ${o[480].toFixed(2)} at the restart, largest step ${step.toFixed(4)}` : 'no .mh.lr-hlp element'}`);
     await ctx.close();
   }
-  // The target muscle stays visible at the hardest point (muscle-check.cjs), and the caption row never overlaps or leaves
-  // the player in idle, ended, the four captions and Pictures, drawn with the canvas font (caption-check.cjs).
+  // The target muscle stays visible at the hardest point (muscle-check.cjs), the caption row never overlaps or leaves
+  // the player in idle, ended, the four captions and Pictures, drawn with the canvas font (caption-check.cjs), and a tap on
+  // a muscle shows its name, real name and role with the dot in its colour (muscle-tap-check.cjs, spec 2.10).
   {
     const { muscleAreaCheck } = require('./muscle-check.cjs');
     const { captionRowCheck } = require('./caption-check.cjs');
+    const { muscleTapCheck } = require('./muscle-tap-check.cjs');
     const ended = () => { window.__rig.stopClock(); window.__rig.setState({ playing: false, ended: true }); };
     for (const [file, label] of [['chest-press.html', 'chest press'], ['lateral-raise.html', 'lateral raise']]) {
       const { page, ctx } = await open(file, '?t=0'); await muscleAreaCheck(page, { label }, check); await ctx.close();
       await captionRowCheck(q => open(file, q), { label, states: [['?autoplay=0', 'idle'], ['?loop=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pics', 'Pictures']] }, check);
+      await muscleTapCheck(q => open(file, q), { label, picsQuery: '?mode=pics' }, check);
     }
   }
 
