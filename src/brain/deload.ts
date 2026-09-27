@@ -7,8 +7,13 @@
  *  (d) readiness has read red on three or more of the last five days.
  * `readinessHistory` is the band for each of the last 5 days (index 0 = today), as scored by
  * derive() in coach/rules.ts — this module only counts them, it doesn't compute readiness itself.
+ * BUG-14: a lift counts as stalled only under the one plateau rule (BR-04, trend.ts) and not at
+ * low confidence; timed holds and conditioning never count (VOLUME-F2, D-A1 point 1). D-A1 point 6:
+ * no offer before 4 weeks of logged training, and none for someone under 3 months of training
+ * unless readiness read red on 3 of the last 5 days.
  */
 import type { Exercise, Session } from '@/core/models';
+import { daysBetween } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { exerciseHistory, isActive, modeOf } from './history';
 import { effortDrift } from './effort';
@@ -31,17 +36,37 @@ function mainLiftIds(sessions: Session[], custom: Exercise[]): string[] {
 }
 
 /** The thresholds behind deloadTrigger, shared with explain_method. `readinessWindowDays` is what callers pass. */
-export const DELOAD_TRIGGER = { stalledLifts: 2, driftLifts: 2, overBandWeeks: 2, readinessRedDays: 3, readinessWindowDays: 5 } as const;
+export const DELOAD_TRIGGER = { stalledLifts: 2, driftLifts: 2, overBandWeeks: 2, readinessRedDays: 3, readinessWindowDays: 5, minHistoryDays: 28, beginnerMonths: 3 } as const;
 
-export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = []): DeloadSuggestion {
+const NONE: DeloadSuggestion = { suggest: false, reason: '' };
+const RED_REASON = 'Readiness has read red on three or more of the last five days.';
+
+/**
+ * `trainingAgeMonths` is the person's training age (profile.trainingSince, else the first session);
+ * when left out, it is counted from the first logged session.
+ */
+export function deloadTrigger(sessions: Session[], today: string, custom: Exercise[] = [], readinessHistory: Array<ReadinessBand | null> = [], trainingAgeMonths?: number | null): DeloadSuggestion {
+  // D-A1 (6): 4 weeks of logged training before any lighter week.
+  const firstDay = sessions.reduce<string | null>((a, s) => (a == null || s.day < a ? s.day : a), null);
+  const historyDays = firstDay ? daysBetween(firstDay, today) : 0;
+  if (historyDays < DELOAD_TRIGGER.minHistoryDays) return NONE;
+  const months = trainingAgeMonths === undefined ? historyDays / 30.44 : trainingAgeMonths;
+  const beginner = months == null || months < DELOAD_TRIGGER.beginnerMonths;
+
+  const readinessRed = readinessHistory.filter(b => b === 'red').length >= DELOAD_TRIGGER.readinessRedDays;
+  // A beginner on linear progress never gets one from the lift-based triggers (plan 6.13, D-A1 (6)).
+  if (beginner) return readinessRed ? { suggest: true, reason: RED_REASON } : NONE;
+
   const mainIds = mainLiftIds(sessions, custom);
-  // Only lifts trained in the last six weeks count (BR-05).
-  const lifts = mainIds.map(id => ({ id, h: exerciseHistory(sessions, id, custom) })).filter(x => isActive(x.h, today));
+  // Only lifts trained in the last six weeks count (BR-05); timed holds and conditioning never do (A4).
+  const lifts = mainIds
+    .filter(id => { const m = modeOf(id, custom); return m !== 'duration' && m !== 'conditioning'; })
+    .map(id => ({ id, h: exerciseHistory(sessions, id, custom) })).filter(x => isActive(x.h, today));
   const histories = lifts.map(x => x.h);
 
   const stalled = lifts.filter(({ id, h }) => {
-    const status = plateauStatus(h, modeOf(id, custom)).status;
-    return status === 'plateaued' || status === 'declining';
+    const p = plateauStatus(h, modeOf(id, custom), today);
+    return (p.status === 'plateaued' || p.status === 'declining') && p.confidence !== 'low';
   });
   const plateauedOrDeclining = stalled.length;
   if (plateauedOrDeclining >= DELOAD_TRIGGER.stalledLifts) {
@@ -67,10 +92,7 @@ export function deloadTrigger(sessions: Session[], today: string, custom: Exerci
     return { suggest: true, reason: 'A muscle has run above its usual weekly range for two weeks while a main lift has stalled.' };
   }
 
-  const redDays = readinessHistory.filter(b => b === 'red').length;
-  if (redDays >= DELOAD_TRIGGER.readinessRedDays) {
-    return { suggest: true, reason: 'Readiness has read red on three or more of the last five days.' };
-  }
+  if (readinessRed) return { suggest: true, reason: RED_REASON };
 
-  return { suggest: false, reason: '' };
+  return NONE;
 }

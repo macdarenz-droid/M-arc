@@ -315,7 +315,8 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'reduce', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(setCount, down, range[0], null, 'Ease one step') };
   }
 
-  const plateau = plateauStatus(hist);
+  // BUG-14: the one plateau rule (BR-04), over the eight weeks up to today.
+  const plateau = plateauStatus(hist, 'weighted', today);
   if (plateau.status === 'declining' && plateau.confidence !== 'low') {
     return { mode: 'plateau', target: `${topKg} kg · ${range[0]}–${range[0] + 2} reps`, kg: topKg, reps: [range[0], range[0] + 2], reason: 'Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.', confidence: plateau.confidence, sets: holdSets('Lighter week', range[0]) };
   }

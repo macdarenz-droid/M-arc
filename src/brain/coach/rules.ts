@@ -11,23 +11,23 @@ import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
-import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
+import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
-import { plateauStatus, sinceLastBreak } from '../trend';
+import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
 import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
-import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
+import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 
-/** The plateau lever only speaks once the lift's recent sessions span six of the eight weeks it looks at (spec: never at 3 weeks). */
-export const PLATEAU_MIN_SPAN_DAYS = 42;
+/** BR-04's one span constant, now in trend.ts (BUG-14): a plateau needs six of the eight weeks (spec: never at 3 weeks). */
+export { PLATEAU_MIN_SPAN_DAYS };
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -193,7 +193,7 @@ export const RULES: Rule[] = [
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist, modeOf(id, ctx.custom));
+        const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'declining' || p.confidence === 'low') return [];
         return [{
           id: `decline:${id}`, category: 'progress' as const, priority: 320,
@@ -210,12 +210,12 @@ export const RULES: Rule[] = [
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist, modeOf(id, ctx.custom));
+        const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'plateaued' || p.confidence === 'low') return [];
         return [{
           id: `plateau:${id}`, category: 'progress' as const, priority: 300,
           title: `${name}: progress has stalled`,
-          noticed: `${name} has not moved over your last eight sessions.`,
+          noticed: `${name} has barely moved over the last six weeks or more.`,
           means: 'The same load and reps for weeks means the stimulus stopped changing.',
           action: 'Try a different rep range for two weeks, or one lighter week, then return.',
           exerciseId: id,
@@ -378,15 +378,11 @@ export const RULES: Rule[] = [
         const meta = findExercise(id, ctx.custom);
         if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
-        // QA2-FC-2/3: like plateauStatus, only the sessions since the last long break count.
-        const recent = sinceLastBreak(hist).filter(h => daysBetween(h.day, ctx.today) <= 56);
-        if (recent.length < 6) return [];
-        // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
-        if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];
+        // BR-04 (BUG-14): the one plateau rule. The last 8 weeks since any long break (QA2-FC-2/3),
+        // 6+ sessions spanning 42+ days (QA-R3a-7), and under 1.5% total change over them.
+        if (plateauStatus(hist, 'weighted', ctx.today).status !== 'plateaued') return [];
+        const recent = plateauWindow(hist, ctx.today);
         const t = e1rmTrend(recent);
-        // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
-        if (!flatOver(recent)) return [];
         const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
         if (recentSessions.length < 6) return [];
 
@@ -620,5 +616,5 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now));
 }
