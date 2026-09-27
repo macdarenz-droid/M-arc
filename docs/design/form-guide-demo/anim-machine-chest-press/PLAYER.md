@@ -7,14 +7,15 @@ Built by `node build.mjs` from the final rig's generator (`../rig-final/gen.mjs`
 - A side view of a person on a chest press machine. The handles start level with the middle of the chest, with the elbows bent to about a right angle and pulled back a little behind the body, so the chest gets a light stretch. The person pushes the handles out in 1 second, pauses for half a second just short of straight arms (a small bend at the elbow, pointing down, that you can see from the side, so it never looks locked), brings the handles back slowly over 2 seconds, and rests for half a second. The weight plates rise and fall with the handles. Three reps, then it stops and offers Replay.
 - A blue line grows from where the handle starts to where it is now, so a beginner can see how far to push and where to stop.
 - Three close-ups (Grip, Path, Seat): the camera glides in, a ring or outline marks the thing to look at, and a short tip shows at the bottom. Nothing that is marked hides behind the tip.
+- Tap a coloured muscle (chest = target, front delts and triceps = helpers) and the same bubble names it: the everyday name in bold, the real muscle name, its role and one line on what it does, with the dot in that muscle's colour and a thin outline on it. Tap it again, tap the stage background or tap a zoom chip to close it. The animation keeps playing (spec 2.10).
 - "Pictures" shows four key moments of one rep as still drawings, made from the same drawing as the animation. A phone set to reduce motion always gets the pictures instead of movement.
-- Everything that changes is driven by one class string and one style string on the outer box. Nothing is built by script.
+- The picture is driven by one class string and one style string on the outer box; the bubble's words, its dot colour and the tapped muscle's outline come from a few named holes (section 2a). Nothing is built by script.
 
 ## 1. Files
 
 | File | What it is |
 |---|---|
-| `index.html` | Harness: the full player, built the way the artboard is. Query: `?theme=<id>&t=<0..1>&zoom=1\|2\|3&mode=pictures&loop=1&autoplay=0&speed=0.5`. `t` freezes rep 1 at that point. |
+| `index.html` | Harness: the full player, built the way the artboard is. Query: `?theme=<id>&t=<0..1>&zoom=1\|2\|3&muscle=chest\|frontDelts\|triceps&mode=pictures&loop=1&autoplay=0&speed=0.5`. `t` freezes rep 1 at that point; `muscle` opens that muscle's bubble. |
 | `logic.js` | The artboard's logic class (`class Component extends DCLogic`). Pasted as is (section 10). |
 | `build.mjs` | Builds `index.html` and this file. First it copies `../rig-final/gen.mjs` into `rig/gen.mjs` with the section 13 changes (each one an exact-match edit, so the build stops if the rig changes under it) and runs it. |
 | `rig/` | Written by `build.mjs`, never edited: `gen.mjs`, `chest-press.html` (the rig harness this player is built from) and `poses.json` (the solved numbers the checks read). |
@@ -24,7 +25,7 @@ Built by `node build.mjs` from the final rig's generator (`../rig-final/gen.mjs`
 
 ## 2. What the logic must set
 
-Only two holes carry state into the picture: the root `class` and the root `style`. Everything else is a plain `sc-if` flag or a click handler.
+Two holes carry the picture's state: the root `class` and the root `style`. The muscle info (section 2a) adds a class hole per muscle, the bubble's dot style and two text holes. Everything else is a plain `sc-if` flag or a handler.
 
 Root element:
 
@@ -49,17 +50,18 @@ Root element:
 | Class | Set when | What the CSS does |
 |---|---|---|
 | `gen-a` / `gen-b` | flips on Play after the end (Replay), on a speed change, on a mode change, and when a Pictures still opens or closes | picks the `-a` or `-b` keyframe set, which restarts every animation from 0 % (the setup pose). The two sets are identical (checked). |
-| `zoom-1` | Grip chip on | camera `translate(179px,138px) scale(2) translate(-206px,-157px)`; grip ring on; far lever hidden; bubble 1 |
-| `zoom-2` | Path chip on | camera `translate(179px,138px) scale(1.6) translate(-204px,-160px)`; path guide and trail (always on); bubble 2 |
-| `zoom-3` | Seat chip on | camera `translate(179px,138px) scale(1.7) translate(-150px,-190px)`; seat pad outlined; bubble 3 |
+| `zoom-1` | Grip chip on | camera `translate(179px,138px) scale(2) translate(-206px,-157px)`; grip ring on; far lever hidden |
+| `zoom-2` | Path chip on | camera `translate(179px,138px) scale(1.6) translate(-204px,-160px)`; path guide and trail (always on) |
+| `zoom-3` | Seat chip on | camera `translate(179px,138px) scale(1.7) translate(-150px,-190px)`; seat pad outlined |
 | any `zoom-N` | | rep pill row and camera label hide; camera glides in 320 ms `cubic-bezier(.32,.72,0,1)`; overlay fades in 150 ms |
 | `pictures` | Pictures mode | the 2 x 2 grid of key poses covers the stage; with a `zoom-N` as well, the grid hides and the stage shows one still (section 5) |
 
-Every other value the markup reads from `renderVals()` (`sc-if` flags, `aria-*` values and click handlers; all in `logic.js`): `showSlow`, `showIdle`, `showEnded`, `showCaps`, `showStill1`, `showStill3`, `showPicsLine`, `showTempo`, `z1`, `pick1`, `z2`, `pick2`, `z3`, `pick3`, `playLabel`, `togglePlay`, `playDisabled`, `isPlay`, `isPause`, `isReplay`, `speed1`, `speedTo1`, `speedHalf`, `speedToHalf`, `modeAnim`, `toAnim`, `animDisabled`, `modePics`, `toPics`, `hintAnim`, `hintPics`, `hintRm`.
+Every other value the markup reads from `renderVals()` (`sc-if` flags, `aria-*` values and click handlers; all in `logic.js`): `tapStage`, `clsChest`, `clsTriceps`, `clsFrontDelts`, `showSlow`, `showBubble`, `bubbleDotStyle`, `bubbleName`, `bubbleRest`, `showIdle`, `showEnded`, `showCaps`, `showStill1`, `showStill3`, `showPicsLine`, `showTempo`, `z1`, `pick1`, `z2`, `pick2`, `z3`, `pick3`, `playLabel`, `togglePlay`, `playDisabled`, `isPlay`, `isPause`, `isReplay`, `speed1`, `speedTo1`, `speedHalf`, `speedToHalf`, `modeAnim`, `toAnim`, `animDisabled`, `modePics`, `toPics`, `hintAnim`, `hintPics`, `hintRm`, `tapChest`, `keyChest`, `tapFrontDelts`, `keyFrontDelts`, `tapTriceps`, `keyTriceps`.
 
 | Flag | True when |
 |---|---|
 | `showSlow` | Animation mode at 0.5x ("Slow motion" pill) |
+| `showBubble` | a zoom chip is on (its caption; also over a Pictures still) or a muscle is open (Animation only) |
 | `showIdle` | Animation mode before the first Play ("Tap Play to watch 3 slow reps.") |
 | `showEnded` | after the 3 reps with loop off ("Done. Tap Replay to watch again.") |
 | `showCaps` | Animation mode, playing or paused mid-set (the 4 phase captions) |
@@ -70,6 +72,34 @@ Every other value the markup reads from `renderVals()` (`sc-if` flags, `aria-*` 
 | `z1`, `z2`, `z3` | `aria-pressed` of the Grip, Path and Seat chips |
 | `speed1`, `speedHalf`, `modeAnim`, `modePics`, `animDisabled` | segment buttons |
 | `hintAnim`, `hintPics`, `hintRm` | which hint line shows |
+
+### 2a. Muscle info on tap (spec 2.10, RIG.md section 21)
+
+State: one field `bubble`, `{ kind: 'zoom', id: 1|2|3 }`, `{ kind: 'muscle', id: 'chest'|'frontDelts'|'triceps' }` or `null`, so a zoom and a muscle bubble never show together. `pickZoom(id)` toggles a zoom (and flips `gen` in Pictures, for the still); `tapMuscle(id, e)` toggles a muscle bubble in Animation only (it stops the event and notes the time); `keyMuscle(id, e)` takes Enter and Space; `tapStage(e)` closes a muscle bubble on a tap of the stage background (never a zoom, never inside the bubble, not within 80 ms of a hotspot tap, so a runtime that passes no event still works). Setting the mode or pressing Play from Pictures clears the bubble.
+
+`EX.muscles` in `logic.js` is the rig's muscle table (region, id, Id, common, anatomical, role, line, cls); `EX.chips` holds the three chips' labels and captions. `build.mjs` stops when either differs from the rig's `EX` in `rig/chest-press.html` (or the chips from its own `CHIPS`).
+
+| Muscle | Role | Bubble text (bold name first) | Class hole | Handlers |
+|---|---|---|---|---|
+| Chest | target | **Chest** (pectoralis major), target. Pushes the handles away; hardest as the arms straighten. | `clsChest` = `mm anim cp-eff` (+ ` sel` while open) | `tapChest`, `keyChest` |
+| Front delts | helps | **Front delts** (anterior deltoid), helps. Lifts the upper arms forward with the chest. | `clsFrontDelts` = `mh` (+ ` sel` while open) | `tapFrontDelts`, `keyFrontDelts` |
+| Triceps | helps | **Triceps** (triceps brachii), helps. Straightens the elbows at the end of the press. | `clsTriceps` = `mh` (+ ` sel` while open) | `tapTriceps`, `keyTriceps` |
+
+Markup (Piece B, from the rig, in section 9):
+
+- Every role polygon: `class="{{ cls<Id> }}"`. While its muscle is open the class gains `sel` (`.mm.sel,.mh.sel`: a 1.5 `--text` outline).
+- Hotspots, painted by the rig: per region polygon a **halo** (`<polygon class="hot" role="button" tabindex="0" aria-label="<Common>, target muscle|helps" data-muscle="<region>" onClick="{{ tap<Id> }}" onKeyDown="{{ key<Id> }}" .../>`: invisible, a 30 px non-scaling stroke, wider inline for thin regions, so the tap target is at least 44 px) inside the same animated group as its region, and a stroke-less **core** (`class="hot hot-core"`, same handlers) painted after every halo, so a tap on a muscle's own paint always opens that muscle (D-R7). Pictures tiles are `<use>` clones and `.pics .hot{pointer-events:none}`, so Pictures has no hotspots.
+- The stage: `<div class="stage" onClick="{{ tapStage }}">`.
+- The one bubble (section 9.3): `<span class="dot" style="{{ bubbleDotStyle }}"></span><span class="bt"><b>{{ bubbleName }}</b> <span>{{ bubbleRest }}</span></span>` inside `sc-if showBubble`.
+
+| Hole | Muscle open | Zoom on |
+|---|---|---|
+| `bubbleDotStyle` | `background:var(--muscle-main)` (target) or `var(--muscle-help)` | `background:var(--accent)` |
+| `bubbleName` | the common name (bold) | empty |
+| `bubbleRest` | `(anatomical), target\|helps. Line.` | the chip's caption |
+| `bubbleText` | the whole line, plain (not used by the markup) | the chip's caption |
+
+The rep pill and the camera label stay while a muscle is open (no zoom class). A zoom chip replaces an open muscle bubble with its caption; a second tap on the chip closes everything. Checked by `../rig-final/muscle-tap-check.cjs` (section 11).
 
 The 200 ms timer in `logic.js` ends playback after 3 x `--dur` with loop off (`playing: false, ended: true`); it is cleared in `componentWillUnmount`.
 
@@ -157,12 +187,12 @@ Sections 8, 9 and 10 fill the marked places. The `data-props` follow spec 2.1 (s
 </style>
 </helmet>
 <div class="{{ rootClass }}" style="width: 358px; height: 460px; box-sizing: border-box; {{ rootStyle }}">
-<div class="stage">
+<div class="stage" onClick="{{ tapStage }}">
 <!-- stage SVG: section 9.1 -->
 <div class="pill-row"><span class="pill"><span class="stack"><span class="repx r1">Rep 1 of 3</span><span class="repx r2">Rep 2 of 3</span><span class="repx r3">Rep 3 of 3</span></span></span><sc-if value="{{ showSlow }}" hint-placeholder-val="{{ true }}"><span class="pill pill-accent">Slow motion</span></sc-if></div>
 <div class="cam-label">Side view</div>
 <!-- Pictures grid: section 9.2 -->
-<!-- caption bubbles: section 9.3 -->
+<!-- caption bubble: section 9.3 -->
 </div>
 <div class="cap-row"><span class="cap"><sc-if value="{{ showIdle }}" hint-placeholder-val="{{ true }}"><span>Tap Play to watch 3 slow reps.</span></sc-if><sc-if value="{{ showEnded }}" hint-placeholder-val="{{ true }}"><span>Done. Tap Replay to watch again.</span></sc-if><sc-if value="{{ showCaps }}" hint-placeholder-val="{{ true }}"><span class="stack"><span class="capx c1">Press out, 1 s</span><span class="capx c2">Pause, don’t lock out</span><span class="capx c3">Back slowly, 2 s</span><span class="capx c4">Reset, light chest stretch</span></span></sc-if><sc-if value="{{ showStill1 }}" hint-placeholder-val="{{ true }}"><span>Setup: handles at mid-chest</span></sc-if><sc-if value="{{ showStill3 }}" hint-placeholder-val="{{ true }}"><span>Arms almost straight, no lock</span></sc-if><sc-if value="{{ showPicsLine }}" hint-placeholder-val="{{ true }}"><span>Press out 1 s, pause, back 2 s</span></sc-if></span><sc-if value="{{ showTempo }}" hint-placeholder-val="{{ true }}"><span class="tempo">1 s out · 2 s back</span></sc-if></div>
 <div class="chips"><button class="chip chip-btn" type="button" aria-pressed="{{ z1 }}" onClick="{{ pick1 }}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>Grip</button><button class="chip chip-btn" type="button" aria-pressed="{{ z2 }}" onClick="{{ pick2 }}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>Path</button><button class="chip chip-btn" type="button" aria-pressed="{{ z3 }}" onClick="{{ pick3 }}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>Seat</button></div>
@@ -232,9 +262,9 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .pill-accent{background:var(--accent-soft);color:var(--accent)}
 .cam-label{position:absolute;top:12px;right:12px;font-size:11px;line-height:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
 .stack{display:inline-grid}.stack>span{grid-area:1/1;white-space:nowrap}
-.bubble{position:absolute;left:12px;right:12px;bottom:12px;display:none;gap:8px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:13px;line-height:18px;color:var(--text)}
+.bubble{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:8px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:13px;line-height:18px;color:var(--text)}
 .bubble .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px}
-.zoom-1 .bub-1,.zoom-2 .bub-2,.zoom-3 .bub-3{display:flex}
+.bubble .bt{min-width:0}.bubble b{font-weight:600}
 .zoom-1 .pill-row,.zoom-2 .pill-row,.zoom-3 .pill-row,.zoom-1 .cam-label,.zoom-2 .cam-label,.zoom-3 .cam-label{display:none}
 .pics{position:absolute;inset:1px;display:none;padding:6px;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,128px);background:var(--surface-1);border-radius:var(--radius-lg)}
 .pictures .pics{display:grid}
@@ -278,6 +308,11 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .fc{fill:var(--body-facet);stroke:var(--map-line);stroke-width:.6px;stroke-linejoin:round}
 .mm{fill:var(--muscle-main);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}
 .mh{fill:var(--muscle-help);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}
+.mm.sel,.mh.sel{stroke:var(--text);stroke-width:calc(var(--sw) * 1.5px)}
+/* muscle hotspots (spec 2.10): an invisible copy of the region with a 30 px non-scaling stroke, so every tap target is at least 44 px */
+.hot{fill:transparent;stroke:transparent;stroke-width:30px;stroke-linejoin:round;pointer-events:all;cursor:pointer}
+.hot-core{stroke:none;stroke-width:0}
+.pics .hot{pointer-events:none}
 /* ---- equipment paint ---- */
 .eq{fill:var(--equip);stroke:var(--fg-frame);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
 .eqm{fill:var(--equip);stroke:var(--fg-metal);stroke-width:calc(var(--sw) * 1.2px);stroke-linejoin:round}
@@ -292,7 +327,7 @@ body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Se
 .rod{fill:none;stroke:var(--fg-frame);stroke-width:calc(var(--sw) * 1.1px)}
 .cable{fill:none;stroke:var(--fg-cable);stroke-width:calc(var(--sw) * 1.25px);stroke-linecap:round}
 .floor{stroke:var(--border);stroke-width:1px}
-.b,.bf,.olk,.olkf,.rim,.fc,.mm,.mh,.eq,.eqm,.eqf,.rod,.cable,.floor,.knurl,.seam,.prim{vector-effect:non-scaling-stroke}
+.b,.bf,.olk,.olkf,.rim,.fc,.mm,.mh,.hot,.eq,.eqm,.eqf,.rod,.cable,.floor,.knurl,.seam,.prim{vector-effect:non-scaling-stroke}
 /* ---- guides: path, progress trail, zoom overlays, arrows (accent) ---- */
 .guide{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3;opacity:.6}
 .trail{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1 1}
@@ -390,10 +425,11 @@ The whole scene sits in `<g class="cam">` (zoomed by the root class) and `<g id=
 <g class="far-side" transform="translate(5 -3)"><g class="j anim cp-lever far-lever"><polygon class="eqf" points="200.9,58 206.1,58 206.1,146 200.9,146"/><rect class="hdf" x="200.3" y="145" width="6.4" height="21" rx="3"/></g><g transform="translate(150 206)"><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="olkf" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="olkf" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="olkf" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="olkf" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="olkf" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="pf" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="bf" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><polygon class="pf" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.82,36 -7.09,37.5 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="bf" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="bf" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="sf" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g></g></g>
 <g class="machine-front"><rect class="eq" x="150" y="222" width="9" height="28"/><rect class="eq" x="100" y="168" width="26" height="8"/><rect class="eq" x="124.5" y="108" width="13" height="104" rx="4"/><rect class="eq" x="118" y="214" width="82" height="10" rx="4"/><rect class="seam" x="126.6" y="110.2" width="8.8" height="99.6" rx="2.6"/><rect class="seam" x="120.2" y="216.2" width="77.6" height="5.6" rx="2.2"/></g>
 <g class="shadow"><ellipse class="shd" cx="166" cy="214.4" rx="34" ry="2.2"/><ellipse class="shd" cx="166" cy="214.4" rx="24.48" ry="1.58"/><ellipse class="shd" cx="166" cy="214.4" rx="14.96" ry="0.97"/></g>
-<g class="figure" transform="translate(150 206)"><polygon class="olk" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="olk" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="olk" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="olk" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="olk" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="olk" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="olk" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="olk" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g><polygon class="rim" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="rim" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="rim" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="rim" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="rim" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="rim" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="rim" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="rim" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g><polygon class="b" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="bh" points="1.2,-76 3.2,-72.6 6.8,-66 4.4,-66.2 0.6,-72.6 -1.4,-75.6"/><polygon class="bl" points="-6.2,-78 -3.4,-77.4 -4.8,-69 -7,-67"/><polygon class="t" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="p" points="10.5,-7 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -11.87,-8.6"/><polygon class="pl" points="10.5,-7 -11.87,-8.6 -12.1,-7.2 10.64,-5.6"/><polygon class="pl" points="-3,8.5 -10.5,6 -12.8,-3 -12.1,-6.8 -6,-4.6 -1.6,2"/><polygon class="th" points="-6.6,-71.1 -1.8,-69.3 0.6,-66.4 -3.6,-61 -11.2,-60.5 -9.2,-67.2"/><polygon class="tl" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 6.4,-65.4 3.2,-67.3 -1.8,-69.3 -6.6,-71.1"/><polygon class="tl" points="-12.3,-52 -5.4,-54.6 -2.6,-42 -4.8,-30 -10,-26 -11.9,-40"/><polygon class="tl" points="-3.4,-56.4 1.4,-56 0.8,-48.6 -1.8,-47.4"/><polygon class="th" points="-2.6,-42 -4.8,-30 -3.2,-29.6 -0.8,-41"/><polygon class="tl" points="12.7,-38.6 12.2,-35.6 7,-36.2 8.4,-38.2"/><polygon class="tl tn anim cp-ten" points="10.2,-26 9.8,-14 10.5,-7 8.6,-7.2 8,-14 8.4,-26.4"/><polygon class="tl tn anim cp-ten" points="-8.8,-60.2 -7.4,-60 -9,-50.8 -10.4,-51"/><clipPath id="cp-ten-clip0"><polygon points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/></clipPath><g clip-path="url(#cp-ten-clip0)"><polygon class="gw anim cp-ten" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="gw anim cp-ten" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/></g><polygon class="mm anim cp-eff" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="mm anim cp-eff" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/><polygon class="b" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><polygon class="hr" points="10.38,-90.4 9.6,-91.6 4.5,-94 -1.5,-93.8 -5.6,-90.8 -7.2,-85.5 -6.3,-81 -3,-82.4 -1.4,-85.6 2,-87.2 5.8,-88 8.2,-89.4"/><polygon class="hrh" points="4.5,-94 -1.5,-93.8 -3.6,-92.2 1.4,-92.6 6.6,-92.9"/><polygon class="bh" points="10.38,-90.4 8.2,-89.4 5.8,-88 2,-87.2 -1.4,-85.6 1.4,-84.8 5,-85.6 8.8,-85.4 9.8,-87.6"/><polygon class="bh" points="-0.4,-83.8 2.4,-85.2 4.6,-82.8 4.4,-78.8 2.6,-76.6 0.2,-78.2"/><polygon class="bl" points="0.6,-82.6 2.4,-83.6 3.4,-82 3.2,-79.4 2.2,-78.2 0.8,-79.4"/><polygon class="bh" points="9.2,-84 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 10,-75.6 8,-79.6"/><polygon class="bl" points="8.8,-85.4 13,-84.6 12.4,-83.2 9.4,-84.2"/><polygon class="bl" points="12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 7,-73.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="p" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="b" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><polygon class="p" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.82,36 -7.09,37.5 -7.8,32 -8.5,16"/><polygon class="ph" points="3,-3 8.5,-3 8.9,10 8.3,22 6.82,36 3.2,36.4"/><polygon class="bh" points="3.2,36.4 6.82,36 6.4,40 4.6,47.6 2.4,49.4 1.6,42"/><polygon class="pl" points="-8.5,-3 -3.4,-3 -3.6,37 -7.09,37.5 -7.8,32 -8.5,16"/><polygon class="bl" points="-7.09,37.5 -3.6,37 -2.8,48.6 -3.8,49.8 -6,46"/><polygon class="pl" points="6.82,36 -7.09,37.5 -7.27,36.1 6.97,34.6"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="b" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="bh" points="0,44 3,44.8 5.2,47 6,50 5.2,53 3,55.2 0,56"/><polygon class="b" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="bl" points="-5.5,49 -2,49.5 -2.2,62 -3.4,78 -5.4,84 -7,66 -6.8,58"/><polygon class="bh" points="2.6,49.6 5.5,49 5.4,60 4.4,80 3.8,94 2,94 2.4,72"/><polygon class="s" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/><polygon class="sl" points="-5.6,92.2 3.4,92.4 4.4,93.4 -6.1,93.6"/><polygon class="sh" points="11,97.2 13.6,97.8 17.2,99.2 17.67,100.4 11.8,100.4 10.4,98.6"/><polygon class="so" points="-6.52,100.4 17.67,100.4 17.9,101 17.6,102 -6.2,102"/></g></g></g>
+<g class="figure" transform="translate(150 206)"><polygon class="olk" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="olk" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="olk" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="olk" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="olk" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="olk" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="olk" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="olk" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g><polygon class="rim" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="rim" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="rim" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="rim" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="rim" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="rim" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="rim" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="rim" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/></g></g><polygon class="b" points="-6.2,-78 1.2,-76 3.2,-72.6 6.8,-66 5,-62.5 -5.5,-62.5 -7,-67"/><polygon class="bh" points="1.2,-76 3.2,-72.6 6.8,-66 4.4,-66.2 0.6,-72.6 -1.4,-75.6"/><polygon class="bl" points="-6.2,-78 -3.4,-77.4 -4.8,-69 -7,-67"/><polygon class="t" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/><polygon class="p" points="10.5,-7 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -11.87,-8.6"/><polygon class="pl" points="10.5,-7 -11.87,-8.6 -12.1,-7.2 10.64,-5.6"/><polygon class="pl" points="-3,8.5 -10.5,6 -12.8,-3 -12.1,-6.8 -6,-4.6 -1.6,2"/><polygon class="th" points="-6.6,-71.1 -1.8,-69.3 0.6,-66.4 -3.6,-61 -11.2,-60.5 -9.2,-67.2"/><polygon class="tl" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 6.4,-65.4 3.2,-67.3 -1.8,-69.3 -6.6,-71.1"/><polygon class="tl" points="-12.3,-52 -5.4,-54.6 -2.6,-42 -4.8,-30 -10,-26 -11.9,-40"/><polygon class="tl" points="-3.4,-56.4 1.4,-56 0.8,-48.6 -1.8,-47.4"/><polygon class="th" points="-2.6,-42 -4.8,-30 -3.2,-29.6 -0.8,-41"/><polygon class="tl" points="12.7,-38.6 12.2,-35.6 7,-36.2 8.4,-38.2"/><polygon class="tl tn anim cp-ten" points="10.2,-26 9.8,-14 10.5,-7 8.6,-7.2 8,-14 8.4,-26.4"/><polygon class="tl tn anim cp-ten" points="-8.8,-60.2 -7.4,-60 -9,-50.8 -10.4,-51"/><clipPath id="cp-ten-clip0"><polygon points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 10.2,-26 9.8,-14 10.8,-4 7.8,6 -3,8.5 -10.5,6 -12.8,-3 -10.8,-15 -10,-26 -11.9,-40 -12.3,-52 -11.2,-60.5 -9.2,-67.2"/></clipPath><g clip-path="url(#cp-ten-clip0)"><polygon class="gw anim cp-ten" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="gw anim cp-ten" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/></g><polygon class="{{ clsChest }}" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="{{ clsChest }}" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/><polygon class="hot" style="stroke-width:31px" role="button" tabindex="0" aria-label="Chest, target muscle" data-muscle="chest" onClick="{{ tapChest }}" onKeyDown="{{ keyChest }}" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="hot" style="stroke-width:31px" role="button" tabindex="0" aria-label="Chest, target muscle" data-muscle="chest" onClick="{{ tapChest }}" onKeyDown="{{ keyChest }}" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/><polygon class="b" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/><polygon class="hr" points="10.38,-90.4 9.6,-91.6 4.5,-94 -1.5,-93.8 -5.6,-90.8 -7.2,-85.5 -6.3,-81 -3,-82.4 -1.4,-85.6 2,-87.2 5.8,-88 8.2,-89.4"/><polygon class="hrh" points="4.5,-94 -1.5,-93.8 -3.6,-92.2 1.4,-92.6 6.6,-92.9"/><polygon class="bh" points="10.38,-90.4 8.2,-89.4 5.8,-88 2,-87.2 -1.4,-85.6 1.4,-84.8 5,-85.6 8.8,-85.4 9.8,-87.6"/><polygon class="bh" points="-0.4,-83.8 2.4,-85.2 4.6,-82.8 4.4,-78.8 2.6,-76.6 0.2,-78.2"/><polygon class="bl" points="0.6,-82.6 2.4,-83.6 3.4,-82 3.2,-79.4 2.2,-78.2 0.8,-79.4"/><polygon class="bh" points="9.2,-84 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 10,-75.6 8,-79.6"/><polygon class="bl" points="8.8,-85.4 13,-84.6 12.4,-83.2 9.4,-84.2"/><polygon class="bl" points="12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 7,-73.4"/><g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)"><polygon class="p" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/><polygon class="b" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.4,40 4.6,47.6 0,51 -3.8,49.8 -6,46 -7.8,32 -8.5,16"/><polygon class="p" points="-8.5,-3 8.5,-3 8.9,10 8.3,22 6.82,36 -7.09,37.5 -7.8,32 -8.5,16"/><polygon class="ph" points="3,-3 8.5,-3 8.9,10 8.3,22 6.82,36 3.2,36.4"/><polygon class="bh" points="3.2,36.4 6.82,36 6.4,40 4.6,47.6 2.4,49.4 1.6,42"/><polygon class="pl" points="-8.5,-3 -3.4,-3 -3.6,37 -7.09,37.5 -7.8,32 -8.5,16"/><polygon class="bl" points="-7.09,37.5 -3.6,37 -2.8,48.6 -3.8,49.8 -6,46"/><polygon class="pl" points="6.82,36 -7.09,37.5 -7.27,36.1 6.97,34.6"/><g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)"><polygon class="b" points="5.8,51.55 4.24,54.24 1.55,55.8 -1.55,55.8 -4.24,54.24 -5.8,51.55 -5.8,48.45 -4.24,45.76 -1.55,44.2 1.55,44.2 4.24,45.76 5.8,48.45"/><polygon class="bh" points="0,44 3,44.8 5.2,47 6,50 5.2,53 3,55.2 0,56"/><polygon class="b" points="-5.5,49 5.5,49 5.4,60 4.4,80 3.8,94 -4,94 -5.4,84 -7,66 -6.8,58"/><polygon class="bl" points="-5.5,49 -2,49.5 -2.2,62 -3.4,78 -5.4,84 -7,66 -6.8,58"/><polygon class="bh" points="2.6,49.6 5.5,49 5.4,60 4.4,80 3.8,94 2,94 2.4,72"/><polygon class="s" points="-5.6,92.2 3.4,92.4 7.4,96.2 13.6,97.8 17.2,99.2 17.9,101 17.6,102 -6.2,102 -6.8,99 -6.6,95"/><polygon class="sl" points="-5.6,92.2 3.4,92.4 4.4,93.4 -6.1,93.6"/><polygon class="sh" points="11,97.2 13.6,97.8 17.2,99.2 17.67,100.4 11.8,100.4 10.4,98.6"/><polygon class="so" points="-6.52,100.4 17.67,100.4 17.9,101 17.6,102 -6.2,102"/></g></g></g>
 <g class="j anim cp-lever lever-near"><polygon class="eqm" points="200.9,58 206.1,58 206.1,146 200.9,146"/><rect class="hd" x="200.3" y="145" width="6.4" height="26" rx="3"/><path class="knurl" d="M200.3 147h6.4M200.3 148.4h6.4M200.3 149.8h6.4M200.3 166.2h6.4M200.3 167.6h6.4M200.3 169h6.4"/></g><circle class="eqm" cx="203.5" cy="58" r="7"/><circle class="prim" cx="203.5" cy="58" r="4.6"/><circle class="rod" cx="203.5" cy="58" r="2"/>
 <path class="guide" d="M178.08 168.1L179.64 168.45L181.21 168.78L182.78 169.08L184.36 169.37L185.94 169.63L187.53 169.87L189.11 170.08L190.71 170.27L192.3 170.44L193.89 170.59L195.49 170.72L197.09 170.82L198.69 170.9L200.29 170.95L201.9 170.99L203.5 171L205.1 170.99L206.71 170.95L208.31 170.9L209.91 170.82L211.51 170.72L213.11 170.59L214.7 170.44L216.29 170.27L217.89 170.08L219.47 169.87L221.06 169.63L222.64 169.37L224.22 169.08L225.79 168.78L227.36 168.45L228.93 168.1"/><path class="trail j anim cp-trail" d="M178.08 168.1L179.64 168.45L181.21 168.78L182.78 169.08L184.36 169.37L185.94 169.63L187.53 169.87L189.11 170.08L190.71 170.27L192.3 170.44L193.89 170.59L195.49 170.72L197.09 170.82L198.69 170.9L200.29 170.95L201.9 170.99L203.5 171L205.1 170.99L206.71 170.95L208.31 170.9L209.91 170.82L211.51 170.72L213.11 170.59L214.7 170.44L216.29 170.27L217.89 170.08L219.47 169.87L221.06 169.63L222.64 169.37L224.22 169.08L225.79 168.78L227.36 168.45L228.93 168.1" pathLength="1"/>
-<g class="figure-arm" transform="translate(150 206)"><g class="j anim cp-ua arm-near"><g class="j anim cp-ul"><polygon class="olk" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/></g><polygon class="olk" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><g class="j anim cp-fa"><polygon class="olk" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><g class="j anim cp-fl"><polygon class="olk" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="olk" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/></g></g><g class="j anim cp-ul"><polygon class="rim" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/></g><polygon class="rim" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><g class="j anim cp-fa"><polygon class="rim" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><g class="j anim cp-fl"><polygon class="rim" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="rim" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/></g></g><g class="j anim cp-ul"><polygon class="b" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/><polygon class="t" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 6.3,-43 -5.74,-42 -6.2,-48"/><polygon class="th" points="2.2,-64 5.5,-64 6.3,-53 6.5,-45 6.3,-43 2.4,-42.7"/><polygon class="bh" points="2.4,-42.7 6.3,-43 5.4,-34 4.4,-27 2.2,-25.2 1.8,-34"/><polygon class="tl" points="6.3,-43 -5.74,-42 -5.85,-43.4 6.44,-44.4"/><polygon class="mh" points="-5.5,-64 -2.4,-64 -2.6,-42.3 -5.74,-42 -6.2,-48"/><polygon class="mh" points="-5.74,-42 -2.6,-42.3 -2,-32 -2.4,-25.2 -4.6,-27"/></g><polygon class="t" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><polygon class="tl" points="-6.5,-66 -2.5,-69.5 -2.2,-69.4 -2.4,-61 -3.2,-49.7 -4.4,-50 -6.5,-54.4"/><polygon class="mh" points="2.4,-69.2 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 3,-49.8 2.2,-61"/><g class="j anim cp-fa"><polygon class="b" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><polygon class="bl" points="2.6,-27.2 4.4,-24 2.6,-20.8 1.6,-24"/><g class="j anim cp-fl"><polygon class="b" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/><polygon class="bh" points="0.6,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 0.8,7"/><polygon class="bl" points="-4.8,-25 -2.6,-25 -2.2,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="b" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/><polygon class="bl" points="-3.7,6.4 -4.8,9 -5.8,12.4 -4.6,12.8 -3.4,7.4"/><polygon class="bl" points="3.3,15.8 3.3,18.6 4.6,20.4 3.4,21.4 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.9,15.6"/><polygon class="bh" points="0.9,15.8 3.1,15.6 3.3,18.6 2.9,20.9 1.5,21.5 0.8,18.8"/><polygon class="bh" points="-1.5,15.8 0.5,15.8 0.4,18.8 0.3,21.6 -1.3,21.7 -1.7,18.8"/><polygon class="bh" points="-3.8,15.8 -1.9,15.8 -2,18.8 -2.1,21.6 -3.5,21.4 -4,18.8"/><polygon class="bh" points="-5.9,15.8 -4.2,15.8 -4.4,18.8 -4.4,21.2 -5.3,20.6 -6,17.6"/><polygon class="bl" points="1.5,7.4 3.6,9.6 4.4,13.4 4,18.2 5.2,19.6 4.6,20.4 3.2,18.6 3.4,13.4 2.6,10 0.8,8.1"/><polygon class="bh" points="3.2,6.6 5.6,9.2 7.2,13 7.3,16.6 6.6,18.6 5.2,19.6 4,18.2 4.4,13.4 3.6,9.6 1.8,7.6"/><circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/></g></g></g></g>
+<g class="figure-arm" transform="translate(150 206)"><g class="j anim cp-ua arm-near"><g class="j anim cp-ul"><polygon class="olk" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/></g><polygon class="olk" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><g class="j anim cp-fa"><polygon class="olk" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><g class="j anim cp-fl"><polygon class="olk" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="olk" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/></g></g><g class="j anim cp-ul"><polygon class="rim" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/></g><polygon class="rim" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><g class="j anim cp-fa"><polygon class="rim" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><g class="j anim cp-fl"><polygon class="rim" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="rim" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/></g></g><g class="j anim cp-ul"><polygon class="b" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 5.4,-34 4.4,-27 2.2,-23.8 0,-23 -4.6,-27 -6.2,-48"/><polygon class="t" points="-5.5,-64 5.5,-64 6.3,-53 6.5,-45 6.3,-43 -5.74,-42 -6.2,-48"/><polygon class="th" points="2.2,-64 5.5,-64 6.3,-53 6.5,-45 6.3,-43 2.4,-42.7"/><polygon class="bh" points="2.4,-42.7 6.3,-43 5.4,-34 4.4,-27 2.2,-25.2 1.8,-34"/><polygon class="tl" points="6.3,-43 -5.74,-42 -5.85,-43.4 6.44,-44.4"/><polygon class="{{ clsTriceps }}" points="-5.5,-64 -2.4,-64 -2.6,-42.3 -5.74,-42 -6.2,-48"/><polygon class="{{ clsTriceps }}" points="-5.74,-42 -2.6,-42.3 -2,-32 -2.4,-25.2 -4.6,-27"/><polygon class="hot" style="stroke-width:41px" role="button" tabindex="0" aria-label="Triceps, helps" data-muscle="triceps" onClick="{{ tapTriceps }}" onKeyDown="{{ keyTriceps }}" points="-5.5,-64 -2.4,-64 -2.6,-42.3 -5.74,-42 -6.2,-48"/><polygon class="hot" style="stroke-width:41px" role="button" tabindex="0" aria-label="Triceps, helps" data-muscle="triceps" onClick="{{ tapTriceps }}" onKeyDown="{{ keyTriceps }}" points="-5.74,-42 -2.6,-42.3 -2,-32 -2.4,-25.2 -4.6,-27"/></g><polygon class="t" points="-6.5,-66 -2.5,-69.5 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 0.6,-49 -4.4,-50 -6.5,-54.4"/><polygon class="tl" points="-6.5,-66 -2.5,-69.5 -2.2,-69.4 -2.4,-61 -3.2,-49.7 -4.4,-50 -6.5,-54.4"/><polygon class="{{ clsFrontDelts }}" points="2.4,-69.2 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 3,-49.8 2.2,-61"/><polygon class="hot" style="stroke-width:39px" role="button" tabindex="0" aria-label="Front delts, helps" data-muscle="frontDelts" onClick="{{ tapFrontDelts }}" onKeyDown="{{ keyFrontDelts }}" points="2.4,-69.2 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 3,-49.8 2.2,-61"/><g class="j anim cp-fa"><polygon class="b" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/><polygon class="bl" points="2.6,-27.2 4.4,-24 2.6,-20.8 1.6,-24"/><g class="j anim cp-fl"><polygon class="b" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/><polygon class="bh" points="0.6,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 0.8,7"/><polygon class="bl" points="-4.8,-25 -2.6,-25 -2.2,7 -4,7 -4.5,-6 -4.9,-17"/></g><g class="j anim cp-hd"><polygon class="b" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/><polygon class="bl" points="-3.7,6.4 -4.8,9 -5.8,12.4 -4.6,12.8 -3.4,7.4"/><polygon class="bl" points="3.3,15.8 3.3,18.6 4.6,20.4 3.4,21.4 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.9,15.6"/><polygon class="bh" points="0.9,15.8 3.1,15.6 3.3,18.6 2.9,20.9 1.5,21.5 0.8,18.8"/><polygon class="bh" points="-1.5,15.8 0.5,15.8 0.4,18.8 0.3,21.6 -1.3,21.7 -1.7,18.8"/><polygon class="bh" points="-3.8,15.8 -1.9,15.8 -2,18.8 -2.1,21.6 -3.5,21.4 -4,18.8"/><polygon class="bh" points="-5.9,15.8 -4.2,15.8 -4.4,18.8 -4.4,21.2 -5.3,20.6 -6,17.6"/><polygon class="bl" points="1.5,7.4 3.6,9.6 4.4,13.4 4,18.2 5.2,19.6 4.6,20.4 3.2,18.6 3.4,13.4 2.6,10 0.8,8.1"/><polygon class="bh" points="3.2,6.6 5.6,9.2 7.2,13 7.3,16.6 6.6,18.6 5.2,19.6 4,18.2 4.4,13.4 3.6,9.6 1.8,7.6"/><circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/></g></g></g></g>
+<g class="figure-hot" transform="translate(150 206)"><polygon class="hot hot-core" data-muscle="chest" onClick="{{ tapChest }}" onKeyDown="{{ keyChest }}" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/><polygon class="hot hot-core" data-muscle="chest" onClick="{{ tapChest }}" onKeyDown="{{ keyChest }}" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/><g class="j anim cp-ua"><g class="j anim cp-ul"><polygon class="hot hot-core" data-muscle="triceps" onClick="{{ tapTriceps }}" onKeyDown="{{ keyTriceps }}" points="-5.5,-64 -2.4,-64 -2.6,-42.3 -5.74,-42 -6.2,-48"/><polygon class="hot hot-core" data-muscle="triceps" onClick="{{ tapTriceps }}" onKeyDown="{{ keyTriceps }}" points="-5.74,-42 -2.6,-42.3 -2,-32 -2.4,-25.2 -4.6,-27"/></g><polygon class="hot hot-core" data-muscle="frontDelts" onClick="{{ tapFrontDelts }}" onKeyDown="{{ keyFrontDelts }}" points="2.4,-69.2 4,-69 7.5,-64.5 7.8,-57 5.6,-50.6 3,-49.8 2.2,-61"/></g></g>
 <path class="ov ov-seat ovs" d="M191 212H121A5 5 0 0 0 116 217V221A5 5 0 0 0 121 226H191"/>
 </g></g></svg>
 ```
@@ -404,12 +440,10 @@ The whole scene sits in `<g class="cam">` (zoomed by the root class) and `<g id=
 <div class="pics"><div class="tile"><svg viewBox="96 104 160 158" aria-hidden="true"><use href="#rig-cp" style="--play:paused;--sw:.75;--stack-top:0;--delay:calc(var(--dur) * -0)"/></svg><span class="badge">1</span><p>Setup: handles at mid-chest</p></div><div class="tile"><svg viewBox="96 104 160 158" aria-hidden="true"><use href="#rig-cp" style="--play:paused;--sw:.75;--stack-top:0;--delay:calc(var(--dur) * -0.125)"/><path class="arrow arrow-lg" d="M188.15 179.95L205.15 179.95"/><polygon class="arrow-head" points="214.15,179.95 205.15,185.95 205.15,173.95"/></svg><span class="badge">2</span><p>Press straight out</p></div><div class="tile"><svg viewBox="96 104 160 158" aria-hidden="true"><use href="#rig-cp" style="--play:paused;--sw:.75;--stack-top:0;--delay:calc(var(--dur) * -0.31)"/></svg><span class="badge">3</span><p>Arms almost straight, no lock</p></div><div class="tile"><svg viewBox="96 104 160 158" aria-hidden="true"><use href="#rig-cp" style="--play:paused;--sw:.75;--stack-top:0;--delay:calc(var(--dur) * -0.625)"/><path class="arrow arrow-lg" d="M214.15 179.95L197.15 179.95"/><polygon class="arrow-head" points="188.15,179.95 197.15,173.95 197.15,185.95"/></svg><span class="badge">4</span><p>Back slowly, 2 s</p></div></div>
 ```
 
-### 9.3 Caption bubbles (one per zoom state; CSS shows the one that matches the root class)
+### 9.3 Caption bubble (a zoom chip's caption or a tapped muscle's info; section 2a)
 
 ```html
-<div class="bubble bub-1"><span class="dot"></span><span>Hold the middle of the handle. Wrists straight, not bent back.</span></div>
-<div class="bubble bub-2"><span class="dot"></span><span>Handles stay at mid-chest height the whole way out and back.</span></div>
-<div class="bubble bub-3"><span class="dot"></span><span>Set the seat so the handles line up with the middle of your chest.</span></div>
+<sc-if value="{{ showBubble }}" hint-placeholder-val="{{ true }}"><div class="bubble"><span class="dot" style="{{ bubbleDotStyle }}"></span><span class="bt"><b>{{ bubbleName }}</b> <span>{{ bubbleRest }}</span></span></div></sc-if>
 ```
 
 ## 10. Logic script (`<script type="text/x-dc" data-dc-script data-props='...'>`)
@@ -427,8 +461,21 @@ function rigVars(id) {
   // Dark themes shade mostly by darkening and light schemes mostly by lightening, so the outline stays readable.
   return `--fg-line:color-mix(in srgb,var(--text) ${light ? 70 : 60}%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) ${light ? 56 : 38}%,var(--surface-1));--lit:var(${light ? '--bg' : '--text'});--shd:var(${light ? '--text' : '--bg'});--hi:${light ? 76 : 90}%;--lo:${light ? 84 : 78}%;--eq-hi:${light ? 40 : 82}%;--rim-k:${light ? 35 : 62}%`;
 }
-// One rep is 4 s at 1x. Zoom chips: 1 Grip, 2 Path, 3 Seat (root classes zoom-1..3).
-const EX = { rep: 4 };
+// One rep is 4 s at 1x. Zoom chips: 1 Grip, 2 Path, 3 Seat (root classes zoom-1..3). Muscles: the rig's table (spec 2.10);
+// build.mjs stops when chips or muscles differ from the rig's EX (rig/chest-press.html).
+const EX = {
+  rep: 4,
+  chips: [
+    { id: 1, label: 'Grip', caption: 'Hold the middle of the handle. Wrists straight, not bent back.' },
+    { id: 2, label: 'Path', caption: 'Handles stay at mid-chest height the whole way out and back.' },
+    { id: 3, label: 'Seat', caption: 'Set the seat so the handles line up with the middle of your chest.' },
+  ],
+  muscles: [
+    { region: 'chest', id: 'chest', Id: 'Chest', common: 'Chest', anatomical: 'pectoralis major', role: 'main', line: 'Pushes the handles away; hardest as the arms straighten.', cls: 'mm anim cp-eff' },
+    { region: 'frontDelts', id: 'frontDelts', Id: 'FrontDelts', common: 'Front delts', anatomical: 'anterior deltoid', role: 'help', line: 'Lifts the upper arms forward with the chest.', cls: 'mh' },
+    { region: 'triceps', id: 'triceps', Id: 'Triceps', common: 'Triceps', anatomical: 'triceps brachii', role: 'help', line: 'Straightens the elbows at the end of the press.', cls: 'mh' },
+  ],
+};
 const on = v => v === true || v === 'true' || v === 'yes';
 class Component extends DCLogic {
   constructor(props) {
@@ -436,7 +483,7 @@ class Component extends DCLogic {
     let rm = false;
     try { rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { rm = false; }
     const auto = on(props.autoplay) && !rm;
-    this.state = { playing: auto, started: auto, ended: false, speed: 1, mode: rm ? 'pics' : 'anim', zoom: 0, gen: 'a', elapsed: 0, rm: rm };
+    this.state = { playing: auto, started: auto, ended: false, speed: 1, mode: rm ? 'pics' : 'anim', bubble: null, gen: 'a', elapsed: 0, rm: rm };
     this.timer = null;
   }
   componentDidMount() { if (this.state.playing) this.startClock(); }
@@ -453,7 +500,7 @@ class Component extends DCLogic {
   togglePlay() {
     const s = this.state;
     if (s.rm) return;
-    if (s.mode !== 'anim') { this.setState({ mode: 'anim', zoom: 0, gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false }, () => this.startClock()); return; }
+    if (s.mode !== 'anim') { this.setState({ mode: 'anim', bubble: null, gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false }, () => this.startClock()); return; }
     if (s.ended) { this.setState({ gen: this.flip(), elapsed: 0, playing: true, started: true, ended: false }, () => this.startClock()); return; }
     if (s.playing) { this.stopClock(); this.setState({ playing: false }); return; }
     this.setState({ playing: true, started: true }, () => this.startClock());
@@ -467,40 +514,76 @@ class Component extends DCLogic {
   setMode(m) {
     if (m === this.state.mode || (this.state.rm && m === 'anim')) return;
     this.stopClock();
-    this.setState({ mode: m, zoom: 0, gen: this.flip(), elapsed: 0, playing: false, started: false, ended: false });
+    this.setState({ mode: m, bubble: null, gen: this.flip(), elapsed: 0, playing: false, started: false, ended: false });
   }
-  pickZoom(n) {
-    const s = this.state, z = s.zoom === n ? 0 : n;
+  // The bubble state is one of { kind: 'zoom', id } (a zoom chip, id 1..3), { kind: 'muscle', id } (a tapped muscle) or
+  // null: a zoom and a muscle bubble never show together (spec 2.10).
+  pickZoom(id) {
+    const s = this.state, z = s.bubble && s.bubble.kind === 'zoom' && s.bubble.id === id ? null : { kind: 'zoom', id: id };
     // In Pictures a zoom opens a still: flip gen so the paused animation restarts at 0 and shows the CSS still pose.
     // The caption line then shows that pose's picture caption (showStill1 / showStill3), not a phase caption.
-    this.setState(s.mode === 'pics' ? { zoom: z, gen: this.flip() } : { zoom: z });
+    this.setState(s.mode === 'pics' ? { bubble: z, gen: this.flip() } : { bubble: z });
+  }
+  tapMuscle(id, e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    this.tapAt = Date.now();
+    const s = this.state;
+    if (s.mode !== 'anim') return;
+    this.setState({ bubble: s.bubble && s.bubble.kind === 'muscle' && s.bubble.id === id ? null : { kind: 'muscle', id: id } });
+  }
+  keyMuscle(id, e) {
+    if (e && e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    if (e && e.preventDefault) e.preventDefault();
+    this.tapMuscle(id, e);
+  }
+  tapStage(e) {   // a tap on the stage background closes a muscle bubble (never a zoom; the hotspot's own tap wins)
+    if (Date.now() - (this.tapAt || 0) < 80) return;
+    if (e && e.target && e.target.closest && e.target.closest('.bubble')) return;
+    const s = this.state;
+    if (s.bubble && s.bubble.kind === 'muscle') this.setState({ bubble: null });
   }
   renderVals() {
     const s = this.state, p = this.props, loop = on(p.loop), dur = this.repDur();
-    const anim = s.mode === 'anim', still = !anim && s.zoom > 0;
+    const zoom = s.bubble && s.bubble.kind === 'zoom' ? s.bubble.id : 0;
+    const anim = s.mode === 'anim', still = !anim && zoom > 0;
+    const mus = anim && s.bubble && s.bubble.kind === 'muscle' ? EX.muscles.find(m => m.id === s.bubble.id) : null;
+    const chip = EX.chips.find(c => c.id === zoom);
     const play = s.playing && anim ? 'running' : 'paused';
-    return {
+    const out = {};
+    for (const m of EX.muscles) {   // per muscle: its class hole (cls<Id>, .sel while tapped) and its tap and key handlers (tap<Id>, key<Id>)
+      out['cls' + m.Id] = m.cls + (mus && mus.id === m.id ? ' sel' : '');
+      out['tap' + m.Id] = e => this.tapMuscle(m.id, e);
+      out['key' + m.Id] = e => this.keyMuscle(m.id, e);
+    }
+    return Object.assign(out, {
       rootStyle: `${themeVars(p.theme)};${rigVars(p.theme)};--play:${play};--dur:${dur}s;--iter:${loop ? 'infinite' : 3};--sets:${loop ? 'infinite' : 1};--delay:0s`,
-      rootClass: `player gen-${s.gen}${s.zoom ? ' zoom-' + s.zoom : ''}${anim ? '' : ' pictures'}`,
+      rootClass: `player gen-${s.gen}${zoom ? ' zoom-' + zoom : ''}${anim ? '' : ' pictures'}`,
       showSlow: anim && s.speed === 0.5,
+      showBubble: !!chip || !!mus,
+      bubbleDotStyle: 'background:var(' + (mus ? (mus.role === 'main' ? '--muscle-main' : '--muscle-help') : '--accent') + ')',
+      bubbleName: mus ? mus.common : '',
+      bubbleRest: mus ? '(' + mus.anatomical + '), ' + (mus.role === 'main' ? 'target' : 'helps') + '. ' + mus.line : (chip ? chip.caption : ''),
+      bubbleText: mus ? mus.common + ' (' + mus.anatomical + '), ' + (mus.role === 'main' ? 'target' : 'helps') + '. ' + mus.line : (chip ? chip.caption : ''),
       showIdle: anim && !s.started && !s.ended,
       showEnded: anim && s.ended,
       showCaps: anim && s.started && !s.ended,
-      showStill1: still && s.zoom !== 2, showStill3: still && s.zoom === 2,
+      showStill1: still && zoom !== 2, showStill3: still && zoom === 2,
       showPicsLine: !anim && !still,
       showTempo: anim, // Pictures mode (grid or still) has no tempo note (RIG section 12); it would not fit beside a still's caption
       isPlay: !s.playing && !s.ended, isPause: s.playing, isReplay: s.ended,
       playLabel: s.ended ? 'Replay' : (s.playing ? 'Pause' : 'Play'),
       playDisabled: s.rm,
-      z1: s.zoom === 1, z2: s.zoom === 2, z3: s.zoom === 3,
+      z1: zoom === 1, z2: zoom === 2, z3: zoom === 3,
       pick1: () => this.pickZoom(1), pick2: () => this.pickZoom(2), pick3: () => this.pickZoom(3),
       speed1: s.speed === 1, speedHalf: s.speed === 0.5,
       modeAnim: anim, modePics: !anim, animDisabled: s.rm,
       hintAnim: !s.rm && anim, hintPics: !s.rm && !anim, hintRm: s.rm,
+      hots: EX.muscles.map(m => ({ id: m.id, tap: out['tap' + m.Id], key: out['key' + m.Id] })),
+      tapStage: e => this.tapStage(e),
       togglePlay: () => this.togglePlay(),
       speedTo1: () => this.setSpeed(1), speedToHalf: () => this.setSpeed(0.5),
       toAnim: () => this.setMode('anim'), toPics: () => this.setMode('pics'),
-    };
+    });
   }
 }
 ```
@@ -523,7 +606,8 @@ class Component extends DCLogic {
 - Smoothness (UPGRADE-BRIEF.md target 4; docs/COACHING-DECISIONS.md D-R1): the rig's own numbers on the written stops of this build are (a) 0.09 %, (b) 5.08 %, (c) 2.08 x (limits 1 %, 8 %, 3 x). `shoot.cjs` measures the drawn page with `../smooth-check.cjs` (every joint angle and the grip at 120 samples per second, plus the keyframe stops) and prints the numbers per phase; the last run is in `checks.txt`.
 - Target muscle visible at the hardest point (`../rig-final/muscle-check.cjs`): the accent pixels of the main muscle in the hold are at least 97 % of those at setup. Caption row (`../rig-final/caption-check.cjs`): caption and tempo never overlap or leave the player in idle, ended, the four captions and Pictures, drawn with the canvas font (Roboto).
 - Reduced motion: paused even when the root style says running, grid shown, hint, Animation disabled.
-- Every binding in the markup exists in `renderVals()`; no page errors.
+- Muscle info on tap (`../rig-final/muscle-tap-check.cjs`, spec 2.10): every muscle has its halo hotspot(s) with button semantics and a hit box of at least 44 px at t 0 and 0.25, plus a core per polygon; at t 0.3 a tap where the muscle is visible shows the exact text, the bold name and the dot in the region's own fill colour, the `.sel` outline on that muscle only, pill, label, camera and layout unchanged; a second tap closes; the same for each helper; a zoom chip replaces the muscle bubble with its caption and a second chip tap closes; Enter opens and Space closes; a stage background tap closes; every text fits two lines in Roboto; no hotspot is hit-testable in Pictures; no hotspot is animated or matches a zoom subject. Screenshots: `shots/cp_muscle-<id>_<theme>.png` (every muscle at t 0.3, dark and Paper).
+- Every binding in the markup exists in `renderVals()` (including `tap<Id>` and `key<Id>` for every hotspot); no page errors.
 
 ## 12. Risks
 
@@ -539,7 +623,8 @@ class Component extends DCLogic {
 | The setup elbow sits close to the back pad (5.5 behind the shoulder) | Checked over 41 phases: the arm shape stays at least 2.05 from the pad, so the outlines never touch. Moving the elbow further back would put it on the pad. |
 | The upper arm is drawn short early in the press (min fu 0.553, floor 0.55) | The end pole is blended in late (p to the 4th power), which keeps fu above the floor; the check fails the build below 0.55. |
 | The pressed arm is 75.1 degrees forward, close to the spec's 75 floor | The visible bend needs the elbow about 4 below the shoulder-to-grip line, which lowers the upper arm. The end pole's downward weight 0.95 keeps it inside 75-85 (1.0 would give 74.97); the check fails the build below 75, and the build stops if the drawn pause angle goes above 169. |
-| The canvas player (`project/Player-MachineChestPress.dc.html`) was assembled from these pieces and then edited for the canvas (text zoom `--tz`, fonts), so a rebuild here does not update it | Carry every change by exact-match edits (round 3: `work/r3/carry.mjs` swaps the changed arm keyframe sets, the `stack-top` markup and the CSS rule, and stops if any old string is missing). |
+| The canvas player (`project/Player-MachineChestPress.dc.html`) was assembled from these pieces and then edited for the canvas (text zoom `--tz`, fonts), so a rebuild here does not update it | Carry every change by exact-match edits, or assemble the artboard from sections 7-10 and re-apply the canvas-only edits (the `EDITS` table in `canvas-check.cjs`); `node canvas-check.cjs` then compares CSS, keyframes, stage, Pictures grid, bubble and logic with this build and taps every muscle on the canvas markup. |
+| A muscle's halo takes a tap meant for a neighbouring muscle | Cores are painted after every halo (D-R7); the check taps each muscle where it is visible and fails if none exists (D-R9). |
 | The lever arc makes the handles dip 2.6 mid-press | Real lever machines do this. The Path tip does not promise a straight line (checked), and the dashed path shows the true curve. |
 
 ## 13. Changes from the rig proof (`rig-final/`), and why

@@ -1,5 +1,5 @@
 // canvas-check.cjs: renders project/Player-MachineChestPress.dc.html with a minimal stand-in for
-// the canvas runtime (holes, sc-if, onClick), runs a parity probe against index.html and the two round 3 probes on it, and writes canvas_*.png
+// the canvas runtime (holes in attributes and text, sc-if, onClick, onKeyDown), runs a parity probe against index.html, the two round 3 probes and a muscle tap probe (spec 2.10) on it, and writes canvas_*.png
 // frames into shots/. Exit 1 on a failed probe.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
@@ -20,13 +20,16 @@ function render(){
   let n; while((n=tpl.content.querySelector('sc-if'))){const ok=lookup(n.getAttribute('value').replace(/[{}\\s]/g,''),v); if(ok) n.replaceWith(...n.childNodes); else n.remove();}
   tpl.content.querySelectorAll('*').forEach(el=>{for(const a of [...el.attributes]){const m=a.value.match(/^\\s*\\{\\{\\s*([\\w.$]+)\\s*\\}\\}\\s*$/);
     if(a.name==='onclick'&&m){el.removeAttribute(a.name);el.onclick=lookup(m[1],v);continue;}
+    if(a.name==='onkeydown'&&m){el.removeAttribute(a.name);el.onkeydown=lookup(m[1],v);continue;}
     if(a.name==='disabled'&&m){el.removeAttribute('disabled');el.disabled=!!lookup(m[1],v);continue;}
     if(/\\{\\{/.test(a.value)) el.setAttribute(a.name,a.value.replace(/\\{\\{\\s*([\\w.$]+)\\s*\\}\\}/g,(_,q)=>{const x=lookup(q,v);return x==null?'':String(x)}));}});
+  const tw=document.createTreeWalker(tpl.content,NodeFilter.SHOW_TEXT); for(let t;(t=tw.nextNode());) if(/\\{\\{/.test(t.data)) t.data=t.data.replace(/\\{\\{\\s*([\\w.$]+)\\s*\\}\\}/g,(_,q)=>{const x=lookup(q,v);return x==null?'':String(x)});
   document.getElementById('host').replaceChildren(tpl.content);
 }
 const comp=new Component({theme:CFG.theme||'silent-black',autoplay:CFG.autoplay!==false,loop:CFG.loop!==false});
 if(CFG.mode==='pics')Object.assign(comp.state,{mode:'pics',playing:false,started:false});
-if(CFG.zoom)comp.state.zoom=CFG.zoom;
+if(CFG.zoom)comp.state.bubble={kind:'zoom',id:CFG.zoom};
+if(CFG.muscle)comp.state.bubble={kind:'muscle',id:CFG.muscle};
 if(CFG.t!=null)Object.assign(comp.state,{playing:false,started:true});
 render(); if(comp.componentDidMount)comp.componentDidMount();
 </script></body></html>`;
@@ -63,12 +66,25 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   const hk = kf(hCss), ck = kf(cCss);
   check(hk.length > 0 && hk.join() === ck.join() && kfText(hCss) === kfText(cCss), `canvas player: same keyframe names (${ck.length}) and the same keyframe text as the harness`);
   const groups = s => [...s.match(/<svg class="scene"[\s\S]*?<\/svg>/)[0].matchAll(/class="([^"]*\banim\b[^"]*)"/g)].map(m => m[1]);
-  const hg = groups(idx), cg = groups(markup);
+  // a muscle's class hole renders its EX.muscles class (plus sel only while tapped), so it is read as that class here
+  const EXM = new Function(script.slice(0, script.indexOf('const on = ')) + 'return EX;')().muscles || [];
+  const hg = groups(idx), cg = groups(markup.replace(/class="\{\{ cls([A-Za-z]+) \}\}"/g, (_, id) => `class="${(EXM.find(m => m.Id === id) || { cls: 'cls' + id }).cls}"`));
   check(hg.length > 0 && hg.join('|') === cg.join('|'), `canvas player: same animated groups as the harness (${cg.length}: ${[...new Set(cg.map(c => c.match(/cp-[\w]+/)?.[0]).filter(Boolean))].join(', ')})`);
   const piece = (s, re) => (s.match(re) || [''])[0];
-  const PIECES = { stage: /<svg class="scene"[\s\S]*?<\/svg>/, pictures: /<div class="pics">[^\n]*/, bubbles: /<div class="bubble bub-1">[\s\S]*?bub-3[^\n]*/ };
-  const pm = Object.entries(PIECES).filter(([k, re]) => !piece(idx, re) || piece(idx, re) !== piece(markup, re)).map(([k]) => k);
-  check(!pm.length, `canvas player: stage SVG (figure, machine, overlays), Pictures grid and bubbles are the harness text${pm.length ? '; differ: ' + pm.join(', ') : ''}`);
+  // The harness binds through data-* attributes; the canvas through holes. Muscle info (spec 2.10) is the only binding
+  // inside these pieces, so the harness text is mapped to holes exactly as build.mjs maps it, then compared whole.
+  const MUS = new Function(script.slice(0, script.indexOf('const on = ')) + 'return EX;')().muscles || [];
+  const holes = s => s.replace(/class="[^"]*" data-class="(cls[A-Za-z]+)"/g, 'class="{{ $1 }}"')
+    .replace(/ data-hot="(\d+)"/g, (_, i) => MUS[+i] ? ` onClick="{{ tap${MUS[+i].Id} }}" onKeyDown="{{ key${MUS[+i].Id} }}"` : ` data-hot="${i}"`);
+  const bubbleHoles = s => s && '<sc-if value="{{ showBubble }}" hint-placeholder-val="{{ true }}">' + s.replace(' data-if="showBubble" hidden', '')
+    .replace(' data-style="bubbleDotStyle">', ' style="{{ bubbleDotStyle }}">').replace(/<([a-z]+) data-text="(bubbleName|bubbleRest)"><\/\1>/g, '<$1>{{ $2 }}</$1>') + '</sc-if>';
+  const PIECES = { // [harness pattern, canvas pattern, harness text -> canvas text]
+    stage: [/<svg class="scene"[\s\S]*?<\/svg>/, /<svg class="scene"[\s\S]*?<\/svg>/, holes],
+    pictures: [/<div class="pics">[^\n]*/, /<div class="pics">[^\n]*/, s => s],
+    bubble: [/<div class="bubble" data-if="showBubble" hidden>[^\n]*/, /<sc-if value="\{\{ showBubble \}\}"[^\n]*/, bubbleHoles],
+  };
+  const pm = Object.entries(PIECES).filter(([k, [hr, cr, f]]) => !piece(idx, hr) || f(piece(idx, hr)) !== piece(markup, cr)).map(([k]) => k);
+  check(!pm.length, `canvas player: stage SVG (figure, machine, overlays, muscle hotspots), Pictures grid and bubble are the harness text${pm.length ? '; differ: ' + pm.join(', ') : ''}`);
   const hLogic = idx.match(/\/\* ===== artboard logic[^\n]*\n([\s\S]*?)\n\/\* ===== harness only/)[1];
   check(hLogic.trim() === script.trim(), 'canvas player: the logic class is the harness logic, character for character');
 }
@@ -112,6 +128,37 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
     check(stage === '1', `canvas player: the stage still shows the stack's top bracket (opacity ${stage})`);
     await ctx.close();
   }
+  // probe 4 (muscle info on tap, spec 2.10): on the canvas markup, at t 0.3, a tap where each muscle is visible opens the
+  // bubble with its exact text, bold name and dot in the region's own fill colour, and the .sel outline on its polygons only;
+  // a second tap closes; a zoom chip replaces a muscle bubble with its caption (accent dot); Enter on a hotspot opens.
+  {
+    const { page, ctx } = await open({ t: 0.3 });
+    const muscles = await page.evaluate(() => EX.muscles || []);
+    const text = m => `${m.common} (${m.anatomical}), ${m.role === 'main' ? 'target' : 'helps'}. ${m.line}`;
+    const state = () => page.evaluate(() => { const b = document.querySelector('.bubble'), shown = !!b && getComputedStyle(b).display !== 'none';
+      const sel = [...document.querySelectorAll('.stage .scene .sel')].filter(el => !el.closest('.pics'));
+      return { shown, text: shown ? b.textContent.replace(/\s+/g, ' ').trim() : '', name: shown ? (b.querySelector('b') || {}).textContent || '' : '', dot: shown ? getComputedStyle(b.querySelector('.dot')).backgroundColor : '',
+        sel: sel.length, selFill: sel.length ? getComputedStyle(sel[0]).fill : '', selAll: sel.map(el => el.getAttribute('class')).join('|'), accent: getComputedStyle(document.querySelector('.stage .scene .guide')).stroke }; });
+    const tap = region => page.evaluate(region => { for (const el of document.querySelectorAll('.stage .scene .hot-core')) { if (el.dataset.muscle !== region) continue; const b = el.getBBox(), m = el.getScreenCTM(), x = b.x + b.width / 2, y = b.y + b.height / 2;
+      const p = { x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f }, hit = document.elementFromPoint(p.x, p.y); if (hit && hit.classList.contains('hot') && hit.dataset.muscle === region) return p; } return null; }, region)
+      .then(async p => { if (p) { await page.mouse.click(p.x, p.y); await page.waitForTimeout(30); } return !!p; });
+    const rows = [];
+    for (const m of muscles) {
+      const hit = await tap(m.region), s1 = await state(), want = await page.evaluate(Id => MARKUP.split('class="{{ cls' + Id + ' }}"').length - 1, m.Id);
+      await tap(m.region); const s2 = await state();
+      rows.push({ id: m.id, ok: hit && s1.shown && s1.text === text(m) && s1.name === m.common && s1.dot === s1.selFill && s1.sel === want && s1.selAll.split('|').every(c => c === m.cls + ' sel') && !s2.shown && s2.sel === 0, s1, want });
+    }
+    check(rows.length > 0 && rows.every(r => r.ok), `canvas player: tapping each muscle at t 0.3 opens its text with the bold name and the dot in its fill colour, outlines its polygons only, and a second tap closes (${rows.map(r => `${r.id}: "${r.s1.name}" dot ${r.s1.dot}, ${r.s1.sel} of ${r.want} outlined${r.ok ? '' : ' FAILED'}`).join('; ')})`);
+    if (muscles.length) await tap(muscles[0].region); await page.click('.chips .chip:nth-child(1)'); await page.waitForTimeout(50);
+    const z = await state(), cap = await page.evaluate(() => (EX.chips || [{ caption: null }])[0].caption);
+    check(z.shown && z.text === cap && z.name === '' && z.dot === z.accent && z.sel === 0, `canvas player: a zoom chip replaces the muscle bubble with its caption ("${z.text}", accent dot, no outline)`);
+    await page.click('.chips .chip:nth-child(1)'); await page.waitForTimeout(50);
+    await page.evaluate(region => { const el = document.querySelector('.stage .scene .hot:not(.hot-core)[data-muscle="' + region + '"]'); if (el) el.focus(); }, muscles.length ? muscles[0].region : '');
+    await page.keyboard.press('Enter'); await page.waitForTimeout(30); const k = await state();
+    check(muscles.length > 0 && k.shown && k.text === text(muscles[0]), `canvas player: Enter on the focused target hotspot opens its bubble`);
+    await ctx.close();
+  }
+  for (const th of ['silent-black', 'paper']) for (const m of ['chest', 'frontDelts', 'triceps']) await shot({ t: 0.3, theme: th, muscle: m }, `canvas_muscle-${m}_${th}.png`);
   await shot({ t: 0.3 }, 'canvas_dark_t0.3.png');
   await shot({ t: 0 }, 'canvas_dark_t0.png');
   await shot({ t: 0.25 }, 'canvas_dark_t0.25.png');

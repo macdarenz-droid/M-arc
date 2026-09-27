@@ -48,11 +48,13 @@ const X0 = SET.X0, X1 = SET.X1;
   { const { page, ctx } = await open('?theme=paper&t=0'); await shot(page, 'cp_paper_t0.000.png'); await ctx.close(); }
   { const { page, ctx } = await open('', { rm: true }); await shot(page, 'cp_reduced-motion.png'); await ctx.close(); }
   for (const th of ['ember', 'emerald', 'midnight']) { const { page, ctx } = await open(`?theme=${th}&t=0.125`); await shot(page, `cp_${th}_t0.125.png`); await ctx.close(); }
+  // muscle info bubbles (spec 2.10): every muscle open at the hold, dark and Paper
+  for (const th of ['silent-black', 'paper']) for (const m of ['chest', 'frontDelts', 'triceps']) { const { page, ctx } = await open(`?t=0.3&theme=${th}&muscle=${m}`); await shot(page, `cp_muscle-${m}_${th}.png`); await ctx.close(); }
 
   // 2. Bindings: every hole the markup uses comes from renderVals(); themes -------------------
   {
     const { page, ctx } = await open('?t=0');
-    const r = await page.evaluate(() => { const v = window.__rig.renderVals(); return { missing: window.__used.filter(k => !(k in v)), handlers: ['pick1', 'pick2', 'pick3', 'togglePlay', 'speedTo1', 'speedToHalf', 'toAnim', 'toPics'].every(k => typeof v[k] === 'function') }; });
+    const r = await page.evaluate(() => { const v = window.__rig.renderVals(); return { missing: window.__used.filter(k => !(k in v)), handlers: ['pick1', 'pick2', 'pick3', 'tapStage', 'togglePlay', 'speedTo1', 'speedToHalf', 'toAnim', 'toPics'].every(k => typeof v[k] === 'function') }; });
     check(r.missing.length === 0 && r.handlers, `every markup binding exists in renderVals() (missing: ${r.missing.join(',') || 'none'})`);
     await ctx.close();
   }
@@ -141,7 +143,7 @@ const X0 = SET.X0, X1 = SET.X1;
     check(Math.hypot(r.elbow[0] - SET.E0[0], r.elbow[1] - SET.E0[1]) < 0.3 && r.elbow[0] <= geo.shoulder[0] - 4, `drawn setup elbow at (${f2(r.elbow[0])}, ${f2(r.elbow[1])}), ${f2(geo.shoulder[0] - r.elbow[0])} units behind the shoulder (at least 4)`);
     check(r.gap >= 2.05, `arm stays off the back pad over 41 phases: arm shape at least 2.05 from the pad, so the 1.5 arm outline and the 0.55 pad stroke never touch (closest ${f2(r.gap)})`);
     check(r.ovSeat === 1 && r.seatRight <= r.shinLeft - 1, `seat outline is the pad only and stops before the near shin (outline right ${f2(r.seatRight)}, shin left ${f2(r.shinLeft)})`);
-    const tip = await page.evaluate(() => document.querySelector('.bub-2').textContent.trim());
+    const tip = await page.evaluate(() => { window.__rig.pickZoom(2); return document.querySelector('.bubble').textContent.trim(); });
     check(!/straight/i.test(tip), `Path tip does not promise a straight line; the lever arc dips a little ("${tip}")`);
     await ctx.close();
   }
@@ -245,7 +247,7 @@ const X0 = SET.X0, X1 = SET.X1;
     const r = await page.evaluate(async ({ z, sel }) => {
       const vis = q => { const el = document.querySelector(q); return !!el && !el.hidden && getComputedStyle(el).display !== 'none'; };
       const m = new DOMMatrix(getComputedStyle(document.querySelector('.cam')).transform);
-      const st = document.querySelector('.stage').getBoundingClientRect(), bu = document.querySelector('.bub-' + z).getBoundingClientRect();
+      const st = document.querySelector('.stage').getBoundingClientRect(), bu = document.querySelector('.bubble').getBoundingClientRect();
       let out = -1e9, under = -1e9, n = 0;
       for (let i = 0; i <= 40; i++) {
         window.__rig.freeze(i / 40); await new Promise(res => requestAnimationFrame(res));
@@ -253,7 +255,8 @@ const X0 = SET.X0, X1 = SET.X1;
       }
       return {
         cls: document.querySelector('.player').className, m: [m.a, m.d, m.e, m.f],
-        bubbles: [1, 2, 3].filter(i => vis('.bub-' + i)), pill: vis('.pill-row'), label: vis('.cam-label'),
+        bubbles: [...document.querySelectorAll('.bubble')].filter(el => !el.hidden && getComputedStyle(el).display !== 'none').map(el => el.textContent.trim()), want: EX.chips[z - 1].caption,
+        dot: getComputedStyle(document.querySelector('.bubble .dot')).backgroundColor, accent: getComputedStyle(document.querySelector('.guide')).stroke, pill: vis('.pill-row'), label: vis('.cam-label'),
         ovGrip: getComputedStyle(document.querySelector('.ov-grip')).opacity, ovSeat: getComputedStyle(document.querySelector('.ov-seat')).opacity,
         farLever: getComputedStyle(document.querySelector('.far-lever')).opacity, pressed: [...document.querySelectorAll('.chip')].map(b => b.getAttribute('aria-pressed')).join(','),
         trans: getComputedStyle(document.querySelector('.cam')).transition, out, under, n: n / 41,
@@ -262,7 +265,7 @@ const X0 = SET.X0, X1 = SET.X1;
     const [cx, cy, s] = CAM[z];
     const camOk = Math.abs(r.m[0] - s) < 1e-3 && Math.abs(r.m[1] - s) < 1e-3 && Math.abs(r.m[2] - (179 - s * cx)) < 0.01 && Math.abs(r.m[3] - (138 - s * cy)) < 0.01;
     check(/(^| )zoom-/.test(r.cls) && r.cls.includes('zoom-' + z) && camOk && /transform 0\.32s/.test(r.trans), `zoom-${z}: root class "${r.cls}", camera scale ${s} centred on (${cx}, ${cy}), 320 ms transition`);
-    check(r.bubbles.join() === String(z) && !r.pill && !r.label, `zoom-${z}: only bubble ${z} shows; rep pill and camera label hidden`);
+    check(r.bubbles.length === 1 && r.bubbles[0] === r.want && r.dot === r.accent && !r.pill && !r.label, `zoom-${z}: the one bubble shows chip ${z}'s caption ("${r.bubbles.join(' | ')}", accent dot ${r.dot}); rep pill and camera label hidden`);
     const ovOk = z === 1 ? r.ovGrip === '1' && r.ovSeat === '0' && r.farLever === '0' : z === 3 ? r.ovSeat === '1' && r.ovGrip === '0' && r.farLever === '1' : r.ovGrip === '0' && r.ovSeat === '0' && r.farLever === '1';
     check(ovOk && r.pressed === [1, 2, 3].map(i => String(i === z)).join(','), `zoom-${z}: overlays (grip ${r.ovGrip}, seat ${r.ovSeat}, far lever ${r.farLever}), chip pressed ${r.pressed}`);
     check(r.n > 0 && r.out <= 0.5 && r.under <= 0.5, `zoom-${z}: subject (${r.n} part${r.n > 1 ? 's' : ''}) inside the stage and above the bubble over 41 phases (closest ${(-r.out).toFixed(1)} px from an edge, ${(-r.under).toFixed(1)} px above the bubble)`);
@@ -271,7 +274,7 @@ const X0 = SET.X0, X1 = SET.X1;
   {
     const { page, ctx } = await open('?t=0');
     const r = await page.evaluate(() => ({ pill: getComputedStyle(document.querySelector('.pill-row')).display, label: getComputedStyle(document.querySelector('.cam-label')).display, bub: [...document.querySelectorAll('.bubble')].map(b => getComputedStyle(b).display).join(','), m: getComputedStyle(document.querySelector('.cam')).transform }));
-    check(r.pill !== 'none' && r.label !== 'none' && r.bub === 'none,none,none' && r.m === 'none', `no zoom: rep pill and camera label shown, no bubble, camera at 1x`);
+    check(r.pill !== 'none' && r.label !== 'none' && r.bub === 'none' && r.m === 'none', `no zoom: rep pill and camera label shown, no bubble, camera at 1x`);
     // chip click toggles the class on and off (live logic, not the query)
     await page.click('.chip:nth-child(2)'); const on2 = await page.evaluate(() => document.querySelector('.player').className);
     await page.click('.chip:nth-child(2)'); const off2 = await page.evaluate(() => document.querySelector('.player').className);
@@ -296,10 +299,10 @@ const X0 = SET.X0, X1 = SET.X1;
     await ca.close();
     for (const [z, pose] of [[1, 0], [2, 0.31], [3, 0]]) {
       const { page, ctx } = await open(`?mode=pictures&zoom=${z}`, { wait: 700 });
-      const r = await page.evaluate(() => { const svg = document.querySelector('.scene'); const p = svg.createSVGPoint(); p.x = 0; p.y = 16; const q = p.matrixTransform(document.querySelector('#rig-cp').getCTM().inverse().multiply(document.querySelector('.arm-near .cp-hd').getCTM())); const line = [...document.querySelectorAll('.cap-row .cap > [data-if]')].filter(el => !el.hidden).map(el => el.textContent); return { h: [q.x, q.y], pics: getComputedStyle(document.querySelector('.pics')).display, bub: getComputedStyle(document.querySelector('.bub-' + new URLSearchParams(location.search).get('zoom'))).display, line }; });
+      const r = await page.evaluate(() => { const svg = document.querySelector('.scene'); const p = svg.createSVGPoint(); p.x = 0; p.y = 16; const q = p.matrixTransform(document.querySelector('#rig-cp').getCTM().inverse().multiply(document.querySelector('.arm-near .cp-hd').getCTM())); const line = [...document.querySelectorAll('.cap-row .cap > [data-if]')].filter(el => !el.hidden).map(el => el.textContent); return { h: [q.x, q.y], pics: getComputedStyle(document.querySelector('.pics')).display, bub: getComputedStyle(document.querySelector('.bubble')).display, bubText: document.querySelector('.bubble').textContent.trim(), want: EX.chips[+new URLSearchParams(location.search).get('zoom') - 1].caption, line }; });
       const target = pose ? want : gripAt(0);
       const wantLine = pose ? 'Arms almost straight, no lock' : 'Setup: handles at mid-chest';
-      check(r.pics === 'none' && r.bub === 'flex' && Math.hypot(r.h[0] - target[0], r.h[1] - target[1]) < 0.3 && r.line.length === 1 && r.line[0] === wantLine, `Pictures still zoom-${z}: grid hidden, bubble shown, pose ${pose ? 3 : 1} (grip ${f2(r.h[0])}, ${f2(r.h[1])}), caption line "${r.line.join(' | ')}" (want "${wantLine}")`);
+      check(r.pics === 'none' && r.bub === 'flex' && r.bubText === r.want && Math.hypot(r.h[0] - target[0], r.h[1] - target[1]) < 0.3 && r.line.length === 1 && r.line[0] === wantLine, `Pictures still zoom-${z}: grid hidden, bubble shown, pose ${pose ? 3 : 1} (grip ${f2(r.h[0])}, ${f2(r.h[1])}), caption line "${r.line.join(' | ')}" (want "${wantLine}")`);
       await ctx.close();
     }
   }
@@ -340,6 +343,8 @@ const X0 = SET.X0, X1 = SET.X1;
     { const { page, ctx } = await open('?t=0'); await muscleAreaCheck(page, { label: 'chest press' }, check); await ctx.close(); }
     await captionRowCheck(q => open(q), { label: 'chest press', states: [['?autoplay=0', 'idle'], ['?loop=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pictures', 'Pictures']] }, check);
   }
+  // Muscle info on tap (spec 2.10; rig-final/muscle-tap-check.cjs): hotspots, bubble text and colours, outline, closing, keyboard, Pictures.
+  { const { muscleTapCheck } = require('../rig-final/muscle-tap-check.cjs'); await muscleTapCheck(q => open(q), { label: 'chest press', picsQuery: '?mode=pictures' }, check); }
 
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
   await browser.close();
