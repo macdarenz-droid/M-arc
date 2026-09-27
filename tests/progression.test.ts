@@ -293,7 +293,7 @@ describe('F13 Part B: a carry logged as kg × reps shows its weight in the targe
 
 describe('BUG-11: a load the user really lifted is never snapped away', () => {
   const lat = 'lib_dumbbell_lateral_raise';
-  const last = [{ kg: 7, reps: 13, effort: 'hard' as const }, { kg: 7, reps: 13, effort: 'hard' as const }, { kg: 7, reps: 12, effort: 'max' as const }];
+  const last = [{ kg: 7, reps: 13, effort: 'ideal' as const }, { kg: 7, reps: 13, effort: 'ideal' as const }, { kg: 7, reps: 12, effort: 'max' as const }];
 
   it('A1: no dumbbell profile saved, last 7x13 with a max set → 7 kg x 14, not 6 kg', async () => {
     const { defaultProfile } = await import('@/brain/units');
