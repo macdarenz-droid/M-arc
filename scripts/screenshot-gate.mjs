@@ -1638,6 +1638,11 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`share-fit ${w}: ${e.message}`));
+  // BUG-13: the seed's newest workout is yesterday (offset 1), so on a local Monday "This week" was
+  // empty and the sheet rightly disabled Save / Share. Pin the page clock to that workout's evening
+  // (same local time zone as the seed) so the default Week card always has sets to share.
+  const shareFitNow = new Date(); shareFitNow.setDate(shareFitNow.getDate() - 1); shareFitNow.setHours(20, 0, 0, 0);
+  await page.clock.install({ time: shareFitNow.getTime() });
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav'); await launchGone(page);
@@ -1648,6 +1653,8 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
     await page.evaluate(i => document.documentElement.style.setProperty('--safe-area-inset-bottom', `${i}px`), inset);
     await page.getByRole('button', { name: 'Share your stats' }).click();
     await shareSheetReady(page);
+    // BUG-13: an empty card disables Save / Share on purpose; fail loudly if the seed ever lands there.
+    if (await page.locator('dialog[open] .share-empty').isVisible().catch(() => false)) errors.push(`share-fit ${w}×${h} inset ${inset}: the Week card is empty, so Save / Share are disabled (seed outside the pinned week)`);
     const off = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .share-actions button')].filter(b => {
       const r = b.getBoundingClientRect(); const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
       return !(r.top >= 0 && r.bottom <= innerHeight && hit && b.contains(hit));
