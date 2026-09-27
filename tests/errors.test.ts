@@ -1,0 +1,330 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { buildReport, framesFromStack, isAppFrame, scrubMessage, signatureOf } from '@/errors/scrub';
+import { clearQueue, enqueue, loadQueueState, MAX_QUEUE, removeByIds, setBackoff, BASE_BACKOFF_MS, MAX_BACKOFF_MS } from '@/errors/queue';
+import { trySend } from '@/errors/sender';
+import { getInstallId, resetInstallId } from '@/errors/installId';
+import { shouldAskErrorReports } from '@/errors/ask';
+import { clearErrorReportQueue, reportCaught, reportError, resetErrorReporting } from '@/errors';
+import { state } from '@/core/store';
+import { ErrorBoundary } from '@/app/ErrorBoundary';
+import { httpTransport } from '@/escobar/transport';
+import type { Report } from '@/errors/types';
+
+function memoryStorage(): Storage {
+  const map = new Map<string, string>();
+  return {
+    getItem: (k: string) => map.get(k) ?? null,
+    setItem: (k: string, v: string) => { map.set(k, v); },
+    removeItem: (k: string) => { map.delete(k); },
+    clear: () => map.clear(),
+    key: (i: number) => [...map.keys()][i] ?? null,
+    get length() { return map.size; },
+  } as Storage;
+}
+
+const PERSONAL = { exercise: 'Bulgarian Split Squat', split: 'Push Day A', note: 'left knee still tender', bodyWeight: 82.4, weight: 62.5, reps: 8, coach: 'You crushed leg day, Alex!' };
+
+describe('scrubMessage (A1)', () => {
+  it('turns every digit into # and every quoted string into "…", then cuts to 300 chars', () => {
+    const raw = `Cannot log set for "${PERSONAL.exercise}" ("${PERSONAL.split}"): ${PERSONAL.reps} reps at ${PERSONAL.weight}kg, body weight ${PERSONAL.bodyWeight}, coach said "${PERSONAL.coach}"`;
+    const out = scrubMessage(raw);
+    for (const v of Object.values(PERSONAL)) expect(out).not.toContain(String(v));
+    expect(out).not.toMatch(/\d/);
+    expect(out).toContain('"…"');
+    expect(scrubMessage('x'.repeat(500)).length).toBe(300);
+  });
+
+  it('scrubs settings values and long free text the same way', () => {
+    const raw = 'weightUnit="lb" restDefaultSec=90 note="Feeling great today, PR incoming!"';
+    const out = scrubMessage(raw);
+    expect(out).not.toContain('lb');
+    expect(out).not.toContain('90');
+    expect(out).not.toContain('Feeling great today');
+  });
+});
+
+describe('framesFromStack / isAppFrame (A1)', () => {
+  const origin = 'https://app.example';
+  it('keeps only same-origin (app-bundle) frames, and caps at 15', () => {
+    const lines = ['Error: boom'];
+    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-abc.js:${i}:${i})`);
+    for (let i = 0; i < 10; i++) lines.push(`    at fn (https://cdn.other.com/lib.js:${i}:${i})`);
+    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-abc.js:${100 + i}:1)`);
+    const frames = framesFromStack(lines.join('\n'), origin);
+    expect(frames.length).toBe(15);
+    expect(frames.every(f => f.file.startsWith(origin))).toBe(true);
+  });
+
+  it('isAppFrame rejects other hosts and browser extensions', () => {
+    expect(isAppFrame(`${origin}/assets/a.js`, origin)).toBe(true);
+    expect(isAppFrame('https://evil.example/a.js', origin)).toBe(false);
+    expect(isAppFrame('chrome-extension://abc/a.js', origin)).toBe(false);
+    expect(isAppFrame('<anonymous>', origin)).toBe(false);
+  });
+});
+
+describe('buildReport (A1: allowlist-only)', () => {
+  it('only ever has the allowlisted keys, and unknown input fields cannot leak through', () => {
+    const evil = { installId: 'i', app: 'v', platform: 'web' as const, route: 'today', kind: 'boundary' as const, name: 'TypeError', rawMessage: 'x', extraSecret: 'should not appear', stack: undefined };
+    const r = buildReport(evil);
+    const keys = Object.keys(r).sort();
+    expect(keys).toEqual(['app', 'count', 'frames', 'installId', 'kind', 'message', 'name', 'platform', 'route', 'sig', 'ts'].sort());
+    expect(JSON.stringify(r)).not.toContain('extraSecret');
+  });
+
+  it('truncates the name to 80 chars and sets count to 1', () => {
+    const r = buildReport({ installId: 'i', app: 'v', platform: 'web', route: 'today', kind: 'onerror', name: 'x'.repeat(100), rawMessage: 'boom' });
+    expect(r.name.length).toBe(80);
+    expect(r.count).toBe(1);
+  });
+});
+
+describe('signatureOf', () => {
+  it('is stable for the same kind/name/top frames and differs otherwise', () => {
+    const frames = [{ file: 'a.js', line: 1, col: 2 }];
+    const s1 = signatureOf('boundary', 'TypeError', frames);
+    const s2 = signatureOf('boundary', 'TypeError', frames);
+    expect(s1).toBe(s2);
+    expect(signatureOf('boot', 'TypeError', frames)).not.toBe(s1);
+  });
+});
+
+describe('the local queue (A3)', () => {
+  let storage: Storage;
+  beforeEach(() => { storage = memoryStorage(); });
+
+  const report = (over: Partial<Report> = {}): Report => ({
+    installId: 'i', ts: '2026-09-27T10:00:00.000Z', app: '1.0.0', platform: 'web', route: 'today',
+    kind: 'boundary', name: 'TypeError', message: 'boom', frames: [], sig: 'sig1', count: 1, ...over,
+  });
+
+  it('caps at 20, dropping the oldest', () => {
+    for (let i = 0; i < 25; i++) enqueue(report({ sig: `sig${i}`, ts: `2026-09-27T10:${String(i).padStart(2, '0')}:00.000Z` }), storage);
+    const { reports } = loadQueueState(storage);
+    expect(reports.length).toBe(MAX_QUEUE);
+    expect(reports[0]!.sig).toBe('sig5');
+    expect(reports[reports.length - 1]!.sig).toBe('sig24');
+  });
+
+  it('the same sig on the same UTC day is folded into one entry with a growing count', () => {
+    enqueue(report({ ts: '2026-09-27T01:00:00.000Z' }), storage);
+    enqueue(report({ ts: '2026-09-27T23:00:00.000Z' }), storage);
+    let { reports } = loadQueueState(storage);
+    expect(reports.length).toBe(1);
+    expect(reports[0]!.count).toBe(2);
+
+    enqueue(report({ ts: '2026-09-28T00:00:01.000Z' }), storage);
+    reports = loadQueueState(storage).reports;
+    expect(reports.length).toBe(2);
+  });
+
+  it('survives a reload (a fresh load from the same storage sees it)', () => {
+    enqueue(report(), storage);
+    const reloaded = loadQueueState(storage);
+    expect(reloaded.reports.length).toBe(1);
+  });
+
+  it('removeByIds and clearQueue', () => {
+    const s = enqueue(report(), storage);
+    removeByIds([s.reports[0]!.id], storage);
+    expect(loadQueueState(storage).reports.length).toBe(0);
+    enqueue(report(), storage);
+    clearQueue(storage);
+    expect(loadQueueState(storage).reports.length).toBe(0);
+  });
+});
+
+describe('the install id', () => {
+  it('is generated once and persists; "delete everything" resets it (A6)', () => {
+    const storage = memoryStorage();
+    const id1 = getInstallId(storage);
+    const id2 = getInstallId(storage);
+    expect(id1).toBe(id2);
+    expect(id1).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    resetInstallId(storage);
+    expect(getInstallId(storage)).not.toBe(id1);
+  });
+});
+
+describe('the sender (A4: response handling, fake timers + mocked fetch)', () => {
+  let storage: Storage;
+  const report = (sig: string, ts: string): Report => ({
+    installId: 'i', ts, app: '1.0.0', platform: 'web', route: 'today', kind: 'boundary', name: 'TypeError', message: 'boom', frames: [], sig, count: 1,
+  });
+
+  beforeEach(() => { storage = memoryStorage(); vi.useFakeTimers(); vi.setSystemTime(new Date('2026-09-27T00:00:00.000Z')); });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('204 removes the sent reports from the queue', async () => {
+    enqueue(report('a', '2026-09-27T00:00:00.000Z'), storage);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://worker.example', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchImpl.mock.calls[0]!;
+    expect(url).toBe('https://worker.example/errors');
+    const body = JSON.parse((init as RequestInit).body as string);
+    expect(body.v).toBe(1);
+    expect(body.reports[0].sig).toBe('a');
+    expect(loadQueueState(storage).reports.length).toBe(0);
+  });
+
+  it('400 or 413 drops the batch and never retries the same payload', async () => {
+    enqueue(report('a', '2026-09-27T00:00:00.000Z'), storage);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 400 });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(loadQueueState(storage).reports.length).toBe(0);
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).toHaveBeenCalledTimes(1); // nothing left to send, so no second attempt
+  });
+
+  it('429/5xx keeps the queue and backs off, doubling and capped at 6h', async () => {
+    enqueue(report('a', '2026-09-27T00:00:00.000Z'), storage);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 500 });
+    let now = Date.now();
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now });
+    expect(loadQueueState(storage).reports.length).toBe(1);
+    let s = loadQueueState(storage);
+    expect(s.nextAttemptAt - now).toBe(BASE_BACKOFF_MS);
+
+    // Too soon: no new attempt.
+    now += 1000;
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+
+    // Backoff elapsed: retries and doubles the wait.
+    now = s.nextAttemptAt;
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    s = loadQueueState(storage);
+    expect(s.nextAttemptAt - now).toBe(BASE_BACKOFF_MS * 2);
+
+    // Drive the backoff up until it caps at 6h.
+    for (let i = 0; i < 12; i++) {
+      now = s.nextAttemptAt;
+      await trySend({ workerBase: 'https://w', storage, fetchImpl, now });
+      s = loadQueueState(storage);
+    }
+    expect(s.backoffMs).toBe(MAX_BACKOFF_MS);
+  });
+
+  it('a thrown fetch (offline) keeps the queue and backs off the same way', async () => {
+    enqueue(report('a', '2026-09-27T00:00:00.000Z'), storage);
+    const fetchImpl = vi.fn().mockRejectedValue(new Error('offline'));
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    const s = loadQueueState(storage);
+    expect(s.reports.length).toBe(1);
+    expect(s.nextAttemptAt - Date.now()).toBe(BASE_BACKOFF_MS);
+  });
+
+  it('does nothing when the queue is empty or still inside its backoff window', async () => {
+    const fetchImpl = vi.fn();
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).not.toHaveBeenCalled();
+
+    enqueue(report('a', '2026-09-27T00:00:00.000Z'), storage);
+    setBackoff(Date.now() + 60_000, BASE_BACKOFF_MS, storage);
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('packs at most ~8KB per request, sending the rest as further requests', async () => {
+    for (let i = 0; i < 20; i++) enqueue(report(`sig${i}`, `2026-09-27T00:${String(i).padStart(2, '0')}:00.000Z`), storage);
+    // Bloat every queued report's message so 20 of them cannot fit in one 8KB request.
+    const s = loadQueueState(storage);
+    s.reports.forEach(r => { r.message = 'm'.repeat(700); });
+    (storage as unknown as { setItem: (k: string, v: string) => void }).setItem('marc.errors.queue', JSON.stringify(s));
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl.mock.calls.length).toBeGreaterThan(1); // one 8KB request could not hold all 20
+    for (const [, init] of fetchImpl.mock.calls) {
+      expect(Buffer.byteLength((init as RequestInit).body as string, 'utf8')).toBeLessThanOrEqual(8192);
+    }
+    expect(loadQueueState(storage).reports.length).toBe(0); // the whole queue drained across those requests
+  });
+});
+
+describe('the one-time ask (A7)', () => {
+  it('shows only after a finished workout, never live, only once, and never on the very boot that just imported it', () => {
+    expect(shouldAskErrorReports(undefined, 0, false, true)).toBe(false);
+    expect(shouldAskErrorReports(undefined, 1, false, true)).toBe(true);
+    expect(shouldAskErrorReports(undefined, 1, true, true)).toBe(false);
+    expect(shouldAskErrorReports(true, 1, false, true)).toBe(false);
+    expect(shouldAskErrorReports(false, 1, false, true)).toBe(true);
+    // A fresh install or a same-session legacy/backup import: wait for the next ordinary open.
+    expect(shouldAskErrorReports(undefined, 1, false, false)).toBe(false);
+  });
+});
+
+describe('consent gating end to end (A2)', () => {
+  beforeEach(() => {
+    (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+    // reportError fires a real (fire-and-forget) send attempt; never let that reach the network in a test.
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('no network in tests')));
+  });
+  afterEach(() => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: undefined } };
+    delete (globalThis as { localStorage?: Storage }).localStorage;
+    vi.unstubAllGlobals();
+  });
+
+  it('off by default: nothing is queued or sent', () => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: undefined } };
+    reportError('boundary', 'TypeError', 'boom');
+    expect(loadQueueState().reports.length).toBe(0);
+  });
+
+  it('once consent is on, an error is queued; switching it off clears the queue', () => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: true } };
+    reportError('boundary', 'TypeError', 'boom');
+    expect(loadQueueState().reports.length).toBe(1);
+    clearErrorReportQueue();
+    expect(loadQueueState().reports.length).toBe(0);
+  });
+
+  it('reportCaught extracts name/message/stack from an arbitrary thrown value', () => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: true } };
+    reportCaught('onerror', new TypeError('bad thing'));
+    const [r] = loadQueueState().reports;
+    expect(r!.name).toBe('TypeError');
+  });
+
+  it('"delete everything" resets the install id and clears the queue (A6)', () => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: true } };
+    const before = getInstallId();
+    reportError('boundary', 'TypeError', 'boom');
+    expect(loadQueueState().reports.length).toBe(1);
+    resetErrorReporting();
+    expect(loadQueueState().reports.length).toBe(0);
+    expect(getInstallId()).not.toBe(before);
+  });
+});
+
+describe('trigger sites produce the right kind (A5)', () => {
+  beforeEach(() => {
+    (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('no network in tests')));
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: true } };
+  });
+  afterEach(() => {
+    state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: undefined } };
+    delete (globalThis as { localStorage?: Storage }).localStorage;
+    vi.unstubAllGlobals();
+  });
+
+  it('a thrown render error reports kind "boundary"', () => {
+    const b = new ErrorBoundary({});
+    b.componentDidCatch(new TypeError('render blew up'));
+    const [r] = loadQueueState().reports;
+    expect(r!.kind).toBe('boundary');
+  });
+
+  it('a failed Escobar fetch reports kind "escobar-transport", never the message content', async () => {
+    const t = httpTransport({ url: () => 'https://coach.example', device: () => 'd1', fetchImpl: vi.fn().mockRejectedValue(new Error('super secret upstream detail')) });
+    const events = [];
+    for await (const ev of t.turn({}, new AbortController().signal)) events.push(ev);
+    expect(events[0]).toMatchObject({ t: 'error', code: 'network' });
+    const [r] = loadQueueState().reports;
+    expect(r!.kind).toBe('escobar-transport');
+    expect(JSON.stringify(r)).not.toContain('super secret upstream detail');
+  });
+});

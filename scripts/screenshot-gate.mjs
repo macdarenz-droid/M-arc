@@ -4556,6 +4556,67 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// 7.5: anonymous error reports. The Settings row starts off, the one-time ask appears once (after
+// a finished workout, never during a live one) as a plain banner (never a blocking modal — it
+// must not steal a tap meant for anything else), Yes/No are remembered across a reload, and no
+// request reaches the errors endpoint while consent is off.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = '7.5';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const errorRequests = [];
+  page.on('request', r => { if (r.url().includes('/errors')) errorRequests.push(r.url()); });
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+
+  const ask = page.locator('[data-palace="errors.ask"]');
+  // Not yet: this very boot is the one that just imported the history, so it never interrupts it.
+  if (await visible(ask)) errors.push(`${tag}: the ask must not show on the same boot that just imported its history`);
+
+  // The next ordinary open (bootSource "saved") is when it appears.
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {}); // the onboarding sheet takes priority if it's still showing
+  if (!(await visible(ask))) errors.push(`${tag}: expected the error-reports ask on the next open after a finished workout`);
+  else {
+    await settle(page); await page.screenshot({ path: `${OUT}/7-5-ask-banner.png` });
+    // A banner, not a modal: it must never block the nav underneath it.
+    await page.locator('nav.nav button', { hasText: 'Train' }).click({ timeout: 3000 }).catch(() => errors.push(`${tag}: the ask blocked a tap on the nav underneath it`));
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(150);
+    await ask.getByRole('button', { name: 'No thanks' }).click().catch(() => errors.push(`${tag}: no "No thanks" button on the ask`));
+    await page.waitForTimeout(200);
+    if (await visible(ask)) errors.push(`${tag}: the ask should close after answering`);
+  }
+
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  const row = page.locator('[data-palace="settings.error-reports"]');
+  await row.scrollIntoViewIfNeeded().catch(() => {});
+  if (!(await visible(row))) errors.push(`${tag}: expected the "Send anonymous error reports" row in Settings`);
+  const toggle = page.getByRole('switch', { name: 'Send anonymous error reports' });
+  if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: expected the error-reports toggle off after answering No`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await visible(page.locator('[data-palace="errors.ask"]'))) errors.push(`${tag}: the ask reappeared after being answered`);
+  if (errorRequests.length) errors.push(`${tag}: ${errorRequests.length} request(s) reached /errors while consent was off`);
+
+  // Never during a live workout, even with a finished one already in history and the ask unanswered.
+  const page2 = await ctx.newPage();
+  page2.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page2.addInitScript(() => {
+    const st = JSON.parse(localStorage.getItem('marc.state.v1'));
+    st.preferences.errorReportsAsked = false;
+    st.preferences.errorReports = false;
+    st.active = { splitId: st.splits[0]?.id ?? 's1', startedAt: new Date().toISOString(), pausedMs: 0, entries: [] };
+    localStorage.setItem('marc.state.v1', JSON.stringify(st));
+  });
+  await page2.goto(`http://localhost:${PORT}/`); await page2.waitForSelector('.nav'); await launchGone(page2); await page2.waitForTimeout(300);
+  if (await visible(page2.locator('[data-palace="errors.ask"]'))) errors.push(`${tag}: the ask must never show during a live workout`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
