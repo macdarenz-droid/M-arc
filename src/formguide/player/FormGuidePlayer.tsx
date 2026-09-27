@@ -9,7 +9,7 @@ import { IconPause, IconPlay } from '@/ui/icons';
 import { onReducedChange, reduced } from '@/ui/motion';
 import type { MuscleId } from '@/data/muscles';
 import type { Guide } from '../rig/api';
-import { clock, finish, initial, pickZoom, renderVals, setMode, setReduced, setSpeed, tapMuscle, tapStage, togglePlay, type Fx, type PlayerState, type Step } from './controller';
+import { clock, finish, initial, isActivateKey, pickZoom, renderVals, setMode, setReduced, setSpeed, tapMuscle, tapStage, togglePlay, type Fx, type PlayerState, type Step } from './controller';
 import { mountAnimations, type AnimHandle, type AnimRoot } from './waapi';
 // GU-7a-4 switches these two to '@/formguide/index' (guides), '@/formguide/rig/paint' (RIG_CSS) and '@/formguide/muscles'.
 import { RIG_CSS, muscleInfo, stubGuide } from './stubGuide';
@@ -120,24 +120,25 @@ export function FormGuidePlayer({ exerciseId }: FormGuidePlayerProps) {
     el.innerHTML = still && tile ? `<g class="cam">${tile.innerHTML}</g>` : '';
   }, [still, v.showStill3]);
 
-  // The .sel outline on the tapped region only: the painted polygon(s) whose points match the hotspot's.
+  // The .sel outline on the tapped region only: its painted polygons, which the rig tags with data-muscle (the demo's cls<Id> hole).
   useEffect(() => {
     const root = sceneRef.current;
     if (!root) return;
     root.querySelectorAll('.sel').forEach(e => e.classList.remove('sel'));
-    if (!v.selMuscle) return;
-    const hot = root.querySelector(`.hot[data-muscle="${v.selMuscle}"]`);
-    const pts = hot?.getAttribute('points');
-    hot?.parentElement?.querySelectorAll('.mm,.mh').forEach(p => { if (p.getAttribute('points') === pts) p.classList.add('sel'); });
+    if (v.selMuscle) root.querySelectorAll(`.mm[data-muscle="${v.selMuscle}"],.mh[data-muscle="${v.selMuscle}"]`).forEach(p => p.classList.add('sel'));
   }, [v.selMuscle]);
 
+  // One handler on the stage (the demo's tapStage on .stage): a hotspot opens its muscle; a tap on the bubble does nothing;
+  // anywhere else closes a muscle bubble.
   const onStage = (e: Event) => {
-    const hot = (e.target as Element | null)?.closest?.('.hot');
-    const id = hot?.getAttribute('data-muscle') as MuscleId | null | undefined;
-    apply(id ? tapMuscle(sRef.current, id) : tapStage(sRef.current));
+    const t = e.target as Element | null;
+    const id = t?.closest?.('.scene .hot')?.getAttribute('data-muscle') as MuscleId | null | undefined;
+    if (id) { apply(tapMuscle(sRef.current, id)); return; }
+    if (t?.closest?.('.bubble')) return;
+    apply(tapStage(sRef.current));
   };
   const onStageKey = (e: KeyboardEvent) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (!isActivateKey(e.key)) return;
     const hot = (e.target as Element | null)?.closest?.('.hot');
     const id = hot?.getAttribute('data-muscle') as MuscleId | null | undefined;
     if (!id) return;
@@ -150,15 +151,15 @@ export function FormGuidePlayer({ exerciseId }: FormGuidePlayerProps) {
   else if (s.bubble?.kind === 'muscle') {
     const id = s.bubble.id;
     const m = info.find(x => x.id === id);
-    if (m) bubble = { name: m.common, rest: ` (${m.anatomical}), ${m.role}. ${m.line}`, dot: m.colorVar };
+    if (m) bubble = { name: m.common, rest: `(${m.anatomical}), ${m.role}. ${m.line}`, dot: m.colorVar };
   }
 
   return (
     <div class="form-guide">
       <style>{stage.css}</style>
       <div class={v.rootClass}>
-        <div class="stage">
-          <svg ref={sceneRef} class="scene" viewBox="0 0 358 276" hidden={!(v.showStage && !still)} onClick={onStage} onKeyDown={onStageKey} />
+        <div class="stage" onClick={onStage} onKeyDown={onStageKey}>
+          <svg ref={sceneRef} class="scene" viewBox="0 0 358 276" hidden={!(v.showStage && !still)} />
           <svg ref={stillRef} class="scene still" viewBox="0 0 358 276" aria-hidden="true" hidden={!still} />
           {v.showPills && (
             <div class="pill-row">
@@ -171,7 +172,7 @@ export function FormGuidePlayer({ exerciseId }: FormGuidePlayerProps) {
           {bubble && (
             <div class="bubble" role="status">
               <span class="dot" style={{ background: bubble.dot }} />
-              <span>{bubble.name && <b>{bubble.name}</b>}{bubble.rest}</span>
+              <span class="bt">{bubble.name && <><b>{bubble.name}</b>{' '}</>}<span>{bubble.rest}</span></span>
             </div>
           )}
         </div>

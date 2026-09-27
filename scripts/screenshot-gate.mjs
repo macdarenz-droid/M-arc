@@ -4833,11 +4833,13 @@ for (const theme of ['silent-black', 'paper']) {
       // A13: every hotspot hits at least 44 x 44 px at t 0 and t 0.25.
       for (const ms of [0, 1000]) {
         await seek(page, ms);
-        const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot')].map(h => {
+        // A muscle's hit area is its halo plus its core (round 3, D-R7): a point counts when it hits either.
+        const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot:not(.hot-core)')].map(h => {
           const r = h.getBoundingClientRect();
           let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
           for (let x = Math.floor(r.left - 24); x <= r.right + 24; x++) for (let y = Math.floor(r.top - 24); y <= r.bottom + 24; y++) {
-            if (document.elementFromPoint(x, y) === h) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+            const hit = document.elementFromPoint(x, y);
+            if (hit?.classList.contains('hot') && hit.dataset.muscle === h.dataset.muscle) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
           }
           return { m: h.dataset.muscle, w: x1 - x0 + 1, h: y1 - y0 + 1 };
         }));
@@ -4846,19 +4848,27 @@ for (const theme of ['silent-black', 'paper']) {
       }
       // Tap the target at t 0.3: the exact line, the dot in the muscle's colour, the outline on that region only.
       await seek(page, 1200);
-      const tapHot = async (m) => { const b = await page.locator(`dialog[open] .scene .hot[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
+      const tapHot = async (m) => { const b = await page.locator(`dialog[open] .scene .hot:not(.hot-core)[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
       await tapHot('chest');
-      const bub = await page.evaluate(() => { const b = document.querySelector('dialog[open] .bubble'); if (!b) return null; const fg = document.querySelector('dialog[open] .form-guide'); const probe = document.createElement('i'); probe.style.color = 'var(--muscle-main)'; fg.appendChild(probe); const want = getComputedStyle(probe).color; probe.remove(); return { text: b.textContent, dot: getComputedStyle(b.querySelector('.dot')).backgroundColor, want, sel: [...document.querySelectorAll('dialog[open] .sel')].map(e => `${e.getAttribute('class')} ${e.getAttribute('points')}`) }; });
+      const bub = await page.evaluate(() => { const b = document.querySelector('dialog[open] .bubble'); if (!b) return null; const fg = document.querySelector('dialog[open] .form-guide'); const probe = document.createElement('i'); probe.style.color = 'var(--muscle-main)'; fg.appendChild(probe); const want = getComputedStyle(probe).color; probe.remove(); return { text: b.textContent, name: b.querySelector('.bt b')?.textContent, dot: getComputedStyle(b.querySelector('.dot')).backgroundColor, want, sel: [...document.querySelectorAll('dialog[open] .sel')].map(e => `${e.getAttribute('class')} ${e.getAttribute('points')}`) }; });
       if (!bub) errors.push(`${tag} A13: tapping the chest shows no bubble`);
       else {
-        if (bub.text !== 'Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.') errors.push(`${tag} A13: bubble text "${bub.text}"`);
+        if (bub.text !== 'Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.' || bub.name !== 'Chest') errors.push(`${tag} A13: bubble text "${bub.text}" (bold "${bub.name}")`);
         if (bub.dot !== bub.want) errors.push(`${tag} A13: dot ${bub.dot}, muscle colour ${bub.want}`);
-        const hotPts = await page.locator('dialog[open] .scene .hot[data-muscle="chest"]').getAttribute('points');
+        const hotPts = await page.locator('dialog[open] .scene .hot:not(.hot-core)[data-muscle="chest"]').getAttribute('points');
         if (bub.sel.length !== 1 || bub.sel[0] !== `mm sel ${hotPts}`) errors.push(`${tag} A13: .sel outline on ${JSON.stringify(bub.sel)}`);
       }
       await page.screenshot({ path: `${OUT}/silent-black-gu7a-muscle.png` });
+      // A tap on the bubble itself keeps it (the demo's tapStage guard); a second tap on the muscle closes it.
+      await page.locator('dialog[open] .bubble').click(); await page.waitForTimeout(150);
+      if (!(await page.locator('dialog[open] .bubble').count())) errors.push(`${tag} A13: a tap on the bubble closed it`);
       await tapHot('chest');
       if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a second tap on the chest did not close the bubble`);
+      // A tap on the stage background closes a muscle bubble.
+      await tapHot('triceps');
+      const stBox = await page.locator('dialog[open] .stage').boundingBox();
+      await page.mouse.click(stBox.x + stBox.width - 20, stBox.y + stBox.height / 2); await page.waitForTimeout(150);
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a tap on the stage background did not close the muscle bubble`);
       await tapHot('triceps');
       await page.locator('dialog[open] .chips button').nth(0).click(); await page.waitForTimeout(150);
       const zb = await page.locator('dialog[open] .bubble').textContent().catch(() => null);

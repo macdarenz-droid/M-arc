@@ -802,7 +802,7 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
  * variant needs its own width and the same height/padding as the btn-sm next to it. */
 .mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
-/* GU-7a: form guide player. The demo's chrome at DEMO_COMMIT 3729f9b (anim-machine-chest-press/index.html),
+/* GU-7a: form guide player. The demo's chrome at DEMO_COMMIT f49c6c9 (anim-machine-chest-press/index.html),
    every rule under .form-guide; chips, .btn-icon, .seg, .hint and .sr-only are the app's own (R1-12).
    Colour tokens: the demo BASE_CSS .player{} block (--fg-line to --seam, --sw) then rigVars() dark;
    [data-theme="paper"] gets rigVars() light. The rig's paint rules come with the lazy chunk. */
@@ -861,6 +861,8 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 .form-guide .cam-label { position: absolute; top: 12px; right: 12px; font-weight: var(--fw-semibold); font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; color: var(--text-2); }
 .form-guide .bubble { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 8px; align-items: flex-start; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
 .form-guide .bubble .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 5px; }
+.form-guide .bubble .bt { min-width: 0; }
+.form-guide .bubble b { font-weight: var(--fw-semibold); }
 .form-guide .ov { opacity: 0; transition: opacity var(--dur-fast) linear; }
 .form-guide .pics { position: absolute; inset: 1px; display: grid; padding: 6px; gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); background: var(--surface-1); border-radius: var(--radius-lg); }
 .form-guide .tile { position: relative; display: flex; flex-direction: column; background: var(--surface-2); border-radius: var(--radius-md); overflow: hidden; }
@@ -876,6 +878,8 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 .form-guide .speed { flex: 0 1 104px; min-width: 0; }
 .form-guide .mode { flex: 0 1 184px; min-width: 0; }
 .form-guide .hot { cursor: pointer; }
+.form-guide .hot-core { stroke: none; stroke-width: 0; }
+.form-guide .pics .hot { pointer-events: none; }
 .form-guide .hot:focus:not(:focus-visible) { outline: none; }
-.form-guide .mm.sel, .form-guide .mh.sel { stroke: var(--text); stroke-width: 1.5px; }
+.form-guide .mm.sel, .form-guide .mh.sel { stroke: var(--text); stroke-width: calc(var(--sw) * 1.5px); }
 html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-guide .ov { transition: none; }

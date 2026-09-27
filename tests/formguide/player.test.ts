@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { clock, finish, initial, pickZoom, renderVals, setMode, setReduced, setSpeed, tapMuscle, tapStage, togglePlay, type PlayerState } from '@/formguide/player/controller';
+import { clock, finish, initial, isActivateKey, pickZoom, renderVals, setMode, setReduced, setSpeed, tapMuscle, tapStage, togglePlay, type PlayerState } from '@/formguide/player/controller';
 import { mountAnimations, timingFor, type AnimRoot } from '@/formguide/player/waapi';
 import { muscleInfo, stubGuide } from '@/formguide/player/stubGuide';
 import { GUIDE_IDS, hasGuide } from '@/formguide/registry';
@@ -148,13 +148,22 @@ describe('GU-7a-2 A13: muscle info on tap (interaction)', () => {
   it('a zoom chip and a muscle bubble never show together; a second chip tap closes', () => {
     let s = tapMuscle(initial(false), 'chest').state;
     s = pickZoom(s, 1).state;
-    expect(s).toMatchObject({ zoom: 1, bubble: { kind: 'zoom', id: 1 } });
-    expect(renderVals(s)).toMatchObject({ selMuscle: null, showPills: false, showCamLabel: false });
+    expect(s.bubble).toEqual({ kind: 'zoom', id: 1 });
+    expect(renderVals(s)).toMatchObject({ zoom: 1, rootClass: 'player zoom-1', zoomPressed: [true, false, false], selMuscle: null, showPills: false, showCamLabel: false });
     expect(tapStage(s).state).toBe(s);
     s = tapMuscle(s, 'front_delts').state;
-    expect(s).toMatchObject({ zoom: 0, bubble: { kind: 'muscle', id: 'front_delts' } });
+    expect(s.bubble).toEqual({ kind: 'muscle', id: 'front_delts' });
+    expect(renderVals(s).zoom).toBe(0);
     s = pickZoom(pickZoom(s, 2).state, 2).state;
-    expect(s).toMatchObject({ zoom: 0, bubble: null });
+    expect(s.bubble).toBeNull();
+    expect(renderVals(s)).toMatchObject({ zoom: 0, rootClass: 'player' });
+    // Round 3: the state has no separate zoom field; the one bubble is the only source.
+    expect(Object.keys(initial(false)).sort()).toEqual(['bubble', 'ended', 'mode', 'playing', 'rm', 'speed', 'started']);
+  });
+
+  it('Enter, Space and "Spacebar" open a focused hotspot; other keys do not (the demo keyMuscle)', () => {
+    expect(['Enter', ' ', 'Spacebar'].map(isActivateKey)).toEqual([true, true, true]);
+    expect(['Tab', 'a', 'Escape'].map(isActivateKey)).toEqual([false, false, false]);
   });
 
   it('Pictures has no hotspots: a tap there changes nothing', () => {
@@ -167,6 +176,10 @@ describe('GU-7a-2 A13: muscle info on tap (interaction)', () => {
     const hots = [...svg.matchAll(/<polygon class="hot" data-muscle="(\w+)" role="button" tabindex="0" aria-label="([^"]+)" points="[^"]+" style="fill:transparent;stroke:transparent;stroke-width:30px;pointer-events:all;vector-effect:non-scaling-stroke"\/>/g)];
     expect(hots.map(h => h[1]).sort()).toEqual(Object.values(stubGuide.spec.roles).sort());
     expect(hots.map(h => h[2])).toEqual(['Chest, target muscle', 'Front delts, helps', 'Triceps, helps']);
+    // Round 3 (D-R7): a stroke-less core per region, and the painted regions tagged for the .sel outline.
+    const cores = [...svg.matchAll(/<polygon class="hot hot-core" data-muscle="(\w+)" points="[^"]+" style="fill:transparent;stroke:none;pointer-events:all"\/>/g)];
+    expect(cores.map(c => c[1]).sort()).toEqual(Object.values(stubGuide.spec.roles).sort());
+    expect([...svg.matchAll(/<polygon class="(mm|mh)" data-muscle="(\w+)"/g)].map(m => `${m[1]} ${m[2]}`)).toEqual(['mm chest', 'mh front_delts', 'mh triceps']);
     expect(muscleInfo('lib_machine_chest_press').map(m => `${m.common} (${m.anatomical}), ${m.role}. ${m.line}`)).toEqual([
       'Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.',
       'Front delts (anterior deltoid), helps. Lifts the upper arms forward with the chest.',

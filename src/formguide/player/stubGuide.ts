@@ -1,6 +1,6 @@
 // GU-7a-2: a stand-in Guide so the player, its tests and the gate run before the rig (GU-7a-1)
 // and the muscle lines (GU-7a-3) land. GU-7a-4 deletes this file and switches the imports.
-// Texts are the demo's chest press (spec.md 3.1 and 2.10 at DEMO_COMMIT 3729f9b); the figure is
+// Texts are the demo's chest press (spec.md 3.1 and 2.10 at DEMO_COMMIT f49c6c9); the figure is
 // a 4-polygon placeholder, not the demo's drawing. Colours are theme tokens only.
 import type { MuscleId } from '../../data/muscles';
 import type { Frame, GroupFrames, Guide, MoveSpec, Scheme, Stage } from '../rig/api';
@@ -74,8 +74,11 @@ function at(frames: Frame[], u: number, key: 'rot' | 'opacity'): number {
   return val(frames[frames.length - 1]!);
 }
 
+// Round 3 (spec 2.10, D-R7): a halo per region, and a stroke-less core painted after every halo so a tap on a muscle's own paint picks it.
 const hot = (muscle: MuscleId, label: string, points: string) =>
   `<polygon class="hot" data-muscle="${muscle}" role="button" tabindex="0" aria-label="${label}" points="${points}" style="${HOT_STYLE}"/>`;
+const core = (muscle: MuscleId, points: string) =>
+  `<polygon class="hot hot-core" data-muscle="${muscle}" points="${points}" style="fill:transparent;stroke:none;pointer-events:all"/>`;
 
 /** The rig: torso with the chest (target), an arm group with front delts and triceps (helpers).
  * `u` given: a static copy posed at u (a Pictures tile), no hotspots needed but kept for parity. */
@@ -85,11 +88,12 @@ function rig(u?: number): string {
   return `<g id="rig-stub">`
     + `<line class="floor" x1="16" y1="258" x2="342" y2="258"/>`
     + `<polygon class="olk" points="${TORSO}"/><polygon class="t" points="${TORSO}"/>`
-    + `<g class="st-eff"${effStyle}><polygon class="mm" points="${CHEST}"/></g>`
-    + hot('chest', 'Chest, target muscle', CHEST)
+    + `<g class="st-eff"${effStyle}><polygon class="mm" data-muscle="chest" points="${CHEST}"/></g>`
+    + hot('chest', 'Chest, target muscle', CHEST) + core('chest', CHEST)
     + `<g class="j st-arm"${armStyle}>`
-    + `<polygon class="mh" points="${DELT}"/><polygon class="mh" points="${TRICEPS}"/>`
+    + `<polygon class="mh" data-muscle="front_delts" points="${DELT}"/><polygon class="mh" data-muscle="triceps" points="${TRICEPS}"/>`
     + hot('front_delts', 'Front delts, helps', DELT) + hot('triceps', 'Triceps, helps', TRICEPS)
+    + core('front_delts', DELT) + core('triceps', TRICEPS)
     + `<circle class="ov ov-grip ovs" cx="120" cy="206" r="12"/>`
     + `</g>`
     + `<path class="ov ov-path ovs" d="M150 186A36 36 0 0 0 186 150"/>`
