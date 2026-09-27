@@ -653,6 +653,9 @@ for (const theme of themes) {
     if (Math.abs(ratio - r) > 0.05) errors.push(`${where}: seeded this week at ${r}x avg but the labels read ${got.curText} vs ${got.avgText}`);
     if (intersects(got.avg, got.cur)) errors.push(`${where}: avg label ${JSON.stringify(got.avg)} overlaps the current-week value label ${JSON.stringify(got.cur)}`);
     for (const v of got.values) if (intersects(got.avg, v)) errors.push(`${where}: avg label overlaps a bar value label ${JSON.stringify(v)}`);
+    // Font size and bar height differ on a real phone (the owner's 0.84x repro overlapped there), so
+    // the two labels must not even share a column: then no ratio or font can stack them.
+    if (got.avg.left < got.cur.right && got.cur.left < got.avg.right) errors.push(`${where}: avg label and current-week value label share a column (x ${got.avg.left}-${got.avg.right} vs ${got.cur.left}-${got.cur.right})`);
     await ctx.close();
   }
 }
