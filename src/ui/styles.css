@@ -875,6 +875,7 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 .form-guide .chips { flex: none; display: flex; align-items: center; gap: 8px; height: 44px; }
 .form-guide .controls { flex: none; display: flex; align-items: center; gap: 8px; height: 44px; }
 /* 44 + 8 + 104 + 8 + 184 = 348 at 358; the two switches share the loss below that (320 px phones). */
+.form-guide .controls > :first-child { flex: none; } /* Play stays a 44 px circle */
 .form-guide .speed { flex: 0 1 104px; min-width: 0; }
 .form-guide .mode { flex: 0 1 184px; min-width: 0; }
 .form-guide .hot { cursor: pointer; }

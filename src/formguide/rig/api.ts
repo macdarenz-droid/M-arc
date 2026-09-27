@@ -51,3 +51,4 @@ export interface Guide {
 // RIG_CSS is a real `export const RIG_CSS: string` in src/formguide/rig/paint.ts (GU-7a-1), never a `declare` here
 // (a declare emits no runtime binding and breaks `vite build`). GU-7a-2 imports it from '@/formguide/rig/paint';
 // until 7a-1 merges, its stubGuide.ts exports its own RIG_CSS and 7a-4 switches the import.
+

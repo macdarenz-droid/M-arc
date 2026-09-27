@@ -229,3 +229,12 @@ describe('GU-7a-2 A8: the "How to do it" row', () => {
     expect(src.indexOf('>Substitute exercise</Button>')).toBeGreaterThan(at);
   });
 });
+
+describe('GU-7a-2 review of 25b05f6', () => {
+  it('api.ts is the 7.2 block byte for byte (it ends with the blank line the block carries)', () => {
+    expect(readFileSync('src/formguide/rig/api.ts', 'utf8').endsWith('7a-4 switches the import.\n\n')).toBe(true);
+  });
+  it('5.12: the phase caption line is an aria-live="polite" region', () => {
+    expect(readFileSync('src/formguide/player/FormGuidePlayer.tsx', 'utf8')).toContain('<span class="cap" aria-live="polite">');
+  });
+});

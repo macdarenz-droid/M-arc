@@ -177,7 +177,7 @@ export function FormGuidePlayer({ exerciseId }: FormGuidePlayerProps) {
           )}
         </div>
         <div class="cap-row">
-          <span class="cap">
+          <span class="cap" aria-live="polite">
             {v.showIdle && 'Tap Play to watch 3 slow reps.'}
             {v.showEnded && 'Done. Tap Replay to watch again.'}
             {v.showCaps && spec.caps[tick.phase]}

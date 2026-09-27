@@ -4753,6 +4753,49 @@ for (const theme of ['silent-black', 'paper']) {
   const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
   const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
 
+  // A13: each muscle's real hit area (halo + core, round 3 D-R7: a point counts when it hits either) at t 0 and 0.25.
+  const hotProbe = async (page, where) => {
+    for (const ms of [0, 1000]) {
+      await seek(page, ms);
+      const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot:not(.hot-core)')].map(h => {
+        const r = h.getBoundingClientRect();
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+        for (let x = Math.floor(r.left - 24); x <= r.right + 24; x++) for (let y = Math.floor(r.top - 24); y <= r.bottom + 24; y++) {
+          const hit = document.elementFromPoint(x, y);
+          if (hit?.classList.contains('hot') && hit.dataset.muscle === h.dataset.muscle) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        }
+        return { m: h.dataset.muscle, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+      }));
+      if (sizes.length !== 3) errors.push(`${tag} A13 ${where}: expected 3 hotspots, got ${sizes.length}`);
+      for (const s of sizes) if (!(s.w >= 44 && s.h >= 44)) errors.push(`${tag} A13 ${where}: hotspot ${s.m} hits ${s.w} x ${s.h} px at ${ms} ms`);
+    }
+    await seek(page, 0);
+  };
+  // A7 / R1-12: the player fits the sheet; Play stays a 44 px circle; no control overlaps another, leaves the player or clips its label.
+  const fitProbe = async (page, where) => {
+    const f = await page.evaluate(() => {
+      const box = e => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, w: r.width, h: r.height }; };
+      const player = box(document.querySelector('dialog[open] .form-guide .player'));
+      const panel = box(document.querySelector('dialog[open] .sheet-panel'));
+      const play = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon'));
+      const ctrls = [...document.querySelectorAll('dialog[open] .form-guide .chips > button, dialog[open] .form-guide .controls > .btn-icon, dialog[open] .form-guide .controls > .seg')];
+      const named = ctrls.map(e => ({ n: e.getAttribute('aria-label') || e.textContent, ...box(e) }));
+      const out = named.filter(c => c.l < player.l - 0.5 || c.r > player.r + 0.5 || c.t < player.t - 0.5 || c.b > player.b + 0.5).map(c => c.n);
+      const overlap = [];
+      for (let i = 0; i < named.length; i++) for (let j = i + 1; j < named.length; j++) {
+        const a = named[i], b = named[j];
+        if (a.l < b.r - 0.5 && b.l < a.r - 0.5 && a.t < b.b - 0.5 && b.t < a.b - 0.5) overlap.push(`${a.n} / ${b.n}`);
+      }
+      const clipped = [...document.querySelectorAll('dialog[open] .form-guide .seg button, dialog[open] .form-guide .chips > button')].filter(b => b.scrollWidth > b.clientWidth + 0.5).map(b => b.textContent);
+      return { player, panel, play, out, overlap, clipped, sw: document.documentElement.scrollWidth, iw: innerWidth };
+    });
+    if (f.player.l < f.panel.l - 0.5 || f.player.r > f.panel.r + 0.5 || f.sw > f.iw) errors.push(`${tag} A7 ${where}: the player does not fit the sheet (${JSON.stringify({ player: f.player, panel: f.panel, sw: f.sw })})`);
+    if (!(f.play.w >= 44 && f.play.h >= 44)) errors.push(`${tag} A7 ${where}: Play is ${f.play.w.toFixed(1)} x ${f.play.h.toFixed(1)} px, under 44`);
+    if (f.out.length) errors.push(`${tag} A7 ${where}: controls leave the player: ${f.out.join(', ')}`);
+    if (f.overlap.length) errors.push(`${tag} A7 ${where}: controls overlap: ${f.overlap.join('; ')}`);
+    if (f.clipped.length) errors.push(`${tag} A7 ${where}: labels clipped: ${f.clipped.join(', ')}`);
+  };
+
   for (const theme of themes) {
     const { ctx, page } = await open(theme);
     // A11: never on Today.
@@ -4773,6 +4816,7 @@ for (const theme of ['silent-black', 'paper']) {
     // A7: screenshots at t 0 and 0.25; the player fits the 390 px sheet.
     const fit = await page.evaluate(() => { const p = document.querySelector('dialog[open] .form-guide .player').getBoundingClientRect(); const d = document.querySelector('dialog[open] .sheet-panel').getBoundingClientRect(); return { l: p.left, r: p.right, dl: d.left, dr: d.right, sw: document.documentElement.scrollWidth }; });
     if (fit.l < fit.dl || fit.r > fit.dr || fit.sw > 390) errors.push(`${tag} ${theme} A7: the player does not fit the sheet at 390 px (${JSON.stringify(fit)})`);
+    await fitProbe(page, `${theme} 390 px`);
     await seek(page, 0); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t0.png` });
     await seek(page, 1000); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t025.png` });
     await seek(page, 0);
@@ -4831,21 +4875,9 @@ for (const theme of ['silent-black', 'paper']) {
       }
 
       // A13: every hotspot hits at least 44 x 44 px at t 0 and t 0.25.
-      for (const ms of [0, 1000]) {
-        await seek(page, ms);
-        // A muscle's hit area is its halo plus its core (round 3, D-R7): a point counts when it hits either.
-        const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot:not(.hot-core)')].map(h => {
-          const r = h.getBoundingClientRect();
-          let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-          for (let x = Math.floor(r.left - 24); x <= r.right + 24; x++) for (let y = Math.floor(r.top - 24); y <= r.bottom + 24; y++) {
-            const hit = document.elementFromPoint(x, y);
-            if (hit?.classList.contains('hot') && hit.dataset.muscle === h.dataset.muscle) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
-          }
-          return { m: h.dataset.muscle, w: x1 - x0 + 1, h: y1 - y0 + 1 };
-        }));
-        if (sizes.length !== 3) errors.push(`${tag} A13: expected 3 hotspots, got ${sizes.length}`);
-        for (const s of sizes) if (!(s.w >= 44 && s.h >= 44)) errors.push(`${tag} A13: hotspot ${s.m} hits ${s.w} x ${s.h} px at ${ms} ms`);
-      }
+      await hotProbe(page, '390 px');
+      // 5.12: the phase caption is announced politely.
+      if (await page.locator('dialog[open] .cap[aria-live="polite"]').count() !== 1) errors.push(`${tag} 5.12: the caption line is not an aria-live="polite" region`);
       // Tap the target at t 0.3: the exact line, the dot in the muscle's colour, the outline on that region only.
       await seek(page, 1200);
       const tapHot = async (m) => { const b = await page.locator(`dialog[open] .scene .hot:not(.hot-core)[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
@@ -4885,6 +4917,19 @@ for (const theme of ['silent-black', 'paper']) {
       await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(600);
       const left = await page.evaluate(() => ({ n: window.__fgAnims.length, live: window.__fgAnims.filter(a => a.playState !== 'idle').length, open: !!document.querySelector('.form-guide') }));
       if (!left.n || left.live || left.open) errors.push(`${tag} A4: closing left ${left.live} of ${left.n} animations alive (guide still open: ${left.open})`);
+    }
+    await ctx.close();
+  }
+
+  // A7 and A13 on narrow phones (review of 25b05f6): the controls and the hotspots at 320 and 360 px.
+  for (const w of [320, 360]) {
+    const { ctx, page } = await open('silent-black', { viewport: { width: w, height: 740 } });
+    await startSession(page);
+    if (!(await openGuide(page))) errors.push(`${tag} ${w} px: the guide did not open`);
+    else {
+      await fitProbe(page, `${w} px`);
+      await hotProbe(page, `${w} px`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-guide-${w}.png` });
     }
     await ctx.close();
   }

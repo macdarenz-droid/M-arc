@@ -21,10 +21,11 @@ export const RIG_CSS = [
 
 const HOT_STYLE = 'fill:transparent;stroke:transparent;stroke-width:30px;pointer-events:all;vector-effect:non-scaling-stroke';
 
-// Regions sit 30+ units apart so each hotspot's 30 px stroke gives a full 44 px hit box at t 0 and 0.25.
+// Regions sit 40+ units apart, so at the 320 px stage scale (0.8) two 15 px halo edges never meet and each hotspot
+// keeps a full 44 px hit box at t 0 and 0.25.
 const TORSO = '150,100 200,100 202,204 148,204';
 const CHEST = '176,110 196,110 196,130 176,130';
-const DELT = '110,130 130,130 130,150 110,150';
+const DELT = '110,120 130,120 130,140 110,140';
 const TRICEPS = '110,182 130,182 130,202 110,202';
 
 const spec: MoveSpec = {
