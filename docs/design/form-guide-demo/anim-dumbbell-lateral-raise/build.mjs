@@ -27,11 +27,8 @@ let css = between(src, '<style>\n/* Artboard: everything in this <style> goes in
 css = one(css, '.pics.on{display:grid}',
   '.pictures .pics{display:grid}\n' +
   '.pictures.zoom-1 .pics,.pictures.zoom-2 .pics,.pictures.zoom-3 .pics{display:none}');
-css = one(css, '.bubble{position:absolute;left:12px;right:12px;bottom:12px;display:flex;',
-  '.bubble{position:absolute;left:12px;right:12px;bottom:12px;display:none;');
 css = one(css, '.bubble .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px}',
   '.bubble .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px}\n' +
-  '.zoom-1 .bub-1,.zoom-2 .bub-2,.zoom-3 .bub-3{display:flex}\n' +
   '.zoom-1 .pill-row,.zoom-2 .pill-row,.zoom-3 .pill-row,.zoom-1 .cam-label,.zoom-2 .cam-label,.zoom-3 .cam-label{display:none}');
 css = one(css, '.pics:not(.zoomed){display:grid!important}',
   '.player:not(.zoom-1):not(.zoom-2):not(.zoom-3) .pics{display:grid!important}');
@@ -55,8 +52,10 @@ body = one(body, '<div class="pics" data-class="picsClass">', '<div class="pics"
 const EXRIG = JSON.parse(between(src, 'const EX = ', ';\n'));
 const CHIPS = EXRIG.chips.map(c => [c.label, c.caption]);
 if (CHIPS.map(c => c[0]).join() !== 'Shoulders,Path,Elbows') throw new Error('rig chips changed: ' + CHIPS.map(c => c[0]));
-body = one(body, '<div class="bubble" data-if="showBubble" hidden><span class="dot"></span><span data-text="bubbleText"></span></div>',
-  CHIPS.map(([, cap], i) => `<div class="bubble bub-${i + 1}"><span class="dot"></span><span>${cap}</span></div>`).join('\n'));
+// One bubble, as in the rig (spec 2.10, RIG.md section 21): a zoom chip's caption or a tapped muscle's name and line, never
+// both. It keeps its sc-if, dot style hole and two text holes; the build asserts the exact markup once.
+const BUBBLE = '<div class="bubble" data-if="showBubble" hidden><span class="dot" data-style="bubbleDotStyle"></span><span class="bt"><b data-text="bubbleName"></b> <span data-text="bubbleRest"></span></span></div>';
+body = one(body, BUBBLE, BUBBLE);
 CHIPS.forEach((c, i) => { body = one(body, `aria-pressed="false" data-chip="${i}"`, `aria-pressed="false" data-pressed="z${i + 1}" data-click="pick${i + 1}"`); });
 body = one(body, '<p class="hint" data-text="hint">Tap a zoom chip to look closer. Tap it again to zoom out.</p>',
   '<p class="hint"><span data-if="hintAnim">Tap a zoom chip to look closer. Tap it again to zoom out.</span>' +
@@ -66,14 +65,25 @@ body = one(body, '<p class="hint" data-text="hint">Tap a zoom chip to look close
 // frozen frame; same pattern as Machine Chest Press and Lat Pulldown.
 body = one(body, '<span data-if="showPicsLine" hidden>',
   '<span data-if="showStill1" hidden>Stand tall, elbows soft</span><span data-if="showStill3" hidden>Stop at shoulder height</span><span data-if="showPicsLine" hidden>');
-if (/data-(chip|text)=|camClass|picsClass|showBubble|showRepPill|showCamLabel/.test(body)) throw new Error('old binding left in markup');
+// Outside the one exact bubble element (matched once above), no rig-only binding may be left.
+if (/data-(chip|text)=|camClass|picsClass|showBubble|showRepPill|showCamLabel|bubbleText/.test(body.replace(BUBBLE, ''))) throw new Error('old binding left in markup');
+// Muscle info on tap: every hotspot's index, every class hole and every static muscle class match the rig's EX.muscles.
+const MUS = EXRIG.muscles;
+if (!MUS.length || MUS.some(m => !m.Id || !m.cls)) throw new Error('rig EX.muscles missing or incomplete');
+for (const m of body.matchAll(/data-muscle="([A-Za-z]+)" data-hot="(\d+)"/g)) if (!MUS[+m[2]] || MUS[+m[2]].region !== m[1]) throw new Error('hotspot index does not match EX.muscles: ' + m[0]);
+for (const m of body.matchAll(/class="([^"]*)" data-class="(cls[A-Za-z0-9]+)"/g)) { const mu = MUS.find(x => 'cls' + x.Id === m[2]); if (!mu || mu.cls !== m[1]) throw new Error('muscle class hole does not match EX.muscles: ' + m[0]); }
+MUS.forEach((m, i) => { if (!body.includes(`data-hot="${i}"`) || !body.includes(`data-class="cls${m.Id}"`)) throw new Error('no hotspot or class hole for ' + m.id); });
 
 // ---- 3. Logic: THEMES + themeVars + rigVars (unchanged from the rig) + logic.js -----------
 const themes = src.slice(src.indexOf('const THEMES = '), src.indexOf('const EX = ')).trim();
-const artboardScript = themes + '\n' + logic;
+// EX: the rig's rep, chips and muscle table (spec 2.10), never typed by hand.
+const EXP = { rep: EXRIG.rep, chips: EXRIG.chips, muscles: EXRIG.muscles };
+if (EXP.rep !== 4) throw new Error('rig rep changed: ' + EXP.rep);
+const artboardScript = themes + '\nconst EX = ' + JSON.stringify(EXP) + ';\n' + logic;
 
 // Every binding the markup uses must exist in renderVals (checked again in the browser).
-const used = [...new Set([...body.matchAll(/data-(?:if|pressed|click|label|disabled|style|class)="([A-Za-z0-9]+)"/g)].map(m => m[1]))];
+const used = [...new Set([...body.matchAll(/data-(?:if|pressed|click|label|disabled|style|class|text)="([A-Za-z0-9]+)"/g)].map(m => m[1])
+  .concat(/data-hot=/.test(body) ? ['hots'] : []).concat(MUS.flatMap(m => ['tap' + m.Id, 'key' + m.Id])))];
 
 // ---- 4. index.html harness -----------------------------------------------------------
 const harness = `
@@ -81,7 +91,7 @@ const harness = `
 class DCLogic { constructor(props) { this.props = props; } setState(u, cb) { Object.assign(this.state, typeof u === 'function' ? u(this.state) : u); bind(this); if (cb) cb(); } forceUpdate() { bind(this); } }
 /* ===== artboard logic (goes into <script type="text/x-dc" data-dc-script>) ===== */
 ${artboardScript}
-/* ===== harness only: ?theme= ?t= ?zoom= ?mode=pictures ?loop=1 ?autoplay=0 ?speed=0.5 ===== */
+/* ===== harness only: ?theme= ?t= ?zoom= ?muscle= ?mode=pictures ?loop=1 ?autoplay=0 ?speed=0.5 ===== */
 const H = { freeze: null };
 function vals(c) {
   const v = c.renderVals();
@@ -94,20 +104,23 @@ function vals(c) {
 }
 function bind(c) {
   const v = vals(c), all = s => document.querySelectorAll(s);
-  all('[data-style]').forEach(el => el.setAttribute('style', 'width: 358px; height: 460px; box-sizing: border-box; ' + v[el.dataset.style]));
+  all('[data-style]').forEach(el => el.setAttribute('style', (el.dataset.style === 'rootStyle' ? 'width: 358px; height: 460px; box-sizing: border-box; ' : '') + v[el.dataset.style]));
   all('[data-class]').forEach(el => el.setAttribute('class', v[el.dataset.class]));
   all('[data-if]').forEach(el => { el.hidden = !v[el.dataset.if]; });
   all('[data-pressed]').forEach(el => el.setAttribute('aria-pressed', String(!!v[el.dataset.pressed])));
   all('[data-label]').forEach(el => el.setAttribute('aria-label', v[el.dataset.label]));
   all('[data-disabled]').forEach(el => { el.disabled = !!v[el.dataset.disabled]; });
   all('[data-click]').forEach(el => { el.onclick = v[el.dataset.click]; });
+  all('[data-text]').forEach(el => { el.textContent = v[el.dataset.text]; });
+  all('[data-hot]').forEach(el => { const h = v.hots[+el.dataset.hot]; el.onclick = h.tap; el.onkeydown = h.key; });
 }
 const q = new URLSearchParams(location.search);
 const props = { theme: q.get('theme') || 'silent-black', autoplay: q.get('autoplay') !== '0', loop: q.get('loop') === '1' };
 const comp = new Component(props);
 if (q.get('mode') === 'pictures' || q.get('mode') === 'pics') Object.assign(comp.state, { mode: 'pics', playing: false, started: false });
-const ZOOM = { shoulders: 1, path: 2, elbows: 3, 1: 1, 2: 2, 3: 3 };
-if (ZOOM[q.get('zoom')]) comp.state.zoom = ZOOM[q.get('zoom')];
+const chipOf = z => EX.chips.find((c, i) => c.id === z || String(i + 1) === z);
+if (q.get('zoom') && chipOf(q.get('zoom'))) comp.state.bubble = { kind: 'zoom', id: chipOf(q.get('zoom')).id };
+if (q.get('muscle') && EX.muscles.some(m => m.id === q.get('muscle'))) comp.state.bubble = { kind: 'muscle', id: q.get('muscle') };
 if (q.get('speed') === '0.5') comp.state.speed = 0.5;
 if (q.has('t') && comp.state.mode === 'anim') { H.freeze = Math.min(1, Math.max(0, +q.get('t') || 0)); Object.assign(comp.state, { playing: false, started: true }); }
 const realToggle = comp.togglePlay.bind(comp);
@@ -115,7 +128,7 @@ comp.togglePlay = () => { H.freeze = null; realToggle(); };
 comp.freeze = t => { H.freeze = t; comp.stopClock(); comp.setState({ playing: false, started: true }); };
 window.__rig = comp; window.__used = ${JSON.stringify(used)};
 bind(comp); comp.componentDidMount();
-document.getElementById('harness-note').textContent = 'Harness only: theme ' + props.theme + (H.freeze !== null ? ', frozen at t = ' + H.freeze : ', live') + (props.loop ? ', loop on' : ', 3 reps then Replay') + '. Query: ?theme= &t= &zoom=1|2|3 &mode=pictures &loop=1 &autoplay=0 &speed=0.5';
+document.getElementById('harness-note').textContent = 'Harness only: theme ' + props.theme + (H.freeze !== null ? ', frozen at t = ' + H.freeze : ', live') + (props.loop ? ', loop on' : ', 3 reps then Replay') + '. Query: ?theme= &t= &zoom=1|2|3 &muscle=<id> &mode=pictures &loop=1 &autoplay=0 &speed=0.5';
 `;
 
 const indexHtml = `<!doctype html>
@@ -156,13 +169,19 @@ for (;;) {
   const el = ab.slice(start, end).replace(` data-if="${m[1]}"`, '').replace(/^(<[^>]*?) hidden(?=[\s>])/, '$1');
   ab = ab.slice(0, start) + `<sc-if value="{{ ${m[1]} }}" hint-placeholder-val="{{ true }}">` + el + '</sc-if>' + ab.slice(end);
 }
+// Muscle info on tap (RIG.md section 21): hotspots get the tap and key holes, muscle polygons a class hole, the bubble its
+// dot style hole and its two text holes (FORMAT-RULES.md: dotted holes only, no expressions).
+ab = ab.replace(/ data-hot="(\d+)"/g, (_, i) => ` onClick="{{ tap${MUS[+i].Id} }}" onKeyDown="{{ key${MUS[+i].Id} }}"`)
+  .replace(/class="[^"]*" data-class="(cls[A-Za-z0-9]+)"/g, 'class="{{ $1 }}"');
+ab = one(ab, '<span class="dot" data-style="bubbleDotStyle"></span><span class="bt"><b data-text="bubbleName"></b> <span data-text="bubbleRest"></span></span>',
+  '<span class="dot" style="{{ bubbleDotStyle }}"></span><span class="bt"><b>{{ bubbleName }}</b> {{ bubbleRest }}</span>');
 ab = ab.replace(/aria-pressed="(?:true|false)" data-pressed="([A-Za-z0-9]+)"/g, 'aria-pressed="{{ $1 }}"')
   .replace(/aria-label="[^"]*" data-label="([A-Za-z0-9]+)"/g, 'aria-label="{{ $1 }}"')
   .replace(/ data-click="([A-Za-z0-9]+)"/g, ' onClick="{{ $1 }}"')
   .replace(/ data-disabled="([A-Za-z0-9]+)"/g, ' disabled="{{ $1 }}"')
   .replace(/<div class="player gen-a" data-class="rootClass" data-style="rootStyle" style="[^"]*">/,
     '<div class="{{ rootClass }}" style="width: 358px; height: 460px; box-sizing: border-box; {{ rootStyle }}">');
-if (/data-(if|pressed|label|click|disabled|class|style)=/.test(ab) || / hidden[\s>]/.test(ab)) throw new Error('unconverted binding in artboard markup');
+if (/data-(if|pressed|label|click|disabled|class|style|text|hot)=/.test(ab) || / hidden[\s>]/.test(ab)) throw new Error('unconverted binding in artboard markup');
 if (/#[0-9a-fA-F]{3,8}\b|rgba?\(/.test(ab.replace(/href="#rig-lr"/g, ''))) throw new Error('raw colour in artboard markup');
 
 // The markup split into the named pieces PLAYER.md hands over.
@@ -170,7 +189,12 @@ const svgStart = ab.indexOf('<svg class="scene"'), svgEnd = ab.indexOf('</svg>',
 const stageSvg = ab.slice(svgStart, svgEnd);
 if (!stageSvg.includes('<g class="ov ov-shoulders">')) throw new Error('stage svg cut short');
 const picsStart = ab.indexOf('<div class="pics">'), picsHtml = ab.slice(picsStart, elementEnd(ab, picsStart));
-const bubStart = ab.indexOf('<div class="bubble bub-1">'), bubHtml = ab.slice(bubStart, elementEnd(ab, ab.indexOf('<div class="bubble bub-3">')));
+const bubStart = ab.indexOf('<sc-if value="{{ showBubble }}"'), bubHtml = ab.slice(bubStart, elementEnd(ab, bubStart));
+if (bubStart < 0 || !bubHtml.includes('<div class="bubble">')) throw new Error('bubble piece not found');
+// the artboard's holes, for the binding check in the browser (every one must exist in renderVals)
+const abHoles = [...new Set([...ab.matchAll(/\{\{ ([A-Za-z0-9]+) \}\}/g)].map(m => m[1]).filter(h => h !== 'true'))];
+const missingHole = abHoles.filter(h => !used.includes(h));
+if (missingHole.length) throw new Error('artboard holes not in the harness binding list: ' + missingHole.join(','));
 
 const dataProps = '{"theme":{"editor":"enum","options":["silent-black","paper","ember","emerald","midnight"],"default":"silent-black"},"autoplay":{"editor":"boolean","default":true},"loop":{"editor":"boolean","default":true},"$preview":{"width":358,"height":460}}';
 const fullArtboard = `<!doctype html>
@@ -187,7 +211,7 @@ const fullArtboard = `<!doctype html>
 /* the complete CSS from section 8 goes here */
 </style>
 </helmet>
-${ab.slice(0, svgStart)}<!-- stage SVG: section 9.1 -->${ab.slice(svgEnd, picsStart)}<!-- Pictures grid: section 9.2 -->${ab.slice(picsStart + picsHtml.length, bubStart)}<!-- caption bubbles: section 9.3 -->${ab.slice(bubStart + bubHtml.length)}
+${ab.slice(0, svgStart)}<!-- stage SVG: section 9.1 -->${ab.slice(svgEnd, picsStart)}<!-- Pictures grid: section 9.2 -->${ab.slice(picsStart + picsHtml.length, bubStart)}<!-- bubble: section 9.3 -->${ab.slice(bubStart + bubHtml.length)}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='${dataProps}'>
 /* section 10 */
@@ -218,21 +242,22 @@ Built by \`node build.mjs\` from the final rig (\`../rig-final/lateral-raise.htm
 - A blue line grows along each hand's path, from the start to where the hand is now, so a beginner can see how high to go and where to stop.
 - Three close-ups (Shoulders, Path, Elbows): the camera glides in, a line or ring marks the thing to look at, and a short tip shows at the bottom.
 - "Pictures" shows four key moments of one rep as still drawings, made from the same drawing as the animation. A phone set to reduce motion always gets the pictures instead of movement.
-- Everything that changes is driven by one class string and one style string on the outer box. Nothing is built by script.
+- Tap a muscle in the animation and a bubble names it: its everyday name in bold, its real name, whether it is the target or helps, and one line on what it does, with a dot in that muscle's colour and a thin outline on the muscle. Tap it again, or the empty stage, to close it. A zoom chip replaces it with the chip's tip.
+- The picture itself is driven by one class string and one style string on the outer box; the bubble and the tapped muscle's outline use a few more holes (section 4a). Nothing is built by script.
 
 ## 1. Files
 
 | File | What it is |
 |---|---|
-| \`index.html\` | Harness: the full player, built the way the artboard is. Query: \`?theme=<id>&t=<0..1>&zoom=1\\|2\\|3&mode=pictures&loop=1&autoplay=0&speed=0.5\`. \`t\` freezes rep 1 at that point. \`zoom\` also takes \`shoulders\`, \`path\`, \`elbows\`. |
-| \`logic.js\` | The artboard's logic class (\`class Component extends DCLogic\`). Pasted as is (section 10). |
+| \`index.html\` | Harness: the full player, built the way the artboard is. Query: \`?theme=<id>&t=<0..1>&zoom=1\\|2\\|3&mode=pictures&loop=1&autoplay=0&speed=0.5\`. \`t\` freezes rep 1 at that point. \`zoom\` also takes \`shoulders\`, \`path\`, \`elbows\`. \`muscle=<id>\` (${MUS.map(m => '\`' + m.id + '\`').join(', ')}) opens that muscle's bubble. |
+| \`logic.js\` | The artboard's logic class (\`class Component extends DCLogic\`). The build writes \`THEMES\`, \`themeVars\`, \`rigVars\` and \`EX\` (rep, chips, muscle table, all from the rig) above it; section 10 is the whole script. |
 | \`build.mjs\` | Builds \`index.html\` and this file. |
-| \`shoot.cjs\` | Checks and screenshots (\`shots/\`). Exits 1 on any failure; writes \`checks.txt\`. |
+| \`shoot.cjs\` | Checks and screenshots (\`shots/\`), including the shared muscle tap check (\`../rig-final/muscle-tap-check.cjs\`). Exits 1 on any failure; writes \`checks.txt\`. |
 | \`canvas-check.cjs\` | Checks the shipped artboard \`project/Player-DumbbellLateralRaise.dc.html\` with a stand-in canvas runtime: its CSS is the harness CSS plus the canvas-only edits (text zoom \`--tz\`, Roboto first, text-coloured accent pill and badge), its stage, figure, Pictures grid, bubbles and logic are the harness text, its drawn frames match the harness and its pixels equal the harness's outside the text the canvas zooms (drawn in the harness's local Roboto), and zoom, Pictures and reduced motion work. Writes \`shots/canvas_*.png\`; exits 1 on any failure. |
 
 ## 2. What the logic must set
 
-Only two holes carry state into the picture: the root \`class\` and the root \`style\`. Everything else is a plain \`sc-if\` flag or a click handler.
+Only two holes carry state into the picture: the root \`class\` and the root \`style\`. Everything else is a plain \`sc-if\` flag, a click handler, or one of the muscle-tap holes of section 4a (the bubble's dot style and two text holes, and per muscle a class hole and a tap and key handler).
 
 Root element:
 
@@ -251,14 +276,14 @@ Root element:
 | \`--delay\` | \`0s\` | always 0 from the logic. The CSS sets its own value for Pictures tiles and stills (section 5) |
 | \`--sw\` | not set by the logic | stroke scale: 1 on the stage (CSS default), 0.75 in Pictures tiles (on each \`<use>\`) |
 
-\`rootClass\` = \`player gen-<a|b>\` + \` zoom-<1|2|3>\` when a chip is on + \` pictures\` in Pictures mode.
+\`rootClass\` = \`player gen-<a|b>\` + \` zoom-<1|2|3>\` when a chip is on + \` pictures\` in Pictures mode. The logic keeps one state field, \`bubble\`: \`{ kind: 'zoom', id }\` (a chip id from \`EX.chips\`; its place in the list gives N), \`{ kind: 'muscle', id }\` or \`null\`, so a zoom and a muscle bubble never show together.
 
 | Class | Set when | What the CSS does |
 |---|---|---|
 | \`gen-a\` / \`gen-b\` | flips on Play after the end (Replay), on a speed change, on a mode change, and when a Pictures still opens or closes | picks the \`-a\` or \`-b\` keyframe set, which restarts every animation from 0 % (the setup pose). The two sets are identical (checked). |
-| \`zoom-1\` | Shoulders chip on | camera \`translate(179px,138px) scale(2.2) translate(-179px,-90px)\`; accent guide lines over both shoulder slopes and two "keep down" arrows; bubble 1 |
-| \`zoom-2\` | Path chip on | camera \`translate(179px,138px) scale(1.2) translate(-179px,-135px)\`; the always-on dashed hand paths and growing trails; bubble 2 |
-| \`zoom-3\` | Elbows chip on | camera \`translate(179px,138px) scale(2.2) translate(-179px,-113px)\`; an accent ring on each elbow, moving with the arm; bubble 3 |
+| \`zoom-1\` | Shoulders chip on | camera \`translate(179px,138px) scale(2.2) translate(-179px,-90px)\`; accent guide lines over both shoulder slopes and two "keep down" arrows; the bubble shows the Shoulders caption |
+| \`zoom-2\` | Path chip on | camera \`translate(179px,138px) scale(1.2) translate(-179px,-135px)\`; the always-on dashed hand paths and growing trails; the bubble shows the Path caption |
+| \`zoom-3\` | Elbows chip on | camera \`translate(179px,138px) scale(2.2) translate(-179px,-113px)\`; an accent ring on each elbow, moving with the arm; the bubble shows the Elbows caption |
 | any \`zoom-N\` | | rep pill row and camera label hide; camera glides in 320 ms \`cubic-bezier(.32,.72,0,1)\`; overlay fades in 150 ms |
 | \`pictures\` | Pictures mode | the 2 x 2 grid of key poses covers the stage; with a \`zoom-N\` as well, the grid hides and the stage shows one still (section 5) |
 
@@ -274,7 +299,8 @@ Every other value the markup reads from \`renderVals()\` (\`sc-if\` flags, \`ari
 | \`showPicsLine\` | Pictures grid showing ("Raise 1 s, pause, lower 2 s") |
 | \`showTempo\` | Animation mode only ("1 s up · 2 s down"). Pictures mode, grid or still, has no tempo note, as on Machine Chest Press and Lat Pulldown |
 | \`isPlay\`, \`isPause\`, \`isReplay\`, \`playLabel\`, \`playDisabled\` | Play button icon, \`aria-label\` and disabled state (disabled under reduced motion) |
-| \`z1\`, \`z2\`, \`z3\` | \`aria-pressed\` of the Shoulders, Path and Elbows chips |
+| \`z1\`, \`z2\`, \`z3\` | \`aria-pressed\` of the Shoulders, Path and Elbows chips (\`pick1\`..\`pick3\` call \`pickZoom\` with the chip's id) |
+| \`showBubble\` | a chip is on (Animation or a Pictures still) or a muscle is tapped (Animation only); the bubble's text holes are in section 4a |
 | \`speed1\`, \`speedHalf\`, \`modeAnim\`, \`modePics\`, \`animDisabled\` | segment buttons |
 | \`hintAnim\`, \`hintPics\`, \`hintRm\` | which hint line shows |
 
@@ -320,6 +346,26 @@ Animated groups (each has an identical \`-a\` and \`-b\` keyframe set): ${animat
 The animation keeps running while zoomed. Each chip's subject stays inside the stage and above the bubble for the whole rep (checked at 41 phases, section 11).
 
 Chips differ from spec 3.5 on purpose, as the final rig decided (RIG.md sections 15 and 17): Grip (242, 139, 2.0) became Shoulders (179, 90, 2.2), because from the front each hand is a small fist round a handle that points at the camera: the whole fist shows above the dumbbell head, with the index finger and thumb closed as a ring round the handle, but a light grip and which way the palms face (the Grip cue) cannot be seen from the front, while shrugging is a listed common mistake that this view shows well; Path moved from (179, 120, 1.25) to (179, 135, 1.2), because at 120 the bottom of the path sat under the bubble; Elbows moved from (224, 113) to (179, 113), because at 224 the screen-left elbow left the stage near the top of the rep. The head centre is (179, 73), not 77, so the chin does not cover the neck. The dumbbell end face is a hex of r 6.6 (squashed to 0.92 tall), centred 12.5 below the grip so the whole hand shows above it, the rig's size (RIG.md sections 7 and 20), not the spec's r 7.
+
+## 4a. Muscle info on tap (spec 2.10; rig-final/RIG.md section 21)
+
+The stage markup (section 9.1) is the rig's: every muscle polygon with a role carries a class hole, and each gets a halo hotspot (an invisible copy, class \`hot\`, a wide transparent stroke so the tap target is at least 44 px, \`role="button"\`, \`tabindex="0"\`, an \`aria-label\`) and a core copy (class \`hot hot-core\`, no stroke) painted after every halo, so a tap on a muscle's own fill always opens that muscle. Hotspots sit in the same animated groups as their muscles and follow the motion; \`.pics .hot{pointer-events:none}\` and the grid keep Pictures free of them.
+
+| Muscle (\`EX.muscles\`) | Role | Class hole | Tap / key holes | Bubble (bold name, then the rest) |
+|---|---|---|---|---|
+${MUS.map(m => `| \`${m.id}\` | ${m.role === 'main' ? 'target' : 'helps'} | \`cls${m.Id}\` = \`${m.cls}\` (+ \` sel\` while tapped) | \`tap${m.Id}\`, \`key${m.Id}\` | **${m.common}** (${m.anatomical}), ${m.role === 'main' ? 'target' : 'helps'}. ${m.line} |`).join('\n')}
+
+Markup: each halo and core carries \`onClick="{{ tap<Id> }}" onKeyDown="{{ key<Id> }}"\`; each muscle polygon \`class="{{ cls<Id> }}"\`; the stage \`onClick="{{ tapStage }}"\`; the bubble (section 9.3) \`<span class="dot" style="{{ bubbleDotStyle }}"></span><span class="bt"><b>{{ bubbleName }}</b> {{ bubbleRest }}</span>\`.
+
+| Hole | Value |
+|---|---|
+| \`bubbleDotStyle\` | \`background:var(--muscle-main)\` for the target, \`var(--muscle-help)\` for a helper, \`var(--accent)\` for a chip |
+| \`bubbleName\` | the muscle's common name (bold); empty for a chip |
+| \`bubbleRest\` | \`(anatomical), target|helps. Line.\`, or the chip's caption |
+| \`bubbleText\` | the whole line as plain text (not used by the markup; for tests and screen readers) |
+| \`hots\` | the tap and key handlers as a list (harness \`data-hot\` binding only) |
+
+Handlers (\`logic.js\`): \`tapMuscle(id, e)\` toggles that muscle's bubble in Animation mode only (it stops the event and notes the time); \`keyMuscle(id, e)\` accepts Enter and Space; \`tapStage(e)\` closes a muscle bubble on a tap of the stage background, never a zoom, never a tap inside the bubble, and not within 80 ms of a hotspot tap; \`pickZoom(id)\` replaces a muscle bubble with the chip's caption. The rep pill, camera label and camera stay as they are while a muscle bubble is open. Mode changes and Play from Pictures close any bubble.
 
 ## 5. Pictures mode and stills
 
@@ -373,7 +419,7 @@ ${stageSvg}
 ${picsHtml}
 \`\`\`
 
-### 9.3 Caption bubbles (one per zoom state; CSS shows the one that matches the root class)
+### 9.3 Bubble (a zoom chip's caption or a tapped muscle's line; section 4a)
 
 \`\`\`html
 ${bubHtml}
@@ -393,12 +439,13 @@ ${artboardScript}
 - Movement over 201 phases (\`getCTM\`): arm angle A at every key point of the tempo table, both shoulders fixed (no shrug), left and right hands mirror each other, hands and elbows never above the shoulder line, elbow bend fixed at 15 degrees, dumbbells level, grip on the rig's timed path, figure inside the safe area of the stage.
 - Loop off (a real 12 s run): 3 reps, stop in the reset pose, Replay restarts through the \`-b\` set; 0.5x gives an 8 s rep and the Slow motion pill; Pause holds the frame; autoplay off starts on the setup pose.
 - Phase captions: exactly one shows, the right one, in each window. The five themes paint from \`?theme=\`.
-- Each zoom state: camera transform, only its own bubble, pill row and camera label hidden, subject inside the stage and above the bubble at 41 phases.
+- Each zoom state: camera transform, the one bubble with that chip's caption, pill row and camera label hidden, subject inside the stage and above the bubble at 41 phases.
 - Pictures: grid shown, 4 different poses; stills: grid hidden, Path still on pose 3.
 - Reduced motion: paused even when the root style says running, grid shown, hint, Animation disabled.
 - Smoothness (UPGRADE-BRIEF.md target 4; docs/COACHING-DECISIONS.md D-R1): the rig's own numbers on the written stops of this build are (a) ${(LR.smooth.a * 100).toFixed(2)} %, (b) ${(LR.smooth.b * 100).toFixed(2)} %, (c) ${LR.smooth.c.toFixed(2)} x (limits 1 %, 8 %, 3 x). \`shoot.cjs\` measures the drawn page with \`../smooth-check.cjs\` (every joint angle and the grip at 120 samples per second, plus the keyframe stops) and prints the numbers per phase; the last run is in \`checks.txt\`.
 - Target muscle visible at the hardest point (\`../rig-final/muscle-check.cjs\`): the accent pixels of the main muscle in the hold are at least 97 % of those at setup. Caption row (\`../rig-final/caption-check.cjs\`): caption and tempo never overlap or leave the player in idle, ended, the four captions and Pictures, drawn with the canvas font (Roboto).
 - Secondary motion: the upper-trap helper tint eases 1 -> 0.7 with the lift and back on the move's timing (opacity only; the shoulder joints, the 15-degree bend and the level dumbbells are checked above).
+- Muscle info on tap (\`../rig-final/muscle-tap-check.cjs\`, spec 2.10): every muscle has halo hotspots of at least 44 px with button semantics and a core per polygon at t 0 and 0.25; at t 0.3 a tap on each muscle shows its exact text, bold name, dot in its own colour and the outline on its polygons only, with nothing else moving; a second tap closes; a chip replaces the muscle bubble; Enter opens, Space closes; the stage background closes; each text fits two lines in Roboto; no hotspot is hit-testable in Pictures; no hotspot is animated or matches a zoom subject.
 - Every binding in the markup exists in \`renderVals()\`; no page errors.
 
 ## 12. Risks
@@ -411,6 +458,7 @@ ${artboardScript}
 | Page weight (about 140 KB; limit 450 KB) from the doubled keyframe sets and the detailed figure | Generated, never typed. The real app plays the same samples with the Web Animations API and needs one copy. |
 | The 200 ms timer stops the set a few ms before the CSS end | The last 0.5 s of every rep is the still reset pose, equal to the setup pose, so the frame is the same; checked that every animation stops inside that window and the grip sits at the setup position. |
 | The chips differ from spec 3.5 (Shoulders instead of Grip, two centres moved) | Decided by the final rig with reasons (section 4); spec.md section 3.5 carries the same chips and reasons (applied 2026-09-27). |
+| A hotspot's halo takes a tap meant for a neighbouring muscle | Every muscle also has a core copy painted after every halo, so its own fill always wins (D-R7); the muscle tap check taps each muscle where it is visible. |
 | Midnight: the accent muscle tint is weak on the body (1.63:1) | As in the rig: each muscle polygon has its own thin outline, the figure outline carries the shape, and the muscles are named in text. |
 `;
 fs.writeFileSync(path.join(DIR, 'PLAYER.md'), md);

@@ -536,3 +536,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-R9)**: the tap check aims at a point where the muscle is visible (the first core polygon whose centre hit-tests to that muscle) and fails when there is none; a muscle a nearer part covers at that point opens the nearer part's muscle.
   **Why**: at the hold the front delt visibly covers the upper pec fan and the upper triceps, so a tap there must open the delt, as a finger would expect; the check must not tap through a covering part. The muscle-visibility check (D-R5) already guards that the target stays visible somewhere at the hardest point.
   **Source**: `rig-final/muscle-tap-check.cjs`; hit-point probe, 2026-09-27.
+
+- **Decided (D-R10)**: the lat pulldown's lats line is "Pulls the elbows down and back; hardest at the bottom." and its mid-back line "Squeezes the shoulder blades together." (87 and 88 characters with the name and role); spec.md 2.10 now says the same, and the app's lines (GU-7a-3) follow the spec.
+  **Why**: the same two-line bubble limit as D-R8: the spec's longer lines (118 and 102) wrap to three lines (72 px) in Roboto at 13 px. The short lines keep the cue.
+  **Source**: `anim-lat-pulldown/gen.mjs` muscle table and its tap probe, 2026-09-27.
+
+- **Decided (D-R11)**: every rig-built player has one shared bubble (a zoom chip's tip or a tapped muscle's info), not one bubble per chip; the players' zoom checks now require exactly one visible bubble showing that chip's own caption with an accent dot (stricter than the old "only bubble N shows").
+  **Why**: the rig's round-3 Component has one bubble state (`{kind, id}`), so a zoom and a muscle bubble never show together (spec 2.10), and the shared `muscle-tap-check.cjs` reads the page's one `.bubble`.
+  **Source**: the chest press, lateral raise and lat pulldown `shoot.cjs` runs, 2026-09-27 (ALL CHECKS PASSED each).
+
+- **Decided (D-R12)**: in the lat pulldown the three lat parts (core, lower lat, flare) share one class hole and so one effort fade, and the flare's tap area is its full shape.
+  **Why**: the canvas format allows one class hole per muscle (FORMAT-RULES.md); the setup and hold frames look the same as before. A tap area that shrank with the flare would fall under 44 px at setup.
+  **Source**: `anim-lat-pulldown/gen.mjs`, `dc-stage.cjs` (no problems), 2026-09-27.

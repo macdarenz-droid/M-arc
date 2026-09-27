@@ -22,7 +22,7 @@ PASS paper: figure outline 4.66 on stage and 3.23 over the body, frame 3.20, met
 PASS ember: figure outline 7.23 on stage and 4.29 over the body, frame 3.56, metal 10.03, cable 6.23 (>= 3); outline over the T-shirt facets 3.15 / 5.05 and skin 3.35 (light 2.53, dark 4.21) (>= 2); skin vs T-shirt 1.28 (>= 1.1), shorts vs skin 1.93 (>= 1.25) and vs pads 3.57 (>= 1.5), T-shirt vs pads 1.45 (>= 1.2); rim vs outline 1.40 (>= 1.25), knurl 2.14 (>= 1.8), seam 2.17 (>= 1.5)
 PASS emerald: figure outline 6.17 on stage and 3.79 over the body, frame 3.23, metal 8.37, cable 5.38 (>= 3); outline over the T-shirt facets 2.87 / 4.40 and skin 3.04 (light 2.35, dark 3.72) (>= 2); skin vs T-shirt 1.25 (>= 1.1), shorts vs skin 1.81 (>= 1.25) and vs pads 3.19 (>= 1.5), T-shirt vs pads 1.41 (>= 1.2); rim vs outline 1.37 (>= 1.25), knurl 2.01 (>= 1.8), seam 2.04 (>= 1.5)
 PASS midnight: figure outline 5.72 on stage and 3.14 over the body, frame 3.18, metal 7.56, cable 5.05 (>= 3); outline over the T-shirt facets 2.45 / 3.70 and skin 2.57 (light 2.06, dark 3.16) (>= 2); skin vs T-shirt 1.22 (>= 1.1), shorts vs skin 1.68 (>= 1.25) and vs pads 2.87 (>= 1.5), T-shirt vs pads 1.40 (>= 1.2); rim vs outline 1.29 (>= 1.25), knurl 1.89 (>= 1.8), seam 1.88 (>= 1.5)
-PASS index.html: no colour literal in the page CSS or the player markup, every paint is a token or a color-mix() of tokens (CSS 310950 chars, markup 49544 chars scanned)
+PASS index.html: no colour literal in the page CSS or the player markup, every paint is a token or a color-mix() of tokens (CSS 311313 chars, markup 51674 chars scanned)
 PASS the lat bar is inside the near hand group (spec 2.4, RIG section 4: held equipment lives in the hand group, so the grip can never come apart): 2 of 2 bar layers (the whole bar under the fist, its near end over it) are in the hand group
 PASS near hand on the bar in the browser over 201 phases: worst gap 0.000 units (limit 0.05: same group)
 PASS far hand on the bar's far grip in the browser over 201 phases: worst gap 0.009 units (limit 0.5)
@@ -41,16 +41,16 @@ PASS smooth motion in the browser (the drawn arm read back at all 203 keyframe s
 PASS close-ups at the setup pose and their stills: Grip and Path show the front pulley, the whole cable and the near fist inside the stage and above the bubble, and the far arm does not stick out of the top (Grip: pulley top 6.3, far arm top 30); Pad shows the feet above its bubble (feet bottom 196.9, bubble top 210)
 PASS Grip close-up over 41 phases: the far arm stays inside the stage (highest point 30.0) and the far hand never goes under the front-view inset (0 found)
 PASS Grip inset bar matches the scene's bar: 150 long, straight between +-48, both ends bent down 6, hands at +-36, and the whole bar inside the inset (bar x -75.0 to 75.0, view x -80 to 80)
-PASS zoom-1 (grip): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-1 (grip): rep pill and camera label hidden, the one bubble shown with this chip's caption ("Hands a little wider than your shoulders, thumbs around the bar.")
 PASS zoom-1 (grip): subject inside the stage and above the bubble over 41 phases (top 37.2, bottom 204.6 vs bubble 210.0, x 120.6-199.2)
 PASS zoom-1 (grip): overlay shown (opacity 1)
 PASS zoom-1 (grip): front-view inset shown (x 220-348, y 10-106.6), and the ring is never under it over 41 phases (0 found)
 PASS zoom-1 (grip): path guide and "still to go" line hidden, so no blue line runs beside the hand and the cable (QA r2 issue 4)
-PASS zoom-2 (path): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-2 (path): rep pill and camera label hidden, the one bubble shown with this chip's caption ("The bar comes down in front of your face to the top of your chest.")
 PASS zoom-2 (path): subject inside the stage and above the bubble over 41 phases (top 73.5, bottom 191.2 vs bubble 210.0, x 161.2-198.7)
 PASS zoom-2 (path): overlay shown (opacity 1; the path and the "still to go" line drawn over the arm)
 PASS zoom-2 (path): front-view inset hidden
-PASS zoom-3 (pad): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-3 (pad): rep pill and camera label hidden, the one bubble shown with this chip's caption ("Thigh pad snug on your thighs, feet flat. It stops you lifting off.")
 PASS zoom-3 (pad): subject inside the stage and above the bubble over 41 phases (top 14.5, bottom 86.7 vs bubble 210.0, x 142.9-196.1)
 PASS zoom-3 (pad): overlay shown (opacity 1)
 PASS zoom-3 (pad): front-view inset hidden
@@ -72,6 +72,21 @@ PASS caption row in Roboto: the caption text and the tempo note stay inside the 
 PASS lat pulldown: target muscle visible at the hardest point: 538 accent pixels in the hold (t 0.3) vs 417 at setup (t 0), at least 97 % (accent #5e6ad2; glow, guides, pin, overlays and helpers hidden while counting)
 PASS lat pulldown: caption and tempo never overlap or leave the 358 px player in 7 states (idle cap 0-203 tempo 269-358; ended cap 0-222 tempo 269-358; caption 1 cap 0-144 tempo 269-358; caption 2 cap 0-144 tempo 269-358; caption 3 cap 0-144 tempo 269-358; caption 4 cap 0-144 tempo 269-358; Pictures cap 0-201)
 PASS lat pulldown: the canvas font drew the caption row (Roboto loaded) and no state clipped the caption (longest: "Done. Tap Replay to watch again.")
+PASS lat pulldown muscle tap: at t 0 every muscle has its halo hotspot(s) with button semantics and a hit box of at least 44 px, plus a core copy per polygon (lats: 3 halos + 3 cores, 47 px; biceps: 2 halos + 2 cores, 45 px; midBack: 1 halo + 1 core, 46 px)
+PASS lat pulldown muscle tap: at t 0.25 every muscle has its halo hotspot(s) with button semantics and a hit box of at least 44 px, plus a core copy per polygon (lats: 3 halos + 3 cores, 47 px; biceps: 2 halos + 2 cores, 47 px; midBack: 1 halo + 1 core, 46 px)
+PASS lat pulldown muscle tap: tapping the target at t 0.3 shows "Lats (latissimus dorsi), target. Pulls the elbows down and back; hardest at the bottom." with the bold name "Lats" and the dot in the target colour (rgb(94, 106, 210) = the region's fill)
+PASS lat pulldown muscle tap: the .sel outline (rgb(247, 248, 248), 1.5px) is on the target's 3 polygon(s) only
+PASS lat pulldown muscle tap: the rep pill and camera label stay, the camera stays at 1x and nothing in the layout moves (stage and caption row 16.0,276.0,300.0,20.0)
+PASS lat pulldown muscle tap: a second tap on the target closes the bubble and clears the outline
+PASS lat pulldown muscle tap: tapping Biceps shows "Biceps (biceps brachii), helps. Bends the elbows as the bar comes down." with the dot in the helper colour (color(srgb 0.281059 0.304392 0.493616)) and the outline on its 2 polygon(s)
+PASS lat pulldown muscle tap: tapping Mid back shows "Mid back (rhomboids and middle trapezius), helps. Squeezes the shoulder blades together." with the dot in the helper colour (color(srgb 0.281059 0.304392 0.493616)) and the outline on its 1 polygon(s)
+PASS lat pulldown muscle tap: a zoom chip replaces the muscle bubble with its caption ("Hands a little wider than your shoulders, thumbs around the bar.", accent dot, no outline, pill hidden)
+PASS lat pulldown muscle tap: a second tap on the chip closes it, nothing restored (bubble hidden, camera 1x, pill back)
+PASS lat pulldown muscle tap: keyboard, Enter on the focused target opens the bubble and Space closes it
+PASS lat pulldown muscle tap: a tap on the stage background closes the muscle bubble
+PASS lat pulldown muscle tap: every muscle text fits two lines in Roboto (bubble heights lats 54 px, biceps 54 px, midBack 54 px; two lines = 54 px)
+PASS lat pulldown muscle tap: 12 hotspots (halos and cores) carry no animation class and match no zoom subject or muscle class, so the smoothness, muscle-visibility and keep-clear checks never see them
+PASS lat pulldown muscle tap: in Pictures mode no hotspot is hit-testable (1530 points over the stage, 0 hit)
 PASS lat pulldown smoothness: sampler found 7 joint angles (lp-fua, lp-ffa, lp-fbar, lp-cable-f, lp-ua, lp-fa, lp-bar) and 1 grip point(s)
 PASS lat pulldown smoothness: sampler self-test, drawn angle vs written stop at 63 stops, worst 0.0000 deg (limit 0.01)
 PASS lat pulldown smoothness (a) lift: speed over the first and last 1/120 s at most 0.12 % of the phase's top speed (lp-cable-f; limit 1 %)

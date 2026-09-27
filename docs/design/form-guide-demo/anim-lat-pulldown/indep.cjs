@@ -23,7 +23,7 @@ const REP = 4000;
     const svg = () => document.querySelector('.stage svg.scene');
     window.__pt = (el, x, y) => { const m = el.getScreenCTM(); const s = svg().getBoundingClientRect(); const P = new DOMPoint(x, y).matrixTransform(m); return [P.x - s.left, P.y - s.top]; };
     window.__scr = (el, x, y) => { const m = el.getScreenCTM(); const P = new DOMPoint(x, y).matrixTransform(m); return [P.x, P.y]; };
-    window.__visible = el => { for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return false; } return true; };
+    window.__visible = el => { if (el.classList && el.classList.contains('hot')) return false; for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return false; } return true; };
     window.__topAt = (x, y) => { const els = document.elementsFromPoint(x, y); for (const e of els) { if (e.tagName === 'svg' || e.tagName === 'g') continue; if (!window.__visible(e)) continue; return e; } return null; };
     window.__cat = e => { if (!e) return 'none'; if (e.closest('.lp-cable-f')) return 'cable'; if (e.closest('.far-arm')) return 'farArm'; if (e.classList.contains('lp-hook')) return 'hook'; if (e.closest('.lp-bar')) return 'bar'; if (e.closest('.machine-back')) return 'machine'; if (e.closest('.arm-near')) return 'nearArm'; if (e.closest('.figure')) return 'body'; if (e.closest('.far-side')) return 'farLeg'; return e.getAttribute('class') || e.tagName; };
   };

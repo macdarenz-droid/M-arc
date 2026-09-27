@@ -1,5 +1,5 @@
 // canvas-check.cjs: tests the shipped artboard project/Player-DumbbellLateralRaise.dc.html, not the harness.
-// It renders the artboard with a minimal stand-in for the canvas runtime (holes, sc-if, onClick, disabled) in the
+// It renders the artboard with a minimal stand-in for the canvas runtime (holes in attributes and text, sc-if, onClick, onKeyDown, disabled) in the
 // same local Roboto the harness uses (rig-final/fonts; the canvas loads it from Google Fonts), proves parity with
 // index.html (text, drawn frames and pixels), runs the zoom, Pictures and reduced-motion probes, and writes
 // canvas_*.png frames into shots/. Run after `node build.mjs`: node canvas-check.cjs (exit 1 on a failure).
@@ -27,13 +27,17 @@ function render(){
   let n; while((n=tpl.content.querySelector('sc-if'))){const ok=lookup(n.getAttribute('value').replace(/[{}\\s]/g,''),v); if(ok) n.replaceWith(...n.childNodes); else n.remove();}
   tpl.content.querySelectorAll('*').forEach(el=>{for(const a of [...el.attributes]){const m=a.value.match(/^\\s*\\{\\{\\s*([\\w.$]+)\\s*\\}\\}\\s*$/);
     if(a.name==='onclick'&&m){el.removeAttribute(a.name);el.onclick=lookup(m[1],v);continue;}
+    if(a.name==='onkeydown'&&m){el.removeAttribute(a.name);el.onkeydown=lookup(m[1],v);continue;}
     if(a.name==='disabled'&&m){el.removeAttribute('disabled');el.disabled=!!lookup(m[1],v);continue;}
     if(/\\{\\{/.test(a.value)) el.setAttribute(a.name,a.value.replace(/\\{\\{\\s*([\\w.$]+)\\s*\\}\\}/g,(_,q)=>{const x=lookup(q,v);return x==null?'':String(x)}));}});
+  const tw=document.createTreeWalker(tpl.content,NodeFilter.SHOW_TEXT),texts=[]; while(tw.nextNode()) if(/\\{\\{/.test(tw.currentNode.nodeValue)) texts.push(tw.currentNode);
+  texts.forEach(t=>{t.nodeValue=t.nodeValue.replace(/\\{\\{\\s*([\\w.$]+)\\s*\\}\\}/g,(_,q)=>{const x=lookup(q,v);return x==null?'':String(x)});});
   document.getElementById('host').replaceChildren(tpl.content);
 }
 const comp=new Component({theme:CFG.theme||'silent-black',autoplay:CFG.autoplay!==false,loop:CFG.loop!==false});
 if(CFG.mode==='pics')Object.assign(comp.state,{mode:'pics',playing:false,started:false});
-if(CFG.zoom)comp.state.zoom=CFG.zoom;
+if(CFG.zoom)comp.state.bubble={kind:'zoom',id:EX.chips[CFG.zoom-1].id};
+if(CFG.muscle)comp.state.bubble={kind:'muscle',id:CFG.muscle};
 if(CFG.t!=null)Object.assign(comp.state,{playing:false,started:true});
 render(); if(comp.componentDidMount)comp.componentDidMount();
 </script></body></html>`;
@@ -45,6 +49,15 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
 // Pictures grid, bubbles and logic class must equal the harness text; the rest of its markup (caption row,
 // chips, controls, hint) must equal PLAYER.md section 7. A rebuild that touches a canvas-edited rule fails
 // the count here: carry that rule by hand, then update the table.
+// The harness markup carries data-* bindings where the artboard carries holes; conv() applies exactly the build's
+// muscle-tap conversion (PLAYER.md section 4a) so the two texts can be compared character for character.
+const EXc = (() => { try { return JSON.parse(script.match(/\nconst EX = (\{.*\});\n/)[1]); } catch (e) { return { chips: [], muscles: [] }; } })();
+check(EXc.muscles.length > 0 && EXc.chips.length === 3, `canvas player: the logic carries the rig's EX with ${EXc.chips.length} chips and ${EXc.muscles.length} muscles`);
+const conv = s => s.replace(/ data-hot="(\d+)"/g, (_, i) => { const m = EXc.muscles[+i] || { Id: `Missing${i}` }; return ` onClick="{{ tap${m.Id} }}" onKeyDown="{{ key${m.Id} }}"`; })
+  .replace(/class="[^"]*" data-class="(cls[A-Za-z0-9]+)"/g, 'class="{{ $1 }}"')
+  .replace('<div class="bubble" data-if="showBubble" hidden><span class="dot" data-style="bubbleDotStyle"></span><span class="bt"><b data-text="bubbleName"></b> <span data-text="bubbleRest"></span></span></div>',
+    '<div class="bubble"><span class="dot" style="{{ bubbleDotStyle }}"></span><span class="bt"><b>{{ bubbleName }}</b> {{ bubbleRest }}</span></div>');
+const idxC = conv(idx);
 const hCss = idx.match(/<style>\n\/\* Artboard:[^\n]*\*\/\n([\s\S]*?)<\/style>/)[1];
 const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet>/)[1];
 {
@@ -72,22 +85,24 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
   const hk = kf(hCss), ck = kf(cCss);
   check(hk.length > 0 && hk.join() === ck.join() && kfText(hCss) === kfText(cCss), `canvas player: same keyframe names (${ck.length}) and the same keyframe text as the harness`);
   const groups = s => [...s.match(/<svg class="scene"[\s\S]*?<\/svg>/)[0].matchAll(/class="([^"]*\banim\b[^"]*)"/g)].map(m => m[1]);
-  const hg = groups(idx), cg = groups(markup);
+  const hg = groups(idxC), cg = groups(markup);
   check(hg.length > 0 && hg.join('|') === cg.join('|'), `canvas player: same animated groups as the harness (${cg.length}: ${[...new Set(cg.map(c => c.match(/lr-[\w-]+/)?.[0]).filter(Boolean))].join(', ')})`);
   // the figure group, cut by counting nested <g> tags
   const figure = s => { const i = s.indexOf('<g class="figure"'); if (i < 0) return ''; const re = /<g[\s>]|<\/g>/g; re.lastIndex = i; let d = 0, m; while ((m = re.exec(s))) { d += m[0][1] === '/' ? -1 : 1; if (!d) return s.slice(i, m.index + 4); } return ''; };
-  const hf = figure(idx), cf = figure(markup);
+  const hf = figure(idxC), cf = figure(markup);
   check(hf.length > 0 && hf === cf, `canvas player: the figure markup is the harness text (${cf.length} chars, ${(cf.match(/<polygon/g) || []).length} polygons)`);
   const piece = (s, re) => (s.match(re) || [''])[0];
-  const PIECES = { stage: /<svg class="scene"[\s\S]*?<\/svg>/, pictures: /<div class="pics">[^\n]*/, bubbles: /<div class="bubble bub-1">[\s\S]*?bub-3[^\n]*/ };
-  const pm = Object.entries(PIECES).filter(([, re]) => !piece(idx, re) || piece(idx, re) !== piece(markup, re)).map(([k]) => k);
-  check(!pm.length, `canvas player: stage SVG (figure, dumbbells, paths, overlays), Pictures grid and bubbles are the harness text${pm.length ? '; differ: ' + pm.join(', ') : ''}`);
+  const PIECES = { stage: /<svg class="scene"[\s\S]*?<\/svg>/, pictures: /<div class="pics">[^\n]*/, bubble: /<div class="bubble">[^\n]*?\{\{ bubbleRest \}\}<\/span><\/div>/ };
+  const pm = Object.entries(PIECES).filter(([, re]) => !piece(idxC, re) || piece(idxC, re) !== piece(markup, re)).map(([k]) => k);
+  check(!/data-(hot|class|text|style)=/.test(piece(idxC, PIECES.stage) + piece(idxC, PIECES.bubble)) && /onKeyDown="\{\{ key/.test(piece(markup, PIECES.stage)) && /class="\{\{ cls/.test(piece(markup, PIECES.stage)),
+    `canvas player: the stage's hotspots carry onClick/onKeyDown holes and its muscle polygons class holes; nothing of the harness's data-* muscle bindings is left after the conversion`);
+  check(!pm.length, `canvas player: stage SVG (figure, dumbbells, paths, overlays, muscle hotspots), Pictures grid and bubble are the harness text (with the muscle-tap holes)${pm.length ? '; differ: ' + pm.join(', ') : ''}`);
   const hLogic = idx.match(/\/\* ===== artboard logic[^\n]*\n([\s\S]*?)\n\/\* ===== harness only/)[1];
   check(hLogic.trim() === script.trim(), 'canvas player: the logic class is the harness logic, character for character');
   // the rest of the markup (caption row, chips, controls, hint) and data-props: PLAYER.md section 7 with 9.1-9.3 filled
   const sec = (head, lang) => { const i = md.indexOf(head); const a = md.indexOf('```' + lang + '\n', i) + lang.length + 4; return md.slice(a, md.indexOf('\n```\n', a)); };
   const skel = sec('## 7. Artboard skeleton', 'html').replace('<!-- stage SVG: section 9.1 -->', () => sec('### 9.1 Stage SVG', 'html'))
-    .replace('<!-- Pictures grid: section 9.2 -->', () => sec('### 9.2 Pictures grid', 'html')).replace('<!-- caption bubbles: section 9.3 -->', () => sec('### 9.3 Caption bubbles', 'html'));
+    .replace('<!-- Pictures grid: section 9.2 -->', () => sec('### 9.2 Pictures grid', 'html')).replace('<!-- bubble: section 9.3 -->', () => sec('### 9.3 Bubble', 'html'));
   const mdMarkup = skel.match(/<\/helmet>([\s\S]*?)<\/x-dc>/)[1], props = s => (s.match(/data-dc-script data-props='([^']*)'/) || [])[1];
   check(mdMarkup === markup && props(skel) === props(src), 'canvas player: markup (caption row, chips, controls, hint) and data-props are PLAYER.md section 7, character for character');
   // format rules the artboard must keep
@@ -146,18 +161,45 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
     check(r.out.length === 0 && r.n === 3, `canvas player (${theme}): caption row, 3 zoom chips, controls and hint inside the player with no overflow${r.out.length ? '; over: ' + r.out.join(', ') : ''} (stage ${r.bg})`);
     await ctx.close();
   }
-  // ---- 4. Zoom: a chip click through the onClick hole zooms, shows only its bubble, and a second click zooms out
+  // ---- 4. Zoom: a chip click through the onClick hole zooms, shows the one bubble with its caption, and a second click zooms out
   {
     const { page, ctx } = await open({});
     const read = () => page.evaluate(() => ({ cls: document.querySelector('.player').className, pressed: [...document.querySelectorAll('.chips .chip')].map(c => c.getAttribute('aria-pressed')).join(),
-      bub: [...document.querySelectorAll('.bubble')].map(x => getComputedStyle(x).display !== 'none' ? 1 : 0).join(''), pill: getComputedStyle(document.querySelector('.pill-row')).display }));
+      bub: [...document.querySelectorAll('.bubble')].map(x => getComputedStyle(x).display !== 'none' ? 1 : 0).join(''), text: (document.querySelector('.bubble') || {}).textContent || '', pill: getComputedStyle(document.querySelector('.pill-row')).display }));
     await page.click('.chips .chip:nth-child(1)'); await page.waitForTimeout(900);
     const z = await read();
     const m = await page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.cam')).transform).a);
     await page.click('.chips .chip:nth-child(1)'); await page.waitForTimeout(900);
     const off = await read();
-    check(/\bzoom-1\b/.test(z.cls) && z.pressed === 'true,false,false' && z.bub === '100' && z.pill === 'none' && Math.abs(m - 2.2) < 0.01 && !/zoom-/.test(off.cls) && off.bub === '000' && off.pill !== 'none',
-      `canvas player: Shoulders chip zooms (x${m.toFixed(2)}, pressed ${z.pressed}, bubbles ${z.bub}, pill ${z.pill}) and a second tap zooms out (bubbles ${off.bub})`);
+    check(/\bzoom-1\b/.test(z.cls) && z.pressed === 'true,false,false' && z.bub === '1' && z.text.replace(/\s+/g, ' ').trim() === EXc.chips[0].caption && z.pill === 'none' && Math.abs(m - 2.2) < 0.01 && !/zoom-/.test(off.cls) && off.bub === '' && off.pill !== 'none',
+      `canvas player: Shoulders chip zooms (x${m.toFixed(2)}, pressed ${z.pressed}, bubbles ${z.bub}, "${z.text.trim()}", pill ${z.pill}) and a second tap zooms out (bubbles ${off.bub || 'none'})`);
+    await ctx.close();
+  }
+  // ---- 4a. Muscle info on tap through the holes: tap, key and stage handlers, text holes, dot style and class holes
+  {
+    const { page, ctx } = await open({ t: 0.3 });
+    const read = () => page.evaluate(() => { const b = document.querySelector('.bubble'); return { text: b ? b.textContent.replace(/\s+/g, ' ').trim() : '', name: b ? b.querySelector('b').textContent : '', dot: b ? getComputedStyle(b.querySelector('.dot')).backgroundColor : '',
+      sel: [...document.querySelectorAll('.stage .scene .sel')].map(el => el.classList.contains('mm') ? 'mm' : el.classList.contains('mh') ? 'mh' : '?'),
+      mm: getComputedStyle(document.querySelector('.stage .scene .mm')).fill, mh: getComputedStyle(document.querySelector('.stage .scene .mh')).fill, pill: getComputedStyle(document.querySelector('.pill-row')).display }; });
+    const tapAt = region => page.evaluate(region => { for (const el of document.querySelectorAll('.stage .scene .hot-core')) { if (el.dataset.muscle !== region) continue; const b = el.getBBox(), m = el.getScreenCTM(), x = b.x + b.width / 2, y = b.y + b.height / 2, p = { x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f }; const h = document.elementFromPoint(p.x, p.y); if (h && h.dataset.muscle === region) return p; } return null; }, region);
+    const text = m => `${m.common} (${m.anatomical}), ${m.role === 'main' ? 'target' : 'helps'}. ${m.line}`;
+    const res = [];
+    for (const m of EXc.muscles) {
+      const p = await tapAt(m.region); if (!p) { res.push(`${m.id}: no tap point`); continue; }
+      await page.mouse.click(p.x, p.y); const r = await read();
+      const ok = r.text === text(m) && r.name === m.common && r.dot === (m.role === 'main' ? r.mm : r.mh) && r.sel.length > 0 && r.sel.every(c => c === (m.role === 'main' ? 'mm' : 'mh')) && r.pill !== 'none';
+      res.push(ok ? 'ok' : `${m.id}: "${r.text}" dot ${r.dot} (fill ${m.role === 'main' ? r.mm : r.mh}) sel ${r.sel.join('+')}`);
+      await page.mouse.click(p.x, p.y); const c = await read(); if (c.text) res.push(`${m.id}: second tap left "${c.text}"`);
+    }
+    // keyboard through onKeyDown: Enter on the target's hotspot opens; the stage background (onClick tapStage) closes
+    const target = EXc.muscles.find(m => m.role === 'main') || { region: 'none', common: 'no target', anatomical: '', role: 'main', line: '' };
+    if (!EXc.muscles.length) res.push('no muscles in EX');
+    await page.evaluate(region => { const el = document.querySelector(`.stage .scene .hot[data-muscle="${region}"]`); if (el) el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); }, target.region);
+    const k = await read();
+    await page.waitForTimeout(120);
+    const st = await page.evaluate(() => { const r = document.querySelector('.stage').getBoundingClientRect(); return { x: r.left + 330, y: r.top + 150 }; });
+    await page.mouse.click(st.x, st.y); const bg = await read();
+    check(res.every(x => x === 'ok') && k.text === text(target) && !bg.text, `canvas player: muscle tap through the holes: each muscle's hotspot opens its bubble (text, bold name, dot in its colour, outline on its polygons, pill kept) and closes on a second tap; Enter opens the target; the stage background closes (${res.join(', ')}; Enter "${k.name}"; background ${bg.text ? 'left "' + bg.text + '"' : 'closed'})`);
     await ctx.close();
   }
   // ---- 5. Pictures: grid of 4 different poses; a still hides the grid and shows its own caption
@@ -222,6 +264,8 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
     ['canvas_pictures_still_zoom2.png', { mode: 'pics', zoom: 2 }, '?mode=pictures&zoom=2'],
     ['canvas_reduced-motion.png', {}, '', { rm: true }],
     ['canvas_about-import_autoplay-off.png', { autoplay: false, loop: false }, '?autoplay=0'],
+    ['canvas_muscle-sideDelts_silent-black.png', { t: 0.3, muscle: 'sideDelts' }, '?t=0.3&muscle=sideDelts'],
+    ['canvas_muscle-upperTraps_paper.png', { t: 0.3, muscle: 'upperTraps', theme: 'paper' }, '?theme=paper&t=0.3&muscle=upperTraps'],
   ];
   const px = [];
   for (const [name, cfg, query, opts = {}] of STATES) {

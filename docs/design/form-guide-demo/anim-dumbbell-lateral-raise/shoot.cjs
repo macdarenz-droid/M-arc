@@ -48,11 +48,13 @@ const gripAt = u => {
   { const { page, ctx } = await open('?mode=pictures&zoom=2', { wait: 700 }); await shot(page, 'lr_pictures-still-zoom-2.png'); await ctx.close(); }
   { const { page, ctx } = await open('', { rm: true }); await shot(page, 'lr_reduced-motion.png'); await ctx.close(); }
   for (const th of ['ember', 'emerald', 'midnight']) { const { page, ctx } = await open(`?theme=${th}&t=0.125`); await shot(page, `lr_${th}_t0.125.png`); await ctx.close(); }
+  // muscle info bubbles (spec 2.10): every muscle's bubble open at the hold, dark and Paper
+  for (const theme of ['silent-black', 'paper']) for (const m of ['sideDelts', 'upperTraps']) { const { page, ctx } = await open(`?t=0.3&theme=${theme}&muscle=${m}`); await shot(page, `lr_muscle-${m}_${theme}.png`); await ctx.close(); }
 
   // 2. Bindings: every hole the markup uses comes from renderVals(); themes -------------------
   {
     const { page, ctx } = await open('?t=0');
-    const r = await page.evaluate(() => { const v = window.__rig.renderVals(); return { missing: window.__used.filter(k => !(k in v)), handlers: ['pick1', 'pick2', 'pick3', 'togglePlay', 'speedTo1', 'speedToHalf', 'toAnim', 'toPics'].every(k => typeof v[k] === 'function') }; });
+    const r = await page.evaluate(() => { const v = window.__rig.renderVals(); return { missing: window.__used.filter(k => !(k in v)), handlers: ['pick1', 'pick2', 'pick3', 'togglePlay', 'speedTo1', 'speedToHalf', 'toAnim', 'toPics', 'tapStage', 'tapSideDelts', 'keySideDelts', 'tapUpperTraps', 'keyUpperTraps'].every(k => typeof v[k] === 'function') }; });
     check(r.missing.length === 0 && r.handlers, `every markup binding exists in renderVals() (missing: ${r.missing.join(',') || 'none'})`);
     await ctx.close();
   }
@@ -177,7 +179,7 @@ const gripAt = u => {
     const r = await page.evaluate(async ({ z, sel }) => {
       const vis = q => { const el = document.querySelector(q); return !!el && !el.hidden && getComputedStyle(el).display !== 'none'; };
       const m = new DOMMatrix(getComputedStyle(document.querySelector('.cam')).transform);
-      const st = document.querySelector('.stage').getBoundingClientRect(), bu = document.querySelector('.bub-' + z).getBoundingClientRect();
+      const st = document.querySelector('.stage').getBoundingClientRect(), bu = document.querySelector('.bubble').getBoundingClientRect();
       let out = -1e9, under = -1e9, n = 0;
       for (let i = 0; i <= 40; i++) {
         window.__rig.freeze(i / 40); await new Promise(res => requestAnimationFrame(res));
@@ -185,7 +187,7 @@ const gripAt = u => {
       }
       return {
         cls: document.querySelector('.player').className, m: [m.a, m.d, m.e, m.f],
-        bubbles: [1, 2, 3].filter(i => vis('.bub-' + i)), pill: vis('.pill-row'), label: vis('.cam-label'),
+        bubbles: [...document.querySelectorAll('.bubble')].filter(el => !el.hidden && getComputedStyle(el).display !== 'none').map(el => el.textContent.replace(/\s+/g, ' ').trim()), pill: vis('.pill-row'), label: vis('.cam-label'),
         ovSh: getComputedStyle(document.querySelector('.ov-shoulders')).opacity, ovEl: getComputedStyle(document.querySelector('.ov-elbows')).opacity,
         pressed: [...document.querySelectorAll('.chip')].map(b => b.getAttribute('aria-pressed')).join(','),
         trans: getComputedStyle(document.querySelector('.cam')).transition, out, under, n: n / 41,
@@ -194,7 +196,8 @@ const gripAt = u => {
     const [cx, cy, s] = CAM[z];
     const camOk = Math.abs(r.m[0] - s) < 1e-3 && Math.abs(r.m[1] - s) < 1e-3 && Math.abs(r.m[2] - (179 - s * cx)) < 0.01 && Math.abs(r.m[3] - (138 - s * cy)) < 0.01;
     check(r.cls.includes('zoom-' + z) && camOk && /transform 0\.32s/.test(r.trans), `zoom-${z}: root class "${r.cls}", camera scale ${s} centred on (${cx}, ${cy}), 320 ms transition`);
-    check(r.bubbles.join() === String(z) && !r.pill && !r.label, `zoom-${z}: only bubble ${z} shows; rep pill and camera label hidden`);
+    const capZ = await page.evaluate(z => EX.chips[z - 1].caption, z);
+    check(r.bubbles.length === 1 && r.bubbles[0] === capZ && !r.pill && !r.label, `zoom-${z}: one bubble shows, with chip ${z}'s caption ("${r.bubbles.join('|')}"); rep pill and camera label hidden`);
     const ovOk = z === 1 ? r.ovSh === '1' && r.ovEl === '0' : z === 3 ? r.ovEl === '1' && r.ovSh === '0' : r.ovSh === '0' && r.ovEl === '0';
     check(ovOk && r.pressed === [1, 2, 3].map(i => String(i === z)).join(','), `zoom-${z}: overlays (shoulders ${r.ovSh}, elbows ${r.ovEl}), chip pressed ${r.pressed}`);
     check(r.n > 0 && r.out <= 0.5 && r.under <= 0.5, `zoom-${z}: subject (${r.n} parts) inside the stage and above the bubble over 41 phases (closest ${(-r.out).toFixed(1)} px from an edge, ${(-r.under).toFixed(1)} px above the bubble)`);
@@ -202,8 +205,8 @@ const gripAt = u => {
   }
   {
     const { page, ctx } = await open('?t=0');
-    const r = await page.evaluate(() => ({ pill: getComputedStyle(document.querySelector('.pill-row')).display, label: getComputedStyle(document.querySelector('.cam-label')).display, bub: [...document.querySelectorAll('.bubble')].map(b => getComputedStyle(b).display).join(','), m: getComputedStyle(document.querySelector('.cam')).transform }));
-    check(r.pill !== 'none' && r.label !== 'none' && r.bub === 'none,none,none' && r.m === 'none', `no zoom: rep pill and camera label shown, no bubble, camera at 1x`);
+    const r = await page.evaluate(() => ({ pill: getComputedStyle(document.querySelector('.pill-row')).display, label: getComputedStyle(document.querySelector('.cam-label')).display, bub: [...document.querySelectorAll('.bubble')].map(b => getComputedStyle(b).display).join(','), nb: document.querySelectorAll('.bubble').length, m: getComputedStyle(document.querySelector('.cam')).transform }));
+    check(r.pill !== 'none' && r.label !== 'none' && r.nb === 1 && r.bub === 'none' && r.m === 'none', `no zoom: rep pill and camera label shown, no bubble, camera at 1x`);
     await page.click('.chip:nth-child(2)'); const on2 = await page.evaluate(() => document.querySelector('.player').className);
     await page.click('.chip:nth-child(2)'); const off2 = await page.evaluate(() => document.querySelector('.player').className);
     check(/zoom-2/.test(on2) && !/zoom-/.test(off2), `tapping Path sets zoom-2, tapping it again clears it ("${on2}" -> "${off2}")`);
@@ -225,10 +228,10 @@ const gripAt = u => {
     const want = gripAt(0.31);
     for (const [z, pose] of [[1, 0], [2, 0.31], [3, 0]]) {
       const { page, ctx } = await open(`?mode=pictures&zoom=${z}`, { wait: 700 });
-      const r = await page.evaluate(() => { const svg = document.querySelector('.scene'); const p = svg.createSVGPoint(); p.x = 22; p.y = 16; const q = p.matrixTransform(document.querySelector('#rig-lr').getCTM().inverse().multiply(document.querySelector('.lr-db-r').getCTM())); return { h: [q.x, q.y], pics: getComputedStyle(document.querySelector('.pics')).display, bub: getComputedStyle(document.querySelector('.bub-' + new URLSearchParams(location.search).get('zoom'))).display, caps: !document.querySelector('[data-if="showCaps"]').hidden, tempo: !document.querySelector('[data-if="showTempo"]').hidden, still: [...document.querySelectorAll('[data-if="showStill1"],[data-if="showStill3"]')].filter(e => !e.hidden).map(e => e.textContent) }; });
+      const r = await page.evaluate(() => { const svg = document.querySelector('.scene'); const p = svg.createSVGPoint(); p.x = 22; p.y = 16; const q = p.matrixTransform(document.querySelector('#rig-lr').getCTM().inverse().multiply(document.querySelector('.lr-db-r').getCTM())); return { h: [q.x, q.y], pics: getComputedStyle(document.querySelector('.pics')).display, bub: getComputedStyle(document.querySelector('.bubble')).display, bubText: document.querySelector('.bubble').textContent.replace(/\s+/g, ' ').trim(), capWant: EX.chips[+new URLSearchParams(location.search).get('zoom') - 1].caption, caps: !document.querySelector('[data-if="showCaps"]').hidden, tempo: !document.querySelector('[data-if="showTempo"]').hidden, still: [...document.querySelectorAll('[data-if="showStill1"],[data-if="showStill3"]')].filter(e => !e.hidden).map(e => e.textContent) }; });
       const target = pose ? want : [206.81, 171.11];
       const cap = pose ? 'Stop at shoulder height' : 'Stand tall, elbows soft';
-      check(r.pics === 'none' && r.bub === 'flex' && !r.caps && !r.tempo && r.still.join('|') === cap && Math.hypot(r.h[0] - target[0], r.h[1] - target[1]) < 0.3, `Pictures still zoom-${z}: grid hidden, bubble shown, pose ${pose ? 3 : 1} (grip ${f2(r.h[0])}, ${f2(r.h[1])}), picture caption "${r.still.join('|')}", no phase caption or tempo`);
+      check(r.pics === 'none' && r.bub === 'flex' && r.bubText === r.capWant && !r.caps && !r.tempo && r.still.join('|') === cap && Math.hypot(r.h[0] - target[0], r.h[1] - target[1]) < 0.3, `Pictures still zoom-${z}: grid hidden, bubble shown with the chip's caption, pose ${pose ? 3 : 1} (grip ${f2(r.h[0])}, ${f2(r.h[1])}), picture caption "${r.still.join('|')}", no phase caption or tempo`);
       await ctx.close();
     }
   }
@@ -256,6 +259,9 @@ const gripAt = u => {
     const { captionRowCheck } = require('../rig-final/caption-check.cjs');
     const ended = () => { window.__rig.stopClock(); window.__rig.setState({ playing: false, ended: true }); };
     { const { page, ctx } = await open('?t=0'); await muscleAreaCheck(page, { label: 'lateral raise' }, check); await ctx.close(); }
+    // muscle info on tap (spec 2.10): hotspots, bubble text and colours, outline, keyboard, stage tap, two lines, Pictures
+    const { muscleTapCheck } = require('../rig-final/muscle-tap-check.cjs');
+    await muscleTapCheck(q => open(q), { label: 'lateral raise', picsQuery: '?mode=pictures' }, check);
     await captionRowCheck(q => open(q), { label: 'lateral raise', states: [['?autoplay=0', 'idle'], ['?loop=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pictures', 'Pictures']] }, check);
   }
   // Secondary motion, lateral raise: the upper-trap helper tint eases off (1 -> 0.7) as the delts take over, on the move's

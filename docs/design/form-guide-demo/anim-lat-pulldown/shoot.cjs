@@ -127,6 +127,8 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
   for (const [n, id] of [[1, 'grip'], [2, 'path']]) { const { page, ctx } = await open(`?t=0.25&zoom=${n}`, { wait: 700 }); await shot(page, `lp_zoom-${n}-${id}_t0.25.png`); await ctx.close(); }
   { const { page, ctx } = await open('?t=0&theme=paper'); await shot(page, 'lp_paper_t0.png'); await ctx.close(); }
   for (const th of ['ember', 'emerald', 'midnight']) { const { page, ctx } = await open(`?t=0.19&theme=${th}`); await shot(page, `lp_${th}_t0.19.png`); await ctx.close(); }
+  // muscle info bubbles (spec 2.10): each muscle open at the hold, dark and Paper
+  for (const theme of ['silent-black', 'paper']) for (const m of ['lats', 'biceps', 'midBack']) { const { page, ctx } = await open(`?t=0.3&theme=${theme}&muscle=${m}`); await shot(page, `lp_muscle-${m}_${theme}.png`); await ctx.close(); }
 
   // ---- 3. Browser checks ---------------------------------------------------------------
   // 3a. hands stay on the bar: the near grip point of the near hand group vs the near grip on the bar, and the far
@@ -268,7 +270,8 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     const { page, ctx } = await open('?t=0');
     const vis = await page.evaluate(({ PF, BP, SAMPLES }) => {
       const root = document.getElementById('player');
-      const visible = el => { for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return false; } return true; };
+      // a muscle hotspot (.hot, spec 2.10) paints nothing (transparent fill and stroke), so it is never the visible top element
+      const visible = el => { if (el.classList && el.classList.contains('hot')) return false; for (let e = el; e && e.nodeType === 1; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return false; } return true; };
       const topAt = (x, y) => document.elementsFromPoint(x, y).find(visible);
       const cp = (el, x, y) => new DOMPoint(x, y).matrixTransform(el.getScreenCTM());
       const line = document.querySelector('.stage .lp-cable-f line'), hook = document.querySelector('.stage .figure-arm .lp-hook'), barP = document.querySelector('.stage .figure-arm .lp-barline');
@@ -325,7 +328,7 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
       const { page, ctx } = await open(q, { wait: 700 });
       res[q] = await page.evaluate(({ PF }) => {
         const st = document.querySelector('.stage').getBoundingClientRect(), n = +document.getElementById('player').className.match(/zoom-(\d)/)[1];
-        const bTop = document.querySelector('.bubble-' + n).getBoundingClientRect().top - st.top;
+        const bTop = document.querySelector('.bubble').getBoundingClientRect().top - st.top;
         const box = el => { const b = window.__geomBox(el, st); return [b.left, b.top, b.right, b.bottom]; };
         const pulley = [...document.querySelectorAll('.stage .machine-back circle.eqm')].find(c => Math.abs(+c.getAttribute('cx') - PF.x) < 0.01);
         const knee = [...document.querySelectorAll('.stage .figure g.j')].filter(g => /rotate\(90deg\)/.test(g.getAttribute('style') || '')).pop();
@@ -372,7 +375,7 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     const r = await page.evaluate(({ n, id }) => {
       const root = document.getElementById('player'), st = document.querySelector('.stage').getBoundingClientRect();
       const vis = s => { const el = document.querySelector(s); return !!el && getComputedStyle(el).display !== 'none'; };
-      const bubble = document.querySelector('.bubble-' + n), bTop = bubble.getBoundingClientRect().top - st.top;
+      const bubble = document.querySelector('.bubble'), bTop = bubble.getBoundingClientRect().top - st.top;
       const subj = id === 'grip' ? ['.stage .ov-grip'] : id === 'path' ? ['.stage .guide'] : ['.stage .ov-pad', '.cam > .ov-pad'];
       let top = 1e9, bottom = -1e9, left = 1e9, right = -1e9;
       for (let i = 0; i <= 40; i++) {
@@ -386,9 +389,9 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
       const ibs = { left: ib.left - st.left, right: ib.right - st.left, top: ib.top - st.top, bottom: ib.bottom - st.top };
       if (id === 'grip') for (let i = 0; i <= 40; i++) { root.style.setProperty('--delay', (-4 * i / 40) + 's'); const b = window.__geomBox(document.querySelector('.stage .ov-grip'), st); if (b.right > ibs.left && b.left < ibs.right && b.bottom > ibs.top && b.top < ibs.bottom) underInset++; }
       const guideOp = +getComputedStyle(document.querySelector('.stage .guide')).opacity, trailOp = +getComputedStyle(document.querySelector('.stage .trail')).opacity;
-      return { pill: vis('.pill-row'), label: vis('.cam-label'), bubble: vis('.bubble-' + n), others: [1, 2, 3].filter(k => k !== n).some(k => vis('.bubble-' + k)), bTop, top, bottom, left, right, ovOpacity, stW: st.width, stH: st.height, insetShown, underInset, inset: [ib.left - st.left, ib.top - st.top, ib.right - st.left, ib.bottom - st.top].map(v => +v.toFixed(1)), guideOp, trailOp };
+      return { pill: vis('.pill-row'), label: vis('.cam-label'), bubble: vis('.bubble') && !bubble.hidden, text: bubble.textContent.replace(/\s+/g, ' ').trim(), caption: EX.chips.find(c => c.n === n).caption, bubbles: document.querySelectorAll('.bubble').length, bTop, top, bottom, left, right, ovOpacity, stW: st.width, stH: st.height, insetShown, underInset, inset: [ib.left - st.left, ib.top - st.top, ib.right - st.left, ib.bottom - st.top].map(v => +v.toFixed(1)), guideOp, trailOp };
     }, { n, id });
-    check(!r.pill && !r.label && r.bubble && !r.others, `zoom-${n} (${id}): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden`);
+    check(!r.pill && !r.label && r.bubble && r.bubbles === 1 && r.text === r.caption, `zoom-${n} (${id}): rep pill and camera label hidden, the one bubble shown with this chip's caption ("${r.text}")`);
     check(r.top >= 0 && r.left >= 0 && r.right <= r.stW && r.bottom <= r.bTop, `zoom-${n} (${id}): subject inside the stage and above the bubble over 41 phases (top ${f1(r.top)}, bottom ${f1(r.bottom)} vs bubble ${f1(r.bTop)}, x ${f1(r.left)}-${f1(r.right)})`);
     check(r.ovOpacity > 0.5, `zoom-${n} (${id}): overlay shown (opacity ${r.ovOpacity}${id === 'path' ? '; the path and the "still to go" line drawn over the arm' : ''})`);
     if (id === 'grip') {
@@ -487,6 +490,7 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
   // by its effective opacity (and the glow's stroke-opacity), so a faint halo counts for what it shows.
   {
     const { page, ctx } = await open('?t=0');
+    await page.addStyleTag({ content: '.hot{display:none!important}' });   // the muscle hotspots (spec 2.10) paint nothing; hidden so the hit test finds what is drawn
     const r = await page.evaluate(async () => {
       const L = window.__lp, out = [];
       const eff = e => { let o = 1; for (let x = e; x && x.nodeType === 1 && !x.classList.contains('scene'); x = x.parentElement) o *= +getComputedStyle(x).opacity; return o; };
@@ -564,6 +568,9 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     const ended = () => { const L = window.__lp; L.S.t = null; L.S.playing = false; L.S.ended = true; L.bind(); };
     { const { page, ctx } = await open('?t=0'); await page.addStyleTag({ content: '.lp-target{display:none!important}' }); await muscleAreaCheck(page, { label: 'lat pulldown' }, check); await ctx.close(); }
     await captionRowCheck(q => open(q), { label: 'lat pulldown', states: [['?t=0', 'idle', idle], ['?t=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pictures', 'Pictures']] }, check);
+    // a tap on a muscle shows its name, real name and role with the dot in its colour (rig-final/muscle-tap-check.cjs, spec 2.10)
+    const { muscleTapCheck } = require('../rig-final/muscle-tap-check.cjs');
+    await muscleTapCheck(q => open(q), { label: 'lat pulldown', picsQuery: '?mode=pictures' }, check);
   }
   // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
   { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lat pulldown', freeze: 'lp', grips: [{ name: 'near hand', sel: '.stage .figure-arm .lp-ua .lp-fa .lp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
