@@ -5,16 +5,19 @@ import { minuteNow, recovery, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
-import { addDays, dayKey, formatDay, formatFullAt, formatFullBy, formatHours, readyGroupFor } from '@/core/dates';
+import { addDays, dayKey, dayOrToday, formatDay, formatFullAt, formatFullBy, formatHours, readyDayWindow, readyGroupFor } from '@/core/dates';
 import { durFor } from '@/ui/motion';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
 import { muscleVolumeStatus } from '@/brain/volume';
 import { navyBodyFat } from '@/core/bodyfat';
 import { LIBRARY } from '@/core/exercises';
-import { exerciseHistory } from '@/brain/history';
+import { exerciseHistory, type ExerciseSessionSummary } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
 import { FULL_PCT, READY_PCT } from '@/data/recovery';
 import type { MuscleRecovery } from '@/brain/recovery';
+import type { LoadUnit, ResistanceMode } from '@/core/models';
+import { addExerciseToSession } from '@/slices/workout/session';
+import { showToast } from '@/app/toast';
 import { bodyView, openPanel, showPanel } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { IconChevron } from '@/ui/icons';
@@ -326,44 +329,115 @@ function ReadyTimesCard({ rec, setSelected }: { rec: MuscleRecovery[]; setSelect
   );
 }
 
-/** One muscle, opened as the `muscle` panel (from the map, a list row, or Escobar). */
+type MuscleTab = 'logged' | 'trynext';
+
+/** Best-ever hint for a Logged row: highest topKg (ties go to higher topReps), or best reps/duration when the exercise carries no load. */
+function bestEverHint(h: ExerciseSessionSummary[], mode: ResistanceMode, u: LoadUnit): string {
+  const loaded = h.filter(x => x.topKg > 0);
+  if (loaded.length) {
+    const best = loaded.reduce((a, b) => (b.topKg > a.topKg || (b.topKg === a.topKg && b.topReps > a.topReps) ? b : a));
+    return `${modeLoadText({ kg: best.topKg }, mode, u)} × ${best.topReps}`;
+  }
+  const bestReps = Math.max(0, ...h.map(x => x.bestReps));
+  const bestDur = Math.max(0, ...h.map(x => x.bestDurationSec));
+  return `${bestReps || bestDur} ${bestDur ? 's' : 'reps'}`;
+}
+
+/** One muscle, opened as the `muscle` panel (from the map, a list row, or Escobar). O2: a clear
+ * recovery timeline (real dates, not "2d to 3d"), four facts, and Logged/Try next tabs. */
 export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: () => void }) {
   const s = state.value;
   usePalaceFocus('body.muscle', { muscle });
   const u = unit.value;
+  const now = minuteNow.value;
   const r = recovery.value.find(x => x.muscle === muscle);
   const info = MUSCLE_BY_ID[muscle];
   if (!info || !r) { queueMicrotask(onClose); return null; }
   const levels = trainingLevels(s.sessions, s.customExercises)[muscle];
   const direct = [...s.customExercises, ...LIBRARY].filter(e => e.primary.includes(muscle));
   const logged = direct.map(e => ({ e, h: exerciseHistory(s.sessions, e.id, s.customExercises) })).filter(x => x.h.length).sort((a, b) => b.h[b.h.length - 1]!.day.localeCompare(a.h[a.h.length - 1]!.day));
+  const loggedIds = new Set(logged.map(x => x.e.id));
+  const tryNext = direct.filter(e => !loggedIds.has(e.id)).slice(0, 10);
+  const [tab, setTab] = useState<MuscleTab>(() => (logged.length ? 'logged' : 'trynext'));
   const markFresh = () => { update(x => ({ ...x, freshMarks: [...x.freshMarks, { muscle, at: new Date().toISOString() }].slice(-100) })); onClose(); };
+
+  const soreBlocked = !!r.soreToday && !r.hoursLeft;
+  const pillTone = !r.lastTrainedAt ? undefined : soreBlocked || r.recovering ? 'warning' : 'positive';
+  const pillText = !r.lastTrainedAt ? 'Not trained yet' : soreBlocked ? 'Held back by soreness' : r.recovering ? 'Recovering' : 'Ready';
+  const fillTone = r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive';
+  const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : 'When soreness eases';
+  const fullText = !r.recovering ? 'Now' : r.fullInHours != null ? dayOrToday(now, r.fullInHours) : 'When soreness eases';
+  const accuracy = r.confidence === 'high' ? 'Good' : r.confidence === 'medium' ? 'Getting there' : 'Rough guess for now';
+  const active = s.active;
+
   return (
     <Sheet title={info.label} onClose={onClose} palace="body.muscle">
       <div class="stack">
-        <div class="row-between"><span class="hint">{info.label} at a glance</span><AskAbout refTo={{ kind: 'muscle', id: muscle, label: info.label }} /></div>
-        <div class="grid-3">
-          <Stat value={r.lastTrainedAt ? `${r.pct}%` : '—'} label="recovered" tone={r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive'} />
-          <Stat value={r.lastDay ? formatDay(r.lastDay) : 'never'} label="last trained" />
-          <Stat value={levels.level} label="level" />
+        <div class="mtl-head">
+          <div class="mtl-pct-row"><span class="mtl-pct">{r.lastTrainedAt ? `${r.pct}%` : '—'}</span><span class="mtl-pct-label">recovered</span></div>
+          <Chip tone={pillTone}>{pillText}</Chip>
         </div>
-        {r.recovering && (
-          <p class="small muted">
-            {r.readyInHours ? `Ready for hard work in about ${formatHours(r.readyInHours[0])} to ${formatHours(r.readyInHours[1])}` : r.soreToday && !r.hoursLeft ? 'Held back by today\'s soreness rating; ready for hard work once it eases' : `About ${formatHours(r.hoursLeft)} until ready for hard work`}
-            {r.fullInHours != null && `, fully recovered in about ${formatHours(r.fullInHours)}`}. {r.confidence} confidence{r.personalized ? ' · adjusted to your own history' : ''}.
-          </p>
+
+        {r.lastTrainedAt && (
+          <div class="mtl-timeline">
+            <div class="mtl-track"><i class="mtl-fill" style={{ width: `${r.pct}%`, background: `var(--${fillTone})` }} /><span class="mtl-tick" style={{ left: `${READY_PCT}%` }} /></div>
+            <div class="mtl-tl-row">
+              <div class="mtl-tl-col"><span class="mtl-tl-key">Trained</span><span class="mtl-tl-val">{formatDay(r.lastDay!, { weekday: 'short', day: 'numeric' })}</span></div>
+              <div class="mtl-tl-col"><span class="mtl-tl-key">Ready</span><span class="mtl-tl-val">{readyText}</span></div>
+              <div class="mtl-tl-col"><span class="mtl-tl-key">Full</span><span class="mtl-tl-val">{fullText}</span></div>
+            </div>
+          </div>
         )}
+
+        <div class="list">
+          {logged.length > 0 && (() => {
+            const last = logged[0]!.h[logged[0]!.h.length - 1]!;
+            return <Row trailing={<span class="small">{logged[0]!.e.name} · {last.sets.length} {last.sets.length === 1 ? 'set' : 'sets'}</span>}><span class="small muted">Last session</span></Row>;
+          })()}
+          <Row trailing={<span class="small">{levels.level}</span>}><span class="small muted">Level</span></Row>
+          <Row trailing={<span class="small">{accuracy}{r.personalized ? ' · fitted to you' : ''}</span>}><span class="small muted">Accuracy</span></Row>
+        </div>
         {r.drivers.length > 0 && <p class="hint">{r.drivers.map(d => d.text).join(' · ')}</p>}
-        {r.recovering && <Button variant="quiet" size="sm" onClick={markFresh}>Mark as fresh</Button>}
-        <div>
-          <div class="eyebrow" style={{ marginBottom: 6 }}>Your exercises for this muscle</div>
-          {!logged.length && <p class="small muted">Nothing logged for this muscle yet.</p>}
-          <div class="list">{logged.slice(0, 6).map(({ e, h }) => { const last = h[h.length - 1]!; return <Row key={e.id} trailing={<span class="hint">{formatDay(last.day)}</span>}><div class="small">{e.name}</div><div class="hint">{last.topKg ? `${modeLoadText({ kg: last.topKg }, e.mode, u)} × ${last.topReps}` : `${last.bestReps || last.bestDurationSec} ${last.bestDurationSec ? 's' : 'reps'}`} · {h.length} sessions</div></Row>; })}</div>
+
+        <div class="mtl-actions">
+          {r.recovering && (
+            <div class="stack-sm">
+              <Button variant="quiet" size="sm" onClick={markFresh}>Mark as fresh</Button>
+              <span class="hint">Use it if this muscle already feels ready.</span>
+            </div>
+          )}
+          <AskAbout refTo={{ kind: 'muscle', id: muscle, label: info.label }} label="Ask Escobar" class="btn-sm" />
         </div>
-        <div>
-          <div class="eyebrow" style={{ marginBottom: 6 }}>Exercises that target it directly</div>
-          <div class="wrap">{direct.slice(0, 10).map(e => <Chip key={e.id}>{e.name}</Chip>)}</div>
+
+        <div data-palace="body.muscle-tabs">
+          <Segmented value={tab} onChange={setTab} options={[{ value: 'logged', label: `Logged · ${logged.length}` }, { value: 'trynext', label: `Try next · ${tryNext.length}` }]} />
         </div>
+
+        {tab === 'logged' ? (
+          !logged.length ? <p class="small muted">Nothing logged for this muscle yet.</p> : (
+            <div class="list mtl-tab-list">{logged.slice(0, 6).map(({ e, h }) => {
+              const last = h[h.length - 1]!;
+              return (
+                <Row key={e.id} trailing={<span class="hint">{formatDay(last.day, { weekday: 'short', day: 'numeric' })}</span>}>
+                  <div class="small">{e.name}</div>
+                  <div class="hint">Best {bestEverHint(h, e.mode, u)} · {h.length} {h.length === 1 ? 'session' : 'sessions'}</div>
+                </Row>
+              );
+            })}</div>
+          )
+        ) : (
+          !tryNext.length ? <p class="small muted">You already do every listed exercise for this muscle.</p> : (
+            <div class="list mtl-tab-list">{tryNext.map(e => {
+              const inWorkout = !!active?.entries.some(en => en.exerciseId === e.id);
+              return (
+                <Row key={e.id} trailing={active ? (inWorkout ? <span class="hint">In workout</span> : <Button size="sm" onClick={() => { addExerciseToSession(e); showToast(`Added ${e.name} to today's workout`); }}>Add</Button>) : undefined}>
+                  <div class="small">{e.name}</div>
+                  <div class="small muted">{e.equipment}</div>
+                </Row>
+              );
+            })}</div>
+          )
+        )}
       </div>
     </Sheet>
   );

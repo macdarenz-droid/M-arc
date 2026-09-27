@@ -782,3 +782,23 @@ button.effort-bar-col[aria-pressed="true"] .effort-bar-stack { outline: 2px soli
 .rt-detail-row3 { font-size: var(--fs-meta); line-height: 16px; color: var(--text-2); }
 .rt-detail-chevron { position: absolute; right: 10px; top: 50%; translate: 0 -50%; color: var(--text-2); }
 html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detail { transition-duration: var(--dur-enter); }
+
+/* O2 */
+.mtl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-3); }
+.mtl-pct-row { display: flex; align-items: baseline; gap: var(--sp-2); min-width: 0; }
+.mtl-pct { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; color: var(--text); }
+.mtl-pct-label { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-2); }
+.mtl-timeline { display: grid; gap: var(--sp-2); }
+.mtl-track { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface-3); }
+.mtl-fill { position: absolute; inset: 0 auto 0 0; height: 100%; border-radius: var(--radius-pill); }
+.mtl-tick { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--text-2); }
+.mtl-tl-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-2); }
+.mtl-tl-row > :nth-child(2) { text-align: center; }
+.mtl-tl-row > :last-child { text-align: right; }
+.mtl-tl-col { display: grid; gap: 2px; min-width: 0; }
+.mtl-tl-key { font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; color: var(--text-3); }
+.mtl-tl-val { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); color: var(--text); overflow-wrap: break-word; }
+.mtl-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+/* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
+ * variant needs its own width and the same height/padding as the btn-sm next to it. */
+.mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
