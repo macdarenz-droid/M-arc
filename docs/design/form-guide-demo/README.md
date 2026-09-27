@@ -12,7 +12,7 @@ This folder holds the full source of the rendered demo canvas: the owner's SPLIT
 - `FORMAT-RULES.md`: the canvas file format.
 
 ## Status (2026-09-27, after the smoothness and figure upgrade)
-- **All three players** (Machine Chest Press, Lat Pulldown, Dumbbell Lateral Raise) have minimum-jerk motion with a solved pose every 0.5 % of the rep (0.25 % in the lift) and the detailed figure of `rig-final/RIG.md` §20. Each passed an independent review and the polish round that followed. Every `shoot.cjs` prints ALL CHECKS PASSED, including the numeric smoothness check (`smooth-check.cjs`); `smoothness-before.txt` shows the same check failing on the original build.
+- **All three players** (Machine Chest Press, Lat Pulldown, Dumbbell Lateral Raise) have minimum-jerk motion with a solved pose every 0.5 % of the rep (0.25 % in the lift) and the detailed figure of `rig-final/RIG.md` §20. Each passed an independent review and the polish round that followed. Every `shoot.cjs` prints ALL CHECKS PASSED, including the numeric smoothness check (`smooth-check.cjs`); `smoothness-before.txt` shows the same check failing on the original build. Tapping a coloured muscle opens its name, role and a one-line cue (spec 2.10), checked by `rig-final/muscle-tap-check.cjs`.
 - **Canvas:** the 3 `Player-*.dc.html` files match their harnesses (parity checkers in each player folder). `canvas-preview/` renders all 13 artboards as a normal page for accounts without the Design canvas type.
 - **Docs:** `spec.md` and `rig-final/RIG.md` are current; the lat pulldown's decisions D1-D3 are applied in `spec.md` 3.2 and its checks are plain checks.
 - **Decisions** taken during the upgrade are in `docs/COACHING-DECISIONS.md` (D-S1..D-S5, D-L1..D-L12, D-R1..D-R6, D-P1).
