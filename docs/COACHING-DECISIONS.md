@@ -444,3 +444,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided (D-S5)**: the smoothness check reads the written keyframe stops from the raw `<style>` text, not from the CSSOM.
   **Why**: Chrome's CSSOM re-serialises numbers to 6 significant digits, so a stop written as -120.1782deg reads back as -120.178deg and (c) saw 2.80 x instead of the 2.62 x that is drawn. The animation itself uses the full written value (the sampler self-test compares drawn and written at every eighth stop).
   **Source**: chest press player run, 2026-09-27.
+
+- **Decided (D-P1)**: the upgraded demo is published as a normal Artifact page that renders all 13 canvas artboards from `project/*.dc.html` through a small stand-in runtime (`docs/design/form-guide-demo/canvas-preview/`), not as a Design canvas.
+  **Why**: this account has no Design canvas type (the Artifact type catalog is empty), and the owner's first canvas belongs to another account (its link only shows a loading shell here). The brief's fallback is the 3 player harness pages; rendering all 13 artboards from the same canvas files is a superset of that fallback and lets the owner inspect the whole canvas, with the 3 upgraded players live.
+  **Source**: UPGRADE-BRIEF.md "Publish and hand back"; owner, 2026-09-27 ("that's what I want you to improve"; "give me the artifact first").
