@@ -441,8 +441,15 @@ export function HoldButton({ label, onConfirm, ms = HOLD_CONFIRM_MS, size, class
   );
 }
 
-export function Empty({ icon, title, children, action }: { icon?: ComponentChildren; title: string; children?: ComponentChildren; action?: ComponentChildren }) {
-  return <div class="empty">{icon}<h3>{title}</h3>{children && <p class="small">{children}</p>}{action}</div>;
+export function Empty({ icon, title, children, action, align = 'start' }: { icon?: ComponentChildren; title: string; children?: ComponentChildren; action?: ComponentChildren; align?: 'start' | 'center' }) {
+  return (
+    <div class={`empty${align === 'center' ? '' : ' align-start'}`}>
+      {icon && <span class="empty-glyph">{icon}</span>}
+      <h3>{title}</h3>
+      {children && <p class="small">{children}</p>}
+      {action}
+    </div>
+  );
 }
 
 export function Section({ title, aside, children, palace }: { title: string; aside?: ComponentChildren; children?: ComponentChildren; palace?: string }) {

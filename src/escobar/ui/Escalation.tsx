@@ -4,6 +4,7 @@ import { update } from '@/core/store';
 import { addDays, todayKey } from '@/core/dates';
 import { MAX_MEMORY_ITEMS } from '@/core/models';
 import { showToast } from '@/app/toast';
+import { IconInfo } from '@/ui/icons';
 
 export type EscalationKind = 'pain' | 'medical' | 'crisis' | 'disordered_eating' | 'pain_mentioned';
 
@@ -28,6 +29,7 @@ export function Escalation({ kind }: { kind: EscalationKind }) {
   const helpline = k === 'crisis' || k === 'disordered_eating';
   return (
     <Card class="esc-escalation" role="note" data-escalation={k}>
+      <IconInfo size={16} class="esc-escalation-head" />
       <p class="small">{copy}</p>
       {helpline && <a class="btn btn-sm" href="https://findahelpline.com" target="_blank" rel="noopener noreferrer">Open findahelpline.com</a>}
       {k === 'pain' && <Button size="sm" variant="quiet" onClick={noteInjury}>Remember this injury</Button>}
