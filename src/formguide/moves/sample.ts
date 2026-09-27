@@ -10,9 +10,12 @@ const frameOf = (c: Channel, offset: number, v: string): Frame =>
 export function sampleMove(move: Pick<Move, 'stops' | 'channels'>): Sample {
   const stops = stopsFor(move.stops);
   const ps = stops.map(pc => progress(pc / 100));
-  const groups = move.channels.flatMap(c => {
-    const frames = stops.map((pc, i) => frameOf(c, +(pc / 100).toFixed(6), c.at(ps[i]!)));
-    return c.alias ? [{ className: c.className, frames }, { className: c.alias, frames }] : [{ className: c.className, frames }];
+  // stop by stop, every channel at one stop before the next (a move may share one solve per stop across its channels)
+  const frames: Frame[][] = move.channels.map(() => []);
+  stops.forEach((pc, i) => { const off = +(pc / 100).toFixed(6); move.channels.forEach((c, k) => frames[k]!.push(frameOf(c, off, c.at(ps[i]!)))); });
+  const groups = move.channels.flatMap((c, k) => {
+    const f = frames[k]!;
+    return c.alias ? [{ className: c.className, frames: f }, { className: c.alias, frames: f }] : [{ className: c.className, frames: f }];
   });
   return { stops, groups };
 }

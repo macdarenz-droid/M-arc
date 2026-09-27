@@ -169,7 +169,14 @@ export function makeLatPulldown(L: LP = makeLP(GRIP_Z)) {
   const PF = { x: Math.round((L.X0 + BAR_MID[0]) * 10) / 10, y: 39.2, r: 5.2 };
   const X = extrasOf(L, PF);
   const { cab, far, FS0 } = X;
-  const CAB0 = cab(0).len, lift = (p: number) => 0.5 * (cab(p).len - CAB0);   // 2:1: the stack rises half as far as the cable pays out
+  // one solve per stop: sampleMove visits every channel at one stop before the next, so the channels share the last
+  // stop's pose, far arm and cable (a one-entry cache; nothing is kept between stops or calls)
+  let last: { p: number; q: LpPose; f: Far; c: { len: number; ang: number } } | null = null;
+  const at = (p: number) => {
+    if (!last || last.p !== p) { const q = pose(p); last = { p, q, f: far(p, q), c: cab(p, q) }; }
+    return last;
+  };
+  const CAB0 = cab(0).len, lift = (p: number) => 0.5 * (at(p).c.len - CAB0);   // 2:1: the stack rises half as far as the cable pays out
   const BEAM = 36, REAR_TOP = BEAM + 11, REAR_RUN = 106 - REAR_TOP;
   // the "still to go" line starts 16 units below the grip
   const TOGO_GAP = 16 / L.pathLen;
@@ -220,25 +227,25 @@ export function makeLatPulldown(L: LP = makeLP(GRIP_Z)) {
     ];
   };
   const channels: Move['channels'] = [
-    { className: 'lp-ua', kind: 'composite', at: p => { const q = pose(p); return `translate(${n3(q.sc[0])}px,${n3(q.sc[1])}px) rotate(${n4(q.ua)}deg)`; } },
-    { className: 'lp-ul', kind: 'scaleY', at: p => `scaleY(${n4(pose(p).fu)})` },
-    { className: 'lp-fa', kind: 'composite', at: p => { const q = pose(p); return `translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; } },
-    { className: 'lp-fl', kind: 'scaleY', at: p => `scaleY(${n4(pose(p).ff)})` },
-    { className: 'lp-hd', kind: 'translateY', at: p => `translateY(${n3(-(1 - pose(p).ff) * LEN.forearm)}px)` },
-    { className: 'lp-bar', kind: 'rotate', at: p => { const q = pose(p); return `rotate(${n4(LEAN - q.ua - q.fa)}deg)`; } },
-    { className: 'lp-fua', kind: 'composite', at: p => { const f = far(p); return `translate(${n3(f.S[0]! - FS0[0]!)}px,${n3(f.S[1]! - FS0[1]!)}px) rotate(${n4(f.au)}deg)`; } },
-    { className: 'lp-ful', kind: 'scaleY', at: p => `scaleY(${n4(far(p).fu)})` },
-    { className: 'lp-ffa', kind: 'composite', at: p => { const f = far(p); return `translateY(${n3(-(1 - f.fu) * LEN.upperArm)}px) rotate(${n4(f.af - f.au)}deg)`; } },
-    { className: 'lp-ffl', kind: 'scaleY', at: p => `scaleY(${n4(far(p).ff)})` },
-    { className: 'lp-fhd', kind: 'translateY', at: p => `translateY(${n3(-(1 - far(p).ff) * LEN.forearm)}px)`, alias: 'lp-fbh' },
+    { className: 'lp-ua', kind: 'composite', at: p => { const q = at(p).q; return `translate(${n3(q.sc[0])}px,${n3(q.sc[1])}px) rotate(${n4(q.ua)}deg)`; } },
+    { className: 'lp-ul', kind: 'scaleY', at: p => `scaleY(${n4(at(p).q.fu)})` },
+    { className: 'lp-fa', kind: 'composite', at: p => { const q = at(p).q; return `translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; } },
+    { className: 'lp-fl', kind: 'scaleY', at: p => `scaleY(${n4(at(p).q.ff)})` },
+    { className: 'lp-hd', kind: 'translateY', at: p => `translateY(${n3(-(1 - at(p).q.ff) * LEN.forearm)}px)` },
+    { className: 'lp-bar', kind: 'rotate', at: p => { const q = at(p).q; return `rotate(${n4(LEAN - q.ua - q.fa)}deg)`; } },
+    { className: 'lp-fua', kind: 'composite', at: p => { const f = at(p).f; return `translate(${n3(f.S[0]! - FS0[0]!)}px,${n3(f.S[1]! - FS0[1]!)}px) rotate(${n4(f.au)}deg)`; } },
+    { className: 'lp-ful', kind: 'scaleY', at: p => `scaleY(${n4(at(p).f.fu)})` },
+    { className: 'lp-ffa', kind: 'composite', at: p => { const f = at(p).f; return `translateY(${n3(-(1 - f.fu) * LEN.upperArm)}px) rotate(${n4(f.af - f.au)}deg)`; } },
+    { className: 'lp-ffl', kind: 'scaleY', at: p => `scaleY(${n4(at(p).f.ff)})` },
+    { className: 'lp-fhd', kind: 'translateY', at: p => `translateY(${n3(-(1 - at(p).f.ff) * LEN.forearm)}px)`, alias: 'lp-fbh' },
     { className: 'lp-stack', kind: 'translateY', at: p => `translateY(${n3(-lift(p))}px)` },
-    { className: 'lp-cable-f', kind: 'composite', at: p => { const c = cab(p); return `rotate(${n4(c.ang)}deg) scaleY(${n4(c.len)})`; } },
+    { className: 'lp-cable-f', kind: 'composite', at: p => { const c = at(p).c; return `rotate(${n4(c.ang)}deg) scaleY(${n4(c.len)})`; } },
     { className: 'lp-cable-r', kind: 'scaleY', at: p => `scaleY(${n4((REAR_RUN - lift(p)) / REAR_RUN)})` },
     { className: 'lp-togo', kind: 'dashoffset', at: p => n3(-Math.min(arcAt(p) + TOGO_GAP, 0.999)) },
     { className: 'lp-eff', kind: 'opacity', at: p => n3(0.75 + 0.25 * p) },
     { className: 'lp-ten', kind: 'opacity', at: p => n3(p) },
     { className: 'lp-flare', kind: 'scaleX', at: p => `scaleX(${n4(0.02 + 0.98 * p)})` },
-    { className: 'lp-fbar', kind: 'rotate', at: p => `rotate(${n4(-far(p).af)}deg)` },
+    { className: 'lp-fbar', kind: 'rotate', at: p => `rotate(${n4(-at(p).f.af)}deg)` },
   ];
   return { L, H, LEAN, X0, Y0, TRAVEL, PF, X, FS0, CAB0, lift, BEAM, REAR_TOP, REAR_RUN, drift, keyTable, smooth, truth, channels };
 }
