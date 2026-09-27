@@ -148,7 +148,15 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
     const l = dir === 'nearest' ? loggedAt(kg, logged) : undefined;
     return l && { kg: l.kg, value: l.value, unit: l.unit };
   };
-  const snap = keep(s.kg) ?? loadableNear(s.kg, profile, dir);
+  // BUG-11: a hold-type target exactly between two rungs goes to the heavier one (the load the
+  // person is working at, not a step back); a first-time start keeps the plain nearest rung.
+  const near = (kg: number): Loadable => {
+    if (dir !== 'nearest' || s.mode === 'start') return loadableNear(kg, profile, dir);
+    const down = loadableNear(kg, profile, 'down');
+    const up = loadableNear(kg, profile, 'up');
+    return Math.abs(up.kg - kg) <= Math.abs(kg - down.kg) + 1e-6 ? up : down;
+  };
+  const snap = keep(s.kg) ?? near(s.kg);
   const oldLabel = `${s.kg} kg`;
   const moved = Math.abs(snap.kg - s.kg) > 0.011;
   // BUG-11: say when the snap moved a load with no direction of its own, so the reps are read
@@ -161,7 +169,7 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
     value: snap.value,
     target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${snap.value} ${snap.unit}`) : s.target,
     reason: s.reason + flag,
-    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: (keep(x.kg) ?? loadableNear(x.kg, profile, dir)).kg })),
+    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: (keep(x.kg) ?? near(x.kg)).kg })),
     ...(moved ? { snappedFromKg: s.kg } : {}),
   };
 }
@@ -186,8 +194,8 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
     // QA3-3c: a lighter week or any Escobar load factor scales the kg with half(), losing the
     // precision an above-the-rack lb restatement needs to land on a clean number.
     const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);
-    // BUG-11: only a weighted lift keeps its logged loads; carries keep their QA3-11b rung rules.
-    const logged = mode === 'weighted' ? loggedLoads(sessions, exerciseId, custom, ctx.equipment.unit) : [];
+    // BUG-11: a lift or a loaded carry keeps the loads already logged for it.
+    const logged = loggedLoads(sessions, exerciseId, custom, ctx.equipment.unit);
     s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled, logged);
   }
   return s;

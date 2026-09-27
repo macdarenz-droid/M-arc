@@ -182,10 +182,18 @@ describe('QA3-11b: carries snap down only for a genuine reduction, never in a no
     const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
     expect(n.value).toBe(75);
   });
-  it('a normal-week 32 kg carry rounds to its nearest rung (32.5), not forced down to 30', async () => {
+  // BUG-11 (owner, 2026-09-27): a load already logged for the exercise stays loadable for every
+  // activity, carries included, so a logged 32 kg carry is no longer moved to a rung at all.
+  it('a normal-week 32 kg carry keeps the 32 kg the person really carried, not forced down to 30', async () => {
     const { defaultProfile } = await import('@/brain/units');
     const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 32, distanceM: 40, effort: 'ideal' }] }])];
     const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.kg).toBe(32);
+  });
+  it('a normal-week carry target of 32 kg that was never logged rounds to its nearest rung (32.5), not forced down to 30', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const h = [session('2026-09-10', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 30, distanceM: 40, effort: 'ideal' }] }])];
+    const n = suggestNext(h, 'lib_farmer_s_carry', 'lean', '2026-09-14', 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 32 / 30 });
     expect(n.kg).toBe(32.5);
   });
   it('an Escobar ×1.05 increase on a 30 kg carry is not lost to a forced-down snap', async () => {
@@ -338,5 +346,74 @@ describe('BUG-11: a load the user really lifted is never snapped away', () => {
     expect(n.value).toBe(15);
     expect(n.snappedFromKg).toBe(7);
     expect(n.reason).toMatch(/Moved to 15 lb, the nearest weight your equipment has/);
+  });
+});
+
+describe('BUG-11: every equipment kind and unit keeps a load already logged for that exercise', () => {
+  const kinds: Array<[string, string, number, 'kg' | 'lb']> = [
+    ['kettlebell', 'lib_kettlebell_swing', 16, 'kg'],
+    ['dumbbell / kettlebell', 'lib_goblet_squat', 16, 'kg'],
+    ['machine stack', 'lib_machine_chest_press', 42, 'kg'],
+    ['cable', 'lib_cable_fly', 17, 'kg'],
+    ['barbell and plates', 'lib_barbell_bench_press', 61, 'kg'],
+    ['smith machine', 'lib_smith_machine_bench_press', 61, 'kg'],
+    ['bodyweight + added load (dip belt)', 'lib_weighted_dip', 11, 'kg'],
+    ['barbell and plates, lb', 'lib_barbell_bench_press', 137, 'lb'],
+    ['machine stack, lb', 'lib_machine_chest_press', 72, 'lb'],
+    ['kettlebell, lb', 'lib_kettlebell_swing', 53, 'lb'],
+    ['cable, lb', 'lib_cable_fly', 17, 'lb'],
+  ];
+  it.each(kinds)('%s: a hold at the logged %s load stays there', async (_kind, id, value, unit) => {
+    const { defaultProfile, loadableValues } = await import('@/brain/units');
+    const { findExercise } = await import('@/core/exercises');
+    const { displayToKg } = await import('@/core/units');
+    const profile = defaultProfile(findExercise(id)!.equipment, unit);
+    // The load really is off this equipment's built-in steps, so the old snap would have moved it.
+    expect(loadableValues(profile)).not.toContain(value);
+    const kg = unit === 'kg' ? value : displayToKg(value, 'lb');
+    const set = { kg, ...(unit === 'lb' ? { entered: { value, unit } } : {}), reps: 8, effort: 'max' as const };
+    const n = suggestNext([session('2026-09-15', [{ id, sets: [set, set, set] }])], id, 'lean', today, 3, [], { equipment: profile });
+    expect(n.mode).toBe('hold');
+    expect(n.kg).toBe(kg);
+    expect(n.value).toBe(value);
+    expect(n.target.startsWith(`${value} ${unit} · `)).toBe(true);
+    expect(n.sets.every(x => x.kg === kg)).toBe(true);
+    expect(n.snappedFromKg).toBeUndefined();
+  });
+
+  it('a loaded carry keeps its logged 16 kg (conditioning)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext([session('2026-09-15', [{ id: 'lib_farmer_s_carry', sets: [{ kg: 16, distanceM: 40, effort: 'ideal' }] }])], 'lib_farmer_s_carry', 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.target).toBe('16 kg · 45 m');
+  });
+
+  it('a bodyweight move with added load has no load target to snap (reps progress)', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext([session('2026-09-15', [{ id: 'lib_pull_up', sets: sets(7, 6) }])], 'lib_pull_up', 'lean', today, 3, [], { equipment: defaultProfile('Bodyweight', 'kg') });
+    expect(n.kg).toBeNull();
+    expect(n.target).toBe('7 reps');
+  });
+
+  it.each([
+    ['machine stack', 'lib_machine_chest_press', 42, 45],
+    ['barbell and plates', 'lib_barbell_bench_press', 61, 65],
+    ['kettlebell', 'lib_kettlebell_swing', 16, 17.5],
+  ] as Array<[string, string, number, number]>)('%s: an increase from a logged %s kg still snaps up to the rack, to %s kg', async (_kind, id, logged, up) => {
+    const { defaultProfile } = await import('@/brain/units');
+    const { findExercise } = await import('@/core/exercises');
+    const top = sets(logged, 15, 'ideal');
+    const n = suggestNext([session('2026-09-12', [{ id, sets: top }]), session('2026-09-15', [{ id, sets: top }])], id, 'lean', today, 3, [], { equipment: defaultProfile(findExercise(id)!.equipment, 'kg') });
+    expect(n.mode).toBe('increase');
+    expect(n.kg).toBe(up);
+  });
+
+  it('a hold-type target exactly between two rungs goes up to the heavier one, never a step back', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const lat = 'lib_dumbbell_lateral_raise';
+    // Logged 6 kg; an Escobar ×7/6 adjustment makes 7 kg, which was never logged and sits between 6 and 8.
+    const n = suggestNext([session('2026-09-15', [{ id: lat, sets: sets(6, 10, 'max') }])], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'kg'), loadFactor: 7 / 6 });
+    expect(n.kg).toBe(8);
+    expect(n.snappedFromKg).toBe(7);
+    expect(n.reason).toMatch(/Moved to 8 kg, the nearest weight your equipment has, so the reps may need to change/);
   });
 });
