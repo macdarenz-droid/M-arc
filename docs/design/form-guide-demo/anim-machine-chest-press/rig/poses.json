@@ -655,10 +655,10 @@
    ]
   },
   "parts": {
-   "lever": "<g class=\"j anim cp-lever lever-near\"><polygon class=\"eqm\" points=\"200.9,58 206.1,58 206.1,146 200.9,146\"/><rect class=\"hd\" x=\"200.3\" y=\"145\" width=\"6.4\" height=\"26\" rx=\"3\"/></g>",
+   "lever": "<g class=\"j anim cp-lever lever-near\"><polygon class=\"eqm\" points=\"200.9,58 206.1,58 206.1,146 200.9,146\"/><rect class=\"hd\" x=\"200.3\" y=\"145\" width=\"6.4\" height=\"26\" rx=\"3\"/><path class=\"knurl\" d=\"M200.3 147h6.4M200.3 148.4h6.4M200.3 149.8h6.4M200.3 166.2h6.4M200.3 167.6h6.4M200.3 169h6.4\"/></g>",
    "leverFar": "<g class=\"j anim cp-lever far-lever\"><polygon class=\"eqf\" points=\"200.9,58 206.1,58 206.1,146 200.9,146\"/><rect class=\"hdf\" x=\"200.3\" y=\"145\" width=\"6.4\" height=\"26\" rx=\"3\"/></g>",
    "hub": "<circle class=\"eqm\" cx=\"203.5\" cy=\"58\" r=\"7\"/><circle class=\"rod\" cx=\"203.5\" cy=\"58\" r=\"2\"/>",
-   "stackMoving": "<rect class=\"eq\" x=\"26\" y=\"112.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"126\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"139.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"153\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"166.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"180\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"pin\" x=\"73\" y=\"184\" width=\"9\" height=\"4\" rx=\"2\"/><rect class=\"eqm stack-top\" x=\"45\" y=\"106\" width=\"10\" height=\"6.5\" rx=\"1\"/>"
+   "stackMoving": "<rect class=\"eq\" x=\"26\" y=\"112.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"126\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"139.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"153\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"166.5\" width=\"48\" height=\"12\" rx=\"1.5\"/><rect class=\"eq\" x=\"26\" y=\"180\" width=\"48\" height=\"12\" rx=\"1.5\"/><path class=\"eqh\" d=\"M27.2 113.6h45.6v1.2h-45.6zM27.2 127.1h45.6v1.2h-45.6zM27.2 140.6h45.6v1.2h-45.6zM27.2 154.1h45.6v1.2h-45.6zM27.2 167.6h45.6v1.2h-45.6zM27.2 181.1h45.6v1.2h-45.6z\"/><rect class=\"pin\" x=\"73\" y=\"184\" width=\"9\" height=\"4\" rx=\"2\"/><circle class=\"pin\" cx=\"82.6\" cy=\"186\" r=\"2.6\"/><rect class=\"eqm stack-top\" x=\"45\" y=\"106\" width=\"10\" height=\"6.5\" rx=\"1\"/>"
   }
  },
  "lateralRaise": {
@@ -727,7 +727,7 @@
    ]
   },
   "parts": {
-   "dumbbellR": "<polygon class=\"eqm\" points=\"14,21 18,14.63 26,14.63 30,21 30,17.2 26,10.83 18,10.83 14,17.2\"/><polygon class=\"eqm\" points=\"30,21 26,27.37 18,27.37 14,21 18,14.63 26,14.63\"/><polygon class=\"hd\" points=\"24.7,21 23.35,23.15 20.65,23.15 19.3,21 20.65,18.85 23.35,18.85\"/>"
+   "dumbbellR": "<rect class=\"hd\" x=\"20.2\" y=\"17.6\" width=\"3.6\" height=\"5.88\"/><path class=\"knurl\" d=\"M20.2 18.9h3.6M20.2 20.1h3.6M20.2 21.3h3.6\"/><polygon class=\"eqm\" points=\"16.2,29.3 19.1,24.68 24.9,24.68 27.8,29.3 27.8,27.3 24.9,22.68 19.1,22.68 16.2,27.3\"/><polygon class=\"eqs\" points=\"16.2,29.3 19.1,24.68 19.1,22.68 16.2,27.3\"/><polygon class=\"eqh\" points=\"19.1,24.68 24.9,24.68 24.9,22.68 19.1,22.68\"/><polygon class=\"eql\" points=\"24.9,24.68 27.8,29.3 27.8,27.3 24.9,22.68\"/><polygon class=\"eqm\" points=\"27.8,29.3 24.9,33.92 19.1,33.92 16.2,29.3 19.1,24.68 24.9,24.68\"/><polygon class=\"eql\" points=\"25.9,29.3 23.95,32.41 20.05,32.41 18.1,29.3 20.05,26.19 23.95,26.19\"/><polygon class=\"hd\" points=\"24,29.3 23,30.89 21,30.89 20,29.3 21,27.71 23,27.71\"/>"
   }
  },
  "contrast": [
@@ -742,7 +742,20 @@
    "bodyStage": 1.5853281668069505,
    "bodyPad": 1.4181534606174024,
    "helpBody": 1.5176343411600366,
-   "mainBody": 2.556371933154944
+   "mainBody": 2.556371933154944,
+   "lineSkin": 3.404287563985987,
+   "lineSkinHi": 2.5742804645665127,
+   "lineSkinLo": 4.191780434709851,
+   "lineTeeHi": 3.2031654636829323,
+   "lineTeeLo": 4.999763647824745,
+   "skinTee": 1.270063192823326,
+   "shortsSkin": 1.5258494054046075,
+   "shortsPad": 2.748275282843472,
+   "shoeStage": 1.163940086321371,
+   "rimLine": 1.4236921508778955,
+   "mainTee": 2.556371933154944,
+   "knurl": 2.974469597163208,
+   "seam": 2.153284449940276
   },
   {
    "id": "paper",
@@ -755,7 +768,20 @@
    "bodyStage": 1.440649700659023,
    "bodyPad": 1.225356964351608,
    "helpBody": 1.518824328260591,
-   "mainBody": 2.490298127291757
+   "mainBody": 2.490298127291757,
+   "lineSkin": 2.84695449905144,
+   "lineSkinHi": 3.3016074161240003,
+   "lineSkinLo": 2.4421304932405064,
+   "lineTeeHi": 3.6190791135563063,
+   "lineTeeLo": 2.755552426250206,
+   "skinTee": 1.1351633606804392,
+   "shortsSkin": 1.267242062914161,
+   "shortsPad": 1.762708782465007,
+   "shoeStage": 3.5540137840966874,
+   "rimLine": 4.345402560248253,
+   "mainTee": 2.490298127291757,
+   "knurl": 2.470055232158955,
+   "seam": 1.9393962012163148
   },
   {
    "id": "ember",
@@ -768,7 +794,20 @@
    "bodyStage": 1.686267332477588,
    "bodyPad": 1.4475365823102255,
    "helpBody": 1.8182445867620591,
-   "mainBody": 3.8829991019344776
+   "mainBody": 3.8829991019344776,
+   "lineSkin": 3.3532025596222192,
+   "lineSkinHi": 2.5271724881828774,
+   "lineSkinLo": 4.210412065878896,
+   "lineTeeHi": 3.151892652976994,
+   "lineTeeLo": 5.054026277395851,
+   "skinTee": 1.2779785229693006,
+   "shortsSkin": 1.5320071610043238,
+   "shortsPad": 2.8340917036261017,
+   "shoeStage": 1.1859632651943532,
+   "rimLine": 1.3974114329572596,
+   "mainTee": 3.8829991019344776,
+   "knurl": 3.0282206785293226,
+   "seam": 2.165533196821475
   },
   {
    "id": "emerald",
@@ -781,7 +820,20 @@
    "bodyStage": 1.6282270149968625,
    "bodyPad": 1.409808528898237,
    "helpBody": 2.2892157483541764,
-   "mainBody": 5.516103010185114
+   "mainBody": 5.516103010185114,
+   "lineSkin": 3.0363067694632657,
+   "lineSkinHi": 2.3531339066203523,
+   "lineSkinLo": 3.7240518860431355,
+   "lineTeeHi": 2.8716968608154345,
+   "lineTeeLo": 4.398892713920376,
+   "skinTee": 1.2477071879321573,
+   "shortsSkin": 1.4696152309144392,
+   "shortsPad": 2.5850946859326536,
+   "shoeStage": 1.177966084280811,
+   "rimLine": 1.3713616021421873,
+   "mainTee": 5.516103010185114,
+   "knurl": 2.76042246651049,
+   "seam": 2.044205273805105
   },
   {
    "id": "midnight",
@@ -794,7 +846,20 @@
    "bodyStage": 1.8215526583487496,
    "bodyPad": 1.4003766311132064,
    "helpBody": 1.2241762876455666,
-   "mainBody": 1.6332379246723787
+   "mainBody": 1.6332379246723787,
+   "lineSkin": 2.573028835768575,
+   "lineSkinHi": 2.05717336476528,
+   "lineSkinLo": 3.164257864277922,
+   "lineTeeHi": 2.449262099725418,
+   "lineTeeLo": 3.7028754982974954,
+   "skinTee": 1.2207478005289671,
+   "shortsSkin": 1.400619098192364,
+   "shortsPad": 2.3943677217841204,
+   "shoeStage": 1.2559240880813378,
+   "rimLine": 1.2867339383597256,
+   "mainTee": 1.6332379246723787,
+   "knurl": 2.5186812771327265,
+   "seam": 1.8810576863134696
   }
  ]
 }

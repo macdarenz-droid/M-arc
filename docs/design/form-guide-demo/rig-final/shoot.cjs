@@ -26,6 +26,31 @@ check(L.startA >= 10 && L.startA <= 15 && L.endA >= 85 && L.endA <= 90, `lateral
 check(L.topGripY >= L.shoulderY, `lateral raise: hands never above shoulder height (top grip y ${f1(L.topGripY)} >= ${L.shoulderY})`);
 
 for (const c of poses.contrast) check(c.line >= 3 && c.lineBody >= 3 && c.frame >= 3 && c.metal >= 3 && c.cable >= 3, `${c.id}: figure outline ${c.line.toFixed(2)} on stage and ${c.lineBody.toFixed(2)} over the body, frame ${c.frame.toFixed(2)}, metal ${c.metal.toFixed(2)}, cable ${c.cable.toFixed(2)} (all >= 3)`);
+// Figure detail paints (RIG.md section 20). The T-shirt keeps the body tone, so the outline over the torso (what an
+// arm crosses) stays the >= 3 checked above. Light and dark facets and the skin tone sit inside a limb's own outline
+// (only the forearm crosses them, at the elbow): at least 2. The cloth tones must differ from skin and pads, the rim
+// from the outline, and the knurl and seam lines must show on their parts.
+for (const c of poses.contrast) {
+  const facets = [c.lineTeeHi, c.lineTeeLo, c.lineSkin, c.lineSkinHi, c.lineSkinLo];
+  check(Math.min(...facets) >= 2 && c.skinTee >= 1.1 && c.shortsSkin >= 1.25 && c.shortsPad >= 1.5 && c.bodyPad >= 1.2 && c.rimLine >= 1.25 && c.knurl >= 1.8 && c.seam >= 1.5,
+    `${c.id}: outline over the T-shirt facets ${c.lineTeeHi.toFixed(2)} / ${c.lineTeeLo.toFixed(2)} and skin ${c.lineSkin.toFixed(2)} (light ${c.lineSkinHi.toFixed(2)}, dark ${c.lineSkinLo.toFixed(2)}) (>= 2); skin vs T-shirt ${c.skinTee.toFixed(2)} (>= 1.1), shorts vs skin ${c.shortsSkin.toFixed(2)} (>= 1.25) and vs pads ${c.shortsPad.toFixed(2)} (>= 1.5), T-shirt vs pads ${c.bodyPad.toFixed(2)} (>= 1.2); rim vs outline ${c.rimLine.toFixed(2)} (>= 1.25), knurl ${c.knurl.toFixed(2)} (>= 1.8), seam ${c.seam.toFixed(2)} (>= 1.5)`);
+}
+
+// Tokens only (UPGRADE-BRIEF.md, shading): no colour literal in the page CSS or the player markup. The only
+// literals allowed are the token definitions: THEMES / themeVars() in the logic script and the root style
+// string they produce on .player.
+{
+  const LIT = [/(^|[\s:(,="'])#[0-9a-fA-F]{3,8}(?![\w-])/, /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i, /(?<![\w-])(?:white|black|red|green|blue|gr[ae]y|silver|yellow|orange|purple|navy|teal|maroon|olive|lime|aqua|fuchsia|pink|brown|gold|GrayText|CanvasText|Canvas)(?![\w-])/i];
+  for (const file of ['chest-press.html', 'lateral-raise.html', 'parts.html']) {
+    const src = fs.readFileSync(path.join(DIR, file), 'utf8');
+    const css = src.slice(src.indexOf('<style>') + 7, src.indexOf('</style>'));
+    const end = src.indexOf('<p class="harness-note"');
+    const markup = src.slice(src.indexOf('<div class="player'), end > 0 ? end : src.indexOf('</body>')).replace(/(<div class="player[^"]*")\s+(?:data-[\w-]+="[^"]*"\s+)*style="[^"]*"/g, '$1');
+    const hits = [];
+    for (const [where, text] of [['CSS', css], ['markup', markup]]) for (const re of LIT) { const m = text.match(re); if (m) hits.push(`${where}: "${text.slice(Math.max(0, m.index - 30), m.index + 30).replace(/\s+/g, ' ')}"`); }
+    check(hits.length === 0, `${file}: no colour literal in the page CSS or the player markup, every paint is a token or a color-mix() of tokens (${hits.length ? hits.join(' | ') : 'CSS ' + css.length + ' chars, markup ' + markup.length + ' chars scanned'})`);
+  }
+}
 
 // ---- 2. Browser checks and screenshots -------------------------------------------------
 (async () => {
@@ -218,6 +243,32 @@ for (const c of poses.contrast) check(c.line >= 3 && c.lineBody >= 3 && c.frame 
       { file: 'lateral-raise.html', label: 'lateral raise', grips: [{ name: 'right hand', sel: '.lr-fa-r', x: 22, y: 16 }, { name: 'left hand', sel: '.lr-fa-l', x: -22, y: 16 }] },
     ];
     for (const sm of SM) { const { page, ctx } = await open(sm.file, '?t=0'); await smoothCheck(page, sm, check); await ctx.close(); }
+  }
+
+  // 2j. Target-muscle glow and secondary motion (UPGRADE-BRIEF.md, figure detail and smoothness target 3). The glow
+  // (.gw) and the brace / shoulder-blade facets (.tn) share one opacity channel on the move's timing. Over 481
+  // samples of the rep: 0 at setup and at the rep restart (t 0 and 1, so no flash when a rep starts again), never
+  // falls during the lift, strongest in the hold (the hardest point), never rises during the return, and never
+  // changes by more than 0.02 between samples 1/120 s apart. It carries no rotate(), so it can never move a joint.
+  for (const [file, label, ch] of [['chest-press.html', 'chest press', 'cp-ten'], ['lateral-raise.html', 'lateral raise', 'lr-ten']]) {
+    const { page, ctx } = await open(file, '?t=0');
+    const r = await page.evaluate(async (ch) => {
+      const inStage = [...document.querySelectorAll('.stage .scene .' + ch)].filter(el => !el.closest('.pics'));
+      const glow = inStage.filter(el => el.classList.contains('gw')), ten = inStage.filter(el => el.classList.contains('tn'));
+      const names = [...new Set(inStage.map(el => getComputedStyle(el).animationName))];
+      const kf = [...document.querySelectorAll('style')].map(s => s.textContent).join('').match(new RegExp('@keyframes ' + ch + '-a\\{[^@]*'));
+      const o = [];
+      for (let i = 0; i <= 480; i++) { window.__rig.freeze(i / 480); await new Promise(res => requestAnimationFrame(res)); o.push([glow[0], ten[0]].map(el => +getComputedStyle(el).opacity)); }
+      return { nGlow: glow.length, nTen: ten.length, names, rotate: kf ? /rotate/.test(kf[0]) : null, o };
+    }, ch);
+    const g = r.o.map(v => v[0]), t = r.o.map(v => v[1]), lift = [0, 120], hold = [120, 180], ret = [180, 420];
+    const step = Math.max(...g.slice(1).map((v, i) => Math.abs(v - g[i]))), maxAll = Math.max(...g), maxHold = Math.min(...g.slice(hold[0], hold[1] + 1));
+    const mono = (a, b, dir) => g.slice(a, b + 1).every((v, i, arr) => i === 0 || dir * (v - arr[i - 1]) >= -1e-6);
+    check(r.nGlow > 0 && r.nTen > 0 && r.names.length === 1 && r.rotate === false && t.every((v, i) => Math.abs(v - g[i]) < 1e-6),
+      `${label}: ${r.nGlow} glow polygon(s) on the target muscle and ${r.nTen} secondary-motion facet(s) share one opacity channel (${r.names.join(', ')}), no rotate()`);
+    check(g[0] <= 0.001 && g[480] <= 0.001 && mono(lift[0], lift[1], 1) && mono(ret[0], ret[1], -1) && maxHold >= maxAll - 1e-6 && maxAll >= 0.99 && step <= 0.02,
+      `${label}: glow 0 at setup (${g[0].toFixed(3)}) and at the rep restart (${g[480].toFixed(3)}), rises through the lift, strongest in the hold (${maxHold.toFixed(3)} of max ${maxAll.toFixed(3)}), falls through the return, largest step between samples 1/120 s apart ${step.toFixed(4)} (limit 0.02)`);
+    await ctx.close();
   }
 
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
