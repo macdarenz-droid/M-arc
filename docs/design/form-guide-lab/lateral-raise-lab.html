@@ -85,14 +85,24 @@ h3{margin:0 0 4px;font-size:15px}
 .phase-labels{display:flex;font-size:11px;color:var(--text-2);font-variant-numeric:tabular-nums}
 .phase-labels span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
-.readouts{border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden;font-size:13px}
-.readouts table{border-collapse:collapse;width:100%}
-.readouts th,.readouts td{padding:6px 10px;text-align:left;font-weight:400;border-bottom:1px solid var(--border-subtle)}
-.readouts tr:last-child th,.readouts tr:last-child td{border-bottom:0}
-.readouts thead th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);background:var(--surface-2)}
-.readouts td{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
-.readouts td.bad{color:var(--neg)}
-.sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.now{display:grid;gap:8px}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px}
+.bar b{font-weight:500;color:var(--text-2);white-space:nowrap}
+.bar .tr{display:grid;gap:2px}
+.bar .tr i{display:block;height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden}
+.bar .tr i::after{content:"";display:block;height:100%;width:var(--w,0%);background:var(--c);border-radius:3px;transition:width .12s linear}
+.bar .tr i.mis::after{background:repeating-linear-gradient(90deg,var(--c) 0 6px,transparent 6px 9px)}
+.bar span{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;font-size:12px;white-space:nowrap;min-width:44px}
+.bar.bad b,.bar.bad span{color:var(--neg)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tile{background:var(--surface-2);border-radius:10px;padding:6px 8px;display:grid;gap:1px;min-width:0}
+.tile b{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile span{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tiles.two .tile span{font-size:13px}
+.tile b em{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500}
+.tile.bad span{color:var(--neg)}
+.tile .mis{color:var(--neg)}
 .chart{display:grid;gap:4px}
 .chart-title{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--text-2);flex-wrap:wrap}
 .chart canvas{display:block;width:100%;height:96px}
@@ -127,10 +137,18 @@ a{color:var(--accent)}
 .moments svg{display:block;width:100%;aspect-ratio:560/600}
 .moments span{padding:2px 4px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .moves{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.moves li{border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface-1)}
-.moves b{display:block;font-size:14px;margin-bottom:2px}
+.moves li{border:1px solid var(--border);border-radius:12px;padding:8px 12px;background:var(--surface-1)}
+.moves b{display:block;font-size:14px;margin-bottom:1px}
 .moves span{font-size:13px;color:var(--text-2)}
 .lbl text{font:600 11px var(--font)}
+details{border:1px solid var(--border);border-radius:12px;padding:0 14px;background:var(--surface-1)}
+details+details{margin-top:-24px}
+summary{cursor:pointer;font-weight:600;font-size:15px;padding:12px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-weight:400;color:var(--text-2);font-size:18px;line-height:1}
+details[open] summary::after{content:"–"}
+details>:not(summary){margin-bottom:14px}
+details .why{margin-top:12px}
 .lab>.watch{position:static;backdrop-filter:none;background:var(--surface-2)}
 .lab>.cap{position:static;align-items:center}
 .lab>.cap .phase{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -141,7 +159,7 @@ a{color:var(--accent)}
   <header>
     <div class="eyebrow">Form guide · new approach · one-exercise sample</div>
     <h1>Lateral Raise Lab</h1>
-    <p class="lede">The dumbbell lateral raise, drawn in a bold comic-anatomy style and painted in the app's own colours. You see the figure as you'd see yourself in the gym mirror. The shoulder blade, elbows, breath, balance and grip all move the way a real body does. Working muscles shimmer as they fire, and the common mistake plays beside the right rep.</p>
+    <p class="lede">One exercise, drawn as a comic-anatomy figure in the app's colours, moving the way a real body does. Working muscles shimmer as they fire. The common mistake plays beside the right rep.</p>
   </header>
 
   <div class="main">
@@ -182,14 +200,14 @@ a{color:var(--accent)}
 
       <div class="moments" id="moments" role="group" aria-label="Key moments of the rep"></div>
 
-      <div class="readouts"><table id="readouts"></table></div>
+      <div class="now" id="now" aria-live="off"></div>
 
       <div class="chart">
-        <div class="chart-title"><span>Dumbbell speed (m/s)</span><span id="speedMax"></span></div>
+        <div class="chart-title"><span>Speed · m/s</span><span id="speedMax"></span></div>
         <canvas id="chartSpeed" role="img" aria-label="Chart of the dumbbell's speed across one rep"></canvas>
       </div>
       <div class="chart">
-        <div class="chart-title"><span>Load on the shoulder, N·m (dumbbell only)</span><span id="chartMax"></span></div>
+        <div class="chart-title"><span>Load on the shoulder · N·m</span><span id="chartMax"></span></div>
         <canvas id="chart" role="img" aria-label="Chart of the load on the shoulder across one rep"></canvas>
       </div>
 
@@ -199,75 +217,69 @@ a{color:var(--accent)}
     <div class="side">
       <section>
         <h2>What moves, besides the arm</h2>
-        <p>A good rep is the whole body working together. Each of these is animated from the exercise's data.</p>
         <ul class="moves">
-          <li><b>Shoulder blade</b><span>Above 30° the shoulders lift slightly as the blades rotate, about 1° for every 2° the arm rises. It isn't a shrug.</span></li>
-          <li><b>Elbows lead</b><span>Near the top the hands sit just below the elbows.</span></li>
-          <li><b>Breathing</b><span>Breathe out on the way up and in on the way down. The ribcage shows it.</span></li>
-          <li><b>Balance</b><span>A slow, natural sway, and a tiny settle as the weights go out.</span></li>
-          <li><b>Grip</b><span>The dumbbells stay level from bottom to top.</span></li>
-          <li><b>Holding the top</b><span>A small tremor under load at the top, a little larger on the last rep.</span></li>
-          <li><b>Tiring</b><span>Each rep lifts a little slower: rep 2 takes 8% longer, rep 3 takes 18% longer. The lowering stays at 2 s.</span></li>
-          <li><b>The mistake</b><span>A knee dip to throw the weight up, a shrug, the thumbs turning down, then a drop that swings past the start and bounces.</span></li>
+          <li><b>Shoulder blade</b><span>Lifts a little above 30°: 1° per 2° of arm. Not a shrug.</span></li>
+          <li><b>Elbows lead</b><span>Near the top the hands sit just under the elbows.</span></li>
+          <li><b>Breathing</b><span>Out on the way up, in on the way down.</span></li>
+          <li><b>Balance</b><span>A slow sway, and a small settle as the weights go out.</span></li>
+          <li><b>Grip</b><span>The dumbbells stay level.</span></li>
+          <li><b>Holding the top</b><span>A small tremor, bigger on the last rep.</span></li>
+          <li><b>Tiring</b><span>Rep 2 lifts 8% slower, rep 3 18%. Lowering stays 2 s.</span></li>
+          <li><b>The mistake</b><span>Knee dip, shrug, thumbs down, a drop, a bounce.</span></li>
         </ul>
       </section>
 
-      <section>
-        <h2>How it's built</h2>
+      <details>
+        <summary>How it's built</summary>
         <ol class="steps">
-          <li><div><h3>Motion description</h3><p>Joint angles over time, the tempo, the movement details above, the cues, and the common mistake as the same exercise done wrong.</p></div></li>
-          <li><div><h3>One drawn figure per view</h3><p>The figure is drawn once, in parts: head, traps, chest, abs, each arm and each leg. Every part is shaded in three flat tones with a bold outline. Exercises move the parts; they don't redraw them. This sample uses the front view. A side view and a back view are drawn once, and then every exercise reuses them.</p></div></li>
-          <li><div><h3>Painted by the theme</h3><p>The body takes the app's accent colour, with lighter and darker tones worked out from it. Each theme repaints it: lavender in Silent Black, blue in Paper, and the accent of Ember, Emerald or Midnight.</p></div></li>
-          <li><div><h3>Muscles shimmer</h3><p>A working muscle takes on the app's warning colour. A band of light runs along its fibres, brighter and faster the harder it works. The upper trap stays green while it's quiet and turns red when it takes over. The body's shape never changes.</p></div></li>
-          <li><div><h3>Load and speed</h3><p>Load is weight × gravity × the sideways distance to the dumbbell. Speed comes from the dumbbell's path.</p></div></li>
-          <li><div><h3>Automatic checks</h3><p>These run before an exercise ships: smooth speed, joints in their normal range, hands on the handle, feet planted, and a mistake that really differs on every fault it names.</p></div></li>
+          <li><div><h3>Motion description</h3><p>Joint angles over time, tempo, cues, and the mistake as the same exercise done wrong. One block of data per exercise.</p></div></li>
+          <li><div><h3>One drawn figure per view</h3><p>Drawn once, in parts. Exercises move the parts; they don't redraw them. Front view here; side and back views are drawn once and reused.</p></div></li>
+          <li><div><h3>Painted by the theme</h3><p>The body takes the app's accent colour, with lighter and darker tones worked out from it, so every theme repaints it.</p></div></li>
+          <li><div><h3>Muscles shimmer</h3><p>A working muscle takes the warning colour, with a band of light along its fibres, faster the harder it works. The upper trap is green while quiet and red when it takes over.</p></div></li>
+          <li><div><h3>Load and speed</h3><p>Load = weight × gravity × sideways distance to the dumbbell. Speed comes from the dumbbell's path.</p></div></li>
+          <li><div><h3>Automatic checks</h3><p>Smooth speed, joints in range, hands on the handle, feet planted, and a mistake that really differs.</p></div></li>
         </ol>
-      </section>
+      </details>
 
-      <section>
-        <h2>This exercise's whole description</h2>
-        <p>This data drives the lab. Another exercise is another block like this, reusing the same drawn figure.</p>
+      <details>
+        <summary>This exercise's data</summary>
         <pre id="spec"></pre>
-      </section>
+      </details>
 
-      <section>
-        <h2>What changes</h2>
+      <details>
+        <summary>What changes from the current build</summary>
         <div class="cmp"><table>
           <thead><tr><th>Part</th><th>Being built now</th><th>This approach</th></tr></thead>
           <tbody>
-            <tr><td>Figure</td><td>Flat line figure</td><td>A bold, muscular comic-anatomy figure in the app's colours: three-tone shading, outlines, a defined chest, abs, delts and arms</td></tr>
-            <tr><td>Movement</td><td>The arm moves on a smooth curve</td><td>The whole body moves: shoulder blade, elbow lead, breath, balance, level grip, a tremor at the top, and slowing reps</td></tr>
-            <tr><td>Muscles</td><td>Coloured patches that glow on a timer</td><td>A shimmer along the fibres, set by computed effort. The upper trap is green when quiet and red when it takes over</td></tr>
-            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>Speed and load curves for your own logged weight, with the moment you're at marked</td></tr>
-            <tr><td>Mistakes</td><td>Written tips</td><td>The same exercise done wrong, beside the right rep, with the numbers that make it worse</td></tr>
-            <tr><td>Stills</td><td>Four drawn pictures</td><td>Four key moments drawn from the same model; tap one to jump there</td></tr>
+            <tr><td>Figure</td><td>Flat line figure</td><td>A comic-anatomy figure in the app's colours</td></tr>
+            <tr><td>Movement</td><td>The arm moves on a smooth curve</td><td>The whole body moves: blade, elbow lead, breath, balance, grip, tremor, slowing reps</td></tr>
+            <tr><td>Muscles</td><td>Patches that glow on a timer</td><td>A shimmer along the fibres, set by computed effort</td></tr>
+            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>Speed and load curves for your logged weight</td></tr>
+            <tr><td>Mistake</td><td>None</td><td>Side by side with the right rep</td></tr>
+            <tr><td>Stills</td><td>Four drawn pictures</td><td>Four key moments from the same model; tap one to jump there</td></tr>
           </tbody>
         </table></div>
-      </section>
+      </details>
 
-      <section>
-        <h2>Costs and risks</h2>
+      <details>
+        <summary>Costs, risks and sources</summary>
         <ul class="plain">
-          <li><b>Size:</b> plain SVG with no library. The whole figure is a few KB, and each exercise adds about 1 KB of data.</li>
-          <li><b>Art:</b> the figure has to be drawn once per view (front, side, back). Exercises seen from above or at an angle would need one more view each.</li>
-          <li><b>Turning:</b> a drawn figure can't be turned freely the way the 3D version could. You get the view that suits each exercise, plus a close-up.</li>
-          <li><b>Phone:</b> SVG animation is light. A quick check on your phone is still worth doing.</li>
-          <li><b>Accuracy:</b> the motion is modelled from anatomy and studies, not motion-captured.</li>
+          <li><b>Size:</b> plain SVG, no library; about 1 KB of data per exercise.</li>
+          <li><b>Art:</b> one drawing per view (front, side, back).</li>
+          <li><b>Turning:</b> no free rotation; each exercise gets the view that suits it, plus a close-up.</li>
+          <li><b>Phone:</b> light to run, still worth a check on a real phone.</li>
+          <li><b>Accuracy:</b> modelled from anatomy and studies, not motion-captured.</li>
         </ul>
-      </section>
-
-      <section>
-        <h2>Why these choices</h2>
         <ol class="why">
-          <li>Seeing the right rep and the mistake together teaches better than the right rep alone. <a href="https://bmcneurosci.biomedcentral.com/articles/10.1186/s12868-021-00685-6" target="_blank" rel="noopener">BMC Neuroscience, 2021</a></li>
-          <li>Telling beginners what to watch before a demo improves learning. <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2016.00051/full" target="_blank" rel="noopener">Frontiers in Psychology, 2016</a></li>
-          <li>For learning body movements, animations can beat still pictures. <a href="https://www.academia.edu/2293233/Instructional_animations_can_be_superior_to_statics_when_learning_human_motor_skills" target="_blank" rel="noopener">Wong et al.</a></li>
-          <li>The shoulder blade moves with the arm, about 1° for every 2° above 30°. <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
-          <li>Don't turn the thumbs down: rotating the arm inward raises upper-trap and rear-delt work. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7503819/" target="_blank" rel="noopener">EMG study, 2020</a></li>
-          <li>A dumbbell's load climbs to shoulder height and is lightest at the bottom. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12277279/" target="_blank" rel="noopener">Dumbbell vs cable study</a></li>
+          <li>Right rep and mistake together teach better. <a href="https://bmcneurosci.biomedcentral.com/articles/10.1186/s12868-021-00685-6" target="_blank" rel="noopener">BMC Neuroscience, 2021</a></li>
+          <li>Saying what to watch before a demo helps beginners. <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2016.00051/full" target="_blank" rel="noopener">Frontiers in Psychology, 2016</a></li>
+          <li>Animations can beat stills for body movements. <a href="https://www.academia.edu/2293233/Instructional_animations_can_be_superior_to_statics_when_learning_human_motor_skills" target="_blank" rel="noopener">Wong et al.</a></li>
+          <li>The shoulder blade moves 1° for every 2° above 30°. <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
+          <li>Thumbs down raises upper-trap and rear-delt work. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7503819/" target="_blank" rel="noopener">EMG study, 2020</a></li>
+          <li>A dumbbell's load peaks at shoulder height. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12277279/" target="_blank" rel="noopener">Dumbbell vs cable study</a></li>
         </ol>
-        <p class="note" style="margin-top:12px">Sample only; nothing here is in the app. The figure's style follows the owner's reference, drawn fresh and painted in the app's colours. The slowdown, sway and tremor sizes are illustrative.</p>
-      </section>
+        <p class="note">Sample only; nothing here is in the app. Figure style after the owner's reference, drawn fresh in the app's colours. Slowdown, sway and tremor sizes are illustrative.</p>
+      </details>
     </div>
   </div>
 </div>
@@ -305,9 +317,9 @@ const PLANE=SPEC.plane.forwardDeg*D, ELBOW=SPEC.joints.elbowBendDeg*D, LEAD=SPEC
 const TH0=SPEC.joints.shoulderAbductionDeg[0]*D, TH1=SPEC.joints.shoulderAbductionDeg[1]*D, TH1_BAD=SPEC.mistake.abductionDeg*D;
 const T=4, KG=SPEC.equipment.kg, G=9.81, REPS=3;
 function phases(m,rep){
-  if(m==='mistake') return [['Lift',SPEC.mistake.tempo.lift,'Dip and swing it up'],['Hold',SPEC.mistake.tempo.hold,'Shrug at the top'],['Lower',SPEC.mistake.tempo.lower,'Drop it'],['Rest',SPEC.mistake.tempo.rest,'Bounce, then wait']];
+  if(m==='mistake') return [['Lift',SPEC.mistake.tempo.lift,'Dip and swing'],['Hold',SPEC.mistake.tempo.hold,'Shrug'],['Lower',SPEC.mistake.tempo.lower,'Drop'],['Rest',SPEC.mistake.tempo.rest,'Bounce']];
   const lift=+(SPEC.tempo.lift*SPEC.movement.liftSlowdownPerRep[rep%REPS]).toFixed(2),hold=SPEC.tempo.hold,lower=SPEC.tempo.lower;
-  return [['Lift',lift,`Lift · ${lift} s, breathe out`],['Hold',hold,'Hold · 0.5 s at shoulder height'],['Lower',lower,'Lower · 2 s, breathe in'],['Rest',+(T-lift-hold-lower).toFixed(2),'Reset · arms long']];
+  return [['Lift',lift,`Lift · ${lift} s · out`],['Hold',hold,'Hold · 0.5 s'],['Lower',lower,'Lower · 2 s · in'],['Rest',+(T-lift-hold-lower).toFixed(2),'Reset']];
 }
 function phaseAt(m,t,rep){let acc=0;const ph=phases(m,rep);for(let i=0;i<ph.length;i++){const d=ph[i][1];if(t<acc+d||i===ph.length-1)return{i,name:ph[i][0],label:ph[i][2],s:clamp((t-acc)/d,0,1),dt:t-acc};acc+=d;}}
 function motion(m,t,rep){
@@ -355,8 +367,8 @@ function readTokens(){const s=getComputedStyle(document.documentElement);for(con
 readTokens();
 const hex2rgb=h=>{h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16));};
 const mixHex=(a,b,t)=>{const A=hex2rgb(a),B=hex2rgb(b);return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')';};
-function bodyPal(mistake){const base=mistake?rgbToHex(mixHex(col.accent,col.neg,0.62)):col.accent;
-  return {hi:mixHex(base,'#ffffff',0.3),base,sh:mixHex(base,'#000000',0.36),line:mixHex(base,'#000000',0.8),def:mixHex(base,'#000000',0.55)};}
+function bodyPal(mistake){const base=mistake?rgbToHex(mixHex(col.accent,col.neg,0.62)):col.accent,m=(c,t)=>mixHex(base,c,t);
+  return {hi:m('#ffffff',0.3),lit:m('#ffffff',0.14),base,mid:m('#000000',0.14),sh:m('#000000',0.3),sh2:m('#000000',0.22),dk:m('#000000',0.42),occ:m('#000000',0.5),line:m('#000000',0.8),def:m('#000000',0.55),spec:m('#ffffff',0.78),rim:m('#ffffff',0.6)};}
 function rgbToHex(r){const m=r.match(/\d+/g).map(Number);return '#'+m.map(v=>v.toString(16).padStart(2,'0')).join('');}
 
 // ================= the drawn figure (front view) =================
@@ -368,35 +380,94 @@ const ELB=[3,92], FIST=[0,93];
 const HIP=262, FLOOR=566, TRAP_X=[210,258];
 function cel(id,hi,base,sh,ang=1){return `<linearGradient id="${id}" x1="0" y1="0" x2="0.85" y2="${ang}"><stop offset="0" stop-color="${hi}"/><stop offset=".16" stop-color="${hi}"/><stop offset=".16" stop-color="${base}"/><stop offset=".66" stop-color="${base}"/><stop offset=".66" stop-color="${sh}"/><stop offset="1" stop-color="${sh}"/></linearGradient>`;}
 function band(id,c,dir){const [x2,y2]=dir==='x'?[1,0]:[0,1];return `<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${c}" stop-opacity="0"/><stop offset=".3" stop-color="${c}" stop-opacity="0"/><stop offset=".4" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".5" stop-color="${c}" stop-opacity="0"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`;}
-const TORSO_HALF=(p)=>`
-  <path d="M201 132 C216 128 236 128 249 134 C255 144 253 157 247 166 C237 177 220 182 202 179 C201 164 201 148 201 132 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-  <path d="M206 177 C222 180 238 175 247 166" fill="none" stroke="var(--d)" stroke-width="1.4"/>
-  <path d="M239 176 L251 171 L250 177 L240 181 Z M240 186 L252 182 L251 188 L241 191 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.2"/>
-  <path d="M232 196 C241 204 246 216 246 228 C246 240 244 250 240 258 L228 256 C231 242 231 224 229 204 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.6"/>
-  <path d="M233 216 L244 213 M233 232 L245 230" stroke="var(--d)" stroke-width="1.1"/>
-  <rect x="202.5" y="186" width="19" height="17" rx="6" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.5"/>
-  <rect x="202.5" y="206" width="20" height="17" rx="6" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.5"/>
-  <rect x="202.5" y="226" width="20" height="16" rx="6" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.5"/>
-  <path d="M202.5 245 C214 245 220 249 219 254 L203 262 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.5"/>`;
-const LEG_HALF=(p)=>`
-  <path d="M200 262 L251 262 C258 292 259 332 253 370 C248 400 245 420 244 440 C243 474 242 508 241 546 L215 546 C214 508 212 474 211 440 C210 418 208 396 206 370 C204 346 202 322 200 308 Z" fill="url(#${p}-p)" stroke="var(--ink)" stroke-width="2"/>
-  <path d="M212 412 C222 417 234 417 245 412" fill="none" stroke="var(--pants-sh)" stroke-width="1.8"/>
-  <path d="M231 282 C235 318 235 352 231 392" fill="none" stroke="var(--pants-hi)" stroke-width="1.5" opacity=".7"/>
+// soft gradient from [offset, colour, opacity] stops
+function lg(id,x1,y1,x2,y2,st){return `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${st.map(([o,c,a=1])=>`<stop offset="${o}" stop-color="${c}"${a<1?` stop-opacity="${a}"`:''}/>`).join('')}</linearGradient>`;}
+// A brush line: a thin filled sliver along a line, quadratic or cubic (4, 6 or 8 numbers),
+// widest (w) at a (0..1) of its length and running to a point at both ends.
+function sl(d,w,c='var(--d)',a=.5,o=1){
+  if(d.length===4)d=[d[0],d[1],d[0]+(d[2]-d[0])/3,d[1]+(d[3]-d[1])/3,d[2]-(d[2]-d[0])/3,d[3]-(d[3]-d[1])/3,d[2],d[3]];
+  else if(d.length===6)d=[d[0],d[1],d[0]+2/3*(d[2]-d[0]),d[1]+2/3*(d[3]-d[1]),d[4]+2/3*(d[2]-d[4]),d[5]+2/3*(d[3]-d[5]),d[4],d[5]];
+  const P=t=>{const u=1-t;return [0,1].map(i=>u*u*u*d[i]+3*u*u*t*d[2+i]+3*u*t*t*d[4+i]+t*t*t*d[6+i]);},A=[],B=[],f=v=>v.toFixed(1);
+  for(let k=0;k<=5;k++){const t=k/5,p=P(t),q=P(Math.min(1,t+.02)),r=P(Math.max(0,t-.02)),dx=q[0]-r[0],dy=q[1]-r[1],n=Math.hypot(dx,dy)||1,
+    h=w/2*Math.pow(Math.sin(Math.PI*(t<a?.5*t/a:.5+.5*(t-a)/(1-a))),.7);
+    A.push(f(p[0]-dy/n*h)+' '+f(p[1]+dx/n*h));B.unshift(f(p[0]+dy/n*h)+' '+f(p[1]-dx/n*h));}
+  return `<path d="M${A.join('L')}L${B.join('L')}Z" fill="${c}"${o<1?` opacity="${o}"`:''}/>`;}
+// A run of neighbouring brush lines is regrouped so each colour and opacity is one path (fewer nodes, same picture:
+// lines in one run do not overlap, and all brush lines wind the same way, so the nonzero fill keeps any overlap).
+const packSl=h=>h.replace(/(?:<path d="M[-\d. L]+Z" fill="(?:var\(--[\w-]+\)|rgb\([\d, ]+\)|#[0-9a-f]+)"(?: opacity="[\d.]+")?\/>\s*){2,}/g,run=>{const out=[];let c=null;
+  for(const m of run.matchAll(/<path d="([^"]+)" fill="([^"]+)"((?: opacity="[\d.]+")?)\/>/g)){const k=m[2]+m[3];c=out.find(o=>o.k===k);if(c)c.d+=m[1];else out.push({k,d:m[1],f:m[2],o:m[3]});}
+  return out.map(c=>`<path d="${c.d}" fill="${c.f}"${c.o}/>`).join('');});
+const D_='var(--d)',L_='var(--l)',SP='var(--sp)',OC='var(--oc)';
+// Right half of the trunk, mirrored for the left. s picks the shading so both halves take light from the top left.
+const TORSO_HALF=(p,s)=>{const m=`url(#${p}-m${s})`,R=s==='R';return `
+  <path d="M231 188 C241 186 251 186 259 186 C254 200 248 214 245 228 C243 238 245 248 247 258 C240 252 233 251 226 255 C231 234 233 210 231 188 Z" fill="${m}"/>
+  <path d="M201 126 C214 126.5 230 124.5 252 121 C259 129 264 137 267 146 C260 160 250 172 236 180 C224 186 211 186 201 183 Z" fill="${m}"/>
+  <path d="M202 185 C212 184 224 185 231 189 C232 194 231 198 230 201 C221 204 210 204 202 202 Z" fill="${m}"/>
+  <path d="M202 204 C212 206 222 205 230 203 C232 209 232 214 231 218 C221 221 210 221 202 219 Z" fill="${m}"/>
+  <path d="M202 221 C212 223 222 222 231 220 C232 226 232 231 230 235 C221 238 210 238 202 236 Z" fill="${m}"/>
+  <path d="M202 238 C212 240 222 239 230 237 C229 245 226 253 220 260 C214 263 207 265 202 266 Z" fill="${m}"/>
+  ${sl([203,186,226,192,252,178,266,153],7,OC,.42,.38)}
+  ${sl([266,150,268,168,262,184,254,200],R?6:3,OC,.4,R?.32:.18)}
+  ${sl([243,238,237,250,226,259,213,268],5,OC,.4,.3)}
+  ${sl([202,183,226,189,252,175,267,148],2.8,L_,.4)}
+  ${sl([203,126.5,218,127,238,123.5],1.3,D_,.35,.75)}
+  ${sl([251,123,259,130,266,146],1.3,D_,.5)}
+  ${sl([226,146,242,146,258,146],1,D_,.7,.4)}${sl([232,166,246,160,260,151],1,D_,.7,.4)}
+  ${sl([267,150,268,166,263,182,256,196],1.4,D_,.4)}
+  ${sl([265,160,258,166,249,172],1.4,D_,.35)}${sl([264,172,257,178,248,184],1.4,D_,.35)}${sl([261,184,254,190,247,196],1.3,D_,.35)}${sl([257,196,251,201,245,206],1.1,D_,.35)}
+  ${sl([252,204,246,211,239,216],1,D_,.45,.55)}${sl([249,216,244,222,238,226],1,D_,.45,.5)}
+  ${sl([231,187,234,210,233,232,226,255],1.7,D_,.45)}
+  ${sl([204,205.6,216,208.8,228,203.6],3.6,OC,.35,.4)}${sl([204,222.6,216,225.8,229,220.6],3.6,OC,.35,.4)}${sl([204,239.6,216,242.8,228,237.6],3.4,OC,.35,.38)}${sl([203,203,216,206,230,200],2.3,D_,.35)}${sl([203,220,216,223,231,217],2.3,D_,.35)}${sl([203,237,216,240,230,234],2.1,D_,.35)}
+  ${sl([245,234,241,246,230,257,215,268],2.2,L_,.35)}
+  ${R?sl([206,133,214,128.5,227,128.5],2.4,SP,.4,.5):sl([228,134,240,132,252,138],2.4,SP,.5,.55)}
+  ${R?sl([204,188,209,186.5,214,187],1.3,SP,.5,.4):sl([218,188,224,187,229,191],1.5,SP,.5,.5)}
+  ${R?'':sl([219,206,225,205.5,229,208],1.3,SP,.5,.45)+sl([219,223,225,222.5,229,225],1.3,SP,.5,.4)+sl([262,152,263,166,259,180],1.6,SP,.5,.4)}`;};
+const LEG_HALF=(p,s)=>{const R=s==='R',H='var(--ph)',S='var(--pants-sh)',G='M200 262 L251 262 C256 290 257 328 253 366 C249 396 246 416 245 438 C244 470 243 506 242 544 L215 544 C214 506 212 472 211 440 C210 416 208 394 206 368 C204 344 202 322 200 306 Z';return `
+  <path d="M251 262 C256 290 257 328 253 366 C249 396 246 416 245 438 C244 470 243 506 242 544 M215 544 C214 506 212 472 211 440 C210 416 208 394 206 368 C205 356 204.5 348 204 342" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="${G}" fill="url(#${p}-p${s})"/>
+  ${R?sl([246,292,250,340,243,400],4,S,.5,.6):sl([206,318,209,368,212,410],3,S,.5,.5)}
+  ${R?sl([214,300,220,350,218,400],2.6,H,.45,.72):sl([248,290,250,340,244,396],2.6,H,.45,.72)}
+  ${sl([206,292,218,284,232,280],1.4,H,.5,.72)}${sl([207,306,220,298,234,294],1.1,H,.5,.72)}
+  ${sl([214,418,228,424,243,418],1.5,H,.5,.72)}${sl([215,428,228,433,242,428],1.2,S,.5,.9)}
+  ${R?sl([219,448,221,490,221,530],2,H,.4,.72):sl([240,448,239,490,238,530],2,H,.4,.72)}
+  ${sl([217,516,228,520,240,515],1.2,H,.5,.72)}${sl([216,530,228,534,241,529],1.2,H,.5,.72)}
+  <path d="${G}" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
   <path d="M213 544 L242 544 C249 549 253 557 251 566 L207 566 C205 557 206 549 213 544 Z" fill="var(--pants)" stroke="var(--ink)" stroke-width="2"/>
-  <path d="M206 561 L252 561" stroke="var(--pants-hi)" stroke-width="2"/>`;
-const TRAP_PATH="M212 94 C222 104 238 112 258 118 C259 124 256 128 251 131 C238 127 224 125 210 123 C209 112 210 102 212 94 Z";
+  ${sl([207,561,229,562.5,251,561],1.8,H,.5,.9)}`;};
+const TRAP_PATH="M210 88 C218 94 234 101 246 108 C253 112 258 117 258 125 C250 126.5 240 125.5 232 121.5 C224 117 216 108 212.5 100 C211 96 210 92 210 88 Z";
 function ARM(p,s){ // one arm, local frame: pivot at the shoulder joint, hanging down +y, outward +x
+  const a=`url(#${p}-a)`,am=`url(#${p}-am)`,rim=(d,w=4.6)=>`<path d="${d}" fill="none" stroke="var(--rim)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`,
+    ink=(d,w=2.3)=>`<path d="${d}" fill="none" stroke="var(--l)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`,
+    UA='M-15 6 C-17 22 -18 34 -19 48 C-20 62 -15 80 -10 94 C-4 99 10 99 15 94 C21 82 27 64 26 50 C24 36 21 24 20 6 Z',
+    UI='M-19 36 C-19.1 40 -19 44 -19 50 C-19 64 -15 80 -10 94',UO='M20 14 C21 26 24 38 26 50 C27 64 21 82 15 93',
+    TW='M-13 -1 C-18 2 -22 9 -22.4 17 C-22.6 25 -21 31 -19 38 L-10 38 L-10 -1 Z',TWO='M-17.4 5 C-20.6 9 -22.2 13 -22.4 18 C-22.6 25 -21 31 -19 38',
+    FA='M-15 -6 C-18 8 -18 26 -13 44 C-11 54 -10 62 -9 70 L9 70 C10 62 12 52 15 40 C19 26 19 10 18 5 C17.3 2.4 16.2 0 15.7 -3 C15.2 -6.2 15.5 -9.8 16 -12.2 C16.3 -13.4 16.6 -14.6 17.1 -16.8 C11 -17.5 -9 -12 -15 -6 Z',
+    FI='M-15 -6 C-18 8 -18 26 -13 44 C-11 54 -10 62 -9 68',FO='M17.1 -16.8 C16.6 -14.6 16.3 -13.4 16 -12.2 C15.5 -9.8 15.2 -6.2 15.7 -3 C16.2 0 17.3 2.4 18 5 C19 10 19 26 15 40 C12 52 10 62 9 68',
+    FOr='M15.4 -6 C15.3 -5 15.4 -4 15.7 -3 C16.2 0 17.3 2.4 18 5 C19 10 19 26 15 40 C12 52 10 62 9 68',FIr='M-15.8 -2 C-17.6 8 -18 26 -13 44 C-11 54 -10 62 -9 68',
+    DA='M-15 -2 C-11 -8 -3 -12 6 -12 C11 -12 16 -11 20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.4 29 21.5 36 C17 44 11 50 6 56 C0 48 -8 36 -13 24 C-17 16 -18 6 -15 -2 Z',
+    DF='M-15 -2 C-11 -8 -3 -12 6 -12 C8 8 9 32 6 56 C0 48 -8 36 -13 24 C-17 16 -18 6 -15 -2 Z',
+    DS='M6 -12 C11 -12 16 -11 20 -8 C23 6 23 26 17 40 C13 46 9 51 6 56 C9 32 8 8 6 -12 Z',
+    DP='M20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.4 29 21.5 36 C17 44 11 50 6 56 C9 51 13 46 17 40 C23 26 23 6 20 -8 Z';
   return `
   <g id="${p}-arm${s}">
-    <path d="M-12 14 C-17 34 -17 60 -13 80 C-10 89 -3 95 4 95 L17 93 C22 76 24 50 21 28 C19 17 15 10 10 6 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-    <path d="M-7 34 C-10 50 -8 66 -3 78 M16 32 C19 50 18 66 15 82" fill="none" stroke="var(--d)" stroke-width="1.3"/>
+    ${rim(TWO)}<path d="${TW}" fill="${a}"/>
+    ${rim(UO)}${sl([-19,50,-19.2,55,-19.1,59,-19,63],4.6,'var(--rim)',.97)}${rim('M-19 62 C-18.5 70 -15 80 -10 94')}<path d="${UA}" fill="${a}"/>
+    <path d="M3 34 C-8 30 -19 40 -19 56 C-19 70 -14 84 -9 92 C-3 98 5 97 8 92 C6 78 5 60 3 34 Z" fill="url(#${p}-ab)"/>
+    <path d="M8 32 C18 32 26 42 26 56 C26 70 20 82 14 94 C12 97 9 96 8 92 C6 78 4 60 3 42 C3 36 5 33 8 32 Z" fill="${am}"/>
+    ${sl([4,36,6,56,7,74,9,93],1.4,D_,.5)}${sl([16,70,13,78,11,86,10,92],1,D_,.5,.6)}${sl([-14,19,-16.5,24,-18.2,30,-19,36],1,D_,.75,.7)}
+    ${sl([-13,46,-15.5,54,-15.5,62,-13,72],2.2,SP,.45,.7)}${sl([19,52,21,58,21,66,19,74],1.3,SP,.5,.45)}
+    ${ink(TWO,2.1)}${ink(UI)}${ink(UO)}
     <g id="${p}-fore${s}">
       <g id="${p}-dbF${s}"><polygon points="${hexPts(-7,-9,16)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="1.8"/><path d="M-5 -5 L6 7" stroke="var(--iron-sh)" stroke-width="8" stroke-linecap="round"/></g>
-      <path d="M-12 2 C-16 20 -14 44 -9 72 L9 72 C14 46 17 22 15 4 C10 -3 -7 -3 -12 2 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-      <path d="M11 8 C15 24 13 40 9 56" fill="none" stroke="var(--d)" stroke-width="1.3"/>
-      <rect x="-11" y="66" width="22" height="12" rx="4" fill="var(--pants)" stroke="var(--ink)" stroke-width="1.8"/>
-      <path d="M-11 79 C-15 87 -13 100 -6 105 C2 109 11 105 13 97 C15 88 11 80 5 78 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-      <path d="M-7 85 L8 85 M-8 92 L9 92 M-6 99 L6 99" stroke="var(--d)" stroke-width="1.2"/>
+      ${rim(FOr)}${rim(FIr)}<path d="${FA}" fill="url(#${p}-af)"/>
+      <path d="M3 -6 C12 -4 18 10 17 26 C16 38 11 48 6 58 C5 40 3 18 3 -6 Z" fill="${am}"/>
+      ${sl([-9,-5,-3,-1,4,-4],1.2,D_,.5,.8)}${sl([3,-3,4,20,5,40,6,57],1.3,D_,.45)}${sl([-6,30,-8,40,-8,50,-7,60],.9,D_,.5,.6)}
+      ${sl([9,2,13,10,14,18,13,28],1.8,SP,.45,.65)}${sl([-10,6,-12,18,-10,32],1.2,SP,.5,.35)}
+      ${ink(FI)}${ink(FO)}
+      <path d="M-10.5 62 C-4 64 4 64 10.5 62 L11.5 76 C4 78 -4 78 -11.5 76 Z" fill="var(--pants-sh)" stroke="var(--ink)" stroke-width="1.6"/>
+      ${sl([-9,65.5,0,67.5,9,65.5],1.4,'var(--pants-hi)',.5)}
+      <path d="M-11 77 C-15 86 -14 98 -7 105 C0 110 10 107 13 99 C15 90 12 81 8 77 Z" fill="url(#${p}-af)" stroke="var(--l)" stroke-width="2"/>
+      ${sl([-8,86,0,88,9,85],1.1,D_)}${sl([-9,93,0,95,10,92],1.1,D_)}${sl([-7,100,0,102,8,99],1,D_)}
       <g id="${p}-dbN${s}">
         <polygon points="${hexPts(7,9,20)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="2"/>
         <polygon points="${hexPts(7,9,14)}" fill="none" stroke="var(--iron-sh)" stroke-width="1.4"/>
@@ -404,37 +475,64 @@ function ARM(p,s){ // one arm, local frame: pivot at the shoulder joint, hanging
         <text x="7" y="17" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="5" fill="var(--ink)" opacity=".65">KG</text>
       </g>
     </g>
-    <path d="M-16 -12 C-8 -23 12 -23 23 -11 C30 0 30 20 25 36 C21 45 15 50 11 52 C6 40 -3 28 -12 18 C-18 7 -19 -3 -16 -12 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-    <path id="${p}-tF${s}" d="M-16 -12 C-8 -21 0 -21 5 -20 C9 12 11 36 11 52 C6 40 -3 28 -12 18 C-18 7 -19 -3 -16 -12 Z" fill="var(--help)" opacity="0"/>
-    <path id="${p}-tS${s}" d="M5 -20 C14 -18 21 -13 24 -6 C30 6 29 23 25 36 C21 45 15 50 11 52 C11 36 9 12 5 -20 Z" fill="var(--target)" opacity="0"/>
-    <path id="${p}-bS${s}" d="M5 -20 C14 -18 21 -13 24 -6 C30 6 29 23 25 36 C21 45 15 50 11 52 C11 36 9 12 5 -20 Z" fill="url(#${p}-shS)" opacity="0"/>
-    <path d="M5 -20 C9 9 11 32 11 50" fill="none" stroke="var(--d)" stroke-width="1.3"/>
+    ${sl([-14,27,-7,40,0,51,6,60],5,OC,.6,.32)}${sl([6,60,11,54,16,47,22.5,39],4,OC,.35,.26)}
+    ${rim('M6 -12 C11 -12 16 -11 20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.8 27 23 31')}
+    <path d="${DA}" fill="${a}"/><path d="${DF}" fill="url(#${p}-dA)"/><path d="${DS}" fill="url(#${p}-dL)"/><path d="${DP}" fill="url(#${p}-dP)"/>
+    <path id="${p}-tF${s}" d="${DF}" fill="var(--help)" opacity="0"/>
+    <path id="${p}-tS${s}" d="${DS}" fill="var(--target)" opacity="0"/>
+    <path id="${p}-bS${s}" d="${DS}" fill="url(#${p}-shS)" opacity="0"/>
+    ${sl([6,-11,8,8,9,32,6.5,54],1.5,D_,.4)}${sl([20,-7,23,6,23,26,17,40],1.2,D_,.45)}
+    ${sl([-11,-1,-5,-8,3,-9.5],2,SP,.5,.75)}${sl([11,-8.5,16,-6.5,20,-1],1.6,SP,.5,.6)}${sl([14,4,15.5,12,15.5,20,14,28],1.3,SP,.5,.35)}
+    ${sl([6.5,55,1,48,-7,37,-13,24],1.1,L_,.8,.85)}${sl([22,35,18,42,12,49,6.5,55],1.1,L_,.2,.7)}${sl([-13,24,-17,16,-18,6,-15,-2],2,L_,.45)}
+    ${ink('M-15 -2 C-11 -8 -3 -12 6 -12 C11 -12 16 -11 20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.8 27 23 31',2.6)}${sl([23.4,29,22.8,33,22.2,35.5,21.5,37],2,L_,.1)}
   </g>`;}
 function hexPts(cx,cy,r){const a=[];for(let i=0;i<6;i++){const t=Math.PI/6+i*Math.PI/3;a.push((cx+r*Math.cos(t)).toFixed(1)+','+(cy+r*Math.sin(t)).toFixed(1));}return a.join(' ');}
 let FIGN=0;
 function figureMarkup(p,mistake){
-  const b=bodyPal(mistake);
-  return `<g id="${p}" style="--l:${b.line};--d:${b.def}">
-  <defs>${cel(p+'-b',b.hi,b.base,b.sh)}${cel(p+'-p',col['pants-hi'],col.pants,col['pants-sh'],0.1)}${cel(p+'-i',col['iron-hi'],col.iron,col['iron-sh'],0.6)}
+  const b=bodyPal(mistake),M='matrix(-1 0 0 1 400 0)',pn=[[0,col.pants],[.25,col['pants-hi']],[.55,col.pants],[1,col['pants-sh']]],mm=[[0,b.lit],[.35,b.base],[.75,b.mid],[1,b.sh]];
+  const TORSO='M200 99 C210 99 218 97 224 99 C234 102 244 108 252 114 C257 116 263 118 268 123 C270 128 271 138 270 146 C268 160 264 172 258 186 C254 200 248 214 245 228 C243 238 245 248 247 258 L248 270 L152 270 L153 258 C155 248 157 238 155 228 C152 214 146 200 142 186 C136 172 132 160 130 146 C129 138 130 128 132 123 C137 118 143 116 148 114 C156 108 166 102 176 99 C182 97 190 99 200 99 Z';
+  const SIDE='M252 114 C257 116 263 118 268 123 C270 128 271 138 270 146 C268 160 264 172 258 186 C254 200 248 214 245 228 C243 238 245 248 247 258';
+  const HEAD='M200 27 C219 27 228 41 228 58 C228 71 224 81 218 88 C212 95 206 99 200 99 C194 99 188 95 182 88 C176 81 172 71 172 58 C172 41 181 27 200 27 Z';
+  const trap=s=>`<path d="${TRAP_PATH}" fill="url(#${p}-m${s})"/><path d="M230 120.5 C238 124.6 248 126.3 258 125 L258 117.5 C250 118.6 240 119.4 230 120.5 Z" fill="${b.sh}" opacity=".3"/>${sl([214,102,224,116,242,125,256,125.5],1.3,D_,.5,.7)}${sl([221,98,234,104,248,111],1.5,SP,.45,.5)}
+        <path id="${p}-tT${s}" d="${TRAP_PATH}" fill="var(--quiet)" opacity="0"/><path id="${p}-bT${s}" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/>
+        <path d="M217 93 C228 99 238 104 246 108 C253 112 258 117 258 124" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M210 88 C218 94 234 101 246 108 C253 112 258 117 258 125" fill="none" stroke="var(--l)" stroke-width="2.4" stroke-linecap="round"/>`;
+  return packSl(`<g id="${p}" style="--l:${b.line};--d:${b.def};--oc:${b.occ};--sp:${b.spec};--rim:${b.rim};--ph:${mixHex(col['pants-hi'],'#ffffff',.22)}">
+  <defs>${lg(p+'-mR',0,0,.9,1,mm)}${lg(p+'-mL',1,0,.1,1,mm)}
+    ${lg(p+'-t',128,100,272,150,[[0,b.mid],[.12,b.lit],[.45,b.base],[.8,b.mid],[1,b.sh]]).replace('<linearGradient','<linearGradient gradientUnits="userSpaceOnUse"')}${[['-a',-20,27],['-af',-23,19]].map(([n,x1,x2])=>lg(p+n,x1,0,x2,0,[[0,b.sh],[.3,b.base],[.55,b.lit],[.85,b.base],[1,b.mid]]).replace('<linearGradient','<linearGradient gradientUnits="userSpaceOnUse"')).join('')}${lg(p+'-ab',0,0,1,0,[[0,b.sh],[.3,b.base],[.55,b.lit],[.85,b.base],[1,b.mid]])}
+    ${lg(p+'-am',0,0,1,.4,[[0,b.mid],[.3,b.lit],[.65,b.base],[1,b.sh]])}${lg(p+'-dA',.2,0,.6,1,[[0,b.hi],[.3,b.lit],[.7,b.base],[1,b.mid]])}${lg(p+'-dL',0,0,1,.5,[[0,b.lit],[.5,b.base],[1,b.mid]])}${lg(p+'-dP',0,0,1,.3,[[0,b.mid],[1,b.sh]])}
+    <radialGradient id="${p}-hg" cx=".36" cy=".3" r=".85" fx=".3" fy=".22"><stop offset="0" stop-color="${b.hi}"/><stop offset=".45" stop-color="${b.base}"/><stop offset=".82" stop-color="${b.sh2}"/><stop offset="1" stop-color="${b.dk}"/></radialGradient>${lg(p+'-pR',0,0,1,.1,pn)}${lg(p+'-pL',1,0,0,.1,pn)}
+    ${cel(p+'-i',col['iron-hi'],col.iron,col['iron-sh'],0.6)}
     ${band(p+'-shS',col.target,'y')}${band(p+'-shT',mistake?col.neg:col.quiet,'x')}</defs>
   <ellipse cx="200" cy="568" rx="92" ry="11" fill="var(--floor)"/>
   <g id="${p}-root">
-    <g id="${p}-legs">${LEG_HALF(p)}<g transform="matrix(-1 0 0 1 400 0)">${LEG_HALF(p)}</g></g>
+    <g id="${p}-legs">${LEG_HALF(p,'R')}<g transform="${M}">${LEG_HALF(p,'L')}</g></g>
     <g id="${p}-upper">
       <g id="${p}-torso">
-        <path d="M186 120 C174 122 160 124 150 127 C141 133 139 146 140 156 C138 176 144 196 148 212 C152 226 154 236 154 246 L152 264 L248 264 L246 246 C246 236 248 226 252 212 C256 196 262 176 260 156 C261 146 259 133 250 127 C240 124 226 122 214 120 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
-        ${TORSO_HALF(p)}<g transform="matrix(-1 0 0 1 400 0)">${TORSO_HALF(p)}</g>
-        <ellipse cx="200" cy="244" rx="2.4" ry="3.2" fill="var(--d)"/>
-        <rect x="149" y="257" width="102" height="11" rx="4" fill="var(--pants-sh)" stroke="var(--ink)" stroke-width="1.8"/>
+        <path d="${SIDE}" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/><path d="${SIDE}" transform="${M}" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${TORSO}" fill="url(#${p}-t)"/>
+        ${TORSO_HALF(p,'R')}<g transform="${M}">${TORSO_HALF(p,'L')}</g>
+        ${sl([200,128,200,154,200,183],1.2,D_,.6,.7)}${sl([200,185,199.6,215,200,256],2.2,D_,.45,.95)}
+        <path d="M198.4 239 C198 242 199 245.5 200 246 C201 245.5 202 242 201.6 239 C201 238 199 238 198.4 239 Z" fill="var(--l)"/>
+        <path d="${SIDE}" fill="none" stroke="var(--l)" stroke-width="2.4"/><path d="${SIDE}" transform="${M}" fill="none" stroke="var(--l)" stroke-width="2.4"/>
+        <path d="M152 257 C184 262 216 262 248 257 L249 270 C216 274 184 274 151 270 Z" fill="var(--pants)" stroke="var(--ink)" stroke-width="1.8"/>
+        ${sl([156,260.5,200,265,244,260.5],1.3,'var(--pants-hi)',.5,.9)}
       </g>
-      <path d="M187 86 L184 124 L216 124 L213 86 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
-      <path d="M190 94 L198 123 M210 94 L202 123" stroke="var(--d)" stroke-width="1.2"/>
-      <g id="${p}-trapR"><path d="${TRAP_PATH}" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/><path id="${p}-tTR" d="${TRAP_PATH}" fill="var(--quiet)" opacity="0"/><path id="${p}-bTR" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/></g>
-      <g id="${p}-trapL"><g transform="matrix(-1 0 0 1 400 0)"><path d="${TRAP_PATH}" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/><path id="${p}-tTL" d="${TRAP_PATH}" fill="var(--quiet)" opacity="0"/><path id="${p}-bTL" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/></g></g>
+      <path d="M185 84 C184 98 181 112 176 125 C184 126 192 126 200 127 C208 126 216 126 224 125 C219 112 216 98 215 84 Z" fill="url(#${p}-t)"/>
+      ${sl([214,111,224,119,236,121.5],4,OC,.45,.28)}${sl([186,111,176,119,164,121.5],4,OC,.45,.28)}
+      <path d="M184 90 C192 100 208 100 216 90 L217 103 C208 108 192 108 183 103 Z" fill="${b.occ}" opacity=".35"/>
+      ${sl([212,93,210,110,204,124],1.4,D_,.55)}${sl([188,93,190,110,196,124],1.4,D_,.55)}${sl([191,101,193,110,196.5,118],1.3,SP,.5,.35)}${sl([196,121.5,200,125.5,204,121.5],1.3,D_,.5)}
+      <g id="${p}-trapR">${trap('R')}</g>
+      <g id="${p}-trapL"><g transform="${M}">${trap('L')}</g></g>
       <g id="${p}-head">
-        <path d="M200 27 C218 27 227 40 227 57 C227 70 225 79 220 87 C215 94 208 99 200 99 C192 99 185 94 180 87 C175 79 173 70 173 57 C173 40 182 27 200 27 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
-        <path d="M204 61 L220 54 L219 60 C215 65 209 66 204 61 Z M196 61 L180 54 L181 60 C185 65 191 66 196 61 Z" fill="var(--eye)" stroke="var(--l)" stroke-width="1.6"/>
-        <path d="M200 32 C210 36 213 48 212 62" fill="none" stroke="var(--d)" stroke-width="1.1" opacity=".6"/>
+        <path d="M180 86 C175 80 172 71 172 58 C172 41 181 27 200 27 C219 27 228 41 228 58 C228 71 225 80 220 86" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${HEAD}" fill="url(#${p}-hg)"/>
+        <path d="M226 48 C229 60 226 76 218 88 C212 95 206 99 200 99 C209 94 216 84 219 72 C221 62 223 54 226 48 Z" fill="${b.sh}" opacity=".5"/>
+        ${sl([224,70,219,84,207,95],1.2,D_,.5,.6)}${sl([176,70,181,84,193,95],1,D_,.5,.3)}
+        <ellipse cx="188" cy="41" rx="9" ry="4.6" transform="rotate(-38 188 41)" fill="var(--sp)" opacity=".3"/>${sl([181.5,51,182.5,43,186.5,36.5,193,32.5],1.4,SP,.5,.9)}
+        <path d="M203 61 C209 60 216 56 222 52 C222 59 218 65 211 65 C207 65 204 63 203 61 Z M197 61 C191 60 184 56 178 52 C178 59 182 65 189 65 C193 65 196 63 197 61 Z" fill="var(--eye)" stroke="var(--l)" stroke-width="1.3" stroke-linejoin="round"/>
+        ${sl([202,61.5,212,58.5,223,51],2.6,L_,.6)}${sl([198,61.5,188,58.5,177,51],2.6,L_,.6)}
+        <path d="${HEAD}" fill="none" stroke="var(--l)" stroke-width="2.4"/>
       </g>
       <g id="${p}-armRw">${ARM(p,'R')}</g>
       <g id="${p}-armLw">${ARM(p,'L')}</g>
@@ -443,7 +541,7 @@ function figureMarkup(p,mistake){
     </g>
     <path id="${p}-path" fill="none" stroke="${mistake?'var(--neg)':'var(--target)'}" stroke-width="1.6" stroke-dasharray="2 4" opacity=".8"/>
     <g class="lbl" id="${p}-lbls"></g>
-  </g></g>`;
+  </g></g>`);
 }
 function makeFigure(host,mistake,dx=0){
   const p='f'+(FIGN++),g=document.createElementNS(NS,'g');g.setAttribute('transform',`translate(${dx} 0)`);
@@ -495,7 +593,7 @@ function applyPose(F,Q,now){
   const on=(e,lo)=>clamp((e-lo)/(1-lo),0,1);
   for(const s of ['R','L']){F.tint['tS'+s].setAttribute('opacity',(0.5*on(E.side,0.2)).toFixed(3));F.tint['bS'+s].setAttribute('opacity',(0.95*on(E.side,0.2)).toFixed(3));
     F.tint['tF'+s].setAttribute('opacity',(0.35*on(E.front,0.15)).toFixed(3));
-    F.tint['tT'+s].setAttribute('opacity',(0.12+0.4*on(E.trap,0.1)).toFixed(3));F.tint['tT'+s].setAttribute('fill',trapBad||F.mistake?'var(--neg)':'var(--quiet)');
+    F.tint['tT'+s].setAttribute('opacity',(0.05+0.45*on(E.trap,0.1)).toFixed(3));F.tint['tT'+s].setAttribute('fill',trapBad||F.mistake?'var(--neg)':'var(--quiet)');
     F.tint['bT'+s].setAttribute('opacity',(0.9*on(E.trap,0.1)).toFixed(3));}
   return E;
 }
@@ -505,17 +603,14 @@ function guides(F,Q,E,labels){
   F.arc.setAttribute('d','M'+pts.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L'));
   F.tick.setAttribute('d',`M${SH_R[0]+40} ${(SH_R[1]-Q.rise).toFixed(1)} L${SH_R[0]+200} ${(SH_R[1]-Q.rise).toFixed(1)}`);
   if(!labels){F.lbls.innerHTML='';return;}
-  const trapBad=Q.P.trapLen/TRAP0<TRAP_BAD;
   const k=vb[2]/560,HEAD=[170,230];  // the face's x span: no tag may cover it
   const tag=(x,y,c,txt,side,to)=>{const wd=txt.length*6.2+22,hw=wd*k/2;
     x=side>0?Math.max(x,HEAD[1]+hw+4):side<0?Math.min(x,HEAD[0]-hw-4):x;
     x=clamp(x,vb[0]+hw+4,vb[0]+vb[2]-hw-4);
     const lead=to?`<path d="M${(x-side*hw).toFixed(1)} ${(y+4*k).toFixed(1)} L${to[0].toFixed(1)} ${to[1].toFixed(1)}" stroke="${c}" stroke-width="${(1.2*k).toFixed(2)}" fill="none"/>`:'';
     return lead+`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k.toFixed(3)})"><rect x="${-wd/2}" y="-11" width="${wd}" height="20" rx="10" fill="var(--surface-1)" stroke="var(--border)"/><circle cx="${-wd/2+10}" cy="-1" r="3.5" fill="${c}"/><text x="${-wd/2+18}" y="3" fill="var(--text)">${txt}</text></g>`;};
-  const a=Q.thDeg,sd=rot([22,-6],-a),trapTo=[166,112+Q.dip-Q.rise*0.5];
-  F.lbls.innerHTML=tag(pv[0]+70,pv[1]-64,'var(--target)',`Side delt ${Math.round(100*E.side)}%`,1,[pv[0]+sd[0],pv[1]+sd[1]])
-    +tag(100,76+Q.dip-Q.rise,trapBad?'var(--neg)':'var(--quiet)',`Upper trap ${Math.round(100*E.trap)}%`,-1,trapTo)
-    +tag(pv[0]+76,pv[1]+44,'var(--guide)',`${Math.round(a)}°`,0);
+  const a=Q.thDeg;
+  F.lbls.innerHTML=tag(pv[0]+76,pv[1]+44,a>95?'var(--neg)':'var(--guide)',`${Math.round(a)}°`,0);
 }
 
 // ================= readouts, charts, captions =================
@@ -535,16 +630,21 @@ function chart(id,key,ymax,ticks,res){
   for(const m of show){const c=curves(m,rep)[key];cx.beginPath();c.forEach((v,k)=>{const x=X(k/200*T),y=Y(v);k?cx.lineTo(x,y):cx.moveTo(x,y);});cx.strokeStyle=m==='mistake'?col.neg:col.target;cx.lineWidth=2;cx.setLineDash(m==='mistake'&&mode==='compare'?[4,3]:[]);cx.stroke();cx.setLineDash([]);}
   for(const rr of res){const v=key==='load'?rr.Q.P.torque:rr.spd;cx.beginPath();cx.arc(X(t),Y(Math.min(v,ymax)),4,0,Math.PI*2);cx.fillStyle=rr.m==='mistake'?col.neg:col.target;cx.fill();cx.strokeStyle=col['surface-1'];cx.lineWidth=2;cx.stroke();}
 }
+// Two effort bars and three numbers: read at a glance, no table. In side-by-side mode each shows right rep · mistake.
 function updateReadouts(res){
-  const head='<thead><tr><th scope="col">Now</th>'+res.map(r=>`<th scope="col" style="text-align:right">${r.m==='mistake'?'Mistake':'Right rep'}</th>`).join('')+'</tr></thead>';
-  const row=(label,sw,f,bad)=>`<tr><th scope="row">${sw?`<span class="sw" style="background:${sw}"></span>`:''}${label}</th>`+res.map(r=>`<td class="${bad&&bad(r)?'bad':''}">${f(r)}</td>`).join('')+'</tr>';
-  $('readouts').innerHTML=head+'<tbody>'+
-    row('Arm angle from the body',null,r=>Math.round(r.Q.thDeg)+'°',r=>r.Q.thDeg>95)+
-    row('Dumbbell speed',null,r=>r.spd.toFixed(2)+' m/s',r=>r.spd>2.2)+
-    row('Load on the shoulder',null,r=>r.Q.P.torque.toFixed(0)+' N·m')+
-    row('Side delt effort','var(--target)',r=>Math.round(100*r.E.side)+'%')+
-    row('Upper trap: length · effort','var(--quiet)',r=>Math.round(100*r.Q.P.trapLen/TRAP0)+'% · '+Math.round(100*r.E.trap)+'%',r=>r.Q.P.trapLen/TRAP0<TRAP_BAD)+
-    row('Knee dip',null,r=>Math.round(r.Q.M.knee/D-SPEC.joints.kneesSoftDeg)+'°',r=>r.Q.M.knee/D-SPEC.joints.kneesSoftDeg>3)+'</tbody>';
+  const pc=v=>Math.round(100*v);
+  const bar=(label,f,colour,bad)=>{const isBad=res.some(bad);
+    return `<div class="bar${isBad?' bad':''}"><b>${label}</b><div class="tr">${res.map(r=>`<i class="${r.m==='mistake'?'mis':''}" style="--c:${colour(r)};--w:${Math.min(100,pc(f(r)))}%"></i>`).join('')}</div><span>${res.map(r=>pc(f(r))+'%').join(' · ')}</span></div>`;};
+  const trapBad=r=>r.Q.P.trapLen/TRAP0<TRAP_BAD;
+  const tile=(label,f,unit,bad)=>{const isBad=res.some(bad||(()=>false));
+    return `<div class="tile${isBad?' bad':''}"><b>${label}${unit?` <em>${unit}</em>`:''}</b><span>${res.map(r=>f(r)).join(' · ')}</span></div>`;};
+  const dip=r=>Math.round(r.Q.M.knee/D-SPEC.joints.kneesSoftDeg);
+  $('now').innerHTML='<div class="bars">'+
+    bar('Side delt',r=>r.E.side,()=>'var(--target)',()=>false)+
+    bar('Upper trap',r=>r.E.trap,r=>trapBad(r)?'var(--neg)':'var(--quiet)',trapBad)+`</div><div class="tiles${res.length>1?' two':''}">`+
+    tile('Arm angle',r=>Math.round(r.Q.thDeg)+'°','',r=>r.Q.thDeg>95)+
+    tile('Speed',r=>r.spd.toFixed(1),'m/s',r=>r.spd>2.2)+
+    (mode==='correct'?tile('Load',r=>r.Q.P.torque.toFixed(0),'N·m'):tile('Knee dip',r=>dip(r)+'°','',r=>dip(r)>3))+'</div>';
 }
 function buildPhaseBar(){
   const ph=phases(mode==='mistake'?'mistake':'correct',rep);
@@ -562,15 +662,15 @@ function captions(){
   if(p.label!==lastLabel){$('phase').textContent=p.label;lastLabel=p.label;}
   $('scrub').value=String(Math.round(t/T*1000));
 }
-function setWatch(){$('watchText').textContent=mode==='mistake'?'Watch: the knee dip, the shrug and the bounce. This is what not to do.':'Watch: '+SPEC.watch[rep%SPEC.watch.length].replace(/^./,c=>c.toLowerCase());}
+function setWatch(){$('watchText').textContent=mode==='mistake'?'Watch the knee dip, the shrug and the bounce.':'Watch: '+SPEC.watch[rep%SPEC.watch.length].replace(/^./,c=>c.toLowerCase());}
 (function mistakes(){
   let minT=1,top=0;for(let k=0;k<=200;k++){const P=pose3('mistake',k/200*T*0.9999,0);minT=Math.min(minT,P.trapLen/TRAP0);top=Math.max(top,P.M.th);}
   const spdM=Math.max(...curves('mistake',0).spd),spdC=Math.max(...curves('correct',0).spd);
   $('mistakes').innerHTML=[
-    `<li><b>Dips and swings.</b> The knees dip ${SPEC.mistake.kneeDipDeg}° to throw the weight up, and it peaks at ${spdM.toFixed(1)} m/s against ${spdC.toFixed(1)} m/s for the right rep.</li>`,
-    `<li><b>Shrugs.</b> The upper trap shortens to ${Math.round(minT*100)}% and takes over from the side delt.</li>`,
-    `<li><b>Too high, thumbs down.</b> ${Math.round(top/D)}° is past shoulder height, where the delt's load falls, and the tilted dumbbell turns the arm in.</li>`,
-    `<li><b>Drops and bounces.</b> Down in ${SPEC.mistake.tempo.lower} s instead of ${SPEC.tempo.lower} s, then the arms swing past the start.</li>`].join('');
+    `<li><b>Knee dip ${SPEC.mistake.kneeDipDeg}°</b> swings it up: ${spdM.toFixed(1)} m/s, not ${spdC.toFixed(1)}.</li>`,
+    `<li><b>Shrug:</b> the upper trap shortens to ${Math.round(minT*100)}% and takes over.</li>`,
+    `<li><b>Too high, ${Math.round(top/D)}°,</b> thumbs down: the load leaves the side delt.</li>`,
+    `<li><b>Dropped</b> in ${SPEC.mistake.tempo.lower} s, not ${SPEC.tempo.lower} s, then a bounce past the start.</li>`].join('');
 })();
 
 // ================= stage =================
