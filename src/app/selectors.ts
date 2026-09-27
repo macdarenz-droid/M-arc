@@ -4,7 +4,7 @@ import { state } from '@/core/store';
 import { weekdayOf, daysBetween, trainedTodaySessions, nextScheduled } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
-import { coachInsights, deloadOffer, type CoachContext } from '@/brain/coach/rules';
+import { deloadOffer, hiddenBackOnBoard, hiddenInsightIds, rankInsights, runInsightRules, type CoachContext } from '@/brain/coach/rules';
 import { plannedThisWeek, trainingStreak, weekSummary } from '@/brain/weekly';
 import { shouldShowOnboarding } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
@@ -59,7 +59,12 @@ const coachContext = computed((): CoachContext => ({
   recoveryModel: state.value.recoveryModel, deload: state.value.deload, feedback: state.value.insightFeedback,
   unit: state.value.preferences.weightUnit,
 }));
-export const insights = computed(() => coachInsights(coachContext.value, 3));
+/** COACH-FB: the rules run once; the board and the hidden-notes list both rank from this one list. */
+const rawInsights = computed(() => runInsightRules(coachContext.value));
+const hiddenById = computed(() => hiddenInsightIds(state.value.insightFeedback, today.value));
+export const insights = computed(() => rankInsights(rawInsights.value, hiddenById.value, 3));
+/** COACH-FB: hidden notes that "Show again" would put back on the board, with why each is hidden. */
+export const hiddenInsights = computed(() => (hiddenById.value.size ? hiddenBackOnBoard(rawInsights.value, hiddenById.value, 3) : []));
 /** null once its endDay passes — F3.3 "closes itself" is read-time gating, no mutation needed. */
 export const activeDeload = computed(() => { const d = state.value.deload; return d && d.endDay >= today.value ? d : null; });
 export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
