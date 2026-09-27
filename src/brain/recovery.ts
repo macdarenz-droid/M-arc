@@ -80,6 +80,15 @@ export function ageOf(profile: Profile, atMs: number): number | null {
   return profile.birthYear ? new Date(atMs).getFullYear() - profile.birthYear : null;
 }
 
+/**
+ * BUG-20 (§19): with only a birth year, someone born (this year - 18) may still be 17 until their
+ * birthday, so they count as possibly under 18 all year. Born (this year - 19) or earlier is 18+.
+ */
+export function possiblyMinor(profile: Profile, atMs: number): boolean {
+  const age = ageOf(profile, atMs);
+  return age != null && age <= 18;
+}
+
 function agePrior(age: number | null): number {
   if (age == null || age <= AGE_PRIOR_START) return 1.0;
   const decades = (age - AGE_PRIOR_START) / 10;
