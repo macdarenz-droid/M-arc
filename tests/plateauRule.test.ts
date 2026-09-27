@@ -146,3 +146,44 @@ describe('A6: history minimum and beginners (D-A1 point 6, COACHRULES-F23)', () 
     expect(deloadOffer(ctx(s)).suggest).toBe(true);
   });
 });
+
+describe('PR #47 review: e1RM only, never mixed with top load or volume (A3, BR-04)', () => {
+  /** Twice a week for 8 weeks; `pick(i)` gives session i's sets. */
+  const weekly = (id: string, pick: (i: number) => LoggedSet[]) => twiceWeekly(8, () => 0, id).map((x, i) => session(x.day, [{ id, sets: pick(i) }]));
+  const heavyLight = (id: string, kg: number, heavyFirst: boolean) =>
+    weekly(id, i => ((i % 2 === 0) === heavyFirst ? sets(kg, 5, 'ideal', 3) : sets(kg * 0.7, 12, 'ideal', 3)));
+  for (const heavyFirst of [true, false]) {
+    it(`a flat heavy 5-rep day plus a 12-rep light day (heavy ${heavyFirst ? 'first' : 'second'}) reads plateaued`, () => {
+      const s = both(heavyLight(bench, 100, heavyFirst), heavyLight(squat, 140, heavyFirst));
+      expect(plateauStatus(exerciseHistory(s, bench), 'weighted', today).status).toBe('plateaued');
+      // The target follows the last session's reps first (a 12-rep top-of-range light day asks
+      // to confirm), so here only the plateau input is checked: never the "slipped" variant.
+      const next = suggestNext(s, bench, 'lean', today);
+      expect(next.reason).not.toMatch(/slipped/);
+      if (!heavyFirst) expect(next.mode).toBe('plateau');
+      const notes = coachInsights(ctx(s), 50).filter(i => i.exerciseId === bench && i.category === 'progress');
+      expect(notes.some(i => i.id === `plateau:${bench}` || i.id === `plateau-lever:${bench}`)).toBe(true);
+      expect(notes.some(i => /declin|slipp/i.test(`${i.id} ${i.title}`))).toBe(false);
+    });
+  }
+  it('a flat e1RM with sets rising from 3 to 5 is still plateaued', () => {
+    const s = weekly(bench, i => sets(100, 5, 'ideal', 3 + Math.floor(i / 6)));
+    expect(plateauStatus(exerciseHistory(s, bench), 'weighted', today).status).toBe('plateaued');
+    expect(suggestNext(s, bench, 'lean', today).mode).toBe('plateau');
+    expect(review(s)[0]?.title).toMatch(/flat/);
+  });
+  it('with no e1RM (12 reps), top load with the volume tie-break still reads rising volume as progress', () => {
+    const s = weekly(bench, i => sets(40, 12, 'ideal', 3 + Math.floor(i / 6)));
+    expect(plateauStatus(exerciseHistory(s, bench), 'weighted', today).status).toBe('progressing');
+  });
+});
+
+describe('PR #47 review: a flat timed hold never counts toward the lighter week (A4)', () => {
+  it('a flat 60 s wall sit plus one flat bench, experienced lifter: no offer', () => {
+    const hold: LoggedSet[] = [{ kg: 0, reps: 0, durationSec: 60, effort: 'ideal' }];
+    const holds = twiceWeekly(8, () => 0).map(x => session(x.day, [{ id: 'lib_wall_sit', sets: hold }]));
+    const s = both(twiceWeekly(8, () => 100), holds);
+    expect(plateauStatus(exerciseHistory(s, 'lib_wall_sit'), 'duration', today).status).toBe('plateaued');
+    expect(deloadTrigger(s, today, [], [], 24).suggest).toBe(false);
+  });
+});
