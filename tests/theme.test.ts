@@ -61,3 +61,22 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
     expect([...used].filter(v => !defined.has(v) && !inline.has(v))).toEqual([]);
   });
 });
+
+// FG-1: the form-guide figure paints from theme tokens only. No hex, rgb() or hsl() literal anywhere in
+// src/formguide/** (paint.ts mixes resolved tokens at run time), and every theme carries the figure tokens.
+describe('form-guide colours come from tokens (FG-1)', () => {
+  it('no hex, rgb() or hsl() literal in src/formguide/**', async () => {
+    const { readdirSync, readFileSync: read } = await import('node:fs');
+    const files = (readdirSync('src/formguide', { recursive: true }) as string[]).filter(f => /\.(ts|tsx|css|json)$/.test(f));
+    expect(files.length).toBeGreaterThan(0);
+    const bad = files.flatMap(f => {
+      const src = read(`src/formguide/${f}`, 'utf8');
+      return [...src.matchAll(/#[0-9a-fA-F]{3,8}(?![\w-])|\b(?:rgba?|hsla?)\(/g)].map(m => `${f}: ${m[0]}`);
+    });
+    expect(bad).toEqual([]);
+  });
+  it('every theme emits the figure tokens', () => {
+    const names = ['--target', '--help', '--quiet', '--pants', '--pants-hi', '--pants-sh', '--ink', '--iron', '--iron-hi', '--iron-sh', '--eye', '--floor', '--guide'];
+    for (const id of THEME_IDS) for (const n of names) expect(themeToCss(THEMES[id]), `${id} ${n}`).toMatch(new RegExp(`${n}:[^;]+`));
+  });
+});

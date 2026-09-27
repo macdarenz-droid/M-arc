@@ -811,3 +811,8 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
  * variant needs its own width and the same height/padding as the btn-sm next to it. */
 .mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
+
+/* FG-1: form-guide figure (src/formguide/rig). Each joint (.fg-j) and moving part (.fg-p) turns about its inline
+ * transform-origin, given in the SVG's user units; only transform and opacity change (rig/pose.ts applyPose). */
+.form-guide svg { display: block; width: 100%; height: auto; }
+.form-guide .fg-j, .form-guide .fg-p { transform-box: view-box; }
