@@ -50,6 +50,21 @@ export interface Insight {
   drivers?: string[];
   unlocks?: string;
   validUntil?: string;
+  /**
+   * BUG-20: the shared data this insight is built from. Set where the insight is made; the coach
+   * brief, get_insights and session notes leave a tagged insight out when that sharing is off.
+   * In memory only, never stored.
+   */
+  gated?: GatedData;
+}
+
+/** BUG-20: a kind of data the person can keep off the coach (§24.15). */
+export type GatedData = 'body' | 'health';
+export type Sharing = { health: boolean; body: boolean };
+
+/** BUG-20: the insights allowed out under these sharing flags: a tagged one only while its data is shared. */
+export function withoutGated<T extends { gated?: GatedData }>(list: T[], sharing: Sharing): T[] {
+  return list.filter(i => !i.gated || sharing[i.gated]);
 }
 
 export interface CoachContext {
@@ -352,7 +367,7 @@ export const RULES: Rule[] = [
         const from = typeof c.from === 'number' ? w(c.from) : null;
         const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
         return {
-          id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
+          id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260, gated: 'body',
           title: `Weight updated to ${to} ${u}`,
           noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} ${u}, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} ${u} since your last entry.` : `You updated your weight to ${to} ${u}.`,
           means: 'Saved to your weight log.',
@@ -438,7 +453,7 @@ export const RULES: Rule[] = [
       if (r.band === 'red') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
-          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.',
+          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.', drivers: r.drivers,
           means: 'Training hard today would work against you more than for you.',
           // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
           action: r.postSessionAdvice ?? 'Keep loads where they are, or drop a set on the hardest lifts.',
@@ -448,7 +463,7 @@ export const RULES: Rule[] = [
       if (r.band === 'amber') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
-          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.',
+          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.', drivers: r.drivers,
           means: 'Not a reason to skip, just not a day to chase a new best.',
           action: r.postSessionAdvice ?? 'Keep today’s loads where they are.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
@@ -475,7 +490,7 @@ export const RULES: Rule[] = [
       const m = effortMismatch(sets);
       if (!m) return [];
       return [{
-        id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data',
+        id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data', gated: 'health',
         title: 'Effort rating: worth a second look',
         noticed: `You rated a set Easy that hit ${m.examplePct}% of your session's hardest peak heart rate.`,
         means: 'Easy sets are not usually that close to your hardest effort of the day.',
@@ -501,7 +516,7 @@ export const RULES: Rule[] = [
           const d = intraSessionDrift(group);
           if (d?.drifting) {
             return [{
-              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId,
+              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId, gated: 'health',
               title: `${ex.name}: fatigue building within the session`,
               noticed: `Peak heart rate rose about ${d.bpmRisePerSet} bpm per set at the same load, while your recovery between sets got worse.`,
               means: 'This usually means the working muscles are fatiguing faster than the rest periods are covering.',
@@ -551,8 +566,10 @@ export function runInsightRules(ctx: CoachContext): Insight[] {
 }
 
 /** Run every rule, drop duplicates per target, keep the most important. */
-export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
-  return rankInsights(runInsightRules(ctx), hiddenInsightIds(ctx.feedback, ctx.today), limit);
+export function coachInsights(ctx: CoachContext, limit = 3, sharing?: Sharing): Insight[] {
+  // BUG-20: for the coach, a gated insight is left out before ranking so it never takes a slot.
+  const all = sharing ? withoutGated(runInsightRules(ctx), sharing) : runInsightRules(ctx);
+  return rankInsights(all, hiddenInsightIds(ctx.feedback, ctx.today), limit);
 }
 
 /** COACH-FB: hidden notes that would be back in the top `limit` if shown again (each checked on its own), highest priority first. */

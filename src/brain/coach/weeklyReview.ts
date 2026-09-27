@@ -14,7 +14,7 @@ import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../e
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
 import { isFlatTotal, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
-import type { Insight } from './rules';
+import { withoutGated, type Insight, type Sharing } from './rules';
 
 /** Hard sets per muscle for the calendar week containing `today`: the shared count without easy sets (BR-16). */
 export function hardSetsThisWeek(sessions: Session[], today: string, custom: Exercise[] = []): Partial<Record<MuscleId, number>> {
@@ -160,6 +160,8 @@ export interface WeeklyReviewInput {
   daysOff?: string[];
   /** QA-R3b-5: body weight in the person's unit. */
   unit?: LoadUnit;
+  /** BUG-20: when given (the coach), a gated insight is left out unless its data is shared. */
+  sharing?: Sharing;
 }
 
 /** Days logged in a calendar week before the weekly review appears. */
@@ -341,7 +343,7 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     const dir = wt.pctPerWeek < 0 ? 'down' : wt.pctPerWeek > 0 ? 'up' : 'flat';
     const inRange = wt.pctPerWeek >= Math.min(lo, hi) && wt.pctPerWeek <= Math.max(lo, hi);
     out.push({
-      id: 'weekly:weight-trend', category: 'data', priority: 130, cadence: 'weekly', kind: inRange ? 'praise' : 'tip',
+      id: 'weekly:weight-trend', category: 'data', priority: 130, cadence: 'weekly', kind: inRange ? 'praise' : 'tip', gated: 'body',
       title: `Trend weight ${Math.round(kgToDisplay(wt.trendKg, input.unit ?? 'kg') * 10) / 10} ${input.unit ?? 'kg'}, ${dir} ${Math.abs(wt.pctPerWeek)}% a week`,
       noticed: `Weight trend is ${dir} about ${Math.abs(wt.pctPerWeek)}% a week.`,
       means: inRange ? `That is inside the range that fits a ${g.name.toLowerCase()} goal.` : `That is outside the usual range for a ${g.name.toLowerCase()} goal (${lo} to ${hi}% a week).`,
@@ -350,5 +352,5 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     });
   }
 
-  return out.sort((a, b) => b.priority - a.priority).slice(0, limit);
+  return (input.sharing ? withoutGated(out, input.sharing) : out).sort((a, b) => b.priority - a.priority).slice(0, limit);
 }
