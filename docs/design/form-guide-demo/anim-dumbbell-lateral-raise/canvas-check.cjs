@@ -1,7 +1,8 @@
 // canvas-check.cjs: tests the shipped artboard project/Player-DumbbellLateralRaise.dc.html, not the harness.
-// It renders the artboard with a minimal stand-in for the canvas runtime (holes, sc-if, onClick, disabled),
-// proves parity with index.html (text and drawn frames), runs the zoom, Pictures and reduced-motion probes,
-// and writes canvas_*.png frames into shots/. Run after `node build.mjs`: node canvas-check.cjs (exit 1 on a failure).
+// It renders the artboard with a minimal stand-in for the canvas runtime (holes, sc-if, onClick, disabled) in the
+// same local Roboto the harness uses (rig-final/fonts; the canvas loads it from Google Fonts), proves parity with
+// index.html (text, drawn frames and pixels), runs the zoom, Pictures and reduced-motion probes, and writes
+// canvas_*.png frames into shots/. Run after `node build.mjs`: node canvas-check.cjs (exit 1 on a failure).
 // Modelled on ../anim-machine-chest-press/canvas-check.cjs.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
@@ -15,7 +16,7 @@ const md = fs.readFileSync(path.join(DIR, 'PLAYER.md'), 'utf8');
 const helmet = src.match(/<helmet>([\s\S]*?)<\/helmet>/)[1].replace(/<link[^>]*googleapis[^>]*>/g, ''); // no network here
 const markup = src.match(/<x-dc>[\s\S]*?<\/helmet>([\s\S]*?)<\/x-dc>/)[1];
 const script = src.match(/<script type="text\/x-dc"[^>]*>([\s\S]*?)<\/script>/)[1];
-const page0 = cfg => `<!doctype html><html lang="en"><head><meta charset="utf-8">${helmet}<style>body{padding:16px}</style></head><body><div id="host"></div><script>
+const page0 = cfg => `<!doctype html><html lang="en"><head><meta charset="utf-8">${helmet}<style>/* stand-in page only, as in the harness: the local Roboto, never in the artboard */@font-face{font-family:Roboto;font-style:normal;font-weight:400 700;font-display:swap;src:url(../../rig-final/fonts/Roboto-latin.woff2) format("woff2")}body{padding:16px}</style></head><body><div id="host"></div><script>
 class DCLogic{constructor(p){this.props=p;this.state={}}setState(u,cb){Object.assign(this.state,typeof u==='function'?u(this.state,this.props):u);render();if(cb)cb()}forceUpdate(){render()}}
 ${script}
 const MARKUP=${JSON.stringify(markup)}, CFG=${JSON.stringify(cfg)};
@@ -105,13 +106,12 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
     const page = await ctx.newPage(); page.on('pageerror', e => errors.push(e.message));
     page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
     fs.writeFileSync(TMP, page0(cfg));
-    await page.goto('file://' + TMP); await page.waitForTimeout(cfg.zoom ? 800 : 450); return { page, ctx };
+    await page.goto('file://' + TMP); await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(cfg.zoom ? 800 : 450); return { page, ctx };
   };
-  const harness = async query => {
-    const ctx = await b.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: 2 });
-    const page = await ctx.newPage(); await page.goto('file://' + path.join(DIR, 'index.html') + query); await page.waitForTimeout(450); return { page, ctx };
+  const harness = async (query, opts = {}) => {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });
+    const page = await ctx.newPage(); await page.goto('file://' + path.join(DIR, 'index.html') + query); await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(opts.zoom ? 800 : 450); return { page, ctx };
   };
-  const shot = async (cfg, name, opts) => { const { page, ctx } = await open(cfg, opts); await (await page.$('.player')).screenshot({ path: path.join(OUT, OUTP + name) }); await ctx.close(); };
 
   // ---- 2. Drawn parity: every animated element sits exactly where the harness draws it -------------------------
   const drawn = () => {
@@ -182,18 +182,56 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
     check(r.grid === 'grid' && r.play === 'paused' && /reduce motion/.test(r.hint) && /Play/.test(r.dis) && /Animation/.test(r.dis), `canvas player: reduced motion shows the key poses (${r.grid}), stays ${r.play} with the root forced to running, disables ${r.dis}; hint "${r.hint}"`);
     await ctx.close();
   }
-  // ---- 7. Frames to look at (compare with the harness shots lr_*.png)
-  await shot({ t: 0 }, 'canvas_dark_t0.png');
-  await shot({ t: 0.25 }, 'canvas_dark_t0.25.png');
-  await shot({ t: 0, theme: 'paper' }, 'canvas_paper_t0.png');
-  await shot({ t: 0.25, theme: 'paper' }, 'canvas_paper_t0.25.png');
-  await shot({ t: 0.25, zoom: 1 }, 'canvas_zoom1_t0.25.png');
-  await shot({ t: 0.25, zoom: 3 }, 'canvas_zoom3_t0.25.png');
-  await shot({ mode: 'pics' }, 'canvas_pictures_silent-black.png');
-  await shot({ mode: 'pics', theme: 'paper' }, 'canvas_pictures_paper.png');
-  await shot({ mode: 'pics', zoom: 2 }, 'canvas_pictures_still_zoom2.png');
-  await shot({}, 'canvas_reduced-motion.png', { rm: true });
-  await shot({ autoplay: false, loop: false }, 'canvas_about-import_autoplay-off.png');
+  // ---- 7. Pixel parity with the harness, and the frames to look at (shots/canvas_*.png; the harness's are lr_*.png).
+  // Each state is drawn by index.html and by the artboard through the stand-in runtime, both at device scale 2 in
+  // Roboto, and the two screenshots are compared pixel by pixel. Every differing pixel must lie inside a box whose
+  // text the canvas zooms (--tz): rep pill, camera label, bubble, tile captions and badges, caption row, chips,
+  // controls and hint. Outside those boxes, which is the whole drawn scene, the two images must be identical.
+  // Both pages get `.ov{will-change:opacity}` for this probe only. Without it the two pages draw the same content
+  // but Chromium may squash the bubble into the zoom overlay's overlap layer in one page and not the other (the
+  // canvas bubble is one line at --tz .8, the harness's two, which flips the squashing heuristic; seen with CDP
+  // LayerTree: overlay layer 358x408 vs 68x25), and a group rasterised in a layer with another origin gets a
+  // different antialiased rim (1118 px, at most 42 levels, on the Shoulders overlay). A direct compositing reason
+  // pins the overlay to its own layer in both pages, so the comparison is about the drawing, not the squashing.
+  const TEXT = '.pill-row,.cam-label,.bubble,.tile p,.badge,.cap-row,.chips,.controls,.hint';
+  const pin = async page => { await page.addStyleTag({ content: '.ov{will-change:opacity}' }); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); };
+  const boxes = sel => { const r = document.querySelector('.player').getBoundingClientRect(); return [...document.querySelectorAll(sel)].filter(el => el.getClientRects().length).map(el => { const q = el.getBoundingClientRect(); return [q.left - r.left, q.top - r.top, q.right - r.left, q.bottom - r.top]; }); };
+  const grab = async (page, name) => { const png = await (await page.$('.player')).screenshot(name ? { path: path.join(OUT, OUTP + name) } : {}); return { png: png.toString('base64'), boxes: await page.evaluate(boxes, TEXT) }; };
+  const cmpPage = await b.newPage();
+  const compare = (a, c, masks) => cmpPage.evaluate(async ({ a, c, masks }) => {
+    const load = s => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + s; });
+    const [ia, ic] = await Promise.all([load(a), load(c)]);
+    if (ia.width !== ic.width || ia.height !== ic.height) return { size: [ia.width, ia.height, ic.width, ic.height] };
+    const data = img => { const k = document.createElement('canvas'); k.width = img.width; k.height = img.height; const g = k.getContext('2d'); g.drawImage(img, 0, 0); return g.getImageData(0, 0, k.width, k.height).data; };
+    const A = data(ia), C = data(ic), W = ia.width, H = ia.height;
+    const masked = (x, y) => masks.some(m => x >= m[0] && x < m[2] && y >= m[1] && y < m[3]);
+    let diff = 0, out = 0, bb = null;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = (y * W + x) * 4; if (A[i] !== C[i] || A[i + 1] !== C[i + 1] || A[i + 2] !== C[i + 2] || A[i + 3] !== C[i + 3]) { diff++; if (!masked(x, y)) { out++; bb = bb ? [Math.min(bb[0], x), Math.min(bb[1], y), Math.max(bb[2], x), Math.max(bb[3], y)] : [x, y, x, y]; } } }
+    return { diff, out, bb, total: W * H };
+  }, { a, c, masks });
+  const STATES = [ // [canvas frame, stand-in config, harness query, context options]
+    ['canvas_dark_t0.png', { t: 0 }, '?t=0'],
+    ['canvas_dark_t0.25.png', { t: 0.25 }, '?t=0.25'],
+    ['canvas_paper_t0.png', { t: 0, theme: 'paper' }, '?theme=paper&t=0'],
+    ['canvas_paper_t0.25.png', { t: 0.25, theme: 'paper' }, '?theme=paper&t=0.25'],
+    ['canvas_zoom1_t0.25.png', { t: 0.25, zoom: 1 }, '?zoom=1&t=0.25'],
+    ['canvas_zoom2_t0.125.png', { t: 0.125, zoom: 2 }, '?zoom=2&t=0.125'],
+    ['canvas_zoom3_t0.25.png', { t: 0.25, zoom: 3 }, '?zoom=3&t=0.25'],
+    ['canvas_pictures_silent-black.png', { mode: 'pics' }, '?mode=pictures'],
+    ['canvas_pictures_paper.png', { mode: 'pics', theme: 'paper' }, '?mode=pictures&theme=paper'],
+    ['canvas_pictures_still_zoom2.png', { mode: 'pics', zoom: 2 }, '?mode=pictures&zoom=2'],
+    ['canvas_reduced-motion.png', {}, '', { rm: true }],
+    ['canvas_about-import_autoplay-off.png', { autoplay: false, loop: false }, '?autoplay=0'],
+  ];
+  const px = [];
+  for (const [name, cfg, query, opts = {}] of STATES) {
+    const c = await open(cfg, opts); await pin(c.page); const cv = await grab(c.page, name); await c.ctx.close();
+    const h = await harness(query, { ...opts, zoom: !!cfg.zoom }); await pin(h.page); const hv = await grab(h.page); await h.ctx.close();
+    const masks = [...cv.boxes, ...hv.boxes].map(q => [Math.floor(q[0] * 2) - 1, Math.floor(q[1] * 2) - 1, Math.ceil(q[2] * 2) + 1, Math.ceil(q[3] * 2) + 1]);
+    px.push({ name: name.replace(/^canvas_|\.png$/g, ''), ...(await compare(cv.png, hv.png, masks)) });
+  }
+  await cmpPage.close();
+  check(px.every(r => !r.size && r.out === 0), `canvas player: pixel parity with the harness in ${px.length} states: every differing pixel sits in a zoomed-text box, and outside those boxes the images are identical (${px.map(r => `${r.name} ${r.size ? 'size ' + r.size.join('x') : r.diff + ' text px, ' + r.out + ' outside' + (r.out ? ' at ' + r.bb.join(',') : '')}`).join('; ')})`);
   check(errors.length === 0, `canvas player: no page errors (${errors.length}) ${errors.slice(0, 2).join(' | ')}`);
   fs.unlinkSync(TMP);
   await b.close();
