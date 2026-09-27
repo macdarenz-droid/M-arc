@@ -15,6 +15,7 @@ import { findInApp, type PalaceEntry } from './palace/registry';
 import type { StreamEvent, Transport, ErrorCode } from './transport';
 import type { ContextRef, Conversation, Fact, ImageBlockRef, ProposalRecord, RenderedTurn, StoredMessage, UserBlock, Usage } from './types';
 import { titleFrom } from './store';
+import { flatten } from './ledger';
 import { estimateCost } from './state';
 
 export const STEP_BUDGET: Record<EscobarMode, number> = { chat: 8, live: 8, plan: 12, brief: 3, moment: 1, summarize: 1 };
@@ -130,8 +131,21 @@ function hrMaxIsAgeSourced(v: unknown): boolean {
   if (!isObj(v)) return false;
   return v.hrMaxSource === 'tanaka' || Object.values(v).some(hrMaxIsAgeSourced);
 }
-function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown {
-  if (Array.isArray(v)) return v.map(x => scrub(x, sharing));
+// BUG-20: insight ids built from gated data (rules.ts / weeklyReview.ts tag them `gated`); a stored
+// get_insights result or brief replayed with that sharing off loses them whole, text included.
+const BODY_INSIGHT_ID = /^(profile-changed:weight:|weekly:weight-trend$)/;
+const HEALTH_INSIGHT_ID = /^(heart-mismatch:|heart-drift:)/;
+function gatedInsightId(id: unknown, sharing: { health: boolean; body: boolean }): boolean {
+  return typeof id === 'string' && ((!sharing.body && BODY_INSIGHT_ID.test(id)) || (!sharing.health && HEALTH_INSIGHT_ID.test(id)));
+}
+/** A gated insight dropped from a stored result, with the key it sat under (its facts are labelled by that key). */
+type Dropped = { key: string; obj: unknown };
+function scrub(v: unknown, sharing: { health: boolean; body: boolean }, dropped?: Dropped[], key = ''): unknown {
+  if (Array.isArray(v)) return v.filter(x => {
+    const gone = isObj(x) && gatedInsightId(x.id, sharing);
+    if (gone) dropped?.push({ key, obj: x });
+    return !gone;
+  }).map(x => scrub(x, sharing, dropped, key));
   if (!isObj(v)) return v;
   const out: Record<string, unknown> = {};
   for (const [k, x] of Object.entries(v)) {
@@ -142,8 +156,15 @@ function scrub(v: unknown, sharing: { health: boolean; body: boolean }): unknown
     // off, same as any other BODY_KEYS field — Array.isArray keeps session_summary's unrelated
     // effort count object (not an array) untouched.
     if (!sharing.body && (BODY_KEYS.has(k) || (k === 'effort' && Array.isArray(x)))) continue;
-    out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing);
+    out[k] = !sharing.health && k === 'drivers' && Array.isArray(x) ? redactDrivers(x.filter((d): d is string => typeof d === 'string'), false) : scrub(x, sharing, dropped, k);
   }
+  return out;
+}
+/** BUG-20: the fact lines a dropped insight registered (the labels and number format captureFacts built), so they go with it. */
+function factsOf(dropped: Dropped[]): Set<string> {
+  const out = new Set<string>();
+  const fmt = (n: number): string => String(Math.round(n * 1000) / 1000); // same as ledger.ts's fmt
+  for (const d of dropped) for (const l of flatten({ [d.key]: [d.obj] })) out.add(`${l.label} = ${fmt(l.value)}${l.unit ? ` ${l.unit}` : ''}`);
   return out;
 }
 function redactResult(content: string, sharing: { health: boolean; body: boolean }): string {
@@ -151,12 +172,16 @@ function redactResult(content: string, sharing: { health: boolean; body: boolean
   try { parsed = JSON.parse(content); } catch { return content; }
   if (!isObj(parsed) || !('data' in parsed)) return content;
   const keepHrMax = hrMaxIsAgeSourced(parsed.data);
+  const dropped: Dropped[] = [];
+  const data = scrub(parsed.data, sharing, dropped);
+  const gone = factsOf(dropped);
   const facts = isObj(parsed.facts) ? Object.fromEntries(Object.entries(parsed.facts).filter(([, t]) => {
     if (typeof t !== 'string') return true;
+    if (gone.has(t)) return false;
     if (!sharing.health && HRMAX_FACT.test(t) && !keepHrMax) return false;
     return !((!sharing.health && HEALTH_FACT.test(t)) || (!sharing.body && BODY_FACT.test(t)));
   })) : parsed.facts;
-  return JSON.stringify({ ...parsed, data: scrub(parsed.data, sharing), facts });
+  return JSON.stringify({ ...parsed, data, facts });
 }
 /**
  * QA2-FD-8, QA2-FD-11, QA2-FD-12: the readiness drivers after "advice X" are dropped whole, by
@@ -180,6 +205,12 @@ function redactBrief(text: string, sharing: { health: boolean; body: boolean }):
   if (!sharing.health) t = t.split('\n').map(dropDrivers).join('\n');
   // QA2-FD-4: a real brief tags the number with its fact id ("weight 80.5 [f13] kg").
   if (!sharing.body) t = t.replace(/, weight [\d.]+(?: \[f\d+\])? kg/g, '');
+  // BUG-20: the top_insights line lists `id "title"` entries; gated ones go, whole.
+  t = t.split('\n').map(line => {
+    if (!line.startsWith('top_insights: ')) return line;
+    const kept = line.slice('top_insights: '.length).split('; ').filter(e => !gatedInsightId(e.split(' ')[0], sharing));
+    return `top_insights: ${kept.length ? kept.join('; ') : 'none'}`;
+  }).join('\n');
   return t;
 }
 
