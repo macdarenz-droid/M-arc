@@ -12,6 +12,7 @@ import { MODES, type Mode } from './prompt/modes';
 import type { TurnBody } from './validate';
 import type { QuotaCounter } from './quotaDO';
 import type { UpstreamRelay } from './upstreamRelay';
+import type { ErrorReports } from './errorsDO';
 
 export interface RateLimiter { limit(opts: { key: string }): Promise<{ success: boolean }> }
 
@@ -30,6 +31,10 @@ export interface Env {
   QUOTA?: KVNamespace;
   RATE?: RateLimiter;
   RATE_IP?: RateLimiter;
+  /** Anonymous error reports (docs/ERROR-REPORTS.md): one Durable Object per UTC day, storage plus rate limiting. */
+  ERRORS_DO?: DurableObjectNamespace<ErrorReports>;
+  /** Bearer secret for GET /errors/summary; the owner sets it at deploy. */
+  ERRORS_SUMMARY_TOKEN?: string;
 }
 
 export const DEFAULT_MODEL = 'claude-opus-5';
