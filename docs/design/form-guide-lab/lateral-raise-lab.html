@@ -114,17 +114,28 @@ ol.why,ul.plain{margin:0;padding-left:20px;display:grid;gap:8px;max-width:70ch}
 a{color:var(--accent)}
 .note{font-size:13px;color:var(--text-2)}
 </style>
+<style>
+.moments{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.moments button{display:grid;gap:2px;padding:0;border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden;background:var(--surface-2);color:var(--text-2);font:inherit;font-size:11px;cursor:pointer;text-align:center}
+.moments button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.moments img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--surface-2)}
+.moments span{padding:2px 4px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.moves{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.moves li{border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface-1)}
+.moves b{display:block;font-size:14px;margin-bottom:2px}
+.moves span{font-size:13px;color:var(--text-2)}
+</style>
 
 <div class="page">
   <header>
     <div class="eyebrow">Form guide · new approach · one-exercise sample</div>
     <h1>Lateral Raise Lab</h1>
-    <p class="lede">The dumbbell lateral raise, built on a new engine. A shaped 3D body lifts your 7 kg dumbbells. You can turn it to any angle or zoom into the shoulder. Three parts of the deltoid and the upper trap swell and shorten as they work. The load comes from physics, and the common mistake plays beside the right rep.</p>
+    <p class="lede">The dumbbell lateral raise on a new engine. One continuous 3D body lifts your 7 kg dumbbells. The shoulder blade, elbow, breath, balance and grip all move the way a real body does. Working muscles shimmer on the skin as they fire. You can turn the figure, zoom in, and play the common mistake beside the right rep.</p>
   </header>
 
   <div class="main">
     <section class="lab" aria-label="Lateral raise lab">
-      <div class="lab-head"><b>Dumbbell Lateral Raise</b><span>7 kg dumbbells · 4 s rep</span></div>
+      <div class="lab-head"><b>Dumbbell Lateral Raise</b><span id="repNote">Rep 1 of 3 · 7 kg</span></div>
 
       <div class="seg" role="group" aria-label="Camera">
         <button type="button" id="v-coach" aria-pressed="true">Coach</button>
@@ -162,10 +173,16 @@ a{color:var(--accent)}
         <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Position in the rep">
       </div>
 
+      <div class="moments" id="moments" role="group" aria-label="Key moments of the rep"></div>
+
       <div class="readouts"><table id="readouts"></table></div>
 
       <div class="chart">
-        <div class="chart-title"><span>Load on the shoulder (dumbbell only)</span><span id="chartMax"></span></div>
+        <div class="chart-title"><span>Dumbbell speed (m/s)</span><span id="speedMax"></span></div>
+        <canvas id="chartSpeed" role="img" aria-label="Chart of the dumbbell's speed across one rep"></canvas>
+      </div>
+      <div class="chart">
+        <div class="chart-title"><span>Load on the shoulder, N·m (dumbbell only)</span><span id="chartMax"></span></div>
         <canvas id="chart" role="img" aria-label="Chart of the load on the shoulder across one rep"></canvas>
       </div>
 
@@ -174,21 +191,35 @@ a{color:var(--accent)}
 
     <div class="side">
       <section>
+        <h2>What moves, besides the arm</h2>
+        <p>A good rep is the whole body working together. This version animates each of these from the exercise's data.</p>
+        <ul class="moves">
+          <li><b>Shoulder blade</b><span>Above 30°, it turns about 1° for every 2° the arm rises. It rotates, it doesn't shrug.</span></li>
+          <li><b>Elbows lead</b><span>The soft bend deepens by 6° near the top, so the elbow stays just above the hand.</span></li>
+          <li><b>Breathing</b><span>Breathe out on the way up and in on the way down. The chest shows it.</span></li>
+          <li><b>Balance</b><span>The body leans back about half a degree at the ankles as the weights move out, with a slow natural sway.</span></li>
+          <li><b>Grip</b><span>Fingers wrap the handle, and the dumbbells stay level from bottom to top.</span></li>
+          <li><b>Holding the top</b><span>A tiny tremor under load at the top, a little larger on the last rep.</span></li>
+          <li><b>Tiring</b><span>Each rep lifts a little slower: rep 2 takes 8% longer, rep 3 takes 18% longer. The lowering stays at 2 s.</span></li>
+          <li><b>The mistake</b><span>A knee dip and hip drive to throw the weight up, a shrug, the thumbs turning down, then a drop that swings past the start and bounces.</span></li>
+        </ul>
+      </section>
+
+      <section>
         <h2>How it's built</h2>
-        <p>Every exercise shares one skeleton and one body. An exercise is only a short motion description. The engine computes everything else from it, in this order:</p>
         <ol class="steps">
-          <li><div><h3>Motion description</h3><p>Joint angles over time, the movement plane, the grip, the tempo and the cues. It also describes the common mistake, so the mistake is the same exercise done wrong, not a second drawing.</p></div></li>
-          <li><div><h3>Shared skeleton</h3><p>Segment lengths are standard fractions of body height (1.78 m here). A second joint moves the shoulder blade: above 30° it rotates about 1° for every 2° the arm rises, as a real shoulder does.</p></div></li>
-          <li><div><h3>Body and clothes</h3><p>Smooth shapes around each bone: chest, waist, calves, biceps, a closed fist on the handle, a tee, shorts and shoes. It is plain on purpose, so the muscles stand out.</p></div></li>
-          <li><div><h3>Muscles</h3><p>Each muscle runs from where it starts to where it attaches. Each frame it gets its length, and it swells as it shortens, keeping its volume. It glows by how hard it works: front, side and rear deltoid, and the upper trap.</p></div></li>
-          <li><div><h3>Load</h3><p>For free weights, the load on the joint is weight × gravity × the sideways distance to the dumbbell. Cables and machines will each get their own resistance curve.</p></div></li>
-          <li><div><h3>Automatic checks</h3><p>These run before an exercise ships:</p><ul class="plain"><li>smooth speed (the check that exists today);</li><li>joints stay in their normal range;</li><li>hands stay on the handle and feet stay planted;</li><li>muscle lengths stay between 55% and 120% of rest;</li><li>the mistake really differs on every fault it names.</li></ul></div></li>
+          <li><div><h3>Motion description</h3><p>Joint angles over time, the plane, the grip, the tempo, the movement details above, the cues, and the common mistake as the same exercise done wrong.</p></div></li>
+          <li><div><h3>Shared skeleton</h3><p>Standard body proportions (1.78 m), plus a second joint for the shoulder blade, soft knees and ankles for balance.</p></div></li>
+          <li><div><h3>One continuous body</h3><p>Smooth skin runs from the shoulder through the elbow to the wrist, and from the hip through the knee to the ankle, with no ball joints. A tank top leaves the shoulders bare so you can see them work. Fingers wrap the handle.</p></div></li>
+          <li><div><h3>Muscles shimmer on the skin</h3><p>Each muscle's area of skin tints in its colour, and a sheen runs along its fibres from where it starts to where it attaches. The sheen is brighter and faster the harder the muscle works. The body's shape never changes.</p></div></li>
+          <li><div><h3>Load and speed</h3><p>Load is weight × gravity × the sideways distance to the dumbbell. Speed comes from the dumbbell's path, frame to frame.</p></div></li>
+          <li><div><h3>Automatic checks</h3><p>These run before an exercise ships:</p><ul class="plain"><li>smooth speed;</li><li>joints stay in their normal range;</li><li>hands stay on the handle and feet stay planted;</li><li>muscle lengths stay in range;</li><li>the mistake really differs on every fault it names.</li></ul></div></li>
         </ol>
       </section>
 
       <section>
         <h2>This exercise's whole description</h2>
-        <p>This is the data that drives the lab on the left. Another exercise is another block like this, with no new drawings.</p>
+        <p>This is the data that drives the lab. Another exercise is another block like this, with no new drawings.</p>
         <pre id="spec"></pre>
       </section>
 
@@ -197,13 +228,12 @@ a{color:var(--accent)}
         <div class="cmp"><table>
           <thead><tr><th>Part</th><th>Being built now</th><th>This approach</th></tr></thead>
           <tbody>
-            <tr><td>Figure</td><td>Flat drawing, one fixed side</td><td>Shaped 3D body with light and shadow: coach view, your own view from behind, side, top, a shoulder close-up, and free turning and zooming</td></tr>
-            <tr><td>Muscles</td><td>Coloured patches that glow on a timer</td><td>Muscle bellies that shorten, swell and glow with the computed effort. The upper trap turns red when it shortens</td></tr>
-            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>The load curve for your own logged weight (N·m), with the moment you're at marked</td></tr>
+            <tr><td>Figure</td><td>Flat drawing, one fixed side</td><td>One continuous 3D body with light and shadow: coach view, your own view from behind, side, top, a close-up, and free turning and zooming</td></tr>
+            <tr><td>Movement</td><td>The arm moves on a smooth curve</td><td>The whole body moves: shoulder blade, elbow lead, breath, balance, level grip, tremor at the top, and slowing reps</td></tr>
+            <tr><td>Muscles</td><td>Coloured patches that glow on a timer</td><td>A shimmer along the fibres on the skin, set by computed effort. The upper trap turns red when it takes over</td></tr>
+            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>Load and speed curves for your own logged weight, with the moment you're at marked</td></tr>
             <tr><td>Mistakes</td><td>Written tips</td><td>The same exercise done wrong on a red figure, with the numbers that make it worse</td></tr>
-            <tr><td>Guides</td><td>Arrows and outlines on the drawing</td><td>The dumbbell's path, the arm angle and a shoulder-height mark, all in 3D</td></tr>
-            <tr><td>Before a rep</td><td>Nothing</td><td>One thing to watch, different each rep</td></tr>
-            <tr><td>New exercises</td><td>New drawn parts and poses</td><td>A new description on the same skeleton; checks decide if it ships</td></tr>
+            <tr><td>Stills</td><td>Four drawn pictures</td><td>Four key moments rendered from the same model; tap one to jump there</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -211,9 +241,9 @@ a{color:var(--accent)}
       <section>
         <h2>Build plan if you switch</h2>
         <ol class="steps">
-          <li><div><h3>Engine card</h3><p>It replaces the flat rig card (GU-7a-1): skeleton, body, muscles, load, the automatic checks, and still frames for reduced motion. The 3D library loads only when a guide opens.</p></div></li>
+          <li><div><h3>Engine card</h3><p>It replaces the flat rig card (GU-7a-1): skeleton, body, muscles, load, the checks, and still frames for reduced motion. The 3D library loads only when a guide opens.</p></div></li>
           <li><div><h3>Keep what's built</h3><p>These carry over unchanged:</p><ul class="plain"><li>the player sheet, controls, bubble and gate (GU-7a-2);</li><li>the muscle names and lines (GU-7a-3).</li></ul></div></li>
-          <li><div><h3>First three exercises</h3><p>The lateral raise, chest press and lat pulldown, written as descriptions and passing the checks.</p></div></li>
+          <li><div><h3>First three exercises</h3><p>The lateral raise, chest press and lat pulldown, as descriptions that pass the checks.</p></div></li>
           <li><div><h3>Then by family</h3><p>Each family is a batch of descriptions, not new art: presses, raises, rows and pulldowns, squats and lunges, hinges, floor and hanging moves, then carries and cardio.</p></div></li>
         </ol>
       </section>
@@ -222,9 +252,9 @@ a{color:var(--accent)}
         <h2>Costs and risks</h2>
         <ul class="plain">
           <li><b>Size:</b> the 3D library (three.js, MIT licence) is 150 KB compressed (measured), loaded only when a guide opens. Each exercise adds about 1 KB.</li>
-          <li><b>Phone speed and battery:</b> 3D uses the graphics chip. This needs a check on your phone. The fallback is the still pictures.</li>
-          <li><b>No 3D support:</b> older phones get the still pictures and the same text.</li>
-          <li><b>Accuracy:</b> muscle start and attachment points and the motions follow published anatomy and studies, but they are modelled, not motion-captured. Each new muscle needs its points checked.</li>
+          <li><b>Phone speed and battery:</b> the body is rebuilt every frame on the graphics chip. This needs a check on your phone. The fallback is the four stills.</li>
+          <li><b>No 3D support:</b> older phones get the stills and the same text.</li>
+          <li><b>Accuracy:</b> the motion and the muscle areas follow published anatomy and studies. They are modelled, not motion-captured, and each new muscle needs its area checked.</li>
           <li><b>Rework:</b> the flat rig built today would be retired.</li>
         </ul>
       </section>
@@ -236,11 +266,11 @@ a{color:var(--accent)}
           <li>Telling beginners what to watch before a demo improves learning. <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2016.00051/full" target="_blank" rel="noopener">Frontiers in Psychology, 2016</a></li>
           <li>Mirrored demos make you flip left and right in your head, and a 3D figure you can turn helps you read the pose. <a href="https://link.springer.com/article/10.1007/s10055-026-01395-2" target="_blank" rel="noopener">Virtual Reality, 2026</a></li>
           <li>For learning body movements, animations can beat still pictures. <a href="https://www.academia.edu/2293233/Instructional_animations_can_be_superior_to_statics_when_learning_human_motor_skills" target="_blank" rel="noopener">Wong et al.</a></li>
-          <li>Above about 30°, the shoulder blade rotates about 1° for every 2° the arm rises (scapulohumeral rhythm). <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
+          <li>The shoulder blade moves with the arm, about 1° for every 2° above 30° (scapulohumeral rhythm). <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
           <li>Raise slightly in front of the body, and don't turn the thumbs down: rotating the arm inward raises upper-trap and rear-delt work. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7503819/" target="_blank" rel="noopener">EMG study, 2020</a></li>
           <li>A dumbbell's load climbs to shoulder height and is lightest at the bottom. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12277279/" target="_blank" rel="noopener">Dumbbell vs cable study</a></li>
         </ol>
-        <p class="note" style="margin-top:12px">Sample only; nothing here is in the app. Segment lengths follow Winter's standard body proportions (Biomechanics and Motor Control of Human Movement).</p>
+        <p class="note" style="margin-top:12px">Sample only; nothing here is in the app. Segment lengths follow Winter's standard body proportions (Biomechanics and Motor Control of Human Movement). The slowdown, sway and tremor sizes are illustrative, chosen to be small and realistic.</p>
       </section>
     </div>
   </div>
@@ -260,366 +290,435 @@ const len=a=>Math.hypot(a[0],a[1],a[2]), norm=a=>{const l=len(a)||1;return [a[0]
 const rotX=(p,c,a)=>{const y=p[1]-c[1],z=p[2]-c[2],cs=Math.cos(a),sn=Math.sin(a);return [p[0],c[1]+y*cs+z*sn,c[2]-y*sn+z*cs]};
 const rotAxis=(v,k,a)=>{const c=Math.cos(a),s=Math.sin(a);return add(add(mul(v,c),mul(cross(k,v),s)),mul(k,dot(k,v)*(1-c)))};
 const bez=(a,c,b,t)=>add(add(mul(a,(1-t)*(1-t)),mul(c,2*(1-t)*t)),mul(b,t*t));
-const bezT=(a,c,b,t)=>norm(add(mul(sub(c,a),2*(1-t)),mul(sub(b,c),2*t)));
 
 // ================= the motion description: the only per-exercise data =================
 const SPEC={
   id:'dumbbell_lateral_raise',
-  equipment:{kind:'dumbbell',grip:'neutral',kg:7,loadFrom:'your last logged set'},
+  equipment:{kind:'dumbbell',grip:'neutral, kept level',kg:7,loadFrom:'your last logged set'},
   plane:{name:'scapular',forwardDeg:22},
   tempo:{lift:1,hold:0.5,lower:2,rest:0.5},
-  joints:{shoulderAbductionDeg:[10,88],elbowBendDeg:14,shoulderBladeRhythm:'1 deg per 2 deg above 30 deg'},
-  muscles:{target:['side_delts'],helps:['front_delts','upper_traps'],quiet:['upper_traps']},
-  watch:['The elbows lead, the hands follow.','The upper-trap line stays long. No shrug.','The load peaks at shoulder height.'],
-  mistake:{tempo:{lift:0.6,hold:0.2,lower:0.9,rest:2.3},shrugCm:5,leanBackDeg:10,abductionDeg:108,thumbsDownDeg:40},
-  checks:['smoothness','jointRanges','handsOnHandle','feetPlanted','muscleLength 55-120%','mistakeDiffers'],
+  joints:{shoulderAbductionDeg:[10,88],elbowBendDeg:14,elbowLeadDeg:6,kneesSoftDeg:6,shoulderBladeRhythm:'1 deg per 2 deg above 30 deg'},
+  movement:{liftSlowdownPerRep:[1,1.08,1.18],breathe:'out on the way up',balanceLeanDeg:0.6,holdTremorDeg:0.35},
+  muscles:{target:['side_delts'],helps:['front_delts','rear_delts','upper_traps'],keepQuiet:['upper_traps']},
+  watch:['The elbows lead, the hands follow.','The upper-trap line stays quiet. No shrug.','The load peaks at shoulder height.'],
+  mistake:{tempo:{lift:0.8,hold:0.2,lower:0.9,rest:2.1},kneeDipDeg:14,leanBackDeg:10,shrugCm:5,abductionDeg:108,thumbsDownDeg:40,bounceDeg:7},
+  checks:['smoothness','jointRanges','handsOnHandle','feetPlanted','muscleLengths','mistakeDiffers'],
 };
 $('spec').textContent=JSON.stringify(SPEC,null,2).replace(/\[\n\s+([^\]{}]+?)\n\s+\]/g,(m,inner)=>'['+inner.split(/,\n\s+/).join(', ')+']');
 
 // ================= skeleton and motion =================
-const H=1.78, UA=0.186*H*0.94, FA=0.146*H, GRIP=0.07;   // Winter proportions: upper arm, forearm; grip centre from wrist
-const PLANE=SPEC.plane.forwardDeg*D, ELBOW=SPEC.joints.elbowBendDeg*D;
+const H=1.78, UA=0.186*H*0.94, FA=0.146*H, GRIP=0.07;
+const PLANE=SPEC.plane.forwardDeg*D, ELBOW=SPEC.joints.elbowBendDeg*D, LEAD=SPEC.joints.elbowLeadDeg*D;
 const TH0=SPEC.joints.shoulderAbductionDeg[0]*D, TH1=SPEC.joints.shoulderAbductionDeg[1]*D, TH1_BAD=SPEC.mistake.abductionDeg*D;
-const T=4, KG=SPEC.equipment.kg, G=9.81;
-const PH={
-  correct:[['Lift',SPEC.tempo.lift,'Lift · 1 s'],['Hold',SPEC.tempo.hold,'Hold · 0.5 s at shoulder height'],['Lower',SPEC.tempo.lower,'Lower · 2 s, under control'],['Rest',SPEC.tempo.rest,'Reset · arms long']],
-  mistake:[['Lift',SPEC.mistake.tempo.lift,'Swing it up'],['Hold',SPEC.mistake.tempo.hold,'Shrug at the top'],['Lower',SPEC.mistake.tempo.lower,'Drop it'],['Rest',SPEC.mistake.tempo.rest,'Waiting']],
-};
-function phaseAt(m,t){let acc=0;const ph=PH[m];for(let i=0;i<ph.length;i++){const d=ph[i][1];if(t<acc+d||i===ph.length-1)return{i,name:ph[i][0],label:ph[i][2],s:clamp((t-acc)/d,0,1)};acc+=d;}}
-function motion(m,t){
-  const p=phaseAt(m,t);let th,lean=0,shrug=0,rotIn=0,ecc=false;
+const T=4, KG=SPEC.equipment.kg, G=9.81, REPS=3;
+function phases(m,rep){
+  if(m==='mistake') return [['Lift',SPEC.mistake.tempo.lift,'Swing it up'],['Hold',SPEC.mistake.tempo.hold,'Shrug at the top'],['Lower',SPEC.mistake.tempo.lower,'Drop it'],['Rest',SPEC.mistake.tempo.rest,'Bounce, then wait']];
+  const lift=+(SPEC.tempo.lift*SPEC.movement.liftSlowdownPerRep[rep%REPS]).toFixed(2), hold=SPEC.tempo.hold, lower=SPEC.tempo.lower;
+  return [['Lift',lift,`Lift · ${lift} s, breathe out`],['Hold',hold,'Hold · 0.5 s at shoulder height'],['Lower',lower,'Lower · 2 s, breathe in'],['Rest',+(T-lift-hold-lower).toFixed(2),'Reset · arms long']];
+}
+function phaseAt(m,t,rep){let acc=0;const ph=phases(m,rep);for(let i=0;i<ph.length;i++){const d=ph[i][1];if(t<acc+d||i===ph.length-1)return{i,name:ph[i][0],label:ph[i][2],s:clamp((t-acc)/d,0,1),dt:t-acc};acc+=d;}}
+function motion(m,t,rep){
+  const p=phaseAt(m,t,rep), r=rep%REPS; let th,lean=0,knee=SPEC.joints.kneesSoftDeg*D,shrug=0,rotIn=0,breath=0.5,ecc=false;
   if(m==='correct'){
-    th=p.name==='Lift'?lerp(TH0,TH1,mj(p.s)):p.name==='Hold'?TH1:p.name==='Lower'?lerp(TH1,TH0,mj(p.s)):TH0;
-    ecc=p.name==='Lower';
+    if(p.name==='Lift'){th=lerp(TH0,TH1,mj(p.s));breath=1-mj(p.s);}
+    else if(p.name==='Hold'){const amp=SPEC.movement.holdTremorDeg*D*(1+0.3*r);th=TH1+amp*(Math.sin(2*Math.PI*9*p.dt)+0.45*Math.sin(2*Math.PI*13*p.dt+1.3));breath=0;}
+    else if(p.name==='Lower'){th=lerp(TH1,TH0,mj(p.s));ecc=true;breath=mj(p.s);}
+    else{th=TH0;breath=1;}
   }else{
-    if(p.name==='Lift'){const s=p.s,e=1-Math.pow(1-s,3);th=lerp(TH0,TH1_BAD,e+0.06*Math.sin(Math.PI*s));lean=SPEC.mistake.leanBackDeg*D*Math.sin(Math.PI*Math.min(1,s*1.15));}
+    const dip=SPEC.mistake.kneeDipDeg*D;
+    if(p.name==='Lift'){const s=p.s,q=clamp((s-0.2)/0.8,0,1),e=mj(q)+0.04*Math.sin(Math.PI*q);th=lerp(TH0,TH1_BAD,e);
+      lean=SPEC.mistake.leanBackDeg*D*Math.sin(Math.PI*Math.min(1,s*1.15)); if(s<0.35) knee+=dip*Math.sin(Math.PI*s/0.35);}
     else if(p.name==='Hold'){th=TH1_BAD;lean=2*D;}
     else if(p.name==='Lower'){th=lerp(TH1_BAD,TH0,p.s*p.s);ecc=true;lean=2*D*(1-p.s);}
-    else th=TH0;
+    else{const b=SPEC.mistake.bounceDeg*D;th=Math.max(0,TH0-b*Math.exp(-p.dt/0.3)*Math.sin(2*Math.PI*1.6*p.dt));}
     shrug=SPEC.mistake.shrugCm/100*smooth(55*D,TH1_BAD,th);
     rotIn=SPEC.mistake.thumbsDownDeg*D*smooth(20*D,90*D,th);
   }
-  const blade=Math.max(0,th-30*D)/3;               // scapular upward rotation (1 per 2 of arm above 30)
-  return {p,th,lean,shrug,rotIn,ecc,blade};
+  const up=clamp((th-TH0)/(TH1-TH0),0,1.3);
+  const sway=-SPEC.movement.balanceLeanDeg*D*up*(m==='mistake'?2:1)+0.2*D*Math.sin(2*Math.PI*t/T);
+  const blade=Math.max(0,th-30*D)/3, elbow=ELBOW+LEAD*smooth(40*D,TH1,th);
+  return {p,th,lean,sway,knee,shrug,rotIn,breath,ecc,blade,elbow};
 }
-function pose(m,t,ox){
-  const M=motion(m,t),P=[ox,0.98,0],R=q=>rotX(q,P,M.lean),J={P,M};
-  J.hip=[[ox+0.09,0.94,0],[ox-0.09,0.94,0]]; J.knee=[[ox+0.1,0.52,0.02],[ox-0.1,0.52,0.02]];
-  J.ank=[[ox+0.1,0.085,-0.01],[ox-0.1,0.085,-0.01]]; J.toe=[[ox+0.115,0.03,0.17],[ox-0.115,0.03,0.17]];
-  J.crotch=[ox,0.83,0]; J.neck=R([ox,1.49,-0.02]); J.neckTop=R([ox,1.6,0]); J.head=R([ox,1.672,0.012]);
-  J.torsoTop=R([ox,1.5,-0.02]); J.fwd=norm(sub(R([ox,1.2,1]),R([ox,1.2,0])));
+function pose(m,t,ox,rep){
+  const M=motion(m,t,rep), L1=0.43, L2=0.44, a2=M.knee/2;
+  const hipY=0.085+(L1+L2)*Math.cos(a2), dy=hipY-0.955;
+  const ankC=[ox,0.085,-0.01], P=[ox,0.98+dy,0];
+  const SW=q=>rotX(q,ankC,M.sway), HL=q=>rotX(q,P,M.lean), UP=q=>SW(HL(q));
+  const UPd=(o,v)=>norm(sub(UP(add(o,v)),UP(o)));
+  const J={M,dy,ox};
+  J.legs=[1,-1].map(side=>{
+    const hip=[ox+side*0.09,0.94+dy,0], knee=[ox+side*0.1,0.085+L2*Math.cos(a2),-0.01+L2*Math.sin(a2)];
+    return {hipIn:SW(add(hip,[-side*0.03,0.08,0])),hip:SW(hip),knee:SW(knee),ank:[ox+side*0.1,0.085,-0.01],toe:[ox+side*0.115,0.03,0.17],front:norm(SW(add([0,0,1],ankC)).map((v,i)=>v-ankC[i]))};
+  });
+  const sp=[[ox,0.83,0],[ox,0.98,0],[ox,1.13,0.005],[ox,1.32,0.012],[ox,1.5,-0.02]].map(q=>UP(add(q,[0,dy,0])));
+  J.spine=sp; J.fwd=UPd(sp[2],[0,0,1]); J.sideV=UPd(sp[2],[1,0,0]);
+  J.neck=[UP([ox,1.48+dy,-0.02]),UP([ox,1.6+dy,0])]; J.head=UP([ox,1.672+dy,0.012]);
   J.arms={};
   for(const side of [1,-1]){
-    const S=[ox+side*(0.2-0.012*Math.sin(M.blade)),1.45+M.shrug+0.03*Math.sin(M.blade),0];
+    const S=[ox+side*(0.2-0.012*Math.sin(M.blade)),1.45+dy+M.shrug+0.03*Math.sin(M.blade),0];
     const Gh=add(S,[-side*0.025,-0.04,0]);
     const lat=[side*Math.cos(PLANE),0,Math.sin(PLANE)];
     const u=norm(add(mul([0,-1,0],Math.cos(M.th)),mul(lat,Math.sin(M.th))));
     const w=norm(sub([0,0,1],mul(u,dot([0,0,1],u))));
-    const f=norm(add(mul(u,Math.cos(ELBOW)),mul(w,Math.sin(ELBOW))));
+    const f=norm(add(mul(u,Math.cos(M.elbow)),mul(w,Math.sin(M.elbow))));
     const E=add(Gh,mul(u,UA)), W=add(E,mul(f,FA)), Hd=add(W,mul(f,GRIP));
-    let a=norm(sub([0,0,1],mul(f,dot([0,0,1],f)))); a=rotAxis(a,f,-side*M.rotIn);
+    // keep the dumbbell level: the handle lies in the horizontal plane, square to the forearm
+    let a=[f[2],0,-f[0]]; if(len(a)<1e-4)a=[0,0,1]; a=norm(a); if(dot(a,[0,0,1])<0)a=mul(a,-1);
+    a=rotAxis(a,f,-side*M.rotIn);
     const ins=add(add(Gh,mul(u,0.15)),mul(lat,0.012));
     const mus={
-      side:{O:add(S,[side*0.02,0.022,0]),I:ins,C:null,r:0.026},
-      front:{O:add(S,[-side*0.05,0.0,0.055]),I:ins,C:null,r:0.024},
-      rear:{O:add(S,[-side*0.055,0.0,-0.055]),I:ins,C:null,r:0.022},
-      trap:{O:[ox+side*0.035,1.55,-0.055],I:add(S,[-side*0.04,0.02,-0.02]),C:null,r:0.016},
+      side:{O:add(S,[side*0.02,0.022,0]),I:ins}, front:{O:add(S,[-side*0.05,0,0.055]),I:ins},
+      rear:{O:add(S,[-side*0.055,0,-0.055]),I:ins}, trap:{O:[ox+side*0.035,1.55+dy,-0.055],I:add(S,[-side*0.04,0.02,-0.02])},
     };
-    for(const k in mus){const q=mus[k];const mid=mul(add(q.O,q.I),0.5);
-      q.C=k==='trap'?add(mid,[0,0.012,-0.02]):add(mid,mul(norm(sub(mid,Gh)),k==='side'?0.036:0.03));}
-    J.arms[side]={S,Gh,E,W,Hd,a,u,f,lat,mus};
+    const T_=q=>UP(q);
+    const A={S:T_(S),Gh:T_(Gh),E:T_(E),W:T_(W),Hd:T_(Hd),u:UPd(Gh,u),f:UPd(W,f),w:UPd(Gh,w),lat:UPd(Gh,lat),a:UPd(Hd,a),mus:{}};
+    for(const k in mus){const O=T_(mus[k].O),I=T_(mus[k].I);A.mus[k]={O,I,len:len(sub(O,I))};}
+    J.arms[side]=A;
   }
-  for(const side of [1,-1]){const A=J.arms[side];
-    for(const k of ['S','Gh','E','W','Hd']) A[k]=R(A[k]);
-    A.a=norm(sub(R(add(A.Hd,A.a)),A.Hd)); A.f=norm(sub(R(add(A.W,A.f)),A.W)); A.u=norm(sub(R(add(A.E,A.u)),A.E));
-    A.lat=norm(sub(R(add(A.Gh,A.lat)),A.Gh));
-    for(const k in A.mus){const q=A.mus[k];q.O=R(q.O);q.I=R(q.I);q.C=R(q.C);q.len=len(sub(q.O,q.C))+len(sub(q.C,q.I));}
-  }
-  const A=J.arms[1], r=sub(A.Hd,A.Gh);
-  J.torque=KG*G*Math.hypot(r[0],r[2]);
+  const A=J.arms[1], r=sub(A.Hd,A.Gh); J.torque=KG*G*Math.hypot(r[0],r[2]);
   return J;
 }
-const REST=pose('correct',T-0.1,0), L0={}; for(const k in REST.arms[1].mus) L0[k]=REST.arms[1].mus[k].len;
+const REST=pose('correct',T-0.1,0,0), L0={}; for(const k in REST.arms[1].mus) L0[k]=REST.arms[1].mus[k].len;
 const TMAX=KG*G*(UA+FA*Math.cos(ELBOW)+GRIP);
-function act(J,m){
+function effort(J,m){
   const tn=J.torque/TMAX, M=J.M;
-  return {side:0.15+0.85*tn, front:0.1+0.4*tn, rear:0.08+0.25*tn+(m==='mistake'?0.3*M.rotIn/(40*D):0),
-    trap:0.08+0.15*tn+(m==='mistake'?0.7*M.shrug/0.05+0.1*M.rotIn/(40*D):0)};
+  return {side:0.12+0.88*tn, front:0.08+0.42*tn, rear:0.06+0.26*tn+(m==='mistake'?0.3*M.rotIn/(40*D):0),
+    trap:0.06+0.14*tn+(m==='mistake'?0.72*M.shrug/0.05+0.1*M.rotIn/(40*D):0)};
 }
+function speedAt(m,t,rep){const h=0.01,a=pose(m,clamp(t-h,0,T-1e-4),0,rep).arms[1].Hd,b=pose(m,clamp(t+h,0,T-1e-4),0,rep).arms[1].Hd;return len(sub(b,a))/(2*h);}
 
-// ================= readouts, chart, captions (plain DOM + 2D canvas) =================
-let mode='correct', t=0, speed=1, rep=0, playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
+// ================= readouts, charts, captions =================
+let mode='correct', t=0, speed=1, rep=0, clock=0, playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 let col={};
 function readTokens(){const s=getComputedStyle(document.documentElement);for(const k of ['surface-1','surface-2','surface-3','text','text-2','accent','target','help','watch','neg','skin','tee','shorts','shoe','hair','iron','platform','guide','border','font','mono'])col[k]=s.getPropertyValue('--'+k).trim();}
 readTokens();
-const CURVES={};for(const m of ['correct','mistake']){CURVES[m]=[];for(let k=0;k<=240;k++)CURVES[m].push(pose(m,k/240*T*0.9999,0).torque);}
-$('chartMax').textContent=`peak ${Math.max(...CURVES.correct).toFixed(0)} N·m with ${KG} kg`;
-const ch=$('chart'), chx=ch.getContext('2d');
-function drawChart(res){
-  const DPR=Math.min(2,devicePixelRatio||1), r=ch.getBoundingClientRect();
+const CACHE={};
+function curves(m,r){const k=m+(m==='correct'?r%REPS:0);if(!CACHE[k]){const load=[],spd=[];for(let i=0;i<=200;i++){const tt=i/200*T*0.9999;load.push(pose(m,tt,0,r).torque);spd.push(speedAt(m,tt,r));}CACHE[k]={load,spd};}return CACHE[k];}
+const SMAX=Math.max(...curves('mistake',0).spd,...curves('correct',0).spd)*1.08;
+function chart(id,key,ymax,ticks,res,unitFmt){
+  const ch=$(id),cx=ch.getContext('2d'),DPR=Math.min(2,devicePixelRatio||1),r=ch.getBoundingClientRect();
   if(ch.width!==Math.round(r.width*DPR)){ch.width=Math.round(r.width*DPR);ch.height=Math.round(r.height*DPR);}
   const w=r.width,h=r.height;if(!w)return;
-  chx.setTransform(DPR,0,0,DPR,0,0);chx.clearRect(0,0,w,h);
-  const pl=34,pr=6,pt=6,pb=16,X=tt=>pl+(w-pl-pr)*tt/T,Y=v=>pt+(h-pt-pb)*(1-v/50);
-  chx.font=`11px ${col.mono}`;chx.fillStyle=col['text-2'];chx.strokeStyle=col.border;chx.lineWidth=1;
-  for(const v of [0,25,50]){chx.beginPath();chx.moveTo(pl,Y(v)+.5);chx.lineTo(w-pr,Y(v)+.5);chx.stroke();chx.textAlign='right';chx.fillText(String(v),pl-6,Y(v)+4);}
-  chx.textAlign='left';let acc=0;for(const [n,d] of PH.correct){chx.fillText(n,X(acc)+2,h-3);acc+=d;}
+  cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,w,h);
+  const pl=34,pr=6,pt=6,pb=16,X=tt=>pl+(w-pl-pr)*tt/T,Y=v=>pt+(h-pt-pb)*(1-v/ymax);
+  cx.font=`11px ${col.mono}`;cx.fillStyle=col['text-2'];cx.strokeStyle=col.border;cx.lineWidth=1;
+  for(const v of ticks){cx.beginPath();cx.moveTo(pl,Y(v)+.5);cx.lineTo(w-pr,Y(v)+.5);cx.stroke();cx.textAlign='right';cx.fillText(unitFmt(v),pl-6,Y(v)+4);}
+  cx.textAlign='left';let acc=0;for(const [n,d] of phases(mode==='mistake'?'mistake':'correct',rep)){cx.fillText(n,X(acc)+2,h-3);acc+=d;}
   const show=mode==='compare'?['correct','mistake']:[mode];
-  for(const m of show){const c=CURVES[m];chx.beginPath();c.forEach((v,k)=>{const x=X(k/240*T),y=Y(v);k?chx.lineTo(x,y):chx.moveTo(x,y);});chx.strokeStyle=m==='mistake'?col.neg:col.target;chx.lineWidth=2;chx.setLineDash(m==='mistake'&&mode==='compare'?[4,3]:[]);chx.stroke();chx.setLineDash([]);}
-  for(const rr of res){chx.beginPath();chx.arc(X(t),Y(rr.J.torque),4,0,Math.PI*2);chx.fillStyle=rr.m==='mistake'?col.neg:col.target;chx.fill();chx.strokeStyle=col['surface-1'];chx.lineWidth=2;chx.stroke();}
+  for(const m of show){const c=curves(m,rep)[key];cx.beginPath();c.forEach((v,k)=>{const x=X(k/200*T),y=Y(v);k?cx.lineTo(x,y):cx.moveTo(x,y);});cx.strokeStyle=m==='mistake'?col.neg:col.target;cx.lineWidth=2;cx.setLineDash(m==='mistake'&&mode==='compare'?[4,3]:[]);cx.stroke();cx.setLineDash([]);}
+  for(const rr of res){const v=key==='load'?rr.J.torque:rr.spd;cx.beginPath();cx.arc(X(t),Y(Math.min(v,ymax)),4,0,Math.PI*2);cx.fillStyle=rr.m==='mistake'?col.neg:col.target;cx.fill();cx.strokeStyle=col['surface-1'];cx.lineWidth=2;cx.stroke();}
 }
 function updateReadouts(res){
   const head='<thead><tr><th scope="col">Now</th>'+res.map(r=>`<th scope="col" style="text-align:right">${r.m==='mistake'?'Mistake':'Right rep'}</th>`).join('')+'</tr></thead>';
   const row=(label,sw,f,bad)=>`<tr><th scope="row">${sw?`<span class="sw" style="background:${sw}"></span>`:''}${label}</th>`+res.map(r=>`<td class="${bad&&bad(r)?'bad':''}">${f(r)}</td>`).join('')+'</tr>';
   $('readouts').innerHTML=head+'<tbody>'+
     row('Arm angle from the body',null,r=>Math.round(r.J.M.th/D)+'°',r=>r.J.M.th>95*D)+
+    row('Dumbbell speed',null,r=>r.spd.toFixed(2)+' m/s',r=>r.spd>2.2)+
     row('Load on the shoulder',null,r=>r.J.torque.toFixed(0)+' N·m')+
-    row('Side delt: length · effort','var(--target)',r=>Math.round(100*r.J.arms[1].mus.side.len/L0.side)+'% · '+Math.round(100*r.A.side)+'%')+
-    row('Upper trap: length · effort','var(--watch)',r=>Math.round(100*r.J.arms[1].mus.trap.len/L0.trap)+'% · '+Math.round(100*r.A.trap)+'%',r=>r.J.arms[1].mus.trap.len/L0.trap<0.95)+
-    row('Body lean back',null,r=>Math.round(r.J.M.lean/D)+'°',r=>r.J.M.lean>4*D)+'</tbody>';
+    row('Side delt effort','var(--target)',r=>Math.round(100*r.E.side)+'%')+
+    row('Upper trap: length · effort','var(--watch)',r=>Math.round(100*r.J.arms[1].mus.trap.len/L0.trap)+'% · '+Math.round(100*r.E.trap)+'%',r=>r.J.arms[1].mus.trap.len/L0.trap<0.95)+
+    row('Lean back (hips + ankles)',null,r=>((r.J.M.lean+Math.max(0,-r.J.M.sway))/D).toFixed(1)+'°',r=>r.J.M.lean>4*D)+'</tbody>';
 }
 function buildPhaseBar(){
-  const ph=PH[mode==='mistake'?'mistake':'correct'];
+  const ph=phases(mode==='mistake'?'mistake':'correct',rep);
   $('phaseBar').innerHTML=ph.map(([n,d])=>`<span style="flex:${d}"></span>`).join('');
   $('phaseLabels').innerHTML=ph.map(([n,d])=>`<span style="flex:${d}">${d>0.5?n+' '+d+' s':n}</span>`).join('');
+  $('repNote').textContent=mode==='mistake'?'Common mistake · 7 kg':`Rep ${rep%REPS+1} of ${REPS} · 7 kg`;
+  const c=curves('correct',rep);
+  $('chartMax').textContent=`peak ${Math.max(...c.load).toFixed(0)} N·m with ${KG} kg`;
+  $('speedMax').textContent=mode==='correct'?`peak ${Math.max(...c.spd).toFixed(1)} m/s`:`right ${Math.max(...c.spd).toFixed(1)} m/s · mistake ${Math.max(...curves('mistake',0).spd).toFixed(1)} m/s`;
 }
 let lastLabel='';
 function captions(){
-  const m=mode==='mistake'?'mistake':'correct',p=phaseAt(m,t);
+  const m=mode==='mistake'?'mistake':'correct',p=phaseAt(m,t,rep);
   [...$('phaseBar').children].forEach((el,k)=>el.classList.toggle('on',k===p.i));
-  const lab=mode==='compare'?PH.correct[p.i][2]:p.label;
-  if(lab!==lastLabel){$('phase').textContent=lab;lastLabel=lab;}
+  if(p.label!==lastLabel){$('phase').textContent=p.label;lastLabel=p.label;}
   $('scrub').value=String(Math.round(t/T*1000));
 }
-function setWatch(){$('watchText').textContent=mode==='mistake'?'Watch: the shrug, the swing and the drop. This is what not to do.':'Watch: '+SPEC.watch[rep%SPEC.watch.length].replace(/^./,c=>c.toLowerCase());}
+function setWatch(){$('watchText').textContent=mode==='mistake'?'Watch: the knee dip, the shrug and the bounce. This is what not to do.':'Watch: '+SPEC.watch[rep%SPEC.watch.length].replace(/^./,c=>c.toLowerCase());}
 (function mistakes(){
-  let minT=1,maxLean=0,top=0;
-  for(let k=0;k<=240;k++){const J=pose('mistake',k/240*T*0.9999,0);minT=Math.min(minT,J.arms[1].mus.trap.len/L0.trap);maxLean=Math.max(maxLean,J.M.lean);top=Math.max(top,J.M.th);}
+  let minT=1,maxLean=0,top=0,spdM=0;
+  for(let k=0;k<=200;k++){const tt=k/200*T*0.9999,J=pose('mistake',tt,0,0);minT=Math.min(minT,J.arms[1].mus.trap.len/L0.trap);maxLean=Math.max(maxLean,J.M.lean);top=Math.max(top,J.M.th);}
+  spdM=Math.max(...curves('mistake',0).spd);const spdC=Math.max(...curves('correct',0).spd);
   $('mistakes').innerHTML=[
+    `<li><b>Dips and swings.</b> The knees dip ${SPEC.mistake.kneeDipDeg}° and the hips drive the body back about ${Math.round(maxLean/D)}° to throw the weight up. It peaks at ${spdM.toFixed(1)} m/s, against ${spdC.toFixed(1)} m/s for the right rep.</li>`,
     `<li><b>Shrugs.</b> The upper trap shortens to ${Math.round(minT*100)}% and takes over from the side delt.</li>`,
-    `<li><b>Swings.</b> The body leans back about ${Math.round(maxLean/D)}° to throw the weight up.</li>`,
     `<li><b>Too high, thumbs down.</b> ${Math.round(top/D)}° is past shoulder height, where the delt's load falls. Turning the arm in adds rear-delt and trap work.</li>`,
-    `<li><b>Drops it.</b> Down in ${SPEC.mistake.tempo.lower} s instead of ${SPEC.tempo.lower} s, so the lowering half does little.</li>`].join('');
+    `<li><b>Drops and bounces.</b> Down in ${SPEC.mistake.tempo.lower} s instead of ${SPEC.tempo.lower} s, then the arms swing past the start and bounce back.</li>`].join('');
 })();
 
 // ================= 3D =================
 const canvas=$('stage'), wrap=$('stageWrap');
 let renderer=null;
 try{ if(!window.THREE) throw new Error('no three'); renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); }
-catch(e){ const d=document.createElement('div');d.className='fallback';d.textContent='3D is not available in this browser. The phone app would show the still pictures here instead.';wrap.appendChild(d); }
+catch(e){ const d=document.createElement('div');d.className='fallback';d.textContent='3D is not available in this browser. The phone app would show the four stills here instead.';wrap.appendChild(d); }
 
-const V3=a=>new THREE.Vector3(a[0],a[1],a[2]);
-// A body part: rings of (t along the bone, half-width, half-depth, x offset, z offset), smooth closed tube.
-function loftGeo(prof,L,segs=26,expo=2.2){
-  const pos=[],idx=[],R=prof.length;
-  for(const [t,w,d,ox=0,oz=0] of prof) for(let i=0;i<segs;i++){const a=i/segs*Math.PI*2,c=Math.cos(a),s=Math.sin(a);
-    pos.push(ox+w*Math.sign(c)*Math.pow(Math.abs(c),2/expo),t*L,oz+d*Math.sign(s)*Math.pow(Math.abs(s),2/expo));}
-  const f=prof[0],l=prof[R-1],c0=pos.length/3;pos.push(f[3]||0,f[0]*L-Math.min(f[1],f[2])*0.6,f[4]||0);
-  const c1=pos.length/3;pos.push(l[3]||0,l[0]*L+Math.min(l[1],l[2])*0.6,l[4]||0);
-  for(let j=0;j<R-1;j++)for(let i=0;i<segs;i++){const a=j*segs+i,b=j*segs+(i+1)%segs,c=(j+1)*segs+i,d=(j+1)*segs+(i+1)%segs;idx.push(a,c,b,b,c,d);}
-  for(let i=0;i<segs;i++){idx.push(c0,i,(i+1)%segs);const o=(R-1)*segs;idx.push(c1,o+(i+1)%segs,o+i);}
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();return g;
+// --- chains: smooth skin along a curve through joints (Catmull-Rom), rings every ~1.3 cm ---
+function crPoint(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t;return [0,1,2].map(i=>0.5*(2*p1[i]+(-p0[i]+p2[i])*t+(2*p0[i]-5*p1[i]+4*p2[i]-p3[i])*t2+(-p0[i]+3*p1[i]-3*p2[i]+p3[i])*t3));}
+function sampleChain(pts,fronts,refIdx,n){
+  const dense=[],fr=[],seg=pts.length-1;
+  for(let i=0;i<seg;i++){const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(seg,i+2)];
+    for(let k=0;k<(i===seg-1?13:12);k++){const u=k/12;dense.push(crPoint(p0,p1,p2,p3,u));fr.push(norm(add(mul(fronts[i],1-u),mul(fronts[i+1],u))));}}
+  const cum=[0];for(let i=1;i<dense.length;i++)cum.push(cum[i-1]+len(sub(dense[i],dense[i-1])));
+  const total=cum[cum.length-1], ref=cum[refIdx*12], out=[];
+  for(let j=0;j<n;j++){const d=total*j/(n-1);let i=1;while(i<cum.length-1&&cum[i]<d)i++;const u=(d-cum[i-1])/((cum[i]-cum[i-1])||1);
+    const C=add(mul(dense[i-1],1-u),mul(dense[i],u)),Tn=norm(sub(dense[Math.min(i,dense.length-1)],dense[i-1])),F=norm(add(mul(fr[i-1],1-u),mul(fr[i],u)));
+    out.push({C,T:Tn,F,dist:d-ref,s:d/total});}
+  return out;
 }
-const _m=new THREE.Matrix4();
-function place(obj,A,B,hint){
-  const y=norm(sub(B,A)); let z=sub(hint,mul(y,dot(hint,y))); if(len(z)<1e-4) z=[1,0,0]; z=norm(z); const x=cross(y,z);
-  _m.makeBasis(V3(x),V3(y),V3(z)); obj.quaternion.setFromRotationMatrix(_m); obj.position.set(A[0],A[1],A[2]);
+const knotAt=(K,x)=>{if(x<=K[0][0])return K[0].slice(1);for(let i=1;i<K.length;i++)if(x<=K[i][0]){const u=(x-K[i-1][0])/(K[i][0]-K[i-1][0]);return K[i].slice(1).map((v,j)=>lerp(K[i-1][j+1]??0,v,u));}return K[K.length-1].slice(1);};
+function chainGeo(nR,nS){
+  const nv=nR*nS+2,g=new THREE.BufferGeometry(),idx=[];
+  for(let j=0;j<nR-1;j++)for(let i=0;i<nS;i++){const a=j*nS+i,b=j*nS+(i+1)%nS,c=(j+1)*nS+i,d=(j+1)*nS+(i+1)%nS;idx.push(a,c,b,b,c,d);}
+  const c0=nR*nS,c1=c0+1;for(let i=0;i<nS;i++){idx.push(c0,i,(i+1)%nS);const o=(nR-1)*nS;idx.push(c1,o+(i+1)%nS,o+i);}
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(nv*3),3));g.setAttribute('color',new THREE.BufferAttribute(new Float32Array(nv*3),3));g.setIndex(idx);g.userData={nR,nS};return g;
 }
-const PROF={
-  shorts:[[0,.15,.1],[.1,.172,.106,0,-.006],[.22,.168,.102],[.3,.158,.098]],
-  tee:[[.26,.172,.106],[.36,.152,.097,0,.004],[.5,.162,.106,0,.012],[.66,.176,.113,0,.016],[.78,.19,.105,0,.01],[.88,.192,.091,0,-.004],[.95,.12,.074,0,-.01],[1,.062,.056,0,-.01]],
-  neck:[[0,.056,.058],[.5,.05,.052],[1,.05,.05]],
-  upper:[[0,.05,.05],[.25,.047,.053,0,.004],[.6,.042,.047,0,.003],[1,.036,.038]],
-  sleeve:[[0,.058,.058],[.3,.054,.058,0,.004],[.42,.052,.056]],
-  fore:[[0,.037,.035],[.25,.041,.037],[.7,.03,.026],[1,.025,.019]],
-  fist:[[0,.026,.021],[.35,.039,.03],[.8,.037,.031],[1,.026,.024]],
-  thigh:[[0,.084,.088],[.15,.082,.086],[.5,.068,.07],[.85,.052,.055],[1,.048,.05]],
-  legShort:[[0,.093,.096],[.2,.09,.094],[.42,.08,.083]],
-  shank:[[0,.048,.05],[.2,.052,.058,0,-.012],[.45,.045,.05,0,-.008],[.8,.03,.033],[1,.028,.03]],
-  foot:[[0,.036,.042],[.3,.043,.034],[.75,.045,.026],[1,.034,.018]],
-};
-let scene,camera,figures=[],hemi,key,rim,platform,platformRim,mats={},ghostMats={};
-function mat(c,o={}){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.78,metalness:0},o));}
-function makeMats(target,tint){
-  const m={skin:mat('#999'),tee:mat('#444'),shorts:mat('#333'),shoe:mat('#eee'),hair:mat('#222',{roughness:0.95}),iron:mat('#555',{roughness:0.42,metalness:0.55}),
-    musSide:mat('#f80',{roughness:0.5}),musFront:mat('#fa0',{roughness:0.5}),musRear:mat('#fa0',{roughness:0.5}),musTrap:mat('#08f',{roughness:0.5})};
-  m.tint=tint; return m;
-}
-function paint(){
-  const c=k=>new THREE.Color(col[k]).convertSRGBToLinear();
-  for(const [set,tint] of [[mats,0],[ghostMats,0.42]]){
-    for(const k of ['skin','tee','shorts','shoe','hair','iron']){set[k].color.copy(c(k)).lerp(c('neg'),tint);}
+function updateChain(g,S,K,expo,shade){
+  const {nR,nS}=g.userData,P=g.attributes.position.array,Cc=g.attributes.color.array;let n=0;
+  for(const r of S){
+    const [w,d,oz=0]=knotAt(K,r.dist), Z=norm(sub(r.F,mul(r.T,dot(r.F,r.T)))), X=cross(r.T,Z);
+    for(let i=0;i<nS;i++){const a=i/nS*2*Math.PI,c=Math.cos(a),s=Math.sin(a);
+      const ex=Math.sign(c)*Math.pow(Math.abs(c),2/expo),ez=Math.sign(s)*Math.pow(Math.abs(s),2/expo);
+      const radial=norm(add(mul(X,c),mul(Z,s))), sh=shade(r,radial);
+      const q=add(add(r.C,mul(X,w*ex)),mul(Z,d*ez+oz));
+      P[n]=q[0];P[n+1]=q[1]+(sh.dy||0);P[n+2]=q[2];Cc[n]=sh.c[0];Cc[n+1]=sh.c[1];Cc[n+2]=sh.c[2];n+=3;}
   }
-  if(platform){platform.material.color.copy(c('platform'));platformRim.material.color.copy(c('guide'));}
-  for(const f of figures){f.path.material.color.copy(c(f.mistake?'neg':'target'));f.arc.material.color.copy(c('guide'));f.tick.material.color.copy(c('guide'));}
+  const f=S[0],l=S[S.length-1],fw=knotAt(K,f.dist),lw=knotAt(K,l.dist);
+  const q0=sub(f.C,mul(f.T,Math.min(fw[0],fw[1])*0.6)),q1=add(l.C,mul(l.T,Math.min(lw[0],lw[1])*0.6));
+  for(const [q,src] of [[q0,0],[q1,(nR-1)*nS]]){P[n]=q[0];P[n+1]=q[1];P[n+2]=q[2];Cc[n]=Cc[src*3];Cc[n+1]=Cc[src*3+1];Cc[n+2]=Cc[src*3+2];n+=3;}
+  g.attributes.position.needsUpdate=true;g.attributes.color.needsUpdate=true;g.computeVertexNormals();g.computeBoundingSphere();
 }
-function tube(){ // dynamic muscle mesh: rings along a curve
-  const RINGS=12,SEG=12,g=new THREE.BufferGeometry(),pos=new Float32Array(RINGS*SEG*3),idx=[];
-  for(let j=0;j<RINGS-1;j++)for(let i=0;i<SEG;i++){const a=j*SEG+i,b=j*SEG+(i+1)%SEG,c=(j+1)*SEG+i,d=(j+1)*SEG+(i+1)%SEG;idx.push(a,b,c,b,d,c);}
-  g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(idx);g.userData={RINGS,SEG};return g;
+// skin profiles: [distance from the reference joint (m), half-width, half-depth, forward offset]
+const K_ARM=[[-0.07,.05,.055],[-0.01,.058,.062],[.04,.059,.062],[.1,.052,.056],[.16,.046,.051],[.23,.042,.047],[UA-.012,.036,.038],[UA+.05,.043,.039],[UA+.13,.035,.031],[UA+FA,.025,.02],[UA+FA+.03,.024,.019]];
+const K_LEG=[[-0.1,.09,.095],[0,.088,.092],[.1,.08,.084],[.25,.068,.07],[.38,.052,.055],[.43,.05,.052],[.5,.052,.058,-.012],[.6,.05,.056,-.01],[.75,.035,.038],[.86,.03,.032],[.92,.029,.03]];
+const K_TORSO=[[0,.15,.1],[.07,.172,.106,-.006],[.15,.168,.102],[.25,.148,.094,.004],[.35,.16,.103,.012],[.46,.176,.112,.018],[.54,.19,.104,.01],[.6,.194,.09,-.004],[.64,.12,.074,-.01],[.68,.062,.056,-.01]];
+const lin=h=>{const c=new THREE.Color(h).convertSRGBToLinear();return [c.r,c.g,c.b];};
+const mixc=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
+let P3={};function palette(){if(!window.THREE)return;for(const k of ['skin','tee','shorts','shoe','hair','iron','target','help','watch','neg','platform','guide'])P3[k]=lin(col[k]);}
+palette();
+
+// --- the muscle shimmer: tint the muscle's skin area, and run a sheen along its fibres ---
+function shimmer(base,colr,weight,effortV,phase){
+  if(weight<=0.001)return base;
+  const band=Math.pow(0.5+0.5*Math.sin(phase),4);            // a bright band running along the fibres
+  const tint=weight*(0.28+0.6*effortV), sheen=weight*band*(0.25+0.9*effortV);
+  const c=mixc(base,colr,clamp(tint,0,0.9));
+  return mixc(c,[1,1,1],clamp(sheen*0.55,0,0.6)).map((v,i)=>v+colr[i]*sheen*0.35);
 }
-function updateTube(g,O,C,I,rMid,flat,ref){
-  const {RINGS,SEG}=g.userData,p=g.attributes.position.array;let n=0;
-  for(let j=0;j<RINGS;j++){const s=j/(RINGS-1),P=bez(O,C,I,s),Tn=bezT(O,C,I,s);
-    let n1=cross(Tn,ref);if(len(n1)<1e-3)n1=cross(Tn,[0,1,0]);n1=norm(n1);const n2=cross(Tn,n1);
-    const r=0.004+rMid*Math.pow(Math.sin(Math.PI*clamp(s,0.02,0.98)),0.75);
-    for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,q=add(P,add(mul(n1,r*Math.cos(a)),mul(n2,r*flat*Math.sin(a))));p[n++]=q[0];p[n++]=q[1];p[n++]=q[2];}}
-  g.attributes.position.needsUpdate=true;g.computeVertexNormals();g.computeBoundingSphere();
-}
+
+let scene,camera,figures=[],platform,platformRim;
+function mat(o={}){return new THREE.MeshStandardMaterial(Object.assign({roughness:0.72,metalness:0},o));}
+function labelTex(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.fillStyle='#d9dbe0';x.font='700 44px Inter, system-ui, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('7',64,52);x.font='600 22px Inter, system-ui, sans-serif';x.fillText('KG',64,90);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t;}
+const LABEL=window.THREE?labelTex():null;
+function loftGeo(prof,L,segs=22,expo=2.4){const S=prof.map(([tt,w,d,ox=0,oz=0])=>({C:[ox,tt*L,0],T:[0,1,0],F:[0,0,1],dist:tt,s:tt}));
+  const K=prof.map(([tt,w,d,ox=0,oz=0])=>[tt,w,d,oz]);const g=chainGeo(S.length,segs);updateChain(g,S,K,expo,()=>({c:[1,1,1]}));return g;}
+const _m=window.THREE?new THREE.Matrix4():null;
+function place(obj,A,B,hint){const y=norm(sub(B,A));let z=sub(hint,mul(y,dot(hint,y)));if(len(z)<1e-4)z=[1,0,0];z=norm(z);const x=cross(y,z);_m.makeBasis(new THREE.Vector3(...x),new THREE.Vector3(...y),new THREE.Vector3(...z));obj.quaternion.setFromRotationMatrix(_m);obj.position.set(A[0],A[1],A[2]);}
 function line(n,dashed){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));
   const m=dashed?new THREE.LineDashedMaterial({color:0x888888,dashSize:0.02,gapSize:0.015,transparent:true,opacity:0.8}):new THREE.LineBasicMaterial({color:0x888888,transparent:true,opacity:0.55});return new THREE.Line(g,m);}
 function setLine(l,pts){const a=l.geometry.attributes.position.array;pts.forEach((q,k)=>{a[k*3]=q[0];a[k*3+1]=q[1];a[k*3+2]=q[2];});l.geometry.attributes.position.needsUpdate=true;l.geometry.computeBoundingSphere();if(l.computeLineDistances)l.computeLineDistances();}
 
-function makeFigure(mistake){
-  const M=mistake?ghostMats:mats, grp=new THREE.Group(), F={mistake,grp,parts:{}};
-  const mk=(name,geo,m)=>{const me=new THREE.Mesh(geo,m);me.castShadow=true;me.receiveShadow=true;grp.add(me);F.parts[name]=me;return me;};
-  const tLen=len(sub([0,1.5,-0.02],[0,0.83,0]));
-  mk('shorts',loftGeo(PROF.shorts,tLen,30,2.6),M.shorts); mk('tee',loftGeo(PROF.tee,tLen,30,2.6),M.tee);
-  mk('neck',loftGeo(PROF.neck,0.12),M.skin);
+const NR={arm:52,leg:62,torso:46,finger:9};
+function makeFigure(m,ox){
+  const ghost=m==='mistake', grp=new THREE.Group(), F={m,ox,ghost,grp,p:{}};
+  const skinMat=mat({vertexColors:true}), flat=(k,o)=>mat(Object.assign({color:0xffffff},o));
+  F.mats={skin:skinMat,shoe:flat('shoe'),hair:flat('hair',{roughness:0.95}),headSkin:flat('skin'),iron:flat('iron',{roughness:0.4,metalness:0.55}),knurl:flat('iron',{roughness:0.8,metalness:0.4})};
+  const mk=(name,geo,mt)=>{const me=new THREE.Mesh(geo,mt);me.castShadow=true;me.receiveShadow=true;grp.add(me);F.p[name]=me;return me;};
+  mk('torso',chainGeo(NR.torso,34),skinMat);
+  mk('neck',loftGeo([[0,.056,.058],[.5,.05,.052],[1,.05,.05]],0.12,18),F.mats.headSkin);
   const head=new THREE.Group();grp.add(head);F.head=head;
-  const sph=(sx,sy,sz,x,y,z,m,seg=28)=>{const me=new THREE.Mesh(new THREE.SphereGeometry(1,seg,Math.round(seg*0.75)),m);me.scale.set(sx,sy,sz);me.position.set(x,y,z);me.castShadow=true;head.add(me);return me;};
-  sph(0.086,0.112,0.098,0,0,0,M.skin); sph(0.07,0.05,0.07,0,-0.055,0.025,M.skin);
-  sph(0.014,0.022,0.02,0,-0.005,0.098,M.skin,12); sph(0.012,0.022,0.016,0.086,-0.005,0,M.skin,12); sph(0.012,0.022,0.016,-0.086,-0.005,0,M.skin,12);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(1,28,14,0,Math.PI*2,0,Math.PI*0.52),M.hair);hair.scale.set(0.091,0.118,0.104);hair.position.set(0,0.008,-0.008);hair.rotation.x=-0.25;hair.castShadow=true;head.add(hair);
+  const sph=(sx,sy,sz,x,y,z,mt,seg=28)=>{const me=new THREE.Mesh(new THREE.SphereGeometry(1,seg,Math.round(seg*0.75)),mt);me.scale.set(sx,sy,sz);me.position.set(x,y,z);me.castShadow=true;head.add(me);return me;};
+  sph(0.086,0.112,0.098,0,0,0,F.mats.headSkin);sph(0.07,0.05,0.07,0,-0.055,0.025,F.mats.headSkin);
+  sph(0.014,0.022,0.02,0,-0.005,0.098,F.mats.headSkin,12);sph(0.012,0.022,0.016,0.086,-0.005,0,F.mats.headSkin,12);sph(0.012,0.022,0.016,-0.086,-0.005,0,F.mats.headSkin,12);
+  sph(0.009,0.006,0.005,0.03,0.012,0.09,F.mats.hair,10);sph(0.009,0.006,0.005,-0.03,0.012,0.09,F.mats.hair,10);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(1,28,14,0,Math.PI*2,0,Math.PI*0.52),F.mats.hair);hair.scale.set(0.091,0.118,0.104);hair.position.set(0,0.008,-0.008);hair.rotation.x=-0.25;head.add(hair);
   for(const s of [0,1]){
-    mk('thigh'+s,loftGeo(PROF.thigh,0.43),M.skin); mk('legShort'+s,loftGeo(PROF.legShort,0.43),M.shorts);
-    mk('shank'+s,loftGeo(PROF.shank,0.44),M.skin); mk('foot'+s,loftGeo(PROF.foot,0.2,22,2.6),M.shoe);
-    mk('upper'+s,loftGeo(PROF.upper,UA),M.skin); mk('sleeve'+s,loftGeo(PROF.sleeve,UA),M.tee);
-    mk('fore'+s,loftGeo(PROF.fore,FA),M.skin); mk('fist'+s,loftGeo(PROF.fist,0.09,20,2.6),M.skin);
-    for(const j of ['knee','elbow','ankle','shoulder']){const r={knee:0.05,elbow:0.037,ankle:0.03,shoulder:0.052}[j];const me=new THREE.Mesh(new THREE.SphereGeometry(r,20,14),j==='shoulder'?M.tee:j==='ankle'?M.shoe:M.skin);me.castShadow=true;grp.add(me);F.parts[j+s]=me;}
-    const handle=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.15,16),M.iron);handle.castShadow=true;grp.add(handle);F.parts['handle'+s]=handle;
-    for(const e of [0,1]){const hd=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.055,6),M.iron);hd.castShadow=true;grp.add(hd);F.parts['head'+s+e]=hd;}
-    for(const k of ['side','front','rear','trap']){const me=new THREE.Mesh(tube(),mistake?mat('#f00',{roughness:0.5}):mats['mus'+k[0].toUpperCase()+k.slice(1)].clone());me.castShadow=false;grp.add(me);F.parts['mus'+k+s]=me;}
+    mk('arm'+s,chainGeo(NR.arm,26),skinMat); mk('leg'+s,chainGeo(NR.leg,26),skinMat);
+    mk('foot'+s,loftGeo([[0,.036,.042],[.3,.043,.034],[.75,.045,.026],[1,.034,.018]],0.2,20,2.6),F.mats.shoe);
+    mk('palm'+s,loftGeo([[0,.026,.021],[.35,.036,.026],[.75,.036,.027],[1,.026,.022]],0.075,18,2.6),F.mats.headSkin);
+    for(let k=0;k<5;k++) mk('fing'+s+k,chainGeo(NR.finger,10),skinMat);
+    mk('handle'+s,new THREE.CylinderGeometry(0.0135,0.0135,0.15,18),F.mats.iron); mk('knurl'+s,new THREE.CylinderGeometry(0.0145,0.0145,0.075,18),F.mats.knurl);
+    for(const e of [0,1]){mk('head'+s+e,new THREE.CylinderGeometry(0.05,0.05,0.055,6),F.mats.iron);mk('bevel'+s+e,new THREE.CylinderGeometry(0.044,0.044,0.063,6),F.mats.knurl);mk('collar'+s+e,new THREE.CylinderGeometry(0.02,0.02,0.012,16),F.mats.iron);
+      const lb=new THREE.Mesh(new THREE.CircleGeometry(0.03,24),new THREE.MeshBasicMaterial({map:LABEL,transparent:true}));grp.add(lb);F.p['label'+s+e]=lb;}
   }
-  F.path=line(81,false); grp.add(F.path);
-  F.arc=line(25,false); grp.add(F.arc);
-  F.tick=line(2,true); grp.add(F.tick);
-  scene.add(grp); return F;
+  F.path=line(81,false);grp.add(F.path); F.arc=line(25,false);grp.add(F.arc); F.tick=line(2,true);grp.add(F.tick);
+  const pts=[];for(let k=0;k<=80;k++)pts.push(pose(m,k/80*T*0.9999,ox,0).arms[1].Hd);setLine(F.path,pts);
+  scene.add(grp);paintFigure(F);return F;
 }
-function updateFigure(F,J,m){
-  const P=F.parts, Ac=act(J,m), c=k=>new THREE.Color(col[k]).convertSRGBToLinear();
-  place(P.shorts,J.crotch,J.torsoTop,J.fwd); place(P.tee,J.crotch,J.torsoTop,J.fwd);
-  place(P.neck,J.neck,J.neckTop,J.fwd);
-  F.head.position.set(J.head[0],J.head[1],J.head[2]); F.head.rotation.set(-J.M.lean,0,0);
-  [1,-1].forEach((side,s)=>{
-    const A=J.arms[side];
-    place(P['thigh'+s],J.hip[s],J.knee[s],[0,0,1]); place(P['legShort'+s],J.hip[s],J.knee[s],[0,0,1]);
-    place(P['shank'+s],J.knee[s],J.ank[s],[0,0,1]); place(P['foot'+s],J.ank[s],J.toe[s],[0,1,0]);
-    P['knee'+s].position.set(...J.knee[s]); P['ankle'+s].position.set(...J.ank[s]);
-    const armHint=add(mul(A.lat,-0.2),[0,0,1]);
-    place(P['upper'+s],A.Gh,A.E,armHint); place(P['sleeve'+s],A.Gh,A.E,armHint);
-    place(P['fore'+s],A.E,A.W,armHint); P['elbow'+s].position.set(...A.E); P['shoulder'+s].position.set(...A.Gh);
-    place(P['fist'+s],A.W,add(A.W,mul(A.f,0.09)),cross(A.a,A.f));
-    // dumbbell: handle and two hex heads along the handle axis
-    const hc=A.Hd; place(P['handle'+s],add(hc,mul(A.a,-0.075)),add(hc,mul(A.a,0.075)),A.f); P['handle'+s].position.set(...hc);
-    [1,-1].forEach((e,k)=>{const hp=add(hc,mul(A.a,e*0.105));place(P['head'+s+k],add(hp,mul(A.a,-0.03)),add(hp,mul(A.a,0.03)),A.f);P['head'+s+k].position.set(...hp);});
-    // muscles: length from the pose, thickness keeps volume, glow = effort
-    for(const k of ['side','front','rear','trap']){
-      const q=A.mus[k], ratio=q.len/L0[k], me=P['mus'+k+s];
-      const r=q.r*Math.pow(1/ratio,0.5)*(1+0.12*Ac[k]);
-      updateTube(me.geometry,q.O,q.C,q.I,r,k==='trap'?0.45:0.85,k==='trap'?[0,0,1]:A.u);
-      let colr=k==='side'?c('target'):k==='trap'?c('watch'):c('help');
-      if(k==='trap'){const bad=clamp((0.97-ratio)/0.08,0,1);colr=colr.lerp(c('neg'),bad);}
-      if(F.mistake&&k!=='trap') colr=colr.lerp(c('neg'),0.35);
-      me.material.color.copy(colr); me.material.emissive.copy(colr); me.material.emissiveIntensity=0.15+0.85*Ac[k];
-    }
+function paintFigure(F){
+  const tint=F.ghost?0.42:0,c=k=>mixc(P3[k],P3.neg,tint);
+  F.mats.shoe.color.setRGB(...c('shoe'));F.mats.hair.color.setRGB(...c('hair'));F.mats.headSkin.color.setRGB(...c('skin'));F.mats.iron.color.setRGB(...P3.iron);F.mats.knurl.color.setRGB(...mixc(P3.iron,[0,0,0],0.35));
+  F.path.material.color.setRGB(...(F.ghost?P3.neg:P3.target));F.arc.material.color.setRGB(...P3.guide);F.tick.material.color.setRGB(...P3.guide);
+}
+function updateFigure(F,J,now){
+  const E=effort(J,F.m), tint=F.ghost?0.42:0, C=k=>mixc(P3[k],P3.neg,tint), skin=C('skin'), tank=C('tee'), shorts=C('shorts');
+  const dtF=F.lastNow==null?0:clamp((now-F.lastNow)/1000,0,0.05);F.lastNow=now;
+  const tw=2*Math.PI;F.phS=(F.phS||0)+dtF*tw*(0.5+1.8*E.side);F.phF=(F.phF||0)+dtF*tw*(0.5+1.8*E.front);F.phR=(F.phR||0)+dtF*tw*(0.5+1.8*E.rear);F.phT=(F.phT||0)+dtF*tw*(0.5+1.8*E.trap);
+  // torso: tank top, bare shoulders, trap shimmer, breathing, shrug lifts the trap slope
+  const sp=J.spine, fronts=sp.map(()=>J.fwd);
+  const S=sampleChain(sp,fronts,0,NR.torso);
+  const trapC=mixc(P3.watch,P3.neg,clamp((0.97-J.arms[1].mus.trap.len/L0.trap)/0.08,0,1));
+  const breathK=1+0.022*(J.M.breath-0.5);
+  const Kt=K_TORSO.map(k=>k[0]>0.3&&k[0]<0.58?[k[0],k[1]*breathK,k[2]*breathK*1.01,k[3]||0]:k);
+  updateChain(F.p.torso.geometry,S,Kt,2.6,(r,rad)=>{
+    const lateral=Math.abs(dot(rad,J.sideV)), front=dot(rad,J.fwd), s=r.dist;
+    let base=s<0.2?shorts:(s>0.52&&lateral>0.7)||s>0.635?skin:tank;
+    const trapW=smooth(0.5,0.6,s)*(1-smooth(0.64,0.68,s))*smooth(0.2,0.8,lateral)*clamp(0.6-0.6*front,0,1);
+    const c=shimmer(base,trapC,trapW,E.trap,F.phT-s*60);
+    return {c,dy:J.M.shrug*smooth(0.5,0.64,s)*lateral};
   });
-  // guides on the figure's left arm: angle arc, shoulder-height tick, the dumbbell's path
-  const A=J.arms[1], down=norm(rotX([0,-1,0],[0,0,0],J.M.lean)), R=0.17, pts=[];
+  // arms: one smooth skin from the shoulder through the elbow to the wrist; deltoid shimmer
+  [1,-1].forEach((side,si)=>{
+    const A=J.arms[side], inner=add(A.Gh,add(mul(J.sideV,-side*0.07),mul(A.u,-0.02)));
+    const pts=[inner,A.Gh,A.E,A.W,add(A.W,mul(A.f,0.03))], fr=[A.w,A.w,A.w,A.w,A.w];
+    const Sa=sampleChain(pts,fr,1,NR.arm);
+    const out=norm(add(A.lat,[0,0.5,0])), fw=A.w;
+    updateChain(F.p['arm'+si].geometry,Sa,K_ARM,2.2,(r,rad)=>{
+      const along=smooth(-0.04,0.0,r.dist)*(1-smooth(0.1,0.15,r.dist));
+      const lobeS=Math.pow(Math.max(0,dot(rad,out)),1.4), lobeF=Math.pow(Math.max(0,dot(rad,fw)),1.6), lobeR=Math.pow(Math.max(0,-dot(rad,fw)),1.6);
+      const fib=-r.dist*70;
+      let c=skin;
+      c=shimmer(c,P3.help,along*lobeF*0.9,E.front,F.phF+fib+1.1);
+      c=shimmer(c,P3.help,along*lobeR*0.9,E.rear,F.phR+fib+2.3);
+      c=shimmer(c,mixc(P3.target,P3.neg,tint),along*lobeS,E.side,F.phS+fib);
+      return {c};
+    });
+    // hand: palm plus four fingers and a thumb wrapped round the handle
+    const e1=mul(A.f,-1), e2=norm(cross(A.a,A.f)), hc=A.Hd;
+    place(F.p['palm'+si],A.W,add(A.W,mul(A.f,0.075)),cross(A.a,A.f));
+    const offs=[-0.033,-0.012,0.009,0.028];
+    for(let k=0;k<5;k++){
+      const thumb=k===4, o=thumb?0.043:offs[k], rr=thumb?0.026:0.025, r0=thumb?0.0095:(k===3?0.0072:0.0085);
+      const pts=[];for(let j=0;j<6;j++){const phi=thumb?lerp(0.5,-2.3,j/5):lerp(-0.5,4.1,j/5);pts.push(add(add(hc,mul(A.a,o)),add(mul(e1,rr*Math.cos(phi)),mul(e2,rr*Math.sin(phi)*side))));}
+      const Sf=sampleChain(pts,pts.map(()=>A.a),0,NR.finger);
+      updateChain(F.p['fing'+si+k].geometry,Sf,[[-1,r0,r0],[1,r0*0.85,r0*0.85]],2,()=>({c:skin}));
+    }
+    // dumbbell: level handle, knurled grip, hex heads with bevel, collars, 7 KG face
+    place(F.p['handle'+si],add(hc,mul(A.a,-0.075)),add(hc,mul(A.a,0.075)),A.f);F.p['handle'+si].position.set(...hc);
+    place(F.p['knurl'+si],add(hc,mul(A.a,-0.03)),add(hc,mul(A.a,0.03)),A.f);F.p['knurl'+si].position.set(...hc);
+    [1,-1].forEach((e,k)=>{const hp=add(hc,mul(A.a,e*0.105));
+      for(const nm of ['head','bevel']){place(F.p[nm+si+k],hp,add(hp,mul(A.a,0.01)),A.f);F.p[nm+si+k].position.set(...hp);}
+      const cp=add(hc,mul(A.a,e*0.072));place(F.p['collar'+si+k],cp,add(cp,mul(A.a,0.01)),A.f);F.p['collar'+si+k].position.set(...cp);
+      const lp=add(hp,mul(A.a,e*0.0322));F.p['label'+si+k].position.set(...lp);F.p['label'+si+k].lookAt(...add(lp,mul(A.a,e)));});
+  });
+  // legs: hip through knee to ankle, shorts on the thigh
+  J.legs.forEach((L,si)=>{
+    const Sl=sampleChain([L.hipIn,L.hip,L.knee,L.ank],[L.front,L.front,L.front,L.front],1,NR.leg);
+    updateChain(F.p['leg'+si].geometry,Sl,K_LEG,2.2,r=>({c:r.dist<0.2?shorts:skin}));
+    place(F.p['foot'+si],L.ank,L.toe,[0,1,0]);
+  });
+  place(F.p.neck,J.neck[0],J.neck[1],J.fwd);
+  F.head.position.set(...J.head);F.head.rotation.set(-(J.M.lean+J.M.sway)*0.3,0,0);
+  // 3D guides on the figure's left arm: angle arc and shoulder-height tick
+  const A=J.arms[1],down=norm(rotX([0,-1,0],[0,0,0],J.M.lean+J.M.sway)),R=0.17,pts=[];
   for(let k=0;k<=24;k++){const a=J.M.th*k/24;pts.push(add(A.Gh,add(mul(down,R*Math.cos(a)),mul(A.lat,R*Math.sin(a)))));}
-  setLine(F.arc,pts); setLine(F.tick,[add(A.Gh,mul(A.lat,0.12)),add(A.Gh,mul(A.lat,0.3))]);
-  return Ac;
+  setLine(F.arc,pts);setLine(F.tick,[add(A.Gh,mul(A.lat,0.12)),add(A.Gh,mul(A.lat,0.3))]);
+  return E;
 }
 function initScene(){
-  scene=new THREE.Scene();
-  camera=new THREE.PerspectiveCamera(32,1,0.05,50);
-  renderer.outputEncoding=THREE.sRGBEncoding; renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  hemi=new THREE.HemisphereLight(0xffffff,0x444444,0.75); scene.add(hemi);
-  key=new THREE.DirectionalLight(0xffffff,0.95); key.position.set(1.6,3.2,2.4); key.castShadow=true; key.shadow.mapSize.set(1024,1024);
-  Object.assign(key.shadow.camera,{left:-1.6,right:1.6,top:2.2,bottom:-0.5,near:0.5,far:8}); key.shadow.bias=-0.0006; key.shadow.normalBias=0.02; scene.add(key);
-  rim=new THREE.DirectionalLight(0xffffff,0.35); rim.position.set(-2,2.2,-2.5); scene.add(rim);
-  platform=new THREE.Mesh(new THREE.CircleGeometry(1.35,64),new THREE.MeshStandardMaterial({color:0xcccccc,roughness:0.95}));
-  platform.rotation.x=-Math.PI/2; platform.receiveShadow=true; scene.add(platform);
-  platformRim=new THREE.Mesh(new THREE.RingGeometry(1.34,1.35,64),new THREE.MeshBasicMaterial({color:0x888888}));platformRim.rotation.x=-Math.PI/2;platformRim.position.y=0.001;scene.add(platformRim);
-  Object.assign(mats,makeMats()); Object.assign(ghostMats,makeMats());
+  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(32,1,0.05,50);
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  scene.add(new THREE.HemisphereLight(0xffffff,0x444444,0.75));
+  const key=new THREE.DirectionalLight(0xffffff,0.95);key.position.set(1.6,3.2,2.4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
+  Object.assign(key.shadow.camera,{left:-1.6,right:1.6,top:2.2,bottom:-0.5,near:0.5,far:8});key.shadow.bias=-0.0006;key.shadow.normalBias=0.02;scene.add(key);
+  const rim=new THREE.DirectionalLight(0xffffff,0.35);rim.position.set(-2,2.2,-2.5);scene.add(rim);
+  platform=new THREE.Mesh(new THREE.CircleGeometry(1.35,64),new THREE.MeshStandardMaterial({roughness:0.95}));platform.rotation.x=-Math.PI/2;platform.receiveShadow=true;scene.add(platform);
+  platformRim=new THREE.Mesh(new THREE.RingGeometry(1.34,1.35,64),new THREE.MeshBasicMaterial());platformRim.rotation.x=-Math.PI/2;platformRim.position.y=0.001;scene.add(platformRim);
+  paintScene();
 }
+function paintScene(){platform.material.color.setRGB(...P3.platform);platformRim.material.color.setRGB(...P3.guide);for(const f of figures)paintFigure(f);}
 function buildFigures(){
-  for(const f of figures){scene.remove(f.grp);f.grp.traverse(o=>{if(o.geometry)o.geometry.dispose();});}
-  figures=[];
+  for(const f of figures){scene.remove(f.grp);f.grp.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==undefined&&o.material.dispose)o.material.dispose();});}
   const list=mode==='correct'?[['correct',0]]:mode==='mistake'?[['mistake',0]]:[['correct',-0.55],['mistake',0.55]];
-  for(const [m,ox] of list){const F=makeFigure(m==='mistake');F.m=m;F.ox=ox;
-    const pts=[];for(let k=0;k<=80;k++)pts.push(pose(m,k/80*T*0.9999,ox).arms[1].Hd);setLine(F.path,pts);figures.push(F);}
-  paint();
+  figures=list.map(([m,ox])=>makeFigure(m,ox));
 }
 
-// camera: orbit around a target, smooth moves between presets
-const VIEWS={coach:{yaw:28,pitch:9,dist:3.6,tgt:[0,0.95,0]},you:{yaw:196,pitch:12,dist:3.6,tgt:[0,0.95,0]},side:{yaw:90,pitch:4,dist:3.6,tgt:[0,0.95,0]},top:{yaw:14,pitch:74,dist:3.6,tgt:[0,0.9,0]},shoulder:{yaw:34,pitch:12,dist:1.55,tgt:[0.18,1.33,0.05]}};
-let cam={yaw:28*D,pitch:9*D,dist:3.6,tgt:[0,0.95,0]}, camGoal=null, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function setCam(){const d=cam.dist*(mode==='compare'&&cam.dist>2?1.3:1);const c=add(cam.tgt,[d*Math.sin(cam.yaw)*Math.cos(cam.pitch),d*Math.sin(cam.pitch),d*Math.cos(cam.yaw)*Math.cos(cam.pitch)]);camera.position.set(...c);camera.lookAt(...cam.tgt);}
+// camera
+const VIEWS={coach:{yaw:28,pitch:9,dist:3.6,tgt:[0,0.95,0]},you:{yaw:196,pitch:12,dist:3.6,tgt:[0,0.95,0]},side:{yaw:90,pitch:4,dist:3.6,tgt:[0,0.95,0]},top:{yaw:14,pitch:74,dist:3.6,tgt:[0,0.9,0]},shoulder:{yaw:34,pitch:12,dist:1.5,tgt:[0.18,1.33,0.05]}};
+let cam={yaw:28*D,pitch:9*D,dist:3.6,tgt:[0,0.95,0]},camGoal=null,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setCam(c,plain){c=c||cam;const d=c.dist*(!plain&&mode==='compare'&&c.dist>2?1.3:1);const p=add(c.tgt,[d*Math.sin(c.yaw)*Math.cos(c.pitch),d*Math.sin(c.pitch),d*Math.cos(c.yaw)*Math.cos(c.pitch)]);camera.position.set(...p);camera.lookAt(...c.tgt);}
+function press(ids,on){ids.forEach(id=>$(id).setAttribute('aria-pressed',String(id===on)));}
 function goView(v){const g=VIEWS[v];camGoal={yaw:g.yaw*D,pitch:g.pitch*D,dist:g.dist,tgt:g.tgt.slice(),from:{...cam,tgt:cam.tgt.slice()},t:0};
   let dy=camGoal.yaw-cam.yaw;while(dy>Math.PI)dy-=2*Math.PI;while(dy<-Math.PI)dy+=2*Math.PI;camGoal.yaw=cam.yaw+dy;
   if(reduce){Object.assign(cam,{yaw:camGoal.yaw,pitch:camGoal.pitch,dist:camGoal.dist,tgt:camGoal.tgt});camGoal=null;}
   press(['v-coach','v-you','v-side','v-top','v-shoulder'],'v-'+v);dirty=true;}
 
-// tags over the canvas
+// tags
 const tagsEl=$('tags');
 function tag(id,txt,colr,pt){let el=document.getElementById(id);if(!el){el=document.createElement('div');el.id=id;el.className='tag';tagsEl.appendChild(el);}
-  const v=new THREE.Vector3(...pt).project(camera), r=canvas.getBoundingClientRect();
-  if(v.z>1){el.hidden=true;return;} el.hidden=false; el.style.left=((v.x+1)/2*r.width)+'px'; el.style.top=((1-v.y)/2*r.height-6)+'px'; el.innerHTML=`<i style="background:${colr}"></i>${txt}`;}
-function clearTags(){tagsEl.innerHTML='';}
+  const v=new THREE.Vector3(...pt).project(camera),r=canvas.getBoundingClientRect();
+  if(v.z>1){el.hidden=true;return;}el.hidden=false;el.style.left=((v.x+1)/2*r.width)+'px';el.style.top=((1-v.y)/2*r.height-6)+'px';el.innerHTML=`<i style="background:${colr}"></i>${txt}`;}
+function hideTags(ids){for(const id of ids){const e=document.getElementById(id);if(e)e.hidden=true;}}
 
-let dirty=true, last=performance.now(), W=0, Hh=0;
+let dirty=true,last=performance.now(),W=0,Hh=0;
 function resize(){const r=canvas.getBoundingClientRect();W=r.width;Hh=r.height;if(!renderer||!W)return;renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));renderer.setSize(W,Hh,false);camera.aspect=W/Hh;camera.updateProjectionMatrix();dirty=true;}
-function render(){
+function render(tt,now,quiet){
   const res=[];
   const list=figures.length?figures:[{m:mode==='compare'?'correct':mode,ox:0}];
-  for(const F of list){const J=pose(F.m,t,F.ox);let A=act(J,F.m);if(renderer&&F.grp)A=updateFigure(F,J,F.m);res.push({m:F.m,J,A,F});}
-  if(renderer){
-    setCam(); renderer.render(scene,camera);
-    if(mode!=='compare'){const r=res[0],A=r.J.arms[1];
-      tag('t-side',`Side delt ${Math.round(100*A.mus.side.len/L0.side)}%`,col.target,A.mus.side.C);
-      tag('t-trap',`Upper trap ${Math.round(100*A.mus.trap.len/L0.trap)}%`,r.J.arms[1].mus.trap.len/L0.trap<0.95?col.neg:col.watch,add(A.mus.trap.C,[0,0.04,0]));
-      tag('t-ang',`${Math.round(r.J.M.th/D)}°`,col.guide,add(A.Gh,add(mul(A.lat,0.2),[0,-0.06,0])));
-      for(const id of ['t-l0','t-l1']){const e=document.getElementById(id);if(e)e.hidden=true;}
-    } else {
-      for(const id of ['t-side','t-trap','t-ang']){const e=document.getElementById(id);if(e)e.hidden=true;}
-      res.forEach((r,k)=>tag('t-l'+k,r.m==='mistake'?'Common mistake':'Right rep',r.m==='mistake'?col.neg:col.target,[r.F.ox,1.92,0]));
-    }
-  }
-  updateReadouts(res); drawChart(res);
+  for(const F of list){const J=pose(F.m,tt,F.ox,rep);let E=effort(J,F.m);if(renderer&&F.grp)E=updateFigure(F,J,now);res.push({m:F.m,J,E,F,spd:speedAt(F.m,tt,rep)});}
+  if(!renderer)return res;
+  renderer.render(scene,camera);
+  if(quiet)return res;
+  if(mode!=='compare'){const r=res[0],A=r.J.arms[1];
+    tag('t-side',`Side delt ${Math.round(100*r.E.side)}%`,col.target,add(A.Gh,add(mul(A.lat,0.02),[0,0.09,0])));
+    const trapBad=A.mus.trap.len/L0.trap<0.95;
+    tag('t-trap',`Upper trap ${Math.round(100*r.E.trap)}%`,trapBad?col.neg:col.watch,add(mul(add(A.mus.trap.O,A.mus.trap.I),0.5),[0,0.07,0]));
+    tag('t-ang',`${Math.round(r.J.M.th/D)}°`,col.guide,add(A.Gh,add(mul(A.lat,0.2),[0,-0.06,0])));
+    hideTags(['t-l0','t-l1']);
+  }else{hideTags(['t-side','t-trap','t-ang']);res.forEach((r,k)=>tag('t-l'+k,r.m==='mistake'?'Common mistake':'Right rep',r.m==='mistake'?col.neg:col.target,[r.F.ox,-0.02,0.42]));}
+  return res;
+}
+function draw(now){
+  if(renderer)setCam();
+  const res=render(t,now);
+  updateReadouts(res);
+  chart('chartSpeed','spd',SMAX,[0,1,2,3,4].filter(v=>v<=SMAX),res,v=>v+'');
+  chart('chart','load',50,[0,25,50],res,v=>v+'');
+}
+// four key moments, rendered from the same model
+const MOMENTS=[['Start',0.02],['Half-way',0.5],['Top',1.2],['Lowering',2.5]];
+function moments(){
+  const host=$('moments'),m=mode==='mistake'?'mistake':'correct';
+  const times=m==='mistake'?[['Start',0.02],['Throw',0.3],['Top',0.7],['Bounce',1.9]]:MOMENTS;
+  host.innerHTML=times.map(([n,tt],i)=>`<button type="button" data-t="${tt}"><img alt="${n}" id="mom${i}"><span>${n} · ${Math.round(pose(m,tt,0,0).M.th/D)}°</span></button>`).join('');
+  host.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{setPlaying(false);t=+b.dataset.t;captions();dirty=true;}));
+  if(!renderer||!W)return;
+  const saved=figures;for(const f of saved)f.grp.visible=false;
+  const tmp=makeFigure(m,0);figures=[tmp];
+  setCam({yaw:28*D,pitch:9*D,dist:3.2,tgt:[0,0.95,0]},true);
+  times.forEach(([n,tt],i)=>{render(tt,1000,true);$('mom'+i).src=canvas.toDataURL('image/jpeg',0.82);});
+  scene.remove(tmp.grp);tmp.grp.traverse(o=>{if(o.geometry)o.geometry.dispose();});
+  for(const f of saved)f.grp.visible=true;figures=saved;dirty=true;
 }
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000);last=now;
-  if(playing){t+=dt*speed;if(t>=T){t-=T;rep++;setWatch();}captions();dirty=true;}
+  if(playing){t+=dt*speed;clock+=dt*speed;if(t>=T){t-=T;rep=(rep+1)%REPS;setWatch();buildPhaseBar();}captions();dirty=true;}
   if(camGoal){camGoal.t=Math.min(1,camGoal.t+dt/0.45);const e=mj(camGoal.t),f=camGoal.from;
     cam.yaw=lerp(f.yaw,camGoal.yaw,e);cam.pitch=lerp(f.pitch,camGoal.pitch,e);cam.dist=lerp(f.dist,camGoal.dist,e);cam.tgt=[0,1,2].map(i=>lerp(f.tgt[i],camGoal.tgt[i],e));
     if(camGoal.t>=1)camGoal=null;dirty=true;}
-  if(dirty){render();dirty=false;}
+  if(dirty||playing){draw(playing?now:1000);dirty=false;}
   requestAnimationFrame(frame);
 }
 
-// ================= controls =================
-function press(ids,on){ids.forEach(id=>$(id).setAttribute('aria-pressed',String(id===on)));}
+// controls
 ['coach','you','side','top','shoulder'].forEach(v=>$('v-'+v).addEventListener('click',()=>goView(v)));
-function setMode(m){mode=m;press(['m-correct','m-mistake','m-compare'],'m-'+m);$('mistakes').hidden=m==='correct';clearTags();if(renderer)buildFigures();buildPhaseBar();setWatch();lastLabel='';captions();dirty=true;}
+function setMode(m){mode=m;press(['m-correct','m-mistake','m-compare'],'m-'+m);$('mistakes').hidden=m==='correct';hideTags(['t-side','t-trap','t-ang','t-l0','t-l1']);if(renderer)buildFigures();buildPhaseBar();setWatch();lastLabel='';captions();moments();dirty=true;}
 ['correct','mistake','compare'].forEach(m=>$('m-'+m).addEventListener('click',()=>setMode(m)));
 function setPlaying(p){playing=p;$('play').setAttribute('aria-label',p?'Pause':'Play');$('playIcon').innerHTML=p?'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';last=performance.now();}
 $('play').addEventListener('click',()=>setPlaying(!playing));
 [['s1',1],['s05',0.5],['s025',0.25]].forEach(([id,v])=>$(id).addEventListener('click',()=>{speed=v;press(['s1','s05','s025'],id);}));
 $('scrub').addEventListener('input',e=>{setPlaying(false);t=(+e.target.value/1000)*T*0.9999;captions();dirty=true;});
-let drag=null,pinch=null;const pts=new Map();
-canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);drag=[e.clientX,e.clientY];camGoal=null;});
-canvas.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);
-  if(pts.size===2){const [a,b]=[...pts.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)cam.dist=clamp(cam.dist*pinch/d,0.8,6);pinch=d;dirty=true;return;}
+let drag=null,pinch=null;const ptrs=new Map();
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);drag=[e.clientX,e.clientY];camGoal=null;});
+canvas.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)cam.dist=clamp(cam.dist*pinch/d,0.8,6);pinch=d;dirty=true;return;}
   if(!drag)return;cam.yaw-=(e.clientX-drag[0])*0.01;cam.pitch=clamp(cam.pitch+(e.clientY-drag[1])*0.008,-8*D,82*D);drag=[e.clientX,e.clientY];
   press(['v-coach','v-you','v-side','v-top','v-shoulder'],'');dirty=true;});
-const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size)drag=null;};
+const up=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!ptrs.size)drag=null;};
 canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
 canvas.addEventListener('wheel',e=>{e.preventDefault();cam.dist=clamp(cam.dist*Math.exp(e.deltaY*0.001),0.8,6);camGoal=null;dirty=true;},{passive:false});
 canvas.addEventListener('keydown',e=>{const k={ArrowLeft:[.12,0],ArrowRight:[-.12,0],ArrowUp:[0,-.08],ArrowDown:[0,.08]}[e.key];if(!k)return;e.preventDefault();cam.yaw+=k[0];cam.pitch=clamp(cam.pitch+k[1],-8*D,82*D);press(['v-coach','v-you','v-side','v-top','v-shoulder'],'');dirty=true;});
-
-// themes
-const retheme=()=>{readTokens();if(renderer)paint();dirty=true;};
+const retheme=()=>{readTokens();palette();if(renderer){paintScene();moments();}dirty=true;};
 new MutationObserver(retheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
 
@@ -627,7 +726,8 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
 if(renderer){initScene();buildFigures();}
 if(!playing)t=0.7;
 buildPhaseBar();setWatch();setPlaying(playing);captions();
-new ResizeObserver(resize).observe(canvas);resize();
+new ResizeObserver(()=>{resize();}).observe(canvas);resize();
+moments();
 requestAnimationFrame(frame);
 })();
 </script>
