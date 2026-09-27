@@ -53,7 +53,7 @@ export interface Theme {
   tokens: ThemeTokens;
 }
 
-const inter = 'Inter, "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const inter = "'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 export const THEMES: Record<ThemeId, Theme> = {
   'silent-black': {
@@ -104,7 +104,9 @@ export const THEMES: Record<ThemeId, Theme> = {
       border: 'rgba(55,53,47,0.14)',
       borderStrong: 'rgba(55,53,47,0.26)',
       text: '#37352f',
-      text2: '#6b6a66',
+      // I14: #6b6a66 measured ~3.3:1 for small text on surface-3 (#e6e4df); #5f5e5a clears 4.5:1
+      // on every Paper surface (5.11:1 on surface-3, 6.49:1 on #fff).
+      text2: '#5f5e5a',
       text3: '#9b9a97',
       accent: '#2383e2',
       accentSoft: 'rgba(35,131,226,0.12)',

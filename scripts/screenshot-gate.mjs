@@ -282,6 +282,132 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I14: WCAG contrast (>=4.5:1 against the nearest opaque ancestor background) for small/secondary
+// text — .hint, .eyebrow, .set-kind, the in-session autoregulation line (--accent-text) — plus the
+// composer's "About:" context chip (.chip-accent) and the Escobar Past-conversations Back link
+// (.esc-link), in all five themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `I14 contrast ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  // Colour vs the nearest ancestor with a fully opaque background, same maths as the F9/F13
+  // pr-badge/toast probes above.
+  const checkContrast = async (sel, label) => {
+    const c = await page.evaluate((s) => {
+      const el = document.querySelector(s);
+      if (!el) return null;
+      // This Chromium build serializes a color-mix() result (--accent-text) via the CSS Color 4
+      // `color(srgb r g b)` function (0-1 range) rather than legacy rgb()/rgba() (0-255 range) —
+      // the F9/F13 probes above never hit this because their color-mix()es are backgrounds, not
+      // text color, and happened not to exercise a build/property combination that serializes
+      // this way.
+      const parseRgba = str => {
+        let m = str.match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+        m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+        if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+        return null;
+      };
+      const fg = parseRgba(getComputedStyle(el).color);
+      if (!fg) return null;
+      let node = el, under = { r: 255, g: 255, b: 255 };
+      while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+      const lin = c2 => { const s2 = c2 / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+      const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+      const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+      return l1 > l2 ? l1 / l2 : l2 / l1;
+    }, sel);
+    if (c == null) { errors.push(`${tag}: could not measure contrast for ${label} (selector ${sel})`); return; }
+    if (c < 4.5) errors.push(`${tag}: ${label} contrast ${c.toFixed(2)} < 4.5`);
+  };
+
+  // .eyebrow and .hint are both on Today without any interaction.
+  await checkContrast('.eyebrow', '.eyebrow');
+  await checkContrast('.hint', '.hint');
+
+  // .set-kind (uncommitted) and the autoreg line: log set 1 easy, at/above its placeholder target.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
+  const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
+  await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
+  await page.locator('.effort button.easy').first().click();
+  await page.waitForTimeout(300);
+  if (!(await visible(page.getByText('for the next set')))) errors.push(`${tag}: expected the autoregulation line after an easy first set`);
+  await checkContrast('.hint[style*="accent-text"]', 'autoreg line');
+  await checkContrast('.set-grid:not(.committed) .set-kind', '.set-kind');
+
+  // .chip-accent: "Ask Escobar about" opens the composer straight to an "About:" chip, no send needed.
+  // Escobar must be turned on first (the Explainer has no composer).
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('[aria-label^="Ask Escobar about"]').first().click(); await page.waitForTimeout(300);
+  if (!(await visible(page.locator('.chip-accent')))) errors.push(`${tag}: expected an "About:" chip after "Ask Escobar about"`);
+  await checkContrast('.chip-accent', '.chip-accent');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+
+  // .esc-link: the Back button in Escobar's Past-conversations list needs no actual conversation.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+  await page.locator('button[aria-label="Escobar menu"]').click(); await page.waitForTimeout(150);
+  await page.getByRole('menuitem', { name: 'Past conversations' }).click(); await page.waitForTimeout(150);
+  if (!(await visible(page.locator('.esc-link')))) errors.push(`${tag}: expected the Past-conversations Back link`);
+  await checkContrast('.esc-link', '.esc-link (Back)');
+
+  await ctx.close();
+}
+
+// I18: every icon renders at the same 1.5px optical stroke weight regardless of its rendered
+// size — icons.tsx `base()` scales `stroke-width` by size instead of a fixed 1.8 literal.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'I18 icon stroke';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const measure = sel => page.evaluate((s) => {
+    const el = document.querySelector(s);
+    if (!el) return null;
+    const sw = parseFloat(el.getAttribute('stroke-width') || '0');
+    const size = el.getBoundingClientRect().width;
+    return size ? (sw * size) / 24 : null;
+  }, sel);
+  const navStroke = await measure('.nav button svg');
+  const gearStroke = await measure('[aria-label="Settings"] svg');
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  const trophyStroke = await measure('section[data-palace="history.records"] svg');
+  for (const [label, v] of [['nav icon', navStroke], ['Settings gear', gearStroke], ['History trophy chip', trophyStroke]]) {
+    if (v == null) errors.push(`${tag}: could not measure ${label}`);
+    else if (Math.abs(v - 1.5) > 0.05) errors.push(`${tag}: ${label} rendered stroke ${v.toFixed(3)}, expected 1.5±0.05`);
+  }
+  await ctx.close();
+}
+
 // R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -461,6 +587,15 @@ for (const theme of themes) {
   const insightTitles = await page.locator('.insight h3').allTextContents();
   if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
   await settle(page); await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
+  // I19: an empty History, on a fresh profile with no sessions yet, shows a designed empty state
+  // (left-aligned, a title, no ghost rows) with a button that starts a session on Train.
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  if (!(await visible(page.getByText('Your finished workouts land here.')))) errors.push('fresh-profile: expected the History empty-state title');
+  const emptyAlign = await page.locator('.empty').first().evaluate(el => getComputedStyle(el).textAlign);
+  if (emptyAlign !== 'left' && emptyAlign !== 'start') errors.push(`fresh-profile: expected the History empty state left-aligned, computed text-align was ${emptyAlign}`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-history-empty.png` });
+  await page.locator('.empty').getByRole('button').first().click(); await page.waitForTimeout(300);
+  if (!(await visible(page.locator('nav.nav button[aria-current="page"]', { hasText: /^(Train|Live)$/ })))) errors.push('fresh-profile: expected the History empty-state button to land on Train');
   await ctx.close();
 }
 

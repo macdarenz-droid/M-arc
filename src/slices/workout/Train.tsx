@@ -29,6 +29,7 @@ import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
 import { INSIGHT_COLOR } from '@/slices/coach/Coach';
+import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { addExerciseToSplit, addTemplates, createSplit, deleteSplit, insertExerciseInSplit, moveExercise, removeExerciseFromSplit, renameSplit, setFocus, setSplitSets, MAX_SPLITS } from './splits';
 import { ExercisePicker } from './ExercisePicker';
 import { showToast } from '@/app/toast';
@@ -234,13 +235,13 @@ function Splits() {
         </div>
       </div>
       <div class="row" style={{ marginBottom: 10 }}>
-        <button type="button" class="chip chip-btn gym-chip" data-palace="train.gym-chip" aria-label={`Gym: ${gym?.name ?? ''}. Change gym`} onClick={() => setGymOpen(true)}>At: {gym?.name} <IconChevronDown size={14} /></button>
+        <button type="button" class="chip chip-btn gym-chip" data-palace="train.gym-chip" aria-label={`Gym: ${gym?.name ?? ''}. Change gym`} onClick={() => setGymOpen(true)}>At: {gym?.name} <IconChevronDown size={16} /></button>
       </div>
       {gymOpen && <GymSheet onClose={() => setGymOpen(false)} />}
 
       {!s.splits.length && (
         <Card>
-          <Empty icon={<IconDumbbell size={32} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>}>
+          <Empty align="center" icon={<IconDumbbell size={24} />} title="No workouts yet" action={<div class="row"><Button variant="primary" onClick={() => { addTemplates(); }}>Use Push / Pull / Legs</Button><Button onClick={() => setCreating(true)}>Build my own</Button></div>}>
             Start from a simple template or build your own split.
           </Empty>
         </Card>
@@ -641,8 +642,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`}>
       <div class="row-between ex-head" onClick={onToggle} role="button" aria-expanded={open} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}>
         <div class="grow">
-          <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={12} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
-          {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={12} /> {sticky}</div>}
+          <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={16} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
+          {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={16} /> {sticky}</div>}
           <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
@@ -652,7 +653,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         <div class="ex-body-inner">
         {(open || closing) && (
         <div class="stack-sm" style={{ marginTop: 12 }}>
-          {autoreg && <p class="hint" style={{ color: 'var(--accent)' }}>{autoreg.action}</p>}
+          {autoreg && <p class="hint" style={{ color: 'var(--accent-text)' }}>{autoreg.action}</p>}
           {ex && recoveryPct != null && recoveryPct < 60 && (
             <p class="hint" style={{ color: 'var(--warning)' }}>Still recovering ({recoveryPct}%). <button type="button" class="link-btn" onClick={() => setSubOpen(true)}>See substitutes</button> or ease off today.</p>
           )}
@@ -907,6 +908,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
         <div class="row-between"><span class="hint">Today’s checks</span><AskAbout refTo={{ kind: 'session', id: `plan:${split.id}`, label: `Before ${split.name}` }} /></div>
         {items.map(i => (
           <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
+            <div class="insight-cat">{CATEGORY_LABEL[i.category]}</div>
             <b class="small">{i.title}</b>
             <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
             <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>
@@ -1015,8 +1017,8 @@ function PastSessionEntry({ split, onClose, onSaved }: { split: Split; onClose: 
               </div>
             ))}
             <div class="row">
-              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: [...e.sets, {}] })))}><IconPlus size={14} /> Set</Button>
-              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.slice(0, -1) })))} disabled={entry.sets.length <= 1}><IconMinus size={14} /> Set</Button>
+              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: [...e.sets, {}] })))}><IconPlus size={16} /> Set</Button>
+              <Button variant="quiet" size="sm" onClick={() => setEntries(cur => cur.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.slice(0, -1) })))} disabled={entry.sets.length <= 1}><IconMinus size={16} /> Set</Button>
             </div>
           </Card>
         ))}
@@ -1053,7 +1055,7 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
               <div class="stat"><b class="num">{session.heart.hrr60Median ?? '—'}</b><span>HRR60</span></div>
             </div>
             <div class="row" style={{ marginTop: 12, gap: 2 }}>
-              {session.heart.zoneSec.map((sec, i) => <div key={i} class="grow" style={{ height: 8, borderRadius: 4, background: sec > 0 ? 'var(--accent)' : 'var(--border)', opacity: sec > 0 ? 0.4 + i * 0.15 : 1 }} />)}
+              {session.heart.zoneSec.map((sec, i) => <div key={i} class="grow" style={{ height: 8, borderRadius: 'var(--radius-xs)', background: sec > 0 ? 'var(--accent)' : 'var(--border)', opacity: sec > 0 ? 0.4 + i * 0.15 : 1 }} />)}
             </div>
             {session.heart.energy && (
               <p class="small" style={{ marginTop: 10 }}>About {session.heart.energy.low} to {session.heart.energy.high} kcal active. {session.heart.energy.source === 'heart_rate' ? 'Estimated from heart rate.' : session.heart.energy.source === 'watch_energy' ? 'From your watch.' : 'From Health Connect.'}</p>
@@ -1062,13 +1064,14 @@ function FinishScreen({ summary, onClose }: { summary: FinishSummary; onClose: (
           </Card>
         </Section>
       )}
-      {hasWorkingSets(session) && <Button block data-palace="train.share" onClick={() => setSharing(true)} style={{ marginTop: 16 }}><IconShare size={18} /> Share workout</Button>}
+      {hasWorkingSets(session) && <Button block data-palace="train.share" onClick={() => setSharing(true)} style={{ marginTop: 16 }}><IconShare size={20} /> Share workout</Button>}
       {sharing && <ShareSheet initial="workout" session={session} onClose={() => setSharing(false)} />}
       {debrief.length > 0 && (
         <Section title="Debrief">
           <div class="stack-sm">
             {debrief.map(i => (
               <Card key={i.id} class="insight" style={{ '--insight': INSIGHT_COLOR[i.category] }}>
+                <div class="insight-cat">{CATEGORY_LABEL[i.category]}</div>
                 <b class="small">{i.title}</b>
                 <p class="small muted" style={{ marginTop: 4 }}>{i.means}</p>
                 <p class="hint" style={{ marginTop: 4 }}>{i.action}</p>

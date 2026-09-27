@@ -52,7 +52,7 @@ export function Today() {
           <h1>{greeting()}{s.profile.name ? `, ${s.profile.name}` : ''}</h1>
         </div>
         <div class="row">
-          {streak.value > 0 && <Chip tone="warning"><IconFlame size={14} /> {streak.value}</Chip>}
+          {streak.value > 0 && <Chip><IconFlame size={16} /> {streak.value}</Chip>}
           <Button variant="quiet" class="btn-icon" aria-label="Settings" data-palace="today.settings" onClick={() => { settingsOpen.value = true; }}><IconGear /></Button>
         </div>
       </div>
@@ -118,7 +118,7 @@ export function Today() {
         </Card>
       </Section>
 
-      <Section title="Recovery" palace="today.recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={14} /></button>}>
+      <Section title="Recovery" palace="today.recovery" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('body')}>Body <IconChevron size={16} /></button>}>
         <Card>
           <div class="row" style={{ alignItems: 'flex-start' }}>
             <div style={{ width: 120, flex: 'none' }}><MuscleMap values={values} mode="recovery" compact /></div>
@@ -136,7 +136,7 @@ export function Today() {
         </Card>
       </Section>
 
-      <Section title="Coach" palace="today.coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={14} /></button>}>
+      <Section title="Coach" palace="today.coach" aside={<button type="button" class="btn btn-quiet btn-sm" onClick={() => go('coach')}>All <IconChevron size={16} /></button>}>
         {top ? (
           <Card class="insight" style={{ '--insight': INSIGHT_COLOR[top.category] }}>
             <div class="insight-cat">{CATEGORY_LABEL[top.category]}</div>

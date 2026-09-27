@@ -91,7 +91,7 @@ export function Coach() {
       <Section title="How the coach thinks" palace="coach.thinks">
         <Card class="card-quiet">
           <div class="stack-sm small muted">
-            <p><IconInfo size={14} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
+            <p><IconInfo size={16} style={{ display: 'inline', verticalAlign: '-2px' }} /> Reps first, then load. You add a rep until you reach the top of your range, hit it twice without max effort, then take one small step up.</p>
             <p>Two sessions under the range at max effort means one step down. More than four weeks away means repeat your last load once.</p>
             <p>Recovery is ready for hard work at 90%, fully recovered at 97%, and adjusts to your own history in both directions, within limits.</p>
             <p>Missing effort ratings never count as easy or max. They lower confidence instead.</p>
@@ -164,7 +164,7 @@ function Schedule() {
     <Section title="Weekly schedule" palace="coach.schedule" aside={<Button variant="quiet" size="sm" onClick={() => showPanel('schedule')}>Edit</Button>}>
       <Card class="card-press" onClick={() => showPanel('schedule')}>
         <div class="row" style={{ justifyContent: 'space-between' }}>
-          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: 5, margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
+          {WEEKDAYS.map(d => { const sp = s.splits.find(x => x.id === s.schedule[d]); return <div key={d} style={{ textAlign: 'center' }}><div class="hint">{WEEKDAY_LABEL[d][0]}</div><div style={{ width: 10, height: 10, borderRadius: '50%', margin: '4px auto 0', background: sp?.color ?? 'var(--surface-3)' }} /></div>; })}
         </div>
         <p class="hint" style={{ marginTop: 8 }}>{active.length ? `${active.length} training days a week. Reminders and streaks follow this.` : 'No schedule. Set one so reminders and streaks know your rest days.'}</p>
       </Card>
