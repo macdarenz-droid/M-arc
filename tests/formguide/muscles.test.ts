@@ -14,12 +14,12 @@ const SPEC: Record<string, string[]> = {
   ],
   lib_dumbbell_lateral_raise: [
     'Side delts (lateral deltoid), target. Lifts the arms out to the sides; hardest near shoulder height.',
-    'Upper traps (upper trapezius), helps. Steadies the shoulder blades. Keep them down: a shrug means the traps take over.',
+    'Upper traps (upper trapezius), helps. Steadies the shoulder blades; keep them down, no shrug.',
   ],
   lib_lat_pulldown: [
-    'Lats (latissimus dorsi), target. Pulls the elbows down and back to bring the bar to your chest; hardest at the bottom.',
+    'Lats (latissimus dorsi), target. Pulls the elbows down and back; hardest at the bottom.',
     'Biceps (biceps brachii), helps. Bends the elbows as the bar comes down.',
-    'Mid back (rhomboids and middle trapezius), helps. Squeezes the shoulder blades together at the bottom.',
+    'Mid back (rhomboids and middle trapezius), helps. Squeezes the shoulder blades together.',
   ],
 };
 
@@ -42,7 +42,7 @@ describe('GU-7a-3 muscleInfo', () => {
       expect(info[0]?.role).toBe('target');
       expect(info[0]?.colorVar).toBe('var(--muscle-main)');
       for (const h of info.slice(1)) { expect(h.role).toBe('helps'); expect(h.colorVar).toBe('var(--muscle-help)'); }
-      for (const l of lines) expect(l.length).toBeLessThan(120);
+      for (const l of lines) expect(l.length).toBeLessThanOrEqual(100); // bubble fits 2 lines (spec 2.10 at DEMO_COMMIT f49c6c9)
     });
 
     it(`${id} written muscles match the exercise row (primary + secondary)`, () => {
