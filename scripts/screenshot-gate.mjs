@@ -602,6 +602,10 @@ for (const theme of themes) {
 // average. Seed 11 earlier weeks at 10k kg and this week at 0.8x, 1.0x and 1.2x of the 12-week
 // average, and check the two label boxes never intersect (A1); at 1.0x, in all 5 themes at 390 px,
 // the avg label overlaps no bar value label (A2).
+// A4 (every chart with value labels, audited in the PR): the dashed avg line must sit where an
+// average-height bar ends and never run through the value label; and on Exercise progress (the same
+// bench sessions, so the latest point is the min at 0.8x, flat at 1.0x, the max at 1.2x) the opaque
+// min/max labels must never cover the latest point's end dot.
 {
   const tag = 'BUG-12 volume labels';
   const intersects = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
@@ -637,13 +641,32 @@ for (const theme of themes) {
     await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
     await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
     await settle(page);
+    await page.locator('[data-palace="history.weekly-volume"]').scrollIntoViewIfNeeded();
     const got = await page.evaluate(() => {
       const card = document.querySelector('[data-palace="history.weekly-volume"]');
       const avg = card?.querySelector('.volume-avg span');
       const values = [...(card?.querySelectorAll('.volume-bar-value') ?? [])];
       const box = el => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
       const cur = card?.querySelector('.volume-bars i.current .volume-bar-value');
-      return { avg: avg && box(avg), avgText: avg?.textContent ?? '', cur: cur && box(cur), curText: cur?.textContent ?? '', values: values.map(box), bars: card?.querySelectorAll('.volume-bars i').length ?? 0 };
+      const bars = card?.querySelector('.volume-bars');
+      const line = card?.querySelector('.volume-avg');
+      let lineY = null, expectedLineY = null, lineHitsLabel = false;
+      if (bars && line && cur) {
+        lineY = line.getBoundingClientRect().top;
+        const pcts = [...bars.querySelectorAll('i')].map(b => parseFloat(b.style.height) || 0);
+        const contentH = bars.clientHeight - parseFloat(getComputedStyle(bars).paddingTop);
+        expectedLineY = bars.getBoundingClientRect().bottom - (pcts.reduce((a, b) => a + b, 0) / pcts.length / 100) * contentH;
+        const c = cur.getBoundingClientRect();
+        // Where the line crosses the label's box, the label must be on top (hit test) and opaque
+        // (a transparent label on top still shows the dashes through its digits).
+        if (lineY >= c.top && lineY <= c.bottom) {
+          const hit = document.elementFromPoint((c.left + c.right) / 2, lineY + 0.5);
+          const bg = getComputedStyle(cur).backgroundColor.match(/[\d.]+/g)?.map(Number) ?? [];
+          const opaque = bg.length === 3 || (bg.length === 4 && bg[3] === 1);
+          lineHitsLabel = !(hit && cur.contains(hit)) || !opaque;
+        }
+      }
+      return { avg: avg && box(avg), avgText: avg?.textContent ?? '', cur: cur && box(cur), curText: cur?.textContent ?? '', values: values.map(box), bars: card?.querySelectorAll('.volume-bars i').length ?? 0, lineY, expectedLineY, lineHitsLabel };
     });
     if (!got.avg || !got.cur) { errors.push(`${where}: expected the avg label and the current-week value label (got ${JSON.stringify(got)})`); await ctx.close(); continue; }
     if (got.bars !== 12) errors.push(`${where}: expected 12 weekly bars, got ${got.bars}`);
@@ -653,9 +676,21 @@ for (const theme of themes) {
     if (Math.abs(ratio - r) > 0.05) errors.push(`${where}: seeded this week at ${r}x avg but the labels read ${got.curText} vs ${got.avgText}`);
     if (intersects(got.avg, got.cur)) errors.push(`${where}: avg label ${JSON.stringify(got.avg)} overlaps the current-week value label ${JSON.stringify(got.cur)}`);
     for (const v of got.values) if (intersects(got.avg, v)) errors.push(`${where}: avg label overlaps a bar value label ${JSON.stringify(v)}`);
+    if (got.lineY == null || got.expectedLineY == null) errors.push(`${where}: expected the dashed avg line`);
+    else if (Math.abs(got.lineY - got.expectedLineY) > 1) errors.push(`${where}: the avg line is at y ${got.lineY.toFixed(1)}, an average-height bar ends at ${got.expectedLineY.toFixed(1)} (±1px)`);
+    if (got.lineHitsLabel) errors.push(`${where}: the dashed avg line runs through the current-week value label ${got.curText}`);
     // Font size and bar height differ on a real phone (the owner's 0.84x repro overlapped there), so
     // the two labels must not even share a column: then no ratio or font can stack them.
     if (got.avg.left < got.cur.right && got.cur.left < got.avg.right) errors.push(`${where}: avg label and current-week value label share a column (x ${got.avg.left}-${got.avg.right} vs ${got.cur.left}-${got.cur.right})`);
+    await page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap').scrollIntoViewIfNeeded();
+    const spark = await page.evaluate(() => {
+      const wrap = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-wrap');
+      const dot = wrap?.querySelector('svg.sparkline circle');
+      const box = el => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
+      return dot ? { dot: box(dot), labels: [...wrap.querySelectorAll('.sparkline-minmax span')].map(el => ({ text: el.textContent, ...box(el) })) } : null;
+    });
+    if (!spark || !spark.labels.length) errors.push(`${where}: expected the exercise-progress sparkline with its end dot and min/max labels`);
+    else for (const l of spark.labels) if (intersects(spark.dot, l)) errors.push(`${where}: sparkline label "${l.text}" covers the latest point's end dot ${JSON.stringify(spark.dot)}`);
     await ctx.close();
   }
 }
