@@ -10,6 +10,8 @@ const rad = d => (d * Math.PI) / 180;
 const deg = r => (r * 180) / Math.PI;
 const n2 = v => { const s = (Math.round(v * 100) / 100).toString(); return s === '-0' ? '0' : s; };
 const n3 = v => { const s = (Math.round(v * 1000) / 1000).toString(); return s === '-0' ? '0' : s; };
+// keyframe angles and scales are written to 4 decimals, translates to 3 (rounding at 2 alone breaks smoothness check (c))
+const n4 = v => { const s = (Math.round(v * 10000) / 10000).toString(); return s === '-0' ? '0' : s; };
 const pts = a => a.map(([x, y]) => `${n2(x)},${n2(y)}`).join(' ');
 const tr = (a, dx, dy) => a.map(([x, y]) => [x + dx, y + dy]);
 const mir = a => a.map(([x, y]) => [-x, y]);
@@ -231,29 +233,24 @@ const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.fa
 
 // ---------------------------------------------------------------------------
 // Timing (spec 2.5): 4 s rep; lift 0-25 %, hold to 37.5 %, return to 87.5 %, pause to 100 %.
-function bez(x1, y1, x2, y2) {
-  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
-  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
-  const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
-  return x => { let lo = 0, hi = 1; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (X(m) < x) lo = m; else hi = m; } return Y((lo + hi) / 2); };
-}
-const easeIn = bez(0.4, 0, 1, 1), easeOut = bez(0, 0, 0.6, 1);
-const inOut = x => (x < 0.5 ? 0.5 * easeIn(2 * x) : 0.5 + 0.5 * easeOut(2 * x - 1));
+// Each move follows the minimum-jerk profile p(x) = 10x^3 - 15x^4 + 6x^5: speed and acceleration are zero at
+// both ends of every move and there is no kink mid-move (UPGRADE-BRIEF.md, smoothness target 1; as rig-final).
+const minJerk = x => x * x * x * (10 + x * (-15 + 6 * x));
 function progress(u) { // u = fraction of one rep -> p (0 setup .. 1 end pose)
-  if (u <= 0.25) return inOut(u / 0.25);
+  if (u <= 0.25) return minJerk(u / 0.25);
   if (u <= 0.375) return 1;
-  if (u <= 0.875) return 1 - inOut((u - 0.375) / 0.5);
+  if (u <= 0.875) return 1 - minJerk((u - 0.375) / 0.5);
   return 0;
 }
+// A solved pose every 0.5 % of the rep while the body moves; the holds need only their boundary stops (smoothness
+// target 2). LP (docs/COACHING-DECISIONS.md D-L2): the brief's fallback of 0.25 % stops in the 1 s lift, so the grip,
+// the bar and the cable pass check (b); both moves then have 100 steps. The old extra stops (0.625, 82.8125, 85.9375,
+// 86.71875 %) are superseded.
+const LIFT_STEP = 0.25;
 const SAMPLES = [];
-for (let i = 0; i <= 20; i++) SAMPLES.push(i * 1.25);
-for (let i = 0; i <= 16; i++) SAMPLES.push(37.5 + i * 3.125);
+for (let i = 0; i <= 25 / LIFT_STEP; i++) SAMPLES.push(i * LIFT_STEP);
+for (let i = 0; i <= 100; i++) SAMPLES.push(37.5 + i * 0.5);
 SAMPLES.push(100);
-// LP (QA r3, smooth elbow): extra stops where the arm is nearly straight, at the very start of the pull and over the
-// last 6.25 % of the return. There a small hand move bends the elbow a lot, so the 1.25 % / 3.125 % gaps made the
-// forearm start and stop at about a fifth of its top speed; with these stops it starts and settles gently.
-SAMPLES.push(0.625, 82.8125, 85.9375, 86.71875);
-SAMPLES.sort((a, b) => a - b);
 
 // Every keyframe set is written twice (-a and -b). Replay, speed change and mode change
 // swap the stage class gen-a <-> gen-b, which restarts every animation from 0 %.
@@ -410,22 +407,31 @@ SIDE.torso.regions = SIDE.torso.regions.map(r => r.muscle === 'lats' ? { ...r, p
 // The build uses Z = 14: hands 72 apart, about 1.2 times the outside shoulder width ("a little wider than
 // your shoulders", spec 3.2 Grip caption and About step 2).
 // Top of the rep (spec truth table: arms overhead, about 170; elbow about 170, not locked): the hand is placed
-// straight above the raised shoulder (5 in front of it) at the reach an elbow of 168 gives, and the slight bend
-// points back, so the upper arm sits about 168 from the torso line. This is why the bar starts at about y 66,
-// not 72, and a little behind x 156: with the bar at (156, 72) the arm cannot pass about 148 (spec 3.2's own
-// key-pose table gives 148.4 there). Path: the bar comes down and forward above the head, straight down in
-// front of the face (x 160, so the fist stays clear of the nose), and eases onto the top of the chest (157, 150).
-// LP (QA r3, smooth elbow): two changes make every joint's speed rise and fall once per phase (pull, return):
-// (1) the elbow's bend direction (the pole) moves along ONE smooth curve over the whole pull, from out to the
-//     side (20 degrees forward) at the top, through the plane MID degrees in front of the side plane (at p = PM), to the end
-//     elbow; round 2 swung it from out to the side into that plane inside the first 10 % of p, which made the
-//     elbow jerk at the start of the pull and at the end of the return;
-// (2) the bar's place on its path is h(p) = p - A sin(2 pi p) / (2 pi): h(0.5) = 0.5, so the key poses and the
-//     tile times stay where they were (bar half-way at 12.5 %, on the chest at 25 %), but the bar leaves the top
-//     a little more gently. Near a straight arm the elbow bends fast for a small hand move, so without this the
-//     elbow's first burst came before the hand had got going.
-const smooth = x => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
-const LP_OPT = { DX: -2, IN0: 174, B0: 110, XF: 160, YK: 104, YC: 134, X1: 157, Y1: 150, TEND: 26, MID: 50, MD: 0.6, PM: 0.4, A: 0.4 };
+// straight above the raised shoulder (2 behind its joint) at the reach an elbow of IN0 gives, so the upper arm sits
+// about 162 from the torso line (the side view draws about 169). This is why the bar starts at about y 66, not 72,
+// and a little behind x 156: with the bar at (156, 72) the arm cannot pass about 148 (spec 3.2's own key-pose table
+// gives 148.4 there). Path: the bar comes down and forward above the head, passes in front of the face at x 160-162
+// (so the fist stays clear of the nose), and comes onto the top of the chest at (157, 150).
+// LP (smoothness upgrade, UPGRADE-BRIEF.md smoothness target 4; docs/COACHING-DECISIONS.md D-L1): the smoothness check
+// asks every drawn angle (upper arm, forearm, bar, far upper arm, far forearm, front cable) to change its acceleration
+// evenly, within 3 x its median change, while the timing is minimum-jerk. That holds only when each angle runs nearly
+// in step with the progress p, with no sudden change of rate anywhere in the move. So the motion is described by
+// smooth curves in p and fitted to the check (fit-motion.mjs), not pieced together from straight and curved parts:
+// - the hand: x = X0 + a Bernstein curve of the PX offsets, y = Y0 + the PV shares of the drop to Y1 (degree 6). It
+//   leaves the top forward and only a little down, so the nearly straight elbow starts to bend gradually (moving the
+//   hand straight toward the shoulder at the start bends a nearly straight elbow in a sudden burst);
+// - the elbow's bend direction (the pole): one cubic Bernstein curve in p from the top direction (out to the side,
+//   B0 - 90 degrees forward) through the two PC directions (forward, out, down along the torso) to the end elbow;
+// - the shoulder blades: pulled down and back first, share of the move done = 1 - (1 - p)^SK (spec truth table);
+// - the elbow at the top: IN0 = 171, "about 170, not locked" (spec truth table; the old 174 made the first burst sharper).
+const bern = (cp, t) => { const n = cp.length - 1; let s = 0; for (let k = 0; k <= n; k++) s += cp[k] * binom(n, k) * t ** k * (1 - t) ** (n - k); return s; };
+const binom = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i; return r; };
+const LP_OPT = {
+  DX: -2, IN0: 171, TEND: 26, X1: 157, Y1: 150, B0: 126.485, SK: 4.56,
+  PX: [2.4067, 12.3466, 22.2061, 33.8756, 19.9921],
+  PV: [0.06516, 0.42816, 0.43248, 0.79953, 0.87118],
+  PC: [[1.3947, 1.2281, 0.8589], [0.2808, 0.338, 0.8292]],
+};
 const makeLP = (Z, o = LP_OPT) => {
   const H = [150, 206];                          // hip on the stage (spec 3.2)
   const LEAN = 10;                               // torso leaned back 10 deg, fixed: rotate(-10) about the hip
@@ -436,29 +442,25 @@ const makeLP = (Z, o = LP_OPT) => {
   const TZ = [0, 0, 1];                                          // out to the lifter's side, toward the camera
   // Shoulder blades (spec truth table): slightly raised at the top stretch, pulled down and back first.
   const SC0 = [0.5, -2.5], SC1 = [-1.5, 1.5];
-  const scap = p => { const w = smooth(p / 0.35); return [SC0[0] + (SC1[0] - SC0[0]) * w, SC0[1] + (SC1[1] - SC0[1]) * w]; };
+  const scap = p => { const w = 1 - (1 - Math.min(1, Math.max(0, p))) ** o.SK; return [SC0[0] + (SC1[0] - SC0[0]) * w, SC0[1] + (SC1[1] - SC0[1]) * w]; };
   const shoulder = p => { const d = scap(p), r = rotL([d[0], -62 + d[1]]); return [H[0] + r[0], H[1] + r[1], 0]; };
   const S0 = shoulder(0), R0 = Math.sqrt(38 * 38 + 40 * 40 - 2 * 38 * 40 * Math.cos(rad(o.IN0)));
   const X0 = S0[0] + o.DX, Y0 = S0[1] - Math.sqrt(R0 * R0 - o.DX * o.DX - Z * Z);
-  const gx = y => (y <= o.YK ? X0 + (o.XF - X0) * smooth((y - Y0) / (o.YK - Y0)) : y <= o.YC ? o.XF : o.XF + (o.X1 - o.XF) * smooth((y - o.YC) / (o.Y1 - o.YC)));
   const TRAVEL = o.Y1 - Y0;
-  const hOf = p => p - o.A * Math.sin(2 * Math.PI * p) / (2 * Math.PI);   // bar's share of its path at pose p (QA r3)
-  const gripAt = p => { const y = Y0 + TRAVEL * hOf(p); return [gx(y), y, Z]; };
-  // the hand path as a polyline, with its arc length, for the guide and the "still to go" line
+  const BX = [X0, ...o.PX.map(v => X0 + v), o.X1], BY = [Y0, ...o.PV.map(v => Y0 + TRAVEL * v), o.Y1];
+  const gripAt = p => [bern(BX, p), bern(BY, p), Z];
+  // the hand path as a polyline (even steps of p), with its arc length, for the guide and the "still to go" line
   const PN = 96, pathPts = Array.from({ length: PN + 1 }, (_, i) => gripAt(i / PN));
   const cum = [0]; for (let i = 1; i <= PN; i++) cum.push(cum[i - 1] + Math.hypot(pathPts[i][0] - pathPts[i - 1][0], pathPts[i][1] - pathPts[i - 1][1]));
   const pathLen = cum[PN];
-  const arcAt = p => { const f = p * PN, i = Math.min(PN - 1, Math.floor(f)); return (cum[i] + (cum[i + 1] - cum[i]) * (f - i)) / cum[PN]; };
-  // Poles (which way the elbow bends): at the top out to the side and B0 - 90 = 20 degrees forward, the shoulder
-  // blade's own plane, where arms held overhead with an overhand grip really sit (round 2 had it straight out to the
-  // side, so the elbow had to swing forward fast at the start; now it has less to travel and the forearm stays clear
-  // of the head);
-  // over the pull the elbow travels out and forward through a plane MID degrees in front of the body's side plane,
-  // pointing a little down (so the upper arm is never drawn short and the forearm stays in front of the face), and
-  // ends at the chosen end elbow: down by the side, slightly behind, 25 from the torso line (spec: about 20-30).
+  const arcAt = p => { const f = p * PN, i = Math.max(0, Math.min(PN - 1, Math.floor(f))); return (cum[i] + (cum[i + 1] - cum[i]) * (f - i)) / cum[PN]; };
+  // where the path runs in front of the face: its most forward x (XF) and the stretch at x 160 or more (y YK to YC)
+  const fine = Array.from({ length: 2001 }, (_, i) => gripAt(i / 2000)), front = fine.filter(g => g[0] >= 160);
+  const XF = Math.round(Math.max(...fine.map(g => g[0])) * 10) / 10, YK = Math.round(front[0][1] * 10) / 10, YC = Math.round(front[front.length - 1][1] * 10) / 10;
+  // Poles (which way the elbow bends): at the top out to the side and B0 - 90 degrees forward; at the end the chosen end
+  // elbow: down by the side, slightly behind, 25 from the torso line (spec: about 20-30); in between one smooth curve.
   const pole = (f, s, d) => norm(add(add(mul(TF, f), mul(TZ, s)), mul(TD, d)));
   const poleTop = pole(-Math.cos(rad(o.B0)), Math.sin(rad(o.B0)), 0);
-  const poleMid = pole(Math.sin(rad(o.MID)), Math.cos(rad(o.MID)), o.MD);
   const S1 = shoulder(1), G1 = gripAt(1);
   const endElbow = (() => {
     const D = sub(G1, S1), d = Math.hypot(...D), ax = mul(D, 1 / d), along = (38 * 38 - 40 * 40 + d * d) / (2 * d), rc = Math.sqrt(38 * 38 - along * along);
@@ -468,18 +470,15 @@ const makeLP = (Z, o = LP_OPT) => {
     return { E, elev: deg(Math.acos(dot(es, TD) / 38)), behind: -dot(es, TF) };
   })();
   const poleEnd = norm(sub(endElbow.E, S1));
-  // one quadratic Bezier curve poleTop -> poleEnd that passes through poleMid at p = PM; its parameter runs at a
-  // constant rate on each side of PM with the same speed where they meet, so the pole never stops or lurches
-  const poleC = sub(mul(poleMid, 2), mul(add(poleTop, poleEnd), 0.5));
-  const bezT = p => (p <= o.PM ? 0.5 * p / o.PM : 0.5 + 0.5 * (p - o.PM) / (1 - o.PM));
-  const poleAt = p => { const t = bezT(p); return norm(add(add(mul(poleTop, (1 - t) * (1 - t)), mul(poleC, 2 * t * (1 - t))), mul(poleEnd, t * t))); };
+  const PCV = [poleTop, ...o.PC.map(([f, s, d]) => add(add(mul(TF, f), mul(TZ, s)), mul(TD, d))), poleEnd];
+  const poleAt = p => norm([0, 1, 2].map(k => bern(PCV.map(v => v[k]), p)));
   const raw = p => {
     const S = shoulder(p), G = gripAt(p), r = solve3(S, G, LEN.upperArm, LEN.forearm, poleAt(p));
     const es = sub(r.E, S);
     return { p, S, G, ...r, elev: deg(Math.acos(dot(es, TD) / 38)), behind: -dot(es, TF), uaRaw: -r.phi + LEAN, faRaw: -(r.psi - r.phi), sc: scap(p), bar: [G[0] - X0, G[1] - Y0] };
   };
   // unwrap the two rotations along p, so keyframes never spin the long way round
-  const N = 2000, tab = [];
+  const N = o.TAB || 2000, tab = [];
   for (let i = 0; i <= N; i++) {
     const q = raw(i / N);
     if (i) { const pr = tab[i - 1]; while (q.uaRaw - pr.ua > 180) q.uaRaw -= 360; while (q.uaRaw - pr.ua < -180) q.uaRaw += 360; while (q.faRaw - pr.fa > 180) q.faRaw -= 360; while (q.faRaw - pr.fa < -180) q.faRaw += 360; }
@@ -492,7 +491,7 @@ const makeLP = (Z, o = LP_OPT) => {
     while (fa - ref.fa > 180) fa -= 360; while (fa - ref.fa < -180) fa += 360;
     return { ...q, ua, fa };
   };
-  return { H, LEAN, rotL, TD, TF, Z, X0, Y0, Y1: o.Y1, XF: o.XF, X1: o.X1, YK: o.YK, YC: o.YC, TRAVEL, SC0, SC1, scap, shoulder, gripAt, hOf, pathPts, arcAt, pathLen, poleTop, poleMid, poleEnd, endElbow, pose, o };
+  return { H, LEAN, rotL, TD, TF, Z, X0, Y0, Y1: o.Y1, XF, X1: o.X1, YK, YC, TRAVEL, SC0, SC1, scap, shoulder, gripAt, pathPts, arcAt, pathLen, poleTop, poleEnd, endElbow, pose, o };
 };
 const GRIP_Z = 14;
 const LP = makeLP(GRIP_Z);
@@ -539,6 +538,84 @@ const PF = { x: Math.round((LP.X0 + BAR_MID[0]) * 10) / 10, y: 39.2, r: 5.2 };
 // chip also shows a small front view of the top of the rep: both hands on the bar, a little wider than the shoulders
 // (the arms open slightly outward from the shoulders), with the thumbs wrapped round the bar (accent). Static, drawn
 // from the rig's front-view parts with the arm angles of this build's top pose.
+// LP: the front cable and the far arm as functions of the pose p, for any makeLP build (the player's, and the
+// pace fit below). The cable runs from the bottom of the front pulley to the hook on the bar's middle.
+function extrasOf(L) {
+  const { pose, X0, Y0 } = L;
+  const C0 = [X0 + BAR_MID[0], Y0 + BAR_MID[1]];          // bar middle (cable hook) at the top
+  const cab = (p, q = pose(p)) => { const c = [C0[0] + q.bar[0], C0[1] + q.bar[1]], dx = c[0] - PF.x, dy = c[1] - (PF.y + PF.r); return { len: Math.hypot(dx, dy), ang: deg(Math.atan2(-dx, dy)) }; };
+  // far forearm: from the far grip it aims at the near elbow, so it tucks in behind the near arm (or behind the chest);
+  // it is scaled about its wrist end (9 from the grip), so it never parts from the fist
+  const farJ = (p, q = pose(p)) => { const zE = SHOULDER_OUT + q.E[2];
+    const S = [q.S[0] + DEPTH_K[0] * 2 * SHOULDER_OUT, q.S[1] + DEPTH_K[1] * 2 * SHOULDER_OUT], E = [q.E[0] + DEPTH_K[0] * 2 * zE, q.E[1] + DEPTH_K[1] * 2 * zE], G = [q.G[0] + FAR_GRIP[0], q.G[1] + FAR_GRIP[1]];
+    const au = deg(Math.atan2(-(E[0] - S[0]), E[1] - S[1])), af = deg(Math.atan2(-(G[0] - E[0]), G[1] - E[1]));
+    return { S, E, G, au, af, fu: Math.hypot(E[0] - S[0], E[1] - S[1]) / LEN.upperArm, ff: Math.hypot(G[0] - E[0], G[1] - E[1]) / LEN.forearm }; };
+  const FS0 = farJ(0).S;
+  // the far arm's two screen angles, unwrapped along p against a table (the table only picks the turn: every value is
+  // solved at its own p, so a stop never repeats its neighbour's value)
+  const FN = L.o.TAB || 2000, farTab = []; for (let i = 0; i <= FN; i++) { const f = farJ(i / FN); if (i) { const pr = farTab[i - 1]; while (f.au - pr.au > 180) f.au -= 360; while (f.au - pr.au < -180) f.au += 360; while (f.af - pr.af > 180) f.af -= 360; while (f.af - pr.af < -180) f.af += 360; } farTab.push(f); }
+  const far = (p, q) => { const f = farJ(p, q), r = farTab[Math.round(p * FN)];
+    while (f.au - r.au > 180) f.au -= 360; while (f.au - r.au < -180) f.au += 360; while (f.af - r.af > 180) f.af -= 360; while (f.af - r.af < -180) f.af += 360;
+    return f; };
+  return { C0, cab, far, FS0 };
+}
+
+// LP: the smoothness numbers shoot.cjs measures in the browser (../smooth-check.cjs, UPGRADE-BRIEF.md target 4),
+// computed from the solved poses exactly as the page draws them: every keyframe value rounded as written, drawn
+// linearly between stops, sampled every 1/480 of the rep. Channels: the six rotated groups (lp-ua, lp-fa, lp-bar,
+// lp-fua, lp-ffa, lp-cable-f) and the near grip point (0, 16 in the near hand group), placed through the drawn chain.
+const SM_LIM = { a: 0.01, b: 0.08, c: 3, d: 4, travel: 10 };
+function drawnAt(L, X, p) {
+  const q = L.pose(p), f = X.far(p, q), c = X.cab(p, q);
+  return { sc: [+n3(q.sc[0]), +n3(q.sc[1])], tfa: +n3(-(1 - q.fu) * LEN.upperArm), thd: +n3(-(1 - q.ff) * LEN.forearm),
+    ang: { 'lp-ua': +n4(q.ua), 'lp-fa': +n4(q.fa), 'lp-bar': +n4(L.LEAN - q.ua - q.fa), 'lp-fua': +n4(f.au), 'lp-ffa': +n4(f.af - f.au), 'lp-cable-f': +n4(c.ang) } };
+}
+function drawnGrip(L, d) {
+  const R = (a, [x, y]) => { const c = Math.cos(rad(a)), s = Math.sin(rad(a)); return [x * c - y * s, x * s + y * c]; };
+  const f = R(d.ang['lp-fa'], [0, LEN.forearm + d.thd]);
+  const u = R(d.ang['lp-ua'], [f[0], LEN.upperArm + d.tfa + f[1]]);
+  const t = L.rotL([d.sc[0] + u[0], -62 + d.sc[1] + u[1]]);
+  return [L.H[0] + t[0], L.H[1] + t[1]];
+}
+function smoothNumbers(L, X = extrasOf(L)) {
+  const N = 480, DT = 4 / N;
+  const st = SAMPLES.map(pc => ({ u: pc / 100, d: drawnAt(L, X, progress(pc / 100)) }));
+  const names = Object.keys(st[0].d.ang);
+  const lerpD = (a, b, w) => ({ sc: [a.sc[0] + (b.sc[0] - a.sc[0]) * w, a.sc[1] + (b.sc[1] - a.sc[1]) * w], tfa: a.tfa + (b.tfa - a.tfa) * w, thd: a.thd + (b.thd - a.thd) * w, ang: Object.fromEntries(names.map(k => [k, a.ang[k] + (b.ang[k] - a.ang[k]) * w])) });
+  const smp = []; let j = 0;
+  for (let i = 0; i <= N; i++) { const u = i / N; while (j < st.length - 2 && st[j + 1].u <= u) j++; const w = (u - st[j].u) / (st[j + 1].u - st[j].u); smp.push(lerpD(st[j].d, st[j + 1].d, Math.min(1, w))); }
+  const grip = smp.map(d => drawnGrip(L, d)), ser = Object.fromEntries(names.map(k => [k, smp.map(d => d.ang[k])]));
+  const stats = (s, i0, i1, vec) => {
+    const vel = []; for (let i = i0; i < i1; i++) vel.push(vec ? [(s[i + 1][0] - s[i][0]) / DT, (s[i + 1][1] - s[i][1]) / DT] : (s[i + 1] - s[i]) / DT);
+    const mag = v => (vec ? Math.hypot(v[0], v[1]) : Math.abs(v)), peak = Math.max(...vel.map(mag));
+    let jump = 0; for (let i = 1; i < vel.length; i++) jump = Math.max(jump, vec ? Math.hypot(vel[i][0] - vel[i - 1][0], vel[i][1] - vel[i - 1][1]) : Math.abs(vel[i] - vel[i - 1]));
+    const seg = s.slice(i0, i1 + 1);
+    return { a: peak ? Math.max(mag(vel[0]), mag(vel[vel.length - 1])) / peak : 0, b: peak ? jump / peak : 0, travel: vec ? null : Math.max(...seg) - Math.min(...seg) };
+  };
+  const stopJerk = (k, a, b) => {
+    const s = st.filter(x => x.u >= a - 1e-9 && x.u <= b + 1e-9).map(x => [x.u * 4, x.d.ang[k]]);
+    const vv = [], tm = []; for (let i = 1; i < s.length; i++) { vv.push((s[i][1] - s[i - 1][1]) / (s[i][0] - s[i - 1][0])); tm.push((s[i][0] + s[i - 1][0]) / 2); }
+    const acc = []; for (let i = 1; i < vv.length; i++) acc.push((vv[i] - vv[i - 1]) / (tm[i] - tm[i - 1]));
+    const jk = []; for (let i = 1; i < acc.length; i++) jk.push(Math.abs(acc[i] - acc[i - 1]));
+    const srt = [...jk].sort((x, y) => x - y), med = srt.length % 2 ? srt[(srt.length - 1) / 2] : (srt[srt.length / 2 - 1] + srt[srt.length / 2]) / 2;
+    const mx = Math.max(...jk);
+    return { r: med > 0 ? mx / med : Infinity, u: s[jk.indexOf(mx) + 2][0] / 4 };
+  };
+  let d = { v: 0 }; for (const k of names) for (let i = 0; i < N; i++) { const v = Math.abs(ser[k][i + 1] - ser[k][i]); if (v > d.v) d = { v, k, u: i / N }; }
+  const out = { d, phases: {} };
+  for (const [ph, a, b] of [['lift', 0, 0.25], ['return', 0.375, 0.875]]) {
+    const i0 = Math.round(a * N), i1 = Math.round(b * N);
+    const rows = [{ name: 'near hand (grip)', ...stats(grip, i0, i1, true), c: null, gate: true }];
+    for (const k of names) { const r = stats(ser[k], i0, i1, false), gate = r.travel >= SM_LIM.travel, j = gate ? stopJerk(k, a, b) : null; rows.push({ name: k, ...r, c: j ? j.r : null, cu: j ? j.u : null, gate }); }
+    const g = rows.filter(r => r.gate), cc = rows.filter(r => r.c !== null);
+    out.phases[ph] = { a: Math.max(...g.map(r => r.a)), b: Math.max(...g.map(r => r.b)), c: Math.max(...cc.map(r => r.c)), rows };
+  }
+  const P = out.phases;
+  out.worst = Math.max(P.lift.a / SM_LIM.a, P.return.a / SM_LIM.a, P.lift.b / SM_LIM.b, P.return.b / SM_LIM.b, P.lift.c / SM_LIM.c, P.return.c / SM_LIM.c, d.v / SM_LIM.d);
+  return out;
+}
+const smLine = m => ['lift', 'return'].map(ph => `${ph}: ` + m.phases[ph].rows.map(r => `${r.name}${r.travel !== null ? ` [${r.travel.toFixed(1)}]` : ''} a ${(r.a * 100).toFixed(2)} % b ${(r.b * 100).toFixed(2)} %${r.c !== null ? ` c ${r.c.toFixed(2)}x` : ''}`).join('; ')).join('\n') + `\n(d) ${m.d.v.toFixed(2)} deg (${m.d.k} at u ${m.d.u.toFixed(4)})`;
+
 function gripInset() {
   const a = LP.pose(0), up = v => -dot(v, LP.TD);
   const eU = sub(a.E, a.S), gU = sub(a.G, a.S);
@@ -571,21 +648,10 @@ function latPulldown() {
   const nearEndD = `M${[barPt(NEAR_Z + HAND_HALF), BAR_PTS[1], BAR_PTS[0]].map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;
   const roles = { lats: 'main', biceps: 'help', midBack: 'help' };
   const FAR = [5, -3];
-  const C0 = [X0 + BAR_MID[0], Y0 + BAR_MID[1]];          // bar middle (cable hook) at the top
-  const cab = p => { const q = pose(p), c = [C0[0] + q.bar[0], C0[1] + q.bar[1]], dx = c[0] - PF.x, dy = c[1] - (PF.y + PF.r); return { len: Math.hypot(dx, dy), ang: deg(Math.atan2(-dx, dy)) }; };
+  const { C0, cab, far, FS0 } = extrasOf(LP);
   const CAB0 = cab(0).len, lift = p => 0.5 * (cab(p).len - CAB0);   // 2:1: the stack rises half as far as the cable pays out
   const LIFT1 = lift(1);
   const BEAM = 36, REAR_TOP = BEAM + 11, REAR_RUN = 106 - REAR_TOP;  // rear pulley r 7 at (47, 47); rear cable to the stack bracket
-  // far forearm: from the far grip it aims at the near elbow, so it tucks in behind the near arm (or behind the chest);
-  // it is scaled about its wrist end (9 from the grip), so it never parts from the fist
-  const farJ = p => { const q = pose(p), zE = SHOULDER_OUT + q.E[2];
-    const S = [q.S[0] + DEPTH_K[0] * 2 * SHOULDER_OUT, q.S[1] + DEPTH_K[1] * 2 * SHOULDER_OUT], E = [q.E[0] + DEPTH_K[0] * 2 * zE, q.E[1] + DEPTH_K[1] * 2 * zE], G = [q.G[0] + FAR_GRIP[0], q.G[1] + FAR_GRIP[1]];
-    const au = deg(Math.atan2(-(E[0] - S[0]), E[1] - S[1])), af = deg(Math.atan2(-(G[0] - E[0]), G[1] - E[1]));
-    return { S, E, G, au, af, fu: Math.hypot(E[0] - S[0], E[1] - S[1]) / LEN.upperArm, ff: Math.hypot(G[0] - E[0], G[1] - E[1]) / LEN.forearm }; };
-  const FS0 = farJ(0).S;
-  // unwrap the far arm's two screen angles along p
-  const farTab = []; for (let i = 0; i <= 2000; i++) { const f = farJ(i / 2000); if (i) { const pr = farTab[i - 1]; while (f.au - pr.au > 180) f.au -= 360; while (f.au - pr.au < -180) f.au += 360; while (f.af - pr.af > 180) f.af -= 360; while (f.af - pr.af < -180) f.af += 360; } farTab.push(f); }
-  const far = p => farTab[Math.round(p * 2000)];
   // analytic checks between baked samples (every keyframe value runs linearly between stops), at 1/4, 1/2 and 3/4 of
   // each gap. The bar lives in the near hand group, so the near hand can never leave it (QA r3); what is checked:
   // - far: the far fist's grip point vs the far grip on the bar (= near hand + FAR_GRIP, the bar never turns);
@@ -668,20 +734,20 @@ ${animRule('lp-cable-f', 'lp-cable-f', origin(PF.x, PF.y + PF.r))}
 ${animRule('lp-cable-r', 'lp-cable-r', origin(40, REAR_TOP))}
 ${animRule('lp-togo', 'lp-togo')}
 ${animRule('lp-eff', 'lp-eff')}
-${kf('lp-ua', p => { const q = pose(p); return `transform:translate(${n2(q.sc[0])}px,${n2(q.sc[1])}px) rotate(${n2(q.ua)}deg)`; })}
-${kf('lp-ul', p => `transform:scaleY(${n3(pose(p).fu)})`)}
-${kf('lp-fa', p => { const q = pose(p); return `transform:translateY(${n2(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n2(q.fa)}deg)`; })}
-${kf('lp-fl', p => `transform:scaleY(${n3(pose(p).ff)})`)}
-${kf('lp-hd', p => `transform:translateY(${n2(-(1 - pose(p).ff) * LEN.forearm)}px)`)}
-${kf('lp-bar', p => { const q = pose(p); return `transform:rotate(${n2(LEAN - q.ua - q.fa)}deg)`; })}
-${kf('lp-fua', p => { const f = far(p); return `transform:translate(${n2(f.S[0] - FS0[0])}px,${n2(f.S[1] - FS0[1])}px) rotate(${n2(f.au)}deg)`; })}
-${kf('lp-ful', p => `transform:scaleY(${n3(far(p).fu)})`)}
-${kf('lp-ffa', p => { const f = far(p); return `transform:translateY(${n2(-(1 - f.fu) * LEN.upperArm)}px) rotate(${n2(f.af - f.au)}deg)`; })}
-${kf('lp-ffl', p => `transform:scaleY(${n3(far(p).ff)})`)}
-${kf('lp-fhd', p => `transform:translateY(${n2(-(1 - far(p).ff) * LEN.forearm)}px)`)}
-${kf('lp-stack', p => `transform:translateY(${n2(-lift(p))}px)`)}
-${kf('lp-cable-f', p => { const c = cab(p); return `transform:rotate(${n2(c.ang)}deg) scaleY(${n2(c.len)})`; })}
-${kf('lp-cable-r', p => `transform:scaleY(${n3((REAR_RUN - lift(p)) / REAR_RUN)})`)}
+${kf('lp-ua', p => { const q = pose(p); return `transform:translate(${n3(q.sc[0])}px,${n3(q.sc[1])}px) rotate(${n4(q.ua)}deg)`; })}
+${kf('lp-ul', p => `transform:scaleY(${n4(pose(p).fu)})`)}
+${kf('lp-fa', p => { const q = pose(p); return `transform:translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; })}
+${kf('lp-fl', p => `transform:scaleY(${n4(pose(p).ff)})`)}
+${kf('lp-hd', p => `transform:translateY(${n3(-(1 - pose(p).ff) * LEN.forearm)}px)`)}
+${kf('lp-bar', p => { const q = pose(p); return `transform:rotate(${n4(LEAN - q.ua - q.fa)}deg)`; })}
+${kf('lp-fua', p => { const f = far(p); return `transform:translate(${n3(f.S[0] - FS0[0])}px,${n3(f.S[1] - FS0[1])}px) rotate(${n4(f.au)}deg)`; })}
+${kf('lp-ful', p => `transform:scaleY(${n4(far(p).fu)})`)}
+${kf('lp-ffa', p => { const f = far(p); return `transform:translateY(${n3(-(1 - f.fu) * LEN.upperArm)}px) rotate(${n4(f.af - f.au)}deg)`; })}
+${kf('lp-ffl', p => `transform:scaleY(${n4(far(p).ff)})`)}
+${kf('lp-fhd', p => `transform:translateY(${n3(-(1 - far(p).ff) * LEN.forearm)}px)`)}
+${kf('lp-stack', p => `transform:translateY(${n3(-lift(p))}px)`)}
+${kf('lp-cable-f', p => { const c = cab(p); return `transform:rotate(${n4(c.ang)}deg) scaleY(${n4(c.len)})`; })}
+${kf('lp-cable-r', p => `transform:scaleY(${n4((REAR_RUN - lift(p)) / REAR_RUN)})`)}
 ${kf('lp-togo', p => `stroke-dashoffset:${n3(-Math.min(arcAt(p) + TOGO_GAP, 0.999))}`)}
 ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
 .lp-barline{fill:none;stroke:var(--fg-metal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
@@ -784,7 +850,7 @@ ${farArm}
   const cableTravel = cab(1).len - CAB0;
   return {
     ex, drift, cableTravel, keyTable: [0, 0.25, 0.5, 0.75, 1].map(p => row(pose(p))),
-    smoothness,
+    smoothness, smoothCheck: smoothNumbers(LP),
     series: { fu: dense.map(q => q.fu), ff: dense.map(q => q.ff), inside: dense.map(q => q.inside), ua: sampled.map(q => q.ua), fa: sampled.map(q => q.fa) },
     truth: { topElev2D: angTo([pose(0).E[0] - pose(0).S[0], pose(0).E[1] - pose(0).S[1]], [LP.TD[0], LP.TD[1]]), endElev2D: angTo([pose(1).E[0] - pose(1).S[0], pose(1).E[1] - pose(1).S[1]], [LP.TD[0], LP.TD[1]]), topLine: angTo(sub(pose(0).G, pose(0).S), LP.TD), gripTimes: gripTimes(LP.Z), tile2: { at: TILE2, p: t2.p, elbowBelowShoulder: t2.E[1] - t2.S[1], elbowBelowGrip: t2.E[1] - t2.G[1], forearmFromVertical: Math.abs(deg(Math.atan2(t2.G[0] - t2.E[0], t2.E[1] - t2.G[1]))) }, topInside: pose(0).inside, topElev: pose(0).elev, endInside: pose(1).inside, endElev: pose(1).elev, endBehind: pose(1).behind, endBehind2D: deg(Math.atan2(pose(1).S[0] - pose(1).E[0], pose(1).E[1] - pose(1).S[1])) + LEAN, minFu: Math.min(...dense.map(q => q.fu)), minFf: Math.min(...dense.map(q => q.ff)), liftEnd: LIFT1, travel: TRAVEL },
     geo: { H, X0, Y0, Y1, X1: LP.X1, XF: LP.XF, YK: LP.YK, YC: LP.YC, TRAVEL, Z: LP.Z, NEAR_Z, C0, BEAM, PF, REAR_TOP, REAR_RUN, CAB0, LIFT1, SC0: LP.SC0, SC1: LP.SC1, FS0, DEPTH_K, FAR_GRIP, BAR_MID, BAR_PTS, zooms: { Z1, Z2, Z3 }, inset: { grip: inset.grip, elbow: inset.elbow, handsApart: inset.handsApart, shouldersOutside: inset.shouldersOutside, uaA: inset.uaA, faA: inset.faA } },
@@ -918,8 +984,9 @@ ${HARNESS_JS}
 `;
 const WRITE = !process.env.LP_NO_WRITE;   // LP_NO_WRITE=1: import the pieces without writing files (work/r3/dc-*.mjs)
 if (WRITE) fs.writeFileSync(path.join(DIR, 'index.html'), harness);
-if (WRITE) fs.writeFileSync(path.join(DIR, 'poses.json'), JSON.stringify({ latPulldown: { keyTable: lp.keyTable, truth: lp.truth, grips: GRIP_OPTIONS, drift: lp.drift, smoothness: lp.smoothness, samples: SAMPLES, cableTravel: lp.cableTravel, geo: lp.geo, series: lp.series, picsAt: EXL.picsAt, chips: EXL.chips, tileBox: EXL.tileBox }, contrast: contrastTable() }, null, 1));
-export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES };
+if (WRITE) fs.writeFileSync(path.join(DIR, 'poses.json'), JSON.stringify({ latPulldown: { keyTable: lp.keyTable, truth: lp.truth, grips: GRIP_OPTIONS, drift: lp.drift, smoothness: lp.smoothness, smoothCheck: lp.smoothCheck, samples: SAMPLES, cableTravel: lp.cableTravel, geo: lp.geo, series: lp.series, picsAt: EXL.picsAt, chips: EXL.chips, tileBox: EXL.tileBox }, contrast: contrastTable() }, null, 1));
+export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES, SIDE, LP, makeLP, LP_OPT, extrasOf, smoothNumbers, smLine, progress as progressOf };
+if (WRITE) console.log('smoothness check, as the page draws it (../smooth-check.cjs limits: a 1 %, b 8 %, c 3 x, d 4 deg):\n' + smLine(lp.smoothCheck));
 if (WRITE) console.log(JSON.stringify({ truth: lp.truth, drift: lp.drift, X0: lp.geo.X0, Y0: lp.geo.Y0, zooms: lp.geo.zooms, grips: GRIP_OPTIONS.map(o => `Z${o.Z} x${o.times.toFixed(2)} top ${o.topElev.toFixed(1)} end ${o.endInside.toFixed(1)} minFu ${o.minFu.toFixed(2)}`), key: lp.keyTable.map(r => `p${r.p} S(${r.shoulder}) E(${r.elbow}) ua ${r.ua} fu ${r.fu} fa ${r.fa} ff ${r.ff} in ${r.inside} elev ${r.elev} beh ${r.behind} lift ${r.lift}`) }, null, 1));
 
 // ---------------------------------------------------------------------------
@@ -943,13 +1010,13 @@ if (WRITE) console.log(JSON.stringify({ truth: lp.truth, drift: lp.drift, X0: lp
   const barTop = `(${f(g.X0)}, ${f(g.Y0)})`;
   const md = `# Lat Pulldown player: drop-in pieces for \`Player-LatPulldown.dc.html\`
 
-Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, paint, stroke widths, timing and restart method. QA round 3 fixes are in (section 0 maps each of the 9 issues to its fix and its proof; the round 2 table follows it). Checked in Chromium on 2026-09-27, result: **${summary}** (section 11). The DECIDED lines are the spec 3.2 values this build changes on purpose (decisions D1, D2 and D3, section 9). They need the supervisor's sign-off, and the ready spec.md edit in section 9 has to be applied to spec.md (this task may not write spec.md). The canvas artboard \`../project/Player-LatPulldown.dc.html\` carries the same pieces (section 2). This file is generated by \`node gen.mjs\`, from the same source as \`index.html\`, so the pieces below are exactly what the harness shows.
+Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, paint, stroke widths, timing and restart method. QA round 3 fixes are in (section 0 maps each of the 9 issues to its fix and its proof; the round 2 table follows it). Checked in Chromium on 2026-09-27, result: **${summary}** (section 11). Decisions D1, D2 and D3 (section 9) are signed off, and spec.md section 3.2 carries them. Smoothness upgrade (\`../UPGRADE-BRIEF.md\`, smoothness target): minimum-jerk timing, a solved pose every ${LIFT_STEP} % of the rep in the pull and every 0.5 % in the return, and one fitted motion, so every drawn angle, the cable and the bar pass the numeric smoothness check (section 7). The canvas artboard \`../project/Player-LatPulldown.dc.html\` carries the same pieces (section 2). This file is generated by \`node gen.mjs\`, from the same source as \`index.html\`, so the pieces below are exactly what the harness shows.
 
 ## In plain words
 
 - A side view of one person doing a lat pulldown: arms straight up overhead at the top, pull the bar down in front of the face to the top of the chest (1 s), squeeze (0.5 s), let it up slowly (2 s), short reset. It plays 3 reps and stops.
 - Both hands hold one wide bar. The far arm is drawn behind the head and body in the dimmer "far side" colour. The cable now hangs from the pulley straight down onto the middle of the bar, between the two hands, and it is drawn in front of the far arm, so the bar clearly hangs from the cable, not from the far hand.
-- The elbow now moves smoothly: it speeds up once and slows down once on the way down and again on the way up. Before, it jerked at the start of the pull and at the end of the way up.
+- The whole motion is smooth: every joint, the far arm, the bar and the cable start and stop without a jolt, speed up once and slow down once on the way down and again on the way up, and never change speed in steps (measured in the browser at 120 samples a second, section 7). Before, the elbows, the far arm and the cable started and stopped sharply.
 - The bar is held in the near hand (it is part of the hand in the drawing), so it can never slip out of the hand. The end of the bar that points toward you always shows; before, it disappeared behind the chest at the bottom.
 - The close-ups now show what holds the bar: the Grip and Path close-ups show the pulley, the whole cable and both hands; the Pad close-up shows the feet flat on the floor, above the caption that says "feet flat". The small front view in the Grip close-up shows the whole bar with its bent ends, as in the main picture.
 - Words changed on purpose (section 9): the Path caption no longer says "straight", because the bar first moves forward above the head and the dashed line shows that curve. At the bottom the elbow is bent to about 35 degrees, not 65-75: with hands only a little wider than the shoulders and arms overhead at the top, that is what a real body does.
@@ -959,11 +1026,11 @@ Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, pai
 | # | Issue | What changed | Proof |
 |---|---|---|---|
 | 1 | [Medium] The front cable is drawn before the far arm, so the far fist hides most of it and the bar seems to hang from the far fist | The front cable is drawn after the far arm, the far leg and the body, and under the guides and the near arm. The front pulley moved from x 152 to x ${g.PF.x}, straight above the cable hook at the top of the rep, so in the setup pose (the pose on screen longest) the cable hangs straight down onto the bar's middle, in the gap between the two fists, not over the far fist. | Check "front cable drawn over the far arm and the body": 0 of 39 points covered at any of 71 phases, including t 0-0.04 and 0.8-1.0 (QA r2: 22 of 39 on the far arm at t 0). Frames \`shots-r3/r3-hi-top-montage.png\` (t 0, 0.03, 0.06, 0.8, 0.84, 0.9), \`r3-tile1-4x.png\`, \`r3-dark-f00.png\`. |
-| 2 | [Medium] The elbow jerks at the start of the pull and the end of the return (forearm 0.3, 6.0, 19.8, 14.9, 8.6 degrees per stop; drawn elbow 173.7 to 139.0 in 0.1 s) | Two changes in the solve (section 7). (1) The elbow's bend direction moves along one smooth curve over the whole pull, from out to the side (20 degrees forward, the shoulder blade's own plane) at the top, through the plane ${LP.o.MID} degrees in front of the side plane, to the end elbow; round 2 swung it inside the first 10 % of the pull. (2) The bar leaves the top a little more gently (its place on the path is \`h(p) = p - ${LP.o.A} sin(2 pi p) / (2 pi)\`); the key poses stay at the same times (bar half-way at 12.5 %, on the chest at 25 %). (3) Extra keyframe stops where the arm is nearly straight (0.625 %, 82.8125 %, 85.9375 %, 86.71875 %), so the forearm starts and settles gently instead of at about a fifth of its top speed. | Check "smooth motion (analytic)": every joint (upper arm, forearm, far upper arm, far forearm, drawn elbow angle, elbow point, far elbow point, hand) speeds up once and slows down once in each phase; worst dip ${(lp.smoothness.worst * 100).toFixed(2)} % of the phase's top speed (limit 2 %). Forearm per 1.25 % of the rep, pull: ${lp.smoothness.pull.fa.slice(0, 7).map(v => v.toFixed(1)).join(', ')}, ... Check "smooth motion in the browser": the drawn arm read back at all ${SAMPLES.length} keyframe stops, worst dip under 2 %; drawn elbow ${f(lpSm.a025)} at t 0.025 and ${f(lpSm.a05)} at t 0.05. The fist and forearm still never cover the head (0.00 s). Frames \`r3-hi-elbow-montage.png\` (t 0.02-0.05). |
+| 2 | [Medium] The elbow jerks at the start of the pull and the end of the return (forearm 0.3, 6.0, 19.8, 14.9, 8.6 degrees per stop; drawn elbow 173.7 to 139.0 in 0.1 s) | Round 3 smoothed the elbow's bend direction and the bar's start and added stops where the arm is nearly straight. The smoothness upgrade (section 7) replaced all three with one fitted motion: minimum-jerk timing, the hand on one smooth curve that leaves the top forward and only a little down, the elbow's bend direction on one smooth curve, and a solved pose every ${LIFT_STEP} % of the rep in the pull and every 0.5 % in the return. | Check "smooth motion (analytic)": every joint (upper arm, forearm, far upper arm, far forearm, drawn elbow angle, elbow point, far elbow point, hand) speeds up once and slows down once in each phase; worst dip ${(lp.smoothness.worst * 100).toFixed(2)} % of the phase's top speed (limit 2 %). Smoothness check (a)-(d) in the browser: section 7. Check "smooth motion in the browser": the drawn arm read back at all ${SAMPLES.length} keyframe stops, worst dip under 2 %; drawn elbow ${f(lpSm.a025)} at t 0.025 and ${f(lpSm.a05)} at t 0.05. The fist or forearm over the head: ${faceHead}. Frames \`r3-hi-elbow-montage.png\` (t 0.02-0.05). |
 | 3 | [Low-Medium] The near end of the bar hides behind the chest and neck at t 0.19-0.44, so the bar's visible length changes | The bar is drawn in the near hand group, in two layers: the whole bar and the hook under the fist (the fist wraps round it), and the near end, from the little-finger side of the hand out to its tip, over the fist. The near end is nearer the camera than the hand, the forearm and the chest, so nothing covers it. (Drawing it under the near arm, as QA suggested, would hide it behind the forearm at the bottom instead, because in this view the near end and the forearm point the same way there.) | Check "near end of the bar": its outer half shows at all 41 phases; its bent part is 100 % in view over the whole rep. Frames \`r3-hi-end-montage.png\` (t 0.125, 0.19, 0.25, 0.44). |
 | 4 | [Low] The bar is not nested in the hand group, and section 9 did not list that | The bar now lives inside the near hand group (spec 2.4, RIG section 4) and counter-rotates by minus the sum of the arm's rotations, as the rig's dumbbells do, so it keeps its fixed look and the grip can never come apart. No longer a difference from the spec. | Checks "the lat bar is inside the near hand group" (2 of 2 bar layers) and "near hand on the bar": worst gap 0.000 over 201 phases. The far hand stays on the bar's far grip: ${lp.drift.far.toFixed(2)} analytic, under 0.5 in the browser. |
-| 5 | [Open, spec] The build disagrees with spec.md 3.2 and spec.md is not edited | Decision D1 stands, checked again (section 9): with hands a little wider than the shoulders and the bar at the top of the chest, the shoulder-to-hand distance forces an elbow of about 35 degrees; the spec's own key-pose table gives 30.5. The About steps match the drawing (grip a little wider than the shoulders, sit with the arms straight, pull to the top of the chest, arms straight again at the top). New: D2 (Path caption) and D3 (Grip and Pad targets). The ready spec.md edit in section 9 now covers all three. | The check summary names every DECIDED value; the exit code stays 3 until the supervisor signs off and spec.md carries the edit. |
-| 6 | [Low] The Path caption says "straight down" but the dashed guide first curves ${f(g.XF - g.X0)} units forward above the head | Decision D2: the caption drops "straight": "${EXL.chips[1].caption}" Arms that start straight overhead must bring the bar forward above the head to pass in front of the face with a fixed lean, so the curve is right and the word was wrong. | DECIDED line "Path caption". Frames \`r3-zoom2-t*.png\`, \`r3-pics-zoom2.png\`. |
+| 5 | [Open, spec] The build disagrees with spec.md 3.2 and spec.md is not edited | Decision D1 stands, checked again (section 9): with hands a little wider than the shoulders and the bar at the top of the chest, the shoulder-to-hand distance forces an elbow of about 35 degrees; the spec's own key-pose table gives 30.5. The About steps match the drawing (grip a little wider than the shoulders, sit with the arms straight, pull to the top of the chest, arms straight again at the top). New: D2 (Path caption) and D3 (Grip and Pad targets). The ready spec.md edit in section 9 now covers all three. | Signed off; spec.md section 3.2 carries D1-D3, and the four former DECIDED lines are ordinary checks now (section 11). |
+| 6 | [Low] The Path caption says "straight down" but the dashed guide first curves ${f(g.XF - g.X0)} units forward above the head | Decision D2: the caption drops "straight": "${EXL.chips[1].caption}" Arms that start straight overhead must bring the bar forward above the head to pass in front of the face with a fixed lean, so the curve is right and the word was wrong. | Check "Path caption". Frames \`r3-zoom2-t*.png\`, \`r3-pics-zoom2.png\`. |
 | 7 | [Low] Grip and Path close-ups at the setup pose (and the Grip still): the far arm pokes out of the top, the pulley is out of frame | Grip target ${g.zooms.Z1.cx}, ${g.zooms.Z1.cy}, ${g.zooms.Z1.s} (was 157, 127, 1.8); Path back on the spec's own 150, 112, 1.4 (was 152, 136, 1.6). Both hold the pulley, the whole cable and both hands; with the cable now in front, the bar is visibly tied to the machine. | Check "close-ups at the setup pose and their stills": pulley, cable and near fist inside the stage and above the bubble, far arm not out of the top, in the animation and in both stills. Check "Grip close-up over 41 phases": far arm inside the stage, far hand never under the inset. Frames \`r3-zoom-t0-montage.png\`, \`r3-pics-zoom-montage.png\`. |
 | 8 | [Low] Pad close-up: "feet flat" but the feet sit under the bubble | Decision D3: Pad target ${g.zooms.Z3.cx}, ${g.zooms.Z3.cy}, ${g.zooms.Z3.s} (spec 192, 200, 2.2): the thigh pad, the arrow above it, the shins and the feet flat on the floor, all above the bubble. | Check "close-ups ...": feet bottom above the bubble top, in the animation and in the still. Frame \`r3-zoom3-t0.png\`. |
 | 9 | [Low] The bar in the Grip front-view inset is short and straight; the scene's bar is 150 long with bent ends | The inset draws the same bar: 150 long, straight between +-48, both ends bent down 6, hands at +-36; the inset's view widened to show all of it. | Check "Grip inset bar matches the scene's bar". Frame \`r3-inset-4x.png\`. |
@@ -976,7 +1043,7 @@ Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, pai
 | 2 | The bar did not read as a wide lat bar | The bar is drawn with the rig's slight view from the front and above, with its real length and bent ends, both hands on it, the far arm in far tones, the cable on its middle. |
 | 3 | Copy and picture disagreed about grip width | Hands 72 apart (${f(t.gripTimes, 2)} times the outside shoulder width); the Grip close-up has a front-view inset with the thumbs in accent. |
 | 4 | A solid blue line ran up from the fist beside the cable | The solid line shows the way still to go, from 16 below the grip to a target mark at the top of the chest. |
-| 5 | Fist or forearm over the face about 1.28 s per rep | Never now (0.00 s); the bar passes in front of the face at x ${g.XF}. |
+| 5 | Fist or forearm over the face about 1.28 s per rep | Fist or forearm over the head now ${faceHead}; the bar passes in front of the face at x 160-${g.XF}. |
 | 6 | Weight-stack slivers at the edge of the close-ups | The whole stack hides in the Grip and Path close-ups and their stills. |
 | 7 | Upper arm drawn at 0.499 of its length | Never below ${f(t.minFu, 2)} now. |
 | 8 | Spec changes not written down | Section 9 lists every difference and the ready spec.md edit. |
@@ -987,7 +1054,8 @@ Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, pai
 |---|---|
 | \`index.html\` | The harness: the full 358 x 460 player, built exactly as the artboard (pieces A, B, C). Its small script is harness-only: \`?theme=<id>\`, \`?t=<0..1>\` (freeze rep 1 at that point), \`?zoom=1|2|3\` (or grip, path, pad), \`?mode=pictures\`, plus \`?loop=1\` and \`?speed=0.5\`. The buttons work too. |
 | \`gen.mjs\` | The single source (rig-final \`gen.mjs\` lines 1-378 copied, changes marked \`LP:\`). Writes \`index.html\`, \`poses.json\` and this file. |
-| \`shoot.cjs\` | Every check and the required screenshots in \`shots/\` (\`lp_*.png\`). Writes \`checks.txt\` and \`measured.json\`. Exit code 1 on any FAIL; 2 on any OPEN (a spec value not met that waits for a decision); 3 when everything passes but a DECIDED spec edit still has to be signed off and applied to spec.md; 0 only when all pass. |
+| \`shoot.cjs\` | Every check and the required screenshots in \`shots/\` (\`lp_*.png\`). Writes \`checks.txt\` and \`measured.json\`. Exit code 1 on any FAIL; 2 on any OPEN (a spec value not met that waits for a decision); 0 only when all pass. It runs the shared smoothness check \`../smooth-check.cjs\`. |
+| \`fit-motion.mjs\` | Refits the motion (\`LP_OPT\` in \`gen.mjs\`) to the smoothness check with a margin, keeping the path's drawn-geometry checks (section 7). Run it only after a change to the path, the grip or the shoulder blades. |
 | \`work/r3/frames.cjs\` | The QA round 3 verification frames in \`shots-r3/\` (\`r3-*.png\`), plus \`work/r3/dc-stage.cjs\`, which checks the canvas artboard against \`index.html\` and renders its own CSS and markup (section 2) into \`shots-r3/dc-*.png\`, and \`work/r3/indep.cjs\`, which re-measures every QA round 2 issue the way QA measured it, on the harness and on the artboard render (\`work/r3/indep-harness.json\`, \`work/r3/indep-dc.json\`). |
 | \`measured.json\` | Numbers measured in the browser: when the arm passes over the head and the face, and the round 3 cable, bar-end and smoothness measures. |
 | \`poses.json\` | Solved numbers: key poses, truth-table angles, the grip table, zoom targets, joint speeds per keyframe gap, drift between samples, contrast table. |
@@ -1039,7 +1107,7 @@ Four spans stacked in one grid cell; each is visible only inside its window. The
 | \`capx c3\` | ${EXL.caps[2]} | 37.5-87.5 | 1.5-3.5 s | 3.0-7.0 s | return (mid pose at 62.5 %) |
 | \`capx c4\` | ${EXL.caps[3]} | 87.5-100 | 3.5-4.0 s | 7.0-8.0 s | reset pause, arms long overhead |
 
-Easing (baked into the samples, rig section 8): pull and return each ease in (\`cubic-bezier(.4,0,1,1)\`) to their mid pose and ease out (\`cubic-bezier(0,0,.6,1)\`) after it. Tempo note: "${EXL.tempo}". Rep pill: "Rep 1 of 3" to "Rep 3 of 3", one step per rep. Pictures line: "${EXL.picsLine}". Hidden line for screen readers: "${EXL.srText}"
+Easing (baked into the samples, rig section 8): each move (pull, return) follows the minimum-jerk profile p(x) = 10x^3 - 15x^4 + 6x^5, so speed and acceleration are zero at both ends and there is no kink mid-move (UPGRADE-BRIEF.md smoothness target 1). Tempo note: "${EXL.tempo}". Rep pill: "Rep 1 of 3" to "Rep 3 of 3", one step per rep. Pictures line: "${EXL.picsLine}". Hidden line for screen readers: "${EXL.srText}"
 
 ## 5. Zoom states (root classes)
 
@@ -1075,11 +1143,11 @@ Camera: side view, lifter faces right. Hip (150, 206); torso leaned back 10 degr
 | Elbow inside angle, top | about 170, not locked | ${f(t.topInside)} | yes |
 | Upper arm, end | down by the sides, slightly behind, about 20-30 | ${f(t.endElev)} from the torso line; ${f(t.endBehind)} behind the shoulder joint (the side view shows ${f(t.endBehind2D)} degrees behind the torso line; the spec's key-pose table has 30.5) | yes |
 | Shoulder, change over the pull | about 140 | ${f(t.topElev - t.endElev)} | yes |
-| Elbow inside angle, end | about 65-75 | ${f(t.endInside)} | **DECIDED** (section 9): 65-75 needs a grip about twice shoulder width, which cannot reach "about 170" at the top; the spec's own key-pose table has 30.5 |
-| Shoulder blades | slightly raised at the top, pulled down and back first | shoulder joint 2.5 up (and 0.5 forward) at the top; 1.5 down and 1.5 back once the bar is 35 % of the way down | yes |
+| Elbow inside angle, end | about 35 (30-45; decision D1, signed off) | ${f(t.endInside)} | yes |
+| Shoulder blades | slightly raised at the top, pulled down and back first | shoulder joint 2.5 up (and 0.5 forward) at the top; 1.5 down and 1.5 back at the end, moving fastest at the start of the pull (share done 1 - (1 - p)^${LP.o.SK}: half by p = ${f(1 - 0.5 ** (1 / LP.o.SK), 2)}) | yes |
 | Torso | 10 degrees back, no swing | fixed 10 | yes |
 | Head, hips, knees under the pad, feet, wrists | fixed | fixed | yes |
-| Bar | straight down at x 156 in front of the face to the top of the chest, y 72 to 150; stack 0 to 39 | from ${barTop} just above the raised shoulder, forward above the head, straight down at x ${g.XF} in front of the face (y ${g.YK} to ${g.YC}), onto the top of the chest at (${g.X1}, ${g.Y1}); stack 0 to ${f(t.liftEnd)} (half the ${f(lp.cableTravel)} the cable pays out) | **DECIDED** (section 9) |
+| Bar | from just above the raised shoulder, forward above the head, down in front of the face to the top of the chest at (157, 150) (decision D1, signed off) | from ${barTop}, forward and down above the head, down in front of the face at x 160 to ${g.XF} (y ${g.YK} to ${g.YC}), onto the top of the chest at (${g.X1}, ${g.Y1}); stack 0 to ${f(t.liftEnd)} (half the ${f(lp.cableTravel)} the cable pays out) | yes |
 
 Key poses (stage units; z = sideways, out from the shoulder joint toward the camera; angles in degrees; \`ua\` and \`fa\` are the keyframe rotations inside the leaned torso frame, unwrapped so they never spin the long way round):
 
@@ -1087,17 +1155,32 @@ Key poses (stage units; z = sideways, out from the shoulder joint toward the cam
 |---|---|---|---|---|---|---|---|---|---|---|---|
 ${k.map(r => `| ${r.p} | ${r.shoulder.join(', ')} | ${r.grip.join(', ')} | ${r.elbow.join(', ')} | ${r.ua} | ${r.fu} | ${r.fa} | ${r.ff} | ${r.inside} | ${r.elev} | ${r.bar} | ${r.lift} |`).join('\n')}
 
-How the arm is solved (rig section 9, the 3D pole-vector solve): shoulder S(p) with the shoulder-blade offsets, grip G(p) on the path above, upper arm 38, forearm 40. The top pose puts the hand 2 behind the raised shoulder joint and ${g.Z} out to the side, at the reach an elbow of ${f(t.topInside)} gives; there the slight elbow bend points out to the side and ${LP.o.B0 - 90} degrees forward (the shoulder blade's own plane, where arms held overhead with an overhand grip sit).
+How the arm is solved (rig section 9, the 3D pole-vector solve): shoulder S(p) with the shoulder-blade offsets, grip G(p) on the path above, upper arm 38, forearm 40. The top pose puts the hand 2 behind the raised shoulder joint and ${g.Z} out to the side, at the reach an elbow of ${f(t.topInside)} gives; there the slight elbow bend points out to the side and ${f(LP.o.B0 - 90)} degrees forward.
 
-The elbow's bend direction (the pole) then moves along one smooth curve (a quadratic Bezier, normalised) from that top direction, through a plane ${LP.o.MID} degrees in front of the body's side plane, pointing a little down (reached at p = ${LP.o.PM}), to the chosen end elbow: ${f(t.endElev)} from the torso line, ${f(t.endBehind)} behind the shoulder joint. The curve's parameter runs at a constant rate on each side of p = ${LP.o.PM}, with the same rate where the two sides meet, so the elbow's direction never stops or lurches. The bar's place on its path at pose p is \`h(p) = p - ${LP.o.A} sin(2 pi p) / (2 pi)\`: h(0.5) = 0.5, so the key poses keep their times, and the bar leaves the top a little more gently, because near a straight arm the elbow bends a lot for a small hand move. Round 2 swung the elbow from straight out to the side into the forward plane within the first 10 % of the pull, which made the elbow jerk at the start of the pull and at the end of the return (QA r3 issue 2). The settings (${LP.o.B0 - 90} degrees at the top, ${LP.o.MID} degrees at p = ${LP.o.PM}, A = ${LP.o.A}) came from a search (\`work/r3/explore/\`) for the smoothest motion that also keeps the fist and forearm off the head (0.00 s) and the upper arm drawn at least ${f(t.minFu, 2)} of its length.
+The smoothness check (\`../smooth-check.cjs\`, UPGRADE-BRIEF.md smoothness target 4) asks every drawn angle to change its acceleration evenly while the timing is minimum-jerk: at the keyframe stops, no change of acceleration may pass 3 times its median over the move. That holds only when each angle runs nearly in step with the progress p, with no sudden change of rate anywhere in the move. Round 3's motion was pieced together (a curve above the head, a straight drop at x 160, a curve onto the chest, the shoulder blades done by p = 0.35, a bend in the elbow direction's timing), and every joint changed rate at each seam (up to 15.6 x in the browser). So the motion is now described by smooth curves in p and fitted to the check (\`fit-motion.mjs\`, docs/COACHING-DECISIONS.md D-L1):
 
-Joint speed per keyframe gap (degrees or units per 1.25 % of the rep; the return's gaps are 3.125 %, scaled to match), as the CSS plays it:
+- the hand: x = X0 + a Bernstein curve through the offsets ${LP.o.PX.join(', ')}; y = Y0 + the shares ${LP.o.PV.join(', ')} of the drop to ${g.Y1} (degree 6). It leaves the top forward and only a little down: moving the hand straight toward the shoulder bends a nearly straight elbow in a sudden burst, and a forward move bends it gradually;
+- the elbow's bend direction (the pole): one cubic Bernstein curve from the top direction through the directions (forward, out, down along the torso) ${LP.o.PC.map(v => `(${v.join(', ')})`).join(' and ')} to the chosen end elbow: ${f(t.endElev)} from the torso line, ${f(t.endBehind)} behind the shoulder joint;
+- the shoulder blades: share done 1 - (1 - p)^${LP.o.SK};
+- the elbow at the top: ${f(t.topInside)} ("about 170, not locked"; round 3's 174 made the first bend sharper).
+
+The fit keeps a margin under every limit and keeps the drawn checks that the path's shape decides: the far fist never under the Grip close-up's inset, the face clear while the bar passes it, the fist and forearm clear of the head, tile 2's pose, the elbow closing steadily, the upper arm never drawn short.
+
+Smoothness check, computed here from the stops as written (the browser reads the same numbers, section 11); a = speed over the first and last 1/120 s as a share of the top speed (limit 1 %), b = largest velocity step between samples 1/120 s apart (limit 8 %), c = largest change of acceleration between keyframe stops over its median (limit 3 x):
+
+| Channel | Moves (deg) | Pull a | Pull b | Pull c | Return a | Return b | Return c |
+|---|---|---|---|---|---|---|---|
+${lp.smoothCheck.phases.lift.rows.map((r, i) => { const q = lp.smoothCheck.phases.return.rows[i], pp = v => (v * 100).toFixed(2) + ' %', cx = v => (v === null ? '-' : v.toFixed(2) + ' x'); return `| ${r.name} | ${r.travel === null ? '-' : f(r.travel)} | ${pp(r.a)} | ${pp(r.b)} | ${cx(r.c)} | ${pp(q.a)} | ${pp(q.b)} | ${cx(q.c)} |`; }).join('\n')}
+
+(d) largest joint angle step between samples 1/120 s apart: ${lp.smoothCheck.d.v.toFixed(2)} degrees (${lp.smoothCheck.d.k}; limit 4). Before the upgrade (\`inOut\` easing, ${43} stops): pull a up to 35.7 %, b up to 80.7 %, c up to 15.6 x; return a up to 26.6 %, b up to 92.8 %, c up to 19.5 x.
+
+Joint speed per keyframe gap, every 10th gap (degrees or units per 1.25 % of the rep, scaled from the ${LIFT_STEP} % and 0.5 % gaps), as the CSS plays it:
 
 | Joint | Pull (0-25 %) | Return (37.5-87.5 %) |
 |---|---|---|
-${Object.keys(lp.smoothness.pull).map(k => `| ${({ ua: 'upper arm (lp-ua)', fa: 'forearm (lp-fa)', fua: 'far upper arm (lp-fua)', ffa: 'far forearm (lp-ffa)', elbowAngle: 'drawn elbow angle', elbow: 'elbow point', farElbow: 'far elbow point', hand: 'hand' })[k]} | ${lp.smoothness.pull[k].map(v => v.toFixed(1)).join(' ')} | ${lp.smoothness.ret[k].map(v => v.toFixed(1)).join(' ')} |`).join('\n')}
+${Object.keys(lp.smoothness.pull).map(k => `| ${({ ua: 'upper arm (lp-ua)', fa: 'forearm (lp-fa)', fua: 'far upper arm (lp-fua)', ffa: 'far forearm (lp-ffa)', elbowAngle: 'drawn elbow angle', elbow: 'elbow point', farElbow: 'far elbow point', hand: 'hand' })[k]} | ${lp.smoothness.pull[k].filter((v, i) => i % 10 === 9).map(v => v.toFixed(1)).join(' ')} | ${lp.smoothness.ret[k].filter((v, i) => i % 10 === 9).map(v => v.toFixed(1)).join(' ')} |`).join('\n')}
 
-Each row rises once and falls once per phase (worst dip ${(lp.smoothness.worst * 100).toFixed(2)} %). Every keyframe stop is a pose solved at p(u); ${SAMPLES.length} stops per group (every 1.25 % in the pull, every 3.125 % in the return, with extra stops at 0.625 %, 82.8125 %, 85.9375 % and 86.71875 % where the arm is nearly straight), written twice (\`-a\`, \`-b\`). Between stops (every value runs linearly): the far hand stays within ${lp.drift.far.toFixed(2)} of the bar's far grip, the cable's free end within ${lp.drift.cable.toFixed(2)} of the hook (the hook dot has radius 2.4, so the join never shows), and the drawn near hand within ${lp.drift.nearPath.toFixed(2)} of the solved path; the near hand holds the bar in its own group, so its gap is 0.
+Each row rises once and falls once per phase (worst dip ${(lp.smoothness.worst * 100).toFixed(2)} %). Every keyframe stop is a pose solved at p(u); ${SAMPLES.length} stops per group (every ${LIFT_STEP} % in the 1 s pull and every 0.5 % in the 2 s return, so both moves have 100 steps; the hold and the pause only at their ends), written twice (\`-a\`, \`-b\`); angles and scales to 4 decimals, moves to 3 (2 decimals alone would break check (c)). Between stops (every value runs linearly): the far hand stays within ${lp.drift.far.toFixed(2)} of the bar's far grip, the cable's free end within ${lp.drift.cable.toFixed(2)} of the hook (the hook dot has radius 2.4, so the join never shows), and the drawn near hand within ${lp.drift.nearPath.toFixed(2)} of the solved path; the near hand holds the bar in its own group, so its gap is 0.
 
 The far arm: the same arm on the far side, placed with the rig's depth view (each joint moves (0.25, -0.15) for every unit it is further from the camera, the view that puts the far leg at \`translate(5 -3)\` for its 20 units of hip width): far shoulder +44 units of depth, far elbow +2 x its distance from the centre line, far hand +72. It is keyframed with the same method (\`lp-fua\`, \`lp-ful\`, \`lp-ffa\`, \`lp-ffl\`, \`lp-fhd\`), painted in the far tones, and drawn behind the body, the cable and the bar, so the head, the torso and the cable cover it where they really would.
 
@@ -1120,7 +1203,7 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 
 | Spec 3.2 | Now | Why |
 |---|---|---|
-| Bar straight down at x 156, y 72 to 150; stack lift 0 to 39 | from ${barTop} forward above the head, straight down at x ${g.XF} in front of the face, onto (${g.X1}, ${g.Y1}); lift 0 to ${f(t.liftEnd)} | Decision D1 below: "about 170" at the top puts the hand about 78 above the raised shoulder (y ${f(g.Y0)}), a little behind x 156. x ${g.XF} in front of the face keeps the fist off the nose (QA r2 issue 5); x ${g.X1} at the end puts the bar on the chest. The stack still rises half as far as the cable pays out. |
+| Bar straight down at x 156, y 72 to 150; stack lift 0 to 39 | from ${barTop} forward and down above the head, down in front of the face at x 160 to ${g.XF}, onto (${g.X1}, ${g.Y1}); lift 0 to ${f(t.liftEnd)} | Decision D1 below: "about 170" at the top puts the hand about 78 above the raised shoulder (y ${f(g.Y0)}), a little behind x 156. x 160 or more in front of the face keeps the fist off the nose (QA r2 issue 5), and the path is one smooth curve so the motion passes the smoothness check (section 7); x ${g.X1} at the end puts the bar on the chest. The stack still rises half as far as the cable pays out. |
 | Elbow at the end about 65-75 | ${f(t.endInside)} | Decision D1 below. |
 | Key pose table (fu, ff from a 2D fit) | the 3D solve in section 7 | The spec's table was a 2D fit with the bar at (156, 72); it gives 148.4 at the top and 30.5 at the end. This build keeps its end (about 30) and meets the truth table's top instead. |
 | Camera line: "a 44-unit bar seen slightly from the front" | the bar and the far arm drawn with the rig's own depth view (section 7); the drawn bar is 44 long, as the spec says | QA r2 issue 2: a bar drawn "from the front" on a true side view read as a stick out of the chest. |
@@ -1138,7 +1221,7 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 
 Back to the spec (so no longer differences): the lat bar lives inside the near hand group (spec 2.4, RIG section 4; round 2 moved it with its own keyframes, and section 9 did not say so); the Path close-up target 150, 112, 1.4 (round 2 had 152, 136, 1.6); Pictures tile 2 at 12.5 % (the fist is ${face ? face.tile2Gap.toFixed(1) : '?'} clear of the face there and the elbow is in view under the bar); the Grip bubble text "Hands a little wider than your shoulders, thumbs around the bar."
 
-### Decision D1 (decided by the builder; waits for the supervisor's sign-off): the arm angle at the top, and the grip width
+### Decision D1 (decided by the builder, signed off): the arm angle at the top, and the grip width
 
 In plain words: spec 3.2 asked for four things that cannot all be true at once in any drawing of a real body:
 
@@ -1147,7 +1230,7 @@ In plain words: spec 3.2 asked for four things that cannot all be true at once i
 3. Hands "a little wider than your shoulders" (Grip bubble and About step 2).
 4. The bar straight down at x 156 from y 72 (anchors), which with the lean puts the hand in front of the shoulder at the top.
 
-What each grip gives, with the same rig, lean, shoulder blades and path method (hand straight above the raised shoulder at the top; computed by \`makeLP(Z)\` in \`gen.mjs\`):
+What each grip gives, with the same rig, lean, shoulder blades and path method (hand straight above the raised shoulder at the top, the same path curve; computed by \`makeLP(Z)\` in \`gen.mjs\`):
 
 | Hands apart (times the outside shoulder width) | Hand out from the shoulder joint | Arm at the top, from the torso line | Elbow at the bottom | Shoulder moves | Upper arm never drawn shorter than | Bar starts at y |
 |---|---|---|---|---|---|---|
@@ -1155,7 +1238,7 @@ ${GRIP_OPTIONS.map(o => `| ${f(o.times, 2)}${o.Z === GRIP_Z ? ' (built: "a littl
 
 A wider grip opens the elbow at the bottom toward 65-75, but tips the arms out to the side, so they cannot get overhead; no grip meets 1 and 2 together. With the bar at (156, 72), no grip reaches 170 at all.
 
-Decision: keep what a beginner reads and sees, and what the lats need: the spec's grip words (3) and arms overhead at the top (1), with the shoulder moving about 140. Hands ${f(G14.times, 2)} times the outside shoulder width. The bottom elbow follows from that: ${f(G14.endInside)}, which is what spec 3.2's own key-pose table already gives (30.5). The round-1 wide grip (${f(G39.times, 2)} times) reached only ${f(G39.topElev)} at the top even with this path. Decided by the builder under the working rule "decide, don't ask" (AGENTS.md), because QA round 2 marked the open item as a failure. QA round 2 checked the geometry on its own and it holds: at the bottom the shoulder joint (${[].concat(end.shoulder).join(', ')}) is ${f(Math.hypot(g.X1 - Number([].concat(end.shoulder)[0]), g.Y1 - Number([].concat(end.shoulder)[1]), g.Z))} from the hand (${g.X1}, ${g.Y1}, ${g.Z} out), and a 38 upper arm with a 40 forearm can span that only with the elbow at about 35 degrees. It still needs the supervisor's sign-off; the supervisor can reverse it, and the table above shows the cost of each other grip.
+Decision: keep what a beginner reads and sees, and what the lats need: the spec's grip words (3) and arms overhead at the top (1), with the shoulder moving about 140. Hands ${f(G14.times, 2)} times the outside shoulder width. The bottom elbow follows from that: ${f(G14.endInside)}, which is what spec 3.2's own key-pose table already gives (30.5). The round-1 wide grip (${f(G39.times, 2)} times) reached only ${f(G39.topElev)} at the top even with this path. Decided by the builder under the working rule "decide, don't ask" (AGENTS.md), because QA round 2 marked the open item as a failure. QA round 2 checked the geometry on its own and it holds: at the bottom the shoulder joint (${[].concat(end.shoulder).join(', ')}) is ${f(Math.hypot(g.X1 - Number([].concat(end.shoulder)[0]), g.Y1 - Number([].concat(end.shoulder)[1]), g.Z))} from the hand (${g.X1}, ${g.Y1}, ${g.Z} out), and a 38 upper arm with a 40 forearm can span that only with the elbow at about 35 degrees. Signed off; the table above shows the cost of each other grip.
 
 Drawing, player words and About steps now say the same thing:
 
@@ -1171,11 +1254,11 @@ Drawing, player words and About steps now say the same thing:
 
 No player word or About step names the elbow angle, so the 35-degree end needs no copy change.
 
-### Decision D2 (decided by the builder; waits for the supervisor's sign-off): the Path caption
+### Decision D2 (decided by the builder, signed off): the Path caption
 
-Spec 3.2: "The bar comes straight down in front of your face to the top of your chest." Arms that start straight overhead, with a fixed lean, must bring the bar ${f(g.XF - g.X0)} units forward above the head before it can pass in front of the face; the dashed guide in the Path close-up shows that curve, so a beginner would see a curve while reading "straight". Now: "${EXL.chips[1].caption}" The part in front of the face is straight, and the words no longer claim more.
+Spec 3.2: "The bar comes straight down in front of your face to the top of your chest." Arms that start straight overhead, with a fixed lean, must bring the bar ${f(g.XF - g.X0)} units forward above the head before it can pass in front of the face; the dashed guide in the Path close-up shows that curve, so a beginner would see a curve while reading "straight". Now: "${EXL.chips[1].caption}" In front of the face the bar runs nearly straight down (x 160 to ${g.XF}), and the words no longer claim more.
 
-### Decision D3 (decided by the builder; waits for the supervisor's sign-off): the Grip and Pad close-up targets
+### Decision D3 (decided by the builder, signed off): the Grip and Pad close-up targets
 
 - Grip: spec 156, 111, 1.8; now ${z.Z1.cx}, ${z.Z1.cy}, ${z.Z1.s}. The hand travels 84 units, so at 1.8 no camera spot holds the setup pose's pulley and far arm and the chest pose's ring at once: at the setup pose (the pose shown longest: before Play, after the 3 reps, and in the Grip still) the pulley and the top of the far arm were cut off, so the bar had no visible link to the machine (QA r2). At ${z.Z1.s} the pulley, the whole cable and both fists show at the setup pose, and the ring stays inside the stage, above the bubble and left of the inset for the whole rep.
 - Pad: spec 192, 200, 2.2; now ${z.Z3.cx}, ${z.Z3.cy}, ${z.Z3.s}. At the spec's target the feet sat under the bubble that says "feet flat" (QA r2: feet bottom 265.6, bubble 210-264). Now the thigh pad, the arrow above it, the shins and the feet flat on the floor all show above the bubble.
@@ -1183,11 +1266,11 @@ Spec 3.2: "The bar comes straight down in front of your face to the top of your 
 
 ### Spec edit to apply to spec.md section 3.2 (ready to paste)
 
-Applied to \`../spec.md\` section 3.2 on 2026-09-27 (items 1-7 below, word for word; the supervisor's sign-off of D1-D3 is still open). The lines replaced in section 3.2:
+Applied to \`../spec.md\` section 3.2 (items 1-7 below, word for word; D1-D3 signed off; items 3 and 5 applied again after the smoothness upgrade moved the path and the key poses). The lines replaced in section 3.2:
 
 1. Camera line, last sentence. Old: "The bar is drawn as a 44-unit bar seen slightly from the front so it reads as a bar, not a dot." New: "The bar is drawn with the rig's slight view from the front and above (the view of the far leg: 0.25 across and 0.15 up for every unit of depth), 44 units long on screen, with both hands on it; the far arm is drawn in the far tones behind the head and body, for this player only (an exception to RIG section 7)."
 2. Equipment line. New: "base rail x 16-262, y 250-258; upright x 72-84, y 36-250; top beam x 16-178, y 36-44; front pulley r 5.2 at (${g.PF.x}, 39.2); rear pulley r 7 at (47, 47); cable bar middle -> front pulley -> beam -> rear pulley -> stack bracket; weight stack: the rig's 10 plates 48 x 12 at x 16-64 from y 112.5, pin at plate 7; seat pad x 118-186, y 214-224 on a post; thigh pad roller x 180-204, y 184-198 (radius 7) on a post; lat bar 150 long (ends bent down 6 over the last 27), hands 72 apart, the cable on its middle."
-3. Anchors line, last two sentences. Old: "Bar straight down at x 156: y 72 → 150. Stack lift 0 → 39." New: "Grip ${g.Z} out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (${f(g.X0)}, ${f(g.Y0)}), just above the raised shoulder, forward above the head to x ${g.XF} at y ${g.YK}, straight down at x ${g.XF} in front of the face to y ${g.YC}, onto the top of the chest at (${g.X1}, ${g.Y1}). Stack lift 0 → ${f(t.liftEnd)} (half the cable travel)."
+3. Anchors line, last two sentences. Old: "Bar straight down at x 156: y 72 → 150. Stack lift 0 → 39." New: "Grip ${g.Z} out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (${f(g.X0)}, ${f(g.Y0)}), just above the raised shoulder, forward and down above the head, down in front of the face at x 160 to ${g.XF} (y ${g.YK} to ${g.YC}), onto the top of the chest at (${g.X1}, ${g.Y1}), along one smooth curve. Stack lift 0 → ${f(t.liftEnd)} (half the cable travel)."
 4. Truth table, Elbow row. Old: "| Elbow (inside angle) | about 170 degrees (not locked) | about 65-75 degrees | about 100 degrees | moves |". New: "| Elbow (inside angle) | about 170 degrees (not locked) | about 35 degrees (30-45) | about 140 degrees | moves |".
 5. Key-pose table: replace with (bar = grip centre; angles are the solved 3D values; the keyframe values are in the player's poses.json):
 
@@ -1206,15 +1289,15 @@ Captions, Pictures captions, tile times (0, 12.5, 31, 62.5 %), the Info block an
 
 | Risk | Handling |
 |---|---|
-| D1-D3 not yet signed off (spec.md section 3.2 already carries them, applied 2026-09-27) | \`shoot.cjs\` reports the ${(checks.match(/^DECIDED/gm) || []).length} DECIDED lines (D1, D2, D3) and exits with code 3 until the supervisor signs them off (it does not read spec.md, so code 3 stays until then). |
+| The motion is fitted to the smoothness check, so a later change to the path, the grip, the shoulder blades or the far arm can break it | \`shoot.cjs\` runs the check on every build and fails on it; \`node fit-motion.mjs\` refits \`LP_OPT\` for the new geometry with the same limits (and a margin) and the same drawn-geometry constraints. |
 | The far arm is new to the rig (RIG section 7 said never) and could clutter the face | It is drawn in the far tones and behind the head and body, so it never covers the face; at 2x zoom the far hand is 21 units away on the same bar, where a second hand belongs. If the supervisor prefers the rig rule, deleting \`.far-arm\` leaves a correct bar without the far hand (QA r2 issue 2 would then return). |
-| The upper arm crosses the face ${faceEdge} | Measured by \`shoot.cjs\` (any near-arm part over the face's front edge, 401 phases). It happens only while the bar is above the head, as the arms come down from overhead or go back up. While the bar passes the face, the face is always clear (0 of those phases), and the fist or forearm never covers the head at all (was 1.28 s). Avoiding it completely would need the elbow to swing straight at the camera, which draws the upper arm short (QA r2 issue 7). |
-| The bar moves forward about ${f(g.XF - g.X0)} units above the head before it comes straight down | That is where arms that start straight overhead must bring the bar to pass in front of the face with a fixed lean. The Path caption no longer says "straight" (D2), so the words match the curved dashed guide. |
-| The arm is nearly straight at the very start of the pull and the end of the return, where a small hand move bends the elbow a lot | Extra keyframe stops there. The near forearm now starts at ${f(lp.smoothness.pull.fa[0])} and settles at ${f(lp.smoothness.ret.fa[lp.smoothness.ret.fa.length - 1])} degrees per 1.25 % of the rep (top speed ${f(Math.max(...lp.smoothness.pull.fa))}). The far forearm, dim and behind the head, still turns ${f(lp.smoothness.ret.ffa[lp.smoothness.ret.ffa.length - 2])} then ${f(lp.smoothness.ret.ffa[lp.smoothness.ret.ffa.length - 1])} degrees per 1.25 % in the last two stops of the return (top speed ${f(Math.max(...lp.smoothness.ret.ffa))}): its speed still rises once and falls once, but it settles late. Left as is: it is the far side, drawn behind the head in the far tones; a change would mean a new far-arm solve. |
+| The upper arm crosses the face ${faceEdge} | Measured by \`shoot.cjs\` (any near-arm part over the face's front edge, 401 phases). It happens only while the bar is above the head, as the arms come down from overhead or go back up. While the bar passes the face, the face is always clear (0 of those phases); the fist or forearm over the head: ${faceHead} (round 1: 1.28 s). Avoiding it completely would need the elbow to swing straight at the camera, which draws the upper arm short (QA r2 issue 7). |
+| The bar moves forward about ${f(g.XF - g.X0)} units above the head before it comes down in front of the face | That is where arms that start straight overhead must bring the bar to pass in front of the face with a fixed lean. The Path caption no longer says "straight" (D2), so the words match the curved dashed guide. |
+| The arm is nearly straight at the top, where a hand move toward the shoulder bends the elbow in a sudden burst | The hand leaves the top forward and only a little down, and the top elbow is ${f(t.topInside)}, so the elbow starts to bend gradually. The near and the far arm now start and settle with the smoothness check's (a) at ${(Math.max(...['lift', 'return'].flatMap(ph => lp.smoothCheck.phases[ph].rows.filter(r => /^lp-f/.test(r.name)).map(r => r.a))) * 100).toFixed(2)} % of the top speed at most (limit 1 %); round 3's late settle of the far forearm is gone. |
 | At the bottom the near end of the bar lies over the near forearm | In this view the near end and the forearm point the same way there. The near end is nearer the camera than the forearm, so drawing it on top is right; drawing it under the arm (QA r2's suggestion) would hide it behind the forearm there and bring back the changing bar length. |
 | The hand-to-bar gap between baked samples is ${lp.drift.far.toFixed(2)} (round 1: 0.31) | Below the 0.5 limit analytically and in the browser (section 11); the fist is 12 wide, so it does not show. More samples would add page size for no visible gain. |
 | Someone edits a keyframe by hand and a hand leaves the bar | Change \`gen.mjs\` and rebuild; \`shoot.cjs\` fails when either hand's gap passes 0.5 or an angle leaves its range. |
-| Pictures 2 and 3 both show the bar low | Tile 2 (12.5 %) has the bar at the forehead with the elbows under it and a down arrow; tile 3 (31 %) has it on the chest. |
+| Pictures 2 and 3 both show the bar low | Tile 2 (12.5 %) has the bar near the forehead with the elbows under it and a down arrow; tile 3 (31 %) has it on the chest. |
 | Page size about ${Math.round(fs.statSync(path.join(DIR, 'index.html')).size / 1000)} KB, because every keyframe set is written twice and the far arm has its own | Generated, never typed; the real app plays the same samples with the Web Animations API. |
 
 ## 11. Checks run (\`node shoot.cjs\`, Chromium)

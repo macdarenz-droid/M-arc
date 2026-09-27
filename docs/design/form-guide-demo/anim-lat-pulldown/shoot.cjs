@@ -1,6 +1,6 @@
 // shoot.cjs: every check for the Lat Pulldown player, plus the screenshots in shots/.
-// Run after `node gen.mjs`:  node shoot.cjs   (exit 1 on any FAIL, 2 on any OPEN, 3 when all pass but a DECIDED spec edit is
-// still to be applied to spec.md, 0 when all pass; writes checks.txt and measured.json)
+// Run after `node gen.mjs`:  node shoot.cjs   (exit 1 on any FAIL, 2 on any OPEN, 0 when all pass; writes checks.txt and
+// measured.json)
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
@@ -14,15 +14,9 @@ const check = (ok, msg) => { const l = (ok ? 'PASS ' : 'FAIL ') + msg; console.l
 const openCheck = (ok, msg, why) => { const l = (ok ? 'PASS ' : 'OPEN ') + msg + (ok ? '' : ` -- NOT MET: ${why}`); console.log(l); lines.push(l); if (!ok) openItems.push(msg); };
 const f1 = v => Number(v).toFixed(1);
 
-// DECIDED: a spec 3.2 value this build changes on purpose, by a recorded decision (D1, PLAYER.md section 9), because the
-// spec's own numbers cannot all hold together. It passes only inside the decided range, and it is never silent: the
-// summary names it and the exit code is 3 until spec.md carries the edit (1 on any FAIL, 2 on any OPEN).
-const decidedItems = [];
-const decidedCheck = (ok, msg, why) => { const l = (ok ? 'DECIDED ' : 'FAIL ') + msg + ` -- ${why}`; console.log(l); lines.push(l); if (!ok) fails.push(msg); else decidedItems.push(msg); };
 
 // ---- 1. Truth table (spec 3.2), from the solved poses --------------------------------
 const T = P.truth, G = P.geo;
-const DECISIONS = 'decisions D1-D3';
 check(T.topInside >= 160 && T.topInside <= 175, `top: elbow inside angle ${f1(T.topInside)} within 160-175 (spec about 170, not locked)`);
 check(T.topElev >= 160 && T.topElev <= 180, `top: upper arm ${f1(T.topElev)} deg from the torso line (the real joint angle), within 160-180 (spec 3.2: arms overhead, about 170)`);
 check(T.topElev2D >= 165, `top: the side view draws the upper arm ${f1(T.topElev2D)} deg from the torso line, so the arms read as overhead (limit 165)`);
@@ -30,18 +24,18 @@ const rom = T.topElev - T.endElev;
 check(rom >= 130 && rom <= 150, `shoulder range of motion ${f1(rom)} deg (spec about 140; range 130-150)`);
 check(T.endElev >= 20 && T.endElev <= 30.5, `end: upper arm ${f1(T.endElev)} deg from the torso line, within 20-30 (spec: elbows down by the sides)`);
 check(T.endBehind > 0 && T.endBehind2D > 0 && T.endBehind2D <= 30.5, `end: elbow ${f1(T.endBehind)} behind the shoulder joint; the side view shows the upper arm ${f1(T.endBehind2D)} deg behind the torso line (spec: slightly behind; its key-pose table has 30.5)`);
-decidedCheck(T.endInside >= 30 && T.endInside <= 45, `end: elbow inside angle ${f1(T.endInside)} within 30-45`, `spec 3.2's truth table says 65-75; only a grip about twice shoulder width gives that, and such a grip cannot reach "about 170" at the top (PLAYER.md section 9, grip table). Decision D1 keeps the spec's grip words and top angle and follows the spec's own key-pose table here (30.5)`);
-decidedCheck(Math.abs(G.Y1 - 150) < 0.01 && G.Y0 > 60 && G.Y0 < 72 && Math.abs(T.liftEnd - 0.5 * P.cableTravel) < 0.01 && Math.abs(G.PF.x - G.C0[0]) < 0.06, `bar: grip centre from (${f1(G.X0)}, ${f1(G.Y0)}) down to (${f1(G.X1)}, ${f1(G.Y1)}) at the top of the chest; stack lift 0 to ${f1(T.liftEnd)} (half the ${f1(P.cableTravel)} the cable pays out)`, `spec 3.2 says straight down at x 156 from y 72 to 150 and a lift of 39; with the arms about 170 overhead the hand sits about 78 above the raised shoulder, so the bar starts at y ${f1(G.Y0)} just above the shoulder and moves forward above the head, then comes straight down at x ${G.XF} in front of the face (the fist clears the nose) onto the chest at x ${G.X1}; the front pulley sits at x ${G.PF.x}, straight above the hook at the top of the rep (QA r3), so the cable hangs straight down between the hands in the setup pose`);
+check(T.endInside >= 30 && T.endInside <= 45, `end: elbow inside angle ${f1(T.endInside)} within 30-45 (spec 3.2 truth table: about 35, 30-45; decision D1: hands a little wider than the shoulders and arms overhead at the top leave the elbow about 35 at the chest)`);
+check(Math.abs(G.Y1 - 150) < 0.01 && G.Y0 > 60 && G.Y0 < 72 && Math.abs(T.liftEnd - 0.5 * P.cableTravel) < 0.01 && Math.abs(G.PF.x - G.C0[0]) < 0.06, `bar: grip centre from (${f1(G.X0)}, ${f1(G.Y0)}), just above the raised shoulder, down to (${f1(G.X1)}, ${f1(G.Y1)}) at the top of the chest; stack lift 0 to ${f1(T.liftEnd)}, half the ${f1(P.cableTravel)} the cable pays out; front pulley at x ${G.PF.x}, straight above the hook at the top, so the cable hangs straight down between the hands in the setup pose (spec 3.2 anchors and equipment, decision D1)`);
 // D2 (QA r3): the Path caption no longer says "straight", because the path curves forward above the head
 {
   const cap2 = P.chips[1].caption, pathForward = G.XF - G.X0;
-  decidedCheck(!/straight/i.test(cap2) || pathForward <= 2, `Path caption "${cap2}"`, `spec 3.2 says "The bar comes straight down in front of your face to the top of your chest."; the bar moves ${f1(pathForward)} forward above the head before it drops past the face, and the dashed guide shows that curve, so "straight" would contradict the picture (decision D2, PLAYER.md section 9)`);
+  check(!/straight/i.test(cap2) || pathForward <= 2, `Path caption "${cap2}" is spec 3.2's and does not say "straight": the bar moves ${f1(pathForward)} forward above the head before it passes the face, as the dashed guide shows (decision D2)`);
 }
 // D3 (QA r3): Grip and Pad close-up targets differ from the spec; Path is back on the spec's own target
 {
   const z = G.zooms, same = (a, b) => a.cx === b[0] && a.cy === b[1] && a.s === b[2];
   check(same(z.Z2, [150, 112, 1.4]), `Path close-up target ${z.Z2.cx}, ${z.Z2.cy}, ${z.Z2.s} is the spec's own (150, 112, 1.4): it holds the pulley, the whole path, the face and the chest above the bubble`);
-  decidedCheck(!same(z.Z1, [156, 111, 1.8]) && !same(z.Z3, [192, 200, 2.2]), `close-up targets Grip ${z.Z1.cx}, ${z.Z1.cy}, ${z.Z1.s} and Pad ${z.Z3.cx}, ${z.Z3.cy}, ${z.Z3.s}`, `spec 3.2 has Grip 156, 111, 1.8 and Pad 192, 200, 2.2; at those the Grip view cuts off the pulley and the far fist at the setup pose and puts the ring under the bubble at the chest, and the Pad view puts the feet under the caption bubble that says "feet flat" (decision D3, PLAYER.md section 9; checked in the browser below)`);
+  check(!same(z.Z1, [156, 111, 1.8]) && !same(z.Z3, [192, 200, 2.2]), `close-up targets Grip ${z.Z1.cx}, ${z.Z1.cy}, ${z.Z1.s} and Pad ${z.Z3.cx}, ${z.Z3.cy}, ${z.Z3.s} are spec 3.2's chip table values, not the first draft's Grip 156, 111, 1.8 and Pad 192, 200, 2.2, which cut off the pulley and the far fist at the setup pose and put the feet under the "feet flat" bubble (decision D3; checked in the browser below)`);
 }
 check(Math.abs(T.tile2.at - 0.125) < 1e-9 && T.tile2.elbowBelowGrip >= 30 && T.tile2.forearmFromVertical <= 15, `tile 2 "Drive your elbows down" at the spec's 12.5 % of the rep: the forearm stands ${f1(T.tile2.forearmFromVertical)} deg from vertical under the bar and the elbow is ${f1(T.tile2.elbowBelowGrip)} below the hand, so the elbow is in view, driving down (limits 15 deg, 30)`);
 check(T.minFu >= 0.55, `upper arm drawn length never below 0.55 (min ${T.minFu.toFixed(3)}), so it never looks stubby or points straight at the camera (chest-press rig limit 0.55)`);
@@ -436,8 +430,8 @@ check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `gr
   { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lat pulldown', freeze: 'lp', grips: [{ name: 'near hand', sel: '.stage .figure-arm .lp-ua .lp-fa .lp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
   check(errors.length === 0, `page errors: ${errors.length}${errors.length ? ' ' + errors.join(' | ') : ''}`);
   await browser.close();
-  const summary = fails.length ? `${fails.length} FAILED${openItems.length ? `, ${openItems.length} OPEN` : ''}` : openItems.length ? `NO FAILURES; ${openItems.length} OPEN (a spec value not met that waits for a decision)` : decidedItems.length ? `NO FAILURES; 0 OPEN; ${decidedItems.length} DECIDED (spec 3.2 values changed by ${DECISIONS}: the supervisor signs them off and applies the spec.md edit in PLAYER.md section 9)` : 'ALL PASS';
+  const summary = fails.length ? `${fails.length} FAILED${openItems.length ? `, ${openItems.length} OPEN` : ''}` : openItems.length ? `NO FAILURES; ${openItems.length} OPEN (a spec value not met that waits for a decision)` : 'ALL PASS';
   console.log(summary);
   fs.writeFileSync(path.join(DIR, 'checks.txt'), lines.join('\n') + `\n${summary}\n`);
-  process.exit(fails.length ? 1 : openItems.length ? 2 : decidedItems.length ? 3 : 0);
+  process.exit(fails.length ? 1 : openItems.length ? 2 : 0);
 })();

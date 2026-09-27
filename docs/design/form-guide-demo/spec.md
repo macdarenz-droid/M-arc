@@ -352,7 +352,7 @@ Info block:
 
 - Camera: **side view**. Reason: shows the small fixed lean, the bar coming down in front of the face to the top of the chest, and the thigh pad holding you down. The bar is drawn with the rig's slight view from the front and above (the view of the far leg: 0.25 across and 0.15 up for every unit of depth), 44 units long on screen, with both hands on it; the far arm is drawn in the far tones behind the head and body, for this player only (an exception to RIG section 7).
 - Equipment: base rail x 16-262, y 250-258; upright x 72-84, y 36-250; top beam x 16-178, y 36-44; front pulley r 5.2 at (146.3, 39.2); rear pulley r 7 at (47, 47); cable bar middle → front pulley → beam → rear pulley → stack bracket; weight stack: the rig's 10 plates 48 x 12 at x 16-64 from y 112.5, pin at plate 7; seat pad x 118-186, y 214-224 on a post; thigh pad roller x 180-204, y 184-198 (radius 7) on a post; lat bar 150 long (ends bent down 6 over the last 27), hands 72 apart, the cable on its middle.
-- Anchors: hip (150,206); torso leaned back 10 degrees, constant (`rotate(-10)`); shoulder (139.2,144.9); thighs horizontal under the pad; feet flat. Grip 14 out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (137.3, 65.8), just above the raised shoulder, forward above the head to x 160 at y 104, straight down at x 160 in front of the face to y 134, onto the top of the chest at (157, 150). Stack lift 0 → 43.1 (half the cable travel).
+- Anchors: hip (150,206); torso leaned back 10 degrees, constant (`rotate(-10)`); shoulder (139.2,144.9); thighs horizontal under the pad; feet flat. Grip 14 out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (137.3, 65.9), just above the raised shoulder, forward and down above the head, down in front of the face at x 160 to 161.5 (y 118 to 139.3), onto the top of the chest at (157, 150), along one smooth curve. Stack lift 0 → 43.0 (half the cable travel).
 - Muscles: main Lats; helps Biceps, Mid back.
 
 | Joint | Start (arms up) | End (bar at chest) | Change | Rule |
@@ -369,9 +369,9 @@ Key poses (bar = grip centre; angles are the solved 3D values; the keyframe valu
 
 | % | Bar (x, y) | Upper arm from torso line | Elbow inside | fu | ff | Stack lift |
 |---|---|---|---|---|---|---|
-| 0, 87.5, 100 | 137.29, 65.79 | 163.7 | 174 | 0.973 | 0.991 | 0 |
-| 12.5, 62.5 | 160, 107.9 | 82.8 | 73.55 | 0.816 | 0.98 | 23.19 |
-| 25, 37.5 | 157, 150 | 25.31 | 35.44 | 0.946 | 0.999 | 43.06 |
+| 0, 87.5, 100 | 137.29, 65.93 | 162.01 | 171 | 0.97 | 0.993 | 0 |
+| 12.5, 62.5 | 157.47, 110.18 | 80.92 | 67.73 | 0.756 | 0.962 | 23.76 |
+| 25, 37.5 | 157, 150 | 25.31 | 35.44 | 0.946 | 0.999 | 42.99 |
 
 (Torso group `rotate(-10)` throughout.)
 
@@ -383,7 +383,7 @@ Captions: "Pull to your chest, 1 s" / "Squeeze, chest up" / "Up slowly, 2 s" / "
 | Path | 150, 112, 1.4 | The bar comes down in front of your face to the top of your chest. |
 | Pad | 197, 227, 1.9 | Thigh pad snug on your thighs, feet flat. It stops you lifting off. |
 
-The Grip close-up also shows a small front view of both hands on the bar (thumbs in accent), because the side view cannot show hand width. Path cue for this player: the solid accent line shows the way still to go (from just below the hands to a target mark at the top of the chest), not the way already travelled (an exception to RIG section 10, because the hands hang from a cable). Why these values differ from the first draft (decisions D1-D3): `anim-lat-pulldown/PLAYER.md` section 9. A zoom chip in Pictures shows one still (pose 1, or pose 3 for Path), and the caption line under it shows that picture's caption.
+The Grip close-up also shows a small front view of both hands on the bar (thumbs in accent), because the side view cannot show hand width. Path cue for this player: the solid accent line shows the way still to go (from just below the hands to a target mark at the top of the chest), not the way already travelled (an exception to RIG section 10, because the hands hang from a cable). Why these values differ from the first draft (decisions D1-D3, signed off): `anim-lat-pulldown/PLAYER.md` section 9. The bar's path, the elbow's bend direction and the shoulder blades move as one smooth motion fitted to the smoothness check (`anim-lat-pulldown/PLAYER.md` section 7). A zoom chip in Pictures shows one still (pose 1, or pose 3 for Path), and the caption line under it shows that picture's caption.
 
 Pictures: 1 "Thighs under the pad, arms long"; 2 "Drive your elbows down"; 3 "Bar to the top of your chest"; 4 "Up slowly, 2 s".
 
