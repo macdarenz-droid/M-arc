@@ -1,6 +1,6 @@
 // shoot.cjs: checks and screenshots for the Dumbbell Lateral Raise player harness (index.html).
 // Run after `node build.mjs`:  node shoot.cjs   (exit code 1 when any check fails; writes checks.txt)
-const { chromium } = require('/home/user/M-arc/node_modules/playwright');
+const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const DIR = __dirname, OUT = path.join(DIR, 'shots');
@@ -25,7 +25,7 @@ const gripAt = u => {
 };
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
   const open = async (query, opts = {}) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });

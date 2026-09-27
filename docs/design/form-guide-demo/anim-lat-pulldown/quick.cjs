@@ -1,8 +1,8 @@
 // quick.cjs: one or more screenshots of the player. Usage: node quick.cjs "<query>" out.png [scale]
-const { chromium } = require('/home/user/M-arc/node_modules/playwright');
+const { chromium } = require('playwright');
 const path = require('path');
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const b = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const args = process.argv.slice(2);
   for (let i = 0; i < args.length; i += 2) {
     const ctx = await b.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: 2 });

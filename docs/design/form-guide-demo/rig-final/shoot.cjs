@@ -1,6 +1,6 @@
 // shoot.cjs: every check for the final rig, plus the screenshots in shots/.
 // Run after `node gen.mjs`:  node shoot.cjs      (exit code 1 when any check fails)
-const { chromium } = require('/home/user/M-arc/node_modules/playwright');
+const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const DIR = __dirname, OUT = path.join(DIR, 'shots');
@@ -29,7 +29,7 @@ for (const c of poses.contrast) check(c.line >= 3 && c.lineBody >= 3 && c.frame 
 
 // ---- 2. Browser checks and screenshots -------------------------------------------------
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
   const open = async (file, query, opts = {}) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: opts.scale || 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });

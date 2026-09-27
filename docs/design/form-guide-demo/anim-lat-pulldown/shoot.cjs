@@ -1,7 +1,7 @@
 // shoot.cjs: every check for the Lat Pulldown player, plus the screenshots in shots/.
 // Run after `node gen.mjs`:  node shoot.cjs   (exit 1 on any FAIL, 2 on any OPEN, 3 when all pass but a DECIDED spec edit is
 // still to be applied to spec.md, 0 when all pass; writes checks.txt and measured.json)
-const { chromium } = require('/home/user/M-arc/node_modules/playwright');
+const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const DIR = __dirname, OUT = path.join(DIR, 'shots');
@@ -64,7 +64,7 @@ check(lastOpen && netOpen <= 0.3, `elbow closes steadily through the pull (${f1(
 check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `grip: hands ${G.inset.handsApart} apart, ${(G.inset.handsApart / G.inset.shouldersOutside).toFixed(2)} times the outside shoulder width (${G.inset.shouldersOutside}): "a little wider than your shoulders" (spec 3.2 Grip caption and About step 2)`);
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
   const open = async (query, opts = {}) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: opts.scale || 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });

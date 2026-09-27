@@ -15,14 +15,24 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 - `anim-dumbbell-lateral-raise/build.mjs`: builds from `rig-final/lateral-raise.html` and `poses.json`, and writes `index.html` and `PLAYER.md`.
 - `anim-lat-pulldown/gen.mjs`: a standalone rig for this player. It writes `index.html`, `poses.json` and `PLAYER.md`.
 - `*/shoot.cjs`: the checks and screenshots for each player (Playwright). Each writes `checks.txt` and saves shots in `shots/`, which git ignores. `quick.cjs` and `crop.cjs` are helpers.
+- Canvas checkers, which test the shipped artboard rather than the harness:
+  - `anim-machine-chest-press/canvas-check.cjs` renders `Player-MachineChestPress.dc.html` with a stand-in canvas runtime and runs its probes;
+  - `anim-lat-pulldown/dc-stage.cjs` compares `Player-LatPulldown.dc.html` with the harness rule by rule and writes `dc-render.html`;
+  - `anim-lat-pulldown/indep.cjs <page.html>` measures either page;
+  - the lateral raise has no canvas checker.
+- PLAYER.md files also name `work/` tools. Those were scratch files and are not kept, apart from the canvas checkers above.
 - `project/*.dc.html` and `project/canvas.json`: the published canvas files, which are what the owner sees. The 3 `Player-*.dc.html` files were assembled from each player's pieces (PLAYER.md, Pieces A-C) and then edited for the canvas (text zoom `--tz`, fonts). A rebuild does NOT update them, so carry every change into them by exact-match edits.
 - `FORMAT-RULES.md` holds the canvas file format rules. `spec.md` holds the screens and each exercise's truth table.
 
-Verified on 2026-09-27 from a fresh copy of this folder:
-- all 4 build commands reproduce the committed files byte for byte;
-- `node anim-machine-chest-press/shoot.cjs` → ALL CHECKS PASSED.
+**Setup:**
+1. Run `npm ci` in the repo root. The scripts find Playwright in the repo's `node_modules`.
+2. Choose the browser the same way the repo's gate does: set `MARC_CHROMIUM` to a Chrome or Chromium binary, for example `MARC_CHROMIUM=/opt/pw-browsers/chromium` in Claude Code cloud sessions. Without it, the scripts use Playwright's bundled browser.
 
-The `shoot.cjs` scripts load Playwright from `/home/user/M-arc/node_modules/playwright`, so run `npm ci` in the repo root first, or change that path. The browser is `/opt/pw-browsers/chromium`.
+**Baseline, checked 2026-09-27 on a fresh copy:**
+- all 4 builds reproduce the committed files byte for byte;
+- the rig, chest press and lateral raise `shoot.cjs` scripts print ALL CHECKS PASSED;
+- `canvas-check.cjs` and `dc-stage.cjs` pass;
+- the lat pulldown `shoot.cjs` exits 3 with "NO FAILURES; 4 DECIDED". That is by design: it waits for the `spec.md` 3.2 edit in step 4 of the order of work, and after that edit it must exit 0.
 
 ## Why the motion looks jerky today
 `rig-final/gen.mjs:239-244` times each move with `inOut`, which is two cubic-bezier halves (`easeIn .4,0,1,1` / `easeOut 0,0,.6,1`). The poses are sampled into keyframe stops joined by straight lines, so speed changes in steps between stops. `anim-lat-pulldown/gen.mjs:240-241` has the same timing. Its known leftover is that the far elbow starts and stops a little sharply.
@@ -82,7 +92,7 @@ The `shoot.cjs` scripts load Playwright from `/home/user/M-arc/node_modules/play
 2. Rebuild each player on it:
    - chest press and lateral raise through their `build.mjs`;
    - lat pulldown in its own `gen.mjs`, with the same changes.
-3. Carry each player into its `project/Player-*.dc.html`. The harness (`index.html`) and the artboard must match.
+3. Carry each player into its `project/Player-*.dc.html` by exact-match edits. The harness (`index.html`) and the artboard must match; prove it with the canvas checkers where they exist.
 4. Clear the doc lag in `spec.md`, and keep the one doc per topic:
    - Apply `anim-lat-pulldown/PLAYER.md` §9 (decisions D1-D3, signed off) to section 3.2.
    - Apply the chest press numbers from `anim-machine-chest-press/PLAYER.md` §3 and §13 to section 3.1 and to `RIG.md` §9 and §15-19.
@@ -104,8 +114,15 @@ Use an independent check, not the builder's own word.
 - **Format:** `FORMAT-RULES.md` holds, colours are token-only, there is no script-built DOM, and each file is under 450 KB.
 
 ## Publish and hand back
-- **Canvas:** the owner's canvas is private to the owner.
-  - If the owner shares it with your account with **edit** access, read it first, then republish only the changed files under `project/`.
-  - Otherwise, create a new Design canvas from these `project/` files and give the owner its link.
-- **Code:** commit the source changes on a `claude/*` branch with a draft PR, and update this brief and `README.md` in place. If you can't push, give the owner a patch file.
-- **Rules:** follow `AGENTS.md`. Never touch app code, keys or secrets, or `main`.
+- **Canvas:** the first demo canvas belongs to another Claude account, so you can't open or update it. Everything it holds is in `project/`.
+  - Publish the upgraded demo as a **new** Design canvas on your own account, with all 13 artboards and `canvas.json` from `project/`, and give the owner its link.
+  - If your account has no Design type, publish the 3 players' harness pages (`anim-*/index.html`) as a normal page instead, and say so.
+- **Code:**
+  - Branch from `claude/marc-regression-architecture-gegkbq` to a new `claude/*` branch.
+  - Commit the source changes and open a draft PR into `claude/marc-regression-architecture-gegkbq`.
+  - Update this brief and `README.md` in place.
+- **Relay:**
+  - Post short progress notes to the M/ARC project's Relay.
+  - When you finish, add one line to `LOG.md`: what changed, the commit and the check numbers.
+  - No URLs or secrets in Relay.
+- **Rules:** follow `AGENTS.md`. Never touch app code, keys or secrets, or `main`, and never merge anything.
