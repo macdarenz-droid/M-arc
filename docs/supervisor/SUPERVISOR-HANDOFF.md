@@ -32,7 +32,16 @@ Written 2026-09-27 by the outgoing supervisor, session_01PjbZXTVmMJU2evEYqGPdNm.
 
 ## 2. New feature: exercise library, form guide, warm-up (design only)
 - Design: `docs/GUIDE-UPGRADE-ARCHITECTURE.md` on branch `claude/marc-regression-architecture-gegkbq` (67d7c06). It replaces FORM-GUIDE-ARCHITECTURE.md.
-- Rendered demo for the owner's critique: finishing as of 05:20 UTC. The last steps are running: a lat pulldown fix plus its check, a chest-press check, and a whole-canvas review and fix. The canvas link and the final pass/fail notes will be added here when it is published.
+- Rendered demo for the owner's critique: the Design canvas https://claude.ai/artifact/HXZTVGUvFz7kqfzuBDrQmD (private to the owner), published 2026-09-27 ~05:45 UTC. It has 13 artboards in three rows:
+  - the flow: Train, About sheet, Machine guide, Warm-up, Search, Create my own;
+  - the 3 animated players;
+  - Train in 4 other themes.
+- Status and specs: `docs/design/form-guide-demo/` (README, SPEC, RIG, 3 PLAYER docs).
+  - Chest press passes QA round 3.
+  - Lateral raise passed round 2.
+  - Lat pulldown is fixed; its spec changes D1-D3 are signed off (PLAYER §9 wins over SPEC 3.2). One low item is left: the far-elbow start and stop is a little sharp.
+  - The final canvas review applied 11 of 13 fixes.
+- To improve the demo after the owner's feedback, read the artboards from the canvas (`read` with `path: "project/<name>.dc.html"`), edit them, and republish only the changed files. The canvas's own SKILL.md has the rules.
 - No app code for it until every current patch has merged AND the owner approves the demo. The owner asked for 3 animated exercises (Machine Chest Press, Lat Pulldown, Dumbbell Lateral Raise). If the design is approved, all library exercises get animated later, in slices, via the pattern files, overrides and coverage ratchet the doc describes.
 - The render workflow script: `/root/.claude/projects/-home-user-M-arc/06790388-49f8-576d-a2f2-765dd355dff8/workflows/scripts/guide-upgrade-doc-and-render-split-wf_8bab1b6a-83a.js` (run wf_8bab1b6a-83a). Its source files are in that session's scratchpad `render-guide/`. A new session can't reach them, so improve the demo from the published canvas files (read them with the Artifact tool).
 
