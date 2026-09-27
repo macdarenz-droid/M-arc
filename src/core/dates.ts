@@ -41,6 +41,25 @@ export function addDays(key: string, n: number): string {
   return dayKey(d);
 }
 
+export interface MonthCell { key: string; other: boolean }
+
+/** BUG-10: every month grid is a fixed 6 rows / 42 cells, never the raw 4-6 rows a month's own
+ * days plus leading padding would give — a real calendar's own height changed as the user paged
+ * between months (Aug 2026 needs 6 rows; Jul and Apr need 5). Leading cells (padding to the first
+ * Monday) and trailing cells (padding out to 42) are both `other`; `month` is `YYYY-MM`. */
+export function monthCells(month: string): MonthCell[] {
+  const first = parseDay(`${month}-01`);
+  const startOffset = (first.getDay() + 6) % 7;
+  const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+  const cells: MonthCell[] = [];
+  for (let i = 0; i < startOffset; i++) cells.push({ key: addDays(`${month}-01`, i - startOffset), other: true });
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ key: `${month}-${String(d).padStart(2, '0')}`, other: false });
+  const lastDayKey = `${month}-${String(daysInMonth).padStart(2, '0')}`;
+  const trailing = 42 - cells.length;
+  for (let j = 1; j <= trailing; j++) cells.push({ key: addDays(lastDayKey, j), other: true });
+  return cells;
+}
+
 export function weekdayOf(key: string): Weekday {
   return WEEKDAYS[parseDay(key).getDay()] as Weekday;
 }

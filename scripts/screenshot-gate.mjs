@@ -597,6 +597,41 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-10: History's calendar used to change height between months (4/5/6 raw rows), shoving
+// "Recent" up and down as the owner paged. monthCells always pads to 42 cells / 6 rows — walk
+// back 13 months (any 13-month window spans a 5- and a 6-row month, whatever today's date is) and
+// check the card's height, "Recent"'s position and the day-cell count never move.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'BUG-10 calendar height';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+
+  const read = () => page.evaluate(() => {
+    const cal = document.querySelector('.cal');
+    const heading = [...document.querySelectorAll('h2')].find(h => h.textContent === 'Recent');
+    if (!cal || !heading) return null;
+    return { height: cal.getBoundingClientRect().height, top: heading.getBoundingClientRect().top, count: cal.querySelectorAll('.day').length };
+  });
+  const first = await read();
+  if (!first) errors.push(`${tag}: could not find .cal and the "Recent" heading`);
+  else if (first.count !== 42) errors.push(`${tag}: expected 42 day cells, got ${first.count}`);
+  for (let i = 0; i < 13; i++) {
+    await page.locator('[aria-label="Previous month"]').click(); await page.waitForTimeout(150);
+    const r = await read();
+    if (!r) { errors.push(`${tag}: could not find .cal and the "Recent" heading after ${i + 1} month(s) back`); continue; }
+    if (r.count !== 42) errors.push(`${tag}: ${i + 1} month(s) back: expected 42 day cells, got ${r.count}`);
+    if (first && Math.abs(r.height - first.height) > 0.5) errors.push(`${tag}: ${i + 1} month(s) back: .cal height ${r.height} vs ${first.height}`);
+    if (first && Math.abs(r.top - first.top) > 0.5) errors.push(`${tag}: ${i + 1} month(s) back: "Recent" top ${r.top} vs ${first.top}`);
+  }
+  await ctx.close();
+}
+
 // R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });

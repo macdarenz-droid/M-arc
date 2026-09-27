@@ -7,7 +7,7 @@ import { IconBack, IconCalendar, IconChevron, IconPlay, IconShare, IconTrash, Ic
 import { requestStart } from '@/slices/workout/Train';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
-import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
+import { formatClock, formatDay, monthCells, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
@@ -72,12 +72,10 @@ function Log() {
   const setEditing = (x: Session) => showPanel('session', { sessionId: x.id });
   usePalaceFocus('history.calendar', selectedDay ? { day: selectedDay } : undefined);
   const trained = useMemo(() => new Set(s.sessions.map(x => x.day)), [s.sessions]);
+  // BUG-10: a fixed 42 cells (6 rows) so the calendar's height never changes paging between a
+  // 4/5/6-row month, which used to shove "Recent" up and down.
+  const cells = useMemo(() => monthCells(month), [month]);
   const first = parseDay(`${month}-01`);
-  const startOffset = (first.getDay() + 6) % 7;
-  const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
-  const cells: Array<{ key: string; other: boolean }> = [];
-  for (let i = 0; i < startOffset; i++) cells.push({ key: addDays(`${month}-01`, i - startOffset), other: true });
-  for (let d = 1; d <= daysInMonth; d++) cells.push({ key: `${month}-${String(d).padStart(2, '0')}`, other: false });
   const shift = (n: number) => { const d = parseDay(`${month}-01`); d.setMonth(d.getMonth() + n); setMonth(dayKey(d).slice(0, 7)); };
   const recent = [...s.sessions].reverse().slice(0, 30);
   const daySessions = selectedDay ? s.sessions.filter(x => x.day === selectedDay) : [];
