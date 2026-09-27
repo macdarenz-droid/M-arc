@@ -9,7 +9,7 @@ import type { AppState, MemoryItem } from '@/core/models';
 import { MAX_MEMORY_ITEMS } from '@/core/models';
 import { todayKey } from '@/core/dates';
 import { showToast } from '@/app/toast';
-import { saveInsightFeedback } from '@/slices/coach/coach';
+import { giveInsightFeedback } from '@/slices/coach/coach';
 import { EscobarLoop, type SendInput, type TurnResult } from './loop';
 import { httpTransport, checkHealth, type Transport } from './transport';
 import { buildManifest } from './context/manifest';
@@ -147,7 +147,8 @@ if (typeof window !== 'undefined' && typeof window.addEventListener === 'functio
   window.addEventListener('online', () => { offlineUntil = 0; checkOnline(); });
 }
 
-function applyEffect(e: MemoryEffect): void {
+/** Exported for tests (COACH-FB). */
+export function applyEffect(e: MemoryEffect): void {
   if (e.type === 'remember') {
     update(s => {
       let memory = [...s.escobar.memory];
@@ -166,9 +167,8 @@ function applyEffect(e: MemoryEffect): void {
     update(s => ({ ...s, escobar: { ...s.escobar, memory: s.escobar.memory.filter(m => m.id !== e.id) } }));
     if (gone) showToast('Forgotten', 'Undo', () => update(s => ({ ...s, escobar: { ...s.escobar, memory: [...s.escobar.memory, gone] } })));
   } else if (e.type === 'snooze') {
-    const before = state.value.insightFeedback;
-    saveInsightFeedback(e.insightId, e.verdict);
-    showToast(e.verdict === 'snoozed' ? 'Snoozed for 7 days' : 'Marked helpful', 'Undo', () => update(s => ({ ...s, insightFeedback: before })));
+    // COACH-FB: the same helper as the Escobar tab's Helpful / Not now buttons (same toast, same Undo).
+    giveInsightFeedback(e.insightId, e.verdict);
   }
 }
 
