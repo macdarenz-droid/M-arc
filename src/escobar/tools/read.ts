@@ -223,6 +223,8 @@ export function getNextTarget(input: { exerciseId?: string; plannedSets?: number
     sets: sug.sets.map(x => ({ kg: x.kg, reps: x.reps, durationSec: x.durationSec, note: x.note })),
     warmup: ex.role === 'main' && (sug.sets[0]?.kg ?? 0) > 0 ? warmupSets(sug.sets[0]!.kg!, profile).map(w => ({ ...loadOf(ctx, id, w.kg), reps: w.reps })) : [],
     recovery: ex.primary.map(m => ({ muscle: m, pct: recoveryAt(ctx).find(x => x.muscle === m)?.pct ?? 100 })),
+    // BUG-11 A4: an off-ladder load was moved by the equipment, not by recovery; say so.
+    ...(sug.snappedFromKg != null && sug.unit ? { equipmentSnap: { fromKg: sug.snappedFromKg, to: `${sug.value} ${sug.unit}`, why: 'The load was moved to the nearest weight this equipment has, not for recovery or readiness. Call get_equipment before explaining this target.' } } : {}),
   }, 3000);
 }
 
