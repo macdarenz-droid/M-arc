@@ -597,6 +597,66 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-12: on Stats > Weekly volume, the "avg" label (on the dashed average line) and the
+// current-week value label (above the right-most bar) used to overlap when this week sat near the
+// average. Seed 11 earlier weeks at 10k kg and this week at 0.8x, 1.0x and 1.2x of the 12-week
+// average, and check the two label boxes never intersect (A1); at 1.0x, in all 5 themes at 390 px,
+// the avg label overlaps no bar value label (A2).
+{
+  const tag = 'BUG-12 volume labels';
+  const intersects = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+  const runs = [...[0.8, 1, 1.2].map(r => ({ r, theme: 'silent-black' })), ...themes.filter(t => t !== 'silent-black').map(theme => ({ r: 1, theme }))];
+  for (const { r, theme } of runs) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const where = `${tag} (${theme}, ${r}x avg)`;
+    page.on('pageerror', e => errors.push(`${where}: ${e.message}`));
+    // avg = (11 * 10000 + x) / 12 and x = r * avg, so x = 11 * r * 10000 / (12 - r).
+    const thisWeekKg = (11 * r * 10000) / (12 - r) / 100;
+    await page.addInitScript(([thisKg, theme]) => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sess = (offset, kg) => ({ id: `bug12-${offset}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T12:00:00.000Z`, endedAt: `${day(offset)}T13:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_bench_press', name: 'Bench Press', sets: Array.from({ length: 10 }, () => ({ kg, reps: 10, effort: 'ideal' })) }],
+        logging: { mode: 'live', trainedAt: `${day(offset)}T12:00:00.000Z`, trainedEndAt: `${day(offset)}T13:00:00.000Z`, loggedAt: `${day(offset)}T13:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+      localStorage.setItem('marc.theme', theme);
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [...Array.from({ length: 11 }, (_, i) => sess(7 * (11 - i), 100)), sess(0, thisKg)],
+        active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, [thisWeekKg, theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+    await settle(page);
+    const got = await page.evaluate(() => {
+      const card = document.querySelector('[data-palace="history.weekly-volume"]');
+      const avg = card?.querySelector('.volume-avg span');
+      const values = [...(card?.querySelectorAll('.volume-bar-value') ?? [])];
+      const box = el => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
+      const cur = card?.querySelector('.volume-bars i.current .volume-bar-value');
+      return { avg: avg && box(avg), avgText: avg?.textContent ?? '', cur: cur && box(cur), curText: cur?.textContent ?? '', values: values.map(box), bars: card?.querySelectorAll('.volume-bars i').length ?? 0 };
+    });
+    if (!got.avg || !got.cur) { errors.push(`${where}: expected the avg label and the current-week value label (got ${JSON.stringify(got)})`); await ctx.close(); continue; }
+    if (got.bars !== 12) errors.push(`${where}: expected 12 weekly bars, got ${got.bars}`);
+    // The seed really puts this week at r x the average (the labels round to 0.1k).
+    const k = t => parseFloat(t.replace(/[^\d.]/g, ''));
+    const ratio = k(got.curText) / k(got.avgText);
+    if (Math.abs(ratio - r) > 0.05) errors.push(`${where}: seeded this week at ${r}x avg but the labels read ${got.curText} vs ${got.avgText}`);
+    if (intersects(got.avg, got.cur)) errors.push(`${where}: avg label ${JSON.stringify(got.avg)} overlaps the current-week value label ${JSON.stringify(got.cur)}`);
+    for (const v of got.values) if (intersects(got.avg, v)) errors.push(`${where}: avg label overlaps a bar value label ${JSON.stringify(v)}`);
+    await ctx.close();
+  }
+}
+
 // BUG-10: History's calendar used to change height between months (4/5/6 raw rows), shoving
 // "Recent" up and down as the owner paged. monthCells always pads to 42 cells / 6 rows — walk
 // back 13 months (any 13-month window spans a 5- and a 6-row month, whatever today's date is) and
