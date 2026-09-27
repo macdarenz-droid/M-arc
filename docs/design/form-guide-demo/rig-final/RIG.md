@@ -1,6 +1,6 @@
 # Final shared rig: one low-poly figure for every form-guide player
 
-Status: final rig for the 10 `Player-*.dc.html` artboards. Base: the winning "rig-lowpoly", with every must-fix item from both judges fixed and the listed grafts from "rig-pill" applied. Checked in Chromium on 2026-09-26 (section 16). QA round 1 fixes are in: pole vectors and the grip-x rule written out (sections 9 and 19), the dumbbell's place stated and its shapes added (sections 4, 7 and 19), the lateral raise Elbows chip re-centred (section 15), and a keep-clear rule for zoom views (sections 2 and 11). Figure detail upgrade (2026-09-27, UPGRADE-BRIEF.md): clothes, head, hands, three tones per surface, a rim line, contact shadows, the target-muscle glow, secondary-motion facets and equipment detail (section 20).
+Status: final rig for the 10 `Player-*.dc.html` artboards. Base: the winning "rig-lowpoly", with every must-fix item from both judges fixed and the listed grafts from "rig-pill" applied. Checked in Chromium on 2026-09-26 (section 16). QA round 1 fixes are in: pole vectors and the grip-x rule written out (sections 9 and 19), the dumbbell's place stated and its shapes added (sections 4, 7 and 19), the lateral raise Elbows chip re-centred (section 15), and a keep-clear rule for zoom views (sections 2 and 11). Figure detail upgrade (2026-09-27, UPGRADE-BRIEF.md): clothes, head, hands, three tones per surface, a rim line, contact shadows, the target-muscle glow, secondary-motion facets and equipment detail (section 20). Round 2 (2026-09-27, three reviewers, owner's bar "premium, smooth and good details"): one silhouette per arm, thicker tapered forearms, a readable thumb, the closed grip on the dumbbell, tone separation in Paper and in dark themes, the glow clipped to the body, 0.25 % stops in the lift, the caption row drawn with the canvas font, and three new checks (section 20, decisions D-R1 to D-R6).
 
 ## In plain words
 
@@ -20,6 +20,8 @@ Status: final rig for the 10 `Player-*.dc.html` artboards. Base: the winning "ri
 | `chest-press.html`, `lateral-raise.html` | Harnesses, built the same way as an artboard (section 14): one root style string, class strings, and the artboard's logic class. A small stand-in for x-dc writes the logic's values into the page. |
 | `parts.html` | Rest poses of the side, front and top views, plus framing guides for the 358 x 276 and 358 x 300 stages. |
 | `shoot.cjs` | Every check (section 16) and every screenshot in `shots/`. Run `node shoot.cjs`; it exits 1 on any failure and writes `checks.txt`. |
+| `muscle-check.cjs`, `caption-check.cjs` | Shared checks (section 20), required by this and by every player's `shoot.cjs`: the target muscle stays visible at the hardest point; the caption row never overlaps or leaves the player, drawn with the canvas font. |
+| `fonts/Roboto-latin.woff2` | The canvas font (Roboto, latin subset, 43 KB, from Google Fonts) for offline shoots: the harness pages declare it as a local `@font-face` after the Google Fonts link. Harness only; the artboards load the link. |
 | `poses.json` | Solved numbers: key poses, truth-table angles, contrast table. `shoot.cjs` reads it. |
 | `quick.cjs`, `crop.cjs`, `montage.py` | Viewing helpers (one screenshot, a 4x crop, a contact sheet). Not deliverables. |
 | `qa-r1/`, `qa-r2/` | QA evidence: the first review's shots, and the contact sheets used to check this round's fixes. Not deliverables. |
@@ -45,7 +47,7 @@ Harness query (stands in for props and state, harness only): `?theme=<id>&t=<0..
 | Neck | 4 to 8 visible | 11 to 16, widening into the trapezius slope |
 | Torso, hip joint to shoulder joint | 62 | side 26 to 28 deep; front 42 at the shoulders, 28 at the waist |
 | Upper arm | 38 | 11 to 12 |
-| Forearm, elbow to grip centre | 40 | 9.6 to 7.2 |
+| Forearm, elbow to grip centre | 40 | 9.8 at the elbow, 12.4 over the brachioradialis bulge (thumb side, 4 to 10 below the elbow), 8 at the wrist |
 | Thigh | 50 | 17 to 12 |
 | Shin, knee to ankle | 47 | 11 to 8 |
 | Foot | sole at ankle + 5 (y 102); side view heel -6 to toe 17.5 | |
@@ -68,17 +70,19 @@ A lifter lying face up and seen from above (Around the World) is seen from the f
 
 Class `j` = `transform-box: view-box`. Class `anim` = the shared animation settings (section 8). Each moving group also has its own class, which sets `transform-origin` and the `-a`/`-b` animation names. `XX` = the exercise prefix (`cp`, `lr`, and so on).
 
-Every body layer is drawn three times inside the same groups: OUTLINE, RIM, FILL (section 5). The blocks below show OUTLINE and FILL; the RIM pass (the same polygons, class `rim`) goes between them.
+Every body layer is drawn three times inside the same groups: OUTLINE, RIM, FILL (section 5). The blocks below show OUTLINE and FILL; the RIM pass (the same polygons, class `rim`) goes between them. An arm is ONE layer: the lower arm's joint chain (`XX-fa` > `XX-fl` / `XX-hd`) is repeated inside each of the upper arm's three passes (`armLayer()` in `gen.mjs`), so the lower arm's outline and rim lie under the upper arm's fill and no outline arc crosses the arm at the elbow. The repeated chains carry the same class and keyframes; the smoothness sampler reads each keyframe name once.
 
 Side view, near arm (the only arm drawn: in a true side view the far arm hides behind it):
 
 ```html
 <g class="figure-arm" transform="translate(150 206)">          <!-- rig origin = hip on the stage -->
   <g class="j anim XX-ua">                                     <!-- origin 0,-62; rotate(-phi) -->
-    <g class="j anim XX-ul">[upperArm OUTLINE]</g>[deltoid OUTLINE]
-    <g class="j anim XX-ul">[upperArm FILL]</g>[deltoid FILL]  <!-- XX-ul: scaleY(fu) about 0,-62 -->
-    <g class="j anim XX-fa">                                   <!-- origin 0,-24; translateY(-(1-fu)*38px) rotate(-(psi-phi)) -->
-      [elbowCap OUTLINE]<g class="j anim XX-fl">[forearm OUTLINE]</g><g class="j anim XX-hd">[fist OUTLINE]</g>
+    <g class="j anim XX-ul">[upperArm OUTLINE]</g>[deltoid OUTLINE]                     <!-- XX-ul: scaleY(fu) about 0,-62 -->
+    <g class="j anim XX-fa">[elbowCap OUTLINE]<g class="j anim XX-fl">[forearm OUTLINE]</g><g class="j anim XX-hd">[fist OUTLINE]</g></g>
+    <g class="j anim XX-ul">[upperArm RIM]</g>[deltoid RIM]
+    <g class="j anim XX-fa">[elbowCap RIM]<g class="j anim XX-fl">[forearm RIM]</g><g class="j anim XX-hd">[fist RIM]</g></g>
+    <g class="j anim XX-ul">[upperArm FILL]</g>[deltoid FILL]
+    <g class="j anim XX-fa">                                   <!-- origin 0,-24; translateY(-(1-fu)*38px) rotate(-(psi-phi)); the same chain three times -->
       [elbowCap FILL]<g class="j anim XX-fl">[forearm FILL]</g>   <!-- XX-fl: scaleY(ff) about 0,-24 -->
       <g class="j anim XX-hd">[fist FILL][held bar or dumbbell][grip ring overlay]</g>  <!-- XX-hd: translateY(-(1-ff)*40px) -->
     </g>
@@ -98,9 +102,11 @@ Front view, one arm (screen-right `-r`; screen-left `-l` uses mirrored points, n
 
 ```html
 <g class="j anim XX-ua-r">                        <!-- origin 22,-62; rotate(-A) raises the arm out to the side -->
-  [upperArmR OUTLINE][deltoidR OUTLINE][upperArmR FILL][deltoidR FILL]
-  <g class="j XX-fa-r">                           <!-- origin 22,-24; rotate(+bend), static or animated -->
-    [elbowCapR OUTLINE][forearmR OUTLINE][fistR OUTLINE][elbowCapR FILL][forearmR FILL][fistR FILL]
+  [upperArmR OUTLINE][deltoidR OUTLINE]<g class="j XX-fa-r">[elbowCapR OUTLINE][forearmR OUTLINE][fistR OUTLINE]</g>
+  [upperArmR RIM][deltoidR RIM]<g class="j XX-fa-r">[elbowCapR RIM][forearmR RIM][fistR RIM]</g>
+  [upperArmR FILL][deltoidR FILL]
+  <g class="j XX-fa-r">                           <!-- origin 22,-24; rotate(+bend), static or animated; the same group three times -->
+    [elbowCapR FILL][forearmR FILL][fistR FILL]
     [elbow ring overlay]
     <g class="j anim XX-db-r">[dumbbell]</g>      <!-- origin 22,16 (the grip); rotate(A - bend) keeps it level on screen;
                                                      knurled handle from inside the fist down into the head; end face centred at (22,29.3), 13.3 below the grip: shapes in section 19 -->
@@ -153,7 +159,7 @@ Every value is a theme token or a `color-mix()` of tokens. The derived variables
 
 Accent is used only for the working muscles and their glow, the stack pin, the path guide, the progress trail, zoom overlays and direction arrows. Handles are metal (spec 2.3). Body, rim, facet, muscle, equipment, rod, cable, floor, knurl, seam and rim strokes use `vector-effect: non-scaling-stroke`, so foreshortening never thickens or thins a line. Their widths are `calc(var(--sw) * N px)`: `--sw` is 1 on the stage and 0.75 in Pictures tiles. Guides, trail and overlays scale with the zoom camera on purpose (they get bolder when zoomed).
 
-Three-pass layers (one outline and one rim per layer): each body LAYER draws every part's outline first (`olk`, 3 wide), then every part's rim (`rim`, 1.1 wide), then every part's fill, tone facets, glow and muscles, inside the same groups (`layer()` in `gen.mjs`). The fills hide the inner half of each stroke, so only the layer's silhouette keeps a 1.5 outline with a 0.55 lighter rim just inside it, and no seam shows where parts overlap (deltoid over upper arm, elbow, hip, knee). The far leg has no rim. Layers: body (torso, neck, head, near leg), upper arm (upper arm and deltoid, inside `ua`), lower arm (elbow cap, forearm, fist, inside `fa`). The lower arm is drawn over the upper arm, so the elbow keeps a round joint line. Top view: the head is its own layer over the torso. Equipment keeps plain centred strokes.
+Three-pass layers (one outline and one rim per layer): each body LAYER draws every part's outline first (`olk`, 3 wide), then every part's rim (`rim`, 1.1 wide), then every part's fill, tone facets, glow and muscles, inside the same groups (`layer()` in `gen.mjs`). The fills hide the inner half of each stroke, so only the layer's silhouette keeps a 1.5 outline with a 0.55 lighter rim just inside it, and no seam shows where parts overlap (deltoid over upper arm, elbow, hip, knee). The far leg has no rim. Layers: body (torso, neck, head, near leg) and the arm (upper arm, deltoid, elbow cap, forearm and fist: one silhouette, section 4). The lower arm's fill is drawn over the upper arm's, and a small dark crease facet on the inner side of the 12-sided elbow cap (r 4.8) marks the joint; no outline crosses the arm at the elbow (the ring it drew before read as a cut, worst in the hold). Top view: the head is its own layer over the torso. Equipment keeps plain centred strokes.
 
 Contrast is measured, not guessed: see the table in the generated block. The figure outline is at least 4.6:1 on the stage and at least 3.1:1 over the body (an arm over the torso) in every theme; the machine frame is at least 3.18:1. In Paper the outline is 70 % text (dark themes 60 %), because the lifted body fill is darker than the stage there, and 60 % gave only 2.46:1 over the body. `--map-line` alone is about 1.6:1 at this size, so it paints only the inner facet lines, as on the app's muscle map. The T-shirt keeps the body tone, so both of these numbers still hold for an arm over the torso; the detail paints have their own measured table (section 20).
 
@@ -168,9 +174,9 @@ Contrast is measured, not guessed: see the table in the generated block. The fig
 
 - Machines: frame, columns, beams and rails are rounded rectangles (`rx` 1.5 to 2) in `eq`. Pads are rounded rectangles (`rx` 4) in `eq`, each with a stitched seam (`seam`) 2.1 inside its edge. Seat posts and brackets are plain `eq` rectangles. Draw only what explains the move: the frame that holds the moving part, the part the body touches, and the weight.
 - Weight stack: 10 plates, each 48 x 12, with 1.5 gaps, from y 112.5 (x 26-74); guide rods at x 32 and 68. Every plate has a lighter top bevel (`eqh`, 45.6 x 1.2, 1.1 below its top). The pin (accent, 9 x 4, `rx` 2, with an accent knob r 2.6 at its end) goes in plate 6, and plates 1 to 6 move as one group (`XX-stack`, translateY). A top bracket (`eqm` 10 x 6.5) sits where the cable pulls. The stack lift is half the handle travel (a 2:1 cam).
-- Levers: an `eqm` bar 5.2 wide from the pivot to the handle, a hub circle r 7 (`eqm`) with an r 2 `rod` centre on top, and the handle as a vertical `hd` grip 6.4 x 26 (`rx` 3), so it shows above and below the fist, with grip ribs (`knurl`) at 8.2, 9.6 and 11 above and below its centre, where the fist does not cover it (near handle only). The whole lever is one group rotating about the pivot.
+- Levers: an `eqm` bar 5.2 wide from the pivot to the handle, a hub circle r 7 (`eqm`) with an r 2 `rod` centre on top, and the handle as a vertical `hd` grip 6.4 x 26 (`rx` 3), so it shows above and below the fist, with grip ribs (`knurl`) at 8.2, 9.6 and 11 above and below its centre, where the fist does not cover it (near handle only). The far handle is 21 tall (13 above its centre, 8 below), so its lower end stays behind the near fist instead of doubling it. The whole lever is one group rotating about the pivot.
 - Cables and pulleys: pulleys are `eqm` circles r 5.2 to 6, with a rim ring (`prim`, r 3.2) and an `hd` hub (r 1.2); the lever hub gets a `prim` ring r 4.6. Cables are `cable` lines tangent to the pulleys. A vertical run that shortens with the stack uses `scaleY((run - lift) / run)` about its top end, on the same samples.
-- Dumbbells, front view (seen end-on from a little above, so the near head sits below the hand): a knurled `hd` handle 3.6 wide from inside the fist (y 17.6) down into the head, with three `knurl` ribs; a 2-deep top band (`eqm` outline) split into its three hex faces (`eqs`, `eqh`, `eql`: mid, light, dark); a hex end face (r 5.8, `sy` 0.92, `eqm`) with a recessed centre (`eql`, r 3.9) and an `hd` end cap (hex r 2). The head is centred at (22, 29.3) in the arm's frame (screen-left: -22, 29.3), 13.3 below the grip and rotation point (22, 16), so the whole hand shows above the weight. Copy the polygons from section 19; do not centre them on the grip. The dumbbell counter-rotates by minus the sum of the arm rotations, so it stays level. Side view: two `eqm` hex heads (r 7) joined by a 4-wide `hd` handle, held in the fist. Top view: a bar with two heads, 22 long, across the palm (spec 3.9).
+- Dumbbells, front view (seen end-on from the front and a little above): a short `hd` handle stub inside the fist (y 17.6 to 21.2; end-on, the handle itself is inside the hand, so no knurl shows in this view), then the index finger and thumb as a ring closed round it (a `bh` band 7.8 wide, y 17.2 to 20, with a `bl` crease under it), then the head: a 2.2-deep top band (`eqm` outline) split into its three hex faces (`eqs`, `eqh`, `eql`: mid, light, dark) and the hex end face (r 6.6, `sy` 0.92, `eqm`) with a thin `prim` hex rim (r 3.8) for the recessed cap (a dark centre read as a nut at phone size). The head is centred at (22, 28.5) in the arm's frame (screen-left: -22, 28.5), 12.5 below the grip and rotation point (22, 16), so its top band overlaps the lower part of the fist and the hand reads as closed round the handle. Copy the polygons from section 19; do not centre them on the grip. The dumbbell counter-rotates by minus the sum of the arm rotations, so it stays level. Side view: two `eqm` hex heads (r 7) joined by a 4-wide `hd` handle, held in the fist. Top view: a bar with two heads, 22 long, across the palm (spec 3.9).
 - Bench: an `eq` rounded rectangle (`rx` 6) for the pad on two `eq` legs; top view: the pad only, x 161-197 (spec 3.9).
 - Bars (lat pulldown): an `hd` bar 44 wide seen a little from the front (a 4-tall rounded rectangle), hung on a `cable` from a pulley.
 - Far side: only the far leg and the far lever or handle, offset `translate(5 -3)`, in the far tones. Never a far arm or far hand: at 2x zoom it reads as a second hand. The far lever hides while the Grip chip is on (`.zoom-grip .far-lever { opacity: 0 }`).
@@ -201,7 +207,7 @@ Shared rules:
 
 - Rep timing (spec 2.5): lift 0-25 % (mid pose at 12.5 %), hold to 37.5 %, return to 87.5 % (mid at 62.5 %), reset pause to 100 %. The timing curve is baked into the samples, so keyframes play linear between samples.
 - Rep time u (0 to 1) to move progress p (0 = setup pose, 1 = end pose), `progress()` in `gen.mjs`: u <= 0.25: p = mj(u / 0.25); u <= 0.375: p = 1; u <= 0.875: p = 1 - mj((u - 0.375) / 0.5); after that p = 0. mj(x) = 10x^3 - 15x^4 + 6x^5 (minimum jerk: speed and acceleration are zero at both ends of every move, no kink mid-move). Every keyframe stop is a pose solved at p(u); the chest press maps p to a hand place through `pace()` (see the comment in `gen.mjs`).
-- Baked samples (`SAMPLES`): a stop every 0.5 % while the body moves (lift and return), the holds only at their boundaries: 153 stops per group, angles and scales written to 1e-4 (`n4`). Reason: with few key poses, two joints turning at once swing the hand off the handle between poses, and coarse stops make the speed change in visible steps. The smoothness check in section 20 measures the result.
+- Baked samples (`SAMPLES`): a stop every 0.25 % of the rep in the 1 s lift and every 0.5 % in the 2 s return (0.01 s between stops either way at 1x; D-R1), the holds only at their boundaries: 203 stops per group, angles and scales written to 1e-4 (`n4`). Reason: with few key poses, two joints turning at once swing the hand off the handle between poses, and coarse stops make the speed change in visible steps. The smoothness check in section 20 measures the result.
 - Restart with two keyframe sets: every `@keyframes` is written twice, `name-a` and `name-b`. The root carries `class="player gen-{{ gen }}"`, and each moving class has `.gen-a .XX-ua{animation-name:XX-ua-a}.gen-b .XX-ua{animation-name:XX-ua-b}`. Changing `gen` changes every animation's name, which restarts it from 0 %. Flip `gen` on Replay, on a speed change, on a mode change, and when a Pictures still opens or closes. The class goes on the ROOT, not on the stage, because the captions and the rep pill live outside the stage.
 - Captions: four spans stacked in one grid cell (`.stack`), each `capx c1..c4` with hard-step opacity keyframes (0-25 %, 25-37.5 %, 37.5-87.5 %, 87.5-100 %). The rep pill uses three `repx r1..r3` spans over one 3-rep cycle. They share the figure's variables, so they cannot drift from it.
 - Paused before the first Play = the 0 % keyframe = the setup pose. After 3 reps (loop off), fill-mode keeps the 100 % frame, which equals 0 %. The logic's 200 ms timer then sets `ended`, and the button becomes Replay.
@@ -235,8 +241,8 @@ Shared rules:
 
 - Grid: absolute over the stage (`inset: 1px`), padding 6, gap 6, 2 x 2 tiles of 169 x 128, `--surface-1` behind, radius `--radius-lg`. Tile: `--surface-2`, radius `--radius-md`. Top to bottom: the pose picture (169 x 90), then the caption (12px/16px `--text-2`, at most 2 lines, padding 0 8 6). The badge is an 18px circle at 6,6: `--accent-soft` laid over `--surface-2` (opaque, so machine parts never show through it), a 2px `--surface-2` ring, and an `--accent` 11px/700 number.
 - The pictures are the rig itself, not copies: wrap the whole scene in `<g id="rig-XX">` (unique per player) and draw each tile as `<svg viewBox="<tile box>"><use href="#rig-XX" style="--play:paused;--sw:.75;--delay:calc(var(--dur) * -<pose>)"/></svg>`. The pose comes from the `use` element's own variables, so no extra keyframes and no static pose markup are needed. Checked: the four tiles render four different poses.
-- Key poses: 1 = 0 %, 2 = 12.5 %, 3 = 31 %, 4 = 62.5 % (Around the World 0, 20, 45, 70 %). Tiles 2 and 4 carry an accent arrow (2 units, filled head) beside the hand path in the move's direction, drawn in the tile's own SVG in scene units.
-- Tile box: a crop of the scene around the figure and the working equipment (chest press 96 104 160 158; lateral raise 66 56 226 208). The picture fills the 90 height; the sides show a little more of the scene.
+- Key poses: 1 = 0 %, 2 = 12.5 %, 3 = 31 %, 4 = 62.5 % (Around the World 0, 20, 45, 70 %). Tiles 2 and 4 carry an accent arrow (`arrowSvg(a, 1.5)`, class `arrow-lg`: 3 units, filled head 9 long) beside the hand path in the move's direction, drawn in the tile's own SVG in scene units.
+- Tile box: a crop of the scene around the figure and the working equipment (chest press 96 104 160 158; lateral raise 66 51 226 213, which leaves 10 units of headroom above the head). The picture fills the 90 height; the sides show a little more of the scene.
 - A zoom chip in Pictures mode swaps the grid for one large still of pose 1 (pose 3 for Path) at that zoom, with the bubble. The logic flips `gen` and sets `--play: paused; --delay: -pose x dur`, so the stage shows exactly that pose, and the caption line shows that pose's caption.
 - The grid is always in the markup. Its class string (`pics`, `pics on`, `pics zoomed`) decides whether it shows, so the reduced-motion CSS can force it on (section 13). Do not wrap it in `sc-if`.
 - Caption line in Pictures mode: one short rep summary ("Press out 1 s, pause, back 2 s"), with no tempo note. Hint: "Four key moments of one rep."
@@ -349,6 +355,7 @@ Only the files in `rig-final/` were written. These edits make spec.md agree with
 | A new paint drifts off the theme tokens | `shoot.cjs` scans the page CSS and markup for any colour literal, and the contrast table is computed from the CSS itself, not from a copy of the recipe. |
 | The glow or a secondary-motion facet flashes at a rep restart | One opacity channel on the move progress: 0 at setup and in the reset, checked over 481 samples, with a step limit of 0.02 per 1/120 s. |
 | Secondary motion moves a joint that a check holds fixed | It is opacity only, inside the torso, with no `rotate()`: the smoothness sampler never sees it as a joint, and the shoulder drift, elbow bend and level dumbbell checks still run. |
+| The harness cannot reach Google Fonts, so the caption row is measured in a wider fallback font | The harness loads Roboto like the canvas (the same link) and also from a local latin copy (`fonts/Roboto-latin.woff2`, 43 KB); the shoots answer the Google link with an empty stylesheet, so they are offline and deterministic. `.cap` shrinks with an ellipsis before it can push the tempo note out, whatever font draws it (D-R3). |
 | Two players on one page with the same `rig-XX` id | Ids are unique per player (`rig-cp`, `rig-lr`, and so on); the About sheet mounts one player at a time. |
 | `<use>` clones take their styles from the original's place | Checked in Chromium; the tiles depend on it. If another engine differs, the tiles still show a pose (the setup pose), never a blank. |
 | Body fill vs stage is only 1.4 to 1.8:1 | On purpose, as on the app's map: the 1.5 outline carries the shape (at least 4.6:1). |
@@ -386,10 +393,13 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="tl" data-region="collar" points="-6.4,-72.6 -1.5,-70.8 3.8,-68.6 7.2,-66.6 6.4,-65.4 3.2,-67.3 -1.8,-69.3 -6.6,-71.1"/>
 <polygon class="mm" data-region="midBack" points="-11.2,-60.5 -3.6,-61 -5.4,-54.6 -12.3,-52"/>  <!-- mm if main, mh if helps, omit otherwise -->
 <polygon class="tl" data-region="lats" points="-12.3,-52 -5.4,-54.6 -2.6,-42 -4.8,-30 -10,-26 -11.9,-40"/>  <!-- mm if main, mh if helps, tl otherwise -->
-<polygon class="tl" data-region="underChest" points="11.8,-36.4 11.4,-33.8 6.6,-36.4 6.4,-38.8"/>
+<polygon class="tl" data-region="armpit" points="-3.4,-56.4 1.4,-56 0.8,-48.6 -1.8,-47.4"/>
+<polygon class="th" data-region="latFold" points="-2.6,-42 -4.8,-30 -3.2,-29.6 -0.8,-41"/>
+<polygon class="tl" data-region="underChest" points="12.7,-38.6 12.2,-35.6 7,-36.2 8.4,-38.2"/>
 <polygon class="mm" data-region="abs" points="11.4,-33.8 10.2,-26 9.8,-14 10.5,-7 5.8,-7.4 5.6,-24 6.6,-36.4"/>  <!-- mm if main, mh if helps, omit otherwise -->
 <polygon class="mm" data-region="obliques" points="5.6,-24 5.8,-7.4 -4,-8.2 -4.8,-19 -0.4,-27"/>  <!-- mm if main, mh if helps, omit otherwise -->
-<polygon class="th" data-region="chest" points="7.2,-66.6 11.4,-64.6 15,-57 15.8,-48.5 14.2,-41.2 11.8,-36.4 6.4,-38.8 3.8,-52 4.8,-62.4"/>  <!-- mm if main, mh if helps, th otherwise -->
+<polygon class="th" data-region="chest" points="9.4,-64.4 12.8,-61.2 15.3,-52 8,-50.2 3.6,-52 1.4,-56 4.6,-61.4"/>  <!-- mm if main, mh if helps, th otherwise -->
+<polygon class="th" data-region="chest" points="15.3,-52 14.7,-44 12.7,-38.6 8.4,-38.2 3.6,-42 0.8,-48.6 3.6,-52 8,-50.2"/>  <!-- mm if main, mh if helps, th otherwise -->
 <polygon class="tl" data-region="brace" points="10.2,-26 9.8,-14 10.5,-7 8.6,-7.2 8,-14 8.4,-26.4"/>  <!-- secondary motion: add "tn anim XX-ten" -->
 <polygon class="tl" data-region="bladeEdge" points="-8.8,-60.2 -7.4,-60 -9,-50.8 -10.4,-51"/>  <!-- secondary motion: add "tn anim XX-ten" -->
 <!-- head  (lives in: figure root) -->
@@ -398,7 +408,9 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="b" points="-7.2,-85.5 -5.6,-90.8 -1.5,-93.8 4.5,-94 9.6,-91.6 12.2,-87.6 13,-84.6 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 -1.5,-75.2 -5.8,-78.4"/>  <!-- fill pass -->
 <polygon class="hr" data-region="hair" points="10.38,-90.4 9.6,-91.6 4.5,-94 -1.5,-93.8 -5.6,-90.8 -7.2,-85.5 -6.3,-81 -3,-82.4 -1.4,-85.6 2,-87.2 5.8,-88 8.2,-89.4"/>
 <polygon class="hrh" data-region="hairSheen" points="4.5,-94 -1.5,-93.8 -3.6,-92.2 1.4,-92.6 6.6,-92.9"/>
-<polygon class="bl" data-region="ear" points="-0.4,-83.8 2.4,-85.2 4.6,-82.8 4.4,-78.8 2.6,-76.6 0.2,-78.2"/>
+<polygon class="bh" data-region="forehead" points="10.38,-90.4 8.2,-89.4 5.8,-88 2,-87.2 -1.4,-85.6 1.4,-84.8 5,-85.6 8.8,-85.4 9.8,-87.6"/>
+<polygon class="bh" data-region="ear" points="-0.4,-83.8 2.4,-85.2 4.6,-82.8 4.4,-78.8 2.6,-76.6 0.2,-78.2"/>
+<polygon class="bl" data-region="earInner" points="0.6,-82.6 2.4,-83.6 3.4,-82 3.2,-79.4 2.2,-78.2 0.8,-79.4"/>
 <polygon class="bh" data-region="face" points="9.2,-84 12.4,-83.2 13.4,-81.4 15.4,-78.6 13.3,-77.4 13.2,-75.8 10,-75.6 8,-79.6"/>
 <polygon class="bl" data-region="brow" points="8.8,-85.4 13,-84.6 12.4,-83.2 9.4,-84.2"/>
 <polygon class="bl" data-region="jaw" points="12.8,-73.5 11,-71.2 5.6,-70.8 1.8,-73.6 7,-73.4"/>
@@ -420,28 +432,28 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="mm" data-region="sideDelts" points="-2.2,-69.4 2.4,-69.2 2.2,-61 3,-49.8 0.6,-49 -3.2,-49.7 -2.4,-61"/>  <!-- mm if main, mh if helps, omit otherwise -->
 <polygon class="tl" data-region="rearDelts" points="-6.5,-66 -2.5,-69.5 -2.2,-69.4 -2.4,-61 -3.2,-49.7 -4.4,-50 -6.5,-54.4"/>  <!-- mm if main, mh if helps, tl otherwise -->
 <!-- elbowCap  (lives in: fa) -->
-<polygon class="olk" points="4.44,-22.81 3.25,-20.75 1.19,-19.56 -1.19,-19.56 -3.25,-20.75 -4.44,-22.81 -4.44,-25.19 -3.25,-27.25 -1.19,-28.44 1.19,-28.44 3.25,-27.25 4.44,-25.19"/>  <!-- outline pass -->
-<polygon class="rim" points="4.44,-22.81 3.25,-20.75 1.19,-19.56 -1.19,-19.56 -3.25,-20.75 -4.44,-22.81 -4.44,-25.19 -3.25,-27.25 -1.19,-28.44 1.19,-28.44 3.25,-27.25 4.44,-25.19"/>  <!-- rim pass -->
-<polygon class="b" points="4.44,-22.81 3.25,-20.75 1.19,-19.56 -1.19,-19.56 -3.25,-20.75 -4.44,-22.81 -4.44,-25.19 -3.25,-27.25 -1.19,-28.44 1.19,-28.44 3.25,-27.25 4.44,-25.19"/>  <!-- fill pass -->
-<polygon class="bl" data-region="elbowBack" points="0,-19.4 -2.3,-20.02 -3.98,-21.7 -4.6,-24 -3.98,-26.3 -2.3,-27.98 0,-28.6"/>
+<polygon class="olk" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/>  <!-- outline pass -->
+<polygon class="rim" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/>  <!-- rim pass -->
+<polygon class="b" points="4.64,-22.76 3.39,-20.61 1.24,-19.36 -1.24,-19.36 -3.39,-20.61 -4.64,-22.76 -4.64,-25.24 -3.39,-27.39 -1.24,-28.64 1.24,-28.64 3.39,-27.39 4.64,-25.24"/>  <!-- fill pass -->
+<polygon class="bl" data-region="elbowCrease" points="2.6,-27.2 4.4,-24 2.6,-20.8 1.6,-24"/>
 <!-- forearm  (lives in: fa > fl) -->
-<polygon class="olk" points="-4.8,-25 4.8,-25 5.4,-18 5,-11 3.6,7 -3.6,7 -4.4,-10 -4.9,-18"/>  <!-- outline pass -->
-<polygon class="rim" points="-4.8,-25 4.8,-25 5.4,-18 5,-11 3.6,7 -3.6,7 -4.4,-10 -4.9,-18"/>  <!-- rim pass -->
-<polygon class="b" points="-4.8,-25 4.8,-25 5.4,-18 5,-11 3.6,7 -3.6,7 -4.4,-10 -4.9,-18"/>  <!-- fill pass -->
-<polygon class="bh" data-region="forearms" points="0.4,-25 4.8,-25 5.4,-18 5,-11 3.6,7 0.6,7"/>  <!-- mm if main, mh if helps, bh otherwise -->
-<polygon class="bl" data-region="forearmUnder" points="-4.8,-25 -2.6,-25 -2.2,7 -3.6,7 -4.4,-10 -4.9,-18"/>
+<polygon class="olk" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/>  <!-- outline pass -->
+<polygon class="rim" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/>  <!-- rim pass -->
+<polygon class="b" points="-4.8,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 -4,7 -4.5,-6 -4.9,-17"/>  <!-- fill pass -->
+<polygon class="bh" data-region="forearms" points="0.6,-25 5,-25 6.4,-19.5 6.2,-14 4.9,-3 4,7 0.8,7"/>  <!-- mm if main, mh if helps, bh otherwise -->
+<polygon class="bl" data-region="forearmUnder" points="-4.8,-25 -2.6,-25 -2.2,7 -4,7 -4.5,-6 -4.9,-17"/>
 <!-- fist  (lives in: fa > hd) -->
 <polygon class="olk" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/>  <!-- outline pass -->
 <polygon class="rim" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/>  <!-- rim pass -->
 <polygon class="b" points="-3.7,6.4 3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.8,12.4 -4.8,9"/>  <!-- fill pass -->
 <polygon class="bl" data-region="palmHeel" points="-3.7,6.4 -4.8,9 -5.8,12.4 -4.6,12.8 -3.4,7.4"/>
-<polygon class="bl" data-region="thumbCrease" points="2.2,7.4 4.2,9.6 5.6,13.4 5.1,17.6 4.3,17.3 4.6,13.6 3.3,10.2 1.5,8.1"/>
-<polygon class="bh" data-region="thumb" points="3.7,6.4 5.6,9.2 7.2,13 7.3,16.6 6.4,18.6 5.3,17.8 5.8,13.6 4.4,9.8 2.4,7.2"/>
-<polygon class="bl" data-region="fingerGaps" points="5.3,15.4 6.2,19.6 4.8,21.2 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.9,15.6"/>
-<polygon class="bh" data-region="finger1" points="2.6,15.8 5.1,15.6 5.6,18.6 4.6,21.1 3,21.6 2.5,18.8"/>
-<polygon class="bh" data-region="finger2" points="-0.2,15.8 2.2,15.8 2.1,19 1.9,21.7 0.1,21.7 -0.3,19"/>
-<polygon class="bh" data-region="finger3" points="-2.9,15.8 -0.6,15.8 -0.7,19 -0.9,21.7 -2.7,21.5 -3.1,19"/>
-<polygon class="bh" data-region="finger4" points="-5.3,16 -3.3,15.8 -3.5,19 -3.6,21.4 -4.9,20.6 -5.6,18"/>
+<polygon class="bl" data-region="fingerGaps" points="3.3,15.8 3.3,18.6 4.6,20.4 3.4,21.4 2.2,21.8 -0.6,21.8 -3.2,21.5 -5.2,20.6 -6,17.6 -5.9,15.6"/>
+<polygon class="bh" data-region="finger1" points="0.9,15.8 3.1,15.6 3.3,18.6 2.9,20.9 1.5,21.5 0.8,18.8"/>
+<polygon class="bh" data-region="finger2" points="-1.5,15.8 0.5,15.8 0.4,18.8 0.3,21.6 -1.3,21.7 -1.7,18.8"/>
+<polygon class="bh" data-region="finger3" points="-3.8,15.8 -1.9,15.8 -2,18.8 -2.1,21.6 -3.5,21.4 -4,18.8"/>
+<polygon class="bh" data-region="finger4" points="-5.9,15.8 -4.2,15.8 -4.4,18.8 -4.4,21.2 -5.3,20.6 -6,17.6"/>
+<polygon class="bl" data-region="thumbCrease" points="1.5,7.4 3.6,9.6 4.4,13.4 4,18.2 5.2,19.6 4.6,20.4 3.2,18.6 3.4,13.4 2.6,10 0.8,8.1"/>
+<polygon class="bh" data-region="thumb" points="3.2,6.6 5.6,9.2 7.2,13 7.3,16.6 6.6,18.6 5.2,19.6 4,18.2 4.4,13.4 3.6,9.6 1.8,7.6"/>
 <!-- hipCap  (lives in: thigh) -->
 <polygon class="olk" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/>  <!-- outline pass -->
 <polygon class="rim" points="8.11,2.17 5.94,5.94 2.17,8.11 -2.17,8.11 -5.94,5.94 -8.11,2.17 -8.11,-2.17 -5.94,-5.94 -2.17,-8.11 2.17,-8.11 5.94,-5.94 8.11,-2.17"/>  <!-- rim pass -->
@@ -491,6 +503,8 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="rim" points="0,-65.8 3.4,-67 6.2,-71.2 11.6,-69 17.2,-66.2 21,-62.6 20.2,-52 16.6,-38 14,-26 15,-14 16.5,-4 15,4 6,10.5 0,11.5 -6,10.5 -15,4 -16.5,-4 -15,-14 -14,-26 -16.6,-38 -20.2,-52 -21,-62.6 -17.2,-66.2 -11.6,-69 -6.2,-71.2 -3.4,-67"/>  <!-- rim pass -->
 <polygon class="t" points="0,-65.8 3.4,-67 6.2,-71.2 11.6,-69 17.2,-66.2 21,-62.6 20.2,-52 16.6,-38 14,-26 15,-14 16.5,-4 15,4 6,10.5 0,11.5 -6,10.5 -15,4 -16.5,-4 -15,-14 -14,-26 -16.6,-38 -20.2,-52 -21,-62.6 -17.2,-66.2 -11.6,-69 -6.2,-71.2 -3.4,-67"/>  <!-- fill pass -->
 <polygon class="p" data-region="shorts" points="0,-7 16.05,-7 16.5,-4 15,4 6,10.5 0,11.5 -6,10.5 -15,4 -16.5,-4 -16.05,-7"/>
+<polygon class="ph" data-region="shortsFront" points="0,-5.6 12.6,-5.6 13.2,-1.6 12,3.6 5.4,9.2 0,10.2 -5.4,9.2 -12,3.6 -13.2,-1.6 -12.6,-5.6"/>
+<polygon class="pl" data-region="fly" points="-0.45,-5.6 0.45,-5.6 0.35,8.2 -0.35,8.2"/>
 <polygon class="pl" data-region="waistband" points="16.05,-7 -16.05,-7 -16.2,-5.6 16.2,-5.6"/>
 <polygon class="th" data-region="upperTraps" points="6.2,-71.2 11.6,-69 17.2,-66.2 21,-62.6 13,-63.4 7.4,-67.6"/>  <!-- mm if main, mh if helps, th otherwise -->
 <polygon class="th" data-region="upperTraps" points="-6.2,-71.2 -11.6,-69 -17.2,-66.2 -21,-62.6 -13,-63.4 -7.4,-67.6"/>  <!-- mm if main, mh if helps, th otherwise -->
@@ -506,16 +520,19 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="th" data-region="chest" points="-1,-64.2 -13,-63.4 -20,-61.6 -19.9,-53 -16.4,-45.4 -8.6,-43.2 -1,-44.6"/>  <!-- mm if main, mh if helps, th otherwise -->
 <polygon class="tl" data-region="brace" points="8.6,-38 10,-37.8 10.4,-9.6 9,-9.6"/>  <!-- secondary motion: add "tn anim XX-ten" -->
 <polygon class="tl" data-region="brace" points="-8.6,-38 -10,-37.8 -10.4,-9.6 -9,-9.6"/>  <!-- secondary motion: add "tn anim XX-ten" -->
-<polygon class="tl" data-region="collarbone" points="7.4,-67.6 13,-63.4 20.4,-62.4 20.2,-61.2 13,-62 7.2,-66.2"/>  <!-- secondary motion: add "tn anim XX-ten" -->
-<polygon class="tl" data-region="collarbone" points="-7.4,-67.6 -13,-63.4 -20.4,-62.4 -20.2,-61.2 -13,-62 -7.2,-66.2"/>  <!-- secondary motion: add "tn anim XX-ten" -->
+<polygon class="tl" data-region="collarbone" points="7.4,-67.6 13,-63.4 20.4,-62.4 20.2,-61 13,-61.5 7,-66"/>  <!-- secondary motion: add "tn anim XX-ten" -->
+<polygon class="tl" data-region="collarbone" points="-7.4,-67.6 -13,-63.4 -20.4,-62.4 -20.2,-61 -13,-61.5 -7,-66"/>  <!-- secondary motion: add "tn anim XX-ten" -->
 <!-- head  (lives in: figure root) -->
 <polygon class="olk" points="0,-95 5.6,-94 8.8,-90.6 9.7,-86.8 11.1,-86.9 11.9,-84.4 11.3,-80.6 9.5,-79.4 8.3,-77 5.4,-73.6 2.4,-71.8 0,-71.4 -2.4,-71.8 -5.4,-73.6 -8.3,-77 -9.5,-79.4 -11.3,-80.6 -11.9,-84.4 -11.1,-86.9 -9.7,-86.8 -8.8,-90.6 -5.6,-94"/>  <!-- outline pass -->
 <polygon class="rim" points="0,-95 5.6,-94 8.8,-90.6 9.7,-86.8 11.1,-86.9 11.9,-84.4 11.3,-80.6 9.5,-79.4 8.3,-77 5.4,-73.6 2.4,-71.8 0,-71.4 -2.4,-71.8 -5.4,-73.6 -8.3,-77 -9.5,-79.4 -11.3,-80.6 -11.9,-84.4 -11.1,-86.9 -9.7,-86.8 -8.8,-90.6 -5.6,-94"/>  <!-- rim pass -->
 <polygon class="b" points="0,-95 5.6,-94 8.8,-90.6 9.7,-86.8 11.1,-86.9 11.9,-84.4 11.3,-80.6 9.5,-79.4 8.3,-77 5.4,-73.6 2.4,-71.8 0,-71.4 -2.4,-71.8 -5.4,-73.6 -8.3,-77 -9.5,-79.4 -11.3,-80.6 -11.9,-84.4 -11.1,-86.9 -9.7,-86.8 -8.8,-90.6 -5.6,-94"/>  <!-- fill pass -->
 <polygon class="hr" data-region="hair" points="0,-95 5.6,-94 8.8,-90.6 9.7,-86.8 8.7,-87.4 7.6,-89.8 4.6,-91.2 0,-91.8 -4.6,-91.2 -7.6,-89.8 -8.7,-87.4 -9.7,-86.8 -8.8,-90.6 -5.6,-94"/>
 <polygon class="hrh" data-region="hairSheen" points="-4.6,-94.1 1.6,-94.9 4.2,-93.4 -1.8,-93"/>
-<polygon class="bl" data-region="ear" points="9.7,-86.8 11.1,-86.9 11.9,-84.4 11.3,-80.6 9.5,-79.4 9.3,-83"/>
-<polygon class="bl" data-region="ear" points="-9.7,-86.8 -11.1,-86.9 -11.9,-84.4 -11.3,-80.6 -9.5,-79.4 -9.3,-83"/>
+<polygon class="bh" data-region="forehead" points="0,-91.8 4.6,-91.2 7.6,-89.8 8.7,-87.4 6.4,-86.2 0,-86.6 -6.4,-86.2 -8.7,-87.4 -7.6,-89.8 -4.6,-91.2"/>
+<polygon class="bh" data-region="ear" points="9.7,-86.8 11.1,-86.9 11.9,-84.4 11.3,-80.6 9.5,-79.4 9.3,-83"/>
+<polygon class="bh" data-region="ear" points="-9.7,-86.8 -11.1,-86.9 -11.9,-84.4 -11.3,-80.6 -9.5,-79.4 -9.3,-83"/>
+<polygon class="bl" data-region="earInner" points="10.2,-85.6 11.2,-84.6 10.9,-81.4 9.9,-80.8 9.6,-83.4"/>
+<polygon class="bl" data-region="earInner" points="-10.2,-85.6 -11.2,-84.6 -10.9,-81.4 -9.9,-80.8 -9.6,-83.4"/>
 <polygon class="bl" data-region="cheek" points="6.4,-85.6 9.3,-86.2 9.3,-83 9.5,-79.4 8.3,-77 5.4,-73.6 4.6,-77.4"/>
 <polygon class="bl" data-region="cheek" points="-6.4,-85.6 -9.3,-86.2 -9.3,-83 -9.5,-79.4 -8.3,-77 -5.4,-73.6 -4.6,-77.4"/>
 <polygon class="bl" data-region="nose" points="0.2,-84.4 1.5,-79.8 0.1,-78.9"/>
@@ -536,16 +553,16 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="th" data-region="sideDelts" points="23,-66 28,-64.5 30.2,-59.5 29.8,-52.5 26.8,-47.5 24.5,-57.5"/>  <!-- mm if main, mh if helps, th otherwise -->
 <polygon class="mm" data-region="frontDelts" points="16.8,-65 23,-66 24.5,-57.5 26.8,-47.5 21,-49 16.8,-56.5"/>  <!-- mm if main, mh if helps, omit otherwise -->
 <!-- elbowCapR  (lives in: fa-r) -->
-<polygon class="olk" points="26.44,-22.81 25.25,-20.75 23.19,-19.56 20.81,-19.56 18.75,-20.75 17.56,-22.81 17.56,-25.19 18.75,-27.25 20.81,-28.44 23.19,-28.44 25.25,-27.25 26.44,-25.19"/>  <!-- outline pass -->
-<polygon class="rim" points="26.44,-22.81 25.25,-20.75 23.19,-19.56 20.81,-19.56 18.75,-20.75 17.56,-22.81 17.56,-25.19 18.75,-27.25 20.81,-28.44 23.19,-28.44 25.25,-27.25 26.44,-25.19"/>  <!-- rim pass -->
-<polygon class="b" points="26.44,-22.81 25.25,-20.75 23.19,-19.56 20.81,-19.56 18.75,-20.75 17.56,-22.81 17.56,-25.19 18.75,-27.25 20.81,-28.44 23.19,-28.44 25.25,-27.25 26.44,-25.19"/>  <!-- fill pass -->
-<polygon class="bl" data-region="elbowInner" points="22,-19.4 19.7,-20.02 18.02,-21.7 17.4,-24 18.02,-26.3 19.7,-27.98 22,-28.6"/>
+<polygon class="olk" points="26.64,-22.76 25.39,-20.61 23.24,-19.36 20.76,-19.36 18.61,-20.61 17.36,-22.76 17.36,-25.24 18.61,-27.39 20.76,-28.64 23.24,-28.64 25.39,-27.39 26.64,-25.24"/>  <!-- outline pass -->
+<polygon class="rim" points="26.64,-22.76 25.39,-20.61 23.24,-19.36 20.76,-19.36 18.61,-20.61 17.36,-22.76 17.36,-25.24 18.61,-27.39 20.76,-28.64 23.24,-28.64 25.39,-27.39 26.64,-25.24"/>  <!-- rim pass -->
+<polygon class="b" points="26.64,-22.76 25.39,-20.61 23.24,-19.36 20.76,-19.36 18.61,-20.61 17.36,-22.76 17.36,-25.24 18.61,-27.39 20.76,-28.64 23.24,-28.64 25.39,-27.39 26.64,-25.24"/>  <!-- fill pass -->
+<polygon class="bl" data-region="elbowCrease" points="19.4,-27.2 17.6,-24 19.4,-20.8 20.4,-24"/>
 <!-- forearmR  (lives in: fa-r) -->
-<polygon class="olk" points="17.4,-25 26.8,-25 27.4,-17 26.8,-9 25.4,7 18.6,7 17.6,-8 17,-17"/>  <!-- outline pass -->
-<polygon class="rim" points="17.4,-25 26.8,-25 27.4,-17 26.8,-9 25.4,7 18.6,7 17.6,-8 17,-17"/>  <!-- rim pass -->
-<polygon class="b" points="17.4,-25 26.8,-25 27.4,-17 26.8,-9 25.4,7 18.6,7 17.6,-8 17,-17"/>  <!-- fill pass -->
-<polygon class="bh" data-region="forearms" points="22.4,-25 26.8,-25 27.4,-17 26.8,-9 25.4,7 22.8,7"/>  <!-- mm if main, mh if helps, bh otherwise -->
-<polygon class="bl" data-region="forearmInner" points="17.4,-25 19.2,-25 19.8,7 18.6,7 17.6,-8 17,-17"/>
+<polygon class="olk" points="17.2,-25 27,-25 28.2,-19 28,-13 26.8,-2 26,7 18,7 17.5,-6 17.1,-17"/>  <!-- outline pass -->
+<polygon class="rim" points="17.2,-25 27,-25 28.2,-19 28,-13 26.8,-2 26,7 18,7 17.5,-6 17.1,-17"/>  <!-- rim pass -->
+<polygon class="b" points="17.2,-25 27,-25 28.2,-19 28,-13 26.8,-2 26,7 18,7 17.5,-6 17.1,-17"/>  <!-- fill pass -->
+<polygon class="bh" data-region="forearms" points="22.6,-25 27,-25 28.2,-19 28,-13 26.8,-2 26,7 22.9,7"/>  <!-- mm if main, mh if helps, bh otherwise -->
+<polygon class="bl" data-region="forearmInner" points="17.2,-25 19.2,-25 19.8,7 18,7 17.5,-6 17.1,-17"/>
 <!-- fistR  (lives in: fa-r) -->
 <polygon class="olk" points="18.4,6.4 25.6,6.4 26.8,7.8 27.7,9.2 27.3,10.3 28.1,11.6 27.7,12.8 28.4,14.2 28,15.4 28.5,16.8 28,19 26.4,20.9 23.4,21.8 20.2,21.5 17.8,20 16.4,17.2 15.9,13.2 16.4,9.6"/>  <!-- outline pass -->
 <polygon class="rim" points="18.4,6.4 25.6,6.4 26.8,7.8 27.7,9.2 27.3,10.3 28.1,11.6 27.7,12.8 28.4,14.2 28,15.4 28.5,16.8 28,19 26.4,20.9 23.4,21.8 20.2,21.5 17.8,20 16.4,17.2 15.9,13.2 16.4,9.6"/>  <!-- rim pass -->
@@ -561,7 +578,8 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="rim" points="2,-4 18,-4 18.4,10 18,20 16,44 13.6,49 10,50.5 6,49 4,46 2.8,30 2.4,16"/>  <!-- rim pass -->
 <polygon class="b" points="2,-4 18,-4 18.4,10 18,20 16,44 13.6,49 10,50.5 6,49 4,46 2.8,30 2.4,16"/>  <!-- fill pass -->
 <polygon class="p" data-region="shorts" points="2,-4 18,-4 18.4,10 18,20 16.95,34 2.7,34.6 2.8,30 2.4,16"/>
-<polygon class="ph" data-region="quads" points="6.6,-4 13.4,-4 14,34.3 6.4,34.5"/>  <!-- mm if main, mh if helps, ph otherwise -->
+<polygon class="ph" data-region="quads" points="4.6,-4 15.6,-4 16.4,10 16.1,20 15.3,34.1 4.7,34.5 4.2,20 4.4,10"/>  <!-- mm if main, mh if helps, ph otherwise -->
+<polygon class="pl" data-region="thighOuter" points="15.6,-4 18,-4 18.4,10 18,20 16.95,34 15.3,34.1 16.1,20 16.4,10"/>
 <polygon class="bh" data-region="quads" points="6.4,34.5 14,34.3 14.6,44 12.4,48.2 9,48.6 6.6,43"/>  <!-- mm if main, mh if helps, bh otherwise -->
 <polygon class="pl" data-region="shortsHem" points="16.95,34 2.7,34.6 2.66,33.2 17.05,32.6"/>
 <!-- kneeCapR  (lives in: figure root) -->
@@ -570,18 +588,18 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="b" points="15.6,51.5 14.1,54.1 11.5,55.6 8.5,55.6 5.9,54.1 4.4,51.5 4.4,48.5 5.9,45.9 8.5,44.4 11.5,44.4 14.1,45.9 15.6,48.5"/>  <!-- fill pass -->
 <polygon class="bh" data-region="patella" points="4.2,50 4.98,47.1 7.1,44.98 10,44.2 12.9,44.98 15.02,47.1 15.8,50"/>
 <!-- shinR  (lives in: figure root) -->
-<polygon class="olk" points="4.5,49 15.5,49 16.2,60 15.2,74 14,94 6,94 5,76 3.8,62"/>  <!-- outline pass -->
-<polygon class="rim" points="4.5,49 15.5,49 16.2,60 15.2,74 14,94 6,94 5,76 3.8,62"/>  <!-- rim pass -->
-<polygon class="b" points="4.5,49 15.5,49 16.2,60 15.2,74 14,94 6,94 5,76 3.8,62"/>  <!-- fill pass -->
-<polygon class="bl" data-region="calves" points="15.5,49 16.2,60 15.2,74 14,94 12.8,92 13.4,70 13.2,52"/>  <!-- mm if main, mh if helps, bl otherwise -->
-<polygon class="bl" data-region="calves" points="4.5,49 3.8,60 4.8,74 6,94 7.2,92 6.6,70 6.8,52"/>  <!-- mm if main, mh if helps, bl otherwise -->
+<polygon class="olk" points="4.5,49 15.5,49 16.9,60 16.4,68 15.2,78 14,94 6,94 5,78 3.6,68 3.1,60"/>  <!-- outline pass -->
+<polygon class="rim" points="4.5,49 15.5,49 16.9,60 16.4,68 15.2,78 14,94 6,94 5,78 3.6,68 3.1,60"/>  <!-- rim pass -->
+<polygon class="b" points="4.5,49 15.5,49 16.9,60 16.4,68 15.2,78 14,94 6,94 5,78 3.6,68 3.1,60"/>  <!-- fill pass -->
+<polygon class="bl" data-region="calves" points="15.5,49 16.9,60 16.4,68 15.2,78 14,94 12.8,92 13.6,74 13.6,56"/>  <!-- mm if main, mh if helps, bl otherwise -->
+<polygon class="bl" data-region="calves" points="4.5,49 3.1,60 3.6,68 4.8,78 6,94 7.2,92 6.4,74 6.4,56"/>  <!-- mm if main, mh if helps, bl otherwise -->
 <!-- footR  (lives in: figure root) -->
-<polygon class="olk" points="5.5,92.4 14.5,92.4 16.6,97 17.2,99.4 16.8,102 4.2,102 3.6,99.4 4,96.4"/>  <!-- outline pass -->
-<polygon class="rim" points="5.5,92.4 14.5,92.4 16.6,97 17.2,99.4 16.8,102 4.2,102 3.6,99.4 4,96.4"/>  <!-- rim pass -->
-<polygon class="s" points="5.5,92.4 14.5,92.4 16.6,97 17.2,99.4 16.8,102 4.2,102 3.6,99.4 4,96.4"/>  <!-- fill pass -->
+<polygon class="olk" points="5.5,92.4 14.5,92.4 17.2,96.6 18,99.4 17.6,102 3.4,102 2.8,99.4 3.6,96.4"/>  <!-- outline pass -->
+<polygon class="rim" points="5.5,92.4 14.5,92.4 17.2,96.6 18,99.4 17.6,102 3.4,102 2.8,99.4 3.6,96.4"/>  <!-- rim pass -->
+<polygon class="s" points="5.5,92.4 14.5,92.4 17.2,96.6 18,99.4 17.6,102 3.4,102 2.8,99.4 3.6,96.4"/>  <!-- fill pass -->
 <polygon class="sl" data-region="collar" points="5.5,92.4 14.5,92.4 15,93.6 5.2,93.6"/>
-<polygon class="sh" data-region="toeCap" points="6.2,96.4 14.2,96.4 16.2,98.6 16.4,100.4 4.6,100.4 4.4,98.6"/>
-<polygon class="so" data-region="sole" points="3.8,100.4 17,100.4 16.8,102 4.2,102"/>
+<polygon class="sh" data-region="toeCap" points="5.6,96 14.8,96 17,98.4 17.3,100.4 3.6,100.4 3.4,98.4"/>
+<polygon class="so" data-region="sole" points="3,100.4 17.8,100.4 17.6,102 3.4,102"/>
 ```
 
 **Top view parts, seated or standing lifter (faces -y; rig origin = midway between the shoulder joints)**
@@ -618,16 +636,16 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <polygon class="bl" data-region="triceps" points="16.52,19.6 18.4,19.5 18.8,33 17.4,35"/>  <!-- mm if main, mh if helps, bl otherwise -->
 <polygon class="tl" data-region="sleeveHem" points="27.82,19 16.52,19.6 16.44,18.2 27.93,17.6"/>
 <!-- elbowCapR  (lives in: fa-r) -->
-<polygon class="olk" points="26.44,39.19 25.25,41.25 23.19,42.44 20.81,42.44 18.75,41.25 17.56,39.19 17.56,36.81 18.75,34.75 20.81,33.56 23.19,33.56 25.25,34.75 26.44,36.81"/>  <!-- outline pass -->
-<polygon class="rim" points="26.44,39.19 25.25,41.25 23.19,42.44 20.81,42.44 18.75,41.25 17.56,39.19 17.56,36.81 18.75,34.75 20.81,33.56 23.19,33.56 25.25,34.75 26.44,36.81"/>  <!-- rim pass -->
-<polygon class="b" points="26.44,39.19 25.25,41.25 23.19,42.44 20.81,42.44 18.75,41.25 17.56,39.19 17.56,36.81 18.75,34.75 20.81,33.56 23.19,33.56 25.25,34.75 26.44,36.81"/>  <!-- fill pass -->
-<polygon class="bl" data-region="elbowInner" points="22,42.6 19.7,41.98 18.02,40.3 17.4,38 18.02,35.7 19.7,34.02 22,33.4"/>
+<polygon class="olk" points="26.64,39.24 25.39,41.39 23.24,42.64 20.76,42.64 18.61,41.39 17.36,39.24 17.36,36.76 18.61,34.61 20.76,33.36 23.24,33.36 25.39,34.61 26.64,36.76"/>  <!-- outline pass -->
+<polygon class="rim" points="26.64,39.24 25.39,41.39 23.24,42.64 20.76,42.64 18.61,41.39 17.36,39.24 17.36,36.76 18.61,34.61 20.76,33.36 23.24,33.36 25.39,34.61 26.64,36.76"/>  <!-- rim pass -->
+<polygon class="b" points="26.64,39.24 25.39,41.39 23.24,42.64 20.76,42.64 18.61,41.39 17.36,39.24 17.36,36.76 18.61,34.61 20.76,33.36 23.24,33.36 25.39,34.61 26.64,36.76"/>  <!-- fill pass -->
+<polygon class="bl" data-region="elbowCrease" points="19.4,34.8 17.6,38 19.4,41.2 20.4,38"/>
 <!-- forearmR  (lives in: fa-r > fl-r) -->
-<polygon class="olk" points="17.4,37 26.8,37 27.4,45 26.8,53 25.4,69 18.6,69 17.6,54 17,45"/>  <!-- outline pass -->
-<polygon class="rim" points="17.4,37 26.8,37 27.4,45 26.8,53 25.4,69 18.6,69 17.6,54 17,45"/>  <!-- rim pass -->
-<polygon class="b" points="17.4,37 26.8,37 27.4,45 26.8,53 25.4,69 18.6,69 17.6,54 17,45"/>  <!-- fill pass -->
-<polygon class="bh" data-region="forearms" points="22.4,37 26.8,37 27.4,45 26.8,53 25.4,69 22.8,69"/>  <!-- mm if main, mh if helps, bh otherwise -->
-<polygon class="bl" data-region="forearmInner" points="17.4,37 19.2,37 19.8,69 18.6,69 17.6,54 17,45"/>
+<polygon class="olk" points="17.2,37 27,37 28.2,43 28,49 26.8,60 26,69 18,69 17.5,56 17.1,45"/>  <!-- outline pass -->
+<polygon class="rim" points="17.2,37 27,37 28.2,43 28,49 26.8,60 26,69 18,69 17.5,56 17.1,45"/>  <!-- rim pass -->
+<polygon class="b" points="17.2,37 27,37 28.2,43 28,49 26.8,60 26,69 18,69 17.5,56 17.1,45"/>  <!-- fill pass -->
+<polygon class="bh" data-region="forearms" points="22.6,37 27,37 28.2,43 28,49 26.8,60 26,69 22.9,69"/>  <!-- mm if main, mh if helps, bh otherwise -->
+<polygon class="bl" data-region="forearmInner" points="17.2,37 19.2,37 19.8,69 18,69 17.5,56 17.1,45"/>
 <!-- fistR  (lives in: fa-r > hd-r) -->
 <polygon class="olk" points="18.4,68.4 25.6,68.4 26.8,69.8 27.7,71.2 27.3,72.3 28.1,73.6 27.7,74.8 28.4,76.2 28,77.4 28.5,78.8 28,81 26.4,82.9 23.4,83.8 20.2,83.5 17.8,82 16.4,79.2 15.9,75.2 16.4,71.6"/>  <!-- outline pass -->
 <polygon class="rim" points="18.4,68.4 25.6,68.4 26.8,69.8 27.7,71.2 27.3,72.3 28.1,73.6 27.7,74.8 28.4,76.2 28,77.4 28.5,78.8 28,81 26.4,82.9 23.4,83.8 20.2,83.5 17.8,82 16.4,79.2 15.9,75.2 16.4,71.6"/>  <!-- rim pass -->
@@ -644,16 +662,16 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 
 ```html
 <!-- front-view dumbbell, screen-right hand. Lives in fa-r > db-r (rotation origin 22,16 = the grip).
-     Knurled handle from inside the fist down into the head; end face centred at (22, 29.3), 13.3 below the grip (seen a little from above), so the whole hand shows above it. Screen-left: negate every x. -->
-<rect class="hd" x="20.2" y="17.6" width="3.6" height="5.88"/>
-<path class="knurl" d="M20.2 18.9h3.6M20.2 20.1h3.6M20.2 21.3h3.6"/>
-<polygon class="eqm" points="16.2,29.3 19.1,24.68 24.9,24.68 27.8,29.3 27.8,27.3 24.9,22.68 19.1,22.68 16.2,27.3"/>
-<polygon class="eqs" points="16.2,29.3 19.1,24.68 19.1,22.68 16.2,27.3"/>
-<polygon class="eqh" points="19.1,24.68 24.9,24.68 24.9,22.68 19.1,22.68"/>
-<polygon class="eql" points="24.9,24.68 27.8,29.3 27.8,27.3 24.9,22.68"/>
-<polygon class="eqm" points="27.8,29.3 24.9,33.92 19.1,33.92 16.2,29.3 19.1,24.68 24.9,24.68"/>
-<polygon class="eql" points="25.9,29.3 23.95,32.41 20.05,32.41 18.1,29.3 20.05,26.19 23.95,26.19"/>
-<polygon class="hd" points="24,29.3 23,30.89 21,30.89 20,29.3 21,27.71 23,27.71"/>
+     Handle stub, then the index finger and thumb as a ring closed round it (skin tones), then the head: centred at (22, 28.5), 12.5 below the grip, its top band over the lower part of the fist (seen a little from above). Screen-left: negate every x. -->
+<rect class="hd" x="20.2" y="17.6" width="3.6" height="3.6"/>
+<polygon class="bh" points="18.6,17.2 25.4,17.2 25.9,18.5 25.3,20 18.7,20 18.1,18.5"/>
+<polygon class="bl" points="18.7,20 25.3,20 25,20.8 19,20.8"/>
+<polygon class="eqm" points="15.4,28.5 18.7,23.24 25.3,23.24 28.6,28.5 28.6,26.3 25.3,21.04 18.7,21.04 15.4,26.3"/>
+<polygon class="eqs" points="15.4,28.5 18.7,23.24 18.7,21.04 15.4,26.3"/>
+<polygon class="eqh" points="18.7,23.24 25.3,23.24 25.3,21.04 18.7,21.04"/>
+<polygon class="eql" points="25.3,23.24 28.6,28.5 28.6,26.3 25.3,21.04"/>
+<polygon class="eqm" points="28.6,28.5 25.3,33.76 18.7,33.76 15.4,28.5 18.7,23.24 25.3,23.24"/>
+<polygon class="prim" points="25.8,28.5 23.9,31.53 20.1,31.53 18.2,28.5 20.1,25.47 23.9,25.47"/>
 <!-- chest press lever (near). One group rotating about the pivot (206.5, 58); grip centre 100 below the pivot at rest. -->
 <g class="j anim cp-lever lever-near">
 <polygon class="eqm" points="203.9,58 209.1,58 209.1,146 203.9,146"/>
@@ -665,7 +683,7 @@ Copy-paste form: every part is an outline polygon (outline pass) and the same po
 <!-- far lever: the same group inside <g class="far-side" transform="translate(5 -3)"> -->
 <g class="j anim cp-lever far-lever">
 <polygon class="eqf" points="203.9,58 209.1,58 209.1,146 203.9,146"/>
-<rect class="hdf" x="203.3" y="145" width="6.4" height="26" rx="3"/>
+<rect class="hdf" x="203.3" y="145" width="6.4" height="21" rx="3"/>
 </g>
 <!-- stack plates 1-6, pin and top bracket: one group, translateY(-lift) -->
 <rect class="eq" x="26" y="112.5" width="48" height="12" rx="1.5"/>
@@ -689,12 +707,12 @@ Machine Chest Press key poses (stage units; z = sideways, out from the shoulder 
 | p | Grip (x, y, z) | Elbow (x, y, z) | Lever | Upper arm | fu | Forearm | ff | Elbow inside angle | Arm out from side | Arm forward | Stack lift |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 0 | 187, 156.08, 38.56 | 149, 166, 30.97 | 11.24 | 2.6 | 0.58 | -107.23 | 0.982 | 89.2 | 54.58 | -2.6 | 0 |
-| 0.25 | 196.02, 157.45, 31.03 | 156.7, 164.81, 31.08 | 6.02 | -17.84 | 0.575 | -82.75 | 1 | 94.1 | 54.89 | 17.84 | 4.51 |
-| 0.5 | 206.06, 158, 22.64 | 166.8, 163.54, 27.92 | 0.25 | -40.69 | 0.678 | -57.35 | 0.991 | 105.41 | 47.29 | 40.69 | 9.53 |
-| 0.75 | 216.99, 157.45, 13.52 | 177.66, 160.45, 20.2 | -6.02 | -59.26 | 0.847 | -35.12 | 0.986 | 126.47 | 32.11 | 59.26 | 14.99 |
+| 0.25 | 196.61, 157.51, 30.53 | 157.28, 164.74, 31 | 5.67 | -19.33 | 0.578 | -81.09 | 1 | 94.6 | 54.66 | 19.33 | 4.81 |
+| 0.5 | 206.38, 158, 22.38 | 167.13, 163.49, 27.76 | 0.07 | -41.31 | 0.683 | -56.65 | 0.991 | 105.88 | 46.94 | 41.31 | 9.69 |
+| 0.75 | 217.09, 157.44, 13.44 | 177.76, 160.41, 20.1 | -6.08 | -59.41 | 0.849 | -34.91 | 0.986 | 126.73 | 31.94 | 59.41 | 15.04 |
 | 1 | 226, 156.08, 6 | 186.13, 153.19, 7.37 | -11.24 | -75.73 | 0.981 | -10.12 | 0.999 | 163.44 | 11.18 | 75.73 | 19.5 |
 
-Worst hand-to-handle gap half-way between baked samples (analytic): 0.01 units. Smallest upper-arm fu over the rep: 0.565.
+Worst hand-to-handle gap half-way between baked samples (analytic): 0.00 units. Smallest upper-arm fu over the rep: 0.565.
 
 Dumbbell Lateral Raise key poses:
 
@@ -720,55 +738,63 @@ Figure detail paints (section 20; outline = --fg-line):
 
 | Theme | Outline on T-shirt light / dark | Outline on skin / light / dark | Skin vs T-shirt | Shorts vs skin | Shorts vs pads | Shoe vs stage | Rim vs outline | Knurl on handle | Seam on pad | Main vs T-shirt |
 |---|---|---|---|---|---|---|---|---|---|---|
-| silent-black | 3.20 / 5.00 | 3.40 / 2.57 / 4.19 | 1.27 | 1.53 | 2.75 | 1.16 | 1.42 | 2.97 | 2.15 | 2.56 |
-| paper | 3.62 / 2.76 | 2.85 / 3.30 / 2.44 | 1.14 | 1.27 | 1.76 | 3.55 | 4.35 | 2.47 | 1.94 | 2.49 |
-| ember | 3.15 / 5.05 | 3.35 / 2.53 / 4.21 | 1.28 | 1.53 | 2.83 | 1.19 | 1.40 | 3.03 | 2.17 | 3.88 |
-| emerald | 2.87 / 4.40 | 3.04 / 2.35 / 3.72 | 1.25 | 1.47 | 2.59 | 1.18 | 1.37 | 2.76 | 2.04 | 5.52 |
-| midnight | 2.45 / 3.70 | 2.57 / 2.06 / 3.16 | 1.22 | 1.40 | 2.39 | 1.26 | 1.29 | 2.52 | 1.88 | 1.63 |
+| silent-black | 3.20 / 5.00 | 3.40 / 2.57 / 4.19 | 1.27 | 1.92 | 3.46 | 1.16 | 1.42 | 2.11 | 2.15 | 2.56 |
+| paper | 3.62 / 2.49 | 2.85 / 3.30 / 2.22 | 1.14 | 1.46 | 2.04 | 3.55 | 4.35 | 1.97 | 1.94 | 2.49 |
+| ember | 3.15 / 5.05 | 3.35 / 2.53 / 4.21 | 1.28 | 1.93 | 3.57 | 1.19 | 1.40 | 2.14 | 2.17 | 3.88 |
+| emerald | 2.87 / 4.40 | 3.04 / 2.35 / 3.72 | 1.25 | 1.81 | 3.19 | 1.18 | 1.37 | 2.01 | 2.04 | 5.52 |
+| midnight | 2.45 / 3.70 | 2.57 / 2.06 / 3.16 | 1.22 | 1.68 | 2.87 | 1.26 | 1.29 | 1.89 | 1.88 | 1.63 |
 
-Keyframe stops per animated group: 153, written twice (-a and -b).
+Keyframe stops per animated group: 203, written twice (-a and -b).
 
 <!-- generated:end -->
 
 ## 20. Figure detail: parts, paint, glow, secondary motion and the checks
 
-Added 2026-09-27 for the owner's "more details on figure" (UPGRADE-BRIEF.md, figure detail target and smoothness target 3). Same low-poly faceted style, camera framing, controls and layout; only the figure and the equipment gained detail.
+Added 2026-09-27 for the owner's "more details on figure" (UPGRADE-BRIEF.md, figure detail target and smoothness target 3) and refined in round 2 for "premium, smooth and good details" (docs/COACHING-DECISIONS.md D-R1 to D-R6). Same low-poly faceted style, camera framing, controls and layout; only the figure and the equipment gained detail.
 
 ### Parts
 
-Every part is `{ base, cloth?, regions }`. `cloth` is `skin` (default), `tee`, `shorts`, `shoe`, `sole` or `hair`. A region is `{ poly, cloth?, tone?: 'hi' | 'lo', muscle?, name?, ten?, far? }`. The painter (`fillPart`) draws the base in its cloth tone, then every non-role region in order in its tone class, then the `ten` facets (only when the exercise passes its channel), then the glow, then the role muscles (`mh`, `mm`), so a highlighted muscle is never hidden by a facet. `far: true` regions (the thigh's shorts) also paint on the far leg, in the far tones.
+Every part is `{ base, cloth?, regions }`. `cloth` is `skin` (default), `tee`, `shorts`, `shoe`, `sole` or `hair`. A region is `{ poly, cloth?, tone?: 'hi' | 'lo', muscle?, name?, ten?, far? }`. The painter (`fillPart`) draws the base in its cloth tone, then every non-role region in order in its tone class, then the `ten` facets (only when the exercise passes its channel), then the glow (clipped to the part), then the role muscles (`mh`, `mm`), so a highlighted muscle is never hidden by a facet. `far: true` regions (the thigh's shorts) also paint on the far leg, in the far tones.
 
 | View | What is new |
 |---|---|
-| Side | Head: skull and jaw profile with a subtle nose and brow ridge, hair cap and sheen, ear, lit face plane, jaw shadow, brow line; no eyes or mouth. Neck leaning a little forward with a lit throat and a dark nape; the torso's top rises into the neck at the back, so the trapezius slopes down into the shoulder. Torso in the T-shirt: collar band, light upper traps, dark lats, the shoulder blade (`midBack`, roles only), under-chest shadow, abs and obliques (roles only), and the shorts below a waistband shadow, with dark glutes. Deltoid cap: front light, side mid, rear dark, with a rounded lower edge that reads as the sleeve when the arm is foreshortened. Upper arm: sleeve to mid upper arm (19 to 20 below the shoulder) with a hem band; biceps light and triceps dark, each split at the hem. Elbow and knee caps are 12-sided (round at every size) with a dark back half and a light kneecap. Forearm tapers from the elbow, light on top, dark underneath. Hand round the vertical handle: palm heel, thumb along the top with its crease, and four fingers over a dark backing, so the gaps read as finger lines; the handle shows above and below. Thigh: shorts to 13 above the knee with a hem band, quads light and hamstrings dark, each split at the hem. Shin: dark calf, light shin front (the shin outline still starts at -5.5,49). Shoe: collar, light toe cap, light sole. |
-| Front | Head: jaw and cheekbones, ears in the silhouette, hair cap and sheen, dark cheek planes, a nose shade; no eyes or mouth. Neck widening into the trapezius, dark sides and an under-chin shadow. Torso in the T-shirt: crew collar band, light traps and pecs, under-chest shadow, dark lats and obliques, abs for roles, shorts with a waistband shadow. Deltoid: side light, front mid. Upper arm: sleeve, hem band, light biceps, dark triceps edge. Elbow cap, forearm taper as in the side view. Hand round a handle that points at the camera: a dark grip backing, three stepped finger knuckles and the index finger curling round the handle, and the thumb across the inner side; the knurled handle leaves the fist and runs into the head below. Thighs in the shorts to 16 above the knee, light quads; dark calf edges; shoe with collar, toe cap and sole. |
-| Top | Torso and deltoid in the T-shirt, the head is the hair cap with a skin nose, the arms are the front-view arm parts moved (`trPart`), so they carry the sleeve and hands too. |
+| Side | Head: skull and jaw profile with a subtle nose and brow ridge, hair cap and sheen, a lit forehead plane under the hairline, an ear (a lit outer shape with a dark inner facet), a lit face plane, jaw shadow and brow line; no eyes or mouth. Neck leaning a little forward with a lit throat and a dark nape; the torso's top rises into the neck at the back, so the trapezius slopes down into the shoulder. Torso in the T-shirt: collar band, light upper traps, dark lats with a lit fold along their front edge and an armpit shadow under the delt, the shoulder blade (`midBack`, roles only), the pec as a two-facet fan whose fibres converge back toward the armpit with its top edge tucked under the front delt, an under-chest shadow, abs and obliques (roles only), and the shorts below a waistband shadow, with dark glutes. Deltoid cap: front light, side mid, rear dark, with a rounded lower edge that reads as the sleeve when the arm is foreshortened. Upper arm: sleeve to mid upper arm (19 to 20 below the shoulder) with a hem band; biceps light and triceps dark, each split at the hem. Elbow and knee caps are 12-sided (round at every size); the elbow cap (r 4.8, so the player's setup elbow stays 2.2 off the back pad) carries a small dark crease on its inner side, the knee a light kneecap. Forearm: 9.8 wide at the elbow, swelling to 12.4 over the brachioradialis on the thumb side (4 to 10 below the elbow) and tapering to 8 at the wrist, light on top and dark underneath. Hand round the vertical handle: palm heel, four fingers over a dark backing (the gaps read as finger lines), and the thumb as a lit wedge 3 wide along the top of the hand that crosses the handle and ends in front of it over the index finger, with a dark crease under it; the handle shows above and below the fist. Thigh: shorts to 13 above the knee with a hem band, quads light and hamstrings dark, each split at the hem. Shin: dark calf, light shin front. Shoe: collar, light toe cap, light sole. |
+| Front | Head: jaw and cheekbones, ears in the silhouette (lit, with a dark inner facet), hair cap and sheen, a lit forehead band under the hairline, dark cheek planes, a nose shade; no eyes or mouth. Neck widening into the trapezius, dark sides and an under-chin shadow. Torso in the T-shirt: crew collar band, light traps and pecs, under-chest shadow, dark lats and obliques, abs for roles, shorts with a waistband shadow, a lit front panel and a thin fly seam (no dark U at the front). Deltoid: side light, front mid. Upper arm: sleeve, hem band, light biceps, dark triceps edge. Elbow cap (r 4.8, inner crease) and the same tapered forearm as the side view (12.2 over the bulge, 8 at the wrist). Hand round a handle that points at the camera: a dark grip backing, three stepped finger knuckles, the index finger curling round and the thumb across the inner side. Thighs in the shorts to 16 above the knee: a wide light quad panel with a dark outer strip; calves 13.8 wide at the bulge with dark edges; shoe with collar, a 14.2-wide toe cap and sole. |
+| Top | Torso and deltoid in the T-shirt, the head is the hair cap with a skin nose and a lit crown, the arms are the front-view arm parts moved (`trPart`), so they carry the sleeve and hands too. |
+
+The arm is one layer (section 4): the lower arm's outline and rim are drawn inside the upper arm's passes, so no outline arc crosses the elbow; the only mark at the joint is the crease facet.
 
 ### Paint
 
-All tokens are in the section 5 table: `--skin`, `--tee` (= `--body`), `--shorts`, `--shoe`, `--sole`, `--hair`, each with `-hi` and `-lo` where used, `--rim`, far `--shorts-far` and `--shoe-far`, and for equipment `--equip-hi`, `--equip-lo`, `--metal-lo` and `--seam`. Three tones per surface: `X-hi = color-mix(X var(--hi), var(--lit))`, `X-lo = color-mix(X var(--lo), var(--shd))`, with the scheme inputs from `rigVars()`. Light comes from the front and above: tops of forms and forward faces light, sides and undersides dark.
+All tokens are in the section 5 table: `--skin`, `--tee` (= `--body`), `--shorts` (body 70 % into text), `--shoe`, `--sole`, `--hair` (sheen `--hair-hi` at 68 %), each with `-hi` and `-lo` where used, `--rim`, far `--shorts-far` and `--shoe-far`, and for equipment `--equip-hi` (`--eq-hi`: 82 % dark, 40 % light), `--equip-lo`, `--metal-lo` (fg-metal 64 % into the stage) and `--seam`. Three tones per surface: `X-hi = color-mix(X var(--hi), var(--lit))`, `X-lo = color-mix(X var(--lo), var(--shd))`, with the scheme inputs from `rigVars()` (`--lo` is 78 % in dark themes and 84 % in light ones, so light, mid and dark separate at 1x on Paper). Light comes from the front and above: tops of forms and forward faces light, sides and undersides dark.
 
-The T-shirt keeps the body tone on purpose: the torso stays as far from the back pad as before (1.23 to 1.45:1) and the outline over it stays at least 3.14:1, so an arm crossing the torso reads exactly as it did. Skin is lifted a little (body 92 % into text) and the shorts more (78 %), so the clothes read by value in every theme. The contrast of every new paint is computed from the CSS and printed in the generated block ("Figure detail paints").
+The T-shirt keeps the body tone on purpose: the torso stays as far from the back pad as before and the outline over it stays at least 3.14:1, so an arm crossing the torso reads exactly as it did. Skin is lifted a little (body 92 % into text) and the shorts more (70 %), so the clothes read by value in every theme, the shorts clearly lighter than the skin in dark themes. The contrast of every new paint is computed from the CSS and printed in the generated block ("Figure detail paints").
 
-Contact shadows: `shadow(cx, cy, rx, ry)` draws three stacked ellipses in `--scrim` at fill-opacity 0.16 (radii 1, 0.72, 0.44), no filter: chest press under the feet (208, 258, rx 17) and under the thighs on the seat (166, 214.4, rx 34); lateral raise under the feet (179, 258, rx 30). They are their own groups outside `.figure`, so the figure's safe-area boxes are unchanged. On the darkest stages they are nearly invisible, as a shadow on a black floor is.
+Contact shadows: `shadow(cx, cy, rx, ry)` draws three stacked ellipses in `--border` at fill-opacity 0.6 (radii 1, 0.72, 0.44), no filter: a faint light pool on the near-black stages, a soft dark one on Paper. Chest press under the feet (208, 258, rx 17) and under the thighs on the seat (166, 214.4, rx 34); lateral raise under the feet (179, 258, rx 30). They are their own groups outside `.figure`, so the figure's safe-area boxes are unchanged.
 
 ### Target-muscle glow and secondary motion (one channel)
 
 Each exercise has one extra keyframe channel, `XX-ten`, written with `kf()` on `SAMPLES` as `-a` / `-b` sets: `opacity: p` (the move progress). Two kinds of elements run it:
 
-- the glow: a `gw` polygon under every main-muscle region (chest press: the pecs; lateral raise: both side delts), an accent halo whose opacity follows p, so it rises with the lift, is strongest in the hold (the hardest point) and fades on the way down;
+- the glow: a `gw` polygon under every main-muscle region (chest press: the two pec facets; lateral raise: both side delts), an accent halo whose opacity follows p, so it rises with the lift, is strongest in the hold (the hardest point) and fades on the way down. It is clipped to the part's own silhouette (`<clipPath>` of the base polygon, ids `XX-ten-clipN`), so it never spills past the outline as a fringe; the `<use>` tiles resolve the same clip in their own user space;
 - the secondary-motion facets (`ten: true` regions, class `tn`, tone fill at 0.75): shape changes inside the torso, never joint moves. Side view (chest press, and the lat pulldown when it copies these parts): `brace`, the belly wall firming along the front of the abdomen, and `bladeEdge`, the inner edge of the shoulder blade showing as the blades are held back. Front view (lateral raise): `brace`, the borders of the abs, and `collarbone`, the collarbone line showing as the shoulders stay down (no shrug). The head and wrists do not move.
 
-The channel has no `rotate()`, so the smoothness sampler does not treat it as a joint, and it cannot move the shoulders, the elbow bend, the dumbbells or the hands: the shoulder drift, mirror, bend, level and hand-on-handle checks all still pass. p is 0 at 0 % and 100 %, so the rep restart and the `-a` / `-b` swap start from the same value (0) and nothing flashes. Cost: about 6.6 KB per page for both sets.
+The lateral raise adds a second opacity channel, `lr-hlp`, on the upper-trap helper polygons (`mh`): 1 at setup easing to 0.7 through the hold and back, so the trap tint gives way to the delts as they take over ("traps stay down"). Neither channel has a `rotate()`, so the smoothness sampler does not treat them as joints, and they cannot move the shoulders, the elbow bend, the dumbbells or the hands: the shoulder drift, mirror, bend, level and hand-on-handle checks all still pass. p is 0 at 0 % and 100 %, so the rep restart and the `-a` / `-b` swap start from the same value and nothing flashes.
+
+### Equipment
+
+Chest press: grip ribs (`knurl`, `--metal-lo` at 0.6 units, low enough that the fingers dominate the hand) on the near handle where the fist does not cover it; the far handle 21 tall (13 above, 8 below its centre) so its lower end stays behind the near fist; stitched seams on the seat and back pad; a light bevel on every plate (`--equip-hi`) and a knob on the selector pin; pulley and hub rims. Lateral raise: the dumbbell of section 7 (finger ring, three-face top band, thin rim for the recessed cap), and tile arrows 1.5 x larger with 10 units of headroom above the head in the tiles.
 
 ### The checks
 
-The numeric smoothness check is `../smooth-check.cjs`, shared by this `shoot.cjs` and every player's. It reads the page as drawn: every animated group in the stage scene whose keyframes contain `rotate()` is a joint angle (its local rotation from the parent and own CTM), plus the grip point(s), at t = i / 480 of the rep (120 samples per second at 1x), and it reads the written keyframe stops from the raw `<style>` text. A self-test compares the drawn angle with the written stop (worst 0.0000 degrees here). Per move phase (lift 0-25 %, return 37.5-87.5 %) it passes only if (a) the speed over the first and last 1/120 s is at most 1 % of the phase's top speed, (b) the velocity changes by at most 8 % of the top speed between samples 1/120 s apart, (c) at the keyframe stops the change of acceleration is at most 3 x its median (angles moving 10 degrees or more), and (d) no joint angle changes by more than 4 degrees between samples. This build: chest press (a) 0.20 % / 0.05 %, (b) 6.98 % / 3.90 %, (c) 2.64 x / 2.67 x, (d) 1.55 degrees; lateral raise (a) 0.21 % / 0.05 %, (b) 6.16 % / 3.08 %, (c) 2.16 x / 2.35 x, (d) 1.19 degrees (lift / return).
+The numeric smoothness check is `../smooth-check.cjs`, shared by this `shoot.cjs` and every player's. It reads the page as drawn: every animated group in the stage scene whose keyframes contain `rotate()` is a joint angle (its local rotation from the parent and own CTM), plus the grip point(s), at t = i / 480 of the rep (120 samples per second at 1x), and it reads the written keyframe stops from the raw `<style>` text. A self-test compares the drawn angle with the written stop (worst 0.0000 degrees here). Per move phase (lift 0-25 %, return 37.5-87.5 %) it passes only if (a) the speed over the first and last 1/120 s is at most 1 % of the phase's top speed, (b) the velocity changes by at most 8 % of the top speed between samples 1/120 s apart, (c) at the keyframe stops the change of acceleration is at most 3 x its median (angles moving 10 degrees or more), and (d) no joint angle changes by more than 4 degrees between samples. This build (0.25 % stops in the lift, D-R1): chest press (a) 0.09 % / 0.05 %, (b) 4.08 % / 4.08 %, (c) 2.00 x / 2.00 x, (d) 1.47 degrees; lateral raise (a) 0.21 % / 0.05 %, (b) 3.09 % / 3.08 %, (c) 2.35 x / 2.35 x, (d) 1.19 degrees (lift / return). Before D-R1 the lift's (b) was 6.98 % (chest press) and 6.16 % (lateral raise), its (c) 2.64 x and 2.16 x. The players' own numbers are in their PLAYER.md section 11 and `checks.txt`.
 
 Added with the figure detail (all in `shoot.cjs`, all passing):
 
 - contrast of the detail paints, all five themes: outline over the T-shirt and skin facets at least 2 (the T-shirt base itself is the section 16 check, at least 3), skin vs T-shirt at least 1.1, shorts vs skin at least 1.25 and vs pads at least 1.5, T-shirt vs pads at least 1.2, rim vs outline at least 1.25, knurl at least 1.8, seam at least 1.5;
 - tokens only: the page CSS and the player markup of both harnesses and `parts.html` contain no hex, `rgb()`/`hsl()`-style or named colour; only the token definitions (THEMES, `themeVars()` and the root style string they produce) may;
-- glow and secondary motion, both exercises: the glow polygons and the facets share one channel with no `rotate()`; over 481 samples the opacity is 0 at t 0 and t 1, never falls in the lift, is at its maximum (1.000) through the hold, never rises in the return, and changes by at most 0.02 between samples 1/120 s apart (largest here 0.0158).
+- glow and secondary motion, both exercises: the glow polygons and the facets share one channel with no `rotate()`; over 481 samples the opacity is 0 at t 0 and t 1, never falls in the lift, is at its maximum (1.000) through the hold, never rises in the return, and changes by at most 0.02 between samples 1/120 s apart; the lateral raise's trap tint is 1 at setup and at the restart, 0.7 through the hold, monotone either side, largest step 0.005;
+- the target muscle stays visible at the hardest point (`muscle-check.cjs`, shared with the players): the accent pixels of the main muscle in the hold, with the effort cue, glow, helpers and every other accent element neutralised, are at least 97 % of those at setup (chest press 543 vs 230, the arm no longer covers the pec; lateral raise 544 vs 540);
+- the caption row (`caption-check.cjs`, shared with the players): in idle, ended, the four captions and Pictures the caption box stays left of the tempo box and both stay inside the player, and Roboto (the canvas font, loaded from the local copy) drew the row with no state clipped. The shoots answer the Google Fonts link with an empty stylesheet, so they run offline; `.cap` shrinks with an ellipsis before it could ever push the tempo note out.
 
-Readability: looked at in Silent Black and Paper at t 0, 0.125, 0.25 and 0.625, every zoom, and Pictures, at device scale 1, 2 and 3, plus Ember, Emerald and Midnight. File sizes after the upgrade: `chest-press.html` 155.5 KB, `lateral-raise.html` 112.7 KB; players `anim-machine-chest-press/index.html` 157.3 KB and `anim-dumbbell-lateral-raise/index.html` 114.1 KB (limit 450 KB).
+Readability: looked at in Silent Black and Paper at t 0, 0.125, 0.25 and 0.625, every zoom, and Pictures, at device scale 1, 2 and 3, plus Ember, Emerald and Midnight. File sizes after round 2: `chest-press.html` 193.8 KB, `lateral-raise.html` 143.9 KB; players `anim-machine-chest-press/index.html` 195.7 KB and `anim-dumbbell-lateral-raise/index.html` 145.0 KB (limit 450 KB; the denser lift stops cost about 38 and 31 KB).

@@ -352,11 +352,18 @@ const FAR_CLOTH = { skin: 'bf', tee: 'bf', shorts: 'pf', shoe: 'sf', sole: 'sf',
 const toneCls = (cloth, tone) => CLOTH[cloth] + (tone === 'hi' ? 'h' : tone === 'lo' ? 'l' : '');
 function fillPart(p, roles = {}, opt = {}) {
   const cloth = p.cloth || 'skin';
-  if (opt.far) return `<polygon class="${FAR_CLOTH[cloth]}" points="${pts(p.base)}"/>` + (p.regions || []).filter(r => r.far).map(r => `<polygon class="${FAR_CLOTH[r.cloth || cloth]}" points="${pts(r.poly)}"/>`).join('');
-  let s = `<polygon class="${toneCls(cloth, null)}" points="${pts(p.base)}"/>`, glow = '', mus = '';
+  // LP: opt.facets draws the far side's light and dark facets too (far tone classes bfh / bfl), so the far arm reads as a
+  // form and not a hollow outline; ten facets and role muscles are left out (the far side shows no muscles)
+  if (opt.far) return `<polygon class="${FAR_CLOTH[cloth]}" points="${pts(p.base)}"/>` + (p.regions || []).filter(r => r.far || (opt.facets && r.tone && !r.ten)).map(r => `<polygon class="${FAR_CLOTH[r.cloth || cloth]}${opt.facets && r.tone ? (r.tone === 'hi' ? 'h' : 'l') : ''}" points="${pts(r.poly)}"/>`).join('');
+  let s = `<polygon class="${toneCls(cloth, null)}" points="${pts(p.base)}"/>`, glow = '', mus = '', flare = '';
   for (const r of p.regions || []) {
     const role = r.muscle && roles[r.muscle];
-    if (role === 'main') { mus += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; }
+    // LP: a main muscle's contracted part (ten) rides the move channel: its resting tone always, the accent from 0 at
+    // setup to full in the hold; a flare is a shape that grows with the move (scaleX on the flare channel) inside a
+    // group faded by the same channel, outlined on its outer edge only (an open path), so nothing shows at setup
+    if (role === 'main' && r.flare) { if (opt.ten && opt.flare) { const d = 'M' + r.outer.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L'); flare += `<g class="j anim ${opt.ten}"><g class="j anim ${opt.flare}" style="transform-origin:${n2(r.origin[0])}px ${n2(r.origin[1])}px"><path class="olk" d="${d}"/><path class="rim" d="${d}"/><polygon class="gw" points="${pts(r.poly)}"/><polygon class="mm" points="${pts(r.poly)}"/></g></g>`; } }
+    else if (role === 'main' && r.ten) { if (r.tone) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`; if (opt.ten) { mus += `<polygon class="mm anim ${opt.ten}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; } }
+    else if (role === 'main') { mus += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; }
     else if (role === 'help') mus += `<polygon class="mh" points="${pts(r.poly)}"/>`;
     else if (r.ten) { if (opt.ten) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)} tn anim ${opt.ten}" points="${pts(r.poly)}"/>`; }
     else if (r.tone || r.cloth) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`;
@@ -364,8 +371,8 @@ function fillPart(p, roles = {}, opt = {}) {
   }
   // LP: opt.tenOver draws the secondary-motion facets over the role muscles. Here mid back (helps) and lats (main)
   // are painted, and the shoulder blade's inner edge lies on the mid back, so under it the edge would never show.
-  if (opt.tenOver) { let ov = ''; s = s.replace(/<polygon class="[^"]* tn anim [^"]*" points="[^"]*"\/>/g, m => { ov += m; return ''; }); return s + glow + mus + ov; }
-  return s + glow + mus;
+  if (opt.tenOver) { let ov = ''; s = s.replace(/<polygon class="[^"]* tn anim [^"]*" points="[^"]*"\/>/g, m => { ov += m; return ''; }); return s + flare + glow + mus + ov; }
+  return s + flare + glow + mus;
 }
 const olPart = (p, far) => `<polygon class="${far ? 'olkf' : 'olk'}" points="${pts(p.base)}"/>`;
 const rimPart = p => `<polygon class="rim" points="${pts(p.base)}"/>`;
@@ -581,7 +588,19 @@ function arrowSvg(a) { // a = { from:[x,y], to:[x,y] } in scene units (rig secti
 // the lats work hardest). The lat really runs down the back to the waist, so here the region
 // follows the back edge down to local y -12.5 (on the figure-detail torso outline, above the waistband).
 // Only the Lat Pulldown uses this shape.
-SIDE.torso.regions = SIDE.torso.regions.map(r => r.muscle === 'lats' ? { ...r, poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-3.8, -30], [-3.8, -20], [-5.2, -12.5], [-11.21, -12.5], [-10.8, -15], [-10, -26], [-11.9, -40]] } : r);
+// LP (docs/COACHING-DECISIONS.md D-L9): at the hardest point (the hold at the chest) the near upper arm hangs over the
+// upper back, so the lat is drawn in three parts that keep the accent visible there without moving a joint:
+// - the core: the upper lat under the armpit, the main muscle at every pose (effort cue 0.75 to 1);
+// - the contracted lower lat, down the back to the waist: its resting shade always, the accent rising with the move
+//   (lp-ten), so at the setup pose the stretched lat is not lit there and in the hold the visible band is;
+// - the flare: the lat's outer edge spreading out behind the arm as it contracts, a shape that grows with the move
+//   (scaleX on lp-flare about x -6, inside the torso) and fades in with lp-ten, up to 5.8 units beyond the back outline.
+SIDE.torso.regions = [
+  ...SIDE.torso.regions.filter(r => r.muscle !== 'lats'),
+  { poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-3.4, -34], [-11.1, -34], [-11.9, -40]], tone: 'lo', muscle: 'lats' },
+  { poly: [[-11.1, -34], [-3, -34], [-3.2, -22], [-4.6, -12.5], [-11.21, -12.5], [-10.8, -15], [-10, -26]], tone: 'lo', muscle: 'lats', ten: true },
+  { flare: true, outer: [[-12.3, -52], [-15.6, -48], [-17.6, -42], [-17.8, -36], [-16.4, -29], [-13.8, -21], [-10.8, -15]], poly: [[-12.3, -52], [-15.6, -48], [-17.6, -42], [-17.8, -36], [-16.4, -29], [-13.8, -21], [-10.8, -15], [-6, -16], [-6, -51]], origin: [-6, -33], muscle: 'lats' },
+];
 // LP: the rig's side hand wraps a handle along its local x with the thumb at +x. Here the bar runs from the grip
 // toward the far hand along local -x (113-169 degrees from +x over the rep, section 7 of PLAYER.md), so the hand is
 // the rig's hand mirrored: thumb and index finger on the inside of the grip (toward the far hand), little finger
@@ -616,10 +635,10 @@ const FACE = { top: [4, 5], edge: [6, 12], chin: 12 };
 const bern = (cp, t) => { const n = cp.length - 1; let s = 0; for (let k = 0; k <= n; k++) s += cp[k] * binom(n, k) * t ** k * (1 - t) ** (n - k); return s; };
 const binom = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i; return r; };
 const LP_OPT = {
-  DX: -2, IN0: 171, TEND: 26, X1: 157, Y1: 150, B0: 126.485, SK: 4.56,
-  PX: [2.4067, 12.3466, 22.2061, 33.8756, 19.9921],
-  PV: [0.06516, 0.42816, 0.43248, 0.79953, 0.87118],
-  PC: [[1.3947, 1.2281, 0.8589], [0.2808, 0.338, 0.8292]],
+  DX: -2, IN0: 171, TEND: 26, X1: 157, Y1: 150, B0: 126.0955, SK: 4.706,
+  PX: [4.6999, 13.1489, 25.7914, 38.4808, 20.9568],
+  PV: [0.062, 0.3134, 0.38007, 0.78897, 0.89265],
+  PC: [[1.3869, 0.961, 0.9347], [0.361, 0.1775, 0.9798]],
 };
 const makeLP = (Z, o = LP_OPT) => {
   const H = [150, 206];                          // hip on the stage (spec 3.2)
@@ -757,7 +776,7 @@ const SM_LIM = { a: 0.01, b: 0.08, c: 3, d: 4, travel: 10 };
 function drawnAt(L, X, p) {
   const q = L.pose(p), f = X.far(p, q), c = X.cab(p, q);
   return { sc: [+n3(q.sc[0]), +n3(q.sc[1])], tfa: +n3(-(1 - q.fu) * LEN.upperArm), thd: +n3(-(1 - q.ff) * LEN.forearm),
-    ang: { 'lp-ua': +n4(q.ua), 'lp-fa': +n4(q.fa), 'lp-bar': +n4(L.LEAN - q.ua - q.fa), 'lp-fua': +n4(f.au), 'lp-ffa': +n4(f.af - f.au), 'lp-cable-f': +n4(c.ang) } };
+    ang: { 'lp-ua': +n4(q.ua), 'lp-fa': +n4(q.fa), 'lp-bar': +n4(L.LEAN - q.ua - q.fa), 'lp-fua': +n4(f.au), 'lp-ffa': +n4(f.af - f.au), 'lp-fbar': +n4(-f.af), 'lp-cable-f': +n4(c.ang) } };
 }
 function drawnGrip(L, d) {
   const R = (a, [x, y]) => { const c = Math.cos(rad(a)), s = Math.sin(rad(a)); return [x * c - y * s, x * s + y * c]; };
@@ -832,7 +851,10 @@ function gripInset() {
 
 function latPulldown() {
   const { H, LEAN, X0, Y0, Y1, TRAVEL, pose, arcAt, pathPts } = LP;
-  const barLocalD = `M${BAR_PTS.map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;   // bar in the hand's frame (grip at 0, 16)
+  // the bar in the near hand's frame (grip at 0, 16): from the near tip to 1 unit inside the far fist's near edge (its round
+  // cap reaches 3 in), where the far fist's fingers take over; the rest of the bar is the far hand's (farBar below, D-L9)
+  const FAR_SPLIT = -(NEAR_Z - HAND_HALF + 1);
+  const barLocalD = `M${[BAR_PTS[0], BAR_PTS[1], barPt(FAR_SPLIT)].map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;
   // the near end again, from the little-finger side of the hand (HAND_HALF nearer the camera than the grip) out to the tip
   const nearEndD = `M${[barPt(NEAR_Z + HAND_HALF), BAR_PTS[1], BAR_PTS[0]].map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;
   const roles = { lats: 'main', biceps: 'help', midBack: 'help' };
@@ -924,6 +946,9 @@ ${animRule('lp-cable-r', 'lp-cable-r', origin(40, REAR_TOP))}
 ${animRule('lp-togo', 'lp-togo')}
 ${animRule('lp-eff', 'lp-eff')}
 ${animRule('lp-ten', 'lp-ten')}
+${animRule('lp-flare', 'lp-flare')}
+${animRule('lp-fbh', 'lp-fhd')}
+${animRule('lp-fbar', 'lp-fbar', origin(FS0[0], FS0[1] + 78))}
 ${kf('lp-ua', p => { const q = pose(p); return `transform:translate(${n3(q.sc[0])}px,${n3(q.sc[1])}px) rotate(${n4(q.ua)}deg)`; })}
 ${kf('lp-ul', p => `transform:scaleY(${n4(pose(p).fu)})`)}
 ${kf('lp-fa', p => { const q = pose(p); return `transform:translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; })}
@@ -941,15 +966,26 @@ ${kf('lp-cable-r', p => `transform:scaleY(${n4((REAR_RUN - lift(p)) / REAR_RUN)}
 ${kf('lp-togo', p => `stroke-dashoffset:${n3(-Math.min(arcAt(p) + TOGO_GAP, 0.999))}`)}
 ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
 ${kf('lp-ten', p => `opacity:${n3(p)}`)}
+${kf('lp-flare', p => `transform:scaleX(${n4(0.02 + 0.98 * p)})`)}
+${kf('lp-fbar', p => `transform:rotate(${n4(-far(p).af)}deg)`)}
 .lp-barline{fill:none;stroke:var(--fg-metal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 /* grip texture on the bar's bent ends: ribs painted on the bar line itself (same path and width). A texture, not an occluder, so it takes no pointer hits: a hit test on the bar there finds the bar */
 .lp-grip{fill:none;stroke:var(--metal-lo);stroke-width:4;stroke-dasharray:.8 1.1;pointer-events:none}
+/* the far end of the bar, held in the far hand's group under the far fist's fill (D-L9): the same metal line */
+.lp-barfar{fill:none;stroke:var(--fg-metal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+/* the far arm: light and dark facets in the far tones, and a softer outline than the far leg's, so it reads as a form behind the body and not as a wireframe beside the detailed near arm */
+.far-arm{--body-far-hi:color-mix(in srgb,var(--body-far) var(--hi),var(--lit));--body-far-lo:color-mix(in srgb,var(--body-far) var(--lo),var(--shd))}
+.bfh{fill:var(--body-far-hi)}.bfl{fill:var(--body-far-lo)}
+.far-arm .olkf{stroke:color-mix(in srgb,var(--fg-line-far) 75%,var(--surface-1))}
+/* the "still to go" line again over the near arm, faint, so it never vanishes behind the forearm; the Grip close-up hides every path cue and the Path close-up draws its own full copy */
+.lp-togo-over{opacity:.35}
+.zoom-1 .lp-togo-over,.zoom-2 .lp-togo-over{opacity:0}
 .lp-hook{fill:var(--fg-metal)}
 .lp-target{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
 /* ---- Grip close-up: front-view inset (QA r2 issue 3) ---- */
-.inset{position:absolute;top:10px;right:10px;width:134px;box-sizing:border-box;display:none;flex-direction:column;gap:2px;padding:6px 7px 5px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md)}
+.inset{position:absolute;top:10px;right:10px;width:128px;box-sizing:border-box;display:none;flex-direction:column;gap:2px;padding:6px 7px 5px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md)}
 .inset-label{font-size:11px;line-height:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
-.inset-fig{display:block;width:118px;height:${n2(118 * inset.vb[3] / inset.vb[2])}px;--sw:.8}
+.inset-fig{display:block;width:112px;height:${n2(112 * inset.vb[3] / inset.vb[2])}px;--sw:.8}
 .lp-thumb{fill:var(--accent)}
 .zoom-1 .inset{display:flex}
 /* the path guide and the "still to go" line are the Path chip's subject: hidden in the Grip close-up (QA r2 issue 4), drawn over the arm in the Path close-up so the part in front of the face always shows */
@@ -981,7 +1017,7 @@ ${kf('lp-ten', p => `opacity:${n3(p)}`)}
     const Pp = passer(pass, roles, { far });
     return `<g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)">${Pp(SIDE.hipCap)}${Pp(SIDE.thigh)}<g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)">${Pp(SIDE.kneeCap)}${Pp(SIDE.shin)}${Pp(SIDE.foot)}</g></g>`;
   };
-  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'lp-eff', glow: 'lp-ten', ten: 'lp-ten', tenOver: true }); return `<g class="j lp-torso">${Pp(SIDE.neck)}${Pp(SIDE.torso)}<g class="lp-head">${Pp(SIDE.head)}</g></g>${leg(pass)}`; };
+  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'lp-eff', glow: 'lp-ten', ten: 'lp-ten', flare: 'lp-flare', tenOver: true }); return `<g class="j lp-torso">${Pp(SIDE.neck)}${Pp(SIDE.torso)}<g class="lp-head">${Pp(SIDE.head)}</g></g>${leg(pass)}`; };
   const upper = pass => { const Pp = passer(pass, roles); return `<g class="j anim lp-ul">${Pp(SIDE.upperArm)}</g>${Pp(SIDE.deltoid)}`; };
   // LP (QA r3): the lat bar is held equipment, so it lives INSIDE the near hand group (spec 2.4, RIG section 4) and can
   // never part from the near hand. It counter-rotates by minus the sum of the arm's rotations (torso -10, ua, fa), as
@@ -991,17 +1027,26 @@ ${kf('lp-ten', p => `opacity:${n3(p)}`)}
   // and the chest, so nothing may hide it: its visible length stays the same through the rep.
   // grip texture (brief: grip texture on the handles): ribs on each bent end, |z| 50 to 73 (the bend is at 48, the tip at 75)
   const gripD = sgn => `M${[50, 56, 62, 68, 73].map(z => barPt(sgn * z)).map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;
-  const barGroup = `<g class="j anim lp-bar"><path class="lp-barline" d="${barLocalD}"/><path class="lp-grip" d="${gripD(-1)}"/><circle class="lp-hook" cx="${n2(BAR_MID[0])}" cy="${n2(16 + BAR_MID[1])}" r="2.4"/></g>`;
+  const barGroup = `<g class="j anim lp-bar"><path class="lp-barline" d="${barLocalD}"/><circle class="lp-hook" cx="${n2(BAR_MID[0])}" cy="${n2(16 + BAR_MID[1])}" r="2.4"/></g>`;
   const barNear = `<g class="j anim lp-bar lp-bar-near"><path class="lp-barline" d="${nearEndD}"/><path class="lp-grip" d="${gripD(1)}"/></g>`;
   const lower = pass => { const Pp = passer(pass, roles); return `${Pp(SIDE.elbowCap)}<g class="j anim lp-fl">${Pp(SIDE.forearm)}</g><g class="j anim lp-hd">${pass === 'fill' ? barGroup : ''}${Pp(LP_FIST)}${pass === 'fill' ? `${barNear}<circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/>` : ''}</g>`; };
   const arm = `<g class="j lp-torso"><g class="j anim lp-ua arm-near">${layer(upper)}<g class="j anim lp-fa">${layer(lower)}</g></g></g>`;
   // far hand: the rig's forearm and fist turned to point from the grip toward the elbow (local +y), in the far tones
   // far arm (QA r2 issue 2): the same arm seen on the far side, placed with the rig's depth view (each joint moves
   // (0.25, -0.15) per unit it is further from the camera), in the far tones, behind the bar and the body
-  const fpart = part => ({ base: tr(part.base, FS0[0], FS0[1] + 62) });
-  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : fillPart(fpart(part), {}, { far: true }));   // far: outline and fill, no rim (RIG section 5)
+  const fpart = part => ({ ...part, base: tr(part.base, FS0[0], FS0[1] + 62), regions: (part.regions || []).map(r => ({ ...r, poly: tr(r.poly, FS0[0], FS0[1] + 62) })) });
+  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : fillPart(fpart(part), {}, { far: true, facets: true }));   // far: outline and fill with far-tone facets, no rim (RIG section 5)
   const farUpper = pass => `<g class="j anim lp-ful">${FP(pass)(SIDE.upperArm)}</g>${FP(pass)(SIDE.deltoid)}`;
-  const farLower = pass => `${FP(pass)(SIDE.elbowCap)}<g class="j anim lp-ffl">${FP(pass)(SIDE.forearm)}</g><g class="j anim lp-fhd">${FP(pass)(SIDE.fist)}</g>`;
+  // The far end of the bar (D-L9): from 1 unit outside the far fist's near edge, through the fist, to the far tip, with the
+  // grip ribs; drawn in the far hand's frame (its grip at FS0 + (0, 78)), under the far forearm and fist fills, so the far
+  // fingers wrap the bar and the far end comes out from under them. It follows the far hand's translate (lp-fbh runs the
+  // lp-fhd keyframes) and counter-rotates by minus the far arm's rotations (lp-fbar), as the near bar does, so it keeps
+  // the bar's fixed look on screen; the far hand tracks the bar's far grip within 0.5 (checked), and the join with the
+  // near hand's bar is under the fist.
+  const FG = [FS0[0] + 0, FS0[1] + 78], rel = z => { const q = barPt(z); return `${n2(FG[0] + q[0] - FAR_GRIP[0])} ${n2(FG[1] + q[1] - FAR_GRIP[1])}`; };
+  const farBarD = 'M' + [FAR_SPLIT + 2, -BAR_BEND, -BAR_HALF].map(rel).join('L'), farGripD = 'M' + [50, 56, 62, 68, 73].map(z => rel(-z)).join('L');
+  const farBar = `<g class="j anim lp-fbh"><g class="j anim lp-fbar"><path class="lp-barfar" d="${farBarD}"/><path class="lp-grip" d="${farGripD}"/></g></g>`;
+  const farLower = pass => `${pass === 'fill' ? farBar : ''}${FP(pass)(SIDE.elbowCap)}<g class="j anim lp-ffl">${FP(pass)(SIDE.forearm)}</g><g class="j anim lp-fhd">${FP(pass)(SIDE.fist)}</g>`;
   const farArm = `<g class="far-arm"><g class="j anim lp-fua">${farUpper('ol')}${farUpper('fill')}<g class="j anim lp-ffa">${farLower('ol')}${farLower('fill')}</g></g></g>`;
   let still = '', moving = '';
   for (let i = 0; i < 10; i++) {
@@ -1025,6 +1070,7 @@ ${shadow(160, 214.4, 26, 2.2)}
 <path class="guide" d="${pathD}"/><path class="trail j anim lp-togo" d="${pathD}" pathLength="1"/><line class="lp-target" x1="${n2(LP.X1 - 5)}" y1="${Y1}" x2="${n2(LP.X1 + 5)}" y2="${Y1}"/>
 <g class="j anim lp-cable-f"><line class="cable" x1="${PF.x}" y1="${PF.y + PF.r}" x2="${PF.x}" y2="${PF.y + PF.r + 1}"/></g>
 <g class="figure-arm" transform="translate(${H[0]} ${H[1]})">${arm}</g>
+<g class="lp-togo-over"><path class="trail j anim lp-togo" d="${pathD}" pathLength="1"/></g>
 <g class="lp-over"><path class="guide" d="${pathD}"/><path class="trail j anim lp-togo" d="${pathD}" pathLength="1"/><line class="lp-target" x1="${n2(LP.X1 - 5)}" y1="${Y1}" x2="${n2(LP.X1 + 5)}" y2="${Y1}"/></g>`;
   const staticOverlays = `<g class="ov ov-pad">${arrowSvg({ from: [192, 162], to: [192, 179] })}</g>`;
   const down = { from: [210, 96], to: [210, 128] };
@@ -1125,7 +1171,7 @@ function vals() {
     rootStyle: 'width:358px;height:460px;box-sizing:border-box;' + themeVars(S.theme) + ';' + rigVars(S.theme) + ';--play:' + play + ';--dur:' + dur + 's;--iter:' + (S.loop ? 'infinite' : 3) + ';--sets:' + (S.loop ? 'infinite' : 1) + ';--delay:' + delay + 's',
     rootClass: 'player gen-' + S.gen + (S.zoom ? ' zoom-' + S.zoom : '') + (anim ? '' : ' pictures'),
     showSlow: anim && S.speed === 0.5, showIdle: anim && !S.playing && !S.ended && S.t === null, showEnded: anim && S.ended,
-    showCaps: anim && !S.ended && (S.playing || S.t !== null), showStill1: still && S.zoom !== 2, showStill3: still && S.zoom === 2, showPicsLine: S.pics && !still, showTempo: anim || still,
+    showCaps: anim && !S.ended && (S.playing || S.t !== null), showStill1: still && S.zoom !== 2, showStill3: still && S.zoom === 2, showPicsLine: S.pics && !still, showTempo: anim,   // as the artboard: Pictures mode (grid or still) has no tempo note (spec 2.7)
     isPlay: !S.playing && !S.ended, isPause: S.playing, isReplay: S.ended, playLabel: S.ended ? 'Replay' : (S.playing ? 'Pause' : 'Play'), playDisabled: rm,
     z1: S.zoom === 1, z2: S.zoom === 2, z3: S.zoom === 3, speed1: S.speed === 1, speedHalf: S.speed === 0.5, modeAnim: anim, modePics: !anim, animDisabled: rm,
     hintAnim: !rm && anim, hintPics: !rm && !anim, hintRm: rm,
@@ -1162,11 +1208,12 @@ const harness = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=390">
 <title>${EXL.title}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&display=swap">
 <style>
 /* Artboard: everything in this <style> goes into <helmet><style> (PLAYER.md piece A). */
 ${ARTBOARD_CSS}
 </style>
-<style>/* harness only */ body{padding:16px;background:#777}.harness-note{margin:10px 0 0;width:358px;font:12px/16px system-ui,sans-serif;color:#fff}</style>
+<style>/* harness only: the canvas's font (Roboto, its link above) and font stack, so the harness renders the text as the artboard does */ body,.player{font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif} body{padding:16px;background:#777}.harness-note{margin:10px 0 0;width:358px;font:12px/16px system-ui,sans-serif;color:#fff}</style>
 </head>
 <body>
 <div class="player gen-a" id="player" style="${defaultStyle}">
@@ -1184,7 +1231,7 @@ ${HARNESS_JS}
 const WRITE = !process.env.LP_NO_WRITE;   // LP_NO_WRITE=1: import the pieces without writing files (work/r3/dc-*.mjs)
 if (WRITE) fs.writeFileSync(path.join(DIR, 'index.html'), harness);
 if (WRITE) fs.writeFileSync(path.join(DIR, 'poses.json'), JSON.stringify({ latPulldown: { keyTable: lp.keyTable, truth: lp.truth, grips: GRIP_OPTIONS, drift: lp.drift, smoothness: lp.smoothness, smoothCheck: lp.smoothCheck, samples: SAMPLES, cableTravel: lp.cableTravel, geo: lp.geo, series: lp.series, picsAt: EXL.picsAt, chips: EXL.chips, tileBox: EXL.tileBox }, contrast: contrastTable() }, null, 1));
-export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES, SIDE, LP_FIST, FACE, LP, makeLP, LP_OPT, extrasOf, smoothNumbers, smLine, progress as progressOf };
+export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES, SIDE, LP_FIST, FACE, barPt, NEAR_Z, HAND_HALF, BAR_HALF, LP, makeLP, LP_OPT, extrasOf, smoothNumbers, smLine, progress as progressOf };
 if (WRITE) console.log('smoothness check, as the page draws it (../smooth-check.cjs limits: a 1 %, b 8 %, c 3 x, d 4 deg):\n' + smLine(lp.smoothCheck));
 if (WRITE) console.log(JSON.stringify({ truth: lp.truth, drift: lp.drift, X0: lp.geo.X0, Y0: lp.geo.Y0, zooms: lp.geo.zooms, grips: GRIP_OPTIONS.map(o => `Z${o.Z} x${o.times.toFixed(2)} top ${o.topElev.toFixed(1)} end ${o.endInside.toFixed(1)} minFu ${o.minFu.toFixed(2)}`), key: lp.keyTable.map(r => `p${r.p} S(${r.shoulder}) E(${r.elbow}) ua ${r.ua} fu ${r.fu} fa ${r.fa} ff ${r.ff} in ${r.inside} elev ${r.elev} beh ${r.behind} lift ${r.lift}`) }, null, 1));
 
@@ -1251,7 +1298,7 @@ Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, pai
 
 | File | What it is |
 |---|---|
-| \`index.html\` | The harness: the full 358 x 460 player, built exactly as the artboard (pieces A, B, C). Its small script is harness-only: \`?theme=<id>\`, \`?t=<0..1>\` (freeze rep 1 at that point), \`?zoom=1|2|3\` (or grip, path, pad), \`?mode=pictures\`, plus \`?loop=1\` and \`?speed=0.5\`. The buttons work too. |
+| \`index.html\` | The harness: the full 358 x 460 player, built exactly as the artboard (pieces A, B, C), and it loads the canvas's Roboto and uses its font stack (harness-only rules), so its text and screenshots match the artboard. Its small script is harness-only: \`?theme=<id>\`, \`?t=<0..1>\` (freeze rep 1 at that point), \`?zoom=1|2|3\` (or grip, path, pad), \`?mode=pictures\`, plus \`?loop=1\` and \`?speed=0.5\`. The buttons work too. |
 | \`gen.mjs\` | The single source (rig-final \`gen.mjs\` lines 1-378 copied, changes marked \`LP:\`). Writes \`index.html\`, \`poses.json\` and this file. |
 | \`shoot.cjs\` | Every check and the required screenshots in \`shots/\` (\`lp_*.png\`). Writes \`checks.txt\` and \`measured.json\`. Exit code 1 on any FAIL; 2 on any OPEN (a spec value not met that waits for a decision); 0 only when all pass. It runs the shared smoothness check \`../smooth-check.cjs\`. |
 | \`fit-motion.mjs\` | Refits the motion (\`LP_OPT\` in \`gen.mjs\`) to the smoothness check with a margin, keeping the path's drawn-geometry checks (section 7). Run it only after a change to the path, the grip or the shoulder blades. |
@@ -1291,7 +1338,7 @@ Root class string (\`rootClass\`): \`player gen-a\` or \`player gen-b\`, then \`
 
 Flip \`gen\` (a to b or back) on Replay, on a speed change, on a mode change, and on a chip tap in Pictures mode. Every animation name ends in \`-a\` or \`-b\`, so the flip restarts every animation from 0 %.
 
-Values piece C reads from \`renderVals()\`: \`showSlow\`, \`showIdle\`, \`showEnded\`, \`showCaps\`, \`showStill1\`, \`showStill3\`, \`showPicsLine\`, \`showTempo\`, \`isPlay\`, \`isPause\`, \`isReplay\`, \`playLabel\`, \`playDisabled\`, \`z1\`, \`z2\`, \`z3\`, \`pick1\`, \`pick2\`, \`pick3\`, \`speed1\`, \`speedHalf\`, \`modeAnim\`, \`modePics\`, \`animDisabled\`, \`hintAnim\`, \`hintPics\`, \`hintRm\`, \`togglePlay\`, \`speedTo1\`, \`speedToHalf\`, \`toAnim\`, \`toPics\`. \`showCaps\` is for Animation mode only (playing or paused mid-set). A Pictures still (Pictures with a chip on) shows that picture's own caption instead, the same words as its tile: \`showStill1\` (Grip and Pad, pose 1) "Thighs under the pad, arms long", \`showStill3\` (Path, pose 3) "Bar to the top of your chest". Same pattern as the Machine Chest Press player.
+Values piece C reads from \`renderVals()\`: \`showSlow\`, \`showIdle\`, \`showEnded\`, \`showCaps\`, \`showStill1\`, \`showStill3\`, \`showPicsLine\`, \`showTempo\`, \`isPlay\`, \`isPause\`, \`isReplay\`, \`playLabel\`, \`playDisabled\`, \`z1\`, \`z2\`, \`z3\`, \`pick1\`, \`pick2\`, \`pick3\`, \`speed1\`, \`speedHalf\`, \`modeAnim\`, \`modePics\`, \`animDisabled\`, \`hintAnim\`, \`hintPics\`, \`hintRm\`, \`togglePlay\`, \`speedTo1\`, \`speedToHalf\`, \`toAnim\`, \`toPics\`. \`showCaps\` is for Animation mode only (playing or paused mid-set). A Pictures still (Pictures with a chip on) shows that picture's own caption instead, the same words as its tile: \`showStill1\` (Grip and Pad, pose 1) "Thighs under the pad, arms long", \`showStill3\` (Path, pose 3) "Bar to the top of your chest". Same pattern as the Machine Chest Press player. \`showTempo\` is Animation mode only (as the artboard and spec 2.7: a Pictures still shows its own caption and no tempo note, which would not fit beside it).
 
 With loop off, the logic's 200 ms timer ends playback after 3 x \`--dur\`: \`playing=false, ended=true\`, and the button becomes Replay. The figure then holds the 100 % frame, which equals the setup pose.
 
@@ -1312,7 +1359,7 @@ Easing (baked into the samples, rig section 8): each move (pull, return) follows
 
 | Class | Chip | Camera target cx, cy, scale | What lights up | Bubble caption |
 |---|---|---|---|---|
-| \`zoom-1\` | Grip | ${z.Z1.cx}, ${z.Z1.cy}, ${z.Z1.s} | accent ring r 12 around the near hand (inside the hand group, so it follows the hand), and the front-view inset (top right, 134 wide): both hands on the bar a little outside the shoulders, thumbs in accent | ${EXL.chips[0].caption} |
+| \`zoom-1\` | Grip | ${z.Z1.cx}, ${z.Z1.cy}, ${z.Z1.s} | accent ring r 12 around the near hand (inside the hand group, so it follows the hand), and the front-view inset (top right, 128 wide): both hands on the bar a little outside the shoulders, thumbs in accent | ${EXL.chips[0].caption} |
 | \`zoom-2\` | Path | ${z.Z2.cx}, ${z.Z2.cy}, ${z.Z2.s} | the path guide, the "still to go" line and the target mark, drawn a second time over the arm, so the part in front of the face always shows | ${EXL.chips[1].caption} |
 | \`zoom-3\` | Pad | ${z.Z3.cx}, ${z.Z3.cy}, ${z.Z3.s} | accent outline on the thigh pad and a down arrow above it | ${EXL.chips[2].caption} |
 
@@ -1363,7 +1410,7 @@ The smoothness check (\`../smooth-check.cjs\`, UPGRADE-BRIEF.md smoothness targe
 - the shoulder blades: share done 1 - (1 - p)^${LP.o.SK};
 - the elbow at the top: ${f(t.topInside)} ("about 170, not locked"; round 3's 174 made the first bend sharper).
 
-The fit keeps a margin under every limit and keeps the drawn checks that the path's shape decides: the far fist never under the Grip close-up's inset, the face clear while the bar passes it, the fist and forearm clear of the head, tile 2's pose, the elbow closing steadily, the upper arm never drawn short.
+The fit keeps a margin under every limit and keeps the drawn checks that the path's shape decides: the far fist never under the Grip close-up's inset, the bar's near end (drawn over the head, as it is nearer the camera) clear of the head, the face clear while the bar passes it, the fist and forearm clear of the head, tile 2's pose, the elbow closing steadily, the upper arm never drawn short.
 
 Smoothness check, computed here from the stops as written (the browser reads the same numbers, section 11); a = speed over the first and last 1/120 s as a share of the top speed (limit 1 %), b = largest velocity step between samples 1/120 s apart (limit 8 %), c = largest change of acceleration between keyframe stops over its median (limit 3 x):
 
@@ -1389,15 +1436,15 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 - Weight stack (rig section 7): 10 plates 48 x 12 at x 16-64 from y 112.5; guide rods x 22 and 58 (y ${g.BEAM + 8}-250); each plate with a lighter top bevel; the pin in plate 7 (x 63-72, accent) with its knob (r 2.4 at x 69.8, clear of the upright); plates 1-7, the pin and the top bracket (x 35-45, y 106) lift together by half the cable travel, 0 to ${f(g.LIFT1, 2)}. Rear pulley r 7 at (47, ${g.REAR_TOP}) with a rim ring (r 4.6) and a hub; the rear cable runs down its left side at x 40 to the bracket and shortens as the stack rises. All of these are in \`.lp-stackset\`, which hides in the Grip and Path close-ups.
 - Upright x 72-84, y ${g.BEAM}-250. Top beam x 16-178, y ${g.BEAM}-${g.BEAM + 8}, below the pill row (pills y 10-32). Front pulley r ${g.PF.r} at (${g.PF.x}, ${g.PF.y}) with a rim ring (r 3.2) and a hub (top at y ${f(g.PF.y - g.PF.r)}, below the pills), straight above the cable hook at the top of the rep. The run between the pulleys is inside the beam.
 - Far leg (far tones) at \`translate(5 -3)\`.
-- Far arm (far tones), section 7.
+- Far arm (far tones, with light and dark far-tone facets \`bfh\` / \`bfl\` and a softer outline than the far leg's, so it reads as a form behind the body), section 7. Inside its hand group, under the far forearm and fist fills, the far end of the bar (\`lp-barfar\`, with the grip ribs): from 1 unit outside the far fist's near edge, through the fist, to the far tip. It runs the far hand's translate (\`lp-fbh\`, the \`lp-fhd\` keyframes) and counter-rotates by minus the far arm's rotations (\`lp-fbar\`, its own keyframe set with \`rotate()\`, so the smoothness check reads it as a joint angle: section 7), which keeps the bar's fixed look on screen. The far hand tracks the bar's far grip within 0.5 (section 11), and the join with the near hand's bar lies under the fist, so the far fingers wrap the bar and its far end comes out from under them (D-L9).
 - Seat pad x 118-186, y 214-224, post x 150-159, with a stitched seam 2.1 inside its edge. Thigh-pad post x 188-196 (behind the near leg).
 - Contact shadows (RIG.md section 20): under the feet on the floor (208, 258, rx 17) and under the thighs on the seat (160, 214.4, rx 26), outside \`.figure\`, so no figure box changes.
 - Body (torso, neck and head leaned 10 degrees; seated leg as the chest press), painted in three passes (outline, rim, fill: RIG.md section 5) with the figure-detail parts of RIG.md section 20. Thigh pad roller x 180-204, y 184-198, rx 7, on top of the thigh, with a stitched seam.
 - Path guide (dashed, the whole hand path) and the "still to go" line (solid accent; \`stroke-dashoffset\` = minus the path fraction already travelled, minus 16 units, so it starts 6 below the fist and shrinks as the bar comes down), plus the target mark: a 10-wide accent line across the path's end at (${g.X1}, ${g.Y1}).
 - The front cable (\`lp-cable-f\`), drawn after the far arm, the far leg and the body (QA r3): it hangs on the bar's middle, which is nearer the camera than the far hand and in front of the face, so nothing but the near arm may cover it. One line from the pulley's bottom (${g.PF.x}, ${f(g.PF.y + g.PF.r)}) to the hook; it turns and stretches with the bar (\`rotate()\` and \`scaleY()\` about the pulley bottom, on the same samples).
 - The near arm on top. The lat bar lives inside its hand group (\`lp-hd\`; spec 2.4, RIG section 4), so the grip can never come apart: \`lp-bar\` turns by \`rotate(-10 - ua - fa)\` about the grip (0, 16), minus the sum of the arm's rotations, as the rig's dumbbells do, so the bar keeps its fixed look on screen. Two layers: the whole bar and the hook under the fist fill (the fist wraps round the bar), and the near end, from the little-finger side of the hand (${HAND_HALF} nearer the camera than the grip) out to its tip, over the fist. The near end is nearer the camera than the hand, the forearm and the chest, so it always shows and the bar's visible length never changes. The bar: a 4-wide metal line, drawn with the depth view: 150 long, straight between +-48 of the centre line, ends bent down 6. Relative to the near grip: near end (${g.BAR_PTS[0].map(v => f(v, 2)).join(', ')}), bends at (${g.BAR_PTS[1].map(v => f(v, 2)).join(', ')}) and (${g.BAR_PTS[2].map(v => f(v, 2)).join(', ')}), far end (${g.BAR_PTS[3].map(v => f(v, 2)).join(', ')}); far hand at (${g.FAR_GRIP.map(v => f(v, 2)).join(', ')}); the cable hook (metal dot r 2.4) on the middle at (${g.BAR_MID.map(v => f(v, 2)).join(', ')}).
-- Then \`.lp-over\`: the same guide, line and mark again, shown only in the Path close-up.
-- Muscles: main Lats (effort cue 0.75 to 1.0 opacity, and the accent glow \`gw\` under it); helps Biceps and Mid back. This player's lats region runs down the back to the waist (section 9).
+- Then \`.lp-togo-over\`: the "still to go" line again over the near arm at opacity 0.35, so it never vanishes behind the forearm while the bar comes down (hidden in the Grip close-up, which hides every path cue, and in the Path close-up, which draws its own full copy). Then \`.lp-over\`: the same guide, line and mark again, shown only in the Path close-up.
+- Muscles: main Lats in three parts (D-L9), so the accent stays in view at the hardest point, when the near upper arm hangs over the upper back: the core (the upper lat under the armpit; effort cue 0.75 to 1.0 opacity, glow \`gw\` under it), the contracted lower lat down to the waist (its resting shade always, the accent and glow rising with the move on \`lp-ten\`), and the flare, the lat's outer edge spreading up to 5.8 units behind the back outline as it contracts: a shape that grows with the move (\`lp-flare\`, \`scaleX\` about x -6 inside the torso, no \`rotate()\`) inside a group faded by \`lp-ten\`, outlined on its outer edge only. Helps Biceps and Mid back. Measured (section 11): the visible accent in the hold is at least the setup pose's.
 - Glow and secondary motion (RIG.md section 20): one channel \`lp-ten\` (\`opacity\` = the move progress p, \`-a\` / \`-b\` sets, no \`rotate()\`) runs the glow on the lats, so it rises through the pull, is strongest in the hold at the chest and fades on the way up, and two facets inside the torso: \`brace\` (the belly wall firming) and \`bladeEdge\` (the inner edge of the shoulder blade showing as the blades are pulled down and back). Here mid back and lats are painted as roles, so the facets are drawn over them (\`tenOver\`); on the rig they sit under unpainted regions. The joints do not move for it; the shoulder joint's own small drop and pull back (the spec's shoulder-blade row) is the \`lp-ua\` translate, as before.
 - Hands: the rig's side hand (palm heel, thumb, four fingers over a dark backing) wraps the bar. The near hand is the rig's hand mirrored, so the thumb and index finger are on the inside of the grip (toward the far hand) and the little finger toward the near end of the bar; the far hand is the rig's hand as it is (its inside is toward the near hand). Grip texture: ribs (\`lp-grip\`, \`--metal-lo\` dashes on the bar line) on both bent ends, |z| 50 to 73, also in the Grip inset.
 

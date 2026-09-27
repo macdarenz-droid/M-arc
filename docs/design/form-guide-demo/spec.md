@@ -180,24 +180,25 @@ Width check: 44 + 8 + 104 + 8 + 184 = 348 of 358.
 
 ### 2.3 Figure and equipment paint (derived from theme tokens, set on the root)
 
-Two rig-only variables ride in the same root style hole as `themeVars()`, written by `rigVars(theme)` (`rig-final/gen.mjs`): `--lit` / `--shd`, what a lit or a shaded facet mixes toward (`--text` / `--bg` in dark themes, `--bg` / `--text` in light ones), and `--hi` / `--lo`, how much of the base tone a light or a dark facet keeps (90% / 78% dark, 76% / 90% light); also `--rim-k` (62% dark, 35% light). Dark themes shade mostly by darkening, light ones mostly by lightening.
+Two rig-only variables ride in the same root style hole as `themeVars()`, written by `rigVars(theme)` (`rig-final/gen.mjs`): `--lit` / `--shd`, what a lit or a shaded facet mixes toward (`--text` / `--bg` in dark themes, `--bg` / `--text` in light ones), and `--hi` / `--lo`, how much of the base tone a light or a dark facet keeps (90% / 78% dark, 76% / 84% light); `--eq-hi`, how much the equipment's light face keeps (82% dark, 40% light, so plate bevels show on Paper); also `--rim-k` (62% dark, 35% light). Dark themes shade mostly by darkening, light ones mostly by lightening.
 
 | Role | Value | Contrast on `--surface-1` (worst theme) |
 |---|---|---|
 | Body fill `--body` (the T-shirt's own tone) | `color-mix(in srgb, var(--map-body) 88%, var(--text))` | fill only |
-| Skin, shorts, shoe, sole, hair | `--skin` = `color-mix(in srgb, var(--body) 92%, var(--text))`; `--shorts` = `color-mix(in srgb, var(--body) 78%, var(--text))`; `--shoe` = `color-mix(in srgb, var(--body) 50%, var(--shd))`; `--sole` = `color-mix(in srgb, var(--body) 45%, var(--lit))`; `--hair` = `color-mix(in srgb, var(--body) 50%, var(--shd))` | fill only |
-| 3-tone shading (light, mid, dark per surface, skin/T-shirt/shorts/shoe/hair and the equipment faces alike) | `X-hi = color-mix(in srgb, X var(--hi), var(--lit))`; `X-lo = color-mix(in srgb, X var(--lo), var(--shd))` | tint only |
+| Skin, shorts, shoe, sole, hair | `--skin` = `color-mix(in srgb, var(--body) 92%, var(--text))`; `--shorts` = `color-mix(in srgb, var(--body) 70%, var(--text))`; `--shoe` = `color-mix(in srgb, var(--body) 50%, var(--shd))`; `--sole` = `color-mix(in srgb, var(--body) 45%, var(--lit))`; `--hair` = `color-mix(in srgb, var(--body) 50%, var(--shd))` | fill only |
+| 3-tone shading (light, mid, dark per surface, skin/T-shirt/shorts/shoe/hair and the equipment faces alike) | `X-hi = color-mix(in srgb, X var(--hi), var(--lit))`; `X-lo = color-mix(in srgb, X var(--lo), var(--shd))`; the hair sheen keeps 68% (`--hair-hi`), the equipment's light face `--eq-hi` | tint only |
 | Figure outline `--fg-line` (one silhouette per body layer: a 3-unit stroke drawn under the fills, so 1.5 shows) | `color-mix(in srgb, var(--text) 60%, var(--surface-1))` dark themes, 70% light, round joins, `vector-effect: non-scaling-stroke` | at least 4.6:1 on the stage, 3.1:1 over the body, every theme |
 | Rim (thin lighter line just inside the outline) `--rim` | `color-mix(in srgb, var(--body) var(--rim-k), var(--lit))`, 1.1 units drawn under the fill so 0.55 shows | at least 1.25:1 over the outline |
 | Frame outline `--fg-frame` (pads, frame, plates, rails, guide rods) | `color-mix(in srgb, var(--text) 38%, var(--surface-1))` dark, 56% light | at least 3.18:1 |
 | Main muscle | `var(--accent)`; effort cue: opacity 0.75 (setup pose) rising to 1.0 (end pose), never below 0.75 | 2.98:1 Midnight (the outline carries the shape; muscles are also listed in text) |
 | Helper muscle | `color-mix(in srgb, var(--accent) 45%, var(--body))` | tint only |
-| Target-muscle glow `gw` (a halo under the main muscle) | `var(--accent)`, 5 units wide, stroke-opacity 0.3; element opacity = the move progress p: 0 at setup, rising through the lift, 1.0 through the hold (the hardest point), falling back to 0 through the return and reset | never flashes at the rep restart |
+| Target-muscle glow `gw` (a halo under the main muscle, clipped to the part's own silhouette with a `<clipPath>` of its base polygon, so it never spills past the outline) | `var(--accent)`, 5 units wide, stroke-opacity 0.3; element opacity = the move progress p: 0 at setup, rising through the lift, 1.0 through the hold (the hardest point), falling back to 0 through the return and reset | never flashes at the rep restart |
+| Helper tint easing (lateral raise): the upper-trap `mh` polygons | opacity 1 at setup easing to 0.7 through the hold and back, on the same timing (the traps stay down; opacity only, no joint moves) | |
 | Secondary-motion facet (a brace inside the torso; the shoulder-blade edge or, front view, the collarbone line) | the surface's own tone, fill-opacity 0.75, class `tn`; opacity also = p, no `rotate()` | shape change only; fixed joints stay fixed |
-| Contact shadow | three stacked ellipses in `--scrim`, fill-opacity 0.16 (radii 1, 0.72, 0.44), no filter, under the feet and (chest press) under the seat | |
+| Contact shadow | three stacked ellipses in `--border`, fill-opacity 0.6 (radii 1, 0.72, 0.44), no filter, under the feet and (chest press) under the seat: a faint light pool on the near-black stages, a soft dark one on Paper | |
 | Metal moving parts `--fg-metal` (handles, bar, dumbbells, carriage) | `color-mix(in srgb, var(--text) 72%, var(--surface-1))` | 4.9:1 Paper, 7.6+ dark |
 | Equipment faces, plain / light / dark (plate bevels, dumbbell top and end faces) | `var(--equip)` (= `var(--surface-3)`) / `--equip-hi` / `--equip-lo` (3-tone formula above) | fill only |
-| Grip texture (handle ribs, dumbbell knurl) `--metal-lo` | `color-mix(in srgb, var(--fg-metal) 50%, var(--surface-1))` | |
+| Grip texture (handle ribs) `--metal-lo` | `color-mix(in srgb, var(--fg-metal) 64%, var(--surface-1))`, 0.6 units, so the fingers dominate the hand | |
 | Pad seams `--seam` | `color-mix(in srgb, var(--fg-frame) 70%, var(--equip))`, dashed 1.6 1.2 | |
 | Cables `--fg-cable` | `color-mix(in srgb, var(--text) 55%, var(--surface-1))`, 1.25 units | 3.1:1 Paper, 5.0+ dark |
 | Far side (depth cue): far leg, far lever or handle only, never a far arm | `--body-far` = map-body 50% into `--surface-1`; `--shorts-far` / `--shoe-far` = shorts / shoe 45% into `--surface-1`; outline `--fg-line-far` = text 30% into `--surface-1`, 2.4 units (1.2 shows) | |
@@ -207,7 +208,7 @@ Two rig-only variables ride in the same root style hole as `themeVars()`, writte
 
 The app's muscle map uses `--map-line` for outlines; at the player's size that fails 3:1 in Silent Black (about 1.6:1), so the player uses `--fg-line` / `--fg-frame` instead, and paints only the inner facet lines with `--map-line`. This is the one deliberate difference from the muscle map look.
 
-Low-poly rule: every body part is a straight-edged polygon (head = a skull-and-jaw shape, limbs = tapered 4-6 sided shapes, torso = 6-8 sided), with a round joint cap (circle, body fill) at shoulder, elbow, hip and knee so rotations never show gaps. Clothing (T-shirt with a neckline and sleeve hem at mid upper arm, shorts above the knee, shoes with a sole and toe cap, a hair cap), the head (skull and jaw, an ear, and in side views a subtle nose and brow line; no eyes or mouth), and the hands (a palm, four fingers wrapping the handle, and a thumb) are drawn as extra low-poly facets inside these same parts, never as new joints (`rig-final/RIG.md` section 20). Every fill, tone and stroke above is a theme token or a `color-mix()` of tokens; none is a literal colour outside the token definitions (`rig-final/gen.mjs`, `BASE_CSS` and `rigVars()`).
+Low-poly rule: every body part is a straight-edged polygon (head = a skull-and-jaw shape, limbs = tapered 4-6 sided shapes, torso = 6-8 sided), with a round joint cap (12-sided, body fill) at shoulder, elbow (r 4.8), hip and knee so rotations never show gaps. An arm is one silhouette: the lower arm's outline and rim are drawn inside the upper arm's passes, so no outline arc crosses the elbow, and a small crease facet on the inner side of the elbow marks the joint. Clothing (T-shirt with a neckline and sleeve hem at mid upper arm, shorts above the knee, shoes with a sole and toe cap, a hair cap), the head (skull and jaw, an ear, and in side views a subtle nose and brow line; no eyes or mouth), and the hands (a palm, four fingers wrapping the handle, and a thumb: in side views a lit wedge along the top of the hand that crosses the handle; in the front view the index finger and thumb close as a ring round the dumbbell handle, drawn in the dumbbell group so it stays level with the head) are drawn as extra low-poly facets inside these same parts, never as new joints (`rig-final/RIG.md` section 20). Every fill, tone and stroke above is a theme token or a `color-mix()` of tokens; none is a literal colour outside the token definitions (`rig-final/gen.mjs`, `BASE_CSS` and `rigVars()`).
 
 ### 2.4 Rig
 
@@ -219,14 +220,14 @@ Units are stage viewBox units (1 unit is about 1 CSS px).
 | Neck | 4 to 8 visible | 11 to 16, widening into the trapezius slope |
 | Torso, hip joint to shoulder joint | 62 | 26-28 deep (side); 42 at the shoulders, 28 at the waist (front) |
 | Upper arm | 38 | 11 to 12 |
-| Forearm to grip centre | 40 | 9.6 to 7.2 |
+| Forearm to grip centre | 40 | 9.8 at the elbow, 12.4 over the brachioradialis bulge (thumb side, 4 to 10 below the elbow), 8 at the wrist |
 | Thigh | 50 | 17 to 12 |
 | Shin, knee to ankle | 47 | 11 to 8 |
 | Foot | heel -6 to toe 17.5 (23.5 long), sole at ankle + 5 | |
 
 Figure detail (`rig-final/RIG.md` section 20), drawn as extra low-poly facets inside these same parts, never as new joints: a hair cap and sheen, an ear, and in side views a subtle nose and brow line (no eyes or mouth); a fitted T-shirt (collar band, sleeve hem at mid upper arm) over the torso and upper arm, shorts (hem above the knee) over the thigh, and a shoe (collar, toe cap, sole); each hand shows a palm, a thumb and four fingers wrapping the handle. Muscle facets (deltoid cap, pecs, lats, biceps, triceps, forearm taper, glutes, quads, hamstrings, calves) are cut inside the same body, upper-arm and lower-arm layers, split at a clothing hem where one crosses it. Equipment gains matching surface detail (section 7): grip ribs on handles, a top bevel on each weight plate, hex faces and a recessed end on the dumbbell heads, pulley and hub rims, and stitched pad seams.
 
-Nesting (`<g>` per joint, each with its own class and keyframes): hip → torso → neck/head and shoulder → upper arm → elbow → forearm → hand → held equipment (handle, bar or dumbbell). Legs hang from the hip group. Equipment that the hand holds is nested in the hand group, so the grip can never come apart; the equipment's own track (carriage, cable, stack) is keyframed at the same percentages. Every body layer draws its outline, then its rim, then its fill, tone facets, glow and muscles (section 2.3), in that order, so no seam shows where parts overlap.
+Nesting (`<g>` per joint, each with its own class and keyframes): hip → torso → neck/head and shoulder → upper arm → elbow → forearm → hand → held equipment (handle, bar or dumbbell). Legs hang from the hip group. Equipment that the hand holds is nested in the hand group, so the grip can never come apart; the equipment's own track (carriage, cable, stack) is keyframed at the same percentages. Every body layer draws its outline, then its rim, then its fill, tone facets, glow and muscles (section 2.3), in that order, so no seam shows where parts overlap; an arm (upper and lower) is one such layer, so nothing crosses it at the elbow.
 
 Side-view sign rule (figure faces right, +x). Every limb is drawn hanging straight down in its local frame. SVG `rotate(θ)`: positive = clockwise on screen.
 - Torso lean back L degrees: `rotate(-L)` about the hip. Lean forward F: `rotate(+F)`.
@@ -369,7 +370,7 @@ Info block:
 
 - Camera: **side view**. Reason: shows the small fixed lean, the bar coming down in front of the face to the top of the chest, and the thigh pad holding you down. The bar is drawn with the rig's slight view from the front and above (the view of the far leg: 0.25 across and 0.15 up for every unit of depth), 44 units long on screen, with both hands on it; the far arm is drawn in the far tones behind the head and body, for this player only (an exception to RIG section 7).
 - Equipment: base rail x 16-262, y 250-258; upright x 72-84, y 36-250; top beam x 16-178, y 36-44; front pulley r 5.2 at (146.3, 39.2); rear pulley r 7 at (47, 47); cable bar middle → front pulley → beam → rear pulley → stack bracket; weight stack: the rig's 10 plates 48 x 12 at x 16-64 from y 112.5, pin at plate 7; seat pad x 118-186, y 214-224 on a post; thigh pad roller x 180-204, y 184-198 (radius 7) on a post; lat bar 150 long (ends bent down 6 over the last 27), hands 72 apart, the cable on its middle.
-- Anchors: hip (150,206); torso leaned back 10 degrees, constant (`rotate(-10)`); shoulder (139.2,144.9); thighs horizontal under the pad; feet flat. Grip 14 out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (137.3, 65.9), just above the raised shoulder, forward and down above the head, down in front of the face at x 160 to 161.5 (y 118 to 139.3), onto the top of the chest at (157, 150), along one smooth curve. Stack lift 0 → 43.0 (half the cable travel).
+- Anchors: hip (150,206); torso leaned back 10 degrees, constant (`rotate(-10)`); shoulder (139.2,144.9); thighs horizontal under the pad; feet flat. Grip 14 out from each shoulder joint (hands 72 apart, about 1.2 times the outside shoulder width). Bar (grip centre) from (137.3, 65.9), just above the raised shoulder, forward and down above the head, down in front of the face at x 160 to 164.1 (y 106.1 to 142.9), onto the top of the chest at (157, 150), along one smooth curve. Stack lift 0 → 43.0 (half the cable travel).
 - Muscles: main Lats; helps Biceps, Mid back.
 
 | Joint | Start (arms up) | End (bar at chest) | Change | Rule |
@@ -387,7 +388,7 @@ Key poses (bar = grip centre; angles are the solved 3D values; the keyframe valu
 | % | Bar (x, y) | Upper arm from torso line | Elbow inside | fu | ff | Stack lift |
 |---|---|---|---|---|---|---|
 | 0, 87.5, 100 | 137.29, 65.93 | 162.01 | 171 | 0.97 | 0.993 | 0 |
-| 12.5, 62.5 | 157.47, 110.18 | 80.92 | 67.73 | 0.756 | 0.962 | 23.76 |
+| 12.5, 62.5 | 160.17, 106.47 | 84.44 | 75.59 | 0.832 | 0.984 | 22.49 |
 | 25, 37.5 | 157, 150 | 25.31 | 35.44 | 0.946 | 0.999 | 42.99 |
 
 (Torso group `rotate(-10)` throughout.)

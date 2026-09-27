@@ -124,10 +124,11 @@ const indexHtml = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=390">
 <title>Dumbbell Lateral Raise form guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&amp;display=swap">
 <style>
 /* Artboard: everything in this <style> goes into <helmet><style>. Built by build.mjs. */
 ${css}</style>
-<style>/* harness only: page padding and the note under the player */ body{padding:16px}.harness-note{margin:10px 0 0;width:358px;font-size:12px;line-height:16px;color:GrayText}</style>
+<style>/* harness only: a local copy of the canvas font (Roboto, latin) so offline shoots draw the same text as the canvas, page padding, and the note under the player */ @font-face{font-family:Roboto;font-style:normal;font-weight:400 700;font-display:swap;src:url(../rig-final/fonts/Roboto-latin.woff2) format("woff2")}body{padding:16px}.harness-note{margin:10px 0 0;width:358px;font-size:12px;line-height:16px;color:GrayText}</style>
 </head>
 <body>
 ${body}
@@ -203,6 +204,7 @@ if (!sameAB) throw new Error('-a and -b keyframe sets differ');
 const animated = setA.map(k => k.slice(0, -2));
 const poses = JSON.parse(fs.readFileSync(path.join(DIR, '..', 'rig-final', 'poses.json'), 'utf8'));
 const LR = poses.lateralRaise, tr = LR.truth, kt = LR.keyTable;
+const stops = kf['lr-ua-r-a'].split('%{').length - 1;
 const f1 = v => Number(v).toFixed(1);
 const gr = i => `(${f1(kt[i].gripR[0])}, ${f1(kt[i].gripR[1])})`;
 
@@ -280,7 +282,7 @@ The 200 ms timer in \`logic.js\` ends playback after 3 x \`--dur\` with loop off
 
 ## 3. Rep timing and phase captions
 
-One rep = \`--dur\` (4 s at 1x). The easing is baked into the keyframe samples (every 1.25 % in the raise, every 3.125 % in the lowering), so every figure keyframe plays \`linear\` between samples.
+One rep = \`--dur\` (4 s at 1x). The minimum-jerk timing is baked into the keyframe samples (a stop every 0.25 % of the rep in the 1 s raise, every 0.5 % in the 2 s lowering, and only the boundary stops in the two holds: ${stops} stops per channel, written twice as the -a and -b sets), so every figure keyframe plays \`linear\` between samples.
 
 | Rep % | Time at 1x | Phase | Movement | Caption (\`capx\` span) | Keyframe window |
 |---|---|---|---|---|---|
@@ -394,6 +396,9 @@ ${artboardScript}
 - Each zoom state: camera transform, only its own bubble, pill row and camera label hidden, subject inside the stage and above the bubble at 41 phases.
 - Pictures: grid shown, 4 different poses; stills: grid hidden, Path still on pose 3.
 - Reduced motion: paused even when the root style says running, grid shown, hint, Animation disabled.
+- Smoothness (UPGRADE-BRIEF.md target 4; docs/COACHING-DECISIONS.md D-R1): the rig's own numbers on the written stops of this build are (a) ${(LR.smooth.a * 100).toFixed(2)} %, (b) ${(LR.smooth.b * 100).toFixed(2)} %, (c) ${LR.smooth.c.toFixed(2)} x (limits 1 %, 8 %, 3 x). \`shoot.cjs\` measures the drawn page with \`../smooth-check.cjs\` (every joint angle and the grip at 120 samples per second, plus the keyframe stops) and prints the numbers per phase; the last run is in \`checks.txt\`.
+- Target muscle visible at the hardest point (\`../rig-final/muscle-check.cjs\`): the accent pixels of the main muscle in the hold are at least 97 % of those at setup. Caption row (\`../rig-final/caption-check.cjs\`): caption and tempo never overlap or leave the player in idle, ended, the four captions and Pictures, drawn with the canvas font (Roboto).
+- Secondary motion: the upper-trap helper tint eases 1 -> 0.7 with the lift and back on the move's timing (opacity only; the shoulder joints, the 15-degree bend and the level dumbbells are checked above).
 - Every binding in the markup exists in \`renderVals()\`; no page errors.
 
 ## 12. Risks

@@ -48,9 +48,8 @@ const hCss = idx.match(/<style>\n\/\* Artboard:[^\n]*\*\/\n([\s\S]*?)<\/style>/)
 const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet>/)[1];
 {
   const tz = (a, b) => `font-size:calc(${a}px * var(--tz));line-height:calc(${b}px * var(--tz))`;
-  const FONT = 'Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', ROBOTO = 'Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif';
+  // the harness and the canvas share the Roboto-first font stack (rig-final/gen.mjs BASE_CSS), so no font edit is needed here
   const EDITS = [ // [harness text, canvas text, expected count in the harness CSS]
-    ['font-family:' + FONT, 'font-family:' + ROBOTO, 2],
     ['.player{--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s;--sw:1;\n', '.player{--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s;--sw:1;--tz:.8;\n', 1],
     ['.pill-accent{background:var(--accent-soft);color:var(--accent)}', '.pill-accent{background:var(--accent-soft);color:var(--text)}', 1],
     ['color:var(--accent);font-size:11px;line-height:18px;font-weight:700;text-align:center}', tz(11, 18) + ';font-weight:700;text-align:center;color:var(--text)}', 1],
@@ -65,7 +64,7 @@ const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet
   for (const [a, b, n] of EDITS) { const k = want.split(a).length - 1; counts.push(k); if (k === n) want = want.split(a).join(b); }
   const badCounts = EDITS.map((e, i) => counts[i] === e[2] ? null : `edit ${i + 1}: ${counts[i]} matches, want ${e[2]}`).filter(Boolean);
   const firstDiff = s => { const x = s.split('\n'), y = want.split('\n'); const i = x.findIndex((l, j) => l !== y[j]); return i < 0 ? `line count ${x.length} vs ${y.length}` : `line ${i + 1}: "${x[i].slice(0, 70)}" vs "${(y[i] || '').slice(0, 70)}"`; };
-  check(!badCounts.length && cCss === want, `canvas player: CSS = harness CSS + the ${EDITS.length} canvas-only edits (text zoom --tz, Roboto first, text-coloured accent pill and badge)${badCounts.length ? ' ' + badCounts.join('; ') : cCss === want ? '' : ' first difference ' + firstDiff(cCss)}`);
+  check(!badCounts.length && cCss === want, `canvas player: CSS = harness CSS + the ${EDITS.length} canvas-only edits (text zoom --tz, text-coloured accent pill and badge)${badCounts.length ? ' ' + badCounts.join('; ') : cCss === want ? '' : ' first difference ' + firstDiff(cCss)}`);
   check(/<helmet>\n<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com\/css2\?family=Roboto:wght@400\.\.700&amp;display=swap">\n<style>/.test(src), 'canvas player: helmet loads Roboto (Google Fonts css2 link) before the style');
   const kf = css => [...css.matchAll(/@keyframes ([\w-]+)\{/g)].map(m => m[1]);
   const kfText = css => css.split('\n').filter(l => l.startsWith('@keyframes ')).join('\n');

@@ -1,14 +1,15 @@
 // fit-motion.mjs: refits the Lat Pulldown motion (LP_OPT in gen.mjs) so every drawn angle, the cable and the bar pass
 // the numeric smoothness check (../smooth-check.cjs, UPGRADE-BRIEF.md smoothness target 4) with a margin, while the
 // path keeps the drawn-geometry checks shoot.cjs makes (docs/COACHING-DECISIONS.md D-L1).
-// Usage: node fit-motion.mjs [generations=350] [seed=9]
+// Usage: node fit-motion.mjs [generations=350] [seed=9]   (FIT_SIGMA=0.15 for a small search round the current settings)
 // It starts from the current LP_OPT, runs a CMA-ES search (about 5 minutes) and prints the new LP_OPT fields. Paste
 // them into gen.mjs (IN0 rounded), then run node gen.mjs, node shoot.cjs and node gen.mjs again. Not a deliverable.
 //
-// Scored with a margin under the check's limits: (a) 0.9 %, (b) 7.5 %, (c) 2.8 x, (d) 3.8 deg (limits 1 %, 8 %, 3 x, 4).
+// Scored with a margin under the check's limits: (a) 0.9 %, (b) 7.8 %, (c) 2.8 x, (d) 3.8 deg (limits 1 %, 8 %, 3 x, 4).
 // Kept as penalties, each a proxy of a shoot.cjs check computed from the solved pose (the stops are 0.25-0.5 % apart,
 // so the drawn pose between them differs by far less than the margins):
-//  - the far fist never under the Grip close-up's inset (margin 0.6 px); no near-arm part within 1.2 of the face's
+//  - the far fist never under the Grip close-up's inset (margin 0.6 px); the near end of the bar (drawn over the head)
+//    at least 0.6 clear of the head polygon; no near-arm part within 1.2 of the face's
 //    front edge while the grip is between the forehead and the chin; the fist and forearm 0.45 clear of the head
 //    (round 3 had 0.21) and 3.6 clear of the face at tile 2; tile 2's forearm within 14 deg of vertical and the elbow
 //    31 below the hand;
@@ -17,9 +18,9 @@
 //    and falling once per phase (dip under 1.2 %).
 process.env.LP_NO_WRITE = '1';
 const m = await import('./gen.mjs');
-const { SIDE, LEN, LP_FIST, FACE } = m;
+const { SIDE, LEN, LP_FIST, FACE, barPt, NEAR_Z, HAND_HALF, BAR_HALF } = m;
 const GENS = +(process.argv[2] || 350), SEED = +(process.argv[3] || 9);
-const LIM = { a: 0.009, b: 0.075, c: 2.8, d: 3.8 };
+const LIM = { a: 0.009, b: 0.078, c: 2.8, d: 3.8 };
 const rad = d => (d * Math.PI) / 180, deg = r => (r * 180) / Math.PI;
 
 // ---- drawn geometry, as the page draws it (2D affine: [a, b, c, d, e, f]) ----
@@ -42,16 +43,21 @@ const nearParts = (L, q) => {   // .figure-arm: translate(H) rotate(-10) > lp-ua
 // shoot.cjs 3b4: no near-arm part over the face's front edge (brow to chin, FACE.edge) while the grip passes the face
 const faceClear = (L, q) => { const prof = edge(headPoly(L).slice(FACE.edge[0], FACE.edge[1] + 1), false); let mn = 1e9;
   for (const poly of Object.values(nearParts(L, q))) { if (prof.some(s => pip(s, poly))) return -1; for (const s of prof) for (let j = 0; j < poly.length; j++) mn = Math.min(mn, seg(s, poly[j], poly[(j + 1) % poly.length])); } return mn; };
+// shoot.cjs "bar clear of the head": the near end of the bar (from the fist's near edge to the tip, drawn over the head)
+// must stay outside the head polygon; returns the worst signed clearance (negative = inside)
+const STUB = [NEAR_Z + HAND_HALF, 52, 58, 64, 70, BAR_HALF].map(z => barPt(z));
+const barClear = (L, q) => { const H = headPoly(L); let mn = 1e9;
+  for (const [dx, dy] of STUB) { const pt = [q.G[0] + dx, q.G[1] + dy]; let d = 1e9; for (let j = 0; j < H.length; j++) d = Math.min(d, seg(pt, H[j], H[(j + 1) % H.length])); mn = Math.min(mn, pip(pt, H) ? -d : d); } return mn; };
 // shoot.cjs 3b4: fist and forearm vs the whole head shape (0 when they overlap)
 const headGap = (L, q) => { const H = headPoly(L), P = nearParts(L, q);
   if ([...edge(P.fist), ...edge(P.fore)].some(s => pip(s, H)) || edge(H).some(s => pip(s, P.fist) || pip(s, P.fore))) return 0;
   return Math.min(pd(P.fist, H), pd(H, P.fist), pd(P.fore, H), pd(H, P.fore)); };
-// shoot.cjs "Grip close-up over 41 phases": the far fist in the zoom-1 camera vs the inset (x 214-348, y 10-110.1)
+// shoot.cjs "Grip close-up over 41 phases": the far fist in the zoom-1 camera vs the inset (x 220-348, y 10-110.1)
 const insetOverlap = (L, X, p, q) => { const f = X.far(p, q), F = X.FS0;
   const t = mul(mul(about(F, T(f.S[0] - F[0], f.S[1] - F[1]), R(f.au)), about([F[0], F[1] + 38], T(0, -(1 - f.fu) * LEN.upperArm), R(f.af - f.au))), T(0, -(1 - f.ff) * LEN.forearm));
   const z = SIDE.fist.base.map(([x, y]) => ap(t, [x + F[0], y + F[1] + 62])).map(([x, y]) => [179 + 1.55 * (x - 163), 138 + 1.55 * (y - 119)]);
   const xs = z.map(v => v[0]), ys = z.map(v => v[1]);
-  return Math.min(Math.min(Math.max(...xs), 348) - Math.max(Math.min(...xs), 214), Math.min(Math.max(...ys), 110.125) - Math.max(Math.min(...ys), 10)); };
+  return Math.min(Math.min(Math.max(...xs), 348) - Math.max(Math.min(...xs), 220), Math.min(Math.max(...ys), 110.125) - Math.max(Math.min(...ys), 10)); };
 
 // ---- the parameter vector: PX (5), PV as 6 positive increments, IN0, B0, SK, PC (2 x 3) ----
 const base = m.LP_OPT, nI = base.PX.length, nW = nI + 1;
@@ -69,13 +75,14 @@ function score(v) {
   let L; try { L = m.makeLP(14, o); } catch (e) { return { u: 1e9 }; }
   let pen = 0; const why = {};
   const X = m.extrasOf(L);
-  let wi = -9, wf = 9, wh = 9;
+  let wi = -9, wf = 9, wh = 9, wb = 9;
   for (let i = 0; i <= 160; i++) { const p = i / 160, q = L.pose(p);
     if (q.G[0] > 166 || q.G[0] < L.X0 - 0.5) pen += 1;
     const ov = insetOverlap(L, X, p, q); wi = Math.max(wi, ov); if (ov > -0.6) pen += (ov + 0.6) * 0.5;
     if (q.G[1] >= HS.yTop - 0.5 && q.G[1] <= HS.yChin + 0.5) { const fc = faceClear(L, q); wf = Math.min(wf, fc); if (fc < 1.2) pen += (1.2 - fc) * 0.5; }
-    if (i % 2 === 0 && p < 0.7) { const hg = headGap(L, q); wh = Math.min(wh, hg); if (hg < 0.45) pen += (0.45 - hg) * 0.5; } }
-  Object.assign(why, { inset: +wi.toFixed(2), face: +wf.toFixed(2), head: +wh.toFixed(2) });
+    if (i % 2 === 0 && p < 0.7) { const hg = headGap(L, q); wh = Math.min(wh, hg); if (hg < 0.45) pen += (0.45 - hg) * 0.5; }
+    if (i % 2 === 0) { const bc = barClear(L, q); wb = Math.min(wb, bc); if (bc < 0.6) pen += (0.6 - bc) * 0.5; } }
+  Object.assign(why, { inset: +wi.toFixed(2), face: +wf.toFixed(2), head: +wh.toFixed(2), bar: +wb.toFixed(2) });
   const q0 = L.pose(0), t2 = L.pose(0.5), ins = [], fus = [];
   for (let i = 0; i <= 100; i++) { const q = L.pose(i / 100); ins.push(q.inside); fus.push(q.fu); }
   for (let i = 1; i < 95; i++) if (ins[i] > ins[i - 1]) pen += (ins[i] - ins[i - 1]) * 2;
@@ -137,7 +144,7 @@ function cmaes(f, n, sigma, gens, seed, log) {
 const v0 = encode(base), act = SCALE.map((s, i) => i), full = z => v0.map((v, i) => v + z[i] * SCALE[i]);
 const start = score(v0);
 console.log(`start: score ${start.u.toFixed(3)}, worst ${start.worst.toFixed(3)} of the margined limits, penalty ${start.pen.toFixed(3)} ${JSON.stringify(start.why)}`);
-const best = cmaes(z => score(full(z)), act.length, 0.3, GENS, SEED, (g, b, s) => console.log(`generation ${g}: score ${b.u.toFixed(3)}, worst ${b.worst.toFixed(3)}, penalty ${b.pen.toFixed(3)} ${JSON.stringify(b.why)}, sigma ${s.toFixed(3)}`));
+const best = cmaes(z => score(full(z)), act.length, +(process.env.FIT_SIGMA || 0.3), GENS, SEED, (g, b, s) => console.log(`generation ${g}: score ${b.u.toFixed(3)}, worst ${b.worst.toFixed(3)}, penalty ${b.pen.toFixed(3)} ${JSON.stringify(b.why)}, sigma ${s.toFixed(3)}`));
 const r4 = x => +x.toFixed(4), o = best.o;
 console.log(`best: score ${best.u.toFixed(3)}, worst ${best.worst.toFixed(3)} of the margined limits, penalty ${best.pen.toFixed(3)} ${JSON.stringify(best.why)}`);
 console.log(m.smLine(best.r));

@@ -61,6 +61,9 @@ for (const c of poses.contrast) {
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${file}${query}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${file}${query}: ${m.text()}`); });
+    // offline shoots: the harness draws Roboto from its local copy (rig-final/fonts), so the Google Fonts link is answered with an
+    // empty stylesheet here and never logs a network error (the artboard loads the same link for real)
+    await page.route(/fonts\.googleapis\.com/, r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
     await page.goto('file://' + path.join(DIR, file) + query);
     await page.waitForTimeout(opts.wait || 350);
     return { page, ctx };
@@ -269,6 +272,33 @@ for (const c of poses.contrast) {
     check(g[0] <= 0.001 && g[480] <= 0.001 && mono(lift[0], lift[1], 1) && mono(ret[0], ret[1], -1) && maxHold >= maxAll - 1e-6 && maxAll >= 0.99 && step <= 0.02,
       `${label}: glow 0 at setup (${g[0].toFixed(3)}) and at the rep restart (${g[480].toFixed(3)}), rises through the lift, strongest in the hold (${maxHold.toFixed(3)} of max ${maxAll.toFixed(3)}), falls through the return, largest step between samples 1/120 s apart ${step.toFixed(4)} (limit 0.02)`);
     await ctx.close();
+  }
+
+  // Secondary motion, lateral raise: the upper-trap helper tint eases off (1 -> 0.7) as the delts take over, on the move's
+  // timing and opacity only (the traps stay down, no shrug): 1 at setup and at the rep restart, never rises in the lift,
+  // 0.7 through the hold, never falls in the return, largest step between samples 1/120 s apart at most 0.01.
+  {
+    const { page, ctx } = await open('lateral-raise.html', '?t=0');
+    const o = await page.evaluate(async () => {
+      const el = document.querySelector('.stage .scene .mh.lr-hlp'); if (!el) return null;
+      const out = []; for (let i = 0; i <= 480; i++) { window.__rig.freeze(i / 480); await new Promise(res => requestAnimationFrame(res)); out.push(+getComputedStyle(el).opacity); } return out;
+    });
+    const mono = (a, b, dir) => o.slice(a, b + 1).every((v, i, arr) => i === 0 || dir * (v - arr[i - 1]) >= -1e-6);
+    const step = o ? Math.max(...o.slice(1).map((v, i) => Math.abs(v - o[i]))) : 1;
+    check(!!o && Math.abs(o[0] - 1) < 1e-3 && Math.abs(o[480] - 1) < 1e-3 && mono(0, 120, -1) && o.slice(120, 181).every(v => Math.abs(v - 0.7) < 1e-3) && mono(180, 420, 1) && step <= 0.01,
+      `lateral raise: upper-trap helper tint eases 1 -> 0.7 with the lift and back (traps stay down): ${o ? `${o[0].toFixed(2)} at setup, ${o[120].toFixed(2)} through the hold, ${o[480].toFixed(2)} at the restart, largest step ${step.toFixed(4)}` : 'no .mh.lr-hlp element'}`);
+    await ctx.close();
+  }
+  // The target muscle stays visible at the hardest point (muscle-check.cjs), and the caption row never overlaps or leaves
+  // the player in idle, ended, the four captions and Pictures, drawn with the canvas font (caption-check.cjs).
+  {
+    const { muscleAreaCheck } = require('./muscle-check.cjs');
+    const { captionRowCheck } = require('./caption-check.cjs');
+    const ended = () => { window.__rig.stopClock(); window.__rig.setState({ playing: false, ended: true }); };
+    for (const [file, label] of [['chest-press.html', 'chest press'], ['lateral-raise.html', 'lateral raise']]) {
+      const { page, ctx } = await open(file, '?t=0'); await muscleAreaCheck(page, { label }, check); await ctx.close();
+      await captionRowCheck(q => open(file, q), { label, states: [['?autoplay=0', 'idle'], ['?loop=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pics', 'Pictures']] }, check);
+    }
   }
 
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);

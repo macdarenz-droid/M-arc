@@ -48,9 +48,9 @@ gen = one(gen, 'pole1 = norm([-0.1, 0.6, 0.8]);', 'pole1 = norm([0, 0.95, 1]);')
 gen = one(gen, 'const pole = norm(add(mul(pole0, 1 - p), mul(pole1, p)));',
   'const w = p ** 4, pole = norm(add(mul(pole0, 1 - w), mul(pole1, w)));');
 gen = one(gen, 'startElbowX: pose(0).E[0],', 'startElbowX: pose(0).E[0], startForward: pose(0).forward,');
-// g) Hand-path pace refit for this geometry (UPGRADE-BRIEF.md: the joint angles pass smoothness check (c)).
-//    From `PACE_FIT=1 node rig/gen.mjs`.
-gen = one(gen, 'const PACE = [0.8593, 1.4015, 0.1513, 2.3988, 0.2594, 1.9613, 0.4721];', 'const PACE = [1.4166, 1.5151, 0.2725, 2.1519, 0.8693, 2.0241, 0.7711];');
+// g) Hand-path pace refit for this geometry (UPGRADE-BRIEF.md: the joint angles pass smoothness checks (b) and (c)).
+//    From `PACE_FIT=1 node rig/gen.mjs` after the build wrote rig/gen.mjs; refit again after any geometry or SAMPLES change.
+gen = one(gen, 'const PACE = [1.2272, 1.7968, 0.2816, 2.4809, 0.7058, 2.3213, 0.5835];', 'const PACE = [6.2061, 0.5597, 0.2101, 4.7279, 0.9953, 8.658, 1.6495];');
 // c) Seat overlay: the pad outline only, open at the front end so it passes behind the near shin.
 //    No post outline: at the Seat zoom the post runs behind the caption bubble.
 gen = one(gen, '<rect class="ov ov-seat ovs" x="116" y="212" width="86" height="14" rx="5"/><rect class="ov ov-seat ovs" x="148" y="224" width="13" height="26" rx="2"/>',
@@ -179,10 +179,11 @@ const indexHtml = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=390">
 <title>Machine Chest Press form guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&amp;display=swap">
 <style>
 /* Artboard: everything in this <style> goes into <helmet><style>. Built by build.mjs. */
 ${css}</style>
-<style>/* harness only: page padding and the note under the player */ body{padding:16px}.harness-note{margin:10px 0 0;width:358px;font-size:12px;line-height:16px;color:GrayText}</style>
+<style>/* harness only: a local copy of the canvas font (Roboto, latin) so offline shoots draw the same text as the canvas, page padding, and the note under the player */ @font-face{font-family:Roboto;font-style:normal;font-weight:400 700;font-display:swap;src:url(../rig-final/fonts/Roboto-latin.woff2) format("woff2")}body{padding:16px}.harness-note{margin:10px 0 0;width:358px;font-size:12px;line-height:16px;color:GrayText}</style>
 </head>
 <body>
 ${body}
@@ -256,6 +257,7 @@ if (!sameAB) throw new Error('-a and -b keyframe sets differ');
 const animated = setA.map(k => k.slice(0, -2));
 const poses = JSON.parse(fs.readFileSync(path.join(RIG_DIR, 'poses.json'), 'utf8'));
 const tr = poses.chestPress.truth, key = poses.chestPress.keyTable, setup = poses.chestPress.setup;
+const stops = kf['cp-ua-a'].split('%{').length - 1;
 const f1 = v => Number(v).toFixed(1);
 const k0 = key[0], k1 = key[key.length - 1], kMid = key[Math.floor(key.length / 2)];
 const gripY = (x) => setup.P[1] + Math.sqrt(setup.R ** 2 - (x - setup.P[0]) ** 2);
@@ -350,7 +352,7 @@ The 200 ms timer in \`logic.js\` ends playback after 3 x \`--dur\` with loop off
 
 ## 3. Rep timing and phase captions
 
-One rep = \`--dur\` (4 s at 1x). The easing is baked into the keyframe samples (every 1.25 % in the press, every 3.125 % in the return), so every figure keyframe plays \`linear\` between samples.
+One rep = \`--dur\` (4 s at 1x). The minimum-jerk timing is baked into the keyframe samples (a stop every 0.25 % of the rep in the 1 s press, every 0.5 % in the 2 s return, and only the boundary stops in the two holds: ${stops} stops per channel, written twice as the -a and -b sets), so every figure keyframe plays \`linear\` between samples.
 
 | Rep % | Time at 1x | Phase | Movement | Caption (\`capx\` span) | Keyframe window |
 |---|---|---|---|---|---|
@@ -468,6 +470,8 @@ ${artboardScript}
 - Each zoom state: camera transform, only its own bubble, pill row and camera label hidden, subject inside the stage and above the bubble at 41 phases.
 - Pictures: grid shown, 4 different poses; stills: grid hidden, Path still on pose 3, and the caption line shows that pose's picture caption.
 - The caption row never overflows its 358 px width: 4 phases of the animation, the Pictures grid and all 3 stills.
+- Smoothness (UPGRADE-BRIEF.md target 4; docs/COACHING-DECISIONS.md D-R1): the rig's own numbers on the written stops of this build are (a) ${(poses.chestPress.smooth.a * 100).toFixed(2)} %, (b) ${(poses.chestPress.smooth.b * 100).toFixed(2)} %, (c) ${poses.chestPress.smooth.c.toFixed(2)} x (limits 1 %, 8 %, 3 x). \`shoot.cjs\` measures the drawn page with \`../smooth-check.cjs\` (every joint angle and the grip at 120 samples per second, plus the keyframe stops) and prints the numbers per phase; the last run is in \`checks.txt\`.
+- Target muscle visible at the hardest point (\`../rig-final/muscle-check.cjs\`): the accent pixels of the main muscle in the hold are at least 97 % of those at setup. Caption row (\`../rig-final/caption-check.cjs\`): caption and tempo never overlap or leave the player in idle, ended, the four captions and Pictures, drawn with the canvas font (Roboto).
 - Reduced motion: paused even when the root style says running, grid shown, hint, Animation disabled.
 - Every binding in the markup exists in \`renderVals()\`; no page errors.
 

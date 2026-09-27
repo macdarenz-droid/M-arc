@@ -28,6 +28,9 @@ const X0 = SET.X0, X1 = SET.X1;
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${query}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${query}: ${m.text()}`); });
+    // offline shoots: the harness draws Roboto from its local copy (rig-final/fonts), so the Google Fonts link is answered with an
+    // empty stylesheet here and never logs a network error (the artboard loads the same link for real)
+    await page.route(/fonts\.googleapis\.com/, r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
     await page.goto('file://' + path.join(DIR, 'index.html') + query);
     await page.waitForTimeout(opts.wait || 400);
     return { page, ctx };
@@ -328,6 +331,16 @@ const X0 = SET.X0, X1 = SET.X1;
 
   // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
   { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'chest press', grips: [{ name: 'hand', sel: '.arm-near .cp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
+  // The target muscle stays visible at the hardest point (rig-final/muscle-check.cjs), and the caption row never overlaps
+  // or leaves the player in idle, ended, the four captions and Pictures, drawn with the canvas font (caption-check.cjs).
+  {
+    const { muscleAreaCheck } = require('../rig-final/muscle-check.cjs');
+    const { captionRowCheck } = require('../rig-final/caption-check.cjs');
+    const ended = () => { window.__rig.stopClock(); window.__rig.setState({ playing: false, ended: true }); };
+    { const { page, ctx } = await open('?t=0'); await muscleAreaCheck(page, { label: 'chest press' }, check); await ctx.close(); }
+    await captionRowCheck(q => open(q), { label: 'chest press', states: [['?autoplay=0', 'idle'], ['?loop=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pictures', 'Pictures']] }, check);
+  }
+
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
   await browser.close();
   console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL CHECKS PASSED');

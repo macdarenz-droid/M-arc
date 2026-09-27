@@ -79,10 +79,15 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
 }
 
 (async () => {
-  const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
+  // The harness loads the canvas's Roboto from Google Fonts. Behind a TLS-terminating proxy (a cloud session) Chromium does
+  // not trust the proxy CA but Node does (NODE_EXTRA_CA_CERTS), so the font requests are fetched on the Node side, with
+  // verification on, as canvas-preview/check.cjs does. Without a proxy Chromium fetches them itself.
+  const proxy = process.env.HTTPS_PROXY || process.env.https_proxy || '';
+  const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), ...(proxy ? { proxy: { server: proxy, bypass: '127.0.0.1,localhost' } } : {}) });
   const errors = [];
   const open = async (query, opts = {}) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: opts.scale || 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });
+    if (proxy) await ctx.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, async route => route.fulfill({ response: await route.fetch() }));
     const page = await ctx.newPage();
     await page.addInitScript(() => {
       const eff = e => { let o = 1; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const cs = getComputedStyle(x); if (cs.display === 'none' || cs.visibility === 'hidden') return 0; o *= +cs.opacity; } return o; };
@@ -105,6 +110,7 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     page.on('pageerror', e => errors.push(`${query}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${query}: ${m.text()}`); });
     await page.goto('file://' + path.join(DIR, 'index.html') + query);
+    await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(opts.wait || 400);
     return { page, ctx };
   };
@@ -476,6 +482,78 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     check(g[0] <= 0.001 && g[480] <= 0.001 && mono(lift[0], lift[1], 1) && mono(ret[0], ret[1], -1) && maxHold >= maxAll - 1e-6 && maxAll >= 0.99 && step <= 0.02,
       `lat pulldown: glow 0 at setup (${g[0].toFixed(3)}) and at the rep restart (${g[480].toFixed(3)}), rises through the pull, strongest in the hold at the chest (${maxHold.toFixed(3)} of max ${maxAll.toFixed(3)}), falls through the return, largest step between samples 1/120 s apart ${step.toFixed(4)} (limit 0.02)`);
     await ctx.close();
+  }
+  // Visible accent at the hardest point (review 2026-09-27, D-L9): the target muscle must show at least as much accent in
+  // the hold (t 0.3, glow full) as at the setup pose (t 0). Measured as drawn: every 0.5 stage px over the boxes of the
+  // lats' .mm and .gw elements, the topmost element must be one of them (so a part in front does not count), weighted
+  // by its effective opacity (and the glow's stroke-opacity), so a faint halo counts for what it shows.
+  {
+    const { page, ctx } = await open('?t=0');
+    const r = await page.evaluate(async () => {
+      const L = window.__lp, out = [];
+      const eff = e => { let o = 1; for (let x = e; x && x.nodeType === 1 && !x.classList.contains('scene'); x = x.parentElement) o *= +getComputedStyle(x).opacity; return o; };
+      for (const t of [0, 0.3]) {
+        L.S.t = t; L.S.playing = false; L.S.ended = false; L.bind(); await new Promise(r => requestAnimationFrame(r)); await new Promise(r => requestAnimationFrame(r));
+        const acc = [...document.querySelectorAll('.stage .scene .mm, .stage .scene .gw')].filter(e => !e.closest('.pics'));
+        let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+        for (const e of acc) { const b = e.getBoundingClientRect(); x0 = Math.min(x0, b.left); y0 = Math.min(y0, b.top); x1 = Math.max(x1, b.right); y1 = Math.max(y1, b.bottom); }
+        let area = 0, raw = 0; const by = {};
+        for (let y = y0; y <= y1; y += 0.5) for (let x = x0; x <= x1; x += 0.5) {
+          const e = document.elementFromPoint(x, y); if (!e || !acc.includes(e)) continue;
+          const w = (e.classList.contains('gw') ? +getComputedStyle(e).strokeOpacity : 1) * eff(e); area += w * 0.25; raw += 0.25;
+          const k = e.classList.contains('gw') ? 'glow' : e.parentElement.classList.contains('lp-flare') ? 'flare' : e.classList.contains('lp-ten') ? 'lower lat' : 'core'; by[k] = (by[k] || 0) + w * 0.25;
+        }
+        out.push({ t, area: +area.toFixed(1), raw: +raw.toFixed(1), by: Object.fromEntries(Object.entries(by).map(([k, v]) => [k, +v.toFixed(1)])) });
+      }
+      return out;
+    });
+    const [a, b] = r;
+    { const mf = path.join(DIR, 'measured.json'), m = fs.existsSync(mf) ? JSON.parse(fs.readFileSync(mf, 'utf8')) : {}; m.visibleAccent = r; fs.writeFileSync(mf, JSON.stringify(m, null, 1)); }
+    check(b.area >= a.area, `visible lats accent at the hardest point: hold (t 0.3) ${b.area} vs setup (t 0) ${a.area} px of accent (area x opacity, 0.5 px grid; hold: ${Object.entries(b.by).map(([k, v]) => `${k} ${v}`).join(', ')}; setup: ${Object.entries(a.by).map(([k, v]) => `${k} ${v}`).join(', ')}; raw ${b.raw} vs ${a.raw}); the hold must show at least as much`);
+    await ctx.close();
+  }
+  // The bar never crosses the face (review 2026-09-27): the bar's layers in the near hand (drawn over the head) sampled at
+  // 41 points each, at 41 phases: no sample inside the head polygon.
+  {
+    const { page, ctx } = await open('?t=0');
+    const r = await page.evaluate(async () => {
+      const L = window.__lp;
+      const tp = el => { const m = el.getCTM(); return [...el.points].map(q => { const r = new DOMPoint(q.x, q.y).matrixTransform(m); return [r.x, r.y]; }); };
+      const inside = (pt, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if (((yi > pt[1]) !== (yj > pt[1])) && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi)) c = !c; } return c; };
+      const head = document.querySelector('.stage .figure .lp-head polygon.b'), bars = [...document.querySelectorAll('.stage .figure-arm .lp-bar .lp-barline')];
+      let bad = 0, at = [];
+      for (let i = 0; i <= 40; i++) { const t = i / 40; L.S.t = t; L.S.playing = false; L.S.ended = false; L.bind(); await new Promise(r => requestAnimationFrame(r));
+        const H = tp(head); let n = 0;
+        for (const bar of bars) { const Lb = bar.getTotalLength(), m = bar.getCTM(); for (let k = 0; k <= 40; k++) { const q = bar.getPointAtLength(Lb * k / 40), s = new DOMPoint(q.x, q.y).matrixTransform(m); if (inside([s.x, s.y], H)) n++; } }
+        if (n) { bad += n; at.push(`${n} at t ${t}`); } }
+      return { bars: bars.length, bad, at };
+    });
+    check(r.bars === 2 && r.bad === 0, `the bar never crosses the face: ${r.bad} of ${r.bars * 41 * 41} bar samples (2 layers x 41 points x 41 phases) inside the head polygon${r.at.length ? ' (' + r.at.join(', ') + ')' : ''}`);
+    await ctx.close();
+  }
+  // Caption row (review 2026-09-27): with the canvas's font, the caption text and the tempo note never overlap and never
+  // leave the player, in every state that shows them: idle, ended, the four phase captions, the Pictures line and the
+  // two Pictures stills.
+  {
+    const states = [['idle', '?t=0', S => { S.t = null; S.playing = false; S.ended = false; }], ['ended', '?t=0', S => { S.t = null; S.playing = false; S.ended = true; }],
+      ['caption 1', '?t=0.1'], ['caption 2', '?t=0.3'], ['caption 3', '?t=0.5'], ['caption 4', '?t=0.9'], ['pictures', '?mode=pictures'], ['still 1', '?mode=pictures&zoom=1'], ['still 3', '?mode=pictures&zoom=2']];
+    const bad = [], seen = [];
+    for (const [name, q, setup] of states) {
+      const { page, ctx } = await open(q, { wait: 700 });
+      if (setup) await page.evaluate(fn => { const L = window.__lp; (0, eval)('(' + fn + ')')(L.S); L.bind(); }, setup.toString());
+      const r = await page.evaluate(() => {
+        const pl = document.getElementById('player').getBoundingClientRect();
+        const vis = el => { for (let e = el; e && e !== document.body; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.display === 'none' || e.hidden || +cs.opacity === 0) return false; } return true; };
+        const texts = [...document.querySelectorAll('.cap-row .cap span, .cap-row .tempo')].filter(el => !el.querySelector('span') && el.textContent.trim() && vis(el)).map(el => { const b = el.getBoundingClientRect(); return { text: el.textContent.trim(), l: +(b.left - pl.left).toFixed(1), r: +(b.right - pl.left).toFixed(1) }; });
+        return { texts, w: pl.width, font: getComputedStyle(document.querySelector('.cap')).fontFamily.split(',')[0], loaded: document.fonts.check('600 15px Roboto') };
+      });
+      seen.push(`${name}: ${r.texts.map(t => `"${t.text}" ${t.l}-${t.r}`).join(' | ')}`);
+      for (const t of r.texts) if (t.l < -0.5 || t.r > r.w + 0.5) bad.push(`${name}: "${t.text}" ${t.l}-${t.r} leaves the player (0-${r.w})`);
+      for (let i = 0; i < r.texts.length; i++) for (let j = i + 1; j < r.texts.length; j++) { const a = r.texts[i], b = r.texts[j]; if (Math.min(a.r, b.r) - Math.max(a.l, b.l) > -2) bad.push(`${name}: "${a.text}" and "${b.text}" overlap or touch (${a.l}-${a.r} vs ${b.l}-${b.r})`); }
+      if (!r.loaded || !/Roboto/i.test(r.font)) bad.push(`${name}: caption font ${r.font}, Roboto loaded ${r.loaded}`);
+      await ctx.close();
+    }
+    check(bad.length === 0, `caption row in Roboto: the caption text and the tempo note stay inside the player and at least 2 px apart in ${states.length} states (${seen.join('; ')})${bad.length ? ': ' + bad.join('; ') : ''}`);
   }
   // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
   { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lat pulldown', freeze: 'lp', grips: [{ name: 'near hand', sel: '.stage .figure-arm .lp-ua .lp-fa .lp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
