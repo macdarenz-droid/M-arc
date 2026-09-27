@@ -82,11 +82,10 @@ button, [role="button"], .card-press, .list-row.pressable, .chip-btn, .seg butto
    Midnight; mixing it toward --text lifts every theme's worst case to >=3.16:1 (Midnight itself
    4.57/4.11/3.67/3.16 on bg/surface-1/2/3), without a per-theme override. */
 :root { --focus-ring: color-mix(in srgb, var(--accent) 80%, var(--text)); }
-/* I14: accent-coloured text (not a fill) measured under 4.5:1 in some themes at a 75/25 accent/text
-   mix (Paper 4.46, Midnight 3.98 against their worst surface) — a raw --accent tints better than
-   it reads. 50/50 clears 4.5:1 with margin in all 5 themes (Midnight's worst case 5.08) while
-   keeping the accent hue recognisable. */
-:root { --accent-text: color-mix(in srgb, var(--accent) 50%, var(--text)); }
+/* I14: accent-coloured text (not a fill), per the plan's 75/25 accent/text mix. Paper (4.46:1) and
+   Midnight (3.98:1) measure under 4.5:1 against their worst-case backdrop at 75%; each gets its own
+   lower accent fraction in themes.ts (--accent-text), which wins the cascade over this default. */
+:root { --accent-text: color-mix(in srgb, var(--accent) 75%, var(--text)); }
 :where(button, [role="button"], a, [tabindex]):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 /* A6: overscroll-behavior-x:none stops a horizontal chart-scrub drag from triggering the browser's own swipe-navigation gesture (distinct from touch-action, which only governs scrolling). */
 body { min-height: 100dvh; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
