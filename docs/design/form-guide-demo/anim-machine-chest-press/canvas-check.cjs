@@ -1,5 +1,5 @@
 // canvas-check.cjs: renders project/Player-MachineChestPress.dc.html with a minimal stand-in for
-// the canvas runtime (holes, sc-if, onClick), runs the two round 3 probes on it and writes canvas_*.png
+// the canvas runtime (holes, sc-if, onClick), runs a parity probe against index.html and the two round 3 probes on it, and writes canvas_*.png
 // frames into shots/. Exit 1 on a failed probe.
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
@@ -32,6 +32,47 @@ render(); if(comp.componentDidMount)comp.componentDidMount();
 </script></body></html>`;
 const fails = [];
 const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!ok) fails.push(msg); };
+// probe 3 (parity): the artboard carries the current build. Its CSS must equal the harness CSS (index.html) plus exactly
+// the canvas-only edits below, and its stage, Pictures grid, bubbles and logic class must equal the harness text.
+// A rebuild that touches a canvas-edited rule fails the count here: carry that rule by hand, then update the table.
+{
+  const idx = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+  const hCss = idx.match(/<style>\n\/\* Artboard:[^\n]*\*\/\n([\s\S]*?)<\/style>/)[1];
+  const cCss = src.match(/<helmet>[\s\S]*?<style>\n([\s\S]*?)<\/style>\s*<\/helmet>/)[1];
+  const tz = (a, b) => `font-size:calc(${a}px * var(--tz));line-height:calc(${b}px * var(--tz))`;
+  const FONT = 'Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', ROBOTO = 'Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif';
+  const EDITS = [ // [harness text, canvas text, expected count in the harness CSS]
+    ['font-family:' + FONT, 'font-family:' + ROBOTO, 2],
+    ['.player{--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s;--sw:1;\n', '.player{--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s;--sw:1;--tz:.8;\n', 1],
+    ['.pill-accent{background:var(--accent-soft);color:var(--accent)}', '.pill-accent{background:var(--accent-soft);color:var(--text)}', 1],
+    ['color:var(--accent);font-size:11px;line-height:18px;font-weight:700;text-align:center}', tz(11, 18) + ';font-weight:700;text-align:center;color:var(--text)}', 1],
+    ['font:600 12px/16px inherit;font-family:inherit;', 'font-family:inherit;' + tz(12, 16) + ';font-weight:600;', 1],
+    ['font:600 13px/16px inherit;font-family:inherit;', 'font-family:inherit;' + tz(13, 16) + ';font-weight:600;', 1],
+    ['font-size:12px;line-height:16px', tz(12, 16), 4],
+    ['font-size:11px;line-height:14px', tz(11, 14), 1],
+    ['font-size:13px;line-height:18px', tz(13, 18), 1],
+    ['font-size:15px;line-height:20px', tz(15, 20), 1],
+  ];
+  let want = hCss; const counts = [];
+  for (const [a, b, n] of EDITS) { const k = want.split(a).length - 1; counts.push(k); if (k === n) want = want.split(a).join(b); }
+  const badCounts = EDITS.map((e, i) => counts[i] === e[2] ? null : `edit ${i + 1}: ${counts[i]} matches, want ${e[2]}`).filter(Boolean);
+  const firstDiff = s => { const x = s.split('\n'), y = want.split('\n'); const i = x.findIndex((l, j) => l !== y[j]); return i < 0 ? `line count ${x.length} vs ${y.length}` : `line ${i + 1}: "${x[i].slice(0, 70)}" vs "${(y[i] || '').slice(0, 70)}"`; };
+  check(!badCounts.length && cCss === want, `canvas player: CSS = harness CSS + the ${EDITS.length} canvas-only edits (text zoom --tz, Roboto first, text-coloured accent pill and badge)${badCounts.length ? ' ' + badCounts.join('; ') : cCss === want ? '' : ' first difference ' + firstDiff(cCss)}`);
+  check(/<helmet>\n<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com\/css2\?family=Roboto:wght@400\.\.700&amp;display=swap">\n<style>/.test(src), 'canvas player: helmet loads Roboto (Google Fonts css2 link) before the style');
+  const kf = css => [...css.matchAll(/@keyframes ([\w-]+)\{/g)].map(m => m[1]);
+  const kfText = css => css.split('\n').filter(l => l.startsWith('@keyframes ')).join('\n');
+  const hk = kf(hCss), ck = kf(cCss);
+  check(hk.length > 0 && hk.join() === ck.join() && kfText(hCss) === kfText(cCss), `canvas player: same keyframe names (${ck.length}) and the same keyframe text as the harness`);
+  const groups = s => [...s.match(/<svg class="scene"[\s\S]*?<\/svg>/)[0].matchAll(/class="([^"]*\banim\b[^"]*)"/g)].map(m => m[1]);
+  const hg = groups(idx), cg = groups(markup);
+  check(hg.length > 0 && hg.join('|') === cg.join('|'), `canvas player: same animated groups as the harness (${cg.length}: ${[...new Set(cg.map(c => c.match(/cp-[\w]+/)?.[0]).filter(Boolean))].join(', ')})`);
+  const piece = (s, re) => (s.match(re) || [''])[0];
+  const PIECES = { stage: /<svg class="scene"[\s\S]*?<\/svg>/, pictures: /<div class="pics">[^\n]*/, bubbles: /<div class="bubble bub-1">[\s\S]*?bub-3[^\n]*/ };
+  const pm = Object.entries(PIECES).filter(([k, re]) => !piece(idx, re) || piece(idx, re) !== piece(markup, re)).map(([k]) => k);
+  check(!pm.length, `canvas player: stage SVG (figure, machine, overlays), Pictures grid and bubbles are the harness text${pm.length ? '; differ: ' + pm.join(', ') : ''}`);
+  const hLogic = idx.match(/\/\* ===== artboard logic[^\n]*\n([\s\S]*?)\n\/\* ===== harness only/)[1];
+  check(hLogic.trim() === script.trim(), 'canvas player: the logic class is the harness logic, character for character');
+}
 (async () => {
   const b = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
@@ -74,6 +115,9 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   }
   await shot({ t: 0.3 }, 'canvas_dark_t0.3.png');
   await shot({ t: 0 }, 'canvas_dark_t0.png');
+  await shot({ t: 0.25 }, 'canvas_dark_t0.25.png');
+  await shot({ t: 0, theme: 'paper' }, 'canvas_paper_t0.png');
+  await shot({ t: 0.25, theme: 'paper' }, 'canvas_paper_t0.25.png');
   await shot({ t: 0.25, zoom: 1 }, 'canvas_zoom1_t0.25.png');
   await shot({ t: 0.25, zoom: 2 }, 'canvas_zoom2_t0.25.png');
   await shot({ mode: 'pics' }, 'canvas_pictures_silent-black.png');
