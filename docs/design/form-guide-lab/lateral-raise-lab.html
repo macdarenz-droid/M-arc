@@ -1,17 +1,19 @@
 <title>Lateral Raise Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Tokens: the app's own themes. Light = Paper, dark = Silent Black (the app default). */
+/* Tokens: the app's own themes. Light = Paper, dark = Silent Black (the app default).
+   The figure is painted from --accent; muscle states use the app's warning / positive / negative colours. */
 :root{
   --bg:#ffffff; --surface-1:#f7f6f3; --surface-2:#efeeea; --surface-3:#e6e4df;
   --border:rgba(55,53,47,.14); --border-subtle:rgba(55,53,47,.08);
   --text:#37352f; --text-2:#5f5e5a; --text-3:#8b8a85;
   --accent:#2383e2; --on-accent:#ffffff;
-  --target:#d4591f; --help:#c98a2a; --watch:#2f7fd6; --neg:#d23f3f;
-  --skin:#c9c1b4; --tee:#3f4c5e; --shorts:#2b2f36; --shoe:#f4f2ee; --hair:#3b3531; --iron:#3a3d44;
-  --platform:#e9e6df; --guide:#6b6a66;
+  --target:#b7791f; --help:#d6a24a; --quiet:#0f7b4f; --neg:#c0392b;
+  --pants:#34322d; --pants-hi:#4a4842; --pants-sh:#22201d; --ink:#15140f;
+  --iron:#6b6a66; --iron-hi:#8f8e89; --iron-sh:#474642; --eye:#ffffff;
+  --floor:rgba(55,53,47,.08); --guide:#6b6a66;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
 }
@@ -22,9 +24,10 @@
     --border:rgba(255,255,255,.10); --border-subtle:rgba(255,255,255,.06);
     --text:#f7f8f8; --text-2:#8a8f98; --text-3:#62666d;
     --accent:#5e6ad2; --on-accent:#ffffff;
-    --target:#ff8a4c; --help:#f0b46a; --watch:#6ea8fe; --neg:#eb5757;
-    --skin:#9a958d; --tee:#34405a; --shorts:#1d2026; --shoe:#d8d8d8; --hair:#1b1918; --iron:#8a909a;
-    --platform:#1a1b1e; --guide:#8a8f98;
+    --target:#f2b544; --help:#f6cd7a; --quiet:#4cc38a; --neg:#eb5757;
+    --pants:#1f2126; --pants-hi:#2e3138; --pants-sh:#131418; --ink:#05060a;
+    --iron:#8a909a; --iron-hi:#b4b9c2; --iron-sh:#5a5f68; --eye:#f7f8f8;
+    --floor:rgba(255,255,255,.06); --guide:#8a8f98;
   }
 }
 :root[data-theme="dark"]{
@@ -33,9 +36,10 @@
   --border:rgba(255,255,255,.10); --border-subtle:rgba(255,255,255,.06);
   --text:#f7f8f8; --text-2:#8a8f98; --text-3:#62666d;
   --accent:#5e6ad2; --on-accent:#ffffff;
-  --target:#ff8a4c; --help:#f0b46a; --watch:#6ea8fe; --neg:#eb5757;
-  --skin:#9a958d; --tee:#34405a; --shorts:#1d2026; --shoe:#d8d8d8; --hair:#1b1918; --iron:#8a909a;
-  --platform:#1a1b1e; --guide:#8a8f98;
+  --target:#f2b544; --help:#f6cd7a; --quiet:#4cc38a; --neg:#eb5757;
+  --pants:#1f2126; --pants-hi:#2e3138; --pants-sh:#131418; --ink:#05060a;
+  --iron:#8a909a; --iron-hi:#b4b9c2; --iron-sh:#5a5f68; --eye:#f7f8f8;
+  --floor:rgba(255,255,255,.06); --guide:#8a8f98;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
@@ -113,43 +117,42 @@ pre{margin:0;overflow-x:auto;background:var(--surface-1);border:1px solid var(--
 ol.why,ul.plain{margin:0;padding-left:20px;display:grid;gap:8px;max-width:70ch}
 a{color:var(--accent)}
 .note{font-size:13px;color:var(--text-2)}
-</style>
-<style>
+.stage-wrap{aspect-ratio:560/600}
+.stage-wrap.wide{aspect-ratio:1100/620}
+.stage-wrap svg{display:block;width:100%;height:100%}
+.stage-wrap svg:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .moments{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .moments button{display:grid;gap:2px;padding:0;border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden;background:var(--surface-2);color:var(--text-2);font:inherit;font-size:11px;cursor:pointer;text-align:center}
 .moments button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.moments img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--surface-2)}
+.moments svg{display:block;width:100%;aspect-ratio:560/600}
 .moments span{padding:2px 4px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .moves{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .moves li{border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface-1)}
 .moves b{display:block;font-size:14px;margin-bottom:2px}
 .moves span{font-size:13px;color:var(--text-2)}
+.lbl text{font:600 11px var(--font)}
 </style>
 
 <div class="page">
   <header>
     <div class="eyebrow">Form guide · new approach · one-exercise sample</div>
     <h1>Lateral Raise Lab</h1>
-    <p class="lede">The dumbbell lateral raise on a new engine. One continuous 3D body lifts your 7 kg dumbbells. The shoulder blade, elbow, breath, balance and grip all move the way a real body does. Working muscles shimmer on the skin as they fire. You can turn the figure, zoom in, and play the common mistake beside the right rep.</p>
+    <p class="lede">The dumbbell lateral raise, drawn in a bold comic-anatomy style and painted in the app's own colours. You see the figure as you'd see yourself in the gym mirror. The shoulder blade, elbows, breath, balance and grip all move the way a real body does. Working muscles shimmer as they fire, and the common mistake plays beside the right rep.</p>
   </header>
 
   <div class="main">
     <section class="lab" aria-label="Lateral raise lab">
       <div class="lab-head"><b>Dumbbell Lateral Raise</b><span id="repNote">Rep 1 of 3 · 7 kg</span></div>
 
-      <div class="seg" role="group" aria-label="Camera">
-        <button type="button" id="v-coach" aria-pressed="true">Coach</button>
-        <button type="button" id="v-you" aria-pressed="false">Behind</button>
-        <button type="button" id="v-side" aria-pressed="false">Side</button>
-        <button type="button" id="v-top" aria-pressed="false">Top</button>
-        <button type="button" id="v-shoulder" aria-pressed="false">Close-up</button>
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" id="v-full" aria-pressed="true">Full body</button>
+        <button type="button" id="v-shoulders" aria-pressed="false">Shoulders</button>
       </div>
 
       <div class="stage-wrap" id="stageWrap">
-        <canvas id="stage" tabindex="0" role="img" aria-label="3D figure doing a dumbbell lateral raise. Drag or use the arrow keys to turn the camera; pinch or scroll to zoom."></canvas>
+        <svg id="stage" viewBox="-80 10 560 600" role="img" aria-label="Illustrated figure doing a dumbbell lateral raise, front view"></svg>
         <div class="watch"><i aria-hidden="true"></i><span id="watchText">Watch: the elbows lead, the hands follow.</span></div>
-        <div id="tags" aria-hidden="true"></div>
-        <div class="cap"><span class="phase" id="phase" aria-live="polite">Lift · 1 s</span><span class="hint">Drag to turn · scroll to zoom</span></div>
+        <div class="cap"><span class="phase" id="phase" aria-live="polite">Lift · 1 s</span><span class="hint" id="viewHint">Mirror view</span></div>
       </div>
 
       <div class="row">
@@ -192,34 +195,34 @@ a{color:var(--accent)}
     <div class="side">
       <section>
         <h2>What moves, besides the arm</h2>
-        <p>A good rep is the whole body working together. This version animates each of these from the exercise's data.</p>
+        <p>A good rep is the whole body working together. Each of these is animated from the exercise's data.</p>
         <ul class="moves">
-          <li><b>Shoulder blade</b><span>Above 30°, it turns about 1° for every 2° the arm rises. It rotates, it doesn't shrug.</span></li>
-          <li><b>Elbows lead</b><span>The soft bend deepens by 6° near the top, so the elbow stays just above the hand.</span></li>
-          <li><b>Breathing</b><span>Breathe out on the way up and in on the way down. The chest shows it.</span></li>
-          <li><b>Balance</b><span>The body leans back about half a degree at the ankles as the weights move out, with a slow natural sway.</span></li>
-          <li><b>Grip</b><span>Fingers wrap the handle, and the dumbbells stay level from bottom to top.</span></li>
-          <li><b>Holding the top</b><span>A tiny tremor under load at the top, a little larger on the last rep.</span></li>
+          <li><b>Shoulder blade</b><span>Above 30° the shoulders lift slightly as the blades rotate, about 1° for every 2° the arm rises. It isn't a shrug.</span></li>
+          <li><b>Elbows lead</b><span>Near the top the hands sit just below the elbows.</span></li>
+          <li><b>Breathing</b><span>Breathe out on the way up and in on the way down. The ribcage shows it.</span></li>
+          <li><b>Balance</b><span>A slow, natural sway, and a tiny settle as the weights go out.</span></li>
+          <li><b>Grip</b><span>The dumbbells stay level from bottom to top.</span></li>
+          <li><b>Holding the top</b><span>A small tremor under load at the top, a little larger on the last rep.</span></li>
           <li><b>Tiring</b><span>Each rep lifts a little slower: rep 2 takes 8% longer, rep 3 takes 18% longer. The lowering stays at 2 s.</span></li>
-          <li><b>The mistake</b><span>A knee dip and hip drive to throw the weight up, a shrug, the thumbs turning down, then a drop that swings past the start and bounces.</span></li>
+          <li><b>The mistake</b><span>A knee dip to throw the weight up, a shrug, the thumbs turning down, then a drop that swings past the start and bounces.</span></li>
         </ul>
       </section>
 
       <section>
         <h2>How it's built</h2>
         <ol class="steps">
-          <li><div><h3>Motion description</h3><p>Joint angles over time, the plane, the grip, the tempo, the movement details above, the cues, and the common mistake as the same exercise done wrong.</p></div></li>
-          <li><div><h3>Shared skeleton</h3><p>Standard body proportions (1.78 m), plus a second joint for the shoulder blade, soft knees and ankles for balance.</p></div></li>
-          <li><div><h3>One continuous body</h3><p>Smooth skin runs from the shoulder through the elbow to the wrist, and from the hip through the knee to the ankle, with no ball joints. A tank top leaves the shoulders bare so you can see them work. Fingers wrap the handle.</p></div></li>
-          <li><div><h3>Muscles shimmer on the skin</h3><p>Each muscle's area of skin tints in its colour, and a sheen runs along its fibres from where it starts to where it attaches. The sheen is brighter and faster the harder the muscle works. The body's shape never changes.</p></div></li>
-          <li><div><h3>Load and speed</h3><p>Load is weight × gravity × the sideways distance to the dumbbell. Speed comes from the dumbbell's path, frame to frame.</p></div></li>
-          <li><div><h3>Automatic checks</h3><p>These run before an exercise ships:</p><ul class="plain"><li>smooth speed;</li><li>joints stay in their normal range;</li><li>hands stay on the handle and feet stay planted;</li><li>muscle lengths stay in range;</li><li>the mistake really differs on every fault it names.</li></ul></div></li>
+          <li><div><h3>Motion description</h3><p>Joint angles over time, the tempo, the movement details above, the cues, and the common mistake as the same exercise done wrong.</p></div></li>
+          <li><div><h3>One drawn figure per view</h3><p>The figure is drawn once, in parts: head, traps, chest, abs, each arm and each leg. Every part is shaded in three flat tones with a bold outline. Exercises move the parts; they don't redraw them. This sample uses the front view. A side view and a back view are drawn once, and then every exercise reuses them.</p></div></li>
+          <li><div><h3>Painted by the theme</h3><p>The body takes the app's accent colour, with lighter and darker tones worked out from it. Each theme repaints it: lavender in Silent Black, blue in Paper, and the accent of Ember, Emerald or Midnight.</p></div></li>
+          <li><div><h3>Muscles shimmer</h3><p>A working muscle takes on the app's warning colour. A band of light runs along its fibres, brighter and faster the harder it works. The upper trap stays green while it's quiet and turns red when it takes over. The body's shape never changes.</p></div></li>
+          <li><div><h3>Load and speed</h3><p>Load is weight × gravity × the sideways distance to the dumbbell. Speed comes from the dumbbell's path.</p></div></li>
+          <li><div><h3>Automatic checks</h3><p>These run before an exercise ships: smooth speed, joints in their normal range, hands on the handle, feet planted, and a mistake that really differs on every fault it names.</p></div></li>
         </ol>
       </section>
 
       <section>
         <h2>This exercise's whole description</h2>
-        <p>This is the data that drives the lab. Another exercise is another block like this, with no new drawings.</p>
+        <p>This data drives the lab. Another exercise is another block like this, reusing the same drawn figure.</p>
         <pre id="spec"></pre>
       </section>
 
@@ -228,34 +231,24 @@ a{color:var(--accent)}
         <div class="cmp"><table>
           <thead><tr><th>Part</th><th>Being built now</th><th>This approach</th></tr></thead>
           <tbody>
-            <tr><td>Figure</td><td>Flat drawing, one fixed side</td><td>One continuous 3D body with light and shadow: coach view, your own view from behind, side, top, a close-up, and free turning and zooming</td></tr>
-            <tr><td>Movement</td><td>The arm moves on a smooth curve</td><td>The whole body moves: shoulder blade, elbow lead, breath, balance, level grip, tremor at the top, and slowing reps</td></tr>
-            <tr><td>Muscles</td><td>Coloured patches that glow on a timer</td><td>A shimmer along the fibres on the skin, set by computed effort. The upper trap turns red when it takes over</td></tr>
-            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>Load and speed curves for your own logged weight, with the moment you're at marked</td></tr>
-            <tr><td>Mistakes</td><td>Written tips</td><td>The same exercise done wrong on a red figure, with the numbers that make it worse</td></tr>
-            <tr><td>Stills</td><td>Four drawn pictures</td><td>Four key moments rendered from the same model; tap one to jump there</td></tr>
+            <tr><td>Figure</td><td>Flat line figure</td><td>A bold, muscular comic-anatomy figure in the app's colours: three-tone shading, outlines, a defined chest, abs, delts and arms</td></tr>
+            <tr><td>Movement</td><td>The arm moves on a smooth curve</td><td>The whole body moves: shoulder blade, elbow lead, breath, balance, level grip, a tremor at the top, and slowing reps</td></tr>
+            <tr><td>Muscles</td><td>Coloured patches that glow on a timer</td><td>A shimmer along the fibres, set by computed effort. The upper trap is green when quiet and red when it takes over</td></tr>
+            <tr><td>Effort</td><td>"Hardest near the top" as text</td><td>Speed and load curves for your own logged weight, with the moment you're at marked</td></tr>
+            <tr><td>Mistakes</td><td>Written tips</td><td>The same exercise done wrong, beside the right rep, with the numbers that make it worse</td></tr>
+            <tr><td>Stills</td><td>Four drawn pictures</td><td>Four key moments drawn from the same model; tap one to jump there</td></tr>
           </tbody>
         </table></div>
       </section>
 
       <section>
-        <h2>Build plan if you switch</h2>
-        <ol class="steps">
-          <li><div><h3>Engine card</h3><p>It replaces the flat rig card (GU-7a-1): skeleton, body, muscles, load, the checks, and still frames for reduced motion. The 3D library loads only when a guide opens.</p></div></li>
-          <li><div><h3>Keep what's built</h3><p>These carry over unchanged:</p><ul class="plain"><li>the player sheet, controls, bubble and gate (GU-7a-2);</li><li>the muscle names and lines (GU-7a-3).</li></ul></div></li>
-          <li><div><h3>First three exercises</h3><p>The lateral raise, chest press and lat pulldown, as descriptions that pass the checks.</p></div></li>
-          <li><div><h3>Then by family</h3><p>Each family is a batch of descriptions, not new art: presses, raises, rows and pulldowns, squats and lunges, hinges, floor and hanging moves, then carries and cardio.</p></div></li>
-        </ol>
-      </section>
-
-      <section>
         <h2>Costs and risks</h2>
         <ul class="plain">
-          <li><b>Size:</b> the 3D library (three.js, MIT licence) is 150 KB compressed (measured), loaded only when a guide opens. Each exercise adds about 1 KB.</li>
-          <li><b>Phone speed and battery:</b> the body is rebuilt every frame on the graphics chip. This needs a check on your phone. The fallback is the four stills.</li>
-          <li><b>No 3D support:</b> older phones get the stills and the same text.</li>
-          <li><b>Accuracy:</b> the motion and the muscle areas follow published anatomy and studies. They are modelled, not motion-captured, and each new muscle needs its area checked.</li>
-          <li><b>Rework:</b> the flat rig built today would be retired.</li>
+          <li><b>Size:</b> plain SVG with no library. The whole figure is a few KB, and each exercise adds about 1 KB of data.</li>
+          <li><b>Art:</b> the figure has to be drawn once per view (front, side, back). Exercises seen from above or at an angle would need one more view each.</li>
+          <li><b>Turning:</b> a drawn figure can't be turned freely the way the 3D version could. You get the view that suits each exercise, plus a close-up.</li>
+          <li><b>Phone:</b> SVG animation is light. A quick check on your phone is still worth doing.</li>
+          <li><b>Accuracy:</b> the motion is modelled from anatomy and studies, not motion-captured.</li>
         </ul>
       </section>
 
@@ -264,19 +257,17 @@ a{color:var(--accent)}
         <ol class="why">
           <li>Seeing the right rep and the mistake together teaches better than the right rep alone. <a href="https://bmcneurosci.biomedcentral.com/articles/10.1186/s12868-021-00685-6" target="_blank" rel="noopener">BMC Neuroscience, 2021</a></li>
           <li>Telling beginners what to watch before a demo improves learning. <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2016.00051/full" target="_blank" rel="noopener">Frontiers in Psychology, 2016</a></li>
-          <li>Mirrored demos make you flip left and right in your head, and a 3D figure you can turn helps you read the pose. <a href="https://link.springer.com/article/10.1007/s10055-026-01395-2" target="_blank" rel="noopener">Virtual Reality, 2026</a></li>
           <li>For learning body movements, animations can beat still pictures. <a href="https://www.academia.edu/2293233/Instructional_animations_can_be_superior_to_statics_when_learning_human_motor_skills" target="_blank" rel="noopener">Wong et al.</a></li>
-          <li>The shoulder blade moves with the arm, about 1° for every 2° above 30° (scapulohumeral rhythm). <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
-          <li>Raise slightly in front of the body, and don't turn the thumbs down: rotating the arm inward raises upper-trap and rear-delt work. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7503819/" target="_blank" rel="noopener">EMG study, 2020</a></li>
+          <li>The shoulder blade moves with the arm, about 1° for every 2° above 30°. <a href="https://www.physio-pedia.com/Scapulohumeral_Rhythm" target="_blank" rel="noopener">Physiopedia</a></li>
+          <li>Don't turn the thumbs down: rotating the arm inward raises upper-trap and rear-delt work. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7503819/" target="_blank" rel="noopener">EMG study, 2020</a></li>
           <li>A dumbbell's load climbs to shoulder height and is lightest at the bottom. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12277279/" target="_blank" rel="noopener">Dumbbell vs cable study</a></li>
         </ol>
-        <p class="note" style="margin-top:12px">Sample only; nothing here is in the app. Segment lengths follow Winter's standard body proportions (Biomechanics and Motor Control of Human Movement). The slowdown, sway and tremor sizes are illustrative, chosen to be small and realistic.</p>
+        <p class="note" style="margin-top:12px">Sample only; nothing here is in the app. The figure's style follows the owner's reference, drawn fresh and painted in the app's colours. The slowdown, sway and tremor sizes are illustrative.</p>
       </section>
     </div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (() => {
 'use strict';
@@ -285,139 +276,263 @@ const D=Math.PI/180, clamp=(x,a,b)=>Math.max(a,Math.min(b,x)), lerp=(a,b,t)=>a+(
 const mj=s=>{s=clamp(s,0,1);return s*s*s*(10-15*s+6*s*s)};
 const smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]], sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]], mul=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
-const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2], cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
-const len=a=>Math.hypot(a[0],a[1],a[2]), norm=a=>{const l=len(a)||1;return [a[0]/l,a[1]/l,a[2]/l]};
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2], len=a=>Math.hypot(a[0],a[1],a[2]), norm=a=>{const l=len(a)||1;return [a[0]/l,a[1]/l,a[2]/l]};
 const rotX=(p,c,a)=>{const y=p[1]-c[1],z=p[2]-c[2],cs=Math.cos(a),sn=Math.sin(a);return [p[0],c[1]+y*cs+z*sn,c[2]-y*sn+z*cs]};
-const rotAxis=(v,k,a)=>{const c=Math.cos(a),s=Math.sin(a);return add(add(mul(v,c),mul(cross(k,v),s)),mul(k,dot(k,v)*(1-c)))};
-const bez=(a,c,b,t)=>add(add(mul(a,(1-t)*(1-t)),mul(c,2*(1-t)*t)),mul(b,t*t));
+const NS='http://www.w3.org/2000/svg';
 
 // ================= the motion description: the only per-exercise data =================
 const SPEC={
-  id:'dumbbell_lateral_raise',
+  id:'dumbbell_lateral_raise', view:'front',
   equipment:{kind:'dumbbell',grip:'neutral, kept level',kg:7,loadFrom:'your last logged set'},
   plane:{name:'scapular',forwardDeg:22},
   tempo:{lift:1,hold:0.5,lower:2,rest:0.5},
-  joints:{shoulderAbductionDeg:[10,88],elbowBendDeg:14,elbowLeadDeg:6,kneesSoftDeg:6,shoulderBladeRhythm:'1 deg per 2 deg above 30 deg'},
+  joints:{shoulderAbductionDeg:[10,88],elbowBendDeg:14,elbowLeadDeg:8,kneesSoftDeg:6,shoulderBladeRhythm:'1 deg per 2 deg above 30 deg'},
   movement:{liftSlowdownPerRep:[1,1.08,1.18],breathe:'out on the way up',balanceLeanDeg:0.6,holdTremorDeg:0.35},
-  muscles:{target:['side_delts'],helps:['front_delts','rear_delts','upper_traps'],keepQuiet:['upper_traps']},
-  watch:['The elbows lead, the hands follow.','The upper-trap line stays quiet. No shrug.','The load peaks at shoulder height.'],
+  muscles:{target:['side_delts'],helps:['front_delts','upper_traps'],keepQuiet:['upper_traps']},
+  watch:['The elbows lead, the hands follow.','The upper traps stay quiet. No shrug.','The load peaks at shoulder height.'],
   mistake:{tempo:{lift:0.8,hold:0.2,lower:0.9,rest:2.1},kneeDipDeg:14,leanBackDeg:10,shrugCm:5,abductionDeg:108,thumbsDownDeg:40,bounceDeg:7},
-  checks:['smoothness','jointRanges','handsOnHandle','feetPlanted','muscleLengths','mistakeDiffers'],
+  checks:['smoothness','jointRanges','handsOnHandle','feetPlanted','mistakeDiffers'],
 };
 $('spec').textContent=JSON.stringify(SPEC,null,2).replace(/\[\n\s+([^\]{}]+?)\n\s+\]/g,(m,inner)=>'['+inner.split(/,\n\s+/).join(', ')+']');
 
-// ================= skeleton and motion =================
+// ================= motion model (numbers for load and speed use the 3D skeleton) =================
 const H=1.78, UA=0.186*H*0.94, FA=0.146*H, GRIP=0.07;
 const PLANE=SPEC.plane.forwardDeg*D, ELBOW=SPEC.joints.elbowBendDeg*D, LEAD=SPEC.joints.elbowLeadDeg*D;
 const TH0=SPEC.joints.shoulderAbductionDeg[0]*D, TH1=SPEC.joints.shoulderAbductionDeg[1]*D, TH1_BAD=SPEC.mistake.abductionDeg*D;
 const T=4, KG=SPEC.equipment.kg, G=9.81, REPS=3;
 function phases(m,rep){
-  if(m==='mistake') return [['Lift',SPEC.mistake.tempo.lift,'Swing it up'],['Hold',SPEC.mistake.tempo.hold,'Shrug at the top'],['Lower',SPEC.mistake.tempo.lower,'Drop it'],['Rest',SPEC.mistake.tempo.rest,'Bounce, then wait']];
-  const lift=+(SPEC.tempo.lift*SPEC.movement.liftSlowdownPerRep[rep%REPS]).toFixed(2), hold=SPEC.tempo.hold, lower=SPEC.tempo.lower;
+  if(m==='mistake') return [['Lift',SPEC.mistake.tempo.lift,'Dip and swing it up'],['Hold',SPEC.mistake.tempo.hold,'Shrug at the top'],['Lower',SPEC.mistake.tempo.lower,'Drop it'],['Rest',SPEC.mistake.tempo.rest,'Bounce, then wait']];
+  const lift=+(SPEC.tempo.lift*SPEC.movement.liftSlowdownPerRep[rep%REPS]).toFixed(2),hold=SPEC.tempo.hold,lower=SPEC.tempo.lower;
   return [['Lift',lift,`Lift · ${lift} s, breathe out`],['Hold',hold,'Hold · 0.5 s at shoulder height'],['Lower',lower,'Lower · 2 s, breathe in'],['Rest',+(T-lift-hold-lower).toFixed(2),'Reset · arms long']];
 }
 function phaseAt(m,t,rep){let acc=0;const ph=phases(m,rep);for(let i=0;i<ph.length;i++){const d=ph[i][1];if(t<acc+d||i===ph.length-1)return{i,name:ph[i][0],label:ph[i][2],s:clamp((t-acc)/d,0,1),dt:t-acc};acc+=d;}}
 function motion(m,t,rep){
-  const p=phaseAt(m,t,rep), r=rep%REPS; let th,lean=0,knee=SPEC.joints.kneesSoftDeg*D,shrug=0,rotIn=0,breath=0.5,ecc=false;
+  const p=phaseAt(m,t,rep),r=rep%REPS;let th,lean=0,knee=SPEC.joints.kneesSoftDeg*D,shrug=0,rotIn=0,breath=0.5;
   if(m==='correct'){
     if(p.name==='Lift'){th=lerp(TH0,TH1,mj(p.s));breath=1-mj(p.s);}
     else if(p.name==='Hold'){const amp=SPEC.movement.holdTremorDeg*D*(1+0.3*r);th=TH1+amp*(Math.sin(2*Math.PI*9*p.dt)+0.45*Math.sin(2*Math.PI*13*p.dt+1.3));breath=0;}
-    else if(p.name==='Lower'){th=lerp(TH1,TH0,mj(p.s));ecc=true;breath=mj(p.s);}
+    else if(p.name==='Lower'){th=lerp(TH1,TH0,mj(p.s));breath=mj(p.s);}
     else{th=TH0;breath=1;}
   }else{
     const dip=SPEC.mistake.kneeDipDeg*D;
-    if(p.name==='Lift'){const s=p.s,q=clamp((s-0.2)/0.8,0,1),e=mj(q)+0.04*Math.sin(Math.PI*q);th=lerp(TH0,TH1_BAD,e);
-      lean=SPEC.mistake.leanBackDeg*D*Math.sin(Math.PI*Math.min(1,s*1.15)); if(s<0.35) knee+=dip*Math.sin(Math.PI*s/0.35);}
+    if(p.name==='Lift'){const s=p.s,q=clamp((s-0.2)/0.8,0,1);th=lerp(TH0,TH1_BAD,mj(q)+0.04*Math.sin(Math.PI*q));
+      lean=SPEC.mistake.leanBackDeg*D*Math.sin(Math.PI*Math.min(1,s*1.15));if(s<0.35)knee+=dip*Math.sin(Math.PI*s/0.35);}
     else if(p.name==='Hold'){th=TH1_BAD;lean=2*D;}
-    else if(p.name==='Lower'){th=lerp(TH1_BAD,TH0,p.s*p.s);ecc=true;lean=2*D*(1-p.s);}
+    else if(p.name==='Lower'){th=lerp(TH1_BAD,TH0,p.s*p.s);lean=2*D*(1-p.s);}
     else{const b=SPEC.mistake.bounceDeg*D;th=Math.max(0,TH0-b*Math.exp(-p.dt/0.3)*Math.sin(2*Math.PI*1.6*p.dt));}
     shrug=SPEC.mistake.shrugCm/100*smooth(55*D,TH1_BAD,th);
     rotIn=SPEC.mistake.thumbsDownDeg*D*smooth(20*D,90*D,th);
   }
   const up=clamp((th-TH0)/(TH1-TH0),0,1.3);
   const sway=-SPEC.movement.balanceLeanDeg*D*up*(m==='mistake'?2:1)+0.2*D*Math.sin(2*Math.PI*t/T);
-  const blade=Math.max(0,th-30*D)/3, elbow=ELBOW+LEAD*smooth(40*D,TH1,th);
-  return {p,th,lean,sway,knee,shrug,rotIn,breath,ecc,blade,elbow};
+  const blade=Math.max(0,th-30*D)/3, lead=LEAD*smooth(40*D,TH1,th);
+  return {p,th,lean,sway,knee,shrug,rotIn,breath,blade,lead};
 }
-function pose(m,t,ox,rep){
-  const M=motion(m,t,rep), L1=0.43, L2=0.44, a2=M.knee/2;
-  const hipY=0.085+(L1+L2)*Math.cos(a2), dy=hipY-0.955;
-  const ankC=[ox,0.085,-0.01], P=[ox,0.98+dy,0];
-  const SW=q=>rotX(q,ankC,M.sway), HL=q=>rotX(q,P,M.lean), UP=q=>SW(HL(q));
-  const UPd=(o,v)=>norm(sub(UP(add(o,v)),UP(o)));
-  const J={M,dy,ox};
-  J.legs=[1,-1].map(side=>{
-    const hip=[ox+side*0.09,0.94+dy,0], knee=[ox+side*0.1,0.085+L2*Math.cos(a2),-0.01+L2*Math.sin(a2)];
-    return {hipIn:SW(add(hip,[-side*0.03,0.08,0])),hip:SW(hip),knee:SW(knee),ank:[ox+side*0.1,0.085,-0.01],toe:[ox+side*0.115,0.03,0.17],front:norm(SW(add([0,0,1],ankC)).map((v,i)=>v-ankC[i]))};
-  });
-  const sp=[[ox,0.83,0],[ox,0.98,0],[ox,1.13,0.005],[ox,1.32,0.012],[ox,1.5,-0.02]].map(q=>UP(add(q,[0,dy,0])));
-  J.spine=sp; J.fwd=UPd(sp[2],[0,0,1]); J.sideV=UPd(sp[2],[1,0,0]);
-  J.neck=[UP([ox,1.48+dy,-0.02]),UP([ox,1.6+dy,0])]; J.head=UP([ox,1.672+dy,0.012]);
-  J.arms={};
-  for(const side of [1,-1]){
-    const S=[ox+side*(0.2-0.012*Math.sin(M.blade)),1.45+dy+M.shrug+0.03*Math.sin(M.blade),0];
-    const Gh=add(S,[-side*0.025,-0.04,0]);
-    const lat=[side*Math.cos(PLANE),0,Math.sin(PLANE)];
-    const u=norm(add(mul([0,-1,0],Math.cos(M.th)),mul(lat,Math.sin(M.th))));
-    const w=norm(sub([0,0,1],mul(u,dot([0,0,1],u))));
-    const f=norm(add(mul(u,Math.cos(M.elbow)),mul(w,Math.sin(M.elbow))));
-    const E=add(Gh,mul(u,UA)), W=add(E,mul(f,FA)), Hd=add(W,mul(f,GRIP));
-    // keep the dumbbell level: the handle lies in the horizontal plane, square to the forearm
-    let a=[f[2],0,-f[0]]; if(len(a)<1e-4)a=[0,0,1]; a=norm(a); if(dot(a,[0,0,1])<0)a=mul(a,-1);
-    a=rotAxis(a,f,-side*M.rotIn);
-    const ins=add(add(Gh,mul(u,0.15)),mul(lat,0.012));
-    const mus={
-      side:{O:add(S,[side*0.02,0.022,0]),I:ins}, front:{O:add(S,[-side*0.05,0,0.055]),I:ins},
-      rear:{O:add(S,[-side*0.055,0,-0.055]),I:ins}, trap:{O:[ox+side*0.035,1.55+dy,-0.055],I:add(S,[-side*0.04,0.02,-0.02])},
-    };
-    const T_=q=>UP(q);
-    const A={S:T_(S),Gh:T_(Gh),E:T_(E),W:T_(W),Hd:T_(Hd),u:UPd(Gh,u),f:UPd(W,f),w:UPd(Gh,w),lat:UPd(Gh,lat),a:UPd(Hd,a),mus:{}};
-    for(const k in mus){const O=T_(mus[k].O),I=T_(mus[k].I);A.mus[k]={O,I,len:len(sub(O,I))};}
-    J.arms[side]=A;
-  }
-  const A=J.arms[1], r=sub(A.Hd,A.Gh); J.torque=KG*G*Math.hypot(r[0],r[2]);
-  return J;
+// 3D skeleton, used only for the numbers (load, speed, trap length)
+function pose3(m,t,rep){
+  const M=motion(m,t,rep),L1=0.43,L2=0.44,a2=M.knee/2,dy=0.085+(L1+L2)*Math.cos(a2)-0.955;
+  const ankC=[0,0.085,-0.01],P=[0,0.98+dy,0],UP=q=>rotX(rotX(q,P,M.lean),ankC,M.sway);
+  const S=[0.2-0.012*Math.sin(M.blade),1.45+dy+M.shrug+0.03*Math.sin(M.blade),0],Gh=add(S,[-0.025,-0.04,0]);
+  const lat=[Math.cos(PLANE),0,Math.sin(PLANE)],u=norm(add(mul([0,-1,0],Math.cos(M.th)),mul(lat,Math.sin(M.th))));
+  const w=norm(sub([0,0,1],mul(u,dot([0,0,1],u)))),el=ELBOW+M.lead,f=norm(add(mul(u,Math.cos(el)),mul(w,Math.sin(el))));
+  const Hd=add(add(add(Gh,mul(u,UA)),mul(f,FA)),mul(f,GRIP));
+  const trapO=UP([0.035,1.55+dy,-0.055]),trapI=UP(add(S,[-0.04,0.02,-0.02]));
+  const g=UP(Gh),h=UP(Hd),r=sub(h,g);
+  return {M,Hd:h,torque:KG*G*Math.hypot(r[0],r[2]),trapLen:len(sub(trapO,trapI))};
 }
-const REST=pose('correct',T-0.1,0,0), L0={}; for(const k in REST.arms[1].mus) L0[k]=REST.arms[1].mus[k].len;
-const TMAX=KG*G*(UA+FA*Math.cos(ELBOW)+GRIP);
-function effort(J,m){
-  const tn=J.torque/TMAX, M=J.M;
-  return {side:0.12+0.88*tn, front:0.08+0.42*tn, rear:0.06+0.26*tn+(m==='mistake'?0.3*M.rotIn/(40*D):0),
-    trap:0.06+0.14*tn+(m==='mistake'?0.72*M.shrug/0.05+0.1*M.rotIn/(40*D):0)};
+const TRAP0=pose3('correct',T-0.1,0).trapLen, TMAX=KG*G*(UA+FA*Math.cos(ELBOW)+GRIP);
+function effort(P,m){const tn=P.torque/TMAX,M=P.M;return {side:0.12+0.88*tn,front:0.08+0.42*tn,trap:0.06+0.14*tn+(m==='mistake'?0.72*M.shrug/0.05+0.1*M.rotIn/(40*D):0)};}
+function speedAt(m,t,rep){const h=0.01,a=pose3(m,clamp(t-h,0,T-1e-4),rep).Hd,b=pose3(m,clamp(t+h,0,T-1e-4),rep).Hd;return len(sub(b,a))/(2*h);}
+
+// ================= colours from the theme =================
+let col={};
+function readTokens(){const s=getComputedStyle(document.documentElement);for(const k of ['surface-1','surface-2','text','text-2','accent','target','help','quiet','neg','pants','pants-hi','pants-sh','ink','iron','iron-hi','iron-sh','eye','floor','guide','border','font','mono'])col[k]=s.getPropertyValue('--'+k).trim();}
+readTokens();
+const hex2rgb=h=>{h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16));};
+const mixHex=(a,b,t)=>{const A=hex2rgb(a),B=hex2rgb(b);return 'rgb('+A.map((v,i)=>Math.round(lerp(v,B[i],t))).join(',')+')';};
+function bodyPal(mistake){const base=mistake?rgbToHex(mixHex(col.accent,col.neg,0.62)):col.accent;
+  return {hi:mixHex(base,'#ffffff',0.3),base,sh:mixHex(base,'#000000',0.36),line:mixHex(base,'#000000',0.8),def:mixHex(base,'#000000',0.55)};}
+function rgbToHex(r){const m=r.match(/\d+/g).map(Number);return '#'+m.map(v=>v.toString(16).padStart(2,'0')).join('');}
+
+// ================= the drawn figure (front view) =================
+// Right-hand parts are drawn once and mirrored for the left. The figure faces you, like your reflection.
+const P2=292;                 // px per metre
+const SH_R=[268,150], SH_L=[132,150];
+const ELB=[4,98], FIST=[0,86];
+function cel(id,hi,base,sh,ang=1){return `<linearGradient id="${id}" x1="0" y1="0" x2="0.85" y2="${ang}"><stop offset="0" stop-color="${hi}"/><stop offset=".16" stop-color="${hi}"/><stop offset=".16" stop-color="${base}"/><stop offset=".66" stop-color="${base}"/><stop offset=".66" stop-color="${sh}"/><stop offset="1" stop-color="${sh}"/></linearGradient>`;}
+function band(id,c,dir){const [x2,y2]=dir==='x'?[1,0]:[0,1];return `<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}"><stop offset="0" stop-color="${c}" stop-opacity="0"/><stop offset=".3" stop-color="${c}" stop-opacity="0"/><stop offset=".4" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".5" stop-color="${c}" stop-opacity="0"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`;}
+const TORSO_HALF=(p)=>`
+  <path d="M200 146 C220 140 246 140 264 148 C272 160 270 176 262 190 C250 206 226 212 202 206 C200 190 200 166 200 146 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
+  <path d="M206 204 C228 208 252 202 262 190" fill="none" stroke="var(--d)" stroke-width="1.6"/>
+  <path d="M236 196 L256 190 L254 199 L238 204 Z M238 209 L258 204 L256 213 L240 217 Z M240 222 L257 219 L255 227 L242 229 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.4"/>
+  <path d="M232 214 C246 222 258 236 260 256 C260 276 254 292 244 306 L228 300 C232 280 233 250 229 224 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.8"/>
+  <path d="M236 244 L254 238 M236 262 L256 258 M236 280 L252 280" stroke="var(--d)" stroke-width="1.3"/>
+  <rect x="203" y="212" width="23" height="26" rx="7" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.8"/>
+  <rect x="203" y="241" width="24" height="26" rx="7" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.8"/>
+  <rect x="203" y="270" width="24" height="25" rx="7" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.8"/>
+  <path d="M203 298 C218 298 226 304 225 312 L204 326 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="1.8"/>`;
+const LEG_HALF=(p)=>`
+  <path d="M200 330 L257 320 C263 360 261 400 253 440 C249 470 247 510 245 548 L216 548 C214 510 212 470 210 444 C206 410 203 372 200 348 Z" fill="url(#${p}-p)" stroke="var(--ink)" stroke-width="2.2"/>
+  <path d="M216 440 C228 446 240 446 251 440" fill="none" stroke="var(--pants-sh)" stroke-width="2"/>
+  <path d="M232 340 C236 380 236 410 232 436" fill="none" stroke="var(--pants-hi)" stroke-width="1.6" opacity=".7"/>
+  <path d="M214 546 L247 546 C253 552 257 560 255 567 L210 567 C208 560 208 552 214 546 Z" fill="var(--pants)" stroke="var(--ink)" stroke-width="2"/>
+  <path d="M209 562 L256 562" stroke="var(--pants-hi)" stroke-width="2"/>`;
+const TRAP_PATH="M214 108 C226 117 246 126 268 134 C266 140 262 144 256 146 C242 140 226 136 208 132 C208 122 210 114 214 108 Z";
+function ARM(p,s){ // one arm, local frame: pivot at the shoulder joint, hanging down +y, outward +x
+  return `
+  <g id="${p}-arm${s}">
+    <path d="M-12 18 C-19 40 -19 70 -14 90 C-10 99 -2 101 6 101 L21 98 C27 80 29 50 25 30 C23 20 18 12 12 8 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
+    <path d="M-7 40 C-11 58 -9 76 -3 88 M20 36 C24 56 23 74 19 90" fill="none" stroke="var(--d)" stroke-width="1.5"/>
+    <g id="${p}-fore${s}">
+      <g id="${p}-dbF${s}"><polygon points="${hexPts(-8,-11,19)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="2"/><path d="M-6 -6 L7 8" stroke="var(--iron-sh)" stroke-width="9" stroke-linecap="round"/></g>
+      <path d="M-14 2 C-18 20 -15 44 -9 68 L10 68 C16 44 20 22 17 4 C11 -3 -8 -3 -14 2 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
+      <path d="M12 7 C16 22 14 36 10 50" fill="none" stroke="var(--d)" stroke-width="1.5"/>
+      <rect x="-12" y="60" width="24" height="13" rx="4" fill="var(--pants)" stroke="var(--ink)" stroke-width="2"/>
+      <path d="M-12 74 C-16 82 -14 94 -6 99 C2 103 12 99 14 91 C16 82 12 74 6 72 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
+      <path d="M-8 80 L8 80 M-9 87 L9 87 M-7 94 L6 94" stroke="var(--d)" stroke-width="1.3"/>
+      <g id="${p}-dbN${s}">
+        <polygon points="${hexPts(9,11,24)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="2.2"/>
+        <polygon points="${hexPts(9,11,17)}" fill="none" stroke="var(--iron-sh)" stroke-width="1.6"/>
+        <text x="9" y="11" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="11" fill="var(--ink)" opacity=".75">7</text>
+        <text x="9" y="21" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="6" fill="var(--ink)" opacity=".65">KG</text>
+      </g>
+    </g>
+    <path d="M-18 -14 C-10 -26 14 -26 26 -12 C34 0 34 22 28 40 C24 50 16 56 12 58 C6 44 -4 30 -14 20 C-20 8 -22 -4 -18 -14 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.2"/>
+    <path id="${p}-tF${s}" d="M-18 -14 C-10 -24 0 -24 6 -22 C10 14 12 40 12 58 C6 44 -4 30 -14 20 C-20 8 -22 -4 -18 -14 Z" fill="var(--help)" opacity="0"/>
+    <path id="${p}-tS${s}" d="M6 -22 C16 -20 24 -14 28 -6 C34 8 32 26 28 40 C24 50 16 56 12 58 C12 40 10 14 6 -22 Z" fill="var(--target)" opacity="0"/>
+    <path id="${p}-bS${s}" d="M6 -22 C16 -20 24 -14 28 -6 C34 8 32 26 28 40 C24 50 16 56 12 58 C12 40 10 14 6 -22 Z" fill="url(#${p}-shS)" opacity="0"/>
+    <path d="M6 -22 C10 10 12 36 12 56" fill="none" stroke="var(--d)" stroke-width="1.5"/>
+  </g>`;}
+function hexPts(cx,cy,r){const a=[];for(let i=0;i<6;i++){const t=Math.PI/6+i*Math.PI/3;a.push((cx+r*Math.cos(t)).toFixed(1)+','+(cy+r*Math.sin(t)).toFixed(1));}return a.join(' ');}
+let FIGN=0;
+function figureMarkup(p,mistake){
+  const b=bodyPal(mistake);
+  return `<g id="${p}" style="--l:${b.line};--d:${b.def}">
+  <defs>${cel(p+'-b',b.hi,b.base,b.sh)}${cel(p+'-p',col['pants-hi'],col.pants,col['pants-sh'],0.1)}${cel(p+'-i',col['iron-hi'],col.iron,col['iron-sh'],0.6)}
+    ${band(p+'-shS',col.target,'y')}${band(p+'-shT',mistake?col.neg:col.quiet,'x')}</defs>
+  <ellipse cx="200" cy="570" rx="110" ry="14" fill="var(--floor)"/>
+  <g id="${p}-root">
+    <g id="${p}-legs">${LEG_HALF(p)}<g transform="matrix(-1 0 0 1 400 0)">${LEG_HALF(p)}</g></g>
+    <g id="${p}-upper">
+      <g id="${p}-torso">
+        <path d="M184 128 C170 130 150 134 134 138 C124 150 124 168 128 176 C126 196 130 220 136 240 C140 262 142 282 142 300 L144 324 L256 324 L258 300 C258 282 260 262 264 240 C270 220 274 196 272 176 C276 168 276 150 266 138 C250 134 230 130 216 128 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.4"/>
+        ${TORSO_HALF(p)}<g transform="matrix(-1 0 0 1 400 0)">${TORSO_HALF(p)}</g>
+        <ellipse cx="200" cy="290" rx="3" ry="4" fill="var(--d)"/>
+        <rect x="140" y="318" width="120" height="13" rx="4" fill="var(--pants-sh)" stroke="var(--ink)" stroke-width="2"/>
+      </g>
+      <path d="M186 102 L184 132 L216 132 L214 102 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/>
+      <path d="M189 106 L198 132 M211 106 L202 132" stroke="var(--d)" stroke-width="1.4"/>
+      <g id="${p}-trapR"><path d="${TRAP_PATH}" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/><path id="${p}-tTR" d="${TRAP_PATH}" fill="var(--quiet)" opacity="0"/><path id="${p}-bTR" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/></g>
+      <g id="${p}-trapL"><g transform="matrix(-1 0 0 1 400 0)"><path d="${TRAP_PATH}" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2"/><path id="${p}-tTL" d="${TRAP_PATH}" fill="var(--quiet)" opacity="0"/><path id="${p}-bTL" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/></g></g>
+      <g id="${p}-head">
+        <path d="M200 24 C227 24 237 45 237 68 C237 91 227 105 214 111 C208 114 192 114 186 111 C173 105 163 91 163 68 C163 45 173 24 200 24 Z" fill="url(#${p}-b)" stroke="var(--l)" stroke-width="2.4"/>
+        <path d="M205 67 L229 57 L227 66 C221 72 212 73 205 67 Z M195 67 L171 57 L173 66 C179 72 188 73 195 67 Z" fill="var(--eye)" stroke="var(--l)" stroke-width="2"/>
+        <path d="M200 30 C212 34 216 50 214 70" fill="none" stroke="var(--d)" stroke-width="1.2" opacity=".6"/>
+      </g>
+      <g id="${p}-armRw">${ARM(p,'R')}</g>
+      <g id="${p}-armLw">${ARM(p,'L')}</g>
+      <path id="${p}-arc" fill="none" stroke="var(--guide)" stroke-width="1.5"/>
+      <path id="${p}-tick" fill="none" stroke="var(--guide)" stroke-width="1.5" stroke-dasharray="5 4"/>
+    </g>
+    <path id="${p}-path" fill="none" stroke="${mistake?'var(--neg)':'var(--target)'}" stroke-width="1.6" stroke-dasharray="2 4" opacity=".8"/>
+    <g class="lbl" id="${p}-lbls"></g>
+  </g></g>`;
 }
-function speedAt(m,t,rep){const h=0.01,a=pose(m,clamp(t-h,0,T-1e-4),0,rep).arms[1].Hd,b=pose(m,clamp(t+h,0,T-1e-4),0,rep).arms[1].Hd;return len(sub(b,a))/(2*h);}
+function makeFigure(host,mistake,dx=0){
+  const p='f'+(FIGN++),g=document.createElementNS(NS,'g');g.setAttribute('transform',`translate(${dx} 0)`);
+  g.innerHTML=figureMarkup(p,mistake);host.appendChild(g);
+  const q=id=>g.querySelector('#'+p+'-'+id);
+  const F={p,mistake,dx,g,q,root:q('root'),legs:q('legs'),upper:q('upper'),torso:q('torso'),head:q('head'),trapR:q('trapR'),trapL:q('trapL'),
+    armR:q('armR'),armL:q('armL'),foreR:q('foreR'),foreL:q('foreL'),dbFR:q('dbFR'),dbFL:q('dbFL'),dbNR:q('dbNR'),dbNL:q('dbNL'),
+    arc:q('arc'),tick:q('tick'),path:q('path'),lbls:q('lbls'),stops:{S:[...g.querySelectorAll('#'+p+'-shS stop')],T:[...g.querySelectorAll('#'+p+'-shT stop')]},ph:{S:0,T:0}};
+  F.tint=['tFR','tSR','bSR','tFL','tSL','bSL','tTR','bTR','tTL','bTL'].reduce((o,k)=>(o[k]=q(k),o),{});
+  const pts=[];for(let k=0;k<=60;k++)pts.push(world2d(pose2d(F.mistake?'mistake':'correct',k/60*T*0.9999,0)).fistR);
+  F.path.setAttribute('d','M'+pts.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L'));
+  return F;
+}
+// 2D pose: angles and offsets in drawing units
+function pose2d(m,t,rep){
+  const M=motion(m,t,rep),P=pose3(m,t,rep);
+  const dip=(0.955-(0.085+0.87*Math.cos(M.knee/2)))*P2;
+  return {m,M,P,thDeg:M.th/D,leadDeg:M.lead/D,rise:10*Math.sin(M.blade)+M.shrug*P2,breath:M.breath,swayDeg:M.sway/D,dip,leanS:Math.cos(M.lean),tiltDeg:M.rotIn/D};
+}
+const rot=(v,a)=>{const c=Math.cos(a*D),s=Math.sin(a*D);return [v[0]*c-v[1]*s,v[0]*s+v[1]*c];};
+function world2d(Q){ // where the right fist lands, for the path and labels
+  const piv=[SH_R[0],SH_R[1]-Q.rise],el=rot(ELB,-Q.thDeg),fi=rot(rot(FIST,Q.leadDeg),-Q.thDeg);
+  let f=[piv[0]+el[0]+fi[0],piv[1]+el[1]+fi[1]];
+  f=[f[0],324+(f[1]-324)*Q.leanS+Q.dip];
+  return {fistR:f,piv:[piv[0],324+(piv[1]-324)*Q.leanS+Q.dip]};
+}
+function applyPose(F,Q,now){
+  F.root.setAttribute('transform',`rotate(${Q.swayDeg.toFixed(3)} 200 566)`);
+  const legS=(566-324-Q.dip)/(566-324);
+  F.legs.setAttribute('transform',`translate(0 566) scale(1 ${legS.toFixed(4)}) translate(0 -566)`);
+  F.upper.setAttribute('transform',`translate(0 ${Q.dip.toFixed(2)}) translate(0 324) scale(1 ${Q.leanS.toFixed(4)}) translate(0 -324)`);
+  const bx=1+0.02*(Q.breath-0.5),by=1+0.012*(Q.breath-0.5);
+  F.torso.setAttribute('transform',`translate(200 200) scale(${bx.toFixed(4)} ${by.toFixed(4)}) translate(-200 -200)`);
+  const r=Q.rise;F.trapR.setAttribute('transform',`matrix(1 ${(-r/60).toFixed(4)} 0 1 0 ${(r*208/60).toFixed(3)})`);
+  F.trapL.setAttribute('transform',`matrix(1 ${(r/60).toFixed(4)} 0 1 0 ${(-r*192/60).toFixed(3)})`);
+  F.head.setAttribute('transform',`translate(0 ${(-Q.M.lean/D*0.25).toFixed(2)})`);
+  const th=Q.thDeg.toFixed(3),ld=Q.leadDeg.toFixed(3),lev=(Q.thDeg-Q.leadDeg-Q.tiltDeg).toFixed(3);
+  F.armR.setAttribute('transform',`translate(${SH_R[0]} ${(SH_R[1]-r).toFixed(2)}) rotate(${-th})`);
+  F.armL.setAttribute('transform',`translate(${SH_L[0]} ${(SH_L[1]-r).toFixed(2)}) scale(-1 1) rotate(${-th})`);
+  for(const s of ['R','L']){F['fore'+s].setAttribute('transform',`translate(${ELB[0]} ${ELB[1]}) rotate(${ld})`);
+    const db=`translate(${FIST[0]} ${FIST[1]}) rotate(${lev})`;F['dbF'+s].setAttribute('transform',db);F['dbN'+s].setAttribute('transform',db);}
+  // muscle shimmer: tint by effort, and a band running along the fibres
+  const E=effort(Q.P,Q.m),dt=F.last==null?0:clamp((now-F.last)/1000,0,0.05);F.last=now;
+  F.ph.S=(F.ph.S+dt*(0.35+1.3*E.side))%1;F.ph.T=(F.ph.T+dt*(0.35+1.3*E.trap))%1;
+  const setBand=(stops,ph)=>{const c=-0.3+ph*1.6;[c-0.14,c-0.05,c,c+0.05,c+0.14].forEach((o,i)=>{if(stops[i])stops[i].setAttribute('offset',clamp(o,0,1).toFixed(3));});};
+  setBand(F.stops.S,F.ph.S);setBand(F.stops.T,F.ph.T);
+  const trapShort=Q.P.trapLen/TRAP0,trapBad=trapShort<0.95;
+  const on=(e,lo)=>clamp((e-lo)/(1-lo),0,1);
+  for(const s of ['R','L']){F.tint['tS'+s].setAttribute('opacity',(0.5*on(E.side,0.2)).toFixed(3));F.tint['bS'+s].setAttribute('opacity',(0.95*on(E.side,0.2)).toFixed(3));
+    F.tint['tF'+s].setAttribute('opacity',(0.35*on(E.front,0.15)).toFixed(3));
+    F.tint['tT'+s].setAttribute('opacity',(0.12+0.4*on(E.trap,0.1)).toFixed(3));F.tint['tT'+s].setAttribute('fill',trapBad||F.mistake?'var(--neg)':'var(--quiet)');
+    F.tint['bT'+s].setAttribute('opacity',(0.9*on(E.trap,0.1)).toFixed(3));}
+  return E;
+}
+function guides(F,Q,E,labels){
+  const w=world2d(Q),pv=w.piv,R=64,pts=[];
+  for(let k=0;k<=24;k++){const a=Q.thDeg*k/24;const v=rot([0,R],-a);pts.push([SH_R[0]+v[0],SH_R[1]-Q.rise+v[1]]);}
+  F.arc.setAttribute('d','M'+pts.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L'));
+  F.tick.setAttribute('d',`M${SH_R[0]+40} ${(SH_R[1]-Q.rise).toFixed(1)} L${SH_R[0]+200} ${(SH_R[1]-Q.rise).toFixed(1)}`);
+  if(!labels){F.lbls.innerHTML='';return;}
+  const trapBad=Q.P.trapLen/TRAP0<0.95;
+  const k=(vb[2]/560).toFixed(3);
+  const tag=(x,y,c,txt)=>{const wd=txt.length*6.2+22;return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${k})"><rect x="${-wd/2}" y="-11" width="${wd}" height="20" rx="10" fill="var(--surface-1)" stroke="var(--border)"/><circle cx="${-wd/2+10}" cy="-1" r="3.5" fill="${c}"/><text x="${-wd/2+18}" y="3" fill="var(--text)">${txt}</text></g>`;};
+  const a=Q.thDeg;
+  F.lbls.innerHTML=tag(pv[0]+40,pv[1]-58,'var(--target)',`Side delt ${Math.round(100*E.side)}%`)
+    +tag(136,88+Q.dip-Q.rise,trapBad?'var(--neg)':'var(--quiet)',`Upper trap ${Math.round(100*E.trap)}%`)
+    +tag(pv[0]+76,pv[1]+44,'var(--guide)',`${Math.round(a)}°`);
+}
 
 // ================= readouts, charts, captions =================
-let mode='correct', t=0, speed=1, rep=0, clock=0, playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
-let col={};
-function readTokens(){const s=getComputedStyle(document.documentElement);for(const k of ['surface-1','surface-2','surface-3','text','text-2','accent','target','help','watch','neg','skin','tee','shorts','shoe','hair','iron','platform','guide','border','font','mono'])col[k]=s.getPropertyValue('--'+k).trim();}
-readTokens();
+let mode='correct',t=0,speed=1,rep=0,view='full',playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 const CACHE={};
-function curves(m,r){const k=m+(m==='correct'?r%REPS:0);if(!CACHE[k]){const load=[],spd=[];for(let i=0;i<=200;i++){const tt=i/200*T*0.9999;load.push(pose(m,tt,0,r).torque);spd.push(speedAt(m,tt,r));}CACHE[k]={load,spd};}return CACHE[k];}
+function curves(m,r){const k=m+(m==='correct'?r%REPS:0);if(!CACHE[k]){const load=[],spd=[];for(let i=0;i<=200;i++){const tt=i/200*T*0.9999;load.push(pose3(m,tt,r).torque);spd.push(speedAt(m,tt,r));}CACHE[k]={load,spd};}return CACHE[k];}
 const SMAX=Math.max(...curves('mistake',0).spd,...curves('correct',0).spd)*1.08;
-function chart(id,key,ymax,ticks,res,unitFmt){
+function chart(id,key,ymax,ticks,res){
   const ch=$(id),cx=ch.getContext('2d'),DPR=Math.min(2,devicePixelRatio||1),r=ch.getBoundingClientRect();
   if(ch.width!==Math.round(r.width*DPR)){ch.width=Math.round(r.width*DPR);ch.height=Math.round(r.height*DPR);}
-  const w=r.width,h=r.height;if(!w)return;
-  cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,w,h);
+  const w=r.width,h=r.height;if(!w)return;cx.setTransform(DPR,0,0,DPR,0,0);cx.clearRect(0,0,w,h);
   const pl=34,pr=6,pt=6,pb=16,X=tt=>pl+(w-pl-pr)*tt/T,Y=v=>pt+(h-pt-pb)*(1-v/ymax);
   cx.font=`11px ${col.mono}`;cx.fillStyle=col['text-2'];cx.strokeStyle=col.border;cx.lineWidth=1;
-  for(const v of ticks){cx.beginPath();cx.moveTo(pl,Y(v)+.5);cx.lineTo(w-pr,Y(v)+.5);cx.stroke();cx.textAlign='right';cx.fillText(unitFmt(v),pl-6,Y(v)+4);}
+  for(const v of ticks){cx.beginPath();cx.moveTo(pl,Y(v)+.5);cx.lineTo(w-pr,Y(v)+.5);cx.stroke();cx.textAlign='right';cx.fillText(String(v),pl-6,Y(v)+4);}
   cx.textAlign='left';let acc=0;for(const [n,d] of phases(mode==='mistake'?'mistake':'correct',rep)){cx.fillText(n,X(acc)+2,h-3);acc+=d;}
   const show=mode==='compare'?['correct','mistake']:[mode];
   for(const m of show){const c=curves(m,rep)[key];cx.beginPath();c.forEach((v,k)=>{const x=X(k/200*T),y=Y(v);k?cx.lineTo(x,y):cx.moveTo(x,y);});cx.strokeStyle=m==='mistake'?col.neg:col.target;cx.lineWidth=2;cx.setLineDash(m==='mistake'&&mode==='compare'?[4,3]:[]);cx.stroke();cx.setLineDash([]);}
-  for(const rr of res){const v=key==='load'?rr.J.torque:rr.spd;cx.beginPath();cx.arc(X(t),Y(Math.min(v,ymax)),4,0,Math.PI*2);cx.fillStyle=rr.m==='mistake'?col.neg:col.target;cx.fill();cx.strokeStyle=col['surface-1'];cx.lineWidth=2;cx.stroke();}
+  for(const rr of res){const v=key==='load'?rr.Q.P.torque:rr.spd;cx.beginPath();cx.arc(X(t),Y(Math.min(v,ymax)),4,0,Math.PI*2);cx.fillStyle=rr.m==='mistake'?col.neg:col.target;cx.fill();cx.strokeStyle=col['surface-1'];cx.lineWidth=2;cx.stroke();}
 }
 function updateReadouts(res){
   const head='<thead><tr><th scope="col">Now</th>'+res.map(r=>`<th scope="col" style="text-align:right">${r.m==='mistake'?'Mistake':'Right rep'}</th>`).join('')+'</tr></thead>';
   const row=(label,sw,f,bad)=>`<tr><th scope="row">${sw?`<span class="sw" style="background:${sw}"></span>`:''}${label}</th>`+res.map(r=>`<td class="${bad&&bad(r)?'bad':''}">${f(r)}</td>`).join('')+'</tr>';
   $('readouts').innerHTML=head+'<tbody>'+
-    row('Arm angle from the body',null,r=>Math.round(r.J.M.th/D)+'°',r=>r.J.M.th>95*D)+
+    row('Arm angle from the body',null,r=>Math.round(r.Q.thDeg)+'°',r=>r.Q.thDeg>95)+
     row('Dumbbell speed',null,r=>r.spd.toFixed(2)+' m/s',r=>r.spd>2.2)+
-    row('Load on the shoulder',null,r=>r.J.torque.toFixed(0)+' N·m')+
+    row('Load on the shoulder',null,r=>r.Q.P.torque.toFixed(0)+' N·m')+
     row('Side delt effort','var(--target)',r=>Math.round(100*r.E.side)+'%')+
-    row('Upper trap: length · effort','var(--watch)',r=>Math.round(100*r.J.arms[1].mus.trap.len/L0.trap)+'% · '+Math.round(100*r.E.trap)+'%',r=>r.J.arms[1].mus.trap.len/L0.trap<0.95)+
-    row('Lean back (hips + ankles)',null,r=>((r.J.M.lean+Math.max(0,-r.J.M.sway))/D).toFixed(1)+'°',r=>r.J.M.lean>4*D)+'</tbody>';
+    row('Upper trap: length · effort','var(--quiet)',r=>Math.round(100*r.Q.P.trapLen/TRAP0)+'% · '+Math.round(100*r.E.trap)+'%',r=>r.Q.P.trapLen/TRAP0<0.95)+
+    row('Knee dip',null,r=>Math.round(r.Q.M.knee/D-SPEC.joints.kneesSoftDeg)+'°',r=>r.Q.M.knee/D-SPEC.joints.kneesSoftDeg>3)+'</tbody>';
 }
 function buildPhaseBar(){
   const ph=phases(mode==='mistake'?'mistake':'correct',rep);
@@ -426,7 +541,7 @@ function buildPhaseBar(){
   $('repNote').textContent=mode==='mistake'?'Common mistake · 7 kg':`Rep ${rep%REPS+1} of ${REPS} · 7 kg`;
   const c=curves('correct',rep);
   $('chartMax').textContent=`peak ${Math.max(...c.load).toFixed(0)} N·m with ${KG} kg`;
-  $('speedMax').textContent=mode==='correct'?`peak ${Math.max(...c.spd).toFixed(1)} m/s`:`right ${Math.max(...c.spd).toFixed(1)} m/s · mistake ${Math.max(...curves('mistake',0).spd).toFixed(1)} m/s`;
+  $('speedMax').textContent=mode==='correct'?`peak ${Math.max(...c.spd).toFixed(1)} m/s`:`right ${Math.max(...c.spd).toFixed(1)} · mistake ${Math.max(...curves('mistake',0).spd).toFixed(1)} m/s`;
 }
 let lastLabel='';
 function captions(){
@@ -437,297 +552,73 @@ function captions(){
 }
 function setWatch(){$('watchText').textContent=mode==='mistake'?'Watch: the knee dip, the shrug and the bounce. This is what not to do.':'Watch: '+SPEC.watch[rep%SPEC.watch.length].replace(/^./,c=>c.toLowerCase());}
 (function mistakes(){
-  let minT=1,maxLean=0,top=0,spdM=0;
-  for(let k=0;k<=200;k++){const tt=k/200*T*0.9999,J=pose('mistake',tt,0,0);minT=Math.min(minT,J.arms[1].mus.trap.len/L0.trap);maxLean=Math.max(maxLean,J.M.lean);top=Math.max(top,J.M.th);}
-  spdM=Math.max(...curves('mistake',0).spd);const spdC=Math.max(...curves('correct',0).spd);
+  let minT=1,top=0;for(let k=0;k<=200;k++){const P=pose3('mistake',k/200*T*0.9999,0);minT=Math.min(minT,P.trapLen/TRAP0);top=Math.max(top,P.M.th);}
+  const spdM=Math.max(...curves('mistake',0).spd),spdC=Math.max(...curves('correct',0).spd);
   $('mistakes').innerHTML=[
-    `<li><b>Dips and swings.</b> The knees dip ${SPEC.mistake.kneeDipDeg}° and the hips drive the body back about ${Math.round(maxLean/D)}° to throw the weight up. It peaks at ${spdM.toFixed(1)} m/s, against ${spdC.toFixed(1)} m/s for the right rep.</li>`,
+    `<li><b>Dips and swings.</b> The knees dip ${SPEC.mistake.kneeDipDeg}° to throw the weight up, and it peaks at ${spdM.toFixed(1)} m/s against ${spdC.toFixed(1)} m/s for the right rep.</li>`,
     `<li><b>Shrugs.</b> The upper trap shortens to ${Math.round(minT*100)}% and takes over from the side delt.</li>`,
-    `<li><b>Too high, thumbs down.</b> ${Math.round(top/D)}° is past shoulder height, where the delt's load falls. Turning the arm in adds rear-delt and trap work.</li>`,
-    `<li><b>Drops and bounces.</b> Down in ${SPEC.mistake.tempo.lower} s instead of ${SPEC.tempo.lower} s, then the arms swing past the start and bounce back.</li>`].join('');
+    `<li><b>Too high, thumbs down.</b> ${Math.round(top/D)}° is past shoulder height, where the delt's load falls, and the tilted dumbbell turns the arm in.</li>`,
+    `<li><b>Drops and bounces.</b> Down in ${SPEC.mistake.tempo.lower} s instead of ${SPEC.tempo.lower} s, then the arms swing past the start.</li>`].join('');
 })();
 
-// ================= 3D =================
-const canvas=$('stage'), wrap=$('stageWrap');
-let renderer=null;
-try{ if(!window.THREE) throw new Error('no three'); renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); }
-catch(e){ const d=document.createElement('div');d.className='fallback';d.textContent='3D is not available in this browser. The phone app would show the four stills here instead.';wrap.appendChild(d); }
-
-// --- chains: smooth skin along a curve through joints (Catmull-Rom), rings every ~1.3 cm ---
-function crPoint(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t;return [0,1,2].map(i=>0.5*(2*p1[i]+(-p0[i]+p2[i])*t+(2*p0[i]-5*p1[i]+4*p2[i]-p3[i])*t2+(-p0[i]+3*p1[i]-3*p2[i]+p3[i])*t3));}
-function sampleChain(pts,fronts,refIdx,n){
-  const dense=[],fr=[],seg=pts.length-1;
-  for(let i=0;i<seg;i++){const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(seg,i+2)];
-    for(let k=0;k<(i===seg-1?13:12);k++){const u=k/12;dense.push(crPoint(p0,p1,p2,p3,u));fr.push(norm(add(mul(fronts[i],1-u),mul(fronts[i+1],u))));}}
-  const cum=[0];for(let i=1;i<dense.length;i++)cum.push(cum[i-1]+len(sub(dense[i],dense[i-1])));
-  const total=cum[cum.length-1], ref=cum[refIdx*12], out=[];
-  for(let j=0;j<n;j++){const d=total*j/(n-1);let i=1;while(i<cum.length-1&&cum[i]<d)i++;const u=(d-cum[i-1])/((cum[i]-cum[i-1])||1);
-    const C=add(mul(dense[i-1],1-u),mul(dense[i],u)),Tn=norm(sub(dense[Math.min(i,dense.length-1)],dense[i-1])),F=norm(add(mul(fr[i-1],1-u),mul(fr[i],u)));
-    out.push({C,T:Tn,F,dist:d-ref,s:d/total});}
-  return out;
-}
-const knotAt=(K,x)=>{if(x<=K[0][0])return K[0].slice(1);for(let i=1;i<K.length;i++)if(x<=K[i][0]){const u=(x-K[i-1][0])/(K[i][0]-K[i-1][0]);return K[i].slice(1).map((v,j)=>lerp(K[i-1][j+1]??0,v,u));}return K[K.length-1].slice(1);};
-function chainGeo(nR,nS){
-  const nv=nR*nS+2,g=new THREE.BufferGeometry(),idx=[];
-  for(let j=0;j<nR-1;j++)for(let i=0;i<nS;i++){const a=j*nS+i,b=j*nS+(i+1)%nS,c=(j+1)*nS+i,d=(j+1)*nS+(i+1)%nS;idx.push(a,c,b,b,c,d);}
-  const c0=nR*nS,c1=c0+1;for(let i=0;i<nS;i++){idx.push(c0,i,(i+1)%nS);const o=(nR-1)*nS;idx.push(c1,o+(i+1)%nS,o+i);}
-  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(nv*3),3));g.setAttribute('color',new THREE.BufferAttribute(new Float32Array(nv*3),3));g.setIndex(idx);g.userData={nR,nS};return g;
-}
-function updateChain(g,S,K,expo,shade){
-  const {nR,nS}=g.userData,P=g.attributes.position.array,Cc=g.attributes.color.array;let n=0;
-  for(const r of S){
-    const [w,d,oz=0]=knotAt(K,r.dist), Z=norm(sub(r.F,mul(r.T,dot(r.F,r.T)))), X=cross(r.T,Z);
-    for(let i=0;i<nS;i++){const a=i/nS*2*Math.PI,c=Math.cos(a),s=Math.sin(a);
-      const ex=Math.sign(c)*Math.pow(Math.abs(c),2/expo),ez=Math.sign(s)*Math.pow(Math.abs(s),2/expo);
-      const radial=norm(add(mul(X,c),mul(Z,s))), sh=shade(r,radial);
-      const q=add(add(r.C,mul(X,w*ex)),mul(Z,d*ez+oz));
-      P[n]=q[0];P[n+1]=q[1]+(sh.dy||0);P[n+2]=q[2];Cc[n]=sh.c[0];Cc[n+1]=sh.c[1];Cc[n+2]=sh.c[2];n+=3;}
-  }
-  const f=S[0],l=S[S.length-1],fw=knotAt(K,f.dist),lw=knotAt(K,l.dist);
-  const q0=sub(f.C,mul(f.T,Math.min(fw[0],fw[1])*0.6)),q1=add(l.C,mul(l.T,Math.min(lw[0],lw[1])*0.6));
-  for(const [q,src] of [[q0,0],[q1,(nR-1)*nS]]){P[n]=q[0];P[n+1]=q[1];P[n+2]=q[2];Cc[n]=Cc[src*3];Cc[n+1]=Cc[src*3+1];Cc[n+2]=Cc[src*3+2];n+=3;}
-  g.attributes.position.needsUpdate=true;g.attributes.color.needsUpdate=true;g.computeVertexNormals();g.computeBoundingSphere();
-}
-// skin profiles: [distance from the reference joint (m), half-width, half-depth, forward offset]
-const K_ARM=[[-0.07,.05,.055],[-0.01,.058,.062],[.04,.059,.062],[.1,.052,.056],[.16,.046,.051],[.23,.042,.047],[UA-.012,.036,.038],[UA+.05,.043,.039],[UA+.13,.035,.031],[UA+FA,.025,.02],[UA+FA+.03,.024,.019]];
-const K_LEG=[[-0.1,.09,.095],[0,.088,.092],[.1,.08,.084],[.25,.068,.07],[.38,.052,.055],[.43,.05,.052],[.5,.052,.058,-.012],[.6,.05,.056,-.01],[.75,.035,.038],[.86,.03,.032],[.92,.029,.03]];
-const K_TORSO=[[0,.15,.1],[.07,.172,.106,-.006],[.15,.168,.102],[.25,.148,.094,.004],[.35,.16,.103,.012],[.46,.176,.112,.018],[.54,.19,.104,.01],[.6,.194,.09,-.004],[.64,.12,.074,-.01],[.68,.062,.056,-.01]];
-const lin=h=>{const c=new THREE.Color(h).convertSRGBToLinear();return [c.r,c.g,c.b];};
-const mixc=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
-let P3={};function palette(){if(!window.THREE)return;for(const k of ['skin','tee','shorts','shoe','hair','iron','target','help','watch','neg','platform','guide'])P3[k]=lin(col[k]);}
-palette();
-
-// --- the muscle shimmer: tint the muscle's skin area, and run a sheen along its fibres ---
-function shimmer(base,colr,weight,effortV,phase){
-  if(weight<=0.001)return base;
-  const band=Math.pow(0.5+0.5*Math.sin(phase),4);            // a bright band running along the fibres
-  const tint=weight*(0.28+0.6*effortV), sheen=weight*band*(0.25+0.9*effortV);
-  const c=mixc(base,colr,clamp(tint,0,0.9));
-  return mixc(c,[1,1,1],clamp(sheen*0.55,0,0.6)).map((v,i)=>v+colr[i]*sheen*0.35);
-}
-
-let scene,camera,figures=[],platform,platformRim;
-function mat(o={}){return new THREE.MeshStandardMaterial(Object.assign({roughness:0.72,metalness:0},o));}
-function labelTex(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.fillStyle='#d9dbe0';x.font='700 44px Inter, system-ui, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('7',64,52);x.font='600 22px Inter, system-ui, sans-serif';x.fillText('KG',64,90);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t;}
-const LABEL=window.THREE?labelTex():null;
-function loftGeo(prof,L,segs=22,expo=2.4){const S=prof.map(([tt,w,d,ox=0,oz=0])=>({C:[ox,tt*L,0],T:[0,1,0],F:[0,0,1],dist:tt,s:tt}));
-  const K=prof.map(([tt,w,d,ox=0,oz=0])=>[tt,w,d,oz]);const g=chainGeo(S.length,segs);updateChain(g,S,K,expo,()=>({c:[1,1,1]}));return g;}
-const _m=window.THREE?new THREE.Matrix4():null;
-function place(obj,A,B,hint){const y=norm(sub(B,A));let z=sub(hint,mul(y,dot(hint,y)));if(len(z)<1e-4)z=[1,0,0];z=norm(z);const x=cross(y,z);_m.makeBasis(new THREE.Vector3(...x),new THREE.Vector3(...y),new THREE.Vector3(...z));obj.quaternion.setFromRotationMatrix(_m);obj.position.set(A[0],A[1],A[2]);}
-function line(n,dashed){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*3),3));
-  const m=dashed?new THREE.LineDashedMaterial({color:0x888888,dashSize:0.02,gapSize:0.015,transparent:true,opacity:0.8}):new THREE.LineBasicMaterial({color:0x888888,transparent:true,opacity:0.55});return new THREE.Line(g,m);}
-function setLine(l,pts){const a=l.geometry.attributes.position.array;pts.forEach((q,k)=>{a[k*3]=q[0];a[k*3+1]=q[1];a[k*3+2]=q[2];});l.geometry.attributes.position.needsUpdate=true;l.geometry.computeBoundingSphere();if(l.computeLineDistances)l.computeLineDistances();}
-
-const NR={arm:52,leg:62,torso:46,finger:9};
-function makeFigure(m,ox){
-  const ghost=m==='mistake', grp=new THREE.Group(), F={m,ox,ghost,grp,p:{}};
-  const skinMat=mat({vertexColors:true}), flat=(k,o)=>mat(Object.assign({color:0xffffff},o));
-  F.mats={skin:skinMat,shoe:flat('shoe'),hair:flat('hair',{roughness:0.95}),headSkin:flat('skin'),iron:flat('iron',{roughness:0.4,metalness:0.55}),knurl:flat('iron',{roughness:0.8,metalness:0.4})};
-  const mk=(name,geo,mt)=>{const me=new THREE.Mesh(geo,mt);me.castShadow=true;me.receiveShadow=true;grp.add(me);F.p[name]=me;return me;};
-  mk('torso',chainGeo(NR.torso,34),skinMat);
-  mk('neck',loftGeo([[0,.056,.058],[.5,.05,.052],[1,.05,.05]],0.12,18),F.mats.headSkin);
-  const head=new THREE.Group();grp.add(head);F.head=head;
-  const sph=(sx,sy,sz,x,y,z,mt,seg=28)=>{const me=new THREE.Mesh(new THREE.SphereGeometry(1,seg,Math.round(seg*0.75)),mt);me.scale.set(sx,sy,sz);me.position.set(x,y,z);me.castShadow=true;head.add(me);return me;};
-  sph(0.086,0.112,0.098,0,0,0,F.mats.headSkin);sph(0.07,0.05,0.07,0,-0.055,0.025,F.mats.headSkin);
-  sph(0.014,0.022,0.02,0,-0.005,0.098,F.mats.headSkin,12);sph(0.012,0.022,0.016,0.086,-0.005,0,F.mats.headSkin,12);sph(0.012,0.022,0.016,-0.086,-0.005,0,F.mats.headSkin,12);
-  sph(0.009,0.006,0.005,0.03,0.012,0.09,F.mats.hair,10);sph(0.009,0.006,0.005,-0.03,0.012,0.09,F.mats.hair,10);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(1,28,14,0,Math.PI*2,0,Math.PI*0.52),F.mats.hair);hair.scale.set(0.091,0.118,0.104);hair.position.set(0,0.008,-0.008);hair.rotation.x=-0.25;head.add(hair);
-  for(const s of [0,1]){
-    mk('arm'+s,chainGeo(NR.arm,26),skinMat); mk('leg'+s,chainGeo(NR.leg,26),skinMat);
-    mk('foot'+s,loftGeo([[0,.036,.042],[.3,.043,.034],[.75,.045,.026],[1,.034,.018]],0.2,20,2.6),F.mats.shoe);
-    mk('palm'+s,loftGeo([[0,.026,.021],[.35,.036,.026],[.75,.036,.027],[1,.026,.022]],0.075,18,2.6),F.mats.headSkin);
-    for(let k=0;k<5;k++) mk('fing'+s+k,chainGeo(NR.finger,10),skinMat);
-    mk('handle'+s,new THREE.CylinderGeometry(0.0135,0.0135,0.15,18),F.mats.iron); mk('knurl'+s,new THREE.CylinderGeometry(0.0145,0.0145,0.075,18),F.mats.knurl);
-    for(const e of [0,1]){mk('head'+s+e,new THREE.CylinderGeometry(0.05,0.05,0.055,6),F.mats.iron);mk('bevel'+s+e,new THREE.CylinderGeometry(0.044,0.044,0.063,6),F.mats.knurl);mk('collar'+s+e,new THREE.CylinderGeometry(0.02,0.02,0.012,16),F.mats.iron);
-      const lb=new THREE.Mesh(new THREE.CircleGeometry(0.03,24),new THREE.MeshBasicMaterial({map:LABEL,transparent:true}));grp.add(lb);F.p['label'+s+e]=lb;}
-  }
-  F.path=line(81,false);grp.add(F.path); F.arc=line(25,false);grp.add(F.arc); F.tick=line(2,true);grp.add(F.tick);
-  const pts=[];for(let k=0;k<=80;k++)pts.push(pose(m,k/80*T*0.9999,ox,0).arms[1].Hd);setLine(F.path,pts);
-  scene.add(grp);paintFigure(F);return F;
-}
-function paintFigure(F){
-  const tint=F.ghost?0.42:0,c=k=>mixc(P3[k],P3.neg,tint);
-  F.mats.shoe.color.setRGB(...c('shoe'));F.mats.hair.color.setRGB(...c('hair'));F.mats.headSkin.color.setRGB(...c('skin'));F.mats.iron.color.setRGB(...P3.iron);F.mats.knurl.color.setRGB(...mixc(P3.iron,[0,0,0],0.35));
-  F.path.material.color.setRGB(...(F.ghost?P3.neg:P3.target));F.arc.material.color.setRGB(...P3.guide);F.tick.material.color.setRGB(...P3.guide);
-}
-function updateFigure(F,J,now){
-  const E=effort(J,F.m), tint=F.ghost?0.42:0, C=k=>mixc(P3[k],P3.neg,tint), skin=C('skin'), tank=C('tee'), shorts=C('shorts');
-  const dtF=F.lastNow==null?0:clamp((now-F.lastNow)/1000,0,0.05);F.lastNow=now;
-  const tw=2*Math.PI;F.phS=(F.phS||0)+dtF*tw*(0.5+1.8*E.side);F.phF=(F.phF||0)+dtF*tw*(0.5+1.8*E.front);F.phR=(F.phR||0)+dtF*tw*(0.5+1.8*E.rear);F.phT=(F.phT||0)+dtF*tw*(0.5+1.8*E.trap);
-  // torso: tank top, bare shoulders, trap shimmer, breathing, shrug lifts the trap slope
-  const sp=J.spine, fronts=sp.map(()=>J.fwd);
-  const S=sampleChain(sp,fronts,0,NR.torso);
-  const trapC=mixc(P3.watch,P3.neg,clamp((0.97-J.arms[1].mus.trap.len/L0.trap)/0.08,0,1));
-  const breathK=1+0.022*(J.M.breath-0.5);
-  const Kt=K_TORSO.map(k=>k[0]>0.3&&k[0]<0.58?[k[0],k[1]*breathK,k[2]*breathK*1.01,k[3]||0]:k);
-  updateChain(F.p.torso.geometry,S,Kt,2.6,(r,rad)=>{
-    const lateral=Math.abs(dot(rad,J.sideV)), front=dot(rad,J.fwd), s=r.dist;
-    let base=s<0.2?shorts:(s>0.52&&lateral>0.7)||s>0.635?skin:tank;
-    const trapW=smooth(0.5,0.6,s)*(1-smooth(0.64,0.68,s))*smooth(0.2,0.8,lateral)*clamp(0.6-0.6*front,0,1);
-    const c=shimmer(base,trapC,trapW,E.trap,F.phT-s*60);
-    return {c,dy:J.M.shrug*smooth(0.5,0.64,s)*lateral};
-  });
-  // arms: one smooth skin from the shoulder through the elbow to the wrist; deltoid shimmer
-  [1,-1].forEach((side,si)=>{
-    const A=J.arms[side], inner=add(A.Gh,add(mul(J.sideV,-side*0.07),mul(A.u,-0.02)));
-    const pts=[inner,A.Gh,A.E,A.W,add(A.W,mul(A.f,0.03))], fr=[A.w,A.w,A.w,A.w,A.w];
-    const Sa=sampleChain(pts,fr,1,NR.arm);
-    const out=norm(add(A.lat,[0,0.5,0])), fw=A.w;
-    updateChain(F.p['arm'+si].geometry,Sa,K_ARM,2.2,(r,rad)=>{
-      const along=smooth(-0.04,0.0,r.dist)*(1-smooth(0.1,0.15,r.dist));
-      const lobeS=Math.pow(Math.max(0,dot(rad,out)),1.4), lobeF=Math.pow(Math.max(0,dot(rad,fw)),1.6), lobeR=Math.pow(Math.max(0,-dot(rad,fw)),1.6);
-      const fib=-r.dist*70;
-      let c=skin;
-      c=shimmer(c,P3.help,along*lobeF*0.9,E.front,F.phF+fib+1.1);
-      c=shimmer(c,P3.help,along*lobeR*0.9,E.rear,F.phR+fib+2.3);
-      c=shimmer(c,mixc(P3.target,P3.neg,tint),along*lobeS,E.side,F.phS+fib);
-      return {c};
-    });
-    // hand: palm plus four fingers and a thumb wrapped round the handle
-    const e1=mul(A.f,-1), e2=norm(cross(A.a,A.f)), hc=A.Hd;
-    place(F.p['palm'+si],A.W,add(A.W,mul(A.f,0.075)),cross(A.a,A.f));
-    const offs=[-0.033,-0.012,0.009,0.028];
-    for(let k=0;k<5;k++){
-      const thumb=k===4, o=thumb?0.043:offs[k], rr=thumb?0.026:0.025, r0=thumb?0.0095:(k===3?0.0072:0.0085);
-      const pts=[];for(let j=0;j<6;j++){const phi=thumb?lerp(0.5,-2.3,j/5):lerp(-0.5,4.1,j/5);pts.push(add(add(hc,mul(A.a,o)),add(mul(e1,rr*Math.cos(phi)),mul(e2,rr*Math.sin(phi)*side))));}
-      const Sf=sampleChain(pts,pts.map(()=>A.a),0,NR.finger);
-      updateChain(F.p['fing'+si+k].geometry,Sf,[[-1,r0,r0],[1,r0*0.85,r0*0.85]],2,()=>({c:skin}));
-    }
-    // dumbbell: level handle, knurled grip, hex heads with bevel, collars, 7 KG face
-    place(F.p['handle'+si],add(hc,mul(A.a,-0.075)),add(hc,mul(A.a,0.075)),A.f);F.p['handle'+si].position.set(...hc);
-    place(F.p['knurl'+si],add(hc,mul(A.a,-0.03)),add(hc,mul(A.a,0.03)),A.f);F.p['knurl'+si].position.set(...hc);
-    [1,-1].forEach((e,k)=>{const hp=add(hc,mul(A.a,e*0.105));
-      for(const nm of ['head','bevel']){place(F.p[nm+si+k],hp,add(hp,mul(A.a,0.01)),A.f);F.p[nm+si+k].position.set(...hp);}
-      const cp=add(hc,mul(A.a,e*0.072));place(F.p['collar'+si+k],cp,add(cp,mul(A.a,0.01)),A.f);F.p['collar'+si+k].position.set(...cp);
-      const lp=add(hp,mul(A.a,e*0.0322));F.p['label'+si+k].position.set(...lp);F.p['label'+si+k].lookAt(...add(lp,mul(A.a,e)));});
-  });
-  // legs: hip through knee to ankle, shorts on the thigh
-  J.legs.forEach((L,si)=>{
-    const Sl=sampleChain([L.hipIn,L.hip,L.knee,L.ank],[L.front,L.front,L.front,L.front],1,NR.leg);
-    updateChain(F.p['leg'+si].geometry,Sl,K_LEG,2.2,r=>({c:r.dist<0.2?shorts:skin}));
-    place(F.p['foot'+si],L.ank,L.toe,[0,1,0]);
-  });
-  place(F.p.neck,J.neck[0],J.neck[1],J.fwd);
-  F.head.position.set(...J.head);F.head.rotation.set(-(J.M.lean+J.M.sway)*0.3,0,0);
-  // 3D guides on the figure's left arm: angle arc and shoulder-height tick
-  const A=J.arms[1],down=norm(rotX([0,-1,0],[0,0,0],J.M.lean+J.M.sway)),R=0.17,pts=[];
-  for(let k=0;k<=24;k++){const a=J.M.th*k/24;pts.push(add(A.Gh,add(mul(down,R*Math.cos(a)),mul(A.lat,R*Math.sin(a)))));}
-  setLine(F.arc,pts);setLine(F.tick,[add(A.Gh,mul(A.lat,0.12)),add(A.Gh,mul(A.lat,0.3))]);
-  return E;
-}
-function initScene(){
-  scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(32,1,0.05,50);
-  renderer.outputEncoding=THREE.sRGBEncoding;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  scene.add(new THREE.HemisphereLight(0xffffff,0x444444,0.75));
-  const key=new THREE.DirectionalLight(0xffffff,0.95);key.position.set(1.6,3.2,2.4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
-  Object.assign(key.shadow.camera,{left:-1.6,right:1.6,top:2.2,bottom:-0.5,near:0.5,far:8});key.shadow.bias=-0.0006;key.shadow.normalBias=0.02;scene.add(key);
-  const rim=new THREE.DirectionalLight(0xffffff,0.35);rim.position.set(-2,2.2,-2.5);scene.add(rim);
-  platform=new THREE.Mesh(new THREE.CircleGeometry(1.35,64),new THREE.MeshStandardMaterial({roughness:0.95}));platform.rotation.x=-Math.PI/2;platform.receiveShadow=true;scene.add(platform);
-  platformRim=new THREE.Mesh(new THREE.RingGeometry(1.34,1.35,64),new THREE.MeshBasicMaterial());platformRim.rotation.x=-Math.PI/2;platformRim.position.y=0.001;scene.add(platformRim);
-  paintScene();
-}
-function paintScene(){platform.material.color.setRGB(...P3.platform);platformRim.material.color.setRGB(...P3.guide);for(const f of figures)paintFigure(f);}
-function buildFigures(){
-  for(const f of figures){scene.remove(f.grp);f.grp.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==undefined&&o.material.dispose)o.material.dispose();});}
-  const list=mode==='correct'?[['correct',0]]:mode==='mistake'?[['mistake',0]]:[['correct',-0.55],['mistake',0.55]];
-  figures=list.map(([m,ox])=>makeFigure(m,ox));
-}
-
-// camera
-const VIEWS={coach:{yaw:28,pitch:9,dist:3.6,tgt:[0,0.95,0]},you:{yaw:196,pitch:12,dist:3.6,tgt:[0,0.95,0]},side:{yaw:90,pitch:4,dist:3.6,tgt:[0,0.95,0]},top:{yaw:14,pitch:74,dist:3.6,tgt:[0,0.9,0]},shoulder:{yaw:34,pitch:12,dist:1.5,tgt:[0.18,1.33,0.05]}};
-let cam={yaw:28*D,pitch:9*D,dist:3.6,tgt:[0,0.95,0]},camGoal=null,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function setCam(c,plain){c=c||cam;const d=c.dist*(!plain&&mode==='compare'&&c.dist>2?1.3:1);const p=add(c.tgt,[d*Math.sin(c.yaw)*Math.cos(c.pitch),d*Math.sin(c.pitch),d*Math.cos(c.yaw)*Math.cos(c.pitch)]);camera.position.set(...p);camera.lookAt(...c.tgt);}
-function press(ids,on){ids.forEach(id=>$(id).setAttribute('aria-pressed',String(id===on)));}
-function goView(v){const g=VIEWS[v];camGoal={yaw:g.yaw*D,pitch:g.pitch*D,dist:g.dist,tgt:g.tgt.slice(),from:{...cam,tgt:cam.tgt.slice()},t:0};
-  let dy=camGoal.yaw-cam.yaw;while(dy>Math.PI)dy-=2*Math.PI;while(dy<-Math.PI)dy+=2*Math.PI;camGoal.yaw=cam.yaw+dy;
-  if(reduce){Object.assign(cam,{yaw:camGoal.yaw,pitch:camGoal.pitch,dist:camGoal.dist,tgt:camGoal.tgt});camGoal=null;}
-  press(['v-coach','v-you','v-side','v-top','v-shoulder'],'v-'+v);dirty=true;}
-
-// tags
-const tagsEl=$('tags');
-function tag(id,txt,colr,pt){let el=document.getElementById(id);if(!el){el=document.createElement('div');el.id=id;el.className='tag';tagsEl.appendChild(el);}
-  const v=new THREE.Vector3(...pt).project(camera),r=canvas.getBoundingClientRect();
-  if(v.z>1){el.hidden=true;return;}el.hidden=false;el.style.left=((v.x+1)/2*r.width)+'px';el.style.top=((1-v.y)/2*r.height-6)+'px';el.innerHTML=`<i style="background:${colr}"></i>${txt}`;}
-function hideTags(ids){for(const id of ids){const e=document.getElementById(id);if(e)e.hidden=true;}}
-
-let dirty=true,last=performance.now(),W=0,Hh=0;
-function resize(){const r=canvas.getBoundingClientRect();W=r.width;Hh=r.height;if(!renderer||!W)return;renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));renderer.setSize(W,Hh,false);camera.aspect=W/Hh;camera.updateProjectionMatrix();dirty=true;}
-function render(tt,now,quiet){
-  const res=[];
-  const list=figures.length?figures:[{m:mode==='compare'?'correct':mode,ox:0}];
-  for(const F of list){const J=pose(F.m,tt,F.ox,rep);let E=effort(J,F.m);if(renderer&&F.grp)E=updateFigure(F,J,now);res.push({m:F.m,J,E,F,spd:speedAt(F.m,tt,rep)});}
-  if(!renderer)return res;
-  renderer.render(scene,camera);
-  if(quiet)return res;
-  if(mode!=='compare'){const r=res[0],A=r.J.arms[1];
-    tag('t-side',`Side delt ${Math.round(100*r.E.side)}%`,col.target,add(A.Gh,add(mul(A.lat,0.02),[0,0.09,0])));
-    const trapBad=A.mus.trap.len/L0.trap<0.95;
-    tag('t-trap',`Upper trap ${Math.round(100*r.E.trap)}%`,trapBad?col.neg:col.watch,add(mul(add(A.mus.trap.O,A.mus.trap.I),0.5),[0,0.07,0]));
-    tag('t-ang',`${Math.round(r.J.M.th/D)}°`,col.guide,add(A.Gh,add(mul(A.lat,0.2),[0,-0.06,0])));
-    hideTags(['t-l0','t-l1']);
-  }else{hideTags(['t-side','t-trap','t-ang']);res.forEach((r,k)=>tag('t-l'+k,r.m==='mistake'?'Common mistake':'Right rep',r.m==='mistake'?col.neg:col.target,[r.F.ox,-0.02,0.42]));}
-  return res;
+// ================= stage =================
+const svg=$('stage');let figs=[];
+const VB={full:[-80,10,560,600],shoulders:[80,40,240,210],wide:[-90,10,1110,620]};
+let vb=VB.full.slice(),vbGoal=null;
+function build(){
+  svg.innerHTML='';figs=[];
+  if(mode==='compare'){figs.push(makeFigure(svg,false,0));figs.push(makeFigure(svg,true,520));}
+  else figs.push(makeFigure(svg,mode==='mistake',0));
+  $('stageWrap').classList.toggle('wide',mode==='compare');
+  vb=(mode==='compare'?VB.wide:VB[view]).slice();vbGoal=null;svg.setAttribute('viewBox',vb.join(' '));
+  $('viewHint').textContent=mode==='compare'?'Mirror view':view==='shoulders'?'Close-up':'Mirror view';
 }
 function draw(now){
-  if(renderer)setCam();
-  const res=render(t,now);
+  const res=figs.map(F=>{const Q=pose2d(F.mistake?'mistake':'correct',t,rep),E=applyPose(F,Q,now);guides(F,Q,E,mode!=='compare');return {m:F.mistake?'mistake':'correct',Q,E,spd:speedAt(F.mistake?'mistake':'correct',t,rep)};});
   updateReadouts(res);
-  chart('chartSpeed','spd',SMAX,[0,1,2,3,4].filter(v=>v<=SMAX),res,v=>v+'');
-  chart('chart','load',50,[0,25,50],res,v=>v+'');
+  chart('chartSpeed','spd',SMAX,[0,1,2,3,4].filter(v=>v<=SMAX),res);
+  chart('chart','load',50,[0,25,50],res);
 }
-// four key moments, rendered from the same model
-const MOMENTS=[['Start',0.02],['Half-way',0.5],['Top',1.2],['Lowering',2.5]];
+// four key moments, drawn from the same model
 function moments(){
   const host=$('moments'),m=mode==='mistake'?'mistake':'correct';
-  const times=m==='mistake'?[['Start',0.02],['Throw',0.3],['Top',0.7],['Bounce',1.9]]:MOMENTS;
-  host.innerHTML=times.map(([n,tt],i)=>`<button type="button" data-t="${tt}"><img alt="${n}" id="mom${i}"><span>${n} · ${Math.round(pose(m,tt,0,0).M.th/D)}°</span></button>`).join('');
-  host.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{setPlaying(false);t=+b.dataset.t;captions();dirty=true;}));
-  if(!renderer||!W)return;
-  const saved=figures;for(const f of saved)f.grp.visible=false;
-  const tmp=makeFigure(m,0);figures=[tmp];
-  setCam({yaw:28*D,pitch:9*D,dist:3.2,tgt:[0,0.95,0]},true);
-  times.forEach(([n,tt],i)=>{render(tt,1000,true);$('mom'+i).src=canvas.toDataURL('image/jpeg',0.82);});
-  scene.remove(tmp.grp);tmp.grp.traverse(o=>{if(o.geometry)o.geometry.dispose();});
-  for(const f of saved)f.grp.visible=true;figures=saved;dirty=true;
+  const times=m==='mistake'?[['Start',0.02],['Dip',0.1],['Top',0.9],['Bounce',1.95]]:[['Start',0.02],['Half-way',0.5],['Top',1.2],['Lowering',2.5]];
+  host.innerHTML='';
+  times.forEach(([n,tt])=>{const b=document.createElement('button');b.type='button';
+    const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox',VB.full.join(' '));s.setAttribute('aria-hidden','true');
+    const F=makeFigure(s,m==='mistake',0);const Q=pose2d(m,tt,0);applyPose(F,Q,0);guides(F,Q,null,false);F.path.remove();
+    const sp=document.createElement('span');sp.textContent=`${n} · ${Math.round(Q.thDeg)}°`;b.append(s,sp);
+    b.addEventListener('click',()=>{setPlaying(false);t=tt;captions();dirty=true;});host.appendChild(b);});
 }
+let dirty=true,last=performance.now();
 function frame(now){
   const dt=Math.min(0.05,(now-last)/1000);last=now;
-  if(playing){t+=dt*speed;clock+=dt*speed;if(t>=T){t-=T;rep=(rep+1)%REPS;setWatch();buildPhaseBar();}captions();dirty=true;}
-  if(camGoal){camGoal.t=Math.min(1,camGoal.t+dt/0.45);const e=mj(camGoal.t),f=camGoal.from;
-    cam.yaw=lerp(f.yaw,camGoal.yaw,e);cam.pitch=lerp(f.pitch,camGoal.pitch,e);cam.dist=lerp(f.dist,camGoal.dist,e);cam.tgt=[0,1,2].map(i=>lerp(f.tgt[i],camGoal.tgt[i],e));
-    if(camGoal.t>=1)camGoal=null;dirty=true;}
-  if(dirty||playing){draw(playing?now:1000);dirty=false;}
+  if(playing){t+=dt*speed;if(t>=T){t-=T;rep=(rep+1)%REPS;setWatch();buildPhaseBar();}captions();dirty=true;}
+  if(vbGoal){vbGoal.t=Math.min(1,vbGoal.t+dt/0.45);const e=mj(vbGoal.t);vb=vbGoal.from.map((v,i)=>lerp(v,vbGoal.to[i],e));svg.setAttribute('viewBox',vb.map(v=>v.toFixed(2)).join(' '));if(vbGoal.t>=1)vbGoal=null;}
+  if(dirty||playing){draw(playing?now:0);dirty=false;}
   requestAnimationFrame(frame);
 }
 
-// controls
-['coach','you','side','top','shoulder'].forEach(v=>$('v-'+v).addEventListener('click',()=>goView(v)));
-function setMode(m){mode=m;press(['m-correct','m-mistake','m-compare'],'m-'+m);$('mistakes').hidden=m==='correct';hideTags(['t-side','t-trap','t-ang','t-l0','t-l1']);if(renderer)buildFigures();buildPhaseBar();setWatch();lastLabel='';captions();moments();dirty=true;}
+// ================= controls =================
+function press(ids,on){ids.forEach(id=>$(id).setAttribute('aria-pressed',String(id===on)));}
+function setView(v){view=v;press(['v-full','v-shoulders'],'v-'+v);if(mode==='compare'){setMode('correct');}
+  const to=VB[v];if(matchMedia('(prefers-reduced-motion: reduce)').matches){vb=to.slice();svg.setAttribute('viewBox',vb.join(' '));}else vbGoal={from:vb.slice(),to,t:0};
+  $('viewHint').textContent=v==='shoulders'?'Close-up':'Mirror view';dirty=true;}
+$('v-full').addEventListener('click',()=>setView('full'));$('v-shoulders').addEventListener('click',()=>setView('shoulders'));
+function setMode(m){mode=m;press(['m-correct','m-mistake','m-compare'],'m-'+m);$('mistakes').hidden=m==='correct';if(m==='compare')press(['v-full','v-shoulders'],'');else press(['v-full','v-shoulders'],'v-'+view);build();buildPhaseBar();setWatch();lastLabel='';captions();moments();dirty=true;}
 ['correct','mistake','compare'].forEach(m=>$('m-'+m).addEventListener('click',()=>setMode(m)));
 function setPlaying(p){playing=p;$('play').setAttribute('aria-label',p?'Pause':'Play');$('playIcon').innerHTML=p?'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';last=performance.now();}
 $('play').addEventListener('click',()=>setPlaying(!playing));
 [['s1',1],['s05',0.5],['s025',0.25]].forEach(([id,v])=>$(id).addEventListener('click',()=>{speed=v;press(['s1','s05','s025'],id);}));
 $('scrub').addEventListener('input',e=>{setPlaying(false);t=(+e.target.value/1000)*T*0.9999;captions();dirty=true;});
-let drag=null,pinch=null;const ptrs=new Map();
-canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);drag=[e.clientX,e.clientY];camGoal=null;});
-canvas.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;ptrs.set(e.pointerId,[e.clientX,e.clientY]);
-  if(ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)cam.dist=clamp(cam.dist*pinch/d,0.8,6);pinch=d;dirty=true;return;}
-  if(!drag)return;cam.yaw-=(e.clientX-drag[0])*0.01;cam.pitch=clamp(cam.pitch+(e.clientY-drag[1])*0.008,-8*D,82*D);drag=[e.clientX,e.clientY];
-  press(['v-coach','v-you','v-side','v-top','v-shoulder'],'');dirty=true;});
-const up=e=>{ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!ptrs.size)drag=null;};
-canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
-canvas.addEventListener('wheel',e=>{e.preventDefault();cam.dist=clamp(cam.dist*Math.exp(e.deltaY*0.001),0.8,6);camGoal=null;dirty=true;},{passive:false});
-canvas.addEventListener('keydown',e=>{const k={ArrowLeft:[.12,0],ArrowRight:[-.12,0],ArrowUp:[0,-.08],ArrowDown:[0,.08]}[e.key];if(!k)return;e.preventDefault();cam.yaw+=k[0];cam.pitch=clamp(cam.pitch+k[1],-8*D,82*D);press(['v-coach','v-you','v-side','v-top','v-shoulder'],'');dirty=true;});
-const retheme=()=>{readTokens();palette();if(renderer){paintScene();moments();}dirty=true;};
+const retheme=()=>{readTokens();build();moments();dirty=true;};
 new MutationObserver(retheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
+new ResizeObserver(()=>{dirty=true;}).observe($('chart'));
 
 // start
-if(renderer){initScene();buildFigures();}
-if(!playing)t=0.7;
-buildPhaseBar();setWatch();setPlaying(playing);captions();
-new ResizeObserver(()=>{resize();}).observe(canvas);resize();
-moments();
+if(!playing)t=1.2;
+build();buildPhaseBar();setWatch();setPlaying(playing);captions();moments();
 requestAnimationFrame(frame);
 })();
 </script>
