@@ -3877,6 +3877,125 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// O2: Muscle panel — recovery timeline (real dates), facts, actions, Logged/Try next tabs.
+{
+  const O2_PINNED = new Date(); O2_PINNED.setHours(12, 0, 0, 0);
+  const o2Day = daysAgo => { const d = new Date(O2_PINNED.getTime() - daysAgo * 86_400_000); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const o2Session = (id, exerciseId, name, daysAgo, kg) => {
+    const at = new Date(`${o2Day(daysAgo)}T09:00:00`).toISOString();
+    return {
+      id, splitId: 'sp1', splitName: 'Custom', day: o2Day(daysAgo), startedAt: at, endedAt: at, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId, name, sets: Array.from({ length: 3 }, () => ({ kg, reps: 8, effort: 'ideal' })) }],
+      logging: { mode: 'live', trainedAt: at, trainedEndAt: at, loggedAt: at, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+    };
+  };
+  // Leg Press (2 days ago) + an older Bulgarian Split Squat: both primary-glutes, so Glutes shows
+  // "Logged · 2" with the rest of the library's 16 direct-glutes exercises (minus these 2, capped
+  // at 10) in Try next.
+  const o2Sessions = [o2Session('o2-1', 'lib_leg_press', 'Leg Press', 2, 100), o2Session('o2-2', 'lib_bulgarian_split_squat', 'Bulgarian Split Squat', 10, 20)];
+  const o2StateJson = (sessions, active = null) => JSON.stringify({
+    version: 1, createdAt: new Date().toISOString(), profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+    goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions, active, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: new Date().toISOString() }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+
+  const openMuscle = async (page, stateJson, theme, label) => {
+    await page.addInitScript(([json, t]) => { localStorage.setItem('marc.state.v1', json); localStorage.setItem('marc.theme', t); }, [stateJson, theme]);
+    await page.clock.install({ time: O2_PINNED.getTime() });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(250);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+    await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+    // The "Levels" list shows every muscle regardless of recovery state, so it opens either the
+    // seeded (Glutes) or never-trained (Biceps) case the same reliable way.
+    await page.locator('.seg button', { hasText: 'Levels' }).click(); await page.waitForTimeout(200);
+    await page.locator('.list-row', { hasText: label }).first().click(); await page.waitForTimeout(300);
+  };
+
+  for (const width of [360, 390]) {
+    for (const theme of ['paper', 'silent-black']) {
+      const tag = `muscle panel ${theme} ${width}`;
+      const ctx = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+      page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+      await openMuscle(page, o2StateJson(o2Sessions), theme, 'Glutes');
+
+      if (!(await visible(page.locator('dialog.sheet[open]')))) errors.push(`${tag}: expected the muscle panel to open`);
+      const pctText = await page.locator('.mtl-pct').textContent();
+      if (!/^\d+%$/.test((pctText ?? '').trim())) errors.push(`${tag}: expected a "N%" header, got "${pctText}"`);
+      const pillText = (await page.locator('.mtl-head .chip').textContent())?.trim();
+      if (!['Recovering', 'Ready', 'Held back by soreness'].includes(pillText ?? '')) errors.push(`${tag}: unexpected pill text "${pillText}"`);
+      const tlVals = await page.locator('.mtl-tl-val').allTextContents();
+      if (tlVals.length !== 3) errors.push(`${tag}: expected 3 timeline labels (Trained/Ready/Full), got ${tlVals.length}`);
+      if (tlVals.some(t => t.includes('d to'))) errors.push(`${tag}: a timeline label still reads the old "d to" range: ${JSON.stringify(tlVals)}`);
+
+      const sheetText = await page.locator('dialog.sheet[open]').innerText();
+      for (const bad of ['at a glance', '1 sessions', 'Low confidence']) if (sheetText.includes(bad)) errors.push(`${tag}: sheet still contains "${bad}"`);
+
+      const segLabels = await page.locator('[data-palace="body.muscle-tabs"] .seg button').allTextContents();
+      if (!segLabels.some(t => t.trim() === 'Logged · 2')) errors.push(`${tag}: expected a "Logged · 2" tab, got ${JSON.stringify(segLabels)}`);
+      const expectTryNext = `Try next · ${Math.min(16 - 2, 10)}`;
+      if (!segLabels.some(t => t.trim() === expectTryNext)) errors.push(`${tag}: expected a "${expectTryNext}" tab, got ${JSON.stringify(segLabels)}`);
+
+      const loggedNames = await page.locator('.mtl-tab-list .list-row .small').allTextContents();
+      await page.locator('[data-palace="body.muscle-tabs"] .seg button', { hasText: 'Try next' }).click(); await page.waitForTimeout(200);
+      const tryNextNames = await page.locator('.mtl-tab-list .list-row .small').allTextContents();
+      const overlap = loggedNames.filter(n => tryNextNames.includes(n));
+      if (overlap.length) errors.push(`${tag}: Logged and Try next share an exercise: ${overlap.join(', ')}`);
+
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('.mtl-tl-val')].filter(n => n.scrollWidth > n.clientWidth + 1).map(n => n.textContent));
+      if (clipped.length) errors.push(`${tag}: clipped timeline label(s): ${clipped.join(', ')}`);
+      if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push(`${tag}: horizontal scroll with the muscle panel open`);
+
+      await settle(page);
+      await page.screenshot({ path: `${OUT}/${theme}-muscle-panel-${width}.png` });
+      await ctx.close();
+    }
+  }
+
+  // Live workout: "Add" on a Try next row adds it to state.active.entries and the row flips to "In workout".
+  {
+    const tag = 'muscle panel live Add';
+    const active = { id: 'act1', splitId: 'sp1', startedAt: new Date().toISOString(), pausedMs: 0, entries: [{ id: 'en1', exerciseId: 'lib_leg_press', name: 'Leg Press', sets: [{ kg: 100, reps: 8 }], done: false, skipped: false }] };
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await openMuscle(page, o2StateJson(o2Sessions, active), 'silent-black', 'Glutes');
+    await page.locator('[data-palace="body.muscle-tabs"] .seg button', { hasText: 'Try next' }).click(); await page.waitForTimeout(200);
+    const hipThrustRow = page.locator('.list .list-row', { hasText: 'Hip Thrust' });
+    if (!(await hipThrustRow.count())) {
+      errors.push(`${tag}: expected a "Hip Thrust" row in Try next`);
+    } else {
+      await hipThrustRow.getByRole('button', { name: 'Add' }).click();
+      await page.waitForTimeout(300);
+      if (!(await visible(page.locator('.toast', { hasText: "Added Hip Thrust to today's workout" })))) errors.push(`${tag}: expected the "Added Hip Thrust..." toast`);
+      if (!(await hipThrustRow.getByText('In workout').isVisible().catch(() => false))) errors.push(`${tag}: the Hip Thrust row should read "In workout" after Add`);
+    }
+    await ctx.close();
+  }
+
+  // Never-trained muscle: "Not trained yet", no timeline, Try next selected by default.
+  {
+    const tag = 'muscle panel never trained';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await openMuscle(page, o2StateJson(o2Sessions), 'silent-black', 'Biceps');
+    const pillText = (await page.locator('.mtl-head .chip').textContent())?.trim();
+    if (pillText !== 'Not trained yet') errors.push(`${tag}: expected pill "Not trained yet", got "${pillText}"`);
+    if ((await page.locator('.mtl-pct').textContent())?.trim() !== '—') errors.push(`${tag}: expected "—" for an untrained muscle's percentage`);
+    if (await page.locator('.mtl-timeline').count()) errors.push(`${tag}: a never-trained muscle should not show the timeline`);
+    const selected = await page.locator('[data-palace="body.muscle-tabs"] .seg button[aria-selected="true"]').textContent();
+    if (!selected?.startsWith('Try next')) errors.push(`${tag}: expected "Try next" selected by default, got "${selected}"`);
+    await ctx.close();
+  }
+}
+
 // O1: the theme colour map, and the crash hook clearing the overlay.
 {
   const tag = 'launch theme+crash (O1)';
@@ -3948,4 +4067,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), and O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified.');
