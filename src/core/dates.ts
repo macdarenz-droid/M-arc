@@ -256,3 +256,26 @@ export function formatFullAt(now: number, fullInHours: number): string {
   const at = ceilHour(now + fullInHours * 3_600_000);
   return `${formatDay(dayKey(at), { weekday: 'short', day: 'numeric' })}, ${hourLabelFull(at)}`;
 }
+
+// O2: the muscle-panel timeline's Ready/Full columns are day-only (no times), unlike O3's
+// hour-based readyWindow above.
+
+/** The calendar day `hours` from `now`, as "Today" or `formatDay`'s weekday+day form. */
+export function dayOrToday(now: number, hours: number): string {
+  const key = dayKey(now + hours * 3_600_000);
+  return key === dayKey(now) ? 'Today' : formatDay(key, { weekday: 'short', day: 'numeric' });
+}
+
+/**
+ * The O2 muscle panel's "Ready" column: a day-only window from `readyInHours` ("Mon 28 – Tue 29",
+ * or a single day when lo and hi land on the same day), or null for a null window (the caller
+ * supplies its own fallback text, since that depends on why there's no window).
+ */
+export function readyDayWindow(now: number, window: [number, number] | null): string | null {
+  if (!window) return null;
+  const lo = Math.min(window[0], window[1]);
+  const hi = Math.max(window[0], window[1]);
+  const loKey = dayKey(now + lo * 3_600_000);
+  const hiKey = dayKey(now + hi * 3_600_000);
+  return loKey === hiKey ? dayOrToday(now, lo) : `${dayOrToday(now, lo)} – ${dayOrToday(now, hi)}`;
+}
