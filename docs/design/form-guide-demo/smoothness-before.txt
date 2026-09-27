@@ -1,0 +1,67 @@
+# Smoothness check on the ORIGINAL build (commit 5c0e884), run with the FINAL smooth-check.cjs
+# Method: scratchpad/prove-before.sh copies smooth-check.cjs into a worktree at 5c0e884, inserts the same
+# smoothness block into each original shoot.cjs, and runs them. Every other check passed there (the lat
+# pulldown exited 3 with 4 DECIDED, by design). Only the smoothness lines are kept below.
+
+## rig-final (exit 1)
+PASS chest press smoothness: sampler found 3 joint angles (cp-lever, cp-ua, cp-fa) and 1 grip point(s)
+PASS chest press smoothness: sampler self-test, drawn angle vs written stop at 30 stops, worst 0.0000 deg (limit 0.01)
+  chest press lift: hand (grip) a 11.98 % b 18.93 %; cp-lever [22.48 deg] a 11.43 % b 20.00 % c 3.25x/21 stops; cp-ua [78.33 deg] a 16.80 % b 19.49 % c 4.75x/21 stops; cp-fa [97.11 deg] a 26.32 % b 28.90 % c 7.25x/21 stops
+FAIL chest press smoothness (a) lift: speed over the first and last 1/120 s at most 26.32 % of the phase's top speed (cp-fa; limit 1 %)
+FAIL chest press smoothness (b) lift: largest velocity step between samples 1/120 s apart 28.90 % of the top speed (cp-fa; limit 8 %)
+FAIL chest press smoothness (c) lift: change of acceleration between keyframe stops at most 7.25 x its median (cp-fa, 21 stops; 3 angle(s) of 10 deg or more; limit 3 x)
+  chest press return: hand (grip) a 14.63 % b 21.89 %; cp-lever [22.48 deg] a 14.35 % b 22.64 % c 3.46x/17 stops; cp-ua [78.33 deg] a 19.68 % b 21.14 % c 3.58x/17 stops; cp-fa [97.11 deg] a 30.76 % b 27.76 % c 5.82x/17 stops
+FAIL chest press smoothness (a) return: speed over the first and last 1/120 s at most 30.76 % of the phase's top speed (cp-fa; limit 1 %)
+FAIL chest press smoothness (b) return: largest velocity step between samples 1/120 s apart 27.76 % of the top speed (cp-fa; limit 8 %)
+FAIL chest press smoothness (c) return: change of acceleration between keyframe stops at most 5.82 x its median (cp-fa, 17 stops; 3 angle(s) of 10 deg or more; limit 3 x)
+PASS chest press smoothness (d): largest joint angle step between samples 1/120 s apart 1.17 deg (cp-fa at t 0.1062; limit 4 deg)
+PASS lateral raise smoothness: sampler found 4 joint angles (lr-ua-l, lr-db-l, lr-ua-r, lr-db-r) and 2 grip point(s)
+PASS lateral raise smoothness: sampler self-test, drawn angle vs written stop at 40 stops, worst 0.0000 deg (limit 0.01)
+  lateral raise lift: right hand (grip) a 11.78 % b 18.69 %; left hand (grip) a 11.78 % b 18.69 %; lr-ua-l [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-db-l [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-ua-r [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-db-r [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops
+FAIL lateral raise smoothness (a) lift: speed over the first and last 1/120 s at most 11.78 % of the phase's top speed (right hand (grip); limit 1 %)
+FAIL lateral raise smoothness (b) lift: largest velocity step between samples 1/120 s apart 18.69 % of the top speed (left hand (grip); limit 8 %)
+FAIL lateral raise smoothness (c) lift: change of acceleration between keyframe stops at most 5.50 x its median (lr-db-l, 21 stops; 4 angle(s) of 10 deg or more; limit 3 x)
+  lateral raise return: right hand (grip) a 14.42 % b 21.69 %; left hand (grip) a 14.42 % b 21.69 %; lr-ua-l [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-db-l [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-ua-r [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-db-r [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops
+FAIL lateral raise smoothness (a) return: speed over the first and last 1/120 s at most 14.42 % of the phase's top speed (left hand (grip); limit 1 %)
+FAIL lateral raise smoothness (b) return: largest velocity step between samples 1/120 s apart 21.69 % of the top speed (left hand (grip); limit 8 %)
+FAIL lateral raise smoothness (c) return: change of acceleration between keyframe stops at most 4.36 x its median (lr-db-l, 17 stops; 4 angle(s) of 10 deg or more; limit 3 x)
+PASS lateral raise smoothness (d): largest joint angle step between samples 1/120 s apart 0.99 deg (lr-db-l at t 0.1146; limit 4 deg)
+
+## anim-machine-chest-press (exit 1)
+PASS chest press smoothness: sampler found 3 joint angles (cp-lever, cp-ua, cp-fa) and 1 grip point(s)
+PASS chest press smoothness: sampler self-test, drawn angle vs written stop at 30 stops, worst 0.0000 deg (limit 0.01)
+  chest press lift: hand (grip) a 11.80 % b 19.23 %; cp-lever [26.00 deg] a 11.94 % b 19.40 % c 4.33x/21 stops; cp-ua [89.18 deg] a 16.06 % b 17.94 % c 4.41x/21 stops; cp-fa [107.99 deg] a 26.00 % b 26.81 % c 7.02x/21 stops
+FAIL chest press smoothness (a) lift: speed over the first and last 1/120 s at most 26.00 % of the phase's top speed (cp-fa; limit 1 %)
+FAIL chest press smoothness (b) lift: largest velocity step between samples 1/120 s apart 26.81 % of the top speed (cp-fa; limit 8 %)
+FAIL chest press smoothness (c) lift: change of acceleration between keyframe stops at most 7.02 x its median (cp-fa, 21 stops; 3 angle(s) of 10 deg or more; limit 3 x)
+  chest press return: hand (grip) a 14.49 % b 21.98 %; cp-lever [26.00 deg] a 14.86 % b 22.00 % c 4.02x/17 stops; cp-ua [89.18 deg] a 18.93 % b 19.18 % c 3.28x/17 stops; cp-fa [107.99 deg] a 30.23 % b 25.48 % c 5.69x/17 stops
+FAIL chest press smoothness (a) return: speed over the first and last 1/120 s at most 30.23 % of the phase's top speed (cp-fa; limit 1 %)
+FAIL chest press smoothness (b) return: largest velocity step between samples 1/120 s apart 25.48 % of the top speed (cp-fa; limit 8 %)
+FAIL chest press smoothness (c) return: change of acceleration between keyframe stops at most 5.69 x its median (cp-fa, 17 stops; 3 angle(s) of 10 deg or more; limit 3 x)
+PASS chest press smoothness (d): largest joint angle step between samples 1/120 s apart 1.42 deg (cp-fa at t 0.1062; limit 4 deg)
+
+## anim-dumbbell-lateral-raise (exit 1)
+PASS lateral raise smoothness: sampler found 4 joint angles (lr-ua-l, lr-db-l, lr-ua-r, lr-db-r) and 2 grip point(s)
+PASS lateral raise smoothness: sampler self-test, drawn angle vs written stop at 40 stops, worst 0.0000 deg (limit 0.01)
+  lateral raise lift: right hand (grip) a 11.78 % b 18.69 %; left hand (grip) a 11.78 % b 18.69 %; lr-ua-l [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-db-l [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-ua-r [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops; lr-db-r [76.00 deg] a 11.78 % b 18.69 % c 5.50x/21 stops
+FAIL lateral raise smoothness (a) lift: speed over the first and last 1/120 s at most 11.78 % of the phase's top speed (right hand (grip); limit 1 %)
+FAIL lateral raise smoothness (b) lift: largest velocity step between samples 1/120 s apart 18.69 % of the top speed (left hand (grip); limit 8 %)
+FAIL lateral raise smoothness (c) lift: change of acceleration between keyframe stops at most 5.50 x its median (lr-db-l, 21 stops; 4 angle(s) of 10 deg or more; limit 3 x)
+  lateral raise return: right hand (grip) a 14.42 % b 21.69 %; left hand (grip) a 14.42 % b 21.69 %; lr-ua-l [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-db-l [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-ua-r [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops; lr-db-r [76.00 deg] a 14.42 % b 21.69 % c 4.36x/17 stops
+FAIL lateral raise smoothness (a) return: speed over the first and last 1/120 s at most 14.42 % of the phase's top speed (left hand (grip); limit 1 %)
+FAIL lateral raise smoothness (b) return: largest velocity step between samples 1/120 s apart 21.69 % of the top speed (left hand (grip); limit 8 %)
+FAIL lateral raise smoothness (c) return: change of acceleration between keyframe stops at most 4.36 x its median (lr-db-l, 17 stops; 4 angle(s) of 10 deg or more; limit 3 x)
+PASS lateral raise smoothness (d): largest joint angle step between samples 1/120 s apart 0.99 deg (lr-db-l at t 0.1146; limit 4 deg)
+
+## anim-lat-pulldown (exit 1)
+PASS lat pulldown smoothness: sampler found 6 joint angles (lp-fua, lp-ffa, lp-cable-f, lp-ua, lp-fa, lp-bar) and 1 grip point(s)
+PASS lat pulldown smoothness: sampler self-test, drawn angle vs written stop at 54 stops, worst 0.0000 deg (limit 0.01)
+  lat pulldown lift: near hand (grip) a 4.91 % b 25.28 %; lp-fua [171.11 deg] a 15.83 % b 17.59 % c 6.15x/22 stops; lp-ffa [135.87 deg] a 35.67 % b 27.17 % c 15.59x/22 stops; lp-cable-f [23.77 deg] a 1.14 % b 80.68 % c 12.84x/22 stops; lp-ua [187.56 deg] a 6.40 % b 17.03 % c 4.75x/22 stops; lp-fa [149.29 deg] a 12.14 % b 22.88 % c 7.60x/22 stops; lp-bar [52.06 deg] a 15.80 % b 40.54 % c 7.67x/22 stops
+FAIL lat pulldown smoothness (a) lift: speed over the first and last 1/120 s at most 35.67 % of the phase's top speed (lp-ffa; limit 1 %)
+FAIL lat pulldown smoothness (b) lift: largest velocity step between samples 1/120 s apart 80.68 % of the top speed (lp-cable-f; limit 8 %)
+FAIL lat pulldown smoothness (c) lift: change of acceleration between keyframe stops at most 15.59 x its median (lp-ffa, 22 stops; 6 angle(s) of 10 deg or more; limit 3 x)
+  lat pulldown return: near hand (grip) a 5.89 % b 32.87 %; lp-fua [171.11 deg] a 12.19 % b 21.21 % c 12.42x/20 stops; lp-ffa [135.87 deg] a 26.64 % b 30.45 % c 19.45x/20 stops; lp-cable-f [23.67 deg] a 1.40 % b 92.78 % c 10.69x/20 stops; lp-ua [187.56 deg] a 7.82 % b 19.52 % c 9.92x/20 stops; lp-fa [149.23 deg] a 8.80 % b 29.03 % c 12.68x/20 stops; lp-bar [51.83 deg] a 19.15 % b 46.49 % c 4.73x/20 stops
+FAIL lat pulldown smoothness (a) return: speed over the first and last 1/120 s at most 26.64 % of the phase's top speed (lp-ffa; limit 1 %)
+FAIL lat pulldown smoothness (b) return: largest velocity step between samples 1/120 s apart 92.78 % of the top speed (lp-cable-f; limit 8 %)
+FAIL lat pulldown smoothness (c) return: change of acceleration between keyframe stops at most 19.45 x its median (lp-ffa, 20 stops; 6 angle(s) of 10 deg or more; limit 3 x)
+PASS lat pulldown smoothness (d): largest joint angle step between samples 1/120 s apart 2.92 deg (lp-ua at t 0.1271; limit 4 deg)

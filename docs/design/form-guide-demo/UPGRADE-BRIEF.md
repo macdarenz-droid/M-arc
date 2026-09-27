@@ -5,6 +5,16 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 ## What the owner asked (2026-09-27)
 "Improve the animation more, i like it but more smooth and details on figure." The owner's screenshots showed the Dumbbell Lateral Raise (front view) and the Machine Chest Press (side view). The owner likes the design; keep its look, controls and layout.
 
+## Status (2026-09-27, upgrade built; final numbers in the PR body of #36)
+Done on branch `claude/marc-form-guide-smoothness-fiuy2y` (draft PR #36 into `claude/marc-regression-architecture-gegkbq`):
+- **Smoothness check:** `smooth-check.cjs` (shared), wired into the rig's and every player's `shoot.cjs`. Proof that it bites: `smoothness-before.txt` holds its output on the original build (30 failures; e.g. chest press lift (a) 26 %, (b) 29 %, (c) 7.3x; lat pulldown (b) 93 %, (c) 19.5x). On the upgraded build every player passes; worst values after the polish round: (a) 0.2 %, (b) 6.8 %, (c) 2.6x, (d) 3.2 deg.
+- **Timing:** minimum-jerk moves; a pose every 0.5 % of the rep, 0.25 % in the 1 s lift (the fallback below, taken for headroom: decisions D-L2, D-R1); 4-decimal keyframes (D-S3). The chest press keeps its hand on a fitted pace curve (D-S4); the lat pulldown's path, elbow direction and shoulder blades are single fitted curves (`anim-lat-pulldown/fit-motion.mjs`, D-L1).
+- **Figure:** RIG.md §20 (head, clothing, muscle facets, hands that wrap the handle, 3-tone token shading, rim line, contact shadows, target-muscle glow on the move timing, torso secondary motion as facets, equipment detail); polish round 2 removed the elbow ring, thickened the forearm, made the thumb read at 1x, and rebalanced the tones (D-R1..D-R6).
+- **Three independent reviews** (one per player, 89-161 frames each) drove the polish round; their defects are all closed.
+- **Canvas:** the 3 `Player-*.dc.html` files carried by exact-match edits; parity checkers for all three (`canvas-check.cjs` for the chest press and the lateral raise, `dc-stage.cjs` for the lat pulldown). `canvas-preview/` renders all 13 artboards as a normal page, published to the owner because this account has no Design canvas type (D-P1).
+- **Docs:** the doc lag in step 4 of the order of work is cleared (spec 2.3, 2.4, 2.5, 3.1, 3.2, 3.5, 3.7; RIG.md §9, §15, §17).
+- **Next:** the app build from `docs/GUIDE-UPGRADE-ARCHITECTURE.md` 5.0 (R1) and its card GU-7a.
+
 ## Scope
 - In: the shared figure rig, the 3 players, and their 3 canvas artboards.
 - Out: app code (`src/`, `tests/`, `scripts/`), the flow and theme artboards, and new features. This is a design demo only.
@@ -15,11 +25,13 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 - `anim-dumbbell-lateral-raise/build.mjs`: builds from `rig-final/lateral-raise.html` and `poses.json`, and writes `index.html` and `PLAYER.md`.
 - `anim-lat-pulldown/gen.mjs`: a standalone rig for this player. It writes `index.html`, `poses.json` and `PLAYER.md`.
 - `*/shoot.cjs`: the checks and screenshots for each player (Playwright). Each writes `checks.txt` and saves shots in `shots/`, which git ignores. `quick.cjs` and `crop.cjs` are helpers.
+- Shared checkers, required by every `shoot.cjs`: `smooth-check.cjs` (the smoothness check below), `rig-final/muscle-check.cjs` (the target muscle stays visible at the hardest point), `rig-final/caption-check.cjs` (the caption row never overflows; it draws with `rig-final/fonts/Roboto-latin.woff2`, OFL, harness-only, because the canvas uses Roboto and this sandbox cannot fetch Google Fonts).
+- `anim-lat-pulldown/fit-motion.mjs`: refits the lat pulldown's motion constants when its path, grip or shoulder-blade geometry changes.
 - Canvas checkers, which test the shipped artboard rather than the harness:
-  - `anim-machine-chest-press/canvas-check.cjs` renders `Player-MachineChestPress.dc.html` with a stand-in canvas runtime and runs its probes;
+  - `anim-machine-chest-press/canvas-check.cjs` and `anim-dumbbell-lateral-raise/canvas-check.cjs` render the artboard with a stand-in canvas runtime, run its probes, and check parity with the harness (same CSS apart from the listed canvas-only edits, same keyframes, same stage);
   - `anim-lat-pulldown/dc-stage.cjs` compares `Player-LatPulldown.dc.html` with the harness rule by rule and writes `dc-render.html`;
   - `anim-lat-pulldown/indep.cjs <page.html>` measures either page;
-  - the lateral raise has no canvas checker.
+  - `canvas-preview/` (`node build.mjs && node check.cjs`) renders all 13 artboards through a stand-in runtime and checks each player's stage against its harness.
 - PLAYER.md files also name `work/` tools. Those were scratch files and are not kept, apart from the canvas checkers above.
 - `project/*.dc.html` and `project/canvas.json`: the published canvas files, which are what the owner sees. The 3 `Player-*.dc.html` files were assembled from each player's pieces (PLAYER.md, Pieces A-C) and then edited for the canvas (text zoom `--tz`, fonts). A rebuild does NOT update them, so carry every change into them by exact-match edits.
 - `FORMAT-RULES.md` holds the canvas file format rules. `spec.md` holds the screens and each exercise's truth table.
@@ -28,14 +40,14 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 1. Run `npm ci` in the repo root. The scripts find Playwright in the repo's `node_modules`.
 2. Choose the browser the same way the repo's gate does: set `MARC_CHROMIUM` to a Chrome or Chromium binary, for example `MARC_CHROMIUM=/opt/pw-browsers/chromium` in Claude Code cloud sessions. Without it, the scripts use Playwright's bundled browser.
 
-**Baseline, checked 2026-09-27 on a fresh copy:**
+**Baseline before the upgrade, checked 2026-09-27 on a fresh copy (commit 5c0e884; the lat pulldown's exit 3 is gone since step 4 of the order of work):**
 - all 4 builds reproduce the committed files byte for byte;
 - the rig, chest press and lateral raise `shoot.cjs` scripts print ALL CHECKS PASSED;
 - `canvas-check.cjs` and `dc-stage.cjs` pass;
 - the lat pulldown `shoot.cjs` exits 3 with "NO FAILURES; 4 DECIDED". That is by design. Its four `decidedCheck(` calls (lines 33, 34, 38 and 44) mark spec values that decisions D1-D3 changed. The script does not read `spec.md`, so step 4 of the order of work changes those calls, and after that it must exit 0.
 
-## Why the motion looks jerky today
-`rig-final/gen.mjs:239-244` times each move with `inOut`, which is two cubic-bezier halves (`easeIn .4,0,1,1` / `easeOut 0,0,.6,1`). The poses are sampled into keyframe stops joined by straight lines, so speed changes in steps between stops. `anim-lat-pulldown/gen.mjs:240-241` has the same timing. Its known leftover is that the far elbow starts and stops a little sharply.
+## Why the motion looked jerky before the upgrade
+At 5c0e884, `rig-final/gen.mjs:239-244` timed each move with `inOut`, which is two cubic-bezier halves (`easeIn .4,0,1,1` / `easeOut 0,0,.6,1`). The poses are sampled into keyframe stops joined by straight lines, so speed changes in steps between stops. `anim-lat-pulldown/gen.mjs:240-241` has the same timing. Its known leftover is that the far elbow starts and stops a little sharply.
 
 ## Smoothness target (apply exactly)
 1. **Timing:** replace `inOut` with a minimum-jerk profile for each move phase, `p(x) = 10x³ − 15x⁴ + 6x⁵`. Speed and acceleration are then zero at the start and end of every move, with no kink at mid-move. Keep the rep structure: lift 0-25%, hold to 37.5%, return to 87.5%, reset pause to 100%. Keep the 1 s up / 2 s down tempo unless a truth table says otherwise.
@@ -150,7 +162,7 @@ Use an independent check, not the builder's own word.
   - Branch from `claude/marc-regression-architecture-gegkbq` to a new `claude/*` branch, or use the `claude/*` branch your session is given.
   - Don't merge `origin/main` into it. That base is 40 commits behind main, so a merge would pull app code into the diff; AGENTS.md's merge-main step is for PRs into main. If the base branch moves, merge `origin/claude/marc-regression-architecture-gegkbq` instead.
   - Commit the source changes and open a draft PR into `claude/marc-regression-architecture-gegkbq`.
-  - Update this brief and `README.md` in place.
+  - Update this brief and `README.md` in place. (Done: the Status section above.)
 - **Relay:**
   - Post short progress notes to the M/ARC project's Relay.
   - When you finish, add one line to `LOG.md`: what changed, the commit and the check numbers.
