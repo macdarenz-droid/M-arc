@@ -290,3 +290,53 @@ describe('F13 Part B: a carry logged as kg × reps shows its weight in the targe
     expect(pushup.kg).toBeNull();
   });
 });
+
+describe('BUG-11: a load the user really lifted is never snapped away', () => {
+  const lat = 'lib_dumbbell_lateral_raise';
+  const last = [{ kg: 7, reps: 13, effort: 'hard' as const }, { kg: 7, reps: 13, effort: 'hard' as const }, { kg: 7, reps: 12, effort: 'max' as const }];
+
+  it('A1: no dumbbell profile saved, last 7x13 with a max set → 7 kg x 14, not 6 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext([session('2026-09-15', [{ id: lat, sets: last }])], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.mode).toBe('hold');
+    expect(n.kg).toBe(7);
+    expect(n.value).toBe(7);
+    expect(n.target).toBe('7 kg · 14 reps');
+    expect(n.sets.every(x => x.kg === 7)).toBe(true);
+    expect(n.snappedFromKg).toBeUndefined();
+  });
+
+  it('A1: the logged lb value is kept when the gym profile is in lb', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const lbSet = { kg: 7.711, entered: { value: 17, unit: 'lb' as const }, reps: 12, effort: 'max' as const };
+    const n = suggestNext([session('2026-09-15', [{ id: lat, sets: [lbSet, lbSet] }])], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.target).toBe('17 lb · 13 reps');
+  });
+
+  it('A2: an increase from a logged off-ladder load still snaps up to the rack', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const top = sets(7, 15, 'ideal');
+    const n = suggestNext([session('2026-09-12', [{ id: lat, sets: top }]), session('2026-09-15', [{ id: lat, sets: top }])], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.mode).toBe('increase');
+    expect(n.kg).toBe(8);
+    expect(n.snappedFromKg).toBeUndefined();
+  });
+
+  it('A3: a first-time off-ladder start still snaps to the rack, and says so', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext([], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'kg') });
+    expect(n.mode).toBe('start');
+    expect(n.kg).toBe(2);
+    expect(n.snappedFromKg).toBe(2.5);
+    expect(n.reason).toMatch(/nearest weight your equipment has/);
+  });
+
+  it('a load logged in another unit is not treated as loadable on this profile', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const n = suggestNext([session('2026-09-15', [{ id: lat, sets: last }])], lat, 'lean', today, 3, [], { equipment: defaultProfile('Dumbbells', 'lb') });
+    expect(n.unit).toBe('lb');
+    expect(n.value).toBe(15);
+    expect(n.snappedFromKg).toBe(7);
+    expect(n.reason).toMatch(/Moved to 15 lb, the nearest weight your equipment has/);
+  });
+});

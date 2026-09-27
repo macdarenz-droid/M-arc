@@ -11,7 +11,7 @@
  *  8. Otherwise                      → add a rep.
  */
 import type { Deload, EquipmentProfile, Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
-import { loadableNear, loadableTopKg } from './units';
+import { loadableNear, loadableTopKg, type Loadable } from './units';
 import { kgToDisplay } from '@/core/units';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
@@ -34,6 +34,8 @@ export interface Suggestion {
   /** With an equipment profile (§25.4): the target in the equipment's own unit, e.g. 55 lb. */
   unit?: LoadUnit;
   value?: number;
+  /** BUG-11: the kg before the equipment snap, set only when the snap moved the headline load. */
+  snappedFromKg?: number;
 }
 
 /** More than this many days away: repeat the last load once. */
@@ -88,6 +90,30 @@ export interface ProgressionContext {
 
 const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', reduce: 'down', deload: 'down' };
 
+/** A load the user already logged for this exercise, in canonical kg and as entered. */
+interface LoggedLoad { kg: number; value: number; unit: LoadUnit }
+
+/**
+ * BUG-11: the loads the user really lifted on this exercise, in the profile's unit. A 7 kg
+ * dumbbell the user logged exists in their gym even when the built-in ladder (2, 4, 6, 8, 10,
+ * 12.5 …) has no 7, so a hold at 7 must not be snapped to 6. Only loads entered in the
+ * profile's own unit count: a kg entry says nothing about an lb rack.
+ */
+function loggedLoads(sessions: Session[], exerciseId: string, custom: Exercise[], unit: LoadUnit): LoggedLoad[] {
+  const out: LoggedLoad[] = [];
+  for (const h of exerciseHistory(sessions, exerciseId, custom)) {
+    for (const x of h.sets) {
+      if (!(x.kg != null && x.kg > 0)) continue;
+      const u = x.entered?.unit ?? 'kg';
+      if (u !== unit) continue;
+      out.push({ kg: x.kg, value: x.entered?.value ?? kgToDisplay(x.kg, unit), unit });
+    }
+  }
+  return out;
+}
+
+const loggedAt = (kg: number, logged: LoggedLoad[]): LoggedLoad | undefined => logged.find(l => Math.abs(l.kg - kg) <= 0.011);
+
 /**
  * Restates a suggestion's loads as loads the equipment can make, in its own unit.
  * QA3-11b: `force` overrides the mode-based direction. A carry/sled (mode 'distance'/'duration')
@@ -95,7 +121,7 @@ const SNAP_DIRECTION: Partial<Record<Mode, 'up' | 'down'>> = { increase: 'up', r
  * 'nearest' like anything else - blanket 'down' rounded a normal-week 32 kg carry down to 30 for no
  * reason, and swallowed an Escobar increase entirely.
  */
-function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down', scaled = false): Suggestion {
+function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning = false, force?: 'up' | 'down', scaled = false, logged: LoggedLoad[] = []): Suggestion {
   if (s.kg == null) return s;
   // QA3-3: a conditioning load above the ladder's range keeps the logged weight. A heavier
   // trap-bar carry must not be capped down to the dumbbell rack's top just because the equipment
@@ -116,15 +142,27 @@ function snapToEquipment(s: Suggestion, profile: EquipmentProfile, conditioning 
     return { ...s, unit: profile.unit, value, target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${value} ${profile.unit}`) : s.target };
   }
   const dir = force ?? SNAP_DIRECTION[s.mode] ?? 'nearest';
-  const snap = loadableNear(s.kg, profile, dir);
+  // BUG-11: with no direction of its own (hold, confirm, plateau, re-entry…), a load already
+  // logged for this exercise is loadable as it is. Increases, reductions and deloads still snap.
+  const keep = (kg: number): Loadable | undefined => {
+    const l = dir === 'nearest' ? loggedAt(kg, logged) : undefined;
+    return l && { kg: l.kg, value: l.value, unit: l.unit };
+  };
+  const snap = keep(s.kg) ?? loadableNear(s.kg, profile, dir);
   const oldLabel = `${s.kg} kg`;
+  const moved = Math.abs(snap.kg - s.kg) > 0.011;
+  // BUG-11: say when the snap moved a load with no direction of its own, so the reps are read
+  // against the new load and the coach can name the equipment, not recovery, as the reason.
+  const flag = moved && dir === 'nearest' ? ` Moved to ${snap.value} ${snap.unit}, the nearest weight your equipment has, so the reps may need to change.` : '';
   return {
     ...s,
     kg: snap.kg,
     unit: snap.unit,
     value: snap.value,
     target: s.target.includes(oldLabel) ? s.target.replace(oldLabel, `${snap.value} ${snap.unit}`) : s.target,
-    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: loadableNear(x.kg, profile, dir).kg })),
+    reason: s.reason + flag,
+    sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: (keep(x.kg) ?? loadableNear(x.kg, profile, dir)).kg })),
+    ...(moved ? { snappedFromKg: s.kg } : {}),
   };
 }
 
@@ -148,7 +186,9 @@ export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalI
     // QA3-3c: a lighter week or any Escobar load factor scales the kg with half(), losing the
     // precision an above-the-rack lb restatement needs to land on a clean number.
     const scaled = !!ctx.deload || (ctx.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor !== 1);
-    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled);
+    // BUG-11: only a weighted lift keeps its logged loads; carries keep their QA3-11b rung rules.
+    const logged = mode === 'weighted' ? loggedLoads(sessions, exerciseId, custom, ctx.equipment.unit) : [];
+    s = snapToEquipment(s, ctx.equipment, mode === 'conditioning', force, scaled, logged);
   }
   return s;
 }
