@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Train workouts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&amp;display=swap">
+<style>
+body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+/* Main: the owner's Train screen. Every class starts with mn- so nothing here reaches the imported About sheet.
+   Text is drawn at 80% of the stylesheet sizes (--tz). Measured on the owner's screenshot: 1 CSS px = 2.6 screen px
+   (44 px button, 58 px nav), and the widths and heights of "Workouts", the row names, the card title, the Start label,
+   the dock label and the gym chip all come out at 0.80 of Roboto at the stylesheet sizes. Boxes (buttons 44, pills 38,
+   chip 36, dock 40, nav 58) keep their stylesheet sizes, as on his phone.
+   Small pills keep a full 44 px touch box: a transparent border around the drawn face (background-clip: padding-box,
+   1 px ring drawn as an inset shadow) and an equal negative margin, so the layout matches the stylesheet.
+   Text colours: the stylesheet uses --text-3 for hints, the eyebrow and idle nav labels; that is below 4.5:1 on these
+   surfaces, so this board uses --text-2 for them. */
+.mn-root{--tz:.8;--mn-focus:color-mix(in srgb,var(--accent) 80%,var(--text));position:relative;overflow:hidden;background:var(--bg);color:var(--text);font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:calc(16px * var(--tz));line-height:1.4;-webkit-font-smoothing:antialiased}
+.mn-b{appearance:none;-webkit-appearance:none;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;line-height:inherit;text-align:inherit;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+.mn-b:focus-visible{outline:2px solid var(--mn-focus);outline-offset:2px}
+.mn-svg{display:block;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mn-scroll{position:absolute;inset:0;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:12px 16px 140px;scrollbar-width:none}
+.mn-scroll::-webkit-scrollbar{display:none}
+.mn-topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 18px}
+.mn-eyebrow{font-size:calc(11px * var(--tz));font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.mn-h1{margin:0;font-size:calc(28px * var(--tz));font-weight:650;letter-spacing:-.02em;line-height:1.15;color:var(--text)}
+.mn-h2{margin:0;font-size:calc(17px * var(--tz));font-weight:600;letter-spacing:-.01em;color:var(--text)}
+.mn-hint{font-size:calc(12px * var(--tz));color:var(--text-2)}
+/* "+ Split": quiet small button (34 px drawn), 44 px touch box. */
+.mn-split{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin:-5px 0;padding:0 13px;border-radius:var(--radius-md);color:var(--text-2);font-size:calc(13px * var(--tz));font-weight:600;white-space:nowrap;transition:transform 200ms cubic-bezier(.2,0,0,1)}
+.mn-split:active{transform:scale(.97);transition-duration:100ms}
+.mn-gymrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+/* Gym chip: 36 px face, 44 px touch box. */
+.mn-chip{display:inline-flex;align-items:center;gap:4px;min-height:44px;margin:-4px;padding:0 13px;border:4px solid transparent;border-radius:999px;background:var(--surface-2);background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--border);color:var(--text-2);font-size:calc(12px * var(--tz));font-weight:600;white-space:nowrap;transition:scale 200ms cubic-bezier(.2,0,0,1)}
+.mn-chip:active{scale:.95;transition-duration:100ms}
+.mn-chip:focus-visible{outline-offset:-2px}
+/* Split pills: 38 px face, 44 px touch box; the strip clips 12 px from the edge, as on his phone. */
+.mn-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 4px 8px;margin:-2px -4px 0;scrollbar-width:none}
+.mn-tabs::-webkit-scrollbar{display:none}
+.mn-tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:44px;margin:-3px;padding:0 15px;border:3px solid transparent;border-radius:999px;background:var(--surface-1);background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--border);color:var(--text-2);font-size:calc(13px * var(--tz));font-weight:600;white-space:nowrap;transition:scale 200ms cubic-bezier(.2,0,0,1)}
+.mn-tab:active{scale:.95;transition-duration:100ms}
+.mn-tab:focus-visible{outline-offset:-1px}
+.mn-tab-on{background-color:var(--text);color:var(--bg);box-shadow:none}
+.mn-dot{flex:none;width:8px;height:8px;border-radius:50%}
+.mn-card{background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:16px}
+.mn-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mn-icon{display:inline-grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;color:var(--text-2);transition:transform 200ms cubic-bezier(.2,0,0,1)}
+.mn-icon:active{transform:scale(.97);transition-duration:100ms}
+.mn-list{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;margin-top:6px}
+/* Rows: pressable (they open the About sheet). Padding 10.8 instead of the stylesheet's 12: this board is 32 px shorter than
+   his screen, and 10.8 keeps the same 20 px gap between the Start button and the Escobar chip, with the chip covering
+   "Log a past session" the same way, as in his screenshot.
+   The divider sits on the text column, as in the screenshot. */
+.mn-row{position:relative;display:flex;align-items:center;gap:12px;width:calc(100% + 16px);min-width:0;min-height:52px;margin:0 -8px;padding:10.8px 8px;border-radius:var(--radius-sm);text-align:left;transition:background-color 150ms cubic-bezier(.2,0,0,1)}
+.mn-row::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:1px;background:var(--border-subtle)}
+.mn-row:last-child::after{display:none}
+.mn-row:active{background:var(--surface-3);transition:none}
+.mn-row:active .mn-sub,.mn-row:active .mn-trail{color:color-mix(in srgb,var(--text-2) 75%,var(--text))}
+.mn-row:focus-visible{outline-offset:-2px}
+.mn-grow{display:block;flex:1;min-width:0}
+.mn-name{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--text)}
+.mn-sub{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:calc(12px * var(--tz));color:var(--text-2)}
+.mn-trail{flex:none;font-size:calc(12px * var(--tz));color:var(--text-2);font-variant-numeric:tabular-nums}
+.mn-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;padding:0 16px;border:1px solid transparent;border-radius:var(--radius-md);font-size:calc(14px * var(--tz));font-weight:600;white-space:nowrap;transition:transform 200ms cubic-bezier(.2,0,0,1)}
+.mn-btn:active{transform:scale(.97);transition-duration:100ms}
+.mn-primary{margin-top:12px;background:var(--mn-primary);color:var(--on-accent)}
+.mn-quiet{background:transparent;color:var(--text-2)}
+/* The real Escobar mark (src/assets/escobar-mark.png) as a mask, painted with currentColor like the app does. */
+.mn-mark{--mn-mark:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAWk0lEQVR42u1debxVVRVGSB+mkSmKaVkGOTwRTMCcwZ4DZmkqikOIQ5KhophgWsogauSQmTghWDggTym1BAPUVMSZqEADFTGFzHCARHHA1f466/w493CHM+zp3LvW7/f9Ae/ee87Ze31nr732GtoQURuBoFEhgyAQAggEQgCBQAggEAgBBAIhgEAgBBAIhAACgRBAIBACCARCAIFACCAQCAEEAiGAQCAEEAiEAAKBEEAgEAIIBEIAgUAIIIhgc4VmhT0U+ikcVQH4224KOyp8VsZNCFA0dFI4QGGIwq8VpinMV/g3pZM1CosVnlaYrDCKCdJFxlgI4BM2VThU4UqFWQrLyay8r/CkwjiF4xW2lDkQArh4yw9Q+I3CUnIrINwUhRPYzJL5EQIYQZNCX4VbFN4kP2Upm117yHwJAXShg8IghdlUHPlA4W6FI5m4Mo9CgEyKP5g3sEWWhxUOVmgrcyoESIL2CifXgeJH5SOF3yn0lvkVAlTCZxSOYbdjvQo8SOMVviLzLQSI4msKdyh8Qo0hSxSOE7NICLC+wokKr1HjCcyiCQpbCAEa15c/iU9cG1me4dALIUADoZfCXBIJBeca/YUAjYF+Hh9kuZTVCkPZLBQC1CHaKZzJEy1SXmAOXtNIh2eNFMZwucLHouOJZFyjkKBRlP9a0WkhQSMSYH1e0kWyySVCgOJiPYUx4ubMvTEeLAQoJk5X+FB0OLcgsvQwIUCxcARPnIgeWabQTQhQDHyVGjO0wbQg3bO9EMB/j89U0VVjMlQI4DfOEx01Kv9R+KYQwE/sqfB2AZToUwrCkZFw87jCTIXHFP6u8LzCKs/vH/e6kRDAv/TFJz1VGFRtuIdXp+8q7KSwcRXX7bYKLQpnKdyu8C8Pn+kcIYBfuMBD1yFSEJFrsFXOZ+tIQQkWJLm/55FXaDshgB/oqvCWJ4rxX4UbyVx8/TcUbvKECDcJAfzAJE/senifelnc70xz/Mw4Je4tBHCLFnIf3owN7UCFDRy4fH+k8IbDZ28VAriN9bnHsfJP98AW3oW9Sa5WgX2FAG7wLXIX64PqEVd75A5ETdA7HI3FJCGAG7Q6fOsNo6COkG+n4OMcjMdKdkQIASyiBwVFnmwLVpwzPB4XVyQYIwSwi8scvf1H897D57HZ0MHe6GWFLwgB7J36LnSg/BOpOCmCaJoxz/L4HC8EsBfrb1ueoOI1n9hL4V2LYzRZCGAHN1hWftQQ6llQU/Eii+OEmKcvCgHMmz8vG55IbK5foCBa80GFYwvsKdvEsik0QAhgFvtrVPLnFO6koPLBDyhof4RITVSKblf0E84IjrVIgBuFAGZxfo7leYbCzyloNdq5jhQ8iWv0z5YI8Dx7oYQAhpDGvfeSwnUUNL1I2kr0cxQ0s96HiXIi29EjGWN4xRgd+T9gEH++DwUNrn3LnT3B4iqwlxDADKCcr9YYfASG3UxBGY8ONXzlPdhmhTIj8WR2gt9PIp/yPmUWb9h/rHAQ5c8LyLt3+oclAgwWApgraV5JHucT2kpK9ll+q6N7+20Kixy4UpGu+QgFMUT9yH6D60stPecNQgAzOKZMTM5dFKQZljug2oyCNqEIDVhA/gmSeO5X+KnCfhZsZ+QQ2GgBNVsIYDbtEYrfyvZ2/DMbs/mDbKXXqVgyj0M8+hg6cUad1EctnQd0EgLoxy8oqEjQl8qnRY7x9E2fRZ7jlaFLQQ/G9hIC6MeubMtH32gHsS9/JdWnvMt7lsM0rQp7WzKDjhcCmA+Hvocap60pBDnALTnHDWmbNgIJfyYEMINm3tSuoMaUcOMPImQNy/6Dhfu8TAigFwhPQIujd0gE8iEToU+GsbzCwv1NFgLoQSd+m7wlOl9xRUCewo4pxnSwhfuaKgTIB+TbIojrBdHxRIKitaP47KPW2B5u4X6eilxvBz7nEAIkxDYUVBqQjo7Z3KcHUu3qcqZlfux6iL4dm5CgDU0AnOq+KHqc2yxC1GulHF2YS59aJMDXaW35mjnkWacZn0J2R5C0NdIpSOPsXmasNyXzFacXUOl5TTT2ahl51HPMl6JOd4q+GhEoW78yY276xHwhK354vfmxv+NFdzp5UGHDB/fmg6Knxk2i4bFxn2/4msjFiOZE/K2CKxf31a5RCdBcYWBEzNrkNgiwiEpDNx6r8Dk4OoY1IgGaLUyCiDsCLIiZN9NqrFCDG4kAWyv8RXTSGQE2IPMJQXHC3ZfATDu2qATAaW1vCiIzUbEZlRt2p/IZT4jm/KPoo3WZG3sBvesZASCov7RHBR2D5+pgCvKuoziQ/+aEAEg/vJZvvJwgfOEm3uiG3xkguuhE7o2Zn6ZlXkxXklal+CuVnl+0VThFYXGV7+BvZ1DGQgR5zJjHUrwNto1871XRR+tyZ2Tuelq43v0xffl7wu8hvH2HyPfQmPujBN/Dwd7NWUiQRfnb8wOmkYmR718p+mhdLo2M/5EWrteacdONyhVh3wUc4qVNdPqRDQIckGFA/htZBQ73WFHwJnmFgpImMN9G8BIc2pvd2IToyvscPMvR7MpDmPFUXsbf9+y5To3M3xAL14t2kPy8wmsJvzcz8r1RGa47ywYBzsk4KIfy93f2SDHgh36a9zIoboXSK3nbHsH915nftMhhQCkU193f97O8Ao+M7TmSxh5F8wiyRAcspJSde7JM8MiMg3KUxU1YLZfbLH5rQ+FtnERuxwSbQkF9IJvybwqabYf3YsML90MqLdOeVG6mfC2wXk67DyhXVqQ/K3lY/g+Ku2EdEOAFtoWrlToHGbanICr1bF6Gx/NkANtoIMNXKYiDmU52WrxOo9IKcUssXPPQyDWPTvG9CTkJgEjiaLvarvyiG8lzeRbFkofildeeqvDDyCPdpKAEQC2cE6l8qcT12CSDG+23bL9X8zo0a14ZkNx/cQovSRY5P3K9gy3to6JN885N8d3f5CQAYpDCEAw0Ulle5jMrWIebogTYjjd/SXbYRSHADB6EcuVE8Ba4kAJXbtIQ7Pf47W2q7ml/vmedlS7WUGmNnkssjDv0KFq+5lqLBAhXAEQY/7PGZ0dFCZCk68ptBSHAHL5WXPHbMyGmULY6QvHl1VQq6Ld58nWYR1jRw7BkKKWNEJSZsWeaZdEECjfBPRJ8FivBDmncVK2eEwDPcGYZL04T26GP5Pz9+WQ3TqUPm55rctzzhZHfO9DSyntd5Jo41V2W4rvjNW2Cd034+SFpFNJXAsCVeSuVhlxEbd6HNV3HNgHCbKojeVVLKytiG76rLBEg2kd535TfzUuAJfwC7JHw8yPTKOSdHhIABXAHlnFl4sDqds1eFhcEiO4RzqbkB0pRkzVc5W21lt2HSkMZ0kheN+hiNvV2M0GA2z0jAAKsdqqgMI8bmNgXyX2fYKxySSpmrKbSoln9LSn/SzET9PeOCNDTBAF82gQj5KBjFUUxkfCBEOKtyX0O9WfYzKi2kb8v9p3JlggQDbrbjNKXqM9LgFd5tUxa+mV0EQkwgWrXlzGV8dRMnlQz4Df8Xyq4Pg+n0sJUtmqpDo1c96iMc5uHAKELtnu9mkDjEpghTWSuttAuHhEgTEa6NXaP91JpRYbLLSn/x2x751l1JuYkQBhNaoQAkx0SAKeLVye0wU3WvTnMMwKEhMeb9x1GDyqNQVpuiQBPRJwRnTOuOnkPwsJzgG+YIMAURwTAhg7+7KSHUFsanPSTPCRA1M8/KPZ/15E9iUaAInbs+gy/cUtOAixiPdnVBAFcuEHx5j83pSKYXAFGeEyAOBACbSsvYXVs5QlP3tOSYLwGAqxvygt0hwMCTKD04QdN7I4zIbcURPnhCZlD9uT+CveB84cZKX7nRk0EMLIC2PYCIY5l84wKYKr03xMFIcBIsisDq9zL9pQ8D1wXAYzsAX5rkQBIodw7hwKYcoMimWUrz5UfXTTfs6j82HhuUuOeUA0kSZRrXhMoDFgsPAEuz6kEJiuf7e+x8m9P9kIeQrmIkh3e3W3BDbrIJAFs7QFe1PCWnWlwwod7qvwwF20XGkZs0pcS3l9PXtltuEGNbIJtRYOeo0EZWg1O+u893fTeS/ZlZMr7rOWWzesGxUFYO1ObYBvnAItzbHyjuNrgpL9B1eOQXByE3eBA+dO8/aPNzt83bAJhE9y9qAS4RJNSXGh48o/wRPk3IruHXVE5O+M9TzW4AiAhZkNTBDBtAiGWZHdNivF9w5M/zhObf6oj5X+WyhcZSIIBCRwtebxAWBF3LiIB5pC+Gj0thhXgFarchM5WXsCfHCk/Tn0PyXHvHdmMNEGAcBPcnIYAmMilHhDgKo0Ksi2ZDwPo70j5UYLeZf/kiRqe4Q5DJlBIgJ0Sfn5IeLFJCT5sOhz6GM2KMs+wIkxxsNmFh+xth8qPnFsdpWHONugFSkqA/+dMhxfrXmVZCmWYQQJ8QpXTG7NiimFlQEZWV0vKj167d5NbQVM7XV1cKpmok3ISACtjW0pWF2gMxSrD4YSz0gkq8m87GSRA6L7SqTQXWVCK0Rbe+qhO/Tq5F1R81tXWtAutbZ6tkwDR4rinVDCDw671TVSmNig2KKdRkJuJG0C2EepYRtvQmCCAiSCzQy0oxeLIi0E3EF7sSzup5xS20Phs7dhc0U2AMBQiWpj3Cv4t7DtGUGnWWqbq0OdnHMQwm6prmb9NNaBAW1myl3W3+dyaHQIrPFH+NzW6p6N4toqjJWtK5fNsAhktj35Ihhur1SCj1dBb1EZszIua3o4dmUyLyR+By/M4Q3Mzvcz1Zkf+/pMM9/tA2vvIcuMdKrA3qcfkSosEuMySovw050o1lOxHcSaRUQb3N7+rYJ93j5jKb6W834E2CBBG9iXtNYsNXLfIZC+xSIBvW1KU1zK4B1Fh4hoKGlj4KBPJbCGwSqvzryOf+SElq+6HkvaXZ7nfPA+wMy85ldrf4P8fotKGFJXa80w3NMhfSOAO0yXXJ/TqwAS8i+wmrWQxJUwH/FXqiYBxOTjyOZwP/a3KvS7gN3/bLPeRp2hr2HW8NwWN12AGXKDwM/73fpEd+XrsTarE5vkaXWxxTLCkNB9QaS+uuNsPzoNnyH95gPRE5NbqNPpylXtYFiPBxuzRiTfK7s1/s9ooG9F242jdKgDV9gwXU/VGFDhU2sbQYJ9kUXlmUWmPKigSojWXUzHkObKT8olqdbXKvq9kp0ASBUfy/ZlZ7j2PCwtuOiTKD2ImNkfQjf3woyl5+58WQ4O9DdkNHzglRv6ZBVH++WSv9GMaTyLMn1/x+VR8BTiZXcbzmVA72iKAierL5xoc8NstKtIyKg2R2CGFw6ARlL8Nm8m6ZQFZ6hTfhj0EuuU+gwPe37JCzaDSzpoHkNsgtmryCJPUZmDfdAPP8ZDNTfBwAw+w0uBEbExmOzGWkzGxeziV7LRFTSN3W9jwlgvsM3HKfY1NAvQ1NCEXUbGW3WqyuszBDMKAP/ZA8XFvl5Kbhh8/NvRMJ9skwKaUrl1PUkFYwWaGBr6LAzPkTTZ/ovVxfulY+VE39VgHih/mMM818EyrsmyAKedBmKn4dJN1d8Y5UDjUKY3mOjQ5ug94SVDDs7sj5TeZq/2ozXOAEGcaehiETnQ2NAE7kZsoy7iXxTYJlrJ71mWPM+zDnjb0fGNdEGAXg5s6JEe3NTQR15MbKUcC2OEfGLwmMu1as5oHmnGWwec80AUBgIcNPRCCm04wNBFdyV2sfZwECP9AE+83DFwLfvEBtDZDyiW6UrqG2WnkecoRDpH3wYYbVBZTiRimK8clUcxv0rrZX7rctAi7GEGlWXwugaZ1Jku4jCXLsUA2fLqV3pi68GVDXqykgjf+d2L3hDKDd+X4zRW8r/CpkyVwiWF3bi+XBABuM6wsf6Wg3LXuiRlKbgWuO0TPto/tC/B/76RU/BtIf1UNHRhMZg//7s97jzoecn9K1vwgj8B+PMiAT/oxci/TKMitiN4bTKRaLY6wgv3cwzd+GCZ/IZk/+T7OBwJgkzXDgqLAtv0B6c0bsNlIrpab8tSYmxIhvufRug3/nubVy9dONXiGX1HtcOe8Mo9fYs4JkLUreBZBLRn0kdpS44RdQf4IOnF2oXVj51Gm5iZ29zV5qvhh/sNtlsZqsI571sn6hy0qCjbH/UhPMd2OBg9osggOAhEv08FjRS8HZGw9a3H+O/hEAOC77L+3JQgqQz2hPhrufW/ypw5PKEgEGUilYdU+AqYaAg3ftTg2p+i6f50DgZNbF/UrV7P78Aj2ORclWjSpzOEJ921FwEb3aDJfhDguj+h8KegelJ6W3wTlXKaoBYQS4p/LYMZNJX8FpQQvptIqG64OtqD4D1rY6JZ72fXV+TwmBmisJwqzhFekUewu25NdhpuzJwn7hy8zokWqniK/BUqA5PthfAjUzpLi45zhJw7e+FEZr/u5TAzUFvwm9lUQYoH4EZTSXsn/jr5VtyOzfYZ174NQauU6dqPuptFUQl5GC/vzkW64yvGzor7T14pAAOA75F/6XzV5hkrre+7FxCiiQFFQiQKnwyMUTmQ3dQu/xZtj6Mn7JyTJXMBkmlXm/MGlfMrP0aYoBPDJFErjg2+KkXglifggk6m07HkhCICyhI8WbKDjRW5PK9hKVo8Cc9VU0bQ2pjdOiHFZWqDBhrKfTusmcX8keuhEEBS4n0kdteE9OKlgg76K1nazCbuZ3Ci66ERGmNZPW8FR4ws28Fi1orVP4TqdLvpoVf5AGoLdfCBA6FJ7oIC2Z3OMBH8UvbQiiCnqZEM3bZ4g4oGeLNhExDPSsLG/VfTT6pjXDQGAHak4h0yVJgQZXONET40IDietZra5iCVpLigJusX2NReTuEh1K7/1ol2uAqqayV7suC55hUrLHALIUFsuuqvlBeMkp9llVOFWBdwYIzzicFo3J3qh6HBmmUsO85p9SKFrLdiEoZLbeVQaNoG0xYdEl1MLvGpbutRBX5Koi2hPI083WskamVFjZV+QSDBGyNvYyLX++ZRhhBzf1ws2kbPLbNzwHItFxysKStwc7Yve+ZZfio3Qnwo2of/izfD6kefYloLqCJ+IvpcI5rarTzrnY5I18j2HUbHi8dewwke7xaNeEgr8viR6//+5HE4eJvj7XG0AkaRTyI+WQkkFySinxTbIW1NQe2hFAyr+x+zk2NlXPfO91gwiMb9HQQ3IIoUkIyNrH1q3AjQI/WGDKP4Mdhm381nHilJ0CSVXUBv03gIp0H8oaCAefQ4k47fwc9RjjsEaVvxDyI++BHVDgKgC7UtBfP5yjxUfsUI9axC6hfcNb9eB4q/i1a1vzBkgBDAIpMkNoeA02XXFAhyOPcSb969kfI5HC+g1QldPVKjepah6VGQCxN2nZ1CQ2G7rLAFNLlBI6yzSE8QFkwHVKNBg+0myX3QqqWB8JygcScHhX6F1p14IEE/GR73Q09kUge95YQ5vEr63iNaWGsHbGnmqHQ0+A8yI3flaqIjwimPzBgd+KHmO8imb1ZO+1CMBKikUCl714jcXauCcqzAyhhEUtH89hie7F39vA8f3jyZwe7KLFaRGeuY/DGykUdZyLq+kGAucaneuZ91oFALUI+Be/Dq7W49iExAkvopXjdYqQFbbpfz5QazovfjMoqHGURRJ0NCQQRAIAQQCIYBAIAQQCIQAAoEQQCAQAggEQgCBQAggEAgBBAIhgEAgBBAIhAACgRBAIBACCARCAIFACCAQCAEEAiGAQFAA/A/kuuunxyctigAAAABJRU5ErkJggg==");display:inline-block;flex:none;background-color:currentColor;-webkit-mask:var(--mn-mark) center / contain no-repeat;mask:var(--mn-mark) center / contain no-repeat}
+/* Escobar chip: 40 px face, 44 px touch box, 70 px above the bottom (68 + the 2 px touch border). */
+.mn-dock{position:absolute;left:0;right:0;bottom:68px;z-index:20;display:flex;align-items:center;gap:8px;width:max-content;max-width:calc(100% - 28px);min-height:44px;margin-inline:auto;padding:0 17px 0 13px;border:2px solid transparent;border-radius:999px;background:var(--surface-2);background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--border),var(--shadow);color:var(--text);font-size:calc(13px * var(--tz));font-weight:600;transition:background-color 150ms cubic-bezier(.2,0,0,1)}
+.mn-dock:active{background-color:var(--surface-3);transition:none}
+.mn-dock:focus-visible{outline-offset:0}
+.mn-dock .mn-mark{color:var(--accent)}
+.mn-dock-label{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mn-nav{position:absolute;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--border-subtle)}
+.mn-nav-inner{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.mn-navbtn{display:grid;justify-items:center;align-content:start;gap:3px;min-height:58px;padding:10px 0 8px;color:var(--text-2);font-size:calc(11px * var(--tz));font-weight:600}
+.mn-navbtn .mn-svg,.mn-navbtn .mn-mark{transition:opacity 100ms cubic-bezier(.2,0,0,1)}
+.mn-navbtn:active .mn-svg,.mn-navbtn:active .mn-mark{opacity:.6;transition:none}
+.mn-navbtn:focus-visible{outline-offset:-2px}
+.mn-now{color:var(--text)}
+/* About sheet, opened in place over the screen. */
+.mn-layer{position:absolute;inset:0;z-index:30}
+.mn-scrim{position:absolute;inset:0;width:100%;height:100%;background:var(--scrim);cursor:default}
+.mn-sheet{position:absolute;left:0;right:0;bottom:0;max-height:100%}
+/* The real close control for the sheet: laid over About's own close button (x 330-374; y 30-74 at rest, 22-66 once
+   About scrolls, because its top bar sticks 8 px higher). About's own close is a link back to this board. */
+.mn-close{position:absolute;top:22px;right:16px;z-index:4;width:44px;height:52px;border-radius:22px;background:transparent}
+.mn-close:focus-visible{outline-offset:-2px}
+.mn-in .mn-scrim{animation:mn-fade-in 240ms cubic-bezier(.05,.7,.1,1) both}
+.mn-in .mn-sheet{animation:mn-rise 320ms cubic-bezier(.32,.72,0,1) both}
+.mn-out .mn-scrim{animation:mn-fade-out 200ms cubic-bezier(.3,0,.8,.15) both}
+.mn-out .mn-sheet{animation:mn-drop 200ms cubic-bezier(.3,0,.8,.15) both}
+.mn-out .mn-close,.mn-out .mn-scrim{pointer-events:none}
+@keyframes mn-rise{from{transform:translateY(100%)}to{transform:none}}
+@keyframes mn-drop{from{transform:none}to{transform:translateY(100%)}}
+@keyframes mn-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes mn-fade-out{from{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .mn-split,.mn-chip,.mn-tab,.mn-icon,.mn-row,.mn-btn,.mn-dock,.mn-navbtn .mn-svg,.mn-navbtn .mn-mark{transition:none}
+  .mn-split:active,.mn-icon:active,.mn-btn:active{transform:none;opacity:.7}
+  .mn-chip:active,.mn-tab:active{scale:1;opacity:.7}
+  .mn-in .mn-sheet{animation:mn-fade-in 160ms linear both}
+  .mn-out .mn-sheet{animation:mn-fade-out 160ms linear both}
+}
+</style>
+</helmet>
+<div class="mn-root" style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: var(--bg); {{ themeCss }}">
+
+<div class="mn-scroll" aria-hidden="{{ screenHidden }}">
+  <div class="mn-topbar">
+    <div>
+      <div class="mn-eyebrow">Train</div>
+      <h1 class="mn-h1">Workouts</h1>
+    </div>
+    <button type="button" class="mn-b mn-split" tabindex="{{ bgTab }}"><svg class="mn-svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Split</button>
+  </div>
+
+  <div class="mn-gymrow">
+    <button type="button" class="mn-b mn-chip" tabindex="{{ bgTab }}" aria-label="Gym: Anytime Fitness. Change gym">At: Anytime Fitness <svg class="mn-svg" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+  </div>
+
+  <div class="mn-tabs" role="tablist" aria-label="Splits">
+    <button type="button" role="tab" aria-selected="true" class="mn-b mn-tab mn-tab-on" tabindex="{{ bgTab }}"><span class="mn-dot" style="background: #4d9dff;"></span>SPLIT 1 UPPER BODY</button>
+    <button type="button" role="tab" aria-selected="false" class="mn-b mn-tab" tabindex="{{ bgTab }}"><span class="mn-dot" style="background: #ffc845;"></span>SPLIT 2 - LOWER AND CORE</button>
+    <button type="button" role="tab" aria-selected="false" class="mn-b mn-tab" tabindex="{{ bgTab }}"><span class="mn-dot" style="background: #a061ff;"></span>SPLIT 3</button>
+  </div>
+
+  <section class="mn-card" aria-label="SPLIT 1 UPPER BODY">
+    <div class="mn-head">
+      <div>
+        <h2 class="mn-h2">SPLIT 1 UPPER BODY</h2>
+        <span class="mn-hint">8 exercises · 21 sets</span>
+      </div>
+      <a class="mn-b mn-icon" href="Search.dc.html" tabindex="{{ bgTab }}" aria-label="Edit split"><svg class="mn-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16zM13 7l4 4"></path></svg></a>
+    </div>
+
+    <div class="mn-list">
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.chestPress }}"><span class="mn-grow"><span class="mn-name">Machine Chest Press</span><span class="mn-sub">120 lb · 12 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">3 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.latPulldown }}"><span class="mn-grow"><span class="mn-name">Lat Pulldown</span><span class="mn-sub">45 kg · 6–8 reps · Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.</span></span><span class="mn-trail">3 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.inclinePress }}"><span class="mn-grow"><span class="mn-name">Incline Machine Press</span><span class="mn-sub">55 lb · 11 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">3 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.cableRow }}"><span class="mn-grow"><span class="mn-name">Seated Cable Row</span><span class="mn-sub">45 kg · 12 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">3 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.lateralRaise }}"><span class="mn-grow"><span class="mn-name">Dumbbell Lateral Raise</span><span class="mn-sub">6 kg · 13 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">3 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.rearDeltFly }}"><span class="mn-grow"><span class="mn-name">Rear Delt Fly</span><span class="mn-sub">55 lb · 15 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">2 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.bicepsCurl }}"><span class="mn-grow"><span class="mn-name">Dumbbell Biceps Curl</span><span class="mn-sub">10 kg · 8–10 reps · Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.</span></span><span class="mn-trail">2 sets</span></button>
+      <button type="button" class="mn-b mn-row" tabindex="{{ bgTab }}" aria-haspopup="dialog" onClick="{{ pick.tricepsPushdown }}"><span class="mn-grow"><span class="mn-name">Single-Arm Triceps Pushdown</span><span class="mn-sub">5 kg · 9 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="mn-trail">2 sets</span></button>
+    </div>
+
+    <a class="mn-b mn-btn mn-primary" href="Warmup.dc.html" tabindex="{{ bgTab }}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="display: block; flex: none;"><path d="M7 5l12 7-12 7z" fill="currentColor"></path></svg>Start SPLIT 1 UPPER BODY</a>
+    <button type="button" class="mn-b mn-btn mn-quiet" tabindex="{{ bgTab }}">Log a past session</button>
+  </section>
+</div>
+
+<sc-if value="{{ dockShown }}" hint-placeholder-val="{{ true }}">
+  <button type="button" class="mn-b mn-dock" aria-label="Escobar: What should I lift today?"><span class="mn-mark" style="width: 20px; height: 20px;" aria-hidden="true"></span><span class="mn-dock-label">What should I lift today?</span></button>
+</sc-if>
+
+<nav class="mn-nav" aria-label="Main" aria-hidden="{{ screenHidden }}">
+  <div class="mn-nav-inner">
+    <button type="button" class="mn-b mn-navbtn" tabindex="{{ bgTab }}"><svg class="mn-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg><span>Today</span></button>
+    <button type="button" class="mn-b mn-navbtn mn-now" tabindex="{{ bgTab }}" aria-current="page"><svg class="mn-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"></path></svg><span>Train</span></button>
+    <button type="button" class="mn-b mn-navbtn" tabindex="{{ bgTab }}"><svg class="mn-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg><span>History</span></button>
+    <button type="button" class="mn-b mn-navbtn" tabindex="{{ bgTab }}"><svg class="mn-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4.5" r="2.5"></circle><path d="M8 9h8l1 6h-2l-1 6h-4l-1-6H7z"></path></svg><span>Body</span></button>
+    <button type="button" class="mn-b mn-navbtn" tabindex="{{ bgTab }}"><span class="mn-mark" style="width: 22px; height: 22px;" aria-hidden="true"></span><span>Escobar</span></button>
+  </div>
+</nav>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="{{ layerClass }}">
+    <button type="button" class="mn-b mn-scrim" tabindex="-1" aria-label="Close" onClick="{{ close }}"></button>
+    <div class="mn-sheet">
+      <button type="button" class="mn-b mn-close" aria-label="Close" onClick="{{ close }}"></button>
+      <dc-import name="About" exercise="{{ openId }}" searched="" theme="{{ theme }}" hint-size="390px,776px"></dc-import>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["silent-black","paper","ember","emerald","midnight"],"default":"silent-black"},"open":{"editor":"enum","options":["none","machine-chest-press","lat-pulldown","incline-machine-press","seated-cable-row","dumbbell-lateral-raise","rear-delt-fly","dumbbell-biceps-curl","single-arm-triceps-pushdown"],"default":"none"},"$preview":{"width":390,"height":844}}'>
+const THEMES = {
+  'silent-black': { bg:'#08090a', s1:'#0f1011', s2:'#141516', s3:'#1b1c1f', bSub:'rgba(255,255,255,0.06)', b:'rgba(255,255,255,0.10)', bStr:'rgba(255,255,255,0.18)', text:'#f7f8f8', t2:'#8a8f98', t3:'#62666d', acc:'#5e6ad2', accSoft:'rgba(94,106,210,0.16)', onAcc:'#ffffff', pos:'#4cc38a', warn:'#f2b544', neg:'#eb5757', info:'#6ea8fe', shadow:'0 16px 40px rgba(0,0,0,0.45)', mapBody:'#1b1c1f', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','22px'] },
+  'paper':        { bg:'#ffffff', s1:'#f7f6f3', s2:'#efeeea', s3:'#e6e4df', bSub:'rgba(55,53,47,0.08)', b:'rgba(55,53,47,0.14)', bStr:'rgba(55,53,47,0.26)', text:'#37352f', t2:'#6b6a66', t3:'#9b9a97', acc:'#2383e2', accSoft:'rgba(35,131,226,0.12)', onAcc:'#ffffff', pri:'#1f73c7', pos:'#0f7b4f', warn:'#b7791f', neg:'#c0392b', info:'#2383e2', shadow:'0 8px 24px rgba(15,15,15,0.08)', mapBody:'#e6e4df', mapLine:'rgba(55,53,47,0.18)', scheme:'light', r:['6px','10px','14px','18px'] },
+  'ember':        { bg:'#07080a', s1:'#0e1013', s2:'#14171b', s3:'#1c2026', bSub:'rgba(255,255,255,0.05)', b:'rgba(255,255,255,0.09)', bStr:'rgba(255,255,255,0.16)', text:'#ffffff', t2:'#9aa0a6', t3:'#5f666d', acc:'#ff6363', accSoft:'rgba(255,99,99,0.16)', onAcc:'#1a0b0b', pos:'#59d499', warn:'#ffb454', neg:'#ff6363', info:'#7aa7ff', shadow:'0 18px 44px rgba(0,0,0,0.5)', mapBody:'#1c2026', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','20px'] },
+  'emerald':      { bg:'#0f0f0f', s1:'#171717', s2:'#1c1c1c', s3:'#242424', bSub:'#242424', b:'#2e2e2e', bStr:'#393939', text:'#ededed', t2:'#a0a0a0', t3:'#707070', acc:'#3ecf8e', accSoft:'rgba(62,207,142,0.14)', onAcc:'#062d1c', pos:'#3ecf8e', warn:'#f5a623', neg:'#f04438', info:'#5fa8ff', shadow:'0 14px 36px rgba(0,0,0,0.45)', mapBody:'#242424', mapLine:'#393939', scheme:'dark', r:['6px','8px','12px','16px'] },
+  'midnight':     { bg:'#0a2540', s1:'#0f2d4d', s2:'#143559', s3:'#1a3f68', bSub:'rgba(246,249,252,0.07)', b:'rgba(246,249,252,0.12)', bStr:'rgba(246,249,252,0.22)', text:'#f6f9fc', t2:'#a3b6cc', t3:'#6c839c', acc:'#635bff', accSoft:'rgba(99,91,255,0.18)', onAcc:'#ffffff', pos:'#3ecf8e', warn:'#ffbb00', neg:'#ff5c5c', info:'#00d4ff', shadow:'0 18px 44px rgba(3,20,40,0.55)', mapBody:'#1a3f68', mapLine:'rgba(246,249,252,0.14)', scheme:'dark', r:['8px','12px','16px','22px'] },
+};
+function themeVars(id) {
+  const t = THEMES[id] || THEMES['silent-black'];
+  return `color-scheme:${t.scheme};--bg:${t.bg};--surface-1:${t.s1};--surface-2:${t.s2};--surface-3:${t.s3};--border-subtle:${t.bSub};--border:${t.b};--border-strong:${t.bStr};--text:${t.text};--text-2:${t.t2};--text-3:${t.t3};--accent:${t.acc};--accent-soft:${t.accSoft};--on-accent:${t.onAcc};--positive:${t.pos};--warning:${t.warn};--negative:${t.neg};--info:${t.info};--shadow:${t.shadow};--map-body:${t.mapBody};--map-line:${t.mapLine};--radius-sm:${t.r[0]};--radius-md:${t.r[1]};--radius-lg:${t.r[2]};--radius-xl:${t.r[3]};--scrim:rgba(0,0,0,.5);--mn-primary:${t.pri||t.acc}`;
+}
+// The 8 rows of SPLIT 1 UPPER BODY: row handler -> About exercise id.
+// Only machine-chest-press, lat-pulldown and dumbbell-lateral-raise have an animation; About shows text for the others.
+const ROWS = {
+  chestPress: 'machine-chest-press',
+  latPulldown: 'lat-pulldown',
+  inclinePress: 'incline-machine-press',
+  cableRow: 'seated-cable-row',
+  lateralRaise: 'dumbbell-lateral-raise',
+  rearDeltFly: 'rear-delt-fly',
+  bicepsCurl: 'dumbbell-biceps-curl',
+  tricepsPushdown: 'single-arm-triceps-pushdown',
+};
+const CLOSE_MS = 200;
+// "open" is picked in the properties panel (a pick list, so a typo cannot silently show no sheet) or passed by a wrapper
+// board: an exercise id such as "machine-chest-press". A name ("Machine Chest Press") works too; "" or "none" means no sheet.
+function toId(v) {
+  if (typeof v !== 'string') return '';
+  const s = v.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return s === 'none' ? '' : s;
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Opened from the prop: shown at once, no rise animation.
+    this.state = { openId: toId(props.open), phase: '' };
+    this.timer = null;
+  }
+  componentDidUpdate(prev) {
+    if (prev && prev.open !== this.props.open) {
+      this.clearTimer();
+      this.setState({ openId: toId(this.props.open), phase: '' });
+    }
+  }
+  componentWillUnmount() { this.clearTimer(); }
+  clearTimer() {
+    if (this.timer) { clearTimeout(this.timer); this.timer = null; }
+  }
+  openSheet(id) {
+    this.clearTimer();
+    this.setState({ openId: id, phase: 'in' });
+  }
+  closeSheet() {
+    if (!this.state.openId || this.state.phase === 'out') return;
+    this.setState({ phase: 'out' });
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      this.setState({ openId: '', phase: '' });
+    }, CLOSE_MS);
+  }
+  renderVals() {
+    const theme = THEMES[this.props.theme] ? this.props.theme : 'silent-black';
+    const s = this.state;
+    const isOpen = s.openId !== '';
+    const pick = {};
+    Object.keys(ROWS).forEach(key => { pick[key] = () => this.openSheet(ROWS[key]); });
+    return {
+      theme: theme,
+      themeCss: themeVars(theme),
+      pick: pick,
+      openId: s.openId,
+      sheetOpen: isOpen,
+      dockShown: !isOpen,
+      screenHidden: isOpen ? 'true' : 'false',
+      bgTab: isOpen ? '-1' : '0',
+      layerClass: 'mn-layer' + (s.phase === 'out' ? ' mn-out' : (s.phase === 'in' ? ' mn-in' : '')),
+      close: () => this.closeSheet(),
+    };
+  }
+}
+</script>
+</body>
+</html>

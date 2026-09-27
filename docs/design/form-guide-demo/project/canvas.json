@@ -1,0 +1,153 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-09-27T07:48:34Z"
+ },
+ "title": "M/ARC form guide demo",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 300,
+   "w": 390,
+   "h": 844,
+   "title": "Train workouts",
+   "is_interactive": true
+  },
+  "About.dc.html": {
+   "x": 470,
+   "y": 300,
+   "w": 390,
+   "h": 776,
+   "title": "Exercise about sheet",
+   "is_interactive": true
+  },
+  "Machine.dc.html": {
+   "x": 940,
+   "y": 300,
+   "w": 390,
+   "h": 844,
+   "title": "Lat pulldown station",
+   "is_interactive": true
+  },
+  "Warmup.dc.html": {
+   "x": 1410,
+   "y": 300,
+   "w": 390,
+   "h": 844,
+   "title": "Split warm-up",
+   "is_interactive": true
+  },
+  "Search.dc.html": {
+   "x": 1880,
+   "y": 300,
+   "w": 390,
+   "h": 844,
+   "title": "Search other names",
+   "is_interactive": true
+  },
+  "Custom.dc.html": {
+   "x": 2350,
+   "y": 300,
+   "w": 390,
+   "h": 844,
+   "title": "Create my own",
+   "is_interactive": true
+  },
+  "Player-MachineChestPress.dc.html": {
+   "x": 0,
+   "y": 1564,
+   "w": 358,
+   "h": 460,
+   "title": "Machine Chest Press form guide",
+   "is_interactive": true
+  },
+  "Player-LatPulldown.dc.html": {
+   "x": 438,
+   "y": 1564,
+   "w": 358,
+   "h": 460,
+   "title": "Lat Pulldown form guide",
+   "is_interactive": true
+  },
+  "Player-DumbbellLateralRaise.dc.html": {
+   "x": 876,
+   "y": 1564,
+   "w": 358,
+   "h": 460,
+   "title": "Dumbbell Lateral Raise form guide",
+   "is_interactive": true
+  },
+  "Theme-Paper.dc.html": {
+   "x": 0,
+   "y": 2444,
+   "w": 390,
+   "h": 844,
+   "title": "Train in Paper"
+  },
+  "Theme-Ember.dc.html": {
+   "x": 470,
+   "y": 2444,
+   "w": 390,
+   "h": 844,
+   "title": "Train in Ember"
+  },
+  "Theme-Emerald.dc.html": {
+   "x": 940,
+   "y": 2444,
+   "w": 390,
+   "h": 844,
+   "title": "Train in Emerald"
+  },
+  "Theme-Midnight.dc.html": {
+   "x": 1410,
+   "y": 2444,
+   "w": 390,
+   "h": 844,
+   "title": "Train in Midnight"
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "About.dc.html",
+  "Machine.dc.html",
+  "Warmup.dc.html",
+  "Search.dc.html",
+  "Custom.dc.html",
+  "Player-MachineChestPress.dc.html",
+  "Player-LatPulldown.dc.html",
+  "Player-DumbbellLateralRaise.dc.html",
+  "Theme-Paper.dc.html",
+  "Theme-Ember.dc.html",
+  "Theme-Emerald.dc.html",
+  "Theme-Midnight.dc.html"
+ ],
+ "notes": {
+  "row0": {
+   "x": 0,
+   "y": 0,
+   "text": "Flow",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "row1": {
+   "x": 0,
+   "y": 1264,
+   "text": "Animated form guides (3)",
+   "kind": "title1",
+   "maxW": 1234
+  },
+  "row2": {
+   "x": 0,
+   "y": 2144,
+   "text": "Other themes",
+   "kind": "title1",
+   "maxW": 1800
+  }
+ },
+ "designSystems": []
+}

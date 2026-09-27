@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Exercise about sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&amp;display=swap">
+<style>
+body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.sheet{--tz:.8;position:relative;width:390px;height:776px;box-sizing:border-box;overflow:hidden;background:var(--surface-2);color:var(--text);border-radius:var(--radius-xl) var(--radius-xl) 0 0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:calc(15px * var(--tz));line-height:1.4;-webkit-font-smoothing:antialiased}
+/* The 1px panel border is drawn on top, so the content keeps the full 358px the player needs. */
+.sheet::after{content:"";position:absolute;inset:0;z-index:3;border:1px solid var(--border);border-bottom:0;border-radius:inherit;pointer-events:none}
+.scroll{position:absolute;inset:0;box-sizing:border-box;padding:8px 16px calc(20px + var(--about-foot, 0px));overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.top{position:sticky;top:-8px;z-index:2;margin:-8px -16px 0;padding:8px 16px 0;background:var(--surface-2)}
+.hair{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--border-subtle);transition:opacity 150ms cubic-bezier(.2,0,0,1)}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:4px auto 14px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
+.head h2{margin:0;min-width:0;font-size:calc(17px * var(--tz));line-height:calc(22px * var(--tz));font-weight:600;letter-spacing:-.01em;color:var(--text)}
+/* Close goes back to the Train screen (a link between artboards, as on the Machine board). Inside Main, Main lays its own close button over this spot. */
+.icon-btn{flex:none;box-sizing:border-box;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--text-2);display:inline-grid;place-items:center;cursor:pointer;text-decoration:none;transition:background-color 100ms cubic-bezier(.2,0,0,1)}
+.icon-btn:active{background:var(--surface-3)}
+.sheet button:focus-visible,.sheet a:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.also{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:10px 12px;border-radius:var(--radius-md);background:var(--accent-soft)}
+.also svg{flex:none;color:var(--accent)}
+.also p{margin:0;font-size:calc(13px * var(--tz));line-height:calc(18px * var(--tz));color:var(--text)}
+.also .l1{font-weight:500}
+.also .l2{margin-top:2px}
+.sec{margin:0 0 10px;font-size:calc(14px * var(--tz));line-height:calc(20px * var(--tz));font-weight:600;color:var(--text)}
+.slot{width:358px;height:460px;margin:0 0 16px}
+.soon{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:14px 16px;background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);color:var(--text-2)}
+.soon svg{flex:none}
+.soon p{margin:0;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz))}
+.eyebrow{margin:0 0 8px;font-size:calc(11px * var(--tz));line-height:calc(14px * var(--tz));font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.works{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center;margin:0 0 16px}
+.lbl{font-size:calc(11px * var(--tz));line-height:calc(14px * var(--tz));color:var(--text-2)}
+.ab-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ab-chip{display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;min-height:28px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:calc(12px * var(--tz));line-height:calc(16px * var(--tz));font-weight:600;white-space:nowrap}
+.ab-chip-main{background:var(--accent-soft);border-color:transparent;color:var(--text)}
+.ab-chip-main .dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.meta{margin:0 0 16px;font-size:calc(13px * var(--tz));line-height:calc(18px * var(--tz));color:var(--text-2)}
+.equip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 24px}
+a.ab-chip-link{position:relative;min-height:36px;padding:6px 8px 6px 12px;border-color:var(--border-strong);color:var(--text);text-decoration:none;cursor:pointer;transition:background-color 100ms cubic-bezier(.2,0,0,1)}
+/* 4px of invisible hit area above and below: 36 + 8 = 44px target, as the app's .chip-btn. */
+a.ab-chip-link::before{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+a.ab-chip-link:active{background:var(--surface-3)}
+.steps{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:10px}
+.steps li{display:flex;gap:10px;align-items:flex-start;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz));color:var(--text)}
+.num{flex:none;width:22px;height:22px;margin-top:-1px;border-radius:50%;background:var(--surface-3);color:var(--text);display:inline-grid;place-items:center;font-size:calc(12px * var(--tz));line-height:1;font-weight:600;font-variant-numeric:tabular-nums}
+.tip{margin:0 0 24px;padding:12px;border:1px solid var(--border-subtle);border-radius:var(--radius-md)}
+.tip .eyebrow{margin-bottom:6px}
+.tip .tip-text{margin:0;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz));color:var(--text)}
+.mistakes{display:flex;flex-direction:column;gap:12px}
+.mistake p{margin:0;font-size:calc(13px * var(--tz));line-height:calc(18px * var(--tz))}
+.mistake .what{font-weight:600;color:var(--text)}
+.mistake .fix{margin-top:2px;color:var(--text-2)}
+.mistake .fix span{font-weight:600;margin-right:.3em}
+@media (hover:hover){.icon-btn:hover,a.ab-chip-link:hover{background:var(--surface-3)}}
+@media (prefers-reduced-motion: reduce){.hair,.icon-btn,a.ab-chip-link{transition:none}}
+</style>
+</helmet>
+<div class="sheet" role="dialog" aria-labelledby="about-title" style="width: 390px; height: 776px; box-sizing: border-box; {{ themeStyle }}">
+<div class="scroll" onScroll="{{ onScroll }}">
+
+<div class="top">
+<div class="grab" aria-hidden="true"></div>
+<div class="head">
+<h2 id="about-title">{{ name }}</h2>
+<a class="icon-btn" href="Main.dc.html" aria-label="Close"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</div>
+<div class="hair" aria-hidden="true" style="{{ hairStyle }}"></div>
+</div>
+
+<sc-if value="{{ showAlso }}" hint-placeholder-val="{{ false }}">
+<div class="also">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<div>
+<p class="l1">You searched "{{ searchedText }}". It's also called {{ name }}.</p>
+<sc-if value="{{ showShared }}" hint-placeholder-val="{{ false }}">
+<p class="l2">Other exercises share that name: {{ sharedList }}.</p>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<section>
+<sc-if value="{{ isMachineChestPress }}" hint-placeholder-val="{{ true }}">
+<div class="slot"><dc-import name="Player-MachineChestPress" theme="{{ theme }}" autoplay="{{ no }}" loop="{{ no }}" hint-size="358px,460px"></dc-import></div>
+</sc-if>
+<sc-if value="{{ isLatPulldown }}" hint-placeholder-val="{{ false }}">
+<div class="slot"><dc-import name="Player-LatPulldown" theme="{{ theme }}" autoplay="{{ no }}" loop="{{ no }}" hint-size="358px,460px"></dc-import></div>
+</sc-if>
+<sc-if value="{{ isDumbbellLateralRaise }}" hint-placeholder-val="{{ false }}">
+<div class="slot"><dc-import name="Player-DumbbellLateralRaise" theme="{{ theme }}" autoplay="{{ no }}" loop="{{ no }}" hint-size="358px,460px"></dc-import></div>
+</sc-if>
+<sc-if value="{{ isTextOnly }}" hint-placeholder-val="{{ false }}">
+<div class="soon">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+<p>Animation comes with the form-guide update.</p>
+</div>
+</sc-if>
+</section>
+
+<section aria-labelledby="works-title">
+<p class="eyebrow" id="works-title">Works</p>
+<div class="works">
+<span class="lbl">Main</span>
+<div class="ab-chips">
+<sc-for list="{{ mainList }}" as="m" hint-placeholder-count="1"><span class="ab-chip ab-chip-main"><span class="dot" aria-hidden="true"></span>{{ m.label }}</span></sc-for>
+</div>
+<sc-if value="{{ showHelps }}" hint-placeholder-val="{{ true }}">
+<span class="lbl">Helps</span>
+<div class="ab-chips">
+<sc-for list="{{ helpsList }}" as="h" hint-placeholder-count="2"><span class="ab-chip">{{ h.label }}</span></sc-for>
+</div>
+</sc-if>
+</div>
+<p class="meta">Also called: {{ otherNames }}</p>
+<p class="eyebrow">Equipment</p>
+<div class="equip">
+<span class="ab-chip">{{ equipment }}</span>
+<sc-if value="{{ showMachineLink }}" hint-placeholder-val="{{ false }}">
+<a class="ab-chip ab-chip-link" href="Machine.dc.html">See the machine<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></a>
+</sc-if>
+</div>
+</section>
+
+<section aria-labelledby="guide-title">
+<h3 class="sec" id="guide-title">How to do it</h3>
+<ol class="steps">
+<sc-for list="{{ steps }}" as="s" hint-placeholder-count="4"><li><span class="num">{{ s.n }}</span><span>{{ s.text }}</span></li></sc-for>
+</ol>
+</section>
+
+<div class="tip">
+<p class="eyebrow">Tip</p>
+<p class="tip-text">{{ tip }}</p>
+</div>
+
+<section aria-labelledby="mistakes-title">
+<h3 class="sec" id="mistakes-title">Common mistakes</h3>
+<div class="mistakes">
+<sc-for list="{{ mistakes }}" as="x" hint-placeholder-count="2"><div class="mistake"><p class="what">{{ x.what }}</p><p class="fix"><span>Fix:</span>{{ x.fix }}</p></div></sc-for>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"exercise":{"editor":"enum","options":["machine-chest-press","lat-pulldown","dumbbell-lateral-raise","around-the-world","incline-machine-press","seated-cable-row","rear-delt-fly","dumbbell-biceps-curl","single-arm-triceps-pushdown"],"default":"machine-chest-press"},"searched":{"editor":"text","default":""},"theme":{"editor":"enum","options":["silent-black","paper","ember","emerald","midnight"],"default":"silent-black"},"$preview":{"width":390,"height":776}}'>
+const THEMES = {
+  'silent-black': { bg:'#08090a', s1:'#0f1011', s2:'#141516', s3:'#1b1c1f', bSub:'rgba(255,255,255,0.06)', b:'rgba(255,255,255,0.10)', bStr:'rgba(255,255,255,0.18)', text:'#f7f8f8', t2:'#8a8f98', t3:'#62666d', acc:'#5e6ad2', accSoft:'rgba(94,106,210,0.16)', onAcc:'#ffffff', pos:'#4cc38a', warn:'#f2b544', neg:'#eb5757', info:'#6ea8fe', shadow:'0 16px 40px rgba(0,0,0,0.45)', mapBody:'#1b1c1f', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','22px'] },
+  'paper':        { bg:'#ffffff', s1:'#f7f6f3', s2:'#efeeea', s3:'#e6e4df', bSub:'rgba(55,53,47,0.08)', b:'rgba(55,53,47,0.14)', bStr:'rgba(55,53,47,0.26)', text:'#37352f', t2:'#6b6a66', t3:'#9b9a97', acc:'#2383e2', accSoft:'rgba(35,131,226,0.12)', onAcc:'#ffffff', pos:'#0f7b4f', warn:'#b7791f', neg:'#c0392b', info:'#2383e2', shadow:'0 8px 24px rgba(15,15,15,0.08)', mapBody:'#e6e4df', mapLine:'rgba(55,53,47,0.18)', scheme:'light', r:['6px','10px','14px','18px'] },
+  'ember':        { bg:'#07080a', s1:'#0e1013', s2:'#14171b', s3:'#1c2026', bSub:'rgba(255,255,255,0.05)', b:'rgba(255,255,255,0.09)', bStr:'rgba(255,255,255,0.16)', text:'#ffffff', t2:'#9aa0a6', t3:'#5f666d', acc:'#ff6363', accSoft:'rgba(255,99,99,0.16)', onAcc:'#1a0b0b', pos:'#59d499', warn:'#ffb454', neg:'#ff6363', info:'#7aa7ff', shadow:'0 18px 44px rgba(0,0,0,0.5)', mapBody:'#1c2026', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','20px'] },
+  'emerald':      { bg:'#0f0f0f', s1:'#171717', s2:'#1c1c1c', s3:'#242424', bSub:'#242424', b:'#2e2e2e', bStr:'#393939', text:'#ededed', t2:'#a0a0a0', t3:'#707070', acc:'#3ecf8e', accSoft:'rgba(62,207,142,0.14)', onAcc:'#062d1c', pos:'#3ecf8e', warn:'#f5a623', neg:'#f04438', info:'#5fa8ff', shadow:'0 14px 36px rgba(0,0,0,0.45)', mapBody:'#242424', mapLine:'#393939', scheme:'dark', r:['6px','8px','12px','16px'] },
+  'midnight':     { bg:'#0a2540', s1:'#0f2d4d', s2:'#143559', s3:'#1a3f68', bSub:'rgba(246,249,252,0.07)', b:'rgba(246,249,252,0.12)', bStr:'rgba(246,249,252,0.22)', text:'#f6f9fc', t2:'#a3b6cc', t3:'#6c839c', acc:'#635bff', accSoft:'rgba(99,91,255,0.18)', onAcc:'#ffffff', pos:'#3ecf8e', warn:'#ffbb00', neg:'#ff5c5c', info:'#00d4ff', shadow:'0 18px 44px rgba(3,20,40,0.55)', mapBody:'#1a3f68', mapLine:'rgba(246,249,252,0.14)', scheme:'dark', r:['8px','12px','16px','22px'] },
+};
+function themeVars(id) {
+  const t = THEMES[id] || THEMES['silent-black'];
+  return `color-scheme:${t.scheme};--bg:${t.bg};--surface-1:${t.s1};--surface-2:${t.s2};--surface-3:${t.s3};--border-subtle:${t.bSub};--border:${t.b};--border-strong:${t.bStr};--text:${t.text};--text-2:${t.t2};--text-3:${t.t3};--accent:${t.acc};--accent-soft:${t.accSoft};--on-accent:${t.onAcc};--positive:${t.pos};--warning:${t.warn};--negative:${t.neg};--info:${t.info};--shadow:${t.shadow};--map-body:${t.mapBody};--map-line:${t.mapLine};--radius-sm:${t.r[0]};--radius-md:${t.r[1]};--radius-lg:${t.r[2]};--radius-xl:${t.r[3]};--scrim:rgba(0,0,0,.5)`;
+}
+
+// Same normalising as normalizeName() in src/core/exercises.ts.
+function norm(s) {
+  return String(s == null ? '' : s).toLowerCase()
+    .replace(/dumbell/g, 'dumbbell')
+    .replace(/\bdbs?\b/g, 'dumbbell')
+    .replace(/\btricep\b/g, 'triceps')
+    .replace(/\bbicep\b/g, 'biceps')
+    .replace(/pull ?down/g, 'pulldown')
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Only these 3 exercises have a moving form guide in this demo.
+const ANIMATED = { 'machine-chest-press': true, 'lat-pulldown': true, 'dumbbell-lateral-raise': true };
+
+// Names that belong to more than one exercise (spec section 6.1 and 6.2).
+const SHARED = { 'around the world': 'Plate Halo, Clock Lunge, Kettlebell Halo and Kettlebell Pass-Around' };
+
+// Info copy, keyed by exercise id (spec sections 1.7 and 3).
+const EX = {
+  'machine-chest-press': {
+    name: 'Machine Chest Press',
+    aliases: ['chest press machine', 'machine press', 'seated chest press'],
+    main: ['Chest'], helps: ['Front shoulders', 'Triceps'],
+    equipment: 'Machine (chest press)',
+    steps: [
+      'Set the seat so the handles line up with the middle of your chest.',
+      'Sit with your back flat on the pad and your feet flat on the floor.',
+      'Push the handles straight out until your arms are almost straight.',
+      'Bring them back slowly until you feel a light stretch across your chest.',
+    ],
+    tip: 'Keep your shoulder blades pulled back and down against the pad for the whole set.',
+    mistakes: [
+      ['Seat at the wrong height, so the handles sit at your shoulders or your stomach.', 'move the seat until the handles are at mid-chest.'],
+      ['Locking your elbows and letting the weights slam between reps.', 'stop just before your arms are straight, and lower slowly so the plates touch lightly.'],
+    ],
+  },
+  'lat-pulldown': {
+    name: 'Lat Pulldown',
+    aliases: ['wide grip pulldown', 'lat pull down'],
+    main: ['Lats'], helps: ['Biceps', 'Mid back'],
+    equipment: 'Cable / Machine (lat pulldown station)',
+    steps: [
+      'Set the thigh pad so your thighs fit snugly under it, feet flat.',
+      'Hold the bar a little wider than your shoulders and sit down with your arms straight.',
+      'Lean back slightly, then pull the bar to the top of your chest, driving your elbows down.',
+      'Let the bar rise slowly until your arms are straight again.',
+    ],
+    tip: 'Think of pulling with your elbows, not your hands.',
+    mistakes: [
+      ['Leaning far back and swinging to move the weight.', 'keep a small lean that does not change; use less weight if you have to swing.'],
+      ['Pulling the bar behind your neck.', 'always pull in front, to the top of your chest.'],
+    ],
+  },
+  'dumbbell-lateral-raise': {
+    name: 'Dumbbell Lateral Raise',
+    aliases: ['lateral raise', 'side raise', 'db lateral raise'],
+    main: ['Side shoulders'], helps: ['Upper traps'],
+    equipment: 'Dumbbells',
+    steps: [
+      'Stand tall with a dumbbell in each hand at your sides, elbows slightly bent.',
+      'Raise both arms out to the sides, leading with your elbows.',
+      'Stop when your arms reach shoulder height.',
+      'Lower slowly back to your sides.',
+    ],
+    tip: 'Go light. Your side shoulders are small muscles; clean reps beat heavy swings.',
+    mistakes: [
+      ['Swinging your body to get the weights up.', 'stand still and use a lighter pair.'],
+      ['Shrugging your shoulders toward your ears.', 'keep your shoulders down and stop at shoulder height.'],
+    ],
+  },
+  'around-the-world': {
+    name: 'Dumbbell Around the World (Lying)',
+    aliases: ['around the world', 'dumbbell around the world', 'lying around the world', 'around the world fly', 'dumbbell circles'],
+    main: ['Chest', 'Front shoulders'], helps: ['Upper chest', 'Triceps'],
+    equipment: 'Dumbbells and a flat bench',
+    steps: [
+      'Lie on a flat bench with your feet on the floor and a light dumbbell in each hand by your hips, palms up.',
+      'With a soft bend in your elbows, sweep your arms out to the sides in a wide half-circle.',
+      'Keep going until the dumbbells almost meet over your head.',
+      'Bring them back the same way, slowly, to your hips.',
+    ],
+    tip: 'Use light dumbbells. The long arm path makes small weights feel heavy on the shoulders.',
+    mistakes: [
+      ['Going heavy and bending the elbows to force it round.', 'pick lighter weights and keep the same soft bend all the way.'],
+      ['Letting your arms drop far below the bench at the sides.', 'keep them at about bench height and stop where you feel a stretch, not pain.'],
+    ],
+  },
+  'incline-machine-press': {
+    name: 'Incline Machine Press',
+    aliases: ['incline chest press machine'],
+    main: ['Upper chest'], helps: ['Front shoulders', 'Triceps', 'Chest'],
+    equipment: 'Machine (incline press)',
+    steps: [
+      'Set the seat so the handles start level with your upper chest.',
+      'Sit with your back flat on the pad and your feet flat on the floor.',
+      'Press the handles up and out until your arms are almost straight.',
+      'Lower slowly until your hands are back at your upper chest.',
+    ],
+    tip: "Keep your chest up and shoulder blades back so your shoulders don't roll forward.",
+    mistakes: [
+      ['Seat too low, so the handles start above your shoulders and your shoulders take over.', 'raise the seat until the handles line up with your upper chest.'],
+      ['Arching your lower back off the pad to push more.', "keep your back and hips on the pad; lower the weight if you can't."],
+    ],
+  },
+  'seated-cable-row': {
+    name: 'Seated Cable Row',
+    aliases: ['cable row', 'seated row'],
+    main: ['Mid back'], helps: ['Lats', 'Biceps', 'Rear shoulders'],
+    equipment: 'Cable (low row station, V-handle)',
+    steps: [
+      'Sit with your feet on the plates and your knees slightly bent.',
+      'Hold the handle with straight arms and sit tall.',
+      'Pull the handle to your lower ribs, squeezing your shoulder blades together.',
+      'Let your arms go straight again slowly, without rounding your back.',
+    ],
+    tip: 'Lead with your elbows and keep them close to your sides.',
+    mistakes: [
+      ['Rocking your body back and forth to move the weight.', 'sit tall and keep still; only your arms and shoulder blades move.'],
+      ['Shrugging your shoulders up toward your ears.', 'keep your shoulders down and pull toward your ribs.'],
+    ],
+  },
+  'rear-delt-fly': {
+    name: 'Rear Delt Fly',
+    aliases: ['reverse pec deck', 'rear delt machine fly'],
+    main: ['Rear shoulders'], helps: ['Mid back'],
+    equipment: 'Machine (pec deck set for rear delts)',
+    steps: [
+      'Set the handles to the back position and the seat so the handles are at shoulder height.',
+      'Sit facing the pad with your chest on it, arms straight out in front holding the handles.',
+      'Sweep your arms out and back in a wide arc until they line up with your shoulders.',
+      'Bring them back slowly, stopping before the weights touch.',
+    ],
+    tip: 'Think of reaching your hands out wide to the walls, not pinching your shoulder blades.',
+    mistakes: [
+      ['Bending and straightening your elbows so it turns into a row.', 'set a soft bend and keep it the same.'],
+      ['Shrugging or lifting your chest off the pad.', 'stay on the pad with your shoulders down; use less weight.'],
+    ],
+  },
+  'dumbbell-biceps-curl': {
+    name: 'Dumbbell Biceps Curl',
+    aliases: ['db biceps curl', 'dumbbell curl', 'db curl'],
+    main: ['Biceps'], helps: ['Forearms'],
+    equipment: 'Dumbbells',
+    steps: [
+      'Stand tall with a dumbbell in each hand, arms straight, palms facing forward.',
+      'Keeping your elbows at your sides, curl the weights up toward your shoulders.',
+      'Squeeze at the top for a moment.',
+      'Lower slowly until your arms are straight.',
+    ],
+    tip: 'Only your forearms should move. If your elbows drift forward, the weight is too heavy.',
+    mistakes: [
+      ['Swinging your body to lift the weight.', 'stand still, brace your stomach, use a lighter pair.'],
+      ['Stopping short at the bottom.', 'lower all the way to straight arms every rep.'],
+    ],
+  },
+  'single-arm-triceps-pushdown': {
+    name: 'Single-Arm Triceps Pushdown',
+    aliases: ['unilateral pushdown', 'one arm pushdown'],
+    main: ['Triceps'], helps: ['Forearms'],
+    equipment: 'Cable (high pulley, single handle)',
+    steps: [
+      'Set the pulley high and clip on a single handle.',
+      'Stand facing it, hold the handle in one hand, elbow tucked at your side.',
+      'Push the handle down until your arm is straight.',
+      'Let it rise slowly until your forearm is about level with the floor.',
+    ],
+    tip: 'Lean forward a little and keep that lean the same; it keeps your shoulder out of the move.',
+    mistakes: [
+      ['Your elbow drifts forward and up as the handle rises.', 'keep the elbow pinned at your side and stop the return at a right angle.'],
+      ['Leaning over the handle to push with your body weight.', 'keep a small, steady lean and use less weight.'],
+    ],
+  },
+};
+
+// True when the search found this exercise through one of its other names,
+// in the same order as the scorer in searchExercises(): exact name, exact other name,
+// name starts with or contains, then other name contains.
+function foundByOtherName(ex, q) {
+  if (!q) return false;
+  const name = norm(ex.name);
+  if (name === q) return false;
+  const others = ex.aliases.map(norm);
+  if (others.some(a => a === q)) return true;
+  if (name.includes(q)) return false;
+  return others.some(a => a.includes(q));
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { scrolled: false };
+  }
+  renderVals() {
+    const p = this.props, s = this.state;
+    const theme = THEMES[p.theme] ? p.theme : 'silent-black';
+    const id = EX[p.exercise] ? p.exercise : 'machine-chest-press';
+    const ex = EX[id];
+    const q = norm(p.searched);
+    const also = foundByOtherName(ex, q);
+    const shared = also && SHARED[q] && ex.aliases.some(a => norm(a) === q) ? SHARED[q] : '';
+    return {
+      theme: theme,
+      no: false,
+      themeStyle: themeVars(theme),
+      hairStyle: `opacity:${s.scrolled ? 1 : 0}`,
+      name: ex.name,
+      showAlso: also,
+      searchedText: String(p.searched == null ? '' : p.searched).trim().replace(/\s+/g, ' '),
+      showShared: shared !== '',
+      sharedList: shared,
+      isMachineChestPress: id === 'machine-chest-press',
+      isLatPulldown: id === 'lat-pulldown',
+      isDumbbellLateralRaise: id === 'dumbbell-lateral-raise',
+      isTextOnly: !ANIMATED[id],
+      mainList: ex.main.map(label => ({ label })),
+      helpsList: ex.helps.map(label => ({ label })),
+      showHelps: ex.helps.length > 0,
+      otherNames: ex.aliases.join(', '),
+      equipment: ex.equipment,
+      showMachineLink: id === 'lat-pulldown',
+      steps: ex.steps.map((text, i) => ({ n: i + 1, text })),
+      tip: ex.tip,
+      mistakes: ex.mistakes.map(m => ({ what: m[0], fix: m[1] })),
+      onScroll: (e) => {
+        const el = e && (e.currentTarget || e.target);
+        const on = !!el && el.scrollTop > 2;
+        if (on !== this.state.scrolled) this.setState({ scrolled: on });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

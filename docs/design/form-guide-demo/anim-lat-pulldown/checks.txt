@@ -1,0 +1,62 @@
+PASS top: elbow inside angle 174.0 within 160-175 (spec about 170, not locked)
+PASS top: upper arm 163.7 deg from the torso line (the real joint angle), within 160-180 (spec 3.2: arms overhead, about 170)
+PASS top: the side view draws the upper arm 170.4 deg from the torso line, so the arms read as overhead (limit 165)
+PASS shoulder range of motion 138.4 deg (spec about 140; range 130-150)
+PASS end: upper arm 25.3 deg from the torso line, within 20-30 (spec: elbows down by the sides)
+PASS end: elbow 10.6 behind the shoulder joint; the side view shows the upper arm 17.2 deg behind the torso line (spec: slightly behind; its key-pose table has 30.5)
+DECIDED end: elbow inside angle 35.4 within 30-45 -- spec 3.2's truth table says 65-75; only a grip about twice shoulder width gives that, and such a grip cannot reach "about 170" at the top (PLAYER.md section 9, grip table). Decision D1 keeps the spec's grip words and top angle and follows the spec's own key-pose table here (30.5)
+DECIDED bar: grip centre from (137.3, 65.8) down to (157.0, 150.0) at the top of the chest; stack lift 0 to 43.1 (half the 86.1 the cable pays out) -- spec 3.2 says straight down at x 156 from y 72 to 150 and a lift of 39; with the arms about 170 overhead the hand sits about 78 above the raised shoulder, so the bar starts at y 65.8 just above the shoulder and moves forward above the head, then comes straight down at x 160 in front of the face (the fist clears the nose) onto the chest at x 157; the front pulley sits at x 146.3, straight above the hook at the top of the rep (QA r3), so the cable hangs straight down between the hands in the setup pose
+DECIDED Path caption "The bar comes down in front of your face to the top of your chest." -- spec 3.2 says "The bar comes straight down in front of your face to the top of your chest."; the bar moves 22.7 forward above the head before it drops past the face, and the dashed guide shows that curve, so "straight" would contradict the picture (decision D2, PLAYER.md section 9)
+PASS Path close-up target 150, 112, 1.4 is the spec's own (150, 112, 1.4): it holds the pulley, the whole path, the face and the chest above the bubble
+DECIDED close-up targets Grip 163, 119, 1.55 and Pad 197, 227, 1.9 -- spec 3.2 has Grip 156, 111, 1.8 and Pad 192, 200, 2.2; at those the Grip view cuts off the pulley and the far fist at the setup pose and puts the ring under the bubble at the chest, and the Pad view puts the feet under the caption bubble that says "feet flat" (decision D3, PLAYER.md section 9; checked in the browser below)
+PASS tile 2 "Drive your elbows down" at the spec's 12.5 % of the rep: the forearm stands 13.3 deg from vertical under the bar and the elbow is 38.1 below the hand, so the elbow is in view, driving down (limits 15 deg, 30)
+PASS upper arm drawn length never below 0.55 (min 0.816), so it never looks stubby or points straight at the camera (chest-press rig limit 0.55)
+PASS analytic far hand to bar's far grip between baked samples 0.154 < 0.5 (the near hand holds the bar in its own group, so its gap is 0)
+PASS analytic cable end to the hook between baked samples 0.671 < 2 (the hook dot has radius 2.4, so the join never shows)
+PASS analytic near hand to the solved path between baked samples 0.555 < 1 (the dashed guide runs through the solved path; the fist is 12 wide)
+PASS smooth motion (analytic, per keyframe gap): every joint speeds up once and slows down once in the pull and in the return; worst dip below a running peak 0.62 % of that phase's top speed (limit 2 %). Forearm, degrees per 1.25 % of the rep, pull: 2.1 4.1 5.3 6.7 7.9 9.2 10.6 12.2 13.7 14.6 16.8 15.8 12.0 8.1 5.2 4.0 2.5 1.2 0.3 0.1 0.1 | return: 0.1 0.0 0.4 1.2 2.1 3.0 5.3 7.7 8.2 7.2 6.4 5.4 4.5 3.7 3.1 2.7 2.2 1.7 0.7 (QA r2 measured 0.3, 6.0, 19.8, 14.9, 8.6, 8.2, 8.0 at the start of the pull)
+PASS elbow closes steadily through the pull (174.0 -> 35.4); it opens only 0.16 deg in the last 5 % (limit 0.3)
+PASS grip: hands 72 apart, 1.19 times the outside shoulder width (60.4): "a little wider than your shoulders" (spec 3.2 Grip caption and About step 2)
+PASS the lat bar is inside the near hand group (spec 2.4, RIG section 4: held equipment lives in the hand group, so the grip can never come apart): 2 of 2 bar layers (the whole bar under the fist, its near end over it) are in the hand group
+PASS near hand on the bar in the browser over 201 phases: worst gap 0.000 units (limit 0.05: same group)
+PASS far hand on the bar's far grip in the browser over 201 phases: worst gap 0.164 units (limit 0.5)
+PASS figure, both arms, bar, stack and line inside the safe area (x 16-342, y 40-258) at 41 phases
+PASS "still to go" line: shown in 26 of 41 phases, always starting below the hand (closest start 12.1 below the grip; limit 5), so nothing solid runs up from the fist next to the cable
+PASS keep clear: no scene part under the rep pill or the Slow motion pill at 41 phases (pills x 10-94.7 y 10-32, x 100.7-200.3 y 10-32; highest scene part starts at y 34.0)
+PASS Slow motion pill has a solid backing (accent tint over rgb(20, 21, 22))
+PASS weight stack (plates, rods, pin, bracket, rear cable and pulley): shown unzoomed and in the Pad close-up, hidden in the Grip and Path close-ups and their stills (most visible part: {"?t=0":1,"?t=0&zoom=1":0,"?t=0&zoom=2":0,"?t=0&zoom=3":1,"?mode=pictures&zoom=1":0,"?mode=pictures&zoom=2":0})
+INFO fist or forearm over the head shape (401 phases, the round-1 measure): never of the rep, 0.00 s of each 4 s rep at 1x (was 1.28 s)
+INFO any near-arm part over the face's front edge (brow to chin): 4-9.75 %, 68-80 % of the rep, 0.73 s of each 4 s rep at 1x; these are the moments the upper arm sweeps down past the face while the bar is still above the head, or comes back up
+PASS face stays in view while the bar passes it (grip between the forehead, y 114.2, and the chin, y 131.4): no arm part over the face's front edge at any of those phases (0 found)
+PASS tile 2 pose (12.5 %): fist and forearm 7.7 clear of the face, so the outlines do not touch (limit 3)
+PASS front cable drawn over the far arm and the body: at most 0 % of 39 points along it covered at any of 71 phases (worst at t 0.000; limit 5 %; QA r2 found 22 of 39 on the far arm at t 0); 0 of 2769 points fell between pixels
+PASS near end of the bar: its outer half shows at all 41 phases (nothing hides it: it is nearer the camera than the arm and the chest); share of its bent part in view 100-100 % over the rep
+PASS smooth motion in the browser (the drawn arm read back at all 43 keyframe stops): the drawn elbow angle and the elbow point each speed up once and slow down once per phase (worst dip 0.54 %, limit 2 %); drawn elbow angle 169.5 at t 0.025 and 155.0 at t 0.05 (QA r2: 173.7 -> 139.0); elbow point per 1.25 % of the rep, pull: 0.8 1.6 2.1 2.7 3.4 4.3 5.5 7.0 8.4 9.0 9.1 9.5 9.2 8.6 7.6 6.5 5.4 4.3 3.1 1.9 0.7
+PASS close-ups at the setup pose and their stills: Grip and Path show the front pulley, the whole cable and the near fist inside the stage and above the bubble, and the far arm does not stick out of the top (Grip: pulley top 6.3, far arm top 27.8); Pad shows the feet above its bubble (feet bottom 196.9, bubble top 210)
+PASS Grip close-up over 41 phases: the far arm stays inside the stage (highest point 27.8) and the far hand never goes under the front-view inset (0 found)
+PASS Grip inset bar matches the scene's bar: 150 long, straight between +-48, both ends bent down 6, hands at +-36, and the whole bar inside the inset (bar x -75.0 to 75.0, view x -80 to 80)
+PASS zoom-1 (grip): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-1 (grip): subject inside the stage and above the bubble over 41 phases (top 36.9, bottom 204.6 vs bubble 210.0, x 120.6-193.6)
+PASS zoom-1 (grip): overlay shown (opacity 1)
+PASS zoom-1 (grip): front-view inset shown (x 214-348, y 10-110.4), and the ring is never under it over 41 phases (0 found)
+PASS zoom-1 (grip): path guide and "still to go" line hidden, so no blue line runs beside the hand and the cable (QA r2 issue 4)
+PASS zoom-2 (path): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-2 (path): subject inside the stage and above the bubble over 41 phases (top 73.3, bottom 191.2 vs bubble 210.0, x 161.2-193.0)
+PASS zoom-2 (path): overlay shown (opacity 1; the path and the "still to go" line drawn over the arm)
+PASS zoom-2 (path): front-view inset hidden
+PASS zoom-3 (pad): rep pill and camera label hidden, its own bubble shown, the other bubbles hidden
+PASS zoom-3 (pad): subject inside the stage and above the bubble over 41 phases (top 14.5, bottom 86.7 vs bubble 210.0, x 142.9-196.1)
+PASS zoom-3 (pad): overlay shown (opacity 1)
+PASS zoom-3 (pad): front-view inset hidden
+PASS unzoomed: rep pill and camera label shown, no bubble, overlays, over-the-arm path copy and inset hidden, path guide shown
+PASS bounded: figure 3 reps, rep pill 1 cycle, keyframe set lp-ua-a
+PASS 3 reps then stop: animationend after the -b restart sets Replay (set lp-ua-b, label Replay)
+PASS Replay restarts through the other keyframe set (lp-ua-a, running)
+PASS pictures: grid shown (grid); the 4 tiles render 4 different pictures (poses 0, 12.5, 31, 62.5 % of the rep)
+PASS pictures + Path chip: one still at pose 3 (delay -1.24s), picture caption "Bar to the top of your chest" shown, no phase caption
+PASS pictures + chip 1: picture caption "Thighs under the pad, arms long" under the setup pose, no phase caption
+PASS pictures + chip 3: picture caption "Thighs under the pad, arms long" under the setup pose, no phase caption
+PASS reduced motion: figure paused, captions paused, grid display grid, hint shown true, Animation disabled true
+PASS paper: machine frame outline 3.20:1 on the stage (>= 3; read back as color(srgb 0.54698 0.540863 0.52251))
+PASS page errors: 0
+NO FAILURES; 0 OPEN; 4 DECIDED (spec 3.2 values changed by decisions D1-D3: the supervisor signs them off and applies the spec.md edit in PLAYER.md section 9)

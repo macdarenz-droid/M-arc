@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Search other names</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400..700&amp;display=swap">
+<style>
+body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+/* Search: the exercise picker ("Add exercise") with "around the world" typed (spec 6.1, 6.2, 7.6).
+   Every class starts with se- (st- for the Train screen behind) so nothing here reaches the imported About sheet, and About's rules never reach this board.
+   --se-ink paints the glowing info icon and ring: the theme accent, lifted toward the text colour only in Midnight, where the plain accent is 2.65:1 on the sheet (3.67:1 lifted). */
+.se-root{--tz:.8;--se-focus:color-mix(in srgb,var(--accent) 80%,var(--text));position:relative;overflow:hidden;background:var(--bg);color:var(--text);font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:calc(16px * var(--tz));line-height:1.4;-webkit-font-smoothing:antialiased}
+.se-b{appearance:none;-webkit-appearance:none;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;line-height:inherit;text-align:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+.se-root button:focus-visible,.se-root a:focus-visible{outline:2px solid var(--se-focus);outline-offset:2px}
+.se-svg{display:block;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* The real Escobar mark (src/assets/escobar-mark.png) as a mask, painted with currentColor like the app does. */
+.se-mark{--se-mark:url("data:image/png;base64,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");display:inline-block;flex:none;background-color:currentColor;-webkit-mask:var(--se-mark) center / contain no-repeat;mask:var(--se-mark) center / contain no-repeat}
+
+/* ---- Behind the sheet: the owner's Train screen as Main draws it at scroll 0 (static, hidden from screen readers). The Escobar dock is hidden while a sheet is open. ---- */
+.st-bg{--tz:.8;position:absolute;inset:0;font-size:calc(16px * var(--tz));line-height:1.4;pointer-events:none}
+.st-scroll{position:absolute;inset:0;box-sizing:border-box;overflow:hidden;padding:12px 16px 140px}
+.st-topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 18px}
+.st-eyebrow{font-size:calc(11px * var(--tz));font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.st-h1{margin:0;font-size:calc(28px * var(--tz));font-weight:650;letter-spacing:-.02em;line-height:1.15;color:var(--text)}
+.st-h2{margin:0;font-size:calc(17px * var(--tz));font-weight:600;letter-spacing:-.01em;line-height:1.4;color:var(--text)}
+.st-hint{font-size:calc(12px * var(--tz));color:var(--text-2)}
+.st-btn{position:relative;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:var(--radius-md);font-weight:600;font-size:calc(14px * var(--tz));border:1px solid var(--border);background:var(--surface-2);color:var(--text);white-space:nowrap}
+.st-primary{background:var(--se-fill);border-color:transparent;color:var(--on-accent)}
+.st-quiet{background:transparent;border-color:transparent;color:var(--text-2)}
+.st-sm{min-height:34px;padding:0 12px;font-size:calc(13px * var(--tz))}
+.st-block{display:flex;width:100%}
+.st-icon{width:44px;min-height:44px;padding:0;border-radius:50%}
+.st-gymrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.st-chip{box-sizing:border-box;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:calc(12px * var(--tz));font-weight:600;white-space:nowrap}
+.st-tabs{display:flex;gap:8px;overflow:hidden;padding:4px 4px 8px;margin:-2px -4px 0}
+.st-tab{box-sizing:border-box;flex:none;display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface-1);color:var(--text-2);font-size:calc(13px * var(--tz));font-weight:600;white-space:nowrap}
+.st-tab-on{background:var(--text);color:var(--bg);border-color:transparent}
+.st-dot{flex:none;width:8px;height:8px;border-radius:50%}
+.st-card{background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:16px}
+.st-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.st-list{display:grid;min-width:0;margin-top:6px}
+.st-row{position:relative;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:calc(100% + 16px);min-width:0;min-height:52px;margin:0 -8px;padding:10.8px 8px}
+.st-row::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:1px;background:var(--border-subtle)}
+.st-row:last-child::after{display:none}
+.st-grow{display:block;flex:1;min-width:0}
+.st-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.st-sub{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:calc(12px * var(--tz));color:var(--text-2)}
+.st-trail{flex:none;font-size:calc(12px * var(--tz));color:var(--text-2);font-variant-numeric:tabular-nums}
+.st-start{margin-top:12px}
+.st-nav{position:absolute;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);border-top:1px solid var(--border-subtle)}
+.st-nav-inner{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.st-navbtn{display:grid;justify-items:center;align-content:start;gap:3px;min-height:58px;padding:10px 0 8px;box-sizing:border-box;color:var(--text-2);font-size:calc(11px * var(--tz));font-weight:600;line-height:1.4}
+.st-navbtn-on{color:var(--text)}
+
+/* ---- Scrim and the picker sheet (origin/main after patch b3: surface-2 panel, sticky top, hairline once scrolled) ---- */
+.se-scrim{position:absolute;inset:0;z-index:30;background:var(--scrim);cursor:default;-webkit-tap-highlight-color:transparent}
+.se-scrim:focus-visible{outline:none}
+.se-sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;max-height:776px;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;background:var(--surface-2);color:var(--text);border-radius:var(--radius-xl) var(--radius-xl) 0 0}
+/* The 1px panel border is drawn on top, so the content keeps the full 358px. */
+.se-sheet::after,.se-panel::after{content:"";position:absolute;inset:0;z-index:3;border:1px solid var(--border);border-bottom:0;border-radius:inherit;pointer-events:none}
+.se-scroll{min-height:0;max-height:776px;box-sizing:border-box;padding:8px 16px 20px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.se-scroll::-webkit-scrollbar,.se-pscroll::-webkit-scrollbar{display:none}
+.se-top{position:sticky;top:-8px;z-index:2;margin:-8px -16px 0;padding:8px 16px 0;background:var(--surface-2)}
+.se-hair{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--border-subtle);transition:opacity 150ms cubic-bezier(.2,0,0,1)}
+.se-grab{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:4px auto 14px}
+.se-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px}
+.se-head h2{margin:0;min-width:0;font-size:calc(17px * var(--tz));line-height:calc(22px * var(--tz));font-weight:600;letter-spacing:-.01em;color:var(--text)}
+.se-close{flex:none;box-sizing:border-box;width:44px;height:44px;border-radius:50%;background:transparent;color:var(--text-2);display:inline-grid;place-items:center;cursor:pointer;text-decoration:none;transition:background-color 100ms cubic-bezier(.2,0,0,1)}
+.se-close:active{background:var(--surface-3)}
+.se-stack{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+
+/* Search field: the app's input (surface-2, 1px border, radius-md, 10px 12px, 44px) in its focused look: accent border and a 3px accent-soft ring. */
+.se-field{display:flex;align-items:center;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid var(--accent);border-radius:var(--radius-md);background:var(--surface-2);box-shadow:0 0 0 3px var(--accent-soft);color:var(--text);font-size:calc(16px * var(--tz));line-height:calc(22px * var(--tz))}
+.se-caret{flex:none;width:2px;height:calc(20px * var(--tz));margin-left:1px;border-radius:1px;background:var(--se-ink);animation:se-blink 1s step-end infinite}
+.se-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+/* Result rows: the app's .list-row.pressable. The whole row adds the exercise (a button stretched under the row);
+   the info button sits above it, so the two never nest. */
+.se-list{display:grid;min-width:0}
+.se-row{position:relative;box-sizing:border-box;display:flex;align-items:center;gap:12px;min-width:0;min-height:52px;margin:0 -8px;padding:12px 8px}
+.se-row::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:1px;background:var(--border-subtle)}
+.se-row:last-child::after{display:none}
+.se-add{position:absolute;inset:0;z-index:0;width:100%;height:100%;border-radius:var(--radius-sm);transition:background-color 150ms cubic-bezier(.2,0,0,1)}
+.se-add:active{background:var(--surface-3);transition:none}
+.se-add:focus-visible{outline-offset:-2px}
+.se-grow{position:relative;display:block;flex:1;min-width:0;pointer-events:none}
+.se-name{display:block;color:var(--text);font-size:calc(16px * var(--tz));line-height:1.4}
+.se-hint{display:block;margin-top:1px;color:var(--text-2);font-size:calc(12px * var(--tz));line-height:1.4}
+.se-info{position:relative;z-index:1;flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--se-ink);transition:background-color 100ms cubic-bezier(.2,0,0,1)}
+.se-info:active{background:var(--surface-3);transition:none}
+/* The glow: a 30px accent ring behind the icon pulses 3 times (900ms each), then stays as a steady ring. Rows start 60ms apart. */
+.se-ring{position:absolute;left:7px;top:7px;width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:1.5px solid var(--se-ink);opacity:1;pointer-events:none;animation:se-info-glow 900ms cubic-bezier(.2,0,0,1) 3 both}
+.se-info .se-svg{position:relative}
+.se-list > .se-row:nth-child(2) .se-ring{animation-delay:60ms}
+.se-list > .se-row:nth-child(3) .se-ring{animation-delay:120ms}
+.se-list > .se-row:nth-child(4) .se-ring{animation-delay:180ms}
+.se-list > .se-row:nth-child(5) .se-ring{animation-delay:240ms}
+.se-chip{position:relative;flex:none;display:inline-flex;align-items:center;gap:4px;box-sizing:border-box;min-height:28px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:calc(12px * var(--tz));line-height:calc(16px * var(--tz));font-weight:600;white-space:nowrap;pointer-events:none}
+.se-chip .se-check{display:none;color:var(--se-ink)}
+.se-chip-on{background:var(--accent-soft);border-color:transparent;color:var(--text)}
+.se-chip-on .se-check{display:block}
+
+/* Quiet button under the results (spec 7.6): "Create a custom exercise". */
+.se-quiet{background:transparent;border-color:transparent;color:var(--text-2)}
+.se-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;min-height:44px;padding:0 16px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:calc(14px * var(--tz));line-height:1.2;font-weight:600;white-space:nowrap;text-decoration:none;cursor:pointer;transition:transform 200ms cubic-bezier(.2,0,0,1),background-color 150ms cubic-bezier(.2,0,0,1)}
+.se-btn:active{transform:scale(.97);background:var(--surface-3);transition-duration:100ms}
+
+/* ---- The About sheet, opened in place over the picker (a nested sheet: clear backdrop) ---- */
+.se-layer{position:absolute;inset:0;z-index:40}
+.se-clear{position:absolute;inset:0;width:100%;height:100%;background:transparent;cursor:default}
+.se-nest{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;max-height:100%;--about-foot:77px}
+/* The real close control for the imported About: laid over About's own close button (x 330-374; y 30-74 at rest,
+   22-66 once About scrolls, because its top bar sticks 8px higher). About's own close is a link to the Train board. */
+.se-over{position:absolute;top:22px;right:16px;z-index:5;width:44px;height:52px;border-radius:22px;background:transparent}
+.se-over:focus-visible{outline-offset:-2px}
+.se-in .se-nest{animation:se-rise 320ms cubic-bezier(.32,.72,0,1) both}
+.se-out .se-nest{animation:se-drop 200ms cubic-bezier(.3,0,.8,.15) both}
+.se-out .se-clear,.se-out .se-nest{pointer-events:none}
+.se-foot{position:absolute;left:0;right:0;bottom:0;z-index:6;box-sizing:border-box;padding:12px 16px 20px;background:var(--surface-2);border-top:1px solid var(--border-subtle)}
+.se-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;padding:0 16px;border-radius:var(--radius-md);background:var(--se-fill);color:var(--on-accent);font-size:calc(14px * var(--tz));line-height:1.2;font-weight:600}
+
+/* Text-only About (the four exercises with no guide yet): the same structure and look as About.dc.html. */
+.se-panel{position:relative;height:776px;box-sizing:border-box;overflow:hidden;background:var(--surface-2);color:var(--text);border-radius:var(--radius-xl) var(--radius-xl) 0 0;font-size:calc(15px * var(--tz));line-height:1.4}
+.se-pscroll{position:absolute;inset:0;box-sizing:border-box;padding:8px 16px 97px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.se-also{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:10px 12px;border-radius:var(--radius-md);background:var(--accent-soft)}
+.se-also .se-svg{color:var(--se-ink)}
+.se-also p{margin:0;font-size:calc(13px * var(--tz));line-height:calc(18px * var(--tz));color:var(--text)}
+.se-also .se-l1{font-weight:500}
+.se-also .se-l2{margin-top:2px}
+.se-sec{margin:0 0 10px;font-size:calc(14px * var(--tz));line-height:calc(20px * var(--tz));font-weight:600;color:var(--text)}
+.se-soon{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:14px 16px;background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);color:var(--text-2)}
+.se-soon p{margin:0;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz))}
+.se-eyebrow{margin:0 0 8px;font-size:calc(11px * var(--tz));line-height:calc(14px * var(--tz));font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.se-works{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:center;margin:0 0 16px}
+.se-lbl{font-size:calc(11px * var(--tz));line-height:calc(14px * var(--tz));color:var(--text-2)}
+.se-chips{display:flex;flex-wrap:wrap;gap:6px}
+.se-mchip{display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;min-height:28px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);font-size:calc(12px * var(--tz));line-height:calc(16px * var(--tz));font-weight:600;white-space:nowrap}
+.se-mchip-main{background:var(--accent-soft);border-color:transparent;color:var(--text)}
+.se-mchip-main .se-dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.se-meta{margin:0 0 16px;font-size:calc(13px * var(--tz));line-height:calc(18px * var(--tz));color:var(--text-2)}
+.se-equip{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 24px}
+.se-steps{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:10px}
+.se-steps li{display:flex;gap:10px;align-items:flex-start;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz));color:var(--text)}
+.se-num{flex:none;width:22px;height:22px;margin-top:-1px;border-radius:50%;background:var(--surface-3);color:var(--text);display:inline-grid;place-items:center;font-size:calc(12px * var(--tz));line-height:1;font-weight:600;font-variant-numeric:tabular-nums}
+.se-tip{margin:0;padding:12px;border:1px solid var(--border-subtle);border-radius:var(--radius-md)}
+.se-tip .se-eyebrow{margin-bottom:6px}
+.se-tip-text{margin:0;font-size:calc(15px * var(--tz));line-height:calc(20px * var(--tz));color:var(--text)}
+
+@keyframes se-info-glow{0%{opacity:0;transform:scale(.8)}40%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+@keyframes se-blink{50%{opacity:0}}
+@keyframes se-rise{from{transform:translateY(100%)}to{transform:none}}
+@keyframes se-drop{from{transform:none}to{transform:translateY(100%)}}
+@keyframes se-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes se-fade-out{from{opacity:1}to{opacity:0}}
+@media (hover:hover){.se-close:hover,.se-info:hover,.se-btn:hover,.se-add:hover{background:var(--surface-3)}}
+@media (prefers-reduced-motion: reduce){
+  .se-ring{animation:none;opacity:1}
+  .se-caret{animation:none}
+  .se-hair,.se-close,.se-add,.se-info,.se-btn{transition:none}
+  .se-btn:active{transform:none;opacity:.7}
+  .se-in .se-nest{animation:se-fade-in 160ms linear both}
+  .se-out .se-nest{animation:se-fade-out 160ms linear both}
+}
+</style>
+</helmet>
+<div class="se-root" style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: var(--bg); {{ themeCss }}">
+
+<!-- Behind: the owner's Train screen at scroll 0, under the scrim. Static and hidden from screen readers. -->
+<div class="st-bg" aria-hidden="true">
+  <div class="st-scroll">
+    <div class="st-topbar">
+      <div>
+        <div class="st-eyebrow">Train</div>
+        <div class="st-h1">Workouts</div>
+      </div>
+      <span class="st-btn st-quiet st-sm"><svg class="se-svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>Split</span>
+    </div>
+    <div class="st-gymrow">
+      <span class="st-chip">At: Anytime Fitness <svg class="se-svg" width="14" height="14" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg></span>
+    </div>
+    <div class="st-tabs">
+      <span class="st-tab st-tab-on"><i class="st-dot" style="background: #4d9dff;"></i>SPLIT 1 UPPER BODY</span>
+      <span class="st-tab"><i class="st-dot" style="background: #ffc845;"></i>SPLIT 2 - LOWER AND CORE</span>
+      <span class="st-tab"><i class="st-dot" style="background: #a061ff;"></i>SPLIT 3</span>
+    </div>
+    <div class="st-card">
+      <div class="st-head">
+        <div>
+          <div class="st-h2">SPLIT 1 UPPER BODY</div>
+          <span class="st-hint">8 exercises · 21 sets</span>
+        </div>
+        <span class="st-btn st-quiet st-icon"><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16zM13 7l4 4"></path></svg></span>
+      </div>
+      <div class="st-list">
+        <div class="st-row"><span class="st-grow"><span class="st-name">Machine Chest Press</span><span class="st-sub">120 lb · 12 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">3 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Lat Pulldown</span><span class="st-sub">45 kg · 6–8 reps · Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.</span></span><span class="st-trail">3 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Incline Machine Press</span><span class="st-sub">55 lb · 11 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">3 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Seated Cable Row</span><span class="st-sub">45 kg · 12 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">3 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Dumbbell Lateral Raise</span><span class="st-sub">6 kg · 13 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">3 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Rear Delt Fly</span><span class="st-sub">55 lb · 15 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">2 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Dumbbell Biceps Curl</span><span class="st-sub">10 kg · 8–10 reps · Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.</span></span><span class="st-trail">2 sets</span></div>
+        <div class="st-row"><span class="st-grow"><span class="st-name">Single-Arm Triceps Pushdown</span><span class="st-sub">5 kg · 9 reps · Last set was max effort. Keep the load and aim for one more clean rep.</span></span><span class="st-trail">2 sets</span></div>
+      </div>
+      <span class="st-btn st-primary st-block st-start"><svg width="18" height="18" viewBox="0 0 24 24" style="display: block; flex: none;"><path d="M7 5l12 7-12 7z" fill="currentColor"></path></svg>Start SPLIT 1 UPPER BODY</span>
+      <span class="st-btn st-quiet st-block">Log a past session</span>
+    </div>
+  </div>
+  <div class="st-nav">
+    <div class="st-nav-inner">
+      <span class="st-navbtn"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg><span>Today</span></span>
+      <span class="st-navbtn st-navbtn-on"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24"><path d="M6 7v10M18 7v10M3 9v6M21 9v6M6 12h12"></path></svg><span>Train</span></span>
+      <span class="st-navbtn"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg><span>History</span></span>
+      <span class="st-navbtn"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2.5"></circle><path d="M8 9h8l1 6h-2l-1 6h-4l-1-6H7z"></path></svg><span>Body</span></span>
+      <span class="st-navbtn"><span class="se-mark" style="width: 22px; height: 22px;"></span><span>Escobar</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Scrim: tapping outside the sheet closes the picker (back to the Train screen). -->
+<a class="se-scrim" href="Main.dc.html" tabindex="-1" aria-label="Close"></a>
+
+<!-- The picker: "Add exercise" with "around the world" typed. -->
+<div class="se-sheet" role="dialog" aria-modal="true" aria-labelledby="se-title" aria-hidden="{{ pickerHidden }}">
+<div class="se-scroll" onScroll="{{ onPickScroll }}">
+
+<div class="se-top">
+<div class="se-grab" aria-hidden="true"></div>
+<div class="se-head">
+<h2 id="se-title">Add exercise</h2>
+<a class="se-close" href="Main.dc.html" tabindex="{{ pickTab }}" aria-label="Close"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+</div>
+<div class="se-hair" aria-hidden="true" style="{{ pickHair }}"></div>
+</div>
+
+<div class="se-stack">
+<div class="se-field" role="search"><span class="se-sr">Search: </span><span>around the world</span><span class="se-caret" aria-hidden="true"></span></div>
+
+<div class="se-list" role="list" aria-label="Results: 5 exercises found by another name">
+  <div class="se-row" role="listitem">
+    <button type="button" class="se-b se-add" tabindex="{{ pickTab }}" aria-label="{{ addLabel.atw }}" onClick="{{ add.atw }}"></button>
+    <span class="se-grow" aria-hidden="true"><span class="se-name">Dumbbell Around the World (Lying)</span><span class="se-hint">Dumbbells · Chest, Front shoulders</span></span>
+    <button type="button" class="se-b se-info" tabindex="{{ pickTab }}" aria-haspopup="dialog" aria-label="About Dumbbell Around the World (Lying). Found by another name" onClick="{{ open.atw }}"><span class="se-ring" aria-hidden="true"></span><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></button>
+    <span class="{{ chip.atw }}" aria-hidden="true"><svg class="se-svg se-check" width="12" height="12" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"></path></svg>{{ chipText.atw }}</span>
+  </div>
+  <div class="se-row" role="listitem">
+    <button type="button" class="se-b se-add" tabindex="{{ pickTab }}" aria-label="{{ addLabel.plateHalo }}" onClick="{{ add.plateHalo }}"></button>
+    <span class="se-grow" aria-hidden="true"><span class="se-name">Plate Halo</span><span class="se-hint">Plate · Side shoulders, Front shoulders</span></span>
+    <button type="button" class="se-b se-info" tabindex="{{ pickTab }}" aria-haspopup="dialog" aria-label="About Plate Halo. Found by another name" onClick="{{ open.plateHalo }}"><span class="se-ring" aria-hidden="true"></span><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></button>
+    <span class="{{ chip.plateHalo }}" aria-hidden="true"><svg class="se-svg se-check" width="12" height="12" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"></path></svg>{{ chipText.plateHalo }}</span>
+  </div>
+  <div class="se-row" role="listitem">
+    <button type="button" class="se-b se-add" tabindex="{{ pickTab }}" aria-label="{{ addLabel.clockLunge }}" onClick="{{ add.clockLunge }}"></button>
+    <span class="se-grow" aria-hidden="true"><span class="se-name">Clock Lunge</span><span class="se-hint">Bodyweight · Quads, Glutes</span></span>
+    <button type="button" class="se-b se-info" tabindex="{{ pickTab }}" aria-haspopup="dialog" aria-label="About Clock Lunge. Found by another name" onClick="{{ open.clockLunge }}"><span class="se-ring" aria-hidden="true"></span><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></button>
+    <span class="{{ chip.clockLunge }}" aria-hidden="true"><svg class="se-svg se-check" width="12" height="12" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"></path></svg>{{ chipText.clockLunge }}</span>
+  </div>
+  <div class="se-row" role="listitem">
+    <button type="button" class="se-b se-add" tabindex="{{ pickTab }}" aria-label="{{ addLabel.kbHalo }}" onClick="{{ add.kbHalo }}"></button>
+    <span class="se-grow" aria-hidden="true"><span class="se-name">Kettlebell Halo</span><span class="se-hint">Kettlebell · Side shoulders, Front shoulders</span></span>
+    <button type="button" class="se-b se-info" tabindex="{{ pickTab }}" aria-haspopup="dialog" aria-label="About Kettlebell Halo. Found by another name" onClick="{{ open.kbHalo }}"><span class="se-ring" aria-hidden="true"></span><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></button>
+    <span class="{{ chip.kbHalo }}" aria-hidden="true"><svg class="se-svg se-check" width="12" height="12" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"></path></svg>{{ chipText.kbHalo }}</span>
+  </div>
+  <div class="se-row" role="listitem">
+    <button type="button" class="se-b se-add" tabindex="{{ pickTab }}" aria-label="{{ addLabel.kbPass }}" onClick="{{ add.kbPass }}"></button>
+    <span class="se-grow" aria-hidden="true"><span class="se-name">Kettlebell Pass-Around</span><span class="se-hint">Kettlebell · Front shoulders, Obliques</span></span>
+    <button type="button" class="se-b se-info" tabindex="{{ pickTab }}" aria-haspopup="dialog" aria-label="About Kettlebell Pass-Around. Found by another name" onClick="{{ open.kbPass }}"><span class="se-ring" aria-hidden="true"></span><svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></button>
+    <span class="{{ chip.kbPass }}" aria-hidden="true"><svg class="se-svg se-check" width="12" height="12" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"></path></svg>{{ chipText.kbPass }}</span>
+  </div>
+</div>
+
+<a class="se-btn se-quiet" href="Custom.dc.html" tabindex="{{ pickTab }}">Create a custom exercise</a>
+</div>
+
+</div>
+</div>
+
+<!-- About, opened in place from an info button. A nested sheet: clear backdrop; tapping outside closes it. -->
+<sc-if value="{{ aboutOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="{{ layerClass }}">
+    <button type="button" class="se-b se-clear" tabindex="-1" aria-label="Close" onClick="{{ closeAbout }}"></button>
+
+    <sc-if value="{{ isAtw }}" hint-placeholder-val="{{ true }}">
+      <div class="se-nest">
+        <button type="button" class="se-b se-over" aria-label="Close" onClick="{{ closeAbout }}"></button>
+        <dc-import name="About" exercise="around-the-world" searched="around the world" theme="{{ theme }}" hint-size="390px,776px"></dc-import>
+        <div class="se-foot"><button type="button" class="se-b se-primary" onClick="{{ addFromAbout }}">{{ addFromAboutText }}</button></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isText }}" hint-placeholder-val="{{ false }}">
+      <div class="se-nest">
+        <div class="se-panel" role="dialog" aria-modal="true" aria-labelledby="se-about-title">
+          <div class="se-pscroll" onScroll="{{ onAboutScroll }}">
+            <div class="se-top">
+              <div class="se-grab" aria-hidden="true"></div>
+              <div class="se-head">
+                <h2 id="se-about-title">{{ ab.name }}</h2>
+                <button type="button" class="se-b se-close" aria-label="Close" onClick="{{ closeAbout }}"><svg class="se-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+              <div class="se-hair" aria-hidden="true" style="{{ aboutHair }}"></div>
+            </div>
+
+            <div class="se-also">
+              <svg class="se-svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+              <div>
+                <p class="se-l1">{{ ab.line1 }}</p>
+                <p class="se-l2">{{ ab.line2 }}</p>
+              </div>
+            </div>
+
+            <div class="se-soon">
+              <svg class="se-svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+              <p>Animation comes with the form-guide update.</p>
+            </div>
+
+            <p class="se-eyebrow">Works</p>
+            <div class="se-works">
+              <span class="se-lbl">Main</span>
+              <div class="se-chips">
+                <sc-for list="{{ abMain }}" as="m" hint-placeholder-count="2"><span class="se-mchip se-mchip-main"><span class="se-dot" aria-hidden="true"></span>{{ m.label }}</span></sc-for>
+              </div>
+              <span class="se-lbl">Helps</span>
+              <div class="se-chips">
+                <sc-for list="{{ abHelps }}" as="h" hint-placeholder-count="2"><span class="se-mchip">{{ h.label }}</span></sc-for>
+              </div>
+            </div>
+            <p class="se-meta">Also called: {{ ab.otherNames }}</p>
+            <p class="se-eyebrow">Equipment</p>
+            <div class="se-equip"><span class="se-mchip">{{ ab.equipment }}</span></div>
+
+            <h3 class="se-sec">How to do it</h3>
+            <ol class="se-steps">
+              <sc-for list="{{ abSteps }}" as="s" hint-placeholder-count="3"><li><span class="se-num">{{ s.n }}</span><span>{{ s.text }}</span></li></sc-for>
+            </ol>
+
+            <div class="se-tip">
+              <p class="se-eyebrow">Tip</p>
+              <p class="se-tip-text">{{ ab.tip }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="se-foot"><button type="button" class="se-b se-primary" onClick="{{ addFromAbout }}">{{ addFromAboutText }}</button></div>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["silent-black","paper","ember","emerald","midnight"],"default":"silent-black"},"$preview":{"width":390,"height":844}}'>
+const THEMES = {
+  'silent-black': { bg:'#08090a', s1:'#0f1011', s2:'#141516', s3:'#1b1c1f', bSub:'rgba(255,255,255,0.06)', b:'rgba(255,255,255,0.10)', bStr:'rgba(255,255,255,0.18)', text:'#f7f8f8', t2:'#8a8f98', t3:'#62666d', acc:'#5e6ad2', accSoft:'rgba(94,106,210,0.16)', onAcc:'#ffffff', pos:'#4cc38a', warn:'#f2b544', neg:'#eb5757', info:'#6ea8fe', shadow:'0 16px 40px rgba(0,0,0,0.45)', mapBody:'#1b1c1f', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','22px'] },
+  'paper':        { bg:'#ffffff', s1:'#f7f6f3', s2:'#efeeea', s3:'#e6e4df', bSub:'rgba(55,53,47,0.08)', b:'rgba(55,53,47,0.14)', bStr:'rgba(55,53,47,0.26)', text:'#37352f', t2:'#6b6a66', t3:'#9b9a97', acc:'#2383e2', accSoft:'rgba(35,131,226,0.12)', onAcc:'#ffffff', pos:'#0f7b4f', warn:'#b7791f', neg:'#c0392b', info:'#2383e2', shadow:'0 8px 24px rgba(15,15,15,0.08)', mapBody:'#e6e4df', mapLine:'rgba(55,53,47,0.18)', scheme:'light', r:['6px','10px','14px','18px'] },
+  'ember':        { bg:'#07080a', s1:'#0e1013', s2:'#14171b', s3:'#1c2026', bSub:'rgba(255,255,255,0.05)', b:'rgba(255,255,255,0.09)', bStr:'rgba(255,255,255,0.16)', text:'#ffffff', t2:'#9aa0a6', t3:'#5f666d', acc:'#ff6363', accSoft:'rgba(255,99,99,0.16)', onAcc:'#1a0b0b', pos:'#59d499', warn:'#ffb454', neg:'#ff6363', info:'#7aa7ff', shadow:'0 18px 44px rgba(0,0,0,0.5)', mapBody:'#1c2026', mapLine:'rgba(255,255,255,0.10)', scheme:'dark', r:['8px','12px','16px','20px'] },
+  'emerald':      { bg:'#0f0f0f', s1:'#171717', s2:'#1c1c1c', s3:'#242424', bSub:'#242424', b:'#2e2e2e', bStr:'#393939', text:'#ededed', t2:'#a0a0a0', t3:'#707070', acc:'#3ecf8e', accSoft:'rgba(62,207,142,0.14)', onAcc:'#062d1c', pos:'#3ecf8e', warn:'#f5a623', neg:'#f04438', info:'#5fa8ff', shadow:'0 14px 36px rgba(0,0,0,0.45)', mapBody:'#242424', mapLine:'#393939', scheme:'dark', r:['6px','8px','12px','16px'] },
+  'midnight':     { bg:'#0a2540', s1:'#0f2d4d', s2:'#143559', s3:'#1a3f68', bSub:'rgba(246,249,252,0.07)', b:'rgba(246,249,252,0.12)', bStr:'rgba(246,249,252,0.22)', text:'#f6f9fc', t2:'#a3b6cc', t3:'#6c839c', acc:'#635bff', accSoft:'rgba(99,91,255,0.18)', onAcc:'#ffffff', pos:'#3ecf8e', warn:'#ffbb00', neg:'#ff5c5c', info:'#00d4ff', shadow:'0 18px 44px rgba(3,20,40,0.55)', mapBody:'#1a3f68', mapLine:'rgba(246,249,252,0.14)', scheme:'dark', r:['8px','12px','16px','22px'] },
+};
+function themeVars(id) {
+  const t = THEMES[id] || THEMES['silent-black'];
+  return `color-scheme:${t.scheme};--bg:${t.bg};--surface-1:${t.s1};--surface-2:${t.s2};--surface-3:${t.s3};--border-subtle:${t.bSub};--border:${t.b};--border-strong:${t.bStr};--text:${t.text};--text-2:${t.t2};--text-3:${t.t3};--accent:${t.acc};--accent-soft:${t.accSoft};--on-accent:${t.onAcc};--positive:${t.pos};--warning:${t.warn};--negative:${t.neg};--info:${t.info};--shadow:${t.shadow};--map-body:${t.mapBody};--map-line:${t.mapLine};--radius-sm:${t.r[0]};--radius-md:${t.r[1]};--radius-lg:${t.r[2]};--radius-xl:${t.r[3]};--scrim:rgba(0,0,0,.5)`;
+}
+// Ink for the glowing info icon and ring. Plain accent everywhere except Midnight (2.65:1 on the sheet), lifted to 3.67:1.
+const INK = { midnight: 'color-mix(in srgb,var(--accent) 80%,var(--text))' };
+// Primary fill: plain accent everywhere except Paper, deepened there so white text reaches 4.5:1 (4.7:1), as on Custom and Warmup.
+const FILL = { paper: 'color-mix(in srgb,var(--accent) 82%,var(--text))' };
+
+// The results for "around the world", in the order the spec's LIB-1 tie-break gives (spec 6.1). All five match through another name.
+const ORDER = ['atw', 'plateHalo', 'clockLunge', 'kbHalo', 'kbPass'];
+const NAMES = {
+  atw: 'Dumbbell Around the World (Lying)',
+  plateHalo: 'Plate Halo',
+  clockLunge: 'Clock Lunge',
+  kbHalo: 'Kettlebell Halo',
+  kbPass: 'Kettlebell Pass-Around',
+};
+const SEARCHED = 'around the world';
+
+// Text-only About info for the four rows with no guide yet (spec 6.1). Common mistakes are not written for these yet, so none are shown.
+const TEXT_ONLY = {
+  plateHalo: {
+    aliases: ['around the world', 'halo', 'plate around the world', 'weight plate halo', 'plate around the head'],
+    main: ['Side shoulders', 'Front shoulders'], helps: ['Deep core', 'Rotator cuff'],
+    equipment: 'Plate',
+    steps: [
+      'Hold a light plate by its sides at chest height.',
+      'Circle it around your head, close to your head, elbows bending as it passes behind.',
+      'Finish at your chest, then circle the other way.',
+    ],
+    tip: "Squeeze your stomach and glutes so your lower back doesn't arch.",
+  },
+  clockLunge: {
+    aliases: ['around the world', 'around the world lunges', 'clock lunges', 'lunge matrix', '8-point lunges', 'multi-directional lunges'],
+    main: ['Quads', 'Glutes'], helps: ['Inner thighs', 'Outer hips'],
+    equipment: 'Bodyweight',
+    steps: [
+      'Stand tall and picture yourself in the middle of a clock.',
+      'Lunge forward to 12, push back to the middle.',
+      'Lunge out to the side to 3, then back to 6, returning to the middle each time.',
+      'Switch legs and go round the other way.',
+    ],
+    tip: 'Keep your front knee in line with your toes on every step.',
+  },
+  kbHalo: {
+    aliases: ['around the world', 'kb halo', 'kettlebell around the head'],
+    main: ['Side shoulders', 'Front shoulders'], helps: ['Deep core', 'Rotator cuff', 'Triceps'],
+    equipment: 'Kettlebell',
+    steps: [
+      'Hold a light kettlebell upside down by the horns at chest height.',
+      'Circle it around your head, keeping it close.',
+      'Finish at your chest, then go the other way.',
+    ],
+    tip: 'Keep your ribs down; move the bell, not your body.',
+  },
+  kbPass: {
+    aliases: ['around the world', 'kettlebell around the world', 'kettlebell pass around the body', 'waist pass', 'around the body pass'],
+    main: ['Front shoulders', 'Obliques'], helps: ['Forearms', 'Deep core', 'Side shoulders'],
+    equipment: 'Kettlebell',
+    steps: [
+      'Stand tall holding a kettlebell by the handle in front of your hips.',
+      'Pass it to your other hand behind your back.',
+      'Bring it round to the front and keep circling.',
+      'Switch direction halfway.',
+    ],
+    tip: 'Keep your hips facing forward; the bell travels, not your body.',
+  },
+};
+
+// "Other exercises share that name: A, B, C and D." (spec 6.2), in result order, without the open one.
+function sharedWith(key) {
+  const o = ORDER.filter(k => k !== key).map(k => NAMES[k]);
+  return o.slice(0, -1).join(', ') + ' and ' + o[o.length - 1];
+}
+const EMPTY_AB = { name: '', line1: '', line2: '', otherNames: '', equipment: '', tip: '' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { about: '', closing: false, added: {}, pickScrolled: false, aboutScrolled: false };
+    this.timer = null;
+  }
+  componentWillUnmount() {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+  }
+  openAbout(key) {
+    if (this.timer) { clearTimeout(this.timer); this.timer = null; }
+    this.setState({ about: key, closing: false, aboutScrolled: false });
+  }
+  closeAbout() {
+    if (!this.state.about || this.state.closing) return;
+    this.setState({ closing: true });
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      this.setState({ about: '', closing: false });
+    }, 200);
+  }
+  addOnce(key) {
+    if (this.state.added[key]) return;
+    this.setState({ added: Object.assign({}, this.state.added, { [key]: true }) });
+  }
+  renderVals() {
+    const p = this.props, s = this.state;
+    const theme = THEMES[p.theme] ? p.theme : 'silent-black';
+    const open = s.about !== '';
+    const add = {}, openFns = {}, chip = {}, chipText = {}, addLabel = {};
+    ORDER.forEach(k => {
+      const on = !!s.added[k];
+      add[k] = () => this.addOnce(k);
+      openFns[k] = () => this.openAbout(k);
+      chip[k] = on ? 'se-chip se-chip-on' : 'se-chip';
+      chipText[k] = on ? 'Added' : 'Add';
+      addLabel[k] = on ? `Added ${NAMES[k]}` : `Add ${NAMES[k]}`;
+    });
+    const t = TEXT_ONLY[s.about];
+    const ab = t ? {
+      name: NAMES[s.about],
+      line1: `You searched "${SEARCHED}". It's also called ${NAMES[s.about]}.`,
+      line2: `Other exercises share that name: ${sharedWith(s.about)}.`,
+      otherNames: t.aliases.join(', '),
+      equipment: t.equipment,
+      tip: t.tip,
+    } : EMPTY_AB;
+    return {
+      theme: theme,
+      themeCss: `${themeVars(theme)};--se-ink:${INK[theme] || 'var(--accent)'};--se-fill:${FILL[theme] || 'var(--accent)'}`,
+      pickerHidden: open,
+      pickTab: open ? -1 : 0,
+      pickHair: `opacity:${s.pickScrolled ? 1 : 0}`,
+      aboutHair: `opacity:${s.aboutScrolled ? 1 : 0}`,
+      add: add,
+      open: openFns,
+      chip: chip,
+      chipText: chipText,
+      addLabel: addLabel,
+      aboutOpen: open,
+      isAtw: s.about === 'atw',
+      isText: !!t,
+      layerClass: s.closing ? 'se-layer se-out' : 'se-layer se-in',
+      closeAbout: () => this.closeAbout(),
+      addFromAbout: () => { this.addOnce(this.state.about); this.closeAbout(); },
+      addFromAboutText: s.added[s.about] ? 'Added to SPLIT 1 UPPER BODY' : 'Add to SPLIT 1 UPPER BODY',
+      ab: ab,
+      abMain: t ? t.main.map(label => ({ label })) : [],
+      abHelps: t ? t.helps.map(label => ({ label })) : [],
+      abSteps: t ? t.steps.map((text, i) => ({ n: i + 1, text })) : [],
+      onPickScroll: (e) => {
+        const el = e && (e.currentTarget || e.target);
+        const on = !!el && el.scrollTop > 2;
+        if (on !== this.state.pickScrolled) this.setState({ pickScrolled: on });
+      },
+      onAboutScroll: (e) => {
+        const el = e && (e.currentTarget || e.target);
+        const on = !!el && el.scrollTop > 2;
+        if (on !== this.state.aboutScrolled) this.setState({ aboutScrolled: on });
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

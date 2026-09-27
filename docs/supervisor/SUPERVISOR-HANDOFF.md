@@ -32,17 +32,17 @@ Written 2026-09-27 by the outgoing supervisor, session_01PjbZXTVmMJU2evEYqGPdNm.
 
 ## 2. New feature: exercise library, form guide, warm-up (design only)
 - Design: `docs/GUIDE-UPGRADE-ARCHITECTURE.md` on branch `claude/marc-regression-architecture-gegkbq` (67d7c06). It replaces FORM-GUIDE-ARCHITECTURE.md.
-- Rendered demo for the owner's critique: the Design canvas https://claude.ai/artifact/HXZTVGUvFz7kqfzuBDrQmD (private to the owner), published 2026-09-27 ~05:45 UTC. It has 13 artboards in three rows:
+- Rendered demo for the owner's critique: the Design canvas https://claude.ai/artifact/HXZTVGUvFz7kqfzuBDrQmD (private to the owner), published 2026-09-27 about 07:49 UTC. It has 13 artboards in three rows:
   - the flow: Train, About sheet, Machine guide, Warm-up, Search, Create my own;
   - the 3 animated players;
   - Train in 4 other themes.
-- Status and specs: `docs/design/form-guide-demo/` (README, SPEC, RIG, 3 PLAYER docs).
+- Full source, status and specs: `docs/design/form-guide-demo/` (README, UPGRADE-BRIEF, spec.md, rig-final/, anim-*/, project/). All 4 builds reproduce the published files byte for byte.
   - Chest press passes QA round 3.
   - Lateral raise passed round 2.
   - Lat pulldown is fixed; its spec changes D1-D3 are signed off (PLAYER §9 wins over SPEC 3.2). One low item is left: the far-elbow start and stop is a little sharp.
   - The final canvas review applied 11 of 13 fixes.
-- To improve the demo after the owner's feedback, read the artboards from the canvas (`read` with `path: "project/<name>.dc.html"`), edit them, and republish only the changed files. The canvas's own SKILL.md has the rules.
-- **Owner on 2026-09-27: "I like it … but I want it to be more improved."** So the design direction is liked but NOT final. Before any app build:
+- To improve the demo, work from the repo folder (the canvas files are in its `project/`), then republish only the changed files to the canvas. The canvas's own SKILL.md has the rules.
+- **Owner on 2026-09-27: "I like it … but I want it to be more improved", then "more smooth and details on figure".** The owner is giving that upgrade to another agent with `docs/design/form-guide-demo/UPGRADE-BRIEF.md`; check its result against that brief's quality bar. So the design direction is liked but NOT final. Before any app build:
   1. Collect the owner's specific notes. The owner can leave comments on any artboard in the canvas (read them with the ArtifactComments tool); otherwise ask for 2-3 concrete changes.
   2. Fix the known leftovers:
      - the lat pulldown's far elbow starts and stops sharply;
@@ -51,7 +51,7 @@ Written 2026-09-27 by the outgoing supervisor, session_01PjbZXTVmMJU2evEYqGPdNm.
   3. Raise the quality bar on the 3 players: smooth joint speed with no jerks at the turnarounds, the equipment always visibly held, the body readable at phone size, the caption row never overflowing (idle and ended states too), and an independent frame-by-frame QA per player at 1× and 0.5×, with reduced motion and in both a dark theme and Paper.
   4. Republish only the changed artboards, then get the owner's sign-off.
 - Only then build it: 7.5 merges → the guide upgrade as the doc's Part 4 patch list (one builder per patch, strict order, same merge/APK rules) → items 8/9 on the final build → fix loop → 10.
-- The render workflow script: `/root/.claude/projects/-home-user-M-arc/06790388-49f8-576d-a2f2-765dd355dff8/workflows/scripts/guide-upgrade-doc-and-render-split-wf_8bab1b6a-83a.js` (run wf_8bab1b6a-83a). Its source files are in that session's scratchpad `render-guide/`. A new session can't reach them, so improve the demo from the published canvas files (read them with the Artifact tool).
+- The render source was copied from the old session's scratchpad into the repo folder above on 2026-09-27, so a new session or account has everything it needs there.
 
 ## 3. How merges work (keep exactly)
 - **Merge an app PR only when all of these hold:**
