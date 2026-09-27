@@ -849,7 +849,7 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
   --fg-frame: color-mix(in srgb, var(--text) 56%, var(--surface-1));
   --lit: var(--bg); --shd: var(--text); --hi: 76%; --lo: 84%; --eq-hi: 40%; --rim-k: 35%;
 }
-.form-guide [hidden] { display: none; }
+.form-guide .player [hidden] { display: none; }
 .form-guide .player { position: relative; width: 100%; max-width: 358px; height: auto; display: flex; flex-direction: column; gap: 8px; background: var(--surface-2); color: var(--text); }
 .form-guide .stage { position: relative; flex: none; width: 100%; height: auto; aspect-ratio: 358/276; background: var(--surface-1); border-radius: var(--radius-lg); overflow: hidden; }
 .form-guide .stage::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--border-subtle); border-radius: inherit; pointer-events: none; }
@@ -876,5 +876,6 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 .form-guide .speed { flex: 0 1 104px; min-width: 0; }
 .form-guide .mode { flex: 0 1 184px; min-width: 0; }
 .form-guide .hot { cursor: pointer; }
+.form-guide .hot:focus:not(:focus-visible) { outline: none; }
 .form-guide .mm.sel, .form-guide .mh.sel { stroke: var(--text); stroke-width: 1.5px; }
 html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-guide .ov { transition: none; }

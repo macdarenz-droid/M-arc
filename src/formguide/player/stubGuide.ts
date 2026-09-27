@@ -108,7 +108,7 @@ function stage(_scheme: Scheme): Stage {
     tiles,
     css: [
       '.st-arm{transform-origin:150px 140px}',
-      '.zoom-1 .cam{transform:translate(179px,138px) scale(2) translate(-120px,-190px)}',
+      '.zoom-1 .cam{transform:translate(179px,138px) scale(2) translate(-156px,-206px)}',
       '.zoom-2 .cam{transform:translate(179px,138px) scale(1.6) translate(-165px,-165px)}',
       '.zoom-3 .cam{transform:translate(179px,138px) scale(1.7) translate(-156px,-200px)}',
       '.zoom-1 .ov-grip,.zoom-2 .ov-path,.zoom-3 .ov-seat{opacity:1}',
