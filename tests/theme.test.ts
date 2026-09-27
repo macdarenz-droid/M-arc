@@ -61,3 +61,24 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
     expect([...used].filter(v => !defined.has(v) && !inline.has(v))).toEqual([]);
   });
 });
+
+// GU-7a (A7): the form guide paints with theme tokens only. Every file under src/formguide/**
+// fails on a hex colour or an rgb()/hsl() call; `#rig-` ids and `url(#…)` refs do not match.
+describe('GU-7a: form guide colours are theme tokens only (A7)', () => {
+  const HEX = /#[0-9a-fA-F]{3,8}(?![\w-])/;
+  const FN = /\b(rgba?|hsla?)\(/;
+  it('no file under src/formguide/** holds a literal colour', async () => {
+    const { readdirSync, readFileSync, statSync } = await import('node:fs');
+    const walk = (dir: string): string[] => readdirSync(dir).flatMap(n => { const p = `${dir}/${n}`; return statSync(p).isDirectory() ? walk(p) : [p]; });
+    const files = walk('src/formguide');
+    expect(files.length).toBeGreaterThan(0);
+    const offenders = files.flatMap(f => readFileSync(f, 'utf8').split('\n').map((l, i) => ({ f, i: i + 1, l })).filter(x => HEX.test(x.l) || FN.test(x.l)).map(x => `${x.f}:${x.i}: ${x.l.trim()}`));
+    expect(offenders).toEqual([]);
+  });
+  it('the patterns catch a colour and pass an id', () => {
+    expect(HEX.test('fill:#5e6ad2')).toBe(true);
+    expect(FN.test('fill:rgba(0,0,0,.5)')).toBe(true);
+    expect(HEX.test('<use href="#rig-cp"/>')).toBe(false);
+    expect(HEX.test('clip-path="url(#cp-ten-clip0)"')).toBe(false);
+  });
+});
