@@ -2,7 +2,7 @@
 
 ## 1. Status
 
-Design only. Building starts after owner checklist items 2-7.5 have merged (owner, 2026-09-26).
+Design only. Building starts after owner checklist items 2-7.5 have merged (owner, 2026-09-26). Revision R1 (2026-09-27, 5.0): the owner asked for the form guide on every exercise, built by a lower-tier builder; the form-guide lane starts with GU-7a (card in 7.1) and may build ahead; merges keep the order.
 
 Place against the rest of the checklist (from the supervisor's task board copy; the owner's checklist itself was not read here, so this is unverified against it): item 8+9 is marked "LAST" (full QA and 50 user sims on the final `main`), then item 10 (release readiness). **Recommended:** GU-1 to GU-13 and GU-15 build and merge after 7.5 and before 8/9, so the final full QA and user sims cover them. GU-14 (optional, decisions 6-7) and GU-16 (only after decision 4) join that window only if decided in time; otherwise they ship in a separate later release that gets its own full regression run.
 
@@ -250,6 +250,33 @@ Whole-library: no duplicate ids, names or aliases (normalized); `equipmentGroup(
 
 ## 5. Part 2: form guide and machine guide
 
+### 5.0 Revision R1 (2026-09-27): built on the upgraded rig, for every exercise
+
+The owner asked on 2026-09-27 for the form guide on every exercise in the app, built by a lower-tier builder agent from task cards. The reference is the upgraded demo in `docs/design/form-guide-demo/` (smooth minimum-jerk motion and the detailed figure; `UPGRADE-BRIEF.md`). That settles decision 1 (option A: agents draw in the repo) and decision 2 (the look is the upgraded demo, subject to the owner's notes on the published page). R1 wins where 5.1-5.14 or section 7 disagree; the superseded lines point here.
+
+**R1-1 One rig in the app.** `src/formguide/rig/` (TypeScript, pure, node-testable) is a port of the demo's shared rig `rig-final/gen.mjs`: the part sets (side, front and top views, with head, clothing, hands that wrap the handle and muscle facets, RIG.md §20), the paint recipe, `solve3` (two-bone arm solve with a pole vector), `minJerk`/`progress`, `pace` and `smoothNumbers`. The lat pulldown's standalone generator (`anim-lat-pulldown/gen.mjs`, its fitted curves in `fit-motion.mjs`) merges into the same rig; the app has one rig, not two. Paint uses the rig's derived tokens (`--fg-line`, `--skin`, `--tee`, `--shorts`, `--rim` and the rest, all `color-mix()` of theme tokens) set on the player root by `rigVars(theme)` from `ThemeTokens.colorScheme`; no hex.
+
+**R1-2 A movement is a motion spec, not key poses.** The earlier "3 key poses + tempo" cannot reproduce the demo: with few poses the hand leaves the handle between poses (RIG.md §8), and the approved motion comes from a solved pose every 0.5 % of the rep. Each movement is a small typed object `src/formguide/moves/<moveId>.ts`:
+- `view` ('side' | 'front' | 'top'; 'threeQuarter' later), stage anchors (hip, shoulder), `equipment` (a rig equipment id);
+- `tempo` in seconds: lift, hold, return, reset (the demo's 1 / 0.5 / 2 / 0.5, a 4 s rep; spec.md 2.5);
+- `channels`: each animated group with its rotation origin and how it moves: an arm solve on an equipment path with a pole curve, or an angle curve in p, or opacity (glow, facets, captions);
+- `path` (equipment arc or Bernstein control points), `pace` weights (fitted, D-S4), `stops` (0.5 %, or 0.25 % in the lift when check (b) needs it, D-L2);
+- `captions` per phase, 3 `zoomChips` (id, label, caption, camera, subject), 4 `pictures` tiles (time, caption, arrow), `glow` muscle, secondary facets;
+- `truth`: named measurements with ranges, copied from spec.md 3.x (for example the chest press pressed elbow 155-168 degrees), and `fixed` points (shoulder joints, hand on handle).
+
+**R1-3 Runtime sampling, not baked keyframes.** When a guide opens, `sampleMove(spec)` computes every channel at every stop (the same numbers the demo writes, 4 decimals) and returns Web Animations keyframes. Measured on the demo, baked keyframes cost 4.7-21.8 KB gzip per movement; shipped as specs, a movement is about 1-3 KB and the rig ships once. Playback: `el.animate(frames, { duration, iterations: 3, easing: 'linear', fill: 'both' })` per group, 1x/0.5x through `updatePlaybackRate`, Replay restarts, 3 reps then hold the start pose, closing cancels everything. Pictures tiles and the reduced-motion view draw static poses from `poseAt(u)` with zero `animate()` calls. Sampling time is budgeted in `tests/perf/budgets.test.ts` style (target under 20 ms per movement on the CI machine, calibrated).
+
+**R1-4 Movement kinds.** A pattern can be drawn only when the rig supports its kind. K1 arm solve on an equipment path (machine and cable presses, rows, pulldowns, pushdowns, flys) and K2 joint-angle curves (raises, curls, extensions, calf raise) exist in the demo. K3 lower-body chain (feet fixed, hip path, hip-knee-ankle solve: squat, hinge, lunge, leg press, hip thrust, step-up), K4 floor, lying and hanging postures (bench press, push-up, crunch, plank, hanging raise) and K5 whole-body one-offs (conditioning, cardio) are new rig work, each in its own card before its patterns (section 7, GU-10a/b). `coverage.json` records each row's kind.
+
+**R1-5 Quality gates for every movement** (unit tests in node, no browser, so every new movement is checked in `npm run check`): the smoothness check (a)-(d) exactly as `docs/design/form-guide-demo/smooth-check.cjs` on the sampled stops (a <= 1 %, b <= 8 %, c <= 3 x its median for angles moving 10 degrees or more, d <= 4 degrees per 1/120 s; scope D-S1/D-S2 in `docs/COACHING-DECISIONS.md`); the truth ranges; the hand-to-equipment gap between stops under 0.5 units; fixed joints drifting under 0.01; the glow rising through the lift, falling on the return, never stepping more than 0.02 per 1/120 s; colours token-only; output deterministic (hash snapshot). A browser gate block per card samples the live player (481 points through `animation.currentTime`) and checks that it matches the unit numbers, that each zoom subject stays in the stage above the bubble, that nothing clips in the 5 themes, and that reduced motion shows Pictures with no animation. A movement that fails is fixed in its motion (pole, path, pace), as the demo was; limits are never raised.
+
+**R1-6 Player contract = the approved demo.** 358 x 460 player, 358 x 276 stage, rep pill and camera label, caption row with tempo, 3 zoom chips, Play/Pause/Replay, 1x/0.5x, Animation/Pictures and the hint line (spec.md 2.x). Zoom keeps the animation running (supersedes 5.6 "pauses"); Pictures shows 4 tiles (supersedes 5.7 "3 poses"). App differences, as the demo already notes (spec.md 10): 3 reps then stop (never loops), reduced motion from `reduced()`/`html[data-motion]`, speed through `updatePlaybackRate`.
+
+**R1-7 First host before the About sheet.** The form-guide lane no longer waits for the About sheet (GU-2: 171 texts and the owner's sample approval). The first host is a lazy `FormGuideSheet` opened from a "How to do it" row in the live-workout exercise Options sheet (`Train.tsx`, `EntryCard`). GU-2 later mounts the same `FormGuideSection` in the About sheet. Never on Today still holds (5.9).
+
+**R1-8 Size.** Starting cap unchanged (150 KB gzip for the form-guide chunk, main chunk unchanged). GU-7a measures the rig, player and 3 specs and records them; each later card records its growth. Estimate to verify: rig and player under 60 KB gzip, all specs together under 60 KB gzip.
+
+
 ### 5.1 The judged choice
 
 Three architectures were scored against this app's limits (no animation dependency in `package.json`, 5 themes, offline-first Capacitor + PWA, low-end Android, no trackers): licensed media first 28/45, own drawn rig 40/45, hybrid 38/45. **Chosen: own drawn rig** (SVG + Web Animations API), with the hybrid's optional real-video tier kept as a late, owner-gated extra (decision 4).
@@ -258,13 +285,13 @@ Why the rig (Research, sources in section 9): Lottie adds about 237 KB minified 
 
 ### 5.2 How it works
 
-- **One shared rig** (`src/svg/formGuideRig.ts`): a hand-drawn figure as named SVG groups (pelvis root, torso, head, upper arm, forearm, hand, thigh, shin, foot per side). Painted only with `var(--map-body)` (body), `var(--map-line)` (outline), `var(--accent)` (working limb and path), `var(--text-2)` (props). No hex colours.
+- **One shared rig** (superseded by 5.0 R1-1: `src/formguide/rig/`, the demo's detailed rig and derived paint tokens). Original text: (`src/svg/formGuideRig.ts`): a hand-drawn figure as named SVG groups (pelvis root, torso, head, upper arm, forearm, hand, thigh, shin, foot per side). Painted only with `var(--map-body)` (body), `var(--map-line)` (outline), `var(--accent)` (working limb and path), `var(--text-2)` (props). No hex colours.
 - **Pattern-keyed movement files** (`src/data/formGuide/movements/<pattern>.json`): one per shared pattern, 32 in total (every pattern except `conditioning`). Authoring scales with patterns, not exercises: 153 exercises collapse to 33 patterns today (verified).
 - **One file cannot serve every exercise on a pattern** (second-review catch, verified in `exercises.json`): `horizontal_push` holds Barbell Bench Press (lying), Push-Up (face down on the floor), Machine Chest Press (seated) and Cable Chest Press (standing); `vertical_pull` holds Upright Row and Pull-Up next to Lat Pulldown; `elbow_extension` holds Skull Crusher; `elbow_flexion` holds Preacher Curl. So every library id gets one of two reviewed labels in `coverage.ts`: `same_as_pattern` (the pattern drawing truly shows it) or `override` (it needs its own sequence). An override may point at a shared posture variant (`src/data/formGuide/variants/<variantId>.json`, for example one lying-press sequence for the barbell, dumbbell, decline and close-grip bench presses), so drawing work scales with body positions, not rows.
 - **Conditioning is the exception** (reviewer correction): its 11 members (sled push/pull, burpee, mountain climbers, jumping jacks, high knees, jump rope, battle ropes, medicine ball slam, wall ball, bear crawl) share no pose, so each gets its own sequence, as do the 11 cardio rows.
 - **Per-exercise overrides** (`src/data/formGuide/exercises/<exerciseId>.json`): joint-angle changes, one-arm versus two, prop, grip, stance, extra callouts; full sequences for R2 exercises, conditioning and cardio.
 - **Custom exercises** resolve to status `custom`: no player, no error.
-- **Playback** (`src/ui/formguide/poseSequence.ts`, pure): key poses plus a 4-number tempo (seconds down, pause, up, pause) become Web Animations keyframes on joint-group `transform` only (compositor-friendly). Always a JS-timed, bounded run (3 reps, then hold the start pose), never a CSS `infinite` animation.
+- **Playback** (superseded by 5.0 R1-2 and R1-3: motion specs sampled at runtime into dense Web Animations keyframes). Original text: (`src/ui/formguide/poseSequence.ts`, pure): key poses plus a 4-number tempo (seconds down, pause, up, pause) become Web Animations keyframes on joint-group `transform` only (compositor-friendly). Always a JS-timed, bounded run (3 reps, then hold the start pose), never a CSS `infinite` animation.
 - **Loading:** everything sits behind a lazy chunk (`src/slices/formguide/lazy.tsx`), using the dynamic-import pattern of `src/slices/share/lazy.tsx` but **not its failure handler**: `shareLoadFailed(onClose)` calls `onClose()` before its toast (verified), which would close the About or Warm-up sheet. The form-guide wrapper never calls `onClose`; on a failed import it shows one line in place of the player, "Demo could not load.", with a **Reload** button (`location.reload()`, the same recovery the share toast offers, since a failed chunk keeps failing until reload). The rest of the sheet stays open and usable. Zero bytes in the main bundle.
 - **Authoring reference:** self-shot or rights-cleared footage, optionally pose-traced offline with MediaPipe (Apache-2.0, authoring tool only, never shipped); CMU mocap or Mixamo only for timing. No AI-generated tracing sources (decision 1).
 
@@ -289,7 +316,7 @@ src/ui/formguide/Rig.tsx, FormGuidePlayer.tsx, KeyPoseStrip.tsx, ZoomCallout.tsx
 src/slices/formguide/lazy.tsx
 ```
 
-Movement file shape: `{ id, view: 'side'|'front', props[], keyPoses: [{id:'start'|'middle'|'finish', label, joints: {JointId: degrees}}] (3, or 4 where a pause matters), tempo: [down, pause, up, pause], phases: [{from, to, caption}], callouts: [{id:'grip'|'path'|'feet'|'seat', label, text, pose, focus:{x,y,w,h}}], mistakes: [{label, fix}] (2-3, plain external-focus cues like "push the floor away") }`.
+Movement file shape (superseded by the motion spec in 5.0 R1-2): `{ id, view: 'side'|'front', props[], keyPoses: [{id:'start'|'middle'|'finish', label, joints: {JointId: degrees}}] (3, or 4 where a pause matters), tempo: [down, pause, up, pause], phases: [{from, to, caption}], callouts: [{id:'grip'|'path'|'feet'|'seat', label, text, pose, focus:{x,y,w,h}}], mistakes: [{label, fix}] (2-3, plain external-focus cues like "push the floor away") }`.
 
 Labels and lists are data in `coverage.json` (so a test can read the base branch's copy), re-exported with types by `coverage.ts`. `resolveGuide` returns **ready** only for a row labelled `same_as_pattern` whose pattern is drawn, or a row whose override (or one-off sequence) file exists; **custom** for custom exercises; otherwise **pending**. Conditioning and cardio rows are labelled `override` (their pattern is sequence-only).
 
@@ -320,11 +347,11 @@ Each drawing teaches the adjustable parts, not the whole machine: seat or pad he
 
 ### 5.6 Zoom callouts
 
-Chips under the player: **Grip**, **Path**, and **Feet** or **Seat** (from the movement file). Tapping one pauses on the pose that shows it best, zooms the SVG to the `focus` box (transform on a wrapper group, `durFor('base')`, instant under reduced motion), and shows the one-line text. **Path** also draws a dashed accent trace of the hand or bar through the rep, computed from the key poses. "Back" returns to the full view.
+(Superseded in part by 5.0 R1-6: zoom keeps the animation running, as in the approved demo.) Chips under the player: **Grip**, **Path**, and **Feet** or **Seat** (from the movement file). Tapping one pauses on the pose that shows it best, zooms the SVG to the `focus` box (transform on a wrapper group, `durFor('base')`, instant under reduced motion), and shows the one-line text. **Path** also draws a dashed accent trace of the hand or bar through the rep, computed from the key poses. "Back" returns to the full view.
 
 ### 5.7 Pictures mode (also the reduced-motion view)
 
-A "Moving | Pictures" switch. Pictures shows the 3 key poses side by side (Start, Middle, Finish) as static theme-coloured drawings with short labels. When reduced motion is on (`reduced()` from `src/ui/motion.ts`, which reads `html[data-motion="reduce"]`, set from the system setting or the in-app `marc.motion` choice; reviewer correction: there is no CSS media-query block for this), Pictures is the only view and no animation call is made. The choice is not saved (no new stored data).
+(Superseded in part by 5.0 R1-6: 4 tiles, as in the approved demo.) A "Moving | Pictures" switch. Pictures shows the 3 key poses side by side (Start, Middle, Finish) as static theme-coloured drawings with short labels. When reduced motion is on (`reduced()` from `src/ui/motion.ts`, which reads `html[data-motion="reduce"]`, set from the system setting or the in-app `marc.motion` choice; reviewer correction: there is no CSS media-query block for this), Pictures is the only view and no animation call is made. The choice is not saved (no new stored data).
 
 ### 5.8 Useful info alongside
 
@@ -356,7 +383,7 @@ No CDN, no third-party embed, no analytics.
 - Baseline, recorded numbers only (reviewer correction: the "760 KB" figure had no source): `index-*.js` 462 KB (128 KB gzip), `session-*.js` 148 KB, `EscobarSheet-*.js` 36 KB (`docs/QA-REGRESSION-AUDIT.md:30`). GU-7 runs `npm run build`, records the real totals in its PR, and sets the gate from them.
 - Gate (add-only block GU-7 in `scripts/screenshot-gate.mjs`): the main chunk must not contain any formguide module; the form-guide chunk has a starting cap of 150 KB gzip, revisited from measured data.
 - Main chunk growth (second-review catch): `App.tsx:2` imports `Train` directly (verified), so anything Train or `ExercisePicker` imports statically lands in the main chunk. **Decided:** the About sheet and `exerciseAbout.json` (171 entries after GU-1, growing with every wave) load as their own lazy chunk (`src/slices/workout/aboutLazy.tsx`), with the same failure rule as the form guide (5.2): never closes the picker or the session sheet; shows "About could not load." with a Reload button. The warm-up logic and `warmups.ts` stay in the main chunk, because the pre-session row needs them to name the regions and the minutes before any tap. GU-2 and GU-5 each record the main chunk's size before and after in the PR and add a cap in their own add-only gate block (measured size plus a small margin); the GU-2 block also fails if About step text appears in the main chunk.
-- Runtime: `transform` only, on about 13 groups; one player visible at a time; bounded reps; animations cancelled on close. Real-phone smoothness check on the owner's phone (budget Android devices run JS about 70% slower than mid-tier ones, Research).
+- Runtime (updated by 5.0 R1-3 and R1-8: the demo animates 14-24 channels, including opacity for the glow, facets and captions; sampling time is budgeted): `transform` only, on about 13 groups; one player visible at a time; bounded reps; animations cancelled on close. Real-phone smoothness check on the owner's phone (budget Android devices run JS about 70% slower than mid-tier ones, Research).
 
 ### 5.12 Accessibility and motion rules
 
@@ -474,10 +501,14 @@ One ordered list. Builds may run ahead in three lanes (library: GU-1-4, 12, 14, 
 | GU-4 | Cardio fixes + Wave 2 (11 rows) | GU-2 | M |
 | GU-5 | Warm-up logic + WarmupSheet (text) | none (merges here) | M |
 | GU-6 | Form-guide data layer, machine map, coverage ratchet | GU-4 | M |
-| GU-7 | Rig + player + SPLIT 1 movement set in the About sheet | GU-2, GU-6 | L |
+| GU-7a | Rig + player + the 3 demo movements, in a Form guide sheet (5.0 R1; card in 7.1) | none (form-guide lane start) | L |
+| GU-7b | The other 5 SPLIT 1 movements (kinds K1, K2) | GU-7a | M |
+| GU-7 | (superseded by GU-7a and GU-7b; whichever of GU-2 and GU-7a merges second mounts `FormGuideSection` in the About sheet, R1-7) | - | - |
 | GU-8 | Machine guide: SPLIT 1's 6 machines | GU-7 | M |
 | GU-9 | Warm-up demos on the rig | GU-5, GU-7 | M |
-| GU-10 | Remaining 24 shared movements + R2 overrides | GU-7 | L |
+| GU-10a | Rig kind K3 (lower-body chain) + squat, single_leg_squat, lunge, hip_hinge, hip_extension | GU-7b | L |
+| GU-10b | Rig kind K4 (floor, lying, hanging) + its patterns and posture variants | GU-10a | L |
+| GU-10 | Remaining K1/K2 patterns + R2 overrides (was all 24) | GU-7b, GU-6 | L |
 | GU-11 | Remaining machines + conditioning/cardio one-offs | GU-8, GU-9 | L |
 | GU-12 | Library Wave 3 (27 rows) with About + guide coverage | GU-4, GU-6 | L |
 | GU-13 | Guide screen in Settings + Escobar deep link | GU-11 | M |
@@ -610,6 +641,36 @@ One ordered list. Builds may run ahead in three lanes (library: GU-1-4, 12, 14, 
 **GU-15 Wave 5 niche (10 rows).** Same rules as GU-12, including the growth rule and a failure path shown failing in the PR (a row missing from its Set fails the parity test).
 
 **GU-16 Licensed clips.** Only after decision 4. Acceptance: base APK and PWA size unchanged; a licence receipt per clip; real WebVTT captions; Wi-Fi-only blocks a mobile-data download (device check).
+
+### 7.1 Task card GU-7a (AGENTS.md format)
+
+This card is written for a builder agent on a lower model tier. Everything it needs is named here; when something is unclear it stops and asks the supervisor (AGENTS.md: after two failed tries of the same approach with no new evidence, stop and report).
+
+- **id:** GU-7a
+- **outcome:** In the app, the Machine Chest Press, Lat Pulldown and Dumbbell Lateral Raise each have a form guide that looks and moves like the approved demo (5.0 R1), opened from a "How to do it" row in the live-workout exercise Options sheet, in all 5 themes, offline, with the demo's controls.
+- **base:** `origin/main` (at or after `5f282d7`). Own branch `claude/<name>`; never merge into or push to `main`.
+- **depends_on:** none for building. Merging waits for owner checklist item 7.5 (section 1) and the supervisor.
+- **read_first:** `AGENTS.md`; this document 5.0 (R1), 5.5-5.13 and section 7's "Every patch" rules; `docs/design/form-guide-demo/` on branch `claude/marc-form-guide-smoothness-fiuy2y` (`git show origin/claude/marc-form-guide-smoothness-fiuy2y:<path>`): `UPGRADE-BRIEF.md`, `spec.md` 2.x, 3.1, 3.2, 3.5 and 10, `rig-final/RIG.md` §8 and §20, `rig-final/gen.mjs`, `anim-machine-chest-press/build.mjs` (the chest press patches, including its `PACE`), `anim-dumbbell-lateral-raise/build.mjs`, `anim-lat-pulldown/gen.mjs` and `fit-motion.mjs`, `smooth-check.cjs`; in the app: `src/ui/primitives.tsx` (`Sheet`), `src/ui/motion.ts`, `src/theme/themes.ts`, `src/slices/share/lazy.tsx`, `src/slices/workout/Train.tsx` (`EntryCard` and its Options sheet), `tests/ui/styles.tokens.test.ts`, `tests/theme.test.ts`, `scripts/screenshot-gate.mjs` (one existing block, for the pattern).
+- **write_scope:** `src/formguide/**` (new: `rig/`, `moves/`, `player/`, `registry.ts`), `src/slices/formguide/lazy.tsx` (new), `src/slices/workout/Train.tsx` (the one row and the lazy sheet state only), `src/ui/styles.css` (one block marked GU-7a), `tests/formguide/**` (new), `scripts/screenshot-gate.mjs` and `tests/theme.test.ts` (add-only blocks named GU-7a).
+- **reserved_paths:** `docs/design/form-guide-demo/**` (reference, read only), `src/core/models.ts`, `src/core/store.ts`, migrations, `package.json`, `package-lock.json`, `.github/**`, `escobar-worker/**`, `src/slices/today/**`, and the watch agent's files (AGENTS.md table).
+- **acceptance** (each maps to a test, a gate probe or a recorded device check; failure paths shown failing in the PR):
+  - A1 `sampleMove` for each of the 3 specs reproduces the demo's written stops: every channel at every stop equals the demo's value within 0.001 (degrees, scale or px) for the chest press (`anim-machine-chest-press/index.html`), the lat pulldown and the lateral raise (a test fixture extracted from the demo files at a named commit).
+  - A2 The unit gates of 5.0 R1-5 pass for the 3 movements, with the same numbers as the demo's `shoot.cjs` runs (record them); failure path: a spec with `stops` at 1.25 % fails check (a).
+  - A3 Truth ranges from spec.md 3.1, 3.2 and 3.5 pass; failure path: moving the chest press end grip 10 units further fails the pressed-elbow range.
+  - A4 Player: Play runs 3 reps of 4 s (8 s at 0.5x) and holds the start pose; Pause freezes; Replay restarts; closing the sheet cancels every animation (Web Animations stub test plus a gate probe).
+  - A5 Zoom chips (the demo's labels and captions for each exercise) keep the animation running; each subject stays inside the stage and above the bubble for the whole rep (gate probe, 41 phases, as the demo's `shoot.cjs`).
+  - A6 Pictures shows the 4 demo tiles with their captions; reduced motion (`html[data-motion="reduce"]`) shows Pictures only, with zero `animate()` calls, and the hint names the reason.
+  - A7 Colours are theme tokens only: the GU-7a theme-test block fails on any hex or rgb literal under `src/formguide/**` (shown failing in the PR); gate screenshots of each guide in all 5 themes at t = 0 and 0.25.
+  - A8 The "How to do it" row shows only for the 3 exercises (a local `registry.ts`, replaced by GU-6's resolver later); other exercises show no row and no error.
+  - A9 Failure path: a failed chunk load shows "Demo could not load." with a Reload button in the sheet and never closes the Options sheet (test).
+  - A10 No formguide module in the main chunk; the form-guide chunk size (raw and gzip) and the main chunk before and after are recorded in the PR; the cap (150 KB gzip) is enforced in block GU-7a.
+  - A11 The gate finds no `.form-guide` element on Today in all 5 themes.
+  - A12 Real phone (owner): playback is smooth at 1x and 0.5x, and a guide opens in airplane mode.
+- **design_reference:** the published demo page (the owner's link) and the demo files above at the commit named in the PR.
+- **connectivity:** offline. Bundled lazy chunk; no network call.
+- **verification:** `npm ci`, `npm run check`, `npm run test:tz`, `MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate`.
+- **risk_and_recovery:** Web Animations on SVG transforms can differ between Chrome and Android WebView: the gate samples the live player and compares with the unit numbers; if they differ, keep the unit numbers and report. Low-end phones: sampling is measured (R1-3) and only one player runs at a time. Size: measured against the cap before merge. Theme contrast: the demo's contrast table is ported as a unit test. A failed movement check is fixed in the motion, never by a raised limit.
+- **return:** a draft PR into `main` with the head commit, changed paths, evidence per criterion (A1-A12), what needs a real phone, open risks, and the measured sizes; then stop for the reviewer (a fresh agent; builders never approve their own work).
 
 ## 8. Risks and mitigations
 
