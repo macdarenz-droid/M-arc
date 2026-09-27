@@ -432,6 +432,8 @@ check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `gr
     check(ratio >= 3, `paper: machine frame outline ${ratio.toFixed(2)}:1 on the stage (>= 3; read back as ${c.stroke})`);
     await ctx.close();
   }
+  // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
+  { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lat pulldown', freeze: 'lp', grips: [{ name: 'near hand', sel: '.stage .figure-arm .lp-ua .lp-fa .lp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
   check(errors.length === 0, `page errors: ${errors.length}${errors.length ? ' ' + errors.join(' | ') : ''}`);
   await browser.close();
   const summary = fails.length ? `${fails.length} FAILED${openItems.length ? `, ${openItems.length} OPEN` : ''}` : openItems.length ? `NO FAILURES; ${openItems.length} OPEN (a spec value not met that waits for a decision)` : decidedItems.length ? `NO FAILURES; 0 OPEN; ${decidedItems.length} DECIDED (spec 3.2 values changed by ${DECISIONS}: the supervisor signs them off and applies the spec.md edit in PLAYER.md section 9)` : 'ALL PASS';

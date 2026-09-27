@@ -11,11 +11,8 @@ const f2 = v => Number(v).toFixed(2);
 
 // Spec 3.5 / RIG.md 15: A = 12 -> 88 degrees, forearm bend 15 constant, shoulders (157,94) and (201,94).
 const A0 = 12, A1 = 88, BEND = 15, SR = [201, 94], SL = [157, 94];
-const inOut = x => { // spec easing pair baked into the samples (RIG.md section 8)
-  const bez = (p1x, p1y, p2x, p2y, t) => { let lo = 0, hi = 1, s = 0.5; for (let i = 0; i < 60; i++) { s = (lo + hi) / 2; const bx = 3 * (1 - s) ** 2 * s * p1x + 3 * (1 - s) * s * s * p2x + s ** 3; if (bx < t) lo = s; else hi = s; } return 3 * (1 - s) ** 2 * s * p1y + 3 * (1 - s) * s * s * p2y + s ** 3; };
-  return x < 0.5 ? 0.5 * bez(0.4, 0, 1, 1, 2 * x) : 0.5 + 0.5 * bez(0, 0, 0.6, 1, 2 * x - 1);
-};
-const pOf = u => u <= 0.25 ? inOut(u / 0.25) : u <= 0.375 ? 1 : u <= 0.875 ? 1 - inOut((u - 0.375) / 0.5) : 0;
+const minJerk = x => x * x * x * (10 + x * (-15 + 6 * x)); // minimum-jerk timing baked into the samples (UPGRADE-BRIEF.md)
+const pOf = u => u <= 0.25 ? minJerk(u / 0.25) : u <= 0.375 ? 1 : u <= 0.875 ? 1 - minJerk((u - 0.375) / 0.5) : 0;
 const rad = d => d * Math.PI / 180;
 // Screen-right grip: shoulder + R(-A) * [(0,38) + R(+15)(0,40)]   (SVG rotate, y down)
 const gripAt = u => {
@@ -247,6 +244,8 @@ const gripAt = u => {
     await ctx.close();
   }
 
+  // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
+  { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lateral raise', grips: [{ name: 'right hand', sel: '.lr-fa-r', x: 22, y: 16 }, { name: 'left hand', sel: '.lr-fa-l', x: -22, y: 16 }] }, check); await ctx.close(); }
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
   await browser.close();
   console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL CHECKS PASSED');

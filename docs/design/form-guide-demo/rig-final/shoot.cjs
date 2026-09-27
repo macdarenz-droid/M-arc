@@ -210,6 +210,16 @@ for (const c of poses.contrast) check(c.line >= 3 && c.lineBody >= 3 && c.frame 
   }
   { const { page, ctx } = await open('parts.html', '', { scale: 2 }); await page.setViewportSize({ width: 780, height: 900 }); await page.screenshot({ path: path.join(OUT, 'parts-sheet.png'), fullPage: true }); await ctx.close(); }
 
+  // 2i. smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
+  {
+    const { smoothCheck } = require('../smooth-check.cjs');
+    const SM = [
+      { file: 'chest-press.html', label: 'chest press', grips: [{ name: 'hand', sel: '.arm-near .cp-hd', x: 0, y: 16 }] },
+      { file: 'lateral-raise.html', label: 'lateral raise', grips: [{ name: 'right hand', sel: '.lr-fa-r', x: 22, y: 16 }, { name: 'left hand', sel: '.lr-fa-l', x: -22, y: 16 }] },
+    ];
+    for (const sm of SM) { const { page, ctx } = await open(sm.file, '?t=0'); await smoothCheck(page, sm, check); await ctx.close(); }
+  }
+
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
   await browser.close();
   console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL CHECKS PASSED');

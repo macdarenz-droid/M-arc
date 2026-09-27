@@ -11,12 +11,12 @@ const fails = [];
 const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!ok) fails.push(msg); };
 const f2 = v => Number(v).toFixed(2);
 
-// Hand path from the rig's solve (RIG.md section 9, with PLAYER.md section 13): p is linear in grip x.
-const inOut = x => { // spec easing pair baked into the samples; only used to predict key positions
-  const bez = (p1x, p1y, p2x, p2y, t) => { let lo = 0, hi = 1, s = 0.5; for (let i = 0; i < 60; i++) { s = (lo + hi) / 2; const bx = 3 * (1 - s) ** 2 * s * p1x + 3 * (1 - s) * s * s * p2x + s ** 3; if (bx < t) lo = s; else hi = s; } return 3 * (1 - s) ** 2 * s * p1y + 3 * (1 - s) * s * s * p2y + s ** 3; };
-  return x < 0.5 ? 0.5 * bez(0.4, 0, 1, 1, 2 * x) : 0.5 + 0.5 * bez(0, 0, 0.6, 1, 2 * x - 1);
-};
-const pOf = u => u <= 0.25 ? inOut(u / 0.25) : u <= 0.375 ? 1 : u <= 0.875 ? 1 - inOut((u - 0.375) / 0.5) : 0;
+// Hand path from the rig's solve (RIG.md section 9, with PLAYER.md section 13): grip x is linear in the path place
+// s = pace(PACE, p), and p follows the minimum-jerk timing (UPGRADE-BRIEF.md). Only used to predict key positions.
+const minJerk = x => x * x * x * (10 + x * (-15 + 6 * x));
+const binom = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i; return r; };
+const pace = (w, p) => { const n = w.length, tot = w.reduce((a, b) => a + b, 0); let c = 0, s = 0; for (let k = 1; k <= n; k++) { c += w[k - 1] / tot; s += c * binom(n, k) * p ** k * (1 - p) ** (n - k); } return s; };
+const pOf = u => pace(SET.PACE, u <= 0.25 ? minJerk(u / 0.25) : u <= 0.375 ? 1 : u <= 0.875 ? 1 - minJerk((u - 0.375) / 0.5) : 0);
 const gripAt = u => { const x = SET.X0 + (SET.X1 - SET.X0) * pOf(u); return [x, SET.P[1] + Math.sqrt(SET.R ** 2 - (x - SET.P[0]) ** 2)]; };
 const X0 = SET.X0, X1 = SET.X1;
 
@@ -326,6 +326,8 @@ const X0 = SET.X0, X1 = SET.X1;
     await ctx.close();
   }
 
+  // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
+  { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'chest press', grips: [{ name: 'hand', sel: '.arm-near .cp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }
   check(errors.length === 0, `no page errors (${errors.length}) ${errors.slice(0, 3).join(' | ')}`);
   await browser.close();
   console.log(fails.length ? `\n${fails.length} FAILED` : '\nALL CHECKS PASSED');

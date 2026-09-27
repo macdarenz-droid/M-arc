@@ -48,6 +48,9 @@ gen = one(gen, 'pole1 = norm([-0.1, 0.6, 0.8]);', 'pole1 = norm([0, 0.95, 1]);')
 gen = one(gen, 'const pole = norm(add(mul(pole0, 1 - p), mul(pole1, p)));',
   'const w = p ** 4, pole = norm(add(mul(pole0, 1 - w), mul(pole1, w)));');
 gen = one(gen, 'startElbowX: pose(0).E[0],', 'startElbowX: pose(0).E[0], startForward: pose(0).forward,');
+// g) Hand-path pace refit for this geometry (UPGRADE-BRIEF.md: the joint angles pass smoothness check (c)).
+//    From `PACE_FIT=1 node rig/gen.mjs`.
+gen = one(gen, 'const PACE = [0.8593, 1.4015, 0.1513, 2.3988, 0.2594, 1.9613, 0.4721];', 'const PACE = [1.4166, 1.5151, 0.2725, 2.1519, 0.8693, 2.0241, 0.7711];');
 // c) Seat overlay: the pad outline only, open at the front end so it passes behind the near shin.
 //    No post outline: at the Seat zoom the post runs behind the caption bubble.
 gen = one(gen, '<rect class="ov ov-seat ovs" x="116" y="212" width="86" height="14" rx="5"/><rect class="ov ov-seat ovs" x="148" y="224" width="13" height="26" rx="2"/>',

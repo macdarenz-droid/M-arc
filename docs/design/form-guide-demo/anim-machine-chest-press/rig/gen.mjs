@@ -12,6 +12,8 @@ const rad = d => (d * Math.PI) / 180;
 const deg = r => (r * 180) / Math.PI;
 const n2 = v => { const s = (Math.round(v * 100) / 100).toString(); return s === '-0' ? '0' : s; };
 const n3 = v => { const s = (Math.round(v * 1000) / 1000).toString(); return s === '-0' ? '0' : s; };
+// keyframe values: angles and scales to 1e-4, so rounding never adds a kink the smoothness check (c) would see
+const n4 = v => { const s = (Math.round(v * 10000) / 10000).toString(); return s === '-0' ? '0' : s; };
 const pts = a => a.map(([x, y]) => `${n2(x)},${n2(y)}`).join(' ');
 const tr = (a, dx, dy) => a.map(([x, y]) => [x + dx, y + dy]);
 const mir = a => a.map(([x, y]) => [-x, y]);
@@ -232,24 +234,77 @@ const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.fa
 
 // ---------------------------------------------------------------------------
 // Timing (spec 2.5): 4 s rep; lift 0-25 %, hold to 37.5 %, return to 87.5 %, pause to 100 %.
-function bez(x1, y1, x2, y2) {
-  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
-  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
-  const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
-  return x => { let lo = 0, hi = 1; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (X(m) < x) lo = m; else hi = m; } return Y((lo + hi) / 2); };
-}
-const easeIn = bez(0.4, 0, 1, 1), easeOut = bez(0, 0, 0.6, 1);
-const inOut = x => (x < 0.5 ? 0.5 * easeIn(2 * x) : 0.5 + 0.5 * easeOut(2 * x - 1));
+// Each move follows the minimum-jerk profile p(x) = 10x^3 - 15x^4 + 6x^5: speed and acceleration are zero at
+// both ends of every move and there is no kink mid-move (UPGRADE-BRIEF.md, smoothness target 1).
+const minJerk = x => x * x * x * (10 + x * (-15 + 6 * x));
 function progress(u) { // u = fraction of one rep -> p (0 setup .. 1 end pose)
-  if (u <= 0.25) return inOut(u / 0.25);
+  if (u <= 0.25) return minJerk(u / 0.25);
   if (u <= 0.375) return 1;
-  if (u <= 0.875) return 1 - inOut((u - 0.375) / 0.5);
+  if (u <= 0.875) return 1 - minJerk((u - 0.375) / 0.5);
   return 0;
 }
+// A solved pose every 0.5 % of the rep while the body moves; the holds need only their boundary stops.
 const SAMPLES = [];
-for (let i = 0; i <= 20; i++) SAMPLES.push(i * 1.25);
-for (let i = 0; i <= 16; i++) SAMPLES.push(37.5 + i * 3.125);
+for (let i = 0; i <= 50; i++) SAMPLES.push(i * 0.5);
+for (let i = 0; i <= 100; i++) SAMPLES.push(37.5 + i * 0.5);
 SAMPLES.push(100);
+
+// Hand-path pace (used by the chest press). A pose solved from a hand place s (0 setup .. 1 end) along a path
+// makes each joint angle a curve f(s). Where f bends sharply (the elbow opens fastest per unit of hand travel
+// near the pressed end), s = p would give the angles a jerk spike at the end of each move (smoothness check (c)
+// 4.3-4.9 x). pace(PACE, p) maps the min-jerk progress p to the place s: a monotone Bernstein polynomial whose
+// control points are the running sums of the PACE weights. The hand still starts and stops with zero speed and
+// acceleration; it only eases into the end pose a little earlier. `PACE_FIT=1 node gen.mjs` refits the weights
+// for the current geometry (fitPace) and prints them; the build itself always uses the stored weights.
+const binom = (n, k) => { let r = 1; for (let i = 1; i <= k; i++) r = (r * (n - k + i)) / i; return r; };
+function pace(w, p) {
+  const n = w.length, tot = w.reduce((a, b) => a + b, 0);
+  let c = 0, s = 0;
+  for (let k = 1; k <= n; k++) { c += w[k - 1] / tot; s += c * binom(n, k) * p ** k * (1 - p) ** (n - k); }
+  return s;
+}
+// The smoothness numbers the shoot.cjs check measures (smooth-check.cjs), computed here from the solved poses:
+// stops rounded as written (n4), drawn linearly between stops, sampled every 1/480 of the rep.
+function smoothNumbers(at, angles, grip) { // at(u) -> pose at rep fraction u; angles: keys; grip: pose -> [x, y]
+  const st = SAMPLES.map(pc => ({ u: pc / 100, q: at(pc / 100) }));
+  const val = (k, q) => (k === 'grip' ? grip(q).map(v => +n4(v)) : [+n4(q[k])]);
+  const lerp = (k, u) => { let i = 0; while (i < st.length - 2 && st[i + 1].u < u) i++; const t = (u - st[i].u) / (st[i + 1].u - st[i].u), a = val(k, st[i].q), b = val(k, st[i + 1].q); return a.map((v, j) => v + (b[j] - v) * t); };
+  let b = 0, c = 0, a = 0;
+  for (const [u0, u1] of [[0, 0.25], [0.375, 0.875]]) {
+    for (const k of [...angles, 'grip']) {
+      const smp = []; for (let i = Math.round(u0 * 480); i <= Math.round(u1 * 480); i++) smp.push(lerp(k, i / 480));
+      const vel = smp.slice(1).map((v, i) => v.map((x, j) => (x - smp[i][j]) * 120));
+      const mag = v => Math.hypot(...v), peak = Math.max(...vel.map(mag));
+      a = Math.max(a, mag(vel[0]) / peak, mag(vel[vel.length - 1]) / peak);
+      for (let i = 1; i < vel.length; i++) b = Math.max(b, mag(vel[i].map((x, j) => x - vel[i - 1][j])) / peak);
+      if (k === 'grip') continue;
+      const s = st.filter(x => x.u >= u0 - 1e-9 && x.u <= u1 + 1e-9).map(x => [x.u * 4, val(k, x.q)[0]]);
+      const vv = [], tm = []; for (let i = 1; i < s.length; i++) { vv.push((s[i][1] - s[i - 1][1]) / (s[i][0] - s[i - 1][0])); tm.push((s[i][0] + s[i - 1][0]) / 2); }
+      const acc = []; for (let i = 1; i < vv.length; i++) acc.push((vv[i] - vv[i - 1]) / (tm[i] - tm[i - 1]));
+      const jk = []; for (let i = 1; i < acc.length; i++) jk.push(Math.abs(acc[i] - acc[i - 1]));
+      const srt = [...jk].sort((x, y) => x - y), med = srt.length % 2 ? srt[(srt.length - 1) / 2] : (srt[srt.length / 2 - 1] + srt[srt.length / 2]) / 2;
+      c = Math.max(c, Math.max(...jk) / med);
+    }
+  }
+  return { a, b, c };
+}
+// Seeded random search over the PACE weights: minimise the worse of (b) / 8 % and (c) / 3 x (edge speed (a) kept
+// under 0.8 %). Deterministic for a given geometry.
+function fitPace(poseAt, angles, grip, n = 7, seeds = [3, 11], iters = 3600) {
+  let best = null;
+  for (const seed of seeds) {
+    let r = seed; const rand = () => (r = (r * 16807) % 2147483647) / 2147483647;
+    const score = w => { const m = smoothNumbers(u => poseAt(pace(w, progress(u))), angles, grip); return { w, m, u: Math.max(m.c / 3, m.b / 0.08) + 5 * Math.max(0, m.a - 0.008) }; };
+    let cur = score(Array(n).fill(1)), step = 0.35;
+    for (let i = 0; i < iters; i++) {
+      const cand = score(cur.w.map(x => Math.max(0.02, x * Math.exp((rand() - 0.5) * 2 * step))));
+      if (cand.u < cur.u) cur = cand;
+      if (i % 600 === 599) step *= 0.7;
+    }
+    if (!best || cur.u < best.u) best = cur;
+  }
+  return best;
+}
 
 // Every keyframe set is written twice (-a and -b). Replay, speed change and mode change
 // swap the stage class gen-a <-> gen-b, which restarts every animation from 0 %.
@@ -579,12 +634,18 @@ function chestPress() {
   const pole0 = norm([E0[0] - S[0], E0[1] - S[1], ez0]), pole1 = norm([0, 0.95, 1]);
   const roles = { chest: 'main', frontDelts: 'help', triceps: 'help' };
   const FAR = [5, -3];
-  const pose = p => {
+  // Place on the hand path from the timing progress q (see pace()). Inside poseAt, p is that place: grip x, grip
+  // z and the pole blend are all linear in it.
+  const PACE = [1.4166, 1.5151, 0.2725, 2.1519, 0.8693, 2.0241, 0.7711];   // PACE_FIT=1 node gen.mjs
+  const poseAt = p => {
     const x = X0 + (X1 - X0) * p, G = [...grip2(x), Z0 + (Z1 - Z0) * p];
     const w = p ** 4, pole = norm(add(mul(pole0, 1 - w), mul(pole1, w)));
     const r = solve3(S, G, LEN.upperArm, LEN.forearm, pole);
-    return { p, x, G, alpha: lever(x), ...r, ua: -r.phi, fa: -(r.psi - r.phi), lift: 0.5 * (x - X0) };
+    return { s: p, x, G, alpha: lever(x), ...r, ua: -r.phi, fa: -(r.psi - r.phi), lift: 0.5 * (x - X0) };
   };
+  const pose = q => ({ ...poseAt(pace(PACE, q)), p: q });
+  if (process.env.PACE_FIT) { const f = fitPace(poseAt, ['ua', 'fa', 'alpha'], q => q.G); console.log(`PACE fit: const PACE = [${f.w.map(v => +v.toFixed(4)).join(', ')}]; (a) ${(f.m.a * 100).toFixed(2)} %, (b) ${(f.m.b * 100).toFixed(2)} %, (c) ${f.m.c.toFixed(2)} x`); }
+  const smooth = smoothNumbers(u => pose(progress(u)), ['ua', 'fa', 'alpha'], q => q.G);
   const a0 = lever(X0), a1 = lever(X1);
   const trailS = p => (a0 - pose(p).alpha) / (a0 - a1);      // share of the handle-tip arc done
   // analytic check: hand vs handle half-way between baked samples
@@ -611,14 +672,14 @@ ${animRule('cp-stack', 'cp-stack')}
 ${animRule('cp-cable', 'cp-cable', origin(50, 61))}
 ${animRule('cp-trail', 'cp-trail')}
 ${animRule('cp-eff', 'cp-eff')}
-${kf('cp-ua', p => `transform:rotate(${n2(pose(p).ua)}deg)`)}
-${kf('cp-ul', p => `transform:scaleY(${n3(pose(p).fu)})`)}
-${kf('cp-fa', p => { const q = pose(p); return `transform:translateY(${n2(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n2(q.fa)}deg)`; })}
-${kf('cp-fl', p => `transform:scaleY(${n3(pose(p).ff)})`)}
-${kf('cp-hd', p => `transform:translateY(${n2(-(1 - pose(p).ff) * LEN.forearm)}px)`)}
-${kf('cp-lever', p => `transform:rotate(${n2(pose(p).alpha)}deg)`)}
-${kf('cp-stack', p => `transform:translateY(${n2(-pose(p).lift)}px)`)}
-${kf('cp-cable', p => `transform:scaleY(${n3((45 - pose(p).lift) / 45)})`)}
+${kf('cp-ua', p => `transform:rotate(${n4(pose(p).ua)}deg)`)}
+${kf('cp-ul', p => `transform:scaleY(${n4(pose(p).fu)})`)}
+${kf('cp-fa', p => { const q = pose(p); return `transform:translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; })}
+${kf('cp-fl', p => `transform:scaleY(${n4(pose(p).ff)})`)}
+${kf('cp-hd', p => `transform:translateY(${n3(-(1 - pose(p).ff) * LEN.forearm)}px)`)}
+${kf('cp-lever', p => `transform:rotate(${n4(pose(p).alpha)}deg)`)}
+${kf('cp-stack', p => `transform:translateY(${n3(-pose(p).lift)}px)`)}
+${kf('cp-cable', p => `transform:scaleY(${n4((45 - pose(p).lift) / 45)})`)}
 ${kf('cp-trail', p => `stroke-dashoffset:${n3(1 - trailS(p))}`)}
 ${kf('cp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
 .cam.zoom-grip{transform:translate(179px,138px) scale(2) translate(-206px,-157px)}
@@ -679,7 +740,7 @@ ${leverG(false)}<circle class="eqm" cx="${P[0]}" cy="${P[1]}" r="7"/><circle cla
   const row = q => ({ p: n2(q.p), grip: [n2(q.G[0]), n2(q.G[1]), n2(q.G[2])], elbow: q.E.map(n2), lever: n2(q.alpha), upper: n2(q.ua), fu: n3(q.fu), fore: n2(q.fa), ff: n3(q.ff), inside: n2(q.inside), outFromSide: n2(q.outFromSide), forward: n2(q.forward), lift: n2(q.lift) });
   return {
     maxDrift, keyTable: [0, 0.25, 0.5, 0.75, 1].map(p => row(pose(p))),
-    setup: { Z0, Z1, ez0, pole0, pole1, X0, X1, P, R, E0, S },
+    setup: { Z0, Z1, ez0, pole0, pole1, X0, X1, P, R, E0, S, PACE }, smooth,
     series: { gz: dense.map(q => q.G[2]), ez: dense.map(q => q.E[2]), fu: sampled.map(q => q.fu), inside: dense.map(q => q.inside) },
     truth: { startInside: pose(0).inside, endInside: pose(1).inside, startOut: pose(0).outFromSide, endForward: pose(1).forward, startElbowX: pose(0).E[0], startForward: pose(0).forward, minFu: Math.min(...dense.map(q => q.fu)), setupFu: pose(0).fu },
     geo: { H, P, R, HALF, FAR, shoulder: [S[0], S[1]] },
@@ -704,10 +765,10 @@ ${animRule('lr-db-r', 'lr-db-r', origin(22, 16))}
 ${animRule('lr-db-l', 'lr-db-l', origin(-22, 16))}
 ${animRule('lr-trail', 'lr-trail')}
 ${animRule('lr-eff', 'lr-eff')}
-${kf('lr-ua-r', p => `transform:rotate(${n2(-A(p))}deg)`)}
-${kf('lr-ua-l', p => `transform:rotate(${n2(A(p))}deg)`)}
-${kf('lr-db-r', p => `transform:rotate(${n2(A(p) - BEND)}deg)`)}
-${kf('lr-db-l', p => `transform:rotate(${n2(-(A(p) - BEND))}deg)`)}
+${kf('lr-ua-r', p => `transform:rotate(${n4(-A(p))}deg)`)}
+${kf('lr-ua-l', p => `transform:rotate(${n4(A(p))}deg)`)}
+${kf('lr-db-r', p => `transform:rotate(${n4(A(p) - BEND)}deg)`)}
+${kf('lr-db-l', p => `transform:rotate(${n4(-(A(p) - BEND))}deg)`)}
 ${kf('lr-trail', p => `stroke-dashoffset:${n3(1 - p)}`)}
 ${kf('lr-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
 .cam.zoom-shoulders{transform:translate(179px,138px) scale(2.2) translate(-179px,-90px)}

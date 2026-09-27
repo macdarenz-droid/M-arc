@@ -422,3 +422,25 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Names (ST-12, ST-13):** exact muscle labels first; lower back before mid back; rear/front shoulder, serratus, brachioradialis added. A substring exercise match only counts when it is the only candidate; Escobar's writes use exact ids/names only; legacy import falls back to the one partial match with the same equipment (all gate fixtures map as before).
 - **Cues (ST-17):** the two "Dumbbell" cues now match; reason cues show under the next-set reason; the 10 mindset notes take Today's quote slot on odd days of the year.
 - **Body weight (UI-18):** typed and shown in the display unit, stored in kg.
+
+## Form guide demo upgrade (smoother motion, more figure detail; `docs/design/form-guide-demo/UPGRADE-BRIEF.md`)
+
+- **Decided (D-S1)**: smoothness checks (a) and (b) apply to the grip point(s) and to every joint angle that moves at least 10 degrees in the phase; (d) applies to every joint angle over the whole rep; (c) to angles of 10 degrees or more, as the brief says.
+  **Why**: the brief names the 10-degree threshold only for (c) and gives no scope for (a)/(b). An angle that moves a degree or two has a top speed so small that the 0.0001-degree rounding of its keyframes dominates its speed ratios, which measures rounding, not motion. Using the brief's own "moves enough to matter" threshold keeps one definition. (d) runs over the whole rep, not only the move phases, which is stricter.
+  **Source**: UPGRADE-BRIEF.md smoothness target 4; `smooth-check.cjs`.
+
+- **Decided (D-S2)**: (b) measures the step in velocity, signed for an angle and as a vector for the grip point, not the step in unsigned speed.
+  **Why**: an angle that bounces (+v to -v) keeps the same unsigned speed, so a speed-only test would miss the most visible judder. The signed step is never smaller than the unsigned one, so this is at least as strict as the brief's wording.
+  **Source**: UPGRADE-BRIEF.md check (b) ("steps in speed are what the eye sees as judder").
+
+- **Decided (D-S3)**: keyframe angles and scales are written to 4 decimals (n4), translates to 3.
+  **Why**: with 2 decimals, rounding alone put check (c) at exactly 3.00-4.00 x on a perfect minimum-jerk curve (the third difference of 0.01-degree steps). With n4 the browser reads the simulated 2.16 / 2.35 x. Cost is about 3 % of file size.
+  **Source**: rig shoot run, 2026-09-27 (n2: lateral raise (c) 3.00 x; n4: 2.16 / 2.35 x).
+
+- **Decided (D-S4)**: the chest press keeps the minimum-jerk progress p, but the hand's place on its path is s = pace(PACE, p), a monotone degree-7 Bernstein curve fitted per geometry (`PACE_FIT=1 node gen.mjs`); the player refits it for its own geometry through one build patch.
+  **Why**: with s = p (hand linear in p) the elbow opens fastest per unit of hand travel near the pressed end, so the forearm and upper-arm angles fail (c) at 4.3-4.9 x even though the progress curve passes. The brief says to fix the motion in that case. Blending the pole curve did not help (the spike is the elbow's extension geometry, not the pole); fixed rules (joint-space mean, L2, L4 arc length) reached only 2.8-3.6 x. The fitted pace eases the hand in a little earlier (its rate falls to about 0.45-0.6 at the end), keeps every speed profile single-peaked, and gives (c) 2.6 x and (b) 7.0 % in both geometries at 0.5 % stops, so the 0.25 % lift stops were not needed.
+  **Source**: UPGRADE-BRIEF.md ("If a joint angle fails while the progress curve passes, fix the motion"); scratch simulation of the chest press solve, confirmed by the browser check (rig 2.64 / 2.67 x, player 2.44 / 2.62 x).
+
+- **Decided (D-S5)**: the smoothness check reads the written keyframe stops from the raw `<style>` text, not from the CSSOM.
+  **Why**: Chrome's CSSOM re-serialises numbers to 6 significant digits, so a stop written as -120.1782deg reads back as -120.178deg and (c) saw 2.80 x instead of the 2.62 x that is drawn. The animation itself uses the full written value (the sampler self-test compares drawn and written at every eighth stop).
+  **Source**: chest press player run, 2026-09-27.

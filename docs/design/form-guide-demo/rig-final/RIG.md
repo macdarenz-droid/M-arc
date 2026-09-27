@@ -533,12 +533,12 @@ Machine Chest Press key poses (stage units; z = sideways, out from the shoulder 
 | p | Grip (x, y, z) | Elbow (x, y, z) | Lever | Upper arm | fu | Forearm | ff | Elbow inside angle | Arm out from side | Arm forward | Stack lift |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 0 | 187, 156.08, 38.56 | 149, 166, 30.97 | 11.24 | 2.6 | 0.58 | -107.23 | 0.982 | 89.2 | 54.58 | -2.6 | 0 |
-| 0.25 | 196.75, 157.52, 30.42 | 157.41, 164.73, 30.97 | 5.6 | -19.67 | 0.579 | -80.71 | 1 | 94.71 | 54.6 | 19.67 | 4.88 |
-| 0.5 | 206.5, 158, 22.28 | 167.25, 163.47, 27.7 | 0 | -41.54 | 0.684 | -56.39 | 0.991 | 106.05 | 46.81 | 41.54 | 9.75 |
-| 0.75 | 216.25, 157.52, 14.14 | 176.96, 160.77, 20.88 | -5.6 | -58.12 | 0.835 | -36.6 | 0.986 | 124.64 | 33.34 | 58.12 | 14.63 |
+| 0.25 | 196.02, 157.45, 31.03 | 156.7, 164.81, 31.08 | 6.02 | -17.84 | 0.575 | -82.75 | 1 | 94.1 | 54.89 | 17.84 | 4.51 |
+| 0.5 | 206.06, 158, 22.64 | 166.8, 163.54, 27.92 | 0.25 | -40.69 | 0.678 | -57.35 | 0.991 | 105.41 | 47.29 | 40.69 | 9.53 |
+| 0.75 | 216.99, 157.45, 13.52 | 177.66, 160.45, 20.2 | -6.02 | -59.26 | 0.847 | -35.12 | 0.986 | 126.47 | 32.11 | 59.26 | 14.99 |
 | 1 | 226, 156.08, 6 | 186.13, 153.19, 7.37 | -11.24 | -75.73 | 0.981 | -10.12 | 0.999 | 163.44 | 11.18 | 75.73 | 19.5 |
 
-Worst hand-to-handle gap half-way between baked samples (analytic): 0.07 units. Smallest upper-arm fu over the rep: 0.565.
+Worst hand-to-handle gap half-way between baked samples (analytic): 0.01 units. Smallest upper-arm fu over the rep: 0.565.
 
 Dumbbell Lateral Raise key poses:
 
@@ -560,6 +560,6 @@ Contrast of the derived paints (WCAG ratio; stage = --surface-1):
 | emerald | 6.17 | 3.79 | 3.23 | 8.37 | 5.38 | 8.98 | 1.63 | 1.41 | 2.29 | 5.52 |
 | midnight | 5.72 | 3.14 | 3.18 | 7.56 | 5.05 | 2.98 | 1.82 | 1.40 | 1.22 | 1.63 |
 
-Keyframe stops per animated group: 39, written twice (-a and -b).
+Keyframe stops per animated group: 153, written twice (-a and -b).
 
 <!-- generated:end -->
