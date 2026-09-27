@@ -1,7 +1,7 @@
 // Checks the canvas artboard against the harness, line by line, and renders it the way the canvas would.
 // usage: node dc-stage.cjs [path/to/Player-LatPulldown.dc.html] [--shots]
 // 1. Style: every rule in the artboard's <style> equals the harness's rule with the same selector or @keyframes name,
-//    except the canvas typography rules listed in TYPO (Roboto, --tz text scale, Slow motion pill text colour).
+//    except the canvas typography rules listed in TYPO (--tz text scale, Slow motion pill text colour; the font stack is shared).
 // 2. Stage: the artboard's stage markup equals piece B (index.html) exactly.
 // 3. Controls: the visible words of piece C match (the artboard uses sc-if / onClick holes instead of data-*).
 // 4. Writes dc-render.html next to this file: the artboard's own CSS and markup, holes filled by its own logic class
@@ -10,7 +10,7 @@ const fs = require('fs'), path = require('path');
 const DIR = __dirname;
 const dcPath = path.resolve(process.argv.find((a, i) => i > 1 && !a.startsWith('--')) || path.join(DIR, '../project/Player-LatPulldown.dc.html'));
 const H = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8'), D = fs.readFileSync(dcPath, 'utf8');
-const TYPO = new Set(['body', '.player', '.pill', '.pill-accent', '.cam-label', '.bubble', '.tile p', '.badge', '.cap', '.tempo', '.chip', '.seg button', '.hint', '.inset-label']);
+const TYPO = new Set(['.player', '.pill', '.pill-accent', '.cam-label', '.bubble', '.tile p', '.badge', '.cap', '.tempo', '.chip', '.seg button', '.hint', '.inset-label']);
 const problems = [];
 const styleOf = s => { const i = s.indexOf('<style>') + 7; return s.slice(i, s.indexOf('</style>', i)).split('\n'); };
 const key = l => { l = l.trim(); if (!l || l.startsWith('/*')) return null; const m = l.match(/^(@keyframes [\w-]+)/); return m ? m[1] : l.split('{')[0]; };

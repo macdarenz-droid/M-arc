@@ -79,15 +79,10 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
 }
 
 (async () => {
-  // The harness loads the canvas's Roboto from Google Fonts. Behind a TLS-terminating proxy (a cloud session) Chromium does
-  // not trust the proxy CA but Node does (NODE_EXTRA_CA_CERTS), so the font requests are fetched on the Node side, with
-  // verification on, as canvas-preview/check.cjs does. Without a proxy Chromium fetches them itself.
-  const proxy = process.env.HTTPS_PROXY || process.env.https_proxy || '';
-  const browser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {}), ...(proxy ? { proxy: { server: proxy, bypass: '127.0.0.1,localhost' } } : {}) });
+  const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
   const open = async (query, opts = {}) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 520 }, deviceScaleFactor: opts.scale || 2, reducedMotion: opts.rm ? 'reduce' : 'no-preference' });
-    if (proxy) await ctx.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, async route => route.fulfill({ response: await route.fetch() }));
     const page = await ctx.newPage();
     await page.addInitScript(() => {
       const eff = e => { let o = 1; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const cs = getComputedStyle(x); if (cs.display === 'none' || cs.visibility === 'hidden') return 0; o *= +cs.opacity; } return o; };
@@ -109,6 +104,9 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
     });
     page.on('pageerror', e => errors.push(`${query}: ${e.message}`));
     page.on('console', m => { if (m.type() === 'error') errors.push(`${query}: ${m.text()}`); });
+    // offline shoots: the harness draws Roboto from its local copy (rig-final/fonts), so the Google Fonts link is answered with an
+    // empty stylesheet here and never logs a network error (the artboard loads the same link for real)
+    await page.route(/fonts\.googleapis\.com/, r => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
     await page.goto('file://' + path.join(DIR, 'index.html') + query);
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(opts.wait || 400);
@@ -554,6 +552,18 @@ for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')
       await ctx.close();
     }
     check(bad.length === 0, `caption row in Roboto: the caption text and the tempo note stay inside the player and at least 2 px apart in ${states.length} states (${seen.join('; ')})${bad.length ? ': ' + bad.join('; ') : ''}`);
+  }
+  // The target muscle stays visible at the hardest point (rig-final/muscle-check.cjs: raw accent pixels of .mm in the hold
+  // vs setup, effort cue, glow, helpers and every other accent hidden) and the caption row never overlaps or leaves the
+  // player in idle, ended, the four captions and Pictures, drawn with the canvas font (rig-final/caption-check.cjs): the
+  // checks shared with the rig and the other players. The harness exposes window.__rig.freeze for them.
+  {
+    const { muscleAreaCheck } = require('../rig-final/muscle-check.cjs');
+    const { captionRowCheck } = require('../rig-final/caption-check.cjs');
+    const idle = () => { const L = window.__lp; L.S.t = null; L.S.playing = false; L.S.ended = false; L.bind(); };
+    const ended = () => { const L = window.__lp; L.S.t = null; L.S.playing = false; L.S.ended = true; L.bind(); };
+    { const { page, ctx } = await open('?t=0'); await page.addStyleTag({ content: '.lp-target{display:none!important}' }); await muscleAreaCheck(page, { label: 'lat pulldown' }, check); await ctx.close(); }
+    await captionRowCheck(q => open(q), { label: 'lat pulldown', states: [['?t=0', 'idle', idle], ['?t=0', 'ended', ended], ['?t=0.1', 'caption 1'], ['?t=0.3', 'caption 2'], ['?t=0.6', 'caption 3'], ['?t=0.95', 'caption 4'], ['?mode=pictures', 'Pictures']] }, check);
   }
   // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
   { const { smoothCheck } = require('../smooth-check.cjs'); const { page, ctx } = await open('?t=0'); await smoothCheck(page, { label: 'lat pulldown', freeze: 'lp', grips: [{ name: 'near hand', sel: '.stage .figure-arm .lp-ua .lp-fa .lp-hd', x: 0, y: 16 }] }, check); await ctx.close(); }

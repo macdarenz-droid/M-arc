@@ -44,7 +44,7 @@ function rigVars(id) {
   const light = t.scheme === 'light';
   // --lit / --shd: what a lit or a shaded facet mixes toward; --hi / --lo: how much of the base tone each keeps.
   // Dark themes shade mostly by darkening and light schemes mostly by lightening, so the outline stays readable.
-  return `--fg-line:color-mix(in srgb,var(--text) ${light ? 70 : 60}%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) ${light ? 56 : 38}%,var(--surface-1));--lit:var(${light ? '--bg' : '--text'});--shd:var(${light ? '--text' : '--bg'});--hi:${light ? 76 : 90}%;--lo:${light ? 90 : 78}%;--rim-k:${light ? 35 : 62}%`;
+  return `--fg-line:color-mix(in srgb,var(--text) ${light ? 70 : 60}%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) ${light ? 56 : 38}%,var(--surface-1));--lit:var(${light ? '--bg' : '--text'});--shd:var(${light ? '--text' : '--bg'});--hi:${light ? 76 : 90}%;--lo:${light ? 84 : 78}%;--eq-hi:${light ? 40 : 82}%;--rim-k:${light ? 35 : 62}%`;
 }
 
 // ---------------------------------------------------------------------------
@@ -127,7 +127,9 @@ const SIDE = {
     regions: [
       { poly: [[7.38, -8.4], [6.6, -9.6], [1.5, -12], [-4.5, -11.8], [-8.6, -8.8], [-10.2, -3.5], [-9.3, 1], [-6, -0.4], [-4.4, -3.6], [-1, -5.2], [2.8, -6], [5.2, -7.4]], cloth: 'hair', name: 'hair' },
       { poly: [[1.5, -12], [-4.5, -11.8], [-6.6, -10.2], [-1.6, -10.6], [3.6, -10.9]], cloth: 'hair', tone: 'hi', name: 'hairSheen' },
-      { poly: [[-3.4, -1.8], [-0.6, -3.2], [1.6, -0.8], [1.4, 3.2], [-0.4, 5.4], [-2.8, 3.8]], tone: 'lo', name: 'ear' },
+      { poly: [[7.38, -8.4], [5.2, -7.4], [2.8, -6], [-1, -5.2], [-4.4, -3.6], [-1.6, -2.8], [2, -3.6], [5.8, -3.4], [6.8, -5.6]], tone: 'hi', name: 'forehead' },
+      { poly: [[-3.4, -1.8], [-0.6, -3.2], [1.6, -0.8], [1.4, 3.2], [-0.4, 5.4], [-2.8, 3.8]], tone: 'hi', name: 'ear' },
+      { poly: [[-2.4, -0.6], [-0.6, -1.6], [0.4, 0], [0.2, 2.6], [-0.8, 3.8], [-2.2, 2.6]], tone: 'lo', name: 'earInner' },
       { poly: [[6.2, -2], [9.4, -1.2], [10.4, 0.6], [12.4, 3.4], [10.3, 4.6], [10.2, 6.2], [7, 6.4], [5, 2.4]], tone: 'hi', name: 'face' },
       { poly: [[5.8, -3.4], [10, -2.6], [9.4, -1.2], [6.4, -2.2]], tone: 'lo', name: 'brow' },
       { poly: [[9.8, 8.5], [8, 10.8], [2.6, 11.2], [-1.2, 8.4], [4, 8.6]], tone: 'lo', name: 'jaw' },
@@ -144,10 +146,14 @@ const SIDE = {
       { poly: [[-6.4, -72.6], [-1.5, -70.8], [3.8, -68.6], [7.2, -66.6], [6.4, -65.4], [3.2, -67.3], [-1.8, -69.3], [-6.6, -71.1]], tone: 'lo', name: 'collar' },
       { poly: [[-11.2, -60.5], [-3.6, -61], [-5.4, -54.6], [-12.3, -52]], muscle: 'midBack' },
       { poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-4.8, -30], [-10, -26], [-11.9, -40]], tone: 'lo', muscle: 'lats' },
-      { poly: [[11.8, -36.4], [11.4, -33.8], [6.6, -36.4], [6.4, -38.8]], tone: 'lo', name: 'underChest' },
+      { poly: [[-3.4, -56.4], [1.4, -56], [0.8, -48.6], [-1.8, -47.4]], tone: 'lo', name: 'armpit' },
+      { poly: [[-2.6, -42], [-4.8, -30], [-3.2, -29.6], [-0.8, -41]], tone: 'hi', name: 'latFold' },
+      { poly: [[12.7, -38.6], [12.2, -35.6], [7, -36.2], [8.4, -38.2]], tone: 'lo', name: 'underChest' },
       { poly: [[11.4, -33.8], [10.2, -26], [9.8, -14], [10.5, -7], [5.8, -7.4], [5.6, -24], [6.6, -36.4]], muscle: 'abs' },
       { poly: [[5.6, -24], [5.8, -7.4], [-4, -8.2], [-4.8, -19], [-0.4, -27]], muscle: 'obliques' },
-      { poly: [[7.2, -66.6], [11.4, -64.6], [15, -57], [15.8, -48.5], [14.2, -41.2], [11.8, -36.4], [6.4, -38.8], [3.8, -52], [4.8, -62.4]], tone: 'hi', muscle: 'chest' },
+      // the pec as a fan: its fibres converge back toward the armpit, its top edge tucked under the front delt
+      { poly: [[9.4, -64.4], [12.8, -61.2], [15.3, -52], [8, -50.2], [3.6, -52], [1.4, -56], [4.6, -61.4]], tone: 'hi', muscle: 'chest' },
+      { poly: [[15.3, -52], [14.7, -44], [12.7, -38.6], [8.4, -38.2], [3.6, -42], [0.8, -48.6], [3.6, -52], [8, -50.2]], tone: 'hi', muscle: 'chest' },
       // secondary motion: the belly wall firms (brace) and the shoulder blade's inner edge shows (blades held back)
       { poly: [[10.2, -26], [9.8, -14], [10.5, -7], [8.6, -7.2], [8, -14], [8.4, -26.4]], tone: 'lo', ten: true, name: 'brace' },
       { poly: [[-8.8, -60.2], [-7.4, -60], [-9, -50.8], [-10.4, -51]], tone: 'lo', ten: true, name: 'bladeEdge' },
@@ -173,12 +179,12 @@ const SIDE = {
       { poly: tr([[6.3, 19], [-5.74, 20], [-5.85, 18.6], [6.44, 17.6]], 0, -62), cloth: 'tee', tone: 'lo', name: 'sleeveHem' },
     ],
   },
-  elbowCap: { base: ngon(0, -24, 4.6), regions: [{ poly: half(0, -24, 4.6, 180), tone: 'lo', name: 'elbowBack' }] },
+  elbowCap: { base: ngon(0, -24, 4.8), regions: [{ poly: [[2.6, -27.2], [4.4, -24], [2.6, -20.8], [1.6, -24]], tone: 'lo', name: 'elbowCrease' }] },
   forearm: {
-    base: tr([[-4.8, -1], [4.8, -1], [5.4, 6], [5, 13], [3.6, 31], [-3.6, 31], [-4.4, 14], [-4.9, 6]], 0, -24),
+    base: tr([[-4.8, -1], [5, -1], [6.4, 4.5], [6.2, 10], [4.9, 21], [4, 31], [-4, 31], [-4.5, 18], [-4.9, 7]], 0, -24),
     regions: [
-      { poly: tr([[0.4, -1], [4.8, -1], [5.4, 6], [5, 13], [3.6, 31], [0.6, 31]], 0, -24), tone: 'hi', muscle: 'forearms' },
-      { poly: tr([[-4.8, -1], [-2.6, -1], [-2.2, 31], [-3.6, 31], [-4.4, 14], [-4.9, 6]], 0, -24), tone: 'lo', name: 'forearmUnder' },
+      { poly: tr([[0.6, -1], [5, -1], [6.4, 4.5], [6.2, 10], [4.9, 21], [4, 31], [0.8, 31]], 0, -24), tone: 'hi', muscle: 'forearms' },
+      { poly: tr([[-4.8, -1], [-2.6, -1], [-2.2, 31], [-4, 31], [-4.5, 18], [-4.9, 7]], 0, -24), tone: 'lo', name: 'forearmUnder' },
     ],
   },
   // Hand round a vertical handle, seen from the back of the hand. In the hand's frame +x is up (thumb side) and
@@ -187,13 +193,14 @@ const SIDE = {
     base: tr([[-3.7, -9.6], [3.7, -9.6], [5.6, -6.8], [7.2, -3], [7.3, 0.6], [6.2, 3.6], [4.8, 5.2], [2.2, 5.8], [-0.6, 5.8], [-3.2, 5.5], [-5.2, 4.6], [-6, 1.6], [-5.8, -3.6], [-4.8, -7]], 0, 16),
     regions: [
       { poly: [[-3.7, -9.6], [-4.8, -7], [-5.8, -3.6], [-4.6, -3.2], [-3.4, -8.6]], tone: 'lo', name: 'palmHeel' },
-      { poly: [[2.2, -8.6], [4.2, -6.4], [5.6, -2.6], [5.1, 1.6], [4.3, 1.3], [4.6, -2.4], [3.3, -5.8], [1.5, -7.9]], tone: 'lo', name: 'thumbCrease' },
-      { poly: [[3.7, -9.6], [5.6, -6.8], [7.2, -3], [7.3, 0.6], [6.4, 2.6], [5.3, 1.8], [5.8, -2.4], [4.4, -6.2], [2.4, -8.8]], tone: 'hi', name: 'thumb' },
-      { poly: [[5.3, -0.6], [6.2, 3.6], [4.8, 5.2], [2.2, 5.8], [-0.6, 5.8], [-3.2, 5.5], [-5.2, 4.6], [-6, 1.6], [-5.9, -0.4]], tone: 'lo', name: 'fingerGaps' },
-      { poly: [[2.6, -0.2], [5.1, -0.4], [5.6, 2.6], [4.6, 5.1], [3, 5.6], [2.5, 2.8]], tone: 'hi', name: 'finger1' },
-      { poly: [[-0.2, -0.2], [2.2, -0.2], [2.1, 3], [1.9, 5.7], [0.1, 5.7], [-0.3, 3]], tone: 'hi', name: 'finger2' },
-      { poly: [[-2.9, -0.2], [-0.6, -0.2], [-0.7, 3], [-0.9, 5.7], [-2.7, 5.5], [-3.1, 3]], tone: 'hi', name: 'finger3' },
-      { poly: [[-5.3, 0], [-3.3, -0.2], [-3.5, 3], [-3.6, 5.4], [-4.9, 4.6], [-5.6, 2]], tone: 'hi', name: 'finger4' },
+      { poly: [[3.3, -0.2], [3.3, 2.6], [4.6, 4.4], [3.4, 5.4], [2.2, 5.8], [-0.6, 5.8], [-3.2, 5.5], [-5.2, 4.6], [-6, 1.6], [-5.9, -0.4]], tone: 'lo', name: 'fingerGaps' },
+      { poly: [[0.9, -0.2], [3.1, -0.4], [3.3, 2.6], [2.9, 4.9], [1.5, 5.5], [0.8, 2.8]], tone: 'hi', name: 'finger1' },
+      { poly: [[-1.5, -0.2], [0.5, -0.2], [0.4, 2.8], [0.3, 5.6], [-1.3, 5.7], [-1.7, 2.8]], tone: 'hi', name: 'finger2' },
+      { poly: [[-3.8, -0.2], [-1.9, -0.2], [-2, 2.8], [-2.1, 5.6], [-3.5, 5.4], [-4, 2.8]], tone: 'hi', name: 'finger3' },
+      { poly: [[-5.9, -0.2], [-4.2, -0.2], [-4.4, 2.8], [-4.4, 5.2], [-5.3, 4.6], [-6, 1.6]], tone: 'hi', name: 'finger4' },
+      // the thumb: a lit wedge along the top of the hand that crosses the handle and ends in front of it, over finger 1
+      { poly: [[1.5, -8.6], [3.6, -6.4], [4.4, -2.6], [4, 2.2], [5.2, 3.6], [4.6, 4.4], [3.2, 2.6], [3.4, -2.6], [2.6, -6], [0.8, -7.9]], tone: 'lo', name: 'thumbCrease' },
+      { poly: [[3.2, -9.4], [5.6, -6.8], [7.2, -3], [7.3, 0.6], [6.6, 2.6], [5.2, 3.6], [4, 2.2], [4.4, -2.6], [3.6, -6.4], [1.8, -8.4]], tone: 'hi', name: 'thumb' },
     ].map(r => ({ ...r, poly: tr(r.poly, 0, 16) })),
   },
   hipCap: { cloth: 'shorts', base: ngon(0, 0, 8.4) },
@@ -246,7 +253,9 @@ const FR = {
     regions: [
       { poly: sym([[0, -12], [5.6, -11], [8.8, -7.6], [9.7, -3.8], [8.7, -4.4], [7.6, -6.8], [4.6, -8.2], [0, -8.8]]), cloth: 'hair', name: 'hair' },
       { poly: [[-4.6, -11.1], [1.6, -11.9], [4.2, -10.4], [-1.8, -10]], cloth: 'hair', tone: 'hi', name: 'hairSheen' },
-      ...both({ poly: [[9.7, -3.8], [11.1, -3.9], [11.9, -1.4], [11.3, 2.4], [9.5, 3.6], [9.3, 0]], tone: 'lo', name: 'ear' }),
+      { poly: sym([[0, -8.8], [4.6, -8.2], [7.6, -6.8], [8.7, -4.4], [6.4, -3.2], [0, -3.6]]), tone: 'hi', name: 'forehead' },
+      ...both({ poly: [[9.7, -3.8], [11.1, -3.9], [11.9, -1.4], [11.3, 2.4], [9.5, 3.6], [9.3, 0]], tone: 'hi', name: 'ear' }),
+      ...both({ poly: [[10.2, -2.6], [11.2, -1.6], [10.9, 1.6], [9.9, 2.2], [9.6, -0.4]], tone: 'lo', name: 'earInner' }),
       ...both({ poly: [[6.4, -2.6], [9.3, -3.2], [9.3, 0], [9.5, 3.6], [8.3, 6], [5.4, 9.4], [4.6, 5.6]], tone: 'lo', name: 'cheek' }),
       { poly: [[0.2, -1.4], [1.5, 3.2], [0.1, 4.1]], tone: 'lo', name: 'nose' },
     ].map(r => ({ ...r, poly: tr(r.poly, 0, -83) })),
@@ -256,6 +265,8 @@ const FR = {
     base: sym([[0, -65.8], [3.4, -67], [6.2, -71.2], [11.6, -69], [17.2, -66.2], [21, -62.6], [20.2, -52], [16.6, -38], [14, -26], [15, -14], [16.5, -4], [15, 4], [6, 10.5], [0, 11.5]]),
     regions: [
       { poly: sym([[0, -7], [16.05, -7], [16.5, -4], [15, 4], [6, 10.5], [0, 11.5]]), cloth: 'shorts', name: 'shorts' },
+      { poly: sym([[0, -5.6], [12.6, -5.6], [13.2, -1.6], [12, 3.6], [5.4, 9.2], [0, 10.2]]), cloth: 'shorts', tone: 'hi', name: 'shortsFront' },
+      { poly: [[-0.45, -5.6], [0.45, -5.6], [0.35, 8.2], [-0.35, 8.2]], cloth: 'shorts', tone: 'lo', name: 'fly' },
       { poly: [[16.05, -7], [-16.05, -7], [-16.2, -5.6], [16.2, -5.6]], cloth: 'shorts', tone: 'lo', name: 'waistband' },
       ...both({ poly: [[6.2, -71.2], [11.6, -69], [17.2, -66.2], [21, -62.6], [13, -63.4], [7.4, -67.6]], tone: 'hi', muscle: 'upperTraps' }),
       { poly: sym([[0, -65.8], [3.4, -67], [6.2, -71.2], [7.4, -70.7], [4.2, -65.6], [0, -64.4]]), tone: 'lo', name: 'collar' },
@@ -266,7 +277,7 @@ const FR = {
       ...both({ poly: [[1, -64.2], [13, -63.4], [20, -61.6], [19.9, -53], [16.4, -45.4], [8.6, -43.2], [1, -44.6]], tone: 'hi', muscle: 'chest' }),
       // secondary motion: the belly wall firms (brace) and the collarbone line shows as the shoulders stay down
       ...both({ poly: [[8.6, -38], [10, -37.8], [10.4, -9.6], [9, -9.6]], tone: 'lo', ten: true, name: 'brace' }),
-      ...both({ poly: [[7.4, -67.6], [13, -63.4], [20.4, -62.4], [20.2, -61.2], [13, -62], [7.2, -66.2]], tone: 'lo', ten: true, name: 'collarbone' }),
+      ...both({ poly: [[7.4, -67.6], [13, -63.4], [20.4, -62.4], [20.2, -61], [13, -61.5], [7, -66]], tone: 'lo', ten: true, name: 'collarbone' }),
     ],
   },
   deltoidR: {
@@ -288,12 +299,12 @@ const FR = {
       { poly: tr([[5.82, 19], [-5.48, 19.6], [-5.56, 18.2], [5.93, 17.6]], 22, -62), cloth: 'tee', tone: 'lo', name: 'sleeveHem' },
     ],
   },
-  elbowCapR: { base: ngon(22, -24, 4.6), regions: [{ poly: half(22, -24, 4.6, 180), tone: 'lo', name: 'elbowInner' }] },
+  elbowCapR: { base: ngon(22, -24, 4.8), regions: [{ poly: tr([[-2.6, -27.2], [-4.4, -24], [-2.6, -20.8], [-1.6, -24]], 22, 0), tone: 'lo', name: 'elbowCrease' }] },
   forearmR: {
-    base: tr([[-4.6, -1], [4.8, -1], [5.4, 7], [4.8, 15], [3.4, 31], [-3.4, 31], [-4.4, 16], [-5, 7]], 22, -24),
+    base: tr([[-4.8, -1], [5, -1], [6.2, 5], [6, 11], [4.8, 22], [4, 31], [-4, 31], [-4.5, 18], [-4.9, 7]], 22, -24),
     regions: [
-      { poly: tr([[0.4, -1], [4.8, -1], [5.4, 7], [4.8, 15], [3.4, 31], [0.8, 31]], 22, -24), tone: 'hi', muscle: 'forearms' },
-      { poly: tr([[-4.6, -1], [-2.8, -1], [-2.2, 31], [-3.4, 31], [-4.4, 16], [-5, 7]], 22, -24), tone: 'lo', name: 'forearmInner' },
+      { poly: tr([[0.6, -1], [5, -1], [6.2, 5], [6, 11], [4.8, 22], [4, 31], [0.9, 31]], 22, -24), tone: 'hi', muscle: 'forearms' },
+      { poly: tr([[-4.8, -1], [-2.8, -1], [-2.2, 31], [-4, 31], [-4.5, 18], [-4.9, 7]], 22, -24), tone: 'lo', name: 'forearmInner' },
     ],
   },
   // Hand round a dumbbell handle that points at the camera, seen from the front and a little above: the index
@@ -314,25 +325,26 @@ const FR = {
     base: tr([[-8, -4], [8, -4], [8.4, 10], [8, 20], [6, 44], [3.6, 49], [0, 50.5], [-4, 49], [-6, 46], [-7.2, 30], [-7.6, 16]], 10, 0),
     regions: [
       { poly: tr([[-8, -4], [8, -4], [8.4, 10], [8, 20], [6.95, 34], [-7.3, 34.6], [-7.2, 30], [-7.6, 16]], 10, 0), cloth: 'shorts', name: 'shorts' },
-      { poly: tr([[-3.4, -4], [3.4, -4], [4, 34.3], [-3.6, 34.5]], 10, 0), cloth: 'shorts', tone: 'hi', muscle: 'quads' },
+      { poly: tr([[-5.4, -4], [5.6, -4], [6.4, 10], [6.1, 20], [5.3, 34.1], [-5.3, 34.5], [-5.8, 20], [-5.6, 10]], 10, 0), cloth: 'shorts', tone: 'hi', muscle: 'quads' },
+      { poly: tr([[5.6, -4], [8, -4], [8.4, 10], [8, 20], [6.95, 34], [5.3, 34.1], [6.1, 20], [6.4, 10]], 10, 0), cloth: 'shorts', tone: 'lo', name: 'thighOuter' },
       { poly: tr([[-3.6, 34.5], [4, 34.3], [4.6, 44], [2.4, 48.2], [-1, 48.6], [-3.4, 43]], 10, 0), tone: 'hi', muscle: 'quads' },
       { poly: tr([[6.95, 34], [-7.3, 34.6], [-7.34, 33.2], [7.05, 32.6]], 10, 0), cloth: 'shorts', tone: 'lo', name: 'shortsHem' },
     ],
   },
   kneeCapR: { base: ngon(10, 50, 5.8), regions: [{ poly: half(10, 50, 5.8, 270), tone: 'hi', name: 'patella' }] },
   shinR: {
-    base: tr([[-5.5, 49], [5.5, 49], [6.2, 60], [5.2, 74], [4, 94], [-4, 94], [-5, 76], [-6.2, 62]], 10, 0),
+    base: tr([[-5.5, 49], [5.5, 49], [6.9, 60], [6.4, 68], [5.2, 78], [4, 94], [-4, 94], [-5, 78], [-6.4, 68], [-6.9, 60]], 10, 0),
     regions: [
-      ...[1, -1].map(s => ({ poly: tr([[5.5, 49], [6.2, 60], [5.2, 74], [4, 94], [2.8, 92], [3.4, 70], [3.2, 52]].map(([x, y]) => [x * s, y]), 10, 0), tone: 'lo', muscle: 'calves' })),
+      ...[1, -1].map(s => ({ poly: tr([[5.5, 49], [6.9, 60], [6.4, 68], [5.2, 78], [4, 94], [2.8, 92], [3.6, 74], [3.6, 56]].map(([x, y]) => [x * s, y]), 10, 0), tone: 'lo', muscle: 'calves' })),
     ],
   },
   footR: {
     cloth: 'shoe',
-    base: tr([[-4.5, 92.4], [4.5, 92.4], [6.6, 97], [7.2, 99.4], [6.8, 102], [-5.8, 102], [-6.4, 99.4], [-6, 96.4]], 10, 0),
+    base: tr([[-4.5, 92.4], [4.5, 92.4], [7.2, 96.6], [8, 99.4], [7.6, 102], [-6.6, 102], [-7.2, 99.4], [-6.4, 96.4]], 10, 0),
     regions: [
       { poly: tr([[-4.5, 92.4], [4.5, 92.4], [5, 93.6], [-4.8, 93.6]], 10, 0), tone: 'lo', name: 'collar' },
-      { poly: tr([[-3.8, 96.4], [4.2, 96.4], [6.2, 98.6], [6.4, 100.4], [-5.4, 100.4], [-5.6, 98.6]], 10, 0), tone: 'hi', name: 'toeCap' },
-      { poly: tr([[-6.2, 100.4], [7, 100.4], [6.8, 102], [-5.8, 102]], 10, 0), cloth: 'sole', name: 'sole' },
+      { poly: tr([[-4.4, 96], [4.8, 96], [7, 98.4], [7.3, 100.4], [-6.4, 100.4], [-6.6, 98.4]], 10, 0), tone: 'hi', name: 'toeCap' },
+      { poly: tr([[-7, 100.4], [7.8, 100.4], [7.6, 102], [-6.6, 102]], 10, 0), cloth: 'sole', name: 'sole' },
     ],
   },
 };
@@ -350,6 +362,7 @@ const mirPart = p => ({ ...p, base: mir(p.base), regions: (p.regions || []).map(
 const CLOTH = { skin: 'b', tee: 't', shorts: 'p', shoe: 's', sole: 'so', hair: 'hr' };
 const FAR_CLOTH = { skin: 'bf', tee: 'bf', shorts: 'pf', shoe: 'sf', sole: 'sf', hair: 'bf' };
 const toneCls = (cloth, tone) => CLOTH[cloth] + (tone === 'hi' ? 'h' : tone === 'lo' ? 'l' : '');
+let clipSeq = 0;   // clipPath ids for the glow, stable across builds
 function fillPart(p, roles = {}, opt = {}) {
   const cloth = p.cloth || 'skin';
   // LP: opt.facets draws the far side's light and dark facets too (far tone classes bfh / bfl), so the far arm reads as a
@@ -359,16 +372,19 @@ function fillPart(p, roles = {}, opt = {}) {
   for (const r of p.regions || []) {
     const role = r.muscle && roles[r.muscle];
     // LP: a main muscle's contracted part (ten) rides the move channel: its resting tone always, the accent from 0 at
-    // setup to full in the hold; a flare is a shape that grows with the move (scaleX on the flare channel) inside a
+    // setup to full in the hold (the fade on a group round the mm, so a check that neutralises the effort cue on .mm
+    // still sees the resting part as unlit); a flare is a shape that grows with the move (scaleX on the flare channel) inside a
     // group faded by the same channel, outlined on its outer edge only (an open path), so nothing shows at setup
-    if (role === 'main' && r.flare) { if (opt.ten && opt.flare) { const d = 'M' + r.outer.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L'); flare += `<g class="j anim ${opt.ten}"><g class="j anim ${opt.flare}" style="transform-origin:${n2(r.origin[0])}px ${n2(r.origin[1])}px"><path class="olk" d="${d}"/><path class="rim" d="${d}"/><polygon class="gw" points="${pts(r.poly)}"/><polygon class="mm" points="${pts(r.poly)}"/></g></g>`; } }
-    else if (role === 'main' && r.ten) { if (r.tone) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`; if (opt.ten) { mus += `<polygon class="mm anim ${opt.ten}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; } }
+    if (role === 'main' && r.flare) { if (opt.ten && opt.flare) { const d = 'M' + r.outer.map(([x, y]) => `${n2(x)} ${n2(y)}`).join('L'); flare += `<g class="j anim ${opt.ten}"><g class="j anim ${opt.flare}" style="transform-origin:${n2(r.origin[0])}px ${n2(r.origin[1])}px"><path class="olk" d="${d}"/><path class="rim" d="${d}"/><clipPath id="${opt.glow}-clip${clipSeq}"><polygon points="${pts(r.poly)}"/></clipPath><g clip-path="url(#${opt.glow}-clip${clipSeq++})"><polygon class="gw" points="${pts(r.poly)}"/></g><polygon class="mm" points="${pts(r.poly)}"/></g></g>`; } }
+    else if (role === 'main' && r.ten) { if (r.tone) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`; if (opt.ten) { mus += `<g class="j anim ${opt.ten}"><polygon class="mm" points="${pts(r.poly)}"/></g>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; } }
     else if (role === 'main') { mus += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; }
-    else if (role === 'help') mus += `<polygon class="mh" points="${pts(r.poly)}"/>`;
+    else if (role === 'help') mus += `<polygon class="mh${opt.helpFade ? ` anim ${opt.helpFade}` : ''}" points="${pts(r.poly)}"/>`;
     else if (r.ten) { if (opt.ten) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)} tn anim ${opt.ten}" points="${pts(r.poly)}"/>`; }
     else if (r.tone || r.cloth) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`;
     else if (r.facet) s += `<polygon class="fc" points="${pts(r.poly)}"/>`;
   }
+  // the glow halo is clipped to the part's own silhouette, so it never spills past the outline as a fringe
+  if (glow) { const id = `${opt.glow}-clip${clipSeq++}`; glow = `<clipPath id="${id}"><polygon points="${pts(p.base)}"/></clipPath><g clip-path="url(#${id})">${glow}</g>`; }
   // LP: opt.tenOver draws the secondary-motion facets over the role muscles. Here mid back (helps) and lats (main)
   // are painted, and the shoulder blade's inner edge lies on the mid back, so under it the edge would never show.
   if (opt.tenOver) { let ov = ''; s = s.replace(/<polygon class="[^"]* tn anim [^"]*" points="[^"]*"\/>/g, m => { ov += m; return ''; }); return s + flare + glow + mus + ov; }
@@ -380,6 +396,9 @@ const rimPart = p => `<polygon class="rim" points="${pts(p.base)}"/>`;
 const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.far) : pass === 'rim' ? (opt.far ? '' : rimPart(p)) : fillPart(p, roles, opt));
 // all three passes of one layer, in order
 const layer = f => f('ol') + f('rim') + f('fill');
+// an arm is ONE layer: the lower arm's outline and rim are drawn inside the upper arm's passes (the joint chain is
+// repeated per pass), so no outline arc crosses the arm at the elbow; wrap(markup, pass) nests the lower arm's chain
+const armLayer = (up, lo, wrap) => ['ol', 'rim', 'fill'].map(pass => up(pass) + wrap(lo(pass), pass)).join('');
 
 // Soft contact shadow (RIG.md section 20): three stacked --scrim ellipses, no filter.
 const shadow = (cx, cy, rx, ry) => `<g class="shadow">${[1, 0.72, 0.44].map(k => `<ellipse class="shd" cx="${n2(cx)}" cy="${n2(cy)}" rx="${n2(rx * k)}" ry="${n2(ry * k)}"/>`).join('')}</g>`;
@@ -433,7 +452,7 @@ function solve3(S, G, a, b, pole) {
 // ---------------------------------------------------------------------------
 // Shared CSS (the artboard puts all of this in <helmet><style>).
 const BASE_CSS = `
-body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
 .player{--play:running;--dur:4s;--iter:infinite;--sets:infinite;--delay:0s;--sw:1;
   --fg-line:color-mix(in srgb,var(--text) 60%,var(--surface-1));
@@ -452,7 +471,7 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
   --tee:var(--body);
   --tee-hi:color-mix(in srgb,var(--tee) var(--hi),var(--lit));
   --tee-lo:color-mix(in srgb,var(--tee) var(--lo),var(--shd));
-  --shorts:color-mix(in srgb,var(--body) 78%,var(--text));
+  --shorts:color-mix(in srgb,var(--body) 70%,var(--text));
   --shorts-hi:color-mix(in srgb,var(--shorts) var(--hi),var(--lit));
   --shorts-lo:color-mix(in srgb,var(--shorts) var(--lo),var(--shd));
   --shorts-far:color-mix(in srgb,var(--shorts) 45%,var(--surface-1));
@@ -462,14 +481,14 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
   --shoe-far:color-mix(in srgb,var(--shoe) 45%,var(--surface-1));
   --sole:color-mix(in srgb,var(--body) 45%,var(--lit));
   --hair:color-mix(in srgb,var(--body) 50%,var(--shd));
-  --hair-hi:color-mix(in srgb,var(--hair) var(--hi),var(--lit));
+  --hair-hi:color-mix(in srgb,var(--hair) 68%,var(--lit));
   --rim:color-mix(in srgb,var(--body) var(--rim-k),var(--lit));
-  --equip-hi:color-mix(in srgb,var(--equip) var(--hi),var(--lit));
+  --equip-hi:color-mix(in srgb,var(--equip) var(--eq-hi),var(--lit));
   --equip-lo:color-mix(in srgb,var(--equip) var(--lo),var(--shd));
-  --metal-lo:color-mix(in srgb,var(--fg-metal) 50%,var(--surface-1));
+  --metal-lo:color-mix(in srgb,var(--fg-metal) 64%,var(--surface-1));
   --seam:color-mix(in srgb,var(--fg-frame) 70%,var(--equip));
   position:relative;width:358px;height:460px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;
-  background:var(--surface-2);color:var(--text);font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  background:var(--surface-2);color:var(--text);font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif}
 .stage{position:relative;flex:none;width:358px;height:276px;background:var(--surface-1);border-radius:var(--radius-lg);overflow:hidden}
 .stage::after{content:"";position:absolute;inset:0;border:1px solid var(--border-subtle);border-radius:inherit;pointer-events:none}
 .scene{position:absolute;left:0;top:0;width:358px;height:276px;display:block}
@@ -490,7 +509,7 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .tile p{margin:0;padding:0 8px 6px;font-size:12px;line-height:16px;color:var(--text-2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .badge{position:absolute;top:6px;left:6px;width:18px;height:18px;border-radius:50%;background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--surface-2);box-shadow:0 0 0 2px var(--surface-2);color:var(--accent);font-size:11px;line-height:18px;font-weight:700;text-align:center}
 .cap-row{flex:none;display:flex;align-items:baseline;justify-content:space-between;gap:8px;height:20px}
-.cap{font-size:15px;line-height:20px;font-weight:600;color:var(--text);white-space:nowrap}
+.cap{font-size:15px;line-height:20px;font-weight:600;color:var(--text);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .tempo{font-size:12px;line-height:16px;color:var(--text-2);white-space:nowrap}
 .chips{flex:none;display:flex;align-items:center;gap:8px;height:44px}
 .chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;box-sizing:border-box;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-2);font:600 12px/16px inherit;font-family:inherit;cursor:pointer;position:relative}
@@ -518,7 +537,7 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .tn{fill-opacity:.75}
 .rim{fill:none;stroke:var(--rim);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
 .gw{fill:none;stroke:var(--accent);stroke-width:calc(var(--sw) * 5px);stroke-opacity:.3;stroke-linejoin:round}
-.shd{fill:var(--scrim);fill-opacity:.16}
+.shd{fill:var(--border);fill-opacity:.6}
 .olk{fill:none;stroke:var(--fg-line);stroke-width:calc(var(--sw) * 3px);stroke-linejoin:round}
 .olkf{fill:none;stroke:var(--fg-line-far);stroke-width:calc(var(--sw) * 2.4px);stroke-linejoin:round}
 .fc{fill:var(--body-facet);stroke:var(--map-line);stroke-width:.6px;stroke-linejoin:round}
@@ -530,7 +549,7 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .eqf{fill:var(--body-far);stroke:var(--fg-line-far);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
 .hd{fill:var(--fg-metal)}
 .eqs{fill:var(--equip)}.eqh{fill:var(--equip-hi)}.eql{fill:var(--equip-lo)}
-.knurl{fill:none;stroke:var(--metal-lo);stroke-width:calc(var(--sw) * .7px)}
+.knurl{fill:none;stroke:var(--metal-lo);stroke-width:calc(var(--sw) * .6px)}
 .seam{fill:none;stroke:var(--seam);stroke-width:calc(var(--sw) * .7px);stroke-dasharray:1.6 1.2}
 .prim{fill:none;stroke:var(--fg-metal);stroke-width:calc(var(--sw) * .7px)}
 .hdf{fill:var(--fg-line-far)}
@@ -546,6 +565,7 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .ovs{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .arrow{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .arrow-head{fill:var(--accent)}
+.arrow-lg{stroke-width:3}
 /* ---- motion ---- */
 .j{transform-box:view-box}
 .anim{animation-duration:var(--dur);animation-delay:var(--delay);animation-play-state:var(--play);animation-iteration-count:var(--iter);animation-fill-mode:both;animation-timing-function:linear}
@@ -577,10 +597,10 @@ const ICON = {
   replay: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4"/></svg>',
   zoom: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>',
 };
-function arrowSvg(a) { // a = { from:[x,y], to:[x,y] } in scene units (rig section 12)
+function arrowSvg(a, k = 1) { // a = { from:[x,y], to:[x,y] } in scene units (rig section 12); k = 1.5 for the larger tile arrows (class arrow-lg)
   const [x0, y0] = a.from, [x1, y1] = a.to, L = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / L, uy = (y1 - y0) / L;
-  const hx = x1 - ux * 6, hy = y1 - uy * 6, nx = -uy * 4, ny = ux * 4;
-  return `<path class="arrow" d="M${n2(x0)} ${n2(y0)}L${n2(hx)} ${n2(hy)}"/><polygon class="arrow-head" points="${pts([[x1, y1], [hx + nx, hy + ny], [hx - nx, hy - ny]])}"/>`;
+  const hx = x1 - ux * 6 * k, hy = y1 - uy * 6 * k, nx = -uy * 4 * k, ny = ux * 4 * k;
+  return `<path class="arrow${k !== 1 ? ' arrow-lg' : ''}" d="M${n2(x0)} ${n2(y0)}L${n2(hx)} ${n2(hy)}"/><polygon class="arrow-head" points="${pts([[x1, y1], [hx + nx, hy + ny], [hx - nx, hy - ny]])}"/>`;
 }
 
 // LP: exercise-local shape for the side-view lats region. The rig's region stops at the lower ribs,
@@ -594,12 +614,14 @@ function arrowSvg(a) { // a = { from:[x,y], to:[x,y] } in scene units (rig secti
 // - the contracted lower lat, down the back to the waist: its resting shade always, the accent rising with the move
 //   (lp-ten), so at the setup pose the stretched lat is not lit there and in the hold the visible band is;
 // - the flare: the lat's outer edge spreading out behind the arm as it contracts, a shape that grows with the move
-//   (scaleX on lp-flare about x -6, inside the torso) and fades in with lp-ten, up to 5.8 units beyond the back outline.
+//   (scaleX on lp-flare about x -6, inside the torso) and fades in with lp-ten, up to 7 units beyond the back outline.
+// The core is the upper lat only, so the setup pose lights a small patch and the shared muscle check (raw accent in the
+// hold vs setup, effort cue neutralised) is met by what the hold really shows: the lower lat and the flare.
 SIDE.torso.regions = [
   ...SIDE.torso.regions.filter(r => r.muscle !== 'lats'),
-  { poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-3.4, -34], [-11.1, -34], [-11.9, -40]], tone: 'lo', muscle: 'lats' },
-  { poly: [[-11.1, -34], [-3, -34], [-3.2, -22], [-4.6, -12.5], [-11.21, -12.5], [-10.8, -15], [-10, -26]], tone: 'lo', muscle: 'lats', ten: true },
-  { flare: true, outer: [[-12.3, -52], [-15.6, -48], [-17.6, -42], [-17.8, -36], [-16.4, -29], [-13.8, -21], [-10.8, -15]], poly: [[-12.3, -52], [-15.6, -48], [-17.6, -42], [-17.8, -36], [-16.4, -29], [-13.8, -21], [-10.8, -15], [-6, -16], [-6, -51]], origin: [-6, -33], muscle: 'lats' },
+  { poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-3.1, -40], [-11.9, -40]], tone: 'lo', muscle: 'lats' },
+  { poly: [[-11.9, -40], [-3.1, -40], [-4.4, -30], [-3.6, -22], [-4.4, -12], [-5, -9.2], [-11.77, -9.2], [-10.8, -15], [-10, -26]], tone: 'lo', muscle: 'lats', ten: true },
+  { flare: true, outer: [[-12.3, -52], [-16, -48], [-18.4, -42], [-19, -36], [-17.6, -29], [-14.6, -21], [-10.8, -15]], poly: [[-12.3, -52], [-16, -48], [-18.4, -42], [-19, -36], [-17.6, -29], [-14.6, -21], [-10.8, -15], [-6, -16], [-6, -51]], origin: [-6, -33], muscle: 'lats' },
 ];
 // LP: the rig's side hand wraps a handle along its local x with the thumb at +x. Here the bar runs from the grip
 // toward the far hand along local -x (113-169 degrees from +x over the rep, section 7 of PLAYER.md), so the hand is
@@ -1030,12 +1052,12 @@ ${kf('lp-fbar', p => `transform:rotate(${n4(-far(p).af)}deg)`)}
   const barGroup = `<g class="j anim lp-bar"><path class="lp-barline" d="${barLocalD}"/><circle class="lp-hook" cx="${n2(BAR_MID[0])}" cy="${n2(16 + BAR_MID[1])}" r="2.4"/></g>`;
   const barNear = `<g class="j anim lp-bar lp-bar-near"><path class="lp-barline" d="${nearEndD}"/><path class="lp-grip" d="${gripD(1)}"/></g>`;
   const lower = pass => { const Pp = passer(pass, roles); return `${Pp(SIDE.elbowCap)}<g class="j anim lp-fl">${Pp(SIDE.forearm)}</g><g class="j anim lp-hd">${pass === 'fill' ? barGroup : ''}${Pp(LP_FIST)}${pass === 'fill' ? `${barNear}<circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/>` : ''}</g>`; };
-  const arm = `<g class="j lp-torso"><g class="j anim lp-ua arm-near">${layer(upper)}<g class="j anim lp-fa">${layer(lower)}</g></g></g>`;
+  const arm = `<g class="j lp-torso"><g class="j anim lp-ua arm-near">${armLayer(upper, lower, m => `<g class="j anim lp-fa">${m}</g>`)}</g></g>`;
   // far hand: the rig's forearm and fist turned to point from the grip toward the elbow (local +y), in the far tones
   // far arm (QA r2 issue 2): the same arm seen on the far side, placed with the rig's depth view (each joint moves
   // (0.25, -0.15) per unit it is further from the camera), in the far tones, behind the bar and the body
   const fpart = part => ({ ...part, base: tr(part.base, FS0[0], FS0[1] + 62), regions: (part.regions || []).map(r => ({ ...r, poly: tr(r.poly, FS0[0], FS0[1] + 62) })) });
-  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : fillPart(fpart(part), {}, { far: true, facets: true }));   // far: outline and fill with far-tone facets, no rim (RIG section 5)
+  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : pass === 'rim' ? '' : fillPart(fpart(part), {}, { far: true, facets: true }));   // far: outline and fill with far-tone facets, no rim (RIG section 5)
   const farUpper = pass => `<g class="j anim lp-ful">${FP(pass)(SIDE.upperArm)}</g>${FP(pass)(SIDE.deltoid)}`;
   // The far end of the bar (D-L9): from 1 unit outside the far fist's near edge, through the fist, to the far tip, with the
   // grip ribs; drawn in the far hand's frame (its grip at FS0 + (0, 78)), under the far forearm and fist fills, so the far
@@ -1047,7 +1069,7 @@ ${kf('lp-fbar', p => `transform:rotate(${n4(-far(p).af)}deg)`)}
   const farBarD = 'M' + [FAR_SPLIT + 2, -BAR_BEND, -BAR_HALF].map(rel).join('L'), farGripD = 'M' + [50, 56, 62, 68, 73].map(z => rel(-z)).join('L');
   const farBar = `<g class="j anim lp-fbh"><g class="j anim lp-fbar"><path class="lp-barfar" d="${farBarD}"/><path class="lp-grip" d="${farGripD}"/></g></g>`;
   const farLower = pass => `${pass === 'fill' ? farBar : ''}${FP(pass)(SIDE.elbowCap)}<g class="j anim lp-ffl">${FP(pass)(SIDE.forearm)}</g><g class="j anim lp-fhd">${FP(pass)(SIDE.fist)}</g>`;
-  const farArm = `<g class="far-arm"><g class="j anim lp-fua">${farUpper('ol')}${farUpper('fill')}<g class="j anim lp-ffa">${farLower('ol')}${farLower('fill')}</g></g></g>`;
+  const farArm = `<g class="far-arm"><g class="j anim lp-fua">${armLayer(farUpper, farLower, m => (m ? `<g class="j anim lp-ffa">${m}</g>` : ''))}</g></g>`;
   let still = '', moving = '';
   for (let i = 0; i < 10; i++) {
     const r = `<rect class="eq" x="16" y="${n2(112.5 + i * 13.5)}" width="48" height="12" rx="1.5"/>`;
@@ -1113,7 +1135,7 @@ const cond = (mode, flag, inner, tag = 'span', attrs = '') => mode === 'dc'
   ? `<sc-if value="{{ ${flag} }}" hint-placeholder-val="{{ true }}"><${tag}${attrs}>${inner}</${tag}></sc-if>`
   : `<${tag}${attrs} data-if="${flag}">${inner}</${tag}>`;
 function tilesMarkup() {
-  return EXL.pics.map((cap, i) => `<div class="tile"><svg viewBox="${EXL.tileBox.join(' ')}" aria-hidden="true"><use href="#rig-${EXL.id}" style="--play:paused;--sw:.75;--delay:calc(var(--dur) * -${EXL.picsAt[i]})"/>${EXL.arrows[i] ? arrowSvg(EXL.arrows[i]) : ''}</svg><span class="badge">${i + 1}</span><p>${cap}</p></div>`).join('\n');
+  return EXL.pics.map((cap, i) => `<div class="tile"><svg viewBox="${EXL.tileBox.join(' ')}" aria-hidden="true"><use href="#rig-${EXL.id}" style="--play:paused;--sw:.75;--delay:calc(var(--dur) * -${EXL.picsAt[i]})"/>${EXL.arrows[i] ? arrowSvg(EXL.arrows[i], 1.5) : ''}</svg><span class="badge">${i + 1}</span><p>${cap}</p></div>`).join('\n');
 }
 function stageMarkup(mode) {
   const slow = cond(mode, 'showSlow', 'Slow motion', 'span', ' class="pill pill-accent"');
@@ -1198,7 +1220,7 @@ function bind() {
 }
 // bounded 3 reps: when the upper arm's animation ends (after --iter reps), the button becomes Replay
 root.addEventListener('animationend', e => { if (e.target.classList.contains('lp-ua') && !e.target.closest('.pics') && !S.loop) { S.playing = false; S.ended = true; bind(); } });
-bind(); window.__lp = { S, bind, vals };
+bind(); window.__lp = { S, bind, vals }; window.__rig = { freeze: t => { S.t = t; S.playing = false; S.ended = false; bind(); } };   // __rig.freeze: what the shared checkers (rig-final/*-check.cjs) call
 document.getElementById('harness-note').textContent = 'Harness only: theme ' + S.theme + (S.t !== null ? ', frozen at t = ' + S.t : '') + (S.zoom ? ', zoom-' + S.zoom : '') + (S.pics ? ', pictures' : '') + '. Query: ?theme= &t= &zoom=1|2|3 &mode=pictures &loop=1 &speed=0.5';
 `;
 const defaultStyle = `width:358px;height:460px;box-sizing:border-box;${themeVars('silent-black')};${rigVars('silent-black')};--play:running;--dur:4s;--iter:3;--sets:1;--delay:0s`;
@@ -1213,7 +1235,7 @@ const harness = `<!doctype html>
 /* Artboard: everything in this <style> goes into <helmet><style> (PLAYER.md piece A). */
 ${ARTBOARD_CSS}
 </style>
-<style>/* harness only: the canvas's font (Roboto, its link above) and font stack, so the harness renders the text as the artboard does */ body,.player{font-family:Roboto,Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",sans-serif} body{padding:16px;background:#777}.harness-note{margin:10px 0 0;width:358px;font:12px/16px system-ui,sans-serif;color:#fff}</style>
+<style>/* harness only: a local copy of the canvas font (Roboto, latin) so offline shoots draw the same text as the canvas, page padding, and the note under the player */ @font-face{font-family:Roboto;font-style:normal;font-weight:400 700;font-display:swap;src:url(../rig-final/fonts/Roboto-latin.woff2) format("woff2")}body{padding:16px;background:#777}.harness-note{margin:10px 0 0;width:358px;font:12px/16px system-ui,sans-serif;color:#fff}</style>
 </head>
 <body>
 <div class="player gen-a" id="player" style="${defaultStyle}">
@@ -1439,10 +1461,10 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 - Far arm (far tones, with light and dark far-tone facets \`bfh\` / \`bfl\` and a softer outline than the far leg's, so it reads as a form behind the body), section 7. Inside its hand group, under the far forearm and fist fills, the far end of the bar (\`lp-barfar\`, with the grip ribs): from 1 unit outside the far fist's near edge, through the fist, to the far tip. It runs the far hand's translate (\`lp-fbh\`, the \`lp-fhd\` keyframes) and counter-rotates by minus the far arm's rotations (\`lp-fbar\`, its own keyframe set with \`rotate()\`, so the smoothness check reads it as a joint angle: section 7), which keeps the bar's fixed look on screen. The far hand tracks the bar's far grip within 0.5 (section 11), and the join with the near hand's bar lies under the fist, so the far fingers wrap the bar and its far end comes out from under them (D-L9).
 - Seat pad x 118-186, y 214-224, post x 150-159, with a stitched seam 2.1 inside its edge. Thigh-pad post x 188-196 (behind the near leg).
 - Contact shadows (RIG.md section 20): under the feet on the floor (208, 258, rx 17) and under the thighs on the seat (160, 214.4, rx 26), outside \`.figure\`, so no figure box changes.
-- Body (torso, neck and head leaned 10 degrees; seated leg as the chest press), painted in three passes (outline, rim, fill: RIG.md section 5) with the figure-detail parts of RIG.md section 20. Thigh pad roller x 180-204, y 184-198, rx 7, on top of the thigh, with a stitched seam.
+- Body (torso, neck and head leaned 10 degrees; seated leg as the chest press), painted in three passes (outline, rim, fill: RIG.md section 5) with the figure-detail parts of RIG.md section 20 (round 2: the lit forehead and ear facets, the pec fan, the armpit and lat-fold facets, the tapered forearm with the brachioradialis bulge, the r 4.8 elbow cap with its inner crease, the thumb wedge that crosses the bar). Thigh pad roller x 180-204, y 184-198, rx 7, on top of the thigh, with a stitched seam.
 - Path guide (dashed, the whole hand path) and the "still to go" line (solid accent; \`stroke-dashoffset\` = minus the path fraction already travelled, minus 16 units, so it starts 6 below the fist and shrinks as the bar comes down), plus the target mark: a 10-wide accent line across the path's end at (${g.X1}, ${g.Y1}).
 - The front cable (\`lp-cable-f\`), drawn after the far arm, the far leg and the body (QA r3): it hangs on the bar's middle, which is nearer the camera than the far hand and in front of the face, so nothing but the near arm may cover it. One line from the pulley's bottom (${g.PF.x}, ${f(g.PF.y + g.PF.r)}) to the hook; it turns and stretches with the bar (\`rotate()\` and \`scaleY()\` about the pulley bottom, on the same samples).
-- The near arm on top. The lat bar lives inside its hand group (\`lp-hd\`; spec 2.4, RIG section 4), so the grip can never come apart: \`lp-bar\` turns by \`rotate(-10 - ua - fa)\` about the grip (0, 16), minus the sum of the arm's rotations, as the rig's dumbbells do, so the bar keeps its fixed look on screen. Two layers: the whole bar and the hook under the fist fill (the fist wraps round the bar), and the near end, from the little-finger side of the hand (${HAND_HALF} nearer the camera than the grip) out to its tip, over the fist. The near end is nearer the camera than the hand, the forearm and the chest, so it always shows and the bar's visible length never changes. The bar: a 4-wide metal line, drawn with the depth view: 150 long, straight between +-48 of the centre line, ends bent down 6. Relative to the near grip: near end (${g.BAR_PTS[0].map(v => f(v, 2)).join(', ')}), bends at (${g.BAR_PTS[1].map(v => f(v, 2)).join(', ')}) and (${g.BAR_PTS[2].map(v => f(v, 2)).join(', ')}), far end (${g.BAR_PTS[3].map(v => f(v, 2)).join(', ')}); far hand at (${g.FAR_GRIP.map(v => f(v, 2)).join(', ')}); the cable hook (metal dot r 2.4) on the middle at (${g.BAR_MID.map(v => f(v, 2)).join(', ')}).
+- The near arm on top, one layer (\`armLayer()\`, RIG section 4): the lower arm's outline and rim are drawn inside the upper arm's passes, so no outline arc crosses the elbow; the same for the far arm. The lat bar lives inside its hand group (\`lp-hd\`; spec 2.4, RIG section 4), so the grip can never come apart: \`lp-bar\` turns by \`rotate(-10 - ua - fa)\` about the grip (0, 16), minus the sum of the arm's rotations, as the rig's dumbbells do, so the bar keeps its fixed look on screen. Two layers: the whole bar and the hook under the fist fill (the fist wraps round the bar), and the near end, from the little-finger side of the hand (${HAND_HALF} nearer the camera than the grip) out to its tip, over the fist. The near end is nearer the camera than the hand, the forearm and the chest, so it always shows and the bar's visible length never changes. The bar: a 4-wide metal line, drawn with the depth view: 150 long, straight between +-48 of the centre line, ends bent down 6. Relative to the near grip: near end (${g.BAR_PTS[0].map(v => f(v, 2)).join(', ')}), bends at (${g.BAR_PTS[1].map(v => f(v, 2)).join(', ')}) and (${g.BAR_PTS[2].map(v => f(v, 2)).join(', ')}), far end (${g.BAR_PTS[3].map(v => f(v, 2)).join(', ')}); far hand at (${g.FAR_GRIP.map(v => f(v, 2)).join(', ')}); the cable hook (metal dot r 2.4) on the middle at (${g.BAR_MID.map(v => f(v, 2)).join(', ')}).
 - Then \`.lp-togo-over\`: the "still to go" line again over the near arm at opacity 0.35, so it never vanishes behind the forearm while the bar comes down (hidden in the Grip close-up, which hides every path cue, and in the Path close-up, which draws its own full copy). Then \`.lp-over\`: the same guide, line and mark again, shown only in the Path close-up.
 - Muscles: main Lats in three parts (D-L9), so the accent stays in view at the hardest point, when the near upper arm hangs over the upper back: the core (the upper lat under the armpit; effort cue 0.75 to 1.0 opacity, glow \`gw\` under it), the contracted lower lat down to the waist (its resting shade always, the accent and glow rising with the move on \`lp-ten\`), and the flare, the lat's outer edge spreading up to 5.8 units behind the back outline as it contracts: a shape that grows with the move (\`lp-flare\`, \`scaleX\` about x -6 inside the torso, no \`rotate()\`) inside a group faded by \`lp-ten\`, outlined on its outer edge only. Helps Biceps and Mid back. Measured (section 11): the visible accent in the hold is at least the setup pose's.
 - Glow and secondary motion (RIG.md section 20): one channel \`lp-ten\` (\`opacity\` = the move progress p, \`-a\` / \`-b\` sets, no \`rotate()\`) runs the glow on the lats, so it rises through the pull, is strongest in the hold at the chest and fades on the way up, and two facets inside the torso: \`brace\` (the belly wall firming) and \`bladeEdge\` (the inner edge of the shoulder blade showing as the blades are pulled down and back). Here mid back and lats are painted as roles, so the facets are drawn over them (\`tenOver\`); on the rig they sit under unpainted regions. The joints do not move for it; the shoulder joint's own small drop and pull back (the spec's shoulder-blade row) is the \`lp-ua\` translate, as before.
@@ -1553,6 +1575,8 @@ Captions, Pictures captions, tile times (0, 12.5, 31, 62.5 %), the Info block an
 \`\`\`
 __CHECKS__
 \`\`\`
+
+Shared checks (with the rig and the other players): \`../rig-final/muscle-check.cjs\` (the raw accent pixels of the main muscle in the hold, effort cue, glow, helpers and every other accent hidden, are at least 97 % of the setup pose's: here the hold shows the lower lat and the flare, the setup pose the upper-lat core) and \`../rig-final/caption-check.cjs\` (idle, ended, the four captions and Pictures: the caption box stays left of the tempo box and inside the player, drawn in Roboto from the local copy, no state clipped). The harness exposes \`window.__rig.freeze\` for them, and the shoot answers the Google Fonts link with an empty stylesheet so it runs offline.
 
 Screenshots (\`shots/\`, captured at 2x, all viewed): the required set from \`shoot.cjs\` (\`lp_*.png\`: the 8 frames of one rep in Silent Black, Paper t 0 and 0.5, slow motion, each zoom state plus Grip and Path at t 0.25, Pictures in Silent Black and Paper, the Path still, reduced motion, Ember, Emerald and Midnight at t 0.19) and the QA round 2 set from \`work/frames.cjs\` (\`r2-*.png\`: 16 frames of one rep, the Grip and Path close-ups at t 0, 0.0625, 0.125, 0.1875, 0.25 and 0.625, the Pad close-up, Pictures in both themes, the Grip and Path stills, Paper at 4 moments, Ember, Emerald and Midnight at t 0.125, slow motion, the whole player at t 0).
 
