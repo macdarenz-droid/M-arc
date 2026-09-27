@@ -432,7 +432,7 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
               return (
                 <Row key={e.id} trailing={active ? (inWorkout ? <span class="hint">In workout</span> : <Button size="sm" onClick={() => { addExerciseToSession(e); showToast(`Added ${e.name} to today's workout`); }}>Add</Button>) : undefined}>
                   <div class="small">{e.name}</div>
-                  <div class="hint">{e.equipment}</div>
+                  <div class="small muted">{e.equipment}</div>
                 </Row>
               );
             })}</div>

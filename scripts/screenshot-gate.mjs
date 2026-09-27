@@ -3879,6 +3879,8 @@ for (const theme of ['silent-black', 'paper']) {
 
 // O2: Muscle panel — recovery timeline (real dates), facts, actions, Logged/Try next tabs.
 {
+  // Computed from the real library, not hard-coded, so this stays correct if the library changes.
+  const O2_GLUTES_DIRECT = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).filter(e => e.primary?.includes('glutes')).length;
   const O2_PINNED = new Date(); O2_PINNED.setHours(12, 0, 0, 0);
   const o2Day = daysAgo => { const d = new Date(O2_PINNED.getTime() - daysAgo * 86_400_000); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const o2Session = (id, exerciseId, name, daysAgo, kg) => {
@@ -3890,8 +3892,8 @@ for (const theme of ['silent-black', 'paper']) {
     };
   };
   // Leg Press (2 days ago) + an older Bulgarian Split Squat: both primary-glutes, so Glutes shows
-  // "Logged · 2" with the rest of the library's 16 direct-glutes exercises (minus these 2, capped
-  // at 10) in Try next.
+  // "Logged · 2" with the rest of the library's direct-glutes exercises (minus these 2, capped at
+  // 10, see O2_GLUTES_DIRECT above) in Try next.
   const o2Sessions = [o2Session('o2-1', 'lib_leg_press', 'Leg Press', 2, 100), o2Session('o2-2', 'lib_bulgarian_split_squat', 'Bulgarian Split Squat', 10, 20)];
   const o2StateJson = (sessions, active = null) => JSON.stringify({
     version: 1, createdAt: new Date().toISOString(), profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
@@ -3934,12 +3936,20 @@ for (const theme of ['silent-black', 'paper']) {
       if (tlVals.length !== 3) errors.push(`${tag}: expected 3 timeline labels (Trained/Ready/Full), got ${tlVals.length}`);
       if (tlVals.some(t => t.includes('d to'))) errors.push(`${tag}: a timeline label still reads the old "d to" range: ${JSON.stringify(tlVals)}`);
 
+      // Every button in the actions row (Mark as fresh, Ask Escobar) must fit its own label, and
+      // when both show they must be the same height — the labelled "Ask Escobar" button used to
+      // inherit the icon-only .esc-ask's 32px width/height and clip its text.
+      const actionBtns = await page.evaluate(() => [...document.querySelectorAll('.mtl-actions button')].map(b => ({ text: b.textContent?.trim(), scrollWidth: b.scrollWidth, clientWidth: b.clientWidth, height: b.getBoundingClientRect().height })));
+      const clippedBtns = actionBtns.filter(b => b.scrollWidth > b.clientWidth + 1);
+      if (clippedBtns.length) errors.push(`${tag}: clipped action button(s): ${JSON.stringify(clippedBtns)}`);
+      if (actionBtns.length === 2 && Math.abs(actionBtns[0].height - actionBtns[1].height) > 1) errors.push(`${tag}: action buttons have mismatched heights: ${JSON.stringify(actionBtns)}`);
+
       const sheetText = await page.locator('dialog.sheet[open]').innerText();
       for (const bad of ['at a glance', '1 sessions', 'Low confidence']) if (sheetText.includes(bad)) errors.push(`${tag}: sheet still contains "${bad}"`);
 
       const segLabels = await page.locator('[data-palace="body.muscle-tabs"] .seg button').allTextContents();
       if (!segLabels.some(t => t.trim() === 'Logged · 2')) errors.push(`${tag}: expected a "Logged · 2" tab, got ${JSON.stringify(segLabels)}`);
-      const expectTryNext = `Try next · ${Math.min(16 - 2, 10)}`;
+      const expectTryNext = `Try next · ${Math.min(O2_GLUTES_DIRECT - 2, 10)}`;
       if (!segLabels.some(t => t.trim() === expectTryNext)) errors.push(`${tag}: expected a "${expectTryNext}" tab, got ${JSON.stringify(segLabels)}`);
 
       const loggedNames = await page.locator('.mtl-tab-list .list-row .small').allTextContents();

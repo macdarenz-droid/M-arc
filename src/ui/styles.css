@@ -772,3 +772,6 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 .mtl-tl-key { font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; color: var(--text-3); }
 .mtl-tl-val { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); color: var(--text); overflow-wrap: break-word; }
 .mtl-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+/* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
+ * variant needs its own width and the same height/padding as the btn-sm next to it. */
+.mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
