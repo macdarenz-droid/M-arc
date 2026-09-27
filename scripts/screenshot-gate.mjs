@@ -285,6 +285,353 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// I14: WCAG contrast (>=4.5:1 against the nearest opaque ancestor background) for small/secondary
+// text — .hint, .eyebrow, .set-kind, the in-session autoregulation line (--accent-text) — plus the
+// composer's "About:" context chip (.chip-accent) and the Escobar Past-conversations Back link
+// (.esc-link), in all five themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `I14 contrast ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.dev', '1');
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  // Colour vs the nearest ancestor with a fully opaque background, same maths as the F9/F13
+  // pr-badge/toast probes above.
+  const checkContrast = async (sel, label) => {
+    const c = await page.evaluate((s) => {
+      const el = document.querySelector(s);
+      if (!el) return null;
+      // This Chromium build serializes a color-mix() result (--accent-text) via the CSS Color 4
+      // `color(srgb r g b)` function (0-1 range) rather than legacy rgb()/rgba() (0-255 range) —
+      // the F9/F13 probes above never hit this because their color-mix()es are backgrounds, not
+      // text color, and happened not to exercise a build/property combination that serializes
+      // this way.
+      const parseRgba = str => {
+        let m = str.match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+        m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+        if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+        return null;
+      };
+      const fg = parseRgba(getComputedStyle(el).color);
+      if (!fg) return null;
+      let node = el, under = { r: 255, g: 255, b: 255 };
+      while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+      const lin = c2 => { const s2 = c2 / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+      const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+      const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+      return l1 > l2 ? l1 / l2 : l2 / l1;
+    }, sel);
+    if (c == null) { errors.push(`${tag}: could not measure contrast for ${label} (selector ${sel})`); return; }
+    if (c < 4.5) errors.push(`${tag}: ${label} contrast ${c.toFixed(2)} < 4.5`);
+  };
+
+  // .eyebrow and .hint are both on Today without any interaction.
+  await checkContrast('.eyebrow', '.eyebrow');
+  await checkContrast('.hint', '.hint');
+
+  // .set-kind (uncommitted) and the autoreg line: log set 1 easy, at/above its placeholder target.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
+  const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
+  await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
+  await page.locator('.effort button.easy').first().click();
+  await page.waitForTimeout(300);
+  if (!(await visible(page.getByText('for the next set')))) errors.push(`${tag}: expected the autoregulation line after an easy first set`);
+  await checkContrast('.hint[style*="accent-text"]', 'autoreg line');
+  await checkContrast('.set-grid:not(.committed) .set-kind', '.set-kind');
+
+  // .chip-accent: "Ask Escobar about" opens the composer straight to an "About:" chip, no send needed.
+  // Escobar must be turned on first (the Explainer has no composer).
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);
+  await page.locator('[aria-label^="Ask Escobar about"]').first().click(); await page.waitForTimeout(300);
+  if (!(await visible(page.locator('.chip-accent')))) errors.push(`${tag}: expected an "About:" chip after "Ask Escobar about"`);
+  await checkContrast('.chip-accent', '.chip-accent');
+  await page.keyboard.press('Escape'); await page.waitForTimeout(250);
+
+  // .esc-link: the Back button in Escobar's Past-conversations list needs no actual conversation.
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+  await page.locator('button[aria-label="Escobar menu"]').click(); await page.waitForTimeout(150);
+  await page.getByRole('menuitem', { name: 'Past conversations' }).click(); await page.waitForTimeout(150);
+  if (!(await visible(page.locator('.esc-link')))) errors.push(`${tag}: expected the Past-conversations Back link`);
+  await checkContrast('.esc-link', '.esc-link (Back)');
+
+  await ctx.close();
+}
+
+// I18: every icon renders at the same 1.5px optical stroke weight regardless of its rendered
+// size — icons.tsx `base()` scales `stroke-width` by size instead of a fixed 1.8 literal.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'I18 icon stroke';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const measure = sel => page.evaluate((s) => {
+    const el = document.querySelector(s);
+    if (!el) return null;
+    const sw = parseFloat(el.getAttribute('stroke-width') || '0');
+    const size = el.getBoundingClientRect().width;
+    return size ? (sw * size) / 24 : null;
+  }, sel);
+  const navStroke = await measure('.nav button svg');
+  const gearStroke = await measure('[aria-label="Settings"] svg');
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+  const trophyStroke = await measure('section[data-palace="history.records"] svg');
+  for (const [label, v] of [['nav icon', navStroke], ['Settings gear', gearStroke], ['History trophy chip', trophyStroke]]) {
+    if (v == null) errors.push(`${tag}: could not measure ${label}`);
+    else if (Math.abs(v - 1.5) > 0.05) errors.push(`${tag}: ${label} rendered stroke ${v.toFixed(3)}, expected 1.5±0.05`);
+  }
+  await ctx.close();
+}
+
+// I15: colour means one thing — the selected effort chip is a soft tint (background alpha < .3),
+// not a solid fill, and its letter still clears 4.5:1 against the composited result, in all 5 themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `I15 effort ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+
+  const measureEffort = sel => page.evaluate((s) => {
+    // Same colour parser as the I14 contrast probe above (color-mix() results serialize via the
+    // CSS Color 4 `color(srgb r g b)` function in this Chromium build, not legacy rgb()/rgba()).
+    const parseColor = str => {
+      let m = str.match(/rgba?\(([^)]+)\)/);
+      if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+      m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+      return null;
+    };
+    const el = document.querySelector(s);
+    if (!el) return null;
+    const cs = getComputedStyle(el);
+    const fg = parseColor(cs.color);
+    const own = parseColor(cs.backgroundColor);
+    if (!fg || !own) return null;
+    let node = el.parentElement, under = { r: 255, g: 255, b: 255 };
+    while (node) { const bg = parseColor(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+    const mixc = (f, b, a) => f * a + b * (1 - a);
+    const bg = { r: mixc(own.r, under.r, own.a), g: mixc(own.g, under.g, own.a), b: mixc(own.b, under.b, own.a) };
+    const lin = c => { const s2 = c / 255; return s2 <= 0.03928 ? s2 / 12.92 : Math.pow((s2 + 0.055) / 1.055, 2.4); };
+    const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
+    const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
+    return { contrast: l1 > l2 ? l1 / l2 : l2 / l1, alpha: own.a };
+  }, sel);
+
+  // Set 0 easy, set 1 ideal, set 2 max — the same nth() pattern the legacy live-flow walk above uses.
+  await page.locator('.effort button.easy').nth(0).click(); await page.waitForTimeout(200);
+  await page.locator('.effort button.ideal').nth(1).click(); await page.waitForTimeout(200);
+  await page.locator('.effort button.max').nth(2).click(); await page.waitForTimeout(300);
+  for (const kind of ['easy', 'ideal', 'max']) {
+    const r = await measureEffort(`.effort button[aria-pressed="true"].${kind}`);
+    if (!r) { errors.push(`${tag}: could not measure .effort .${kind}`); continue; }
+    if (r.contrast < 4.5) errors.push(`${tag}: .effort .${kind} letter contrast ${r.contrast.toFixed(2)} < 4.5`);
+    if (r.alpha >= 0.3) errors.push(`${tag}: .effort .${kind} background alpha ${r.alpha.toFixed(2)} >= .3`);
+  }
+  await ctx.close();
+}
+
+// I16: elevation — tracks (.bar/.seg/an off .toggle) sit on a neutral overlay distinct from their
+// parent's background, and floating/sheet layers step up from a plain .card, in all 5 themes.
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `I16 elevation ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  // Walks to the nearest ancestor with a fully opaque background — the actual visual "layer" the
+  // element sits on — rather than el.parentElement, which is usually unstyled/transparent and
+  // would trivially "differ" from any real colour regardless of whether the track blends into its
+  // surrounding surface.
+  const bgDiffersFromParent = sel => page.evaluate((s) => {
+    const el = document.querySelector(s);
+    if (!el) return null;
+    const own = getComputedStyle(el).backgroundColor;
+    let node = el.parentElement, under = null;
+    while (node) { const bg = getComputedStyle(node).backgroundColor; if (bg && bg !== 'rgba(0, 0, 0, 0)' && !/^color\(srgb [\d.]+ [\d.]+ [\d.]+ \/ 0\)$/.test(bg)) { under = bg; break; } node = node.parentElement; }
+    if (under == null) return null;
+    return own !== under;
+  }, sel);
+  const bgDiffers = (selA, selB) => page.evaluate(([a, b]) => {
+    const elA = document.querySelector(a), elB = document.querySelector(b);
+    if (!elA || !elB) return null;
+    return getComputedStyle(elA).backgroundColor !== getComputedStyle(elB).backgroundColor;
+  }, [selA, selB]);
+
+  // .seg: History's Log/Stats segmented control, visible with no interaction.
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  const segOk = await bgDiffersFromParent('.seg');
+  if (segOk == null) errors.push(`${tag}: could not find .seg`);
+  else if (!segOk) errors.push(`${tag}: .seg background matches its parent`);
+
+  // An off .toggle, and a plain .card nested inside the Settings sheet (.sheet-panel).
+  await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  const toggleOk = await bgDiffersFromParent('.toggle:not([aria-checked="true"])');
+  if (toggleOk == null) errors.push(`${tag}: could not find an off .toggle`);
+  else if (!toggleOk) errors.push(`${tag}: an off .toggle's background matches its parent`);
+  const panelCardOk = await bgDiffers('.sheet-panel', '.sheet-panel .card');
+  if (panelCardOk == null) errors.push(`${tag}: could not find .sheet-panel .card`);
+  else if (!panelCardOk) errors.push(`${tag}: a .card inside .sheet-panel matches the panel's own background`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+
+  // .bar (the rest banner's progress track) and .rest vs a plain .card: log a set to start rest.
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('50'); await inputs.nth(1).fill('8'); await inputs.nth(1).blur();
+  await page.locator('.effort button.easy').first().click();
+  await page.waitForTimeout(300);
+  if (!(await visible(page.locator('.rest')))) errors.push(`${tag}: expected the rest banner after a logged set`);
+  const barOk = await bgDiffersFromParent('.rest .bar');
+  if (barOk == null) errors.push(`${tag}: could not find .bar`);
+  else if (!barOk) errors.push(`${tag}: .bar background matches its parent`);
+  const restCardOk = await bgDiffers('.rest', '.card');
+  if (restCardOk == null) errors.push(`${tag}: could not find both .rest and .card`);
+  else if (!restCardOk) errors.push(`${tag}: .rest matches a plain .card's background`);
+  await ctx.close();
+}
+
+// I17: on one grid — Emerald's computed .set-kind and .esc-bubble radii equal its own theme
+// tokens (radius.sm 6px, radius.lg 12px, the global --radius-xs 4px — src/theme/themes.ts).
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'I17 radius emerald';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { localStorage.setItem('marc.dev', '1'); localStorage.setItem('marc.theme', 'emerald'); if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const setKindRadius = await page.evaluate(() => { const el = document.querySelector('.set-kind'); return el ? getComputedStyle(el).borderRadius : null; });
+  if (setKindRadius !== '6px') errors.push(`${tag}: .set-kind radius ${setKindRadius}, expected 6px`);
+
+  await page.locator('nav.nav button', { hasText: 'Escobar' }).click(); await page.waitForTimeout(250);
+  await page.locator('.esc-hall-input').click();
+  await page.waitForSelector('dialog.esc-sheet[open]'); await page.waitForTimeout(250);
+  await page.locator('dialog.esc-sheet').getByRole('button', { name: 'Turn on Escobar', exact: true }).click();
+  await page.waitForTimeout(200);
+  await page.locator('.esc-textarea').fill('radius check');
+  await page.locator('.esc-send').click();
+  await page.waitForTimeout(200);
+  const bubbleRadii = await page.evaluate(() => {
+    const el = document.querySelector('.esc-bubble');
+    if (!el) return null;
+    const cs = getComputedStyle(el);
+    return [cs.borderTopLeftRadius, cs.borderTopRightRadius, cs.borderBottomRightRadius, cs.borderBottomLeftRadius];
+  });
+  const expectedBubble = ['12px', '12px', '4px', '12px'];
+  if (!bubbleRadii) errors.push(`${tag}: could not find .esc-bubble`);
+  else if (bubbleRadii.join(',') !== expectedBubble.join(',')) errors.push(`${tag}: .esc-bubble radii ${bubbleRadii.join(',')}, expected ${expectedBubble.join(',')}`);
+  await ctx.close();
+}
+
+// I17: no theme computes a negative border-radius anywhere (a calc()/max() expression gone wrong).
+for (const theme of themes) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `I17 radius negative ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  const negatives = await page.evaluate(() => {
+    const bad = [];
+    for (const el of document.querySelectorAll('*')) {
+      const cs = getComputedStyle(el);
+      for (const prop of ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius']) {
+        const v = parseFloat(cs[prop]);
+        if (v < 0) bad.push(`${el.className || el.tagName}.${prop}=${cs[prop]}`);
+      }
+    }
+    return bad;
+  });
+  if (negatives.length) errors.push(`${tag}: negative radius on ${negatives.slice(0, 5).join(', ')}`);
+  await ctx.close();
+}
+
+// BUG-10: History's calendar used to change height between months (4/5/6 raw rows), shoving
+// "Recent" up and down as the owner paged. monthCells always pads to 42 cells / 6 rows — walk
+// back 13 months (any 13-month window spans a 5- and a 6-row month, whatever today's date is) and
+// check the card's height, "Recent"'s position and the day-cell count never move.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'BUG-10 calendar height';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', 'silent-black'); }, [JSON.stringify(legacy)]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+
+  const read = () => page.evaluate(() => {
+    const cal = document.querySelector('.cal');
+    const heading = [...document.querySelectorAll('h2')].find(h => h.textContent === 'Recent');
+    if (!cal || !heading) return null;
+    return { height: cal.getBoundingClientRect().height, top: heading.getBoundingClientRect().top, count: cal.querySelectorAll('.day').length };
+  });
+  const first = await read();
+  if (!first) errors.push(`${tag}: could not find .cal and the "Recent" heading`);
+  else if (first.count !== 42) errors.push(`${tag}: expected 42 day cells, got ${first.count}`);
+  for (let i = 0; i < 13; i++) {
+    await page.locator('[aria-label="Previous month"]').click(); await page.waitForTimeout(150);
+    const r = await read();
+    if (!r) { errors.push(`${tag}: could not find .cal and the "Recent" heading after ${i + 1} month(s) back`); continue; }
+    if (r.count !== 42) errors.push(`${tag}: ${i + 1} month(s) back: expected 42 day cells, got ${r.count}`);
+    if (first && Math.abs(r.height - first.height) > 0.5) errors.push(`${tag}: ${i + 1} month(s) back: .cal height ${r.height} vs ${first.height}`);
+    if (first && Math.abs(r.top - first.top) > 0.5) errors.push(`${tag}: ${i + 1} month(s) back: "Recent" top ${r.top} vs ${first.top}`);
+  }
+  await ctx.close();
+}
+
 // R2.7 (UI-23): on a 360 px phone the set row keeps a typed 102.5 fully visible.
 {
   const ctx = await browser.newContext({ viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -989,6 +1336,15 @@ for (const theme of themes) {
   const insightTitles = await page.locator('.insight h3').allTextContents();
   if (!insightTitles.some(t => t.includes('Goal changed'))) errors.push(`fresh-profile: expected a goal-change insight, got: ${insightTitles.join(' | ')}`);
   await settle(page); await page.screenshot({ path: `${OUT}/silent-black-goal-changed-insight.png` });
+  // I19: an empty History, on a fresh profile with no sessions yet, shows a designed empty state
+  // (left-aligned, a title, no ghost rows) with a button that starts a session on Train.
+  await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+  if (!(await visible(page.getByText('Your finished workouts land here.')))) errors.push('fresh-profile: expected the History empty-state title');
+  const emptyAlign = await page.locator('.empty').first().evaluate(el => getComputedStyle(el).textAlign);
+  if (emptyAlign !== 'left' && emptyAlign !== 'start') errors.push(`fresh-profile: expected the History empty state left-aligned, computed text-align was ${emptyAlign}`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-history-empty.png` });
+  await page.locator('.empty').getByRole('button').first().click(); await page.waitForTimeout(300);
+  if (!(await visible(page.locator('nav.nav button[aria-current="page"]', { hasText: /^(Train|Live)$/ })))) errors.push('fresh-profile: expected the History empty-state button to land on Train');
   await ctx.close();
 }
 
@@ -1617,6 +1973,13 @@ for (const theme of themes) {
   await ctx.setOffline(true);
   await page.reload();
   if (!(await page.waitForSelector('.nav', { timeout: 10000 }).then(() => true).catch(() => false))) errors.push(`${tag}: offline reload did not render the app`);
+  // I13: the bundled Inter Variable font (precached by the service worker, cache marc-*, sw.js:6)
+  // must render with the network fully off, not just from an already-warm HTTP cache.
+  const fontsOffline = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return [...document.fonts].some(f => /Inter/.test(f.family) && f.status === 'loaded');
+  });
+  if (!fontsOffline) errors.push(`I13: Inter did not report loaded on an offline reload`);
   await ctx.setOffline(false);
   await later();
   const swPath = join(ROOT, 'www/sw.js');
@@ -2137,7 +2500,16 @@ for (const theme of themes) {
       const btn = document.querySelector('.toast button');
       const toast = document.querySelector('.toast');
       if (!btn || !toast) return null;
-      const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+      // QA-b7-1: this Chromium build serializes a color-mix() result via the CSS Color 4
+      // `color(srgb r g b)` function (0-1 range), not legacy rgb()/rgba() — without this, fg/bg
+      // silently parsed to null and the check below never actually ran.
+      const parseRgba = str => {
+        let m = str.match(/rgba?\(([^)]+)\)/);
+        if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+        m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+        if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+        return null;
+      };
       const fg = parseRgba(getComputedStyle(btn).color);
       const bg = parseRgba(getComputedStyle(toast).backgroundColor);
       if (!fg || !bg) return null;
@@ -2146,7 +2518,9 @@ for (const theme of themes) {
       const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
       return l1 > l2 ? l1 / l2 : l2 / l1;
     });
-    if (contrast != null && contrast < 4.5) errors.push(`${tag} ${theme}: toast button contrast ${contrast.toFixed(2)} < 4.5`);
+    // QA-b7-1: a null contrast (couldn't parse either colour) is now a hard error, not a skip.
+    if (contrast == null) errors.push(`${tag} ${theme}: could not measure toast button contrast`);
+    else if (contrast < 4.5) errors.push(`${tag} ${theme}: toast button contrast ${contrast.toFixed(2)} < 4.5`);
     await page.locator('.toast').getByRole('button', { name: 'Undo' }).click(); await page.waitForTimeout(350);
   }
   await page.evaluate(t => { localStorage.setItem('marc.theme', t); }, 'silent-black');
@@ -2513,20 +2887,32 @@ for (const theme of themes) {
   const contrast = await page.evaluate(() => {
     const badge = document.querySelector('.pr-badge');
     if (!badge) return null;
-    const parseRgba = str => { const m = str.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    // QA-b7-1: see the toast contrast check above — this Chromium build serializes a color-mix()
+    // result via `color(srgb r g b)` (0-1 range), not legacy rgb()/rgba().
+    const parseRgba = str => {
+      let m = str.match(/rgba?\(([^)]+)\)/);
+      if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+      m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+      if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+      return null;
+    };
     const cs = getComputedStyle(badge);
     const fg = parseRgba(cs.color);
     const own = parseRgba(cs.backgroundColor);
+    if (!fg || !own) return null;
     let node = badge.parentElement, under = { r: 255, g: 255, b: 255 };
     while (node) { const bg = parseRgba(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
     const mix = (f, b, a) => f * a + b * (1 - a);
-    const bg = own ? { r: mix(own.r, under.r, own.a), g: mix(own.g, under.g, own.a), b: mix(own.b, under.b, own.a) } : under;
+    const bg = { r: mix(own.r, under.r, own.a), g: mix(own.g, under.g, own.a), b: mix(own.b, under.b, own.a) };
     const lin = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
     const rl = ({ r, g, b: bb }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(bb);
     const l1 = rl(fg) + 0.05, l2 = rl(bg) + 0.05;
     return l1 > l2 ? l1 / l2 : l2 / l1;
   });
-  if (contrast != null && contrast < 4.5) errors.push(`${tag}: pr-badge text contrast ${contrast.toFixed(2)} < 4.5`);
+  // QA-b7-1: a null contrast (badge missing, or either colour failed to parse) is now a hard
+  // error, not a skip.
+  if (contrast == null) errors.push(`${tag}: could not measure pr-badge text contrast`);
+  else if (contrast < 4.5) errors.push(`${tag}: pr-badge text contrast ${contrast.toFixed(2)} < 4.5`);
 
   // A tab switch away and back does not replay the pop.
   await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(250);

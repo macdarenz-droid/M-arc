@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state, update } from '@/core/store';
-import { today, unit, bodyWeightAt } from '@/app/selectors';
+import { today, unit, bodyWeightAt, scheduledSplit } from '@/app/selectors';
 import { Button, Card, Chip, Empty, Row, Section, Segmented, Sheet, Stat, WeightInput } from '@/ui/primitives';
-import { IconBack, IconCalendar, IconChevron, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
+import { IconBack, IconCalendar, IconChevron, IconPlay, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
+import { requestStart } from '@/slices/workout/Train';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
-import { addDays, formatClock, formatDay, parseDay, dayKey } from '@/core/dates';
+import { formatClock, formatDay, monthCells, parseDay, dayKey } from '@/core/dates';
 import { formatLoad, kgToDisplay } from '@/core/units';
 import type { AppState, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { rebuildRecoveryModel, sortByStart } from '@/slices/workout/session';
@@ -23,7 +24,7 @@ import { progressHint, progressTrend, progressValue } from './progressTrend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
 import { Sparkline } from '@/ui/Sparkline';
-import { closePanel, historySeg, openPanel, showPanel } from '@/app/router';
+import { closePanel, go, historySeg, openPanel, showPanel } from '@/app/router';
 import { deleteSeries, getSeries, storeSeries } from '@/core/heartStore';
 import { usePalaceFocus } from '@/escobar/palace/focus';
 import { haptic } from '@/native/haptics';
@@ -65,17 +66,16 @@ export function History() {
 
 function Log() {
   const s = state.value;
+  const split = scheduledSplit.value;
   const [month, setMonth] = useState(() => today.value.slice(0, 7));
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const setEditing = (x: Session) => showPanel('session', { sessionId: x.id });
   usePalaceFocus('history.calendar', selectedDay ? { day: selectedDay } : undefined);
   const trained = useMemo(() => new Set(s.sessions.map(x => x.day)), [s.sessions]);
+  // BUG-10: a fixed 42 cells (6 rows) so the calendar's height never changes paging between a
+  // 4/5/6-row month, which used to shove "Recent" up and down.
+  const cells = useMemo(() => monthCells(month), [month]);
   const first = parseDay(`${month}-01`);
-  const startOffset = (first.getDay() + 6) % 7;
-  const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
-  const cells: Array<{ key: string; other: boolean }> = [];
-  for (let i = 0; i < startOffset; i++) cells.push({ key: addDays(`${month}-01`, i - startOffset), other: true });
-  for (let d = 1; d <= daysInMonth; d++) cells.push({ key: `${month}-${String(d).padStart(2, '0')}`, other: false });
   const shift = (n: number) => { const d = parseDay(`${month}-01`); d.setMonth(d.getMonth() + n); setMonth(dayKey(d).slice(0, 7)); };
   const recent = [...s.sessions].reverse().slice(0, 30);
   const daySessions = selectedDay ? s.sessions.filter(x => x.day === selectedDay) : [];
@@ -151,7 +151,18 @@ function Log() {
       )}
 
       <Section title="Recent" palace="history.recent">
-        {!recent.length && <Card><Empty icon={<IconCalendar size={30} />} title="No sessions yet">Finished workouts show up here.</Empty></Card>}
+        {!recent.length && (
+          <Empty
+            align="start"
+            icon={<IconCalendar size={24} />}
+            title="Your finished workouts land here."
+            action={split
+              ? <Button variant="primary" onClick={() => { requestStart(split); go('train'); }}><IconPlay /> Start {split.name}</Button>
+              : <Button variant="primary" onClick={() => go('train')}>Go to Train</Button>}
+          >
+            Log a session from Train, or start one now.
+          </Empty>
+        )}
         <div class="stack-sm">{recent.map(x => <SessionCard key={x.id} session={x} onEdit={() => setEditing(x)} />)}</div>
       </Section>
     </div>
@@ -228,7 +239,7 @@ function SessionCard({ session, onEdit }: { session: Session; onEdit: () => void
             <div class="hint">{formatDay(session.day)} · {session.exercises.length} exercise{session.exercises.length === 1 ? '' : 's'} · {sets} set{sets === 1 ? '' : 's'}{session.durationSec ? ` · ${formatClock(session.durationSec)}` : ''}</div>
             {session.heart && <div class="hint">avg {session.heart.avgBpm} bpm · max {session.heart.maxBpm}{session.heart.energy ? ` · ~${session.heart.energy.activeKcal} kcal` : ''}</div>}
           </div>
-          {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={18} /></Button>}
+          {hasWorkingSets(session) && <Button variant="quiet" size="sm" class="btn-icon" aria-label={`Share ${session.splitName}`} data-palace="history.session-share" onClick={e => { e.stopPropagation(); setSharing(true); }}><IconShare size={20} /></Button>}
           <Button variant="quiet" size="sm" onClick={e => { e.stopPropagation(); onEdit(); }}>Edit</Button>
         </div>
         {open && (
@@ -509,7 +520,7 @@ function Stats() {
         )}
       </Section>
 
-      <Section title="Records" palace="history.records" aside={<Chip tone="warning"><IconTrophy size={12} /> {records.length}</Chip>}>
+      <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {records.length}</Chip>}>
         <Card>
           {!records.length ? <p class="small muted">Records appear from your second session of an exercise onward.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>

@@ -39,6 +39,11 @@ export interface ThemeTokens {
   /** Meta theme-color for the browser / Android status bar. */
   chrome: string;
   colorScheme: 'dark' | 'light';
+  /** I14: --accent-text's accent fraction (styles.css's :root default is 75). Most themes just
+   * restate 75; Paper and Midnight measure under 4.5:1 there (the I14 gate's WCAG contrast probe)
+   * and lower it just enough to clear 4.5:1. Required (not optional) so every theme keeps the
+   * same token contract (tests/theme.test.ts). */
+  accentTextPct: number;
 }
 
 export interface Theme {
@@ -53,7 +58,7 @@ export interface Theme {
   tokens: ThemeTokens;
 }
 
-const inter = 'Inter, "SF Pro Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const inter = "'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 export const THEMES: Record<ThemeId, Theme> = {
   'silent-black': {
@@ -86,6 +91,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       mapLine: 'rgba(255,255,255,0.10)',
       chrome: '#08090a',
       colorScheme: 'dark',
+      accentTextPct: 75,
     },
   },
   paper: {
@@ -104,7 +110,9 @@ export const THEMES: Record<ThemeId, Theme> = {
       border: 'rgba(55,53,47,0.14)',
       borderStrong: 'rgba(55,53,47,0.26)',
       text: '#37352f',
-      text2: '#6b6a66',
+      // I14: #6b6a66 measured ~3.3:1 for small text on surface-3 (#e6e4df); #5f5e5a clears 4.5:1
+      // on every Paper surface (5.11:1 on surface-3, 6.49:1 on #fff).
+      text2: '#5f5e5a',
       text3: '#9b9a97',
       accent: '#2383e2',
       accentSoft: 'rgba(35,131,226,0.12)',
@@ -118,6 +126,8 @@ export const THEMES: Record<ThemeId, Theme> = {
       mapLine: 'rgba(55,53,47,0.18)',
       chrome: '#ffffff',
       colorScheme: 'light',
+      // I14: 75% measures 4.46:1 on surface-2 (.chip-accent/.esc-link's backdrop); 70% measures 4.73:1.
+      accentTextPct: 70,
     },
   },
   ember: {
@@ -150,6 +160,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       mapLine: 'rgba(255,255,255,0.10)',
       chrome: '#07080a',
       colorScheme: 'dark',
+      accentTextPct: 75,
     },
   },
   emerald: {
@@ -182,6 +193,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       mapLine: '#393939',
       chrome: '#0f0f0f',
       colorScheme: 'dark',
+      accentTextPct: 75,
     },
   },
   midnight: {
@@ -214,6 +226,10 @@ export const THEMES: Record<ThemeId, Theme> = {
       mapLine: 'rgba(246,249,252,0.14)',
       chrome: '#0a2540',
       colorScheme: 'dark',
+      // I14: 75% measures 3.98:1 on surface-2 (.chip-accent/.esc-link's backdrop, the worst of the
+      // two contexts — the autoreg line's surface-1 clears at 4.46:1); 65% measures 4.67:1 on
+      // surface-2 and 5.23:1 on surface-1.
+      accentTextPct: 65,
     },
   },
 };
@@ -255,6 +271,11 @@ export function themeToCss(theme: Theme): string {
     `--radius-lg:${theme.radius.lg}`,
     `--radius-xl:${theme.radius.xl}`,
     `--font:${theme.font}`,
+    // I14: restates styles.css's 75/25 --accent-text default, or overrides it for a theme whose
+    // probed worst case measures under 4.5:1 there. This rule's `[data-theme]` attribute selector
+    // matches :root's specificity, but the theme <style> tag (theme/engine.ts) is inserted after
+    // styles.css, so it wins the tie either way.
+    `--accent-text:color-mix(in srgb, var(--accent) ${t.accentTextPct}%, var(--text))`,
   ];
   return `[data-theme="${theme.id}"]{${lines.join(';')}}`;
 }

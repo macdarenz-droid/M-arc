@@ -184,6 +184,67 @@ describe('styles.css motion token lint (F1)', () => {
   });
 });
 
+// I14: 15 ad-hoc font sizes (10, 10.5, 12.5, 15.5px, ...) collapsed to the §2 type ladder. Every
+// font-size outside the token block must be a --fs-* var, except the 16px floor on form controls
+// (iOS/Android zoom the page on focus below 16px).
+describe('I14: font-size lint', () => {
+  it('every font-size declaration is var(--fs-*), or 16px on input/select/textarea', () => {
+    const re = /(^|[{;\s])font-size\s*:\s*([^;}]+)/g;
+    const offenders: string[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(withoutTokens))) {
+      const value = (m[2] ?? '').trim();
+      if (/^var\(--fs-[\w-]+\)$/.test(value)) continue;
+      if (value === '16px') continue;
+      offenders.push(value);
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
+// I17: 18 spacing values (mostly an off-grid 10px) and fixed radii collapsed onto one grid. Every
+// border-radius outside the token block must be built from var(--radius-*), 0, 50% or inherit —
+// a multi-value shorthand (each space-separated outside any calc()/max()) or a calc()/max() that
+// wraps a var(--radius-*) are both allowed.
+describe('I17: border-radius lint', () => {
+  /** Splits a CSS value on top-level whitespace only — a calc()/max() argument list keeps its
+   * own internal spaces (e.g. "max(var(--radius-xs), calc(var(--radius-lg) - 10px))"). */
+  function splitTopLevel(value: string): string[] {
+    const tokens: string[] = [];
+    let depth = 0, cur = '';
+    for (const ch of value) {
+      if (ch === '(') depth++;
+      if (ch === ')') depth--;
+      if (ch === ' ' && depth === 0) { if (cur) tokens.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    if (cur) tokens.push(cur);
+    return tokens;
+  }
+
+  const TOKEN_RE = /^(0|50%|inherit|var\(--radius-[\w-]+\)|(?:calc|max)\(.*var\(--radius-[\w-]+\).*\))$/;
+
+  it('every border-radius declaration is built from var(--radius-*), 0, 50% or inherit', () => {
+    const re = /(^|[{;\s])border-radius\s*:\s*([^;}]+)/g;
+    const offenders: string[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(withoutTokens))) {
+      const value = (m[2] ?? '').trim();
+      if (!splitTopLevel(value).every(t => TOKEN_RE.test(t))) offenders.push(value);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('the lint accepts a multi-value shorthand and a calc()/max() wrapping var(--radius-*)', () => {
+    expect(splitTopLevel('var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-lg)').every(t => TOKEN_RE.test(t))).toBe(true);
+    expect(splitTopLevel('max(var(--radius-xs), calc(var(--radius-lg) - 10px))').every(t => TOKEN_RE.test(t))).toBe(true);
+  });
+
+  it('the lint rejects a literal pixel radius', () => {
+    expect(TOKEN_RE.test('8px')).toBe(false);
+  });
+});
+
 // I9: switching tabs is a quick crossfade (opacity only) — the 6px translateY it used to carry is
 // gone, since App.tsx's nav now does its own scrollTo per tab (a competing transform would fight it).
 describe('I9: .view is a crossfade, not a slide', () => {

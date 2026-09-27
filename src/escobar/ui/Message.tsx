@@ -111,6 +111,7 @@ export function ProposalCard({ p, conversationId }: { p: ProposalRecord; convers
   const act = async (choice: 'apply' | 'dismiss' | 'undo') => { setBusy(true); try { await onProposal(p.id, choice); } finally { setBusy(false); } };
   return (
     <Card class="esc-proposal" data-proposal={p.status}>
+      <div class="eyebrow">Proposal</div>
       <b>{p.title}</b>
       <table class="esc-diff small"><tbody>{p.preview.map((r, i) => <tr key={i}><th scope="row">{r.label}</th><td class="muted">{r.before ?? '—'}</td><td aria-hidden="true">→</td><td>{r.after}</td></tr>)}</tbody></table>
       {p.status === 'awaiting' && (
@@ -153,7 +154,7 @@ function Drawer({ uses, results }: { uses: ToolUse[]; results: Map<string, { con
   const ctx = makeCtx(state.value);
   return (
     <div class="esc-drawer">
-      <button type="button" class="esc-drawer-toggle small" aria-expanded={open} onClick={() => setOpen(o => !o)}>What Escobar looked at ({uses.length}) <IconChevronDown size={14} /></button>
+      <button type="button" class="esc-drawer-toggle small" aria-expanded={open} onClick={() => setOpen(o => !o)}>What Escobar looked at ({uses.length}) <IconChevronDown size={16} /></button>
       {open && (
         <ul class="esc-drawer-list small">
           {uses.map(u => {

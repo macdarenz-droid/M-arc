@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addDays, dayKey, daysBetween, weekStart, weekdayOf, formatClock, formatHours, trainedToday, nextScheduled } from '@/core/dates';
+import { addDays, dayKey, daysBetween, weekStart, weekdayOf, formatClock, formatHours, trainedToday, nextScheduled, monthCells } from '@/core/dates';
 import { emptySchedule } from '@/core/models';
 import { sessionAt } from './helpers';
 
@@ -23,6 +23,35 @@ describe('dates', () => {
     expect(formatHours(0.5)).toBe('under 1h');
     expect(formatHours(30)).toBe('1.5d');
     expect(formatHours(96)).toBe('4d');
+  });
+});
+
+// BUG-10: the calendar's own height changed paging between a 4/5/6-row month (Aug 2026 needs 6
+// rows; Jul and Apr need 5), shoving "Recent" up and down — monthCells always returns a fixed 42.
+describe('monthCells (BUG-10)', () => {
+  it('always returns 42 cells, for a 4-, 5- and 6-row month', () => {
+    expect(monthCells('2021-02')).toHaveLength(42); // Feb 2021: starts Monday, 28 days, 4 raw rows
+    expect(monthCells('2026-07')).toHaveLength(42); // Jul 2026: starts Wednesday, 31 days, 5 raw rows
+    expect(monthCells('2026-08')).toHaveLength(42); // Aug 2026: starts Saturday, 31 days, 6 raw rows
+  });
+  it('the days in the month are not-other; the padding before and after is', () => {
+    const cells = monthCells('2026-07'); // starts Wednesday: 2 leading days from June
+    expect(cells[0]).toEqual({ key: '2026-06-29', other: true });
+    expect(cells[1]).toEqual({ key: '2026-06-30', other: true });
+    expect(cells[2]).toEqual({ key: '2026-07-01', other: false });
+    expect(cells[32]).toEqual({ key: '2026-07-31', other: false });
+    expect(cells[33]).toEqual({ key: '2026-08-01', other: true });
+    expect(cells[41]).toEqual({ key: '2026-08-09', other: true });
+    expect(cells.filter(c => !c.other)).toHaveLength(31);
+  });
+  it('a 6-row month (Aug 2026) still pads out to exactly 42', () => {
+    const cells = monthCells('2026-08'); // starts Saturday: 5 leading days from July
+    expect(cells[0]).toEqual({ key: '2026-07-27', other: true });
+    expect(cells[4]).toEqual({ key: '2026-07-31', other: true });
+    expect(cells[5]).toEqual({ key: '2026-08-01', other: false });
+    expect(cells[35]).toEqual({ key: '2026-08-31', other: false });
+    expect(cells[36]).toEqual({ key: '2026-09-01', other: true });
+    expect(cells[41]).toEqual({ key: '2026-09-06', other: true });
   });
 });
 

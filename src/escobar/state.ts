@@ -21,6 +21,10 @@ export interface EscobarUi {
 }
 export const escobarUi = signal<EscobarUi>({ open: false, detent: 'half', mode: 'chat', contextRef: null, draft: '' });
 
+/** I19: true from the moment the sheet is asked to open until its lazy chunk has actually
+ * loaded — the Dock button uses this to show a spinner instead of vanishing into a blank gap. */
+export const escobarLoading = signal(false);
+
 /**
  * I7: the sheet's exit animation (slide + scrim fade) lives inside EscobarSheet.tsx, a lazy chunk
  * fetched only once Escobar first opens — but native/back.ts (the hardware Back button) is always

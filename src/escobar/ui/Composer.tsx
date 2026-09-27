@@ -65,8 +65,8 @@ export function Composer({ busy, draft, contextRef, disabled, placeholder, notic
       {notice && <div class="esc-notice small" role="status">{notice}</div>}
       {(contextRef || images.length > 0) && (
         <div class="esc-pending">
-          {contextRef && <span class="chip chip-accent">About: {contextRef.label}{onClearRef && <button type="button" class="esc-chip-x" aria-label="Remove context" onClick={onClearRef}><IconX size={12} /></button>}</span>}
-          {images.map(i => { const d = imageData(i.id); return <span key={i.id} class="esc-thumb">{d && <img src={`data:${d.mediaType};base64,${d.data}`} alt="Photo to send" />}<button type="button" class="esc-chip-x" aria-label="Remove photo" onClick={() => setImages(xs => xs.filter(x => x.id !== i.id))}><IconX size={12} /></button></span>; })}
+          {contextRef && <span class="chip chip-accent">About: {contextRef.label}{onClearRef && <button type="button" class="esc-chip-x" aria-label="Remove context" onClick={onClearRef}><IconX size={16} /></button>}</span>}
+          {images.map(i => { const d = imageData(i.id); return <span key={i.id} class="esc-thumb">{d && <img src={`data:${d.mediaType};base64,${d.data}`} alt="Photo to send" />}<button type="button" class="esc-chip-x" aria-label="Remove photo" onClick={() => setImages(xs => xs.filter(x => x.id !== i.id))}><IconX size={16} /></button></span>; })}
         </div>
       )}
       <div class="esc-input-row">

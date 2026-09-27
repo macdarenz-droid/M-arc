@@ -91,7 +91,7 @@ function PastConversations({ onBack }: { onBack: () => void }) {
   const list = [...S.storeSig.value.conversations].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
   return (
     <div class="stack-sm">
-      <button type="button" class="esc-link small" onClick={onBack}><IconBack size={14} /> Back</button>
+      <button type="button" class="esc-link small" onClick={onBack}><IconBack size={16} /> Back</button>
       {!list.length && <p class="small muted">No conversations yet.</p>}
       {list.map(c => (
         <button type="button" key={c.id} class="esc-past" onClick={() => { S.selectConversation(c.id); onBack(); }}>

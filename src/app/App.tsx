@@ -16,7 +16,7 @@ import { MemoryScreen } from '@/escobar/ui/MemoryScreen';
 import { palaceAnnouncement } from '@/escobar/palace/navigate';
 import { installPalaceDevHooks } from '@/escobar/palace/dev';
 import { Dock } from '@/escobar/ui/Dock';
-import { escobarUi } from '@/escobar/state';
+import { escobarUi, escobarLoading } from '@/escobar/state';
 import { useEffect, useState } from 'preact/hooks';
 import { signal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
@@ -41,10 +41,14 @@ function EscobarMount() {
   const open = escobarUi.value.open;
   const [Comp, setComp] = useState<FunctionComponent | null>(null);
   useEffect(() => {
-    if (open && !Comp) void import('@/escobar/ui/EscobarSheet').then(m => setComp(() => m.EscobarSheet)).catch(() => {
-      escobarUi.value = { ...escobarUi.value, open: false, contextRef: null };
-      showToast('Could not load Escobar. Check your connection.');
-    });
+    if (open && !Comp) {
+      escobarLoading.value = true;
+      void import('@/escobar/ui/EscobarSheet').then(m => { escobarLoading.value = false; setComp(() => m.EscobarSheet); }).catch(() => {
+        escobarLoading.value = false;
+        escobarUi.value = { ...escobarUi.value, open: false, contextRef: null };
+        showToast('Could not load Escobar. Check your connection.');
+      });
+    }
   }, [open, Comp]);
   return open && Comp ? <Comp /> : null;
 }
@@ -97,7 +101,7 @@ export function App() {
         <div class="nav-inner">
           {TABS.map(x => { const Icon = ICON[x.id]; return (
             <button type="button" key={x.id} aria-current={t === x.id ? 'page' : undefined} class={x.id === 'train' && live ? 'nav-live' : ''} onClick={() => { navTap(x.id); }}>
-              <Icon size={22} /><span>{x.id === 'train' && live ? 'Live' : x.label}</span>
+              <Icon size={20} /><span>{x.id === 'train' && live ? 'Live' : x.label}</span>
             </button>
           ); })}
         </div>
