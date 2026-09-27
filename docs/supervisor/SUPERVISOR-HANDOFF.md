@@ -42,7 +42,15 @@ Written 2026-09-27 by the outgoing supervisor, session_01PjbZXTVmMJU2evEYqGPdNm.
   - Lat pulldown is fixed; its spec changes D1-D3 are signed off (PLAYER §9 wins over SPEC 3.2). One low item is left: the far-elbow start and stop is a little sharp.
   - The final canvas review applied 11 of 13 fixes.
 - To improve the demo after the owner's feedback, read the artboards from the canvas (`read` with `path: "project/<name>.dc.html"`), edit them, and republish only the changed files. The canvas's own SKILL.md has the rules.
-- **The owner approved the demo design on 2026-09-27 ("I like it").** Build order, per the doc's status line (building starts after checklist items up to 7.5 merge): 7.5 merges → build the guide upgrade as the doc's Part 4 patch list (library → About sheet → form guide → machine guide → warm-up; one builder per patch, strict order, same merge/APK rules) → items 8/9 then run on the final build, which includes it → fix loop → 10. The owner asked for 3 animated exercises (Machine Chest Press, Lat Pulldown, Dumbbell Lateral Raise). If the design is approved, all library exercises get animated later, in slices, via the pattern files, overrides and coverage ratchet the doc describes.
+- **Owner on 2026-09-27: "I like it … but I want it to be more improved."** So the design direction is liked but NOT final. Before any app build:
+  1. Collect the owner's specific notes. The owner can leave comments on any artboard in the canvas (read them with the ArtifactComments tool); otherwise ask for 2-3 concrete changes.
+  2. Fix the known leftovers:
+     - the lat pulldown's far elbow starts and stops sharply;
+     - the 2 skipped final-critic fixes and 1 partial one (the final:fix result in the old run, or re-run a canvas critic);
+     - apply PLAYER §9 (D1-D3) into SPEC 3.2, and the PLAYER §3/§13 chest-press numbers into SPEC 3.1 and RIG.
+  3. Raise the quality bar on the 3 players: smooth joint speed with no jerks at the turnarounds, the equipment always visibly held, the body readable at phone size, the caption row never overflowing (idle and ended states too), and an independent frame-by-frame QA per player at 1× and 0.5×, with reduced motion and in both a dark theme and Paper.
+  4. Republish only the changed artboards, then get the owner's sign-off.
+- Only then build it: 7.5 merges → the guide upgrade as the doc's Part 4 patch list (one builder per patch, strict order, same merge/APK rules) → items 8/9 on the final build → fix loop → 10.
 - The render workflow script: `/root/.claude/projects/-home-user-M-arc/06790388-49f8-576d-a2f2-765dd355dff8/workflows/scripts/guide-upgrade-doc-and-render-split-wf_8bab1b6a-83a.js` (run wf_8bab1b6a-83a). Its source files are in that session's scratchpad `render-guide/`. A new session can't reach them, so improve the demo from the published canvas files (read them with the Artifact tool).
 
 ## 3. How merges work (keep exactly)
