@@ -1,5 +1,5 @@
-// gen.mjs: Lat Pulldown player, built on the FINAL shared rig (rig-final/gen.mjs lines 1-378,
-// copied as is; the only changes are marked "LP:"). Writes index.html, poses.json and the
+// gen.mjs: Lat Pulldown player, built on the FINAL shared rig (rig-final/gen.mjs: helpers, themes, parts, paint and
+// base CSS, copied as is from the figure-detail rig, commit 1ba3b30; the only changes are marked "LP:"). Writes index.html, poses.json and the
 // generated pieces used in PLAYER.md.   Run: node gen.mjs   (no network, no dependencies)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,24 +42,54 @@ function themeVars(id) {
 function rigVars(id) {
   const t = THEMES[id] || THEMES['silent-black'];
   const light = t.scheme === 'light';
-  return `--fg-line:color-mix(in srgb,var(--text) ${light ? 70 : 60}%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) ${light ? 56 : 38}%,var(--surface-1))`;
+  // --lit / --shd: what a lit or a shaded facet mixes toward; --hi / --lo: how much of the base tone each keeps.
+  // Dark themes shade mostly by darkening and light schemes mostly by lightening, so the outline stays readable.
+  return `--fg-line:color-mix(in srgb,var(--text) ${light ? 70 : 60}%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) ${light ? 56 : 38}%,var(--surface-1));--lit:var(${light ? '--bg' : '--text'});--shd:var(${light ? '--text' : '--bg'});--hi:${light ? 76 : 90}%;--lo:${light ? 90 : 78}%;--rim-k:${light ? 35 : 62}%`;
 }
 
 // ---------------------------------------------------------------------------
-// Contrast (WCAG) of the derived paints, so RIG.md quotes measured numbers.
+// Contrast (WCAG) of the derived paints, so RIG.md quotes measured numbers. The paints are read from the CSS
+// itself (BASE_CSS .player block, then themeVars() and rigVars(), as the page cascades them) and evaluated like
+// the browser does (color-mix in srgb), so the table can never drift from what is drawn.
 const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-const parse = c => c.startsWith('#') ? { rgb: hex(c), a: 1 } : (() => { const m = c.match(/[\d.]+/g).map(Number); return { rgb: m.slice(0, 3), a: m[3] ?? 1 }; })();
-const over = (c, bg) => { const p = parse(c), b = parse(bg).rgb; return p.rgb.map((v, i) => v * p.a + b[i] * (1 - p.a)); };
-const mixc = (a, pa, b) => a.map((v, i) => v * pa + b[i] * (1 - pa));
 const lum = rgb => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; const [r, g, b] = rgb.map(f); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
 const cr = (x, y) => { const a = lum(x), b = lum(y); return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); };
+const topSplit = (v, sep) => { const out = []; let d = 0, cur = ''; for (const ch of v) { if (ch === '(') d++; if (ch === ')') d--; if (ch === sep && !d) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out.map(x => x.trim()).filter(Boolean); };
+function paintVars(id) {
+  const vars = {};
+  const take = str => { for (const decl of topSplit(str, ';')) { const m = decl.match(/^(--[\w-]+)\s*:\s*([\s\S]*)$/); if (m) vars[m[1]] = m[2].trim(); } };
+  take(BASE_CSS.slice(BASE_CSS.indexOf('.player{') + 8, BASE_CSS.indexOf('position:relative;width:358px')));
+  take(themeVars(id)); take(rigVars(id));
+  return vars;
+}
+function paint(expr, vars) { // -> { rgb, a }
+  expr = expr.trim();
+  let m;
+  if ((m = expr.match(/^var\((--[\w-]+)\)$/))) { if (!(m[1] in vars)) throw new Error('undefined ' + m[1]); return paint(vars[m[1]], vars); }
+  if (expr.startsWith('#')) return { rgb: hex(expr), a: 1 };
+  if (expr === 'transparent') return { rgb: [0, 0, 0], a: 0 };
+  if ((m = expr.match(/^rgba?\(([^)]*)\)$/))) { const v = m[1].split(',').map(Number); return { rgb: v.slice(0, 3), a: v[3] ?? 1 }; }
+  if ((m = expr.match(/^color-mix\(in srgb,([\s\S]*)\)$/))) {
+    const [A, B] = topSplit(m[1], ',').map(part => { const w = part.match(/^([\s\S]*?)\s+(var\(--[\w-]+\)|[\d.]+%)$/); if (!w) return { c: paint(part, vars), p: null }; const p = w[2].startsWith('var') ? vars[w[2].slice(4, -1)] : w[2]; return { c: paint(w[1], vars), p: parseFloat(p) / 100 }; });
+    const pa = A.p ?? (B.p !== null ? 1 - B.p : 0.5), pb = B.p ?? 1 - pa;
+    const al = A.c.a * pa + B.c.a * pb;
+    return { rgb: al ? A.c.rgb.map((v, i) => (v * A.c.a * pa + B.c.rgb[i] * B.c.a * pb) / al) : [0, 0, 0], a: al };
+  }
+  throw new Error('cannot evaluate ' + expr);
+}
 function contrastTable() {
   const rows = [];
-  for (const [id, t] of Object.entries(THEMES)) {
-    const s1 = hex(t.s1), text = hex(t.text), mb = hex(t.mapBody), s3 = hex(t.s3), acc = hex(t.acc);
-    const body = mixc(mb, 0.88, text), line = mixc(text, t.scheme === 'light' ? 0.7 : 0.6, s1), frame = mixc(text, t.scheme === 'light' ? 0.56 : 0.38, s1);
-    const metal = mixc(text, 0.72, s1), cable = mixc(text, 0.55, s1), help = mixc(acc, 0.45, body);
-    rows.push({ id, line: cr(line, s1), lineBody: cr(line, body), frame: cr(frame, s1), metal: cr(metal, s1), cable: cr(cable, s1), accent: cr(acc, s1), bodyStage: cr(body, s1), bodyPad: cr(body, s3), helpBody: cr(help, body), mainBody: cr(acc, body) });
+  for (const id of Object.keys(THEMES)) {
+    const V = paintVars(id), c = n => { const p = paint(`var(--${n})`, V); if (p.a < 1) throw new Error(n + ' is not opaque'); return p.rgb; };
+    const s1 = c('surface-1'), line = c('fg-line'), body = c('body');
+    rows.push({
+      id, line: cr(line, s1), lineBody: cr(line, body), frame: cr(c('fg-frame'), s1), metal: cr(c('fg-metal'), s1), cable: cr(c('fg-cable'), s1), accent: cr(c('accent'), s1),
+      bodyStage: cr(body, s1), bodyPad: cr(body, c('surface-3')), helpBody: cr(c('muscle-help'), body), mainBody: cr(c('accent'), body),
+      // figure detail paints (RIG.md section 20): the outline over every tone an arm can cross, and the new parts
+      lineSkin: cr(line, c('skin')), lineSkinHi: cr(line, c('skin-hi')), lineSkinLo: cr(line, c('skin-lo')), lineTeeHi: cr(line, c('tee-hi')), lineTeeLo: cr(line, c('tee-lo')),
+      skinTee: cr(c('skin'), c('tee')), shortsSkin: cr(c('shorts'), c('skin')), shortsPad: cr(c('shorts'), c('surface-3')), shoeStage: cr(c('shoe'), s1), rimLine: cr(c('rim'), line), mainTee: cr(c('accent'), c('tee')),
+      knurl: cr(c('metal-lo'), c('fg-metal')), seam: cr(c('seam'), c('equip')),
+    });
   }
   return rows;
 }
@@ -69,167 +99,283 @@ function contrastTable() {
 // +y is down; limbs are drawn hanging straight down (rest pose); poses come only
 // from rotations (and foreshortening scales) about the joints below.
 export const LEN = { upperArm: 38, forearm: 40, torso: 62, thigh: 50, shin: 47, sole: 102 };
+// Round joint caps: an n-gon (12 sides reads round at every size); half: the half facing dir (degrees, 0 = +x).
+const ngon = (cx, cy, r, n = 12, a0 = 15) => Array.from({ length: n }, (_, i) => { const a = rad(a0 + (i * 360) / n); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; });
+const half = (cx, cy, r, dir, n = 6) => [...Array.from({ length: n + 1 }, (_, i) => { const a = rad(dir - 90 + (i * 180) / n); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; })];
+// sym: a front-view shape given as its screen-right half, from a point on x = 0 round to a point on x = 0.
+const sym = h => [...h, ...mir(h.slice(1, -1)).reverse()];
+const trPart = (p, dx, dy) => ({ ...p, base: tr(p.base, dx, dy), regions: (p.regions || []).map(r => ({ ...r, poly: tr(r.poly, dx, dy) })) });
+// Every part: base (its silhouette) in its cloth (skin, tee, shorts, shoe, hair), then regions painted in order:
+//   { poly, cloth?, tone?: 'hi' | 'lo', muscle?, name?, ten? }.
+// A region with a muscle paints mm / mh when the exercise gives it a role; otherwise it paints its tone, or
+// nothing when it has neither tone nor cloth (a muscle kept only for roles). ten: a secondary-motion facet that
+// fades in with the move (drawn only when the exercise passes its channel). Section 20 of RIG.md.
 
-// SIDE view: origin = hip joint, lifter faces +x.
+// SIDE view: origin = hip joint, lifter faces +x. Light from the front and above.
+const HEAD_S = [[-10.2, -3.5], [-8.6, -8.8], [-4.5, -11.8], [1.5, -12], [6.6, -9.6], [9.2, -5.6], [10, -2.6], [9.4, -1.2], [10.4, 0.6], [12.4, 3.4], [10.3, 4.6], [10.2, 6.2], [9.8, 8.5], [8, 10.8], [2.6, 11.2], [-1.2, 8.4], [-4.5, 6.8], [-8.8, 3.6]];
 const SIDE = {
   joints: { hip: [0, 0], shoulder: [0, -62], elbow: [0, -24], grip: [0, 16], knee: [0, 50], ankle: [0, 97], head: [3, -82] },
-  neck: { base: [[-5, -63], [-4.5, -73.5], [5, -72.5], [7, -64]] },
+  neck: {
+    base: [[-6.2, -78], [1.2, -76], [3.2, -72.6], [6.8, -66], [5, -62.5], [-5.5, -62.5], [-7, -67]],
+    regions: [
+      { poly: [[1.2, -76], [3.2, -72.6], [6.8, -66], [4.4, -66.2], [0.6, -72.6], [-1.4, -75.6]], tone: 'hi', name: 'throat' },
+      { poly: [[-6.2, -78], [-3.4, -77.4], [-4.8, -69], [-7, -67]], tone: 'lo', name: 'nape' },
+    ],
+  },
   head: {
-    base: tr([[-10, -4], [-7.5, -10], [0, -12], [7, -9.5], [10, -4], [11, 0], [13, 2.5], [10.5, 4.5], [9.5, 8.5], [4, 11], [-2, 10], [-7, 6.5]], 3, -82),
-    regions: [{ poly: tr([[-3.5, -1.5], [0, -3], [1.5, 1], [0, 4.5], [-3.5, 3]], 3, -82), facet: true, name: 'ear' }],
+    base: tr(HEAD_S, 3, -82),
+    regions: [
+      { poly: [[7.38, -8.4], [6.6, -9.6], [1.5, -12], [-4.5, -11.8], [-8.6, -8.8], [-10.2, -3.5], [-9.3, 1], [-6, -0.4], [-4.4, -3.6], [-1, -5.2], [2.8, -6], [5.2, -7.4]], cloth: 'hair', name: 'hair' },
+      { poly: [[1.5, -12], [-4.5, -11.8], [-6.6, -10.2], [-1.6, -10.6], [3.6, -10.9]], cloth: 'hair', tone: 'hi', name: 'hairSheen' },
+      { poly: [[-3.4, -1.8], [-0.6, -3.2], [1.6, -0.8], [1.4, 3.2], [-0.4, 5.4], [-2.8, 3.8]], tone: 'lo', name: 'ear' },
+      { poly: [[6.2, -2], [9.4, -1.2], [10.4, 0.6], [12.4, 3.4], [10.3, 4.6], [10.2, 6.2], [7, 6.4], [5, 2.4]], tone: 'hi', name: 'face' },
+      { poly: [[5.8, -3.4], [10, -2.6], [9.4, -1.2], [6.4, -2.2]], tone: 'lo', name: 'brow' },
+      { poly: [[9.8, 8.5], [8, 10.8], [2.6, 11.2], [-1.2, 8.4], [4, 8.6]], tone: 'lo', name: 'jaw' },
+    ].map(r => ({ ...r, poly: tr(r.poly, 3, -82) })),
   },
   torso: {
-    base: [[-7, -67], [-2, -70.5], [6, -69.5], [11, -65], [15, -56], [15.5, -46], [12.5, -36], [10, -25], [9.5, -13], [10.5, -3], [7.5, 6], [-3, 8.5], [-10.5, 6], [-12.5, -3], [-10.5, -15], [-9.8, -26], [-11.8, -40], [-12.2, -52], [-10.5, -62]],
+    cloth: 'tee',
+    base: [[-6.4, -72.6], [-1.5, -70.8], [3.8, -68.6], [7.2, -66.6], [11.4, -64.6], [15, -57], [15.8, -48.5], [14.2, -41.2], [11.8, -36.4], [10.2, -26], [9.8, -14], [10.8, -4], [7.8, 6], [-3, 8.5], [-10.5, 6], [-12.8, -3], [-10.8, -15], [-10, -26], [-11.9, -40], [-12.3, -52], [-11.2, -60.5], [-9.2, -67.2]],
     regions: [
-      { poly: [[4, -66.5], [11, -65], [15, -56], [15.5, -46], [12.5, -36], [5, -39], [3, -52]], muscle: 'chest', facet: true },
-      { poly: [[12.5, -36], [10, -25], [9.5, -13], [10.5, -3], [3, -6], [3, -24], [5, -39]], muscle: 'abs' },
-      { poly: [[-12.2, -52], [-4, -55], [-2, -40], [-6, -28], [-9.8, -26], [-11.8, -40]], muscle: 'lats', facet: true },
-      { poly: [[-7, -67], [-2, -70.5], [2, -66], [-3, -58], [-10.5, -62]], muscle: 'upperTraps' },
-      { poly: [[-10.5, -62], [-3, -58], [-4, -55], [-12.2, -52]], muscle: 'midBack' },   // LP: added region (paints only when mid back has a role)
-      { poly: [[-3, 8.5], [-10.5, 6], [-12.5, -3], [-10.5, -15], [-3, -9], [1, 3]], facet: true, name: 'seat' },
+      { poly: [[10.5, -7], [10.8, -4], [7.8, 6], [-3, 8.5], [-10.5, 6], [-12.8, -3], [-11.87, -8.6]], cloth: 'shorts', name: 'shorts' },
+      { poly: [[10.5, -7], [-11.87, -8.6], [-12.1, -7.2], [10.64, -5.6]], cloth: 'shorts', tone: 'lo', name: 'waistband' },
+      { poly: [[-3, 8.5], [-10.5, 6], [-12.8, -3], [-12.1, -6.8], [-6, -4.6], [-1.6, 2]], cloth: 'shorts', tone: 'lo', muscle: 'glutes' },
+      { poly: [[-6.6, -71.1], [-1.8, -69.3], [0.6, -66.4], [-3.6, -61], [-11.2, -60.5], [-9.2, -67.2]], tone: 'hi', muscle: 'upperTraps' },
+      { poly: [[-6.4, -72.6], [-1.5, -70.8], [3.8, -68.6], [7.2, -66.6], [6.4, -65.4], [3.2, -67.3], [-1.8, -69.3], [-6.6, -71.1]], tone: 'lo', name: 'collar' },
+      { poly: [[-11.2, -60.5], [-3.6, -61], [-5.4, -54.6], [-12.3, -52]], muscle: 'midBack' },
+      { poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-4.8, -30], [-10, -26], [-11.9, -40]], tone: 'lo', muscle: 'lats' },
+      { poly: [[11.8, -36.4], [11.4, -33.8], [6.6, -36.4], [6.4, -38.8]], tone: 'lo', name: 'underChest' },
+      { poly: [[11.4, -33.8], [10.2, -26], [9.8, -14], [10.5, -7], [5.8, -7.4], [5.6, -24], [6.6, -36.4]], muscle: 'abs' },
+      { poly: [[5.6, -24], [5.8, -7.4], [-4, -8.2], [-4.8, -19], [-0.4, -27]], muscle: 'obliques' },
+      { poly: [[7.2, -66.6], [11.4, -64.6], [15, -57], [15.8, -48.5], [14.2, -41.2], [11.8, -36.4], [6.4, -38.8], [3.8, -52], [4.8, -62.4]], tone: 'hi', muscle: 'chest' },
+      // secondary motion: the belly wall firms (brace) and the shoulder blade's inner edge shows (blades held back)
+      { poly: [[10.2, -26], [9.8, -14], [10.5, -7], [8.6, -7.2], [8, -14], [8.4, -26.4]], tone: 'lo', ten: true, name: 'brace' },
+      { poly: [[-8.8, -60.2], [-7.4, -60], [-9, -50.8], [-10.4, -51]], tone: 'lo', ten: true, name: 'bladeEdge' },
     ],
   },
   deltoid: {
-    base: tr([[-6.5, -4], [-2.5, -7.5], [4, -7], [7.5, -2.5], [7.5, 5], [5, 12], [-1, 13.5], [-6.5, 8]], 0, -62),
+    cloth: 'tee',
+    base: tr([[-6.5, -4], [-2.5, -7.5], [4, -7], [7.5, -2.5], [7.8, 5], [5.6, 11.4], [0.6, 13], [-4.4, 12], [-6.5, 7.6]], 0, -62),
     regions: [
-      { poly: tr([[0.5, -7.3], [4, -7], [7.5, -2.5], [7.5, 5], [5, 12], [1.5, 6]], 0, -62), muscle: 'frontDelts' },
-      { poly: tr([[-6.5, -4], [-2.5, -7.5], [0.5, -7.3], [1.5, 6], [-1, 13.5], [-6.5, 8]], 0, -62), muscle: 'rearDelts', facet: true },
+      { poly: tr([[2.4, -7.2], [4, -7], [7.5, -2.5], [7.8, 5], [5.6, 11.4], [3, 12.2], [2.2, 1]], 0, -62), tone: 'hi', muscle: 'frontDelts' },
+      { poly: tr([[-2.2, -7.4], [2.4, -7.2], [2.2, 1], [3, 12.2], [0.6, 13], [-3.2, 12.3], [-2.4, 1]], 0, -62), muscle: 'sideDelts' },
+      { poly: tr([[-6.5, -4], [-2.5, -7.5], [-2.2, -7.4], [-2.4, 1], [-3.2, 12.3], [-4.4, 12], [-6.5, 7.6]], 0, -62), tone: 'lo', muscle: 'rearDelts' },
     ],
   },
   upperArm: {
-    base: tr([[-5.5, -2], [5.5, -2], [6.2, 12], [4.6, 35], [0, 39], [-4.6, 35], [-6.2, 14]], 0, -62),
+    base: tr([[-5.5, -2], [5.5, -2], [6.3, 9], [6.5, 17], [5.4, 28], [4.4, 35], [2.2, 38.2], [0, 39], [-4.6, 35], [-6.2, 14]], 0, -62),
     regions: [
-      { poly: tr([[0.3, -2], [5.5, -2], [6.2, 12], [4.6, 35], [0.3, 37]], 0, -62), muscle: 'biceps', facet: true },
-      { poly: tr([[-5.5, -2], [0.3, -2], [0.3, 37], [-4.6, 35], [-6.2, 14]], 0, -62), muscle: 'triceps' },
+      { poly: tr([[-5.5, -2], [5.5, -2], [6.3, 9], [6.5, 17], [6.3, 19], [-5.74, 20], [-6.2, 14]], 0, -62), cloth: 'tee', name: 'sleeve' },
+      { poly: tr([[2.2, -2], [5.5, -2], [6.3, 9], [6.5, 17], [6.3, 19], [2.4, 19.3]], 0, -62), cloth: 'tee', tone: 'hi', muscle: 'biceps' },
+      { poly: tr([[2.4, 19.3], [6.3, 19], [5.4, 28], [4.4, 35], [2.2, 36.8], [1.8, 28]], 0, -62), tone: 'hi', muscle: 'biceps' },
+      { poly: tr([[-5.5, -2], [-2.4, -2], [-2.6, 19.7], [-5.74, 20], [-6.2, 14]], 0, -62), cloth: 'tee', tone: 'lo', muscle: 'triceps' },
+      { poly: tr([[-5.74, 20], [-2.6, 19.7], [-2, 30], [-2.4, 36.8], [-4.6, 35]], 0, -62), tone: 'lo', muscle: 'triceps' },
+      { poly: tr([[6.3, 19], [-5.74, 20], [-5.85, 18.6], [6.44, 17.6]], 0, -62), cloth: 'tee', tone: 'lo', name: 'sleeveHem' },
     ],
   },
-  elbowCap: { base: oct(0, -24, 4.6) },
+  elbowCap: { base: ngon(0, -24, 4.6), regions: [{ poly: half(0, -24, 4.6, 180), tone: 'lo', name: 'elbowBack' }] },
   forearm: {
-    base: tr([[-4.8, -1], [4.8, -1], [5, 11], [3.6, 31], [-3.6, 31], [-4.6, 11]], 0, -24),
-    regions: [{ poly: tr([[0.2, -1], [4.8, -1], [5, 11], [3.6, 31], [0.2, 31]], 0, -24), muscle: 'forearms', facet: true }],
+    base: tr([[-4.8, -1], [4.8, -1], [5.4, 6], [5, 13], [3.6, 31], [-3.6, 31], [-4.4, 14], [-4.9, 6]], 0, -24),
+    regions: [
+      { poly: tr([[0.4, -1], [4.8, -1], [5.4, 6], [5, 13], [3.6, 31], [0.6, 31]], 0, -24), tone: 'hi', muscle: 'forearms' },
+      { poly: tr([[-4.8, -1], [-2.6, -1], [-2.2, 31], [-3.6, 31], [-4.4, 14], [-4.9, 6]], 0, -24), tone: 'lo', name: 'forearmUnder' },
+    ],
   },
+  // Hand round a vertical handle, seen from the back of the hand. In the hand's frame +x is up (thumb side) and
+  // +y points forward along the forearm; the handle runs along x through the grip centre (0, 16).
   fist: {
-    base: tr([[-4.2, -10], [4.2, -10], [6, -5], [6.5, 3], [3.5, 7], [-3, 7], [-5.5, 2.5], [-5.2, -5]], 0, 16),
-    regions: [{ poly: tr([[4.2, -10], [6, -5], [6.5, 3], [3.5, 7], [1.5, -1]], 0, 16), facet: true }],
+    base: tr([[-3.7, -9.6], [3.7, -9.6], [5.6, -6.8], [7.2, -3], [7.3, 0.6], [6.2, 3.6], [4.8, 5.2], [2.2, 5.8], [-0.6, 5.8], [-3.2, 5.5], [-5.2, 4.6], [-6, 1.6], [-5.8, -3.6], [-4.8, -7]], 0, 16),
+    regions: [
+      { poly: [[-3.7, -9.6], [-4.8, -7], [-5.8, -3.6], [-4.6, -3.2], [-3.4, -8.6]], tone: 'lo', name: 'palmHeel' },
+      { poly: [[2.2, -8.6], [4.2, -6.4], [5.6, -2.6], [5.1, 1.6], [4.3, 1.3], [4.6, -2.4], [3.3, -5.8], [1.5, -7.9]], tone: 'lo', name: 'thumbCrease' },
+      { poly: [[3.7, -9.6], [5.6, -6.8], [7.2, -3], [7.3, 0.6], [6.4, 2.6], [5.3, 1.8], [5.8, -2.4], [4.4, -6.2], [2.4, -8.8]], tone: 'hi', name: 'thumb' },
+      { poly: [[5.3, -0.6], [6.2, 3.6], [4.8, 5.2], [2.2, 5.8], [-0.6, 5.8], [-3.2, 5.5], [-5.2, 4.6], [-6, 1.6], [-5.9, -0.4]], tone: 'lo', name: 'fingerGaps' },
+      { poly: [[2.6, -0.2], [5.1, -0.4], [5.6, 2.6], [4.6, 5.1], [3, 5.6], [2.5, 2.8]], tone: 'hi', name: 'finger1' },
+      { poly: [[-0.2, -0.2], [2.2, -0.2], [2.1, 3], [1.9, 5.7], [0.1, 5.7], [-0.3, 3]], tone: 'hi', name: 'finger2' },
+      { poly: [[-2.9, -0.2], [-0.6, -0.2], [-0.7, 3], [-0.9, 5.7], [-2.7, 5.5], [-3.1, 3]], tone: 'hi', name: 'finger3' },
+      { poly: [[-5.3, 0], [-3.3, -0.2], [-3.5, 3], [-3.6, 5.4], [-4.9, 4.6], [-5.6, 2]], tone: 'hi', name: 'finger4' },
+    ].map(r => ({ ...r, poly: tr(r.poly, 0, 16) })),
   },
-  hipCap: { base: oct(0, 0, 8.4) },
+  hipCap: { cloth: 'shorts', base: ngon(0, 0, 8.4) },
   thigh: {
-    base: [[-8.5, -3], [8.5, -3], [8.2, 20], [6, 47], [0, 51], [-6, 47], [-8.4, 22]],
-    regions: [{ poly: [[0.3, -3], [8.5, -3], [8.2, 20], [6, 47], [0.3, 48]], muscle: 'quads', facet: true }],
+    base: [[-8.5, -3], [8.5, -3], [8.9, 10], [8.3, 22], [6.4, 40], [4.6, 47.6], [0, 51], [-3.8, 49.8], [-6, 46], [-7.8, 32], [-8.5, 16]],
+    regions: [
+      { poly: [[-8.5, -3], [8.5, -3], [8.9, 10], [8.3, 22], [6.82, 36], [-7.09, 37.5], [-7.8, 32], [-8.5, 16]], cloth: 'shorts', name: 'shorts', far: true },
+      { poly: [[3, -3], [8.5, -3], [8.9, 10], [8.3, 22], [6.82, 36], [3.2, 36.4]], cloth: 'shorts', tone: 'hi', muscle: 'quads' },
+      { poly: [[3.2, 36.4], [6.82, 36], [6.4, 40], [4.6, 47.6], [2.4, 49.4], [1.6, 42]], tone: 'hi', muscle: 'quads' },
+      { poly: [[-8.5, -3], [-3.4, -3], [-3.6, 37], [-7.09, 37.5], [-7.8, 32], [-8.5, 16]], cloth: 'shorts', tone: 'lo', muscle: 'hamstrings' },
+      { poly: [[-7.09, 37.5], [-3.6, 37], [-2.8, 48.6], [-3.8, 49.8], [-6, 46]], tone: 'lo', muscle: 'hamstrings' },
+      { poly: [[6.82, 36], [-7.09, 37.5], [-7.27, 36.1], [6.97, 34.6]], cloth: 'shorts', tone: 'lo', name: 'shortsHem' },
+    ],
   },
-  kneeCap: { base: oct(0, 50, 6) },
+  kneeCap: { base: ngon(0, 50, 6), regions: [{ poly: half(0, 50, 6, 0), tone: 'hi', name: 'patella' }] },
   shin: {
-    base: [[-5.5, 49], [5.5, 49], [5, 62], [4, 94], [-4, 94], [-7, 64]],
-    regions: [{ poly: [[-5.5, 49], [0, 49], [0, 94], [-4, 94], [-7, 64]], muscle: 'calves', facet: true }],
+    base: [[-5.5, 49], [5.5, 49], [5.4, 60], [4.4, 80], [3.8, 94], [-4, 94], [-5.4, 84], [-7, 66], [-6.8, 58]],
+    regions: [
+      { poly: [[-5.5, 49], [-2, 49.5], [-2.2, 62], [-3.4, 78], [-5.4, 84], [-7, 66], [-6.8, 58]], tone: 'lo', muscle: 'calves' },
+      { poly: [[2.6, 49.6], [5.5, 49], [5.4, 60], [4.4, 80], [3.8, 94], [2, 94], [2.4, 72]], tone: 'hi', name: 'shinFront' },
+    ],
   },
-  foot: { base: [[-5, 93], [3, 93], [8, 97.5], [17, 99.5], [17.5, 102], [-6, 102], [-6.5, 97.5]] },
+  foot: {
+    cloth: 'shoe',
+    base: [[-5.6, 92.2], [3.4, 92.4], [7.4, 96.2], [13.6, 97.8], [17.2, 99.2], [17.9, 101], [17.6, 102], [-6.2, 102], [-6.8, 99], [-6.6, 95]],
+    regions: [
+      { poly: [[-5.6, 92.2], [3.4, 92.4], [4.4, 93.4], [-6.1, 93.6]], tone: 'lo', name: 'collar' },
+      { poly: [[11, 97.2], [13.6, 97.8], [17.2, 99.2], [17.67, 100.4], [11.8, 100.4], [10.4, 98.6]], tone: 'hi', name: 'toeCap' },
+      { poly: [[-6.52, 100.4], [17.67, 100.4], [17.9, 101], [17.6, 102], [-6.2, 102]], cloth: 'sole', name: 'sole' },
+    ],
+  },
 };
 
 // FRONT view: origin = midway between the hip joints, lifter faces the viewer.
-// Screen-right side (the lifter's left) is defined; screen-left = mirror in x.
+// Screen-right side (the lifter's left) is defined; screen-left = mirror in x. Light from the front and above:
+// tops of forms light, faces toward the camera mid, sides and undersides dark.
+const HEAD_F = sym([[0, -12], [5.6, -11], [8.8, -7.6], [9.7, -3.8], [11.1, -3.9], [11.9, -1.4], [11.3, 2.4], [9.5, 3.6], [8.3, 6], [5.4, 9.4], [2.4, 11.2], [0, 11.6]]);
+const both = (r) => [r, { ...r, poly: mir(r.poly) }];
 const FR = {
   joints: { hipR: [10, 0], shoulderR: [22, -62], elbowR: [22, -24], gripR: [22, 16], kneeR: [10, 50], ankleR: [10, 97], head: [0, -83] },
-  neck: { base: [[-5, -79], [5, -79], [6.5, -64], [-6.5, -64]] },
+  neck: {
+    base: [[-5.2, -80], [5.2, -80], [5.6, -73], [8.2, -67.4], [6.4, -64], [-6.4, -64], [-8.2, -67.4], [-5.6, -73]],
+    regions: [
+      ...both({ poly: [[5.2, -78], [5.6, -73], [8.2, -67.4], [6, -67], [4.2, -72.4]], tone: 'lo', name: 'neckSide' }),
+      { poly: [[-5.4, -73.4], [5.4, -73.4], [5.6, -71], [0, -69.4], [-5.6, -71]], tone: 'lo', name: 'underChin' },
+    ],
+  },
   head: {
-    base: tr([[0, -12], [7, -10], [10, -4], [9.5, 3], [6, 9], [0, 11.5], [-6, 9], [-9.5, 3], [-10, -4], [-7, -10]], 0, -83),
-    regions: [{ poly: tr([[0, -12], [7, -10], [10, -4], [9.5, 3], [6, 9], [0, 11.5]], 0, -83), facet: true }],
+    base: tr(HEAD_F, 0, -83),
+    regions: [
+      { poly: sym([[0, -12], [5.6, -11], [8.8, -7.6], [9.7, -3.8], [8.7, -4.4], [7.6, -6.8], [4.6, -8.2], [0, -8.8]]), cloth: 'hair', name: 'hair' },
+      { poly: [[-4.6, -11.1], [1.6, -11.9], [4.2, -10.4], [-1.8, -10]], cloth: 'hair', tone: 'hi', name: 'hairSheen' },
+      ...both({ poly: [[9.7, -3.8], [11.1, -3.9], [11.9, -1.4], [11.3, 2.4], [9.5, 3.6], [9.3, 0]], tone: 'lo', name: 'ear' }),
+      ...both({ poly: [[6.4, -2.6], [9.3, -3.2], [9.3, 0], [9.5, 3.6], [8.3, 6], [5.4, 9.4], [4.6, 5.6]], tone: 'lo', name: 'cheek' }),
+      { poly: [[0.2, -1.4], [1.5, 3.2], [0.1, 4.1]], tone: 'lo', name: 'nose' },
+    ].map(r => ({ ...r, poly: tr(r.poly, 0, -83) })),
   },
   torso: {
-    base: [[-6.5, -69.5], [-2.5, -65.5], [2.5, -65.5], [6.5, -69.5], [17, -66.5], [21, -63], [20, -52], [16.5, -38], [14, -26], [15, -14], [16.5, -4], [15, 4], [6, 10.5], [0, 11.5], [-6, 10.5], [-15, 4], [-16.5, -4], [-15, -14], [-14, -26], [-16.5, -38], [-20, -52], [-21, -63], [-17, -66.5]],
+    cloth: 'tee',
+    base: sym([[0, -65.8], [3.4, -67], [6.2, -71.2], [11.6, -69], [17.2, -66.2], [21, -62.6], [20.2, -52], [16.6, -38], [14, -26], [15, -14], [16.5, -4], [15, 4], [6, 10.5], [0, 11.5]]),
     regions: [
-      { poly: [[6.5, -69.5], [17, -66.5], [21, -63], [12, -63], [4.5, -65.5]], muscle: 'upperTraps' },
-      { poly: mir([[6.5, -69.5], [17, -66.5], [21, -63], [12, -63], [4.5, -65.5]]), muscle: 'upperTraps' },
-      { poly: [[0.5, -63.5], [19.8, -62], [19.5, -52], [15.5, -44], [0.5, -45]], muscle: 'chest', facet: true },
-      { poly: mir([[0.5, -63.5], [19.8, -62], [19.5, -52], [15.5, -44], [0.5, -45]]), muscle: 'chest', facet: true },
-      { poly: [[16.5, -38], [14, -26], [15, -14], [16.5, -4], [9, -9], [9, -41]], muscle: 'obliques', facet: true },
-      { poly: mir([[16.5, -38], [14, -26], [15, -14], [16.5, -4], [9, -9], [9, -41]]), muscle: 'obliques', facet: true },
+      { poly: sym([[0, -7], [16.05, -7], [16.5, -4], [15, 4], [6, 10.5], [0, 11.5]]), cloth: 'shorts', name: 'shorts' },
+      { poly: [[16.05, -7], [-16.05, -7], [-16.2, -5.6], [16.2, -5.6]], cloth: 'shorts', tone: 'lo', name: 'waistband' },
+      ...both({ poly: [[6.2, -71.2], [11.6, -69], [17.2, -66.2], [21, -62.6], [13, -63.4], [7.4, -67.6]], tone: 'hi', muscle: 'upperTraps' }),
+      { poly: sym([[0, -65.8], [3.4, -67], [6.2, -71.2], [7.4, -70.7], [4.2, -65.6], [0, -64.4]]), tone: 'lo', name: 'collar' },
+      ...both({ poly: [[16.4, -45.4], [8.6, -43.2], [1, -44.6], [1, -42.6], [8.6, -41], [15.9, -43.4]], tone: 'lo', name: 'underChest' }),
+      ...both({ poly: [[20.2, -52], [16.6, -38], [15.2, -33.4], [14.8, -40.6], [16.8, -45.6], [19.9, -53]], tone: 'lo', muscle: 'lats' }),
+      ...both({ poly: [[15.2, -33.4], [14, -26], [15, -14], [16.05, -7], [9.6, -7.8], [9.4, -37.6], [14.8, -40.6]], tone: 'lo', muscle: 'obliques' }),
+      { poly: sym([[0, -42.6], [8.6, -41], [9.4, -37.6], [9.6, -7.8], [0, -7.4]]), muscle: 'abs' },
+      ...both({ poly: [[1, -64.2], [13, -63.4], [20, -61.6], [19.9, -53], [16.4, -45.4], [8.6, -43.2], [1, -44.6]], tone: 'hi', muscle: 'chest' }),
+      // secondary motion: the belly wall firms (brace) and the collarbone line shows as the shoulders stay down
+      ...both({ poly: [[8.6, -38], [10, -37.8], [10.4, -9.6], [9, -9.6]], tone: 'lo', ten: true, name: 'brace' }),
+      ...both({ poly: [[7.4, -67.6], [13, -63.4], [20.4, -62.4], [20.2, -61.2], [13, -62], [7.2, -66.2]], tone: 'lo', ten: true, name: 'collarbone' }),
     ],
   },
   deltoidR: {
+    cloth: 'tee',
     base: tr([[-5.2, -3], [1, -4], [6, -2.5], [8.2, 2.5], [7.8, 9.5], [4.8, 14.5], [-1, 13], [-5.2, 5.5]], 22, -62),
     regions: [
-      { poly: tr([[1, -4], [6, -2.5], [8.2, 2.5], [7.8, 9.5], [4.8, 14.5], [2.5, 4.5]], 22, -62), muscle: 'sideDelts' },
-      { poly: tr([[-5.2, -3], [1, -4], [2.5, 4.5], [4.8, 14.5], [-1, 13], [-5.2, 5.5]], 22, -62), muscle: 'frontDelts', facet: true },
+      { poly: tr([[1, -4], [6, -2.5], [8.2, 2.5], [7.8, 9.5], [4.8, 14.5], [2.5, 4.5]], 22, -62), tone: 'hi', muscle: 'sideDelts' },
+      { poly: tr([[-5.2, -3], [1, -4], [2.5, 4.5], [4.8, 14.5], [-1, 13], [-5.2, 5.5]], 22, -62), muscle: 'frontDelts' },
     ],
   },
   upperArmR: {
-    base: tr([[-5.2, -2], [5.5, -2], [6.2, 14], [4.6, 35], [0, 39], [-4.6, 35], [-5.8, 14]], 22, -62),
-    regions: [{ poly: tr([[-3, 3], [3, 3], [3.5, 26], [0, 31], [-3, 26]], 22, -62), muscle: 'biceps', facet: true }],
+    base: tr([[-5.2, -2], [5.5, -2], [6.4, 9], [6.2, 14], [4.6, 35], [0, 39], [-4.6, 35], [-5.8, 14]], 22, -62),
+    regions: [
+      { poly: tr([[-5.2, -2], [5.5, -2], [6.4, 9], [6.2, 14], [5.82, 19], [-5.48, 19.6], [-5.8, 14]], 22, -62), cloth: 'tee', name: 'sleeve' },
+      { poly: tr([[-2.4, 1], [2.8, 1], [3, 19.2], [-2.4, 19.45]], 22, -62), cloth: 'tee', tone: 'hi', muscle: 'biceps' },
+      { poly: tr([[-2.4, 19.45], [3, 19.2], [3.2, 27], [0.4, 31.4], [-2.4, 27]], 22, -62), tone: 'hi', muscle: 'biceps' },
+      { poly: tr([[-5.2, -2], [-3.4, -2], [-3.6, 19.5], [-5.48, 19.6], [-5.8, 14]], 22, -62), cloth: 'tee', tone: 'lo', muscle: 'triceps' },
+      { poly: tr([[-5.48, 19.6], [-3.6, 19.5], [-3.2, 33], [-4.6, 35]], 22, -62), tone: 'lo', muscle: 'triceps' },
+      { poly: tr([[5.82, 19], [-5.48, 19.6], [-5.56, 18.2], [5.93, 17.6]], 22, -62), cloth: 'tee', tone: 'lo', name: 'sleeveHem' },
+    ],
   },
-  elbowCapR: { base: oct(22, -24, 4.6) },
+  elbowCapR: { base: ngon(22, -24, 4.6), regions: [{ poly: half(22, -24, 4.6, 180), tone: 'lo', name: 'elbowInner' }] },
   forearmR: {
-    base: tr([[-4.6, -1], [4.8, -1], [5, 11], [3.6, 31], [-3.6, 31], [-4.8, 11]], 22, -24),
-    regions: [{ poly: tr([[0.2, -1], [4.8, -1], [5, 11], [3.6, 31], [0.2, 31]], 22, -24), muscle: 'forearms', facet: true }],
+    base: tr([[-4.6, -1], [4.8, -1], [5.4, 7], [4.8, 15], [3.4, 31], [-3.4, 31], [-4.4, 16], [-5, 7]], 22, -24),
+    regions: [
+      { poly: tr([[0.4, -1], [4.8, -1], [5.4, 7], [4.8, 15], [3.4, 31], [0.8, 31]], 22, -24), tone: 'hi', muscle: 'forearms' },
+      { poly: tr([[-4.6, -1], [-2.8, -1], [-2.2, 31], [-3.4, 31], [-4.4, 16], [-5, 7]], 22, -24), tone: 'lo', name: 'forearmInner' },
+    ],
   },
+  // Hand round a dumbbell handle that points at the camera, seen from the front and a little above: the index
+  // finger curls round the handle, the middle, ring and little finger knuckles step up behind it, the thumb
+  // crosses the inner side. The handle and the near head are in the dumbbell group (drawn over the hand).
   fistR: {
-    base: tr([[-4.2, -10], [4.2, -10], [5.2, -4], [5, 4], [2.5, 7.5], [-3, 7.5], [-5.2, 3.5], [-5.2, -4]], 22, 16),
-    regions: [{ poly: tr([[0, -10], [4.2, -10], [5.2, -4], [5, 4], [2.5, 7.5], [0, 7.5]], 22, 16), facet: true }],
+    base: tr([[-3.6, -9.6], [3.6, -9.6], [4.8, -8.2], [5.7, -6.8], [5.3, -5.7], [6.1, -4.4], [5.7, -3.2], [6.4, -1.8], [6, -0.6], [6.5, 0.8], [6, 3], [4.4, 4.9], [1.4, 5.8], [-1.8, 5.5], [-4.2, 4], [-5.6, 1.2], [-6.1, -2.8], [-5.6, -6.4]], 22, 16),
+    regions: [
+      { poly: [[4.8, -8.2], [5.7, -6.8], [5.3, -5.7], [6.1, -4.4], [5.7, -3.2], [6.4, -1.8], [6, -0.6], [6.5, 0.8], [6, 3], [4.4, 4.9], [1.4, 5.8], [-1.8, 5.5], [-4.2, 4], [-5.6, 1.2], [-6.1, -2.8], [-3.2, -4.6], [1.2, -8]], tone: 'lo', name: 'grip' },
+      { poly: [[4.6, -8], [5.5, -6.9], [5.1, -5.9], [1.8, -6.2], [1.5, -7.7]], tone: 'hi', name: 'finger4' },
+      { poly: [[5.4, -5.5], [5.9, -4.4], [5.5, -3.4], [2, -3.8], [1.9, -5.4]], tone: 'hi', name: 'finger3' },
+      { poly: [[5.6, -3], [6.2, -1.8], [5.8, -0.9], [2.2, -1.2], [2.1, -2.8]], tone: 'hi', name: 'finger2' },
+      { poly: [[5.8, -0.5], [6.3, 0.8], [5.8, 2.8], [4.2, 4.5], [1.4, 5.3], [-1.8, 5], [-3.6, 3.9], [-2.6, 2.7], [-0.2, 3.3], [2, 2.7], [2.4, -0.3]], tone: 'hi', name: 'finger1' },
+      { poly: [[-6, -5.6], [-4.8, -7.2], [-3.4, -5.4], [-1.4, -1.6], [-0.9, 1], [-2, 2.2], [-3.6, 1.5], [-5.4, -1.6]], tone: 'hi', name: 'thumb' },
+    ].map(r => ({ ...r, poly: tr(r.poly, 22, 16) })),
   },
   thighR: {
-    base: tr([[-8, -4], [8, -4], [8, 18], [6, 47], [0, 50.5], [-6, 47], [-7.5, 20]], 10, 0),
-    regions: [{ poly: tr([[0, -4], [8, -4], [8, 18], [6, 47], [0, 49]], 10, 0), muscle: 'quads', facet: true }],
+    base: tr([[-8, -4], [8, -4], [8.4, 10], [8, 20], [6, 44], [3.6, 49], [0, 50.5], [-4, 49], [-6, 46], [-7.2, 30], [-7.6, 16]], 10, 0),
+    regions: [
+      { poly: tr([[-8, -4], [8, -4], [8.4, 10], [8, 20], [6.95, 34], [-7.3, 34.6], [-7.2, 30], [-7.6, 16]], 10, 0), cloth: 'shorts', name: 'shorts' },
+      { poly: tr([[-3.4, -4], [3.4, -4], [4, 34.3], [-3.6, 34.5]], 10, 0), cloth: 'shorts', tone: 'hi', muscle: 'quads' },
+      { poly: tr([[-3.6, 34.5], [4, 34.3], [4.6, 44], [2.4, 48.2], [-1, 48.6], [-3.4, 43]], 10, 0), tone: 'hi', muscle: 'quads' },
+      { poly: tr([[6.95, 34], [-7.3, 34.6], [-7.34, 33.2], [7.05, 32.6]], 10, 0), cloth: 'shorts', tone: 'lo', name: 'shortsHem' },
+    ],
   },
-  kneeCapR: { base: oct(10, 50, 5.8) },
+  kneeCapR: { base: ngon(10, 50, 5.8), regions: [{ poly: half(10, 50, 5.8, 270), tone: 'hi', name: 'patella' }] },
   shinR: {
-    base: tr([[-5.5, 49], [5.5, 49], [6, 62], [4, 94], [-4, 94], [-6, 62]], 10, 0),
-    regions: [{ poly: tr([[0, 49], [5.5, 49], [6, 62], [4, 94], [0, 94]], 10, 0), muscle: 'calves', facet: true }],
-  },
-  footR: { base: tr([[-4.5, 93], [4.5, 93], [7, 99], [6.5, 102], [-5.5, 102], [-6, 99]], 10, 0) },
-};
-const mirPart = p => ({ base: mir(p.base), regions: (p.regions || []).map(r => ({ ...r, poly: mir(r.poly) })) });
-
-// TOP view (camera above a SEATED or STANDING lifter): origin = midpoint between the
-// shoulder joints, lifter faces -y (up the screen). A LYING lifter seen from above is
-// the front view (the camera sees the front of the body), so it reuses FR.
-const TOP = {
-  joints: { shoulderR: [22, 0], elbowR: [22, 38], gripR: [22, 78], head: [0, -2] },
-  torso: {
-    base: [[-10, -12], [10, -12], [21, -8.5], [27, -1.5], [26, 6], [20, 11], [8, 13.5], [-8, 13.5], [-20, 11], [-26, 6], [-27, -1.5], [-21, -8.5]],
+    base: tr([[-5.5, 49], [5.5, 49], [6.2, 60], [5.2, 74], [4, 94], [-4, 94], [-5, 76], [-6.2, 62]], 10, 0),
     regions: [
-      { poly: [[6, -7], [19, -6], [23, -1], [9, 3]], muscle: 'upperTraps' },
-      { poly: mir([[6, -7], [19, -6], [23, -1], [9, 3]]), muscle: 'upperTraps' },
-      { poly: [[0, 2], [9, 3], [20, 11], [8, 13.5], [0, 13.5]], muscle: 'midBack', facet: true },
-      { poly: mir([[0, 2], [9, 3], [20, 11], [8, 13.5], [0, 13.5]]), muscle: 'midBack', facet: true },
+      ...[1, -1].map(s => ({ poly: tr([[5.5, 49], [6.2, 60], [5.2, 74], [4, 94], [2.8, 92], [3.4, 70], [3.2, 52]].map(([x, y]) => [x * s, y]), 10, 0), tone: 'lo', muscle: 'calves' })),
     ],
   },
-  head: {
-    base: [[0, -12], [5, -11], [8.5, -7.5], [10, -2], [8.5, 4], [4.5, 7.5], [0, 8.5], [-4.5, 7.5], [-8.5, 4], [-10, -2], [-8.5, -7.5], [-5, -11]],
-    regions: [{ poly: [[-2.2, -11.6], [0, -15], [2.2, -11.6]], facet: true, name: 'nose' }, { poly: [[-8.5, 4], [-4.5, 7.5], [0, 8.5], [4.5, 7.5], [8.5, 4], [0, 1]], facet: true, name: 'crown' }],
-  },
-  deltoidR: {
-    base: tr([[-5, -6], [0, -8.5], [6, -7], [8.5, -1], [7.5, 6], [3, 9], [-3, 8], [-6, 2]], 22, 0),
+  footR: {
+    cloth: 'shoe',
+    base: tr([[-4.5, 92.4], [4.5, 92.4], [6.6, 97], [7.2, 99.4], [6.8, 102], [-5.8, 102], [-6.4, 99.4], [-6, 96.4]], 10, 0),
     regions: [
-      { poly: tr([[-5, -6], [0, -8.5], [6, -7], [8.5, -1], [1, 0]], 22, 0), muscle: 'frontDelts', facet: true },
-      { poly: tr([[8.5, -1], [7.5, 6], [3, 9], [-3, 8], [1, 0]], 22, 0), muscle: 'rearDelts' },
+      { poly: tr([[-4.5, 92.4], [4.5, 92.4], [5, 93.6], [-4.8, 93.6]], 10, 0), tone: 'lo', name: 'collar' },
+      { poly: tr([[-3.8, 96.4], [4.2, 96.4], [6.2, 98.6], [6.4, 100.4], [-5.4, 100.4], [-5.6, 98.6]], 10, 0), tone: 'hi', name: 'toeCap' },
+      { poly: tr([[-6.2, 100.4], [7, 100.4], [6.8, 102], [-5.8, 102]], 10, 0), cloth: 'sole', name: 'sole' },
     ],
   },
-  // arms seen from above = the front-view arm parts moved so the shoulder joint is at (22, 0)
-  upperArmR: { base: tr(FR.upperArmR.base, 0, 62), regions: [] },
-  elbowCapR: { base: tr(FR.elbowCapR.base, 0, 62) },
-  forearmR: { base: tr(FR.forearmR.base, 0, 62), regions: [{ poly: tr(FR.forearmR.regions[0].poly, 0, 62), muscle: 'forearms', facet: true }] },
-  fistR: { base: tr(FR.fistR.base, 0, 62), regions: [{ poly: tr(FR.fistR.regions[0].poly, 0, 62), facet: true }] },
 };
+const mirPart = p => ({ ...p, base: mir(p.base), regions: (p.regions || []).map(r => ({ ...r, poly: mir(r.poly) })) });
+// LP: the rig's TOP view is not used by this player, so it is not copied.
 
 // ---------------------------------------------------------------------------
-// Painting. Every body LAYER is drawn in two passes inside the same groups:
+// Painting. Every body LAYER is drawn in three passes inside the same groups:
 //   1) outline pass: each part's polygon with a 3-unit stroke in --fg-line (class olk)
-//   2) fill pass: each part's base fill, facets, muscles
-// The fill hides the inner half of every stroke, so only the layer's silhouette keeps
-// a 1.5 outline and no seam shows where parts overlap (shoulder, elbow, hip, knee).
+//   2) rim pass: the same polygons with a 1.1-unit --rim stroke (class rim), so a thin lighter line runs just
+//      inside the dark outline on the layer's silhouette
+//   3) fill pass: each part's base fill, its tone facets, then glow and muscles
+// The fills hide the inner half of every stroke, so only the layer's silhouette keeps its outline and rim,
+// and no seam shows where parts overlap (shoulder, elbow, hip, knee).
+const CLOTH = { skin: 'b', tee: 't', shorts: 'p', shoe: 's', sole: 'so', hair: 'hr' };
+const FAR_CLOTH = { skin: 'bf', tee: 'bf', shorts: 'pf', shoe: 'sf', sole: 'sf', hair: 'bf' };
+const toneCls = (cloth, tone) => CLOTH[cloth] + (tone === 'hi' ? 'h' : tone === 'lo' ? 'l' : '');
 function fillPart(p, roles = {}, opt = {}) {
-  let s = `<polygon class="${opt.far ? 'bf' : 'b'}" points="${pts(p.base)}"/>`;
-  if (opt.far) return s;
+  const cloth = p.cloth || 'skin';
+  if (opt.far) return `<polygon class="${FAR_CLOTH[cloth]}" points="${pts(p.base)}"/>` + (p.regions || []).filter(r => r.far).map(r => `<polygon class="${FAR_CLOTH[r.cloth || cloth]}" points="${pts(r.poly)}"/>`).join('');
+  let s = `<polygon class="${toneCls(cloth, null)}" points="${pts(p.base)}"/>`, glow = '', mus = '';
   for (const r of p.regions || []) {
     const role = r.muscle && roles[r.muscle];
-    if (role === 'main') s += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`;
-    else if (role === 'help') s += `<polygon class="mh" points="${pts(r.poly)}"/>`;
+    if (role === 'main') { mus += `<polygon class="mm anim ${opt.effort || ''}" points="${pts(r.poly)}"/>`; if (opt.glow) glow += `<polygon class="gw anim ${opt.glow}" points="${pts(r.poly)}"/>`; }
+    else if (role === 'help') mus += `<polygon class="mh" points="${pts(r.poly)}"/>`;
+    else if (r.ten) { if (opt.ten) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)} tn anim ${opt.ten}" points="${pts(r.poly)}"/>`; }
+    else if (r.tone || r.cloth) s += `<polygon class="${toneCls(r.cloth || cloth, r.tone)}" points="${pts(r.poly)}"/>`;
     else if (r.facet) s += `<polygon class="fc" points="${pts(r.poly)}"/>`;
   }
-  return s;
+  // LP: opt.tenOver draws the secondary-motion facets over the role muscles. Here mid back (helps) and lats (main)
+  // are painted, and the shoulder blade's inner edge lies on the mid back, so under it the edge would never show.
+  if (opt.tenOver) { let ov = ''; s = s.replace(/<polygon class="[^"]* tn anim [^"]*" points="[^"]*"\/>/g, m => { ov += m; return ''; }); return s + glow + mus + ov; }
+  return s + glow + mus;
 }
 const olPart = (p, far) => `<polygon class="${far ? 'olkf' : 'olk'}" points="${pts(p.base)}"/>`;
-// pass-aware helper: P(part) returns the outline or the fill markup for the current pass
-const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.far) : fillPart(p, roles, opt));
+const rimPart = p => `<polygon class="rim" points="${pts(p.base)}"/>`;
+// pass-aware helper: P(part) returns the outline, rim or fill markup for the current pass
+const passer = (pass, roles, opt = {}) => p => (pass === 'ol' ? olPart(p, opt.far) : pass === 'rim' ? (opt.far ? '' : rimPart(p)) : fillPart(p, roles, opt));
+// all three passes of one layer, in order
+const layer = f => f('ol') + f('rim') + f('fill');
+
+// Soft contact shadow (RIG.md section 20): three stacked --scrim ellipses, no filter.
+const shadow = (cx, cy, rx, ry) => `<g class="shadow">${[1, 0.72, 0.44].map(k => `<ellipse class="shd" cx="${n2(cx)}" cy="${n2(cy)}" rx="${n2(rx * k)}" ry="${n2(ry * k)}"/>`).join('')}</g>`;
 
 // ---------------------------------------------------------------------------
 // Timing (spec 2.5): 4 s rep; lift 0-25 %, hold to 37.5 %, return to 87.5 %, pause to 100 %.
@@ -293,6 +439,28 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
   --muscle-main:var(--accent);
   --muscle-help:color-mix(in srgb,var(--accent) 45%,var(--body));
   --equip:var(--surface-3);
+  --skin:color-mix(in srgb,var(--body) 92%,var(--text));
+  --skin-hi:color-mix(in srgb,var(--skin) var(--hi),var(--lit));
+  --skin-lo:color-mix(in srgb,var(--skin) var(--lo),var(--shd));
+  --tee:var(--body);
+  --tee-hi:color-mix(in srgb,var(--tee) var(--hi),var(--lit));
+  --tee-lo:color-mix(in srgb,var(--tee) var(--lo),var(--shd));
+  --shorts:color-mix(in srgb,var(--body) 78%,var(--text));
+  --shorts-hi:color-mix(in srgb,var(--shorts) var(--hi),var(--lit));
+  --shorts-lo:color-mix(in srgb,var(--shorts) var(--lo),var(--shd));
+  --shorts-far:color-mix(in srgb,var(--shorts) 45%,var(--surface-1));
+  --shoe:color-mix(in srgb,var(--body) 50%,var(--shd));
+  --shoe-hi:color-mix(in srgb,var(--shoe) var(--hi),var(--lit));
+  --shoe-lo:color-mix(in srgb,var(--shoe) var(--lo),var(--shd));
+  --shoe-far:color-mix(in srgb,var(--shoe) 45%,var(--surface-1));
+  --sole:color-mix(in srgb,var(--body) 45%,var(--lit));
+  --hair:color-mix(in srgb,var(--body) 50%,var(--shd));
+  --hair-hi:color-mix(in srgb,var(--hair) var(--hi),var(--lit));
+  --rim:color-mix(in srgb,var(--body) var(--rim-k),var(--lit));
+  --equip-hi:color-mix(in srgb,var(--equip) var(--hi),var(--lit));
+  --equip-lo:color-mix(in srgb,var(--equip) var(--lo),var(--shd));
+  --metal-lo:color-mix(in srgb,var(--fg-metal) 50%,var(--surface-1));
+  --seam:color-mix(in srgb,var(--fg-frame) 70%,var(--equip));
   position:relative;width:358px;height:460px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;
   background:var(--surface-2);color:var(--text);font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .stage{position:relative;flex:none;width:358px;height:276px;background:var(--surface-1);border-radius:var(--radius-lg);overflow:hidden}
@@ -334,8 +502,16 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .hint{flex:none;margin:0;font-size:12px;line-height:16px;color:var(--text-2);min-height:36px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* ---- figure paint (every value is a token or a color-mix of tokens) ---- */
-.b{fill:var(--body)}
-.bf{fill:var(--body-far)}
+.b{fill:var(--skin)}.bh{fill:var(--skin-hi)}.bl{fill:var(--skin-lo)}
+.t{fill:var(--tee)}.th{fill:var(--tee-hi)}.tl{fill:var(--tee-lo)}
+.p{fill:var(--shorts)}.ph{fill:var(--shorts-hi)}.pl{fill:var(--shorts-lo)}
+.s{fill:var(--shoe)}.sh{fill:var(--shoe-hi)}.sl{fill:var(--shoe-lo)}.so{fill:var(--sole)}
+.hr{fill:var(--hair)}.hrh{fill:var(--hair-hi)}
+.bf{fill:var(--body-far)}.pf{fill:var(--shorts-far)}.sf{fill:var(--shoe-far)}
+.tn{fill-opacity:.75}
+.rim{fill:none;stroke:var(--rim);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
+.gw{fill:none;stroke:var(--accent);stroke-width:calc(var(--sw) * 5px);stroke-opacity:.3;stroke-linejoin:round}
+.shd{fill:var(--scrim);fill-opacity:.16}
 .olk{fill:none;stroke:var(--fg-line);stroke-width:calc(var(--sw) * 3px);stroke-linejoin:round}
 .olkf{fill:none;stroke:var(--fg-line-far);stroke-width:calc(var(--sw) * 2.4px);stroke-linejoin:round}
 .fc{fill:var(--body-facet);stroke:var(--map-line);stroke-width:.6px;stroke-linejoin:round}
@@ -346,12 +522,16 @@ body{margin:0;font-family:Inter,"SF Pro Text",system-ui,-apple-system,"Segoe UI"
 .eqm{fill:var(--equip);stroke:var(--fg-metal);stroke-width:calc(var(--sw) * 1.2px);stroke-linejoin:round}
 .eqf{fill:var(--body-far);stroke:var(--fg-line-far);stroke-width:calc(var(--sw) * 1.1px);stroke-linejoin:round}
 .hd{fill:var(--fg-metal)}
+.eqs{fill:var(--equip)}.eqh{fill:var(--equip-hi)}.eql{fill:var(--equip-lo)}
+.knurl{fill:none;stroke:var(--metal-lo);stroke-width:calc(var(--sw) * .7px)}
+.seam{fill:none;stroke:var(--seam);stroke-width:calc(var(--sw) * .7px);stroke-dasharray:1.6 1.2}
+.prim{fill:none;stroke:var(--fg-metal);stroke-width:calc(var(--sw) * .7px)}
 .hdf{fill:var(--fg-line-far)}
 .pin{fill:var(--accent)}
 .rod{fill:none;stroke:var(--fg-frame);stroke-width:calc(var(--sw) * 1.1px)}
 .cable{fill:none;stroke:var(--fg-cable);stroke-width:calc(var(--sw) * 1.25px);stroke-linecap:round}
 .floor{stroke:var(--border);stroke-width:1px}
-.b,.bf,.olk,.olkf,.fc,.mm,.mh,.eq,.eqm,.eqf,.rod,.cable,.floor{vector-effect:non-scaling-stroke}
+.b,.bf,.olk,.olkf,.rim,.fc,.mm,.mh,.eq,.eqm,.eqf,.rod,.cable,.floor,.knurl,.seam,.prim{vector-effect:non-scaling-stroke}
 /* ---- guides: path, progress trail, zoom overlays, arrows (accent) ---- */
 .guide{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3;opacity:.6}
 .trail{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:1 1}
@@ -399,8 +579,17 @@ function arrowSvg(a) { // a = { from:[x,y], to:[x,y] } in scene units (rig secti
 // LP: exercise-local shape for the side-view lats region. The rig's region stops at the lower ribs,
 // and with the arm down by the side it hides almost all of it at the end of the pull (the moment
 // the lats work hardest). The lat really runs down the back to the waist, so here the region
-// follows the back edge down to local y -12.5. Only the Lat Pulldown uses this shape.
-SIDE.torso.regions = SIDE.torso.regions.map(r => r.muscle === 'lats' ? { ...r, poly: [[-12.2, -52], [-4, -55], [-2, -40], [-3.5, -26], [-3.5, -20], [-5, -12.5], [-10.5, -15], [-9.8, -26], [-11.8, -40]] } : r);
+// follows the back edge down to local y -12.5 (on the figure-detail torso outline, above the waistband).
+// Only the Lat Pulldown uses this shape.
+SIDE.torso.regions = SIDE.torso.regions.map(r => r.muscle === 'lats' ? { ...r, poly: [[-12.3, -52], [-5.4, -54.6], [-2.6, -42], [-3.8, -30], [-3.8, -20], [-5.2, -12.5], [-11.21, -12.5], [-10.8, -15], [-10, -26], [-11.9, -40]] } : r);
+// LP: the rig's side hand wraps a handle along its local x with the thumb at +x. Here the bar runs from the grip
+// toward the far hand along local -x (113-169 degrees from +x over the rep, section 7 of PLAYER.md), so the hand is
+// the rig's hand mirrored: thumb and index finger on the inside of the grip (toward the far hand), little finger
+// toward the near end of the bar, which is drawn over the hand from the little-finger side (as before).
+const LP_FIST = mirPart(SIDE.fist);   // the far hand holds the other end, so its inside (thumb) is toward the near hand: the rig's hand as is
+// LP: the face landmarks shoot.cjs and fit-motion.mjs measure against, as indices into the side head polygon
+// (HEAD_S): the forehead's front top (top), the front edge from the brow to the chin (edge), and the chin (chin).
+const FACE = { top: [4, 5], edge: [6, 12], chin: 12 };
 
 // LP (QA r2, decision D1 closed): the whole solve is a function of the grip Z (hand out to the side from the
 // shoulder joint, constant because the bar is rigid), so PLAYER.md can show what other grips would give.
@@ -637,7 +826,7 @@ function gripInset() {
   };
   const body = pass => { const pp = P(pass); return `${pp(FR.neck)}${pp(FR.torso)}${pp(FR.head)}`; };
   const vb = [-80, gy - 11, 160, -52 - (gy - 11)];   // crop: the whole bar with both bent ends, both hands, head and shoulders
-  const svg = `<svg class="inset-fig" viewBox="${vb.map(n2).join(' ')}" aria-hidden="true">${body('ol')}${body('fill')}<path class="lp-barline" d="M${bar.map(p => `${n2(p[0])} ${n2(p[1])}`).join('L')}"/>${arm('ol', 'L')}${arm('fill', 'L')}${arm('ol', 'R')}${arm('fill', 'R')}</svg>`;
+  const svg = `<svg class="inset-fig" viewBox="${vb.map(n2).join(' ')}" aria-hidden="true">${layer(body)}<path class="lp-barline" d="M${bar.map(p => `${n2(p[0])} ${n2(p[1])}`).join('L')}"/>${[-1, 1].map(sg => `<path class="lp-grip" d="M${[50, 56, 62, 68, 73].map(x => `${n2(sg * x)} ${n2(barY + BAR_DROP * (x - BAR_BEND) / (BAR_HALF - BAR_BEND))}`).join('L')}"/>`).join('')}${layer(q => arm(q, 'L'))}${layer(q => arm(q, 'R'))}</svg>`;
   return { svg, grip: [gxR, gy], elbow, uaA, faA, fu, ff, handsApart: 2 * gxR, shouldersOutside: 2 * SHOULDER_OUTSIDE, vb };
 }
 
@@ -734,6 +923,7 @@ ${animRule('lp-cable-f', 'lp-cable-f', origin(PF.x, PF.y + PF.r))}
 ${animRule('lp-cable-r', 'lp-cable-r', origin(40, REAR_TOP))}
 ${animRule('lp-togo', 'lp-togo')}
 ${animRule('lp-eff', 'lp-eff')}
+${animRule('lp-ten', 'lp-ten')}
 ${kf('lp-ua', p => { const q = pose(p); return `transform:translate(${n3(q.sc[0])}px,${n3(q.sc[1])}px) rotate(${n4(q.ua)}deg)`; })}
 ${kf('lp-ul', p => `transform:scaleY(${n4(pose(p).fu)})`)}
 ${kf('lp-fa', p => { const q = pose(p); return `transform:translateY(${n3(-(1 - q.fu) * LEN.upperArm)}px) rotate(${n4(q.fa)}deg)`; })}
@@ -750,7 +940,10 @@ ${kf('lp-cable-f', p => { const c = cab(p); return `transform:rotate(${n4(c.ang)
 ${kf('lp-cable-r', p => `transform:scaleY(${n4((REAR_RUN - lift(p)) / REAR_RUN)})`)}
 ${kf('lp-togo', p => `stroke-dashoffset:${n3(-Math.min(arcAt(p) + TOGO_GAP, 0.999))}`)}
 ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
+${kf('lp-ten', p => `opacity:${n3(p)}`)}
 .lp-barline{fill:none;stroke:var(--fg-metal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+/* grip texture on the bar's bent ends: ribs painted on the bar line itself (same path and width). A texture, not an occluder, so it takes no pointer hits: a hit test on the bar there finds the bar */
+.lp-grip{fill:none;stroke:var(--metal-lo);stroke-width:4;stroke-dasharray:.8 1.1;pointer-events:none}
 .lp-hook{fill:var(--fg-metal)}
 .lp-target{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
 /* ---- Grip close-up: front-view inset (QA r2 issue 3) ---- */
@@ -788,7 +981,7 @@ ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
     const Pp = passer(pass, roles, { far });
     return `<g class="j" style="transform-origin:0px 0px;transform:rotate(-90deg)">${Pp(SIDE.hipCap)}${Pp(SIDE.thigh)}<g class="j" style="transform-origin:0px 50px;transform:rotate(90deg)">${Pp(SIDE.kneeCap)}${Pp(SIDE.shin)}${Pp(SIDE.foot)}</g></g>`;
   };
-  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'lp-eff' }); return `<g class="j lp-torso">${Pp(SIDE.neck)}${Pp(SIDE.torso)}<g class="lp-head">${Pp(SIDE.head)}</g></g>${leg(pass)}`; };
+  const bodyLayer = pass => { const Pp = passer(pass, roles, { effort: 'lp-eff', glow: 'lp-ten', ten: 'lp-ten', tenOver: true }); return `<g class="j lp-torso">${Pp(SIDE.neck)}${Pp(SIDE.torso)}<g class="lp-head">${Pp(SIDE.head)}</g></g>${leg(pass)}`; };
   const upper = pass => { const Pp = passer(pass, roles); return `<g class="j anim lp-ul">${Pp(SIDE.upperArm)}</g>${Pp(SIDE.deltoid)}`; };
   // LP (QA r3): the lat bar is held equipment, so it lives INSIDE the near hand group (spec 2.4, RIG section 4) and can
   // never part from the near hand. It counter-rotates by minus the sum of the arm's rotations (torso -10, ua, fa), as
@@ -796,15 +989,17 @@ ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
   // the hook go under the fist fill (the fist wraps round the bar at the grip); the near end, from the little-finger
   // side of the hand out to its tip, goes over the fist. The near end is nearer the camera than the hand, the forearm
   // and the chest, so nothing may hide it: its visible length stays the same through the rep.
-  const barGroup = `<g class="j anim lp-bar"><path class="lp-barline" d="${barLocalD}"/><circle class="lp-hook" cx="${n2(BAR_MID[0])}" cy="${n2(16 + BAR_MID[1])}" r="2.4"/></g>`;
-  const barNear = `<g class="j anim lp-bar lp-bar-near"><path class="lp-barline" d="${nearEndD}"/></g>`;
-  const lower = pass => { const Pp = passer(pass, roles); return `${Pp(SIDE.elbowCap)}<g class="j anim lp-fl">${Pp(SIDE.forearm)}</g><g class="j anim lp-hd">${pass === 'fill' ? barGroup : ''}${Pp(SIDE.fist)}${pass === 'fill' ? `${barNear}<circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/>` : ''}</g>`; };
-  const arm = `<g class="j lp-torso"><g class="j anim lp-ua arm-near">${upper('ol')}${upper('fill')}<g class="j anim lp-fa">${lower('ol')}${lower('fill')}</g></g></g>`;
+  // grip texture (brief: grip texture on the handles): ribs on each bent end, |z| 50 to 73 (the bend is at 48, the tip at 75)
+  const gripD = sgn => `M${[50, 56, 62, 68, 73].map(z => barPt(sgn * z)).map(q => `${n2(q[0])} ${n2(16 + q[1])}`).join('L')}`;
+  const barGroup = `<g class="j anim lp-bar"><path class="lp-barline" d="${barLocalD}"/><path class="lp-grip" d="${gripD(-1)}"/><circle class="lp-hook" cx="${n2(BAR_MID[0])}" cy="${n2(16 + BAR_MID[1])}" r="2.4"/></g>`;
+  const barNear = `<g class="j anim lp-bar lp-bar-near"><path class="lp-barline" d="${nearEndD}"/><path class="lp-grip" d="${gripD(1)}"/></g>`;
+  const lower = pass => { const Pp = passer(pass, roles); return `${Pp(SIDE.elbowCap)}<g class="j anim lp-fl">${Pp(SIDE.forearm)}</g><g class="j anim lp-hd">${pass === 'fill' ? barGroup : ''}${Pp(LP_FIST)}${pass === 'fill' ? `${barNear}<circle class="ov ov-grip ovs" cx="0" cy="16" r="12"/>` : ''}</g>`; };
+  const arm = `<g class="j lp-torso"><g class="j anim lp-ua arm-near">${layer(upper)}<g class="j anim lp-fa">${layer(lower)}</g></g></g>`;
   // far hand: the rig's forearm and fist turned to point from the grip toward the elbow (local +y), in the far tones
   // far arm (QA r2 issue 2): the same arm seen on the far side, placed with the rig's depth view (each joint moves
   // (0.25, -0.15) per unit it is further from the camera), in the far tones, behind the bar and the body
   const fpart = part => ({ base: tr(part.base, FS0[0], FS0[1] + 62) });
-  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : fillPart(fpart(part), {}, { far: true }));
+  const FP = pass => part => (pass === 'ol' ? olPart(fpart(part), true) : fillPart(fpart(part), {}, { far: true }));   // far: outline and fill, no rim (RIG section 5)
   const farUpper = pass => `<g class="j anim lp-ful">${FP(pass)(SIDE.upperArm)}</g>${FP(pass)(SIDE.deltoid)}`;
   const farLower = pass => `${FP(pass)(SIDE.elbowCap)}<g class="j anim lp-ffl">${FP(pass)(SIDE.forearm)}</g><g class="j anim lp-fhd">${FP(pass)(SIDE.fist)}</g>`;
   const farArm = `<g class="far-arm"><g class="j anim lp-fua">${farUpper('ol')}${farUpper('fill')}<g class="j anim lp-ffa">${farLower('ol')}${farLower('fill')}</g></g></g>`;
@@ -813,16 +1008,20 @@ ${kf('lp-eff', p => `opacity:${n3(0.75 + 0.25 * p)}`)}
     const r = `<rect class="eq" x="16" y="${n2(112.5 + i * 13.5)}" width="48" height="12" rx="1.5"/>`;
     if (i < 7) moving += r; else still += r;
   }
-  moving += `<rect class="pin lp-pin" x="63" y="${n2(112.5 + 6 * 13.5 + 4)}" width="9" height="4" rx="2"/>`;   // pin in plate 7 (spec)
+  const bevel = (i0, i1) => `<path class="eqh" d="${Array.from({ length: i1 - i0 }, (_, k) => `M17.2 ${n2(113.6 + (i0 + k) * 13.5)}h45.6v1.2h-45.6z`).join('')}"/>`;   // each plate's lighter top bevel (rig section 7)
+  moving += bevel(0, 7); still += bevel(7, 10);
+  moving += `<rect class="pin lp-pin" x="63" y="${n2(112.5 + 6 * 13.5 + 4)}" width="9" height="4" rx="2"/><circle class="pin" cx="69.8" cy="${n2(112.5 + 6 * 13.5 + 6)}" r="2.4"/>`;   // pin in plate 7 (spec)
   moving += `<rect class="eqm" x="35" y="106" width="10" height="6.5" rx="1"/>`;                        // top bracket the cable pulls
   const pathD = `M${pathPts.map(p => `${n2(p[0])} ${n2(p[1])}`).join('L')}`;
   const scene = `<line class="floor" x1="16" y1="258" x2="342" y2="258"/>
-<g class="machine-back"><rect class="eq" x="16" y="250" width="246" height="8" rx="1.5"/><g class="lp-stackset"><line class="rod" x1="22" y1="${BEAM + 8}" x2="22" y2="250"/><line class="rod" x1="58" y1="${BEAM + 8}" x2="58" y2="250"/>${still}<g class="j anim lp-stack">${moving}</g><line class="cable j anim lp-cable-r" x1="40" y1="${REAR_TOP}" x2="40" y2="106"/></g><rect class="eq" x="72" y="${BEAM}" width="12" height="${250 - BEAM}" rx="1.5"/><rect class="eq" x="16" y="${BEAM}" width="162" height="8" rx="2"/><g class="lp-stackset"><circle class="eqm" cx="47" cy="${REAR_TOP}" r="7"/><circle class="rod" cx="47" cy="${REAR_TOP}" r="2"/></g><circle class="eqm" cx="${PF.x}" cy="${PF.y}" r="${PF.r}"/><circle class="rod" cx="${PF.x}" cy="${PF.y}" r="2"/></g>
+${shadow(208, 258, 17, 2.6)}
+<g class="machine-back"><rect class="eq" x="16" y="250" width="246" height="8" rx="1.5"/><g class="lp-stackset"><line class="rod" x1="22" y1="${BEAM + 8}" x2="22" y2="250"/><line class="rod" x1="58" y1="${BEAM + 8}" x2="58" y2="250"/>${still}<g class="j anim lp-stack">${moving}</g><line class="cable j anim lp-cable-r" x1="40" y1="${REAR_TOP}" x2="40" y2="106"/></g><rect class="eq" x="72" y="${BEAM}" width="12" height="${250 - BEAM}" rx="1.5"/><rect class="eq" x="16" y="${BEAM}" width="162" height="8" rx="2"/><g class="lp-stackset"><circle class="eqm" cx="47" cy="${REAR_TOP}" r="7"/><circle class="prim" cx="47" cy="${REAR_TOP}" r="4.6"/><circle class="hd" cx="47" cy="${REAR_TOP}" r="1.4"/></g><circle class="eqm" cx="${PF.x}" cy="${PF.y}" r="${PF.r}"/><circle class="prim" cx="${PF.x}" cy="${PF.y}" r="3.2"/><circle class="hd" cx="${PF.x}" cy="${PF.y}" r="1.2"/></g>
 <g class="far-side" transform="translate(${FAR[0]} ${FAR[1]})"><g transform="translate(${H[0]} ${H[1]})">${leg('ol', true)}${leg('fill', true)}</g></g>
 ${farArm}
-<g class="machine-front"><rect class="eq" x="150" y="224" width="9" height="26"/><rect class="eq" x="188" y="191" width="8" height="59"/><rect class="eq" x="118" y="214" width="68" height="10" rx="4"/></g>
-<g class="figure" transform="translate(${H[0]} ${H[1]})">${bodyLayer('ol')}${bodyLayer('fill')}</g>
-<rect class="eq" x="180" y="184" width="24" height="14" rx="7"/><rect class="ov ov-pad ovs" x="178" y="182" width="28" height="18" rx="9"/>
+<g class="machine-front"><rect class="eq" x="150" y="224" width="9" height="26"/><rect class="eq" x="188" y="191" width="8" height="59"/><rect class="eq" x="118" y="214" width="68" height="10" rx="4"/><rect class="seam" x="120.1" y="216.1" width="63.8" height="5.8" rx="2.2"/></g>
+${shadow(160, 214.4, 26, 2.2)}
+<g class="figure" transform="translate(${H[0]} ${H[1]})">${layer(bodyLayer)}</g>
+<rect class="eq" x="180" y="184" width="24" height="14" rx="7"/><rect class="seam" x="182.1" y="186.1" width="19.8" height="9.8" rx="4.9"/><rect class="ov ov-pad ovs" x="178" y="182" width="28" height="18" rx="9"/>
 <path class="guide" d="${pathD}"/><path class="trail j anim lp-togo" d="${pathD}" pathLength="1"/><line class="lp-target" x1="${n2(LP.X1 - 5)}" y1="${Y1}" x2="${n2(LP.X1 + 5)}" y2="${Y1}"/>
 <g class="j anim lp-cable-f"><line class="cable" x1="${PF.x}" y1="${PF.y + PF.r}" x2="${PF.x}" y2="${PF.y + PF.r + 1}"/></g>
 <g class="figure-arm" transform="translate(${H[0]} ${H[1]})">${arm}</g>
@@ -853,7 +1052,7 @@ ${farArm}
     smoothness, smoothCheck: smoothNumbers(LP),
     series: { fu: dense.map(q => q.fu), ff: dense.map(q => q.ff), inside: dense.map(q => q.inside), ua: sampled.map(q => q.ua), fa: sampled.map(q => q.fa) },
     truth: { topElev2D: angTo([pose(0).E[0] - pose(0).S[0], pose(0).E[1] - pose(0).S[1]], [LP.TD[0], LP.TD[1]]), endElev2D: angTo([pose(1).E[0] - pose(1).S[0], pose(1).E[1] - pose(1).S[1]], [LP.TD[0], LP.TD[1]]), topLine: angTo(sub(pose(0).G, pose(0).S), LP.TD), gripTimes: gripTimes(LP.Z), tile2: { at: TILE2, p: t2.p, elbowBelowShoulder: t2.E[1] - t2.S[1], elbowBelowGrip: t2.E[1] - t2.G[1], forearmFromVertical: Math.abs(deg(Math.atan2(t2.G[0] - t2.E[0], t2.E[1] - t2.G[1]))) }, topInside: pose(0).inside, topElev: pose(0).elev, endInside: pose(1).inside, endElev: pose(1).elev, endBehind: pose(1).behind, endBehind2D: deg(Math.atan2(pose(1).S[0] - pose(1).E[0], pose(1).E[1] - pose(1).S[1])) + LEAN, minFu: Math.min(...dense.map(q => q.fu)), minFf: Math.min(...dense.map(q => q.ff)), liftEnd: LIFT1, travel: TRAVEL },
-    geo: { H, X0, Y0, Y1, X1: LP.X1, XF: LP.XF, YK: LP.YK, YC: LP.YC, TRAVEL, Z: LP.Z, NEAR_Z, C0, BEAM, PF, REAR_TOP, REAR_RUN, CAB0, LIFT1, SC0: LP.SC0, SC1: LP.SC1, FS0, DEPTH_K, FAR_GRIP, BAR_MID, BAR_PTS, zooms: { Z1, Z2, Z3 }, inset: { grip: inset.grip, elbow: inset.elbow, handsApart: inset.handsApart, shouldersOutside: inset.shouldersOutside, uaA: inset.uaA, faA: inset.faA } },
+    geo: { face: FACE, H, X0, Y0, Y1, X1: LP.X1, XF: LP.XF, YK: LP.YK, YC: LP.YC, TRAVEL, Z: LP.Z, NEAR_Z, C0, BEAM, PF, REAR_TOP, REAR_RUN, CAB0, LIFT1, SC0: LP.SC0, SC1: LP.SC1, FS0, DEPTH_K, FAR_GRIP, BAR_MID, BAR_PTS, zooms: { Z1, Z2, Z3 }, inset: { grip: inset.grip, elbow: inset.elbow, handsApart: inset.handsApart, shouldersOutside: inset.shouldersOutside, uaA: inset.uaA, faA: inset.faA } },
   };
 }
 
@@ -985,7 +1184,7 @@ ${HARNESS_JS}
 const WRITE = !process.env.LP_NO_WRITE;   // LP_NO_WRITE=1: import the pieces without writing files (work/r3/dc-*.mjs)
 if (WRITE) fs.writeFileSync(path.join(DIR, 'index.html'), harness);
 if (WRITE) fs.writeFileSync(path.join(DIR, 'poses.json'), JSON.stringify({ latPulldown: { keyTable: lp.keyTable, truth: lp.truth, grips: GRIP_OPTIONS, drift: lp.drift, smoothness: lp.smoothness, smoothCheck: lp.smoothCheck, samples: SAMPLES, cableTravel: lp.cableTravel, geo: lp.geo, series: lp.series, picsAt: EXL.picsAt, chips: EXL.chips, tileBox: EXL.tileBox }, contrast: contrastTable() }, null, 1));
-export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES, SIDE, LP, makeLP, LP_OPT, extrasOf, smoothNumbers, smLine, progress as progressOf };
+export { EXL, lp, ARTBOARD_CSS, stageMarkup, belowMarkup, tilesMarkup, SAMPLES, SIDE, LP_FIST, FACE, LP, makeLP, LP_OPT, extrasOf, smoothNumbers, smLine, progress as progressOf };
 if (WRITE) console.log('smoothness check, as the page draws it (../smooth-check.cjs limits: a 1 %, b 8 %, c 3 x, d 4 deg):\n' + smLine(lp.smoothCheck));
 if (WRITE) console.log(JSON.stringify({ truth: lp.truth, drift: lp.drift, X0: lp.geo.X0, Y0: lp.geo.Y0, zooms: lp.geo.zooms, grips: GRIP_OPTIONS.map(o => `Z${o.Z} x${o.times.toFixed(2)} top ${o.topElev.toFixed(1)} end ${o.endInside.toFixed(1)} minFu ${o.minFu.toFixed(2)}`), key: lp.keyTable.map(r => `p${r.p} S(${r.shoulder}) E(${r.elbow}) ua ${r.ua} fu ${r.fu} fa ${r.fa} ff ${r.ff} in ${r.inside} elev ${r.elev} beh ${r.behind} lift ${r.lift}`) }, null, 1));
 
@@ -1010,7 +1209,7 @@ if (WRITE) console.log(JSON.stringify({ truth: lp.truth, drift: lp.drift, X0: lp
   const barTop = `(${f(g.X0)}, ${f(g.Y0)})`;
   const md = `# Lat Pulldown player: drop-in pieces for \`Player-LatPulldown.dc.html\`
 
-Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, paint, stroke widths, timing and restart method. QA round 3 fixes are in (section 0 maps each of the 9 issues to its fix and its proof; the round 2 table follows it). Checked in Chromium on 2026-09-27, result: **${summary}** (section 11). Decisions D1, D2 and D3 (section 9) are signed off, and spec.md section 3.2 carries them. Smoothness upgrade (\`../UPGRADE-BRIEF.md\`, smoothness target): minimum-jerk timing, a solved pose every ${LIFT_STEP} % of the rep in the pull and every 0.5 % in the return, and one fitted motion, so every drawn angle, the cable and the bar pass the numeric smoothness check (section 7). The canvas artboard \`../project/Player-LatPulldown.dc.html\` carries the same pieces (section 2). This file is generated by \`node gen.mjs\`, from the same source as \`index.html\`, so the pieces below are exactly what the harness shows.
+Status: built on the final shared rig (\`../rig-final/RIG.md\`), same parts, paint, stroke widths, timing and restart method, including the figure detail of RIG.md section 20 (head, clothing, muscle facets, hands that wrap the bar, 3-tone token shading with a rim line, contact shadows, the target-muscle glow and the secondary-motion facets, equipment detail), so the three players share one look. QA round 3 fixes are in (section 0 maps each of the 9 issues to its fix and its proof; the round 2 table follows it). Checked in Chromium on 2026-09-27, result: **${summary}** (section 11). Decisions D1, D2 and D3 (section 9) are signed off, and spec.md section 3.2 carries them. Smoothness upgrade (\`../UPGRADE-BRIEF.md\`, smoothness target): minimum-jerk timing, a solved pose every ${LIFT_STEP} % of the rep in the pull and every 0.5 % in the return, and one fitted motion, so every drawn angle, the cable and the bar pass the numeric smoothness check (section 7). The canvas artboard \`../project/Player-LatPulldown.dc.html\` carries the same pieces (section 2). This file is generated by \`node gen.mjs\`, from the same source as \`index.html\`, so the pieces below are exactly what the harness shows.
 
 ## In plain words
 
@@ -1187,17 +1386,20 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 ## 8. Scene layout (stage units, back to front)
 
 - Floor x 16-342 at y 258. Base rail x 16-262, y 250-258.
-- Weight stack (rig section 7): 10 plates 48 x 12 at x 16-64 from y 112.5; guide rods x 22 and 58 (y ${g.BEAM + 8}-250); the pin in plate 7 (x 63-72, accent); plates 1-7, the pin and the top bracket (x 35-45, y 106) lift together by half the cable travel, 0 to ${f(g.LIFT1, 2)}. Rear pulley r 7 at (47, ${g.REAR_TOP}); the rear cable runs down its left side at x 40 to the bracket and shortens as the stack rises. All of these are in \`.lp-stackset\`, which hides in the Grip and Path close-ups.
-- Upright x 72-84, y ${g.BEAM}-250. Top beam x 16-178, y ${g.BEAM}-${g.BEAM + 8}, below the pill row (pills y 10-32). Front pulley r ${g.PF.r} at (${g.PF.x}, ${g.PF.y}) (top at y ${f(g.PF.y - g.PF.r)}, below the pills), straight above the cable hook at the top of the rep. The run between the pulleys is inside the beam.
+- Weight stack (rig section 7): 10 plates 48 x 12 at x 16-64 from y 112.5; guide rods x 22 and 58 (y ${g.BEAM + 8}-250); each plate with a lighter top bevel; the pin in plate 7 (x 63-72, accent) with its knob (r 2.4 at x 69.8, clear of the upright); plates 1-7, the pin and the top bracket (x 35-45, y 106) lift together by half the cable travel, 0 to ${f(g.LIFT1, 2)}. Rear pulley r 7 at (47, ${g.REAR_TOP}) with a rim ring (r 4.6) and a hub; the rear cable runs down its left side at x 40 to the bracket and shortens as the stack rises. All of these are in \`.lp-stackset\`, which hides in the Grip and Path close-ups.
+- Upright x 72-84, y ${g.BEAM}-250. Top beam x 16-178, y ${g.BEAM}-${g.BEAM + 8}, below the pill row (pills y 10-32). Front pulley r ${g.PF.r} at (${g.PF.x}, ${g.PF.y}) with a rim ring (r 3.2) and a hub (top at y ${f(g.PF.y - g.PF.r)}, below the pills), straight above the cable hook at the top of the rep. The run between the pulleys is inside the beam.
 - Far leg (far tones) at \`translate(5 -3)\`.
 - Far arm (far tones), section 7.
-- Seat pad x 118-186, y 214-224, post x 150-159. Thigh-pad post x 188-196 (behind the near leg).
-- Body (torso, neck and head leaned 10 degrees; seated leg as the chest press). Thigh pad roller x 180-204, y 184-198, rx 7, on top of the thigh.
+- Seat pad x 118-186, y 214-224, post x 150-159, with a stitched seam 2.1 inside its edge. Thigh-pad post x 188-196 (behind the near leg).
+- Contact shadows (RIG.md section 20): under the feet on the floor (208, 258, rx 17) and under the thighs on the seat (160, 214.4, rx 26), outside \`.figure\`, so no figure box changes.
+- Body (torso, neck and head leaned 10 degrees; seated leg as the chest press), painted in three passes (outline, rim, fill: RIG.md section 5) with the figure-detail parts of RIG.md section 20. Thigh pad roller x 180-204, y 184-198, rx 7, on top of the thigh, with a stitched seam.
 - Path guide (dashed, the whole hand path) and the "still to go" line (solid accent; \`stroke-dashoffset\` = minus the path fraction already travelled, minus 16 units, so it starts 6 below the fist and shrinks as the bar comes down), plus the target mark: a 10-wide accent line across the path's end at (${g.X1}, ${g.Y1}).
 - The front cable (\`lp-cable-f\`), drawn after the far arm, the far leg and the body (QA r3): it hangs on the bar's middle, which is nearer the camera than the far hand and in front of the face, so nothing but the near arm may cover it. One line from the pulley's bottom (${g.PF.x}, ${f(g.PF.y + g.PF.r)}) to the hook; it turns and stretches with the bar (\`rotate()\` and \`scaleY()\` about the pulley bottom, on the same samples).
 - The near arm on top. The lat bar lives inside its hand group (\`lp-hd\`; spec 2.4, RIG section 4), so the grip can never come apart: \`lp-bar\` turns by \`rotate(-10 - ua - fa)\` about the grip (0, 16), minus the sum of the arm's rotations, as the rig's dumbbells do, so the bar keeps its fixed look on screen. Two layers: the whole bar and the hook under the fist fill (the fist wraps round the bar), and the near end, from the little-finger side of the hand (${HAND_HALF} nearer the camera than the grip) out to its tip, over the fist. The near end is nearer the camera than the hand, the forearm and the chest, so it always shows and the bar's visible length never changes. The bar: a 4-wide metal line, drawn with the depth view: 150 long, straight between +-48 of the centre line, ends bent down 6. Relative to the near grip: near end (${g.BAR_PTS[0].map(v => f(v, 2)).join(', ')}), bends at (${g.BAR_PTS[1].map(v => f(v, 2)).join(', ')}) and (${g.BAR_PTS[2].map(v => f(v, 2)).join(', ')}), far end (${g.BAR_PTS[3].map(v => f(v, 2)).join(', ')}); far hand at (${g.FAR_GRIP.map(v => f(v, 2)).join(', ')}); the cable hook (metal dot r 2.4) on the middle at (${g.BAR_MID.map(v => f(v, 2)).join(', ')}).
 - Then \`.lp-over\`: the same guide, line and mark again, shown only in the Path close-up.
-- Muscles: main Lats (effort cue 0.75 to 1.0 opacity); helps Biceps and Mid back.
+- Muscles: main Lats (effort cue 0.75 to 1.0 opacity, and the accent glow \`gw\` under it); helps Biceps and Mid back. This player's lats region runs down the back to the waist (section 9).
+- Glow and secondary motion (RIG.md section 20): one channel \`lp-ten\` (\`opacity\` = the move progress p, \`-a\` / \`-b\` sets, no \`rotate()\`) runs the glow on the lats, so it rises through the pull, is strongest in the hold at the chest and fades on the way up, and two facets inside the torso: \`brace\` (the belly wall firming) and \`bladeEdge\` (the inner edge of the shoulder blade showing as the blades are pulled down and back). Here mid back and lats are painted as roles, so the facets are drawn over them (\`tenOver\`); on the rig they sit under unpainted regions. The joints do not move for it; the shoulder joint's own small drop and pull back (the spec's shoulder-blade row) is the \`lp-ua\` translate, as before.
+- Hands: the rig's side hand (palm heel, thumb, four fingers over a dark backing) wraps the bar. The near hand is the rig's hand mirrored, so the thumb and index finger are on the inside of the grip (toward the far hand) and the little finger toward the near end of the bar; the far hand is the rig's hand as it is (its inside is toward the near hand). Grip texture: ribs (\`lp-grip\`, \`--metal-lo\` dashes on the bar line) on both bent ends, |z| 50 to 73, also in the Grip inset.
 
 ## 9. Differences from the spec, and why
 
@@ -1215,11 +1417,10 @@ The far arm: the same arm on the far side, placed with the rig's depth view (eac
 | Path caption "The bar comes straight down in front of your face to the top of your chest." | "${EXL.chips[1].caption}" | Decision D2 below. |
 | Stack pin always shown | the whole stack hides in the Grip and Path close-ups and their stills | QA r1 issue 5 and QA r2 issue 6: there it sat cut into slivers on the left edge. Same rule as the rig's far lever in the chest-press Grip zoom. |
 | Slow motion pill: \`.chip-accent\` look (see-through \`--accent-soft\`) | accent tint laid over \`--surface-2\`, as the tile badge | QA r1 issue 1: nothing can show through its text. |
-| Muscle "Mid back" (no side-view region in the rig) | a \`midBack\` region on the side torso, between the upper traps and the lats | So the helper can be tinted. It paints only when an exercise gives mid back a role. |
 | Rig side-view lats region | this player only: the region runs on down the back to the waist | With the arm down by the side at the end of the pull, the rig's region was almost fully hidden at the moment the lats work hardest. |
 | Pictures and zoom as class strings on the grid (\`pics on\`, \`pics zoomed\`) | root classes \`pictures\`, \`zoom-1\`..\`zoom-3\` | As asked for this build; the reduced-motion rule keys off the same root classes. |
 
-Back to the spec (so no longer differences): the lat bar lives inside the near hand group (spec 2.4, RIG section 4; round 2 moved it with its own keyframes, and section 9 did not say so); the Path close-up target 150, 112, 1.4 (round 2 had 152, 136, 1.6); Pictures tile 2 at 12.5 % (the fist is ${face ? face.tile2Gap.toFixed(1) : '?'} clear of the face there and the elbow is in view under the bar); the Grip bubble text "Hands a little wider than your shoulders, thumbs around the bar."
+Back to the spec (so no longer differences): the rig's side torso now has its own \`midBack\` region (the shoulder blade, painted only for roles), used here for the helper tint; the lat bar lives inside the near hand group (spec 2.4, RIG section 4; round 2 moved it with its own keyframes, and section 9 did not say so); the Path close-up target 150, 112, 1.4 (round 2 had 152, 136, 1.6); Pictures tile 2 at 12.5 % (the fist is ${face ? face.tile2Gap.toFixed(1) : '?'} clear of the face there and the elbow is in view under the bar); the Grip bubble text "Hands a little wider than your shoulders, thumbs around the bar."
 
 ### Decision D1 (decided by the builder, signed off): the arm angle at the top, and the grip width
 

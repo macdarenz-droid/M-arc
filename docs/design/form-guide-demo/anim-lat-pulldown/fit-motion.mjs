@@ -17,7 +17,7 @@
 //    and falling once per phase (dip under 1.2 %).
 process.env.LP_NO_WRITE = '1';
 const m = await import('./gen.mjs');
-const { SIDE, LEN } = m;
+const { SIDE, LEN, LP_FIST, FACE } = m;
 const GENS = +(process.argv[2] || 350), SEED = +(process.argv[3] || 9);
 const LIM = { a: 0.009, b: 0.075, c: 2.8, d: 3.8 };
 const rad = d => (d * Math.PI) / 180, deg = r => (r * 180) / Math.PI;
@@ -37,10 +37,10 @@ const nearParts = (L, q) => {   // .figure-arm: translate(H) rotate(-10) > lp-ua
   const fa = mul(ua, about([0, -24], T(0, -(1 - q.fu) * LEN.upperArm), R(q.fa)));
   const tp = (t, poly) => poly.map(p => ap(t, p));
   return { upper: tp(mul(ua, about([0, -62], S(1, q.fu))), SIDE.upperArm.base), delt: tp(ua, SIDE.deltoid.base), elbow: tp(fa, SIDE.elbowCap.base),
-    fore: tp(mul(fa, about([0, -24], S(1, q.ff))), SIDE.forearm.base), fist: tp(mul(fa, T(0, -(1 - q.ff) * LEN.forearm)), SIDE.fist.base) };
+    fore: tp(mul(fa, about([0, -24], S(1, q.ff))), SIDE.forearm.base), fist: tp(mul(fa, T(0, -(1 - q.ff) * LEN.forearm)), LP_FIST.base) };
 };
-// shoot.cjs 3b4: no near-arm part over the face's front edge (head points 4..8) while the grip passes the face
-const faceClear = (L, q) => { const prof = edge(headPoly(L).slice(4, 9), false); let mn = 1e9;
+// shoot.cjs 3b4: no near-arm part over the face's front edge (brow to chin, FACE.edge) while the grip passes the face
+const faceClear = (L, q) => { const prof = edge(headPoly(L).slice(FACE.edge[0], FACE.edge[1] + 1), false); let mn = 1e9;
   for (const poly of Object.values(nearParts(L, q))) { if (prof.some(s => pip(s, poly))) return -1; for (const s of prof) for (let j = 0; j < poly.length; j++) mn = Math.min(mn, seg(s, poly[j], poly[(j + 1) % poly.length])); } return mn; };
 // shoot.cjs 3b4: fist and forearm vs the whole head shape (0 when they overlap)
 const headGap = (L, q) => { const H = headPoly(L), P = nearParts(L, q);
@@ -60,7 +60,7 @@ const decode = v => { const w = v.slice(nI, nI + nW).map(x => Math.abs(x) + 1e-4
   for (let k = 0; k < nI; k++) { c += w[k] / tot; PV.push(c); }
   const [IN0, B0, SK, ...pc] = v.slice(nI + nW); return { ...base, PX: v.slice(0, nI), PV, IN0, B0, SK, PC: [pc.slice(0, 3), pc.slice(3, 6)], TAB: 400 }; };
 const SCALE = [...Array(nI).fill(3), ...Array(nW).fill(0.2), 1.5, 4, 0.3, ...Array(6).fill(0.15)];
-const HS = (() => { const H = headPoly(m.LP); return { yTop: Math.min(H[3][1], H[4][1]), yChin: H[8][1] }; })();
+const HS = (() => { const H = headPoly(m.LP); return { yTop: Math.min(...H.slice(FACE.top[0], FACE.top[1] + 1).map(p => p[1])), yChin: H[FACE.chin][1] }; })();
 const dip = s => { const mx = Math.max(...s); let w = 0, pre = -1; const suf = []; let mm = -1; for (let i = s.length - 1; i >= 0; i--) { mm = Math.max(mm, s[i]); suf[i] = mm; } for (let j = 0; j < s.length; j++) { if (j > 0 && j < s.length - 1) w = Math.max(w, Math.min(pre, suf[j + 1]) - s[j]); pre = Math.max(pre, s[j]); } return mx ? w / mx : 0; };
 
 function score(v) {

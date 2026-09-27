@@ -57,6 +57,27 @@ const netOpen = ins[100] - Math.min(...ins);
 check(lastOpen && netOpen <= 0.3, `elbow closes steadily through the pull (${f1(ins[0])} -> ${f1(ins[100])}); it opens only ${netOpen.toFixed(2)} deg in the last 5 % (limit 0.3)`);
 check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `grip: hands ${G.inset.handsApart} apart, ${(G.inset.handsApart / G.inset.shouldersOutside).toFixed(2)} times the outside shoulder width (${G.inset.shouldersOutside}): "a little wider than your shoulders" (spec 3.2 Grip caption and About step 2)`);
 
+// ---- Figure detail (RIG.md section 20; the same checks as rig-final/shoot.cjs) -------------
+// Paints: the outline over the T-shirt and skin facets, the cloth tones against skin and pads, the rim, knurl and seam
+// lines, all five themes, computed from the CSS the page uses (gen.mjs contrastTable()).
+for (const c of JSON.parse(fs.readFileSync(path.join(DIR, 'poses.json'), 'utf8')).contrast) {
+  const facets = [c.lineTeeHi, c.lineTeeLo, c.lineSkin, c.lineSkinHi, c.lineSkinLo];
+  check(c.line >= 3 && c.lineBody >= 3 && c.frame >= 3 && c.metal >= 3 && c.cable >= 3 && Math.min(...facets) >= 2 && c.skinTee >= 1.1 && c.shortsSkin >= 1.25 && c.shortsPad >= 1.5 && c.bodyPad >= 1.2 && c.rimLine >= 1.25 && c.knurl >= 1.8 && c.seam >= 1.5,
+    `${c.id}: figure outline ${c.line.toFixed(2)} on stage and ${c.lineBody.toFixed(2)} over the body, frame ${c.frame.toFixed(2)}, metal ${c.metal.toFixed(2)}, cable ${c.cable.toFixed(2)} (>= 3); outline over the T-shirt facets ${c.lineTeeHi.toFixed(2)} / ${c.lineTeeLo.toFixed(2)} and skin ${c.lineSkin.toFixed(2)} (light ${c.lineSkinHi.toFixed(2)}, dark ${c.lineSkinLo.toFixed(2)}) (>= 2); skin vs T-shirt ${c.skinTee.toFixed(2)} (>= 1.1), shorts vs skin ${c.shortsSkin.toFixed(2)} (>= 1.25) and vs pads ${c.shortsPad.toFixed(2)} (>= 1.5), T-shirt vs pads ${c.bodyPad.toFixed(2)} (>= 1.2); rim vs outline ${c.rimLine.toFixed(2)} (>= 1.25), knurl ${c.knurl.toFixed(2)} (>= 1.8), seam ${c.seam.toFixed(2)} (>= 1.5)`);
+}
+// Tokens only (UPGRADE-BRIEF.md, shading): no colour literal in the page CSS (the artboard's <style>, piece A) or the
+// player markup. The only literals allowed are the token definitions: THEMES / themeVars() in the script and the root
+// style string they produce on .player (stripped before the scan).
+{
+  const LIT = [/(^|[\s:(,="'])#[0-9a-fA-F]{3,8}(?![\w-])/, /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i, /(?<![\w-])(?:white|black|red|green|blue|gr[ae]y|silver|yellow|orange|purple|navy|teal|maroon|olive|lime|aqua|fuchsia|pink|brown|gold|GrayText|CanvasText|Canvas)(?![\w-])/i];
+  const src = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+  const css = src.slice(src.indexOf('<style>') + 7, src.indexOf('</style>'));
+  const markup = src.slice(src.indexOf('<div class="player'), src.indexOf('<p class="harness-note"')).replace(/(<div class="player[^"]*")((?:\s+(?!style=)[\w-]+="[^"]*")*)\s+style="[^"]*"/g, '$1$2');
+  const hits = [];
+  for (const [where, text] of [['CSS', css], ['markup', markup]]) for (const re of LIT) { const m = text.match(re); if (m) hits.push(`${where}: "${text.slice(Math.max(0, m.index - 30), m.index + 30).replace(/\s+/g, ' ')}"`); }
+  check(hits.length === 0 && markup.length > 1000, `index.html: no colour literal in the page CSS or the player markup, every paint is a token or a color-mix() of tokens (${hits.length ? hits.join(' | ') : 'CSS ' + css.length + ' chars, markup ' + markup.length + ' chars scanned'})`);
+}
+
 (async () => {
   const browser = await chromium.launch(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : {});
   const errors = [];
@@ -200,7 +221,7 @@ check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `gr
   // never happen, so the "bar comes down in front of your face" cue is always seen. Tile 2 must be clear of the face.
   {
     const { page, ctx } = await open('?t=0');
-    const res = await page.evaluate(({ tile2, X0, Y0 }) => {
+    const res = await page.evaluate(({ tile2, X0, Y0, FACE }) => {
       const root = document.getElementById('player'), svg = document.querySelector('.scene');
       const tp = el => { const m = el.getCTM(); return [...el.points].map(q => { const r = new DOMPoint(q.x, q.y).matrixTransform(m); return [r.x, r.y]; }); };
       const inside = (pt, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if (((yi > pt[1]) !== (yj > pt[1])) && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi)) c = !c; } return c; };
@@ -208,25 +229,28 @@ check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `gr
       const head = document.querySelector('.stage .figure .lp-head polygon.b');
       const arm = document.querySelector('.stage .figure-arm');
       const hd = arm.querySelector('.lp-hd polygon.b'), fl = arm.querySelector('.lp-fl polygon.b');
-      const parts = [...arm.querySelectorAll('polygon.b')];
+      // every near-arm part's own shape (upper arm, deltoid, elbow, forearm, fist): skin parts paint .b, the deltoid and
+      // sleeve paint the T-shirt tone .t since the figure detail (RIG.md section 20)
+      const parts = [...arm.querySelectorAll('polygon.b, polygon.t')];
       const bar = document.querySelector('.stage .figure-arm .lp-bar');
       const map = (el, x, y) => { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p.matrixTransform(svg.getScreenCTM().inverse().multiply(el.getScreenCTM())); };
       const at = u => root.style.setProperty('--delay', (-4 * u) + 's');
       const overHead = () => { const H = tp(head), A = tp(hd), F = tp(fl); return [...edge(A), ...edge(F)].some(s => inside(s, H)) || edge(H).some(s => inside(s, A) || inside(s, F)); };
-      // face front edge: head points 4..8 (brow, nose tip, under the nose, mouth, chin); the top corner of the forehead
-      // and the underside of the jaw are left out, because an arm held overhead in a true side view always passes over
-      // the temple and the jaw beside them
-      const profile = () => edge(tp(head).slice(4, 9), false);
+      // face front edge: the head points from the brow to the chin (brow, nose tip, under the nose, mouth, chin; indices
+      // FACE.edge in poses.json, since the figure-detail head has more points); the top corner of the forehead and the
+      // underside of the jaw are left out, because an arm held overhead in a true side view always passes over the
+      // temple and the jaw beside them
+      const profile = () => edge(tp(head).slice(FACE.edge[0], FACE.edge[1] + 1), false);
       const overFace = () => { const pr = profile(); return parts.some(p => { const Q = tp(p); return pr.some(s => inside(s, Q)); }); };
       const seg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy))); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); };
       const pd = (P, Q) => { let m = 1e9; for (let i = 0; i < P.length; i++) { const a = P[i], b = P[(i + 1) % P.length]; for (let k = 0; k < 16; k++) { const s = [a[0] + (b[0] - a[0]) * k / 16, a[1] + (b[1] - a[1]) * k / 16]; for (let j = 0; j < Q.length; j++) m = Math.min(m, seg(s, Q[j], Q[(j + 1) % Q.length])); } } return m; };
       const gap = u => { at(u); if (overHead()) return 0; const H = tp(head), A = tp(hd), F = tp(fl); return Math.min(pd(A, H), pd(H, A), pd(F, H), pd(H, F)); };
-      const H0 = tp(head), yTop = Math.min(...H0.slice(3, 5).map(p => p[1])), yChin = H0[8][1];
+      const H0 = tp(head), yTop = Math.min(...H0.slice(FACE.top[0], FACE.top[1] + 1).map(p => p[1])), yChin = H0[FACE.chin][1];
       const onH = [], onF = [], passing = [];
       for (let i = 0; i <= 400; i++) { const u = i / 400; at(u); const g = map(bar, 0, 16).y; if (overHead()) onH.push(u); const f = overFace(); if (f) onF.push(u); if (g >= yTop && g <= yChin && f) passing.push(u); }
       const wins = on => { const w = []; let s0 = null, prev = null; for (const t of on) { if (s0 === null) s0 = t; else if (t - prev > 0.003) { w.push([s0, prev]); s0 = t; } prev = t; } if (s0 !== null) w.push([s0, prev]); return w; };
       return { head: { win: wins(onH), total: onH.length / 401 * 4 }, face: { win: wins(onF), total: onF.length / 401 * 4 }, passing: passing.length, yTop, yChin, tile2Gap: gap(tile2), oldTile2Gap: gap(0.2) };
-    }, { tile2: P.truth.tile2.at, X0: G.X0, Y0: G.Y0 });
+    }, { tile2: P.truth.tile2.at, X0: G.X0, Y0: G.Y0, FACE: G.face });
     fs.writeFileSync(path.join(DIR, 'measured.json'), JSON.stringify({ armOverFace: res }, null, 1));
     const pc = v => `${+(v * 100).toFixed(2)}`, ws = w => w.length ? w.map(x => `${pc(x[0])}-${pc(x[1])} %`).join(', ') : 'never';
     lines.push(`INFO fist or forearm over the head shape (401 phases, the round-1 measure): ${ws(res.head.win)} of the rep, ${res.head.total.toFixed(2)} s of each 4 s rep at 1x (was 1.28 s)`); console.log(lines[lines.length - 1]);
@@ -424,6 +448,33 @@ check(Math.abs(G.inset.handsApart / G.inset.shouldersOutside - 1.19) < 0.05, `gr
     const lum = rgb => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; const [r, g, b] = rgb.map(f); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
     const a = lum(num(c.stroke)), b = lum(num(c.bg)), ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     check(ratio >= 3, `paper: machine frame outline ${ratio.toFixed(2)}:1 on the stage (>= 3; read back as ${c.stroke})`);
+    await ctx.close();
+  }
+  // Target-muscle glow and secondary motion (UPGRADE-BRIEF.md, figure detail and smoothness target 3; as rig-final/shoot.cjs
+  // 2j). The glow on the lats (.gw) and the brace / shoulder-blade facets (.tn) share one opacity channel on the move's
+  // timing. Over 481 samples of the rep: 0 at setup and at the rep restart (t 0 and 1, so no flash when a rep starts
+  // again), never falls during the pull, strongest in the hold at the chest (the hardest point), never rises during the
+  // return, and never changes by more than 0.02 between samples 1/120 s apart. It carries no rotate(), so it can never
+  // move a joint.
+  {
+    const { page, ctx } = await open('?t=0');
+    const r = await page.evaluate(async (ch) => {
+      const L = window.__lp, setT = t => { L.S.t = t; L.S.playing = false; L.S.ended = false; L.bind(); };
+      const inStage = [...document.querySelectorAll('.stage .scene .' + ch)].filter(el => !el.closest('.pics'));
+      const glow = inStage.filter(el => el.classList.contains('gw')), ten = inStage.filter(el => el.classList.contains('tn'));
+      const names = [...new Set(inStage.map(el => getComputedStyle(el).animationName))];
+      const kf = [...document.querySelectorAll('style')].map(s => s.textContent).join('').match(new RegExp('@keyframes ' + ch + '-a\\{[^@]*'));
+      const o = [];
+      for (let i = 0; i <= 480; i++) { setT(i / 480); await new Promise(res => requestAnimationFrame(res)); o.push([glow[0], ten[0]].map(el => +getComputedStyle(el).opacity)); }
+      return { nGlow: glow.length, nTen: ten.length, names, rotate: kf ? /rotate/.test(kf[0]) : null, o };
+    }, 'lp-ten');
+    const g = r.o.map(v => v[0]), t = r.o.map(v => v[1]), lift = [0, 120], hold = [120, 180], ret = [180, 420];
+    const step = Math.max(...g.slice(1).map((v, i) => Math.abs(v - g[i]))), maxAll = Math.max(...g), maxHold = Math.min(...g.slice(hold[0], hold[1] + 1));
+    const mono = (a, b, dir) => g.slice(a, b + 1).every((v, i, arr) => i === 0 || dir * (v - arr[i - 1]) >= -1e-6);
+    check(r.nGlow > 0 && r.nTen > 0 && r.names.length === 1 && r.rotate === false && t.every((v, i) => Math.abs(v - g[i]) < 1e-6),
+      `lat pulldown: ${r.nGlow} glow polygon(s) on the lats and ${r.nTen} secondary-motion facet(s) share one opacity channel (${r.names.join(', ')}), no rotate()`);
+    check(g[0] <= 0.001 && g[480] <= 0.001 && mono(lift[0], lift[1], 1) && mono(ret[0], ret[1], -1) && maxHold >= maxAll - 1e-6 && maxAll >= 0.99 && step <= 0.02,
+      `lat pulldown: glow 0 at setup (${g[0].toFixed(3)}) and at the rep restart (${g[480].toFixed(3)}), rises through the pull, strongest in the hold at the chest (${maxHold.toFixed(3)} of max ${maxAll.toFixed(3)}), falls through the return, largest step between samples 1/120 s apart ${step.toFixed(4)} (limit 0.02)`);
     await ctx.close();
   }
   // smoothness (UPGRADE-BRIEF.md target 4): every joint angle and the grip at 120 samples per second, plus the keyframe stops
