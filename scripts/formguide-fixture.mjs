@@ -39,6 +39,11 @@ for (const m of MOVES) {
   if (stage.slice(1).includes('<svg')) throw new Error(`${m.id}: nested svg in the stage`);
   writeFileSync(`${OUT}${m.id}.json`, JSON.stringify({ commit: DEMO_COMMIT, props, groups }) + '\n');
   writeFileSync(`${OUT}${m.id}.stage.html`, stage + '\n');
+  if (m.id === 'latPulldown') {   // the Grip close-up inset: a front-view svg in a div over the stage
+    const a = html.indexOf('<svg class="inset-fig"'), b = html.indexOf('</svg>', a);
+    if (a < 0 || b < 0) throw new Error('latPulldown: no inset svg');
+    writeFileSync(`${OUT}${m.id}.inset.html`, html.slice(a, b + 6) + '\n');
+  }
   writeFileSync(`${OUT}${m.id}.poses.json`, JSON.stringify({ commit: DEMO_COMMIT, ...m.poses() }, null, 1) + '\n');
   console.log(`${m.id}: ${names.length} keyframe names, stage ${stage.length} chars`);
 }
