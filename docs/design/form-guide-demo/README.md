@@ -17,5 +17,5 @@ This folder holds the full source of the rendered demo canvas: the owner's SPLIT
   - The supervisor signed off decisions D1-D3 (`anim-lat-pulldown/PLAYER.md` §9). They agree with spec.md's own key-pose table: an end elbow of about 30-35°, not the 65-75° in the prose.
   - **PLAYER.md §9 wins over spec.md 3.2.**
   - One low, non-blocking issue is left: the far elbow starts and stops a little sharply.
-- **Known doc lag:** `spec.md` 3.1 and `rig-final/RIG.md` §9 and §15-19 still hold the older chest press numbers. The current ones are in `anim-machine-chest-press/PLAYER.md` §3 and §13.
+- **Known doc lag:** `spec.md` 3.1 and the hand-written `rig-final/RIG.md` §9, §15 and §17 still hold the older chest press numbers. The current ones are in `anim-machine-chest-press/PLAYER.md` §3 and §13. `RIG.md` §16 and the generated §19 describe the rig's own proof and stay as they are.
 - **Owner feedback:** the owner likes the demo but wants smoother motion and more figure detail. See `UPGRADE-BRIEF.md`.

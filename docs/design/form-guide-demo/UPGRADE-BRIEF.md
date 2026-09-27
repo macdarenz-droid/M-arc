@@ -32,7 +32,7 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 - all 4 builds reproduce the committed files byte for byte;
 - the rig, chest press and lateral raise `shoot.cjs` scripts print ALL CHECKS PASSED;
 - `canvas-check.cjs` and `dc-stage.cjs` pass;
-- the lat pulldown `shoot.cjs` exits 3 with "NO FAILURES; 4 DECIDED". That is by design: it waits for the `spec.md` 3.2 edit in step 4 of the order of work, and after that edit it must exit 0.
+- the lat pulldown `shoot.cjs` exits 3 with "NO FAILURES; 4 DECIDED". That is by design. Its four `decidedCheck(` calls (lines 33, 34, 38 and 44) mark spec values that decisions D1-D3 changed. The script does not read `spec.md`, so step 4 of the order of work changes those calls, and after that it must exit 0.
 
 ## Why the motion looks jerky today
 `rig-final/gen.mjs:239-244` times each move with `inOut`, which is two cubic-bezier halves (`easeIn .4,0,1,1` / `easeOut 0,0,.6,1`). The poses are sampled into keyframe stops joined by straight lines, so speed changes in steps between stops. `anim-lat-pulldown/gen.mjs:240-241` has the same timing. Its known leftover is that the far elbow starts and stops a little sharply.
@@ -48,12 +48,32 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
      - lateral raise: the traps stay down.
    - The wrists stay neutral.
    - The equipment and the hands stay locked together at every stop.
-4. **A numeric smoothness check,** added to the rig's and each player's `shoot.cjs`. Sample every drawn joint angle and the grip point 120 times per second of real time via `?t=`. It passes only if:
-   - speed is zero at every phase boundary;
-   - during motion, no frame-to-frame acceleration is more than 3× that phase's median;
-   - no joint angle changes by more than 4° between two samples 1/120 s apart, at 1× speed.
+   - It must not move anything an existing check holds fixed. Show the brace and the shoulder-blade movement as facet and shape changes inside the torso, not as joint moves. The checks cover:
+     - the shoulder joint centres, with drift under 0.01 (`rig-final/shoot.cjs:84` and `:113`, `anim-machine-chest-press/shoot.cjs:82`, `anim-dumbbell-lateral-raise/shoot.cjs:95`);
+     - the lateral raise's 15° elbow bend and level dumbbells (`anim-dumbbell-lateral-raise/shoot.cjs:99-100`).
+4. **A numeric smoothness check,** added to the rig's and each player's `shoot.cjs`.
+   - **How to sample:** read every drawn joint angle and the grip point via `?t=`, which freezes rep 1 at a fraction from 0 to 1 of the 4 s rep. Use steps of 1/480, which is 120 samples per second at 1×. Also read the keyframe stops themselves.
+   - **It passes only if, for each move phase (lift and return), all of these hold:**
+     - (a) Over the first and the last 1/120 s of the phase, the speed is at most 1% of the phase's top speed.
+     - (b) The speed changes by at most 8% of the phase's top speed between two samples 1/120 s apart. Steps in speed are what the eye sees as judder.
+     - (c) At the keyframe stops, the change in acceleration from one stop to the next is at most 3× its median over the phase. A spike means a kink. Apply this to angles that move at least 10° in the phase.
+     - (d) No joint angle changes by more than 4° between two samples 1/120 s apart, at 1× speed.
+   - **Print the numbers.**
+   - **Prove the check first:**
+     - it must FAIL on the current build before you change the timing;
+     - it must PASS after;
+     - record both outputs.
+   - **Simulated numbers** (`python3 rig-final/smooth-sim.py`, on the rep progress curve as drawn):
 
-   Print the numbers.
+     | Check | Today (`inOut`, 39 stops) | Target (min-jerk, 0.5% stops) |
+     |---|---|---|
+     | (a) | 12-14% | 0.05-0.2% |
+     | (b) | 19-22% | 3-6% |
+     | (c) | 4.0-5.5× | 2.2-2.3× |
+
+     Density alone or min-jerk alone still fails (a).
+   - **Why not a limit on raw acceleration at 120 samples per second:** straight lines between stops make it spike about 5× even on the perfect curve. Don't add that limit.
+   - **If a joint angle fails while the progress curve passes,** fix the motion (for example the pole curve or the secondary motion). If (b) still fails, use 0.25% stops in the 1 s lift only, and keep each player under 450 KB. Never raise a limit.
 
 ## Figure detail target (same low-poly faceted style, readable at 358×460)
 - **Head:**
@@ -91,11 +111,16 @@ The task for whoever upgrades the 3 animated form-guide players next. Update thi
 1. Upgrade the shared rig once in `rig-final/gen.mjs`, and document the new parts, tokens, sampler and check in `RIG.md`.
 2. Rebuild each player on it:
    - chest press and lateral raise through their `build.mjs`;
-   - lat pulldown in its own `gen.mjs`, with the same changes.
+   - lat pulldown in its own `gen.mjs`, with the same changes. Run `node gen.mjs`, then `node shoot.cjs`, then `node gen.mjs` again, because PLAYER.md is written from `checks.txt` and `measured.json`.
+   - `anim-machine-chest-press/build.mjs` (32 calls) and `anim-dumbbell-lateral-raise/build.mjs` (16 calls) patch the rig through exact-match anchors (`one()`). If a rig change moves an anchor, the build stops with "expected 1 match". Update the anchor in the same commit, and never drop a patch.
 3. Carry each player into its `project/Player-*.dc.html` by exact-match edits. The harness (`index.html`) and the artboard must match; prove it with the canvas checkers where they exist.
 4. Clear the doc lag in `spec.md`, and keep the one doc per topic:
-   - Apply `anim-lat-pulldown/PLAYER.md` §9 (decisions D1-D3, signed off) to section 3.2.
-   - Apply the chest press numbers from `anim-machine-chest-press/PLAYER.md` §3 and §13 to section 3.1 and to `RIG.md` §9 and §15-19.
+   - Apply `anim-lat-pulldown/PLAYER.md` §9 (decisions D1-D3, signed off; ignore its older "wait for sign-off" headings) to section 3.2.
+   - Then turn the four `decidedCheck(` calls in `anim-lat-pulldown/shoot.cjs` (lines 33, 34, 38, 44) into `check(` calls, with the same conditions and the new spec wording, so it exits 0. The conditions stay exactly as they are.
+   - Apply the chest press numbers from `anim-machine-chest-press/PLAYER.md` §3 and §13 to section 3.1.
+   - In `RIG.md`, edit only the hand-written §9, §15 and §17: label their chest press numbers as the rig proof's own, and point to PLAYER.md §13 for the player's.
+   - Leave `RIG.md` §16 (the rig's own check results) and §19 alone. §19 is generated: `node gen.mjs` rewrites it.
+   - Update `spec.md` 2.3 (paint), 2.4 (rig) and the Easing column of 2.5 (now minimum-jerk) to match the new rig.
 
 ## Quality bar (per player, before publishing)
 Use an independent check, not the builder's own word.
@@ -115,10 +140,15 @@ Use an independent check, not the builder's own word.
 
 ## Publish and hand back
 - **Canvas:** the first demo canvas belongs to another Claude account, so you can't open or update it. Everything it holds is in `project/`.
-  - Publish the upgraded demo as a **new** Design canvas on your own account, with all 13 artboards and `canvas.json` from `project/`, and give the owner its link.
+  - Publish the upgraded demo as a **new** Design canvas on your own account, with all 13 artboards and `canvas.json` from `project/`.
+  - Publish the files unchanged, with no design system added: they already use the tokens from `spec.md`.
+  - Set `canvas.json` `createdOnFiles.at` to the current time.
+  - Run all QA on the local files before publishing.
+  - Give the owner the link, and say the canvas is private to your account.
   - If your account has no Design type, publish the 3 players' harness pages (`anim-*/index.html`) as a normal page instead, and say so.
 - **Code:**
-  - Branch from `claude/marc-regression-architecture-gegkbq` to a new `claude/*` branch.
+  - Branch from `claude/marc-regression-architecture-gegkbq` to a new `claude/*` branch, or use the `claude/*` branch your session is given.
+  - Don't merge `origin/main` into it. That base is 40 commits behind main, so a merge would pull app code into the diff; AGENTS.md's merge-main step is for PRs into main. If the base branch moves, merge `origin/claude/marc-regression-architecture-gegkbq` instead.
   - Commit the source changes and open a draft PR into `claude/marc-regression-architecture-gegkbq`.
   - Update this brief and `README.md` in place.
 - **Relay:**
