@@ -714,6 +714,76 @@ This card is written for a builder agent on a lower model tier. Everything it ne
 - **stop_conditions:** a demo number you cannot find at the named path; a check that fails twice with the same fix; a needed edit outside write_scope; a size over the cap. Report to the supervisor with the exact file, line and numbers.
 - **return:** a draft PR into `main` with the head commit, changed paths, evidence per criterion (A1-A12), what needs a real phone, open risks, and the measured sizes; then stop for the reviewer (a fresh agent; builders never approve their own work).
 
+### 7.2 GU-7a split into parallel builder cards (owner, 2026-09-27: three coders in parallel)
+
+GU-7a is built by three builders at once on disjoint paths, then integrated by a fourth card. Every sub-card inherits 7.1's base, rules, reserved_paths, verification and return, and the acceptance numbers below refer to 7.1's list. The builders are Opus 5.5 (7.2-1 at medium effort, the others at low). Each opens its own draft PR into `main` from its own `claude/*` branch; a fresh reviewer checks each PR against its card; nobody merges. The only shared file is the contract below, copied verbatim into every branch (identical content merges cleanly).
+
+**The contract, `src/formguide/rig/api.ts` (copy verbatim; 7.2-1 implements it, 7.2-2 consumes it, 7.2-3 uses `MuscleId`):**
+
+```ts
+// The contract between the rig (GU-7a-1), the player (GU-7a-2) and the muscle data (GU-7a-3).
+// Every number a Guide returns is the demo's (docs/design/form-guide-demo at DEMO_COMMIT).
+import type { MuscleId } from '../../data/muscles';
+
+export type View = 'side' | 'front' | 'top';
+export type Scheme = 'dark' | 'light';
+
+/** One Web Animations keyframe. `offset` is 0..1 of the 4 s rep; values are the demo's 4-decimal strings. */
+export type Frame = { offset: number; transform?: string; opacity?: number; strokeDashoffset?: number };
+/** Keyframes for one animated group, found in the stage markup by `className` (the demo's class, e.g. "cp-ua"). */
+export type GroupFrames = { className: string; frames: Frame[] };
+
+export type ZoomChip = { id: string; label: string; caption: string };
+export type MuscleRole = 'target' | 'helps';
+
+export type MoveSpec = {
+  id: string;                     // demo id: 'cp' | 'lp' | 'lr'
+  exerciseId: string;             // library id, e.g. 'lib_machine_chest_press'
+  view: View;
+  cam: string;                    // camera label, e.g. 'Side view'
+  rep: number;                    // seconds per rep (4)
+  caps: [string, string, string, string];
+  tempo: string;                  // e.g. '1 s out · 2 s back'
+  picsLine: string;
+  srText: string;
+  chips: ZoomChip[];              // 3
+  pics: [string, string, string, string];
+  picsAt: [number, number, number, number];
+  /** rig region name -> muscle id, for the painted target and helper regions; roles come from the exercise row */
+  roles: Record<string, MuscleId>;
+  muscleNotes?: Partial<Record<MuscleId, string>>;
+};
+
+export type Stage = {
+  svg: string;     // the stage <svg> inner markup: the rig group, overlays, guides; ids and classes as in the demo
+  tiles: string;   // the 4 Pictures tiles markup
+  css: string;     // exercise-specific static CSS: zoom camera transforms, overlay visibility, static part transforms
+};
+
+export type Sample = { stops: number[]; groups: GroupFrames[] };
+
+export interface Guide {
+  readonly spec: MoveSpec;
+  /** the same values the demo writes into @keyframes, one entry per animated class */
+  sample(): Sample;
+  /** markup and CSS for the given scheme (dark or light); no hex colours, tokens only */
+  stage(scheme: Scheme): Stage;
+  /** the rig's derived colour tokens for the scheme, as a style string (rigVars) */
+  rigVars(scheme: Scheme): string;
+}
+
+/** the paint every Guide shares: figure, equipment, guide and overlay classes (the demo's BASE_CSS minus the player chrome and the CSS-animation classes) */
+export declare const RIG_CSS: string;
+```
+
+**GU-7a-1 Rig, movements, scenes, fixture, gates** (Opus 5.5, medium). write_scope: `src/formguide/rig/**`, `src/formguide/moves/**`, `src/formguide/scenes/**`, `scripts/formguide-fixture.mjs`, `tests/formguide/{rig,fixture,gates,scene}.test.ts`, `tests/formguide/fixtures/**`. Build steps 1-6 of 7.1 and the R1-5 gates; `src/formguide/index.ts` exporting `guides: Record<string, Guide>` keyed by exercise id for the 3 moves. Acceptance: A1, A2, A3 and 7.1 step 3's `rig.test.ts`; plus every `Guide.stage()` string contains no `#[0-9a-f]{3,6}` or `rgb(` outside `RIG_CSS`'s token block. No UI, no styles.css, no Train.tsx.
+
+**GU-7a-2 Player, sheet, styles, host row, gate** (Opus 5.5, low). write_scope: `src/formguide/player/**`, `src/formguide/registry.ts`, `src/slices/formguide/lazy.tsx`, `src/slices/workout/Train.tsx` (the one row and the lazy sheet state only), `src/ui/styles.css` block GU-7a, `tests/formguide/player.test.ts`, `scripts/screenshot-gate.mjs` block GU-7a, `tests/theme.test.ts` block GU-7a. Until 7a-1 merges, the player is built against `api.ts` with a stub Guide in `src/formguide/player/stubGuide.ts` (a 4-polygon figure, 2 groups, 5 stops; deleted by 7a-4) so tests and the gate run. Acceptance: A4-A9, A11, A13's interaction part (hotspot, bubble, outline, exclusivity; text from 7a-3's helper, stubbed until it merges), the styles and theme lints green.
+
+**GU-7a-3 Muscle names and lines** (Opus 5.5, low). write_scope: `src/data/muscles.ts` (add `anatomical` and `action` per id; keys never change), `src/formguide/muscles.ts` (`muscleInfo(exerciseId, notes?)` -> `{ id, common, anatomical, role, line, colorVar }[]` from the exercise row's `primary`/`secondary`), `src/formguide/muscleNotes.ts` (the 3 demo exercises' lines from spec 2.10), `tests/formguide/muscles.test.ts`. Acceptance: A13's data part: all 24 ids have non-empty `anatomical` and `action`; the 3 demo exercises return spec 2.10's exact lines in order (target first); an unknown exercise id returns `[]`; a custom exercise (`custom: true`) returns its listed muscles with generic lines.
+
+**GU-7a-4 Integration** (Opus 5.5, medium; starts when 7a-1, 7a-2 and 7a-3 are green and reviewed). On a new branch that merges the three branches (merge commits, no rebase): delete the stub Guide, wire `guides` into `registry.ts`, run the fixture script at DEMO_COMMIT and commit the fixtures, connect `muscleInfo` to the bubble, measure sizes (A10), run the full verification and the real gate, and open the PR that carries all of GU-7a's evidence (A1-A13). This is the PR the supervisor merges; the three part PRs close when it merges.
+
 ## 8. Risks and mitigations
 
 | Risk | Mitigation |
