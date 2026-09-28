@@ -11,23 +11,23 @@ import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
-import { muscleDoses, recoveryAt, recoveryStatus, type MuscleRecovery } from '../recovery';
+import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
-import { plateauStatus, sinceLastBreak } from '../trend';
+import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
 import { effortDrift } from '../effort';
 import { trainingBalance } from '../balance';
 import { weekSummary, daysSinceLastSession } from '../weekly';
 import { isWorkingSet, weeklyMuscleSets } from '../exposure';
 import { muscleVolumeStatus } from '../volume';
 import { findExercise } from '@/core/exercises';
-import { e1rmTrend, failureShare, flatOver, hardSetsThisWeek, isStale } from './weeklyReview';
+import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
-import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
+import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 
-/** The plateau lever only speaks once the lift's recent sessions span six of the eight weeks it looks at (spec: never at 3 weeks). */
-export const PLATEAU_MIN_SPAN_DAYS = 42;
+/** BR-04's one span constant, now in trend.ts (BUG-14): a plateau needs six of the eight weeks (spec: never at 3 weeks). */
+export { PLATEAU_MIN_SPAN_DAYS };
 
 export type Category = 'recovery' | 'progress' | 'readiness' | 'balance' | 'focus' | 'consistency' | 'data';
 
@@ -50,6 +50,21 @@ export interface Insight {
   drivers?: string[];
   unlocks?: string;
   validUntil?: string;
+  /**
+   * BUG-20: the shared data this insight is built from. Set where the insight is made; the coach
+   * brief, get_insights and session notes leave a tagged insight out when that sharing is off.
+   * In memory only, never stored.
+   */
+  gated?: GatedData;
+}
+
+/** BUG-20: a kind of data the person can keep off the coach (§24.15). */
+export type GatedData = 'body' | 'health';
+export type Sharing = { health: boolean; body: boolean };
+
+/** BUG-20: the insights allowed out under these sharing flags: a tagged one only while its data is shared. */
+export function withoutGated<T extends { gated?: GatedData }>(list: T[], sharing: Sharing): T[] {
+  return list.filter(i => !i.gated || sharing[i.gated]);
 }
 
 export interface CoachContext {
@@ -77,6 +92,14 @@ interface Derived {
   /** Lifts trained in the last six weeks (BR-05): progress and effort rules skip the rest. */
   activeIds: Array<{ id: string; name: string }>;
   readiness: ReadinessResult | null;
+  /** BUG-16: the inputs that fed today's readiness, so its copy names only those, and the ones past their driver line. */
+  readinessInputs: ReadinessInputKey[];
+  readinessLow: ReadinessInputKey[];
+}
+
+/** "a", "a and b", "a, b and c". */
+function listJoin(xs: string[]): string {
+  return xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 }
 
 /** QA8-2: the next scheduled split (and its weekday) after `day`, resolved to the actual Split. */
@@ -93,15 +116,18 @@ function derive(ctx: CoachContext): Derived {
   const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
   const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
   const exerciseIds = [...names].map(([id, name]) => ({ id, name }));
+  const today = readinessWithInputs({
+    today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
+    checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
+    next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
+  });
   return {
     recovery,
     exerciseIds,
     activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
-    readiness: readiness({
-      today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
-      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
-    }),
+    readiness: today.result,
+    readinessInputs: today.inputs,
+    readinessLow: today.low,
   };
 }
 
@@ -193,7 +219,7 @@ export const RULES: Rule[] = [
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist, modeOf(id, ctx.custom));
+        const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'declining' || p.confidence === 'low') return [];
         return [{
           id: `decline:${id}`, category: 'progress' as const, priority: 320,
@@ -210,12 +236,12 @@ export const RULES: Rule[] = [
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        const p = plateauStatus(hist, modeOf(id, ctx.custom));
+        const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'plateaued' || p.confidence === 'low') return [];
         return [{
           id: `plateau:${id}`, category: 'progress' as const, priority: 300,
           title: `${name}: progress has stalled`,
-          noticed: `${name} has not moved over your last eight sessions.`,
+          noticed: `${name} has barely moved over the last six weeks or more.`,
           means: 'The same load and reps for weeks means the stimulus stopped changing.',
           action: 'Try a different rep range for two weeks, or one lighter week, then return.',
           exerciseId: id,
@@ -352,7 +378,7 @@ export const RULES: Rule[] = [
         const from = typeof c.from === 'number' ? w(c.from) : null;
         const delta = from != null ? Math.round((to - from) * 10) / 10 : null;
         return {
-          id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260,
+          id: `profile-changed:weight:${c.at}`, category: 'data', priority: 260, gated: 'body',
           title: `Weight updated to ${to} ${u}`,
           noticed: delta != null && delta !== 0 ? `You updated your weight to ${to} ${u}, ${delta < 0 ? 'down' : 'up'} ${Math.abs(delta)} ${u} since your last entry.` : `You updated your weight to ${to} ${u}.`,
           means: 'Saved to your weight log.',
@@ -378,15 +404,11 @@ export const RULES: Rule[] = [
         const meta = findExercise(id, ctx.custom);
         if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
         const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
-        // BR-04: the last 8 weeks, 6+ sessions, and flat means under 1.5% total change over them.
-        // QA2-FC-2/3: like plateauStatus, only the sessions since the last long break count.
-        const recent = sinceLastBreak(hist).filter(h => daysBetween(h.day, ctx.today) <= 56);
-        if (recent.length < 6) return [];
-        // QA-R3a-7: 'flat' needs the sessions to cover most of the eight weeks, never two weeks of a 3x/week lift.
-        if (daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) < PLATEAU_MIN_SPAN_DAYS) return [];
+        // BR-04 (BUG-14): the one plateau rule. The last 8 weeks since any long break (QA2-FC-2/3),
+        // 6+ sessions spanning 42+ days (QA-R3a-7), and under 1.5% total change over them.
+        if (plateauStatus(hist, 'weighted', ctx.today).status !== 'plateaued') return [];
+        const recent = plateauWindow(hist, ctx.today);
         const t = e1rmTrend(recent);
-        // Six sessions in eight weeks is the evidence bar here; the trend's own confidence needs 7+.
-        if (!flatOver(recent)) return [];
         const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
         if (recentSessions.length < 6) return [];
 
@@ -439,29 +461,50 @@ export const RULES: Rule[] = [
     run: (ctx, d) => {
       const r = d.readiness;
       if (!r) return [];
+      // BUG-16: copy names only the inputs that fed the score, and says "several" only when there are.
+      const inputs = d.readinessInputs;
+      const named = listJoin(inputs.map(k => READINESS_INPUT_LABEL[k]));
+      const Named = named.charAt(0).toUpperCase() + named.slice(1);
       if (r.band === 'red') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
-          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.',
+          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : inputs.length > 1 ? 'Several signals point the same way today.' : `${Named} reads low today.`, drivers: r.drivers,
           means: 'Training hard today would work against you more than for you.',
           // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
-          action: r.postSessionAdvice ?? 'Keep loads where they are, or drop a set on the hardest lifts.',
+          // BUG-16: "drop a set" only when the advice is to reduce (a check-in or 2+ agreeing inputs).
+          action: r.postSessionAdvice ?? (r.loadAdvice === 'reduce' ? 'Keep loads where they are, or drop a set on the hardest lifts.' : 'Keep today’s loads where they are.'),
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
       if (r.band === 'amber') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
-          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.',
+          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : inputs.length > 1 ? 'A mixed picture today.' : `${Named} reads middling today.`, drivers: r.drivers,
           means: 'Not a reason to skip, just not a day to chase a new best.',
           action: r.postSessionAdvice ?? 'Keep today’s loads where they are.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
+      // BUG-16: acute load high on a green day is a low-confidence note, never an alert or a load change.
+      if (r.drivers.includes(LOAD_DRIVER)) {
+        return [{
+          id: 'readiness-today', category: 'readiness', priority: 90, cadence: 'now', kind: 'data',
+          title: 'Training load is up', noticed: 'You have trained more this week than in your recent weeks.',
+          means: 'On its own that is not a reason to back off. A check-in tells the coach how you actually feel.',
+          action: 'Log a quick check-in before you train.',
+          evidence: { n: 1, window: 'today', confidence: 'low' },
+        }];
+      }
       if (weekdayOf(ctx.today) !== 'mon') return [];
+      // Only inputs that read well are "lining up"; one past its driver line is left out.
+      const good = inputs.filter(k => !d.readinessLow.includes(k));
+      if (!good.length) return [];
+      const lining = listJoin(good.map(k => READINESS_INPUT_LABEL[k]));
+      // Sleep, resting HR and HRV come from health data: the note is kept off the coach when that sharing is off (BUG-20).
+      const goodHealth = good.some(k => k === 'sleep' || k === 'rhr' || k === 'hrv') ? { gated: 'health' as const } : {};
       return [{
-        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise',
-        title: 'Readiness: green', noticed: 'Sleep, resting heart rate and recovery are all lining up this week.',
+        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise', ...goodHealth,
+        title: 'Readiness: green', noticed: `${lining.charAt(0).toUpperCase()}${lining.slice(1)} ${good.length === 1 ? 'is' : good.length === 2 ? 'are' : 'are all'} lining up this week.`,
         means: 'A good week to push the lifts that have room to grow.',
         action: 'No change needed.',
         evidence: { n: 1, window: 'today', confidence: r.confidence },
@@ -479,7 +522,7 @@ export const RULES: Rule[] = [
       const m = effortMismatch(sets);
       if (!m) return [];
       return [{
-        id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data',
+        id: `heart-mismatch:${last.id}`, category: 'readiness', priority: 110, cadence: 'post', kind: 'data', gated: 'health',
         title: 'Effort rating: worth a second look',
         noticed: `You rated a set Easy that hit ${m.examplePct}% of your session's hardest peak heart rate.`,
         means: 'Easy sets are not usually that close to your hardest effort of the day.',
@@ -505,7 +548,7 @@ export const RULES: Rule[] = [
           const d = intraSessionDrift(group);
           if (d?.drifting) {
             return [{
-              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId,
+              id: `heart-drift:${last.id}:${ex.exerciseId}`, category: 'readiness', priority: 130, cadence: 'post', kind: 'alert', exerciseId: ex.exerciseId, gated: 'health',
               title: `${ex.name}: fatigue building within the session`,
               noticed: `Peak heart rate rose about ${d.bpmRisePerSet} bpm per set at the same load, while your recovery between sets got worse.`,
               means: 'This usually means the working muscles are fatiguing faster than the rest periods are covering.',
@@ -555,8 +598,10 @@ export function runInsightRules(ctx: CoachContext): Insight[] {
 }
 
 /** Run every rule, drop duplicates per target, keep the most important. */
-export function coachInsights(ctx: CoachContext, limit = 3): Insight[] {
-  return rankInsights(runInsightRules(ctx), hiddenInsightIds(ctx.feedback, ctx.today), limit);
+export function coachInsights(ctx: CoachContext, limit = 3, sharing?: Sharing): Insight[] {
+  // BUG-20: for the coach, a gated insight is left out before ranking so it never takes a slot.
+  const all = sharing ? withoutGated(runInsightRules(ctx), sharing) : runInsightRules(ctx);
+  return rankInsights(all, hiddenInsightIds(ctx.feedback, ctx.today), limit);
 }
 
 /** COACH-FB: hidden notes that would be back in the top `limit` if shown again (each checked on its own), highest priority first. */
@@ -620,5 +665,5 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now));
 }

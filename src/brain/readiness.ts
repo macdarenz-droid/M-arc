@@ -8,6 +8,7 @@ import type { CheckIn, DailyHealth, Exercise, Session, Split, Weekday } from '@/
 import type { MuscleId } from '@/data/muscles';
 import type { MuscleRecovery } from './recovery';
 import { acuteChronicRatio, avg, stddev, clamp } from './recovery';
+import { SYSTEMIC_LOAD_RATIO } from '@/data/recovery';
 import { daysBetween, trainedToday, WEEKDAY_LABEL } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 
@@ -113,7 +114,23 @@ function targetMuscles(split: Split | undefined, custom: Exercise[]): MuscleId[]
 
 interface Weighted { key: string; weight: number; score: number | null; }
 
+/** BUG-16: the readiness inputs by name, as copy may say them ("sleep", "resting heart rate"). */
+export const READINESS_INPUT_LABEL = {
+  checkIn: 'your check-in', sleep: 'sleep', recovery: 'muscle recovery', rhr: 'resting heart rate', hrv: 'HRV', load: 'training load',
+} as const;
+export type ReadinessInputKey = keyof typeof READINESS_INPUT_LABEL;
+/** BUG-16: the driver the load part adds when it reads low. */
+export const LOAD_DRIVER = 'training load is well above your recent weeks';
+
 export function readiness(input: ReadinessInput): ReadinessResult | null {
+  return readinessWithInputs(input).result;
+}
+
+/**
+ * readiness(), plus the inputs that actually fed today's score (BUG-16), so copy can name only
+ * those. The result object itself keeps its shape.
+ */
+export function readinessWithInputs(input: ReadinessInput): { result: ReadinessResult | null; inputs: ReadinessInputKey[]; low: ReadinessInputKey[] } {
   const { today, healthDays, checkIn, recovery, scheduledSplit, custom, sessions } = input;
   const checkInHistory = input.checkInHistory.filter(c => { const d = daysBetween(c.day, today); return d > 0 && d <= 30; });
   const baselines = readinessBaselines(healthDays, today);
@@ -207,10 +224,13 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
     }
   }
 
-  // Acute load (0.05): 7-day session load vs the 28-day mean, reusing the same ATL/CTL pattern
-  // as the systemic recovery factor (6.11/F2.4).
+  // Acute load (0.05): 7-day session load vs the chronic mean, the same ATL/CTL ratio as the
+  // systemic recovery factor (6.11/F2.4). BUG-16: no penalty up to 1.3 (the systemic factor's own
+  // start, Gabbett's upper bound), falling to 0 at 1.5.
   const ratio = acuteChronicRatio(sessions, today);
-  const loadScore: number | null = ratio == null ? null : clamp(1 - Math.max(0, ratio - 1) / 0.5, 0, 1);
+  let loadScore: number | null = ratio == null ? null : clamp(1 - Math.max(0, ratio - SYSTEMIC_LOAD_RATIO) / 0.2, 0, 1);
+  const loadLow = loadScore != null && loadScore < 0.5;
+  if (loadLow) drivers.push(LOAD_DRIVER);
 
   const W = READINESS_WEIGHTS;
   const weighted: Weighted[] = [
@@ -221,13 +241,35 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
     { key: 'hrv', weight: W.hrv, score: hrvScore },
     { key: 'load', weight: W.load, score: loadScore },
   ];
+  // BUG-16: which present inputs are past their driver thresholds (the same lines that add a driver).
+  const low: Record<string, boolean> = {
+    checkIn: checkInScore != null && checkInScore < 0.4,
+    sleep: sleepScore != null && sleepScore < 0.5,
+    recovery: recoveryScore != null && recoveryScore < 0.6,
+    rhr: rhrScore != null && rhrScore <= 0.5,
+    hrv: hrvScore != null && hrvScore < 0.4,
+    load: loadLow,
+  };
+  const lowCount = Object.values(low).filter(Boolean).length;
+  // BUG-16 (Plan Appendix B, self-report leads): acute load confirms, it never leads. A low load
+  // part counts in full only when another input is low too; on its own it cannot pull the score
+  // under the green line, so load alone is never red or amber and never holds a load.
+  if (loadLow && lowCount < 2) {
+    loadScore = Math.max(loadScore!, READINESS_GREEN_AT / 100);
+    weighted.find(w => w.key === 'load')!.score = loadScore;
+  }
   const present = weighted.filter(w => w.score != null);
-  if (!present.length) return null;
+  const inputs = present.map(w => w.key as ReadinessInputKey);
+  const lowInputs = inputs.filter(k => low[k]);
+  if (!present.length) return { result: null, inputs, low: lowInputs };
 
   const totalWeight = present.reduce((a, w) => a + w.weight, 0);
   const score = Math.round(100 * present.reduce((a, w) => a + w.weight * w.score!, 0) / totalWeight);
   const band: ReadinessBand = score >= READINESS_GREEN_AT ? 'green' : score <= READINESS_RED_AT ? 'red' : 'amber';
-  const loadAdvice: LoadAdvice = band === 'red' ? 'reduce' : band === 'amber' ? 'no_increase' : 'normal';
+  // BUG-16 (RECOVERY-F9): "reduce" needs today's check-in or 2+ agreeing inputs; one signal alone
+  // at most blocks the increase.
+  const corroborated = checkInScore != null || lowCount >= 2;
+  const loadAdvice: LoadAdvice = band === 'red' ? (corroborated ? 'reduce' : 'no_increase') : band === 'amber' ? 'no_increase' : 'normal';
   const confidence = present.length >= 4 ? 'high' : present.length >= 2 ? 'medium' : 'low';
   const distinctCheckInDays = new Set(checkInHistory.map(c => c.day)).size;
   const sleepDays = healthDays.filter(d => d.sleepMinutes != null).length;
@@ -236,7 +278,7 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
     ? `Today's session is done. Recover well${next ? `; ${next.split.name} is next on ${WEEKDAY_LABEL[next.weekday]}` : ''}.`
     : undefined;
 
-  return { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating, ...(postSessionAdvice ? { postSessionAdvice } : {}) };
+  return { result: { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating, ...(postSessionAdvice ? { postSessionAdvice } : {}) }, inputs, low: lowInputs };
 }
 
 /** F3.8: a one-line summary for the optional morning notification. */

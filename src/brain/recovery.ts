@@ -80,6 +80,15 @@ export function ageOf(profile: Profile, atMs: number): number | null {
   return profile.birthYear ? new Date(atMs).getFullYear() - profile.birthYear : null;
 }
 
+/**
+ * BUG-20 (§19): with only a birth year, someone born (this year - 18) may still be 17 until their
+ * birthday, so they count as possibly under 18 all year. Born (this year - 19) or earlier is 18+.
+ */
+export function possiblyMinor(profile: Profile, atMs: number): boolean {
+  const age = ageOf(profile, atMs);
+  return age != null && age <= 18;
+}
+
 function agePrior(age: number | null): number {
   if (age == null || age <= AGE_PRIOR_START) return 1.0;
   const decades = (age - AGE_PRIOR_START) / 10;
@@ -102,13 +111,15 @@ export function sessionRpeLoad(session: Session): number {
 /**
  * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
  * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at
- * least 14 days back. A fixed 28-day divisor would otherwise spike the ratio for a new account.
+ * least 14 days back. The chronic mean divides by the days training actually covers, at most 28
+ * (BUG-16, RECOVERY-F2): a fixed 28 made steady training on days 14 to 27 read as a spike.
  */
 export function acuteChronicRatio(sessions: Session[], refDay: string): number | null {
   const ago = (day: string) => daysBetween(day, refDay);
   const chronic = sessions.filter(s => { const d = ago(s.day); return d >= 0 && d < 28; });
   if (chronic.length < 3 || Math.max(...chronic.map(s => ago(s.day))) < 14) return null;
-  const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
+  const covered = Math.min(28, 1 + Math.max(...sessions.map(s => ago(s.day))));
+  const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / covered;
   if (!(ctl > 0)) return null;
   const atl = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
   return atl / ctl;

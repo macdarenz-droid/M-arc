@@ -335,3 +335,15 @@ describe('get_overview without a session today is byte-identical to before QA8-5
     expect(o.daysSinceLastSession).toBe(lastDay ? Math.round((Date.parse(six.today) - Date.parse(lastDay)) / 86_400_000) : null);
   });
 });
+
+describe('BUG-11 A4: an off-ladder target names the equipment snap', () => {
+  it('get_next_target says the load was snapped to the equipment and points at get_equipment', () => {
+    const t = R.getNextTarget({ exerciseId: 'lib_dumbbell_lateral_raise' }, ctxOf(emptyState())) as unknown as { kg: number; reason: string; equipmentSnap?: { fromKg: number; to: string; why: string } };
+    expect(t.kg).toBe(2);
+    expect(t.equipmentSnap).toEqual({ fromKg: 2.5, to: '2 kg', why: expect.stringMatching(/nearest weight this equipment has.*not.*recovery.*get_equipment/i) });
+  });
+  it('no snap, no equipmentSnap field', () => {
+    const t = R.getNextTarget({ exerciseId: 'lib_barbell_bench_press' }, ctxOf(emptyState())) as unknown as { equipmentSnap?: unknown };
+    expect(t.equipmentSnap).toBeUndefined();
+  });
+});
