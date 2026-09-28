@@ -18,7 +18,7 @@ import { suggestNext } from '@/brain/progression';
 import { warmupSets } from '@/brain/coach/pre';
 import { trainingAgeMonths } from '@/brain/recovery';
 import { readinessBaselines } from '@/brain/readiness';
-import { coachInsights, deloadOffer, readinessSeries, CATEGORY_LABEL, type Insight } from '@/brain/coach/rules';
+import { coachInsights, deloadOffer, readinessSeries, withoutGated, CATEGORY_LABEL, type Insight, type Sharing } from '@/brain/coach/rules';
 import { weeklyReviewInsights, weightTrendPctPerWeek } from '@/brain/coach/weeklyReview';
 import { postSessionInsights } from '@/brain/coach/post';
 import { muscleVolumeStatus } from '@/brain/volume';
@@ -169,7 +169,8 @@ export function getSession(input: { sessionId?: string }, ctx: ToolCtx) {
   const x = s.sessions.find(y => y.id === input.sessionId);
   if (!x) throw new ToolError('unknown sessionId; use get_sessions');
   const prior = s.sessions.filter(y => y.startedAt < x.startedAt);
-  const notes = postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
+  // BUG-20: a note built from unshared body or health data stays on the phone.
+  const notes = withoutGated(postSessionInsights({ session: x, priorSessions: prior, custom: s.customExercises, isStrengthGoal: s.goal === 'strength', unit: s.preferences.weightUnit }), s.escobar.sharing).map(i => ({ title: i.title, noticed: i.noticed, action: i.action }));
   const heart = s.escobar.sharing.health && x.heart ? { avgBpm: x.heart.avgBpm, maxBpm: x.heart.maxBpm, activeKcal: x.heart.energy?.activeKcal ?? null } : undefined;
   return capJson({
     sessionId: x.id, day: x.day, split: x.splitName, durationMin: Math.round(x.durationSec / 60), fidelity: x.logging?.mode,
@@ -297,20 +298,23 @@ export function getRecords(input: { exerciseId?: string; limit?: number }, ctx: 
   return capJson({ records: list.map(r => ({ exercise: r.exerciseName, exerciseId: r.exerciseId, day: r.day, kind: PR_LABEL[r.kind], detail: r.detail, value: shown(r.kind, r.value), previous: shown(r.kind, r.previous), ...(r.kind === 'heaviest' || r.kind === 'strength' ? { unit } : {}) })) }, 4000);
 }
 
-const insightOut = (i: Insight) => ({
-  id: i.id, category: CATEGORY_LABEL[i.category], priority: i.priority, title: i.title, noticed: i.noticed, means: i.means, action: i.action,
+// BUG-20: an insight that lists readiness drivers (readiness-today) loses the health ones with health off, like get_readiness.
+const insightOut = (i: Insight, sharing: Sharing) => ({
+  id: i.id, category: CATEGORY_LABEL[i.category], priority: i.priority, title: i.title, noticed: i.drivers && !sharing.health ? (redactDrivers(i.drivers, false).join('. ') || (i.kind === 'alert' ? 'Several signals point the same way today' : 'A mixed picture today')) + '.' : i.noticed, means: i.means, action: i.action,
   ...(i.numbers?.length ? { numbers: i.numbers } : {}), ...(i.evidence ? { evidence: i.evidence } : {}), ...(i.exerciseId ? { exerciseId: i.exerciseId } : {}), ...(i.muscle ? { muscle: i.muscle } : {}),
 });
 
 export function getInsights(input: { includeSnoozed?: boolean }, ctx: ToolCtx) {
   const s = ctx.state;
   const c = coachCtx(ctx);
-  const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50);
+  // BUG-20: insights built from unshared body or health data stay on the phone.
+  const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50, s.escobar.sharing);
   const names = new Map<string, string>();
   for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
-  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit }, 6);
+  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit, sharing: s.escobar.sharing }, 6);
   const offer = deloadOffer(c);
-  return capJson({ insights: list.map(insightOut), weeklyReview: weekly.map(insightOut), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);
+  const out = (i: Insight) => insightOut(i, s.escobar.sharing);
+  return capJson({ insights: list.map(out), weeklyReview: weekly.map(out), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);
 }
 
 export function getPlan(_: unknown, ctx: ToolCtx) {
