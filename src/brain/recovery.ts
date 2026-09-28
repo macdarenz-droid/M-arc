@@ -134,11 +134,12 @@ export function acuteChronicRatio(sessions: Session[], refDay: string): number |
   // With 3+ trained weeks among the 8 before this one, the ratio is also read against the user's
   // usual trained week (median of the last 4 trained weeks) and the smaller of the two counts, so
   // a real jump above the usual week still shows and nothing reads higher than before.
-  const weekLoads: number[] = [];
-  for (let w = 1; w <= USUAL_WEEK_LOOKBACK; w++) {
-    const load = sessions.filter(s => { const d = ago(s.day); return d >= 7 * w && d < 7 * (w + 1); }).reduce((a, s) => a + sessionRpeLoad(s), 0);
-    if (load > 0) weekLoads.push(load);
+  const byWeek = new Array<number>(USUAL_WEEK_LOOKBACK + 1).fill(0);
+  for (const s of sessions) {
+    const w = Math.floor(ago(s.day) / 7);
+    if (w >= 1 && w <= USUAL_WEEK_LOOKBACK) byWeek[w]! += sessionRpeLoad(s);
   }
+  const weekLoads = byWeek.slice(1).filter(load => load > 0);
   if (weekLoads.length < USUAL_WEEK_MIN_TRAINED) return ratio;
   const recent = weekLoads.slice(0, USUAL_WEEK_SAMPLE).sort((a, b) => a - b);
   const mid = recent.length / 2;
