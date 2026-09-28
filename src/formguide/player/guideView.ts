@@ -61,7 +61,12 @@ const classOf = (key: string) => ((JOINTS as readonly string[]).includes(key) ? 
  * unchanged value keep their first and last keyframe only (the same picture under linear interpolation).
  */
 export function chainedGroups(g: ExerciseGuide, rig: Rig, figure: Figure, markup: string): GroupFrames[] {
-  const by = new Map<string, Keyframe[]>();
+  const by = new Map<string, Keyframe[]>(), drawn = new Map<string, boolean>();
+  const has = (key: string) => {
+    let v = drawn.get(key);
+    if (v === undefined) drawn.set(key, (v = markup.includes(`class="${(JOINTS as readonly string[]).includes(key) ? 'fg-j' : 'fg-p'} ${classOf(key)}"`)));
+    return v;
+  };
   for (let r = 0; r < REPS; r++) {
     const s = sampleGuide(g, figure, figure === 'mistake' ? 0 : r), fr = frameFn(g, rig, figure, figure === 'mistake' ? 0 : r, markup);
     s.stops.forEach((u, i) => {
@@ -70,7 +75,7 @@ export function chainedGroups(g: ExerciseGuide, rig: Rig, figure: Figure, markup
       for (const ch of s.channels) pose[ch.id] = ch.stops[i]![1];
       const offset = r4((r + u) / REPS), f = fr(pose, u);
       for (const [key, xf] of Object.entries(f)) {
-        if (!markup.includes(`class="${(JOINTS as readonly string[]).includes(key) ? 'fg-j' : 'fg-p'} ${classOf(key)}"`)) continue;
+        if (!has(key)) continue;
         const k: Keyframe = xf.ops ? { offset, transform: css(xf.ops) } : { offset, opacity: r4(xf.opacity) };
         let list = by.get(key);
         if (!list) by.set(key, (list = []));

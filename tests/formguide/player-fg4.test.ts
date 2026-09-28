@@ -10,7 +10,7 @@ import { VIEWBOXES } from '@/formguide/model';
 import { sampleGuide, windowsFor, tempoOf } from '@/formguide/sample';
 import { moments } from '@/formguide/check/index';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
-import { REPS, bandOf, cameraOf, chainedGroups, clockOf, guideRig, markupOf, momentFrame, momentsOf, textsOf, tintOf } from '@/formguide/player/guideView';
+import { REPS, bandOf, cameraOf, chainedGroups, clockOf, frameFn, guideRig, markupOf, momentFrame, momentsOf, textsOf, tintOf } from '@/formguide/player/guideView';
 import { SnapshotCache, posedMarkup, resolveVars, snapshotSvg, toDataUri } from '@/formguide/snapshot';
 import { lastLoggedKg, loadOf } from '@/formguide/player/load';
 import { chainedTiming, mountAnimations, type AnimRoot } from '@/formguide/player/waapi';
@@ -55,6 +55,19 @@ describe('FG-4 A1: the three reps as chained keyframe sets', () => {
     // the same point of rep 1 and rep 3 differs (slowdown 1 → 1.18)
     const at = (off: number) => sh.find(f => Math.abs(f.offset - off) < 1e-4)?.transform ?? sh.reduce((b, f) => (Math.abs(f.offset - off) < Math.abs(b.offset - off) ? f : b)).transform;
     expect(at(0.125 / 3)).not.toBe(at((2 + 0.125) / 3));
+  });
+
+  it('dropping flat runs keeps the same picture: the kept frames interpolate to every rep-0 stop exactly', () => {
+    const s = sampleGuide(LR, 'correct', 0), fr = frameFn(LR, rig, 'correct', 0, m);
+    for (const key of ['b-side_delts_r', 't-upper_traps_l']) {
+      const kept = byClass.get(`fg-${key}`)!;
+      const at = (off: number) => { let i = 0; while (i < kept.length - 2 && kept[i + 1]!.offset <= off) i++; const a = kept[i]!, b = kept[i + 1]!; return a.opacity! + (b.opacity! - a.opacity!) * Math.min(1, Math.max(0, (off - a.offset) / (b.offset - a.offset))); };
+      s.stops.forEach((u, i) => {
+        const pose: Pose = {};
+        for (const ch of s.channels) pose[ch.id] = ch.stops[i]![1];
+        expect(at(Math.round((u / REPS) * 1e4) / 1e4)).toBeCloseTo(fr(pose, u)[key]!.opacity!, 3);
+      });
+    }
   });
 
   it('flat runs keep only their ends (the same picture under linear interpolation)', () => {
@@ -184,6 +197,7 @@ describe('FG-4: load from the last logged set (read only)', () => {
     const hist = [sess('2026-09-20', [set(9)])];
     expect(lastLoggedKg(src(hist, [set(11, { status: 'committed' }), set(12.5, { status: 'draft' })]), 'lib_dumbbell_lateral_raise')).toBe(11);
     expect(lastLoggedKg(src(hist, [set(12.5, { status: 'draft' })]), 'lib_dumbbell_lateral_raise')).toBe(9);
+    expect(lastLoggedKg(src(hist, [set(11, { status: 'committed' }), set(3, { status: 'committed', kind: 'warmup' })]), 'lib_dumbbell_lateral_raise')).toBe(11);
   });
   it('loadOf: the kg for the KG-marked dumbbell, the readout in the user unit; bodyweight draws no label', () => {
     const s = src([sess('2026-09-20', [set(9.07)])]);
@@ -213,17 +227,20 @@ describe('FG-4: registry, lazy chunks and the mistake figure joining the clock',
 
   it('follow() starts a later figure on the first one\'s timeline; seek() moves every animation', () => {
     const made: { currentTime: number | null; startTime: number | null }[] = [];
-    const root = (n: number): AnimRoot => ({ querySelectorAll: () => Array.from({ length: n }, () => ({ animate: () => { const a = { currentTime: 0 as number | null, startTime: null as number | null, play() { a.startTime = 500; }, pause() {}, cancel() {}, updatePlaybackRate() {} }; made.push(a); return a as unknown as Animation; } })) });
+    const root = (n: number): AnimRoot => ({ querySelectorAll: () => Array.from({ length: n }, () => ({ animate: () => { const a = { currentTime: 0 as number | null, startTime: null as number | null, play() { a.startTime = 500 + 100 * made.indexOf(a); }, pause() {}, cancel() {}, updatePlaybackRate() {} }; made.push(a); return a as unknown as Animation; } })) });
     const g = [{ className: 'x', frames: [{ offset: 0 }, { offset: 1 }] }];
     const h = mountAnimations(g, root(2), 4, chainedTiming(4)), m = mountAnimations(g, root(1), 4, chainedTiming(4));
-    h.play(); h.seek(3000);
+    h.play(); made[1]!.startTime = 500; h.seek(3000);
     expect(made.slice(0, 2).map(a => a.currentTime)).toEqual([3000, 3000]);
     m.follow(h);
-    expect(made[2]!.startTime).toBe(500);
+    expect(made[2]!.startTime).toBe(500);          // the first figure's start, not a start of its own (700)
     const q = mountAnimations(g, root(1), 4, chainedTiming(4));
-    const paused = { ...h, startTime: () => null, currentTime: () => 1234 };
-    q.follow(paused);
+    let ready = () => {};
+    const pending = { ...h, startTime: () => null as number | null, currentTime: () => 1234, whenReady: (fn: () => void) => { ready = fn; } };
+    q.follow(pending);
     expect(made[3]!.currentTime).toBe(1234);
+    pending.startTime = () => 900; ready();
+    expect(made[3]!.startTime).toBe(900);           // takes the first figure's start once its pending play lands
   });
 });
 

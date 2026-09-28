@@ -2,7 +2,7 @@
 // Created paused on the setup pose (fill both = the 0 % frame); nothing here ever loops.
 import type { Frame, GroupFrames } from '../rig/api';
 
-type Anim = Pick<Animation, 'play' | 'pause' | 'cancel' | 'updatePlaybackRate'> & { currentTime: Animation['currentTime']; startTime?: Animation['startTime']; playbackRate?: number };
+type Anim = Pick<Animation, 'play' | 'pause' | 'cancel' | 'updatePlaybackRate'> & { currentTime: Animation['currentTime']; startTime?: Animation['startTime']; ready?: Promise<unknown> };
 type Animatable = { animate(frames: Frame[], timing: KeyframeAnimationOptions): Anim };
 /** R1-10 names `querySelector`, but a demo class animates several elements (the chest press has three
  * `cp-ul` groups), so the root gives every match; a real Element has both. */
@@ -19,8 +19,10 @@ export type AnimHandle = {
   seek(ms: number): void;
   /** FG-4: run on another handle's timeline start (same rate), so a figure mounted later plays in step with no lag */
   follow(other: AnimHandle): void;
-  /** the document-timeline start of the running animations (null while paused) */
+  /** the document-timeline start of the running animations (null while paused or while a play is pending) */
   startTime(): number | null;
+  /** runs fn once every animation's pending play or pause has taken effect */
+  whenReady(fn: () => void): void;
   count: number;
 };
 
@@ -56,7 +58,14 @@ export function mountAnimations(groups: GroupFrames[], root: AnimRoot, rep: numb
     cancel: () => { each(a => a.cancel()); anims.length = 0; },
     currentTime: () => Number(anims[0]?.currentTime ?? 0),
     seek: ms => each(a => { a.currentTime = ms; }),
-    follow: other => { const st = other.startTime(); if (st == null) each(a => { a.currentTime = other.currentTime(); a.play(); }); else each(a => { a.startTime = st; }); },
+    follow: other => {
+      const st = other.startTime();
+      if (st != null) { each(a => { a.startTime = st; }); return; }
+      // the other's play is still pending (no start yet): catch up now, then take its start once it has one
+      each(a => { a.currentTime = other.currentTime(); a.play(); });
+      other.whenReady(() => { const s2 = other.startTime(); if (s2 != null) each(a => { a.startTime = s2; }); });
+    },
+    whenReady: fn => { void Promise.all(anims.map(a => a.ready)).then(fn, () => {}); },
     startTime: () => { const v = anims[0]?.startTime; return v == null ? null : Number(v); },
     get count() { return anims.length; },
   };
