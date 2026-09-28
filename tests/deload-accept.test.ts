@@ -27,4 +27,17 @@ describe('acceptDeload chains back-to-back lighter weeks (BUG-15)', () => {
     const d = await accept([pre, light, session('2026-09-21', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }])]);
     expect([d.startDay, d.endDay]).toEqual(['2026-09-21', '2026-09-27']);
   });
+
+  it('review round 2: the saved week carries 0.6 sets and 0.9 load, and a 5-set lift gets 3 sets at 0.9 ×', async () => {
+    const five = session('2026-09-18', [{ id: ex, sets: sets(80, 8, 'ideal', 5) }]);
+    const store = await import('@/core/store');
+    const { freshState } = await import('@/core/models');
+    store.replaceState({ ...freshState(), sessions: [five], deload: null });
+    (await import('@/slices/coach/coach')).acceptDeload('test');
+    const d = store.state.value.deload!;
+    expect([d.setFactor, d.loadFactor]).toEqual([0.6, 0.9]);
+    const { suggestNext } = await import('@/brain/progression');
+    const s = suggestNext([five], ex, 'lean', '2026-09-21', 5, [], { deload: d, lastDeload: d });
+    expect([s.kg, s.sets.length]).toEqual([72, 3]);
+  });
 });
