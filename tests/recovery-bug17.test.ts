@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { calibrateAfterSession, calibrateTauScale, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
-import { exerciseHistory } from '@/brain/history';
+import { calibrateAfterSession, calibrateTauScale, lastSummaryAlone, recoveryStatus, type MuscleRecovery } from '@/brain/recovery';
 import { readiness, type ReadinessInput } from '@/brain/readiness';
 import { coachInsights } from '@/brain/coach/rules';
 import { formatHoursLeft, readyGroupFor, weekdayOf, addDays } from '@/core/dates';
@@ -180,12 +179,13 @@ describe('A5: calibration skips a comparison across a layoff (RECOVERY-F6)', () 
 
 describe('A6: a rebuild learns exactly what finish stored (RECOVERY-F7)', () => {
   const replayFinish = (list: Session[], profile: Profile): RecoveryModel => {
-    // What finishSession stores, session by session: full prior history, last summary from all sessions so far.
+    // What finishSession stores, session by session: full prior history, and the exercise's last
+    // session summarised on its own (BUG-18: lastSummaryAlone, as the rebuild sees it).
     let model: RecoveryModel = { tauScale: {}, observations: {} };
     const sorted = sortByStart(list);
     sorted.forEach((s, i) => {
       const prior = sorted.slice(0, i);
-      model = calibrateAfterSession(prior, s, [], profile, [], model, id => { const h = exerciseHistory(prior, id, []); return h[h.length - 1]; });
+      model = calibrateAfterSession(prior, s, [], profile, [], model, id => lastSummaryAlone(prior, id, []));
     });
     return model;
   };

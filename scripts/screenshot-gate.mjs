@@ -3131,6 +3131,50 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-18: a record from a set the plausibility check flags (80 kg after 50 kg, over the 25 % jump
+// line) reads "PR unconfirmed"; a plausible one (55 kg) reads plain "PR".
+{
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = 'BUG-18 unconfirmed record';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(() => {
+    if (localStorage.getItem('marc.state.v1')) return;
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const sess = { id: 's1', splitId: 'sp1', splitName: 'Upper', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_bench_press', name: 'Barbell Bench Press', sets: [{ kg: 50, reps: 8, effort: 'ideal' }, { kg: 50, reps: 8, effort: 'ideal' }] }],
+      logging: { mode: 'live', trainedAt: `${day(3)}T17:00:00.000Z`, trainedEndAt: `${day(3)}T18:00:00.000Z`, loggedAt: `${day(3)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [sess], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [{ day: day(0), sleepQuality: 4 }], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      units: { gyms: [{ id: 'gym_default', name: 'My gym', defaultUnit: 'kg', createdAt: now }], activeGymId: 'gym_default', byExercise: {}, byEquipment: {} },
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip' }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  const inputs = page.locator('.set-grid input');
+  await inputs.nth(0).fill('80'); await inputs.nth(1).fill('5'); await inputs.nth(1).blur(); await page.waitForTimeout(150);
+  const first = (await page.locator('.pr-badge').first().textContent().catch(() => null))?.trim() ?? null;
+  if (first !== 'PR unconfirmed') errors.push(`${tag}: 80 kg after 50 kg should read 'PR unconfirmed', got ${JSON.stringify(first)}`);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  if (overflow) errors.push(`${tag}: the unconfirmed pill makes the page scroll sideways at 360 px`);
+  const second = page.locator('.set-grid:has(input)').nth(1).locator('input');
+  await second.nth(0).fill('55'); await second.nth(1).fill('5'); await second.nth(1).blur(); await page.waitForTimeout(150);
+  const texts = (await page.locator('.pr-badge').allTextContents()).map(t => t.trim());
+  if (!texts.includes('PR')) errors.push(`${tag}: 55 kg after 50 kg should read 'PR', got ${JSON.stringify(texts)}`);
+  await ctx.close();
+}
+
 // F8: every live control is a real >=44px tap target (QA-R7-1 style: elementFromPoint at its
 // centre +/-21px still resolves to it or a descendant), at both 390 and 360px, and the topbar
 // controls fit on one line even at 360px.
