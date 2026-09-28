@@ -113,3 +113,54 @@ describe('form-guide colours come from tokens (FG-1)', () => {
     for (const id of THEME_IDS) for (const n of names) expect(themeToCss(THEMES[id]), `${id} ${n}`).toMatch(new RegExp(`${n}:[^;]+`));
   });
 });
+
+// UI-1: the exercise-title sweep paints only var(--text) and the accent, never a dim tone (A4); it
+// lives inside its keyframes, so at rest and under reduced motion the title is plain var(--text)
+// (A3); only the open card's title runs it, finite on open (A1, A6); I3's static border stays and no
+// box-shadow loop comes back (A5); and every theme's accent is a real colour, not a grey (A4).
+describe('exercise-title sweep (UI-1)', () => {
+  const css = readFileSync('src/ui/styles.css', 'utf8');
+  const kfAt = css.indexOf('@keyframes exercise-shimmer');
+  const keyframes = kfAt === -1 ? '' : css.slice(kfAt, css.indexOf('\n}', kfAt) + 2);
+  const rules = css.split('\n').filter(l => /animation\s*:[^;]*exercise-/.test(l));
+  it('the keyframes paint only var(--text), the accent and transparent', () => {
+    expect(keyframes).not.toBe('');
+    const vars = [...keyframes.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]);
+    expect(new Set(vars)).toEqual(new Set(['--text', '--accent']));
+    expect(keyframes).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\bgr[ae]y\b/i);
+    expect(keyframes).toMatch(/background-clip:\s*text/);
+  });
+  it('nothing outside the keyframes clips or hides the title text (plain at rest and under reduce)', () => {
+    const outside = css.replace(keyframes, '');
+    expect(outside).not.toMatch(/\.exname[^{]*\{[^}]*(background|text-fill-color|color:\s*transparent)/);
+  });
+  it('only the open card title animates, never under reduce, finite on open', () => {
+    expect(rules.length).toBe(2);
+    for (const r of rules) {
+      expect(r.startsWith('html:not([data-motion="reduce"]) .exercise.active')).toBe(true);
+      expect(r).toMatch(/\.exname \{ animation: exercise-shimmer /);
+    }
+    const [open, logging] = rules;
+    expect(open).toMatch(/exercise-shimmer [\d.]+s linear 2;/);
+    expect(logging).toMatch(/:has\(\.set-grid input:focus\)/);
+    expect(logging).toMatch(/\[data-hold\]:focus-within/);
+    expect(logging).toMatch(/linear infinite;/);
+  });
+  it('keeps I3: static accent border, no breathe loop, no box-shadow in the sweep', () => {
+    expect(css).toContain('.exercise.active { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }');
+    expect(css).not.toContain('exercise-breathe');
+    expect(keyframes).not.toContain('box-shadow');
+  });
+  it('every theme accent is a saturated colour, distinct from its text', () => {
+    const hsl = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+      return { s: max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1)), l };
+    };
+    for (const id of THEME_IDS) {
+      const { accent, text } = THEMES[id].tokens;
+      expect(hsl(accent).s, `${id} accent ${accent}`).toBeGreaterThan(0.5);
+      expect(accent.toLowerCase(), id).not.toBe(text.toLowerCase());
+    }
+  });
+});
