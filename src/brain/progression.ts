@@ -221,7 +221,8 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   const meta = findExercise(exerciseId, custom);
   const mode: ResistanceMode = modeOf(exerciseId, custom);
   const range = repRange(meta, goal);
-  const all = exerciseHistory(sessions, exerciseId, custom);
+  // BUG-18: a session whose only sets are held as implausible has nothing to build a target on.
+  const all = exerciseHistory(sessions, exerciseId, custom).filter(h => h.held.length < h.sets.length);
   // BUG-15 (PROGRESSION-F1/F5): lighter-week sessions are never the base or the evidence for a
   // target. Timed holds skip the lighter week (D-A1 point 1), so theirs are ordinary sessions.
   const week = ctx?.deload ?? ctx?.lastDeload ?? null;
@@ -263,13 +264,13 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   // which already gives a rep goal only when reps were actually logged (QA2-FE-8).
   const carryOrSled = CARRY_OR_SLED_IDS.has(exerciseId) || (!!meta?.custom && mode === 'conditioning');
   // Part B (F13): a carry/sled or custom conditioning move logged as kg × reps shows its weight in the target too.
-  const carryLoad = carryOrSled && last.topKg > 0;
+  const carryLoad = carryOrSled && last.workKg > 0;
   if (mode === 'conditioning' && (carryOrSled ? last.bestDistanceM > 0 || last.bestDurationSec > 0 : last.bestDistanceM > 0 || (last.bestDurationSec > 0 && !(last.bestReps > 0)))) {
     const byDistance = last.bestDistanceM > 0;
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
     // QA3-3b: with an equipment profile to restate against later, keep the raw kg so an lb entry
     // (already stored to 3 decimals) round-trips to its own clean number instead of a half-kg one.
-    const kg = last.topKg > 0 ? (ctx?.deload ? half(last.topKg * weekFactor) : ctx?.equipment ? last.topKg : half(last.topKg)) : null;
+    const kg = last.workKg > 0 ? (ctx?.deload ? half(last.workKg * weekFactor) : ctx?.equipment ? last.workKg : half(last.workKg)) : null;
     const load = kg != null ? `${kg} kg · ` : '';
     const u = byDistance ? ' m' : 's';
     const step = byDistance ? (best >= 100 ? 10 : 5) : 5;
@@ -285,7 +286,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   if (gap > REENTRY_DAYS) {
-    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${last.topKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.topKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.topKg || null, range[0], null, 'Return session') };
+    return { mode: 'reentry', target: mode === 'weighted' || carryLoad ? `${last.workKg} kg · ${fmtRange(range)}` : `${fmtRange(range)}`, kg: last.workKg || null, reps: range, reason: `It has been ${gap} days. Repeat your last load once before adding anything.`, confidence: 'low', sets: setPlan(setCount, last.workKg || null, range[0], null, 'Return session') };
   }
 
   if (ctx?.deload) {
@@ -296,10 +297,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const cut = { cutSets: true as const };
     if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
       const reps = last.bestReps;
-      if (carryLoad) { const down = half(last.topKg * weekFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload'), ...cut }; }
+      if (carryLoad) { const down = half(last.workKg * weekFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload'), ...cut }; }
       return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload'), ...cut };
     }
-    const down = half(last.topKg * weekFactor);
+    const down = half(last.workKg * weekFactor);
     return { mode: 'deload', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(deloadSets, down, range[0], null, 'Deload'), ...cut };
   }
 
@@ -312,14 +313,15 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const nextReps = match ? reps : reps + 1;
     const why = firstBack ? `${BACK_REASON} Match it before adding a rep.` : last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.';
     if (carryLoad) {
-      const kg = ctx?.equipment ? last.topKg : half(last.topKg);
+      const kg = ctx?.equipment ? last.workKg : half(last.workKg);
       return { mode: 'reps', target: `${kg} kg · ${nextReps} reps`, kg, reps: [nextReps, nextReps], reason: why, confidence: conf, sets: setPlan(setCount, kg, nextReps, null, match ? 'Match it' : 'Add a rep') };
     }
     return { mode: 'reps', target: `${nextReps} reps`, kg: null, reps: [nextReps, nextReps], reason: why, confidence: conf, sets: setPlan(setCount, null, nextReps, null, match ? 'Match it' : 'Add a rep') };
   }
 
-  const topKg = last.topKg;
-  const holdSets = (note: string, reps = Math.min(range[1], Math.max(range[0], last.topReps + 1))) => setPlan(setCount, topKg, reps, null, note);
+  // BUG-18 (PROGRESSION-F3): targets build on the straight working sets, not one heavy single.
+  const topKg = last.workKg;
+  const holdSets = (note: string, reps = Math.min(range[1], Math.max(range[0], last.workReps + 1))) => setPlan(setCount, topKg, reps, null, note);
   const holdTarget = `${topKg} kg · ${fmtRange(range)}`;
 
   if (ctx?.readiness?.loadAdvice === 'reduce') {
@@ -328,7 +330,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   if (firstBack) {
-    const reps = Math.min(range[1], Math.max(range[0], last.topReps));
+    const reps = Math.min(range[1], Math.max(range[0], last.workReps));
     return { mode: 'hold', target: `${topKg} kg · ${reps} reps`, kg: topKg, reps: [reps, reps], reason: `${BACK_REASON} Match it before adding more.`, confidence: conf, sets: holdSets('Back to your level', reps) };
   }
 
@@ -340,7 +342,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   const prev2 = hist[hist.length - 3];
   // A range starting at 1-2 reps can never see "reps under the range" at max effort, so a
   // falling e1RM over two consecutive max-effort sessions is the step-down signal instead.
-  const belowAtMax = (r: ExerciseSessionSummary) => r.hasMax && r.topReps < range[0];
+  const belowAtMax = (r: ExerciseSessionSummary) => r.hasMax && r.workReps < range[0];
   const stepDown = range[0] <= 2
     ? !!prev && !!prev2 && e1rmDownAtMax(last, prev) && e1rmDownAtMax(prev, prev2)
     : !!prev && belowAtMax(last) && belowAtMax(prev);
@@ -357,9 +359,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   if (plateau.status === 'declining' && plateau.confidence !== 'low') {
     return { mode: 'plateau', target: `${topKg} kg · ${range[0]}–${range[0] + 2} reps`, kg: topKg, reps: [range[0], range[0] + 2], reason: 'Progress has slipped over recent sessions. Keep this load, stop short of max effort for a week, then build back up.', confidence: plateau.confidence, sets: holdSets('Lighter week', range[0]) };
   }
-  const cleanTop = (r: ExerciseSessionSummary) => r.topReps >= range[1] && !r.hasMax && r.effortCoverage > 0;
+  // BUG-18 (PROGRESSION-F23): every working set at the top of the range, not just the best one.
+  const cleanTop = (r: ExerciseSessionSummary) => r.workMinReps >= range[1] && !r.hasMax && r.effortCoverage > 0;
   if (cleanTop(last)) {
-    const twoForTwo = !!prev && cleanTop(prev) && prev.topKg === topKg;
+    const twoForTwo = !!prev && cleanTop(prev) && prev.workKg === topKg;
     const fastTrack = last.allEasy && hist.length >= 4;
     const readinessBlocksIncrease = ctx?.readiness?.loadAdvice === 'no_increase' || (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT);
     if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && !readinessBlocksIncrease) {
@@ -381,7 +384,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     return { mode: 'plateau', target: holdTarget, kg: topKg, reps: range, reason: 'This lift has not moved for a while. Try a different rep range or one lighter week, then rebuild.', confidence: plateau.confidence, sets: holdSets('Change it up') };
   }
 
-  const nextReps = Math.min(range[1], Math.max(range[0], last.topReps + 1));
+  const nextReps = Math.min(range[1], Math.max(range[0], last.workReps + 1));
   return { mode: 'hold', target: `${topKg} kg · ${nextReps} reps`, kg: topKg, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Keep the load and aim for one more clean rep.' : 'Keep the load and add a rep. Reps first, then load.', confidence: conf, sets: holdSets('Build reps', nextReps) };
 }
 

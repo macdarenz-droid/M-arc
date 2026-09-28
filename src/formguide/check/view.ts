@@ -8,6 +8,7 @@ import { apply, frontFrame, handAt, worldMat, type Frame, type PoseId } from '..
 import type { TokenReader } from '../rig/paint';
 import type { Pt } from '../rig/ik';
 import { viewFor } from '../rig/patterns';
+import { PART_BUDGET_MARKUP } from '../parts';
 
 export type Rig = {
   view: View;
@@ -22,8 +23,9 @@ export type Rig = {
 
 /** Parts the figure draws in its own hand groups (FG-1: the lab's dumbbell); other parts come from the parts library. */
 export const FIGURE_PARTS: readonly PartId[] = ['dumbbell'];
-/** The parts library (§4, FG-5). Only `none` until then; a file using a part not here fails pathBudget. */
-export const PARTS: Partial<Record<PartId, string>> = { none: '' };
+/** The parts library (§4): FG-5's free-weight parts at their worst case (parts/index.ts PART_BUDGET_MARKUP); a file
+ * using a part not here fails pathBudget. */
+export const PARTS: Partial<Record<PartId, string>> = { none: '', ...PART_BUDGET_MARKUP };
 
 /** The view a file is drawn in: its override, else its pattern's (null when the id has no library row). */
 export function viewOf(g: ExerciseGuide, pattern: string | undefined): View | null {

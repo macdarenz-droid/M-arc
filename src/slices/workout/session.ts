@@ -8,8 +8,7 @@ import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { hasEntry } from '@/brain/exposure';
 import { BURST_WINDOW_MS, LIVE_GAP_SEC, classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
-import { calibrateAfterSession, replayRecoveryModel } from '@/brain/recovery';
-import { exerciseHistory } from '@/brain/history';
+import { calibrateAfterSession, lastSummaryAlone, replayRecoveryModel } from '@/brain/recovery';
 import { dayKey, todayKey } from '@/core/dates';
 import { cancelRestDone, scheduleRestDone } from '@/native/notifications';
 import { haptic } from '@/native/haptics';
@@ -519,7 +518,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: templateFromSession(a, split, s.escobar.todayOverride) }))
       : s.splits,
     // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
-    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => { const h = exerciseHistory(s.sessions, id, s.customExercises); return h[h.length - 1]; }) : s.recoveryModel,
+    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => lastSummaryAlone(s.sessions, id, s.customExercises)) : s.recoveryModel,
   }));
   flushSave();
   pausedAtCommit.clear();
