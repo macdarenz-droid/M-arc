@@ -4795,11 +4795,21 @@ for (const theme of ['silent-black', 'paper']) {
 // Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
 // down and up, every piece of page content ends above the dock's top edge plus its shadow
 // (--dock-shade); (A2) scrolling down mid-page moves the dock out of the way (a tap at its spot
-// reaches the page) and scrolling up brings it back.
-for (const theme of ['silent-black', 'paper']) {
+// reaches the page) and scrolling up brings it back. The owner's phone showed the dock over "Log a
+// past session" even at the scroll end, so Train's end is also checked with a tall 48px system inset,
+// both as env(safe-area-inset-bottom) and as the --safe-area-inset-bottom Capacitor's SystemBars
+// injects on <html>, and with the dock pushed 60px higher than --float-bottom (standing in for a
+// device where it sits higher than the tokens say); a real tap at the button's centre at the scroll
+// end must open the sheet. Only the document may scroll (no nested scroller eating the end padding).
+const bug22Runs = [];
+for (const theme of ['silent-black', 'paper']) for (const inset of ['none', 'env48', 'var48', 'raised60']) bug22Runs.push({ theme, inset });
+for (const { theme, inset } of bug22Runs) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
-  const tag = `BUG-22 dock overlap (${theme})`;
+  const tag = `BUG-22 dock overlap (${theme}, inset ${inset})`;
+  if (inset === 'env48') { const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 0, bottom: 48, left: 0, right: 0 } }); }
+  if (inset === 'raised60') await page.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = '.esc-dock { bottom: calc(var(--float-bottom) + 60px) !important; }'; document.head.append(st); }); });
+  if (inset === 'var48') await page.addInitScript(() => { const set = () => document.documentElement.style.setProperty('--safe-area-inset-bottom', '48px'); if (document.documentElement) set(); else document.addEventListener('DOMContentLoaded', set); });
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
   await page.goto(`http://localhost:${PORT}/`);
@@ -4850,6 +4860,8 @@ for (const theme of ['silent-black', 'paper']) {
   // A1, rest banner down.
   await go(/^Train$/);
   await checkEnd('Train end');
+  const scrollers = await page.evaluate(() => [...document.querySelectorAll('body *')].filter(el => { const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') && el.scrollHeight > el.clientHeight + 1 && !el.closest('dialog'); }).map(el => `${el.tagName.toLowerCase()}.${el.className}`));
+  if (scrollers.length) errors.push(`${tag} Train: expected only the document to scroll, found ${scrollers.join(', ')}`);
   const trainEnd = await page.evaluate(() => {
     const dock = document.querySelector('.esc-dock').getBoundingClientRect();
     const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
@@ -4865,7 +4877,15 @@ for (const theme of ['silent-black', 'paper']) {
     if (trainEnd.hint > trainEnd.limit) errors.push(`${tag} Train end: the targets line ends at ${trainEnd.hint}, under the dock (${trainEnd.limit})`);
     if (!trainEnd.tap) errors.push(`${tag} Train end: a tap on "Log a past session" does not reach it`);
   }
-  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-train-end.png` });
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}${inset === 'none' ? '' : `-${inset}`}-train-end.png` });
+  // The owner's check: at the scroll end, a real tap on "Log a past session" opens its sheet.
+  if (trainEnd.log != null) {
+    const box = await page.locator('[data-palace="train.log-past"]').boundingBox();
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    if (!(await visible(page.getByRole('button', { name: 'Save past session' }), 3000))) errors.push(`${tag} Train end: tapping "Log a past session" at the scroll end did not open the log-past sheet`);
+    else { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('dialog[open]'), null, { timeout: 3000 }).catch(() => errors.push(`${tag}: the log-past sheet did not close`)); await page.waitForTimeout(200); }
+  }
+  if (inset !== 'none') { await ctx.close(); continue; }
 
   // A2: mid-page, scrolling down moves the dock away; scrolling up brings it back.
   await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
