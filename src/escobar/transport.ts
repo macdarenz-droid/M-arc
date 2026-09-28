@@ -2,6 +2,7 @@
  * Transport (§12.4, §13): POST /v2/turn and read server-sent events over fetch. Keeps
  * CapacitorHttp out of the path (it buffers responses and would kill streaming).
  */
+import { reportError } from '@/errors';
 
 export type ErrorCode = 'quota' | 'rate' | 'too_many_steps' | 'invalid' | 'upstream_busy' | 'upstream_auth' | 'upstream_region' | 'upstream' | 'timeout' | 'network' | 'offline';
 
@@ -81,8 +82,9 @@ export function httpTransport(opts: { url: () => string; device: () => string; f
       let res: Response;
       try {
         res = await f(`${opts.url().replace(/\/$/, '')}/v2/turn`, { method: 'POST', body: JSON.stringify(body), headers: { 'content-type': 'application/json', 'x-escobar-device': opts.device() }, signal });
-      } catch (err) {
+      } catch {
         if (signal.aborted) return;
+        reportError('escobar-transport', 'network', 'fetch failed');
         yield { t: 'error', code: 'network', message: 'Could not reach the coach.' };
         return;
       }
@@ -92,13 +94,15 @@ export function httpTransport(opts: { url: () => string; device: () => string; f
           const j = (await res.json()) as { t?: string; code?: ErrorCode; message?: string; retryAfter?: number };
           if (j?.t === 'error' && j.code) e = { t: 'error', code: j.code, message: j.message ?? '', ...(j.retryAfter ? { retryAfter: j.retryAfter } : {}) };
         } catch { /* not JSON */ }
+        // Never the upstream message content — just that the request failed, and with what status.
+        reportError('escobar-transport', 'upstream', `status ${res.status}`);
         yield e;
         return;
       }
       try {
         yield* parseSse(textChunks(res.body));
       } catch {
-        if (!signal.aborted) yield { t: 'error', code: 'network', message: 'The connection dropped.' };
+        if (!signal.aborted) { reportError('escobar-transport', 'stream', 'stream dropped'); yield { t: 'error', code: 'network', message: 'The connection dropped.' }; }
       }
     },
   };

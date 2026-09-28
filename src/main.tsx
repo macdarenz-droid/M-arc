@@ -16,12 +16,14 @@ import { go, showPanel } from './app/router';
 import { refreshClock } from './app/clock';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { pageIsCurrent } from './app/swUpdate';
+import { initErrorReporting, reportCaught } from './errors';
 import './ui/styles.css';
 
 /** A throw anywhere in here used to leave a silent blank screen with no signal to diagnose from — see the crash handler in index.html, which this reports to explicitly rather than relying only on the window 'error' event. */
 try {
   installThemeEngine();
   initStore();
+  initErrorReporting();
   setHapticsEnabled(state.value.preferences.haptics);
   startWatchListeners();
   void installBackButton();
@@ -40,8 +42,8 @@ try {
     lastErrorToast = now;
     showToast('Something went wrong. Your data is saved.');
   };
-  window.addEventListener('error', e => reportLate(e.error ?? e.message));
-  window.addEventListener('unhandledrejection', e => reportLate(e.reason));
+  window.addEventListener('error', e => { reportLate(e.error ?? e.message); reportCaught('onerror', e.error ?? e.message); });
+  window.addEventListener('unhandledrejection', e => { reportLate(e.reason); reportCaught('unhandledrejection', e.reason); });
 
   if (bootSource.value === 'legacy') {
     showToast(`Imported ${state.value.sessions.length} sessions from the previous version`);
@@ -79,6 +81,7 @@ try {
     });
   }
 } catch (err) {
+  reportCaught('boot', err);
   (globalThis as { __marcCrash?: (e: unknown) => void }).__marcCrash?.(err);
   throw err;
 }
