@@ -1,5 +1,5 @@
-// FG-3 seeded bad files: the base. The lateral raise without its mistake's sway delta (that delta swings the mistake's
-// left dumbbell 4.5 units out of the viewBox; D-FG3), so every bad file here is one defect away from a file that passes
+// FG-3 seeded bad files: the base. The lateral raise without its mistake's sway delta (a file of its own, with no stored
+// hash, so the hash bad file is the base itself), so every bad file here is one defect away from a file that passes
 // every other check. Each folder is named for the check its file must fail; a `fixture.json` beside it gives what a real
 // file would have in the repo (research, drawings, its stored hash).
 import type { ExerciseGuide } from '@/formguide/model';

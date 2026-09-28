@@ -25,9 +25,7 @@ describe('every exercise file passes every check', () => {
     const g = guideOf(await import(`../../${EX}/${f}`), f), rs = runChecks(inputFor(`${EX}/${f}`, g));
     console.info(report(f.replace(/\.ts$/, ''), rs));
     expect(rs.map(r => r.check)).toEqual([...CHECKS]);
-    // D-FG3: the lab's viewBox clips the lateral raise's mistake by 4.5 units (its sway delta); the ruling is the
-    // supervisor's (the fix is in model.ts or the exercise file, outside FG-3). Every other check passes.
-    expect(failing(rs)).toEqual(f === 'lib_dumbbell_lateral_raise.ts' ? ['mistakeSane'] : []);
+    expect(failing(rs)).toEqual([]);
   });
   it('the fixture base (the lateral raise without its mistake sway) passes every check but its missing hash', () => {
     expect(failing(variant(BASE))).toEqual(['hash']);
@@ -119,6 +117,28 @@ describe('the rules inside each check', () => {
   });
 });
 
+describe('D-FG3 the widened standingFront frame', () => {
+  it('holds the lateral raise\'s correct reps and its mistake (sway kept) with at least 1 unit to spare', async () => {
+    const { VIEWBOXES } = await import('@/formguide/model');
+    const { rigFor } = await import('@/formguide/check/view');
+    const { themeReader } = await import('@/formguide/rig/paint');
+    const { poseAt } = await import('@/formguide/sample');
+    const { lib_dumbbell_lateral_raise: LR } = await import('@/formguide/exercises/lib_dumbbell_lateral_raise');
+    const [x, y, w, h] = VIEWBOXES.standingFront, rig = rigFor(LR, 'front');
+    if (typeof rig === 'string') throw new Error(rig);
+    for (const [fig, reps] of [['correct', [0, 1, 2]], ['mistake', [0]]] as const) {
+      const c = compile(rig.markup(themeReader('silent-black'), fig === 'mistake'));
+      let m = Infinity;
+      for (const rep of reps) for (let i = 0; i <= 480; i++) {
+        const b = bbox(c, rig.frame(poseAt(LR, i / 480, fig, rep)));
+        m = Math.min(m, b.x0 - x, b.y0 - y, x + w - b.x1, y + h - b.y1);
+      }
+      console.info(`[FG-3] ${fig}: least margin to the standingFront frame ${m.toFixed(2)} units`);
+      expect(m).toBeGreaterThanOrEqual(1);
+    }
+  });
+});
+
 describe('helpers', () => {
   it('a lever anchor runs on its arc and a slide end on its segment; travel past the ends leaves the path', () => {
     const L: Lever = { kind: 'lever', pivot: [0, 0], bound: 'shoulder_r', radius: 10, deg: [0, 90] };
@@ -163,12 +183,8 @@ describe('A4 npm run fg:check', () => {
   it('prints pass or fail per check for the lateral raise', () => {
     const r = run('lib_dumbbell_lateral_raise');
     for (const c of CHECKS) expect(r.stdout).toMatch(new RegExp(`^(PASS|FAIL) ${c}\\b`, 'm'));
-    // exit 0 once the viewBox ruling lands (D-FG3); until then the one failing check is mistakeSane
-    expect(r.stdout.match(/^FAIL .*/gm)).toEqual(['FAIL mistakeSane']);
-    expect(r.status).toBe(1);
-    const rest = run('lib_dumbbell_lateral_raise', ...CHECKS.filter(c => c !== 'mistakeSane'));
-    expect(rest.stdout).toMatch(/all 19 checks passed/);
-    expect(rest.status).toBe(0);
+    expect(r.stdout).toMatch(/all 20 checks passed/);
+    expect(r.status).toBe(0);
   }, 30_000);
   it('exits non-zero on a bad file and prints its failing numbers', () => {
     const bad = run(`${BAD}/jointRanges/lib_dumbbell_lateral_raise.ts`);
