@@ -23,7 +23,7 @@ import { findExercise } from '@/core/exercises';
 import { e1rmTrend, failureShare, hardSetsThisWeek, isStale } from './weeklyReview';
 import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
-import { readiness, type ReadinessBand, type ReadinessResult } from '../readiness';
+import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
 
 /** BR-04's one span constant, now in trend.ts (BUG-14): a plateau needs six of the eight weeks (spec: never at 3 weeks). */
@@ -92,6 +92,13 @@ interface Derived {
   /** Lifts trained in the last six weeks (BR-05): progress and effort rules skip the rest. */
   activeIds: Array<{ id: string; name: string }>;
   readiness: ReadinessResult | null;
+  /** BUG-16: the inputs that fed today's readiness, so its copy names only those. */
+  readinessInputs: ReadinessInputKey[];
+}
+
+/** "a", "a and b", "a, b and c". */
+function listJoin(xs: string[]): string {
+  return xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 }
 
 /** QA8-2: the next scheduled split (and its weekday) after `day`, resolved to the actual Split. */
@@ -108,15 +115,17 @@ function derive(ctx: CoachContext): Derived {
   const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
   const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
   const exerciseIds = [...names].map(([id, name]) => ({ id, name }));
+  const today = readinessWithInputs({
+    today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
+    checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
+    next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
+  });
   return {
     recovery,
     exerciseIds,
     activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
-    readiness: readiness({
-      today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
-      checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
-      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
-    }),
+    readiness: today.result,
+    readinessInputs: today.inputs,
   };
 }
 
@@ -450,29 +459,46 @@ export const RULES: Rule[] = [
     run: (ctx, d) => {
       const r = d.readiness;
       if (!r) return [];
+      // BUG-16: copy names only the inputs that fed the score, and says "several" only when there are.
+      const inputs = d.readinessInputs;
+      const named = listJoin(inputs.map(k => READINESS_INPUT_LABEL[k]));
+      const Named = named.charAt(0).toUpperCase() + named.slice(1);
+      // Sleep, resting HR and HRV come from health data: the note is kept off the coach when that sharing is off (BUG-20).
+      const health = inputs.some(k => k === 'sleep' || k === 'rhr' || k === 'hrv') ? { gated: 'health' as const } : {};
       if (r.band === 'red') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
-          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'Several signals point the same way today.', drivers: r.drivers,
+          title: 'Readiness: red', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : inputs.length > 1 ? 'Several signals point the same way today.' : `${Named} reads low today.`, drivers: r.drivers,
           means: 'Training hard today would work against you more than for you.',
           // QA8-2: once today's session is already done, "keep loads where they are" no longer applies.
-          action: r.postSessionAdvice ?? 'Keep loads where they are, or drop a set on the hardest lifts.',
+          // BUG-16: "drop a set" only when the advice is to reduce (a check-in or 2+ agreeing inputs).
+          action: r.postSessionAdvice ?? (r.loadAdvice === 'reduce' ? 'Keep loads where they are, or drop a set on the hardest lifts.' : 'Keep today’s loads where they are.'),
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
       if (r.band === 'amber') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 380, cadence: 'now', kind: 'data',
-          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : 'A mixed picture today.', drivers: r.drivers,
+          title: 'Readiness: amber', noticed: r.drivers.length ? `${r.drivers.join('. ')}.` : inputs.length > 1 ? 'A mixed picture today.' : `${Named} reads middling today.`, drivers: r.drivers,
           means: 'Not a reason to skip, just not a day to chase a new best.',
           action: r.postSessionAdvice ?? 'Keep today’s loads where they are.',
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
+      // BUG-16: acute load high on its own is a low-confidence note, never an alert or a load change.
+      if (r.drivers.includes(LOAD_DRIVER) && inputs.length === 1) {
+        return [{
+          id: 'readiness-today', category: 'readiness', priority: 90, cadence: 'now', kind: 'data',
+          title: 'Training load is up', noticed: 'You have trained more this week than in your recent weeks.',
+          means: 'On its own that is not a reason to back off. A check-in tells the coach how you actually feel.',
+          action: 'Log a quick check-in before you train.',
+          evidence: { n: 1, window: 'today', confidence: 'low' },
+        }];
+      }
       if (weekdayOf(ctx.today) !== 'mon') return [];
       return [{
-        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise',
-        title: 'Readiness: green', noticed: 'Sleep, resting heart rate and recovery are all lining up this week.',
+        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise', ...health,
+        title: 'Readiness: green', noticed: `${Named} ${inputs.length > 1 ? 'are all lining up' : 'is lining up'} this week.`,
         means: 'A good week to push the lifts that have room to grow.',
         action: 'No change needed.',
         evidence: { n: 1, window: 'today', confidence: r.confidence },
