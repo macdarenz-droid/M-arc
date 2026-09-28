@@ -146,3 +146,49 @@ describe('BUG-18 A2: the post-session debrief holds a typo too', () => {
     expect(recordsInsight(real, base).length).toBeGreaterThan(0);
   });
 });
+
+describe('BUG-18 x BUG-15: the lighter week builds on the straight working sets', () => {
+  // Pre-week session: one heavy single, then three straight working sets.
+  const pre = session('2026-09-10', [{ id: ex, sets: [s(100, 3, 'max'), s(80, 8), s(80, 8), s(80, 8)] }]);
+  const week = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+  it('the lighter-week load is cut from the working load, not the heavy single', () => {
+    const next = suggestNext([pre], ex, 'lean', '2026-09-15', 3, [], { deload: week });
+    expect(next.mode).toBe('deload');
+    expect(next.kg).toBe(72);
+  });
+  it('the first session back holds the working load at the working reps', () => {
+    const inWeek = session('2026-09-16', [{ id: ex, sets: sets(72, 8, 'easy', 2) }]);
+    const next = suggestNext([pre, inWeek], ex, 'lean', '2026-09-22', 3, [], { lastDeload: week });
+    expect(next.mode).toBe('hold');
+    expect(next.kg).toBe(80);
+    expect(next.reps).toEqual([8, 8]);
+  });
+  const carry = 'lib_farmer_s_carry';
+  it('a loaded carry logged as kg x reps is cut from its working load', () => {
+    const c = session('2026-09-10', [{ id: carry, sets: [s(50, 10), s(40, 20), s(40, 20)] }]);
+    const next = suggestNext([c], carry, 'lean', '2026-09-15', 3, [], { deload: week });
+    expect(next.mode).toBe('deload');
+    expect(next.kg).toBe(36);
+  });
+  it('a carry logged by distance is cut from its working load too', () => {
+    const c = session('2026-09-10', [{ id: carry, sets: [{ kg: 50, distanceM: 20 }, { kg: 40, distanceM: 40 }, { kg: 40, distanceM: 40 }] }]);
+    const next = suggestNext([c], carry, 'lean', '2026-09-15', 3, [], { deload: week });
+    expect(next.kg).toBe(36);
+  });
+});
+
+describe('BUG-18 A2: a session where every set is held', () => {
+  const base = [session('2026-09-01', [{ id: ex, sets: sets(100, 6) }]), session('2026-09-04', [{ id: ex, sets: sets(100, 6) }])];
+  // A load typo and a reps typo: neither repeats the other, so both stay held.
+  const bad = session('2026-09-08', [{ id: ex, sets: [s(130, 6), s(100, 60)] }]);
+  it('holds both sets and leaves every number to the trusted sessions', () => {
+    const row = exerciseHistory([...base, bad], ex)[2]!;
+    expect(row.held).toHaveLength(2);
+    expect(row.sets).toHaveLength(2);
+    expect([row.topKg, row.workKg, row.bestE1rm, row.volume]).toEqual([0, 0, 0, 0]);
+    expect(allRecords([...base, bad]).filter(r => r.day === '2026-09-08')).toHaveLength(0);
+    const next = suggestNext([...base, bad], ex, 'lean', today);
+    expect(next.kg).toBe(100);
+    expect(next.sets.every(x => x.kg === 100)).toBe(true);
+  });
+});
