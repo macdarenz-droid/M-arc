@@ -2213,14 +2213,116 @@ for (const theme of themes) {
   }
 
   // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
-  // I3 dropped exercise-breathe/exercise-shimmer, so a live screen showing an active card must not
-  // have any infinite animation left running on it at all.
-  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
+  // UI-1 (replaces I3's "no exercise-* animation" probe): at most one exercise-* animation, only on
+  // the open card's title. The inputs are blurred here, so the logging sweep must be off and the
+  // idle check below stays strict: exercise-shimmer is NOT on its allow list.
+  const exAnims = await page.evaluate(() => document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'))
+    .map(a => ({ name: a.animationName, onActiveTitle: !!a.effect?.target?.matches?.('.exercise.active .exname') })));
+  if (exAnims.length > 1 || exAnims.some(a => !a.onActiveTitle)) errors.push(`${tag}: UI-1 A6 exercise-* animations: ${JSON.stringify(exAnims)}`);
+  const ALLOW =['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// UI-1: the open exercise's title sweeps twice on open and stops by itself (A1), sweeps while a
+// kg/reps field has focus and stops on blur, holds briefly after an effort tap, stays off when idle
+// (A2), never runs under reduced motion (A3), paints only var(--text) and the accent (A4), and only
+// the open card's title ever animates (A6). Full motion, 390 px, Silent Black and Paper.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = `UI-1 shimmer ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForSelector('.exercise.active .exname');
+  // Every exercise-* animation, where it runs, and the title's paint at this instant.
+  const probe = () => page.evaluate(() => {
+    const anims = document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'));
+    const rgb = v => { const d = document.createElement('i'); d.style.color = v; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
+    const n = document.querySelector('.exercise.active .exname'); const cs = n && getComputedStyle(n);
+    return {
+      anims: anims.map(a => ({ name: a.animationName, state: a.playState, iterations: a.effect.getTiming().iterations, onActiveTitle: !!a.effect.target?.matches('.exercise.active .exname') })),
+      text: rgb('var(--text)'), accent: rgb('var(--accent)'), greys: [rgb('var(--text-2)'), rgb('var(--text-3)')],
+      paint: cs && { color: cs.color, fill: cs.webkitTextFillColor, clip: cs.backgroundClip || cs.webkitBackgroundClip, bg: cs.backgroundColor, image: cs.backgroundImage },
+    };
+  });
+  const running = p => p.anims.filter(a => a.state === 'running');
+  const a6 = (p, when) => { if (p.anims.length > 1 || p.anims.some(a => !a.onActiveTitle)) errors.push(`${tag}: A6 ${when}: ${JSON.stringify(p.anims)}`); };
+  // A4: plain var(--text) at rest; mid-sweep the fill is transparent over a var(--text) background
+  // carrying only the accent band, with no dim text tone anywhere.
+  const restPlain = (p, when) => { if (!p.paint || p.paint.color !== p.text || p.paint.fill !== p.text || p.paint.clip === 'text') errors.push(`${tag}: A4 title not plain var(--text) ${when}: ${JSON.stringify(p.paint)} text ${p.text}`); };
+
+  // A1: opening starts a finite run on the title.
+  let p = await probe();
+  a6(p, 'on open');
+  if (running(p).length !== 1 || !(Number.isFinite(p.anims[0]?.iterations) && p.anims[0].iterations >= 1)) errors.push(`${tag}: A1 opening gave no finite exercise-shimmer run: ${JSON.stringify(p.anims)}`);
+  // Freeze it mid-pass for the paint check and the screenshot (once the screen's own entry fades
+  // have settled), then let it run on.
+  await settle(page);
+  await page.evaluate(() => { const a = document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer'); if (a) { a.pause(); a.currentTime = 1000; } });
+  p = await probe();
+  const mid = p.paint;
+  if (!mid || mid.color !== p.text || mid.bg !== p.text || mid.clip !== 'text' || mid.fill !== 'rgba(0, 0, 0, 0)' || !mid.image.includes(p.accent) || p.greys.some(g => mid.image.includes(g) || mid.bg === g)) errors.push(`${tag}: A4 mid-sweep paint is not var(--text) + accent: ${JSON.stringify(mid)} text ${p.text} accent ${p.accent}`);
+  const head = await page.locator('.exercise.active .ex-head').boundingBox();
+  if (head) await page.screenshot({ path: `${OUT}/${theme}-ui1-title-sweep.png`, clip: { x: 0, y: Math.max(0, head.y - 8), width: 390, height: head.height + 16 } });
+  await page.evaluate(() => document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer')?.play());
+  // ...and it ends by itself: gone from document.getAnimations(), title plain again (A1, A2 idle).
+  await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 6000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A1 the open run did not end by itself: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'after the open run');
+
+  // A2: focusing a kg field sweeps, and keeps sweeping; blurring stops it within one cycle.
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'kg focus');
+  if (running(p).length !== 1 || p.anims[0].iterations !== Infinity) errors.push(`${tag}: A2 kg focus gave no sweep: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().fill('40');
+  await page.locator('.exercise.active .set-grid input').nth(1).focus(); await page.waitForTimeout(2300);
+  p = await probe();
+  if (running(p).length !== 1) errors.push(`${tag}: A2 sweep stopped while the reps field still has focus: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').nth(1).blur();
+  const offAfterBlur = await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 2000 }).then(() => true).catch(() => false);
+  if (!offAfterBlur) errors.push(`${tag}: A2 the sweep did not stop within one cycle of blur`);
+  restPlain(await probe(), 'after blur');
+
+  // A2: an effort tap gives a short hold that ends by itself, even while the button keeps focus.
+  await page.locator('.exercise.active .effort button').first().click(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'effort tap');
+  const effortFocused = await page.evaluate(() => !!document.activeElement?.closest('.exercise.active .effort'));
+  if (running(p).length !== 1) errors.push(`${tag}: A2 effort tap gave no hold (button focused: ${effortFocused}): ${JSON.stringify(p.anims)}`);
+  await page.waitForTimeout(2300);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A2 the effort hold did not end by itself: ${JSON.stringify(p.anims)}`);
+
+  // A6: opening another card moves the one run to it; the first card's title is plain.
+  const second = page.locator('.exercise:not(.active) .ex-head').first();
+  if (await second.count()) {
+    await second.click(); await page.waitForTimeout(150);
+    p = await probe(); a6(p, 'second card');
+    if (running(p).length !== 1) errors.push(`${tag}: A1 opening a second card gave no run: ${JSON.stringify(p.anims)}`);
+  } else errors.push(`${tag}: expected a second exercise card`);
+
+  // A3: under reduced motion there is never a sweep, focused or not, and the title stays plain.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(() => document.documentElement.dataset.motion === 'reduce', null, { timeout: 2000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 a sweep is still running under reduce: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 kg focus swept under reduce: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'under reduce');
   await ctx.close();
 }
 

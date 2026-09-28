@@ -639,7 +639,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
 
   return (
-    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`}>
+    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`} onClick={e => { const c = e.currentTarget, t = String(Date.now()); if ((e.target as Element).closest('.effort button')) { c.dataset.hold = t; setTimeout(() => { if (c.dataset.hold === t) delete c.dataset.hold; }, 2000); } }}>
       <div class="row-between ex-head" onClick={onToggle} role="button" aria-expanded={open} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}>
         <div class="grow">
           <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={16} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
