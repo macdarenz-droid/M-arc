@@ -84,6 +84,7 @@ export function resetErrorReporting(): void {
 }
 
 let poller: ReturnType<typeof setInterval> | null = null;
+let saveErrorUnsub: (() => void) | null = null;
 let onlineHandler: (() => void) | null = null;
 
 /** Called once at boot: flushes anything left over from last session, then keeps trying every
@@ -91,7 +92,9 @@ let onlineHandler: (() => void) | null = null;
 export function initErrorReporting(): void {
   try {
     let lastSaveError: string | null = null;
-    saveError.subscribe(v => {
+    // Called again (a re-init), it replaces its listener instead of adding a second one.
+    if (saveErrorUnsub) saveErrorUnsub();
+    saveErrorUnsub = saveError.subscribe(v => {
       // A fixed message: the save error's own text is never read into a report.
       if (v && v !== lastSaveError) reportError('store-save', 'SaveFailed', 'save failed');
       lastSaveError = v;

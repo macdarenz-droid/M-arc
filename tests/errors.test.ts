@@ -492,6 +492,20 @@ describe('7.5 requirements (D-C75)', () => {
     });
   });
 
+  it('initErrorReporting twice still reports one save failure once (no second listener)', () => {
+    vi.useFakeTimers();
+    (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+    state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true } };
+    initErrorReporting();
+    initErrorReporting();
+    saveError.value = 'Could not save.';
+    saveError.value = null;
+    expect(loadQueueState().reports.find(r => r.kind === 'store-save')?.count).toBe(1);
+    state.value = freshState();
+    delete (globalThis as { localStorage?: Storage }).localStorage;
+    vi.clearAllTimers(); vi.useRealTimers();
+  });
+
   it('R2 a load failure on boot (quarantined or restored from backup) is reported as kind "boot"', () => {
     vi.useFakeTimers();
     (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
@@ -546,7 +560,20 @@ describe('R3 privacy: planted personal data never leaves', () => {
     const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
     await trySend({ workerBase: 'https://w', fetchImpl, now: Date.now() });
     expect(fetchImpl).toHaveBeenCalled();
-    const wire = fetchImpl.mock.calls.map(c => (c[1] as RequestInit).body as string).join('\n');
+    // installId, ts and sig are generated here, never taken from input: a random uuid, the clock
+    // and a hash. Each is pinned to its exact shape (which cannot hold a planted word), then left
+    // out of the text check, so a random '147' in a uuid can't fail it. Every other byte of every
+    // body (message, frames, route, name, app, platform, kind, count, the keys) is checked.
+    const wire = fetchImpl.mock.calls.map(c => {
+      const body = JSON.parse((c[1] as RequestInit).body as string) as { v: number; reports: Record<string, unknown>[] };
+      for (const r of body.reports) {
+        expect(r.installId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+        expect(r.ts).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+        expect(r.sig).toMatch(/^[0-9a-f]{8}$/);
+      }
+      return JSON.stringify({ ...body, reports: body.reports.map(({ installId: _i, ts: _t, sig: _s, ...rest }) => rest) });
+    }).join('\n');
+    expect(wire).toContain('"message"');
     for (const secret of SECRETS) expect(wire, secret).not.toContain(secret);
     expect(wire).not.toContain('data:');
     // Only allowlisted keys on the wire.
