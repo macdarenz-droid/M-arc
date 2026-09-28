@@ -106,7 +106,7 @@ a { color: var(--accent); }
 svg { display: block; }
 ::selection { background: var(--accent-soft); }
 
-.app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px var(--app-end); }
+.app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
 /* I9: a quick crossfade, not a slide — the nav wiring (App.tsx) now does its own scrollTo per tab. */
 .view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; } }
@@ -402,7 +402,7 @@ html[data-motion="reduce"] .ex-body { transition: none; }
 .rest .bar > i { width: 100%; transform: translateX(-100%); }
 .rest.done .bar > i { background: var(--positive); }
 .rest-btn { min-height: 44px; padding: 0 12px; }
-html[data-rest] .app { padding-bottom: max(calc(var(--float-bottom) + var(--rest-h) + var(--float-gap) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear, 0px) + var(--dock-shade) + var(--float-gap))); } /* BUG-22: the dock sits above the rest banner */
+html[data-rest] .app { padding-bottom: calc(var(--float-bottom) + var(--rest-h) + var(--sp-5)); }
 html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bottom) + var(--rest-h) + var(--float-gap)); }
 
 /* Logo */
@@ -620,7 +620,11 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
    --dock-clear (0px here) is the dock's real reach from the screen bottom, written inline on <html> by Dock.tsx, so the end
    padding also holds when the dock sits higher than the tokens say.
    --dock-shade: how far --shadow-float reaches above the dock (blur 32 - spread 8 - offset 12). */
-:root { --dock-h: 40px; --dock-shade: 12px; --dock-clear: 0px; --app-end: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear, 0px) + var(--dock-shade) + var(--float-gap))); }
+:root { --dock-h: 40px; --dock-shade: 12px; --dock-clear: 0px; }
+/* Each padding is written twice: a plain calc() first, so an engine without max() keeps a
+   token-based end instead of dropping the whole declaration. */
+.app { padding-bottom: calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); padding-bottom: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear) + var(--dock-shade) + var(--float-gap))); }
+html[data-rest] .app { padding-bottom: calc(var(--float-bottom) + var(--rest-h) + var(--float-gap) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); padding-bottom: max(calc(var(--float-bottom) + var(--rest-h) + var(--float-gap) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear) + var(--dock-shade) + var(--float-gap))); }
 .esc-dock { transition: translate var(--dur-base) var(--ease-standard), opacity var(--dur-base) var(--ease-standard); }
 .esc-dock-away { translate: 0 calc(100% + var(--float-gap)); opacity: 0; pointer-events: none; }
 .esc-dock-away:focus-visible { translate: none; opacity: 1; pointer-events: auto; }
