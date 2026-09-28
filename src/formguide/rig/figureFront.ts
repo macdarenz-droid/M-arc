@@ -118,7 +118,7 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
     DS = 'M6 -12 C11 -12 16 -11 20 -8 C23 6 23 26 17 40 C13 46 9 51 6 56 C9 32 8 8 6 -12 Z',
     DP = 'M20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.4 29 21.5 36 C17 44 11 50 6 56 C9 51 13 46 17 40 C23 26 23 6 20 -8 Z';
   // The library dumbbell (FG-5, src/formguide/parts/dumbbell.ts): far head behind the forearm, near head in the wrist.
-  const eqFar = db ? `<g transform="translate(${FIST[0]} ${FIST[1]})">${part(`eqf_${side}`, [0, 0], dumbbellFar(`${p}-i`, db.kg))}</g>` : '';
+  const eqFar = db ? `<g transform="translate(${FIST[0]} ${FIST[1]})">${part(`eqf_${side}`, [0, 0], dumbbellFar(`${p}-i`))}</g>` : '';
   const eqNear = db ? part(`eq_${side}`, [0, 0], dumbbellNear(`${p}-i`, db.kg)) : '';
   const hand = `<g transform="translate(0 ${-FIST[1]})">
       <path d="M-11 77 C-15 86 -14 98 -7 105 C0 110 10 107 13 99 C15 90 12 81 8 77 Z" fill="url(#${p}-af)" stroke="var(--l)" stroke-width="2"/>

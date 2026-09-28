@@ -11,7 +11,8 @@ import { CHECKS, runChecks, guideHash } from '@/formguide/check';
 import { inputFor } from '@/formguide/check/node';
 import { PARTS, rigFor, viewOf } from '@/formguide/check/view';
 import { bbox, compile, countPaths, parseTransform } from '@/formguide/check/svg';
-import { apply } from '@/formguide/rig/pose';
+import { apply, frontFrame } from '@/formguide/rig/pose';
+import { VIEWBOXES } from '@/formguide/model';
 import { SWAY_DRIFT_DEG, poseAt } from '@/formguide/sample';
 import library from '@/data/exercises.json';
 import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumbbell_lateral_raise';
@@ -140,7 +141,9 @@ describe('A2 the plate count follows the load', () => {
     expect(headScale(60)).toBe(1.6);
     expect(headScale(1)).toBe(0.75);
     const k = headScale(20), first = (svg: string) => +/points="([-\d.]+),/.exec(svg)![1]!;
-    expect(first(dumbbellNear(g, 20))).toBeCloseTo(7 * k + 20 * k * Math.cos(Math.PI / 6), 0);
+    expect(first(dumbbellNear(g, 20, 20))).toBeCloseTo(7 * k + 20 * k * Math.cos(Math.PI / 6), 0);
+    expect(first(dumbbellNear(g, 20))).toBeCloseTo(7 + 20 * Math.cos(Math.PI / 6), 1);   // no size: the lab's heads
+    expect(dumbbell({ g, kg: 20 }).svg).toContain(dumbbellNear(g, 20, 20));   // on its own the part is sized by its load
     expect(first(dumbbellNear(g, 7))).toBeCloseTo(7 + 20 * Math.cos(Math.PI / 6), 1);
     expect(kettlebell({ g, kg: 24 }).svg).toContain('>24</text>');
   });
@@ -274,6 +277,18 @@ describe('A4 the lateral raise with the library dumbbell', () => {
     for (const t of THEME_IDS) for (const kg of [7, undefined]) for (const mistake of [false, true]) {
       const svg = figureFront(themeReader(t), { id: 'fg0', mistake, dumbbell: { kg } });
       expect(createHash('sha256').update(svg).digest('hex').slice(0, 16), `${t} ${kg ?? '-'} ${mistake}`).toBe(BEFORE[`${t} ${kg ?? '-'} ${mistake}`]);
+    }
+  });
+  it('in the figure the heads keep the lab\'s size at any load, so the lateral raise stays in its frame (FG-4 passes the logged kg)', () => {
+    const vb = VIEWBOXES.standingFront, lab = figureFront(themeReader('paper'), { id: 'fg0', dumbbell: { kg: 7 } });
+    for (const kg of [12, 20, 60]) {
+      const svg = figureFront(themeReader('paper'), { id: 'fg0', dumbbell: { kg } });
+      expect(svg.replace(/>\d+<\/text>/g, '><\/text>')).toBe(lab.replace(/>\d+<\/text>/g, '><\/text>'));
+      const c = compile(svg);
+      for (const fig of ['correct', 'mistake'] as const) for (let i = 0; i <= 120; i++) {
+        const b = bbox(c, frontFrame('standing', poseAt(LR, i / 120, fig) as never));
+        expect(b.x0 >= vb[0] && b.y0 >= vb[1] && b.x1 <= vb[0] + vb[2] && b.y1 <= vb[1] + vb[3], `${kg} kg ${fig} u=${i / 120}: ${b.x0.toFixed(1)}..${b.x1.toFixed(1)}`).toBe(true);
+      }
     }
   });
   it('the dumbbell on its own is the figure\'s far and near heads about the grip', () => {
