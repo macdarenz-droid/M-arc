@@ -96,14 +96,34 @@ export function validateBatch(raw: unknown): Validation {
   return { ok: true, body: raw as unknown as ErrorBatch };
 }
 
-/** The app's message cleaning (src/errors/scrub.ts `scrubMessage`), repeated here: quoted
- * strings become "…", every digit becomes #, cut to 300 characters. Idempotent. */
+const QUOTE_CLASS: Record<string, string> = { '"': 'd', '\u201C': 'd', '\u201D': 'd', "'": 's', '\u2018': 's', '\u2019': 's', '`': 'b' };
+const MARK = '"\u2026"';
+
+/** Message cleaning (docs/ERROR-REPORTS.md): quoted text becomes "…", every digit becomes #, cut
+ * to 300 characters. A quote (straight, curly or backtick) runs to the LAST quote of its kind in
+ * the message, so nested quotes and apostrophes inside a quote (`"hello "Dave"`, `'O'Brien'`)
+ * are covered; an opening quote with no closing one removes the rest of the message. An existing
+ * "…" is kept as is, so cleaning twice changes nothing. */
 export function scrubMessage(raw: string): string {
-  return raw.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '"…"').replace(/\d/g, '#').slice(0, MAX_MESSAGE);
+  let out = '';
+  let i = 0;
+  while (i < raw.length) {
+    if (raw.startsWith(MARK, i)) { out += MARK; i += MARK.length; continue; }
+    const c = raw[i]!;
+    const cls = QUOTE_CLASS[c];
+    if (!cls) { out += c; i++; continue; }
+    let end = -1;
+    for (let j = raw.length - 1; j > i; j--) if (QUOTE_CLASS[raw[j]!] === cls) { end = j; break; }
+    out += MARK;
+    if (end < 0) break;
+    i = end + 1;
+  }
+  return out.replace(/\d/g, '#').slice(0, MAX_MESSAGE);
 }
 
 const ROUTE = /^[a-z][a-z0-9-]{0,39}$/;
-const ERROR_NAME = /^[A-Za-z_$][\w$.]{0,79}$/;
+/** Same rule as the app's `cleanName` (PR #35): a code identifier such as TypeError or save-failed. */
+const ERROR_NAME = /^[A-Za-z_$][\w$.-]{0,79}$/;
 const VERSION = /^[0-9A-Za-z.+-]{1,40}$/;
 const LABEL = /^[\w .,()+-]{1,60}$/;
 const BUNDLE_PATH = /^\/?[\w.-]+(\/[\w.-]+)*\.m?js$/;

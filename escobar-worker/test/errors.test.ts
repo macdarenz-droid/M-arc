@@ -145,6 +145,35 @@ describe('POST /errors: server-side allowlist (W4)', () => {
     const once = cleanReport(report({ message: scrubMessage('weight 82.5 "notes"') }) as Report);
     expect(cleanReport(once)).toEqual(once);
   });
+
+  it('W4 nested, unclosed and curly quotes never leak (review of 06efaba, finding 2)', () => {
+    const cases: Array<[string, string, string[]]> = [
+      [`Unexpected token 'h', "hello "Dave Smith"... is not valid JSON`, 'Unexpected token "…", "…"... is not valid JSON', ['Dave', 'Smith', 'hello']],
+      [`Cannot read properties of undefined (reading 'O'Brien bench')`, 'Cannot read properties of undefined (reading "…")', ['Brien', 'bench']],
+      ['weight \u201C100 kg\u201D Jane', 'weight "…" Jane', ['100', 'kg']],
+      ['note \u2018my knee hurts\u2019 today', 'note "…" today', ['knee']],
+      ['bad input "Jane Doe squats', 'bad input "…"', ['Jane', 'squats']],
+      [`it's Jane's log`, 'it"…"s log', ['Jane']],
+      ['"a" and "b" and "c"', '"…"', ['a', 'b', 'c']],
+    ];
+    for (const [raw, want, gone] of cases) {
+      const got = scrubMessage(raw);
+      expect([raw, got]).toEqual([raw, want]);
+      for (const g of gone) expect([raw, got.includes(g)]).toEqual([raw, false]);
+      expect(scrubMessage(got)).toBe(got);
+    }
+    // Cut at 300 in the middle of "…": cleaning again still changes nothing.
+    const edge = scrubMessage('x'.repeat(298) + '"secret');
+    expect(edge).toHaveLength(300);
+    expect(scrubMessage(edge)).toBe(edge);
+  });
+
+  it('W4 keeps the error names the app sends (save-failed, load-recovered) and code names, and drops free text', async () => {
+    const { db, env } = testEnv();
+    const names = ['save-failed', 'load-recovered', 'TypeError', 'QuotaExceededError', 'DOMException', 'Jane Doe', '100kg', 'a<b'];
+    await handleErrors(post(batch(names.map((name, i) => report({ name, sig: i.toString(16) })))), env, deps);
+    expect(rows(db, 'error_reports').map(r => r.name)).toEqual(['save-failed', 'load-recovered', 'TypeError', 'QuotaExceededError', 'DOMException', 'Error', 'Error', 'Error']);
+  });
 });
 
 describe('POST /errors: rate limits (W5)', () => {
