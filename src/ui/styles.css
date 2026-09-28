@@ -106,7 +106,7 @@ a { color: var(--accent); }
 svg { display: block; }
 ::selection { background: var(--accent-soft); }
 
-.app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px calc(140px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+.app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding: calc(12px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))) 16px var(--app-end); }
 /* I9: a quick crossfade, not a slide — the nav wiring (App.tsx) now does its own scrollTo per tab. */
 .view { animation: view-in var(--dur-fast) var(--ease-standard); }
 @keyframes view-in { from { opacity: 0; } }
@@ -402,7 +402,7 @@ html[data-motion="reduce"] .ex-body { transition: none; }
 .rest .bar > i { width: 100%; transform: translateX(-100%); }
 .rest.done .bar > i { background: var(--positive); }
 .rest-btn { min-height: 44px; padding: 0 12px; }
-html[data-rest] .app { padding-bottom: calc(var(--float-bottom) + var(--rest-h) + var(--sp-5)); }
+html[data-rest] .app { padding-bottom: calc(var(--app-end) + var(--rest-h) + var(--float-gap)); } /* BUG-22: the dock sits above the rest banner */
 html[data-rest] .toast, html[data-rest] .esc-dock { bottom: calc(var(--float-bottom) + var(--rest-h) + var(--float-gap)); }
 
 /* Logo */
@@ -610,10 +610,19 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
 .esc-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .esc-send { flex: none; }
 
-.esc-dock { position: fixed; left: 0; right: 0; margin-inline: auto; width: max-content; transform: none; bottom: var(--float-bottom); z-index: var(--z-dock); display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: 40px; padding: 0 16px 0 12px; border-radius: var(--radius-pill); background: var(--surface-3); color: var(--text); border: 1px solid var(--border); border-top: 1px solid var(--border-strong); box-shadow: var(--shadow-float); font-size: var(--fs-small); font-weight: 600; }
+.esc-dock { position: fixed; left: 0; right: 0; margin-inline: auto; width: max-content; transform: none; bottom: var(--float-bottom); z-index: var(--z-dock); display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: var(--dock-h); padding: 0 16px 0 12px; border-radius: var(--radius-pill); background: var(--surface-3); color: var(--text); border: 1px solid var(--border); border-top: 1px solid var(--border-strong); box-shadow: var(--shadow-float); font-size: var(--fs-small); font-weight: 600; }
 .esc-dock span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .esc-dock svg, .esc-dock .escobar-mark { color: var(--accent); flex: none; }
 .esc-dock-off { background: var(--surface-1); color: var(--text-2); box-shadow: none; }
+/* BUG-22: the dock never covers content. At the end of any page the .app end padding clears the
+   dock's top edge plus its shadow (tokens, not a magic number); mid-page it slides away while
+   the page scrolls down and comes back on scroll-up, at the top and at the end (hideOnScroll.ts).
+   --dock-shade: how far --shadow-float reaches above the dock (blur 32 - spread 8 - offset 12). */
+:root { --dock-h: 40px; --dock-shade: 12px; --app-end: calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); }
+.esc-dock { transition: translate var(--dur-base) var(--ease-standard), opacity var(--dur-base) var(--ease-standard); }
+.esc-dock-away { translate: 0 calc(100% + var(--float-gap)); opacity: 0; pointer-events: none; }
+.esc-dock-away:focus-visible { translate: none; opacity: 1; pointer-events: auto; }
+html[data-motion="reduce"] .esc-dock { transition: none; }
 .esc-ask { width: 32px; min-height: 32px; color: var(--text-3); }
 .esc-ask::before { content: ''; position: absolute; inset: -6px; }
 .esc-ask { position: relative; }

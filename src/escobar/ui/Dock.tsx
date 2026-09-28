@@ -1,6 +1,7 @@
 /**
  * The dock (§4.1): a pill above the nav with a screen-aware prompt. Hidden while any sheet
  * is open, and on Train during a live session (the topbar button takes over there).
+ * BUG-22: it also slides away while the page scrolls down, so it never covers a tap target.
  */
 import { useEffect, useState } from 'preact/hooks';
 import { state } from '@/core/store';
@@ -9,6 +10,7 @@ import { todayReadiness } from '@/app/selectors';
 import { openSheets } from '@/ui/primitives';
 import { IconEscobar } from '@/ui/icons';
 import { showAfter } from '@/ui/pending';
+import { useHideOnScroll } from '@/ui/hideOnScroll';
 import { escobarUi, escobarLoading, online } from '../state';
 import { currentFocus } from '../palace/focus';
 import { contextRefFor, dockPromptFor } from './prompts';
@@ -19,6 +21,7 @@ export function Dock() {
   const s = state.value;
   const loading = escobarLoading.value;
   const [busy, setBusy] = useState(false);
+  const scrolledAway = useHideOnScroll(tab.value);
   // I19: while the sheet's lazy chunk is still loading, the dock stays up (busy) instead of
   // vanishing into a blank gap; a spinner appears only if the load takes longer than a moment.
   useEffect(() => {
@@ -46,7 +49,7 @@ export function Dock() {
     if (on) escobarUi.value = { ...escobarUi.value, draft: prompt };
   };
   return (
-    <button type="button" class={`esc-dock${on ? '' : ' esc-dock-off'}`} data-palace="escobar.dock" aria-label={`Escobar: ${prompt}`} aria-busy={busy || undefined} onClick={open}>
+    <button type="button" class={`esc-dock${on ? '' : ' esc-dock-off'}${scrolledAway && !busy ? ' esc-dock-away' : ''}`} data-palace="escobar.dock" aria-label={`Escobar: ${prompt}`} aria-busy={busy || undefined} onClick={open}>
       {busy ? <span class="esc-spin" /> : <IconEscobar size={20} />}<span>{prompt}</span>
     </button>
   );

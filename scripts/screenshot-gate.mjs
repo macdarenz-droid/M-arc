@@ -4790,6 +4790,114 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
+// the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
+// Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
+// down and up, every piece of page content ends above the dock's top edge plus its shadow
+// (--dock-shade); (A2) scrolling down mid-page moves the dock out of the way (a tap at its spot
+// reaches the page) and scrolling up brings it back.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `BUG-22 dock overlap (${theme})`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  const later = async () => { if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); } };
+  await later();
+  // Seeds go through sessionStorage and land before the app boots, so the running app's own save can't overwrite them.
+  await page.addInitScript(() => { const seed = sessionStorage.getItem('bug22.seed'); if (seed) { localStorage.setItem('marc.state.v1', seed); sessionStorage.removeItem('bug22.seed'); } });
+  const go = async (label) => { await page.locator('nav.nav button', { hasText: label }).click(); await page.waitForTimeout(300); };
+  await go(/^Train$/);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  // One split with 8 different exercises (the owner's long split), then reload so it renders from storage.
+  const n = await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    if (!s?.splits?.length) return 0;
+    const seen = new Set();
+    s.splits[0].exercises = s.splits.flatMap(x => x.exercises).filter(e => !seen.has(e.exerciseId) && seen.add(e.exerciseId)).slice(0, 8);
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+    return s.splits[0].exercises.length;
+  });
+  if (n !== 8) errors.push(`${tag}: expected to seed an 8-exercise split, got ${n}`);
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+
+  const toEnd = async () => { await page.evaluate(() => window.scrollTo(0, document.scrollingElement.scrollHeight)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); };
+  const measureEnd = () => page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock');
+    if (!dock) return null;
+    const d = dock.getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    let bottom = 0; let who = '';
+    for (const el of document.querySelectorAll('.app *')) {
+      if (el.closest('.esc-dock, .nav, .rest, .toast, dialog, .pulse-line')) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden') continue;
+      if (r.bottom > bottom) { bottom = r.bottom; who = `${el.tagName.toLowerCase()}.${el.className || ''} "${(el.textContent || '').trim().slice(0, 30)}"`; }
+    }
+    return { away: dock.classList.contains('esc-dock-away'), limit: d.top - shade, bottom, who };
+  });
+  const checkEnd = async (where) => {
+    await toEnd();
+    const m = await measureEnd();
+    if (!m) { errors.push(`${tag} ${where}: expected the dock to show`); return; }
+    if (m.away) errors.push(`${tag} ${where}: the dock should show at the end of the page`);
+    if (m.bottom > m.limit + 0.5) errors.push(`${tag} ${where}: content ends at ${m.bottom.toFixed(1)} but the dock and its shadow start at ${m.limit.toFixed(1)} (${m.who})`);
+  };
+
+  // A1, rest banner down.
+  await go(/^Train$/);
+  await checkEnd('Train end');
+  const trainEnd = await page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock').getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    const log = document.querySelector('[data-palace="train.log-past"]');
+    const hint = [...document.querySelectorAll('.view p.hint')].find(p => p.textContent.includes('Change the goal in Coach'));
+    const lb = log?.getBoundingClientRect();
+    const hit = lb ? document.elementFromPoint(lb.left + lb.width / 2, lb.top + lb.height / 2) : null;
+    return { rows: document.querySelectorAll('[data-palace="train.split"] .list .row, [data-palace="train.split"] .list > *').length, limit: dock.top - shade, log: lb?.bottom ?? null, hint: hint?.getBoundingClientRect().bottom ?? null, tap: !!hit && log.contains(hit) };
+  });
+  if (trainEnd.log == null || trainEnd.hint == null) errors.push(`${tag} Train end: could not find "Log a past session" and the targets line`);
+  else {
+    if (trainEnd.log > trainEnd.limit) errors.push(`${tag} Train end: "Log a past session" ends at ${trainEnd.log}, under the dock (${trainEnd.limit})`);
+    if (trainEnd.hint > trainEnd.limit) errors.push(`${tag} Train end: the targets line ends at ${trainEnd.hint}, under the dock (${trainEnd.limit})`);
+    if (!trainEnd.tap) errors.push(`${tag} Train end: a tap on "Log a past session" does not reach it`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-train-end.png` });
+
+  // A2: mid-page, scrolling down moves the dock away; scrolling up brings it back.
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  const spot = await page.evaluate(() => { const r = document.querySelector('.esc-dock').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  for (let k = 0; k < 3; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const mid = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock') }; }, spot);
+  if (!(mid.y > 0 && mid.y < mid.max - 8)) errors.push(`${tag} A2: expected to be mid-page, at ${mid.y} of ${mid.max}`);
+  if (!mid.away) errors.push(`${tag} A2: the dock should move away while scrolling down mid-page`);
+  if (mid.blocks) errors.push(`${tag} A2: mid-scroll, a tap at the dock's spot still hits the dock`);
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-train-mid.png` });
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2: scrolling up should bring the dock back`);
+
+  for (const t of ['Today', 'History', 'Body']) { await go(t); await checkEnd(`${t} end`); }
+
+  // A1, rest banner up: a live session resting, looked at from the other tabs (Train hides the dock while live).
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    const sp = s.splits[0];
+    s.active = { splitId: sp.id, startedAt: new Date().toISOString(), pausedMs: 0, entries: sp.exercises.map(e => ({ exerciseId: e.exerciseId, name: e.exerciseId, sets: [], done: false, skipped: false })), rest: { endsAt: Date.now() + 600000, totalSec: 600 } };
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+  });
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+  for (const t of ['Today', 'History', 'Body']) {
+    await go(t);
+    if (!(await page.evaluate(() => document.documentElement.hasAttribute('data-rest') && !!document.querySelector('.rest')))) { errors.push(`${tag} ${t} rest: expected the rest banner up`); continue; }
+    await checkEnd(`${t} end, rest up`);
+    if (t === 'Today') { await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-today-rest.png` }); }
+  }
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
