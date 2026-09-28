@@ -4892,6 +4892,43 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// FG-5: the free-weight parts library (docs/FORM-GUIDE-PRODUCTION.md §4, tests/formguide/partsGallery.ts). Every part's
+// drawings, framed to their own box, plus the front figure with the library dumbbell and with a barbell at its hand
+// anchors, in Silent Black and Paper at phone width (390 px): no page error, no sideways scroll, every drawing has a
+// non-empty box inside its card, and the part gradient's stops are the theme's own --iron tokens.
+{
+  const { build } = await import('esbuild');
+  const fg5Out = join(ROOT, 'node_modules/.cache/fg5-gallery.mjs');
+  await build({ entryPoints: [join(ROOT, 'tests/formguide/partsGallery.ts')], bundle: true, format: 'esm', platform: 'node', outfile: fg5Out, logLevel: 'warning' });
+  const { galleryHtml, GALLERY } = await import(`file://${fg5Out}?t=${Date.now()}`);
+  for (const theme of ['silent-black', 'paper']) {
+    const tag = `FG-5 parts ${theme}`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: page error ${e.message}`));
+    await page.setContent(galleryHtml(theme));
+    const r = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement), tok = n => root.getPropertyValue(n).trim().toLowerCase();
+      const stops = [...document.querySelectorAll('#fgp-i stop')].map(s => s.getAttribute('stop-color').toLowerCase());
+      const cards = [...document.querySelectorAll('figure.card')].map(f => {
+        const svg = f.querySelector('svg'), part = svg.querySelector('.fg-part') ?? svg.querySelector('.fg-fig');
+        const b = part.getBoundingClientRect(), c = svg.getBoundingClientRect();
+        return { name: f.dataset.part, w: b.width, h: b.height, inside: b.left >= c.left - 1 && b.right <= c.right + 1 && b.top >= c.top - 1 && b.bottom <= c.bottom + 1 };
+      });
+      return { sw: document.documentElement.scrollWidth, iw: innerWidth, stops: [...new Set(stops)].sort(), iron: [tok('--iron-hi'), tok('--iron'), tok('--iron-sh')].sort(), cards };
+    });
+    if (r.sw > r.iw) errors.push(`${tag}: scrollWidth ${r.sw} > innerWidth ${r.iw}`);
+    if (r.cards.length !== GALLERY.length + 2) errors.push(`${tag}: expected ${GALLERY.length + 2} drawings, got ${r.cards.length}`);
+    for (const c of r.cards) {
+      if (!(c.w > 4 && c.h > 4)) errors.push(`${tag}: ${c.name} draws an empty box ${c.w}x${c.h}`);
+      if (!c.inside) errors.push(`${tag}: ${c.name} spills out of its card`);
+    }
+    if (JSON.stringify(r.stops) !== JSON.stringify([...new Set(r.iron)].sort())) errors.push(`${tag}: part gradient stops ${r.stops} are not the theme's iron tokens ${r.iron}`);
+    await page.screenshot({ path: `${OUT}/fg5-parts-${theme}.png`, fullPage: true });
+    await ctx.close();
+  }
+}
+
 // BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
 // the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
 // Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
