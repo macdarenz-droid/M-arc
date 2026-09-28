@@ -4929,6 +4929,45 @@ for (const theme of ['silent-black', 'paper']) {
   }
 }
 
+// FG-6: the side figure (docs/FORM-GUIDE-PRODUCTION.md §3, tests/formguide/sideGallery.ts). A2: the bench press (lockout,
+// bar on the chest, facing left) and the back squat (top, bottom) stills, plus the rest poses, each framed by the
+// standing camera in Silent Black and Paper at phone width (390 px): no page error, no sideways scroll, the figure and
+// its parts draw a non-empty box that stays inside its camera (nothing clipped), and the posed figure is where the rig
+// says (its joint groups carry the written transforms).
+{
+  const { build } = await import('esbuild');
+  const fg6Out = join(ROOT, 'node_modules/.cache/fg6-gallery.mjs');
+  await build({ entryPoints: [join(ROOT, 'tests/formguide/sideGallery.ts')], bundle: true, format: 'esm', platform: 'node', outfile: fg6Out, logLevel: 'warning' });
+  const { sideGalleryHtml, STILLS } = await import(`file://${fg6Out}?t=${Date.now()}`);
+  for (const theme of ['silent-black', 'paper']) {
+    const tag = `FG-6 side figure ${theme}`;
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: page error ${e.message}`));
+    await page.setContent(sideGalleryHtml(theme));
+    const r = await page.evaluate(() => ({
+      sw: document.documentElement.scrollWidth, iw: innerWidth,
+      cards: [...document.querySelectorAll('figure.card')].map(f => {
+        const svg = f.querySelector('svg'), c = svg.getBoundingClientRect(), bs = [...svg.querySelectorAll('.fg-fig, .fg-part')].map(e => e.getBoundingClientRect());
+        const b = bs.reduce((a, x) => ({ left: Math.min(a.left, x.left), top: Math.min(a.top, x.top), right: Math.max(a.right, x.right), bottom: Math.max(a.bottom, x.bottom) }), { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
+        const posed = [...svg.querySelectorAll('.fg-j')].filter(g => g.style.transform).length;
+        return { name: f.dataset.still, w: b.right - b.left, h: b.bottom - b.top, inside: b.left >= c.left - 1 && b.right <= c.right + 1 && b.top >= c.top - 1 && b.bottom <= c.bottom + 1, cardIn: c.right <= innerWidth, posed };
+      }),
+    }));
+    if (r.sw > r.iw) errors.push(`${tag}: scrollWidth ${r.sw} > innerWidth ${r.iw}`);
+    if (r.cards.length !== STILLS.length) errors.push(`${tag}: expected ${STILLS.length} stills, got ${r.cards.length}`);
+    for (const name of ['bench press, lockout', 'bench press, bar on the chest', 'back squat, top', 'back squat, bottom']) if (!r.cards.some(c => c.name === name)) errors.push(`${tag}: missing still "${name}"`);
+    for (const c of r.cards) {
+      if (!(c.w > 40 && c.h > 40)) errors.push(`${tag}: ${c.name} draws an empty box ${c.w}x${c.h}`);
+      if (!c.inside) errors.push(`${tag}: ${c.name} is clipped by its camera`);
+      if (!c.cardIn) errors.push(`${tag}: ${c.name} runs past the screen edge`);
+      if (c.posed !== 17) errors.push(`${tag}: ${c.name} has ${c.posed} of 17 joint groups posed`);
+    }
+    await page.screenshot({ path: `${OUT}/fg6-side-${theme}.png`, fullPage: true });
+    await ctx.close();
+  }
+}
+
 // BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
 // the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
 // Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
