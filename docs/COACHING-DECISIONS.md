@@ -587,3 +587,13 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Captions come from the tempo ("Lift, 1 s", "Hold, 0.5 s", "Lower slowly, 2 s", "Reset, 0.5 s"; tempo line "1 s up · 2 s down"); the rep pill and caption read the rep's own slowed windows. A theme change while the sheet is open (playing, paused mid-run or ended) remounts the figure paused on the start pose, with the rep pill and caption reset, (its palette is resolved from the tokens) and regenerates the pictures.
   - Known risks: about 34 animations of up to ~600 keyframes per figure, two figures in compare mode; frame rate on the owner's phone is A6 (not measured here). The main chunk grows by 48 B raw / 26 B gzip (Node zlib default; 25 B with `gzip -6`), measured on the merged head against `main` 18056db: the `playerFor` call in `lazy.tsx` and the chunk export of session.ts `isCommitted`, no form-guide code.
   **Why**: §6 and the GU-7a kept pieces; checked by `tests/formguide/player-fg4.test.ts` and the gate's FG-4 block.
+
+## Privacy policy draft (DOC-1, 2026-09-28)
+
+- **Decided (D-DOC1, DOC-1 builder)**: what docs/PRIVACY-POLICY.md says where the card is silent.
+  - Scope: the Android app and the web version, since error reports carry `platform: 'android' | 'web'` and the Worker allows the Netlify origin. Netlify is named only as the web host.
+  - Everything real is listed, including what the docs don't mention: the coach's per-device and per-IP daily counters (raw IP or IPv6 /64, deleted after 3 days, `quotaDO.ts`), Anthropic's prompt cache (up to 1 h, `anthropic.ts`), and Android Auto Backup (Capacitor's template sets `allowBackup="true"` and `patch_manifest.py` does not change it). These are open risks for the owner in the PR, not decisions.
+  - Error reports are described from the merged code, not the doc alone: "Android version and device model" are named as "not collected yet" (D-C75).
+  - The Settings button is named as the UI shows it, "Reset everything" (Settings.tsx), not the doc's "delete everything".
+  - Anything only the owner can supply stays a `[OWNER: …]` placeholder: contact email, date, Anthropic policy link, minimum age, applicable law.
+  **Why**: the card's risk note (a policy that says less than the app does is a store-review and legal risk); every statement is traced to a file and line in the DOC-1 PR.
