@@ -7,7 +7,7 @@ import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
 import { usePalaceFocus } from '@/escobar/palace/focus';
-import { daysBetween, formatDay, formatHours } from '@/core/dates';
+import { daysBetween, formatDay, formatHoursLeft } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { SPARKS } from '@/data/sparks';
 import { mindsetForDay, sparkIndexForDay } from '@/brain/coach/cues';
@@ -127,7 +127,7 @@ export function Today() {
               {recovering.slice(0, 4).map(r => (
                 <div key={r.muscle} class="row-between small">
                   <span>{muscleLabel(r.muscle)}</span>
-                  <span class="muted num">{r.pct}% · {r.soreToday && !r.readyInHours && !r.hoursLeft ? 'sore today' : formatHours(r.hoursLeft)}</span>
+                  <span class="muted num">{r.pct}% · {r.soreToday && !r.readyInHours && !r.hoursLeft ? 'sore today' : formatHoursLeft(r)}</span>
                 </div>
               ))}
               {recovering.length > 4 && <span class="hint">+{recovering.length - 4} more recovering</span>}

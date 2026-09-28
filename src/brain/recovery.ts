@@ -25,7 +25,7 @@ import {
   IMPULSE_LOOKBACK_DAYS, FLOOR_DAYS, READY_TO_HOURS_CAP, READY_PCT, FULL_PCT,
   F_REF_FLOOR, F_REF_SESSION_LOOKBACK,
   SORENESS_CAP_PCT, SORENESS_CAP_MIN_RATING,
-  TAU_SCALE_MIN, TAU_SCALE_MAX, TAU_SCALE_UP, TAU_SCALE_DOWN, CALIBRATION_PREDICTED_HIGH, CALIBRATION_PREDICTED_LOW, CALIBRATION_PERFORMANCE_DROP,
+  TAU_SCALE_MIN, TAU_SCALE_MAX, TAU_SCALE_UP, TAU_SCALE_DOWN, TAU_SCALE_DECAY, CALIBRATION_PREDICTED_HIGH, CALIBRATION_PREDICTED_LOW, CALIBRATION_PERFORMANCE_DROP,
 } from '@/data/recovery';
 
 export interface MuscleRecovery {
@@ -50,6 +50,8 @@ export interface MuscleRecovery {
   systemicFactor: number;
   /** QA-R3a-9: today's soreness rating holds this muscle below ready; no clock time can say when that eases. */
   soreToday?: boolean;
+  /** BUG-17 (RECOVERY-F1): more than 120 h still to go before 90 %: shown as "5+ days", never as ready. */
+  beyondCap?: boolean;
 }
 
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
@@ -157,9 +159,9 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
   const sorted = [...sessions].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
   // systemicFactor depends on the time only through its day (BR-23): one evaluation per day.
   const systemicByDay = new Map<string, number>();
-  let lo = 0, hi = 0;
+  let lo = 0;
 
-  for (const session of sorted) {
+  for (const [idx, session] of sorted.entries()) {
     const at = new Date(session.logging?.trainedEndAt || session.endedAt || session.startedAt).getTime();
     const perMuscle = new Map<MuscleId, { total: number; effortWeighted: number; roleWeightSum: number; topL: number; topDriver: { text: string; hours: number } | null }>();
     const hardSetIndex = new Map<MuscleId, number>();
@@ -213,11 +215,11 @@ function sessionMuscleDoses(sessions: Session[], custom: Exercise[], profile: Pr
     const atDay = dayKey(new Date(at));
     let systemic = systemicByDay.get(atDay);
     if (systemic === undefined) {
-      // systemicFactor only reads sessions from the 28 days up to this day: pass that window
-      // (with a 2-day margin either side for day/start ordering) instead of the whole history.
-      while (lo < sorted.length && daysBetween(sorted[lo]!.day, atDay) > 30) lo++;
-      while (hi < sorted.length && daysBetween(atDay, sorted[hi]!.day) <= 2) hi++;
-      systemic = systemicFactor(healthDays, sorted.slice(lo, hi), at);
+      // systemicFactor only reads sessions from the 28 days up to this day: pass that window (with
+      // a 2-day margin for day/start ordering) instead of the whole history. BUG-17 (RECOVERY-F7):
+      // never a session that started later, so a dose is the same whatever came after it.
+      while (lo < idx && daysBetween(sorted[lo]!.day, atDay) > 30) lo++;
+      systemic = systemicFactor(healthDays, sorted.slice(lo, idx + 1), at);
       systemicByDay.set(atDay, systemic);
     }
     const trainingAge = trainingAgePrior(trainingAgeMonths(profile, sorted, at));
@@ -261,12 +263,16 @@ function pctAt(doses: Dose[], fRef: number, atMs: number, lastTouchAt: number): 
   return clamp(Math.round((1 - f / fRef) * 100), 0, 100);
 }
 
-/** Smallest hours-since-`fromMs`, up to the cap, where pct first reaches `targetPct`. Null if never within the cap. */
-function solveHours(doses: Dose[], fRef: number, lastTouchAt: number, fromMs: number, targetPct: number): number | null {
+/**
+ * Smallest hours-since-`fromMs` where pct first reaches `targetPct`. BUG-17 (RECOVERY-F1): searched up
+ * to the 120 h cap first (unchanged results inside it), then on to the 7-day floor, where pct is 100 by
+ * definition, so a recovering muscle always gets its real time.
+ */
+function solveHours(doses: Dose[], fRef: number, lastTouchAt: number, fromMs: number, targetPct: number): number {
   const fromHours = Math.max(0, (fromMs - lastTouchAt) / 3_600_000);
   if (pctAt(doses, fRef, fromMs, lastTouchAt) >= targetPct) return fromHours;
-  let lo = fromHours, hi = READY_TO_HOURS_CAP;
-  if (pctAt(doses, fRef, lastTouchAt + hi * 3_600_000, lastTouchAt) < targetPct) return null;
+  let lo = fromHours, hi = Math.max(fromHours, READY_TO_HOURS_CAP);
+  if (hi === fromHours || pctAt(doses, fRef, lastTouchAt + hi * 3_600_000, lastTouchAt) < targetPct) { lo = hi; hi = FLOOR_DAYS * 24; }
   for (let i = 0; i < 40; i++) {
     const mid = (lo + hi) / 2;
     const p = pctAt(doses, fRef, lastTouchAt + mid * 3_600_000, lastTouchAt);
@@ -310,13 +316,16 @@ export function recoveryStatus(input: RecoveryInputs): MuscleRecovery[] {
 export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRecovery[] {
   const { sessions, now = Date.now(), healthDays = [], checkIns = [], freshMarks = [], recoveryModel = { tauScale: {}, observations: {} } } = input;
   const today = dayKey(new Date(now));
-  const systemicNow = Math.round(systemicFactor(healthDays, sessions, now) * 100) / 100;
+  // Calibration needs only pct; the whole-body factor shown next to it is left out there.
+  const systemicNow = input.pctOnly ? 1 : Math.round(systemicFactor(healthDays, sessions, now) * 100) / 100;
 
   return MUSCLE_IDS.map(muscle => {
     const list = doses[muscle];
     const last = list[list.length - 1];
-    const fresh = freshMarks.filter(f => f.muscle === muscle).sort((a, b) => a.at.localeCompare(b.at)).pop();
-    const freshOverridesLast = fresh && last && new Date(fresh.at).getTime() >= last.at;
+    // BUG-17 (RECOVERY-F3): "Mark as fresh" sets the residual to zero (plan 6.11 point 7): doses at or
+    // before the latest mark up to now never stack again, also after a later session.
+    const freshMs = Math.max(-Infinity, ...freshMarks.filter(f => f.muscle === muscle).map(f => Date.parse(f.at)).filter(ms => ms <= now));
+    const freshOverridesLast = last && freshMs >= last.at;
 
     if (!last || freshOverridesLast) {
       return {
@@ -330,7 +339,8 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     const fRef = fRefFor(list, now);
     // Every time evaluated below is now or later, so doses older than the lookback never count:
     // drop them once instead of in each of the ~80 bisection steps.
-    const recent = list.filter(d => d.at >= now - IMPULSE_LOOKBACK_DAYS * 86_400_000);
+    // fRef (the muscle's typical dose) still reads the doses before a fresh mark: it sizes a session, it is not a residual.
+    const recent = list.filter(d => d.at >= now - IMPULSE_LOOKBACK_DAYS * 86_400_000 && d.at > freshMs);
     let pct = pctAt(recent, fRef, now, last.at);
 
     // Soreness caps today's pct; it never raises it, and no soreness never implies ready either.
@@ -346,14 +356,16 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     const elapsedH = Math.max(0, (now - last.at) / 3_600_000);
     // Sore but past the model's own ready time: the soreness decides, not the clock.
     const soreOnly = soreToday && tReady != null && tReady <= elapsedH;
-    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
+    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly || (tReady - elapsedH > READY_TO_HOURS_CAP) ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
+    // BUG-17 (RECOVERY-F1): more than 120 h still to go is shown as "5+ days", never as "0 hours left".
+    const beyondCap = !input.pctOnly && tReady != null && tReady - elapsedH > READY_TO_HOURS_CAP;
 
     return {
       muscle,
       pct,
-      hoursLeft: tReady == null ? 0 : Math.max(0, Math.round((tReady - Math.max(0, (now - last.at) / 3_600_000)) * 10) / 10),
+      hoursLeft: tReady == null ? 0 : Math.max(0, Math.round((tReady - elapsedH) * 10) / 10),
       windowHours: tReady == null ? READY_TO_HOURS_CAP : Math.round(tReady * 10) / 10,
       lastTrainedAt: new Date(last.at).toISOString(),
       lastDay: last.day,
@@ -367,6 +379,7 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
       drivers: last.drivers,
       systemicFactor: systemicNow,
       ...(soreToday ? { soreToday } : {}),
+      ...(beyondCap ? { beyondCap } : {}),
     };
   });
 }
@@ -392,28 +405,37 @@ export function calibrateTauScale(currentScale: number, predictedPct: number, pe
  * effort with a matched-effort prior session, compares the predicted recovery at session start
  * against the e1RM change and nudges that muscle's tauScale. Pure: `priorSessions` must not yet
  * include `newSession`.
+ *
+ * BUG-17: a change counts only beyond two typical errors (RECOVERY-F4); the prior session must be
+ * inside the model's 7-day window, so a layoff never reads as slow recovery (RECOVERY-F6); and a
+ * muscle this session trains without evidence drifts TAU_SCALE_DECAY of the way back to 1.0.
  */
 /**
- * `prevSummary`, when given, returns the exercise's last summary before this session, so a
- * full rebuild (UI-12) can pass a recent window as `priorSessions` without an O(n²) history scan.
+ * `prevSummary`, when given, returns the exercise's last summary before this session; `predict`,
+ * when given, returns the predicted recovery at the session start from doses already built
+ * (replayRecoveryModel), so a full rebuild stays linear. Both must give what the defaults would.
  */
-export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined): RecoveryModel {
+export function calibrateAfterSession(priorSessions: Session[], newSession: Session, custom: Exercise[], profile: Profile, healthDays: DailyHealth[], recoveryModel: RecoveryModel, prevSummary?: (exerciseId: string) => ExerciseSessionSummary | undefined, predict?: (atMs: number) => MuscleRecovery[]): RecoveryModel {
   const startedAtMs = new Date(newSession.logging?.trainedAt ?? newSession.startedAt).getTime();
   // Only computed when some exercise has a max-effort comparison to learn from (most sessions have none).
   let predictedMemo: MuscleRecovery[] | null = null;
-  const predicted = (): MuscleRecovery[] => (predictedMemo ??= recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true }));
+  const predicted = (): MuscleRecovery[] => (predictedMemo ??= predict ? predict(startedAtMs) : recoveryStatus({ sessions: priorSessions, custom, now: startedAtMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel, pctOnly: true }));
   const tauScale = { ...recoveryModel.tauScale };
   const observations = { ...recoveryModel.observations };
   const touched = new Set<MuscleId>();
+  const trained = new Set<MuscleId>();
 
   for (const ex of newSession.exercises) {
     const meta = findExercise(ex.exerciseId, custom);
     if (!meta) continue;
+    if (ex.sets.some(isWorkingSet)) meta.primary.forEach(m => trained.add(m));
     const curHist = exerciseHistory([newSession], ex.exerciseId, custom);
     const cur = curHist[curHist.length - 1];
     if (!cur?.hasMax || cur.bestE1rm <= 0) continue;
     const prev = prevSummary ? prevSummary(ex.exerciseId) : (() => { const h = exerciseHistory(priorSessions, ex.exerciseId, custom); return h[h.length - 1]; })();
     if (!prev?.hasMax || prev.bestE1rm <= 0) continue;
+    // Past the 7-day window the predicted pct is the 100 % floor whatever happened: nothing to learn.
+    if (daysBetween(prev.day, newSession.day) >= FLOOR_DAYS) continue;
     const deltaPct = ((cur.bestE1rm - prev.bestE1rm) / prev.bestE1rm) * 100;
     for (const muscle of meta.primary) {
       if (touched.has(muscle)) continue;
@@ -421,13 +443,57 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
       const predictedPct = predicted().find(r => r.muscle === muscle)?.pct ?? 50;
       const before = tauScale[muscle] ?? 1.0;
       const after = calibrateTauScale(before, predictedPct, deltaPct);
+      // Evidence beyond the noise margin never decays, even when the clamp holds tauScale where it is.
+      if (calibrateTauScale(1.0, predictedPct, deltaPct) !== 1.0) trained.delete(muscle);
       if (after !== before) {
         tauScale[muscle] = after;
         observations[muscle] = (observations[muscle] ?? 0) + 1;
       }
     }
   }
+  for (const muscle of trained) {
+    const before = tauScale[muscle];
+    if (before == null || before === 1) continue;
+    const after = 1 + (before - 1) * (1 - TAU_SCALE_DECAY);
+    tauScale[muscle] = Math.abs(after - 1) < 0.001 ? 1 : after;
+  }
   return { tauScale, observations };
+}
+
+/**
+ * UI-12 / BUG-17 (RECOVERY-F7): the recovery model rebuilt from history, as finishSession learned it
+ * session by session. Each step gets what finish had: the whole prior history (doses are built once
+ * for all sessions, then the step's tauScale is applied to those before it), the real training start
+ * and the exercise's last summary. `calibrates` says which sessions finish calibrated.
+ */
+export function replayRecoveryModel(sorted: Session[], custom: Exercise[], profile: Profile, healthDays: DailyHealth[], calibrates: (s: Session) => boolean): RecoveryModel {
+  const empty: RecoveryModel = { tauScale: {}, observations: {} };
+  // tauScale 1 leaves every tau exactly as built (x * 1 === x), so scaling later matches finish bit for bit.
+  const all = sessionMuscleDoses(sorted, custom, profile, healthDays, empty);
+  const indexOf = new Map(sorted.map((sess, i) => [sess.id, i]));
+  const lastSummary = new Map<string, ExerciseSessionSummary>();
+  const keyOf = (exerciseId: string) => findExercise(exerciseId, custom)?.id ?? exerciseId;
+  let model = empty;
+  sorted.forEach((sess, i) => {
+    if (calibrates(sess)) {
+      const predict = (atMs: number): MuscleRecovery[] => {
+        const scaled = Object.fromEntries(MUSCLE_IDS.map(m => {
+          const scale = model.tauScale[m] ?? 1.0;
+          const prior = all[m].filter(d => indexOf.get(d.sessionId)! < i);
+          return [m, scale === 1 ? prior : prior.map(d => ({ ...d, tau: d.tau * scale }))];
+        })) as MuscleDoses;
+        return recoveryAt(scaled, { sessions: [], custom, now: atMs, profile, healthDays, checkIns: [], freshMarks: [], recoveryModel: model, pctOnly: true });
+      };
+      // Both callbacks are given, so the prior list itself is never read: no O(n) copy per step.
+      model = calibrateAfterSession([], sess, custom, profile, healthDays, model, id => lastSummary.get(keyOf(id)), predict);
+    }
+    for (const e of sess.exercises) {
+      const h = exerciseHistory([sess], e.exerciseId, custom);
+      const last = h[h.length - 1];
+      if (last) lastSummary.set(keyOf(e.exerciseId), last);
+    }
+  });
+  return model;
 }
 
 /** The lowest recovery % among an exercise's primary muscles (F2.1's progression hook). Moved from Train.tsx so Escobar's tools share it. */

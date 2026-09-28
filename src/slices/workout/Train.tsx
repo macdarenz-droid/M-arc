@@ -6,7 +6,7 @@ import { openEscobar } from '@/escobar/ui/open';
 import { computed, signal } from '@preact/signals';
 import { state } from '@/core/store';
 import { nowMs, acquireTicker, today, unit, todayReadiness, todayCheckIn, recovery as recoverySelector, activeDeload, bodyWeightAt } from '@/app/selectors';
-import { saveCheckIn } from '@/slices/readiness/checkIn';
+import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
@@ -894,10 +894,13 @@ export function CheckInSheet({ split, onClose, onDone }: { split?: Split; onClos
   const muscles = split
     ? [...new Set(split.exercises.flatMap(se => findExercise(se.exerciseId, s.customExercises)?.primary ?? []))].slice(0, 4)
     : recoverySelector.value.filter(r => r.lastTrainedAt).sort((a, b) => a.pct - b.pct).slice(0, 4).map(r => r.muscle);
-  const [sleepQuality, setSleepQuality] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
-  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | undefined>(undefined);
-  const [soreness, setSoreness] = useState<Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>>({});
-  const save = () => { saveCheckIn(today.value, { sleepQuality, mood, soreness }); onDone(); };
+  // BUG-17 (RECOVERY-F5): reopened the same day, it starts from today's answers.
+  // The day is fixed when the sheet opens, so a sheet left open past midnight saves to the day it showed.
+  const [draft] = useState(() => ({ day: today.value, ...checkInDraft(todayCheckIn.value) }));
+  const [sleepQuality, setSleepQuality] = useState<1 | 2 | 3 | 4 | 5 | undefined>(draft.sleepQuality);
+  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | undefined>(draft.mood);
+  const [soreness, setSoreness] = useState<Partial<Record<MuscleId, 1 | 2 | 3 | 4 | 5>>>(draft.soreness);
+  const save = () => { saveCheckIn(draft.day, { sleepQuality, mood, soreness }); onDone(); };
   return (
     <Sheet title="Quick check-in" onClose={onClose} palace="panel.checkin">
       <div class="stack">

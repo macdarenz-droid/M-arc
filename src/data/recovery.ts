@@ -73,4 +73,11 @@ export const TAU_SCALE_UP = 1.1;
 export const TAU_SCALE_DOWN = 0.92;
 export const CALIBRATION_PREDICTED_HIGH = 85;
 export const CALIBRATION_PREDICTED_LOW = 65;
-export const CALIBRATION_PERFORMANCE_DROP = 0.05;
+/**
+ * BUG-17 (RECOVERY-F4): an e1RM change counts only beyond two typical errors. Plan App D.1 puts the
+ * typical error of 1RM-type measures at 2-5 %, plan 6.x uses 4 % as the default personal TE.
+ */
+export const CALIBRATION_TYPICAL_ERROR = 0.04;
+export const CALIBRATION_PERFORMANCE_DROP = 2 * CALIBRATION_TYPICAL_ERROR;
+/** Each finished session that trains a muscle without evidence moves its tauScale this share of the way back to 1.0. */
+export const TAU_SCALE_DECAY = 0.05;

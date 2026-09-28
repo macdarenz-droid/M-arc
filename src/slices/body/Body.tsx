@@ -5,7 +5,7 @@ import { minuteNow, recovery, today, unit } from '@/app/selectors';
 import { Button, Card, Chip, Field, Row, Section, Segmented, Sheet, Stat } from '@/ui/primitives';
 import { MapLegend, MuscleMap, type MapMode } from '@/ui/MuscleMap';
 import { MUSCLES, MUSCLE_BY_ID, muscleLabel, type MuscleId } from '@/data/muscles';
-import { addDays, dayKey, dayOrToday, formatDay, formatFullAt, formatFullBy, formatHours, readyDayWindow, readyGroupFor } from '@/core/dates';
+import { BEYOND_CAP_TEXT, addDays, dayKey, dayOrToday, formatDay, formatFullAt, formatFullBy, formatHours, readyDayWindow, readyGroupFor } from '@/core/dates';
 import { durFor } from '@/ui/motion';
 import { trainingLevels, weeklyMuscleSets, LEVELS } from '@/brain/exposure';
 import { muscleVolumeStatus } from '@/brain/volume';
@@ -106,7 +106,7 @@ type RtGroupKey = 'today' | 'tomorrow' | 'later' | 'sore';
 interface RtGroup { key: RtGroupKey; label: string; muscles: MuscleId[] }
 interface RtLayout { readyNow: MuscleId[]; groups: RtGroup[] }
 
-const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hoursLeft: r.hoursLeft, soreToday: r.soreToday });
+const rtGroupInput = (r: MuscleRecovery) => ({ readyInHours: r.readyInHours, hoursLeft: r.hoursLeft, soreToday: r.soreToday, beyondCap: r.beyondCap });
 
 /** QA7-6: a tile's time text as its unbreakable parts ("10 pm – midnight" -> ["10 pm", "midnight"]),
  * so the line can only break at the dash, never inside "10 pm". */
@@ -365,8 +365,9 @@ export function MuscleDetail({ muscle, onClose }: { muscle: MuscleId; onClose: (
   const pillTone = !r.lastTrainedAt ? undefined : soreBlocked || r.recovering ? 'warning' : 'positive';
   const pillText = !r.lastTrainedAt ? 'Not trained yet' : soreBlocked ? 'Held back by soreness' : r.recovering ? 'Recovering' : 'Ready';
   const fillTone = r.recovering ? (r.pct < 40 ? 'negative' : 'warning') : 'positive';
-  const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : 'When soreness eases';
-  const fullText = !r.recovering ? 'Now' : r.fullInHours != null ? dayOrToday(now, r.fullInHours) : 'When soreness eases';
+  // BUG-17: past the 120 h window cap there is no clock time, but it is not soreness either.
+  const readyText = !r.recovering ? 'Now' : r.readyInHours ? (readyDayWindow(now, r.readyInHours) ?? 'Now') : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
+  const fullText = !r.recovering ? 'Now' : r.fullInHours != null ? dayOrToday(now, r.fullInHours) : r.beyondCap ? BEYOND_CAP_TEXT : 'When soreness eases';
   const accuracy = r.confidence === 'high' ? 'Good' : r.confidence === 'medium' ? 'Getting there' : 'Rough guess for now';
   const active = s.active;
 
