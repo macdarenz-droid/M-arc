@@ -8,6 +8,8 @@ import { freshState, type Split } from '@/core/models';
 import { addSet, commitSet, finishSession, logWarmups, pauseSession, resumeSession, setSet, startSession } from '@/slices/workout/session';
 import * as session from '@/slices/workout/session';
 import { burstShare, liveSessionLogging } from '@/brain/fidelity';
+import { latestMeasurement } from '@/native/watch';
+import { startHeartCapture } from '@/slices/workout/heart';
 
 // BUG-19: live session end time, paused time and rest seconds (DATES-F1, F2, F3, F5, F11).
 const split: Split = { id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 1 }, { exerciseId: 'lib_cable_fly', sets: 1 }] };
@@ -19,7 +21,7 @@ beforeEach(() => {
   vi.setSystemTime(T0);
   replaceState({ ...freshState(), splits: [split], preferences: { ...freshState().preferences, autoRest: false } });
 });
-afterEach(() => { vi.useRealTimers(); });
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 const a = () => state.value.active!;
 const at = (ms: number) => vi.setSystemTime(T0 + ms);
@@ -173,5 +175,33 @@ describe('BUG-19 A5: burst share counts only bursts (DATES-F11)', () => {
     expect(l.flags).toContain('burst');
     expect(l.mode).toBe('live');
     expect(l.timingTrusted).toBe(false);
+  });
+});
+
+describe('BUG-19: the heart summary ends where the session ends (review finding 1)', () => {
+  it('a forgotten Finish 12 h later keeps zones, energy and coverage to the first 15 min', () => {
+    // heartStore writes the series to localStorage; a map stands in for it here.
+    const mem = new Map<string, string>();
+    vi.stubGlobal('localStorage', { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => { mem.set(k, v); }, removeItem: (k: string) => { mem.delete(k); }, clear: () => mem.clear(), key: (i: number) => [...mem.keys()][i] ?? null, get length() { return mem.size; } });
+    replaceState({ ...state.value, profile: { name: 'T', bodyWeightKg: 80, heightCm: 180, sex: 'male', birthYear: 1990, restingHrOverride: 60 } });
+    startHeartCapture();
+    latestMeasurement.value = null;
+    startSession(split);
+    const beat = (sec: number, bpm: number) => { latestMeasurement.value = { bpm, contact: true, rrMs: [], energyKj: null, receivedAtEpochMs: T0 + sec * 1000, receivedAtElapsedMs: sec * 1000 }; };
+    // Training: 150 bpm every 10 s for the first 15 min (half coverage). Then the watch stays on for
+    // 12 h at 130 bpm, which is inside zone 1, every 5 s.
+    for (let t = 0; t <= 15 * 60; t += 10) beat(t, 150);
+    logSet(0, 0, 1 * MIN); logSet(0, 1, 5 * MIN); logSet(0, 2, 10 * MIN);
+    for (let t = 15 * 60 + 5; t <= 12 * 3600; t += 5) beat(t, 130);
+    at(12 * 3600 * 1000);
+    const { session: s } = finishSession(false)!;
+    expect(s.durationSec).toBe(15 * 60);
+    const h = s.heart!;
+    expect(h.zoneSec.reduce((x, y) => x + y, 0)).toBeLessThanOrEqual(15 * 60 + 5);
+    expect(h.minBpm).toBe(150);
+    expect(h.samples).toBeLessThanOrEqual(15 * 60 / 10 + 1);
+    expect(h.coverage).toBeCloseTo(0.5, 1);
+    expect(h.energy).toBeDefined();
+    expect(h.energy!.minutes).toBeLessThanOrEqual(16);
   });
 });
