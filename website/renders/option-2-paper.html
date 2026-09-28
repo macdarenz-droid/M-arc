@@ -1,0 +1,689 @@
+<title>Paper Edition</title>
+<meta name="description" content="A workout log for Android and the browser that tells you what to lift today, how recovered each muscle is, and why. No account. Works offline.">
+<meta name="theme-color" content="#f7f6f3">
+<meta property="og:title" content="M/ARC">
+<meta property="og:image" content="og-paper.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Paper theme tokens, as src/theme/themes.ts defines them */
+:root{
+  color-scheme:light;
+  --page:#f7f6f3;--surface:#ffffff;--surface-2:#efeeea;--surface-3:#e6e4df;
+  --text:#37352f;--text-2:#5f5e5a;--text-3:#9b9a97;
+  --accent:#2383e2;--accent-soft:rgba(35,131,226,.12);--accent-ink:color-mix(in srgb,#2383e2 88%,#37352f);
+  --positive:#0f7b4f;--warning:#b7791f;--negative:#c0392b;
+  --border:rgba(55,53,47,.14);--border-subtle:rgba(55,53,47,.08);--border-strong:rgba(55,53,47,.26);
+  --shadow:0 8px 24px rgba(15,15,15,.08);
+  --r-1:6px;--r-2:10px;--r-3:14px;--r-4:18px;
+  --focus:color-mix(in srgb,#2383e2 80%,#37352f);
+  --serif:"Newsreader","Newsreader Fallback",Georgia,serif;
+  --sans:"Inter","Inter Fallback",Arial,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --measure:640px;--gutter:24px;--section:112px;
+  /* motion tokens, copied from src/ui/styles.css */
+  --dur-press:100ms;--dur-fast:150ms;--dur-base:200ms;--dur-enter:240ms;--dur-bounce:460ms;--dur-draw:600ms;--dur-draw-long:900ms;--dur-path:700ms;--dur-hold:1000ms;--stagger:40ms;--step:60ms;--step-fig:120ms;--step-rail:80ms;--step-hero:150ms;
+  --ease-standard:cubic-bezier(.2,0,0,1);--ease-enter:cubic-bezier(.05,.7,.1,1);--ease-draw:cubic-bezier(.6,.6,0,1);
+  --ease-spring-bounce:var(--ease-enter);
+}
+@supports (animation-timing-function:linear(0,1)){
+  :root{--ease-spring-bounce:linear(0,0.106,0.323,0.554,0.748,0.889,0.978,1.025,1.043,1.044,1.036,1.026,1.016,1.008,1.003,1,0.998,0.998,0.998,0.999,1)}
+}
+@font-face{font-family:"Newsreader Fallback";src:local("Georgia");size-adjust:98%;ascent-override:92%;descent-override:24%}
+@font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107%;ascent-override:90%;descent-override:22%}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.55;letter-spacing:-.009em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+p{margin:0 0 1.2em}
+p:last-child{margin-bottom:0}
+h1,h2,h3{margin:0;font-family:var(--serif);font-weight:500;font-optical-sizing:auto}
+h1{font-size:64px;line-height:1.02;letter-spacing:-.01em;font-weight:400;text-wrap:balance}
+h2{font-size:40px;line-height:1.1;letter-spacing:-.008em;text-wrap:balance}
+h3{font-size:24px;line-height:1.2}
+.num,time,code,kbd,.fp{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:var(--gutter)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
+.measure{max-width:var(--measure)}
+.eyebrow,.cap{font:600 11px/16px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
+.muted{color:var(--text-2)}
+.small{font-size:13px;line-height:18px}
+.skip{position:absolute;left:16px;top:-48px;z-index:20;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-2);padding:8px 12px;font-weight:500}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 12px)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--r-2);font:500 14px/1 var(--sans);letter-spacing:0;border:1px solid transparent;cursor:pointer;background:none;color:var(--text);text-decoration:none;white-space:nowrap}
+.btn:hover{text-decoration:none}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-hair{border-color:var(--border);background:var(--surface)}
+.btn-quiet{color:var(--text-2)}
+.btn-quiet:hover{background:var(--surface-2)}
+.btn-lg{min-height:44px;padding:0 20px;font-size:15px}
+.btn-sm{min-height:32px;padding:0 10px;font-size:13px;border-radius:8px}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* header */
+#sentinel{position:absolute;top:0;left:0;width:1px;height:1px}
+.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;height:64px;background:transparent}
+.site .wrap{height:100%;display:flex;align-items:center;gap:24px}
+html[data-scrolled] .site{background:var(--page);box-shadow:0 1px 0 var(--border)}
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  html[data-scrolled] .site{background:color-mix(in srgb,var(--page) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+}
+.lockup{display:inline-flex;align-items:center;color:var(--text)}
+.lockup svg{height:28px;width:auto}
+.nav{display:flex;gap:4px;margin-inline:auto}
+.nav a{font:500 14px/1 var(--sans);color:var(--text-2);padding:8px 10px;border-radius:8px}
+.nav a[aria-current]{color:var(--text)}
+.nav a:hover{text-decoration:none;background:var(--surface-2)}
+.site-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.site-right .src{font:500 14px/1 var(--sans);color:var(--text-2);padding:8px 10px}
+.progress{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(var(--progress,0))}
+html[data-install] .progress{background:var(--positive)}
+
+/* hero */
+.hero{padding-top:56px;padding-bottom:24px;min-height:min(72svh,720px)}
+.hero .copy{grid-column:1/7;align-self:center}
+.hero .fig{grid-column:8/13;justify-self:start}
+.hero h1{margin:16px 0 20px}
+.hero .lede{font-size:19px;line-height:1.5;color:var(--text-2);max-width:540px;margin-bottom:28px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.cta.swap .btn:first-child{order:2}
+.hero .note{font-size:13px;line-height:18px;color:var(--text-2)}
+
+/* figures */
+.fig{margin:0;width:var(--w,390px);max-width:100%}
+.sheet{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-3);overflow:hidden;box-shadow:var(--shadow)}
+.sheet img{width:100%;height:auto}
+.frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;overflow:hidden}
+.frame rect{fill:none;stroke:var(--text);stroke-width:2;vector-effect:non-scaling-stroke}
+figcaption{margin-top:10px;font-size:13px;line-height:18px;color:var(--text-2)}
+figcaption .cap{display:block;margin-bottom:2px}
+.pair{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.pair .fig{--w:320px}
+.crop{aspect-ratio:390/344;width:100%}
+.crop img{transform:translateY(-26.7%)}
+.chip{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font:600 11px/1 var(--sans);letter-spacing:.04em;vertical-align:middle;margin-left:6px}
+
+/* sections */
+.sec{padding-block:var(--section) 0}
+.sec-head{margin-bottom:36px;max-width:760px}
+.sec-head h2{margin-top:10px}
+.body-col{grid-column:1/8}
+.side-col{grid-column:8/13;justify-self:start;width:100%;max-width:390px}
+.full{grid-column:1/-1}
+.stack{display:flex;flex-direction:column;gap:36px}
+
+/* Today card replica */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-3);box-shadow:var(--shadow);padding:20px}
+.card.today .eyebrow{margin-bottom:8px}
+.card.today h3{font-family:var(--sans);font-size:22px;font-weight:600;letter-spacing:-.012em;line-height:1.2;margin-bottom:6px}
+.card.today p{font-size:14px;line-height:20px;color:var(--text-2)}
+.card.today .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.live{opacity:1}
+.live.fade{opacity:0}
+
+/* details */
+details{margin-top:28px;border-top:1px solid var(--border);padding-top:6px}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 0;font-weight:500;font-size:15px;border-radius:var(--r-1)}
+summary::-webkit-details-marker{display:none}
+summary svg{width:16px;height:16px;stroke:var(--text-2);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.panel{display:grid;grid-template-rows:0fr}
+.panel>div{overflow:hidden}
+details.open .panel{grid-template-rows:1fr}
+details.open summary svg{transform:rotate(90deg)}
+.rules{margin:0;padding:4px 0 12px 26px;font-size:15px;line-height:1.5;color:var(--text-2)}
+.rules li{margin:4px 0}
+
+/* chain list */
+.chain{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--border)}
+.chain li{display:grid;grid-template-columns:88px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);font-size:15px;line-height:1.5}
+.chain .eyebrow{padding-top:3px}
+
+/* quote line */
+.pull{font:italic 400 24px/1.35 var(--serif);max-width:var(--measure);margin:0;color:var(--text)}
+
+/* diagram */
+.diagram svg{width:100%;height:auto}
+.diagram .tile{fill:var(--surface);stroke:var(--border)}
+.diagram text{font:13px var(--sans);fill:var(--text);letter-spacing:-.009em}
+.diagram .c{fill:none;stroke:var(--border-strong);stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:0}
+.diagram .mark path{fill:none;stroke:var(--text);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.diagram .mark circle{fill:var(--accent)}
+.diagram .portrait{display:none}
+.diagram .portrait text{font-size:12px}
+
+/* promise and install cards */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.cards .card{display:flex;flex-direction:column;gap:12px;padding:24px}
+.cards .card h3{font-size:24px}
+.cards .card p{font-size:15px;line-height:1.5;color:var(--text-2)}
+.cards .card .btn{align-self:flex-start;margin-top:auto}
+.code{position:relative;background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--r-2);padding:12px 14px;font:400 13px/20px var(--mono);color:var(--text);white-space:pre-wrap;word-break:break-all;overflow-wrap:anywhere;margin:0}
+.code strong{font-weight:500}
+.copybtn{display:grid;place-items:center;margin-top:10px}
+.copybtn>span{grid-area:1/1}
+.copybtn .ghost{visibility:hidden}
+.copybtn.done .lbl{visibility:hidden}
+.copybtn.done .ghost{visibility:visible}
+.copybtn.done{border-color:var(--positive);color:var(--positive)}
+
+/* theme rail */
+.themes-grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;padding-left:max(var(--gutter),calc((100% - 1120px)/2 + var(--gutter)))}
+.themes-grid>div{min-width:0}
+.rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-right:var(--gutter)}
+.rail-head .arrows{display:flex;gap:6px}
+.rail-head .arrows .btn{width:32px;padding:0}
+.rail{list-style:none;margin:0;padding:6px 24px 12px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:24px;-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
+.rail::-webkit-scrollbar{display:none}
+.rail li{flex:none;scroll-snap-align:start}
+.rail .fig{--w:200px}
+.rail .sheet{background:var(--sheet-bg,var(--surface))}
+.rail figcaption b{display:block;font-weight:600;color:var(--text)}
+
+/* footer */
+.foot{margin-top:var(--section);border-top:1px solid var(--border);padding:64px 0 40px}
+.foot .grid{align-items:start}
+.foot .brand{grid-column:1/5;font-size:14px;line-height:1.5;color:var(--text-2)}
+.foot .brand svg{width:32px;height:32px;margin-bottom:12px}
+.foot .cols{grid-column:5/9;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:14px}
+.foot .cols .eyebrow{margin-bottom:10px}
+.foot .cols ul{list-style:none;margin:0;padding:0}
+.foot .cols li{margin:6px 0}
+.foot .cols a{color:var(--text)}
+.foot .cols a:hover{color:var(--accent)}
+.foot .note{grid-column:9/13;font-size:14px;line-height:1.5;color:var(--text-2)}
+.foot .fpline{margin-top:40px;padding-top:20px;border-top:1px solid var(--border-subtle);font:400 12px/18px var(--mono);color:var(--text-2);word-break:break-all;overflow-wrap:anywhere}
+
+/* responsive */
+@media (max-width:1000px){
+  :root{--section:80px}
+  .nav{display:none}
+  .hero .copy{grid-column:1/8}
+  .hero .fig{grid-column:8/13}
+  .body-col{grid-column:1/-1}
+  .side-col{grid-column:1/-1;max-width:none}
+  .themes-grid{grid-template-columns:minmax(0,1fr);padding-right:0}
+}
+@media (max-width:720px){
+  :root{--section:56px;--gutter:16px}
+  .site{height:56px}
+  .site-right .src{display:none}
+  h1{font-size:40px;line-height:1.06}
+  h2{font-size:30px}
+  .hero{padding-top:32px;min-height:0}
+  .hero .copy,.hero .fig{grid-column:1/-1}
+  .hero .fig{--w:100%}
+  .fig,.pair .fig,.side-col{--w:100%;width:100%;max-width:none}
+  .side-col{max-width:none}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .chain li{grid-template-columns:1fr;gap:4px}
+  .foot .brand,.foot .cols,.foot .note{grid-column:1/-1}
+  .diagram .landscape{display:none}
+  .diagram .portrait{display:block}
+  .pull{font-size:21px}
+}
+@media (forced-colors:active){
+  .sheet,.card,.btn-hair{border-color:CanvasText}
+  .progress{background:Highlight}
+}
+@media (hover:hover) and (pointer:fine){
+  .btn-accent:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+  .btn-hair:hover{border-color:var(--border-strong)}
+  .fig:hover .cap{color:var(--accent)}
+}
+
+/* motion: everything below only runs when the visitor has not asked for less motion */
+@media (prefers-reduced-motion:no-preference){
+  .btn,.chip{transition:transform var(--dur-press) var(--ease-standard),background-color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard),color var(--dur-fast) var(--ease-standard)}
+  .btn:active{transform:scale(.97)}
+  .btn-sm:active,.chip:active{transform:scale(.95)}
+  .cards .card{transition:transform var(--dur-press) var(--ease-standard)}
+  .cards .card:active{transform:scale(.985)}
+  .site{transition:background-color var(--dur-fast) var(--ease-standard),box-shadow var(--dur-fast) var(--ease-standard)}
+  .live{transition:opacity var(--dur-fast) var(--ease-standard)}
+  .panel{transition:grid-template-rows var(--dur-base) var(--ease-standard)}
+  summary svg{transition:transform var(--dur-base) var(--ease-standard)}
+  .copybtn{transition:color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
+  .nav a{transition:background-color var(--dur-fast) var(--ease-standard)}
+  html{scroll-behavior:smooth}
+  @supports (animation-timeline:scroll()){
+    .progress{animation:grow linear both;animation-timeline:scroll();transform:scaleX(0)}
+    @keyframes grow{to{transform:scaleX(1)}}
+  }
+  /* rise and fade for copy, cards and rows */
+  html.js .rv{opacity:0;transform:translateY(8px);transition:opacity var(--dur-enter) var(--ease-enter),transform var(--dur-enter) var(--ease-enter);transition-delay:var(--d,0ms)}
+  html.js .rv.in{opacity:1;transform:none}
+  /* hero load orchestration */
+  html.js .hr{animation:rise var(--dur-enter) var(--ease-enter) both;animation-delay:calc(var(--i,0) * var(--step-hero))}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  html.js .lockup .pulse{stroke-dasharray:1;animation:draw var(--dur-draw-long) var(--ease-draw) both}
+  html.js .lockup .dot{transform-box:fill-box;transform-origin:center;animation:pop var(--dur-base) var(--ease-spring-bounce) var(--dur-draw-long) both}
+  @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+  /* paste-up */
+  html.js .fig .frame{display:block}
+  html.js .fig.done .frame{display:none}
+  html.js .fig:not(.done) .sheet{border-color:transparent;box-shadow:none}
+  html.js .fig:not(.in) .sheet>:not(.frame),html.js .fig:not(.in) figcaption{opacity:0}
+  .fig.in .frame rect{stroke-dasharray:1;animation:draw var(--dur-draw) var(--ease-draw) both;animation-delay:var(--d,0ms)}
+  .fig.in .sheet>:not(.frame){animation:paste 400ms var(--ease-enter) both;animation-delay:calc(var(--d,0ms) + 200ms)}
+  .fig.in figcaption{animation:fade var(--dur-enter) var(--ease-standard) both;animation-delay:calc(var(--d,0ms) + 500ms)}
+  @keyframes paste{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .hero .fig.in .sheet>img{animation:hold var(--dur-hold) cubic-bezier(0,0,.2,1) both;animation-delay:var(--d,0ms)}
+  .hero .fig.in figcaption{animation-delay:calc(var(--d,0ms) + var(--dur-hold) + 200ms)}
+  @keyframes hold{0%,30%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
+  .fig.in .sheet.crop>img{animation-name:paste-crop}
+  @keyframes paste-crop{from{opacity:0;transform:translateY(calc(-26.7% + 12px))}to{opacity:1;transform:translateY(-26.7%)}}
+  /* diagram paths draw after the frame, inputs first */
+  html.js .diagram:not(.in) .c{stroke-dashoffset:1}
+  .diagram.in .c{animation:draw var(--dur-path) var(--ease-draw) both;animation-delay:calc(var(--d,0ms) + var(--dur-draw) + var(--i,0) * var(--step-rail))}
+  /* PR chip pops in after Fig. 3 pastes up */
+  html.js .fig .chip{transform:scale(0)}
+  .fig.in .chip{animation:pop var(--dur-bounce) var(--ease-spring-bounce) both;animation-delay:calc(var(--d,0ms) + 700ms)}
+}
+</style>
+
+<a class="skip" href="#article">Skip to the article</a>
+<a class="skip" href="#install">Skip to Install</a>
+<div id="sentinel" aria-hidden="true"></div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="lockup" href="#top" aria-label="M/ARC, top of page">
+      <svg viewBox="0 0 216 64" height="28" width="95" role="img" aria-label="M/ARC">
+        <path class="pulse" pathLength="1" d="M8 40H16L22 22L30 50L36 30L40 40H56" fill="none" stroke="#37352f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="dot" cx="30" cy="50" r="4.5" fill="#2383e2"/>
+        <text x="68" y="47" font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="700" letter-spacing="-1.5" fill="#37352f">M<tspan fill="#2383e2">/</tspan>ARC</text>
+      </svg>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#today">Today</a><a href="#train">Train</a><a href="#body">Body</a><a href="#escobar">Escobar</a><a href="#history">History</a><a href="#data">Your data</a><a href="#themes">Themes</a>
+    </nav>
+    <div class="site-right">
+      <a class="src" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      <a class="btn btn-accent" href="#install">Install</a>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"></div>
+</header>
+
+<main id="top">
+<section class="hero wrap grid">
+  <div class="copy">
+    <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android and the browser</div>
+    <h1 class="hr" style="--i:1">A workout log that explains today's plan.</h1>
+    <p class="lede hr" style="--i:2">M/ARC keeps your sets, works out how recovered each muscle is, and writes today's targets with the reason next to each one. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
+    <div class="cta hr" style="--i:3" data-web="">
+      <a class="btn btn-accent btn-lg" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download for Android</a>
+      <a class="btn btn-hair btn-lg" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+    </div>
+    <p class="note hr" style="--i:4">Signed APK. Works offline. Public source.</p>
+  </div>
+  <figure class="fig now" style="--w:340px;--d:600ms">
+    <div class="sheet">
+      <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+      <img src="shots/paper-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day. Readiness 66, Amber and still calibrating, with triceps at 45% and three days to go.">
+    </div>
+    <figcaption><span class="cap">Fig. 1</span>The Today screen on a Push day. Readiness <span class="num">66</span>, Amber and still calibrating, with triceps at <span class="num">45%</span> and three days to go.</figcaption>
+  </figure>
+</section>
+
+<article id="article">
+
+<section class="sec" id="today">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="eyebrow rv">Today</div>
+      <h2 class="rv" style="--d:60ms">The day starts with one card.</h2>
+    </header>
+    <div class="grid">
+      <div class="body-col measure">
+        <p>Open M/ARC and the first card already knows what is scheduled. On a Push day it says Start Push. Mid-session it says how many exercises are done. Afterwards it says Push done, 18 sets logged, recovery has started. Tap Take today off and the day counts as rest: your streak and this week's target leave it out.</p>
+        <p>Under it sits Readiness, a 0 to 100 score built from your check-in, sleep, heart rate, HRV and recent load. Green from 67, Red at 33 or below, and marked calibrating for the first 14 days. It comes with one line of advice, such as keep loads steady today and skip any increases. Below that, the muscles still recovering and the time each one needs, then the week in three numbers: workouts, sets, records.</p>
+      </div>
+      <div class="side-col">
+        <figure class="fig" style="--w:100%">
+          <div class="sheet card today">
+            <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+            <div class="live" id="today-live" aria-live="polite">
+              <div class="eyebrow" id="tc-eyebrow">Scheduled today</div>
+              <h3 id="tc-title">Push</h3>
+              <p id="tc-line"><span class="num">3</span> exercises planned.</p>
+            </div>
+            <div class="row">
+              <button class="btn btn-accent" type="button" id="tc-start">Start Push</button>
+              <button class="btn btn-quiet" type="button" id="tc-off" aria-pressed="false">Take today off</button>
+            </div>
+          </div>
+          <figcaption>The Today card, rebuilt in HTML with the app's own strings. Tap Take today off to see the rest-day state.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="train">
+  <div class="wrap stack">
+    <header class="sec-head" style="margin-bottom:0">
+      <div class="eyebrow rv">Train</div>
+      <h2 class="rv" style="--d:60ms">Every set arrives with a number and a reason.</h2>
+    </header>
+    <div class="measure">
+      <p>Each exercise in a split shows today's target before you start, taken from your last sessions and your goal: 62.5 kg for 8, top of the range twice, step up. In the session the target is pre-filled as a placeholder. Tap Log as planned and move on, or type what you actually did.</p>
+      <p>Rate every set with one tap. E is easy, three or more reps left. I is ideal, one to three left. M is max, nothing left. A missing rating never counts as easy or max; it lowers confidence instead. Drop sets count for volume and never for records. A set that beats your best gets a PR chip while you are still on the bench.</p>
+      <p>Rest runs by timer, or by heart rate when a Bluetooth watch is connected: the rest ends when your pulse settles and falls back to the timer if the signal drops. Tap a barbell target to see plates per side in the unit that gym uses. Up to eight gyms, and each one remembers which unit every machine and rack takes.</p>
+      <details id="why">
+        <summary><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>Why this target</summary>
+        <div class="panel"><div>
+          <ul class="rules">
+            <li>Top of range twice, step up.</li>
+            <li>Effort missing, repeat and rate.</li>
+            <li>Readiness Amber, hold the load.</li>
+            <li>Primary muscle under 60% recovered, hold the load.</li>
+            <li>Red day or lighter week, fewer sets.</li>
+          </ul>
+        </div></div>
+      </details>
+    </div>
+    <div class="pair">
+      <figure class="fig">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-train.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Push split before a session: machine chest press at 50 kg for 6 to 8 reps, dumbbell shoulder press at 18 kg, triceps pushdown at 25 kg, three sets each.">
+        </div>
+        <figcaption><span class="cap">Fig. 2</span>The Push split before a session: machine chest press at <span class="num">50 kg</span> for <span class="num">6 to 8</span> reps, dumbbell shoulder press at <span class="num">18 kg</span>, triceps pushdown at <span class="num">25 kg</span>, three sets each.</figcaption>
+      </figure>
+      <figure class="fig" style="--d:120ms">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: set one 50 kg for 8 rated E, set two 52.5 kg for 6 rated I, the third pre-filled at 50 kg for 6, rest counting down from 1:30.">
+        </div>
+        <figcaption><span class="cap">Fig. 3 <span class="chip">PR</span></span>A live Push session on the machine chest press: set one <span class="num">50 kg</span> for <span class="num">8</span> rated E, set two <span class="num">52.5 kg</span> for <span class="num">6</span> rated I, the third pre-filled at <span class="num">50 kg</span> for <span class="num">6</span>, rest counting down from <span class="num">1:30</span>.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="body">
+  <div class="wrap stack">
+    <header class="sec-head" style="margin-bottom:0">
+      <div class="eyebrow rv">Body</div>
+      <h2 class="rv" style="--d:60ms">A muscle map that knows what you did on Tuesday.</h2>
+    </header>
+    <div class="measure">
+      <p>Every working set leaves an impulse on the muscles it used, sized by their role in the lift, the effort you rated, the reps and the load. The impulse decays, stacks over seven days, and the model adjusts to how your next session actually went, in both directions, within limits.</p>
+      <p>The map shades 24 muscles. Ready for hard work at 90%, fully recovered at 97%. Tap one for Ready now or Full by 10 pm, with a confidence label. When sleep, resting heart rate and load slow everything down, the map says so in one line, whole body recovering about 12% slower than usual this week.</p>
+      <p>Switch to This week to see effective sets per muscle against a target band. Switch to Levels to see how much each muscle has been trained, as a relative measure, not a medical one.</p>
+    </div>
+    <p class="pull rv">Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.</p>
+    <figure class="fig diagram" style="--w:100%">
+      <div class="sheet">
+        <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+        <svg class="landscape" viewBox="0 0 1040 320" role="img" aria-labelledby="fig4-t">
+          <title id="fig4-t">Inputs on the left feed the model in the centre; four outputs come out on the right.</title>
+          <path class="c" style="--i:0" pathLength="1" d="M244 64C358 64 358 160 472 160"/>
+          <path class="c" style="--i:1" pathLength="1" d="M244 160C358 160 358 160 472 160"/>
+          <path class="c" style="--i:2" pathLength="1" d="M244 256C358 256 358 160 472 160"/>
+          <path class="c" style="--i:3" pathLength="1" d="M568 160C682 160 682 40 796 40"/>
+          <path class="c" style="--i:4" pathLength="1" d="M568 160C682 160 682 120 796 120"/>
+          <path class="c" style="--i:5" pathLength="1" d="M568 160C682 160 682 200 796 200"/>
+          <path class="c" style="--i:6" pathLength="1" d="M568 160C682 160 682 280 796 280"/>
+          <rect class="tile" x="24" y="40" width="220" height="48" rx="10"/><text x="44" y="69">Sets and effort</text>
+          <rect class="tile" x="24" y="136" width="220" height="48" rx="10"/><text x="44" y="165">Check-in</text>
+          <rect class="tile" x="24" y="232" width="220" height="48" rx="10"/><text x="44" y="261">Sleep and heart rate</text>
+          <rect class="tile" x="472" y="112" width="96" height="96" rx="10"/>
+          <g class="mark" transform="translate(496 136) scale(.75)"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></g>
+          <rect class="tile" x="796" y="16" width="220" height="48" rx="10"/><text x="816" y="45">Recovery per muscle</text>
+          <rect class="tile" x="796" y="96" width="220" height="48" rx="10"/><text x="816" y="125">Readiness 0 to 100</text>
+          <rect class="tile" x="796" y="176" width="220" height="48" rx="10"/><text x="816" y="205">Next-session targets</text>
+          <rect class="tile" x="796" y="256" width="220" height="48" rx="10"/><text x="816" y="285">Lighter week</text>
+        </svg>
+        <svg class="portrait" viewBox="0 0 360 320" aria-hidden="true">
+          <path class="c" style="--i:0" pathLength="1" d="M120 64C132 64 132 160 144 160"/>
+          <path class="c" style="--i:1" pathLength="1" d="M120 160C132 160 132 160 144 160"/>
+          <path class="c" style="--i:2" pathLength="1" d="M120 256C132 256 132 160 144 160"/>
+          <path class="c" style="--i:3" pathLength="1" d="M216 160C228 160 228 40 240 40"/>
+          <path class="c" style="--i:4" pathLength="1" d="M216 160C228 160 228 120 240 120"/>
+          <path class="c" style="--i:5" pathLength="1" d="M216 160C228 160 228 200 240 200"/>
+          <path class="c" style="--i:6" pathLength="1" d="M216 160C228 160 228 280 240 280"/>
+          <rect class="tile" x="8" y="40" width="112" height="48" rx="10"/><text x="20" y="60">Sets and</text><text x="20" y="76">effort</text>
+          <rect class="tile" x="8" y="136" width="112" height="48" rx="10"/><text x="20" y="164">Check-in</text>
+          <rect class="tile" x="8" y="232" width="112" height="48" rx="10"/><text x="20" y="252">Sleep and</text><text x="20" y="268">heart rate</text>
+          <rect class="tile" x="144" y="124" width="72" height="72" rx="10"/>
+          <g class="mark" transform="translate(156 136) scale(.75)"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></g>
+          <rect class="tile" x="240" y="16" width="112" height="48" rx="10"/><text x="252" y="36">Recovery</text><text x="252" y="52">per muscle</text>
+          <rect class="tile" x="240" y="96" width="112" height="48" rx="10"/><text x="252" y="116">Readiness</text><text x="252" y="132">0 to 100</text>
+          <rect class="tile" x="240" y="176" width="112" height="48" rx="10"/><text x="252" y="196">Next-session</text><text x="252" y="212">targets</text>
+          <rect class="tile" x="240" y="256" width="112" height="48" rx="10"/><text x="252" y="284">Lighter week</text>
+        </svg>
+      </div>
+      <figcaption><span class="cap">Fig. 4</span>What feeds the model and what comes out: rated sets, the check-in and sleep and heart rate go in; recovery per muscle, readiness, next-session targets and a lighter week come out.</figcaption>
+    </figure>
+    <div class="pair">
+      <figure class="fig">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-body.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map in Recovery view. Chest and front shoulders are marked Nearly, rear shoulders Recovering, legs and back Ready.">
+        </div>
+        <figcaption><span class="cap">Fig. 5</span>The muscle map in Recovery view. Chest and front shoulders are marked Nearly, rear shoulders Recovering, legs and back Ready.</figcaption>
+      </figure>
+      <figure class="fig" style="--d:120ms">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-levels.png" width="780" height="1688" loading="lazy" decoding="async" alt="The same map switched to Levels, shaded by how much each muscle has been trained.">
+        </div>
+        <figcaption><span class="cap">Fig. 6</span>The same map switched to Levels, shaded by how much each muscle has been trained.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="escobar">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="eyebrow rv">Escobar</div>
+      <h2 class="rv" style="--d:60ms">A coach that shows its working.</h2>
+    </header>
+    <div class="grid">
+      <div class="body-col measure">
+        <p>Escobar is the online coach. It is off until you turn it on, and it reads only what you allow. Health data and body data leave the phone only with their own switches on, and turning a switch off removes that data from replayed history.</p>
+        <p>Ask about anything in your log. Every number in the answer is checked against your own data before it stands; a number that does not match is repaired or marked. When Escobar proposes a split, a schedule, a goal, today's loads or a lighter week, it arrives as a card. Nothing changes until you tap Apply, and you have eight seconds to undo. Fourteen kinds of change work this way.</p>
+        <p>Without a network the tab still works. Ranked notes, a weekly review, deload suggestions and 422 exercise cues come from the phone. Each note reads Noticed, Means, Do next. Mention an injury or a piece of equipment and, with Let Escobar remember on, it is kept in a list you can read and edit under What Escobar knows.</p>
+        <ul class="chain">
+          <li class="rv"><span class="eyebrow">Noticed</span><span>Push is scheduled today. Triceps is <span class="num">45%</span> recovered.</span></li>
+          <li class="rv" style="--d:60ms"><span class="eyebrow">Means</span><span>Hard triceps sets would land on a muscle that is not ready.</span></li>
+          <li class="rv" style="--d:120ms"><span class="eyebrow">Do next</span><span>Swap to another split, or keep Push light and put the hard sets elsewhere.</span></li>
+        </ul>
+      </div>
+      <div class="side-col">
+        <figure class="fig" style="--w:390px">
+          <div class="sheet crop">
+            <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+            <img src="shots/paper-escobar.png" width="780" height="1688" loading="lazy" decoding="async" alt="Today's brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only 45% recovered. Nothing agreed yet, nothing remembered yet.">
+          </div>
+          <figcaption><span class="cap">Fig. 7</span>Today's brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only <span class="num">45%</span> recovered. Nothing agreed yet, nothing remembered yet.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="history">
+  <div class="wrap stack">
+    <header class="sec-head" style="margin-bottom:0">
+      <div class="eyebrow rv">History</div>
+      <h2 class="rv" style="--d:60ms">A log you can go back and correct.</h2>
+    </header>
+    <div class="measure">
+      <p>Trained days sit on a month calendar. Swipe sideways to page months, tap a day to list its sessions. Open any session to fix a set or a load; recovery is rebuilt from history after the edit. Swipe a session away and a toast offers Undo, heart data included.</p>
+      <p>Stats keeps weekly volume, a sparkline per exercise with a plain trend word, and six kinds of records: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Loads stay in the unit you typed them in. Share a week or a session as a card.</p>
+    </div>
+    <div class="pair">
+      <figure class="fig">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-history.png" width="780" height="1688" loading="lazy" decoding="async" alt="September 2026 on the History calendar, trained days filled in, today outlined, and the last sessions under Recent: Push on Sunday the 27th, Pull on Saturday the 26th.">
+        </div>
+        <figcaption><span class="cap">Fig. 8</span>September <span class="num">2026</span> on the History calendar, trained days filled in, today outlined, and the last sessions under Recent: Push on Sunday the <span class="num">27th</span>, Pull on Saturday the <span class="num">26th</span>.</figcaption>
+      </figure>
+      <figure class="fig" style="--d:120ms">
+        <div class="sheet">
+          <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+          <img src="shots/paper-stats.png" width="780" height="1688" loading="lazy" decoding="async" alt="Exercise progress for the machine chest press: the line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping.">
+        </div>
+        <figcaption><span class="cap">Fig. 9</span>Exercise progress for the machine chest press: the line falls from <span class="num">95.7</span> on August <span class="num">30</span> to <span class="num">68.3</span> on September <span class="num">27</span>, last top load <span class="num">50 kg</span>, trend marked Slipping.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="data">
+  <div class="wrap stack">
+    <header class="sec-head" style="margin-bottom:0">
+      <div class="eyebrow rv">Your data</div>
+      <h2 class="rv" style="--d:60ms">Nothing leaves the phone unless you send it.</h2>
+    </header>
+    <div class="cards">
+      <div class="card rv"><h3>Your log stays on your phone.</h3><p>No account, no sign-in, no server copy.</p></div>
+      <div class="card rv" style="--d:60ms"><h3>It works without a signal.</h3><p>The installed app and the coach's notes run offline.</p></div>
+      <div class="card rv" style="--d:120ms"><h3>Your data is a file you own.</h3><p>JSON backup with preview and Undo, CSV of every set, and a rescue copy if anything fails to read.</p></div>
+    </div>
+    <div class="measure">
+      <p>There is no account and no sign-in. Your log lives in the phone's storage, coach photos in IndexedDB, heart data in a local side store. The installed web app keeps every built file, so it opens in a basement with no signal.</p>
+      <p>Export backup writes a JSON file. Restore backup previews it, applies it, and offers Undo. Export CSV hands you every filled-in set, for 90 days or all time. If saved data ever fails to read at start, the app keeps a copy aside and offers Save rescue file. Nothing is thrown away silently.</p>
+      <p>The online coach is the one exception. When you use it, the numbers its tools ask for go through the project's own server to the coach service and back, and health and body data go only with their switches on. Quotas are counted per device and network address, not per person.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="themes">
+  <div class="wrap">
+    <header class="sec-head">
+      <div class="eyebrow rv">Themes</div>
+      <h2 class="rv" style="--d:60ms">Five themes, switched with one crossfade.</h2>
+    </header>
+    <p class="measure" style="margin-bottom:36px">Silent Black, Paper, Ember, Emerald and Midnight. Each is a complete token set, so every screen and chart recolours at once and the whole app crossfades when you switch. This page is set in Paper.</p>
+  </div>
+  <div class="themes-grid">
+    <figure class="fig" style="--w:320px">
+      <div class="sheet">
+        <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+        <img src="shots/paper-settings.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Settings sheet with the five theme cards, Paper selected, and the Training section beneath.">
+      </div>
+      <figcaption><span class="cap">Fig. 10</span>The Settings sheet with the five theme cards, Paper selected, and the Training section beneath.</figcaption>
+    </figure>
+    <div>
+      <div class="rail-head">
+        <span class="eyebrow">The Today screen in each theme</span>
+        <div class="arrows">
+          <button class="btn btn-hair btn-sm" type="button" data-rail="-1" aria-label="Scroll the themes left"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+          <button class="btn btn-hair btn-sm" type="button" data-rail="1" aria-label="Scroll the themes right"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+        </div>
+      </div>
+      <ul class="rail" id="rail" aria-label="The five themes">
+        <li><figure class="fig" style="--sheet-bg:#08090a"><div class="sheet"><svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg><img src="shots/silent-black-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen in the Silent Black theme."></div><figcaption><b>Silent Black</b>after Linear and Vercel</figcaption></figure></li>
+        <li><figure class="fig" style="--sheet-bg:#ffffff"><div class="sheet"><svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg><img src="shots/paper-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen in the Paper theme."></div><figcaption><b>Paper</b>after Notion</figcaption></figure></li>
+        <li><figure class="fig" style="--sheet-bg:#07080a"><div class="sheet"><svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg><img src="shots/ember-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen in the Ember theme."></div><figcaption><b>Ember</b>after Raycast</figcaption></figure></li>
+        <li><figure class="fig" style="--sheet-bg:#0f0f0f"><div class="sheet"><svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg><img src="shots/emerald-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen in the Emerald theme."></div><figcaption><b>Emerald</b>after Supabase</figcaption></figure></li>
+        <li><figure class="fig" style="--sheet-bg:#0a2540"><div class="sheet"><svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg><img src="shots/midnight-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen in the Midnight theme."></div><figcaption><b>Midnight</b>after Stripe</figcaption></figure></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="install">
+  <div class="wrap stack">
+    <header class="sec-head" style="margin-bottom:0">
+      <div class="eyebrow rv">Install</div>
+      <h2 class="rv" style="--d:60ms">Two ways in.</h2>
+    </header>
+    <div class="cards">
+      <div class="card rv">
+        <h3>In the browser</h3>
+        <p>Open the web app in Chrome, Edge or Samsung Internet on Android, then choose Add to Home Screen. It keeps every built file and works offline. Escobar needs a network; everything else does not.</p>
+        <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+      <div class="card rv" style="--d:60ms">
+        <h3>Android APK</h3>
+        <p>Version <span class="num">37.1.0</span>. Every build is signed with one permanent key, and CI checks the fingerprint before an APK is released. Check yours with apksigner and compare the SHA-256 below. Obtainium can install M/ARC straight from the GitHub releases page and checks the signature for you.</p>
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">Signing key SHA-256. Does not change between versions.</div>
+          <pre class="code fp" id="fp">05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</pre>
+          <button class="btn btn-hair btn-sm copybtn" type="button" id="copy"><span class="lbl">Copy fingerprint</span><span class="ghost" aria-hidden="true">Copied</span></button>
+          <pre class="code" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs M-ARC.apk</pre>
+          <p style="margin-top:10px">If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
+        </div>
+        <a class="btn btn-accent" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
+      </div>
+      <div class="card rv" style="--d:120ms">
+        <h3>Source</h3>
+        <p>The code is public on GitHub. Read it, build it, file an issue. Each push runs the typecheck, <span class="num">1,255</span> unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
+        <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</article>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="grid">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" role="img" aria-label="M/ARC mark"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" fill="none" stroke="#37352f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="50" r="4.5" fill="#2383e2"/></svg>
+        M/ARC <span class="num">37.1.0</span> for Android and the browser. Public source on GitHub.<br>This page sets no cookies and loads no analytics.
+      </div>
+      <div class="cols">
+        <div><div class="eyebrow">Product</div><ul><li><a href="#install">Install</a></li><li><a href="#data">How data is handled</a></li><li><a href="#themes">Themes</a></li></ul></div>
+        <div><div class="eyebrow">Source</div><ul><li><a href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Repository</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture notes</a></li></ul></div>
+      </div>
+      <p class="note">Every colour on this page is a Paper theme token. Every animation stops when your phone asks for less motion.</p>
+    </div>
+    <p class="fpline">Signing key SHA-256, does not change between versions: 05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+var d=document,H=d.documentElement,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
+H.classList.add('js');
+var rm=matchMedia('(prefers-reduced-motion: reduce)').matches,IO='IntersectionObserver' in window;
+function done(f){f.classList.add('done');var s=$('.frame',f);if(s)s.remove()}
+function show(f){if(f.classList.contains('in'))return;f.classList.add('in');if(rm)done(f);else setTimeout(function(){done(f)},parseInt(getComputedStyle(f).getPropertyValue('--d'))+900||900)}
+d.addEventListener('animationend',function(e){if(e.target.tagName==='rect'){var f=e.target.closest('.fig');if(f)done(f)}});
+var figs=$$('.fig'),rv=$$('.rv');
+if(rm||IO===false){figs.forEach(show);rv.forEach(function(e){e.classList.add('in')})}
+else{
+  var rail=$('#rail'),io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting===false)return;var t=en.target;io.unobserve(t);
+    if(t===rail)$$('.fig',t).forEach(function(f,i){f.style.setProperty('--d',i*80+'ms');show(f)});
+    else if(t.classList.contains('fig'))show(t);else t.classList.add('in')})},{threshold:.2,rootMargin:'0px 0px -10% 0px'});
+  figs.forEach(function(f){if(f.classList.contains('now'))show(f);else if(f.closest('#rail')===null)io.observe(f)});
+  rv.forEach(function(e){io.observe(e)});if(rail)io.observe(rail);
+}
+/* header state and reading progress */
+if(IO)new IntersectionObserver(function(es){H.toggleAttribute('data-scrolled',es[0].isIntersecting===false)}).observe($('#sentinel'));
+if(rm||(window.CSS&&CSS.supports('animation-timeline','scroll()'))===false){var tick=false;function prog(){tick=false;var m=H.scrollHeight-innerHeight;H.style.setProperty('--progress',m>0?Math.min(1,scrollY/m):0)}addEventListener('scroll',function(){if(tick)return;tick=true;requestAnimationFrame(prog)},{passive:true});prog()}
+/* current section in the nav */
+var links={};$$('.nav a').forEach(function(a){links[a.hash.slice(1)]=a});
+if(IO){var so=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting===false)return;var id=en.target.id;$$('.nav a').forEach(function(a){a.removeAttribute('aria-current')});if(links[id])links[id].setAttribute('aria-current','true');H.toggleAttribute('data-install',id==='install')})},{rootMargin:'-40% 0px -55% 0px'});$$('section[id]').forEach(function(x){so.observe(x)})}
+/* Today card swap */
+var live=$('#today-live'),off=$('#tc-off'),start=$('#tc-start'),isOff=false;
+function setCard(){var o=isOff;$('#tc-eyebrow').textContent=o?'Day off':'Scheduled today';$('#tc-title').textContent=o?'Push can wait':'Push';$('#tc-line').textContent=o?"Today counts as a rest day: your streak and this week's target leave it out.":'3 exercises planned.';start.textContent=o?'Train anyway':'Start Push';off.textContent=o?'Undo day off':'Take today off';off.setAttribute('aria-pressed',o)}
+off.addEventListener('click',function(){isOff=isOff===false;if(rm){setCard();return}live.classList.add('fade');setTimeout(function(){setCard();live.classList.remove('fade')},150)});
+/* Why this target */
+var det=$('#why');$('summary',det).addEventListener('click',function(e){e.preventDefault();if(det.open){det.classList.remove('open');if(rm)det.open=false;else setTimeout(function(){det.open=false},200)}else{det.open=true;requestAnimationFrame(function(){det.classList.add('open')})}});
+/* copy the fingerprint */
+var cb=$('#copy');cb.addEventListener('click',function(){var t=$('#fp').textContent.trim();if(navigator.clipboard)navigator.clipboard.writeText(t);cb.classList.add('done');setTimeout(function(){cb.classList.remove('done')},1500)});
+/* hero labels: only swap order when a web app URL is set and this is not Android */
+var cta=$('.cta');if(cta.dataset.web&&/Android/.test(navigator.userAgent)===false)cta.classList.add('swap');
+/* theme rail arrows */
+$$('[data-rail]').forEach(function(b){b.addEventListener('click',function(){$('#rail').scrollBy({left:224*+b.dataset.rail,behavior:rm?'auto':'smooth'})})});
+})();
+</script>
