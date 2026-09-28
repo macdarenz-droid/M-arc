@@ -101,6 +101,8 @@ export function progressionCtxFor(ctx: ToolCtx, exerciseId: string, gymId?: stri
     readiness: readinessToday(ctx),
     recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoveryAt(ctx)),
     deload: activeDeloadOf(ctx),
+    // BUG-15: the saved lighter week, so an ended one is not the base for later targets.
+    lastDeload: s.deload,
     equipment,
     ...(change && change.kind === 'load' ? { loadFactor: change.factor } : {}),
   };
