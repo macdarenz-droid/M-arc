@@ -26,7 +26,7 @@ export function FormGuideSheet({ exerciseId, name, onClose }: { exerciseId: stri
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   useEffect(() => {
     let live = true;
-    void loadGuide(importPlayer).then(r => { if (live) setLoaded(r); });
+    void loadGuide(() => importPlayer().then(m => m.playerFor(exerciseId))).then(r => { if (live) setLoaded(r); });
     return () => { live = false; };
   }, []);
   return (

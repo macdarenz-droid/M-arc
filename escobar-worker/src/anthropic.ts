@@ -30,6 +30,10 @@ export interface Env {
   QUOTA?: KVNamespace;
   RATE?: RateLimiter;
   RATE_IP?: RateLimiter;
+  /** Anonymous error reports (docs/ERROR-REPORTS.md): D1 storage and rate counters (src/errorsStore.ts). */
+  ERRORS_DB?: D1Database;
+  /** Secret: the bearer token for GET /errors/summary and the key of the IP hash; the owner sets it before deploy. */
+  ERRORS_SUMMARY_TOKEN?: string;
 }
 
 export const DEFAULT_MODEL = 'claude-opus-5';

@@ -51,12 +51,13 @@ export function readinessBaselines(healthDays: DailyHealth[], today: string): Re
   };
 }
 
+/** BUG-17 (RECOVERY-F11): the smallest spread a 1-5 check-in history counts as, so a flat history still sees a bad day. */
+export const CHECKIN_MIN_SD = 0.5;
+
 /** A value's z-score against a series, or null when there isn't enough of the user's own history (n<3) to mean anything. */
 function zScore(value: number, series: number[]): number | null {
   if (series.length < 3) return null;
-  const sd = stddev(series);
-  if (sd <= 0) return 0;
-  return (value - avg(series)) / sd;
+  return (value - avg(series)) / Math.max(stddev(series), CHECKIN_MIN_SD);
 }
 
 /** How much each input counts toward the score; missing inputs are left out and the rest renormalised. */
