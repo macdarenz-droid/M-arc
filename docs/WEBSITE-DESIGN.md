@@ -51,7 +51,7 @@ The same header on every page (one partial, `website/partials/nav.html`, inlined
 | Centre (900px and under) | A native `<details class="menu">` labelled Menu with the same five links in a full-width list under the bar | | Closes when a link is chosen (script) and on Escape. |
 | Right | Secondary button "Read the source"; primary button "Install" | `https://github.com/macdarenz-droid/M-arc`; `__BASE__install/` | The secondary hides at 640px and under. Install is visible at every width. On /install/ the primary reads "Download the APK" and links to `#apk`. |
 
-Behaviour: sticky at `top: env(safe-area-inset-top, 0px)`, 64px tall (57px at 640 and under). Transparent over the hero; once a 1px sentinel at the page top has left the viewport (one IntersectionObserver, no scroll listener) the header takes `--nav-bg`, a 1px `--border` bottom line and a 14px backdrop blur. At 400px and under the blur is dropped for a solid `--bg`. On /install/, /privacy/ and 404 the header is solid from the start (class `nav on` in the HTML). Without JavaScript the header is solid (`html:not(.js) .nav`).
+Behaviour: sticky at `top: env(safe-area-inset-top, 0px)`, 64px tall (57px at 640 and under). Transparent over the hero; once a 1px sentinel at the page top has left the viewport (one IntersectionObserver, no scroll listener) the header takes `--nav-bg`, a 1px `--border` bottom line and a 14px backdrop blur. At 400px and under the blur is dropped for a solid `--bg`. On /install/, /privacy/ and 404 the header is solid from the start (class `nav on` in the HTML). Without JavaScript the header is solid from the start on every page (`html:not(.js) .nav`, W27). With JavaScript and reduced motion the sentinel observer still runs and the header still gains and loses `.on`, only without the `--dur-base` transition, so W20 has one expected result per run.
 
 ### 2.3 Footer
 
@@ -217,6 +217,7 @@ Body defaults: `font: 400 17px/1.5 var(--fb); letter-spacing: -.009em; -webkit-f
 | eyebrow | Inter 600 | 12/1, .08em, uppercase | same | Section eyebrows, `--accent-text`; step eyebrows `--text2` until active |
 | eyebrow-hero | Instrument Sans 500 | 15/1.4, -.005em | same | The version line above the h1, `--text2` |
 | label | Inter 600 | 12/1.4, .08em, uppercase | same | "Signing key SHA-256" and table labels, `--text2` |
+| label-lg | Inter 600 | 13/1, .08em, uppercase | same | The footer column headings (2.3, 6.16), `--text` |
 | stat | Inter 600 | 48/1, -.03em, tabular | 40/1 | The four-figure strip |
 | stat-md | Inter 600 | 40/1, -.03em, tabular | 40/1 | The two Escobar stat tiles |
 | stat-sm | Inter 600 | 32/1, -.03em, tabular | 32/1 | The Body tiles |
@@ -225,7 +226,7 @@ Body defaults: `font: 400 17px/1.5 var(--fb); letter-spacing: -.009em; -webkit-f
 | button | Inter 500 | 15/1, -.005em | same | Buttons and nav links; small button 14/1 |
 | mono | JetBrains Mono 400 | 13/1.6, 0 | same | Fingerprint, commands, version lines, the footer's last line |
 | mono-button | JetBrains Mono 500 | 13/1, 0 | same | The Copy button label |
-| wordmark | Inter 700 | 18/1, -.04em | same | The M/ARC wordmark in the nav (24px mark); 16/1 in the footer and themes row. Matches `branding/midnight/lockup.svg` (Inter 700, letter-spacing -1.5 at 38px) |
+| wordmark | Inter 700 | 18/1, -.04em | same | The M/ARC wordmark in the nav (28px mark); 16/1 in the footer and themes row (24px mark). Matches `branding/midnight/lockup.svg` (Inter 700, letter-spacing -1.5 at 38px) |
 
 Numerals: `font-variant-numeric: tabular-nums` (and `font-feature-settings: "tnum"` for older engines) on every stat, ring label, the rest banner, the strip, the fingerprint, the undo label and every table cell that holds a number on /install/ and /privacy/. Anywhere two digits sit above each other, they align.
 
@@ -247,7 +248,7 @@ One `h1` per page. Sections are `h2`. Inside a section, `h3` only: story steps, 
 
 ## 5. Motion system
 
-The app's motion tokens, copied exactly (app-facts `dna.motion`). No literal duration or curve outside the token block; no `transition: all`; no infinite animation anywhere on the site (W24). Every transition and animation sits inside `@media (prefers-reduced-motion: no-preference)` and is further gated by `html.m`, a class the script sets only when the OS query is `no-preference`. Without JavaScript there is no `.m`, so the page is static.
+The app's motion tokens, copied exactly (app-facts `dna.motion`), plus the site-only tokens marked (site) in 5.1. The site-only tokens drive the site's own entrances and demos and have no counterpart in `src/ui/styles.css`, so W24's lint and a reviewer look for them in `website/tokens.css` only. No literal duration or curve outside the token block; no `transition: all`; no infinite animation anywhere on the site (W24). Every transition and animation sits inside `@media (prefers-reduced-motion: no-preference)` and is further gated by `html.m`, a class the script sets only when the OS query is `no-preference`. Without JavaScript there is no `.m`, so the page is static.
 
 ### 5.1 Tokens
 
@@ -257,19 +258,19 @@ The app's motion tokens, copied exactly (app-facts `dna.motion`). No literal dur
 | `--dur-fast` | 150ms | Colour changes on links and buttons |
 | `--dur-base` | 200ms | Nav solidify, step eyebrow colour, step dimming, shine opacity, undo bar colour |
 | `--dur-enter` | 240ms | Screen crossfade in the pinned phone |
-| `--dur-light` | 400ms | The lit plane's colour pair; the phone shrink fallback on phones |
-| `--dur-reveal` | 400ms | Section reveals |
+| `--dur-light` (site) | 400ms | The lit plane's colour pair; the phone shrink fallback on phones |
+| `--dur-reveal` (site) | 400ms | Section reveals |
 | `--stagger` | 40ms | Between staggered children (up to five) |
-| `--dur-rise` | 600ms | Hero copy entrance per element |
-| `--gap-rise` | 120ms | Between hero elements; between the two ring fills |
-| `--dur-draw` | 900ms | The mark's line draw; the phone's arrival |
-| `--dur-pop` | 200ms | The mark's dot |
-| `--dur-wipe` | 800ms | Screenshot wipe-in; the keycap sheen sweep and its delay |
-| `--dur-fill` | 700ms | Ring fills |
+| `--dur-rise` (site) | 600ms | Hero copy entrance per element |
+| `--gap-rise` (site) | 120ms | Between hero elements; between the two ring fills |
+| `--dur-draw` (site) | 900ms | The mark's line draw; the phone's arrival |
+| `--dur-pop` (site) | 200ms | The mark's dot |
+| `--dur-wipe` (site) | 800ms | Screenshot wipe-in; the keycap sheen sweep and its delay |
+| `--dur-fill` (site) | 700ms | Ring fills |
 | `--dur-bounce` | 460ms | The rest banner swell |
-| `--dur-tick` | 1000ms | One second of the rest count |
-| `--dur-undo` | 8000ms | The undo bar drain (the app's real 8 seconds) |
-| `--dur-copied` | 1500ms | How long the Copy button reads Copied |
+| `--dur-tick` (site) | 1000ms | One second of the rest count |
+| `--dur-undo` (site) | 8000ms | The undo bar drain (the app's real 8 seconds) |
+| `--dur-copied` (site) | 1500ms | How long the Copy button reads Copied |
 | `--ease-standard` | `cubic-bezier(.2,0,0,1)` | Colour, opacity, small moves |
 | `--ease-enter` | `cubic-bezier(.05,.7,.1,1)` | Anything arriving |
 | `--ease-exit` | `cubic-bezier(.3,0,.8,.15)` | Reserved for exits (unused on the site today) |
@@ -288,7 +289,7 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 | Property | Value |
 |---|---|
 | Grid | `.pg { grid-template-columns: 6fr 6fr; column-gap: 24px }`; hero copy row 1 col 1 (`min-height: 72svh`, content centred, padding 48px 0 64px, max-width 560px); `.col-pin` col 2 rows 1 to 3; `.story-bg` and `.story` row 2 col 1 |
-| Pin | `.pin { position: sticky; top: max(calc(50vh - 394px), 8px); contain: layout; padding: 48px 64px }`. 394px is half the pin's box (a 320px phone is 669px tall plus 96px padding) so the phone centres in tall viewports and sits 8px under the top edge in short ones |
+| Pin | `.pin { position: sticky; top: max(calc(50vh - 382px), 8px); contain: layout; padding: 48px 64px }`. 382px is half the pin's box: a 320px phone is (320 - 20) × 2.1641 + 20 = 669px tall, plus 96px padding is 765px, half of which is 382px (the render's 394px was 12px off; section 15), so the phone centres in tall viewports and sits 8px under the top edge in short ones |
 | Phone | 320px wide |
 | Light | `.light { position: absolute; inset: -20%; filter: blur(60px); will-change: filter }` with two radial gradients: `50% 40% at 32% 30%` in `--light-a` and `45% 36% at 72% 66%` in `--light-b`, each fading to transparent at 70% |
 | Step band | The middle tenth of the viewport: IntersectionObserver `rootMargin: '-45% 0px -45% 0px'` on the hero copy and the three steps |
@@ -303,7 +304,7 @@ Screen layers: three `img.layer` at `position: absolute; inset: 0; object-fit: c
 |---|---|
 | Grid | `.pg { grid-template-columns: 1fr; grid-template-rows: auto 0 auto }`; hero copy row 1 (`min-height: 0; padding: 32px 0 40px`); `.col-pin` rows 2 to 4 on the 0px track, `position: relative; padding-top: calc(var(--cut) + 16px); z-index: 2`; story on row 3 |
 | Pin | `top: calc(var(--navh) + env(safe-area-inset-top, 0px) + 8px)`; `padding: 0`; width `--pw0` (240px) at rest |
-| Shrink | Target height `--ph: 44svh` (44vh where svh is unsupported). `--pw: clamp(168px, calc((var(--ph) - 20px) * .4621), var(--pw0))`; `--phh: calc((var(--pw) - 20px) * 2.1641 + 20px)` (the frame's 10px bezel on each side, and 1688/780 = 2.1641). Both registered as `<length>` with `@property` so the script can read the resolved pixel value |
+| Shrink | Target height `--ph: 44svh` (44vh where svh is unsupported). `--phh0: calc((var(--pw0) - 20px) * 2.1641 + 20px)` (496px, the frame's height at rest; it sizes `.pin-s` and the story's top padding); `--pw: clamp(168px, calc((var(--ph) - 20px) * .4621), var(--pw0))`; `--phh: calc((var(--pw) - 20px) * 2.1641 + 20px)` (the frame's 10px bezel on each side, and 1688/780 = 2.1641). Both registered as `<length>` with `@property` so the script can read the resolved pixel value |
 | Shrink driver | Where `animation-timeline: scroll()` is supported: `.pin { animation: shrink 1s linear both; animation-timeline: --shrink; animation-range: exit 0% exit 100% }` with `@keyframes shrink { to { width: var(--pw) } }`, timed by `.pin-s`, an invisible block of height `calc(var(--phh0) - var(--phh))` at the pin's rest position with `view-timeline: --shrink block; view-timeline-inset: <sticky top> 0` and `timeline-scope: --shrink` on `.col-pin`. Otherwise the script toggles `.stuck` on `.pinblock` once `.pin-s` passes the sticky line and `.pin` transitions `width` over `--dur-light` |
 | Backdrop | `.pin::before`: a full-bleed strip from 8px above the pin to `--pin-fade` (48px) below it, `linear-gradient(var(--s1) calc(100% - var(--pin-fade)), transparent)`, z -2, so copy passing under the phone dissolves instead of showing through |
 | Light | `inset: -30% calc(50% - 50vw) 0` with a mask that fades the bottom 24px, so the glow ends at the phone's foot |
@@ -324,7 +325,7 @@ Below-the-fold blocks carry `.r` (single) or `.st` (staggered children, first fi
 
 Gated to `@media (hover: hover) and (pointer: fine)`:
 
-- Cursor-following border shine on `.sh` elements (feature rows, cards, panels): a `::after` with a 1px `--accent-line` border, masked by a 200px radial gradient at `--mx/--my`, updated on `pointermove` (one delegated listener on `document`), opacity 0 to 1 over `--dur-base`. Touch devices get the static hairline.
+- Cursor-following border shine on `.sh` elements (feature rows, cards, panels): a `::after` with a 1px `--accent-line` border, masked by a 200px radial gradient at `--mx/--my`, updated on `pointermove` (one delegated listener on `document`), opacity 0 to 1 over `--dur-base`. The script binds the `pointermove` listener only when `html.m` is present, so under reduced motion there is no cursor-following shine at all, fine pointer or not: the element keeps its static hairline, the same as on touch devices.
 - Primary button hover: background `--accent-hover`, `translateY(-1px)`.
 - Secondary button hover: border `--border-strong`, background `--s2`.
 - Links and nav links: colour `--text2` to `--text` over `--dur-fast`.
@@ -379,7 +380,7 @@ Anatomy in 2.2. Sizes: 64px tall (57 at 640 and under); lockup mark 28px, wordma
 | Secondary `.btn-s` | `--s1` | 1px `--border` | `--text` | border `--border-strong`, fill `--s2` | `scale(.97)` |
 | Small `.sm` | as parent | | 14px | | |
 
-Sizes: `min-height: 44px; padding: 0 18px; border-radius: --r2; gap: 8px`; small `min-height: 36px; padding: 0 14px` (small is used only inside the aria-hidden proposal replica, never as a real control). `white-space: nowrap`. Focus: the ring. Disabled: not used on the site. Copy: verbs, two to four words: "Download the APK", "Read the source", "Install", "Copy". External links carry `target="_blank" rel="noopener"` and the visible text names the destination.
+Sizes: `min-height: 44px; padding: 0 18px; border-radius: --r2; gap: 8px`; small `min-height: 36px; padding: 0 14px` (small is used only inside the aria-hidden proposal replica, never as a real control). `white-space: nowrap`. Focus: the ring. Disabled: not used on the site. Copy: verbs, two to four words. The full set on the site: "Download for Android", "Download the APK", "Read the source", "Install", "Source on GitHub", "Open in the browser", "Home", "Copy". External links carry `target="_blank" rel="noopener"` and the visible text names the destination.
 
 ### 6.3 Phone frame
 
@@ -441,7 +442,7 @@ Inline SVG `viewBox 0 0 40 40`, 40px, `aria-hidden` (the adjacent text carries t
 
 ### 6.16 Footer
 
-Section 2.3. `.foot { background: --s1; padding: 96px 0 48px }`; row 1 flex with wrap (`gap: 16px 32px; padding-bottom: 40px`); `.fcols` `repeat(3, 1fr)` with 24px gap, `padding: 40px 0`, 1px `--border` top; column `h2` at `600 13px/1`, `.08em`, uppercase, `--text`, 16px below; links 15px `--text2` (`--text` on hover), 10px between; row 3 1px `--border` top, `padding-top: 24px`, mono `--text2`. Footer links are inline text at 15px with 10px spacing (their line box is under 44px; inline text links are exempt from the target rule, W18).
+Section 2.3. `.foot { background: --s1; padding: 96px 0 48px }`; row 1 flex with wrap (`gap: 16px 32px; padding-bottom: 40px`); `.fcols` `repeat(3, 1fr)` with 24px gap, `padding: 40px 0`, 1px `--border` top; column `h2` in label-lg type (`600 13px/1`, `.08em`, uppercase, `--text`), 16px below; links 15px `--text2` (`--text` on hover), 10px between; row 3 1px `--border` top, `padding-top: 24px`, mono `--text2`. Footer links are inline text at 15px with 10px spacing (their line box is under 44px; inline text links are exempt from the target rule, W18).
 
 ### 6.17 Table (install and privacy pages)
 
@@ -461,7 +462,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 | h1 | A training log that knows how recovered you are. |
 | Lead | Every set you rate feeds a recovery clock for each of 24 muscles, a readiness score for the day and a target for your next session. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach. |
 | Buttons | Primary "Download for Android" to `__BASE__install/#apk`. Secondary "Read the source" to the repository. |
-| Caption | Signed APK. No account. Works offline. |
+| Caption | A signed APK that works offline, with no account. |
 | Phone | `shots/midnight-today.png`, eager. Alt: "The Today screen on a Push day, readiness Amber at 66, with triceps at 45% and three days from ready" |
 | Layout 1440 | Copy in the left 6fr column, max-width 560px, centred in 72svh; the phone (320px) in the right column, pinned, on the lit plane at the hero pair |
 | Layout 900 | Same two columns (the break to one column is at 900 and under, so 900 itself is still two columns; at 899 the single column applies) |
@@ -491,7 +492,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 |---|---|
 | Eyebrow | Train |
 | h2 | Targets from your own numbers. |
-| Copy | "Open a session and every set already says what to do, 62.5 kg for 8 with a one-line reason. Tap the row to log it as planned or type what actually happened." / "A target steps up after you hit the top of the range twice. It holds when readiness is Amber or a primary muscle is under 60% recovered. A lighter week or a Red day cuts sets. There is no blind 2.5 kg increase." |
+| Copy | "Open a session and every set already says what to do, such as 62.5 kg for 8, with a one-line reason. Tap the row to log it as planned or type what actually happened." / "A target steps up after you hit the top of the range twice. It holds when readiness is Amber or a primary muscle is under 60% recovered. A lighter week or a Red day cuts sets. There is no blind 2.5 kg increase." |
 | Rows | "Rest by heart rate": With a Bluetooth heart-rate watch, rest ends when your heart rate settles, and falls back to the timer if the signal drops. / "A PR chip while you are still on the bench": The set that beats your best lights up the moment you log it, and History keeps six kinds of records, from heaviest load to furthest carry. / "Plates per side": Tap a barbell target to see the plates in the plates' own unit. Up to 8 gyms, and each machine remembers kg or lb. / "Why this target": Open the disclosure under any exercise to see the rule that fired, such as top of range twice, step up, or effort missing, repeat and rate. |
 | Demo | The rest banner (6.8) under the rows |
 | Figure | `shots/midnight-train.png` in a 300px phone. Caption: "The Train tab with a Push split of three exercises: machine chest press at 50 kg, dumbbell shoulder press at 18 kg, triceps pushdown at 25 kg, three sets each". Alt: "The Train tab" |
@@ -507,7 +508,7 @@ Copy below is final. `__VERSION__` renders as the package.json version (37.1.0 t
 |---|---|
 | Eyebrow | Body |
 | h2 | 24 muscles, each with a ready time. |
-| Copy | "Tap any muscle for its ring, when it will be ready and how sure the estimate is. Ready times sit under Today, Tomorrow, Later and Sore today. When sleep, resting heart rate and load slow everything down, the map says so in one line, for example whole body recovering about 12% slower than usual this week. If a muscle already feels fine, mark it as fresh." / "This week shows effective sets per muscle against a band and turns amber when you go over. Levels shows how much you have trained each muscle, as a relative measure and not a medical one." / "Sleep and heart rate can arrive from Android Health Connect in the background. Before a session, a quick check-in adds sleep quality, mood and soreness on a 1 to 5 scale. It takes a few seconds and you can skip it." |
+| Copy | "Tap any muscle for its ring, when it will be ready and how sure the estimate is. Ready times sit under Today, Tomorrow, Later and Sore today. When sleep, resting heart rate and load slow everything down, the map says so in one line, such as "Whole body: recovering about 12% slower than usual this week." If a muscle already feels fine, mark it as fresh." / "This week shows effective sets per muscle against a band and turns amber when you go over. Levels shows how much you have trained each muscle, as a relative measure and not a medical one." / "Sleep and heart rate can arrive from Android Health Connect in the background. Before a session, a quick check-in adds sleep quality, mood and soreness on a 1 to 5 scale. It takes a few seconds and you can skip it." |
 | Tiles | Ring 90 "90% ready for hard work" · ring 97 "97% fully recovered" · stat 7 "days of stacking" |
 | Figures (`.duo`) | `shots/midnight-levels.png` in a 300px phone. Caption: "The muscle map in Levels view, front and back, the most worked muscles in violet, with the legend Most worked, Some, None". Alt: "The muscle map, Levels view". Then `shots/midnight-checkin.png` in the check-in panel (6.4), offset 48px lower. Caption: "The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale". Alt: "The pre-session check-in sheet" |
 | Layout 1440 | Figures 7 columns left in two equal tracks; copy 5 columns right |
@@ -552,7 +553,7 @@ The History and Stats captions name dates and values that are true for the curre
 | | |
 |---|---|
 | Eyebrow | Your data |
-| h2 | No account. No server copy. Your log stays on the phone. |
+| h2 | Your log stays on the phone, with no account and no server copy. |
 | Cards (keycap, icons: phone, cloud-off, file) | "It stays on the phone." Sessions, recovery and settings are stored on the device. Photos you give Escobar and heart-rate data sit in their own local stores. There is nothing to sign in to, and nothing is uploaded unless you turn Escobar on. / "It works offline." The service worker installs every built file, and the coach notes, weekly review and lighter-week suggestion run without a network. Only a conversation with Escobar needs one. / "It is a file you own." Export a JSON backup and restore it with a preview and Undo. Export every set as CSV for 90 days or all time. If saved data ever fails to read at start, it is kept aside as a rescue file, never thrown away. |
 | Switches | Share health data · Share body data, with the paragraph: "When Escobar is on, health data (sleep, resting and session heart rate) and body data (weight, measurements) leave the phone only with their own switches on. Turn one off and that data is redacted from replayed history. Requests go through the project's own server, and quotas are counted per device and network address, not per account." |
 | Link | A text link after the switches: "How M/ARC handles your data, in full" to `__BASE__privacy/` |
@@ -570,7 +571,7 @@ The History and Stats captions name dates and values that are true for the curre
 | h2 | Get M/ARC. |
 | Card 1 "Android APK" (icon: arrow down to a line) | Mono line "Version __VERSION__". "Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released." Primary button "Download the APK" to `https://github.com/macdarenz-droid/M-arc/releases/latest`. Text link "Verify the signature" to `__BASE__install/#verify`. |
 | Card 2 "Add to Home Screen" (icon: square with a plus) | "Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline." Then, with `SITE_APP_URL` empty: "The web app has no public address yet. Until it does, install the APK." With it set: a secondary button "Open in the browser" to `SITE_APP_URL` instead of that sentence. |
-| Card 3 "Read the source" (icon: angle brackets) | "The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,487 unit tests in 116 files across three time zones, a production build and a visual gate across the five themes before an APK is signed." Secondary button "Source on GitHub" to the repository. |
+| Card 3 "Read the source" (icon: angle brackets) | "The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed." Secondary button "Source on GitHub" to the repository. |
 | Themes row | 6.15 |
 | Layout 1440 | Intro 640px; three cards `repeat(3, 1fr)`, `align-items: start`; the lit plane behind the cards at `opacity: .4` (`inset: auto 10% 15%; height: 60%`) |
 | Layout 900 | One column of cards |
@@ -586,12 +587,12 @@ Solid nav from the start; the primary nav button reads "Download the APK" and li
 
 | Block | Copy and layout |
 |---|---|
-| Heading (`--bg`) | Eyebrow "Install". h1 "Install M/ARC." Lead: "One signed APK for Android. A web app once it has an address. The source for anyone who wants to read it." |
+| Heading (`--bg`) | Eyebrow "Install". h1 "Install M/ARC." Lead: "A signed APK for Android, the web app once it has an address, and the source for anyone who wants to read it." |
 | Android APK (`section#apk`, `--s1`) | h2 "Android APK". Mono line "Version __VERSION__". Paragraph: "The release file is named MARC-v__VERSION__.<run>-signed.apk, where <run> is the CI run number." (mono for the file name). Primary "Download the APK" to releases/latest; text link "Releases and changelog". Then a chain list (6.12): 1 "Download the APK from the latest release." 2 "Open the file. The first time, Android asks you to allow installs from your browser or file manager. Allow it for this install." 3 "Tap Install. An update installs over the old version and keeps your data. Android allows that only because every M/ARC build carries the same signing key." At 1440 the intro (h2, version, paragraph, buttons) takes 5 columns and the chain 7 (starting at column 7); at 900 and under one column, chain after the buttons. |
 | Verify the signature (`section#verify`, `--bg`) | h2 "Verify the signature". Paragraph: "Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released. You can check it yourself." Label "Signing key SHA-256. Does not change between versions." The fingerprint block with Copy (6.11): `__FINGERPRINT__`. Label "Verify command". The command block with Copy: `apksigner verify --print-certs MARC-v__VERSION__.*-signed.apk`. Paragraph: "apksigner ships with the Android SDK build tools. If the fingerprint it prints matches the one above, the file was signed by the M/ARC key and has not been altered." Max-width 640px at every size. |
 | Obtainium (`section#obtainium`, `--s1`) | h2 "Obtainium". Paragraph: "Obtainium can install M/ARC from the GitHub releases page and keep it updated. Add this address as a source:" then a mono block `https://github.com/macdarenz-droid/M-arc` with a Copy button (`aria-label="Copy the repository address"`). Paragraph: "Android refuses an update whose signing key differs from the installed app's, so a swapped file cannot install over M/ARC." |
 | In the browser (`section#web`, `--bg`) | h2 "In the browser". With `SITE_APP_URL` empty: "The web app has no public address yet. When it does, this page will carry it. Chrome, Edge and Samsung Internet on Android then offer Add to Home Screen, and M/ARC installs as an app and works offline." With it set: "Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline." and a primary button "Open in the browser" to `SITE_APP_URL`. |
-| Before a release (`section#checks`, `--s1`) | h2 "What runs before a release". Paragraph: "Every push runs typecheck, 1,487 unit tests in 116 files across three time zones, a production build and a visual gate across the five themes before an APK is signed. A release is built on demand from a commit with a green gate." Secondary "Source on GitHub"; text link "Architecture notes". |
+| Before a release (`section#checks`, `--s1`) | h2 "What runs before a release". Paragraph: "Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed. A release is built on demand from a commit with a green gate." Secondary "Source on GitHub"; text link "Architecture notes". |
 | Footer | 2.3 |
 
 Motion on this page: the load rise on the heading block; `.r` reveals on each section; the Copy buttons; nothing else. Criteria: W1, W2, W3, W8, W10, W13, W21.
@@ -603,7 +604,7 @@ Solid nav. Prose in a 640px measure, body copy in `--text` (this page is read, n
 | Block | Copy |
 |---|---|
 | Heading | Eyebrow "Your data". h1 "How M/ARC handles your data." Lead: "Everything you log stays on the phone. Nothing leaves it unless you turn on Escobar, the optional online coach, and then only what you allow. This page says exactly what that means." |
-| What is stored, and where (`#stored`) | h2 "What is stored, and where". Paragraph: "There is no server copy. Each kind of data has one place on your phone." Then a facts table (6.17), columns Data / Where it lives / How you remove it: "Sessions, splits, settings and recovery" / "The app's own storage on the phone" / "Settings, Your data: Reset workout data or Reset everything" · "Conversations with Escobar" / "On the phone" / "Settings, Escobar: Delete conversations" · "Photos you attach in a conversation with Escobar" / "A local photo store on the phone" / "Deleted with the conversations" · "What Escobar remembers (injuries, equipment, preferences)" / "On the phone, listed under What Escobar knows" / "Edit or delete any entry there; it stays until you clear it" · "Heart-rate data from a watch" / "A local store on the phone" / "Deleted with the session it belongs to" · "Sleep, steps, active calories and heart rate from Android Health Connect" / "Read into the phone's storage in the background" / "Disconnect it in Health Connect on the phone; Reset everything clears the copies" |
+| What is stored, and where (`#stored`) | h2 "What is stored, and where". Paragraph: "There is no server copy. Each kind of data has one place on your phone." Then a facts table (6.17), columns Data / Where it lives / How you remove it: "Sessions, splits, settings and recovery" / "The app's own storage on the phone" / "Settings, Your data: Reset workout data or Reset everything" · "Conversations with Escobar" / "On the phone" / "Settings, Escobar: Reset conversations, then Delete conversations" · "Photos you attach in a conversation with Escobar" / "A local photo store on the phone" / "Deleted with the conversations" · "What Escobar remembers (injuries, equipment, preferences)" / "On the phone, listed under What Escobar knows" / "Edit or delete any entry there; it stays until you clear it" · "Heart-rate data from a watch" / "A local store on the phone" / "Deleted with the session it belongs to" · "Sleep, steps, active calories and heart rate from Android Health Connect" / "Read into the phone's storage in the background" / "Disconnect it in Health Connect on the phone; Reset everything clears the copies" |
 | What leaves the phone, and when (`#leaves`) | h2 "What leaves the phone, and when". Paragraph: "Nothing, until you turn Escobar on. With Escobar on, this is the whole list." Chain list: 1 "The numbers Escobar's tools ask for travel through the project's own server to the model that answers. Every number in the answer is checked against your log before it stands." 2 "Health data (sleep, resting heart rate, session heart rate) leaves only while Share health data is on." 3 "Body data (weight and measurements) leaves only while Share body data is on." 4 "A photo you attach to a message is sent with that message." 5 "Turn a switch off and that data is redacted from replayed history." Paragraph: "Quotas are counted per device and network address. There is no account to count against." |
 | The two switches (`#switches`) | h2 "The two switches". The switches component (6.10) with the app's own hints as the paragraph: "Share health data: sleep, resting heart rate, session heart rate. Share body data: weight and measurements. Both are off until you turn them on, and both live in Settings under Escobar." |
 | No account (`#account`) | h2 "No account". Paragraph: "Nothing in the app asks you to register or sign in. There is no password to reset and no server that knows who you are." |
@@ -646,15 +647,22 @@ Solid nav, footer, one short band on `--bg`: eyebrow "404", h1 "There is no page
 | Gyms | up to 8 | `Train.tsx` GymSheet | Train row |
 | Check-in scale | 1 to 5 | `Train.tsx` check-in | Body copy and caption |
 | Effort ratings | E, I, M with their rep definitions | `Train.tsx` `EFFORTS` | Step 1 |
-| Screenshot values (66, 45%, 52.5 kg, 50 kg, 18 kg, 25 kg, 95.7, 68.3, dates) | as captioned | the current PNGs in `website/renders/shots/` | Captions and alt text; rewritten when the shots are regenerated |
+| Screenshot values (66, 45%, 58%, 52.5 kg, 50 kg, 18 kg, 25 kg, 95.7, 68.3, dates) | as captioned | the current PNGs in `website/renders/shots/` | Captions and alt text; rewritten when the shots are regenerated |
 | Data stores | app storage, Escobar photo store, heart-rate store | `docs/ARCHITECTURE.md` "Side stores"; `src/escobar/images.ts`; `src/core/heartStore.ts` | /privacy/#stored |
 | Deletion paths | Delete conversations (also clears photos); Reset everything (state, Escobar store, heart store, photos); deleting a session removes its heart series | `src/escobar/ui/SettingsSection.tsx` line 50; `Settings.tsx` `resetEverything`; `History.tsx` `deleteSeries` | /privacy/#stored |
 | Sharing switches and hints | Share health data (sleep, resting heart rate, session heart rate); Share body data (weight and measurements) | `src/escobar/ui/SettingsSection.tsx` lines 39-40 | /privacy/#switches, home Your data |
 | Photos sent with a message | yes, up to two per message | `src/escobar/ui/EscobarSheet.tsx` line 296; `Composer.tsx` | /privacy/#leaves |
 | Quotas | per device and network address | `README.md`; `docs/ARCHITECTURE.md` Worker section | Your data, /privacy/ |
 | Health Connect reads | steps, active calories, sleep, heart rate | `docs/ARCHITECTURE.md` "Android" | /privacy/#stored |
+| Train target example | 62.5 kg for 8 | app-facts Train tab ("62.5 kg x 8 - top of range twice, step up"); `src/brain/progression.ts` headline target | Train copy |
+| Load step | 2.5 kg | `src/brain/units.ts` `step` (2.5 kg, 5 lb); `docs/ARCHITECTURE.md` "Next session" (one step up, at most 10%) | Train copy ("no blind 2.5 kg increase") |
+| Whole-body line | 12% | `src/slices/body/Body.tsx` line 58 ("Whole body: recovering about {n}% slower than usual this week."); 12 is the example value app-facts shows | Body copy |
+| Readiness scale | 0 to 100 | `docs/ARCHITECTURE.md` "Readiness" | Step 3 |
+| CSV window | 90 days | `src/slices/settings/Settings.tsx` "Export CSV (90 days)" | Your data card, /privacy/#backups |
+| Rest banner replica | 1:30, -15, +15, Next · 50 kg × 6 | `Train.tsx` strings; the Train screenshot for 50 kg × 6 | Rest banner demo (6.8, aria-hidden) |
+| Key label; not-found eyebrow | SHA-256; 404 | the hash algorithm's name; the HTTP status | "Signing key SHA-256" on /install/; the /404.html eyebrow |
 
-Nothing else numeric appears on the site. A new figure needs a row here first.
+Nothing else numeric appears on the site. A new figure needs a row here first; W22 is built from this table.
 
 ### 8.2 Build-time injection
 
@@ -727,7 +735,7 @@ Computed with the WCAG 2.x relative-luminance formula on the flat values (script
 
 ### 9.3 Reduced motion
 
-Section 5: `prefers-reduced-motion: reduce` (or no JavaScript) yields the static page: pinned phone unpinned, three stacked step pairs, rest banner at its done state, undo bar drained and "Applied", rings at their values, no reveals (everything at opacity 1), no wipe, no sheen, no hover shine transition, no header transition. The gate runs every page twice, with and without the preference (W6, W26).
+Section 5: `prefers-reduced-motion: reduce` (or no JavaScript) yields the static page: pinned phone unpinned, three stacked step pairs, rest banner at its done state, undo bar drained and "Applied", rings at their values, no reveals (everything at opacity 1), no wipe, no sheen, no cursor-following shine (the static hairline only; the `pointermove` listener is not bound), no header transition. The gate runs every page twice, with and without the preference (W6, W26).
 
 ### 9.4 Structure
 
@@ -814,9 +822,9 @@ The gate (`npm run site:gate`) checks each item on `website/dist` at 1440x900 an
 | W17 | Landmarks present: `header`, `nav`, `main`, `footer`; every `section` has `aria-labelledby` resolving to an element | Gate |
 | W18 | Every `button`, nav link, menu link, header link and card button has a bounding box of at least 44x44 (inline prose and footer links exempt) | Gate |
 | W19 | Every focusable element shows a visible focus ring on `:focus-visible` (computed `outline-style` not `none`, width 2px) | Gate |
-| W20 | The header gains `.on` after scrolling 100px on the home page and loses it back at the top; at 400 the Menu opens, lists five links, and closes on Escape and on choosing a link | Gate |
+| W20 | With JavaScript, in both motion runs, the header gains `.on` after scrolling 100px on the home page and loses it back at the top (without JavaScript it carries `.on` from the start, W27); at 400 the Menu opens, lists five links, and closes on Escape and on choosing a link | Gate |
 | W21 | The rendered text, `alt`, `title` and `meta description` of every page contain no em-dash, no exclamation mark, no standalone token "AI", none of "free", "open source", and none of the banned words in section 1 and docs/WEBSITE-ARCHITECTURE.md section 3 | `copy-gate.mjs` at build and the gate |
-| W22 | The strings 153, 24, 6, 8, 14, 422, 1,487, 116, 37.1.0 (the version) and the caption values named in 7.1 appear where this document places them, and no other integer above 20 appears in the copy outside those and the fingerprint | Gate: expected-values list |
+| W22 | Every value in 8.1 appears where 8.1 places it, and no integer above 20 appears in rendered copy, alt or captions other than the 8.1 values, the fingerprint and the dates named in the 7.1 captions | Gate: expected-values list built from 8.1 |
 | W23 | `og.png` exists at 1200x630; each page has the OG and Twitter tags in section 10; `mark.svg` and `icon-192.png` resolve | Gate |
 | W24 | After load plus 10 s at rest, `document.getAnimations()` contains no animation with infinite iterations, and no long task over 50 ms was observed | Gate: PerformanceObserver `longtask` |
 | W25 | LCP under 2.5 s and CLS under 0.05 on the home page at 400 with 4x CPU throttle and a 1.6 Mbps / 150 ms network | Gate: PerformanceObserver; reported per run, fails over budget |
@@ -871,3 +879,8 @@ Each is also recorded in docs/COACHING-DECISIONS.md under "Website design spec (
 18. **Fonts are preloaded in the order Instrument Sans, Inter, JetBrains Mono.** The h1 paints first and is the LCP candidate; the mono face is needed only below the fold. Source: 11's LCP budget.
 19. **The gate treats footer and prose text links as exempt from the 44px rule.** WCAG 2.5.8 exempts inline links; every button and nav control still meets 44px. Source: WCAG 2.2 target size (minimum) exceptions.
 20. **The Obtainium section gives the repository address as the source URL and states Android's same-key update rule.** Both are checkable facts (Obtainium adds GitHub repositories as sources; Android refuses updates signed with a different key). Source: the render's reviewed Obtainium sentence; Android platform behaviour.
+21. **The desktop pin top is `max(calc(50vh - 382px), 8px)`, not the render's 394px.** The stated intent is to centre the pin's box: (320 - 20) × 2.1641 + 20 = 669px of phone plus 96px of padding is 765px, half of which is 382px. The render's value put the phone 12px high. Source: 5.2's own arithmetic.
+22. **W22 is defined by 8.1, not by a list of its own.** Every figure on the site has a row in 8.1 with its source; the gate's expected-values list is generated from that table, so the two cannot drift. Rows were added for 62.5 kg for 8, 2.5 kg, 12%, 0 to 100, 90 days, 58%, the rest banner replica strings, the SHA-256 label and the 404 eyebrow. The 2.5 kg step lives in `src/brain/units.ts`, not in docs/ARCHITECTURE.md, which states the step rule without the size. Source: the review of this document; the files named in the rows.
+23. **No cursor-following shine under reduced motion.** The `pointermove` listener is bound only when `html.m` is present, so reduced motion with a fine pointer gets the static hairline, the same as touch and no JavaScript. Source: 5's gating rule applied to the one listener the render bound outside it.
+24. **Three fragment rows became sentences.** The hero caption, the Your data h2 and the install lead now each read as one sentence. The copy rule bans stacked fragments, and the copy gate cannot tell a fact strip from hype, so the site carries none. Source: the owner's copy rule (docs/COACHING-DECISIONS.md "Website copy voice").
+25. **The header behaves the same with and without reduced motion; only the transition goes.** The sentinel observer runs whenever JavaScript runs, so W20 has one expected result per motion run, and without JavaScript the header is solid from the start (W27). Source: W20 and W27 read together.
