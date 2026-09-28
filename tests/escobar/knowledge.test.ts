@@ -10,6 +10,7 @@ import { BIAS_CAP_REPS, BIAS_MIN_OBSERVATIONS } from '@/brain/effortBias';
 import { DELOAD_TRIGGER } from '@/brain/deload';
 import { MAX_INCREASE_SHARE, RECOVERY_HOLD_PCT, REENTRY_DAYS } from '@/brain/progression';
 import { WARMUP_PCTS } from '@/brain/coach/pre';
+import { E1RM_MIN_SESSIONS, PLATEAU_FLAT_TOTAL, PLATEAU_HIGH_SESSIONS, PLATEAU_MIN_SESSIONS, PLATEAU_MIN_SPAN_DAYS, PLATEAU_WINDOW, PLATEAU_WINDOW_DAYS } from '@/brain/trend';
 
 describe('knowledge cards (§16.1)', () => {
   it('has at least 45 well-formed cards with sources', () => {
@@ -81,5 +82,30 @@ describe('explain_method (§16.2)', () => {
     // The numbers are the ones the brain uses, not just labels: the cut-off really is where e1RM stops.
     expect(effectiveOneRm(100, E1RM_MAX_REPS, 'max')).not.toBeNull();
     expect(effectiveOneRm(100, E1RM_MAX_REPS + 1, 'max')).toBeNull();
+  });
+});
+
+describe('BUG-14: the plateau and lighter-week explanations match the one plateau rule (BR-04)', () => {
+  const six = ctxOf(sixMonthsState());
+  it('plateau: states the BR-04 numbers the brain runs on', () => {
+    const m = explainMethod('plateau', six);
+    expect(m.constants).toEqual({ windowDays: PLATEAU_WINDOW_DAYS, flatTotalPct: PLATEAU_FLAT_TOTAL * 100, sessionsNeeded: PLATEAU_MIN_SESSIONS, minSpanDays: PLATEAU_MIN_SPAN_DAYS, e1rmSessionsNeeded: E1RM_MIN_SESSIONS, shortPathSessions: PLATEAU_WINDOW, highConfidenceSessions: PLATEAU_HIGH_SESSIONS });
+    // BR-04 as written: under 1.5% over 8 weeks, from 6+ judged sessions spanning 42+ days.
+    expect([PLATEAU_FLAT_TOTAL * 100, PLATEAU_WINDOW_DAYS / 7, PLATEAU_MIN_SESSIONS, PLATEAU_MIN_SPAN_DAYS]).toEqual([1.5, 8, 6, 42]);
+    expect(m.summary).toContain(`less than ${PLATEAU_FLAT_TOTAL * 100}% over those ${PLATEAU_WINDOW_DAYS / 7} weeks`);
+    expect(m.summary).toContain(`from ${PLATEAU_MIN_SESSIONS} or more judged sessions spanning ${PLATEAU_MIN_SPAN_DAYS} days or more`);
+    expect(m.summary).toContain(`fewer than ${E1RM_MIN_SESSIONS} do`);
+    expect(m.summary).toContain(`last ${PLATEAU_WINDOW} sessions, never a plateau`);
+    expect(m.summary).toContain(`high from ${PLATEAU_HIGH_SESSIONS} judged sessions`);
+    // The old rule's wording must not come back.
+    expect(m.summary).not.toMatch(/needs at least|top load trends up/);
+  });
+  it('deload_trigger: states the 4-week minimum and the beginner rule', () => {
+    const m = explainMethod('deload_trigger', six);
+    expect(m.constants).toMatchObject({ minHistoryDays: DELOAD_TRIGGER.minHistoryDays, beginnerMonths: DELOAD_TRIGGER.beginnerMonths });
+    expect([DELOAD_TRIGGER.minHistoryDays / 7, DELOAD_TRIGGER.beginnerMonths, DELOAD_TRIGGER.readinessRedDays, DELOAD_TRIGGER.readinessWindowDays]).toEqual([4, 3, 3, 5]);
+    expect(m.summary).toContain(`never offered before ${DELOAD_TRIGGER.minHistoryDays / 7} weeks of logged training`);
+    expect(m.summary).toContain(`under ${DELOAD_TRIGGER.beginnerMonths} months of training gets it only when readiness was red on ${DELOAD_TRIGGER.readinessRedDays} of the last ${DELOAD_TRIGGER.readinessWindowDays} days`);
+    expect(m.summary).toContain('timed holds and conditioning never count');
   });
 });
