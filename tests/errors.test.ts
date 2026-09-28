@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { buildReport, framesFromStack, isAppFrame, scrubMessage, signatureOf } from '@/errors/scrub';
+import { buildReport, cleanName, framesFromStack, isAppFrame, scrubMessage, signatureOf } from '@/errors/scrub';
 import { clearQueue, enqueue, loadQueueState, MAX_QUEUE, removeByIds, setBackoff, BASE_BACKOFF_MS, MAX_BACKOFF_MS } from '@/errors/queue';
-import { trySend } from '@/errors/sender';
+import { MAX_BATCH, MAX_BODY_BYTES, packBatch, trySend } from '@/errors/sender';
 import { getInstallId, resetInstallId } from '@/errors/installId';
 import { shouldAskErrorReports } from '@/errors/ask';
-import { clearErrorReportQueue, reportCaught, reportError, resetErrorReporting } from '@/errors';
-import { state } from '@/core/store';
+import { clearErrorReportQueue, describeError, initErrorReporting, reportCaught, reportError, resetErrorReporting, sendingAllowed } from '@/errors';
+import { bootRecovered, saveError, state } from '@/core/store';
+import { freshState } from '@/core/models';
 import { ErrorBoundary } from '@/app/ErrorBoundary';
 import { httpTransport } from '@/escobar/transport';
 import type { Report } from '@/errors/types';
@@ -60,6 +61,19 @@ describe('framesFromStack / isAppFrame (A1)', () => {
     expect(isAppFrame('https://evil.example/a.js', origin)).toBe(false);
     expect(isAppFrame('chrome-extension://abc/a.js', origin)).toBe(false);
     expect(isAppFrame('<anonymous>', origin)).toBe(false);
+    // A bare path can carry a user's folder name.
+    expect(isAppFrame('/home/alex/app/index.js', origin)).toBe(false);
+    expect(isAppFrame('index.js', origin)).toBe(false);
+    // A data: or blob: "file" can carry content; another origin that merely starts the same way is not ours.
+    expect(isAppFrame('data:text/javascript,alert(1)', origin)).toBe(false);
+    expect(isAppFrame(`blob:${origin}/1234`, origin)).toBe(false);
+    expect(isAppFrame(`${origin}.evil.example/a.js`, origin)).toBe(false);
+  });
+
+  it('keeps only the url of a Firefox "fn@url" frame, and drops query and hash', () => {
+    const stack = `renderBulgarianSplitSquat@${origin}/assets/index.js?note=knee#x:12:34\n@data:text/javascript,secret:1:1`;
+    const frames = framesFromStack(stack, origin);
+    expect(frames).toEqual([{ file: `${origin}/assets/index.js`, line: 12, col: 34 }]);
   });
 });
 
@@ -72,10 +86,14 @@ describe('buildReport (A1: allowlist-only)', () => {
     expect(JSON.stringify(r)).not.toContain('extraSecret');
   });
 
-  it('truncates the name to 80 chars and sets count to 1', () => {
+  it('an over-long or free-text name becomes "Error"; a code name is kept; count starts at 1', () => {
     const r = buildReport({ installId: 'i', app: 'v', platform: 'web', route: 'today', kind: 'onerror', name: 'x'.repeat(100), rawMessage: 'boom' });
-    expect(r.name.length).toBe(80);
+    expect(r.name).toBe('Error');
     expect(r.count).toBe(1);
+    expect(cleanName('x'.repeat(80))).toBe('x'.repeat(80));
+    expect(cleanName(`${PERSONAL.exercise} failed`)).toBe('Error');
+    expect(cleanName('QuotaExceededError')).toBe('QuotaExceededError');
+    expect(cleanName('save-failed')).toBe('save-failed');
   });
 });
 
@@ -237,7 +255,7 @@ describe('the sender (A4: response handling, fake timers + mocked fetch)', () =>
     await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
     expect(fetchImpl.mock.calls.length).toBeGreaterThan(1); // one 8KB request could not hold all 20
     for (const [, init] of fetchImpl.mock.calls) {
-      expect(Buffer.byteLength((init as RequestInit).body as string, 'utf8')).toBeLessThanOrEqual(8192);
+      expect(Buffer.byteLength((init as RequestInit).body as string, 'utf8')).toBeLessThanOrEqual(8000);
     }
     expect(loadQueueState(storage).reports.length).toBe(0); // the whole queue drained across those requests
   });
@@ -326,5 +344,170 @@ describe('trigger sites produce the right kind (A5)', () => {
     const [r] = loadQueueState().reports;
     expect(r!.kind).toBe('escobar-transport');
     expect(JSON.stringify(r)).not.toContain('super secret upstream detail');
+  });
+});
+
+describe('7.5 requirements (D-C75)', () => {
+  const report = (sig: string, ts = '2026-09-27T00:00:00.000Z', message = 'boom'): Report => ({
+    installId: '6f1c2a4e-1b2c-4d3e-8f00-123456789abc', ts, app: '1.0.0', platform: 'web', route: 'today', kind: 'boundary', name: 'TypeError', message, frames: [], sig, count: 1,
+  });
+
+  it('R1 consent is off by default: a fresh state has it unset, and nothing leaves', () => {
+    expect(freshState().preferences.errorReports).not.toBe(true);
+    state.value = freshState();
+    expect(sendingAllowed()).toBe(false);
+  });
+
+  it('R4 a batch never holds more than 20 reports or 8,000 bytes', () => {
+    const q = Array.from({ length: 25 }, (_, i) => ({ ...report(`s${i}`), id: `q${i}` }));
+    expect(packBatch(q)).toHaveLength(MAX_BATCH);
+    expect(MAX_BATCH).toBe(20);
+    const fat = q.map(r => ({ ...r, message: 'm'.repeat(300), frames: Array.from({ length: 15 }, () => ({ file: `https://localhost/assets/${'x'.repeat(180)}.js`, line: 1, col: 1 })) }));
+    const b = packBatch(fat);
+    expect(b.length).toBeGreaterThan(0);
+    expect(Buffer.byteLength(JSON.stringify({ v: 1, reports: b.map(({ id: _id, ...r }) => r) }), 'utf8')).toBeLessThanOrEqual(MAX_BODY_BYTES);
+  });
+
+  it('R4 a single report too big for any request is dropped, never sent', async () => {
+    const storage = memoryStorage();
+    enqueue(report('big'), storage);
+    const s = loadQueueState(storage);
+    s.reports[0]!.message = 'm'.repeat(9000);
+    storage.setItem('marc.errors.queue', JSON.stringify(s));
+    enqueue(report('small'), storage);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    const body = JSON.parse((fetchImpl.mock.calls[0]![1] as RequestInit).body as string);
+    expect(body.reports.map((r: Report) => r.sig)).toEqual(['small']);
+    expect(loadQueueState(storage).reports).toHaveLength(0);
+  });
+
+  it('R5 nothing is sent while offline; it waits in the queue', async () => {
+    const storage = memoryStorage();
+    enqueue(report('a'), storage);
+    vi.stubGlobal('navigator', { onLine: false });
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    expect(loadQueueState(storage).reports).toHaveLength(1);
+    vi.stubGlobal('navigator', { onLine: true });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    vi.unstubAllGlobals();
+  });
+
+  it('R5 the same signature is sent once a day: after a 204 it stays quiet until the next UTC day', async () => {
+    const storage = memoryStorage();
+    enqueue(report('a', '2026-09-27T01:00:00.000Z'), storage);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
+    enqueue(report('a', '2026-09-27T20:00:00.000Z'), storage);
+    expect(loadQueueState(storage).reports).toHaveLength(0);
+    enqueue(report('a', '2026-09-28T00:00:01.000Z'), storage);
+    expect(loadQueueState(storage).reports).toHaveLength(1);
+  });
+
+  describe('R5/R6 the one door out', () => {
+    afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); state.value = freshState(); });
+
+    it('R6 never in a test run, even with consent on', () => {
+      state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true } };
+      expect(sendingAllowed()).toBe(false);
+    });
+
+    it('R6 never under an automated browser (the gate); allowed only with consent in a real app', () => {
+      vi.stubEnv('MODE', 'production');
+      vi.stubGlobal('navigator', { onLine: true, webdriver: false });
+      state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true } };
+      expect(sendingAllowed()).toBe(true);
+      vi.stubGlobal('navigator', { onLine: true, webdriver: true });
+      expect(sendingAllowed()).toBe(false);
+      vi.stubGlobal('navigator', { onLine: true, webdriver: false });
+      state.value = { ...state.value, preferences: { ...state.value.preferences, errorReports: false } };
+      expect(sendingAllowed()).toBe(false);
+    });
+
+    it('R6 with consent on in a test run, reporting an error never calls fetch', () => {
+      (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+      const fetchSpy = vi.fn().mockResolvedValue({ status: 204 });
+      vi.stubGlobal('fetch', fetchSpy);
+      state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true } };
+      reportError('boundary', 'TypeError', 'boom');
+      expect(loadQueueState().reports).toHaveLength(1);
+      expect(fetchSpy).not.toHaveBeenCalled();
+      delete (globalThis as { localStorage?: Storage }).localStorage;
+    });
+  });
+
+  it('R2 a load failure on boot (quarantined or restored from backup) is reported as kind "boot"', () => {
+    vi.useFakeTimers();
+    (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+    state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true } };
+    bootRecovered.value = true;
+    initErrorReporting();
+    const [r] = loadQueueState().reports;
+    expect(r).toMatchObject({ kind: 'boot', name: 'load-recovered' });
+    bootRecovered.value = false;
+    state.value = freshState();
+    delete (globalThis as { localStorage?: Storage }).localStorage;
+    vi.clearAllTimers(); vi.useRealTimers();
+  });
+});
+
+describe('R3 privacy: planted personal data never leaves', () => {
+  const SECRETS = ['/home/', 'Bulgarian Split Squat', 'Push Day A', 'left knee still tender', 'Alex', 'crushed leg day', 'lateral raise', 'resting HR', '82.4', '62.5', '147', 'lb'];
+  const planted = { exercise: 'Bulgarian Split Squat', split: 'Push Day A', note: 'left knee still tender', weight: 62.5, reps: 8, bodyWeight: 82.4, heart: 'resting HR 147', coach: 'You crushed leg day, Alex!', memory: 'Alex hates lateral raise', unit: 'lb' };
+
+  beforeEach(() => {
+    (globalThis as { localStorage?: Storage }).localStorage = memoryStorage();
+    state.value = { ...freshState(), preferences: { ...freshState().preferences, errorReports: true, weightUnit: 'lb' } };
+  });
+  afterEach(() => {
+    state.value = freshState();
+    delete (globalThis as { localStorage?: Storage }).localStorage;
+    vi.unstubAllGlobals();
+  });
+
+  it('every trigger shape, seeded with personal strings and numbers, sends none of them', async () => {
+    // Errors whose messages quote personal data, as a browser or app code would.
+    const e1 = new TypeError(`Cannot read properties of undefined (reading '${planted.exercise}') at ${planted.weight}kg x${planted.reps}`);
+    e1.stack = `TypeError: x\n    at logSet (https://localhost/assets/index.js:10:5)\n    at ${planted.split} (data:text/javascript,${planted.note}:1:1)`;
+    reportCaught('boundary', e1);
+    reportCaught('onerror', new Error(`save "${planted.note}" failed for body weight ${planted.bodyWeight}`));
+    // Non-Error values thrown or rejected carry arbitrary content: only their type is kept.
+    reportCaught('unhandledrejection', `${planted.coach} ${planted.memory}`);
+    reportCaught('unhandledrejection', { session: { exercise: planted.exercise, note: planted.note, weight: planted.weight }, heart: planted.heart });
+    reportCaught('backup', planted);
+    // A custom error whose name is free text.
+    const e2 = new Error('x'); e2.name = `${planted.exercise} ${planted.unit}`;
+    reportCaught('boot', e2);
+    vi.useFakeTimers();
+    initErrorReporting();
+    saveError.value = `quota exceeded saving ${planted.heart}`;
+    saveError.value = null;
+    vi.clearAllTimers(); vi.useRealTimers();
+    expect(loadQueueState().reports.some(r => r.kind === 'store-save')).toBe(true);
+
+    const reports = loadQueueState().reports;
+    expect(reports.length).toBeGreaterThanOrEqual(5);
+    const fetchImpl = vi.fn().mockResolvedValue({ status: 204 });
+    await trySend({ workerBase: 'https://w', fetchImpl, now: Date.now() });
+    expect(fetchImpl).toHaveBeenCalled();
+    const wire = fetchImpl.mock.calls.map(c => (c[1] as RequestInit).body as string).join('\n');
+    for (const secret of SECRETS) expect(wire, secret).not.toContain(secret);
+    expect(wire).not.toContain('data:');
+    // Only allowlisted keys on the wire.
+    for (const call of fetchImpl.mock.calls) {
+      const body = JSON.parse((call[1] as RequestInit).body as string);
+      expect(Object.keys(body).sort()).toEqual(['reports', 'v']);
+      for (const r of body.reports) for (const k of Object.keys(r)) expect(['installId', 'ts', 'app', 'platform', 'os', 'device', 'route', 'kind', 'name', 'message', 'frames', 'sig', 'count']).toContain(k);
+    }
+  });
+
+  it('describeError reads only an Error\'s own name, message and stack', () => {
+    expect(describeError('Alex: left knee')).toEqual({ name: 'NonError', message: 'non-Error string thrown' });
+    expect(describeError({ note: 'x' })).toEqual({ name: 'NonError', message: 'non-Error object thrown' });
+    expect(describeError(null)).toEqual({ name: 'NonError', message: 'non-Error null thrown' });
   });
 });

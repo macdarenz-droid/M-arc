@@ -1,5 +1,6 @@
 /** 7.5: the local error-report queue. At most MAX reports, oldest dropped first; the same
- * signature on the same UTC day is folded into one entry with a growing count. */
+ * signature on the same UTC day is folded into one entry with a growing count, and once that
+ * entry is sent the signature stays quiet for the rest of that UTC day (sent once a day). */
 import type { Report } from './types';
 
 export const MAX_QUEUE = 20;
@@ -12,12 +13,14 @@ export interface QueueState {
   reports: QueuedReport[];
   nextAttemptAt: number;
   backoffMs: number;
+  /** sig → the UTC day it was last sent. Only today's entries are kept. */
+  sent: Record<string, string>;
 }
 
 const KEY = 'marc.errors.queue';
 
 function defaultState(): QueueState {
-  return { reports: [], nextAttemptAt: 0, backoffMs: BASE_BACKOFF_MS };
+  return { reports: [], nextAttemptAt: 0, backoffMs: BASE_BACKOFF_MS, sent: {} };
 }
 
 type Storagelike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
@@ -36,6 +39,7 @@ export function loadQueueState(storage: Storagelike = localStorage): QueueState 
       reports,
       nextAttemptAt: typeof parsed.nextAttemptAt === 'number' ? parsed.nextAttemptAt : 0,
       backoffMs: typeof parsed.backoffMs === 'number' ? parsed.backoffMs : BASE_BACKOFF_MS,
+      sent: parsed.sent && typeof parsed.sent === 'object' && !Array.isArray(parsed.sent) ? Object.fromEntries(Object.entries(parsed.sent).filter(([, d]) => typeof d === 'string')) as Record<string, string> : {},
     };
   } catch {
     return defaultState();
@@ -53,6 +57,7 @@ function nextId(): string { idSeq += 1; return `q${Date.now().toString(36)}${idS
 export function enqueue(report: Report, storage: Storagelike = localStorage): QueueState {
   const state = loadQueueState(storage);
   const day = report.ts.slice(0, 10);
+  if (state.sent[report.sig] === day) return state;
   const existing = state.reports.find(r => r.sig === report.sig && r.ts.slice(0, 10) === day);
   if (existing) {
     existing.count += report.count;
@@ -68,6 +73,20 @@ export function removeByIds(ids: readonly string[], storage: Storagelike = local
   const state = loadQueueState(storage);
   const drop = new Set(ids);
   state.reports = state.reports.filter(r => !drop.has(r.id));
+  saveQueueState(state, storage);
+  return state;
+}
+
+/** A 204 for these: drop them and remember each signature as sent on its day. */
+export function markSent(sentReports: readonly QueuedReport[], storage: Storagelike = localStorage): QueueState {
+  const state = loadQueueState(storage);
+  const drop = new Set(sentReports.map(r => r.id));
+  state.reports = state.reports.filter(r => !drop.has(r.id));
+  const today = new Date().toISOString().slice(0, 10);
+  const sent: Record<string, string> = {};
+  for (const [sig, d] of Object.entries(state.sent)) if (d >= today) sent[sig] = d;
+  for (const r of sentReports) sent[r.sig] = r.ts.slice(0, 10);
+  state.sent = sent;
   saveQueueState(state, storage);
   return state;
 }

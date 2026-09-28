@@ -7,6 +7,8 @@ import type { Frame, Report, ReportKind } from './types';
 
 const MAX_MESSAGE_LEN = 300;
 const MAX_FRAMES = 15;
+const MAX_NAME_LEN = 80;
+const MAX_FILE_LEN = 200;
 
 /** Quoted strings first (so any digits inside them are already gone), then every digit → '#'. */
 export function scrubMessage(raw: string): string {
@@ -15,17 +17,12 @@ export function scrubMessage(raw: string): string {
   return noDigits.slice(0, MAX_MESSAGE_LEN);
 }
 
-/** True when a stack frame's file looks like part of this app's own bundle, not a browser
- * internal, an extension or a third-party host. */
+/** True only for a frame from this page's own origin (the app bundle). Anything else, a browser
+ * internal, an extension, another host, a data: or blob: url (which can carry content) or a bare
+ * path (which can carry a user's folder name), is not ours and never sent. */
 export function isAppFrame(file: string, origin: string): boolean {
-  if (!file) return false;
-  if (file.startsWith('chrome-extension:') || file.startsWith('moz-extension:') || file === '<anonymous>') return false;
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(file)) {
-    if (!origin) return false;
-    return file.startsWith(origin);
-  }
-  // A path with no scheme (relative, or a bare "file:line:col" from a minified bundle) is ours.
-  return true;
+  if (!file || !origin) return false;
+  return file.startsWith(`${origin}/`);
 }
 
 const FRAME_RE = /(?:^|\bat\s+)(?:[^(\n]*\()?([^\s()]+):(\d+):(\d+)\)?/;
@@ -37,7 +34,9 @@ export function framesFromStack(stack: string | undefined, origin = safeOrigin()
   for (const line of stack.split('\n')) {
     const m = FRAME_RE.exec(line);
     if (!m) continue;
-    const [, file, lineNo, col] = m;
+    const [, rawFile, lineNo, col] = m;
+    // Firefox/Safari write "fn@url": keep the url only. Query and hash never go.
+    const file = (rawFile ?? '').replace(/^[^@\s]*@/, '').split(/[?#]/)[0]!.slice(0, MAX_FILE_LEN);
     if (!file || !isAppFrame(file, origin)) continue;
     frames.push({ file, line: Number(lineNo), col: Number(col) });
     if (frames.length >= MAX_FRAMES) break;
@@ -47,6 +46,12 @@ export function framesFromStack(stack: string | undefined, origin = safeOrigin()
 
 function safeOrigin(): string {
   try { return typeof location !== 'undefined' ? location.origin : ''; } catch { return ''; }
+}
+
+/** An error name is code (TypeError, QuotaExceededError, save-failed), never free text: anything
+ * that isn't a plain identifier becomes 'Error'. */
+export function cleanName(raw: string): string {
+  return /^[A-Za-z_$][\w$.-]*$/.test(raw) && raw.length <= MAX_NAME_LEN ? raw : 'Error';
 }
 
 /** A short, stable, non-cryptographic hash — good enough to dedupe by, not to authenticate. */
@@ -82,7 +87,7 @@ export interface BuildReportInput {
  * is never spread into it, so an unknown field can't reach the wire. */
 export function buildReport(input: BuildReportInput): Report {
   const frames = framesFromStack(input.stack);
-  const name = input.name.slice(0, 80);
+  const name = cleanName(input.name);
   const message = scrubMessage(input.rawMessage);
   return {
     installId: input.installId,

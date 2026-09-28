@@ -3,21 +3,33 @@
  * it for good, anything else (429, 5xx, a thrown fetch) keeps the queue and backs off — at least
  * a minute, doubling, capped at 6 hours.
  */
-import { BASE_BACKOFF_MS, loadQueueState, MAX_BACKOFF_MS, removeByIds, setBackoff, type QueuedReport } from './queue';
+import { BASE_BACKOFF_MS, loadQueueState, markSent, MAX_BACKOFF_MS, removeByIds, setBackoff, type QueuedReport } from './queue';
 import type { Report } from './types';
 
-const MAX_BODY_BYTES = 8 * 1024;
+/** The Worker's cap (escobar-worker/src/errorsValidate.ts): 8 KB read as 8,000 bytes, the
+ * stricter of the two readings, and at most 20 reports per request. */
+export const MAX_BODY_BYTES = 8_000;
+export const MAX_BATCH = 20;
 
 function byteLength(s: string): number {
   try { return new TextEncoder().encode(s).length; } catch { return s.length; }
 }
 
-/** Packs as many of the oldest-first reports as fit under MAX_BODY_BYTES. */
-function packBatch(reports: readonly QueuedReport[]): QueuedReport[] {
+export function wireBody(reports: readonly QueuedReport[]): string {
+  return JSON.stringify({ v: 1, reports: reports.map(stripId) });
+}
+
+/** A report that can't fit a request on its own; the Worker would only ever answer 413. */
+export function oversize(r: QueuedReport): boolean {
+  return byteLength(wireBody([r])) > MAX_BODY_BYTES;
+}
+
+/** Packs as many of the oldest-first reports as fit under MAX_BODY_BYTES and MAX_BATCH. */
+export function packBatch(reports: readonly QueuedReport[]): QueuedReport[] {
   const batch: QueuedReport[] = [];
   for (const r of reports) {
-    const wire = batch.map(stripId).concat(stripId(r));
-    if (byteLength(JSON.stringify({ v: 1, reports: wire })) > MAX_BODY_BYTES && batch.length > 0) break;
+    if (batch.length >= MAX_BATCH) break;
+    if (byteLength(wireBody([...batch, r])) > MAX_BODY_BYTES) break;
     batch.push(r);
   }
   return batch;
@@ -45,6 +57,8 @@ export async function trySend(opts: SendOptions): Promise<void> {
     if (now < state.nextAttemptAt) return;
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
 
+    const tooBig = state.reports.filter(oversize);
+    if (tooBig.length) { removeByIds(tooBig.map(r => r.id), opts.storage); return trySend(opts); }
     const batch = packBatch(state.reports);
     if (batch.length === 0) return;
     const f = opts.fetchImpl ?? fetch;
@@ -54,7 +68,7 @@ export async function trySend(opts: SendOptions): Promise<void> {
       res = await f(url, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ v: 1, reports: batch.map(stripId) }),
+        body: wireBody(batch),
       });
     } catch {
       backOff(state.backoffMs, now, opts.storage);
@@ -62,7 +76,7 @@ export async function trySend(opts: SendOptions): Promise<void> {
     }
 
     if (res.status === 204) {
-      removeByIds(batch.map(r => r.id), opts.storage);
+      markSent(batch, opts.storage);
       setBackoff(0, BASE_BACKOFF_MS, opts.storage);
       const remaining = loadQueueState(opts.storage).reports.length;
       if (remaining > 0) await trySend(opts);

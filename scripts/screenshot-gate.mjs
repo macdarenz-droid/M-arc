@@ -4851,6 +4851,81 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// 7.5-toggle: the Settings consent switch in Silent Black and Paper. It starts off, its label and
+// hint read at 4.5:1 or better, On queues an error locally (the wiring works) yet no request
+// ever reaches /errors (an automated browser never sends), and Off clears the queue and sticks
+// across a reload.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `7.5-toggle ${theme}`;
+  page.on('pageerror', e => { if (!e.message.includes('gate-7.5-probe')) errors.push(`${tag}: ${e.message}`); });
+  const errorRequests = [];
+  page.on('request', r => { if (/\/errors(\?|$)/.test(new URL(r.url()).pathname)) errorRequests.push(r.url()); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  const openSettings = async () => {
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    await page.locator('[data-palace="settings.error-reports"]').scrollIntoViewIfNeeded().catch(() => {});
+  };
+  const toggle = page.getByRole('switch', { name: 'Send anonymous error reports' });
+  const queueLen = () => page.evaluate(() => { try { return JSON.parse(localStorage.getItem('marc.errors.queue') ?? '{"reports":[]}').reports.length; } catch { return -1; } });
+
+  await openSettings();
+  if (!(await visible(toggle))) errors.push(`${tag}: expected the "Send anonymous error reports" switch in Settings`);
+  else {
+    if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: the switch must start off`);
+    for (const [sel, label] of [['[data-palace="settings.error-reports"]', 'switch label'], ['[data-palace="settings.error-reports"] + .hint', 'switch hint']]) {
+      const c = await page.evaluate((q) => {
+        const el = document.querySelector(q);
+        if (!el) return null;
+        const parse = str => {
+          let m = str.match(/rgba?\(([^)]+)\)/);
+          if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+          m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+          if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+          return null;
+        };
+        const fg = parse(getComputedStyle(el).color);
+        if (!fg) return null;
+        let node = el, under = { r: 255, g: 255, b: 255 };
+        while (node) { const bg = parse(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+        const lin = v => { const x = v / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
+        const rl = ({ r, g, b }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+        return l1 > l2 ? l1 / l2 : l2 / l1;
+      }, sel);
+      if (c == null) errors.push(`${tag}: could not measure contrast for the ${label}`);
+      else if (c < 4.5) errors.push(`${tag}: ${label} contrast ${c.toFixed(2)} < 4.5`);
+    }
+    await settle(page); await page.locator('.list-row:has([data-palace="settings.error-reports"])').screenshot({ path: `${OUT}/${theme}-7-5-toggle-off.png` }).catch(() => {});
+
+    await toggle.click(); await page.waitForTimeout(200);
+    if ((await toggle.getAttribute('aria-checked')) !== 'true') errors.push(`${tag}: the switch did not turn on`);
+    await settle(page); await page.locator('.list-row:has([data-palace="settings.error-reports"])').screenshot({ path: `${OUT}/${theme}-7-5-toggle-on.png` }).catch(() => {});
+    await page.evaluate(() => { void Promise.reject(new Error('gate-7.5-probe')); });
+    await page.waitForTimeout(600);
+    if ((await queueLen()) < 1) errors.push(`${tag}: with consent on, an unhandled rejection should be queued locally`);
+
+    await toggle.click(); await page.waitForTimeout(200);
+    if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: the switch did not turn back off`);
+    if ((await queueLen()) !== 0) errors.push(`${tag}: switching off must clear the queued reports`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+    await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await openSettings();
+    if ((await toggle.getAttribute('aria-checked').catch(() => null)) !== 'false') errors.push(`${tag}: the switch should stay off after a reload`);
+  }
+  if (errorRequests.length) errors.push(`${tag}: ${errorRequests.length} request(s) reached /errors under the gate`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
