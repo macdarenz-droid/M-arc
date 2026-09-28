@@ -305,13 +305,15 @@ export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?:
 }
 
 /**
- * BUG-21 (D-A1 point 4): the exercise the running rest follows, taken from the latest committed set,
- * is a main lift. Unknown counts as a main lift, the safer side: the timer then stays the floor.
+ * BUG-21 (D-A1 point 4): the exercise the running rest follows, taken from the latest committed set
+ * that can start a rest (a live working set; see commitSetById), is a main lift. A warm-up or a late
+ * set committed during the rest leaves it alone. Unknown counts as a main lift, the safer side.
  */
 export function restFollowsMainLift(a: ActiveSession, custom: Exercise[]): boolean {
   let latest: { exerciseId: string; ms: number } | undefined;
   for (const e of a.entries) for (const x of e.sets) {
-    const ms = x.status === 'committed' && x.at ? Date.parse(x.at) : NaN;
+    const startsRest = x.status === 'committed' && x.kind !== 'warmup' && (x.fidelity ?? 'live') === 'live';
+    const ms = startsRest && x.at ? Date.parse(x.at) : NaN;
     if (Number.isFinite(ms) && (!latest || ms > latest.ms)) latest = { exerciseId: e.exerciseId, ms };
   }
   if (!latest) return true;

@@ -50,6 +50,22 @@ describe('A1: heart-guided rest and the main-lift floor (D-A1 point 4)', () => {
     expect(restFollowsMainLift(state.value.active!, [])).toBe(false);
   });
 
+  it('a warm-up or a late set committed during a main-lift rest does not hand the rest to its exercise (review r1)', () => {
+    startSession(split);
+    setSet(0, 0, { kg: 60, reps: 5 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(0, 0);
+    const a = state.value.active!;
+    const benchAt = Date.parse(a.entries[0]!.sets[0]!.at!);
+    const later = (sec: number, patch: Partial<LoggedSet>): LoggedSet => ({ kg: 10, reps: 12, status: 'committed', at: new Date(benchAt + sec * 1000).toISOString(), ...patch });
+    for (const patch of [{ kind: 'warmup' as const, fidelity: 'live' as const }, { fidelity: 'delayed' as const }, { fidelity: 'retro' as const }]) {
+      const withFly = { ...a, entries: [a.entries[0]!, { ...a.entries[1]!, sets: [later(40, patch)] }] };
+      expect(restFollowsMainLift(withFly, [])).toBe(true);
+    }
+    const liveFly = { ...a, entries: [a.entries[0]!, { ...a.entries[1]!, sets: [later(40, { fidelity: 'live' })] }] };
+    expect(restFollowsMainLift(liveFly, [])).toBe(false);
+  });
+
   it('with no committed set or an unknown exercise it is treated as a main lift (the timer stays the floor)', () => {
     startSession(split);
     expect(restFollowsMainLift(state.value.active!, [])).toBe(true);
