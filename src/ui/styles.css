@@ -811,6 +811,96 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
 /* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
  * variant needs its own width and the same height/padding as the btn-sm next to it. */
 .mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
+/* GU-7a: form guide player. The demo's chrome at DEMO_COMMIT f49c6c9 (anim-machine-chest-press/index.html),
+   every rule under .form-guide; chips, .btn-icon, .seg, .hint and .sr-only are the app's own (R1-12).
+   Colour tokens: the demo BASE_CSS .player{} block (--fg-line to --seam, --sw) then rigVars() dark;
+   [data-theme="paper"] gets rigVars() light. The rig's paint rules come with the lazy chunk. */
+.form-guide { display: flex; justify-content: center;
+  --sw: 1;
+  --fg-line: color-mix(in srgb, var(--text) 60%, var(--surface-1));
+  --fg-line-far: color-mix(in srgb, var(--text) 30%, var(--surface-1));
+  --fg-metal: color-mix(in srgb, var(--text) 72%, var(--surface-1));
+  --fg-cable: color-mix(in srgb, var(--text) 55%, var(--surface-1));
+  --body: color-mix(in srgb, var(--map-body) 88%, var(--text));
+  --body-facet: color-mix(in srgb, var(--map-body) 78%, var(--text));
+  --body-far: color-mix(in srgb, var(--map-body) 50%, var(--surface-1));
+  --muscle-main: var(--accent);
+  --muscle-help: color-mix(in srgb, var(--accent) 45%, var(--body));
+  --equip: var(--surface-3);
+  --skin: color-mix(in srgb, var(--body) 92%, var(--text));
+  --skin-hi: color-mix(in srgb, var(--skin) var(--hi), var(--lit));
+  --skin-lo: color-mix(in srgb, var(--skin) var(--lo), var(--shd));
+  --tee: var(--body);
+  --tee-hi: color-mix(in srgb, var(--tee) var(--hi), var(--lit));
+  --tee-lo: color-mix(in srgb, var(--tee) var(--lo), var(--shd));
+  --shorts: color-mix(in srgb, var(--body) 70%, var(--text));
+  --shorts-hi: color-mix(in srgb, var(--shorts) var(--hi), var(--lit));
+  --shorts-lo: color-mix(in srgb, var(--shorts) var(--lo), var(--shd));
+  --shorts-far: color-mix(in srgb, var(--shorts) 45%, var(--surface-1));
+  --shoe: color-mix(in srgb, var(--body) 50%, var(--shd));
+  --shoe-hi: color-mix(in srgb, var(--shoe) var(--hi), var(--lit));
+  --shoe-lo: color-mix(in srgb, var(--shoe) var(--lo), var(--shd));
+  --shoe-far: color-mix(in srgb, var(--shoe) 45%, var(--surface-1));
+  --sole: color-mix(in srgb, var(--body) 45%, var(--lit));
+  --hair: color-mix(in srgb, var(--body) 50%, var(--shd));
+  --hair-hi: color-mix(in srgb, var(--hair) 68%, var(--lit));
+  --rim: color-mix(in srgb, var(--body) var(--rim-k), var(--lit));
+  --equip-hi: color-mix(in srgb, var(--equip) var(--eq-hi), var(--lit));
+  --equip-lo: color-mix(in srgb, var(--equip) var(--lo), var(--shd));
+  --metal-lo: color-mix(in srgb, var(--fg-metal) 64%, var(--surface-1));
+  --seam: color-mix(in srgb, var(--fg-frame) 70%, var(--equip));
+  /* integration with FG-1: the scheme values live here as named tokens, so src/formguide/** stays literal-free */
+  --fg-line-dark: color-mix(in srgb, var(--text) 60%, var(--surface-1));
+  --fg-frame-dark: color-mix(in srgb, var(--text) 38%, var(--surface-1));
+  --fg-line-light: color-mix(in srgb, var(--text) 70%, var(--surface-1));
+  --fg-frame-light: color-mix(in srgb, var(--text) 56%, var(--surface-1));
+  --mm-edge: color-mix(in srgb, var(--text) 35%, transparent);
+  --fg-line: var(--fg-line-dark);
+  --fg-frame: var(--fg-frame-dark);
+  --lit: var(--text); --shd: var(--bg); --hi: 90%; --lo: 78%; --eq-hi: 82%; --rim-k: 62%;
+}
+[data-theme="paper"] .form-guide {
+  --fg-line: var(--fg-line-light);
+  --fg-frame: var(--fg-frame-light);
+  --lit: var(--bg); --shd: var(--text); --hi: 76%; --lo: 84%; --eq-hi: 40%; --rim-k: 35%;
+}
+.form-guide .player [hidden] { display: none; }
+.form-guide .player { position: relative; width: 100%; max-width: 358px; height: auto; display: flex; flex-direction: column; gap: 8px; background: var(--surface-2); color: var(--text); }
+.form-guide .stage { position: relative; flex: none; width: 100%; height: auto; aspect-ratio: 358/276; background: var(--surface-1); border-radius: var(--radius-lg); overflow: hidden; }
+.form-guide .stage::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--border-subtle); border-radius: inherit; pointer-events: none; }
+.form-guide .scene { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+.form-guide .cam { transform-box: view-box; transform-origin: 0 0; transition: transform var(--dur-sheet) var(--ease-drawer); }
+.form-guide .pill-row { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; }
+.form-guide .pill { display: inline-grid; font-weight: var(--fw-semibold); font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); background: var(--surface-2); border-radius: var(--radius-pill); padding: 3px 8px; }
+.form-guide .pill-accent { background: var(--accent-soft); color: var(--accent); }
+.form-guide .cam-label { position: absolute; top: 12px; right: 12px; font-weight: var(--fw-semibold); font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; color: var(--text-2); }
+.form-guide .bubble { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 8px; align-items: flex-start; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
+.form-guide .bubble .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 5px; }
+.form-guide .bubble .bt { min-width: 0; }
+.form-guide .bubble b { font-weight: var(--fw-semibold); }
+.form-guide .ov { opacity: 0; transition: opacity var(--dur-fast) linear; }
+.form-guide .pics { position: absolute; inset: 1px; display: grid; padding: 6px; gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); background: var(--surface-1); border-radius: var(--radius-lg); }
+.form-guide .tile { position: relative; display: flex; flex-direction: column; background: var(--surface-2); border-radius: var(--radius-md); overflow: hidden; }
+.form-guide .tile svg { display: block; width: 100%; height: auto; aspect-ratio: 169/90; flex: none; }
+.form-guide .tile p { margin: 0; padding: 0 8px 6px; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.form-guide .badge { position: absolute; top: 6px; left: 6px; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(var(--accent-soft), var(--accent-soft)), var(--surface-2); box-shadow: 0 0 0 2px var(--surface-2); color: var(--accent); font-weight: 700; font-size: var(--fs-cap); line-height: 18px; text-align: center; }
+.form-guide .cap-row { flex: none; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; height: 20px; }
+.form-guide .cap { font-weight: var(--fw-semibold); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.form-guide .tempo { font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); white-space: nowrap; }
+.form-guide .chips { flex: none; display: flex; align-items: center; gap: 8px; height: 44px; }
+.form-guide .controls { flex: none; display: flex; align-items: center; gap: 8px; height: 44px; }
+/* 44 + 8 + 104 + 8 + 184 = 348 at 358; the two switches share the loss below that (320 px phones). */
+.form-guide .controls > :first-child { flex: none; } /* Play stays a 44 px circle */
+/* integration with FG-1: its `.form-guide svg { width: 100% }` is for the figure; the chrome icons keep their own width/height. */
+.form-guide .chips svg, .form-guide .controls svg { display: inline; width: auto; height: auto; }
+.form-guide .speed { flex: 0 1 104px; min-width: 0; }
+.form-guide .mode { flex: 0 1 184px; min-width: 0; }
+.form-guide .hot { cursor: pointer; }
+.form-guide .hot-core { stroke: none; stroke-width: 0; }
+.form-guide .pics .hot { pointer-events: none; }
+.form-guide .hot:focus:not(:focus-visible) { outline: none; }
+.form-guide .mm.sel, .form-guide .mh.sel { stroke: var(--text); stroke-width: calc(var(--sw) * 1.5px); }
+html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-guide .ov { transition: none; }
 
 /* FG-1: form-guide figure (src/formguide/rig). Each joint (.fg-j) and moving part (.fg-p) turns about its inline
  * transform-origin, given in the SVG's user units; only transform and opacity change (rig/pose.ts applyPose). */
