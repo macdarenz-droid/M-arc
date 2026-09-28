@@ -8,6 +8,8 @@ import { figureFront } from '@/formguide/rig/figureFront';
 import { themeReader, bodyPal, mix, FIGURE_TOKENS } from '@/formguide/rig/paint';
 import { applyPose, bindFigure, css, frontFrame, handAt, type Frame, type StyleTarget } from '@/formguide/rig/pose';
 import { at, walk } from './svgWalk';
+import { colourLiterals } from './colourLint';
+import { deltaEHex } from './deltaE';
 import { MOMENTS, labChannels, pose2d, screenFist } from './fixtures/labFront';
 
 const build = (theme = THEME_IDS[0]!, mistake = false) => figureFront(themeReader(theme), { id: 'fg0', mistake, dumbbell: { kg: 7 } });
@@ -36,15 +38,42 @@ describe('A1 the front figure renders in every theme from tokens only', () => {
         const hex = [...svg.matchAll(/#[0-9a-f]{6}\b/gi)].map(m => m[0]);
         expect(hex.length).toBeGreaterThan(0);
         expect(hex.filter(h => !allowed.has(h))).toEqual([]);
-        expect(svg).not.toMatch(/\b(rgba?|hsla?)\(/);
+        expect(colourLiterals(svg, { hex: false })).toEqual([]);
       }
     }
   });
-  it('the body follows --accent (each theme paints differently) and the mistake follows --negative', () => {
+  it('the markup lint catches a planted named colour or colour function (review finding 1)', () => {
+    const svg = build();
+    for (const [from, to] of [['fill="none"', 'fill="white"'], ['fill="none"', 'stroke="oklch(0.5 0.1 20)"'], ['fill="none"', 'fill="lab(50% 40 59)"'],
+      ['fill="none"', 'style="color:red"'], ['fill="none"', 'fill="color-mix(in srgb, red, blue)"'], ['fill="none"', 'fill="hwb(1 2% 3%)"']] as const) {
+      expect(svg).toContain(from);
+      expect(colourLiterals(svg.replace(from, to), { hex: false }), to).not.toEqual([]);
+    }
+  });
+  it('the body follows --accent (each theme paints differently) and the mistake follows --mistake', () => {
     const bases = THEME_IDS.map(id => bodyPal(themeReader(id), false).base);
     expect(bases).toEqual(THEME_IDS.map(id => THEMES[id].tokens.accent.toLowerCase()));
-    expect(bodyPal(themeReader('paper'), true).base).toBe(mix(themeReader('paper'), { from: 'accent', toward: 'negative', t: 0.62 }, 'white', 0));
+    expect(bodyPal(themeReader('paper'), true).base).toBe(mix(themeReader('paper'), { from: 'accent', toward: 'mistake', t: 0.62 }, 'white', 0));
     expect(build('paper', true)).not.toBe(build('paper'));
+  });
+  // Review finding 2: in Ember accent = negative, so a mistake tinted toward --negative painted like the correct figure.
+  // CIEDE2000 >= 15 is a clear, at-a-glance difference (2.3 is just noticeable; graphic-arts tolerances stop near 5).
+  it.each(THEME_IDS)('%s: the mistake body is clearly a different colour from the correct body (CIEDE2000 >= 15)', id => {
+    const read = themeReader(id), dE = deltaEHex(bodyPal(read, false).base, bodyPal(read, true).base);
+    console.info(`[FG-1] ${id}: mistake vs correct body base CIEDE2000 ${dE.toFixed(1)}`);
+    expect(dE).toBeGreaterThanOrEqual(15);
+    // the keep-quiet warning paints in --mistake and must not vanish into the mistake body (>= 10: plainly visible)
+    expect(build(id, true)).toContain('fill="var(--mistake)"');
+    const warn = deltaEHex(bodyPal(read, true).base, read('mistake').toLowerCase());
+    console.info(`[FG-1] ${id}: keep-quiet warning vs mistake body CIEDE2000 ${warn.toFixed(1)}`);
+    expect(warn).toBeGreaterThanOrEqual(10);
+  });
+  it('--mistake equals --negative wherever --negative already differs from --accent', () => {
+    for (const id of THEME_IDS) {
+      const t = THEMES[id].tokens;
+      if (t.negative.toLowerCase() !== t.accent.toLowerCase()) expect(t.mistake, id).toBe(t.negative);
+      else expect(deltaEHex(t.mistake.toLowerCase(), t.accent.toLowerCase()), id).toBeGreaterThanOrEqual(25);
+    }
   });
 });
 

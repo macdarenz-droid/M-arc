@@ -62,21 +62,33 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
   });
 });
 
-// FG-1: the form-guide figure paints from theme tokens only. No hex, rgb() or hsl() literal anywhere in
-// src/formguide/** (paint.ts mixes resolved tokens at run time), and every theme carries the figure tokens.
+// FG-1: the form-guide figure paints from theme tokens only. No colour literal (hex, any CSS colour function, a named
+// colour in a paint attribute; tests/formguide/colourLint.ts) anywhere in src/formguide/** (paint.ts mixes resolved
+// tokens at run time), and every theme carries the figure tokens.
 describe('form-guide colours come from tokens (FG-1)', () => {
-  it('no hex, rgb() or hsl() literal in src/formguide/**', async () => {
+  it('no colour literal in src/formguide/**', async () => {
     const { readdirSync, readFileSync: read } = await import('node:fs');
+    const { colourLiterals } = await import('./formguide/colourLint');
     const files = (readdirSync('src/formguide', { recursive: true }) as string[]).filter(f => /\.(ts|tsx|css|json)$/.test(f));
     expect(files.length).toBeGreaterThan(0);
     const bad = files.flatMap(f => {
       const src = read(`src/formguide/${f}`, 'utf8');
-      return [...src.matchAll(/#[0-9a-fA-F]{3,8}(?![\w-])|\b(?:rgba?|hsla?)\(/g)].map(m => `${f}: ${m[0]}`);
+      return colourLiterals(src).map(m => `${f}: ${m}`);
     });
     expect(bad).toEqual([]);
   });
+  it('the lint catches every kind of colour literal and passes token references', async () => {
+    const { colourLiterals } = await import('./formguide/colourLint');
+    const planted = ['#fff', '#a1b2c3', '#a1b2c3d4', 'rgb(1 2 3)', 'rgba(1,2,3,.5)', 'hsl(1 2% 3%)', 'hsla(1,2%,3%,.5)', 'hwb(1 2% 3%)',
+      'lab(50% 40 59)', 'lch(52% 72 50)', 'oklab(0.5 0.1 0.1)', 'oklch(0.5 0.1 20)', 'color(display-p3 1 0 0)',
+      'color-mix(in srgb, red, blue)', 'fill="white"', "stroke='red'", 'stop-color="navy"', 'color: tomato', 'style="color:Red"', 'fill: rebeccapurple'];
+    for (const p of planted) expect(colourLiterals(`<x ${p}/>`), p).not.toEqual([]);
+    const clean = ['fill="none"', 'fill="url(#g)"', 'stroke="var(--ink)"', 'fill="currentColor"', 'stop-color="transparent"', 'fill="${c}"',
+      'fill="var\\(--[\\w-]+\\)"', "mix(read, 'accent', 'white', 0.3)", 'const lab = screenFist(Q)', 'stroke-width="2"'];
+    for (const c of clean) expect(colourLiterals(c), c).toEqual([]);
+  });
   it('every theme emits the figure tokens', () => {
-    const names = ['--target', '--help', '--quiet', '--pants', '--pants-hi', '--pants-sh', '--ink', '--iron', '--iron-hi', '--iron-sh', '--eye', '--floor', '--guide'];
+    const names = ['--mistake', '--target', '--help', '--quiet', '--pants', '--pants-hi', '--pants-sh', '--ink', '--iron', '--iron-hi', '--iron-sh', '--eye', '--floor', '--guide'];
     for (const id of THEME_IDS) for (const n of names) expect(themeToCss(THEMES[id]), `${id} ${n}`).toMatch(new RegExp(`${n}:[^;]+`));
   });
 });

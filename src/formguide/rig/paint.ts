@@ -10,7 +10,7 @@ import { THEMES, type ThemeId, type ThemeTokens } from '@/theme/themes';
 
 /** The theme tokens the figure reads (CSS names without the leading --). */
 export const FIGURE_TOKENS = {
-  accent: 'accent', negative: 'negative', target: 'target', help: 'help', quiet: 'quiet',
+  accent: 'accent', mistake: 'mistake', target: 'target', help: 'help', quiet: 'quiet',
   pants: 'pants', 'pants-hi': 'pantsHi', 'pants-sh': 'pantsSh', ink: 'ink',
   iron: 'iron', 'iron-hi': 'ironHi', 'iron-sh': 'ironSh', eye: 'eye', floor: 'floor', guide: 'guide',
 } as const satisfies Record<string, keyof ThemeTokens>;
@@ -47,12 +47,12 @@ export function mix(read: TokenReader, a: Tone, toward: 'white' | 'black' | Toke
   return out(blend(toneRgb(read, a), b, t));
 }
 
-/** The mistake figure is tinted toward --negative (the lab's 0.62). */
+/** The mistake figure is tinted toward --mistake (the lab's 0.62 toward its negative red; D-FG1). */
 export const MISTAKE_TINT = 0.62;
 export type BodyPal = Record<'hi' | 'lit' | 'base' | 'mid' | 'sh' | 'sh2' | 'dk' | 'occ' | 'line' | 'def' | 'spec' | 'rim', string>;
-/** The lab's bodyPal: the body tones, all from --accent (or --accent toward --negative for the mistake). */
+/** The lab's bodyPal: the body tones, all from --accent (or --accent toward --mistake for the mistake). */
 export function bodyPal(read: TokenReader, mistake: boolean): BodyPal {
-  const base: Tone = mistake ? { from: 'accent', toward: 'negative', t: MISTAKE_TINT } : 'accent';
+  const base: Tone = mistake ? { from: 'accent', toward: 'mistake', t: MISTAKE_TINT } : 'accent';
   const m = (c: 'white' | 'black', t: number) => mix(read, base, c, t);
   return { hi: m('white', 0.3), lit: m('white', 0.14), base: m('white', 0), mid: m('black', 0.14), sh: m('black', 0.3), sh2: m('black', 0.22),
     dk: m('black', 0.42), occ: m('black', 0.5), line: m('black', 0.8), def: m('black', 0.55), spec: m('white', 0.78), rim: m('white', 0.6) };

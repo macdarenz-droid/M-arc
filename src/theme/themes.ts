@@ -45,8 +45,11 @@ export interface ThemeTokens {
    * same token contract (tests/theme.test.ts). */
   accentTextPct: number;
   /** FG-1: form-guide figure tokens (docs/FORM-GUIDE-PRODUCTION.md §3). Muscle states: target (worked), help
-   * (helpers), quiet (keep-quiet muscles); clothes (pants, -hi, -sh), outline ink, iron (weights, -hi, -sh), eye
-   * whites, floor shadow and guide lines. The body itself is mixed from accent (src/formguide/rig/paint.ts). */
+   * (helpers), quiet (keep-quiet muscles); mistake (the mistake figure's tint and keep-quiet warning: negative, unless
+   * negative is the accent; D-FG1 in docs/COACHING-DECISIONS.md); clothes (pants, -hi, -sh), outline ink, iron
+   * (weights, -hi, -sh), eye whites, floor shadow and guide lines. The body itself is mixed from accent
+   * (src/formguide/rig/paint.ts). */
+  mistake: string;
   target: string;
   help: string;
   quiet: string;
@@ -109,6 +112,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       colorScheme: 'dark',
       accentTextPct: 75,
       // FG-1: the Lateral Raise Lab's dark (Silent Black) figure tokens.
+      mistake: '#eb5757',
       target: '#f2b544', help: '#f6cd7a', quiet: '#4cc38a',
       pants: '#1f2126', pantsHi: '#2e3138', pantsSh: '#131418', ink: '#05060a',
       iron: '#8a909a', ironHi: '#b4b9c2', ironSh: '#5a5f68', eye: '#f7f8f8',
@@ -150,6 +154,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       // I14: 75% measures 4.46:1 on surface-2 (.chip-accent/.esc-link's backdrop); 70% measures 4.73:1.
       accentTextPct: 70,
       // FG-1: the Lateral Raise Lab's light (Paper) figure tokens.
+      mistake: '#c0392b',
       target: '#b7791f', help: '#d6a24a', quiet: '#0f7b4f',
       pants: '#34322d', pantsHi: '#4a4842', pantsSh: '#22201d', ink: '#15140f',
       iron: '#6b6a66', ironHi: '#8f8e89', ironSh: '#474642', eye: '#ffffff',
@@ -188,6 +193,8 @@ export const THEMES: Record<ThemeId, Theme> = {
       colorScheme: 'dark',
       accentTextPct: 75,
       // FG-1: figure tokens on the lab's dark pattern: target = warning, quiet = positive, cool near-black clothes.
+      // mistake is violet, not negative: negative equals this theme's accent, so a red mistake would not show (D-FG1).
+      mistake: '#b36bff',
       target: '#ffb454', help: '#ffcd8a', quiet: '#59d499',
       pants: '#20242b', pantsHi: '#2f343c', pantsSh: '#12151a', ink: '#030406',
       iron: '#8c939b', ironHi: '#b6bcc3', ironSh: '#5b6168', eye: '#ffffff',
@@ -227,6 +234,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       accentTextPct: 75,
       // FG-1: figure tokens on the lab's dark pattern. quiet is the info blue, not positive green: positive equals
       // this theme's accent, so a green keep-quiet tint would vanish on the green body.
+      mistake: '#f04438',
       target: '#f5a623', help: '#f8c46a', quiet: '#5fa8ff',
       pants: '#262626', pantsHi: '#333333', pantsSh: '#181818', ink: '#050505',
       iron: '#8f8f8f', ironHi: '#b8b8b8', ironSh: '#5e5e5e', eye: '#ededed',
@@ -268,6 +276,7 @@ export const THEMES: Record<ThemeId, Theme> = {
       // surface-2 and 5.23:1 on surface-1.
       accentTextPct: 65,
       // FG-1: figure tokens on the lab's dark pattern, in navy.
+      mistake: '#ff5c5c',
       target: '#ffbb00', help: '#ffd25c', quiet: '#3ecf8e',
       pants: '#0d1e33', pantsHi: '#1a3150', pantsSh: '#06121f', ink: '#02080f',
       iron: '#8fa3ba', ironHi: '#b9c8d9', ironSh: '#5c7189', eye: '#f6f9fc',
@@ -319,6 +328,7 @@ export function themeToCss(theme: Theme): string {
     // styles.css, so it wins the tie either way.
     `--accent-text:color-mix(in srgb, var(--accent) ${t.accentTextPct}%, var(--text))`,
     // FG-1: form-guide figure tokens.
+    `--mistake:${t.mistake}`,
     `--target:${t.target}`,
     `--help:${t.help}`,
     `--quiet:${t.quiet}`,

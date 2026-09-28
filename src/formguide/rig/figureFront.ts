@@ -165,7 +165,7 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
 export type FrontOptions = {
   /** Prefix for the gradient ids; unique per live figure on the page. */
   id: string;
-  /** The mistake figure: body tinted toward --negative, keep-quiet tint in --negative. */
+  /** The mistake figure: body tinted toward --mistake, keep-quiet tint in --mistake. */
   mistake?: boolean;
   /** A dumbbell in each hand (the lab's), with the load label when kg is given. */
   dumbbell?: Dumbbell;
@@ -183,7 +183,7 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
   const SIDE = 'M252 114 C257 116 263 118 268 123 C270 128 271 138 270 146 C268 160 264 172 258 186 C254 200 248 214 245 228 C243 238 245 248 247 258';
   const HEAD = 'M200 27 C219 27 228 41 228 58 C228 71 224 81 218 88 C212 95 206 99 200 99 C194 99 188 95 182 88 C176 81 172 71 172 58 C172 41 181 27 200 27 Z';
   const trap = (s: 'R' | 'L') => { const side = s === 'R' ? 'r' : 'l'; return `<path d="${TRAP_PATH}" fill="url(#${p}-m${s})"/><path d="M230 120.5 C238 124.6 248 126.3 258 125 L258 117.5 C250 118.6 240 119.4 230 120.5 Z" fill="${b.sh}" opacity=".3"/>${sl([214, 102, 224, 116, 242, 125, 256, 125.5], 1.3, D_, .5, .7)}${sl([221, 98, 234, 104, 248, 111], 1.5, SP, .45, .5)}
-        <path class="fg-p fg-t-upper_traps_${side}" d="${TRAP_PATH}" fill="${mistake ? 'var(--negative)' : 'var(--quiet)'}" opacity="0"/><path class="fg-p fg-b-upper_traps_${side}" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/>
+        <path class="fg-p fg-t-upper_traps_${side}" d="${TRAP_PATH}" fill="${mistake ? 'var(--mistake)' : 'var(--quiet)'}" opacity="0"/><path class="fg-p fg-b-upper_traps_${side}" d="${TRAP_PATH}" fill="url(#${p}-shT)" opacity="0"/>
         <path d="M217 93 C228 99 238 104 246 108 C253 112 258 117 258 124" fill="none" stroke="var(--rim)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M210 88 C218 94 234 101 246 108 C253 112 258 117 258 125" fill="none" stroke="var(--l)" stroke-width="2.4" stroke-linecap="round"/>`; };
   // Pants gradients: the lab's objectBoundingBox gradients over the whole leg, fixed to that box in user space
@@ -226,7 +226,7 @@ export function figureFront(read: TokenReader, o: FrontOptions): string {
     ${lg(p + '-am', 0, 0, 1, .4, [[0, b.mid], [.3, b.lit], [.65, b.base], [1, b.sh]])}${lg(p + '-dA', .2, 0, .6, 1, [[0, b.hi], [.3, b.lit], [.7, b.base], [1, b.mid]])}${lg(p + '-dL', 0, 0, 1, .5, [[0, b.lit], [.5, b.base], [1, b.mid]])}${lg(p + '-dP', 0, 0, 1, .3, [[0, b.mid], [1, b.sh]])}
     <radialGradient id="${p}-hg" cx=".36" cy=".3" r=".85" fx=".3" fy=".22"><stop offset="0" stop-color="${b.hi}"/><stop offset=".45" stop-color="${b.base}"/><stop offset=".82" stop-color="${b.sh2}"/><stop offset="1" stop-color="${b.dk}"/></radialGradient>${pantsGrad(p + '-pR', 200, 255.5)}${pantsGrad(p + '-pL', 255.5, 200)}
     ${cel(p + '-i', res('iron-hi'), res('iron'), res('iron-sh'), 0.6)}
-    ${band(read, p + '-shS', 'target', 'y')}${band(read, p + '-shT', mistake ? 'negative' : 'quiet', 'x')}</defs>
+    ${band(read, p + '-shS', 'target', 'y')}${band(read, p + '-shT', mistake ? 'mistake' : 'quiet', 'x')}</defs>
   <ellipse cx="200" cy="568" rx="92" ry="11" fill="var(--floor)"/>
   ${joint('pelvis', `
     ${LEG(p, 'R', 'r')}${LEG(p, 'L', 'l')}
