@@ -4892,6 +4892,297 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// GU-7a-2: the form guide (stub Guide until GU-7a-4). A10 chunk rules; A11 no guide on Today; A8 the
+// "How to do it" row only for guided exercises; A7 screenshots in 5 themes at t 0 and 0.25, 390 px;
+// A4 playback (3 reps of 4 s, 0.5x, Pause, Replay, closing cancels every animation); A5 zoom keeps
+// playing with its subject inside the stage and above the bubble for 41 phases; A13 hotspots of at
+// least 44 x 44 px and the muscle bubble; A6 reduced motion = Pictures with zero animate() calls;
+// A9 a failed chunk keeps the sheet open with "Demo could not load." and Reload.
+{
+  const tag = 'GU-7a';
+  const { gzipSync } = await import('node:zlib');
+  const assets = join(ROOT, 'www/assets');
+  const files = readdirSync(assets);
+  const mains = files.filter(f => /^index-.*\.js$/.test(f));
+  if (!mains.length) errors.push(`${tag} A10: no www/assets/index-*.js found`);
+  for (const f of mains) {
+    const text = readFileSync(join(assets, f), 'utf8');
+    if (text.includes('marc-formguide-rig') || text.includes('id="rig-')) errors.push(`${tag} A10: ${f} (main chunk) holds form-guide code`);
+    const buf = readFileSync(join(assets, f));
+    console.log(`${tag} A10: ${f} ${buf.length} B raw, ${gzipSync(buf).length} B gzip`);
+  }
+  const chunk = files.find(f => /^FormGuidePlayer-.*\.js$/.test(f));
+  if (!chunk) errors.push(`${tag} A10: www/assets/FormGuidePlayer-*.js is missing`);
+  else {
+    const buf = readFileSync(join(assets, chunk));
+    const gz = gzipSync(buf).length;
+    console.log(`${tag} A10: ${chunk} ${buf.length} B raw, ${gz} B gzip (cap ${150 * 1024})`);
+    if (gz > 150 * 1024) errors.push(`${tag} A10: ${chunk} is ${gz} B gzip, over the 150 KB cap`);
+  }
+
+  const seed = ([t]) => {
+    // Records every Web Animation the page creates, so a probe can see cancel() and count animate() calls.
+    const orig = Element.prototype.animate;
+    window.__fgAnims = [];
+    Element.prototype.animate = function (...a) { const an = orig.apply(this, a); if (this.closest?.('.form-guide')) window.__fgAnims.push(an); return an; };
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_machine_chest_press', sets: 3 }, { exerciseId: 'lib_barbell_bench_press', sets: 3 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  const open = async (theme, opts = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, ...opts });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error' && !/Failed to (load|fetch)|ERR_FAILED/.test(m.text())) errors.push(`${tag} ${theme} console: ${m.text()}`); });
+    await page.addInitScript(seed, [theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    return { ctx, page };
+  };
+  const startSession = async (page) => {
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+  };
+  const options = async (page, i) => { await page.getByRole('button', { name: 'Options', exact: true }).nth(i).click(); await page.waitForTimeout(300); };
+  const howRow = (page) => page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true });
+  const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
+  const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
+
+  // A13: each muscle's real hit area (halo + core, round 3 D-R7: a point counts when it hits either) at t 0 and 0.25.
+  const hotProbe = async (page, where) => {
+    for (const ms of [0, 1000]) {
+      await seek(page, ms);
+      const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot:not(.hot-core)')].map(h => {
+        const r = h.getBoundingClientRect();
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+        for (let x = Math.floor(r.left - 24); x <= r.right + 24; x++) for (let y = Math.floor(r.top - 24); y <= r.bottom + 24; y++) {
+          const hit = document.elementFromPoint(x, y);
+          if (hit?.classList.contains('hot') && hit.dataset.muscle === h.dataset.muscle) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        }
+        return { m: h.dataset.muscle, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+      }));
+      if (sizes.length !== 3) errors.push(`${tag} A13 ${where}: expected 3 hotspots, got ${sizes.length}`);
+      for (const s of sizes) if (!(s.w >= 44 && s.h >= 44)) errors.push(`${tag} A13 ${where}: hotspot ${s.m} hits ${s.w} x ${s.h} px at ${ms} ms`);
+    }
+    await seek(page, 0);
+  };
+  // A7 / R1-12: the player fits the sheet; Play stays a 44 px circle; no control overlaps another, leaves the player or clips its label.
+  const fitProbe = async (page, where) => {
+    const f = await page.evaluate(() => {
+      const box = e => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, w: r.width, h: r.height }; };
+      const player = box(document.querySelector('dialog[open] .form-guide .player'));
+      const panel = box(document.querySelector('dialog[open] .sheet-panel'));
+      const play = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon'));
+      const ctrls = [...document.querySelectorAll('dialog[open] .form-guide .chips > button, dialog[open] .form-guide .controls > .btn-icon, dialog[open] .form-guide .controls > .seg')];
+      const named = ctrls.map(e => ({ n: e.getAttribute('aria-label') || e.textContent, ...box(e) }));
+      const out = named.filter(c => c.l < player.l - 0.5 || c.r > player.r + 0.5 || c.t < player.t - 0.5 || c.b > player.b + 0.5).map(c => c.n);
+      const overlap = [];
+      for (let i = 0; i < named.length; i++) for (let j = i + 1; j < named.length; j++) {
+        const a = named[i], b = named[j];
+        if (a.l < b.r - 0.5 && b.l < a.r - 0.5 && a.t < b.b - 0.5 && b.t < a.b - 0.5) overlap.push(`${a.n} / ${b.n}`);
+      }
+      const clipped = [...document.querySelectorAll('dialog[open] .form-guide .seg button, dialog[open] .form-guide .chips > button')].filter(b => b.scrollWidth > b.clientWidth + 0.5).map(b => b.textContent);
+      // integration with FG-1: `.form-guide svg { width: 100% }` must not stretch the chrome icons; each is drawn at its own width/height.
+      const playIcon = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon > svg'));
+      const icons = [...document.querySelectorAll('dialog[open] .form-guide .chips svg, dialog[open] .form-guide .controls svg')]
+        .map(s => ({ want: `${s.getAttribute('width')} x ${s.getAttribute('height')}`, got: `${Math.round(s.getBoundingClientRect().width)} x ${Math.round(s.getBoundingClientRect().height)}`, in: s.parentElement.getAttribute('aria-label') || s.parentElement.textContent }))
+        .filter(i => i.want !== i.got);
+      return { player, panel, play, playIcon, icons, out, overlap, clipped, sw: document.documentElement.scrollWidth, iw: innerWidth };
+    });
+    if (Math.abs(f.playIcon.w - 20) > 0.5 || Math.abs(f.playIcon.h - 20) > 0.5) errors.push(`${tag} A7 ${where}: the Play icon is ${f.playIcon.w.toFixed(1)} x ${f.playIcon.h.toFixed(1)} px, not 20 x 20`);
+    if (f.icons.length) errors.push(`${tag} A7 ${where}: icons drawn off their own size: ${f.icons.map(i => `${i.in} ${i.got} (want ${i.want})`).join('; ')}`);
+    if (f.player.l < f.panel.l - 0.5 || f.player.r > f.panel.r + 0.5 || f.sw > f.iw) errors.push(`${tag} A7 ${where}: the player does not fit the sheet (${JSON.stringify({ player: f.player, panel: f.panel, sw: f.sw })})`);
+    if (!(f.play.w >= 44 && f.play.h >= 44)) errors.push(`${tag} A7 ${where}: Play is ${f.play.w.toFixed(1)} x ${f.play.h.toFixed(1)} px, under 44`);
+    if (f.out.length) errors.push(`${tag} A7 ${where}: controls leave the player: ${f.out.join(', ')}`);
+    if (f.overlap.length) errors.push(`${tag} A7 ${where}: controls overlap: ${f.overlap.join('; ')}`);
+    if (f.clipped.length) errors.push(`${tag} A7 ${where}: labels clipped: ${f.clipped.join(', ')}`);
+  };
+
+  for (const theme of themes) {
+    const { ctx, page } = await open(theme);
+    // A11: never on Today.
+    if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A11: a .form-guide element is on Today`);
+    await startSession(page);
+    // A8: the row is there for the chest press (entry 0) and not for the bench press (entry 1).
+    await options(page, 1);
+    if (await howRow(page).count()) errors.push(`${tag} ${theme} A8: "How to do it" shows for Barbell Bench Press`);
+    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    await options(page, 0);
+    const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
+    const at = labels.indexOf('How to do it');
+    if (at < 0 || labels[at + 1] !== 'Substitute exercise') errors.push(`${tag} ${theme} A8: expected "How to do it" right before "Substitute exercise", got ${JSON.stringify(labels)}`);
+    await howRow(page).click();
+    if (!(await visible(page.locator('dialog[open] .form-guide .player')))) { errors.push(`${tag} ${theme}: the guide sheet did not open`); await ctx.close(); continue; }
+    const title = await page.locator('dialog[open] h2').textContent();
+    if (title !== 'How to do it: Machine Chest Press') errors.push(`${tag} ${theme}: sheet title "${title}"`);
+    // A7: screenshots at t 0 and 0.25; the player fits the 390 px sheet.
+    const fit = await page.evaluate(() => { const p = document.querySelector('dialog[open] .form-guide .player').getBoundingClientRect(); const d = document.querySelector('dialog[open] .sheet-panel').getBoundingClientRect(); return { l: p.left, r: p.right, dl: d.left, dr: d.right, sw: document.documentElement.scrollWidth }; });
+    if (fit.l < fit.dl || fit.r > fit.dr || fit.sw > 390) errors.push(`${tag} ${theme} A7: the player does not fit the sheet at 390 px (${JSON.stringify(fit)})`);
+    await fitProbe(page, `${theme} 390 px`);
+    await seek(page, 0); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t0.png` });
+    await seek(page, 1000); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t025.png` });
+    await seek(page, 0);
+
+    if (theme === 'silent-black') {
+      // A4: Play runs 3 reps of 4 s, linear, fill both, never looping.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+      const t = await page.evaluate(() => window.__fgAnims.map(a => { const x = a.effect.getTiming(); return `${a.playState} ${x.duration} ${x.iterations} ${x.easing} ${x.fill}`; }));
+      if (!t.length || t.some(s => s !== 'running 4000 3 linear both')) errors.push(`${tag} A4: expected every animation "running 4000 3 linear both", got ${JSON.stringify([...new Set(t)])}`);
+      await page.locator('dialog[open] .seg button', { hasText: '0.5x' }).click(); await page.waitForTimeout(100);
+      const rates = await page.evaluate(() => [...new Set(window.__fgAnims.map(a => a.playbackRate))]);
+      if (rates.join() !== '0.5') errors.push(`${tag} A4: 0.5x set playbackRate ${JSON.stringify(rates)}`);
+      if (!(await page.locator('dialog[open] .pill-accent', { hasText: 'Slow motion' }).isVisible())) errors.push(`${tag} A4: no "Slow motion" pill at 0.5x`);
+      await page.locator('dialog[open] .seg button', { hasText: '1x' }).click();
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(100);
+      const t1 = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime}`));
+      await page.waitForTimeout(300);
+      const t2 = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime}`));
+      if (t1.join() !== t2.join() || !t1.every(s => s.startsWith('paused'))) errors.push(`${tag} A4: Pause did not freeze (${t1[0]} -> ${t2[0]})`);
+      // The end of rep 3: the button becomes Replay and the figure holds the start pose.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click();
+      await page.evaluate(() => { for (const a of window.__fgAnims) a.currentTime = 11990; });
+      await page.waitForTimeout(400);
+      const end = await page.evaluate(() => ({ states: [...new Set(window.__fgAnims.map(a => a.playState))], arm: getComputedStyle(document.querySelector('dialog[open] .scene .st-arm')).transform, cap: document.querySelector('dialog[open] .cap').textContent }));
+      if (end.states.join() !== 'finished') errors.push(`${tag} A4: after 3 reps expected finished, got ${end.states}`);
+      if (!/^matrix\(1, 0, 0, 1, 0, 0\)$|^none$/.test(end.arm)) errors.push(`${tag} A4: after 3 reps the arm is not on the start pose (${end.arm})`);
+      if (end.cap !== 'Done. Tap Replay to watch again.') errors.push(`${tag} A4: ended caption "${end.cap}"`);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Replay', exact: true }).click(); await page.waitForTimeout(150);
+      const re = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime < 1000}`));
+      if (!re.every(s => s === 'running true')) errors.push(`${tag} A4: Replay did not restart from 0 (${re[0]})`);
+      if (await page.locator('dialog[open] .pill', { hasText: 'Rep 1 of 3' }).count() !== 1) errors.push(`${tag} A4: no "Rep 1 of 3" pill after Replay`);
+
+      // A5: each zoom chip keeps playing; its subject (.ov-<chip>) stays in the stage, above the bubble, over 41 phases.
+      for (const [i, chip] of ['grip', 'path', 'seat'].entries()) {
+        await page.locator('dialog[open] .chips button').nth(i).click(); await page.waitForTimeout(450);
+        const running = await page.evaluate(() => window.__fgAnims.every(a => a.playState === 'running'));
+        if (!running) errors.push(`${tag} A5: zoom ${chip} stopped the animation`);
+        const bad = await page.evaluate(async (chip) => {
+          const out = [];
+          const st = document.querySelector('dialog[open] .stage').getBoundingClientRect();
+          const bub = document.querySelector('dialog[open] .bubble').getBoundingClientRect();
+          for (let k = 0; k <= 40; k++) {
+            for (const a of window.__fgAnims) { a.pause(); a.currentTime = (k / 40) * 4000; }
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+            const b = document.querySelector(`dialog[open] .scene .ov-${chip}`).getBoundingClientRect();
+            if (b.left < st.left || b.right > st.right || b.top < st.top || b.bottom > bub.top) out.push(k);
+          }
+          for (const a of window.__fgAnims) a.play();
+          return out;
+        }, chip);
+        if (bad.length) errors.push(`${tag} A5: zoom ${chip} subject leaves the stage or meets the bubble at phases ${bad.join(',')}`);
+        const cap = await page.locator('dialog[open] .bubble').textContent();
+        if (!cap?.trim()) errors.push(`${tag} A5: zoom ${chip} shows no caption bubble`);
+        await page.screenshot({ path: `${OUT}/silent-black-gu7a-zoom-${chip}.png` });
+        await page.locator('dialog[open] .chips button').nth(i).click(); await page.waitForTimeout(450);
+      }
+
+      // A13: every hotspot hits at least 44 x 44 px at t 0 and t 0.25.
+      await hotProbe(page, '390 px');
+      // 5.12: the phase caption is announced politely.
+      if (await page.locator('dialog[open] .cap[aria-live="polite"]').count() !== 1) errors.push(`${tag} 5.12: the caption line is not an aria-live="polite" region`);
+      // Tap the target at t 0.3: the exact line, the dot in the muscle's colour, the outline on that region only.
+      await seek(page, 1200);
+      const tapHot = async (m) => { const b = await page.locator(`dialog[open] .scene .hot:not(.hot-core)[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
+      await tapHot('chest');
+      const bub = await page.evaluate(() => { const b = document.querySelector('dialog[open] .bubble'); if (!b) return null; const fg = document.querySelector('dialog[open] .form-guide'); const probe = document.createElement('i'); probe.style.color = 'var(--muscle-main)'; fg.appendChild(probe); const want = getComputedStyle(probe).color; probe.remove(); return { text: b.textContent, name: b.querySelector('.bt b')?.textContent, dot: getComputedStyle(b.querySelector('.dot')).backgroundColor, want, sel: [...document.querySelectorAll('dialog[open] .sel')].map(e => `${e.getAttribute('class')} ${e.getAttribute('points')}`) }; });
+      if (!bub) errors.push(`${tag} A13: tapping the chest shows no bubble`);
+      else {
+        if (bub.text !== 'Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.' || bub.name !== 'Chest') errors.push(`${tag} A13: bubble text "${bub.text}" (bold "${bub.name}")`);
+        if (bub.dot !== bub.want) errors.push(`${tag} A13: dot ${bub.dot}, muscle colour ${bub.want}`);
+        const hotPts = await page.locator('dialog[open] .scene .hot:not(.hot-core)[data-muscle="chest"]').getAttribute('points');
+        if (bub.sel.length !== 1 || bub.sel[0] !== `mm sel ${hotPts}`) errors.push(`${tag} A13: .sel outline on ${JSON.stringify(bub.sel)}`);
+      }
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-muscle.png` });
+      // A tap on the bubble itself keeps it (the demo's tapStage guard); a second tap on the muscle closes it.
+      await page.locator('dialog[open] .bubble').click(); await page.waitForTimeout(150);
+      if (!(await page.locator('dialog[open] .bubble').count())) errors.push(`${tag} A13: a tap on the bubble closed it`);
+      await tapHot('chest');
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a second tap on the chest did not close the bubble`);
+      // A tap on the stage background closes a muscle bubble.
+      await tapHot('triceps');
+      const stBox = await page.locator('dialog[open] .stage').boundingBox();
+      await page.mouse.click(stBox.x + stBox.width - 20, stBox.y + stBox.height / 2); await page.waitForTimeout(150);
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a tap on the stage background did not close the muscle bubble`);
+      await tapHot('triceps');
+      await page.locator('dialog[open] .chips button').nth(0).click(); await page.waitForTimeout(150);
+      const zb = await page.locator('dialog[open] .bubble').textContent().catch(() => null);
+      if (zb !== 'Hold the middle of the handle. Wrists straight, not bent back.') errors.push(`${tag} A13: the chip did not replace the muscle bubble ("${zb}")`);
+      if (await page.locator('dialog[open] .sel').count()) errors.push(`${tag} A13: the outline stayed after a zoom chip`);
+      await page.locator('dialog[open] .chips button').nth(0).click(); await page.waitForTimeout(150);
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a second chip tap left a bubble`);
+      // Pictures: 4 tiles with the demo captions, no hotspot inside.
+      await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(150);
+      const pics = await page.evaluate(() => ({ tiles: [...document.querySelectorAll('dialog[open] .pics .tile p')].map(p => p.textContent), hot: document.querySelectorAll('dialog[open] .pics .hot').length, hint: document.querySelector('dialog[open] .hint').textContent }));
+      if (pics.tiles.join('|') !== 'Setup: handles at mid-chest|Press straight out|Arms almost straight, no lock|Back slowly, 2 s' || pics.hot || pics.hint !== 'Four key moments of one rep.') errors.push(`${tag} A6: Pictures ${JSON.stringify(pics)}`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-pictures.png` });
+      // Closing the sheet cancels every animation.
+      await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(600);
+      const left = await page.evaluate(() => ({ n: window.__fgAnims.length, live: window.__fgAnims.filter(a => a.playState !== 'idle').length, open: !!document.querySelector('.form-guide') }));
+      if (!left.n || left.live || left.open) errors.push(`${tag} A4: closing left ${left.live} of ${left.n} animations alive (guide still open: ${left.open})`);
+    }
+    await ctx.close();
+  }
+
+  // A7 and A13 on narrow phones (review of 25b05f6): the controls and the hotspots at 320 and 360 px.
+  for (const w of [320, 360]) {
+    const { ctx, page } = await open('silent-black', { viewport: { width: w, height: 740 } });
+    await startSession(page);
+    if (!(await openGuide(page))) errors.push(`${tag} ${w} px: the guide did not open`);
+    else {
+      await fitProbe(page, `${w} px`);
+      await hotProbe(page, `${w} px`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-guide-${w}.png` });
+    }
+    await ctx.close();
+  }
+
+  // A6: reduced motion shows Pictures only, with zero animate() calls, and says why.
+  {
+    const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce' });
+    await startSession(page);
+    if (!(await openGuide(page))) errors.push(`${tag} A6: the guide did not open under reduced motion`);
+    else {
+      const rm = await page.evaluate(() => ({ calls: window.__fgAnims.length, tiles: document.querySelectorAll('dialog[open] .pics:not([hidden]) .tile').length, scene: getComputedStyle(document.querySelector('dialog[open] .scene')).display, hint: document.querySelector('dialog[open] .hint').textContent, anim: document.querySelector('dialog[open] .seg.mode button').disabled, play: document.querySelector('dialog[open] .controls .btn-icon').disabled }));
+      if (rm.calls || rm.tiles !== 4 || rm.scene !== 'none' || rm.hint !== 'Pictures shown because your phone is set to reduce motion.' || !rm.anim || !rm.play) errors.push(`${tag} A6: reduced motion ${JSON.stringify(rm)}`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-reduced.png` });
+      await page.locator('dialog[open] .chips button').nth(1).click(); await page.waitForTimeout(150);
+      const st = await page.evaluate(() => ({ calls: window.__fgAnims.length, still: document.querySelectorAll('dialog[open] .scene.still .st-arm').length, cap: document.querySelector('dialog[open] .cap').textContent }));
+      if (st.calls || st.still !== 1 || st.cap !== 'Arms almost straight, no lock') errors.push(`${tag} A6: the Path still under reduced motion ${JSON.stringify(st)}`);
+    }
+    await ctx.close();
+  }
+
+  // A9: a failed chunk load keeps the sheet open with one line and Reload.
+  {
+    // The service worker would serve the precached chunk around page.route, so it is blocked here.
+    const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce', serviceWorkers: 'block' });
+    await page.route(/FormGuidePlayer-.*\.js$/, r => r.abort());
+    await startSession(page);
+    await options(page, 0); await howRow(page).click();
+    if (!(await visible(page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' })))) errors.push(`${tag} A9: no "Demo could not load." line after a failed chunk`);
+    else {
+      const f = await page.evaluate(() => ({ title: document.querySelector('dialog[open] h2')?.textContent, reload: [...document.querySelectorAll('dialog[open] button')].some(b => b.textContent === 'Reload') }));
+      if (f.title !== 'How to do it: Machine Chest Press' || !f.reload) errors.push(`${tag} A9: failure sheet ${JSON.stringify(f)}`);
+      await page.waitForTimeout(500);
+      if (!(await page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' }).isVisible())) errors.push(`${tag} A9: the sheet closed after a failed chunk`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-load-failed.png` });
+    }
+    await ctx.close();
+  }
+}
+
 await browser.close();
 stopping = true;
 server.kill();
