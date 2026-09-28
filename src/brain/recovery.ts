@@ -111,13 +111,15 @@ export function sessionRpeLoad(session: Session): number {
 /**
  * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
  * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at
- * least 14 days back. A fixed 28-day divisor would otherwise spike the ratio for a new account.
+ * least 14 days back. The chronic mean divides by the days training actually covers, at most 28
+ * (BUG-16, RECOVERY-F2): a fixed 28 made steady training on days 14 to 27 read as a spike.
  */
 export function acuteChronicRatio(sessions: Session[], refDay: string): number | null {
   const ago = (day: string) => daysBetween(day, refDay);
   const chronic = sessions.filter(s => { const d = ago(s.day); return d >= 0 && d < 28; });
   if (chronic.length < 3 || Math.max(...chronic.map(s => ago(s.day))) < 14) return null;
-  const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / 28;
+  const covered = Math.min(28, 1 + Math.max(...sessions.map(s => ago(s.day))));
+  const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / covered;
   if (!(ctl > 0)) return null;
   const atl = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
   return atl / ctl;
