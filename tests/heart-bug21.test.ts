@@ -116,6 +116,13 @@ describe('A2: effort mismatch compares within one exercise (D-A1 point 5, P2)', 
     const exercises = [{ sets: [s('max', 140), s('ideal', 180), s('easy', 130), s('ideal', 150), s('ideal', 150)] }];
     expect(effortMismatch(exercises)?.examplePct).toBe(Math.round(130 / 140 * 100));
   });
+  it('the coach note stays quiet for those two sessions (the rule used to compare across the whole session)', () => {
+    const ctx = { sessions: [], splits: [], schedule: emptySchedule(), custom: [], today: '2026-09-18', now: new Date('2026-09-18T12:00:00Z').getTime(), ...baseCoachExtras };
+    const set = (effort: 'easy' | 'ideal' | 'max', peakBpm: number): LoggedSet => ({ kg: 40, reps: 10, effort, heart: { peakBpm, endBpm: peakBpm } });
+    const legsAndCurls = sessionAt('2026-09-18T10:00:00.000Z', '2026-09-18T11:00:00.000Z', [{ id: 'lib_barbell_back_squat', sets: [set('easy', 150)] }, { id: 'lib_dumbbell_curl', sets: [set('max', 130), set('max', 132), set('max', 131), set('ideal', 125)] }]);
+    const onlyEasy = sessionAt('2026-09-18T10:00:00.000Z', '2026-09-18T11:00:00.000Z', [{ id: bench, sets: [150, 151, 152, 150, 149].map(p => set('easy', p)) }]);
+    for (const s of [legsAndCurls, onlyEasy]) expect(coachInsights({ ...ctx, sessions: [s] }, 20).some(i => i.id.startsWith('heart-mismatch'))).toBe(false);
+  });
   it('an exercise rated only easy has nothing to compare against', () => {
     const exercises = [{ sets: [s('easy', 150), s('easy', 151), s('easy', 152), s('easy', 150), s('easy', 149)] }];
     expect(effortMismatch(exercises)).toBeNull();
@@ -142,6 +149,11 @@ describe('A3: drift follows Appendix B (D-A1 point 7)', () => {
     const d = sessionDrift({ ...base, series: series(k => (k < 3 ? 90 : 98)) });
     expect(d?.driftPct).toBe(8.9);
     expect(d?.drifting).toBe(true);
+  });
+  it('takes the mean of exactly the first 3 and the last 3 pre-set HRs', () => {
+    const pre = [88, 90, 92, 96, 98, 106];
+    // (100 - 90) / 90 = 11.1%.
+    expect(sessionDrift({ ...base, series: series(k => pre[k]!) })?.driftPct).toBe(11.1);
   });
   it('8% or less is not drift', () => {
     // 100 → 108 is exactly +8%.
