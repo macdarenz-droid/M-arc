@@ -79,6 +79,14 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 - Re-reviews when `main` changed in files the PR touches or in the shared files above.
 - Treats evidence as valid only for the exact commit or APK it ran on. The release candidate gets its full regression run again after its last change.
 - Task states: ready → running → review → integrating → done (merged and accepted). A blocked task names its reason and what unblocks it.
+- One supervisor runs the whole project unless the owner names more; it owns every lane, the task board and the merge queue.
+- Acts on failures, never just watches them: reads the failing CI log itself. When the same failure hits several PRs, it root-causes it once (one fix PR, by itself or one builder), tells the other builders not to chase it, and brings each waiting PR up to date after the fix merges.
+- Helps builders instead of letting them burn tokens: does small checks and small fixes itself (reading a log, verifying a claim, a one-line doc fix, merging `main` into a waiting branch, the re-review after a `main` merge) instead of starting a new agent.
+- Checks every agent's report itself before accepting it: re-runs the key check on the exact commit.
+- Messages another session with a one-shot Routine bound to it (`create_trigger` with `persistent_session_id` and `run_once_at` a minute or two ahead). Never `fire_trigger` with text: that starts a new, empty session.
+- Archives a session as soon as its role is done: a reviewer after its review, a builder after its PR merges or closes.
+- Keeps Relay current (dashboard, `PROJECT_STATE.md`, `LOG.md`). Posts in `agents/All Updates` only when something important changed.
+- Speaks to the owner in plain words, and only at a phase end, a decision only the owner can make, or a blocker only the owner can clear. No play-by-play.
 
 **Commands:**
 - `npm ci`

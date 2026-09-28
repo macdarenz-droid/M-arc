@@ -15,13 +15,16 @@ describe('deloadTrigger (F3.3)', () => {
       session(d, [{ id: 'lib_barbell_bench_press', sets: sets(70 - i * 2.5, 9, 'ideal') }]),
       session(d, [{ id: 'lib_barbell_back_squat', sets: sets(100 - i * 2.5, 9, 'ideal') }], 'split_legs'),
     ]);
-    const r = deloadTrigger(s, today, [], []);
+    // BUG-14 (COACHRULES-F23, D-A1 point 6): an experienced lifter (24 months); a beginner is skipped.
+    const r = deloadTrigger(s, today, [], [], 24);
     expect(r.suggest).toBe(true);
     expect(r.reason).toMatch(/plateaued or slipped/);
   });
 
   it('suggests a deload when readiness has read red on 3 of the last 5 days', () => {
-    const r = deloadTrigger([], today, [], ['red', 'green', 'red', 'amber', 'red']);
+    // BUG-14 (COACHRULES-F23, D-A1 point 6): the offer needs 4 weeks of logged training first.
+    const month = ['2026-08-20', '2026-09-17'].map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8, 'ideal') }]));
+    const r = deloadTrigger(month, today, [], ['red', 'green', 'red', 'amber', 'red']);
     expect(r.suggest).toBe(true);
     expect(r.reason).toMatch(/red on three or more/);
   });
