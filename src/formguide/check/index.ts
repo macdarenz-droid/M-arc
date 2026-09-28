@@ -12,7 +12,7 @@ import { FLOOR } from '../rig/figureFront';
 import { FIGURE_TOKENS, bodyPal, mix, themeReader } from '../rig/paint';
 import type { Frame } from '../rig/pose';
 import type { Pt } from '../rig/ik';
-import { curveAt, drawnAt, poseAt, repSeconds, sampleGuide, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
+import { STEPS_PER_PHASE, curveAt, drawnAt, poseAt, repSeconds, sampleGuide, stopsFor, tempoOf, windowsFor, type Figure, type Window } from '../sample';
 import { MACHINES, anchorAt, offPath, setupMarkup, type MachineDrawing } from './machines';
 import { hasOverlay, type LibraryRow } from './overlays';
 import { effortOf, TORQUE } from './effort';
@@ -134,22 +134,29 @@ const stops: Fn = (c, fail) => {
       if (T < LIMITS.repS[0] || T > LIMITS.repS[1]) fail(`${L} rep lasts ${f2(T)} s, outside ${LIMITS.repS[0]}–${LIMITS.repS[1]} s (§2), so stop spacing leaves GU-7a's ¼ % of a 4 s rep`);
       for (const k of ['lift', 'lower'] as const) if (!(t[k] > 0)) fail(`${L} ${k} = ${t[k]} s: a ${g.kind} needs both moving phases`);
     }
-    const st = stopsFor(t, g.order, g.kind);
-    if (st[0] !== 0 || st[st.length - 1] !== 1) fail(`${L} stops run ${st[0]}..${st[st.length - 1]}, not 0..1`);
-    st.forEach((u, i) => { if (i && !(u > st[i - 1]!)) fail(`${L} stop ${i} at u=${f4(u)} does not increase`); });
-    for (const w of ws.filter(x => x.u1 - x.u0 > 1e-9)) {
-      const inside = st.filter(u => u >= w.u0 - 1e-9 && u <= w.u1 + 1e-9);
-      if (w.move) {
-        const step = (w.u1 - w.u0) / 100, bad = inside.findIndex((u, i) => i && Math.abs(u - inside[i - 1]! - step) > 1e-9);
-        if (inside.length !== 101) fail(`${L} ${w.name}: ${inside.length - 1} intervals, D-FG2 gives 100 per moving phase`);
-        else if (bad > 0) fail(`${L} ${w.name}: uneven stop at u=${f4(inside[bad]!)}`);
-      } else {
-        const mid = inside.filter(u => u > w.u0 + 1e-9 && u < w.u1 - 1e-9);
-        if (mid.length) fail(`${L} ${w.name}: ${mid.length} stops inside (first u=${f4(mid[0]!)}), D-FG2 allows its two ends only`);
-      }
-    }
+    for (const m of stopsRule(stopsFor(t, g.order, g.kind), ws)) fail(`${L} ${m}`);
   }
 };
+
+/** D-FG2's stop rule on a stop list and its phase windows: 0..1, increasing, 100 even intervals across each moving
+ * phase, no stop inside a hold or rest. Returns the failures. */
+export function stopsRule(st: readonly number[], ws: readonly Window[]): string[] {
+  const out: string[] = [];
+  if (st[0] !== 0 || st[st.length - 1] !== 1) out.push(`stops run ${st[0]}..${st[st.length - 1]}, not 0..1`);
+  st.forEach((u, i) => { if (i && !(u > st[i - 1]!)) out.push(`stop ${i} at u=${f4(u)} does not increase`); });
+  for (const w of ws.filter(x => x.u1 - x.u0 > 1e-9)) {
+    const inside = st.filter(u => u >= w.u0 - 1e-9 && u <= w.u1 + 1e-9);
+    if (w.move) {
+      const step = (w.u1 - w.u0) / STEPS_PER_PHASE, bad = inside.findIndex((u, i) => i && Math.abs(u - inside[i - 1]! - step) > 1e-9);
+      if (inside.length !== STEPS_PER_PHASE + 1) out.push(`${w.name}: ${inside.length - 1} intervals, D-FG2 gives ${STEPS_PER_PHASE} per moving phase`);
+      else if (bad > 0) out.push(`${w.name}: uneven stop at u=${f4(inside[bad]!)}, ${f4(inside[bad]! - inside[bad - 1]!)} after the last (step ${f4(step)})`);
+    } else {
+      const mid = inside.filter(u => u > w.u0 + 1e-9 && u < w.u1 - 1e-9);
+      if (mid.length) out.push(`${w.name}: ${mid.length} stops inside (first u=${f4(mid[0]!)}), D-FG2 allows its two ends only`);
+    }
+  }
+  return out;
+}
 
 const jointRanges: Fn = (c, fail) => {
   const g = c.g, r = c.in.research;
@@ -162,8 +169,9 @@ const jointRanges: Fn = (c, fail) => {
       const p = poseAt(g, u, 'correct', rep);
       for (const ch of CHANNELS) {
         const v = p[ch], cr = researchRange(r, ch), a = aaosTruth(ch, v);
-        if (cr && !seen.has(ch) && (v < cr.min - 1e-9 || v > cr.max + 1e-9)) { seen.add(ch); fail(`${ch} = ${f2(v)} outside the coaching range ${cr.min}..${cr.max} (research.json) at ${at(u, T, L)}`); }
-        if (a && !seen.has('a' + ch) && (v < a.min || v > a.max)) { seen.add('a' + ch); fail(`${ch} = ${f2(v)} outside the AAOS limits ${a.min}..${a.max} at ${at(u, T, L)}`); }
+        // written as !(inside) so a NaN fails
+        if (cr && !seen.has(ch) && !(v >= cr.min - 1e-9 && v <= cr.max + 1e-9)) { seen.add(ch); fail(`correct figure ${ch} = ${f2(v)} outside the coaching range ${cr.min}..${cr.max} (research.json) at ${at(u, T, L)}`); }
+        if (a && !seen.has('a' + ch) && !(v >= a.min && v <= a.max)) { seen.add('a' + ch); fail(`correct figure ${ch} = ${f2(v)} outside the AAOS limits ${a.min}..${a.max} at ${at(u, T, L)}`); }
       }
     }
   }
@@ -182,7 +190,7 @@ const mistakeSane: Fn = (c, fail) => {
     for (const ch of CHANNELS) {
       const v = p[ch], a = aaosTruth(ch, v);
       if (!Number.isFinite(v) && !seen.has(ch)) { seen.add(ch); fail(`${ch} = ${v} at ${at(u, T, 'mistake')}`); }
-      if (a && !seen.has('a' + ch) && (v < a.min || v > a.max)) { seen.add('a' + ch); fail(`${ch} = ${f2(v)} outside the AAOS limits ${a.min}..${a.max} at ${at(u, T, 'mistake')}`); }
+      if (a && !seen.has('a' + ch) && !(v >= a.min && v <= a.max)) { seen.add('a' + ch); fail(`${ch} = ${f2(v)} outside the AAOS limits ${a.min}..${a.max} at ${at(u, T, 'mistake')}`); }
     }
     if (cb && !seen.has('clip')) {
       const b = bbox(cb, (c.rig as Rig).frame(p));
@@ -219,10 +227,17 @@ const mistakeDiffers: Fn = (c, fail) => {
     return 'hold: sag delta';
   }
   if (typeof c.rig === 'string') return void fail(`hand and foot speed not measured: ${c.rig}`);
-  const k = peakSpeed(c, c.rig, 'correct'), m = peakSpeed(c, c.rig, 'mistake'), d = k.v ? Math.abs(m.v - k.v) / k.v : Infinity;
-  if (!(d >= LIMITS.speedDiff)) fail(`peak grip speed ${f2(m.v)} u/s (${m.a}, mistake u=${f4(m.u)}) vs ${f2(k.v)} u/s (${k.a}, rep 0 u=${f4(k.u)}): ${f2(100 * d)} % < ${100 * LIMITS.speedDiff} %`);
-  return `peak grip speed ${f2(k.v)} → ${f2(m.v)} u/s (${f2(100 * d)} %)`;
+  const k = peakSpeed(c, c.rig, 'correct'), m = peakSpeed(c, c.rig, 'mistake'), why = speedsDiffer(k.v, m.v);
+  if (why) fail(`peak grip speed ${f2(m.v)} u/s (${m.a}, mistake u=${f4(m.u)}) vs ${f2(k.v)} u/s (${k.a}, rep 0 u=${f4(k.u)}): ${why}`);
+  return `peak grip speed ${f2(k.v)} → ${f2(m.v)} u/s`;
 };
+
+/** mistakeDiffers' rule on the two peak speeds: null when they differ by 15 % or more; no motion in either never differs. */
+export function speedsDiffer(correct: number, mistake: number): string | null {
+  if (!(correct > 0) || !(mistake > 0)) return `no motion (${f2(correct)} and ${f2(mistake)} u/s), so nothing differs`;
+  const d = Math.abs(mistake - correct) / correct;
+  return d >= LIMITS.speedDiff ? null : `${f2(100 * d)} % < ${100 * LIMITS.speedDiff} %`;
+}
 
 const machineOf = (c: Ctx, fail: (s: string) => void): MachineDrawing | null => {
   if (typeof c.machine === 'string') { fail(c.machine); return null; }
@@ -259,7 +274,10 @@ const handsOnHandle: Fn = (c, fail) => {
   if (!m) return;
   if (typeof c.rig === 'string') return void fail(`gap not measured: ${c.rig}`);
   const drives = c.g.machine.drive.map(d => ({ d, p: m.parts[d.part] }));
+  if (!drives.length) fail(`machine ${c.g.machine.id} has 0 drive parts: nothing moves the machine`);
   drives.filter(x => !x.p).forEach(x => fail(`drive part ${x.d.part} is not in machine ${c.g.machine!.id}`));
+  const held = new Set(drives.map(x => x.p?.attach).filter(Boolean));
+  for (const a of c.g.equipment.attach.filter(a => /^(hand|foot)_/.test(a))) if (!held.has(a)) fail(`${a} holds the equipment but 0 of ${drives.length} drive parts attach it`);
   const seen = new Set<string>(), rig = c.rig;
   eachSample(c, rig, (f, u, T, L, tr) => drives.forEach(({ d, p }, i) => {
     if (!p?.attach || seen.has(d.part)) return;

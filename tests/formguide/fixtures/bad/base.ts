@@ -7,6 +7,8 @@ import { lib_dumbbell_lateral_raise as LR } from '@/formguide/exercises/lib_dumb
 
 const { sway: _sway, ...joints } = LR.mistake.joints as Record<string, unknown>;
 export const BASE = { ...LR, mistake: { ...LR.mistake, joints } } as ExerciseGuide;
-/** The base as a machine file (the machine lateral raise), for the machine checks. */
+/** The base as a machine file (the machine lateral raise), for the machine checks. The hands hold nothing here (the
+ * equipment attaches no point), and `STACK` is a drive part that moves the weight stack and attaches no body point. */
 export const machineBase = (machine: NonNullable<ExerciseGuide['machine']>, extra: Partial<ExerciseGuide> = {}): ExerciseGuide =>
-  ({ ...BASE, id: 'lib_machine_lateral_raise', machine, ...extra }) as ExerciseGuide;
+  ({ ...BASE, id: 'lib_machine_lateral_raise', equipment: { ...BASE.equipment, kind: 'none', attach: [] }, machine, ...extra }) as ExerciseGuide;
+export const STACK = { part: 'stack', travel: [0, 1], chain: [] } as NonNullable<ExerciseGuide['machine']>['drive'][number];

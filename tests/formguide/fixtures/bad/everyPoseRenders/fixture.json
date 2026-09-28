@@ -89,7 +89,21 @@
   "fx_empty": {
    "view": "front",
    "svg": "",
-   "parts": {}
+   "parts": {
+    "stack": {
+     "kind": "carriage",
+     "path": [
+      [
+       300,
+       420
+      ],
+      [
+       300,
+       380
+      ]
+     ]
+    }
+   }
   }
  },
  "hash": "d2f094cae1312e80"

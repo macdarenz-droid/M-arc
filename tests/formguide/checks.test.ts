@@ -5,12 +5,12 @@ import { readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import library from '@/data/exercises.json';
 import type { ExerciseGuide } from '@/formguide/model';
-import { CHECKS, runChecks, report, moments, type CheckId } from '@/formguide/check';
+import { CHECKS, runChecks, report, moments, speedsDiffer, stopsRule, type CheckId } from '@/formguide/check';
 import { inputFor, guideOf } from '@/formguide/check/node';
 import { CENSUS_VIEW_OVERRIDES, OVERLAYS, hasOverlay, hiddenTargets, type LibraryRow } from '@/formguide/check/overlays';
 import { anchorAt, offPath, type Lever } from '@/formguide/check/machines';
 import { bbox, compile, pathSegs } from '@/formguide/check/svg';
-import { windowsFor } from '@/formguide/sample';
+import { stopsFor, windowsFor } from '@/formguide/sample';
 import { BASE } from './fixtures/bad/base';
 
 const EX = 'src/formguide/exercises', BAD = 'tests/formguide/fixtures/bad';
@@ -34,13 +34,20 @@ describe('every exercise file passes every check', () => {
 
 describe('A1/A2 each check fails on its own seeded bad file, and names the check, the id and the numbers', () => {
   const dirs = readdirSync(BAD, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name);
-  it('one seeded bad file per check', () => expect([...dirs].sort()).toEqual([...CHECKS].sort()));
-  it.each([...CHECKS])('%s', async check => {
-    const f = readdirSync(`${BAD}/${check}`).find(x => x.endsWith('.ts'))!, path = `${BAD}/${check}/${f}`;
-    const g = guideOf(await import(`./fixtures/bad/${check}/${f}`), f), rs = runChecks(inputFor(path, g));
+  /** A folder is named for its check, with `.case` when a check has more than one bad file. */
+  const checkOf = (dir: string) => dir.split('.')[0] as CheckId;
+  it('at least one seeded bad file per check, and every folder names a check', () => {
+    expect([...new Set(dirs.map(checkOf))].sort()).toEqual([...CHECKS].sort());
+  });
+  /** The rule each extra case exercises, by its failing line. */
+  const CASE: Record<string, RegExp> = { 'handsOnHandle.nodrive': /has 0 drive parts: nothing moves the machine/, 'handsOnHandle.unattached': /hand_l holds the equipment but 0 of 1 drive parts attach it/ };
+  it.each(dirs)('%s', async dir => {
+    const check = checkOf(dir), f = readdirSync(`${BAD}/${dir}`).find(x => x.endsWith('.ts'))!, path = `${BAD}/${dir}/${f}`;
+    const g = guideOf(await import(`./fixtures/bad/${dir}/${f}`), f), rs = runChecks(inputFor(path, g));
     const r = rs.find(x => x.check === check)!;
     console.info(`[FG-3] ${check}: ${r.fails[0]}`);
     expect(failing(rs)).toEqual([check]);
+    if (CASE[dir]) expect(r.fails.join('\n')).toMatch(CASE[dir]!);
     for (const m of r.fails) {
       expect(m.startsWith(`${check} ${g.id}: `), m).toBe(true);
       // the failing numbers; idMatch's failing values are the two names it prints
@@ -67,6 +74,15 @@ describe('the rules inside each check', () => {
     for (const t of [[1.2, 0.5, 2, 0.8], [0.9, 0.3, 1.7, 0.6], [1.5, 1, 2.5, 0], [0.7, 0.4, 1.9, 0.5]])
       expect(only({ ...BASE, joints: { shoulder_abd: [10, 88] }, tempo: { lift: t[0], hold: t[1], lower: t[2], rest: t[3] } }, 'smoothness').fails, t.join('/')).toEqual([]);
   });
+  it('stops: D-FG2\'s rule on the stop list itself (99 intervals, an uneven stop, a stop in the hold, not 0..1)', () => {
+    const ws = windowsFor({ lift: 1, hold: 0.5, lower: 2, rest: 0.5 }, 'lift_first', 'rep'), good = stopsFor({ lift: 1, hold: 0.5, lower: 2, rest: 0.5 }, 'lift_first', 'rep');
+    expect(stopsRule(good, ws)).toEqual([]);
+    expect(stopsRule(good.filter((_, i) => i !== 50), ws)).toEqual(['lift: 99 intervals, D-FG2 gives 100 per moving phase']);
+    expect(stopsRule(good.map((u, i) => (i === 50 ? u + 0.001 : u)), ws)).toEqual(['lift: uneven stop at u=0.126, 0.0035 after the last (step 0.0025)']);
+    expect(stopsRule([...good.slice(0, 101), 0.3, ...good.slice(101)], ws)).toEqual(['hold: 1 stops inside (first u=0.3), D-FG2 allows its two ends only']);
+    expect(stopsRule(good.slice(0, -1), ws)).toEqual(['stops run 0..0.875, not 0..1']);
+    expect(stopsRule([0, ...good], ws).join()).toMatch(/stop 1 at u=0 does not increase/);
+  });
   it('stops: a rep with one moving phase fails; a hold has stops at its ends only', () => {
     expect(only({ ...BASE, tempo: { lift: 1, hold: 0.5, lower: 0, rest: 2.5 } }, 'stops').fails.join()).toMatch(/lower = 0 s: a rep needs both moving phases/);
     const hold = { ...BASE, kind: 'hold', tempo: { hold: 4 }, mistake: { ...BASE.mistake, tempo: undefined } };
@@ -75,6 +91,17 @@ describe('the rules inside each check', () => {
   it('jointRanges: a written channel without a research range fails, and so does leaving the AAOS limits', () => {
     expect(only({ ...BASE, joints: { ...BASE.joints, hip_flex: 5 } }, 'jointRanges').fails.join()).toMatch(/hip_flex_[lr] is written but research.json has no coaching range/);
     expect(only({ ...BASE, joints: { ...BASE.joints, knee_flex: 140 } }, 'jointRanges').fails.join()).toMatch(/knee_flex_[lr] = 140 outside the AAOS limits 0..135/);
+  });
+  it('jointRanges: a NaN in the correct figure fails, named as the correct figure', () => {
+    expect(only({ ...BASE, joints: { ...BASE.joints, knee_flex: NaN } }, 'jointRanges').fails.join()).toMatch(/correct figure knee_flex_[lr] = NaN outside the coaching range 0..10/);
+    expect(only({ ...BASE, joints: { ...BASE.joints, torso_lean: NaN } }, 'jointRanges').fails.join()).toMatch(/correct figure torso_lean = NaN outside the AAOS limits/);
+  });
+  it('mistakeDiffers: no motion in either figure never differs; 15 % either way does', () => {
+    expect(speedsDiffer(0, 0)).toMatch(/no motion \(0 and 0 u\/s\)/);
+    expect(speedsDiffer(0, 10)).toMatch(/no motion/);
+    expect(speedsDiffer(100, 114.9)).toBe('14.9 % < 15 %');
+    expect(speedsDiffer(100, 115)).toBeNull();
+    expect(speedsDiffer(100, 85)).toBeNull();
   });
   it('mistakeSane: fewer than two tells, NaN and the AAOS limits fail', () => {
     expect(only({ ...BASE, mistake: { ...BASE.mistake, tells: BASE.mistake.tells.slice(0, 1) } }, 'mistakeSane').fails.join()).toMatch(/1 tells, the mistake needs 2/);
@@ -190,7 +217,7 @@ describe('A4 npm run fg:check', () => {
     const bad = run(`${BAD}/jointRanges/lib_dumbbell_lateral_raise.ts`);
     expect(bad.status).toBe(1);
     expect(bad.stdout).toMatch(/^FAIL jointRanges$/m);
-    expect(bad.stdout).toMatch(/jointRanges lib_dumbbell_lateral_raise: knee_flex_[lr] = 12 outside the coaching range 0..10 \(research.json\) at u=0 \(0 s, rep 0\)/);
+    expect(bad.stdout).toMatch(/jointRanges lib_dumbbell_lateral_raise: correct figure knee_flex_[lr] = 12 outside the coaching range 0..10 \(research.json\) at u=0 \(0 s, rep 0\)/);
     expect(run('lib_nothing').status).toBe(2);
   }, 30_000);
 });
