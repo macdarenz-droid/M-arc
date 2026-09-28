@@ -17,6 +17,7 @@ import { effortSplit, effortUsesSets } from '@/ui/EffortBars';
 import { allRecords, PR_LABEL } from '@/brain/prs';
 import { evaluatePlan } from '@/brain/plan';
 import { suggestNext } from '@/brain/progression';
+import { inLighterWeek } from '@/brain/deload';
 import { warmupSets } from '@/brain/coach/pre';
 import { pickCue } from '@/brain/coach/cues';
 import { substitutesFor } from '@/brain/substitute';
@@ -72,8 +73,10 @@ export function summarize(component: string, params: P, ctx: ToolCtx): Record<st
       const hist = sampleEvenly(inWindow, 12);
       const points = hist.map(h => ({ day: h.day, value: val(h) }));
       const values = inWindow.map(val).filter(v => v > 0);
-      const p = plateauStatus(all, liftMode);
-      const t = liftTrend(all, liftMode);
+      // BUG-15: the lighter week's sessions are not decline evidence.
+      const evidence = all.filter(h => !inLighterWeek(h.day, s.deload));
+      const p = plateauStatus(evidence, liftMode);
+      const t = liftTrend(evidence, liftMode);
       // O4: the per-session effort split. A bodyweight/assisted load only reaches Escobar with
       // sharing.body on (BODY_KEYS/BODY_FACT in loop.ts scrub by key name, not by value, so the
       // numbers themselves must never be body-weight-derived when sharing is off).

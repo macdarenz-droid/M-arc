@@ -253,8 +253,12 @@ describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
     const target = R.getNextTarget({ exerciseId: bench, plannedSets: 3 }, ctxOf(s)) as { sets: Array<{ kg: number; reps: number }> };
     const t = target.sets[0]!;
     const easy = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: t.reps + 2, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null; current: { setsPlanned: number } };
-    expect(easy.adjustment).toMatch(/Try/);
+    // BUG-15 (COACHRULES-F7): this fixture's readiness reads amber, so an easy set never brings "add load".
+    expect(easy.adjustment).toBe(`Keep ${t.kg} kg for the next set.`);
     expect(easy.current.setsPlanned).toBe(3);
+    // The easy warm-up in front is not read: a missed first working set still brings its advice.
+    const missed = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: Math.max(1, t.reps - 3), effort: 'max', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null };
+    expect(missed.adjustment).toMatch(/\S/);
     const unrated = R.getLiveSession({}, ctxOf(live({}) as never)) as { adjustment: string | null };
     expect(unrated.adjustment).toBeNull();
   });
@@ -345,5 +349,23 @@ describe('BUG-11 A4: an off-ladder target names the equipment snap', () => {
   it('no snap, no equipmentSnap field', () => {
     const t = R.getNextTarget({ exerciseId: 'lib_barbell_bench_press' }, ctxOf(emptyState())) as unknown as { equipmentSnap?: unknown };
     expect(t.equipmentSnap).toBeUndefined();
+  });
+});
+
+// BUG-15 review item 2: the lighter week's sessions are not decline evidence for Escobar either.
+describe('lift history after a lighter week (BUG-15)', () => {
+  const bench = 'lib_barbell_bench_press';
+  const at = (day: string, kg: number, effort: 'ideal' | 'easy', n: number, i: number) => ({ id: `lw${i}`, splitId: 'x', splitName: 'Push', day, startedAt: `${day}T10:00:00.000Z`, endedAt: `${day}T11:00:00.000Z`, durationSec: 3600, exercises: [{ exerciseId: bench, name: 'Bench', sets: Array.from({ length: n }, () => ({ kg, reps: 8, effort })) }], logging: { mode: 'live', flags: [] } as never });
+  // Seven weeks at 100 × 8, then the lighter week at 90 kg; TODAY is the day after it ends.
+  const weeks = [0, 1, 2, 3, 4, 5, 6].map(i => at(addDaysLocal(TODAY, -56 + i * 7), 100, 'ideal', 3, i));
+  const lighter = [-7, -4].map((o, i) => at(addDaysLocal(TODAY, o), 90, 'easy', 2, 10 + i));
+  const state = () => ({ ...emptyState(), sessions: [...weeks, ...lighter], deload: { startDay: addDaysLocal(TODAY, -7), endDay: addDaysLocal(TODAY, -1), reason: 'x', setFactor: 0.6, loadFactor: 0.9 } });
+  it('get_exercise_history reads plateaued, not declining', () => {
+    const h = R.getExerciseHistory({ exerciseId: bench, weeks: 12 }, ctxOf(state())) as { plateau: { status: string } };
+    expect(h.plateau.status).toBe('plateaued');
+  });
+  it('the lift_trend card reads plateaued, not declining', async () => {
+    const { summarize } = await import('@/escobar/tools/show');
+    expect((summarize('lift_trend', { exerciseId: bench, weeks: 12 }, ctxOf(state())) as { plateau: string }).plateau).toBe('plateaued');
   });
 });
