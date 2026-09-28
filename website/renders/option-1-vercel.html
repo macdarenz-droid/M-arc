@@ -62,7 +62,7 @@ html[data-scrolled] .hdr{background:var(--bg);border-bottom-color:var(--line)}
 .menu .menu-actions{display:flex;flex-wrap:wrap;gap:12px;padding:16px 0 20px}
 
 /* hero */
-.hero{padding-top:64px;padding-bottom:96px}
+.hero{padding-top:32px;padding-bottom:96px}
 .hero-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter);align-items:start}
 .hero-copy{grid-column:1/7;max-width:520px}
 .hero-visual{grid-column:8/13;display:flex;flex-direction:column;align-items:flex-start;gap:20px}
@@ -77,14 +77,14 @@ h1{font-size:var(--display);line-height:var(--display-lh);letter-spacing:var(--d
 .panel::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px var(--line);pointer-events:none}
 .panel.fade{mask-image:linear-gradient(#000 calc(100% - 140px),transparent);-webkit-mask-image:linear-gradient(#000 calc(100% - 140px),transparent)}
 .panel img{width:100%;height:auto;aspect-ratio:390/844}
-.panel.r640{aspect-ratio:390/640}
+.panel.r540{aspect-ratio:390/540}
 .panel.r700{aspect-ratio:390/700}
 .panel.r780{aspect-ratio:390/780}
 .panel.r844{aspect-ratio:390/844}
 .panel.r344{aspect-ratio:390/344}
 .panel.r344 img{margin-top:-58.46%}
-.panel.r650{aspect-ratio:390/650}
-.panel.r650 img{margin-top:-49.7%}
+.panel.r628{aspect-ratio:390/628}
+.panel.r628 img{margin-top:-55.4%}
 .stack{position:relative;width:100%;aspect-ratio:390/844}
 .stack img{position:absolute;inset:0;opacity:0}
 .stack img.on{opacity:1}
@@ -93,7 +93,7 @@ h1{font-size:var(--display);line-height:var(--display-lh);letter-spacing:var(--d
 .themes button[aria-checked="true"]{color:var(--text)}
 
 /* ruler */
-.ruler{position:relative;margin-top:64px;padding-top:176px;--tick:1%;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.ruler{position:relative;margin-top:40px;padding-top:140px;--ruler-delay:0ms;--tick:1%;font-family:var(--mono);font-variant-numeric:tabular-nums}
 .scale{position:relative;height:24px}
 .ticks{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:flex-end}
 .ticks span{display:block;width:1px;height:8px;background:var(--muted);opacity:.4}
@@ -131,13 +131,15 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
 .c-fig6l{grid-column:1/7}
 .c-copy5r{grid-column:8/13}
 .c-copy5b{grid-column:1/6}
-.c-fig7{grid-column:6/13;display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap}
+.c-fig7{grid-column:6/13;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.c-fig7 .figure{width:390px;max-width:100%;flex:none}
+.c-fig7 .caption{max-width:100%}
 .caption{font-family:var(--mono);font-size:var(--caption);line-height:var(--caption-lh);color:var(--muted);margin-top:16px;max-width:52ch;font-variant-numeric:tabular-nums}
 .figure{display:flex;flex-direction:column;align-items:flex-start}
 
 /* hairline tables */
 .tbl{font-family:var(--mono);font-size:14px;line-height:22px;font-variant-numeric:tabular-nums;margin-top:40px;border-top:1px solid var(--line);width:100%}
-.tbl .row{position:relative;display:grid;grid-template-columns:minmax(150px,1fr) 2fr;gap:24px;padding:14px 0}
+.tbl .row{position:relative;display:grid;grid-template-columns:auto 1fr;gap:16px;padding:14px 0}
 .tbl .row::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform-origin:left}
 .tbl .k{color:var(--text)}
 .tbl .v{color:var(--muted)}
@@ -145,7 +147,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
 .tbl.kv .v{color:var(--text)}
 .tbl.right{grid-template-columns:1fr}
 .tbl.readout{font-size:13px}
-.tbl.readout .row{grid-template-columns:72px 1fr;gap:12px}
+.tbl.readout .row{grid-template-columns:56px 1fr;gap:12px}
 .tbl.readout .k{text-align:right;color:var(--text)}
 
 /* ledger */
@@ -154,30 +156,36 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
 .ledger-wrap::before{left:-5px}
 .ledger-wrap::after{right:-5px}
 .ledger{display:grid;grid-template-columns:repeat(8,1fr);border-left:1px solid var(--line);border-top:1px solid var(--line)}
-.cell{position:relative;padding:16px 14px 18px;border-right:1px solid var(--line);min-height:170px;display:grid;grid-template-rows:36px auto 1fr;align-content:start;gap:12px}
+.cell{position:relative;padding:16px 12px 18px;border-right:1px solid var(--line);min-height:170px;display:grid;grid-template-rows:36px auto 1fr;align-content:start;gap:12px}
 .cell .src{align-self:end}
 .cell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform-origin:left}
 .cell .lbl{font-family:var(--mono);font-size:12px;line-height:16px;color:var(--muted)}
-.cell .fig{font-size:clamp(32px,3.4vw,44px);line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
-.cell .src{font-family:var(--mono);font-size:12px;line-height:16px;color:var(--muted);overflow-wrap:anywhere}
+.cell .fig{font-size:44px;line-height:1;letter-spacing:-0.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cell .src{font-family:var(--mono);font-size:12px;line-height:16px;color:var(--muted);overflow-wrap:normal}
+
+/* record strip */
+.recs{display:grid;grid-template-columns:repeat(3,1fr);list-style:none;margin:0 0 24px;padding:0;width:100%;border-left:1px solid var(--line);border-top:1px solid var(--line);font-family:var(--mono);font-size:13px;line-height:20px;color:var(--text);font-variant-numeric:tabular-nums}
+.rec{position:relative;padding:12px 12px;border-right:1px solid var(--line)}
+.rec::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform-origin:left}
 
 /* train callouts */
 .fig-wrap{position:relative;width:100%}
 .callouts{position:absolute;left:390px;top:0;bottom:0;width:190px;margin:0;padding:0;list-style:none}
 .callouts li{position:absolute;left:0;display:flex;align-items:center;gap:0;font-family:var(--mono);font-size:13px;line-height:20px;color:var(--text);white-space:nowrap;transform:translateY(-50%)}
 .callouts li::before{content:"";display:block;width:36px;height:1px;background:var(--line-strong);margin-right:10px;transform-origin:left}
-.callouts li:nth-child(1){top:48.3%}
-.callouts li:nth-child(2){top:57.6%}
-.callouts li:nth-child(3){top:85.3%}
+.callouts li:nth-child(1){top:52.3%}
+.callouts li:nth-child(2){top:62.3%}
+.callouts li:nth-child(3){top:92.3%}
 
 /* rings */
 .rings{display:flex;flex-wrap:wrap;gap:16px 24px;margin-top:24px}
-.ring{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;line-height:20px;color:var(--muted);font-variant-numeric:tabular-nums}
-.ring svg{width:40px;height:40px;transform:rotate(-90deg)}
-.ring .track{fill:none;stroke:var(--line);stroke-width:3}
-.ring .val{fill:none;stroke:var(--text);stroke-width:3;stroke-linecap:butt;stroke-dasharray:var(--v) 100}
-.ring .mark{fill:none;stroke:var(--muted);stroke-width:7;stroke-dasharray:.8 100;stroke-dashoffset:-89.6}
-.readout-col{min-width:220px;flex:1}
+.ring{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;line-height:20px;color:var(--text);font-variant-numeric:tabular-nums}
+.ring svg{width:56px;height:56px;flex:none}
+.ring .track{fill:none;stroke:var(--line);stroke-width:4}
+.ring .val{fill:none;stroke:var(--text);stroke-width:4;stroke-linecap:butt;stroke-dasharray:var(--v) 100}
+.ring .mark{stroke:var(--muted);stroke-width:2}
+.rings .caption{margin-top:0;width:100%}
+.readout-col{min-width:240px;flex:1}
 .readout-col .tbl{margin-top:0}
 
 /* chain */
@@ -230,11 +238,11 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   .panel::after{transition:box-shadow 150ms ease}
   .disc{transition:grid-template-rows 250ms var(--ease)}
   .disc-btn svg{transition:transform 250ms var(--ease)}
-  .tbl .row::after,.cell::after{transition:transform 400ms var(--ease);transition-delay:calc(var(--i,0) * 40ms)}
+  .tbl .row::after,.cell::after,.rec::after{transition:transform 400ms var(--ease);transition-delay:calc(var(--i,0) * 40ms)}
   .cell::after{transition-delay:calc(var(--i,0) * 60ms)}
   .callouts li::before{transition:transform 300ms var(--ease);transition-delay:calc(var(--i,0) * 80ms)}
   .ring .val{transition:stroke-dasharray 700ms var(--ease);transition-delay:calc(var(--i,0) * 120ms)}
-  html.js [data-draw]:not(.in) .row::after,html.js [data-draw]:not(.in) .cell::after,html.js [data-draw]:not(.in) .callouts li::before{transform:scaleX(0)}
+  html.js [data-draw]:not(.in) .row::after,html.js [data-draw]:not(.in) .cell::after,html.js [data-draw]:not(.in) .rec::after,html.js [data-draw]:not(.in) .callouts li::before{transform:scaleX(0)}
   html.js [data-draw]:not(.in) .ring .val{stroke-dasharray:0 100}
   /* screenshot wipe-in */
   html.js .wipe{mask-image:linear-gradient(90deg,#000 0 45%,transparent 60% 100%);-webkit-mask-image:linear-gradient(90deg,#000 0 45%,transparent 60% 100%);mask-size:300% 100%;-webkit-mask-size:300% 100%;mask-repeat:no-repeat;-webkit-mask-repeat:no-repeat;mask-position:0 0;-webkit-mask-position:0 0}
@@ -248,13 +256,17 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   @keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
   .hero.is-live .mark-hero circle{transform-box:fill-box;transform-origin:center;animation:dot 200ms var(--ease) 540ms both}
   @keyframes dot{from{transform:scale(.4)}to{transform:scale(1)}}
-  .hero.is-live .hero-panel{animation:panelIn 900ms var(--ease) 500ms both}
+  .hero.is-live .hero-panel{animation:panelIn 900ms var(--ease) 250ms both}
   @keyframes panelIn{0%{opacity:0;transform:scale(.97)}30%{opacity:0;transform:scale(.985)}100%{opacity:1;transform:none}}
-  .hero.is-live .marker{animation:marker 900ms var(--ease) 1100ms both}
+  /* the ruler waits at tick 0 once the hero is live, then settles when it is in view */
+  .hero.is-live .ruler:not(.is-set) .marker{transform:translateX(calc(-66 * var(--tick) - .5px))}
+  .hero.is-live .ruler:not(.is-set) .ticks-bright{mask-position:100% 0;-webkit-mask-position:100% 0}
+  .hero.is-live .ruler:not(.is-set) .advice{opacity:0}
+  .hero.is-live .ruler.is-set .marker{animation:marker 900ms var(--ease) var(--ruler-delay) both}
   @keyframes marker{from{transform:translateX(calc(-66 * var(--tick) - .5px))}to{transform:translateX(-.5px)}}
-  .hero.is-live .ticks-bright{animation:light 900ms steps(66,end) 1100ms both}
+  .hero.is-live .ruler.is-set .ticks-bright{animation:light 900ms steps(66,end) var(--ruler-delay) both}
   @keyframes light{from{mask-position:100% 0;-webkit-mask-position:100% 0}to{mask-position:33.5% 0;-webkit-mask-position:33.5% 0}}
-  .hero.is-live .advice{animation:fade 200ms ease 1800ms both}
+  .hero.is-live .ruler.is-set .advice{animation:fade 200ms ease calc(var(--ruler-delay) + 700ms) both}
   @keyframes fade{from{opacity:0}to{opacity:1}}
 }
 @media (hover:hover) and (pointer:fine){
@@ -266,6 +278,10 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   .code .copy:hover{color:var(--text)}
 }
 
+/* wide */
+@media (min-width:1280px){
+  .cell .fig{font-size:52px}
+}
 /* tablet */
 @media (max-width:1023px){
   :root{--sec:96px}
@@ -279,8 +295,13 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   .hero-visual .panel{width:300px}
   .g12>.c-copy5,.g12>.c-fig6,.g12>.c-fig6l,.g12>.c-copy5r,.g12>.c-copy5b,.g12>.c-fig7{grid-column:1/-1}
   .c-fig6,.c-fig6l,.c-fig7{margin-top:40px}
+  .c-fig7{display:block}
+  .c-fig7 .figure,.figure{width:100%;min-width:0}
+  .c-fig7 .readout-col{margin-top:32px;max-width:390px}
+  .panel{width:100%;max-width:390px}
+  .caption{max-width:100%}
   .ledger{grid-template-columns:repeat(4,1fr)}
-  .cell .fig{font-size:56px}
+  .cell .fig{font-size:44px}
   .callouts{position:static;width:auto;margin-top:16px;border-top:1px solid var(--line);width:100%;max-width:390px}
   .callouts li{position:static;transform:none;padding:10px 0;border-bottom:1px solid var(--line)}
   .callouts li::before{width:16px}
@@ -292,20 +313,27 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   :root{--sec:64px;--gutter:16px;--hdr:56px;--display:40px;--display-lh:44px;--h2:32px;--h2-lh:36px}
   .menu-btn{display:inline-block;margin-left:auto}
   .hdr-actions{display:none}
-  .hero{padding-top:40px;padding-bottom:64px}
+  .hero{padding-top:32px;padding-bottom:64px}
   .mark-hero{width:48px;height:48px}
   .ruler{padding-top:96px}
+  .themes{gap:0}
+  .themes button{padding:6px 5px;font-size:12px}
+  .recs{grid-template-columns:repeat(2,1fr);font-size:12px;line-height:18px}
   .marker .fig{font-size:56px;left:auto;right:10px;bottom:72px}
   .band{display:none}
   .bands-row{display:flex;justify-content:space-between;gap:16px;margin-top:8px;font-size:12px;line-height:16px;color:var(--muted)}
   .ledger{grid-template-columns:repeat(2,1fr)}
   .cell{min-height:150px}
-  .cell .fig{font-size:44px}
+  .cell .fig{font-size:40px}
   .tbl .row{grid-template-columns:1fr;gap:4px}
-  .tbl.readout .row{grid-template-columns:72px 1fr;gap:16px}
+  .tbl.readout .row{grid-template-columns:56px 1fr;gap:16px}
   .chain .row{grid-template-columns:1fr}
   .ftr-row{flex-direction:column}
   .card{padding:24px 16px}
+}
+/* narrow phones */
+@media (max-width:399px){
+  .labels span:nth-child(even){display:none}
 }
 </style>
 
@@ -329,7 +357,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
         <a href="#install" data-sec="install">Install</a>
       </nav>
       <div class="hdr-actions">
-        <a class="txt" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">See the source on GitHub</a>
+        <a class="txt" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener" aria-label="See the source on GitHub">Source</a>
         <a class="btn sm" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download for Android</a>
       </div>
       <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="menu">Menu</button>
@@ -359,19 +387,19 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
         <div class="hero-grid">
           <div class="hero-copy">
             <svg class="mark-hero rise" style="--d:0" viewBox="0 0 64 64" role="img" aria-label="M/ARC mark"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="1" fill="none" stroke="#f7f8f8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="50" r="4.5" fill="#5e6ad2"/></svg>
-            <p class="version rise" style="--d:40">Version 37.1.0 for Android and the browser</p>
-            <h1 id="hero-h" class="rise" style="--d:80">What to lift today, and why.</h1>
-            <p class="sub rise" style="--d:140">M/ARC is a workout log for Android and the browser. It keeps every set on your phone, works out how recovered each of 24 muscles is, scores the day from 0 to 100 and sets your next targets from your own numbers. No account. Nothing leaves the phone unless you turn on Escobar, the optional online coach.</p>
-            <div class="ctas rise" style="--d:200">
+            <p class="version rise" style="--d:60">Version 37.1.0 for Android and the browser</p>
+            <h1 id="hero-h" class="rise" style="--d:20">What to lift today, and why.</h1>
+            <p class="sub rise" style="--d:100">M/ARC is a workout log for Android and the browser. It keeps every set on your phone, works out how recovered each of 24 muscles is, scores the day from 0 to 100 and sets your next targets from your own numbers. No account. Nothing leaves the phone unless you turn on Escobar, the optional online coach.</p>
+            <div class="ctas rise" style="--d:150">
               <a class="btn" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download for Android</a>
               <a class="btn ghost" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">See the source on GitHub</a>
             </div>
-            <p class="note rise" style="--d:260">Signed APK. Works offline. Public source.</p>
+            <p class="note rise" style="--d:200">Signed APK. Works offline. Public source.</p>
           </div>
           <div class="hero-visual">
-            <div class="panel fade r640 hero-panel" id="hero-panel">
+            <div class="panel fade r540 hero-panel" id="hero-panel">
               <div class="stack" id="stack">
-                <img class="on wipe" style="--wipe-delay:500ms" src="shots/silent-black-today.png" width="390" height="844" fetchpriority="high" decoding="async" data-theme="silent-black" alt="The Today screen on a Push day: readiness Amber at 66, three exercises planned, triceps 45% recovered.">
+                <img class="on wipe" style="--wipe-delay:250ms" src="shots/silent-black-today.png" width="390" height="844" fetchpriority="high" decoding="async" data-theme="silent-black" alt="The Today screen on a Push day: readiness Amber at 66, three exercises planned.">
               </div>
             </div>
             <div class="themes" role="radiogroup" aria-label="App theme shown in the panel" id="themes">
@@ -406,14 +434,14 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
         <h2 id="ledger-h">What ships in 37.1.0.</h2>
         <p class="lead">Every figure on this page is read from the source, which is public on GitHub.</p>
         <div class="ledger-wrap"><div class="ledger" data-draw>
-          <div class="cell" style="--i:0"><span class="lbl">exercises</span><span class="fig">153</span><span class="src">src/data/exercises.json</span></div>
-          <div class="cell" style="--i:1"><span class="lbl">muscles</span><span class="fig">24</span><span class="src">src/data/muscles.ts</span></div>
-          <div class="cell" style="--i:2"><span class="lbl">kinds of records</span><span class="fig">6</span><span class="src">src/brain/prs.ts</span></div>
-          <div class="cell" style="--i:3"><span class="lbl">changes Escobar can propose</span><span class="fig">14</span><span class="src">src/escobar/tools/schema.ts</span></div>
-          <div class="cell" style="--i:4"><span class="lbl">seconds to undo</span><span class="fig">8</span><span class="src">docs/ARCHITECTURE.md</span></div>
+          <div class="cell" style="--i:0"><span class="lbl">exercises</span><span class="fig">153</span><span class="src">src/<wbr>data/<wbr>exercises.json</span></div>
+          <div class="cell" style="--i:1"><span class="lbl">muscles</span><span class="fig">24</span><span class="src">src/<wbr>data/<wbr>muscles.ts</span></div>
+          <div class="cell" style="--i:2"><span class="lbl">kinds of records</span><span class="fig">6</span><span class="src">src/<wbr>brain/<wbr>prs.ts</span></div>
+          <div class="cell" style="--i:3"><span class="lbl">changes Escobar can propose</span><span class="fig">14</span><span class="src">src/<wbr>escobar/<wbr>tools/<wbr>schema.ts</span></div>
+          <div class="cell" style="--i:4"><span class="lbl">seconds to undo</span><span class="fig">8</span><span class="src">docs/<wbr>ARCHITECTURE.md</span></div>
           <div class="cell" style="--i:5"><span class="lbl">unit tests</span><span class="fig">1,255</span><span class="src">tests/, 117 files, 3 time zones</span></div>
-          <div class="cell" style="--i:6"><span class="lbl">themes</span><span class="fig">5</span><span class="src">src/theme/themes.ts</span></div>
-          <div class="cell" style="--i:7"><span class="lbl">signing key</span><span class="fig">1</span><span class="src">.github/workflows/build-apk.yml</span></div>
+          <div class="cell" style="--i:6"><span class="lbl">themes</span><span class="fig">5</span><span class="src">src/<wbr>theme/<wbr>themes.ts</span></div>
+          <div class="cell" style="--i:7"><span class="lbl">signing key</span><span class="fig">1</span><span class="src">.github/<wbr>workflows/<wbr>build-apk.yml</span></div>
         </div></div>
       </div></div>
     </section>
@@ -433,7 +461,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
             </div>
           </div>
           <div class="c-fig6 figure">
-            <div class="panel r650">
+            <div class="panel r628">
               <img class="wipe" src="shots/silent-black-checkin.png" width="390" height="844" loading="lazy" decoding="async" alt="The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale.">
             </div>
             <p class="caption">The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale.</p>
@@ -448,7 +476,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
         <div class="g12">
           <div class="c-fig6l figure">
             <div class="fig-wrap" data-draw>
-              <div class="panel fade r844">
+              <div class="panel r780">
                 <img class="wipe" src="shots/silent-black-live.png" width="390" height="844" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: set one 50 kg for 8 rated E, set two 52.5 kg for 6 rated I, the third pre-filled at 50 kg for 6, rest counting down from 1:30.">
               </div>
               <ul class="callouts" aria-label="Rows in the picture">
@@ -493,15 +521,15 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
               </div>
               <div class="rings">
                 <div class="ring" style="--i:0;--v:45">
-                  <svg viewBox="0 0 40 40" aria-hidden="true"><circle class="track" cx="20" cy="20" r="17" pathLength="100"/><circle class="mark" cx="20" cy="20" r="17" pathLength="100"/><circle class="val" cx="20" cy="20" r="17" pathLength="100"/></svg>
+                  <svg viewBox="0 0 56 56" aria-hidden="true"><g transform="rotate(-90 28 28)"><circle class="track" cx="28" cy="28" r="22" pathLength="100"/><circle class="val" cx="28" cy="28" r="22" pathLength="100"/><line class="mark" x1="52" y1="28" x2="55" y2="28" transform="rotate(324 28 28)"/></g></svg>
                   <span>Triceps 45%</span>
                 </div>
                 <div class="ring" style="--i:1;--v:58">
-                  <svg viewBox="0 0 40 40" aria-hidden="true"><circle class="track" cx="20" cy="20" r="17" pathLength="100"/><circle class="mark" cx="20" cy="20" r="17" pathLength="100"/><circle class="val" cx="20" cy="20" r="17" pathLength="100"/></svg>
+                  <svg viewBox="0 0 56 56" aria-hidden="true"><g transform="rotate(-90 28 28)"><circle class="track" cx="28" cy="28" r="22" pathLength="100"/><circle class="val" cx="28" cy="28" r="22" pathLength="100"/><line class="mark" x1="52" y1="28" x2="55" y2="28" transform="rotate(324 28 28)"/></g></svg>
                   <span>Chest 58%</span>
                 </div>
+                <p class="caption">The small tick on each ring marks 90%, Ready.</p>
               </div>
-              <p class="caption">The small tick on each ring marks 90%, Ready.</p>
             </div>
           </div>
         </div>
@@ -518,9 +546,14 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
             <p class="lead">Open any past session and edit a set; recovery is rebuilt from the corrected history. Delete one by mistake and Undo brings it back with its heart-rate data. Swipe the calendar to move between months. Share a week or a session as a card.</p>
           </div>
           <div class="c-fig6 figure">
-            <div class="tbl" data-draw style="margin-top:0;margin-bottom:24px;width:100%">
-              <div class="row" style="--i:0;grid-template-columns:1fr"><span class="k">Heaviest load · Strength estimate · More reps at a load · Most reps · Longest hold · Furthest carry</span></div>
-            </div>
+            <ul class="recs" data-draw aria-label="The six kinds of records">
+              <li class="rec" style="--i:0">Heaviest load</li>
+              <li class="rec" style="--i:1">Strength estimate</li>
+              <li class="rec" style="--i:2">More reps at a load</li>
+              <li class="rec" style="--i:3">Most reps</li>
+              <li class="rec" style="--i:4">Longest hold</li>
+              <li class="rec" style="--i:5">Furthest carry</li>
+            </ul>
             <div class="panel fade r844">
               <img class="wipe" src="shots/silent-black-stats.png" width="390" height="844" loading="lazy" decoding="async" alt="History in Stats view. The machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping.">
             </div>
@@ -579,10 +612,10 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
         <div class="cards">
           <div class="card">
             <p class="eyebrow">In the browser</p>
-            <h3>Add to Home Screen</h3>
-            <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and keeps every screen working without a network.</p>
+            <h3>Runs in the browser</h3>
+            <p>M/ARC also runs as a web app, but it has no hosted address yet. When it does, open it in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. Until then, install the APK or build the web app from the source.</p>
             <div><a class="btn" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">See the source on GitHub</a></div>
-            <p class="req">No hosted address yet. Build it from the source, or install the APK.</p>
+            <p class="req">No hosted address yet. Build from the source, or install the APK.</p>
           </div>
           <div class="card">
             <p class="eyebrow">Android APK</p>
@@ -748,7 +781,21 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   /* hero orchestration, once, only when motion is welcome */
   var hero=$('#hero');
   if(hero&&okMotion){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){hero.classList.add('is-live')})});
+    var liveAt=0;
+    requestAnimationFrame(function(){requestAnimationFrame(function(){hero.classList.add('is-live');liveAt=performance.now()})});
+    /* the ruler settles once it is half in view; if it is in view on load it keeps its place in the sequence */
+    var setRuler=function(){
+      if(!ruler||ruler.classList.contains('is-set'))return;
+      var wait=Math.max(0,900-(liveAt?performance.now()-liveAt:0));
+      ruler.style.setProperty('--ruler-delay',Math.round(wait)+'ms');
+      ruler.classList.add('is-set');
+    };
+    if(ruler&&'IntersectionObserver' in window){
+      var rulerObs=new IntersectionObserver(function(entries){
+        if(entries.some(function(en){return en.isIntersecting})){setRuler();rulerObs.disconnect()}
+      },{threshold:0.5});
+      rulerObs.observe(ruler);
+    }else{setRuler()}
   }
 
   /* theme radiogroup for the Today panel */
@@ -760,10 +807,10 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
       if(img===null){
         img=doc.createElement('img');
         img.src='shots/'+theme+'-today.png';img.width=390;img.height=844;img.decoding='async';img.setAttribute('data-theme',theme);
-        img.alt='The Today screen in the '+radioLabel(theme)+' theme: readiness Amber at 66, three exercises planned, triceps 45% recovered.';
+        img.alt='The Today screen in the '+radioLabel(theme)+' theme: readiness Amber at 66, three exercises planned.';
         stack.appendChild(img);
         /* the four other images load on the first choice */
-        radios.forEach(function(r){var t=r.getAttribute('data-theme');if($('img[data-theme="'+t+'"]',stack)===null){var pre=doc.createElement('img');pre.src='shots/'+t+'-today.png';pre.width=390;pre.height=844;pre.decoding='async';pre.loading='eager';pre.setAttribute('data-theme',t);pre.alt='The Today screen in the '+radioLabel(t)+' theme: readiness Amber at 66, three exercises planned, triceps 45% recovered.';stack.appendChild(pre)}});
+        radios.forEach(function(r){var t=r.getAttribute('data-theme');if($('img[data-theme="'+t+'"]',stack)===null){var pre=doc.createElement('img');pre.src='shots/'+t+'-today.png';pre.width=390;pre.height=844;pre.decoding='async';pre.loading='eager';pre.setAttribute('data-theme',t);pre.alt='The Today screen in the '+radioLabel(t)+' theme: readiness Amber at 66, three exercises planned.';stack.appendChild(pre)}});
       }
       var swap=function(){$$('img',stack).forEach(function(i){i.classList.toggle('on',i===img)})};
       if(img.complete&&img.naturalWidth>0){swap()}else{img.addEventListener('load',swap,{once:true})}
