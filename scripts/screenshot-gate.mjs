@@ -4823,8 +4823,10 @@ for (const theme of ['silent-black', 'paper']) {
     await page.goto(`http://localhost:${PORT}/`);
     await page.waitForSelector('.nav');
     await launchGone(page);
-    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(250);
-    await page.getByRole('button', { name: 'Finish', exact: true }).click().catch(() => errors.push(`${tag} (${label}): no Finish button on the live session`));
+    // With a session in progress the Train tab reads "Live".
+    await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(250);
+    const finish = page.getByRole('button', { name: 'Finish', exact: true });
+    await finish.click({ timeout: 5000 }).catch(() => errors.push(`${tag} (${label}): no Finish button on the live session`));
     await page.waitForTimeout(300);
     const note = page.locator('[data-finish-trimmed]');
     const shown = await visible(note);
