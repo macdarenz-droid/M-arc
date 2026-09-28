@@ -417,3 +417,123 @@ describe('BUG-11: every equipment kind and unit keeps a load already logged for 
     expect(n.reason).toMatch(/Moved to 8 kg, the nearest weight your equipment has, so the reps may need to change/);
   });
 });
+
+// BUG-15 (PROGRESSION-F1/F4/F5/F6, COACHRULES-F7): the lighter week cuts from a fixed pre-week
+// base, ends in a hold at the pre-week level, and its sessions are never later evidence.
+describe('lighter week: in-week and post-week histories (BUG-15)', () => {
+  const week = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+  const pre = [
+    session('2026-09-08', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+    session('2026-09-11', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+  ];
+  // What the old rule told the lifter to do: each session cut the one before.
+  const inWeek = [
+    session('2026-09-14', [{ id: ex, sets: sets(65.5, 8, 'easy', 2) }]),
+    session('2026-09-16', [{ id: ex, sets: sets(59, 8, 'easy', 1) }]),
+  ];
+
+  it('A1: every in-week session targets 0.9 × and 0.6 × the pre-week level, with no compounding', () => {
+    for (const [today, hist] of [['2026-09-14', pre], ['2026-09-16', [...pre, inWeek[0]!]], ['2026-09-18', [...pre, ...inWeek]]] as const) {
+      const s = suggestNext([...hist], ex, 'lean', today, 3, [], { deload: week, lastDeload: week });
+      expect(s.mode).toBe('deload');
+      expect(s.kg).toBe(65.5); // half(72.5 × 0.9)
+      expect(s.sets.length).toBe(2); // round(3 × 0.6)
+      expect(s.sets.every(x => x.kg === 65.5)).toBe(true);
+    }
+  });
+
+  it('A1: with a barbell profile every in-week session snaps down to the same loadable 65 kg', async () => {
+    const { defaultProfile } = await import('@/brain/units');
+    const equipment = defaultProfile('Barbell', 'kg');
+    const a = suggestNext([...pre, inWeek[0]!], ex, 'lean', '2026-09-16', 3, [], { deload: week, equipment });
+    const b = suggestNext([...pre, ...inWeek], ex, 'lean', '2026-09-18', 3, [], { deload: week, equipment });
+    expect([a.kg, b.kg]).toEqual([65, 65]);
+    expect([a.sets.length, b.sets.length]).toEqual([2, 2]);
+  });
+
+  it('A1: a lift first logged inside the week repeats that load, never cuts it again', () => {
+    const only = [session('2026-09-14', [{ id: ex, sets: sets(60, 8, 'easy', 2) }])];
+    const s = suggestNext(only, ex, 'lean', '2026-09-16', 3, [], { deload: week });
+    expect(s.kg).toBe(60);
+    expect(s.sets.length).toBe(2);
+  });
+
+  it('A2: the first session after the week holds the pre-week level, not the lighter loads', () => {
+    const s = suggestNext([...pre, ...inWeek], ex, 'lean', '2026-09-21', 3, [], { lastDeload: week });
+    expect(s.mode).toBe('hold');
+    expect(s.kg).toBe(72.5);
+    expect(s.reps).toEqual([8, 8]);
+    expect(s.sets.length).toBe(3);
+    expect(s.reason).toMatch(/lighter week is over/);
+    // After that first session, progress resumes from the pre-week sessions plus the new one.
+    const back = session('2026-09-22', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]);
+    const n = suggestNext([...pre, ...inWeek, back], ex, 'lean', '2026-09-24', 3, [], { lastDeload: week });
+    expect([n.mode, n.kg, n.reps]).toEqual(['hold', 72.5, [9, 9]]);
+  });
+
+  it('A3: lighter sessions are not decline evidence: two clean tops after the week earn the increase', () => {
+    const d = { startDay: '2026-09-07', endDay: '2026-09-13', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+    const days = ['2026-07-27', '2026-08-03', '2026-08-10', '2026-08-17', '2026-08-24', '2026-08-31'];
+    const hist = [
+      ...days.map(day => session(day, [{ id: ex, sets: sets(100, 12, 'max', 3) }])),
+      session('2026-09-08', [{ id: ex, sets: sets(90, 8, 'easy', 2) }]),
+      session('2026-09-11', [{ id: ex, sets: sets(90, 8, 'easy', 2) }]),
+      session('2026-09-15', [{ id: ex, sets: sets(100, 12, 'ideal', 3) }]),
+      session('2026-09-18', [{ id: ex, sets: sets(100, 12, 'ideal', 3) }]),
+    ];
+    const s = suggestNext(hist, ex, 'lean', '2026-09-21', 3, [], { lastDeload: d });
+    expect(s.mode).toBe('increase');
+    expect(s.kg).toBe(102.5);
+  });
+
+  it('A4: a lighter week and a red day mark their set list as a cut', () => {
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { deload: week }).cutSets).toBe(true);
+    const red = suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { readiness: { loadAdvice: 'reduce' } });
+    expect(red.cutSets).toBe(true);
+    expect(red.sets.length).toBe(2);
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, []).cutSets).toBeUndefined();
+  });
+
+  it('A5: a lighter week, an amber or red day and a cut factor hold the load for live advice', () => {
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { deload: week }).holdLoad).toBe(true);
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { readiness: { loadAdvice: 'no_increase' } }).holdLoad).toBe(true);
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { readiness: { loadAdvice: 'reduce' } }).holdLoad).toBe(true);
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { loadFactor: 0.9 }).holdLoad).toBe(true);
+    expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { readiness: { loadAdvice: 'normal' } }).holdLoad).toBeUndefined();
+  });
+});
+
+// BUG-15 review items 1 and 3.
+describe('lighter week: chained weeks and the set factor (BUG-15 review)', () => {
+  const week1 = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+  const pre = [
+    session('2026-09-08', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+    session('2026-09-11', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+  ];
+  const inWeek1 = ['2026-09-14', '2026-09-16', '2026-09-18'].map(d => session(d, [{ id: ex, sets: sets(65.5, 8, 'easy', 2) }]));
+
+  it('item 1: a second week straight after the first keeps the original pre-week base', async () => {
+    const { chainedStartDay } = await import('@/brain/deload');
+    const week2 = { ...week1, startDay: chainedStartDay(week1, [...pre, ...inWeek1], '2026-09-21'), endDay: '2026-09-27' };
+    expect(week2.startDay).toBe('2026-09-14');
+    const inWeek2 = [...pre, ...inWeek1, session('2026-09-21', [{ id: ex, sets: sets(65.5, 8, 'easy', 2) }])];
+    const s = suggestNext(inWeek2, ex, 'lean', '2026-09-22', 3, [], { deload: week2, lastDeload: week2 });
+    expect([s.kg, s.sets.length, s.reason]).toEqual([65.5, 2, 'Lighter week, day 2 of 7.']);
+    // The week after holds the original pre-week level, not week 1's lighter one.
+    const after = suggestNext(inWeek2, ex, 'lean', '2026-09-28', 3, [], { lastDeload: week2 });
+    expect([after.mode, after.kg, after.sets.length]).toEqual(['hold', 72.5, 3]);
+  });
+
+  it('item 1: a session after the first week re-establishes the level, so the next week starts fresh', async () => {
+    const { chainedStartDay } = await import('@/brain/deload');
+    const back = session('2026-09-22', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]);
+    expect(chainedStartDay(week1, [...pre, ...inWeek1, back], '2026-09-24')).toBe('2026-09-24');
+    expect(chainedStartDay(null, pre, '2026-09-24')).toBe('2026-09-24');
+  });
+
+  it('item 3: the 0.6 set factor: five pre-week sets give 3 (0.8 gives 4), six give 4 (0.5 gives 3)', () => {
+    // round(5 × 0.5) is also 3 (2.5 rounds up), so the six-set case is what tells 0.5 from 0.6.
+    const n = (count: number) => suggestNext([session('2026-09-11', [{ id: ex, sets: sets(72.5, 8, 'ideal', count) }])], ex, 'lean', '2026-09-15', count, [], { deload: week1 }).sets.length;
+    expect([n(5), n(6)]).toEqual([3, 4]);
+  });
+});
