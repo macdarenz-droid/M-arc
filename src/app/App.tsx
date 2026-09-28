@@ -28,6 +28,8 @@ import { IconBody, IconDumbbell, IconCalendar, IconEscobar, IconSun } from '@/ui
 import { bootRecovered, saveError, state } from '@/core/store';
 import { keepAwake, keepAwakePref } from '@/native/keepAwake';
 import { launchOverlayGone } from './launch';
+import { errorReportsAskTrigger } from '@/errors';
+import { ErrorReportsAskSheet } from '@/errors/AskSheet';
 
 /** The recovery banner shows once per launch; the rescue row stays in Settings until deleted. */
 const recoveredSeen = signal(false);
@@ -91,6 +93,7 @@ export function App() {
           <button type="button" class="btn btn-quiet btn-sm" style={{ marginLeft: 8 }} onClick={() => { recoveredSeen.value = true; }}>OK</button>
         </div>
       )}
+      {launchOverlayGone.value && panel !== 'settings' && panel !== 'profile' && !onboardingTrigger.value && errorReportsAskTrigger.value && <ErrorReportsAskSheet />}
       {t === 'today' && <Today />}
       {t === 'train' && <Train />}
       {t === 'history' && <History />}

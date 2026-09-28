@@ -253,6 +253,10 @@ export interface Preferences {
   rest: RestPreference;
   /** F5: a weekly "save a backup" notification (default on in the Android app). */
   backupReminder?: boolean;
+  /** 7.5: unset (old saves too) means off. Only on once the user says yes to the one-time ask. */
+  errorReports?: boolean;
+  /** 7.5: the one-time ask has been shown and answered, Yes or No. */
+  errorReportsAsked?: boolean;
 }
 
 export interface Profile {
