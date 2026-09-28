@@ -122,7 +122,9 @@ describe('the rules inside each check', () => {
     const side = only({ ...BASE, view: 'side', viewWhy: 'test' }, 'everyPoseRenders').fails.join();
     expect(side).toMatch(/no side view figure yet/);
     expect(only({ ...BASE, pose: 'lying_supine' }, 'themes').fails.join()).toMatch(/no lying_supine pose/);
-    expect(only({ ...BASE, equipment: { ...BASE.equipment, kind: 'barbell' } }, 'pathBudget').fails.join()).toMatch(/part barbell has no drawing yet/);
+    // FG-5 drew the free-weight parts, so a part still missing from the library (the sled) stands in for barbell here.
+    expect(only({ ...BASE, equipment: { ...BASE.equipment, kind: 'sled' } }, 'pathBudget').fails.join()).toMatch(/part sled has no drawing yet/);
+    expect(only({ ...BASE, equipment: { ...BASE.equipment, kind: 'barbell' } }, 'pathBudget').fails).toEqual([]);
   });
   it('muscleTiming: an effort step over 0.02 per 1/120 s, a loud keep-quiet muscle and a quiet mistake fail', () => {
     const e = (effort: object, mistake?: object) => ({ ...BASE, muscles: { ...BASE.muscles, effort }, mistake: { ...BASE.mistake, muscles: mistake } });
