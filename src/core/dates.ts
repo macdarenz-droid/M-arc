@@ -129,6 +129,14 @@ export function formatClock(sec: number): string {
 }
 
 /** "3h" / "1.5d" style durations for recovery copy. */
+/** BUG-17 (RECOVERY-F1): a muscle still under 90 % at the model's 120 h window cap. */
+export const BEYOND_CAP_TEXT = '5+ days';
+
+/** Hours left to ready, or "5+ days" past the window cap. */
+export function formatHoursLeft(r: { hoursLeft: number; beyondCap?: boolean }): string {
+  return r.beyondCap ? BEYOND_CAP_TEXT : formatHours(r.hoursLeft);
+}
+
 export function formatHours(hours: number): string {
   if (hours < 1) return 'under 1h';
   if (hours < 24) return `${Math.round(hours)}h`;
@@ -233,10 +241,13 @@ export interface ReadyGroupInfo {
  * with no window ("Sore today"), or a recovering muscle with no window that isn't sore (dropped
  * into Later with its plain hours-left estimate).
  */
-export function readyGroupFor(now: number, r: { readyInHours: [number, number] | null; hoursLeft: number; soreToday?: boolean }): ReadyGroupInfo {
+export function readyGroupFor(now: number, r: { readyInHours: [number, number] | null; hoursLeft: number; soreToday?: boolean; beyondCap?: boolean }): ReadyGroupInfo {
   if (r.readyInHours) {
     const w = readyWindow(now, r.readyInHours[0], r.readyInHours[1]);
     return { group: w.group, groupDay: w.groupDay, tileText: w.tileText, detailText: w.detailText, earliestMs: w.earliestMs, latestMs: w.latestMs };
+  }
+  if (r.beyondCap) {
+    return { group: 'later', groupDay: null, tileText: BEYOND_CAP_TEXT, detailText: `Ready in ${BEYOND_CAP_TEXT}`, earliestMs: now + r.hoursLeft * 3_600_000, latestMs: Number.POSITIVE_INFINITY };
   }
   if (r.soreToday) {
     return { group: 'sore', groupDay: null, tileText: 'Not today', detailText: 'Ready when soreness eases', earliestMs: now, latestMs: Number.POSITIVE_INFINITY };

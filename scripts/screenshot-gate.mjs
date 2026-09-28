@@ -5373,6 +5373,50 @@ for (const { theme, inset } of bug22Runs) {
   }
 }
 
+// BUG-17 (RECOVERY-F1): a muscle with more than 120 h still to go reads "5+ days" on Today, the
+// Body ready-time tile and the muscle panel's Ready label, never "under 1h". Seed: a novice (no
+// training start), squat to max for 10 sets of 12 on three days in a row, the last ending 1.5 h ago.
+{
+  const tag = 'BUG-17 5+ days';
+  const pinned = new Date(); pinned.setHours(12, 0, 0, 0);
+  const sq = (hoursAgo) => {
+    const at = pinned.getTime() - hoursAgo * 3_600_000, d = new Date(at);
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const s0 = new Date(at).toISOString(), s1 = new Date(at + 1_800_000).toISOString();
+    return { id: `b17-${hoursAgo}`, splitId: 'sp1', splitName: 'Legs', day, startedAt: s0, endedAt: s1, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId: 'lib_barbell_back_squat', name: 'Barbell Back Squat', sets: Array.from({ length: 10 }, () => ({ kg: 100, reps: 12, effort: 'max' })) }],
+      logging: { mode: 'live', trainedAt: s0, trainedEndAt: s1, loggedAt: s1, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } };
+  };
+  const now = new Date().toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc' }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [sq(50), sq(26), sq(2)], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j]) => { localStorage.setItem('marc.state.v1', j); localStorage.setItem('marc.theme', 'silent-black'); }, [json]);
+  await page.clock.install({ time: pinned.getTime() });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  const todayRow = await page.evaluate(() => [...document.querySelectorAll('[data-palace="today.recovery"] .row-between')].find(r => r.children[0]?.textContent === 'Quads')?.children[1]?.textContent ?? null);
+  if (!todayRow?.endsWith('· 5+ days')) errors.push(`${tag}: Today's Quads row reads ${JSON.stringify(todayRow)}, expected "N% · 5+ days"`);
+  await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+  const tile = await page.evaluate(() => [...document.querySelectorAll('button.rt-tile')].find(t => t.querySelector('.rt-tile-name')?.textContent === 'Quads')?.textContent ?? null);
+  if (!tile?.includes('5+ days')) errors.push(`${tag}: Body's Quads tile reads ${JSON.stringify(tile)}, expected "5+ days"`);
+  await page.locator('.seg button', { hasText: 'Levels' }).click(); await page.waitForTimeout(200);
+  await page.locator('.list-row', { hasText: 'Quads' }).first().click(); await page.waitForTimeout(300);
+  const tl = await page.evaluate(() => [...document.querySelectorAll('dialog.sheet[open] .mtl-tl-col')].map(c => [c.querySelector('.mtl-tl-key')?.textContent, c.querySelector('.mtl-tl-val')?.textContent]));
+  const ready = tl.find(([k]) => k === 'Ready')?.[1];
+  if (ready !== '5+ days') errors.push(`${tag}: the muscle panel's Ready label reads ${JSON.stringify(ready)} (timeline ${JSON.stringify(tl)}), expected "5+ days"`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();
