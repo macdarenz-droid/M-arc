@@ -38,7 +38,8 @@ export function dumbbell(o: DumbbellOptions): Part {
     inner = `<path d="M${-x} -3.5h${2 * x}v7h${-2 * x}Z" fill="${SH}" stroke="${INK}" stroke-width="1.4"/>`
       + body(rrect(-x - d, -h / 2, d, h, 3) + rrect(x, -h / 2, d, h, 3), o.g, 2)
       + edge(`M${n2(-x - d + 3)} ${n2(-h / 2 + 2)}h${n2(d - 6)}M${n2(x + 3)} ${n2(-h / 2 + 2)}h${n2(d - 6)}`)
-      + (o.kg != null ? `<text x="0" y="${n2(h / 2 + 12)}" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="10" fill="${INK}" opacity=".75">${o.kg} KG</text>` : '');
+      // The load on the near (right) head, as on the end-on head: ink on iron reads in every theme.
+      + (o.kg != null ? `<text x="${n2(x + d / 2)}" y="1" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="9" fill="${INK}" opacity=".75">${o.kg}</text><text x="${n2(x + d / 2)}" y="8" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="5" fill="${INK}" opacity=".65">KG</text>` : '');
   }
   return { id: 'dumbbell', view: o.view ?? 'front', svg: wrap('dumbbell', inner), anchors: { hand_l: [0, 0], hand_r: [0, 0] } };
 }

@@ -10,7 +10,7 @@ import { mix, themeReader } from '@/formguide/rig/paint';
 import { CHECKS, runChecks, guideHash } from '@/formguide/check';
 import { inputFor } from '@/formguide/check/node';
 import { PARTS, rigFor, viewOf } from '@/formguide/check/view';
-import { countPaths, parseTransform } from '@/formguide/check/svg';
+import { bbox, compile, countPaths, parseTransform } from '@/formguide/check/svg';
 import { apply } from '@/formguide/rig/pose';
 import { SWAY_DRIFT_DEG, poseAt } from '@/formguide/sample';
 import library from '@/data/exercises.json';
@@ -174,6 +174,23 @@ describe('A3 anchors for hand, back, shoulder and foot', () => {
     expect(bench({ g, angle: 120 }).svg).toContain('data-angle="90"');
     expect(bench({ g, angle: -45 }).svg).toContain('data-angle="-20"');
   });
+  it('the barbell\'s shoulders sit on its axis at the rig\'s shoulder joints (front) and at its centre (side) (review 1)', () => {
+    const f = barbell({ g, kg: 60 }).anchors, sh = mm(RIG_MM.shoulders) / 2;
+    expect(f.shoulder_l).toEqual([-sh, 0]);
+    expect(f.shoulder_r).toEqual([sh, 0]);
+    const s = barbell({ g, kg: 60, view: 'side' }).anchors;
+    expect(s.shoulder_l).toEqual([0, 0]);
+    expect(s.shoulder_r).toEqual([0, 0]);
+  });
+  it('every load label sits on the iron, so it reads in every theme (review 2)', () => {
+    for (const id of FREE_WEIGHT_PARTS) for (const p of VARIANTS[id]()) {
+      const irons = [...p.svg.matchAll(/<(?:path|polygon)\b[^>]*fill="url\(#fgp-i\)"[^>]*\/>/g)].map(m => bbox(compile(m[0]), {}));
+      for (const t of p.svg.matchAll(/<text x="([-\d.]+)" y="([-\d.]+)"/g)) {
+        const x = +t[1]!, y = +t[2]!;
+        expect(irons.some(b => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1), `${id} ${p.view} label at ${x},${y}`).toBe(true);
+      }
+    }
+  });
   it('the bench\'s back pad is drawn at the angle its anchor follows', () => {
     for (const angle of [-20, 0, 45]) {
       const p = bench({ g, angle }), m = /<g transform="([^"]+)"><path d="M([-\d.]+) 0/.exec(p.svg)!;
@@ -218,14 +235,16 @@ describe('A3 anchors for hand, back, shoulder and foot', () => {
     expect(r.ok).toBe(false);
     expect(r.fails.join('\n')).toMatch(/hand_[lr] is 1 units from the bar_hand_[lr] anchor/);
   });
-  it('bodyOnPad: feet on a box, the back on a bench, the shoulders under a racked bar', () => {
+  it('bodyOnPad: feet on a box, the back on a bench, the shoulders under a racked bar and under a barbell', () => {
     const [fl, fr] = [at('foot_l'), at('foot_r')];
     const bx = place(box({ g, view: 'front' }), [(fl[0] + fr[0]) / 2, fl[1] - box({ g, view: 'front' }).anchors.foot_l![1]]);
     const feet = { ...bx, anchors: { foot_l: bx.anchors.foot_l, foot_r: bx.anchors.foot_r } };
     const bk = bench({ g, view: 'front' }), bp = place(bk, [at('back')[0] - bk.anchors.back![0], at('back')[1] - bk.anchors.back![1]]);
     const back = { ...bp, anchors: { back: bp.anchors.back } };
     const rk = rack({ g, view: 'front' }), sh = at('shoulder_r'), rp = place(rk, [sh[0] - rk.anchors.shoulder_r![0], sh[1] - rk.anchors.shoulder_r![1]]);
-    for (const p of [feet, back, rp]) {
+    const bb = barbell({ g, kg: 60 }), sr = at('shoulder_r'), bbp = place(bb, [sr[0] - bb.anchors.shoulder_r![0], sr[1] - bb.anchors.shoulder_r![1]]);
+    const onBack = { ...bbp, anchors: { shoulder_l: bbp.anchors.shoulder_l, shoulder_r: bbp.anchors.shoulder_r } };
+    for (const p of [feet, back, rp, onBack]) {
       expect(run(asDrawing('front', [p]), 'bodyOnPad').fails).toEqual([]);
       const r = run(asDrawing('front', [off(p, 1)]), 'bodyOnPad');
       expect(r.ok).toBe(false);
