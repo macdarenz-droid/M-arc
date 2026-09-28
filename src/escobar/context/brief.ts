@@ -8,7 +8,7 @@ import type { MemoryItem } from '@/core/models';
 import { daysBetween, weekdayOf, trainedTodaySessions } from '@/core/dates';
 import { muscleLabel } from '@/data/muscles';
 import { GOAL_BY_ID } from '@/data/goals';
-import { trainingAgeMonths, ageOf } from '@/brain/recovery';
+import { trainingAgeMonths, ageOf, possiblyMinor } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
 import { resolveProfile } from '@/brain/units';
@@ -97,7 +97,8 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
   L.week = `${num(w.workouts, 'sessions this week')} of ${num(planned, 'planned sessions this week')} planned sessions, ${num(w.sets, 'sets this week')} sets, ${num(w.records.length, 'records this week')} records`;
 
-  const top = coachInsights(coachCtx(ctx), 5);
+  // BUG-20: insights built from unshared body or health data stay on the phone.
+  const top = coachInsights(coachCtx(ctx), 5, e.sharing);
   L.top_insights = top.length ? top.map(i => `${i.id} "${one(i.title)}"`).join('; ') : 'none';
 
   const g = GOAL_BY_ID[s.goal];
@@ -125,7 +126,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   const off = [!e.sharing.health && 'health', !e.sharing.body && 'body'].filter(Boolean);
   L.sharing = off.length ? `${off.join(' and ')} sharing off` : 'health and body shared';
   L.tone = e.tone;
-  if (age != null && age < 18) L.minor = 'true';
+  if (possiblyMinor(s.profile, ctx.now)) L.minor = 'true';
   if (inp.signals?.length) L.signals = inp.signals.join(', ');
   L.mode = `${inp.mode}: ${MODE_ADDENDUM[inp.mode]}`;
   L.pending = inp.pending?.length ? inp.pending.map(p => `${p.id} "${one(p.title)}"`).join('; ') : 'none';

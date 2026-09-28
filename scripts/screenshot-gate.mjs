@@ -597,6 +597,104 @@ for (const theme of themes) {
   await ctx.close();
 }
 
+// BUG-12: on Stats > Weekly volume, the "avg" label (on the dashed average line) and the
+// current-week value label (above the right-most bar) used to overlap when this week sat near the
+// average. Seed 11 earlier weeks at 10k kg and this week at 0.8x, 1.0x and 1.2x of the 12-week
+// average, and check the two label boxes never intersect (A1); at 1.0x, in all 5 themes at 390 px,
+// the avg label overlaps no bar value label (A2).
+// A4 (every chart with value labels, audited in the PR): the dashed avg line must sit where an
+// average-height bar ends and never run through the value label; and on Exercise progress (the same
+// bench sessions, so the latest point is the min at 0.8x, flat at 1.0x, the max at 1.2x) the opaque
+// min/max labels must never cover the latest point's end dot.
+{
+  const tag = 'BUG-12 volume labels';
+  const intersects = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+  const runs = [...[0.8, 1, 1.2].map(r => ({ r, theme: 'silent-black' })), ...themes.filter(t => t !== 'silent-black').map(theme => ({ r: 1, theme }))];
+  for (const { r, theme } of runs) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    const where = `${tag} (${theme}, ${r}x avg)`;
+    page.on('pageerror', e => errors.push(`${where}: ${e.message}`));
+    // avg = (11 * 10000 + x) / 12 and x = r * avg, so x = 11 * r * 10000 / (12 - r).
+    const thisWeekKg = (11 * r * 10000) / (12 - r) / 100;
+    await page.addInitScript(([thisKg, theme]) => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sess = (offset, kg) => ({ id: `bug12-${offset}`, splitId: 'sp1', splitName: 'Push', day: day(offset), startedAt: `${day(offset)}T12:00:00.000Z`, endedAt: `${day(offset)}T13:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+        exercises: [{ exerciseId: 'lib_bench_press', name: 'Bench Press', sets: Array.from({ length: 10 }, () => ({ kg, reps: 10, effort: 'ideal' })) }],
+        logging: { mode: 'live', trainedAt: `${day(offset)}T12:00:00.000Z`, trainedEndAt: `${day(offset)}T13:00:00.000Z`, loggedAt: `${day(offset)}T13:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } });
+      localStorage.setItem('marc.theme', theme);
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions: [...Array.from({ length: 11 }, (_, i) => sess(7 * (11 - i), 100)), sess(0, thisKg)],
+        active: null, customExercises: [],
+        preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, [thisWeekKg, theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav');
+    await launchGone(page);
+    await page.waitForTimeout(300);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(250);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(250);
+    await settle(page);
+    await page.locator('[data-palace="history.weekly-volume"]').scrollIntoViewIfNeeded();
+    const got = await page.evaluate(() => {
+      const card = document.querySelector('[data-palace="history.weekly-volume"]');
+      const avg = card?.querySelector('.volume-avg span');
+      const values = [...(card?.querySelectorAll('.volume-bar-value') ?? [])];
+      const box = el => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
+      const cur = card?.querySelector('.volume-bars i.current .volume-bar-value');
+      const bars = card?.querySelector('.volume-bars');
+      const line = card?.querySelector('.volume-avg');
+      let lineY = null, expectedLineY = null, lineHitsLabel = false;
+      if (bars && line && cur) {
+        lineY = line.getBoundingClientRect().top;
+        const pcts = [...bars.querySelectorAll('i')].map(b => parseFloat(b.style.height) || 0);
+        const contentH = bars.clientHeight - parseFloat(getComputedStyle(bars).paddingTop);
+        expectedLineY = bars.getBoundingClientRect().bottom - (pcts.reduce((a, b) => a + b, 0) / pcts.length / 100) * contentH;
+        const c = cur.getBoundingClientRect();
+        // Where the line crosses the label's box, the label must be on top (hit test) and opaque
+        // (a transparent label on top still shows the dashes through its digits).
+        if (lineY >= c.top && lineY <= c.bottom) {
+          const hit = document.elementFromPoint((c.left + c.right) / 2, lineY + 0.5);
+          const bg = getComputedStyle(cur).backgroundColor.match(/[\d.]+/g)?.map(Number) ?? [];
+          const opaque = bg.length === 3 || (bg.length === 4 && bg[3] === 1);
+          lineHitsLabel = !(hit && cur.contains(hit)) || !opaque;
+        }
+      }
+      return { avg: avg && box(avg), avgText: avg?.textContent ?? '', cur: cur && box(cur), curText: cur?.textContent ?? '', values: values.map(box), bars: card?.querySelectorAll('.volume-bars i').length ?? 0, lineY, expectedLineY, lineHitsLabel };
+    });
+    if (!got.avg || !got.cur) { errors.push(`${where}: expected the avg label and the current-week value label (got ${JSON.stringify(got)})`); await ctx.close(); continue; }
+    if (got.bars !== 12) errors.push(`${where}: expected 12 weekly bars, got ${got.bars}`);
+    // The seed really puts this week at r x the average (the labels round to 0.1k).
+    const k = t => parseFloat(t.replace(/[^\d.]/g, ''));
+    const ratio = k(got.curText) / k(got.avgText);
+    if (Math.abs(ratio - r) > 0.05) errors.push(`${where}: seeded this week at ${r}x avg but the labels read ${got.curText} vs ${got.avgText}`);
+    if (intersects(got.avg, got.cur)) errors.push(`${where}: avg label ${JSON.stringify(got.avg)} overlaps the current-week value label ${JSON.stringify(got.cur)}`);
+    for (const v of got.values) if (intersects(got.avg, v)) errors.push(`${where}: avg label overlaps a bar value label ${JSON.stringify(v)}`);
+    if (got.lineY == null || got.expectedLineY == null) errors.push(`${where}: expected the dashed avg line`);
+    else if (Math.abs(got.lineY - got.expectedLineY) > 1) errors.push(`${where}: the avg line is at y ${got.lineY.toFixed(1)}, an average-height bar ends at ${got.expectedLineY.toFixed(1)} (±1px)`);
+    if (got.lineHitsLabel) errors.push(`${where}: the dashed avg line runs through the current-week value label ${got.curText}`);
+    // Font size and bar height differ on a real phone (the owner's 0.84x repro overlapped there), so
+    // the two labels must not even share a column: then no ratio or font can stack them.
+    if (got.avg.left < got.cur.right && got.cur.left < got.avg.right) errors.push(`${where}: avg label and current-week value label share a column (x ${got.avg.left}-${got.avg.right} vs ${got.cur.left}-${got.cur.right})`);
+    await page.locator('[data-palace="history.exercise-stats"] .sparkline-wrap').scrollIntoViewIfNeeded();
+    const spark = await page.evaluate(() => {
+      const wrap = document.querySelector('[data-palace="history.exercise-stats"] .sparkline-wrap');
+      const dot = wrap?.querySelector('svg.sparkline circle');
+      const box = el => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
+      return dot ? { dot: box(dot), labels: [...wrap.querySelectorAll('.sparkline-minmax span')].map(el => ({ text: el.textContent, ...box(el) })) } : null;
+    });
+    if (!spark || !spark.labels.length) errors.push(`${where}: expected the exercise-progress sparkline with its end dot and min/max labels`);
+    else for (const l of spark.labels) if (intersects(spark.dot, l)) errors.push(`${where}: sparkline label "${l.text}" covers the latest point's end dot ${JSON.stringify(spark.dot)}`);
+    await ctx.close();
+  }
+}
+
 // BUG-10: History's calendar used to change height between months (4/5/6 raw rows), shoving
 // "Recent" up and down as the owner paged. monthCells always pads to 42 cells / 6 rows — walk
 // back 13 months (any 13-month window spans a 5- and a 6-row month, whatever today's date is) and
@@ -1638,6 +1736,11 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`share-fit ${w}: ${e.message}`));
+  // BUG-13: the seed's newest workout is yesterday (offset 1), so on a local Monday "This week" was
+  // empty and the sheet rightly disabled Save / Share. Pin the page clock to that workout's evening
+  // (same local time zone as the seed) so the default Week card always has sets to share.
+  const shareFitNow = new Date(); shareFitNow.setDate(shareFitNow.getDate() - 1); shareFitNow.setHours(20, 0, 0, 0);
+  await page.clock.install({ time: shareFitNow.getTime() });
   await page.addInitScript(([legacyJson]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, [JSON.stringify(legacy)]);
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForSelector('.nav'); await launchGone(page);
@@ -1648,6 +1751,8 @@ for (const [w, h] of [[360, 640], [390, 844]]) {
     await page.evaluate(i => document.documentElement.style.setProperty('--safe-area-inset-bottom', `${i}px`), inset);
     await page.getByRole('button', { name: 'Share your stats' }).click();
     await shareSheetReady(page);
+    // BUG-13: an empty card disables Save / Share on purpose; fail loudly if the seed ever lands there.
+    if (await page.locator('dialog[open] .share-empty').isVisible().catch(() => false)) errors.push(`share-fit ${w}×${h} inset ${inset}: the Week card is empty, so Save / Share are disabled (seed outside the pinned week)`);
     const off = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .share-actions button')].filter(b => {
       const r = b.getBoundingClientRect(); const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
       return !(r.top >= 0 && r.bottom <= innerHeight && hit && b.contains(hit));
@@ -4263,6 +4368,135 @@ for (const theme of ['silent-black', 'paper']) {
   await ctx.close();
 }
 
+// O2: Muscle panel — recovery timeline (real dates), facts, actions, Logged/Try next tabs.
+{
+  // Computed from the real library, not hard-coded, so this stays correct if the library changes.
+  const O2_GLUTES_DIRECT = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).filter(e => e.primary?.includes('glutes')).length;
+  const O2_PINNED = new Date(); O2_PINNED.setHours(12, 0, 0, 0);
+  const o2Day = daysAgo => { const d = new Date(O2_PINNED.getTime() - daysAgo * 86_400_000); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const o2Session = (id, exerciseId, name, daysAgo, kg) => {
+    const at = new Date(`${o2Day(daysAgo)}T09:00:00`).toISOString();
+    return {
+      id, splitId: 'sp1', splitName: 'Custom', day: o2Day(daysAgo), startedAt: at, endedAt: at, durationSec: 1800, gymId: 'gym_default',
+      exercises: [{ exerciseId, name, sets: Array.from({ length: 3 }, () => ({ kg, reps: 8, effort: 'ideal' })) }],
+      logging: { mode: 'live', trainedAt: at, trainedEndAt: at, loggedAt: at, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] },
+    };
+  };
+  // Leg Press (2 days ago) + an older Bulgarian Split Squat: both primary-glutes, so Glutes shows
+  // "Logged · 2" with the rest of the library's direct-glutes exercises (minus these 2, capped at
+  // 10, see O2_GLUTES_DIRECT above) in Try next.
+  const o2Sessions = [o2Session('o2-1', 'lib_leg_press', 'Leg Press', 2, 100), o2Session('o2-2', 'lib_bulgarian_split_squat', 'Bulgarian Split Squat', 10, 20)];
+  const o2StateJson = (sessions, active = null) => JSON.stringify({
+    version: 1, createdAt: new Date().toISOString(), profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+    goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions, active, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: new Date().toISOString() }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+
+  const openMuscle = async (page, stateJson, theme, label) => {
+    await page.addInitScript(([json, t]) => { localStorage.setItem('marc.state.v1', json); localStorage.setItem('marc.theme', t); }, [stateJson, theme]);
+    await page.clock.install({ time: O2_PINNED.getTime() });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(250);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+    await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(300);
+    // The "Levels" list shows every muscle regardless of recovery state, so it opens either the
+    // seeded (Glutes) or never-trained (Biceps) case the same reliable way.
+    await page.locator('.seg button', { hasText: 'Levels' }).click(); await page.waitForTimeout(200);
+    await page.locator('.list-row', { hasText: label }).first().click(); await page.waitForTimeout(300);
+  };
+
+  for (const width of [360, 390]) {
+    for (const theme of ['paper', 'silent-black']) {
+      const tag = `muscle panel ${theme} ${width}`;
+      const ctx = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+      page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+      await openMuscle(page, o2StateJson(o2Sessions), theme, 'Glutes');
+
+      if (!(await visible(page.locator('dialog.sheet[open]')))) errors.push(`${tag}: expected the muscle panel to open`);
+      const pctText = await page.locator('.mtl-pct').textContent();
+      if (!/^\d+%$/.test((pctText ?? '').trim())) errors.push(`${tag}: expected a "N%" header, got "${pctText}"`);
+      const pillText = (await page.locator('.mtl-head .chip').textContent())?.trim();
+      if (!['Recovering', 'Ready', 'Held back by soreness'].includes(pillText ?? '')) errors.push(`${tag}: unexpected pill text "${pillText}"`);
+      const tlVals = await page.locator('.mtl-tl-val').allTextContents();
+      if (tlVals.length !== 3) errors.push(`${tag}: expected 3 timeline labels (Trained/Ready/Full), got ${tlVals.length}`);
+      if (tlVals.some(t => t.includes('d to'))) errors.push(`${tag}: a timeline label still reads the old "d to" range: ${JSON.stringify(tlVals)}`);
+
+      // Every button in the actions row (Mark as fresh, Ask Escobar) must fit its own label, and
+      // when both show they must be the same height — the labelled "Ask Escobar" button used to
+      // inherit the icon-only .esc-ask's 32px width/height and clip its text.
+      const actionBtns = await page.evaluate(() => [...document.querySelectorAll('.mtl-actions button')].map(b => ({ text: b.textContent?.trim(), scrollWidth: b.scrollWidth, clientWidth: b.clientWidth, height: b.getBoundingClientRect().height })));
+      const clippedBtns = actionBtns.filter(b => b.scrollWidth > b.clientWidth + 1);
+      if (clippedBtns.length) errors.push(`${tag}: clipped action button(s): ${JSON.stringify(clippedBtns)}`);
+      if (actionBtns.length === 2 && Math.abs(actionBtns[0].height - actionBtns[1].height) > 1) errors.push(`${tag}: action buttons have mismatched heights: ${JSON.stringify(actionBtns)}`);
+
+      const sheetText = await page.locator('dialog.sheet[open]').innerText();
+      for (const bad of ['at a glance', '1 sessions', 'Low confidence']) if (sheetText.includes(bad)) errors.push(`${tag}: sheet still contains "${bad}"`);
+
+      const segLabels = await page.locator('[data-palace="body.muscle-tabs"] .seg button').allTextContents();
+      if (!segLabels.some(t => t.trim() === 'Logged · 2')) errors.push(`${tag}: expected a "Logged · 2" tab, got ${JSON.stringify(segLabels)}`);
+      const expectTryNext = `Try next · ${Math.min(O2_GLUTES_DIRECT - 2, 10)}`;
+      if (!segLabels.some(t => t.trim() === expectTryNext)) errors.push(`${tag}: expected a "${expectTryNext}" tab, got ${JSON.stringify(segLabels)}`);
+
+      const loggedNames = await page.locator('.mtl-tab-list .list-row .small').allTextContents();
+      await page.locator('[data-palace="body.muscle-tabs"] .seg button', { hasText: 'Try next' }).click(); await page.waitForTimeout(200);
+      const tryNextNames = await page.locator('.mtl-tab-list .list-row .small').allTextContents();
+      const overlap = loggedNames.filter(n => tryNextNames.includes(n));
+      if (overlap.length) errors.push(`${tag}: Logged and Try next share an exercise: ${overlap.join(', ')}`);
+
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('.mtl-tl-val')].filter(n => n.scrollWidth > n.clientWidth + 1).map(n => n.textContent));
+      if (clipped.length) errors.push(`${tag}: clipped timeline label(s): ${clipped.join(', ')}`);
+      if (await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1)) errors.push(`${tag}: horizontal scroll with the muscle panel open`);
+
+      await settle(page);
+      await page.screenshot({ path: `${OUT}/${theme}-muscle-panel-${width}.png` });
+      await ctx.close();
+    }
+  }
+
+  // Live workout: "Add" on a Try next row adds it to state.active.entries and the row flips to "In workout".
+  {
+    const tag = 'muscle panel live Add';
+    const active = { id: 'act1', splitId: 'sp1', startedAt: new Date().toISOString(), pausedMs: 0, entries: [{ id: 'en1', exerciseId: 'lib_leg_press', name: 'Leg Press', sets: [{ kg: 100, reps: 8 }], done: false, skipped: false }] };
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await openMuscle(page, o2StateJson(o2Sessions, active), 'silent-black', 'Glutes');
+    await page.locator('[data-palace="body.muscle-tabs"] .seg button', { hasText: 'Try next' }).click(); await page.waitForTimeout(200);
+    const hipThrustRow = page.locator('.list .list-row', { hasText: 'Hip Thrust' });
+    if (!(await hipThrustRow.count())) {
+      errors.push(`${tag}: expected a "Hip Thrust" row in Try next`);
+    } else {
+      await hipThrustRow.getByRole('button', { name: 'Add' }).click();
+      await page.waitForTimeout(300);
+      if (!(await visible(page.locator('.toast', { hasText: "Added Hip Thrust to today's workout" })))) errors.push(`${tag}: expected the "Added Hip Thrust..." toast`);
+      if (!(await hipThrustRow.getByText('In workout').isVisible().catch(() => false))) errors.push(`${tag}: the Hip Thrust row should read "In workout" after Add`);
+    }
+    await ctx.close();
+  }
+
+  // Never-trained muscle: "Not trained yet", no timeline, Try next selected by default.
+  {
+    const tag = 'muscle panel never trained';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+    await openMuscle(page, o2StateJson(o2Sessions), 'silent-black', 'Biceps');
+    const pillText = (await page.locator('.mtl-head .chip').textContent())?.trim();
+    if (pillText !== 'Not trained yet') errors.push(`${tag}: expected pill "Not trained yet", got "${pillText}"`);
+    if ((await page.locator('.mtl-pct').textContent())?.trim() !== '—') errors.push(`${tag}: expected "—" for an untrained muscle's percentage`);
+    if (await page.locator('.mtl-timeline').count()) errors.push(`${tag}: a never-trained muscle should not show the timeline`);
+    const selected = await page.locator('[data-palace="body.muscle-tabs"] .seg button[aria-selected="true"]').textContent();
+    if (!selected?.startsWith('Try next')) errors.push(`${tag}: expected "Try next" selected by default, got "${selected}"`);
+    await ctx.close();
+  }
+}
+
 // O1: the theme colour map, and the crash hook clearing the overlay.
 {
   const tag = 'launch theme+crash (O1)';
@@ -4560,4 +4794,4 @@ await browser.close();
 stopping = true;
 server.kill();
 if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
-console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), and O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases) verified.');
+console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified.');

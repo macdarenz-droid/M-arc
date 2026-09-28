@@ -15,7 +15,8 @@ describe('plateauStatus for assisted work (BR-06)', () => {
   });
   it('with the assistance flat, more reps is progress', () => {
     expect(plateauStatus(hist(() => 30, i => 5 + i), 'assisted').status).toBe('progressing');
-    expect(plateauStatus(hist(() => 30, () => 8), 'assisted').status).toBe('plateaued');
+    // BUG-14 (VOLUME-F1, BR-04): these 8 sessions span 24 days, under the 42-day minimum, so no plateau yet.
+    expect(plateauStatus(hist(() => 30, () => 8), 'assisted').status).toBe('unknown');
   });
   it('weighted work is unchanged: more load is progress', () => {
     expect(plateauStatus(hist(i => 40 + i * 2.5, () => 8)).status).toBe('progressing');

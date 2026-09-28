@@ -53,7 +53,10 @@ describe('readiness', () => {
   });
   it('is red with reduce advice when recovery and resting HR are both poor', () => {
     const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => ({ day: day(i), restingHr: i < 7 ? 70 : 55, source: 'health_connect' as const, syncedAt: today }));
-    const r = readiness({ ...baseInput, healthDays, recovery: [mr('chest', 20), mr('triceps', 25)] });
+    // BUG-16: the recovery part counts only for a scheduled split's muscles; without one this case
+    // had resting HR as its only input, and one input alone no longer says "reduce".
+    const scheduledSplit: Split = { id: 'push', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+    const r = readiness({ ...baseInput, healthDays, recovery: [mr('chest', 20), mr('triceps', 25)], scheduledSplit });
     expect(r).not.toBeNull();
     expect(r!.band).toBe('red');
     expect(r!.loadAdvice).toBe('reduce');

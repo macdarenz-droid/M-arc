@@ -425,7 +425,7 @@ function WeeklyVolumeChart({ u }: { u: 'kg' | 'lb' }) {
       <ChartReadout text={readout} />
       {/* I12: no title attrs (touch never shows a tooltip); the current week is accent with its value above it. */}
       <div class="volume-bars" ref={barsRef} tabIndex={0} role="slider" aria-valuemin={0} aria-valuemax={weeks.length - 1} aria-valuenow={volIdx} aria-valuetext={readout} onKeyDown={onKeyDown}>
-        <div class="volume-avg" style={{ bottom: `${Math.min(100, (avg / max) * 100)}%` }}><span class="num">avg {fmt(avg)}</span></div>
+        <div class="volume-avg" style={{ bottom: `calc((100% - var(--volume-label-room, 0px)) * ${Math.min(1, avg / max)})` }}><span class="num">avg {fmt(avg)}</span></div>
         {weeks.map((w, i) => {
           const isCurrent = i === weeks.length - 1;
           return (

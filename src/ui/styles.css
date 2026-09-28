@@ -690,6 +690,15 @@ html:not([data-motion="reduce"]) .reorder-list.dragging .reorder-item:not(.lifte
 .volume-bar-value { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 2px; font-size: var(--fs-meta); color: var(--text-2); white-space: nowrap; }
 .volume-avg { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border-strong); }
 .volume-avg span { position: absolute; right: 0; top: -14px; font-size: var(--fs-cap); color: var(--text-2); white-space: nowrap; }
+/* BUG-12: the weekly volume card's labels never share space.
+   - The avg label sits at the left end of the dashed line; at the right end it shared space with the
+     current-week value label above the right-most bar whenever this week was near the average.
+   - --volume-label-room is the QA13-3 padding-top, named so History.tsx can place the avg line in the
+     same 0-100% box the bars use (it was measured against the padded box, so it sat too high).
+   - The current-week value label is opaque and above the dashed line, so the line never runs through it. */
+.volume-bars { --volume-label-room: 18px; padding-top: var(--volume-label-room); }
+.volume-avg span { left: 0; right: auto; }
+.volume-bar-value { z-index: 1; padding: 0 2px; border-radius: var(--radius-xs); background: var(--surface-1); }
 
 /* O4: "Work done, by effort" stacked bars, shared with Escobar's lift_trend card. */
 .effort-chart { margin-top: 12px; min-width: 0; }
@@ -782,3 +791,28 @@ button.effort-bar-col[aria-pressed="true"] .effort-bar-stack { outline: 2px soli
 .rt-detail-row3 { font-size: var(--fs-meta); line-height: 16px; color: var(--text-2); }
 .rt-detail-chevron { position: absolute; right: 10px; top: 50%; translate: 0 -50%; color: var(--text-2); }
 html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detail { transition-duration: var(--dur-enter); }
+
+/* O2 */
+.mtl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-3); }
+.mtl-pct-row { display: flex; align-items: baseline; gap: var(--sp-2); min-width: 0; }
+.mtl-pct { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--ls-display); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; color: var(--text); }
+.mtl-pct-label { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-2); }
+.mtl-timeline { display: grid; gap: var(--sp-2); }
+.mtl-track { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface-3); }
+.mtl-fill { position: absolute; inset: 0 auto 0 0; height: 100%; border-radius: var(--radius-pill); }
+.mtl-tick { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--text-2); }
+.mtl-tl-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-2); }
+.mtl-tl-row > :nth-child(2) { text-align: center; }
+.mtl-tl-row > :last-child { text-align: right; }
+.mtl-tl-col { display: grid; gap: 2px; min-width: 0; }
+.mtl-tl-key { font-size: var(--fs-cap); line-height: var(--lh-cap); letter-spacing: var(--ls-cap); text-transform: uppercase; color: var(--text-3); }
+.mtl-tl-val { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); color: var(--text); overflow-wrap: break-word; }
+.mtl-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+/* .esc-ask (styles.css) is sized 32x32 for its icon-only default; the labelled "Ask Escobar"
+ * variant needs its own width and the same height/padding as the btn-sm next to it. */
+.mtl-actions .esc-ask { width: auto; min-height: 34px; padding: 0 var(--sp-3); }
+
+/* FG-1: form-guide figure (src/formguide/rig). Each joint (.fg-j) and moving part (.fg-p) turns about its inline
+ * transform-origin, given in the SVG's user units; only transform and opacity change (rig/pose.ts applyPose). */
+.form-guide svg { display: block; width: 100%; height: auto; }
+.form-guide .fg-j, .form-guide .fg-p { transform-box: view-box; }
