@@ -4371,17 +4371,31 @@ for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  // 7.5 (supervisor request, 2026-09-28): under reduce the overlay leaves 100 ms after the app
+  // signals ready, so reading it after goto() raced its removal (about 1 run in 70, on main too).
+  // Read the same state at the real ready signal instead: wrap window.__marcLaunchReady when
+  // index.html defines it, snapshot before it runs. Same assertions, no race.
+  await page.addInitScript(() => {
+    let inner;
+    Object.defineProperty(window, '__marcLaunchReady', {
+      configurable: true,
+      get() { return inner && (() => {
+        const path = document.querySelector('#launch svg path');
+        const dot = document.getElementById('launch-dot');
+        window.__qa123Snapshot = {
+          dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
+          cx: dot ? dot.getAttribute('cx') : null,
+          cy: dot ? dot.getAttribute('cy') : null,
+        };
+        return inner();
+      }); },
+      set(fn) { inner = fn; },
+    });
+  });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
-  const state = await page.evaluate(() => {
-    const path = document.querySelector('#launch svg path');
-    const dot = document.getElementById('launch-dot');
-    return {
-      dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
-      cx: dot ? dot.getAttribute('cx') : null,
-      cy: dot ? dot.getAttribute('cy') : null,
-    };
-  });
+  await page.waitForFunction(() => window.__qa123Snapshot !== undefined, null, { timeout: 5000 }).catch(() => {});
+  const state = await page.evaluate(() => window.__qa123Snapshot ?? { dashoffset: 'no ready signal', cx: null, cy: null });
   if (state.dashoffset !== '0px' && state.dashoffset !== '0') errors.push(`${tag}: expected the path's strokeDashoffset to be 0 right after load, got ${state.dashoffset}`);
   if (state.cx !== '30' || state.cy !== '50') errors.push(`${tag}: expected #launch-dot at cx=30 cy=50 right after load, got cx=${state.cx} cy=${state.cy}`);
   await ctx.close();
