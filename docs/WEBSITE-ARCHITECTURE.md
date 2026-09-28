@@ -106,7 +106,7 @@ What is still open on every option: the web app has no hosted address, so the In
 
 ## 5. Build architecture for the real site
 
-Decided once the owner picks a direction. Fixed points that do not depend on the choice:
+The owner chose Midnight Pulse on 28 September 2026. The design system and page-by-page spec for the real site live in docs/WEBSITE-DESIGN.md; this section holds the build, checks and hosting. Fixed points that do not depend on the choice:
 
 - A static site in `website/`, built with Vite (already in the repo) and plain HTML, CSS and JavaScript; no framework, no animation library, no analytics, no cookie banner. The app's own theme tokens (`src/theme/themes.ts`) are the site's palette source so the two never drift.
 - Fonts self-hosted (Inter Variable is already a dependency) so the page does not call Google at load.
