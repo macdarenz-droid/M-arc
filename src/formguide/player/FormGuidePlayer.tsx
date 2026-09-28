@@ -13,6 +13,33 @@ import { clock, finish, initial, isActivateKey, pickZoom, renderVals, setMode, s
 import { mountAnimations, type AnimHandle, type AnimRoot } from './waapi';
 // GU-7a-4 switches these two to '@/formguide/index' (guides), '@/formguide/rig/paint' (RIG_CSS) and '@/formguide/muscles'.
 import { RIG_CSS, muscleInfo, stubGuide } from './stubGuide';
+import { state } from '@/core/store';
+import { unit } from '@/app/selectors';
+import { findExercise } from '@/core/exercises';
+import type { ExerciseGuide } from '../model';
+import { ExercisePlayer } from './ExercisePlayer';
+import { guideRig } from './guideView';
+import { loadOf } from './load';
+
+/** FG-4: one lazy chunk per exercise file (src/formguide/exercises/<libraryId>.ts); the rig is in this chunk. */
+const FILES = import.meta.glob<Record<string, unknown>>('../exercises/*.ts');
+export const fileFor = (exerciseId: string) => FILES[`../exercises/${exerciseId}.ts`];
+
+/**
+ * The player for an exercise, for lazy.tsx: an exercise with a guide file loads its chunk and plays its ExerciseGuide
+ * (FG-4); the two GU-7a guides without a file yet keep the stub (D-FG4). A failed exercise chunk rejects, so the sheet
+ * shows GU-7a's one failure line with Reload.
+ */
+export async function playerFor(exerciseId: string): Promise<{ FormGuidePlayer: (p: FormGuidePlayerProps) => preact.JSX.Element }> {
+  const file = fileFor(exerciseId);
+  if (!file) return { FormGuidePlayer };
+  const mod = await file();
+  const guide = (mod[exerciseId] ?? null) as ExerciseGuide | null;
+  if (!guide || guide.id !== exerciseId) throw new Error(`form guide: ${exerciseId}.ts exports no guide`);
+  const ex = findExercise(exerciseId), rig = guideRig(guide, ex?.pattern);
+  const s = state.value, load = loadOf(guide, s, unit.value);
+  return { FormGuidePlayer: () => <ExercisePlayer guide={guide} rig={rig} name={ex?.name ?? exerciseId} load={load} /> };
+}
 
 const RIG_STYLE_ID = 'marc-formguide-rig';
 

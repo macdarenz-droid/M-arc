@@ -2,7 +2,7 @@
 // Created paused on the setup pose (fill both = the 0 % frame); nothing here ever loops.
 import type { Frame, GroupFrames } from '../rig/api';
 
-type Anim = Pick<Animation, 'play' | 'pause' | 'cancel' | 'updatePlaybackRate'> & { currentTime: Animation['currentTime'] };
+type Anim = Pick<Animation, 'play' | 'pause' | 'cancel' | 'updatePlaybackRate'> & { currentTime: Animation['currentTime']; startTime?: Animation['startTime']; playbackRate?: number };
 type Animatable = { animate(frames: Frame[], timing: KeyframeAnimationOptions): Anim };
 /** R1-10 names `querySelector`, but a demo class animates several elements (the chest press has three
  * `cp-ul` groups), so the root gives every match; a real Element has both. */
@@ -15,6 +15,12 @@ export type AnimHandle = {
   cancel(): void;
   /** ms into the 3-rep run, in animation time (speed does not change it) */
   currentTime(): number;
+  /** FG-4: put every animation at ms (the mistake figure joins the correct one's clock); play state unchanged */
+  seek(ms: number): void;
+  /** FG-4: run on another handle's timeline start (same rate), so a figure mounted later plays in step with no lag */
+  follow(other: AnimHandle): void;
+  /** the document-timeline start of the running animations (null while paused) */
+  startTime(): number | null;
   count: number;
 };
 
@@ -25,9 +31,13 @@ export function timingFor(rep: number): KeyframeAnimationOptions {
   return { duration: rep * 1000, iterations: 3, easing: 'linear', fill: HOLD_ENDS };
 }
 
-export function mountAnimations(groups: GroupFrames[], root: AnimRoot, rep: number): AnimHandle {
+/** FG-4: the three reps as one chained keyframe set (one set per rep, so the slow-down needs no per-frame code). */
+export function chainedTiming(rep: number, reps = 3): KeyframeAnimationOptions {
+  return { duration: rep * reps * 1000, iterations: 1, easing: 'linear', fill: HOLD_ENDS };
+}
+
+export function mountAnimations(groups: GroupFrames[], root: AnimRoot, rep: number, timing: KeyframeAnimationOptions = timingFor(rep)): AnimHandle {
   const anims: Anim[] = [];
-  const timing = timingFor(rep);
   for (const g of groups) {
     const els = root.querySelectorAll(`.${g.className}`);
     for (let i = 0; i < els.length; i++) {
@@ -45,6 +55,9 @@ export function mountAnimations(groups: GroupFrames[], root: AnimRoot, rep: numb
     reset: () => each(a => { a.pause(); a.currentTime = 0; }),
     cancel: () => { each(a => a.cancel()); anims.length = 0; },
     currentTime: () => Number(anims[0]?.currentTime ?? 0),
+    seek: ms => each(a => { a.currentTime = ms; }),
+    follow: other => { const st = other.startTime(); if (st == null) each(a => { a.currentTime = other.currentTime(); a.play(); }); else each(a => { a.startTime = st; }); },
+    startTime: () => { const v = anims[0]?.startTime; return v == null ? null : Number(v); },
     get count() { return anims.length; },
   };
 }
