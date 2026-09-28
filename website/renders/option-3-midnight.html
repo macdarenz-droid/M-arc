@@ -5,17 +5,21 @@
 <style>
 @font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
 @font-face{font-family:'Instrument Sans Fallback';src:local('Arial'),local('Helvetica');size-adjust:101%;ascent-override:92%;descent-override:23%;line-gap-override:0%}
-@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,255,.72)}
+@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,487,.85)}
 @property --light-b{syntax:'<color>';inherits:true;initial-value:rgba(0,212,255,.48)}
+/* registered as lengths so the pinned phone's height resolves to px: the script reads it to place the step band under the phone */
+@property --pw{syntax:'<length>';inherits:true;initial-value:240px}
+@property --phh{syntax:'<length>';inherits:true;initial-value:0px}
 :root{
   color-scheme:dark;
   --bg:#0a2540;--s1:#0f2d4d;--s2:#143559;--s3:#1a3f68;--text:#f6f9fc;--text2:#a3b6cc;--text3:#6c839c;
-  --accent:#635bff;--accent-soft:rgba(99,91,255,.18);--accent-line:rgba(99,91,255,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
+  --accent:#635bff;--accent-soft:rgba(99,91,487,.18);--accent-line:rgba(99,91,487,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
   --border:#263e57;--border-a:rgba(246,249,252,.12);--border-strong:rgba(246,249,252,.22);--shadow:0 18px 44px rgba(3,20,40,.55);
   --bezel:#071a30;--ring:rgba(246,249,252,.18);--white:#fff;--hl:rgba(255,255,255,.14);--hl-soft:rgba(255,255,255,.07);--sheen:rgba(255,255,255,.08);--nav-bg:rgba(10,37,64,.92);
-  /* light strength: spec says .55/.35; the blur at 60px on a 1.4x plane needs more ink to read on #0a2540, so violet .72, cyan .48, green .62, amber .48 (amber kept lowest so step 3 never blooms yellow) */
-  --light-a:rgba(99,91,255,.72);--light-b:rgba(0,212,255,.48);
-  --la-violet:rgba(99,91,255,.72);--la-green:rgba(62,207,142,.62);--la-amber:rgba(255,187,0,.48);--lb-cyan:rgba(0,212,255,.48);--lb-violet:rgba(99,91,255,.5);
+  /* light strength: spec says .55/.35; the blur at 60px on a 1.4x plane needs more ink to read on #0a2540, so violet .85 (the thinnest of the three planes on navy, so it gets the most ink to weigh the same as green and amber), cyan .48, green .62, amber .48 (amber kept lowest so step 3 never blooms yellow) */
+  --light-a:rgba(99,91,487,.85);--light-b:rgba(0,212,255,.48);
+  --la-violet:rgba(99,91,487,.85);--la-green:rgba(62,207,142,.62);--la-amber:rgba(255,187,0,.48);--lb-cyan:rgba(0,212,255,.48);--lb-violet:rgba(99,91,487,.5);
+  --pin-fade:48px;
   --t-silent:#5e6ad2;--t-paper:#2383e2;--t-ember:#ff6363;--t-emerald:#3ecf8e;--t-midnight:#635bff;
   --accent-text:color-mix(in srgb,var(--accent) 65%,var(--text));
   --focus:color-mix(in srgb,var(--accent) 80%,var(--text));
@@ -48,7 +52,7 @@ ul,ol{padding:0;list-style:none}
 .c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c5r{grid-column:8/span 5}
 .band{padding-block:var(--pad)}
 .lift{background:var(--s1)}
-.cut{position:relative;isolation:isolate;overflow:clip;background:transparent;padding-top:calc(var(--pad) + var(--cut))}
+.cut{position:relative;isolation:isolate;overflow:clip;background:transparent;padding-top:calc(var(--cut) + 48px)}
 .cut::before{content:"";position:absolute;inset:0;background:var(--s1);clip-path:polygon(0 var(--cut),100% 0,100% 100%,0 100%);z-index:-1}
 
 /* type */
@@ -127,7 +131,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .pinblock[data-step="2"] .pin{--light-a:var(--la-green);--light-b:var(--lb-cyan)}
 .pinblock[data-step="3"] .pin{--light-a:var(--la-amber);--light-b:var(--lb-violet)}
 .hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.hero .lead{margin-top:24px}
+.hero .lead{margin-top:16px}
 .hero .cap{margin-top:16px}
 
 /* phone frame */
@@ -144,7 +148,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .strip li{display:flex;flex-direction:column;gap:8px}
 .strip span{font-size:13px;line-height:1.4;color:var(--text2)}
 .steps{counter-reset:s}
-.step{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:32px 0;max-width:460px}
+.step{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 0;max-width:460px}
 .step:first-child{min-height:0;padding-top:8px}
 .step .eyebrow{color:var(--text2)}
 .step[aria-current] .eyebrow{color:var(--accent-text)}
@@ -161,10 +165,12 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .ring.acc .val{stroke:var(--accent)}
 .ring .tick{fill:none;stroke:var(--text);stroke-width:1.5;stroke-linecap:round}
 .step-shot{display:none;margin-top:32px}
+.pin-s{display:none}
 .step-shot .cap{margin-top:12px}
 
 /* figures */
 .fig figcaption{margin-top:16px;text-align:center}
+.fig.first{align-self:start}
 .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
 .duo > figure:nth-child(2){margin-top:48px}
 .duo .phone{width:100%;max-width:300px}
@@ -261,21 +267,27 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 /* responsive */
 @media (max-width:900px){
   .c5,.c6,.c7,.c5r{grid-column:1/-1}
-  /* single column: the phone pins under the nav at 44svh tall (spec signatureMotion, phone width) and the steps scroll under it;
-     the col-pin spans the story rows on a 0px track so the sticky range is the whole story, and the story leaves room above for the phone */
+  /* single column: the phone sits under the hero copy at the spec's 240px, then pins under the nav and shrinks to 44svh tall (spec signatureMotion) as the story
+     reaches it, so the steps scroll under a smaller phone; the col-pin spans the story rows on a 0px track so the sticky range is the whole story, and the
+     story leaves room above for the phone. The shrink is scroll-linked where the browser can do it, otherwise a class from the script with a width transition.
+     The sticky range ends early (margin-bottom) so the last step's rings leave with the phone instead of sliding under it. */
   .pinblock{--ph:44vh}
   @supports (height:1svh){.pinblock{--ph:44svh}}
-  .pinblock{--pw:clamp(168px,calc((var(--ph) - 20px)*.4621),240px);--phh:calc((var(--pw) - 20px)*2.1641 + 20px)}
+  .pinblock{--pw0:240px;--phh0:calc((var(--pw0) - 20px)*2.1641 + 20px);--pw:clamp(168px,calc((var(--ph) - 20px)*.4621),var(--pw0));--phh:calc((var(--pw) - 20px)*2.1641 + 20px)}
   .pg{grid-template-columns:1fr;grid-template-rows:auto 0 auto}
   .hero-copy{grid-row:1;max-width:none;min-height:0;padding:32px 0 40px}
-  .col-pin{grid-column:1;grid-row:2/4;padding-top:calc(var(--cut) + 16px)}
+  .col-pin{grid-column:1;grid-row:2/4;position:relative;padding-top:calc(var(--cut) + 16px);margin-bottom:calc(var(--pin-fade) + 96px);timeline-scope:--shrink}
+  .pin-s{display:block;position:absolute;left:0;right:0;top:calc(var(--cut) + 16px);height:calc(var(--phh0) - var(--phh));view-timeline:--shrink block;view-timeline-inset:calc(var(--navh) + env(safe-area-inset-top,0px) + 8px) 0;pointer-events:none}
   .story-bg,.story{grid-column:1;grid-row:3}
-  .pin{top:calc(var(--navh) + env(safe-area-inset-top,0px) + 8px);padding:0}
-  .pin::before{content:"";position:absolute;top:-8px;bottom:-72px;left:calc(50% - 50vw);right:calc(50% - 50vw);background:linear-gradient(var(--s1) calc(100% - 72px),transparent);z-index:-2;pointer-events:none}
-  .pin .phone{width:var(--pw)}
-  .pin .light{inset:-30% -60%}
-  .story{padding-top:calc(var(--cut) + 16px + var(--phh) + 32px);padding-bottom:48px}
-  .step,.step:first-child{min-height:40vh;justify-content:flex-start;padding:32px 0;max-width:none}
+  .pin{top:calc(var(--navh) + env(safe-area-inset-top,0px) + 8px);padding:0;width:var(--pw0)}
+  .pinblock.stuck .pin{width:var(--pw)}
+  .pin::before{content:"";position:absolute;top:-8px;bottom:calc(-1*var(--pin-fade));left:calc(50% - 50vw);right:calc(50% - 50vw);background:linear-gradient(var(--s1) calc(100% - var(--pin-fade)),transparent);z-index:-2;pointer-events:none}
+  .pin .phone{width:100%}
+  /* the lit plane ends at the phone's foot with a short fade, so copy passing under the pin dissolves into the backdrop instead of the glow */
+  .pin .light{inset:-30% calc(50% - 50vw) 0;-webkit-mask-image:linear-gradient(black calc(100% - 24px),transparent);mask-image:linear-gradient(black calc(100% - 24px),transparent)}
+  .story{padding-top:calc(var(--cut) + 16px + var(--phh0) + 32px);padding-bottom:48px}
+  .step,.step:first-child{min-height:40vh;justify-content:flex-start;padding:48px 0 24px;max-width:none}
+  .fig.first{order:-1}
   .cards3,.icards,.fcols{grid-template-columns:1fr}
   .switches{grid-template-columns:1fr}
   .switches p{grid-row:auto;grid-column:auto;order:1}
@@ -286,6 +298,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
   .duo{grid-template-columns:minmax(0,1fr);gap:32px}
   .duo > figure:nth-child(2){margin-top:0}
   .duo .phone{width:240px}
+  .duo .panel{width:220px}
   .duo figcaption{text-align:center}
   .install .light{inset:auto 0 10%;height:50%}
 }
@@ -302,8 +315,9 @@ html:not(.m) .prop .undo-l{display:none}
 html:not(.m) .prop .undo-d{display:block}
 @media (max-width:900px){
   html:not(.m) .pg{grid-template-rows:auto auto auto}
-  html:not(.m) .col-pin{grid-row:2;padding-top:0}
-  html:not(.m) .pin{padding:32px 40px}
+  html:not(.m) .col-pin{grid-row:2;padding-top:0;margin-bottom:0}
+  html:not(.m) .pin-s{display:none}
+  html:not(.m) .pinblock .pin{padding:32px 40px;width:auto}
   html:not(.m) .pin::before{content:none}
   html:not(.m) .pin .phone{width:240px}
   html:not(.m) .story{padding-top:calc(var(--cut) + 32px)}
@@ -342,6 +356,14 @@ html:not(.m) .prop .undo-d{display:block}
   .m .hero-copy > :nth-child(4){animation-delay:calc(3*var(--gap-rise))}
   .m .hero-copy > :nth-child(5){animation-delay:calc(4*var(--gap-rise))}
   .m .pin .phone{animation:arrive var(--dur-draw) var(--ease-enter) both}
+  /* phones: the pinned phone shrinks from 240px to the 44svh size as the story reaches it, driven by scroll where supported, else by the .stuck class */
+  @media (max-width:900px){
+    .m .pin{transition:width var(--dur-light) var(--ease-standard)}
+    @supports (animation-timeline:scroll()){
+      .m .pin{transition:none;animation:shrink 1s linear both;animation-timeline:--shrink;animation-range:exit 0% exit 100%}
+    }
+    @keyframes shrink{to{width:var(--pw)}}
+  }
   .m .lockup.draw .mark path{animation:draw var(--dur-draw) var(--ease-draw) both}
   .m .lockup.draw .mark circle{animation:pop var(--dur-pop) var(--ease-enter) calc(var(--dur-draw) - var(--dur-pop)) both}
   /* image wipe on load */
@@ -383,7 +405,7 @@ html:not(.m) .prop .undo-d{display:block}
       </ul>
     </details>
     <div class="nav-ctas">
-      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases</a>
+      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
       <a class="btn btn-p" href="#install">Install</a>
     </div>
   </div>
@@ -404,6 +426,7 @@ html:not(.m) .prop .undo-d{display:block}
     </section>
 
     <div class="col-pin">
+      <div class="pin-s" aria-hidden="true"></div>
       <div class="pin">
         <div class="light" aria-hidden="true"></div>
         <div class="phone">
@@ -614,7 +637,7 @@ html:not(.m) .prop .undo-d{display:block}
         <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released.</p>
         <p class="label">Signing key SHA-256. Does not change between versions.</p>
         <div class="copyrow"><code class="fp" id="fp">05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint">Copy</button></div>
-        <code class="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">M-ARC.apk</span></code>
+        <code class="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">MARC-v37.1.0.*-signed.apk</span></code>
         <p>If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
         <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
         <a class="link" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a>
@@ -623,7 +646,7 @@ html:not(.m) .prop .undo-d{display:block}
       <div class="card key sh">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>
         <h3>Read the source</h3>
-        <p>The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,255 unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
+        <p>The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,487 unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
         <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
     </div>
@@ -703,21 +726,49 @@ var io=new IntersectionObserver(function(es){es.forEach(function(e){
 })},{threshold:[.2,.4]});
 qa('.r,.st,[data-play]').forEach(function(el){io.observe(el)});
 
-var pb=q('#pinblock'),steps=qa('[data-i]'),links=qa('#navlinks a');
+var pb=q('#pinblock'),pin=q('.pin',pb),ps=q('.pin-s',pb),steps=qa('[data-i]'),links=qa('#navlinks a'),so=null,st=null,rt;
 var setCur=function(id){links.forEach(function(a){if(id&&a.getAttribute('href')==='#'+id)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})};
-var so=new IntersectionObserver(function(es){es.forEach(function(e){
-  if(e.isIntersecting===false)return;
+var act=function(i){
+  pb.dataset.step=i;
+  steps.forEach(function(s){if(s.dataset.i==='0')return;if(+s.dataset.i===i)s.setAttribute('aria-current','step');else s.removeAttribute('aria-current')});
+  if(i===3)qa('.rings-story .ring').forEach(function(r){r.classList.add('fill')});
+  setCur(null);
+};
+var onStep=function(es){es.forEach(function(e){
   var t=e.target;
-  if(t.hasAttribute('data-i')){
-    var i=+t.dataset.i;
-    pb.dataset.step=i;
-    steps.forEach(function(s){if(s.dataset.i==='0')return;if(+s.dataset.i===i)s.setAttribute('aria-current','step');else s.removeAttribute('aria-current')});
-    if(i===3)qa('.rings-story .ring').forEach(function(r){r.classList.add('fill')});
-    setCur(null);
-  }else setCur(t.id);
-})},{rootMargin:matchMedia('(max-width:900px)').matches?'-58% 0px -30% 0px':'-45% 0px -45% 0px'});
-steps.forEach(function(s){so.observe(s)});
-qa('main > section[id]').forEach(function(s){so.observe(s)});
+  if(t.hasAttribute('data-i')===false){if(e.isIntersecting)setCur(t.id);return}
+  if(e.isIntersecting){act(+t.dataset.i);return}
+  /* a step that left above the band without the next one entering (a jump or a fast flick): light the last step whose top has passed the band, so the phone never keeps an earlier screen */
+  if(t.dataset.i!=='0'&&e.rootBounds&&e.boundingClientRect.bottom<=e.rootBounds.top){
+    var last=null;
+    steps.forEach(function(s){if(s.dataset.i!=='0'&&s.getBoundingClientRect().top<=e.rootBounds.bottom)last=s});
+    if(last)act(+last.dataset.i);
+  }
+})};
+var pinTop=function(){return parseFloat(getComputedStyle(pin).top)||0};
+var band=function(){
+  /* phones: a 24px band just under the pinned phone and its fade, so a step lights only once its heading is in the clear; desktop: the middle tenth of the viewport */
+  if(matchMedia('(max-width:900px)').matches){
+    var b=Math.round(pinTop()+parseFloat(getComputedStyle(pb).getPropertyValue('--phh'))+ms('--pin-fade')+8);
+    return '-'+b+'px 0px -'+Math.max(0,Math.round(innerHeight-b-24))+'px 0px';
+  }
+  return '-45% 0px -45% 0px';
+};
+var watch=function(){
+  if(so)so.disconnect();
+  so=new IntersectionObserver(onStep,{rootMargin:band()});
+  steps.forEach(function(s){so.observe(s)});
+  qa('main > section[id]').forEach(function(s){so.observe(s)});
+  /* fallback for the pinned phone's shrink when the browser has no scroll-driven animations: a class once the phone's own top passes its sticky line */
+  if(st)st.disconnect();
+  if(ps&&!(window.CSS&&CSS.supports('animation-timeline:scroll()'))){
+    var line=Math.round(pinTop());
+    st=new IntersectionObserver(function(e){pb.classList.toggle('stuck',M()&&matchMedia('(max-width:900px)').matches&&e[0].boundingClientRect.top<line)},{rootMargin:'-'+line+'px 0px 0px 0px'});
+    st.observe(ps);
+  }
+};
+watch();
+addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(watch,200)});
 
 qa('img.wipe').forEach(function(im){
   var f=function(){im.classList.add('ld')};
