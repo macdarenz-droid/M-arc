@@ -3,7 +3,8 @@
  * Canonical kg stays the number every other brain module uses; this only turns
  * a target into something you can put on the bar, pin or pick off the rack.
  */
-import type { EquipmentProfile, Exercise, Gym, LoadUnit, Session, UnitsState } from '@/core/models';
+import type { EquipmentProfile, Exercise, Gym, LoadUnit, LoggedSet, Session, UnitsState } from '@/core/models';
+import { DEFAULT_GYM_ID } from '@/core/models';
 import { KG_PER_LB } from '@/core/units';
 import { equipmentGroup } from './coach/cues';
 
@@ -54,6 +55,98 @@ export function resolveProfile(exerciseId: string, gymId: string, units: UnitsSt
   if (group) return group;
   const gym = units.gyms.find(g => g.id === gymId) ?? units.gyms[0];
   return defaultProfile(equipment, gym?.defaultUnit ?? 'kg');
+}
+
+/** One logged load for loadMenu (LT-1): the set's own numbers plus the session it came from. */
+export interface LoggedLoad {
+  sessionId: string;
+  /** The session's gym; absent before Plate Sense (counts for the default gym only). */
+  gymId?: string;
+  kg: number;
+  entered?: LoggedSet['entered'];
+  flags?: LoggedSet['flags'];
+}
+
+/** Every loaded, non-skipped set of `exerciseId` in `sessions`, warm-ups and drop sets included: a load someone lifted exists. */
+export function loggedLoads(sessions: Session[], exerciseId: string): LoggedLoad[] {
+  const out: LoggedLoad[] = [];
+  for (const s of sessions) for (const e of s.exercises) {
+    if (e.exerciseId !== exerciseId) continue;
+    for (const set of e.sets) if ((set.kg ?? 0) > 0 && set.status !== 'skipped') out.push({ sessionId: s.id, gymId: s.gymId, kg: set.kg!, entered: set.entered, flags: set.flags });
+  }
+  return out;
+}
+
+/** LT-1: whether a logged load is flagged and so never a rung. The one place the flag rule lives. */
+export function isFlaggedLoad(l: Pick<LoggedLoad, 'flags'>): boolean {
+  return !!l.flags?.some(f => f === 'implausible_load' || f === 'unit_suspect');
+}
+
+export type MenuConfidence = 'known' | 'learned' | 'assumed';
+/** Which precedence rank chose the menu: `other_gym` means the default ladder in another gym's unit for this exercise. */
+export type MenuSource = 'exercise' | 'group' | 'default' | 'other_gym';
+
+export interface LoadMenu {
+  profile: EquipmentProfile;
+  /** Every load in canonical kg, ascending: the profile's loads plus the learned ones (ranks 3 and 4 only). */
+  rungsKg: number[];
+  unit: LoadUnit;
+  confidence: MenuConfidence;
+  source: MenuSource;
+}
+
+const KNOWN_SOURCES: ReadonlySet<EquipmentProfile['source']> = new Set(['user', 'suspect_fix', 'escobar_scan', 'escobar_chat']);
+
+/** The gym that owns sessions without a gymId: the built-in one, or the first gym when it was deleted (as resolveProfile falls back). */
+const defaultGymId = (units: UnitsState): string | undefined => (units.gyms.some(g => g.id === DEFAULT_GYM_ID) ? DEFAULT_GYM_ID : units.gyms[0]?.id);
+
+/**
+ * LT-1 (docs/LOAD-AWARE-TARGETS.md §2): what the user can load for one exercise at one gym, and how sure we are.
+ * 1. the exercise's profile here with a real source → known; 2. its group's profile here with a real source → known;
+ * 3. the built-in default united with loads logged in two sessions at this gym, unflagged, in the menu's unit →
+ * learned with two such loads, else assumed; 4. the exercise's profile at another gym gives the unit only.
+ */
+export function loadMenu(exerciseId: string, gymId: string, units: UnitsState, exercise: Pick<Exercise, 'equipment'> | undefined, loggedKg: LoggedLoad[]): LoadMenu {
+  const toKg = (values: number[], unit: LoadUnit) => values.map(v => r(v * factor(unit), 3));
+  const equipment = exercise?.equipment ?? '';
+  const here = units.byExercise[gymId]?.[exerciseId];
+  if (here && KNOWN_SOURCES.has(here.source)) return { profile: here, rungsKg: toKg(loadableValues(here), here.unit), unit: here.unit, confidence: 'known', source: 'exercise' };
+  const group = units.byEquipment[gymId]?.[equipmentGroup(equipment)];
+  if (group && KNOWN_SOURCES.has(group.source)) return { profile: group, rungsKg: toKg(loadableValues(group), group.unit), unit: group.unit, confidence: 'known', source: 'group' };
+  const elsewhere = Object.entries(units.byExercise)
+    .filter(([id]) => id !== gymId)
+    .map(([, m]) => m[exerciseId])
+    .filter((p): p is EquipmentProfile => !!p)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+  const gym = units.gyms.find(g => g.id === gymId) ?? units.gyms[0];
+  const unit = here?.unit ?? group?.unit ?? elsewhere?.unit ?? gym?.defaultUnit ?? 'kg';
+  const profile = defaultProfile(equipment, unit);
+  const ownsUndated = gymId === defaultGymId(units);
+  const sessionsByValue = new Map<number, Set<string>>();
+  for (const l of loggedKg) {
+    if (!(l.gymId ? l.gymId === gymId : ownsUndated)) continue;
+    if (isFlaggedLoad(l) || (l.entered?.unit ?? 'kg') !== unit) continue;
+    const value = r(l.entered?.value ?? l.kg);
+    if (!(value > 0)) continue;
+    const seen = sessionsByValue.get(value) ?? new Set<string>();
+    seen.add(l.sessionId);
+    sessionsByValue.set(value, seen);
+  }
+  const learned = [...sessionsByValue].filter(([, s]) => s.size >= 2).map(([v]) => v);
+  const values = [...new Set([...loadableValues(profile), ...learned])].sort((a, b) => a - b);
+  return {
+    profile,
+    rungsKg: toKg(values, unit),
+    unit,
+    confidence: learned.length >= 2 ? 'learned' : 'assumed',
+    source: !here && !group && elsewhere ? 'other_gym' : 'default',
+  };
+}
+
+/** LT-1: the size of a jump in percent of `fromKg` (negative for a step down); Infinity from nothing to a load. */
+export function jumpPct(fromKg: number, toKg: number): number {
+  if (!(fromKg > 0)) return toKg > 0 ? Infinity : 0;
+  return ((toKg - fromKg) / fromKg) * 100;
 }
 
 /** Every per-side plate total reachable with unlimited pairs of each plate, up to `maxPerSide`, in hundredths. */

@@ -521,3 +521,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - The F1 token lint allow list gains `exercise-shimmer` (a literal duration and one `infinite`), like the other decorative loops. The gate's idle check keeps it off its infinite-animation allow list, so an idle open card with a loop still fails.
   - Known risks: blurring within the first 4 s after opening lets the open run finish its two passes (at most 4 s). `:has()` needs WebView 105+; on older WebViews the logging sweep simply never shows (the open run still does). `background-position` repaints on the main thread while the sweep runs (4 s on open, and only while typing).
   **Why**: owner request 2026-09-27; checked by `tests/theme.test.ts` (UI-1 block) and the gate's `UI-1 shimmer` block, each failing on `main` 39b26d7 and passing after.
+
+## Load menu (LT-1, 2026-09-28)
+
+- **Decided (D-LT1, LT-1 builder)**: points `docs/LOAD-AWARE-TARGETS.md` §2 leaves open.
+  - `loggedKg` is a list of `LoggedLoad` (`sessionId`, `gymId?`, `kg`, `entered?`, `flags?`), built by `loggedLoads(sessions, exerciseId)`, so `loadMenu` itself applies the gym, flag, unit and two-session rules.
+  - Learned loads join the menu only at ranks 3 and 4 (the card's "default united with"). A `known` profile is taken as it is: §1's 32 kg typed on a 25/30/32.5/35 ladder must not turn into a rung.
+  - Any loaded, non-skipped set counts, warm-ups and drop sets included: a load someone lifted exists. Two sets in one session are one session.
+  - A set without `entered` was typed in kg, as `Train.tsx` SuspectChip already reads it (`set.entered?.unit ?? 'kg'`).
+  - "Flagged" is the stored `implausible_load` / `unit_suspect` flag, behind `isFlaggedLoad`. It switches to BUG-18's read-time rule when PR #61 merges.
+  - `learned` needs two confirmed loads, and loads the default ladder already has count toward the two (they confirm the default).
+  - "The default gym" is `gym_default`; when it was deleted, the first gym, the same fallback `resolveProfile` uses. A session whose gym was deleted counts for no gym.
+  - The menu's unit: a default-source profile here (exercise, then group), else the most recent other gym's profile for this exercise (`source: 'other_gym'`), else the gym's default unit. That keeps today's unit for users who set it at another gym.
+  - `jumpPct` is unrounded percent of `fromKg`; `Infinity` from 0 to a load, 0 from 0 to 0.
+  **Why**: the spec is silent on these; each follows the card, the code it cites, or the §1 problem. Checked by the LT-1 block in `tests/plate-sense.test.ts`.
