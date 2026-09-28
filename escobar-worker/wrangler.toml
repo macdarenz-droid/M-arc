@@ -79,7 +79,7 @@ new_sqlite_classes = ["UpstreamRelay"]
 [[d1_databases]]
 binding = "ERRORS_DB"
 database_name = "marc-errors"
-database_id = "REPLACE-WITH-THE-ID-FROM-wrangler-d1-create"
+database_id = "398dabc4-282f-437a-97dd-e3ce9aeb5d93"
 
 # Daily at 03:17 UTC: delete error reports past 90 days and old rate counters.
 [triggers]
