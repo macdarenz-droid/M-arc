@@ -4905,6 +4905,21 @@ for (const { theme, inset } of bug22Runs) {
 
   for (const t of ['Today', 'History', 'Body']) { await go(t); await checkEnd(`${t} end`); }
 
+  // A2 on History > Stats, where the owner's screenshot had the dock over "Exercise progress": scrolling
+  // down mid-page moves it away and a tap at its spot reaches the chart area; scrolling up brings it
+  // back (the shipped trade-off: until the next scroll-down it may cover what is under it). Then A1 at its end.
+  await go('History');
+  await page.locator('.seg button', { hasText: /^Stats$/ }).click(); await page.waitForTimeout(300);
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  for (let k = 0; k < 4; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const stats = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock'), onPage: !!hit?.closest('.view') }; }, spot);
+  if (!(stats.y > 0 && stats.y < stats.max - 8)) errors.push(`${tag} A2 Stats: expected to be mid-page, at ${stats.y} of ${stats.max}`);
+  if (!stats.away || stats.blocks) errors.push(`${tag} A2 Stats: scrolling down mid-page should move the dock away (away ${stats.away}, still hit ${stats.blocks})`);
+  if (!stats.onPage) errors.push(`${tag} A2 Stats: a tap at the dock's spot should reach the page`);
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2 Stats: scrolling up should bring the dock back`);
+  await checkEnd('History > Stats end');
+
   // A1, rest banner up: a live session resting, looked at from the other tabs (Train hides the dock while live).
   await page.evaluate(() => {
     const s = JSON.parse(localStorage.getItem('marc.state.v1'));

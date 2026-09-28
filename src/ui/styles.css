@@ -610,7 +610,7 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
 .esc-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .esc-send { flex: none; }
 
-.esc-dock { position: fixed; left: 0; right: 0; margin-inline: auto; width: max-content; transform: none; bottom: var(--float-bottom); z-index: var(--z-dock); display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: var(--dock-h); padding: 0 16px 0 12px; border-radius: var(--radius-pill); background: var(--surface-3); color: var(--text); border: 1px solid var(--border); border-top: 1px solid var(--border-strong); box-shadow: var(--shadow-float); font-size: var(--fs-small); font-weight: 600; }
+.esc-dock { position: fixed; left: 0; right: 0; margin-inline: auto; width: max-content; transform: none; bottom: var(--float-bottom); z-index: var(--z-dock); display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); min-height: 40px; padding: 0 16px 0 12px; border-radius: var(--radius-pill); background: var(--surface-3); color: var(--text); border: 1px solid var(--border); border-top: 1px solid var(--border-strong); box-shadow: var(--shadow-float); font-size: var(--fs-small); font-weight: 600; }
 .esc-dock span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .esc-dock svg, .esc-dock .escobar-mark { color: var(--accent); flex: none; }
 .esc-dock-off { background: var(--surface-1); color: var(--text-2); box-shadow: none; }
@@ -621,6 +621,7 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
    padding also holds when the dock sits higher than the tokens say.
    --dock-shade: how far --shadow-float reaches above the dock (blur 32 - spread 8 - offset 12). */
 :root { --dock-h: 40px; --dock-shade: 12px; --dock-clear: 0px; }
+.esc-dock { min-height: var(--dock-h); }
 /* Each padding is written twice: a plain calc() first, so an engine without max() keeps a
    token-based end instead of dropping the whole declaration. */
 .app { padding-bottom: calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); padding-bottom: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear) + var(--dock-shade) + var(--float-gap))); }
