@@ -71,3 +71,21 @@ new_sqlite_classes = ["UpstreamRelay"]
 # [[kv_namespaces]]
 # binding = "QUOTA"
 # id = "paste-the-id-here"
+
+# Anonymous error reports (docs/ERROR-REPORTS.md, item 7.5): reports and rate counters in D1
+# (src/errorsStore.ts; tables are created on first use). The owner creates the database once:
+#   npx wrangler d1 create marc-errors
+# and replaces database_id below with the id it prints (an id, not a secret).
+[[d1_databases]]
+binding = "ERRORS_DB"
+database_name = "marc-errors"
+database_id = "398dabc4-282f-437a-97dd-e3ce9aeb5d93"
+
+# Daily at 03:17 UTC: delete error reports past 90 days and old rate counters.
+[triggers]
+crons = ["17 3 * * *"]
+
+# Error reports secret: the bearer token for GET /errors/summary and the key of the IP hash.
+# POST /errors answers 503 until it is set. The owner sets it once, before merging:
+#   npx wrangler secret put ERRORS_SUMMARY_TOKEN
+# Never set in [vars]: secrets don't belong in the repo.
