@@ -212,45 +212,114 @@ export function restTarget(input: RestTargetInput): RestTargetResult {
 }
 
 export interface EffortMismatchResult {
-  /** Sets rated easy whose peak was within 10% of the session's hardest rated set. */
+  /** Sets rated easy whose peak was within 10% of the same exercise's hardest rated set. */
   mismatched: number;
   rated: number;
   examplePct: number;
 }
 
+const EFFORT_RANK: Record<Effort, number> = { easy: 0, ideal: 1, max: 2 };
+
 /**
- * F1.3: after 5+ rated sets with heart data, an "easy" set that hit near the session's hardest
- * peak is probably under-rated. Session-relative (never an absolute population number) — the
- * plan's own worked example ("hit 92% of your session max") anchors the 90% cutoff here.
+ * F1.3 (D-A1 point 5, decision P2): after 5+ rated sets with heart data in the session, an "easy"
+ * set whose peak reached 90%+ of the peak of the same exercise's hardest rated set is probably
+ * under-rated. Only within one exercise (App A.11): a big-muscle lift runs higher than curls at
+ * the same effort. The hardest rated set is the one rated hardest (max, then ideal); its highest
+ * peak is the reference. An exercise rated only easy has nothing to compare against.
  */
-export function effortMismatch(sets: Array<{ effort?: Effort; heart?: SetHeart }>): EffortMismatchResult | null {
-  const rated = sets.filter(s => s.effort && s.heart?.peakBpm != null);
-  if (rated.length < 5) return null;
-  const sessionMax = Math.max(...rated.map(s => s.heart!.peakBpm));
-  if (sessionMax <= 0) return null;
-  const flagged = rated.filter(s => s.effort === 'easy' && s.heart!.peakBpm >= sessionMax * 0.9);
-  if (!flagged.length) return null;
-  const examplePct = Math.round(Math.max(...flagged.map(s => s.heart!.peakBpm)) / sessionMax * 100);
-  return { mismatched: flagged.length, rated: rated.length, examplePct };
+export function effortMismatch(exercises: Array<{ sets: Array<{ effort?: Effort; heart?: SetHeart }> }>): EffortMismatchResult | null {
+  const byExercise = exercises.map(e => e.sets.filter(s => s.effort && s.heart?.peakBpm != null));
+  const rated = byExercise.reduce((n, sets) => n + sets.length, 0);
+  if (rated < 5) return null;
+  let mismatched = 0;
+  let examplePct = 0;
+  for (const sets of byExercise) {
+    const hardest = Math.max(-1, ...sets.map(s => EFFORT_RANK[s.effort!]));
+    if (hardest <= EFFORT_RANK.easy) continue;
+    const refPeak = Math.max(...sets.filter(s => EFFORT_RANK[s.effort!] === hardest).map(s => s.heart!.peakBpm));
+    if (!(refPeak > 0)) continue;
+    for (const s of sets) {
+      if (s.effort !== 'easy' || s.heart!.peakBpm < refPeak * 0.9) continue;
+      mismatched++;
+      examplePct = Math.max(examplePct, Math.round(s.heart!.peakBpm / refPeak * 100));
+    }
+  }
+  return mismatched ? { mismatched, rated, examplePct } : null;
+}
+
+/**
+ * RECOVERY-F18: the heart rate just before a set began, from the series between the previous
+ * commit (or the session start) and this set's commit. Rest ends at the trough and wrist HR lags
+ * the set's start (App A.1), so this is the lowest 15-second median in that window. Null with
+ * fewer than three 5-second points: too little signal to call it.
+ */
+export function preSetBpmFromWindow(series: Array<[number, number]>, fromSec: number, toSec: number): number | null {
+  const bpms = series.filter(([t]) => t >= fromSec && t <= toSec).map(([, bpm]) => bpm);
+  if (bpms.length < 3) return null;
+  let low = Infinity;
+  for (let i = 0; i + 2 < bpms.length; i++) low = Math.min(low, [...bpms.slice(i, i + 3)].sort((a, b) => a - b)[1]!);
+  return low;
+}
+
+/** Appendix B "Drift and fatigue". */
+export const DRIFT = { minSessionSec: 20 * 60, minSets: 6, pctAbove: 8, readySlopeAboveSec: 10, readyCapSec: 300 } as const;
+
+export interface DriftInput {
+  series: Array<[number, number]>;
+  sessionSec: number;
+  /** Commit time of each live working set, seconds since the session started. */
+  setAtSec: number[];
+  /** Needed for timeToReady only; null leaves that half out. */
+  restingHrBpm: number | null;
+  hrMaxBpm: number;
 }
 
 export interface DriftResult {
   drifting: boolean;
-  bpmRisePerSet: number;
+  /** 100 × (mean pre-set HR of the last 3 sets − the first 3) / the first 3. */
+  driftPct: number;
+  /** Least-squares slope of timeToReady in seconds per set; null with fewer than 3 known rests. */
+  readySlopeSecPerSet: number | null;
+  sets: number;
+}
+
+/** Least-squares slope of y over x. */
+function slope(points: Array<[number, number]>): number {
+  const n = points.length;
+  const mx = points.reduce((a, [x]) => a + x, 0) / n;
+  const my = points.reduce((a, [, y]) => a + y, 0) / n;
+  const sxx = points.reduce((a, [x]) => a + (x - mx) ** 2, 0);
+  return sxx ? points.reduce((a, [x, y]) => a + (x - mx) * (y - my), 0) / sxx : 0;
 }
 
 /**
- * F1.4: 3+ sets of the same exercise at the same load (the caller filters to that), peak HR
- * rising 8+ bpm per set on average while HRR60 shrinks, means fatigue is building within the
- * session — not a single set's reading, a trend across several.
+ * Appendix B drift (D-A1 point 7): the pre-set HR of the last 3 sets against the first 3, only in
+ * a session of 20+ min with 6+ sets that have a pre-set HR. Flags above 8%, or when timeToReady
+ * (seconds after a set until 3 consecutive points sit at or below its rest-ready bpm, within the
+ * 300 s cap and before the next commit) rises more than 10 s per set.
  */
-export function intraSessionDrift(sets: Array<{ heart?: SetHeart }>): DriftResult | null {
-  const withHeart = sets.filter(s => s.heart?.peakBpm != null);
-  if (withHeart.length < 3) return null;
-  const peaks = withHeart.map(s => s.heart!.peakBpm);
-  const rises = peaks.slice(1).map((p, i) => p - peaks[i]!);
-  const avgRise = rises.reduce((a, b) => a + b, 0) / rises.length;
-  const hrr60s = withHeart.map(s => s.heart!.hrr60).filter((x): x is number => x != null);
-  const hrrShrinking = hrr60s.length >= 2 && hrr60s[hrr60s.length - 1]! < hrr60s[0]!;
-  return { drifting: avgRise >= 8 && hrrShrinking, bpmRisePerSet: Math.round(avgRise) };
+export function sessionDrift(input: DriftInput): DriftResult | null {
+  const { series, sessionSec, setAtSec, restingHrBpm, hrMaxBpm } = input;
+  if (sessionSec < DRIFT.minSessionSec || !series.length) return null;
+  const at = setAtSec.filter(t => Number.isFinite(t) && t >= 0).sort((a, b) => a - b);
+  const sets = at.map((t, i) => ({ i, t, pre: preSetBpmFromWindow(series, i ? at[i - 1]! : 0, t) }));
+  const known = sets.filter((s): s is { i: number; t: number; pre: number } => s.pre != null);
+  if (known.length < DRIFT.minSets) return null;
+  const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const first = mean(known.slice(0, 3).map(s => s.pre));
+  const last = mean(known.slice(-3).map(s => s.pre));
+  const driftPct = Math.round((100 * (last - first) / first) * 10) / 10;
+  const ready: Array<[number, number]> = [];
+  if (restingHrBpm != null) {
+    for (const s of known) {
+      const readyBpm = restReadyBpm(s.pre, restingHrBpm, hrMaxBpm);
+      const end = Math.min(s.t + DRIFT.readyCapSec, at[s.i + 1] ?? sessionSec);
+      const after = series.filter(([t]) => t > s.t && t <= end);
+      const j = after.findIndex((_, k) => k + 2 < after.length && after.slice(k, k + 3).every(([, bpm]) => bpm <= readyBpm));
+      if (j >= 0) ready.push([s.i, after[j + 2]![0] - s.t]);
+    }
+  }
+  const readySlopeSecPerSet = ready.length >= 3 ? Math.round(slope(ready) * 10) / 10 : null;
+  const drifting = driftPct > DRIFT.pctAbove || (readySlopeSecPerSet != null && readySlopeSecPerSet > DRIFT.readySlopeAboveSec);
+  return { drifting, driftPct, readySlopeSecPerSet, sets: known.length };
 }

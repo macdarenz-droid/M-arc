@@ -16,7 +16,7 @@ import { haptic } from '@/native/haptics';
 import { backgroundHealthSync } from '@/slices/settings/health';
 import { connectWatch } from '@/native/watch';
 import { resyncReminders } from '@/slices/settings/reminders';
-import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, latestLiveBpm } from './heart';
+import { resetHeartCapture, discardHeartCapture, heartForSet, finishHeartCapture, preSetBpmFor } from './heart';
 
 export const REST_MIN = 15, REST_MAX = 600;
 
@@ -168,7 +168,7 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const startedAtMs = new Date(a.startedAt).getTime();
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   setSetById(setId, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, latestLiveBpm(), now);
+  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
   void haptic.confirm();
   return true;
 }
@@ -302,6 +302,29 @@ export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?:
   }
   patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm } }));
   if (endsAt > Date.now()) void scheduleRestDone(endsAt);
+}
+
+/**
+ * BUG-21 (D-A1 point 4): the exercise the running rest follows, taken from the latest committed set,
+ * is a main lift. Unknown counts as a main lift, the safer side: the timer then stays the floor.
+ */
+export function restFollowsMainLift(a: ActiveSession, custom: Exercise[]): boolean {
+  let latest: { exerciseId: string; ms: number } | undefined;
+  for (const e of a.entries) for (const x of e.sets) {
+    const ms = x.status === 'committed' && x.at ? Date.parse(x.at) : NaN;
+    if (Number.isFinite(ms) && (!latest || ms > latest.ms)) latest = { exerciseId: e.exerciseId, ms };
+  }
+  if (!latest) return true;
+  const role = findExercise(latest.exerciseId, custom)?.role;
+  return role == null || role === 'main';
+}
+
+/**
+ * BUG-21 (D-A1 point 4, App A.1): heart rate may end an accessory's rest early, never a main
+ * lift's. For a main lift the user's own timer is the floor, and the rest ends when it runs out.
+ */
+export function restDone(timeDone: boolean, heartReady: boolean, mainLift: boolean): boolean {
+  return timeDone || (heartReady && !mainLift);
 }
 
 export function adjustRest(deltaSec: number): void {

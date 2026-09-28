@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary, downsampleToBuckets, bestObservedHrMax, minRestSec, restReadyBpm, restTarget, effortMismatch, intraSessionDrift } from '@/brain/heart';
+import { hrMax, observedHrMaxFromSeries, restingHr, zones, signalQuality, setHeartFromWindow, sessionHeartSummary, downsampleToBuckets, bestObservedHrMax, minRestSec, restReadyBpm, restTarget, effortMismatch } from '@/brain/heart';
 import type { Profile, SetHeart } from '@/core/models';
 
 const profile = (p: Partial<Profile> = {}): Profile => ({ name: '', ...p });
@@ -186,33 +186,17 @@ describe('effortMismatch', () => {
   const set = (effort: 'easy' | 'ideal' | 'max', peakBpm: number): { effort: 'easy' | 'ideal' | 'max'; heart: SetHeart } => ({ effort, heart: { peakBpm, endBpm: peakBpm } });
   it('flags an easy set that hit near the session max, needs 5+ rated sets', () => {
     const sets = [set('ideal', 160), set('ideal', 170), set('ideal', 180), set('max', 190), set('easy', 180)];
-    const r = effortMismatch(sets);
+    const r = effortMismatch([{ sets }]);
     expect(r?.mismatched).toBe(1);
     expect(r?.examplePct).toBe(Math.round(180 / 190 * 100));
   });
   it('is null below 5 rated sets', () => {
     const sets = [set('ideal', 160), set('easy', 180)];
-    expect(effortMismatch(sets)).toBeNull();
+    expect(effortMismatch([{ sets }])).toBeNull();
   });
   it('is null when no easy set is anywhere near the session max', () => {
     const sets = [set('ideal', 160), set('ideal', 170), set('ideal', 180), set('max', 190), set('easy', 100)];
-    expect(effortMismatch(sets)).toBeNull();
-  });
-});
-
-describe('intraSessionDrift', () => {
-  const set = (peakBpm: number, hrr60: number): { heart: SetHeart } => ({ heart: { peakBpm, endBpm: peakBpm, hrr60 } });
-  it('flags rising peak HR with shrinking HRR60 across 3+ sets', () => {
-    const r = intraSessionDrift([set(150, 20), set(160, 15), set(172, 8)]);
-    expect(r?.drifting).toBe(true);
-    expect(r?.bpmRisePerSet).toBe(11);
-  });
-  it('does not flag a rise without shrinking recovery', () => {
-    const r = intraSessionDrift([set(150, 20), set(160, 22), set(172, 21)]);
-    expect(r?.drifting).toBe(false);
-  });
-  it('is null below 3 sets with heart data', () => {
-    expect(intraSessionDrift([set(150, 20)])).toBeNull();
+    expect(effortMismatch([{ sets }])).toBeNull();
   });
 });
 
