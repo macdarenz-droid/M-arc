@@ -320,16 +320,30 @@ describe('LT-1 loadMenu', () => {
     expect(rungs(loggedLoads([at('b', '2026-09-01', [kgSet(3)])], 'db_press'))).not.toContain(3);
     // Twice in one session is still one session.
     expect(rungs(loggedLoads([at('b', '2026-09-01', [kgSet(3), kgSet(3)])], 'db_press'))).not.toContain(3);
-    for (const flag of ['implausible_load', 'unit_suspect'] as const) {
-      const flagged = loggedLoads([at('b', '2026-09-01', [kgSet(3, { flags: [flag] })]), at('b', '2026-09-03', [kgSet(3, { flags: [flag] })])], 'db_press');
-      expect(rungs(flagged)).not.toContain(3);
-    }
+    const suspect = loggedLoads([at('b', '2026-09-01', [kgSet(3, { flags: ['unit_suspect'] })]), at('b', '2026-09-03', [kgSet(3, { flags: ['unit_suspect'] })])], 'db_press');
+    expect(rungs(suspect)).not.toContain(3);
     const inLb = loggedLoads([at('b', '2026-09-01', [{ kg: 3.175, reps: 10, entered: { value: 7, unit: 'lb' } }]), at('b', '2026-09-03', [{ kg: 3.175, reps: 10, entered: { value: 7, unit: 'lb' } }])], 'db_press');
     expect(rungs(inLb)).toEqual(rungs([]));
     // With no `entered`, the kg was typed in kg (Train.tsx SuspectChip rule).
     expect(rungs(loggedLoads([at('b', '2026-09-01', [{ kg: 3, reps: 8 }]), at('b', '2026-09-03', [{ kg: 3, reps: 8 }])], 'db_press'))).toContain(3);
     // Skipped sets are not loads.
     expect(rungs(loggedLoads([at('b', '2026-09-01', [kgSet(3, { status: 'skipped' })]), at('b', '2026-09-03', [kgSet(3, { status: 'skipped' })])], 'db_press'))).not.toContain(3);
+  });
+  it('A2 "flagged" is BUG-18\'s held rule: a held set is not a rung, a flagged load lifted again is', () => {
+    const rungs = (sessions: Session[]) => loadMenu('db_press', 'b', base, DB, loggedLoads(sessions, 'db_press')).rungsKg;
+    // 41 kg × 99: the reps are past the limit and never repeated, so that set is held; one clean session is not two.
+    const heldReps = [at('b', '2026-09-01', [kgSet(41, { reps: 99 })]), at('b', '2026-09-03', [kgSet(41)])];
+    expect(loggedLoads(heldReps, 'db_press').map(l => !!l.held)).toEqual([true, false]);
+    expect(rungs(heldReps)).not.toContain(41);
+    // A set to failure is summarised as a copy (rated max); it is still found held.
+    const heldFailure = [at('b', '2026-09-01', [kgSet(41, { reps: 99, kind: 'failure' })]), at('b', '2026-09-03', [kgSet(41)])];
+    expect(loggedLoads(heldFailure, 'db_press').map(l => !!l.held)).toEqual([true, false]);
+    // A load 25 % over the best, stored as implausible, but lifted again: confirmed, so a rung.
+    const confirmed = [at('b', '2026-09-01', [kgSet(20)]), at('b', '2026-09-03', [kgSet(41, { flags: ['implausible_load'] })]), at('b', '2026-09-05', [kgSet(41, { flags: ['implausible_load'] })])];
+    expect(loggedLoads(confirmed, 'db_press').some(l => l.held)).toBe(false);
+    expect(rungs(confirmed)).toContain(41);
+    // A typo 41 kg once after 20 kg: held (and once is never a rung anyway).
+    expect(loggedLoads([at('b', '2026-09-01', [kgSet(20)]), at('b', '2026-09-03', [kgSet(41)])], 'db_press').map(l => !!l.held)).toEqual([false, true]);
   });
   it('A3 loads at gym A never enter gym B\'s menu; sessions without a gymId count only for the default gym', () => {
     expect(loadMenu('db_press', 'b', base, DB, twice(DEFAULT_GYM_ID, 3, 11)).rungsKg).not.toContain(3);

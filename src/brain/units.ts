@@ -7,6 +7,7 @@ import type { EquipmentProfile, Exercise, Gym, LoadUnit, LoggedSet, Session, Uni
 import { DEFAULT_GYM_ID } from '@/core/models';
 import { KG_PER_LB } from '@/core/units';
 import { equipmentGroup } from './coach/cues';
+import { exerciseHistory } from './history';
 
 const factor = (u: LoadUnit): number => (u === 'lb' ? KG_PER_LB : 1);
 const r = (v: number, places = 2): number => { const f = 10 ** places; return Math.round(v * f) / f; };
@@ -65,21 +66,37 @@ export interface LoggedLoad {
   kg: number;
   entered?: LoggedSet['entered'];
   flags?: LoggedSet['flags'];
+  /** BUG-18: held as implausible at read time (flagged against earlier sessions, never repeated). */
+  held?: boolean;
 }
 
-/** Every loaded, non-skipped set of `exerciseId` in `sessions`, warm-ups and drop sets included: a load someone lifted exists. */
-export function loggedLoads(sessions: Session[], exerciseId: string): LoggedLoad[] {
+/**
+ * Every loaded, non-skipped set of `exerciseId` in `sessions`, warm-ups and drop sets included: a load someone
+ * lifted exists. `held` comes from BUG-18's read-time rule, the same one targets and records use.
+ */
+export function loggedLoads(sessions: Session[], exerciseId: string, custom?: Exercise[]): LoggedLoad[] {
+  const heldBySession = new Map<string, LoggedSet[]>();
+  for (const h of exerciseHistory(sessions, exerciseId, custom)) if (h.held.length) heldBySession.set(h.sessionId, h.held);
+  // A held set is the logged object itself, or a copy for a set to failure (summarizeSets rates it max).
+  const isHeld = (held: LoggedSet[] | undefined, set: LoggedSet) => !!held?.some(h => h === set || (set.kind === 'failure' && h.kind === 'failure' && h.kg === set.kg && h.reps === set.reps && h.at === set.at));
   const out: LoggedLoad[] = [];
   for (const s of sessions) for (const e of s.exercises) {
     if (e.exerciseId !== exerciseId) continue;
-    for (const set of e.sets) if ((set.kg ?? 0) > 0 && set.status !== 'skipped') out.push({ sessionId: s.id, gymId: s.gymId, kg: set.kg!, entered: set.entered, flags: set.flags });
+    for (const set of e.sets) {
+      if (!((set.kg ?? 0) > 0) || set.status === 'skipped') continue;
+      const held = isHeld(heldBySession.get(s.id), set);
+      out.push({ sessionId: s.id, gymId: s.gymId, kg: set.kg!, entered: set.entered, flags: set.flags, ...(held ? { held } : {}) });
+    }
   }
   return out;
 }
 
-/** LT-1: whether a logged load is flagged and so never a rung. The one place the flag rule lives. */
-export function isFlaggedLoad(l: Pick<LoggedLoad, 'flags'>): boolean {
-  return !!l.flags?.some(f => f === 'implausible_load' || f === 'unit_suspect');
+/**
+ * LT-1: whether a logged load is flagged and so never a rung. The one place the flag rule lives: BUG-18's held
+ * sets (a stored `implausible_load` is not enough, since a repeat confirms the load), and a stored kg/lb suspicion.
+ */
+export function isFlaggedLoad(l: Pick<LoggedLoad, 'flags' | 'held'>): boolean {
+  return !!l.held || !!l.flags?.includes('unit_suspect');
 }
 
 export type MenuConfidence = 'known' | 'learned' | 'assumed';

@@ -583,7 +583,7 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Learned loads join the menu only at ranks 3 and 4 (the card's "default united with"). A `known` profile is taken as it is: §1's 32 kg typed on a 25/30/32.5/35 ladder must not turn into a rung.
   - Any loaded, non-skipped set counts, warm-ups and drop sets included: a load someone lifted exists. Two sets in one session are one session.
   - A set without `entered` was typed in kg, as `Train.tsx` SuspectChip already reads it (`set.entered?.unit ?? 'kg'`).
-  - "Flagged" is the stored `implausible_load` / `unit_suspect` flag, behind `isFlaggedLoad`. It switches to BUG-18's read-time rule when PR #61 merges.
+  - "Flagged" (`isFlaggedLoad`) is BUG-18's read-time held rule (D-B18), read from `exerciseHistory`'s `held` sets, plus a stored `unit_suspect`. A stored `implausible_load` alone no longer counts: a repeat confirms the load (plan 6.17.4), and BUG-18's rule already covers it. `unit_suspect` stays because BUG-18 does not replace it. Under BUG-18 a load clean in two sessions is never held (the later one confirms the earlier), so the hold only bites when a set's reps are the typo.
   - `learned` needs two confirmed loads, and loads the default ladder already has count toward the two (they confirm the default).
   - "The default gym" is `gym_default`; when it was deleted, the first gym, the same fallback `resolveProfile` uses. A session whose gym was deleted counts for no gym.
   - The menu's unit: a default-source profile here (exercise, then group), else the most recent other gym's profile for this exercise (`source: 'other_gym'`), else the gym's default unit. That keeps today's unit for users who set it at another gym.
