@@ -1160,7 +1160,7 @@ export function RestBanner() {
     remaining = Math.min(rest.totalSec, restRemainingSec(a, now) ?? 0);
     const timeDone = remaining <= 0;
     // Heart-guided rest (F1.2): only while the stream is LIVE; a DELAYED/STALE stream falls back to the timer.
-    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && rest.preSetBpm != null && watchStatus.value.freshness === 'LIVE';
+    heartMode = s.preferences.rest.mode === 'heart' && !a.pausedAt && watchStatus.value.freshness === 'LIVE';
     let heartReady = false;
     let currentBpm: number | undefined;
     let targetBpm: number | undefined;
@@ -1168,7 +1168,7 @@ export function RestBanner() {
       const restingBpm = restingHr(s.healthDays, s.profile, today.value);
       if (restingBpm != null) {
         const elapsedSec = Math.max(0, rest.totalSec - remaining);
-        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm!, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
+        const r = restTarget({ recentBpms: recentLiveBpms(3), preSetBpm: rest.preSetBpm, restingHrBpm: restingBpm, hrMaxBpm: hrMax(s.profile).bpm, effort: rest.effort, elapsedSec });
         heartReady = r.ready;
         targetBpm = r.readyBpm;
         currentBpm = latestMeasurement.value?.bpm;

@@ -180,15 +180,20 @@ export function minRestSec(effort: Effort | undefined): number {
 export const REST_RISE_BPM = 12;
 export const REST_RESERVE_PCT = 0.35;
 
-/** `min(preSetBpm + 12, restingHr + 0.35 * reserve)` (6.4) — the bpm rest is "done enough" at. */
-export function restReadyBpm(preSetBpm: number, restingHrBpm: number, hrMaxBpm: number): number {
-  return Math.round(Math.min(preSetBpm + REST_RISE_BPM, restingHrBpm + REST_RESERVE_PCT * (hrMaxBpm - restingHrBpm)));
+/**
+ * `min(preSetBpm + 12, restingHr + 0.35 * reserve)` (6.4) — the bpm rest is "done enough" at.
+ * BUG-21: with no pre-set bpm (too little signal before the set) only the reserve term is known,
+ * and it is used alone; the end-of-set bpm is never a stand-in (RECOVERY-F18).
+ */
+export function restReadyBpm(preSetBpm: number | undefined, restingHrBpm: number, hrMaxBpm: number): number {
+  const reserveTerm = restingHrBpm + REST_RESERVE_PCT * (hrMaxBpm - restingHrBpm);
+  return Math.round(preSetBpm == null ? reserveTerm : Math.min(preSetBpm + REST_RISE_BPM, reserveTerm));
 }
 
 export interface RestTargetInput {
   /** Chronological, contact=true LIVE samples only; the caller drops anything else before calling. */
   recentBpms: number[];
-  preSetBpm: number;
+  preSetBpm: number | undefined;
   restingHrBpm: number;
   hrMaxBpm: number;
   effort: Effort | undefined;

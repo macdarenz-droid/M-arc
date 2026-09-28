@@ -52,7 +52,7 @@ export function recentLiveBpms(n = 3): number[] {
 /**
  * RECOVERY-F18: the heart rate before the set that was just committed (the trough of the rest
  * before it), for heart-guided rest. Not the bpm at the commit, which is the end-of-set peak.
- * Undefined without enough signal in that window: the rest then runs on the timer.
+ * Undefined without enough signal in that window: the rest target then uses its reserve term alone.
  */
 export function preSetBpmFor(fromSec: number, toSec: number): number | undefined {
   return preSetBpmFromWindow(downsampleToBuckets(rawSamples), fromSec, toSec) ?? undefined;

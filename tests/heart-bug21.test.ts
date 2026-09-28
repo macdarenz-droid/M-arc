@@ -11,7 +11,7 @@ vi.mock('@/slices/settings/reminders', () => remindersMock);
 import { replaceState, state } from '@/core/store';
 import { freshState, type LoggedSet, type Split } from '@/core/models';
 import { latestMeasurement, type WatchMeasurement } from '@/native/watch';
-import { effortMismatch, preSetBpmFromWindow, sessionDrift, DRIFT } from '@/brain/heart';
+import { effortMismatch, preSetBpmFromWindow, restReadyBpm, restTarget, sessionDrift, DRIFT } from '@/brain/heart';
 import { coachInsights } from '@/brain/coach/rules';
 import { commitSet, restDone, restFollowsMainLift, setSet, startSession } from '@/slices/workout/session';
 import { resetHeartCapture, startHeartCapture } from '@/slices/workout/heart';
@@ -84,7 +84,7 @@ describe('RECOVERY-F18: the rest target starts from the heart rate before the se
     expect(state.value.active!.rest?.preSetBpm).toBe(85);
   });
 
-  it('without enough heart signal the rest gets no pre-set bpm, so it runs on the timer', () => {
+  it('without enough heart signal the rest gets no pre-set bpm (never the end-of-set bpm)', () => {
     startSession(split);
     latestMeasurement.value = m(85, 150);
     vi.setSystemTime(T0 + 90_000);
@@ -92,6 +92,13 @@ describe('RECOVERY-F18: the rest target starts from the heart rate before the se
     commitSet(0, 0);
     expect(state.value.active!.rest).toBeTruthy();
     expect(state.value.active!.rest!.preSetBpm).toBeUndefined();
+  });
+
+  it('with no pre-set bpm the rest target is the reserve term alone', () => {
+    // resting 60, max 190: 60 + 0.35 × 130 = 105.5 → 106; with a pre-set 85 it is 97.
+    expect(restReadyBpm(undefined, 60, 190)).toBe(106);
+    expect(restReadyBpm(85, 60, 190)).toBe(97);
+    expect(restTarget({ recentBpms: [100, 100, 100], preSetBpm: undefined, restingHrBpm: 60, hrMaxBpm: 190, effort: 'easy', elapsedSec: 60 })).toEqual({ readyBpm: 106, ready: true });
   });
 
   it('preSetBpmFromWindow is the lowest 15-second median in the window and ignores a one-point dip', () => {
