@@ -34,7 +34,7 @@
 @font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107%;ascent-override:90%;descent-override:22%}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--page);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.55;letter-spacing:-.009em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.55;letter-spacing:-.009em;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img,svg{display:block;max-width:100%}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline;text-underline-offset:3px}
@@ -44,19 +44,19 @@ h1,h2,h3{margin:0;font-family:var(--serif);font-weight:500;font-optical-sizing:a
 h1{font-size:64px;line-height:1.02;letter-spacing:-.01em;font-weight:400;text-wrap:balance}
 h2{font-size:40px;line-height:1.1;letter-spacing:-.008em;text-wrap:balance}
 h3{font-size:24px;line-height:1.2}
-.num,time,code,kbd,.fp{font-variant-numeric:tabular-nums}
+.num,time,code,kbd,pre,.fp,figcaption{font-variant-numeric:tabular-nums}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .wrap{max-width:1120px;margin-inline:auto;padding-inline:var(--gutter)}
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
 .measure{max-width:var(--measure)}
-.eyebrow,.cap{font:600 11px/16px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
+.eyebrow,.cap{font:600 11px/16px var(--sans);font-variant-numeric:tabular-nums;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2)}
 .muted{color:var(--text-2)}
 .small{font-size:13px;line-height:18px}
 .skip{position:absolute;left:16px;top:-48px;z-index:20;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-2);padding:8px 12px;font-weight:500}
 .skip:focus{top:calc(env(safe-area-inset-top,0px) + 12px)}
 
 /* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--r-2);font:500 14px/1 var(--sans);letter-spacing:0;border:1px solid transparent;cursor:pointer;background:none;color:var(--text);text-decoration:none;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 16px;border-radius:var(--r-2);font:500 14px/1 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:0;border:1px solid transparent;cursor:pointer;background:none;color:var(--text);text-decoration:none;white-space:nowrap}
 .btn:hover{text-decoration:none}
 .btn-accent{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-hair{border-color:var(--border);background:var(--surface)}
@@ -89,6 +89,7 @@ html[data-install] .progress{background:var(--positive)}
 .hero{padding-top:56px;padding-bottom:24px;min-height:min(72svh,720px)}
 .hero .copy{grid-column:1/7;align-self:center}
 .hero .fig{grid-column:8/13;justify-self:start}
+.diagram figcaption{max-width:var(--measure)}
 .hero h1{margin:16px 0 20px}
 .hero .lede{font-size:19px;line-height:1.5;color:var(--text-2);max-width:540px;margin-bottom:28px}
 .cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
@@ -98,9 +99,9 @@ html[data-install] .progress{background:var(--positive)}
 /* figures */
 .fig{margin:0;width:var(--w,390px);max-width:100%}
 .sheet{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-3);overflow:hidden;box-shadow:var(--shadow)}
-.sheet img{width:100%;height:auto}
+.sheet img{display:block;width:100%;height:auto}
 .frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;overflow:hidden}
-.frame rect{fill:none;stroke:var(--text);stroke-width:2;vector-effect:non-scaling-stroke}
+.frame rect{fill:none;stroke:var(--text);stroke-width:1;vector-effect:non-scaling-stroke;x:.5px;y:.5px;width:calc(100% - 1px);height:calc(100% - 1px)}
 figcaption{margin-top:10px;font-size:13px;line-height:18px;color:var(--text-2)}
 figcaption .cap{display:block;margin-bottom:2px}
 .pair{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
@@ -136,8 +137,9 @@ summary svg{width:16px;height:16px;stroke:var(--text-2);fill:none;stroke-width:1
 .panel>div{overflow:hidden}
 details.open .panel{grid-template-rows:1fr}
 details.open summary svg{transform:rotate(90deg)}
-.rules{margin:0;padding:4px 0 12px 26px;font-size:15px;line-height:1.5;color:var(--text-2)}
-.rules li{margin:4px 0}
+.rules{list-style:none;margin:0;padding:0 0 8px;font-size:15px;line-height:1.5;color:var(--text-2)}
+.rules li{position:relative;padding:8px 0 8px 18px;border-top:1px solid var(--border-subtle)}
+.rules li::before{content:"";position:absolute;left:2px;top:17px;width:5px;height:5px;border-radius:50%;background:var(--text)}
 
 /* chain list */
 .chain{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--border)}
@@ -150,7 +152,7 @@ details.open summary svg{transform:rotate(90deg)}
 /* diagram */
 .diagram svg{width:100%;height:auto}
 .diagram .tile{fill:var(--surface);stroke:var(--border)}
-.diagram text{font:13px var(--sans);fill:var(--text);letter-spacing:-.009em}
+.diagram text{font:13px var(--sans);font-variant-numeric:tabular-nums;fill:var(--text);letter-spacing:-.009em}
 .diagram .c{fill:none;stroke:var(--border-strong);stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:0}
 .diagram .mark path{fill:none;stroke:var(--text);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
 .diagram .mark circle{fill:var(--accent)}
@@ -158,12 +160,12 @@ details.open summary svg{transform:rotate(90deg)}
 .diagram .portrait text{font-size:12px}
 
 /* promise and install cards */
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:start}
 .cards .card{display:flex;flex-direction:column;gap:12px;padding:24px}
 .cards .card h3{font-size:24px}
 .cards .card p{font-size:15px;line-height:1.5;color:var(--text-2)}
 .cards .card .btn{align-self:flex-start;margin-top:auto}
-.code{position:relative;background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--r-2);padding:12px 14px;font:400 13px/20px var(--mono);color:var(--text);white-space:pre-wrap;word-break:break-all;overflow-wrap:anywhere;margin:0}
+.code{position:relative;background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--r-2);padding:12px 14px;font:400 13px/20px var(--mono);font-variant-numeric:tabular-nums;color:var(--text);white-space:pre-wrap;word-break:normal;overflow-wrap:normal;margin:0}
 .code strong{font-weight:500}
 .copybtn{display:grid;place-items:center;margin-top:10px}
 .copybtn>span{grid-area:1/1}
@@ -174,14 +176,14 @@ details.open summary svg{transform:rotate(90deg)}
 
 /* theme rail */
 .themes-grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;padding-left:max(var(--gutter),calc((100% - 1120px)/2 + var(--gutter)))}
-.themes-grid>div{min-width:0}
-.rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-right:var(--gutter)}
+.themes-grid>div{min-width:0;--rail-pad:max(24px,7%)}
+.rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-left:var(--rail-pad);padding-right:var(--gutter)}
 .rail-head .arrows{display:flex;gap:6px}
 .rail-head .arrows .btn{width:32px;padding:0}
-.rail{list-style:none;margin:0;padding:6px 24px 12px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:24px;-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
+.rail{--rail-pad:max(24px,7%);list-style:none;margin:0;padding:6px var(--rail-pad) 12px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:var(--rail-pad);-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
 .rail::-webkit-scrollbar{display:none}
-.rail li{flex:none;scroll-snap-align:start}
-.rail .fig{--w:200px}
+.rail li{flex:0 0 200px;scroll-snap-align:start}
+.rail .fig{--w:200px;width:200px;max-width:200px}
 .rail .sheet{background:var(--sheet-bg,var(--surface))}
 .rail figcaption b{display:block;font-weight:600;color:var(--text)}
 
@@ -197,7 +199,7 @@ details.open summary svg{transform:rotate(90deg)}
 .foot .cols a{color:var(--text)}
 .foot .cols a:hover{color:var(--accent)}
 .foot .note{grid-column:9/13;font-size:14px;line-height:1.5;color:var(--text-2)}
-.foot .fpline{margin-top:40px;padding-top:20px;border-top:1px solid var(--border-subtle);font:400 12px/18px var(--mono);color:var(--text-2);word-break:break-all;overflow-wrap:anywhere}
+.foot .fpline{margin-top:40px;padding-top:20px;border-top:1px solid var(--border-subtle);font:400 12px/18px var(--mono);font-variant-numeric:tabular-nums;color:var(--text-2);word-break:normal;overflow-wrap:normal}
 
 /* responsive */
 @media (max-width:1000px){
@@ -219,6 +221,7 @@ details.open summary svg{transform:rotate(90deg)}
   .hero .copy,.hero .fig{grid-column:1/-1}
   .hero .fig{--w:100%}
   .fig,.pair .fig,.side-col{--w:100%;width:100%;max-width:none}
+  .rail .fig{--w:200px;width:200px;max-width:200px}
   .side-col{max-width:none}
   .cards{grid-template-columns:minmax(0,1fr)}
   .chain li{grid-template-columns:1fr;gap:4px}
@@ -268,7 +271,8 @@ details.open summary svg{transform:rotate(90deg)}
   /* paste-up */
   html.js .fig .frame{display:block}
   html.js .fig.done .frame{display:none}
-  html.js .fig:not(.done) .sheet{border-color:transparent;box-shadow:none}
+  html.js .fig:not(.done) .sheet{border-color:transparent}
+  html.js .fig:not(.in) .frame rect{stroke-dasharray:1;stroke-dashoffset:1}
   html.js .fig:not(.in) .sheet>:not(.frame),html.js .fig:not(.in) figcaption{opacity:0}
   .fig.in .frame rect{stroke-dasharray:1;animation:draw var(--dur-draw) var(--ease-draw) both;animation-delay:var(--d,0ms)}
   .fig.in .sheet>:not(.frame){animation:paste 400ms var(--ease-enter) both;animation-delay:calc(var(--d,0ms) + 200ms)}
@@ -317,15 +321,15 @@ details.open summary svg{transform:rotate(90deg)}
 <section class="hero wrap grid">
   <div class="copy">
     <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android and the browser</div>
-    <h1 class="hr" style="--i:1">A workout log that explains today's plan.</h1>
-    <p class="lede hr" style="--i:2">M/ARC keeps your sets, works out how recovered each muscle is, and writes today's targets with the reason next to each one. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
+    <h1 class="hr" style="--i:1">A workout log that explains today’s plan.</h1>
+    <p class="lede hr" style="--i:2">M/ARC keeps your sets, works out how recovered each muscle is, and writes today’s targets with the reason next to each one. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
     <div class="cta hr" style="--i:3" data-web="">
       <a class="btn btn-accent btn-lg" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download for Android</a>
-      <a class="btn btn-hair btn-lg" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      <a class="btn btn-hair btn-lg" href="#data">See how data is handled</a>
     </div>
     <p class="note hr" style="--i:4">Signed APK. Works offline. Public source.</p>
   </div>
-  <figure class="fig now" style="--w:340px;--d:600ms">
+  <figure class="fig now" style="--w:340px;--d:300ms">
     <div class="sheet">
       <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
       <img src="shots/paper-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day. Readiness 66, Amber and still calibrating, with triceps at 45% and three days to go.">
@@ -344,7 +348,7 @@ details.open summary svg{transform:rotate(90deg)}
     </header>
     <div class="grid">
       <div class="body-col measure">
-        <p>Open M/ARC and the first card already knows what is scheduled. On a Push day it says Start Push. Mid-session it says how many exercises are done. Afterwards it says Push done, 18 sets logged, recovery has started. Tap Take today off and the day counts as rest: your streak and this week's target leave it out.</p>
+        <p>Open M/ARC and the first card already knows what is scheduled. On a Push day it says Start Push. Mid-session it says how many exercises are done. Afterwards it says Push done, 18 sets logged, recovery has started. Tap Take today off and the day counts as rest: your streak and this week’s target leave it out.</p>
         <p>Under it sits Readiness, a 0 to 100 score built from your check-in, sleep, heart rate, HRV and recent load. Green from 67, Red at 33 or below, and marked calibrating for the first 14 days. It comes with one line of advice, such as keep loads steady today and skip any increases. Below that, the muscles still recovering and the time each one needs, then the week in three numbers: workouts, sets, records.</p>
       </div>
       <div class="side-col">
@@ -361,7 +365,7 @@ details.open summary svg{transform:rotate(90deg)}
               <button class="btn btn-quiet" type="button" id="tc-off" aria-pressed="false">Take today off</button>
             </div>
           </div>
-          <figcaption>The Today card, rebuilt in HTML with the app's own strings. Tap Take today off to see the rest-day state.</figcaption>
+          <figcaption>The Today card, rebuilt in HTML with the app’s own strings. Tap Take today off, then Undo day off, to see both states.</figcaption>
         </figure>
       </div>
     </div>
@@ -375,7 +379,7 @@ details.open summary svg{transform:rotate(90deg)}
       <h2 class="rv" style="--d:60ms">Every set arrives with a number and a reason.</h2>
     </header>
     <div class="measure">
-      <p>Each exercise in a split shows today's target before you start, taken from your last sessions and your goal: 62.5 kg for 8, top of the range twice, step up. In the session the target is pre-filled as a placeholder. Tap Log as planned and move on, or type what you actually did.</p>
+      <p>Each exercise in a split shows today’s target before you start, taken from your last sessions and your goal: 62.5 kg for 8, top of the range twice, step up. In the session the target is pre-filled as a placeholder. Tap Log as planned and move on, or type what you actually did.</p>
       <p>Rate every set with one tap. E is easy, three or more reps left. I is ideal, one to three left. M is max, nothing left. A missing rating never counts as easy or max; it lowers confidence instead. Drop sets count for volume and never for records. A set that beats your best gets a PR chip while you are still on the bench.</p>
       <p>Rest runs by timer, or by heart rate when a Bluetooth watch is connected: the rest ends when your pulse settles and falls back to the timer if the signal drops. Tap a barbell target to see plates per side in the unit that gym uses. Up to eight gyms, and each one remembers which unit every machine and rack takes.</p>
       <details id="why">
@@ -493,7 +497,7 @@ details.open summary svg{transform:rotate(90deg)}
     <div class="grid">
       <div class="body-col measure">
         <p>Escobar is the online coach. It is off until you turn it on, and it reads only what you allow. Health data and body data leave the phone only with their own switches on, and turning a switch off removes that data from replayed history.</p>
-        <p>Ask about anything in your log. Every number in the answer is checked against your own data before it stands; a number that does not match is repaired or marked. When Escobar proposes a split, a schedule, a goal, today's loads or a lighter week, it arrives as a card. Nothing changes until you tap Apply, and you have eight seconds to undo. Fourteen kinds of change work this way.</p>
+        <p>Ask about anything in your log. Every number in the answer is checked against your own data before it stands; a number that does not match is repaired or marked. When Escobar proposes a split, a schedule, a goal, today’s loads or a lighter week, it arrives as a card. Nothing changes until you tap Apply, and you have eight seconds to undo. Fourteen kinds of change work this way.</p>
         <p>Without a network the tab still works. Ranked notes, a weekly review, deload suggestions and 422 exercise cues come from the phone. Each note reads Noticed, Means, Do next. Mention an injury or a piece of equipment and, with Let Escobar remember on, it is kept in a list you can read and edit under What Escobar knows.</p>
         <ul class="chain">
           <li class="rv"><span class="eyebrow">Noticed</span><span>Push is scheduled today. Triceps is <span class="num">45%</span> recovered.</span></li>
@@ -505,9 +509,9 @@ details.open summary svg{transform:rotate(90deg)}
         <figure class="fig" style="--w:390px">
           <div class="sheet crop">
             <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
-            <img src="shots/paper-escobar.png" width="780" height="1688" loading="lazy" decoding="async" alt="Today's brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only 45% recovered. Nothing agreed yet, nothing remembered yet.">
+            <img src="shots/paper-escobar.png" width="780" height="1688" loading="lazy" decoding="async" alt="Today’s brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only 45% recovered. Nothing agreed yet, nothing remembered yet.">
           </div>
-          <figcaption><span class="cap">Fig. 7</span>Today's brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only <span class="num">45%</span> recovered. Nothing agreed yet, nothing remembered yet.</figcaption>
+          <figcaption><span class="cap">Fig. 7</span>Today’s brief on the Escobar tab before the online coach is turned on: Push today, but triceps is only <span class="num">45%</span> recovered. Nothing agreed yet, nothing remembered yet.</figcaption>
         </figure>
       </div>
     </div>
@@ -551,13 +555,13 @@ details.open summary svg{transform:rotate(90deg)}
     </header>
     <div class="cards">
       <div class="card rv"><h3>Your log stays on your phone.</h3><p>No account, no sign-in, no server copy.</p></div>
-      <div class="card rv" style="--d:60ms"><h3>It works without a signal.</h3><p>The installed app and the coach's notes run offline.</p></div>
+      <div class="card rv" style="--d:60ms"><h3>It works without a signal.</h3><p>The installed app and the coach’s notes run offline.</p></div>
       <div class="card rv" style="--d:120ms"><h3>Your data is a file you own.</h3><p>JSON backup with preview and Undo, CSV of every set, and a rescue copy if anything fails to read.</p></div>
     </div>
     <div class="measure">
-      <p>There is no account and no sign-in. Your log lives in the phone's storage, coach photos in IndexedDB, heart data in a local side store. The installed web app keeps every built file, so it opens in a basement with no signal.</p>
+      <p>There is no account and no sign-in. Your log lives in the phone’s storage, coach photos in IndexedDB, heart data in a local side store. The installed web app keeps every built file, so it opens in a basement with no signal.</p>
       <p>Export backup writes a JSON file. Restore backup previews it, applies it, and offers Undo. Export CSV hands you every filled-in set, for 90 days or all time. If saved data ever fails to read at start, the app keeps a copy aside and offers Save rescue file. Nothing is thrown away silently.</p>
-      <p>The online coach is the one exception. When you use it, the numbers its tools ask for go through the project's own server to the coach service and back, and health and body data go only with their switches on. Quotas are counted per device and network address, not per person.</p>
+      <p>The online coach is the one exception. When you use it, the numbers its tools ask for go through the project’s own server to the coach service and back, and health and body data go only with their switches on. Quotas are counted per device and network address, not per person.</p>
     </div>
   </div>
 </section>
@@ -606,7 +610,7 @@ details.open summary svg{transform:rotate(90deg)}
     <div class="cards">
       <div class="card rv">
         <h3>In the browser</h3>
-        <p>Open the web app in Chrome, Edge or Samsung Internet on Android, then choose Add to Home Screen. It keeps every built file and works offline. Escobar needs a network; everything else does not.</p>
+        <p>The web app is not published yet. Build it from the source, open it in Chrome, Edge or Samsung Internet on Android, then choose Add to Home Screen. It keeps every built file and works offline. Escobar needs a network; everything else does not.</p>
         <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
       </div>
       <div class="card rv" style="--d:60ms">
@@ -614,9 +618,10 @@ details.open summary svg{transform:rotate(90deg)}
         <p>Version <span class="num">37.1.0</span>. Every build is signed with one permanent key, and CI checks the fingerprint before an APK is released. Check yours with apksigner and compare the SHA-256 below. Obtainium can install M/ARC straight from the GitHub releases page and checks the signature for you.</p>
         <div>
           <div class="eyebrow" style="margin-bottom:8px">Signing key SHA-256. Does not change between versions.</div>
-          <pre class="code fp" id="fp">05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</pre>
-          <button class="btn btn-hair btn-sm copybtn" type="button" id="copy"><span class="lbl">Copy fingerprint</span><span class="ghost" aria-hidden="true">Copied</span></button>
-          <pre class="code" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs M-ARC.apk</pre>
+          <pre class="code fp" id="fp">05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</pre>
+          <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="fp"><span class="lbl">Copy fingerprint</span><span class="ghost" aria-hidden="true">Copied</span></button>
+          <pre class="code" id="cmd" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs M-ARC.apk</pre>
+          <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="cmd"><span class="lbl">Copy command</span><span class="ghost" aria-hidden="true">Copied</span></button>
           <p style="margin-top:10px">If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
         </div>
         <a class="btn btn-accent" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
@@ -646,7 +651,7 @@ details.open summary svg{transform:rotate(90deg)}
       </div>
       <p class="note">Every colour on this page is a Paper theme token. Every animation stops when your phone asks for less motion.</p>
     </div>
-    <p class="fpline">Signing key SHA-256, does not change between versions: 05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</p>
+    <p class="fpline">Signing key SHA-256, does not change between versions: 05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</p>
   </div>
 </footer>
 
@@ -675,12 +680,12 @@ var links={};$$('.nav a').forEach(function(a){links[a.hash.slice(1)]=a});
 if(IO){var so=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting===false)return;var id=en.target.id;$$('.nav a').forEach(function(a){a.removeAttribute('aria-current')});if(links[id])links[id].setAttribute('aria-current','true');H.toggleAttribute('data-install',id==='install')})},{rootMargin:'-40% 0px -55% 0px'});$$('section[id]').forEach(function(x){so.observe(x)})}
 /* Today card swap */
 var live=$('#today-live'),off=$('#tc-off'),start=$('#tc-start'),isOff=false;
-function setCard(){var o=isOff;$('#tc-eyebrow').textContent=o?'Day off':'Scheduled today';$('#tc-title').textContent=o?'Push can wait':'Push';$('#tc-line').textContent=o?"Today counts as a rest day: your streak and this week's target leave it out.":'3 exercises planned.';start.textContent=o?'Train anyway':'Start Push';off.textContent=o?'Undo day off':'Take today off';off.setAttribute('aria-pressed',o)}
+function setCard(){var o=isOff;$('#tc-eyebrow').textContent=o?'Day off':'Scheduled today';$('#tc-title').textContent=o?'Push can wait':'Push';$('#tc-line').textContent=o?"Today counts as a rest day: your streak and this week’s target leave it out.":'3 exercises planned.';start.textContent=o?'Train anyway':'Start Push';off.textContent=o?'Undo day off':'Take today off';off.setAttribute('aria-pressed',o)}
 off.addEventListener('click',function(){isOff=isOff===false;if(rm){setCard();return}live.classList.add('fade');setTimeout(function(){setCard();live.classList.remove('fade')},150)});
 /* Why this target */
 var det=$('#why');$('summary',det).addEventListener('click',function(e){e.preventDefault();if(det.open){det.classList.remove('open');if(rm)det.open=false;else setTimeout(function(){det.open=false},200)}else{det.open=true;requestAnimationFrame(function(){det.classList.add('open')})}});
 /* copy the fingerprint */
-var cb=$('#copy');cb.addEventListener('click',function(){var t=$('#fp').textContent.trim();if(navigator.clipboard)navigator.clipboard.writeText(t);cb.classList.add('done');setTimeout(function(){cb.classList.remove('done')},1500)});
+$$('[data-copy]').forEach(function(cb){cb.addEventListener('click',function(){var t=$('#'+cb.dataset.copy).textContent.trim();if(navigator.clipboard)navigator.clipboard.writeText(t);cb.classList.add('done');setTimeout(function(){cb.classList.remove('done')},1500)})});
 /* hero labels: only swap order when a web app URL is set and this is not Android */
 var cta=$('.cta');if(cta.dataset.web&&/Android/.test(navigator.userAgent)===false)cta.classList.add('swap');
 /* theme rail arrows */
