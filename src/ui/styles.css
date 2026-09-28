@@ -348,6 +348,17 @@ html[data-motion="reduce"] .ex-body { transition: none; }
    erase draft fields). */
 .exercise.active { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 .exercise.active .exname { color: var(--text); }
+/* UI-1: an accent light sweeps the open exercise's title twice when the card opens, keeps sweeping
+   while a kg/reps field has focus, and for one short hold (data-hold, set for 2 s by Train.tsx) after
+   an effort tap while that button keeps focus. Idle, it stays off. Every paint property lives inside
+   the keyframes, so at rest and after the run the title is plain var(--text): never grey, nothing
+   clipped. The sweep is the accent band over var(--text), no dim tone. Never under reduced motion. */
+@keyframes exercise-shimmer {
+  0% { background: linear-gradient(100deg, transparent 40%, var(--accent) 50%, transparent 60%) 110% 0 / 220% 100% no-repeat var(--text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  100% { background: linear-gradient(100deg, transparent 40%, var(--accent) 50%, transparent 60%) -10% 0 / 220% 100% no-repeat var(--text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+}
+html:not([data-motion="reduce"]) .exercise.active .exname { animation: exercise-shimmer 2s linear 2; }
+html:not([data-motion="reduce"]) .exercise.active:is(:has(.set-grid input:focus), [data-hold]:focus-within) .exname { animation: exercise-shimmer 2s linear infinite; }
 .set-grid { display: grid; grid-template-columns: 32px 1fr 1fr auto; gap: 8px; align-items: center; }
 .set-grid.duration { grid-template-columns: 32px 1fr auto; }
 .set-grid input { min-height: 44px; padding: 6px 10px; text-align: center; transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
