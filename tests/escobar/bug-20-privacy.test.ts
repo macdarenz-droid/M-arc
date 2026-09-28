@@ -110,7 +110,8 @@ describe('BUG-20 Escobar privacy: gated insights and the minor flag', () => {
 
   it('A2: readiness insight drops its health drivers with health off, keeps the check-in ones', async () => {
     // A week of resting HR well above the 28-day usual makes it a readiness driver.
-    const raised = (s: AppState) => { s.healthDays = s.healthDays.map((d, i) => (i < 7 ? { ...d, restingHr: 75 } : d)); return s; };
+    // ADAPT-2: today's check-in is set below the user's usual, so it stays a check-in driver now that a usual one reads normal.
+    const raised = (s: AppState) => { s.healthDays = s.healthDays.map((d, i) => (i < 7 ? { ...d, restingHr: 75 } : d)); s.checkIns = s.checkIns.map((c, i) => (i === 0 ? { ...c, sleepQuality: 2 as const, mood: 3 as const } : c)); return s; };
     const on = await outbound(raised(state({ health: true, body: true })));
     expect(on.insights).toMatch(/"id":"readiness-today"[^}]*resting heart rate is up over your usual/);
     const off = await outbound(raised(state({ health: false, body: true })));

@@ -110,6 +110,11 @@ export function sessionRpeLoad(session: Session): number {
   return load;
 }
 
+/** ADAPT-2 (B-9): the usual trained week is the median of the last 4 trained weeks among the 8 before this one, from 3 trained weeks. */
+const USUAL_WEEK_LOOKBACK = 8;
+const USUAL_WEEK_SAMPLE = 4;
+const USUAL_WEEK_MIN_TRAINED = 3;
+
 /**
  * 7-day over 28-day session load (ATL/CTL), one definition for recovery and readiness (BR-19).
  * Null until training has spanned most of the window: 3+ sessions in the 28 days, the oldest at
@@ -123,8 +128,22 @@ export function acuteChronicRatio(sessions: Session[], refDay: string): number |
   const covered = Math.min(28, 1 + Math.max(...sessions.map(s => ago(s.day))));
   const ctl = chronic.reduce((a, s) => a + sessionRpeLoad(s), 0) / covered;
   if (!(ctl > 0)) return null;
-  const atl = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0) / 7;
-  return atl / ctl;
+  const acuteLoad = chronic.filter(s => ago(s.day) < 7).reduce((a, s) => a + sessionRpeLoad(s), 0);
+  const ratio = (acuteLoad / 7) / ctl;
+  // ADAPT-2 (B-9): empty weeks in the chronic window make an ordinary return week read as a spike.
+  // With 3+ trained weeks among the 8 before this one, the ratio is also read against the user's
+  // usual trained week (median of the last 4 trained weeks) and the smaller of the two counts, so
+  // a real jump above the usual week still shows and nothing reads higher than before.
+  const weekLoads: number[] = [];
+  for (let w = 1; w <= USUAL_WEEK_LOOKBACK; w++) {
+    const load = sessions.filter(s => { const d = ago(s.day); return d >= 7 * w && d < 7 * (w + 1); }).reduce((a, s) => a + sessionRpeLoad(s), 0);
+    if (load > 0) weekLoads.push(load);
+  }
+  if (weekLoads.length < USUAL_WEEK_MIN_TRAINED) return ratio;
+  const recent = weekLoads.slice(0, USUAL_WEEK_SAMPLE).sort((a, b) => a - b);
+  const mid = recent.length / 2;
+  const usual = recent.length % 2 ? recent[Math.floor(mid)]! : (recent[mid - 1]! + recent[mid]!) / 2;
+  return Math.min(ratio, acuteLoad / usual);
 }
 
 /** Whole-body slowdown from multi-day sleep debt, resting-HR deviation and acute training load. Never from one bad night. Capped. */
