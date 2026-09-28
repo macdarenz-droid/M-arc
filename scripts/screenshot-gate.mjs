@@ -4928,6 +4928,9 @@ for (const theme of ['silent-black', 'paper']) {
     // With a session in progress the Train tab reads "Live".
     await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(250);
     const finish = page.getByRole('button', { name: 'Finish', exact: true });
+    // Nothing (the Escobar dock included, BUG-22) may sit on top of the button's centre.
+    const onTop = loc => loc.evaluate(el => { const r = el.getBoundingClientRect(); const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!hit && el.contains(hit); }).catch(() => false);
+    if (!(await onTop(finish))) errors.push(`${tag} (${label}): something covers the live session's Finish button`);
     await finish.click({ timeout: 5000 }).catch(() => errors.push(`${tag} (${label}): no Finish button on the live session`));
     await page.waitForTimeout(300);
     const note = page.locator('[data-finish-trimmed]');
@@ -4937,7 +4940,10 @@ for (const theme of ['silent-black', 'paper']) {
     if (expectDur && dur !== expectDur) errors.push(`${tag} (${label}): expected the finish sheet to show ${expectDur}, got ${dur}`);
     if (!expectDur && (!dur || dur.split(':').length > 2)) errors.push(`${tag} (${label}): expected the running duration under an hour, got ${dur}`);
     if (expectNote) { await settle(page); await page.screenshot({ path: `${OUT}/bug-19-finish-trimmed.png` }); }
-    await page.getByRole('button', { name: /Finish and save|Just today/ }).first().click().catch(() => errors.push(`${tag} (${label}): no Finish and save`));
+    const save = page.getByRole('button', { name: /Finish and save|Just today/ }).first();
+    await save.scrollIntoViewIfNeeded().catch(() => {});
+    if (!(await onTop(save))) errors.push(`${tag} (${label}): something covers "Finish and save"`);
+    await save.click().catch(() => errors.push(`${tag} (${label}): no Finish and save`));
     await page.waitForTimeout(400);
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1')).sessions.find(x => x.id === 's_bug19'));
     if (!saved) errors.push(`${tag} (${label}): the session was not saved`);
