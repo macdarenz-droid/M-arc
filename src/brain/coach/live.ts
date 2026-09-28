@@ -19,6 +19,8 @@ export interface AutoregulationInput {
   historyCount: number;
   /** When known, the next load snaps to what the equipment has and is stated in its unit (§25.4). */
   equipment?: EquipmentProfile;
+  /** BUG-15 (COACHRULES-F7): a lighter week, an amber or red day or a cut factor (Suggestion.holdLoad); never "add load". */
+  holdLoad?: boolean;
 }
 
 export function autoregulationSuggestion(input: AutoregulationInput): Insight | null {
@@ -47,7 +49,9 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
   /** QA2-FC-6: whether the equipment has any load lighter than the target (not at the empty bar). */
   const canGoLighter = !equipment || loadableNear(targetKg - 0.02, equipment, 'down').kg < targetKg - 0.01;
 
+  // Plan 6.12.5 / 6.13: suppressed on a back-off day, where easy sets are the point.
   if (firstSet.effort === 'easy' && firstSet.reps >= targetReps) {
+    if (input.holdLoad) return null;
     const next = snap(targetKg + step, 'up');
     return {
       id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,

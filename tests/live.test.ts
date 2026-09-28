@@ -110,3 +110,15 @@ describe('a missed set on the empty bar (QA2-FC-6)', () => {
     expect(heavier.action).toMatch(/^Drop to/);
   });
 });
+
+// BUG-15 (COACHRULES-F7): plan 6.13, never an increase on a back-off day.
+describe('autoregulation on a lighter week, amber or red day (BUG-15)', () => {
+  const set = (p: Partial<LoggedSet>): LoggedSet => ({ fidelity: 'live', ...p }) as LoggedSet;
+  it('A5: an easy first set brings no "add load" when the load is held; a missed one still eases off', () => {
+    const r = autoregulationSuggestion({ exerciseId: 'bench', exerciseName: 'Bench Press', firstSet: set({ kg: 60, reps: 8, effort: 'easy' }), targetKg: 60, targetReps: 8, historyCount: 5, holdLoad: true });
+    expect(r).toBeNull();
+    const miss = autoregulationSuggestion({ exerciseId: 'bench', exerciseName: 'Bench Press', firstSet: set({ kg: 60, reps: 4, effort: 'max' }), targetKg: 60, targetReps: 8, historyCount: 5, holdLoad: true });
+    expect(miss?.title).toMatch(/Bench Press/);
+    expect(miss?.title).not.toMatch(/add load/);
+  });
+});

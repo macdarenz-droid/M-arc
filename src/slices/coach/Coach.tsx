@@ -139,7 +139,7 @@ export function GoalSheet({ onClose }: { onClose: () => void }) {
 function InsightSheet({ insight, onClose }: { insight: Insight; onClose: () => void }) {
   const s = state.value;
   const ex = insight.exerciseId ? findExercise(insight.exerciseId, s.customExercises) : undefined;
-  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises, { deload: activeDeload.value, equipment: profileFor(ex.id) }) : null;
+  const next = ex ? suggestNext(s.sessions, ex.id, s.goal, today.value, 3, s.customExercises, { deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(ex.id) }) : null;
   const hist = ex ? exerciseHistory(s.sessions, ex.id, s.customExercises).slice(-5).reverse() : [];
   return (
     <Sheet title={insight.title} onClose={onClose}>

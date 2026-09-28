@@ -409,7 +409,7 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
     const first = firstWorkingSet(cur.sets);
     const tgt = sug.sets[0];
     // QA-R4b-5: like Train, weighted main lifts only; on an assisted lift more kg means more help.
-    if (ex?.role === 'main' && ex.mode === 'weighted' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, equipment: pctx.equipment })?.action ?? null;
+    if (ex?.role === 'main' && ex.mode === 'weighted' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, equipment: pctx.equipment, holdLoad: !!sug.holdLoad })?.action ?? null;
   }
   return capJson({
     active: true,
