@@ -489,3 +489,15 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Train's amber hold names readiness ("Readiness is middling today…") unless the muscle is under 60 % recovered.
   - One existing test changed its input, not its assertion: `tests/readiness.test.ts` "is red with reduce advice when recovery and resting HR are both poor" had no scheduled split, so recovery never counted and resting HR was the only input. It now schedules a push split so both inputs count, as its name says.
   **Why**: plan Appendix B and the audit's correct behaviour; checked in `tests/readiness-bug16.test.ts` (each test fails on `main` b28bfe5 and passes after).
+
+## Anonymous error reports, Worker side (item 7.5, 2026-09-28)
+
+- **Decided (D-C75W, 7.5 Worker builder)**: how `POST /errors` meets docs/ERROR-REPORTS.md "Server".
+  - Storage is Cloudflare D1, one of the two the doc names (the earlier draft used a Durable Object, which the doc does not name). D1 over KV: the KV free tier allows 1,000 writes a day, and every accepted request writes at least 3 rows (report plus two counters); D1 allows 100,000, and SQL gives the 90-day delete and the summary directly. Tables are created on first use, so there is no migration command for the owner.
+  - 8 KB means 8192 bytes, because the app (PR #35 `sender.ts`) packs batches to `8 * 1024`. The draft used 8000, which would have made the app drop valid batches of 8001-8192 bytes as 413.
+  - Unknown fields are rejected (400), as the doc says. "Drop anything not on the allowlist" is applied to values: the stored row is built from named fields only, the message is re-cleaned with the app's own rule, frames outside the app bundle are dropped, and an unexpected route, error name, version, OS or device becomes a neutral value or is left out, so the report is still useful.
+  - The IP limit needs a per-IP counter, and an IP is personal data. The counter key is an HMAC-SHA-256 of hour and IP keyed by the `ERRORS_SUMMARY_TOKEN` secret, and counters from earlier hours are deleted on the next request and by the daily cron. One secret serves both uses so the owner sets one value; `POST /errors` answers 503 until it is set, so no IP is ever hashed without a key.
+  - A request counts against the limits even when it is then refused; the doc limits requests, not accepted reports.
+  - "Daily summary" is a pull: `GET /errors/summary` returns the last 24 hours, and marks a signature new when it was first stored inside that window. No email or push service was added (that would be a new provider).
+  - Risk: D1 unavailable. Mitigation: the Worker answers 503 without detail; the app keeps its queue and backs off. Risk: the owner merges before creating the database. Mitigation: `wrangler.toml` holds a placeholder id, so the deploy fails loudly and the running Worker stays as it was.
+  **Why**: docs/ERROR-REPORTS.md and the shared contract with PR #35; checked in `escobar-worker/test/errors.test.ts` (W1-W9), and every rule there was shown to fail its test when broken (27 code mutations, all caught).

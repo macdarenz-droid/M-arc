@@ -2,12 +2,12 @@
  * POST /errors and GET /errors/summary (docs/ERROR-REPORTS.md "Server"). Reuses the Escobar
  * Worker's CORS rules (src/handler.ts): only the Capacitor origin and the allowed web origin,
  * never a wildcard with credentials (no Access-Control-Allow-Credentials header is ever sent).
- * Report bodies are never logged.
+ * Nothing from a request (body, IP, install id) is ever logged; storage errors answer 503 without detail.
  */
 import { corsHeaders } from './handler';
 import type { Env } from './anthropic';
-import { validateBatch, MAX_ERRORS_BODY_BYTES } from './errorsValidate';
-import { ingestReports, summarize } from './errors';
+import { validateBatch, cleanReport, MAX_ERRORS_BODY_BYTES } from './errorsValidate';
+import { countRequest, ensureSchema, storeReports, summarize } from './errorsStore';
 
 export interface ErrorsDeps { now(): number }
 
@@ -33,6 +33,14 @@ async function readCapped(req: Request, max: number): Promise<{ text: string; by
   return { text: new TextDecoder().decode(all), bytes };
 }
 
+/** Constant-time string comparison for the summary token. */
+function sameText(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 export async function handleErrors(req: Request, env: Env, deps: ErrorsDeps): Promise<Response> {
   const url = new URL(req.url);
   const origin = req.headers.get('origin');
@@ -42,13 +50,17 @@ export async function handleErrors(req: Request, env: Env, deps: ErrorsDeps): Pr
 
   if (url.pathname === '/errors/summary' && req.method === 'GET') {
     const token = env.ERRORS_SUMMARY_TOKEN;
-    if (!token || req.headers.get('authorization') !== `Bearer ${token}`) return json(401, { error: 'unauthorized' }, cors);
-    if (!env.ERRORS_DO) return json(503, { error: 'not configured' }, cors);
-    return json(200, await summarize(env, deps.now()), cors);
+    if (!token || !sameText(req.headers.get('authorization') ?? '', `Bearer ${token}`)) return json(401, { error: 'unauthorized' }, cors);
+    if (!env.ERRORS_DB) return json(503, { error: 'not configured' }, cors);
+    try {
+      await ensureSchema(env.ERRORS_DB);
+      return json(200, await summarize(env.ERRORS_DB, deps.now()), cors);
+    } catch { return json(503, { error: 'storage unavailable' }, cors); }
   }
 
   if (url.pathname === '/errors' && req.method === 'POST') {
-    if (!env.ERRORS_DO) return json(503, { error: 'not configured' }, cors);
+    // The secret keys the IP hash (errorsStore.ts `ipKey`), so without it nothing is accepted.
+    if (!env.ERRORS_DB || !env.ERRORS_SUMMARY_TOKEN) return json(503, { error: 'not configured' }, cors);
     const declared = Number(req.headers.get('content-length') ?? 'NaN');
     if (Number.isFinite(declared) && declared > MAX_ERRORS_BODY_BYTES) return json(413, { error: 'body over 8 KB' }, cors);
     const read = await readCapped(req, MAX_ERRORS_BODY_BYTES);
@@ -57,9 +69,15 @@ export async function handleErrors(req: Request, env: Env, deps: ErrorsDeps): Pr
     try { raw = JSON.parse(read.text); } catch { return json(400, { error: 'body is not JSON' }, cors); }
     const v = validateBatch(raw);
     if (!v.ok) return json(400, { error: v.message }, cors);
+    const reports = v.body.reports.map(cleanReport);
     const ip = req.headers.get('cf-connecting-ip') ?? 'unknown';
-    const result = await ingestReports(env, ip, v.body.reports, deps.now());
-    if (!result.ok) return json(429, { error: 'rate limited' }, cors);
+    const now = deps.now();
+    try {
+      await ensureSchema(env.ERRORS_DB);
+      const rate = await countRequest(env.ERRORS_DB, env.ERRORS_SUMMARY_TOKEN, [...new Set(reports.map(r => r.installId))], ip, now);
+      if (!rate.ok) return json(429, { error: 'rate limited' }, cors);
+      await storeReports(env.ERRORS_DB, reports, now);
+    } catch { return json(503, { error: 'storage unavailable' }, cors); }
     return new Response(null, { status: 204, headers: cors });
   }
 

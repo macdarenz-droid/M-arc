@@ -1,22 +1,31 @@
 /**
- * Request validation for POST /errors (docs/ERROR-REPORTS.md "Server"). Strict allowlist:
- * an unknown field, a wrong type, or a value over a documented limit is rejected with 400.
+ * Request validation for POST /errors (docs/ERROR-REPORTS.md "Server"). Two layers:
+ * 1. `validateBatch`: strict shape check. An unknown field, a wrong type, or a value over a
+ *    documented limit is rejected with 400.
+ * 2. `cleanReport`: the allowlist applied again to the values, server-side, so a changed or
+ *    hostile client cannot store what the app would never send. It builds a new object from
+ *    named fields only (nothing is spread from the request), re-cleans the message the same way
+ *    the app does, keeps only app-bundle file paths, and replaces anything else with a neutral value.
  * Body size (8 KB) is checked by the caller before this runs.
  */
-export const MAX_ERRORS_BODY_BYTES = 8_000;
+export const MAX_ERRORS_BODY_BYTES = 8 * 1024;
 export const MIN_REPORTS = 1;
 export const MAX_REPORTS = 20;
 export const MAX_NAME = 80;
 export const MAX_MESSAGE = 300;
 export const MAX_FRAMES = 15;
+export const MAX_SHORT = 80;
+export const MAX_COUNT = 100_000;
 
 export const KINDS = new Set(['boundary', 'onerror', 'unhandledrejection', 'store-save', 'boot', 'backup', 'escobar-transport']);
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+const SIG = /^[0-9a-f]{1,64}$/i;
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const only = (o: Record<string, unknown>, keys: string[]): string | null => Object.keys(o).find(k => !keys.includes(k)) ?? null;
+const shortStr = (v: unknown): v is string => typeof v === 'string' && v.length <= MAX_SHORT;
 
 export interface Frame { file: string; line: number; col: number }
 export interface Report {
@@ -45,9 +54,9 @@ function frameError(f: unknown, where: string): string | null {
   if (!isObj(f)) return `${where} must be an object`;
   const extra = only(f, ['file', 'line', 'col']);
   if (extra) return `${where}: unknown key ${extra}`;
-  if (typeof f.file !== 'string') return `${where}.file must be a string`;
-  if (!Number.isInteger(f.line)) return `${where}.line must be an integer`;
-  if (!Number.isInteger(f.col)) return `${where}.col must be an integer`;
+  if (typeof f.file !== 'string' || f.file.length > 300) return `${where}.file must be a string of at most 300 characters`;
+  if (!Number.isInteger(f.line) || (f.line as number) < 0) return `${where}.line must be a non-negative integer`;
+  if (!Number.isInteger(f.col) || (f.col as number) < 0) return `${where}.col must be a non-negative integer`;
   return null;
 }
 
@@ -59,18 +68,18 @@ function reportError(r: unknown, where: string): string | null {
   if (missing) return `${where}: missing ${missing}`;
   if (typeof r.installId !== 'string' || !UUID_V4.test(r.installId)) return `${where}.installId must be a uuid v4`;
   if (typeof r.ts !== 'string' || !ISO_UTC.test(r.ts) || Number.isNaN(Date.parse(r.ts))) return `${where}.ts must be an ISO-8601 UTC timestamp`;
-  if (typeof r.app !== 'string') return `${where}.app must be a string`;
+  if (!shortStr(r.app)) return `${where}.app must be a string of at most ${MAX_SHORT} characters`;
   if (r.platform !== 'android' && r.platform !== 'web') return `${where}.platform must be android or web`;
-  if (r.os !== undefined && typeof r.os !== 'string') return `${where}.os must be a string`;
-  if (r.device !== undefined && typeof r.device !== 'string') return `${where}.device must be a string`;
-  if (typeof r.route !== 'string') return `${where}.route must be a string`;
+  if (r.os !== undefined && !shortStr(r.os)) return `${where}.os must be a string of at most ${MAX_SHORT} characters`;
+  if (r.device !== undefined && !shortStr(r.device)) return `${where}.device must be a string of at most ${MAX_SHORT} characters`;
+  if (!shortStr(r.route)) return `${where}.route must be a string of at most ${MAX_SHORT} characters`;
   if (typeof r.kind !== 'string' || !KINDS.has(r.kind)) return `${where}.kind is not a known kind`;
   if (typeof r.name !== 'string' || r.name.length > MAX_NAME) return `${where}.name must be at most ${MAX_NAME} characters`;
   if (typeof r.message !== 'string' || r.message.length > MAX_MESSAGE) return `${where}.message must be at most ${MAX_MESSAGE} characters`;
   if (!Array.isArray(r.frames) || r.frames.length > MAX_FRAMES) return `${where}.frames must be at most ${MAX_FRAMES} frames`;
   for (let i = 0; i < r.frames.length; i++) { const err = frameError(r.frames[i], `${where}.frames[${i}]`); if (err) return err; }
-  if (typeof r.sig !== 'string') return `${where}.sig must be a string`;
-  if (!Number.isInteger(r.count) || (r.count as number) < 1) return `${where}.count must be an integer >= 1`;
+  if (typeof r.sig !== 'string' || !SIG.test(r.sig)) return `${where}.sig must be 1 to 64 hex characters`;
+  if (!Number.isInteger(r.count) || (r.count as number) < 1 || (r.count as number) > MAX_COUNT) return `${where}.count must be an integer from 1 to ${MAX_COUNT}`;
   return null;
 }
 
@@ -85,4 +94,48 @@ export function validateBatch(raw: unknown): Validation {
     if (err) return bad(err);
   }
   return { ok: true, body: raw as unknown as ErrorBatch };
+}
+
+/** The app's message cleaning (src/errors/scrub.ts `scrubMessage`), repeated here: quoted
+ * strings become "…", every digit becomes #, cut to 300 characters. Idempotent. */
+export function scrubMessage(raw: string): string {
+  return raw.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '"…"').replace(/\d/g, '#').slice(0, MAX_MESSAGE);
+}
+
+const ROUTE = /^[a-z][a-z0-9-]{0,39}$/;
+const ERROR_NAME = /^[A-Za-z_$][\w$.]{0,79}$/;
+const VERSION = /^[0-9A-Za-z.+-]{1,40}$/;
+const LABEL = /^[\w .,()+-]{1,60}$/;
+const BUNDLE_PATH = /^\/?[\w.-]+(\/[\w.-]+)*\.m?js$/;
+
+/** A frame's file as an app-bundle path (web or app scheme and host, query and hash removed), or
+ * null to drop the frame. Any other scheme (a browser extension, for one) keeps its ':' and fails the path test. */
+export function bundlePath(file: string): string | null {
+  const path = file.replace(/^(https?|capacitor):\/\/[^/]*/i, '').replace(/[?#].*$/, '');
+  return BUNDLE_PATH.test(path) && !path.includes('..') ? path : null;
+}
+
+/** The report the Worker stores: allowlisted fields only, each value cleaned again. */
+export function cleanReport(r: Report): Report {
+  const frames: Frame[] = [];
+  for (const f of r.frames) {
+    const file = bundlePath(f.file);
+    if (file) frames.push({ file, line: f.line, col: f.col });
+  }
+  const out: Report = {
+    installId: r.installId.toLowerCase(),
+    ts: r.ts,
+    app: VERSION.test(r.app) ? r.app : 'unknown',
+    platform: r.platform,
+    route: ROUTE.test(r.route) ? r.route : 'unknown',
+    kind: r.kind,
+    name: ERROR_NAME.test(r.name) ? r.name : 'Error',
+    message: scrubMessage(r.message),
+    frames,
+    sig: r.sig.toLowerCase(),
+    count: r.count,
+  };
+  if (r.os !== undefined && LABEL.test(r.os)) out.os = r.os;
+  if (r.device !== undefined && LABEL.test(r.device)) out.device = r.device;
+  return out;
 }

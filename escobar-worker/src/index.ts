@@ -2,6 +2,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { handle } from './handler';
 import { handleErrors } from './errorsHandler';
+import { dailyPurge } from './errorsStore';
 import type { ClientLike, Env } from './anthropic';
 
 export default {
@@ -15,8 +16,11 @@ export default {
       waitUntil: p => ctx.waitUntil(p),
     });
   },
+  /** Daily cron (wrangler.toml [triggers]): deletes error reports past 90 days and old rate counters. */
+  async scheduled(_c: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(dailyPurge(env.ERRORS_DB, Date.now()));
+  },
 };
 
 export { QuotaCounter } from './quotaDO';
 export { UpstreamRelay } from './upstreamRelay';
-export { ErrorReports } from './errorsDO';
