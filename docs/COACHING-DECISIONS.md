@@ -521,3 +521,9 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - The F1 token lint allow list gains `exercise-shimmer` (a literal duration and one `infinite`), like the other decorative loops. The gate's idle check keeps it off its infinite-animation allow list, so an idle open card with a loop still fails.
   - Known risks: blurring within the first 4 s after opening lets the open run finish its two passes (at most 4 s). `:has()` needs WebView 105+; on older WebViews the logging sweep simply never shows (the open run still does). `background-position` repaints on the main thread while the sweep runs (4 s on open, and only while typing).
   **Why**: owner request 2026-09-27; checked by `tests/theme.test.ts` (UI-1 block) and the gate's `UI-1 shimmer` block, each failing on `main` 39b26d7 and passing after.
+
+## Website copy voice (owner, 2026-09-28)
+
+- **Decided**: every line on the M/ARC website (headlines, body, captions, buttons, alt text) is written in a plain, professional, human voice: concrete nouns and verbs, the app's own words, real numbers, no hype. A banned list (seamless, effortless, elevate, unleash, empower, journey, unlock, "not just X but Y", rhetorical questions, em-dashes, colon-then-reveal headlines, Discover/Experience/Introducing, and so on) is enforced at three points: the direction specs, the build, and the review of each render.
+  **Why**: the owner's instruction: "Avoid using ai wordings in the website. Use human professional level wordings, captions." The reference sites (Linear, Vercel, Height) all write this way: short, specific, no adjectives doing the work.
+  **Source**: owner message, 2026-09-28; docs/WEBSITE-ARCHITECTURE.md carries the full rule list.
