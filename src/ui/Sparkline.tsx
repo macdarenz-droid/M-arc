@@ -22,6 +22,12 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
   // on release, so displayIndex keeps that position after scrubIndex reverts to null.
   const [displayIndex, setDisplayIndex] = useState<number | null>(null);
   const idxRef = useRef<number | null>(null);
+  // BUG-12 (A4): the opaque min/max labels sit at the right edge. The plot ends left of them, so a
+  // latest point that is the max or the min never has its end dot hidden under its own label.
+  const labelsRef = useRef<HTMLDivElement>(null);
+  const [gutter, setGutter] = useState(0);
+  const gutterRef = useRef(0);
+  gutterRef.current = gutter;
   // I12: read the real pixel width before paint, so the viewBox never scales non-uniformly (the
   // old preserveAspectRatio="none" stretched the end dot into an ellipse on any width but 300).
   useLayoutEffect(() => {
@@ -48,7 +54,7 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
     if (!el || n < 2) return undefined;
     const indexFromX = (clientX: number): number => {
       const r = el.getBoundingClientRect();
-      const usable = Math.max(1, r.width - PAD * 2);
+      const usable = Math.max(1, r.width - PAD * 2 - gutterRef.current);
       const relX = clientX - r.left - PAD;
       return Math.max(0, Math.min(n - 1, Math.round((relX / usable) * (n - 1))));
     };
@@ -80,10 +86,16 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrub, n, w]);
+  // BUG-12 (A4): measured after each render, since the label text (and so its width) follows the data.
+  useLayoutEffect(() => {
+    const spans = labelsRef.current ? [...labelsRef.current.querySelectorAll('span')] : [];
+    const g = spans.length ? Math.ceil(Math.max(...spans.map(el => el.getBoundingClientRect().width))) + 4 : 0;
+    if (g !== gutter) setGutter(g);
+  });
   if (n < 2) return null;
   const min = Math.min(...points), max = Math.max(...points);
   const vw = Math.max(1, w);
-  const x = (i: number) => PAD + (i / (n - 1)) * (vw - PAD * 2);
+  const x = (i: number) => PAD + (i / (n - 1)) * Math.max(1, vw - PAD * 2 - gutter);
   const y = (v: number) => height - PAD - ((v - min) / Math.max(1e-6, max - min)) * (height - PAD * 2);
   const d = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(p).toFixed(1)}`).join(' ');
   const lastX = x(n - 1), lastY = y(points[n - 1]!);
@@ -111,7 +123,7 @@ export function Sparkline({ points, dates, height = 56, labels = false, scrub = 
       </svg>
       {labels && (
         <>
-          <div class="sparkline-minmax" style={{ height: `${height}px` }}>
+          <div class="sparkline-minmax" ref={labelsRef} style={{ height: `${height}px` }}>
             <span class="num" style={{ top: `${(y(max) / height) * 100}%` }}>{fmt(max)}</span>
             {max !== min && <span class="num" style={{ top: `${(y(min) / height) * 100}%` }}>{fmt(min)}</span>}
           </div>
