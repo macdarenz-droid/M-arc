@@ -5795,6 +5795,45 @@ for (const { theme, inset } of bug22Runs) {
   await ctx.close();
 }
 
+// ADAPT-4 G1 (F-1): Profile shows "not set" for planned days per week when the user never set it (it
+// showed 3), and the number once it is set (tapping + from "not set" saves 4). Silent Black and Paper, 390 px.
+for (const theme of ['silent-black', 'paper']) {
+  const tag = `ADAPT-4 planned days (${theme})`;
+  const now = new Date().toISOString();
+  const json = JSON.stringify({
+    version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 }, goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    sessions: [], active: null, customExercises: [],
+    preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+    body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+    onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+  });
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([j, t]) => { if (!sessionStorage.getItem('adapt4-seeded')) { localStorage.setItem('marc.state.v1', j); sessionStorage.setItem('adapt4-seeded', '1'); } localStorage.setItem('marc.theme', t); }, [json, theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(250);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(150); }
+  await page.getByRole('button', { name: 'Settings', exact: true }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Open', exact: true }).click(); await page.waitForTimeout(300);
+  const field = page.locator('dialog[open] [data-palace="profile.training"] label', { hasText: 'Planned days per week' });
+  const unset = page.locator('dialog[open] [data-testid="planned-days-unset"]');
+  await unset.scrollIntoViewIfNeeded().catch(() => {});
+  const read = async () => (await field.locator('.row').first().textContent().catch(() => null))?.replace(/[−+]/g, '').trim() ?? null;
+  const before = await read();
+  if (before !== 'not set') errors.push(`${tag}: planned days reads ${JSON.stringify(before)} when unset, expected "not set"`);
+  const box = await unset.boundingBox().catch(() => null);
+  if (!box || box.x < 0 || box.x + box.width > 390) errors.push(`${tag}: "not set" is off screen at 390 px (${JSON.stringify(box)})`);
+  await settle(page); await page.screenshot({ path: `${OUT}/${theme}-adapt-4-planned-days-unset.png` });
+  await field.getByRole('button', { name: '+' }).click(); await page.waitForTimeout(200);
+  const after = await read();
+  if (after !== '4') errors.push(`${tag}: after + from unset it reads ${JSON.stringify(after)}, expected "4"`);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays ?? null);
+  if (saved !== 4) errors.push(`${tag}: saved plannedDays is ${JSON.stringify(saved)}, expected 4`);
+  await ctx.close();
+}
+
 await browser.close();
 stopping = true;
 server.kill();

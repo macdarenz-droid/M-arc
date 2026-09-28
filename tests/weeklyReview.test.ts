@@ -89,11 +89,12 @@ describe('repMixShares', () => {
 });
 
 describe('weekHasEnoughData', () => {
-  it('needs 5+ days logged in the calendar week', () => {
+  // ADAPT-4: the approved COACHING-PLAN §7 P2-C change replaced "5+ logged days" with the planned sessions (3 when nothing is set).
+  it('needs the planned sessions (3 when nothing is set) in this week or the week just ended', () => {
     const days = ['2026-09-14', '2026-09-15', '2026-09-16', '2026-09-17', '2026-09-18'];
     const s = days.map(d => session(d, [{ id: bench, sets: sets(60, 8) }]));
     expect(weekHasEnoughData(s, '2026-09-18')).toBe(true);
-    expect(weekHasEnoughData(s.slice(0, 3), '2026-09-18')).toBe(false);
+    expect(weekHasEnoughData(s.slice(0, 2), '2026-09-18')).toBe(false);
   });
 });
 

@@ -66,8 +66,8 @@ export function Profile({ onClose }: { onClose: () => void }) {
                 <Button variant="quiet" size="sm" onClick={() => setTrainingSince(new Date().toISOString().slice(0, 7))}>I'm new</Button>
               </div>
             </Field>
-            <Field label="Planned days per week" hint="Pre-fills your weekly schedule.">
-              <div class="row"><Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.max(1, (s.profile.plannedDays ?? 3) - 1))}>−</Button><b class="num small">{s.profile.plannedDays ?? 3}</b><Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.min(7, (s.profile.plannedDays ?? 3) + 1))}>+</Button></div>
+            <Field label="Planned days per week" hint="Your weekly target when no days are scheduled.">
+              <div class="row"><Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.max(1, (s.profile.plannedDays ?? 3) - 1))}>−</Button>{s.profile.plannedDays != null ? <b class="num small">{s.profile.plannedDays}</b> : <span class="small muted" data-testid="planned-days-unset">not set</span>}<Button variant="quiet" size="sm" onClick={() => setPlannedDays(Math.min(7, (s.profile.plannedDays ?? 3) + 1))}>+</Button></div>
             </Field>
           </Card>
         </Section>
