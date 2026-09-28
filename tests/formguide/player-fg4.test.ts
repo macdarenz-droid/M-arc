@@ -197,6 +197,8 @@ describe('FG-4: load from the last logged set (read only)', () => {
     const hist = [sess('2026-09-20', [set(9)])];
     expect(lastLoggedKg(src(hist, [set(11, { status: 'committed' }), set(12.5, { status: 'draft' })]), 'lib_dumbbell_lateral_raise')).toBe(11);
     expect(lastLoggedKg(src(hist, [set(12.5, { status: 'draft' })]), 'lib_dumbbell_lateral_raise')).toBe(9);
+    // a set committed before `status` existed has only `at` (session.ts isCommitted)
+    expect(lastLoggedKg(src(hist, [set(10.5, { at: '2026-09-28T10:00:00.000Z' })]), 'lib_dumbbell_lateral_raise')).toBe(10.5);
     expect(lastLoggedKg(src(hist, [set(11, { status: 'committed' }), set(3, { status: 'committed', kind: 'warmup' })]), 'lib_dumbbell_lateral_raise')).toBe(11);
   });
   it('loadOf: the kg for the KG-marked dumbbell, the readout in the user unit; bodyweight draws no label', () => {
@@ -211,6 +213,7 @@ describe('FG-4: load from the last logged set (read only)', () => {
   it('load.ts never writes: no store update, no setter', () => {
     const src = readFileSync('src/formguide/player/load.ts', 'utf8');
     expect(src).not.toMatch(/\bupdate\(|\.value\s*=|setItem|@\/core\/store/);
+    expect(src).toContain('isCommitted(x)');
   });
 });
 

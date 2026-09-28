@@ -5513,6 +5513,15 @@ for (const { theme, inset } of bug22Runs) {
       const end = await page.evaluate(() => ({ btn: document.querySelector('dialog[open] .controls .btn-icon').getAttribute('aria-label'), cap: document.querySelector('dialog[open] .cap').textContent }));
       if (end.btn !== 'Replay' || end.cap !== 'Done. Tap Replay to watch again.') errors.push(`${tag} A1: end of 3 reps ${JSON.stringify(end)}`);
       if (await shoulder(page) !== s0) errors.push(`${tag} A1: after 3 reps the shoulder is ${await shoulder(page)}, not the start pose ${s0}`);
+      // A theme change while paused mid-run remounts the figure on the start pose and resets the rep pill and caption.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Replay', exact: true }).click(); await page.waitForTimeout(150);
+      await seek(page, 5000);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(150);
+      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'ember')); await page.waitForTimeout(250);
+      const mid = await page.evaluate(() => ({ pill: document.querySelector('dialog[open] .pill')?.textContent, cap: document.querySelector('dialog[open] .cap').textContent, btn: document.querySelector('dialog[open] .controls .btn-icon').getAttribute('aria-label') }));
+      if (mid.pill !== 'Rep 1 of 3' || mid.cap !== 'Tap Play to watch 3 slow reps.' || mid.btn !== 'Play') errors.push(`${tag} A1: theme change while paused mid-run ${JSON.stringify(mid)}`);
+      if (await shoulder(page) !== s0) errors.push(`${tag} A1: after a theme change the shoulder is ${await shoulder(page)}, not the start pose ${s0}`);
+      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'silent-black')); await page.waitForTimeout(250);
       // A5: the pictures regenerate on a data-theme change (the next theme's tokens, new images).
       await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(200);
       const before = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .pics .tile img')].map(i => i.src));

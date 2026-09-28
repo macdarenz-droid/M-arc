@@ -97,7 +97,7 @@ export function ExercisePlayer({ guide: g, rig, name, load }: ExercisePlayerProp
     drop();
     anim.current = mountFig('correct');
     if (mistakeRef.current) animM.current = mountFig('mistake');
-    if (sRef.current.playing || sRef.current.ended) apply({ state: { ...sRef.current, playing: false, started: false, ended: false }, fx: 'reset' });
+    if (sRef.current.started || sRef.current.ended) apply({ state: { ...sRef.current, playing: false, started: false, ended: false }, fx: 'reset' });
   }, [theme]);
 
   useEffect(() => {

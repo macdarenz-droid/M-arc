@@ -5,6 +5,7 @@ import type { AppState, Exercise, LoadUnit } from '@/core/models';
 import { exerciseHistory } from '@/brain/history';
 import { isWorkingSet } from '@/brain/exposure';
 import { formatLoad } from '@/core/units';
+import { isCommitted } from '@/slices/workout/session';
 import type { ExerciseGuide } from '../model';
 
 type Src = Pick<AppState, 'sessions' | 'active'> & { customExercises: Exercise[] };
@@ -13,7 +14,7 @@ const loaded = (kg: number | undefined): kg is number => kg != null && Number.is
 /** kg of the last logged working set of `exerciseId`, or null when none has a load. */
 export function lastLoggedKg(s: Src, exerciseId: string): number | null {
   const live = (s.active?.entries ?? []).filter(e => e.exerciseId === exerciseId).flatMap(e => e.sets)
-    .filter(x => x.status === 'committed' && isWorkingSet(x) && loaded(x.kg));
+    .filter(x => isCommitted(x) && isWorkingSet(x) && loaded(x.kg));
   if (live.length) return live[live.length - 1]!.kg!;
   const hist = exerciseHistory(s.sessions, exerciseId, s.customExercises);
   for (let i = hist.length - 1; i >= 0; i--) {
