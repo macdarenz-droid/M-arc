@@ -29,6 +29,7 @@ import { addDays, formatDay, formatLocalStamp, dayKey } from '@/core/dates';
 import { backupAgeDays, buildBackup, parseBackup } from './backup';
 import { sessionsToCsv } from './exportCsv';
 import { today } from '@/app/selectors';
+import { clearErrorReportQueue, reportCaught, resetErrorReporting } from '@/errors';
 
 type Snapshot = { state: AppState; escobar: unknown; heart: unknown };
 type PendingRestore = { next: AppState; escobar?: unknown; heart?: unknown; from: string; label: string };
@@ -71,6 +72,7 @@ function resetEverything(): void {
   clearHeart();
   void import('@/escobar/images').then(m => m.clearImages()).catch(() => {});
   try { localStorage.removeItem('marc.health.asked'); } catch { /* storage unavailable */ }
+  resetErrorReporting();
   afterReplace();
 }
 
@@ -97,7 +99,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     try {
       showToast(await exportText(name, JSON.stringify(buildBackup(), null, 1)));
       update(x => ({ ...x, lastBackupAt: new Date().toISOString() }));
-    } catch { showToast('Export failed'); }
+    } catch (err) { showToast('Export failed'); reportCaught('backup', err); }
   };
   // RG-17: every filled-in set as CSV, loads as typed in the display unit.
   const exportCsv = async (days: number | null) => {
@@ -117,7 +119,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
     const text = await pickFile();
     if (!text) return;
     const b = parseBackup(text);
-    if ('error' in b) { showToast(b.error); return; }
+    if ('error' in b) { showToast(b.error); reportCaught('backup', new Error(b.error)); return; }
     if (b.kind === 'legacy') { setPending({ next: b.state, from: 'the previous version', label: 'the old backup' }); return; }
     const when = b.exportedAt && Number.isFinite(Date.parse(b.exportedAt)) ? formatDay(dayKey(b.exportedAt)) : 'this file';
     setPending({ next: b.state, escobar: b.escobar, heart: b.heart, from: when, label: b.dropped ? `the backup (${b.dropped} damaged item${b.dropped === 1 ? '' : 's'} skipped)` : 'the backup' });
@@ -229,6 +231,10 @@ export function Settings({ onClose }: { onClose: () => void }) {
               </Row>
             )}
             <p class="hint">Everything stays on this device. {s.legacyImportedAt ? 'Your history from the previous version was imported automatically.' : ''} Loaded from: {bootSource.value}.</p>
+            <Row trailing={<Toggle checked={!!p.errorReports} label="Send anonymous error reports" onChange={v => { setPref({ errorReports: v, errorReportsAsked: true }); if (!v) clearErrorReportQueue(); }} />}>
+              <span class="small" data-palace="settings.error-reports">Send anonymous error reports</span>
+              <div class="hint">No workouts, health data or personal details — only what broke and where. Off by default.</div>
+            </Row>
             {!confirmReset ? <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset workout data</Button> : (
               <Card class="card-quiet"><p class="small">Delete all sessions, splits and settings on this device? Export a backup first if unsure.</p><div class="row" style={{ marginTop: 10 }}><Button variant="quiet" onClick={() => setConfirmReset(false)}>Keep</Button><Button variant="danger" onClick={() => { resetEverything(); setConfirmReset(false); showToast('Workout data reset'); void haptic.confirm(); }}>Reset everything</Button></div></Card>
             )}

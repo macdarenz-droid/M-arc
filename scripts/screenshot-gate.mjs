@@ -4415,17 +4415,37 @@ for (const theme of ['silent-black', 'paper']) {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  // 7.5 (supervisor request, 2026-09-28): under reduce the overlay leaves 100 ms after the app
+  // signals ready, so reading it after goto() raced its removal (about 1 run in 70, on main too).
+  // Wrap window.__marcLaunchReady and hold the ready call until after `load` and two animation
+  // frames: SMIL has started by then (so a beginElement() under reduce shows as a non-zero
+  // dashoffset, as main's read after goto() did), and the overlay can't leave before the
+  // snapshot, because leaving only starts once the held call runs. Same assertions, no race.
+  await page.addInitScript(() => {
+    let inner;
+    Object.defineProperty(window, '__marcLaunchReady', {
+      configurable: true,
+      get() { return inner && (() => {
+        const path = document.querySelector('#launch svg path');
+        const dot = document.getElementById('launch-dot');
+        const snap = () => {
+          window.__qa123Snapshot = {
+            dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
+            cx: dot ? dot.getAttribute('cx') : null,
+            cy: dot ? dot.getAttribute('cy') : null,
+          };
+          inner();
+        };
+        const go = () => requestAnimationFrame(() => requestAnimationFrame(snap));
+        if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
+      }); },
+      set(fn) { inner = fn; },
+    });
+  });
   await page.goto(`http://localhost:${PORT}/`);
   await page.waitForFunction(() => typeof window.__marcLaunchT0 === 'number');
-  const state = await page.evaluate(() => {
-    const path = document.querySelector('#launch svg path');
-    const dot = document.getElementById('launch-dot');
-    return {
-      dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
-      cx: dot ? dot.getAttribute('cx') : null,
-      cy: dot ? dot.getAttribute('cy') : null,
-    };
-  });
+  await page.waitForFunction(() => window.__qa123Snapshot !== undefined, null, { timeout: 5000 }).catch(() => {});
+  const state = await page.evaluate(() => window.__qa123Snapshot ?? { dashoffset: 'no ready signal', cx: null, cy: null });
   if (state.dashoffset !== '0px' && state.dashoffset !== '0') errors.push(`${tag}: expected the path's strokeDashoffset to be 0 right after load, got ${state.dashoffset}`);
   if (state.cx !== '30' || state.cy !== '50') errors.push(`${tag}: expected #launch-dot at cx=30 cy=50 right after load, got cx=${state.cx} cy=${state.cy}`);
   await ctx.close();
@@ -4933,6 +4953,142 @@ for (const theme of ['silent-black', 'paper']) {
       if (scrollWidthAfterUndo > innerWidth) errors.push(`${tag} C: scrollWidth ${scrollWidthAfterUndo} > innerWidth ${innerWidth} after Undo`);
     }
   }
+  await ctx.close();
+}
+
+// 7.5: anonymous error reports. The Settings row starts off, the one-time ask appears once (after
+// a finished workout, never during a live one) as a plain banner (never a blocking modal — it
+// must not steal a tap meant for anything else), Yes/No are remembered across a reload, and no
+// request reaches the errors endpoint while consent is off.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = '7.5';
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  const errorRequests = [];
+  page.on('request', r => { if (r.url().includes('/errors')) errorRequests.push(r.url()); });
+  await page.addInitScript(legacyJson => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); }, JSON.stringify(legacy));
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  await page.waitForTimeout(300);
+
+  const ask = page.locator('[data-palace="errors.ask"]');
+  // Not yet: this very boot is the one that just imported the history, so it never interrupts it.
+  if (await visible(ask)) errors.push(`${tag}: the ask must not show on the same boot that just imported its history`);
+
+  // The next ordinary open (bootSource "saved") is when it appears.
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Later' }).click({ timeout: 1000 }).catch(() => {}); // the onboarding sheet takes priority if it's still showing
+  if (!(await visible(ask))) errors.push(`${tag}: expected the error-reports ask on the next open after a finished workout`);
+  else {
+    await settle(page); await page.screenshot({ path: `${OUT}/7-5-ask-banner.png` });
+    // A banner, not a modal: it must never block the nav underneath it.
+    await page.locator('nav.nav button', { hasText: 'Train' }).click({ timeout: 3000 }).catch(() => errors.push(`${tag}: the ask blocked a tap on the nav underneath it`));
+    await page.locator('nav.nav button', { hasText: 'Today' }).click(); await page.waitForTimeout(150);
+    await ask.getByRole('button', { name: 'No thanks' }).click().catch(() => errors.push(`${tag}: no "No thanks" button on the ask`));
+    await page.waitForTimeout(200);
+    if (await visible(ask)) errors.push(`${tag}: the ask should close after answering`);
+  }
+
+  await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+  const row = page.locator('[data-palace="settings.error-reports"]');
+  await row.scrollIntoViewIfNeeded().catch(() => {});
+  if (!(await visible(row))) errors.push(`${tag}: expected the "Send anonymous error reports" row in Settings`);
+  const toggle = page.getByRole('switch', { name: 'Send anonymous error reports' });
+  if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: expected the error-reports toggle off after answering No`);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await visible(page.locator('[data-palace="errors.ask"]'))) errors.push(`${tag}: the ask reappeared after being answered`);
+  if (errorRequests.length) errors.push(`${tag}: ${errorRequests.length} request(s) reached /errors while consent was off`);
+
+  // Never during a live workout, even with a finished one already in history and the ask unanswered.
+  const page2 = await ctx.newPage();
+  page2.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page2.addInitScript(() => {
+    const st = JSON.parse(localStorage.getItem('marc.state.v1'));
+    st.preferences.errorReportsAsked = false;
+    st.preferences.errorReports = false;
+    st.active = { splitId: st.splits[0]?.id ?? 's1', startedAt: new Date().toISOString(), pausedMs: 0, entries: [] };
+    localStorage.setItem('marc.state.v1', JSON.stringify(st));
+  });
+  await page2.goto(`http://localhost:${PORT}/`); await page2.waitForSelector('.nav'); await launchGone(page2); await page2.waitForTimeout(300);
+  if (await visible(page2.locator('[data-palace="errors.ask"]'))) errors.push(`${tag}: the ask must never show during a live workout`);
+  await ctx.close();
+}
+
+// 7.5-toggle: the Settings consent switch in Silent Black and Paper. It starts off, its label and
+// hint read at 4.5:1 or better, On queues an error locally (the wiring works) yet no request
+// ever reaches /errors (an automated browser never sends), and Off clears the queue and sticks
+// across a reload.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `7.5-toggle ${theme}`;
+  page.on('pageerror', e => { if (!e.message.includes('gate-7.5-probe')) errors.push(`${tag}: ${e.message}`); });
+  const errorRequests = [];
+  page.on('request', r => { if (/\/errors(\?|$)/.test(new URL(r.url()).pathname)) errorRequests.push(r.url()); });
+  await page.addInitScript(([legacyJson, t]) => {
+    localStorage.setItem('marc.theme', t);
+    if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson);
+  }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+
+  const openSettings = async () => {
+    await page.locator('[data-palace="today.settings"]').click(); await page.waitForTimeout(300);
+    await page.locator('[data-palace="settings.error-reports"]').scrollIntoViewIfNeeded().catch(() => {});
+  };
+  const toggle = page.getByRole('switch', { name: 'Send anonymous error reports' });
+  const queueLen = () => page.evaluate(() => { try { return JSON.parse(localStorage.getItem('marc.errors.queue') ?? '{"reports":[]}').reports.length; } catch { return -1; } });
+
+  await openSettings();
+  if (!(await visible(toggle))) errors.push(`${tag}: expected the "Send anonymous error reports" switch in Settings`);
+  else {
+    if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: the switch must start off`);
+    for (const [sel, label] of [['[data-palace="settings.error-reports"]', 'switch label'], ['[data-palace="settings.error-reports"] + .hint', 'switch hint']]) {
+      const c = await page.evaluate((q) => {
+        const el = document.querySelector(q);
+        if (!el) return null;
+        const parse = str => {
+          let m = str.match(/rgba?\(([^)]+)\)/);
+          if (m) { const p = m[1].split(',').map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+          m = str.match(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/);
+          if (m) return { r: Number(m[1]) * 255, g: Number(m[2]) * 255, b: Number(m[3]) * 255, a: m[4] !== undefined ? Number(m[4]) : 1 };
+          return null;
+        };
+        const fg = parse(getComputedStyle(el).color);
+        if (!fg) return null;
+        let node = el, under = { r: 255, g: 255, b: 255 };
+        while (node) { const bg = parse(getComputedStyle(node).backgroundColor); if (bg && bg.a >= 0.999) { under = bg; break; } node = node.parentElement; }
+        const lin = v => { const x = v / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
+        const rl = ({ r, g, b }) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        const l1 = rl(fg) + 0.05, l2 = rl(under) + 0.05;
+        return l1 > l2 ? l1 / l2 : l2 / l1;
+      }, sel);
+      if (c == null) errors.push(`${tag}: could not measure contrast for the ${label}`);
+      else if (c < 4.5) errors.push(`${tag}: ${label} contrast ${c.toFixed(2)} < 4.5`);
+    }
+    await settle(page); await page.locator('.list-row:has([data-palace="settings.error-reports"])').screenshot({ path: `${OUT}/${theme}-7-5-toggle-off.png` }).catch(() => {});
+
+    await toggle.click(); await page.waitForTimeout(200);
+    if ((await toggle.getAttribute('aria-checked')) !== 'true') errors.push(`${tag}: the switch did not turn on`);
+    await settle(page); await page.locator('.list-row:has([data-palace="settings.error-reports"])').screenshot({ path: `${OUT}/${theme}-7-5-toggle-on.png` }).catch(() => {});
+    await page.evaluate(() => { void Promise.reject(new Error('gate-7.5-probe')); });
+    await page.waitForTimeout(600);
+    if ((await queueLen()) < 1) errors.push(`${tag}: with consent on, an unhandled rejection should be queued locally`);
+
+    await toggle.click(); await page.waitForTimeout(200);
+    if ((await toggle.getAttribute('aria-checked')) !== 'false') errors.push(`${tag}: the switch did not turn back off`);
+    if ((await queueLen()) !== 0) errors.push(`${tag}: switching off must clear the queued reports`);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+    await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); }
+    await openSettings();
+    if ((await toggle.getAttribute('aria-checked').catch(() => null)) !== 'false') errors.push(`${tag}: the switch should stay off after a reload`);
+  }
+  if (errorRequests.length) errors.push(`${tag}: ${errorRequests.length} request(s) reached /errors under the gate`);
   await ctx.close();
 }
 
