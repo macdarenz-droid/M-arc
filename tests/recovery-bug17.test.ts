@@ -53,6 +53,29 @@ describe('A1: a muscle still under 90 % at the 120 h cap reads "5+ days" (RECOVE
     expect(r.readyInHours).not.toBeNull();
   });
 
+  it('110 h after training it gives the real time left, not "5+ days" (review of 82c4625)', () => {
+    const r = quadsOf(hard, t0 + 2 * DAY + HOUR + 110 * HOUR);
+    expect(r.recovering).toBe(true);
+    expect(r.beyondCap).toBeFalsy();
+    expect(r.hoursLeft).toBeGreaterThan(0);
+    expect(r.hoursLeft).toBeLessThan(48);
+    expect(r.readyInHours).not.toBeNull();
+    expect(formatHoursLeft(r)).not.toBe('5+ days');
+  });
+
+  it('the coach does not warn about a session scheduled after the real ready time', () => {
+    const now110 = t0 + 2 * DAY + HOUR + 110 * HOUR;
+    const today = iso(now110).slice(0, 10);
+    const legs: Split = { id: 'legs', name: 'Legs', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: SQUAT, sets: 3 }] };
+    // Legs today (done, as arms only) and again in 2 days, past quads' real ready time.
+    const schedule = { ...emptySchedule(), [weekdayOf(today)]: 'legs', [weekdayOf(addDays(today, 2))]: 'legs' };
+    const doneToday = at(now110 - HOUR, [{ id: 'lib_dumbbell_biceps_curl', sets: sets(15, 10, 'ideal', 3) }], 'legs');
+    const notes = coachInsights({ ...baseCoachExtras, profile: novice, sessions: [...hard, doneToday], splits: [legs], schedule, custom: [], today, now: now110 }, 20);
+    const done = notes.find(i => i.id === 'recovery.done-today:legs');
+    expect(done).toBeDefined();
+    expect(done!.means).not.toContain('Quads should be ready');
+  });
+
   it('the coach warns that the next scheduled session hits a not-ready muscle', () => {
     const today = iso(now).slice(0, 10);
     const legs: Split = { id: 'legs', name: 'Legs', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: SQUAT, sets: 3 }] };
@@ -100,6 +123,14 @@ describe('A3: tauScale moves only beyond noise and decays toward 1.0 (RECOVERY-F
     // Untrained muscles keep what was learned.
     const chest = calibrateAfterSession([], s, [], establishedProfile, [], { tauScale: { chest: 1.3 }, observations: {} });
     expect(chest.tauScale.chest).toBe(1.3);
+  });
+
+  it('evidence held back by the clamp never decays (review of 82c4625)', () => {
+    const t0 = Date.parse('2026-08-01T17:00:00Z');
+    const prior = at(t0, [{ id: SQUAT, sets: sets(140, 5, 'max', 3) }]);
+    const drop = at(t0 + 3 * DAY, [{ id: SQUAT, sets: sets(120, 5, 'max', 3) }]);
+    const r = calibrateAfterSession([prior], drop, [], establishedProfile, [], { tauScale: { quads: 1.6 }, observations: { quads: 5 } });
+    expect(r.tauScale.quads).toBe(1.6);
   });
 
   it('a year of flat strength with ±3 % day-to-day noise does not ratchet tauScale up', () => {
@@ -187,6 +218,22 @@ describe('A6: a rebuild learns exactly what finish stored (RECOVERY-F7)', () => 
     const model = replayFinish(list, novice);
     expect(Object.keys(model.observations).length).toBeGreaterThan(0);
     expect(rebuildRecoveryModel({ sessions: list, customExercises: [], profile: novice, healthDays: [] })).toEqual(model);
+  });
+});
+
+describe('F7: a dose never depends on a later session (whole-body factor)', () => {
+  it('a heavy second session later the same day leaves the first one\'s recovery time as it was', () => {
+    // Four weeks of hour-long easy sessions, a short squat session in the morning (load ratio about
+    // 0.65 alone) and a very long max session in the afternoon (ratio near 3, factor 1.25 for the day).
+    const day0 = Date.parse('2026-09-01T07:00:00Z');
+    const history = [0, 7, 14, 21].map(d => at(day0 + d * DAY, [{ id: 'lib_barbell_row', sets: sets(60, 8, 'easy', 2) }]));
+    const morning = sessionAt(iso(day0 + 28 * DAY), iso(day0 + 28 * DAY + 20 * 60_000), [{ id: SQUAT, sets: sets(100, 8, 'ideal', 3) }]);
+    const afternoon = sessionAt(iso(day0 + 28 * DAY + 8 * HOUR), iso(day0 + 28 * DAY + 11 * HOUR), [{ id: 'lib_barbell_bench_press', sets: sets(80, 8, 'max', 12) }]);
+    const evalAt = day0 + 28 * DAY + 12 * HOUR;
+    const without = quadsOf([...history, morning], evalAt, { profile: establishedProfile });
+    const withLater = quadsOf([...history, morning, afternoon], evalAt, { profile: establishedProfile });
+    expect(withLater.windowHours).toBe(without.windowHours);
+    expect(withLater.pct).toBe(without.pct);
   });
 });
 

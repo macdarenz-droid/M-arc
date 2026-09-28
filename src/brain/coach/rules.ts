@@ -186,8 +186,7 @@ export const RULES: Rule[] = [
             const nextPrimary = new Set<MuscleId>();
             for (const se of nextSplit.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => nextPrimary.add(m));
             const hoursAhead = daysBetween(ctx.today, next.day) * 24;
-            // BUG-17 (RECOVERY-F1): past the window cap counts as not ready, however far ahead.
-            const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && (r.beyondCap || r.hoursLeft > hoursAhead)).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
+            const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && r.hoursLeft > hoursAhead).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
             if (notReady) {
               const window = notReady.readyInHours ? `in ${formatHours(notReady.readyInHours[0])}–${formatHours(notReady.readyInHours[1])}` : notReady.beyondCap ? 'in more than 5 days' : `in about ${formatHours(notReady.hoursLeft)}`;
               warn = ` ${muscleLabel(notReady.muscle)} should be ready ${window}.`;

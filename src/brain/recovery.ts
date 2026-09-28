@@ -32,7 +32,7 @@ export interface MuscleRecovery {
   muscle: MuscleId;
   /** 0-100. 100 means fully recovered. */
   pct: number;
-  /** Hours remaining until "ready for hard work" (90%), 0 once past it. READY_TO_HOURS_CAP (a lower bound) when `beyondCap`. */
+  /** Hours remaining until "ready for hard work" (90%), 0 once past it. */
   hoursLeft: number;
   /** The solved hours-since-training to reach "ready", before the ± display band. */
   windowHours: number;
@@ -50,7 +50,7 @@ export interface MuscleRecovery {
   systemicFactor: number;
   /** QA-R3a-9: today's soreness rating holds this muscle below ready; no clock time can say when that eases. */
   soreToday?: boolean;
-  /** BUG-17 (RECOVERY-F1): still under 90 % at the 120 h window cap, so no ready time can be given: shown as "5+ days", never as ready. */
+  /** BUG-17 (RECOVERY-F1): more than 120 h still to go before 90 %: shown as "5+ days", never as ready. */
   beyondCap?: boolean;
 }
 
@@ -264,14 +264,15 @@ function pctAt(doses: Dose[], fRef: number, atMs: number, lastTouchAt: number): 
 }
 
 /**
- * Smallest hours-since-`fromMs`, up to the cap, where pct first reaches `targetPct`. Null if never within the cap.
- * Already past the cap (BUG-17), the search runs to the 7-day floor, where pct is 100 by definition.
+ * Smallest hours-since-`fromMs` where pct first reaches `targetPct`. BUG-17 (RECOVERY-F1): searched up
+ * to the 120 h cap first (unchanged results inside it), then on to the 7-day floor, where pct is 100 by
+ * definition, so a recovering muscle always gets its real time.
  */
-function solveHours(doses: Dose[], fRef: number, lastTouchAt: number, fromMs: number, targetPct: number): number | null {
+function solveHours(doses: Dose[], fRef: number, lastTouchAt: number, fromMs: number, targetPct: number): number {
   const fromHours = Math.max(0, (fromMs - lastTouchAt) / 3_600_000);
   if (pctAt(doses, fRef, fromMs, lastTouchAt) >= targetPct) return fromHours;
-  let lo = fromHours, hi = fromHours >= READY_TO_HOURS_CAP ? FLOOR_DAYS * 24 : READY_TO_HOURS_CAP;
-  if (pctAt(doses, fRef, lastTouchAt + hi * 3_600_000, lastTouchAt) < targetPct) return null;
+  let lo = fromHours, hi = Math.max(fromHours, READY_TO_HOURS_CAP);
+  if (hi === fromHours || pctAt(doses, fRef, lastTouchAt + hi * 3_600_000, lastTouchAt) < targetPct) { lo = hi; hi = FLOOR_DAYS * 24; }
   for (let i = 0; i < 40; i++) {
     const mid = (lo + hi) / 2;
     const p = pctAt(doses, fRef, lastTouchAt + mid * 3_600_000, lastTouchAt);
@@ -355,16 +356,16 @@ export function recoveryAt(doses: MuscleDoses, input: RecoveryInputs): MuscleRec
     const elapsedH = Math.max(0, (now - last.at) / 3_600_000);
     // Sore but past the model's own ready time: the soreness decides, not the clock.
     const soreOnly = soreToday && tReady != null && tReady <= elapsedH;
-    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
+    const readyInHours: [number, number] | null = pct >= READY_PCT || tReady == null || soreOnly || (tReady - elapsedH > READY_TO_HOURS_CAP) ? null : [r1(Math.max(0, tReady - elapsedH) * 0.85), Math.min(READY_TO_HOURS_CAP, r1(Math.max(0, tReady - elapsedH) * 1.15))];
     const observations = recoveryModel.observations[muscle] ?? 0;
     const tauScale = recoveryModel.tauScale[muscle] ?? 1.0;
-    // BUG-17 (RECOVERY-F1): not ready within the window cap is its own state, never "0 hours left".
-    const beyondCap = !input.pctOnly && tReady == null;
+    // BUG-17 (RECOVERY-F1): more than 120 h still to go is shown as "5+ days", never as "0 hours left".
+    const beyondCap = !input.pctOnly && tReady != null && tReady - elapsedH > READY_TO_HOURS_CAP;
 
     return {
       muscle,
       pct,
-      hoursLeft: beyondCap ? READY_TO_HOURS_CAP : tReady == null ? 0 : Math.max(0, Math.round((tReady - elapsedH) * 10) / 10),
+      hoursLeft: tReady == null ? 0 : Math.max(0, Math.round((tReady - elapsedH) * 10) / 10),
       windowHours: tReady == null ? READY_TO_HOURS_CAP : Math.round(tReady * 10) / 10,
       lastTrainedAt: new Date(last.at).toISOString(),
       lastDay: last.day,
@@ -442,10 +443,11 @@ export function calibrateAfterSession(priorSessions: Session[], newSession: Sess
       const predictedPct = predicted().find(r => r.muscle === muscle)?.pct ?? 50;
       const before = tauScale[muscle] ?? 1.0;
       const after = calibrateTauScale(before, predictedPct, deltaPct);
+      // Evidence beyond the noise margin never decays, even when the clamp holds tauScale where it is.
+      if (calibrateTauScale(1.0, predictedPct, deltaPct) !== 1.0) trained.delete(muscle);
       if (after !== before) {
         tauScale[muscle] = after;
         observations[muscle] = (observations[muscle] ?? 0) + 1;
-        trained.delete(muscle);
       }
     }
   }
