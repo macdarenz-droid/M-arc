@@ -12,3 +12,4 @@ www/
 .vscode/
 screenshots/
 test-results/
+website/renders/.preview-*.html
