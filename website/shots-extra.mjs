@@ -1,0 +1,67 @@
+import { chromium } from 'playwright';
+import { spawn } from 'node:child_process';
+import { mkdirSync } from 'node:fs';
+const ROOT = '/home/user/M-arc';
+const OUT = `${ROOT}/website/renders/shots`;
+mkdirSync(OUT, { recursive: true });
+const PORT = '4181';
+const server = spawn(process.execPath, [`${ROOT}/node_modules/vite/bin/vite.js`, 'preview', '--port', PORT, '--strictPort'], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+process.on('exit', () => { try { server.kill('SIGKILL'); } catch {} });
+for (let i = 0; ; i++) { try { const r = await fetch(`http://localhost:${PORT}/`); if (r.ok) break; } catch {} if (i > 120) { console.error('no server'); process.exit(1); } await new Promise(r => setTimeout(r, 250)); }
+
+
+// Realistic legacy data so the migration path is exercised end to end.
+const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const iso = (offset, h = 17) => { const d = new Date(); d.setDate(d.getDate() - offset); d.setHours(h, 30, 0, 0); return d.toISOString(); };
+const rec = (i, offset, dayKey, name, type, muscle, sets, kg0) => ({ id: `r${i}`, day: dayKey, dayKey: day(offset), name, type, muscle, finalizedAt: iso(offset), sets: Array.from({ length: sets }, (_, k) => ({ kg: kg0, reps: 8 + (k % 2), effort: k === sets - 1 ? 'max' : 'ideal' })) });
+const completed = [];
+let i = 0;
+const pushDays = [1, 4, 8, 11, 15, 18, 22, 25, 29];
+const pullDays = [2, 6, 9, 13, 16, 20, 23, 27];
+const legDays = [3, 7, 10, 14, 17, 21, 24, 28];
+pushDays.forEach((o, n) => { completed.push(rec(i++, o, 'push', 'Chest Press', 'Machine', 'Chest', 3, 50 + n * 2.5)); completed.push(rec(i++, o, 'push', 'Dumbbell Shoulder Press', 'Dumbbells', 'Shoulders', 3, 18 + n)); completed.push(rec(i++, o, 'push', 'Triceps Pushdown', 'Cable', 'Triceps', 3, 25 + n)); });
+pullDays.forEach((o, n) => { completed.push(rec(i++, o, 'pull', 'Lat Pulldown', 'Cable', 'Lats', 3, 55 + n * 2.5)); completed.push(rec(i++, o, 'pull', 'Seated Cable Row', 'Cable', 'Mid Back', 3, 50 + n)); completed.push(rec(i++, o, 'pull', 'Hammer Curl', 'Dumbbells', 'Biceps', 3, 12)); });
+legDays.forEach((o, n) => { completed.push(rec(i++, o, 'legs', 'Leg Press', 'Leg Press', 'Quads', 4, 120 + n * 5)); completed.push(rec(i++, o, 'legs', 'Romanian Deadlift', 'Barbell', 'Hamstrings', 3, 60 + n * 2.5)); completed.push(rec(i++, o, 'legs', 'Standing Calf Raise', 'Machine', 'Calves', 3, 40)); });
+const timed = [...pushDays.map(o => ({ id: `t${o}`, day: 'push', dayKey: day(o), startedAt: iso(o, 16), endedAt: iso(o, 17), durationMs: 3300000 }))];
+const legacy = {
+  days: {}, money: { available: 0, savings: 0, weeklyLimit: 0, currency: 'AUD', transactions: [] },
+  workouts: { completedExercises: completed, sessions: [], timedSessions: timed, customSplits: [], custom: {}, dayNames: {}, hiddenBaseSplits: [], trainingProgram: 'lean' },
+  trainingSchedule: { days: { mon: 'push', tue: null, wed: 'pull', thu: null, fri: 'legs', sat: null, sun: null } },
+  notifications: { trainingEnabled: true, trainingTime: '17:30', trainingStyle: 'silent' },
+  preferences: { units: { weight: 'kg' } }, user: { profile: { displayName: 'Marc', bodyWeightKg: 78 } },
+};
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
+for (const theme of ['silent-black', 'paper', 'ember', 'emerald', 'midnight']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => console.error('pageerror', theme, e.message));
+  await page.addInitScript(([legacyJson, t]) => { localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.locator('nav.nav').waitFor({ timeout: 20000 });
+  await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(600);
+  for (const name of [/^Later$/, /^Not now$/, /^Skip$/]) { const b = page.getByRole('button', { name }); if (await b.isVisible().catch(() => false)) { await b.click(); await page.waitForTimeout(400); break; } }
+  await page.waitForTimeout(3400);
+  const shot = (n) => page.screenshot({ path: `${OUT}/${theme}-${n}.png` });
+  try {
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(500);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(600); await shot('stats');
+    await page.locator('nav.nav button', { hasText: 'Body' }).click(); await page.waitForTimeout(500);
+    await page.getByRole('tab', { name: 'Levels' }).click(); await page.waitForTimeout(600); await shot('levels');
+    await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(400);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(400); await shot('checkin');
+    const skip = page.getByRole('button', { name: 'Skip' }); if (await skip.isVisible().catch(() => false)) { await skip.click(); await page.waitForTimeout(400); }
+    const start2 = page.getByRole('button', { name: /^Start / }).first(); if (await start2.isVisible().catch(() => false)) { await start2.click(); await page.waitForTimeout(500); }
+    const inputs = page.locator('.set-grid input');
+    const targetKg = parseFloat(await inputs.nth(0).getAttribute('placeholder')) || 50;
+    const targetReps = parseInt(await inputs.nth(1).getAttribute('placeholder'), 10) || 8;
+    await inputs.nth(0).fill(String(targetKg)); await inputs.nth(1).fill(String(targetReps + 2)); await inputs.nth(1).blur();
+    await page.locator('.effort button.easy').nth(0).click();
+    await inputs.nth(2).fill(String(targetKg + 2.5)); await inputs.nth(3).fill(String(targetReps)); await inputs.nth(3).blur();
+    await page.locator('.effort button.ideal').nth(1).click();
+    await page.waitForTimeout(500); await shot('live');
+  } catch (e) { console.error('extra shots failed', theme, e.message); }
+  console.log('done', theme);
+  await ctx.close();
+}
+await browser.close(); server.kill('SIGKILL'); process.exit(0);
