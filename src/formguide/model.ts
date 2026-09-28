@@ -27,7 +27,7 @@ export type Tempo = RepTempo | HoldTempo;
 
 /** Stored camera frames, in the lab's units (lateral-raise-lab.html VB: full and shoulders). */
 export const VIEWBOXES = {
-  standingFront: [-80, -6, 560, 600],
+  standingFront: [-88, -6, 576, 600],   // the lab's -80 -6 560 600 widened 8 units a side for the mistake's sway (D-FG3)
   upperFront: [60, 10, 280, 300],
 } as const satisfies Record<string, readonly [number, number, number, number]>;
 export type ViewBoxId = keyof typeof VIEWBOXES;
