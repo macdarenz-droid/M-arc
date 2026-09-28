@@ -6,7 +6,7 @@ Approved approach (owner, 2026-09-27): every exercise in the library gets what t
 
 Every exercise must deliver, in the app, on a phone:
 
-- [ ] Comic-anatomy figure painted from the theme tokens (`--accent` mixes for the body; the mistake figure tinted toward `--negative`), never a literal colour, in all five themes (Silent Black, Paper, Ember, Emerald, Midnight).
+- [ ] Comic-anatomy figure painted from the theme tokens (`--accent` mixes for the body; the mistake figure tinted toward `--mistake`, D-FG1), never a literal colour, in all five themes (Silent Black, Paper, Ember, Emerald, Midnight).
 - [ ] Whole-body motion from the data file: the working joints plus breath, balance sway, shoulder-blade rhythm, tremor in the hold, slow-down across reps.
 - [ ] Muscles that shimmer with computed effort: target, helpers and keep-quiet muscles, band phase driven by the effort curve, every target muscle visible in the chosen view.
 - [ ] The common mistake side by side, from a delta on the same data (its own tempo, extra joint offsets), with the differing numbers shown.
