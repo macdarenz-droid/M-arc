@@ -254,7 +254,7 @@ describe('warm-ups in the live view (QA-R6-3, QA-R6-11)', () => {
     const t = target.sets[0]!;
     const easy = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: t.reps + 2, effort: 'easy', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null; current: { setsPlanned: number } };
     // BUG-15 (COACHRULES-F7): this fixture's readiness reads amber, so an easy set never brings "add load".
-    expect(easy.adjustment).toBeNull();
+    expect(easy.adjustment).toBe(`Keep ${t.kg} kg for the next set.`);
     expect(easy.current.setsPlanned).toBe(3);
     // The easy warm-up in front is not read: a missed first working set still brings its advice.
     const missed = R.getLiveSession({}, ctxOf(live({ kg: t.kg, reps: Math.max(1, t.reps - 3), effort: 'max', fidelity: 'live', at: new Date(NOW - 60_000).toISOString() }) as never)) as { adjustment: string | null };

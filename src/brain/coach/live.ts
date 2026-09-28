@@ -7,6 +7,7 @@
 import type { EquipmentProfile, LoggedSet } from '@/core/models';
 import { roundToStep } from '../e1rm';
 import { loadableNear } from '../units';
+import { kgToDisplay } from '@/core/units';
 import type { Insight } from './rules';
 
 export interface AutoregulationInput {
@@ -49,9 +50,20 @@ export function autoregulationSuggestion(input: AutoregulationInput): Insight | 
   /** QA2-FC-6: whether the equipment has any load lighter than the target (not at the empty bar). */
   const canGoLighter = !equipment || loadableNear(targetKg - 0.02, equipment, 'down').kg < targetKg - 0.01;
 
-  // Plan 6.12.5 / 6.13: suppressed on a back-off day, where easy sets are the point.
+  // Plan 6.13: never an increase on a back-off day, where easy sets are the point.
   if (firstSet.effort === 'easy' && firstSet.reps >= targetReps) {
-    if (input.holdLoad) return null;
+    if (input.holdLoad) {
+      // The target already comes snapped to the equipment; restate it, never move it.
+      const here = equipment ? { value: kgToDisplay(targetKg, equipment.unit), unit: equipment.unit } : { value: targetKg, unit: 'kg' };
+      return {
+        id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,
+        title: `${exerciseName}: keep this load`,
+        noticed: `That felt easy at ${firstSet.kg} kg for ${firstSet.reps}.`,
+        means: 'Today holds the load, so easy sets are the point.',
+        action: `Keep ${here.value} ${here.unit} for the next set.`,
+        evidence: { n: 1, window: 'this set', confidence: 'high' },
+      };
+    }
     const next = snap(targetKg + step, 'up');
     return {
       id: `live:autoreg:${exerciseId}`, category: 'progress', priority: 170, cadence: 'live', kind: 'tip', exerciseId,
