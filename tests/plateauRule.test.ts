@@ -187,3 +187,30 @@ describe('PR #47 review: a flat timed hold never counts toward the lighter week 
     expect(deloadTrigger(s, today, [], [], 24).suggest).toBe(false);
   });
 });
+
+describe('PR #47 second review: BR-04 counts only the judged series (A3)', () => {
+  // 12 sessions at 12 reps (no e1RM) over 6 weeks, then 4 flat 100x5 sessions in the last 10 days.
+  const mixed = (id: string, kg: number) => [
+    ...Array.from({ length: 12 }, (_, i) => session(addDays(today, -56 + Math.round(i * 42 / 11)), [{ id, sets: sets(kg * 0.6, 12, 'ideal', 3) }])),
+    ...[-10, -7, -4, -1].map(d => session(addDays(today, d), [{ id, sets: sets(kg, 5, 'ideal', 3) }])),
+  ];
+  const s = both(mixed(bench, 100), mixed(squat, 140));
+  it('4 flat e1RM sessions in 10 days are not a plateau: unknown, no offer, target hold', () => {
+    expect(exerciseHistory(s, bench).filter(h => h.bestE1rm > 0)).toHaveLength(4);
+    expect(plateauStatus(exerciseHistory(s, bench), 'weighted', today).status).toBe('unknown');
+    expect(deloadTrigger(s, today, [], [], 24).suggest).toBe(false);
+    expect(deloadOffer(ctx(s)).suggest).toBe(false);
+    expect(suggestNext(s, bench, 'lean', today).mode).toBe('hold');
+  });
+});
+
+describe('PR #47 second review: the weekly note rate comes from the judged window', () => {
+  it('20 weeks rising 1 kg a week, then about -3% over 8 weeks: falling at about 0.4% a week', () => {
+    const s = twiceWeekly(28, w => (w < 20 ? 100 + w : 119 - (w - 19) * (3.6 / 8)));
+    const note = review(s)[0];
+    expect(note?.title).toMatch(/falling/);
+    const pct = Number(/about ([\d.]+)% a week/.exec(note?.noticed ?? '')?.[1]);
+    // The last 8 weeks fall about 0.38% a week; the all-history slope is about +0.54% a week.
+    expect(pct).toBe(0.4);
+  });
+});

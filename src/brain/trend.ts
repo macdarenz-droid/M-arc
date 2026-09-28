@@ -135,14 +135,17 @@ export function plateauStatus(history: ExerciseSessionSummary[], mode: Resistanc
   const flip = mode === 'assisted' ? -1 : 1;
   const series = (rs: ExerciseSessionSummary[], f: (r: ExerciseSessionSummary) => number): Series => rs.map(r => ({ day: r.day, value: f(r) }));
 
-  const win = plateauWindow(history, today);
-  const span = win.length ? daysBetween(win[0]!.day, win[win.length - 1]!.day) : 0;
-  if (win.length >= PLATEAU_MIN_SESSIONS && span >= PLATEAU_MIN_SPAN_DAYS) {
-    const { rows, main, tie } = pick(win);
+  // BR-04's count, span and confidence apply to the series actually judged (e.g. only the
+  // e1RM sessions), not to every session in the window.
+  const judged = pick(plateauWindow(history, today));
+  const jr = judged.rows;
+  const span = jr.length ? daysBetween(jr[0]!.day, jr[jr.length - 1]!.day) : 0;
+  if (jr.length >= PLATEAU_MIN_SESSIONS && span >= PLATEAU_MIN_SPAN_DAYS) {
+    const { rows, main, tie } = judged;
     const m = totalChange(series(rows, main));
     const t = totalChange(series(rows, tie));
     // Six sessions over six weeks is BR-04's evidence bar, so it is never low confidence.
-    const confidence: Confidence = win.length >= 12 ? 'high' : 'medium';
+    const confidence: Confidence = rows.length >= 12 ? 'high' : 'medium';
     if (m != null && Math.abs(m) >= PLATEAU_FLAT_TOTAL) return { status: bySign(flip * m), confidence };
     if (t != null && (t >= PLATEAU_FLAT_TOTAL || (mode === 'assisted' && t <= -PLATEAU_FLAT_TOTAL))) return { status: bySign(t), confidence };
     if (m != null || (mode === 'assisted' && t != null)) return { status: 'plateaued', confidence };

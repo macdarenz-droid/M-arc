@@ -12,7 +12,7 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
-import { isFlatTotal, plateauStatus, sinceLastBreak, trend } from '../trend';
+import { isFlatTotal, plateauStatus, plateauWindow, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { withoutGated, type Insight, type Sharing } from './rules';
 
@@ -251,10 +251,14 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     if (p.status !== 'unknown') {
       const dir = p.status === 'progressing' ? 'up' : p.status === 'declining' ? 'down' : 'flat';
       const pctPerWeek = Math.round(t.slopePerWeek * 1000) / 10;
+      // The note's rate comes from the same series plateauStatus judged, so sign and rate agree.
+      const judged = e1rmTrend(plateauWindow(hist, today));
+      const judgedPct = Math.round(judged.slopePerWeek * 1000) / 10;
+      const rate = judged.direction === 'unknown' ? '' : ` at about ${Math.abs(judgedPct)}% a week`;
       out.push({
         id: `weekly:e1rm:${id}`, category: 'progress', priority: 200, cadence: 'weekly', kind: 'progress', exerciseId: id,
         title: `${name}: ${dir === 'up' ? 'rising' : dir === 'down' ? 'falling' : 'flat'}`,
-        noticed: dir === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${dir} at about ${Math.abs(pctPerWeek)}% a week.`,
+        noticed: dir === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${dir}${rate}.`,
         means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'The stimulus has stopped changing.',
         action: dir === 'up' ? 'No change needed.' : dir === 'down' ? 'Ease off max effort for a week, then rebuild.' : 'Add a set, add load, or change the rep range for two weeks.',
         evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: p.confidence },
