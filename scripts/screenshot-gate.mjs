@@ -4892,8 +4892,15 @@ for (const theme of ['silent-black', 'paper']) {
         if (a.l < b.r - 0.5 && b.l < a.r - 0.5 && a.t < b.b - 0.5 && b.t < a.b - 0.5) overlap.push(`${a.n} / ${b.n}`);
       }
       const clipped = [...document.querySelectorAll('dialog[open] .form-guide .seg button, dialog[open] .form-guide .chips > button')].filter(b => b.scrollWidth > b.clientWidth + 0.5).map(b => b.textContent);
-      return { player, panel, play, out, overlap, clipped, sw: document.documentElement.scrollWidth, iw: innerWidth };
+      // integration with FG-1: `.form-guide svg { width: 100% }` must not stretch the chrome icons; each is drawn at its own width/height.
+      const playIcon = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon > svg'));
+      const icons = [...document.querySelectorAll('dialog[open] .form-guide .chips svg, dialog[open] .form-guide .controls svg')]
+        .map(s => ({ want: `${s.getAttribute('width')} x ${s.getAttribute('height')}`, got: `${Math.round(s.getBoundingClientRect().width)} x ${Math.round(s.getBoundingClientRect().height)}`, in: s.parentElement.getAttribute('aria-label') || s.parentElement.textContent }))
+        .filter(i => i.want !== i.got);
+      return { player, panel, play, playIcon, icons, out, overlap, clipped, sw: document.documentElement.scrollWidth, iw: innerWidth };
     });
+    if (Math.abs(f.playIcon.w - 20) > 0.5 || Math.abs(f.playIcon.h - 20) > 0.5) errors.push(`${tag} A7 ${where}: the Play icon is ${f.playIcon.w.toFixed(1)} x ${f.playIcon.h.toFixed(1)} px, not 20 x 20`);
+    if (f.icons.length) errors.push(`${tag} A7 ${where}: icons drawn off their own size: ${f.icons.map(i => `${i.in} ${i.got} (want ${i.want})`).join('; ')}`);
     if (f.player.l < f.panel.l - 0.5 || f.player.r > f.panel.r + 0.5 || f.sw > f.iw) errors.push(`${tag} A7 ${where}: the player does not fit the sheet (${JSON.stringify({ player: f.player, panel: f.panel, sw: f.sw })})`);
     if (!(f.play.w >= 44 && f.play.h >= 44)) errors.push(`${tag} A7 ${where}: Play is ${f.play.w.toFixed(1)} x ${f.play.h.toFixed(1)} px, under 44`);
     if (f.out.length) errors.push(`${tag} A7 ${where}: controls leave the player: ${f.out.join(', ')}`);
