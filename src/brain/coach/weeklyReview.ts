@@ -12,7 +12,7 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
-import { sinceLastBreak, trend } from '../trend';
+import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { withoutGated, type Insight, type Sharing } from './rules';
 
@@ -69,13 +69,11 @@ export function expectedMonthlyRatePct(trainingAgeMonths: number | null): [numbe
 
 /**
  * Flat means the e1RM moved less than 1.5% in total over the window (BR-04): the fitted
- * weekly slope times the weeks the window spans, not the weekly slope alone.
+ * weekly slope times the weeks the window spans, not the weekly slope alone. The same test
+ * plateauStatus uses (BUG-14).
  */
 export function flatOver(recent: ExerciseSessionSummary[]): boolean {
-  if (recent.length < 2) return false;
-  const t = e1rmTrend(recent);
-  const spanWeeks = daysBetween(recent[0]!.day, recent[recent.length - 1]!.day) / 7;
-  return t.direction !== 'unknown' && Math.abs(t.slopePerWeek * spanWeeks) < 0.015;
+  return isFlatTotal(recent.filter(h => h.bestE1rm > 0).map(h => ({ day: h.day, value: h.bestE1rm })));
 }
 
 /** True once a lift's load, effort and e1RM have not moved over the last `weeks` weeks, with a session in most of them. */
@@ -248,21 +246,30 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     const meta = findExercise(id, custom);
     if (meta?.role !== 'main') continue;
 
-    if (t.confidence !== 'low') {
+    // BUG-14: rising, falling or flat come from the one plateau rule (BR-04), not the weekly slope alone.
+    const p = plateauStatus(hist, 'weighted', today);
+    if (p.status !== 'unknown') {
+      const dir = p.status === 'progressing' ? 'up' : p.status === 'declining' ? 'down' : 'flat';
       const pctPerWeek = Math.round(t.slopePerWeek * 1000) / 10;
+      // The note's rate comes from the rows plateauStatus judged (8-week rule or short path), and is
+      // left out when that trend is unknown or its sign disagrees with the direction.
+      const judged = e1rmTrend(plateauSeries(hist, 'weighted', today));
+      const judgedPct = Math.round(judged.slopePerWeek * 1000) / 10;
+      const agrees = Math.sign(judgedPct) === (dir === 'up' ? 1 : -1);
+      const rate = judged.direction === 'unknown' || !agrees ? '' : ` at about ${Math.abs(judgedPct)}% a week`;
       out.push({
         id: `weekly:e1rm:${id}`, category: 'progress', priority: 200, cadence: 'weekly', kind: 'progress', exerciseId: id,
-        title: `${name}: ${t.direction === 'up' ? 'rising' : t.direction === 'down' ? 'falling' : 'flat'}`,
-        noticed: t.direction === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${t.direction} at about ${Math.abs(pctPerWeek)}% a week.`,
-        means: t.direction === 'up' ? 'Keep doing what you are doing.' : t.direction === 'down' ? 'Worth a lighter week before pushing again.' : 'The stimulus has stopped changing.',
-        action: t.direction === 'up' ? 'No change needed.' : t.direction === 'down' ? 'Ease off max effort for a week, then rebuild.' : 'Add a set, add load, or change the rep range for two weeks.',
-        evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: t.confidence },
+        title: `${name}: ${dir === 'up' ? 'rising' : dir === 'down' ? 'falling' : 'flat'}`,
+        noticed: dir === 'flat' ? `${name} has not moved in recent sessions.` : `${name} is trending ${dir}${rate}.`,
+        means: dir === 'up' ? 'Keep doing what you are doing.' : dir === 'down' ? 'Worth a lighter week before pushing again.' : 'The stimulus has stopped changing.',
+        action: dir === 'up' ? 'No change needed.' : dir === 'down' ? 'Ease off max effort for a week, then rebuild.' : 'Add a set, add load, or change the rep range for two weeks.',
+        evidence: { n: hist.length, window: `${hist.length} sessions`, confidence: p.confidence },
       });
 
       const [lo, hi] = expectedMonthlyRatePct(trainingAgeMonths);
       const pctPerMonth = pctPerWeek * 4.33;
       // BR-13: a pace comparison only makes sense for a lift that is actually rising.
-      if (t.direction === 'up' && t.confidence === 'high' && hist.length >= 6) {
+      if (dir === 'up' && t.slopePerWeek > 0 && t.confidence === 'high' && hist.length >= 6) {
         const pace = pctPerMonth > hi ? 'faster than typical' : pctPerMonth < lo && pctPerMonth >= 0 ? 'slower than typical' : 'a typical pace';
         out.push({
           id: `weekly:pace:${id}`, category: 'progress', priority: 190, cadence: 'weekly', kind: 'data', exerciseId: id,

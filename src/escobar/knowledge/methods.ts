@@ -16,7 +16,7 @@ import { MIN_REST_SEC, REST_RESERVE_PCT, REST_RISE_BPM, TANAKA, ZONE_RESERVE_PCT
 import { BURST_COUNT, COMPRESSED_SEC_PER_SET, LIVE_GAP_SEC } from '@/brain/fidelity';
 import { WARMUP_PCTS, WARMUP_REPS } from '@/brain/coach/pre';
 import { MAX_INCREASE_SHARE, RECOVERY_HOLD_PCT, REENTRY_DAYS } from '@/brain/progression';
-import { PLATEAU_MIN_SESSIONS, PLATEAU_WINDOW } from '@/brain/trend';
+import { E1RM_MIN_SESSIONS, PLATEAU_FLAT_TOTAL, PLATEAU_HIGH_SESSIONS, PLATEAU_MIN_SESSIONS, PLATEAU_MIN_SPAN_DAYS, PLATEAU_WINDOW, PLATEAU_WINDOW_DAYS } from '@/brain/trend';
 import { BALANCE } from '@/brain/balance';
 import { WEEKLY_REVIEW_DAYS } from '@/brain/coach/weeklyReview';
 import { BIAS_CAP_REPS, BIAS_MIN_OBSERVATIONS, effortBiasByLabel, rirObservations } from '@/brain/effortBias';
@@ -95,9 +95,9 @@ const METHODS: Record<MethodId, Builder> = {
     };
   },
   deload_trigger: () => ({
-    summary: `A lighter week is offered when ${DELOAD_TRIGGER.stalledLifts} or more main lifts have plateaued or slipped, when effort drifts harder on ${DELOAD_TRIGGER.driftLifts} lifts while weekly volume keeps climbing, when a muscle runs above its band ${DELOAD_TRIGGER.overBandWeeks} weeks in a row while a lift has stalled, or when readiness was red on ${DELOAD_TRIGGER.readinessRedDays} of the last ${DELOAD_TRIGGER.readinessWindowDays} days. Accepted, it lasts ${DELOAD_DAYS} days with sets × ${DELOAD_SET_FACTOR} and loads × ${DELOAD_LOAD_FACTOR}, then closes itself.`,
-    inputs: ['plateau status of main lifts', 'effort drift', 'weekly volume', 'readiness over the last 5 days'],
-    constants: { plateauedLifts: DELOAD_TRIGGER.stalledLifts, readinessRedDays: DELOAD_TRIGGER.readinessRedDays, readinessWindowDays: DELOAD_TRIGGER.readinessWindowDays, overBandWeeks: DELOAD_TRIGGER.overBandWeeks, deloadDays: DELOAD_DAYS, setFactor: DELOAD_SET_FACTOR, loadFactor: DELOAD_LOAD_FACTOR },
+    summary: `A lighter week is offered when ${DELOAD_TRIGGER.stalledLifts} or more main lifts have plateaued or slipped, when effort drifts harder on ${DELOAD_TRIGGER.driftLifts} lifts while weekly volume keeps climbing, when a muscle runs above its band ${DELOAD_TRIGGER.overBandWeeks} weeks in a row while a lift has stalled, or when readiness was red on ${DELOAD_TRIGGER.readinessRedDays} of the last ${DELOAD_TRIGGER.readinessWindowDays} days. A lift counts as plateaued or slipped only under the plateau rule, at medium or high confidence; timed holds and conditioning never count. It is never offered before ${DELOAD_TRIGGER.minHistoryDays / 7} weeks of logged training, and someone under ${DELOAD_TRIGGER.beginnerMonths} months of training gets it only when readiness was red on ${DELOAD_TRIGGER.readinessRedDays} of the last ${DELOAD_TRIGGER.readinessWindowDays} days. Accepted, it lasts ${DELOAD_DAYS} days with sets × ${DELOAD_SET_FACTOR} and loads × ${DELOAD_LOAD_FACTOR}, then closes itself.`,
+    inputs: ['plateau status of main lifts', 'effort drift', 'weekly volume', 'readiness over the last 5 days', 'weeks of logged training', 'training age'],
+    constants: { plateauedLifts: DELOAD_TRIGGER.stalledLifts, readinessRedDays: DELOAD_TRIGGER.readinessRedDays, readinessWindowDays: DELOAD_TRIGGER.readinessWindowDays, overBandWeeks: DELOAD_TRIGGER.overBandWeeks, minHistoryDays: DELOAD_TRIGGER.minHistoryDays, beginnerMonths: DELOAD_TRIGGER.beginnerMonths, deloadDays: DELOAD_DAYS, setFactor: DELOAD_SET_FACTOR, loadFactor: DELOAD_LOAD_FACTOR },
     personal: {},
   }),
   e1rm: () => ({
@@ -107,9 +107,9 @@ const METHODS: Record<MethodId, Builder> = {
     personal: {},
   }),
   plateau: () => ({
-    summary: `Looks at the last ${PLATEAU_WINDOW} sessions of a lift (needs at least ${PLATEAU_MIN_SESSIONS}). If the top load trends up, or holds while volume rises, it is progressing. A flat load with flat volume is a plateau; a falling load is declining. Confidence grows with more points.`,
-    inputs: ['top load per session', 'session volume'],
-    constants: { sessionsLooked: PLATEAU_WINDOW, sessionsNeeded: PLATEAU_MIN_SESSIONS },
+    summary: `Judges the last ${PLATEAU_WINDOW_DAYS / 7} weeks of a lift on its own measure: the strength estimate (e1RM) for weighted lifts, from the sessions that have one (top load, with volume as the tie-breaker, only when fewer than ${E1RM_MIN_SESSIONS} do), best reps for body-weight moves, the longest hold for timed ones, and less assistance, then more reps, for assisted ones. It is a plateau only when that measure changed by less than ${PLATEAU_FLAT_TOTAL * 100}% over those ${PLATEAU_WINDOW_DAYS / 7} weeks, from ${PLATEAU_MIN_SESSIONS} or more judged sessions spanning ${PLATEAU_MIN_SPAN_DAYS} days or more; a bigger rise is progressing and a bigger fall is declining. With less history it reports only a clear rise or fall over the last ${PLATEAU_WINDOW} sessions, never a plateau. Conditioning is not judged. Confidence is high from ${PLATEAU_HIGH_SESSIONS} judged sessions.`,
+    inputs: ['e1RM per session (weighted)', 'top load and session volume (weighted with few e1RM sessions)', 'best reps, longest hold or assistance (other modes)'],
+    constants: { windowDays: PLATEAU_WINDOW_DAYS, flatTotalPct: PLATEAU_FLAT_TOTAL * 100, sessionsNeeded: PLATEAU_MIN_SESSIONS, minSpanDays: PLATEAU_MIN_SPAN_DAYS, e1rmSessionsNeeded: E1RM_MIN_SESSIONS, shortPathSessions: PLATEAU_WINDOW, highConfidenceSessions: PLATEAU_HIGH_SESSIONS },
     personal: {},
   }),
   effort_calibration: ctx => {
