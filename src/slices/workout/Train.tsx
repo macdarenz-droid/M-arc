@@ -10,6 +10,8 @@ import { saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
+import { FormGuideSheet } from '@/slices/formguide/lazy';
+import { hasGuide } from '@/formguide/registry';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
@@ -534,6 +536,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   // I2: `closing` keeps the body mounted from open->false until its fold transition finishes, so
   // the content doesn't vanish mid-animation; `settled` lifts the clip once fully open, so focus
   // rings and the palace spotlight are not cut off at rest.
@@ -779,6 +782,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
             <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            {ex && hasGuide(ex.id) && <Button variant="quiet" onClick={() => { closeMenu(); setGuideOpen(true); }}>How to do it</Button>}
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => {
               // QA10-1: closeMenu() just above commits any pending "Note for today" draft to the
@@ -815,6 +819,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </Sheet>
       )}
       {plates && next.kg != null && <PlateSheet kg={next.kg} profile={profile} name={entry.name} onClose={() => setPlates(false)} />}
+      {guideOpen && ex && <FormGuideSheet exerciseId={ex.id} name={ex.name} onClose={() => setGuideOpen(false)} />}
       {subOpen && ex && <SubstituteSheet exercise={ex} custom={s.customExercises} onPick={sub => { substituteEntry(index, sub); setSubOpen(false); }} onClose={() => setSubOpen(false)} />}
     </Card>
   );
