@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildReport, cleanName, framesFromStack, isAppFrame, scrubMessage, signatureOf } from '@/errors/scrub';
-import { clearQueue, enqueue, loadQueueState, MAX_QUEUE, removeByIds, setBackoff, BASE_BACKOFF_MS, MAX_BACKOFF_MS } from '@/errors/queue';
+import { clearQueue, enqueue, loadQueueState, MAX_COUNT, MAX_QUEUE, removeByIds, setBackoff, BASE_BACKOFF_MS, MAX_BACKOFF_MS } from '@/errors/queue';
 import { MAX_BATCH, MAX_BODY_BYTES, packBatch, trySend } from '@/errors/sender';
 import { getInstallId, resetInstallId } from '@/errors/installId';
 import { shouldAskErrorReports } from '@/errors/ask';
@@ -177,6 +177,15 @@ describe('the local queue (A3)', () => {
     reports = loadQueueState(storage).reports;
     expect(reports.length).toBe(2);
   });
+
+  it('100,001 enqueues of one signature give count 100,000, the Worker\'s cap (round-2 review)', () => {
+    expect(MAX_COUNT).toBe(100_000);
+    const mem = new Map<string, string>();
+    let cached: string | null = null;
+    const fast = { getItem: (k: string) => (k === 'marc.errors.queue' ? cached : mem.get(k) ?? null), setItem: (k: string, v: string) => { if (k === 'marc.errors.queue') cached = v; else mem.set(k, v); }, removeItem: (k: string) => { if (k === 'marc.errors.queue') cached = null; else mem.delete(k); } };
+    for (let i = 0; i < 100_001; i++) enqueue(report(), fast);
+    expect(loadQueueState(fast).reports[0]!.count).toBe(100_000);
+  }, 120_000);
 
   it('survives a reload (a fresh load from the same storage sees it)', () => {
     enqueue(report(), storage);
@@ -404,6 +413,7 @@ describe('7.5 requirements (D-C75)', () => {
     const q = Array.from({ length: 25 }, (_, i) => ({ ...report(`s${i}`), id: `q${i}` }));
     expect(packBatch(q)).toHaveLength(MAX_BATCH);
     expect(MAX_BATCH).toBe(20);
+    expect(MAX_BODY_BYTES).toBe(8 * 1024);
     const fat = q.map(r => ({ ...r, message: 'm'.repeat(300), frames: Array.from({ length: 15 }, () => ({ file: `https://localhost/assets/${'x'.repeat(180)}.js`, line: 1, col: 1 })) }));
     const b = packBatch(fat);
     expect(b.length).toBeGreaterThan(0);

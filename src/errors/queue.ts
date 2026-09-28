@@ -4,6 +4,9 @@
 import type { Report } from './types';
 
 export const MAX_QUEUE = 20;
+/** The Worker's `MAX_COUNT` (escobar-worker/src/errorsValidate.ts): a count above it gets a 400,
+ * which would drop the whole batch, so a folded count stops here. */
+export const MAX_COUNT = 100_000;
 export const BASE_BACKOFF_MS = 60_000;
 export const MAX_BACKOFF_MS = 6 * 60 * 60_000;
 
@@ -60,7 +63,7 @@ export function enqueue(report: Report, storage: Storagelike = localStorage): Qu
   if (state.sent[report.sig] === day) return state;
   const existing = state.reports.find(r => r.sig === report.sig && r.ts.slice(0, 10) === day);
   if (existing) {
-    existing.count += report.count;
+    existing.count = Math.min(MAX_COUNT, existing.count + report.count);
   } else {
     state.reports.push({ ...report, id: nextId() });
     if (state.reports.length > MAX_QUEUE) state.reports.splice(0, state.reports.length - MAX_QUEUE);
