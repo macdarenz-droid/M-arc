@@ -62,6 +62,27 @@ describe('stylesheet custom properties (QA-R7-4)', () => {
   });
 });
 
+// GU-7a (A7): the form guide paints with theme tokens only. Every file under src/formguide/**
+// fails on a hex colour or an rgb()/hsl() call; `#rig-` ids and `url(#…)` refs do not match.
+describe('GU-7a: form guide colours are theme tokens only (A7)', () => {
+  const HEX = /#[0-9a-fA-F]{3,8}(?![\w-])/;
+  const FN = /\b(rgba?|hsla?)\(/;
+  it('no file under src/formguide/** holds a literal colour', async () => {
+    const { readdirSync, readFileSync, statSync } = await import('node:fs');
+    const walk = (dir: string): string[] => readdirSync(dir).flatMap(n => { const p = `${dir}/${n}`; return statSync(p).isDirectory() ? walk(p) : [p]; });
+    const files = walk('src/formguide');
+    expect(files.length).toBeGreaterThan(0);
+    const offenders = files.flatMap(f => readFileSync(f, 'utf8').split('\n').map((l, i) => ({ f, i: i + 1, l })).filter(x => HEX.test(x.l) || FN.test(x.l)).map(x => `${x.f}:${x.i}: ${x.l.trim()}`));
+    expect(offenders).toEqual([]);
+  });
+  it('the patterns catch a colour and pass an id', () => {
+    expect(HEX.test('fill:#5e6ad2')).toBe(true);
+    expect(FN.test('fill:rgba(0,0,0,.5)')).toBe(true);
+    expect(HEX.test('<use href="#rig-cp"/>')).toBe(false);
+    expect(HEX.test('clip-path="url(#cp-ten-clip0)"')).toBe(false);
+  });
+});
+
 // FG-1: the form-guide figure paints from theme tokens only. No colour literal (hex, any CSS colour function, a named
 // colour in a paint attribute; tests/formguide/colourLint.ts) anywhere in src/formguide/** (paint.ts mixes resolved
 // tokens at run time), and every theme carries the figure tokens.
@@ -104,6 +125,57 @@ describe('form-guide parts come from tokens (FG-5)', () => {
     for (const t of THEME_IDS) {
       const tk = THEMES[t].tokens, stops = [...partDefs(themeReader(t)).matchAll(/stop-color="([^"]+)"/g)].map(m => m[1]!.toLowerCase());
       expect(new Set(stops), t).toEqual(new Set([tk.ironHi, tk.iron, tk.ironSh].map(c => String(c).toLowerCase())));
+    }
+  });
+});
+
+// UI-1: the exercise-title sweep paints only var(--text) and the accent, never a dim tone (A4); it
+// lives inside its keyframes, so at rest and under reduced motion the title is plain var(--text)
+// (A3); only the open card's title runs it, finite on open (A1, A6); I3's static border stays and no
+// box-shadow loop comes back (A5); and every theme's accent is a real colour, not a grey (A4).
+describe('exercise-title sweep (UI-1)', () => {
+  const css = readFileSync('src/ui/styles.css', 'utf8');
+  const kfAt = css.indexOf('@keyframes exercise-shimmer');
+  const keyframes = kfAt === -1 ? '' : css.slice(kfAt, css.indexOf('\n}', kfAt) + 2);
+  const rules = css.split('\n').filter(l => /animation\s*:[^;]*exercise-/.test(l));
+  it('the keyframes paint only var(--text), the accent and transparent', () => {
+    expect(keyframes).not.toBe('');
+    const vars = [...keyframes.matchAll(/var\((--[\w-]+)\)/g)].map(m => m[1]);
+    expect(new Set(vars)).toEqual(new Set(['--text', '--accent']));
+    expect(keyframes).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\bgr[ae]y\b/i);
+    expect(keyframes).toMatch(/background-clip:\s*text/);
+  });
+  it('nothing outside the keyframes clips or hides the title text (plain at rest and under reduce)', () => {
+    const outside = css.replace(keyframes, '');
+    expect(outside).not.toMatch(/\.exname[^{]*\{[^}]*(background|text-fill-color|color:\s*transparent)/);
+  });
+  it('only the open card title animates, never under reduce, finite on open', () => {
+    expect(rules.length).toBe(2);
+    for (const r of rules) {
+      expect(r.startsWith('html:not([data-motion="reduce"]) .exercise.active')).toBe(true);
+      expect(r).toMatch(/\.exname \{ animation: exercise-shimmer /);
+    }
+    const [open, logging] = rules;
+    expect(open).toMatch(/exercise-shimmer [\d.]+s linear 2;/);
+    expect(logging).toMatch(/:has\(\.set-grid input:focus\)/);
+    expect(logging).toMatch(/\[data-hold\]:focus-within/);
+    expect(logging).toMatch(/linear infinite;/);
+  });
+  it('keeps I3: static accent border, no breathe loop, no box-shadow in the sweep', () => {
+    expect(css).toContain('.exercise.active { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }');
+    expect(css).not.toContain('exercise-breathe');
+    expect(keyframes).not.toContain('box-shadow');
+  });
+  it('every theme accent is a saturated colour, distinct from its text', () => {
+    const hsl = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+      return { s: max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1)), l };
+    };
+    for (const id of THEME_IDS) {
+      const { accent, text } = THEMES[id].tokens;
+      expect(hsl(accent).s, `${id} accent ${accent}`).toBeGreaterThan(0.5);
+      expect(accent.toLowerCase(), id).not.toBe(text.toLowerCase());
     }
   });
 });
