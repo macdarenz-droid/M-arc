@@ -10,6 +10,8 @@ import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
+import { FormGuideSheet } from '@/slices/formguide/lazy';
+import { hasGuide } from '@/formguide/registry';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
@@ -18,7 +20,7 @@ import { findExercise } from '@/core/exercises';
 import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/brain/bodyweight';
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
-import { suggestNext, previousSet } from '@/brain/progression';
+import { suggestNext, previousSet, type Suggestion } from '@/brain/progression';
 import { isLiveRecord } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
@@ -96,6 +98,17 @@ export function nextUpCore(kgPh: string, unitLabel: string, repsPh: string): str
 /** A1: whether a set is a standing candidate for "Log as planned" — has something to log, isn't
  * logged yet, and isn't a warm-up (warm-ups are optional and never auto-filled). The first such
  * set on the card, in order, is the one that gets the fill-row. */
+/**
+ * BUG-15 (PROGRESSION-F6): the planned rows a lighter week or a red day cuts today. A working row
+ * past the suggestion's cut set list is set aside while empty; one the user fills counts as usual.
+ */
+export function setAsideRows(next: Pick<Suggestion, 'cutSets' | 'sets'>, sets: LoggedSet[]): boolean[] {
+  return sets.map((set, j) => {
+    const w = workingIndex(sets, j);
+    return !!next.cutSets && w != null && w >= next.sets.length && !hasEntry(set);
+  });
+}
+
 export function isNextUpCandidate(core: string | null, committed: boolean, kind: LoggedSet['kind']): boolean {
   return core != null && !committed && kind !== 'warmup';
 }
@@ -267,9 +280,9 @@ function Splits() {
               {/* ES-02: the preview shows today's applied Escobar adjustment, as Start will. */}
               {plannedExercises(split, s.escobar.todayOverride, today.value).map(se => {
                 const ex = findExercise(se.exerciseId, s.customExercises);
-                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment: profileFor(se.exerciseId), ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
+                const next = suggestNext(s.sessions, se.exerciseId, s.goal, today.value, se.sets, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(se.exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, lastDeload: s.deload, equipment: profileFor(se.exerciseId), ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
                 return (
-                  <Row key={se.exerciseId} trailing={<span class="hint num">{se.sets} sets</span>}>
+                  <Row key={se.exerciseId} trailing={<span class="hint num">{next.cutSets ? Math.min(se.sets, next.sets.length) : se.sets} sets</span>}>
                     <div class="ellipsis">{ex?.name ?? se.exerciseId}</div>
                     <div class="hint ellipsis">{targetText(next, u)} · {next.reason}</div>
                   </Row>
@@ -515,14 +528,15 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const loaded = mode === 'weighted' || mode === 'conditioning';
   const eu = loaded ? profile.unit : u;
   const gymId = s.active?.gymId;
-  const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, recoveryPct];
+  const memoDeps = [s.sessions, s.customExercises, s.units, s.goal, gymId, entry, today.value, todayReadiness.value, activeDeload.value, s.deload, recoveryPct];
   // profileFor() returns a new object each render, so the memo keys on s.units and the gym instead.
-  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
+  const next = useMemo(() => suggestNext(s.sessions, entry.exerciseId, s.goal, today.value, entry.sets.filter(x => x.kind !== 'warmup').length || 1, s.customExercises, { readiness: todayReadiness.value, recoveryPct, deload: activeDeload.value, lastDeload: s.deload, equipment: profile, ...(entry.loadFactor != null ? { loadFactor: entry.loadFactor } : {}) }), memoDeps);
   const [menu, setMenu] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [stickyDraft, setStickyDraft] = useState<string | null>(null);
   const [setMenuAt, setSetMenuAt] = useState<number | null>(null);
   const [plates, setPlates] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   // I2: `closing` keeps the body mounted from open->false until its fold transition finishes, so
   // the content doesn't vanish mid-animation; `settled` lifts the clip once fully open, so focus
   // rings and the palace spotlight are not cut off at rest.
@@ -581,8 +595,10 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   // QA-R6-3: autoregulation reads the first working set; logged warm-ups sit in front of it.
   const firstSet = firstWorkingSet(entry.sets);
   const firstTarget = next.sets[0];
+  const aside = useMemo(() => setAsideRows(next, entry.sets), [next, entry.sets]);
+  const asideCount = aside.filter(Boolean).length;
   const autoreg = useMemo(() => (ex?.role === 'main' && mode === 'weighted' && firstSet && firstTarget?.kg != null && firstTarget?.reps != null
-    ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile })
+    ? autoregulationSuggestion({ exerciseId: entry.exerciseId, exerciseName: entry.name, firstSet, targetKg: firstTarget.kg, targetReps: firstTarget.reps, historyCount: exerciseHistory(s.sessions, entry.exerciseId, s.customExercises).length, equipment: profile, holdLoad: !!next.holdLoad })
     : null), memoDeps);
   // D10 / BR-09: warm-ups ramp to today's first working set, not to the e1RM.
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
@@ -628,7 +644,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     for (let j = 0; j < entry.sets.length; j++) {
       const set = entry.sets[j]!;
       if (set.kind === 'warmup') { warmups++; continue; }
-      if (isCommitted(set)) continue;
+      if (isCommitted(set) || aside[j]) continue;
       const wj = j - warmups;
       const target = next.sets[Math.min(wj, next.sets.length - 1)];
       core = nextUpCore(targetKgPh(target, perSet[j]!.prev, eu, mode), eu, targetRepsPh(target, perSet[j]!.prev));
@@ -636,15 +652,15 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     }
     nextUpHint.value = core;
     return () => { nextUpHint.value = null; };
-  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet]);
+  }, [open, isTimed, mode, eu, entry.sets, next.sets, perSet, aside]);
 
   return (
-    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`}>
+    <Card class={`exercise ${open && !entry.skipped ? 'active' : ''} ${entry.skipped ? 'card-quiet skipped' : ''}`} onClick={e => { const c = e.currentTarget, t = String(Date.now()); if ((e.target as Element).closest('.effort button')) { c.dataset.hold = t; setTimeout(() => { if (c.dataset.hold === t) delete c.dataset.hold; }, 2000); } }}>
       <div class="row-between ex-head" onClick={onToggle} role="button" aria-expanded={open} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(); } }}>
         <div class="grow">
           <div class="row"><b class="ellipsis exname">{entry.name}</b>{entry.done && <Chip tone="positive"><IconCheck size={16} /> Done</Chip>}{entry.skipped && <Chip>Skipped</Chip>}</div>
           {sticky && <div class="hint ellipsis exercise-note" data-palace="train.exercise-note"><IconEdit size={16} /> {sticky}</div>}
-          <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length} sets</div>
+          <div class="hint ellipsis">{barbell && next.kg != null ? <a class="target-link" onClick={e => { e.stopPropagation(); setPlates(true); }}>{targetText(next, u)}</a> : targetText(next, u)} · {logged}/{entry.sets.length - asideCount} sets</div>
         </div>
         <Button variant="quiet" class="btn-icon" aria-label="Options" onClick={e => { e.stopPropagation(); setStickyDraft(null); setNoteDraft(null); setMenu(true); }}><IconMore /></Button>
         <IconChevronDown class={`chev ${open ? 'up' : ''}`} />
@@ -687,23 +703,23 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             const { prev, pr } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
-            const target = set.kind === 'warmup' ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
+            const target = set.kind === 'warmup' || aside[j] ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
             // A1: the first not-yet-logged, non-warmup working set on this card can be tapped to
             // fill and log itself with exactly the values its own placeholders show.
-            const core = !isTimed && mode !== 'conditioning' ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
+            const core = !isTimed && mode !== 'conditioning' && !aside[j] ? nextUpCore(targetKgPh(target, prev, eu, mode), eu, targetRepsPh(target, prev)) : null;
             const isNextUp = !nextUpFound && isNextUpCandidate(core, isCommitted(set), set.kind);
             if (isNextUp) nextUpFound = true;
-            const lastHint = prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
+            const lastHint = aside[j] ? `Not today · ${next.mode === 'deload' ? 'lighter week' : 'readiness'}` : prev ? `Last: ${isTimed ? `${prev.durationSec ?? 0}s` : prev.distanceM || (mode === 'conditioning' && prev.durationSec) ? `${prev.kg ? `${formatSetLoad(prev, eu)} · ` : ''}${prev.distanceM ? `${prev.distanceM} m` : `${prev.durationSec}s`}` : `${modeLoadText(prev, mode, eu)} × ${prev.reps ?? 0}`}${prev.effort ? ` · ${prev.effort}` : ''}` : target?.note ?? '';
             return (
               <div key={j}>
-                <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`}>
+                <div class={`set-grid ${isTimed ? 'duration' : ''} ${isCommitted(set) ? 'committed' : ''}`} data-set-aside={aside[j] ? '' : undefined} style={aside[j] ? { opacity: 0.55 } : undefined}>
                   <button type="button" class={`set-index set-kind ${set.kind ?? ''} ${isCommitted(set) ? 'committed' : ''}`} aria-label={isCommitted(set) ? `Set ${j + 1}, logged. Options` : `Set ${j + 1} options`} onClick={() => setSetMenuAt(j)}>{isCommitted(set) && set.kind !== 'warmup' && set.kind !== 'drop' && set.kind !== 'failure' ? <IconCheck size={16} /> : set.kind === 'warmup' ? 'W' : set.kind === 'drop' ? 'D' : set.kind === 'failure' ? 'F' : j + 1}</button>
                   {isTimed ? (
-                    <input type="number" inputMode="numeric" placeholder={String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                    <input type="number" inputMode="numeric" placeholder={aside[j] ? '' : String(target?.durationSec ?? prev?.durationSec ?? '')} value={set.durationSec ?? ''} onInput={e => setSet(index, j, { durationSec: parseDurationSec((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                   ) : (
                     <>
-                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={targetKgPh(target, prev, eu, mode)} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
-                      <input type="number" inputMode="numeric" placeholder={targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
+                      <WeightInput kg={set.kg} entered={set.entered} entryUnit={eu} displayUnit={u} placeholder={aside[j] ? '' : targetKgPh(target, prev, eu, mode)} ariaLabel={loadAriaLabel(mode, eu)} onChange={v => setSet(index, j, v ? { kg: v.kg, entered: v.entered } : { kg: undefined, entered: undefined })} onUnitFlip={loaded ? flip : undefined} onUnitLongPress={loaded ? flipGroup : undefined} setField onFieldKeyDown={onSetFieldKeyDown} />
+                      <input type="number" inputMode="numeric" placeholder={aside[j] ? '' : targetRepsPh(target, prev)} value={set.reps ?? ''} data-set-field="reps" enterKeyHint={j === entry.sets.length - 1 ? 'done' : 'next'} onFocus={e => (e.target as HTMLInputElement).select()} onKeyDown={onSetFieldKeyDown} onInput={e => setSet(index, j, { reps: parseReps((e.target as HTMLInputElement).value) })} onBlur={() => commitSet(index, j)} />
                     </>
                   )}
                   <div class="effort">{EFFORTS.map(ef => <button type="button" key={ef.v} class={ef.v} title={ef.title} aria-label={ef.title} aria-pressed={set.effort === ef.v} onClick={() => {
@@ -766,6 +782,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <Field label="Setup note (shown every time)"><input maxLength={200} value={stickyDraft ?? sticky ?? ''} placeholder="Seat 4, narrow grip" data-palace="train.exercise-note-edit" onInput={e => setStickyDraft((e.target as HTMLInputElement).value)} onChange={e => { setExerciseNote(entry.exerciseId, (e.target as HTMLInputElement).value); setStickyDraft(null); }} /></Field>
             <Field label="Note for today"><input maxLength={500} value={noteDraft ?? entry.note ?? ''} onInput={e => setNoteDraft((e.target as HTMLInputElement).value)} onChange={e => { commitNoteDraft((e.target as HTMLInputElement).value); setNoteDraft(null); }} /></Field>
             <Button onClick={() => { closeMenu(); skipEntry(index, !entry.skipped); }}>{entry.skipped ? 'Put back in today' : 'Skip today'}</Button>
+            {ex && hasGuide(ex.id) && <Button variant="quiet" onClick={() => { closeMenu(); setGuideOpen(true); }}>How to do it</Button>}
             {ex && <Button variant="quiet" onClick={() => { closeMenu(); setSubOpen(true); }}>Substitute exercise</Button>}
             <Button variant="danger" onClick={() => {
               // QA10-1: closeMenu() just above commits any pending "Note for today" draft to the
@@ -802,6 +819,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
         </Sheet>
       )}
       {plates && next.kg != null && <PlateSheet kg={next.kg} profile={profile} name={entry.name} onClose={() => setPlates(false)} />}
+      {guideOpen && ex && <FormGuideSheet exerciseId={ex.id} name={ex.name} onClose={() => setGuideOpen(false)} />}
       {subOpen && ex && <SubstituteSheet exercise={ex} custom={s.customExercises} onPick={sub => { substituteEntry(index, sub); setSubOpen(false); }} onClose={() => setSubOpen(false)} />}
     </Card>
   );
@@ -900,7 +918,7 @@ function PreSessionSheet({ split, onClose, onStart }: { split: Split; onClose: (
   const targetFor = (exerciseId: string) => {
     const equipment = profileFor(exerciseId, s.units.activeGymId);
     const se = planned.exercises.find(x => x.exerciseId === exerciseId);
-    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, se?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, equipment, ...(se?.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
+    const n = suggestNext(s.sessions, exerciseId, s.goal, today.value, se?.sets ?? 3, s.customExercises, { readiness: todayReadiness.value, recoveryPct: recoveryPctFor(exerciseId, s.customExercises, recoverySelector.value), deload: activeDeload.value, lastDeload: s.deload, equipment, ...(se?.loadFactor != null ? { loadFactor: se.loadFactor } : {}) });
     return { kg: n.sets[0]?.kg ?? n.kg, target: n.target, equipment };
   };
   const items = preSessionInsights({ sessions: s.sessions, custom: s.customExercises, today: today.value, split: planned, profile: s.profile, age, targetFor, unit: s.preferences.weightUnit });

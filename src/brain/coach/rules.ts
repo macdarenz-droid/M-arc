@@ -25,6 +25,7 @@ import { effortBiasByLabel, rirObservations } from '../effortBias';
 import { effortMismatch, intraSessionDrift } from '../heart';
 import { readiness, readinessWithInputs, READINESS_INPUT_LABEL, LOAD_DRIVER, type ReadinessBand, type ReadinessInputKey, type ReadinessResult } from '../readiness';
 import { DELOAD_TRIGGER, deloadTrigger, type DeloadSuggestion } from '../deload';
+import { inLighterWeek } from '../progression';
 
 /** BR-04's one span constant, now in trend.ts (BUG-14): a plateau needs six of the eight weeks (spec: never at 3 weeks). */
 export { PLATEAU_MIN_SPAN_DAYS };
@@ -219,7 +220,8 @@ export const RULES: Rule[] = [
     id: 'progress.declining',
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
-        const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
+        // BUG-15 (COACHRULES-F8): lighter-week sessions are not stall or decline evidence.
+        const hist = exerciseHistory(evidenceSessions(ctx), id, ctx.custom);
         const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'declining' || p.confidence === 'low') return [];
         return [{
@@ -236,7 +238,8 @@ export const RULES: Rule[] = [
     id: 'progress.plateau',
     run: (ctx, d) =>
       d.activeIds.flatMap(({ id, name }) => {
-        const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
+        // BUG-15 (COACHRULES-F8): lighter-week sessions are not stall or decline evidence.
+        const hist = exerciseHistory(evidenceSessions(ctx), id, ctx.custom);
         const p = plateauStatus(hist, modeOf(id, ctx.custom), ctx.today);
         if (p.status !== 'plateaued' || p.confidence === 'low') return [];
         return [{
@@ -404,13 +407,13 @@ export const RULES: Rule[] = [
       d.activeIds.flatMap(({ id, name }) => {
         const meta = findExercise(id, ctx.custom);
         if (meta?.role !== 'main' || modeOf(id, ctx.custom) !== 'weighted') return [];
-        const hist = exerciseHistory(ctx.sessions, id, ctx.custom);
+        const hist = exerciseHistory(evidenceSessions(ctx), id, ctx.custom);
         // BR-04 (BUG-14): the one plateau rule. The last 8 weeks since any long break (QA2-FC-2/3),
         // 6+ sessions spanning 42+ days (QA-R3a-7), and under 1.5% total change over them.
         if (plateauStatus(hist, 'weighted', ctx.today).status !== 'plateaued') return [];
         const recent = plateauWindow(hist, ctx.today);
         const t = e1rmTrend(recent);
-        const recentSessions = ctx.sessions.filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
+        const recentSessions = evidenceSessions(ctx).filter(s => s.exercises.some(e => e.exerciseId === id)).sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(-6);
         if (recentSessions.length < 6) return [];
 
         const primaryMuscle = meta.primary[0];
@@ -666,5 +669,10 @@ function readinessHistory(ctx: CoachContext, days = 5): Array<ReadinessBand | nu
 /** F3.3: whether the coach should offer a lighter week right now. Never suggests one while a deload is already active. */
 export function deloadOffer(ctx: CoachContext): DeloadSuggestion {
   if (ctx.deload && ctx.deload.endDay >= ctx.today) return { suggest: false, reason: '' };
-  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now));
+  return deloadTrigger(ctx.sessions, ctx.today, ctx.custom, readinessHistory(ctx, DELOAD_TRIGGER.readinessWindowDays), trainingAgeMonths(ctx.profile, ctx.sessions, ctx.now), ctx.deload);
+}
+
+/** BUG-15: the sessions that count as progress evidence, without the saved lighter week's. */
+function evidenceSessions(ctx: CoachContext): Session[] {
+  return ctx.deload ? ctx.sessions.filter(s => !inLighterWeek(s.day, ctx.deload)) : ctx.sessions;
 }

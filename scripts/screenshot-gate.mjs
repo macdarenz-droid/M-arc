@@ -2213,14 +2213,116 @@ for (const theme of themes) {
   }
 
   // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
-  // I3 dropped exercise-breathe/exercise-shimmer, so a live screen showing an active card must not
-  // have any infinite animation left running on it at all.
+  // UI-1 (replaces I3's "no exercise-* animation" probe): at most one exercise-* animation, only on
+  // the open card's title. The inputs are blurred here, so the logging sweep must be off and the
+  // idle check below stays strict: exercise-shimmer is NOT on its allow list.
+  const exAnims = await page.evaluate(() => document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'))
+    .map(a => ({ name: a.animationName, onActiveTitle: !!a.effect?.target?.matches?.('.exercise.active .exname') })));
+  if (exAnims.length > 1 || exAnims.some(a => !a.onActiveTitle)) errors.push(`${tag}: UI-1 A6 exercise-* animations: ${JSON.stringify(exAnims)}`);
   const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// UI-1: the open exercise's title sweeps twice on open and stops by itself (A1), sweeps while a
+// kg/reps field has focus and stops on blur, holds briefly after an effort tap, stays off when idle
+// (A2), never runs under reduced motion (A3), paints only var(--text) and the accent (A4), and only
+// the open card's title ever animates (A6). Full motion, 390 px, Silent Black and Paper.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = `UI-1 shimmer ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForSelector('.exercise.active .exname');
+  // Every exercise-* animation, where it runs, and the title's paint at this instant.
+  const probe = () => page.evaluate(() => {
+    const anims = document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'));
+    const rgb = v => { const d = document.createElement('i'); d.style.color = v; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
+    const n = document.querySelector('.exercise.active .exname'); const cs = n && getComputedStyle(n);
+    return {
+      anims: anims.map(a => ({ name: a.animationName, state: a.playState, iterations: a.effect.getTiming().iterations, onActiveTitle: !!a.effect.target?.matches('.exercise.active .exname') })),
+      text: rgb('var(--text)'), accent: rgb('var(--accent)'), greys: [rgb('var(--text-2)'), rgb('var(--text-3)')],
+      paint: cs && { color: cs.color, fill: cs.webkitTextFillColor, clip: cs.backgroundClip || cs.webkitBackgroundClip, bg: cs.backgroundColor, image: cs.backgroundImage },
+    };
+  });
+  const running = p => p.anims.filter(a => a.state === 'running');
+  const a6 = (p, when) => { if (p.anims.length > 1 || p.anims.some(a => !a.onActiveTitle)) errors.push(`${tag}: A6 ${when}: ${JSON.stringify(p.anims)}`); };
+  // A4: plain var(--text) at rest; mid-sweep the fill is transparent over a var(--text) background
+  // carrying only the accent band, with no dim text tone anywhere.
+  const restPlain = (p, when) => { if (!p.paint || p.paint.color !== p.text || p.paint.fill !== p.text || p.paint.clip === 'text') errors.push(`${tag}: A4 title not plain var(--text) ${when}: ${JSON.stringify(p.paint)} text ${p.text}`); };
+
+  // A1: opening starts a finite run on the title.
+  let p = await probe();
+  a6(p, 'on open');
+  if (running(p).length !== 1 || !(Number.isFinite(p.anims[0]?.iterations) && p.anims[0].iterations >= 1)) errors.push(`${tag}: A1 opening gave no finite exercise-shimmer run: ${JSON.stringify(p.anims)}`);
+  // Freeze it mid-pass for the paint check and the screenshot (once the screen's own entry fades
+  // have settled), then let it run on.
+  await settle(page);
+  await page.evaluate(() => { const a = document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer'); if (a) { a.pause(); a.currentTime = 1000; } });
+  p = await probe();
+  const mid = p.paint;
+  if (!mid || mid.color !== p.text || mid.bg !== p.text || mid.clip !== 'text' || mid.fill !== 'rgba(0, 0, 0, 0)' || !mid.image.includes(p.accent) || p.greys.some(g => mid.image.includes(g) || mid.bg === g)) errors.push(`${tag}: A4 mid-sweep paint is not var(--text) + accent: ${JSON.stringify(mid)} text ${p.text} accent ${p.accent}`);
+  const head = await page.locator('.exercise.active .ex-head').boundingBox();
+  if (head) await page.screenshot({ path: `${OUT}/${theme}-ui1-title-sweep.png`, clip: { x: 0, y: Math.max(0, head.y - 8), width: 390, height: head.height + 16 } });
+  await page.evaluate(() => document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer')?.play());
+  // ...and it ends by itself: gone from document.getAnimations(), title plain again (A1, A2 idle).
+  await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 6000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A1 the open run did not end by itself: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'after the open run');
+
+  // A2: focusing a kg field sweeps, and keeps sweeping; blurring stops it within one cycle.
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'kg focus');
+  if (running(p).length !== 1 || p.anims[0].iterations !== Infinity) errors.push(`${tag}: A2 kg focus gave no sweep: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().fill('40');
+  await page.locator('.exercise.active .set-grid input').nth(1).focus(); await page.waitForTimeout(2300);
+  p = await probe();
+  if (running(p).length !== 1) errors.push(`${tag}: A2 sweep stopped while the reps field still has focus: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').nth(1).blur();
+  const offAfterBlur = await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 2000 }).then(() => true).catch(() => false);
+  if (!offAfterBlur) errors.push(`${tag}: A2 the sweep did not stop within one cycle of blur`);
+  restPlain(await probe(), 'after blur');
+
+  // A2: an effort tap gives a short hold that ends by itself, even while the button keeps focus.
+  await page.locator('.exercise.active .effort button').first().click(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'effort tap');
+  const effortFocused = await page.evaluate(() => !!document.activeElement?.closest('.exercise.active .effort'));
+  if (running(p).length !== 1) errors.push(`${tag}: A2 effort tap gave no hold (button focused: ${effortFocused}): ${JSON.stringify(p.anims)}`);
+  await page.waitForTimeout(2300);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A2 the effort hold did not end by itself: ${JSON.stringify(p.anims)}`);
+
+  // A6: opening another card moves the one run to it; the first card's title is plain.
+  const second = page.locator('.exercise:not(.active) .ex-head').first();
+  if (await second.count()) {
+    await second.click(); await page.waitForTimeout(150);
+    p = await probe(); a6(p, 'second card');
+    if (running(p).length !== 1) errors.push(`${tag}: A1 opening a second card gave no run: ${JSON.stringify(p.anims)}`);
+  } else errors.push(`${tag}: expected a second exercise card`);
+
+  // A3: under reduced motion there is never a sweep, focused or not, and the title stays plain.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(() => document.documentElement.dataset.motion === 'reduce', null, { timeout: 2000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 a sweep is still running under reduce: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 kg focus swept under reduce: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'under reduce');
   await ctx.close();
 }
 
@@ -4788,6 +4890,487 @@ for (const theme of ['silent-black', 'paper']) {
     }
   }
   await ctx.close();
+}
+
+// BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
+// the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
+// Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
+// down and up, every piece of page content ends above the dock's top edge plus its shadow
+// (--dock-shade); (A2) scrolling down mid-page moves the dock out of the way (a tap at its spot
+// reaches the page) and scrolling up brings it back. The owner's phone showed the dock over "Log a
+// past session" even at the scroll end, so Train's end is also checked with a tall 48px system inset,
+// both as env(safe-area-inset-bottom) and as the --safe-area-inset-bottom Capacitor's SystemBars
+// injects on <html>, and with the dock pushed 60px higher than --float-bottom (standing in for a
+// device where it sits higher than the tokens say); a real tap at the button's centre at the scroll
+// end must open the sheet. Only the document may scroll (no nested scroller eating the end padding).
+const bug22Runs = [];
+for (const theme of ['silent-black', 'paper']) for (const inset of ['none', 'env48', 'var48', 'raised60']) bug22Runs.push({ theme, inset });
+// The owner's Samsung (3-button navigation, larger default font): a 360x740 viewport, a 48px inset
+// written the SystemBars way, and every --fs-* token scaled 1.3x (standing in for WebView text zoom).
+for (const theme of ['silent-black', 'paper']) bug22Runs.push({ theme, inset: 'samsung' });
+for (const { theme, inset } of bug22Runs) {
+  const ctx = await browser.newContext({ viewport: inset === 'samsung' ? { width: 360, height: 740 } : { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `BUG-22 dock overlap (${theme}, inset ${inset})`;
+  if (inset === 'samsung') await page.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const root = document.documentElement; root.style.setProperty('--safe-area-inset-bottom', '48px'); const cs = getComputedStyle(root); for (const k of ['--fs-body', '--fs-cap', '--fs-display', '--fs-h1', '--fs-meta', '--fs-small', '--fs-stat', '--fs-title']) { const v = parseFloat(cs.getPropertyValue(k)); if (v) root.style.setProperty(k, `${(v * 1.3).toFixed(1)}px`); } }); });
+  if (inset === 'env48') { const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 0, bottom: 48, left: 0, right: 0 } }); }
+  if (inset === 'raised60') await page.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = '.esc-dock { bottom: calc(var(--float-bottom) + 60px) !important; }'; document.head.append(st); }); });
+  if (inset === 'var48') await page.addInitScript(() => { const set = () => document.documentElement.style.setProperty('--safe-area-inset-bottom', '48px'); if (document.documentElement) set(); else document.addEventListener('DOMContentLoaded', set); });
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  const later = async () => { if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); } };
+  await later();
+  // Seeds go through sessionStorage and land before the app boots, so the running app's own save can't overwrite them.
+  await page.addInitScript(() => { const seed = sessionStorage.getItem('bug22.seed'); if (seed) { localStorage.setItem('marc.state.v1', seed); sessionStorage.removeItem('bug22.seed'); } });
+  const go = async (label) => { await page.locator('nav.nav button', { hasText: label }).click(); await page.waitForTimeout(300); };
+  await go(/^Train$/);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  // One split with 8 different exercises (the owner's long split), then reload so it renders from storage.
+  const n = await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    if (!s?.splits?.length) return 0;
+    const seen = new Set();
+    s.splits[0].exercises = s.splits.flatMap(x => x.exercises).filter(e => !seen.has(e.exerciseId) && seen.add(e.exerciseId)).slice(0, 8);
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+    return s.splits[0].exercises.length;
+  });
+  if (n !== 8) errors.push(`${tag}: expected to seed an 8-exercise split, got ${n}`);
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+
+  const toEnd = async () => { await page.evaluate(() => window.scrollTo(0, document.scrollingElement.scrollHeight)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); };
+  const measureEnd = () => page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock');
+    if (!dock) return null;
+    const d = dock.getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    let bottom = 0; let who = '';
+    for (const el of document.querySelectorAll('.app *')) {
+      if (el.closest('.esc-dock, .nav, .rest, .toast, dialog, .pulse-line')) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden') continue;
+      if (r.bottom > bottom) { bottom = r.bottom; who = `${el.tagName.toLowerCase()}.${el.className || ''} "${(el.textContent || '').trim().slice(0, 30)}"`; }
+    }
+    return { away: dock.classList.contains('esc-dock-away'), limit: d.top - shade, bottom, who };
+  });
+  const checkEnd = async (where) => {
+    await toEnd();
+    const m = await measureEnd();
+    if (!m) { errors.push(`${tag} ${where}: expected the dock to show`); return; }
+    if (m.away) errors.push(`${tag} ${where}: the dock should show at the end of the page`);
+    if (m.bottom > m.limit + 0.5) errors.push(`${tag} ${where}: content ends at ${m.bottom.toFixed(1)} but the dock and its shadow start at ${m.limit.toFixed(1)} (${m.who})`);
+  };
+
+  // A1, rest banner down.
+  await go(/^Train$/);
+  await checkEnd('Train end');
+  const scrollers = await page.evaluate(() => [...document.querySelectorAll('body *')].filter(el => { const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') && el.scrollHeight > el.clientHeight + 1 && !el.closest('dialog'); }).map(el => `${el.tagName.toLowerCase()}.${el.className}`));
+  if (scrollers.length) errors.push(`${tag} Train: expected only the document to scroll, found ${scrollers.join(', ')}`);
+  const trainEnd = await page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock').getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    const log = document.querySelector('[data-palace="train.log-past"]');
+    const hint = [...document.querySelectorAll('.view p.hint')].find(p => p.textContent.includes('Change the goal in Coach'));
+    const lb = log?.getBoundingClientRect();
+    const hit = lb ? document.elementFromPoint(lb.left + lb.width / 2, lb.top + lb.height / 2) : null;
+    return { rows: document.querySelectorAll('[data-palace="train.split"] .list .row, [data-palace="train.split"] .list > *').length, limit: dock.top - shade, log: lb?.bottom ?? null, hint: hint?.getBoundingClientRect().bottom ?? null, tap: !!hit && log.contains(hit) };
+  });
+  if (trainEnd.log == null || trainEnd.hint == null) errors.push(`${tag} Train end: could not find "Log a past session" and the targets line`);
+  else {
+    if (trainEnd.log > trainEnd.limit) errors.push(`${tag} Train end: "Log a past session" ends at ${trainEnd.log}, under the dock (${trainEnd.limit})`);
+    if (trainEnd.hint > trainEnd.limit) errors.push(`${tag} Train end: the targets line ends at ${trainEnd.hint}, under the dock (${trainEnd.limit})`);
+    if (!trainEnd.tap) errors.push(`${tag} Train end: a tap on "Log a past session" does not reach it`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}${inset === 'none' ? '' : `-${inset}`}-train-end.png` });
+  // The owner's check: at the scroll end, a real tap on "Log a past session" opens its sheet.
+  if (trainEnd.log != null) {
+    const box = await page.locator('[data-palace="train.log-past"]').boundingBox();
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    if (!(await visible(page.getByRole('button', { name: 'Save past session' }), 3000))) errors.push(`${tag} Train end: tapping "Log a past session" at the scroll end did not open the log-past sheet`);
+    else { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('dialog[open]'), null, { timeout: 3000 }).catch(() => errors.push(`${tag}: the log-past sheet did not close`)); await page.waitForTimeout(200); }
+  }
+  if (inset !== 'none') { await ctx.close(); continue; }
+
+  // A2: mid-page, scrolling down moves the dock away; scrolling up brings it back.
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  const spot = await page.evaluate(() => { const r = document.querySelector('.esc-dock').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  for (let k = 0; k < 3; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const mid = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock') }; }, spot);
+  if (!(mid.y > 0 && mid.y < mid.max - 8)) errors.push(`${tag} A2: expected to be mid-page, at ${mid.y} of ${mid.max}`);
+  if (!mid.away) errors.push(`${tag} A2: the dock should move away while scrolling down mid-page`);
+  if (mid.blocks) errors.push(`${tag} A2: mid-scroll, a tap at the dock's spot still hits the dock`);
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-train-mid.png` });
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2: scrolling up should bring the dock back`);
+
+  for (const t of ['Today', 'History', 'Body']) { await go(t); await checkEnd(`${t} end`); }
+
+  // A2 on History > Stats, where the owner's screenshot had the dock over "Exercise progress": scrolling
+  // down mid-page moves it away and a tap at its spot reaches the chart area; scrolling up brings it
+  // back (the shipped trade-off: until the next scroll-down it may cover what is under it). Then A1 at its end.
+  await go('History');
+  await page.locator('.seg button', { hasText: /^Stats$/ }).click(); await page.waitForTimeout(300);
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  for (let k = 0; k < 4; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const stats = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock'), onPage: !!hit?.closest('.view') }; }, spot);
+  if (!(stats.y > 0 && stats.y < stats.max - 8)) errors.push(`${tag} A2 Stats: expected to be mid-page, at ${stats.y} of ${stats.max}`);
+  if (!stats.away || stats.blocks) errors.push(`${tag} A2 Stats: scrolling down mid-page should move the dock away (away ${stats.away}, still hit ${stats.blocks})`);
+  if (!stats.onPage) errors.push(`${tag} A2 Stats: a tap at the dock's spot should reach the page`);
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2 Stats: scrolling up should bring the dock back`);
+  await checkEnd('History > Stats end');
+
+  // A1, rest banner up: a live session resting, looked at from the other tabs (Train hides the dock while live).
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    const sp = s.splits[0];
+    s.active = { splitId: sp.id, startedAt: new Date().toISOString(), pausedMs: 0, entries: sp.exercises.map(e => ({ exerciseId: e.exerciseId, name: e.exerciseId, sets: [], done: false, skipped: false })), rest: { endsAt: Date.now() + 600000, totalSec: 600 } };
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+  });
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+  for (const t of ['Today', 'History', 'Body']) {
+    await go(t);
+    if (!(await page.evaluate(() => document.documentElement.hasAttribute('data-rest') && !!document.querySelector('.rest')))) { errors.push(`${tag} ${t} rest: expected the rest banner up`); continue; }
+    await checkEnd(`${t} end, rest up`);
+    if (t === 'Today') { await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-today-rest.png` }); }
+  }
+  await ctx.close();
+}
+
+// BUG-15 (PROGRESSION-F6): a lighter week cuts 3 planned sets to 2, and the Train rows show it:
+// two rows carry the 0.9 × pre-week target (72.5 → 65 kg on the default barbell), the third is set
+// aside, and the header counts 2 sets.
+{
+  const tag = 'BUG-15 set cut rows';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const bench = 'lib_barbell_bench_press';
+    const pre = { id: 's-pre', splitId: 'sp1', splitName: 'Push', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, logging: { mode: 'live', flags: [] },
+      exercises: [{ exerciseId: bench, name: 'Barbell Bench Press', sets: [1, 2, 3].map(i => ({ id: `p${i}`, kg: 72.5, reps: 8, effort: 'ideal' })) }] };
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Push', color: '#888', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: now }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [pre], customExercises: [],
+      active: { id: 'act15', splitId: 'sp1', startedAt: now, pausedMs: 0, entries: [{ id: 'en15', exerciseId: bench, name: 'Barbell Bench Press', sets: [{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }], done: false, skipped: false }] },
+      deload: { startDay: day(1), endDay: day(-5), reason: 'gate', setFactor: 0.6, loadFactor: 0.9 },
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  // A running session puts Train under the "Live" tab.
+  await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card.exercise').first();
+  if (!(await card.locator('.set-grid input').first().isVisible().catch(() => false))) { await card.locator('.ex-head').click(); await page.waitForTimeout(300); }
+  const rows = await card.evaluate(c => [...c.querySelectorAll('.set-grid')].filter(g => g.querySelector('input')).map(g => ({ aside: g.hasAttribute('data-set-aside'), kg: g.querySelector('input')?.getAttribute('placeholder') ?? '' })));
+  if (JSON.stringify(rows.map(r => r.aside)) !== '[false,false,true]') errors.push(`${tag}: expected rows [kept, kept, set aside], got ${JSON.stringify(rows)}`);
+  if (rows[0]?.kg !== '65' || rows[1]?.kg !== '65') errors.push(`${tag}: expected both kept rows to target 65 (0.9 × 72.5, snapped down), got ${JSON.stringify(rows)}`);
+  if (!(await visible(card.getByText('Not today · lighter week'), 1500))) errors.push(`${tag}: expected the third row to read "Not today · lighter week"`);
+  if (!(await visible(card.locator('.ex-head .hint', { hasText: '0/2 sets' }), 1500))) errors.push(`${tag}: expected the header to count 2 sets`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-bug-15-set-rows.png` });
+  await ctx.close();
+}
+
+// GU-7a-2: the form guide (stub Guide until GU-7a-4). A10 chunk rules; A11 no guide on Today; A8 the
+// "How to do it" row only for guided exercises; A7 screenshots in 5 themes at t 0 and 0.25, 390 px;
+// A4 playback (3 reps of 4 s, 0.5x, Pause, Replay, closing cancels every animation); A5 zoom keeps
+// playing with its subject inside the stage and above the bubble for 41 phases; A13 hotspots of at
+// least 44 x 44 px and the muscle bubble; A6 reduced motion = Pictures with zero animate() calls;
+// A9 a failed chunk keeps the sheet open with "Demo could not load." and Reload.
+{
+  const tag = 'GU-7a';
+  const { gzipSync } = await import('node:zlib');
+  const assets = join(ROOT, 'www/assets');
+  const files = readdirSync(assets);
+  const mains = files.filter(f => /^index-.*\.js$/.test(f));
+  if (!mains.length) errors.push(`${tag} A10: no www/assets/index-*.js found`);
+  for (const f of mains) {
+    const text = readFileSync(join(assets, f), 'utf8');
+    if (text.includes('marc-formguide-rig') || text.includes('id="rig-')) errors.push(`${tag} A10: ${f} (main chunk) holds form-guide code`);
+    const buf = readFileSync(join(assets, f));
+    console.log(`${tag} A10: ${f} ${buf.length} B raw, ${gzipSync(buf).length} B gzip`);
+  }
+  const chunk = files.find(f => /^FormGuidePlayer-.*\.js$/.test(f));
+  if (!chunk) errors.push(`${tag} A10: www/assets/FormGuidePlayer-*.js is missing`);
+  else {
+    const buf = readFileSync(join(assets, chunk));
+    const gz = gzipSync(buf).length;
+    console.log(`${tag} A10: ${chunk} ${buf.length} B raw, ${gz} B gzip (cap ${150 * 1024})`);
+    if (gz > 150 * 1024) errors.push(`${tag} A10: ${chunk} is ${gz} B gzip, over the 150 KB cap`);
+  }
+
+  const seed = ([t]) => {
+    // Records every Web Animation the page creates, so a probe can see cancel() and count animate() calls.
+    const orig = Element.prototype.animate;
+    window.__fgAnims = [];
+    Element.prototype.animate = function (...a) { const an = orig.apply(this, a); if (this.closest?.('.form-guide')) window.__fgAnims.push(an); return an; };
+    if (localStorage.getItem('marc.state.v1')) return;
+    localStorage.setItem('marc.theme', t);
+    const now = new Date().toISOString();
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_machine_chest_press', sets: 3 }, { exerciseId: 'lib_barbell_bench_press', sets: 3 }] }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [], active: null, customExercises: [],
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+    }));
+  };
+  const open = async (theme, opts = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, ...opts });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error' && !/Failed to (load|fetch)|ERR_FAILED/.test(m.text())) errors.push(`${tag} ${theme} console: ${m.text()}`); });
+    await page.addInitScript(seed, [theme]);
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.waitForTimeout(300);
+    return { ctx, page };
+  };
+  const startSession = async (page) => {
+    await page.locator('nav.nav button', { hasText: 'Train' }).click(); await page.waitForTimeout(200);
+    await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+    if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+    if (await page.getByRole('button', { name: /^Start / }).first().isVisible().catch(() => false)) { await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300); }
+  };
+  const options = async (page, i) => { await page.getByRole('button', { name: 'Options', exact: true }).nth(i).click(); await page.waitForTimeout(300); };
+  const howRow = (page) => page.locator('dialog[open]').getByRole('button', { name: 'How to do it', exact: true });
+  const openGuide = async (page) => { await options(page, 0); await howRow(page).click(); return visible(page.locator('dialog[open] .form-guide .player')); };
+  const seek = (page, ms) => page.evaluate(ms => { for (const a of window.__fgAnims) { a.pause(); a.currentTime = ms; } return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); }, ms);
+
+  // A13: each muscle's real hit area (halo + core, round 3 D-R7: a point counts when it hits either) at t 0 and 0.25.
+  const hotProbe = async (page, where) => {
+    for (const ms of [0, 1000]) {
+      await seek(page, ms);
+      const sizes = await page.evaluate(() => [...document.querySelectorAll('dialog[open] .scene .hot:not(.hot-core)')].map(h => {
+        const r = h.getBoundingClientRect();
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+        for (let x = Math.floor(r.left - 24); x <= r.right + 24; x++) for (let y = Math.floor(r.top - 24); y <= r.bottom + 24; y++) {
+          const hit = document.elementFromPoint(x, y);
+          if (hit?.classList.contains('hot') && hit.dataset.muscle === h.dataset.muscle) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        }
+        return { m: h.dataset.muscle, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+      }));
+      if (sizes.length !== 3) errors.push(`${tag} A13 ${where}: expected 3 hotspots, got ${sizes.length}`);
+      for (const s of sizes) if (!(s.w >= 44 && s.h >= 44)) errors.push(`${tag} A13 ${where}: hotspot ${s.m} hits ${s.w} x ${s.h} px at ${ms} ms`);
+    }
+    await seek(page, 0);
+  };
+  // A7 / R1-12: the player fits the sheet; Play stays a 44 px circle; no control overlaps another, leaves the player or clips its label.
+  const fitProbe = async (page, where) => {
+    const f = await page.evaluate(() => {
+      const box = e => { const r = e.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, w: r.width, h: r.height }; };
+      const player = box(document.querySelector('dialog[open] .form-guide .player'));
+      const panel = box(document.querySelector('dialog[open] .sheet-panel'));
+      const play = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon'));
+      const ctrls = [...document.querySelectorAll('dialog[open] .form-guide .chips > button, dialog[open] .form-guide .controls > .btn-icon, dialog[open] .form-guide .controls > .seg')];
+      const named = ctrls.map(e => ({ n: e.getAttribute('aria-label') || e.textContent, ...box(e) }));
+      const out = named.filter(c => c.l < player.l - 0.5 || c.r > player.r + 0.5 || c.t < player.t - 0.5 || c.b > player.b + 0.5).map(c => c.n);
+      const overlap = [];
+      for (let i = 0; i < named.length; i++) for (let j = i + 1; j < named.length; j++) {
+        const a = named[i], b = named[j];
+        if (a.l < b.r - 0.5 && b.l < a.r - 0.5 && a.t < b.b - 0.5 && b.t < a.b - 0.5) overlap.push(`${a.n} / ${b.n}`);
+      }
+      const clipped = [...document.querySelectorAll('dialog[open] .form-guide .seg button, dialog[open] .form-guide .chips > button')].filter(b => b.scrollWidth > b.clientWidth + 0.5).map(b => b.textContent);
+      // integration with FG-1: `.form-guide svg { width: 100% }` must not stretch the chrome icons; each is drawn at its own width/height.
+      const playIcon = box(document.querySelector('dialog[open] .form-guide .controls > .btn-icon > svg'));
+      const icons = [...document.querySelectorAll('dialog[open] .form-guide .chips svg, dialog[open] .form-guide .controls svg')]
+        .map(s => ({ want: `${s.getAttribute('width')} x ${s.getAttribute('height')}`, got: `${Math.round(s.getBoundingClientRect().width)} x ${Math.round(s.getBoundingClientRect().height)}`, in: s.parentElement.getAttribute('aria-label') || s.parentElement.textContent }))
+        .filter(i => i.want !== i.got);
+      return { player, panel, play, playIcon, icons, out, overlap, clipped, sw: document.documentElement.scrollWidth, iw: innerWidth };
+    });
+    if (Math.abs(f.playIcon.w - 20) > 0.5 || Math.abs(f.playIcon.h - 20) > 0.5) errors.push(`${tag} A7 ${where}: the Play icon is ${f.playIcon.w.toFixed(1)} x ${f.playIcon.h.toFixed(1)} px, not 20 x 20`);
+    if (f.icons.length) errors.push(`${tag} A7 ${where}: icons drawn off their own size: ${f.icons.map(i => `${i.in} ${i.got} (want ${i.want})`).join('; ')}`);
+    if (f.player.l < f.panel.l - 0.5 || f.player.r > f.panel.r + 0.5 || f.sw > f.iw) errors.push(`${tag} A7 ${where}: the player does not fit the sheet (${JSON.stringify({ player: f.player, panel: f.panel, sw: f.sw })})`);
+    if (!(f.play.w >= 44 && f.play.h >= 44)) errors.push(`${tag} A7 ${where}: Play is ${f.play.w.toFixed(1)} x ${f.play.h.toFixed(1)} px, under 44`);
+    if (f.out.length) errors.push(`${tag} A7 ${where}: controls leave the player: ${f.out.join(', ')}`);
+    if (f.overlap.length) errors.push(`${tag} A7 ${where}: controls overlap: ${f.overlap.join('; ')}`);
+    if (f.clipped.length) errors.push(`${tag} A7 ${where}: labels clipped: ${f.clipped.join(', ')}`);
+  };
+
+  for (const theme of themes) {
+    const { ctx, page } = await open(theme);
+    // A11: never on Today.
+    if (await page.locator('.form-guide').count()) errors.push(`${tag} ${theme} A11: a .form-guide element is on Today`);
+    await startSession(page);
+    // A8: the row is there for the chest press (entry 0) and not for the bench press (entry 1).
+    await options(page, 1);
+    if (await howRow(page).count()) errors.push(`${tag} ${theme} A8: "How to do it" shows for Barbell Bench Press`);
+    await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(300);
+    await options(page, 0);
+    const labels = await page.locator('dialog[open] .stack-sm > button').allTextContents();
+    const at = labels.indexOf('How to do it');
+    if (at < 0 || labels[at + 1] !== 'Substitute exercise') errors.push(`${tag} ${theme} A8: expected "How to do it" right before "Substitute exercise", got ${JSON.stringify(labels)}`);
+    await howRow(page).click();
+    if (!(await visible(page.locator('dialog[open] .form-guide .player')))) { errors.push(`${tag} ${theme}: the guide sheet did not open`); await ctx.close(); continue; }
+    const title = await page.locator('dialog[open] h2').textContent();
+    if (title !== 'How to do it: Machine Chest Press') errors.push(`${tag} ${theme}: sheet title "${title}"`);
+    // A7: screenshots at t 0 and 0.25; the player fits the 390 px sheet.
+    const fit = await page.evaluate(() => { const p = document.querySelector('dialog[open] .form-guide .player').getBoundingClientRect(); const d = document.querySelector('dialog[open] .sheet-panel').getBoundingClientRect(); return { l: p.left, r: p.right, dl: d.left, dr: d.right, sw: document.documentElement.scrollWidth }; });
+    if (fit.l < fit.dl || fit.r > fit.dr || fit.sw > 390) errors.push(`${tag} ${theme} A7: the player does not fit the sheet at 390 px (${JSON.stringify(fit)})`);
+    await fitProbe(page, `${theme} 390 px`);
+    await seek(page, 0); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t0.png` });
+    await seek(page, 1000); await page.screenshot({ path: `${OUT}/${theme}-gu7a-guide-t025.png` });
+    await seek(page, 0);
+
+    if (theme === 'silent-black') {
+      // A4: Play runs 3 reps of 4 s, linear, fill both, never looping.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click(); await page.waitForTimeout(200);
+      const t = await page.evaluate(() => window.__fgAnims.map(a => { const x = a.effect.getTiming(); return `${a.playState} ${x.duration} ${x.iterations} ${x.easing} ${x.fill}`; }));
+      if (!t.length || t.some(s => s !== 'running 4000 3 linear both')) errors.push(`${tag} A4: expected every animation "running 4000 3 linear both", got ${JSON.stringify([...new Set(t)])}`);
+      await page.locator('dialog[open] .seg button', { hasText: '0.5x' }).click(); await page.waitForTimeout(100);
+      const rates = await page.evaluate(() => [...new Set(window.__fgAnims.map(a => a.playbackRate))]);
+      if (rates.join() !== '0.5') errors.push(`${tag} A4: 0.5x set playbackRate ${JSON.stringify(rates)}`);
+      if (!(await page.locator('dialog[open] .pill-accent', { hasText: 'Slow motion' }).isVisible())) errors.push(`${tag} A4: no "Slow motion" pill at 0.5x`);
+      await page.locator('dialog[open] .seg button', { hasText: '1x' }).click();
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Pause', exact: true }).click(); await page.waitForTimeout(100);
+      const t1 = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime}`));
+      await page.waitForTimeout(300);
+      const t2 = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime}`));
+      if (t1.join() !== t2.join() || !t1.every(s => s.startsWith('paused'))) errors.push(`${tag} A4: Pause did not freeze (${t1[0]} -> ${t2[0]})`);
+      // The end of rep 3: the button becomes Replay and the figure holds the start pose.
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Play', exact: true }).click();
+      await page.evaluate(() => { for (const a of window.__fgAnims) a.currentTime = 11990; });
+      await page.waitForTimeout(400);
+      const end = await page.evaluate(() => ({ states: [...new Set(window.__fgAnims.map(a => a.playState))], arm: getComputedStyle(document.querySelector('dialog[open] .scene .st-arm')).transform, cap: document.querySelector('dialog[open] .cap').textContent }));
+      if (end.states.join() !== 'finished') errors.push(`${tag} A4: after 3 reps expected finished, got ${end.states}`);
+      if (!/^matrix\(1, 0, 0, 1, 0, 0\)$|^none$/.test(end.arm)) errors.push(`${tag} A4: after 3 reps the arm is not on the start pose (${end.arm})`);
+      if (end.cap !== 'Done. Tap Replay to watch again.') errors.push(`${tag} A4: ended caption "${end.cap}"`);
+      await page.locator('dialog[open] .form-guide').getByRole('button', { name: 'Replay', exact: true }).click(); await page.waitForTimeout(150);
+      const re = await page.evaluate(() => window.__fgAnims.map(a => `${a.playState} ${a.currentTime < 1000}`));
+      if (!re.every(s => s === 'running true')) errors.push(`${tag} A4: Replay did not restart from 0 (${re[0]})`);
+      if (await page.locator('dialog[open] .pill', { hasText: 'Rep 1 of 3' }).count() !== 1) errors.push(`${tag} A4: no "Rep 1 of 3" pill after Replay`);
+
+      // A5: each zoom chip keeps playing; its subject (.ov-<chip>) stays in the stage, above the bubble, over 41 phases.
+      for (const [i, chip] of ['grip', 'path', 'seat'].entries()) {
+        await page.locator('dialog[open] .chips button').nth(i).click(); await page.waitForTimeout(450);
+        const running = await page.evaluate(() => window.__fgAnims.every(a => a.playState === 'running'));
+        if (!running) errors.push(`${tag} A5: zoom ${chip} stopped the animation`);
+        const bad = await page.evaluate(async (chip) => {
+          const out = [];
+          const st = document.querySelector('dialog[open] .stage').getBoundingClientRect();
+          const bub = document.querySelector('dialog[open] .bubble').getBoundingClientRect();
+          for (let k = 0; k <= 40; k++) {
+            for (const a of window.__fgAnims) { a.pause(); a.currentTime = (k / 40) * 4000; }
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+            const b = document.querySelector(`dialog[open] .scene .ov-${chip}`).getBoundingClientRect();
+            if (b.left < st.left || b.right > st.right || b.top < st.top || b.bottom > bub.top) out.push(k);
+          }
+          for (const a of window.__fgAnims) a.play();
+          return out;
+        }, chip);
+        if (bad.length) errors.push(`${tag} A5: zoom ${chip} subject leaves the stage or meets the bubble at phases ${bad.join(',')}`);
+        const cap = await page.locator('dialog[open] .bubble').textContent();
+        if (!cap?.trim()) errors.push(`${tag} A5: zoom ${chip} shows no caption bubble`);
+        await page.screenshot({ path: `${OUT}/silent-black-gu7a-zoom-${chip}.png` });
+        await page.locator('dialog[open] .chips button').nth(i).click(); await page.waitForTimeout(450);
+      }
+
+      // A13: every hotspot hits at least 44 x 44 px at t 0 and t 0.25.
+      await hotProbe(page, '390 px');
+      // 5.12: the phase caption is announced politely.
+      if (await page.locator('dialog[open] .cap[aria-live="polite"]').count() !== 1) errors.push(`${tag} 5.12: the caption line is not an aria-live="polite" region`);
+      // Tap the target at t 0.3: the exact line, the dot in the muscle's colour, the outline on that region only.
+      await seek(page, 1200);
+      const tapHot = async (m) => { const b = await page.locator(`dialog[open] .scene .hot:not(.hot-core)[data-muscle="${m}"]`).boundingBox(); await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2); await page.waitForTimeout(150); };
+      await tapHot('chest');
+      const bub = await page.evaluate(() => { const b = document.querySelector('dialog[open] .bubble'); if (!b) return null; const fg = document.querySelector('dialog[open] .form-guide'); const probe = document.createElement('i'); probe.style.color = 'var(--muscle-main)'; fg.appendChild(probe); const want = getComputedStyle(probe).color; probe.remove(); return { text: b.textContent, name: b.querySelector('.bt b')?.textContent, dot: getComputedStyle(b.querySelector('.dot')).backgroundColor, want, sel: [...document.querySelectorAll('dialog[open] .sel')].map(e => `${e.getAttribute('class')} ${e.getAttribute('points')}`) }; });
+      if (!bub) errors.push(`${tag} A13: tapping the chest shows no bubble`);
+      else {
+        if (bub.text !== 'Chest (pectoralis major), target. Pushes the handles away; hardest as the arms straighten.' || bub.name !== 'Chest') errors.push(`${tag} A13: bubble text "${bub.text}" (bold "${bub.name}")`);
+        if (bub.dot !== bub.want) errors.push(`${tag} A13: dot ${bub.dot}, muscle colour ${bub.want}`);
+        const hotPts = await page.locator('dialog[open] .scene .hot:not(.hot-core)[data-muscle="chest"]').getAttribute('points');
+        if (bub.sel.length !== 1 || bub.sel[0] !== `mm sel ${hotPts}`) errors.push(`${tag} A13: .sel outline on ${JSON.stringify(bub.sel)}`);
+      }
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-muscle.png` });
+      // A tap on the bubble itself keeps it (the demo's tapStage guard); a second tap on the muscle closes it.
+      await page.locator('dialog[open] .bubble').click(); await page.waitForTimeout(150);
+      if (!(await page.locator('dialog[open] .bubble').count())) errors.push(`${tag} A13: a tap on the bubble closed it`);
+      await tapHot('chest');
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a second tap on the chest did not close the bubble`);
+      // A tap on the stage background closes a muscle bubble.
+      await tapHot('triceps');
+      const stBox = await page.locator('dialog[open] .stage').boundingBox();
+      await page.mouse.click(stBox.x + stBox.width - 20, stBox.y + stBox.height / 2); await page.waitForTimeout(150);
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a tap on the stage background did not close the muscle bubble`);
+      await tapHot('triceps');
+      await page.locator('dialog[open] .chips button').nth(0).click(); await page.waitForTimeout(150);
+      const zb = await page.locator('dialog[open] .bubble').textContent().catch(() => null);
+      if (zb !== 'Hold the middle of the handle. Wrists straight, not bent back.') errors.push(`${tag} A13: the chip did not replace the muscle bubble ("${zb}")`);
+      if (await page.locator('dialog[open] .sel').count()) errors.push(`${tag} A13: the outline stayed after a zoom chip`);
+      await page.locator('dialog[open] .chips button').nth(0).click(); await page.waitForTimeout(150);
+      if (await page.locator('dialog[open] .bubble').count()) errors.push(`${tag} A13: a second chip tap left a bubble`);
+      // Pictures: 4 tiles with the demo captions, no hotspot inside.
+      await page.locator('dialog[open] .seg button', { hasText: 'Pictures' }).click(); await page.waitForTimeout(150);
+      const pics = await page.evaluate(() => ({ tiles: [...document.querySelectorAll('dialog[open] .pics .tile p')].map(p => p.textContent), hot: document.querySelectorAll('dialog[open] .pics .hot').length, hint: document.querySelector('dialog[open] .hint').textContent }));
+      if (pics.tiles.join('|') !== 'Setup: handles at mid-chest|Press straight out|Arms almost straight, no lock|Back slowly, 2 s' || pics.hot || pics.hint !== 'Four key moments of one rep.') errors.push(`${tag} A6: Pictures ${JSON.stringify(pics)}`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-pictures.png` });
+      // Closing the sheet cancels every animation.
+      await page.getByRole('button', { name: 'Close', exact: true }).click(); await page.waitForTimeout(600);
+      const left = await page.evaluate(() => ({ n: window.__fgAnims.length, live: window.__fgAnims.filter(a => a.playState !== 'idle').length, open: !!document.querySelector('.form-guide') }));
+      if (!left.n || left.live || left.open) errors.push(`${tag} A4: closing left ${left.live} of ${left.n} animations alive (guide still open: ${left.open})`);
+    }
+    await ctx.close();
+  }
+
+  // A7 and A13 on narrow phones (review of 25b05f6): the controls and the hotspots at 320 and 360 px.
+  for (const w of [320, 360]) {
+    const { ctx, page } = await open('silent-black', { viewport: { width: w, height: 740 } });
+    await startSession(page);
+    if (!(await openGuide(page))) errors.push(`${tag} ${w} px: the guide did not open`);
+    else {
+      await fitProbe(page, `${w} px`);
+      await hotProbe(page, `${w} px`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-guide-${w}.png` });
+    }
+    await ctx.close();
+  }
+
+  // A6: reduced motion shows Pictures only, with zero animate() calls, and says why.
+  {
+    const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce' });
+    await startSession(page);
+    if (!(await openGuide(page))) errors.push(`${tag} A6: the guide did not open under reduced motion`);
+    else {
+      const rm = await page.evaluate(() => ({ calls: window.__fgAnims.length, tiles: document.querySelectorAll('dialog[open] .pics:not([hidden]) .tile').length, scene: getComputedStyle(document.querySelector('dialog[open] .scene')).display, hint: document.querySelector('dialog[open] .hint').textContent, anim: document.querySelector('dialog[open] .seg.mode button').disabled, play: document.querySelector('dialog[open] .controls .btn-icon').disabled }));
+      if (rm.calls || rm.tiles !== 4 || rm.scene !== 'none' || rm.hint !== 'Pictures shown because your phone is set to reduce motion.' || !rm.anim || !rm.play) errors.push(`${tag} A6: reduced motion ${JSON.stringify(rm)}`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-reduced.png` });
+      await page.locator('dialog[open] .chips button').nth(1).click(); await page.waitForTimeout(150);
+      const st = await page.evaluate(() => ({ calls: window.__fgAnims.length, still: document.querySelectorAll('dialog[open] .scene.still .st-arm').length, cap: document.querySelector('dialog[open] .cap').textContent }));
+      if (st.calls || st.still !== 1 || st.cap !== 'Arms almost straight, no lock') errors.push(`${tag} A6: the Path still under reduced motion ${JSON.stringify(st)}`);
+    }
+    await ctx.close();
+  }
+
+  // A9: a failed chunk load keeps the sheet open with one line and Reload.
+  {
+    // The service worker would serve the precached chunk around page.route, so it is blocked here.
+    const { ctx, page } = await open('silent-black', { reducedMotion: 'reduce', serviceWorkers: 'block' });
+    await page.route(/FormGuidePlayer-.*\.js$/, r => r.abort());
+    await startSession(page);
+    await options(page, 0); await howRow(page).click();
+    if (!(await visible(page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' })))) errors.push(`${tag} A9: no "Demo could not load." line after a failed chunk`);
+    else {
+      const f = await page.evaluate(() => ({ title: document.querySelector('dialog[open] h2')?.textContent, reload: [...document.querySelectorAll('dialog[open] button')].some(b => b.textContent === 'Reload') }));
+      if (f.title !== 'How to do it: Machine Chest Press' || !f.reload) errors.push(`${tag} A9: failure sheet ${JSON.stringify(f)}`);
+      await page.waitForTimeout(500);
+      if (!(await page.locator('dialog[open] .hint', { hasText: 'Demo could not load.' }).isVisible())) errors.push(`${tag} A9: the sheet closed after a failed chunk`);
+      await page.screenshot({ path: `${OUT}/silent-black-gu7a-load-failed.png` });
+    }
+    await ctx.close();
+  }
 }
 
 await browser.close();

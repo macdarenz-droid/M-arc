@@ -154,3 +154,21 @@ describe('weekly e1RM review after a break (QA2-FC-2)', () => {
     expect(e1rm[0]!.title).toMatch(/rising/i);
   });
 });
+
+// BUG-15 review item 2: the lighter week's sessions do not make the weekly review say "falling".
+describe('weekly e1RM review after a lighter week (BUG-15)', () => {
+  const profile: Profile = { name: 'Test' };
+  const days = ['2026-07-20', '2026-07-27', '2026-08-03', '2026-08-10', '2026-08-17', '2026-08-24', '2026-08-31'];
+  const sessions = [
+    ...days.map(d => session(d, [{ id: bench, sets: sets(100, 8, 'ideal', 3) }])),
+    ...['2026-09-08', '2026-09-11'].map(d => session(d, [{ id: bench, sets: sets(90, 8, 'easy', 2) }])),
+  ];
+  it('seven weeks at 100 × 8, then 90 kg lighter sessions: flat, not falling', () => {
+    const out = weeklyReviewInsights({
+      sessions, today: '2026-09-14', custom: [], schedule: emptySchedule(), goal: 'lean', profile,
+      weightLog: [], trainingAgeMonths: 24, exerciseIds: [{ id: bench, name: 'Barbell Bench Press' }],
+      deload: { startDay: '2026-09-08', endDay: '2026-09-14', reason: 'x', setFactor: 0.6, loadFactor: 0.9 },
+    }, 50).filter(i => i.id.startsWith('weekly:e1rm'));
+    expect(out.map(i => i.title)).toEqual(['Barbell Bench Press: flat']);
+  });
+});
