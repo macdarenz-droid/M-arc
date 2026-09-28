@@ -92,8 +92,10 @@ html[data-install] .progress{background:var(--positive)}
 .diagram figcaption{max-width:var(--measure)}
 .hero h1{margin:16px 0 20px}
 .hero .lede{font-size:19px;line-height:1.5;color:var(--text-2);max-width:540px;margin-bottom:28px}
-.cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
-.cta.swap .btn:first-child{order:2}
+.cta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-bottom:14px}
+.textlink{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 6px;border-radius:var(--r-1);font:500 15px/1 var(--sans);color:var(--text)}
+.textlink svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.textlink:hover{text-decoration:underline;text-underline-offset:3px}
 .hero .note{font-size:13px;line-height:18px;color:var(--text-2)}
 
 /* figures */
@@ -106,16 +108,18 @@ figcaption{margin-top:10px;font-size:13px;line-height:18px;color:var(--text-2)}
 figcaption .cap{display:block;margin-bottom:2px}
 .pair{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
 .pair .fig{--w:320px}
-.crop{aspect-ratio:390/344;width:100%}
-.crop img{transform:translateY(-26.7%)}
+.crop{aspect-ratio:390/344;width:100%;--oy:-26.7%}
+.crop img{transform:translateY(var(--oy))}
 .chip{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font:600 11px/1 var(--sans);letter-spacing:.04em;vertical-align:middle;margin-left:6px}
 
 /* sections */
 .sec{padding-block:var(--section) 0}
 .sec-head{margin-bottom:36px;max-width:760px}
 .sec-head h2{margin-top:10px}
-.body-col{grid-column:1/8}
+.body-col{grid-column:1/8;align-self:start}
 .side-col{grid-column:8/13;justify-self:start;width:100%;max-width:390px}
+.side-stack{display:flex;flex-direction:column;gap:24px}
+.body-col .pull{margin-top:28px}
 .full{grid-column:1/-1}
 .stack{display:flex;flex-direction:column;gap:36px}
 
@@ -127,6 +131,10 @@ figcaption .cap{display:block;margin-bottom:2px}
 .card.today .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .live{opacity:1}
 .live.fade{opacity:0}
+.card.ready .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.card.ready h3{font-family:var(--sans);font-size:18px;font-weight:600;letter-spacing:-.012em;line-height:1.2}
+.card.ready .score{font-size:13px;line-height:18px;color:var(--text-2)}
+.card.ready p{font-size:14px;line-height:20px;color:var(--text-2);margin-top:6px}
 
 /* details */
 details{margin-top:28px;border-top:1px solid var(--border);padding-top:6px}
@@ -176,11 +184,11 @@ details.open summary svg{transform:rotate(90deg)}
 
 /* theme rail */
 .themes-grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;padding-left:max(var(--gutter),calc((100% - 1120px)/2 + var(--gutter)))}
-.themes-grid>div{min-width:0;--rail-pad:max(24px,7%)}
+.themes-grid>div{min-width:0;--rail-pad:24px}
 .rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-left:var(--rail-pad);padding-right:var(--gutter)}
 .rail-head .arrows{display:flex;gap:6px}
 .rail-head .arrows .btn{width:32px;padding:0}
-.rail{--rail-pad:max(24px,7%);list-style:none;margin:0;padding:6px var(--rail-pad) 12px;display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:var(--rail-pad);-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
+.rail{--rail-pad:24px;list-style:none;margin:0;padding:6px var(--rail-pad) 12px;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:var(--rail-pad);-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
 .rail::-webkit-scrollbar{display:none}
 .rail li{flex:0 0 200px;scroll-snap-align:start}
 .rail .fig{--w:200px;width:200px;max-width:200px}
@@ -202,6 +210,13 @@ details.open summary svg{transform:rotate(90deg)}
 .foot .fpline{margin-top:40px;padding-top:20px;border-top:1px solid var(--border-subtle);font:400 12px/18px var(--mono);font-variant-numeric:tabular-nums;color:var(--text-2);word-break:normal;overflow-wrap:normal}
 
 /* responsive */
+@media (min-width:1001px){
+  .side-col.pair{flex-direction:column;gap:32px}
+  .side-col.pair .fig{--w:100%;max-width:390px}
+}
+@media (min-width:1001px) and (min-height:760px){
+  .body-col.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 88px)}
+}
 @media (max-width:1000px){
   :root{--section:80px}
   .nav{display:none}
@@ -220,6 +235,8 @@ details.open summary svg{transform:rotate(90deg)}
   .hero{padding-top:32px;min-height:0}
   .hero .copy,.hero .fig{grid-column:1/-1}
   .hero .fig{--w:100%}
+  .hero .sheet{aspect-ratio:390/352;--oy:-14%}
+  .hero .sheet>img{transform:translateY(var(--oy))}
   .fig,.pair .fig,.side-col{--w:100%;width:100%;max-width:none}
   .rail .fig{--w:200px;width:200px;max-width:200px}
   .side-col{max-width:none}
@@ -238,6 +255,7 @@ details.open summary svg{transform:rotate(90deg)}
   .btn-accent:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
   .btn-hair:hover{border-color:var(--border-strong)}
   .fig:hover .cap{color:var(--accent)}
+  .textlink:hover svg{transform:translateX(2px)}
 }
 
 /* motion: everything below only runs when the visitor has not asked for less motion */
@@ -253,6 +271,7 @@ details.open summary svg{transform:rotate(90deg)}
   summary svg{transition:transform var(--dur-base) var(--ease-standard)}
   .copybtn{transition:color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
   .nav a{transition:background-color var(--dur-fast) var(--ease-standard)}
+  .textlink svg{transition:transform var(--dur-fast) var(--ease-standard)}
   html{scroll-behavior:smooth}
   @supports (animation-timeline:scroll()){
     .progress{animation:grow linear both;animation-timeline:scroll();transform:scaleX(0)}
@@ -282,8 +301,10 @@ details.open summary svg{transform:rotate(90deg)}
   .hero .fig.in .sheet>img{animation:hold var(--dur-hold) cubic-bezier(0,0,.2,1) both;animation-delay:var(--d,0ms)}
   .hero .fig.in figcaption{animation-delay:calc(var(--d,0ms) + var(--dur-hold) + 200ms)}
   @keyframes hold{0%,30%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
+  @media (max-width:720px){.hero .fig.in .sheet>img{animation-name:hold-crop}}
+  @keyframes hold-crop{0%,30%{opacity:0;transform:translateY(calc(var(--oy) + 12px))}100%{opacity:1;transform:translateY(var(--oy))}}
   .fig.in .sheet.crop>img{animation-name:paste-crop}
-  @keyframes paste-crop{from{opacity:0;transform:translateY(calc(-26.7% + 12px))}to{opacity:1;transform:translateY(-26.7%)}}
+  @keyframes paste-crop{from{opacity:0;transform:translateY(calc(var(--oy) + 12px))}to{opacity:1;transform:translateY(var(--oy))}}
   /* diagram paths draw after the frame, inputs first */
   html.js .diagram:not(.in) .c{stroke-dashoffset:1}
   .diagram.in .c{animation:draw var(--dur-path) var(--ease-draw) both;animation-delay:calc(var(--d,0ms) + var(--dur-draw) + var(--i,0) * var(--step-rail))}
@@ -320,21 +341,21 @@ details.open summary svg{transform:rotate(90deg)}
 <main id="top">
 <section class="hero wrap grid">
   <div class="copy">
-    <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android and the browser</div>
+    <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android</div>
     <h1 class="hr" style="--i:1">A workout log that explains today’s plan.</h1>
     <p class="lede hr" style="--i:2">M/ARC keeps your sets, works out how recovered each muscle is, and writes today’s targets with the reason next to each one. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
-    <div class="cta hr" style="--i:3" data-web="">
+    <div class="cta hr" style="--i:3">
       <a class="btn btn-accent btn-lg" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download for Android</a>
-      <a class="btn btn-hair btn-lg" href="#data">See how data is handled</a>
+      <a class="textlink" href="#data">See how data is handled<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
     <p class="note hr" style="--i:4">Signed APK. Works offline. Public source.</p>
   </div>
   <figure class="fig now" style="--w:340px;--d:300ms">
     <div class="sheet">
       <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
-      <img src="shots/paper-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day. Readiness 66, Amber and still calibrating, with triceps at 45% and three days to go.">
+      <img src="shots/paper-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day: Push scheduled, three exercises planned, Readiness 66, Amber and still calibrating.">
     </div>
-    <figcaption><span class="cap">Fig. 1</span>The Today screen on a Push day. Readiness <span class="num">66</span>, Amber and still calibrating, with triceps at <span class="num">45%</span> and three days to go.</figcaption>
+    <figcaption><span class="cap">Fig. 1</span>The Today screen on a Push day: Push scheduled, three exercises planned, Readiness <span class="num">66</span>, Amber and still calibrating.</figcaption>
   </figure>
 </section>
 
@@ -351,7 +372,7 @@ details.open summary svg{transform:rotate(90deg)}
         <p>Open M/ARC and the first card already knows what is scheduled. On a Push day it says Start Push. Mid-session it says how many exercises are done. Afterwards it says Push done, 18 sets logged, recovery has started. Tap Take today off and the day counts as rest: your streak and this week’s target leave it out.</p>
         <p>Under it sits Readiness, a 0 to 100 score built from your check-in, sleep, heart rate, HRV and recent load. Green from 67, Red at 33 or below, and marked calibrating for the first 14 days. It comes with one line of advice, such as keep loads steady today and skip any increases. Below that, the muscles still recovering and the time each one needs, then the week in three numbers: workouts, sets, records.</p>
       </div>
-      <div class="side-col">
+      <div class="side-col side-stack">
         <figure class="fig" style="--w:100%">
           <div class="sheet card today">
             <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
@@ -367,18 +388,27 @@ details.open summary svg{transform:rotate(90deg)}
           </div>
           <figcaption>The Today card, rebuilt in HTML with the app’s own strings. Tap Take today off, then Undo day off, to see both states.</figcaption>
         </figure>
+        <figure class="fig" style="--w:100%;--d:120ms">
+          <div class="sheet card ready">
+            <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+            <div class="top"><h3>Amber · calibrating</h3><span class="num score">66</span></div>
+            <p>the muscles you would train today are not fully recovered.</p>
+          </div>
+          <figcaption>The Readiness card from the same day, in the app’s own words: Amber, still calibrating, <span class="num">66</span>, and the reason in one line.</figcaption>
+        </figure>
       </div>
     </div>
   </div>
 </section>
 
 <section class="sec" id="train">
-  <div class="wrap stack">
-    <header class="sec-head" style="margin-bottom:0">
+  <div class="wrap">
+    <header class="sec-head">
       <div class="eyebrow rv">Train</div>
       <h2 class="rv" style="--d:60ms">Every set arrives with a number and a reason.</h2>
     </header>
-    <div class="measure">
+    <div class="grid">
+    <div class="body-col measure sticky">
       <p>Each exercise in a split shows today’s target before you start, taken from your last sessions and your goal: 62.5 kg for 8, top of the range twice, step up. In the session the target is pre-filled as a placeholder. Tap Log as planned and move on, or type what you actually did.</p>
       <p>Rate every set with one tap. E is easy, three or more reps left. I is ideal, one to three left. M is max, nothing left. A missing rating never counts as easy or max; it lowers confidence instead. Drop sets count for volume and never for records. A set that beats your best gets a PR chip while you are still on the bench.</p>
       <p>Rest runs by timer, or by heart rate when a Bluetooth watch is connected: the rest ends when your pulse settles and falls back to the timer if the signal drops. Tap a barbell target to see plates per side in the unit that gym uses. Up to eight gyms, and each one remembers which unit every machine and rack takes.</p>
@@ -395,7 +425,7 @@ details.open summary svg{transform:rotate(90deg)}
         </div></div>
       </details>
     </div>
-    <div class="pair">
+    <div class="side-col pair">
       <figure class="fig">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
@@ -411,6 +441,7 @@ details.open summary svg{transform:rotate(90deg)}
         <figcaption><span class="cap">Fig. 3 <span class="chip">PR</span></span>A live Push session on the machine chest press: set one <span class="num">50 kg</span> for <span class="num">8</span> rated E, set two <span class="num">52.5 kg</span> for <span class="num">6</span> rated I, the third pre-filled at <span class="num">50 kg</span> for <span class="num">6</span>, rest counting down from <span class="num">1:30</span>.</figcaption>
       </figure>
     </div>
+    </div>
   </div>
 </section>
 
@@ -420,12 +451,6 @@ details.open summary svg{transform:rotate(90deg)}
       <div class="eyebrow rv">Body</div>
       <h2 class="rv" style="--d:60ms">A muscle map that knows what you did on Tuesday.</h2>
     </header>
-    <div class="measure">
-      <p>Every working set leaves an impulse on the muscles it used, sized by their role in the lift, the effort you rated, the reps and the load. The impulse decays, stacks over seven days, and the model adjusts to how your next session actually went, in both directions, within limits.</p>
-      <p>The map shades 24 muscles. Ready for hard work at 90%, fully recovered at 97%. Tap one for Ready now or Full by 10 pm, with a confidence label. When sleep, resting heart rate and load slow everything down, the map says so in one line, whole body recovering about 12% slower than usual this week.</p>
-      <p>Switch to This week to see effective sets per muscle against a target band. Switch to Levels to see how much each muscle has been trained, as a relative measure, not a medical one.</p>
-    </div>
-    <p class="pull rv">Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.</p>
     <figure class="fig diagram" style="--w:100%">
       <div class="sheet">
         <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
@@ -467,9 +492,16 @@ details.open summary svg{transform:rotate(90deg)}
           <rect class="tile" x="240" y="256" width="112" height="48" rx="10"/><text x="252" y="284">Lighter week</text>
         </svg>
       </div>
-      <figcaption><span class="cap">Fig. 4</span>What feeds the model and what comes out: rated sets, the check-in and sleep and heart rate go in; recovery per muscle, readiness, next-session targets and a lighter week come out.</figcaption>
+      <figcaption><span class="cap">Fig. 4</span>What goes into the model and what comes out of it.</figcaption>
     </figure>
-    <div class="pair">
+    <div class="grid">
+    <div class="body-col measure sticky">
+      <p>Every working set leaves an impulse on the muscles it used, sized by their role in the lift, the effort you rated, the reps and the load. The impulse decays, stacks over seven days, and the model adjusts to how your next session actually went, in both directions, within limits.</p>
+      <p>The map shades 24 muscles. Ready for hard work at 90%, fully recovered at 97%. Tap one for Ready now or Full by 10 pm, with a confidence label. When sleep, resting heart rate and load slow everything down, the map says so in one line, whole body recovering about 12% slower than usual this week.</p>
+      <p>Switch to This week to see effective sets per muscle against a target band. Switch to Levels to see how much each muscle has been trained, as a relative measure, not a medical one.</p>
+      <p class="pull rv">Recovery time depends on sets, load and effort, and adjusts to your own history in both directions, within limits.</p>
+    </div>
+    <div class="side-col pair">
       <figure class="fig">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
@@ -484,6 +516,7 @@ details.open summary svg{transform:rotate(90deg)}
         </div>
         <figcaption><span class="cap">Fig. 6</span>The same map switched to Levels, shaded by how much each muscle has been trained.</figcaption>
       </figure>
+    </div>
     </div>
   </div>
 </section>
@@ -519,16 +552,17 @@ details.open summary svg{transform:rotate(90deg)}
 </section>
 
 <section class="sec" id="history">
-  <div class="wrap stack">
-    <header class="sec-head" style="margin-bottom:0">
+  <div class="wrap">
+    <header class="sec-head">
       <div class="eyebrow rv">History</div>
       <h2 class="rv" style="--d:60ms">A log you can go back and correct.</h2>
     </header>
-    <div class="measure">
+    <div class="grid">
+    <div class="body-col measure sticky">
       <p>Trained days sit on a month calendar. Swipe sideways to page months, tap a day to list its sessions. Open any session to fix a set or a load; recovery is rebuilt from history after the edit. Swipe a session away and a toast offers Undo, heart data included.</p>
       <p>Stats keeps weekly volume, a sparkline per exercise with a plain trend word, and six kinds of records: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Loads stay in the unit you typed them in. Share a week or a session as a card.</p>
     </div>
-    <div class="pair">
+    <div class="side-col pair">
       <figure class="fig">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
@@ -543,6 +577,7 @@ details.open summary svg{transform:rotate(90deg)}
         </div>
         <figcaption><span class="cap">Fig. 9</span>Exercise progress for the machine chest press: the line falls from <span class="num">95.7</span> on August <span class="num">30</span> to <span class="num">68.3</span> on September <span class="num">27</span>, last top load <span class="num">50 kg</span>, trend marked Slipping.</figcaption>
       </figure>
+    </div>
     </div>
   </div>
 </section>
@@ -605,30 +640,30 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap stack">
     <header class="sec-head" style="margin-bottom:0">
       <div class="eyebrow rv">Install</div>
-      <h2 class="rv" style="--d:60ms">Two ways in.</h2>
+      <h2 class="rv" style="--d:60ms">Install the APK.</h2>
     </header>
     <div class="cards">
       <div class="card rv">
-        <h3>In the browser</h3>
-        <p>The web app is not published yet. Build it from the source, open it in Chrome, Edge or Samsung Internet on Android, then choose Add to Home Screen. It keeps every built file and works offline. Escobar needs a network; everything else does not.</p>
-        <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
-      </div>
-      <div class="card rv" style="--d:60ms">
         <h3>Android APK</h3>
-        <p>Version <span class="num">37.1.0</span>. Every build is signed with one permanent key, and CI checks the fingerprint before an APK is released. Check yours with apksigner and compare the SHA-256 below. Obtainium can install M/ARC straight from the GitHub releases page and checks the signature for you.</p>
+        <p>Version <span class="num">37.1.0</span>. Every build is signed with one permanent key, and CI checks the fingerprint before an APK is released. Check the file you downloaded with apksigner and compare the SHA-256 below. Obtainium can install M/ARC straight from the GitHub releases page and checks the signature for you.</p>
         <div>
           <div class="eyebrow" style="margin-bottom:8px">Signing key SHA-256. Does not change between versions.</div>
-          <pre class="code fp" id="fp">05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</pre>
+          <pre class="code fp" id="fp">05:66:9A:D2:72:1C:6A:BA:<wbr>F9:FD:D4:B9:B8:4E:2F:B7:<wbr>94:48:44:B1:DE:F3:59:84:<wbr>5F:01:5F:2B:67:CA:F1:F5</pre>
           <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="fp"><span class="lbl">Copy fingerprint</span><span class="ghost" aria-hidden="true">Copied</span></button>
-          <pre class="code" id="cmd" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs M-ARC.apk</pre>
+          <pre class="code" id="cmd" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs MARC-debug.apk</pre>
           <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="cmd"><span class="lbl">Copy command</span><span class="ghost" aria-hidden="true">Copied</span></button>
           <p style="margin-top:10px">If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
         </div>
         <a class="btn btn-accent" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
       </div>
-      <div class="card rv" style="--d:120ms">
+      <div class="card rv" style="--d:60ms">
         <h3>Source</h3>
         <p>The code is public on GitHub. Read it, build it, file an issue. Each push runs the typecheck, <span class="num">1,255</span> unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
+        <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+      <div class="card rv" style="--d:120ms">
+        <h3>In the browser, later</h3>
+        <p>The web app is not published yet. When it is, you will open it in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. Until then, build it from the source.</p>
         <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
       </div>
     </div>
@@ -643,7 +678,7 @@ details.open summary svg{transform:rotate(90deg)}
     <div class="grid">
       <div class="brand">
         <svg viewBox="0 0 64 64" role="img" aria-label="M/ARC mark"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" fill="none" stroke="#37352f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="50" r="4.5" fill="#2383e2"/></svg>
-        M/ARC <span class="num">37.1.0</span> for Android and the browser. Public source on GitHub.<br>This page sets no cookies and loads no analytics.
+        M/ARC <span class="num">37.1.0</span> for Android. Public source on GitHub.<br>This page sets no cookies and loads no analytics.
       </div>
       <div class="cols">
         <div><div class="eyebrow">Product</div><ul><li><a href="#install">Install</a></li><li><a href="#data">How data is handled</a></li><li><a href="#themes">Themes</a></li></ul></div>
@@ -651,7 +686,7 @@ details.open summary svg{transform:rotate(90deg)}
       </div>
       <p class="note">Every colour on this page is a Paper theme token. Every animation stops when your phone asks for less motion.</p>
     </div>
-    <p class="fpline">Signing key SHA-256, does not change between versions: 05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</p>
+    <p class="fpline">Signing key SHA-256, does not change between versions: 05:66:9A:D2:72:1C:6A:BA:<wbr>F9:FD:D4:B9:B8:4E:2F:B7:<wbr>94:48:44:B1:DE:F3:59:84:<wbr>5F:01:5F:2B:67:CA:F1:F5</p>
   </div>
 </footer>
 
@@ -686,9 +721,7 @@ off.addEventListener('click',function(){isOff=isOff===false;if(rm){setCard();ret
 var det=$('#why');$('summary',det).addEventListener('click',function(e){e.preventDefault();if(det.open){det.classList.remove('open');if(rm)det.open=false;else setTimeout(function(){det.open=false},200)}else{det.open=true;requestAnimationFrame(function(){det.classList.add('open')})}});
 /* copy the fingerprint */
 $$('[data-copy]').forEach(function(cb){cb.addEventListener('click',function(){var t=$('#'+cb.dataset.copy).textContent.trim();if(navigator.clipboard)navigator.clipboard.writeText(t);cb.classList.add('done');setTimeout(function(){cb.classList.remove('done')},1500)})});
-/* hero labels: only swap order when a web app URL is set and this is not Android */
-var cta=$('.cta');if(cta.dataset.web&&/Android/.test(navigator.userAgent)===false)cta.classList.add('swap');
 /* theme rail arrows */
-$$('[data-rail]').forEach(function(b){b.addEventListener('click',function(){$('#rail').scrollBy({left:224*+b.dataset.rail,behavior:rm?'auto':'smooth'})})});
+$$('[data-rail]').forEach(function(b){b.addEventListener('click',function(){$('#rail').scrollBy({left:220*+b.dataset.rail,behavior:rm?'auto':'smooth'})})});
 })();
 </script>
