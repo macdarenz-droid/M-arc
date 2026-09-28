@@ -332,7 +332,10 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
       return { mode: 'increase', target: `${up} kg · ${fmtRange(range)}`, kg: up, reps: range, reason: twoForTwo ? 'Top of the range two sessions running without max effort. Add one step.' : 'All sets felt easy at the top of the range. Add one step.', confidence: conf, sets: setPlan(setCount, up, range[0], null, 'Small load increase') };
     }
     if ((twoForTwo || fastTrack) && plateau.status !== 'declining' && readinessBlocksIncrease) {
-      return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: ctx?.readiness?.reason ?? 'Recovery is under 60% for this muscle, so the load holds for now.', confidence: conf, sets: holdSets('Hold for now', range[1]) };
+      return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: ctx?.readiness?.reason ?? (ctx?.recoveryPct != null && ctx.recoveryPct < RECOVERY_HOLD_PCT
+        ? 'Recovery is under 60% for this muscle, so the load holds for now.'
+        // BUG-16 (PROGRESSION-F12): amber readiness with the muscle recovered names readiness, not recovery.
+        : 'Readiness is middling today, so the load holds for now.'), confidence: conf, sets: holdSets('Hold for now', range[1]) };
     }
     return { mode: 'confirm', target: holdTarget, kg: topKg, reps: [range[1], range[1]], reason: 'You reached the top of the range once. Do it again at this load and the next step unlocks.', confidence: conf, sets: holdSets('Confirm', range[1]) };
   }
