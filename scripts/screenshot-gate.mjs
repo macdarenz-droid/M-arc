@@ -4802,10 +4802,12 @@ for (const theme of ['silent-black', 'paper']) {
 // device where it sits higher than the tokens say); a real tap at the button's centre at the scroll
 // end must open the sheet. Only the document may scroll (no nested scroller eating the end padding).
 const bug22Runs = [];
-for (const theme of ['silent-black', 'paper']) for (const inset of ['none', 'env48', 'var48', 'raised60']) bug22Runs.push({ theme, inset });
-// The owner's Samsung (3-button navigation, larger default font): a 360x740 viewport, a 48px inset
-// written the SystemBars way, and every --fs-* token scaled 1.3x (standing in for WebView text zoom).
-for (const theme of ['silent-black', 'paper']) bug22Runs.push({ theme, inset: 'samsung' });
+// Both themes run the full page walk; the inset and device variants only move the dock, not colours,
+// so they run once, in Silent Black, to keep the gate inside CI's time budget.
+for (const theme of ['silent-black', 'paper']) bug22Runs.push({ theme, inset: 'none' });
+for (const inset of ['env48', 'var48', 'raised60', 'samsung']) bug22Runs.push({ theme: 'silent-black', inset });
+// 'samsung' is the owner's phone (3-button navigation, larger default font): a 360x740 viewport, a 48px
+// inset written the SystemBars way, and every --fs-* token scaled 1.3x (standing in for WebView text zoom).
 for (const { theme, inset } of bug22Runs) {
   const ctx = await browser.newContext({ viewport: inset === 'samsung' ? { width: 360, height: 740 } : { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
