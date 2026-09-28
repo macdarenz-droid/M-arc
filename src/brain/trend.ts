@@ -69,6 +69,8 @@ export const PLATEAU_FLAT_TOTAL = 0.015;
 /** Below the BR-04 span, only a clear direction (never "plateaued") from the last PLATEAU_WINDOW sessions, 7+ needed. */
 export const PLATEAU_WINDOW = 8;
 const SHORT_MIN_SESSIONS = 7;
+/** Judged sessions in the BR-04 window from which the verdict is high confidence (else medium). */
+export const PLATEAU_HIGH_SESSIONS = 12;
 /** Weighted lifts are judged on e1RM when at least this many sessions in the window have one. */
 export const E1RM_MIN_SESSIONS = 4;
 
@@ -116,48 +118,72 @@ const bySign = (c: number): PlateauStatus => (Math.abs(c) < PLATEAU_FLAT_TOTAL ?
  * "Plateaued" needs the BR-04 window (6+ sessions over 42+ days, flat under 1.5% in total); on a
  * shorter span only a clear direction over the last 8 sessions (7+) is reported, else unknown.
  */
-export function plateauStatus(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted', today?: string): { status: PlateauStatus; confidence: Confidence } {
-  const none = { status: 'unknown' as const, confidence: 'low' as const };
-  if (mode === 'conditioning') return none;
-  type Row = ExerciseSessionSummary;
-  type Pick = { rows: Row[]; main: (r: Row) => number; tie: (r: Row) => number };
+type PlateauRow = ExerciseSessionSummary;
+type PlateauPick = { rows: PlateauRow[]; main: (r: PlateauRow) => number; tie: (r: PlateauRow) => number };
+
+/**
+ * The series BR-04 judges and the path it took: 'rule' (6+ judged sessions over 42+ days in the
+ * 56-day window), 'short' (the last 8 sessions since the break, 7+ needed) or 'none'.
+ */
+function plateauJudged(history: ExerciseSessionSummary[], mode: ResistanceMode, today?: string): { path: 'rule' | 'short' | 'none' } & PlateauPick {
+  const empty = { path: 'none' as const, rows: [], main: () => 0, tie: () => 0 };
+  if (mode === 'conditioning') return empty;
   // Weighted: e1RM from the sessions that have one, never mixed with top load (a 12-rep light
   // day has no e1RM); top load for all sessions, with volume as the tie-breaker, only when fewer
   // than E1RM_MIN_SESSIONS have an e1RM. A flat e1RM is flat whatever the volume (BR-04).
-  const pick = (rs: Row[]): Pick => {
+  const pick = (rs: PlateauRow[]): PlateauPick => {
     if (mode === 'bodyweight') return { rows: rs, main: r => r.bestReps, tie: () => 0 };
     if (mode === 'duration') return { rows: rs, main: r => r.bestDurationSec, tie: () => 0 };
     if (mode === 'assisted') return { rows: rs, main: r => r.topKg, tie: r => r.bestReps };
     const e = rs.filter(r => r.bestE1rm > 0);
     return e.length >= E1RM_MIN_SESSIONS ? { rows: e, main: r => r.bestE1rm, tie: () => 0 } : { rows: rs, main: r => r.topKg, tie: r => r.volume };
   };
-  // Less assistance is progress (BR-06).
-  const flip = mode === 'assisted' ? -1 : 1;
-  const series = (rs: ExerciseSessionSummary[], f: (r: ExerciseSessionSummary) => number): Series => rs.map(r => ({ day: r.day, value: f(r) }));
-
   // BR-04's count, span and confidence apply to the series actually judged (e.g. only the
   // e1RM sessions), not to every session in the window.
   const judged = pick(plateauWindow(history, today));
   const jr = judged.rows;
   const span = jr.length ? daysBetween(jr[0]!.day, jr[jr.length - 1]!.day) : 0;
-  if (jr.length >= PLATEAU_MIN_SESSIONS && span >= PLATEAU_MIN_SPAN_DAYS) {
-    const { rows, main, tie } = judged;
-    const m = totalChange(series(rows, main));
-    const t = totalChange(series(rows, tie));
+  if (jr.length >= PLATEAU_MIN_SESSIONS && span >= PLATEAU_MIN_SPAN_DAYS) return { path: 'rule', ...judged };
+  // Too short a span for BR-04: never a plateau, only a clear direction (VOLUME-F1).
+  const recent = sinceLastBreak(history).slice(-PLATEAU_WINDOW);
+  if (recent.length < SHORT_MIN_SESSIONS) return empty;
+  return { path: 'short', ...pick(recent) };
+}
+
+/** The sessions plateauStatus judged, on whichever path it took (empty when it had none). */
+export function plateauSeries(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted', today?: string): ExerciseSessionSummary[] {
+  return plateauJudged(history, mode, today).rows;
+}
+
+/**
+ * Whether a lift is progressing, plateaued or declining, judged by the lift's own measure.
+ * Weighted: e1RM from the sessions that have one (top load, with volume as the tie-breaker, only
+ * when fewer than 4 have one). Bodyweight: best reps. Duration: longest hold. Assisted (BR-06): less assistance is
+ * progress, and with it flat the best reps decide. Conditioning has no measure here: unknown (VOLUME-F2).
+ * "Plateaued" needs the BR-04 window (6+ sessions over 42+ days, flat under 1.5% in total); on a
+ * shorter span only a clear direction over the last 8 sessions (7+) is reported, else unknown.
+ */
+export function plateauStatus(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted', today?: string): { status: PlateauStatus; confidence: Confidence } {
+  const none = { status: 'unknown' as const, confidence: 'low' as const };
+  const { path, rows, main, tie } = plateauJudged(history, mode, today);
+  if (path === 'none') return none;
+  // Less assistance is progress (BR-06).
+  const flip = mode === 'assisted' ? -1 : 1;
+  const series = (f: (r: ExerciseSessionSummary) => number): Series => rows.map(r => ({ day: r.day, value: f(r) }));
+
+  if (path === 'rule') {
+    const m = totalChange(series(main));
+    const t = totalChange(series(tie));
     // Six sessions over six weeks is BR-04's evidence bar, so it is never low confidence.
-    const confidence: Confidence = rows.length >= 12 ? 'high' : 'medium';
+    const confidence: Confidence = rows.length >= PLATEAU_HIGH_SESSIONS ? 'high' : 'medium';
     if (m != null && Math.abs(m) >= PLATEAU_FLAT_TOTAL) return { status: bySign(flip * m), confidence };
     if (t != null && (t >= PLATEAU_FLAT_TOTAL || (mode === 'assisted' && t <= -PLATEAU_FLAT_TOTAL))) return { status: bySign(t), confidence };
     if (m != null || (mode === 'assisted' && t != null)) return { status: 'plateaued', confidence };
     return none;
   }
 
-  // Too short a span for BR-04: never a plateau, only a clear direction (VOLUME-F1).
-  const recent = sinceLastBreak(history).slice(-PLATEAU_WINDOW);
-  if (recent.length < SHORT_MIN_SESSIONS) return none;
-  const { rows, main, tie } = pick(recent);
-  const m = trend(series(rows, main));
-  const t = trend(series(rows, tie));
+  const m = trend(series(main));
+  const t = trend(series(tie));
   const confidence = m.confidence === 'low' ? t.confidence : m.confidence;
   if (m.direction === 'up' || m.direction === 'down') return { status: (m.direction === 'up') === (flip === 1) ? 'progressing' : 'declining', confidence };
   if (t.direction === 'up') return { status: 'progressing', confidence };

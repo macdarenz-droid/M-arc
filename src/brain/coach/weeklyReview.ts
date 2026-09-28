@@ -12,7 +12,7 @@ import { MUSCLE_IDS, muscleLabel, type MuscleId } from '@/data/muscles';
 import { findExercise } from '@/core/exercises';
 import { effectiveSetsByMuscle, isWorkingSet, ROLE_WEIGHT, rolesFor } from '../exposure';
 import { exerciseHistory, isActive, modeOf, type ExerciseSessionSummary } from '../history';
-import { isFlatTotal, plateauStatus, plateauWindow, sinceLastBreak, trend } from '../trend';
+import { isFlatTotal, plateauSeries, plateauStatus, sinceLastBreak, trend } from '../trend';
 import { weekStart, addDays, daysBetween, weekdayOf } from '@/core/dates';
 import { withoutGated, type Insight, type Sharing } from './rules';
 
@@ -251,10 +251,12 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
     if (p.status !== 'unknown') {
       const dir = p.status === 'progressing' ? 'up' : p.status === 'declining' ? 'down' : 'flat';
       const pctPerWeek = Math.round(t.slopePerWeek * 1000) / 10;
-      // The note's rate comes from the same series plateauStatus judged, so sign and rate agree.
-      const judged = e1rmTrend(plateauWindow(hist, today));
+      // The note's rate comes from the rows plateauStatus judged (8-week rule or short path), and is
+      // left out when that trend is unknown or its sign disagrees with the direction.
+      const judged = e1rmTrend(plateauSeries(hist, 'weighted', today));
       const judgedPct = Math.round(judged.slopePerWeek * 1000) / 10;
-      const rate = judged.direction === 'unknown' ? '' : ` at about ${Math.abs(judgedPct)}% a week`;
+      const agrees = Math.sign(judgedPct) === (dir === 'up' ? 1 : -1);
+      const rate = judged.direction === 'unknown' || !agrees ? '' : ` at about ${Math.abs(judgedPct)}% a week`;
       out.push({
         id: `weekly:e1rm:${id}`, category: 'progress', priority: 200, cadence: 'weekly', kind: 'progress', exerciseId: id,
         title: `${name}: ${dir === 'up' ? 'rising' : dir === 'down' ? 'falling' : 'flat'}`,

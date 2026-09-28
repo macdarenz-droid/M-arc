@@ -4,7 +4,7 @@
  * COACHRULES-F1/F23, D-A1 point 6).
  */
 import { describe, it, expect } from 'vitest';
-import { plateauStatus, PLATEAU_MIN_SPAN_DAYS as TREND_SPAN } from '@/brain/trend';
+import { plateauStatus, trend, PLATEAU_MIN_SPAN_DAYS as TREND_SPAN } from '@/brain/trend';
 import { exerciseHistory } from '@/brain/history';
 import { deloadTrigger } from '@/brain/deload';
 import { suggestNext } from '@/brain/progression';
@@ -212,5 +212,25 @@ describe('PR #47 second review: the weekly note rate comes from the judged windo
     const pct = Number(/about ([\d.]+)% a week/.exec(note?.noticed ?? '')?.[1]);
     // The last 8 weeks fall about 0.38% a week; the all-history slope is about +0.54% a week.
     expect(pct).toBe(0.4);
+  });
+});
+
+describe('PR #47 third review: the weekly note rate comes from the rows plateauStatus judged, on either path', () => {
+  it('bench every 12 days, 10 sessions (short path): no rising note with a falling rate', () => {
+    const kgs = [60, 70, 80, 90, 100, 110, 109.5, 109, 108.5, 108];
+    const s = kgs.map((kg, i) => session(addDays(today, -2 - (kgs.length - 1 - i) * 12), [{ id: bench, sets: sets(kg, 5, 'ideal', 3) }]));
+    const hist = exerciseHistory(s, bench, []);
+    expect(plateauStatus(hist, 'weighted', today).status).toBe('progressing');
+    const note = review(s)[0];
+    expect(note?.title).toMatch(/rising/);
+    // The 56-day window alone falls about 0.27% a week; the short path judged the last 8 sessions.
+    expect(note?.noticed).not.toMatch(/0\.3% a week/);
+    const m = /about ([\d.]+)% a week/.exec(note?.noticed ?? '');
+    if (m) {
+      const last8 = hist.slice(-8).map(h => h.bestE1rm);
+      const t = trend(last8.map((v, i) => ({ day: hist.slice(-8)[i]!.day, value: v })));
+      expect(t.slopePerWeek).toBeGreaterThan(0);
+      expect(Number(m[1])).toBe(Math.round(t.slopePerWeek * 1000) / 10);
+    }
   });
 });
