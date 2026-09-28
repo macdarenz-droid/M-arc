@@ -84,6 +84,6 @@ export function sideGalleryHtml(theme: ThemeId): string {
   return `<!doctype html><html data-theme="${theme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>${themeToCss(THEMES[theme])}body{margin:0;padding:16px;background:var(--bg);color:var(--text);font:13px Inter,system-ui,sans-serif}
 .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.card{margin:0;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--surface-1)}
-.card svg{display:block;width:100%;height:auto;overflow:hidden}figcaption{margin-top:4px;color:var(--text-2);font-size:11px}</style></head>
+.card svg{display:block;width:100%;aspect-ratio:${VIEWBOXES.standingFront[2]}/${VIEWBOXES.standingFront[3]};overflow:hidden}figcaption{margin-top:4px;color:var(--text-2);font-size:11px}</style></head>
 <body><h1 style="font-size:16px;margin:0 0 10px">FG-6 side figure, ${theme}</h1><div class="grid">${cards.join('')}</div></body></html>`;
 }

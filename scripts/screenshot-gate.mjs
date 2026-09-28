@@ -4932,8 +4932,9 @@ for (const theme of ['silent-black', 'paper']) {
 // FG-6: the side figure (docs/FORM-GUIDE-PRODUCTION.md §3, tests/formguide/sideGallery.ts). A2: the bench press (lockout,
 // bar on the chest, facing left) and the back squat (top, bottom) stills, plus the rest poses, each framed by the
 // standing camera in Silent Black and Paper at phone width (390 px): no page error, no sideways scroll, the figure and
-// its parts draw a non-empty box that stays inside its camera (nothing clipped), and the posed figure is where the rig
-// says (its joint groups carry the written transforms).
+// its parts draw a non-empty box that stays inside its camera (nothing clipped; measured on the drawn shapes, since a
+// group's box in Chrome is the union of its children's boxes turned with them, which overstates a rotated figure), and
+// all 17 joint groups carry the written transforms.
 {
   const { build } = await import('esbuild');
   const fg6Out = join(ROOT, 'node_modules/.cache/fg6-gallery.mjs');
@@ -4948,7 +4949,7 @@ for (const theme of ['silent-black', 'paper']) {
     const r = await page.evaluate(() => ({
       sw: document.documentElement.scrollWidth, iw: innerWidth,
       cards: [...document.querySelectorAll('figure.card')].map(f => {
-        const svg = f.querySelector('svg'), c = svg.getBoundingClientRect(), bs = [...svg.querySelectorAll('.fg-fig, .fg-part')].map(e => e.getBoundingClientRect());
+        const svg = f.querySelector('svg'), c = svg.getBoundingClientRect(), bs = [...svg.querySelectorAll(':is(.fg-fig, .fg-part) :is(path, ellipse, circle, rect, polygon)')].map(e => e.getBoundingClientRect());
         const b = bs.reduce((a, x) => ({ left: Math.min(a.left, x.left), top: Math.min(a.top, x.top), right: Math.max(a.right, x.right), bottom: Math.max(a.bottom, x.bottom) }), { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
         const posed = [...svg.querySelectorAll('.fg-j')].filter(g => g.style.transform).length;
         return { name: f.dataset.still, w: b.right - b.left, h: b.bottom - b.top, inside: b.left >= c.left - 1 && b.right <= c.right + 1 && b.top >= c.top - 1 && b.bottom <= c.bottom + 1, cardIn: c.right <= innerWidth, posed };
