@@ -9,6 +9,7 @@ import { buildRescueJson, saveRescueFile } from '@/core/rescue';
 import { exportText } from '@/native/share';
 import { stopSaving } from '@/core/store';
 import { HOLD_CONFIRM_MS } from '@/ui/gesture';
+import { reportCaught } from '@/errors';
 
 export async function saveRescueCopy(): Promise<void> {
   const text = buildRescueJson();
@@ -38,6 +39,7 @@ export class ErrorBoundary extends Component<{ children?: ComponentChildren }, {
 
   override componentDidCatch(error: unknown): void {
     console.error('render failed', error);
+    reportCaught('boundary', error);
     this.setState({ error });
   }
 
