@@ -1,0 +1,723 @@
+<title>Midnight Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+@font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
+@font-face{font-family:'Instrument Sans Fallback';src:local('Arial'),local('Helvetica');size-adjust:101%;ascent-override:92%;descent-override:23%;line-gap-override:0%}
+@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,255,.55)}
+@property --light-b{syntax:'<color>';inherits:true;initial-value:rgba(0,212,255,.35)}
+:root{
+  color-scheme:dark;
+  --bg:#0a2540;--s1:#0f2d4d;--s2:#143559;--s3:#1a3f68;--text:#f6f9fc;--text2:#a3b6cc;--text3:#6c839c;
+  --accent:#635bff;--accent-soft:rgba(99,91,255,.18);--accent-line:rgba(99,91,255,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
+  --border:#263e57;--border-a:rgba(246,249,252,.12);--border-strong:rgba(246,249,252,.22);--shadow:0 18px 44px rgba(3,20,40,.55);
+  --bezel:#071a30;--ring:rgba(246,249,252,.18);--white:#fff;--hl:rgba(255,255,255,.14);--hl-soft:rgba(255,255,255,.07);--sheen:rgba(255,255,255,.08);--nav-bg:rgba(10,37,64,.88);
+  --light-a:rgba(99,91,255,.55);--light-b:rgba(0,212,255,.35);
+  --la-violet:rgba(99,91,255,.55);--la-green:rgba(62,207,142,.5);--la-amber:rgba(255,187,0,.42);--lb-cyan:rgba(0,212,255,.35);--lb-violet:rgba(99,91,255,.4);
+  --t-silent:#5e6ad2;--t-paper:#2383e2;--t-ember:#ff6363;--t-emerald:#3ecf8e;--t-midnight:#635bff;
+  --accent-text:color-mix(in srgb,var(--accent) 65%,var(--text));
+  --focus:color-mix(in srgb,var(--accent) 80%,var(--text));
+  --r1:8px;--r2:12px;--r3:16px;--r4:22px;
+  --dur-press:100ms;--dur-fast:150ms;--dur-base:200ms;--dur-enter:240ms;--dur-bounce:460ms;
+  --dur-light:400ms;--dur-reveal:400ms;--stagger:40ms;--dur-rise:600ms;--gap-rise:120ms;--dur-draw:900ms;--dur-pop:200ms;--dur-wipe:800ms;--dur-fill:700ms;--dur-copied:1500ms;--dur-undo:8000ms;--dur-tick:1000ms;
+  --ease-standard:cubic-bezier(.2,0,0,1);--ease-enter:cubic-bezier(.05,.7,.1,1);--ease-exit:cubic-bezier(.3,0,.8,.15);--ease-draw:cubic-bezier(.6,.6,0,1);--ease-fill:cubic-bezier(.2,.7,.2,1);--ease-spring-bounce:var(--ease-enter);
+  --fd:'Instrument Sans','Instrument Sans Fallback',Arial,sans-serif;
+  --fb:Inter,'Inter Fallback',Arial,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --pad:128px;--gutter:32px;--cut:min(10.5vw,140px);--navh:64px;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@supports (transition-timing-function:linear(0,1)){
+  :root{--ease-spring-bounce:linear(0,0.106,0.323,0.554,0.748,0.889,0.978,1.025,1.043,1.044,1.036,1.026,1.016,1.008,1.003,1,0.998,0.998,0.998,0.999,1)}
+}
+@media (max-width:1024px){:root{--pad:96px}}
+@media (max-width:640px){:root{--pad:64px;--gutter:16px;--navh:57px}}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.5 var(--fb);letter-spacing:-.009em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.page{overflow-x:clip;position:relative}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+h1,h2,h3,p,ul,ol,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+.wrap{max-width:calc(1120px + 2*var(--gutter));margin-inline:auto;padding-inline:var(--gutter)}
+.g{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;align-items:center}
+.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c5r{grid-column:8/span 5}
+.band{padding-block:var(--pad)}
+.lift{background:var(--s1)}
+.cut{position:relative;isolation:isolate;overflow:clip;background:transparent;padding-top:calc(var(--pad) + var(--cut))}
+.cut::before{content:"";position:absolute;inset:0;background:var(--s1);clip-path:polygon(0 var(--cut),100% 0,100% 100%,0 100%);z-index:-1}
+
+/* type */
+.eyebrow{font:600 12px/1 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text);margin-bottom:16px}
+.eb-hero{font:500 15px/1.4 var(--fd);letter-spacing:-.005em;text-transform:none;color:var(--text2);margin-bottom:20px}
+h1{font:600 64px/1.04 var(--fd);letter-spacing:-.03em;text-wrap:balance}
+h2{font:600 44px/1.1 var(--fd);letter-spacing:-.024em;text-wrap:balance;margin-bottom:20px}
+h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
+.lead{font-size:19px;color:var(--text2);max-width:36em}
+.copy p+p{margin-top:16px}
+.copy p{color:var(--text2)}
+.cap{font:400 13px/1.4 var(--fb);color:var(--text2)}
+.stat{font:600 48px/1 var(--fb);letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.mono,code{font:400 13px/1.6 var(--fm);letter-spacing:0}
+.title{font:600 17px/1.4 var(--fb);letter-spacing:-.01em;color:var(--text)}
+.link{color:var(--text2);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--border-strong)}
+.link:hover{color:var(--text)}
+@media (max-width:640px){
+  body{font-size:15px}h1{font-size:40px}h2{font-size:32px}.lead{font-size:17px}.stat{font-size:40px}
+}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:var(--r2);font:500 15px/1 var(--fb);letter-spacing:-.005em;color:var(--text);text-decoration:none;border:1px solid var(--border);background:var(--s1);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn-s:hover{border-color:var(--border-strong);background:var(--s2)}
+.btn-p{background:var(--accent);border-color:transparent;color:var(--white);box-shadow:inset 0 1px 0 var(--hl)}
+.btn-p:hover{background:color-mix(in srgb,var(--accent) 88%,white);transform:translateY(-1px)}
+.btn-p:active{transform:scale(.97)}
+.btn.sm{min-height:36px;padding:0 14px;font-size:14px}
+
+/* skip */
+.skip{position:absolute;left:16px;top:-48px;z-index:100;background:var(--accent);color:var(--white);padding:10px 14px;border-radius:var(--r1);font:500 15px/1 var(--fb);text-decoration:none}
+.skip:focus{top:16px}
+
+/* nav */
+.sentinel{height:1px;margin-bottom:-1px}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--navh);border-bottom:1px solid transparent}
+.nav.on,html:not(.js) .nav{background:var(--nav-bg);border-bottom-color:var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+@media (max-width:400px){.nav.on,html:not(.js) .nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}}
+.nav-in{display:flex;align-items:center;gap:16px;height:100%}
+.lockup{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);--lk:var(--accent)}
+.mark{width:28px;height:28px;flex:none;overflow:visible}
+.mark path{fill:none;stroke:currentColor;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
+.mark circle{fill:var(--lk);transform-box:fill-box;transform-origin:center}
+.word{font:600 18px/1 var(--fd);letter-spacing:-.02em}
+.word .sl{color:var(--lk)}
+.nav-links{display:flex;gap:2px;margin-inline:auto}
+.nav-links a,.menu a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:var(--r1);font:500 15px/1 var(--fb);color:var(--text2);text-decoration:none}
+.nav-links a:hover,.nav-links a[aria-current],.menu a:hover{color:var(--text)}
+.nav-links a[aria-current]{background:var(--accent-soft)}
+.nav-ctas{display:flex;gap:8px;margin-left:auto;align-items:center}
+.menu{display:none;position:relative}
+.menu summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:var(--r1);font:500 15px/1 var(--fb);color:var(--text2)}
+.menu summary::-webkit-details-marker{display:none}
+.menu[open] summary{color:var(--text)}
+.menu ul{position:absolute;left:0;right:0;top:100%;padding:8px var(--gutter) 16px;background:var(--bg);border-bottom:1px solid var(--border)}
+.menu li a{display:flex;width:100%}
+@media (max-width:900px){
+  .nav-links{display:none}
+  .menu{display:block;position:static}
+  .nav-ctas{margin-left:0}
+  .nav-in{justify-content:space-between}
+}
+@media (max-width:640px){.nav .btn-s{display:none}}
+
+/* pinned block: hero and story */
+.pinblock{position:relative;isolation:isolate;overflow:clip}
+.pg{display:grid;grid-template-columns:5fr 7fr;column-gap:24px;row-gap:0}
+.hero-copy{grid-column:1;grid-row:1;min-height:72svh;display:flex;flex-direction:column;justify-content:center;padding:48px 0 64px;max-width:560px}
+.col-pin{grid-column:2;grid-row:1/3;display:flex;justify-content:center;align-items:flex-start;z-index:2}
+.story-bg{grid-column:1/-1;grid-row:2;margin-inline:calc(50% - 50vw);background:var(--s1);clip-path:polygon(0 var(--cut),100% 0,100% 100%,0 100%);z-index:-1;position:relative}
+.story{grid-column:1;grid-row:2;padding-top:calc(var(--cut) + 48px);padding-bottom:64px}
+.pin{position:sticky;top:max(calc(50vh - 442px),8px);contain:layout paint;padding:96px 64px;isolation:isolate}
+.light{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(50% 40% at 32% 30%,var(--light-a),transparent 70%),radial-gradient(45% 36% at 72% 66%,var(--light-b),transparent 70%);filter:blur(60px);will-change:filter}
+.light::after{content:"";position:absolute;inset:0;background:var(--grain) 0 0/256px 256px repeat;opacity:.06;mix-blend-mode:overlay}
+.pinblock[data-step="2"] .pin{--light-a:var(--la-green);--light-b:var(--lb-cyan)}
+.pinblock[data-step="3"] .pin{--light-a:var(--la-amber);--light-b:var(--lb-violet)}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero .lead{margin-top:24px}
+.hero .cap{margin-top:16px}
+
+/* phone frame */
+.phone{position:relative;width:320px;max-width:100%;background:var(--bezel);border-radius:40px;padding:10px;box-shadow:var(--shadow),0 0 0 1px var(--ring);margin-inline:auto}
+.phone::after{content:"";position:absolute;inset:0;border-radius:40px;box-shadow:inset 0 1px 0 var(--hl-soft);pointer-events:none}
+.screen{position:relative;aspect-ratio:780/1688;border-radius:32px;overflow:hidden;background:var(--bg)}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.phone.s{width:300px}
+.layer{opacity:0;transform:translateY(12px)}
+[data-step="0"] .l-today,[data-step="3"] .l-today,[data-step="1"] .l-live,[data-step="2"] .l-body{opacity:1;transform:none}
+
+/* strip and steps */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:64px}
+.strip li{display:flex;flex-direction:column;gap:8px}
+.strip span{font-size:13px;line-height:1.4;color:var(--text2)}
+.steps{counter-reset:s}
+.step{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 0;max-width:460px}
+.step .eyebrow{color:var(--text2)}
+.step[aria-current] .eyebrow{color:var(--accent-text)}
+.step h3{margin-bottom:12px}
+.step p{color:var(--text2)}
+.bands{margin-top:28px;border-top:1px solid var(--border)}
+.bands li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:15px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--c);flex:none}
+.rings{display:flex;gap:24px;margin-top:20px}
+.rings > div{display:flex;align-items:center;gap:10px;font:500 14px/1.3 var(--fb);font-variant-numeric:tabular-nums}
+.ring{width:40px;height:40px;flex:none}
+.ring .tr{fill:none;stroke:var(--border);stroke-width:4}
+.ring .val{fill:none;stroke:var(--warning);stroke-width:4;stroke-linecap:round;stroke-dasharray:var(--v) 100;transform:rotate(-90deg);transform-origin:50% 50%}
+.ring.acc .val{stroke:var(--accent)}
+.ring .tick{fill:none;stroke:var(--text);stroke-width:1.5;stroke-linecap:round}
+.step-shot{display:none;margin-top:32px}
+.step-shot .cap{margin-top:12px}
+
+/* figures */
+.fig figcaption{margin-top:16px;text-align:center}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.duo > figure:nth-child(2){margin-top:48px}
+.duo .phone{width:100%;max-width:300px}
+.duo figcaption{text-align:left}
+
+/* rows and replicas */
+.rows{margin-top:32px;border-top:1px solid var(--border)}
+.rows li{display:grid;grid-template-columns:24px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--border);align-items:start}
+.rows li p{font-size:15px;color:var(--text2);margin-top:4px}
+.ic{width:24px;height:24px;color:var(--accent-text);fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.rest{margin-top:32px;background:var(--s3);border:1px solid var(--border);border-top:2px solid var(--border-strong);border-radius:var(--r3);padding:16px 20px;max-width:420px}
+.rest-live{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center}
+.rest-time{font:600 40px/1 var(--fd);letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.rest-c{display:flex;gap:8px}
+.rest-c span{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:var(--r1);border:1px solid var(--border);background:var(--s2);font:500 14px/1 var(--fb)}
+.rest-n{grid-column:1/-1;font-size:14px;color:var(--text2)}
+.rest-done{display:none;font:600 22px/1.25 var(--fd);letter-spacing:-.012em;padding:8px 0}
+.rest.done .rest-live{display:none}.rest.done .rest-done{display:block}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r3);padding:20px}
+.key{box-shadow:inset 0 1px 0 var(--hl);position:relative;overflow:hidden}
+.key::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,var(--sheen) 50%,transparent 60%);transform:translateX(-100%);pointer-events:none}
+.panel{position:relative;width:390px;max-width:100%;aspect-ratio:390/344;background:var(--s1);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden}
+.panel img{position:absolute;left:0;top:-67.44%;width:100%;height:auto}
+.prop{margin-top:24px;max-width:390px}
+.prop .title{margin-bottom:4px}
+.prop p{font-size:15px;color:var(--text2);margin-bottom:16px}
+.undo{margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.undo-l,.undo-d{font:500 14px/1 var(--fb);color:var(--text2);display:block;margin-bottom:8px}
+.undo-d{display:none;color:var(--positive)}
+.undo-bar{display:block;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.undo-bar b{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(1)}
+.prop.applied .undo-bar{background:var(--positive)}
+.prop.applied .undo-bar b{transform:scaleX(0)}
+.prop.applied .undo-l{display:none}.prop.applied .undo-d{display:block}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:32px}
+.tile{display:flex;flex-direction:column;gap:12px;font:500 14px/1.3 var(--fb);font-variant-numeric:tabular-nums}
+.tile .stat{font-size:32px}
+.stats2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px}
+.stats2 .stat{font-size:40px;margin-bottom:8px}
+.stats2 span{font-size:14px;color:var(--text2);line-height:1.4}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.cards3 .ic{margin-bottom:16px}
+.cards3 h3{font-size:19px;margin-bottom:8px}
+.cards3 p{font-size:15px;color:var(--text2)}
+.switches{margin-top:48px;display:grid;grid-template-columns:auto 1fr;gap:16px 24px;align-items:center;max-width:820px}
+.sw{display:flex;align-items:center;gap:12px;font:500 15px/1 var(--fb);white-space:nowrap}
+.pill{display:inline-block;width:46px;height:28px;border-radius:14px;border:1px solid var(--border-strong);background:var(--s2);position:relative;flex:none}
+.pill b{position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--text2)}
+.switches p{grid-row:1/3;grid-column:2;font-size:15px;color:var(--text2)}
+
+/* install */
+.install{position:relative;isolation:isolate;overflow:clip}
+.install .light{inset:auto 10% 15%;height:60%;opacity:.4;z-index:-1}
+.icards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;align-items:start}
+.icards .card{display:flex;flex-direction:column;gap:14px;padding:28px 24px}
+.icards h3{font-size:20px}
+.icards p{font-size:15px;color:var(--text2)}
+.icards .btn{align-self:flex-start;margin-top:auto}
+.fp{display:block;word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text)}
+.cmd{display:block;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text2)}
+.copyrow{display:flex;gap:8px;align-items:flex-start}
+.copyrow .btn{font:500 13px/1 var(--fm);min-height:40px;padding:0 12px;flex:none}
+.label{font:600 12px/1.4 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
+.themes{margin-top:64px;padding-top:32px;border-top:1px solid var(--border)}
+.themes p{text-align:center;color:var(--text2);font-size:15px;margin-bottom:24px}
+.trow{display:flex;flex-wrap:wrap;justify-content:center;gap:24px 40px}
+.trow li{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;color:var(--text2)}
+.trow .mark{width:24px;height:24px}
+.trow .word{font-size:16px}
+
+/* footer */
+.foot{background:var(--s1);padding:96px 0 48px}
+.foot .lockup .mark{width:24px;height:24px}
+.frow1{display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;padding-bottom:40px}
+.frow1 p{color:var(--text2);font-size:15px}
+.fcols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:40px 0;border-top:1px solid var(--border)}
+.fcols h3{font:600 13px/1 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:16px}
+.fcols li{margin-bottom:10px}
+.fcols a{color:var(--text2);text-decoration:none;font-size:15px}
+.fcols a:hover{color:var(--text)}
+.frow3{border-top:1px solid var(--border);padding-top:24px;color:var(--text2)}
+
+/* cursor shine */
+.sh{position:relative}
+.sh::after{content:"";position:absolute;inset:0;border-radius:inherit;border:1px solid var(--accent-line);pointer-events:none;opacity:0;-webkit-mask:radial-gradient(200px 200px at var(--mx,-999px) var(--my,-999px),black 0,transparent 100%);mask:radial-gradient(200px 200px at var(--mx,-999px) var(--my,-999px),black 0,transparent 100%)}
+@media (hover:hover) and (pointer:fine){.sh:hover::after{opacity:1}}
+
+/* responsive */
+@media (max-width:900px){
+  .c5,.c6,.c7,.c5r{grid-column:1/-1}
+  .fig.first{order:-1}
+  .pg{grid-template-columns:1fr;grid-template-rows:auto calc(44vh + 64px) auto}
+  .hero-copy{grid-row:1;max-width:none;min-height:0;padding:32px 0 40px}
+  .col-pin{grid-column:1;grid-row:2/4}
+  .story-bg,.story{grid-column:1;grid-row:3}
+  .pin{top:calc(var(--navh) + env(safe-area-inset-top,0px));padding:32px 40px}
+  .pin .phone{width:calc(44vh * 780 / 1688)}
+  .story{padding-top:calc(var(--cut) + 32px)}
+  .step{min-height:100vh;justify-content:flex-start;padding-top:calc(44vh + 96px);max-width:none}
+  .cards3,.icards,.fcols{grid-template-columns:1fr}
+  .switches{grid-template-columns:1fr}
+  .switches p{grid-row:auto;grid-column:auto}
+}
+@media (max-width:640px){
+  .strip{grid-template-columns:1fr 1fr}
+  .phone,.phone.s{width:240px}
+  .duo{gap:16px}
+  .duo .phone{width:100%}
+  .stats2{grid-template-columns:1fr}
+  .install .light{inset:auto 0 10%;height:50%}
+}
+
+/* fallback for no JS and reduced motion: stacked phone and text pairs */
+html:not(.m) .pin{position:static}
+html:not(.m) .step-shot{display:block}
+html:not(.m) .step{min-height:0;padding:40px 0}
+html:not(.m) .rest .rest-live{display:none}
+html:not(.m) .rest .rest-done{display:block}
+html:not(.m) .prop .undo-bar{background:var(--positive)}
+html:not(.m) .prop .undo-bar b{transform:scaleX(0)}
+html:not(.m) .prop .undo-l{display:none}
+html:not(.m) .prop .undo-d{display:block}
+@media (max-width:900px){
+  html:not(.m) .col-pin{grid-row:2}
+  html:not(.m) .pg{grid-template-rows:auto auto auto}
+  html:not(.m) .step{padding-top:40px}
+}
+
+/* motion: only with JS and no reduced-motion request */
+@media (prefers-reduced-motion:no-preference){
+  .m .btn{transition:transform var(--dur-press) var(--ease-standard),background-color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
+  .m .nav{transition:background-color var(--dur-base) var(--ease-standard),border-color var(--dur-base) var(--ease-standard)}
+  .m .nav-links a,.m .link,.m .fcols a{transition:color var(--dur-fast) var(--ease-standard),background-color var(--dur-fast) var(--ease-standard)}
+  .m .sh::after{transition:opacity var(--dur-base) var(--ease-standard)}
+  .m .step{transition:opacity var(--dur-base) var(--ease-standard)}
+  .m .step .eyebrow{transition:color var(--dur-base) var(--ease-standard)}
+  .m .step:not([aria-current]){opacity:.6}
+  .m .layer{transition:opacity var(--dur-enter) var(--ease-standard),transform var(--dur-enter) var(--ease-enter)}
+  .m .light{transition:--light-a var(--dur-light) var(--ease-standard),--light-b var(--dur-light) var(--ease-standard)}
+  .m .ring .val{transition:stroke-dasharray var(--dur-fill) var(--ease-fill)}
+  .m .ring:not(.fill) .val{stroke-dasharray:0 100}
+  .m .rings > div:nth-child(2) .ring .val{transition-delay:var(--gap-rise)}
+  .m .tiles > div:nth-child(2) .ring .val{transition-delay:var(--gap-rise)}
+  /* reveals */
+  .m .r:not(.in){opacity:0;transform:translateY(12px)}
+  .m .r{transition:opacity var(--dur-reveal) var(--ease-enter),transform var(--dur-reveal) var(--ease-enter)}
+  .m .st:not(.in) > *{opacity:0;transform:translateY(12px)}
+  .m .st > *{transition:opacity var(--dur-reveal) var(--ease-enter),transform var(--dur-reveal) var(--ease-enter)}
+  .m .st > :nth-child(2){transition-delay:var(--stagger)}
+  .m .st > :nth-child(3){transition-delay:calc(2*var(--stagger))}
+  .m .st > :nth-child(4){transition-delay:calc(3*var(--stagger))}
+  .m .st > :nth-child(5){transition-delay:calc(4*var(--stagger))}
+  .m .duo > figure:nth-child(2){transition-delay:calc(2*var(--stagger))}
+  /* hero load */
+  .m .hero-copy > *{animation:rise var(--dur-rise) var(--ease-enter) both}
+  .m .hero-copy > :nth-child(2){animation-delay:var(--gap-rise)}
+  .m .hero-copy > :nth-child(3){animation-delay:calc(2*var(--gap-rise))}
+  .m .hero-copy > :nth-child(4){animation-delay:calc(3*var(--gap-rise))}
+  .m .hero-copy > :nth-child(5){animation-delay:calc(4*var(--gap-rise))}
+  .m .pin .phone{animation:arrive var(--dur-draw) var(--ease-enter) both}
+  .m .lockup.draw .mark path{animation:draw var(--dur-draw) var(--ease-draw) both}
+  .m .lockup.draw .mark circle{animation:pop var(--dur-pop) var(--ease-enter) calc(var(--dur-draw) - var(--dur-pop)) both}
+  /* image wipe on load */
+  .m img.wipe:not(.ld){opacity:0}
+  .m img.wipe.ld{-webkit-mask-image:linear-gradient(90deg,black 40%,transparent 60%);mask-image:linear-gradient(90deg,black 40%,transparent 60%);-webkit-mask-size:250% 100%;mask-size:250% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation:wipe var(--dur-wipe) var(--ease-standard) both}
+  /* keycap sheen, once */
+  .m .in .key::before,.m .key.in::before{animation:sweep var(--dur-wipe) var(--ease-standard) var(--dur-wipe) 1 both}
+  /* rest banner swell */
+  .m .rest.done .rest-done{animation:swell var(--dur-bounce) var(--ease-spring-bounce) both}
+  /* undo drain */
+  .m .prop.run .undo-bar b{transform:scaleX(0);transition:transform var(--dur-undo) linear}
+  .m .prop .undo-bar{transition:background-color var(--dur-base) var(--ease-standard)}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}}
+  @keyframes arrive{0%{opacity:.3;transform:scale(.97)}30%{opacity:.3}100%{opacity:1;transform:none}}
+  @keyframes draw{from{stroke-dashoffset:1}}
+  @keyframes pop{from{transform:scale(0)}}
+  @keyframes wipe{from{-webkit-mask-position:100% 0;mask-position:100% 0}to{-webkit-mask-position:0 0;mask-position:0 0}}
+  @keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+  @keyframes swell{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+}
+</style>
+
+<a class="skip" href="#install">Skip to install</a>
+<div class="page">
+<div class="sentinel" id="sentinel" aria-hidden="true"></div>
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="lockup" id="lockup" href="#hero" aria-label="M/ARC, back to the top">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="1"/><circle cx="30" cy="50" r="4.5"/></svg>
+      <span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span>
+    </a>
+    <nav class="nav-links" id="navlinks" aria-label="Sections">
+      <a href="#train">Train</a><a href="#body">Body</a><a href="#escobar">Escobar</a><a href="#history">History</a><a href="#data">Your data</a>
+    </nav>
+    <details class="menu">
+      <summary>Menu</summary>
+      <ul>
+        <li><a href="#train">Train</a></li><li><a href="#body">Body</a></li><li><a href="#escobar">Escobar</a></li><li><a href="#history">History</a></li><li><a href="#data">Your data</a></li>
+      </ul>
+    </details>
+    <div class="nav-ctas">
+      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      <a class="btn btn-p" href="#install">Install</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="pinblock" id="pinblock" data-step="0">
+  <div class="wrap pg">
+    <section class="hero-copy hero" id="hero" data-i="0" aria-labelledby="hero-h">
+      <p class="eyebrow eb-hero">Version 37.1.0 for Android and the browser</p>
+      <h1 id="hero-h">A training log that knows how recovered you are.</h1>
+      <p class="lead">Every set you rate feeds a recovery clock for each of 24 muscles, a readiness score for the day and a target for your next session. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
+      <div class="ctas">
+        <a class="btn btn-p" id="dl" href="#install">Download for Android</a>
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+      <p class="cap">Signed APK. No account. Works offline.</p>
+    </section>
+
+    <div class="col-pin">
+      <div class="pin">
+        <div class="light" aria-hidden="true"></div>
+        <div class="phone">
+          <div class="screen">
+            <img class="layer l-today wipe" src="shots/midnight-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day, readiness Amber at 66, with triceps at 45% and three days from ready">
+            <img class="layer l-live wipe" src="shots/midnight-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down">
+            <img class="layer l-body wipe" src="shots/midnight-body.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="story-bg" aria-hidden="true"></div>
+
+    <section class="story" id="story" aria-labelledby="story-h">
+      <ul class="strip" aria-label="Four figures about the app">
+        <li><b class="stat">153</b><span>exercises in the library</span></li>
+        <li><b class="stat">24</b><span>muscles on the map</span></li>
+        <li><b class="stat">6</b><span>kinds of records</span></li>
+        <li><b class="stat">8</b><span>seconds to undo a coach change</span></li>
+      </ul>
+      <p class="eyebrow">How it works</p>
+      <h2 id="story-h">Every set you rate changes the next session.</h2>
+      <ol class="steps">
+        <li class="step" data-i="1" aria-current="step">
+          <p class="eyebrow">Step 1</p>
+          <h3>One tap for effort.</h3>
+          <p>After each set, tap E, I or M. Easy means 3 or more reps left, Ideal 1 to 3, Max nothing left. A missing rating never counts as easy or max. It lowers confidence instead.</p>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="shots/midnight-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down"></div></div>
+            <figcaption class="cap">A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down</figcaption>
+          </figure>
+        </li>
+        <li class="step" data-i="2">
+          <p class="eyebrow">Step 2</p>
+          <h3>Each muscle recovers on its own clock.</h3>
+          <p>Every working set leaves an impulse sized by role, effort, reps and load. It decays, stacks over 7 days and adjusts to how your next session actually went, within limits. Ready for hard work at 90%. Fully recovered at 97%.</p>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="shots/midnight-body.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready"></div></div>
+            <figcaption class="cap">The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready</figcaption>
+          </figure>
+        </li>
+        <li class="step" data-i="3">
+          <p class="eyebrow">Step 3</p>
+          <h3>Targets that respect a bad night.</h3>
+          <p>Your check-in, sleep, resting heart rate and load make a 0 to 100 score. Green from 67. Red at 33 or below. Amber holds the load. Red cuts sets. The advice is one sentence you can act on: keep loads steady today and skip any increases.</p>
+          <ul class="bands">
+            <li><i class="dot" style="--c:var(--positive)" aria-hidden="true"></i>Green, 67 and above. Train as planned.</li>
+            <li><i class="dot" style="--c:var(--warning)" aria-hidden="true"></i>Amber. Keep loads steady, skip increases.</li>
+            <li><i class="dot" style="--c:var(--negative)" aria-hidden="true"></i>Red, 33 and below. Fewer sets today.</li>
+          </ul>
+          <div class="rings rings-story">
+            <div><svg class="ring" viewBox="0 0 40 40" style="--v:45" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/><path class="tick" d="M11.8 8.7L9.4 5.4"/></svg><span>Triceps 45%</span></div>
+            <div><svg class="ring" viewBox="0 0 40 40" style="--v:58" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/><path class="tick" d="M11.8 8.7L9.4 5.4"/></svg><span>Chest 58%</span></div>
+          </div>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="shots/midnight-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen on the same Push day, readiness Amber at 66 and the advice to keep loads steady"></div></div>
+            <figcaption class="cap">The Today screen on the same Push day, readiness Amber at 66 and the advice to keep loads steady</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </section>
+  </div>
+</div>
+
+<section class="band lift" id="train" aria-labelledby="train-h">
+  <div class="wrap g">
+    <div class="c5 copy r">
+      <p class="eyebrow">Train</p>
+      <h2 id="train-h">Targets from your own numbers.</h2>
+      <p>Open a session and every set already says what to do, 62.5 kg for 8 with a one-line reason. Tap the row to log it as planned or type what actually happened.</p>
+      <p>A target steps up after you hit the top of the range twice. It holds when readiness is Amber or a primary muscle is under 60% recovered. A lighter week or a Red day cuts sets. There is no blind 2.5 kg increase.</p>
+      <ul class="rows st">
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><div><h3 class="title">Rest by heart rate</h3><p>With a Bluetooth heart-rate watch, rest ends when your heart rate settles, and falls back to the timer if the signal drops.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.5 7 21l5-2.5 5 2.5-1.5-7.5"/></svg><div><h3 class="title">A PR chip while you are still on the bench</h3><p>The set that beats your best lights up the moment you log it, and History keeps six kinds of records, from heaviest load to furthest carry.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg><div><h3 class="title">Plates per side</h3><p>Tap a barbell target to see the plates in the plates' own unit. Up to 8 gyms, and each machine remembers kg or lb.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><div><h3 class="title">Why this target</h3><p>Open the disclosure under any exercise to see the rule that fired, such as top of range twice, step up, or effort missing, repeat and rate.</p></div></li>
+      </ul>
+      <div class="rest" data-play="rest" aria-hidden="true">
+        <div class="rest-live">
+          <div class="rest-time">1:30</div>
+          <div class="rest-c"><span>-15</span><span>+15</span><span>Skip</span></div>
+          <div class="rest-n">Next · 50 kg × 6</div>
+        </div>
+        <div class="rest-done">Rest done. Next set.</div>
+      </div>
+    </div>
+    <figure class="c7 fig first r">
+      <div class="phone s"><div class="screen"><img class="wipe" src="shots/midnight-train.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Train tab with a Push split of three exercises: machine chest press at 50 kg, dumbbell shoulder press at 18 kg, triceps pushdown at 25 kg, three sets each"></div></div>
+      <figcaption class="cap">The Train tab with a Push split of three exercises: machine chest press at 50 kg, dumbbell shoulder press at 18 kg, triceps pushdown at 25 kg, three sets each</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band" id="body" aria-labelledby="body-h">
+  <div class="wrap g">
+    <div class="c7 duo st">
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="shots/midnight-levels.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map in Levels view, front and back, the most worked muscles in violet, with the legend Most worked, Some, None"></div></div>
+        <figcaption class="cap">The muscle map in Levels view, front and back, the most worked muscles in violet, with the legend Most worked, Some, None</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="shots/midnight-checkin.png" width="780" height="1688" loading="lazy" decoding="async" alt="The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale"></div></div>
+        <figcaption class="cap">The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale</figcaption>
+      </figure>
+    </div>
+    <div class="c5 copy r">
+      <p class="eyebrow">Body</p>
+      <h2 id="body-h">24 muscles, each with a ready time.</h2>
+      <p>Tap any muscle for its ring, when it will be ready and how sure the estimate is. Ready times sit under Today, Tomorrow, Later and Sore today. When sleep, resting heart rate and load slow everything down, the map says so in one line, for example whole body recovering about 12% slower than usual this week. If a muscle already feels fine, mark it as fresh.</p>
+      <p>This week shows effective sets per muscle against a band and turns amber when you go over. Levels shows how much you have trained each muscle, as a relative measure and not a medical one.</p>
+      <p>Sleep and heart rate can arrive from Android Health Connect in the background. Before a session, a quick check-in adds sleep quality, mood and soreness on a 1 to 5 scale. It takes a few seconds and you can skip it.</p>
+      <div class="tiles" data-play="rings">
+        <div class="card tile sh"><svg class="ring acc" viewBox="0 0 40 40" style="--v:90" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/></svg><span>90% ready for hard work</span></div>
+        <div class="card tile sh"><svg class="ring acc" viewBox="0 0 40 40" style="--v:97" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/></svg><span>97% fully recovered</span></div>
+        <div class="card tile sh"><b class="stat">7</b><span>days of stacking</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="escobar" aria-labelledby="escobar-h">
+  <div class="wrap g">
+    <div class="c6 r">
+      <figure>
+        <div class="panel sh"><img class="wipe" src="shots/midnight-escobar.png" width="780" height="1688" loading="lazy" decoding="async" alt="Today's brief on the Escobar tab: Push today, but triceps is only 45% recovered, with the suggestion to swap splits or keep Push light. Nothing agreed yet."></div>
+        <figcaption class="cap" style="margin-top:12px">Today's brief on the Escobar tab: Push today, but triceps is only 45% recovered, with the suggestion to swap splits or keep Push light. Nothing agreed yet.</figcaption>
+      </figure>
+      <div class="card prop sh" data-play="undo" aria-hidden="true">
+        <div class="title">Lighter week</div>
+        <p>Fewer sets this week.</p>
+        <span class="btn btn-p sm">Apply</span>
+        <div class="undo"><span class="undo-l">Undo · 8 s</span><span class="undo-d">Applied</span><i class="undo-bar"><b></b></i></div>
+      </div>
+    </div>
+    <div class="c5r copy r">
+      <p class="eyebrow">Escobar</p>
+      <h2 id="escobar-h">A coach that checks its own numbers.</h2>
+      <p>Escobar is the one online part of M/ARC, and it is off until you turn it on. Ask about your training and every number in the answer is checked against your own log before it stands; anything unsupported is repaired or marked, and you can see what it looked at.</p>
+      <p>When Escobar wants to change something, a split, a schedule, a goal, today's loads or a lighter week, it arrives as a card. Nothing changes until you tap Apply, and you have 8 seconds to undo.</p>
+      <p>Without a network the tab still works: the ranked notes, the weekly review and the lighter-week suggestion update on the phone, and each note shows its chain, Noticed, Means, Do next. What Escobar knows lists what it remembers about injuries, equipment and preferences, and you can edit or delete any of it.</p>
+      <div class="stats2 st">
+        <div class="card key sh"><b class="stat">14</b><span>kinds of change, each tap to apply</span></div>
+        <div class="card key sh"><b class="stat">422</b><span>cues that work offline</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="history" aria-labelledby="history-h">
+  <div class="wrap g">
+    <div class="c7 duo st">
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="shots/midnight-history.png" width="780" height="1688" loading="lazy" decoding="async" alt="History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Sunday the 27th, Pull on Saturday the 26th"></div></div>
+        <figcaption class="cap">History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Sunday the 27th, Pull on Saturday the 26th</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="shots/midnight-stats.png" width="780" height="1688" loading="lazy" decoding="async" alt="History in Stats view: the machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping"></div></div>
+        <figcaption class="cap">History in Stats view: the machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping</figcaption>
+      </figure>
+    </div>
+    <div class="c5 copy r">
+      <p class="eyebrow">History</p>
+      <h2 id="history-h">A history you can edit.</h2>
+      <p>Swipe the calendar between months, tap a day to see its sessions, open any of them to fix a set or a load. Recovery is rebuilt from history after the edit. Swipe a session to delete it and get an Undo that restores it with its heart data.</p>
+      <p>Stats shows weekly volume, a sparkline per exercise once you have logged it twice, and records by kind: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Share a week or a session as a card.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band cut" id="data" aria-labelledby="data-h">
+  <div class="wrap">
+    <div class="copy r" style="max-width:640px">
+      <p class="eyebrow">Your data</p>
+      <h2 id="data-h">No account. No server copy. Your log stays on the phone.</h2>
+    </div>
+    <div class="cards3 st">
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 17.5h2"/></svg><h3>It stays on the phone.</h3><p>Sessions, recovery and settings are stored on the device. Photos you give Escobar and heart-rate data sit in their own local stores. There is nothing to sign in to, and nothing is uploaded unless you turn Escobar on.</p></div>
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5a3.5 3.5 0 0 1 0 9.5H7zM4 4l16 16"/></svg><h3>It works offline.</h3><p>The service worker installs every built file, and the coach notes, weekly review and lighter-week suggestion run without a network. Only a conversation with Escobar needs one.</p></div>
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><h3>It is a file you own.</h3><p>Export a JSON backup and restore it with a preview and Undo. Export every set as CSV for 90 days or all time. If saved data ever fails to read at start, it is kept aside as a rescue file, never thrown away.</p></div>
+    </div>
+    <div class="switches r">
+      <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share health data</div>
+      <p>When Escobar is on, health data (sleep, resting and session heart rate) and body data (weight, measurements) leave the phone only with their own switches on. Turn one off and that data is redacted from replayed history. Requests go through the project's own server, and quotas are counted per device and network address, not per account.</p>
+      <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share body data</div>
+    </div>
+  </div>
+</section>
+
+<section class="band install" id="install" aria-labelledby="install-h">
+  <div class="light" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="copy r" style="max-width:640px">
+      <p class="eyebrow">Install</p>
+      <h2 id="install-h">Get M/ARC.</h2>
+    </div>
+    <div class="icards st">
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
+        <h3>Add to Home Screen</h3>
+        <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></svg>
+        <h3>Android APK</h3>
+        <p class="mono" style="color:var(--text)">Version 37.1.0</p>
+        <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released.</p>
+        <p class="label">Signing key SHA-256. Does not change between versions.</p>
+        <div class="copyrow"><code class="fp" id="fp">05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint">Copy</button></div>
+        <code class="cmd">apksigner verify --print-certs M-ARC.apk</code>
+        <p>If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
+        <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
+        <a class="link" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a>
+        <p>Obtainium can install M/ARC straight from the GitHub releases page and checks the signature for you.</p>
+      </div>
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>
+        <h3>Read the source</h3>
+        <p>The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,255 unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+    </div>
+    <div class="themes r">
+      <p>Five themes. Silent Black, Paper, Ember, Emerald and Midnight. Switching one crossfades the whole app.</p>
+      <ul class="trow">
+        <li><span class="lockup" style="--lk:var(--t-silent)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Silent Black</li>
+        <li><span class="lockup" style="--lk:var(--t-paper)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Paper</li>
+        <li><span class="lockup" style="--lk:var(--t-ember)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Ember</li>
+        <li><span class="lockup" style="--lk:var(--t-emerald)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Emerald</li>
+        <li><span class="lockup" style="--lk:var(--t-midnight)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Midnight</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="frow1">
+      <a class="lockup" href="#hero" aria-label="M/ARC, back to the top"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></a>
+      <p>Nothing leaves your phone unless you turn Escobar on.</p>
+    </div>
+    <div class="fcols">
+      <div><h3>Product</h3><ul><li><a href="#hero">Today</a></li><li><a href="#train">Train</a></li><li><a href="#body">Body</a></li><li><a href="#escobar">Escobar</a></li><li><a href="#history">History</a></li></ul></div>
+      <div><h3>Install</h3><ul><li><a href="#install">Android APK</a></li><li><a href="#install">Add to Home Screen</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a></li></ul></div>
+      <div><h3>Source</h3><ul><li><a href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">GitHub</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture notes</a></li><li><a href="#fp">Signing key</a></li></ul></div>
+    </div>
+    <p class="frow3 mono">M/ARC 37.1.0. Public source on GitHub. This page loads no analytics and sets no cookies.</p>
+  </div>
+</footer>
+</div>
+
+<script>
+(function(){
+var d=document,h=d.documentElement,q=function(s,c){return (c||d).querySelector(s)},qa=function(s,c){return [].slice.call((c||d).querySelectorAll(s))};
+h.classList.add('js');
+var mq=matchMedia('(prefers-reduced-motion: reduce)');
+var setM=function(){h.dataset.motion=mq.matches?'reduce':'auto';h.classList.toggle('m',mq.matches===false)};
+setM();mq.addEventListener('change',setM);
+var M=function(){return h.classList.contains('m')};
+var ms=function(n){return parseFloat(getComputedStyle(h).getPropertyValue(n))||0};
+
+if(/android/i.test(navigator.userAgent)){var dl=q('#dl');if(dl)dl.href='https://github.com/macdarenz-droid/M-arc/releases/latest'}
+
+var lk=q('#lockup');
+if(lk){
+  var draw=function(){lk.classList.remove('draw');void lk.offsetWidth;lk.classList.add('draw')};
+  if(M())draw();
+  lk.addEventListener('animationend',function(e){if(e.target.tagName==='circle')lk.classList.remove('draw')});
+  if(matchMedia('(pointer:fine)').matches)lk.addEventListener('pointerenter',function(){if(M())draw()});
+}
+
+var nav=q('#nav');
+new IntersectionObserver(function(e){nav.classList.toggle('on',e[0].isIntersecting===false)}).observe(q('#sentinel'));
+
+var play={
+  rings:function(el){qa('.ring',el).forEach(function(r){r.classList.add('fill')})},
+  rest:function(el){
+    if(M()===false)return;
+    var t=q('.rest-time',el),v=['1:29','1:28'],i=0,tk=ms('--dur-tick');
+    var f=function(){if(i<v.length){t.textContent=v[i++];setTimeout(f,tk)}else el.classList.add('done')};
+    setTimeout(f,tk);
+  },
+  undo:function(el){
+    if(M()===false)return;
+    var b=q('.undo-bar b',el);
+    b.addEventListener('transitionend',function(){el.classList.add('applied')});
+    requestAnimationFrame(function(){el.classList.add('run')});
+  }
+};
+var io=new IntersectionObserver(function(es){es.forEach(function(e){
+  var el=e.target,k=el.dataset.play,need=k?.4:.2;
+  if(e.isIntersecting===false||e.intersectionRatio<need)return;
+  el.classList.add('in');io.unobserve(el);
+  if(k&&play[k])play[k](el);
+})},{threshold:[.2,.4]});
+qa('.r,.st,[data-play]').forEach(function(el){io.observe(el)});
+
+var pb=q('#pinblock'),steps=qa('[data-i]'),links=qa('#navlinks a');
+var setCur=function(id){links.forEach(function(a){if(id&&a.getAttribute('href')==='#'+id)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})};
+var so=new IntersectionObserver(function(es){es.forEach(function(e){
+  if(e.isIntersecting===false)return;
+  var t=e.target;
+  if(t.hasAttribute('data-i')){
+    var i=+t.dataset.i;
+    pb.dataset.step=i;
+    steps.forEach(function(s){if(s.dataset.i==='0')return;if(+s.dataset.i===i)s.setAttribute('aria-current','step');else s.removeAttribute('aria-current')});
+    if(i===3)qa('.rings-story .ring').forEach(function(r){r.classList.add('fill')});
+    setCur(null);
+  }else setCur(t.id);
+})},{rootMargin:'-45% 0px -45% 0px'});
+steps.forEach(function(s){so.observe(s)});
+qa('main > section[id]').forEach(function(s){so.observe(s)});
+
+qa('img.wipe').forEach(function(im){
+  var f=function(){im.classList.add('ld')};
+  if(im.complete&&im.naturalWidth)f();else{im.addEventListener('load',f);im.addEventListener('error',f)}
+});
+
+if(matchMedia('(hover:hover) and (pointer:fine)').matches)d.addEventListener('pointermove',function(e){
+  var el=e.target.closest?e.target.closest('.sh'):null;if(el===null)return;
+  var r=el.getBoundingClientRect();
+  el.style.setProperty('--mx',(e.clientX-r.left)+'px');el.style.setProperty('--my',(e.clientY-r.top)+'px');
+});
+
+qa('[data-copy]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var el=q(b.dataset.copy),t=el.textContent.trim();
+    var done=function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},ms('--dur-copied'))};
+    var fail=function(){var s=getSelection(),r=d.createRange();r.selectNodeContents(el);s.removeAllRanges();s.addRange(r)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fail);else fail();
+  });
+});
+})();
+</script>
