@@ -199,6 +199,13 @@ Ownership (AGENTS.md): the supervisor adds the `fg:check` and `fg:render` script
 ## 7. Production order
 
 0. **Batch 0, the rig** (FG-1 to FG-4): rig joints, painter port, checks, player wiring on the lateral raise; the owner's phone measurement of the worst case. Ships behind the existing GU-7a host row.
+
+**Version 1 cut (owner, 2026-09-28).** Version 1 ships the form guide for the owner's own two splits first: 15 exercises. The other 138 follow in the batches below, after the release or in parallel if the budget allows. These 15 need FG-4, FG-5, FG-6 (side view), FG-7 (cables and the pulldown) and the machine parts below. They are built as Batch 1 before the order below:
+- Free weights and bodyweight (4): `lib_dumbbell_lateral_raise` (done in FG-2), `lib_dumbbell_biceps_curl`, `lib_romanian_deadlift` (barbell), `lib_hanging_leg_raise`.
+- Cable (3): `lib_seated_cable_row`, `lib_single_arm_triceps_pushdown`, `lib_lat_pulldown`.
+- Machines (8): `lib_machine_chest_press`, `lib_incline_machine_press`, `lib_rear_delt_fly`, `lib_shoulder_press`, `lib_leg_press`, `lib_seated_leg_curl`, `lib_leg_extension`, `lib_seated_calf_raise`.
+The batches below then skip whatever Batch 1 already built.
+
 1. **Batch 1, side view, benches and free weights** (FG-5, FG-6, then exercises): the free-weight starter-template exercises: bench presses, rows, RDL, deadlift, squat, lunges, overhead press, curls (13 of the 24 template exercises).
 2. **Batch 2, the template machines**: leg press, leg extension, seated leg curl, standing calf, machine chest press, chest-supported row, seated row station, lat pulldown station (the remaining 11 template exercises finish here).
 3. **Batch 3, the dual pulley** (FG-7 first): 21 cable exercises plus the remaining pulldowns (27).

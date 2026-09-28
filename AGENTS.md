@@ -68,6 +68,12 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 - Map every acceptance criterion to evidence: a unit test, a gate probe or a recorded device check. A bug fix needs a test that fails before and passes after.
 - In the PR body, list the head commit, the changed paths, the evidence for each criterion, what needs a real phone, and open risks.
 - After two failed tries of the same approach with no new evidence, stop and tell the supervisor.
+- Self-check before titling a PR "[ready for review]" (owner, 2026-09-28):
+  - tick every acceptance criterion in the PR body with its evidence;
+  - prove each new test bites: break the code it covers, see the test fail, restore it, and list these mutations in the PR;
+  - merge `origin/main`, then run `npm run check`, `npm run test:tz` and the gate on that exact head;
+  - re-read your own diff against the card's `write_scope` and `reserved_paths`.
+- Never cut, narrow or skip a test or probe to fit a time limit. Tell the supervisor instead.
 
 **Supervisor:**
 - Reacts to PR and CI events, not polling.
@@ -85,6 +91,10 @@ Adopted from the owner's Agent Delivery Playbook on 2026-09-26. The supervisor k
 - Checks every agent's report itself before accepting it: re-runs the key check on the exact commit.
 - Messages another session with a one-shot Routine bound to it (`create_trigger` with `persistent_session_id` and `run_once_at` a minute or two ahead). Never `fire_trigger` with text: that starts a new, empty session.
 - Archives a session as soon as its role is done: a reviewer after its review, a builder after its PR merges or closes.
+- Sweeps the tracker on every tick (owner, 2026-09-28):
+  - every `ready` item the owner asked for is started or has a written reason why not;
+  - every merged item is set to done with its evidence the same tick.
+- Brings review-passed PRs up to date with `main` together, so their CI runs in parallel, then merges them in checklist order as each turns green.
 - Keeps Relay current (dashboard, `PROJECT_STATE.md`, `LOG.md`). Posts in `agents/All Updates` only when something important changed.
 - Speaks to the owner in plain words, and only at a phase end, a decision only the owner can make, or a blocker only the owner can clear. No play-by-play.
 
