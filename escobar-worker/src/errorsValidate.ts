@@ -126,13 +126,17 @@ const ROUTE = /^[a-z][a-z0-9-]{0,39}$/;
 const ERROR_NAME = /^[A-Za-z_$][\w$.-]{0,79}$/;
 const VERSION = /^[0-9A-Za-z.+-]{1,40}$/;
 const LABEL = /^[\w .,()+-]{1,60}$/;
-const BUNDLE_PATH = /^\/?[\w.-]+(\/[\w.-]+)*\.m?js$/;
+/** The app's built files only (`vite build` into www/): `assets/<Name>-<8-character hash>.js`, and
+ * the service worker `sw.js`. A path with any other shape (a folder, a name with extra words or
+ * digits outside the hash) could carry personal text, so it is never stored. */
+const BUNDLE_PATH = /^\/(assets\/[A-Za-z][A-Za-z0-9_]*-[A-Za-z0-9_-]{8}\.js|sw\.js)$/;
 
 /** A frame's file as an app-bundle path (web or app scheme and host, query and hash removed), or
- * null to drop the frame. Any other scheme (a browser extension, for one) keeps its ':' and fails the path test. */
+ * null to drop the frame. Any other scheme (file:, blob:, data:, an extension) keeps its ':' and fails the test. */
 export function bundlePath(file: string): string | null {
   const path = file.replace(/^(https?|capacitor):\/\/[^/]*/i, '').replace(/[?#].*$/, '');
-  return BUNDLE_PATH.test(path) && !path.includes('..') ? path : null;
+  const rooted = path.startsWith('/') ? path : `/${path}`;
+  return BUNDLE_PATH.test(rooted) ? rooted : null;
 }
 
 /** The report the Worker stores: allowlisted fields only, each value cleaned again. */

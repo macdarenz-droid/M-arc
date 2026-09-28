@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { handleErrors } from '../src/errorsHandler';
 import { dailyPurge, HOURLY_LIMIT, RETENTION_MS } from '../src/errorsStore';
-import { cleanReport, scrubMessage, type Report } from '../src/errorsValidate';
+import { bundlePath, cleanReport, scrubMessage, type Report } from '../src/errorsValidate';
 import worker from '../src/index';
 import type { Env } from '../src/anthropic';
 import { sqliteD1 } from './d1-sqlite';
@@ -19,7 +19,7 @@ function report(overrides: Record<string, unknown> = {}) {
   return {
     installId: INSTALL, ts: '2026-09-27T12:00:00.000Z', app: '1.4.0', platform: 'android',
     route: 'exercise-stats', kind: 'boundary', name: 'TypeError', message: 'x is undefined',
-    frames: [{ file: 'https://localhost/assets/index-Ab12.js', line: 1, col: 2 }], sig: '0a1b2c3d', count: 1, ...overrides,
+    frames: [{ file: 'https://localhost/assets/index-AbCd1234.js', line: 1, col: 2 }], sig: '0a1b2c3d', count: 1, ...overrides,
   };
 }
 const batch = (reports: unknown[] = [report()]) => ({ v: 1, reports });
@@ -57,7 +57,7 @@ describe('POST /errors: shape and size (W1-W3)', () => {
       stored_at: NOW, install_id: INSTALL, ts: '2026-09-27T12:00:00.000Z', app: '1.4.0', platform: 'android', os: null, device: null,
       route: 'exercise-stats', kind: 'boundary', name: 'TypeError', message: 'x is undefined', sig: '0a1b2c3d', count: 1,
     });
-    expect(JSON.parse(stored[0]!.frames as string)).toEqual([{ file: '/assets/index-Ab12.js', line: 1, col: 2 }]);
+    expect(JSON.parse(stored[0]!.frames as string)).toEqual([{ file: '/assets/index-AbCd1234.js', line: 1, col: 2 }]);
   });
 
   it('W1 accepts a full batch of 20 and every documented kind', async () => {
@@ -122,22 +122,45 @@ describe('POST /errors: server-side allowlist (W4)', () => {
       os: 'Android 15',
       device: 'Pixel 9; call 555-0100 ✓',
       frames: [
-        { file: 'https://localhost/assets/index-Ab12.js?user=anna#x', line: 10, col: 5 },
+        { file: 'https://localhost/assets/index-AbCd1234.js?user=anna#x', line: 10, col: 5 },
         { file: 'chrome-extension://abc/inject.js', line: 1, col: 1 },
         { file: 'Anna Smith 140kg', line: 1, col: 1 },
         { file: '../../etc/passwd.js', line: 1, col: 1 },
-        { file: 'assets/vendor-9f.mjs', line: 3, col: 4 },
+        { file: 'assets/web-aB3dE5fG.js', line: 3, col: 4 },
       ],
     });
     expect((await handleErrors(post(batch([hostile])), env, deps)).status).toBe(204);
     const [row] = rows(db, 'error_reports');
     expect(row).toMatchObject({ message: 'Squat ###kg for "…" at ##:##', route: 'unknown', name: 'Error', app: 'unknown', os: 'Android 15', device: null });
     expect(JSON.parse(row!.frames as string)).toEqual([
-      { file: '/assets/index-Ab12.js', line: 10, col: 5 },
-      { file: 'assets/vendor-9f.mjs', line: 3, col: 4 },
+      { file: '/assets/index-AbCd1234.js', line: 10, col: 5 },
+      { file: '/assets/web-aB3dE5fG.js', line: 3, col: 4 },
     ]);
     const all = reportText(db);
     for (const personal of ['Anna', '140', '07:30', 'anna@example.com', '555', 'chrome-extension', 'passwd', 'user=anna']) expect(all).not.toContain(personal);
+  });
+
+  it('W4 keeps only the real bundle files, never a path that could carry personal text (review of 06efaba, finding 1)', () => {
+    const leaks = [
+      'https://localhost/Jane-Doe-bench-100kg',
+      'https://localhost/notes/I-hurt-my-knee',
+      'https://localhost/notes/Jane-Doe-100kg.js',
+      'https://localhost/assets/Jane-Doe-bench-100kg.js',
+      'https://localhost/assets/sub/index-AbCd1234.js',
+      'file:///storage/emulated/0/Jane/index-AbCd1234.js',
+      'blob:https://localhost/6f1c-2a',
+      'data:text/javascript,alert(1)',
+      'Error: failed at https://localhost/Jane-Doe-bench-100kg',
+    ];
+    for (const f of leaks) expect([f, bundlePath(f)]).toEqual([f, null]);
+    const kept: Array<[string, string]> = [
+      ['https://localhost/assets/index-AbCd1234.js', '/assets/index-AbCd1234.js'],
+      ['https://mrcdrnzz.netlify.app/assets/EscobarSheet-Xy12_w-4.js?v=1#x', '/assets/EscobarSheet-Xy12_w-4.js'],
+      ['capacitor://localhost/assets/web-aB3dE5fG.js', '/assets/web-aB3dE5fG.js'],
+      ['https://localhost/sw.js', '/sw.js'],
+      ['assets/web-aB3dE5fG.js', '/assets/web-aB3dE5fG.js'],
+    ];
+    for (const [f, want] of kept) expect([f, bundlePath(f)]).toEqual([f, want]);
   });
 
   it('W4 matches the app cleaning, and cleaning twice changes nothing', () => {

@@ -33,7 +33,7 @@ Workouts, sets, weights, reps, notes, exercise or split names, body weight, heal
 ## Server (escobar-worker/)
 - `POST /errors`:
   - validates the shape against the allowlist and rejects unknown fields;
-  - applies the allowlist again to the values: re-cleans the message (a quote runs to the last quote of its kind, an unclosed quote removes the rest, curly quotes count), keeps only app-bundle file paths in frames, and replaces an unexpected route, error name or version with a neutral value;
+  - applies the allowlist again to the values: re-cleans the message (a quote runs to the last quote of its kind, an unclosed quote removes the rest, curly quotes count), keeps only app-bundle files in frames (`/assets/<Name>-<hash>.js` and `/sw.js`), and replaces an unexpected route, error name or version with a neutral value;
   - limits body size to 8 KB (8192 bytes; the app must pack batches to at most this) and a batch to 20 reports;
   - limits requests to 30 per hour per install id and per IP. The IP is never stored: its counter uses a keyed hash that is deleted after the hour.
 - Stores reports in Cloudflare D1 (database `marc-errors`, binding `ERRORS_DB`) and deletes them after 90 days (a daily cron).
