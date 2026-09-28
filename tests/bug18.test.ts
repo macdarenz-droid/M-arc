@@ -192,3 +192,29 @@ describe('BUG-18 A2: a session where every set is held', () => {
     expect(next.sets.every(x => x.kg === 100)).toBe(true);
   });
 });
+
+describe('BUG-18 x BUG-17: finish and the rebuild learn the same recovery model with a held typo', () => {
+  it('an earlier session with a typo set gives the same model at finish and in a rebuild', async () => {
+    const { calibrateAfterSession, lastSummaryAlone } = await import('@/brain/recovery');
+    const { rebuildRecoveryModel, sortByStart } = await import('@/slices/workout/session');
+    const { sessionAt } = await import('./helpers');
+    const SQUAT = 'lib_barbell_back_squat';
+    const DAY = 86_400_000;
+    const at = (t: number, sets: LoggedSet[]) => sessionAt(new Date(t).toISOString(), new Date(t + 3_600_000).toISOString(), [{ id: SQUAT, sets }]);
+    const t0 = Date.parse('2026-09-01T07:00:00Z');
+    const max5 = (kg: number): LoggedSet => ({ kg, reps: 5, effort: 'max' });
+    const list = [at(t0, [max5(100), max5(100), max5(100)]), at(t0 + 3 * DAY, [max5(100), max5(100), max5(100), max5(150)]), at(t0 + 6 * DAY, [max5(100), max5(100), max5(100)])];
+    // What finishSession stores, step by step, with the previous summary finish uses.
+    let finish = { tauScale: {}, observations: {} } as import('@/core/models').RecoveryModel;
+    const sorted = sortByStart(list);
+    sorted.forEach((sess, i) => {
+      const prior = sorted.slice(0, i);
+      finish = calibrateAfterSession(prior, sess, [], { name: 'N' }, [], finish, id => lastSummaryAlone(prior, id, []));
+    });
+    expect(rebuildRecoveryModel({ sessions: list, customExercises: [], profile: { name: 'N' }, healthDays: [] })).toEqual(finish);
+    // The default (no summary given) is the same rule.
+    let byDefault = { tauScale: {}, observations: {} } as import('@/core/models').RecoveryModel;
+    sorted.forEach((sess, i) => { byDefault = calibrateAfterSession(sorted.slice(0, i), sess, [], { name: 'N' }, [], byDefault); });
+    expect(byDefault).toEqual(finish);
+  });
+});
