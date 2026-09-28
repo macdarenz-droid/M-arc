@@ -9,7 +9,8 @@ const css = readFileSync(cssPath, 'utf8');
 // Animation names allowed to keep a literal, infinite-running duration: the handful of
 // decorative loops the plan keeps outside the token system. I3 (batch b2b) deleted the
 // exercise-breathe/exercise-shimmer loops, so they are gone from this list too.
-const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
+// UI-1 brings back exercise-shimmer only: a finite run on open, infinite only while logging.
+const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin', 'exercise-shimmer'];
 
 const TOKENS_START = '/* tokens:start */';
 const TOKENS_END = '/* tokens:end */';

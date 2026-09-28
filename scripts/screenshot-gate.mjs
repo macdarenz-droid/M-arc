@@ -2213,14 +2213,116 @@ for (const theme of themes) {
   }
 
   // (3) Always: every still-running infinite animation is one of the allow-listed decorative loops.
-  // I3 dropped exercise-breathe/exercise-shimmer, so a live screen showing an active card must not
-  // have any infinite animation left running on it at all.
+  // UI-1 (replaces I3's "no exercise-* animation" probe): at most one exercise-* animation, only on
+  // the open card's title. The inputs are blurred here, so the logging sweep must be off and the
+  // idle check below stays strict: exercise-shimmer is NOT on its allow list.
+  const exAnims = await page.evaluate(() => document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'))
+    .map(a => ({ name: a.animationName, onActiveTitle: !!a.effect?.target?.matches?.('.exercise.active .exname') })));
+  if (exAnims.length > 1 || exAnims.some(a => !a.onActiveTitle)) errors.push(`${tag}: UI-1 A6 exercise-* animations: ${JSON.stringify(exAnims)}`);
   const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
     .map(a => (a instanceof CSSAnimation ? a.animationName : a.constructor.name)), ALLOW);
   if (unlisted.length) errors.push(`${tag}: unlisted infinite animation(s): ${unlisted.join(', ')}`);
+  await ctx.close();
+}
+
+// UI-1: the open exercise's title sweeps twice on open and stops by itself (A1), sweeps while a
+// kg/reps field has focus and stops on blur, holds briefly after an effort tap, stays off when idle
+// (A2), never runs under reduced motion (A3), paints only var(--text) and the accent (A4), and only
+// the open card's title ever animates (A6). Full motion, 390 px, Silent Black and Paper.
+for (const theme of ['silent-black', 'paper']) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const tag = `UI-1 shimmer ${theme}`;
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: 'Later' }).click().catch(() => {}); await page.waitForTimeout(250);
+  await page.locator('nav.nav button', { hasText: /^(Train|Live)$/ }).click(); await page.waitForTimeout(250);
+  await page.getByRole('button', { name: /^Start / }).first().click(); await page.waitForTimeout(300);
+  if (await page.getByRole('button', { name: 'Skip', exact: true }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Skip', exact: true }).click(); await page.waitForTimeout(300); }
+  await page.getByRole('button', { name: /^Start / }).first().click();
+  await page.waitForSelector('.exercise.active .exname');
+  // Every exercise-* animation, where it runs, and the title's paint at this instant.
+  const probe = () => page.evaluate(() => {
+    const anims = document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'));
+    const rgb = v => { const d = document.createElement('i'); d.style.color = v; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
+    const n = document.querySelector('.exercise.active .exname'); const cs = n && getComputedStyle(n);
+    return {
+      anims: anims.map(a => ({ name: a.animationName, state: a.playState, iterations: a.effect.getTiming().iterations, onActiveTitle: !!a.effect.target?.matches('.exercise.active .exname') })),
+      text: rgb('var(--text)'), accent: rgb('var(--accent)'), greys: [rgb('var(--text-2)'), rgb('var(--text-3)')],
+      paint: cs && { color: cs.color, fill: cs.webkitTextFillColor, clip: cs.backgroundClip || cs.webkitBackgroundClip, bg: cs.backgroundColor, image: cs.backgroundImage },
+    };
+  });
+  const running = p => p.anims.filter(a => a.state === 'running');
+  const a6 = (p, when) => { if (p.anims.length > 1 || p.anims.some(a => !a.onActiveTitle)) errors.push(`${tag}: A6 ${when}: ${JSON.stringify(p.anims)}`); };
+  // A4: plain var(--text) at rest; mid-sweep the fill is transparent over a var(--text) background
+  // carrying only the accent band, with no dim text tone anywhere.
+  const restPlain = (p, when) => { if (!p.paint || p.paint.color !== p.text || p.paint.fill !== p.text || p.paint.clip === 'text') errors.push(`${tag}: A4 title not plain var(--text) ${when}: ${JSON.stringify(p.paint)} text ${p.text}`); };
+
+  // A1: opening starts a finite run on the title.
+  let p = await probe();
+  a6(p, 'on open');
+  if (running(p).length !== 1 || !(Number.isFinite(p.anims[0]?.iterations) && p.anims[0].iterations >= 1)) errors.push(`${tag}: A1 opening gave no finite exercise-shimmer run: ${JSON.stringify(p.anims)}`);
+  // Freeze it mid-pass for the paint check and the screenshot (once the screen's own entry fades
+  // have settled), then let it run on.
+  await settle(page);
+  await page.evaluate(() => { const a = document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer'); if (a) { a.pause(); a.currentTime = 1000; } });
+  p = await probe();
+  const mid = p.paint;
+  if (!mid || mid.color !== p.text || mid.bg !== p.text || mid.clip !== 'text' || mid.fill !== 'rgba(0, 0, 0, 0)' || !mid.image.includes(p.accent) || p.greys.some(g => mid.image.includes(g) || mid.bg === g)) errors.push(`${tag}: A4 mid-sweep paint is not var(--text) + accent: ${JSON.stringify(mid)} text ${p.text} accent ${p.accent}`);
+  const head = await page.locator('.exercise.active .ex-head').boundingBox();
+  if (head) await page.screenshot({ path: `${OUT}/${theme}-ui1-title-sweep.png`, clip: { x: 0, y: Math.max(0, head.y - 8), width: 390, height: head.height + 16 } });
+  await page.evaluate(() => document.getAnimations().find(x => x instanceof CSSAnimation && x.animationName === 'exercise-shimmer')?.play());
+  // ...and it ends by itself: gone from document.getAnimations(), title plain again (A1, A2 idle).
+  await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 6000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A1 the open run did not end by itself: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'after the open run');
+
+  // A2: focusing a kg field sweeps, and keeps sweeping; blurring stops it within one cycle.
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'kg focus');
+  if (running(p).length !== 1 || p.anims[0].iterations !== Infinity) errors.push(`${tag}: A2 kg focus gave no sweep: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().fill('40');
+  await page.locator('.exercise.active .set-grid input').nth(1).focus(); await page.waitForTimeout(2300);
+  p = await probe();
+  if (running(p).length !== 1) errors.push(`${tag}: A2 sweep stopped while the reps field still has focus: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').nth(1).blur();
+  const offAfterBlur = await page.waitForFunction(() => !document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-')), null, { timeout: 2000 }).then(() => true).catch(() => false);
+  if (!offAfterBlur) errors.push(`${tag}: A2 the sweep did not stop within one cycle of blur`);
+  restPlain(await probe(), 'after blur');
+
+  // A2: an effort tap gives a short hold that ends by itself, even while the button keeps focus.
+  await page.locator('.exercise.active .effort button').first().click(); await page.waitForTimeout(150);
+  p = await probe(); a6(p, 'effort tap');
+  const effortFocused = await page.evaluate(() => !!document.activeElement?.closest('.exercise.active .effort'));
+  if (running(p).length !== 1) errors.push(`${tag}: A2 effort tap gave no hold (button focused: ${effortFocused}): ${JSON.stringify(p.anims)}`);
+  await page.waitForTimeout(2300);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A2 the effort hold did not end by itself: ${JSON.stringify(p.anims)}`);
+
+  // A6: opening another card moves the one run to it; the first card's title is plain.
+  const second = page.locator('.exercise:not(.active) .ex-head').first();
+  if (await second.count()) {
+    await second.click(); await page.waitForTimeout(150);
+    p = await probe(); a6(p, 'second card');
+    if (running(p).length !== 1) errors.push(`${tag}: A1 opening a second card gave no run: ${JSON.stringify(p.anims)}`);
+  } else errors.push(`${tag}: expected a second exercise card`);
+
+  // A3: under reduced motion there is never a sweep, focused or not, and the title stays plain.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(() => document.documentElement.dataset.motion === 'reduce', null, { timeout: 2000 }).catch(() => {});
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 a sweep is still running under reduce: ${JSON.stringify(p.anims)}`);
+  await page.locator('.exercise.active .set-grid input').first().focus(); await page.waitForTimeout(150);
+  p = await probe();
+  if (p.anims.length) errors.push(`${tag}: A3 kg focus swept under reduce: ${JSON.stringify(p.anims)}`);
+  restPlain(p, 'under reduce');
   await ctx.close();
 }
 
@@ -4831,6 +4933,196 @@ for (const theme of ['silent-black', 'paper']) {
       if (scrollWidthAfterUndo > innerWidth) errors.push(`${tag} C: scrollWidth ${scrollWidthAfterUndo} > innerWidth ${innerWidth} after Undo`);
     }
   }
+  await ctx.close();
+}
+
+// BUG-22: the floating Escobar dock used to cover the end of long pages ("Log a past session" and
+// the targets line on an 8-exercise split) and anything under it mid-scroll. At 390x844 in Silent
+// Black and Paper: (A1) scrolled to the end of Train, Today, History and Body, with the rest banner
+// down and up, every piece of page content ends above the dock's top edge plus its shadow
+// (--dock-shade); (A2) scrolling down mid-page moves the dock out of the way (a tap at its spot
+// reaches the page) and scrolling up brings it back. The owner's phone showed the dock over "Log a
+// past session" even at the scroll end, so Train's end is also checked with a tall 48px system inset,
+// both as env(safe-area-inset-bottom) and as the --safe-area-inset-bottom Capacitor's SystemBars
+// injects on <html>, and with the dock pushed 60px higher than --float-bottom (standing in for a
+// device where it sits higher than the tokens say); a real tap at the button's centre at the scroll
+// end must open the sheet. Only the document may scroll (no nested scroller eating the end padding).
+const bug22Runs = [];
+for (const theme of ['silent-black', 'paper']) for (const inset of ['none', 'env48', 'var48', 'raised60']) bug22Runs.push({ theme, inset });
+// The owner's Samsung (3-button navigation, larger default font): a 360x740 viewport, a 48px inset
+// written the SystemBars way, and every --fs-* token scaled 1.3x (standing in for WebView text zoom).
+for (const theme of ['silent-black', 'paper']) bug22Runs.push({ theme, inset: 'samsung' });
+for (const { theme, inset } of bug22Runs) {
+  const ctx = await browser.newContext({ viewport: inset === 'samsung' ? { width: 360, height: 740 } : { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  const tag = `BUG-22 dock overlap (${theme}, inset ${inset})`;
+  if (inset === 'samsung') await page.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const root = document.documentElement; root.style.setProperty('--safe-area-inset-bottom', '48px'); const cs = getComputedStyle(root); for (const k of ['--fs-body', '--fs-cap', '--fs-display', '--fs-h1', '--fs-meta', '--fs-small', '--fs-stat', '--fs-title']) { const v = parseFloat(cs.getPropertyValue(k)); if (v) root.style.setProperty(k, `${(v * 1.3).toFixed(1)}px`); } }); });
+  if (inset === 'env48') { const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets: { top: 0, bottom: 48, left: 0, right: 0 } }); }
+  if (inset === 'raised60') await page.addInitScript(() => { document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = '.esc-dock { bottom: calc(var(--float-bottom) + 60px) !important; }'; document.head.append(st); }); });
+  if (inset === 'var48') await page.addInitScript(() => { const set = () => document.documentElement.style.setProperty('--safe-area-inset-bottom', '48px'); if (document.documentElement) set(); else document.addEventListener('DOMContentLoaded', set); });
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  await page.addInitScript(([legacyJson, t]) => { if (!localStorage.getItem('marc.state.v1')) localStorage.setItem('dailyTrackerPremium', legacyJson); localStorage.setItem('marc.theme', t); }, [JSON.stringify(legacy), theme]);
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300);
+  const later = async () => { if (await page.getByRole('button', { name: 'Later' }).isVisible().catch(() => false)) { await page.getByRole('button', { name: 'Later' }).click(); await page.waitForTimeout(200); } };
+  await later();
+  // Seeds go through sessionStorage and land before the app boots, so the running app's own save can't overwrite them.
+  await page.addInitScript(() => { const seed = sessionStorage.getItem('bug22.seed'); if (seed) { localStorage.setItem('marc.state.v1', seed); sessionStorage.removeItem('bug22.seed'); } });
+  const go = async (label) => { await page.locator('nav.nav button', { hasText: label }).click(); await page.waitForTimeout(300); };
+  await go(/^Train$/);
+  const tpl = page.getByRole('button', { name: 'Use Push / Pull / Legs' });
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(300); }
+  // One split with 8 different exercises (the owner's long split), then reload so it renders from storage.
+  const n = await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    if (!s?.splits?.length) return 0;
+    const seen = new Set();
+    s.splits[0].exercises = s.splits.flatMap(x => x.exercises).filter(e => !seen.has(e.exerciseId) && seen.add(e.exerciseId)).slice(0, 8);
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+    return s.splits[0].exercises.length;
+  });
+  if (n !== 8) errors.push(`${tag}: expected to seed an 8-exercise split, got ${n}`);
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+
+  const toEnd = async () => { await page.evaluate(() => window.scrollTo(0, document.scrollingElement.scrollHeight)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); };
+  const measureEnd = () => page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock');
+    if (!dock) return null;
+    const d = dock.getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    let bottom = 0; let who = '';
+    for (const el of document.querySelectorAll('.app *')) {
+      if (el.closest('.esc-dock, .nav, .rest, .toast, dialog, .pulse-line')) continue;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height || getComputedStyle(el).visibility === 'hidden') continue;
+      if (r.bottom > bottom) { bottom = r.bottom; who = `${el.tagName.toLowerCase()}.${el.className || ''} "${(el.textContent || '').trim().slice(0, 30)}"`; }
+    }
+    return { away: dock.classList.contains('esc-dock-away'), limit: d.top - shade, bottom, who };
+  });
+  const checkEnd = async (where) => {
+    await toEnd();
+    const m = await measureEnd();
+    if (!m) { errors.push(`${tag} ${where}: expected the dock to show`); return; }
+    if (m.away) errors.push(`${tag} ${where}: the dock should show at the end of the page`);
+    if (m.bottom > m.limit + 0.5) errors.push(`${tag} ${where}: content ends at ${m.bottom.toFixed(1)} but the dock and its shadow start at ${m.limit.toFixed(1)} (${m.who})`);
+  };
+
+  // A1, rest banner down.
+  await go(/^Train$/);
+  await checkEnd('Train end');
+  const scrollers = await page.evaluate(() => [...document.querySelectorAll('body *')].filter(el => { const o = getComputedStyle(el).overflowY; return (o === 'auto' || o === 'scroll') && el.scrollHeight > el.clientHeight + 1 && !el.closest('dialog'); }).map(el => `${el.tagName.toLowerCase()}.${el.className}`));
+  if (scrollers.length) errors.push(`${tag} Train: expected only the document to scroll, found ${scrollers.join(', ')}`);
+  const trainEnd = await page.evaluate(() => {
+    const dock = document.querySelector('.esc-dock').getBoundingClientRect();
+    const shade = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dock-shade')) || 0;
+    const log = document.querySelector('[data-palace="train.log-past"]');
+    const hint = [...document.querySelectorAll('.view p.hint')].find(p => p.textContent.includes('Change the goal in Coach'));
+    const lb = log?.getBoundingClientRect();
+    const hit = lb ? document.elementFromPoint(lb.left + lb.width / 2, lb.top + lb.height / 2) : null;
+    return { rows: document.querySelectorAll('[data-palace="train.split"] .list .row, [data-palace="train.split"] .list > *').length, limit: dock.top - shade, log: lb?.bottom ?? null, hint: hint?.getBoundingClientRect().bottom ?? null, tap: !!hit && log.contains(hit) };
+  });
+  if (trainEnd.log == null || trainEnd.hint == null) errors.push(`${tag} Train end: could not find "Log a past session" and the targets line`);
+  else {
+    if (trainEnd.log > trainEnd.limit) errors.push(`${tag} Train end: "Log a past session" ends at ${trainEnd.log}, under the dock (${trainEnd.limit})`);
+    if (trainEnd.hint > trainEnd.limit) errors.push(`${tag} Train end: the targets line ends at ${trainEnd.hint}, under the dock (${trainEnd.limit})`);
+    if (!trainEnd.tap) errors.push(`${tag} Train end: a tap on "Log a past session" does not reach it`);
+  }
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}${inset === 'none' ? '' : `-${inset}`}-train-end.png` });
+  // The owner's check: at the scroll end, a real tap on "Log a past session" opens its sheet.
+  if (trainEnd.log != null) {
+    const box = await page.locator('[data-palace="train.log-past"]').boundingBox();
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    if (!(await visible(page.getByRole('button', { name: 'Save past session' }), 3000))) errors.push(`${tag} Train end: tapping "Log a past session" at the scroll end did not open the log-past sheet`);
+    else { await page.keyboard.press('Escape'); await page.waitForFunction(() => !document.querySelector('dialog[open]'), null, { timeout: 3000 }).catch(() => errors.push(`${tag}: the log-past sheet did not close`)); await page.waitForTimeout(200); }
+  }
+  if (inset !== 'none') { await ctx.close(); continue; }
+
+  // A2: mid-page, scrolling down moves the dock away; scrolling up brings it back.
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  const spot = await page.evaluate(() => { const r = document.querySelector('.esc-dock').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+  for (let k = 0; k < 3; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const mid = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock') }; }, spot);
+  if (!(mid.y > 0 && mid.y < mid.max - 8)) errors.push(`${tag} A2: expected to be mid-page, at ${mid.y} of ${mid.max}`);
+  if (!mid.away) errors.push(`${tag} A2: the dock should move away while scrolling down mid-page`);
+  if (mid.blocks) errors.push(`${tag} A2: mid-scroll, a tap at the dock's spot still hits the dock`);
+  await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-train-mid.png` });
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2: scrolling up should bring the dock back`);
+
+  for (const t of ['Today', 'History', 'Body']) { await go(t); await checkEnd(`${t} end`); }
+
+  // A2 on History > Stats, where the owner's screenshot had the dock over "Exercise progress": scrolling
+  // down mid-page moves it away and a tap at its spot reaches the chart area; scrolling up brings it
+  // back (the shipped trade-off: until the next scroll-down it may cover what is under it). Then A1 at its end.
+  await go('History');
+  await page.locator('.seg button', { hasText: /^Stats$/ }).click(); await page.waitForTimeout(300);
+  await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(100);
+  for (let k = 0; k < 4; k++) { await page.evaluate(() => window.scrollBy(0, 40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))); }
+  const stats = await page.evaluate(({ x, y }) => { const d = document.querySelector('.esc-dock'); const hit = document.elementFromPoint(x, y); return { y: window.scrollY, max: document.scrollingElement.scrollHeight - innerHeight, away: d.classList.contains('esc-dock-away'), blocks: !!hit?.closest('.esc-dock'), onPage: !!hit?.closest('.view') }; }, spot);
+  if (!(stats.y > 0 && stats.y < stats.max - 8)) errors.push(`${tag} A2 Stats: expected to be mid-page, at ${stats.y} of ${stats.max}`);
+  if (!stats.away || stats.blocks) errors.push(`${tag} A2 Stats: scrolling down mid-page should move the dock away (away ${stats.away}, still hit ${stats.blocks})`);
+  if (!stats.onPage) errors.push(`${tag} A2 Stats: a tap at the dock's spot should reach the page`);
+  await page.evaluate(() => window.scrollBy(0, -40)); await page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
+  if (await page.evaluate(() => document.querySelector('.esc-dock').classList.contains('esc-dock-away'))) errors.push(`${tag} A2 Stats: scrolling up should bring the dock back`);
+  await checkEnd('History > Stats end');
+
+  // A1, rest banner up: a live session resting, looked at from the other tabs (Train hides the dock while live).
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('marc.state.v1'));
+    const sp = s.splits[0];
+    s.active = { splitId: sp.id, startedAt: new Date().toISOString(), pausedMs: 0, entries: sp.exercises.map(e => ({ exerciseId: e.exerciseId, name: e.exerciseId, sets: [], done: false, skipped: false })), rest: { endsAt: Date.now() + 600000, totalSec: 600 } };
+    sessionStorage.setItem('bug22.seed', JSON.stringify(s));
+  });
+  await page.reload(); await page.waitForSelector('.nav'); await launchGone(page); await page.waitForTimeout(300); await later();
+  for (const t of ['Today', 'History', 'Body']) {
+    await go(t);
+    if (!(await page.evaluate(() => document.documentElement.hasAttribute('data-rest') && !!document.querySelector('.rest')))) { errors.push(`${tag} ${t} rest: expected the rest banner up`); continue; }
+    await checkEnd(`${t} end, rest up`);
+    if (t === 'Today') { await settle(page); await page.screenshot({ path: `${OUT}/bug-22-${theme}-today-rest.png` }); }
+  }
+  await ctx.close();
+}
+
+// BUG-15 (PROGRESSION-F6): a lighter week cuts 3 planned sets to 2, and the Train rows show it:
+// two rows carry the 0.9 × pre-week target (72.5 → 65 kg on the default barbell), the third is set
+// aside, and the header counts 2 sets.
+{
+  const tag = 'BUG-15 set cut rows';
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  const page = await ctx.newPage();
+  page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
+  page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} console: ${m.text()}`); });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+    const bench = 'lib_barbell_bench_press';
+    const pre = { id: 's-pre', splitId: 'sp1', splitName: 'Push', day: day(3), startedAt: `${day(3)}T17:00:00.000Z`, endedAt: `${day(3)}T18:00:00.000Z`, durationSec: 3600, logging: { mode: 'live', flags: [] },
+      exercises: [{ exerciseId: bench, name: 'Barbell Bench Press', sets: [1, 2, 3].map(i => ({ id: `p${i}`, kg: 72.5, reps: 8, effort: 'ideal' })) }] };
+    localStorage.setItem('marc.theme', 'silent-black');
+    localStorage.setItem('marc.state.v1', JSON.stringify({
+      version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Push', color: '#888', exercises: [{ exerciseId: bench, sets: 3 }], focus: [], createdAt: now }],
+      schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+      sessions: [pre], customExercises: [],
+      active: { id: 'act15', splitId: 'sp1', startedAt: now, pausedMs: 0, entries: [{ id: 'en15', exerciseId: bench, name: 'Barbell Bench Press', sets: [{ id: 'r1' }, { id: 'r2' }, { id: 'r3' }], done: false, skipped: false }] },
+      deload: { startDay: day(1), endDay: day(-5), reason: 'gate', setFactor: 0.6, loadFactor: 0.9 },
+      preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+      body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+      onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [], insightFeedback: [],
+    }));
+  });
+  await page.goto(`http://localhost:${PORT}/`);
+  await page.waitForSelector('.nav'); await launchGone(page);
+  // A running session puts Train under the "Live" tab.
+  await page.locator('nav.nav button', { hasText: 'Live' }).click(); await page.waitForTimeout(300);
+  const card = page.locator('.card.exercise').first();
+  if (!(await card.locator('.set-grid input').first().isVisible().catch(() => false))) { await card.locator('.ex-head').click(); await page.waitForTimeout(300); }
+  const rows = await card.evaluate(c => [...c.querySelectorAll('.set-grid')].filter(g => g.querySelector('input')).map(g => ({ aside: g.hasAttribute('data-set-aside'), kg: g.querySelector('input')?.getAttribute('placeholder') ?? '' })));
+  if (JSON.stringify(rows.map(r => r.aside)) !== '[false,false,true]') errors.push(`${tag}: expected rows [kept, kept, set aside], got ${JSON.stringify(rows)}`);
+  if (rows[0]?.kg !== '65' || rows[1]?.kg !== '65') errors.push(`${tag}: expected both kept rows to target 65 (0.9 × 72.5, snapped down), got ${JSON.stringify(rows)}`);
+  if (!(await visible(card.getByText('Not today · lighter week'), 1500))) errors.push(`${tag}: expected the third row to read "Not today · lighter week"`);
+  if (!(await visible(card.locator('.ex-head .hint', { hasText: '0/2 sets' }), 1500))) errors.push(`${tag}: expected the header to count 2 sets`);
+  await settle(page); await page.screenshot({ path: `${OUT}/silent-black-bug-15-set-rows.png` });
   await ctx.close();
 }
 

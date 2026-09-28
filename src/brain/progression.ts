@@ -17,7 +17,9 @@ import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
-import { daysBetween } from '@/core/dates';
+import { inLighterWeek, lighterWeekDay } from './deload';
+
+export { inLighterWeek };
 
 export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload';
 
@@ -36,7 +38,13 @@ export interface Suggestion {
   value?: number;
   /** BUG-11: the kg before the equipment snap, set only when the snap moved the headline load. */
   snappedFromKg?: number;
+  /** BUG-15: `sets` is a deliberate cut (lighter week or red readiness), so Train sets the planned rows past it aside. */
+  cutSets?: true;
+  /** BUG-15 (COACHRULES-F7): a lighter week, an amber or red day or a cut factor; live advice never adds load. */
+  holdLoad?: true;
 }
+
+const BACK_REASON = 'The lighter week is over. This is your level from before it.';
 
 /** More than this many days away: repeat the last load once. */
 export const REENTRY_DAYS = 28;
@@ -82,6 +90,11 @@ export interface ProgressionContext {
   recoveryPct?: number;
   /** Active lighter week (F3.3). Takes priority over readiness and recovery: it's a whole-week call, not a single day's. */
   deload?: Deload | null;
+  /**
+   * BUG-15: the saved lighter week, active or ended (`AppState.deload`). Its sessions never become
+   * the base for later targets, and the first session after it holds the pre-week level.
+   */
+  lastDeload?: Deload | null;
   /** What the equipment really loads (§25.4). Targets snap to it: up for increases, down for reductions and deloads. */
   equipment?: EquipmentProfile;
   /** Today's load change from an applied Escobar adjustment (§10.4), applied like a deload's loadFactor. */
@@ -184,6 +197,9 @@ function applyLoadFactor(s: Suggestion, f: number): Suggestion {
 
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
+  // BUG-15 (COACHRULES-F7): plan 6.13, never an increase on a back-off day.
+  const cutFactor = ctx?.loadFactor != null && ctx.loadFactor > 0 && ctx.loadFactor < 1;
+  if (ctx?.deload || (ctx?.readiness && ctx.readiness.loadAdvice !== 'normal') || cutFactor) s = { ...s, holdLoad: true };
   if (ctx?.loadFactor != null) s = applyLoadFactor(s, ctx.loadFactor);
   // QA2-FE-2, QA2-FE-7: a loaded carry's target snaps to the gym's equipment too (70 lb, not 31.751 kg).
   const mode = modeOf(exerciseId, custom);
@@ -206,9 +222,20 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   const mode: ResistanceMode = modeOf(exerciseId, custom);
   const range = repRange(meta, goal);
   // BUG-18: a session whose only sets are held as implausible has nothing to build a target on.
-  const hist = exerciseHistory(sessions, exerciseId, custom).filter(h => h.held.length < h.sets.length);
+  const all = exerciseHistory(sessions, exerciseId, custom).filter(h => h.held.length < h.sets.length);
+  // BUG-15 (PROGRESSION-F1/F5): lighter-week sessions are never the base or the evidence for a
+  // target. Timed holds skip the lighter week (D-A1 point 1), so theirs are ordinary sessions.
+  const week = ctx?.deload ?? ctx?.lastDeload ?? null;
+  const outside = mode === 'duration' || !week ? all : all.filter(h => !inLighterWeek(h.day, week));
+  // A lift first logged inside the week has nothing else to go on.
+  const hist = outside.length ? outside : all;
   const last = hist[hist.length - 1];
   const setCount = last?.sets.length || plannedSets;
+  // BUG-15: that lift's lighter-week session is already light, so the week repeats it, never cuts it again.
+  const weekFactor = outside.length ? (ctx?.deload?.loadFactor ?? 1) : 1;
+  const weekSets = outside.length ? (ctx?.deload?.setFactor ?? 1) : 1;
+  // BUG-15 (A2): the first session after an ended lighter week, for a lift trained during it.
+  const firstBack = !ctx?.deload && !!week && today > week.endDay && outside.length > 0 && outside.length < all.length && !all.some(h => h.day > week.endDay);
 
   if (!last) {
     const start = startingLoadKg(meta?.equipment ?? '');
@@ -218,7 +245,8 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
   }
 
   const conf = confidenceFrom(hist.length);
-  const gap = daysSinceLast(hist, today) ?? 0;
+  // The time away counts every session, the lighter ones too.
+  const gap = daysSinceLast(all, today) ?? 0;
 
   if (mode === 'duration') {
     const best = last.bestDurationSec || 20;
@@ -242,14 +270,15 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
     const best = byDistance ? last.bestDistanceM : last.bestDurationSec;
     // QA3-3b: with an equipment profile to restate against later, keep the raw kg so an lb entry
     // (already stored to 3 decimals) round-trips to its own clean number instead of a half-kg one.
-    const kg = last.workKg > 0 ? (ctx?.deload ? half(last.workKg * ctx.deload.loadFactor) : ctx?.equipment ? last.workKg : half(last.workKg)) : null;
+    const kg = last.workKg > 0 ? (ctx?.deload ? half(last.workKg * weekFactor) : ctx?.equipment ? last.workKg : half(last.workKg)) : null;
     const load = kg != null ? `${kg} kg · ` : '';
     const u = byDistance ? ' m' : 's';
     const step = byDistance ? (best >= 100 ? 10 : 5) : 5;
-    const repeat = !!ctx?.deload || gap > REENTRY_DAYS || last.hasMax;
+    const repeat = !!ctx?.deload || firstBack || gap > REENTRY_DAYS || last.hasMax;
     const next = repeat ? best : best + step;
     const reason = ctx?.deload ? 'Lighter week: the same distance at a lighter load, kept easy.'
       : gap > REENTRY_DAYS ? `It has been ${gap} days. Repeat your last ${byDistance ? 'distance' : 'time'} once before adding anything.`
+      : firstBack ? `${BACK_REASON} Match it before going ${byDistance ? 'further' : 'longer'}.`
       : last.hasMax ? `Last one was max effort. Match it before going ${byDistance ? 'further' : 'longer'}.`
       : byDistance ? `Go ${step} m further at the same load.` : 'Add five seconds at the same load.';
     const note = repeat ? (ctx?.deload ? 'Deload' : 'Match it') : `+${step}${u}`;
@@ -262,16 +291,17 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
 
   if (ctx?.deload) {
     const d = ctx.deload;
-    const dayN = Math.min(7, Math.max(1, daysBetween(d.startDay, today) + 1));
-    const reason = `Lighter week, day ${dayN} of 7.`;
-    const deloadSets = Math.max(1, Math.round(setCount * d.setFactor));
+    const reason = `Lighter week, day ${lighterWeekDay(d, today)} of 7.`;
+    // BUG-15 (A1): every day of the week cuts from the pre-week level, never from a lighter session.
+    const deloadSets = Math.max(1, Math.round(setCount * weekSets));
+    const cut = { cutSets: true as const };
     if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
       const reps = last.bestReps;
-      if (carryLoad) { const down = half(last.workKg * d.loadFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload') }; }
-      return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload') };
+      if (carryLoad) { const down = half(last.workKg * weekFactor); return { mode: 'deload', target: `${down} kg · ${reps} reps · easy`, kg: down, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, down, reps, null, 'Deload'), ...cut }; }
+      return { mode: 'deload', target: `${reps} reps · easy`, kg: null, reps: [reps, reps], reason, confidence: conf, sets: setPlan(deloadSets, null, reps, null, 'Deload'), ...cut };
     }
-    const down = half(last.workKg * d.loadFactor);
-    return { mode: 'deload', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(deloadSets, down, range[0], null, 'Deload') };
+    const down = half(last.workKg * weekFactor);
+    return { mode: 'deload', target: `${down} kg · ${fmtRange(range)}`, kg: down, reps: range, reason, confidence: conf, sets: setPlan(deloadSets, down, range[0], null, 'Deload'), ...cut };
   }
 
   const recent = hist.slice(-3);
@@ -279,12 +309,14 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
 
   if (mode === 'bodyweight' || mode === 'assisted' || mode === 'conditioning') {
     const reps = last.bestReps;
-    const nextReps = last.hasMax ? reps : reps + 1;
+    const match = last.hasMax || firstBack;
+    const nextReps = match ? reps : reps + 1;
+    const why = firstBack ? `${BACK_REASON} Match it before adding a rep.` : last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.';
     if (carryLoad) {
       const kg = ctx?.equipment ? last.workKg : half(last.workKg);
-      return { mode: 'reps', target: `${kg} kg · ${nextReps} reps`, kg, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, kg, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
+      return { mode: 'reps', target: `${kg} kg · ${nextReps} reps`, kg, reps: [nextReps, nextReps], reason: why, confidence: conf, sets: setPlan(setCount, kg, nextReps, null, match ? 'Match it' : 'Add a rep') };
     }
-    return { mode: 'reps', target: `${nextReps} reps`, kg: null, reps: [nextReps, nextReps], reason: last.hasMax ? 'Last set was max effort. Match it before adding a rep.' : 'Add one rep to your best set.', confidence: conf, sets: setPlan(setCount, null, nextReps, null, last.hasMax ? 'Match it' : 'Add a rep') };
+    return { mode: 'reps', target: `${nextReps} reps`, kg: null, reps: [nextReps, nextReps], reason: why, confidence: conf, sets: setPlan(setCount, null, nextReps, null, match ? 'Match it' : 'Add a rep') };
   }
 
   // BUG-18 (PROGRESSION-F3): targets build on the straight working sets, not one heavy single.
@@ -294,7 +326,12 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
 
   if (ctx?.readiness?.loadAdvice === 'reduce') {
     const fewer = Math.max(1, setCount - 1);
-    return { mode: 'hold', target: holdTarget, kg: topKg, reps: range, reason: ctx.readiness.reason ?? 'Readiness is low today. Keep the load and drop a set.', confidence: conf, sets: setPlan(fewer, topKg, range[0], null, 'Readiness: one fewer set') };
+    return { mode: 'hold', target: holdTarget, kg: topKg, reps: range, reason: ctx.readiness.reason ?? 'Readiness is low today. Keep the load and drop a set.', confidence: conf, sets: setPlan(fewer, topKg, range[0], null, 'Readiness: one fewer set'), cutSets: true };
+  }
+
+  if (firstBack) {
+    const reps = Math.min(range[1], Math.max(range[0], last.workReps));
+    return { mode: 'hold', target: `${topKg} kg · ${reps} reps`, kg: topKg, reps: [reps, reps], reason: `${BACK_REASON} Match it before adding more.`, confidence: conf, sets: holdSets('Back to your level', reps) };
   }
 
   if (coverage < 0.5 && hist.length >= 2) {

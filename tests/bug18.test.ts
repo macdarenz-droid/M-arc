@@ -27,6 +27,11 @@ describe('BUG-18 A1: targets come from the straight working load', () => {
     expect(next.kg).toBe(90);
     expect(next.sets.every(x => x.kg === 90)).toBe(true);
   });
+  it('a tie between loads goes to the heavier load', () => {
+    const a = session('2026-09-14', [{ id: ex, sets: [s(80, 8), s(80, 8), s(90, 6), s(90, 6)] }]);
+    expect(exerciseHistory([a], ex)[0]!.workKg).toBe(90);
+    expect(suggestNext([a], ex, 'lean', today).kg).toBe(90);
+  });
   it('drop sets never become the working load', () => {
     const a = session('2026-09-14', [{ id: ex, sets: [s(80, 8), { kg: 60, reps: 10, effort: 'max', kind: 'drop' }, { kg: 50, reps: 10, effort: 'max', kind: 'drop' }] }]);
     expect(suggestNext([a], ex, 'lean', today).kg).toBe(80);
@@ -71,6 +76,8 @@ describe('BUG-18 A2: implausible sets are held until repeated', () => {
     const all = [...base, typo, repeat];
     expect(allRecords(all).some(r => r.day === '2026-09-08' && r.kind === 'heaviest')).toBe(true);
     expect(suggestNext(all, ex, 'lean', today).kg).toBe(130);
+    // A later session confirms the earlier held set: the typo session holds nothing any more.
+    expect(exerciseHistory(all, ex)[2]!.held).toHaveLength(0);
   });
   it('three sets at the new load in one session confirm each other', () => {
     const jump = session('2026-09-08', [{ id: ex, sets: sets(130, 6) }]);
@@ -116,6 +123,11 @@ describe('BUG-18 A4: an increase needs the working sets at the top of the range'
     const a = session('2026-09-11', [{ id: ex, sets: [s(60, 12), s(60, 8), s(60, 7)] }]);
     const b = session('2026-09-14', [{ id: ex, sets: [s(60, 12), s(60, 8), s(60, 7)] }]);
     expect(suggestNext([a, b], ex, 'lean', today).mode).not.toBe('increase');
+  });
+  it('a lighter unmarked last set neither blocks nor earns the increase', () => {
+    const a = session('2026-09-11', [{ id: ex, sets: [s(60, 12), s(60, 12), s(50, 10)] }]);
+    const b = session('2026-09-14', [{ id: ex, sets: [s(60, 12), s(60, 12), s(50, 10)] }]);
+    expect(suggestNext([a, b], ex, 'lean', today).mode).toBe('increase');
   });
   it('every working set at the top twice: increase', () => {
     const a = session('2026-09-11', [{ id: ex, sets: sets(60, 12) }]);
