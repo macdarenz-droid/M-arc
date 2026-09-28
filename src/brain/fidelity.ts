@@ -100,6 +100,28 @@ export function implausibleReps(reps: number, isHeavyMainLift: boolean): boolean
   return reps > (isHeavyMainLift ? 30 : 50);
 }
 
+/**
+ * BUG-18 (COACHRULES-F3): whether a set is implausible, read from set data alone. `checkLoad` is
+ * false for bodyweight and assisted work, where the kg is added or helping weight and big jumps are normal.
+ */
+export function isImplausibleSet(set: Pick<LoggedSet, 'kg' | 'reps'>, recentBestKg: number | null, isHeavyMainLift: boolean, checkLoad = true): boolean {
+  const kg = set.kg ?? 0;
+  const reps = set.reps ?? 0;
+  return (checkLoad && kg > 0 && implausibleLoad(kg, recentBestKg)) || (reps > 0 && implausibleReps(reps, isHeavyMainLift));
+}
+
+/**
+ * BUG-18 (plan 6.17.4): a flagged set counts once it is repeated: another working set of the
+ * same exercise at the same load or heavier (load flag), or also past the rep limit (reps flag).
+ */
+export function confirmsFlagged(flagged: Pick<LoggedSet, 'kg' | 'reps'>, other: Pick<LoggedSet, 'kg' | 'reps'>, recentBestKg: number | null, isHeavyMainLift: boolean, checkLoad = true): boolean {
+  const kg = flagged.kg ?? 0;
+  const reps = flagged.reps ?? 0;
+  const loadOk = !(checkLoad && kg > 0 && implausibleLoad(kg, recentBestKg)) || (other.kg ?? 0) >= kg - 0.011;
+  const repsOk = !(reps > 0 && implausibleReps(reps, isHeavyMainLift)) || implausibleReps(other.reps ?? 0, isHeavyMainLift);
+  return loadOk && repsOk;
+}
+
 /** A load within 5% of 2.2x or 0.45x the exercise's recent best: kg and lb likely got mixed up. */
 /** QA-R6-9: warm-ups and drop sets are light on purpose, so they are never a kg/lb slip. */
 export function setUnitSuspect(set: { kg?: number; kind?: LoggedSet['kind'] }, recentBestKg: number | null): boolean {
@@ -145,8 +167,8 @@ export function flagsForSet(set: LoggedSet, recentBestKg: number | null, isHeavy
   const flags: SetFlag[] = [];
   const kg = set.kg ?? 0;
   const reps = set.reps ?? 0;
-  if (kg > 0 && implausibleLoad(kg, recentBestKg)) flags.push('implausible_load');
-  if (reps > 0 && implausibleReps(reps, isHeavyMainLift)) flags.push('implausible_reps');
+  if (isImplausibleSet({ kg }, recentBestKg, isHeavyMainLift)) flags.push('implausible_load');
+  if (isImplausibleSet({ reps }, recentBestKg, isHeavyMainLift)) flags.push('implausible_reps');
   // QA2-FE-3, QA2-FE-4: a warm-up or drop set is light on purpose, never a kg/lb slip.
   if (kg > 0 && setUnitSuspect(set, recentBestKg)) flags.push('unit_suspect');
   if (futureTime(set.at, nowMs)) flags.push('future_time');

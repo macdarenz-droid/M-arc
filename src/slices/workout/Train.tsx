@@ -19,7 +19,7 @@ import { bodyweightHint, loadColumnLabel, loadAriaLabel, modeLoadText } from '@/
 import { MUSCLES, muscleLabel, type MuscleId } from '@/data/muscles';
 import type { Exercise, Split } from '@/core/models';
 import { suggestNext, previousSet } from '@/brain/progression';
-import { isLiveRecord } from '@/brain/prs';
+import { liveRecordStatus } from '@/brain/prs';
 import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
@@ -588,7 +588,12 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
   const workingKg = ex?.role === 'main' && mode === 'weighted' ? next.sets[0]?.kg ?? next.kg ?? 0 : 0;
   const warmup = useMemo(() => warmupOffer(workingKg, profile), [...memoDeps, workingKg]);
   const [warmupOpen, setWarmupOpen] = useState(false);
-  const perSet = useMemo(() => entry.sets.map((set, j) => ({ prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: !isTimed && isLiveRecord(s.sessions, entry.exerciseId, set, s.customExercises) })), memoDeps);
+  // BUG-18: a record from a set the plausibility check flags keeps its pill, marked unconfirmed, until
+  // today's sets repeat its load; only a confirmed record buzzes.
+  const perSet = useMemo(() => entry.sets.map((set, j) => {
+    const status = isTimed ? 'none' : liveRecordStatus(s.sessions, entry.exerciseId, set, s.customExercises, entry.sets.filter(isCommitted));
+    return { prev: ((w: number | null) => (w == null ? null : previousSet(s.sessions, entry.exerciseId, w, s.customExercises)))(workingIndex(entry.sets, j)), pr: status !== 'none', prUnconfirmed: status === 'unconfirmed' };
+  }), memoDeps);
   /** F3.5: one line, seeded by day + exercise so it rotates day to day, same as Coach's own cue card. */
   const cue = ex ? pickCue(ex, 'coach', `${today.value}|${ex.id}`) : null;
   const reasonCue = pickReasonCue(reasonKeyFor(next.mode, next.confidence, mode, next.sets[0]?.note), `${today.value}|${entry.exerciseId}`);
@@ -616,7 +621,8 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     for (const id of freshIds) seenPrRef.current.add(id);
     setPopIds(prev => new Set([...prev, ...freshIds]));
     const t = setTimeout(() => setPopIds(prev => { const next = new Set(prev); for (const id of freshIds) next.delete(id); return next; }), durFor('bounce'));
-    if (s.active && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
+    const confirmedFresh = entry.sets.some((set, j) => set.id && freshIds.includes(set.id) && !perSet[j]?.prUnconfirmed);
+    if (s.active && confirmedFresh && celebrateOnce(`${s.active.startedAt}|${entry.exerciseId}`)) setTimeout(() => void haptic.success(), 120);
     return () => clearTimeout(t);
   }, [entry.sets, perSet]);
 
@@ -684,7 +690,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
           {bwHint && <p class="hint">{bwHint}</p>}
           <div class={`set-grid ${isTimed ? 'duration' : ''}`}><span class="set-index">Set</span>{isTimed ? <span class="hint">seconds</span> : <><span class="hint">{loadColumnLabel(mode, eu)}</span><span class="hint">reps</span></>}<span class="hint">effort</span></div>
           {(() => { let nextUpFound = false; return entry.sets.map((set, j) => {
-            const { prev, pr } = perSet[j]!;
+            const { prev, pr, prUnconfirmed } = perSet[j]!;
             // Warm-ups sit in front: working targets line up with the working sets.
             const wj = j - entry.sets.slice(0, j).filter(x => x.kind === 'warmup').length;
             const target = set.kind === 'warmup' ? undefined : next.sets[Math.min(wj, next.sets.length - 1)];
@@ -729,7 +735,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
                     <span class="hint">{lastHint}</span>
                     <span class="row" style={{ gap: 6 }}>
                       {set.heart?.peakBpm != null && <span class="hint">peak {set.heart.peakBpm}</span>}
-                      {pr && isCommitted(set) && <span class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> PR</span>}
+                      {pr && isCommitted(set) && <span title={prUnconfirmed ? 'This load is well above your usual. It counts as a record once you lift it again.' : undefined} class={`pr-badge ${set.id && popIds.has(set.id) ? 'pop' : ''}`}><IconTrophy size={16} /> {prUnconfirmed ? 'PR unconfirmed' : 'PR'}</span>}
                     </span>
                   </div>
                 )}
