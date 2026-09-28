@@ -44,21 +44,63 @@ describe('scrubMessage (A1)', () => {
   });
 });
 
+describe('review probes on 09500d3 (PR #35 findings 1–3)', () => {
+  const origin = 'https://localhost';
+  it('1: the message line is never parsed, and only bundle files are frames', () => {
+    const stack = [
+      `Error: failed at ${origin}/Jane-Doe-bench-100kg:1:2`,
+      `    at ${origin}/notes/I-hurt-my-knee:3:4`,
+      `    at logSet (${origin}/assets/index-AbCd1234.js:10:5)`,
+      `Error: at ${origin}/assets/index-AbCd1234.js:99:9`,
+    ].join('\n');
+    expect(framesFromStack(stack, origin)).toEqual([{ file: '/assets/index-AbCd1234.js', line: 10, col: 5 }]);
+  });
+  it('2: nested, unclosed and curly quotes never leak', () => {
+    const cases = [
+      ['Unexpected token \'h\', "hello "Dave Smith"... is not valid JSON', 'Dave'],
+      ["Cannot read properties of undefined (reading 'O'Brien bench')", 'Brien'],
+      ['weight \u201C100 kg\u201D Jane', 'kg'],
+      ['note "left knee still tender', 'knee'],
+      ['\u2018Alex\u2019s bench\u2019 failed', 'Alex'],
+    ] as const;
+    for (const [raw, secret] of cases) {
+      const out = scrubMessage(raw);
+      expect(out, raw).not.toContain(secret);
+      expect(out, raw).not.toMatch(/\d/);
+    }
+    expect(scrubMessage('weight \u201C100 kg\u201D Jane')).toBe('weight "\u2026" Jane');
+    expect(scrubMessage('note "left knee')).toBe('note "\u2026"');
+    // Cleaning twice changes nothing (the Worker cleans again).
+    const once = scrubMessage('a "b" c \'d\' 12');
+    expect(scrubMessage(once)).toBe(once);
+  });
+  it('3: the app\'s own error names pass the Worker\'s name rule unchanged', () => {
+    const WORKER_ERROR_NAME = /^[A-Za-z_$][\w$.-]{0,79}$/;
+    for (const n of ['SaveFailed', 'LoadRecovered', 'NonError', 'network', 'upstream', 'stream']) {
+      expect(cleanName(n)).toBe(n);
+      expect(WORKER_ERROR_NAME.test(n), n).toBe(true);
+      expect(n).not.toContain('-');
+    }
+  });
+});
+
 describe('framesFromStack / isAppFrame (A1)', () => {
   const origin = 'https://app.example';
   it('keeps only same-origin (app-bundle) frames, and caps at 15', () => {
     const lines = ['Error: boom'];
-    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-abc.js:${i}:${i})`);
+    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-AbCd1234.js:${i}:${i})`);
     for (let i = 0; i < 10; i++) lines.push(`    at fn (https://cdn.other.com/lib.js:${i}:${i})`);
-    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-abc.js:${100 + i}:1)`);
+    for (let i = 0; i < 10; i++) lines.push(`    at fn (${origin}/assets/index-AbCd1234.js:${100 + i}:1)`);
     const frames = framesFromStack(lines.join('\n'), origin);
     expect(frames.length).toBe(15);
-    expect(frames.every(f => f.file.startsWith(origin))).toBe(true);
+    expect(frames.every(f => f.file === '/assets/index-AbCd1234.js')).toBe(true);
   });
 
   it('isAppFrame rejects other hosts and browser extensions', () => {
-    expect(isAppFrame(`${origin}/assets/a.js`, origin)).toBe(true);
-    expect(isAppFrame('https://evil.example/a.js', origin)).toBe(false);
+    expect(isAppFrame(`${origin}/assets/index-AbCd1234.js`, origin)).toBe(true);
+    expect(isAppFrame(`${origin}/sw.js`, origin)).toBe(true);
+    expect(isAppFrame(`${origin}/assets/a.js`, origin)).toBe(false);
+    expect(isAppFrame('https://evil.example/assets/index-AbCd1234.js', origin)).toBe(false);
     expect(isAppFrame('chrome-extension://abc/a.js', origin)).toBe(false);
     expect(isAppFrame('<anonymous>', origin)).toBe(false);
     // A bare path can carry a user's folder name.
@@ -67,13 +109,13 @@ describe('framesFromStack / isAppFrame (A1)', () => {
     // A data: or blob: "file" can carry content; another origin that merely starts the same way is not ours.
     expect(isAppFrame('data:text/javascript,alert(1)', origin)).toBe(false);
     expect(isAppFrame(`blob:${origin}/1234`, origin)).toBe(false);
-    expect(isAppFrame(`${origin}.evil.example/a.js`, origin)).toBe(false);
+    expect(isAppFrame(`${origin}.evil.example/assets/index-AbCd1234.js`, origin)).toBe(false);
   });
 
   it('keeps only the url of a Firefox "fn@url" frame, and drops query and hash', () => {
-    const stack = `renderBulgarianSplitSquat@${origin}/assets/index.js?note=knee#x:12:34\n@data:text/javascript,secret:1:1`;
+    const stack = `renderBulgarianSplitSquat@${origin}/assets/index-AbCd1234.js?note=knee#x:12:34\n@data:text/javascript,secret:1:1`;
     const frames = framesFromStack(stack, origin);
-    expect(frames).toEqual([{ file: `${origin}/assets/index.js`, line: 12, col: 34 }]);
+    expect(frames).toEqual([{ file: '/assets/index-AbCd1234.js', line: 12, col: 34 }]);
   });
 });
 
@@ -93,7 +135,7 @@ describe('buildReport (A1: allowlist-only)', () => {
     expect(cleanName('x'.repeat(80))).toBe('x'.repeat(80));
     expect(cleanName(`${PERSONAL.exercise} failed`)).toBe('Error');
     expect(cleanName('QuotaExceededError')).toBe('QuotaExceededError');
-    expect(cleanName('save-failed')).toBe('save-failed');
+    expect(cleanName('SaveFailed')).toBe('SaveFailed');
   });
 });
 
@@ -255,7 +297,7 @@ describe('the sender (A4: response handling, fake timers + mocked fetch)', () =>
     await trySend({ workerBase: 'https://w', storage, fetchImpl, now: Date.now() });
     expect(fetchImpl.mock.calls.length).toBeGreaterThan(1); // one 8KB request could not hold all 20
     for (const [, init] of fetchImpl.mock.calls) {
-      expect(Buffer.byteLength((init as RequestInit).body as string, 'utf8')).toBeLessThanOrEqual(8000);
+      expect(Buffer.byteLength((init as RequestInit).body as string, 'utf8')).toBeLessThanOrEqual(8192);
     }
     expect(loadQueueState(storage).reports.length).toBe(0); // the whole queue drained across those requests
   });
@@ -358,7 +400,7 @@ describe('7.5 requirements (D-C75)', () => {
     expect(sendingAllowed()).toBe(false);
   });
 
-  it('R4 a batch never holds more than 20 reports or 8,000 bytes', () => {
+  it('R4 a batch never holds more than 20 reports or 8 KB (8,192 bytes)', () => {
     const q = Array.from({ length: 25 }, (_, i) => ({ ...report(`s${i}`), id: `q${i}` }));
     expect(packBatch(q)).toHaveLength(MAX_BATCH);
     expect(MAX_BATCH).toBe(20);
@@ -447,7 +489,7 @@ describe('7.5 requirements (D-C75)', () => {
     bootRecovered.value = true;
     initErrorReporting();
     const [r] = loadQueueState().reports;
-    expect(r).toMatchObject({ kind: 'boot', name: 'load-recovered' });
+    expect(r).toMatchObject({ kind: 'boot', name: 'LoadRecovered' });
     bootRecovered.value = false;
     state.value = freshState();
     delete (globalThis as { localStorage?: Storage }).localStorage;
@@ -487,7 +529,7 @@ describe('R3 privacy: planted personal data never leaves', () => {
     saveError.value = `quota exceeded saving ${planted.heart}`;
     saveError.value = null;
     vi.clearAllTimers(); vi.useRealTimers();
-    expect(loadQueueState().reports.some(r => r.kind === 'store-save')).toBe(true);
+    expect(loadQueueState().reports.find(r => r.kind === 'store-save')?.name).toBe('SaveFailed');
 
     const reports = loadQueueState().reports;
     expect(reports.length).toBeGreaterThanOrEqual(5);

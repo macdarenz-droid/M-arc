@@ -6,9 +6,9 @@
 import { BASE_BACKOFF_MS, loadQueueState, markSent, MAX_BACKOFF_MS, removeByIds, setBackoff, type QueuedReport } from './queue';
 import type { Report } from './types';
 
-/** The Worker's cap (escobar-worker/src/errorsValidate.ts): 8 KB read as 8,000 bytes, the
- * stricter of the two readings, and at most 20 reports per request. */
-export const MAX_BODY_BYTES = 8_000;
+/** The doc's and the Worker's cap (escobar-worker/src/errorsValidate.ts `MAX_ERRORS_BODY_BYTES`):
+ * 8 KB = 8 * 1024 bytes per request, and at most 20 reports per request. */
+export const MAX_BODY_BYTES = 8 * 1024;
 export const MAX_BATCH = 20;
 
 function byteLength(s: string): number {

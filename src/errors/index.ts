@@ -93,12 +93,12 @@ export function initErrorReporting(): void {
     let lastSaveError: string | null = null;
     saveError.subscribe(v => {
       // A fixed message: the save error's own text is never read into a report.
-      if (v && v !== lastSaveError) reportError('store-save', 'save-failed', 'save failed');
+      if (v && v !== lastSaveError) reportError('store-save', 'SaveFailed', 'save failed');
       lastSaveError = v;
     });
 
     // A load or migration failure this boot (unreadable save quarantined, or restored from backup).
-    if (bootRecovered.value || bootSource.value === 'backup') reportError('boot', 'load-recovered', bootRecovered.value ? 'saved data unreadable; quarantined' : 'saved data unreadable; restored from backup');
+    if (bootRecovered.value || bootSource.value === 'backup') reportError('boot', 'LoadRecovered', bootRecovered.value ? 'saved data unreadable; quarantined' : 'saved data unreadable; restored from backup');
 
     flush();
     if (poller) clearInterval(poller);

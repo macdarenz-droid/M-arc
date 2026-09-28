@@ -8,37 +8,65 @@ import type { Frame, Report, ReportKind } from './types';
 const MAX_MESSAGE_LEN = 300;
 const MAX_FRAMES = 15;
 const MAX_NAME_LEN = 80;
-const MAX_FILE_LEN = 200;
 
-/** Quoted strings first (so any digits inside them are already gone), then every digit → '#'. */
+const QUOTE_CLASS: Record<string, string> = { '"': 'd', '\u201C': 'd', '\u201D': 'd', "'": 's', '\u2018': 's', '\u2019': 's', '`': 'b' };
+const MARK = '"\u2026"';
+
+/** The same rule as the Worker's `scrubMessage` (escobar-worker/src/errorsValidate.ts, PR #34):
+ * quoted text becomes "\u2026", every digit becomes #, cut to 300 characters. A quote (straight, curly
+ * or backtick) runs to the LAST quote of its kind in the message, so nested quotes and
+ * apostrophes inside a quote (`"hello "Dave"`, `'O'Brien'`) are covered; an opening quote with no
+ * closing one removes the rest of the message. An existing "\u2026" is kept, so cleaning twice
+ * changes nothing. */
 export function scrubMessage(raw: string): string {
-  const noQuotes = raw.replace(/'[^']*'|"[^"]*"|`[^`]*`/g, '"…"');
-  const noDigits = noQuotes.replace(/\d/g, '#');
-  return noDigits.slice(0, MAX_MESSAGE_LEN);
+  let out = '';
+  let i = 0;
+  while (i < raw.length) {
+    if (raw.startsWith(MARK, i)) { out += MARK; i += MARK.length; continue; }
+    const c = raw[i]!;
+    const cls = QUOTE_CLASS[c];
+    if (!cls) { out += c; i++; continue; }
+    let end = -1;
+    for (let j = raw.length - 1; j > i; j--) if (QUOTE_CLASS[raw[j]!] === cls) { end = j; break; }
+    out += MARK;
+    if (end < 0) break;
+    i = end + 1;
+  }
+  return out.replace(/\d/g, '#').slice(0, MAX_MESSAGE_LEN);
 }
 
-/** True only for a frame from this page's own origin (the app bundle). Anything else, a browser
- * internal, an extension, another host, a data: or blob: url (which can carry content) or a bare
- * path (which can carry a user's folder name), is not ours and never sent. */
+/** The app's built files only, the Worker's `BUNDLE_PATH` rule: `/assets/<Name>-<8-char hash>.js`
+ * or `/sw.js`. Any other path (a folder, extra words or digits) could carry personal text. */
+const BUNDLE_PATH = /^\/(assets\/[A-Za-z][A-Za-z0-9_]*-[A-Za-z0-9_-]{8}\.js|sw\.js)$/;
+
+/** A frame's file as a bundle path (`/assets/index-AbCd1234.js`), or null to drop the frame. It
+ * must come from this page's own origin: another host, an extension, data:, blob: or a bare path
+ * never goes. Query and hash are removed. */
+export function bundleFile(file: string, origin: string): string | null {
+  if (!file || !origin || !file.startsWith(`${origin}/`)) return null;
+  const path = file.slice(origin.length).replace(/[?#].*$/, '');
+  return BUNDLE_PATH.test(path) ? path : null;
+}
+
 export function isAppFrame(file: string, origin: string): boolean {
-  if (!file || !origin) return false;
-  return file.startsWith(`${origin}/`);
+  return bundleFile(file, origin) !== null;
 }
 
-const FRAME_RE = /(?:^|\bat\s+)(?:[^(\n]*\()?([^\s()]+):(\d+):(\d+)\)?/;
+/** A real frame line only: V8's "    at …" or Firefox/Safari's "fn@url". The message line(s) at
+ * the top of a V8 stack are never parsed, whatever they contain. */
+const V8_FRAME = /^\s*at\s+(?:.*?\()?(\S+?):(\d+):(\d+)\)?\s*$/;
+const GECKO_FRAME = /^[^\s@]*@(\S+?):(\d+):(\d+)\s*$/;
 
-/** Parses a V8-style Error.stack into frames, app-bundle only, at most MAX_FRAMES. */
+/** Parses Error.stack into frames, app-bundle only, at most MAX_FRAMES. */
 export function framesFromStack(stack: string | undefined, origin = safeOrigin()): Frame[] {
   if (!stack) return [];
   const frames: Frame[] = [];
   for (const line of stack.split('\n')) {
-    const m = FRAME_RE.exec(line);
+    const m = V8_FRAME.exec(line) ?? GECKO_FRAME.exec(line);
     if (!m) continue;
-    const [, rawFile, lineNo, col] = m;
-    // Firefox/Safari write "fn@url": keep the url only. Query and hash never go.
-    const file = (rawFile ?? '').replace(/^[^@\s]*@/, '').split(/[?#]/)[0]!.slice(0, MAX_FILE_LEN);
-    if (!file || !isAppFrame(file, origin)) continue;
-    frames.push({ file, line: Number(lineNo), col: Number(col) });
+    const file = bundleFile(m[1] ?? '', origin);
+    if (!file) continue;
+    frames.push({ file, line: Number(m[2]), col: Number(m[3]) });
     if (frames.length >= MAX_FRAMES) break;
   }
   return frames;
@@ -48,10 +76,12 @@ function safeOrigin(): string {
   try { return typeof location !== 'undefined' ? location.origin : ''; } catch { return ''; }
 }
 
-/** An error name is code (TypeError, QuotaExceededError, save-failed), never free text: anything
- * that isn't a plain identifier becomes 'Error'. */
+/** The Worker's `ERROR_NAME` rule: an error name is code (TypeError, QuotaExceededError,
+ * SaveFailed), never free text; anything else becomes 'Error'. The app's own names carry no '-'
+ * so they pass either side's rule unchanged. */
+const ERROR_NAME = new RegExp(`^[A-Za-z_$][\\w$.-]{0,${MAX_NAME_LEN - 1}}$`);
 export function cleanName(raw: string): string {
-  return /^[A-Za-z_$][\w$.-]*$/.test(raw) && raw.length <= MAX_NAME_LEN ? raw : 'Error';
+  return ERROR_NAME.test(raw) ? raw : 'Error';
 }
 
 /** A short, stable, non-cryptographic hash — good enough to dedupe by, not to authenticate. */
