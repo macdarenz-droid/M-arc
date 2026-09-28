@@ -11,7 +11,7 @@ import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, Weig
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
 import { hasWorkingSets } from '@/brain/exposure';
-import { dayKey, formatClock } from '@/core/dates';
+import { dayKey, formatClock, formatTimeOfDay } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
 import { enteredLoad, formatLoad, formatSetLoad, kgToDisplay } from '@/core/units';
 import { findExercise } from '@/core/exercises';
@@ -24,7 +24,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, finishTiming, FINISH_MARGIN_SEC, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -433,6 +433,7 @@ function LiveSession() {
               {(() => { const nEx = a.entries.filter(e => e.sets.some(isWorkingSet)).length; return <div class="stat"><b class="num">{nEx}</b><span>exercise{nEx === 1 ? '' : 's'}</span></div>; })()}
               {(() => { const nSets = a.entries.reduce((n, e) => n + e.sets.filter(isWorkingSet).length, 0); return <div class="stat"><b class="num">{nSets}</b><span>set{nSets === 1 ? '' : 's'}</span></div>; })()}
             </div>
+            <TrimmedEndNote a={a} />
             <EffortRepair a={a} />
             <Field label="Session note (optional)"><textarea rows={2} maxLength={1000} value={sessionNote} placeholder="How it went, what to change" data-palace="train.session-note" onInput={e => setSessionNote((e.target as HTMLTextAreaElement).value)} /></Field>
             <FinishChoice onFinish={saveTemplate => { const r = finishSession(saveTemplate, { note: sessionNote }); setSessionNote(''); setFinishing(false); if (!r) return; if (r.session.logging.flags.includes('compressed')) pendingTimeQuestion.value = r; else lastFinish.value = r; }} changed={changedFromPlan(a, split)} />
@@ -495,8 +496,16 @@ function FinishChoice({ changed, onFinish }: { changed: boolean; onFinish: (save
 
 /** The only part of the live screen that reads the 1 s clock (UI-10), so the cards do not re-render every second. */
 /** QA-R2d-3: the Finish sheet's duration keeps ticking while the sheet is open. */
+/** BUG-19: it shows the time that is saved, so a Finish long after the last set shows the trimmed time. */
 function Elapsed({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
-  return <>{formatClock(elapsedSec(a, nowMs.value))}</>;
+  return <>{formatClock(finishTiming(a, nowMs.value).durationSec)}</>;
+}
+
+/** BUG-19 (DATES-F1): says when a forgotten Finish ends the session, with no extra step. */
+function TrimmedEndNote({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
+  const t = finishTiming(a, nowMs.value);
+  if (!t.trimmed) return null;
+  return <p class="small muted" data-finish-trimmed>Saved as ending at {formatTimeOfDay(new Date(t.endedAtMs).toISOString())}, {FINISH_MARGIN_SEC / 60} min after your last set. The time since is not counted.</p>;
 }
 
 function LiveClock({ a }: { a: NonNullable<ReturnType<typeof active>> }) {
