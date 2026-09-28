@@ -5829,7 +5829,9 @@ for (const theme of ['silent-black', 'paper']) {
   await field.getByRole('button', { name: '+', exact: true }).click(); await page.waitForTimeout(200);
   const after = await read();
   if (after !== '4') errors.push(`${tag}: after + from unset it reads ${JSON.stringify(after)}, expected "4"`);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays ?? null);
+  // The store saves 250 ms after a change (store.ts saveTimer): wait for the write, up to 3 s.
+  const saved = await page.waitForFunction(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays === 4, null, { timeout: 3000 }).then(() => 4)
+    .catch(() => page.evaluate(() => JSON.parse(localStorage.getItem('marc.state.v1') ?? '{}').profile?.plannedDays ?? null));
   if (saved !== 4) errors.push(`${tag}: saved plannedDays is ${JSON.stringify(saved)}, expected 4`);
   await ctx.close();
 }
