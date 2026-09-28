@@ -12,6 +12,7 @@ import { trainingAgeMonths, ageOf, possiblyMinor } from '@/brain/recovery';
 import { coachInsights } from '@/brain/coach/rules';
 import { plannedThisWeek, weekSummary, daysSinceLastSession } from '@/brain/weekly';
 import { resolveProfile } from '@/brain/units';
+import { lighterWeekDay } from '@/brain/deload';
 import { activeDeloadOf, coachCtx, exerciseName, exerciseOf, readinessToday, recoveryAt, scheduledSplitFor, todayOverrideOf, type ToolCtx } from '../tools/context';
 import { MODE_ADDENDUM, type EscobarMode } from './modes';
 import { addFact } from '../ledger';
@@ -81,7 +82,7 @@ function buildLines(inp: BriefInput, num: Num): Record<string, string> {
   if (r) parts.push(`readiness ${r.band} ${num(r.score, 'readiness score today')}${r.calibrating ? ' calibrating' : ''}, advice ${r.loadAdvice}${r.postSessionAdvice ? ` (${one(r.postSessionAdvice)})` : ''}${e.sharing.health && r.drivers.length ? ` (${r.drivers.join('; ')})` : ''}`);
   else parts.push('readiness none (no check-in or health data)');
   const deload = activeDeloadOf(ctx);
-  if (deload) parts.push(`lighter week day ${num(Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), 'lighter week day')} of 7`);
+  if (deload) parts.push(`lighter week day ${num(lighterWeekDay(deload, ctx.today), 'lighter week day')} of 7`);
   const o = todayOverrideOf(ctx);
   if (o) parts.push(`today adjusted: ${one(o.reason)}`);
   if (s.active) parts.push(`live session: ${one(s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'workout')}`);
