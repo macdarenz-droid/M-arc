@@ -26,10 +26,16 @@
   --dur-press:100ms;--dur-fast:150ms;--dur-base:200ms;--dur-enter:240ms;--dur-bounce:460ms;--dur-draw:600ms;--dur-draw-long:900ms;--dur-path:700ms;--dur-hold:1000ms;--stagger:40ms;--step:60ms;--step-fig:120ms;--step-rail:80ms;--step-hero:150ms;
   --ease-standard:cubic-bezier(.2,0,0,1);--ease-enter:cubic-bezier(.05,.7,.1,1);--ease-draw:cubic-bezier(.6,.6,0,1);
   --ease-spring-bounce:var(--ease-enter);
+  /* page-only timings, built from the tokens above: the paste-up lag and length, then the caption and chip lag */
+  --lag-paste:var(--dur-base);--dur-paste:calc(2 * var(--dur-base));--lag-cap:calc(var(--lag-paste) + var(--dur-paste) - var(--dur-press));--lag-chip:calc(var(--lag-paste) + var(--dur-paste) + var(--dur-press));
 }
 @supports (animation-timing-function:linear(0,1)){
   :root{--ease-spring-bounce:linear(0,0.106,0.323,0.554,0.748,0.889,0.978,1.025,1.043,1.044,1.036,1.026,1.016,1.008,1.003,1,0.998,0.998,0.998,0.999,1)}
 }
+/* --d is a per-element delay built from the tokens; registering it resolves calc() so the script reads a real number */
+@property --d{syntax:"<time>";inherits:true;initial-value:0ms}
+@property --fade-l{syntax:"<length>";inherits:false;initial-value:48px}
+@property --fade-r{syntax:"<length>";inherits:false;initial-value:48px}
 @font-face{font-family:"Newsreader Fallback";src:local("Georgia");size-adjust:98%;ascent-override:92%;descent-override:24%}
 @font-face{font-family:"Inter Fallback";src:local("Arial");size-adjust:107%;ascent-override:90%;descent-override:22%}
 *,*::before,*::after{box-sizing:border-box}
@@ -87,7 +93,7 @@ html[data-install] .progress{background:var(--positive)}
 
 /* hero */
 .hero{padding-top:56px;padding-bottom:24px;min-height:min(72svh,720px)}
-.hero .copy{grid-column:1/7;align-self:center}
+.hero .copy{grid-column:1/7;align-self:start;padding-top:32px}
 .hero .fig{grid-column:8/13;justify-self:start}
 .diagram figcaption{max-width:var(--measure)}
 .hero h1{margin:16px 0 20px}
@@ -106,11 +112,12 @@ html[data-install] .progress{background:var(--positive)}
 .frame rect{fill:none;stroke:var(--text);stroke-width:1;vector-effect:non-scaling-stroke;x:.5px;y:.5px;width:calc(100% - 1px);height:calc(100% - 1px)}
 figcaption{margin-top:10px;font-size:13px;line-height:18px;color:var(--text-2)}
 figcaption .cap{display:block;margin-bottom:2px}
+.cap-narrow{display:none}
 .pair{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
 .pair .fig{--w:320px}
 .crop{aspect-ratio:390/344;width:100%;--oy:-26.7%}
 .crop img{transform:translateY(var(--oy))}
-.chip{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font:600 11px/1 var(--sans);letter-spacing:.04em;vertical-align:middle;margin-left:6px}
+.chip{display:inline-flex;align-items:center;min-height:16px;padding:0 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font:600 11px/1 var(--sans);letter-spacing:.04em;vertical-align:top;margin-left:6px}
 
 /* sections */
 .sec{padding-block:var(--section) 0}
@@ -118,7 +125,8 @@ figcaption .cap{display:block;margin-bottom:2px}
 .sec-head h2{margin-top:10px}
 .body-col{grid-column:1/8;align-self:start}
 .side-col{grid-column:8/13;justify-self:start;width:100%;max-width:390px}
-.side-stack{display:flex;flex-direction:column;gap:24px}
+.side-col.pair{grid-column:1/-1;max-width:none;margin-top:12px}
+.sheets{display:flex;flex-direction:column;gap:16px}
 .body-col .pull{margin-top:28px}
 .full{grid-column:1/-1}
 .stack{display:flex;flex-direction:column;gap:36px}
@@ -168,7 +176,7 @@ details.open summary svg{transform:rotate(90deg)}
 .diagram .portrait text{font-size:12px}
 
 /* promise and install cards */
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:start}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}
 .cards .card{display:flex;flex-direction:column;gap:12px;padding:24px}
 .cards .card h3{font-size:24px}
 .cards .card p{font-size:15px;line-height:1.5;color:var(--text-2)}
@@ -188,7 +196,10 @@ details.open summary svg{transform:rotate(90deg)}
 .rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding-left:var(--rail-pad);padding-right:var(--gutter)}
 .rail-head .arrows{display:flex;gap:6px}
 .rail-head .arrows .btn{width:32px;padding:0}
-.rail{--rail-pad:24px;list-style:none;margin:0;padding:6px var(--rail-pad) 12px;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:var(--rail-pad);-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
+.rail{--rail-pad:24px;--fade-l:48px;--fade-r:48px;list-style:none;margin:0;padding:6px var(--rail-pad) 12px;display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:var(--rail-pad);-webkit-mask-image:linear-gradient(to right,transparent,#000 var(--fade-l),#000 calc(100% - var(--fade-r)),transparent);mask-image:linear-gradient(to right,transparent,#000 var(--fade-l),#000 calc(100% - var(--fade-r)),transparent)}
+/* no fade on the edge the rail is resting at, so the first and last sheets are never dimmed */
+.rail[data-edge~="start"]{--fade-l:0px}
+.rail[data-edge~="end"]{--fade-r:0px}
 .rail::-webkit-scrollbar{display:none}
 .rail li{flex:0 0 200px;scroll-snap-align:start}
 .rail .fig{--w:200px;width:200px;max-width:200px}
@@ -210,13 +221,6 @@ details.open summary svg{transform:rotate(90deg)}
 .foot .fpline{margin-top:40px;padding-top:20px;border-top:1px solid var(--border-subtle);font:400 12px/18px var(--mono);font-variant-numeric:tabular-nums;color:var(--text-2);word-break:normal;overflow-wrap:normal}
 
 /* responsive */
-@media (min-width:1001px){
-  .side-col.pair{flex-direction:column;gap:32px}
-  .side-col.pair .fig{--w:100%;max-width:390px}
-}
-@media (min-width:1001px) and (min-height:760px){
-  .body-col.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 88px)}
-}
 @media (max-width:1000px){
   :root{--section:80px}
   .nav{display:none}
@@ -234,6 +238,9 @@ details.open summary svg{transform:rotate(90deg)}
   h2{font-size:30px}
   .hero{padding-top:32px;min-height:0}
   .hero .copy,.hero .fig{grid-column:1/-1}
+  .hero .copy{padding-top:0}
+  .hero .cap-wide{display:none}
+  .hero .cap-narrow{display:inline}
   .hero .fig{--w:100%}
   .hero .sheet{aspect-ratio:390/352;--oy:-14%}
   .hero .sheet>img{transform:translateY(var(--oy))}
@@ -272,6 +279,7 @@ details.open summary svg{transform:rotate(90deg)}
   .copybtn{transition:color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard)}
   .nav a{transition:background-color var(--dur-fast) var(--ease-standard)}
   .textlink svg{transition:transform var(--dur-fast) var(--ease-standard)}
+  .rail{transition:--fade-l var(--dur-fast) var(--ease-standard),--fade-r var(--dur-fast) var(--ease-standard)}
   html{scroll-behavior:smooth}
   @supports (animation-timeline:scroll()){
     .progress{animation:grow linear both;animation-timeline:scroll();transform:scaleX(0)}
@@ -294,12 +302,12 @@ details.open summary svg{transform:rotate(90deg)}
   html.js .fig:not(.in) .frame rect{stroke-dasharray:1;stroke-dashoffset:1}
   html.js .fig:not(.in) .sheet>:not(.frame),html.js .fig:not(.in) figcaption{opacity:0}
   .fig.in .frame rect{stroke-dasharray:1;animation:draw var(--dur-draw) var(--ease-draw) both;animation-delay:var(--d,0ms)}
-  .fig.in .sheet>:not(.frame){animation:paste 400ms var(--ease-enter) both;animation-delay:calc(var(--d,0ms) + 200ms)}
-  .fig.in figcaption{animation:fade var(--dur-enter) var(--ease-standard) both;animation-delay:calc(var(--d,0ms) + 500ms)}
+  .fig.in .sheet>:not(.frame){animation:paste var(--dur-paste) var(--ease-enter) both;animation-delay:calc(var(--d,0ms) + var(--lag-paste))}
+  .fig.in figcaption{animation:fade var(--dur-enter) var(--ease-standard) both;animation-delay:calc(var(--d,0ms) + var(--lag-cap))}
   @keyframes paste{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   .hero .fig.in .sheet>img{animation:hold var(--dur-hold) cubic-bezier(0,0,.2,1) both;animation-delay:var(--d,0ms)}
-  .hero .fig.in figcaption{animation-delay:calc(var(--d,0ms) + var(--dur-hold) + 200ms)}
+  .hero .fig.in figcaption{animation-delay:calc(var(--d,0ms) + var(--dur-hold) + var(--dur-base))}
   @keyframes hold{0%,30%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
   @media (max-width:720px){.hero .fig.in .sheet>img{animation-name:hold-crop}}
   @keyframes hold-crop{0%,30%{opacity:0;transform:translateY(calc(var(--oy) + 12px))}100%{opacity:1;transform:translateY(var(--oy))}}
@@ -310,7 +318,7 @@ details.open summary svg{transform:rotate(90deg)}
   .diagram.in .c{animation:draw var(--dur-path) var(--ease-draw) both;animation-delay:calc(var(--d,0ms) + var(--dur-draw) + var(--i,0) * var(--step-rail))}
   /* PR chip pops in after Fig. 3 pastes up */
   html.js .fig .chip{transform:scale(0)}
-  .fig.in .chip{animation:pop var(--dur-bounce) var(--ease-spring-bounce) both;animation-delay:calc(var(--d,0ms) + 700ms)}
+  .fig.in .chip{animation:pop var(--dur-bounce) var(--ease-spring-bounce) both;animation-delay:calc(var(--d,0ms) + var(--lag-chip))}
 }
 </style>
 
@@ -341,7 +349,7 @@ details.open summary svg{transform:rotate(90deg)}
 <main id="top">
 <section class="hero wrap grid">
   <div class="copy">
-    <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android</div>
+    <div class="eyebrow hr" style="--i:0">M/ARC <span class="num">37.1.0</span> for Android and the browser</div>
     <h1 class="hr" style="--i:1">A workout log that explains today’s plan.</h1>
     <p class="lede hr" style="--i:2">M/ARC keeps your sets, works out how recovered each muscle is, and writes today’s targets with the reason next to each one. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
     <div class="cta hr" style="--i:3">
@@ -350,12 +358,12 @@ details.open summary svg{transform:rotate(90deg)}
     </div>
     <p class="note hr" style="--i:4">Signed APK. Works offline. Public source.</p>
   </div>
-  <figure class="fig now" style="--w:340px;--d:300ms">
+  <figure class="fig now" style="--w:320px;--d:calc(2 * var(--step-hero))">
     <div class="sheet">
       <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
       <img src="shots/paper-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day: Push scheduled, three exercises planned, Readiness 66, Amber and still calibrating.">
     </div>
-    <figcaption><span class="cap">Fig. 1</span>The Today screen on a Push day: Push scheduled, three exercises planned, Readiness <span class="num">66</span>, Amber and still calibrating.</figcaption>
+    <figcaption><span class="cap">Fig. 1</span><span class="cap-wide">The Today screen</span><span class="cap-narrow">The top of the Today screen</span> on a Push day: Push scheduled, three exercises planned, Readiness <span class="num">66</span>, Amber and still calibrating.</figcaption>
   </figure>
 </section>
 
@@ -365,36 +373,35 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap">
     <header class="sec-head">
       <div class="eyebrow rv">Today</div>
-      <h2 class="rv" style="--d:60ms">The day starts with one card.</h2>
+      <h2 class="rv" style="--d:var(--step)">The day starts with one card.</h2>
     </header>
     <div class="grid">
       <div class="body-col measure">
         <p>Open M/ARC and the first card already knows what is scheduled. On a Push day it says Start Push. Mid-session it says how many exercises are done. Afterwards it says Push done, 18 sets logged, recovery has started. Tap Take today off and the day counts as rest: your streak and this week’s target leave it out.</p>
         <p>Under it sits Readiness, a 0 to 100 score built from your check-in, sleep, heart rate, HRV and recent load. Green from 67, Red at 33 or below, and marked calibrating for the first 14 days. It comes with one line of advice, such as keep loads steady today and skip any increases. Below that, the muscles still recovering and the time each one needs, then the week in three numbers: workouts, sets, records.</p>
       </div>
-      <div class="side-col side-stack">
+      <div class="side-col">
         <figure class="fig" style="--w:100%">
-          <div class="sheet card today">
-            <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
-            <div class="live" id="today-live" aria-live="polite">
-              <div class="eyebrow" id="tc-eyebrow">Scheduled today</div>
-              <h3 id="tc-title">Push</h3>
-              <p id="tc-line"><span class="num">3</span> exercises planned.</p>
+          <div class="sheets">
+            <div class="sheet card today">
+              <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+              <div class="live" id="today-live" aria-live="polite">
+                <div class="eyebrow" id="tc-eyebrow">Scheduled today</div>
+                <h3 id="tc-title">Push</h3>
+                <p id="tc-line"><span class="num">3</span> exercises planned.</p>
+              </div>
+              <div class="row">
+                <button class="btn btn-accent" type="button" id="tc-start">Start Push</button>
+                <button class="btn btn-quiet" type="button" id="tc-off" aria-pressed="false">Take today off</button>
+              </div>
             </div>
-            <div class="row">
-              <button class="btn btn-accent" type="button" id="tc-start">Start Push</button>
-              <button class="btn btn-quiet" type="button" id="tc-off" aria-pressed="false">Take today off</button>
+            <div class="sheet card ready" style="--d:var(--step-fig)">
+              <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
+              <div class="top"><h3>Amber · calibrating</h3><span class="num score">66</span></div>
+              <p>the muscles you would train today are not fully recovered.</p>
             </div>
           </div>
-          <figcaption>The Today card, rebuilt in HTML with the app’s own strings. Tap Take today off, then Undo day off, to see both states.</figcaption>
-        </figure>
-        <figure class="fig" style="--w:100%;--d:120ms">
-          <div class="sheet card ready">
-            <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
-            <div class="top"><h3>Amber · calibrating</h3><span class="num score">66</span></div>
-            <p>the muscles you would train today are not fully recovered.</p>
-          </div>
-          <figcaption>The Readiness card from the same day, in the app’s own words: Amber, still calibrating, <span class="num">66</span>, and the reason in one line.</figcaption>
+          <figcaption style="--d:var(--step-fig)">The Today card and the Readiness card from the same day, rebuilt in HTML with the app’s own strings: Push scheduled, three exercises planned, Amber, still calibrating, <span class="num">66</span>. Tap Take today off, then Undo day off, to see both states.</figcaption>
         </figure>
       </div>
     </div>
@@ -405,10 +412,10 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap">
     <header class="sec-head">
       <div class="eyebrow rv">Train</div>
-      <h2 class="rv" style="--d:60ms">Every set arrives with a number and a reason.</h2>
+      <h2 class="rv" style="--d:var(--step)">Every set arrives with a number and a reason.</h2>
     </header>
     <div class="grid">
-    <div class="body-col measure sticky">
+    <div class="body-col measure">
       <p>Each exercise in a split shows today’s target before you start, taken from your last sessions and your goal: 62.5 kg for 8, top of the range twice, step up. In the session the target is pre-filled as a placeholder. Tap Log as planned and move on, or type what you actually did.</p>
       <p>Rate every set with one tap. E is easy, three or more reps left. I is ideal, one to three left. M is max, nothing left. A missing rating never counts as easy or max; it lowers confidence instead. Drop sets count for volume and never for records. A set that beats your best gets a PR chip while you are still on the bench.</p>
       <p>Rest runs by timer, or by heart rate when a Bluetooth watch is connected: the rest ends when your pulse settles and falls back to the timer if the signal drops. Tap a barbell target to see plates per side in the unit that gym uses. Up to eight gyms, and each one remembers which unit every machine and rack takes.</p>
@@ -433,12 +440,12 @@ details.open summary svg{transform:rotate(90deg)}
         </div>
         <figcaption><span class="cap">Fig. 2</span>The Push split before a session: machine chest press at <span class="num">50 kg</span> for <span class="num">6 to 8</span> reps, dumbbell shoulder press at <span class="num">18 kg</span>, triceps pushdown at <span class="num">25 kg</span>, three sets each.</figcaption>
       </figure>
-      <figure class="fig" style="--d:120ms">
+      <figure class="fig" style="--d:var(--step-fig)">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
           <img src="shots/paper-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: set one 50 kg for 8 rated E, set two 52.5 kg for 6 rated I, the third pre-filled at 50 kg for 6, rest counting down from 1:30.">
         </div>
-        <figcaption><span class="cap">Fig. 3 <span class="chip">PR</span></span>A live Push session on the machine chest press: set one <span class="num">50 kg</span> for <span class="num">8</span> rated E, set two <span class="num">52.5 kg</span> for <span class="num">6</span> rated I, the third pre-filled at <span class="num">50 kg</span> for <span class="num">6</span>, rest counting down from <span class="num">1:30</span>.</figcaption>
+        <figcaption><span class="cap">Fig. 3 <span class="chip" aria-hidden="true">PR</span></span>A live Push session on the machine chest press: set one <span class="num">50 kg</span> for <span class="num">8</span> rated E, set two <span class="num">52.5 kg</span> for <span class="num">6</span> rated I, the third pre-filled at <span class="num">50 kg</span> for <span class="num">6</span>, rest counting down from <span class="num">1:30</span>.</figcaption>
       </figure>
     </div>
     </div>
@@ -449,7 +456,7 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap stack">
     <header class="sec-head" style="margin-bottom:0">
       <div class="eyebrow rv">Body</div>
-      <h2 class="rv" style="--d:60ms">A muscle map that knows what you did on Tuesday.</h2>
+      <h2 class="rv" style="--d:var(--step)">A muscle map that knows what you did on Tuesday.</h2>
     </header>
     <figure class="fig diagram" style="--w:100%">
       <div class="sheet">
@@ -495,7 +502,7 @@ details.open summary svg{transform:rotate(90deg)}
       <figcaption><span class="cap">Fig. 4</span>What goes into the model and what comes out of it.</figcaption>
     </figure>
     <div class="grid">
-    <div class="body-col measure sticky">
+    <div class="body-col measure">
       <p>Every working set leaves an impulse on the muscles it used, sized by their role in the lift, the effort you rated, the reps and the load. The impulse decays, stacks over seven days, and the model adjusts to how your next session actually went, in both directions, within limits.</p>
       <p>The map shades 24 muscles. Ready for hard work at 90%, fully recovered at 97%. Tap one for Ready now or Full by 10 pm, with a confidence label. When sleep, resting heart rate and load slow everything down, the map says so in one line, whole body recovering about 12% slower than usual this week.</p>
       <p>Switch to This week to see effective sets per muscle against a target band. Switch to Levels to see how much each muscle has been trained, as a relative measure, not a medical one.</p>
@@ -509,7 +516,7 @@ details.open summary svg{transform:rotate(90deg)}
         </div>
         <figcaption><span class="cap">Fig. 5</span>The muscle map in Recovery view. Chest and front shoulders are marked Nearly, rear shoulders Recovering, legs and back Ready.</figcaption>
       </figure>
-      <figure class="fig" style="--d:120ms">
+      <figure class="fig" style="--d:var(--step-fig)">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
           <img src="shots/paper-levels.png" width="780" height="1688" loading="lazy" decoding="async" alt="The same map switched to Levels, shaded by how much each muscle has been trained.">
@@ -525,7 +532,7 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap">
     <header class="sec-head">
       <div class="eyebrow rv">Escobar</div>
-      <h2 class="rv" style="--d:60ms">A coach that shows its working.</h2>
+      <h2 class="rv" style="--d:var(--step)">A coach that shows its working.</h2>
     </header>
     <div class="grid">
       <div class="body-col measure">
@@ -534,8 +541,8 @@ details.open summary svg{transform:rotate(90deg)}
         <p>Without a network the tab still works. Ranked notes, a weekly review, deload suggestions and 422 exercise cues come from the phone. Each note reads Noticed, Means, Do next. Mention an injury or a piece of equipment and, with Let Escobar remember on, it is kept in a list you can read and edit under What Escobar knows.</p>
         <ul class="chain">
           <li class="rv"><span class="eyebrow">Noticed</span><span>Push is scheduled today. Triceps is <span class="num">45%</span> recovered.</span></li>
-          <li class="rv" style="--d:60ms"><span class="eyebrow">Means</span><span>Hard triceps sets would land on a muscle that is not ready.</span></li>
-          <li class="rv" style="--d:120ms"><span class="eyebrow">Do next</span><span>Swap to another split, or keep Push light and put the hard sets elsewhere.</span></li>
+          <li class="rv" style="--d:var(--step)"><span class="eyebrow">Means</span><span>Hard triceps sets would land on a muscle that is not ready.</span></li>
+          <li class="rv" style="--d:calc(2 * var(--step))"><span class="eyebrow">Do next</span><span>Swap to another split, or keep Push light and put the hard sets elsewhere.</span></li>
         </ul>
       </div>
       <div class="side-col">
@@ -555,10 +562,10 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap">
     <header class="sec-head">
       <div class="eyebrow rv">History</div>
-      <h2 class="rv" style="--d:60ms">A log you can go back and correct.</h2>
+      <h2 class="rv" style="--d:var(--step)">A log you can go back and correct.</h2>
     </header>
     <div class="grid">
-    <div class="body-col measure sticky">
+    <div class="body-col measure">
       <p>Trained days sit on a month calendar. Swipe sideways to page months, tap a day to list its sessions. Open any session to fix a set or a load; recovery is rebuilt from history after the edit. Swipe a session away and a toast offers Undo, heart data included.</p>
       <p>Stats keeps weekly volume, a sparkline per exercise with a plain trend word, and six kinds of records: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Loads stay in the unit you typed them in. Share a week or a session as a card.</p>
     </div>
@@ -570,7 +577,7 @@ details.open summary svg{transform:rotate(90deg)}
         </div>
         <figcaption><span class="cap">Fig. 8</span>September <span class="num">2026</span> on the History calendar, trained days filled in, today outlined, and the last sessions under Recent: Push on Sunday the <span class="num">27th</span>, Pull on Saturday the <span class="num">26th</span>.</figcaption>
       </figure>
-      <figure class="fig" style="--d:120ms">
+      <figure class="fig" style="--d:var(--step-fig)">
         <div class="sheet">
           <svg class="frame" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="14" pathLength="1"/></svg>
           <img src="shots/paper-stats.png" width="780" height="1688" loading="lazy" decoding="async" alt="Exercise progress for the machine chest press: the line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping.">
@@ -586,12 +593,12 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap stack">
     <header class="sec-head" style="margin-bottom:0">
       <div class="eyebrow rv">Your data</div>
-      <h2 class="rv" style="--d:60ms">Nothing leaves the phone unless you send it.</h2>
+      <h2 class="rv" style="--d:var(--step)">Nothing leaves the phone unless you send it.</h2>
     </header>
     <div class="cards">
       <div class="card rv"><h3>Your log stays on your phone.</h3><p>No account, no sign-in, no server copy.</p></div>
-      <div class="card rv" style="--d:60ms"><h3>It works without a signal.</h3><p>The installed app and the coach’s notes run offline.</p></div>
-      <div class="card rv" style="--d:120ms"><h3>Your data is a file you own.</h3><p>JSON backup with preview and Undo, CSV of every set, and a rescue copy if anything fails to read.</p></div>
+      <div class="card rv" style="--d:var(--step)"><h3>It works without a signal.</h3><p>The installed app and the coach’s notes run offline.</p></div>
+      <div class="card rv" style="--d:calc(2 * var(--step))"><h3>Your data is a file you own.</h3><p>JSON backup with preview and Undo, CSV of every set, and a rescue copy if anything fails to read.</p></div>
     </div>
     <div class="measure">
       <p>There is no account and no sign-in. Your log lives in the phone’s storage, coach photos in IndexedDB, heart data in a local side store. The installed web app keeps every built file, so it opens in a basement with no signal.</p>
@@ -605,7 +612,7 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap">
     <header class="sec-head">
       <div class="eyebrow rv">Themes</div>
-      <h2 class="rv" style="--d:60ms">Five themes, switched with one crossfade.</h2>
+      <h2 class="rv" style="--d:var(--step)">Five themes, switched with one crossfade.</h2>
     </header>
     <p class="measure" style="margin-bottom:36px">Silent Black, Paper, Ember, Emerald and Midnight. Each is a complete token set, so every screen and chart recolours at once and the whole app crossfades when you switch. This page is set in Paper.</p>
   </div>
@@ -640,7 +647,7 @@ details.open summary svg{transform:rotate(90deg)}
   <div class="wrap stack">
     <header class="sec-head" style="margin-bottom:0">
       <div class="eyebrow rv">Install</div>
-      <h2 class="rv" style="--d:60ms">Install the APK.</h2>
+      <h2 class="rv" style="--d:var(--step)">Install the APK.</h2>
     </header>
     <div class="cards">
       <div class="card rv">
@@ -650,18 +657,18 @@ details.open summary svg{transform:rotate(90deg)}
           <div class="eyebrow" style="margin-bottom:8px">Signing key SHA-256. Does not change between versions.</div>
           <pre class="code fp" id="fp">05:66:9A:D2:72:1C:6A:BA:<wbr>F9:FD:D4:B9:B8:4E:2F:B7:<wbr>94:48:44:B1:DE:F3:59:84:<wbr>5F:01:5F:2B:67:CA:F1:F5</pre>
           <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="fp"><span class="lbl">Copy fingerprint</span><span class="ghost" aria-hidden="true">Copied</span></button>
-          <pre class="code" id="cmd" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs MARC-debug.apk</pre>
+          <pre class="code" id="cmd" style="margin-top:12px"><strong>apksigner</strong> verify --print-certs MARC-v37.1.0.*-signed.apk</pre>
           <button class="btn btn-hair btn-sm copybtn" type="button" data-copy="cmd"><span class="lbl">Copy command</span><span class="ghost" aria-hidden="true">Copied</span></button>
           <p style="margin-top:10px">If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
         </div>
         <a class="btn btn-accent" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
       </div>
-      <div class="card rv" style="--d:60ms">
+      <div class="card rv" style="--d:var(--step)">
         <h3>Source</h3>
         <p>The code is public on GitHub. Read it, build it, file an issue. Each push runs the typecheck, <span class="num">1,255</span> unit tests in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
         <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
       </div>
-      <div class="card rv" style="--d:120ms">
+      <div class="card rv" style="--d:calc(2 * var(--step))">
         <h3>In the browser, later</h3>
         <p>The web app is not published yet. When it is, you will open it in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. Until then, build it from the source.</p>
         <a class="btn btn-hair" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
@@ -678,7 +685,7 @@ details.open summary svg{transform:rotate(90deg)}
     <div class="grid">
       <div class="brand">
         <svg viewBox="0 0 64 64" role="img" aria-label="M/ARC mark"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" fill="none" stroke="#37352f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="50" r="4.5" fill="#2383e2"/></svg>
-        M/ARC <span class="num">37.1.0</span> for Android. Public source on GitHub.<br>This page sets no cookies and loads no analytics.
+        M/ARC <span class="num">37.1.0</span> for Android and the browser. Public source on GitHub.<br>This page sets no cookies and loads no analytics.
       </div>
       <div class="cols">
         <div><div class="eyebrow">Product</div><ul><li><a href="#install">Install</a></li><li><a href="#data">How data is handled</a></li><li><a href="#themes">Themes</a></li></ul></div>
@@ -695,14 +702,17 @@ details.open summary svg{transform:rotate(90deg)}
 var d=document,H=d.documentElement,$=function(s,r){return (r||d).querySelector(s)},$$=function(s,r){return [].slice.call((r||d).querySelectorAll(s))};
 H.classList.add('js');
 var rm=matchMedia('(prefers-reduced-motion: reduce)').matches,IO='IntersectionObserver' in window;
-function done(f){f.classList.add('done');var s=$('.frame',f);if(s)s.remove()}
-function show(f){if(f.classList.contains('in'))return;f.classList.add('in');if(rm)done(f);else setTimeout(function(){done(f)},parseInt(getComputedStyle(f).getPropertyValue('--d'))+900||900)}
-d.addEventListener('animationend',function(e){if(e.target.tagName==='rect'){var f=e.target.closest('.fig');if(f)done(f)}});
-var figs=$$('.fig'),rv=$$('.rv');
+/* a token's value in milliseconds, so script timings stay in step with the CSS */
+function ms(n){return parseFloat(getComputedStyle(H).getPropertyValue(n))||0}
+/* a figure is done when its last frame has drawn: the frames go, the sheet borders come back */
+function done(f){f.classList.add('done');$$('.frame',f).forEach(function(s){s.remove()})}
+function show(f){if(f.classList.contains('in'))return;f.classList.add('in');if(rm)done(f);else setTimeout(function(){done(f)},(parseInt(getComputedStyle(f).getPropertyValue('--d'))||0)+ms('--step-fig')+ms('--dur-draw')+ms('--dur-base'))}
+d.addEventListener('animationend',function(e){if(e.target.tagName==='rect'){var f=e.target.closest('.fig');if(f){var r=$$('.frame rect',f);if(r[r.length-1]===e.target)done(f)}}});
+var figs=$$('.fig'),rv=$$('.rv'),rail=$('#rail');
 if(rm||IO===false){figs.forEach(show);rv.forEach(function(e){e.classList.add('in')})}
 else{
-  var rail=$('#rail'),io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting===false)return;var t=en.target;io.unobserve(t);
-    if(t===rail)$$('.fig',t).forEach(function(f,i){f.style.setProperty('--d',i*80+'ms');show(f)});
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting===false)return;var t=en.target;io.unobserve(t);
+    if(t===rail)$$('.fig',t).forEach(function(f,i){f.style.setProperty('--d','calc('+i+' * var(--step-rail))');show(f)});
     else if(t.classList.contains('fig'))show(t);else t.classList.add('in')})},{threshold:.2,rootMargin:'0px 0px -10% 0px'});
   figs.forEach(function(f){if(f.classList.contains('now'))show(f);else if(f.closest('#rail')===null)io.observe(f)});
   rv.forEach(function(e){io.observe(e)});if(rail)io.observe(rail);
@@ -716,12 +726,14 @@ if(IO){var so=new IntersectionObserver(function(es){es.forEach(function(en){if(e
 /* Today card swap */
 var live=$('#today-live'),off=$('#tc-off'),start=$('#tc-start'),isOff=false;
 function setCard(){var o=isOff;$('#tc-eyebrow').textContent=o?'Day off':'Scheduled today';$('#tc-title').textContent=o?'Push can wait':'Push';$('#tc-line').textContent=o?"Today counts as a rest day: your streak and this week’s target leave it out.":'3 exercises planned.';start.textContent=o?'Train anyway':'Start Push';off.textContent=o?'Undo day off':'Take today off';off.setAttribute('aria-pressed',o)}
-off.addEventListener('click',function(){isOff=isOff===false;if(rm){setCard();return}live.classList.add('fade');setTimeout(function(){setCard();live.classList.remove('fade')},150)});
+off.addEventListener('click',function(){isOff=isOff===false;if(rm){setCard();return}live.classList.add('fade');setTimeout(function(){setCard();live.classList.remove('fade')},ms('--dur-fast'))});
 /* Why this target */
-var det=$('#why');$('summary',det).addEventListener('click',function(e){e.preventDefault();if(det.open){det.classList.remove('open');if(rm)det.open=false;else setTimeout(function(){det.open=false},200)}else{det.open=true;requestAnimationFrame(function(){det.classList.add('open')})}});
+var det=$('#why');$('summary',det).addEventListener('click',function(e){e.preventDefault();if(det.open){det.classList.remove('open');if(rm)det.open=false;else setTimeout(function(){det.open=false},ms('--dur-base'))}else{det.open=true;requestAnimationFrame(function(){det.classList.add('open')})}});
 /* copy the fingerprint */
 $$('[data-copy]').forEach(function(cb){cb.addEventListener('click',function(){var t=$('#'+cb.dataset.copy).textContent.trim();if(navigator.clipboard)navigator.clipboard.writeText(t);cb.classList.add('done');setTimeout(function(){cb.classList.remove('done')},1500)})});
-/* theme rail arrows */
-$$('[data-rail]').forEach(function(b){b.addEventListener('click',function(){$('#rail').scrollBy({left:220*+b.dataset.rail,behavior:rm?'auto':'smooth'})})});
+/* theme rail: arrows, and no fade on the edge the rail rests at */
+function edge(){var e=[];if(rail.scrollLeft<2)e.push('start');if(rail.scrollLeft+rail.clientWidth>rail.scrollWidth-2)e.push('end');rail.setAttribute('data-edge',e.join(' '))}
+rail.addEventListener('scroll',edge,{passive:true});addEventListener('resize',edge);edge();
+$$('[data-rail]').forEach(function(b){b.addEventListener('click',function(){rail.scrollBy({left:220*+b.dataset.rail,behavior:rm?'auto':'smooth'})})});
 })();
 </script>
