@@ -933,3 +933,10 @@ html[data-motion="reduce"] .form-guide .cam, html[data-motion="reduce"] .form-gu
  * transform-origin, given in the SVG's user units; only transform and opacity change (rig/pose.ts applyPose). */
 .form-guide svg { display: block; width: 100%; height: auto; }
 .form-guide .fg-j, .form-guide .fg-p { transform-box: view-box; }
+
+/* FG-4: the ExerciseGuide player (src/formguide/player/ExercisePlayer.tsx): moment snapshots are <img>, the zoom still
+ * fills the stage, and compare mode names its two figures (the mistake with a --mistake dot, D-FG1). */
+.form-guide .tile img { display: block; width: 100%; flex: 1 1 0; min-height: 0; object-fit: contain; padding-top: 4px; }
+.form-guide .fg4-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.form-guide .fg4-key { position: absolute; left: 12px; right: 12px; bottom: 10px; display: flex; justify-content: space-around; font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); pointer-events: none; }
+.form-guide .fg4-key-m::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--mistake); margin-right: 6px; }
