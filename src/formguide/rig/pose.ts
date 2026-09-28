@@ -199,7 +199,6 @@ export function sideFrame(id: SidePoseId, pose: Pose, o: SideFrameOptions = {}, 
   }
   f.spine = { ops: [['r', -v('torso_lean')]] };
   f.chest = { ops: [['r', 0]] };
-  f.neck = { ops: [['r', 0]] };
   f.head = { ops: [['r', 0]] };
   const br = v('breath');
   f.breath = { ops: [['s', 1 + 0.03 * (br - 0.5), 1 + 0.01 * (br - 0.5)]] };
@@ -227,6 +226,10 @@ export function sideFrame(id: SidePoseId, pose: Pose, o: SideFrameOptions = {}, 
     P = mmul(TR(0, (o.surface ?? FLOOR) - Math.max(...pts.map(q => q[1]))), P0);
   }
   f.pelvis = { ops: asOps(S_PELVIS, P) };
+  // gaze: on the feet, the neck lifts the head back by half the trunk's forward tilt, so a squat or a hinge looks ahead
+  // and down rather than at the floor (a drawing rule, D-FG6); lying poses keep the head in line with the trunk
+  const tilt = id === 'standing' || id === 'seated' ? Math.atan2(P[1], P[0]) / D - v('torso_lean') : 0;
+  f.neck = { ops: [['r', -0.5 * Math.max(0, tilt)]] };
   for (const [k, x] of Object.entries(tints)) f[k] = { opacity: Math.min(1, Math.max(0, x)) };
   return f;
 }

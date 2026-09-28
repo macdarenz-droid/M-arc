@@ -7,13 +7,14 @@ import { gzipSync } from 'node:zlib';
 import { THEMES, THEME_IDS, themeToCss } from '@/theme/themes';
 import { CHANNELS, JOINTS, type ChannelId, type Pose } from '@/formguide/rig/joints';
 import { FLOOR } from '@/formguide/rig/figureFront';
-import { SIDE_MUSCLES, figureSide } from '@/formguide/rig/figureSide';
+import { DELT, HIPS, SIDE_MUSCLES, THIGH, TORSO, UA, figureSide } from '@/formguide/rig/figureSide';
+import { figureFront } from '@/formguide/rig/figureFront';
 import { bodyPal, mix, themeReader, FIGURE_TOKENS } from '@/formguide/rig/paint';
-import { SIDE_POSE_IDS, sideFrame, sideGuideRig, sideHandAt, sidePivot, sidePoint, solveSideArm, applyPose, bindFigure, css, type Frame, type StyleTarget } from '@/formguide/rig/pose';
+import { SIDE_POSE_IDS, sideFrame, sideWorldMat, sideGuideRig, sideHandAt, sidePivot, sidePoint, solveSideArm, applyPose, bindFigure, css, type Frame, type StyleTarget } from '@/formguide/rig/pose';
 import { OVERLAYS } from '@/formguide/check/overlays';
-import { bbox, compile, countPaths, colourLiterals } from '@/formguide/check/svg';
+import { bbox, compile, countPaths, colourLiterals, parseTransform, pathSegs } from '@/formguide/check/svg';
 import { VIEWBOXES, type ExerciseGuide } from '@/formguide/model';
-import { STILLS, stillMarkup } from './sideGallery';
+import { MID_FOOT, STILLS, stillMarkup } from './sideGallery';
 import { walk } from './svgWalk';
 
 vi.mock('@/formguide/check/view', async orig => {
@@ -92,6 +93,9 @@ describe('A2 bench press and squat stills sit inside the standing camera', () =>
       expect(Math.hypot(h[0] - bar[0], h[1] - bar[1])).toBeLessThan(0.01);
     }
     expect(sidePivot(bottom.frame, 'pelvis')[1]).toBeGreaterThan(sidePivot(top.frame, 'pelvis')[1] + 100);   // the hips drop
+    // balance (review r1): the bar stays over the middle of the foot, top and bottom
+    for (const s of [top, bottom]) expect(Math.abs(sidePoint(s.frame, 'shoulder_r')[0] - MID_FOOT), s.name).toBeLessThan(1);
+    console.info(`[FG-6] squat: top ankle ${top.pose.ankle_flex_r!.toFixed(1)}°, bottom trunk ${bottom.pose.torso_lean!.toFixed(1)}° to hold the bar over the mid-foot`);
   });
 });
 
@@ -215,5 +219,80 @@ describe('supine and prone files pass every §5 check through the side rig', () 
     console.info(report(id, rs));
     expect(rs.map(r => r.check)).toEqual([...CHECKS]);
     expect(rs.filter(r => !r.ok).flatMap(r => r.fails)).toEqual([]);
+  });
+});
+
+// ---- review r1: one person in both views, and the hips stay on the trunk ------------------------------------------------
+/** Each drawn shape of the markup with its figure-space matrix under a frame (as check/svg.ts bbox composes them). */
+function placed(svg: string, f: Frame) {
+  const c = compile(svg), mats: number[][] = [];
+  c.nodes.forEach((n, i) => {
+    let M = n.parent < 0 ? [1, 0, 0, 1, 0, 0] : mats[n.parent]!;
+    const mul = (A: number[], B: number[]) => [A[0]! * B[0]! + A[2]! * B[1]!, A[1]! * B[0]! + A[3]! * B[1]!, A[0]! * B[2]! + A[2]! * B[3]!, A[1]! * B[2]! + A[3]! * B[3]!, A[0]! * B[4]! + A[2]! * B[5]! + A[4]!, A[1]! * B[4]! + A[3]! * B[5]! + A[5]!];
+    if (n.own) M = mul(M, n.own);
+    const xf = n.key ? f[n.key] : undefined;
+    if (xf?.ops) { const [ox, oy] = n.origin!, X = parseTransform(css(xf.ops)); M = mul(mul(mul(M, [1, 0, 0, 1, ox, oy]), X), [1, 0, 0, 1, -ox, -oy]); }
+    mats[i] = M;
+  });
+  return c.shapes.map(s => ({ first: s.segs[0]![0]!, n: s.segs.length, poly: s.segs.flatMap(seg => Array.from({ length: seg.length === 4 ? 24 : 1 }, (_, k) => {
+    const t = k / 24, u = 1 - t, p = seg.length === 4 ? [0, 1].map(i => u * u * u * seg[0]![i]! + 3 * u * u * t * seg[1]![i]! + 3 * u * t * t * seg[2]![i]! + t * t * t * seg[3]![i]!) : seg[0]!;
+    const M = mats[s.node]!; return [M[0]! * p[0]! + M[2]! * p[1]! + M[4]!, M[1]! * p[0]! + M[3]! * p[1]! + M[5]!] as [number, number];
+  })) }));
+}
+/** The placed outline of the last drawn shape with path `d` (the near limb's, when both sides draw it). */
+const shapeOf = (all: ReturnType<typeof placed>, d: string) => {
+  const s0 = pathSegs(d)[0]![0]!, n = pathSegs(d).length;
+  return all.filter(s => s.n === n && Math.abs(s.first[0] - s0[0]) < 1e-9 && Math.abs(s.first[1] - s0[1]) < 1e-9).at(-1)!.poly;
+};
+const widthAt = (poly: [number, number][], y: number) => {
+  const xs: number[] = [];
+  poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length]!; if ((a[1] - y) * (b[1] - y) <= 0 && a[1] !== b[1]) xs.push(a[0] + ((b[0] - a[0]) * (y - a[1])) / (b[1] - a[1])); });
+  return Math.max(...xs) - Math.min(...xs);
+};
+const inside = (poly: [number, number][], p: [number, number]) => {
+  let n = false;
+  poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length]!; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < a[0] + ((b[0] - a[0]) * (p[1] - a[1])) / (b[1] - a[1])) n = !n; });
+  return n;
+};
+
+describe('review r1: the side figure is the FG-1 person seen from the side', () => {
+  // Side depth over FG-1's front width at the same landmark, from the ANSUR II male means (Gordon et al. 2014): chest
+  // depth 257 / biacromial breadth 397 mm = 0.65; buttock depth 252 / hip breadth 363 = 0.69; waist depth 243 / waist
+  // breadth 327 = 0.74. Round limbs (thigh, upper arm, deltoid) are as deep as they are wide: 1.0. Tolerance ± 0.08.
+  const TOL = 0.08;
+  const front = placed(figureFront(read, { id: 'q' }), {}), side = placed(build(), sideFrame('standing', {}));
+  const F = (re: RegExp) => { const d = re.exec(figureFront(read, { id: 'q' }))![1]!; return shapeOf(front, d); };
+  const rows: [string, [number, number][], number, [number, number][], number, number][] = [
+    ['chest', F(/<path d="(M200 99 [^"]+)"/), 150, shapeOf(side, TORSO), 150, 0.65],
+    ['waist', F(/<path d="(M200 99 [^"]+)"/), 228, shapeOf(side, TORSO), 228, 0.74],
+    ['hips', F(/<path d="(M200 99 [^"]+)"/), 262, shapeOf(side, HIPS), 290, 0.69],
+    ['thigh', F(/<path d="(M200 262 L251[^"]+)"/), 350, shapeOf(side, THIGH), 350, 1],
+    ['upper arm', F(/<path d="(M-15 6 [^"]+)"/), 50 + 128, shapeOf(side, UA), 50 + 134, 1],
+    ['shoulder (deltoid)', F(/<path d="(M-15 -2 C-11 -8 -3 -12 6 -12 C11 -12 16 -11 20 -8 C24 -4 25.5 3 25 12 [^"]+)"/), 10 + 128, shapeOf(side, DELT), 10 + 134, 1],
+  ];
+  it.each(rows)('%s: side depth / FG-1 width within ± 0.08 of the anthropometric ratio', (name, fp, fy, sp, sy, want) => {
+    const r = widthAt(sp, sy) / widthAt(fp, fy);
+    console.info(`[FG-6] ${name}: side ${widthAt(sp, sy).toFixed(1)} / front ${widthAt(fp, fy).toFixed(1)} = ${r.toFixed(3)} (want ${want} ± ${TOL})`);
+    expect(Math.abs(r - want)).toBeLessThanOrEqual(TOL);
+  });
+});
+
+describe('review r1: the hip block stays joined to the trunk at deep hip flexion', () => {
+  const deep: [string, () => Frame][] = [
+    ['back squat, bottom', () => STILLS[3]!().frame],
+    ['deep hinge (hip 120°, trunk -35°)', () => sideFrame('standing', { hip_flex_r: 120, hip_flex_l: 120, knee_flex_r: 60, knee_flex_l: 60, ankle_flex_r: 10, ankle_flex_l: 10, torso_lean: -35 })],
+    ['upright', () => sideFrame('standing', {})],
+  ];
+  it.each(deep)('%s: the trunk\'s lowest back point sits inside the hip block, and the two overlap', (_n, frame) => {
+    const all = placed(build(), frame()), trunk = shapeOf(all, TORSO), hips = shapeOf(all, HIPS);
+    // the trunk's back bottom: its lowest outline point behind the pelvis's centre, in the pelvis's own frame
+    const P = sideWorldMat('pelvis', frame()), toPelvis = (p: [number, number]) => { const d = P[0] * P[3] - P[1] * P[2], x = p[0] - P[4], y = p[1] - P[5]; return [(P[3] * x - P[2] * y) / d, (-P[1] * x + P[0] * y) / d] as [number, number]; };
+    const back = trunk.map(p => ({ p, q: toPelvis(p) })).filter(o => o.q[0] < 200).reduce((a, b) => (b.q[1] > a.q[1] ? b : a));
+    expect(inside(hips, back.p), `trunk back bottom ${back.p.map(v => v.toFixed(1))}`).toBe(true);
+    let both = 0;
+    const hb = hips.reduce((m, p) => [Math.min(m[0]!, p[0]), Math.min(m[1]!, p[1]), Math.max(m[2]!, p[0]), Math.max(m[3]!, p[1])], [Infinity, Infinity, -Infinity, -Infinity]);
+    for (let x = hb[0]!; x < hb[2]!; x += 2) for (let y = hb[1]!; y < hb[3]!; y += 2) if (inside(trunk, [x, y]) && inside(hips, [x, y])) both += 4;
+    console.info(`[FG-6] ${_n}: trunk and hips overlap ${both} units²`);
+    expect(both).toBeGreaterThanOrEqual(400);
   });
 });

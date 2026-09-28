@@ -40,9 +40,22 @@ function benchStill(name: string, lockout: boolean, mirror = false): Still {
   return { name, id: 'lying_supine', pose, o, frame: f, aim: bar, parts: [benchSvg, place(barbell({ g: PART_GRAD, kg: 60, view: 'side' }), hand).svg] };
 }
 
+/** The middle of the foot (the shoe runs from x 184 to 264 at rest): a balanced squat keeps the bar over it. */
+export const MID_FOOT = 224;
+/** Bisection of a channel so the bar on the traps sits over the mid-foot. */
+function overMidFoot(pose: Pose, set: (v: number) => Pose, lo: number, hi: number): Pose {
+  const x = (v: number) => sidePoint(sideFrame('standing', { ...pose, ...set(v) }), 'shoulder_r')[0];
+  const up = x(hi) > x(lo);
+  for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if ((x(m) < MID_FOOT) === up) lo = m; else hi = m; }
+  return { ...pose, ...set((lo + hi) / 2) };
+}
+
 function squatStill(name: string, bottom: boolean): Still {
   const o = {};
-  let pose: Pose = bottom ? { breath: 0.5, ...both('hip_flex', 112), ...both('knee_flex', 118), ...both('ankle_flex', 20), torso_lean: -22 } : { breath: 0.5 };
+  // the top leans the whole body forward at the ankle, the bottom leans the trunk, until the bar is over the mid-foot
+  let pose: Pose = bottom
+    ? overMidFoot({ breath: 0.5, ...both('hip_flex', 120), ...both('knee_flex', 120), ...both('ankle_flex', 38) }, v => ({ torso_lean: v }), -70, 0)
+    : overMidFoot({ breath: 0.5 }, v => both('ankle_flex', v), 0, 15);
   const bar = sidePoint(sideFrame('standing', pose, o), 'shoulder_r');
   const arm = solveSideArm('standing', pose, 'r', bar, { ...o, turnedOut: true });
   pose = { ...pose, ...both('shoulder_flex', arm.shoulder_flex), ...both('elbow_flex', arm.elbow_flex) };
