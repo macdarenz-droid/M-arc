@@ -527,3 +527,17 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
 - **Decided**: every line on the M/ARC website (headlines, body, captions, buttons, alt text) is written in a plain, professional, human voice: concrete nouns and verbs, the app's own words, real numbers, no hype. A banned list (seamless, effortless, elevate, unleash, empower, journey, unlock, "not just X but Y", rhetorical questions, em-dashes, colon-then-reveal headlines, Discover/Experience/Introducing, and so on) is enforced at three points: the direction specs, the build, and the review of each render.
   **Why**: the owner's instruction: "Avoid using ai wordings in the website. Use human professional level wordings, captions." The reference sites (Linear, Vercel, Height) all write this way: short, specific, no adjectives doing the work.
   **Source**: owner message, 2026-09-28; docs/WEBSITE-ARCHITECTURE.md carries the full rule list.
+
+## Website renders: small calls made during review (2026-09-28)
+
+- **Decided**: the verify command on every render reads `apksigner verify --print-certs MARC-v37.1.0.*-signed.apk`, not `M-ARC.apk` or `MARC-debug.apk`.
+  **Why**: the release workflow publishes `MARC-v<version>.<run>-signed.apk` (release-apk.yml lines 215-252); `MARC-debug.apk` is the gate's CI artifact, not a release asset. The run number is not known in advance, so the command uses a shell glob.
+  **Source**: .github/workflows/release-apk.yml, .github/workflows/build-apk.yml.
+
+- **Decided**: the hero keeps "for Android and the browser" even though the web app has no hosted address yet; the Install card says so plainly and points to the APK or the source until a URL exists.
+  **Why**: the PWA is real (README, service worker) and the site will host it once it goes live; the honest gap is the address, not the platform. A reviewer suggested trimming the hero; the Install card carries the caveat instead so the hero stays true once hosted.
+  **Source**: README.md "Run", docs/ARCHITECTURE.md "PWA".
+
+- **Decided**: the Today screenshot keeps "This week 0 workouts, 0 sets, 0 records. Nothing logged yet." and the floating Ask Escobar pill.
+  **Why**: the screenshots are taken on a Monday with the gate's fixture, whose newest session is Sunday, so zero for the week is what the app truthfully shows; the pill is the app's real floating button. Regenerating with a faked clock would show a state the fixture did not produce.
+  **Source**: website/shots.mjs (the gate's `legacy` fixture), the app's Today screen.
