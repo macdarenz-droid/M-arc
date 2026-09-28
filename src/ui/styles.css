@@ -625,6 +625,22 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
 .esc-dock span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .esc-dock svg, .esc-dock .escobar-mark { color: var(--accent); flex: none; }
 .esc-dock-off { background: var(--surface-1); color: var(--text-2); box-shadow: none; }
+/* BUG-22: the dock never covers content. At the end of any page the .app end padding clears the
+   dock's top edge plus its shadow (tokens, not a magic number); mid-page it slides away while
+   the page scrolls down and comes back on scroll-up, at the top and at the end (hideOnScroll.ts).
+   --dock-clear (0px here) is the dock's real reach from the screen bottom, written inline on <html> by Dock.tsx, so the end
+   padding also holds when the dock sits higher than the tokens say.
+   --dock-shade: how far --shadow-float reaches above the dock (blur 32 - spread 8 - offset 12). */
+:root { --dock-h: 40px; --dock-shade: 12px; --dock-clear: 0px; }
+.esc-dock { min-height: var(--dock-h); }
+/* Each padding is written twice: a plain calc() first, so an engine without max() keeps a
+   token-based end instead of dropping the whole declaration. */
+.app { padding-bottom: calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); padding-bottom: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear) + var(--dock-shade) + var(--float-gap))); }
+html[data-rest] .app { padding-bottom: calc(var(--float-bottom) + var(--rest-h) + var(--float-gap) + var(--dock-h) + var(--dock-shade) + var(--float-gap)); padding-bottom: max(calc(var(--float-bottom) + var(--rest-h) + var(--float-gap) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear) + var(--dock-shade) + var(--float-gap))); }
+.esc-dock { transition: translate var(--dur-base) var(--ease-standard), opacity var(--dur-base) var(--ease-standard); }
+.esc-dock-away { translate: 0 calc(100% + var(--float-gap)); opacity: 0; pointer-events: none; }
+.esc-dock-away:focus-visible { translate: none; opacity: 1; pointer-events: auto; }
+html[data-motion="reduce"] .esc-dock { transition: none; }
 .esc-ask { width: 32px; min-height: 32px; color: var(--text-3); }
 .esc-ask::before { content: ''; position: absolute; inset: -6px; }
 .esc-ask { position: relative; }
