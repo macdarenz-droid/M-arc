@@ -2219,7 +2219,7 @@ for (const theme of themes) {
   const exAnims = await page.evaluate(() => document.getAnimations().filter(a => a instanceof CSSAnimation && a.animationName.startsWith('exercise-'))
     .map(a => ({ name: a.animationName, onActiveTitle: !!a.effect?.target?.matches?.('.exercise.active .exname') })));
   if (exAnims.length > 1 || exAnims.some(a => !a.onActiveTitle)) errors.push(`${tag}: UI-1 A6 exercise-* animations: ${JSON.stringify(exAnims)}`);
-  const ALLOW =['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
+  const ALLOW = ['esc-rot', 'esc-blink', 'esc-pulse', 'esc-lift', 'palace-glow', 'esc-spin'];
   const unlisted = await page.evaluate(allow => document.getAnimations()
     .filter(a => a.effect && a.effect.getTiming().iterations === Infinity)
     .filter(a => !(a instanceof CSSAnimation && allow.includes(a.animationName)))
