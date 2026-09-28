@@ -168,7 +168,11 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const startedAtMs = new Date(a.startedAt).getTime();
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   setSetById(setId, { at: new Date(now).toISOString(), restSec: gapSec != null ? Math.min(600, Math.max(0, gapSec)) : undefined, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
+  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') {
+    startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
+    const entry = a.entries.find(e => e.sets.some(x => x.id === setId));
+    if (entry) restStartedBy = { setId, exerciseId: entry.exerciseId };
+  }
   void haptic.confirm();
   return true;
 }
@@ -295,6 +299,7 @@ export function substituteEntry(entry: number, ex: Exercise): void {
 export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
   const endsAt = from + total * 1000;
+  restStartedBy = null;
   // Paused: hold the full rest until resume (UI-19); resume schedules it.
   if (active()?.pausedAt) {
     patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm, pausedRemainingSec: total } }));
@@ -305,28 +310,33 @@ export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?:
 }
 
 /**
- * BUG-21 (D-A1 point 4): the exercise the running rest follows, taken from the latest committed set
- * that can start a rest (a live working set; see commitSetById), is a main lift. A warm-up or a late
- * set committed during the rest leaves it alone. Unknown counts as a main lift, the safer side.
+ * BUG-21 (D-A1 point 4, review r2): the set whose commit started the running rest, kept in memory
+ * only (never in RestState or storage). After an app restart it is gone, and the timer is the floor.
  */
-export function restFollowsMainLift(a: ActiveSession, custom: Exercise[]): boolean {
-  let latest: { exerciseId: string; ms: number } | undefined;
-  for (const e of a.entries) for (const x of e.sets) {
-    const startsRest = x.status === 'committed' && x.kind !== 'warmup' && (x.fidelity ?? 'live') === 'live';
-    const ms = startsRest && x.at ? Date.parse(x.at) : NaN;
-    if (Number.isFinite(ms) && (!latest || ms > latest.ms)) latest = { exerciseId: e.exerciseId, ms };
-  }
-  if (!latest) return true;
-  const role = findExercise(latest.exerciseId, custom)?.role;
-  return role == null || role === 'main';
+let restStartedBy: { setId: string; exerciseId: string } | null = null;
+
+/**
+ * BUG-21 (D-A1 point 4): the user's timer is the floor for this rest unless the set that started it
+ * is known (restStartedBy), still there, still a committed live working set of the same exercise,
+ * and that exercise is an accessory. Deleting the set, marking it a warm-up, removing its exercise
+ * or substituting it, a restart, or an unknown exercise all keep the timer as the floor.
+ */
+export function restTimerIsFloor(a: ActiveSession, custom: Exercise[]): boolean {
+  const rec = restStartedBy;
+  if (!a.rest || !rec) return true;
+  const entry = a.entries.find(e => e.sets.some(x => x.id === rec.setId));
+  const set = entry?.sets.find(x => x.id === rec.setId);
+  if (!entry || !set || entry.exerciseId !== rec.exerciseId) return true;
+  if (!isCommitted(set) || set.kind === 'warmup' || (set.fidelity ?? 'live') !== 'live') return true;
+  return findExercise(entry.exerciseId, custom)?.role !== 'accessory';
 }
 
 /**
  * BUG-21 (D-A1 point 4, App A.1): heart rate may end an accessory's rest early, never a main
- * lift's. For a main lift the user's own timer is the floor, and the rest ends when it runs out.
+ * lift's. When the timer is the floor (restTimerIsFloor), the rest ends when it runs out.
  */
-export function restDone(timeDone: boolean, heartReady: boolean, mainLift: boolean): boolean {
-  return timeDone || (heartReady && !mainLift);
+export function restDone(timeDone: boolean, heartReady: boolean, timerIsFloor: boolean): boolean {
+  return timeDone || (heartReady && !timerIsFloor);
 }
 
 export function adjustRest(deltaSec: number): void {
@@ -346,6 +356,7 @@ export function adjustRest(deltaSec: number): void {
 
 export function stopRest(): void {
   patchActive(a => ({ ...a, rest: undefined }));
+  restStartedBy = null;
   void cancelRestDone();
 }
 
@@ -450,6 +461,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     loggedDurationSec: elapsedSec(a, now.getTime()),
     workingSetCount: workingSets.length,
   });
+  restStartedBy = null;
   const session: Session = finishHeartCapture({
     id: a.id ?? newId('s'),
     splitId: a.splitId,
@@ -540,4 +552,5 @@ export function discardSession(): void {
   flushSave();
   void cancelRestDone();
   discardHeartCapture();
+  restStartedBy = null;
 }

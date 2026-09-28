@@ -26,7 +26,7 @@ import { sessionEmphasis } from '@/brain/exposure';
 import { exerciseHistory } from '@/brain/history';
 import { autoregulationSuggestion } from '@/brain/coach/live';
 import { pickCue, pickReasonCue, reasonKeyFor } from '@/brain/coach/cues';
-import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restFollowsMainLift, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
+import { addExerciseToSession, todaySplit, addSet, active, changedFromPlan, insertEntry, insertSet, logWarmups, restRemainingSec, restDone, restTimerIsFloor, setEntryNote, setExerciseNote, moveEntry, adjustRest, stopRest, commitSet, discardSession, isCommitted, latestCommittedSetId, plannedExercises, setRestEffort, elapsedSec, finishSession, logPastSession, markDone, pauseSession, removeEntry, removeSet, resolveSessionTiming, resumeSession, setSet, skipEntry, startSession, substituteEntry, type FinishSummary } from './session';
 import { substitutesFor } from '@/brain/substitute';
 import { preSessionInsights, warmupOffer } from '@/brain/coach/pre';
 import { postSessionInsights } from '@/brain/coach/post';
@@ -1174,10 +1174,10 @@ export function RestBanner() {
         currentBpm = latestMeasurement.value?.bpm;
       }
     }
-    // BUG-21: heart rate ends an accessory's rest early; a main lift's rest runs to the timer.
-    const mainLift = restFollowsMainLift(a, s.customExercises);
-    done = restDone(timeDone, heartReady, mainLift);
-    if (heartMode && mainLift && heartReady) heartMode = false;
+    // BUG-21: heart rate ends an accessory's rest early; otherwise the rest runs to the timer.
+    const timerIsFloor = restTimerIsFloor(a, s.customExercises);
+    done = restDone(timeDone, heartReady, timerIsFloor);
+    if (heartMode && timerIsFloor && heartReady) heartMode = false;
     const showBpm = heartMode && !done && currentBpm != null && targetBpm != null;
     frame = {
       done,

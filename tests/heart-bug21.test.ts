@@ -13,7 +13,8 @@ import { freshState, type LoggedSet, type Split } from '@/core/models';
 import { latestMeasurement, type WatchMeasurement } from '@/native/watch';
 import { effortMismatch, preSetBpmFromWindow, restReadyBpm, restTarget, sessionDrift, DRIFT } from '@/brain/heart';
 import { coachInsights } from '@/brain/coach/rules';
-import { commitSet, restDone, restFollowsMainLift, setSet, startSession } from '@/slices/workout/session';
+import { commitSet, removeEntry, removeSet, restDone, restTimerIsFloor, setSet, startRest, startSession, stopRest, substituteEntry } from '@/slices/workout/session';
+import { findExercise } from '@/core/exercises';
 import { resetHeartCapture, startHeartCapture } from '@/slices/workout/heart';
 import { baseCoachExtras, sessionAt } from './helpers';
 import { emptySchedule } from '@/core/models';
@@ -29,7 +30,7 @@ describe('A1: heart-guided rest and the main-lift floor (D-A1 point 4)', () => {
     expect(restDone(false, false, false)).toBe(false);
   });
 
-  const split: Split = { id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: bench, sets: 1 }, { exerciseId: fly, sets: 1 }] };
+  const split: Split = { id: 'sp', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: bench, sets: 2 }, { exerciseId: fly, sets: 2 }] };
   const T0 = Date.parse('2026-09-22T10:00:00.000Z');
   beforeEach(() => {
     vi.useFakeTimers();
@@ -37,41 +38,118 @@ describe('A1: heart-guided rest and the main-lift floor (D-A1 point 4)', () => {
     replaceState({ ...freshState(), splits: [split], preferences: { ...freshState().preferences, autoRest: true } });
   });
   afterEach(() => { vi.useRealTimers(); });
-
-  it('the rest follows the exercise of the latest committed set', () => {
+  const floor = () => restTimerIsFloor(state.value.active!, []);
+  /** An accessory set, then a bench set that starts the running rest. */
+  const flyThenBench = () => {
     startSession(split);
-    setSet(0, 0, { kg: 60, reps: 5 });
-    vi.advanceTimersByTime(30_000);
-    commitSet(0, 0);
-    expect(restFollowsMainLift(state.value.active!, [])).toBe(true);
     setSet(1, 0, { kg: 20, reps: 12 });
-    vi.advanceTimersByTime(90_000);
+    vi.advanceTimersByTime(30_000);
     commitSet(1, 0);
-    expect(restFollowsMainLift(state.value.active!, [])).toBe(false);
+    expect(floor()).toBe(false);
+    setSet(0, 0, { kg: 60, reps: 5 });
+    vi.advanceTimersByTime(90_000);
+    commitSet(0, 0);
+    expect(floor()).toBe(true);
+  };
+
+  it('the rest follows the set that started it: an accessory can end early, a main lift cannot', () => {
+    flyThenBench();
+    setSet(1, 1, { kg: 20, reps: 12 });
+    vi.advanceTimersByTime(90_000);
+    commitSet(1, 1);
+    expect(floor()).toBe(false);
   });
 
-  it('a warm-up or a late set committed during a main-lift rest does not hand the rest to its exercise (review r1)', () => {
+  it('review r2: deleting, re-kinding, removing or substituting the set that started a main-lift rest keeps the timer as the floor', () => {
+    const rows: Array<[string, () => void]> = [
+      ['delete the bench set', () => removeSet(0, 0)],
+      ['mark it a warm-up', () => setSet(0, 0, { kind: 'warmup' })],
+      ['remove bench from the session', () => removeEntry(0)],
+      ['substitute bench', () => substituteEntry(0, findExercise(fly, [])!)],
+    ];
+    for (const [name, act] of rows) {
+      vi.setSystemTime(T0);
+      replaceState({ ...freshState(), splits: [split], preferences: { ...freshState().preferences, autoRest: true } });
+      flyThenBench();
+      act();
+      expect(state.value.active!.rest, name).toBeTruthy();
+      expect(floor(), name).toBe(true);
+    }
+  });
+
+  it('review r2: the same changes to the accessory set that started a rest also keep the timer as the floor', () => {
+    const rows: Array<[string, () => void]> = [
+      ['delete the fly set', () => removeSet(1, 0)],
+      ['mark it a warm-up', () => setSet(1, 0, { kind: 'warmup' })],
+      ['remove fly from the session', () => removeEntry(1)],
+      ['substitute fly', () => substituteEntry(1, findExercise('lib_dumbbell_lateral_raise', [])!)],
+      ['a rest started some other way', () => startRest(90)],
+    ];
+    for (const [name, act] of rows) {
+      vi.setSystemTime(T0);
+      replaceState({ ...freshState(), splits: [split], preferences: { ...freshState().preferences, autoRest: true } });
+      startSession(split);
+      setSet(1, 0, { kg: 20, reps: 12 });
+      vi.advanceTimersByTime(30_000);
+      commitSet(1, 0);
+      expect(floor(), name).toBe(false);
+      act();
+      expect(state.value.active!.rest, name).toBeTruthy();
+      expect(floor(), name).toBe(true);
+    }
+    // The entry's exercise changed under the same set ids (another accessory): no longer a match.
+    replaceState({ ...freshState(), splits: [split], preferences: { ...freshState().preferences, autoRest: true } });
+    startSession(split);
+    setSet(1, 0, { kg: 20, reps: 12 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(1, 0);
+    const b = state.value.active!;
+    expect(restTimerIsFloor({ ...b, entries: b.entries.map((e, i) => (i === 1 ? { ...e, exerciseId: 'lib_dumbbell_lateral_raise' } : e)) }, [])).toBe(true);
+    // A stopped rest drops the record: a rest brought back later (a restore) runs on the timer.
+    stopRest();
+    replaceState({ ...state.value, active: { ...state.value.active!, rest: b.rest } });
+    expect(floor()).toBe(true);
+  });
+
+  it('review r2: with no in-memory record (an app restart) the timer is the floor, even after an accessory set', async () => {
+    startSession(split);
+    setSet(1, 0, { kg: 20, reps: 12 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(1, 0);
+    expect(floor()).toBe(false);
+    const saved = state.value.active!;
+    vi.resetModules();
+    const fresh = await import('@/slices/workout/session');
+    expect(fresh.restTimerIsFloor(saved, [])).toBe(true);
+  });
+
+  it('review r1: a warm-up or a late set committed during a main-lift rest does not take the rest over', () => {
     startSession(split);
     setSet(0, 0, { kg: 60, reps: 5 });
     vi.advanceTimersByTime(30_000);
     commitSet(0, 0);
-    const a = state.value.active!;
-    const benchAt = Date.parse(a.entries[0]!.sets[0]!.at!);
-    const later = (sec: number, patch: Partial<LoggedSet>): LoggedSet => ({ kg: 10, reps: 12, status: 'committed', at: new Date(benchAt + sec * 1000).toISOString(), ...patch });
-    for (const patch of [{ kind: 'warmup' as const, fidelity: 'live' as const }, { fidelity: 'delayed' as const }, { fidelity: 'retro' as const }]) {
-      const withFly = { ...a, entries: [a.entries[0]!, { ...a.entries[1]!, sets: [later(40, patch)] }] };
-      expect(restFollowsMainLift(withFly, [])).toBe(true);
-    }
-    const liveFly = { ...a, entries: [a.entries[0]!, { ...a.entries[1]!, sets: [later(40, { fidelity: 'live' })] }] };
-    expect(restFollowsMainLift(liveFly, [])).toBe(false);
+    setSet(1, 0, { kg: 10, reps: 12, kind: 'warmup' });
+    vi.advanceTimersByTime(40_000);
+    commitSet(1, 0);
+    expect(floor()).toBe(true);
+    setSet(1, 1, { kg: 20, reps: 12 });
+    vi.advanceTimersByTime(13 * 60_000);
+    commitSet(1, 1);
+    expect(state.value.active!.entries[1]!.sets[1]!.fidelity).not.toBe('live');
+    expect(floor()).toBe(true);
   });
 
-  it('with no committed set or an unknown exercise it is treated as a main lift (the timer stays the floor)', () => {
+  it('an unknown exercise, no rest or a stopped rest keeps the timer as the floor', () => {
     startSession(split);
-    expect(restFollowsMainLift(state.value.active!, [])).toBe(true);
+    expect(floor()).toBe(true);
+    setSet(1, 0, { kg: 20, reps: 12 });
+    vi.advanceTimersByTime(30_000);
+    commitSet(1, 0);
+    expect(restTimerIsFloor(state.value.active!, [])).toBe(false);
     const a = state.value.active!;
-    const unknown = { ...a, entries: [{ ...a.entries[0]!, exerciseId: 'nope', sets: [{ kg: 1, reps: 1, status: 'committed' as const, at: new Date(T0).toISOString() }] }] };
-    expect(restFollowsMainLift(unknown, [])).toBe(true);
+    expect(restTimerIsFloor({ ...a, entries: a.entries.map((e, i) => (i === 1 ? { ...e, exerciseId: 'nope' } : e)) }, [])).toBe(true);
+    stopRest();
+    expect(floor()).toBe(true);
   });
 });
 
