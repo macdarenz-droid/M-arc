@@ -59,7 +59,7 @@ html[data-scrolled] .hdr{background:var(--bg);border-bottom-color:var(--line)}
 .menu[data-open]{display:block}
 .menu ul{list-style:none;margin:0;padding:8px 0}
 .menu li a{display:block;padding:12px 0;font-size:16px;color:var(--text);text-decoration:none;border-bottom:1px solid var(--line)}
-.menu .menu-actions{display:flex;gap:12px;padding:16px 0 20px}
+.menu .menu-actions{display:flex;flex-wrap:wrap;gap:12px;padding:16px 0 20px}
 
 /* hero */
 .hero{padding-top:64px;padding-bottom:96px}
@@ -93,8 +93,8 @@ h1{font-size:var(--display);line-height:var(--display-lh);letter-spacing:var(--d
 .themes button[aria-checked="true"]{color:var(--text)}
 
 /* ruler */
-.ruler{position:relative;margin-top:64px;--tick:1%;font-family:var(--mono);font-variant-numeric:tabular-nums}
-.scale{position:relative;height:24px;margin-top:176px}
+.ruler{position:relative;margin-top:64px;padding-top:176px;--tick:1%;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.scale{position:relative;height:24px}
 .ticks{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:flex-end}
 .ticks span{display:block;width:1px;height:8px;background:var(--muted);opacity:.4}
 .ticks span:nth-child(10n+1){height:16px}
@@ -154,7 +154,8 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
 .ledger-wrap::before{left:-5px}
 .ledger-wrap::after{right:-5px}
 .ledger{display:grid;grid-template-columns:repeat(8,1fr);border-left:1px solid var(--line);border-top:1px solid var(--line)}
-.cell{position:relative;padding:16px 14px 18px;border-right:1px solid var(--line);min-height:170px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.cell{position:relative;padding:16px 14px 18px;border-right:1px solid var(--line);min-height:170px;display:grid;grid-template-rows:36px auto 1fr;align-content:start;gap:12px}
+.cell .src{align-self:end}
 .cell::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform-origin:left}
 .cell .lbl{font-family:var(--mono);font-size:12px;line-height:16px;color:var(--muted)}
 .cell .fig{font-size:clamp(32px,3.4vw,44px);line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
@@ -293,7 +294,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
   .hdr-actions{display:none}
   .hero{padding-top:40px;padding-bottom:64px}
   .mark-hero{width:48px;height:48px}
-  .scale{margin-top:96px}
+  .ruler{padding-top:96px}
   .marker .fig{font-size:56px;left:auto;right:10px;bottom:72px}
   .band{display:none}
   .bands-row{display:flex;justify-content:space-between;gap:16px;margin-top:8px;font-size:12px;line-height:16px;color:var(--muted)}
@@ -574,7 +575,7 @@ h2{font-size:var(--h2);line-height:var(--h2-lh);letter-spacing:var(--h2-ls);marg
     <section class="sec" id="install" aria-labelledby="install-h">
       <div class="wrap"><div class="sec-in">
         <p class="eyebrow">Install</p>
-        <h2 id="install-h">No account. No sign-in. Works offline.</h2>
+        <h2 id="install-h">No account. No <span style="white-space:nowrap">sign-in</span>. Works offline.</h2>
         <div class="cards">
           <div class="card">
             <p class="eyebrow">In the browser</p>
