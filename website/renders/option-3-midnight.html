@@ -5,16 +5,17 @@
 <style>
 @font-face{font-family:'Inter Fallback';src:local('Arial'),local('Helvetica');size-adjust:107%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
 @font-face{font-family:'Instrument Sans Fallback';src:local('Arial'),local('Helvetica');size-adjust:101%;ascent-override:92%;descent-override:23%;line-gap-override:0%}
-@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,255,.85)}
-@property --light-b{syntax:'<color>';inherits:true;initial-value:rgba(0,212,255,.6)}
+@property --light-a{syntax:'<color>';inherits:true;initial-value:rgba(99,91,255,.72)}
+@property --light-b{syntax:'<color>';inherits:true;initial-value:rgba(0,212,255,.48)}
 :root{
   color-scheme:dark;
   --bg:#0a2540;--s1:#0f2d4d;--s2:#143559;--s3:#1a3f68;--text:#f6f9fc;--text2:#a3b6cc;--text3:#6c839c;
   --accent:#635bff;--accent-soft:rgba(99,91,255,.18);--accent-line:rgba(99,91,255,.7);--info:#00d4ff;--positive:#3ecf8e;--warning:#ffbb00;--negative:#ff5c5c;
   --border:#263e57;--border-a:rgba(246,249,252,.12);--border-strong:rgba(246,249,252,.22);--shadow:0 18px 44px rgba(3,20,40,.55);
   --bezel:#071a30;--ring:rgba(246,249,252,.18);--white:#fff;--hl:rgba(255,255,255,.14);--hl-soft:rgba(255,255,255,.07);--sheen:rgba(255,255,255,.08);--nav-bg:rgba(10,37,64,.92);
-  --light-a:rgba(99,91,255,.85);--light-b:rgba(0,212,255,.6);
-  --la-violet:rgba(99,91,255,.85);--la-green:rgba(62,207,142,.8);--la-amber:rgba(255,187,0,.7);--lb-cyan:rgba(0,212,255,.6);--lb-violet:rgba(99,91,255,.65);
+  /* light strength: spec says .55/.35; the blur at 60px on a 1.4x plane needs more ink to read on #0a2540, so violet .72, cyan .48, green .62, amber .48 (amber kept lowest so step 3 never blooms yellow) */
+  --light-a:rgba(99,91,255,.72);--light-b:rgba(0,212,255,.48);
+  --la-violet:rgba(99,91,255,.72);--la-green:rgba(62,207,142,.62);--la-amber:rgba(255,187,0,.48);--lb-cyan:rgba(0,212,255,.48);--lb-violet:rgba(99,91,255,.5);
   --t-silent:#5e6ad2;--t-paper:#2383e2;--t-ember:#ff6363;--t-emerald:#3ecf8e;--t-midnight:#635bff;
   --accent-text:color-mix(in srgb,var(--accent) 65%,var(--text));
   --focus:color-mix(in srgb,var(--accent) 80%,var(--text));
@@ -119,7 +120,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .hero-copy{grid-column:1;grid-row:1;min-height:72svh;display:flex;flex-direction:column;justify-content:center;padding:48px 0 64px;max-width:560px}
 .col-pin{grid-column:2;grid-row:1/3;display:flex;justify-content:center;align-items:flex-start;z-index:2}
 .story-bg{grid-column:1/-1;grid-row:2;margin-inline:calc(50% - 50vw);background:var(--s1);clip-path:polygon(0 var(--cut),100% 0,100% 100%,0 100%);z-index:-1;position:relative}
-.story{grid-column:1;grid-row:2;padding-top:calc(var(--cut) + 48px);padding-bottom:64px}
+.story{grid-column:1;grid-row:2;padding-top:calc(var(--cut) + 48px);padding-bottom:max(calc(50vh - 40px),64px)}
 .pin{position:sticky;top:max(calc(50vh - 394px),8px);contain:layout;padding:48px 64px;isolation:isolate}
 .light{position:absolute;inset:-20%;z-index:-1;pointer-events:none;background:radial-gradient(50% 40% at 32% 30%,var(--light-a),transparent 70%),radial-gradient(45% 36% at 72% 66%,var(--light-b),transparent 70%);filter:blur(60px);will-change:filter}
 .light::after{content:"";position:absolute;inset:0;background:var(--grain) 0 0/256px 256px repeat;opacity:.06;mix-blend-mode:overlay}
@@ -139,7 +140,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 [data-step="0"] .l-today,[data-step="3"] .l-today,[data-step="1"] .l-live,[data-step="2"] .l-body{opacity:1;transform:none}
 
 /* strip and steps */
-.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:64px}
+.strip{display:grid;grid-template-columns:repeat(4,max-content);justify-content:space-between;gap:12px;padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:64px}
 .strip li{display:flex;flex-direction:column;gap:8px}
 .strip span{font-size:13px;line-height:1.4;color:var(--text2)}
 .steps{counter-reset:s}
@@ -187,6 +188,7 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .key::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,var(--sheen) 50%,transparent 60%);transform:translateX(-100%);pointer-events:none}
 .panel{position:relative;width:390px;max-width:100%;aspect-ratio:390/344;background:var(--s1);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden}
 .panel img{position:absolute;left:0;top:-67.44%;width:100%;height:auto}
+/* the check-in is a sheet in the app, not a screen, so it sits in a hairline panel instead of the second phone frame the spec names */
 .panel.ck{aspect-ratio:390/629}
 .panel.ck img{top:-34.1%}
 .duo .panel{margin-inline:auto}
@@ -226,9 +228,10 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 .icards h3{font-size:20px}
 .icards p{font-size:15px;color:var(--text2)}
 .icards .btn{align-self:flex-start;margin-top:auto}
-.fp{display:block;word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text)}
-.cmd{display:block;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text2)}
+.fp{display:block;word-break:normal;overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text)}
+.cmd{display:block;white-space:pre-wrap;overflow-wrap:normal;word-break:keep-all;background:var(--bg);border:1px solid var(--border);border-radius:var(--r1);padding:10px 12px;color:var(--text2)}
 .copyrow{display:flex;gap:8px;align-items:flex-start}
+.nb{white-space:nowrap}
 .copyrow .btn{font:500 13px/1 var(--fm);min-height:44px;padding:0 12px;flex:none}
 .label{font:600 12px/1.4 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
 .themes{margin-top:64px;padding-top:32px;border-top:1px solid var(--border)}
@@ -258,28 +261,32 @@ h3{font:600 22px/1.25 var(--fd);letter-spacing:-.012em;text-wrap:balance}
 /* responsive */
 @media (max-width:900px){
   .c5,.c6,.c7,.c5r{grid-column:1/-1}
-  .fig.first{order:-1}
-  /* single column: the story is the stacked fallback, three phone-and-text pairs, every screen visible */
-  .pg{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  /* single column: the phone pins under the nav at 44svh tall (spec signatureMotion, phone width) and the steps scroll under it;
+     the col-pin spans the story rows on a 0px track so the sticky range is the whole story, and the story leaves room above for the phone */
+  .pinblock{--ph:44vh}
+  @supports (height:1svh){.pinblock{--ph:44svh}}
+  .pinblock{--pw:clamp(168px,calc((var(--ph) - 20px)*.4621),240px);--phh:calc((var(--pw) - 20px)*2.1641 + 20px)}
+  .pg{grid-template-columns:1fr;grid-template-rows:auto 0 auto}
   .hero-copy{grid-row:1;max-width:none;min-height:0;padding:32px 0 40px}
-  .col-pin{grid-column:1;grid-row:2}
+  .col-pin{grid-column:1;grid-row:2/4;padding-top:calc(var(--cut) + 16px)}
   .story-bg,.story{grid-column:1;grid-row:3}
-  .pin{position:static;padding:32px 40px}
-  .step-shot{display:block}
-  .story{padding-top:calc(var(--cut) + 32px)}
-  .step,.step:first-child{min-height:0;justify-content:flex-start;padding:40px 0;max-width:none}
+  .pin{top:calc(var(--navh) + env(safe-area-inset-top,0px) + 8px);padding:0}
+  .pin::before{content:"";position:absolute;top:-8px;bottom:-40px;left:calc(50% - 50vw);right:calc(50% - 50vw);background:linear-gradient(var(--s1) calc(100% - 40px),transparent);z-index:-2;pointer-events:none}
+  .pin .phone{width:var(--pw)}
+  .pin .light{inset:-30% -60%}
+  .story{padding-top:calc(var(--cut) + 16px + var(--phh) + 32px);padding-bottom:48px}
+  .step,.step:first-child{min-height:40vh;justify-content:flex-start;padding:32px 0;max-width:none}
   .cards3,.icards,.fcols{grid-template-columns:1fr}
   .switches{grid-template-columns:1fr}
   .switches p{grid-row:auto;grid-column:auto;order:1}
 }
 @media (max-width:640px){
-  .strip{grid-template-columns:1fr 1fr;gap:16px}
+  .strip{grid-template-columns:1fr 1fr;justify-content:normal;gap:16px}
   .phone,.phone.s{width:240px}
   .duo{grid-template-columns:minmax(0,1fr);gap:32px}
   .duo > figure:nth-child(2){margin-top:0}
   .duo .phone{width:240px}
   .duo figcaption{text-align:center}
-  .stats2{grid-template-columns:1fr}
   .install .light{inset:auto 0 10%;height:50%}
 }
 
@@ -294,9 +301,13 @@ html:not(.m) .prop .undo-bar b{transform:scaleX(0)}
 html:not(.m) .prop .undo-l{display:none}
 html:not(.m) .prop .undo-d{display:block}
 @media (max-width:900px){
-  html:not(.m) .col-pin{grid-row:2}
   html:not(.m) .pg{grid-template-rows:auto auto auto}
-  html:not(.m) .step{padding-top:40px}
+  html:not(.m) .col-pin{grid-row:2;padding-top:0}
+  html:not(.m) .pin{padding:32px 40px}
+  html:not(.m) .pin::before{content:none}
+  html:not(.m) .pin .phone{width:240px}
+  html:not(.m) .story{padding-top:calc(var(--cut) + 32px)}
+  html:not(.m) .step,html:not(.m) .step:first-child{min-height:0;padding:40px 0}
 }
 
 /* motion: only with JS and no reduced-motion request */
@@ -350,7 +361,6 @@ html:not(.m) .prop .undo-d{display:block}
   @keyframes wipe{from{-webkit-mask-position:100% 0;mask-position:100% 0}to{-webkit-mask-position:0 0;mask-position:0 0}}
   @keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
   @keyframes swell{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
-  @media (max-width:900px){.m .step:not([aria-current]){opacity:1}}
 }
 </style>
 
@@ -373,7 +383,7 @@ html:not(.m) .prop .undo-d{display:block}
       </ul>
     </details>
     <div class="nav-ctas">
-      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases</a>
       <a class="btn btn-p" href="#install">Install</a>
     </div>
   </div>
@@ -595,6 +605,7 @@ html:not(.m) .prop .undo-d{display:block}
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
         <h3>Add to Home Screen</h3>
         <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
+        <p>The web address is not live yet. Until it is, install the APK.</p>
       </div>
       <div class="card key sh">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></svg>
@@ -602,8 +613,8 @@ html:not(.m) .prop .undo-d{display:block}
         <p class="mono" style="color:var(--text)">Version 37.1.0</p>
         <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released.</p>
         <p class="label">Signing key SHA-256. Does not change between versions.</p>
-        <div class="copyrow"><code class="fp" id="fp">05:66:9A:D2:72:1C:6A:BA:F9:FD:D4:B9:B8:4E:2F:B7:94:48:44:B1:DE:F3:59:84:5F:01:5F:2B:67:CA:F1:F5</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint">Copy</button></div>
-        <code class="cmd">apksigner verify --print-certs M-ARC.apk</code>
+        <div class="copyrow"><code class="fp" id="fp">05:<wbr>66:<wbr>9A:<wbr>D2:<wbr>72:<wbr>1C:<wbr>6A:<wbr>BA:<wbr>F9:<wbr>FD:<wbr>D4:<wbr>B9:<wbr>B8:<wbr>4E:<wbr>2F:<wbr>B7:<wbr>94:<wbr>48:<wbr>44:<wbr>B1:<wbr>DE:<wbr>F3:<wbr>59:<wbr>84:<wbr>5F:<wbr>01:<wbr>5F:<wbr>2B:<wbr>67:<wbr>CA:<wbr>F1:<wbr>F5</code><button class="btn btn-s" type="button" data-copy="#fp" aria-label="Copy the signing key fingerprint">Copy</button></div>
+        <code class="cmd">apksigner verify <span class="nb">--print-certs</span> <span class="nb">M-ARC.apk</span></code>
         <p>If the fingerprint matches, the file was signed by the M/ARC key and has not been altered.</p>
         <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
         <a class="link" href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a>
@@ -704,7 +715,7 @@ var so=new IntersectionObserver(function(es){es.forEach(function(e){
     if(i===3)qa('.rings-story .ring').forEach(function(r){r.classList.add('fill')});
     setCur(null);
   }else setCur(t.id);
-})},{rootMargin:'-45% 0px -45% 0px'});
+})},{rootMargin:matchMedia('(max-width:900px)').matches?'-58% 0px -30% 0px':'-45% 0px -45% 0px'});
 steps.forEach(function(s){so.observe(s)});
 qa('main > section[id]').forEach(function(s){so.observe(s)});
 
