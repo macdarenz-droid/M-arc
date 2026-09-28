@@ -617,10 +617,10 @@ html:not([data-motion="reduce"]) .esc-spin { animation: esc-rot 0.9s linear infi
 /* BUG-22: the dock never covers content. At the end of any page the .app end padding clears the
    dock's top edge plus its shadow (tokens, not a magic number); mid-page it slides away while
    the page scrolls down and comes back on scroll-up, at the top and at the end (hideOnScroll.ts).
-   --dock-clear is the dock's real reach from the screen bottom, written by Dock.tsx, so the end
+   --dock-clear (0px here) is the dock's real reach from the screen bottom, written inline on <html> by Dock.tsx, so the end
    padding also holds when the dock sits higher than the tokens say.
    --dock-shade: how far --shadow-float reaches above the dock (blur 32 - spread 8 - offset 12). */
-:root { --dock-h: 40px; --dock-shade: 12px; --app-end: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear, 0px) + var(--dock-shade) + var(--float-gap))); }
+:root { --dock-h: 40px; --dock-shade: 12px; --dock-clear: 0px; --app-end: max(calc(var(--float-bottom) + var(--dock-h) + var(--dock-shade) + var(--float-gap)), calc(var(--dock-clear, 0px) + var(--dock-shade) + var(--float-gap))); }
 .esc-dock { transition: translate var(--dur-base) var(--ease-standard), opacity var(--dur-base) var(--ease-standard); }
 .esc-dock-away { translate: 0 calc(100% + var(--float-gap)); opacity: 0; pointer-events: none; }
 .esc-dock-away:focus-visible { translate: none; opacity: 1; pointer-events: auto; }
