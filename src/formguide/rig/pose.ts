@@ -3,7 +3,11 @@
 // part; applyPose writes those, and only those: `transform` and `opacity` (§3).
 import { PARENT, type ChannelId, type JointId, type Pose, type SidedBase } from './joints';
 import { solve2, type Pt } from './ik';
-import { ELB, FIST, FLOOR, FRONT_RIG, HIP, P2, SHIN_H, THIGH_H, TRAP_X, type Mat } from './figureFront';
+import { ELB, FIST, FLOOR, FRONT_RIG, HIP, MIRROR, P2, SHIN_H, THIGH_H, TRAP_X, type Mat } from './figureFront';
+import { S_BACK, S_BAR, S_ELB, S_FRONT, S_GRIP, S_HIP_FRONT, S_PELVIS, S_SACRUM, S_SH, S_SOLE, S_WR, figureSide, sideParent, sideRig, type Near, type SideRig } from './figureSide';
+import type { AttachmentId, ExerciseGuide } from '../model';
+import { poseAt } from '../sample';
+import type { Rig } from '../check/view';
 
 export type PoseId = 'standing' | 'seated';
 /** Stored start-angle sets (§3 "Poses"); an exercise overrides only what moves. legs picks the leg rule. */
@@ -150,4 +154,153 @@ export function applyPose(els: Record<string, StyleTarget>, frame: Frame): void 
     if (xf.ops) el.style.transform = css(xf.ops);
     else el.style.opacity = n(xf.opacity!);
   }
+}
+
+// ---- FG-6: the side view ---------------------------------------------------------------------------------------------
+// The side figure (figureSide.ts) faces right; `mirror` faces it left. The mirror rule: the mirrored figure is the
+// drawing reflected about x = 200 with the sides swapped, so its near limbs are the lifter's left and read the `_l`
+// channels. Sign conventions, figure facing right: flexion turns a limb forward (shoulder, elbow, hip), the knee bends
+// back, ankle_flex + is dorsiflexion, torso_lean + leans back (joints.ts, ranges.ts).
+export type SidePoseId = 'standing' | 'seated' | 'lying_supine' | 'lying_prone';
+/** Stored start values per side pose (§3 "Poses"); an exercise overrides only what moves. */
+export const SIDE_POSES: Record<SidePoseId, Pose> = {
+  standing: { breath: 0.5 },
+  seated: { breath: 0.5, hip_flex_l: 90, hip_flex_r: 90, knee_flex_l: 90, knee_flex_r: 90 },
+  lying_supine: { breath: 0.5 },
+  lying_prone: { breath: 0.5, ankle_flex_l: -30, ankle_flex_r: -30 },   // tops of the feet on the floor
+};
+export const SIDE_POSE_IDS = Object.keys(SIDE_POSES) as SidePoseId[];
+export type SideFrameOptions = {
+  mirror?: boolean;
+  /** Lying poses: the y of the surface the body rests on (the floor, or a bench pad's top); default the floor. */
+  surface?: number;
+};
+/** A lying figure's pelvis is moved this far along the floor (toward its feet) so the straight body, with the prone
+ * figure's pointed feet, fits the standing camera's 576 units. */
+export const LYING_SHIFT = { lying_supine: 34, lying_prone: 46 } as const;
+
+const ROT = (a: number): Mat => { const c = Math.cos(a * D), s = Math.sin(a * D); return [c, s, -s, c, 0, 0]; };
+const TR = (x: number, y: number): Mat => [1, 0, 0, 1, x, y];
+const about = (o: readonly [number, number], M: Mat): Mat => mmul(mmul(TR(o[0], o[1]), M), TR(-o[0], -o[1]));
+/** The CSS transform that makes a group about origin `o` equal M in its parent's space. */
+const asOps = (o: readonly [number, number], M: Mat): Op[] => [['m', ...mmul(mmul(TR(-o[0], -o[1]), M), TR(o[0], o[1]))]];
+const opsMat = (ops: Op[] | undefined): Mat => (ops ?? []).reduce<Mat>((X, o) => mmul(X, opMat(o)), [1, 0, 0, 1, 0, 0]);
+const sideLocal = (rig: SideRig, j: JointId, xf: Xf | undefined): Mat => { const { at, origin } = rig[j]; return mmul(at, about(origin, opsMat(xf?.ops))); };
+
+/** The side view of a pose: one transform per joint and moving part, and muscle tint opacities (0..1). */
+export function sideFrame(id: SidePoseId, pose: Pose, o: SideFrameOptions = {}, tints: Record<string, number> = {}): Frame {
+  const base = SIDE_POSES[id], v = (c: ChannelId) => pose[c] ?? base[c] ?? 0, f: Frame = {};
+  const near: Near = o.mirror ? 'l' : 'r', rig = sideRig(near);
+  const sc = (b: SidedBase, s: 'l' | 'r') => v(`${b}_${s}` as ChannelId);
+  for (const s of ['l', 'r'] as const) {
+    f[`hip_${s}`] = { ops: [['r', -sc('hip_flex', s)]] };
+    f[`knee_${s}`] = { ops: [['r', sc('knee_flex', s)]] };
+    f[`ankle_${s}`] = { ops: [['r', -sc('ankle_flex', s)]] };
+  }
+  f.spine = { ops: [['r', -v('torso_lean')]] };
+  f.chest = { ops: [['r', 0]] };
+  f.neck = { ops: [['r', 0]] };
+  f.head = { ops: [['r', 0]] };
+  const br = v('breath');
+  f.breath = { ops: [['s', 1 + 0.03 * (br - 0.5), 1 + 0.01 * (br - 0.5)]] };
+  const trunk = mmul(sideLocal(rig, 'spine', f.spine), sideLocal(rig, 'chest', f.chest));   // chest frame in the pelvis
+  for (const s of ['l', 'r'] as const) {
+    const flex = sc('shoulder_flex', s), r = riseOf(Math.max(0, flex), sc('shrug_cm', s), sc('scap_depress_cm', s));
+    const own: Op[] = [['t', 0, -r], ['r', -flex]];
+    f[`shoulder_${s}`] = { ops: s === near ? [['m', ...mmul(mmul(trunk, TR(S_SH[0], S_SH[1])), opsMat(own))]] : own };
+    f[`elbow_${s}`] = { ops: [['r', -sc('elbow_flex', s)]] };
+    f[`wrist_${s}`] = { ops: [['r', 0]] };
+  }
+  // the pelvis: turned and placed so the pose's support holds (standing: the near foot flat on its spot, swaying about
+  // it; seated: the feet on the floor; lying: the lowest contact point on the surface)
+  const legOf = (s: 'l' | 'r', P: Mat) => mmul(mmul(mmul(P, sideLocal(rig, `hip_${s}`, f[`hip_${s}`])), sideLocal(rig, `knee_${s}`, f[`knee_${s}`])), sideLocal(rig, `ankle_${s}`, f[`ankle_${s}`]));
+  let P: Mat;
+  if (id === 'standing' || id === 'seated') {
+    const rho = id === 'standing' ? sc('hip_flex', near) - sc('knee_flex', near) + sc('ankle_flex', near) : 0;
+    const P0 = about(S_PELVIS, ROT(rho)), sole = apply(legOf(near, P0), S_SOLE);
+    const move = id === 'standing' ? TR(S_SOLE[0] - sole[0], FLOOR - sole[1]) : TR(0, FLOOR - sole[1]);
+    P = mmul(about([S_SOLE[0], FLOOR], ROT(id === 'standing' ? v('sway') : 0)), mmul(move, P0));
+  } else {
+    const sup = id === 'lying_supine', P0 = mmul(TR(sup ? -LYING_SHIFT.lying_supine : LYING_SHIFT.lying_prone, 0), about(S_PELVIS, ROT(sup ? -90 : 90)));
+    // the contact is read with the trunk straight, so it stays put while the trunk moves (a back extension lifts the chest)
+    const pts = sup ? [apply(P0, S_SACRUM), apply(P0, S_BACK)] : [apply(P0, S_HIP_FRONT), apply(P0, S_FRONT)];
+    P = mmul(TR(0, (o.surface ?? FLOOR) - Math.max(...pts.map(q => q[1]))), P0);
+  }
+  f.pelvis = { ops: asOps(S_PELVIS, P) };
+  for (const [k, x] of Object.entries(tints)) f[k] = { opacity: Math.min(1, Math.max(0, x)) };
+  return f;
+}
+
+/** Figure-space matrix of a joint's frame in the side view (the mirror included). */
+export function sideWorldMat(j: JointId, f: Frame, mirror = false): Mat {
+  const near: Near = mirror ? 'l' : 'r', rig = sideRig(near), parent = sideParent(near);
+  const walk = (k: JointId): Mat => { const p = parent[k], L = sideLocal(rig, k, f[k]); return p ? mmul(walk(p), L) : L; };
+  return mirror ? mmul(MIRROR, walk(j)) : walk(j);
+}
+/** A joint's pivot in figure space (side view). */
+export const sidePivot = (f: Frame, j: JointId, mirror = false): Pt => apply(sideWorldMat(j, f, mirror), sideRig(mirror ? 'l' : 'r')[j].origin);
+/** Where a hand grips (the fist's centre) in figure space (side view). */
+export const sideHandAt = (f: Frame, s: 'l' | 'r', mirror = false): Pt => apply(sideWorldMat(`wrist_${s}`, f, mirror), S_GRIP);
+/** A §3 attachment point in figure space (side view). */
+export function sidePoint(f: Frame, a: AttachmentId, mirror = false): Pt {
+  const s = a.slice(-1) as 'l' | 'r', W = (j: JointId) => sideWorldMat(j, f, mirror);
+  if (a === 'back') return apply(W('chest'), S_BACK);
+  if (a === 'hip') return apply(W('pelvis'), S_SACRUM);
+  if (a.startsWith('hand_')) return sideHandAt(f, s, mirror);
+  if (a.startsWith('foot_')) return apply(W(`ankle_${s}`), S_SOLE);
+  if (a.startsWith('shoulder_')) return apply(W('chest'), S_BAR);
+  return sidePivot(f, `${a.slice(0, -2)}_${s}` as JointId, mirror);   // knee_, ankle_
+}
+
+/** Upper arm and forearm-to-grip lengths of the side arm. */
+export const SIDE_ARM_A = Math.hypot(...S_ELB), SIDE_ARM_B = Math.hypot(S_WR[0] + S_GRIP[0], S_WR[1] + S_GRIP[1]);
+/**
+ * Two-bone solve of a side arm to a grip target in figure space (a bar in the hands, a handle): the shoulder_flex and
+ * elbow_flex that put the fist's centre there, elbow bending the natural way (0..180), the rest of the pose unchanged.
+ * A target beyond the arm's reach gets the straight arm pointing at it. `turnedOut`: the arm is abducted and turned out
+ * (a back-squat grip), so its drawn projection bends the other way; elbow_flex comes back 0..-180 (D-FG6).
+ */
+export function solveSideArm(id: SidePoseId, pose: Pose, s: 'l' | 'r', hand: Pt, o: SideFrameOptions & { turnedOut?: boolean } = {}): { shoulder_flex: number; elbow_flex: number } {
+  const mirror = !!o.mirror, ang = (x: number, y: number) => Math.atan2(x, y) / D, wrap = (a: number) => ((a + 540) % 360) - 180;
+  const reach = SIDE_ARM_A + SIDE_ARM_B;
+  // the shoulder rises with its own flexion (blade rhythm), so solve, re-place the shoulder, and solve again
+  let own = pose[`shoulder_flex_${s}` as ChannelId] ?? SIDE_POSES[id][`shoulder_flex_${s}` as ChannelId] ?? 0, out: { shoulder_flex: number; elbow_flex: number } | null = null;
+  for (let it = 0; it < 30; it++) {
+    const f = sideFrame(id, { ...pose, [`shoulder_flex_${s}`]: own }, o);
+    // the shoulder's frame before its own rotation: its world matrix with the rotation taken back out
+    let G = apply(inv(mmul(sideWorldMat(`shoulder_${s}`, f, mirror), ROT(own))), hand);
+    const d = Math.hypot(G[0], G[1]);
+    if (d > reach * (1 - 1e-9)) G = [(G[0] * reach * (1 - 1e-9)) / d, (G[1] * reach * (1 - 1e-9)) / d];   // straight, pointing at it
+    out = null;
+    for (const bend of [1, -1] as const) {
+      const E = solve2([0, 0], G, SIDE_ARM_A, SIDE_ARM_B, bend);
+      const sf = ang(E[0], E[1]), ef = wrap(ang(G[0] - E[0], G[1] - E[1]) - sf);
+      if (o.turnedOut ? ef <= 1e-9 : ef >= -1e-9) { out = { shoulder_flex: wrap(sf), elbow_flex: o.turnedOut ? Math.min(0, ef) : Math.max(0, ef) }; break; }
+    }
+    if (!out) break;
+    if (Math.abs(out.shoulder_flex - own) < 1e-10) return out;
+    own = out.shoulder_flex;
+  }
+  if (out) return out;
+  throw new Error('solveSideArm: no natural elbow bend reaches the target');
+}
+
+/** The side-view rig the §5 checks read (check/view.ts `Rig`), or the reason there is none: a side file in a pose the
+ * side view does not draw yet (kneeling, hanging, plank, quadruped). check/view.ts rigFor returns it for view 'side'. */
+export function sideGuideRig(g: ExerciseGuide): Rig | string {
+  if (!(SIDE_POSE_IDS as string[]).includes(g.pose)) return `no ${g.pose} pose in the side view yet`;
+  const id = g.pose as SidePoseId, mirror = !!g.mirror;
+  // lying: the support is as high as the start pose's feet need to reach the floor (a bench press on its bench), or the floor
+  let surface: number = FLOOR;
+  if (id === 'lying_supine' || id === 'lying_prone') {
+    const f0 = sideFrame(id, poseAt(g, 0) as Pose, { mirror });
+    surface = FLOOR - Math.max(0, ...(['foot_l', 'foot_r'] as const).map(a => sidePoint(f0, a, mirror)[1] - FLOOR));
+  }
+  return {
+    view: 'side',
+    frame: p => sideFrame(id, p as Pose, { mirror, surface }),
+    point: (f, a) => sidePoint(f, a, mirror),
+    pivot: (f, j) => sidePivot(f, j, mirror),
+    markup: (read, mistake) => figureSide(read, { id: 'fgc', mistake, mirror }),
+  };
 }
