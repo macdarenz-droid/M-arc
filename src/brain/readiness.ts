@@ -130,7 +130,7 @@ export function readiness(input: ReadinessInput): ReadinessResult | null {
  * readiness(), plus the inputs that actually fed today's score (BUG-16), so copy can name only
  * those. The result object itself keeps its shape.
  */
-export function readinessWithInputs(input: ReadinessInput): { result: ReadinessResult | null; inputs: ReadinessInputKey[] } {
+export function readinessWithInputs(input: ReadinessInput): { result: ReadinessResult | null; inputs: ReadinessInputKey[]; low: ReadinessInputKey[] } {
   const { today, healthDays, checkIn, recovery, scheduledSplit, custom, sessions } = input;
   const checkInHistory = input.checkInHistory.filter(c => { const d = daysBetween(c.day, today); return d > 0 && d <= 30; });
   const baselines = readinessBaselines(healthDays, today);
@@ -260,7 +260,8 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
   }
   const present = weighted.filter(w => w.score != null);
   const inputs = present.map(w => w.key as ReadinessInputKey);
-  if (!present.length) return { result: null, inputs };
+  const lowInputs = inputs.filter(k => low[k]);
+  if (!present.length) return { result: null, inputs, low: lowInputs };
 
   const totalWeight = present.reduce((a, w) => a + w.weight, 0);
   const score = Math.round(100 * present.reduce((a, w) => a + w.weight * w.score!, 0) / totalWeight);
@@ -277,7 +278,7 @@ export function readinessWithInputs(input: ReadinessInput): { result: ReadinessR
     ? `Today's session is done. Recover well${next ? `; ${next.split.name} is next on ${WEEKDAY_LABEL[next.weekday]}` : ''}.`
     : undefined;
 
-  return { result: { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating, ...(postSessionAdvice ? { postSessionAdvice } : {}) }, inputs };
+  return { result: { score, band, confidence, loadAdvice, drivers: drivers.slice(0, 3), calibrating, ...(postSessionAdvice ? { postSessionAdvice } : {}) }, inputs, low: lowInputs };
 }
 
 /** F3.8: a one-line summary for the optional morning notification. */

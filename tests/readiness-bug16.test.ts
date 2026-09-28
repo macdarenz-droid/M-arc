@@ -155,8 +155,20 @@ describe('A2: readiness copy names only the inputs that exist', () => {
   it('a green Monday with health data names it and is kept off the coach when health sharing is off', () => {
     const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => { const d = new Date(`${monday}T00:00:00Z`); d.setUTCDate(d.getUTCDate() - i); return { day: d.toISOString().slice(0, 10), restingHr: 55, sleepMinutes: 450, source: 'health_connect' as const, syncedAt: monday }; });
     const note = coachInsights(ctxOn(monday, { healthDays }), 20).find(i => i.id === 'readiness-today');
-    expect(note?.noticed).toBe('Sleep and resting heart rate are all lining up this week.');
+    expect(note?.noticed).toBe('Sleep and resting heart rate are lining up this week.');
     expect(note?.gated).toBe('health');
+    // Three inputs read "are all".
+    const three = coachInsights(ctxOn(monday, { healthDays, checkIns: [{ day: monday, sleepQuality: 4, mood: 4 }] }), 20).find(i => i.id === 'readiness-today');
+    expect(three?.noticed).toBe('Your check-in, sleep and resting heart rate are all lining up this week.');
+  });
+  it('a Monday load spike with normal sleep gives the load note, never "training load is lining up"', () => {
+    const mon = (o: number) => { const d = new Date(`${monday}T00:00:00Z`); d.setUTCDate(d.getUTCDate() - o); return d.toISOString().slice(0, 10); };
+    const sessions = [1, 2, 3, 4, 5, 6, 8, 12, 16, 20, 24, 27].map(o => session(mon(o), [{ id: squat, sets: sets(100, 8, 'max', 5) }]));
+    const healthDays: DailyHealth[] = Array.from({ length: 28 }, (_, i) => ({ day: mon(i), sleepMinutes: 450, source: 'health_connect' as const, syncedAt: monday }));
+    const all = coachInsights(ctxOn(monday, { sessions, healthDays }), 20).filter(i => i.id === 'readiness-today');
+    expect(all).toHaveLength(1);
+    expect(all[0]!.title).toBe('Training load is up');
+    expect(all.some(i => /lining up/.test(i.noticed))).toBe(false);
   });
   it('an amber day from one input without a driver names that input, not "a mixed picture"', () => {
     // A first check-in rated 3 and 3 scores 50 (amber) with no driver, and it is the only input.

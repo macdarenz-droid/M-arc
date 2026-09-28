@@ -92,8 +92,9 @@ interface Derived {
   /** Lifts trained in the last six weeks (BR-05): progress and effort rules skip the rest. */
   activeIds: Array<{ id: string; name: string }>;
   readiness: ReadinessResult | null;
-  /** BUG-16: the inputs that fed today's readiness, so its copy names only those. */
+  /** BUG-16: the inputs that fed today's readiness, so its copy names only those, and the ones past their driver line. */
   readinessInputs: ReadinessInputKey[];
+  readinessLow: ReadinessInputKey[];
 }
 
 /** "a", "a and b", "a, b and c". */
@@ -126,6 +127,7 @@ function derive(ctx: CoachContext): Derived {
     activeIds: exerciseIds.filter(({ id }) => isActive(exerciseHistory(ctx.sessions, id, ctx.custom), ctx.today)),
     readiness: today.result,
     readinessInputs: today.inputs,
+    readinessLow: today.low,
   };
 }
 
@@ -463,8 +465,6 @@ export const RULES: Rule[] = [
       const inputs = d.readinessInputs;
       const named = listJoin(inputs.map(k => READINESS_INPUT_LABEL[k]));
       const Named = named.charAt(0).toUpperCase() + named.slice(1);
-      // Sleep, resting HR and HRV come from health data: the note is kept off the coach when that sharing is off (BUG-20).
-      const health = inputs.some(k => k === 'sleep' || k === 'rhr' || k === 'hrv') ? { gated: 'health' as const } : {};
       if (r.band === 'red') {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 450, cadence: 'now', kind: 'alert',
@@ -485,8 +485,8 @@ export const RULES: Rule[] = [
           evidence: { n: 1, window: 'today', confidence: r.confidence },
         }];
       }
-      // BUG-16: acute load high on its own is a low-confidence note, never an alert or a load change.
-      if (r.drivers.includes(LOAD_DRIVER) && inputs.length === 1) {
+      // BUG-16: acute load high on a green day is a low-confidence note, never an alert or a load change.
+      if (r.drivers.includes(LOAD_DRIVER)) {
         return [{
           id: 'readiness-today', category: 'readiness', priority: 90, cadence: 'now', kind: 'data',
           title: 'Training load is up', noticed: 'You have trained more this week than in your recent weeks.',
@@ -496,9 +496,15 @@ export const RULES: Rule[] = [
         }];
       }
       if (weekdayOf(ctx.today) !== 'mon') return [];
+      // Only inputs that read well are "lining up"; one past its driver line is left out.
+      const good = inputs.filter(k => !d.readinessLow.includes(k));
+      if (!good.length) return [];
+      const lining = listJoin(good.map(k => READINESS_INPUT_LABEL[k]));
+      // Sleep, resting HR and HRV come from health data: the note is kept off the coach when that sharing is off (BUG-20).
+      const goodHealth = good.some(k => k === 'sleep' || k === 'rhr' || k === 'hrv') ? { gated: 'health' as const } : {};
       return [{
-        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise', ...health,
-        title: 'Readiness: green', noticed: `${Named} ${inputs.length > 1 ? 'are all lining up' : 'is lining up'} this week.`,
+        id: 'readiness-today', category: 'readiness', priority: 120, cadence: 'now', kind: 'praise', ...goodHealth,
+        title: 'Readiness: green', noticed: `${lining.charAt(0).toUpperCase()}${lining.slice(1)} ${good.length === 1 ? 'is' : good.length === 2 ? 'are' : 'are all'} lining up this week.`,
         means: 'A good week to push the lifts that have room to grow.',
         action: 'No change needed.',
         evidence: { n: 1, window: 'today', confidence: r.confidence },
