@@ -849,13 +849,19 @@ html[data-motion="reduce"] .rt-detail-wrap, html[data-motion="reduce"] .rt-detai
   --equip-lo: color-mix(in srgb, var(--equip) var(--lo), var(--shd));
   --metal-lo: color-mix(in srgb, var(--fg-metal) 64%, var(--surface-1));
   --seam: color-mix(in srgb, var(--fg-frame) 70%, var(--equip));
-  --fg-line: color-mix(in srgb, var(--text) 60%, var(--surface-1));
-  --fg-frame: color-mix(in srgb, var(--text) 38%, var(--surface-1));
+  /* integration with FG-1: the scheme values live here as named tokens, so src/formguide/** stays literal-free */
+  --fg-line-dark: color-mix(in srgb, var(--text) 60%, var(--surface-1));
+  --fg-frame-dark: color-mix(in srgb, var(--text) 38%, var(--surface-1));
+  --fg-line-light: color-mix(in srgb, var(--text) 70%, var(--surface-1));
+  --fg-frame-light: color-mix(in srgb, var(--text) 56%, var(--surface-1));
+  --mm-edge: color-mix(in srgb, var(--text) 35%, transparent);
+  --fg-line: var(--fg-line-dark);
+  --fg-frame: var(--fg-frame-dark);
   --lit: var(--text); --shd: var(--bg); --hi: 90%; --lo: 78%; --eq-hi: 82%; --rim-k: 62%;
 }
 [data-theme="paper"] .form-guide {
-  --fg-line: color-mix(in srgb, var(--text) 70%, var(--surface-1));
-  --fg-frame: color-mix(in srgb, var(--text) 56%, var(--surface-1));
+  --fg-line: var(--fg-line-light);
+  --fg-frame: var(--fg-frame-light);
   --lit: var(--bg); --shd: var(--text); --hi: 76%; --lo: 84%; --eq-hi: 40%; --rim-k: 35%;
 }
 .form-guide .player [hidden] { display: none; }

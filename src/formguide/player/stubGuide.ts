@@ -11,8 +11,8 @@ export const RIG_CSS = [
   '.form-guide .t{fill:var(--tee)}',
   '.form-guide .b{fill:var(--skin)}',
   '.form-guide .olk{fill:none;stroke:var(--fg-line);stroke-width:calc(var(--sw) * 3px);stroke-linejoin:round}',
-  '.form-guide .mm{fill:var(--muscle-main);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}',
-  '.form-guide .mh{fill:var(--muscle-help);stroke:color-mix(in srgb,var(--text) 35%,transparent);stroke-width:.6px;stroke-linejoin:round}',
+  '.form-guide .mm{fill:var(--muscle-main);stroke:var(--mm-edge);stroke-width:.6px;stroke-linejoin:round}',
+  '.form-guide .mh{fill:var(--muscle-help);stroke:var(--mm-edge);stroke-width:.6px;stroke-linejoin:round}',
   '.form-guide .ovs{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}',
   '.form-guide .floor{stroke:var(--border);stroke-width:1px}',
   '.form-guide .arrow{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}',
@@ -126,8 +126,8 @@ export const stubGuide: Guide = {
   sample: () => ({ stops: STOPS, groups: GROUPS }),
   stage,
   rigVars: (scheme: Scheme) => scheme === 'light'
-    ? '--fg-line:color-mix(in srgb,var(--text) 70%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) 56%,var(--surface-1));--lit:var(--bg);--shd:var(--text);--hi:76%;--lo:84%;--eq-hi:40%;--rim-k:35%'
-    : '--fg-line:color-mix(in srgb,var(--text) 60%,var(--surface-1));--fg-frame:color-mix(in srgb,var(--text) 38%,var(--surface-1));--lit:var(--text);--shd:var(--bg);--hi:90%;--lo:78%;--eq-hi:82%;--rim-k:62%',
+    ? '--fg-line:var(--fg-line-light);--fg-frame:var(--fg-frame-light);--lit:var(--bg);--shd:var(--text);--hi:76%;--lo:84%;--eq-hi:40%;--rim-k:35%'
+    : '--fg-line:var(--fg-line-dark);--fg-frame:var(--fg-frame-dark);--lit:var(--text);--shd:var(--bg);--hi:90%;--lo:78%;--eq-hi:82%;--rim-k:62%',
 };
 
 export type MuscleLine = { id: MuscleId; common: string; anatomical: string; role: 'target' | 'helps'; line: string; colorVar: string };

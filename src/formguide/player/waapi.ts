@@ -18,8 +18,11 @@ export type AnimHandle = {
   count: number;
 };
 
+// WAAPI fill mode (hold the first and last frame), not a colour; named so FG-1's colour lint reads no `fill: <word>`.
+const HOLD_ENDS: FillMode = 'both';
+
 export function timingFor(rep: number): KeyframeAnimationOptions {
-  return { duration: rep * 1000, iterations: 3, easing: 'linear', fill: 'both' };
+  return { duration: rep * 1000, iterations: 3, easing: 'linear', fill: HOLD_ENDS };
 }
 
 export function mountAnimations(groups: GroupFrames[], root: AnimRoot, rep: number): AnimHandle {
