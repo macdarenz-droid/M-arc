@@ -102,10 +102,10 @@ Each finding: **where** (file:line, value) · **harm** (typical user) · **rule*
 - where: `readiness.ts:65-66` (67/33); the check-in part maps the user's own average to 0.5 (`:168-171`, `clamp(0.5 ± z/3)`), and below 3 past check-ins `rawFallback` (`:166`) also scores 3/3/3 as 0.5; weight 0.35 (`:64`); band `:269`; amber → `no_increase` (`:273`, no calibrating check) → gate `progression.ts:364`. The hold text at `:375` ("Readiness is middling today…") is only the fallback for `ctx.readiness.reason`.
 - calibration (r1): `calibrating` (`:275-277`) needs 14 **distinct check-in days in the last 30** (or 14 sleep nights). A no-watch user who checks in 2-3 times a week has 9-13 days, so they stay "calibrating" for good. Any fix gated on 14 days would never reach them.
 - harm (verifier's probe, with a real 4-week history): average check-in + target muscle 100 % recovered → 68 green. The same check-in 3 days after the last push day (chest 90 %) → **65 amber, no increase**; 2 days after (78 %) → 62 amber. With fewer than 3 sessions in 28 days (no load input) an average day **cannot** reach green (max 65). Skipping the check-in reads green. So for a user who trains each muscle twice a week, checking in honestly on a normal day costs the progression.
-- rule, in two steps: (1) **from 3 past check-ins** (the existing z-score minimum), score the check-in so the user's own median maps to "normal" (0.75; with the verifier's inputs, check-in 0.35 + recovery 0.15 + load 0.05, an average day then scores 78 at 78 % recovery and 81 at 90 %, instead of 62 and 65); a 3/3/3 first check-in (`rawFallback`) also maps to normal. (2) **from 14 days of scores**, band against the user's own distribution: amber only below the user's 25th percentile, red below the 10th, with 67/33 as outer limits.
+- rule, in two steps: (1) **from 3 past check-ins** (the existing z-score minimum), score each check-in part as `clamp(0.75 ± z/3, 0, 1)` instead of `clamp(0.5 ± z/3)`, where z is the existing z-score against the user's own **mean** (`zScore`, `readiness.ts:57-61`), so the user's usual answer maps to "normal" (0.75; with the verifier's inputs, check-in 0.35 + recovery 0.15 + load 0.05, an average day then scores 78 at 78 % recovery and 81 at 90 %, instead of 62 and 65); a 3/3/3 first check-in (`rawFallback`) also maps to normal. The builder records the 0.75 centre and the z/3 slope in `COACHING-DECISIONS.md`. (2) **Later (after V1, r2):** band against the user's own score distribution. Not in ADAPT-2: `readiness()` scores one day and has four callers (`app/selectors.ts:41`, `coach/rules.ts:120, 655`, `escobar/tools/context.ts:69`); past scores need `readinessSeries` (`coach/rules.ts:645-661`); and a percentile cutoff makes about 1 day in 4 amber by construction. If built, the cutoff may only loosen: `clamp(p25, 33, 67)`, check-in days only.
 - data: EXISTING (`checkIns`, `healthDays`; `readinessSeries`). basis: COACHING-PLAN 6.4, App. A 7 (bands on a personal baseline), [Saw 2016] (self-report leads).
-- min data → fallback: step 1 from 3 check-ins (before that, the re-centred raw rating); step 2 from 14 days → step 1 with the fixed 67/33 bands. The 14-day `calibrating` flag keeps its label meaning; it no longer decides whether an average day can be green.
-- bounds: "reduce" still needs corroboration (D-B16, `:272`); green cutoff 55-75.
+- min data → fallback: step 1 from 3 check-ins (before that, the re-centred raw rating), with the fixed 67/33 bands. The 14-day `calibrating` flag keeps its label meaning; it no longer decides whether an average day can be green.
+- bounds: "reduce" still needs corroboration (D-B16, `:272`); the 67/33 cutoffs stay; the centre only moves the check-in part (0.5 → 0.75), never the bands.
 - S / **H**. overlap: none (BUG-16 did load-only and corroboration).
 - side note (verifier M-3): the comment at `readiness.ts:147` says 14 days; the code uses 30 (`:136`).
 
@@ -184,7 +184,7 @@ Each finding: **where** (file:line, value) · **harm** (typical user) · **rule*
 
 **D-5 Unrated sets are assumed "ideal".** `heart.ts:174-177`, `exposure.ts:53-56`. Unrated sets already count as hard sets (only "easy" is left out, `exposure.ts:115`); what is understated is the recovery dose and the accessory heart-rest minimum. Rule: impute from the same exercise's rated sets in the same slot; never shown as the user's rating, never 'easy' for a rest minimum, never into e1RM. EXISTING. basis: unverified. M / L. After V1.
 
-**D-6 (r1) The effort-drift deload trigger is effectively off for inconsistent raters.** `effort.ts:16` needs 4 of the last 6 sessions rated and 8 rated sets, else `unknown`; `deload.ts:109-111` counts only `harder`. A user who rates in 3 of 6 sessions never feeds trigger (b), so their lighter-week offer rests on plateau and readiness only. Rule: once A-1's rep rule exists, count "reps falling at the same load across 3 sessions" as a harder signal when ratings are missing. EXISTING. basis: plan 6.13 (effort drift), App. D 17. Min 4 sessions → `unknown`. Bounds: the gate stays for rated users (§4: it keeps inconsistent raters from *triggering* a deload); the rep signal only adds evidence. M / L. After V1 (with D-4 in ADAPT-7).
+**D-6 (r1) The effort-drift deload trigger is effectively off for inconsistent raters.** `effort.ts:16` needs 4 of the last 6 sessions rated and 8 rated sets, else `unknown`; `deload.ts:109-111` counts only `harder`. A user who rates in 3 of 6 sessions never feeds trigger (b), so their lighter-week offer rests on plateau and readiness only. Rule: once A-1's rep rule exists, count "reps falling at the same load across 3 sessions" as a harder signal when ratings are missing. EXISTING. basis: plan 6.13 (effort drift), App. D 17. Min 4 sessions → `unknown`. Bounds: the gate stays for rated users (§4 effort-drift row); the rep signal only adds evidence. M / L. After V1 (with D-4 in ADAPT-7).
 
 ### E. Coach rules
 
@@ -192,7 +192,7 @@ Each finding: **where** (file:line, value) · **harm** (typical user) · **rule*
 
 **E-1 The plateau lever calls volume "low" below a fixed 10 sets, from last week only.** `rules.ts:420` (last completed week), `:425` `weekSets < 10`. Probe: a missed last week gives 0 sets, so the lever says "about 0 hard sets… add 3 to 4 sets" even when the usual week is in band. Rule: median of the last 3-4 trained weeks vs the muscle's band (and `mainLiftWeeklySets` for main lifts). EXISTING. basis: plan 6.13 "Plateau with one lever", 6.16 G7; [Schoenfeld 2017]. 3 trained weeks → 10. Bounds 4-20 sets. S / M.
 
-**E-2 The plateau lever's failure share is a fixed 0.5.** `rules.ts:426`. A strength user at 40 % max sets (goal cap 0.3) is never told effort is the lever. Rule: `failureShareCap` of the goal (needs `goal` in `CoachContext`, `rules.ts:71-88`). EXISTING. basis: 6.16. S / M.
+**E-2 The plateau lever's failure share is a fixed 0.5.** `rules.ts:426`. A strength user at 40 % max sets (goal cap 0.3) is never told effort is the lever. Rule: `failureShareCap` of the goal (needs the goal in `CoachContext`, `rules.ts:71-88`: the context has `profile` and `profileHistory`, but the current goal is `AppState.goal`, not a `Profile` field, so it must be passed in by `app/selectors.ts:55` and `escobar/tools/context.ts:78`). EXISTING. basis: 6.16. S / M.
 
 **E-3 The after-session effort mix ignores the goal and fires on one session.** `post.ts:47` `max <= 0.5 && easy <= 0.6`, `:57` `max > 0.5`, `:52` copy; also Escobar `read.ts:174`. A strength user at 45 % max gets "healthy spread" (cap 0.3). One noisy session fires the tip; plan 6.13 asks for 2 sessions of the split. Rule: cap from `failureShareCap`, easy check from `goal.rir`, fire only when the previous session of the split repeats it (pass prior sessions in). EXISTING. S / M.
 
@@ -254,6 +254,7 @@ Profile fields and who reads them (grep, verified): `plannedDays` is read only b
 | Plateau evidence bar (6+ sessions over 42+ days), active lift 42 days | `trend.ts:65-67`, `history.ts:58` | Minimum-evidence rules (BUG-14). |
 | Data-trust guards (load > 500 kg or > 1.25 × best; live-gap and burst windows) | `fidelity.ts:94-95, 12-20` | Logging trust, not preference. |
 | Plan safety caps: 120 min, 1.5 × band top, 6 sets per exercise; ~25 sets per muscle ceiling | `plan.ts:37, 40, 45`; App. B | Adapt the band they multiply, never the multipliers. |
+| Effort-drift minimums: 4 of the last 6 sessions rated, 8 rated sets | `effort.ts:16` | They keep inconsistent raters from *triggering* a deload on noisy ratings; D-6 only adds a rep-based signal. |
 | Effort-bias bounds: 3 pairs minimum, ±3 cap | `effortBias.ts:11-12` | Plan 6.13 bounds on learning. |
 | Coaching behaviour thresholds (failure share > 50 %, adherence 60/85 %, reps fell 25 %, duration +20 %) | `weeklyReview.ts:229, 304, 313`; `post.ts:91, 113` | Learning them from the same behaviour would silence the note. The user's data sets the baseline, not the trigger. |
 | Never an increase on the first session after a long break | `progression.ts:50`, `rules.ts:337-339` | Safety. What stays fixed is "no increase"; the return **load** is not fixed: A-4 / ADAPT-3 adds a cut after 8+ weeks and extends "no increase" down to 14 days. |
@@ -302,17 +303,17 @@ Values marked "unverified" above (sleep floor, volume-decay half-life, cue taggi
 
 **What already learns from you:** how you rate effort (wording only), your normal sleep, mood and soreness, how fast each muscle recovers (BUG-17), your real top heart rate, and the weights you use.
 
-**What would help most, ranked by how much a user would feel it:**
-1. **A normal day shouldn't block progress.** Today, checking in honestly a few days after training can read "amber", which stops the weight going up. Coming back after missed weeks also reads as "too much load". Fix: judge "normal" against your own average from your first few check-ins.
+**What would help most, ranked by how much you would feel it:**
+1. **A normal day shouldn't block progress.** Checking in honestly a few days after training can read "amber", which stops the weight going up. Coming back after missed weeks also reads as "too much load". Fix: judge "normal" against your own average from your first few check-ins.
 2. **Rating only some sets shouldn't freeze your weights.** Today, if you rate fewer than half your sets, the app keeps the weight the same forever, and never lowers it unless you tap "max". Fix: judge from your reps when ratings are missing.
 3. **Use the days per week you told us.** A twice-a-week lifter is never told a muscle is under-trained, and a three-a-week lifter never sees the weekly review (it needs 5 days). Fix: use your planned days.
 4. **Know an experienced lifter is experienced.** Today everyone new to the app counts as a beginner, so a normal push/pull/legs plan gets blocked. Fix: start from the training age you enter.
-5. **Rest timer per exercise**, from how long you really rest (after the rest-time fix lands).
-6. **Coach notes that fit your goal**, and snoozes that back off.
+5. **Coach notes that fit your goal.**
+6. **After Version 1:** a rest timer per exercise, from how long you really rest, and snoozes that back off.
 
 **What stays fixed on purpose:** safety limits (biggest weight jump, rest floors, "no increase on a hard day", no weight cut from heart rate), your earlier decisions (D-A1, D10, D11), and research formulas. They protect you from noisy data.
 
-**Your decisions (not urgent):** saving injuries you tell Escobar so the app itself avoids those lifts (new saved data); saving a preferred session length.
+**Your decisions:** saving injuries you tell Escobar so the app itself avoids those lifts (new saved data); saving a preferred session length; keeping a history of lighter weeks.
 
 ---
 
@@ -324,13 +325,13 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
 - **base:** the latest `origin/main` at dispatch (this doc was checked against b0b2259).
 - **read_first:** `AGENTS.md`, this doc's findings for the card, and the COACHING-PLAN sections they cite.
 - **design_reference:** this doc (the finding IDs in the card title); no new UI design except ADAPT-4's one Profile label.
-- **connectivity:** offline and local; no network call, no new provider, no new stored data. Only ADAPT-5 changes what is sent to the AI provider (one line derived from stored data, see V8).
+- **connectivity:** offline and local; no network call, no new provider, no new stored data. No card adds a new kind of data sent to the AI provider. ADAPT-2 to ADAPT-4 change the values in Escobar tool results (readiness via `escobar/tools/context.ts:69` and `show.ts:124`, the weekly review via `read.ts:317`, volume); ADAPT-5 adds one derived brief line (V8) and the rest tip in `read.ts:174`.
 - **verification:** unit tests (vitest), which fail on `main` before the change and pass after, with each test's bite proved by a mutation listed in the PR; then `npm run check`, `npm run test:tz` and the gate on the merged head. ADAPT-4 adds a gate probe for its Profile label. No card needs a real phone.
 - **risk_and_recovery:** each change sits behind the fallback named in its finding (today's constant until the minimum data exists), so reverting the card's commit restores today's behaviour; nothing is migrated.
 - **return:** a PR titled with the card ID, listing the head commit, changed paths, the evidence per criterion, the mutations, and a `COACHING-DECISIONS.md` entry for every value the card chose.
 
 ### ADAPT-2 Readiness judges "normal" against the user (B-1, B-3, B-9) — Version 1
-- **outcome:** an ordinary day for this user reads green from their first check-ins, not after 14; only a genuinely worse day, or a real load jump, holds the load. Coming back after missed weeks is not a spike.
+- **outcome:** an ordinary day for this user reads green from their first check-ins, not after 14; only a genuinely worse day, or a real load jump, holds the load. Coming back after missed weeks is not a spike. (B-1 step 2, personal percentile bands, is after V1.)
 - **write_scope:** `src/brain/readiness.ts`, `src/brain/recovery.ts` (`acuteChronicRatio` only), readiness and recovery tests (add-only blocks), `docs/COACHING-DECISIONS.md` (one entry). **reserved_paths:** `progression.ts` (read only), `calibrateAfterSession` (BUG-24, ADAPT-7), everything the watch agent owns.
 - **depends_on:** none (BUG-16, BUG-17 merged). PR #64 does not touch these files.
 - **acceptance (tests):**
@@ -339,12 +340,11 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
   - R3 (the typical user): **10 check-in days in the last 30** (2-3 a week), no watch, today average, 4 weeks of sessions, 90 % recovered → not amber from the check-in alone: `green` (fails on `main`: 65 amber; `calibrating` stays true).
   - R4: first-ever check-in 3/3/3, 4 weeks of sessions, 90 % recovered → `green` (fails on `main`: `rawFallback` 0.5 → amber).
   - R5 (failure path): today 2 SD worse than the user's own mean on sleep and soreness → `amber` or `red`; `reduce` still needs corroboration (D-B16 tests unchanged).
-  - R6: 14+ days of scores → a day under the user's own 25th percentile is `amber`, under the 10th is `red`; a day at the user's median is `green`.
-  - R7: resting HR +4 bpm with a personal SD of 1 → driver "resting heart rate is up"; +6 bpm with SD 5 → no driver (fails on `main` both ways: fixed 10 bpm, driver at +5).
-  - R8: 3 sessions a week, two missed weeks, an ordinary return week → no load driver and no whole-body slowdown (fails on `main`: ratio 2.00, ×1.25, load score 0).
-  - R9 (failure path): a return week at 1.6 × the usual trained week → the load driver still fires.
+  - R6: resting HR +4 bpm with a personal SD of 1 → driver "resting heart rate is up"; +6 bpm with SD 5 → no driver (fails on `main` both ways: fixed 10 bpm, driver at +5).
+  - R7: 3 sessions a week, two missed weeks, an ordinary return week → no load driver and no whole-body slowdown (fails on `main`: ratio 2.00, ×1.25, load score 0).
+  - R8 (failure path): a return week at 1.6 × the usual trained week → the load driver still fires.
   - Existing readiness, recovery, progression and deload tests pass unchanged.
-- **risk:** more green days means more increases; mitigated by the unchanged per-muscle 60 % hold, the goal caps, and R5/R9.
+- **risk:** more green days means more increases; mitigated by the unchanged 67/33 bands, the per-muscle 60 % hold, the goal caps, and R5/R8.
 
 ### ADAPT-3 Progression without perfect ratings, and after breaks (A-1, A-9, E-8, A-4) — Version 1
 - **outcome:** users who rate only some sets still progress and still get a lighter target when reps fall; a break of 2+ weeks never earns an increase on the first session back; a long break returns lighter.
@@ -354,7 +354,7 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
   - P1: 2 sessions of 3×12 at 40 kg (range 8-12), 1 of 3 sets rated "ideal", no rep drop → `increase` by one standard step (fails on `main`: `confirm_effort`).
   - P2 (failure path): same with reps 12, 10, 8 → no increase (ambiguous; asks to rate).
   - P3: a max-rated set in the last session → no increase (unchanged).
-  - P4: 40 kg, range 8-12, top reps 6 then 5, last sets unrated → `reduce` by one step (fails on `main`: needs "max" twice).
+  - P4: 40 kg, range 8-12, top reps 6 then 5 on two sessions, (a) 2 of 3 sets rated "ideal" and the last set unrated, and (b) 1 of 3 rated (coverage under 0.5) → `reduce` by one step in both (fails on `main`: (a) needs "max" twice; (b) `confirm_effort` at `:335` returns first, so the rep rule must run before that gate).
   - P5 (failure path): reps under the range on one session only, or an "easy"-rated last set → no step-down.
   - P6: 2 × 40×12 then 26 days off → 40 kg, no increase (fails on `main`: 42.5).
   - P7: 156 days off → 36 kg or the nearest rung below (the 10 % cut beyond 8 weeks, inside 70-100 %) (fails on `main`: 40).
@@ -364,7 +364,7 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
 
 ### ADAPT-4 The user's own week (C-3, C-5, C-8, F-1, E-6, E-9) — Version 1
 - **outcome:** the app uses the days per week the user planned; twice-a-week lifters get volume feedback; 3-a-week lifters see the weekly review.
-- **write_scope:** `src/brain/volume.ts`, `weekly.ts`, `coach/weeklyReview.ts`, `coach/rules.ts` (gap and green-readiness rules), `src/app/selectors.ts` (pass `plannedDays`; smallest wiring, called out), `src/slices/profile/Profile.tsx` (show "not set"), tests (add-only), `scripts/screenshot-gate.mjs` (add-only block ADAPT-4). **reserved_paths:** `docs/COACHING-PLAN.md` (the supervisor edits the line).
+- **write_scope:** `src/brain/volume.ts`, `weekly.ts`, `coach/weeklyReview.ts`, `coach/rules.ts` (gap and green-readiness rules), `src/app/selectors.ts` and `src/escobar/tools/context.ts` `coachCtx` (pass `plannedDays` and `daysOff` into `CoachContext`; smallest wiring, called out), `src/slices/profile/Profile.tsx` (show "not set"), tests (add-only), `scripts/screenshot-gate.mjs` (add-only block ADAPT-4). **reserved_paths:** `docs/COACHING-PLAN.md` (the supervisor edits the line).
 - **depends_on:** the supervisor's approval of the COACHING-PLAN §7 P2-C line change (§5 item 2), recorded before merge.
 - **acceptance (tests):**
   - W1: `plannedDays` 2, two sessions a week, 4 hamstring sets a week for 3 weeks → `under` (fails on `main`: `in`).
@@ -379,7 +379,7 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
 
 ### ADAPT-5 Volume that fits the lifter and one band everywhere (C-2 seed, A-10, C-4, E-1, E-2, E-3, E-4, F-2) — Version 1
 - **outcome:** experienced lifters start at their level; every screen and the lighter-week trigger use the same band; coach notes read the goal's own numbers.
-- **write_scope:** `src/brain/exposure.ts` (level seed only), `coach/weeklyReview.ts` (band), `coach/rules.ts` (plateau lever), `coach/post.ts` (effort mix, rest tip), `src/slices/workout/Train.tsx:1059` and `src/escobar/tools/read.ts:174` (pass the goal, one line each), `src/escobar/context/brief.ts` (goal not chosen), tests (add-only). **reserved_paths:** `data/goals.ts` values, `deload.ts` (read only; A-10 is fixed through the level).
+- **write_scope:** `src/brain/exposure.ts` (level seed only), `coach/weeklyReview.ts` (band), `coach/rules.ts` (plateau lever), `coach/post.ts` (effort mix, rest tip), `src/slices/workout/Train.tsx:1059` and `src/escobar/tools/read.ts:174` (pass the goal, one line each), `src/escobar/context/brief.ts` (goal not chosen), `src/app/selectors.ts` and `src/escobar/tools/context.ts` (pass the goal into `CoachContext`, one line each), tests (add-only). **reserved_paths:** `data/goals.ts` values, `deload.ts` (read only; A-10 is fixed through the level).
 - **depends_on:** ADAPT-4 (full-week rule used by the shared band).
 - **acceptance (tests):**
   - V1: `trainingSince` 36 months ago, no sessions → level ≥ Established for every muscle; the stock push/pull/legs ×2 passes `evaluatePlan` with **no `volume_far_over` block on any muscle** (fails on `main`: blocked on 8 muscles).
@@ -408,4 +408,4 @@ Version 1 order: coaching correctness first (ADAPT-2 to ADAPT-5), then the form 
 - **acceptance (tests):** N1: ±1 % scatter gaining 1 % in 8 weeks → not "plateaued" (fails on `main`). N2 (failure path): ±6 % scatter with a 1.5 % fitted change → not "progressing". N3: "ideal" bias +3 over 4 pairs → live "room to add load" fires on an ideal set; "max" never shifted. N4: ideal/ideal same-load pairs move `tauScale` within the clamp (fails on `main`: needs max/max); a held set never moves it. N5: reps falling at the same load over 3 sessions with 3 of 6 sessions rated → drift `harder` (fails on `main`: `unknown`). N6: same id snoozed twice → hidden 14 days (fails on `main`: 7); alerts unaffected. N7: a substitute logged 12 times ranks above an unlogged one with the same pattern (fails on `main`).
 - **risk:** learned lines hide real stalls; bounded 1-4 %, plateau evidence bar unchanged.
 
-**Not carded (fold into existing work):** D-2 (observed HR max in live rest) → gap for BUG-21 / PR #64; E-5 → LT-2; A-5 → LT-2; A-8 → LT-5; B-8 → ADAPT-7's snooze back-off; B-10 → improves with B-5, no change. **Later, research or owner first:** B-2, B-4, B-6, B-7, C-1 and C-2's decay (after ADAPT-5), D-3 (needs a real-watch check), D-5, A-6, A-7, E-10, E-12, F-3, F-5, F-7 (when carded, it must state that its brief lines are derived from stored data, like V8).
+**Not carded (fold into existing work):** D-2 (observed HR max in live rest) → gap for BUG-21 / PR #64; E-5 → LT-2; A-5 → LT-2; A-8 → LT-5; B-8 → ADAPT-7's snooze back-off; B-10 → improves with B-5, no change. **Later, research or owner first:** B-1 step 2 (personal bands), B-2, B-4, B-6, B-7, C-1 and C-2's decay (after ADAPT-5), D-3 (needs a real-watch check), D-5, A-6, A-7, E-10, E-12, F-3, F-5, F-7 (when carded, it must state that its brief lines are derived from stored data, like V8).
