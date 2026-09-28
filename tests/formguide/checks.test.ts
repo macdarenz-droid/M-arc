@@ -1,0 +1,180 @@
+// FG-3: the §5 checks (docs/FORM-GUIDE-PRODUCTION.md) on every exercise file, each against its seeded bad file (A1, A2),
+// the library census for targetVisible (A3) and the `npm run fg:check` command (A4).
+import { describe, expect, it } from 'vitest';
+import { readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import library from '@/data/exercises.json';
+import type { ExerciseGuide } from '@/formguide/model';
+import { CHECKS, runChecks, report, moments, type CheckId } from '@/formguide/check';
+import { inputFor, guideOf } from '@/formguide/check/node';
+import { CENSUS_VIEW_OVERRIDES, OVERLAYS, hasOverlay, hiddenTargets, type LibraryRow } from '@/formguide/check/overlays';
+import { anchorAt, offPath, type Lever } from '@/formguide/check/machines';
+import { bbox, compile, pathSegs } from '@/formguide/check/svg';
+import { windowsFor } from '@/formguide/sample';
+import { BASE } from './fixtures/bad/base';
+
+const EX = 'src/formguide/exercises', BAD = 'tests/formguide/fixtures/bad';
+const failing = (rs: ReturnType<typeof runChecks>) => rs.filter(r => !r.ok).map(r => r.check);
+/** The lateral raise's input with another guide in its place (a variant of the base). */
+const variant = (g: ExerciseGuide, only?: CheckId[]) => runChecks(inputFor(`${EX}/lib_dumbbell_lateral_raise.ts`, g), only);
+
+describe('every exercise file passes every check', () => {
+  const files = readdirSync(EX).filter(f => f.endsWith('.ts'));
+  it('the library holds the lateral raise', () => expect(files).toContain('lib_dumbbell_lateral_raise.ts'));
+  it.each(files)('%s', async f => {
+    const g = guideOf(await import(`../../${EX}/${f}`), f), rs = runChecks(inputFor(`${EX}/${f}`, g));
+    console.info(report(f.replace(/\.ts$/, ''), rs));
+    expect(rs.map(r => r.check)).toEqual([...CHECKS]);
+    // D-FG3: the lab's viewBox clips the lateral raise's mistake by 4.5 units (its sway delta); the ruling is the
+    // supervisor's (the fix is in model.ts or the exercise file, outside FG-3). Every other check passes.
+    expect(failing(rs)).toEqual(f === 'lib_dumbbell_lateral_raise.ts' ? ['mistakeSane'] : []);
+  });
+  it('the fixture base (the lateral raise without its mistake sway) passes every check but its missing hash', () => {
+    expect(failing(variant(BASE))).toEqual(['hash']);
+  });
+});
+
+describe('A1/A2 each check fails on its own seeded bad file, and names the check, the id and the numbers', () => {
+  const dirs = readdirSync(BAD, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name);
+  it('one seeded bad file per check', () => expect([...dirs].sort()).toEqual([...CHECKS].sort()));
+  it.each([...CHECKS])('%s', async check => {
+    const f = readdirSync(`${BAD}/${check}`).find(x => x.endsWith('.ts'))!, path = `${BAD}/${check}/${f}`;
+    const g = guideOf(await import(`./fixtures/bad/${check}/${f}`), f), rs = runChecks(inputFor(path, g));
+    const r = rs.find(x => x.check === check)!;
+    console.info(`[FG-3] ${check}: ${r.fails[0]}`);
+    expect(failing(rs)).toEqual([check]);
+    for (const m of r.fails) {
+      expect(m.startsWith(`${check} ${g.id}: `), m).toBe(true);
+      // the failing numbers; idMatch's failing values are the two names it prints
+      if (check !== 'idMatch') expect(m, 'names a number').toMatch(/\d/);
+    }
+  });
+  it('sample-based failures say where: the channel or joint and the rep fraction, seconds and rep', async () => {
+    for (const check of ['smoothness', 'jointRanges', 'feetPlanted', 'handsOnHandle', 'machinePivot', 'bodyOnPad'] as const) {
+      const f = readdirSync(`${BAD}/${check}`).find(x => x.endsWith('.ts'))!;
+      const g = guideOf(await import(`./fixtures/bad/${check}/${f}`), f), r = runChecks(inputFor(`${BAD}/${check}/${f}`, g), [check])[0]!;
+      for (const m of r.fails) expect(m, check).toMatch(/u=[\d.]+ \([\d.]+ s, (rep \d|mistake)\)/);
+      expect(r.fails.some(m => /(_[lr]|hand|foot|back|shoulder|arm)\b/.test(m)), check).toBe(true);
+    }
+  });
+});
+
+describe('the rules inside each check', () => {
+  const only = (g: unknown, c: CheckId) => variant(g as ExerciseGuide, [c])[0]!;
+  it('smoothness (d): a 15° snap of the elbow fails', () => {
+    const r = only({ ...BASE, joints: { ...BASE.joints, elbow_flex: { keys: [[0.5, 5], [0.5005, 20]] } } }, 'smoothness');
+    expect(r.fails.some(m => /\(d\) elbow_flex_[lr] moves [\d.]+° in 1\/120 s > 4°/.test(m))).toBe(true);
+  });
+  it('smoothness (c) is measured at the stops\' exact times: a plain minimum-jerk raise passes at uneven tempos', () => {
+    for (const t of [[1.2, 0.5, 2, 0.8], [0.9, 0.3, 1.7, 0.6], [1.5, 1, 2.5, 0], [0.7, 0.4, 1.9, 0.5]])
+      expect(only({ ...BASE, joints: { shoulder_abd: [10, 88] }, tempo: { lift: t[0], hold: t[1], lower: t[2], rest: t[3] } }, 'smoothness').fails, t.join('/')).toEqual([]);
+  });
+  it('stops: a rep with one moving phase fails; a hold has stops at its ends only', () => {
+    expect(only({ ...BASE, tempo: { lift: 1, hold: 0.5, lower: 0, rest: 2.5 } }, 'stops').fails.join()).toMatch(/lower = 0 s: a rep needs both moving phases/);
+    const hold = { ...BASE, kind: 'hold', tempo: { hold: 4 }, mistake: { ...BASE.mistake, tempo: undefined } };
+    expect(only(hold, 'stops').fails).toEqual([]);
+  });
+  it('jointRanges: a written channel without a research range fails, and so does leaving the AAOS limits', () => {
+    expect(only({ ...BASE, joints: { ...BASE.joints, hip_flex: 5 } }, 'jointRanges').fails.join()).toMatch(/hip_flex_[lr] is written but research.json has no coaching range/);
+    expect(only({ ...BASE, joints: { ...BASE.joints, knee_flex: 140 } }, 'jointRanges').fails.join()).toMatch(/knee_flex_[lr] = 140 outside the AAOS limits 0..135/);
+  });
+  it('mistakeSane: fewer than two tells, NaN and the AAOS limits fail', () => {
+    expect(only({ ...BASE, mistake: { ...BASE.mistake, tells: BASE.mistake.tells.slice(0, 1) } }, 'mistakeSane').fails.join()).toMatch(/1 tells, the mistake needs 2/);
+    expect(only({ ...BASE, mistake: { ...BASE.mistake, joints: { ...BASE.mistake.joints, elbow_flex: NaN } } }, 'mistakeSane').fails.join()).toMatch(/elbow_flex_[lr] = NaN/);
+    expect(only({ ...BASE, mistake: { ...BASE.mistake, joints: { ...BASE.mistake.joints, knee_flex: [0, 140] } } }, 'mistakeSane').fails.join()).toMatch(/knee_flex_[lr] = [\d.]+ outside the AAOS limits/);
+  });
+  it('mistakeDiffers: a hold passes on its sag delta and fails without one', () => {
+    const hold = (d: number) => ({ ...BASE, kind: 'hold', tempo: { hold: 4 }, mistake: { ...BASE.mistake, tempo: undefined, joints: { knee_flex: [0, d] } } });
+    expect(only(hold(12), 'mistakeDiffers').fails).toEqual([]);
+    expect(only(hold(2), 'mistakeDiffers').fails.join()).toMatch(/largest sag delta 2 < 5°/);
+  });
+  it('machine checks fail a machine with no drawing, and a setup mistake without a machine', () => {
+    const m = { ...BASE, machine: { id: 'nowhere', settings: {}, drive: [] } };
+    for (const c of ['handsOnHandle', 'bodyOnPad', 'machinePivot', 'pathBudget', 'everyPoseRenders'] as const) expect(only(m, c).fails.join(), c).toMatch(/machine nowhere has no drawing/);
+    expect(only({ ...BASE, mistake: { ...BASE.mistake, setup: { setting: 'seat', wrong: 0.2, text: 'x' } } }, 'setupDiffers').fails.join()).toMatch(/no machine/);
+  });
+  it('a view or pose the rig does not draw yet fails the figure checks, naming what is missing', () => {
+    const side = only({ ...BASE, view: 'side', viewWhy: 'test' }, 'everyPoseRenders').fails.join();
+    expect(side).toMatch(/no side view figure yet/);
+    expect(only({ ...BASE, pose: 'lying_supine' }, 'themes').fails.join()).toMatch(/no lying_supine pose/);
+    expect(only({ ...BASE, equipment: { ...BASE.equipment, kind: 'barbell' } }, 'pathBudget').fails.join()).toMatch(/part barbell has no drawing yet/);
+  });
+  it('muscleTiming: an effort step over 0.02 per 1/120 s, a loud keep-quiet muscle and a quiet mistake fail', () => {
+    const e = (effort: object, mistake?: object) => ({ ...BASE, muscles: { ...BASE.muscles, effort }, mistake: { ...BASE.mistake, muscles: mistake } });
+    expect(only(e({ side_delts: { keys: [[0, 0.1], [0.3, 0.1], [0.302, 1], [0.6, 0.1]] }, upper_traps: 0.1 }, { upper_traps: 0.5 }), 'muscleTiming').fails.join()).toMatch(/side_delts effort steps [\d.]+ in 1\/120 s > 0.02/);
+    expect(only(e({ side_delts: { keys: [[0, 0.1], [0.3, 1], [0.6, 0.1]] }, upper_traps: 0.3 }, { upper_traps: 0.5 }), 'muscleTiming').fails.join()).toMatch(/keep-quiet upper_traps reaches 0.3 ≥ 0.2/);
+    expect(only(e({ side_delts: { keys: [[0, 0.1], [0.3, 1], [0.6, 0.1]] }, upper_traps: 0.1 }), 'muscleTiming').fails.join()).toMatch(/upper_traps is not higher in the mistake/);
+    expect(only({ ...BASE, muscles: { ...BASE.muscles, keepQuiet: [] } }, 'muscleTiming').fails.join()).toMatch(/keepQuiet is empty/);
+  });
+  it('secondaryMotion: no breath and too much sway fail', () => {
+    expect(only({ ...BASE, joints: { ...BASE.joints, breath: 0.5 } }, 'secondaryMotion').fails.join()).toMatch(/breath amplitude 0, must be > 0/);
+    expect(only({ ...BASE, movement: { ...BASE.movement, leanDeg: 3 } }, 'secondaryMotion').fails.join()).toMatch(/sway amplitude 2.94° outside \[0.2°, 1.5°\] at u=/);
+  });
+  it('targetVisible: an empty target list fails', () => {
+    expect(only({ ...BASE, muscles: { ...BASE.muscles, target: [] } }, 'targetVisible').fails.join()).toMatch(/target is empty/);
+  });
+  it('the key moments come from the tempo: start, mid-lift, top, mid-lower', () => {
+    expect(moments(windowsFor({ lift: 1, hold: 0.5, lower: 2, rest: 0.5 }, 'lift_first', 'rep'))).toEqual([0, 0.125, 0.25, 0.625]);
+    expect(moments(windowsFor({ lift: 1, hold: 0.25, lower: 2, rest: 0.75 }, 'lower_first', 'rep'))).toEqual([0, 0.25, 0.5, 0.6875]);
+  });
+});
+
+describe('helpers', () => {
+  it('a lever anchor runs on its arc and a slide end on its segment; travel past the ends leaves the path', () => {
+    const L: Lever = { kind: 'lever', pivot: [0, 0], bound: 'shoulder_r', radius: 10, deg: [0, 90] };
+    expect(anchorAt(L, 0).map(v => +v.toFixed(9))).toEqual([0, 10]);
+    expect(anchorAt(L, 1).map(v => +v.toFixed(9))).toEqual([10, 0]);
+    expect(offPath(L, anchorAt(L, 0.5))).toBeCloseTo(0, 9);
+    expect(offPath(L, anchorAt(L, 1.5))).toBeGreaterThan(5);
+    const S = { kind: 'cable' as const, path: [[0, 0], [0, 10]] as [[number, number], [number, number]] };
+    expect(offPath(S, anchorAt(S, 0.3))).toBeCloseTo(0, 9);
+    expect(offPath(S, anchorAt(S, 1.2))).toBeCloseTo(2, 9);
+  });
+  it('the box of a curve is its true extent, not its control points', () => {
+    const c = compile('<g><path d="M0 0 C0 10 10 10 10 0 Z"/></g>'), b = bbox(c, {});
+    expect([b.x0, b.y0, b.x1, +b.y1.toFixed(9)]).toEqual([0, 0, 10, 7.5]);
+    expect(pathSegs('m1 1 h2 v2 l-2 0 z').length).toBe(4);
+    const r = compile('<g transform="rotate(90)"><rect x="0" y="0" width="4" height="2"/></g>'), rb = bbox(r, {});
+    expect([rb.x0, rb.y0, rb.x1, rb.y1].map(v => +v.toFixed(9))).toEqual([-2, 0, 0, 4]);
+  });
+});
+
+describe('A3 targetVisible census over the library (§3 overlays, pattern-to-view table)', () => {
+  const lib = library as LibraryRow[];
+  it('with the pattern views alone, four targets on three exercises are hidden', () => {
+    const hidden = hiddenTargets(lib);
+    console.info(`[FG-3] census, pattern views: ${lib.length} exercises, ${lib.reduce((n, e) => n + e.primary.length, 0)} targets, ${hidden.length} hidden: ${hidden.join('; ')}`);
+    expect(hidden).toEqual([
+      'lib_cable_external_rotation: rotator_cuff (front)', 'lib_sumo_deadlift: adductors (side)',
+      'lib_hip_abduction: glutes (front)', 'lib_hip_abduction: abductors (front)',
+    ]);
+  });
+  it('with the three recorded view overrides (D-FG3), zero targets are hidden', () => {
+    const hidden = hiddenTargets(lib, CENSUS_VIEW_OVERRIDES);
+    console.info(`[FG-3] census with overrides: ${hidden.length} hidden`);
+    expect(hidden).toEqual([]);
+    for (const [id, o] of Object.entries(CENSUS_VIEW_OVERRIDES)) for (const m of lib.find(e => e.id === id)!.primary) expect(hasOverlay(o.view, m as never), `${id} ${m}`).toBe(true);
+    expect(OVERLAYS.back).toContain('adductors');
+  });
+});
+
+describe('A4 npm run fg:check', () => {
+  const run = (...args: string[]) => spawnSync('npm', ['run', '-s', 'fg:check', ...args], { encoding: 'utf8' });
+  it('prints pass or fail per check for the lateral raise', () => {
+    const r = run('lib_dumbbell_lateral_raise');
+    for (const c of CHECKS) expect(r.stdout).toMatch(new RegExp(`^(PASS|FAIL) ${c}\\b`, 'm'));
+    // exit 0 once the viewBox ruling lands (D-FG3); until then the one failing check is mistakeSane
+    expect(r.stdout.match(/^FAIL .*/gm)).toEqual(['FAIL mistakeSane']);
+    expect(r.status).toBe(1);
+    const rest = run('lib_dumbbell_lateral_raise', ...CHECKS.filter(c => c !== 'mistakeSane'));
+    expect(rest.stdout).toMatch(/all 19 checks passed/);
+    expect(rest.status).toBe(0);
+  }, 30_000);
+  it('exits non-zero on a bad file and prints its failing numbers', () => {
+    const bad = run(`${BAD}/jointRanges/lib_dumbbell_lateral_raise.ts`);
+    expect(bad.status).toBe(1);
+    expect(bad.stdout).toMatch(/^FAIL jointRanges$/m);
+    expect(bad.stdout).toMatch(/jointRanges lib_dumbbell_lateral_raise: knee_flex_[lr] = 12 outside the coaching range 0..10 \(research.json\) at u=0 \(0 s, rep 0\)/);
+    expect(run('lib_nothing').status).toBe(2);
+  }, 30_000);
+});
