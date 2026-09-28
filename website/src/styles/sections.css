@@ -1,0 +1,119 @@
+/* Home page sections (docs/WEBSITE-DESIGN.md sections 5.2 and 7.1). Static rules; motion lives in motion.css. */
+
+/* pinned block: hero and story */
+.pinblock { position: relative; isolation: isolate; }
+.pg { display: grid; grid-template-columns: 6fr 6fr; column-gap: var(--sp-6); row-gap: 0; }
+.hero-copy { grid-column: 1; grid-row: 1; min-height: 72svh; display: flex; flex-direction: column; justify-content: center; padding: var(--sp-9) 0 var(--sp-10); max-width: 560px; }
+.col-pin { grid-column: 2; grid-row: 1 / 3; display: flex; justify-content: center; align-items: flex-start; z-index: 2; }
+.story-bg { grid-column: 1 / -1; grid-row: 2; margin-inline: calc(50% - 50vw); background: var(--s1); clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%); z-index: -1; position: relative; }
+.story { grid-column: 1; grid-row: 2; padding-top: calc(var(--cut) + var(--sp-9)); padding-bottom: max(calc(50vh - 40px), var(--sp-10)); }
+/* 382px is half the pin's box: (320 - 20) * 2.1641 + 20 = 669px of phone plus 96px of padding, halved */
+.pin { position: sticky; top: max(calc(50vh - 382px), 8px); contain: layout; padding: var(--sp-9) var(--sp-10); isolation: isolate; }
+.light { position: absolute; inset: -20%; z-index: -1; pointer-events: none; background: radial-gradient(50% 40% at 32% 30%, var(--light-a), transparent 70%), radial-gradient(45% 36% at 72% 66%, var(--light-b), transparent 70%); filter: blur(60px); will-change: filter; }
+.light::after { content: ""; position: absolute; inset: 0; background: var(--grain) 0 0 / 256px 256px repeat; opacity: .06; mix-blend-mode: overlay; }
+.pinblock[data-step="2"] .pin { --light-a: var(--la-green); --light-b: var(--lb-cyan); }
+.pinblock[data-step="3"] .pin { --light-a: var(--la-amber); --light-b: var(--lb-violet); }
+.hero .ctas { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-7); }
+.hero .lead { margin-top: var(--sp-4); }
+.hero .cap { margin-top: var(--sp-4); }
+
+/* the phone's screen layers */
+.layer { opacity: 0; transform: translateY(12px); }
+[data-step="0"] .l-today, [data-step="3"] .l-today, [data-step="1"] .l-live, [data-step="2"] .l-body { opacity: 1; transform: none; }
+
+/* steps */
+.step { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: var(--sp-7) 0; max-width: 460px; }
+.step:first-child { min-height: 0; padding-top: var(--sp-2); }
+.step .eyebrow { color: var(--text2); }
+.step[aria-current] .eyebrow { color: var(--accent-text); }
+.step h3 { margin-bottom: var(--sp-3); }
+.step p { color: var(--text2); }
+.step-shot { display: none; margin-top: var(--sp-7); }
+.step-shot .cap { margin-top: var(--sp-3); }
+.pin-s { display: none; }
+
+/* figures */
+.fig figcaption { margin-top: var(--sp-4); text-align: center; }
+.fig.first { align-self: start; }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+.duo > figure:nth-child(2) { margin-top: var(--sp-9); }
+.duo .phone { width: 100%; max-width: 300px; }
+.duo figcaption { text-align: left; }
+.duo .panel { margin-inline: auto; }
+.fig-panel figcaption { margin-top: var(--sp-3); }
+
+/* tiles, stats and card grids */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--sp-3); margin-top: var(--sp-7); }
+.tile .stat { font-size: 32px; display: block; }
+.stats2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-top: var(--sp-7); }
+.stats2 .stat { display: block; font-size: 40px; margin-bottom: var(--sp-2); }
+.stats2 span { font-size: 14px; color: var(--text2); line-height: 1.4; }
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); margin-top: var(--sp-9); }
+.intro { max-width: 640px; }
+
+/* install */
+.install { position: relative; isolation: isolate; overflow: clip; }
+.install .light { inset: auto 10% 15%; height: 60%; opacity: .4; z-index: -1; }
+.icards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); margin-top: var(--sp-9); align-items: start; }
+.icards .card { display: flex; flex-direction: column; gap: 14px; padding: 28px var(--sp-6); }
+.icards .card .ic, .icards .card .h3-card, .icards .card p { margin: 0; }
+.icards .card .link { align-self: flex-start; }
+.icards .mono { color: var(--text); }
+
+/* phones and tablets */
+@media (max-width: 900px) {
+  .c5, .c6, .c7, .c5r { grid-column: 1 / -1; }
+  /* one column: the phone sits under the hero copy at 240px, then pins under the nav and shrinks to 44svh tall as the story reaches it,
+     so the steps scroll under a smaller phone; .col-pin spans the story rows on a 0px track so the sticky range is the whole story,
+     and the story leaves room above for the phone at rest. */
+  .pinblock { --ph: 44vh; }
+  @supports (height: 1svh) { .pinblock { --ph: 44svh; } }
+  .pinblock { --pw0: 240px; --phh0: calc((var(--pw0) - 20px) * 2.1641 + 20px); --pw: clamp(168px, calc((var(--ph) - 20px) * .4621), var(--pw0)); --phh: calc((var(--pw) - 20px) * 2.1641 + 20px); }
+  .pg { grid-template-columns: 1fr; grid-template-rows: auto 0 auto; }
+  .hero-copy { grid-row: 1; max-width: none; min-height: 0; padding: var(--sp-7) 0 var(--sp-8); }
+  .col-pin { grid-column: 1; grid-row: 2 / 4; position: relative; padding-top: calc(var(--cut) + var(--sp-4)); margin-bottom: calc(var(--pin-fade) + var(--sp-11)); timeline-scope: --shrink; }
+  .pin-s { display: block; position: absolute; left: 0; right: 0; top: calc(var(--cut) + var(--sp-4)); height: calc(var(--phh0) - var(--phh)); view-timeline: --shrink block; view-timeline-inset: calc(var(--navh) + env(safe-area-inset-top, 0px) + 8px) 0; pointer-events: none; }
+  .story-bg, .story { grid-column: 1; grid-row: 3; }
+  .pin { top: calc(var(--navh) + env(safe-area-inset-top, 0px) + 8px); padding: 0; width: var(--pw0); }
+  .pinblock.stuck .pin { width: var(--pw); }
+  .pin::before { content: ""; position: absolute; top: -8px; bottom: calc(-1 * var(--pin-fade)); left: calc(50% - 50vw); right: calc(50% - 50vw); background: linear-gradient(var(--s1) calc(100% - var(--pin-fade)), transparent); z-index: -2; pointer-events: none; }
+  .pin .phone { width: 100%; }
+  /* the lit plane ends at the phone's foot with a short fade, so copy passing under the pin dissolves into the backdrop instead of the glow */
+  .pin .light { inset: -30% calc(50% - 50vw) 0; -webkit-mask-image: linear-gradient(black calc(100% - 24px), transparent); mask-image: linear-gradient(black calc(100% - 24px), transparent); }
+  .story { padding-top: calc(var(--cut) + var(--sp-4) + var(--phh0) + var(--sp-7)); padding-bottom: var(--sp-9); }
+  .step, .step:first-child { min-height: 40vh; justify-content: flex-start; padding: var(--sp-9) 0 var(--sp-6); max-width: none; }
+  .fig.first { order: -1; }
+  .cards3, .icards { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .phone, .phone.s { width: 240px; }
+  .duo { grid-template-columns: minmax(0, 1fr); gap: var(--sp-7); }
+  .duo > figure:nth-child(2) { margin-top: 0; }
+  .duo .phone { width: 240px; }
+  .duo .panel { width: 220px; }
+  .duo figcaption { text-align: center; }
+  .install .light { inset: auto 0 10%; height: 50%; }
+}
+
+/* reduced motion or no JavaScript: the phone unpins and each step carries its own stacked figure (5.2, W6) */
+html:not(.m) .pin { position: static; }
+html:not(.m) .layer:not(.l-today) { display: none; }
+html:not(.m) .l-today { opacity: 1; transform: none; }
+html:not(.m) .step-shot { display: block; }
+html:not(.m) .step { min-height: 0; padding: var(--sp-8) 0; }
+html:not(.m) .rest .rest-live { display: none; }
+html:not(.m) .rest .rest-done { display: block; }
+html:not(.m) .prop .undo-bar { background: var(--positive); }
+html:not(.m) .prop .undo-bar b { transform: scaleX(0); }
+html:not(.m) .prop .undo-l { display: none; }
+html:not(.m) .prop .undo-d { display: block; }
+@media (max-width: 900px) {
+  html:not(.m) .pg { grid-template-rows: auto auto auto; }
+  html:not(.m) .col-pin { grid-row: 2; padding-top: 0; margin-bottom: 0; }
+  html:not(.m) .pin-s { display: none; }
+  html:not(.m) .pinblock .pin { padding: var(--sp-7) var(--sp-8); width: auto; }
+  html:not(.m) .pin::before { content: none; }
+  html:not(.m) .pin .phone { width: 240px; }
+  html:not(.m) .story { padding-top: calc(var(--cut) + var(--sp-7)); }
+  html:not(.m) .step, html:not(.m) .step:first-child { min-height: 0; padding: var(--sp-8) 0; }
+}

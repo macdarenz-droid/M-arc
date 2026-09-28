@@ -1,0 +1,31 @@
+/* Install, privacy and not-found pages (docs/WEBSITE-DESIGN.md sections 7.2 to 7.4). */
+
+.page-head { position: relative; isolation: isolate; overflow: clip; padding-block: var(--pad) var(--sp-10); }
+.page-head .light { inset: auto 10% 0; height: 70%; opacity: .4; z-index: -1; }
+.page-head .lead { margin-top: var(--sp-4); }
+.prose { max-width: 640px; }
+.prose p { color: var(--text2); }
+.prose p + p { margin-top: var(--sp-4); }
+.privacy .prose p { color: var(--text); }
+.prose h3 { margin: var(--sp-7) 0 var(--sp-3); }
+.prose .label { margin: var(--sp-6) 0 var(--sp-2); }
+.prose .copyrow + .label { margin-top: var(--sp-6); }
+.prose .ctas { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; margin-top: var(--sp-6); }
+.prose .chain { margin-top: var(--sp-6); }
+.prose .facts { margin-top: var(--sp-6); }
+.band + .band { border-top: 0; }
+
+/* two-column install intro at 1440 (7.2) */
+.apk-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--sp-6); align-items: start; }
+.apk-grid .intro { grid-column: span 5; }
+.apk-grid .chain { grid-column: 7 / span 6; margin-top: 0; }
+@media (max-width: 900px) {
+  .apk-grid { grid-template-columns: 1fr; }
+  .apk-grid .intro, .apk-grid .chain { grid-column: auto; }
+  .apk-grid .chain { margin-top: var(--sp-7); }
+}
+
+/* not found */
+.nf { min-height: 60svh; display: flex; align-items: center; }
+.nf p { color: var(--text2); }
+.nf .ctas { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-7); }

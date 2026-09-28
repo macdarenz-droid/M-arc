@@ -13,3 +13,5 @@ www/
 screenshots/
 test-results/
 website/renders/.preview-*.html
+website/dist/
+website/gate-out/

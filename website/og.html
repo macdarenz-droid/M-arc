@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>M/ARC share image</title>
+<link rel="stylesheet" href="./src/styles/tokens.css">
+<style>
+/* 1200x630 share image (docs/WEBSITE-DESIGN.md section 10). Fonts from ./fonts, the same tokens as the site. The lockup is the
+   nav's inline mark and wordmark (branding/midnight/lockup.png has no alpha channel, so it would box on the lit plane). */
+@font-face { font-family: 'Instrument Sans'; font-weight: 400 700; src: url('./fonts/instrument-sans-latin-wght.woff2') format('woff2'); }
+@font-face { font-family: Inter; font-weight: 100 900; src: url('./fonts/inter-latin-wght.woff2') format('woff2'); }
+html, body { margin: 0; }
+body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--fb); -webkit-font-smoothing: antialiased; }
+.card { position: relative; width: 1200px; height: 630px; isolation: isolate; overflow: hidden; }
+.light { position: absolute; inset: -20%; z-index: -1; background: radial-gradient(50% 40% at 32% 30%, var(--la-violet), transparent 70%), radial-gradient(45% 36% at 72% 66%, var(--lb-cyan), transparent 70%); filter: blur(60px); }
+.light::after { content: ""; position: absolute; inset: 0; background: var(--grain) 0 0 / 256px 256px repeat; opacity: .06; mix-blend-mode: overlay; }
+.lockup { position: absolute; left: 80px; top: 80px; height: 96px; display: flex; align-items: center; gap: 12px; color: var(--text); }
+.mark { width: 96px; height: 96px; overflow: visible; }
+.mark path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.mark circle { fill: var(--accent); }
+.word { font: 700 57px/1 var(--fb); letter-spacing: -.04em; }
+.word .sl { color: var(--accent); }
+.line { position: absolute; left: 80px; bottom: 80px; max-width: 900px; }
+h1 { margin: 0; font: 600 72px/1.04 var(--fd); letter-spacing: -.03em; }
+p { margin: 24px 0 0; font: 400 24px/1.4 var(--fb); color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="light"></div>
+  <div class="lockup"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word">M<span class="sl">/</span>ARC</span></div>
+  <div class="line">
+    <h1>A training log that knows how recovered you are.</h1>
+    <p>Android. No account. Your data stays on the phone.</p>
+  </div>
+</div>
+</body>
+</html>

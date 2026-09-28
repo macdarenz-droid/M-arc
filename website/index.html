@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>M/ARC, a training log that knows how recovered you are</title>
+<meta name="description" content="A workout log for Android. Every set you rate feeds a recovery clock for 24 muscles, a readiness score and your next targets. No account. Your data stays on the phone.">
+<link rel="canonical" href="__SITE_URL____BASE__">
+<meta name="theme-color" content="#0a2540">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="M/ARC">
+<meta property="og:title" content="M/ARC, a training log that knows how recovered you are">
+<meta property="og:description" content="A workout log for Android. Every set you rate feeds a recovery clock for 24 muscles, a readiness score and your next targets. No account. Your data stays on the phone.">
+<!-- if SITE_URL -->
+<meta property="og:url" content="__SITE_URL____BASE__">
+<meta property="og:image" content="__SITE_URL____BASE__og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="M/ARC lockup and the line A training log that knows how recovered you are, on deep navy">
+<meta name="twitter:image" content="__SITE_URL____BASE__og.png">
+<!-- endif -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="M/ARC, a training log that knows how recovered you are">
+<meta name="twitter:description" content="A workout log for Android. Every set you rate feeds a recovery clock for 24 muscles, a readiness score and your next targets. No account. Your data stays on the phone.">
+<link rel="icon" href="__BASE__favicon.svg" type="image/svg+xml">
+<link rel="icon" href="__BASE__icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="__BASE__apple-touch-icon.png">
+<link rel="preload" href="/fonts/instrument-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/src/styles/site.css">
+<script>(function(h){h.classList.add('js');if(matchMedia('(prefers-reduced-motion: no-preference)').matches)h.classList.add('m')})(document.documentElement)</script>
+<script type="module" src="/src/scripts/site.js"></script>
+<script type="module" src="/src/scripts/story.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="__BASE__install/">Skip to install</a>
+<div class="page">
+<div class="sentinel" id="sentinel" aria-hidden="true"></div>
+<!-- nav: identical on every page -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="lockup" id="lockup" href="__BASE__" aria-label="M/ARC, home">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56" pathLength="1"/><circle cx="30" cy="50" r="4.5"/></svg>
+      <span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span>
+    </a>
+    <nav class="nav-links" id="navlinks" aria-label="Sections">
+      <a href="__BASE__#train">Train</a><a href="__BASE__#body">Body</a><a href="__BASE__#escobar">Escobar</a><a href="__BASE__#history">History</a><a href="__BASE__privacy/">Privacy</a>
+    </nav>
+    <details class="menu">
+      <summary>Menu</summary>
+      <ul>
+        <li><a href="__BASE__#train">Train</a></li><li><a href="__BASE__#body">Body</a></li><li><a href="__BASE__#escobar">Escobar</a></li><li><a href="__BASE__#history">History</a></li><li><a href="__BASE__privacy/">Privacy</a></li>
+      </ul>
+    </details>
+    <div class="nav-ctas">
+      <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      <a class="btn btn-p" href="__BASE__install/">Install</a>
+    </div>
+  </div>
+</header>
+<!-- /nav -->
+
+<main id="main" tabindex="-1">
+<div class="pinblock" id="pinblock" data-step="0">
+  <div class="wrap pg">
+    <section class="hero-copy hero" id="hero" data-i="0" aria-labelledby="hero-h" tabindex="-1">
+      <p class="eyebrow eb-hero">Version __VERSION__ for Android and the browser</p>
+      <h1 id="hero-h">A training log that knows how recovered you are.</h1>
+      <p class="lead">Every set you rate feeds a recovery clock for each of 24 muscles, a readiness score for the day and a target for your next session. No account. Everything stays on your phone unless you turn on Escobar, the optional online coach.</p>
+      <div class="ctas">
+        <a class="btn btn-p" href="__BASE__install/#apk">Download for Android</a>
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Read the source</a>
+      </div>
+      <p class="cap">A signed APK that works offline, with no account.</p>
+    </section>
+
+    <div class="col-pin">
+      <div class="pin-s" aria-hidden="true"></div>
+      <div class="pin">
+        <div class="light" aria-hidden="true"></div>
+        <div class="phone">
+          <div class="screen">
+            <img class="layer l-today wipe" src="__BASE__shots/midnight-today.png" width="780" height="1688" fetchpriority="high" decoding="async" alt="The Today screen on a Push day, readiness Amber at 66, with triceps at 45% and three days from ready">
+            <img class="layer l-live wipe" src="__BASE__shots/midnight-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down">
+            <img class="layer l-body wipe" src="__BASE__shots/midnight-body.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="story-bg" aria-hidden="true"></div>
+
+    <section class="story" id="story" aria-labelledby="story-h" tabindex="-1">
+      <ul class="strip" aria-label="Four figures about the app">
+        <li><b class="stat">153</b><span>exercises in the library</span></li>
+        <li><b class="stat">24</b><span>muscles on the map</span></li>
+        <li><b class="stat">6</b><span>kinds of records</span></li>
+        <li><b class="stat">8</b><span>seconds to undo a coach change</span></li>
+      </ul>
+      <p class="eyebrow">How it works</p>
+      <h2 id="story-h">Every set you rate changes the next session.</h2>
+      <ol class="steps" aria-label="Three steps">
+        <li class="step" data-i="1">
+          <p class="eyebrow">Step 1</p>
+          <h3>One tap for effort.</h3>
+          <p>After each set, tap E, I or M. Easy means 3 or more reps left, Ideal 1 to 3, Max nothing left. A missing rating never counts as easy or max. It lowers confidence instead.</p>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="__BASE__shots/midnight-live.png" width="780" height="1688" loading="lazy" decoding="async" alt="A live Push session"></div></div>
+            <figcaption class="cap">A live Push session on the machine chest press: two sets logged, the second at 52.5 kg for 6 rated I, and 1:30 of rest counting down</figcaption>
+          </figure>
+        </li>
+        <li class="step" data-i="2">
+          <p class="eyebrow">Step 2</p>
+          <h3>Each muscle recovers on its own clock.</h3>
+          <p>Every working set leaves an impulse sized by role, effort, reps and load. It decays, stacks over 7 days and adjusts to how your next session actually went, within limits. Ready for hard work at 90%. Fully recovered at 97%.</p>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="__BASE__shots/midnight-body.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map, Recovery view"></div></div>
+            <figcaption class="cap">The muscle map in Recovery view, front and back: chest and front shoulders marked Nearly, rear shoulders Recovering, legs and back Ready</figcaption>
+          </figure>
+        </li>
+        <li class="step" data-i="3">
+          <p class="eyebrow">Step 3</p>
+          <h3>Targets that respect a bad night.</h3>
+          <p>Your check-in, sleep, resting heart rate and load make a 0 to 100 score. Green from 67. Red at 33 or below. Amber holds the load. Red cuts sets. The advice is one sentence you can act on: keep loads steady today and skip any increases.</p>
+          <ul class="bands">
+            <li><i class="dot" style="--c:var(--positive)" aria-hidden="true"></i>Green, 67 and above. Train as planned.</li>
+            <li><i class="dot" style="--c:var(--warning)" aria-hidden="true"></i>Amber. Keep loads steady, skip increases.</li>
+            <li><i class="dot" style="--c:var(--negative)" aria-hidden="true"></i>Red, 33 and below. Fewer sets today.</li>
+          </ul>
+          <div class="rings rings-story">
+            <div><svg class="ring" viewBox="0 0 40 40" style="--v:45" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/><path class="tick" d="M11.8 8.7L9.4 5.4"/></svg><span>Triceps 45%</span></div>
+            <div><svg class="ring" viewBox="0 0 40 40" style="--v:58" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/><path class="tick" d="M11.8 8.7L9.4 5.4"/></svg><span>Chest 58%</span></div>
+          </div>
+          <figure class="step-shot">
+            <div class="phone s"><div class="screen"><img src="__BASE__shots/midnight-today.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Today screen"></div></div>
+            <figcaption class="cap">The Today screen on the same Push day, readiness Amber at 66 and the advice to keep loads steady</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </section>
+  </div>
+</div>
+
+<section class="band lift" id="train" aria-labelledby="train-h" tabindex="-1">
+  <div class="wrap g">
+    <div class="c5 copy r">
+      <p class="eyebrow">Train</p>
+      <h2 id="train-h">Targets from your own numbers.</h2>
+      <p>Open a session and every set already says what to do, such as 62.5 kg for 8, with a one-line reason. Tap the row to log it as planned or type what actually happened.</p>
+      <p>A target steps up after you hit the top of the range twice. It holds when readiness is Amber or a primary muscle is under 60% recovered. A lighter week or a Red day cuts sets. There is no blind 2.5 kg increase.</p>
+      <ul class="rows st">
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><div><h3 class="title">Rest by heart rate</h3><p>With a Bluetooth heart-rate watch, rest ends when your heart rate settles, and falls back to the timer if the signal drops.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.5 7 21l5-2.5 5 2.5-1.5-7.5"/></svg><div><h3 class="title">A PR chip while you are still on the bench</h3><p>The set that beats your best lights up the moment you log it, and History keeps six kinds of records, from heaviest load to furthest carry.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg><div><h3 class="title">Plates per side</h3><p>Tap a barbell target to see the plates in the plates' own unit. Up to 8 gyms, and each machine remembers kg or lb.</p></div></li>
+        <li class="sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><div><h3 class="title">Why this target</h3><p>Open the disclosure under any exercise to see the rule that fired, such as top of range twice, step up, or effort missing, repeat and rate.</p></div></li>
+      </ul>
+      <div class="rest" data-play="rest" aria-hidden="true">
+        <div class="rest-live">
+          <div class="rest-time">1:30</div>
+          <div class="rest-c"><span>-15</span><span>+15</span><span>Skip</span></div>
+          <div class="rest-n">Next · 50 kg × 6</div>
+        </div>
+        <div class="rest-done">Rest done. Next set.</div>
+      </div>
+    </div>
+    <figure class="c7 fig first r">
+      <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-train.png" width="780" height="1688" loading="lazy" decoding="async" alt="The Train tab"></div></div>
+      <figcaption class="cap">The Train tab with a Push split of three exercises: machine chest press at 50 kg, dumbbell shoulder press at 18 kg, triceps pushdown at 25 kg, three sets each</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band" id="body" aria-labelledby="body-h" tabindex="-1">
+  <div class="wrap g">
+    <div class="c7 duo st">
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-levels.png" width="780" height="1688" loading="lazy" decoding="async" alt="The muscle map, Levels view"></div></div>
+        <figcaption class="cap">The muscle map in Levels view, front and back, the most worked muscles in violet, with the legend Most worked, Some, None</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="panel ck sh"><img class="wipe" src="__BASE__shots/midnight-checkin.png" width="780" height="1688" loading="lazy" decoding="async" alt="The pre-session check-in sheet"></div>
+        <figcaption class="cap">The quick check-in before a Push session: sleep quality, mood and soreness for chest, shoulders and triceps on a 1 to 5 scale</figcaption>
+      </figure>
+    </div>
+    <div class="c5 copy r">
+      <p class="eyebrow">Body</p>
+      <h2 id="body-h">24 muscles, each with a ready time.</h2>
+      <p>Tap any muscle for its ring, when it will be ready and how sure the estimate is. Ready times sit under Today, Tomorrow, Later and Sore today. When sleep, resting heart rate and load slow everything down, the map says so in one line, such as "Whole body: recovering about 12% slower than usual this week." If a muscle already feels fine, mark it as fresh.</p>
+      <p>This week shows effective sets per muscle against a band and turns amber when you go over. Levels shows how much you have trained each muscle, as a relative measure and not a medical one.</p>
+      <p>Sleep and heart rate can arrive from Android Health Connect in the background. Before a session, a quick check-in adds sleep quality, mood and soreness on a 1 to 5 scale. It takes a few seconds and you can skip it.</p>
+      <div class="tiles" data-play="rings">
+        <div class="card tile sh"><svg class="ring acc" viewBox="0 0 40 40" style="--v:90" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/></svg><span>90% ready for hard work</span></div>
+        <div class="card tile sh"><svg class="ring acc" viewBox="0 0 40 40" style="--v:97" aria-hidden="true"><circle class="tr" cx="20" cy="20" r="16"/><circle class="val" cx="20" cy="20" r="16" pathLength="100"/></svg><span>97% fully recovered</span></div>
+        <div class="card tile sh"><b class="stat">7</b><span>days of stacking</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band lift" id="escobar" aria-labelledby="escobar-h" tabindex="-1">
+  <div class="wrap g">
+    <div class="c6 r">
+      <figure class="fig-panel">
+        <div class="panel sh"><img class="wipe" src="__BASE__shots/midnight-escobar.png" width="780" height="1688" loading="lazy" decoding="async" alt="Today's brief on the Escobar tab"></div>
+        <figcaption class="cap">Today's brief on the Escobar tab: Push today, but triceps is only 45% recovered, with the suggestion to swap splits or keep Push light. Nothing agreed yet.</figcaption>
+      </figure>
+      <div class="card prop sh" data-play="undo" aria-hidden="true">
+        <div class="title">Lighter week</div>
+        <p>Fewer sets this week.</p>
+        <span class="btn btn-p sm">Apply</span>
+        <div class="undo"><span class="undo-l">Undo · 8 s</span><span class="undo-d">Applied</span><i class="undo-bar"><b></b></i></div>
+      </div>
+    </div>
+    <div class="c5r copy r">
+      <p class="eyebrow">Escobar</p>
+      <h2 id="escobar-h">A coach that checks its own numbers.</h2>
+      <p>Escobar is the one online part of M/ARC, and it is off until you turn it on. Ask about your training and every number in the answer is checked against your own log before it stands; anything unsupported is repaired or marked, and you can see what it looked at.</p>
+      <p>When Escobar wants to change something, a split, a schedule, a goal, today's loads or a lighter week, it arrives as a card. Nothing changes until you tap Apply, and you have 8 seconds to undo.</p>
+      <p>Without a network the tab still works: the ranked notes, the weekly review and the lighter-week suggestion update on the phone, and each note shows its chain, Noticed, Means, Do next. What Escobar knows lists what it remembers about injuries, equipment and preferences, and you can edit or delete any of it.</p>
+      <div class="stats2 st">
+        <div class="card key sh"><b class="stat">14</b><span>kinds of change, each tap to apply</span></div>
+        <div class="card key sh"><b class="stat">422</b><span>cues that work offline</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="history" aria-labelledby="history-h" tabindex="-1">
+  <div class="wrap g">
+    <div class="c7 duo st">
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-history.png" width="780" height="1688" loading="lazy" decoding="async" alt="History, the month calendar"></div></div>
+        <figcaption class="cap">History for September 2026, trained days filled in, today outlined, and the last sessions listed under Recent: Push on Sunday the 27th, Pull on Saturday the 26th</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="phone s"><div class="screen"><img class="wipe" src="__BASE__shots/midnight-stats.png" width="780" height="1688" loading="lazy" decoding="async" alt="History, Stats view"></div></div>
+        <figcaption class="cap">History in Stats view: the machine chest press line falls from 95.7 on August 30 to 68.3 on September 27, last top load 50 kg, trend marked Slipping</figcaption>
+      </figure>
+    </div>
+    <div class="c5 copy r">
+      <p class="eyebrow">History</p>
+      <h2 id="history-h">A history you can edit.</h2>
+      <p>Swipe the calendar between months, tap a day to see its sessions, open any of them to fix a set or a load. Recovery is rebuilt from history after the edit. Swipe a session to delete it and get an Undo that restores it with its heart data.</p>
+      <p>Stats shows weekly volume, a sparkline per exercise once you have logged it twice, and records by kind: heaviest load, strength estimate, more reps at a load, most reps, longest hold, furthest carry. Share a week or a session as a card.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band cut" id="data" aria-labelledby="data-h" tabindex="-1">
+  <div class="wrap">
+    <div class="copy intro r">
+      <p class="eyebrow">Your data</p>
+      <h2 id="data-h">Your log stays on the phone, with no account and no server copy.</h2>
+    </div>
+    <div class="cards3 st">
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 17.5h2"/></svg><h3 class="h3-card">It stays on the phone.</h3><p>Sessions, recovery and settings are stored on the device. Photos you give Escobar and heart-rate data sit in their own local stores. There is nothing to sign in to, and nothing is uploaded unless you turn Escobar on.</p></div>
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5a3.5 3.5 0 0 1 0 9.5H7zM4 4l16 16"/></svg><h3 class="h3-card">It works offline.</h3><p>The service worker installs every built file, and the coach notes, weekly review and lighter-week suggestion run without a network. Only a conversation with Escobar needs one.</p></div>
+      <div class="card key sh"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><h3 class="h3-card">It is a file you own.</h3><p>Export a JSON backup and restore it with a preview and Undo. Export every set as CSV for 90 days or all time. If saved data ever fails to read at start, it is kept aside as a rescue file, never thrown away.</p></div>
+    </div>
+    <div class="switches r">
+      <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share health data</div>
+      <p>When Escobar is on, health data (sleep, resting and session heart rate) and body data (weight, measurements) leave the phone only with their own switches on. Turn one off and that data is redacted from replayed history. Requests go through the project's own server, and quotas are counted per device and network address, not per account.</p>
+      <div class="sw"><i class="pill" aria-hidden="true"><b></b></i>Share body data</div>
+      <a class="link" href="__BASE__privacy/">How M/ARC handles your data, in full</a>
+    </div>
+  </div>
+</section>
+
+<section class="band install" id="install" aria-labelledby="install-h" tabindex="-1">
+  <div class="light" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="copy intro r">
+      <p class="eyebrow">Install</p>
+      <h2 id="install-h">Get M/ARC.</h2>
+    </div>
+    <div class="icards st">
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></svg>
+        <h3 class="h3-card">Android APK</h3>
+        <p class="mono">Version __VERSION__</p>
+        <p>Every build is signed with one permanent key, and CI checks the fingerprint on each build before an APK is released.</p>
+        <a class="btn btn-p" href="https://github.com/macdarenz-droid/M-arc/releases/latest" target="_blank" rel="noopener">Download the APK</a>
+        <a class="link" href="__BASE__install/#verify">Verify the signature</a>
+      </div>
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
+        <h3 class="h3-card">Add to Home Screen</h3>
+        <p>Open M/ARC in Chrome, Edge or Samsung Internet on Android and choose Add to Home Screen. It installs as an app and works offline.</p>
+        <!-- if APP_URL -->
+        <a class="btn btn-s" href="__APP_URL__" target="_blank" rel="noopener">Open in the browser</a>
+        <!-- else -->
+        <p>The web app has no public address yet. Until it does, install the APK.</p>
+        <!-- endif -->
+      </div>
+      <div class="card key sh">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>
+        <h3 class="h3-card">Read the source</h3>
+        <p>The code is public on GitHub with the architecture notes. Every push runs typecheck, 1,487 unit tests in 116 files, run in three time zones, a production build and a visual gate across the five themes before an APK is signed.</p>
+        <a class="btn btn-s" href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+    </div>
+    <div class="themes r">
+      <p>Five themes. Silent Black, Paper, Ember, Emerald and Midnight. Switching one crossfades the whole app.</p>
+      <ul class="trow">
+        <li><span class="lockup" style="--lk:var(--t-silent)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Silent Black</li>
+        <li><span class="lockup" style="--lk:var(--t-paper)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Paper</li>
+        <li><span class="lockup" style="--lk:var(--t-ember)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Ember</li>
+        <li><span class="lockup" style="--lk:var(--t-emerald)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Emerald</li>
+        <li><span class="lockup" style="--lk:var(--t-midnight)"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></span>Midnight</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- footer: identical on every page -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="frow1">
+      <a class="lockup" href="__BASE__" aria-label="M/ARC, home"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40H16L22 22L30 50L36 30L40 40H56"/><circle cx="30" cy="50" r="4.5"/></svg><span class="word" aria-hidden="true">M<span class="sl">/</span>ARC</span></a>
+      <p>Nothing leaves your phone unless you turn Escobar on.</p>
+    </div>
+    <div class="fcols">
+      <div><h2>Product</h2><ul><li><a href="__BASE__">Today</a></li><li><a href="__BASE__#train">Train</a></li><li><a href="__BASE__#body">Body</a></li><li><a href="__BASE__#escobar">Escobar</a></li><li><a href="__BASE__#history">History</a></li></ul></div>
+      <div><h2>Install</h2><ul><li><a href="__BASE__install/#apk">Android APK</a></li><li><a href="__BASE__install/#web">Add to Home Screen</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/releases" target="_blank" rel="noopener">Releases and changelog</a></li></ul></div>
+      <div><h2>Trust</h2><ul><li><a href="__BASE__privacy/">Your data</a></li><li><a href="__BASE__install/#verify">Signing key</a></li><li><a href="https://github.com/macdarenz-droid/M-arc" target="_blank" rel="noopener">Source on GitHub</a></li><li><a href="https://github.com/macdarenz-droid/M-arc/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture notes</a></li></ul></div>
+    </div>
+    <p class="frow3 mono">M/ARC __VERSION__. Public source on GitHub. This page loads no analytics and sets no cookies.</p>
+  </div>
+</footer>
+<!-- /footer -->
+</div>
+</body>
+</html>

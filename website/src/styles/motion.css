@@ -1,0 +1,69 @@
+/* Everything that moves (docs/WEBSITE-DESIGN.md section 5). All of it sits inside the no-preference query and behind html.m,
+   a class the script sets only when the OS query matches; without JavaScript or with reduced motion the page is static. */
+@media (prefers-reduced-motion: no-preference) {
+  .m .btn { transition: transform var(--dur-press) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard); }
+  .m .nav { transition: background-color var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard); }
+  .m .nav-links a, .m .menu a, .m .link, .m .fcols a { transition: color var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard); }
+  .m .sh::after { transition: opacity var(--dur-base) var(--ease-standard); }
+
+  /* the pinned story */
+  .m .step { transition: opacity var(--dur-base) var(--ease-standard); }
+  .m .step .eyebrow { transition: color var(--dur-base) var(--ease-standard); }
+  .m .step:not([aria-current]) { opacity: .6; }
+  .m .layer { transition: opacity var(--dur-enter) var(--ease-standard), transform var(--dur-enter) var(--ease-enter); }
+  .m .light { transition: --light-a var(--dur-light) var(--ease-standard), --light-b var(--dur-light) var(--ease-standard); }
+
+  /* rings fill once */
+  .m .ring .val { transition: stroke-dasharray var(--dur-fill) var(--ease-fill); }
+  .m .ring:not(.fill) .val { stroke-dasharray: 0 100; }
+  .m .rings > div:nth-child(2) .ring .val { transition-delay: var(--gap-rise); }
+  .m .tiles > div:nth-child(2) .ring .val { transition-delay: var(--gap-rise); }
+
+  /* reveals (5.3) */
+  .m .r:not(.in) { opacity: 0; transform: translateY(12px); }
+  .m .r { transition: opacity var(--dur-reveal) var(--ease-enter), transform var(--dur-reveal) var(--ease-enter); }
+  .m .st:not(.in) > * { opacity: 0; transform: translateY(12px); }
+  .m .st > * { transition: opacity var(--dur-reveal) var(--ease-enter), transform var(--dur-reveal) var(--ease-enter); }
+  .m .st > :nth-child(2) { transition-delay: var(--stagger); }
+  .m .st > :nth-child(3) { transition-delay: calc(2 * var(--stagger)); }
+  .m .st > :nth-child(4) { transition-delay: calc(3 * var(--stagger)); }
+  .m .st > :nth-child(5) { transition-delay: calc(4 * var(--stagger)); }
+  .m .duo > figure:nth-child(2) { transition-delay: calc(2 * var(--stagger)); }
+
+  /* load orchestration (5.5) */
+  .m .hero-copy > *, .m .page-head .rise > * { animation: rise var(--dur-rise) var(--ease-enter) both; }
+  .m .hero-copy > :nth-child(2), .m .page-head .rise > :nth-child(2) { animation-delay: var(--gap-rise); }
+  .m .hero-copy > :nth-child(3), .m .page-head .rise > :nth-child(3) { animation-delay: calc(2 * var(--gap-rise)); }
+  .m .hero-copy > :nth-child(4), .m .page-head .rise > :nth-child(4) { animation-delay: calc(3 * var(--gap-rise)); }
+  .m .hero-copy > :nth-child(5), .m .page-head .rise > :nth-child(5) { animation-delay: calc(4 * var(--gap-rise)); }
+  .m .pin .phone { animation: arrive var(--dur-draw) var(--ease-enter) both; }
+  .m .lockup.draw .mark path { animation: draw var(--dur-draw) var(--ease-draw) both; }
+  .m .lockup.draw .mark circle { animation: pop var(--dur-pop) var(--ease-enter) calc(var(--dur-draw) - var(--dur-pop)) both; }
+
+  /* phones: the pinned phone shrinks from 240px to the 44svh size as the story reaches it, driven by scroll where supported, else by .stuck */
+  @media (max-width: 900px) {
+    .m .pin { transition: width var(--dur-light) var(--ease-standard); }
+    @supports (animation-timeline: scroll()) {
+      .m .pin { transition: none; animation: shrink 1s linear both; animation-timeline: --shrink; animation-range: exit 0% exit 100%; }
+    }
+    @keyframes shrink { to { width: var(--pw); } }
+  }
+
+  /* screenshot wipe on load */
+  .m img.wipe:not(.ld) { opacity: 0; }
+  .m img.wipe.ld { -webkit-mask-image: linear-gradient(90deg, black 40%, transparent 60%); mask-image: linear-gradient(90deg, black 40%, transparent 60%); -webkit-mask-size: 250% 100%; mask-size: 250% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; animation: wipe var(--dur-wipe) var(--ease-standard) both; }
+
+  /* component demos, once each (5.6) */
+  .m .in .key::before, .m .key.in::before { animation: sweep var(--dur-wipe) var(--ease-standard) var(--dur-wipe) 1 both; }
+  .m .rest.done .rest-done { animation: swell var(--dur-bounce) var(--ease-spring-bounce) both; }
+  .m .prop.run .undo-bar b { transform: scaleX(0); transition: transform var(--dur-undo) linear; }
+  .m .prop .undo-bar { transition: background-color var(--dur-base) var(--ease-standard); }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+  @keyframes arrive { 0% { opacity: .3; transform: scale(.97); } 30% { opacity: .3; } 100% { opacity: 1; transform: none; } }
+  @keyframes draw { from { stroke-dashoffset: 1; } }
+  @keyframes pop { from { transform: scale(0); } }
+  @keyframes wipe { from { -webkit-mask-position: 100% 0; mask-position: 100% 0; } to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
+  @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  @keyframes swell { 0% { transform: scale(1); } 40% { transform: scale(1.02); } 100% { transform: scale(1); } }
+}

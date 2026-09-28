@@ -1,0 +1,122 @@
+/* M/ARC website tokens. Every colour restates THEMES.midnight in src/theme/themes.ts (docs/WEBSITE-DESIGN.md section 3);
+   the motion tokens are the app's own plus the site-only ones marked (site) in section 5.1. Nothing outside this file
+   states a colour, a duration or a curve. */
+
+@property --light-a { syntax: '<color>'; inherits: true; initial-value: rgba(99, 91, 255, .85); }
+@property --light-b { syntax: '<color>'; inherits: true; initial-value: rgba(0, 212, 255, .48); }
+/* registered as lengths so the pinned phone's height resolves to px: the script reads it to place the step band under the phone */
+@property --pw { syntax: '<length>'; inherits: true; initial-value: 240px; }
+@property --phh { syntax: '<length>'; inherits: true; initial-value: 0px; }
+
+:root {
+  color-scheme: dark;
+
+  /* colours: themes.ts midnight */
+  --bg: #0a2540;
+  --s1: #0f2d4d;
+  --s2: #143559;
+  --s3: #1a3f68;
+  --border: #263e57;
+  --border-a: rgba(246, 249, 252, .12);
+  --border-strong: rgba(246, 249, 252, .22);
+  --text: #f6f9fc;
+  --text2: #a3b6cc;
+  --text3: #6c839c;
+  --accent: #635bff;
+  --accent-soft: rgba(99, 91, 255, .18);
+  --accent-line: rgba(99, 91, 255, .7);
+  --accent-text: color-mix(in srgb, var(--accent) 65%, var(--text));
+  --on-accent: #ffffff;
+  --accent-hover: color-mix(in srgb, var(--accent) 90%, black);
+  --info: #00d4ff;
+  --positive: #3ecf8e;
+  --warning: #ffbb00;
+  --negative: #ff5c5c;
+  --bezel: #071a30;
+  --ring: rgba(246, 249, 252, .18);
+  --hl: rgba(255, 255, 255, .14);
+  --hl-soft: rgba(255, 255, 255, .07);
+  --sheen: rgba(255, 255, 255, .08);
+  --nav-bg: rgba(10, 37, 64, .92);
+  --shadow: 0 18px 44px rgba(3, 20, 40, .55);
+  --focus: color-mix(in srgb, var(--accent) 80%, var(--text));
+  --t-silent: #5e6ad2;
+  --t-paper: #2383e2;
+  --t-ember: #ff6363;
+  --t-emerald: #3ecf8e;
+  --t-midnight: #635bff;
+
+  /* the lit plane, one pair per story step (3.1) */
+  --la-violet: rgba(99, 91, 255, .85);
+  --la-green: rgba(62, 207, 142, .62);
+  --la-amber: rgba(255, 187, 0, .48);
+  --lb-cyan: rgba(0, 212, 255, .48);
+  --lb-violet: rgba(99, 91, 255, .5);
+  --light-a: var(--la-violet);
+  --light-b: var(--lb-cyan);
+  --pin-fade: 48px;
+
+  /* spacing, 4px base (3.2) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+  --sp-8: 40px;
+  --sp-9: 48px;
+  --sp-10: 64px;
+  --sp-11: 96px;
+  --sp-12: 128px;
+  --pad: var(--sp-12);
+  --gutter: var(--sp-7);
+  --cut: min(10.5vw, 140px);
+  --navh: 64px;
+
+  /* radii (3.4) */
+  --r1: 8px;
+  --r2: 12px;
+  --r3: 16px;
+  --r4: 22px;
+
+  /* motion (5.1): the app's tokens, then the site-only ones */
+  --dur-press: 100ms;
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-enter: 240ms;
+  --dur-bounce: 460ms;
+  --stagger: 40ms;
+  --dur-light: 400ms; /* site */
+  --dur-reveal: 400ms; /* site */
+  --dur-rise: 600ms; /* site */
+  --gap-rise: 120ms; /* site */
+  --dur-draw: 900ms; /* site */
+  --dur-pop: 200ms; /* site */
+  --dur-wipe: 800ms; /* site */
+  --dur-fill: 700ms; /* site */
+  --dur-tick: 1000ms; /* site */
+  --dur-undo: 8000ms; /* site: the app's real undo window */
+  --dur-copied: 1500ms; /* site */
+  --ease-standard: cubic-bezier(.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(.05, .7, .1, 1);
+  --ease-exit: cubic-bezier(.3, 0, .8, .15);
+  --ease-draw: cubic-bezier(.6, .6, 0, 1);
+  --ease-fill: cubic-bezier(.2, .7, .2, 1);
+  --ease-spring-bounce: var(--ease-enter);
+
+  /* type families (4) */
+  --fd: 'Instrument Sans', 'Instrument Sans Fallback', Arial, sans-serif;
+  --fb: Inter, 'Inter Fallback', Arial, sans-serif;
+  --fm: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  /* the noise grain (3.7): one SVG tile, used on .light::after only */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --ease-spring-bounce: linear(0, 0.106, 0.323, 0.554, 0.748, 0.889, 0.978, 1.025, 1.043, 1.044, 1.036, 1.026, 1.016, 1.008, 1.003, 1, 0.998, 0.998, 0.998, 0.999, 1); }
+}
+
+@media (max-width: 1024px) { :root { --pad: var(--sp-11); } }
+@media (max-width: 640px) { :root { --pad: var(--sp-10); --gutter: var(--sp-4); --navh: 57px; } }
