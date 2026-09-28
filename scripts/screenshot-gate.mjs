@@ -4373,8 +4373,10 @@ for (const theme of ['silent-black', 'paper']) {
   page.on('pageerror', e => errors.push(`${tag}: ${e.message}`));
   // 7.5 (supervisor request, 2026-09-28): under reduce the overlay leaves 100 ms after the app
   // signals ready, so reading it after goto() raced its removal (about 1 run in 70, on main too).
-  // Read the same state at the real ready signal instead: wrap window.__marcLaunchReady when
-  // index.html defines it, snapshot before it runs. Same assertions, no race.
+  // Wrap window.__marcLaunchReady and hold the ready call until after `load` and two animation
+  // frames: SMIL has started by then (so a beginElement() under reduce shows as a non-zero
+  // dashoffset, as main's read after goto() did), and the overlay can't leave before the
+  // snapshot, because leaving only starts once the held call runs. Same assertions, no race.
   await page.addInitScript(() => {
     let inner;
     Object.defineProperty(window, '__marcLaunchReady', {
@@ -4382,12 +4384,16 @@ for (const theme of ['silent-black', 'paper']) {
       get() { return inner && (() => {
         const path = document.querySelector('#launch svg path');
         const dot = document.getElementById('launch-dot');
-        window.__qa123Snapshot = {
-          dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
-          cx: dot ? dot.getAttribute('cx') : null,
-          cy: dot ? dot.getAttribute('cy') : null,
+        const snap = () => {
+          window.__qa123Snapshot = {
+            dashoffset: path ? getComputedStyle(path).strokeDashoffset : null,
+            cx: dot ? dot.getAttribute('cx') : null,
+            cy: dot ? dot.getAttribute('cy') : null,
+          };
+          inner();
         };
-        return inner();
+        const go = () => requestAnimationFrame(() => requestAnimationFrame(snap));
+        if (document.readyState === 'complete') go(); else addEventListener('load', go, { once: true });
       }); },
       set(fn) { inner = fn; },
     });
