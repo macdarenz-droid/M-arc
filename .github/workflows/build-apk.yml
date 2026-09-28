@@ -59,11 +59,6 @@ jobs:
           path: screenshots/
           if-no-files-found: error
           retention-days: 30
-      - name: Visual gate once more in Pacific/Auckland (RG-14)
-        env:
-          TZ: Pacific/Auckland
-          MARC_GATE_PORT: '4174'
-        run: npm run gate
       - name: Upload built web app
         uses: actions/upload-artifact@v4
         with:
@@ -71,8 +66,39 @@ jobs:
           path: www/
           retention-days: 7
 
+  # RG-14's second visual gate (Pacific/Auckland) runs as its own job, in parallel with
+  # source-gate, instead of as a step after the first gate. Same command, same TZ, same
+  # build; android-gate still waits for both, so nothing ships unless both pass.
+  visual-gate-tz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the web app
+        run: npm run build
+      - name: Install Chromium for the visual gate
+        run: npx playwright install --with-deps chromium
+      - name: Visual gate once more in Pacific/Auckland (RG-14)
+        env:
+          TZ: Pacific/Auckland
+          MARC_GATE_PORT: '4174'
+        run: npm run gate
+      - name: Upload Auckland gate evidence on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-gate-screenshots-auckland
+          path: screenshots/
+          if-no-files-found: ignore
+          retention-days: 30
+
   android-gate:
-    needs: source-gate
+    needs: [source-gate, visual-gate-tz]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
