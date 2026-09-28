@@ -5,7 +5,7 @@
  */
 import type { Exercise, LoadUnit, LoggedSet, ResistanceMode, Session } from '@/core/models';
 import { formatSetLoad, kgToDisplay } from '@/core/units';
-import { exerciseHistory, heldIn, loadIsChecked, modeOf, plausibilityRef, summarizeSets, type ExerciseSessionSummary } from './history';
+import { exerciseHistory, heldIn, modeOf, plausibilityRef, summarizeSets, type ExerciseSessionSummary } from './history';
 import { weekStart, addDays } from '@/core/dates';
 import { isWorkingSet } from './exposure';
 import { effectiveOneRm } from './e1rm';
@@ -75,13 +75,27 @@ function recordE1rm(current: ExerciseSessionSummary, prior: ExerciseSessionSumma
   return Math.max(0, ...fresh.map(s => effectiveOneRm(s.kg ?? 0, s.reps ?? 0, s.effort) ?? 0));
 }
 
+export interface RecordOpts {
+  /** Also return, marked `unconfirmed`, the records only a held set would set. */
+  unconfirmed?: boolean;
+  /** Working sets logged after `current`: one that repeats a flagged load confirms it. */
+  later?: LoggedSet[];
+  /** Main lift (the 30-rep line); defaults to the library's role for `exerciseId`. */
+  isMain?: boolean;
+}
+
 /**
  * `opts.unconfirmed` also returns, marked `unconfirmed`, the records only a held set would set
  * (BUG-18). Everything that celebrates or counts records leaves it off.
  */
-export function recordsFor(currentIn: ExerciseSessionSummary, priorIn: ExerciseSessionSummary[], mode: ResistanceMode, exerciseId: string, exerciseName: string, unit: LoadUnit = 'kg', opts: { unconfirmed?: boolean } = {}): PersonalRecord[] {
-  const confirmed = confirmedRecords(currentIn, priorIn, mode, exerciseId, exerciseName, unit);
-  if (!opts.unconfirmed || !currentIn.held.length) return confirmed;
+export function recordsFor(currentIn: ExerciseSessionSummary, priorIn: ExerciseSessionSummary[], mode: ResistanceMode, exerciseId: string, exerciseName: string, unit: LoadUnit = 'kg', opts: RecordOpts = {}): PersonalRecord[] {
+  // BUG-18: which of `current`'s sets are held is judged here, against `prior`, so a caller that
+  // summarised the session on its own (the post-session debrief) cannot celebrate a typo.
+  const ref = plausibilityRef(priorIn, opts.isMain ?? findExercise(exerciseId)?.role === 'main');
+  const isHeld = heldIn(currentIn.sets, opts.later ?? [], ref, mode === 'weighted' || mode === 'conditioning');
+  const current = summarizeSets(currentIn.sessionId, currentIn.day, currentIn.sets, isHeld);
+  const confirmed = confirmedRecords(current, priorIn, mode, exerciseId, exerciseName, unit);
+  if (!opts.unconfirmed || !current.held.length) return confirmed;
   const asIf = summarizeSets(currentIn.sessionId, currentIn.day, currentIn.sets);
   const extra = confirmedRecords(asIf, priorIn, mode, exerciseId, exerciseName, unit).filter(r => !confirmed.some(c => c.kind === r.kind));
   return [...confirmed, ...extra.map(r => ({ ...r, unconfirmed: true as const }))];
@@ -131,7 +145,8 @@ export function allRecords(sessions: Session[], custom: Exercise[] = [], unit: L
   for (const [id, name] of names) {
     const hist = exerciseHistory(sessions, id, custom);
     const mode = modeOf(id, custom);
-    hist.forEach((row, i) => out.push(...recordsFor(row, hist.slice(0, i), mode, id, name, unit)));
+    const isMain = findExercise(id, custom)?.role === 'main';
+    hist.forEach((row, i) => out.push(...recordsFor(row, hist.slice(0, i), mode, id, name, unit, { isMain, later: hist.slice(i + 1).flatMap(h => h.sets) })));
   }
   return out.sort((a, b) => b.day.localeCompare(a.day));
 }
@@ -154,10 +169,8 @@ export function liveRecordStatus(sessions: Session[], exerciseId: string, set: L
   const hist = exerciseHistory(sessions, exerciseId, custom);
   if (!hist.length) return 'none';
   const mode = modeOf(exerciseId, custom);
-  const ref = plausibilityRef(hist, findExercise(exerciseId, custom)?.role === 'main');
-  const isHeld = heldIn([set, ...sessionSets.filter(o => o !== set)], [], ref, loadIsChecked(exerciseId, custom));
-  const current = summarizeSets('live', '9999-12-31', [set], isHeld);
-  const recs = recordsFor(current, hist, mode, exerciseId, '', 'kg', { unconfirmed: true });
+  const current = summarizeSets('live', '9999-12-31', [set]);
+  const recs = recordsFor(current, hist, mode, exerciseId, '', 'kg', { unconfirmed: true, isMain: findExercise(exerciseId, custom)?.role === 'main', later: sessionSets.filter(o => o !== set && isWorkingSet(o)) });
   return !recs.length ? 'none' : recs.some(r => !r.unconfirmed) ? 'record' : 'unconfirmed';
 }
 

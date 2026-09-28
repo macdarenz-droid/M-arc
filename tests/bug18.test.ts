@@ -123,3 +123,14 @@ describe('BUG-18 A4: an increase needs the working sets at the top of the range'
     expect(suggestNext([a, b], ex, 'lean', today).mode).toBe('increase');
   });
 });
+
+describe('BUG-18 A2: the post-session debrief holds a typo too', () => {
+  it('recordsInsight does not praise a 130 kg typo after 100 kg sessions', async () => {
+    const { recordsInsight } = await import('@/brain/coach/post');
+    const base = [session('2026-09-01', [{ id: ex, sets: sets(100, 6) }]), session('2026-09-04', [{ id: ex, sets: sets(100, 6) }])];
+    const typo = session('2026-09-08', [{ id: ex, sets: [s(130, 6), s(100, 6), s(100, 6)] }]);
+    expect(recordsInsight(typo, base)).toHaveLength(0);
+    const real = session('2026-09-08', [{ id: ex, sets: sets(105, 6) }]);
+    expect(recordsInsight(real, base).length).toBeGreaterThan(0);
+  });
+});
