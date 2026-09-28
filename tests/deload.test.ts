@@ -97,3 +97,22 @@ function addDays(day: string, n: number): string {
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
+
+// BUG-15 review item 4: trigger (c) reads completed weeks only.
+describe('deloadTrigger (c) ignores the unfinished current week (BUG-15)', () => {
+  it('last week and the unfinished week over the band, with a stalled main lift: no offer', () => {
+    const bench = 'lib_barbell_bench_press';
+    const squat = 'lib_barbell_back_squat';
+    // A flat (stalled) bench, squat progressing, low weekly volume; then last week and this
+    // unfinished week pile chest sets well above the band. Only last week is a completed week
+    // over the band, so (c)'s "two weeks straight" is not met.
+    const weekly = ['2026-07-06', '2026-07-13', '2026-07-20', '2026-07-27', '2026-08-03', '2026-08-10', '2026-08-17', '2026-08-24', '2026-08-31', '2026-09-07'];
+    const hist = weekly.flatMap((d, i) => [
+      session(d, [{ id: bench, sets: sets(80, 8, 'ideal', 3) }]),
+      session(d, [{ id: squat, sets: sets(100 + i * 5, 8, 'ideal', 3) }], 'split_legs'),
+    ]);
+    const heavy = ['2026-09-08', '2026-09-10', '2026-09-14', '2026-09-16'].map(d => session(d, [{ id: bench, sets: sets(80, 8, 'ideal', 20) }]));
+    const r = deloadTrigger([...hist, ...heavy], '2026-09-16', [], [], 24);
+    expect(r.reason).toBe('');
+  });
+});

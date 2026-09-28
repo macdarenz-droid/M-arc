@@ -15,6 +15,7 @@ import { effortDrift } from '@/brain/effort';
 import { allRecords, PR_LABEL, type PrKind } from '@/brain/prs';
 import { kgToDisplay } from '@/core/units';
 import { suggestNext } from '@/brain/progression';
+import { inLighterWeek, lighterWeekDay } from '@/brain/deload';
 import { warmupSets } from '@/brain/coach/pre';
 import { trainingAgeMonths } from '@/brain/recovery';
 import { readinessBaselines } from '@/brain/readiness';
@@ -136,7 +137,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     leastRecovered: least(ctx),
     week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: planned ?? 0 }, // QA-R6-12: days off are not planned
     streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
-    lighterWeek: deload ? { day: Math.min(7, daysBetween(deload.startDay, ctx.today) + 1), endDay: deload.endDay } : null,
+    lighterWeek: deload ? { day: lighterWeekDay(deload, ctx.today), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
     daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today, ctx.now),
   }, 1200);
@@ -192,8 +193,10 @@ export function getExerciseHistory(input: { exerciseId?: string; weeks?: number 
   const hist = all.filter(h => h.day >= since);
   // QA-R3a-2: judged by the lift's mode (less assistance is progress).
   const liftMode = modeOf(id, s.customExercises);
-  const p = plateauStatus(all, liftMode);
-  const t = liftTrend(all, liftMode);
+  // BUG-15: the lighter week's sessions are not decline evidence.
+  const evidence = all.filter(h => !inLighterWeek(h.day, s.deload));
+  const p = plateauStatus(evidence, liftMode);
+  const t = liftTrend(evidence, liftMode);
   const records = allRecords(s.sessions, s.customExercises, s.preferences.weightUnit).filter(r => r.exerciseId === id).slice(0, 5).map(r => ({ day: r.day, kind: PR_LABEL[r.kind], detail: r.detail }));
   const effortMix = (sets: LoggedSet[]) => ({ easy: sets.filter(x => x.effort === 'easy').length, ideal: sets.filter(x => x.effort === 'ideal').length, max: sets.filter(x => x.effort === 'max').length });
   return capJson({
@@ -311,7 +314,7 @@ export function getInsights(input: { includeSnoozed?: boolean }, ctx: ToolCtx) {
   const list = coachInsights(input.includeSnoozed ? { ...c, feedback: [] } : c, 50, s.escobar.sharing);
   const names = new Map<string, string>();
   for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
-  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit, sharing: s.escobar.sharing }, 6);
+  const weekly = weeklyReviewInsights({ sessions: s.sessions, today: ctx.today, custom: s.customExercises, schedule: s.schedule, goal: s.goal, profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, ctx.now), exerciseIds: [...names].map(([id, name]) => ({ id, name })), daysOff: s.daysOff, unit: s.preferences.weightUnit, sharing: s.escobar.sharing, deload: s.deload }, 6);
   const offer = deloadOffer(c);
   const out = (i: Insight) => insightOut(i, s.escobar.sharing);
   return capJson({ insights: list.map(out), weeklyReview: weekly.map(out), lighterWeek: offer.suggest ? { suggest: true, reason: offer.reason } : { suggest: false } }, 9000);

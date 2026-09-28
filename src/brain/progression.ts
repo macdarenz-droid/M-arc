@@ -17,7 +17,9 @@ import { GOAL_BY_ID, type GoalId } from '@/data/goals';
 import { CARRY_OR_SLED_IDS, findExercise, startingLoadKg } from '@/core/exercises';
 import { daysSinceLast, exerciseHistory, modeOf, type ExerciseSessionSummary } from './history';
 import { plateauStatus } from './trend';
-import { daysBetween } from '@/core/dates';
+import { inLighterWeek, lighterWeekDay } from './deload';
+
+export { inLighterWeek };
 
 export type Mode = 'start' | 'reentry' | 'confirm_effort' | 'reduce' | 'increase' | 'confirm' | 'reps' | 'hold' | 'duration' | 'distance' | 'plateau' | 'deload';
 
@@ -193,11 +195,6 @@ function applyLoadFactor(s: Suggestion, f: number): Suggestion {
   return { ...s, kg: down, target: s.target.replace(oldLabel, `${down} kg`), reason: `${s.reason} Adjusted for today.`, sets: s.sets.map(x => (x.kg == null ? x : { ...x, kg: half(x.kg * f) })) };
 }
 
-/** BUG-15: whether a day falls inside a lighter week's seven days. */
-export function inLighterWeek(day: string, d: Deload | null | undefined): boolean {
-  return !!d && day >= d.startDay && day <= d.endDay;
-}
-
 export function suggestNext(sessions: Session[], exerciseId: string, goal: GoalId, today: string, plannedSets = 3, custom: Exercise[] = [], ctx?: ProgressionContext): Suggestion {
   let s = suggestRaw(sessions, exerciseId, goal, today, plannedSets, custom, ctx);
   // BUG-15 (COACHRULES-F7): plan 6.13, never an increase on a back-off day.
@@ -293,8 +290,7 @@ function suggestRaw(sessions: Session[], exerciseId: string, goal: GoalId, today
 
   if (ctx?.deload) {
     const d = ctx.deload;
-    const dayN = Math.min(7, Math.max(1, daysBetween(d.startDay, today) + 1));
-    const reason = `Lighter week, day ${dayN} of 7.`;
+    const reason = `Lighter week, day ${lighterWeekDay(d, today)} of 7.`;
     // BUG-15 (A1): every day of the week cuts from the pre-week level, never from a lighter session.
     const deloadSets = Math.max(1, Math.round(setCount * weekSets));
     const cut = { cutSets: true as const };

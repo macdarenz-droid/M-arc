@@ -502,3 +502,38 @@ describe('lighter week: in-week and post-week histories (BUG-15)', () => {
     expect(suggestNext(pre, ex, 'lean', '2026-09-14', 3, [], { readiness: { loadAdvice: 'normal' } }).holdLoad).toBeUndefined();
   });
 });
+
+// BUG-15 review items 1 and 3.
+describe('lighter week: chained weeks and the set factor (BUG-15 review)', () => {
+  const week1 = { startDay: '2026-09-14', endDay: '2026-09-20', reason: 'test', setFactor: 0.6, loadFactor: 0.9 };
+  const pre = [
+    session('2026-09-08', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+    session('2026-09-11', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]),
+  ];
+  const inWeek1 = ['2026-09-14', '2026-09-16', '2026-09-18'].map(d => session(d, [{ id: ex, sets: sets(65.5, 8, 'easy', 2) }]));
+
+  it('item 1: a second week straight after the first keeps the original pre-week base', async () => {
+    const { chainedStartDay } = await import('@/brain/deload');
+    const week2 = { ...week1, startDay: chainedStartDay(week1, [...pre, ...inWeek1], '2026-09-21'), endDay: '2026-09-27' };
+    expect(week2.startDay).toBe('2026-09-14');
+    const inWeek2 = [...pre, ...inWeek1, session('2026-09-21', [{ id: ex, sets: sets(65.5, 8, 'easy', 2) }])];
+    const s = suggestNext(inWeek2, ex, 'lean', '2026-09-22', 3, [], { deload: week2, lastDeload: week2 });
+    expect([s.kg, s.sets.length, s.reason]).toEqual([65.5, 2, 'Lighter week, day 2 of 7.']);
+    // The week after holds the original pre-week level, not week 1's lighter one.
+    const after = suggestNext(inWeek2, ex, 'lean', '2026-09-28', 3, [], { lastDeload: week2 });
+    expect([after.mode, after.kg, after.sets.length]).toEqual(['hold', 72.5, 3]);
+  });
+
+  it('item 1: a session after the first week re-establishes the level, so the next week starts fresh', async () => {
+    const { chainedStartDay } = await import('@/brain/deload');
+    const back = session('2026-09-22', [{ id: ex, sets: sets(72.5, 8, 'ideal', 3) }]);
+    expect(chainedStartDay(week1, [...pre, ...inWeek1, back], '2026-09-24')).toBe('2026-09-24');
+    expect(chainedStartDay(null, pre, '2026-09-24')).toBe('2026-09-24');
+  });
+
+  it('item 3: the 0.6 set factor: five pre-week sets give 3 (0.8 gives 4), six give 4 (0.5 gives 3)', () => {
+    // round(5 × 0.5) is also 3 (2.5 rounds up), so the six-set case is what tells 0.5 from 0.6.
+    const n = (count: number) => suggestNext([session('2026-09-11', [{ id: ex, sets: sets(72.5, 8, 'ideal', count) }])], ex, 'lean', '2026-09-15', count, [], { deload: week1 }).sets.length;
+    expect([n(5), n(6)]).toEqual([3, 4]);
+  });
+});

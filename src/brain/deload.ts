@@ -16,12 +16,11 @@
  * ends, and (b) and (c) read only completed weeks (PROGRESSION-F26).
  */
 import type { Deload, Exercise, Session } from '@/core/models';
-import { daysBetween } from '@/core/dates';
+import { addDays, daysBetween } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { exerciseHistory, isActive, modeOf } from './history';
 import { effortDrift } from './effort';
 import { plateauStatus } from './trend';
-import { inLighterWeek } from './progression';
 import { weeklyMuscleSets } from './exposure';
 import { volumeBands } from './volume';
 import { trainingLevels } from './exposure';
@@ -41,6 +40,30 @@ function mainLiftIds(sessions: Session[], custom: Exercise[]): string[] {
 
 /** The thresholds behind deloadTrigger, shared with explain_method. `readinessWindowDays` is what callers pass. */
 export const DELOAD_TRIGGER = { stalledLifts: 2, driftLifts: 2, overBandWeeks: 2, readinessRedDays: 3, readinessWindowDays: 5, minHistoryDays: 28, beginnerMonths: 3, cooldownDays: 28 } as const;
+
+/**
+ * BUG-15: the day a new lighter week's window starts. When the previous week ended with no session
+ * logged since, the pre-week level was never re-established, so the window reaches back to the
+ * previous week's start and the base stays the original pre-week level (no compounding). A session
+ * already logged on the new start day counts as re-established. Only the
+ * latest week is saved, so this keeps the chain in `startDay` without a new field.
+ */
+export function chainedStartDay(prev: Deload | null | undefined, sessions: Session[], startDay: string): string {
+  if (!prev || prev.startDay >= startDay) return startDay;
+  const since = prev.endDay < startDay ? prev.endDay : addDays(startDay, -1);
+  return sessions.some(s => s.day > since && s.day <= startDay) ? startDay : prev.startDay;
+}
+
+/** BUG-15: whether a day falls inside a lighter week's window. */
+export function inLighterWeek(day: string, d: Deload | null | undefined): boolean {
+  return !!d && day >= d.startDay && day <= d.endDay;
+}
+
+/** BUG-15: the day of the current lighter week, 1-7; a chained window counts from its last seven days. */
+export function lighterWeekDay(d: Deload, today: string): number {
+  const weekStart = addDays(d.endDay, -6) > d.startDay ? addDays(d.endDay, -6) : d.startDay;
+  return Math.min(7, Math.max(1, daysBetween(weekStart, today) + 1));
+}
 
 const NONE: DeloadSuggestion = { suggest: false, reason: '' };
 const RED_REASON = 'Readiness has read red on three or more of the last five days.';

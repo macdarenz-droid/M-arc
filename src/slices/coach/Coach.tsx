@@ -13,6 +13,7 @@ import { WEEKDAYS, type Weekday } from '@/core/models';
 import { WEEKDAY_LABEL, weekStart, daysBetween, formatLocalStamp } from '@/core/dates';
 import { findExercise } from '@/core/exercises';
 import { suggestNext } from '@/brain/progression';
+import { lighterWeekDay } from '@/brain/deload';
 import { profileFor } from '@/slices/workout/units';
 import { exerciseHistory } from '@/brain/history';
 import { modeLoadText } from '@/brain/bodyweight';
@@ -225,7 +226,7 @@ function useWeeklyReviewItems() {
   }, [s.sessions]);
   const items = weeklyReviewInsights({
     sessions: s.sessions, today: today.value, custom: s.customExercises, schedule: s.schedule, goal: s.goal,
-    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff, unit: s.preferences.weightUnit,
+    profile: s.profile, weightLog: s.weightLog, trainingAgeMonths: trainingAgeMonths(s.profile, s.sessions, Date.now()), exerciseIds, daysOff: s.daysOff, unit: s.preferences.weightUnit, deload: s.deload,
   }, 6);
   return items;
 }
@@ -263,7 +264,7 @@ function DeloadCard() {
       {active ? (
         <>
           <div class="eyebrow">Lighter week</div>
-          <p style={{ marginTop: 6 }}>Day {Math.min(7, Math.max(1, daysBetween(active.startDay, today.value) + 1))} of 7. {active.reason}</p>
+          <p style={{ marginTop: 6 }}>Day {lighterWeekDay(active, today.value)} of 7. {active.reason}</p>
           <p class="hint" style={{ marginTop: 4 }}>Sets and load are reduced across your plan through {active.endDay}.</p>
         </>
       ) : (
