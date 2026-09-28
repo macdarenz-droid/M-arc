@@ -495,3 +495,14 @@ One entry per decision not already made explicit by section 8 of `docs/COACHING-
   - Train's amber hold names readiness ("Readiness is middling today…") unless the muscle is under 60 % recovered.
   - One existing test changed its input, not its assertion: `tests/readiness.test.ts` "is red with reduce advice when recovery and resting HR are both poor" had no scheduled split, so recovery never counted and resting HR was the only input. It now schedules a push split so both inputs count, as its name says.
   **Why**: plan Appendix B and the audit's correct behaviour; checked in `tests/readiness-bug16.test.ts` (each test fails on `main` b28bfe5 and passes after).
+
+## Exercise-title sweep on open and while logging (UI-1, 2026-09-28)
+
+- **Decided (D-UI1, UI-1 builder)**: how the owner's sweep comes back without I3's always-on loop.
+  - One keyframe, `exercise-shimmer`, holds every paint property (accent band over a `var(--text)` background, text clipped to it). Nothing is set on the title outside the keyframes, so at rest, after the run and under reduced motion the title is plain `var(--text)`. The band is `var(--accent)` only; no dim text tone, so it never reads as "disabled".
+  - Opening: `2s linear 2` (two passes, 4 s) on `.exercise.active .exname`. Logging: the same animation switches to `infinite` while a `.set-grid` input has focus. Same name, so the switch never restarts the run; on blur the count drops back to 2, the run is already past its end, and the sweep stops at once.
+  - Effort tap: a button keeps focus after a tap, so plain `:focus-within` would sweep for the whole rest. Instead Train.tsx sets `data-hold` on the card for 2 s after an effort tap (one delegated `onClick` on the card, away from the set rows); the sweep runs while `data-hold` and focus are both there. CSS alone cannot time a hold without a second animation, which would break "at most one exercise-* animation".
+  - Two passes of 2 s: the card's "about 2 s, 2 passes". The band enters at the left edge and leaves at the right in each pass.
+  - The F1 token lint allow list gains `exercise-shimmer` (a literal duration and one `infinite`), like the other decorative loops. The gate's idle check keeps it off its infinite-animation allow list, so an idle open card with a loop still fails.
+  - Known risks: blurring within the first 4 s after opening lets the open run finish its two passes (at most 4 s). `:has()` needs WebView 105+; on older WebViews the logging sweep simply never shows (the open run still does). `background-position` repaints on the main thread while the sweep runs (4 s on open, and only while typing).
+  **Why**: owner request 2026-09-27; checked by `tests/theme.test.ts` (UI-1 block) and the gate's `UI-1 shimmer` block, each failing on `main` 39b26d7 and passing after.
