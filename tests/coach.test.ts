@@ -175,6 +175,32 @@ describe('deloadOffer (F3.3)', () => {
   });
 });
 
+// BUG-15 (PROGRESSION-F4, COACHRULES-F8): the lighter week's own sessions are not decline evidence.
+describe('after a lighter week (BUG-15)', () => {
+  const week = { startDay: '2026-09-08', endDay: '2026-09-14', reason: 'x', setFactor: 0.6, loadFactor: 0.9 };
+  const days = ['2026-07-14', '2026-07-21', '2026-07-28', '2026-08-04', '2026-08-11', '2026-08-18', '2026-08-25', '2026-09-01'];
+  const b = [80, 80, 80.5, 81, 81, 81.5, 82, 82];
+  const q = [120, 120, 121, 121, 122, 122, 123, 123];
+  const sessions = [
+    ...days.flatMap((d, i) => [
+      session(d, [{ id: bench, sets: sets(b[i]!, 8, 'ideal') }]),
+      session(d, [{ id: 'lib_barbell_back_squat', sets: sets(q[i]!, 8, 'ideal') }], 'split_legs'),
+    ]),
+    ...['2026-09-09', '2026-09-12'].flatMap(d => [
+      session(d, [{ id: bench, sets: sets(74, 8, 'easy', 2) }]),
+      session(d, [{ id: 'lib_barbell_back_squat', sets: sets(110.5, 8, 'easy', 2) }], 'split_legs'),
+    ]),
+  ];
+  const ctx = { ...baseCtx, sessions, deload: week, today: '2026-09-15', now: new Date('2026-09-15T12:00:00Z').getTime() };
+  it('A3: no lighter-week offer the day after it ends', () => {
+    expect(deloadOffer(ctx).suggest).toBe(false);
+  });
+  it('A3: no "progress has slipped" or "stalled" note from the lighter sessions', () => {
+    const out = coachInsights(ctx, 20);
+    expect(out.filter(i => i.id.startsWith('decline:') || i.id.startsWith('plateau:')).map(i => i.id)).toEqual([]);
+  });
+});
+
 describe('active lifts and one note per lift (BR-05, BR-27)', () => {
   const flat = (days: string[]) => days.map(d => session(d, [{ id: bench, sets: sets(60, 8, 'ideal', 3) }]));
   const eight = ['2026-06-01', '2026-06-04', '2026-06-08', '2026-06-11', '2026-06-15', '2026-06-18', '2026-06-22', '2026-06-25'];

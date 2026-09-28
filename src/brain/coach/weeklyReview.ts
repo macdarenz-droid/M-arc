@@ -4,7 +4,8 @@
  * Each function below is one catalogue row; weeklyReviewInsights() assembles
  * the ones with enough evidence into Insight v2 objects.
  */
-import type { Exercise, LoadUnit, Profile, Session, WeightEntry } from '@/core/models';
+import type { Deload, Exercise, LoadUnit, Profile, Session, WeightEntry } from '@/core/models';
+import { inLighterWeek } from '../deload';
 import { kgToDisplay } from '@/core/units';
 import type { GoalId } from '@/data/goals';
 import { GOAL_BY_ID } from '@/data/goals';
@@ -162,6 +163,8 @@ export interface WeeklyReviewInput {
   unit?: LoadUnit;
   /** BUG-20: when given (the coach), a gated insight is left out unless its data is shared. */
   sharing?: Sharing;
+  /** BUG-15: the saved lighter week; its sessions are not trend or decline evidence. */
+  deload?: Deload | null;
 }
 
 /** Days logged in a calendar week before the weekly review appears. */
@@ -237,7 +240,8 @@ export function weeklyReviewInsights(input: WeeklyReviewInput, limit = 6): Insig
   // e1RM trend and progress vs training age, and staleness, per exercise the user actually does
   for (const { id, name } of exerciseIds) {
     // QA2-FC-2: a comeback is judged only on the sessions since the break, as in plateauStatus.
-    const hist = sinceLastBreak(exerciseHistory(sessions, id, custom));
+    // BUG-15: without the lighter week's sessions, which are not trend or decline evidence.
+    const hist = sinceLastBreak(exerciseHistory(sessions, id, custom).filter(h => !inLighterWeek(h.day, input.deload)));
     if (hist.length < 4 || !isActive(hist, today)) continue;
     // e1RM says nothing for assisted, body-weight or timed work (BR-06).
     if (modeOf(id, custom) !== 'weighted') continue;
