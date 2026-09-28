@@ -122,7 +122,7 @@ export function scrubMessage(raw: string): string {
 }
 
 const ROUTE = /^[a-z][a-z0-9-]{0,39}$/;
-/** Same rule as the app's `cleanName` (PR #35): a code identifier such as TypeError or save-failed. */
+/** Same rule as the app's `cleanName` (PR #35): a code identifier such as TypeError or SaveFailed. */
 const ERROR_NAME = /^[A-Za-z_$][\w$.-]{0,79}$/;
 const VERSION = /^[0-9A-Za-z.+-]{1,40}$/;
 const LABEL = /^[\w .,()+-]{1,60}$/;
