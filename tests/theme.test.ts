@@ -92,3 +92,18 @@ describe('form-guide colours come from tokens (FG-1)', () => {
     for (const id of THEME_IDS) for (const n of names) expect(themeToCss(THEMES[id]), `${id} ${n}`).toMatch(new RegExp(`${n}:[^;]+`));
   });
 });
+
+// FG-5: the free-weight parts paint from theme tokens only. Their markup carries no colour literal at all, and the one
+// gradient they fill with resolves, in every theme, to exactly that theme's --iron-hi, --iron and --iron-sh.
+describe('form-guide parts come from tokens (FG-5)', () => {
+  it('every part drawing is literal-free and its gradient is the theme\'s iron', async () => {
+    const { colourLiterals } = await import('./formguide/colourLint');
+    const { FREE_WEIGHT_PARTS, VARIANTS, partDefs } = await import('@/formguide/parts');
+    const { themeReader } = await import('@/formguide/rig/paint');
+    for (const id of FREE_WEIGHT_PARTS) for (const p of VARIANTS[id]()) expect(colourLiterals(p.svg), id).toEqual([]);
+    for (const t of THEME_IDS) {
+      const tk = THEMES[t].tokens, stops = [...partDefs(themeReader(t)).matchAll(/stop-color="([^"]+)"/g)].map(m => m[1]!.toLowerCase());
+      expect(new Set(stops), t).toEqual(new Set([tk.ironHi, tk.iron, tk.ironSh].map(c => String(c).toLowerCase())));
+    }
+  });
+});

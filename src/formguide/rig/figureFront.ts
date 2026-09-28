@@ -6,6 +6,7 @@
 // placement <g transform> sits outside it where the part is drawn in its own frame (arms, the left half).
 import type { JointId } from './joints';
 import { bodyPal, band, cel, lg, mix, packSl, sl, D_, L_, OC, SP, type Token, type TokenReader } from './paint';
+import { dumbbellFar, dumbbellNear } from '../parts/dumbbell';
 
 export const P2 = 303;                                      // units per metre
 export const SH_R: [number, number] = [260, 128], SH_L: [number, number] = [140, 128];
@@ -43,11 +44,6 @@ const joint = (j: JointId, inner: string) => { const r = FRONT_RIG[j]; return pl
 const part = (name: string, origin: readonly [number, number], inner: string) => `<g class="fg-p fg-${name}" style="transform-origin:${origin[0]}px ${origin[1]}px">${inner}</g>`;
 const M = matAttr(MIRROR);
 
-function hexPts(cx: number, cy: number, r: number): string {
-  const a: string[] = [];
-  for (let i = 0; i < 6; i++) { const t = Math.PI / 6 + (i * Math.PI) / 3; a.push((cx + r * Math.cos(t)).toFixed(1) + ',' + (cy + r * Math.sin(t)).toFixed(1)); }
-  return a.join(' ');
-}
 const rimP = (d: string, w = 4.6, cap = 'round') => `<path d="${d}" fill="none" stroke="var(--rim)" stroke-width="${w}" stroke-linecap="${cap}" stroke-linejoin="round"/>`;
 
 // Right half of the trunk, mirrored for the left. s picks the shading so both halves take light from the top left.
@@ -121,13 +117,9 @@ function ARM(p: string, s: 'R' | 'L', db: Dumbbell): string {
     DF = 'M-15 -2 C-11 -8 -3 -12 6 -12 C8 8 9 32 6 56 C0 48 -8 36 -13 24 C-17 16 -18 6 -15 -2 Z',
     DS = 'M6 -12 C11 -12 16 -11 20 -8 C23 6 23 26 17 40 C13 46 9 51 6 56 C9 32 8 8 6 -12 Z',
     DP = 'M20 -8 C24 -4 25.5 3 25 12 C24.6 21 23.4 29 21.5 36 C17 44 11 50 6 56 C9 51 13 46 17 40 C23 26 23 6 20 -8 Z';
-  const eqFar = db ? `<g transform="translate(${FIST[0]} ${FIST[1]})">${part(`eqf_${side}`, [0, 0], `<polygon points="${hexPts(-7, -9, 16)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="1.8"/><path d="M-5 -5 L6 7" stroke="var(--iron-sh)" stroke-width="8" stroke-linecap="round"/>`)}</g>` : '';
-  const label = db && db.kg != null ? `
-        <text x="7" y="9" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="800" font-size="10" fill="var(--ink)" opacity=".75">${db.kg}</text>
-        <text x="7" y="17" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="5" fill="var(--ink)" opacity=".65">KG</text>` : '';
-  const eqNear = db ? part(`eq_${side}`, [0, 0], `
-        <polygon points="${hexPts(7, 9, 20)}" fill="url(#${p}-i)" stroke="var(--ink)" stroke-width="2"/>
-        <polygon points="${hexPts(7, 9, 14)}" fill="none" stroke="var(--iron-sh)" stroke-width="1.4"/>${label}`) : '';
+  // The library dumbbell (FG-5, src/formguide/parts/dumbbell.ts): far head behind the forearm, near head in the wrist.
+  const eqFar = db ? `<g transform="translate(${FIST[0]} ${FIST[1]})">${part(`eqf_${side}`, [0, 0], dumbbellFar(`${p}-i`, db.kg))}</g>` : '';
+  const eqNear = db ? part(`eq_${side}`, [0, 0], dumbbellNear(`${p}-i`, db.kg)) : '';
   const hand = `<g transform="translate(0 ${-FIST[1]})">
       <path d="M-11 77 C-15 86 -14 98 -7 105 C0 110 10 107 13 99 C15 90 12 81 8 77 Z" fill="url(#${p}-af)" stroke="var(--l)" stroke-width="2"/>
       ${sl([-8, 86, 0, 88, 9, 85], 1.1, D_)}${sl([-9, 93, 0, 95, 10, 92], 1.1, D_)}${sl([-7, 100, 0, 102, 8, 99], 1, D_)}</g>`;
